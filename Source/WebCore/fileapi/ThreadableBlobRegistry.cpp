@@ -57,8 +57,19 @@ static ThreadSpecific<BlobUrlOriginMap>& originMap()
 {
     static std::once_flag onceFlag;
     static ThreadSpecific<BlobUrlOriginMap>* map;
-    std::call_once(onceFlag, []{
+    std::call_once(onceFlag, [] {
         map = new ThreadSpecific<BlobUrlOriginMap>;
+    });
+
+    return *map;
+}
+
+static ThreadSpecific<HashCountedSet<String>>& blobURLReferencesMap()
+{
+    static std::once_flag onceFlag;
+    static ThreadSpecific<HashCountedSet<String>>* map;
+    std::call_once(onceFlag, [] {
+        map = new ThreadSpecific<HashCountedSet<String>>;
     });
 
     return *map;
@@ -99,11 +110,24 @@ static inline bool isBlobURLContainsNullOrigin(const URL& url)
     return StringView(url.string()).substring(startIndex, endIndex - startIndex - 1) == "null"_s;
 }
 
+static void unregisterBlobURLOriginIfNecessary(const URL& url)
+{
+    if (!isBlobURLContainsNullOrigin(url))
+        return;
+
+    auto urlWithoutFragment = url.stringWithoutFragmentIdentifier();
+    if (blobURLReferencesMap()->remove(urlWithoutFragment))
+        originMap()->remove(urlWithoutFragment);
+}
+
 void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URL& url, const URL& srcURL)
 {
     // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
-    if (origin && isBlobURLContainsNullOrigin(url))
-        originMap()->add<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier(), origin);
+    if (origin && isBlobURLContainsNullOrigin(url)) {
+        auto urlWithoutFragment = url.stringWithoutFragmentIdentifier();
+        originMap()->add(urlWithoutFragment, origin);
+        blobURLReferencesMap()->add(urlWithoutFragment);
+    }
 
     if (isMainThread()) {
         blobRegistry().registerBlobURL(url, srcURL, policyContainer);
@@ -152,8 +176,7 @@ unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
 
 void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
 {
-    if (isBlobURLContainsNullOrigin(url))
-        originMap()->remove<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier());
+    unregisterBlobURLOriginIfNecessary(url);
 
     ensureOnMainThread([url = url.isolatedCopy()] {
         blobRegistry().unregisterBlobURL(url);
@@ -162,6 +185,9 @@ void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
 
 void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url)
 {
+    if (isBlobURLContainsNullOrigin(url))
+        blobURLReferencesMap()->add(url.stringWithoutFragmentIdentifier());
+
     ensureOnMainThread([url = url.isolatedCopy()] {
         blobRegistry().registerBlobURLHandle(url);
     });
@@ -169,6 +195,8 @@ void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url)
 
 void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url)
 {
+    unregisterBlobURLOriginIfNecessary(url);
+
     ensureOnMainThread([url = url.isolatedCopy()] {
         blobRegistry().unregisterBlobURLHandle(url);
     });
