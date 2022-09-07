@@ -5620,4 +5620,11 @@ LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionM
     return direction == HorizontalLine ? box.height() : box.width();
 }
 
+LayoutUnit RenderBox::intrinsicLogicalWidth() const
+{
+    if (shouldApplyInlineSizeContainment())
+        return LayoutUnit();
+    return style().isHorizontalWritingMode() ? intrinsicSize().width() : intrinsicSize().height();
+}
+
 } // namespace WebCore
