@@ -966,13 +966,23 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     boxGeometry.setLogicalTopLeft(floatingPosition);
     floatingState()->append(floatingContext.toFloatItem(floatBox));
     m_placedFloats.append(&floatItem);
-    // Check if this float shrinks the line (they don't get positioned higher than the line).
-    auto floatBoxMarginBox = BoxGeometry::marginBoxRect(boxGeometry);
-    if (floatBoxMarginBox.top() >= m_lineLogicalRect.bottom() || floatBoxMarginBox.right() <= lineMarginBoxLeft) {
+
+    auto intersects = [&] {
+        // Float boxes don't get positioned higher than the line.
+        auto floatBoxMarginBox = BoxGeometry::marginBoxRect(boxGeometry);
+        if (floatBoxMarginBox.right() <= lineMarginBoxLeft) {
+            // Previous floats already constrain the line horizontally more than this one.
+            return false;
+        }
+        // Empty rect case: "line-height: 0px;" line still intersects with intrusive floats.
+        return floatBoxMarginBox.top() == m_lineLogicalRect.top() || floatBoxMarginBox.top() < m_lineLogicalRect.bottom();
+    };
+    if (!intersects()) {
         // This float is placed outside the line. No need to shrink the current line.
         return true;
     }
 
+    // Shrink the line box with the intrusive float box' margin box.
     m_contentIsConstrainedByFloat = true;
     auto floatBoxWidth = inlineItemWidth(floatItem, { });
     if (floatBox.isLeftFloatingPositioned())
