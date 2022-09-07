@@ -47,19 +47,6 @@ void VideoFrame::initializeCharacteristics(MediaTime presentationTime, bool isMi
     const_cast<bool&>(m_isMirrored) = isMirrored;
     const_cast<Rotation&>(m_rotation) = rotation;
 }
-
-#if !PLATFORM(COCOA)
-RefPtr<JSC::Uint8ClampedArray> VideoFrame::getRGBAImageData() const
-{
-#if USE(GSTREAMER)
-    if (isGStreamer())
-        return static_cast<const VideoFrameGStreamer*>(this)->computeRGBAImageData();
-#endif
-    // FIXME: Add support.
-    return nullptr;
-}
-#endif
-
 }
 
 #endif // ENABLE(VIDEO)

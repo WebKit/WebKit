@@ -250,6 +250,11 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringToIntegerConversion.h>
+#include "PixelBufferConformerCV.h"
+#include "VideoFrameCV.h"
+#include <JavaScriptCore/TypedArrayInlines.h>
+#include <pal/cf/CoreMediaSoftLink.h>
+#include "CoreVideoSoftLink.h"
 
 #if USE(CG)
 #include "PDFDocumentImage.h"
@@ -5641,11 +5646,45 @@ void Internals::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetada
         if (!videoSettings.width() || !videoSettings.height())
             return;
 
-        auto rgba = videoFrame->getRGBAImageData();
-        if (!rgba)
+        #if PLATFORM(COCOA) && ENABLE(VIDEO)
+        const OSType imageFormat = kCVPixelFormatType_32RGBA;
+        RetainPtr<CFNumberRef> imageFormatNumber = adoptCF(CFNumberCreate(nullptr,  kCFNumberIntType,  &imageFormat));
+
+        RetainPtr<CFMutableDictionaryRef> conformerOptions = adoptCF(CFDictionaryCreateMutable(0, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        CFDictionarySetValue(conformerOptions.get(), kCVPixelBufferPixelFormatTypeKey, imageFormatNumber.get());
+        PixelBufferConformerCV pixelBufferConformer(conformerOptions.get());
+
+        auto pixelBuffer = videoFrame->pixelBuffer();
+        auto rgbaPixelBuffer = pixelBufferConformer.convert(pixelBuffer);
+        auto status = CVPixelBufferLockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+        ASSERT_UNUSED(status, status == noErr);
+
+        void* data = CVPixelBufferGetBaseAddressOfPlane(rgbaPixelBuffer.get(), 0);
+        size_t byteLength = CVPixelBufferGetHeight(pixelBuffer) * CVPixelBufferGetWidth(pixelBuffer) * 4;
+        auto result = JSC::Uint8ClampedArray::tryCreate(JSC::ArrayBuffer::create(data, byteLength), 0, byteLength);
+
+        status = CVPixelBufferUnlockBaseAddress(rgbaPixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+        ASSERT(status == noErr);
+        #endif
+        #if !PLATFORM(COCOA)
+        RefPtr<JSC::Uint8ClampedArray> VideoFrame::getRGBAImageData() const
+        {
+        #if USE(GSTREAMER)
+            JSC::Uint8ClampedArray result = nullptr;
+            if (isGStreamer())
+                result = static_cast<const VideoFrameGStreamer*>(this)->computeRGBAImageData();
+        #endif
+            // FIXME: Add support.
+            JSC::Uint8ClampedArray result = nullptr;
+        }
+        #endif
+        // auto rgba = videoFrame->getRGBAImageData();
+        if (!result)
             return;
 
-        auto imageData = ImageData::create(rgba.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
+        // return result;
+
+        auto imageData = ImageData::create(result.releaseNonNull(), videoSettings.width(), videoSettings.height(), { { PredefinedColorSpace::SRGB } });
         if (!imageData.hasException())
             m_nextTrackFramePromise->resolve(imageData.releaseReturnValue());
         else
