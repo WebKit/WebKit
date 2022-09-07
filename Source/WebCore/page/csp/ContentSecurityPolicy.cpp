@@ -798,9 +798,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     info.columnNumber = sourcePosition.m_column.oneBasedInt();
     info.sample = violatedDirectiveList.shouldReportSample(effectiveViolatedDirective) ? sourceContent.left(40).toString() : emptyString();
 
-    if (m_client)
-        m_client->willSendCSPViolationReport(info);
-    else {
+    if (!m_client) {
         if (!usesReportTo && !is<Document>(m_scriptExecutionContext))
             return;
 

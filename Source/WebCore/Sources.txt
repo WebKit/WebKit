@@ -1857,7 +1857,6 @@ page/WindowOrWorkerGlobalScope.cpp
 page/WorkerNavigator.cpp
 page/csp/CSPViolationReportBody.cpp
 page/csp/ContentSecurityPolicy.cpp
-page/csp/ContentSecurityPolicyClient.cpp
 page/csp/ContentSecurityPolicyDirective.cpp
 page/csp/ContentSecurityPolicyDirectiveList.cpp
 page/csp/ContentSecurityPolicyDirectiveNames.cpp
