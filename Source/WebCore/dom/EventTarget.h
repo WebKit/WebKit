@@ -147,22 +147,15 @@ public:
         return nullptr;
     }
 
-    bool hasEventTargetData() const
-    {
-        return weakPtrFactory().bitfield() & static_cast<uint16_t>(EventTargetFlag::HasEventTargetData);
-    }
-
-    bool isNode() const
-    {
-        return weakPtrFactory().bitfield() & static_cast<uint16_t>(EventTargetFlag::IsNode);
-    }
+    bool hasEventTargetData() const { return hasEventTargetFlag(EventTargetFlag::HasEventTargetData); }
+    bool isNode() const { return hasEventTargetFlag(EventTargetFlag::IsNode); }
 
 protected:
     enum ConstructNodeTag { ConstructNode };
     EventTarget() = default;
     EventTarget(ConstructNodeTag)
     {
-        weakPtrFactory().setBitfield(weakPtrFactory().bitfield() | static_cast<uint16_t>(EventTargetFlag::IsNode));
+        setEventTargetFlag(EventTargetFlag::IsNode, true);
     }
 
     WEBCORE_EXPORT virtual ~EventTarget();
@@ -172,32 +165,25 @@ protected:
         IsNode = 1 << 1,
     };
 
-    void setHasEventTargetData(bool flag) const
-    {
-        uint16_t bitfield = weakPtrFactory().bitfield();
-        if (flag)
-            bitfield |= static_cast<uint16_t>(EventTargetFlag::HasEventTargetData);
-        else
-            bitfield &= ~static_cast<uint16_t>(EventTargetFlag::HasEventTargetData);
-        weakPtrFactory().setBitfield(bitfield);
-    }
-    
     EventTargetData& ensureEventTargetData()
     {
         if (auto* data = eventTargetData())
             return *data;
         initializeWeakPtrFactory();
         WTF::storeStoreFence();
-        setHasEventTargetData(true);
+        setEventTargetFlag(EventTargetFlag::HasEventTargetData, true);
         return weakPtrFactory().impl()->eventTargetData();
     }
 
     virtual void eventListenersDidChange() { }
 
+    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & static_cast<uint16_t>(flag); }
+    void setEventTargetFlag(EventTargetFlag, bool);
+
 private:
     virtual void refEventTarget() = 0;
     virtual void derefEventTarget() = 0;
-    
+
     void innerInvokeEventListeners(Event&, EventListenerVector, EventInvokePhase);
     void invalidateEventListenerRegions();
 };
@@ -225,6 +211,16 @@ void EventTarget::visitJSEventListeners(Visitor& visitor)
 {
     if (auto* data = eventTargetDataConcurrently())
         data->eventListenerMap.visitJSEventListeners(visitor);
+}
+
+inline void EventTarget::setEventTargetFlag(EventTargetFlag flag, bool value)
+{
+    uint16_t bitfield = weakPtrFactory().bitfield();
+    if (value)
+        bitfield |= static_cast<uint16_t>(flag);
+    else
+        bitfield &= ~static_cast<uint16_t>(flag);
+    weakPtrFactory().setBitfield(bitfield);
 }
 
 } // namespace WebCore
