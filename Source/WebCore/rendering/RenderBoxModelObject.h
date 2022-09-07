@@ -217,7 +217,6 @@ public:
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
 
     void paintBoxShadow(const PaintInfo&, const LayoutRect&, const RenderStyle&, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
-    void paintFillLayerExtended(const PaintInfo&, const Color&, const FillLayer&, const LayoutRect&, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&, const LayoutRect& backgroundImageStrip = { }, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr, BaseBackgroundColorUsage = BaseBackgroundColorUse);
 
     virtual bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& absolutePaintPostion, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&) const;
 
@@ -263,21 +262,21 @@ protected:
     LayoutPoint adjustedPositionRelativeToOffsetParent(const LayoutPoint&) const;
 
     bool hasVisibleBoxDecorationStyle() const;
-    BackgroundImageGeometry calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer&, const LayoutPoint& paintOffset,
-        const LayoutRect& paintRect, RenderElement* = nullptr) const;
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
     bool borderObscuresBackground() const;
     RoundedRect backgroundRoundedRectAdjustedForBleedAvoidance(const GraphicsContext&, const LayoutRect&, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
 
-    InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&);
-
-    static void clipRoundedInnerRect(GraphicsContext&, const FloatRect&, const FloatRoundedRect& clipRect);
-
     bool hasAutoHeightOrContainingBlockWithAutoHeight() const;
 
+public:
+    BackgroundImageGeometry calculateBackgroundImageGeometry(const RenderLayerModelObject* paintContainer, const FillLayer&, const LayoutPoint& paintOffset,
+        const LayoutRect& paintRect, RenderElement* = nullptr) const;
+
+    InterpolationQuality chooseInterpolationQuality(GraphicsContext&, Image&, const void*, const LayoutSize&) const;
     DecodingMode decodingModeForImageDraw(const Image&, const PaintInfo&) const;
 
-public:
+    void paintMaskForTextFillBox(ImageBuffer*, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
+
     // For RenderBlocks and RenderInlines with m_style->styleType() == PseudoId::FirstLetter, this tracks their remaining text fragments
     RenderTextFragment* firstLetterRemainingText() const;
     void setFirstLetterRemainingText(RenderTextFragment&);
@@ -315,11 +314,7 @@ private:
 
     LayoutSize calculateFillTileSize(const FillLayer&, const LayoutSize& scaledPositioningAreaSize) const;
 
-    RoundedRect getBackgroundRoundedRect(const LayoutRect&, const InlineIterator::InlineBoxIterator&, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const;
-    
     bool fixedBackgroundPaintsInLocalCoordinates() const;
-
-    void paintMaskForTextFillBox(ImageBuffer*, const FloatRect&, const InlineIterator::InlineBoxIterator&, const LayoutRect&);
 };
 
 } // namespace WebCore

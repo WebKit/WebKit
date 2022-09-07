@@ -89,7 +89,7 @@ public:
 
     bool isOriginClean(SecurityOrigin*);
 
-    bool isClientWaitingForAsyncDecoding(CachedImageClient&) const;
+    bool isClientWaitingForAsyncDecoding(const CachedImageClient&) const;
     void addClientWaitingForAsyncDecoding(CachedImageClient&);
     void removeAllClientsWaitingForAsyncDecoding();
 

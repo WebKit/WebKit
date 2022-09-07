@@ -153,9 +153,9 @@ void CachedImage::didRemoveClient(CachedResourceClient& client)
     downcast<CachedImageClient>(client).didRemoveCachedImageClient(*this);
 }
 
-bool CachedImage::isClientWaitingForAsyncDecoding(CachedImageClient& client) const
+bool CachedImage::isClientWaitingForAsyncDecoding(const CachedImageClient& client) const
 {
-    return m_clientsWaitingForAsyncDecoding.contains(&client);
+    return m_clientsWaitingForAsyncDecoding.contains(const_cast<CachedImageClient*>(&client));
 }
 
 void CachedImage::addClientWaitingForAsyncDecoding(CachedImageClient& client)

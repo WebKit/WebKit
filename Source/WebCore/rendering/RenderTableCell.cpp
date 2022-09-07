@@ -25,7 +25,7 @@
 #include "config.h"
 #include "RenderTableCell.h"
 
-#include "BoxModelPainter.h"
+#include "BorderPainter.h"
 #include "CollapsedBorderValue.h"
 #include "ElementInlines.h"
 #include "FloatQuad.h"
@@ -1270,7 +1270,7 @@ void RenderTableCell::paintCollapsedBorders(PaintInfo& paintInfo, const LayoutPo
     borders.addBorder(leftVal, BoxSide::Left, renderLeft, borderRect.x(), borderRect.y(), borderRect.x() + leftWidth, borderRect.maxY(), leftStyle);
     borders.addBorder(rightVal, BoxSide::Right, renderRight, borderRect.maxX() - rightWidth, borderRect.y(), borderRect.maxX(), borderRect.maxY(), rightStyle);
 
-    bool antialias = BoxModelPainter::shouldAntialiasLines(graphicsContext);
+    bool antialias = BorderPainter::shouldAntialiasLines(graphicsContext);
     
     for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
         if (border->borderValue.isSameIgnoringColor(*table()->currentBorderValue()))
@@ -1342,7 +1342,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
     if (!style().hasBorder() || table->collapseBorders())
         return;
 
-    BoxModelPainter { *this, paintInfo }.paintBorder(paintRect, style());
+    BorderPainter { *this, paintInfo }.paintBorder(paintRect, style());
 }
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

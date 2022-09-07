@@ -25,7 +25,8 @@
 #include "config.h"
 #include "RenderBox.h"
 
-#include "BoxModelPainter.h"
+#include "BackgroundPainter.h"
+#include "BorderPainter.h"
 #include "CSSFontSelector.h"
 #include "ControlStates.h"
 #include "Document.h"
@@ -1684,11 +1685,11 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
             view().scheduleLazyRepaint(*this);
     }
 
-    BoxModelPainter boxModelPainter { *this, paintInfo };
+    BorderPainter borderPainter { *this, paintInfo };
 
     if (borderOrBackgroundPaintingIsNeeded) {
         if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
-            boxModelPainter.paintBorder(paintRect, style(), bleedAvoidance);
+            borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
 
         paintBackground(paintInfo, paintRect, bleedAvoidance);
 
@@ -1699,7 +1700,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasEffectiveAppearance() || (borderOrBackgroundPaintingIsNeeded && theme().paintBorderOnly(*this, paintInfo, paintRect))) && style().hasVisibleBorderDecoration())
-        boxModelPainter.paintBorder(paintRect, style(), bleedAvoidance);
+        borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context().endTransparencyLayer();
@@ -1947,7 +1948,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
 
     if (allMaskImagesLoaded) {
         paintFillLayers(paintInfo, Color(), style().maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
-        BoxModelPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBoxImage(), compositeOp);
+        BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBoxImage(), compositeOp);
     }
     
     if (pushTransparencyLayer)
@@ -1992,8 +1993,8 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& color, 
         // FIXME: It would be possible for the following occlusion culling test to be more aggressive
         // on layers with no repeat by testing whether the image covers the layout rect.
         // Testing that here would imply duplicating a lot of calculations that are currently done in
-        // RenderBoxModelObject::paintFillLayerExtended. A more efficient solution might be to move
-        // the layer recursion into paintFillLayerExtended, or to compute the layer geometry here
+        // BackgroundPainter::paintFillLayer. A more efficient solution might be to move
+        // the layer recursion into paintFillLayer, or to compute the layer geometry here
         // and pass it down.
 
         // The clipOccludesNextLayers condition must be evaluated first to avoid short-circuiting.
@@ -2004,24 +2005,19 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& color, 
     auto& context = paintInfo.context();
     auto baseBgColorUsage = BaseBackgroundColorUse;
 
+    BackgroundPainter backgroundPainter { *this, paintInfo };
+
     if (shouldDrawBackgroundInSeparateBuffer) {
-        paintFillLayer(paintInfo, color, *layers.last(), rect, bleedAvoidance, op, backgroundObject, BaseBackgroundColorOnly);
+        backgroundPainter.paintFillLayer(color, *layers.last(), rect, bleedAvoidance, { }, { }, op, backgroundObject, BaseBackgroundColorOnly);
         baseBgColorUsage = BaseBackgroundColorSkip;
         context.beginTransparencyLayer(1);
     }
 
-    auto topLayer = layers.rend();
-    for (auto it = layers.rbegin(); it != topLayer; ++it)
-        paintFillLayer(paintInfo, color, **it, rect, bleedAvoidance, op, backgroundObject, baseBgColorUsage);
+    for (auto& layer : makeReversedRange(layers))
+        backgroundPainter.paintFillLayer(color, *layer, rect, bleedAvoidance, { }, { }, op, backgroundObject, baseBgColorUsage);
 
     if (shouldDrawBackgroundInSeparateBuffer)
         context.endTransparencyLayer();
-}
-
-void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer& fillLayer, const LayoutRect& rect,
-    BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderElement* backgroundObject, BaseBackgroundColorUsage baseBgColorUsage)
-{
-    paintFillLayerExtended(paintInfo, c, fillLayer, rect, bleedAvoidance, { }, { }, op, backgroundObject, baseBgColorUsage);
 }
 
 static StyleImage* findLayerUsedImage(WrappedImagePtr image, const FillLayer& layers)

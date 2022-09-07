@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderReplaced.h"
 
+#include "BackgroundPainter.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentMarkerController.h"
 #include "ElementRuleCollector.h"
@@ -272,7 +273,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             paintInfo.context().save();
             auto pixelSnappedRoundedRect = style().getRoundedInnerBorderFor(paintRect,
                 paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor());
-            clipRoundedInnerRect(paintInfo.context(), paintRect, pixelSnappedRoundedRect);
+            BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), paintRect, pixelSnappedRoundedRect);
         }
     }
 
