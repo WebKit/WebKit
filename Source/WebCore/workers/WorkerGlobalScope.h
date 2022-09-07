@@ -71,6 +71,8 @@ class WorkerStorageConnection;
 class WorkerThread;
 struct WorkerParameters;
 
+enum class ViolationReportType : uint8_t;
+
 namespace IDBClient {
 class IDBConnectionProxy;
 }
@@ -204,7 +206,7 @@ private:
 
     void notifyReportObservers(Ref<Report>&&) final;
     String endpointURIForToken(const String&) const final;
-
+    void sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType) final;
 
     URL m_url;
     URL m_ownerURL;

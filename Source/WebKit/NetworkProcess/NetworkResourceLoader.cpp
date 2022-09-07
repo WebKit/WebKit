@@ -61,6 +61,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/SharedBuffer.h>
+#include <WebCore/ViolationReportType.h>
 #include <wtf/Expected.h>
 #include <wtf/RunLoop.h>
 
@@ -1738,11 +1739,6 @@ void NetworkResourceLoader::addConsoleMessage(MessageSource messageSource, Messa
     send(Messages::WebPage::AddConsoleMessage { m_parameters.webFrameID,  messageSource, messageLevel, message, coreIdentifier() }, m_parameters.webPageID);
 }
 
-void NetworkResourceLoader::sendCSPViolationReport(URL&& reportURL, Ref<FormData>&& report)
-{
-    send(Messages::WebPage::SendCSPViolationReport { m_parameters.webFrameID, WTFMove(reportURL), IPC::FormDataReference { WTFMove(report) } }, m_parameters.webPageID);
-}
-
 void NetworkResourceLoader::enqueueSecurityPolicyViolationEvent(WebCore::SecurityPolicyViolationEventInit&& eventInit)
 {
     send(Messages::WebPage::EnqueueSecurityPolicyViolationEvent { m_parameters.webFrameID, WTFMove(eventInit) }, m_parameters.webPageID);
@@ -1845,6 +1841,11 @@ void NetworkResourceLoader::notifyReportObservers(Ref<Report>&& report)
 String NetworkResourceLoader::endpointURIForToken(const String& reportTo) const
 {
     return m_reportingEndpoints.get(reportTo);
+}
+
+void NetworkResourceLoader::sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, WebCore::ViolationReportType reportType)
+{
+    send(Messages::WebPage::SendReportToEndpoints { m_parameters.webFrameID, baseURL, WTFMove(endPoints), IPC::FormDataReference { WTFMove(report) }, reportType }, m_parameters.webPageID);
 }
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)

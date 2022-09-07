@@ -25,26 +25,26 @@
 
 #pragma once
 
-#include <wtf/IsoMalloc.h>
-#include <wtf/RefCounted.h>
-
 namespace WebCore {
 
-enum class ViolationReportType : uint8_t;
-
-class WEBCORE_EXPORT ReportBody : public RefCounted<ReportBody> {
-    WTF_MAKE_ISO_ALLOCATED(ReportBody);
-public:
-    virtual ~ReportBody();
-
-    virtual const AtomString& type() const = 0;
-    ViolationReportType reportBodyType() const;
-
-protected:
-    ReportBody(ViolationReportType);
-
-private:
-    ViolationReportType m_reportBodyType;
+enum class ViolationReportType : uint8_t {
+    ContentSecurityPolicy,
+    StandardReportingAPIViolation, // https://www.w3.org/TR/reporting/#try-delivery
+    Test, // https://www.w3.org/TR/reporting-1/#generate-test-report-command
+    // More to come
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ViolationReportType> {
+    using values = EnumValues<
+    WebCore::ViolationReportType,
+    WebCore::ViolationReportType::ContentSecurityPolicy,
+    WebCore::ViolationReportType::StandardReportingAPIViolation,
+    WebCore::ViolationReportType::Test
+    >;
+};
+
+} // namespace WTF

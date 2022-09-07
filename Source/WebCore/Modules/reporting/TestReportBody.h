@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ReportBody.h"
+#include "ViolationReportType.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -78,5 +79,5 @@ std::optional<RefPtr<TestReportBody>> TestReportBody::decode(Decoder& decoder)
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TestReportBody)
-    static bool isType(const WebCore::ReportBody& reportBody) { return reportBody.reportBodyType() == WebCore::ReportBodyType::Test; }
+    static bool isType(const WebCore::ReportBody& reportBody) { return reportBody.reportBodyType() == WebCore::ViolationReportType::Test; }
 SPECIALIZE_TYPE_TRAITS_END()

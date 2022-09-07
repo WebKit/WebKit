@@ -40,7 +40,7 @@ const AtomString& TestReportBody::testReportType()
 }
 
 TestReportBody::TestReportBody(String&& message)
-    : ReportBody(ReportBodyType::Test)
+    : ReportBody(ViolationReportType::Test)
     , m_bodyMessage(WTFMove(message))
 {
 }

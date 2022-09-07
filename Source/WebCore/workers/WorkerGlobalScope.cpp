@@ -42,6 +42,7 @@
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMExceptionHandling.h"
+#include "NotImplemented.h"
 #include "Performance.h"
 #include "RTCDataChannelRemoteHandlerConnection.h"
 #include "ReportingScope.h"
@@ -53,6 +54,7 @@
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
+#include "ViolationReportType.h"
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerFileSystemStorageConnection.h"
 #include "WorkerFontLoadRequest.h"
@@ -694,5 +696,11 @@ String WorkerGlobalScope::endpointURIForToken(const String& token) const
 {
     return reportingScope().endpointURIForToken(token);
 }
+
+void WorkerGlobalScope::sendReportToEndpoints(const URL&, Vector<String>&&, Ref<FormData>&&, ViolationReportType)
+{
+    notImplemented();
+}
+
 
 } // namespace WebCore

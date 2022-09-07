@@ -51,7 +51,6 @@ struct WEBCORE_EXPORT ContentSecurityPolicyClient {
     virtual ~ContentSecurityPolicyClient() = default;
 
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String&, unsigned long requestIdentifier = 0) = 0;
-    virtual void sendCSPViolationReport(URL&&, Ref<FormData>&&) = 0;
     virtual void enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&&) = 0;
 };
 

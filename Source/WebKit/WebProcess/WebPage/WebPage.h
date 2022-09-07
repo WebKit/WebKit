@@ -240,6 +240,7 @@ enum class TextIndicatorPresentationTransition : uint8_t;
 enum class TextGranularity : uint8_t;
 enum class WheelEventProcessingSteps : uint8_t;
 enum class WritingDirection : uint8_t;
+enum class ViolationReportType : uint8_t;
 
 using PlatformDisplayID = uint32_t;
 
@@ -450,10 +451,10 @@ public:
 #endif
 
     void addConsoleMessage(WebCore::FrameIdentifier, MessageSource, MessageLevel, const String&, std::optional<WebCore::ResourceLoaderIdentifier> = std::nullopt);
-    void sendCSPViolationReport(WebCore::FrameIdentifier, const URL& reportURL, IPC::FormDataReference&&);
     void enqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier, WebCore::SecurityPolicyViolationEventInit&&);
 
     void notifyReportObservers(WebCore::FrameIdentifier, Ref<WebCore::Report>&&);
+    void sendReportToEndpoints(WebCore::FrameIdentifier, URL&& baseURL, Vector<String>&& endPoints, IPC::FormDataReference&&, WebCore::ViolationReportType);
 
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?

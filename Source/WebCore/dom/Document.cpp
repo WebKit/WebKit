@@ -170,6 +170,7 @@
 #include "PaintWorkletGlobalScope.h"
 #include "Performance.h"
 #include "PerformanceNavigationTiming.h"
+#include "PingLoader.h"
 #include "PlatformLocale.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
@@ -255,6 +256,7 @@
 #include "UndoManager.h"
 #include "UserGestureIndicator.h"
 #include "ValidationMessageClient.h"
+#include "ViolationReportType.h"
 #include "VisibilityChangeClient.h"
 #include "VisitedLinkState.h"
 #include "VisualViewport.h"
@@ -9267,6 +9269,12 @@ void Document::notifyReportObservers(Ref<Report>&& reports)
 String Document::endpointURIForToken(const String& token) const
 {
     return reportingScope().endpointURIForToken(token);
+}
+
+void Document::sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType reportType)
+{
+    for (const auto& url : endPoints)
+        PingLoader::sendViolationReport(*frame(), URL { baseURL, url }, report.copyRef(), reportType);    
 }
 
 } // namespace WebCore

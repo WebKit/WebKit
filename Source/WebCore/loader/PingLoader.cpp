@@ -57,6 +57,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "UserContentController.h"
+#include "ViolationReportType.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -172,6 +173,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
         request.setHTTPContentType("application/csp-report"_s);
         break;
     case ViolationReportType::StandardReportingAPIViolation:
+    case ViolationReportType::Test:
         request.setHTTPContentType("application/reports+json"_s);
         break;
     }
@@ -184,7 +186,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 
-    if (reportType != ViolationReportType::StandardReportingAPIViolation)
+    if (reportType != ViolationReportType::StandardReportingAPIViolation && reportType != ViolationReportType::Test)
         frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
 
     String referrer = SecurityPolicy::generateReferrerHeader(document.referrerPolicy(), reportURL, frame.loader().outgoingReferrer());
@@ -213,7 +215,7 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeade
     options.cache = FetchOptions::Cache::NoCache;
 
     // https://www.w3.org/TR/reporting/#try-delivery
-    if (violationReportType == ViolationReportType::StandardReportingAPIViolation) {
+    if (violationReportType == ViolationReportType::StandardReportingAPIViolation || violationReportType == ViolationReportType::Test) {
         options.credentials = FetchOptions::Credentials::SameOrigin;
         options.mode = FetchOptions::Mode::Cors;
         options.serviceWorkersMode = ServiceWorkersMode::None;

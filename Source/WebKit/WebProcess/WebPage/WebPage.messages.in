@@ -28,8 +28,8 @@ messages -> WebPage LegacyReceiver {
     SetBackgroundColor(std::optional<WebCore::Color> color)
 
     AddConsoleMessage(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, std::optional<WebCore::ResourceLoaderIdentifier> requestID)
-    SendCSPViolationReport(WebCore::FrameIdentifier frameID, URL reportURL, IPC::FormDataReference reportData)
     EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, struct WebCore::SecurityPolicyViolationEventInit eventInit)
+    SendReportToEndpoints(WebCore::FrameIdentifier frameID, URL baseURL, Vector<String> endPoints, IPC::FormDataReference reportData, enum:uint8_t WebCore::ViolationReportType reportType);
 
     NotifyReportObservers(WebCore::FrameIdentifier frameID, Ref<WebCore::Report> report)
 

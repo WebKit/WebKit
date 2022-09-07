@@ -270,6 +270,7 @@ enum class ShouldOpenExternalURLsPolicy : uint8_t;
 enum class RenderingUpdateStep : uint32_t;
 enum class StyleColorOptions : uint8_t;
 enum class MutationObserverOptionType : uint8_t;
+enum class ViolationReportType : uint8_t;
 
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 using MediaProducerMutedStateFlags = OptionSet<MediaProducerMutedState>;
@@ -1831,6 +1832,7 @@ private:
 
     void notifyReportObservers(Ref<Report>&&) final;
     String endpointURIForToken(const String&) const final;
+    void sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType) final;
 
     const Ref<const Settings> m_settings;
 

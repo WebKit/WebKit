@@ -27,6 +27,7 @@
 
 #include "ReportBody.h"
 #include "SecurityPolicyViolationEvent.h"
+#include "ViolationReportType.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -114,5 +115,5 @@ std::optional<RefPtr<CSPViolationReportBody>> CSPViolationReportBody::decode(Dec
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSPViolationReportBody)
-    static bool isType(const WebCore::ReportBody& reportBody) { return reportBody.reportBodyType() == WebCore::ReportBodyType::CSPViolation; }
+    static bool isType(const WebCore::ReportBody& reportBody) { return reportBody.reportBodyType() == WebCore::ViolationReportType::ContentSecurityPolicy; }
 SPECIALIZE_TYPE_TRAITS_END()

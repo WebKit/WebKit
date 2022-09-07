@@ -56,6 +56,7 @@
 #include "SecurityPolicyViolationEvent.h"
 #include "Settings.h"
 #include "SubresourceIntegrity.h"
+#include "ViolationReportType.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
@@ -881,18 +882,15 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     if (reportURIs.isEmpty())
         return;
 
+    RELEASE_ASSERT(m_reportingClient || (!m_client && !m_scriptExecutionContext));
+    if (!m_reportingClient)
+        return;
+
     auto reportURL = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : blockedURI;
 
     auto report = CSPViolationReportBody::createReportFormDataForViolation(info, usesReportTo, violatedDirectiveList.isReportOnly(), effectiveViolatedDirective, m_referrer, violatedDirectiveList.header(), blockedURI, httpStatusCode);
 
-    if (m_client) {
-        for (const auto& url : reportURIs)
-            m_client->sendCSPViolationReport(URL { m_protectedURL, url }, report.copyRef());
-    } else {
-        auto& document = downcast<Document>(*m_scriptExecutionContext);
-        for (const auto& url : reportURIs)
-            PingLoader::sendViolationReport(*document.frame(), URL { m_protectedURL, url }, report.copyRef(), ViolationReportType::ContentSecurityPolicy);
-    }
+    m_reportingClient->sendReportToEndpoints(m_protectedURL, WTFMove(reportURIs), WTFMove(report), ViolationReportType::ContentSecurityPolicy);
 }
 
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const

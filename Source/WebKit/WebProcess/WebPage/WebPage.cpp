@@ -266,6 +266,7 @@
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/UserTypingGestureIndicator.h>
+#include <WebCore/ViolationReportType.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
 #include <WebCore/WebGLStateTracker.h>
@@ -4582,15 +4583,6 @@ void WebPage::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSo
         frame->addConsoleMessage(messageSource, messageLevel, message, requestID ? requestID->toUInt64() : 0);
 }
 
-void WebPage::sendCSPViolationReport(FrameIdentifier frameID, const URL& reportURL, IPC::FormDataReference&& reportData)
-{
-    auto report = reportData.takeData();
-    if (!report)
-        return;
-    if (auto* frame = WebProcess::singleton().webFrame(frameID))
-        PingLoader::sendViolationReport(*frame->coreFrame(), reportURL, report.releaseNonNull(), ViolationReportType::ContentSecurityPolicy);
-}
-
 void WebPage::enqueueSecurityPolicyViolationEvent(FrameIdentifier frameID, SecurityPolicyViolationEventInit&& eventInit)
 {
     auto* frame = WebProcess::singleton().webFrame(frameID);
@@ -4613,6 +4605,20 @@ void WebPage::notifyReportObservers(FrameIdentifier frameID, Ref<WebCore::Report
         return;
     if (RefPtr document = coreFrame->document())
         document->reportingScope().notifyReportObservers(WTFMove(report));
+}
+
+void WebPage::sendReportToEndpoints(FrameIdentifier frameID, URL&& baseURL, Vector<String>&& endPoints, IPC::FormDataReference&& reportData, WebCore::ViolationReportType reportType)
+{
+    auto report = reportData.takeData();
+    if (!report)
+        return;
+
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    for (const auto& url : endPoints)
+        PingLoader::sendViolationReport(*frame->coreFrame(), URL { baseURL, url }, Ref { *report.get() }, reportType);
 }
 
 NotificationPermissionRequestManager* WebPage::notificationPermissionRequestManager()

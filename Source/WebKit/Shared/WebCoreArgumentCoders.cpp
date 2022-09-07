@@ -3084,11 +3084,14 @@ void ArgumentCoder<RefPtr<WebCore::ReportBody>>::encode(Encoder& encoder, const 
     encoder << reportBody->reportBodyType();
 
     switch (reportBody->reportBodyType()) {
-    case ReportBodyType::CSPViolation:
+    case ViolationReportType::ContentSecurityPolicy:
         downcast<CSPViolationReportBody>(reportBody.get())->encode(encoder);
         return;
-    case ReportBodyType::Test:
+    case ViolationReportType::Test:
         downcast<TestReportBody>(reportBody.get())->encode(encoder);
+        return;
+    case ViolationReportType::StandardReportingAPIViolation:
+        ASSERT_NOT_REACHED();
         return;
     }
 
@@ -3105,16 +3108,19 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
     if (!hasReportBody)
         return { result };
 
-    std::optional<ReportBodyType> reportBodyType;
+    std::optional<ViolationReportType> reportBodyType;
     decoder >> reportBodyType;
     if (!reportBodyType)
         return std::nullopt;
 
     switch (*reportBodyType) {
-    case ReportBodyType::CSPViolation:
+    case ViolationReportType::ContentSecurityPolicy:
         return CSPViolationReportBody::decode(decoder);
-    case ReportBodyType::Test:
+    case ViolationReportType::Test:
         return TestReportBody::decode(decoder);
+    case ViolationReportType::StandardReportingAPIViolation:
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
     }
 
     ASSERT_NOT_REACHED();
