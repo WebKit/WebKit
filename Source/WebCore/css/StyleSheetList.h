@@ -33,6 +33,7 @@ class Node;
 class ShadowRoot;
 class StyleSheet;
 class CSSStyleSheet;
+class WeakPtrImplWithEventTargetData;
 
 class StyleSheetList final : public RefCounted<StyleSheetList> {
 public:

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "VoidCallback.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefCounted.h>

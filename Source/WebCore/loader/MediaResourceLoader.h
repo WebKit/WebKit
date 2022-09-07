@@ -44,6 +44,7 @@ class CachedRawResource;
 class Document;
 class Element;
 class MediaResource;
+class WeakPtrImplWithEventTargetData;
 
 class MediaResourceLoader final : public PlatformMediaResourceLoader, public CanMakeWeakPtr<MediaResourceLoader>, public ContextDestructionObserver {
 public:

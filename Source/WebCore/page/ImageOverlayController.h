@@ -46,6 +46,7 @@ class IntRect;
 class FloatQuad;
 class Page;
 class RenderElement;
+class WeakPtrImplWithEventTargetData;
 struct GapRects;
 
 class ImageOverlayController final : private PageOverlay::Client

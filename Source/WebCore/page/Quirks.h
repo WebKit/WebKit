@@ -38,6 +38,7 @@ class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
 class PlatformMouseEvent;
+class WeakPtrImplWithEventTargetData;
 struct SecurityOriginData;
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)

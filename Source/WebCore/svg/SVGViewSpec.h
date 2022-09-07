@@ -28,6 +28,7 @@ namespace WebCore {
 
 class SVGElement;
 class SVGTransformList;
+class WeakPtrImplWithEventTargetData;
 
 class SVGViewSpec final : public RefCounted<SVGViewSpec>, public SVGFitToViewBox, public SVGZoomAndPan {
 public:

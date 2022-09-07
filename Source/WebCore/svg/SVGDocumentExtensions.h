@@ -38,6 +38,7 @@ class SVGResourcesCache;
 class SVGSMILElement;
 class SVGSVGElement;
 class SVGUseElement;
+class WeakPtrImplWithEventTargetData;
 
 class SVGDocumentExtensions {
     WTF_MAKE_NONCOPYABLE(SVGDocumentExtensions); WTF_MAKE_FAST_ALLOCATED;

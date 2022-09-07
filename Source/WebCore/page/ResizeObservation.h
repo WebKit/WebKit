@@ -39,6 +39,7 @@ class TextStream;
 namespace WebCore {
 
 class Element;
+class WeakPtrImplWithEventTargetData;
 
 class ResizeObservation : public RefCounted<ResizeObservation> {
     WTF_MAKE_FAST_ALLOCATED;

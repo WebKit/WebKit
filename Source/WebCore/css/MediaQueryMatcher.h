@@ -32,6 +32,7 @@ class MediaQueryList;
 class MediaQueryEvaluator;
 class MediaQuerySet;
 class RenderStyle;
+class WeakPtrImplWithEventTargetData;
 
 // MediaQueryMatcher class is responsible for evaluating the queries whenever it
 // is needed and dispatch "change" event on MediaQueryLists if the corresponding

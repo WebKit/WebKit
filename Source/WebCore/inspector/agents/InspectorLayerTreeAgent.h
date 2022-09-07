@@ -42,6 +42,7 @@ class Node;
 class PseudoElement;
 class RenderElement;
 class RenderLayer;
+class WeakPtrImplWithEventTargetData;
 
 class InspectorLayerTreeAgent final : public InspectorAgentBase, public Inspector::LayerTreeBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorLayerTreeAgent);

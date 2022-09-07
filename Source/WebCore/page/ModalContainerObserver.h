@@ -41,6 +41,7 @@ class Element;
 class FrameView;
 class HTMLElement;
 class HTMLFrameOwnerElement;
+class WeakPtrImplWithEventTargetData;
 
 class ModalContainerObserver {
     WTF_MAKE_FAST_ALLOCATED;

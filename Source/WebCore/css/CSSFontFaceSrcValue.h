@@ -37,6 +37,7 @@ class CachedFont;
 class FontLoadRequest;
 class SVGFontFaceElement;
 class ScriptExecutionContext;
+class WeakPtrImplWithEventTargetData;
 
 class CSSFontFaceSrcValue final : public CSSValue {
 public:

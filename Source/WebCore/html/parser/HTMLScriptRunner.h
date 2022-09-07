@@ -37,6 +37,7 @@ class Document;
 class Frame;
 class HTMLScriptRunnerHost;
 class ScriptSourceCode;
+class WeakPtrImplWithEventTargetData;
 
 class HTMLScriptRunner {
     WTF_MAKE_FAST_ALLOCATED;

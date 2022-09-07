@@ -51,6 +51,7 @@ class ResourceLoader;
 class ResourceRequest;
 class ResourceResponse;
 class SubstituteData;
+class WeakPtrImplWithEventTargetData;
 
 class ApplicationCacheHost {
     WTF_MAKE_NONCOPYABLE(ApplicationCacheHost); WTF_MAKE_FAST_ALLOCATED;

@@ -58,6 +58,7 @@ class NodeList;
 class RenderObject;
 class Settings;
 class StyleRule;
+class WeakPtrImplWithEventTargetData;
 
 namespace Style {
 class Resolver;

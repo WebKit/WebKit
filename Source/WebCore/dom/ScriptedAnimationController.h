@@ -40,6 +40,7 @@ class Document;
 class Page;
 class RequestAnimationFrameCallback;
 class UserGestureToken;
+class WeakPtrImplWithEventTargetData;
 
 class ScriptedAnimationController : public RefCounted<ScriptedAnimationController>
 {
