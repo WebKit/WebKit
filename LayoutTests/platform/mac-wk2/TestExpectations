@@ -998,6 +998,41 @@ webkit.org/b/206696 editing/selection/caret-at-bidi-boundary.html [ Pass Timeout
 
 webkit.org/b/206708 fast/animation/request-animation-frame-iframe.html [ Pass Failure ]
 
+# rdar://92774119 ([ Ventura Release wk2 ] 27X imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements (Layout-Tests) are flaky text failures)
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/audio_loop_seek_to_eos.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplay_noautoplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_canplaythrough_noautoplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadeddata_noautoplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_loadedmetadata_noautoplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_play.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_pause.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_order_loadstart_progress.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_order_loadedmetadata_loadeddata.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_order_canplay_playing.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_order_canplay_canplaythrough.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/paused_false_during_play.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate_noautoplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_timeupdate.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress_noautoplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_progress.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_playing_noautoplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_playing.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplay.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_playing.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadedmetadata.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_loadeddata.html [ Pass Failure ]
+[ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/readyState_during_canplaythrough.html [ Pass Failure ]
+
+#rdar://92833592 ([ Ventura ] 4x imported/w3c/web-platform-tests/webrtc-encoded-transform/ are flaky text failures)
+imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/script-write-twice-transform.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Pass Failure ]
+
 webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash Failure ]
 
 webkit.org/b/207141 [ Debug ] inspector/canvas/create-context-bitmaprenderer.html [ Pass Failure ]

@@ -752,6 +752,53 @@ webkit.org/b/61487 http/tests/media/video-cross-site.html [ Failure ]
 
 webkit.org/b/230708 [ Debug ] media/video-ended-seek-crash.html [ Pass Timeout ]
 
+# https://bugs.webkit.org/show_bug.cgi?id=236113 mathml/presentation/fenced-mi.html is flakey when run with STIX Two
+mathml/presentation/fenced-mi.html [ Pass ImageOnlyFailure ]
+
+# rdar://88981242 ([ Ventura ] media/accessiblity-describes-video.html is a constant timeout)
+media/accessiblity-describes-video.html [ Timeout ]
+
+# rdar://92286809 ([ Ventura ] 4x editing/spelling (layout-tests) Are constant timeouts)
+editing/spelling/inline-spelling-markers-hidpi.html [ Timeout ]
+editing/spelling/grammar-markers-hidpi.html [ Timeout ]
+editing/spelling/grammar-markers.html [ Timeout ]
+editing/spelling/inline-spelling-markers.html [ Timeout ]
+
+#rdar://92833592 ([ Ventura ] 4x imported/w3c/web-platform-tests/webrtc-encoded-transform/ are flaky text failures)
+imported/w3c/web-platform-tests/webrtc-encoded-transform/script-metadata-transform.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/script-write-twice-transform.https.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webrtc-encoded-transform/sframe-transform-in-worker.https.html [ Pass Failure ]
+
+#rdar://92293472 ([ Ventura ] fast/css/stylesheet-candidate-nodes-crash.xhtml is a constant text failure)
+fast/css/stylesheet-candidate-nodes-crash.xhtml [ Pass Failure ]
+
+#rdar://92491906 (REGRESSION): 2 platform/mac/fast/loader/* tests are constant text failures)
+platform/mac/fast/loader/file-url-mimetypes-3.html [ Failure ]
+platform/mac/fast/loader/file-url-mimetypes.html [ Failure ]
+
+# rdar://92299030 ([ Ventura ] 2 imported/w3c/web-platform-tests/svg/* tests are constant text failures)
+imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/import/animate-elem-35-t-manual.svg [ Failure ]
+
+# This test rarely times out with color being (0, 0, 0, 0), so far only on macOS Ventura.
+http/tests/media/hls/hls-hdr-switch.html [ Pass Timeout ]
+
+# rdar://94184618 (REGRESSION): [ Mac Ventura Debug ] 5* editing/secure-input/* (layout-tests) are constant failures)
+editing/secure-input/password-input-changed-type.html [ Pass Failure ]
+editing/secure-input/password-input-focusing-to-different-frame.html [ Pass Failure ]
+editing/secure-input/password-input-focusing.html [ Pass Failure ]
+editing/secure-input/removed-password-input.html [ Pass Failure ]
+editing/secure-input/reset-state-on-navigation.html [ Pass Failure ]
+
+#rdar://96912160 (REGRESSION): [ Ventura ] 3* imported/w3c/web-platform-tests/cookies* tests are constant text failures)
+imported/w3c/web-platform-tests/cookies/attributes/path.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/value/value.html [ Failure ]
+imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
+
+#rdar://92629515 (REGRESSION(Ventura): [ Ventura ] media/media-can-play-av1.html is a constant text failure)
+media/media-can-play-av1.html [ Skip ]
+
 # Opera-submitted tests to W3C for <track>, a lot of failures still.
 webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
@@ -885,8 +932,6 @@ webkit.org/b/142726 fast/images/animated-png.html [ Skip ]
 
 # OS X 10.10.3+ has the necessary glyphs.
 webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Pass ]
-
-media/accessiblity-describes-video.html [ Pass Failure ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
@@ -1882,9 +1927,6 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-20.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ Slow ]
 
-# This test is skipped in generic TestExpectations.
-http/tests/media/hls/hls-hdr-switch.html [ Pass ]
-
 # rdar://69347249
 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-byte-data.html [ Failure ]
@@ -2101,7 +2143,7 @@ webkit.org/b/227998 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure Timeout ]
 
 # webkit.org/b/228200 Adjusting test expectations for Monterey on Open Source <rdar://80344138>:
-[ Monterey ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
+[ Monterey+ ] imported/w3c/web-platform-tests/fetch/connection-pool/network-partition-key.html [ Failure ]
 
 # webkit.org/b/228200 Setting multiple test expectations for Monterey on OpenSource:
 [ Monterey ] model-element/model-element-graphics-layers-opacity.html [ Pass Failure ]

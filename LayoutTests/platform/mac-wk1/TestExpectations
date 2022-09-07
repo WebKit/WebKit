@@ -1013,6 +1013,41 @@ inspector/network/interceptContinue.html [ Skip ]
 
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
+# rdar://92764272 ([ Ventura wk1 ] 18 X fast/html/details (layout-tests) are flaky text failures)
+fast/html/details-add-summary-1-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-10-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-2-and-click.html [ Pass Failure ] 
+fast/html/details-add-summary-3-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-4-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-5-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-6-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-7-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-8-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-9-and-click.html [ Pass Failure ]
+fast/html/details-click-controls.html [ Pass Failure ]
+fast/html/details-mouse-click.html [ Pass Failure ]
+fast/html/details-remove-summary-1-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-2-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-3-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-4-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-5-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-6-and-click.html [ Pass Failure ]
+
+# rdar://92765314 ([ Ventura wk1 Release x86_64 ] 8X fast/forms/number/number- (Layout-Tests) are flaky text failures)
+[ Release ] fast/forms/number/number-change-type-on-focus.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-large-padding.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-capturing.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-change-and-input-events.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-click-in-iframe.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-state.html [ Pass Failure ]
+
+#rdar://96906411 (REGRESSION(251850@main): imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html is a constant text failure)
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
+imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
+
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
 webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
@@ -2035,9 +2070,6 @@ webkit.org/b/244404 js/dom/modules/missing-exception-check-for-import.html [ Cra
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002.html [ Crash ]
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Crash ]
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Crash ]
-
-imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
 
 webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
 
