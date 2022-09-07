@@ -113,8 +113,8 @@ public:
         std::optional<int> sampleRate;
         std::optional<int> sampleSize;
         std::optional<bool> echoCancellation;
-        std::optional<bool> displaySurface;
-        String logicalSurface;
+        String displaySurface;
+        std::optional<bool> logicalSurface;
         String deviceId;
         String groupId;
     };
@@ -132,6 +132,7 @@ public:
         std::optional<Vector<bool>> echoCancellation;
         String deviceId;
         String groupId;
+        String displaySurface;
     };
     TrackCapabilities getCapabilities() const;
 

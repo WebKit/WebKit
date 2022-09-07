@@ -273,8 +273,10 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
         result.deviceId = settings.deviceId();
     if (settings.supportsGroupId())
         result.groupId = settings.groupId();
+    if (settings.supportsDisplaySurface() && settings.displaySurface() != RealtimeMediaSourceSettings::DisplaySurfaceType::Invalid)
+        result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
 
-    // FIXME: shouldn't this include displaySurface and logicalSurface?
+    // FIXME: shouldn't this include logicalSurface?
 
     return result;
 }
@@ -362,6 +364,11 @@ MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
         result.deviceId = capabilities.deviceId();
     if (capabilities.supportsGroupId())
         result.groupId = capabilities.groupId();
+
+    auto settings = m_private->settings();
+    if (settings.supportsDisplaySurface() && settings.displaySurface() != RealtimeMediaSourceSettings::DisplaySurfaceType::Invalid)
+        result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
+
     return result;
 }
 

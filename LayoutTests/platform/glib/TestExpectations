@@ -818,6 +818,7 @@ webkit.org/b/79203 fast/mediastream/RTCRtpSender-replaceTrack.html [ Failure ]
 webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Timeout Failure Pass ]
 
 fast/mediastream/mediastreamtrack-configurationchange.html [ Failure ]
+fast/mediastream/getDisplayMedia-displaySurface.html [ Failure ]
 
 webkit.org/b/223508 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-srcObject.https.html [ Failure Pass ]
 

@@ -183,6 +183,25 @@ String convertEnumerationToString(RealtimeMediaSourceSettings::VideoFacingMode e
     return values[static_cast<size_t>(enumerationValue)];
 }
 
+String RealtimeMediaSourceSettings::displaySurface(RealtimeMediaSourceSettings::DisplaySurfaceType surface)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("monitor"),
+        MAKE_STATIC_STRING_IMPL("window"),
+        MAKE_STATIC_STRING_IMPL("application"),
+        MAKE_STATIC_STRING_IMPL("browser"),
+        MAKE_STATIC_STRING_IMPL("invalid"),
+    };
+
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor) == 0, "RealtimeMediaSourceSettings::DisplaySurface::Monitor is not 0 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Window) == 1, "RealtimeMediaSourceSettings::DisplaySurface::Window is not 1 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Application) == 2, "RealtimeMediaSourceSettings::DisplaySurface::Application is not 0 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Browser) == 3, "RealtimeMediaSourceSettings::DisplaySurface::Browser is not 1 as expected");
+    static_assert(static_cast<size_t>(RealtimeMediaSourceSettings::DisplaySurfaceType::Invalid) == 4, "RealtimeMediaSourceSettings::DisplaySurface::Invalid is not 0 as expected");
+    ASSERT(static_cast<size_t>(surface) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(surface)];
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

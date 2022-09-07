@@ -363,6 +363,7 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
     result.echoCancellation = supported.supportsEchoCancellation();
     result.deviceId = supported.supportsDeviceId();
     result.groupId = supported.supportsGroupId();
+    result.displaySurface = supported.supportsDisplaySurface();
 
     return result;
 }
