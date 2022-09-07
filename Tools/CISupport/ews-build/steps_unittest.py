@@ -524,7 +524,7 @@ class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -538,7 +538,7 @@ class TestWebKitPyPython2Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -554,7 +554,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -569,7 +569,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -586,7 +586,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -614,7 +614,7 @@ class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -628,7 +628,7 @@ class TestWebKitPyPython3Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         )
@@ -644,7 +644,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -659,7 +659,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
@@ -676,7 +676,7 @@ FAILED (failures=1, errors=0)''')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/test-webkitpy', '--verbose', f'--json-output={self.jsonFileName}'],
+                        command=['python3', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', f'--json-output={self.jsonFileName}'],
                         logfiles={'json': self.jsonFileName},
                         timeout=120,
                         ) +
