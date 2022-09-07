@@ -407,6 +407,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_config.h
     libpas/src/libpas/pas_config_prefix.h
     libpas/src/libpas/pas_create_basic_heap_page_caches_with_reserved_memory.h
+    libpas/src/libpas/pas_darwin_spi.h
     libpas/src/libpas/pas_deallocate.h
     libpas/src/libpas/pas_deallocation_mode.h
     libpas/src/libpas/pas_deallocator.h
