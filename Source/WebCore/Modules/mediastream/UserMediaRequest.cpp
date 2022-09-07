@@ -190,7 +190,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             }
 
             ASSERT(document.isCapturing());
-            stream->document()->setHasCaptureMediaStreamTrack();
+            document.setHasCaptureMediaStreamTrack();
             m_promise->resolve(WTFMove(stream));
         };
 

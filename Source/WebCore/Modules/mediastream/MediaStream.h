@@ -101,8 +101,6 @@ public:
 
     void addTrackFromPlatform(Ref<MediaStreamTrack>&&);
 
-    Document* document() const;
-
 #if !RELEASE_LOG_DISABLED
     const void* logIdentifier() const final { return m_private->logIdentifier(); }
 #endif
@@ -147,6 +145,8 @@ private:
     void statusDidChange();
 
     MediaStreamTrackVector filteredTracks(const Function<bool(const MediaStreamTrack&)>&) const;
+
+    Document* document() const;
 
     Ref<MediaStreamPrivate> m_private;
 

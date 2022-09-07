@@ -156,8 +156,6 @@ public:
 
     void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
 
-    Document* document() const;
-
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
     const void* logIdentifier() const final { return m_private->logIdentifier(); }
@@ -199,6 +197,8 @@ private:
 
     // PlatformMediaSession::AudioCaptureSource
     bool isCapturingAudio() const final;
+
+    void updateVideoCaptureAccordingMicrophoneInterruption(Document&, bool);
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaStreamTrack"; }
