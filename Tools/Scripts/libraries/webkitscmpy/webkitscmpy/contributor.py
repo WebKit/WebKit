@@ -210,7 +210,7 @@ class Contributor(object):
         return self.emails[0]
 
     def __repr__(self):
-        return u'{} <{}>'.format(self.name, self.email)
+        return u'{} <{}>'.format(self.name, self.email or '?')
 
     def __hash__(self):
         return hash(self.name)
@@ -224,8 +224,9 @@ class Contributor(object):
             ref_value = ''
         else:
             raise ValueError('Cannot compare {} with {}'.format(Contributor, type(other)))
-        if self.name == ref_value:
-            return 0
+        for part in [self.name, self.emails, self.github, self.bitbucket]:
+            if part == ref_value:
+                return 0
         return 1 if self.name > ref_value else -1
 
     def __eq__(self, other):

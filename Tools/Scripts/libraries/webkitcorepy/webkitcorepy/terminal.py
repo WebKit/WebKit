@@ -86,7 +86,7 @@ class Terminal(object):
         if not isinstance(target, (io.IOBase, file, StringIO)):
             raise ValueError('{} is not an IO object'.format(target))
         if not isinstance(target, StringIO) and not (getattr(target, 'writable', None) and target.writable()) and 'w' not in getattr(target, 'mode', 'r'):
-            raise ValueError('{} is an IO object, but is not writable {}'.format(target, ))
+            raise ValueError('{} is an IO object, but is not writable'.format(target, ))
 
     @classmethod
     def supports_color(cls, file):
