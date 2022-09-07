@@ -1676,7 +1676,7 @@ void RenderLayerBacking::updateInternalHierarchy()
     GraphicsLayer* lastClippingLayer = nullptr;
     if (m_ancestorClippingStack) {
         connectClippingStackLayers(*m_ancestorClippingStack);
-        lastClippingLayer = m_ancestorClippingStack->lastClippingLayer();
+        lastClippingLayer = m_ancestorClippingStack->lastLayer();
     }
 
     constexpr size_t maxOrderedLayers = 5;
@@ -1979,24 +1979,42 @@ void RenderLayerBacking::ensureClippingStackLayers(LayerAncestorClippingStack& c
             entry.clippingLayer->setMasksToBounds(true);
             entry.clippingLayer->setPaintingPhase({ });
         }
+
+        if (entry.clipData.isOverflowScroll) {
+            if (!entry.scrollingLayer)
+                entry.scrollingLayer = createGraphicsLayer("scrolling proxy"_s);
+        } else if (entry.scrollingLayer)
+            GraphicsLayer::unparentAndClear(entry.scrollingLayer);
     }
 }
 
 void RenderLayerBacking::removeClippingStackLayers(LayerAncestorClippingStack& clippingStack)
 {
-    for (auto& entry : clippingStack.stack())
+    for (auto& entry : clippingStack.stack()) {
         GraphicsLayer::unparentAndClear(entry.clippingLayer);
+        GraphicsLayer::unparentAndClear(entry.scrollingLayer);
+    }
 }
 
 void RenderLayerBacking::connectClippingStackLayers(LayerAncestorClippingStack& clippingStack)
 {
+    auto connectEntryLayers = [](LayerAncestorClippingStack::ClippingStackEntry& entry) {
+        if (entry.scrollingLayer)
+            entry.clippingLayer->setChildren({ Ref { *entry.scrollingLayer } });
+    };
+
     auto& clippingEntryStack = clippingStack.stack();
     for (unsigned i = 0; i < clippingEntryStack.size() - 1; ++i) {
         auto& entry = clippingEntryStack.at(i);
-        entry.clippingLayer->setChildren({ Ref { *clippingEntryStack.at(i + 1).clippingLayer } });
+        connectEntryLayers(entry);
+
+        auto* entryParentForSublayers = entry.parentForSublayers();
+        auto* childLayer = clippingEntryStack.at(i + 1).childForSuperlayers();
+        entryParentForSublayers->setChildren({ Ref { *childLayer } });
     }
 
-    clippingEntryStack.last().clippingLayer->removeAllChildren();
+    connectEntryLayers(clippingEntryStack.last());
+    clippingEntryStack.last().parentForSublayers()->removeAllChildren();
 }
 
 void RenderLayerBacking::updateClippingStackLayerGeometry(LayerAncestorClippingStack& clippingStack, const RenderLayer* compositedAncestor, LayoutRect& parentGraphicsLayerRect)
@@ -2007,24 +2025,31 @@ void RenderLayerBacking::updateClippingStackLayerGeometry(LayerAncestorClippingS
 
     auto deviceScaleFactor = this->deviceScaleFactor();
     for (auto& entry : clippingStack.stack()) {
-        auto clipRect = entry.clipData.clipRect;
+        auto roundedClipRect = entry.clipData.clipRect;
+        auto clipRect = roundedClipRect.rect();
         LayoutSize clippingOffset = computeOffsetFromAncestorGraphicsLayer(compositedAncestor, clipRect.location() + offsetFromCompositedAncestor, deviceScaleFactor);
         LayoutRect snappedClippingLayerRect = snappedGraphicsLayer(clippingOffset, clipRect.size(), deviceScaleFactor).m_snappedRect;
-
-        entry.clippingLayer->setPosition(toLayoutPoint(snappedClippingLayerRect.location() - lastClipLayerRect.location()));
-        lastClipLayerRect = snappedClippingLayerRect;
-
+        
+        auto clippingLayerPosition = toLayoutPoint(snappedClippingLayerRect.location() - lastClipLayerRect.location());
+        entry.clippingLayer->setPosition(clippingLayerPosition);
         entry.clippingLayer->setSize(snappedClippingLayerRect.size());
+
+        clipRect.setLocation({ });
+        roundedClipRect.setRect(clipRect);
+        entry.clippingLayer->setContentsClippingRect(FloatRoundedRect(roundedClipRect));
+        entry.clippingLayer->setContentsRectClipsDescendants(true);
+
+        lastClipLayerRect = snappedClippingLayerRect;
 
         if (entry.clipData.isOverflowScroll) {
             ScrollOffset scrollOffset;
             if (auto* scrollableArea = entry.clipData.clippingLayer ? entry.clipData.clippingLayer->scrollableArea() : nullptr)
                 scrollOffset = scrollableArea->scrollOffset();
 
-            entry.clippingLayer->setBoundsOrigin(scrollOffset);
+            // scrollingLayer size and position are always 0,0.
+            entry.scrollingLayer->setBoundsOrigin(scrollOffset);
             lastClipLayerRect.moveBy(-scrollOffset);
-        } else
-            entry.clippingLayer->setBoundsOrigin({ });
+        }
     }
 
     parentGraphicsLayerRect = lastClipLayerRect;
@@ -3132,7 +3157,7 @@ GraphicsLayer* RenderLayerBacking::parentForSublayers() const
 GraphicsLayer* RenderLayerBacking::childForSuperlayers() const
 {
     if (m_ancestorClippingStack)
-        return m_ancestorClippingStack->firstClippingLayer();
+        return m_ancestorClippingStack->firstLayer();
 
     if (m_viewportAnchorLayer)
         return m_viewportAnchorLayer.get();

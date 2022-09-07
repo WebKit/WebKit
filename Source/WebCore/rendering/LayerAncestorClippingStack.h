@@ -40,9 +40,9 @@ namespace WebCore {
 class ScrollingCoordinator;
 
 struct CompositedClipData {
-    CompositedClipData(RenderLayer* layer, LayoutRect rect, bool isOverflowScrollEntry)
+    CompositedClipData(RenderLayer* layer, const RoundedRect& roundedRect, bool isOverflowScrollEntry)
         : clippingLayer(layer)
-        , clipRect(rect)
+        , clipRect(roundedRect)
         , isOverflowScroll(isOverflowScrollEntry)
     {
     }
@@ -60,7 +60,7 @@ struct CompositedClipData {
     }
 
     WeakPtr<RenderLayer> clippingLayer; // For scroller entries, the scrolling layer. For other entries, the most-descendant layer that has a clip.
-    LayoutRect clipRect; // In the coordinate system of the RenderLayer that owns the stack.
+    RoundedRect clipRect; // In the coordinate system of the RenderLayer that owns the stack.
     bool isOverflowScroll { false };
 };
 
@@ -85,14 +85,25 @@ public:
 
     void updateScrollingNodeLayers(ScrollingCoordinator&);
 
-    GraphicsLayer* firstClippingLayer() const;
-    GraphicsLayer* lastClippingLayer() const;
+    GraphicsLayer* firstLayer() const;
+    GraphicsLayer* lastLayer() const;
     ScrollingNodeID lastOverflowScrollProxyNodeID() const;
 
     struct ClippingStackEntry {
         CompositedClipData clipData;
         ScrollingNodeID overflowScrollProxyNodeID { 0 }; // The node for repositioning the scrolling proxy layer.
         RefPtr<GraphicsLayer> clippingLayer;
+        RefPtr<GraphicsLayer> scrollingLayer; // Only present for scrolling entries.
+
+        GraphicsLayer* parentForSublayers() const
+        {
+            return scrollingLayer ? scrollingLayer.get() : clippingLayer.get();
+        }
+        
+        GraphicsLayer* childForSuperlayers() const
+        {
+            return clippingLayer.get();
+        }
     };
 
     Vector<ClippingStackEntry>& stack() { return m_stack; }

@@ -31,9 +31,13 @@
           (bounds 400.00 400.00)
           (children 1
             (GraphicsLayer
-              (position 34.00 134.00)
-              (bounds 220.00 220.00)
-              (contentsOpaque 1)
+              (children 1
+                (GraphicsLayer
+                  (position 34.00 134.00)
+                  (bounds 220.00 220.00)
+                  (contentsOpaque 1)
+                )
+              )
             )
           )
         )

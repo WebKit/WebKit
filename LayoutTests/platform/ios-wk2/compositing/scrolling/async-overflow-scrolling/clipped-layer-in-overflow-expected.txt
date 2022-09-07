@@ -32,20 +32,24 @@
         )
         (GraphicsLayer
           (position 41.00 33.00)
-          (bounds origin 0.00 50.00)
           (bounds 316.00 316.00)
           (clips 1)
           (children 1
             (GraphicsLayer
-              (position 34.00 234.00)
-              (bounds 100.00 86.00)
-              (clips 1)
+              (bounds origin 0.00 50.00)
               (children 1
                 (GraphicsLayer
-                  (offsetFromRenderer width=-6 height=-6)
-                  (position 24.00 44.00)
-                  (bounds 112.00 112.00)
-                  (drawsContent 1)
+                  (position 34.00 234.00)
+                  (bounds 100.00 86.00)
+                  (clips 1)
+                  (children 1
+                    (GraphicsLayer
+                      (offsetFromRenderer width=-6 height=-6)
+                      (position 24.00 44.00)
+                      (bounds 112.00 112.00)
+                      (drawsContent 1)
+                    )
+                  )
                 )
               )
             )
