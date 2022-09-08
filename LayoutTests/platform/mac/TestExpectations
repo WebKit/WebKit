@@ -2313,6 +2313,8 @@ editing/execCommand/insert-ordered-list-and-delete.html [ Pass Failure ]
 
 webkit.org/b/239791 webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/244932 webanimations/accelerated-overlapping-transform-animations.html [ Pass ImageOnlyFailure ]
+
 webkit.org/b/239990 css3/calc/transitions-dependent.html [ Pass Failure ]
 
 webkit.org/b/231298 accessibility/mac/selection-sync.html [ Skip ] # Timeout
