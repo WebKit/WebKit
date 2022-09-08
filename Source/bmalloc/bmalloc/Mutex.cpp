@@ -55,7 +55,7 @@ void Mutex::lockSlowCase()
     if (!m_isSpinning.exchange(true)) {
         auto clear = makeScopeExit([&] { m_isSpinning.store(false); });
 
-        for (size_t i = 0; i < aLot; ++i) {
+        for (size_t i = aLot; i > 0; --i) {
             if (try_lock())
                 return;
         }
