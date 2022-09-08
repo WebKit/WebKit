@@ -16345,6 +16345,13 @@ IGNORE_CLANG_WARNINGS_END
                     operands.append(cell);
                     break;
                 }
+                case SpecAnyIntAsDouble:
+                case SpecInt52Any:
+                case SpecInt32AsInt52:
+                case SpecNonInt32AsInt52: {
+                    operands.append(lowStrictInt52(edge));
+                    break;
+                }
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
                     break;

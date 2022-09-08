@@ -4366,6 +4366,14 @@ private:
                             shouldConvertToCallDOM = false;
                         break;
                     }
+                    case SpecInt52Any:
+                    case SpecInt32AsInt52:
+                    case SpecNonInt32AsInt52:
+                    case SpecAnyIntAsDouble: {
+                        if (edge->shouldSpeculateInt52())
+                            shouldConvertToCallDOM = false;
+                        break;
+                    }
                     default:
                         RELEASE_ASSERT_NOT_REACHED();
                         break;
@@ -4406,6 +4414,12 @@ private:
                 break;
             case SpecBoolean:
                 fixEdge<BooleanUse>(edge);
+                break;
+            case SpecAnyIntAsDouble:
+            case SpecNonInt32AsInt52:
+            case SpecInt32AsInt52:
+            case SpecInt52Any:
+                fixEdge<Int52RepUse>(edge);
                 break;
             case SpecInt8Array:
             case SpecInt16Array: 

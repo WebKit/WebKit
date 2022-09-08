@@ -11321,7 +11321,7 @@ void SpeculativeJIT::compileCallDOM(Node* node)
 
     // FIXME: We should have a way to call functions with the vector of registers.
     // https://bugs.webkit.org/show_bug.cgi?id=163099
-    using OperandVariant = std::variant<SpeculateCellOperand, SpeculateInt32Operand, SpeculateBooleanOperand>;
+    using OperandVariant = std::variant<SpeculateCellOperand, SpeculateInt32Operand, SpeculateBooleanOperand, SpeculateStrictInt52Operand>;
     Vector<OperandVariant, JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS> operands;
     Vector<GPRReg, JSC_DOMJIT_SIGNATURE_MAX_ARGUMENTS_INCLUDING_THIS> regs;
 
@@ -11345,6 +11345,11 @@ void SpeculativeJIT::compileCallDOM(Node* node)
         operands.append(OperandVariant(std::in_place_type<SpeculateInt32Operand>, WTFMove(operand)));
     };
 
+    auto appendAnyIntAsDouble = [&](Edge& edge) {
+        SpeculateStrictInt52Operand operand(this, edge);
+        regs.append(operand.gpr());
+        operands.append(OperandVariant(std::in_place_type<SpeculateStrictInt52Operand>, WTFMove(operand)));
+    };
     auto appendBoolean = [&](Edge& edge) {
         SpeculateBooleanOperand operand(this, edge);
         regs.append(operand.gpr());
@@ -11457,6 +11462,12 @@ void SpeculativeJIT::compileCallDOM(Node* node)
                 break;
             case SpecFloat64Array: 
                 appendFloat64Array(edge);
+                break;
+            case SpecAnyIntAsDouble:
+            case SpecNonInt32AsInt52:
+            case SpecInt32AsInt52:
+            case SpecInt52Any:
+                appendAnyIntAsDouble(edge);
                 break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
