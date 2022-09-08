@@ -30,13 +30,13 @@
 
 namespace JSC {
 
-RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* globalObject, JSCell* base, const PropertySlot& slot)
+RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* globalObject, JSCell* base, CacheableIdentifier propertyName, const PropertySlot& slot)
 {
     JSObject* target = slot.isUnset() ? nullptr : slot.slotBase();
-    return tryCreate(globalObject, base, target);
+    return tryCreate(globalObject, base, propertyName, target);
 }
 
-RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* globalObject, JSCell* base, JSObject* target)
+RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* globalObject, JSCell* base, CacheableIdentifier propertyName, JSObject* target)
 {
     JSCell* current = base;
 
@@ -63,6 +63,14 @@ RefPtr<PolyProtoAccessChain> PolyProtoAccessChain::tryCreate(JSGlobalObject* glo
             RELEASE_ASSERT(current == base);
 
         if (current == target) {
+            found = true;
+            break;
+        }
+
+        // TypedArray has an ability to stop [[Prototype]] traversing for numeric index string (e.g. "0.1").
+        // If we found it, then traverse should stop for Unset case.
+        // https://262.ecma-international.org/9.0/#_ref_2826
+        if (!target && isTypedArrayType(structure->typeInfo().type()) && isCanonicalNumericIndexString(propertyName.uid())) {
             found = true;
             break;
         }

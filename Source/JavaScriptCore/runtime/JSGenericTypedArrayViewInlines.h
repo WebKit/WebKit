@@ -377,7 +377,7 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
         return getOwnPropertySlotByIndex(thisObject, globalObject, index.value(), slot);
     }
 
-    if (isCanonicalNumericIndexString(propertyName))
+    if (isCanonicalNumericIndexString(propertyName.uid()))
         return false;
 
     return Base::getOwnPropertySlot(thisObject, globalObject, propertyName, slot);
@@ -395,7 +395,7 @@ bool JSGenericTypedArrayView<Adaptor>::put(
         return putByIndex(thisObject, globalObject, index.value(), value, slot.isStrictMode());
     }
 
-    if (isCanonicalNumericIndexString(propertyName)) {
+    if (isCanonicalNumericIndexString(propertyName.uid())) {
         // Cases like '-0', '1.1', etc. are still obliged to give the RHS a chance to throw.
         toNativeFromValue<Adaptor>(globalObject, value);
         return true;
@@ -445,7 +445,7 @@ bool JSGenericTypedArrayView<Adaptor>::defineOwnProperty(
         return true;
     }
 
-    if (isCanonicalNumericIndexString(propertyName))
+    if (isCanonicalNumericIndexString(propertyName.uid()))
         return typeError(globalObject, scope, shouldThrow, "Attempting to store canonical numeric string property on a typed array"_s);
 
     RELEASE_AND_RETURN(scope, Base::defineOwnProperty(thisObject, globalObject, propertyName, descriptor, shouldThrow));
@@ -462,7 +462,7 @@ bool JSGenericTypedArrayView<Adaptor>::deleteProperty(
         return deletePropertyByIndex(thisObject, globalObject, index.value());
     }
 
-    if (isCanonicalNumericIndexString(propertyName))
+    if (isCanonicalNumericIndexString(propertyName.uid()))
         return true;
 
     return Base::deleteProperty(thisObject, globalObject, propertyName, slot);
