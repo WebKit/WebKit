@@ -80,7 +80,7 @@ struct SecurityOriginData {
     {
         return protocol.isNull() && host.isNull() && port == std::nullopt;
     }
-    bool isUnique() const
+    bool isOpaque() const
     {
         return protocol == emptyString() && host == emptyString() && !port;
     }

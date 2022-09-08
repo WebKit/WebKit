@@ -51,7 +51,7 @@ static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
 
 WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)
     : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, parameters.sessionID, WTFMove(vm), &thread)
-    , m_topOrigin(SecurityOrigin::createUnique())
+    , m_topOrigin(SecurityOrigin::createOpaque())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
     , m_settingsValues(parameters.settingsValues)
@@ -66,7 +66,7 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::V
 WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
     : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, *document.sessionID(), WTFMove(vm), nullptr)
     , m_document(document)
-    , m_topOrigin(SecurityOrigin::createUnique())
+    , m_topOrigin(SecurityOrigin::createOpaque())
     , m_url(code.url())
     , m_jsRuntimeFlags(document.settings().javaScriptRuntimeFlags())
     , m_code(WTFMove(code))

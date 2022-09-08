@@ -352,7 +352,7 @@ void DocumentThreadableLoader::redirectReceived(CachedResource& resource, Resour
     // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch (Step 10).
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
     if (!securityOrigin().canRequest(redirectResponse.url()) && !protocolHostAndPortAreEqual(redirectResponse.url(), request.url()))
-        m_origin = SecurityOrigin::createUnique();
+        m_origin = SecurityOrigin::createOpaque();
 
     // Except in case where preflight is needed, loading should be able to continue on its own.
     // But we also handle credentials here if it is restricted to SameOrigin.

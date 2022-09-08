@@ -1213,7 +1213,7 @@ void DocumentLoader::stopLoadingForPolicyChange()
 // https://w3c.github.io/ServiceWorker/#control-and-use-window-client
 static inline bool shouldUseActiveServiceWorkerFromParent(const Document& document, const Document& parent)
 {
-    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isUnique() && parent.securityOrigin().isSameOriginDomain(document.securityOrigin());
+    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isOpaque() && parent.securityOrigin().isSameOriginDomain(document.securityOrigin());
 }
 #endif
 
@@ -1268,7 +1268,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
 #endif
 #if ENABLE(SERVICE_WORKER)
         if (m_canUseServiceWorkers) {
-            if (!document.securityOrigin().isUnique()) {
+            if (!document.securityOrigin().isOpaque()) {
                 if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
                     document.setActiveServiceWorker(ServiceWorker::getOrCreate(document, WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
                     m_serviceWorkerRegistrationData = { };
@@ -1277,8 +1277,8 @@ void DocumentLoader::commitData(const SharedBuffer& data)
                         document.setActiveServiceWorker(parent->activeServiceWorker());
                 }
             } else if (m_resultingClientId) {
-                // In case document has a unique origin, say due to sandboxing, we should have created a new context, let's create a new identifier instead.
-                if (document.securityOrigin().isUnique())
+                // In case document has an opaque origin, say due to sandboxing, we should have created a new context, let's create a new identifier instead.
+                if (document.securityOrigin().isOpaque())
                     document.createNewIdentifier();
             }
 

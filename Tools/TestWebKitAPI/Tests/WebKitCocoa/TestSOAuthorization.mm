@@ -1644,7 +1644,7 @@ TEST(SOAuthorizationPopUp, NoInterceptionsSubFrame)
     [webView loadHTMLString:testHtml baseURL:baseURL.get()];
     Util::run(&navigationCompleted);
 
-    // The new window will not navigate to the testURL as the iframe has unique origin.
+    // The new window will not navigate to the testURL as the iframe has an opaque origin.
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
     Util::run(&newWindowCreated);
     EXPECT_FALSE(policyForAppSSOPerformed);

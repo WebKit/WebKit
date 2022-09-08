@@ -229,8 +229,8 @@ bool SecurityPolicy::isAccessAllowed(const SecurityOrigin& activeOrigin, const U
 
 void SecurityPolicy::addOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
 {
-    ASSERT(!sourceOrigin.isUnique());
-    if (sourceOrigin.isUnique())
+    ASSERT(!sourceOrigin.isOpaque());
+    if (sourceOrigin.isOpaque())
         return;
 
     Locker locker { originAccessMapLock };
@@ -240,8 +240,8 @@ void SecurityPolicy::addOriginAccessAllowlistEntry(const SecurityOrigin& sourceO
 
 void SecurityPolicy::removeOriginAccessAllowlistEntry(const SecurityOrigin& sourceOrigin, const String& destinationProtocol, const String& destinationDomain, bool allowDestinationSubdomains)
 {
-    ASSERT(!sourceOrigin.isUnique());
-    if (sourceOrigin.isUnique())
+    ASSERT(!sourceOrigin.isOpaque());
+    if (sourceOrigin.isOpaque())
         return;
 
     Locker locker { originAccessMapLock };

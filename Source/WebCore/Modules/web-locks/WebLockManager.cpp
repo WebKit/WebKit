@@ -50,7 +50,7 @@ static std::optional<ClientOrigin> clientOriginFromContext(ScriptExecutionContex
     if (!context)
         return std::nullopt;
     auto* origin = context->securityOrigin();
-    if (!origin || origin->isUnique())
+    if (!origin || origin->isOpaque())
         return std::nullopt;
     return { { context->topOrigin().data(), origin->data() } };
 }

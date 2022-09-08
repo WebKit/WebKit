@@ -724,7 +724,7 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
     }
 
     if (!m_currentCoopEnforcementResult) {
-        auto sourceOrigin = m_parameters.sourceOrigin ? Ref { *m_parameters.sourceOrigin } : SecurityOrigin::createUnique();
+        auto sourceOrigin = m_parameters.sourceOrigin ? Ref { *m_parameters.sourceOrigin } : SecurityOrigin::createOpaque();
         m_currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_parameters.documentURL, WTFMove(sourceOrigin), m_parameters.sourceCrossOriginOpenerPolicy, m_parameters.navigationRequester, m_parameters.openerURL);
     }
 

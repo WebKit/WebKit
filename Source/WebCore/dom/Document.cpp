@@ -6372,7 +6372,7 @@ void Document::initSecurityContext()
         // No source for a security context.
         // This can occur via document.implementation.createDocument().
         setCookieURL(URL({ }, emptyString()));
-        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
+        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createOpaque()));
         setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { emptyString() }, *this));
         return;
     }
@@ -6391,7 +6391,7 @@ void Document::initSecurityContext()
     if (!isSecurityOriginUnique)
         isSecurityOriginUnique = documentLoader && documentLoader->response().tainting() == ResourceResponse::Tainting::Opaque;
 
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(isSecurityOriginUnique ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(isSecurityOriginUnique ? SecurityOrigin::createOpaque() : SecurityOrigin::create(m_url)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
 
     String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
@@ -6422,7 +6422,7 @@ void Document::initSecurityContext()
         } else if (!settings().allowFileAccessFromFileURLs()) {
             // Some clients want local URLs to have even tighter restrictions by default, and not be able to access other local files.
             // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
-            // still can have other privileges that can be remembered, thereby not making them unique origins.
+            // still can have other privileges that can be remembered, thereby not making them opaque origins.
             securityOrigin().setEnforcesFilePathSeparation();
         }
     }

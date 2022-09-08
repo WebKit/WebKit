@@ -40,13 +40,13 @@ static inline IPC::Connection& networkProcessConnection()
     return WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-// Unique origins are only stored in process in m_channelsPerOrigin and never sent to the NetworkProcess as a ClientOrigin.
-// The identity of unique origins wouldn't be preserved when serializing them as a SecurityOriginData (via ClientOrigin).
-// Since BroadcastChannels from a unique origin can only communicate with other BroadcastChannels from the same unique origin,
+// Opaque origins are only stored in process in m_channelsPerOrigin and never sent to the NetworkProcess as a ClientOrigin.
+// The identity of opaque origins wouldn't be preserved when serializing them as a SecurityOriginData (via ClientOrigin).
+// Since BroadcastChannels from an opaque origin can only communicate with other BroadcastChannels from the same opaque origin,
 // the destination channels have to be within the same WebProcess anyway.
 static std::optional<WebCore::ClientOrigin> toClientOrigin(const WebCore::PartitionedSecurityOrigin& origin)
 {
-    if (origin.topOrigin->isUnique() || origin.clientOrigin->isUnique())
+    if (origin.topOrigin->isOpaque() || origin.clientOrigin->isOpaque())
         return std::nullopt;
     return WebCore::ClientOrigin { origin.topOrigin->data(), origin.clientOrigin->data() };
 }

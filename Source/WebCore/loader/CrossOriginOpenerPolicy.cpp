@@ -100,8 +100,8 @@ static std::tuple<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseO
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(response.url()) && requester)
         return std::make_tuple(requester->securityOrigin, requester->securityOrigin->isSameOriginAs(requester->topOrigin) ? requester->crossOriginOpenerPolicy : CrossOriginOpenerPolicy { });
 
-    // If the HTTP response contains a CSP header, it may set sandbox flags, which would cause the origin to become unique.
-    auto responseOrigin = responseCSP && responseCSP->sandboxFlags() != SandboxNone ? SecurityOrigin::createUnique() : SecurityOrigin::create(response.url());
+    // If the HTTP response contains a CSP header, it may set sandbox flags, which would cause the origin to become opaque.
+    auto responseOrigin = responseCSP && responseCSP->sandboxFlags() != SandboxNone ? SecurityOrigin::createOpaque() : SecurityOrigin::create(response.url());
     return std::make_tuple(WTFMove(responseOrigin), obtainCrossOriginOpenerPolicy(response));
 }
 

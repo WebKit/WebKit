@@ -249,7 +249,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     , m_sampleBufferDisplayLayerManager(RemoteSampleBufferDisplayLayerManager::create(*this))
 #endif
 #if ENABLE(MEDIA_STREAM)
-    , m_captureOrigin(SecurityOrigin::createUnique())
+    , m_captureOrigin(SecurityOrigin::createOpaque())
 #endif
 #if ENABLE(VIDEO)
     , m_videoFrameObjectHeap(RemoteVideoFrameObjectHeap::create(m_connection.get()))

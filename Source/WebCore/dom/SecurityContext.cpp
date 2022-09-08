@@ -77,8 +77,8 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask, SandboxFlagsSource 
     m_sandboxFlags |= mask;
 
     // The SandboxOrigin is stored redundantly in the security origin.
-    if (isSandboxed(SandboxOrigin) && securityOriginPolicy() && !securityOriginPolicy()->origin().isUnique())
-        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
+    if (isSandboxed(SandboxOrigin) && securityOriginPolicy() && !securityOriginPolicy()->origin().isOpaque())
+        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createOpaque()));
 }
 
 bool SecurityContext::isSupportedSandboxPolicy(StringView policy)

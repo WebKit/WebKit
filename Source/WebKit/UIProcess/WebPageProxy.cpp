@@ -5070,7 +5070,7 @@ void WebPageProxy::callLoadCompletionHandlersIfNecessary(bool success)
 static OptionSet<CrossSiteNavigationDataTransfer::Flag> checkIfNavigationContainsDataTransfer(const SecurityOriginData requesterOrigin, const ResourceRequest& currentRequest)
 {
     OptionSet<CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer;
-    if (requesterOrigin.securityOrigin()->isUnique())
+    if (requesterOrigin.securityOrigin()->isOpaque())
         return navigationDataTransfer;
 
     auto currentURL = currentRequest.url();
@@ -8920,7 +8920,7 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
         completionHandler(*result);
     };
 
-    if (clientOrigin.topOrigin.isUnique()) {
+    if (clientOrigin.topOrigin.isOpaque()) {
         callback(PermissionState::Prompt);
         return;
     }
