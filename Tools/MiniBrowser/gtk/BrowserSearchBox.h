@@ -27,7 +27,12 @@
 #define BrowserSearchBox_h
 
 #include <gtk/gtk.h>
+
+#if GTK_CHECK_VERSION(3, 98, 0)
+#include <webkit/webkit.h>
+#else
 #include <webkit2/webkit2.h>
+#endif
 
 G_BEGIN_DECLS
 

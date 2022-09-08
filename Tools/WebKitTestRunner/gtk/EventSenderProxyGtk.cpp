@@ -40,7 +40,7 @@
 #include <WebCore/GtkVersioning.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
-#include <webkit2/WebKitWebViewBaseInternal.h>
+#include <webkit/WebKitWebViewBaseInternal.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/glib/GUniquePtr.h>

@@ -18,37 +18,45 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkit2/webkit-web-extension.h> can be included directly."
-#endif
+#include <config.h>
+#include "WebKitWebProcessEnumTypes.h"
 
-#ifndef WEBKIT_WEB_PROCESS_ENUM_TYPES_H
-#define WEBKIT_WEB_PROCESS_ENUM_TYPES_H
-
-#include <glib-object.h>
-#include <webkit2/WebKitDefines.h>
-
-G_BEGIN_DECLS
+#include <webkit/webkit-web-extension.h>
+extern "C" {
 /*** END file-header ***/
 
 
 /*** BEGIN file-production ***/
-/* Enumerations from @basename@. */
+// Enumerations from @filename@.
 /*** END file-production ***/
 
 
-/*** BEGIN enumeration-production ***/
-#define WEBKIT_TYPE_@ENUMSHORT@ @enum_name@_get_type ()
+/*** BEGIN value-header ***/
+GType @enum_name@_get_type()
+{
+    static const G@Type@Value values[] = {
+/*** END value-header ***/
 
-WEBKIT_API GType
-@enum_name@_get_type (void);
 
-/*** END enumeration-production ***/
+/*** BEGIN value-production ***/
+        { @VALUENAME@, "@VALUENAME@", "@valuenick@" },
+/*** END value-production ***/
+
+
+/*** BEGIN value-tail ***/
+        { 0, NULL, NULL }
+    };
+
+    static GType type = 0;
+    if (G_UNLIKELY(!type))
+        type = g_@type@_register_static("@EnumName@", values);
+
+    return type;
+}
+
+/*** END value-tail ***/
 
 
 /*** BEGIN file-tail ***/
-G_END_DECLS
-
-#endif
+}
 /*** END file-tail ***/
-

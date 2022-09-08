@@ -110,7 +110,7 @@ bool WebDriverService::platformMatchCapability(const String&, const Ref<JSON::Va
 
 void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const
 {
-    capabilities.browserBinary = String(LIBEXECDIR "/webkit2gtk-" WEBKITGTK_API_VERSION_STRING "/MiniBrowser"_s);
+    capabilities.browserBinary = String(LIBEXECDIR "/webkit" WEBKITGTK_API_INFIX "gtk-" WEBKITGTK_API_VERSION "/MiniBrowser"_s);
     capabilities.browserArguments = Vector<String> { "--automation"_s };
     capabilities.useOverlayScrollbars = true;
 

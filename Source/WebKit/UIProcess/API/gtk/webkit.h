@@ -19,13 +19,13 @@
  */
 
 #ifdef __WEBKIT_WEB_EXTENSION_H__
-#error "Headers <webkit2/webkit2.h> and <webkit2/webkit-web-extension.h> cannot be included together."
+#error "Headers <webkit/webkit.h> and <webkit/webkit-web-extension.h> cannot be included together."
 #endif
 
-#ifndef __WEBKIT_2_H__
-#define __WEBKIT_2_H__
+#ifndef __WEBKIT_H__
+#define __WEBKIT_H__
 
-#define __WEBKIT2_H_INSIDE__
+#define __WEBKIT_H_INSIDE__
 
 #include <webkit/WebKitApplicationInfo.h>
 #include <webkit/WebKitAuthenticationRequest.h>
@@ -99,6 +99,6 @@
 
 #include <webkit/WebKitAutocleanups.h>
 
-#undef __WEBKIT2_H_INSIDE__
+#undef __WEBKIT_H_INSIDE__
 
-#endif /* __WEBKIT2_H__ */
+#endif /* __WEBKIT_H__ */

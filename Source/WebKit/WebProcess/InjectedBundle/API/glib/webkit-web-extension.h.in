@@ -17,7 +17,11 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(GTK4)
+#ifdef __WEBKIT_H__
+#error "Headers <webkit/webkit.h> and <webkit/webkit-web-extension.h> cannot be included together."
+#endif
+#elif PLATFORM(GTK)
 #ifdef __WEBKIT_2_H__
 #error "Headers <webkit2/webkit2.h> and <webkit2/webkit-web-extension.h> cannot be included together."
 #endif

@@ -311,7 +311,7 @@ void webkitWebContextWillCloseAutomationSession(WebKitWebContext* webContext)
 WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
 #if PLATFORM(GTK)
-#define INJECTED_BUNDLE_FILENAME "libwebkit2gtkinjectedbundle.so"
+#define INJECTED_BUNDLE_FILENAME "libwebkit" WEBKITGTK_API_INFIX "gtkinjectedbundle.so"
 #elif PLATFORM(WPE)
 #define INJECTED_BUNDLE_FILENAME "libWPEInjectedBundle.so"
 #endif
@@ -325,7 +325,7 @@ static const char* injectedBundleDirectory()
 #endif
 
 #if PLATFORM(GTK)
-    static const char* injectedBundlePath = LIBDIR G_DIR_SEPARATOR_S "webkit2gtk-" WEBKITGTK_API_VERSION_STRING
+    static const char* injectedBundlePath = LIBDIR G_DIR_SEPARATOR_S "webkit" WEBKITGTK_API_INFIX "gtk-" WEBKITGTK_API_VERSION
         G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
     return injectedBundlePath;
 #elif PLATFORM(WPE)

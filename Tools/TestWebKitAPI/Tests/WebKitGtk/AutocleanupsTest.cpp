@@ -20,7 +20,12 @@
 #include "config.h"
 
 #include "WebProcessTest.h"
+
+#if USE(GTK4)
+#include <webkit/webkit-web-extension.h>
+#else
 #include <webkit2/webkit-web-extension.h>
+#endif
 
 #ifdef G_DEFINE_AUTOPTR_CLEANUP_FUNC
 

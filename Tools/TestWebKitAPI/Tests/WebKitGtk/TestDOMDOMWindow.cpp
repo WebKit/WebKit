@@ -22,7 +22,12 @@
 #include "WebProcessTestRunner.h"
 #include "WebViewTest.h"
 #include <gtk/gtk.h>
+
+#if USE(GTK4)
+#include <webkit/webkit.h>
+#else
 #include <webkit2/webkit2.h>
+#endif
 
 #define HTML_DOCUMENT "<html><head><title></title></head><style type='text/css'>#test { font-size: 16px; }</style><body><p id='test'>test</p></body></html>"
 

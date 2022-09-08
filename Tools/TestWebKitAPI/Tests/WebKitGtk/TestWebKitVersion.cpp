@@ -21,8 +21,12 @@
 
 #include "TestMain.h"
 #include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
 
+#if USE(GTK4)
+#include <webkit/webkit.h>
+#else
+#include <webkit2/webkit2.h>
+#endif
 
 static void testWebKitVersion(Test*, gconstpointer)
 {

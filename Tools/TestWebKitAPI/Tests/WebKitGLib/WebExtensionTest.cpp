@@ -37,7 +37,9 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(GTK4)
+#include <webkit/webkit-web-extension.h>
+#elif PLATFORM(GTK)
 #include <webkit2/webkit-web-extension.h>
 #elif PLATFORM(WPE)
 #include <wpe/webkit-web-extension.h>

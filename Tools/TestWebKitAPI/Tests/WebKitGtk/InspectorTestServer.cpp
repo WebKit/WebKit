@@ -27,8 +27,13 @@
 #include <WebCore/GtkVersioning.h>
 #include <string.h>
 #include <sys/eventfd.h>
-#include <webkit2/webkit2.h>
 #include <wtf/glib/GRefPtr.h>
+
+#if USE(GTK4)
+#include <webkit/webkit.h>
+#else
+#include <webkit2/webkit2.h>
+#endif
 
 int main(int argc, char** argv)
 {

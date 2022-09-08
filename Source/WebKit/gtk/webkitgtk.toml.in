@@ -1,11 +1,11 @@
 [library]
-description = "The WebKit2 web extension and DOM library"
+description = "The WebKit library"
 license = "BSD, LGPL-2.1"
 authors = "The WebKit GTK and WPE teams"
 version = "@PROJECT_VERSION@"
 repository_url = "https://github.com/WebKit/WebKit"
 website_url = "https://webkit.org"
-dependencies = ["GObject-2.0", "Gio-2.0", "Soup-@SOUP_API_VERSION@"]
+dependencies = ["GObject-2.0", "Gio-2.0", "Gtk-@GTK_API_VERSION@.0", "Soup-@SOUP_API_VERSION@"]
 devhelp = true
 search_index = true
 
@@ -18,6 +18,11 @@ docs_url = "https://docs.gtk.org/gobject/"
 name = "Gio"
 description = "GObject Interfaces and Objects, Networking, IPC, and I/O"
 docs_url = "https://docs.gtk.org/gio/"
+
+[dependencies."Gtk-@GTK_API_VERSION@.0"]
+name = "Gtk"
+description = "The GTK widget toolkit"
+docs_url = "https://docs.gtk.org/gtk@GTK_API_VERSION@/"
 
 [dependencies."Soup-@SOUP_API_VERSION@"]
 name = "Soup"

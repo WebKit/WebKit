@@ -140,7 +140,7 @@ static void getContextMenuFromProposedMenu(WKPageRef pageRef, WKArrayRef propose
 
 static Ref<WebsiteDataStore> inspectorWebsiteDataStore()
 {
-    static constexpr auto versionedDirectory = "webkitgtk-" WEBKITGTK_API_VERSION_STRING G_DIR_SEPARATOR_S "WebInspector" G_DIR_SEPARATOR_S ""_s;
+    static constexpr auto versionedDirectory = "webkitgtk-" WEBKITGTK_API_VERSION G_DIR_SEPARATOR_S "WebInspector" G_DIR_SEPARATOR_S ""_s;
     String baseCacheDirectory = FileSystem::pathByAppendingComponent(FileSystem::userCacheDirectory(), versionedDirectory);
     String baseDataDirectory = FileSystem::pathByAppendingComponent(FileSystem::userDataDirectory(), versionedDirectory);
 
