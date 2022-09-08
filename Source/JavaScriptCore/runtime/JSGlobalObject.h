@@ -113,6 +113,7 @@ class ModuleProgramExecutable;
 class NativeErrorConstructorBase;
 class NullGetterFunction;
 class NullSetterFunction;
+class ObjectAdaptiveStructureWatchpoint;
 class ObjectConstructor;
 class ProgramCodeBlock;
 class ProgramExecutable;
