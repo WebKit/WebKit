@@ -2058,7 +2058,7 @@
 		1C09D0351E31C32800725F18 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					1C09D03C1E31C32800725F18 = {
 						CreatedOnToolsVersion = 8.3;
@@ -2072,13 +2072,13 @@
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				en,
-				English,
-				Japanese,
-				French,
-				German,
-				Spanish,
-				Dutch,
-				Italian,
+				nl,
+				fr,
+				es,
+				ja,
+				Base,
+				de,
+				it,
 			);
 			mainGroup = 1C09D0341E31C32800725F18;
 			productRefGroup = 1C09D03E1E31C32800725F18 /* Products */;
@@ -2219,6 +2219,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -2226,6 +2228,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C09D0621E31EC2800725F18 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
@@ -2248,6 +2251,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C09D0631E31EC3100725F18 /* Base.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Production;
 		};

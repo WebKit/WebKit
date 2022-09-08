@@ -886,7 +886,6 @@
 		5CE44F49206D70E9003EFD01 /* PingHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PingHandle.h; path = WebCoreSupport/PingHandle.h; sourceTree = SOURCE_ROOT; };
 		5D7BF8120C2A1D90008CE06D /* WebInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspector.h; sourceTree = "<group>"; };
 		5D7BF8130C2A1D90008CE06D /* WebInspector.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspector.mm; sourceTree = "<group>"; };
-		5DE83A750D0F7F9400CAD12A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/WebJavaScriptTextInputPanel.xib; sourceTree = SOURCE_ROOT; };
 		65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDictionaryExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSDictionaryExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		656D333D0AF21AE900212169 /* WebResourceLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebResourceLoadDelegatePrivate.h; sourceTree = "<group>"; };
@@ -996,7 +995,6 @@
 		9321D5931A391DF9008052BE /* WebImmediateActionController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebImmediateActionController.mm; sourceTree = "<group>"; };
 		933D659903413FF2008635CE /* WebClipView.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebClipView.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		933D659A03413FF2008635CE /* WebClipView.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebClipView.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		9345D17C0365BF35008635CE /* en */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = file.xib; name = en; path = Panels/en.lproj/WebAuthenticationPanel.xib; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4EA0365C5B2008635CE /* WebJavaScriptTextInputPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebJavaScriptTextInputPanel.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345D4EB0365C5B2008635CE /* WebJavaScriptTextInputPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebJavaScriptTextInputPanel.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		9345DDAE0365FB27008635CE /* WebNSWindowExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSWindowExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -1434,6 +1432,8 @@
 		A5DEFC1211D5344B00885273 /* WebApplicationCacheQuotaManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCacheQuotaManager.mm; sourceTree = "<group>"; };
 		A70936AD0B5608DC00CDB48E /* WebDragClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebDragClient.h; sourceTree = "<group>"; };
 		A70936AE0B5608DC00CDB48E /* WebDragClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebDragClient.mm; sourceTree = "<group>"; };
+		AAF37B8E28CA7DF800180F19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Panels/Base.lproj/WebAuthenticationPanel.xib; sourceTree = "<group>"; };
+		AAF37B8F28CA7E0900180F19 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = ../../Base.lproj/WebJavaScriptTextInputPanel.xib; sourceTree = "<group>"; };
 		AB9FBBBA0F8582B0006ADC43 /* WebDOMOperationsInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDOMOperationsInternal.h; sourceTree = "<group>"; };
 		B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCache.h; sourceTree = "<group>"; };
 		B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCache.mm; sourceTree = "<group>"; };
@@ -3181,7 +3181,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					537CF83D22EFC4C900C6EBB3 = {
 						CreatedOnToolsVersion = 11.0;
@@ -3197,14 +3197,14 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
-				Spanish,
-				Dutch,
-				Italian,
 				en,
+				de,
+				fr,
+				ja,
+				it,
+				nl,
+				Base,
+				es,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* WebKit */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -3650,7 +3650,7 @@
 		5DE83A740D0F7F9400CAD12A /* WebJavaScriptTextInputPanel.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				5DE83A750D0F7F9400CAD12A /* en */,
+				AAF37B8F28CA7E0900180F19 /* Base */,
 			);
 			name = WebJavaScriptTextInputPanel.xib;
 			path = mac/Resources;
@@ -3659,7 +3659,7 @@
 		9345D17B0365BF35008635CE /* WebAuthenticationPanel.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				9345D17C0365BF35008635CE /* en */,
+				AAF37B8E28CA7DF800180F19 /* Base */,
 			);
 			name = WebAuthenticationPanel.xib;
 			path = ..;
@@ -3693,6 +3693,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C904FD40BA9DD0F0081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -3700,6 +3702,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C904FD40BA9DD0F0081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
@@ -3708,6 +3711,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C904FD50BA9DD0F0081E9D0 /* Base.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Production;
 		};

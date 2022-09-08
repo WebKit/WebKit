@@ -307,7 +307,7 @@
 		CD1DAF8A1D709E3600017CF0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = WebKit;
 				TargetAttributes = {
 					CD1DAF911D709E3600017CF0 = {
@@ -451,6 +451,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Debug;
 		};
@@ -458,6 +461,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD4DEEE31D78C6FF00625986 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Release;
 		};
@@ -466,6 +471,7 @@
 			baseConfigurationReference = CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
 				INFOPLIST_FILE = MobileMiniBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -482,6 +488,7 @@
 			baseConfigurationReference = CD4DEEE41D78C6FF00625986 /* MobileMiniBrowser.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
 				INFOPLIST_FILE = MobileMiniBrowser/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

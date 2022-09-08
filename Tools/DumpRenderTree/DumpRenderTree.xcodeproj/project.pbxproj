@@ -369,10 +369,10 @@
 		BCA18B790C9B08F100114369 /* ObjCPluginFunction.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = ObjCPluginFunction.m; path = mac/ObjCPluginFunction.m; sourceTree = "<group>"; };
 		BCA18C0A0C9B59EF00114369 /* DumpRenderTreeMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DumpRenderTreeMac.h; path = mac/DumpRenderTreeMac.h; sourceTree = "<group>"; };
 		BCA18C460C9B5B9400114369 /* DumpRenderTree.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = DumpRenderTree.mm; path = mac/DumpRenderTree.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		BCB281EE0CFA713D007E533E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = mac/Configurations/Base.xcconfig; sourceTree = "<group>"; };
-		BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DumpRenderTree.xcconfig; path = mac/Configurations/DumpRenderTree.xcconfig; sourceTree = "<group>"; };
-		BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = DebugRelease.xcconfig; path = mac/Configurations/DebugRelease.xcconfig; sourceTree = "<group>"; };
-		BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xcconfig; name = TestNetscapePlugIn.xcconfig; path = mac/Configurations/TestNetscapePlugIn.xcconfig; sourceTree = "<group>"; };
+		BCB281EE0CFA713D007E533E /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Base.xcconfig; path = mac/Configurations/Base.xcconfig; sourceTree = "<group>"; };
+		BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DumpRenderTree.xcconfig; path = mac/Configurations/DumpRenderTree.xcconfig; sourceTree = "<group>"; };
+		BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = DebugRelease.xcconfig; path = mac/Configurations/DebugRelease.xcconfig; sourceTree = "<group>"; };
+		BCB283DE0CFA7C20007E533E /* TestNetscapePlugIn.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = TestNetscapePlugIn.xcconfig; path = mac/Configurations/TestNetscapePlugIn.xcconfig; sourceTree = "<group>"; };
 		BCB284880CFA8202007E533E /* PixelDumpSupportCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PixelDumpSupportCG.cpp; path = cg/PixelDumpSupportCG.cpp; sourceTree = "<group>"; };
 		BCB284890CFA8202007E533E /* PixelDumpSupportCG.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PixelDumpSupportCG.h; path = cg/PixelDumpSupportCG.h; sourceTree = "<group>"; };
 		BCB2848A0CFA820F007E533E /* PixelDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PixelDumpSupport.h; sourceTree = "<group>"; };
@@ -923,7 +923,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					5325BDD321DFF4BD00A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -1182,6 +1182,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_BUNDLE_IDENTIFIER}";
 			};
 			name = Debug;
 		};
@@ -1189,6 +1191,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_BUNDLE_IDENTIFIER}";
 			};
 			name = Release;
 		};
@@ -1196,6 +1200,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Debug;
 		};
@@ -1203,6 +1211,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB282F40CFA7450007E533E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Release;
 		};
@@ -1210,6 +1221,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = LayoutTestHelper;
 			};
 			name = Debug;
@@ -1218,6 +1230,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = LayoutTestHelper;
 			};
 			name = Release;
@@ -1226,6 +1239,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A1103B5B1892498F00738C87 /* LayoutTestHelper.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = LayoutTestHelper;
 				SKIP_INSTALL = NO;
 			};
@@ -1236,6 +1250,7 @@
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_BUNDLE_IDENTIFIER}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1245,6 +1260,7 @@
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_BUNDLE_IDENTIFIER}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1254,6 +1270,7 @@
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_BUNDLE_IDENTIFIER}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -1262,6 +1279,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281EE0CFA713D007E533E /* Base.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Production;
 		};
@@ -1276,6 +1296,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_BUNDLE_IDENTIFIER}";
 			};
 			name = Production;
 		};
@@ -1283,6 +1305,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
 			};
 			name = Debug;
@@ -1291,6 +1314,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
 			};
 			name = Release;
@@ -1299,6 +1323,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A19317FD18928738001C52B1 /* DumpRenderTreeApp.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				INFOPLIST_FILE = "$(SRCROOT)/ios/Info.plist";
 			};
 			name = Production;

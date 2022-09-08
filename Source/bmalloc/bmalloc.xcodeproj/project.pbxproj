@@ -2645,7 +2645,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					0F7EB8501F95504B00F1ABCB = {
 						CreatedOnToolsVersion = 9.0;
@@ -2910,6 +2910,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 14B650C518F39F4800751968 /* Base.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Production;
 		};
@@ -2931,6 +2932,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 14B650C718F39F4800751968 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -2938,6 +2941,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 14B650C718F39F4800751968 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Release;
 		};

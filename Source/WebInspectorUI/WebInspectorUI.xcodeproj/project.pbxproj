@@ -134,7 +134,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = Apple;
 			};
 			buildConfigurationList = A54C2250148B23DE00373FA3 /* Build configuration list for PBXProject "WebInspectorUI" */;
@@ -241,6 +241,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C60FE2F14E5F3CD006CD77D /* Base.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Production;
 		};
@@ -255,6 +256,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -262,6 +265,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C60FE3114E5F3CD006CD77D /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Release;
 		};

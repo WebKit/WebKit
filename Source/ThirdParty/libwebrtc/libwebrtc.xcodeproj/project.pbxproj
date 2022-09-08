@@ -20039,7 +20039,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					41F77D15215BE45E00E72967 = {
 						CreatedOnToolsVersion = 10.0;
@@ -20056,13 +20056,14 @@
 			};
 			buildConfigurationList = FB39D0731200ED9200088E69 /* Build configuration list for PBXProject "libwebrtc" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
-				Japanese,
-				French,
-				German,
+				en,
+				ja,
+				Base,
+				fr,
+				de,
 			);
 			mainGroup = FB39D06E1200ED9200088E69;
 			projectDirPath = "";
@@ -22505,6 +22506,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41F77D1E215BE4AD00E72967 /* yasm.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -22516,6 +22518,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41F77D1E215BE4AD00E72967 /* yasm.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -22523,6 +22526,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 41F77D1E215BE4AD00E72967 /* yasm.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -22656,6 +22660,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C61208C68B001C873E /* Base.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 			};
 			name = Production;
 		};
@@ -22717,6 +22726,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 			};
 			name = Debug;
@@ -22725,6 +22740,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5D7C59C71208C68B001C873E /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 			};
 			name = Release;
 		};

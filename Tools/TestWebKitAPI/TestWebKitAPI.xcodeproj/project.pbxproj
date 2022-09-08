@@ -5574,7 +5574,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					537CF84322EFD64100C6EBB3 = {
 						CreatedOnToolsVersion = 11.0;
@@ -6535,6 +6535,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -6542,6 +6543,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -6549,6 +6551,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90957F12554CF900083756 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Debug;
 		};
@@ -6556,6 +6562,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC90957F12554CF900083756 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Release;
 		};
@@ -6593,6 +6602,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7B9FC58628A2682E007570E7 /* TestIPC.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -6600,6 +6610,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7B9FC58628A2682E007570E7 /* TestIPC.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -6621,6 +6632,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -6628,6 +6640,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7C83E0261D0A5B8D00FEBCF3 /* TestWTF.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};

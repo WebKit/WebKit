@@ -1088,7 +1088,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					5325BDD921DFF4F500A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -1376,6 +1376,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -1383,6 +1384,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -1390,6 +1392,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Debug;
 		};
@@ -1397,6 +1403,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Release;
 		};
@@ -1405,6 +1414,7 @@
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "-";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
@@ -1418,6 +1428,7 @@
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "-";
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1429,6 +1440,7 @@
 			baseConfigurationReference = A18510391B9ADFF800744AEB /* WebKitTestRunnerApp.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "-";
 				INFOPLIST_FILE = "WebKitTestRunnerApp/WebKitTestRunnerApp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -1522,6 +1534,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC793426118F7D3C005EA8E2 /* Base.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 			};
 			name = Production;
 		};
@@ -1529,6 +1544,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};

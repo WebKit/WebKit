@@ -5579,7 +5579,7 @@
 		F5BB2BC5030F772101FCFE1D /* Completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
 		F68EBB8C0255D4C601FF60F7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; };
-		F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ArrayPrototype.cpp; sourceTree = "<group>"; tabWidth = 8; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ArrayPrototype.cpp; sourceTree = "<group>"; tabWidth = 8; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		F692A84E0255597D01FF60F7 /* ArrayPrototype.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototype.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8500255597D01FF60F7 /* BooleanObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BooleanObject.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8540255597D01FF60F7 /* create_hash_table */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = text.script.perl; path = create_hash_table; sourceTree = "<group>"; tabWidth = 8; };
@@ -11695,7 +11695,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					5325BDBF21DFF2B100A0DEE1 = {
 						CreatedOnToolsVersion = 10.1;
@@ -12205,7 +12205,6 @@
 			files = (
 				0FF922D414F46B410041A24E /* LLIntOffsetsExtractor.cpp in Sources */,
 				DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */,
-				DD41FA8727CDAD4300394D95 /* LowLevelInterpreter.asm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12253,7 +12252,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				14BD689D215191C10050DAFF /* LLIntSettingsExtractor.cpp in Sources */,
-				DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */,
 				DD41FA8627CDAD3200394D95 /* LowLevelInterpreter.asm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12703,6 +12701,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -12710,6 +12709,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -12717,6 +12717,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Profiling;
 		};
@@ -12724,6 +12725,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -12731,6 +12733,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -12738,6 +12741,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -12745,6 +12749,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Profiling;
 		};
@@ -12752,6 +12757,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -12759,6 +12765,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -12766,6 +12773,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -12773,6 +12781,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Profiling;
 		};
@@ -12780,6 +12789,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -12787,6 +12797,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -12794,6 +12805,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -12801,6 +12813,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Profiling;
 		};
@@ -12808,6 +12821,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -12815,6 +12829,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -12822,6 +12837,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -12829,6 +12845,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -12858,6 +12875,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -12865,6 +12883,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -12872,6 +12891,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -12900,6 +12920,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -12907,6 +12929,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
@@ -12915,6 +12938,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051450BA9E8A70081E9D0 /* Base.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Production;
 		};
@@ -12922,6 +12946,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -12929,6 +12954,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -12936,6 +12962,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -12943,6 +12970,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -12951,6 +12979,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -12959,6 +12988,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Profiling;
@@ -12967,6 +12997,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -13036,6 +13067,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -13044,6 +13076,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -13052,6 +13085,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Profiling;
@@ -13060,6 +13094,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -13160,6 +13195,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Debug;
 		};
@@ -13167,6 +13203,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Release;
 		};
@@ -13174,6 +13211,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Profiling;
 		};
@@ -13181,6 +13219,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Production;
 		};
@@ -13248,6 +13287,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -13256,6 +13296,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -13264,6 +13305,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Profiling;
@@ -13272,6 +13314,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -13280,6 +13323,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Profiling;
@@ -13310,6 +13354,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Profiling;
 		};
@@ -13317,6 +13362,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E3D6F6EF25D791B300C20EB4 /* TestAPI.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Profiling;
 		};
@@ -13324,6 +13370,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5DAFD6CB146B686300FBEFB4 /* JSC.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 			};
 			name = Profiling;
 		};
@@ -13331,6 +13378,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -13339,6 +13387,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -13347,6 +13396,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Profiling;
@@ -13355,6 +13405,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;

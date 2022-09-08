@@ -627,7 +627,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1340;
 			};
 			buildConfigurationList = 4FADC24608B4156D00ABE55E /* Build configuration list for PBXProject "gtest" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -811,6 +811,7 @@
 		3B238F600E828B5400846E11 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -821,6 +822,7 @@
 		3B238F610E828B5400846E11 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				PRODUCT_NAME = Check;
@@ -831,6 +833,8 @@
 		40899F450FFA7185000B29AE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "gtest_unittest-framework";
 			};
 			name = Debug;
@@ -838,6 +842,8 @@
 		40899F460FFA7185000B29AE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "gtest_unittest-framework";
 			};
 			name = Release;
@@ -845,6 +851,8 @@
 		4089A0150FFACEFD000B29AE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "sample1_unittest-framework";
 			};
 			name = Debug;
@@ -852,6 +860,8 @@
 		4089A0160FFACEFD000B29AE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "sample1_unittest-framework";
 			};
 			name = Release;
@@ -860,6 +870,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				PRODUCT_NAME = gtest;
@@ -870,6 +881,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				PRODUCT_NAME = gtest;
@@ -880,6 +892,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				PRODUCT_NAME = gtest_main;
 			};
 			name = Debug;
@@ -888,6 +901,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				PRODUCT_NAME = gtest_main;
 			};
 			name = Release;
@@ -895,6 +909,8 @@
 		40C84985101A36850083642A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = gtest_unittest;
 			};
 			name = Debug;
@@ -902,6 +918,8 @@
 		40C84986101A36850083642A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = gtest_unittest;
 			};
 			name = Release;
@@ -909,6 +927,8 @@
 		40C84995101A36A60083642A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "sample1_unittest-static";
 			};
 			name = Debug;
@@ -916,6 +936,8 @@
 		40C84996101A36A60083642A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "sample1_unittest-static";
 			};
 			name = Release;
@@ -924,6 +946,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 44C48DFF14A4098F00A2D9C7 /* ProductionProject.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 			};
 			name = Production;
 		};
@@ -931,6 +965,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CURRENT_PROJECT_VERSION = 1.10.0;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -938,6 +973,7 @@
 				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = YES;
 				MARKETING_VERSION = 1.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.google.${PRODUCT_NAME}";
 				PRODUCT_NAME = gtest;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -947,6 +983,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				PRODUCT_NAME = gtest;
@@ -957,6 +994,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40899FB30FFA7567000B29AE /* StaticLibraryTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				PRODUCT_NAME = gtest_main;
 			};
 			name = Production;
@@ -964,6 +1002,8 @@
 		44C48E0814A409DE00A2D9C7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "gtest_unittest-framework";
 			};
 			name = Production;
@@ -971,6 +1011,8 @@
 		44C48E0914A409DE00A2D9C7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = gtest_unittest;
 			};
 			name = Production;
@@ -978,6 +1020,8 @@
 		44C48E0A14A409DE00A2D9C7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "sample1_unittest-framework";
 			};
 			name = Production;
@@ -985,6 +1029,8 @@
 		44C48E0B14A409DE00A2D9C7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_IDENTITY = "-";
 				PRODUCT_NAME = "sample1_unittest-static";
 			};
 			name = Production;
@@ -992,6 +1038,7 @@
 		44C48E0C14A409DE00A2D9C7 /* Production */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				PRODUCT_NAME = Check;
@@ -1003,6 +1050,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CURRENT_PROJECT_VERSION = 1.10.0;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1010,6 +1058,7 @@
 				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = YES;
 				MARKETING_VERSION = 1.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.google.${PRODUCT_NAME}";
 				PRODUCT_NAME = gtest;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1019,6 +1068,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF20E30E07400294801 /* FrameworkTarget.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CURRENT_PROJECT_VERSION = 1.10.0;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1026,6 +1076,7 @@
 				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = YES;
 				MARKETING_VERSION = 1.10;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.google.${PRODUCT_NAME}";
 				PRODUCT_NAME = gtest;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1035,6 +1086,19 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF10E30E07400294801 /* DebugProject.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 			};
 			name = Debug;
 		};
@@ -1042,6 +1106,18 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 40D4CDF40E30E07400294801 /* ReleaseProject.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 			};
 			name = Release;
 		};

@@ -792,7 +792,6 @@
 				33EA187427BC204900A1DD52 /* StructureDecl.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
 				33EA186E27BC1D4C00A1DD52 /* TypeDecl.h in Headers */,
-				3AAE4EB228C494D500DA484B /* UnaryExpression.h in Headers */,
 				3AAE4EB428C56E9A00DA484B /* UnaryExpression.h in Headers */,
 				33EA186427BC1A1D00A1DD52 /* VariableDecl.h in Headers */,
 				33EA187227BC1FE100A1DD52 /* VariableQualifier.h in Headers */,
@@ -887,7 +886,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1400;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					1C023D3B27449070001DB734 = {
 						CreatedOnToolsVersion = 13.3;
@@ -1111,6 +1110,7 @@
 			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1126,6 +1126,7 @@
 			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1140,6 +1141,7 @@
 			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1153,6 +1155,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				ENABLE_TESTABILITY = YES;
 			};
 			name = Debug;
 		};
@@ -1160,6 +1164,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};
@@ -1195,6 +1201,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CEBD7FA2716B3D500A5254D /* Base.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 			};
 			name = Production;
 		};
