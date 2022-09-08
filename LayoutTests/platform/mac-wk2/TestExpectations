@@ -1371,7 +1371,7 @@ webkit.org/b/221759 [ Release ] inspector/debugger/breakpoints/resolved-dump-all
 
 webkit.org/b/223206 http/tests/local/loading-stylesheet-import-remove.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure ]
+webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure Timeout ]
 
 # webkit.org/b/223291 Two accesability tests are flakey text failing only on Apple Silicon
 [ arm64 ] accessibility/mac/value-change/value-change-user-info-textfield.html [ Pass Failure ]
