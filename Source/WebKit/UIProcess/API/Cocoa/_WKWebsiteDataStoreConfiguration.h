@@ -54,6 +54,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic) BOOL requiresSecureHTTPSProxyConnection WK_API_AVAILABLE(macos(11.0), ios(14.0));
 @property (nonatomic) BOOL shouldRunServiceWorkersOnMainThreadForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
 @property (nonatomic) NSUInteger overrideServiceWorkerRegistrationCountTestingValue WK_API_AVAILABLE(macos(13.0), ios(16.0));
+@property (nonatomic) BOOL resourceLoadStatisticsDebugModeEnabled WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // FIXME: rdar://86641948 Remove acceptInsecureCertificatesForWebSockets once HAVE(NSURLSESSION_WEBSOCKET) is supported on all Cocoa platforms.
 @property (nonatomic, setter=_setShouldAcceptInsecureCertificatesForWebSockets:) BOOL _shouldAcceptInsecureCertificatesForWebSockets WK_API_AVAILABLE(macos(13.0), ios(16.0));

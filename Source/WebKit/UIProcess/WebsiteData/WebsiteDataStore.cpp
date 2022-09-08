@@ -130,6 +130,9 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_resolvedConfiguration(WTFMove(configuration))
     , m_configuration(m_resolvedConfiguration->copy())
     , m_deviceIdHashSaltStorage(DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()))
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+    , m_resourceLoadStatisticsDebugMode(m_resolvedConfiguration->resourceLoadStatisticsDebugModeEnabled())
+#endif
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
@@ -1781,7 +1784,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     createHandleFromResolvedPathIfPossible(hstsStorageDirectory, hstsStorageDirectoryExtensionHandle);
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = false;
-    bool enableResourceLoadStatisticsDebugMode = false;
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;
@@ -1804,7 +1806,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         false,
 #endif
         shouldIncludeLocalhostInResourceLoadStatistics,
-        enableResourceLoadStatisticsDebugMode,
+        resourceLoadStatisticsDebugMode(),
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         thirdPartyCookieBlockingMode(),
         WebCore::SameSiteStrictEnforcementEnabled::No,
