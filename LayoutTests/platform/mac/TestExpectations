@@ -2350,3 +2350,5 @@ webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Pass Timeout Failure ]
 
 webkit.org/b/244928 http/tests/media/fairplay/fps-mse-unmuxed-multiple-keys.html [ Pass Failure ]
+
+webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-cross-origin.https.sub.tentative.html [ Pass Timeout ]

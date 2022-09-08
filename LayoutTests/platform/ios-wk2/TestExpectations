@@ -2340,3 +2340,5 @@ webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfac
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html [ Pass Failure ]
 
 webkit.org/b/244913 [ Debug ] fast/mediastream/getDisplayMedia-displaySurface.html [ Skip ]
+
+webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-cross-origin.https.sub.tentative.html [ Pass Timeout ]
