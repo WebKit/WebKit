@@ -167,7 +167,7 @@ public:
     bool hiddenFromInspector() const { return m_hiddenFromInspector; }
     void setHiddenFromInspector(bool hiddenFromInspector) { m_hiddenFromInspector = hiddenFromInspector; }
 
-    enum class Requester : uint8_t { Unspecified, Main, XHR, Fetch, Media, Model, ImportScripts, Ping, Beacon, EventSource };
+    enum class Requester : uint8_t { Unspecified, Main, XHR, Fetch, Media, Model, ImportScripts, ImportModule, Ping, Beacon, EventSource };
     Requester requester() const { return m_requester; }
     void setRequester(Requester requester) { m_requester = requester; }
 
@@ -431,6 +431,7 @@ template<> struct EnumTraits<WebCore::ResourceRequestBase::Requester> {
         WebCore::ResourceRequestBase::Requester::Fetch,
         WebCore::ResourceRequestBase::Requester::Media,
         WebCore::ResourceRequestBase::Requester::ImportScripts,
+        WebCore::ResourceRequestBase::Requester::ImportModule,
         WebCore::ResourceRequestBase::Requester::Ping,
         WebCore::ResourceRequestBase::Requester::Beacon,
         WebCore::ResourceRequestBase::Requester::EventSource

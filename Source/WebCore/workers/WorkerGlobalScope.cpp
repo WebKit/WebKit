@@ -189,11 +189,6 @@ bool WorkerGlobalScope::isSecureContext() const
     return m_topOrigin->isPotentiallyTrustworthy();
 }
 
-void WorkerGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
-{
-    contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
-}
-
 URL WorkerGlobalScope::completeURL(const String& url, ForceUTF8) const
 {
     // Always return a null URL when passed a null string.

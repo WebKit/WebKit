@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class ContentSecurityPolicyResponseHeaders;
 class EventLoopTaskGroup;
 class ScriptModuleLoader;
 class WorkerEventLoop;
@@ -87,6 +88,7 @@ protected:
     bool isJSExecutionForbidden() const final;
 
     void markAsClosing() { m_isClosing = true; }
+    void applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders&);
 
 private:
     // ScriptExecutionContext.
