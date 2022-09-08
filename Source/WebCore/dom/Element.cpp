@@ -2811,6 +2811,22 @@ CustomElementReactionQueue* Element::reactionQueue() const
     return elementRareData()->customElementReactionQueue();
 }
 
+CustomElementDefaultARIA& Element::customElementDefaultARIA()
+{
+    ASSERT(isPrecustomizedOrDefinedCustomElement());
+    auto* deafultARIA = elementRareData()->customElementDefaultARIA();
+    if (!deafultARIA) {
+        elementRareData()->setCustomElementDefaultARIA(makeUnique<CustomElementDefaultARIA>());
+        deafultARIA = elementRareData()->customElementDefaultARIA();
+    }
+    return *deafultARIA;
+}
+
+CustomElementDefaultARIA* Element::customElementDefaultARIAIfExists()
+{
+    return isPrecustomizedOrDefinedCustomElement() && hasRareData() ? elementRareData()->customElementDefaultARIA() : nullptr;
+}
+
 const AtomString& Element::shadowPseudoId() const
 {
     return pseudo();

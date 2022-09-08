@@ -1,5 +1,5 @@
 
-FAIL role is defined in ElementInternals assert_inherits: property "role" not found in prototype chain
+PASS role is defined in ElementInternals
 FAIL ariaActiveDescendantElement is defined in ElementInternals assert_inherits: property "ariaActiveDescendantElement" not found in prototype chain
 FAIL ariaAtomic is defined in ElementInternals assert_inherits: property "ariaAtomic" not found in prototype chain
 FAIL ariaAutoComplete is defined in ElementInternals assert_inherits: property "ariaAutoComplete" not found in prototype chain
@@ -20,7 +20,7 @@ FAIL ariaHasPopup is defined in ElementInternals assert_inherits: property "aria
 FAIL ariaHidden is defined in ElementInternals assert_inherits: property "ariaHidden" not found in prototype chain
 FAIL ariaInvalid is defined in ElementInternals assert_inherits: property "ariaInvalid" not found in prototype chain
 FAIL ariaKeyShortcuts is defined in ElementInternals assert_inherits: property "ariaKeyShortcuts" not found in prototype chain
-FAIL ariaLabel is defined in ElementInternals assert_inherits: property "ariaLabel" not found in prototype chain
+PASS ariaLabel is defined in ElementInternals
 FAIL ariaLabelledByElements is defined in ElementInternals assert_inherits: property "ariaLabelledByElements" not found in prototype chain
 FAIL ariaLevel is defined in ElementInternals assert_inherits: property "ariaLevel" not found in prototype chain
 FAIL ariaLive is defined in ElementInternals assert_inherits: property "ariaLive" not found in prototype chain
@@ -35,7 +35,7 @@ FAIL ariaPressed is defined in ElementInternals assert_inherits: property "ariaP
 FAIL ariaReadOnly is defined in ElementInternals assert_inherits: property "ariaReadOnly" not found in prototype chain
 FAIL ariaRelevant is defined in ElementInternals assert_inherits: property "ariaRelevant" not found in prototype chain
 FAIL ariaRequired is defined in ElementInternals assert_inherits: property "ariaRequired" not found in prototype chain
-FAIL ariaRoleDescription is defined in ElementInternals assert_inherits: property "ariaRoleDescription" not found in prototype chain
+PASS ariaRoleDescription is defined in ElementInternals
 FAIL ariaRowCount is defined in ElementInternals assert_inherits: property "ariaRowCount" not found in prototype chain
 FAIL ariaRowIndex is defined in ElementInternals assert_inherits: property "ariaRowIndex" not found in prototype chain
 FAIL ariaRowSpan is defined in ElementInternals assert_inherits: property "ariaRowSpan" not found in prototype chain

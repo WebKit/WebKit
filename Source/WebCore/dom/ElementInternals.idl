@@ -29,4 +29,8 @@
     Exposed=Window,
 ] interface ElementInternals {
     readonly attribute ShadowRoot? shadowRoot;
+
+    [CEReactions, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute [AtomString] DOMString? role;
+    [CEReactions, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute [AtomString] DOMString? ariaLabel;
+    [CEReactions, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute [AtomString] DOMString? ariaRoleDescription;
 };

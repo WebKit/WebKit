@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-element id="custom-element"></custom-element>
+<custom-checkbox id="custom-checkbox"></custom-checkbox>
+<custom-checkbox id="button-checkbox" role="button" aria-roledescription="other description" aria-label="other label"></custom-checkbox>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+customElements.define('custom-element', class CustomElement extends HTMLElement {});
+customElements.define('custom-checkbox', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'checkbox';
+        internals.ariaRoleDescription = 'some description';
+        internals.ariaLabel = 'some label';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBe('accessibilityController.accessibleElementById("custom-element")', 'null');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-checkbox").role', 'AXRole: AXCheckBox');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-checkbox").roleDescription', 'AXRoleDescription: some description');
+    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("custom-checkbox"))', 'some label');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("button-checkbox").role', 'AXRole: AXButton');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("button-checkbox").roleDescription', 'AXRoleDescription: other description');
+    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("button-checkbox"))', 'other label');
+}
+
+</script>
+
+<script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

@@ -36,6 +36,7 @@
 #include "AccessibilityTable.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CustomElementDefaultARIA.h"
 #include "DOMTokenList.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
@@ -2359,8 +2360,13 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
     
 const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
-    if (auto* element = this->element())
-        return element->attributeWithoutSynchronization(attribute);
+    if (RefPtr element = this->element()) {
+        auto& value = element->attributeWithoutSynchronization(attribute);
+        if (!value.isNull())
+            return value;
+        if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
+            return defaultARIA->valueForAttribute(attribute.localName());
+    }
     return nullAtom();
 }
 

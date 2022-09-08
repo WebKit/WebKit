@@ -569,6 +569,18 @@ CrossOriginOpenerPolicyEnabled:
     WebCore:
       default: false
 
+DefaultARIAForCustomElementsEnabled:
+  type: bool
+  humanReadableName: "Default ARIA for Custom Elements"
+  humanReadableDescription: "Enable Default ARIA for Custom Elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DialogElementEnabled:
   type: bool
   humanReadableName: "Dialog Element"

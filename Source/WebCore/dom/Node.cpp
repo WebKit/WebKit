@@ -130,8 +130,10 @@ static const char* stringForRareDataUseType(NodeRareData::UseType useType)
         return "ClassList";
     case NodeRareData::UseType::ShadowRoot:
         return "ShadowRoot";
-    case NodeRareData::UseType::CustomElementQueue:
-        return "CustomElementQueue";
+    case NodeRareData::UseType::CustomElementReactionQueue:
+        return "CustomElementReactionQueue";
+    case NodeRareData::UseType::CustomElementDefaultARIA:
+        return "CustomElementDefaultARIA";
     case NodeRareData::UseType::AttributeMap:
         return "AttributeMap";
     case NodeRareData::UseType::InteractionObserver:
