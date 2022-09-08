@@ -58,33 +58,4 @@ private:
     BlobURL() { }
 };
 
-// Extends the lifetime of the Blob URL. This means that the blob URL will remain valid after
-// revokeObjectURL() has been called, as long as BlobURLHandle objects refer to the blob URL.
-class BlobURLHandle {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    BlobURLHandle() = default;
-    explicit BlobURLHandle(const URL&);
-    ~BlobURLHandle();
-
-    BlobURLHandle(const BlobURLHandle&);
-    BlobURLHandle(BlobURLHandle&& other)
-        : m_url(std::exchange(other.m_url, { }))
-    { }
-
-    BlobURLHandle& operator=(const BlobURLHandle&);
-    BlobURLHandle& operator=(BlobURLHandle&&);
-    BlobURLHandle& operator=(const URL&);
-
-    URL url() const { return m_url.isolatedCopy(); }
-
-    void clear();
-
-private:
-    void unregisterBlobURLHandleIfNecessary();
-    void registerBlobURLHandleIfNecessary();
-
-    URL m_url;
-};
-
 } // namespace WebCore

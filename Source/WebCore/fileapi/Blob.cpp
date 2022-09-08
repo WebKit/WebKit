@@ -403,9 +403,9 @@ const char* Blob::activeDOMObjectName() const
     return "Blob";
 }
 
-BlobURLHandle Blob::handle() const
+URLKeepingBlobAlive Blob::handle() const
 {
-    return BlobURLHandle { m_internalURL };
+    return { m_internalURL };
 }
 
 WebCoreOpaqueRoot root(Blob* blob)

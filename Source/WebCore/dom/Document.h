@@ -27,7 +27,6 @@
 
 #pragma once
 
-#include "BlobURL.h"
 #include "CSSPropertyNames.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CanvasBase.h"
@@ -57,6 +56,7 @@
 #include "Supplementable.h"
 #include "Timer.h"
 #include "TreeScope.h"
+#include "URLKeepingBlobAlive.h"
 #include "UserActionElementSet.h"
 #include "ViewportArguments.h"
 #include "VisibilityState.h"
@@ -714,7 +714,7 @@ public:
 
     const URL& url() const final { return m_url; }
     void setURL(const URL&);
-    const URL& urlForBindings() const { return m_url.isEmpty() ? aboutBlankURL() : m_url; }
+    const URL& urlForBindings() const { return m_url.url().isEmpty() ? aboutBlankURL() : m_url.url(); }
 
     const URL& creationURL() const { return m_creationURL; }
 
@@ -1848,8 +1848,7 @@ private:
     unsigned m_parserYieldTokenCount { 0 };
 
     // Document URLs.
-    URL m_url; // Document.URL: The URL from which this document was retrieved.
-    BlobURLHandle m_blobURLLifetimeExtension; // Keep the Document's blob alive so it can be reloaded.
+    URLKeepingBlobAlive m_url; // Document.URL: The URL from which this document was retrieved.
     URL m_creationURL; // https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-creation-url.
     URL m_baseURL; // Node.baseURI: The URL to use when resolving relative URLs.
     URL m_baseURLOverride; // An alternative base URL that takes precedence over m_baseURL (but not m_baseElementURL).

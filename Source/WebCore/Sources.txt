@@ -1191,6 +1191,7 @@ fileapi/FileReaderLoader.cpp
 fileapi/FileReaderSync.cpp
 fileapi/NetworkSendQueue.cpp
 fileapi/ThreadableBlobRegistry.cpp
+fileapi/URLKeepingBlobAlive.cpp
 history/BackForwardCache.cpp
 history/BackForwardController.cpp
 history/BackForwardItemIdentifier.cpp

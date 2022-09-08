@@ -22,12 +22,12 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
-#include "BlobURL.h"
 #include "ExceptionOr.h"
 #include "FormData.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "ThreadableLoaderClient.h"
+#include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/URL.h>
 #include "XMLHttpRequestEventTarget.h"
@@ -215,8 +215,7 @@ private:
 
     std::unique_ptr<XMLHttpRequestUpload> m_upload;
 
-    URL m_url;
-    BlobURLHandle m_blobURLLifetimeExtension;
+    URLKeepingBlobAlive m_url;
     String m_method;
     HTTPHeaderMap m_requestHeaders;
     RefPtr<FormData> m_requestEntityBody;

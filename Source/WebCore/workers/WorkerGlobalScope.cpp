@@ -28,7 +28,6 @@
 #include "config.h"
 #include "WorkerGlobalScope.h"
 
-#include "BlobURL.h"
 #include "CSSFontSelector.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
@@ -54,6 +53,7 @@
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "SocketProvider.h"
+#include "URLKeepingBlobAlive.h"
 #include "ViolationReportType.h"
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerFileSystemStorageConnection.h"
@@ -371,15 +371,12 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
     if (m_workerType == WorkerType::Module)
         return Exception { TypeError, "importScripts cannot be used if worker type is \"module\""_s };
 
-    Vector<URL> completedURLs;
-    Vector<BlobURLHandle> protectedBlobURLs;
+    Vector<URLKeepingBlobAlive> completedURLs;
     completedURLs.reserveInitialCapacity(urls.size());
     for (auto& entry : urls) {
         URL url = completeURL(entry);
         if (!url.isValid())
             return Exception { SyntaxError };
-        if (url.protocolIsBlob())
-            protectedBlobURLs.append(BlobURLHandle { url });
         completedURLs.uncheckedAppend(WTFMove(url));
     }
 

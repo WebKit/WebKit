@@ -29,13 +29,13 @@
 #pragma once
 
 #include "AbortSignal.h"
-#include "BlobURL.h"
 #include "ExceptionOr.h"
 #include "FetchBodyOwner.h"
 #include "FetchIdentifier.h"
 #include "FetchOptions.h"
 #include "FetchRequestInit.h"
 #include "ResourceRequest.h"
+#include "URLKeepingBlobAlive.h"
 
 namespace WebCore {
 
@@ -99,10 +99,9 @@ private:
     const char* activeDOMObjectName() const final;
 
     ResourceRequest m_request;
+    URLKeepingBlobAlive m_requestURL;
     FetchOptions m_options;
     String m_referrer;
-    mutable String m_requestURL;
-    BlobURLHandle m_requestBlobURLLifetimeExtender;
     Ref<AbortSignal> m_signal;
     FetchIdentifier m_navigationPreloadIdentifier;
 };
@@ -110,13 +109,12 @@ private:
 inline FetchRequest::FetchRequest(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceRequest&& request, FetchOptions&& options, String&& referrer)
     : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
     , m_request(WTFMove(request))
+    , m_requestURL(m_request.url())
     , m_options(WTFMove(options))
     , m_referrer(WTFMove(referrer))
     , m_signal(AbortSignal::create(context))
 {
     m_request.setRequester(ResourceRequest::Requester::Fetch);
-    if (m_request.url().protocolIsBlob())
-        m_requestBlobURLLifetimeExtender = m_request.url();
     updateContentType();
 }
 

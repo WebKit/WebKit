@@ -3498,16 +3498,11 @@ void Document::setURL(const URL& url)
     
     m_fragmentDirective = newURL.consumefragmentDirective();
 
-    m_url = newURL;
-    if (SecurityOrigin::shouldIgnoreHost(m_url))
-        m_url.setHostAndPort({ });
+    if (SecurityOrigin::shouldIgnoreHost(newURL))
+        newURL.setHostAndPort({ });
+    m_url = WTFMove(newURL);
 
-    if (m_url.protocolIsBlob())
-        m_blobURLLifetimeExtension = m_url;
-    else
-        m_blobURLLifetimeExtension.clear();
-
-    m_documentURI = m_url.string();
+    m_documentURI = m_url.url().string();
     updateBaseURL();
 }
 
@@ -6409,7 +6404,7 @@ void Document::initSecurityContext()
 #endif
 
     if (shouldEnforceHTTP09Sandbox()) {
-        auto message = makeString("Sandboxing '", m_url.stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9.");
+        auto message = makeString("Sandboxing '", m_url.url().stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9.");
         addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
         enforceSandboxFlags(SandboxScripts | SandboxPlugins);
     }

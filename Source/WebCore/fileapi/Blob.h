@@ -36,6 +36,7 @@
 #include "FileReaderLoader.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptWrappable.h"
+#include "URLKeepingBlobAlive.h"
 #include "URLRegistry.h"
 #include <variant>
 #include <wtf/IsoMalloc.h>
@@ -121,7 +122,7 @@ public:
     size_t memoryCost() const { return m_memoryCost; }
 
     // Keeping the handle alive will keep the Blob data alive (but not the Blob object).
-    BlobURLHandle handle() const;
+    URLKeepingBlobAlive handle() const;
 
 protected:
     WEBCORE_EXPORT explicit Blob(ScriptExecutionContext*);

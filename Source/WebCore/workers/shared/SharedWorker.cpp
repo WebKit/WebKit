@@ -113,13 +113,10 @@ SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<M
     , m_identifier(SharedWorkerObjectIdentifier::generate())
     , m_port(WTFMove(port))
     , m_identifierForInspector("SharedWorker:" + Inspector::IdentifiersFactory::createIdentifier())
+    , m_blobURLExtension(m_key.url.protocolIsBlob() ? m_key.url : URL()) // Keep blob URL alive until the worker has finished loading.
 {
     SHARED_WORKER_RELEASE_LOG("SharedWorker:");
     allSharedWorkers().add(m_identifier, this);
-
-    // If the shared worker URL is a blob URL, make sure to keep it alive until the worker has finished loading.
-    if (m_key.url.protocolIsBlob())
-        m_blobURLExtension = m_key.url;
 }
 
 SharedWorker::~SharedWorker()
@@ -152,7 +149,7 @@ void SharedWorker::didFinishLoading(const ResourceError& error)
         queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
         m_isActive = false;
     }
-    m_blobURLExtension.clear();
+    m_blobURLExtension = URL { };
 }
 
 bool SharedWorker::virtualHasPendingActivity() const
