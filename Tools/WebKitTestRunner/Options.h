@@ -52,6 +52,7 @@ struct Options {
     bool enableAllExperimentalFeatures { true };
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
+    std::set<std::string> localhostAliases;
     std::string webCoreLogChannels;
     std::string webKitLogChannels;
     TestFeatures features;

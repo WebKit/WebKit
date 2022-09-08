@@ -76,6 +76,8 @@ struct NetworkProcessCreationParameters {
     bool ftpEnabled { false };
 
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
+
+    HashSet<String> localhostAliasesForTesting;
 };
 
 } // namespace WebKit

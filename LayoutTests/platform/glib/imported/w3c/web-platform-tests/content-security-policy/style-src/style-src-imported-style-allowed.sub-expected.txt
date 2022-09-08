@@ -1,0 +1,3 @@
+
+PASS Imported style that violates policy should not load
+Lorem ipsum

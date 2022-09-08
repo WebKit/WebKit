@@ -1,0 +1,12 @@
+CONSOLE MESSAGE: Cancelled load to https://www.web-platform.test:9444/common/blank.html because it violates the resource's Cross-Origin-Resource-Policy response header.
+
+PASS Test that local scheme workers inherit COEP: require-corp from the creating document
+PASS blob URL dedicated worker: Same origin should be allowed.
+PASS blob URL dedicated worker: Cross origin should be blocked.
+PASS blob URL shared worker: Same origin should be allowed.
+PASS blob URL shared worker: Cross origin should be blocked.
+FAIL data URL dedicated worker: Same origin should be blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data URL dedicated worker: Cross origin should be blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data URL shared worker: Same origin should be blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL data URL shared worker: Cross origin should be blocked. assert_unreached: Should have rejected: undefined Reached unreachable code
+

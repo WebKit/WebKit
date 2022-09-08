@@ -1,0 +1,9 @@
+Description
+
+This test validates that for a cross origin resource, the timing allow check algorithm will pass when the HTTP response has multiple Timing-Allow-Origin header fields and the subsequent field value is separated by a comma.
+
+
+PASS window.performance is defined
+PASS window.performance.getEntriesByType is defined
+PASS redirectStart, redirectEnd, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, and responseStart -- should not be all returned as 0 when the HTTP response has multiple Timing-Allow-Origin header fields and the subsequent field value is separated by a comma, i.e. TAO algorithm passes
+

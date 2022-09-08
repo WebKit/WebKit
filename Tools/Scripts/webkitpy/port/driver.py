@@ -195,6 +195,8 @@ class Driver(object):
         self.web_platform_test_server_doc_root = self._port.web_platform_test_server_doc_root()
         self.web_platform_test_server_base_http_url = self._port.web_platform_test_server_base_http_url()
         self.web_platform_test_server_base_https_url = self._port.web_platform_test_server_base_https_url()
+        self.web_platform_test_server_localhost_base_https_url = self._port.web_platform_test_server_base_https_url(localhost_only=True)
+        self.web_platform_test_server_localhost_base_http_url = self._port.web_platform_test_server_base_http_url(localhost_only=True)
 
     def __del__(self):
         self.stop()
@@ -351,6 +353,10 @@ class Driver(object):
     def wpt_test_path_to_uri(self, path):
         return self.web_platform_test_server_base_https_url + path if ".https." in path else self.web_platform_test_server_base_http_url + path
 
+    def wpt_webkit_test_path_to_uri(self, path):
+        # Our custom test cases currently hardcode localhost/127.0.0.1 for all tests.
+        return self.web_platform_test_server_localhost_base_https_url + path if ".https." in path else self.web_platform_test_server_localhost_base_http_url + path
+
     def http_test_path_to_uri(self, path):
         path = path.replace(os.sep, '/')
         return self.http_base_url(secure=self.is_secure_path(path)) + path
@@ -366,7 +372,7 @@ class Driver(object):
         if self.is_web_platform_test(test_name):
             return self.wpt_test_path_to_uri(test_name[len(self.web_platform_test_server_doc_root):])
         if self.is_webkit_specific_web_platform_test(test_name):
-            return self.wpt_test_path_to_uri(self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE + test_name[len(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR):])
+            return self.wpt_webkit_test_path_to_uri(self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE + test_name[len(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR):])
 
         if not self.is_http_test(test_name):
             return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test_name))
@@ -554,6 +560,10 @@ class Driver(object):
         for feature in self._port.internal_feature():
             cmd.append('--internal-feature')
             cmd.append(feature)
+
+        for alias in self._port.localhost_aliases():
+            cmd.append('--localhost-alias')
+            cmd.append(alias)
 
         if not self._port.get_option('enable_all_experimental_features'):
             cmd.append('--no-enable-all-experimental-features')

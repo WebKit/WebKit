@@ -1,0 +1,129 @@
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=%20http%3A%2F%2Fnot-web-platform.test%20%20%20%09%20 due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fweb-platform.test%3A8800 due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=%09http%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=%20http%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=ftp%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3Anot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=not-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%3F due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%2F due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%20%2F due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%23 due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%2523 due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%3A80 due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%2C%20* due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%00 due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=HTTP%3A%2F%2FNOT-WEB-PLATFORM.TEST due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=HTTP%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2FNOT-WEB-PLATFORM.TEST due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=- due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=** due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=*http%3A%2F%2F* due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=%22*%22 due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=%27*%27 due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=*http%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=*%20* due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=*%20http%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Access-Control-Allow-Origin cannot contain more than one origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=*%2C%20http%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=%00http%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=null due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fexample.net due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=null%20http%3A%2F%2Fnot-web-platform.test due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin= due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fweb-platform.test%3A8800%2Fcors%2Fremote-origin.htm due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fnot-web-platform.test%3A8800%2Fcors%2F due to access control checks.
+CONSOLE MESSAGE: Origin http://not-web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://web-platform.test:8800/cors/resources/cors-makeheader.py?origin=http%3A%2F%2Fweb-platform.test%3A8800%2Fcors%2F due to access control checks.
+Access-Control-Allow-Origin handling
+
+
+FAIL Allow origin: * assert_equals: Request Origin: should be http://not-web-platform.test expected "http://not-web-platform.test" but got "http://not-web-platform.test:8800"
+FAIL Allow origin: _*__ assert_equals: Request Origin: should be http://not-web-platform.test expected "http://not-web-platform.test" but got "http://not-web-platform.test:8800"
+FAIL Allow origin: [tab]* assert_equals: Request Origin: should be http://not-web-platform.test expected "http://not-web-platform.test" but got "http://not-web-platform.test:8800"
+FAIL Allow origin: http://not-web-platform.test assert_equals: expected "load" but got "error"
+FAIL Allow origin: _http://not-web-platform.test assert_equals: expected "load" but got "error"
+FAIL Allow origin: _http://not-web-platform.test___[tab]_ assert_equals: expected "load" but got "error"
+FAIL Allow origin: [tab]http://not-web-platform.test assert_equals: expected "load" but got "error"
+PASS Disallow origin: http://web-platform.test:8800
+PASS Disallow origin: //not-web-platform.test
+PASS Disallow origin: ://not-web-platform.test
+PASS Disallow origin: ftp://not-web-platform.test
+PASS Disallow origin: http:://not-web-platform.test
+PASS Disallow origin: http:/not-web-platform.test
+PASS Disallow origin: http:not-web-platform.test
+PASS Disallow origin: not-web-platform.test
+PASS Disallow origin: http://not-web-platform.test?
+PASS Disallow origin: http://not-web-platform.test/
+PASS Disallow origin: http://not-web-platform.test_/
+PASS Disallow origin: http://not-web-platform.test#
+PASS Disallow origin: http://not-web-platform.test%23
+PASS Disallow origin: http://not-web-platform.test:80
+PASS Disallow origin: http://not-web-platform.test,_*
+PASS Disallow origin: http://not-web-platform.test\0
+PASS Disallow origin: HTTP://NOT-WEB-PLATFORM.TEST
+PASS Disallow origin: HTTP://not-web-platform.test
+PASS Disallow origin: http://NOT-WEB-PLATFORM.TEST
+PASS Disallow origin: -
+PASS Disallow origin: **
+FAIL Disallow origin: \0* assert_equals: expected "error" but got "load"
+FAIL Disallow origin: *\0 assert_equals: expected "error" but got "load"
+PASS Disallow origin: '*'
+PASS Disallow origin: "*"
+PASS Disallow origin: *_*
+PASS Disallow origin: *http://*
+PASS Disallow origin: *http://not-web-platform.test
+PASS Disallow origin: *_http://not-web-platform.test
+PASS Disallow origin: *,_http://not-web-platform.test
+PASS Disallow origin: \0http://not-web-platform.test
+PASS Disallow origin: null_http://not-web-platform.test
+PASS Disallow origin: http://example.net
+PASS Disallow origin: null
+PASS Disallow origin:
+PASS Disallow origin: http://web-platform.test:8800/cors/remote-origin.htm
+PASS Disallow origin: http://web-platform.test:8800/cors/
+PASS Disallow origin: http://not-web-platform.test:8800/cors/
+

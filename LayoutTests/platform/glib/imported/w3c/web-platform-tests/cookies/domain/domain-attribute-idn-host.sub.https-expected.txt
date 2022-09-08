@@ -1,0 +1,8 @@
+
+FAIL UTF8-encoded IDN in domain attribute assert_equals: expected "no cookies" but got "utf8=set"
+FAIL UTF8-encoded IDN with non-ASCII dot in domain attribute assert_equals: expected "no cookies" but got "utf8-dot=set"
+FAIL wrong UTF8-encoded IDN in domain attribute assert_equals: expected "no cookies" but got "wrong-utf8=set"
+PASS punycode IDN in domain attribute
+PASS wrong punycode IDN in domain attribute
+FAIL IDN with invalid UTF-8 bytes in domain attribute assert_equals: expected "no cookies" but got "invalid-byte=set"
+

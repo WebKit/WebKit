@@ -1,0 +1,49 @@
+CORS redirect handling
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT local (*) to remote (*), expect origin=http://web-platform.test:8800 Test timed out
+TIMEOUT local (*) to remote (http://web-platform.test:8800), expect origin=http://web-platform.test:8800 Test timed out
+TIMEOUT local (*) to remote (null), expect to fail Test timed out
+TIMEOUT local (*) to remote (none), expect to fail Test timed out
+TIMEOUT local (http://web-platform.test:8800) to remote (*), expect origin=http://web-platform.test:8800 Test timed out
+TIMEOUT local (http://web-platform.test:8800) to remote (http://web-platform.test:8800), expect origin=http://web-platform.test:8800 Test timed out
+TIMEOUT local (http://web-platform.test:8800) to remote (null), expect to fail Test timed out
+TIMEOUT local (http://web-platform.test:8800) to remote (none), expect to fail Test timed out
+TIMEOUT local (null) to remote (*), expect origin=http://web-platform.test:8800 Test timed out
+TIMEOUT local (none) to remote (*), expect origin=http://web-platform.test:8800 Test timed out
+FAIL remote (*) to local (*), expect origin=null assert_true: Got response expected true got false
+PASS remote (*) to local (http://web-platform.test:8800), expect to fail
+FAIL remote (*) to local (null), expect origin=null assert_true: Got response expected true got false
+PASS remote (*) to local (none), expect to fail
+FAIL remote (http://web-platform.test:8800) to local (*), expect origin=null assert_true: Got response expected true got false
+PASS remote (http://web-platform.test:8800) to local (http://web-platform.test:8800), expect to fail
+FAIL remote (http://web-platform.test:8800) to local (null), expect origin=null assert_true: Got response expected true got false
+PASS remote (http://web-platform.test:8800) to local (none), expect to fail
+PASS remote (null) to local (*), expect to fail
+PASS remote (none) to local (*), expect to fail
+FAIL remote (*) to remote (*), expect origin=http://web-platform.test:8800 assert_true: Got response expected true got false
+FAIL remote (*) to remote (http://web-platform.test:8800), expect origin=http://web-platform.test:8800 assert_true: Got response expected true got false
+PASS remote (*) to remote (null), expect to fail
+PASS remote (*) to remote (none), expect to fail
+FAIL remote (http://web-platform.test:8800) to remote (*), expect origin=http://web-platform.test:8800 assert_true: Got response expected true got false
+FAIL remote (http://web-platform.test:8800) to remote (http://web-platform.test:8800), expect origin=http://web-platform.test:8800 assert_true: Got response expected true got false
+PASS remote (http://web-platform.test:8800) to remote (null), expect to fail
+PASS remote (http://web-platform.test:8800) to remote (none), expect to fail
+PASS remote (null) to remote (*), expect to fail
+PASS remote (none) to remote (*), expect to fail
+FAIL remote (*) to remote2 (*), expect origin=null assert_true: Got response expected true got false
+TIMEOUT remote (*) to remote2 (http://web-platform.test:8800), expect to fail Test timed out
+TIMEOUT remote (*) to remote2 (null), expect origin=null Test timed out
+TIMEOUT remote (*) to remote2 (none), expect to fail Test timed out
+TIMEOUT remote (http://web-platform.test:8800) to remote2 (*), expect origin=null Test timed out
+TIMEOUT remote (http://web-platform.test:8800) to remote2 (http://web-platform.test:8800), expect to fail Test timed out
+TIMEOUT remote (http://web-platform.test:8800) to remote2 (null), expect origin=null Test timed out
+TIMEOUT remote (http://web-platform.test:8800) to remote2 (none), expect to fail Test timed out
+TIMEOUT remote (null) to remote2 (*), expect to fail Test timed out
+TIMEOUT remote (none) to remote2 (*), expect to fail Test timed out
+TIMEOUT remote (*) to remote (http://not-web-platform.test.web-platform.test:8800), expect to fail Test timed out
+TIMEOUT remote (*) to remote2 (http://not-web-platform.test.web-platform.test:8800), expect to fail Test timed out
+TIMEOUT remote (http://not-web-platform.test.web-platform.test:8800) to remote (*), expect to fail Test timed out
+

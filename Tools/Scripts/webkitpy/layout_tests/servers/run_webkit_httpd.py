@@ -77,9 +77,14 @@ def run_server_with_log_file(host, options, stdout, stderr, log_file):
         return EXCEPTIONAL_EXIT_STATUS
 
     if options.web_platform_test_server:
-        print("Starting web-platform-tests server on <%s> and <%s>" % (web_platform_test_server.base_http_url(port), web_platform_test_server.base_https_url(port)))
-        print("WebKit http/wpt tests are accessible at <%s>" % (web_platform_test_server.base_http_url(port) + "WebKit/"))
-        port.start_web_platform_test_server()
+        port.start_web_platform_test_server()  # We must start the server to get the correct hostnames.
+        urls = web_platform_test_server.base_url_list(port)
+        print("Started web-platform-tests server on: {}".format(", ".join(urls)))
+        # WebKit specific tests always run against localhost for now
+        print("WebKit http/wpt tests are accessible at: {}".format(", ".join(url + "WebKit/" for url in urls if "localhost" in url)))
+        if port.supports_localhost_aliases:
+            print("NOTE: This port runs tests on web-platform.test which will not work outside of WebKit tests without host configuration.")
+            print("      See here for details: https://web-platform-tests.org/running-tests/from-local-system.html#hosts-file-setup")
 
     if options.httpd_server:
         # FIXME(154294): somehow retrieve the actual ports and interfaces bound by the httpd server
