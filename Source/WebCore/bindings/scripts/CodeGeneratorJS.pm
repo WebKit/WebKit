@@ -5876,7 +5876,7 @@ sub GenerateDefaultToJSONOperationDefinition
     push(@implContent, "    auto& impl = castedThis->wrapped();\n");
 
     AddToImplIncludes("<JavaScriptCore/ObjectConstructor.h>");
-    push(@implContent, "    auto* result = constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype());\n");
+    push(@implContent, "    auto* result = constructEmptyObject(lexicalGlobalObject);\n");
 
      while (@inheritenceStack) {
         my $currentInterface = pop(@inheritenceStack);

@@ -255,7 +255,7 @@ static inline EncodedJSValue jsTestDefaultToJSONInheritFinalPrototypeFunction_to
     auto throwScope = DECLARE_THROW_SCOPE(vm);
     UNUSED_PARAM(throwScope);
     auto& impl = castedThis->wrapped();
-    auto* result = constructEmptyObject(lexicalGlobalObject, castedThis->globalObject()->objectPrototype());
+    auto* result = constructEmptyObject(lexicalGlobalObject);
     if (DeprecatedGlobalSettings::testDeprecatedGlobalSettingEnabled()) {
         auto longAttributeValue = toJS<IDLLong>(*lexicalGlobalObject, throwScope, impl.longAttribute());
         RETURN_IF_EXCEPTION(throwScope, { });

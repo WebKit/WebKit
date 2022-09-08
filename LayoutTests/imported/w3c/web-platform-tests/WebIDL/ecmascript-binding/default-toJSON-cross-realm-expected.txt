@@ -1,0 +1,4 @@
+
+PASS Cross-realm [Default] toJSON() creates result object in its realm
+PASS Cross-realm [Default] toJSON() converts its interface attributes to ECMAScript values of correct realm
+
