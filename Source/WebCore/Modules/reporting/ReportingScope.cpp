@@ -171,6 +171,8 @@ void ReportingScope::generateTestReport(String&& message, String&& group)
 
     // https://w3c.github.io/reporting/#generate-test-report-command, step 7.1.10.
     notifyReportObservers(Report::create(TestReportBody::testReportType(), WTFMove(reportURL), TestReportBody::create(WTFMove(message))));
+
+    // FIXME(244907): We should call sendReportToEndpoints here.
 }
 
 } // namespace WebCore

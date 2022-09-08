@@ -61,7 +61,6 @@ const String& TestReportBody::message() const
     return m_bodyMessage;
 }
 
-
 Ref<FormData> TestReportBody::createReportFormDataForViolation(const String& bodyMessage)
 {
     // https://w3c.github.io/reporting/#generate-test-report-command, Step 7.1.10
