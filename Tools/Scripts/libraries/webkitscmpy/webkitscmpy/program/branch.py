@@ -26,7 +26,7 @@ import sys
 from .command import Command
 from .commit import Commit
 
-from webkitbugspy import Tracker
+from webkitbugspy import Tracker, radar
 from webkitcorepy import run, string_utils, Terminal
 from webkitscmpy import local, log, remote
 
@@ -139,6 +139,10 @@ class Branch(Command):
                 log.warning("'{}' has no spaces, assuming user intends it to be a branch name".format(args.issue))
 
         if issue:
+            for tracker in Tracker._trackers:
+                if isinstance(tracker, radar.Tracker) and tracker.radarclient():
+                    issue.cc_radar(block=True)
+                    break
             args._title = issue.title
             args._bug_urls = Commit.bug_urls(issue)
 

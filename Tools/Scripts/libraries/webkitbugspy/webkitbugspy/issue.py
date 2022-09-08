@@ -194,6 +194,9 @@ class Issue(object):
     def set_component(self, project=None, component=None, version=None):
         return self.tracker.set(self, project=project, component=component, version=version)
 
+    def cc_radar(self, block=False, timeout=None):
+        return self.tracker.cc_radar(self, block=block, timeout=timeout)
+
     def __hash__(self):
         return hash(self.link)
 
