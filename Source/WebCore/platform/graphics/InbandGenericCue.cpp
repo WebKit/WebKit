@@ -43,9 +43,7 @@ String InbandGenericCue::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-#if !LOG_DISABLED
     object->setString("text"_s, m_cueData.m_content);
-#endif
     object->setInteger("identifier"_s, m_cueData.m_uniqueId.toUInt64());
     object->setDouble("start"_s, m_cueData.m_startTime.toDouble());
     object->setDouble("end"_s, m_cueData.m_endTime.toDouble());

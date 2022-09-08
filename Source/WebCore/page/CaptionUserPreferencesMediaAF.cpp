@@ -273,7 +273,7 @@ bool CaptionUserPreferencesMediaAF::userPrefersCaptions() const
     bool captionSetting = CaptionUserPreferences::userPrefersCaptions();
     if (captionSetting || testingMode() || !MediaAccessibilityLibrary())
         return captionSetting;
-    
+
     RetainPtr<CFArrayRef> captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
     return captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get());
 }
@@ -286,6 +286,16 @@ bool CaptionUserPreferencesMediaAF::userPrefersSubtitles() const
     
     RetainPtr<CFArrayRef> captioningMediaCharacteristics = adoptCF(MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
+}
+
+bool CaptionUserPreferencesMediaAF::userPrefersTextDescriptions() const
+{
+    bool prefersTextDescriptions = CaptionUserPreferences::userPrefersTextDescriptions();
+    if (prefersTextDescriptions || testingMode() || !MediaAccessibilityLibrary())
+        return prefersTextDescriptions;
+
+    auto preferDescriptiveVideo = adoptCF(MAAudibleMediaPrefCopyPreferDescriptiveVideo());
+    return preferDescriptiveVideo && CFBooleanGetValue(preferDescriptiveVideo.get());
 }
 
 void CaptionUserPreferencesMediaAF::updateTimerFired()

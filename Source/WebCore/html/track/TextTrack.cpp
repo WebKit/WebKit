@@ -39,6 +39,7 @@
 #include "Document.h"
 #include "Event.h"
 #include "SourceBuffer.h"
+#include "SpeechSynthesis.h"
 #include "TextTrackClient.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
@@ -490,9 +491,10 @@ void TextTrack::cueDidChange(TextTrackCue& cue)
 int TextTrack::trackIndex()
 {
     if (!m_trackIndex) {
-        if (!m_textTrackList)
+        if (!textTrackList())
             return 0;
-        m_trackIndex = m_textTrackList->getTrackIndex(*this);
+
+        m_trackIndex = textTrackList()->getTrackIndex(*this);
     }
     return m_trackIndex.value();
 }
@@ -505,8 +507,13 @@ void TextTrack::invalidateTrackIndex()
 
 bool TextTrack::isRendered()
 {
-    return (m_kind == Kind::Captions || m_kind == Kind::Subtitles || m_kind == Kind::Forced)
+    return (m_kind == Kind::Captions || m_kind == Kind::Subtitles || m_kind == Kind::Forced || m_kind == Kind::Descriptions)
         && m_mode == Mode::Showing;
+}
+
+bool TextTrack::isSpoken()
+{
+    return m_kind == Kind::Descriptions && m_mode == Mode::Showing;
 }
 
 TextTrackCueList& TextTrack::ensureTextTrackCueList()
@@ -519,9 +526,10 @@ TextTrackCueList& TextTrack::ensureTextTrackCueList()
 int TextTrack::trackIndexRelativeToRenderedTracks()
 {
     if (!m_renderedTrackIndex) {
-        if (!m_textTrackList)
+        if (!textTrackList())
             return 0;
-        m_renderedTrackIndex = m_textTrackList->getTrackIndexRelativeToRenderedTracks(*this);
+
+        m_renderedTrackIndex = textTrackList()->getTrackIndexRelativeToRenderedTracks(*this);
     }
     return m_renderedTrackIndex.value();
 }
@@ -646,6 +654,18 @@ void TextTrack::newCuesAvailable(const TextTrackCueList& list)
         client.textTrackAddCues(*this, list);
     });
 }
+
+#if ENABLE(SPEECH_SYNTHESIS)
+SpeechSynthesis& TextTrack::speechSynthesis()
+{
+    if (!m_speechSynthesis) {
+        m_speechSynthesis = SpeechSynthesis::create(document());
+        m_speechSynthesis->removeBehaviorRestriction(SpeechSynthesis::RequireUserGestureForSpeechStartRestriction);
+    }
+
+    return *m_speechSynthesis;
+}
+#endif
 
 } // namespace WebCore
 

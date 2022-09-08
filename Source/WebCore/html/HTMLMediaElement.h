@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -616,6 +616,8 @@ public:
     bool showingStats() const { return m_showingStats; }
     void setShowingStats(bool);
 
+    WEBCORE_EXPORT RefPtr<TextTrackCue> cueBeingSpoken() const;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -836,6 +838,17 @@ private:
 
     void updateActiveTextTrackCues(const MediaTime&);
     HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
+
+    enum class CueAction : uint8_t { Enter, Exit };
+    void executeCueEnterOrLeaveAction(TextTrackCue&, CueAction);
+    void speakCueText(TextTrackCue&);
+    void pauseSpeakingCueText();
+    void resumeSpeakingCueText();
+    void cancelSpeakingCueText();
+    bool shouldSpeakCueTextForTime(const MediaTime&);
+
+    enum class SpeechSynthesisState : uint8_t { None, Speaking, Paused };
+    void setSpeechSynthesisState(SpeechSynthesisState);
 
     enum ReconfigureMode { Immediately, AfterDelay };
     void markCaptionAndSubtitleTracksAsUnconfigured(ReconfigureMode);
@@ -1218,11 +1231,6 @@ private:
     std::unique_ptr<MediaElementSession> m_mediaSession;
     size_t m_reportedExtraMemoryCost { 0 };
 
-#if !RELEASE_LOG_DISABLED
-    RefPtr<Logger> m_logger;
-    const void* m_logIdentifier;
-#endif
-
     friend class MediaControlsHost;
     RefPtr<MediaControlsHost> m_mediaControlsHost;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
@@ -1255,6 +1263,16 @@ private:
     bool m_wasInterruptedForInvisibleAutoplay { false };
 
     bool m_showingStats { false };
+
+    SpeechSynthesisState m_speechState { SpeechSynthesisState::None };
+    RefPtr<TextTrackCue> m_cueBeingSpoken;
+    double m_volumeMultiplierForSpeechSynthesis { 1 };
+    bool m_userPrefersTextDescriptions { false };
+
+#if !RELEASE_LOG_DISABLED
+    RefPtr<Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);

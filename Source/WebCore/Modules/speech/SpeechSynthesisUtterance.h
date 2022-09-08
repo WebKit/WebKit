@@ -30,16 +30,19 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "PlatformSpeechSynthesisUtterance.h"
+#include "SpeechSynthesisErrorCode.h"
 #include "SpeechSynthesisVoice.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public EventTarget {
+class WEBCORE_EXPORT SpeechSynthesisUtterance final : public PlatformSpeechSynthesisUtteranceClient, public RefCounted<SpeechSynthesisUtterance>, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(SpeechSynthesisUtterance);
 public:
+    using UtteranceCompletionHandler = Function<void(const SpeechSynthesisUtterance&)>;
+    static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
     static Ref<SpeechSynthesisUtterance> create(ScriptExecutionContext&, const String&);
-    
+
     // Create an empty default constructor so SpeechSynthesisEventInit compiles.
     SpeechSynthesisUtterance();
 
@@ -71,10 +74,11 @@ public:
 
     PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 
-    SpeechSynthesisUtterance(const SpeechSynthesisUtterance&);
-    
+    void eventOccurred(const AtomString& type, unsigned long charIndex, unsigned long charLength, const String& name);
+    void errorEventOccurred(const AtomString& type, SpeechSynthesisErrorCode);
+
 private:
-    SpeechSynthesisUtterance(ScriptExecutionContext&, const String&);
+    SpeechSynthesisUtterance(ScriptExecutionContext&, const String&, UtteranceCompletionHandler&&);
 
     ScriptExecutionContext* scriptExecutionContext() const final { return &m_scriptExecutionContext; }
     EventTargetInterface eventTargetInterface() const final { return SpeechSynthesisUtteranceEventTargetInterfaceType; }
@@ -84,6 +88,7 @@ private:
     RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
     ScriptExecutionContext& m_scriptExecutionContext;
+    UtteranceCompletionHandler m_completionHandler;
 };
 
 } // namespace WebCore

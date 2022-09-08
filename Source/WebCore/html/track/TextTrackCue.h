@@ -41,6 +41,7 @@
 
 namespace WebCore {
 
+class SpeechSynthesis;
 class TextTrack;
 class TextTrackCue;
 
@@ -111,6 +112,7 @@ public:
     virtual void removeDisplayTree();
 
     virtual RefPtr<DocumentFragment> getCueAsHTML();
+    virtual const String& text() const { return emptyString(); }
 
     String toJSONString() const;
 
@@ -122,6 +124,9 @@ public:
     virtual void updateDisplayTree(const MediaTime&) { }
 
     unsigned cueIndex() const;
+
+    using SpeakCueCompletionHandler = Function<void(const TextTrackCue&)>;
+    virtual void speak(double, double, SpeakCueCompletionHandler&&) { }
 
 protected:
     TextTrackCue(Document&, const MediaTime& start, const MediaTime& end);

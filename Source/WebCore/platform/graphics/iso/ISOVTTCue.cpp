@@ -122,9 +122,7 @@ String ISOWebVTTCue::toJSONString() const
 {
     auto object = JSON::Object::create();
 
-#if !LOG_DISABLED
     object->setString("text"_s, m_cueText);
-#endif
     object->setString("sourceId"_s, encodeWithURLEscapeSequences(m_sourceID));
     object->setString("id"_s, encodeWithURLEscapeSequences(m_identifier));
 
