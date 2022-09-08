@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT access-from-coop-page-to-other (COOP-RO) Test timed out
+FAIL access-from-coop-page-to-other (COOP-RO) assert_equals: expected (string) "coop" but got (undefined) undefined
 

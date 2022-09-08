@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT access-from-coop-page-to-opener, cross-origin Test timed out
-NOTRUN access-from-coop-page-to-opener, cross-origin + redirect
+FAIL access-from-coop-page-to-opener, cross-origin assert_equals: expected (string) "coop" but got (undefined) undefined
+FAIL access-from-coop-page-to-opener, cross-origin + redirect assert_equals: expected (string) "coop" but got (undefined) undefined
 
