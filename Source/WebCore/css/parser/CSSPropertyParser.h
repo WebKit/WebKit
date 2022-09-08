@@ -123,6 +123,7 @@ private:
     bool consumePerspectiveOrigin(bool important);
     bool consumePrefixedPerspective(bool important);
     bool consumeOffset(bool important);
+    bool consumeListStyleShorthand(bool important);
 
     bool consumeOverscrollBehaviorShorthand(bool important);
 
