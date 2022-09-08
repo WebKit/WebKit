@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-class VisualViewport final : public RefCounted<VisualViewport>, public EventTargetWithInlineData, public DOMWindowProperty {
+class VisualViewport final : public RefCounted<VisualViewport>, public EventTarget, public DOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(VisualViewport);
 public:
     static Ref<VisualViewport> create(DOMWindow& window) { return adoptRef(*new VisualViewport(window)); }

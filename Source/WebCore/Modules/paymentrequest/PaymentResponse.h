@@ -46,7 +46,7 @@ enum class PaymentComplete;
 
 template<typename IDLType> class DOMPromiseDeferred;
 
-class PaymentResponse final : public ActiveDOMObject, public EventTargetWithInlineData, public RefCounted<PaymentResponse> {
+class PaymentResponse final : public ActiveDOMObject, public EventTarget, public RefCounted<PaymentResponse> {
     WTF_MAKE_ISO_ALLOCATED(PaymentResponse);
 public:
     using DetailsFunction = Function<JSC::Strong<JSC::JSObject>(JSC::JSGlobalObject&)>;
@@ -116,7 +116,7 @@ private:
         Stopped,
     };
 
-    WeakPtr<PaymentRequest> m_request;
+    WeakPtr<PaymentRequest, WeakPtrImplWithEventTargetData> m_request;
     String m_requestId;
     String m_methodName;
     DetailsFunction m_detailsFunction;

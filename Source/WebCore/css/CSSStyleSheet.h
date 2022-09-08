@@ -40,6 +40,7 @@ class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class Document;
 class Element;
+class WeakPtrImplWithEventTargetData;
 class MediaQuerySet;
 class StyleRuleKeyframes;
 class StyleSheetContents;

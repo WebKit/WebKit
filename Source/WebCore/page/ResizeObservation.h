@@ -71,7 +71,7 @@ private:
     BoxSizes computeObservedSizes() const;
     LayoutPoint computeTargetLocation() const;
 
-    WeakPtr<Element> m_target;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_target;
     BoxSizes m_lastObservationSizes;
     ResizeObserverBoxOptions m_observedBox;
 };

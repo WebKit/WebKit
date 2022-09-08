@@ -122,7 +122,7 @@ static RTCRtpSFrameTransformErrorEvent::Type errorTypeFromInformation(const RTCR
     }
 }
 
-static std::optional<Vector<uint8_t>> processFrame(Span<const uint8_t> data, RTCRtpSFrameTransformer& transformer, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform>& weakTransform)
+static std::optional<Vector<uint8_t>> processFrame(Span<const uint8_t> data, RTCRtpSFrameTransformer& transformer, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform, WeakPtrImplWithEventTargetData>& weakTransform)
 {
     auto result = transformer.transform(data);
     if (!result.has_value()) {
@@ -194,7 +194,7 @@ void RTCRtpSFrameTransform::willClearBackend(RTCRtpTransformBackend& backend)
     backend.clearTransformableFrameCallback();
 }
 
-static void transformFrame(Span<const uint8_t> data, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform>& weakTransform)
+static void transformFrame(Span<const uint8_t> data, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform, WeakPtrImplWithEventTargetData>& weakTransform)
 {
     auto result = processFrame(data, transformer, identifier, weakTransform);
     auto buffer = result ? SharedBuffer::create(WTFMove(*result)) : SharedBuffer::create();
@@ -202,7 +202,7 @@ static void transformFrame(Span<const uint8_t> data, JSDOMGlobalObject& globalOb
 }
 
 template<typename Frame>
-void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform>& weakTransform)
+void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform, WeakPtrImplWithEventTargetData>& weakTransform)
 {
     auto chunk = frame.rtcFrame().data();
     auto result = processFrame(chunk, transformer, identifier, weakTransform);

@@ -47,7 +47,7 @@ namespace WebCore {
 class Document;
 
 class MediaStream final
-    : public EventTargetWithInlineData
+    : public EventTarget
     , public ActiveDOMObject
     , public MediaStreamPrivate::Observer
     , private MediaCanStartListener

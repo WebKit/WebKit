@@ -44,7 +44,7 @@ class MediaSessionCoordinator
     , public MediaSessionCoordinatorClient
     , public MediaSession::Observer
     , public ActiveDOMObject
-    , public EventTargetWithInlineData  {
+    , public EventTarget  {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WEBCORE_EXPORT static Ref<MediaSessionCoordinator> create(ScriptExecutionContext*);
@@ -66,7 +66,8 @@ public:
     void setMediaSession(MediaSession*);
 
     using MediaSessionCoordinatorClient::weakPtrFactory;
-    using WeakValueType = MediaSessionCoordinatorClient::WeakValueType;
+    using MediaSessionCoordinatorClient::WeakValueType;
+    using MediaSessionCoordinatorClient::WeakPtrImplType;
     using RefCounted::ref;
     using RefCounted::deref;
 

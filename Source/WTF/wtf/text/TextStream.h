@@ -252,8 +252,8 @@ TextStream& operator<<(TextStream& ts, const Vector<ItemType, inlineCapacity>& v
     return ts << "]";
 }
 
-template<typename T>
-TextStream& operator<<(TextStream& ts, const WeakPtr<T>& item)
+template<typename T, typename Counter>
+TextStream& operator<<(TextStream& ts, const WeakPtr<T, Counter>& item)
 {
     if (item)
         return ts << *item;
@@ -354,8 +354,8 @@ struct supports_text_stream_insertion<OptionSet<T>> : supports_text_stream_inser
 template<typename T>
 struct supports_text_stream_insertion<std::optional<T>> : supports_text_stream_insertion<T> { };
 
-template<typename T>
-struct supports_text_stream_insertion<WeakPtr<T>> : supports_text_stream_insertion<T> { };
+template<typename T, typename Counter>
+struct supports_text_stream_insertion<WeakPtr<T, Counter>> : supports_text_stream_insertion<T> { };
 
 template<typename T>
 struct supports_text_stream_insertion<RefPtr<T>> : supports_text_stream_insertion<T> { };

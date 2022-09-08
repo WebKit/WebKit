@@ -68,7 +68,7 @@ RefPtr<ImageBuffer> DetachedOffscreenCanvas::takeImageBuffer()
     return WTFMove(m_buffer);
 }
 
-WeakPtr<HTMLCanvasElement> DetachedOffscreenCanvas::takePlaceholderCanvas()
+WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> DetachedOffscreenCanvas::takePlaceholderCanvas()
 {
     ASSERT(isMainThread());
     return std::exchange(m_placeholderCanvas, nullptr);

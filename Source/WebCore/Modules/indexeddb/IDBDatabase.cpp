@@ -467,7 +467,7 @@ void IDBDatabase::dispatchEvent(Event& event)
 
     Ref protectedThis { *this };
 
-    EventTargetWithInlineData::dispatchEvent(event);
+    EventTarget::dispatchEvent(event);
 
     if (event.isVersionChangeEvent() && event.type() == m_eventNames.versionchangeEvent)
         m_connectionProxy->didFireVersionChangeEvent(m_databaseConnectionIdentifier, downcast<IDBVersionChangeEvent>(event).requestIdentifier());

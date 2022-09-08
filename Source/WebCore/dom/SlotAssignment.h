@@ -60,7 +60,7 @@ public:
 
     void didChangeSlot(const AtomString&, ShadowRoot&);
 
-    const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
+    const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&, ShadowRoot&);
     void willRemoveAssignedNode(const Node&);
 
     virtual void hostChildElementDidChange(const Element&, ShadowRoot&);
@@ -75,11 +75,11 @@ private:
         bool hasDuplicatedSlotElements() { return elementCount > 1; }
         bool shouldResolveSlotElement() { return !element && elementCount; }
 
-        WeakPtr<HTMLSlotElement> element;
-        WeakPtr<HTMLSlotElement> oldElement; // Set by resolveSlotsAfterSlotMutation to dispatch slotchange in tree order.
+        WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> element;
+        WeakPtr<HTMLSlotElement, WeakPtrImplWithEventTargetData> oldElement; // Set by resolveSlotsAfterSlotMutation to dispatch slotchange in tree order.
         unsigned elementCount { 0 };
         bool seenFirstElement { false }; // Used in resolveSlotsAfterSlotMutation.
-        Vector<WeakPtr<Node>> assignedNodes;
+        Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>> assignedNodes;
     };
 
     bool hasAssignedNodes(ShadowRoot&, Slot&);

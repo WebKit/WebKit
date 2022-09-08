@@ -42,10 +42,11 @@ class Document;
 
 struct CredentialCreationOptions;
 struct CredentialRequestOptions;
+class WeakPtrImplWithEventTargetData;
 
 class CredentialsContainer : public RefCounted<CredentialsContainer> {
 public:
-    static Ref<CredentialsContainer> create(WeakPtr<Document>&& document) { return adoptRef(*new CredentialsContainer(WTFMove(document))); }
+    static Ref<CredentialsContainer> create(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document) { return adoptRef(*new CredentialsContainer(WTFMove(document))); }
 
     void get(CredentialRequestOptions&&, CredentialPromise&&);
 
@@ -56,11 +57,11 @@ public:
     void preventSilentAccess(DOMPromiseDeferred<void>&&) const;
 
 private:
-    CredentialsContainer(WeakPtr<Document>&&);
+    CredentialsContainer(WeakPtr<Document, WeakPtrImplWithEventTargetData>&&);
 
     ScopeAndCrossOriginParent scopeAndCrossOriginParent() const;
 
-    WeakPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

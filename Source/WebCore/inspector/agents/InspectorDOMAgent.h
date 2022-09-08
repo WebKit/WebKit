@@ -261,8 +261,8 @@ private:
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
     Page& m_inspectedPage;
     InspectorOverlay* m_overlay { nullptr };
-    WeakHashMap<Node, Inspector::Protocol::DOM::NodeId> m_nodeToId;
-    HashMap<Inspector::Protocol::DOM::NodeId, WeakPtr<Node>> m_idToNode;
+    WeakHashMap<Node, Inspector::Protocol::DOM::NodeId, WeakPtrImplWithEventTargetData> m_nodeToId;
+    HashMap<Inspector::Protocol::DOM::NodeId, WeakPtr<Node, WeakPtrImplWithEventTargetData>> m_idToNode;
     HashSet<Inspector::Protocol::DOM::NodeId> m_childrenRequested;
     Inspector::Protocol::DOM::NodeId m_lastNodeId { 1 };
     RefPtr<Document> m_document;
@@ -296,7 +296,7 @@ private:
     };
 
     // The pointer key for this map should not be used for anything other than matching.
-    WeakHashMap<HTMLMediaElement, MediaMetrics> m_mediaMetrics;
+    WeakHashMap<HTMLMediaElement, MediaMetrics, WeakPtrImplWithEventTargetData> m_mediaMetrics;
 #endif
 
     struct InspectorEventListener {

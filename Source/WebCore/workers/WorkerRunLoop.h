@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class WeakPtrImplWithEventTargetData;
 class ModePredicate;
 class WorkerOrWorkletGlobalScope;
 class WorkerSharedTimer;

@@ -42,7 +42,7 @@ namespace WebCore {
 
 class SerializedScriptValue;
 
-class BroadcastChannel : public RefCounted<BroadcastChannel>, public EventTargetWithInlineData, public ActiveDOMObject {
+class BroadcastChannel : public RefCounted<BroadcastChannel>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(BroadcastChannel);
 public:
     static Ref<BroadcastChannel> create(ScriptExecutionContext& context, const String& name)

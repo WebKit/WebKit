@@ -75,7 +75,7 @@ public:
     void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
 
     Element* host() const { return m_host.get(); }
-    void setHost(WeakPtr<Element>&& host) { m_host = WTFMove(host); }
+    void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTFMove(host); }
 
     String innerHTML() const;
     ExceptionOr<void> setInnerHTML(const String&);
@@ -102,7 +102,7 @@ public:
     void hostChildElementDidChange(const Element&);
     void hostChildElementDidChangeSlotAttribute(Element&, const AtomString& oldValue, const AtomString& newValue);
 
-    const Vector<WeakPtr<Node>>* assignedNodesForSlot(const HTMLSlotElement&);
+    const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&);
 
     void moveShadowRootToNewParentScope(TreeScope&, Document&);
     void moveShadowRootToNewDocument(Document&);
@@ -136,7 +136,7 @@ private:
     bool m_containsFocusedElement { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
 
-    WeakPtr<Element> m_host;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_host;
     RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<Style::Scope> m_styleScope;

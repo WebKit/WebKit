@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class WeakPtrImplWithEventTargetData;
 class HTMLElement;
 class HTMLFormControlElement;
 class Node;

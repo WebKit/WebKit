@@ -48,7 +48,8 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     using GPUProcessConnection::Client::weakPtrFactory;
-    using WeakValueType = GPUProcessConnection::Client::WeakValueType;
+    using GPUProcessConnection::Client::WeakValueType;
+    using GPUProcessConnection::Client::WeakPtrImplType;
 
 private:
     SampleBufferDisplayLayer(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);

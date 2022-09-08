@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-CredentialsContainer::CredentialsContainer(WeakPtr<Document>&& document)
+CredentialsContainer::CredentialsContainer(WeakPtr<Document, WeakPtrImplWithEventTargetData>&& document)
     : m_document(WTFMove(document))
 {
 }

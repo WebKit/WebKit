@@ -84,7 +84,7 @@ private:
     const float m_sampleRate;
     MemoryCompactRobinHoodHashMap<String, RefPtr<JSAudioWorkletProcessorConstructor>> m_processorConstructorMap;
     Lock m_processorsLock;
-    WeakHashSet<AudioWorkletProcessor, WTF::EmptyCounter, EnableWeakPtrThreadingAssertions::No> m_processors WTF_GUARDED_BY_LOCK(m_processorsLock);
+    WeakHashSet<AudioWorkletProcessor, WTF::DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions::No> m_processors WTF_GUARDED_BY_LOCK(m_processorsLock);
     std::unique_ptr<AudioWorkletProcessorConstructionData> m_pendingProcessorConstructionData;
     std::optional<JSC::JSLockHolder> m_lockDuringRendering;
 };

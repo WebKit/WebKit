@@ -53,7 +53,7 @@ private:
     bool rendererIsNeeded(const RenderStyle&) final { return false; }
 
     PropertyRegistry m_propertyRegistry { *this };
-    WeakPtr<SVGSVGElement> m_targetElement { nullptr };
+    WeakPtr<SVGSVGElement, WeakPtrImplWithEventTargetData> m_targetElement { nullptr };
 };
 
 } // namespace WebCore

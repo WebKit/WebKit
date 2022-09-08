@@ -35,9 +35,9 @@ class ConditionEventListener;
 class SMILTimeContainer;
 class SVGSMILElement;
 
-template<typename T> class EventSender;
+template<typename T, typename Counter> class EventSender;
 
-using SMILEventSender = EventSender<SVGSMILElement>;
+using SMILEventSender = EventSender<SVGSMILElement, WeakPtrImplWithEventTargetData>;
 
 // This class implements SMIL interval timing model as needed for SVG animation.
 class SVGSMILElement : public SVGElement {

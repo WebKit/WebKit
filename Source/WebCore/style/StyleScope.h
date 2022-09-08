@@ -47,6 +47,7 @@ namespace WebCore {
 class CSSStyleSheet;
 class Document;
 class Element;
+class WeakPtrImplWithEventTargetData;
 class HTMLSlotElement;
 class Node;
 class ProcessingInstruction;
@@ -211,7 +212,7 @@ private:
     bool m_isUpdatingStyleResolver { false };
 
     std::optional<MediaQueryViewportState> m_viewportStateOnPreviousMediaQueryEvaluation;
-    WeakHashMap<Element, LayoutSize> m_queryContainerStates;
+    WeakHashMap<Element, LayoutSize, WeakPtrImplWithEventTargetData> m_queryContainerStates;
 
     // FIXME: These (and some things above) are only relevant for the root scope.
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;

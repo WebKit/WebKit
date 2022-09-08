@@ -58,7 +58,8 @@ public:
     void updatePresentingProcesses();
 
     using WebCore::AudioSession::InterruptionObserver::weakPtrFactory;
-    using WeakValueType = WebCore::AudioSession::InterruptionObserver::WeakValueType;
+    using WebCore::AudioSession::InterruptionObserver::WeakValueType;
+    using WebCore::AudioSession::InterruptionObserver::WeakPtrImplType;
 
 private:
     void beginAudioSessionInterruption() final;

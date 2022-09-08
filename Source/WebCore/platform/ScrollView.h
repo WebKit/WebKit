@@ -67,8 +67,9 @@ class ScrollView : public Widget, public ScrollableArea {
 public:
     virtual ~ScrollView();
 
-    using WeakValueType = Widget::WeakValueType;
     using Widget::weakPtrFactory;
+    using Widget::WeakValueType;
+    using Widget::WeakPtrImplType;
 
     // ScrollableArea functions.
     WEBCORE_EXPORT void setScrollOffset(const ScrollOffset&) final;

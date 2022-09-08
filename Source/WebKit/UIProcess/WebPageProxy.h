@@ -474,7 +474,8 @@ public:
     virtual ~WebPageProxy();
 
     using IPC::MessageReceiver::weakPtrFactory;
-    using WeakValueType = IPC::MessageReceiver::WeakValueType;
+    using IPC::MessageReceiver::WeakValueType;
+    using IPC::MessageReceiver::WeakPtrImplType;
 
     static void forMostVisibleWebPageIfAny(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(WebPageProxy*)>&&);
 

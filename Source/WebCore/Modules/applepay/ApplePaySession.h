@@ -58,7 +58,7 @@ struct ApplePayPaymentMethodUpdate;
 struct ApplePayShippingContactUpdate;
 struct ApplePayShippingMethodUpdate;
 
-class ApplePaySession final : public PaymentSession, public ActiveDOMObject, public EventTargetWithInlineData {
+class ApplePaySession final : public PaymentSession, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(ApplePaySession);
 public:
     static ExceptionOr<Ref<ApplePaySession>> create(Document&, unsigned version, ApplePayPaymentRequest&&);
@@ -109,7 +109,7 @@ private:
     void suspend(ReasonForSuspension) override;
     bool virtualHasPendingActivity() const final;
 
-    // EventTargetWithInlineData.
+    // EventTarget.
     EventTargetInterface eventTargetInterface() const override { return ApplePaySessionEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const override { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() override { ref(); }

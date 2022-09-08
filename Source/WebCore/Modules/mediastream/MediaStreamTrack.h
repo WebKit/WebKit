@@ -51,7 +51,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 class MediaStreamTrack
     : public RefCounted<MediaStreamTrack>
     , public ActiveDOMObject
-    , public EventTargetWithInlineData
+    , public EventTarget
     , private MediaStreamTrackPrivate::Observer
     , private PlatformMediaSession::AudioCaptureSource
 #if !RELEASE_LOG_DISABLED

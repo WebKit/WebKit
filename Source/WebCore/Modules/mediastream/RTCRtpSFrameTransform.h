@@ -45,7 +45,7 @@ class ReadableStream;
 class SimpleReadableStreamSource;
 class WritableStream;
 
-class RTCRtpSFrameTransform : public RefCounted<RTCRtpSFrameTransform>, public ActiveDOMObject, public EventTargetWithInlineData {
+class RTCRtpSFrameTransform : public RefCounted<RTCRtpSFrameTransform>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(RTCRtpSFrameTransform);
 public:
     enum class Role { Encrypt, Decrypt };
@@ -85,7 +85,7 @@ private:
     const char* activeDOMObjectName() const final { return "RTCRtpSFrameTransform"; }
     bool virtualHasPendingActivity() const final;
 
-    // EventTargetWithInlineData
+    // EventTarget
     EventTargetInterface eventTargetInterface() const final { return RTCRtpSFrameTransformEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }

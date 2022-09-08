@@ -443,12 +443,12 @@ bool MessagePort::addEventListener(const AtomString& eventType, Ref<EventListene
         registerLocalActivity();
     }
 
-    return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), options);
+    return EventTarget::addEventListener(eventType, WTFMove(listener), options);
 }
 
 bool MessagePort::removeEventListener(const AtomString& eventType, EventListener& listener, const EventListenerOptions& options)
 {
-    auto result = EventTargetWithInlineData::removeEventListener(eventType, listener, options);
+    auto result = EventTarget::removeEventListener(eventType, listener, options);
 
     if (!hasEventListeners(eventNames().messageEvent))
         m_hasMessageEventListener = false;

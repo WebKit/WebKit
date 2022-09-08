@@ -43,7 +43,8 @@ namespace WebKit {
 class NavigationSOAuthorizationSession : public SOAuthorizationSession, private WebViewDidMoveToWindowObserver {
 public:
     using SOAuthorizationSession::weakPtrFactory;
-    using WeakValueType = SOAuthorizationSession::WeakValueType;
+    using SOAuthorizationSession::WeakValueType;
+    using SOAuthorizationSession::WeakPtrImplType;
 
     ~NavigationSOAuthorizationSession();
 

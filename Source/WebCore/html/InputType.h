@@ -420,7 +420,7 @@ private:
     const Type m_type;
     bool m_hasCreatedShadowSubtree { false };
     // m_element is null if this InputType is no longer associated with an element (either the element died or changed input type).
-    WeakPtr<HTMLInputElement> m_element;
+    WeakPtr<HTMLInputElement, WeakPtrImplWithEventTargetData> m_element;
 };
 
 template<typename DowncastedType>

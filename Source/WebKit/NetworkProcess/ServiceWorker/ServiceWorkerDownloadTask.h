@@ -67,6 +67,7 @@ public:
     using NetworkDataTask::deref;
     using NetworkDataTask::weakPtrFactory;
     using NetworkDataTask::WeakValueType;
+    using NetworkDataTask::WeakPtrImplType;
 
 private:
     ServiceWorkerDownloadTask(NetworkSession&, NetworkDataTaskClient&, WebSWServerToContextConnection&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceRequest&, DownloadID);

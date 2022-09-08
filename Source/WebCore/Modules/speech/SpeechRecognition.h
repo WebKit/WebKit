@@ -36,13 +36,14 @@ namespace WebCore {
 class Document;
 class SpeechRecognitionResult;
 
-class SpeechRecognition : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTargetWithInlineData  {
+class SpeechRecognition : public SpeechRecognitionConnectionClient, public ActiveDOMObject, public RefCounted<SpeechRecognition>, public EventTarget  {
     WTF_MAKE_ISO_ALLOCATED(SpeechRecognition);
 public:
     static Ref<SpeechRecognition> create(Document&);
 
     using SpeechRecognitionConnectionClient::weakPtrFactory;
-    using WeakValueType = SpeechRecognitionConnectionClient::WeakValueType;
+    using SpeechRecognitionConnectionClient::WeakValueType;
+    using SpeechRecognitionConnectionClient::WeakPtrImplType;
 
     const String& lang() const { return m_lang; }
     void setLang(String&& lang) { m_lang = WTFMove(lang); }

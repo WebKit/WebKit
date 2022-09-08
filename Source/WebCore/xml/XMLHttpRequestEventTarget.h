@@ -29,8 +29,8 @@
 
 namespace WebCore {
 
-class XMLHttpRequestEventTarget : public EventTargetWithInlineData {
+class XMLHttpRequestEventTarget : public EventTarget {
 };
-static_assert(sizeof(XMLHttpRequestEventTarget) == sizeof(EventTargetWithInlineData));
+static_assert(sizeof(XMLHttpRequestEventTarget) == sizeof(EventTarget));
 
 } // namespace WebCore

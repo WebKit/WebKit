@@ -99,7 +99,7 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomStri
     }
 }
 
-const Vector<WeakPtr<Node>>* HTMLSlotElement::assignedNodes() const
+const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* HTMLSlotElement::assignedNodes() const
 {
     RefPtr shadowRoot = containingShadowRoot();
     if (!shadowRoot)

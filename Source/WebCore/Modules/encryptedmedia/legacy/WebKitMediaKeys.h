@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Document;
+class WeakPtrImplWithEventTargetData;
 class HTMLMediaElement;
 class WebKitMediaKeySession;
 
@@ -61,7 +62,7 @@ private:
     WebKitMediaKeys(const String& keySystem, std::unique_ptr<LegacyCDM>&&);
 
     Vector<Ref<WebKitMediaKeySession>> m_sessions;
-    WeakPtr<HTMLMediaElement> m_mediaElement;
+    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     String m_keySystem;
     std::unique_ptr<LegacyCDM> m_cdm;
 };

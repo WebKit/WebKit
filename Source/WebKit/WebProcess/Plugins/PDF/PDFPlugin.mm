@@ -162,12 +162,12 @@ static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::
     PDFLayerController *_pdfLayerController;
     WeakObjCPtr<NSObject> _parent;
     WebKit::PDFPlugin* _pdfPlugin;
-    WeakPtr<WebCore::HTMLPlugInElement> _pluginElement;
+    WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> _pluginElement;
 }
 
 @property (assign) PDFLayerController *pdfLayerController;
 @property (assign) WebKit::PDFPlugin* pdfPlugin;
-@property (assign) WeakPtr<WebCore::HTMLPlugInElement> pluginElement;
+@property (assign) WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> pluginElement;
 
 - (id)initWithPDFPlugin:(WebKit::PDFPlugin *)plugin andElement:(WebCore::HTMLPlugInElement *)element;
 

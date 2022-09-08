@@ -682,7 +682,7 @@ bool HTMLAnchorElement::willRespondToMouseClickEventsWithEditability(Editability
 
 static auto& rootEditableElementMap()
 {
-    static NeverDestroyed<WeakHashMap<HTMLAnchorElement, WeakPtr<Element>>> map;
+    static NeverDestroyed<WeakHashMap<HTMLAnchorElement, WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtrImplWithEventTargetData>> map;
     return map.get();
 }
 

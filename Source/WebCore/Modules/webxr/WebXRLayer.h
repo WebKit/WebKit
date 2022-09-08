@@ -37,7 +37,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class WebXRLayer : public RefCounted<WebXRLayer>, public EventTargetWithInlineData, public ContextDestructionObserver {
+class WebXRLayer : public RefCounted<WebXRLayer>, public EventTarget, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(WebXRLayer);
 public:
     ~WebXRLayer();

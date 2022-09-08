@@ -32,6 +32,7 @@ class AtomStringImpl;
 class BinarySemaphore;
 class CString;
 class CrashOnOverflow;
+class DefaultWeakPtrImpl;
 class FunctionDispatcher;
 class Hasher;
 class Lock;
@@ -53,7 +54,6 @@ class UniquedStringImpl;
 class WallTime;
 
 struct AnyThreadsAccessTraits;
-struct EmptyCounter;
 struct FastMalloc;
 struct MainThreadAccessTraits;
 
@@ -87,7 +87,7 @@ template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
 template<typename> class UniqueRef;
 template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename Malloc = VectorMalloc> class Vector;
-template<typename, typename = EmptyCounter> class WeakPtr;
+template<typename, typename = DefaultWeakPtrImpl> class WeakPtr;
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<AtomString>;

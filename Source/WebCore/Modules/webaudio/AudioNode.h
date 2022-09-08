@@ -50,7 +50,7 @@ class BaseAudioContext;
 // Most processing nodes such as filters will have one input and one output, although multiple inputs and outputs are possible.
 
 class AudioNode
-    : public EventTargetWithInlineData
+    : public EventTarget
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -231,7 +231,7 @@ protected:
     virtual void updatePullStatus() { }
 
 private:
-    using WeakOrStrongContext = std::variant<Ref<BaseAudioContext>, WeakPtr<BaseAudioContext>>;
+    using WeakOrStrongContext = std::variant<Ref<BaseAudioContext>, WeakPtr<BaseAudioContext, WeakPtrImplWithEventTargetData>>;
     static WeakOrStrongContext toWeakOrStrongContext(BaseAudioContext&, NodeType);
 
     // EventTarget

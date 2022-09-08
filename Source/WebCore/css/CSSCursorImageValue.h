@@ -28,6 +28,7 @@
 namespace WebCore {
 
 class Document;
+class WeakPtrImplWithEventTargetData;
 class SVGCursorElement;
 
 struct ImageWithScale;
