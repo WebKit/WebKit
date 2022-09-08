@@ -4985,6 +4985,10 @@ webkit.org/b/226364 fast/layoutformattingcontext/table-with-percent-columns-and-
 fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-space-distribution-simple-mismatching.html [ Skip ]
+[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-multiple-roots.html [ Skip ]
+[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-simple-right.html [ Skip ]
+[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-with-margins.html [ Skip ]
+
 # Needs display box support.
 fast/layoutformattingcontext/flex-box-simple.html [ Skip ]
 
