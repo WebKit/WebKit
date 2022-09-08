@@ -50,6 +50,28 @@ void StringFireDetail::dump(PrintStream& out) const
     out.print(m_string);
 }
 
+template<typename Func>
+inline void Watchpoint::runWithDowncast(const Func& func)
+{
+    switch (m_type) {
+#define JSC_DEFINE_WATCHPOINT_DISPATCH(type, cast) \
+    case Type::type: \
+        func(static_cast<cast*>(this)); \
+        break;
+    JSC_WATCHPOINT_TYPES(JSC_DEFINE_WATCHPOINT_DISPATCH)
+#undef JSC_DEFINE_WATCHPOINT_DISPATCH
+    }
+}
+
+void Watchpoint::operator delete(Watchpoint* watchpoint, std::destroying_delete_t)
+{
+    watchpoint->runWithDowncast([](auto* derived) {
+        using T = std::decay_t<decltype(*derived)>;
+        derived->~T();
+    });
+    Watchpoint::freeAfterDestruction(watchpoint);
+}
+
 Watchpoint::~Watchpoint()
 {
     if (isOnList()) {
@@ -65,14 +87,9 @@ Watchpoint::~Watchpoint()
 void Watchpoint::fire(VM& vm, const FireDetail& detail)
 {
     RELEASE_ASSERT(!isOnList());
-    switch (m_type) {
-#define JSC_DEFINE_WATCHPOINT_DISPATCH(type, cast) \
-    case Type::type: \
-        static_cast<cast*>(this)->fireInternal(vm, detail); \
-        break;
-    JSC_WATCHPOINT_TYPES(JSC_DEFINE_WATCHPOINT_DISPATCH)
-#undef JSC_DEFINE_WATCHPOINT_DISPATCH
-    }
+    runWithDowncast([&](auto* derived) {
+        derived->fireInternal(vm, detail);
+    });
 }
 
 WatchpointSet::WatchpointSet(WatchpointState state)

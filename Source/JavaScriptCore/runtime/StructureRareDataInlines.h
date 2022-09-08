@@ -60,7 +60,7 @@ public:
 
 private:
     // Own destructor may not be called. Keep members trivially destructible.
-    JSC_WATCHPOINT_FIELD(PackedCellPtr<StructureRareData>, m_structureRareData);
+    PackedCellPtr<StructureRareData> m_structureRareData;
 };
 
 inline void StructureRareData::setPreviousID(VM& vm, Structure* structure)

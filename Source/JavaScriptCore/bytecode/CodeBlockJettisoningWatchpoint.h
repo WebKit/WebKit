@@ -47,7 +47,7 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    JSC_WATCHPOINT_FIELD(PackedCellPtr<CodeBlock>, m_codeBlock);
+    PackedCellPtr<CodeBlock> m_codeBlock;
 };
 
 } // namespace JSC

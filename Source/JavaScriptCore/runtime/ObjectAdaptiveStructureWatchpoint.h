@@ -35,8 +35,8 @@ class ObjectAdaptiveStructureWatchpoint final : public Watchpoint {
 public:
     ObjectAdaptiveStructureWatchpoint(JSCell* owner, const ObjectPropertyCondition& key, InlineWatchpointSet& watchpointSet)
         : Watchpoint(Watchpoint::Type::ObjectAdaptiveStructure)
-        , m_key(key)
         , m_owner(owner)
+        , m_key(key)
         , m_watchpointSet(watchpointSet)
     {
         RELEASE_ASSERT(key.kind() != PropertyCondition::Equivalence);
@@ -53,9 +53,9 @@ public:
 
 private:
     // Own destructor may not be called. Keep members trivially destructible.
-    JSC_WATCHPOINT_FIELD(ObjectPropertyCondition, m_key);
-    JSC_WATCHPOINT_FIELD(JSCell*, m_owner);
-    JSC_WATCHPOINT_FIELD(InlineWatchpointSet&, m_watchpointSet);
+    PackedCellPtr<JSCell> m_owner;
+    ObjectPropertyCondition m_key;
+    InlineWatchpointSet& m_watchpointSet;
 };
 
 inline void ObjectAdaptiveStructureWatchpoint::install(VM&)

@@ -55,8 +55,8 @@ public:
 
 private:
     // Own destructor may not be called. Keep members trivially destructible.
-    JSC_WATCHPOINT_FIELD(PackedPtr<WatchpointsOnStructureStubInfo>, m_holder);
-    JSC_WATCHPOINT_FIELD(ObjectPropertyCondition, m_key);
+    PackedPtr<WatchpointsOnStructureStubInfo> m_holder;
+    ObjectPropertyCondition m_key;
 };
 
 class AdaptiveValueStructureStubClearingWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
