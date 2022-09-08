@@ -197,6 +197,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/BInline.h
     bmalloc/BMalloced.h
     bmalloc/BPlatform.h
+    bmalloc/BSyscall.h
     bmalloc/BVMTags.h
     bmalloc/Bits.h
     bmalloc/BulkDecommit.h
@@ -279,7 +280,6 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/SmallPage.h
     bmalloc/StaticPerProcess.h
     bmalloc/StdLibExtras.h
-    bmalloc/Syscall.h
     bmalloc/VMAllocate.h
     bmalloc/Vector.h
     bmalloc/Zone.h

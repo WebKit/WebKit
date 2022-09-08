@@ -26,11 +26,11 @@
 #pragma once
 
 #include "BAssert.h"
+#include "BSyscall.h"
 #include "BVMTags.h"
 #include "Logging.h"
 #include "Range.h"
 #include "Sizes.h"
-#include "Syscall.h"
 #include <algorithm>
 #include <sys/mman.h>
 #include <unistd.h>

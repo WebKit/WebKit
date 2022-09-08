@@ -595,7 +595,7 @@
 		14DD78CB18F48D7500950702 /* PerProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = 14446A0717A61FA400F9EA1D /* PerProcess.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CC18F48D7500950702 /* PerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 144469FD17A61F1F00F9EA1D /* PerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CD18F48D7500950702 /* Range.h in Headers */ = {isa = PBXBuildFile; fileRef = 145F6878179E3A4400D65598 /* Range.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		14DD78CE18F48D7500950702 /* Syscall.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64F18B7280C0076FA3F /* Syscall.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		14DD78CE18F48D7500950702 /* BSyscall.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64F18B7280C0076FA3F /* BSyscall.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CE18F48D7500950799 /* valgrind.h in Headers */ = {isa = PBXBuildFile; fileRef = 1417F64F18B7280C0076FA99 /* valgrind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78CF18F48D7500950702 /* Vector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479E21217A1A255006D4E9D /* Vector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14DD78D018F48D7500950702 /* VMAllocate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1479E21417A1A63E006D4E9D /* VMAllocate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1229,7 +1229,7 @@
 		1413E460189DCE1E00546D68 /* BInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BInline.h; path = bmalloc/BInline.h; sourceTree = "<group>"; };
 		1413E462189DE1CD00546D68 /* BumpAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BumpAllocator.h; path = bmalloc/BumpAllocator.h; sourceTree = "<group>"; };
 		1413E468189EEDE400546D68 /* BAssert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BAssert.h; path = bmalloc/BAssert.h; sourceTree = "<group>"; };
-		1417F64F18B7280C0076FA3F /* Syscall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Syscall.h; path = bmalloc/Syscall.h; sourceTree = "<group>"; };
+		1417F64F18B7280C0076FA3F /* BSyscall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BSyscall.h; path = bmalloc/BSyscall.h; sourceTree = "<group>"; };
 		1417F64F18B7280C0076FA99 /* valgrind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = valgrind.h; path = bmalloc/valgrind.h; sourceTree = "<group>"; };
 		141D9AFF1C8E51C0000ABBA0 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = List.h; path = bmalloc/List.h; sourceTree = "<group>"; };
 		1421A87718EE462A00B4DD68 /* Algorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Algorithm.h; path = bmalloc/Algorithm.h; sourceTree = "<group>"; };
@@ -2079,6 +2079,7 @@
 				0F7EB84A1F9541C600F1ABCB /* Bits.h */,
 				0F7EB84B1F9541C600F1ABCB /* BMalloced.h */,
 				14C919C818FCC59F0028DB43 /* BPlatform.h */,
+				1417F64F18B7280C0076FA3F /* BSyscall.h */,
 				DE8B13B221CC5D9F00A63FCD /* BVMTags.h */,
 				0F74B93D1F89713E00B935D3 /* CryptoRandom.cpp */,
 				0F74B93C1F89713E00B935D3 /* CryptoRandom.h */,
@@ -2100,7 +2101,6 @@
 				148EFAE61D6B953B008E721E /* ScopeExit.h */,
 				E31E747F2238CA5B005D084A /* StaticPerProcess.h */,
 				7C571F0022388B840077A3C7 /* StdLibExtras.h */,
-				1417F64F18B7280C0076FA3F /* Syscall.h */,
 				1417F64F18B7280C0076FA99 /* valgrind.h */,
 				1479E21217A1A255006D4E9D /* Vector.h */,
 				1479E21417A1A63E006D4E9D /* VMAllocate.h */,
@@ -2149,6 +2149,7 @@
 				2C11E8952728DE27002162D0 /* bmalloc_type.h in Headers */,
 				0F7EB84D1F9541C700F1ABCB /* BMalloced.h in Headers */,
 				14C919C918FCC59F0028DB43 /* BPlatform.h in Headers */,
+				14DD78CE18F48D7500950702 /* BSyscall.h in Headers */,
 				7939885B2076EEB60074A2E7 /* BulkDecommit.h in Headers */,
 				14DD789C18F48D4A00950702 /* BumpAllocator.h in Headers */,
 				140FA00319CE429C00FFD3C8 /* BumpRange.h in Headers */,
@@ -2589,7 +2590,6 @@
 				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
 				E31E74802238CA5C005D084A /* StaticPerProcess.h in Headers */,
 				7C571F0122388B840077A3C7 /* StdLibExtras.h in Headers */,
-				14DD78CE18F48D7500950702 /* Syscall.h in Headers */,
 				0F8700CF25B0CB03000E1ABF /* thingy_heap.h in Headers */,
 				0F8700D125B0CB03000E1ABF /* thingy_heap_config.h in Headers */,
 				0F8700D025B0CB03000E1ABF /* thingy_heap_prefix.h in Headers */,
