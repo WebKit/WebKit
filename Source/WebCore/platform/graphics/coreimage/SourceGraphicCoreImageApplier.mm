@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,31 +29,17 @@
 #if USE(CORE_IMAGE)
 
 #import "FilterImage.h"
-#import "PlatformImageBuffer.h"
-#import <CoreImage/CIContext.h>
-#import <CoreImage/CIFilter.h>
-#import <CoreImage/CoreImage.h>
 
 namespace WebCore {
 
 bool SourceGraphicCoreImageApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     auto& input = inputs[0].get();
-
-    auto sourceImage = input.imageBuffer();
-    if (!sourceImage)
+    auto ciImage = input.ciImage();
+    if (!ciImage)
         return false;
 
-    RetainPtr<CIImage> image;
-    if (is<IOSurfaceImageBuffer>(*sourceImage))
-        image = [CIImage imageWithIOSurface:downcast<IOSurfaceImageBuffer>(*sourceImage).surface().surface()];
-    else
-        image = [CIImage imageWithCGImage:sourceImage->copyNativeImage()->platformImage().get()];
-
-    if (!image)
-        return false;
-
-    result.setCIImage(WTFMove(image));
+    result.setCIImage(WTFMove(ciImage));
     return true;
 }
 

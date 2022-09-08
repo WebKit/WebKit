@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,27 +42,48 @@ static RetainPtr<CIContext> sharedCIContext()
     return ciContext;
 }
 
+RetainPtr<CIImage> FilterImage::ciImage() const
+{
+    if (std::holds_alternative<RetainPtr<CIImage>>(m_buffer))
+        return ciImageSlot();
+    
+    if (auto imageBuffer = this->imageBuffer()) {
+        RetainPtr<CIImage> ciImage;
+        if (is<IOSurfaceImageBuffer>(*imageBuffer))
+            ciImage = [CIImage imageWithIOSurface:downcast<IOSurfaceImageBuffer>(*imageBuffer).surface().surface()];
+        else
+            ciImage = [CIImage imageWithCGImage:imageBuffer->copyNativeImage()->platformImage().get()];
+        if (ciImage)
+            m_buffer = WTFMove(ciImage);
+    }
+    
+    return ciImageSlot();
+}
+
+RetainPtr<CIImage> FilterImage::ciImageSlot() const
+{
+    if (!std::holds_alternative<RetainPtr<CIImage>>(m_buffer))
+        return nullptr;
+
+    return std::get<RetainPtr<CIImage>>(m_buffer);
+}
+
 void FilterImage::setCIImage(RetainPtr<CIImage>&& ciImage)
 {
     ASSERT(ciImage);
-    m_ciImage = WTFMove(ciImage);
+    m_buffer = WTFMove(ciImage);
 }
 
-ImageBuffer* FilterImage::imageBufferFromCIImage()
+RefPtr<ImageBuffer> FilterImage::createImageBuffer(RetainPtr<CIImage>& ciImage) const
 {
-    ASSERT(m_ciImage);
-
-    if (m_imageBuffer)
-        return m_imageBuffer.get();
-
-    m_imageBuffer = IOSurfaceImageBuffer::create(m_absoluteImageRect.size(), 1, m_colorSpace, PixelFormat::BGRA8, RenderingPurpose::Unspecified);
-    if (!m_imageBuffer)
+    auto imageBuffer = IOSurfaceImageBuffer::create(m_absoluteImageRect.size(), 1, m_colorSpace, PixelFormat::BGRA8, RenderingPurpose::Unspecified);
+    if (!imageBuffer)
         return nullptr;
 
     auto destRect = FloatRect { FloatPoint(), m_absoluteImageRect.size() };
-    [sharedCIContext().get() render: m_ciImage.get() toIOSurface: downcast<IOSurfaceImageBuffer>(*m_imageBuffer).surface().surface() bounds:destRect colorSpace:m_colorSpace.platformColorSpace()];
+    [sharedCIContext().get() render: ciImage.get() toIOSurface: imageBuffer->surface().surface() bounds:destRect colorSpace:m_colorSpace.platformColorSpace()];
 
-    return m_imageBuffer.get();
+    return imageBuffer;
 }
 
 } // namespace WebCore
