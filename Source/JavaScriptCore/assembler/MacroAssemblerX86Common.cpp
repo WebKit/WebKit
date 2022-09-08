@@ -31,6 +31,10 @@
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
 
+#if OS(DARWIN)
+#include <sys/sysctl.h>
+#endif
+
 #if COMPILER(MSVC)
 #include <intrin.h>
 #endif
@@ -805,10 +809,19 @@ void MacroAssemblerX86Common::collectCPUFeatures()
             s_popcntCheckState = (cpuid[2] & (1 << 23)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
             s_avxCheckState = (cpuid[2] & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         }
+#if OS(DARWIN)
+        {
+            uint32_t val = 0;
+            size_t valSize = sizeof(val);
+            int rc = sysctlbyname("hw.optional.bmi1", &val, &valSize, nullptr, 0);
+            s_bmi1CheckState = (rc >= 0 && val) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
+        }
+#else
         {
             CPUID cpuid = getCPUID(0x7);
             s_bmi1CheckState = (cpuid[2] & (1 << 3)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
         }
+#endif
         {
             CPUID cpuid = getCPUID(0x80000001);
             s_lzcntCheckState = (cpuid[2] & (1 << 5)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
