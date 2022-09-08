@@ -447,8 +447,10 @@ void OffscreenCanvas::commitToPlaceholderCanvas()
         return;
 
     // FIXME: Transfer texture over if we're using accelerated compositing
-    if (m_context && (m_context->isWebGL() || m_context->isAccelerated()))
+    if (m_context && (m_context->isWebGL() || m_context->isAccelerated())) {
+        m_context->prepareForDisplayWithPaint();
         m_context->paintRenderingResultsToCanvas();
+    }
 
     if (m_placeholderData->bufferPipeSource) {
         if (auto bufferCopy = imageBuffer->clone())
