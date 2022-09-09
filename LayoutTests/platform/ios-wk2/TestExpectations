@@ -2347,3 +2347,5 @@ webkit.org/b/244913 [ Debug ] fast/mediastream/getDisplayMedia-displaySurface.ht
 webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-cross-origin.https.sub.tentative.html [ Pass Timeout ]
 
 webkit.org/b/245002 compositing/clipping/border-radius-async-overflow-non-stacking.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure Timeout ]
