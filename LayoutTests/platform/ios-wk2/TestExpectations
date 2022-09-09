@@ -2296,6 +2296,9 @@ imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 #rdar://95420649 ([BLOCKED] 2X fast/canvas/canvas-createPattern-video (layout-tests) are constant text failures)
 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
+media/video-canvas-createPattern.html [ Failure ]
+media/video-canvas-drawing-output.html [ Failure ]
+media/video-orientation-canvas.html [ Failure ]
 
 # Changed JS cookie behavior in iOS16
 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html  [ Skip ]
