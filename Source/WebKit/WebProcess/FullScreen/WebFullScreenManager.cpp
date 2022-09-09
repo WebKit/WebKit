@@ -169,13 +169,16 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 
     setElement(*element);
 
+    bool isVideoElement = false;
 #if PLATFORM(IOS_FAMILY) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-    if (auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement())
+    if (auto* currentPlaybackControlsElement = m_page->playbackSessionManager().currentPlaybackControlsElement()) {
         currentPlaybackControlsElement->prepareForVideoFullscreenStandby();
+        isVideoElement = currentPlaybackControlsElement->controls();
+    }
 #endif
 
     m_initialFrame = screenRectOfContents(m_element.get());
-    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk());
+    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElement);
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)
