@@ -3378,6 +3378,7 @@ imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.s
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Pass ]
 
 # Show 1px diff in the result. Maybe hitting the background bleed avoidance code path.
+webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-095.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-109.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-125.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-141.xht [ ImageOnlyFailure ]
@@ -3395,6 +3396,7 @@ webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-po
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-052.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-064.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-076.xht [ ImageOnlyFailure ]
+webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-088.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-104.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-108.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-112.xht [ ImageOnlyFailure ]

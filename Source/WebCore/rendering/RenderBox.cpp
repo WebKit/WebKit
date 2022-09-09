@@ -4413,17 +4413,20 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
 // The |containerLogicalHeightForPositioned| is already aware of orthogonal flows.
 // The logicalTop concept is confusing here. It's the logical top from the child's POV. This means that is the physical
 // y if the child is vertical or the physical x if the child is horizontal.
-static void computeLogicalTopPositionedOffset(LayoutUnit& logicalTopPos, const RenderBox* child, LayoutUnit logicalHeightValue, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalHeightForPositioned)
+static void computeLogicalTopPositionedOffset(LayoutUnit& logicalTopPos, const RenderBox* child, LayoutUnit logicalHeightValue, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalHeightForPositioned, bool logicalTopIsAuto, bool logicalBottomIsAuto)
 {
-    auto logicalTopAndBottomAreAuto = child->style().logicalTop().isAuto() && child->style().logicalBottom().isAuto();
+    auto logicalTopAndBottomAreAuto = logicalTopIsAuto && logicalBottomIsAuto;
     auto haveOrthogonalWritingModes = isOrthogonal(*child, containerBlock);
     auto haveFlippedBlockAxis = child->style().isFlippedBlocksWritingMode() != containerBlock.style().isFlippedBlocksWritingMode();
+    bool isOverconstrained = !logicalTopIsAuto && !logicalBottomIsAuto && !child->style().logicalHeight().isAuto();
 
     // Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space. If the containing block is flipped
     // along this axis, then we need to flip the coordinate.  This can only happen if the containing block is both a flipped mode and perpendicular to us.
-    if ((haveOrthogonalWritingModes && !logicalTopAndBottomAreAuto && child->style().isFlippedBlocksWritingMode())
-        || (haveFlippedBlockAxis && !haveOrthogonalWritingModes))
-        logicalTopPos = containerLogicalHeightForPositioned - logicalHeightValue - logicalTopPos;
+    if (!isOverconstrained) {
+        if ((haveOrthogonalWritingModes && !logicalTopAndBottomAreAuto && child->style().isFlippedBlocksWritingMode())
+            || (haveFlippedBlockAxis && !haveOrthogonalWritingModes))
+            logicalTopPos = containerLogicalHeightForPositioned - logicalHeightValue - logicalTopPos;
+    }
 
     // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
     if (containerBlock.style().isFlippedBlocksWritingMode() && !haveOrthogonalWritingModes) {
@@ -4518,6 +4521,16 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
             // Over-constrained, (no need solve for bottom)
             computedValues.m_margins.m_before = valueForLength(marginBefore, containerRelativeLogicalWidth);
             computedValues.m_margins.m_after = valueForLength(marginAfter, containerRelativeLogicalWidth);
+
+            if (isOrthogonal(*this, containerBlock)) {
+                // When orthogonal we want to explicitly deal with left/right instead of top/bottom, so compute physical left next.
+                logicalTopValue = valueForLength(style().left(), containerLogicalHeight);
+                if (containerBlock.style().direction() == TextDirection::RTL) {
+                    // Recompute availableSpace with physical left.
+                    LayoutUnit availableSpace = containerLogicalHeight - (logicalTopValue + logicalHeightValue + valueForLength(style().right(), containerLogicalHeight) + bordersPlusPadding);
+                    logicalTopValue = (availableSpace + logicalTopValue) - computedValues.m_margins.m_before - computedValues.m_margins.m_after;
+                }
+            }
         }
     } else {
         /*--------------------------------------------------------------------*\
@@ -4578,7 +4591,7 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
 
     // Use computed values to calculate the vertical position.
     computedValues.m_position = logicalTopValue + computedValues.m_margins.m_before;
-    computeLogicalTopPositionedOffset(computedValues.m_position, this, logicalHeightValue + bordersPlusPadding, containerBlock, containerLogicalHeight);
+    computeLogicalTopPositionedOffset(computedValues.m_position, this, logicalHeightValue + bordersPlusPadding, containerBlock, containerLogicalHeight, style().logicalTop().isAuto(), style().logicalBottom().isAuto());
 }
 
 void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValues& computedValues) const
@@ -4877,7 +4890,7 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
     // Use computed values to calculate the vertical position.
     LayoutUnit logicalTopPos = logicalTopValue + marginBeforeAlias;
     // Border and padding have already been included in computedValues.m_extent.
-    computeLogicalTopPositionedOffset(logicalTopPos, this, computedValues.m_extent, containerBlock, containerLogicalHeight);
+    computeLogicalTopPositionedOffset(logicalTopPos, this, computedValues.m_extent, containerBlock, containerLogicalHeight, style().logicalTop().isAuto(), style().logicalBottom().isAuto());
     computedValues.m_position = logicalTopPos;
 }
 
