@@ -9,11 +9,9 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
       (children 6
         (GraphicsLayer
           (position 820.00 25.00)
-          (bounds origin 820.00 25.00)
           (preserves3D 1)
           (children 1
             (GraphicsLayer
-              (position 820.00 25.00)
               (bounds 300.00 60.00)
               (contentsOpaque 1)
               (drawsContent 1)
@@ -22,11 +20,9 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
         )
         (GraphicsLayer
           (position 812.00 93.00)
-          (bounds origin 812.00 93.00)
           (preserves3D 1)
           (children 1
             (GraphicsLayer
-              (position 812.00 93.00)
               (bounds 300.00 60.00)
               (contentsOpaque 1)
               (drawsContent 1)
@@ -35,11 +31,9 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
         )
         (GraphicsLayer
           (position 960.00 161.00)
-          (bounds origin 960.00 161.00)
           (preserves3D 1)
           (children 1
             (GraphicsLayer
-              (position 960.00 161.00)
               (bounds 300.00 60.00)
               (contentsOpaque 1)
               (drawsContent 1)
@@ -48,11 +42,9 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
         )
         (GraphicsLayer
           (position 812.00 229.00)
-          (bounds origin 812.00 229.00)
           (preserves3D 1)
           (children 1
             (GraphicsLayer
-              (position 812.00 229.00)
               (bounds 300.00 60.00)
               (contentsOpaque 1)
               (drawsContent 1)
@@ -61,11 +53,9 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
         )
         (GraphicsLayer
           (position 820.00 297.00)
-          (bounds origin 820.00 297.00)
           (preserves3D 1)
           (children 1
             (GraphicsLayer
-              (position 820.00 297.00)
               (bounds 300.00 60.00)
               (contentsOpaque 1)
               (drawsContent 1)
@@ -74,11 +64,9 @@ Left sticky Right sticky Left % sticky Right % sticky Left and Right Left and Ri
         )
         (GraphicsLayer
           (position 960.00 365.00)
-          (bounds origin 960.00 365.00)
           (preserves3D 1)
           (children 1
             (GraphicsLayer
-              (position 960.00 365.00)
               (bounds 300.00 60.00)
               (contentsOpaque 1)
               (drawsContent 1)
