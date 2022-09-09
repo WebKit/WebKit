@@ -58,4 +58,24 @@ struct LinkRelAttribute {
     static bool isSupported(Document&, StringView);
 };
 
+inline bool operator==(const LinkRelAttribute& left, const LinkRelAttribute& right)
+{
+    return left.iconType == right.iconType
+        && left.isStyleSheet == right.isStyleSheet
+        && left.isAlternate == right.isAlternate
+        && left.isDNSPrefetch == right.isDNSPrefetch
+        && left.isLinkPreload == right.isLinkPreload
+        && left.isLinkPreconnect == right.isLinkPreconnect
+        && left.isLinkPrefetch == right.isLinkPrefetch
+#if ENABLE(APPLICATION_MANIFEST)
+        && left.isApplicationManifest == right.isApplicationManifest
+#endif
+        ;
+}
+
+inline bool operator!=(const LinkRelAttribute& left, const LinkRelAttribute& right)
+{
+    return !(left == right);
+}
+
 }
