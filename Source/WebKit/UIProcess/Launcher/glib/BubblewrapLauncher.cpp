@@ -197,15 +197,17 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
         args.appendVector(Vector<CString>({ bindType, path, path }));
 }
 
-static void bindDBusSession(Vector<CString>& args, bool allowPortals)
+static void bindDBusSession(Vector<CString>& args, XDGDBusProxy& dbusProxy, bool allowPortals)
 {
-    static std::unique_ptr<XDGDBusProxy> proxy = makeUnique<XDGDBusProxy>(XDGDBusProxy::Type::SessionBus, allowPortals);
+    auto dbusSessionProxy = dbusProxy.dbusSessionProxy(allowPortals ? XDGDBusProxy::AllowPortals::Yes : XDGDBusProxy::AllowPortals::No);
+    if (!dbusSessionProxy)
+        return;
 
-    if (!proxy->proxyPath().isNull() && !proxy->path().isNull()) {
-        args.appendVector(Vector<CString>({
-            "--bind", proxy->proxyPath(), proxy->path(),
-        }));
-    }
+    GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", dbusSessionProxy->second.data()));
+    args.appendVector(Vector<CString> {
+        "--ro-bind", WTFMove(dbusSessionProxy->first), WTFMove(dbusSessionProxy->second),
+        "--setenv", "DBUS_SESSION_BUS_ADDRESS", proxyAddress.get()
+    });
 }
 
 #if PLATFORM(X11)
@@ -348,17 +350,17 @@ static void bindGtkData(Vector<CString>& args)
 #endif
 
 #if ENABLE(ACCESSIBILITY)
-static void bindA11y(Vector<CString>& args)
+static void bindA11y(Vector<CString>& args, XDGDBusProxy& dbusProxy)
 {
-    static std::unique_ptr<XDGDBusProxy> proxy = makeUnique<XDGDBusProxy>(XDGDBusProxy::Type::AccessibilityBus);
+    auto accessibilityProxy = dbusProxy.accessibilityProxy();
+    if (!accessibilityProxy)
+        return;
 
-    if (!proxy->proxyPath().isNull()) {
-        GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", proxy->proxyPath().data()));
-        args.appendVector(Vector<CString> {
-            "--ro-bind", proxy->proxyPath(), proxy->proxyPath(),
-            "--setenv", "AT_SPI_BUS_ADDRESS", proxyAddress.get(),
-        });
-    }
+    GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", accessibilityProxy->second.data()));
+    args.appendVector(Vector<CString> {
+        "--ro-bind", WTFMove(accessibilityProxy->first), WTFMove(accessibilityProxy->second),
+        "--setenv", "AT_SPI_BUS_ADDRESS", proxyAddress.get()
+    });
 }
 #endif
 
@@ -753,7 +755,9 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
                 sandboxArgs.appendVector(Vector<CString>({ "--bind-try", extraPath.utf8(), extraPath.utf8() }));
         }
 
-        bindDBusSession(sandboxArgs, flatpakInfoFd != -1);
+        static std::unique_ptr<XDGDBusProxy> dbusProxy = makeUnique<XDGDBusProxy>();
+        if (dbusProxy)
+            bindDBusSession(sandboxArgs, *dbusProxy, flatpakInfoFd != -1);
         // FIXME: We should move to Pipewire as soon as viable, Pulse doesn't restrict clients atm.
         bindPulse(sandboxArgs);
         bindSndio(sandboxArgs);
@@ -763,11 +767,14 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         // FIXME: This is also fixed by Pipewire once in use.
         bindV4l(sandboxArgs);
 #if ENABLE(ACCESSIBILITY)
-        bindA11y(sandboxArgs);
+        if (dbusProxy)
+            bindA11y(sandboxArgs, *dbusProxy);
 #endif
 #if PLATFORM(GTK)
         bindGtkData(sandboxArgs);
 #endif
+        if (dbusProxy && !dbusProxy->launch())
+            dbusProxy = nullptr;
     } else {
         // Only X11 users need this for XShm which is only the Web process.
         sandboxArgs.append("--unshare-ipc");
