@@ -123,6 +123,8 @@ WI.TextResourceContentView = class TextResourceContentView extends WI.ResourceCo
         WI.settings.enableControlFlowProfiler.removeEventListener(WI.Setting.Event.Changed, this._enableControlFlowProfilerSettingChanged, this);
         WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ProbeSetAdded, this._probeSetsChanged, this);
         WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ProbeSetRemoved, this._probeSetsChanged, this);
+
+        this._textEditor.close();
     }
 
     contentAvailable(content, base64Encoded)
