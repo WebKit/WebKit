@@ -32,8 +32,8 @@ messages -> NetworkProcessConnection LegacyReceiver {
     CookieAcceptPolicyChanged(enum:uint8_t WebCore::HTTPCookieAcceptPolicy policy);
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    CookiesAdded(String host, Vector<struct WebCore::Cookie> cookies);
-    CookiesDeleted(String host, Vector<struct WebCore::Cookie> cookies);
+    CookiesAdded(String host, Vector<WebCore::Cookie> cookies);
+    CookiesDeleted(String host, Vector<WebCore::Cookie> cookies);
     AllCookiesDeleted();
 #endif
 

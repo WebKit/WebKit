@@ -281,3 +281,27 @@ std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWith
 }
 
 } // namespace IPC
+
+namespace WTF {
+
+template<> bool isValidEnum<EnumNamespace::EnumType>(uint16_t value)
+{
+    switch (value) {
+    case EnumNamespace::EnumType::FirstValue:
+    case EnumNamespace::EnumType::SecondValue:
+        return true;
+    default:
+        return false;
+    }
+}
+
+template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<EnumNamespace2::OptionSetEnumType> value)
+{
+    constexpr uint8_t allValidBitsValue =
+        static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue)
+        | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue)
+        | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue);
+    return (value.toRaw() | allValidBitsValue) == allValidBitsValue;
+}
+
+} // namespace WTF

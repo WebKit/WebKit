@@ -33,15 +33,3 @@ enum class WebsiteDataFetchOption : uint8_t {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::WebsiteDataFetchOption> {
-    using values = EnumValues<
-        WebKit::WebsiteDataFetchOption,
-        WebKit::WebsiteDataFetchOption::ComputeSizes,
-        WebKit::WebsiteDataFetchOption::DoNotCreateProcesses
-    >;
-};
-
-} // namespace WTF

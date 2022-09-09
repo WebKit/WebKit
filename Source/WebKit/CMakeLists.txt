@@ -524,6 +524,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUOrigin3D.serialization.in
     Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
     Shared/WebGPU/WebGPUValidationError.serialization.in
+
+    Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
 )
 
 list(APPEND WebKit_DERIVED_SOURCES

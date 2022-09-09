@@ -43,3 +43,14 @@ class WithoutNamespace {
 [AdditionalEncoder=OtherEncoder] class WithoutNamespaceWithAttributes {
     int a;
 }
+
+enum class EnumNamespace::EnumType : uint16_t {
+    FirstValue,
+    SecondValue
+}
+
+[OptionSet] enum class EnumNamespace2::OptionSetEnumType : uint8_t {
+    OptionSetFirstValue,
+    OptionSetSecondValue,
+    OptionSetThirdValue
+}

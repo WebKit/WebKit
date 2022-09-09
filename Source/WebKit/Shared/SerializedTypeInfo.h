@@ -39,6 +39,15 @@ struct SerializedTypeInfo {
 
 Vector<SerializedTypeInfo> allSerializedTypes();
 
+struct SerializedEnumInfo {
+    ASCIILiteral name;
+    uint32_t size;
+    bool isOptionSet;
+    Vector<uint64_t> validValues;
+};
+
+Vector<SerializedEnumInfo> allSerializedEnums();
+
 }
 
 #endif
