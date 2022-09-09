@@ -40,6 +40,9 @@ PASS 'abc'.includes('ab', -Infinity) is true
 PASS 'abc'.includes('cd', -Infinity) is false
 PASS 'abc'.includes('ab', 0) is true
 PASS 'abc'.includes('cd', 0) is false
+PASS 'abc'.includes('', 3) is true
+PASS 'abc'.includes('', 4) is true
+PASS 'abc'.includes('', Infinity) is true
 PASS String.prototype.startsWith.name is 'startsWith'
 PASS String.prototype.startsWith.length is 1
 PASS 'foo bar'.startsWith('foo') is true
@@ -75,6 +78,9 @@ PASS 'abc'.startsWith('b', 1) is true
 PASS 'abc'.startsWith('b', 2) is false
 PASS 'abc'.startsWith('c', 2) is true
 PASS 'abc'.startsWith('a', Math.pow(2, 33)) is false
+PASS 'abc'.startsWith('', 3) is true
+PASS 'abc'.startsWith('', 4) is true
+PASS 'abc'.startsWith('', Infinity) is true
 PASS String.prototype.endsWith.name is 'endsWith'
 PASS String.prototype.endsWith.length is 1
 PASS 'foo bar'.endsWith('bar') is true
@@ -115,6 +121,9 @@ PASS 'abc'.endsWith('b', 1) is false
 PASS 'abc'.endsWith('b', 2) is true
 PASS 'abc'.endsWith('bc', 2) is false
 PASS 'abc'.endsWith('bc', 3) is true
+PASS 'abc'.endsWith('', 3) is true
+PASS 'abc'.endsWith('', 4) is true
+PASS 'abc'.endsWith('', Infinity) is true
 PASS (function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
 PASS (function() { var f = String.prototype.endsWith; (function() { f('a'); })(); })() threw exception TypeError: Type error.
 PASS (function() { var f = String.prototype.includes; (function() { f('a'); })(); })() threw exception TypeError: Type error.
