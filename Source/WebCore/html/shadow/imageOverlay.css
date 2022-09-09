@@ -32,7 +32,6 @@ div#image-overlay {
     text-indent: 0;
     text-align: center;
     font-family: system-ui;
-    cursor: auto;
 }
 
 :host(:not(img)) div#image-overlay:-webkit-full-screen-document {

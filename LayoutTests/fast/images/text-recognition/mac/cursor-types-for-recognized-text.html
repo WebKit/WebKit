@@ -11,19 +11,14 @@ img {
     border: 1px solid black;
     display: block;
 }
-
 a {
     display: block;
 }
-
 #cursor-zoom-in {
-    top: 100px;
     cursor: zoom-in;
 }
-
-#user-select-none-in-link {
-    top: 200px;
-    -webkit-user-select: none;
+#img-not-styled-cursor-user-select-none {
+    user-select: none;
 }
 
 </style>
@@ -65,23 +60,30 @@ addEventListener("load", () => {
         shouldBeEqualToString("cursor", expectedResult);
     }
 
-    testImage("inside-link", "Hand");
-    testImage("cursor-zoom-in", "ZoomIn");
-    testImage("user-select-none-in-link", "Hand");
+    testImage("img-not-styled-cursor", "Pointer");
+    testOverlayDivFromImage("img-not-styled-cursor", "IBeam");
 
-    testOverlayDivFromImage("inside-link", "IBeam");
-    testOverlayDivFromImage("cursor-zoom-in", "IBeam");
-    testOverlayDivFromImage("user-select-none-in-link", "Pointer");
+    testImage("img-not-styled-cursor-user-select-none", "Pointer");
+    //  FIXME: this test case will fail due to https://bugs.webkit.org/show_bug.cgi?id=244944
+    //  EventHandler::selectCursor will select an IBeam cursor although it shouldn't. This is
+    //  because Node::canStartSelection() is not false for user-select: none.
+    //  Enable the test case once we fix this behavior:
+    // testOverlayDivFromImage("img-not-styled-cursor-user-select-none", "Pointer");
+
+    testImage("inside-link", "Hand");
+    testOverlayDivFromImage("inside-link", "Hand");
+
+    testImage("cursor-zoom-in", "ZoomIn");
+    testOverlayDivFromImage("cursor-zoom-in", "ZoomIn");
 });
 </script>
 </head>
 <body>
+<img id="img-not-styled-cursor" src="../../resources/green-400x400.png">
 <a href="#">
     <img id="inside-link" src="../../resources/green-400x400.png"></img>
 </a>
 <img id="cursor-zoom-in" src="../../resources/green-400x400.png"></img>
-<a href="#">
-    <img id="user-select-none-in-link" src="../../resources/green-400x400.png"></img>
-</a>
+<img id="img-not-styled-cursor-user-select-none" src="../../resources/green-400x400.png">
 </body>
 </html>
