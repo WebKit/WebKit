@@ -96,7 +96,7 @@ std::string FormatMetalErrorMessage(NSError *error)
 {
     if (!error)
     {
-        return "";
+        return {};
     }
 
     std::stringstream errorStream;
