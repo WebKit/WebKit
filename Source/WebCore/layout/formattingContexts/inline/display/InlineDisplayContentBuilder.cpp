@@ -95,8 +95,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     m_lineIndex = lineIndex;
     m_lineBoxOffset = lineContent.lineLogicalTopLeft.x() - lineContent.lineInitialLogicalLeft;
     // Every line starts with a root box, even the empty ones.
-    auto rootInlineBoxRect = flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), displayLine, root().style().writingMode());
-    boxes.append({ m_lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), UBIDI_DEFAULT_LTR, rootInlineBoxRect, rootInlineBoxRect, { }, { }, lineBox.rootInlineBox().hasContent() });
+    appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), displayLine, root().style().writingMode()), lineBox.rootInlineBox().hasContent(), boxes);
 
     auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
     if (contentNeedsBidiReordering)
@@ -282,6 +281,20 @@ void InlineDisplayContentBuilder::setInlineBoxGeometry(const Box& layoutBox, con
     auto contentBoxWidth = adjustedRect.width() - (boxGeometry.horizontalBorder() + boxGeometry.horizontalPadding().value_or(0_lu));
     boxGeometry.setContentBoxHeight(contentBoxHeight);
     boxGeometry.setContentBoxWidth(contentBoxWidth);
+}
+
+void InlineDisplayContentBuilder::appendRootInlineBoxDisplayBox(const InlineRect& rootInlineBoxVisualRect, bool linehasContent, DisplayBoxes& boxes)
+{
+    boxes.append({ m_lineIndex
+        , InlineDisplay::Box::Type::RootInlineBox
+        , root()
+        , UBIDI_DEFAULT_LTR
+        , rootInlineBoxVisualRect
+        , rootInlineBoxVisualRect
+        , { }
+        , { }
+        , linehasContent
+    });
 }
 
 void InlineDisplayContentBuilder::appendInlineBoxDisplayBox(const Line::Run& lineRun, const InlineLevelBox& inlineBox, const InlineRect& inlineBoxBorderBox, bool linehasContent, DisplayBoxes& boxes)
