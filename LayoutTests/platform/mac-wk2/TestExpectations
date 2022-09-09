@@ -1363,6 +1363,8 @@ webkit.org/b/229832 imported/w3c/web-platform-tests/beacon/beacon-redirect.https
 
 webkit.org/b/230109 [ BigSur arm64 Debug ] imported/w3c/web-platform-tests/workers/modules/dedicated-worker-import-blob-url.any.html [ Pass Crash ]
 
+webkit.org/b/244967 [ Debug ] imported/w3c/web-platform-tests/workers/shared-worker-parse-error-failure.html [ Pass Crash ]
+
 webkit.org/b/230488 [ arm64 ] imported/w3c/web-platform-tests/infrastructure/reftest-wait.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/230571 [ Release ] imported/w3c/web-platform-tests/page-visibility/unload-bubbles.html [ Pass Failure ]
