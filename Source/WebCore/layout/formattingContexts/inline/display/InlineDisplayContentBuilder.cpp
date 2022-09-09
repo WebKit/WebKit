@@ -93,6 +93,7 @@ DisplayBoxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& 
     boxes.reserveInitialCapacity(lineContent.runs.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
 
     m_lineIndex = lineIndex;
+    m_lineBoxOffset = lineContent.lineLogicalTopLeft.x() - lineContent.lineInitialLogicalLeft;
     // Every line starts with a root box, even the empty ones.
     auto rootInlineBoxRect = flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), displayLine, root().style().writingMode());
     boxes.append({ m_lineIndex, InlineDisplay::Box::Type::RootInlineBox, root(), UBIDI_DEFAULT_LTR, rootInlineBoxRect, rootInlineBoxRect, { }, { }, lineBox.rootInlineBox().hasContent() });
@@ -1008,12 +1009,11 @@ InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(co
     auto& boxGeometry = formattingState().boxGeometry(listMarker);
     auto isLeftToRightDirection = listMarker.parent().style().isLeftToRightDirection();
     auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(root().style().writingMode());
-    auto lineBoxOffset = formattingContext().formattingGeometry().computedTextIndent(InlineFormattingGeometry::IsIntrinsicWidthMode::No, { }, displayLine.lineBoxRect().width());
     auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
 
     if (isHorizontalWritingMode)
-        return isLeftToRightDirection ? displayLine.left() - lineBoxOffset + boxMarginLeft : displayLine.right() + lineBoxOffset + boxMarginLeft;
-    return isLeftToRightDirection ? displayLine.top() - lineBoxOffset + boxMarginLeft : displayLine.bottom() + lineBoxOffset + boxMarginLeft;
+        return isLeftToRightDirection ? displayLine.left() - m_lineBoxOffset + boxMarginLeft : displayLine.right() + m_lineBoxOffset + boxMarginLeft;
+    return isLeftToRightDirection ? displayLine.top() - m_lineBoxOffset + boxMarginLeft : displayLine.bottom() + m_lineBoxOffset + boxMarginLeft;
 }
 
 }

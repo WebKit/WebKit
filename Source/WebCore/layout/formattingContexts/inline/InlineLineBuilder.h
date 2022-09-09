@@ -69,11 +69,12 @@ public:
         FloatList placedFloats;
         FloatList overflowingFloats;
         bool hasIntrusiveFloat { false };
+        InlineLayoutUnit lineInitialLogicalLeft { 0.f };
         InlineLayoutPoint lineLogicalTopLeft;
-        InlineLayoutUnit lineLogicalWidth { 0 };
-        InlineLayoutUnit contentLogicalWidth { 0 };
-        InlineLayoutUnit contentLogicalRight { 0 };
-        InlineLayoutUnit hangingContentWidth { 0 };
+        InlineLayoutUnit lineLogicalWidth { 0.f };
+        InlineLayoutUnit contentLogicalWidth { 0.f };
+        InlineLayoutUnit contentLogicalRight { 0.f };
+        InlineLayoutUnit hangingContentWidth { 0.f };
         bool isLastLineWithInlineContent { true };
         size_t nonSpanningInlineLevelBoxCount { 0 };
         Vector<int32_t> visualOrderList;
@@ -156,7 +157,8 @@ private:
 
     Line m_line;
     InlineRect m_lineLogicalRect;
-    InlineLayoutUnit m_lineMarginStart { 0 };
+    InlineLayoutUnit m_lineMarginStart { 0.f };
+    InlineLayoutUnit m_lineInitialLogicalLeft { 0.f };
     const InlineItems& m_inlineItems;
     FloatList m_placedFloats;
     FloatList m_overflowingFloats;
