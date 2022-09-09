@@ -215,7 +215,7 @@ using WebCore::LogOverlayScrollbars;
     const NSTimeInterval timeInterval = 0.01;
     _timer = adoptNS([[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:0] interval:timeInterval target:self selector:@selector(setCurrentProgress:) userInfo:nil repeats:YES]);
     _duration = duration;
-    _timingFunction = WebCore::CubicBezierTimingFunction::create(WebCore::CubicBezierTimingFunction::EaseInOut);
+    _timingFunction = WebCore::CubicBezierTimingFunction::create(WebCore::CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
 
     LOG_WITH_STREAM(OverlayScrollbars, stream << "Creating WebScrollbarPartAnimation for " << featureToAnimate << " from " << startValue << " to " << endValue);
 

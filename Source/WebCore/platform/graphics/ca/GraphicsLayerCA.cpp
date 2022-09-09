@@ -3726,7 +3726,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
 {
     Vector<float> keyTimes;
     Vector<float> values;
-    Vector<const TimingFunction*> timingFunctions;
+    Vector<Ref<const TimingFunction>> timingFunctions;
 
     bool forwards = animation->directionIsForwards();
     
@@ -3747,7 +3747,7 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(&timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
 
     keyframeAnim->setKeyTimes(keyTimes);
@@ -3821,7 +3821,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     Vector<float> floatValues;
     Vector<FloatPoint3D> floatPoint3DValues;
     Vector<TransformationMatrix> transformationMatrixValues;
-    Vector<const TimingFunction*> timingFunctions;
+    Vector<Ref<const TimingFunction>> timingFunctions;
 
     bool forwards = animation->directionIsForwards();
 
@@ -3857,7 +3857,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(&timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);
@@ -3918,7 +3918,7 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
 {
     Vector<float> keyTimes;
     Vector<RefPtr<FilterOperation>> values;
-    Vector<const TimingFunction*> timingFunctions;
+    Vector<Ref<const TimingFunction>> timingFunctions;
     RefPtr<DefaultFilterOperation> defaultOperation;
 
     bool forwards = animation->directionIsForwards();
@@ -3937,7 +3937,7 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
         }
 
         if (i < (valueList.size() - 1))
-            timingFunctions.append(&timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);

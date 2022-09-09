@@ -120,7 +120,6 @@ class Color;
 class SharedBuffer;
 class CSPViolationReportBody;
 class Credential;
-class CubicBezierTimingFunction;
 class Cursor;
 class DatabaseDetails;
 class DragData;
@@ -133,7 +132,6 @@ class Font;
 class FontPlatformData;
 class HTTPHeaderMap;
 class KeyframeValueList;
-class LinearTimingFunction;
 class Notification;
 class NotificationResources;
 class PasteboardCustomData;
@@ -149,8 +147,6 @@ class ResourceResponse;
 class ScriptBuffer;
 class SecurityOrigin;
 class FragmentedSharedBuffer;
-class SpringTimingFunction;
-class StepsTimingFunction;
 class StickyPositionViewportConstraints;
 class SystemImage;
 class TextCheckingRequestData;
@@ -269,26 +265,6 @@ template<> struct ArgumentCoder<WebCore::TouchActionData> {
 template<> struct ArgumentCoder<WebCore::EventTrackingRegions> {
     static void encode(Encoder&, const WebCore::EventTrackingRegions&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::EventTrackingRegions&);
-};
-
-template<> struct ArgumentCoder<WebCore::LinearTimingFunction> {
-    static void encode(Encoder&, const WebCore::LinearTimingFunction&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::LinearTimingFunction&);
-};
-
-template<> struct ArgumentCoder<WebCore::CubicBezierTimingFunction> {
-    static void encode(Encoder&, const WebCore::CubicBezierTimingFunction&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::CubicBezierTimingFunction&);
-};
-
-template<> struct ArgumentCoder<WebCore::StepsTimingFunction> {
-    static void encode(Encoder&, const WebCore::StepsTimingFunction&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::StepsTimingFunction&);
-};
-
-template<> struct ArgumentCoder<WebCore::SpringTimingFunction> {
-    static void encode(Encoder&, const WebCore::SpringTimingFunction&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::SpringTimingFunction&);
 };
 
 template<> struct ArgumentCoder<WebCore::CertificateInfo> {

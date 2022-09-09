@@ -116,7 +116,7 @@ public:
     void setKeyTimes(const Vector<float>&) override;
     void copyKeyTimesFrom(const WebCore::PlatformCAAnimation&) override;
 
-    void setTimingFunctions(const Vector<const WebCore::TimingFunction*>&, bool reverse = false) override;
+    void setTimingFunctions(const Vector<Ref<const WebCore::TimingFunction>>&, bool reverse) override;
     void copyTimingFunctionsFrom(const WebCore::PlatformCAAnimation&) override;
 
     // Animation group properties.
@@ -176,7 +176,7 @@ public:
         // timingFunctions has n-1 entries.
         Vector<KeyframeValue> keyValues;
         Vector<float> keyTimes;
-        Vector<RefPtr<WebCore::TimingFunction>> timingFunctions;
+        Vector<Ref<WebCore::TimingFunction>> timingFunctions;
 
         Vector<Properties> animations;
     };

@@ -537,7 +537,7 @@ void PlatformCAAnimationWin::copyKeyTimesFrom(const PlatformCAAnimation& value)
     CACFAnimationSetKeyTimes(m_animation.get(), CACFAnimationGetKeyTimes(downcast<PlatformCAAnimationWin>(value).platformAnimation()));
 }
 
-void PlatformCAAnimationWin::setTimingFunctions(const Vector<const TimingFunction*>& value, bool reverse)
+void PlatformCAAnimationWin::setTimingFunctions(const Vector<Ref<const TimingFunction>>& value, bool reverse)
 {
     UNUSED_PARAM(reverse);
     if (animationType() != Keyframe)
@@ -545,6 +545,7 @@ void PlatformCAAnimationWin::setTimingFunctions(const Vector<const TimingFunctio
 
     RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
     for (size_t i = 0; i < value.size(); ++i) {
+        // FIXME: This seems wrong. We should be passing in a float* instead of a TimingFunction**.
         RetainPtr<CFNumberRef> v = adoptCF(CFNumberCreate(0, kCFNumberFloatType, &value[i]));
         CFArrayAppendValue(array.get(), toCACFTimingFunction(value[i], reverse).get());
     }

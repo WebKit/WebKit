@@ -116,7 +116,7 @@ public:
     virtual void setKeyTimes(const Vector<float>&) = 0;
     virtual void copyKeyTimesFrom(const PlatformCAAnimation&) = 0;
 
-    virtual void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false) = 0;
+    virtual void setTimingFunctions(const Vector<Ref<const TimingFunction>>&, bool reverse) = 0;
     virtual void copyTimingFunctionsFrom(const PlatformCAAnimation&) = 0;
 
     // Animation group properties.
