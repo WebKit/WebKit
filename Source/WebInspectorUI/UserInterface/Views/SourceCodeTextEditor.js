@@ -748,9 +748,16 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
 
         let locations = await script.breakpointLocations(startPosition, endPosition);
         for (let location of locations) {
+            let position = this.originalPositionToCurrentPosition(location.position());
+
+            // Don't show an inline widget when there is only one breakpoint location on the line
+            // and it's at the start of the line.
+            if (locations.length === 1 && position.lineNumber === lineNumber && !this.line(lineNumber).slice(0, position.columnNumber).trim().length)
+                continue;
+
             console.assert(!Array.from(this._inlineBreakpointDataForLine.values()).some(({widget}) => widget.sourceCodeLocation.isEqual(location)), location, this._inlineBreakpointDataForLine);
             let inlineBreakpointWidget = new WI.BreakpointInlineWidget(WI.debuggerManager.breakpointsForSourceCodeLocation(location).firstValue || location);
-            let bookmark = this.setInlineWidget(this.originalPositionToCurrentPosition(location.position()), inlineBreakpointWidget.element);
+            let bookmark = this.setInlineWidget(position, inlineBreakpointWidget.element);
             this._inlineBreakpointDataForLine.add(lineNumber, {bookmark, widget: inlineBreakpointWidget});
         }
     }
