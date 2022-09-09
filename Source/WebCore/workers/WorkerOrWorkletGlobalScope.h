@@ -79,9 +79,10 @@ public:
     virtual void resume() { }
 
     virtual FetchOptions::Destination destination() const = 0;
+    ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy; }
 
 protected:
-    WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, WorkerOrWorkletThread*, ScriptExecutionContextIdentifier = { });
+    WorkerOrWorkletGlobalScope(WorkerThreadType, PAL::SessionID, Ref<JSC::VM>&&, ReferrerPolicy, WorkerOrWorkletThread*, ScriptExecutionContextIdentifier = { });
 
     // ScriptExecutionContext.
     bool isJSExecutionForbidden() const final;
@@ -111,6 +112,7 @@ private:
     std::unique_ptr<EventLoopTaskGroup> m_defaultTaskGroup;
     std::unique_ptr<WorkerInspectorController> m_inspectorController;
     PAL::SessionID m_sessionID;
+    ReferrerPolicy m_referrerPolicy;
     bool m_isClosing { false };
 };
 

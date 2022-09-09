@@ -38,10 +38,11 @@ struct WorkletParameters {
     String identifier;
     PAL::SessionID sessionID;
     Settings::Values settingsValues;
+    ReferrerPolicy referrerPolicy;
     bool isAudioContextRealTime;
 
-    WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, identifier.isolatedCopy(), sessionID, settingsValues.isolatedCopy(), isAudioContextRealTime }; }
-    WorkletParameters isolatedCopy() && { return { WTFMove(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, WTFMove(identifier).isolatedCopy(), sessionID, WTFMove(settingsValues).isolatedCopy(), isAudioContextRealTime }; }
+    WorkletParameters isolatedCopy() const & { return { windowURL.isolatedCopy(), jsRuntimeFlags, sampleRate, identifier.isolatedCopy(), sessionID, settingsValues.isolatedCopy(), referrerPolicy, isAudioContextRealTime }; }
+    WorkletParameters isolatedCopy() && { return { WTFMove(windowURL).isolatedCopy(), jsRuntimeFlags, sampleRate, WTFMove(identifier).isolatedCopy(), sessionID, WTFMove(settingsValues).isolatedCopy(), referrerPolicy, isAudioContextRealTime }; }
 };
 
 } // namespace WebCore

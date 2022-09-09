@@ -50,7 +50,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(WorkletGlobalScope);
 static std::atomic<unsigned> gNumberOfWorkletGlobalScopes { 0 };
 
 WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, parameters.sessionID, WTFMove(vm), &thread)
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, parameters.sessionID, WTFMove(vm), parameters.referrerPolicy, &thread)
     , m_topOrigin(SecurityOrigin::createOpaque())
     , m_url(parameters.windowURL)
     , m_jsRuntimeFlags(parameters.jsRuntimeFlags)
@@ -64,7 +64,7 @@ WorkletGlobalScope::WorkletGlobalScope(WorkerOrWorkletThread& thread, Ref<JSC::V
 }
 
 WorkletGlobalScope::WorkletGlobalScope(Document& document, Ref<JSC::VM>&& vm, ScriptSourceCode&& code)
-    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, *document.sessionID(), WTFMove(vm), nullptr)
+    : WorkerOrWorkletGlobalScope(WorkerThreadType::Worklet, *document.sessionID(), WTFMove(vm), document.referrerPolicy(), nullptr)
     , m_document(document)
     , m_topOrigin(SecurityOrigin::createOpaque())
     , m_url(code.url())
@@ -150,11 +150,6 @@ void WorkletGlobalScope::addMessage(MessageSource source, MessageLevel level, co
     if (!m_document || isJSExecutionForbidden())
         return;
     m_document->addMessage(source, level, messageText, sourceURL, lineNumber, columnNumber, WTFMove(callStack), nullptr, requestIdentifier);
-}
-
-ReferrerPolicy WorkletGlobalScope::referrerPolicy() const
-{
-    return ReferrerPolicy::NoReferrer;
 }
 
 void WorkletGlobalScope::fetchAndInvokeScript(const URL& moduleURL, FetchRequestCredentials credentials, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)

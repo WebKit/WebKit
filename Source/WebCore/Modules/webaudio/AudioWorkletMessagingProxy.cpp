@@ -58,6 +58,7 @@ static WorkletParameters generateWorkletParameters(AudioWorklet& worklet)
         worklet.identifier(),
         *document->sessionID(),
         document->settingsValues(),
+        document->referrerPolicy(),
         worklet.audioContext() ? !worklet.audioContext()->isOfflineContext() : false
     };
 }

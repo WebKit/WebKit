@@ -154,8 +154,6 @@ public:
     std::unique_ptr<FontLoadRequest> fontLoadRequest(String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource) final;
     void beginLoadingFontSoon(FontLoadRequest&) final;
 
-    ReferrerPolicy referrerPolicy() const final;
-
     const Settings::Values& settingsValues() const final { return m_settingsValues; }
 
     FetchOptions::Credentials credentials() const { return m_credentials; }
@@ -241,7 +239,6 @@ private:
 #endif
     std::unique_ptr<CSSValuePool> m_cssValuePool;
     RefPtr<CSSFontSelector> m_cssFontSelector;
-    ReferrerPolicy m_referrerPolicy;
     Settings::Values m_settingsValues;
     WorkerType m_workerType;
     FetchOptions::Credentials m_credentials;

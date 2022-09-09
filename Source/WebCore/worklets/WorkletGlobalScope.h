@@ -72,8 +72,6 @@ public:
 
     void evaluate();
 
-    ReferrerPolicy referrerPolicy() const final;
-
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&) final;
 
     SecurityOrigin& topOrigin() const final { return m_topOrigin.get(); }
