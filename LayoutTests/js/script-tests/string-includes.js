@@ -38,6 +38,9 @@ shouldBeTrue("'abc'.includes('ab', -Infinity)");
 shouldBeFalse("'abc'.includes('cd', -Infinity)");
 shouldBeTrue("'abc'.includes('ab', 0)");
 shouldBeFalse("'abc'.includes('cd', 0)");
+shouldBeTrue("'abc'.includes('', 3)")
+shouldBeTrue("'abc'.includes('', 4)")
+shouldBeTrue("'abc'.includes('', Infinity)")
 
 // Test startsWith
 shouldBe("String.prototype.startsWith.name", "'startsWith'");
@@ -75,6 +78,9 @@ shouldBeTrue("'abc'.startsWith('b', 1)");
 shouldBeFalse("'abc'.startsWith('b', 2)");
 shouldBeTrue("'abc'.startsWith('c', 2)");
 shouldBeFalse("'abc'.startsWith('a', Math.pow(2, 33))");
+shouldBeTrue("'abc'.startsWith('', 3)")
+shouldBeTrue("'abc'.startsWith('', 4)")
+shouldBeTrue("'abc'.startsWith('', Infinity)")
 
 // Test endsWith
 shouldBe("String.prototype.endsWith.name", "'endsWith'");
@@ -117,6 +123,9 @@ shouldBeFalse("'abc'.endsWith('b', 1)");
 shouldBeTrue("'abc'.endsWith('b', 2)");
 shouldBeFalse("'abc'.endsWith('bc', 2)");
 shouldBeTrue("'abc'.endsWith('bc', 3)");
+shouldBeTrue("'abc'.endsWith('', 3)")
+shouldBeTrue("'abc'.endsWith('', 4)")
+shouldBeTrue("'abc'.endsWith('', Infinity)")
 
 // Call functions with an environment record as 'this'.
 shouldThrow("(function() { var f = String.prototype.startsWith; (function() { f('a'); })(); })()");
