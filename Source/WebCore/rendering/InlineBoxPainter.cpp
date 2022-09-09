@@ -287,8 +287,8 @@ void InlineBoxPainter::paintFillLayers(const Color& color, const FillLayer& fill
     Vector<const FillLayer*, 8> layers;
     for (auto* layer = &fillLayer; layer; layer = layer->next())
         layers.append(layer);
-    layers.reverse();
-    for (auto* layer : layers)
+
+    for (auto* layer : makeReversedRange(layers))
         paintFillLayer(color, *layer, rect, op);
 }
 

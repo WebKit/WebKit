@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderTableCell.h"
 
+#include "BackgroundPainter.h"
 #include "BorderPainter.h"
 #include "CollapsedBorderValue.h"
 #include "ElementInlines.h"
@@ -1317,7 +1318,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const Lay
         paintInfo.context().clip(clipRect);
     }
     auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
-    paintFillLayers(paintInfo, color, bgLayer, LayoutRect(adjustedPaintOffset, frameRect().size()), BackgroundBleedNone, compositeOp, backgroundObject);
+    BackgroundPainter { *this, paintInfo }.paintFillLayers(color, bgLayer, LayoutRect(adjustedPaintOffset, frameRect().size()), BackgroundBleedNone, compositeOp, backgroundObject);
 }
 
 void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

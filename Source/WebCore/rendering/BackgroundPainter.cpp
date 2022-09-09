@@ -43,11 +43,63 @@
 
 namespace WebCore {
 
+BackgroundImageGeometry::BackgroundImageGeometry(const LayoutRect& destinationRect, const LayoutSize& tileSizeWithoutPixelSnapping, const LayoutSize& tileSize, const LayoutSize& phase, const LayoutSize& spaceSize, bool fixedAttachment)
+    : destinationRect(destinationRect)
+    , destinationOrigin(destinationRect.location())
+    , tileSizeWithoutPixelSnapping(tileSizeWithoutPixelSnapping)
+    , tileSize(tileSize)
+    , phase(phase)
+    , spaceSize(spaceSize)
+    , hasNonLocalGeometry(fixedAttachment)
+{
+}
+
 BackgroundPainter::BackgroundPainter(RenderBoxModelObject& renderer, const PaintInfo& paintInfo)
     : m_renderer(renderer)
     , m_paintInfo(paintInfo)
 {
 }
+
+void BackgroundPainter::paintFillLayers(const Color& color, const FillLayer& fillLayer, const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderElement* backgroundObject)
+{
+    Vector<const FillLayer*, 8> layers;
+    bool shouldDrawBackgroundInSeparateBuffer = false;
+
+    for (auto* layer = &fillLayer; layer; layer = layer->next()) {
+        layers.append(layer);
+
+        if (layer->blendMode() != BlendMode::Normal)
+            shouldDrawBackgroundInSeparateBuffer = true;
+
+        // Stop traversal when an opaque layer is encountered.
+        // FIXME: It would be possible for the following occlusion culling test to be more aggressive
+        // on layers with no repeat by testing whether the image covers the layout rect.
+        // Testing that here would imply duplicating a lot of calculations that are currently done in
+        // BackgroundPainter::paintFillLayer. A more efficient solution might be to move
+        // the layer recursion into paintFillLayer, or to compute the layer geometry here
+        // and pass it down.
+
+        // The clipOccludesNextLayers condition must be evaluated first to avoid short-circuiting.
+        if (layer->clipOccludesNextLayers(layer == &fillLayer) && layer->hasOpaqueImage(m_renderer) && layer->image()->canRender(&m_renderer, m_renderer.style().effectiveZoom()) && layer->hasRepeatXY() && layer->blendMode() == BlendMode::Normal)
+            break;
+    }
+
+    auto& context = m_paintInfo.context();
+    auto baseBgColorUsage = BaseBackgroundColorUse;
+
+    if (shouldDrawBackgroundInSeparateBuffer) {
+        paintFillLayer(color, *layers.last(), rect, bleedAvoidance, { }, { }, op, backgroundObject, BaseBackgroundColorOnly);
+        baseBgColorUsage = BaseBackgroundColorSkip;
+        context.beginTransparencyLayer(1);
+    }
+
+    for (auto& layer : makeReversedRange(layers))
+        paintFillLayer(color, *layer, rect, bleedAvoidance, { }, { }, op, backgroundObject, baseBgColorUsage);
+
+    if (shouldDrawBackgroundInSeparateBuffer)
+        context.endTransparencyLayer();
+}
+
 static void applyBoxShadowForBackground(GraphicsContext& context, const RenderStyle& style)
 {
     const ShadowData* boxShadow = style.boxShadow();
@@ -164,7 +216,7 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
     bool clipToBorderRadius = hasRoundedBorder && !(isBorderFill && bleedAvoidance == BackgroundBleedUseTransparencyLayer);
     GraphicsContextStateSaver clipToBorderStateSaver(context, clipToBorderRadius);
     if (clipToBorderRadius) {
-        RoundedRect border = isBorderFill ? backgroundRoundedRectAdjustedForBleedAvoidance(rect, bleedAvoidance, box, includeLeftEdge, includeRightEdge) : getBackgroundRoundedRect(rect, box, includeLeftEdge, includeRightEdge);
+        RoundedRect border = isBorderFill ? backgroundRoundedRectAdjustedForBleedAvoidance(rect, bleedAvoidance, box, includeLeftEdge, includeRightEdge) : backgroundRoundedRect(rect, box, includeLeftEdge, includeRightEdge);
 
         // Clip to the padding or content boxes as necessary.
         if (bgLayer.clip() == FillBox::Content) {
@@ -284,10 +336,14 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         // Multiline inline boxes paint like the image was one long strip spanning lines. The backgroundImageStrip is this fictional rectangle.
         auto imageRect = backgroundImageStrip.isEmpty() ? scrolledPaintRect : backgroundImageStrip;
         auto paintOffset = backgroundImageStrip.isEmpty() ? rect.location() : backgroundImageStrip.location();
-        auto geometry = m_renderer.calculateBackgroundImageGeometry(m_paintInfo.paintContainer, bgLayer, paintOffset, imageRect, backgroundObject);
+        auto geometry = calculateBackgroundImageGeometry(m_renderer, m_paintInfo.paintContainer, bgLayer, paintOffset, imageRect);
+
+        auto& clientForBackgroundImage = backgroundObject ? *backgroundObject : m_renderer;
+        bgImage->setContainerContextForRenderer(clientForBackgroundImage, geometry.tileSizeWithoutPixelSnapping, m_renderer.style().effectiveZoom());
+
         geometry.clip(LayoutRect(pixelSnappedRect));
         RefPtr<Image> image;
-        if (!geometry.destRect().isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize()))) {
+        if (!geometry.destinationRect.isEmpty() && (image = bgImage->image(backgroundObject ? backgroundObject : &m_renderer, geometry.tileSize))) {
             context.setDrawLuminanceMask(bgLayer.maskMode() == MaskMode::Luminance);
 
             if (is<BitmapImage>(image))
@@ -298,10 +354,10 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
                 bgLayer.blendMode(),
                 m_renderer.decodingModeForImageDraw(*image, m_paintInfo),
                 ImageOrientation::FromImage,
-                m_renderer.chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize())
+                m_renderer.chooseInterpolationQuality(context, *image, &bgLayer, geometry.tileSize)
             };
 
-            auto drawResult = context.drawTiledImage(*image, geometry.destRect(), toLayoutPoint(geometry.relativePhase()), geometry.tileSize(), geometry.spaceSize(), options);
+            auto drawResult = context.drawTiledImage(*image, geometry.destinationRect, toLayoutPoint(geometry.relativePhase()), geometry.tileSize, geometry.spaceSize, options);
             if (drawResult == ImageDrawResult::DidRequestDecoding) {
                 ASSERT(bgImage->hasCachedImage());
                 bgImage->cachedImage()->addClientWaitingForAsyncDecoding(m_renderer);
@@ -352,16 +408,16 @@ RoundedRect BackgroundPainter::backgroundRoundedRectAdjustedForBleedAvoidance(co
 {
     if (bleedAvoidance == BackgroundBleedShrinkBackground) {
         // We shrink the rectangle by one device pixel on each side because the bleed is one pixel maximum.
-        return getBackgroundRoundedRect(shrinkRectByOneDevicePixel(m_paintInfo.context(), borderRect, document().deviceScaleFactor()), box,
+        return backgroundRoundedRect(shrinkRectByOneDevicePixel(m_paintInfo.context(), borderRect, document().deviceScaleFactor()), box,
             includeLogicalLeftEdge, includeLogicalRightEdge);
     }
     if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
         return m_renderer.style().getRoundedInnerBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
 
-    return getBackgroundRoundedRect(borderRect, box, includeLogicalLeftEdge, includeLogicalRightEdge);
+    return backgroundRoundedRect(borderRect, box, includeLogicalLeftEdge, includeLogicalRightEdge);
 }
 
-RoundedRect BackgroundPainter::getBackgroundRoundedRect(const LayoutRect& borderRect, const InlineIterator::InlineBoxIterator& box, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect BackgroundPainter::backgroundRoundedRect(const LayoutRect& borderRect, const InlineIterator::InlineBoxIterator& box, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     RoundedRect border = m_renderer.style().getRoundedBorderFor(borderRect, includeLogicalLeftEdge, includeLogicalRightEdge);
     if (box && (box->nextInlineBox() || box->previousInlineBox())) {
@@ -369,6 +425,296 @@ RoundedRect BackgroundPainter::getBackgroundRoundedRect(const LayoutRect& border
         border.setRadii(segmentBorder.radii());
     }
     return border;
+}
+
+static inline std::optional<LayoutUnit> getSpace(LayoutUnit areaSize, LayoutUnit tileSize)
+{
+    if (int numberOfTiles = areaSize / tileSize; numberOfTiles > 1)
+        return (areaSize - numberOfTiles * tileSize) / (numberOfTiles - 1);
+    return std::nullopt;
+}
+
+static LayoutUnit resolveEdgeRelativeLength(const Length& length, Edge edge, LayoutUnit availableSpace, const LayoutSize& areaSize, const LayoutSize& tileSize)
+{
+    LayoutUnit result = minimumValueForLength(length, availableSpace);
+
+    if (edge == Edge::Right)
+        return areaSize.width() - tileSize.width() - result;
+
+    if (edge == Edge::Bottom)
+        return areaSize.height() - tileSize.height() - result;
+
+    return result;
+}
+
+static void pixelSnapBackgroundImageGeometryForPainting(LayoutRect& destinationRect, LayoutSize& tileSize, LayoutSize& phase, LayoutSize& space, float scaleFactor)
+{
+    tileSize = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), tileSize), scaleFactor).size());
+    phase = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), phase), scaleFactor).size());
+    space = LayoutSize(snapRectToDevicePixels(LayoutRect(LayoutPoint(), space), scaleFactor).size());
+    destinationRect = LayoutRect(snapRectToDevicePixels(destinationRect, scaleFactor));
+}
+
+BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(const RenderBoxModelObject& renderer, const RenderLayerModelObject* paintContainer, const FillLayer& fillLayer, const LayoutPoint& paintOffset, const LayoutRect& borderBoxRect)
+{
+    auto& view = renderer.view();
+
+    LayoutUnit left;
+    LayoutUnit top;
+    LayoutSize positioningAreaSize;
+    // Determine the background positioning area and set destination rect to the background painting area.
+    // Destination rect will be adjusted later if the background is non-repeating.
+    // FIXME: transforms spec says that fixed backgrounds behave like scroll inside transforms. https://bugs.webkit.org/show_bug.cgi?id=15679
+    LayoutRect destinationRect(borderBoxRect);
+    bool fixedAttachment = fillLayer.attachment() == FillAttachment::FixedBackground;
+    float deviceScaleFactor = renderer.document().deviceScaleFactor();
+    if (!fixedAttachment) {
+        LayoutUnit right;
+        LayoutUnit bottom;
+        // Scroll and Local.
+        if (fillLayer.origin() != FillBox::Border) {
+            left = renderer.borderLeft();
+            right = renderer.borderRight();
+            top = renderer.borderTop();
+            bottom = renderer.borderBottom();
+            if (fillLayer.origin() == FillBox::Content) {
+                left += renderer.paddingLeft();
+                right += renderer.paddingRight();
+                top += renderer.paddingTop();
+                bottom += renderer.paddingBottom();
+            }
+        }
+
+        // The background of the box generated by the root element covers the entire canvas including
+        // its margins. Since those were added in already, we have to factor them out when computing
+        // the background positioning area.
+        if (renderer.isDocumentElementRenderer()) {
+            positioningAreaSize = downcast<RenderBox>(renderer).size() - LayoutSize(left + right, top + bottom);
+            positioningAreaSize = LayoutSize(snapSizeToDevicePixel(positioningAreaSize, LayoutPoint(), deviceScaleFactor));
+            if (view.frameView().hasExtendedBackgroundRectForPainting()) {
+                LayoutRect extendedBackgroundRect = view.frameView().extendedBackgroundRectForPainting();
+                left += (renderer.marginLeft() - extendedBackgroundRect.x());
+                top += (renderer.marginTop() - extendedBackgroundRect.y());
+            }
+        } else {
+            positioningAreaSize = borderBoxRect.size() - LayoutSize(left + right, top + bottom);
+            positioningAreaSize = LayoutSize(snapRectToDevicePixels(LayoutRect(paintOffset, positioningAreaSize), deviceScaleFactor).size());
+        }
+    } else {
+        LayoutRect viewportRect;
+        float topContentInset = 0;
+        if (renderer.settings().fixedBackgroundsPaintRelativeToDocument())
+            viewportRect = view.unscaledDocumentRect();
+        else {
+            FrameView& frameView = view.frameView();
+            bool useFixedLayout = frameView.useFixedLayout() && !frameView.fixedLayoutSize().isEmpty();
+
+            if (useFixedLayout) {
+                // Use the fixedLayoutSize() when useFixedLayout() because the rendering will scale
+                // down the frameView to to fit in the current viewport.
+                viewportRect.setSize(frameView.fixedLayoutSize());
+            } else
+                viewportRect.setSize(frameView.sizeForVisibleContent());
+
+            if (renderer.fixedBackgroundPaintsInLocalCoordinates()) {
+                if (!useFixedLayout) {
+                    // Shifting location up by topContentInset is needed for layout tests which expect
+                    // layout to be shifted down when calling window.internals.setTopContentInset().
+                    topContentInset = frameView.topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
+                    viewportRect.setLocation(LayoutPoint(0, -topContentInset));
+                }
+            } else if (useFixedLayout || frameView.frameScaleFactor() != 1) {
+                // scrollPositionForFixedPosition() is adjusted for page scale and it does not include
+                // topContentInset so do not add it to the calculation below.
+                viewportRect.setLocation(frameView.scrollPositionForFixedPosition());
+            } else {
+                // documentScrollPositionRelativeToViewOrigin() includes -topContentInset in its height
+                // so we need to account for that in calculating the phase size
+                topContentInset = frameView.topContentInset(ScrollView::TopContentInsetType::WebCoreOrPlatformContentInset);
+                viewportRect.setLocation(frameView.documentScrollPositionRelativeToViewOrigin());
+            }
+
+            top += topContentInset;
+        }
+
+        if (paintContainer)
+            viewportRect.moveBy(LayoutPoint(-paintContainer->localToAbsolute(FloatPoint())));
+
+        destinationRect = viewportRect;
+        positioningAreaSize = destinationRect.size();
+        positioningAreaSize.setHeight(positioningAreaSize.height() - topContentInset);
+        positioningAreaSize = LayoutSize(snapRectToDevicePixels(LayoutRect(destinationRect.location(), positioningAreaSize), deviceScaleFactor).size());
+    }
+
+    LayoutSize tileSize = calculateFillTileSize(renderer, fillLayer, positioningAreaSize);
+
+    FillRepeat backgroundRepeatX = fillLayer.repeat().x;
+    FillRepeat backgroundRepeatY = fillLayer.repeat().y;
+    LayoutUnit availableWidth = positioningAreaSize.width() - tileSize.width();
+    LayoutUnit availableHeight = positioningAreaSize.height() - tileSize.height();
+
+    LayoutSize spaceSize;
+    LayoutSize phase;
+    LayoutSize noRepeat;
+    LayoutUnit computedXPosition = resolveEdgeRelativeLength(fillLayer.xPosition(), fillLayer.backgroundXOrigin(), availableWidth, positioningAreaSize, tileSize);
+    if (backgroundRepeatX == FillRepeat::Round && positioningAreaSize.width() > 0 && tileSize.width() > 0) {
+        int numTiles = std::max(1, roundToInt(positioningAreaSize.width() / tileSize.width()));
+        if (fillLayer.size().size.height.isAuto() && backgroundRepeatY != FillRepeat::Round)
+            tileSize.setHeight(tileSize.height() * positioningAreaSize.width() / (numTiles * tileSize.width()));
+
+        tileSize.setWidth(positioningAreaSize.width() / numTiles);
+        phase.setWidth(tileSize.width() ? tileSize.width() - fmodf((computedXPosition + left), tileSize.width()) : 0);
+    }
+
+    LayoutUnit computedYPosition = resolveEdgeRelativeLength(fillLayer.yPosition(), fillLayer.backgroundYOrigin(), availableHeight, positioningAreaSize, tileSize);
+    if (backgroundRepeatY == FillRepeat::Round && positioningAreaSize.height() > 0 && tileSize.height() > 0) {
+        int numTiles = std::max(1, roundToInt(positioningAreaSize.height() / tileSize.height()));
+        if (fillLayer.size().size.width.isAuto() && backgroundRepeatX != FillRepeat::Round)
+            tileSize.setWidth(tileSize.width() * positioningAreaSize.height() / (numTiles * tileSize.height()));
+
+        tileSize.setHeight(positioningAreaSize.height() / numTiles);
+        phase.setHeight(tileSize.height() ? tileSize.height() - fmodf((computedYPosition + top), tileSize.height()) : 0);
+    }
+
+    if (backgroundRepeatX == FillRepeat::Repeat) {
+        phase.setWidth(tileSize.width() ? tileSize.width() - fmodf(computedXPosition + left, tileSize.width()) : 0);
+        spaceSize.setWidth(0);
+    } else if (backgroundRepeatX == FillRepeat::Space && tileSize.width() > 0) {
+        if (auto space = getSpace(positioningAreaSize.width(), tileSize.width())) {
+            LayoutUnit actualWidth = tileSize.width() + *space;
+            computedXPosition = minimumValueForLength(Length(), availableWidth);
+            spaceSize.setWidth(*space);
+            spaceSize.setHeight(0);
+            phase.setWidth(actualWidth ? actualWidth - fmodf((computedXPosition + left), actualWidth) : 0);
+        } else
+            backgroundRepeatX = FillRepeat::NoRepeat;
+    }
+
+    if (backgroundRepeatX == FillRepeat::NoRepeat) {
+        LayoutUnit xOffset = left + computedXPosition;
+        if (xOffset > 0)
+            destinationRect.move(xOffset, 0_lu);
+        xOffset = std::min<LayoutUnit>(xOffset, 0);
+        phase.setWidth(-xOffset);
+        destinationRect.setWidth(tileSize.width() + xOffset);
+        spaceSize.setWidth(0);
+    }
+
+    if (backgroundRepeatY == FillRepeat::Repeat) {
+        phase.setHeight(tileSize.height() ? tileSize.height() - fmodf(computedYPosition + top, tileSize.height()) : 0);
+        spaceSize.setHeight(0);
+    } else if (backgroundRepeatY == FillRepeat::Space && tileSize.height() > 0) {
+        if (auto space = getSpace(positioningAreaSize.height(), tileSize.height())) {
+            LayoutUnit actualHeight = tileSize.height() + *space;
+            computedYPosition = minimumValueForLength(Length(), availableHeight);
+            spaceSize.setHeight(*space);
+            phase.setHeight(actualHeight ? actualHeight - fmodf((computedYPosition + top), actualHeight) : 0);
+        } else
+            backgroundRepeatY = FillRepeat::NoRepeat;
+    }
+    if (backgroundRepeatY == FillRepeat::NoRepeat) {
+        LayoutUnit yOffset = top + computedYPosition;
+        if (yOffset > 0)
+            destinationRect.move(0_lu, yOffset);
+        yOffset = std::min<LayoutUnit>(yOffset, 0);
+        phase.setHeight(-yOffset);
+        destinationRect.setHeight(tileSize.height() + yOffset);
+        spaceSize.setHeight(0);
+    }
+
+    if (fixedAttachment) {
+        LayoutPoint attachmentPoint = borderBoxRect.location();
+        phase.expand(std::max<LayoutUnit>(attachmentPoint.x() - destinationRect.x(), 0), std::max<LayoutUnit>(attachmentPoint.y() - destinationRect.y(), 0));
+    }
+
+    destinationRect.intersect(borderBoxRect);
+
+    auto tileSizeWithoutPixelSnapping = tileSize;
+    pixelSnapBackgroundImageGeometryForPainting(destinationRect, tileSize, phase, spaceSize, deviceScaleFactor);
+
+    return BackgroundImageGeometry(destinationRect, tileSizeWithoutPixelSnapping, tileSize, phase, spaceSize, fixedAttachment);
+}
+
+LayoutSize BackgroundPainter::calculateFillTileSize(const RenderBoxModelObject& renderer, const FillLayer& fillLayer, const LayoutSize& positioningAreaSize)
+{
+    StyleImage* image = fillLayer.image();
+    FillSizeType type = fillLayer.size().type;
+    auto devicePixelSize = LayoutUnit { 1.0 / renderer.document().deviceScaleFactor() };
+
+    LayoutSize imageIntrinsicSize;
+    if (image) {
+        imageIntrinsicSize = renderer.calculateImageIntrinsicDimensions(image, positioningAreaSize, RenderBoxModelObject::ScaleByEffectiveZoom);
+        imageIntrinsicSize.scale(1 / image->imageScaleFactor(), 1 / image->imageScaleFactor());
+    } else
+        imageIntrinsicSize = positioningAreaSize;
+
+    switch (type) {
+    case FillSizeType::Size: {
+        LayoutSize tileSize = positioningAreaSize;
+
+        Length layerWidth = fillLayer.size().size.width;
+        Length layerHeight = fillLayer.size().size.height;
+
+        if (layerWidth.isFixed())
+            tileSize.setWidth(layerWidth.value());
+        else if (layerWidth.isPercentOrCalculated()) {
+            auto resolvedWidth = valueForLength(layerWidth, positioningAreaSize.width());
+            // Non-zero resolved value should always produce some content.
+            tileSize.setWidth(!resolvedWidth ? resolvedWidth : std::max(devicePixelSize, resolvedWidth));
+        }
+
+        if (layerHeight.isFixed())
+            tileSize.setHeight(layerHeight.value());
+        else if (layerHeight.isPercentOrCalculated()) {
+            auto resolvedHeight = valueForLength(layerHeight, positioningAreaSize.height());
+            // Non-zero resolved value should always produce some content.
+            tileSize.setHeight(!resolvedHeight ? resolvedHeight : std::max(devicePixelSize, resolvedHeight));
+        }
+
+        // If one of the values is auto we have to use the appropriate
+        // scale to maintain our aspect ratio.
+        if (layerWidth.isAuto() && !layerHeight.isAuto()) {
+            if (imageIntrinsicSize.height())
+                tileSize.setWidth(imageIntrinsicSize.width() * tileSize.height() / imageIntrinsicSize.height());
+        } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
+            if (imageIntrinsicSize.width())
+                tileSize.setHeight(imageIntrinsicSize.height() * tileSize.width() / imageIntrinsicSize.width());
+        } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
+            // If both width and height are auto, use the image's intrinsic size.
+            tileSize = imageIntrinsicSize;
+        }
+
+        tileSize.clampNegativeToZero();
+        return tileSize;
+    }
+    case FillSizeType::None: {
+        // If both values are ‘auto’ then the intrinsic width and/or height of the image should be used, if any.
+        if (!imageIntrinsicSize.isEmpty())
+            return imageIntrinsicSize;
+
+        // If the image has neither an intrinsic width nor an intrinsic height, its size is determined as for ‘contain’.
+        type = FillSizeType::Contain;
+    }
+    FALLTHROUGH;
+    case FillSizeType::Contain:
+    case FillSizeType::Cover: {
+        // Scale computation needs higher precision than what LayoutUnit can offer.
+        FloatSize localImageIntrinsicSize = imageIntrinsicSize;
+        FloatSize localPositioningAreaSize = positioningAreaSize;
+
+        float horizontalScaleFactor = localImageIntrinsicSize.width() ? (localPositioningAreaSize.width() / localImageIntrinsicSize.width()) : 1;
+        float verticalScaleFactor = localImageIntrinsicSize.height() ? (localPositioningAreaSize.height() / localImageIntrinsicSize.height()) : 1;
+        float scaleFactor = type == FillSizeType::Contain ? std::min(horizontalScaleFactor, verticalScaleFactor) : std::max(horizontalScaleFactor, verticalScaleFactor);
+
+        if (localImageIntrinsicSize.isEmpty())
+            return { };
+
+        return LayoutSize(localImageIntrinsicSize.scaled(scaleFactor).expandedTo({ devicePixelSize, devicePixelSize }));
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 const Document& BackgroundPainter::document() const
