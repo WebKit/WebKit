@@ -1298,11 +1298,11 @@ SKAttributionEnabled:
   humanReadableDescription: "SKAttribution"
   defaultValue:
     WebCore:
-      default: false
+      default: true
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
 
 SampleBufferContentKeySessionSupportEnabled:
   type: bool
