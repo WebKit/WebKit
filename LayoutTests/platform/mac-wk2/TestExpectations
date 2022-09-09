@@ -1764,3 +1764,9 @@ webkit.org/b/244272 [ Monterey ] fast/images/text-recognition/mac/cursor-types-f
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
 
 webkit.org/b/244968 [ arm64 ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/basic_copyteximage2d.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/fboinvalidate/format_02.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_pbo_params.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/shaderbuiltinvar.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_unpack_params.html [ Pass Failure ]
