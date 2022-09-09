@@ -1776,3 +1776,5 @@ webkit.org/b/244983 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniform
 webkit.org/b/244983 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniformapi/random.html [ Pass Failure ]
 
 webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure ]
+
+webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
