@@ -99,11 +99,9 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         return hadElementChild ? DidRemoveElements::Yes : DidRemoveElements::No;
     }
 
-    bool hadElementChild = false;
     if (source == ChildChange::Source::API) {
         ChildListMutationScope mutation(*this);
         for (auto& child : children) {
-            hadElementChild |= is<Element>(child);
             mutation.willRemoveChild(child.get());
             child->notifyMutationObserversNodeWillDetach();
             dispatchChildRemovalEvents(child);
@@ -113,17 +111,16 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         if (UNLIKELY(document().hasMutationObserversOfType(MutationObserverOptionType::ChildList))) {
             ChildListMutationScope mutation(*this);
-            for (auto& child : children) {
-                hadElementChild |= is<Element>(child);
+            for (auto& child : children)
                 mutation.willRemoveChild(child.get());
-            }
-        } else
-            hadElementChild = children.containsIf([](auto& child) { return is<Element>(child); });
+        }
     }
 
     disconnectSubframesIfNeeded(*this, DescendantsOnly);
 
-    ContainerNode::ChildChange childChange { ChildChange::Type::AllChildrenRemoved, nullptr, nullptr, nullptr, source, hadElementChild ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No };
+    ContainerNode::ChildChange childChange { ChildChange::Type::AllChildrenRemoved, nullptr, nullptr, nullptr, source, ContainerNode::ChildChange::AffectsElements::Unknown };
+
+    bool hadElementChild = false;
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
@@ -136,11 +133,16 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
         document().nodeChildrenWillBeRemoved(*this);
 
         while (RefPtr<Node> child = m_firstChild) {
+            if (is<Element>(*child))
+                hadElementChild = true;
+
             removeBetween(nullptr, child->nextSibling(), *child);
             auto subtreeObservability = notifyChildNodeRemoved(*this, *child);
             if (source == ChildChange::Source::API && subtreeObservability == RemovedSubtreeObservability::MaybeObservableByRefPtr)
                 willCreatePossiblyOrphanedTreeByRemoval(*child);
         }
+
+        childChange.affectsElements = hadElementChild ? ContainerNode::ChildChange::AffectsElements::Yes : ContainerNode::ChildChange::AffectsElements::No;
     }
 
     ASSERT_WITH_SECURITY_IMPLICATION(!document().selection().selection().isOrphan());

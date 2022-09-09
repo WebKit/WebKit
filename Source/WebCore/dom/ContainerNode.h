@@ -78,7 +78,7 @@ public:
     struct ChildChange {
         enum class Type : uint8_t { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted, AllChildrenReplaced };
         enum class Source : bool { Parser, API };
-        enum class AffectsElements : bool { No, Yes };
+        enum class AffectsElements : uint8_t { Unknown, No, Yes };
 
         ChildChange::Type type;
         Element* siblingChanged;
