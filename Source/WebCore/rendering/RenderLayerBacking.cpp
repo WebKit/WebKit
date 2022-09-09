@@ -1355,8 +1355,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     if (m_viewportAnchorLayer) {
         m_viewportAnchorLayer->setPosition(primaryLayerPosition);
-        // Setting boundsOrigin on this layer allows us to keep the position on m_graphicsLayer, which is necessary to preserve the propagation of the correct perspective transform to fixed layers.
-        m_viewportAnchorLayer->setBoundsOrigin(primaryLayerPosition);
+        primaryLayerPosition = { };
     }
 
     if (m_contentsContainmentLayer) {

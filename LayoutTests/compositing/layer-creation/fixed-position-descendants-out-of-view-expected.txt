@@ -10,12 +10,10 @@
       (children 3
         (GraphicsLayer
           (position 8.00 13.00)
-          (bounds origin 8.00 13.00)
           (preserves3D 1)
           (backingStoreAttached 0)
           (children 1
             (GraphicsLayer
-              (position 8.00 13.00)
               (bounds 100.00 100.00)
               (contentsOpaque 1)
               (backingStoreAttached 1)
@@ -31,12 +29,10 @@
         )
         (GraphicsLayer
           (position 8.00 120.00)
-          (bounds origin 8.00 120.00)
           (preserves3D 1)
           (backingStoreAttached 0)
           (children 1
             (GraphicsLayer
-              (position 8.00 120.00)
               (bounds 100.00 100.00)
               (contentsOpaque 1)
               (backingStoreAttached 0)
@@ -53,12 +49,10 @@
         )
         (GraphicsLayer
           (position 8.00 240.00)
-          (bounds origin 8.00 240.00)
           (preserves3D 1)
           (backingStoreAttached 0)
           (children 1
             (GraphicsLayer
-              (position 8.00 240.00)
               (bounds 100.00 100.00)
               (contentsOpaque 1)
               (backingStoreAttached 0)
