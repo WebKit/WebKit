@@ -1,0 +1,8 @@
+resources/link-stylesheet-load-once.css - willSendRequest <NSURLRequest URL resources/link-stylesheet-load-once.css, main document URL link-stylesheet-load-once.html, http method GET> redirectResponse (null)
+link-stylesheet-load-once.html - didFinishLoading
+resources/link-stylesheet-load-once.css - didReceiveResponse <NSURLResponse resources/link-stylesheet-load-once.css, http status code 0>
+resources/link-stylesheet-load-once.css - didFinishLoading
+This tests overriding rel content attribute with the same value.
+You should see 1 in a green box below:
+
+1

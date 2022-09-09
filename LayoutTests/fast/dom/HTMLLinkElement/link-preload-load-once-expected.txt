@@ -1,0 +1,8 @@
+data:text/css,div { background: green; width: 100px; height: 100px } - willSendRequest <NSURLRequest URL data:text/css,div { background: green; width: 100px; height: 100px }, main document URL link-preload-load-once.html, http method GET> redirectResponse (null)
+link-preload-load-once.html - didFinishLoading
+data:text/css,div { background: green; width: 100px; height: 100px } - didReceiveResponse <NSURLResponse data:text/css,div { background: green; width: 100px; height: 100px }, http status code 200>
+data:text/css,div { background: green; width: 100px; height: 100px } - didFinishLoading
+This tests overriding rel content attribute with the same value.
+You should see 1 below:
+
+1
