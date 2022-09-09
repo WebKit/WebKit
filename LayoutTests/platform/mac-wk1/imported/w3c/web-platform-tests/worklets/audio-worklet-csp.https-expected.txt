@@ -3,13 +3,9 @@ CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/worklets/resources/empty
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/worklets/resources/import-empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/worklets/resources/import-empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/worklets/resources/empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Blocked by Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Blocked by Content Security Policy.
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
-CONSOLE MESSAGE: Refused to load https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js because it does not appear in the script-src directive of the Content Security Policy.
-CONSOLE MESSAGE: Blocked by Content Security Policy.
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
+Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
 Blocked access to external URL https://www1.localhost:9443/worklets/resources/empty-worklet-script-with-cors-header.js
@@ -26,7 +22,7 @@ CONSOLE MESSAGE: [blocked] The page at https://localhost:9443/worklets/resources
 PASS A remote-origin worklet should be blocked by the script-src 'self' directive.
 PASS A same-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive.
 PASS A remote-origin worklet importing a remote-origin script should be blocked by the script-src 'self' directive.
-PASS A remote-origin-redirected worklet should be blocked by the script-src 'self' directive.
+FAIL A remote-origin-redirected worklet should be blocked by the script-src 'self' directive. assert_equals: expected "REJECTED" but got "RESOLVED"
 PASS A same-origin worklet importing a remote-origin-redirected script should be blocked by the script-src 'self' directive.
 PASS A remote-origin worklet should not be blocked because the script-src directive specifying the origin allows it.
 FAIL A same-origin worklet importing a remote-origin script should not be blocked because the script-src directive specifying the origin allows it. assert_equals: expected "RESOLVED" but got "REJECTED"

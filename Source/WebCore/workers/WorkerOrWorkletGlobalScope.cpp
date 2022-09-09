@@ -128,4 +128,9 @@ void WorkerOrWorkletGlobalScope::postTaskForMode(Task&& task, const String& mode
     workerOrWorkletThread()->runLoop().postTaskForMode(WTFMove(task), mode);
 }
 
+void WorkerOrWorkletGlobalScope::applyContentSecurityPolicyResponseHeaders(const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders)
+{
+    contentSecurityPolicy()->didReceiveHeaders(contentSecurityPolicyResponseHeaders, String { });
+}
+
 } // namespace WebCore

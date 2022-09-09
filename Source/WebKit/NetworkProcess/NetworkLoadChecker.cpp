@@ -279,14 +279,14 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
     auto preRedirectURL = m_networkResourceLoader ? m_networkResourceLoader.get()->originalRequest().url() : URL();
     auto redirectResponseReceived = isRedirected() ? ContentSecurityPolicy::RedirectResponseReceived::Yes : ContentSecurityPolicy::RedirectResponseReceived::No;
     switch (m_options.destination) {
-    case FetchOptions::Destination::Audioworklet:
-    case FetchOptions::Destination::Paintworklet:
     case FetchOptions::Destination::Worker:
     case FetchOptions::Destination::Serviceworker:
     case FetchOptions::Destination::Sharedworker:
         return contentSecurityPolicy->allowWorkerFromSource(request.url(), redirectResponseReceived, preRedirectURL);
+    case FetchOptions::Destination::Audioworklet:
+    case FetchOptions::Destination::Paintworklet:
     case FetchOptions::Destination::Script:
-        if (request.requester() == ResourceRequest::Requester::ImportScripts && !contentSecurityPolicy->allowScriptFromSource(request.url(), redirectResponseReceived, preRedirectURL))
+        if ((request.requester() == ResourceRequest::Requester::ImportScripts || request.requester() == ResourceRequest::Requester::ImportModule) && !contentSecurityPolicy->allowScriptFromSource(request.url(), redirectResponseReceived, preRedirectURL))
             return false;
         // FIXME: Check CSP for non-importScripts() initiated loads.
         return true;
