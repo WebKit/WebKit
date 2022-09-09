@@ -30,7 +30,7 @@ promise_test(async t => {
   // The "final" url the opener will navigate to. It has COOP and a reporter.
   const final_report_token= token();
   const final_token = token();
-  const final_reportTo = reportToHeaders(final_report_token);
+  const final_reportTo = reportingEndpointsHeaders(final_report_token);
   const final_url =  same_origin + executor_path + final_reportTo.header +
     final_reportTo.coopSameOriginHeader +`&uuid=${final_token}`;
 

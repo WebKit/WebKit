@@ -17,14 +17,14 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#if !defined(__WEBKIT2_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
-#error "Only <webkit2/webkit2.h> can be included directly."
+#if !defined(__WEBKIT@WEBKITGTK_API_INFIX@_H_INSIDE__) && !defined(__WEBKIT_WEB_EXTENSION_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <webkit@WEBKITGTK_API_INFIX@/webkit@WEBKITGTK_API_INFIX@.h> can be included directly."
 #endif
 
 #ifndef WebKitVersion_h
 #define WebKitVersion_h
 
-#include <webkit2/WebKitDefines.h>
+#include <webkit/WebKitDefines.h>
 
 G_BEGIN_DECLS
 

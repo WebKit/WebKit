@@ -6364,6 +6364,61 @@ bool CSSPropertyParser::consumeOffset(bool important)
     return m_range.atEnd();
 }
 
+bool CSSPropertyParser::consumeListStyleShorthand(bool important)
+{
+    auto& valuePool = CSSValuePool::singleton();
+    RefPtr<CSSValue> parsedPosition;
+    RefPtr<CSSValue> parsedImage;
+    RefPtr<CSSValue> parsedType;
+    unsigned noneCount = 0;
+
+    while (!m_range.atEnd()) {
+        if (m_range.peek().id() == CSSValueNone) {
+            ++noneCount;
+            consumeIdent(m_range);
+            continue;
+        }
+        if (!parsedPosition) {
+            if (auto position = parseSingleValue(CSSPropertyListStylePosition, CSSPropertyListStyle)) {
+                parsedPosition = position;
+                continue;
+            }
+        }
+        if (!parsedImage) {
+            if (auto image = parseSingleValue(CSSPropertyListStyleImage, CSSPropertyListStyle)) {
+                parsedImage = image;
+                continue;
+            }
+        }
+        if (!parsedType) {
+            if (auto type = parseSingleValue(CSSPropertyListStyleType, CSSPropertyListStyle)) {
+                parsedType = type;
+                continue;
+            }
+        }
+        return false;
+    }
+
+    if (noneCount > (!parsedImage + !parsedType))
+        return false;
+
+    // Use the implicit initial value for list-style-image, to serialize to "none" instead of "none none".
+    if (noneCount == 2) {
+        parsedImage = valuePool.createImplicitInitialValue();
+        parsedType = valuePool.createIdentifierValue(CSSValueNone);
+    } else if (noneCount == 1) {
+        if (!parsedImage)
+            parsedImage = parsedType ? valuePool.createIdentifierValue(CSSValueNone) : valuePool.createImplicitInitialValue();
+        if (!parsedType)
+            parsedType = valuePool.createIdentifierValue(CSSValueNone);
+    }
+
+    addPropertyWithImplicitDefault(CSSPropertyListStylePosition, CSSPropertyListStyle, WTFMove(parsedPosition), valuePool.createImplicitInitialValue(), important);
+    addPropertyWithImplicitDefault(CSSPropertyListStyleImage, CSSPropertyListStyle, WTFMove(parsedImage), valuePool.createImplicitInitialValue(), important);
+    addPropertyWithImplicitDefault(CSSPropertyListStyleType, CSSPropertyListStyle, WTFMove(parsedType), valuePool.createImplicitInitialValue(), important);
+    return m_range.atEnd();
+}
+
 bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 {
     switch (property) {
@@ -6497,14 +6552,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyColumnRule:
         return consumeShorthandGreedily(columnRuleShorthand(), important);
     case CSSPropertyListStyle:
-        if (m_range.peek().id() == CSSValueNone) {
-            auto& valuePool = CSSValuePool::singleton();
-            addProperty(CSSPropertyListStylePosition, CSSPropertyListStyle, valuePool.createImplicitInitialValue(), important);
-            addProperty(CSSPropertyListStyleImage, CSSPropertyListStyle, valuePool.createImplicitInitialValue(), important);
-            addProperty(CSSPropertyListStyleType, CSSPropertyListStyle, valuePool.createIdentifierValue(CSSValueNone), important);
-            return true;
-        }
-        return consumeShorthandGreedily(listStyleShorthand(), important);
+        return consumeListStyleShorthand(important);
     case CSSPropertyBorderRadius:
     case CSSPropertyWebkitBorderRadius: {
         RefPtr<CSSPrimitiveValue> horizontalRadii[4];

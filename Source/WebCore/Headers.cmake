@@ -310,6 +310,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/permissions/PermissionName.h
     Modules/permissions/PermissionObserver.h
     Modules/permissions/PermissionQuerySource.h
+    Modules/permissions/Permissions.h
     Modules/permissions/PermissionState.h
 
     Modules/plugins/PluginReplacement.h
@@ -329,6 +330,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/reporting/ReportingObserverCallback.h
     Modules/reporting/ReportingScope.h
     Modules/reporting/TestReportBody.h
+    Modules/reporting/ViolationReportType.h
 
     Modules/speech/SpeechRecognitionCaptureSource.h
     Modules/speech/SpeechRecognitionCaptureSourceImpl.h
@@ -838,6 +840,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     fileapi/FileReaderLoader.h
     fileapi/FileReaderLoaderClient.h
     fileapi/NetworkSendQueue.h
+    fileapi/URLKeepingBlobAlive.h
 
     history/BackForwardCache.h
     history/BackForwardClient.h

@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x220
+  RenderBlock {html} at (0,0) size 800x220
+    RenderBody {body} at (8,8) size 784x204
+      RenderText {#text} at (0,0) size 0x0
+layer at (8,8) size 200x200
+  RenderSVGRoot {svg:svg} at (0,0) size 200x200
+layer at (8,8) size 200x200
+  RenderSVGViewportContainer at (0,0) size 200x200
+layer at (6,6) size 4x4 backgroundClip at (8,8) size 200x200 clip at (8,8) size 200x200
+  RenderSVGHiddenContainer {svg:symbol} at (-2,-2) size 4x4
+layer at (6,6) size 4x4 backgroundClip at (8,8) size 200x200 clip at (8,8) size 200x200
+  RenderSVGEllipse {svg:circle} at (0,0) size 4x4 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=2.00]
+layer at (6,6) size 4x4 backgroundClip at (8,8) size 200x200 clip at (8,8) size 200x200
+  RenderSVGTransformableContainer {svg:use} at (-2,-2) size 4x4
+layer at (8,8) size 200x200
+  RenderSVGViewportContainer {svg} at (2,2) size 200x200
+layer at (6,6) size 4x4 backgroundClip at (8,8) size 200x200 clip at (8,8) size 200x200
+  RenderSVGEllipse {svg:circle} at (-2,-2) size 4x4 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=0.00] [cy=0.00] [r=2.00]

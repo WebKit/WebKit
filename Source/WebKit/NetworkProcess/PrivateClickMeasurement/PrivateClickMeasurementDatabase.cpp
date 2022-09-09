@@ -290,7 +290,7 @@ std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUnti
     DebugInfo debugInfo;
     auto data = attributionTriggerData.data;
     auto priority = attributionTriggerData.priority;
-    RELEASE_LOG_INFO(PrivateClickMeasurement, "Got an attribution with attribution trigger data: %{public}u and priority: %{public}u.", data, priority);
+    RELEASE_LOG_INFO(PrivateClickMeasurement, "Got an attribution with attribution trigger data: %u and priority: %u.", data, priority);
     debugInfo.messages.append({ MessageLevel::Info, makeString("[Private Click Measurement] Got an attribution with attribution trigger data: '"_s, data, "' and priority: '"_s, priority, "'."_s) });
 
     WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData secondsUntilSend { std::nullopt, std::nullopt };
@@ -310,14 +310,14 @@ std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUnti
             return { std::nullopt, WTFMove(debugInfo) };
         }
 
-        RELEASE_LOG_INFO(PrivateClickMeasurement, "Converted a stored ad click with attribution trigger data: %{public}u and priority: %{public}u.", data, priority);
+        RELEASE_LOG_INFO(PrivateClickMeasurement, "Converted a stored ad click with attribution trigger data: %u and priority: %u.", data, priority);
         debugInfo.messages.append({ MessageLevel::Info, makeString("[Private Click Measurement] Converted a stored ad click with attribution trigger data: '"_s, data, "' and priority: '"_s, priority, "'."_s) });
 
         // If there is no previous attribution, or the new attribution has higher priority, insert/update the database.
         if (!previouslyAttributed || previouslyUnattributed.value().hasHigherPriorityThan(*previouslyAttributed)) {
             insertPrivateClickMeasurement(WTFMove(*previouslyUnattributed), PrivateClickMeasurementAttributionType::Attributed);
 
-            RELEASE_LOG_INFO(PrivateClickMeasurement, "Replaced a previously converted ad click with a new one with attribution data: %{public}u and priority: %{public}u because it had higher priority.", data, priority);
+            RELEASE_LOG_INFO(PrivateClickMeasurement, "Replaced a previously converted ad click with a new one with attribution data: %u and priority: %u because it had higher priority.", data, priority);
             debugInfo.messages.append({ MessageLevel::Info, makeString("[Private Click Measurement] Replaced a previously converted ad click with a new one with attribution trigger data: '"_s, data, "' and priority: '"_s, priority, "' because it had higher priority."_s) });
         }
     } else if (previouslyAttributed) {
@@ -330,7 +330,7 @@ std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUnti
 
             insertPrivateClickMeasurement(WTFMove(*previouslyAttributed), PrivateClickMeasurementAttributionType::Attributed);
 
-            RELEASE_LOG_INFO(PrivateClickMeasurement, "Re-converted an ad click with a new one with attribution trigger data: %{public}u and priority: %{public}u because it had higher priority.", data, priority);
+            RELEASE_LOG_INFO(PrivateClickMeasurement, "Re-converted an ad click with a new one with attribution trigger data: %u and priority: %u because it had higher priority.", data, priority);
             debugInfo.messages.append({ MessageLevel::Info, makeString("[Private Click Measurement] Re-converted an ad click with a new one with attribution trigger data: '"_s, data, "' and priority: '"_s, priority, "'' because it had higher priority."_s) });
         }
     }

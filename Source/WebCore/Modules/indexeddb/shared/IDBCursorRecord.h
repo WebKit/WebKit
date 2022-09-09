@@ -35,37 +35,8 @@ struct IDBCursorRecord {
     IDBKeyData primaryKey;
     IDBValue value;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBCursorRecord&);
-
-    IDBCursorRecord isolatedCopy() const;
+    IDBCursorRecord isolatedCopy() const { return { key.isolatedCopy(), primaryKey.isolatedCopy(), value.isolatedCopy() }; }
     size_t size() const { return key.size() + primaryKey.size() + value.size(); }
 };
-
-template<class Encoder>
-void IDBCursorRecord::encode(Encoder& encoder) const
-{
-    encoder << key << primaryKey << value;
-}
-
-template<class Decoder>
-bool IDBCursorRecord::decode(Decoder& decoder, IDBCursorRecord& record)
-{
-    if (!decoder.decode(record.key))
-        return false;
-
-    if (!decoder.decode(record.primaryKey))
-        return false;
-
-    if (!decoder.decode(record.value))
-        return false;
-
-    return true;
-}
-
-inline IDBCursorRecord IDBCursorRecord::isolatedCopy() const
-{
-    return { key.isolatedCopy(), primaryKey.isolatedCopy(), value.isolatedCopy() };
-}
 
 } // namespace WebCore

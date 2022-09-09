@@ -609,6 +609,16 @@ static void checkURLArgument(NSURL *url)
     _configuration->setWebPushDaemonUsesMockBundlesForTesting(usesMockBundles);
 }
 
+- (BOOL)resourceLoadStatisticsDebugModeEnabled
+{
+    return _configuration->resourceLoadStatisticsDebugModeEnabled();
+}
+
+- (void)setResourceLoadStatisticsDebugModeEnabled:(BOOL)enabled
+{
+    _configuration->setResourceLoadStatisticsDebugModeEnabled(enabled);
+}
+
 - (API::Object&)_apiObject
 {
     return *_configuration;

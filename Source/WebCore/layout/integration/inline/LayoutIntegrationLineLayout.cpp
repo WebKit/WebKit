@@ -409,22 +409,25 @@ void LineLayout::constructContent()
             continue;
 
         auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
-        auto visualRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(m_inlineFormattingState.boxGeometry(layoutBox)) };
+        auto& boxGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
+        auto visualBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(boxGeometry) };
 
         if (layoutBox.isOutOfFlowPositioned()) {
             auto& layer = *renderer.layer();
-            layer.setStaticBlockPosition(visualRect.y());
-            layer.setStaticInlinePosition(visualRect.x());
+            layer.setStaticBlockPosition(visualBorderBoxRect.y());
+            layer.setStaticInlinePosition(visualBorderBoxRect.x());
             continue;
         }
 
         if (layoutBox.isFloatingPositioned()) {
             auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
-            floatingObject.setFrameRect(visualRect);
+            auto marginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(boxGeometry) };
+            floatingObject.setFrameRect(marginBoxRect);
+            floatingObject.setMarginOffset({ boxGeometry.marginStart(), boxGeometry.marginBefore() });
             floatingObject.setIsPlaced(true);
         }
 
-        renderer.setLocation(visualRect.location());
+        renderer.setLocation(visualBorderBoxRect.location());
     }
 
     m_inlineContent->clearGapAfterLastLine = m_inlineFormattingState.clearGapAfterLastLine();

@@ -9,7 +9,7 @@ def main(request, response):
         (b"Referrer-Policy", b"origin"),
         (b"SourceMap", b"1"),
         (b"x-sourcemap", b"2"),
-        (b"Access-Control-Expose-Headers", b"x-Header1, content-length"),
+        (b"Access-Control-Expose-Headers", b"x-header1, content-length"),
         (b"x-header1", b"x-value1"),
         (b"x-header2", b"x-value2"),
         (b"Content-Length", b"13"),

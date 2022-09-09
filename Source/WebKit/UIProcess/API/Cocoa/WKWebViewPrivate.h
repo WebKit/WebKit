@@ -120,6 +120,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class WKBrowsingContextHandle;
 @class WKDownload;
 @class WKFrameInfo;
+@class WKSecurityOrigin;
 @class WKWebpagePreferences;
 @class _WKApplicationManifest;
 @class _WKDataTask;
@@ -494,6 +495,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
  If both screenCaptureState and windowCaptureState are None or Muted, no system audio will be captured.
  */
 - (void)_setSystemAudioCaptureState:(WKSystemAudioCaptureState)state completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
+
++ (void)_permissionChanged:(NSString *)permissionName forOrigin:(WKSecurityOrigin *)origin WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

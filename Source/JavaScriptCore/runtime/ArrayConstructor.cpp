@@ -26,8 +26,11 @@
 
 #include "ArrayPrototype.h"
 #include "BuiltinNames.h"
+#include "ExecutableBaseInlines.h"
 #include "JSCInlines.h"
 #include "ProxyObject.h"
+
+#include "VMInlines.h"
 
 #include "ArrayConstructor.lut.h"
 
@@ -107,8 +110,14 @@ static ALWAYS_INLINE bool isArraySlowInline(JSGlobalObject* globalObject, ProxyO
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     while (true) {
-        if (proxy->isRevoked()) {
-            throwTypeError(globalObject, scope, "Array.isArray cannot be called on a Proxy that has been revoked"_s);
+        if (UNLIKELY(proxy->isRevoked())) {
+            auto* callFrame = vm.topJSCallFrame();
+            auto* callee = callFrame && !callFrame->isWasmFrame() ? callFrame->jsCallee() : nullptr;
+            ASCIILiteral calleeName = "Array.isArray"_s;
+            auto* function = callee ? jsDynamicCast<JSFunction*>(callee) : nullptr;
+            if (function && function->intrinsic() == ObjectToStringIntrinsic)
+                calleeName = "Object.prototype.toString"_s;
+            throwTypeError(globalObject, scope, makeString(calleeName, " cannot be called on a Proxy that has been revoked"_s));
             return false;
         }
         JSObject* argument = proxy->target();

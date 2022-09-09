@@ -51,7 +51,8 @@ public:
     virtual ~PlatformXRSystem();
 
     using PlatformXRCoordinator::SessionEventClient::weakPtrFactory;
-    using WeakValueType = PlatformXRCoordinator::SessionEventClient::WeakValueType;
+    using PlatformXRCoordinator::SessionEventClient::WeakValueType;
+    using PlatformXRCoordinator::SessionEventClient::WeakPtrImplType;
 
     void invalidate();
 

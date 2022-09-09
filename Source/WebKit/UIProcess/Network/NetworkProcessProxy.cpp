@@ -206,6 +206,7 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     parameters.urlSchemesRegisteredAsNoAccess = copyToVector(LegacyGlobalSettings::singleton().schemesToRegisterAsNoAccess());
     parameters.cacheModel = LegacyGlobalSettings::singleton().cacheModel();
     parameters.urlSchemesRegisteredForCustomProtocols = WebProcessPool::urlSchemesWithCustomProtocolHandlers();
+    parameters.localhostAliasesForTesting = LegacyGlobalSettings::singleton().hostnamesToRegisterAsLocal();
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE) // GTK and WPE don't use defaultNetworkProcess
     parameters.websiteDataStoreParameters = WebsiteDataStore::parametersFromEachWebsiteDataStore();
@@ -558,7 +559,7 @@ void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Con
 
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
-    if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
+    if (!connectionIdentifier) {
         networkProcessDidTerminate(ProcessTerminationReason::Crash);
         return;
     }
@@ -1449,7 +1450,7 @@ void NetworkProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContent
 
 void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier)
 {
-    RELEASE_LOG(Worker, "NetworkProcessProxy::registerRemoteWorkerClientProcess: workerType=%{public}s, clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
+    RELEASE_LOG(Worker, "NetworkProcessProxy::registerRemoteWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
     auto* clientWebProcess = WebProcessProxy::processForIdentifier(clientProcessIdentifier);
     auto* remoteWorkerProcess = WebProcessProxy::processForIdentifier(remoteWorkerProcessIdentifier);
     if (!clientWebProcess || !remoteWorkerProcess) {
@@ -1462,7 +1463,7 @@ void NetworkProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType wor
 
 void NetworkProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType workerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier)
 {
-    RELEASE_LOG(Worker, "NetworkProcessProxy::unregisterRemoteWorkerClientProcess: workerType=%{public}s, clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
+    RELEASE_LOG(Worker, "NetworkProcessProxy::unregisterRemoteWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcessIdentifier=%" PRIu64 ", remoteWorkerProcessIdentifier=%" PRIu64, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", clientProcessIdentifier.toUInt64(), remoteWorkerProcessIdentifier.toUInt64());
     auto* clientWebProcess = WebProcessProxy::processForIdentifier(clientProcessIdentifier);
     auto* remoteWorkerProcess = WebProcessProxy::processForIdentifier(remoteWorkerProcessIdentifier);
     if (!clientWebProcess || !remoteWorkerProcess) {

@@ -28,7 +28,7 @@
 #include "ASTNode.h"
 #include "Attribute.h"
 #include "CompilationMessage.h"
-#include "GlobalDecl.h"
+#include "Decl.h"
 #include "TypeDecl.h"
 #include <wtf/text/StringView.h>
 #include <wtf/FastMalloc.h>
@@ -58,11 +58,11 @@ private:
     UniqueRef<TypeDecl> m_type;
 };
 
-class StructDecl final : public GlobalDecl {
+class StructDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     StructDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<StructMember>>&& members, Attributes&& attributes)
-        : GlobalDecl(sourceSpan)
+        : Decl(sourceSpan)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
         , m_members(WTFMove(members))

@@ -124,7 +124,8 @@ public:
     virtual ~GPUConnectionToWebProcess();
 
     using WebCore::NowPlayingManager::Client::weakPtrFactory;
-    using WeakValueType = WebCore::NowPlayingManager::Client::WeakValueType;
+    using WebCore::NowPlayingManager::Client::WeakValueType;
+    using WebCore::NowPlayingManager::Client::WeakPtrImplType;
 
     IPC::Connection& connection() { return m_connection.get(); }
     IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }

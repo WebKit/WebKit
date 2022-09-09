@@ -57,6 +57,8 @@ namespace DFG {
 struct OSRExit;
 }
 
+#define JIT_COMMENT(jit, ...) do { if (UNLIKELY(Options::dumpDisassembly())) { (jit).comment(__VA_ARGS__); } else { (void) jit; } } while (0);
+
 class AbstractMacroAssemblerBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:

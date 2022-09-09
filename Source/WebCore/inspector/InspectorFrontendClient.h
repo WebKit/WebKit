@@ -135,6 +135,8 @@ public:
     virtual void inspectedURLChanged(const String&) = 0;
     virtual void showCertificate(const CertificateInfo&) = 0;
 
+    virtual void setInspectorPageDeveloperExtrasEnabled(bool) = 0;
+
 #if ENABLE(INSPECTOR_TELEMETRY)
     virtual bool supportsDiagnosticLogging() { return false; }
     virtual bool diagnosticLoggingAvailable() { return false; }

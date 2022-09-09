@@ -62,7 +62,7 @@ private:
     void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
     void createDocumentStructure();
 
-    WeakPtr<HTMLEmbedElement> m_embedElement;
+    WeakPtr<HTMLEmbedElement, WeakPtrImplWithEventTargetData> m_embedElement;
 };
 
 void PluginDocumentParser::createDocumentStructure()

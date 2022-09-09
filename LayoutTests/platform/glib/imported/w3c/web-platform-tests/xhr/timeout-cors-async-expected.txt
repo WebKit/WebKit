@@ -1,0 +1,3 @@
+
+PASS XMLHttpRequest: timeout event and cross-origin request
+

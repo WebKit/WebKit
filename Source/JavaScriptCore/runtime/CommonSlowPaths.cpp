@@ -381,34 +381,6 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_nstricteq)
     RETURN(jsBoolean(!JSValue::strictEqual(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
 }
 
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_less)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpLess>();
-    RETURN(jsBoolean(jsLess<true>(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_lesseq)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpLesseq>();
-    RETURN(jsBoolean(jsLessEq<true>(globalObject, GET_C(bytecode.m_lhs).jsValue(), GET_C(bytecode.m_rhs).jsValue())));
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_greater)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpGreater>();
-    RETURN(jsBoolean(jsLess<false>(globalObject, GET_C(bytecode.m_rhs).jsValue(), GET_C(bytecode.m_lhs).jsValue())));
-}
-
-JSC_DEFINE_COMMON_SLOW_PATH(slow_path_greatereq)
-{
-    BEGIN();
-    auto bytecode = pc->as<OpGreatereq>();
-    RETURN(jsBoolean(jsLessEq<false>(globalObject, GET_C(bytecode.m_rhs).jsValue(), GET_C(bytecode.m_lhs).jsValue())));
-}
-
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_inc)
 {
     BEGIN();

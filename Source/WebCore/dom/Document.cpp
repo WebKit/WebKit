@@ -170,6 +170,7 @@
 #include "PaintWorkletGlobalScope.h"
 #include "Performance.h"
 #include "PerformanceNavigationTiming.h"
+#include "PingLoader.h"
 #include "PlatformLocale.h"
 #include "PlatformMediaSessionManager.h"
 #include "PlatformScreen.h"
@@ -255,6 +256,7 @@
 #include "UndoManager.h"
 #include "UserGestureIndicator.h"
 #include "ValidationMessageClient.h"
+#include "ViolationReportType.h"
 #include "VisibilityChangeClient.h"
 #include "VisitedLinkState.h"
 #include "VisualViewport.h"
@@ -846,8 +848,8 @@ Element* Document::elementForAccessKey(const String& key)
 
 void Document::buildAccessKeyCache()
 {
-    m_accessKeyCache = makeUnique<HashMap<String, WeakPtr<Element>, ASCIICaseInsensitiveHash>>([this] {
-        HashMap<String, WeakPtr<Element>, ASCIICaseInsensitiveHash> map;
+    m_accessKeyCache = makeUnique<HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash>>([this] {
+        HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash> map;
         for (auto& node : composedTreeDescendants(*this)) {
             auto element = dynamicDowncast<Element>(node);
             if (!element)
@@ -3496,11 +3498,11 @@ void Document::setURL(const URL& url)
     
     m_fragmentDirective = newURL.consumefragmentDirective();
 
-    m_url = newURL;
-    if (SecurityOrigin::shouldIgnoreHost(m_url))
-        m_url.setHostAndPort({ });
+    if (SecurityOrigin::shouldIgnoreHost(newURL))
+        newURL.setHostAndPort({ });
+    m_url = WTFMove(newURL);
 
-    m_documentURI = m_url.string();
+    m_documentURI = m_url.url().string();
     updateBaseURL();
 }
 
@@ -4010,10 +4012,10 @@ void Document::metaElementThemeColorChanged(HTMLMetaElement& metaElement)
     themeColorChanged();
 }
 
-WeakPtr<HTMLMetaElement> Document::determineActiveThemeColorMetaElement()
+WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData> Document::determineActiveThemeColorMetaElement()
 {
     if (!m_metaThemeColorElements) {
-        Vector<WeakPtr<HTMLMetaElement>> metaThemeColorElements;
+        Vector<WeakPtr<HTMLMetaElement, WeakPtrImplWithEventTargetData>> metaThemeColorElements;
         for (auto& metaElement : descendantsOfType<HTMLMetaElement>(*this)) {
             if (equalLettersIgnoringASCIICase(metaElement.name(), "theme-color"_s) && metaElement.contentColor().isValid())
                 metaThemeColorElements.append(metaElement);
@@ -6370,7 +6372,7 @@ void Document::initSecurityContext()
         // No source for a security context.
         // This can occur via document.implementation.createDocument().
         setCookieURL(URL({ }, emptyString()));
-        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createUnique()));
+        setSecurityOriginPolicy(SecurityOriginPolicy::create(SecurityOrigin::createOpaque()));
         setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { emptyString() }, *this));
         return;
     }
@@ -6389,7 +6391,7 @@ void Document::initSecurityContext()
     if (!isSecurityOriginUnique)
         isSecurityOriginUnique = documentLoader && documentLoader->response().tainting() == ResourceResponse::Tainting::Opaque;
 
-    setSecurityOriginPolicy(SecurityOriginPolicy::create(isSecurityOriginUnique ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url)));
+    setSecurityOriginPolicy(SecurityOriginPolicy::create(isSecurityOriginUnique ? SecurityOrigin::createOpaque() : SecurityOrigin::create(m_url)));
     setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
 
     String overrideContentSecurityPolicy = m_frame->loader().client().overrideContentSecurityPolicy();
@@ -6402,7 +6404,7 @@ void Document::initSecurityContext()
 #endif
 
     if (shouldEnforceHTTP09Sandbox()) {
-        auto message = makeString("Sandboxing '", m_url.stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9.");
+        auto message = makeString("Sandboxing '", m_url.url().stringCenterEllipsizedToLength(), "' because it is using HTTP/0.9.");
         addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
         enforceSandboxFlags(SandboxScripts | SandboxPlugins);
     }
@@ -6420,7 +6422,7 @@ void Document::initSecurityContext()
         } else if (!settings().allowFileAccessFromFileURLs()) {
             // Some clients want local URLs to have even tighter restrictions by default, and not be able to access other local files.
             // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
-            // still can have other privileges that can be remembered, thereby not making them unique origins.
+            // still can have other privileges that can be remembered, thereby not making them opaque origins.
             securityOrigin().setEnforcesFilePathSeparation();
         }
     }
@@ -8082,10 +8084,11 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
     if (!intersects)
         return std::nullopt;
 
-    LayoutRect rectInFrameViewSpace(renderer->view().frameView().contentsToView(snappedIntRect(*rectInFrameAbsoluteSpace)));
     auto* ownerRenderer = renderer->frame().ownerRenderer();
     if (!ownerRenderer)
         return std::nullopt;
+    
+    LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(*rectInFrameAbsoluteSpace) };
 
     rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
     return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer);
@@ -8841,7 +8844,7 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
     if (messageSource == MessageSource::Other)
         return;
 
-    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr { *this }, level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
+    eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, level, messageSource, logMessages = WTFMove(logMessages)]() mutable {
         if (!weakThis || !weakThis->page())
             return;
 
@@ -8880,7 +8883,7 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
         callback(false);
         return;
     }
-    eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr { *this }, url, callback = WTFMove(callback)]() mutable {
+    eventLoop().queueTask(TaskSource::DOMManipulation, [weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }, url, callback = WTFMove(callback)]() mutable {
         auto* frame = weakThis ? weakThis->frame() : nullptr;
         if (!frame) {
             callback(false);
@@ -9054,7 +9057,7 @@ void Document::didRejectSyncXHRDuringPageDismissal()
     if (m_numberOfRejectedSyncXHRs > 1)
         return;
 
-    postTask([this, weakThis = WeakPtr { *this }](auto&) mutable {
+    postTask([this, weakThis = WeakPtr<Document, WeakPtrImplWithEventTargetData> { *this }](auto&) mutable {
         if (weakThis)
             m_numberOfRejectedSyncXHRs = 0;
     });
@@ -9267,6 +9270,17 @@ void Document::notifyReportObservers(Ref<Report>&& reports)
 String Document::endpointURIForToken(const String& token) const
 {
     return reportingScope().endpointURIForToken(token);
+}
+
+String Document::httpUserAgent() const
+{
+    return userAgent(url());
+}
+
+void Document::sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType reportType)
+{
+    for (const auto& url : endPoints)
+        PingLoader::sendViolationReport(*frame(), URL { baseURL, url }, report.copyRef(), reportType);    
 }
 
 } // namespace WebCore

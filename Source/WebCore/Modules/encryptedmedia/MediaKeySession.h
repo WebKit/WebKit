@@ -61,14 +61,15 @@ class SharedBuffer;
 
 template<typename IDLType> class DOMPromiseProxy;
 
-class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTargetWithInlineData, public ActiveDOMObject, public CDMInstanceSessionClient {
+class MediaKeySession final : public RefCounted<MediaKeySession>, public EventTarget, public ActiveDOMObject, public CDMInstanceSessionClient {
     WTF_MAKE_ISO_ALLOCATED(MediaKeySession);
 public:
     static Ref<MediaKeySession> create(Document&, WeakPtr<MediaKeys>&&, MediaKeySessionType, bool useDistinctiveIdentifier, Ref<CDM>&&, Ref<CDMInstanceSession>&&);
     virtual ~MediaKeySession();
 
     using CDMInstanceSessionClient::weakPtrFactory;
-    using WeakValueType = CDMInstanceSessionClient::WeakValueType;
+    using CDMInstanceSessionClient::WeakValueType;
+    using CDMInstanceSessionClient::WeakPtrImplType;
     using RefCounted<MediaKeySession>::ref;
     using RefCounted<MediaKeySession>::deref;
 

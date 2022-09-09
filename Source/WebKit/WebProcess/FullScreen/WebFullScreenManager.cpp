@@ -203,7 +203,6 @@ void WebFullScreenManager::willEnterFullScreen()
     m_page->hidePageBanners();
 #endif
     m_element->document().updateLayout();
-    m_page->forceRepaintWithoutCallback();
     m_finalFrame = screenRectOfContents(m_element.get());
     m_page->injectedBundleFullScreenClient().beganEnterFullScreen(m_page.get(), m_initialFrame, m_finalFrame);
 }

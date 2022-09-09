@@ -33,6 +33,7 @@
 #include "IDBResourceIdentifier.h"
 #include "IDBTransactionInfo.h"
 #include "ThreadSafeDataBuffer.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 
 namespace WebCore {
@@ -111,10 +112,10 @@ public:
     WEBCORE_EXPORT const IDBGetAllResult& getAllResult() const;
 
     WEBCORE_EXPORT IDBResultData();
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<IDBResultData> decode(Decoder&);
 
 private:
+    friend struct IPC::ArgumentCoder<IDBResultData, void>;
+
     IDBResultData(const IDBResourceIdentifier&);
     IDBResultData(IDBResultType, const IDBResourceIdentifier&);
 
@@ -132,105 +133,6 @@ private:
     std::unique_ptr<IDBGetAllResult> m_getAllResult;
     uint64_t m_resultInteger { 0 };
 };
-
-template<class Encoder>
-void IDBResultData::encode(Encoder& encoder) const
-{
-    encoder << m_requestIdentifier << m_error << m_databaseConnectionIdentifier << m_resultInteger;
-
-    encoder << m_type;
-
-    encoder << !!m_databaseInfo;
-    if (m_databaseInfo)
-        encoder << *m_databaseInfo;
-
-    encoder << !!m_transactionInfo;
-    if (m_transactionInfo)
-        encoder << *m_transactionInfo;
-
-    encoder << !!m_resultKey;
-    if (m_resultKey)
-        encoder << *m_resultKey;
-
-    encoder << !!m_getResult;
-    if (m_getResult)
-        encoder << *m_getResult;
-
-    encoder << !!m_getAllResult;
-    if (m_getAllResult)
-        encoder << *m_getAllResult;
-}
-
-template<class Decoder> std::optional<IDBResultData> IDBResultData::decode(Decoder& decoder)
-{
-    IDBResultData result;
-    if (!decoder.decode(result.m_requestIdentifier))
-        return std::nullopt;
-
-    if (!decoder.decode(result.m_error))
-        return std::nullopt;
-
-    if (!decoder.decode(result.m_databaseConnectionIdentifier))
-        return std::nullopt;
-
-    if (!decoder.decode(result.m_resultInteger))
-        return std::nullopt;
-
-    if (!decoder.decode(result.m_type))
-        return std::nullopt;
-
-    bool hasObject;
-
-    if (!decoder.decode(hasObject))
-        return std::nullopt;
-    if (hasObject) {
-        auto object = makeUnique<IDBDatabaseInfo>();
-        if (!decoder.decode(*object))
-            return std::nullopt;
-        result.m_databaseInfo = WTFMove(object);
-    }
-
-    if (!decoder.decode(hasObject))
-        return std::nullopt;
-    if (hasObject) {
-        auto object = makeUnique<IDBTransactionInfo>();
-        if (!decoder.decode(*object))
-            return std::nullopt;
-        result.m_transactionInfo = WTFMove(object);
-    }
-
-    if (!decoder.decode(hasObject))
-        return std::nullopt;
-    if (hasObject) {
-        auto object = makeUnique<IDBKeyData>();
-        std::optional<IDBKeyData> optional;
-        decoder >> optional;
-        if (!optional)
-            return std::nullopt;
-        *object = WTFMove(*optional);
-        result.m_resultKey = WTFMove(object);
-    }
-
-    if (!decoder.decode(hasObject))
-        return std::nullopt;
-    if (hasObject) {
-        auto object = makeUnique<IDBGetResult>();
-        if (!decoder.decode(*object))
-            return std::nullopt;
-        result.m_getResult = WTFMove(object);
-    }
-
-    if (!decoder.decode(hasObject))
-        return std::nullopt;
-    if (hasObject) {
-        auto object = makeUnique<IDBGetAllResult>();
-        if (!decoder.decode(*object))
-            return std::nullopt;
-        result.m_getAllResult = WTFMove(object);
-    }
-
-    return result;
-}
 
 } // namespace WebCore
 

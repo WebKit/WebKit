@@ -56,6 +56,7 @@
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPasteboardProxy.h"
+#include "WebPermissionControllerMessages.h"
 #include "WebPermissionControllerProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessCache.h"
@@ -69,9 +70,11 @@
 #include "WebsiteData.h"
 #include "WebsiteDataFetchOption.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
+#include <WebCore/PermissionName.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PrewarmInformation.h>
 #include <WebCore/PublicSuffix.h>
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/SuddenTermination.h>
 #include <pal/system/Sound.h>
 #include <stdio.h>
@@ -825,7 +828,7 @@ void WebProcessProxy::gpuProcessDidFinishLaunching()
 
 void WebProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
 {
-    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessExited: reason=%{public}s", processTerminationReasonToString(reason));
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "gpuProcessExited: reason=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason));
 
     for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
         page->gpuProcessExited(reason);
@@ -883,7 +886,7 @@ void WebProcessProxy::didClose(IPC::Connection& connection)
 
 void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReason reason)
 {
-    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminateOrFailedToLaunch: reason=%{public}s", processTerminationReasonToString(reason));
+    WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "processDidTerminateOrFailedToLaunch: reason=%" PUBLIC_LOG_STRING, processTerminationReasonToString(reason));
 
     // Protect ourselves, as the call to shutDown() below may otherwise cause us
     // to be deleted before we can finish our work.
@@ -1026,7 +1029,7 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     Ref protectedThis { *this };
     AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
-    if (!IPC::Connection::identifierIsValid(connectionIdentifier)) {
+    if (!connectionIdentifier) {
         WEBPROCESSPROXY_RELEASE_LOG_ERROR(Process, "didFinishLaunching: Invalid connection identifier (web process failed to launch)");
         processDidTerminateOrFailedToLaunch(ProcessTerminationReason::Crash);
         return;
@@ -1872,12 +1875,12 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 
 void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, const WebPreferencesStore& store, const RegistrableDomain& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Started (workerType=%{public}s)", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
+    WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Started (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
     markProcessAsRecentlyUsed();
     auto& remoteWorkerInformation = workerType == RemoteWorkerType::ServiceWorker ? m_serviceWorkerInformation : m_sharedWorkerInformation;
     sendWithAsyncReply(Messages::WebProcess::EstablishRemoteWorkerContextConnectionToNetworkProcess { workerType, processPool().defaultPageGroup().pageGroupID(), remoteWorkerInformation->remoteWorkerPageProxyID, remoteWorkerInformation->remoteWorkerPageID, store, registrableDomain, serviceWorkerPageIdentifier, remoteWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, workerType, completionHandler = WTFMove(completionHandler)]() mutable {
         if (weakThis)
-            WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Finished (workerType=%{public}s)", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
+            WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Finished (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
         completionHandler();
     }, 0);
 }
@@ -1909,7 +1912,7 @@ void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType worker
     if (!workerInformation)
         return;
 
-    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateRemoteWorkerProcessAssertion: workerType=%{public}s", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service");
+    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateRemoteWorkerProcessAssertion: workerType=%" PUBLIC_LOG_STRING, workerType == RemoteWorkerType::SharedWorker ? "shared" : "service");
 
     bool shouldTakeForegroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_foregroundToken;
@@ -1945,7 +1948,7 @@ void WebProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerT
     if (!workerInformation)
         return;
 
-    WEBPROCESSPROXY_RELEASE_LOG(Worker, "registerWorkerClientProcess: workerType=%{public}s, clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
+    WEBPROCESSPROXY_RELEASE_LOG(Worker, "registerWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
     workerInformation->clientProcesses.add(proxy);
     updateRemoteWorkerProcessAssertion(workerType);
 }
@@ -1956,7 +1959,7 @@ void WebProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType worke
     if (!workerInformation)
         return;
 
-    WEBPROCESSPROXY_RELEASE_LOG(Worker, "unregisterWorkerClientProcess: workerType=%{public}s, clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
+    WEBPROCESSPROXY_RELEASE_LOG(Worker, "unregisterWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
     workerInformation->clientProcesses.remove(proxy);
     updateRemoteWorkerProcessAssertion(workerType);
 }
@@ -2006,7 +2009,7 @@ void WebProcessProxy::disableRemoteWorkers(RemoteWorkerType workerType)
 #endif
     remoteWorkerInformation = { };
 
-    WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling workers (workerType=%{public}s)", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
+    WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling workers (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
 
     updateBackgroundResponsivenessTimer();
 
@@ -2117,6 +2120,21 @@ const WeakHashSet<WebProcessProxy>* WebProcessProxy::sharedWorkerClientProcesses
     if (m_sharedWorkerInformation)
         return &m_sharedWorkerInformation.value().clientProcesses;
     return nullptr;
+}
+
+void WebProcessProxy::permissionChanged(WebCore::PermissionName permissionName, const WebCore::SecurityOriginData& topOrigin)
+{
+    auto webProcessPools = WebKit::WebProcessPool::allProcessPools();
+
+    for (auto& webProcessPool : webProcessPools) {
+        for (auto& webProcessProxy : webProcessPool->processes())
+            webProcessProxy->sendPermissionChanged(permissionName, topOrigin);
+    }
+}
+
+void WebProcessProxy::sendPermissionChanged(WebCore::PermissionName permissionName, const WebCore::SecurityOriginData& topOrigin)
+{
+    send(Messages::WebPermissionController::permissionChanged(permissionName, topOrigin), 0);
 }
 
 } // namespace WebKit

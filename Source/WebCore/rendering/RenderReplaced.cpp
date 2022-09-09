@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderReplaced.h"
 
+#include "BackgroundPainter.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentMarkerController.h"
 #include "ElementRuleCollector.h"
@@ -272,7 +273,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             paintInfo.context().save();
             auto pixelSnappedRoundedRect = style().getRoundedInnerBorderFor(paintRect,
                 paddingTop() + borderTop(), paddingBottom() + borderBottom(), paddingLeft() + borderLeft(), paddingRight() + borderRight(), true, true).pixelSnappedRoundedRectForPainting(document().deviceScaleFactor());
-            clipRoundedInnerRect(paintInfo.context(), paintRect, pixelSnappedRoundedRect);
+            BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), paintRect, pixelSnappedRoundedRect);
         }
     }
 
@@ -339,34 +340,6 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         return false;
 
     return true;
-}
-
-static inline RenderBlock* firstContainingBlockWithLogicalWidth(const RenderReplaced* replaced)
-{
-    // We have to lookup the containing block, which has an explicit width, which must not be equal to our direct containing block.
-    // If the embedded document appears _after_ we performed the initial layout, our intrinsic size is 300x150. If our containing
-    // block doesn't provide an explicit width, it's set to the 300 default, coming from the initial layout run.
-    RenderBlock* containingBlock = replaced->containingBlock();
-    if (!containingBlock)
-        return 0;
-
-    for (; containingBlock && !is<RenderView>(*containingBlock) && !containingBlock->isBody(); containingBlock = containingBlock->containingBlock()) {
-        if (containingBlock->style().logicalWidth().isSpecified())
-            return containingBlock;
-    }
-
-    return 0;
-}
-
-bool RenderReplaced::hasReplacedLogicalWidth() const
-{
-    if (style().logicalWidth().isSpecified())
-        return true;
-
-    if (style().logicalWidth().isAuto())
-        return false;
-
-    return firstContainingBlockWithLogicalWidth(this);
 }
 
 bool RenderReplaced::hasReplacedLogicalHeight() const
@@ -568,6 +541,8 @@ static inline bool hasIntrinsicSize(RenderBox*contentRenderer, bool hasIntrinsic
 
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
+    if (shouldApplyInlineSizeContainment())
+        return LayoutUnit();
     if (style().logicalWidth().isSpecified() || style().logicalWidth().isIntrinsic())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
 

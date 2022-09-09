@@ -49,8 +49,8 @@ public:
 
 private:
     // Own destructor may not be called. Keep members trivially destructible.
-    JSC_WATCHPOINT_FIELD(PackedCellPtr<CodeBlock>, m_codeBlock);
-    JSC_WATCHPOINT_FIELD(ObjectPropertyCondition, m_key);
+    PackedCellPtr<CodeBlock> m_codeBlock;
+    ObjectPropertyCondition m_key;
 };
 
 } } // namespace JSC::DFG

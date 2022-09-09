@@ -32,6 +32,7 @@
 #include "JSTestReportBody.h"
 #include "ReportBody.h"
 #include "TestReportBody.h"
+#include "ViolationReportType.h"
 
 namespace WebCore {
 using namespace JSC;

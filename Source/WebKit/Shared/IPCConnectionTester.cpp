@@ -36,11 +36,11 @@ namespace WebKit {
 static IPC::Connection::Identifier asIdentifier(IPC::Attachment&& connectionIdentifier)
 {
 #if USE(UNIX_DOMAIN_SOCKETS)
-    return { connectionIdentifier.release().release() };
+    return IPC::Connection::Identifier { connectionIdentifier.release().release() };
 #elif OS(DARWIN)
-    return { connectionIdentifier.leakSendRight() };
+    return IPC::Connection::Identifier { connectionIdentifier.leakSendRight() };
 #elif OS(WINDOWS)
-    return { connectionIdentifier.handle() };
+    return IPC::Connection::Identifier { connectionIdentifier.handle() };
 #else
     notImplemented();
     return { };

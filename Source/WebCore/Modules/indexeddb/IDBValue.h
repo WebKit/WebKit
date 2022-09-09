@@ -39,7 +39,7 @@ public:
     IDBValue(const SerializedScriptValue&);
     IDBValue(const ThreadSafeDataBuffer&);
     IDBValue(const SerializedScriptValue&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
-    IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
+    WEBCORE_EXPORT IDBValue(const ThreadSafeDataBuffer&, Vector<String>&& blobURLs, Vector<String>&& blobFilePaths);
     IDBValue(const ThreadSafeDataBuffer&, const Vector<String>& blobURLs, const Vector<String>& blobFilePaths);
 
     void setAsIsolatedCopy(const IDBValue&);
@@ -49,38 +49,11 @@ public:
     const Vector<String>& blobURLs() const { return m_blobURLs; }
     const Vector<String>& blobFilePaths() const { return m_blobFilePaths; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<IDBValue> decode(Decoder&);
-
     size_t size() const;
 private:
     ThreadSafeDataBuffer m_data;
     Vector<String> m_blobURLs;
     Vector<String> m_blobFilePaths;
 };
-
-template<class Encoder>
-void IDBValue::encode(Encoder& encoder) const
-{
-    encoder << m_data;
-    encoder << m_blobURLs;
-    encoder << m_blobFilePaths;
-}
-
-template<class Decoder>
-std::optional<IDBValue> IDBValue::decode(Decoder& decoder)
-{
-    IDBValue result;
-    if (!decoder.decode(result.m_data))
-        return std::nullopt;
-
-    if (!decoder.decode(result.m_blobURLs))
-        return std::nullopt;
-
-    if (!decoder.decode(result.m_blobFilePaths))
-        return std::nullopt;
-
-    return result;
-}
 
 } // namespace WebCore

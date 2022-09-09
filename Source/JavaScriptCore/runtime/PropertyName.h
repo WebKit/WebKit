@@ -132,19 +132,18 @@ ALWAYS_INLINE std::optional<uint32_t> parseIndex(PropertyName propertyName)
 }
 
 // https://www.ecma-international.org/ecma-262/9.0/index.html#sec-canonicalnumericindexstring
-ALWAYS_INLINE bool isCanonicalNumericIndexString(const PropertyName& propertyName)
+ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName)
 {
-    StringImpl* property = propertyName.uid();
-    if (!property)
+    if (!propertyName)
         return false;
-    if (property->isSymbol())
+    if (propertyName->isSymbol())
         return false;
-    if (equal(property, "-0"_s))
+    if (equal(propertyName, "-0"_s))
         return true;
-    double index = jsToNumber(property);
+    double index = jsToNumber(propertyName);
     NumberToStringBuffer buffer;
     const char* indexString = WTF::numberToString(index, buffer);
-    if (!equal(property, indexString))
+    if (!equal(propertyName, indexString))
         return false;
     return true;
 }

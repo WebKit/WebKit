@@ -119,9 +119,9 @@ public:
 
     RadioButtonGroups& radioButtonGroups() { return m_radioButtonGroups; }
 
-    WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement>>& unsafeAssociatedElements() const;
+    WEBCORE_EXPORT const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& unsafeAssociatedElements() const;
     Vector<Ref<FormAssociatedElement>> copyAssociatedElementsVector() const;
-    const Vector<WeakPtr<HTMLImageElement>>& imageElements() const { return m_imageElements; }
+    const Vector<WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData>>& imageElements() const { return m_imageElements; }
 
     StringPairVector textFieldValues() const;
 
@@ -175,16 +175,16 @@ private:
     RefPtr<HTMLFormControlElement> findSubmitButton(HTMLFormControlElement* submitter, bool needButtonActivation);
 
     FormSubmission::Attributes m_attributes;
-    HashMap<AtomString, WeakPtr<HTMLElement>> m_pastNamesMap;
+    HashMap<AtomString, WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_pastNamesMap;
 
     RadioButtonGroups m_radioButtonGroups;
-    mutable WeakPtr<HTMLFormControlElement> m_defaultButton;
+    mutable WeakPtr<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_defaultButton;
 
     unsigned m_associatedElementsBeforeIndex { 0 };
     unsigned m_associatedElementsAfterIndex { 0 };
-    Vector<WeakPtr<HTMLElement>> m_associatedElements;
-    Vector<WeakPtr<HTMLImageElement>> m_imageElements;
-    WeakHashSet<HTMLFormControlElement> m_invalidAssociatedFormControls;
+    Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> m_associatedElements;
+    Vector<WeakPtr<HTMLImageElement, WeakPtrImplWithEventTargetData>> m_imageElements;
+    WeakHashSet<HTMLFormControlElement, WeakPtrImplWithEventTargetData> m_invalidAssociatedFormControls;
     WeakPtr<FormSubmission> m_plannedFormSubmission;
     std::unique_ptr<DOMTokenList> m_relList;
 

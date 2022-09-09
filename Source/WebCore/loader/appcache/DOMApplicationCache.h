@@ -34,7 +34,7 @@ namespace WebCore {
 class ApplicationCacheHost;
 class Frame;
 
-class DOMApplicationCache final : public RefCounted<DOMApplicationCache>, public EventTargetWithInlineData, public DOMWindowProperty {
+class DOMApplicationCache final : public RefCounted<DOMApplicationCache>, public EventTarget, public DOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(DOMApplicationCache);
 public:
     static Ref<DOMApplicationCache> create(DOMWindow& window) { return adoptRef(*new DOMApplicationCache(window)); }

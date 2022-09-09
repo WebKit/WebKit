@@ -17,7 +17,7 @@ class GithubDownloadTask(object):
 
     def __init__(self, source_url, subtree=None):
         match = self.URL_RE.match(source_url)
-        assert match, f'Unrecognized source URL: {source_url}'
+        assert match, 'Unrecognized source URL: {}'.format(source_url)
         owner = match.group('owner')
         repository = match.group('repository')
         api_url = 'https://api.github.{}'.format(match.group('domain'))
@@ -46,7 +46,7 @@ def retry_on_exception(count):
                 try:
                     return function(*args, **kwargs)
                 except Exception as error:
-                    _log.warning(f'Encountered {error} in {function.__name__}, remaining retry: {remaining_retry}.')
+                    _log.warning('Encountered {} in {}, remaining retry: {}.'.format(error, function.__name__, remaining_retry))
                     if not remaining_retry:
                         raise
         return wrapped
@@ -104,11 +104,11 @@ class GithubDownloader(object):
                     visited_path.append(part)
                     break
             else:
-                raise Exception(f'Path {part} does not exists under {os.path.join(*visited_path)}.')
+                raise Exception('Path {} does not exists under {}.'.format(part, os.path.join(*visited_path)))
         return subtree
 
     def _download_subtree_multiprocessing(self, base_relpath_in_repo, commit_hash, subtree, output_directory):
-        _log.info(f'Checking out content under {base_relpath_in_repo}:')
+        _log.info('Checking out content under {}:'.format(base_relpath_in_repo))
         result_by_path = {}
 
         with Pool(10) as pool:
@@ -118,7 +118,7 @@ class GithubDownloader(object):
                 mode = entry['mode']
                 if self.is_directory(entry):
                     os.makedirs(destination_path, exist_ok=True)
-                    _log.info(f'{rel_path_in_repo}')
+                    _log.info(str(rel_path_in_repo))
                 elif self.is_symlink(entry):
                     result_by_path[rel_path_in_repo] = pool.apply_async(self._resolve_symlink,
                                                                         (commit_hash, rel_path_in_repo, destination_path))
@@ -126,11 +126,11 @@ class GithubDownloader(object):
                     result_by_path[rel_path_in_repo] = pool.apply_async(self._download_raw_content,
                                                                         (commit_hash, rel_path_in_repo, destination_path))
                 else:
-                    raise Exception(f'Unrecognized file: {rel_path_in_repo} with mode {mode}')
+                    raise Exception('Unrecognized file: {} with mode {}'.format(rel_path_in_repo, mode))
             for path, result in result_by_path.items():
                 result.wait()
-                assert result.successful(), f'Failed to download {path}'
-                _log.info(f'{path}')
+                assert result.successful(), 'Failed to download {}'.format(path)
+                _log.info(str(path))
 
         for entry in self.walk(subtree):
             mode = entry['mode']
@@ -161,11 +161,11 @@ class GithubDownloader(object):
         return self._request(url, kwargs)
 
     def _commit(self, commit_hash):
-        url = f'{self._url}/repos/{self._owner}/{self._repository}/git/commits/{commit_hash}'
+        url = '{}/repos/{}/{}/git/commits/{}'.format(self._url, self._owner, self._repository, commit_hash)
         return self._request(url)
 
     def _raw_content_url(self, commit_hash, rel_path_in_repo):
-        return f'https://raw.githubusercontent.com/{self._owner}/{self._repository}/{commit_hash}/{rel_path_in_repo}'
+        return 'https://raw.githubusercontent.com/{}/{}/{}/{}'.format(self._owner, self._repository, commit_hash, rel_path_in_repo)
 
     @retry_on_exception(3)
     def _download_raw_content(self, commit_hash, rel_path_in_repo, destination_path):
@@ -180,15 +180,15 @@ class GithubDownloader(object):
 
     def _request(self, url, params=None):
         params = params or dict()
-        _log.info(f'Accessing {url} with {params}')
+        _log.info('Accessing {} with {}'.format(url, params))
         response = self.session.get(url, headers={'Accept': 'application/vnd.github+json'}, params=params).json()
         if 'API rate limit exceeded' in response.get('message', ''):
             reset_time = int(response.headers.get('X-RateLimit-Reset', '0'))
             if not reset_time:
-                rate_limit = self.session.get(f'{self._url}/rate_limit').json()
+                rate_limit = self.session.get('{}/rate_limit'.format(self._url)).json()
                 reset_time = rate_limit['resources']['core']['reset']
             wait_time = reset_time - int(time.time())
-            _log.info(f'Hit rate limit, will wait for {wait_time} seconds')
+            _log.info('Hit rate limit, will wait for {} seconds'.format(wait_time))
             time.sleep(wait_time)
             return self._request(url, params)
         return response

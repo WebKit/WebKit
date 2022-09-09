@@ -28,59 +28,36 @@
 #include "config.h"
 #include "Attachment.h"
 
-#include "Decoder.h"
-#include "Encoder.h"
-#include <wtf/ArgumentCoder.h>
-
-// FIXME: This code is duplicated with SharedMemory::Handle implementation for Win
+#include "ArgumentCoders.h"
 
 namespace IPC {
 
-void Attachment::encode(Encoder& encoder) const
+Attachment::Attachment(Win32Handle&& handle)
+    : m_handle(WTFMove(handle))
 {
-    // Hand off ownership of our HANDLE to the receiving process. It will close it for us.
-    // FIXME: If the receiving process crashes before it receives the memory, the memory will be
-    // leaked. See <http://webkit.org/b/47502>.
-    encoder << reinterpret_cast<uint64_t>(m_handle);
-
-    // Send along our PID so that the receiving process can duplicate the HANDLE for its own use.
-    encoder << static_cast<uint32_t>(::GetCurrentProcessId());
 }
 
-static bool getDuplicatedHandle(HANDLE sourceHandle, DWORD sourcePID, HANDLE& duplicatedHandle)
+void Attachment::encode(Encoder& encoder) const
 {
-    duplicatedHandle = 0;
-    if (!sourceHandle)
-        return true;
-
-    HANDLE sourceProcess = ::OpenProcess(PROCESS_DUP_HANDLE, FALSE, sourcePID);
-    if (!sourceProcess)
-        return false;
-
-    // Copy the handle into our process and close the handle that the sending process created for us.
-    BOOL success = ::DuplicateHandle(sourceProcess, sourceHandle, ::GetCurrentProcess(), &duplicatedHandle, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE);
-    ASSERT_WITH_MESSAGE(success, "::DuplicateHandle failed with error %lu", ::GetLastError());
-
-    ::CloseHandle(sourceProcess);
-
-    return success;
+    encoder << m_handle;
 }
 
 std::optional<Attachment> Attachment::decode(Decoder& decoder)
 {
-    uint64_t sourceHandle;
-    if (!decoder.decode(sourceHandle))
+    auto handle = decoder.decode<Win32Handle>();
+    if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
+    return Attachment { WTFMove(*handle) };
+}
 
-    uint32_t sourcePID;
-    if (!decoder.decode(sourcePID))
-        return std::nullopt;
+const Win32Handle& Attachment::handle() const
+{
+    return m_handle;
+}
 
-    HANDLE duplicatedHandle;
-    if (!getDuplicatedHandle(reinterpret_cast<HANDLE>(sourceHandle), sourcePID, duplicatedHandle))
-        return std::nullopt;
-
-    return Attachment { duplicatedHandle };
+Win32Handle Attachment::release()
+{
+    return WTFMove(m_handle);
 }
 
 } // namespace IPC

@@ -35,7 +35,7 @@ namespace WebCore {
 
 class RTCDtlsTransport;
 
-class RTCSctpTransport final : public RefCounted<RTCSctpTransport>, public ActiveDOMObject, public EventTargetWithInlineData, public RTCSctpTransportBackend::Client {
+class RTCSctpTransport final : public RefCounted<RTCSctpTransport>, public ActiveDOMObject, public EventTarget, public RTCSctpTransportBackend::Client {
     WTF_MAKE_ISO_ALLOCATED(RTCSctpTransport);
 public:
     static Ref<RTCSctpTransport> create(ScriptExecutionContext&, UniqueRef<RTCSctpTransportBackend>&&, Ref<RTCDtlsTransport>&&);
@@ -56,7 +56,7 @@ public:
 private:
     RTCSctpTransport(ScriptExecutionContext&, UniqueRef<RTCSctpTransportBackend>&&, Ref<RTCDtlsTransport>&&);
 
-    // EventTargetWithInlineData
+    // EventTarget
     EventTargetInterface eventTargetInterface() const final { return RTCSctpTransportEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }

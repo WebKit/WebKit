@@ -238,6 +238,11 @@ void RemoteWebInspectorUI::showCertificate(const CertificateInfo& certificateInf
     WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::ShowCertificate(certificateInfo), m_page.identifier());
 }
 
+void RemoteWebInspectorUI::setInspectorPageDeveloperExtrasEnabled(bool enabled)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::RemoteWebInspectorUIProxy::SetInspectorPageDeveloperExtrasEnabled(enabled), m_page.identifier());
+}
+
 Inspector::DebuggableType RemoteWebInspectorUI::debuggableType() const
 {
     return m_debuggableInfo.debuggableType;

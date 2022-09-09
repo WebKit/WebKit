@@ -142,7 +142,6 @@
 		290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 290F4274172A1FDE00939FF0 /* custom-protocol-sync-xhr.html */; };
 		297234B7173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297234B5173AFAC700983601 /* CustomProtocolsInvalidScheme_Bundle.cpp */; };
 		29E06E5E266F3C0600F1A707 /* AccessibilityIncreaseContrast.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29E06E5D266F3C0600F1A707 /* AccessibilityIncreaseContrast.mm */; };
-		2B648DBB28C1C1F700791F2B /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B648DBA28C1C1F700791F2B /* WebKit.framework */; };
 		2D09CF0026A68297009C43C0 /* GraphicsContextTestsCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D09CEFF26A68296009C43C0 /* GraphicsContextTestsCG.cpp */; };
 		2D1646E21D1862CD00015A1A /* DeferredViewInWindowStateChange.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2D1646E11D1862CD00015A1A /* DeferredViewInWindowStateChange.mm */; };
 		2D2FE8DA231745C900B2E9C9 /* long-email-viewport.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2D2FE8D9231745AB00B2E9C9 /* long-email-viewport.html */; };
@@ -539,6 +538,7 @@
 		7B2739F32632AB640040F182 /* ThreadAssertionsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B2739F22632AB640040F182 /* ThreadAssertionsTest.cpp */; };
 		7B397C0628BE0EAD00239202 /* ConnectionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B397C0528BE0EAD00239202 /* ConnectionTests.cpp */; };
 		7B397C0828BE394B00239202 /* UtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C83E0391D0A602700FEBCF3 /* UtilitiesCocoa.mm */; };
+		7B6FF89728C22D9400CA76B0 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 2B648DBA28C1C1F700791F2B /* WebKit.framework */; };
 		7B774906267CCE72009873B4 /* TestRunnerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B774904267CCE68009873B4 /* TestRunnerTests.cpp */; };
 		7B7D096A2519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B7D09692519F8F90017A078 /* WebGLNoCrashOnOtherThreadAccess.mm */; };
 		7B9FC39F28A26137007570E7 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
@@ -1334,6 +1334,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		7B6FF89528C22D3D00CA76B0 /* Product Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				7B6FF89728C22D9400CA76B0 /* WebKit.framework in Product Dependencies */,
+			);
+			name = "Product Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DD76F9E0486AA7600D96B5E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
@@ -3408,7 +3419,6 @@
 				7B9FC5B528A5222D007570E7 /* QuartzCore.framework in Frameworks */,
 				7B9FC3AD28A26137007570E7 /* Security.framework in Frameworks */,
 				7B9FC5CE28A52ECD007570E7 /* WebCore.framework in Frameworks */,
-				2B648DBB28C1C1F700791F2B /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5432,6 +5442,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7B9FC57B28A26137007570E7 /* Build configuration list for PBXNativeTarget "TestIPC" */;
 			buildPhases = (
+				7B6FF89528C22D3D00CA76B0 /* Product Dependencies */,
 				7B9FC39B28A26137007570E7 /* Sources */,
 				7B9FC3A328A26137007570E7 /* Frameworks */,
 			);

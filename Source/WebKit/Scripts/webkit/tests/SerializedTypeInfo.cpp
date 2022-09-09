@@ -38,12 +38,29 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             "RetainPtr<CFTypeRef>"_s,
         } },
         { "Namespace::OtherClass"_s, {
+            "bool"_s,
             "int"_s,
             "bool"_s,
         } },
         { "Namespace::ReturnRefClass"_s, {
             "double"_s,
             "double"_s,
+            "std::unique_ptr<int>"_s,
+        } },
+        { "Namespace::EmptyConstructorStruct"_s, {
+            "int"_s,
+            "double"_s,
+        } },
+        { "Namespace::EmptyConstructorNullable"_s, {
+            "bool"_s,
+            "MemberType"_s,
+            "OtherMemberType"_s,
+        } },
+        { "WithoutNamespace"_s, {
+            "int"_s,
+        } },
+        { "WithoutNamespaceWithAttributes"_s, {
+            "int"_s,
         } },
     };
 }

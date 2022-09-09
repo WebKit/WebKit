@@ -155,7 +155,7 @@ bool StyleMultiImage::hasClient(RenderElement& renderer) const
     return m_selectedImage->hasClient(renderer);
 }
 
-RefPtr<Image> StyleMultiImage::image(RenderElement* renderer, const FloatSize& size) const
+RefPtr<Image> StyleMultiImage::image(const RenderElement* renderer, const FloatSize& size) const
 {
     if (!m_selectedImage)
         return nullptr;

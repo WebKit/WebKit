@@ -50,8 +50,9 @@ public:
     GraphicsContextCGDisplayList(const CGDisplayListImageBufferBackend::Parameters& parameters)
         : GraphicsContextCG(adoptCF(WKCGCommandsContextCreate(parameters.logicalSize, nullptr)).autorelease())
     {
-        m_immutableBaseTransform.scale(parameters.resolutionScale, -parameters.resolutionScale);
-        m_immutableBaseTransform.translate(0, -parameters.logicalSize.height());
+        m_immutableBaseTransform.scale(1, -1);
+        m_immutableBaseTransform.translate(0, -ceilf(parameters.logicalSize.height() * parameters.resolutionScale));
+        m_immutableBaseTransform.scale(parameters.resolutionScale);
         m_inverseImmutableBaseTransform = *m_immutableBaseTransform.inverse();
     }
 

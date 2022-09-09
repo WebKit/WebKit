@@ -51,7 +51,7 @@ template<typename IDLType> class DOMPromiseDeferred;
 class MediaStreamTrack
     : public RefCounted<MediaStreamTrack>
     , public ActiveDOMObject
-    , public EventTargetWithInlineData
+    , public EventTarget
     , private MediaStreamTrackPrivate::Observer
     , private PlatformMediaSession::AudioCaptureSource
 #if !RELEASE_LOG_DISABLED
@@ -113,8 +113,8 @@ public:
         std::optional<int> sampleRate;
         std::optional<int> sampleSize;
         std::optional<bool> echoCancellation;
-        std::optional<bool> displaySurface;
-        String logicalSurface;
+        String displaySurface;
+        std::optional<bool> logicalSurface;
         String deviceId;
         String groupId;
     };
@@ -132,6 +132,7 @@ public:
         std::optional<Vector<bool>> echoCancellation;
         String deviceId;
         String groupId;
+        String displaySurface;
     };
     TrackCapabilities getCapabilities() const;
 
@@ -154,8 +155,6 @@ public:
     using RefCounted::deref;
 
     void setIdForTesting(String&& id) { m_private->setIdForTesting(WTFMove(id)); }
-
-    Document* document() const;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_private->logger(); }
@@ -198,6 +197,8 @@ private:
 
     // PlatformMediaSession::AudioCaptureSource
     bool isCapturingAudio() const final;
+
+    void updateVideoCaptureAccordingMicrophoneInterruption(Document&, bool);
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaStreamTrack"; }

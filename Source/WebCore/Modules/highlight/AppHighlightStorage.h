@@ -63,7 +63,7 @@ public:
 private:
     bool attemptToRestoreHighlightAndScroll(AppHighlightRangeData&, ScrollToHighlight);
     
-    WeakPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     MonotonicTime m_timeAtLastRangeSearch;
     Vector<AppHighlightRangeData> m_unrestoredHighlights;
     std::optional<AppHighlightRangeData> m_unrestoredScrollHighlight;

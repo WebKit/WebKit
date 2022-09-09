@@ -519,10 +519,10 @@ class TestPort(Port):
     def web_platform_test_server_doc_root(self):
         return 'imported/w3c/web-platform-tests/'
 
-    def web_platform_test_server_base_http_url(self):
+    def web_platform_test_server_base_http_url(self, localhost_only=False):
         return "http://localhost:8800/"
 
-    def web_platform_test_server_base_https_url(self):
+    def web_platform_test_server_base_https_url(self, localhost_only=False):
         return "https://localhost:8800/"
 
     def _path_to_lighttpd(self):

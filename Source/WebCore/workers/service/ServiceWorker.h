@@ -47,7 +47,7 @@ class SWClientConnection;
 
 struct StructuredSerializeOptions;
 
-class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTargetWithInlineData, public ActiveDOMObject {
+class ServiceWorker final : public RefCounted<ServiceWorker>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(ServiceWorker);
 public:
     using State = ServiceWorkerState;

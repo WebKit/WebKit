@@ -370,10 +370,10 @@ void NetworkLoadChecker::checkCORSRedirectedRequest(ResourceRequest&& request, V
     m_isSameOriginRequest = false;
 
     if (!m_origin->canRequest(m_previousURL) && !protocolHostAndPortAreEqual(m_previousURL, request.url())) {
-        // Use a unique origin for subsequent loads if needed.
+        // Use an opaque origin for subsequent loads if needed.
         // https://fetch.spec.whatwg.org/#concept-http-redirect-fetch (Step 10).
-        if (!m_origin || !m_origin->isUnique())
-            m_origin = SecurityOrigin::createUnique();
+        if (!m_origin || !m_origin->isOpaque())
+            m_origin = SecurityOrigin::createOpaque();
     }
 
     // FIXME: We should set the request referrer according the referrer policy.

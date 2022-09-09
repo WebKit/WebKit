@@ -50,16 +50,35 @@ namespace WebCore {
 
 struct AddEventListenerOptions;
 class DOMWrapperWorld;
+class EventTarget;
 class JSEventListener;
 
 struct EventTargetData {
     WTF_MAKE_NONCOPYABLE(EventTargetData); WTF_MAKE_FAST_ALLOCATED;
 public:
     EventTargetData() = default;
+
+    void clear()
+    {
+        eventListenerMap.clearEntriesForTearDown();
+    }
+
     EventListenerMap eventListenerMap;
 };
 
-class EventTarget : public ScriptWrappable, public CanMakeWeakPtr<EventTarget> {
+// Do not make WeakPtrImplWithEventTargetData a derived class of DefaultWeakPtrImpl to catch the bug which uses incorrect impl class.
+class WeakPtrImplWithEventTargetData final : public WTF::WeakPtrImplBase<WeakPtrImplWithEventTargetData> {
+public:
+    EventTargetData& eventTargetData() { return m_eventTargetData; }
+    const EventTargetData& eventTargetData() const { return m_eventTargetData; }
+
+    template<typename T> WeakPtrImplWithEventTargetData(T* ptr) : WTF::WeakPtrImplBase<WeakPtrImplWithEventTargetData>(ptr) { }
+
+private:
+    EventTargetData m_eventTargetData;
+};
+
+class EventTarget : public ScriptWrappable, public CanMakeWeakPtr<EventTarget, WeakPtrFactoryInitialization::Lazy, WeakPtrImplWithEventTargetData> {
     WTF_MAKE_ISO_ALLOCATED(EventTarget);
 public:
     static Ref<EventTarget> create(ScriptExecutionContext&);
@@ -70,7 +89,6 @@ public:
     virtual EventTargetInterface eventTargetInterface() const = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 
-    WEBCORE_EXPORT virtual bool isNode() const;
     WEBCORE_EXPORT virtual bool isPaymentRequest() const;
 
     using AddEventListenerOptionsOrBoolean = std::variant<AddEventListenerOptions, bool>;
@@ -106,39 +124,69 @@ public:
     template<typename Visitor> void visitJSEventListeners(Visitor&);
     void invalidateJSEventListeners(JSC::JSObject*);
 
-    const EventTargetData* eventTargetData() const;
+    const EventTargetData* eventTargetData() const
+    {
+        if (hasEventTargetData())
+            return &weakPtrFactory().impl()->eventTargetData();
+        return nullptr;
+    }
+
+    EventTargetData* eventTargetData()
+    {
+        if (hasEventTargetData())
+            return &weakPtrFactory().impl()->eventTargetData();
+        return nullptr;
+    }
+
+    EventTargetData* eventTargetDataConcurrently()
+    {
+        bool flag = this->hasEventTargetData();
+        auto fencedFlag = Dependency::fence(flag);
+        if (flag)
+            return &fencedFlag.consume(this)->weakPtrFactory().impl()->eventTargetData();
+        return nullptr;
+    }
+
+    bool hasEventTargetData() const { return hasEventTargetFlag(EventTargetFlag::HasEventTargetData); }
+    bool isNode() const { return hasEventTargetFlag(EventTargetFlag::IsNode); }
 
 protected:
+    enum ConstructNodeTag { ConstructNode };
+    EventTarget() = default;
+    EventTarget(ConstructNodeTag)
+    {
+        setEventTargetFlag(EventTargetFlag::IsNode, true);
+    }
+
     WEBCORE_EXPORT virtual ~EventTarget();
-    
-    virtual EventTargetData* eventTargetData() = 0;
-    virtual EventTargetData* eventTargetDataConcurrently() = 0;
-    virtual EventTargetData& ensureEventTargetData() = 0;
+
+    enum class EventTargetFlag : uint16_t {
+        HasEventTargetData = 1 << 0,
+        IsNode = 1 << 1,
+    };
+
+    EventTargetData& ensureEventTargetData()
+    {
+        if (auto* data = eventTargetData())
+            return *data;
+        initializeWeakPtrFactory();
+        WTF::storeStoreFence();
+        setEventTargetFlag(EventTargetFlag::HasEventTargetData, true);
+        return weakPtrFactory().impl()->eventTargetData();
+    }
 
     virtual void eventListenersDidChange() { }
+
+    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & static_cast<uint16_t>(flag); }
+    void setEventTargetFlag(EventTargetFlag, bool);
 
 private:
     virtual void refEventTarget() = 0;
     virtual void derefEventTarget() = 0;
-    
+
     void innerInvokeEventListeners(Event&, EventListenerVector, EventInvokePhase);
     void invalidateEventListenerRegions();
 };
-
-class EventTargetWithInlineData : public EventTarget {
-    WTF_MAKE_ISO_ALLOCATED_EXPORT(EventTargetWithInlineData, WEBCORE_EXPORT);
-protected:
-    EventTargetData* eventTargetData() final { return &m_eventTargetData; }
-    EventTargetData* eventTargetDataConcurrently() final { return &m_eventTargetData; }
-    EventTargetData& ensureEventTargetData() final { return m_eventTargetData; }
-private:
-    EventTargetData m_eventTargetData;
-};
-
-inline const EventTargetData* EventTarget::eventTargetData() const
-{
-    return const_cast<EventTarget*>(this)->eventTargetData();
-}
 
 inline bool EventTarget::hasEventListeners() const
 {
@@ -163,6 +211,16 @@ void EventTarget::visitJSEventListeners(Visitor& visitor)
 {
     if (auto* data = eventTargetDataConcurrently())
         data->eventListenerMap.visitJSEventListeners(visitor);
+}
+
+inline void EventTarget::setEventTargetFlag(EventTargetFlag flag, bool value)
+{
+    uint16_t bitfield = weakPtrFactory().bitfield();
+    if (value)
+        bitfield |= static_cast<uint16_t>(flag);
+    else
+        bitfield &= ~static_cast<uint16_t>(flag);
+    weakPtrFactory().setBitfield(bitfield);
 }
 
 } // namespace WebCore

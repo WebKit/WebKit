@@ -28,7 +28,9 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) && USE(GTK4)
+#include <webkit/webkit.h>
+#elif PLATFORM(GTK)
 #include <webkit2/webkit2.h>
 #elif PLATFORM(WPE)
 #include <WPEToolingBackends/HeadlessViewBackend.h>

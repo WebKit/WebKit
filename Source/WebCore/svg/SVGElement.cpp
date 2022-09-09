@@ -312,10 +312,10 @@ SVGElement* SVGElement::viewportElement() const
     return nullptr;
 }
  
-const WeakHashSet<SVGElement>& SVGElement::instances() const
+const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& SVGElement::instances() const
 {
     if (!m_svgRareData) {
-        static NeverDestroyed<WeakHashSet<SVGElement>> emptyInstances;
+        static NeverDestroyed<WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> emptyInstances;
         return emptyInstances;
     }
     return m_svgRareData->instances();

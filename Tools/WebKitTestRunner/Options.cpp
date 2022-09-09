@@ -114,6 +114,12 @@ static bool handleOptionAllowedHost(Options& options, const char*, const char* h
     return true;
 }
 
+static bool handleOptionLocalhostAlias(Options& options, const char*, const char* host)
+{
+    options.localhostAliases.insert(host);
+    return true;
+}
+
 static bool parseFeature(std::string_view featureString, TestFeatures& features)
 {
     auto strings = split(featureString, '=');
@@ -176,6 +182,7 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--accelerated-drawing", "Use accelerated drawing.", handleOptionAcceleratedDrawing));
     optionList.append(Option("--remote-layer-tree", "Use remote layer tree.", handleOptionRemoteLayerTree));
     optionList.append(Option("--allowed-host", "Allows access to the specified host from tests.", handleOptionAllowedHost, true));
+    optionList.append(Option("--localhost-alias", "Adds hostname alias to localhost if the port supports it.", handleOptionLocalhostAlias, true));
     optionList.append(Option("--allow-any-certificate-for-allowed-hosts", "Allows any HTTPS certificate for an allowed host.", handleOptionAllowAnyHTTPSCertificateForAllowedHosts));
     optionList.append(Option("--show-webview", "DEPRECATED. Same as --show-window", handleOptionShowWindow));
     optionList.append(Option("--show-window", "Make the test runner window visible during testing", handleOptionShowWindow));

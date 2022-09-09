@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x128
+  RenderSVGRoot {svg} at (0,0) size 800x128
+layer at (0,0) size 800x128
+  RenderSVGViewportContainer at (0,0) size 800x128
+layer at (0,0) size 800x48
+  RenderSVGRect {rect} at (0,0) size 800x48 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=800.00] [height=48.00]
+layer at (0,16) size 800x16
+  RenderSVGTransformableContainer {g} at (0,16) size 800x16
+layer at (0,16) size 800x16
+  RenderSVGRect {rect} at (0,0) size 800x16 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=16.00] [width=800.00] [height=16.00]
+layer at (0,80) size 800x48
+  RenderSVGRect {rect} at (0,80) size 800x48 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=80.00] [width=800.00] [height=48.00]
+layer at (0,96) size 800x16
+  RenderSVGTransformableContainer {g} at (0,96) size 800x16
+layer at (0,96) size 800x16
+  RenderSVGRect {rect} at (0,0) size 800x16 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=96.00] [width=800.00] [height=16.00]

@@ -46,7 +46,7 @@ class MediaController final
     : public RefCounted<MediaController>
     , public MediaControllerInterface
     , public ContextDestructionObserver
-    , public EventTargetWithInlineData {
+    , public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(MediaController);
 public:
     static Ref<MediaController> create(ScriptExecutionContext&);

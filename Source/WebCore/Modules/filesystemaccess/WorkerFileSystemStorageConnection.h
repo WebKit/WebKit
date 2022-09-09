@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class WeakPtrImplWithEventTargetData;
 class FileHandle;
 class FileSystemSyncAccessHandle;
 class WorkerGlobalScope;
@@ -76,7 +77,7 @@ private:
     void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier) final;
     void invalidateAccessHandle(FileSystemSyncAccessHandleIdentifier) final;
 
-    WeakPtr<WorkerGlobalScope> m_scope;
+    WeakPtr<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     RefPtr<FileSystemStorageConnection> m_mainThreadConnection;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::SameEntryCallback> m_sameEntryCallbacks;
     HashMap<CallbackIdentifier, FileSystemStorageConnection::GetHandleCallback> m_getHandleCallbacks;

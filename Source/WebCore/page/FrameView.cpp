@@ -2435,6 +2435,10 @@ void FrameView::scrollToFocusedElementInternal()
     auto updateTarget = focusedElement->focusAppearanceUpdateTarget();
     if (!updateTarget)
         return;
+    
+    // Get the scroll-margin of the shadow host when we're inside a user agent shadow root.
+    if (updateTarget->containingShadowRoot() && updateTarget->containingShadowRoot()->mode() == ShadowRootMode::UserAgent)
+        updateTarget = updateTarget->shadowHost();
 
     auto* renderer = updateTarget->renderer();
     if (!renderer || renderer->isWidget())

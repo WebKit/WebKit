@@ -214,7 +214,7 @@ void AssemblyHelpers::jitAssertArgumentCountSane()
 
 void AssemblyHelpers::jitAssertCodeBlockOnCallFrameWithType(GPRReg scratchGPR, JITType type)
 {
-    comment("jitAssertCodeBlockOnCallFrameWithType | ", scratchGPR, " = callFrame->codeBlock->jitCode->jitType == ", type);
+    JIT_COMMENT(*this, "jitAssertCodeBlockOnCallFrameWithType | ", scratchGPR, " = callFrame->codeBlock->jitCode->jitType == ", type);
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, scratchGPR);
     loadPtr(Address(scratchGPR, CodeBlock::jitCodeOffset()), scratchGPR);
     load8(Address(scratchGPR, JITCode::offsetOfJITType()), scratchGPR);
@@ -228,17 +228,17 @@ void AssemblyHelpers::jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame
     if (block.codeType() != FunctionCode)
         return;
     auto kind = block.isConstructor() ? CodeForConstruct : CodeForCall;
-    comment("jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame with code block type: ", kind, " | ", scratchGPR, " = callFrame->callee->executableOrRareData");
+    JIT_COMMENT(*this, "jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame with code block type: ", kind, " | ", scratchGPR, " = callFrame->callee->executableOrRareData");
 
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::callee, scratchGPR);
     loadPtr(Address(scratchGPR, JSFunction::offsetOfExecutableOrRareData()), scratchGPR);
     auto hasExecutable = branchTestPtr(Zero, scratchGPR, TrustedImm32(JSFunction::rareDataTag));
     loadPtr(Address(scratchGPR, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), scratchGPR);
     hasExecutable.link(this);
-    comment(scratchGPR, " = (", scratchGPR, ": Executable)->codeBlock");
+    JIT_COMMENT(*this, scratchGPR, " = (", scratchGPR, ": Executable)->codeBlock");
     loadPtr(Address(scratchGPR, FunctionExecutable::offsetOfCodeBlockFor(kind)), scratchGPR);
 
-    comment(scratchGPR2, " = callFrame->codeBlock");
+    JIT_COMMENT(*this, scratchGPR2, " = callFrame->codeBlock");
     emitGetFromCallFrameHeaderPtr(CallFrameSlot::codeBlock, scratchGPR2);
     Jump ok = branch32(Equal, scratchGPR, scratchGPR2);
     abortWithReason(AHInvalidCodeBlock);
@@ -672,6 +672,7 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->registerCount();
+    JIT_COMMENT(*this, "restoreCalleeSavesFromEntryFrameCalleeSavesBuffer ", *allCalleeSaves, " skip: ", dontRestoreRegisters);
 
     GPRReg scratch = InvalidGPRReg;
     unsigned scratchGPREntryIndex = 0;
@@ -758,6 +759,7 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), entryFrameGPR);
 
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
+    JIT_COMMENT(*this, "restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl ", entryFrameGPR, " callee saves: ", *allCalleeSaves, " skip: ", skipList);
     unsigned registerCount = allCalleeSaves->registerCount();
 
     LoadRegSpooler spooler(*this, entryFrameGPR);
@@ -1056,6 +1058,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfValue(VM& vm, JSValueRegs val
 #if ENABLE(WEBASSEMBLY)
 void AssemblyHelpers::loadWasmContextInstance(GPRReg dst)
 {
+    JIT_COMMENT(*this, "Load wasm context instance to ", dst);
 #if ENABLE(FAST_TLS_JIT)
     if (Wasm::Context::useFastTLS()) {
         loadFromTLSPtr(fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY), dst);
@@ -1063,10 +1066,12 @@ void AssemblyHelpers::loadWasmContextInstance(GPRReg dst)
     }
 #endif
     move(Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer, dst);
+    JIT_COMMENT(*this, "Load wasm instance done");
 }
 
 void AssemblyHelpers::storeWasmContextInstance(GPRReg src)
 {
+    JIT_COMMENT(*this, "Store wasm context instance from", src);
 #if ENABLE(FAST_TLS_JIT)
     if (Wasm::Context::useFastTLS()) {
         storeToTLSPtr(src, fastTLSOffsetForKey(WTF_WASM_CONTEXT_KEY));
@@ -1074,6 +1079,7 @@ void AssemblyHelpers::storeWasmContextInstance(GPRReg src)
     }
 #endif
     move(src, Wasm::PinnedRegisterInfo::get().wasmContextInstancePointer);
+    JIT_COMMENT(*this, "Store wasm context instance done");
 }
 
 bool AssemblyHelpers::loadWasmContextInstanceNeedsMacroScratchRegister()
@@ -1098,6 +1104,7 @@ bool AssemblyHelpers::storeWasmContextInstanceNeedsMacroScratchRegister()
 
 void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* argument)
 {
+    JIT_COMMENT(*this, "debugCall");
     size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
     ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(scratchSize);
     EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
@@ -1142,6 +1149,7 @@ void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* arg
 
 void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer)
 {
+    JIT_COMMENT(*this, "copyCalleeSavesToEntryFrameCalleeSavesBufferImpl ", calleeSavesBuffer);
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), calleeSavesBuffer);
 
@@ -1255,6 +1263,7 @@ void AssemblyHelpers::cageConditionallyAndUntag(Gigacage::Kind kind, GPRReg stor
 
 void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)
 {
+    JIT_COMMENT(*this, "emitSave ", list);
     StoreRegSpooler spooler(*this, framePointerRegister);
 
     size_t registerCount = list.registerCount();
@@ -1274,6 +1283,7 @@ void AssemblyHelpers::emitSave(const RegisterAtOffsetList& list)
 
 void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list)
 {
+    JIT_COMMENT(*this, "emitRestore ", list);
     LoadRegSpooler spooler(*this, framePointerRegister);
 
     size_t registerCount = list.registerCount();
@@ -1295,6 +1305,7 @@ void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeS
 {
     RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
     unsigned registerCount = calleeSaves->registerCount();
+    JIT_COMMENT(*this, "emitSaveCalleeSavesFor ", *calleeSaves, " dontRestore: ", dontSaveRegisters);
 
     StoreRegSpooler spooler(*this, framePointerRegister);
 
@@ -1321,6 +1332,7 @@ void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* call
 {
     RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters());
     unsigned registerCount = calleeSaves->registerCount();
+    JIT_COMMENT(*this, "emitRestoreCalleeSavesFor ", *calleeSaves, " dontSave: ", dontRestoreRegisters);
     
     LoadRegSpooler spooler(*this, framePointerRegister);
 

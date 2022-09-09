@@ -175,23 +175,26 @@ const fileLoader = (function() {
             if (!isInBrowser)
                 return Promise.resolve(readFile(url));
 
-            let fetchResponse;
+            let response;
             let tries = 3;
             while (tries--) {
+                let hasError = false;
                 try {
-                    fetchResponse = await fetch(new Request(url));
-                    break;
+                    response = await fetch(url);
                 } catch (e) {
-                    if (!tries) {
-                        window.allIsGood = false;
-                        throw new Error("Fetch failed");
-                    }
+                    hasError = true;
                 }
+                if (!hasError && response.ok)
+                    break;
+                if (tries)
+                    continue;
+                window.allIsGood = false;
+                throw new Error("Fetch failed");
             }
             if (url.indexOf(".js") !== -1)
-                return await fetchResponse.text();
+                return await response.text();
             else if (url.indexOf(".wasm") !== -1)
-                return await fetchResponse.arrayBuffer();
+                return await response.arrayBuffer();
 
             throw new Error("should not be reached!");
         }
@@ -213,6 +216,10 @@ class Driver {
         this.benchmarks = [];
         this.blobDataCache = { };
         this.loadCache = { };
+        this.counter = { };
+        this.counter.loadedResources = 0;
+        this.counter.totalResources = 0;
+        this.counter.failedPreloadResources = 0;
     }
 
     addPlan(plan, BenchmarkClass = DefaultBenchmark) {
@@ -251,8 +258,8 @@ class Driver {
                 let cache = JetStream.blobDataCache;
                 for (let file of benchmark.plan.files) {
                     let blobData = cache[file];
-                    blobData[3]--;
-                    if (!blobData[3])
+                    blobData.refCount--;
+                    if (!blobData.refCount)
                         cache[file] = undefined;
                 }
             }
@@ -394,7 +401,7 @@ class Driver {
     }
 
     async initialize() {
-        await this.preloadFilesForBrowser();
+        await this.prefetchResourcesForBrowser();
         await this.fetchResources();
         this.prepareToRun();
         if (isInBrowser && window.location.search == '?report=true') {
@@ -402,18 +409,31 @@ class Driver {
         }
     }
 
-    async preloadFilesForBrowser() {
+    async prefetchResourcesForBrowser() {
         if (!isInBrowser)
             return;
 
-        var counter = { };
-        counter.loadedFiles = 0;
-        counter.totalFiles = 0;
-
         var promises = [];
         for (let benchmark of this.benchmarks)
-            promises.push(benchmark.preloadFilesForBrowser(counter));
+            promises.push(benchmark.prefetchResourcesForBrowser());
+
         await Promise.all(promises);
+
+        let counter = JetStream.counter;
+        if (counter.failedPreloadResources || counter.loadedResources != counter.totalResources) {
+            for (let benchmark of this.benchmarks) {
+                let allFilesLoaded = await benchmark.retryPrefetchResourcesForBrowser(counter);
+                if (allFilesLoaded)
+                    break;
+            }
+
+            if (counter.failedPreloadResources || counter.loadedResources != counter.totalResources) {
+                // If we've failed to prefetch resources even after a sequential 1 by 1 retry,
+                // then fail out early rather than letting subtests fail with a hang.
+                window.allIsGood = false;
+                throw new Error("Fetch failed"); 
+            }
+        }
 
         JetStream.loadCache = { }; // Done preloading all the files.
     }
@@ -595,7 +615,7 @@ class Benchmark {
         } else {
             let cache = JetStream.blobDataCache;
             for (let file of this.plan.files)
-                addScriptWithURL(cache[file][2]);
+                addScriptWithURL(cache[file].blobURL);
         }
 
         let promise = new Promise((resolve, reject) => {
@@ -640,55 +660,149 @@ class Benchmark {
             Realm.dispose(magicFrame);
     }
 
-    async doLoadBlob(file) {
+    async doLoadBlob(resource) {
         let response;
         let tries = 3;
         while (tries--) {
+            let hasError = false;
             try {
-                response = await fetch(file, { cache: "no-store" });
-                break;
+                response = await fetch(resource, { cache: "no-store" });
             } catch (e) {
-                if (!tries) {
-                    window.allIsGood = false;
-                    throw new Error("Fetch failed");
-                }
+                hasError = true;
             }
+            if (!hasError && response.ok)
+                break;
+            if (tries)
+                continue;
+            throw new Error("Fetch failed");
         }
         let blob = await response.blob();
-        var blobData = [ file, blob, URL.createObjectURL(blob), 0 ];
-        JetStream.blobDataCache[file] = blobData;
+        var blobData = JetStream.blobDataCache[resource];
+        blobData.blob = blob;
+        blobData.blobURL = URL.createObjectURL(blob);
         return blobData;
     }
 
-    async loadBlob(file) {
-        let promise = JetStream.loadCache[file];
+    async loadBlob(type, prop, resource, incrementRefCount = true) {
+        var blobData = JetStream.blobDataCache[resource];
+        if (!blobData) {
+            blobData = {
+                type: type,
+                prop: prop,
+                resource: resource,
+                blob: null,
+                blobURL: null,
+                refCount: 0
+            };
+            JetStream.blobDataCache[resource] = blobData;
+        }
+
+        if (incrementRefCount)
+            blobData.refCount++;
+
+        let promise = JetStream.loadCache[resource];
         if (promise)
             return await promise;
 
-        promise = this.doLoadBlob(file);
-        JetStream.loadCache[file] = promise;
+        promise = this.doLoadBlob(resource);
+        JetStream.loadCache[resource] = promise;
         return await promise;
     }
 
-    preloadFilesForBrowser(counter) {
+    updateCounter() {
+        let counter = JetStream.counter;
+        ++counter.loadedResources;
+        var statusElement = document.getElementById("status");
+        statusElement.innerHTML = `Loading ${counter.loadedResources} of ${counter.totalResources} ...`;
+    }
+
+    prefetchResourcesForBrowser() {
         if (!isInBrowser)
             return;
-        let filePromises = this.plan.files.map((file) => this.loadBlob(file));
-
-        counter.totalFiles += filePromises.length;
-
-        return Promise.all(filePromises.map((promise) => {
-            return promise.then((blobData) => {
+        let promises = this.plan.files.map((file) => this.loadBlob("file", null, file).then((blobData) => {
                 if (!window.allIsGood)
                     return;
+                this.updateCounter();
+            }).catch((error) => {
+                // We'll try again later in retryPrefetchResourceForBrowser(). Don't throw an error.
+            }));
 
-                blobData[3]++; // Increment the refCount.
+        if (this.plan.preload) {
+            this.preloads = [];
+            for (let prop of Object.getOwnPropertyNames(this.plan.preload)) {
+                promises.push(this.loadBlob("preload", prop, this.plan.preload[prop]).then((blobData) => {
+                    if (!window.allIsGood)
+                        return;
+                    this.preloads.push([ blobData.prop, blobData.blobURL ]);
+                    this.updateCounter();
+                }).catch((error) => {
+                    // We'll try again later in retryPrefetchResourceForBrowser(). Don't throw an error.
+                    if (!this.failedPreloads)
+                        this.failedPreloads = { };
+                    this.failedPreloads[prop] = true;
+                    JetStream.counter.failedPreloadResources++;
+                }));
+            }
+        }
 
-                ++counter.loadedFiles;
-                var statusElement = document.getElementById("status");
-                statusElement.innerHTML = `Loading ${counter.loadedFiles} of ${counter.totalFiles} ...`;
-            });
-        }));
+        JetStream.counter.totalResources += promises.length;
+        return Promise.all(promises);
+    }
+
+    async retryPrefetchResource(type, prop, file) {
+        let counter = JetStream.counter;
+        var blobData = JetStream.blobDataCache[file];
+        if (blobData.blob) {
+            // The same preload blob may be used by multiple subtests. Though the blob is already loaded,
+            // we still need to check if this subtest failed to load it before. If so, handle accordingly.
+            if (type == "preload") {
+                if (this.failedPreloads && this.failedPreloads[blobData.prop]) {
+                    this.failedPreloads[blobData.prop] = false;
+                    this.preloads.push([ blobData.prop, blobData.blobURL ]);
+                    counter.failedPreloadResources--;
+                }
+            }
+            return !counter.failedPreloadResources && counter.loadedResources == counter.totalResources;
+        }
+
+        // Retry fetching the resource.
+        JetStream.loadCache[file] = null;
+        await this.loadBlob(type, prop, file, false).then((blobData) => {
+            if (!window.allIsGood)
+                return;
+            if (blobData.type == "preload")
+                this.preloads.push([ blobData.prop, blobData.blobURL ]);
+            this.updateCounter();
+        });
+
+        if (!blobData.blob) {
+            window.allIsGood = false;
+            throw new Error("Fetch failed"); 
+        }
+
+        return !counter.failedPreloadResources && counter.loadedResources == counter.totalResources;
+    }
+
+    async retryPrefetchResourcesForBrowser() {
+        if (!isInBrowser)
+            return;
+
+        let counter = JetStream.counter;
+        for (let resource of this.plan.files) {
+            let allDone = await this.retryPrefetchResource("file", null, resource);
+            if (allDone)
+                return true; // All resources loaded, nothing more to do.
+        }
+
+        if (this.plan.preload) {
+            for (let prop of Object.getOwnPropertyNames(this.plan.preload)) {
+                let resource = this.plan.preload[prop];
+                let allDone = await this.retryPrefetchResource("preload", prop, resource);
+                if (allDone)
+                    return true; // All resources loaded, nothing more to do.
+            }
+        }
+        return !counter.failedPreloadResources && counter.loadedResources == counter.totalResources;
     }
 
     fetchResources() {
@@ -696,19 +810,8 @@ class Benchmark {
             return this._resourcesPromise;
 
         let filePromises = !isInBrowser ? this.plan.files.map((file) => fileLoader.load(file)) : [];
-        let preloads = [];
-        let preloadVariableNames = [];
 
-        if (isInBrowser && this.plan.preload) {
-            for (let prop of Object.getOwnPropertyNames(this.plan.preload)) {
-                preloadVariableNames.push(prop);
-                preloads.push(this.plan.preload[prop]);
-            }
-        }
-
-        preloads = preloads.map((file) => fileLoader.load(file));
-
-        let p1 = Promise.all(filePromises).then((texts) => {
+        let promise = Promise.all(filePromises).then((texts) => {
             if (isInBrowser)
                 return;
             this.scripts = [];
@@ -717,26 +820,10 @@ class Benchmark {
                 this.scripts.push(text);
         });
 
-        let p2 = Promise.all(preloads).then((data) => {
-            this.preloads = [];
-            this.blobs = [];
-            for (let i = 0; i < data.length; ++i) {
-                let item = data[i];
+        this.preloads = [];
+        this.blobs = [];
 
-                let blob;
-                if (typeof item === "string") {
-                    blob = new Blob([item], {type : 'application/javascript'});
-                } else if (item instanceof ArrayBuffer) {
-                    blob = new Blob([item], {type : 'application/octet-stream'});
-                } else
-                    throw new Error("Unexpected item!");
-
-                this.blobs.push(blob);
-                this.preloads.push([preloadVariableNames[i], URL.createObjectURL(blob)]);
-            }
-        });
-
-        this._resourcesPromise = Promise.all([p1, p2]);
+        this._resourcesPromise = promise;
         return this._resourcesPromise;
     }
 

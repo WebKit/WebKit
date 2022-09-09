@@ -192,7 +192,7 @@ bool StyleCachedImage::hasImage() const
     return m_cachedImage->hasImage();
 }
 
-RefPtr<Image> StyleCachedImage::image(RenderElement* renderer, const FloatSize&) const
+RefPtr<Image> StyleCachedImage::image(const RenderElement* renderer, const FloatSize&) const
 {
     ASSERT(!m_isPending);
     if (!m_cachedImage)

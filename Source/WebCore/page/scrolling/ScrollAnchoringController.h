@@ -45,7 +45,7 @@ public:
 
 private:
     FrameView& m_frameView;
-    WeakPtr<Element> m_anchorElement;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_anchorElement;
     FloatPoint m_lastPositionForAnchorElement;
 };
 

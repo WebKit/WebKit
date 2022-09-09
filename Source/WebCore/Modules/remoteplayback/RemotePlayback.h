@@ -42,7 +42,7 @@ class MediaPlaybackTarget;
 class Node;
 class RemotePlaybackAvailabilityCallback;
 
-class RemotePlayback final : public RefCounted<RemotePlayback>, public ActiveDOMObject, public EventTargetWithInlineData {
+class RemotePlayback final : public RefCounted<RemotePlayback>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(RemotePlayback);
 public:
     static Ref<RemotePlayback> create(HTMLMediaElement&);
@@ -86,11 +86,11 @@ private:
     // ActiveDOMObject.
     const char* activeDOMObjectName() const final;
 
-    // EventTargetWithInlineData.
+    // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return RemotePlaybackEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    WeakPtr<HTMLMediaElement> m_mediaElement;
+    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     uint32_t m_nextId { 0 };
 
     using CallbackMap = HashMap<int32_t, Ref<RemotePlaybackAvailabilityCallback>>;

@@ -68,6 +68,8 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << enablePrivateClickMeasurement;
     encoder << ftpEnabled;
     encoder << websiteDataStoreParameters;
+
+    encoder << localhostAliasesForTesting;
 }
 
 bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProcessCreationParameters& result)
@@ -125,6 +127,9 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!websiteDataStoreParameters)
         return false;
     result.websiteDataStoreParameters = WTFMove(*websiteDataStoreParameters);
+
+    if (!decoder.decode(result.localhostAliasesForTesting))
+        return false;
 
     return true;
 }

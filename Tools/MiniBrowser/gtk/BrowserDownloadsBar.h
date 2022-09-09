@@ -27,9 +27,10 @@
 #define BrowserDownloadsBar_h
 
 #include <gtk/gtk.h>
-#include <webkit2/webkit2.h>
 
 #if !GTK_CHECK_VERSION(3, 98, 0)
+
+#include <webkit2/webkit2.h>
 
 G_BEGIN_DECLS
 

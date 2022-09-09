@@ -261,7 +261,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders(
         const AtomString& scope = downcast<AccessibilityObject>(tableCell)->getAttribute(scopeAttr);
         if (scope == "colgroup"_s && isTableCellInSameColGroup(tableCell))
             headers.append(tableCell);
-        else if (tableCell->isColumnHeaderCell())
+        else if (downcast<AccessibilityObject>(tableCell)->isColumnHeaderCell())
             headers.append(tableCell);
     }
 
@@ -286,7 +286,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
         const AtomString& scope = downcast<AccessibilityObject>(tableCell)->getAttribute(scopeAttr);
         if (scope == "rowgroup"_s && isTableCellInSameRowGroup(tableCell))
             headers.append(tableCell);
-        else if (tableCell->isRowHeaderCell())
+        else if (downcast<AccessibilityObject>(tableCell)->isRowHeaderCell())
             headers.append(tableCell);
     }
 

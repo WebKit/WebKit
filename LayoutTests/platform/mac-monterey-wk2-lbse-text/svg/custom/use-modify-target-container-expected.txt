@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,-5) size 60x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (0,-5) size 60x20
+layer at (0,-5) size 60x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 60x20
+layer at (0,0) size 60x10
+  RenderSVGRect {rect} at (0,5) size 60x10 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+layer at (20,-5) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (20,0) size 20x20 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]
+layer at (0,-5) size 60x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,-5) size 60x20
+layer at (0,-5) size 60x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 60x20
+layer at (0,0) size 60x10
+  RenderSVGRect {rect} at (0,5) size 60x10 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+layer at (20,-5) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (20,0) size 20x20 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]
+layer at (0,-5) size 60x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {use} at (0,-5) size 60x20
+layer at (0,-5) size 60x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 60x20
+layer at (0,0) size 60x10
+  RenderSVGRect {rect} at (0,5) size 60x10 [stroke={[type=SOLID] [color=#000080] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=60.00] [height=10.00]
+layer at (20,-5) size 20x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (20,0) size 20x20 [opacity=0.50] [fill={[type=SOLID] [color=#008000]}] [cx=30.00] [cy=5.00] [r=10.00]
+layer at (30,61) size 146x12
+  RenderSVGText {text} at (30,61) size 147x12 contains 1 chunk(s)
+    RenderSVGInlineText {#text} at (0,0) size 147x12
+      chunk 1 text run 1 at (30.00,70.00) startOffset 0 endOffset 35 width 146.37: "You should shapes _above_ this text"

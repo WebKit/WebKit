@@ -177,7 +177,7 @@ protected:
     HashMap<PlaybackSessionContextIdentifier, ModelInterfaceTuple> m_contextMap;
     PlaybackSessionContextIdentifier m_controlsManagerContextId;
     HashMap<PlaybackSessionContextIdentifier, int> m_clientCounts;
-    WeakPtr<WebCore::HTMLVideoElement> m_videoElementInPictureInPicture;
+    WeakPtr<WebCore::HTMLVideoElement, WebCore::WeakPtrImplWithEventTargetData> m_videoElementInPictureInPicture;
     bool m_currentlyInFullscreen { false };
 };
 

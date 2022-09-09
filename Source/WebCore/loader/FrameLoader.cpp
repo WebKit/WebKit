@@ -3036,8 +3036,8 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& 
 
     if (origin.isEmpty()) {
         // If we don't know what origin header to attach, we attach the value
-        // for an empty origin.
-        request.setHTTPOrigin(SecurityOrigin::createUnique()->toString());
+        // for an opaque origin.
+        request.setHTTPOrigin(SecurityOrigin::createOpaque()->toString());
         return;
     }
 

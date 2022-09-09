@@ -199,8 +199,10 @@ void SVGGraphicsElement::didAttachRenderers()
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (auto* svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()); svgRenderer && lineageOfType<RenderSVGHiddenContainer>(*svgRenderer).first())
-            svgRenderer->layer()->dirtyVisibleContentStatus();
+        if (auto* svgRenderer = dynamicDowncast<RenderLayerModelObject>(renderer()); svgRenderer && lineageOfType<RenderSVGHiddenContainer>(*svgRenderer).first()) {
+            if (auto* layer = svgRenderer->layer())
+                layer->dirtyVisibleContentStatus();
+        }
     }
 #endif
 }

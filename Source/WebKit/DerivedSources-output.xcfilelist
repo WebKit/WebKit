@@ -575,6 +575,9 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPaymentCoordinatorProxyAdditionsM
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPaymentCoordinatorProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPaymentCoordinatorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPaymentCoordinatorProxyMessagesReplies.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPermissionControllerMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPermissionControllerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPermissionControllerMessagesReplies.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPermissionControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPermissionControllerProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebPermissionControllerProxyMessagesReplies.h

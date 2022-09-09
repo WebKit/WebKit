@@ -53,6 +53,7 @@
 #include "Page.h"
 #include "PolicyChecker.h"
 #include "ScriptController.h"
+#include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/Ref.h>
 
@@ -127,8 +128,6 @@ protected:
         , m_url { url }
         , m_referrer { referrer }
     {
-        if (m_url.protocolIsBlob())
-            m_blobURLLifetimeExtender = m_url;
     }
 
     void didStartTimer(Frame& frame, Timer& timer) override
@@ -164,8 +163,7 @@ protected:
 private:
     Ref<Document> m_initiatingDocument;
     RefPtr<SecurityOrigin> m_securityOrigin;
-    URL m_url;
-    BlobURLHandle m_blobURLLifetimeExtender;
+    URLKeepingBlobAlive m_url;
     String m_referrer;
     bool m_haveToldClient { false };
 };

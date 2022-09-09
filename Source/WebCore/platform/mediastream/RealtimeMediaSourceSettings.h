@@ -38,9 +38,18 @@ namespace WebCore {
 class RealtimeMediaSourceSettings {
 public:
     enum VideoFacingMode { Unknown, User, Environment, Left, Right };
+    enum class DisplaySurfaceType {
+        Monitor,
+        Window,
+        Application,
+        Browser,
+        Invalid,
+    };
+
 
     static String facingMode(RealtimeMediaSourceSettings::VideoFacingMode);
     static RealtimeMediaSourceSettings::VideoFacingMode videoFacingModeEnum(const String&);
+    static String displaySurface(RealtimeMediaSourceSettings::DisplaySurfaceType);
 
     enum Flag {
         Width = 1 << 0,
@@ -109,14 +118,6 @@ public:
     const AtomString& groupId() const { return m_groupId; }
     void setGroupId(const AtomString& groupId) { m_groupId = groupId; }
 
-    enum class DisplaySurfaceType {
-        Monitor,
-        Window,
-        Application,
-        Browser,
-        Invalid,
-    };
-
     bool supportsDisplaySurface() const { return m_supportedConstraints.supportsDisplaySurface(); }
     DisplaySurfaceType displaySurface() const { return m_displaySurface; }
     void setDisplaySurface(DisplaySurfaceType displaySurface) { m_displaySurface = displaySurface; }
@@ -170,6 +171,8 @@ void RealtimeMediaSourceSettings::encode(Encoder& encoder) const
         << m_echoCancellation
         << m_deviceId
         << m_groupId
+        << m_displaySurface
+        << m_logicalSurface
         << m_label
         << m_supportedConstraints;
     encoder << m_facingMode;
@@ -188,6 +191,8 @@ bool RealtimeMediaSourceSettings::decode(Decoder& decoder, RealtimeMediaSourceSe
         && decoder.decode(settings.m_echoCancellation)
         && decoder.decode(settings.m_deviceId)
         && decoder.decode(settings.m_groupId)
+        && decoder.decode(settings.m_displaySurface)
+        && decoder.decode(settings.m_logicalSurface)
         && decoder.decode(settings.m_label)
         && decoder.decode(settings.m_supportedConstraints)
         && decoder.decode(settings.m_facingMode);
@@ -207,6 +212,17 @@ template <> struct EnumTraits<WebCore::RealtimeMediaSourceSettings::VideoFacingM
         WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Environment,
         WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Left,
         WebCore::RealtimeMediaSourceSettings::VideoFacingMode::Right
+    >;
+};
+
+template <> struct EnumTraits<WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType> {
+    using values = EnumValues<
+        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType,
+        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Monitor,
+        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Window,
+        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Application,
+        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Browser,
+        WebCore::RealtimeMediaSourceSettings::DisplaySurfaceType::Invalid
     >;
 };
 

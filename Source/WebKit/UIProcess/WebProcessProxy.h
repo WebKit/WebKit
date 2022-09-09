@@ -78,6 +78,7 @@ struct NotificationData;
 struct PluginInfo;
 struct PrewarmInformation;
 struct SecurityOriginData;
+enum class PermissionName : uint8_t;
 enum class ThirdPartyCookieBlockingMode : uint8_t;
 using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
@@ -451,6 +452,9 @@ public:
 
     const WeakHashSet<WebProcessProxy>* serviceWorkerClientProcesses() const;
     const WeakHashSet<WebProcessProxy>* sharedWorkerClientProcesses() const;
+
+    static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
+    void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, CaptivePortalMode);

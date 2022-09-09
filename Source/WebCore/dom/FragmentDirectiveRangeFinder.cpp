@@ -145,6 +145,8 @@ static std::optional<SimpleRange> findRangeFromNodeList(const String& query, con
     // FIXME: try to use SearchBuffer in TextIterator.h instead.
     searchBuffer = searchBufferBuilder.toString();
     
+    searchBuffer = foldQuoteMarks(searchBuffer);
+    
     unsigned searchStart = 0;
     
     if (nodes[0].ptr() == &searchRange.startContainer())

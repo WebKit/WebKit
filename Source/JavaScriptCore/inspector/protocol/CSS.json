@@ -253,7 +253,9 @@
             "description": "A representation of WebCore::Font. Conceptually this is backed by either a font file on disk or from the network.",
             "properties": [
                 { "name": "displayName", "type": "string", "description": "The display name defined by the font." },
-                { "name": "variationAxes", "type": "array", "items": { "$ref": "FontVariationAxis" }, "description": "The variation axes defined by the font." }
+                { "name": "variationAxes", "type": "array", "items": { "$ref": "FontVariationAxis" }, "description": "The variation axes defined by the font." },
+                { "name": "synthesizedBold", "type": "boolean", "optional": true, "description": "Whether the font has synthesized its boldness or not." },
+                { "name": "synthesizedOblique", "type": "boolean", "optional": true, "description": "Whether the font has synthesized its obliqueness or not" }
             ]
         },
         {

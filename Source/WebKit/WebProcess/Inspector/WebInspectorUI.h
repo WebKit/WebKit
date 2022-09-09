@@ -151,6 +151,8 @@ public:
     void inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
 
+    void setInspectorPageDeveloperExtrasEnabled(bool) override;
+
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool supportsDiagnosticLogging() override;
     bool diagnosticLoggingAvailable() override { return m_diagnosticLoggingAvailable; }

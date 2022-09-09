@@ -630,7 +630,7 @@ public:
             WasmModuleArray& wasmModules,
             WasmMemoryHandleArray& wasmMemoryHandles,
 #endif
-        Vector<BlobURLHandle>& blobHandles, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers)
+        Vector<URLKeepingBlobAlive>& blobHandles, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers)
     {
         CloneSerializer serializer(lexicalGlobalObject, messagePorts, arrayBuffers, imageBitmaps,
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
@@ -677,7 +677,7 @@ private:
             WasmModuleArray& wasmModules,
             WasmMemoryHandleArray& wasmMemoryHandles,
 #endif
-        Vector<BlobURLHandle>& blobHandles, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers)
+        Vector<URLKeepingBlobAlive>& blobHandles, Vector<uint8_t>& out, SerializationContext context, ArrayBufferContentsArray& sharedBuffers)
         : CloneBase(lexicalGlobalObject)
         , m_buffer(out)
         , m_blobHandles(blobHandles)
@@ -1346,7 +1346,7 @@ private:
             if (auto* key = JSCryptoKey::toWrapped(vm, obj)) {
                 write(CryptoKeyTag);
                 Vector<uint8_t> serializedKey;
-                Vector<BlobURLHandle> dummyBlobHandles;
+                Vector<URLKeepingBlobAlive> dummyBlobHandles;
                 Vector<RefPtr<MessagePort>> dummyMessagePorts;
                 Vector<RefPtr<JSC::ArrayBuffer>> dummyArrayBuffers;
 #if ENABLE(WEBASSEMBLY)
@@ -1876,7 +1876,7 @@ private:
     }
 
     Vector<uint8_t>& m_buffer;
-    Vector<BlobURLHandle>& m_blobHandles;
+    Vector<URLKeepingBlobAlive>& m_blobHandles;
     ObjectPool m_objectPool;
     ObjectPool m_transferredMessagePorts;
     ObjectPool m_transferredArrayBuffers;
@@ -4121,7 +4121,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, std::uniq
     m_memoryCost = computeMemoryCost();
 }
 
-SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vector<BlobURLHandle>& blobHandles, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray, std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray, Vector<std::optional<ImageBitmapBacking>>&& backingStores
+SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, Vector<URLKeepingBlobAlive>&& blobHandles, std::unique_ptr<ArrayBufferContentsArray> arrayBufferContentsArray, std::unique_ptr<ArrayBufferContentsArray> sharedBufferContentsArray, Vector<std::optional<ImageBitmapBacking>>&& backingStores
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
         , Vector<std::unique_ptr<DetachedOffscreenCanvas>>&& detachedOffscreenCanvases
 #endif
@@ -4147,7 +4147,7 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>&& buffer, const Vec
     , m_wasmModulesArray(WTFMove(wasmModulesArray))
     , m_wasmMemoryHandlesArray(WTFMove(wasmMemoryHandlesArray))
 #endif
-    , m_blobHandles(blobHandles)
+    , m_blobHandles(WTFMove(blobHandles))
 {
     m_memoryCost = computeMemoryCost();
 }
@@ -4392,7 +4392,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
 #endif
 
     Vector<uint8_t> buffer;
-    Vector<BlobURLHandle> blobHandles;
+    Vector<URLKeepingBlobAlive> blobHandles;
 #if ENABLE(WEBASSEMBLY)
     WasmModuleArray wasmModules;
     WasmMemoryHandleArray wasmMemoryHandles;
@@ -4434,7 +4434,7 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
         detachedRTCDataChannels.append(channel->detach());
 #endif
 
-    return adoptRef(*new SerializedScriptValue(WTFMove(buffer), blobHandles, arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(backingStores)
+    return adoptRef(*new SerializedScriptValue(WTFMove(buffer), WTFMove(blobHandles), arrayBufferContentsArray.releaseReturnValue(), context == SerializationContext::WorkerPostMessage ? WTFMove(sharedBuffers) : nullptr, WTFMove(backingStores)
 #if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
                 , WTFMove(detachedCanvases)
 #endif
@@ -4543,7 +4543,7 @@ uint32_t SerializedScriptValue::wireFormatVersion()
 Vector<String> SerializedScriptValue::blobURLs() const
 {
     return m_blobHandles.map([](auto& handle) {
-        return handle.url().string();
+        return handle.url().string().isolatedCopy();
     });
 }
 

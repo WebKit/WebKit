@@ -77,7 +77,7 @@ private:
     void appendBytes(DocumentWriter&, const uint8_t*, size_t) final;
     void createDocumentStructure();
 
-    WeakPtr<HTMLMediaElement> m_mediaElement;
+    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     String m_outgoingReferrer;
 };
     

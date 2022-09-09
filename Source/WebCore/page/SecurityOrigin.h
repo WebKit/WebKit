@@ -47,7 +47,7 @@ public:
     };
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const URL&);
-    WEBCORE_EXPORT static Ref<SecurityOrigin> createUnique();
+    WEBCORE_EXPORT static Ref<SecurityOrigin> createOpaque();
 
     WEBCORE_EXPORT static Ref<SecurityOrigin> createFromString(const String&);
     WEBCORE_EXPORT static Ref<SecurityOrigin> create(const String& protocol, const String& host, std::optional<uint16_t> port);
@@ -154,10 +154,10 @@ public:
     // The origin is a globally unique identifier assigned when the Document is
     // created. http://www.whatwg.org/specs/web-apps/current-work/#sandboxOrigin
     //
-    // There's a subtle difference between a unique origin and an origin that
+    // There's a subtle difference between an opaque origin and an origin that
     // has the SandboxOrigin flag set. The latter implies the former, and, in
     // addition, the SandboxOrigin flag is inherited by iframes.
-    bool isUnique() const { return !!m_uniqueOriginIdentifier; }
+    bool isOpaque() const { return !!m_opaqueOriginIdentifier; }
 
     // Marks a file:// origin as being in a domain defined by its path.
     // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
@@ -171,7 +171,7 @@ public:
     // the value of the SecurityOrigin's domain property.
     //
     // When using the string value, it's important to remember that it might be
-    // "null". This happens when this SecurityOrigin is unique. For example,
+    // "null". This happens when this SecurityOrigin is opaque. For example,
     // this SecurityOrigin might have come from a sandboxed iframe, the
     // SecurityOrigin might be empty, or we might have explicitly decided that
     // we shouldTreatURLSchemeAsNoAccess.
@@ -227,13 +227,13 @@ private:
     enum ShouldAllowFromThirdParty { AlwaysAllowFromThirdParty, MaybeAllowFromThirdParty };
     WEBCORE_EXPORT bool canAccessStorage(const SecurityOrigin*, ShouldAllowFromThirdParty = MaybeAllowFromThirdParty) const;
 
-    enum UniqueOriginIdentifierType { };
-    using UniqueOriginIdentifier = ProcessQualified<ObjectIdentifier<UniqueOriginIdentifierType>>;
+    enum OpaqueOriginIdentifierType { };
+    using OpaqueOriginIdentifier = ProcessQualified<ObjectIdentifier<OpaqueOriginIdentifierType>>;
 
     SecurityOriginData m_data;
     String m_domain;
     String m_filePath;
-    Markable<UniqueOriginIdentifier, UniqueOriginIdentifier::MarkableTraits> m_uniqueOriginIdentifier;
+    Markable<OpaqueOriginIdentifier, OpaqueOriginIdentifier::MarkableTraits> m_opaqueOriginIdentifier;
     bool m_universalAccess { false };
     bool m_domainWasSetInDOM { false };
     bool m_canLoadLocalResources { false };
@@ -254,7 +254,7 @@ template<class Encoder> inline void SecurityOrigin::encode(Encoder& encoder) con
     encoder << m_data;
     encoder << m_domain;
     encoder << m_filePath;
-    encoder << m_uniqueOriginIdentifier;
+    encoder << m_opaqueOriginIdentifier;
     encoder << m_universalAccess;
     encoder << m_domainWasSetInDOM;
     encoder << m_canLoadLocalResources;
@@ -278,7 +278,7 @@ template<class Decoder> inline RefPtr<SecurityOrigin> SecurityOrigin::decode(Dec
         return nullptr;
     if (!decoder.decode(origin->m_filePath))
         return nullptr;
-    if (!decoder.decode(origin->m_uniqueOriginIdentifier))
+    if (!decoder.decode(origin->m_opaqueOriginIdentifier))
         return nullptr;
     if (!decoder.decode(origin->m_universalAccess))
         return nullptr;

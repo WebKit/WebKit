@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "jit/GPRInfo.h"
 
 #if ENABLE(JIT)
 #include "JIT.h"
@@ -43,6 +44,26 @@
 #include "SlowPathCall.h"
 
 namespace JSC {
+
+void JIT::emit_op_less(const JSInstruction* currentInstruction)
+{
+    emit_compare<OpLess>(currentInstruction, LessThan);
+}
+
+void JIT::emit_op_lesseq(const JSInstruction* currentInstruction)
+{
+    emit_compare<OpLesseq>(currentInstruction, LessThanOrEqual);
+}
+
+void JIT::emit_op_greater(const JSInstruction* currentInstruction)
+{
+    emit_compare<OpGreater>(currentInstruction, GreaterThan);
+}
+
+void JIT::emit_op_greatereq(const JSInstruction* currentInstruction)
+{
+    emit_compare<OpGreatereq>(currentInstruction, GreaterThanOrEqual);
+}
 
 void JIT::emit_op_jless(const JSInstruction* currentInstruction)
 {
@@ -82,6 +103,26 @@ void JIT::emit_op_jngreater(const JSInstruction* currentInstruction)
 void JIT::emit_op_jngreatereq(const JSInstruction* currentInstruction)
 {
     emit_compareAndJump<OpJngreatereq>(currentInstruction, LessThan);
+}
+
+void JIT::emitSlow_op_less(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emit_compareSlow<OpLess>(currentInstruction, DoubleLessThanAndOrdered, operationCompareLess, iter);
+}
+
+void JIT::emitSlow_op_lesseq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emit_compareSlow<OpLesseq>(currentInstruction, DoubleLessThanOrEqualAndOrdered, operationCompareLessEq, iter);
+}
+
+void JIT::emitSlow_op_greater(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emit_compareSlow<OpGreater>(currentInstruction, DoubleGreaterThanAndOrdered, operationCompareGreater, iter);
+}
+
+void JIT::emitSlow_op_greatereq(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    emit_compareSlow<OpGreatereq>(currentInstruction, DoubleGreaterThanOrEqualAndOrdered, operationCompareGreaterEq, iter);
 }
 
 void JIT::emitSlow_op_jless(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -158,64 +199,83 @@ void JIT::emit_op_unsigned(const JSInstruction* currentInstruction)
 }
 
 template<typename Op>
+void JIT::emit_compare(const JSInstruction* instruction, RelationalCondition condition)
+{
+    auto bytecode = instruction->as<Op>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister op1 = bytecode.m_lhs;
+    VirtualRegister op2 = bytecode.m_rhs;
+    auto emitCompare = [&](RelationalCondition cond, JSValueRegs leftJSR, auto right) {
+        GPRReg left = leftJSR.payloadGPR();
+        compare32(cond, left, right, left);
+        boxBoolean(left, leftJSR);
+        emitPutVirtualRegister(dst, leftJSR);
+    };
+    emit_compareImpl(op1, op2, condition, emitCompare);
+}
+
+template<typename Op>
 void JIT::emit_compareAndJump(const JSInstruction* instruction, RelationalCondition condition)
 {
     auto bytecode = instruction->as<Op>();
     VirtualRegister op1 = bytecode.m_lhs;
     VirtualRegister op2 = bytecode.m_rhs;
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
-    emit_compareAndJumpImpl(op1, op2, target, condition);
+    auto emitCompareAndJump = [&](RelationalCondition cond, JSValueRegs leftJSR, auto right) {
+        addJump(branch32(cond, leftJSR.payloadGPR(), right), target);
+    };
+    emit_compareImpl(op1, op2, condition, emitCompareAndJump);
 }
 
-void JIT::emit_compareAndJumpImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, RelationalCondition condition)
+template <typename EmitCompareFunctor>
+ALWAYS_INLINE void JIT::emit_compareImpl(VirtualRegister op1, VirtualRegister op2, RelationalCondition condition, const EmitCompareFunctor& emitCompare)
 {
     // We generate inline code for the following cases in the fast path:
     // - int immediate to constant int immediate
     // - constant int immediate to int immediate
     // - int immediate to int immediate
 
-    bool disallowAllocation = false;
-    if (isOperandConstantChar(op1)) {
-        emitGetVirtualRegister(op2, jsRegT10);
+    constexpr bool disallowAllocation = false;
+    auto handleConstantCharOperand = [&](VirtualRegister left, VirtualRegister right, RelationalCondition cond) {
+        if (!isOperandConstantChar(left))
+            return false;
+
+        emitGetVirtualRegister(right, jsRegT10);
         addSlowCase(branchIfNotCell(jsRegT10));
         JumpList failures;
-        emitLoadCharacterString(jsRegT10.payloadGPR(), regT0, failures);
+        emitLoadCharacterString(jsRegT10.payloadGPR(), jsRegT10.payloadGPR(), failures);
         addSlowCase(failures);
-        addJump(branch32(commute(condition), regT0, Imm32(asString(getConstantOperand(op1))->tryGetValue(disallowAllocation)[0])), target);
+        emitCompare(commute(cond), jsRegT10, Imm32(asString(getConstantOperand(left))->tryGetValue(disallowAllocation)[0]));
+        return true;
+    };
+
+    if (handleConstantCharOperand(op1, op2, condition))
         return;
-    }
-    if (isOperandConstantChar(op2)) {
-        emitGetVirtualRegister(op1, jsRegT10);
-        addSlowCase(branchIfNotCell(jsRegT10));
-        JumpList failures;
-        emitLoadCharacterString(jsRegT10.payloadGPR(), regT0, failures);
-        addSlowCase(failures);
-        addJump(branch32(condition, regT0, Imm32(asString(getConstantOperand(op2))->tryGetValue(disallowAllocation)[0])), target);
+    if (handleConstantCharOperand(op2, op1, commute(condition)))
         return;
-    }
-    if (isOperandConstantInt(op2)) {
-        emitGetVirtualRegister(op1, jsRegT10);
-        emitJumpSlowCaseIfNotInt(jsRegT10);
-        int32_t op2imm = getOperandConstantInt(op2);
-        addJump(branch32(condition, jsRegT10.payloadGPR(), Imm32(op2imm)), target);
+
+    auto handleConstantIntOperand = [&](VirtualRegister left, VirtualRegister right, JSValueRegs rightJSR, RelationalCondition cond) {
+        if (!isOperandConstantInt(left))
+            return false;
+
+        emitGetVirtualRegister(right, rightJSR);
+        emitJumpSlowCaseIfNotInt(rightJSR);
+        emitCompare(commute(cond), rightJSR, Imm32(getOperandConstantInt(left)));
+        return true;
+    };
+
+    if (handleConstantIntOperand(op1, op2, jsRegT32, condition))
         return;
-    }
-    if (isOperandConstantInt(op1)) {
-        emitGetVirtualRegister(op2, jsRegT32);
-        emitJumpSlowCaseIfNotInt(jsRegT32);
-        int32_t op1imm = getOperandConstantInt(op1);
-        addJump(branch32(commute(condition), jsRegT32.payloadGPR(), Imm32(op1imm)), target);
+    if (handleConstantIntOperand(op2, op1, jsRegT10, commute(condition)))
         return;
-    }
 
     emitGetVirtualRegister(op1, jsRegT10);
     emitGetVirtualRegister(op2, jsRegT32);
     emitJumpSlowCaseIfNotInt(jsRegT10);
     emitJumpSlowCaseIfNotInt(jsRegT32);
 
-    addJump(branch32(condition, jsRegT10.payloadGPR(), jsRegT32.payloadGPR()), target);
+    emitCompare(condition, jsRegT10, jsRegT32.payloadGPR());
 }
-
 
 template<typename Op>
 void JIT::emit_compareUnsignedAndJump(const JSInstruction* instruction, RelationalCondition condition)
@@ -274,17 +334,42 @@ void JIT::emit_compareUnsignedImpl(VirtualRegister dst, VirtualRegister op1, Vir
 }
 
 template<typename Op, typename SlowOperation>
+void JIT::emit_compareSlow(const JSInstruction* instruction, DoubleCondition condition, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter)
+{
+    auto bytecode = instruction->as<Op>();
+    VirtualRegister dst = bytecode.m_dst;
+    VirtualRegister op1 = bytecode.m_lhs;
+    VirtualRegister op2 = bytecode.m_rhs;
+    auto handleReturnValueGPR = [&]() {
+        boxBoolean(returnValueGPR, jsRegT10);
+        emitPutVirtualRegister(dst, jsRegT10);
+    };
+    auto emitDoubleCompare = [&](FPRReg left, FPRReg right) {
+        compareDouble(condition, left, right, regT0);
+        boxBoolean(regT0, jsRegT10);
+        emitPutVirtualRegister(dst, jsRegT10);
+    };
+    emit_compareSlowImpl(op1, op2, instruction->size(), operation, iter, handleReturnValueGPR, emitDoubleCompare);
+}
+
+template<typename Op, typename SlowOperation>
 void JIT::emit_compareAndJumpSlow(const JSInstruction* instruction, DoubleCondition condition, SlowOperation operation, bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     auto bytecode = instruction->as<Op>();
     VirtualRegister op1 = bytecode.m_lhs;
     VirtualRegister op2 = bytecode.m_rhs;
     unsigned target = jumpTarget(instruction, bytecode.m_targetLabel);
-    emit_compareAndJumpSlowImpl(op1, op2, target, instruction->size(), condition, operation, invert, iter);
+    auto handleReturnValueGPR = [&]() {
+        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
+    };
+    auto emitCompareAndJump = [&](FPRReg left, FPRReg right) {
+        emitJumpSlowToHot(branchDouble(condition, left, right), target);
+    };
+    emit_compareSlowImpl(op1, op2, instruction->size(), operation, iter, handleReturnValueGPR, emitCompareAndJump);
 }
 
-template<typename SlowOperation>
-void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, unsigned target, size_t instructionSize, DoubleCondition condition, SlowOperation operation, bool invert, Vector<SlowCaseEntry>::iterator& iter)
+template<typename SlowOperation, typename HanldeReturnValueGPRFunctor, typename EmitDoubleCompareFunctor>
+void JIT::emit_compareSlowImpl(VirtualRegister op1, VirtualRegister op2, size_t instructionSize, SlowOperation operation, Vector<SlowCaseEntry>::iterator& iter, const HanldeReturnValueGPRFunctor& handleReturnValueGPR, const EmitDoubleCompareFunctor& emitDoubleCompare)
 {
 
     // We generate inline code for the following cases in the slow path:
@@ -302,7 +387,7 @@ void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, 
         emitGetVirtualRegister(op2, arg2JSR);
         loadGlobalObject(globalObjectGPR);
         callOperation(operation, globalObjectGPR, arg1JSR, arg2JSR);
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
+        handleReturnValueGPR();
         return;
     }
 
@@ -314,57 +399,36 @@ void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, 
 #endif
     };
 
-    if (isOperandConstantInt(op2)) {
+    auto handleConstantIntOperandSlow = [&](VirtualRegister op, JSValueRegs jsReg1, FPRReg fpReg1, JSValueRegs jsReg2, FPRReg fpReg2) {
+        if (!isOperandConstantInt(op))
+            return false;
         linkAllSlowCases(iter);
 
         if (supportsFloatingPoint()) {
-            Jump fail1 = branchIfNotNumber(jsRegT10, regT4);
-            unboxDouble(jsRegT10, fpRegT0);
+            Jump fail1 = branchIfNotNumber(jsReg2, regT4);
+            unboxDouble(jsReg2, fpReg2);
 
-            int32_t op2imm = getConstantOperand(op2).asInt32();
+            move(Imm32(getConstantOperand(op).asInt32()), jsReg1.payloadGPR());
+            convertInt32ToDouble(jsReg1.payloadGPR(), fpReg1);
 
-            move(Imm32(op2imm), regT2);
-            convertInt32ToDouble(regT2, fpRegT1);
-
-            emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
+            emitDoubleCompare(fpRegT0, fpRegT1);
 
             emitJumpSlowToHot(jump(), instructionSize);
 
             fail1.link(this);
         }
 
-        emitGetVirtualRegister(op2, jsRegT32);
+        emitGetVirtualRegister(op, jsReg1);
         loadGlobalObject(regT4);
         callOperation(operation, regT4, jsRegT10, jsRegT32);
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
+        handleReturnValueGPR();
+        return true;
+    };
+
+    if (handleConstantIntOperandSlow(op1, jsRegT10, fpRegT0, jsRegT32, fpRegT1))
         return;
-    }
-
-    if (isOperandConstantInt(op1)) {
-        linkAllSlowCases(iter);
-
-        if (supportsFloatingPoint()) {
-            Jump fail1 = branchIfNotNumber(jsRegT32, regT4);
-            unboxDouble(jsRegT32, fpRegT1);
-
-            int32_t op1imm = getConstantOperand(op1).asInt32();
-
-            move(Imm32(op1imm), regT0);
-            convertInt32ToDouble(regT0, fpRegT0);
-
-            emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
-
-            emitJumpSlowToHot(jump(), instructionSize);
-
-            fail1.link(this);
-        }
-
-        emitGetVirtualRegister(op1, jsRegT10);
-        loadGlobalObject(regT4);
-        callOperation(operation, regT4, jsRegT10, jsRegT32);
-        emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
+    if (handleConstantIntOperandSlow(op2, jsRegT32, fpRegT1, jsRegT10, fpRegT0))
         return;
-    }
 
     linkSlowCase(iter); // LHS is not Int.
 
@@ -375,7 +439,7 @@ void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, 
         unboxDouble(jsRegT10, fpRegT0);
         unboxDouble(jsRegT32, fpRegT1);
 
-        emitJumpSlowToHot(branchDouble(condition, fpRegT0, fpRegT1), target);
+        emitDoubleCompare(fpRegT0, fpRegT1);
 
         emitJumpSlowToHot(jump(), instructionSize);
 
@@ -387,7 +451,7 @@ void JIT::emit_compareAndJumpSlowImpl(VirtualRegister op1, VirtualRegister op2, 
     linkSlowCase(iter); // RHS is not Int.
     loadGlobalObject(regT4);
     callOperation(operation, regT4, jsRegT10, jsRegT32);
-    emitJumpSlowToHot(branchTest32(invert ? Zero : NonZero, returnValueGPR), target);
+    handleReturnValueGPR();
 }
 
 void JIT::emit_op_inc(const JSInstruction* currentInstruction)

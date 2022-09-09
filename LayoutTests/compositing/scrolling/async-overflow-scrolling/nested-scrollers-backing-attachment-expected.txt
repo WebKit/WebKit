@@ -74,9 +74,14 @@
               (backingStoreAttached 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 241.00 1000.00)
-                  (contentsOpaque 1)
-                  (backingStoreAttached 1)
+                  (backingStoreAttached 0)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 241.00 1000.00)
+                      (contentsOpaque 1)
+                      (backingStoreAttached 1)
+                    )
+                  )
                 )
               )
             )
@@ -122,52 +127,27 @@
           (backingStoreAttached 1)
           (children 1
             (GraphicsLayer
-              (bounds origin 0.00 1000.00)
               (bounds 429.00 485.00)
               (clips 1)
               (backingStoreAttached 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 429.00 2810.00)
-                  (clips 1)
-                  (backingStoreAttached 1)
+                  (bounds origin 0.00 1000.00)
+                  (backingStoreAttached 0)
                   (children 1
                     (GraphicsLayer
-                      (position 10.00 300.00)
-                      (bounds 409.00 202.00)
-                      (contentsOpaque 1)
-                      (drawsContent 1)
-                      (backingStoreAttached 0)
-                    )
-                  )
-                )
-              )
-            )
-          )
-        )
-        (GraphicsLayer
-          (position 265.00 14.00)
-          (bounds 444.00 500.00)
-          (clips 1)
-          (backingStoreAttached 1)
-          (children 1
-            (GraphicsLayer
-              (bounds origin 0.00 1000.00)
-              (bounds 429.00 485.00)
-              (clips 1)
-              (backingStoreAttached 1)
-              (children 1
-                (GraphicsLayer
-                  (bounds 429.00 2810.00)
-                  (clips 1)
-                  (backingStoreAttached 1)
-                  (children 1
-                    (GraphicsLayer
-                      (position 10.00 802.00)
-                      (bounds 409.00 202.00)
-                      (contentsOpaque 1)
-                      (drawsContent 1)
+                      (bounds 429.00 2810.00)
+                      (clips 1)
                       (backingStoreAttached 1)
+                      (children 1
+                        (GraphicsLayer
+                          (position 10.00 300.00)
+                          (bounds 409.00 202.00)
+                          (contentsOpaque 1)
+                          (drawsContent 1)
+                          (backingStoreAttached 0)
+                        )
+                      )
                     )
                   )
                 )
@@ -182,22 +162,27 @@
           (backingStoreAttached 1)
           (children 1
             (GraphicsLayer
-              (bounds origin 0.00 1000.00)
               (bounds 429.00 485.00)
               (clips 1)
               (backingStoreAttached 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 429.00 2810.00)
-                  (clips 1)
-                  (backingStoreAttached 1)
+                  (bounds origin 0.00 1000.00)
+                  (backingStoreAttached 0)
                   (children 1
                     (GraphicsLayer
-                      (position 10.00 1304.00)
-                      (bounds 409.00 202.00)
-                      (contentsOpaque 1)
-                      (drawsContent 1)
+                      (bounds 429.00 2810.00)
+                      (clips 1)
                       (backingStoreAttached 1)
+                      (children 1
+                        (GraphicsLayer
+                          (position 10.00 802.00)
+                          (bounds 409.00 202.00)
+                          (contentsOpaque 1)
+                          (drawsContent 1)
+                          (backingStoreAttached 1)
+                        )
+                      )
                     )
                   )
                 )
@@ -212,22 +197,27 @@
           (backingStoreAttached 1)
           (children 1
             (GraphicsLayer
-              (bounds origin 0.00 1000.00)
               (bounds 429.00 485.00)
               (clips 1)
               (backingStoreAttached 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 429.00 2810.00)
-                  (clips 1)
-                  (backingStoreAttached 1)
+                  (bounds origin 0.00 1000.00)
+                  (backingStoreAttached 0)
                   (children 1
                     (GraphicsLayer
-                      (position 10.00 1806.00)
-                      (bounds 409.00 202.00)
-                      (contentsOpaque 1)
-                      (drawsContent 1)
-                      (backingStoreAttached 0)
+                      (bounds 429.00 2810.00)
+                      (clips 1)
+                      (backingStoreAttached 1)
+                      (children 1
+                        (GraphicsLayer
+                          (position 10.00 1304.00)
+                          (bounds 409.00 202.00)
+                          (contentsOpaque 1)
+                          (drawsContent 1)
+                          (backingStoreAttached 1)
+                        )
+                      )
                     )
                   )
                 )
@@ -242,22 +232,62 @@
           (backingStoreAttached 1)
           (children 1
             (GraphicsLayer
-              (bounds origin 0.00 1000.00)
               (bounds 429.00 485.00)
               (clips 1)
               (backingStoreAttached 1)
               (children 1
                 (GraphicsLayer
-                  (bounds 429.00 2810.00)
-                  (clips 1)
-                  (backingStoreAttached 1)
+                  (bounds origin 0.00 1000.00)
+                  (backingStoreAttached 0)
                   (children 1
                     (GraphicsLayer
-                      (position 10.00 2308.00)
-                      (bounds 409.00 202.00)
-                      (contentsOpaque 1)
-                      (drawsContent 1)
-                      (backingStoreAttached 0)
+                      (bounds 429.00 2810.00)
+                      (clips 1)
+                      (backingStoreAttached 1)
+                      (children 1
+                        (GraphicsLayer
+                          (position 10.00 1806.00)
+                          (bounds 409.00 202.00)
+                          (contentsOpaque 1)
+                          (drawsContent 1)
+                          (backingStoreAttached 0)
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 265.00 14.00)
+          (bounds 444.00 500.00)
+          (clips 1)
+          (backingStoreAttached 1)
+          (children 1
+            (GraphicsLayer
+              (bounds 429.00 485.00)
+              (clips 1)
+              (backingStoreAttached 1)
+              (children 1
+                (GraphicsLayer
+                  (bounds origin 0.00 1000.00)
+                  (backingStoreAttached 0)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 429.00 2810.00)
+                      (clips 1)
+                      (backingStoreAttached 1)
+                      (children 1
+                        (GraphicsLayer
+                          (position 10.00 2308.00)
+                          (bounds 409.00 202.00)
+                          (contentsOpaque 1)
+                          (drawsContent 1)
+                          (backingStoreAttached 0)
+                        )
+                      )
                     )
                   )
                 )

@@ -30,6 +30,7 @@ editing/selection/ios [ Skip ]
 editing/deleting/ios [ Skip ]
 editing/undo-manager [ Skip ]
 tiled-drawing [ Skip ]
+fast/attachment/mac [ Skip ]
 fast/css/ios [ Skip ]
 fast/css/watchos [ Skip ]
 fast/forms/date/date-editable-components [ Skip ]
@@ -225,8 +226,9 @@ http/tests/app-privacy-report/ [ Skip ]
 # Only partial support on Cocoa platforms.
 imported/w3c/web-platform-tests/speech-api/ [ Skip ]
 
-# Support for COOP / COEP violation reporting is missing.
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting
+# Support for COEP violation reporting is missing.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/document-reporting/
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-document-reporting-endpoint.https.window.html
@@ -477,6 +479,11 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/a
 imported/w3c/web-platform-tests/workers/same-origin-check.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/mixed-content [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/deny.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/get-decode-split.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/invalid.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/multiple.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/x-frame-options/sameorigin.sub.html [ DumpJSConsoleLogInStdErr ]
 
 # Skip some WPT that require cross-origin testrunner features we don't yet support, causing timeouts.
 imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp/opt-in/xhr.https.html [ Skip ]
@@ -828,6 +835,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-elemen
 
 # Newly imported WPT tests that are flaky.
 webkit.org/b/227649 imported/w3c/web-platform-tests/beacon/beacon-basic.https.window.html [ Failure Pass ]
+imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Failure Pass ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-audio.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/script-tag.http.html [ Failure Pass ]
 imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/script-tag.https.html [ Failure Pass ]
@@ -4702,7 +4710,6 @@ webkit.org/b/214462 imported/w3c/web-platform-tests/css/css-scoping/slotted-plac
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-014.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/abspos-020.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-004.html [ ImageOnlyFailure ]
-webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-026.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/flex-aspect-ratio-038.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001.html [ ImageOnlyFailure ]
 
@@ -4978,6 +4985,10 @@ webkit.org/b/226364 fast/layoutformattingcontext/table-with-percent-columns-and-
 fast/layoutformattingcontext/absolute-positioned-box-with-inline-sibling.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-fixed-width-with-max-distribution.html [ Skip ]
 [ Debug ] fast/layoutformattingcontext/table-space-distribution-simple-mismatching.html [ Skip ]
+[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-multiple-roots.html [ Skip ]
+[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-simple-right.html [ Skip ]
+[ Debug ] fast/layoutformattingcontext/block-only/float-avoider-with-margins.html [ Skip ]
+
 # Needs display box support.
 fast/layoutformattingcontext/flex-box-simple.html [ Skip ]
 
@@ -5035,6 +5046,8 @@ webkit.org/b/234690 imported/w3c/web-platform-tests/css/css-color/inline-opacity
 
 # color-mix() doesn't work with currentcolor
 webkit.org/b/234691 imported/w3c/web-platform-tests/css/css-color/color-mix-basic-001.html [ ImageOnlyFailure ]
+webkit.org/b/234691 imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-001.html [ ImageOnlyFailure ]
+webkit.org/b/234691 imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-002.html [ ImageOnlyFailure ]
 
 # display-p3 canvas and ImageData are Cocoa only for now.
 fast/canvas/canvas-color-space-display-p3-ImageData.html [ Failure ]

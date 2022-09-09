@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class ScriptExecutionContext;
+enum class PermissionState : uint8_t;
 struct ClientOrigin;
 struct PermissionDescriptor;
 
@@ -37,9 +39,11 @@ class PermissionObserver : public CanMakeWeakPtr<PermissionObserver> {
 public:
     virtual ~PermissionObserver() = default;
 
+    virtual PermissionState currentState() const = 0;
     virtual void stateChanged(PermissionState) = 0;
     virtual const ClientOrigin& origin() const = 0;
     virtual const PermissionDescriptor& descriptor() const = 0;
+    virtual const ScriptExecutionContext* context() const = 0;
 };
 
 } // namespace WebCore

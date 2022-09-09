@@ -81,7 +81,7 @@ public:
 private:
     EmptyScriptExecutionContext(JSC::VM& vm)
         : m_vm(vm)
-        , m_origin(SecurityOrigin::createUnique())
+        , m_origin(SecurityOrigin::createOpaque())
         , m_eventLoop(EmptyEventLoop::create(vm))
         , m_eventLoopTaskGroup(makeUnique<EventLoopTaskGroup>(m_eventLoop))
     {

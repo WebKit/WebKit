@@ -38,6 +38,7 @@ class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
 class PlatformMouseEvent;
+class WeakPtrImplWithEventTargetData;
 struct SecurityOriginData;
 
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
@@ -171,7 +172,7 @@ private:
     bool isGoogleMaps() const;
 #endif
 
-    WeakPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
     mutable std::optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
     mutable std::optional<bool> m_needsFullWidthHeightFullscreenStyleQuirk;

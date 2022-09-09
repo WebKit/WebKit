@@ -43,6 +43,7 @@ namespace JSC { namespace Wasm {
 MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const AbstractLocker&)
 {
     CCallHelpers jit;
+    JIT_COMMENT(jit, "throwExceptionFromWasmThunkGenerator");
 
     // The thing that jumps here must move ExceptionType into the argumentGPR1 before jumping here.
     // We're allowed to use temp registers here. We are not allowed to use callee saves.
@@ -64,6 +65,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromWasmThunkGenerator(const
 MacroAssemblerCodeRef<JITThunkPtrTag> throwStackOverflowFromWasmThunkGenerator(const AbstractLocker& locker)
 {
     CCallHelpers jit;
+    JIT_COMMENT(jit, "throwStackOverflowFromWasmThunkGenerator");
 
     int32_t stackSpace = WTF::roundUpToMultipleOf(stackAlignmentBytes(), RegisterSet::calleeSaveRegisters().numberOfSetRegisters() * sizeof(Register));
     ASSERT(static_cast<unsigned>(stackSpace) < Options::softReservedZoneSize());
@@ -80,6 +82,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const 
 {
     // We expect that the user has already put the function index into GPRInfo::argumentGPR1
     CCallHelpers jit;
+    JIT_COMMENT(jit, "triggerOMGEntryTierUpThunkGenerator");
 
     jit.emitFunctionPrologue();
 

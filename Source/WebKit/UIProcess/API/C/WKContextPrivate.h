@@ -104,6 +104,9 @@ WK_EXPORT void WKContextSetUseSeparateServiceWorkerProcess(WKContextRef context,
 
 WK_EXPORT void WKContextSetPrimaryWebsiteDataStore(WKContextRef context, WKWebsiteDataStoreRef websiteDataStore);
 
+WK_EXPORT WKArrayRef WKContextCopyLocalhostAliases(WKContextRef context);
+WK_EXPORT void WKContextSetLocalhostAliases(WKContextRef context, WKArrayRef localhostAliases);
+
 #ifdef __cplusplus
 }
 #endif

@@ -35,9 +35,9 @@ class ConditionEventListener;
 class SMILTimeContainer;
 class SVGSMILElement;
 
-template<typename T> class EventSender;
+template<typename T, typename Counter> class EventSender;
 
-using SMILEventSender = EventSender<SVGSMILElement>;
+using SMILEventSender = EventSender<SVGSMILElement, WeakPtrImplWithEventTargetData>;
 
 // This class implements SMIL interval timing model as needed for SVG animation.
 class SVGSMILElement : public SVGElement {
@@ -185,7 +185,7 @@ private:
 
     QualifiedName m_attributeName;
 
-    WeakPtr<SVGElement> m_targetElement;
+    WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_targetElement;
 
     Vector<Condition> m_conditions;
     bool m_conditionsConnected;
@@ -193,7 +193,7 @@ private:
 
     bool m_isWaitingForFirstInterval;
 
-    WeakHashSet<SVGSMILElement> m_timeDependents;
+    WeakHashSet<SVGSMILElement, WeakPtrImplWithEventTargetData> m_timeDependents;
 
     // Instance time lists
     Vector<SMILTimeWithOrigin> m_beginTimes;

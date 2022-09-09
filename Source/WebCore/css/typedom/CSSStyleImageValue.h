@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class Document;
+class WeakPtrImplWithEventTargetData;
 
 class CSSStyleImageValue final : public CSSStyleValue {
     WTF_MAKE_ISO_ALLOCATED(CSSStyleImageValue);
@@ -57,7 +58,7 @@ private:
     CSSStyleImageValue(Ref<CSSImageValue>&&, Document*);
 
     Ref<CSSImageValue> m_cssValue;
-    WeakPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 } // namespace WebCore

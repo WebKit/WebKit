@@ -81,7 +81,7 @@ private:
     void removeChildScrollbar(AccessibilityObject*);
 
     WeakPtr<ScrollView> m_scrollView;
-    WeakPtr<HTMLFrameOwnerElement> m_frameOwnerElement;
+    WeakPtr<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_frameOwnerElement;
     RefPtr<AccessibilityObject> m_horizontalScrollbar;
     RefPtr<AccessibilityObject> m_verticalScrollbar;
     bool m_childrenDirty;

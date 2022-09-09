@@ -48,7 +48,7 @@ namespace WebCore {
 class Blob;
 class ThreadableWebSocketChannel;
 
-class WebSocket final : public RefCounted<WebSocket>, public EventTargetWithInlineData, public ActiveDOMObject, private WebSocketChannelClient {
+class WebSocket final : public RefCounted<WebSocket>, public EventTarget, public ActiveDOMObject, private WebSocketChannelClient {
     WTF_MAKE_ISO_ALLOCATED(WebSocket);
 public:
     static ASCIILiteral subprotocolSeparator();

@@ -29,9 +29,10 @@ import webkitcorepy
 
 from .issue import Issue
 from .tracker import Tracker as GenericTracker
+from .radar import Tracker as RadarTracker
 
 from datetime import datetime
-from webkitbugspy import User
+from webkitbugspy import User, log
 
 
 class Tracker(GenericTracker):
@@ -51,12 +52,14 @@ class Tracker(GenericTracker):
                 )
                 if obj._res[len(Tracker.RE_TEMPLATES):]:
                     result['res'] = [compiled.pattern for compiled in obj._res[len(Tracker.RE_TEMPLATES):]]
+                if obj.radar_importer:
+                    result['radar_importer'] = User.Encoder().default(obj.radar_importer)
                 return result
             if isinstance(context, type):
                 raise TypeError('Cannot invoke parent class when classmethod')
             return super(Tracker.Encoder, context).default(obj)
 
-    def __init__(self, url, users=None, res=None, login_attempts=3, redact=None):
+    def __init__(self, url, users=None, res=None, login_attempts=3, redact=None, radar_importer=None):
         super(Tracker, self).__init__(users=users, redact=redact)
 
         self._logins_left = login_attempts + 1 if login_attempts else 1
@@ -68,6 +71,11 @@ class Tracker(GenericTracker):
             re.compile(template.format(match.group('domain')))
             for template in self.RE_TEMPLATES
         ] + (res or [])
+
+        if radar_importer:
+            self.radar_importer = User(**radar_importer) if isinstance(radar_importer, dict) else radar_importer
+        else:
+            self.radar_importer = None
 
     def user(self, name=None, username=None, email=None):
         user = super(Tracker, self).user(name=name, username=username, email=email)
@@ -217,6 +225,17 @@ class Tracker(GenericTracker):
         if member == 'references':
             issue._references = []
             refs = set()
+
+            # Attempt to match radar importer first
+            if self.radar_importer:
+                for comment in issue.comments:
+                    if comment.user != self.radar_importer:
+                        continue
+                    candidate = GenericTracker.from_string(comment.content)
+                    if not candidate or candidate.link in refs or (isinstance(type(candidate.tracker), type(issue.tracker)) and candidate.id == issue.id):
+                        continue
+                    issue._references.append(candidate)
+                    refs.add(candidate.link)
 
             for text in [issue.description] + [comment.content for comment in issue.comments]:
                 for match in self.REFERENCE_RE.findall(text):
@@ -447,3 +466,52 @@ class Tracker(GenericTracker):
             )
             return None
         return self.issue(response.json()['id'])
+
+    def cc_radar(self, issue, block=False, timeout=None):
+        if not self.radar_importer:
+            sys.stderr.write('No radar importer specified\n')
+            return None
+
+        for tracker in Tracker._trackers:
+            if isinstance(tracker, RadarTracker):
+                break
+        else:
+            sys.stderr.write('Project does not define radar tracker\n')
+            return None
+
+        did_modify_cc = False
+        if self.radar_importer not in issue.watchers:
+            log.info('CCing {}'.format(self.radar_importer.name))
+            response = None
+            try:
+                response = requests.put(
+                    '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
+                    json=dict(
+                        ids=[issue.id],
+                        cc=dict(add=[self.radar_importer.username]),
+                    ),
+                )
+            except RuntimeError as e:
+                sys.stderr.write('{}\n'.format(e))
+            if response and response.status_code // 100 == 4 and self._logins_left:
+                self._logins_left -= 1
+            if response and response.status_code // 100 == 2:
+                did_modify_cc = True
+                issue._comments = None
+                issue._references = None
+            else:
+                sys.stderr.write("Failed to cc {} on '{}'\n".format(self.radar_importer.name, issue))
+
+        start = time.time()
+        while start + (timeout or 60) > time.time():
+            for reference in issue.references:
+                if isinstance(reference.tracker, RadarTracker):
+                    return reference
+            if not block or not did_modify_cc:
+                break
+            log.warning('Waiting until {} imports bug...'.format(self.radar_importer.name))
+            time.sleep(10)
+            issue._comments = None
+            issue._references = None
+
+        return None

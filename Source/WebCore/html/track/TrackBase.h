@@ -99,7 +99,7 @@ private:
     RefPtr<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };
 #endif
-    WeakPtr<TrackListBase> m_trackList;
+    WeakPtr<TrackListBase, WeakPtrImplWithEventTargetData> m_trackList;
 };
 
 class MediaTrackBase : public TrackBase {

@@ -55,7 +55,7 @@ class NotificationResourcesLoader;
 
 struct NotificationData;
 
-class Notification final : public ThreadSafeRefCounted<Notification>, public ActiveDOMObject, public EventTargetWithInlineData {
+class Notification final : public ThreadSafeRefCounted<Notification>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
     using Permission = NotificationPermission;

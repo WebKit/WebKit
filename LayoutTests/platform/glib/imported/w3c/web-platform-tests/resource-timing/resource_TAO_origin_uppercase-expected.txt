@@ -1,0 +1,9 @@
+Description
+
+This test validates that for a cross origin resource, the timing allow check algorithm will fail when the value of Timing-Allow-Origin is NOT a case-sensitive match for the value of the origin of the current document.
+
+
+PASS window.performance is defined
+PASS window.performance.getEntriesByType is defined
+PASS redirectStart, redirectEnd, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, and responseStart -- should be all returned as 0 when the value of Timing-Allow-Origin is NOT a case-sensitive match for the value of the origin of the current document and TAO algorithm passes
+

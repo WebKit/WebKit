@@ -3588,14 +3588,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             auto list = CSSValueList::createSpaceSeparated();
             if (containment & Containment::Size)
                 list->append(cssValuePool.createIdentifierValue(CSSValueSize));
+            if (containment & Containment::InlineSize)
+                list->append(cssValuePool.createIdentifierValue(CSSValueInlineSize));
             if (containment & Containment::Layout)
                 list->append(cssValuePool.createIdentifierValue(CSSValueLayout));
             if (containment & Containment::Style)
                 list->append(cssValuePool.createIdentifierValue(CSSValueStyle));
             if (containment & Containment::Paint)
                 list->append(cssValuePool.createIdentifierValue(CSSValuePaint));
-            if (containment & Containment::InlineSize)
-                list->append(cssValuePool.createIdentifierValue(CSSValueInlineSize));
             return list;
         }
         case CSSPropertyContainer: {

@@ -30,6 +30,7 @@
 #import "APIFormClient.h"
 #import "APIFrameTreeNode.h"
 #import "APIPageConfiguration.h"
+#import "APISecurityOrigin.h"
 #import "APISerializedScriptValue.h"
 #import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
@@ -76,6 +77,7 @@
 #import "WKPreferencesInternal.h"
 #import "WKProcessPoolInternal.h"
 #import "WKSafeBrowsingWarning.h"
+#import "WKSecurityOriginInternal.h"
 #import "WKSharedAPICast.h"
 #import "WKSnapshotConfiguration.h"
 #import "WKUIDelegate.h"
@@ -128,6 +130,7 @@
 #import <WebCore/JSDOMExceptionHandling.h>
 #import <WebCore/LegacySchemeRegistry.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/Permissions.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Settings.h>
@@ -3936,6 +3939,15 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 - (CGFloat)_overrideDeviceScaleFactor
 {
     return _page->customDeviceScaleFactor().value_or(0);
+}
+
++ (void)_permissionChanged:(NSString *)permissionName forOrigin:(WKSecurityOrigin *)origin
+{
+    auto name = WebCore::Permissions::toPermissionName(permissionName);
+    if (!name)
+        return;
+
+    WebKit::WebProcessProxy::permissionChanged(*name, origin->_securityOrigin->securityOrigin());
 }
 
 @end

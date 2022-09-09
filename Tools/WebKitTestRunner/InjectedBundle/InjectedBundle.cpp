@@ -208,13 +208,7 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         if (booleanValue(messageBodyDictionary, "ShouldGC"))
             WKBundleGarbageCollectJavaScriptObjects(m_bundle.get());
 
-        auto allowedHostsValue = value(messageBodyDictionary, "AllowedHosts");
-        if (allowedHostsValue && WKGetTypeID(allowedHostsValue) == WKArrayGetTypeID()) {
-            m_allowedHosts.clear();
-            auto array = static_cast<WKArrayRef>(allowedHostsValue);
-            for (size_t i = 0, size = WKArrayGetSize(array); i < size; ++i)
-                m_allowedHosts.append(toWTFString(WKArrayGetItemAtIndex(array, i)));
-        }
+        setAllowedHosts(messageBodyDictionary);
 
         m_state = Idle;
         m_dumpPixels = false;
@@ -492,6 +486,17 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
     postPageMessage("Error", "Unknown");
 }
 
+void InjectedBundle::setAllowedHosts(WKDictionaryRef settings)
+{
+    auto allowedHostsValue = value(settings, "AllowedHosts");
+    if (allowedHostsValue && WKGetTypeID(allowedHostsValue) == WKArrayGetTypeID()) {
+        m_allowedHosts.clear();
+        auto array = static_cast<WKArrayRef>(allowedHostsValue);
+        for (size_t i = 0, size = WKArrayGetSize(array); i < size; ++i)
+            m_allowedHosts.append(toWTFString(WKArrayGetItemAtIndex(array, i)));
+    }
+}
+
 void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode testingMode)
 {
     m_state = Testing;
@@ -502,6 +507,8 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 
     m_pixelResult.clear();
     m_repaintRects.clear();
+
+    setAllowedHosts(settings);
 
     m_testRunner = TestRunner::create();
     m_gcController = GCController::create();

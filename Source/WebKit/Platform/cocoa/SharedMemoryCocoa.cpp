@@ -88,9 +88,7 @@ void SharedMemory::Handle::takeOwnershipOfMemory(MemoryLedger memoryLedger) cons
         return;
 
     kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), mach_task_self(), toVMMemoryLedger(memoryLedger), 0);
-
-    if (kr != KERN_SUCCESS)
-        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::takeOwnershipOfMemory: Failed ownership of shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
+    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::Handle::takeOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
 #else
     UNUSED_PARAM(memoryLedger);
 #endif
@@ -103,9 +101,7 @@ void SharedMemory::Handle::setOwnershipOfMemory(const WebCore::ProcessIdentity& 
         return;
 
     kern_return_t kr = mach_memory_entry_ownership(m_handle.sendRight(), processIdentity.taskIdToken(), toVMMemoryLedger(memoryLedger), 0);
-
-    if (kr != KERN_SUCCESS)
-        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::Handle::setOwnershipOfMemory: Failed ownership of shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
+    RELEASE_LOG_ERROR_IF(kr != KERN_SUCCESS, VirtualMemory, "SharedMemory::Handle::setOwnershipOfMemory: Failed ownership of shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
 #else
     UNUSED_PARAM(memoryLedger);
     UNUSED_PARAM(processIdentity);
@@ -173,11 +169,7 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     // Using VM_FLAGS_PURGABLE so that we can later transfer ownership of the memory via mach_memory_entry_ownership().
     kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, *roundedSize, VM_FLAGS_ANYWHERE | VM_FLAGS_PURGABLE);
     if (kr != KERN_SUCCESS) {
-#if RELEASE_LOG_DISABLED
-        LOG_ERROR("Failed to allocate mach_vm_allocate shared memory (%zu bytes). %s (%x)", size, mach_error_string(kr), kr);
-#else
-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate mach_vm_allocate shared memory (%zu bytes). %{public}s (%x)", nullptr, size, mach_error_string(kr), kr);
-#endif
+        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::allocate: Failed to allocate mach_vm_allocate shared memory (%zu bytes). %" PUBLIC_LOG_STRING " (%x)", nullptr, size, mach_error_string(kr), kr);
         return nullptr;
     }
 
@@ -215,25 +207,17 @@ static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, Share
 #if HAVE(MEMORY_ATTRIBUTION_VM_SHARE_SUPPORT)
     kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
     if (kr != KERN_SUCCESS) {
-#if RELEASE_LOG_DISABLED
-        LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
-#else
-        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. Error: %{public}s (%x)", mach_error_string(kr), kr);
-#endif
+        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
         return { };
     }
 #else
     // First try without MAP_MEM_VM_SHARE because it prevents memory ownership transfer. We only pass the MAP_MEM_VM_SHARE flag as a fallback.
     kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK, &port, parentEntry);
     if (kr != KERN_SUCCESS) {
-        RELEASE_LOG(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory, will try again with MAP_MEM_VM_SHARE flag. Error: %{public}s (%x)", mach_error_string(kr), kr);
+        RELEASE_LOG(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory, will try again with MAP_MEM_VM_SHARE flag. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
         kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE, &port, parentEntry);
         if (kr != KERN_SUCCESS) {
-#if RELEASE_LOG_DISABLED
-            LOG_ERROR("Failed to create a mach port for shared memory. %s (%x)", mach_error_string(kr), kr);
-#else
-            RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory with MAP_MEM_VM_SHARE flag. Error: %{public}s (%x)", mach_error_string(kr), kr);
-#endif
+            RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory with MAP_MEM_VM_SHARE flag. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
             return { };
         }
     }
@@ -274,15 +258,10 @@ RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protecti
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
     kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, *roundedSize, 0, VM_FLAGS_ANYWHERE, handle.m_handle.sendRight(), 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
-#if RELEASE_LOG_DISABLED
-    if (kr != KERN_SUCCESS)
-        return nullptr;
-#else
     if (kr != KERN_SUCCESS) {
-        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::map: Failed to map shared memory. %{public}s (%x)", nullptr, mach_error_string(kr), kr);
+        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::map: Failed to map shared memory. %" PUBLIC_LOG_STRING " (%x)", nullptr, mach_error_string(kr), kr);
         return nullptr;
     }
-#endif
 
     auto sharedMemory(adoptRef(*new SharedMemory));
     sharedMemory->m_size = handle.m_size;
@@ -302,14 +281,10 @@ SharedMemory::~SharedMemory()
         }
 
         kern_return_t kr = mach_vm_deallocate(mach_task_self(), toVMAddress(m_data), *roundedSize);
-#if RELEASE_LOG_DISABLED
-        ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
-#else
         if (kr != KERN_SUCCESS) {
-            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate shared memory. %{public}s (%x)", this, mach_error_string(kr), kr);
+            RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::~SharedMemory: Failed to deallocate shared memory. %" PUBLIC_LOG_STRING " (%x)", this, mach_error_string(kr), kr);
             ASSERT_NOT_REACHED();
         }
-#endif
     }
 }
     

@@ -8,6 +8,11 @@ Webfont Test 2
 ¥Yen
 ¥Yen
 Variable Font Test 1
+Synthetic Weight Test 1
+Synthetic Weight Test 2
+Synthetic Oblique Test 1
+Synthetic Oblique Test 2
+Synthetic Oblique Test 3
 
 == Running test suite: CSS.getComputedPrimaryFontForNode
 -- Running test case: CSS.getComputedPrimaryFontForNode.Fallback1
@@ -60,4 +65,29 @@ PASS: Width axis name should be 'Width'.
 PASS: Width axis minimum should be '0'.
 PASS: Width axis maximum should be '1000'.
 PASS: Width axis default should be '750'.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.SyntheticWeightFromNormal
+PASS: Font should not have a synthesized weight.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.SyntheticWeightFromBold
+PASS: Font should have a synthesized weight.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.SyntheticObliqueFromNormal
+PASS: Font should not have a synthesized obliqueness.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.SyntheticObliqueFromItalic
+PASS: Font should have a synthesized obliqueness.
+
+-- Running test setup.
+PASS: Font should be loaded.
+-- Running test case: CSS.getComputedPrimaryFontForNode.SyntheticObliqueFromOblique
+PASS: Font should have a synthesized obliqueness.
 

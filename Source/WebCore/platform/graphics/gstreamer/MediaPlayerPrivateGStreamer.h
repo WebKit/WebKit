@@ -248,6 +248,10 @@ public:
     const Logger& mediaPlayerLogger() { return logger(); }
 #endif
 
+    // This AbortableTaskQueue must be aborted everytime a flush is sent downstream from the main thread
+    // to avoid deadlocks from threads in the playback pipeline waiting for the main thread.
+    AbortableTaskQueue& sinkTaskQueue() { return m_sinkTaskQueue; }
+
 protected:
     enum MainThreadNotification {
         VideoChanged = 1 << 0,
@@ -601,7 +605,7 @@ private:
 
     GRefPtr<GstStreamCollection> m_streamCollection;
 
-    AbortableTaskQueue m_abortableTaskQueue;
+    AbortableTaskQueue m_sinkTaskQueue;
 };
 
 }

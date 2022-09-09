@@ -28,24 +28,36 @@
 
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
+#include "WebPermissionControllerMessages.h"
 #include "WebPermissionControllerProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/Document.h>
 #include <WebCore/Page.h>
 #include <WebCore/PermissionObserver.h>
 #include <WebCore/PermissionQuerySource.h>
 #include <WebCore/PermissionState.h>
+#include <WebCore/Permissions.h>
+#include <WebCore/SecurityOriginData.h>
 #include <optional>
 
 namespace WebKit {
 
-Ref<WebPermissionController> WebPermissionController::create()
+Ref<WebPermissionController> WebPermissionController::create(WebProcess& process)
 {
-    return adoptRef(*new WebPermissionController);
+    return adoptRef(*new WebPermissionController(process));
 }
 
-WebPermissionController::WebPermissionController() = default;
+WebPermissionController::WebPermissionController(WebProcess& process)
+{
+    process.addMessageReceiver(Messages::WebPermissionController::messageReceiverName(), *this);
+}
 
-void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor&& descriptor, WebCore::Page* page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
+WebPermissionController::~WebPermissionController()
+{
+    WebProcess::singleton().removeMessageReceiver(Messages::WebPermissionController::messageReceiverName());
+}
+
+void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::PermissionDescriptor descriptor, WebCore::Page* page, WebCore::PermissionQuerySource source, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&& completionHandler)
 {
     std::optional<WebPageProxyIdentifier> proxyIdentifier;
     if (source == WebCore::PermissionQuerySource::Window || source == WebCore::PermissionQuerySource::DedicatedWorker) {
@@ -53,7 +65,7 @@ void WebPermissionController::query(WebCore::ClientOrigin&& origin, WebCore::Per
         proxyIdentifier = WebPage::fromCorePage(*page).webPageProxyIdentifier();
     }
 
-    m_requests.append(PermissionRequest { WTFMove(origin), WTFMove(descriptor), proxyIdentifier, source, WTFMove(completionHandler) });
+    m_requests.append(PermissionRequest { WTFMove(origin), descriptor, proxyIdentifier, source, WTFMove(completionHandler) });
     tryProcessingRequests();
 }
 
@@ -86,11 +98,28 @@ void WebPermissionController::removeObserver(WebCore::PermissionObserver& observ
     m_observers.remove(observer);
 }
 
-void WebPermissionController::permissionChanged(const WebCore::ClientOrigin& origin, const WebCore::PermissionDescriptor& descriptor, WebCore::PermissionState state)
+void WebPermissionController::permissionChanged(WebCore::PermissionName permissionName, const WebCore::SecurityOriginData& topOrigin)
 {
     for (auto& observer : m_observers) {
-        if (observer.origin() == origin && observer.descriptor() == descriptor)
-            observer.stateChanged(state);
+        if (observer.descriptor().name != permissionName || observer.origin().topOrigin != topOrigin)
+            return;
+
+        auto* context = observer.context();
+        if (!context)
+            continue;
+
+        auto source = WebCore::Permissions::sourceFromContext(*context);
+        // FIXME: Add support for workers.
+        ASSERT(source && *source == WebCore::PermissionQuerySource::Window);
+
+        auto* page = downcast<WebCore::Document>(context)->page();
+        if (!page)
+            continue;
+
+        query(WebCore::ClientOrigin { observer.origin() }, WebCore::PermissionDescriptor { permissionName }, page, *source, [observer = WeakPtr { observer }](auto newState) {
+            if (observer && newState != observer->currentState())
+                observer->stateChanged(*newState);
+        });
     }
 }
 

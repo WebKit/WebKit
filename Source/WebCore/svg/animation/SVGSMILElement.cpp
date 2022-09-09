@@ -1157,7 +1157,7 @@ bool SVGSMILElement::progress(SMILTime elapsed, SVGSMILElement& firstAnimation, 
 void SVGSMILElement::notifyDependentsIntervalChanged(NewOrExistingInterval newOrExisting)
 {
     ASSERT(m_intervalBegin.isFinite());
-    static NeverDestroyed<WeakHashSet<SVGSMILElement>> loopBreaker;
+    static NeverDestroyed<WeakHashSet<SVGSMILElement, WeakPtrImplWithEventTargetData>> loopBreaker;
     if (loopBreaker->contains(*this))
         return;
     loopBreaker->add(*this);

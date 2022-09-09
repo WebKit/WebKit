@@ -44,6 +44,7 @@ class CachedRawResource;
 class Document;
 class Element;
 class MediaResource;
+class WeakPtrImplWithEventTargetData;
 
 class MediaResourceLoader final : public PlatformMediaResourceLoader, public CanMakeWeakPtr<MediaResourceLoader>, public ContextDestructionObserver {
 public:
@@ -64,8 +65,8 @@ public:
 private:
     void contextDestroyed() override;
 
-    WeakPtr<Document> m_document;
-    WeakPtr<Element> m_element;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
     String m_crossOriginMode;
     HashSet<MediaResource*> m_resources;
     Vector<ResourceResponse> m_responsesForTesting;

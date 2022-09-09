@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 400x500
+  RenderSVGRoot {svg} at (0,0) size 400x500
+layer at (0,0) size 400x500
+  RenderSVGViewportContainer at (0,0) size 400x500
+layer at (0,0) size 100x100
+  RenderSVGHiddenContainer {defs} at (0,0) size 100x100
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+layer at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (0,0) size 400x200
+layer at (0,0) size 400x200
+  RenderSVGRect {rect} at (0,0) size 400x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
+layer at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (0,0) size 400x200
+layer at (0,0) size 400x200
+  RenderSVGRect {rect} at (0,0) size 400x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
+layer at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (0,0) size 400x200
+layer at (0,0) size 400x200
+  RenderSVGRect {rect} at (0,0) size 400x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
+layer at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (0,0) size 400x200
+layer at (0,0) size 400x200
+  RenderSVGRect {rect} at (0,0) size 400x200 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=400.00] [height=200.00]
+layer at (50,10) size 100x100
+  RenderSVGRect {rect} at (50,10) size 100x100 [stroke={[type=SOLID] [color=#FF0000]}] [x=50.00] [y=10.00] [width=100.00] [height=100.00]
+layer at (10,240) size 100x100
+  RenderSVGRect {rect} at (10,240) size 100x100 [stroke={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=240.00] [width=100.00] [height=100.00]
+layer at (250,10) size 440x220 backgroundClip at (0,0) size 400x500 clip at (0,0) size 400x500
+  RenderSVGRect {rect} at (250,10) size 440x220 [stroke={[type=SOLID] [color=#FF0000]}] [x=250.00] [y=10.00] [width=440.00] [height=220.00]
+layer at (210,240) size 480x240 backgroundClip at (0,0) size 400x500 clip at (0,0) size 400x500
+  RenderSVGRect {rect} at (210,240) size 480x240 [stroke={[type=SOLID] [color=#FF0000]}] [x=210.00] [y=240.00] [width=480.00] [height=240.00]

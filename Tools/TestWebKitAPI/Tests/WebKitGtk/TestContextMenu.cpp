@@ -25,7 +25,9 @@
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
 
+#if !USE(GTK4)
 static WebKitTestServer* kServer;
+#endif
 
 class ContextMenuTest: public WebViewTest {
 public:
@@ -482,6 +484,7 @@ public:
     DefaultMenuType m_expectedMenuType;
 };
 
+#if !USE(GTK4)
 static void prepareContextMenuTestView(ContextMenuDefaultTest* test)
 {
     GUniquePtr<char> baseDir(g_strdup_printf("file://%s/", Test::getResourcesDir().data()));
@@ -570,6 +573,7 @@ static void testContextMenuKey(ContextMenuDefaultTest* test, gconstpointer)
     test->m_expectedMenuType = ContextMenuDefaultTest::Selection;
     test->showContextMenuTriggeredByContextMenuKeyAndWaitUntilFinished();
 }
+#endif
 
 class ContextMenuCustomTest: public ContextMenuTest {
 public:
@@ -613,11 +617,11 @@ public:
     void activateMenuItem()
     {
         g_assert_nonnull(m_itemToActivateLabel);
-        auto* menu = getContextMenuWidget();
-        auto* item = getMenuItem(menu, m_itemToActivateLabel);
 #if USE(GTK4)
 
 #else
+        auto* menu = getContextMenuWidget();
+        auto* item = getMenuItem(menu, m_itemToActivateLabel);
         // GTK3 uses a menu, which contains menu items.
         gtk_menu_shell_activate_item(GTK_MENU_SHELL(menu), GTK_WIDGET(item), TRUE);
 #endif // USE(GTK4)
@@ -701,6 +705,7 @@ public:
     bool m_toggled { false };
 };
 
+#if !USE(GTK4)
 static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -750,6 +755,7 @@ static void testContextMenuPopulateMenu(ContextMenuCustomTest* test, gconstpoint
     test->activateCustomMenuItemAndWaitUntilActivated("Custom _GAction With Target");
     g_assert_true(test->m_activated);
 }
+#endif
 
 class ContextMenuCustomFullTest: public ContextMenuTest {
 public:
@@ -827,6 +833,7 @@ public:
     }
 };
 
+#if !USE(GTK4)
 static void testContextMenuCustomMenu(ContextMenuCustomFullTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -835,6 +842,7 @@ static void testContextMenuCustomMenu(ContextMenuCustomFullTest* test, gconstpoi
 
     test->showContextMenuAndWaitUntilFinished();
 }
+#endif
 
 class ContextMenuSubmenuTest: public ContextMenuTest {
 public:
@@ -875,6 +883,7 @@ public:
     }
 };
 
+#if !USE(GTK4)
 static void testContextMenuSubMenu(ContextMenuSubmenuTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -883,6 +892,7 @@ static void testContextMenuSubMenu(ContextMenuSubmenuTest* test, gconstpointer)
 
     test->showContextMenuAndWaitUntilFinished();
 }
+#endif
 
 class ContextMenuDismissedTest: public ContextMenuTest {
 public:
@@ -915,6 +925,7 @@ public:
     bool m_dismissed;
 };
 
+#if !USE(GTK4)
 static void testContextMenuDismissed(ContextMenuDismissedTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -924,6 +935,7 @@ static void testContextMenuDismissed(ContextMenuDismissedTest* test, gconstpoint
     test->showContextMenuAndWaitUntilDismissed();
     g_assert_true(test->m_dismissed);
 }
+#endif
 
 class ContextMenuWebExtensionTest: public ContextMenuTest {
 public:
@@ -964,6 +976,7 @@ public:
     Vector<WebKitContextMenuAction> m_actions;
 };
 
+#if !USE(GTK4)
 static void testContextMenuWebExtensionMenu(ContextMenuWebExtensionTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -1004,6 +1017,7 @@ static void testContextMenuWebExtensionMenu(ContextMenuWebExtensionTest* test, g
     test->showContextMenuAndWaitUntilFinished();
     g_assert_cmpuint(test->m_actions.size(), ==, 0);
 }
+#endif
 
 class ContextMenuWebExtensionNodeTest: public ContextMenuTest {
 public:
@@ -1054,6 +1068,7 @@ public:
     Node m_node;
 };
 
+#if !USE(GTK4)
 static void testContextMenuWebExtensionNode(ContextMenuWebExtensionNodeTest* test, gconstpointer)
 {
     test->showInWindow();
@@ -1143,12 +1158,14 @@ static void testContextMenuLiveStream(ContextMenuDefaultTest* test, gconstpointe
     test->showContextMenuAtPositionAndWaitUntilFinished(1, 1);
 }
 
+#endif // !USE(GTK4)
+
 void beforeAll()
 {
+#if !USE(GTK4)
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
-#if !USE(GTK4)
     // FIXME: Rework context menu API in GTK4 to not expose GdkEvent.
     ContextMenuDefaultTest::add("WebKitWebView", "default-menu", testContextMenuDefaultMenu);
     ContextMenuDefaultTest::add("WebKitWebView", "context-menu-key", testContextMenuKey);
@@ -1165,5 +1182,7 @@ void beforeAll()
 
 void afterAll()
 {
+#if !USE(GTK4)
     delete kServer;
+#endif
 }

@@ -141,6 +141,7 @@ private:
     void openURLExternally(const String& url);
     void revealFileExternally(const String& path);
     void showCertificate(const WebCore::CertificateInfo&);
+    void setInspectorPageDeveloperExtrasEnabled(bool);
     void sendMessageToBackend(const String& message);
 
     void createFrontendPageAndWindow();

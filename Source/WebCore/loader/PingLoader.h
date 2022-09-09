@@ -45,12 +45,8 @@ class Frame;
 class HTTPHeaderMap;
 class ResourceRequest;
 
-enum class ViolationReportType : uint8_t {
-    ContentSecurityPolicy,
-    StandardReportingAPIViolation // https://www.w3.org/TR/reporting/#try-delivery
-};
-
 enum class ContentSecurityPolicyImposition : uint8_t;
+enum class ViolationReportType : uint8_t;
 
 class PingLoader {
 public:

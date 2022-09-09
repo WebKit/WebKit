@@ -85,7 +85,9 @@
 #include <WebCore/ContentRuleListResults.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/Page.h>
+#include <WebCore/Permissions.h>
 #include <WebCore/SSLKeyGenerator.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SerializedCryptoKeyWrap.h>
 #include <WebCore/WindowFeatures.h>
@@ -348,6 +350,16 @@ bool WKPageTryClose(WKPageRef pageRef)
 {
     CRASH_IF_SUSPENDED;
     return toImpl(pageRef)->tryClose();
+}
+
+void WKPagePermissionChanged(WKStringRef permissionName, WKStringRef originString)
+{
+    auto name = WebCore::Permissions::toPermissionName(toWTFString(permissionName));
+    if (!name)
+        return;
+
+    auto topOrigin = WebCore::SecurityOrigin::createFromString(toWTFString(originString))->data();
+    WebKit::WebProcessProxy::permissionChanged(*name, topOrigin);
 }
 
 void WKPageClose(WKPageRef pageRef)

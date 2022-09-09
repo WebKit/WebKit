@@ -110,6 +110,7 @@ public:
     void pickColorFromScreen(CompletionHandler<void(const std::optional<WebCore::Color>&)>&&) override;
     void inspectedURLChanged(const String&) override;
     void showCertificate(const WebCore::CertificateInfo&) override;
+    void setInspectorPageDeveloperExtrasEnabled(bool) override;
     void sendMessageToBackend(const String&) override;
     WebCore::InspectorFrontendAPIDispatcher& frontendAPIDispatcher() override { return m_frontendAPIDispatcher; }
     WebCore::Page* frontendPage() final;

@@ -2,10 +2,10 @@
 <html>
 <head>
 <script>
-
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText();
+    testRunner.dumpResourceLoadCallbacks();
 }
 
 let loadCount = 0;
@@ -13,34 +13,24 @@ function didLoad(element)
 {
     if (!loadCount) {
         document.querySelector('link').rel = 'stylesheet';
-        setTimeout(() => {
-            document.querySelector('link').rel = 'StyleSheet';          
-        }, 100);
-        setTimeout(() => {
-            document.querySelector('link').rel = '  StyleSheet';          
-        }, 200);
+        setTimeout(() => document.querySelector('link').rel = 'StyleSheet', 50);
+        setTimeout(() => document.querySelector('link').rel = '  StyleSheet', 100);
+        setTimeout(() => document.querySelector('link').media = 'all', 150);
+        setTimeout(() => document.querySelector('link').media = 'All', 200);
+        setTimeout(() => document.querySelector('link').type = 'text/css', 250);
+        setTimeout(() => document.querySelector('link').href = 'resources/link-stylesheet-load-once.css', 300);
+        setTimeout(() => document.querySelector('link').href = '  ../HTMLLinkElement/resources/link-stylesheet-load-once.css', 350);
         setTimeout(() => {
             if (window.testRunner)
               testRunner.notifyDone();
-        }, 300);
+        }, 400);
     }
     ++loadCount;
     result.innerHTML = loadCount;
 }
 
-window.onload = () => {
-    setTimeout(() => {
-        if (window.testRunner) {
-            internals.clearMemoryCache();
-            testRunner.dumpResourceLoadCallbacks();
-            if (testRunner.setSerializeHTTPLoads)
-                testRunner.setSerializeHTTPLoads();
-        }
-        document.head.innerHTML = `<link rel="stylesheet" href="resources/link-stylesheet-load-once.css" onload="didLoad(this)">`;
-    }, 0);
-}
-
 </script>
+<link rel="stylesheet" type="text/css" media="all" href="resources/link-stylesheet-load-once.css" onload="didLoad(this)">
 </head>
 <body>
 <p>This tests overriding rel content attribute with the same value.<br>

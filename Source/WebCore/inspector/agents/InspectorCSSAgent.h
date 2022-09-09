@@ -58,6 +58,7 @@ class NodeList;
 class RenderObject;
 class Settings;
 class StyleRule;
+class WeakPtrImplWithEventTargetData;
 
 namespace Style {
 class Resolver;
@@ -195,8 +196,8 @@ private:
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };
 
-    WeakHashMap<Node, OptionSet<LayoutFlag>> m_lastLayoutFlagsForNode;
-    WeakHashSet<Node> m_nodesWithPendingLayoutFlagsChange;
+    WeakHashMap<Node, OptionSet<LayoutFlag>, WeakPtrImplWithEventTargetData> m_lastLayoutFlagsForNode;
+    WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_nodesWithPendingLayoutFlagsChange;
     Timer m_nodesWithPendingLayoutFlagsChangeDispatchTimer;
 
     Inspector::Protocol::CSS::LayoutContextTypeChangedMode m_layoutContextTypeChangedMode { Inspector::Protocol::CSS::LayoutContextTypeChangedMode::Observed };

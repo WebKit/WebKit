@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "MessageReceiver.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/PermissionController.h>
@@ -36,24 +37,31 @@ namespace WebCore {
 enum class PermissionQuerySource : uint8_t;
 enum class PermissionState : uint8_t;
 class Page;
+struct SecurityOriginData;
 }
 
 namespace WebKit {
 
-class WebPermissionController final : public CanMakeWeakPtr<WebPermissionController>, public WebCore::PermissionController {
+class WebProcess;
+
+class WebPermissionController final : public WebCore::PermissionController, public IPC::MessageReceiver {
 public:
-    static Ref<WebPermissionController> create();
+    static Ref<WebPermissionController> create(WebProcess&);
+    ~WebPermissionController();
+
+    // IPC::MessageReceiver
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:
-    WebPermissionController();
+    explicit WebPermissionController(WebProcess&);
 
     // WebCore::PermissionController
-    void query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor&&, WebCore::Page*, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
+    void query(WebCore::ClientOrigin&&, WebCore::PermissionDescriptor, WebCore::Page*, WebCore::PermissionQuerySource, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
     void addObserver(WebCore::PermissionObserver&) final;
     void removeObserver(WebCore::PermissionObserver&) final;
+    void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&) final;
 
     void tryProcessingRequests();
-    void permissionChanged(const WebCore::ClientOrigin&, const WebCore::PermissionDescriptor&, WebCore::PermissionState);
 
     WeakHashSet<WebCore::PermissionObserver> m_observers;
 

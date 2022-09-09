@@ -93,6 +93,7 @@
 #include "TextResourceDecoder.h"
 #include "UserContentProvider.h"
 #include "UserContentURLPattern.h"
+#include "ViolationReportType.h"
 #include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
@@ -767,7 +768,7 @@ std::optional<CrossOriginOpenerPolicyEnforcementResult> DocumentLoader::doCrossO
 
     auto currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_frame->document()->url(), m_frame->document()->securityOrigin(), m_frame->document()->crossOriginOpenerPolicy(), m_triggeringAction.requester(), openerURL);
 
-    auto newCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(response, m_triggeringAction.requester(), m_contentSecurityPolicy.get(), frameLoader()->effectiveSandboxFlags(), frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), currentCoopEnforcementResult);
+    auto newCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*m_frame->document(), response, m_triggeringAction.requester(), m_contentSecurityPolicy.get(), frameLoader()->effectiveSandboxFlags(), m_request.httpReferrer(), frameLoader()->stateMachine().isDisplayingInitialEmptyDocument(), currentCoopEnforcementResult);
     if (!newCoopEnforcementResult) {
         cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
         return std::nullopt;
@@ -1212,7 +1213,7 @@ void DocumentLoader::stopLoadingForPolicyChange()
 // https://w3c.github.io/ServiceWorker/#control-and-use-window-client
 static inline bool shouldUseActiveServiceWorkerFromParent(const Document& document, const Document& parent)
 {
-    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isUnique() && parent.securityOrigin().isSameOriginDomain(document.securityOrigin());
+    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isOpaque() && parent.securityOrigin().isSameOriginDomain(document.securityOrigin());
 }
 #endif
 
@@ -1267,7 +1268,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
 #endif
 #if ENABLE(SERVICE_WORKER)
         if (m_canUseServiceWorkers) {
-            if (!document.securityOrigin().isUnique()) {
+            if (!document.securityOrigin().isOpaque()) {
                 if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
                     document.setActiveServiceWorker(ServiceWorker::getOrCreate(document, WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
                     m_serviceWorkerRegistrationData = { };
@@ -1276,8 +1277,8 @@ void DocumentLoader::commitData(const SharedBuffer& data)
                         document.setActiveServiceWorker(parent->activeServiceWorker());
                 }
             } else if (m_resultingClientId) {
-                // In case document has a unique origin, say due to sandboxing, we should have created a new context, let's create a new identifier instead.
-                if (document.securityOrigin().isUnique())
+                // In case document has an opaque origin, say due to sandboxing, we should have created a new context, let's create a new identifier instead.
+                if (document.securityOrigin().isOpaque())
                     document.createNewIdentifier();
             }
 
@@ -2471,11 +2472,6 @@ PreviewConverter* DocumentLoader::previewConverter() const
 void DocumentLoader::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, unsigned long requestIdentifier)
 {
     static_cast<ScriptExecutionContext*>(m_frame->document())->addConsoleMessage(messageSource, messageLevel, message, requestIdentifier);
-}
-
-void DocumentLoader::sendCSPViolationReport(URL&& reportURL, Ref<FormData>&& report)
-{
-    PingLoader::sendViolationReport(*m_frame, WTFMove(reportURL), WTFMove(report), ViolationReportType::ContentSecurityPolicy);
 }
 
 void DocumentLoader::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventInit&& eventInit)

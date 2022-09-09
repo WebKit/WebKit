@@ -598,7 +598,7 @@ std::unique_ptr<Decoder> Connection::waitForMessage(MessageName messageName, uin
         }
 
         if (UNLIKELY(m_inDispatchSyncMessageCount && !timeout.isInfinity())) {
-            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%{public}s): Exiting immediately, since we're handling a sync message already", description(messageName));
+            RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%" PUBLIC_LOG_STRING "): Exiting immediately, since we're handling a sync message already", description(messageName));
             m_waitingForMessage = nullptr;
             break;
         }
@@ -726,7 +726,7 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(SyncRequestID syncRequestI
     }
 
 #if OS(DARWIN)
-    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %{public}s from process %d, id=%" PRIu64, description(messageName), remoteProcessID(), syncRequestID.toUInt64());
+    RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %" PUBLIC_LOG_STRING " from process %d, id=%" PRIu64, description(messageName), remoteProcessID(), syncRequestID.toUInt64());
 #else
     RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Timed-out while waiting for reply for %s, id=%" PRIu64, description(messageName), syncRequestID.toUInt64());
 #endif
@@ -1240,9 +1240,7 @@ void Connection::dispatchIncomingMessages()
         messagesToProcess = m_incomingMessagesThrottler->numberOfMessagesToProcess(m_incomingMessages.size());
         if (messagesToProcess < m_incomingMessages.size()) {
             RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: IPC throttling was triggered (has %zu pending incoming messages, will only process %zu before yielding)", this, m_incomingMessages.size(), messagesToProcess);
-#if PLATFORM(COCOA)
-            RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: first IPC message in queue is %{public}s", this, description(message->messageName()));
-#endif
+            RELEASE_LOG_ERROR(IPC, "%p - Connection::dispatchIncomingMessages: first IPC message in queue is %" PUBLIC_LOG_STRING, this, description(message->messageName()));
         }
 
         // Re-schedule ourselves *before* we dispatch the messages because we want to process follow-up messages if the client

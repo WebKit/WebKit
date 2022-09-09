@@ -73,7 +73,8 @@ public:
     ~RemoteRenderingBackendProxy();
 
     using GPUProcessConnection::Client::weakPtrFactory;
-    using WeakValueType = GPUProcessConnection::Client::WeakValueType;
+    using GPUProcessConnection::Client::WeakValueType;
+    using GPUProcessConnection::Client::WeakPtrImplType;
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 

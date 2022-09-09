@@ -56,7 +56,8 @@ public:
     using TransportSet = HashSet<WebCore::AuthenticatorTransport, WTF::IntHash<WebCore::AuthenticatorTransport>, WTF::StrongEnumHashTraits<WebCore::AuthenticatorTransport>>;
 
     using AuthenticatorTransportService::Observer::weakPtrFactory;
-    using WeakValueType = AuthenticatorTransportService::Observer::WeakValueType;
+    using AuthenticatorTransportService::Observer::WeakValueType;
+    using AuthenticatorTransportService::Observer::WeakPtrImplType;
 
     const static size_t maxTransportNumber;
 

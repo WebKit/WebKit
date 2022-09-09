@@ -53,7 +53,7 @@ class WebXRView;
 class WebXRViewerSpace;
 struct XRRenderStateInit;
 
-class WebXRSession final : public RefCounted<WebXRSession>, public EventTargetWithInlineData, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient {
+class WebXRSession final : public RefCounted<WebXRSession>, public EventTarget, public ActiveDOMObject, public PlatformXR::TrackingAndRenderingClient {
     WTF_MAKE_ISO_ALLOCATED(WebXRSession);
 public:
     using RequestReferenceSpacePromise = DOMPromiseDeferred<IDLInterface<WebXRReferenceSpace>>;
@@ -67,7 +67,8 @@ public:
     using RefCounted<WebXRSession>::deref;
 
     using TrackingAndRenderingClient::weakPtrFactory;
-    using WeakValueType = TrackingAndRenderingClient::WeakValueType;
+    using TrackingAndRenderingClient::WeakValueType;
+    using TrackingAndRenderingClient::WeakPtrImplType;
 
     XREnvironmentBlendMode environmentBlendMode() const;
     XRInteractionMode interactionMode() const;

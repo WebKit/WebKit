@@ -43,4 +43,6 @@ messages -> RemoteWebInspectorUIProxy {
     ShowCertificate(WebCore::CertificateInfo certificateInfo)
 
     SendMessageToBackend(String message)
+
+    SetInspectorPageDeveloperExtrasEnabled(bool enabled)
 }

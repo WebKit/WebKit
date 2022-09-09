@@ -45,4 +45,47 @@ ShadowRoot* ElementInternals::shadowRoot() const
     return shadowRoot;
 }
 
+void ElementInternals::setRole(const AtomString& role)
+{
+    setAriaValueForAttribute(roleAttr->localName(), role);
+}
+
+const AtomString& ElementInternals::role()
+{
+    return ariaValueForAttribute(roleAttr->localName());
+}
+
+void ElementInternals::setAriaRoleDescription(const AtomString& description)
+{
+    setAriaValueForAttribute(aria_roledescriptionAttr->localName(), description);
+}
+
+const AtomString& ElementInternals::ariaRoleDescription()
+{
+    return ariaValueForAttribute(aria_roledescriptionAttr->localName());
+}
+
+void ElementInternals::setAriaLabel(const AtomString& label)
+{
+    setAriaValueForAttribute(aria_labelAttr->localName(), label);
+}
+
+const AtomString& ElementInternals::ariaLabel()
+{
+    return ariaValueForAttribute(aria_labelAttr->localName());
+}
+
+void ElementInternals::setAriaValueForAttribute(const AtomString& key, const AtomString& value)
+{
+    m_element->customElementDefaultARIA().setValueForAttribute(key, value);
+}
+
+const AtomString& ElementInternals::ariaValueForAttribute(const AtomString& key)
+{
+    auto* defaultARIA = m_element->customElementDefaultARIAIfExists();
+    if (!defaultARIA)
+        return nullAtom();
+    return defaultARIA->valueForAttribute(key);
+}
+
 } // namespace WebCore

@@ -30,20 +30,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
 
-#if HAVE(BACKTRACE_SYMBOLS) || HAVE(BACKTRACE)
-#include <execinfo.h>
-#endif
-
-#if HAVE(DLADDR)
-#include <cxxabi.h>
-#include <dlfcn.h>
-#endif
-
-#if OS(WINDOWS)
-#include <windows.h>
-#include <wtf/win/DbgHelperWin.h>
-#endif
-
 void WTFGetBacktrace(void** stack, int* size)
 {
 #if HAVE(BACKTRACE)
@@ -109,46 +95,11 @@ auto StackTrace::demangle(void* pc) -> std::optional<DemangleEntry>
 
 void StackTrace::dump(PrintStream& out, const char* indentString) const
 {
-    const auto* stack = this->stack();
-#if HAVE(BACKTRACE_SYMBOLS)
-    char** symbols = backtrace_symbols(stack, m_size);
-    if (!symbols)
-        return;
-#elif OS(WINDOWS)
-    HANDLE hProc = GetCurrentProcess();
-    uint8_t symbolData[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)] = { 0 };
-    auto symbolInfo = reinterpret_cast<SYMBOL_INFO*>(symbolData);
-
-    symbolInfo->SizeOfStruct = sizeof(SYMBOL_INFO);
-    symbolInfo->MaxNameLen = MAX_SYM_NAME;
-#endif
-
     if (!indentString)
         indentString = "";
-    for (int i = 0; i < m_size; ++i) {
-        const char* mangledName = nullptr;
-        const char* cxaDemangled = nullptr;
-#if HAVE(BACKTRACE_SYMBOLS)
-        mangledName = symbols[i];
-#elif OS(WINDOWS)
-        if (DbgHelper::SymFromAddress(hProc, reinterpret_cast<DWORD64>(stack[i]), nullptr, symbolInfo))
-            mangledName = symbolInfo->Name;
-#endif
-        auto demangled = demangle(stack[i]);
-        if (demangled) {
-            mangledName = demangled->mangledName();
-            cxaDemangled = demangled->demangledName();
-        }
-        const int frameNumber = i + 1;
-        if (mangledName || cxaDemangled)
-            out.printf("%s%s%-3d %p %s\n", m_prefix ? m_prefix : "", indentString, frameNumber, stack[i], cxaDemangled ? cxaDemangled : mangledName);
-        else
-            out.printf("%s%s%-3d %p\n", m_prefix ? m_prefix : "", indentString, frameNumber, stack[i]);
-    }
-
-#if HAVE(BACKTRACE_SYMBOLS)
-    free(symbols);
-#endif
+    forEach([&](int frameNumber, void* stackFrame, const char* name) {
+        out.printf("%s%s%-3d %p %s\n", m_prefix ? m_prefix : "", indentString, frameNumber, stackFrame, name);
+    });
 }
 
 } // namespace WTF

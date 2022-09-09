@@ -52,7 +52,7 @@ void SharedWorkerObjectConnection::fetchScriptInClient(URL&& url, WebCore::Share
     ASSERT(isMainThread());
 
     auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
-    CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%{public}s, worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+    CONNECTION_RELEASE_LOG("fetchScriptInClient: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
     if (!workerObject)
         return completionHandler(workerFetchError(ResourceError { ResourceError::Type::Cancellation }), { });
 
@@ -74,9 +74,9 @@ void SharedWorkerObjectConnection::notifyWorkerObjectOfLoadCompletion(WebCore::S
     ASSERT(isMainThread());
     auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
     if (error.isNull())
-        CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%{public}s, worker=%p, load succeeded", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+        CONNECTION_RELEASE_LOG("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p, load succeeded", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
     else
-        CONNECTION_RELEASE_LOG_ERROR("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%{public}s, worker=%p, load failed", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+        CONNECTION_RELEASE_LOG_ERROR("notifyWorkerObjectOfLoadCompletion: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p, load failed", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
     if (workerObject)
         workerObject->didFinishLoading(error);
 }
@@ -85,7 +85,7 @@ void SharedWorkerObjectConnection::postExceptionToWorkerObject(SharedWorkerObjec
 {
     ASSERT(isMainThread());
     auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
-    CONNECTION_RELEASE_LOG_ERROR("postExceptionToWorkerObject: sharedWorkerObjectIdentifier=%{public}s, worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
+    CONNECTION_RELEASE_LOG_ERROR("postExceptionToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject);
     if (workerObject)
         ActiveDOMObject::queueTaskToDispatchEvent(*workerObject, TaskSource::DOMManipulation, ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { }));
 }

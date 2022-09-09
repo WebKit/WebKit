@@ -652,6 +652,14 @@ void WebInspectorUIProxy::showCertificate(const CertificateInfo& certificateInfo
     platformShowCertificate(certificateInfo);
 }
 
+void WebInspectorUIProxy::setInspectorPageDeveloperExtrasEnabled(bool enabled)
+{
+    if (!m_inspectorPage)
+        return;
+
+    m_inspectorPage->preferences().setDeveloperExtrasEnabled(enabled);
+}
+
 void WebInspectorUIProxy::elementSelectionChanged(bool active)
 {
     m_elementSelectionActive = active;

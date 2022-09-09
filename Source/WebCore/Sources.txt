@@ -951,6 +951,7 @@ dom/ConstantPropertyMap.cpp
 dom/ContainerNode.cpp
 dom/ContainerNodeAlgorithms.cpp
 dom/ContextDestructionObserver.cpp
+dom/CustomElementDefaultARIA.cpp
 dom/CustomElementReactionQueue.cpp
 dom/CustomElementRegistry.cpp
 dom/CustomEvent.cpp
@@ -1190,6 +1191,7 @@ fileapi/FileReaderLoader.cpp
 fileapi/FileReaderSync.cpp
 fileapi/NetworkSendQueue.cpp
 fileapi/ThreadableBlobRegistry.cpp
+fileapi/URLKeepingBlobAlive.cpp
 history/BackForwardCache.cpp
 history/BackForwardController.cpp
 history/BackForwardItemIdentifier.cpp
@@ -1857,7 +1859,6 @@ page/WindowOrWorkerGlobalScope.cpp
 page/WorkerNavigator.cpp
 page/csp/CSPViolationReportBody.cpp
 page/csp/ContentSecurityPolicy.cpp
-page/csp/ContentSecurityPolicyClient.cpp
 page/csp/ContentSecurityPolicyDirective.cpp
 page/csp/ContentSecurityPolicyDirectiveList.cpp
 page/csp/ContentSecurityPolicyDirectiveNames.cpp
@@ -2338,8 +2339,10 @@ plugins/DOMPluginArray.cpp
 plugins/PluginData.cpp
 plugins/PluginInfoProvider.cpp
 rendering/AutoTableLayout.cpp
+rendering/BackgroundPainter.cpp
 rendering/BidiRun.cpp
 rendering/BorderEdge.cpp
+rendering/BorderPainter.cpp
 rendering/BreakLines.cpp
 rendering/CSSFilter.cpp
 rendering/CaretRectComputation.cpp

@@ -411,6 +411,7 @@ _SKIPPED_FILES_WITH_WARNING = [
     os.path.join('Source', 'JavaScriptCore', 'API', 'glib', 'jsc.h'),
     os.path.join('Source', 'WebCore', 'platform', 'gtk', 'GtkVersioning.h'),
     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'webkit2.h'),
+    os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'gtk', 'webkit.h'),
     os.path.join('Source', 'WebKit', 'UIProcess', 'API', 'wpe', 'webkit.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'gtk', 'webkit-web-extension.h'),
     os.path.join('Source', 'WebKit', 'WebProcess', 'InjectedBundle', 'API', 'wpe', 'webkit-web-extension.h'),

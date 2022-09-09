@@ -94,6 +94,9 @@ public:
     void execute(const RegisterAtOffset& entry)
     {
         RELEASE_ASSERT(RegDispatch<RegType>::hasSameType(entry.reg()));
+        auto& jit = m_jit;
+        JIT_COMMENT(jit, "Execute Spooler: ", entry);
+
         if constexpr (!hasPairOp)
             return op().executeSingle(entry.offset(), RegDispatch<RegType>::get(entry.reg()));
 

@@ -42,6 +42,10 @@ class Connection;
 class Decoder;
 }
 
+namespace WebCore {
+class WeakPtrImplWithEventTargetData;
+}
+
 namespace WebKit {
 
 class WebSocketChannel : public IPC::MessageSender, public IPC::MessageReceiver, public WebCore::ThreadableWebSocketChannel, public RefCounted<WebSocketChannel> {
@@ -104,7 +108,7 @@ private:
     WebCore::ResourceRequest clientHandshakeRequest(const CookieGetter&) const final { return m_handshakeRequest; }
     const WebCore::ResourceResponse& serverHandshakeResponse() const final { return m_handshakeResponse; }
 
-    WeakPtr<WebCore::Document> m_document;
+    WeakPtr<WebCore::Document, WebCore::WeakPtrImplWithEventTargetData> m_document;
     WeakPtr<WebCore::WebSocketChannelClient> m_client;
     URL m_url;
     String m_subprotocol;

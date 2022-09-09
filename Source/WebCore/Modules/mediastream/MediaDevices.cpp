@@ -363,6 +363,7 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
     result.echoCancellation = supported.supportsEchoCancellation();
     result.deviceId = supported.supportsDeviceId();
     result.groupId = supported.supportsGroupId();
+    result.displaySurface = supported.supportsDisplaySurface();
 
     return result;
 }
@@ -411,7 +412,7 @@ bool MediaDevices::addEventListener(const AtomString& eventType, Ref<EventListen
     if (eventType == eventNames().devicechangeEvent)
         listenForDeviceChanges();
 
-    return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), options);
+    return EventTarget::addEventListener(eventType, WTFMove(listener), options);
 }
 
 } // namespace WebCore

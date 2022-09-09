@@ -311,7 +311,7 @@ static inline bool shouldCrossOriginResourcePolicyCancelLoad(CrossOriginEmbedder
         return true;
 
     if (policy == CrossOriginResourcePolicy::SameSite) {
-        if (origin.isUnique())
+        if (origin.isOpaque())
             return true;
 #if ENABLE(PUBLIC_SUFFIX_LIST)
         if (!RegistrableDomain::uncheckedCreateFromHost(origin.host()).matches(response.url()))

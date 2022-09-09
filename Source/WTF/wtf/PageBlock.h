@@ -49,7 +49,7 @@ namespace WTF {
 // aarch64 by default. USE(64KB_PAGE_BLOCK) allows overriding this.
 //
 // Use 64 KiB for any unknown CPUs to be conservative.
-#if OS(DARWIN) || PLATFORM(PLAYSTATION) || CPU(MIPS) || CPU(MIPS64) || (OS(LINUX) && CPU(ARM64) && !USE(64KB_PAGE_BLOCK))
+#if OS(DARWIN) || PLATFORM(PLAYSTATION) || CPU(MIPS) || CPU(MIPS64) || CPU(LOONGARCH64) || (OS(LINUX) && CPU(ARM64) && !USE(64KB_PAGE_BLOCK))
 constexpr size_t CeilingOnPageSize = 16 * KB;
 #elif USE(64KB_PAGE_BLOCK) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(UNKNOWN)
 constexpr size_t CeilingOnPageSize = 64 * KB;

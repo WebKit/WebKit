@@ -60,8 +60,8 @@
 		339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */; };
 		33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185D27BC194F00A1DD52 /* ASTNode.h */; };
 		33EA186027BC198100A1DD52 /* GlobalDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185F27BC198100A1DD52 /* GlobalDirective.h */; };
-		33EA186227BC19C100A1DD52 /* GlobalDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186127BC19C100A1DD52 /* GlobalDecl.h */; };
-		33EA186427BC1A1D00A1DD52 /* GlobalVariableDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186327BC1A1D00A1DD52 /* GlobalVariableDecl.h */; };
+		33EA186227BC19C100A1DD52 /* Decl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186127BC19C100A1DD52 /* Decl.h */; };
+		33EA186427BC1A1D00A1DD52 /* VariableDecl.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186327BC1A1D00A1DD52 /* VariableDecl.h */; };
 		33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186527BC1AD500A1DD52 /* CompilationMessage.h */; };
 		33EA186A27BC1BE600A1DD52 /* Attribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186927BC1BE600A1DD52 /* Attribute.h */; };
 		33EA186C27BC1CBC00A1DD52 /* Expression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA186B27BC1CBC00A1DD52 /* Expression.h */; };
@@ -78,6 +78,9 @@
 		33EA188427BC268600A1DD52 /* StructureAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188327BC268600A1DD52 /* StructureAccess.h */; };
 		33EA188627BC26DF00A1DD52 /* CallableExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* CallableExpression.h */; };
 		33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* LiteralExpressions.h */; };
+		3A7E164C28C57BB8003F49C9 /* ArrayAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */; };
+		3AAE4EB428C56E9A00DA484B /* UnaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */; };
+		3AE27DB528C1BA480043A8E0 /* VariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* VariableStatement.h */; };
 		6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6634666A285F0140002ABE8E /* ConstLiteralTests.mm */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
@@ -313,8 +316,8 @@
 		339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WGSLParserTests.mm; sourceTree = "<group>"; };
 		33EA185D27BC194F00A1DD52 /* ASTNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ASTNode.h; path = WGSL/ASTNode.h; sourceTree = SOURCE_ROOT; };
 		33EA185F27BC198100A1DD52 /* GlobalDirective.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlobalDirective.h; sourceTree = "<group>"; };
-		33EA186127BC19C100A1DD52 /* GlobalDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlobalDecl.h; sourceTree = "<group>"; };
-		33EA186327BC1A1D00A1DD52 /* GlobalVariableDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlobalVariableDecl.h; sourceTree = "<group>"; };
+		33EA186127BC19C100A1DD52 /* Decl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Decl.h; sourceTree = "<group>"; };
+		33EA186327BC1A1D00A1DD52 /* VariableDecl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VariableDecl.h; sourceTree = "<group>"; };
 		33EA186527BC1AD500A1DD52 /* CompilationMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompilationMessage.h; sourceTree = "<group>"; };
 		33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CompilationMessage.cpp; sourceTree = "<group>"; };
 		33EA186927BC1BE600A1DD52 /* Attribute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Attribute.h; sourceTree = "<group>"; };
@@ -332,6 +335,9 @@
 		33EA188327BC268600A1DD52 /* StructureAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StructureAccess.h; sourceTree = "<group>"; };
 		33EA188527BC26DF00A1DD52 /* CallableExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallableExpression.h; sourceTree = "<group>"; };
 		33EA188727BC361E00A1DD52 /* LiteralExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiteralExpressions.h; sourceTree = "<group>"; };
+		3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayAccess.h; sourceTree = "<group>"; };
+		3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnaryExpression.h; sourceTree = "<group>"; };
+		3AE27DB428C1BA480043A8E0 /* VariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableStatement.h; sourceTree = "<group>"; };
 		6634666A285F0140002ABE8E /* ConstLiteralTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConstLiteralTests.mm; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
@@ -695,15 +701,15 @@
 				33EA187727BC229A00A1DD52 /* Statements */,
 				33EA185D27BC194F00A1DD52 /* ASTNode.h */,
 				33EA186927BC1BE600A1DD52 /* Attribute.h */,
+				33EA186127BC19C100A1DD52 /* Decl.h */,
 				33EA186B27BC1CBC00A1DD52 /* Expression.h */,
 				33EA187527BC216B00A1DD52 /* FunctionDecl.h */,
-				33EA186127BC19C100A1DD52 /* GlobalDecl.h */,
 				33EA185F27BC198100A1DD52 /* GlobalDirective.h */,
-				33EA186327BC1A1D00A1DD52 /* GlobalVariableDecl.h */,
 				33EA186F27BC1E8A00A1DD52 /* ShaderModule.h */,
 				33EA187827BC22AA00A1DD52 /* Statement.h */,
 				33EA187327BC204900A1DD52 /* StructureDecl.h */,
 				33EA186D27BC1D4C00A1DD52 /* TypeDecl.h */,
+				33EA186327BC1A1D00A1DD52 /* VariableDecl.h */,
 				33EA187127BC1FE100A1DD52 /* VariableQualifier.h */,
 			);
 			path = AST;
@@ -715,6 +721,7 @@
 				33EA187F27BC24E200A1DD52 /* AssignmentStatement.h */,
 				33EA187A27BC230E00A1DD52 /* CompoundStatement.h */,
 				33EA187D27BC249000A1DD52 /* ReturnStatement.h */,
+				3AE27DB428C1BA480043A8E0 /* VariableStatement.h */,
 			);
 			path = Statements;
 			sourceTree = "<group>";
@@ -722,10 +729,12 @@
 		33EA187C27BC246000A1DD52 /* Expressions */ = {
 			isa = PBXGroup;
 			children = (
+				3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */,
 				33EA188527BC26DF00A1DD52 /* CallableExpression.h */,
 				33EA188127BC25D000A1DD52 /* IdentifierExpression.h */,
 				33EA188727BC361E00A1DD52 /* LiteralExpressions.h */,
 				33EA188327BC268600A1DD52 /* StructureAccess.h */,
+				3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */,
 			);
 			path = Expressions;
 			sourceTree = "<group>";
@@ -759,17 +768,17 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A7E164C28C57BB8003F49C9 /* ArrayAccess.h in Headers */,
 				33EA188027BC24E200A1DD52 /* AssignmentStatement.h in Headers */,
 				33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */,
 				33EA186A27BC1BE600A1DD52 /* Attribute.h in Headers */,
 				33EA188627BC26DF00A1DD52 /* CallableExpression.h in Headers */,
 				33EA186627BC1AD500A1DD52 /* CompilationMessage.h in Headers */,
 				33EA187B27BC230E00A1DD52 /* CompoundStatement.h in Headers */,
+				33EA186227BC19C100A1DD52 /* Decl.h in Headers */,
 				33EA186C27BC1CBC00A1DD52 /* Expression.h in Headers */,
 				33EA187627BC216B00A1DD52 /* FunctionDecl.h in Headers */,
-				33EA186227BC19C100A1DD52 /* GlobalDecl.h in Headers */,
 				33EA186027BC198100A1DD52 /* GlobalDirective.h in Headers */,
-				33EA186427BC1A1D00A1DD52 /* GlobalVariableDecl.h in Headers */,
 				33EA188227BC25D000A1DD52 /* IdentifierExpression.h in Headers */,
 				338BB2D427B6B66C00E066AB /* Lexer.h in Headers */,
 				33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */,
@@ -783,7 +792,11 @@
 				33EA187427BC204900A1DD52 /* StructureDecl.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
 				33EA186E27BC1D4C00A1DD52 /* TypeDecl.h in Headers */,
+				3AAE4EB228C494D500DA484B /* UnaryExpression.h in Headers */,
+				3AAE4EB428C56E9A00DA484B /* UnaryExpression.h in Headers */,
+				33EA186427BC1A1D00A1DD52 /* VariableDecl.h in Headers */,
 				33EA187227BC1FE100A1DD52 /* VariableQualifier.h in Headers */,
+				3AE27DB528C1BA480043A8E0 /* VariableStatement.h in Headers */,
 				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -101,7 +101,7 @@ void HTMLSlotElement::attributeChanged(const QualifiedName& name, const AtomStri
     }
 }
 
-const Vector<WeakPtr<Node>>* HTMLSlotElement::assignedNodes() const
+const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* HTMLSlotElement::assignedNodes() const
 {
     RefPtr shadowRoot = containingShadowRoot();
     if (!shadowRoot)
@@ -177,8 +177,8 @@ void HTMLSlotElement::assign(FixedVector<ElementOrText>&& nodes)
 
     auto previous = std::exchange(m_manuallyAssignedNodes, { });
     HashSet<RefPtr<Node>> seenNodes;
-    m_manuallyAssignedNodes = WTF::compactMap(nodes, [&seenNodes](ElementOrText& node) -> std::optional<WeakPtr<Node>> {
-        auto mapper = [&seenNodes]<typename T>(RefPtr<T>& node) -> std::optional<WeakPtr<Node>> {
+    m_manuallyAssignedNodes = WTF::compactMap(nodes, [&seenNodes](ElementOrText& node) -> std::optional<WeakPtr<Node, WeakPtrImplWithEventTargetData>> {
+        auto mapper = [&seenNodes]<typename T>(RefPtr<T>& node) -> std::optional<WeakPtr<Node, WeakPtrImplWithEventTargetData>> {
             if (seenNodes.contains(node))
                 return std::nullopt;
             seenNodes.add(node);

@@ -480,9 +480,10 @@ void LinkBuffer::linkComments(MacroAssembler& assembler)
     for (const auto& [label, str] : assembler.m_comments) {
         void* commentLocation = locationOf<DisassemblyPtrTag>(label).dataLocation();
         auto key = reinterpret_cast<uintptr_t>(commentLocation);
-        RELEASE_ASSERT(!map.contains(reinterpret_cast<uintptr_t>(commentLocation)), 
-            "You cannot print more than one comment on the same line.");
-        map.add(key, str.isolatedCopy());
+        String strCopy = str.isolatedCopy();
+        if (map.contains(key))
+            strCopy = map.get(key).isolatedCopy() + "\n; " + strCopy;
+        map.set(key, WTFMove(strCopy));
     }
 
     AssemblyCommentRegistry::singleton().registerCodeRange(m_executableMemory->start().untaggedPtr(), m_executableMemory->end().untaggedPtr(), WTFMove(map));

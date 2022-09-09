@@ -1,0 +1,9 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+main frame - didFinishLoadForFrame
+0123456789
+
+PASS Modal dialog content should be re-rendered with loaded web font
+

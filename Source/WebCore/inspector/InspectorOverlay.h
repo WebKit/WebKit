@@ -53,6 +53,7 @@ using ErrorStringOr = Expected<T, ErrorString>;
 
 namespace WebCore {
 
+class WeakPtrImplWithEventTargetData;
 class FontCascade;
 class FloatPoint;
 class GraphicsContext;
@@ -171,7 +172,7 @@ public:
             bool showAreaNames;
         };
 
-        WeakPtr<Node> gridNode;
+        WeakPtr<Node, WeakPtrImplWithEventTargetData> gridNode;
         Config config;
     };
 
@@ -185,7 +186,7 @@ public:
             bool showOrderNumbers;
         };
 
-        WeakPtr<Node> flexNode;
+        WeakPtr<Node, WeakPtrImplWithEventTargetData> flexNode;
         Config config;
     };
 

@@ -38,6 +38,7 @@ public:
         Compound,
         Return,
         Assignment,
+        Variable,
     };
 
     Statement(SourceSpan span)
@@ -51,6 +52,7 @@ public:
     bool isCompound() const { return kind() == Kind::Compound; }
     bool isReturn() const { return kind() == Kind::Return; }
     bool isAssignment() const { return kind() == Kind::Assignment; }
+    bool isVariable() const { return kind() == Kind::Variable; }
 };
 
 } // namespace WGSL::AST

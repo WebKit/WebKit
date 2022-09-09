@@ -169,11 +169,9 @@ void SpeechSynthesis::cancel()
         // and the event won't be processed. Instead we process the error immediately.
         speakingErrorOccurred();
         m_currentSpeechUtterance = nullptr;
-    } else if (m_platformSpeechSynthesizer) {
+    } else if (m_platformSpeechSynthesizer)
         m_platformSpeechSynthesizer->cancel();
-        // The platform should have called back immediately and cleared the current utterance.
-        ASSERT(!m_currentSpeechUtterance);
-    }
+
     current = nullptr;
 }
 

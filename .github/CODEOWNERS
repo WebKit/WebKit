@@ -45,6 +45,9 @@
 /Tools/Scripts/libraries/webkitscmpy @facetothefate @JonWBedard
 
 /Tools/TestWebKitAPI
+/Tools/TestWebKitAPI/Tests/WebKitGLib/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/Tests/WebKitGtk/ @WebKit/glib-reviewers
+/Tools/TestWebKitAPI/Tests/WPEQt/ @philn
 /Tools/TestWebKitAPI/WebKitGLib/ @WebKit/glib-reviewers
 /Tools/TestWebKitAPI/WebKitGtk/ @WebKit/glib-reviewers
 /Tools/TestWebKitAPI/WPEQt/ @philn

@@ -588,14 +588,8 @@ void BifurcatedGraphicsContext::verifyStateSynchronization()
     // The two contexts' CTMs must begin and remain in sync, otherwise `setCTM(getCTM())`
     // will cause further painting to the secondary context to be mistransformed.
     auto secondaryContextCTM = m_secondaryContext.getCTM();
-    if (!m_hasLoggedAboutDesynchronizedState && !primaryContextCTM.isEssentiallyEqualTo(secondaryContextCTM)) {
-        TextStream message;
-        message << "BifurcatedGraphicsContext(" << this << ") CTM is out of sync: " << primaryContextCTM << " != " << secondaryContextCTM;
-#if ASSERT_ENABLED
-        ASSERT_NOT_REACHED_WITH_MESSAGE("%s", message.release().utf8().data());
-#else
-        WTFLogAlways("%s", message.release().utf8().data());
-#endif
+    if (!m_hasLoggedAboutDesynchronizedState && !primaryContextCTM.isEssentiallyEqualToAsFloats(secondaryContextCTM)) {
+        ALWAYS_LOG_WITH_STREAM(stream << "BifurcatedGraphicsContext(" << this << ") CTM is out of sync: " << primaryContextCTM << " != " << secondaryContextCTM);
         m_hasLoggedAboutDesynchronizedState = true;
     }
 }

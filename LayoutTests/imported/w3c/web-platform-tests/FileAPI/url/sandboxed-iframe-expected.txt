@@ -21,7 +21,7 @@ PASS XHR with method "OPTIONS" should fail
 PASS XHR with method "PUT" should fail
 PASS XHR with method "CUSTOM" should fail
 PASS XHR should return Content-Type from Blob
-FAIL Revoke blob URL after open(), will fetch assert_unreached: Got unexpected error event Reached unreachable code
+PASS Revoke blob URL after open(), will fetch
 PASS Blob URLs can be used in fetch
 PASS fetch with a fragment should succeed
 PASS fetch of a revoked URL should fail
@@ -35,7 +35,7 @@ PASS fetch with method "OPTIONS" should fail
 PASS fetch with method "PUT" should fail
 PASS fetch with method "CUSTOM" should fail
 PASS fetch should return Content-Type from Blob
-FAIL Revoke blob URL after creating Request, will fetch promise_test: Unhandled rejection with value: object "TypeError: Load failed"
-FAIL Revoke blob URL after creating Request, then clone Request, will fetch promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+PASS Revoke blob URL after creating Request, will fetch
+PASS Revoke blob URL after creating Request, then clone Request, will fetch
 PASS Revoke blob URL after calling fetch, fetch should succeed
 

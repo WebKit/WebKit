@@ -32,6 +32,7 @@ class MediaQueryList;
 class MediaQueryEvaluator;
 class MediaQuerySet;
 class RenderStyle;
+class WeakPtrImplWithEventTargetData;
 
 // MediaQueryMatcher class is responsible for evaluating the queries whenever it
 // is needed and dispatch "change" event on MediaQueryLists if the corresponding
@@ -60,8 +61,8 @@ private:
     std::unique_ptr<RenderStyle> documentElementUserAgentStyle() const;
     String mediaType() const;
 
-    WeakPtr<Document> m_document;
-    Vector<WeakPtr<MediaQueryList>> m_mediaQueryLists;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
+    Vector<WeakPtr<MediaQueryList, WeakPtrImplWithEventTargetData>> m_mediaQueryLists;
 
     // This value is incremented at style selector changes.
     // It is used to avoid evaluating queries more then once and to make sure

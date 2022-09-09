@@ -34,41 +34,12 @@ def get_bugs_string():
         bugs_string += '\n' + need_the_radar
     return bugs_string
 
-
-def message_from_staged_changelogs():
-    try:
-        diff = subprocess.check_output(['git', 'diff', '--staged'])
-    except subprocess.CalledProcessError:
-        return ''
-
-    modified_files = DiffParser(diff.splitlines()).files
-    message = ''
-    for path, parsed_diff in modified_files.items():
-        if not path.endswith('ChangeLog'):
-            continue
-
-        # Ignore first line (date, name, email) and second line (empty).
-        diff_lines = parsed_diff.lines[2:]
-
-        # Get added lines and strip leading 8 characters indentation.
-        lines = [line[2][SPACING:] for line in diff_lines if not line[0]]
-
-        message += '\n'.join(lines)
-
-    return message
-
-
-def message(source=None, sha=None):
-    msg = message_from_staged_changelogs()
-    if msg:
-        return msg
-
+def parseChanges(command, commit_message):
     dirname = None
-    commit_message = []
 
     try:
         for line in subprocess.check_output(
-            ['perl', os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters'],
+            command,
             **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
         ).splitlines():
             if line == '~':
@@ -83,7 +54,23 @@ def message(source=None, sha=None):
                 dirname = line.split(':')[0]
                 continue
     except subprocess.CalledProcessError:
-        return ''
+        commit_message.append('')
+        return
+
+def message(source=None, sha=None):
+    commit_message = []
+    command = ['perl', os.path.join(SCRIPTS, 'prepare-ChangeLog'), '--no-write', '--only-files', '--delimiters', '--git-index']
+
+    if sha:
+        commit_message.append('Amend changes:')
+        parseChanges(command, commit_message)
+        commit_message.append('')
+
+        commit_message.append('Combined changes:')
+        command.append('--git-commit')
+        command.append('HEAD')
+
+    parseChanges(command, commit_message)
 
     bugs_string = get_bugs_string()
 

@@ -90,7 +90,7 @@ static inline bool checkNonce(ContentSecurityPolicySourceListDirective* directiv
 }
 
 // Used to compute the comparison URL when checking frame-ancestors. We do this weird conversion so that child
-// frames of a page with a unique origin (e.g. about:blank) are not blocked due to their frame-ancestors policy
+// frames of a page with an opaque origin (e.g. about:blank) are not blocked due to their frame-ancestors policy
 // and do not need to add the parent's URL to their policy. The latter could allow the child page to be framed
 // by anyone. See <https://github.com/w3c/webappsec/issues/311> for more details.
 static inline URL urlFromOrigin(const SecurityOrigin& origin)

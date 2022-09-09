@@ -44,7 +44,7 @@ struct NetworkProcessConnectionInfo {
 #elif OS(DARWIN)
         return IPC::Connection::Identifier(connection.sendRight());
 #elif OS(WINDOWS)
-        return IPC::Connection::Identifier(connection.handle());
+        return IPC::Connection::Identifier(connection.handle().get());
 #else
         ASSERT_NOT_REACHED();
         return IPC::Connection::Identifier();
@@ -53,12 +53,10 @@ struct NetworkProcessConnectionInfo {
 
     IPC::Connection::Identifier releaseIdentifier()
     {
-#if USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
         auto returnValue = IPC::Connection::Identifier(connection.release().release());
 #elif OS(DARWIN)
         auto returnValue = IPC::Connection::Identifier(connection.leakSendRight());
-#else
-        auto returnValue = identifier();
 #endif
         connection = { };
         return returnValue;

@@ -305,7 +305,7 @@ bool SVGRenderSupport::isOverflowHidden(const RenderElement& renderer)
     // LegacyRenderSVGRoot should never query for overflow state - it should always clip itself to the initial viewport size.
     ASSERT(!renderer.isDocumentElementRenderer());
 
-    return renderer.style().overflowX() == Overflow::Hidden || renderer.style().overflowX() == Overflow::Scroll;
+    return isNonVisibleOverflow(renderer.style().overflowX());
 }
 
 void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& renderer, FloatRect& repaintRect)

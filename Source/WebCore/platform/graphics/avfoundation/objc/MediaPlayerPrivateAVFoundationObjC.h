@@ -357,6 +357,7 @@ private:
     void checkNewVideoFrameMetadata();
 
     std::optional<bool> allTracksArePlayable() const;
+    bool containsDisabledTracks() const;
     bool trackIsPlayable(AVAssetTrack*) const;
 
     RetainPtr<AVURLAsset> m_avAsset;

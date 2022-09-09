@@ -28,6 +28,7 @@ namespace WebCore {
 
 class SVGElement;
 class SVGTransformList;
+class WeakPtrImplWithEventTargetData;
 
 class SVGViewSpec final : public RefCounted<SVGViewSpec>, public SVGFitToViewBox, public SVGZoomAndPan {
 public:
@@ -46,14 +47,14 @@ public:
     String transformString() const { return m_transform->valueAsString(); }
     Ref<SVGTransformList>& transform() { return m_transform; }
 
-    const WeakPtr<SVGElement>& contextElementConcurrently() const { return m_contextElement; }
+    const WeakPtr<SVGElement, WeakPtrImplWithEventTargetData>& contextElementConcurrently() const { return m_contextElement; }
 
 private:
     explicit SVGViewSpec(SVGElement&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGViewSpec, SVGFitToViewBox>;
 
-    WeakPtr<SVGElement> m_contextElement;
+    WeakPtr<SVGElement, WeakPtrImplWithEventTargetData> m_contextElement;
     String m_viewTargetString;
     Ref<SVGTransformList> m_transform;
 };

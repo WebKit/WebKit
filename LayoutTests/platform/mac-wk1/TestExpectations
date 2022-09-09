@@ -312,6 +312,9 @@ accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
+# Default ARIA for custom elements are not yet enabled
+accessibility/custom-elements/role.html [ Skip ]
+
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]
@@ -924,8 +927,6 @@ webkit.org/b/157589 fast/text-autosizing/ios/text-autosizing-after-back.html [ P
 # repaint rects work differently on WK1
 fast/repaint/vertical-text-repaint.html [ Pass Failure ]
 
-webkit.org/b/244729 fast/repaint/border-radius-repaint-2.html [ Failure ]
-
 # <rdar://problem/24818712>
 editing/spelling/spelling-insert-html.html [ Pass Timeout ]
 
@@ -1015,6 +1016,41 @@ inspector/network/interceptContinue.html [ Skip ]
 
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
+# rdar://92764272 ([ Ventura wk1 ] 18 X fast/html/details (layout-tests) are flaky text failures)
+fast/html/details-add-summary-1-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-10-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-2-and-click.html [ Pass Failure ] 
+fast/html/details-add-summary-3-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-4-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-5-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-6-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-7-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-8-and-click.html [ Pass Failure ]
+fast/html/details-add-summary-9-and-click.html [ Pass Failure ]
+fast/html/details-click-controls.html [ Pass Failure ]
+fast/html/details-mouse-click.html [ Pass Failure ]
+fast/html/details-remove-summary-1-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-2-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-3-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-4-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-5-and-click.html [ Pass Failure ]
+fast/html/details-remove-summary-6-and-click.html [ Pass Failure ]
+
+# rdar://92765314 ([ Ventura wk1 Release x86_64 ] 8X fast/forms/number/number- (Layout-Tests) are flaky text failures)
+[ Release ] fast/forms/number/number-change-type-on-focus.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-large-padding.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-capturing.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-change-and-input-events.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-click-in-iframe.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-in-multi-column.html [ Pass Failure ]
+[ Release ] fast/forms/number/number-spinbutton-state.html [ Pass Failure ]
+
+#rdar://96906411 (REGRESSION(251850@main): imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html is a constant text failure)
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-createImageBitmap-e_srgb.html [ Skip ]
+imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
+imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
+
 webkit.org/b/165541 compositing/layer-creation/fixed-overlap-extent-rtl.html [ Failure ]
 webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
@@ -1028,8 +1064,6 @@ media/track/track-cues-enter-exit.html [ Pass Crash ]
 
 # <rdar://problem/61744994> media/track/track-cues-cuechange.html is flaky timing out.
 media/track/track-cues-cuechange.html [ Pass Crash Timeout ]
-
-webkit.org/b/244683 [ Debug ] media/track/track-description-cue.html [ Crash ]
 
 webkit.org/b/167127 pointer-lock/locked-element-removed-from-dom.html
 
@@ -1162,7 +1196,7 @@ fast/images/sprite-sheet-image-draw.html [ Skip ]
 media/video-restricted-invisible-autoplay-not-allowed-source.html [ Skip ]
 media/video-restricted-invisible-autoplay-not-allowed.html [ Skip ]
 
-webkit.org/b/244693 [ Debug ] media/video-element-other-namespace-crash.html [ Pass Crash ]
+webkit.org/b/244693 [ Debug ] media/video-element-other-namespace-crash.html [ Skip ]
 
 # <rdar://problem/42736213>
 displaylists/layer-dispay-list.html [ Failure ]
@@ -1302,7 +1336,7 @@ webkit.org/b/207891 imported/w3c/web-platform-tests/css/css-position/fixed-z-ind
 
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
-webkit.org/b/208022 [ Debug ] http/tests/history/back-to-post.py [ Pass Failure ]
+webkit.org/b/208022 http/tests/history/back-to-post.py [ Pass Failure ]
 
 # prefetch not supported in WK1
 http/wpt/prefetch [ Skip ]
@@ -1357,7 +1391,7 @@ media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/presentationmodechanged-fired-once.html [ Skip ]
 media/video-presentation-mode.html [ Skip ]
 
-webkit.org/b/244696 [ Debug ] media/modern-media-controls/media-documents/insert-style-should-not-crash.html [ Pass Crash ]
+webkit.org/b/244696 [ Debug ] media/modern-media-controls/media-documents/insert-style-should-not-crash.html [ Skip ]
 
 webkit.org/b/213896 imported/w3c/web-platform-tests/css/css-flexbox/overflow-auto-008.html [ Pass Failure ]
 
@@ -1537,13 +1571,15 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 [ BigSur ] webanimations/accelerated-animation-easing-and-direction-update.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-animation-slot-invalidation.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-animation-with-easing.html [ Pass ImageOnlyFailure ]
-[ BigSur ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-overlapping-transform-animations.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-transform-related-animation-property-order.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-transition-by-removing-property.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation-underlying-transform-changed-in-flight.html [ Pass ImageOnlyFailure ]
 [ BigSur ] webanimations/accelerated-translate-animation.html [ Pass ImageOnlyFailure ]
+
+# rdar://80340735 ([ Monterey wk1 arm64 ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html is a flaky image only failure)
+webkit.org/b/244891 webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass ImageOnlyFailure Timeout ]
 
 # webkit.org/b/223904 Updating test expectations for 9 tests
 [ BigSur ] transforms/2d/scale-change-composited.html [ Pass ImageOnlyFailure ]
@@ -1562,9 +1598,6 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 
 # rdar://80346720 ([Monterey Wk1] media/media-source/media-webm-opus-partial.html is a consistent failure)
 [ Monterey ] media/media-source/media-webm-opus-partial.html [ Failure ]
-
-# rdar://80340735 ([ Monterey wk1 arm64 ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html is a flaky image only failure)
-[ Monterey arm64 ] webanimations/accelerated-css-transition-with-easing-y-axis-above-1.html [ Pass Timeout ]
 
 #nrdar://80343068 ([ Monterey wk1 arm64] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html is a flaky image only failure)
 [ Monterey arm64 ] webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ Pass ImageOnlyFailure ]
@@ -2041,9 +2074,6 @@ webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-mod
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Crash ]
 webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Crash ]
 
-imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
-imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
-
 webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
 
 webkit.org/b/244637 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Pass Failure ]
@@ -2052,6 +2082,6 @@ webkit.org/b/244649 [ Debug ] imported/w3c/web-platform-tests/css/css-align/base
 
 webkit.org/b/244652 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/bfcache/embedded-mp4.html [ Pass Crash ]
 
-webkit.org/b/244677 [ Debug ] media/media-source/media-source-istypesupported-vp8-without-vp9.html [ Pass Failure ]
+webkit.org/b/244677 media/media-source/media-source-istypesupported-vp8-without-vp9.html [ Pass Failure ]
 
-webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Pass Crash ]
+webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Skip ]

@@ -169,6 +169,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "ObjectIsIntrinsic";
     case ObjectKeysIntrinsic:
         return "ObjectKeysIntrinsic";
+    case ObjectToStringIntrinsic:
+        return "ObjectToStringIntrinsic";
     case ReflectGetPrototypeOfIntrinsic:
         return "ReflectGetPrototypeOfIntrinsic";
     case StringPrototypeCodePointAtIntrinsic:

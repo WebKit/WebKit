@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 128x128
+  RenderSVGRoot {svg} at (0,0) size 128x128
+layer at (0,0) size 128x128
+  RenderSVGViewportContainer at (0,0) size 128x128
+layer at (0,0) size 96x96
+  RenderSVGTransformableContainer {g} at (0,0) size 96x96
+layer at (0,0) size 64x64
+  RenderSVGRect {rect} at (0,0) size 64x64 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=64.00] [height=64.00]
+layer at (32,32) size 64x64
+  RenderSVGRect {rect} at (32,32) size 64x64 [fill={[type=SOLID] [color=#008000]}] [x=32.00] [y=32.00] [width=64.00] [height=64.00]

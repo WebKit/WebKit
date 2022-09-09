@@ -800,7 +800,6 @@ protected:
     void setNeedsSimplifiedNormalFlowLayoutBit(bool b) { m_bitfields.setNeedsSimplifiedNormalFlowLayout(b); }
 
     virtual RenderFragmentedFlow* locateEnclosingFragmentedFlow() const;
-    static void calculateBorderStyleColor(const BorderStyle&, const BoxSide&, Color&);
 
     static FragmentedFlowState computedFragmentedFlowState(const RenderObject&);
 

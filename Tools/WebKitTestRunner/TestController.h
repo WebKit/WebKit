@@ -275,6 +275,8 @@ public:
     void updateBundleIdentifierInNetworkProcess(const std::string& bundleIdentifier);
     void clearBundleIdentifierInNetworkProcess();
 
+    const std::set<std::string>& allowedHosts() const { return m_allowedHosts; }
+
     WKArrayRef openPanelFileURLs() const { return m_openPanelFileURLs.get(); }
     void setOpenPanelFileURLs(WKArrayRef fileURLs) { m_openPanelFileURLs = fileURLs; }
 
@@ -577,6 +579,7 @@ private:
     bool m_enableAllExperimentalFeatures { true };
     std::vector<std::string> m_paths;
     std::set<std::string> m_allowedHosts;
+    std::set<std::string> m_localhostAliases;
     TestFeatures m_globalFeatures;
 
     WKRetainPtr<WKStringRef> m_injectedBundlePath;

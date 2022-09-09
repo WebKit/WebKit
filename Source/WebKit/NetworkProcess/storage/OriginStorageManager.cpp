@@ -391,7 +391,7 @@ String OriginStorageManager::StorageBucket::resolvedLocalStoragePath()
         auto localStorageDirectory = typeStoragePath(StorageType::LocalStorage);
         auto localStoragePath = LocalStorageManager::localStorageFilePath(localStorageDirectory);
         if (!m_customLocalStoragePath.isEmpty() && !FileSystem::fileExists(localStoragePath) && FileSystem::fileExists(m_customLocalStoragePath)) {
-            RELEASE_LOG(Storage, "%p - StorageBucket::resolvedLocalStoragePath New path '%{public}s'", this, localStoragePath.utf8().data());
+            RELEASE_LOG(Storage, "%p - StorageBucket::resolvedLocalStoragePath New path '%" PUBLIC_LOG_STRING "'", this, localStoragePath.utf8().data());
             FileSystem::makeAllDirectories(localStorageDirectory);
             auto moved = WebCore::SQLiteFileSystem::moveDatabaseFile(m_customLocalStoragePath, localStoragePath);
             if (!moved && !FileSystem::fileExists(localStoragePath))
@@ -417,7 +417,7 @@ String OriginStorageManager::StorageBucket::resolvedIDBStoragePath()
         m_resolvedIDBStoragePath = m_customIDBStoragePath;
     } else {
         auto idbStoragePath = typeStoragePath(StorageType::IndexedDB);
-        RELEASE_LOG(Storage, "%p - StorageBucket::resolvedIDBStoragePath New path '%{public}s'", this, idbStoragePath.utf8().data());
+        RELEASE_LOG(Storage, "%p - StorageBucket::resolvedIDBStoragePath New path '%" PUBLIC_LOG_STRING "'", this, idbStoragePath.utf8().data());
         auto moved = IDBStorageManager::migrateOriginData(m_customIDBStoragePath, idbStoragePath);
         if (!moved && FileSystem::fileExists(idbStoragePath)) {
             auto fileNames = FileSystem::listDirectory(m_customIDBStoragePath);

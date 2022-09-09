@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 403
+CONSOLE MESSAGE: Fetch API cannot load https://www.web-platform.test:9443/fetch/metadata/resources/echo-as-json.py due to access control checks.
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 403
+CONSOLE MESSAGE: Fetch API cannot load https://www.not-web-platform.test:9443/fetch/metadata/resources/echo-as-json.py due to access control checks.
+
+FAIL Same-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+FAIL Cross-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+

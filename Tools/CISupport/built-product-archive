@@ -264,7 +264,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
         # Don't pack files named with following prefixes, unless they are resolved from a symbolic
         # link. This helps reducing the zip file size in situations where the build directory
         # contains old library files.
-        ignoreList = ('libwebkit2gtk-', 'libjavascriptcoregtk', 'libWPEWebKit')
+        ignoreList = ('libwebkit2gtk-', 'libwebkitgtk-', 'libjavascriptcoregtk', 'libWPEWebKit')
         absoluteLibDirectory = os.path.join(_configurationBuildDirectory, 'lib')
         for filename in os.listdir(absoluteLibDirectory):
             path = os.path.join(absoluteLibDirectory, filename)

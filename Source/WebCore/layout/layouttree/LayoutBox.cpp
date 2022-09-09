@@ -188,16 +188,26 @@ bool Box::isFloatingPositioned() const
 
 bool Box::isLeftFloatingPositioned() const
 {
+    ASSERT(isBlockLevelBox());
     if (!isFloatingPositioned())
         return false;
-    return m_style.floating() == Float::Left;
+    auto inlineDirection = containingBlock().style().direction();
+    auto floatingValue = m_style.floating();
+    return floatingValue == Float::InlineStart
+        || (inlineDirection == TextDirection::LTR && floatingValue == Float::Left)
+        || (inlineDirection == TextDirection::RTL && floatingValue == Float::Right);
 }
 
 bool Box::isRightFloatingPositioned() const
 {
+    ASSERT(isBlockLevelBox());
     if (!isFloatingPositioned())
         return false;
-    return m_style.floating() == Float::Right;
+    auto inlineDirection = containingBlock().style().direction();
+    auto floatingValue = m_style.floating();
+    return floatingValue == Float::InlineEnd
+        || (inlineDirection == TextDirection::LTR && floatingValue == Float::Right)
+        || (inlineDirection == TextDirection::RTL && floatingValue == Float::Left);
 }
 
 bool Box::hasFloatClear() const

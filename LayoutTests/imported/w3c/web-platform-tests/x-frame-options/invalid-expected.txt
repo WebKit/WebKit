@@ -1,0 +1,18 @@
+
+PASS `INVALID` allows same-origin framing
+PASS `INVALID` allows cross-origin framing
+PASS `ALLOW-FROM https://example.com/` allows same-origin framing
+PASS `ALLOW-FROM https://example.com/` allows cross-origin framing
+PASS `ALLOW-FROM=https://example.com/` allows same-origin framing
+PASS `ALLOW-FROM=https://example.com/` allows cross-origin framing
+PASS `ALLOWALL` allows same-origin framing
+PASS `ALLOWALL` allows cross-origin framing
+PASS `"DENY"` allows same-origin framing
+PASS `"DENY"` allows cross-origin framing
+PASS `"SAMEORIGIN"` allows same-origin framing
+PASS `"SAMEORIGIN"` allows cross-origin framing
+PASS `"SAMEORIGIN,DENY"` allows same-origin framing
+PASS `"SAMEORIGIN,DENY"` allows cross-origin framing
+PASS `(the empty string)` allows same-origin framing
+PASS `(the empty string)` allows cross-origin framing
+

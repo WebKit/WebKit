@@ -71,6 +71,8 @@ class WorkerStorageConnection;
 class WorkerThread;
 struct WorkerParameters;
 
+enum class ViolationReportType : uint8_t;
+
 namespace IDBClient {
 class IDBConnectionProxy;
 }
@@ -92,8 +94,9 @@ public:
     void suspend() final;
     void resume() final;
 
-    using WeakValueType = EventTarget::WeakValueType;
     using EventTarget::weakPtrFactory;
+    using EventTarget::WeakValueType;
+    using EventTarget::WeakPtrImplType;
     WorkerStorageConnection& storageConnection();
     static void postFileSystemStorageTask(Function<void()>&&);
     WorkerFileSystemStorageConnection& getFileSystemStorageConnection(Ref<FileSystemStorageConnection>&&);
@@ -201,9 +204,11 @@ private:
 
     void stopIndexedDatabase();
 
+    // ReportingClient.
     void notifyReportObservers(Ref<Report>&&) final;
     String endpointURIForToken(const String&) const final;
-
+    void sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType) final;
+    String httpUserAgent() const final { return m_userAgent; }
 
     URL m_url;
     URL m_ownerURL;

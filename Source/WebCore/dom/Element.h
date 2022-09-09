@@ -49,6 +49,7 @@ namespace WebCore {
 class Attr;
 class Attribute;
 class AttributeIteratorAccessor;
+class CustomElementDefaultARIA;
 class CustomElementReactionQueue;
 class DatasetDOMStringMap;
 class DOMRect;
@@ -94,7 +95,7 @@ struct ScrollToOptions;
 struct SecurityPolicyViolationEventInit;
 struct ShadowRootInit;
 
-using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element>>>;
+using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 
 namespace Style {
 class Resolver;
@@ -345,6 +346,9 @@ public:
     void setIsCustomElementUpgradeCandidate();
     void enqueueToUpgrade(JSCustomElementInterface&);
     CustomElementReactionQueue* reactionQueue() const;
+
+    CustomElementDefaultARIA& customElementDefaultARIA();
+    CustomElementDefaultARIA* customElementDefaultARIAIfExists();
 
     // FIXME: This should not be virtual. Please do not add additional overrides of this function.
     virtual const AtomString& shadowPseudoId() const;

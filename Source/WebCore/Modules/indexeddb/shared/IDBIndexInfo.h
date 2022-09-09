@@ -33,7 +33,7 @@ namespace WebCore {
 class IDBIndexInfo {
 public:
     WEBCORE_EXPORT IDBIndexInfo();
-    IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
+    WEBCORE_EXPORT IDBIndexInfo(uint64_t identifier, uint64_t objectStoreIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
 
     WEBCORE_EXPORT IDBIndexInfo isolatedCopy() const &;
     WEBCORE_EXPORT IDBIndexInfo isolatedCopy() &&;
@@ -46,9 +46,6 @@ public:
     bool multiEntry() const { return m_multiEntry; }
 
     void rename(const String& newName) { m_name = newName; }
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBIndexInfo&);
 
 #if !LOG_DISABLED
     String loggingString(int indent = 0) const;
@@ -67,35 +64,5 @@ private:
     bool m_unique { true };
     bool m_multiEntry { false };
 };
-
-template<class Encoder>
-void IDBIndexInfo::encode(Encoder& encoder) const
-{
-    encoder << m_identifier << m_objectStoreIdentifier << m_name << m_keyPath << m_unique << m_multiEntry;
-}
-
-template<class Decoder>
-bool IDBIndexInfo::decode(Decoder& decoder, IDBIndexInfo& info)
-{
-    if (!decoder.decode(info.m_identifier))
-        return false;
-
-    if (!decoder.decode(info.m_objectStoreIdentifier))
-        return false;
-
-    if (!decoder.decode(info.m_name))
-        return false;
-
-    if (!decoder.decode(info.m_keyPath))
-        return false;
-
-    if (!decoder.decode(info.m_unique))
-        return false;
-
-    if (!decoder.decode(info.m_multiEntry))
-        return false;
-
-    return true;
-}
 
 } // namespace WebCore

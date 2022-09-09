@@ -198,7 +198,7 @@ Vector<FloatSize> NinePieceImage::computeTileScales(const Vector<FloatRect>& des
     return scales;
 }
 
-void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* renderer, const RenderStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator op) const
+void NinePieceImage::paint(GraphicsContext& graphicsContext, const RenderElement* renderer, const RenderStyle& style, const LayoutRect& destination, const LayoutSize& source, float deviceScaleFactor, CompositeOperator op) const
 {
     StyleImage* styleImage = image();
     ASSERT(styleImage);

@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT same-origin > w => w.self Test timed out
-NOTRUN cross-origin > w => w.self
+FAIL same-origin > w => w.self promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'report.body.property')"
+FAIL cross-origin > w => w.self promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'report.body.property')"
 

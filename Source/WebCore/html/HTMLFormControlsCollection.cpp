@@ -66,7 +66,7 @@ std::optional<std::variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormCont
     return std::variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { ownerNode().radioNodeList(name) } };
 }
 
-static unsigned findFormAssociatedElement(const Vector<WeakPtr<HTMLElement>>& elements, const Element& element)
+static unsigned findFormAssociatedElement(const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& elements, const Element& element)
 {
     for (unsigned i = 0; i < elements.size(); ++i) {
         RefPtr currentElement = elements[i].get();

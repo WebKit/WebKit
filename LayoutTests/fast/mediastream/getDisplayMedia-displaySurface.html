@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>video track created with getDisplayMedia should return correct settings</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src="resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+
+        <script>
+            promise_test(async () => {
+                assert_true(navigator.mediaDevices.getSupportedConstraints().displaySurface, "displaySurface constraint");
+
+                stream = await callGetDisplayMedia({ video: true });
+
+                const settings = stream.getVideoTracks()[0].getSettings();
+                assert_equals(settings.displaySurface, "monitor", "displaySurface settings");
+
+                const capabilities = stream.getVideoTracks()[0].getCapabilities();
+                assert_equals(capabilities.displaySurface, "monitor", "displaySurface capabilities");
+            }, "Validate displaySurface settings and capabilities");
+        </script>
+    </body>
+</html>

@@ -398,7 +398,11 @@ private:
         LazyNode addImpure(HeapLocation location, LazyNode node)
         {
             // FIXME: If we are using small maps, we must not def() derived values.
-            // For now the only derived values we def() are constant-based.
+            // This is because we rely on one node defining at most one value so
+            // that we can have constant capacity buffers for pure map and impure map.
+            // If we use the derived index inside heap location, this property doesn't hold.
+            // For example, if you look at NewArrayBuffer, it is a single node that can
+            // have an arbitrary number of defs.
             if (location.index() && !location.index().isNode())
                 return nullptr;
             if (LazyNode result = findReplacement(location))

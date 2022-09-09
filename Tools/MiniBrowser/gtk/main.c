@@ -32,7 +32,12 @@
 #include <errno.h>
 #include <gtk/gtk.h>
 #include <string.h>
+
+#if GTK_CHECK_VERSION(3, 98, 0)
+#include <webkit/webkit.h>
+#else
 #include <webkit2/webkit2.h>
+#endif
 
 #if !USE_GSTREAMER_FULL && (ENABLE_WEB_AUDIO || ENABLE_VIDEO)
 #include <gst/gst.h>
@@ -660,8 +665,8 @@ static void activate(GApplication *application, WebKitSettings *webkitSettings)
     if (privateMode || automationMode)
         manager = webkit_website_data_manager_new_ephemeral();
     else {
-        char *dataDirectory = g_build_filename(g_get_user_data_dir(), "webkitgtk-" WEBKITGTK_API_VERSION_STRING, "MiniBrowser", NULL);
-        char *cacheDirectory = g_build_filename(g_get_user_cache_dir(), "webkitgtk-" WEBKITGTK_API_VERSION_STRING, "MiniBrowser", NULL);
+        char *dataDirectory = g_build_filename(g_get_user_data_dir(), "webkitgtk-" WEBKITGTK_API_VERSION, "MiniBrowser", NULL);
+        char *cacheDirectory = g_build_filename(g_get_user_cache_dir(), "webkitgtk-" WEBKITGTK_API_VERSION, "MiniBrowser", NULL);
         manager = webkit_website_data_manager_new("base-data-directory", dataDirectory, "base-cache-directory", cacheDirectory, NULL);
         g_free(dataDirectory);
         g_free(cacheDirectory);

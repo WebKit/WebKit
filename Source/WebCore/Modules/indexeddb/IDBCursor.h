@@ -100,7 +100,7 @@ private:
 
     IDBCursorInfo m_info;
     Source m_source;
-    WeakPtr<IDBRequest> m_request;
+    WeakPtr<IDBRequest, WeakPtrImplWithEventTargetData> m_request;
 
     bool m_gotValue { false };
 

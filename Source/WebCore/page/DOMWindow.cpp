@@ -157,9 +157,9 @@ using namespace Inspector;
 
 static constexpr Seconds defaultTransientActivationDuration { 5_s };
 
-static WeakHashSet<DOMWindow>& windowsInterestedInStorageEvents()
+static WeakHashSet<DOMWindow, WeakPtrImplWithEventTargetData>& windowsInterestedInStorageEvents()
 {
-    static MainThreadNeverDestroyed<WeakHashSet<DOMWindow>> set;
+    static MainThreadNeverDestroyed<WeakHashSet<DOMWindow, WeakPtrImplWithEventTargetData>> set;
     return set;
 }
 
@@ -907,9 +907,9 @@ ExceptionOr<void> DOMWindow::postMessage(JSC::JSGlobalObject& lexicalGlobalObjec
         target = &sourceDocument->securityOrigin();
     } else if (options.targetOrigin != "*"_s) {
         target = SecurityOrigin::createFromString(options.targetOrigin);
-        // It doesn't make sense target a postMessage at a unique origin
-        // because there's no way to represent a unique origin in a string.
-        if (target->isUnique())
+        // It doesn't make sense target a postMessage at an opaque origin
+        // because there's no way to represent an opaque origin in a string.
+        if (target->isOpaque())
             return Exception { SyntaxError };
     }
 

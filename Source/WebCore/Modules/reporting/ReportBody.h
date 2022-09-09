@@ -30,11 +30,7 @@
 
 namespace WebCore {
 
-enum class ReportBodyType : uint8_t {
-    CSPViolation,
-    Test
-    // More to come
-};
+enum class ViolationReportType : uint8_t;
 
 class WEBCORE_EXPORT ReportBody : public RefCounted<ReportBody> {
     WTF_MAKE_ISO_ALLOCATED(ReportBody);
@@ -42,25 +38,13 @@ public:
     virtual ~ReportBody();
 
     virtual const AtomString& type() const = 0;
-    ReportBodyType reportBodyType() const;
+    ViolationReportType reportBodyType() const;
 
 protected:
-    ReportBody(ReportBodyType);
+    ReportBody(ViolationReportType);
 
 private:
-    ReportBodyType m_reportBodyType;
+    ViolationReportType m_reportBodyType;
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ReportBodyType> {
-    using values = EnumValues<
-    WebCore::ReportBodyType,
-    WebCore::ReportBodyType::CSPViolation,
-    WebCore::ReportBodyType::Test
-    >;
-};
-
-} // namespace WTF

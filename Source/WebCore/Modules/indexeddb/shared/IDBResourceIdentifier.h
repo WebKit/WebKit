@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ProcessIdentifier.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Hasher.h>
 
 namespace WebCore {
@@ -71,15 +72,13 @@ public:
 #endif
 
     WEBCORE_EXPORT IDBResourceIdentifier();
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBResourceIdentifier&);
-
 private:
+    friend struct IPC::ArgumentCoder<IDBResourceIdentifier, void>;
     friend struct IDBResourceIdentifierHashTraits;
     friend void add(Hasher&, const IDBResourceIdentifier&);
 
-    IDBResourceIdentifier(IDBConnectionIdentifier, uint64_t resourceIdentifier);
+    WEBCORE_EXPORT IDBResourceIdentifier(IDBConnectionIdentifier, uint64_t resourceIdentifier);
+
     IDBConnectionIdentifier m_idbConnectionIdentifier;
     uint64_t m_resourceNumber { 0 };
 };
@@ -119,24 +118,6 @@ struct IDBResourceIdentifierHashTraits : WTF::CustomHashTraits<IDBResourceIdenti
         return identifier.m_idbConnectionIdentifier.isHashTableDeletedValue();
     }
 };
-
-template<class Encoder>
-void IDBResourceIdentifier::encode(Encoder& encoder) const
-{
-    encoder << m_idbConnectionIdentifier << m_resourceNumber;
-}
-
-template<class Decoder>
-bool IDBResourceIdentifier::decode(Decoder& decoder, IDBResourceIdentifier& identifier)
-{
-    if (!decoder.decode(identifier.m_idbConnectionIdentifier))
-        return false;
-
-    if (!decoder.decode(identifier.m_resourceNumber))
-        return false;
-
-    return true;
-}
 
 } // namespace WebCore
 

@@ -54,4 +54,6 @@ struct WebKit::NetworkProcessCreationParameters {
     bool ftpEnabled
 
     Vector<WebKit::WebsiteDataStoreParameters> websiteDataStoreParameters
+
+    HashSet<String> localhostAliasesForTesting;
 }

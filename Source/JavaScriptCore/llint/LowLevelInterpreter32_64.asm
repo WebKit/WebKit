@@ -2126,7 +2126,7 @@ macro compareOp(opcodeName, opcodeStruct, integerCompareAndSet, doubleCompareAnd
         return(BooleanTag, t1)
 
     .slow:
-        callSlowPath(_slow_path_%opcodeName%)
+        callSlowPath(_llint_slow_path_%opcodeName%)
         dispatch()
     end)
 end

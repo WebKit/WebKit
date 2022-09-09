@@ -44,6 +44,7 @@ class Decoder;
 namespace WebCore {
 class IntRect;
 class Element;
+class WeakPtrImplWithEventTargetData;
 class GraphicsLayer;
 class HTMLVideoElement;
 }
@@ -114,7 +115,7 @@ private:
     void updateMainVideoElement();
     void setMainVideoElement(RefPtr<WebCore::HTMLVideoElement>&&);
 
-    WeakPtr<WebCore::HTMLVideoElement> m_mainVideoElement;
+    WeakPtr<WebCore::HTMLVideoElement, WebCore::WeakPtrImplWithEventTargetData> m_mainVideoElement;
     RunLoop::Timer<WebFullScreenManager> m_mainVideoElementTextRecognitionTimer;
     bool m_isPerformingTextRecognitionInMainVideo { false };
 #endif // ENABLE(VIDEO)

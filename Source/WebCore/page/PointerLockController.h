@@ -71,8 +71,8 @@ private:
     bool m_unlockPending { false };
     bool m_forceCursorVisibleUponUnlock { false };
     RefPtr<Element> m_element;
-    WeakPtr<Document> m_documentOfRemovedElementWhileWaitingForUnlock;
-    WeakPtr<Document> m_documentAllowedToRelockWithoutUserGesture;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_documentOfRemovedElementWhileWaitingForUnlock;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_documentAllowedToRelockWithoutUserGesture;
 };
 
 inline void PointerLockController::elementWasRemoved(Element& element)

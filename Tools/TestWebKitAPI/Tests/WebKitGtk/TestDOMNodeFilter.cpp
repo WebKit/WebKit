@@ -21,7 +21,12 @@
 
 #include "WebViewTest.h"
 #include <gtk/gtk.h>
+
+#if USE(GTK4)
+#include <webkit/webkit.h>
+#else
 #include <webkit2/webkit2.h>
+#endif
 
 static const char* testHTML = "<html id='root'><head><title>DOMNodeTreeWalker</title></head>"
     "<body><input type='button' name='push' value='push'><input type='button' name='clear' value='clear'><br></body></html>";

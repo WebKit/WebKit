@@ -94,7 +94,7 @@ public:
     void updateSVGRendererForElementChange();
 
     // The instances of an element are clones made in shadow trees to implement <use>.
-    const WeakHashSet<SVGElement>& instances() const;
+    const WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>& instances() const;
 
     std::optional<FloatRect> getBoundingBox() const;
 
@@ -205,7 +205,7 @@ private:
 
     std::unique_ptr<SVGElementRareData> m_svgRareData;
 
-    WeakHashSet<SVGElement> m_elementsWithRelativeLengths;
+    WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> m_elementsWithRelativeLengths;
 
     std::unique_ptr<SVGPropertyAnimatorFactory> m_propertyAnimatorFactory;
 

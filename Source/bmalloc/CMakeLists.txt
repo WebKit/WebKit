@@ -197,6 +197,7 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/BInline.h
     bmalloc/BMalloced.h
     bmalloc/BPlatform.h
+    bmalloc/BSyscall.h
     bmalloc/BVMTags.h
     bmalloc/Bits.h
     bmalloc/BulkDecommit.h
@@ -279,7 +280,6 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/SmallPage.h
     bmalloc/StaticPerProcess.h
     bmalloc/StdLibExtras.h
-    bmalloc/Syscall.h
     bmalloc/VMAllocate.h
     bmalloc/Vector.h
     bmalloc/Zone.h
@@ -407,6 +407,7 @@ set(bmalloc_PUBLIC_HEADERS
     libpas/src/libpas/pas_config.h
     libpas/src/libpas/pas_config_prefix.h
     libpas/src/libpas/pas_create_basic_heap_page_caches_with_reserved_memory.h
+    libpas/src/libpas/pas_darwin_spi.h
     libpas/src/libpas/pas_deallocate.h
     libpas/src/libpas/pas_deallocation_mode.h
     libpas/src/libpas/pas_deallocator.h

@@ -21,8 +21,13 @@
 
 #include "WebProcessTest.h"
 #include <gio/gio.h>
-#include <webkit2/webkit-web-extension.h>
 #include <wtf/RunLoop.h>
+
+#if USE(GTK4)
+#include <webkit/webkit-web-extension.h>
+#else
+#include <webkit2/webkit-web-extension.h>
+#endif
 
 class WebKitDOMDOMWindowTest;
 static gboolean loadedCallback(WebKitDOMDOMWindow*, WebKitDOMEvent*, WebKitDOMDOMWindowTest*);

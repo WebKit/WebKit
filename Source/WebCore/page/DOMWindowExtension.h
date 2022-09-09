@@ -56,7 +56,7 @@ public:
 private:
     WEBCORE_EXPORT DOMWindowExtension(DOMWindow*, DOMWrapperWorld&);
 
-    WeakPtr<DOMWindow> m_window;
+    WeakPtr<DOMWindow, WeakPtrImplWithEventTargetData> m_window;
     Ref<DOMWrapperWorld> m_world;
     RefPtr<Frame> m_disconnectedFrame;
     bool m_wasDetached;

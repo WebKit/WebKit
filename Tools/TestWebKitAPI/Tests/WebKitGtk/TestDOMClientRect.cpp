@@ -20,7 +20,12 @@
 #include "config.h"
 
 #include "WebViewTest.h"
+
+#if USE(GTK4)
+#include <webkit/webkit.h>
+#else
 #include <webkit2/webkit2.h>
+#endif
 
 static const char* testHTML = "<html><head></head><body>"
     "<style>"

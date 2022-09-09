@@ -46,7 +46,7 @@ class MessageEvent;
 class TextResourceDecoder;
 class ThreadableLoader;
 
-class EventSource final : public RefCounted<EventSource>, public EventTargetWithInlineData, private ThreadableLoaderClient, public ActiveDOMObject {
+class EventSource final : public RefCounted<EventSource>, public EventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(EventSource);
 public:
     struct Init {

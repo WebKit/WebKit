@@ -1,0 +1,4 @@
+
+PASS Lack of .https file name flag implies non-secure context
+PASS Lack of .https file name flag implies HTTP scheme
+

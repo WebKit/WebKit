@@ -2630,6 +2630,7 @@ static void paintAttachmentIconBackground(const RenderAttachment& attachment, Gr
 
 static bool shouldDrawIcon(const String& title)
 {
+#if HAVE(QUICKLOOK_THUMBNAILING)
     // The thumbnail will be painted by the client.
     NSString *cocoaTitle = title;
     if (auto fileExtension = cocoaTitle.pathExtension; fileExtension.length) {
@@ -2637,6 +2638,8 @@ static bool shouldDrawIcon(const String& title)
             && ![fileExtension isEqualToString:@"pages"]
             && ![fileExtension isEqualToString:@"numbers"];
     }
+#endif
+    UNUSED_PARAM(title);
     return true;
 }
 

@@ -27,6 +27,7 @@
 
 #include "ClientOrigin.h"
 #include "SecurityOriginData.h"
+#include <wtf/ArgumentCoder.h>
 
 namespace WebCore {
 
@@ -73,9 +74,6 @@ public:
     String databaseDirectoryRelativeToRoot(const String& rootDirectory, ASCIILiteral versionString = "v1"_s) const;
     WEBCORE_EXPORT static String databaseDirectoryRelativeToRoot(const ClientOrigin&, const String& rootDirectory, ASCIILiteral versionString);
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<IDBDatabaseIdentifier> decode(Decoder&);
-
 #if !LOG_DISABLED
     String loggingString() const;
 #endif
@@ -83,6 +81,8 @@ public:
     bool isRelatedToOrigin(const SecurityOriginData& other) const { return m_origin.isRelated(other); }
 
 private:
+    friend struct IPC::ArgumentCoder<IDBDatabaseIdentifier, void>;
+
     String m_databaseName;
     ClientOrigin m_origin;
     bool m_isTransient { false };
@@ -104,37 +104,6 @@ struct IDBDatabaseIdentifierHashTraits : SimpleClassHashTraits<IDBDatabaseIdenti
     static const bool emptyValueIsZero = false;
     static bool isEmptyValue(const IDBDatabaseIdentifier& info) { return info.isEmpty(); }
 };
-
-template<class Encoder>
-void IDBDatabaseIdentifier::encode(Encoder& encoder) const
-{
-    encoder << m_databaseName << m_origin << m_isTransient;
-}
-
-template<class Decoder>
-std::optional<IDBDatabaseIdentifier> IDBDatabaseIdentifier::decode(Decoder& decoder)
-{
-    std::optional<String> databaseName;
-    decoder >> databaseName;
-    if (!databaseName)
-        return std::nullopt;
-
-    std::optional<ClientOrigin> origin;
-    decoder >> origin;
-    if (!origin)
-        return std::nullopt;
-
-    std::optional<bool> isTransient;
-    decoder >> isTransient;
-    if (!isTransient)
-        return std::nullopt;
-
-    IDBDatabaseIdentifier identifier;
-    identifier.m_databaseName = WTFMove(*databaseName); // FIXME: When decoding from IPC, databaseName can be null, and the non-empty constructor asserts that this is not the case.
-    identifier.m_origin = WTFMove(*origin);
-    identifier.m_isTransient = *isTransient;
-    return identifier;
-}
 
 } // namespace WebCore
 

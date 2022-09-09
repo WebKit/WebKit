@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderMultiColumnSet.h"
 
+#include "BorderPainter.h"
 #include "FrameView.h"
 #include "HitTestResult.h"
 #include "PaintInfo.h"
@@ -623,7 +624,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     if (colCount <= 1)
         return;
 
-    bool antialias = shouldAntialiasLines(paintInfo.context());
+    bool antialias = BorderPainter::shouldAntialiasLines(paintInfo.context());
 
     if (fragmentedFlow->progressionIsInline()) {
         bool leftToRight = style().isLeftToRightDirection() ^ fragmentedFlow->progressionIsReversed();

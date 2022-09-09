@@ -40,6 +40,7 @@ class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class Document;
 class Element;
+class WeakPtrImplWithEventTargetData;
 class MediaQuerySet;
 class StyleRuleKeyframes;
 class StyleSheetContents;
@@ -151,7 +152,7 @@ private:
     RefPtr<MediaQuerySet> m_mediaQueries;
     WeakPtr<Style::Scope> m_styleScope;
 
-    WeakPtr<Node> m_ownerNode;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_ownerNode;
     WeakPtr<CSSImportRule> m_ownerRule;
 
     TextPosition m_startPosition;

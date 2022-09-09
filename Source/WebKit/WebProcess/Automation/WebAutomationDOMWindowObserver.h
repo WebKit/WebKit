@@ -52,7 +52,7 @@ public:
 private:
     WebAutomationDOMWindowObserver(WebCore::DOMWindow&, WTF::Function<void(WebAutomationDOMWindowObserver&)>&&);
 
-    WeakPtr<WebCore::DOMWindow> m_window;
+    WeakPtr<WebCore::DOMWindow, WebCore::WeakPtrImplWithEventTargetData> m_window;
     bool m_wasDetached { false };
     WTF::Function<void(WebAutomationDOMWindowObserver&)> m_callback;
 };

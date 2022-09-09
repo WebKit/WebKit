@@ -36,7 +36,15 @@
     const isInBrowser = true;
     const isD8 = false;
     var allIsGood = true;
-    window.onerror = function() { allIsGood = false; }
+    window.onerror = function(e) {
+        if (e == "Script error.") {
+            // This is a workaround for Firefox on iOS which has an uncaught exception from
+            // its injected script. We should not stop the benchmark from running due to that
+            // if it can otherwise run.
+            return;
+        }
+        allIsGood = false;
+    }
 
     async function initialize() {
         if (allIsGood) {

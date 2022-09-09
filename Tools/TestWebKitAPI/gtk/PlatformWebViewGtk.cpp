@@ -31,7 +31,7 @@
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKView.h>
 #include <gtk/gtk.h>
-#include <webkit2/WebKitWebViewBaseInternal.h>
+#include <webkit/WebKitWebViewBaseInternal.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace TestWebKitAPI {

@@ -323,7 +323,7 @@ private:
 
     void updateAssociatedLiveRange();
 
-    WeakPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     RefPtr<Range> m_associatedLiveRange;
     std::optional<LayoutUnit> m_xPosForVerticalArrowNavigation;
     VisibleSelection m_selection;

@@ -253,9 +253,11 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
 
 - (void)stopPictureInPicture
 {
-    [_startPictureInPictureTimer invalidate];
-    _startPictureInPictureTimer = nil;
-    [self removeObserver];
+    if (_startPictureInPictureTimer) {
+        [_startPictureInPictureTimer invalidate];
+        _startPictureInPictureTimer = nil;
+        [self removeObserver];
+    }
     [_pip stopPictureInPicture];
 }
 

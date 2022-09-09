@@ -59,7 +59,7 @@ public:
     IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
 
 private:
-    void lineLayout(InlineItems&, LineBuilder::InlineItemRange, const ConstraintsForInFlowContent&);
+    void lineLayout(InlineItems&, const LineBuilder::InlineItemRange&, const ConstraintsForInFlowContent&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&);
 
     void computeIntrinsicWidthForFormattingRoot(const Box&);

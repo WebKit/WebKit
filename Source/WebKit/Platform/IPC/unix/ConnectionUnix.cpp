@@ -113,7 +113,7 @@ static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount
 
 void Connection::platformInitialize(Identifier identifier)
 {
-    m_socketDescriptor = identifier;
+    m_socketDescriptor = identifier.handle;
 #if USE(GLIB)
     m_socket = adoptGRef(g_socket_new_from_fd(m_socketDescriptor, nullptr));
 #endif
@@ -638,6 +638,6 @@ void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
     Connection::SocketPair socketPair = Connection::createPlatformConnection();
-    return ConnectionIdentifierPair { socketPair.server, Attachment { UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } } };
+    return ConnectionIdentifierPair { Identifier { socketPair.server }, Attachment { UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } } };
 }
 } // namespace IPC

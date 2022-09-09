@@ -3383,8 +3383,8 @@ static void filterListForRemoval(const ListHashSet<T>& list, const Document& doc
         conditionallyAddNodeToFilterList(node, document, nodesToRemove);
 }
 
-template<typename T>
-static void filterWeakHashSetForRemoval(WeakHashSet<T>& weakHashSet, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
+template<typename WeakHashSet>
+static void filterWeakHashSetForRemoval(WeakHashSet& weakHashSet, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
 {
     weakHashSet.forEach([&] (auto& element) {
         conditionallyAddNodeToFilterList(&element, document, nodesToRemove);

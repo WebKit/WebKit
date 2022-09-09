@@ -29,12 +29,12 @@ function uniqueEventSourceURL(key, crossOrigin) { return uniqueURL(key, crossOri
 function uniqueURL(key, crossOrigin, path) {
     let params = key ? `${key}&${Math.random()}` : `${Math.random()}`;
     if (crossOrigin === "cross-origin")
-        return `http://{{host}}:{{ports[http][1]}}/${path}?${params}`;
+        return `http://localhost:{{ports[http][1]}}/${path}?${params}`;
     return location.origin + `/${path}?${params}`;
 }
 
 function crossOriginURL(key, path) {
-    return `http://{{host}}:{{ports[http][1]}}/${path}?${key}`;
+    return `http://localhost:{{ports[http][1]}}/${path}?${key}`;
 }
 
 function urlWithRedirectTo(url) {

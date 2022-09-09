@@ -40,7 +40,7 @@ const AtomString& TestReportBody::testReportType()
 }
 
 TestReportBody::TestReportBody(String&& message)
-    : ReportBody(ReportBodyType::Test)
+    : ReportBody(ViolationReportType::Test)
     , m_bodyMessage(WTFMove(message))
 {
 }
@@ -60,7 +60,6 @@ const String& TestReportBody::message() const
     // https://w3c.github.io/reporting/#generate-test-report-command, Step 7.1.7
     return m_bodyMessage;
 }
-
 
 Ref<FormData> TestReportBody::createReportFormDataForViolation(const String& bodyMessage)
 {

@@ -360,7 +360,7 @@ def cpp_array_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_contain
 
 def webkit_ipc_span_transfer_type_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_container) -> cpp_expr:
     element_pointer_type = type.get_contained_type().get_pointer_type()
-    return cpp_expr(type, f"{str(type)}(reinterpret_cast<const {element_pointer_type}>({str(expr)}.data), {str(expr)}.bufSize)")
+    return cpp_expr(type, f"{str(type)}(reinterpret_cast<const {element_pointer_type}>({str(expr)}.data()), {str(expr)}.size())")
 
 def cpp_move_expr(expr: cpp_expr) -> cpp_expr:
     return cpp_expr(expr.type.get_rvalue_type(), f"WTFMove({str(expr)})")
@@ -665,9 +665,9 @@ class webkit_ipc_cpp_proxy_impl(object):
                     ]
                 self.out_exprs += [cpp_expr(v.type, v.name)]
                 if o.type.is_dynamic_span():
-                    self.in_exprs += [cpp_expr(get_cpp_type("size_t"), f"{o.name}.bufSize")]
+                    self.in_exprs += [cpp_expr(get_cpp_type("size_t"), f"{o.name}.size()")]
                 self.post_call_stmts += [
-                    f"    memcpy({o.name}.data, {v.name}.data(), {o.name}.bufSize * sizeof({str(webkit_ipc_type.get_contained_type())}));"
+                    f"    memcpy({o.name}.data(), {v.name}.data(), {o.name}.size() * sizeof({str(webkit_ipc_type.get_contained_type())}));"
                 ]
             else:
                 self.out_exprs += [cpp_expr(o.type, o.name)]

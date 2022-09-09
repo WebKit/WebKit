@@ -1,0 +1,5 @@
+
+FAIL web-platform.test -> web-platform.test:9443 portal assert_implements: Portals are not supported. undefined
+FAIL web-platform.test -> www.web-platform.test:9443 portal assert_implements: Portals are not supported. undefined
+FAIL web-platform.test -> www.not-web-platform.test:9443 portal assert_implements: Portals are not supported. undefined
+

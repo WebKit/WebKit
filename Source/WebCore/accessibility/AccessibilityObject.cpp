@@ -36,6 +36,7 @@
 #include "AccessibilityTable.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "CustomElementDefaultARIA.h"
 #include "DOMTokenList.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
@@ -1461,9 +1462,10 @@ bool AccessibilityObject::replacedNodeNeedsCharacter(Node* replacedNode)
         return false;
 
     // create an AX object, but skip it if it is not supposed to be seen
-    AccessibilityObject* object = replacedNode->renderer()->document().axObjectCache()->getOrCreate(replacedNode);
-    if (object->accessibilityIsIgnored())
-        return false;
+    if (auto* cache = replacedNode->renderer()->document().axObjectCache()) {
+        if (auto* axObject = cache->getOrCreate(replacedNode))
+            return !axObject->accessibilityIsIgnored();
+    }
 
     return true;
 }
@@ -2358,8 +2360,13 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
     
 const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
 {
-    if (auto* element = this->element())
-        return element->attributeWithoutSynchronization(attribute);
+    if (RefPtr element = this->element()) {
+        auto& value = element->attributeWithoutSynchronization(attribute);
+        if (!value.isNull())
+            return value;
+        if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
+            return defaultARIA->valueForAttribute(attribute.localName());
+    }
     return nullAtom();
 }
 

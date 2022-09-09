@@ -98,7 +98,7 @@ public:
     void idTargetChanged() override;
 
 private:
-    WeakPtr<HTMLInputElement> m_element;
+    WeakPtr<HTMLInputElement, WeakPtrImplWithEventTargetData> m_element;
 };
 #endif
 

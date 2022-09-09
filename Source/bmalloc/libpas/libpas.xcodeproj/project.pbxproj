@@ -585,6 +585,7 @@
 		2CB9B15B278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */; };
 		2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */; };
 		2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */; };
+		E3AA9B8328C724D8005DF9D6 /* pas_darwin_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1291,6 +1292,7 @@
 		2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr_inlines.h; sourceTree = "<group>"; };
 		2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LotsOfHeapsAndThreads.cpp; sourceTree = "<group>"; };
 		2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitfitTests.cpp; sourceTree = "<group>"; };
+		E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_darwin_spi.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1586,6 +1588,7 @@
 				0F85EFD522E2BEC7003A362B /* pas_config_prefix.h */,
 				0F329A2623F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.c */,
 				0F329A2523F1D63500A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.h */,
+				E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */,
 				0FE7EE5F229E14FA004F4166 /* pas_deallocate.c */,
 				0FE7EE5E229E14FA004F4166 /* pas_deallocate.h */,
 				0FFFD514256B0FBC001EB94C /* pas_deallocation_mode.h */,
@@ -2145,6 +2148,7 @@
 				0FE7EE0A22960142004F4166 /* pas_config.h in Headers */,
 				0F85EFDA22E2BEC7003A362B /* pas_config_prefix.h in Headers */,
 				0F329A2B23F1D63600A133C4 /* pas_create_basic_heap_page_caches_with_reserved_memory.h in Headers */,
+				E3AA9B8328C724D8005DF9D6 /* pas_darwin_spi.h in Headers */,
 				0FE7EE66229E14FA004F4166 /* pas_deallocate.h in Headers */,
 				0FFFD515256B0FBD001EB94C /* pas_deallocation_mode.h in Headers */,
 				0FE7EE0B22960142004F4166 /* pas_deallocator.h in Headers */,

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBObjectStoreInfo.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
 
@@ -34,7 +35,8 @@ namespace WebCore {
 class IDBDatabaseInfo {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(IDBDatabaseInfo, WEBCORE_EXPORT);
 public:
-    explicit IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID);
+    WEBCORE_EXPORT explicit IDBDatabaseInfo(const String& name, uint64_t version, uint64_t maxIndexID, uint64_t maxObjectStoreID = 0, HashMap<uint64_t, IDBObjectStoreInfo>&& objectStoreMap = { });
+    IDBDatabaseInfo() = default;
 
     enum IsolatedCopyTag { IsolatedCopy };
     IDBDatabaseInfo(const IDBDatabaseInfo&, IsolatedCopyTag);
@@ -62,11 +64,6 @@ public:
     void deleteObjectStore(const String& objectStoreName);
     void deleteObjectStore(uint64_t objectStoreIdentifier);
 
-    WEBCORE_EXPORT IDBDatabaseInfo();
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static WARN_UNUSED_RETURN bool decode(Decoder&, IDBDatabaseInfo&);
-
     void setMaxIndexID(uint64_t maxIndexID);
     uint64_t generateNextIndexID() { return ++m_maxIndexID; }
 
@@ -75,6 +72,7 @@ public:
 #endif
 
 private:
+    friend struct IPC::ArgumentCoder<IDBDatabaseInfo, void>;
     IDBObjectStoreInfo* getInfoForExistingObjectStore(const String& objectStoreName);
     IDBObjectStoreInfo* getInfoForExistingObjectStore(uint64_t objectStoreIdentifier);
 
@@ -86,32 +84,5 @@ private:
     HashMap<uint64_t, IDBObjectStoreInfo> m_objectStoreMap;
 
 };
-
-template<class Encoder>
-void IDBDatabaseInfo::encode(Encoder& encoder) const
-{
-    encoder << m_name << m_version << m_maxObjectStoreID << m_maxIndexID << m_objectStoreMap;
-}
-
-template<class Decoder>
-bool IDBDatabaseInfo::decode(Decoder& decoder, IDBDatabaseInfo& info)
-{
-    if (!decoder.decode(info.m_name))
-        return false;
-
-    if (!decoder.decode(info.m_version))
-        return false;
-
-    if (!decoder.decode(info.m_maxObjectStoreID))
-        return false;
-
-    if (!decoder.decode(info.m_maxIndexID))
-        return false;
-
-    if (!decoder.decode(info.m_objectStoreMap))
-        return false;
-
-    return true;
-}
 
 } // namespace WebCore

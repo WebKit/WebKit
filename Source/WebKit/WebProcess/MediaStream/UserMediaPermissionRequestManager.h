@@ -44,7 +44,8 @@ class UserMediaPermissionRequestManager : public WebCore::MediaCanStartListener
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using WebCore::MediaCanStartListener::weakPtrFactory;
-    using WeakValueType = WebCore::MediaCanStartListener::WeakValueType;
+    using WebCore::MediaCanStartListener::WeakValueType;
+    using WebCore::MediaCanStartListener::WeakPtrImplType;
 
     explicit UserMediaPermissionRequestManager(WebPage&);
     ~UserMediaPermissionRequestManager() = default;

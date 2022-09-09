@@ -314,7 +314,40 @@ class PullRequest(Command):
             sys.stderr.write('Checks have failed, aborting pull request.\n')
             return 1
 
+        issue = None
+        commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
+        for line in commits[0].message.split() if commits[0] and commits[0].message else []:
+            issue = Tracker.from_string(line)
+            if issue:
+                break
+
         remote_repo = repository.remote(name=source_remote)
+        if isinstance(remote_repo, remote.GitHub):
+            if issue and issue.redacted and args.remote is None:
+                print("Your issue is redacted, diverting to a secure, non-origin remote you have access to.")
+                original_remote = source_remote
+                if len(repository.source_remotes()) < 2:
+                    print("Error. You do not have access to a secure, non-origin remote")
+                    if args.defaults or Terminal.choose(
+                        "Would you like to proceed anyways? \n",
+                        default='No',
+                    ) == 'No':
+                        sys.stderr.write("Failed to create pull request due to non-suitable remote\n")
+                        return 1
+                else:
+                    source_remote = repository.source_remotes()[1]
+                    remote_repo = repository.remote(name=source_remote)
+                    print("Making PR against '{}' instead of '{}'".format(source_remote, original_remote))
+            target = 'fork' if source_remote == repository.default_remote else '{}-fork'.format(source_remote)
+
+            if not repository.config().get('remote.{}.url'.format(target)):
+                sys.stderr.write("'{}' is not a remote in this repository. Have you run `{} setup` yet?\n".format(
+                    source_remote, os.path.basename(sys.argv[0]),
+                ))
+                return 1
+        else:
+            target = source_remote
+
         if not remote_repo:
             sys.stderr.write("'{}' doesn't have a recognized remote\n".format(repository.root_path))
             return 1
@@ -344,39 +377,6 @@ class PullRequest(Command):
                     did_remove = True
             if did_remove:
                 pr_issue.set_labels(labels)
-
-        commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
-
-        issue = None
-        for line in commits[0].message.split() if commits[0] and commits[0].message else []:
-            issue = Tracker.from_string(line)
-            if issue:
-                break
-
-        if isinstance(remote_repo, remote.GitHub):
-            if issue and issue.redacted and args.remote is None:
-                print("Your issue is redacted, diverting to a secure, non-origin remote you have access to.")
-                original_remote = source_remote
-                if len(repository.source_remotes()) < 2:
-                    print("Error. You do not have access to a secure, non-origin remote")
-                    if args.defaults or Terminal.choose(
-                        "Would you like to proceed anyways? \n",
-                        default='No',
-                    ) == 'No':
-                        sys.stderr.write("Failed to create pull request due to non-suitable remote\n")
-                        return 1
-                else:
-                    source_remote = repository.source_remotes()[1]
-                    print("Making PR against '{}' instead of '{}'".format(source_remote, original_remote))
-            target = 'fork' if source_remote == repository.default_remote else '{}-fork'.format(source_remote)
-
-            if not repository.config().get('remote.{}.url'.format(target)):
-                sys.stderr.write("'{}' is not a remote in this repository. Have you run `{} setup` yet?\n".format(
-                    source_remote, os.path.basename(sys.argv[0]),
-                ))
-                return 1
-        else:
-            target = source_remote
 
         log.info("Pushing '{}' to '{}'...".format(repository.branch, target))
         if run([repository.executable(), 'push', '-f', target, repository.branch], cwd=repository.root_path).returncode:

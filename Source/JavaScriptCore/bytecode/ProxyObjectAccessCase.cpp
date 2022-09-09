@@ -29,7 +29,9 @@
 #if ENABLE(JIT)
 
 #include "CCallHelpers.h"
+#include "CacheableIdentifierInlines.h"
 #include "LinkBuffer.h"
+#include "LinkTimeConstant.h"
 #include "PolymorphicAccess.h"
 #include "ProxyObject.h"
 #include "StructureStubInfo.h"

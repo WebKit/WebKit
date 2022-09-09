@@ -39,14 +39,15 @@ class WorkerInspectorController;
 class WorkerOrWorkletScriptController;
 class WorkerOrWorkletThread;
 
-class WorkerOrWorkletGlobalScope : public ScriptExecutionContext, public RefCounted<WorkerOrWorkletGlobalScope>, public EventTargetWithInlineData {
+class WorkerOrWorkletGlobalScope : public ScriptExecutionContext, public RefCounted<WorkerOrWorkletGlobalScope>, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(WorkerOrWorkletGlobalScope);
     WTF_MAKE_NONCOPYABLE(WorkerOrWorkletGlobalScope);
 public:
     virtual ~WorkerOrWorkletGlobalScope();
 
     using ScriptExecutionContext::weakPtrFactory;
-    using WeakValueType = ScriptExecutionContext::WeakValueType;
+    using ScriptExecutionContext::WeakValueType;
+    using ScriptExecutionContext::WeakPtrImplType;
 
     bool isClosing() const { return m_isClosing; }
     WorkerOrWorkletThread* workerOrWorkletThread() const { return m_thread; }

@@ -33,6 +33,7 @@ class Node;
 class ShadowRoot;
 class StyleSheet;
 class CSSStyleSheet;
+class WeakPtrImplWithEventTargetData;
 
 class StyleSheetList final : public RefCounted<StyleSheetList> {
 public:
@@ -55,7 +56,7 @@ private:
     StyleSheetList(ShadowRoot&);
     const Vector<RefPtr<StyleSheet>>& styleSheets() const;
 
-    WeakPtr<Document> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     ShadowRoot* m_shadowRoot { nullptr };
     Vector<RefPtr<StyleSheet>> m_detachedStyleSheets;
 };

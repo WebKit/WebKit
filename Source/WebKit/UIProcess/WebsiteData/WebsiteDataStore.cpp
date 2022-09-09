@@ -130,6 +130,9 @@ WebsiteDataStore::WebsiteDataStore(Ref<WebsiteDataStoreConfiguration>&& configur
     , m_resolvedConfiguration(WTFMove(configuration))
     , m_configuration(m_resolvedConfiguration->copy())
     , m_deviceIdHashSaltStorage(DeviceIdHashSaltStorage::create(isPersistent() ? m_configuration->deviceIdHashSaltsStorageDirectory() : String()))
+#if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
+    , m_resourceLoadStatisticsDebugMode(m_resolvedConfiguration->resourceLoadStatisticsDebugModeEnabled())
+#endif
     , m_queue(WorkQueue::create("com.apple.WebKit.WebsiteDataStore"))
 #if ENABLE(WEB_AUTHN)
     , m_authenticatorManager(makeUniqueRef<AuthenticatorManager>())
@@ -1530,7 +1533,7 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
 {
     auto& networkProcessProxy = networkProcess();
     networkProcessProxy.getNetworkProcessConnection(webProcessProxy, [weakThis = WeakPtr { *this }, networkProcessProxy = WeakPtr { networkProcessProxy }, webProcessProxy = WeakPtr { webProcessProxy }, reply = WTFMove(reply), shouldRetryOnFailure] (auto& connectionInfo) mutable {
-        if (UNLIKELY(!IPC::Connection::identifierIsValid(connectionInfo.identifier()))) {
+        if (UNLIKELY(!connectionInfo.identifier())) {
             if (shouldRetryOnFailure == ShouldRetryOnFailure::No || !webProcessProxy) {
                 RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will reply invalid identifier ...");
                 reply({ });
@@ -1781,7 +1784,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     createHandleFromResolvedPathIfPossible(hstsStorageDirectory, hstsStorageDirectoryExtensionHandle);
 
     bool shouldIncludeLocalhostInResourceLoadStatistics = false;
-    bool enableResourceLoadStatisticsDebugMode = false;
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;
@@ -1804,7 +1806,7 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
         false,
 #endif
         shouldIncludeLocalhostInResourceLoadStatistics,
-        enableResourceLoadStatisticsDebugMode,
+        resourceLoadStatisticsDebugMode(),
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         thirdPartyCookieBlockingMode(),
         WebCore::SameSiteStrictEnforcementEnabled::No,

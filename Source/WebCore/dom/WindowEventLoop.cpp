@@ -50,7 +50,7 @@ static String agentClusterKeyOrNullIfUnique(const SecurityOrigin& origin)
 {
     auto computeKey = [&] {
         // https://html.spec.whatwg.org/multipage/webappapis.html#obtain-agent-cluster-key
-        if (origin.isUnique())
+        if (origin.isOpaque())
             return origin.toString();
         RegistrableDomain registrableDomain { origin.data() };
         if (registrableDomain.isEmpty())

@@ -601,7 +601,7 @@ void InspectorOverlay::setShowRulers(bool showRulers)
 
 bool InspectorOverlay::removeGridOverlayForNode(Node& node)
 {
-    // Try to remove `node`. Also clear any grid overlays whose WeakPtr<Node> has been cleared.
+    // Try to remove `node`. Also clear any grid overlays whose WeakPtr<Node, WeakPtrImplWithEventTargetData> has been cleared.
     return m_activeGridOverlays.removeAllMatching([&] (const InspectorOverlay::Grid& gridOverlay) {
         return !gridOverlay.gridNode || gridOverlay.gridNode.get() == &node;
     });
@@ -641,7 +641,7 @@ void InspectorOverlay::clearAllGridOverlays()
 
 bool InspectorOverlay::removeFlexOverlayForNode(Node& node)
 {
-    // Try to remove `node`. Also clear any grid overlays whose WeakPtr<Node> has been cleared.
+    // Try to remove `node`. Also clear any grid overlays whose WeakPtr<Node, WeakPtrImplWithEventTargetData> has been cleared.
     return m_activeFlexOverlays.removeAllMatching([&] (const InspectorOverlay::Flex& flexOverlay) {
         return !flexOverlay.flexNode || flexOverlay.flexNode.get() == &node;
     });

@@ -63,6 +63,7 @@ RealtimeMediaSourceCenter::RealtimeMediaSourceCenter()
     m_supportedConstraints.setSupportsFacingMode(true);
     m_supportedConstraints.setSupportsVolume(true);
     m_supportedConstraints.setSupportsDeviceId(true);
+    m_supportedConstraints.setSupportsDisplaySurface(true);
 }
 
 RealtimeMediaSourceCenter::~RealtimeMediaSourceCenter() = default;

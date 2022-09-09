@@ -1,7 +1,6 @@
 CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: The string did not match the expected pattern.
+CONSOLE MESSAGE: Unhandled Promise Rejection: SyntaxError: The string did not match the expected pattern.
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT same-origin > w => w.postMessage("", "") Test timed out
-NOTRUN cross-origin > w => w.postMessage("", "")
+FAIL same-origin > w => w.postMessage("", "") promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'report.body.property')"
+FAIL cross-origin > w => w.postMessage("", "") promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'report.body.property')"
 

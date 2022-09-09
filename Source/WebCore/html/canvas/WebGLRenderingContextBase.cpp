@@ -5235,7 +5235,7 @@ void WebGLRenderingContextBase::texImageArrayBufferViewHelper(TexImageFunctionID
 
     Vector<uint8_t> tempData;
     bool changeUnpackParams = false;
-    if (data->data && width && height
+    if (data->data() && width && height
         && (m_unpackFlipY || m_unpackPremultiplyAlpha)) {
         ASSERT(sourceType == TexImageDimension::Tex2D);
         // Only enter here if width or height is non-zero. Otherwise, call to the
@@ -5357,7 +5357,7 @@ void WebGLRenderingContextBase::texImage2DBase(GCGLenum target, GCGLint level, G
     ASSERT(validateTexFuncParameters("texImage2D", TexImageFunctionType::TexImage, SourceArrayBufferView, target, level, internalFormat, width, height, 1, border, format, type));
     ASSERT(tex);
     ASSERT(validateNPOTTextureLevel(width, height, level, "texImage2D"));
-    if (!pixels.data) {
+    if (!pixels.data()) {
         if (!static_cast<GraphicsContextGLOpenGL*>(m_context.get())->texImage2DResourceSafe(target, level, internalFormat, width, height, border, format, type, m_unpackAlignment))
             return;
     } else {
@@ -6319,7 +6319,7 @@ void WebGLRenderingContextBase::uniform1iv(const WebGLUniformLocation* location,
 
 #if !USE(ANGLE)
     if (location->type() == GraphicsContextGL::SAMPLER_2D || location->type() == GraphicsContextGL::SAMPLER_CUBE) {
-        for (size_t i = 0; i < data.bufSize; ++i) {
+        for (size_t i = 0; i < data.size(); ++i) {
             if (data[i] >= static_cast<int>(m_textureUnits.size())) {
                 LOG(WebGL, "Texture unit size=%zu, v[%zu]=%d. Location type = %04X.", m_textureUnits.size(), i, data[i], location->type());
                 synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "uniform1iv", "invalid texture unit");

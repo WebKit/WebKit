@@ -479,7 +479,7 @@
     "web-platform-tests/webxr": "import", 
     "web-platform-tests/workers": "import", 
     "web-platform-tests/worklets": "import", 
-    "web-platform-tests/x-frame-options": "skip", 
+    "web-platform-tests/x-frame-options": "import", 
     "web-platform-tests/xhr": "import", 
     "web-platform-testscss/css-transforms/": "import", 
     "web-platform/test/html/infrastructure": "import", 

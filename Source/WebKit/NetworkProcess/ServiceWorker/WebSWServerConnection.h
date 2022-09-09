@@ -72,7 +72,8 @@ public:
     ~WebSWServerConnection() final;
 
     using WebCore::SWServer::Connection::weakPtrFactory;
-    using WeakValueType = WebCore::SWServer::Connection::WeakValueType;
+    using WebCore::SWServer::Connection::WeakValueType;
+    using WebCore::SWServer::Connection::WeakPtrImplType;
 
     IPC::Connection& ipcConnection() const { return m_contentConnection.get(); }
 

@@ -39,13 +39,11 @@ bool RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
     if (!modes)
         return true;
     
-    RELEASE_LOG_ERROR(WebRTC, "RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange2");
     int modesCount = [modes count];
     for (int i = 0; i < modesCount; i++) {
         if ([[modes objectAtIndex:i] isEqual: @"audio"])
             return false;
     }
-    RELEASE_LOG_ERROR(WebRTC, "RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange3");
     return true;
 #else
     return false;

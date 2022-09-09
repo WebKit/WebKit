@@ -28,6 +28,7 @@
 
 #if ENABLE(ZYDIS)
 
+#include "AssemblyComments.h"
 #include "MacroAssemblerCodeRef.h"
 #include "Zydis.h"
 
@@ -53,9 +54,13 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
     char formatted[1024];
     while (ZYAN_SUCCESS(ZydisDecoderDecodeBuffer(&decoder, data + offset, size - offset, &instruction))) {
         if (ZYAN_SUCCESS(ZydisFormatterFormatInstruction(&formatter, &instruction, formatted, sizeof(formatted), bitwise_cast<unsigned long long>(data + offset))))
-            out.printf("%s%#16llx: %s\n", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)), formatted);
+            out.printf("%s%#16llx: %s", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)), formatted);
         else
-            out.printf("%s%#16llx: failed-to-format\n", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)));
+            out.printf("%s%#16llx: failed-to-format", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)));
+        if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)))))
+            out.printf("; %s\n", str->ascii().data());
+        else
+            out.printf("\n");
         offset += instruction.length;
     }
 

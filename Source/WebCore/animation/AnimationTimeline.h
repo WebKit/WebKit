@@ -54,7 +54,7 @@ public:
 protected:
     explicit AnimationTimeline();
 
-    Vector<WeakPtr<WebAnimation>> m_allAnimations;
+    Vector<WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData>> m_allAnimations;
     AnimationCollection m_animations;
 
 private:

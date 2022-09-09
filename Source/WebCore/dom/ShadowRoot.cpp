@@ -55,14 +55,14 @@ struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     uint8_t mode;
     void* styleScope;
     void* styleSheetList;
-    WeakPtr<Element> host;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> host;
     void* slotAssignment;
     std::optional<HashMap<AtomString, AtomString>> partMappings;
 };
 
 static_assert(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), "shadowroot should stay small");
 #if !ASSERT_ENABLED
-static_assert(sizeof(WeakPtr<Element>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
+static_assert(sizeof(WeakPtr<Element, WeakPtrImplWithEventTargetData>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
 ShadowRoot::ShadowRoot(Document& document, ShadowRootMode type, SlotAssignmentMode assignmentMode, DelegatesFocus delegatesFocus, AvailableToElementInternals availableToElementInternals)
@@ -266,7 +266,7 @@ void ShadowRoot::removeSlotElementByName(const AtomString& name, HTMLSlotElement
     return m_slotAssignment->removeSlotElementByName(name, slot, &oldParentOfRemovedTree, *this);
 }
 
-void ShadowRoot::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node>>& previous, Vector<WeakPtr<Node>>& current)
+void ShadowRoot::slotManualAssignmentDidChange(HTMLSlotElement& slot, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& previous, Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>& current)
 {
     ASSERT(m_slotAssignment);
     m_slotAssignment->slotManualAssignmentDidChange(slot, previous, current, *this);
@@ -284,7 +284,7 @@ void ShadowRoot::slotFallbackDidChange(HTMLSlotElement& slot)
     return m_slotAssignment->slotFallbackDidChange(slot, *this);
 }
 
-const Vector<WeakPtr<Node>>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)
+const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* ShadowRoot::assignedNodesForSlot(const HTMLSlotElement& slot)
 {
     if (!m_slotAssignment)
         return nullptr;

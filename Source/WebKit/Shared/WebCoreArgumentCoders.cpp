@@ -150,7 +150,6 @@ using namespace WebKit;
     template void ArgumentCoder<Type>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Type&);
 
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatBoxExtent)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatRoundedRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(FloatSize)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(IntPoint)
@@ -158,13 +157,6 @@ DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(IntRect)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(IntSize)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(LayoutPoint)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(LayoutSize)
-
-#if USE(CG)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGRect)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGSize)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGPoint)
-DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(CGAffineTransform)
-#endif
 
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineFillColor)
 DEFINE_SIMPLE_ARGUMENT_CODER_FOR_SOURCE(DisplayList::SetInlineStrokeColor)
@@ -1331,38 +1323,6 @@ bool ArgumentCoder<PasteboardCustomData>::decode(Decoder& decoder, PasteboardCus
         return false;
 
     data = PasteboardCustomData(WTFMove(origin), WTFMove(items));
-    return true;
-}
-
-void ArgumentCoder<PasteboardURL>::encode(Encoder& encoder, const PasteboardURL& content)
-{
-    encoder << content.url;
-    encoder << content.title;
-#if PLATFORM(MAC)
-    encoder << content.userVisibleForm;
-#endif
-#if PLATFORM(GTK)
-    encoder << content.markup;
-#endif
-}
-
-bool ArgumentCoder<PasteboardURL>::decode(Decoder& decoder, PasteboardURL& content)
-{
-    if (!decoder.decode(content.url))
-        return false;
-
-    if (!decoder.decode(content.title))
-        return false;
-
-#if PLATFORM(MAC)
-    if (!decoder.decode(content.userVisibleForm))
-        return false;
-#endif
-#if PLATFORM(GTK)
-    if (!decoder.decode(content.markup))
-        return false;
-#endif
-
     return true;
 }
 
@@ -3084,11 +3044,15 @@ void ArgumentCoder<RefPtr<WebCore::ReportBody>>::encode(Encoder& encoder, const 
     encoder << reportBody->reportBodyType();
 
     switch (reportBody->reportBodyType()) {
-    case ReportBodyType::CSPViolation:
+    case ViolationReportType::ContentSecurityPolicy:
         downcast<CSPViolationReportBody>(reportBody.get())->encode(encoder);
         return;
-    case ReportBodyType::Test:
+    case ViolationReportType::Test:
         downcast<TestReportBody>(reportBody.get())->encode(encoder);
+        return;
+    case ViolationReportType::CrossOriginOpenerPolicy:
+    case ViolationReportType::StandardReportingAPIViolation:
+        ASSERT_NOT_REACHED();
         return;
     }
 
@@ -3105,16 +3069,20 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
     if (!hasReportBody)
         return { result };
 
-    std::optional<ReportBodyType> reportBodyType;
+    std::optional<ViolationReportType> reportBodyType;
     decoder >> reportBodyType;
     if (!reportBodyType)
         return std::nullopt;
 
     switch (*reportBodyType) {
-    case ReportBodyType::CSPViolation:
+    case ViolationReportType::ContentSecurityPolicy:
         return CSPViolationReportBody::decode(decoder);
-    case ReportBodyType::Test:
+    case ViolationReportType::Test:
         return TestReportBody::decode(decoder);
+    case ViolationReportType::CrossOriginOpenerPolicy:
+    case ViolationReportType::StandardReportingAPIViolation:
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
     }
 
     ASSERT_NOT_REACHED();

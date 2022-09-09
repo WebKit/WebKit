@@ -72,7 +72,7 @@ private:
     } m_depth;
     std::optional<double> m_inlineVerticalFieldOfView; // in radians
     RefPtr<WebXRWebGLLayer> m_baseLayer;
-    WeakPtr<HTMLCanvasElement> m_outputCanvas;
+    WeakPtr<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_outputCanvas;
     bool m_compositionEnabled { true };
 };
 

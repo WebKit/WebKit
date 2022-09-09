@@ -55,9 +55,9 @@
 
 #if PLATFORM(GTK)
 #include <JavaScriptCore/JSBase.h>
-#include <webkit2/WebKitColorChooserRequest.h>
-#include <webkit2/WebKitWebInspector.h>
-#include <webkit2/WebKitWebViewBase.h>
+#include <webkit/WebKitColorChooserRequest.h>
+#include <webkit/WebKitWebInspector.h>
+#include <webkit/WebKitWebViewBase.h>
 #elif PLATFORM(WPE)
 #include <wpe/WebKitColor.h>
 #include <wpe/WebKitRectangle.h>

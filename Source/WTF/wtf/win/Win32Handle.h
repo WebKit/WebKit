@@ -32,13 +32,42 @@ namespace WTF {
 
 class Win32Handle {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(Win32Handle);
 
 public:
-    Win32Handle() : m_handle(INVALID_HANDLE_VALUE) { }
+    Win32Handle() = default;
     explicit Win32Handle(HANDLE handle) : m_handle(handle) { }
+    Win32Handle(const Win32Handle& other)
+    {
+        *this = other;
+    }
+
+    Win32Handle(Win32Handle&& other)
+    {
+        *this = WTFMove(other);
+    }
 
     ~Win32Handle() { clear(); }
+
+    Win32Handle& operator=(const Win32Handle& other)
+    {
+        if (this != &other) {
+            clear();
+            if (other.isValid()) {
+                auto processHandle = ::GetCurrentProcess();
+                ::DuplicateHandle(processHandle, other.m_handle, processHandle, &m_handle, 0, FALSE, DUPLICATE_SAME_ACCESS);
+            }
+        }
+        return *this;
+    }
+
+    Win32Handle& operator=(Win32Handle&& other)
+    {
+        if (this != &other) {
+            clear();
+            m_handle = other.release();
+        }
+        return *this;
+    }
 
     void clear()
     {
@@ -49,6 +78,7 @@ public:
     }
 
     bool isValid() const { return m_handle != INVALID_HANDLE_VALUE; }
+    explicit operator bool() const { return isValid(); }
 
     HANDLE get() const { return m_handle; }
     HANDLE release() { HANDLE ret = m_handle; m_handle = INVALID_HANDLE_VALUE; return ret; }
@@ -61,8 +91,9 @@ public:
     }
 
 private:
-    HANDLE m_handle;
+    HANDLE m_handle { INVALID_HANDLE_VALUE };
 };
 
 } // namespace WTF
 
+using WTF::Win32Handle;

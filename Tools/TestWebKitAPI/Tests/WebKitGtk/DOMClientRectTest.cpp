@@ -21,7 +21,12 @@
 
 #include "WebProcessTest.h"
 #include <gio/gio.h>
+
+#if USE(GTK4)
+#include <webkit/webkit-web-extension.h>
+#else
 #include <webkit2/webkit-web-extension.h>
+#endif
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
 

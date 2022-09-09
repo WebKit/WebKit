@@ -412,6 +412,7 @@ void WebPopupMenuProxyGtk::hidePopupMenu()
     }
 
 #if USE(GTK4)
+    gtk_popover_popdown(GTK_POPOVER(m_popup));
     g_clear_pointer(&m_popup, gtk_widget_unparent);
 #else
     gtk_widget_destroy(m_popup);

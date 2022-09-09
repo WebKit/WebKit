@@ -179,7 +179,7 @@ StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 
 // ------------------------------ Functions --------------------------
 
-static NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)
+NEVER_INLINE void substituteBackreferencesSlow(StringBuilder& result, StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)
 {
     bool hasNamedCaptures = reg && reg->hasNamedCaptures();
     int offset = 0;

@@ -6772,6 +6772,7 @@
 		D3B9484311FF4B6500032B39 /* WebPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPopupMenu.h; sourceTree = "<group>"; };
 		D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSearchPopupMenu.cpp; sourceTree = "<group>"; };
 		D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchPopupMenu.h; sourceTree = "<group>"; };
+		D93F6FB228C17970006C627C /* WebPermissionController.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPermissionController.messages.in; sourceTree = "<group>"; };
 		D952EC76289C4299006C240A /* WebPermissionControllerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPermissionControllerProxy.h; sourceTree = "<group>"; };
 		D952EC77289C46B4006C240A /* WebPermissionControllerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPermissionControllerProxy.cpp; sourceTree = "<group>"; };
 		D952EC79289C4AD0006C240A /* WebPermissionControllerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPermissionControllerProxy.messages.in; sourceTree = "<group>"; };
@@ -11565,6 +11566,7 @@
 				0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */,
 				93B0A67326D5A72E00AA21E4 /* WebPermissionController.cpp */,
 				93B0A67426D5A72E00AA21E4 /* WebPermissionController.h */,
+				D93F6FB228C17970006C627C /* WebPermissionController.messages.in */,
 				1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */,
 				1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */,
 				D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */,

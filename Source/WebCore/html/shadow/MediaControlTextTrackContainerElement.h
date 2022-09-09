@@ -96,7 +96,7 @@ private:
 
     std::unique_ptr<TextTrackRepresentation> m_textTrackRepresentation;
 
-    WeakPtr<HTMLMediaElement> m_mediaElement;
+    WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
     IntRect m_videoDisplaySize;
     int m_fontSize { 0 };
     bool m_fontSizeIsImportant { false };

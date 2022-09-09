@@ -46,6 +46,8 @@ class WebPermissionControllerProxy final : public IPC::MessageReceiver {
 public:
     explicit WebPermissionControllerProxy(WebProcessProxy&);
     ~WebPermissionControllerProxy();
+
+    // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
 private:

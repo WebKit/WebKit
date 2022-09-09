@@ -64,7 +64,7 @@ public:
     virtual void removeClient(RenderElement&) = 0;
     virtual bool hasClient(RenderElement&) const = 0;
     virtual bool hasImage() const { return false; }
-    virtual RefPtr<Image> image(RenderElement*, const FloatSize&) const = 0;
+    virtual RefPtr<Image> image(const RenderElement*, const FloatSize&) const = 0;
     virtual WrappedImagePtr data() const = 0;
     virtual float imageScaleFactor() const { return 1; }
     virtual bool knownToBeOpaque(const RenderElement&) const = 0;

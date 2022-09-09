@@ -266,6 +266,7 @@
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/UserTypingGestureIndicator.h>
+#include <WebCore/ViolationReportType.h>
 #include <WebCore/VisiblePosition.h>
 #include <WebCore/VisibleUnits.h>
 #include <WebCore/WebGLStateTracker.h>
@@ -3916,7 +3917,7 @@ void WebPage::runJavaScriptInFrameInScriptWorld(RunJavaScriptParameters&& parame
 
     runJavaScript(webFrame.get(), WTFMove(parameters), worldData.first, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](const IPC::DataReference& result, const std::optional<WebCore::ExceptionDetails>& exception) mutable {
         if (exception)
-            WEBPAGE_RELEASE_LOG_ERROR(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript failed with error %{private}s", exception->message.utf8().data());
+            WEBPAGE_RELEASE_LOG_ERROR(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript failed with error %" PRIVATE_LOG_STRING, exception->message.utf8().data());
         else
             WEBPAGE_RELEASE_LOG(Process, "runJavaScriptInFrameInScriptWorld: Request to run JavaScript succeeded");
         completionHandler(result, exception);
@@ -4582,15 +4583,6 @@ void WebPage::addConsoleMessage(FrameIdentifier frameID, MessageSource messageSo
         frame->addConsoleMessage(messageSource, messageLevel, message, requestID ? requestID->toUInt64() : 0);
 }
 
-void WebPage::sendCSPViolationReport(FrameIdentifier frameID, const URL& reportURL, IPC::FormDataReference&& reportData)
-{
-    auto report = reportData.takeData();
-    if (!report)
-        return;
-    if (auto* frame = WebProcess::singleton().webFrame(frameID))
-        PingLoader::sendViolationReport(*frame->coreFrame(), reportURL, report.releaseNonNull(), ViolationReportType::ContentSecurityPolicy);
-}
-
 void WebPage::enqueueSecurityPolicyViolationEvent(FrameIdentifier frameID, SecurityPolicyViolationEventInit&& eventInit)
 {
     auto* frame = WebProcess::singleton().webFrame(frameID);
@@ -4613,6 +4605,20 @@ void WebPage::notifyReportObservers(FrameIdentifier frameID, Ref<WebCore::Report
         return;
     if (RefPtr document = coreFrame->document())
         document->reportingScope().notifyReportObservers(WTFMove(report));
+}
+
+void WebPage::sendReportToEndpoints(FrameIdentifier frameID, URL&& baseURL, Vector<String>&& endPoints, IPC::FormDataReference&& reportData, WebCore::ViolationReportType reportType)
+{
+    auto report = reportData.takeData();
+    if (!report)
+        return;
+
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    if (!frame)
+        return;
+
+    for (const auto& url : endPoints)
+        PingLoader::sendViolationReport(*frame->coreFrame(), URL { baseURL, url }, Ref { *report.get() }, reportType);
 }
 
 NotificationPermissionRequestManager* WebPage::notificationPermissionRequestManager()
