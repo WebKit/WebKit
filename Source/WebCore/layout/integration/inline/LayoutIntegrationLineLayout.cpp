@@ -806,6 +806,9 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     LayerPaintScope layerPaintScope(m_boxTree, layerRenderer);
 
     for (auto& box : makeReversedRange(boxRange)) {
+        if (!box.isVisible())
+            continue;
+
         auto& renderer = m_boxTree.rendererForLayoutBox(box.layoutBox());
 
         if (!layerPaintScope.includes(box))
