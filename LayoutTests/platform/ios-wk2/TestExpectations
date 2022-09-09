@@ -2342,3 +2342,5 @@ webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfac
 webkit.org/b/244913 [ Debug ] fast/mediastream/getDisplayMedia-displaySurface.html [ Skip ]
 
 webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-cross-origin.https.sub.tentative.html [ Pass Timeout ]
+
+webkit.org/b/244986 [ Debug ] compositing/hidpi-non-simple-compositing-layer-with-fractional-size-and-background.html [ Pass Timeout ]
