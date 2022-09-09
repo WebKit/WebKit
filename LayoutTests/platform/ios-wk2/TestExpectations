@@ -2349,3 +2349,5 @@ webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/d
 webkit.org/b/245002 compositing/clipping/border-radius-async-overflow-non-stacking.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure Timeout ]
+
+webkit.org/b/245009 http/wpt/service-workers/controlled-sharedworker.https.html [ Pass Failure ]
