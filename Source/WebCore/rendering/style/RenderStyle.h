@@ -2550,4 +2550,9 @@ inline bool generatesBox(const RenderStyle& style)
     return style.display() != DisplayType::None && style.display() != DisplayType::Contents;
 }
 
+inline bool isNonVisibleOverflow(Overflow overflow)
+{
+    return overflow == Overflow::Hidden || overflow == Overflow::Scroll || overflow == Overflow::Clip;
+}
+
 } // namespace WebCore

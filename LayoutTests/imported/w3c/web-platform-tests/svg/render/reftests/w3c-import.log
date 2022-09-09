@@ -26,5 +26,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/change-sync-for-nested-use.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/filter-effects-on-pattern-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/filter-effects-on-pattern.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/nested-svg-overflow-clip-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/nested-svg-overflow-clip.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/overflow-clip-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/overflow-clip.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/render-sync-with-font-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/render/reftests/render-sync-with-font-size.html
