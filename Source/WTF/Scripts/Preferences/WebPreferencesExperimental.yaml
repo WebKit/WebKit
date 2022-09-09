@@ -1400,11 +1400,11 @@ SKAttributionEnabled:
   humanReadableDescription: "SKAttribution"
   defaultValue:
     WebCore:
-      default: false
+      default: true
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 # FIXME: This should have it's own ENABLE.
