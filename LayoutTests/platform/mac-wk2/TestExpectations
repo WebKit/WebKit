@@ -1771,10 +1771,6 @@ webkit.org/b/244979 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/texture
 webkit.org/b/244979 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/shaderbuiltinvar.html [ Pass Failure ]
 webkit.org/b/244979 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_unpack_params.html [ Pass Failure ]
 
-webkit.org/b/244983 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniformbuffers/instance_array_basic_type.html [ Pass Failure ]
-webkit.org/b/244983 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniformapi/value_initial.html [ Pass Failure ]
-webkit.org/b/244983 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniformapi/random.html [ Pass Failure ]
-
 webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure ]
 
 webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
