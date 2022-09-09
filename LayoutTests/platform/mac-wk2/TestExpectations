@@ -1774,5 +1774,3 @@ webkit.org/b/244979 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/texture
 webkit.org/b/244983 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniformbuffers/instance_array_basic_type.html [ Pass Failure ]
 webkit.org/b/244983 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniformapi/value_initial.html [ Pass Failure ]
 webkit.org/b/244983 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniformapi/random.html [ Pass Failure ]
-
-webkit.org/b/244980 [ BigSur Release ] webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_basic_type.html [ Pass Failure ]
