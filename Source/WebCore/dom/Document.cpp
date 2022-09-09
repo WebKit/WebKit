@@ -9272,6 +9272,11 @@ String Document::endpointURIForToken(const String& token) const
     return reportingScope().endpointURIForToken(token);
 }
 
+String Document::httpUserAgent() const
+{
+    return userAgent(url());
+}
+
 void Document::sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType reportType)
 {
     for (const auto& url : endPoints)

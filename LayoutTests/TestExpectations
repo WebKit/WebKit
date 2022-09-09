@@ -226,8 +226,9 @@ http/tests/app-privacy-report/ [ Skip ]
 # Only partial support on Cocoa platforms.
 imported/w3c/web-platform-tests/speech-api/ [ Skip ]
 
-# Support for COOP / COEP violation reporting is missing.
-imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting
+# Support for COEP violation reporting is missing.
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/
+imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/document-reporting/
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-document-reporting-endpoint.https.window.html

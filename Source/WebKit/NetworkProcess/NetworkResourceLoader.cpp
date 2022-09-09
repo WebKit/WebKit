@@ -648,10 +648,6 @@ bool NetworkResourceLoader::shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptio
         return false;
 #endif
 
-    String reportingEndpoints = response.httpHeaderField(HTTPHeaderName::ReportingEndpoints);
-    if (!reportingEndpoints.isEmpty())
-        m_reportingEndpoints = ReportingScope::parseReportingEndpointsFromHeader(reportingEndpoints, response.url());
-
     auto url = response.url();
     ContentSecurityPolicy contentSecurityPolicy { URL { url }, this, this };
     contentSecurityPolicy.didReceiveHeaders(ContentSecurityPolicyResponseHeaders { response }, originalRequest().httpReferrer());
@@ -728,7 +724,7 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
         m_currentCoopEnforcementResult = CrossOriginOpenerPolicyEnforcementResult::from(m_parameters.documentURL, WTFMove(sourceOrigin), m_parameters.sourceCrossOriginOpenerPolicy, m_parameters.navigationRequester, m_parameters.openerURL);
     }
 
-    m_currentCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(response, m_parameters.navigationRequester, contentSecurityPolicy.get(), m_parameters.effectiveSandboxFlags, m_parameters.isDisplayingInitialEmptyDocument, *m_currentCoopEnforcementResult);
+    m_currentCoopEnforcementResult = WebCore::doCrossOriginOpenerHandlingOfResponse(*this, response, m_parameters.navigationRequester, contentSecurityPolicy.get(), m_parameters.effectiveSandboxFlags, originalRequest().httpReferrer(), m_parameters.isDisplayingInitialEmptyDocument, *m_currentCoopEnforcementResult);
     if (!m_currentCoopEnforcementResult)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), "Navigation was blocked by Cross-Origin-Opener-Policy"_s, ResourceError::Type::AccessControl };
     return std::nullopt;
@@ -824,6 +820,8 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
             return completionHandler(PolicyAction::Ignore);
         }
     }
+
+    initializeReportingEndpoints(m_response);
 
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(m_response)) {
         LOADER_RELEASE_LOG_ERROR("didReceiveResponse: Interrupting main resource load due to CSP frame-ancestors or X-Frame-Options");
@@ -1419,6 +1417,13 @@ void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::Resour
 #endif
 }
 
+void NetworkResourceLoader::initializeReportingEndpoints(const ResourceResponse& response)
+{
+    auto reportingEndpoints = response.httpHeaderField(HTTPHeaderName::ReportingEndpoints);
+    if (!reportingEndpoints.isEmpty())
+        m_reportingEndpoints = ReportingScope::parseReportingEndpointsFromHeader(reportingEndpoints, response.url());
+}
+
 void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::Entry> entry)
 {
     LOADER_RELEASE_LOG("didRetrieveCacheEntry:");
@@ -1431,6 +1436,8 @@ void NetworkResourceLoader::didRetrieveCacheEntry(std::unique_ptr<NetworkCache::
 
     if (isMainResource())
         didReceiveMainResourceResponse(response);
+
+    initializeReportingEndpoints(response);
 
     if (isMainResource() && shouldInterruptLoadForCSPFrameAncestorsOrXFrameOptions(response)) {
         LOADER_RELEASE_LOG_ERROR("didRetrieveCacheEntry: Stopping load due to CSP Frame-Ancestors or X-Frame-Options");

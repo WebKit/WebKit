@@ -1834,6 +1834,7 @@ private:
     void notifyReportObservers(Ref<Report>&&) final;
     String endpointURIForToken(const String&) const final;
     void sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType) final;
+    String httpUserAgent() const final;
 
     const Ref<const Settings> m_settings;
 

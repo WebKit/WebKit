@@ -204,9 +204,11 @@ private:
 
     void stopIndexedDatabase();
 
+    // ReportingClient.
     void notifyReportObservers(Ref<Report>&&) final;
     String endpointURIForToken(const String&) const final;
     void sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType) final;
+    String httpUserAgent() const final { return m_userAgent; }
 
     URL m_url;
     URL m_ownerURL;

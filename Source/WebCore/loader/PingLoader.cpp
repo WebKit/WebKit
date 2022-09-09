@@ -157,6 +157,11 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
 {
     ASSERT(frame.document());
 
+    // FIXME: Add the concept of browsing context group like in the specification instead of treating the whole process as a group.
+    // https://bugs.webkit.org/show_bug.cgi?id=244945
+    if (reportType == ViolationReportType::CrossOriginOpenerPolicy && Page::nonUtilityPageCount() <= 1)
+        return;
+
     ResourceRequest request(reportURL);
 #if ENABLE(CONTENT_EXTENSIONS)
     if (processContentRuleListsForLoad(frame, request, ContentExtensions::ResourceType::CSPReport))
@@ -172,6 +177,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     case ViolationReportType::ContentSecurityPolicy:
         request.setHTTPContentType("application/csp-report"_s);
         break;
+    case ViolationReportType::CrossOriginOpenerPolicy:
     case ViolationReportType::StandardReportingAPIViolation:
     case ViolationReportType::Test:
         request.setHTTPContentType("application/reports+json"_s);
@@ -186,7 +192,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
 
     HTTPHeaderMap originalRequestHeader = request.httpHeaderFields();
 
-    if (reportType != ViolationReportType::StandardReportingAPIViolation && reportType != ViolationReportType::Test)
+    if (reportType == ViolationReportType::ContentSecurityPolicy)
         frame.loader().updateRequestAndAddExtraFields(request, IsMainResource::No);
 
     String referrer = SecurityPolicy::generateReferrerHeader(document.referrerPolicy(), reportURL, frame.loader().outgoingReferrer());
@@ -215,7 +221,7 @@ void PingLoader::startPingLoad(Frame& frame, ResourceRequest& request, HTTPHeade
     options.cache = FetchOptions::Cache::NoCache;
 
     // https://www.w3.org/TR/reporting/#try-delivery
-    if (violationReportType == ViolationReportType::StandardReportingAPIViolation || violationReportType == ViolationReportType::Test) {
+    if (violationReportType && *violationReportType != ViolationReportType::ContentSecurityPolicy) {
         options.credentials = FetchOptions::Credentials::SameOrigin;
         options.mode = FetchOptions::Mode::Cors;
         options.serviceWorkersMode = ServiceWorkersMode::None;

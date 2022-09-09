@@ -3050,6 +3050,7 @@ void ArgumentCoder<RefPtr<WebCore::ReportBody>>::encode(Encoder& encoder, const 
     case ViolationReportType::Test:
         downcast<TestReportBody>(reportBody.get())->encode(encoder);
         return;
+    case ViolationReportType::CrossOriginOpenerPolicy:
     case ViolationReportType::StandardReportingAPIViolation:
         ASSERT_NOT_REACHED();
         return;
@@ -3078,6 +3079,7 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
         return CSPViolationReportBody::decode(decoder);
     case ViolationReportType::Test:
         return TestReportBody::decode(decoder);
+    case ViolationReportType::CrossOriginOpenerPolicy:
     case ViolationReportType::StandardReportingAPIViolation:
         ASSERT_NOT_REACHED();
         return std::nullopt;

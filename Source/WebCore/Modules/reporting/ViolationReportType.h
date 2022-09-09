@@ -29,6 +29,7 @@ namespace WebCore {
 
 enum class ViolationReportType : uint8_t {
     ContentSecurityPolicy,
+    CrossOriginOpenerPolicy,
     StandardReportingAPIViolation, // https://www.w3.org/TR/reporting/#try-delivery
     Test, // https://www.w3.org/TR/reporting-1/#generate-test-report-command
     // More to come
@@ -42,6 +43,7 @@ template<> struct EnumTraits<WebCore::ViolationReportType> {
     using values = EnumValues<
     WebCore::ViolationReportType,
     WebCore::ViolationReportType::ContentSecurityPolicy,
+    WebCore::ViolationReportType::CrossOriginOpenerPolicy,
     WebCore::ViolationReportType::StandardReportingAPIViolation,
     WebCore::ViolationReportType::Test
     >;

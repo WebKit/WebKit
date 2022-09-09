@@ -257,6 +257,8 @@ private:
     void notifyReportObservers(Ref<WebCore::Report>&&) final;
     String endpointURIForToken(const String&) const final;
     void sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<WebCore::FormData>&& report, WebCore::ViolationReportType) final;
+    String httpUserAgent() const final { return originalRequest().httpUserAgent(); }
+    void initializeReportingEndpoints(const WebCore::ResourceResponse&);
 
     enum class IsFromServiceWorker : bool { No, Yes };
     void willSendRedirectedRequestInternal(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&&, IsFromServiceWorker);

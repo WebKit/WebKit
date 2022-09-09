@@ -1,4 +1,4 @@
 
-FAIL Same origin openee redirected to same-origin with same-origin-allow-popups assert_equals: expected (string) "coop" but got (undefined) undefined
-FAIL Cross origin openee redirected to same-origin with same-origin-allow-popups assert_equals: expected (string) "coop" but got (undefined) undefined
+PASS Same origin openee redirected to same-origin with same-origin-allow-popups
+PASS Cross origin openee redirected to same-origin with same-origin-allow-popups
 

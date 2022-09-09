@@ -37,6 +37,7 @@ class ScriptExecutionContext;
 class SecurityOrigin;
 
 struct NavigationRequester;
+struct ReportingClient;
 
 typedef int SandboxFlags;
 
@@ -132,7 +133,7 @@ struct CrossOriginOpenerPolicyEnforcementResult {
 
 CrossOriginOpenerPolicy obtainCrossOriginOpenerPolicy(const ResourceResponse&);
 WEBCORE_EXPORT void addCrossOriginOpenerPolicyHeaders(ResourceResponse&, const CrossOriginOpenerPolicy&);
-WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
+WEBCORE_EXPORT std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(ReportingClient&, const ResourceResponse&, const std::optional<NavigationRequester>&, ContentSecurityPolicy* responseCSP, SandboxFlags effectiveSandboxFlags, const String& referrer, bool isDisplayingInitialEmptyDocument, const CrossOriginOpenerPolicyEnforcementResult& currentCoopEnforcementResult);
 
 } // namespace WebCore
 
