@@ -41,51 +41,24 @@
 
 namespace WebKit {
 
-XDGDBusProxy::XDGDBusProxy(Type type, bool allowPortals)
-    : m_type(type)
+CString XDGDBusProxy::makePath(const char* dbusAddress)
 {
-    switch (m_type) {
-    case Type::SessionBus:
-        m_dbusAddress = g_getenv("DBUS_SESSION_BUS_ADDRESS");
-        break;
-    case Type::AccessibilityBus:
-#if ENABLE(ACCESSIBILITY)
-        m_dbusAddress = WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress().utf8();
-#endif
-        break;
-    }
+    if (!dbusAddress || !g_str_has_prefix(dbusAddress, "unix:"))
+        return { };
 
-    if (m_dbusAddress.isNull() || !g_str_has_prefix(m_dbusAddress.data(), "unix:"))
-        return;
-
-    m_proxyPath = makeProxy();
-    if (m_proxyPath.isNull())
-        return;
-
-#if USE(ATSPI)
-    if (m_type == Type::AccessibilityBus)
-        WebCore::PlatformDisplay::sharedDisplay().setAccessibilityBusAddress(makeString("unix:path=", m_proxyPath.data()));
-#endif
-
-    if (const char* path = strstr(m_dbusAddress.data(), "path=")) {
+    if (const char* path = strstr(dbusAddress, "path=")) {
         path += strlen("path=");
         const char* pathEnd = path;
         while (*pathEnd && *pathEnd != ',')
             pathEnd++;
 
-        m_path = CString(path, pathEnd - path);
+        return CString(path, pathEnd - path);
     }
 
-    m_syncFD = launch(allowPortals);
+    return { };
 }
 
-XDGDBusProxy::~XDGDBusProxy()
-{
-    if (m_syncFD != -1)
-        close(m_syncFD);
-}
-
-CString XDGDBusProxy::makeProxy() const
+CString XDGDBusProxy::makeProxy(const char* proxyTemplate)
 {
     GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
     if (g_mkdir_with_parents(appRunDir.get(), 0700) == -1) {
@@ -93,85 +66,116 @@ CString XDGDBusProxy::makeProxy() const
         return { };
     }
 
-    auto proxyTemplate = [](Type type) -> const char* {
-        switch (type) {
-        case Type::SessionBus:
-            return "bus-proxy-XXXXXX";
-        case Type::AccessibilityBus:
-            return "a11y-proxy-XXXXXX";
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    };
-
-    GUniquePtr<char> proxySocketTemplate(g_build_filename(appRunDir.get(), proxyTemplate(m_type), nullptr));
-    int fd;
-    if ((fd = g_mkstemp(proxySocketTemplate.get())) == -1) {
+    GUniquePtr<char> proxySocketTemplate(g_build_filename(appRunDir.get(), proxyTemplate, nullptr));
+    UnixFileDescriptor fd(g_mkstemp(proxySocketTemplate.get()), UnixFileDescriptor::Adopt);
+    if (!fd) {
         g_warning("Failed to make socket file %s for dbus proxy: %s", proxySocketTemplate.get(), g_strerror(errno));
         return { };
     }
 
-    close(fd);
     return proxySocketTemplate.get();
 }
 
-int XDGDBusProxy::launch(bool allowPortals) const
+std::optional<std::pair<CString, CString>> XDGDBusProxy::dbusSessionProxy(AllowPortals allowPortals)
 {
+    if (!m_dbusSessionProxyPath.isNull())
+        return std::pair<CString, CString> { m_dbusSessionProxyPath, m_dbusSessionPath };
+
+    const char* dbusAddress = g_getenv("DBUS_SESSION_BUS_ADDRESS");
+    m_dbusSessionPath = makePath(dbusAddress);
+    if (m_dbusSessionPath.isNull())
+        return std::nullopt;
+
+    m_dbusSessionProxyPath = makeProxy("bus-proxy-XXXXXX");
+    if (m_dbusSessionProxyPath.isNull()) {
+        m_dbusSessionPath = { };
+        return std::nullopt;
+    }
+
+    m_args.appendVector(Vector<CString> {
+        CString(dbusAddress), m_dbusSessionProxyPath,
+        "--filter",
+        // GStreamers plugin install helper.
+        "--call=org.freedesktop.PackageKit=org.freedesktop.PackageKit.Modify2.InstallGStreamerResources@/org/freedesktop/PackageKit"
+    });
+
+#if ENABLE(MEDIA_SESSION)
+    if (auto* app = g_application_get_default()) {
+        if (const char* appID = g_application_get_application_id(app)) {
+            auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2.", appID, ".*");
+            m_args.append(mprisSessionID.ascii().data());
+        }
+    }
+#endif
+
+    if (allowPortals == AllowPortals::Yes)
+        m_args.append("--talk=org.freedesktop.portal.Desktop");
+
+    if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"))
+        m_args.append("--log");
+
+    return std::pair<CString, CString> { m_dbusSessionProxyPath, m_dbusSessionPath };
+}
+
+std::optional<std::pair<CString, CString>> XDGDBusProxy::accessibilityProxy()
+{
+#if ENABLE(ACCESSIBILITY)
+    if (!m_accessibilityProxyPath.isNull())
+        return std::pair<CString, CString> { m_accessibilityProxyPath, m_accessibilityPath };
+
+    auto dbusAddress = WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress().utf8();
+    m_accessibilityPath = makePath(dbusAddress.data());
+    if (m_accessibilityPath.isNull())
+        return std::nullopt;
+
+    m_accessibilityProxyPath = makeProxy("a11y-proxy-XXXXXX");
+    if (m_accessibilityProxyPath.isNull()) {
+        m_accessibilityPath = { };
+        return std::nullopt;
+    }
+
+#if USE(ATSPI)
+    WebCore::PlatformDisplay::sharedDisplay().setAccessibilityBusAddress(makeString("unix:path=", m_accessibilityPath.data()));
+#endif
+
+    m_args.appendVector(Vector<CString> {
+        WTFMove(dbusAddress), m_accessibilityProxyPath,
+        "--filter",
+        "--sloppy-names",
+        "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Embed@/org/a11y/atspi/accessible/root",
+        "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Unembed@/org/a11y/atspi/accessible/root",
+        "--call=org.a11y.atspi.Registry=org.a11y.atspi.Registry.GetRegisteredEvents@/org/a11y/atspi/registry",
+        "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetKeystrokeListeners@/org/a11y/atspi/registry/deviceeventcontroller",
+        "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetDeviceEventListeners@/org/a11y/atspi/registry/deviceeventcontroller",
+        "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersSync@/org/a11y/atspi/registry/deviceeventcontroller",
+        "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
+    });
+
+    if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"))
+        m_args.append("--log");
+
+    return std::pair<CString, CString> { m_accessibilityProxyPath, m_accessibilityPath };
+#else
+    return std::nullopt;
+#endif
+}
+
+bool XDGDBusProxy::launch()
+{
+    if (m_syncFD)
+        return true;
+
+    if (m_args.isEmpty())
+        return false;
+
     int syncFds[2];
     if (pipe(syncFds) == -1)
         g_error("Failed to make syncfds for dbus-proxy: %s", g_strerror(errno));
     setCloseOnExec(syncFds[0]);
 
     GUniquePtr<char> syncFdStr(g_strdup_printf("--fd=%d", syncFds[1]));
-    Vector<CString> proxyArgs = {
-        m_dbusAddress, m_proxyPath,
-        "--filter",
-        syncFdStr.get()
-    };
-
-    auto enableLogging = [](Type type) -> bool {
-        switch (type) {
-        case Type::SessionBus:
-            return !g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1");
-        case Type::AccessibilityBus:
-            return !g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1");
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    };
-    if (enableLogging(m_type))
-        proxyArgs.append("--log");
-
-    switch (m_type) {
-    case Type::SessionBus: {
-#if ENABLE(MEDIA_SESSION)
-        if (auto* app = g_application_get_default()) {
-            if (const char* appID = g_application_get_application_id(app)) {
-                auto mprisSessionID = makeString("--own=org.mpris.MediaPlayer2.", appID, ".*");
-                proxyArgs.append(mprisSessionID.ascii().data());
-            }
-        }
-#endif
-        // GStreamers plugin install helper.
-        proxyArgs.append("--call=org.freedesktop.PackageKit=org.freedesktop.PackageKit.Modify2.InstallGStreamerResources@/org/freedesktop/PackageKit");
-
-        if (allowPortals)
-            proxyArgs.append("--talk=org.freedesktop.portal.Desktop");
-        break;
-    }
-    case Type::AccessibilityBus:
-#if ENABLE(ACCESSIBILITY)
-        proxyArgs.appendVector(Vector<CString> {
-            "--sloppy-names",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Embed@/org/a11y/atspi/accessible/root",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Socket.Unembed@/org/a11y/atspi/accessible/root",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.Registry.GetRegisteredEvents@/org/a11y/atspi/registry",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetKeystrokeListeners@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.GetDeviceEventListeners@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersSync@/org/a11y/atspi/registry/deviceeventcontroller",
-            "--call=org.a11y.atspi.Registry=org.a11y.atspi.DeviceEventController.NotifyListenersAsync@/org/a11y/atspi/registry/deviceeventcontroller",
-        });
-#endif
-        break;
-    }
+    Vector<CString> proxyArgs = { syncFdStr.get() };
+    proxyArgs.appendVector(WTFMove(m_args));
 
     // We have to run xdg-dbus-proxy under bubblewrap because we need /.flatpak-info to exist in
     // xdg-dbus-proxy's mount namespace. Portals may use this as a trusted way to get the
@@ -195,16 +199,14 @@ int XDGDBusProxy::launch(bool allowPortals) const
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_NONE));
     g_subprocess_launcher_take_fd(launcher.get(), proxyFd, proxyFd);
     g_subprocess_launcher_take_fd(launcher.get(), syncFds[1], syncFds[1]);
+    m_syncFD = UnixFileDescriptor(syncFds[0], UnixFileDescriptor::Adopt);
 
     // We are purposefully leaving syncFds[0] open here.
     // xdg-dbus-proxy will exit() itself once that is closed on our exit.
 
     ProcessLauncher::LaunchOptions launchOptions;
     launchOptions.processType = ProcessLauncher::ProcessType::DBusProxy;
-#if ENABLE(ACCESSIBILITY)
-    if (m_type == Type::AccessibilityBus && !m_path.isNull())
-        launchOptions.extraSandboxPaths.add(m_path, SandboxPermission::ReadOnly);
-#endif
+
     GUniqueOutPtr<GError> error;
     GRefPtr<GSubprocess> process = bubblewrapSpawn(launcher.get(), launchOptions, argv, &error.outPtr());
     if (!process)
@@ -216,7 +218,7 @@ int XDGDBusProxy::launch(bool allowPortals) const
     if (read(syncFds[0], &out, 1) != 1)
         g_error("Failed to fully launch dbus-proxy: %s", g_strerror(errno));
 
-    return syncFds[0];
+    return true;
 }
 
 } // namespace WebKit
