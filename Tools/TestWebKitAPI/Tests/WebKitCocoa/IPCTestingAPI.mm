@@ -691,6 +691,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"WebCore::CookieRequestHeaderFieldProxy",
         @"WebCore::Credential",
         @"WebCore::CrossSiteNavigationDataTransfer::Flag",
+        @"WebCore::CubicBezierTimingFunction::TimingFunctionPreset",
         @"WebCore::Cursor",
         @"WebCore::DataDetectorElementInfo",
         @"WebCore::DataDetectorType",
@@ -906,6 +907,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
         @"WebCore::SourceBufferPrivateClient::ReceiveResult",
         @"WebCore::SpeechRecognitionConnectionClientIdentifier",
         @"WebCore::SpeechRecognitionUpdate",
+        @"WebCore::StepsTimingFunction::StepPosition",
         @"WebCore::StorageType",
         @"WebCore::SubstituteData",
         @"WebCore::SWServerConnectionIdentifier",
@@ -1132,7 +1134,7 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
     if (unexpectedRemovals.count)
         NSLog(@"Please remove from expectedTypesNeedingDescriptions: %@", unexpectedRemovals);
     if (unexpectedAdditions.count)
-        NSLog(@"Please add too expectedTypesNeedingDescriptions: %@", unexpectedAdditions);
+        NSLog(@"Please add to expectedTypesNeedingDescriptions: %@", unexpectedAdditions);
 }
 
 #endif
