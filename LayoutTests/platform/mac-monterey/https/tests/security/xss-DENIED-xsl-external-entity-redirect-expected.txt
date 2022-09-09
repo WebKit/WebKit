@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/resources/redirect.py?url=http://localhost:8000/security/resources/target.xml' because cross-origin loads are not allowed.
-CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/resources/redirect.py?url=http://localhost:8000/security/resources/target.xml' because cross-origin loads are not allowed.
-This test includes a cross-origin external entity. It passes if the load fails and thus there is no text below this line.
-
