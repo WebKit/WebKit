@@ -2069,6 +2069,8 @@ webkit.org/b/244601 http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [
 
 webkit.org/b/245036 http/tests/media/fairplay/fps-hls-key-rotation.html [ Failure ]
 
+webkit.org/b/245037 [ Monterey ] http/tests/media/fairplay/fps-hls-update-reject.html [ Pass Failure ]
+
 webkit.org/b/244336 fast/canvas/canvas-createPattern-video-loading.html [ Pass Timeout ]
 
 webkit.org/b/244347 storage/domstorage/sessionstorage/window-open-remove-item.html [ Pass Failure ]
