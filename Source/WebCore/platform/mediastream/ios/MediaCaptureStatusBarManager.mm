@@ -119,6 +119,7 @@ using namespace WebCore;
         [m_statusBarStyleOverride invalidate];
         m_statusBarStyleOverride = nil;
     }
+    m_manager = nullptr;
 }
 
 - (BOOL)statusBarCoordinator:(SBSStatusBarStyleOverridesCoordinator *)coordinator receivedTapWithContext:(id<SBSStatusBarTapContext>)tapContext completionBlock:(void (^)(void))completion

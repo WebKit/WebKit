@@ -146,6 +146,7 @@ $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUOrigin3D.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUValidationError.serialization.in
+$(PROJECT_DIR)/Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
 $(PROJECT_DIR)/Shared/WebsiteDataStoreParameters.serialization.in
 $(PROJECT_DIR)/Shared/mac/SecItemResponseData.serialization.in
 $(PROJECT_DIR)/UIProcess/Automation/Automation.json

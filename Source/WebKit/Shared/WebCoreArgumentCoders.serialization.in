@@ -307,3 +307,27 @@ struct WebCore::PasteboardURL {
     String markup
 #endif
 };
+
+header: <WebCore/TimingFunction.h>
+[Return=Ref] class WebCore::LinearTimingFunction {
+};
+
+[Return=Ref] class WebCore::CubicBezierTimingFunction {
+    WebCore::CubicBezierTimingFunction::TimingFunctionPreset timingFunctionPreset()
+    double x1()
+    double y1()
+    double x2()
+    double y2()
+};
+
+[Return=Ref] class WebCore::StepsTimingFunction {
+    int numberOfSteps()
+    std::optional<WebCore::StepsTimingFunction::StepPosition> stepPosition()
+};
+
+[Return=Ref] class WebCore::SpringTimingFunction {
+    double mass()
+    double stiffness()
+    double damping()
+    double initialVelocity()
+};

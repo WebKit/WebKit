@@ -70,6 +70,7 @@ public:
 
     const FloatRect& scrollableOverflow() const { return m_scrollableOverflow; }
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
+    FloatRect visibleRectIgnoringBlockDirection() const;
 
     float baseline() const { return m_baseline; }
     FontBaseline baselineType() const { return m_baselineType; }
@@ -107,6 +108,14 @@ private:
     // FIXME: This is to match paginated legacy lines. Move it to some other, paginated related structure.
     bool m_isFirstAfterPageBreak { false };
 };
+
+inline FloatRect Line::visibleRectIgnoringBlockDirection() const
+{
+    if (!m_ellipsisVisualRect)
+        return m_lineBoxRect;
+    auto visibleLineBoxRight = std::min(m_lineBoxRect.maxX(), m_ellipsisVisualRect->maxX());
+    return { m_lineBoxRect.location(), FloatPoint { visibleLineBoxRight, m_lineBoxRect.maxY() } };
+}
 
 }
 }

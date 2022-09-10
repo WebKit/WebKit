@@ -358,12 +358,13 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const InlineItemRange&
     auto partialOverflowingContent = committedContent.partialTrailingContentLength ? std::make_optional<PartialContent>(committedContent.partialTrailingContentLength, committedContent.overflowLogicalWidth) : std::nullopt;
     auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
 
-    return LineContent { committedRange
+    return { committedRange
         , partialOverflowingContent
         , partialOverflowingContent ? std::nullopt : committedContent.overflowLogicalWidth
         , WTFMove(m_placedFloats)
         , WTFMove(m_overflowingFloats)
         , m_contentIsConstrainedByFloat
+        , m_lineInitialLogicalLeft
         , m_lineLogicalRect.topLeft()
         , m_lineLogicalRect.width()
         , m_line.contentLogicalWidth()
@@ -443,6 +444,7 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, const Inlin
 
     m_lineMarginStart = lineConstraints.marginStart;
     m_lineLogicalRect = lineConstraints.logicalRect;
+    m_lineInitialLogicalLeft = m_lineLogicalRect.left();
     m_lineLogicalRect.moveHorizontally(m_lineMarginStart);
     // While negative margins normally don't expand the available space, preferred width computation gets confused by negative text-indent
     // (shrink the space needed for the content) which we have to balance it here.
@@ -604,44 +606,7 @@ std::optional<HorizontalConstraints> LineBuilder::floatConstraints(const InlineR
     if (isInIntrinsicWidthMode() || floatingState()->isEmpty())
         return { };
 
-    // Check for intruding floats and adjust logical left/available width for this line accordingly.
-    auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
-    auto toLogicalFloatPosition = [&] (const auto& constraints) -> FloatingContext::Constraints {
-        if (root().style().isLeftToRightDirection())
-            return constraints;
-        auto logicalConstraints = FloatingContext::Constraints { };
-        auto borderBoxWidth = layoutState().geometryForBox(root()).borderBoxWidth();
-        if (constraints.left)
-            logicalConstraints.right = PointInContextRoot { borderBoxWidth - constraints.left->x, constraints.left->y };
-        if (constraints.right)
-            logicalConstraints.left = PointInContextRoot { borderBoxWidth - constraints.right->x, constraints.right->y };
-        return logicalConstraints;
-    };
-    auto constraints = toLogicalFloatPosition(floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(lineLogicalRect.bottom()), FloatingContext::MayBeAboveLastFloat::Yes));
-
-    // Check if these values actually constrain the line.
-    if (constraints.left && constraints.left->x <= lineLogicalRect.left())
-        constraints.left = { };
-
-    if (constraints.right && constraints.right->x >= lineLogicalRect.right())
-        constraints.right = { };
-
-    if (!constraints.left && !constraints.right)
-        return { };
-
-    auto lineLogicalLeft = lineLogicalRect.left();
-    auto lineLogicalRight = lineLogicalRect.right();
-    if (constraints.left && constraints.right) {
-        lineLogicalRight = constraints.right->x;
-        lineLogicalLeft = constraints.left->x;
-    } else if (constraints.left) {
-        ASSERT(constraints.left->x >= lineLogicalLeft);
-        lineLogicalLeft = constraints.left->x;
-    } else if (constraints.right) {
-        // Right float boxes may overflow the containing block on the left.
-        lineLogicalRight = std::max<InlineLayoutUnit>(lineLogicalLeft, constraints.right->x);
-    }
-    return HorizontalConstraints { toLayoutUnit(lineLogicalLeft), toLayoutUnit(lineLogicalRight - lineLogicalLeft) };
+    return formattingContext().formattingGeometry().floatConstraintsForLine(lineLogicalRect, FloatingContext { formattingContext(), *floatingState() });
 }
 
 LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const

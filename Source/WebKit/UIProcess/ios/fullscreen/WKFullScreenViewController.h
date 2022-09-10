@@ -47,6 +47,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)hideUI;
 - (void)videoControlsManagerDidChange;
 - (void)setAnimatingViewAlpha:(CGFloat)alpha;
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+- (void)hideMediaControls:(BOOL)hidden;
+#endif
 @end
 
 NS_ASSUME_NONNULL_END

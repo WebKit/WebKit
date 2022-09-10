@@ -170,9 +170,21 @@ bool WebFullScreenManagerProxy::blocksReturnToFullscreenFromPictureInPicture() c
     return m_blocksReturnToFullscreenFromPictureInPicture;
 }
 
-void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture)
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+bool WebFullScreenManagerProxy::isVideoElement() const
+{
+    return m_isVideoElement;
+}
+#endif
+
+void WebFullScreenManagerProxy::enterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement)
 {
     m_blocksReturnToFullscreenFromPictureInPicture = blocksReturnToFullscreenFromPictureInPicture;
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    m_isVideoElement = isVideoElement;
+#else
+    UNUSED_PARAM(isVideoElement);
+#endif
     m_client.enterFullScreen();
 }
 

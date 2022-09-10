@@ -27,15 +27,15 @@ messages -> WebUserContentController {
     AddContentWorlds(Vector<std::pair<WebKit::ContentWorldIdentifier, String>> worlds);
     RemoveContentWorlds(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
 
-    AddUserScripts(Vector<struct WebKit::WebUserScriptData> userScripts, enum:bool WebKit::InjectUserScriptImmediately immediately);
+    AddUserScripts(Vector<WebKit::WebUserScriptData> userScripts, enum:bool WebKit::InjectUserScriptImmediately immediately);
     RemoveUserScript(WebKit::ContentWorldIdentifier worldIdentifier, uint64_t identifier);
     RemoveAllUserScripts(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
 
-    AddUserStyleSheets(Vector<struct WebKit::WebUserStyleSheetData> userStyleSheets);
+    AddUserStyleSheets(Vector<WebKit::WebUserStyleSheetData> userStyleSheets);
     RemoveUserStyleSheet(WebKit::ContentWorldIdentifier worldIdentifier, uint64_t identifier);
     RemoveAllUserStyleSheets(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
 
-    AddUserScriptMessageHandlers(Vector<struct WebKit::WebScriptMessageHandlerData> scriptMessageHandlers);
+    AddUserScriptMessageHandlers(Vector<WebKit::WebScriptMessageHandlerData> scriptMessageHandlers);
     RemoveUserScriptMessageHandler(WebKit::ContentWorldIdentifier worldIdentifier, uint64_t identifier);
     RemoveAllUserScriptMessageHandlersForWorlds(Vector<WebKit::ContentWorldIdentifier> worldIdentifiers);
     RemoveAllUserScriptMessageHandlers();

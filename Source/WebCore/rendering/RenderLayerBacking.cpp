@@ -27,6 +27,7 @@
 
 #include "RenderLayerBacking.h"
 
+#include "BackgroundPainter.h"
 #include "BitmapImage.h"
 #include "CanvasRenderingContext.h"
 #include "CSSPropertyNames.h"
@@ -1354,8 +1355,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     if (m_viewportAnchorLayer) {
         m_viewportAnchorLayer->setPosition(primaryLayerPosition);
-        // Setting boundsOrigin on this layer allows us to keep the position on m_graphicsLayer, which is necessary to preserve the propagation of the correct perspective transform to fixed layers.
-        m_viewportAnchorLayer->setBoundsOrigin(primaryLayerPosition);
+        primaryLayerPosition = { };
     }
 
     if (m_contentsContainmentLayer) {
@@ -2649,16 +2649,14 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
         return;
     }
 
-    auto destRect = backgroundBoxForSimpleContainerPainting();
-    FloatSize phase;
-    FloatSize tileSize;
+    auto backgroundBox = LayoutRect { backgroundBoxForSimpleContainerPainting() };
     // FIXME: Absolute paint location is required here.
-    downcast<RenderBox>(renderer()).getGeometryForBackgroundImage(&renderer(), LayoutPoint(), destRect, phase, tileSize);
+    auto geometry = BackgroundPainter::calculateBackgroundImageGeometry(*renderBox(), renderBox(), style.backgroundLayers(), { }, backgroundBox);
 
-    m_graphicsLayer->setContentsTileSize(tileSize);
-    m_graphicsLayer->setContentsTilePhase(phase);
-    m_graphicsLayer->setContentsRect(destRect);
-    m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(destRect));
+    m_graphicsLayer->setContentsTileSize(geometry.tileSize);
+    m_graphicsLayer->setContentsTilePhase(geometry.phase);
+    m_graphicsLayer->setContentsRect(geometry.destinationRect);
+    m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(geometry.destinationRect));
     m_graphicsLayer->setContentsToImage(style.backgroundLayers().image()->cachedImage()->image());
 
     didUpdateContentsRect = true;

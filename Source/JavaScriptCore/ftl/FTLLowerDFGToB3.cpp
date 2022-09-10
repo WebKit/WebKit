@@ -14742,12 +14742,20 @@ IGNORE_CLANG_WARNINGS_END
             && m_node->child1().useKind() == StringUse
             && m_node->child2().useKind() == StringUse
             && m_node->child3().useKind() == StringUse) {
+            const BoyerMooreHorspoolTable<uint8_t>* tablePointer = nullptr;
+            String searchString = m_node->child2()->tryGetString(m_graph);
+            if (!!searchString)
+                tablePointer = m_graph.tryAddStringSearchTable8(searchString);
+
             String replacement = m_node->child3()->tryGetString(m_graph);
             if (!!replacement) {
                 if (!replacement.length()) {
                     LValue string = lowString(m_node->child1());
                     LValue search = lowString(m_node->child2());
-                    setJSValue(vmCall(pointerType(), operationStringReplaceStringEmptyString, weakPointer(globalObject), string, search));
+                    if (tablePointer)
+                        setJSValue(vmCall(pointerType(), operationStringReplaceStringEmptyStringWithTable8, weakPointer(globalObject), string, search, m_out.constIntPtr(tablePointer)));
+                    else
+                        setJSValue(vmCall(pointerType(), operationStringReplaceStringEmptyString, weakPointer(globalObject), string, search));
                     return;
                 }
 
@@ -14755,7 +14763,10 @@ IGNORE_CLANG_WARNINGS_END
                     LValue string = lowString(m_node->child1());
                     LValue search = lowString(m_node->child2());
                     LValue replace = lowString(m_node->child3());
-                    setJSValue(vmCall(pointerType(), operationStringReplaceStringStringWithoutSubstitution, weakPointer(globalObject), string, search, replace));
+                    if (tablePointer)
+                        setJSValue(vmCall(pointerType(), operationStringReplaceStringStringWithoutSubstitutionWithTable8, weakPointer(globalObject), string, search, replace, m_out.constIntPtr(tablePointer)));
+                    else
+                        setJSValue(vmCall(pointerType(), operationStringReplaceStringStringWithoutSubstitution, weakPointer(globalObject), string, search, replace));
                     return;
                 }
             }
@@ -14763,7 +14774,10 @@ IGNORE_CLANG_WARNINGS_END
             LValue string = lowString(m_node->child1());
             LValue search = lowString(m_node->child2());
             LValue replace = lowString(m_node->child3());
-            setJSValue(vmCall(pointerType(), operationStringReplaceStringString, weakPointer(globalObject), string, search, replace));
+            if (tablePointer)
+                setJSValue(vmCall(pointerType(), operationStringReplaceStringStringWithTable8, weakPointer(globalObject), string, search, replace, m_out.constIntPtr(tablePointer)));
+            else
+                setJSValue(vmCall(pointerType(), operationStringReplaceStringString, weakPointer(globalObject), string, search, replace));
             return;
         }
 

@@ -1056,6 +1056,11 @@ webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
 webkit.org/b/154612 compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
 
+webkit.org/b/245030 compositing/contents-opaque/body-background-skipped.html [ Pass Failure ]
+webkit.org/b/245030 compositing/rtl/rtl-fixed.html [ Pass Failure ]
+webkit.org/b/245030 compositing/contents-opaque/body-background-painted.html [ Pass Failure ]
+webkit.org/b/245030 compositing/fixed-image-loading.html [ Pass Failure ]
+
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
 webkit.org/b/244304 pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
 
@@ -2085,3 +2090,10 @@ webkit.org/b/244652 [ Debug ] imported/w3c/web-platform-tests/html/semantics/emb
 webkit.org/b/244677 media/media-source/media-source-istypesupported-vp8-without-vp9.html [ Pass Failure ]
 
 webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Skip ]
+
+webkit.org/b/245008 fast/attachment/mac/attachment-numbers.html [ Skip ]
+webkit.org/b/245008 fast/attachment/mac/attachment-pages.html [ Skip ]
+webkit.org/b/245008 fast/attachment/mac/attachment-keynote.html [ Skip ]
+
+webkit.org/b/245014 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
+

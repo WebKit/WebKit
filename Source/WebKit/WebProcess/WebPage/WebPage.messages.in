@@ -134,7 +134,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetShouldRevealCurrentSelectionAfterInsertion(bool shouldRevealCurrentSelectionAfterInsertion)
     InsertTextPlaceholder(WebCore::IntSize size) -> (std::optional<WebCore::ElementContext> placeholder)
     RemoveTextPlaceholder(struct WebCore::ElementContext placeholder) -> ()
-    TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<struct WebCore::ElementContext> contexts)
+    TextInputContextsInRect(WebCore::FloatRect rect) -> (Vector<WebCore::ElementContext> contexts)
     FocusTextInputContextAndPlaceCaret(struct WebCore::ElementContext context, WebCore::IntPoint point) -> (bool success)
     ClearServiceWorkerEntitlementOverride() -> ()
 #endif

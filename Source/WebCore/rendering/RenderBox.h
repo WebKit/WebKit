@@ -691,9 +691,6 @@ protected:
     bool computeBackgroundIsKnownToBeObscured(const LayoutPoint& paintOffset) override;
 
     void paintBackground(const PaintInfo&, const LayoutRect&, BackgroundBleedAvoidance = BackgroundBleedNone);
-    
-    void paintFillLayers(const PaintInfo&, const Color&, const FillLayer&, const LayoutRect&, BackgroundBleedAvoidance = BackgroundBleedNone, CompositeOperator = CompositeOperator::SourceOver, RenderElement* backgroundObject = nullptr);
-
     void paintMaskImages(const PaintInfo&, const LayoutRect&);
 
     BackgroundBleedAvoidance determineBackgroundBleedAvoidance(GraphicsContext&) const;

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformCAAnimationWin_h
-#define PlatformCAAnimationWin_h
+#pragma once
 
 #if PLATFORM(WIN) && USE(CA)
 
@@ -110,7 +109,7 @@ public:
     void setKeyTimes(const Vector<float>&) override;
     void copyKeyTimesFrom(const PlatformCAAnimation&) override;
 
-    void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false) override;
+    void setTimingFunctions(const Vector<Ref<const TimingFunction>>&, bool reverse) override;
     void copyTimingFunctionsFrom(const PlatformCAAnimation&) override;
 
     // Animation group properties.
@@ -129,5 +128,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_CAANIMATION(WebCore::PlatformCAAnimationWin, isPlatformCAAnimationWin())
 
 #endif // PLATFORM(WIN)
-
-#endif // PlatformCAAnimationWin_h

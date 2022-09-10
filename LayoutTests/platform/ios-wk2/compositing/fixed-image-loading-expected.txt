@@ -9,11 +9,9 @@
       (children 1
         (GraphicsLayer
           (position 8.00 13.00)
-          (bounds origin 8.00 13.00)
           (preserves3D 1)
           (children 1
             (GraphicsLayer
-              (position 8.00 13.00)
               (bounds 214.00 232.00)
               (drawsContent 1)
             )

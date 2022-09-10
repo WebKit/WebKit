@@ -687,8 +687,10 @@ void CoreAudioSharedUnit::setIsInBackground(bool isInBackground)
             m_statusBarWasTappedCallback(WTFMove(completionHandler));
     }, [this] {
         RELEASE_LOG_ERROR(WebRTC, "CoreAudioSharedUnit status bar failed");
-        captureFailed();
-        ASSERT(!m_statusBarManager);
+        auto statusBarManager = std::exchange(m_statusBarManager, { });
+        statusBarManager->stop();
+        if (isRunning())
+            captureFailed();
     });
     m_statusBarManager->start();
 }

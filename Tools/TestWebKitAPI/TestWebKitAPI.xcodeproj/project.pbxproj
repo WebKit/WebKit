@@ -1038,6 +1038,7 @@
 		E3A1E77F21B25B39008C6007 /* URLParserTextEncoding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A1E77E21B25B39008C6007 /* URLParserTextEncoding.cpp */; };
 		E3A1E78221B25B7A008C6007 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A1E78021B25B79008C6007 /* URL.cpp */; };
 		E3A1E78521B25B91008C6007 /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A1E78421B25B91008C6007 /* URLParser.cpp */; };
+		E3A24FDC28CAB75B008D810B /* StringSearch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A24FDB28CAB75B008D810B /* StringSearch.cpp */; };
 		E3C21A7C21B25CA2003B31A3 /* URLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = E3C21A7B21B25CA2003B31A3 /* URLExtras.mm */; };
 		E3DE273C28A8D67800873DF2 /* StringCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DE273B28A8D67700873DF2 /* StringCommon.cpp */; };
 		E3DEA8111F0A589000CBC2E8 /* ThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DEA8101F0A588000CBC2E8 /* ThreadGroup.cpp */; };
@@ -3181,6 +3182,7 @@
 		E3A1E77E21B25B39008C6007 /* URLParserTextEncoding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParserTextEncoding.cpp; sourceTree = "<group>"; };
 		E3A1E78021B25B79008C6007 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		E3A1E78421B25B91008C6007 /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
+		E3A24FDB28CAB75B008D810B /* StringSearch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringSearch.cpp; sourceTree = "<group>"; };
 		E3C21A7B21B25CA2003B31A3 /* URLExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = URLExtras.mm; sourceTree = "<group>"; };
 		E3DE273B28A8D67700873DF2 /* StringCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringCommon.cpp; sourceTree = "<group>"; };
 		E3DEA8101F0A588000CBC2E8 /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
@@ -4948,6 +4950,7 @@
 				26F1B44315CA434F00D1E4BF /* StringImpl.cpp */,
 				C01363C713C3997300EF3964 /* StringOperators.cpp */,
 				7CD70C4E24A436EE00E61040 /* StringParsingBuffer.cpp */,
+				E3A24FDB28CAB75B008D810B /* StringSearch.cpp */,
 				9332EF932649BB68009F5D6D /* StringToIntegerConversion.cpp */,
 				7C74D42D188228F300E5ED57 /* StringView.cpp */,
 				936E4AE32821BB6D00208654 /* SuspendableWorkQueue.cpp */,
@@ -5864,6 +5867,7 @@
 				7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */,
 				7C83DF381D0A590C00FEBCF3 /* StringOperators.cpp in Sources */,
 				7CD70C4F24A436EE00E61040 /* StringParsingBuffer.cpp in Sources */,
+				E3A24FDC28CAB75B008D810B /* StringSearch.cpp in Sources */,
 				9332EF942649BB68009F5D6D /* StringToIntegerConversion.cpp in Sources */,
 				7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */,
 				936E4AE42821BB6D00208654 /* SuspendableWorkQueue.cpp in Sources */,

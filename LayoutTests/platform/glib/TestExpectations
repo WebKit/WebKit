@@ -289,6 +289,7 @@ imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.h
 # The test is marked as Timeout for wk2. It has been flaky in GTK and WPE since added.
 webaudio/Panner/hrtf-database.html [ Timeout Pass ]
 webaudio/Panner/panner-loop.html [ Timeout Pass ]
+crypto/subtle/ecdsa-import-compressed-spki-key-p384.html [ Timeout Pass ]
 
 # CSS backgrounds. Passing after WPT re-import in r277073.
 imported/w3c/web-platform-tests/css/css-backgrounds/bg-color-with-gradient.html [ Pass ]

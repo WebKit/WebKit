@@ -22,14 +22,14 @@ layer at (0,0) size 800x219
         RenderText {#text} at (0,0) size 0x0
 layer at (8,132) size 75x75
   RenderSVGRoot {svg} at (0,0) size 75x75
-layer at (87,132) size 75x75
-  RenderSVGRoot {svg} at (79,0) size 75x75
 layer at (8,132) size 75x75
   RenderSVGViewportContainer at (0,0) size 75x75
 layer at (8,132) size 75x75
   RenderSVGImage {image} at (0,0) size 75x75
 layer at (8,132) size 75x75
   RenderSVGRect {rect} at (0,0) size 75x75 [stroke={[type=SOLID] [color=#FF0000] [stroke width=6.00]}] [x=0.00] [y=0.00] [width=75.00] [height=75.00]
+layer at (87,132) size 75x75
+  RenderSVGRoot {svg} at (79,0) size 75x75
 layer at (87,132) size 75x75
   RenderSVGViewportContainer at (0,0) size 75x75
 layer at (87,132) size 75x75

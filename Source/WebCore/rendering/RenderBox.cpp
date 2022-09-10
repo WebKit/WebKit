@@ -1610,7 +1610,7 @@ void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
     auto color = style.visitedDependentColor(CSSPropertyBackgroundColor);
     auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
 
-    paintFillLayers(paintInfo, style.colorByApplyingColorFilter(color), style.backgroundLayers(), view().backgroundRect(), BackgroundBleedNone, compositeOp, rootBackgroundRenderer);
+    BackgroundPainter { *this, paintInfo }.paintFillLayers(style.colorByApplyingColorFilter(color), style.backgroundLayers(), view().backgroundRect(), BackgroundBleedNone, compositeOp, rootBackgroundRenderer);
 }
 
 BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext& context) const
@@ -1736,7 +1736,7 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
     auto backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
     auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, *this);
 
-    paintFillLayers(paintInfo, style().colorByApplyingColorFilter(backgroundColor), style().backgroundLayers(), paintRect, bleedAvoidance, compositeOp);
+    BackgroundPainter { *this, paintInfo }.paintFillLayers(style().colorByApplyingColorFilter(backgroundColor), style().backgroundLayers(), paintRect, bleedAvoidance, compositeOp);
 }
 
 bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect& paintedExtent) const
@@ -1756,9 +1756,9 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
         return true;
     }
 
-    auto geometry = calculateBackgroundImageGeometry(nullptr, layers, paintOffset, backgroundRect);
-    paintedExtent = geometry.destRect();
-    return !geometry.hasNonLocalGeometry();
+    auto geometry = BackgroundPainter::calculateBackgroundImageGeometry(*this, nullptr, layers, paintOffset, backgroundRect);
+    paintedExtent = geometry.destinationRect;
+    return !geometry.hasNonLocalGeometry;
 }
 
 bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
@@ -1947,7 +1947,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
     }
 
     if (allMaskImagesLoaded) {
-        paintFillLayers(paintInfo, Color(), style().maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
+        BackgroundPainter { *this, paintInfo }.paintFillLayers(Color(), style().maskLayers(), paintRect, BackgroundBleedNone, compositeOp);
         BorderPainter { *this, paintInfo }.paintNinePieceImage(paintRect, style(), style().maskBoxImage(), compositeOp);
     }
     
@@ -1971,53 +1971,10 @@ LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
     for (auto* maskLayer = &style().maskLayers(); maskLayer; maskLayer = maskLayer->next()) {
         if (maskLayer->image()) {
             // Masks should never have fixed attachment, so it's OK for paintContainer to be null.
-            result.unite(calculateBackgroundImageGeometry(nullptr, *maskLayer, paintOffset, borderBox).destRect());
+            result.unite(BackgroundPainter::calculateBackgroundImageGeometry(*this, nullptr, *maskLayer, paintOffset, borderBox).destinationRect);
         }
     }
     return result;
-}
-
-void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& color, const FillLayer& fillLayer, const LayoutRect& rect,
-    BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderElement* backgroundObject)
-{
-    Vector<const FillLayer*, 8> layers;
-    bool shouldDrawBackgroundInSeparateBuffer = false;
-
-    for (auto* layer = &fillLayer; layer; layer = layer->next()) {
-        layers.append(layer);
-
-        if (layer->blendMode() != BlendMode::Normal)
-            shouldDrawBackgroundInSeparateBuffer = true;
-
-        // Stop traversal when an opaque layer is encountered.
-        // FIXME: It would be possible for the following occlusion culling test to be more aggressive
-        // on layers with no repeat by testing whether the image covers the layout rect.
-        // Testing that here would imply duplicating a lot of calculations that are currently done in
-        // BackgroundPainter::paintFillLayer. A more efficient solution might be to move
-        // the layer recursion into paintFillLayer, or to compute the layer geometry here
-        // and pass it down.
-
-        // The clipOccludesNextLayers condition must be evaluated first to avoid short-circuiting.
-        if (layer->clipOccludesNextLayers(layer == &fillLayer) && layer->hasOpaqueImage(*this) && layer->image()->canRender(this, style().effectiveZoom()) && layer->hasRepeatXY() && layer->blendMode() == BlendMode::Normal)
-            break;
-    }
-
-    auto& context = paintInfo.context();
-    auto baseBgColorUsage = BaseBackgroundColorUse;
-
-    BackgroundPainter backgroundPainter { *this, paintInfo };
-
-    if (shouldDrawBackgroundInSeparateBuffer) {
-        backgroundPainter.paintFillLayer(color, *layers.last(), rect, bleedAvoidance, { }, { }, op, backgroundObject, BaseBackgroundColorOnly);
-        baseBgColorUsage = BaseBackgroundColorSkip;
-        context.beginTransparencyLayer(1);
-    }
-
-    for (auto& layer : makeReversedRange(layers))
-        backgroundPainter.paintFillLayer(color, *layer, rect, bleedAvoidance, { }, { }, op, backgroundObject, baseBgColorUsage);
-
-    if (shouldDrawBackgroundInSeparateBuffer)
-        context.endTransparencyLayer();
 }
 
 static StyleImage* findLayerUsedImage(WrappedImagePtr image, const FillLayer& layers)
@@ -2107,15 +2064,15 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
                 }
             }
             // FIXME: Figure out how to pass absolute position to calculateBackgroundImageGeometry (for pixel snapping)
-            BackgroundImageGeometry geometry = layerRenderer->calculateBackgroundImageGeometry(nullptr, *layer, LayoutPoint(), rendererRect);
-            if (geometry.hasNonLocalGeometry()) {
+            auto geometry = BackgroundPainter::calculateBackgroundImageGeometry(*layerRenderer, nullptr, *layer, LayoutPoint(), rendererRect);
+            if (geometry.hasNonLocalGeometry) {
                 // Rather than incur the costs of computing the paintContainer for renderers with fixed backgrounds
                 // in order to get the right destRect, just repaint the entire renderer.
                 layerRenderer->repaint();
                 return true;
             }
             
-            LayoutRect rectToRepaint = geometry.destRect();
+            LayoutRect rectToRepaint = geometry.destinationRect;
             bool shouldClipToLayer = true;
 
             // If this is the root background layer, we may need to extend the repaintRect if the FrameView has an
@@ -2135,7 +2092,7 @@ bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer
             }
 
             layerRenderer->repaintRectangle(rectToRepaint, shouldClipToLayer);
-            if (geometry.destRect() == rendererRect)
+            if (geometry.destinationRect == rendererRect)
                 return true;
         }
     }
@@ -4456,17 +4413,20 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
 // The |containerLogicalHeightForPositioned| is already aware of orthogonal flows.
 // The logicalTop concept is confusing here. It's the logical top from the child's POV. This means that is the physical
 // y if the child is vertical or the physical x if the child is horizontal.
-static void computeLogicalTopPositionedOffset(LayoutUnit& logicalTopPos, const RenderBox* child, LayoutUnit logicalHeightValue, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalHeightForPositioned)
+static void computeLogicalTopPositionedOffset(LayoutUnit& logicalTopPos, const RenderBox* child, LayoutUnit logicalHeightValue, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalHeightForPositioned, bool logicalTopIsAuto, bool logicalBottomIsAuto)
 {
-    auto logicalTopAndBottomAreAuto = child->style().logicalTop().isAuto() && child->style().logicalBottom().isAuto();
+    auto logicalTopAndBottomAreAuto = logicalTopIsAuto && logicalBottomIsAuto;
     auto haveOrthogonalWritingModes = isOrthogonal(*child, containerBlock);
     auto haveFlippedBlockAxis = child->style().isFlippedBlocksWritingMode() != containerBlock.style().isFlippedBlocksWritingMode();
+    bool isOverconstrained = !logicalTopIsAuto && !logicalBottomIsAuto && !child->style().logicalHeight().isAuto();
 
     // Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space. If the containing block is flipped
     // along this axis, then we need to flip the coordinate.  This can only happen if the containing block is both a flipped mode and perpendicular to us.
-    if ((haveOrthogonalWritingModes && !logicalTopAndBottomAreAuto && child->style().isFlippedBlocksWritingMode())
-        || (haveFlippedBlockAxis && !haveOrthogonalWritingModes))
-        logicalTopPos = containerLogicalHeightForPositioned - logicalHeightValue - logicalTopPos;
+    if (!isOverconstrained) {
+        if ((haveOrthogonalWritingModes && !logicalTopAndBottomAreAuto && child->style().isFlippedBlocksWritingMode())
+            || (haveFlippedBlockAxis && !haveOrthogonalWritingModes))
+            logicalTopPos = containerLogicalHeightForPositioned - logicalHeightValue - logicalTopPos;
+    }
 
     // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
     if (containerBlock.style().isFlippedBlocksWritingMode() && !haveOrthogonalWritingModes) {
@@ -4561,6 +4521,16 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
             // Over-constrained, (no need solve for bottom)
             computedValues.m_margins.m_before = valueForLength(marginBefore, containerRelativeLogicalWidth);
             computedValues.m_margins.m_after = valueForLength(marginAfter, containerRelativeLogicalWidth);
+
+            if (isOrthogonal(*this, containerBlock)) {
+                // When orthogonal we want to explicitly deal with left/right instead of top/bottom, so compute physical left next.
+                logicalTopValue = valueForLength(style().left(), containerLogicalHeight);
+                if (containerBlock.style().direction() == TextDirection::RTL) {
+                    // Recompute availableSpace with physical left.
+                    LayoutUnit availableSpace = containerLogicalHeight - (logicalTopValue + logicalHeightValue + valueForLength(style().right(), containerLogicalHeight) + bordersPlusPadding);
+                    logicalTopValue = (availableSpace + logicalTopValue) - computedValues.m_margins.m_before - computedValues.m_margins.m_after;
+                }
+            }
         }
     } else {
         /*--------------------------------------------------------------------*\
@@ -4621,7 +4591,7 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
 
     // Use computed values to calculate the vertical position.
     computedValues.m_position = logicalTopValue + computedValues.m_margins.m_before;
-    computeLogicalTopPositionedOffset(computedValues.m_position, this, logicalHeightValue + bordersPlusPadding, containerBlock, containerLogicalHeight);
+    computeLogicalTopPositionedOffset(computedValues.m_position, this, logicalHeightValue + bordersPlusPadding, containerBlock, containerLogicalHeight, style().logicalTop().isAuto(), style().logicalBottom().isAuto());
 }
 
 void RenderBox::computePositionedLogicalWidthReplaced(LogicalExtentComputedValues& computedValues) const
@@ -4920,7 +4890,7 @@ void RenderBox::computePositionedLogicalHeightReplaced(LogicalExtentComputedValu
     // Use computed values to calculate the vertical position.
     LayoutUnit logicalTopPos = logicalTopValue + marginBeforeAlias;
     // Border and padding have already been included in computedValues.m_extent.
-    computeLogicalTopPositionedOffset(logicalTopPos, this, computedValues.m_extent, containerBlock, containerLogicalHeight);
+    computeLogicalTopPositionedOffset(logicalTopPos, this, computedValues.m_extent, containerBlock, containerLogicalHeight, style().logicalTop().isAuto(), style().logicalBottom().isAuto());
     computedValues.m_position = logicalTopPos;
 }
 

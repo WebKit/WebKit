@@ -105,61 +105,69 @@ template<typename T> static Vector<PlatformCAAnimationRemote::KeyframeValue> toK
     });
 }
 
-static void encodeTimingFunction(IPC::Encoder& encoder, TimingFunction* timingFunction)
+static void encodeTimingFunction(IPC::Encoder& encoder, const TimingFunction& timingFunction)
 {
-    switch (timingFunction->type()) {
-    case TimingFunction::LinearFunction:
-        encoder << *static_cast<LinearTimingFunction*>(timingFunction);
+    encoder << timingFunction.type();
+
+    switch (timingFunction.type()) {
+    case TimingFunction::TimingFunctionType::LinearFunction:
+        encoder << static_cast<const LinearTimingFunction&>(timingFunction);
         break;
 
-    case TimingFunction::CubicBezierFunction:
-        encoder << *static_cast<CubicBezierTimingFunction*>(timingFunction);
+    case TimingFunction::TimingFunctionType::CubicBezierFunction:
+        encoder << static_cast<const CubicBezierTimingFunction&>(timingFunction);
         break;
 
-    case TimingFunction::StepsFunction:
-        encoder << *static_cast<StepsTimingFunction*>(timingFunction);
+    case TimingFunction::TimingFunctionType::StepsFunction:
+        encoder << static_cast<const StepsTimingFunction&>(timingFunction);
         break;
 
-    case TimingFunction::SpringFunction:
-        encoder << *static_cast<SpringTimingFunction*>(timingFunction);
+    case TimingFunction::TimingFunctionType::SpringFunction:
+        encoder << static_cast<const SpringTimingFunction&>(timingFunction);
         break;
     }
 }
 
-static std::optional<RefPtr<TimingFunction>> decodeTimingFunction(IPC::Decoder& decoder)
+static std::optional<Ref<TimingFunction>> decodeTimingFunction(IPC::Decoder& decoder)
 {
-    TimingFunction::TimingFunctionType type;
-    if (!decoder.decode(type))
+    std::optional<TimingFunction::TimingFunctionType> type;
+    decoder >> type;
+    if (!type)
         return std::nullopt;
 
-    RefPtr<TimingFunction> timingFunction;
-    switch (type) {
-    case TimingFunction::LinearFunction:
-        timingFunction = LinearTimingFunction::create();
-        if (!decoder.decode(*static_cast<LinearTimingFunction*>(timingFunction.get())))
+    switch (*type) {
+    case TimingFunction::TimingFunctionType::LinearFunction: {
+        std::optional<Ref<LinearTimingFunction>> function;
+        decoder >> function;
+        if (!function)
             return std::nullopt;
-        break;
-
-    case TimingFunction::CubicBezierFunction:
-        timingFunction = CubicBezierTimingFunction::create();
-        if (!decoder.decode(*static_cast<CubicBezierTimingFunction*>(timingFunction.get())))
-            return std::nullopt;
-        break;
-
-    case TimingFunction::StepsFunction:
-        timingFunction = StepsTimingFunction::create();
-        if (!decoder.decode(*static_cast<StepsTimingFunction*>(timingFunction.get())))
-            return std::nullopt;
-        break;
-
-    case TimingFunction::SpringFunction:
-        timingFunction = SpringTimingFunction::create();
-        if (!decoder.decode(*static_cast<SpringTimingFunction*>(timingFunction.get())))
-            return std::nullopt;
-        break;
+        return WTFMove(*function);
     }
 
-    return timingFunction;
+    case TimingFunction::TimingFunctionType::CubicBezierFunction: {
+        std::optional<Ref<CubicBezierTimingFunction>> function;
+        decoder >> function;
+        if (!function)
+            return std::nullopt;
+        return WTFMove(*function);
+    }
+
+    case TimingFunction::TimingFunctionType::StepsFunction: {
+        std::optional<Ref<StepsTimingFunction>> function;
+        decoder >> function;
+        if (!function)
+            return std::nullopt;
+        return WTFMove(*function);
+    }
+
+    case TimingFunction::TimingFunctionType::SpringFunction: {
+        std::optional<Ref<SpringTimingFunction>> function;
+        decoder >> function;
+        if (!function)
+            return std::nullopt;
+        return WTFMove(*function);
+    }
+    }
 }
 
 void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
@@ -179,7 +187,7 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     bool hasTimingFunction = !!timingFunction;
     encoder << hasTimingFunction;
     if (hasTimingFunction)
-        encodeTimingFunction(encoder, timingFunction.get());
+        encodeTimingFunction(encoder, *timingFunction);
 
     encoder << autoReverses;
     encoder << removedOnCompletion;
@@ -192,7 +200,7 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     
     encoder << static_cast<uint64_t>(timingFunctions.size());
     for (const auto& timingFunction : timingFunctions)
-        encodeTimingFunction(encoder, timingFunction.get());
+        encodeTimingFunction(encoder, timingFunction);
 
     encoder << animations;
 }
@@ -620,9 +628,9 @@ void PlatformCAAnimationRemote::copyKeyTimesFrom(const PlatformCAAnimation& valu
     m_properties.keyTimes = downcast<PlatformCAAnimationRemote>(value).m_properties.keyTimes;
 }
 
-void PlatformCAAnimationRemote::setTimingFunctions(const Vector<const TimingFunction*>& values, bool reverse)
+void PlatformCAAnimationRemote::setTimingFunctions(const Vector<Ref<const TimingFunction>>& values, bool reverse)
 {
-    m_properties.timingFunctions = values.map([](auto& value) -> RefPtr<WebCore::TimingFunction> {
+    m_properties.timingFunctions = values.map([](auto& value) {
         return value->clone();
     });
     m_properties.reverseTimingFunctions = reverse;
@@ -715,7 +723,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         }
 
         if (properties.timingFunction)
-            [keyframeAnimation setTimingFunction:toCAMediaTimingFunction(properties.timingFunction.get(), false)]; // FIXME: handle reverse.
+            [keyframeAnimation setTimingFunction:toCAMediaTimingFunction(*properties.timingFunction, false)]; // FIXME: handle reverse.
 
         if (properties.timingFunctions.size()) {
             [keyframeAnimation setTimingFunctions:createNSArray(properties.timingFunctions, [&] (auto& function) {
@@ -737,7 +745,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         if (properties.timingFunctions.size()) {
             auto& timingFunction = properties.timingFunctions[0];
             if (timingFunction->isSpringTimingFunction()) {
-                auto& function = *static_cast<const SpringTimingFunction*>(timingFunction.get());
+                auto& function = static_cast<const SpringTimingFunction&>(timingFunction.get());
                 [springAnimation setMass:function.mass()];
                 [springAnimation setStiffness:function.stiffness()];
                 [springAnimation setDamping:function.damping()];
@@ -857,8 +865,8 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
         if (i < animation.keyTimes.size())
             ts.dumpProperty("time", animation.keyTimes[i]);
 
-        if (i < animation.timingFunctions.size() && animation.timingFunctions[i])
-            ts.dumpProperty<const TimingFunction&>("timing function", *animation.timingFunctions[i]);
+        if (i < animation.timingFunctions.size())
+            ts.dumpProperty<const TimingFunction&>("timing function", animation.timingFunctions[i]);
 
         if (i < animation.keyValues.size()) {
             ts.startGroup();

@@ -3378,6 +3378,7 @@ imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/2d.color.s
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Pass ]
 
 # Show 1px diff in the result. Maybe hitting the background bleed avoidance code path.
+webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-095.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-109.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-125.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vlr-141.xht [ ImageOnlyFailure ]
@@ -3395,6 +3396,7 @@ webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-po
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-052.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-064.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-076.xht [ ImageOnlyFailure ]
+webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-088.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-104.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-108.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/abs-pos-non-replaced-vrl-112.xht [ ImageOnlyFailure ]
@@ -3741,8 +3743,6 @@ webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 webkit.org/b/244619 editing/selection/ios/tap-to-set-selection-in-editable-web-view.html [ Pass Timeout ]
 
 webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Pass Failure ]
-
-webkit.org/b/244851 [ Debug ] platform/ios/mediastream/video-muted-in-background-tab.html [ Skip ]
 
 # These tests have similar harness errors and timeouts. See webkit.org/b/244900
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]

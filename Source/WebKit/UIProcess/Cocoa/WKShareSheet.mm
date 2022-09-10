@@ -196,7 +196,7 @@ static void appendFilesAsShareableURLs(RetainPtr<NSMutableArray>&& shareDataArra
 
         // Make sure that we're actually not presented anymore (-completionWithItemsHandler can be called multiple times
         // before the share sheet is actually dismissed), and if so, clean up.
-        if (![_shareSheetViewController presentingViewController])
+        if (![_shareSheetViewController presentingViewController] || [_shareSheetViewController isBeingDismissed])
             [self dismiss];
     }];
 

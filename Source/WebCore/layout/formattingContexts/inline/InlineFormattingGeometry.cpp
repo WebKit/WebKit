@@ -232,6 +232,48 @@ InlineLayoutUnit InlineFormattingGeometry::initialLineHeight() const
     return formattingContext().formattingQuirks().initialLineHeight();
 }
 
+std::optional<HorizontalConstraints> InlineFormattingGeometry::floatConstraintsForLine(const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
+{
+    // Check for intruding floats and adjust logical left/available width for this line accordingly.
+    auto toLogicalFloatPosition = [&] (const auto& constraints) {
+        // FIXME: Move inline direction flip to FloatingContext.
+        if (formattingContext().root().style().isLeftToRightDirection())
+            return constraints;
+        auto logicalConstraints = FloatingContext::Constraints { };
+        auto borderBoxWidth = layoutState().geometryForBox(formattingContext().root()).borderBoxWidth();
+        if (constraints.left)
+            logicalConstraints.right = PointInContextRoot { borderBoxWidth - constraints.left->x, constraints.left->y };
+        if (constraints.right)
+            logicalConstraints.left = PointInContextRoot { borderBoxWidth - constraints.right->x, constraints.right->y };
+        return logicalConstraints;
+    };
+    auto constraints = toLogicalFloatPosition(floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(lineLogicalRect.bottom()), FloatingContext::MayBeAboveLastFloat::Yes));
+
+    // Check if these values actually constrain the line.
+    if (constraints.left && constraints.left->x <= lineLogicalRect.left())
+        constraints.left = { };
+
+    if (constraints.right && constraints.right->x >= lineLogicalRect.right())
+        constraints.right = { };
+
+    if (!constraints.left && !constraints.right)
+        return { };
+
+    auto lineLogicalLeft = lineLogicalRect.left();
+    auto lineLogicalRight = lineLogicalRect.right();
+    if (constraints.left && constraints.right) {
+        lineLogicalRight = constraints.right->x;
+        lineLogicalLeft = constraints.left->x;
+    } else if (constraints.left) {
+        ASSERT(constraints.left->x >= lineLogicalLeft);
+        lineLogicalLeft = constraints.left->x;
+    } else if (constraints.right) {
+        // Right float boxes may overflow the containing block on the left.
+        lineLogicalRight = std::max<InlineLayoutUnit>(lineLogicalLeft, constraints.right->x);
+    }
+    return HorizontalConstraints { toLayoutUnit(lineLogicalLeft), toLayoutUnit(lineLogicalRight - lineLogicalLeft) };
+}
+
 }
 }
 

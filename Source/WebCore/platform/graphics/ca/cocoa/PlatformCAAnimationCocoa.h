@@ -41,7 +41,7 @@ namespace WebCore {
 
 WEBCORE_EXPORT NSString* toCAFillModeType(PlatformCAAnimation::FillModeType);
 WEBCORE_EXPORT NSString* toCAValueFunctionType(PlatformCAAnimation::ValueFunctionType);
-WEBCORE_EXPORT CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction*, bool reverse);
+WEBCORE_EXPORT CAMediaTimingFunction* toCAMediaTimingFunction(const TimingFunction&, bool reverse);
 
 bool hasExplicitBeginTime(CAAnimation *);
 void setHasExplicitBeginTime(CAAnimation *, bool);
@@ -120,7 +120,7 @@ public:
     void setKeyTimes(const Vector<float>&) override;
     void copyKeyTimesFrom(const PlatformCAAnimation&) override;
 
-    void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false) override;
+    void setTimingFunctions(const Vector<Ref<const TimingFunction>>&, bool reverse) override;
     void copyTimingFunctionsFrom(const PlatformCAAnimation&) override;
 
     // Animation group properties.

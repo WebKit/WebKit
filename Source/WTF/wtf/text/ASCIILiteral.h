@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <type_traits>
 #include <wtf/ASCIICType.h>
 #include <wtf/Forward.h>
 #include <wtf/StdLibExtras.h>
@@ -50,7 +51,7 @@ public:
 
     constexpr const char* characters() const { return m_characters; }
     const LChar* characters8() const { return bitwise_cast<const LChar*>(m_characters); }
-    size_t length() const { return strlen(m_characters); }
+    constexpr size_t length() const;
     size_t isEmpty() const { return !m_characters || !*m_characters; }
 
     constexpr char characterAt(unsigned index) const { return m_characters[index]; }
@@ -78,6 +79,23 @@ inline bool operator==(ASCIILiteral a, ASCIILiteral b)
     if (!a || !b)
         return a.characters() == b.characters();
     return !strcmp(a.characters(), b.characters());
+}
+
+inline constexpr size_t ASCIILiteral::length() const
+{
+    if (std::is_constant_evaluated()) {
+        if (!m_characters)
+            return 0;
+
+        size_t length = 0;
+        while (true) {
+            if (!m_characters[length])
+                return length;
+            ++length;
+        }
+        return length;
+    }
+    return strlen(m_characters);
 }
 
 inline namespace StringLiterals {

@@ -76,7 +76,23 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(const Crypt
 {
     ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128 || parameters.ivVector().isEmpty());
     ASSERT(padding == Padding::Yes || !(cipherText.size() % kCCBlockSizeAES128));
-    return transformAES_CBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText, padding);
+    auto result = transformAES_CBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText, Padding::No);
+    if (result.hasException())
+        return result.releaseException();
+
+    auto data = result.releaseReturnValue();
+    if (padding == Padding::Yes && !data.isEmpty()) {
+        // Validate and remove padding as per https://www.w3.org/TR/WebCryptoAPI/#aes-cbc-operations (Decrypt section).
+        auto paddingByte = data.last();
+        if (!paddingByte || paddingByte > 16 || paddingByte > data.size())
+            return Exception { OperationError };
+        for (size_t i = data.size() - paddingByte; i < data.size() - 1; ++i) {
+            if (data[i] != paddingByte)
+                return Exception { OperationError };
+        }
+        data.shrink(data.size() - paddingByte);
+    }
+    return data;
 }
 
 } // namespace WebCore

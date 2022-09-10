@@ -51,13 +51,13 @@ bool InjectedBundlePageFullScreenClient::supportsFullScreen(WebPage *page, bool 
     return supports;
 }
 
-void InjectedBundlePageFullScreenClient::enterFullScreenForElement(WebPage *page, WebCore::Element *element, bool blocksReturnToFullscreenFromPictureInPicture)
+void InjectedBundlePageFullScreenClient::enterFullScreenForElement(WebPage *page, WebCore::Element *element, bool blocksReturnToFullscreenFromPictureInPicture, bool isVideoElement)
 {
     if (m_client.enterFullScreenForElement) {
         RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(element);
         m_client.enterFullScreenForElement(toAPI(page), toAPI(nodeHandle.get()));
     } else
-        page->send(Messages::WebFullScreenManagerProxy::EnterFullScreen(blocksReturnToFullscreenFromPictureInPicture));
+        page->send(Messages::WebFullScreenManagerProxy::EnterFullScreen(blocksReturnToFullscreenFromPictureInPicture, isVideoElement));
 }
 
 void InjectedBundlePageFullScreenClient::exitFullScreenForElement(WebPage *page, WebCore::Element *element)

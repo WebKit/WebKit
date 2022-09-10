@@ -49,6 +49,13 @@ void link(State& state)
     
     if (!graph.m_plan.inlineCallFrames()->isEmpty())
         state.jitCode->common.inlineCallFrames = graph.m_plan.inlineCallFrames();
+    if (!graph.m_stringSearchTable8.isEmpty()) {
+        FixedVector<std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> tables(graph.m_stringSearchTable8.size());
+        unsigned index = 0;
+        for (auto& entry : graph.m_stringSearchTable8)
+            tables[index++] = WTFMove(entry.value);
+        state.jitCode->common.m_stringSearchTable8 = WTFMove(tables);
+    }
 
     graph.registerFrozenValues();
 

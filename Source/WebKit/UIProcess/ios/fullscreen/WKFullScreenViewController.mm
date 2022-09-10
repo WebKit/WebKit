@@ -124,6 +124,9 @@ private:
     WebKit::FullscreenTouchSecheuristic _secheuristic;
     WKFullScreenViewControllerPlaybackSessionModelClient _playbackClient;
     CGFloat _nonZeroStatusBarHeight;
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    BOOL m_shouldHideMediaControls;
+#endif
 }
 
 @synthesize prefersStatusBarHidden = _prefersStatusBarHidden;
@@ -147,6 +150,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _playbackClient.setParent(self);
     _valid = YES;
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    m_shouldHideMediaControls = NO;
+#endif
 
     return self;
 }
@@ -236,6 +242,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto page = [self._webView _page])
         isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    [_cancelButton setHidden:m_shouldHideMediaControls];
+    isPiPEnabled = !m_shouldHideMediaControls && isPiPEnabled;
+#endif
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
 }
 
@@ -246,6 +256,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _animatingView.get().alpha = alpha;
     }];
 }
+
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+- (void)hideMediaControls:(BOOL)hidden
+{
+    if (m_shouldHideMediaControls == hidden)
+        return;
+
+    m_shouldHideMediaControls = hidden;
+    [self videoControlsManagerDidChange];
+}
+#endif // HAVE(UIKIT_WEBKIT_INTERNALS)
 
 - (void)setPrefersStatusBarHidden:(BOOL)value
 {

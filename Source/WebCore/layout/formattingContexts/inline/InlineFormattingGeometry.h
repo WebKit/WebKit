@@ -50,6 +50,8 @@ public:
 
     InlineLayoutUnit initialLineHeight() const;
 
+    std::optional<HorizontalConstraints> floatConstraintsForLine(const InlineRect& lineLogicalRect, const FloatingContext&) const;
+
     static InlineRect flipVisualRectToLogicalForWritingMode(const InlineRect& visualRect, WritingMode);
     static std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> previousAndNextDisplayBoxForStaticPosition(const Box& outOfFlowBox, const DisplayBoxes&);
 

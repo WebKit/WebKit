@@ -2296,6 +2296,9 @@ imported/w3c/web-platform-tests/cookies/encoding/charset.html [ Failure ]
 #rdar://95420649 ([BLOCKED] 2X fast/canvas/canvas-createPattern-video (layout-tests) are constant text failures)
 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
+media/video-canvas-createPattern.html [ Failure ]
+media/video-canvas-drawing-output.html [ Failure ]
+media/video-orientation-canvas.html [ Failure ]
 
 # Changed JS cookie behavior in iOS16
 http/tests/resourceLoadStatistics/capped-lifetime-for-cookie-set-in-js.html  [ Skip ]
@@ -2342,3 +2345,9 @@ webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfac
 webkit.org/b/244913 [ Debug ] fast/mediastream/getDisplayMedia-displaySurface.html [ Skip ]
 
 webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-cross-origin.https.sub.tentative.html [ Pass Timeout ]
+
+webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure Timeout ]
+
+webkit.org/b/245009 http/wpt/service-workers/controlled-sharedworker.https.html [ Pass Failure ]
+
+webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]

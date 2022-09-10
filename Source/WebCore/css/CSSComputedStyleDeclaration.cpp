@@ -1470,22 +1470,23 @@ static Ref<CSSPrimitiveValue> valueForAnimationName(const Animation::Name& name)
 static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timingFunction)
 {
     switch (timingFunction.type()) {
-    case TimingFunction::CubicBezierFunction: {
+    case TimingFunction::TimingFunctionType::CubicBezierFunction: {
         auto& function = downcast<CubicBezierTimingFunction>(timingFunction);
-        if (function.timingFunctionPreset() != CubicBezierTimingFunction::Custom) {
+        if (function.timingFunctionPreset() != CubicBezierTimingFunction::TimingFunctionPreset::Custom) {
             CSSValueID valueId = CSSValueInvalid;
             switch (function.timingFunctionPreset()) {
-            case CubicBezierTimingFunction::Ease:
+            case CubicBezierTimingFunction::TimingFunctionPreset::Ease:
                 valueId = CSSValueEase;
                 break;
-            case CubicBezierTimingFunction::EaseIn:
+            case CubicBezierTimingFunction::TimingFunctionPreset::EaseIn:
                 valueId = CSSValueEaseIn;
                 break;
-            case CubicBezierTimingFunction::EaseOut:
+            case CubicBezierTimingFunction::TimingFunctionPreset::EaseOut:
                 valueId = CSSValueEaseOut;
                 break;
-            default:
-                ASSERT(function.timingFunctionPreset() == CubicBezierTimingFunction::EaseInOut);
+            case CubicBezierTimingFunction::TimingFunctionPreset::Custom:
+            case CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut:
+                ASSERT(function.timingFunctionPreset() == CubicBezierTimingFunction::TimingFunctionPreset::EaseInOut);
                 valueId = CSSValueEaseInOut;
                 break;
             }
@@ -1493,16 +1494,15 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
         }
         return CSSCubicBezierTimingFunctionValue::create(function.x1(), function.y1(), function.x2(), function.y2());
     }
-    case TimingFunction::StepsFunction: {
+    case TimingFunction::TimingFunctionType::StepsFunction: {
         auto& function = downcast<StepsTimingFunction>(timingFunction);
         return CSSStepsTimingFunctionValue::create(function.numberOfSteps(), function.stepPosition());
     }
-    case TimingFunction::SpringFunction: {
+    case TimingFunction::TimingFunctionType::SpringFunction: {
         auto& function = downcast<SpringTimingFunction>(timingFunction);
         return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
     }
-    default:
-        ASSERT(timingFunction.type() == TimingFunction::LinearFunction);
+    case TimingFunction::TimingFunctionType::LinearFunction:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueLinear);
     }
 }

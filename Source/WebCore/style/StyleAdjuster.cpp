@@ -709,7 +709,8 @@ void Adjuster::adjustSVGElementStyle(RenderStyle& style, const SVGElement& svgEl
         ASSERT(!style.clipPath());
         ASSERT(!style.hasFilter());
 
-        if (svgElement.hasTagName(SVGNames::foreignObjectTag)
+        if (svgElement.isOutermostSVGSVGElement()
+            || svgElement.hasTagName(SVGNames::foreignObjectTag)
             || svgElement.hasTagName(SVGNames::imageTag)
             || svgElement.hasTagName(SVGNames::markerTag)
             || svgElement.hasTagName(SVGNames::maskTag)
