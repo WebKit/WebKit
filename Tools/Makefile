@@ -1,3 +1,7 @@
+ifeq ($(MAKECMDGOALS),installsrc)
+USE_WORKSPACE = NO
+endif
+
 ifneq ($(USE_WORKSPACE),NO)
 
 include ../Makefile.shared
