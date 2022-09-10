@@ -361,3 +361,7 @@
 #if !defined(USE_ISO_MALLOC)
 #define USE_ISO_MALLOC 1
 #endif
+
+#if !PLATFORM(WATCHOS)
+#define USE_GLYPH_DISPLAY_LIST_CACHE 1
+#endif
