@@ -8,6 +8,36 @@ from github_downloader import GithubDownloadTask
 _log = logging.getLogger(__name__)
 
 
+class PlanPrettyPrintEncoder(json.JSONEncoder):
+    def iterencode(self, o, _one_shot=False):
+        suppress_new_line = False
+        inside_tree_section = False
+        for entry in super(PlanPrettyPrintEncoder, self).iterencode(o, _one_shot=_one_shot):
+            if entry == '"tree"':
+                inside_tree_section = True
+
+            if inside_tree_section and entry.strip() == ']':
+                inside_tree_section = False
+
+            if not inside_tree_section:
+                yield entry
+                continue
+
+            if entry == '{':
+                suppress_new_line = True
+            if entry == '}':
+                suppress_new_line = False
+            if not suppress_new_line:
+                yield entry
+                continue
+
+            entry = entry.strip()
+            if entry in [',', ':']:
+                yield '{} '.format(entry)
+            else:
+                yield entry
+
+
 def optimize_plan_file(file_path):
     with open(file_path) as fp:
         plan = json.load(fp, object_pairs_hook=OrderedDict)
@@ -32,7 +62,7 @@ def optimize_plan_file(file_path):
 
     plan['github_subtree'] = subtree
     with open(file_path, 'w') as fp:
-        json.dump(plan, fp, indent=4, separators=(',', ': '))
+        json.dump(plan, fp, indent=4, separators=(',', ': '), cls=PlanPrettyPrintEncoder)
 
 
 def main():
