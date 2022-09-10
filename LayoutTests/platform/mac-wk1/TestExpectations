@@ -1362,6 +1362,8 @@ webkit.org/b/209882 [ Debug ] inspector/page/overrideSetting-ICECandidateFilteri
 
 webkit.org/b/209921 [ Debug ] inspector/css/add-css-property.html [ Pass Timeout ]
 
+webkit.org/b/245038 inspector/css/nodeLayoutFlagsChanged-Scrollable.html [ Pass Failure ]
+
 webkit.org/b/210079 [ Debug ] inspector/debugger/evaluateOnCallFrame-errors.html [ Pass Failure ]
 
 webkit.org/b/230072 [ Release ] inspector/dom/shadow-and-non-shadow-children.html [ Pass Failure ]
