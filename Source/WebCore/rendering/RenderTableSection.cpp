@@ -625,6 +625,8 @@ void RenderTableSection::layoutRows()
 
     setLogicalHeight(m_rowPos[totalRows]);
 
+    updateLayerTransform();
+
     computeOverflowFromCells(totalRows, nEffCols);
 }
 
