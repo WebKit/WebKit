@@ -1,4 +1,4 @@
-ifeq ($(USE_WORKSPACE),YES)
+ifneq ($(USE_WORKSPACE),NO)
 
 include ../Makefile.shared
 SCHEME = All Tools

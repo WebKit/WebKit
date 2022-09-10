@@ -82,7 +82,7 @@ MTL_ENABLE_DEBUG_INFO = NO;
 VALIDATE_PRODUCT = YES;
 WARNING_CFLAGS = -Wall -W -Wformat=2 -Wno-unused-parameter -Wundef;
 
-SUPPORTED_PLATFORMS = iphoneos iphonesimulator;
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator;
 SDKROOT = $(SDKROOT_$(USE_INTERNAL_SDK));
 SDKROOT_ = macosx;
 SDKROOT_YES = macosx.internal;

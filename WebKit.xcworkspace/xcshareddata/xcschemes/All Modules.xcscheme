@@ -196,6 +196,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "DD2A1D052888D1CB00342472"
+               BuildableName = "MobileMiniBrowser (Platform filters)"
+               BlueprintName = "MobileMiniBrowser (Platform filters)"
+               ReferencedContainer = "container:Tools/MobileMiniBrowser/MobileMiniBrowser.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "8D07F2BC0486CC7A007CD1D0"
                BuildableName = "gtest.framework"
                BlueprintName = "gtest-framework"

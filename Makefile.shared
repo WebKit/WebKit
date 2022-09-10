@@ -1,6 +1,6 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 
-ifeq ($(USE_WORKSPACE),YES)
+ifneq ($(USE_WORKSPACE),NO)
 SCHEME ?= $(notdir $(CURDIR))
 XCODE_TARGET = -scheme "$(SCHEME)"
 
@@ -12,9 +12,11 @@ endif
 # happen in the workspace. When this is only passed on the command line, it
 # invalidates build results made in the IDE (rdar://88135402).
 #XCODE_OPTIONS += WK_VALIDATE_DEPENDENCIES=YES_ERROR
+BUILD_GOAL = $(SCHEME)
 else
 USE_WORKSPACE =
 BUILD_WEBKIT_OPTIONS += --no-use-workspace
+BUILD_GOAL = $(notdir $(CURDIR))
 endif
 
 
@@ -125,7 +127,7 @@ endef
 define invoke_xcode
 	( \
 		echo; \
-		echo "===== BUILDING $(if $(USE_WORKSPACE),$(SCHEME),$(notdir $(CURDIR))) ====="; \
+		echo "===== BUILDING $(BUILD_GOAL) ====="; \
 		echo; \
 		$1 xcodebuild $2 $(OTHER_OPTIONS) $(XCODE_TARGET) $(XCODE_OPTIONS) $3 | $(OUTPUT_FILTER) && exit $${PIPESTATUS[0]} \
 	)
