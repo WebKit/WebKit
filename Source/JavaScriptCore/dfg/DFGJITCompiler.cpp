@@ -191,6 +191,13 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 
     if (!m_graph.m_plan.inlineCallFrames()->isEmpty())
         m_jitCode->common.inlineCallFrames = m_graph.m_plan.inlineCallFrames();
+    if (!m_graph.m_stringSearchTable8.isEmpty()) {
+        FixedVector<std::unique_ptr<BoyerMooreHorspoolTable<uint8_t>>> tables(m_graph.m_stringSearchTable8.size());
+        unsigned index = 0;
+        for (auto& entry : m_graph.m_stringSearchTable8)
+            tables[index++] = WTFMove(entry.value);
+        m_jitCode->common.m_stringSearchTable8 = WTFMove(tables);
+    }
 
 #if USE(JSVALUE32_64)
     m_jitCode->common.doubleConstants = WTFMove(m_graph.m_doubleConstants);

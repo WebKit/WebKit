@@ -13319,9 +13319,14 @@ void SpeculativeJIT::compileStringReplace(Node* node)
         && node->child1().useKind() == StringUse
         && node->child2().useKind() == StringUse
         && node->child3().useKind() == StringUse) {
-        String replacement = node->child3()->tryGetString(m_graph);
-        if (!!replacement) {
-            if (!replacement.length()) {
+        const BoyerMooreHorspoolTable<uint8_t>* tablePointer = nullptr;
+        String searchString = node->child2()->tryGetString(m_graph);
+        if (!!searchString)
+            tablePointer = m_graph.tryAddStringSearchTable8(searchString);
+
+        String replacementString = node->child3()->tryGetString(m_graph);
+        if (!!replacementString) {
+            if (!replacementString.length()) {
                 SpeculateCellOperand string(this, node->child1());
                 SpeculateCellOperand search(this, node->child2());
                 GPRReg stringGPR = string.gpr();
@@ -13331,13 +13336,16 @@ void SpeculativeJIT::compileStringReplace(Node* node)
 
                 flushRegisters();
                 GPRFlushedCallResult result(this);
-                callOperation(operationStringReplaceStringEmptyString, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR);
+                if (tablePointer)
+                    callOperation(operationStringReplaceStringEmptyStringWithTable8, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR, TrustedImmPtr(tablePointer));
+                else
+                    callOperation(operationStringReplaceStringEmptyString, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR);
                 m_jit.exceptionCheck();
                 cellResult(result.gpr(), node);
                 return;
             }
 
-            if (replacement.find('$') == notFound) {
+            if (replacementString.find('$') == notFound) {
                 SpeculateCellOperand string(this, node->child1());
                 SpeculateCellOperand search(this, node->child2());
                 SpeculateCellOperand replace(this, node->child3());
@@ -13350,7 +13358,10 @@ void SpeculativeJIT::compileStringReplace(Node* node)
 
                 flushRegisters();
                 GPRFlushedCallResult result(this);
-                callOperation(operationStringReplaceStringStringWithoutSubstitution, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR, replaceGPR);
+                if (tablePointer)
+                    callOperation(operationStringReplaceStringStringWithoutSubstitutionWithTable8, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
+                else
+                    callOperation(operationStringReplaceStringStringWithoutSubstitution, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR, replaceGPR);
                 m_jit.exceptionCheck();
                 cellResult(result.gpr(), node);
                 return;
@@ -13369,7 +13380,10 @@ void SpeculativeJIT::compileStringReplace(Node* node)
 
         flushRegisters();
         GPRFlushedCallResult result(this);
-        callOperation(operationStringReplaceStringString, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR, replaceGPR);
+        if (tablePointer)
+            callOperation(operationStringReplaceStringStringWithTable8, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
+        else
+            callOperation(operationStringReplaceStringString, result.gpr(), JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, searchGPR, replaceGPR);
         m_jit.exceptionCheck();
         cellResult(result.gpr(), node);
         return;
