@@ -102,6 +102,7 @@ struct Box {
     bool isVisible() const { return !m_isFullyTruncated && style().visibility() == Visibility::Visible; }
 
     const FloatRect& visualRectIgnoringBlockDirection() const { return m_unflippedVisualRect; }
+    static FloatRect visibleRectIgnoringBlockDirection(const Box&, const FloatRect& visibleLineRect);
     const FloatRect& inkOverflow() const { return m_inkOverflow; }
 
     float top() const { return visualRectIgnoringBlockDirection().y(); }
@@ -214,6 +215,14 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
     , m_originalContent(originalContent)
     , m_adjustedContentToRender(adjustedContentToRender)
 {
+}
+
+inline FloatRect Box::visibleRectIgnoringBlockDirection(const Box& box, const FloatRect& visibleLineRect)
+{
+    auto visualRectIgnoringBlockDirection = box.visualRectIgnoringBlockDirection();
+    auto visibleBoxRight = std::min(visualRectIgnoringBlockDirection.maxX(), visibleLineRect.maxX());
+    visualRectIgnoringBlockDirection.shiftMaxXEdgeTo(visibleBoxRight);
+    return visualRectIgnoringBlockDirection;
 }
 
 }

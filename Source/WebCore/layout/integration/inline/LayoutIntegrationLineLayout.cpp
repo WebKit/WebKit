@@ -820,7 +820,8 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
             continue;
         }
 
-        auto boxRect = flippedRectForWritingMode(flow(), box.visualRectIgnoringBlockDirection());
+        auto& currentLine = m_inlineContent->lines[box.lineIndex()];
+        auto boxRect = flippedRectForWritingMode(flow(), InlineDisplay::Box::visibleRectIgnoringBlockDirection(box, currentLine.visibleRectIgnoringBlockDirection()));
         boxRect.moveBy(accumulatedOffset);
 
         if (!locationInContainer.intersects(boxRect))
