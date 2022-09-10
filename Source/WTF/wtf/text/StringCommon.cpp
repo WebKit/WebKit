@@ -53,8 +53,7 @@ const uint16_t* find16AlignedImpl(const uint16_t* pointer, uint16_t character, s
     // Dupe character => |c|c|c|c|c|c|c|c|
     uint16x8_t charactersVector = vdupq_n_u16(character);
 
-    size_t oldLength;
-    do {
+    while (true) {
         // Load target value. It is possible that this includes unrelated part of the memory.
         uint16x8_t value = vld1q_u16(cursor);
         // If the character is the same, then it becomes all-1. Otherwise, it becomes 0.
@@ -80,11 +79,11 @@ const uint16_t* find16AlignedImpl(const uint16_t* pointer, uint16_t character, s
             //     index       3, the smallest number from this vector, and it is the same to the index.
             return (index < length) ? cursor + index : nullptr;
         }
-        oldLength = length;
+        if (length <= stride)
+            return nullptr;
         length -= stride;
         cursor += stride;
-    } while (length < oldLength);
-    return nullptr;
+    }
 }
 
 SUPPRESS_ASAN
@@ -102,8 +101,7 @@ const uint32_t* find32AlignedImpl(const uint32_t* pointer, uint32_t character, s
 
     uint32x4_t charactersVector = vdupq_n_u32(character);
 
-    size_t oldLength;
-    do {
+    while (true) {
         uint32x4_t value = vld1q_u32(cursor);
         uint32x4_t mask = vceqq_u32(value, charactersVector);
         if (vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(mask)), 0)) {
@@ -111,11 +109,11 @@ const uint32_t* find32AlignedImpl(const uint32_t* pointer, uint32_t character, s
             uint32_t index = vminvq_u32(ranked);
             return (index < length) ? cursor + index : nullptr;
         }
-        oldLength = length;
+        if (length <= stride)
+            return nullptr;
         length -= stride;
         cursor += stride;
-    } while (length < oldLength);
-    return nullptr;
+    }
 }
 
 SUPPRESS_ASAN
@@ -133,8 +131,7 @@ const uint64_t* find64AlignedImpl(const uint64_t* pointer, uint64_t character, s
 
     uint64x2_t charactersVector = vdupq_n_u64(character);
 
-    size_t oldLength;
-    do {
+    while (true) {
         uint64x2_t value = vld1q_u64(cursor);
         uint64x2_t mask = vceqq_u64(value, charactersVector);
         uint32x2_t reducedMask = vmovn_u64(mask);
@@ -143,11 +140,11 @@ const uint64_t* find64AlignedImpl(const uint64_t* pointer, uint64_t character, s
             uint64_t index = vminv_u32(ranked);
             return (index < length) ? cursor + index : nullptr;
         }
-        oldLength = length;
+        if (length <= stride)
+            return nullptr;
         length -= stride;
         cursor += stride;
-    } while (length < oldLength);
-    return nullptr;
+    }
 }
 
 SUPPRESS_ASAN
@@ -165,8 +162,7 @@ const float* findFloatAlignedImpl(const float* pointer, float target, size_t len
 
     float32x4_t targetsVector = vdupq_n_f32(target);
 
-    size_t oldLength;
-    do {
+    while (true) {
         float32x4_t value = vld1q_f32(cursor);
         uint32x4_t mask = vceqq_f32(value, targetsVector);
         if (vget_lane_u64(vreinterpret_u64_u16(vmovn_u32(mask)), 0)) {
@@ -174,11 +170,11 @@ const float* findFloatAlignedImpl(const float* pointer, float target, size_t len
             uint32_t index = vminvq_u32(ranked);
             return (index < length) ? cursor + index : nullptr;
         }
-        oldLength = length;
+        if (length <= stride)
+            return nullptr;
         length -= stride;
         cursor += stride;
-    } while (length < oldLength);
-    return nullptr;
+    }
 }
 
 SUPPRESS_ASAN
@@ -196,8 +192,7 @@ const double* findDoubleAlignedImpl(const double* pointer, double target, size_t
 
     float64x2_t targetsVector = vdupq_n_f64(target);
 
-    size_t oldLength;
-    do {
+    while (true) {
         float64x2_t value = vld1q_f64(cursor);
         uint64x2_t mask = vceqq_f64(value, targetsVector);
         uint32x2_t reducedMask = vmovn_u64(mask);
@@ -206,11 +201,11 @@ const double* findDoubleAlignedImpl(const double* pointer, double target, size_t
             uint32_t index = vminv_u32(ranked);
             return (index < length) ? cursor + index : nullptr;
         }
-        oldLength = length;
+        if (length <= stride)
+            return nullptr;
         length -= stride;
         cursor += stride;
-    } while (length < oldLength);
-    return nullptr;
+    }
 }
 
 SUPPRESS_ASAN
@@ -226,8 +221,7 @@ const LChar* find8NonASCIIAlignedImpl(const LChar* pointer, size_t length)
 
     uint8x16_t charactersVector = vdupq_n_u8(0x80);
 
-    size_t oldLength;
-    do {
+    while (true) {
         uint8x16_t value = vld1q_u8(cursor);
         uint8x16_t mask = vcgeq_u8(value, charactersVector);
         if (vmaxvq_u8(mask)) {
@@ -235,11 +229,11 @@ const LChar* find8NonASCIIAlignedImpl(const LChar* pointer, size_t length)
             uint8_t index = vminvq_u8(ranked);
             return bitwise_cast<const LChar*>((index < length) ? cursor + index : nullptr);
         }
-        oldLength = length;
+        if (length <= stride)
+            return nullptr;
         length -= stride;
         cursor += stride;
-    } while (length < oldLength);
-    return nullptr;
+    }
 }
 
 SUPPRESS_ASAN
@@ -257,8 +251,7 @@ const UChar* find16NonASCIIAlignedImpl(const UChar* pointer, size_t length)
 
     uint16x8_t charactersVector = vdupq_n_u16(0x80);
 
-    size_t oldLength;
-    do {
+    while (true) {
         uint16x8_t value = vld1q_u16(cursor);
         uint16x8_t mask = vcgeq_u16(value, charactersVector);
         if (vget_lane_u64(vreinterpret_u64_u8(vmovn_u16(mask)), 0)) {
@@ -266,11 +259,11 @@ const UChar* find16NonASCIIAlignedImpl(const UChar* pointer, size_t length)
             uint16_t index = vminvq_u16(ranked);
             return bitwise_cast<const UChar*>((index < length) ? cursor + index : nullptr);
         }
-        oldLength = length;
+        if (length <= stride)
+            return nullptr;
         length -= stride;
         cursor += stride;
-    } while (length < oldLength);
-    return nullptr;
+    }
 }
 #endif
 
