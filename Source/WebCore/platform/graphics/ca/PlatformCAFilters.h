@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformCAFilters_h
-#define PlatformCAFilters_h
+#pragma once
 
 #include "FilterOperations.h"
 #include "GraphicsTypes.h"
@@ -61,5 +60,3 @@ public:
 };
 
 }
-
-#endif // PlatformCAFilters_h

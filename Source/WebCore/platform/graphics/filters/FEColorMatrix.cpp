@@ -24,6 +24,7 @@
 #include "config.h"
 #include "FEColorMatrix.h"
 
+#include "ColorMatrix.h"
 #include "FEColorMatrixSoftwareApplier.h"
 #include "Filter.h"
 #include <wtf/text/TextStream.h>
@@ -64,30 +65,36 @@ bool FEColorMatrix::setValues(const Vector<float> &values)
 
 void FEColorMatrix::calculateSaturateComponents(float* components, float value)
 {
-    components[0] = (0.213 + 0.787 * value);
-    components[1] = (0.715 - 0.715 * value);
-    components[2] = (0.072 - 0.072 * value);
-    components[3] = (0.213 - 0.213 * value);
-    components[4] = (0.715 + 0.285 * value);
-    components[5] = (0.072 - 0.072 * value);
-    components[6] = (0.213 - 0.213 * value);
-    components[7] = (0.715 - 0.715 * value);
-    components[8] = (0.072 + 0.928 * value);
+    auto saturationMatrix = saturationColorMatrix(value);
+
+    components[0] = saturationMatrix.at(0, 0);
+    components[1] = saturationMatrix.at(0, 1);
+    components[2] = saturationMatrix.at(0, 2);
+
+    components[3] = saturationMatrix.at(1, 0);
+    components[4] = saturationMatrix.at(1, 1);
+    components[5] = saturationMatrix.at(1, 2);
+
+    components[6] = saturationMatrix.at(2, 0);
+    components[7] = saturationMatrix.at(2, 1);
+    components[8] = saturationMatrix.at(2, 2);
 }
 
-void FEColorMatrix::calculateHueRotateComponents(float* components, float value)
+void FEColorMatrix::calculateHueRotateComponents(float* components, float angleInDegrees)
 {
-    float cosHue = cos(value * piFloat / 180);
-    float sinHue = sin(value * piFloat / 180);
-    components[0] = 0.213 + cosHue * 0.787 - sinHue * 0.213;
-    components[1] = 0.715 - cosHue * 0.715 - sinHue * 0.715;
-    components[2] = 0.072 - cosHue * 0.072 + sinHue * 0.928;
-    components[3] = 0.213 - cosHue * 0.213 + sinHue * 0.143;
-    components[4] = 0.715 + cosHue * 0.285 + sinHue * 0.140;
-    components[5] = 0.072 - cosHue * 0.072 - sinHue * 0.283;
-    components[6] = 0.213 - cosHue * 0.213 - sinHue * 0.787;
-    components[7] = 0.715 - cosHue * 0.715 + sinHue * 0.715;
-    components[8] = 0.072 + cosHue * 0.928 + sinHue * 0.072;
+    auto hueRotateMatrix = hueRotateColorMatrix(angleInDegrees);
+
+    components[0] = hueRotateMatrix.at(0, 0);
+    components[1] = hueRotateMatrix.at(0, 1);
+    components[2] = hueRotateMatrix.at(0, 2);
+
+    components[3] = hueRotateMatrix.at(1, 0);
+    components[4] = hueRotateMatrix.at(1, 1);
+    components[5] = hueRotateMatrix.at(1, 2);
+
+    components[6] = hueRotateMatrix.at(2, 0);
+    components[7] = hueRotateMatrix.at(2, 1);
+    components[8] = hueRotateMatrix.at(2, 2);
 }
 
 Vector<float> FEColorMatrix::normalizedFloats(const Vector<float>& values)
