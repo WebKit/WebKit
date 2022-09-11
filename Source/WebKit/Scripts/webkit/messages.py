@@ -254,6 +254,86 @@ def forward_declarations_for_namespace(namespace, kind_and_types):
     return ''.join(result)
 
 
+# When updating this list, run "make -C Source/WebKit/Scripts/webkit/tests" to keep the webkitpy tests passing.
+def serialized_identifiers():
+    return [
+        'WebCore::BroadcastChannelIdentifier',
+        'WebCore::DisplayList::ItemBufferIdentifier',
+        'WebCore::FetchIdentifier',
+        'WebCore::FileSystemHandleIdentifier',
+        'WebCore::FileSystemSyncAccessHandleIdentifier',
+        'WebCore::FrameIdentifier',
+        'WebCore::GraphicsContextFlushIdentifier',
+        'WebCore::ImageDecoderIdentifier',
+        'WebCore::LibWebRTCSocketIdentifier',
+        'WebCore::MediaKeySystemRequestIdentifier',
+        'WebCore::MediaPlayerIdentifier',
+        'WebCore::MediaSessionIdentifier',
+        'WebCore::PageIdentifier',
+        'WebCore::PlaybackTargetClientContextIdentifier',
+        'WebCore::PushSubscriptionIdentifier',
+        'WebCore::ProcessIdentifier',
+        'WebCore::RealtimeMediaSourceIdentifier',
+        'WebCore::RenderingResourceIdentifier',
+        'WebCore::ResourceLoaderIdentifier',
+        'WebCore::SWServerConnectionIdentifier',
+        'WebCore::ServiceWorkerIdentifier',
+        'WebCore::ServiceWorkerJobIdentifier',
+        'WebCore::ServiceWorkerRegistrationIdentifier',
+        'WebCore::SharedWorkerIdentifier',
+        'WebCore::SleepDisablerIdentifier',
+        'WebCore::SpeechRecognitionConnectionClientIdentifier',
+        'WebCore::UserMediaRequestIdentifier',
+        'WebCore::WebSocketIdentifier',
+        'WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier',
+        'WebKit::AuthenticationChallengeIdentifier',
+        'WebKit::ContentWorldIdentifier',
+        'WebKit::DataTaskIdentifier',
+        'WebKit::FormSubmitListenerIdentifier',
+        'WebKit::GeolocationIdentifier',
+        'WebKit::GraphicsContextGLIdentifier',
+        'WebKit::IPCConnectionTesterIdentifier',
+        'WebKit::IPCStreamTesterIdentifier',
+        'WebKit::LibWebRTCResolverIdentifier',
+        'WebKit::MDNSRegisterIdentifier',
+        'WebKit::MarkSurfacesAsVolatileRequestIdentifier',
+        'WebKit::MediaRecorderIdentifier',
+        'WebKit::NetworkResourceLoadIdentifier',
+        'WebKit::PDFPluginIdentifier',
+        'WebKit::PageGroupIdentifier',
+        'WebKit::PlaybackSessionContextIdentifier',
+        'WebKit::QuotaIncreaseRequestIdentifier',
+        'WebKit::RTCDecoderIdentifier',
+        'WebKit::RTCEncoderIdentifier',
+        'WebKit::RemoteAudioDestinationIdentifier',
+        'WebKit::RemoteAudioHardwareListenerIdentifier',
+        'WebKit::RemoteAudioSessionIdentifier',
+        'WebKit::RemoteCDMIdentifier',
+        'WebKit::RemoteCDMInstanceIdentifier',
+        'WebKit::RemoteCDMInstanceSessionIdentifier',
+        'WebKit::RemoteLegacyCDMIdentifier',
+        'WebKit::RemoteLegacyCDMSessionIdentifier',
+        'WebKit::RemoteMediaResourceIdentifier',
+        'WebKit::RemoteMediaSourceIdentifier',
+        'WebKit::RemoteVideoFrameIdentifier',
+        'WebKit::RemoteRemoteCommandListenerIdentifier',
+        'WebKit::RemoteSourceBufferIdentifier',
+        'WebKit::RenderingBackendIdentifier',
+        'WebKit::SampleBufferDisplayLayerIdentifier',
+        'WebKit::StorageAreaIdentifier',
+        'WebKit::StorageAreaImplIdentifier',
+        'WebKit::StorageAreaMapIdentifier',
+        'WebKit::StorageNamespaceIdentifier',
+        'WebKit::TapIdentifier',
+        'WebKit::TrackPrivateRemoteIdentifier',
+        'WebKit::UserContentControllerIdentifier',
+        'WebKit::WebGPUIdentifier',
+        'WebKit::WebPageProxyIdentifier',
+        'WebKit::WebURLSchemeHandlerIdentifier',
+        'WebKit::XRDeviceIdentifier',
+    ]
+
+
 def types_that_cannot_be_forward_declared():
     return frozenset([
         'CVPixelBufferRef',
@@ -268,116 +348,42 @@ def types_that_cannot_be_forward_declared():
         'PlatformXR::SessionMode',
         'PlatformXR::VisibilityState',
         'String',
-        'WebCore::BroadcastChannelIdentifier',
         'WebCore::DestinationColorSpace',
         'WebCore::DiagnosticLoggingDomain',
         'WebCore::DictationContext',
-        'WebCore::DisplayList::ItemBufferIdentifier',
         'WebCore::DragApplicationFlags',
-        'WebCore::FetchIdentifier',
-        'WebCore::FileSystemHandleIdentifier',
-        'WebCore::FileSystemSyncAccessHandleIdentifier',
-        'WebCore::FrameIdentifier',
-        'WebCore::GraphicsContextFlushIdentifier',
         'WebCore::GraphicsContextGLAttributes',
-        'WebCore::ImageDecoderIdentifier',
-        'WebCore::LibWebRTCSocketIdentifier',
-        'WebCore::MediaKeySystemRequestIdentifier',
-        'WebCore::MediaPlayerIdentifier',
-        'WebCore::MediaSessionIdentifier',
         'WebCore::ModalContainerControlType',
         'WebCore::NativeImageReference',
-        'WebCore::PageIdentifier',
-        'WebCore::PlaybackTargetClientContextIdentifier',
-        'WebKit::QuotaIncreaseRequestIdentifier',
         'WebCore::PluginLoadClientPolicy',
         'WebCore::PointerID',
         'WebCore::PolicyCheckIdentifier',
-        'WebCore::PushSubscriptionIdentifier',
-        'WebCore::ProcessIdentifier',
-        'WebCore::RealtimeMediaSourceIdentifier',
         'WebCore::RenderingMode',
         'WebCore::RenderingPurpose',
-        'WebCore::RenderingResourceIdentifier',
-        'WebCore::ResourceLoaderIdentifier',
-        'WebCore::SWServerConnectionIdentifier',
         'WebCore::ScriptExecutionContextIdentifier',
-        'WebCore::ServiceWorkerIdentifier',
-        'WebCore::ServiceWorkerJobIdentifier',
         'WebCore::ServiceWorkerOrClientData',
         'WebCore::ServiceWorkerOrClientIdentifier',
-        'WebCore::ServiceWorkerRegistrationIdentifier',
         'WebCore::SharedStringHash',
-        'WebCore::SharedWorkerIdentifier',
         'WebCore::SharedWorkerObjectIdentifier',
-        'WebCore::SleepDisablerIdentifier',
         'WebCore::SourceBufferAppendMode',
-        'WebCore::SpeechRecognitionConnectionClientIdentifier',
         'WebCore::StorageType',
         'WebCore::TransferredMessagePort',
-        'WebCore::UserMediaRequestIdentifier',
         'WebCore::WebLockIdentifier',
-        'WebCore::WebSocketIdentifier',
         'WebKit::ActivityStateChangeID',
-        'WebKit::AudioMediaStreamTrackRendererInternalUnitIdentifier',
-        'WebKit::AuthenticationChallengeIdentifier',
-        'WebKit::ContentWorldIdentifier',
-        'WebKit::DataTaskIdentifier',
         'WebKit::DisplayLinkObserverID',
         'WebKit::DownloadID',
         'WebKit::FileSystemStorageError',
-        'WebKit::FormSubmitListenerIdentifier',
-        'WebKit::GeolocationIdentifier',
-        'WebKit::GraphicsContextGLIdentifier',
         'WebKit::ImageBufferBackendHandle',
-        'WebKit::IPCConnectionTesterIdentifier',
-        'WebKit::IPCStreamTesterIdentifier',
         'WebKit::LayerHostingContextID',
         'WebKit::LegacyCustomProtocolID',
-        'WebKit::LibWebRTCResolverIdentifier',
-        'WebKit::MDNSRegisterIdentifier',
-        'WebKit::MarkSurfacesAsVolatileRequestIdentifier',
-        'WebKit::MediaRecorderIdentifier',
-        'WebKit::NetworkResourceLoadIdentifier',
-        'WebKit::PDFPluginIdentifier',
-        'WebKit::PageGroupIdentifier',
-        'WebKit::PlaybackSessionContextIdentifier',
-        'WebKit::RTCDecoderIdentifier',
-        'WebKit::RTCEncoderIdentifier',
-        'WebKit::RemoteAudioDestinationIdentifier',
-        'WebKit::RemoteAudioHardwareListenerIdentifier',
-        'WebKit::RemoteAudioSessionIdentifier',
-        'WebKit::RemoteCDMIdentifier',
-        'WebKit::RemoteCDMInstanceIdentifier',
-        'WebKit::RemoteCDMInstanceSessionIdentifier',
-        'WebKit::RemoteLegacyCDMIdentifier',
-        'WebKit::RemoteLegacyCDMSessionIdentifier',
-        'WebKit::RemoteMediaResourceIdentifier',
-        'WebKit::RemoteMediaSourceIdentifier',
-        'WebKit::RemoteVideoFrameIdentifier',
         'WebKit::RemoteVideoFrameWriteReference',
         'WebKit::RemoteVideoFrameReadReference',
-        'WebKit::RemoteRemoteCommandListenerIdentifier',
-        'WebKit::RemoteSourceBufferIdentifier',
-        'WebKit::RenderingBackendIdentifier',
         'WebKit::RenderingUpdateID',
-        'WebKit::SampleBufferDisplayLayerIdentifier',
-        'WebKit::StorageAreaIdentifier',
-        'WebKit::StorageAreaImplIdentifier',
-        'WebKit::StorageAreaMapIdentifier',
-        'WebKit::StorageNamespaceIdentifier',
-        'WebKit::TapIdentifier',
         'WebKit::TextCheckerRequestID',
-        'WebKit::TrackPrivateRemoteIdentifier',
         'WebKit::TransactionID',
-        'WebKit::UserContentControllerIdentifier',
         'WebKit::WCLayerTreeHostIdentifier',
         'WebKit::WCContentBufferIdentifier',
-        'WebKit::WebGPUIdentifier',
-        'WebKit::WebPageProxyIdentifier',
-        'WebKit::WebURLSchemeHandlerIdentifier',
-        'WebKit::XRDeviceIdentifier',
-    ])
+    ] + serialized_identifiers())
 
 
 def conditions_for_header(header):
@@ -1439,7 +1445,19 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
     result.append('\n')
     result.append('#if ENABLE(IPC_TESTING_API) || !LOG_DISABLED\n')
     result.append('\n')
-    result.append('#include "JSIPCBinding.h"\n')
+    all_headers = ['"JSIPCBinding.h"']
+    for identifier in serialized_identifiers():
+        for header in headers_for_type(identifier):
+            all_headers.append(header)
+    all_headers = sorted(list(dict.fromkeys(all_headers)))
+    for header in all_headers:
+        conditions = conditions_for_header(header)
+        if conditions and None not in conditions:
+            result.append('#if %s\n' % ' || '.join(sorted(set(conditions))))
+            result.append('#include %s\n' % header)
+            result.append('#endif\n')
+        else:
+            result.append('#include %s\n' % header)
 
     for receiver in receivers:
         if receiver.has_attribute(BUILTIN_ATTRIBUTE):
@@ -1465,6 +1483,17 @@ def generate_message_argument_description_implementation(receivers, receiver_hea
     result.append('\n')
 
     generate_js_value_conversion_function(result, receivers, 'jsValueForReplyArguments', 'jsValueForDecodedMessageReply', 'ReplyArguments', lambda message: message.reply_parameters is not None)
+
+    result.append('\n')
+    result.append('Vector<ASCIILiteral> serializedIdentifiers()\n')
+    result.append('{\n')
+    for identifier in serialized_identifiers():
+        result.append('    static_assert(sizeof(uint64_t) == sizeof(' + identifier + '));\n')
+    result.append('    return {\n')
+    for identifier in serialized_identifiers():
+        result.append('        "' + identifier + '"_s,\n')
+    result.append('    };\n')
+    result.append('}\n')
 
     result.append('\n')
     result.append('#endif // ENABLE(IPC_TESTING_API)\n')

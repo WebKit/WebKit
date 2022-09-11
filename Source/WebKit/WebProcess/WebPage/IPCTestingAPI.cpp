@@ -357,6 +357,7 @@ private:
     static JSValueRef messages(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef serializedTypeInfo(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef serializedEnumInfo(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
+    static JSValueRef objectIdentifiers(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef processTargets(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
 
     WeakPtr<WebPage> m_webPage;
@@ -1638,6 +1639,7 @@ const JSStaticValue* JSIPC::staticValues()
         { "messages", messages, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "serializedTypeInfo", serializedTypeInfo, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "serializedEnumInfo", serializedEnumInfo, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
+        { "objectIdentifiers", objectIdentifiers, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "processTargets", processTargets, 0, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { 0, 0, 0, 0 }
     };
@@ -2359,29 +2361,28 @@ JSValueRef JSIPC::serializedEnumInfo(JSContextRef context, JSObjectRef thisObjec
         JSC::JSObject* enumObject = constructEmptyObject(globalObject, globalObject->objectPrototype());
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
         
-        JSValueRef exception { nullptr };
-        JSObjectRef jsEnumObject = JSValueToObject(context, toRef(vm, enumObject), &exception);
-        if (exception)
+        JSObjectRef jsEnumObject = JSValueToObject(context, toRef(vm, enumObject), exception);
+        if (*exception)
             return JSValueMakeUndefined(context);
 
         Vector<JSValueRef> validValuesArray;
         validValuesArray.reserveInitialCapacity(enumeration.validValues.size());
         for (auto& validValue : enumeration.validValues)
             validValuesArray.uncheckedAppend(JSValueMakeNumber(context, validValue));
-        JSObjectRef jsValidValues = JSObjectMakeArray(context, enumeration.validValues.size(), validValuesArray.data(), &exception);
-        if (exception)
+        JSObjectRef jsValidValues = JSObjectMakeArray(context, enumeration.validValues.size(), validValuesArray.data(), exception);
+        if (*exception)
             return JSValueMakeUndefined(context);
 
-        JSObjectSetProperty(context, jsEnumObject, adopt(JSStringCreateWithUTF8CString("validValues")).get(), jsValidValues, kJSPropertyAttributeNone, &exception);
-        if (exception)
+        JSObjectSetProperty(context, jsEnumObject, adopt(JSStringCreateWithUTF8CString("validValues")).get(), jsValidValues, kJSPropertyAttributeNone, exception);
+        if (*exception)
             return JSValueMakeUndefined(context);
 
-        JSObjectSetProperty(context, jsEnumObject, adopt(JSStringCreateWithUTF8CString("isOptionSet")).get(), JSValueMakeNumber(context, enumeration.isOptionSet), kJSPropertyAttributeNone, &exception);
-        if (exception)
+        JSObjectSetProperty(context, jsEnumObject, adopt(JSStringCreateWithUTF8CString("isOptionSet")).get(), JSValueMakeNumber(context, enumeration.isOptionSet), kJSPropertyAttributeNone, exception);
+        if (*exception)
             return JSValueMakeUndefined(context);
 
-        JSObjectSetProperty(context, jsEnumObject, adopt(JSStringCreateWithUTF8CString("size")).get(), JSValueMakeNumber(context, enumeration.size), kJSPropertyAttributeNone, &exception);
-        if (exception)
+        JSObjectSetProperty(context, jsEnumObject, adopt(JSStringCreateWithUTF8CString("size")).get(), JSValueMakeNumber(context, enumeration.size), kJSPropertyAttributeNone, exception);
+        if (*exception)
             return JSValueMakeUndefined(context);
 
         object->putDirect(vm, JSC::Identifier::fromString(vm, String(enumeration.name)), enumObject);
@@ -2389,6 +2390,25 @@ JSValueRef JSIPC::serializedEnumInfo(JSContextRef context, JSObjectRef thisObjec
     }
 
     return toRef(vm, object);
+}
+
+JSValueRef JSIPC::objectIdentifiers(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
+{
+    auto* globalObject = toJS(context);
+    auto& vm = globalObject->vm();
+    JSC::JSLockHolder lock(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSC::JSObject* array = JSC::constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+    auto identifiers = IPC::serializedIdentifiers();
+    for (size_t i = 0; i < identifiers.size(); i++) {
+        array->putDirectIndex(globalObject, i, toJS(JSValueMakeString(context, adopt(JSStringCreateWithUTF8CString(identifiers[i].characters())).get())));
+        RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+    }
+
+    return toRef(vm, array);
 }
 
 JSValueRef JSIPC::vmPageSize(JSContextRef context, JSObjectRef thisObject, JSStringRef, JSValueRef* exception)
