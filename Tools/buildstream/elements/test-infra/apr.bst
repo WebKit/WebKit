@@ -1,10 +1,29 @@
 kind: autotools
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-autotools.bst
+- freedesktop-sdk.bst:components/python3.bst
 
 depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
+- freedesktop-sdk.bst:components/libxml2.bst
+
+variables:
+  autogen: |
+    ./buildconf
+
+config:
+  install-commands:
+  - |
+    make -j1 install DESTDIR="%{install-root}"
+    mkdir -p %{install-root}%{datadir}/aclocal/
+    cp build/*.m4 %{install-root}%{datadir}/aclocal/
+
+public:
+  bst:
+    overlap-whitelist:
+    - '**'
+
 sources:
-- kind: tar
-  url: https://www.apache.org/dist/apr/apr-1.6.5.tar.bz2
-  ref: a67ca9fcf9c4ff59bce7f428a323c8b5e18667fdea7b0ebad47d194371b0a105
+- kind: git
+  url: github_com:apache/apr
+  ref: ab59882d46f992fe13e696e0275a244123d51349

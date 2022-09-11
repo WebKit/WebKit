@@ -4,10 +4,6 @@ build-depends:
 - flatpak/platform-image.bst
 - freedesktop-sdk.bst:integration/platform-integration.bst
 
-variables:
-  # Obtain the versions of the flatpak extensions
-  (@): freedesktop-sdk.bst:include/_private/versions.yml
-
 config:
   directory: '%{prefix}'
   exclude:
@@ -34,7 +30,7 @@ config:
 
     Extension org.freedesktop.Platform.GL:
       # 1.4 is for Nvidia drivers
-      versions: "%{freedesktop-sdk-flatpak-branch};1.4"
+      versions: "%{sdk-branch};1.4"
       version: "1.4"
       directory: "%{lib}/GL"
       subdirectories: "true"
@@ -48,7 +44,7 @@ config:
 
     Extension org.freedesktop.Platform.Timezones:
       directory: share/zoneinfo
-      version: '%{freedesktop-sdk-flatpak-branch}'
+      version: '%{sdk-branch}'
 
     Extension org.freedesktop.Platform.Icontheme:
       directory: share/runtime/share/icons
@@ -70,17 +66,17 @@ config:
       no-autodownload: 'true'
       add-ld-path: lib
       download-if: have-intel-gpu
-      version: '%{freedesktop-sdk-flatpak-branch}'
+      version: '%{sdk-branch}'
 
     Extension org.freedesktop.Platform.openh264:
       directory: '%{lib}/openh264'
       add-ld-path: extra
       autodelete: 'false'
-      version: '%{freedesktop-sdk-flatpak-branch}'
+      version: '%{sdk-branch}'
 
     Extension org.freedesktop.Platform.sparkle-cdm:
       directory: '%{lib}/sparkle-cdm'
       autodelete: 'false'
       no-autodownload: 'true'
       add-ld-path: lib
-      version: '%{freedesktop-sdk-flatpak-branch}'
+      version: '%{sdk-branch}'

@@ -2,22 +2,10 @@ kind: junction
 sources:
 - kind: git_tag
   url: gitlab_com:freedesktop-sdk/freedesktop-sdk.git
-  track: 'release/21.08'
-  ref: freedesktop-sdk-21.08.15-13-g376b04010f0971ab03d08802f3ad728f9044f130
+  track: 'release/22.08'
+  ref: freedesktop-sdk-22.08.1-45-g0cc0140fac8eda36fa446cb8fa7c1a525fa56e7d
 - kind: patch
-  path: patches/fdo-0001-Bump-libnice-to-current-git-master-HEAD.patch
-- kind: patch
-  path: patches/fdo-0001-pango-Bump-to-1.50.4.patch
-- kind: patch
-  path: patches/fdo-0001-gdk-pixbuf-Remove-invalid-meson-options.patch
-- kind: patch
-  path: patches/fdo-0001-gst-plugins-bad-Remove-invalid-meson-option.patch
-- kind: patch
-  path: patches/fdo-0001-gobject-introspection-Bump-to-1.72.patch
-- kind: patch
-  path: patches/fdo-0002-meson-Bump-to-1.62.patch
-- kind: patch
-  path: patches/fdo-0001-pipewire-base-Track-master-branch-and-disable-AEC-mo.patch
+  path: patches/fdo-0001-pipewire-base-Disable-AEC-module.patch
 config:
   options:
     target_arch: '%{arch}'

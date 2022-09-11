@@ -7,7 +7,7 @@ sources:
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
-- sdk/glib.bst
+- freedesktop-sdk.bst:components/glib.bst
 - sdk/libwpe.bst
 - freedesktop-sdk.bst:components/mesa-headers.bst
 - freedesktop-sdk.bst:components/wayland.bst

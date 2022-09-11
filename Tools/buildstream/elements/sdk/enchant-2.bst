@@ -6,7 +6,7 @@ sources:
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-autotools.bst
 depends:
-- sdk/glib.bst
+- freedesktop-sdk.bst:components/glib.bst
 - freedesktop-sdk.bst:components/hunspell.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
 variables:

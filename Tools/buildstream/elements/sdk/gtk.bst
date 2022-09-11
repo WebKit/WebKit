@@ -13,7 +13,7 @@ depends:
 - freedesktop-sdk.bst:components/at-spi2-atk.bst
 - freedesktop-sdk.bst:components/atk.bst
 - freedesktop-sdk.bst:components/gdk-pixbuf.bst
-- sdk/glib.bst
+- freedesktop-sdk.bst:components/glib.bst
 - sdk/graphene.bst
 - sdk/gst-plugins-bad.bst
 - sdk/gst-plugins-base.bst
