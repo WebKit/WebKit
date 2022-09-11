@@ -491,7 +491,8 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
         // Now check if we can put this content on the current line.
         if (auto* floatItem = lineCandidate.floatItem) {
             ASSERT(lineCandidate.inlineContent.isEmpty());
-            if (!tryPlacingFloatBox(*floatItem, LineBoxConstraintApplies::Yes))
+            auto evenOverflowingFloatShouldBePlaced = m_line.runs().isEmpty();
+            if (!tryPlacingFloatBox(*floatItem, evenOverflowingFloatShouldBePlaced ? LineBoxConstraintApplies::No : LineBoxConstraintApplies::Yes))
                 m_overflowingFloats.append(floatItem);
             ++committedItemCount;
         } else {
