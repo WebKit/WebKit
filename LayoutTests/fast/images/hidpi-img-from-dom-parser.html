@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+const doc = new DOMParser().parseFromString('<img src="resources/red-100x100.png" srcset="resources/red-100x100.png 1x, resources/green-400x400.png 2x">', 'text/html');
+document.body.appendChild(doc.querySelector('img'));
+</script>
+</body>
+</html>
