@@ -38,9 +38,6 @@ namespace TemporalPlainDateInternal {
 static constexpr bool verbose = false;
 }
 
-static constexpr int maxISOYear = 275760;
-static constexpr int minISOYear = -271821;
-
 const ClassInfo TemporalPlainDate::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(TemporalPlainDate) };
 
 TemporalPlainDate* TemporalPlainDate::create(VM& vm, Structure* structure, ISO8601::PlainDate&& plainDate)
@@ -95,7 +92,7 @@ ISO8601::PlainDate TemporalPlainDate::toPlainDate(JSGlobalObject* globalObject, 
     double monthDouble = duration.months();
     double dayDouble = duration.days();
 
-    if (yearDouble > maxISOYear || yearDouble < minISOYear) {
+    if (!ISO8601::isYearWithinLimits(yearDouble)) {
         throwRangeError(globalObject, scope, "year is out of range"_s);
         return { };
     }

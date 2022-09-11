@@ -123,7 +123,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncAdd, (JSGlobalObject* glo
     if (!plainTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.add called on value that's not a PlainTime"_s);
 
-    auto result = plainTime->add(globalObject, callFrame->argument(0));
+    auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto result = TemporalPlainTime::toPlainTime(globalObject, TemporalPlainTime::addTime(plainTime->plainTime(), duration));
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(result)));
@@ -139,7 +142,10 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncSubtract, (JSGlobalObject
     if (!plainTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.subtract called on value that's not a PlainTime"_s);
 
-    auto result = plainTime->subtract(globalObject, callFrame->argument(0));
+    auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto result = TemporalPlainTime::toPlainTime(globalObject, TemporalPlainTime::addTime(plainTime->plainTime(), -duration));
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(TemporalPlainTime::create(vm, globalObject->plainTimeStructure(), WTFMove(result)));
@@ -247,7 +253,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainTimePrototypeFuncGetISOFields, (JSGlobalOb
 
     auto* plainTime = jsDynamicCast<TemporalPlainTime*>(callFrame->thisValue());
     if (!plainTime)
-        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.equals called on value that's not a PlainTime"_s);
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainTime.prototype.getISOFields called on value that's not a PlainTime"_s);
 
     JSObject* fields = constructEmptyObject(globalObject);
     fields->putDirect(vm, vm.propertyNames->calendar, plainTime->calendar());

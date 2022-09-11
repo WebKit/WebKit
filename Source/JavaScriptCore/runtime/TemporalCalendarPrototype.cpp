@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +32,13 @@
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
 #include "TemporalCalendar.h"
+#include "TemporalDuration.h"
 #include "TemporalPlainDate.h"
 
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateFromFields);
+static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateAdd);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncMergeFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncToString);
@@ -53,6 +56,7 @@ const ClassInfo TemporalCalendarPrototype::s_info = { "Temporal.Calendar"_s, &Ba
 /* Source for TemporalCalendarPrototype.lut.h
 @begin temporalCalendarPrototypeTable
     dateFromFields      temporalCalendarPrototypeFuncDateFromFields      DontEnum|Function 1
+    dateAdd             temporalCalendarPrototypeFuncDateAdd             DontEnum|Function 2
     fields              temporalCalendarPrototypeFuncFields              DontEnum|Function 1
     mergeFields         temporalCalendarPrototypeFuncMergeFields         DontEnum|Function 2
     toString            temporalCalendarPrototypeFuncToString            DontEnum|Function 0
@@ -116,6 +120,38 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateFromFields, (JSGlobalO
     RETURN_IF_EXCEPTION(scope, { });
 
     ISO8601::PlainDate plainDate = calendar->isoDateFromFields(globalObject, asObject(value), overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate))));
+}
+
+// https://tc39.es/proposal-temporal/#sup-temporal.calendar.prototype.dateadd
+JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateAdd, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    if (!calendar)
+        return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.dateAdd called on value that's not a Calendar"_s);
+
+    // FIXME: Implement after fleshing out the rest of Temporal.Calendar.
+    if (!calendar->isISO8601())
+        return throwVMRangeError(globalObject, scope, "unimplemented: non-ISO8601 calendar"_s);
+
+    auto* date = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto duration = TemporalDuration::toISO8601Duration(globalObject, callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(2));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    ISO8601::PlainDate plainDate = calendar->isoDateAdd(globalObject, date->plainDate(), duration, overflow);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate))));
@@ -358,7 +394,14 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncToString, (JSGlobalObject*
 // https://tc39.es/proposal-temporal/#sec-temporal.calendar.prototype.tojson
 JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncToJSON, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
-    return JSValue::encode(callFrame->thisValue().toString(globalObject));
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    if (!calendar)
+        return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.toJSON called on value that's not a Calendar"_s);
+
+    return JSValue::encode(calendar->toString(globalObject));
 }
 
 } // namespace JSC
