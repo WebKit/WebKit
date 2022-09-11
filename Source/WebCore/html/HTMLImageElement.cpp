@@ -726,6 +726,7 @@ void HTMLImageElement::didMoveToNewDocument(Document& oldDocument, Document& new
 {
     oldDocument.removeDynamicMediaQueryDependentImage(*this);
 
+    selectImageSource(RelevantMutation::No);
     m_imageLoader->elementDidMoveToNewDocument(oldDocument);
     HTMLElement::didMoveToNewDocument(oldDocument, newDocument);
     if (RefPtr element = pictureElement())

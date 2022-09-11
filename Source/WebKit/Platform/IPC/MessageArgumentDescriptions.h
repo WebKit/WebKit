@@ -46,6 +46,8 @@ class Decoder;
 std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
 std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject*, MessageName, Decoder&);
 
+Vector<ASCIILiteral> serializedIdentifiers();
+
 #endif // ENABLE(IPC_TESTING_API)
 
 struct ArgumentDescription {

@@ -1362,6 +1362,8 @@ webkit.org/b/209882 [ Debug ] inspector/page/overrideSetting-ICECandidateFilteri
 
 webkit.org/b/209921 [ Debug ] inspector/css/add-css-property.html [ Pass Timeout ]
 
+webkit.org/b/245038 inspector/css/nodeLayoutFlagsChanged-Scrollable.html [ Pass Failure ]
+
 webkit.org/b/210079 [ Debug ] inspector/debugger/evaluateOnCallFrame-errors.html [ Pass Failure ]
 
 webkit.org/b/230072 [ Release ] inspector/dom/shadow-and-non-shadow-children.html [ Pass Failure ]
@@ -1538,6 +1540,8 @@ fast/layoutformattingcontext/wbr-simple.html [ ImageOnlyFailure ]
 webkit.org/b/219498 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-padding-003.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/244538 [ Debug ] imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-margin-003.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/245034 imported/w3c/web-platform-tests/css/css-scroll-snap/scroll-target-align-003.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/221009 fast/harness/render-tree-as-text-options.html [ Pass Failure ]
 
@@ -2065,6 +2069,10 @@ webkit.org/b/244312 http/tests/media/fairplay/fps-hls.html [ Pass Failure ]
 
 webkit.org/b/244601 http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [ Failure ]
 
+webkit.org/b/245036 http/tests/media/fairplay/fps-hls-key-rotation.html [ Failure ]
+
+webkit.org/b/245037 [ Monterey ] http/tests/media/fairplay/fps-hls-update-reject.html [ Pass Failure ]
+
 webkit.org/b/244336 fast/canvas/canvas-createPattern-video-loading.html [ Pass Timeout ]
 
 webkit.org/b/244347 storage/domstorage/sessionstorage/window-open-remove-item.html [ Pass Failure ]
@@ -2097,3 +2105,4 @@ webkit.org/b/245008 fast/attachment/mac/attachment-keynote.html [ Skip ]
 
 webkit.org/b/245014 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
 
+webkit.org/b/245035 imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass Failure ]

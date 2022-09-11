@@ -137,8 +137,7 @@ SOFT_LINK(UIKitMacHelper, UINSSharedRevealController, id<UINSRevealController>, 
 {
     UNUSED_PARAM(context);
     UNUSED_PARAM(item);
-    auto block = WTFMove(_clearTextIndicator);
-    if (block)
+    if (auto block = std::exchange(_clearTextIndicator, nullptr))
         block();
 }
 
@@ -466,10 +465,11 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     auto context = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:pointerLocation inView:view highlightDelegate:webHighlight.get()]);
     auto item = adoptNS([PAL::allocRVItemInstance() initWithText:dictionaryPopupInfo.attributedString.get().string selectedRange:NSMakeRange(0, dictionaryPopupInfo.attributedString.get().string.length)]);
 
-    [webHighlight setClearTextIndicator:[webHighlight = WTFMove(webHighlight), clearTextIndicator = WTFMove(clearTextIndicator)] {
-        if (clearTextIndicator)
+    if (clearTextIndicator) {
+        [webHighlight setClearTextIndicator:[clearTextIndicator = WTFMove(clearTextIndicator)] {
             clearTextIndicator();
-    }];
+        }];
+    }
 
     if (createAnimationController)
         return [presenter animationControllerForItem:item.get() documentContext:nil presentingContext:context.get() options:nil];

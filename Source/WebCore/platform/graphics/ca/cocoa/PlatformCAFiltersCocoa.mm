@@ -27,7 +27,7 @@
 #import "PlatformCAFilters.h"
 
 #import "FloatConversion.h"
-#import "LengthFunctions.h" // This is a layering violation.
+#import "LengthFunctions.h"
 #import "PlatformCALayerCocoa.h"
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -36,19 +36,6 @@
 #import <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
-
-// FIXME: Should share these values with CSSFilter::build() (https://bugs.webkit.org/show_bug.cgi?id=76008).
-static const double sepiaFullConstants[3][3] = {
-    { 0.393, 0.769, 0.189 },
-    { 0.349, 0.686, 0.168 },
-    { 0.272, 0.534, 0.131 }
-};
-
-static const double sepiaNoneConstants[3][3] = {
-    { 1, 0, 0 },
-    { 0, 1, 0 },
-    { 0, 0, 1 }
-};
 
 void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOperations& filters)
 {
@@ -176,18 +163,11 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             CIFilter* filter = [CIFilter filterWithName:@"CIColorMatrix"];
             [filter setDefaults];
 
-            double t = colorMatrixOperation.amount();
-            t = std::min(std::max(0.0, t), 1.0);
+            auto sepiaMatrix = sepiaColorMatrix(colorMatrixOperation.amount());
             // FIXME: results don't match the software filter.
-            [filter setValue:[CIVector vectorWithX:WebCore::blend(sepiaNoneConstants[0][0], sepiaFullConstants[0][0], t)
-                Y:WebCore::blend(sepiaNoneConstants[0][1], sepiaFullConstants[0][1], t)
-                Z:WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], t) W:0] forKey:@"inputRVector"];
-            [filter setValue:[CIVector vectorWithX:WebCore::blend(sepiaNoneConstants[1][0], sepiaFullConstants[1][0], t)
-                Y:WebCore::blend(sepiaNoneConstants[1][1], sepiaFullConstants[1][1], t)
-                Z:WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], t) W:0] forKey:@"inputGVector"];
-            [filter setValue:[CIVector vectorWithX:WebCore::blend(sepiaNoneConstants[2][0], sepiaFullConstants[2][0], t)
-                Y:WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], t)
-                Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], t) W:0] forKey:@"inputBVector"];
+            [filter setValue:[CIVector vectorWithX:sepiaMatrix.at(0, 0) Y:sepiaMatrix.at(0, 1) Z:sepiaMatrix.at(0, 2) W:0] forKey:@"inputRVector"];
+            [filter setValue:[CIVector vectorWithX:sepiaMatrix.at(1, 0) Y:sepiaMatrix.at(1, 1) Z:sepiaMatrix.at(1, 2) W:0] forKey:@"inputGVector"];
+            [filter setValue:[CIVector vectorWithX:sepiaMatrix.at(2, 0) Y:sepiaMatrix.at(2, 1) Z:sepiaMatrix.at(2, 2) W:0] forKey:@"inputBVector"];
             [filter setName:filterName];
             return filter;
         }
@@ -220,7 +200,7 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
             [filter setValue:[CIVector vectorWithX:0 Y:multiplier Z:0 W:0] forKey:@"inputGVector"];
             [filter setValue:[CIVector vectorWithX:0 Y:0 Z:multiplier W:0] forKey:@"inputBVector"];
             [filter setValue:[CIVector vectorWithX:0 Y:0 Z:0 W:1] forKey:@"inputAVector"];
-            [filter setValue:[CIVector vectorWithX:op->amount() Y:op->amount() Z:op->amount() W:0] forKey:@"inputBiasVector"];
+            [filter setValue:[CIVector vectorWithX:componentTransferOperation.amount() Y:componentTransferOperation.amount() Z:componentTransferOperation.amount() W:0] forKey:@"inputBiasVector"];
             [filter setName:filterName];
             return filter;
         }
@@ -320,20 +300,22 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
         if (operation)
             amount = downcast<BasicColorMatrixFilterOperation>(*operation).amount();
 
+        auto sepiaMatrix = sepiaColorMatrix(amount);
+
         RetainPtr<CIVector> rowVector;
         switch (internalFilterPropertyIndex) {
-        case 0: rowVector = adoptNS([[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[0][0], sepiaFullConstants[0][0], amount)
-            Y:WebCore::blend(sepiaNoneConstants[0][1], sepiaFullConstants[0][1], amount)
-            Z:WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], amount) W:0]);
-            break; // inputRVector
-        case 1: rowVector = adoptNS([[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[1][0], sepiaFullConstants[1][0], amount)
-            Y:WebCore::blend(sepiaNoneConstants[1][1], sepiaFullConstants[1][1], amount)
-            Z:WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], amount) W:0]);
-            break; // inputGVector
-        case 2: rowVector = adoptNS([[CIVector alloc] initWithX:WebCore::blend(sepiaNoneConstants[2][0], sepiaFullConstants[2][0], amount)
-            Y:WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], amount)
-            Z:WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], amount) W:0]);
-            break; // inputBVector
+        case 0:
+            // inputRVector
+            rowVector = adoptNS([CIVector vectorWithX:sepiaMatrix.at(0, 0) Y:sepiaMatrix.at(0, 1) Z:sepiaMatrix.at(0, 2) W:0]);
+            break;
+        case 1:
+            // inputGVector
+            rowVector = adoptNS([CIVector vectorWithX:sepiaMatrix.at(1, 0) Y:sepiaMatrix.at(1, 1) Z:sepiaMatrix.at(1, 2) W:0]);
+            break;
+        case 2:
+            // inputBVector
+            rowVector = adoptNS([CIVector vectorWithX:sepiaMatrix.at(2, 0) Y:sepiaMatrix.at(2, 1) Z:sepiaMatrix.at(2, 2) W:0]);
+            break;
         }
         value = WTFMove(rowVector);
 #endif
@@ -457,28 +439,23 @@ RetainPtr<NSValue> PlatformCAFilters::filterValueForOperation(const FilterOperat
 }
 
 #if USE_CA_FILTERS
+static CAColorMatrix caColorMatrixFromColorMatrix(const ColorMatrix<3, 3>& colorMatrix)
+{
+    return {
+        colorMatrix.at(0, 0), colorMatrix.at(0, 1), colorMatrix.at(0, 2), 0, 0,
+        colorMatrix.at(1, 0), colorMatrix.at(1, 1), colorMatrix.at(1, 2), 0, 0,
+        colorMatrix.at(2, 0), colorMatrix.at(2, 1), colorMatrix.at(2, 2), 0, 0,
+        0, 0, 0, 1, 0
+    };
+}
+
 RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(FilterOperation::OperationType type, const FilterOperation* filterOperation)
 {
     switch (type) {
     case FilterOperation::SEPIA: {
         double t = filterOperation ? downcast<BasicColorMatrixFilterOperation>(*filterOperation).amount() : 0;
-        t = std::min(std::max(0.0, t), 1.0);
-        BlendingContext context { t };
-        CAColorMatrix colorMatrix = {
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[0][0], sepiaFullConstants[0][0], context)),
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[0][1], sepiaFullConstants[0][1], context)),
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[0][2], sepiaFullConstants[0][2], context)), 0, 0,
-            
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[1][0], sepiaFullConstants[1][0], context)),
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[1][1], sepiaFullConstants[1][1], context)),
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[1][2], sepiaFullConstants[1][2], context)), 0, 0,
-            
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[2][0], sepiaFullConstants[2][0], context)),
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[2][1], sepiaFullConstants[2][1], context)),
-            static_cast<float>(WebCore::blend(sepiaNoneConstants[2][2], sepiaFullConstants[2][2], context)), 0, 0,
-            0, 0, 0, 1, 0
-        };
-        return [NSValue valueWithCAColorMatrix:colorMatrix];
+        auto sepiaMatrix = sepiaColorMatrix(t);
+        return [NSValue valueWithCAColorMatrix:caColorMatrixFromColorMatrix(sepiaMatrix)];
     }
     case FilterOperation::INVERT: {
         float amount = filterOperation ? downcast<BasicComponentTransferFilterOperation>(*filterOperation).amount() : 0;
