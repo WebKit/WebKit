@@ -5,8 +5,8 @@
 //
 // angle_version_info.h: ANGLE version queries.
 
-#ifndef COMMON_VERSION_H_
-#define COMMON_VERSION_H_
+#ifndef COMMON_VERSION_INFO_H_
+#define COMMON_VERSION_INFO_H_
 
 namespace angle
 {
@@ -17,4 +17,4 @@ int GetANGLECommitHashSize();
 bool GetANGLEHasBinaryLoading();
 }  // namespace angle
 
-#endif  // COMMON_VERSION_H_
+#endif  // COMMON_VERSION_INFO_H_
