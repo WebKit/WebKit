@@ -34,8 +34,6 @@ if (ENABLE_WEBKIT)
     list(APPEND TestWebKit_SOURCES
         ${test_main_SOURCES}
 
-        Utilities.cpp
-
         Tests/WebKit/curl/Certificates.cpp
 
         playstation/PlatformUtilitiesPlayStation.cpp

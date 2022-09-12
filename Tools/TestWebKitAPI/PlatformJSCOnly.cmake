@@ -5,7 +5,5 @@ list(APPEND TestWTF_SOURCES generic/main.cpp)
 if (LOWERCASE_EVENT_LOOP_TYPE STREQUAL "glib")
     list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
         ${GLIB_INCLUDE_DIRS}
-
-        Utilities.cpp
     )
 endif ()
