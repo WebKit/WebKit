@@ -841,9 +841,6 @@ public:
     virtual bool isAccessibilityRenderObject() const = 0;
     virtual bool isAccessibilityScrollbar() const = 0;
     virtual bool isAccessibilityScrollViewInstance() const = 0;
-    virtual bool isAXImageInstance() const = 0;
-    virtual bool isAccessibilitySVGRoot() const = 0;
-    virtual bool isAccessibilitySVGElement() const = 0;
     virtual bool isAccessibilityTableInstance() const = 0;
     virtual bool isAccessibilityTableColumnInstance() const = 0;
     virtual bool isAccessibilityARIAGridInstance() const = 0;
@@ -853,17 +850,12 @@ public:
     virtual bool isAccessibilityListBoxInstance() const = 0;
     virtual bool isAXIsolatedObjectInstance() const = 0;
 
-    virtual bool isAttachmentElement() const = 0;
     virtual bool isHeading() const = 0;
     virtual bool isLink() const = 0;
     bool isImage() const { return roleValue() == AccessibilityRole::Image; }
     bool isImageMap() const { return roleValue() == AccessibilityRole::ImageMap; }
     bool isVideo() const { return roleValue() == AccessibilityRole::Video; }
-    virtual bool isNativeImage() const = 0;
-    virtual bool isImageButton() const = 0;
     virtual bool isPasswordField() const = 0;
-    virtual bool isContainedByPasswordField() const = 0;
-    virtual AXCoreObject* passwordFieldOrContainingPasswordField() = 0;
     virtual bool isNativeTextControl() const = 0;
     bool isWebArea() const { return roleValue() == AccessibilityRole::WebArea; }
     bool isCheckbox() const { return roleValue() == AccessibilityRole::CheckBox; }
@@ -978,7 +970,6 @@ public:
 
     virtual bool isLandmark() const = 0;
     virtual bool isStyleFormatGroup() const = 0;
-    virtual bool isFigureElement() const = 0;
     virtual bool isKeyboardFocusable() const = 0;
 
     virtual bool isChecked() const = 0;
@@ -1079,7 +1070,6 @@ public:
 
     virtual bool hasPopup() const = 0;
     virtual String popupValue() const = 0;
-    virtual bool hasDatalist() const = 0;
     virtual bool supportsHasPopup() const = 0;
     virtual bool pressedIsPresent() const = 0;
     virtual bool ariaIsMultiline() const = 0;
@@ -1097,8 +1087,6 @@ public:
     virtual bool supportsCurrent() const = 0;
     virtual const String keyShortcutsValue() const = 0;
 
-    // This function checks if the object should be ignored when there's a modal dialog displayed.
-    virtual bool isModalDescendant(Node*) const = 0;
     virtual bool isModalNode() const = 0;
 
     virtual bool supportsSetSize() const = 0;
@@ -1175,7 +1163,6 @@ public:
     virtual String ariaLabeledByAttribute() const = 0;
     virtual String ariaDescribedByAttribute() const = 0;
     virtual const String placeholderValue() const = 0;
-    virtual bool accessibleNameDerivesFromContent() const = 0;
 
     // Abbreviations
     virtual String expandedTextValue() const = 0;
@@ -1305,15 +1292,9 @@ public:
     virtual String stringForRange(const SimpleRange&) const = 0;
     virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const = 0;
     virtual IntRect boundsForRange(const SimpleRange&) const = 0;
-    virtual int lengthForVisiblePositionRange(const VisiblePositionRange&) const = 0;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const = 0;
 
-    virtual VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const = 0;
     virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const = 0;
-    virtual VisiblePosition nextVisiblePosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition previousVisiblePosition(const VisiblePosition&) const = 0;
-    virtual VisiblePosition nextWordEnd(const VisiblePosition&) const = 0;
-    virtual VisiblePosition previousWordStart(const VisiblePosition&) const = 0;
     virtual VisiblePosition nextLineEndPosition(const VisiblePosition&) const = 0;
     virtual VisiblePosition previousLineStartPosition(const VisiblePosition&) const = 0;
     virtual VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const = 0;
@@ -1325,12 +1306,10 @@ public:
     virtual VisiblePosition visiblePositionForIndex(int) const = 0;
     virtual int indexForVisiblePosition(const VisiblePosition&) const = 0;
 
-    virtual AXCoreObject* accessibilityObjectForPosition(const VisiblePosition&) const = 0;
     virtual int lineForPosition(const VisiblePosition&) const = 0;
     virtual PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const = 0;
     virtual int index(const VisiblePosition&) const = 0;
 
-    virtual void lineBreaks(Vector<int>&) const = 0;
     virtual PlainTextRange doAXRangeForLine(unsigned) const = 0;
     virtual PlainTextRange doAXRangeForPosition(const IntPoint&) const = 0;
     virtual PlainTextRange doAXRangeForIndex(unsigned) const = 0;

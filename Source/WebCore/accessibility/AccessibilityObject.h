@@ -110,9 +110,7 @@ public:
     bool isAccessibilityRenderObject() const override { return false; }
     bool isAccessibilityScrollbar() const override { return false; }
     bool isAccessibilityScrollViewInstance() const override { return false; }
-    bool isAXImageInstance() const override { return false; }
-    bool isAccessibilitySVGRoot() const override { return false; }
-    bool isAccessibilitySVGElement() const override { return false; }
+    virtual bool isAccessibilitySVGRoot() const { return false; }
     bool isAccessibilityTableInstance() const override { return false; }
     bool isAccessibilityTableColumnInstance() const override { return false; }
     bool isAccessibilityARIAGridInstance() const override { return false; }
@@ -122,14 +120,11 @@ public:
     bool isAccessibilityListBoxInstance() const override { return false; }
     bool isAXIsolatedObjectInstance() const override { return false; }
 
-    bool isAttachmentElement() const override { return false; }
+    virtual bool isAttachmentElement() const { return false; }
     bool isHeading() const override { return false; }
     bool isLink() const override { return false; }
-    bool isNativeImage() const override { return false; }
-    bool isImageButton() const override { return false; }
     bool isPasswordField() const override { return false; }
-    bool isContainedByPasswordField() const override;
-    AccessibilityObject* passwordFieldOrContainingPasswordField() override { return nullptr; }
+    bool isContainedByPasswordField() const;
     bool isNativeTextControl() const override { return false; }
     virtual bool isSearchField() const { return false; }
     bool isListBoxOption() const override { return false; }
@@ -219,7 +214,7 @@ public:
     bool isRangeControl() const;
     bool isMeter() const;
     bool isStyleFormatGroup() const override;
-    bool isFigureElement() const override;
+    bool isFigureElement() const;
     bool isKeyboardFocusable() const override;
     bool isOutput() const;
 
@@ -310,7 +305,7 @@ public:
 
     bool hasPopup() const override { return false; }
     String popupValue() const override;
-    bool hasDatalist() const override;
+    bool hasDatalist() const;
     bool supportsHasPopup() const override;
     bool pressedIsPresent() const override;
     bool ariaIsMultiline() const override;
@@ -332,7 +327,7 @@ public:
 
     // This function checks if the object should be ignored when there's a modal dialog displayed.
     virtual bool ignoredFromModalPresence() const;
-    bool isModalDescendant(Node*) const override;
+    bool isModalDescendant(Node*) const;
     bool isModalNode() const override;
 
     bool supportsSetSize() const override;
@@ -409,7 +404,7 @@ public:
     String ariaLabeledByAttribute() const override { return String(); }
     String ariaDescribedByAttribute() const override { return String(); }
     const String placeholderValue() const override;
-    bool accessibleNameDerivesFromContent() const override;
+    bool accessibleNameDerivesFromContent() const;
     String brailleLabel() const override { return getAttribute(HTMLNames::aria_braillelabelAttr); }
     String brailleRoleDescription() const override { return getAttribute(HTMLNames::aria_brailleroledescriptionAttr); }
     String embeddedImageDescription() const override;
@@ -567,15 +562,9 @@ public:
     String stringForRange(const SimpleRange&) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override { return IntRect(); }
     IntRect boundsForRange(const SimpleRange&) const override { return IntRect(); }
-    int lengthForVisiblePositionRange(const VisiblePositionRange&) const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override { }
 
-    VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const override;
     VisiblePosition visiblePositionForPoint(const IntPoint&) const override { return VisiblePosition(); }
-    VisiblePosition nextVisiblePosition(const VisiblePosition& visiblePos) const override { return visiblePos.next(); }
-    VisiblePosition previousVisiblePosition(const VisiblePosition& visiblePos) const override { return visiblePos.previous(); }
-    VisiblePosition nextWordEnd(const VisiblePosition&) const override;
-    VisiblePosition previousWordStart(const VisiblePosition&) const override;
     VisiblePosition nextLineEndPosition(const VisiblePosition&) const override;
     VisiblePosition previousLineStartPosition(const VisiblePosition&) const override;
     VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const override;
@@ -587,12 +576,10 @@ public:
     VisiblePosition visiblePositionForIndex(int) const override { return VisiblePosition(); }
     int indexForVisiblePosition(const VisiblePosition&) const override { return 0; }
 
-    AccessibilityObject* accessibilityObjectForPosition(const VisiblePosition&) const override;
     int lineForPosition(const VisiblePosition&) const override;
     PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const override;
     int index(const VisiblePosition&) const override { return -1; }
 
-    void lineBreaks(Vector<int>&) const override { }
     PlainTextRange doAXRangeForLine(unsigned) const override { return PlainTextRange(); }
     PlainTextRange doAXRangeForPosition(const IntPoint&) const override;
     PlainTextRange doAXRangeForIndex(unsigned) const override { return PlainTextRange(); }

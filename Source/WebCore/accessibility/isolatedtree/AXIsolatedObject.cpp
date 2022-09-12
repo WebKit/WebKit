@@ -997,47 +997,11 @@ IntRect AXIsolatedObject::boundsForVisiblePositionRange(const VisiblePositionRan
     return { };
 }
 
-int AXIsolatedObject::lengthForVisiblePositionRange(const VisiblePositionRange&) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-VisiblePosition AXIsolatedObject::visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
 VisiblePosition AXIsolatedObject::visiblePositionForPoint(const IntPoint& point) const
 {
     ASSERT(isMainThread());
     auto* axObject = associatedAXObject();
     return axObject ? axObject->visiblePositionForPoint(point) : VisiblePosition();
-}
-
-VisiblePosition AXIsolatedObject::nextVisiblePosition(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-VisiblePosition AXIsolatedObject::previousVisiblePosition(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-VisiblePosition AXIsolatedObject::nextWordEnd(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
-}
-
-VisiblePosition AXIsolatedObject::previousWordStart(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return { };
 }
 
 VisiblePosition AXIsolatedObject::nextLineEndPosition(const VisiblePosition&) const
@@ -1089,12 +1053,6 @@ int AXIsolatedObject::indexForVisiblePosition(const VisiblePosition&) const
     return 0;
 }
 
-AXCoreObject* AXIsolatedObject::accessibilityObjectForPosition(const VisiblePosition&) const
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 PlainTextRange AXIsolatedObject::plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const
 {
     ASSERT_NOT_REACHED();
@@ -1105,11 +1063,6 @@ int AXIsolatedObject::index(const VisiblePosition&) const
 {
     ASSERT_NOT_REACHED();
     return 0;
-}
-
-void AXIsolatedObject::lineBreaks(Vector<int>&) const
-{
-    ASSERT_NOT_REACHED();
 }
 
 Vector<SimpleRange> AXIsolatedObject::findTextRanges(const AccessibilitySearchTextCriteria& criteria) const
@@ -1270,24 +1223,6 @@ bool AXIsolatedObject::isAccessibilityScrollViewInstance() const
     return false;
 }
 
-bool AXIsolatedObject::isAXImageInstance() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isAccessibilitySVGRoot() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isAccessibilitySVGElement() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isAccessibilityTableInstance() const
 {
     ASSERT_NOT_REACHED();
@@ -1310,36 +1245,6 @@ bool AXIsolatedObject::isAccessibilityListBoxInstance() const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-bool AXIsolatedObject::isAttachmentElement() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isNativeImage() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isImageButton() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isContainedByPasswordField() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-AXCoreObject* AXIsolatedObject::passwordFieldOrContainingPasswordField()
-{
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 bool AXIsolatedObject::isNativeTextControl() const
@@ -1677,12 +1582,6 @@ bool AXIsolatedObject::isNonNativeTextControl() const
     return false;
 }
 
-bool AXIsolatedObject::isFigureElement() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::isIndeterminate() const
 {
     ASSERT_NOT_REACHED();
@@ -1809,12 +1708,6 @@ float AXIsolatedObject::stepValueForRange() const
     return 0;
 }
 
-bool AXIsolatedObject::hasDatalist() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool AXIsolatedObject::supportsHasPopup() const
 {
     ASSERT_NOT_REACHED();
@@ -1828,12 +1721,6 @@ bool AXIsolatedObject::supportsPressed() const
 }
 
 bool AXIsolatedObject::supportsChecked() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool AXIsolatedObject::isModalDescendant(Node*) const
 {
     ASSERT_NOT_REACHED();
     return false;
@@ -1938,12 +1825,6 @@ String AXIsolatedObject::ariaDescribedByAttribute() const
 {
     ASSERT_NOT_REACHED();
     return String();
-}
-
-bool AXIsolatedObject::accessibleNameDerivesFromContent() const
-{
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 AXObjectCache* AXIsolatedObject::axObjectCache() const

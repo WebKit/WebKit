@@ -59,7 +59,6 @@ public:
     bool isGroup() const override;
     bool isHeading() const override;
     bool isHovered() const override;
-    bool isImageButton() const override;
     bool isInputImage() const override;
     bool isLink() const override;
     bool isMenu() const override;
@@ -69,10 +68,9 @@ public:
     bool isMenuRelated() const override;
     bool isMultiSelectable() const override;
     virtual bool isNativeCheckboxOrRadio() const;
-    bool isNativeImage() const override;
+    bool isNativeImage() const;
     bool isNativeTextControl() const override;
     bool isPasswordField() const override;
-    AccessibilityObject* passwordFieldOrContainingPasswordField() override;
     bool isProgressIndicator() const override;
     bool isSearchField() const override;
     bool isSlider() const override;

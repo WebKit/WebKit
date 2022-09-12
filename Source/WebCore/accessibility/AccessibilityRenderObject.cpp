@@ -986,7 +986,7 @@ IntPoint AccessibilityRenderObject::linkClickPoint()
      */
     if (auto range = elementRange()) {
         auto start = VisiblePosition { makeContainerOffsetPosition(range->start) };
-        auto end = nextVisiblePosition(start);
+        auto end = start.next();
         if (contains<ComposedTree>(*range, makeBoundaryPoint(end)))
             return { boundsForRange(*makeSimpleRange(start, end)).center() };
     }
@@ -2431,21 +2431,6 @@ int AccessibilityRenderObject::index(const VisiblePosition& position) const
     return -1;
 }
 
-void AccessibilityRenderObject::lineBreaks(Vector<int>& lineBreaks) const
-{
-    if (!isTextControl())
-        return;
-
-    VisiblePosition visiblePos = visiblePositionForIndex(0);
-    VisiblePosition savedVisiblePos = visiblePos;
-    visiblePos = nextLinePosition(visiblePos, 0);
-    while (!visiblePos.isNull() && visiblePos != savedVisiblePos) {
-        lineBreaks.append(indexForVisiblePosition(visiblePos));
-        savedVisiblePos = visiblePos;
-        visiblePos = nextLinePosition(visiblePos, 0);
-    }
-}
-
 static bool isHardLineBreak(const VisiblePosition& position)
 {
     if (!isEndOfLine(position))
@@ -3028,10 +3013,7 @@ AccessibilitySVGRoot* AccessibilityRenderObject::remoteSVGRootElement(CreationCh
     AccessibilityObject* rootSVGObject = createIfNecessary == Create ? cache->getOrCreate(rendererRoot) : cache->get(rendererRoot);
 
     ASSERT(!createIfNecessary || rootSVGObject);
-    if (!is<AccessibilitySVGRoot>(rootSVGObject))
-        return nullptr;
-
-    return downcast<AccessibilitySVGRoot>(rootSVGObject);
+    return dynamicDowncast<AccessibilitySVGRoot>(rootSVGObject);
 }
     
 void AccessibilityRenderObject::addRemoteSVGChildren()
