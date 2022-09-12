@@ -6399,7 +6399,7 @@ bool CSSPropertyParser::consumeListStyleShorthand(bool important)
         return false;
     }
 
-    if (noneCount > (!parsedImage + !parsedType))
+    if (noneCount > (static_cast<unsigned>(!parsedImage + !parsedType)))
         return false;
 
     // Use the implicit initial value for list-style-image, to serialize to "none" instead of "none none".
