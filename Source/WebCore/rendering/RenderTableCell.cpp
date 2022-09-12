@@ -1333,17 +1333,19 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoin
     LayoutRect paintRect = LayoutRect(paintOffset, frameRect().size());
     adjustBorderBoxRectForPainting(paintRect);
 
-    paintBoxShadow(paintInfo, paintRect, style(), ShadowStyle::Normal);
+    BackgroundPainter backgroundPainter { *this, paintInfo };
+    backgroundPainter.paintBoxShadow(paintRect, style(), ShadowStyle::Normal);
     
     // Paint our cell background.
     paintBackgroundsBehindCell(paintInfo, paintOffset, this);
 
-    paintBoxShadow(paintInfo, paintRect, style(), ShadowStyle::Inset);
+    backgroundPainter.paintBoxShadow(paintRect, style(), ShadowStyle::Inset);
 
     if (!style().hasBorder() || table->collapseBorders())
         return;
 
-    BorderPainter { *this, paintInfo }.paintBorder(paintRect, style());
+    BorderPainter borderPainter { *this, paintInfo };
+    borderPainter.paintBorder(paintRect, style());
 }
 
 void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -1359,11 +1361,6 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOf
     adjustBorderBoxRectForPainting(paintRect);
 
     paintMaskImages(paintInfo, paintRect);
-}
-
-bool RenderTableCell::boxShadowShouldBeAppliedToBackground(const LayoutPoint&, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&) const
-{
-    return false;
 }
 
 void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged)

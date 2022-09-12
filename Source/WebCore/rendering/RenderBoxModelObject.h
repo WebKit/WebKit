@@ -180,10 +180,6 @@ public:
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
 
-    void paintBoxShadow(const PaintInfo&, const LayoutRect&, const RenderStyle&, ShadowStyle, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
-
-    virtual bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& absolutePaintPostion, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&) const;
-
     // Overridden by subclasses to determine line height and baseline position.
     virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
     virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;

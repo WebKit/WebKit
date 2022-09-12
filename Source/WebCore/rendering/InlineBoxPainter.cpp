@@ -225,7 +225,7 @@ void InlineBoxPainter::paintDecorations()
     GraphicsContext& context = m_paintInfo.context();
     LayoutRect paintRect = LayoutRect(adjustedPaintoffset, localRect.size());
     // Shadow comes first and is behind the background and border.
-    if (!renderer().boxShadowShouldBeAppliedToBackground(adjustedPaintoffset, BackgroundBleedNone, m_inlineBox))
+    if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(renderer(), adjustedPaintoffset, BackgroundBleedNone, m_inlineBox))
         paintBoxShadow(ShadowStyle::Normal, paintRect);
 
     auto color = style.visitedDependentColor(CSSPropertyBackgroundColor);
@@ -350,16 +350,18 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
 
 void InlineBoxPainter::paintBoxShadow(ShadowStyle shadowStyle, const LayoutRect& paintRect)
 {
+    BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
+
     bool hasSingleLine = !m_inlineBox.previousInlineBox() && !m_inlineBox.nextInlineBox();
     if (hasSingleLine || m_isRootInlineBox) {
-        renderer().paintBoxShadow(m_paintInfo, paintRect, style(), shadowStyle);
+        backgroundPainter.paintBoxShadow(paintRect, style(), shadowStyle);
         return;
     }
 
     // FIXME: We can do better here in the multi-line case. We want to push a clip so that the shadow doesn't
     // protrude incorrectly at the edges, and we want to possibly include shadows cast from the previous/following lines
     auto [hasClosedLeftEdge, hasClosedRightEdge] = m_inlineBox.hasClosedLeftAndRightEdge();
-    renderer().paintBoxShadow(m_paintInfo, paintRect, style(), shadowStyle, hasClosedLeftEdge, hasClosedRightEdge);
+    backgroundPainter.paintBoxShadow(paintRect, style(), shadowStyle, hasClosedLeftEdge, hasClosedRightEdge);
 }
 
 const RenderStyle& InlineBoxPainter::style() const

@@ -153,8 +153,6 @@ private:
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&) override;
     void paintMask(PaintInfo&, const LayoutPoint&) override;
 
-    bool boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance, const InlineIterator::InlineBoxIterator&) const override;
-
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const override;
     std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const override;
 

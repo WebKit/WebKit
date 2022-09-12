@@ -1596,23 +1596,6 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
 
 // --------------------- painting stuff -------------------------------
 
-void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
-{
-    ASSERT(isDocumentElementRenderer());
-    if (paintInfo.skipRootBackground())
-        return;
-
-    auto* rootBackgroundRenderer = view().rendererForRootBackground();
-    if (!rootBackgroundRenderer)
-        return;
-
-    auto& style = rootBackgroundRenderer->style();
-    auto color = style.visitedDependentColor(CSSPropertyBackgroundColor);
-    auto compositeOp = document().compositeOperatorForBackgroundColor(color, *this);
-
-    BackgroundPainter { *this, paintInfo }.paintFillLayers(style.colorByApplyingColorFilter(color), style.backgroundLayers(), view().backgroundRect(), BackgroundBleedNone, compositeOp, rootBackgroundRenderer);
-}
-
 BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext& context) const
 {
     if (context.paintingDisabled())
@@ -1660,10 +1643,12 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     paintRect = theme().adjustedPaintRect(*this, paintRect);
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context());
 
+    BackgroundPainter backgroundPainter { *this, paintInfo };
+
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
     // custom shadows of their own.
-    if (!boxShadowShouldBeAppliedToBackground(paintRect.location(), bleedAvoidance, { }))
-        paintBoxShadow(paintInfo, paintRect, style(), ShadowStyle::Normal);
+    if (!BackgroundPainter::boxShadowShouldBeAppliedToBackground(*this, paintRect.location(), bleedAvoidance, { }))
+        backgroundPainter.paintBoxShadow(paintRect, style(), ShadowStyle::Normal);
 
     GraphicsContextStateSaver stateSaver(paintInfo.context(), false);
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {
@@ -1691,12 +1676,12 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
         if (bleedAvoidance == BackgroundBleedBackgroundOverBorder)
             borderPainter.paintBorder(paintRect, style(), bleedAvoidance);
 
-        paintBackground(paintInfo, paintRect, bleedAvoidance);
+        backgroundPainter.paintBackground(paintRect, bleedAvoidance);
 
         if (style().hasEffectiveAppearance())
             theme().paintDecorations(*this, paintInfo, paintRect);
     }
-    paintBoxShadow(paintInfo, paintRect, style(), ShadowStyle::Inset);
+    backgroundPainter.paintBoxShadow(paintRect, style(), ShadowStyle::Inset);
 
     // The theme will tell us whether or not we should also paint the CSS border.
     if (bleedAvoidance != BackgroundBleedBackgroundOverBorder && (!style().hasEffectiveAppearance() || (borderOrBackgroundPaintingIsNeeded && theme().paintBorderOnly(*this, paintInfo, paintRect))) && style().hasVisibleBorderDecoration())
@@ -1704,39 +1689,6 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context().endTransparencyLayer();
-}
-
-bool RenderBox::paintsOwnBackground() const
-{
-    if (isBody()) {
-        // The <body> only paints its background if the root element has defined a background independent of the body,
-        // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
-        auto documentElementRenderer = document().documentElement()->renderer();
-        return !documentElementRenderer
-            || documentElementRenderer->hasBackground()
-            || (documentElementRenderer != parent());
-    }
-    
-    return true;
-}
-
-void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance)
-{
-    if (isDocumentElementRenderer()) {
-        paintRootBoxFillLayers(paintInfo);
-        return;
-    }
-
-    if (!paintsOwnBackground())
-        return;
-
-    if (backgroundIsKnownToBeObscured(paintRect.location()) && !boxShadowShouldBeAppliedToBackground(paintRect.location(), bleedAvoidance, { }))
-        return;
-
-    auto backgroundColor = style().visitedDependentColor(CSSPropertyBackgroundColor);
-    auto compositeOp = document().compositeOperatorForBackgroundColor(backgroundColor, *this);
-
-    BackgroundPainter { *this, paintInfo }.paintFillLayers(style().colorByApplyingColorFilter(backgroundColor), style().backgroundLayers(), paintRect, bleedAvoidance, compositeOp);
 }
 
 bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, LayoutRect& paintedExtent) const
@@ -1763,7 +1715,7 @@ bool RenderBox::getBackgroundPaintedExtent(const LayoutPoint& paintOffset, Layou
 
 bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
 {
-    if (!paintsOwnBackground())
+    if (!BackgroundPainter::paintsOwnBackground(*this))
         return false;
 
     Color backgroundColor = style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);

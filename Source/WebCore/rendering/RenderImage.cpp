@@ -708,14 +708,6 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     return drawResult;
 }
 
-bool RenderImage::boxShadowShouldBeAppliedToBackground(const LayoutPoint& paintOffset, BackgroundBleedAvoidance bleedAvoidance, const InlineIterator::InlineBoxIterator&) const
-{
-    if (!RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(paintOffset, bleedAvoidance, { }))
-        return false;
-
-    return !const_cast<RenderImage*>(this)->backgroundIsKnownToBeObscured(paintOffset);
-}
-
 bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const
 {
     UNUSED_PARAM(maxDepthToTest);
