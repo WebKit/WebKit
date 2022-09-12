@@ -6,8 +6,6 @@ set(test_main_SOURCES
 
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
-
-    generic/UtilitiesGeneric.cpp
 )
 list(APPEND TestWTF_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBKIT_LIBRARIES_DIR}/include
@@ -30,8 +28,6 @@ list(APPEND TestWebCore_PRIVATE_INCLUDE_DIRECTORIES
 # TestWebKit
 if (ENABLE_WEBKIT)
     target_sources(TestWebKitAPIInjectedBundle PRIVATE
-        generic/UtilitiesGeneric.cpp
-
         playstation/PlatformUtilitiesPlayStation.cpp
     )
 
