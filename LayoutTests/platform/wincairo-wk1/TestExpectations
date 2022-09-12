@@ -528,11 +528,10 @@ js/dom/global-function-resolve.html [ Skip ]
 # DRT doesn't support testRunner.loadedSubresourceDomains
 http/tests/websocket/web-socket-loads-captured-in-per-page-domains.html [ Skip ]
 
-# :dir pseudo class isn't enabled yet.
-fast/css/dir-pseudo-on-bdi-element.html [ Failure ]
-fast/css/dir-pseudo-on-input-element.html [ Failure ]
-
 # Skip Compression Stream Tests on WK1
 imported/w3c/web-platform-tests/compression [ Skip ]
 
 fast/dom/HTMLLinkElement/link-preload-load-once.html [ Failure ]
+
+webgl/webgl-draft-extensions-flag-default.html [ Failure ]
+webgl/webgl-draft-extensions-flag-on.html [ Failure ]

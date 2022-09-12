@@ -1038,7 +1038,6 @@ css3/escape-dom-api.html [ Skip ]
 webkit.org/b/149630 css3/font-variant-all.html [ ImageOnlyFailure ]
 
 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
-css3/font-variant-synthesis-jdaggett.html [ ImageOnlyFailure ]
 
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html [ Skip ]
