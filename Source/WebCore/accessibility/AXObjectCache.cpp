@@ -2678,7 +2678,7 @@ CharacterOffset AXObjectCache::characterOffsetFromVisiblePosition(const VisibleP
     VisiblePosition previousVisiblePos;
     while (!currentPosition.isNull() && !deepPos.equals(currentPosition)) {
         previousVisiblePos = visiblePosition;
-        visiblePosition = obj->nextVisiblePosition(visiblePosition);
+        visiblePosition = visiblePosition.next();
         currentPosition = visiblePosition.deepEquivalent();
         Position previousPosition = previousVisiblePos.deepEquivalent();
         // Sometimes nextVisiblePosition will give the same VisiblePostion,
@@ -3330,15 +3330,6 @@ CharacterOffset AXObjectCache::characterOffsetForIndex(int index, const AXCoreOb
             break;
     }
     return result;
-}
-
-int AXObjectCache::indexForCharacterOffset(const CharacterOffset& characterOffset, AccessibilityObject* obj)
-{
-    // Create a collapsed range so that we can get the VisiblePosition from it.
-    auto range = rangeForUnorderedCharacterOffsets(characterOffset, characterOffset);
-    if (!range)
-        return 0;
-    return obj->indexForVisiblePosition(makeContainerOffsetPosition(range->start));
 }
 
 const Element* AXObjectCache::rootAXEditableElement(const Node* node)

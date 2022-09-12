@@ -554,11 +554,6 @@ bool AccessibilityNodeObject::canvasHasFallbackContent() const
     return childrenOfType<Element>(canvasElement).first();
 }
 
-bool AccessibilityNodeObject::isImageButton() const
-{
-    return isNativeImage() && isButton();
-}
-
 bool AccessibilityNodeObject::isNativeTextControl() const
 {
     Node* node = this->node();
@@ -637,25 +632,6 @@ bool AccessibilityNodeObject::isPasswordField() const
         return false;
 
     return downcast<HTMLInputElement>(*node).isPasswordField();
-}
-
-AccessibilityObject* AccessibilityNodeObject::passwordFieldOrContainingPasswordField()
-{
-    Node* node = this->node();
-    if (!node)
-        return nullptr;
-
-    if (is<HTMLInputElement>(*node) && downcast<HTMLInputElement>(*node).isPasswordField())
-        return this;
-
-    auto* element = node->shadowHost();
-    if (!is<HTMLInputElement>(element))
-        return nullptr;
-
-    if (auto* cache = axObjectCache())
-        return cache->getOrCreate(element);
-
-    return nullptr;
 }
 
 bool AccessibilityNodeObject::isInputImage() const

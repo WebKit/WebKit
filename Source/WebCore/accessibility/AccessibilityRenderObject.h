@@ -172,7 +172,6 @@ public:
     VisiblePosition visiblePositionForIndex(int) const override;
     int indexForVisiblePosition(const VisiblePosition&) const override;
 
-    void lineBreaks(Vector<int>&) const override;
     PlainTextRange doAXRangeForLine(unsigned) const override;
     PlainTextRange doAXRangeForIndex(unsigned) const override;
     

@@ -274,7 +274,6 @@ public:
     
     // Index
     CharacterOffset characterOffsetForIndex(int, const AXCoreObject*);
-    int indexForCharacterOffset(const CharacterOffset&, AccessibilityObject*);
 
     enum AXNotification {
         AXActiveDescendantChanged,

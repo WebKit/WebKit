@@ -398,13 +398,7 @@ private:
     String stringForRange(const SimpleRange&) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
     IntRect boundsForRange(const SimpleRange&) const override;
-    int lengthForVisiblePositionRange(const VisiblePositionRange&) const override;
-    VisiblePosition visiblePositionForBounds(const IntRect&, AccessibilityVisiblePositionForBounds) const override;
     VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
-    VisiblePosition nextVisiblePosition(const VisiblePosition&) const override;
-    VisiblePosition previousVisiblePosition(const VisiblePosition&) const override;
-    VisiblePosition nextWordEnd(const VisiblePosition&) const override;
-    VisiblePosition previousWordStart(const VisiblePosition&) const override;
     VisiblePosition nextLineEndPosition(const VisiblePosition&) const override;
     VisiblePosition previousLineStartPosition(const VisiblePosition&) const override;
     VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const override;
@@ -414,12 +408,10 @@ private:
     VisiblePosition visiblePositionForIndex(unsigned, bool lastIndexOK) const override;
     VisiblePosition visiblePositionForIndex(int) const override;
     int indexForVisiblePosition(const VisiblePosition&) const override;
-    AXCoreObject* accessibilityObjectForPosition(const VisiblePosition&) const override;
     int lineForPosition(const VisiblePosition&) const override;
     PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const override;
     std::optional<SimpleRange> visibleCharacterRange() const override;
     int index(const VisiblePosition&) const override;
-    void lineBreaks(Vector<int>&) const override;
     FloatRect unobscuredContentRect() const override;
     
     // Attribute setters.
@@ -461,9 +453,6 @@ private:
     bool isAccessibilityRenderObject() const override;
     bool isAccessibilityScrollbar() const override;
     bool isAccessibilityScrollViewInstance() const override;
-    bool isAXImageInstance() const override;
-    bool isAccessibilitySVGRoot() const override;
-    bool isAccessibilitySVGElement() const override;
     bool isAccessibilityTableInstance() const override;
     bool isAccessibilityTableColumnInstance() const override;
     bool isAccessibilityARIAGridInstance() const override { return false; }
@@ -472,11 +461,6 @@ private:
     bool isAccessibilityProgressIndicatorInstance() const override;
     bool isAccessibilityListBoxInstance() const override;
 
-    bool isAttachmentElement() const override;
-    bool isNativeImage() const override;
-    bool isImageButton() const override;
-    bool isContainedByPasswordField() const override;
-    AXCoreObject* passwordFieldOrContainingPasswordField() override;
     bool isNativeTextControl() const override;
     bool isListBoxOption() const override;
     bool isSliderThumb() const override;
@@ -489,7 +473,6 @@ private:
     bool isMediaObject() const override;
     bool isARIATextControl() const override;
     bool isNonNativeTextControl() const override;
-    bool isFigureElement() const override;
     bool isIndeterminate() const override;
     bool isLoaded() const override { return loadingProgress() >= 1; }
     bool isOnScreen() const override;
@@ -516,11 +499,9 @@ private:
 
     AccessibilityChildrenVector relatedObjects(AXRelationType) const override;
 
-    bool hasDatalist() const override;
     bool supportsHasPopup() const override;
     bool supportsPressed() const override;
     bool supportsChecked() const override;
-    bool isModalDescendant(Node*) const override;
     bool isModalNode() const override;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
     AXCoreObject* parentObjectIfExists() const override;
@@ -540,7 +521,6 @@ private:
     String text() const override;
     String ariaLabeledByAttribute() const override;
     String ariaDescribedByAttribute() const override;
-    bool accessibleNameDerivesFromContent() const override;
     AXObjectCache* axObjectCache() const override;
     Element* anchorElement() const override;
     Element* actionElement() const override;
