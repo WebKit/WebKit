@@ -34,7 +34,7 @@ namespace WebCore {
 
 IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionProxy& connectionProxy, const IDBOpenDBRequest& request)
     : m_serverConnectionIdentifier(connectionProxy.serverConnectionIdentifier())
-    , m_requestIdentifier(makeUnique<IDBResourceIdentifier>(connectionProxy, request))
+    , m_requestIdentifier(IDBResourceIdentifier { connectionProxy, request })
     , m_databaseIdentifier(request.databaseIdentifier())
     , m_requestedVersion(request.version())
     , m_requestType(request.requestType())
@@ -43,8 +43,8 @@ IDBRequestData::IDBRequestData(const IDBClient::IDBConnectionProxy& connectionPr
 
 IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
     : m_serverConnectionIdentifier(operation.transaction().database().connectionProxy().serverConnectionIdentifier())
-    , m_requestIdentifier(makeUnique<IDBResourceIdentifier>(operation.identifier()))
-    , m_transactionIdentifier(makeUnique<IDBResourceIdentifier>(operation.transactionIdentifier()))
+    , m_requestIdentifier(operation.identifier())
+    , m_transactionIdentifier(operation.transactionIdentifier())
     , m_objectStoreIdentifier(operation.objectStoreIdentifier())
     , m_indexIdentifier(operation.indexIdentifier())
 {
@@ -52,11 +52,28 @@ IDBRequestData::IDBRequestData(IDBClient::TransactionOperation& operation)
         m_indexRecordType = operation.indexRecordType();
 
     if (operation.cursorIdentifier())
-        m_cursorIdentifier = makeUnique<IDBResourceIdentifier>(*operation.cursorIdentifier());
+        m_cursorIdentifier = *operation.cursorIdentifier();
+}
+
+IDBRequestData::IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, std::optional<IDBResourceIdentifier>&& transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType indexRecordType, std::optional<IDBDatabaseIdentifier>&& databaseIdentifier, uint64_t requestedVersion, IndexedDB::RequestType requestType)
+    : m_serverConnectionIdentifier(serverConnectionIdentifier)
+    , m_requestIdentifier(requestIdentifier)
+    , m_transactionIdentifier(WTFMove(transactionIdentifier))
+    , m_cursorIdentifier(WTFMove(cursorIdentifier))
+    , m_objectStoreIdentifier(objectStoreIdentifier)
+    , m_indexIdentifier(indexIdentifier)
+    , m_indexRecordType(WTFMove(indexRecordType))
+    , m_databaseIdentifier(WTFMove(databaseIdentifier))
+    , m_requestedVersion(requestedVersion)
+    , m_requestType(requestType)
+{
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& other)
     : m_serverConnectionIdentifier(other.m_serverConnectionIdentifier)
+    , m_requestIdentifier(other.m_requestIdentifier)
+    , m_transactionIdentifier(other.m_transactionIdentifier)
+    , m_cursorIdentifier(other.m_cursorIdentifier)
     , m_objectStoreIdentifier(other.m_objectStoreIdentifier)
     , m_indexIdentifier(other.m_indexIdentifier)
     , m_indexRecordType(other.m_indexRecordType)
@@ -64,12 +81,6 @@ IDBRequestData::IDBRequestData(const IDBRequestData& other)
     , m_requestedVersion(other.m_requestedVersion)
     , m_requestType(other.m_requestType)
 {
-    if (other.m_requestIdentifier)
-        m_requestIdentifier = makeUnique<IDBResourceIdentifier>(*other.m_requestIdentifier);
-    if (other.m_transactionIdentifier)
-        m_transactionIdentifier = makeUnique<IDBResourceIdentifier>(*other.m_transactionIdentifier);
-    if (other.m_cursorIdentifier)
-        m_cursorIdentifier = makeUnique<IDBResourceIdentifier>(*other.m_cursorIdentifier);
 }
 
 IDBRequestData::IDBRequestData(const IDBRequestData& that, IsolatedCopyTag)
@@ -86,6 +97,9 @@ IDBRequestData IDBRequestData::isolatedCopy() const
 void IDBRequestData::isolatedCopy(const IDBRequestData& source, IDBRequestData& destination)
 {
     destination.m_serverConnectionIdentifier = source.m_serverConnectionIdentifier;
+    destination.m_requestIdentifier = source.m_requestIdentifier;
+    destination.m_transactionIdentifier = source.m_transactionIdentifier;
+    destination.m_cursorIdentifier = source.m_cursorIdentifier;
     destination.m_objectStoreIdentifier = source.m_objectStoreIdentifier;
     destination.m_indexIdentifier = source.m_indexIdentifier;
     destination.m_indexRecordType = source.m_indexRecordType;
@@ -94,13 +108,6 @@ void IDBRequestData::isolatedCopy(const IDBRequestData& source, IDBRequestData& 
 
     if (source.m_databaseIdentifier)
         destination.m_databaseIdentifier = source.m_databaseIdentifier->isolatedCopy();
-
-    if (source.m_requestIdentifier)
-        destination.m_requestIdentifier = makeUnique<IDBResourceIdentifier>(*source.m_requestIdentifier);
-    if (source.m_transactionIdentifier)
-        destination.m_transactionIdentifier = makeUnique<IDBResourceIdentifier>(*source.m_transactionIdentifier);
-    if (source.m_cursorIdentifier)
-        destination.m_cursorIdentifier = makeUnique<IDBResourceIdentifier>(*source.m_cursorIdentifier);
 }
 
 IDBConnectionIdentifier IDBRequestData::serverConnectionIdentifier() const
@@ -111,8 +118,7 @@ IDBConnectionIdentifier IDBRequestData::serverConnectionIdentifier() const
 
 IDBResourceIdentifier IDBRequestData::requestIdentifier() const
 {
-    ASSERT(m_requestIdentifier);
-    return *m_requestIdentifier;
+    return m_requestIdentifier;
 }
 
 IDBResourceIdentifier IDBRequestData::transactionIdentifier() const
@@ -143,6 +149,12 @@ IndexedDB::IndexRecordType IDBRequestData::indexRecordType() const
 {
     ASSERT(m_indexIdentifier);
     return m_indexRecordType;
+}
+
+IDBDatabaseIdentifier IDBRequestData::databaseIdentifier() const
+{
+    ASSERT(m_databaseIdentifier);
+    return m_databaseIdentifier.value_or(IDBDatabaseIdentifier { });
 }
 
 uint64_t IDBRequestData::requestedVersion() const
