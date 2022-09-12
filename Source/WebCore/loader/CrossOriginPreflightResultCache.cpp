@@ -48,7 +48,7 @@ CrossOriginPreflightResultCache::CrossOriginPreflightResultCache()
 static bool parseAccessControlMaxAge(const String& string, Seconds& expiryDelta)
 {
     // FIXME: This should probably reject strings that have a leading "+".
-    auto parsedInteger = parseInteger<uint64_t>(string);
+    auto parsedInteger = parseInteger<int64_t>(string);
     expiryDelta = Seconds(static_cast<double>(parsedInteger.value_or(0)));
     return parsedInteger.has_value();
 }
