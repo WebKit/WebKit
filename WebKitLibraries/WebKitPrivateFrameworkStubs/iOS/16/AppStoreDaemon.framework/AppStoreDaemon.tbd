@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version:     4
+targets:         [ armv7-ios, armv7s-ios, arm64-ios, arm64e-ios, i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator ]
+install-name:    '/System/Library/PrivateFrameworks/AppStoreDaemon.framework/AppStoreDaemon'
+exports:
+  - targets:         [ armv7-ios, armv7s-ios, arm64-ios, arm64e-ios, i386-ios-simulator, x86_64-ios-simulator, arm64-ios-simulator ]
+    objc-classes:    [ ASDInstallAttribution, ASDInstallWebAttributionParamsConfig ]
+...

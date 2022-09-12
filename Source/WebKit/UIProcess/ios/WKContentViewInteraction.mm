@@ -78,6 +78,7 @@
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WKWebViewIOS.h"
+#import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
 #import "WKWebViewPrivateForTesting.h"
 #import "WebAutocorrectionContext.h"

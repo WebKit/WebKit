@@ -122,6 +122,7 @@ typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
 @class WKFrameInfo;
 @class WKSecurityOrigin;
 @class WKWebpagePreferences;
+@class _UIFindInteraction;
 @class _WKApplicationManifest;
 @class _WKDataTask;
 @class _WKFrameHandle;
@@ -504,6 +505,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 
 #if !TARGET_OS_TV && !TARGET_OS_WATCH && __has_include(<UIKit/_UITextSearching.h>)
 @interface WKWebView (WKPrivateIOS) <_UITextSearching, UITextSearching, UIFindInteractionDelegate>
+#elif TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
+@interface WKWebView (WKPrivateIOS) <UITextSearching, UIFindInteractionDelegate>
 #else
 @interface WKWebView (WKPrivateIOS)
 #endif
@@ -513,7 +516,7 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 @property (nonatomic, copy, setter=_setEphemeralUIEventAttribution:) UIEventAttribution *_ephemeralUIEventAttribution WK_API_AVAILABLE(ios(16.0));
 - (void)_setEphemeralUIEventAttribution:(UIEventAttribution *)attribution forApplicationWithBundleID:(NSString *)bundleID WK_API_AVAILABLE(ios(16.0));
 
-#if __has_include(<UIKit/_UIFindInteraction.h>)
+#if TARGET_OS_IOS && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
 @property (nonatomic, readonly) _UIFindInteraction *_findInteraction WK_API_AVAILABLE(ios(16.0));
 @property (nonatomic, readwrite, setter=_setFindInteractionEnabled:) BOOL _findInteractionEnabled WK_API_AVAILABLE(ios(16.0));
 
