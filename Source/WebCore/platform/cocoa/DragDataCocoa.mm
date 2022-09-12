@@ -182,17 +182,21 @@ bool DragData::containsColor() const
 
 bool DragData::containsFiles() const
 {
-    return numberOfFiles();
+    return !m_disallowFileAccess && numberOfFiles();
 }
 
 unsigned DragData::numberOfFiles() const
 {
+    if (m_disallowFileAccess)
+        return 0;
     auto context = createPasteboardContext();
     return platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName, context.get());
 }
 
 Vector<String> DragData::asFilenames() const
 {
+    if (m_disallowFileAccess)
+        return { };
     auto context = createPasteboardContext();
 #if PLATFORM(MAC)
     Vector<String> types;
@@ -264,8 +268,8 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         || types.contains(htmlPasteboardType())
         || types.contains(String(kUTTypeWebArchive))
 #if PLATFORM(MAC)
-        || types.contains(String(legacyFilenamesPasteboardType()))
-        || types.contains(String(legacyFilesPromisePasteboardType()))
+        || (!m_disallowFileAccess && types.contains(String(legacyFilenamesPasteboardType())))
+        || (!m_disallowFileAccess && types.contains(String(legacyFilesPromisePasteboardType())))
 #endif
         || types.contains(tiffPasteboardType())
         || types.contains(pdfPasteboardType())
@@ -282,6 +286,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 bool DragData::containsPromise() const
 {
+    if (m_disallowFileAccess)
+        return false;
     auto context = createPasteboardContext();
     // FIXME: legacyFilesPromisePasteboardType() contains UTIs, not path names. Also, why do we
     // think promises should only contain one file (or UTI)?

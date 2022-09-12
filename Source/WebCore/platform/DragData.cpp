@@ -61,6 +61,12 @@ std::unique_ptr<PasteboardContext> DragData::createPasteboardContext() const
     return PagePasteboardContext::create(std::optional<PageIdentifier> { m_pageID });
 }
 
+void DragData::disallowFileAccess()
+{
+    m_fileNames = { };
+    m_disallowFileAccess = true;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DRAG_SUPPORT)

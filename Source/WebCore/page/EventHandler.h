@@ -353,6 +353,8 @@ public:
     Element* draggingElement() const;
 #endif
 
+    bool canDropCurrentlyDraggedImageAsFile() const;
+
     WEBCORE_EXPORT void invalidateClick();
 
 #if ENABLE(IMAGE_ANALYSIS)

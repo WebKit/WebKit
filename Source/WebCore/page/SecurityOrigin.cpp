@@ -355,6 +355,9 @@ bool SecurityOrigin::canReceiveDragData(const SecurityOrigin& dragInitiator) con
     if (this == &dragInitiator)
         return true;
 
+    if (dragInitiator.isLocal() && isLocal())
+        return true;
+
     return isSameOriginDomain(dragInitiator);
 }
 
