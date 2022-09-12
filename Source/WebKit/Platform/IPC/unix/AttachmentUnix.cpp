@@ -27,6 +27,8 @@
 #include "config.h"
 #include "Attachment.h"
 
+#include "Decoder.h"
+#include "Encoder.h"
 #include <wtf/UniStdExtras.h>
 
 namespace IPC {
