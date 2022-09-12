@@ -1115,23 +1115,31 @@ public:
 
     void storePair32(TrustedImmPtr immPtr, TrustedImm32 imm32, Address address)
     {
-        RegisterID scratch1 = getCachedAddressTempRegisterIDAndInvalidate();
-        move(immPtr, scratch1);
-        RegisterID scratch2 = getCachedDataTempRegisterIDAndInvalidate();
-        move(imm32, scratch2);
-        storePair32(scratch1, scratch2, address);
+        storePair32(TrustedImm32(immPtr), imm32, address);
     }
 
     void storePair32(TrustedImm32 imm1, TrustedImm32 imm2, Address address)
     {
-        RegisterID scratch1 = getCachedAddressTempRegisterIDAndInvalidate();
-        move(imm1, scratch1);
-        RegisterID scratch2 = scratch1;
-        if (imm1.m_value != imm2.m_value) {
-            scratch2 = getCachedDataTempRegisterIDAndInvalidate();
-            move(imm2, scratch2);
+        // We cannot re-use the two register version of `storePair32` defined
+        // below here because we can only use the `addressTempRegister` as a
+        // scratch register if the `strd` case is taken.
+        int32_t absOffset = address.offset;
+        if (absOffset < 0)
+            absOffset = -absOffset;
+        if (!(absOffset & ~0x3fc)) {
+            RegisterID src1 = getCachedAddressTempRegisterIDAndInvalidate();
+            move(imm1, src1);
+            RegisterID src2 = src1;
+            if (imm1.m_value != imm2.m_value) {
+                src2 = getCachedDataTempRegisterIDAndInvalidate();
+                move(imm2, src2);
+            }
+            ASSERT(src1 != address.base && src2 != address.base);
+            m_assembler.strd(src1, src2, address.base, address.offset, /* index: */ true, /* wback: */ false);
+        } else {
+            store32(imm1, address);
+            store32(imm2, address.withOffset(4));
         }
-        storePair32(scratch1, scratch2, address);
     }
 
     void storePair32(RegisterID src1, RegisterID src2, RegisterID dest)
