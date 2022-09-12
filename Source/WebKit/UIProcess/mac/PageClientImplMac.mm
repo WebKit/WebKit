@@ -445,6 +445,11 @@ void PageClientImpl::pinnedStateDidChange()
 {
     [m_webView didChangeValueForKey:@"_pinnedState"];
 }
+
+void PageClientImpl::drawPageBorderForPrinting(WebCore::FloatSize&& size)
+{
+    [m_webView drawPageBorderWithSize:size];
+}
     
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {

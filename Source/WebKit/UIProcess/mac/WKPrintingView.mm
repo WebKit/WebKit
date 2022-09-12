@@ -677,6 +677,10 @@ static NSString *linkDestinationName(PDFDocument *document, PDFDestination *dest
     NSRectClip(footerRect);
     _webFrame->page()->drawFooterForPrinting(*_webFrame, footerRect);
     [currentContext restoreGraphicsState];
+    
+    [currentContext saveGraphicsState];
+    _webFrame->page()->drawPageBorderForPrinting(*_webFrame, static_cast<WebCore::FloatSize>(borderSize));
+    [currentContext restoreGraphicsState];
 }
 
 - (NSRect)rectForPage:(NSInteger)page

@@ -125,6 +125,8 @@ private:
 
     void pinnedStateWillChange() final;
     void pinnedStateDidChange() final;
+        
+    void drawPageBorderForPrinting(WebCore::FloatSize&&) final;
 
     CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const override;
 

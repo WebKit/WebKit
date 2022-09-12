@@ -9180,6 +9180,13 @@ void WebPageProxy::drawFooterForPrinting(WebFrameProxy& frame, FloatRect&& rect)
     m_uiClient->drawFooter(*this, frame, WTFMove(rect));
 }
 
+void WebPageProxy::drawPageBorderForPrinting(WebFrameProxy& frame, WebCore::FloatSize&& size)
+{
+    if (frame.isDisplayingPDFDocument())
+        return;
+    pageClient().drawPageBorderForPrinting(WTFMove(size));
+}
+
 void WebPageProxy::runModal()
 {
     // Since runModal() can (and probably will) spin a nested run loop we need to turn off the responsiveness timer.
