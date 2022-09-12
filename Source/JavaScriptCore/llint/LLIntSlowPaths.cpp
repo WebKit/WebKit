@@ -2092,10 +2092,10 @@ LLINT_SLOW_PATH_DECL(slow_path_construct_varargs)
     return varargsSetup<OpConstructVarargs, SetArgumentsWith::Object>(callFrame, pc, CodeForConstruct);
 }
 
-inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const JSInstruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
+inline SlowPathReturnType commonCallDirectEval(CallFrame* callFrame, const JSInstruction* pc, MacroAssemblerCodeRef<JSEntryPtrTag> returnPoint)
 {
     LLINT_BEGIN_NO_SET_PC();
-    auto bytecode = pc->as<OpCallEval>();
+    auto bytecode = pc->as<OpCallDirectEval>();
     JSValue calleeAsValue = getNonConstantOperand(callFrame, bytecode.m_callee);
     
     CallFrame* calleeFrame = callFrame - bytecode.m_argv;
@@ -2110,25 +2110,27 @@ inline SlowPathReturnType commonCallEval(CallFrame* callFrame, const JSInstructi
     if (!isHostFunction(calleeAsValue, globalFuncEval))
         RELEASE_AND_RETURN(throwScope, setUpCall(calleeFrame, CodeForCall, calleeAsValue));
     
-    vm.encodedHostCallReturnValue = JSValue::encode(eval(globalObject, calleeFrame, bytecode.m_ecmaMode));
+    JSScope* callerScopeChain = jsCast<JSScope*>(getOperand(callFrame, bytecode.m_scope));
+    JSValue thisValue = getOperand(callFrame, bytecode.m_thisValue);
+    vm.encodedHostCallReturnValue = JSValue::encode(eval(calleeFrame, thisValue, callerScopeChain, bytecode.m_ecmaMode));
     DisallowGC disallowGC;
     auto* callerSP = calleeFrame + CallerFrameAndPC::sizeInRegisters;
     LLINT_CALL_RETURN(globalObject, callerSP, LLInt::getHostCallReturnValueEntrypoint().code().taggedPtr(), JSEntryPtrTag);
 }
     
-LLINT_SLOW_PATH_DECL(slow_path_call_eval)
+LLINT_SLOW_PATH_DECL(slow_path_call_direct_eval)
 {
-    return commonCallEval(callFrame, pc, LLInt::genericReturnPointEntrypoint(OpcodeSize::Narrow));
+    return commonCallDirectEval(callFrame, pc, LLInt::genericReturnPointEntrypoint(OpcodeSize::Narrow));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_call_eval_wide16)
+LLINT_SLOW_PATH_DECL(slow_path_call_direct_eval_wide16)
 {
-    return commonCallEval(callFrame, pc, LLInt::genericReturnPointEntrypoint(OpcodeSize::Wide16));
+    return commonCallDirectEval(callFrame, pc, LLInt::genericReturnPointEntrypoint(OpcodeSize::Wide16));
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_call_eval_wide32)
+LLINT_SLOW_PATH_DECL(slow_path_call_direct_eval_wide32)
 {
-    return commonCallEval(callFrame, pc, LLInt::genericReturnPointEntrypoint(OpcodeSize::Wide32));
+    return commonCallDirectEval(callFrame, pc, LLInt::genericReturnPointEntrypoint(OpcodeSize::Wide32));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_strcat)

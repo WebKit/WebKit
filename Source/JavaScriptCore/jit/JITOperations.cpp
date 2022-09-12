@@ -1504,20 +1504,26 @@ JSC_DEFINE_JIT_OPERATION(operationPutByValSetPrivateFieldGeneric, void, (JSGloba
     putPrivateName<false>(globalObject, baseValue, subscript, value);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationCallEval, EncodedJSValue, (JSGlobalObject* globalObject, CallFrame* calleeFrame, ECMAMode ecmaMode))
+JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void* frame, JSScope* callerScopeChain, EncodedJSValue encodedThisValue))
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
+    CallFrame* calleeFrame = bitwise_cast<CallFrame*>(frame);
     calleeFrame->setCodeBlock(nullptr);
-    
+
     if (!isHostFunction(calleeFrame->guaranteedJSValueCallee(), globalFuncEval))
         return JSValue::encode(JSValue());
 
-    JSValue result = eval(globalObject, calleeFrame, ecmaMode);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    
-    return JSValue::encode(result);
+    return JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::sloppy()));
+}
+
+JSC_DEFINE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void* frame, JSScope* callerScopeChain, EncodedJSValue encodedThisValue))
+{
+    CallFrame* calleeFrame = bitwise_cast<CallFrame*>(frame);
+    calleeFrame->setCodeBlock(nullptr);
+
+    if (!isHostFunction(calleeFrame->guaranteedJSValueCallee(), globalFuncEval))
+        return JSValue::encode(JSValue());
+
+    return JSValue::encode(eval(calleeFrame, JSValue::decode(encodedThisValue), callerScopeChain, ECMAMode::strict()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationLinkCall, SlowPathReturnType, (CallFrame* calleeFrame, JSGlobalObject* globalObject, CallLinkInfo* callLinkInfo))

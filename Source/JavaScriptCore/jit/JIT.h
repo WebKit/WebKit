@@ -294,8 +294,8 @@ namespace JSC {
         template<typename Op>
         bool compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned callLinkInfoIndex);
         template<typename Op>
-        bool compileCallEval(const Op&);
-        void compileCallEvalSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        bool compileCallDirectEval(const Op&);
+        void compileCallDirectEvalSlowCase(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         template<typename Op>
         void emitPutCallResult(const Op&);
 
@@ -386,7 +386,7 @@ namespace JSC {
         void emit_op_bitnot(const JSInstruction*);
         void emit_op_call(const JSInstruction*);
         void emit_op_tail_call(const JSInstruction*);
-        void emit_op_call_eval(const JSInstruction*);
+        void emit_op_call_direct_eval(const JSInstruction*);
         void emit_op_call_varargs(const JSInstruction*);
         void emit_op_tail_call_varargs(const JSInstruction*);
         void emit_op_tail_call_forward_arguments(const JSInstruction*);
@@ -552,7 +552,7 @@ namespace JSC {
         void emitSlow_op_add(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_tail_call(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_call_eval(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_call_direct_eval(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_call_varargs(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_tail_call_varargs(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_tail_call_forward_arguments(const JSInstruction*, Vector<SlowCaseEntry>::iterator&);

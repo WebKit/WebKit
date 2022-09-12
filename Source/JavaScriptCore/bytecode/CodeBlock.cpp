@@ -530,7 +530,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         LINK(OpCall, callLinkInfo, profile)
         LINK(OpTailCall, callLinkInfo, profile)
-        LINK(OpCallEval, callLinkInfo, profile)
+        LINK(OpCallDirectEval, callLinkInfo, profile)
         LINK(OpConstruct, callLinkInfo, profile)
         LINK(OpIteratorOpen, callLinkInfo)
         LINK(OpIteratorNext, callLinkInfo)

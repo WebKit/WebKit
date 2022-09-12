@@ -40,6 +40,19 @@ namespace Call {
     constexpr GPRReg callLinkInfoGPR { GPRInfo::regT2 };
 }
 
+namespace CallDirectEval {
+    namespace SlowPath {
+        constexpr GPRReg calleeFrameGPR { GPRInfo::regT0 };
+#if USE(JSVALUE64)
+        constexpr GPRReg scopeGPR { GPRInfo::regT1 };
+        constexpr JSValueRegs thisValueJSR { GPRInfo::regT2 };
+#else
+        constexpr GPRReg scopeGPR { GPRInfo::regT1 };
+        constexpr JSValueRegs thisValueJSR { JSRInfo::jsRegT32 };
+#endif
+    }
+}
+
 namespace CheckTraps {
     constexpr GPRReg bytecodeOffsetGPR { GPRInfo::nonArgGPR0 };
 }

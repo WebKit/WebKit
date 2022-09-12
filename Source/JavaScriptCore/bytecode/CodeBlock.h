@@ -367,8 +367,6 @@ public:
 
     VirtualRegister thisRegister() const { return m_unlinkedCode->thisRegister(); }
 
-    bool usesCallEval() const { return m_unlinkedCode->usesCallEval(); }
-
     void setScopeRegister(VirtualRegister scopeRegister)
     {
         ASSERT(scopeRegister.isLocal() || !scopeRegister.isValid());

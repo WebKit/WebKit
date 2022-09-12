@@ -184,7 +184,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Construct:
     case DirectConstruct:
     case CallVarargs:
-    case CallEval:
+    case CallDirectEval:
     case TailCallVarargs:
     case TailCallVarargsInlinedCaller:
     case ConstructVarargs:

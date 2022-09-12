@@ -219,7 +219,8 @@ JSC_DECLARE_JIT_OPERATION(operationPutByValDefinePrivateFieldGeneric, void, (JSG
 JSC_DECLARE_JIT_OPERATION(operationPutByValSetPrivateFieldOptimize, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
 JSC_DECLARE_JIT_OPERATION(operationPutByValSetPrivateFieldGeneric, void, (JSGlobalObject*, EncodedJSValue, EncodedJSValue, EncodedJSValue, StructureStubInfo*, ArrayProfile*));
 
-JSC_DECLARE_JIT_OPERATION(operationCallEval, EncodedJSValue, (JSGlobalObject*, CallFrame*, ECMAMode));
+JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalSloppy, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationCallDirectEvalStrict, EncodedJSValue, (void*, JSScope*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationLinkCall, SlowPathReturnType, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
 JSC_DECLARE_JIT_OPERATION(operationLinkPolymorphicCall, SlowPathReturnType, (CallFrame*, JSGlobalObject*, CallLinkInfo*));
 JSC_DECLARE_JIT_OPERATION(operationVirtualCall, SlowPathReturnType, (CallFrame*, JSGlobalObject*, CallLinkInfo*));

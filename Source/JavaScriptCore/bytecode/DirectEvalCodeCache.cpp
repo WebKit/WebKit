@@ -30,13 +30,13 @@
 
 namespace JSC {
 
-void DirectEvalCodeCache::setSlow(JSGlobalObject* globalObject, JSCell* owner, const String& evalSource, CallSiteIndex callSiteIndex, DirectEvalExecutable* evalExecutable)
+void DirectEvalCodeCache::setSlow(JSGlobalObject* globalObject, JSCell* owner, const String& evalSource, BytecodeIndex bytecodeIndex, DirectEvalExecutable* evalExecutable)
 {
     if (!evalExecutable->allowDirectEvalCache())
         return;
 
     Locker locker { m_lock };
-    m_cacheMap.set(CacheKey(evalSource, callSiteIndex), WriteBarrier<DirectEvalExecutable>(globalObject->vm(), owner, evalExecutable));
+    m_cacheMap.set(CacheKey(evalSource, bytecodeIndex), WriteBarrier<DirectEvalExecutable>(globalObject->vm(), owner, evalExecutable));
 }
 
 void DirectEvalCodeCache::clear()

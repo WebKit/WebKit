@@ -44,7 +44,6 @@ const ClassInfo UnlinkedCodeBlock::s_info = { "UnlinkedCodeBlock"_s, nullptr, nu
 UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType codeType, const ExecutableInfo& info, OptionSet<CodeGenerationMode> codeGenerationMode)
     : Base(vm, structure)
     , m_numVars(0)
-    , m_usesCallEval(false)
     , m_numCalleeLocals(0)
     , m_isConstructor(info.isConstructor())
     , m_numParameters(0)
