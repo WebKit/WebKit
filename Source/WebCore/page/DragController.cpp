@@ -216,13 +216,15 @@ void DragController::dragEnded()
     client().dragEnded();
 }
 
-std::optional<DragOperation> DragController::dragEntered(const DragData& dragData)
+std::optional<DragOperation> DragController::dragEntered(DragData&& dragData)
 {
-    return dragEnteredOrUpdated(dragData);
+    return dragEnteredOrUpdated(WTFMove(dragData));
 }
 
-void DragController::dragExited(const DragData& dragData)
+void DragController::dragExited(DragData&& dragData)
 {
+    disallowFileAccessIfNeeded(dragData);
+
     auto& mainFrame = m_page.mainFrame();
     if (mainFrame.view())
         mainFrame.eventHandler().cancelDragAndDrop(createMouseEvent(dragData), Pasteboard::create(dragData), dragData.draggingSourceOperationMask(), dragData.containsFiles());
@@ -232,9 +234,9 @@ void DragController::dragExited(const DragData& dragData)
     m_fileInputElementUnderMouse = nullptr;
 }
 
-std::optional<DragOperation> DragController::dragUpdated(const DragData& dragData)
+std::optional<DragOperation> DragController::dragUpdated(DragData&& dragData)
 {
-    return dragEnteredOrUpdated(dragData);
+    return dragEnteredOrUpdated(WTFMove(dragData));
 }
 
 inline static bool dragIsHandledByDocument(DragHandlingMethod dragHandlingMethod)
@@ -242,7 +244,7 @@ inline static bool dragIsHandledByDocument(DragHandlingMethod dragHandlingMethod
     return dragHandlingMethod != DragHandlingMethod::None && dragHandlingMethod != DragHandlingMethod::PageLoad;
 }
 
-bool DragController::performDragOperation(const DragData& dragData)
+bool DragController::performDragOperation(DragData&& dragData)
 {
     if (!m_droppedImagePlaceholders.isEmpty() && m_droppedImagePlaceholderRange && tryToUpdateDroppedImagePlaceholders(dragData)) {
         m_droppedImagePlaceholders.clear();
@@ -258,6 +260,8 @@ bool DragController::performDragOperation(const DragData& dragData)
     IgnoreSelectionChangeForScope ignoreSelectionChanges { m_page.focusController().focusedOrMainFrame() };
 
     m_documentUnderMouse = m_page.mainFrame().documentAtPoint(dragData.clientPosition());
+
+    disallowFileAccessIfNeeded(dragData);
 
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy = ShouldOpenExternalURLsPolicy::ShouldNotAllow;
     if (m_documentUnderMouse)
@@ -314,7 +318,7 @@ void DragController::mouseMovedIntoDocument(Document* newDocument)
     m_documentUnderMouse = newDocument;
 }
 
-std::optional<DragOperation> DragController::dragEnteredOrUpdated(const DragData& dragData)
+std::optional<DragOperation> DragController::dragEnteredOrUpdated(DragData&& dragData)
 {
     mouseMovedIntoDocument(m_page.mainFrame().documentAtPoint(dragData.clientPosition()));
 
@@ -323,6 +327,8 @@ std::optional<DragOperation> DragController::dragEnteredOrUpdated(const DragData
         clearDragCaret(); // FIXME: Why not call mouseMovedIntoDocument(nullptr)?
         return std::nullopt;
     }
+
+    disallowFileAccessIfNeeded(dragData);
 
     std::optional<DragOperation> dragOperation;
     m_dragHandlingMethod = tryDocumentDrag(dragData, m_dragDestinationActionMask, dragOperation);
@@ -335,6 +341,13 @@ std::optional<DragOperation> DragController::dragEnteredOrUpdated(const DragData
 
     updateSupportedTypeIdentifiersForDragHandlingMethod(m_dragHandlingMethod, dragData);
     return dragOperation;
+}
+
+void DragController::disallowFileAccessIfNeeded(DragData& dragData)
+{
+    RefPtr frame = m_documentUnderMouse ? m_documentUnderMouse->frame() : nullptr;
+    if (frame && !frame->eventHandler().canDropCurrentlyDraggedImageAsFile())
+        dragData.disallowFileAccess();
 }
 
 static HTMLInputElement* asFileInput(Node& node)

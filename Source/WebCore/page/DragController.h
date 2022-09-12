@@ -61,10 +61,10 @@ public:
 
     static DragOperation platformGenericDragOperation();
 
-    WEBCORE_EXPORT std::optional<DragOperation> dragEntered(const DragData&);
-    WEBCORE_EXPORT void dragExited(const DragData&);
-    WEBCORE_EXPORT std::optional<DragOperation> dragUpdated(const DragData&);
-    WEBCORE_EXPORT bool performDragOperation(const DragData&);
+    WEBCORE_EXPORT std::optional<DragOperation> dragEntered(DragData&&);
+    WEBCORE_EXPORT void dragExited(DragData&&);
+    WEBCORE_EXPORT std::optional<DragOperation> dragUpdated(DragData&&);
+    WEBCORE_EXPORT bool performDragOperation(DragData&&);
     WEBCORE_EXPORT void dragCancelled();
 
     bool mouseIsOverFileInput() const { return m_fileInputElementUnderMouse; }
@@ -110,7 +110,7 @@ private:
     bool dispatchTextInputEventFor(Frame*, const DragData&);
     bool canProcessDrag(const DragData&);
     bool concludeEditDrag(const DragData&);
-    std::optional<DragOperation> dragEnteredOrUpdated(const DragData&);
+    std::optional<DragOperation> dragEnteredOrUpdated(DragData&&);
     std::optional<DragOperation> operationForLoad(const DragData&);
     DragHandlingMethod tryDocumentDrag(const DragData&, OptionSet<DragDestinationAction>, std::optional<DragOperation>&);
     bool tryDHTMLDrag(const DragData&, std::optional<DragOperation>&);
@@ -121,6 +121,7 @@ private:
 
     void mouseMovedIntoDocument(Document*);
     bool shouldUseCachedImageForDragImage(const Image&) const;
+    void disallowFileAccessIfNeeded(DragData&);
 
     std::optional<HitTestResult> hitTestResultForDragStart(Frame&, Element&, const IntPoint&) const;
 
