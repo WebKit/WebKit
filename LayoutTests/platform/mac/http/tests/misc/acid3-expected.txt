@@ -38,11 +38,11 @@ layer at (20,20) size 644x433
                 RenderBody {BODY} at (0,0) size 0x1
                   RenderImage {IMG} at (0,0) size 1x1
           RenderIFrame {IFRAME} at (0,0) size 0x0
-            layer at (0,0) size 16x2166
+            layer at (0,0) size 16x2171
               RenderView at (0,0) size 0x0
-            layer at (0,0) size 0x2166
-              RenderBlock {HTML} at (0,0) size 0x2166
-                RenderBody {BODY} at (8,8) size 0x2145
+            layer at (0,0) size 0x2171
+              RenderBlock {HTML} at (0,0) size 0x2171
+                RenderBody {BODY} at (8,13) size 0x2145
                   RenderBlock {PRE} at (0,0) size 0x2145
                     RenderText {#text} at (0,0) size 8x2145
                       text run at (0,0) width 8: "<"

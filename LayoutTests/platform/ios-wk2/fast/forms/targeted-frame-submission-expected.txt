@@ -18,9 +18,9 @@ layer at (0,0) size 800x600
         RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 300x150
             RenderView at (0,0) size 300x150
-          layer at (0,0) size 300x150
-            RenderBlock {HTML} at (0,0) size 300x150
-              RenderBody {BODY} at (8,8) size 284x129
+          layer at (0,0) size 300x40
+            RenderBlock {HTML} at (0,0) size 300x40
+              RenderBody {BODY} at (8,13) size 284x14
                 RenderBlock {PRE} at (0,0) size 284x14
                   RenderText {#text} at (0,0) size 55x14
                     text run at (0,0) width 55: "SUCCESS"
