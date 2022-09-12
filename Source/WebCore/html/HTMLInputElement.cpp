@@ -511,10 +511,11 @@ void HTMLInputElement::resignStrongPasswordAppearance()
 void HTMLInputElement::updateType()
 {
     ASSERT(m_inputType);
-    auto newType = InputType::create(*this, attributeWithoutSynchronization(typeAttr));
+    auto newType = InputType::createIfDifferent(*this, attributeWithoutSynchronization(typeAttr), m_inputType.get());
     m_hasType = true;
-    if (m_inputType->formControlType() == newType->formControlType())
+    if (!newType)
         return;
+    ASSERT(m_inputType->formControlType() != newType->formControlType());
 
     removeFromRadioButtonGroup();
     resignStrongPasswordAppearance();
@@ -716,7 +717,7 @@ inline void HTMLInputElement::initializeInputType()
     }
 
     m_hasType = true;
-    m_inputType = InputType::create(*this, type);
+    m_inputType = InputType::createIfDifferent(*this, type);
     updateWillValidateAndValidity();
     registerForSuspensionCallbackIfNeeded();
     runPostTypeUpdateTasks();

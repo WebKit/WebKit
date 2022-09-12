@@ -154,7 +154,7 @@ public:
         Type::Submit,
     };
 
-    static Ref<InputType> create(HTMLInputElement&, const AtomString&);
+    static RefPtr<InputType> createIfDifferent(HTMLInputElement&, const AtomString&, InputType* currentInputType = nullptr);
     static Ref<InputType> createText(HTMLInputElement&);
     virtual ~InputType();
 
