@@ -64,7 +64,7 @@ static const CFStringRef testDomain = CFSTR("com.apple.avfoundation");
 }
 
 static constexpr unsigned preferenceQueryMaxCount = 10;
-static constexpr float preferenceQuerySleepTime = 1;
+static constexpr Seconds preferenceQuerySleepTime = 1_s;
 
 static void waitForPreferenceSynchronization()
 {
@@ -192,7 +192,7 @@ TEST(WebKit, GlobalPreferenceChangesUsingDefaultsWrite)
 
     for (unsigned i = 0; i < preferenceQueryMaxCount && preferenceValue() != 2; i++) {
         TestWebKitAPI::Util::spinRunLoop();
-        TestWebKitAPI::Util::sleep(preferenceQuerySleepTime);
+        TestWebKitAPI::Util::runFor(preferenceQuerySleepTime);
     }
 
     EXPECT_EQ(preferenceValue(), 2);
@@ -235,7 +235,7 @@ TEST(WebKit, PreferenceChangesArray)
         NSError *err = nil;
         object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
         TestWebKitAPI::Util::spinRunLoop();
-        TestWebKitAPI::Util::sleep(preferenceQuerySleepTime);
+        TestWebKitAPI::Util::runFor(preferenceQuerySleepTime);
     }
 
     ASSERT_TRUE([object isEqual:changedArray]);
@@ -285,7 +285,7 @@ TEST(WebKit, PreferenceChangesDictionary)
         NSError *err = nil;
         object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
         TestWebKitAPI::Util::spinRunLoop();
-        TestWebKitAPI::Util::sleep(preferenceQuerySleepTime);
+        TestWebKitAPI::Util::runFor(preferenceQuerySleepTime);
     }
     
     ASSERT_TRUE([object isEqual:changedDict]);
@@ -328,7 +328,7 @@ TEST(WebKit, PreferenceChangesData)
         NSError *err = nil;
         object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
         TestWebKitAPI::Util::spinRunLoop();
-        TestWebKitAPI::Util::sleep(preferenceQuerySleepTime);
+        TestWebKitAPI::Util::runFor(preferenceQuerySleepTime);
     }
     
     ASSERT_TRUE([object isEqual:changedData]);
@@ -371,7 +371,7 @@ TEST(WebKit, PreferenceChangesDate)
         NSError *err = nil;
         object = retainPtr([NSKeyedUnarchiver unarchivedObjectOfClass:[NSObject class] fromData:encodedData.get() error:&err]);
         TestWebKitAPI::Util::spinRunLoop();
-        TestWebKitAPI::Util::sleep(preferenceQuerySleepTime);
+        TestWebKitAPI::Util::runFor(preferenceQuerySleepTime);
     }
     
     ASSERT_TRUE([object isEqual:changedDate]);
@@ -406,7 +406,7 @@ TEST(WebKit, PreferenceChangesNil)
 
     for (unsigned i = 0; i < preferenceQueryMaxCount && preferenceValue(); i++) {
         TestWebKitAPI::Util::spinRunLoop();
-        TestWebKitAPI::Util::sleep(preferenceQuerySleepTime);
+        TestWebKitAPI::Util::runFor(preferenceQuerySleepTime);
     }
     
     EXPECT_EQ(0, preferenceValue());

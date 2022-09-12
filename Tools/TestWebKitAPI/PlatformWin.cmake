@@ -13,7 +13,7 @@ set(test_main_SOURCES
 # TestWTF
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
-    win/UtilitiesWin.cpp
+    Utilities.cpp
 )
 
 WEBKIT_WRAP_EXECUTABLE(TestWTF
@@ -118,18 +118,20 @@ endif ()
 # TestWebKit
 if (ENABLE_WEBKIT)
     target_sources(TestWebKitAPIInjectedBundle PRIVATE
+        Utilities.cpp
+
         win/PlatformUtilitiesWin.cpp
-        win/UtilitiesWin.cpp
     )
 
     list(APPEND TestWebKit_SOURCES
         ${test_main_SOURCES}
 
+        Utilities.cpp
+
         Tests/WebKit/CookieStorageFile.cpp
 
         win/PlatformUtilitiesWin.cpp
         win/PlatformWebViewWin.cpp
-        win/UtilitiesWin.cpp
     )
 
     if (${WTF_PLATFORM_WIN_CAIRO})

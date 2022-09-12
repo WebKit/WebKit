@@ -1481,7 +1481,7 @@ static void runWebsitePoliciesDeviceOrientationEventTest(_WKWebsiteDeviceOrienta
     if (accessPolicy != _WKWebsiteDeviceOrientationAndMotionAccessPolicyDeny)
         TestWebKitAPI::Util::run(&didReceiveMessage);
     else {
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
         EXPECT_FALSE(didReceiveMessage);
     }
 }

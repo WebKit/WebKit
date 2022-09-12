@@ -38,9 +38,9 @@ if (ENABLE_WEBKIT)
     list(APPEND TestWebKit_SOURCES
         ${test_main_SOURCES}
 
-        Tests/WebKit/curl/Certificates.cpp
+        Utilities.cpp
 
-        generic/UtilitiesGeneric.cpp
+        Tests/WebKit/curl/Certificates.cpp
 
         playstation/PlatformUtilitiesPlayStation.cpp
         playstation/PlatformWebViewPlayStation.cpp

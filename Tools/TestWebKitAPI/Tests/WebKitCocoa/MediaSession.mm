@@ -204,7 +204,7 @@ public:
         do {
             if (eventListenerWasCalled(event))
                 return;
-            Util::sleep(0.1);
+            Util::runFor(0.1_s);
         } while (++tries <= 50);
 
         return;
@@ -232,7 +232,7 @@ public:
         do {
             if (sessionHandlerWasCalled(handler))
                 return;
-            Util::sleep(0.1);
+            Util::runFor(0.1_s);
         } while (++tries <= 50);
 
         return;

@@ -59,11 +59,11 @@ TEST(Fullscreen, PointerLeave)
         @"</script>"];
 
     [webView mouseMoveToPoint:NSMakePoint(50, 50) withFlags:0];
-    Util::runFor(&pointerenter, 5);
+    Util::runFor(&pointerenter, 5_s);
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"target.webkitRequestFullscreen()"];
-    Util::runFor(&fullscreenchange, 5);
-    Util::runFor(&pointerleave, 5);
+    Util::runFor(&fullscreenchange, 5_s);
+    Util::runFor(&pointerleave, 5_s);
 }
 
 }

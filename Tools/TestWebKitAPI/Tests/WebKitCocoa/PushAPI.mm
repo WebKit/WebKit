@@ -130,7 +130,7 @@ static bool waitUntilEvaluatesToTrue(const Function<bool()>& f)
     do {
         if (f())
             return true;
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     } while (++timeout < 100);
     return false;
 }
@@ -220,7 +220,7 @@ static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfigurat
     NSURL *swDBPath = [directory URLByAppendingPathComponent:filename];
     unsigned timeout = 0;
     while (![[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path] && ++timeout < 100)
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     // Let's close the SQL database.
     [configuration.websiteDataStore _sendNetworkProcessWillSuspendImminently];
     [configuration.websiteDataStore _terminateNetworkProcess];

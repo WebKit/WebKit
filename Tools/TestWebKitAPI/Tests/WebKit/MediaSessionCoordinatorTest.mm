@@ -289,7 +289,7 @@ public:
         do {
             if (callback())
                 return;
-            Util::sleep(0.1);
+            Util::runFor(0.1_s);
         } while (++tries <= retries);
 
         return;

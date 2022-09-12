@@ -161,7 +161,7 @@ TEST(ApplicationManifest, AlwaysFetch)
         auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
         auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
         while (!CGColorEqualToColor([webView themeColor].CGColor, redColor.get()))
-            Util::sleep(1);
+            Util::runFor(1_s);
     }
 
     __block bool done = false;
@@ -187,7 +187,7 @@ TEST(ApplicationManifest, OnlyFirstManifest)
         auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
         auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
         while (!CGColorEqualToColor([webView themeColor].CGColor, redColor.get()))
-            Util::sleep(1);
+            Util::runFor(1_s);
     }
 
     __block bool done = false;
@@ -230,7 +230,7 @@ TEST(ApplicationManifest, MediaAttriute)
         auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
         auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));
         while (!CGColorEqualToColor([webView themeColor].CGColor, redColor.get()))
-            Util::sleep(1);
+            Util::runFor(1_s);
     }
 
     __block bool done = false;

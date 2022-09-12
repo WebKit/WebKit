@@ -41,7 +41,7 @@ static void waitUntilBufferingPolicyIsEqualTo(WKWebView* webView, const char* ex
         if ([observed isEqualToString:@(expected)])
             break;
 
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     } while (++tries <= 100);
 
     EXPECT_WK_STREQ(expected, observed);

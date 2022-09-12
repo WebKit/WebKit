@@ -60,7 +60,7 @@ TEST(WebKit, TerminateAllProcessesDuringLaunch)
     // Call terminateAllProcesses while the process is still launching.
     [webView.get().configuration.processPool _terminateAllWebContentProcesses];
 
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
 
     // The WKWebView should be able to recover from the WebProcess termination and navigation should succeed.
     [webView loadHTMLString:@"test" baseURL:nil];

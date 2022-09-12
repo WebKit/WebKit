@@ -124,7 +124,7 @@ TEST(WebKit, CookieCacheSyncAcrossProcess)
     int timeout = 0;
     __block String cookieString;
     do {
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
         doneEvaluatingJavaScript = false;
         [view2 evaluateJavaScript:@"document.cookie;" completionHandler:^(id _Nullable cookie, NSError * _Nullable error) {
             EXPECT_NULL(error);

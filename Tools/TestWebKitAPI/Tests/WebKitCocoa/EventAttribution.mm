@@ -619,7 +619,7 @@ TEST(PrivateClickMeasurement, SKAdNetworkWithoutNavigatingToAppStoreLink)
     [delegate allowAnyTLSCertificate];
     delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *navigationAction, void (^decisionHandler)(WKNavigationActionPolicy)) {
         decisionHandler(WKNavigationActionPolicyCancel);
-        Util::sleep(0.1);
+        Util::runFor(0.1_s);
         EXPECT_EQ(0u, consoleMessages.size());
         [navigationAction _storeSKAdNetworkAttribution];
     };

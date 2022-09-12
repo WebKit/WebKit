@@ -97,7 +97,7 @@ static void waitUntilInnerHeightIs(TestWKWebView *webView, CGFloat expectedValue
 {
     int tries = 0;
     do {
-        Util::sleep(0.1);
+        Util::runFor(0.1_s);
     } while ([[webView objectByEvaluatingJavaScript:@"innerHeight"] floatValue] != expectedValue && ++tries <= 100);
 }
 

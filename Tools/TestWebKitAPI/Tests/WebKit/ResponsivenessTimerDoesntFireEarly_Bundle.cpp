@@ -54,7 +54,7 @@ void ResponsivenessTimerDoesntFireEarlyTest::didReceiveMessage(WKBundleRef bundl
         return;
 
     // The responsiveness timer is a 3-second timer. Pausing for 0.5 seconds should not cause it to fire.
-    Util::sleep(0.5);
+    Util::runFor(0.5_s);
 
     WKBundlePostMessage(bundle, Util::toWK("DidBrieflyPause").get(), 0);
 }

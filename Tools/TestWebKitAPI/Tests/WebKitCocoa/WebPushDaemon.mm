@@ -710,7 +710,7 @@ TEST(WebPush, ITPCleanup)
                 pushMessageProcessed = true;
             }];
             if (!expectedMessages) {
-                TestWebKitAPI::Util::sleep(0.1);
+                TestWebKitAPI::Util::runFor(0.1_s);
                 EXPECT_FALSE(gotExpectedMessage);
                 return;
             }

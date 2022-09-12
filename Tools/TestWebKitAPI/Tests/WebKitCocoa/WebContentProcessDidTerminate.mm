@@ -210,7 +210,7 @@ TEST(WKNavigation, AutomaticVisibleViewReloadAfterWebProcessCrash)
 
     // WebKit should not attempt to reload again.
     EXPECT_FALSE(startedLoad);
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
     EXPECT_FALSE(startedLoad);
 }
 
@@ -237,7 +237,7 @@ TEST(WKNavigation, AutomaticHiddenViewDelayedReloadAfterWebProcessCrash)
     // Simulate crash.
     [webView _killWebContentProcess];
 
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
 
     // WebKit should not have attempted a reload since the view is not visible.
     EXPECT_FALSE(startedLoad);
@@ -319,7 +319,7 @@ TEST(WKNavigation, ProcessCrashDuringCallback)
     [webView _killWebContentProcess];
 
     TestWebKitAPI::Util::run(&calledAllCallbacks);
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
     EXPECT_EQ(6U, callbackCount);
 }
 

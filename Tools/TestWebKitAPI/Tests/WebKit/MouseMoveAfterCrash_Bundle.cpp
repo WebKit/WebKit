@@ -53,7 +53,7 @@ void MouseMoveAfterCrashTest::didReceiveMessage(WKBundleRef bundle, WKStringRef 
     if (!WKStringIsEqualToUTF8CString(messageName, "Pause"))
         return;
 
-    Util::sleep(30);
+    Util::runFor(30_s);
 }
 
 } // namespace TestWebKitAPI

@@ -67,7 +67,7 @@ static void waitUntilAudioSessionCategoryIsEqualTo(NSString *expectedValue)
     do {
         if ([[[getAVAudioSessionClass() sharedInstance] category] isEqualToString:expectedValue])
             return;
-        Util::sleep(0.1);
+        Util::runFor(0.1_s);
     } while (++tries <= 100);
 }
 

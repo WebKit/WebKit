@@ -339,7 +339,7 @@ TEST(SampledPageTopColor, HitTestDuringCSSTransition)
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0; transition: background-color 1000s'>"];
     [webView objectByEvaluatingJavaScript:@"document.body.style.setProperty('background-color', 'red')"];
 
-    TestWebKitAPI::Util::sleep(1);
+    TestWebKitAPI::Util::runFor(1_s);
 
     // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
     [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
@@ -355,7 +355,7 @@ TEST(SampledPageTopColor, HitTestAfterCSSTransition)
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<body style='margin: 0; transition: background-color 0.1s'>"];
     [webView objectByEvaluatingJavaScript:@"document.body.style.setProperty('background-color', 'red')"];
 
-    TestWebKitAPI::Util::sleep(1);
+    TestWebKitAPI::Util::runFor(1_s);
 
     // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
     [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
@@ -379,7 +379,7 @@ TEST(SampledPageTopColor, HitTestDuringCSSAnimation)
 
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<style>@keyframes changeBackgroundRed { to { background-color: red; } }</style><body style='margin: 0; animation: changeBackgroundRed 1000s forwards'>"];
 
-    TestWebKitAPI::Util::sleep(1);
+    TestWebKitAPI::Util::runFor(1_s);
 
     // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
     [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];
@@ -394,7 +394,7 @@ TEST(SampledPageTopColor, HitTestAfterCSSAnimation)
 
     [webView synchronouslyLoadHTMLStringAndWaitUntilAllImmediateChildFramesPaint:@"<style>@keyframes changeBackgroundRed { to { background-color: red; } }</style><body style='margin: 0; animation: changeBackgroundRed 0.1s forwards'>"];
 
-    TestWebKitAPI::Util::sleep(1);
+    TestWebKitAPI::Util::runFor(1_s);
 
     // Not setting this until now prevents the sampling logic from running because without it the page isn't considered contentful.
     [webView objectByEvaluatingJavaScript:@"document.body.textContent = 'Test'"];

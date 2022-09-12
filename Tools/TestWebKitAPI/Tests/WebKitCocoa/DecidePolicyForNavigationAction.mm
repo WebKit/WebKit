@@ -363,7 +363,7 @@ TEST(WebKit, DecidePolicyForNavigationActionForLoadHTMLStringDeny)
     finishedNavigation = false;
     decidedPolicy = false;
     [webView loadHTMLString:@"TEST" baseURL:[NSURL URLWithString:@"about:blank"]];
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
     EXPECT_FALSE(finishedNavigation);
     shouldCancelNavigation = false;
 }
@@ -639,7 +639,7 @@ TEST(WebKit, DelayDecidePolicyForNavigationAction)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
     TestWebKitAPI::Util::run(&decidedPolicy);
     [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    TestWebKitAPI::Util::sleep(0.5); // Wait until the pending api request gets clear.
+    TestWebKitAPI::Util::runFor(0.5_s); // Wait until the pending api request gets clear.
     EXPECT_TRUE([[webView URL] isEqual:testURL.get()]);
 
     shouldDelayDecision = false;

@@ -1006,7 +1006,7 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrame)
     [webView loadRequest:server.request()];
     Util::run(&finishedNavigation);
 
-    Util::sleep(0.5);
+    Util::runFor(0.5_s);
 
     EXPECT_FALSE(didTryToLoadRadarURL);
 }
@@ -1043,7 +1043,7 @@ TEST(WKNavigation, LoadRadarURLFromSandboxedFrameMissingUserGesture)
     [webView loadRequest:server.request()];
     Util::run(&finishedNavigation);
 
-    Util::sleep(0.5);
+    Util::runFor(0.5_s);
 
     EXPECT_FALSE(didTryToLoadRadarURL);
 }
