@@ -580,6 +580,18 @@ static bool isTableComponent(AXCoreObject& axObject)
 {
     return axObject.isTable() || axObject.isTableColumn() || axObject.isTableRow() || axObject.isTableCell();
 }
+
+static bool isAtspiListItemMarker(AXCoreObject& axObject, AXCoreObject& child)
+{
+#if USE(ATSPI)
+    if (!axObject.isListItem())
+        return false;
+    auto* renderer = axObject.renderer();
+    return renderer && is<RenderListItem>(*renderer) && downcast<RenderListItem>(*renderer).markerRenderer() == child.renderer();
+#else
+    return false;
+#endif
+}
 #endif
 
 void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, DescendIfIgnored descendIfIgnored)
@@ -643,8 +655,9 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
         }
     } else {
         // Table component child-parent relationships often don't line up properly, hence the need for methods
-        // like parentTable() and parentRow(). Exclude them from this ASSERT.
-        ASSERT(isTableComponent(*child) || isTableComponent(*this) || child->parentObject() == this);
+        // like parentTable() and parentRow(). ATSPI always add the list item marker as the first child of the
+        // list item. Exclude them from this ASSERT.
+        ASSERT(isTableComponent(*child) || isTableComponent(*this) || isAtspiListItemMarker(*this, *child) || child->parentObject() == this);
         m_children.insert(index, child);
     }
     
