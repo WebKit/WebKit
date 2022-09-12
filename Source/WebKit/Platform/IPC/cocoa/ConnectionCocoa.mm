@@ -36,6 +36,8 @@
 #import "XPCUtilities.h"
 #import <WebCore/AXObjectCache.h>
 #import <mach/mach_error.h>
+#import <mach/mach_init.h>
+#import <mach/mach_traps.h>
 #import <mach/vm_map.h>
 #import <sys/mman.h>
 #import <wtf/HexNumber.h>
@@ -199,8 +201,7 @@ bool Connection::open()
         auto encoder = makeUniqueRef<Encoder>(MessageName::InitializeConnection, 0);
 
         mach_port_insert_right(mach_task_self(), m_receivePort, m_receivePort, MACH_MSG_TYPE_MAKE_SEND);
-        MachSendRight right = MachSendRight::adopt(m_receivePort);
-        encoder.get() << Attachment { WTFMove(right) };
+        encoder.get() << MachSendRight::adopt(m_receivePort);
 
         initializeSendSource();
 
@@ -278,11 +279,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     ASSERT(!m_isInitializingSendSource);
 
     auto attachments = encoder->releaseAttachments();
-    
-    auto numberOfPortDescriptors = std::count_if(attachments.begin(), attachments.end(), [](auto& attachment)
-    {
-        return attachment.type() == Attachment::MachPortType;
-    });
+    auto numberOfPortDescriptors = attachments.size();
 
     bool messageBodyIsOOL = false;
     auto messageSize = MachMessage::messageSize(encoder->bufferSize(), numberOfPortDescriptors, messageBodyIsOOL);
@@ -323,13 +320,10 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
         };
 
         for (auto& attachment : attachments) {
-            ASSERT(attachment.type() == Attachment::MachPortType);
-            if (attachment.type() == Attachment::MachPortType) {
-                auto* descriptor = getDescriptorAndAdvance(messageData, sizeof(mach_msg_port_descriptor_t));
-                descriptor->port.name = attachment.leakSendRight();
-                descriptor->port.disposition = MACH_MSG_TYPE_MOVE_SEND;
-                descriptor->port.type = MACH_MSG_PORT_DESCRIPTOR;
-            }
+            auto* descriptor = getDescriptorAndAdvance(messageData, sizeof(mach_msg_port_descriptor_t));
+            descriptor->port.name = attachment.leakSendRight();
+            descriptor->port.disposition = MACH_MSG_TYPE_MOVE_SEND;
+            descriptor->port.type = MACH_MSG_PORT_DESCRIPTOR;
         }
 
         if (messageBodyIsOOL) {
@@ -559,13 +553,13 @@ void Connection::receiveSourceEventHandler()
             return;
         }
 
-        Attachment attachment;
-        if (!decoder->decode(attachment)) {
+        MachSendRight sendRight;
+        if (!decoder->decode(sendRight)) {
             // FIXME: Disconnect.
             return;
         }
 
-        m_sendPort = attachment.leakSendRight();
+        m_sendPort = sendRight.leakSendRight();
         
         if (m_sendPort) {
             ASSERT(MACH_PORT_VALID(m_receivePort));
@@ -657,8 +651,6 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
         return std::nullopt;
     }
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    MachSendRight right = MachSendRight::adopt(listeningPort);
-
-    return ConnectionIdentifierPair { Connection::Identifier { listeningPort }, Attachment { WTFMove(right) } };
+    return ConnectionIdentifierPair { Identifier { listeningPort, nullptr }, MachSendRight::adopt(listeningPort) };
 }
 } // namespace IPC

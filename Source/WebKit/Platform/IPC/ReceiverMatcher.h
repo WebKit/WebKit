@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <optional>
+
 namespace IPC {
 
 struct ReceiverMatcher {

@@ -79,7 +79,7 @@ public:
     void setEmulatedConditions(std::optional<int64_t>&& bytesPerSecondLimit);
 #endif
 
-    void setFrontendConnection(IPC::Attachment);
+    void setFrontendConnection(IPC::Connection::Handle&&);
 
     void disconnectFromPage() { close(); }
 

@@ -47,10 +47,19 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/CString.h>
 
-#if OS(DARWIN) && !USE(UNIX_DOMAIN_SOCKETS)
+#if USE(UNIX_DOMAIN_SOCKETS)
+#include <wtf/unix/UnixFileDescriptor.h>
+#endif
+
+#if OS(DARWIN)
 #include <mach/mach_port.h>
+#include <wtf/MachSendRight.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
+#endif
+
+#if OS(WINDOWS)
+#include <wtf/win/Win32Handle.h>
 #endif
 
 #if USE(GLIB)
@@ -132,9 +141,21 @@ public:
     };
 #endif
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+    using Handle = UnixFileDescriptor;
+#elif OS(WINDOWS)
+    using Handle = Win32Handle;
+#elif OS(DARWIN)
+    using Handle = MachSendRight;
+#endif
+
     struct Identifier {
         Identifier() = default;
 #if USE(UNIX_DOMAIN_SOCKETS)
+        explicit Identifier(Handle&& handle)
+            : Identifier(handle.release())
+        {
+        }
         explicit Identifier(int handle)
             : handle(handle)
         {
@@ -142,6 +163,10 @@ public:
         operator bool() const { return handle != -1; }
         int handle { -1 };
 #elif OS(WINDOWS)
+        explicit Identifier(Handle&& handle)
+            : Identifier(handle.release())
+        {
+        }
         explicit Identifier(HANDLE handle)
             : handle(handle)
         {
@@ -149,6 +174,10 @@ public:
         operator bool() const { return !!handle; }
         HANDLE handle { 0 };
 #elif OS(DARWIN)
+        explicit Identifier(Handle&& handle)
+            : Identifier(handle.leakSendRight())
+        {
+        }
         explicit Identifier(mach_port_t port)
             : port(port)
         {
@@ -189,7 +218,7 @@ public:
 
     struct ConnectionIdentifierPair {
         IPC::Connection::Identifier server;
-        IPC::Attachment client;
+        IPC::Connection::Handle client;
     };
     static std::optional<ConnectionIdentifierPair> createConnectionIdentifierPair();
 

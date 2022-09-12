@@ -32,22 +32,17 @@ namespace IPC {
 
 void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, const MachSendRight& sendRight)
 {
-    encoder << Attachment { sendRight };
+    encoder.addAttachment(MachSendRight { sendRight });
 }
 
 void ArgumentCoder<MachSendRight>::encode(Encoder& encoder, MachSendRight&& sendRight)
 {
-    encoder << Attachment { WTFMove(sendRight) };
+    encoder.addAttachment(WTFMove(sendRight));
 }
 
-bool ArgumentCoder<MachSendRight>::decode(Decoder& decoder, MachSendRight& sendRight)
+std::optional<MachSendRight> ArgumentCoder<MachSendRight>::decode(Decoder& decoder)
 {
-    Attachment attachment;
-    if (!decoder.decode(attachment))
-        return false;
-
-    sendRight = WTFMove(attachment);
-    return true;
+    return decoder.takeLastAttachment();
 }
 
 }

@@ -40,7 +40,6 @@
 #include <wtf/RefPtr.h>
 
 namespace IPC {
-class Attachment;
 class Connection;
 class Decoder;
 class MessageReceiver;

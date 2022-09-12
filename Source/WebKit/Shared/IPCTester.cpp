@@ -169,7 +169,7 @@ void IPCTester::sendSemaphoreBackAndSignalProtocol(IPC::Connection& connection, 
     }
 }
 
-void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Attachment&& testedConnectionIdentifier)
+void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& testedConnectionIdentifier)
 {
     auto addResult = m_connectionTesters.ensure(identifier, [&] {
         return IPC::ScopedActiveMessageReceiveQueue<IPCConnectionTester> { IPCConnectionTester::create(connection, identifier, WTFMove(testedConnectionIdentifier)) };
@@ -177,7 +177,7 @@ void IPCTester::createConnectionTester(IPC::Connection& connection, IPCConnectio
     ASSERT_UNUSED(addResult, addResult.isNewEntry || IPC::isTestingIPC());
 }
 
-void IPCTester::createConnectionTesterAndSendAsyncMessages(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Attachment&& testedConnectionIdentifier, uint32_t messageCount)
+void IPCTester::createConnectionTesterAndSendAsyncMessages(IPC::Connection& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& testedConnectionIdentifier, uint32_t messageCount)
 {
     auto addResult = m_connectionTesters.ensure(identifier, [&] {
         return IPC::ScopedActiveMessageReceiveQueue<IPCConnectionTester> { IPCConnectionTester::create(connection, identifier, WTFMove(testedConnectionIdentifier)) };

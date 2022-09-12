@@ -43,12 +43,12 @@ namespace WebKit {
 class IPCConnectionTester final : public RefCounted<IPCConnectionTester>, private IPC::Connection::Client {
 public:
     ~IPCConnectionTester();
-    static Ref<IPCConnectionTester> create(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Attachment&& testedConnectionIdentifier);
+    static Ref<IPCConnectionTester> create(IPC::Connection&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
     void stopListeningForIPC(Ref<IPCConnectionTester>&& refFromConnection);
 
     void sendAsyncMessages(uint32_t messageCount);
 private:
-    IPCConnectionTester(Ref<IPC::Connection>&&, IPCConnectionTesterIdentifier, IPC::Attachment&& testedConnectionIdentifier);
+    IPCConnectionTester(Ref<IPC::Connection>&&, IPCConnectionTesterIdentifier, IPC::Connection::Handle&&);
     void initialize();
 
     // IPC::Connection::Client overrides.

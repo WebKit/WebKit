@@ -72,7 +72,7 @@ public:
     static GPUProcessProxy* singletonIfCreated();
     ~GPUProcessProxy();
 
-    void createGPUProcessConnection(WebProcessProxy&, IPC::Attachment&& connectionIdentifier, GPUProcessConnectionParameters&&);
+    void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();

@@ -815,7 +815,7 @@ void WebProcessProxy::getNetworkProcessConnection(Messages::WebProcessProxy::Get
 }
 
 #if ENABLE(GPU_PROCESS)
-void WebProcessProxy::createGPUProcessConnection(IPC::Attachment&& connectionIdentifier, WebKit::GPUProcessConnectionParameters&& parameters)
+void WebProcessProxy::createGPUProcessConnection(IPC::Connection::Handle&& connectionIdentifier, WebKit::GPUProcessConnectionParameters&& parameters)
 {
     m_processPool->createGPUProcessConnection(*this, WTFMove(connectionIdentifier), WTFMove(parameters));
 }

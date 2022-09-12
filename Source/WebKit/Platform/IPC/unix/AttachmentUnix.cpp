@@ -31,6 +31,11 @@
 
 namespace IPC {
 
+Attachment::Attachment()
+    : m_type(Uninitialized)
+{
+}
+
 Attachment::Attachment(UnixFileDescriptor&& fd, size_t size)
     : m_type(MappedMemoryType)
     , m_fd(WTFMove(fd))
@@ -75,5 +80,15 @@ Attachment& Attachment::operator=(Attachment&& attachment)
 }
 
 Attachment::~Attachment() = default;
+
+void Attachment::encode(Encoder& encoder) const
+{
+    encoder.addAttachment(WTFMove(*const_cast<Attachment*>(this)));
+}
+
+std::optional<Attachment> Attachment::decode(Decoder& decoder)
+{
+    return decoder.takeLastAttachment();
+}
 
 } // namespace IPC
