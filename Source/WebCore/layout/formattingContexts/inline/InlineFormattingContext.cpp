@@ -214,6 +214,8 @@ static size_t indexOfFirstInlineItemForNextLine(const LineBuilder::LineContent& 
 
 void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBuilder::InlineItemRange& needsLayoutRange, const ConstraintsForInFlowContent& constraints)
 {
+    ASSERT(!needsLayoutRange.isEmpty());
+
     auto& formattingState = this->formattingState();
     formattingState.boxes().reserveInitialCapacity(formattingState.inlineItems().size());
 
@@ -225,21 +227,20 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     auto firstInlineItemNeedsLayout = needsLayoutRange.start;
 
     auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal(), inlineItems };
-    auto isAtEnd = [&] {
-        auto endOfInlineContent = firstInlineItemNeedsLayout == needsLayoutRange.end;
-        auto endOfOverflowingFloatingContent = previousLine && previousLine->overflowingFloats.isEmpty();
-        return endOfInlineContent && endOfOverflowingFloatingContent;
-    };
-    while (!isAtEnd()) {
+    while (true) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight() };
         auto lineContent = lineBuilder.layoutInlineContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, previousLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent);
+        if (lineContent.isLastLineWithInlineContent)
+            formattingState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineContent, lineInitialRect, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
+
+        firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
+        auto isAtEnd = firstInlineItemNeedsLayout == needsLayoutRange.end && lineContent.overflowingFloats.isEmpty();
+        if (isAtEnd)
+            break;
 
         lineLogicalTop = formattingGeometry().logicalTopForNextLine(lineContent, lineInitialRect, lineLogicalRect, floatingContext);
-        if (lineContent.isLastLineWithInlineContent)
-            formattingState.setClearGapAfterLastLine(lineLogicalTop - lineLogicalRect.bottom());
-        firstInlineItemNeedsLayout = indexOfFirstInlineItemForNextLine(lineContent, previousLine, previousLineLastInlineItemIndex);
         previousLine = LineBuilder::PreviousLine { !lineContent.runs.isEmpty() && lineContent.runs.last().isLineBreak(), lineContent.inlineBaseDirection, lineContent.partialOverflowingContent, WTFMove(lineContent.overflowingFloats), lineContent.trailingOverflowingContentWidth };
         previousLineLastInlineItemIndex = lineContent.inlineItemRange.end;
     }
