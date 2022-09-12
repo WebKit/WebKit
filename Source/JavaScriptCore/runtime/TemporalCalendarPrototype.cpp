@@ -401,7 +401,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncToJSON, (JSGlobalObject* g
     if (!calendar)
         return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.toJSON called on value that's not a Calendar"_s);
 
-    return JSValue::encode(calendar->toString(globalObject));
+    RELEASE_AND_RETURN(scope, JSValue::encode(calendar->toString(globalObject)));
 }
 
 } // namespace JSC
