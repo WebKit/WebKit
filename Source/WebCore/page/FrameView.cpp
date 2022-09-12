@@ -2487,6 +2487,36 @@ void FrameView::scrollToFocusedElementInternal()
     FrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No });
 }
 
+void FrameView::textFragmentIndicatorTimerFired()
+{
+    Ref protectedThis { *this };
+    
+    ASSERT(frame().document());
+    auto& document = *frame().document();
+    
+    if (!m_pendingTextFragmentIndicatorRange)
+        return;
+    
+    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
+        return;
+    
+    auto range = m_pendingTextFragmentIndicatorRange.value();
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered });
+    
+    auto textIndicator = TextIndicator::createWithRange(range, { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
+    if (textIndicator)
+        document.page()->chrome().client().setTextIndicator(textIndicator->data());
+    
+    cancelScheduledTextFragmentIndicatorTimer();
+}
+
+void FrameView::cancelScheduledTextFragmentIndicatorTimer()
+{
+    m_pendingTextFragmentIndicatorRange.reset();
+    m_pendingTextFragmentIndicatorText = String();
+    m_delayedTextFragmentIndicatorTimer.stop();
+}
+
 bool FrameView::scrollRectToVisible(const LayoutRect& absoluteRect, const RenderObject& renderer, bool insideFixed, const ScrollRectToVisibleOptions& options)
 {
     if (options.revealMode == SelectionRevealMode::DoNotReveal)
@@ -2620,34 +2650,6 @@ void FrameView::scrollRectToVisibleInTopLevelView(const LayoutRect& absoluteRect
     // The canAutoscroll function in EventHandler also knows about this.
     page->chrome().scrollContainingScrollViewsToRevealRect(snappedIntRect(absoluteRect));
 }
-
-void FrameView::textFragmentIndicatorTimerFired()
-{
-    Ref protectedThis { *this };
-    
-    ASSERT(frame().document());
-    auto& document = *frame().document();
-    
-    if (!m_pendingTextFragmentIndicatorRange)
-        return;
-    
-    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
-        return;
-    
-    auto textIndicator = TextIndicator::createWithRange(m_pendingTextFragmentIndicatorRange.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
-    if (textIndicator)
-        document.page()->chrome().client().setTextIndicator(textIndicator->data());
-    
-    cancelScheduledTextFragmentIndicatorTimer();
-}
-
-void FrameView::cancelScheduledTextFragmentIndicatorTimer()
-{
-    m_pendingTextFragmentIndicatorRange.reset();
-    m_pendingTextFragmentIndicatorText = String();
-    m_delayedTextFragmentIndicatorTimer.stop();
-}
-
 
 void FrameView::contentsResized()
 {
