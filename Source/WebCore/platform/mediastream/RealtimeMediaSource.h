@@ -193,8 +193,6 @@ public:
     bool supportsConstraints(const MediaConstraints&, String&);
     bool supportsConstraint(const MediaConstraint&);
 
-    virtual bool isIsolated() const { return false; }
-
     virtual bool isMockSource() const { return false; }
     virtual bool isCaptureSource() const { return false; }
     virtual CaptureDevice::DeviceType deviceType() const { return CaptureDevice::DeviceType::Unknown; }

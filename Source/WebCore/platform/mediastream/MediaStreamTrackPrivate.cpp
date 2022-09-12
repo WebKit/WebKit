@@ -167,7 +167,7 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
     clonedMediaStreamTrackPrivate->m_contentHint = this->m_contentHint;
     clonedMediaStreamTrackPrivate->updateReadyState();
 
-    if (isProducingData())
+    if (m_source->isProducingData())
         clonedMediaStreamTrackPrivate->startProducingData();
 
     return clonedMediaStreamTrackPrivate;
