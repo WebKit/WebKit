@@ -3486,7 +3486,6 @@ webkit.org/b/159755 fast/text/emoji-num-glyphs.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-originating-decoration-color.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-originating-underline-order.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/target-text-007.html [ Failure ]
 
 # These tests require platform support.
 # <rdar://problem/87944426>
