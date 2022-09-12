@@ -95,7 +95,7 @@ bool CDMSessionClearKey::update(Uint8Array* rawKeysData, RefPtr<Uint8Array>& nex
         auto rawKeysString = String::fromUTF8(rawKeysData->data(), rawKeysData->length());
         if (rawKeysString.isEmpty())  {
             LOG(Media, "CDMSessionClearKey::update(%p) - failed: empty message", this);
-            continue;
+            break;
         }
 
         auto& vm = clearKeyVM();
