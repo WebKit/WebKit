@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="fuzzy" content="maxDifference=0-48; totalPixels=0-2500">
     <link rel="stylesheet" href="resources/filter-helpers.css">
     <script src="resources/filter-helpers.js"></script>
-    <script>
-    if (window.internals) {
-        // Force software rendering mode.
-        window.internals.settings.setAcceleratedCompositingEnabled(false);
-    }
-    </script>
 </head>
 <body>
     <script>
@@ -22,7 +15,7 @@
             'opacity(1.0)',
         ];
 
-        buildCSSFilteredBoxes(filters);
+        buildSVGFilteredBoxes(filters);
     </script>
 </body>
 </html>

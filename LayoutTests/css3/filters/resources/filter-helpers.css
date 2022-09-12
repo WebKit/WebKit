@@ -1,0 +1,12 @@
+img {
+    margin: 10px;
+}
+
+svg {
+    height: 0;
+    width: 0;
+}
+
+filter {
+    color-interpolation-filters: sRGB;
+}

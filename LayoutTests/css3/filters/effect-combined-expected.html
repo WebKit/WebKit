@@ -2,25 +2,20 @@
 <html>
 <head>
     <link rel="stylesheet" href="resources/filter-helpers.css">
-    <style>
-        img {
-            will-change: transform;
-        }
-    </style>
     <script src="resources/filter-helpers.js"></script>
 </head>
 <body>
     <script>
         const filters = [
-            'sepia() saturate(3) hue-rotate(0.5turn)',
+            'sepia(1) saturate(3) hue-rotate(0.5turn)',
             'saturate(3) hue-rotate(0.25turn)',
-            'grayscale() blur(3px)',
-            'blur(3px) hue-rotate(-0.25turn) sepia()',
-            'blur(3px) opacity(0.5) hue-rotate(-0.25turn) sepia()',
+            'grayscale(1) blur(3px)',
+            'blur(3px) hue-rotate(-0.25turn) sepia(1)',
+            'blur(3px) opacity(0.5) hue-rotate(-0.25turn) sepia(1)',
             'blur(3px) brightness(1.2) contrast(2)',
         ];
 
-        buildCSSFilteredBoxes(filters);
+        buildSVGFilteredBoxes(filters);
     </script>
 </body>
 </html>

@@ -3,12 +3,6 @@
 <head>
     <link rel="stylesheet" href="resources/filter-helpers.css">
     <script src="resources/filter-helpers.js"></script>
-    <script>
-    if (window.internals) {
-        // Force software rendering mode.
-        window.internals.settings.setAcceleratedCompositingEnabled(false);
-    }
-    </script>
 </head>
 <body>
     <script>
@@ -20,7 +14,9 @@
             'drop-shadow(5px 5px 10px blue)',
         ];
 
-        buildCSSFilteredBoxes(filters);
+        buildSVGFilteredBoxes(filters);
+        if (window.testRunner)
+            testRunner.forceRepaint();
     </script>
 </body>
 </html>
