@@ -130,14 +130,14 @@ inline bool isI31ref(Type type)
 inline Type funcrefType()
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
+        return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Funcref) };
     return Types::Funcref;
 }
 
 inline Type externrefType()
 {
     if (Options::useWebAssemblyTypedFunctionReferences())
-        return Wasm::Type { Wasm::TypeKind::RefNull, Wasm::Nullable::Yes, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
+        return Wasm::Type { Wasm::TypeKind::RefNull, static_cast<Wasm::TypeIndex>(Wasm::TypeKind::Externref) };
     return Types::Externref;
 }
 

@@ -130,12 +130,10 @@ static unsigned computeSignatureHash(size_t returnCount, const Type* returnTypes
     unsigned accumulator = 0xa1bcedd8u;
     for (uint32_t i = 0; i < argumentCount; ++i) {
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(argumentTypes[i].kind)));
-        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(argumentTypes[i].nullable)));
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<unsigned>::hash(argumentTypes[i].index));
     }
     for (uint32_t i = 0; i < returnCount; ++i) {
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(returnTypes[i].kind)));
-        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(returnTypes[i].nullable)));
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<unsigned>::hash(returnTypes[i].index));
     }
     return accumulator;
@@ -146,7 +144,6 @@ static unsigned computeStructTypeHash(size_t fieldCount, const StructField* fiel
     unsigned accumulator = 0x15d2546;
     for (uint32_t i = 0; i < fieldCount; ++i) {
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].type.kind)));
-        accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].type.nullable)));
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].type.index)));
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].mutability)));
     }
@@ -248,7 +245,7 @@ Type TypeDefinition::substitute(Type type, TypeIndex projectee)
     if (type.kind == TypeKind::Rec) {
         RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(projectee, static_cast<ProjectionIndex>(type.index));
         TypeKind kind = type.isNullable() ? TypeKind::RefNull : TypeKind::Ref;
-        return Type { kind, type.nullable, projection->index() };
+        return Type { kind, projection->index() };
     }
 
     return type;

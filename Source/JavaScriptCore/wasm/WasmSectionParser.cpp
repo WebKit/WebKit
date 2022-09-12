@@ -625,9 +625,9 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
             WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx");
             if (isTypeIndexHeapType(heapType)) {
                 TypeIndex typeIndex = TypeInformation::get(m_info->typeSignatures[heapType].get());
-                typeOfNull = Type { TypeKind::RefNull, Nullable::Yes, typeIndex };
+                typeOfNull = Type { TypeKind::RefNull, typeIndex };
             } else
-                typeOfNull = Type { TypeKind::RefNull, Nullable::Yes, static_cast<TypeIndex>(heapType) };
+                typeOfNull = Type { TypeKind::RefNull, static_cast<TypeIndex>(heapType) };
         } else
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, typeOfNull), "ref.null type must be a reference type");
 
@@ -644,7 +644,7 @@ auto SectionParser::parseInitExpr(uint8_t& opcode, uint64_t& bitsOrImportNumber,
 
         if (Options::useWebAssemblyTypedFunctionReferences()) {
             TypeIndex typeIndex = m_info->typeIndexFromFunctionIndexSpace(index);
-            resultType = { TypeKind::Ref, Nullable::No, typeIndex };
+            resultType = { TypeKind::Ref, typeIndex };
         } else
             resultType = Types::Funcref;
 

@@ -1330,7 +1330,7 @@ auto AirIRGenerator::addRefFunc(uint32_t index, ExpressionType& result) -> Parti
     // FIXME: Emit this inline <https://bugs.webkit.org/show_bug.cgi?id=198506>.
     if (Options::useWebAssemblyTypedFunctionReferences()) {
         TypeIndex typeIndex = m_info.typeIndexFromFunctionIndexSpace(index);
-        result = tmpForType(Type { TypeKind::Ref, Nullable::No, typeIndex });
+        result = tmpForType(Type { TypeKind::Ref, typeIndex });
     } else
         result = tmpForType(Types::Funcref);
     emitCCall(&operationWasmRefFunc, result, instanceValue(), addConstant(Types::I32, index));
@@ -3018,7 +3018,7 @@ auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, Expressio
 auto AirIRGenerator::addI31New(ExpressionType value, ExpressionType& result) -> PartialResult
 {
     auto tmp1 = g32();
-    result = gRef(Type { TypeKind::Ref, Nullable::No, static_cast<TypeIndex>(TypeKind::I31ref) });
+    result = gRef(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::I31ref) });
 
     append(Move, Arg::bigImm(0x7fffffff), tmp1);
     append(And32, tmp1, value, tmp1);
