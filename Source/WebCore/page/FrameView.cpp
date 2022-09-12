@@ -2462,7 +2462,10 @@ void FrameView::textFragmentIndicatorTimerFired()
     if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
         return;
     
-    auto textIndicator = TextIndicator::createWithRange(m_pendingTextFragmentIndicatorRange.value(), { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
+    auto range = m_pendingTextFragmentIndicatorRange.value();
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered });
+    
+    auto textIndicator = TextIndicator::createWithRange(range, { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
     if (textIndicator)
         document.page()->chrome().client().setTextIndicator(textIndicator->data());
     
