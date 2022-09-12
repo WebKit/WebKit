@@ -22,7 +22,7 @@ promise_test(async t => {
 
         IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateConnectionTester.name, [
             { type: 'uint64_t', value: testerID },
-            { type: 'Attachment', value: clientConnectionIdentifier },
+            { type: 'ConnectionHandle', value: clientConnectionIdentifier },
         ]);
         try {
             for (let msg of msgs)
@@ -51,7 +51,7 @@ promise_test(async t => {
             const messageCount = 3; // FIXME: should be 10000, but waiting for messages is slow.
             IPC.sendMessage(processTarget, 0, IPC.messages.IPCTester_CreateConnectionTesterAndSendAsyncMessages.name, [
                 { type: 'uint64_t', value: testerID },
-                { type: 'Attachment', value: clientConnectionIdentifier },
+                { type: 'ConnectionHandle', value: clientConnectionIdentifier },
                 { type: 'uint32_t', value: messageCount },
             ]);
             try {

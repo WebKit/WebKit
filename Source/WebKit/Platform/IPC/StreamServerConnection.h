@@ -66,7 +66,7 @@ public:
     // Creates StreamServerConnection where the out of stream messages and server replies are
     // received through a dedidcated, new IPC::Connection. The messages from the server are sent to
     // the dedicated conneciton.
-    static Ref<StreamServerConnection> createWithDedicatedConnection(Attachment&& connectionIdentifier, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
+    static Ref<StreamServerConnection> createWithDedicatedConnection(IPC::Connection::Handle&&, StreamConnectionBuffer&&, StreamConnectionWorkQueue&);
     ~StreamServerConnection() final;
 
     void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);

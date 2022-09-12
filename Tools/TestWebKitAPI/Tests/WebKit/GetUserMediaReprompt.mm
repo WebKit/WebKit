@@ -98,7 +98,7 @@ TEST(WebKit2, GetUserMediaReprompt)
     EXPECT_TRUE([webView haveStream:NO]);
 
     // Sleep long enough for the reprompt timer to fire and clear cached state.
-    Util::sleep(1);
+    Util::runFor(1_s);
 
     [webView stringByEvaluatingJavaScript:@"promptForCapture()"];
     [delegate waitUntilPrompted];

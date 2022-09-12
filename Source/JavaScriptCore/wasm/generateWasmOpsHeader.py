@@ -226,21 +226,15 @@ enum class TypeKind : int8_t {
 };
 #undef CREATE_ENUM_VALUE
 
-enum class Nullable : bool {
-  No = false,
-  Yes = true,
-};
-
 using TypeIndex = uintptr_t;
 
 struct Type {
     TypeKind kind;
-    Nullable nullable;
     TypeIndex index;
 
     bool operator==(const Type& other) const
     {
-        return other.kind == kind && other.nullable == nullable && other.index == index;
+        return other.kind == kind && other.isNullable() == isNullable() && other.index == index;
     }
 
     bool operator!=(const Type& other) const
@@ -250,7 +244,7 @@ struct Type {
 
     bool isNullable() const
     {
-        return static_cast<bool>(nullable);
+        return kind == TypeKind::RefNull || kind == TypeKind::Externref || kind == TypeKind::Funcref;
     }
 
     void dump(PrintStream& out) const
@@ -271,7 +265,7 @@ struct Type {
 
 namespace Types
 {
-#define CREATE_CONSTANT(name, id, ...) constexpr Type name = Type{TypeKind::name, Nullable::Yes, 0u};
+#define CREATE_CONSTANT(name, id, ...) constexpr Type name = Type{TypeKind::name, 0u};
 FOR_EACH_WASM_TYPE(CREATE_CONSTANT)
 #undef CREATE_CONSTANT
 } // namespace Types

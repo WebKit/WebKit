@@ -61,7 +61,7 @@ namespace JSC {
     v(op_tail_call_varargs_slow, JSEntryPtrTag) \
     v(op_tail_call_forward_arguments_slow, JSEntryPtrTag) \
     v(op_construct_varargs_slow, JSEntryPtrTag) \
-    v(op_call_eval_slow, JSEntrySlowPathPtrTag) \
+    v(op_call_direct_eval_slow, JSEntrySlowPathPtrTag) \
 
 #if ENABLE(WEBASSEMBLY)
 

@@ -31,10 +31,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/text/CString.h>
 
-namespace IPC {
-class Attachment;
-}
-
 namespace WebKit {
 
 class MemoryPressureMonitor {

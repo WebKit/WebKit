@@ -5624,7 +5624,7 @@ HRESULT WebView::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL p
     ::ScreenToClient(m_viewWindow, (LPPOINT)&localpt);
     DragData data(pDataObject, IntPoint(localpt.x, localpt.y), 
         IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
-    *pdwEffect = dragOperationToDragCursor(m_page->dragController().dragEntered(data));
+    *pdwEffect = dragOperationToDragCursor(m_page->dragController().dragEntered(WTFMove(data)));
 
     m_lastDropEffect = *pdwEffect;
     m_dragData = pDataObject;
@@ -5642,7 +5642,7 @@ HRESULT WebView::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
         ::ScreenToClient(m_viewWindow, (LPPOINT)&localpt);
         DragData data(m_dragData.get(), IntPoint(localpt.x, localpt.y), 
             IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
-        *pdwEffect = dragOperationToDragCursor(m_page->dragController().dragUpdated(data));
+        *pdwEffect = dragOperationToDragCursor(m_page->dragController().dragUpdated(WTFMove(data)));
     } else
         *pdwEffect = DROPEFFECT_NONE;
 
@@ -5657,7 +5657,7 @@ HRESULT WebView::DragLeave()
 
     if (m_dragData) {
         DragData data(m_dragData.get(), IntPoint(), IntPoint(), { });
-        m_page->dragController().dragExited(data);
+        m_page->dragController().dragExited(WTFMove(data));
         m_dragData = 0;
     }
     return S_OK;
@@ -5674,7 +5674,7 @@ HRESULT WebView::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DW
     ::ScreenToClient(m_viewWindow, (LPPOINT)&localpt);
     DragData data(pDataObject, IntPoint(localpt.x, localpt.y), 
         IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
-    m_page->dragController().performDragOperation(data);
+    m_page->dragController().performDragOperation(WTFMove(data));
     return S_OK;
 }
 

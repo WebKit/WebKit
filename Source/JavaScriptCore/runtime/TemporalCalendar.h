@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +50,7 @@ public:
     static JSObject* toTemporalCalendarWithISODefault(JSGlobalObject*, JSValue);
     static JSObject* getTemporalCalendarWithISODefault(JSGlobalObject*, JSValue);
     static ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, JSObject*, TemporalOverflow);
+    static ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
 
     CalendarID identifier() const { return m_identifier; }
     bool isISO8601() const { return m_identifier == iso8601CalendarID(); }
@@ -56,6 +58,8 @@ public:
     static std::optional<CalendarID> isBuiltinCalendar(StringView);
 
     static JSObject* from(JSGlobalObject*, JSValue);
+
+    bool equals(JSGlobalObject*, TemporalCalendar*);
 
 private:
     TemporalCalendar(VM&, Structure*, CalendarID);

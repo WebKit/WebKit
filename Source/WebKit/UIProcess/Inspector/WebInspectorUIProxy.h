@@ -27,7 +27,7 @@
 #pragma once
 
 #include "APIObject.h"
-#include "Attachment.h"
+#include "Connection.h"
 #include "DebuggableInfoData.h"
 #include "MessageReceiver.h"
 #include "WebInspectorUtilities.h"
@@ -249,7 +249,7 @@ private:
 
     // Called by WebInspectorUIProxy messages
     void openLocalInspectorFrontend(bool canAttach, bool underTest);
-    void setFrontendConnection(IPC::Attachment);
+    void setFrontendConnection(IPC::Connection::Handle&&);
 
     void sendMessageToBackend(const String&);
     void frontendLoaded();

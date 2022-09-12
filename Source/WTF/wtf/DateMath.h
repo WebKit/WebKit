@@ -406,6 +406,8 @@ using WTF::calculateLocalTimeOffset;
 using WTF::dateToDaysFrom1970;
 using WTF::dayInMonthFromDayInYear;
 using WTF::dayInYear;
+using WTF::daysFrom1970ToYear;
+using WTF::daysInYear;
 using WTF::getTimeZoneOverride;
 using WTF::isLeapYear;
 using WTF::isTimeZoneValid;

@@ -69,7 +69,7 @@ public:
 
             if (forceGC)
                 [webView.get().configuration.processPool _garbageCollectJavaScriptObjectsForTesting];
-            TestWebKitAPI::Util::sleep(0.1);
+            TestWebKitAPI::Util::runFor(0.1_s);
         } while (++tries <= 100);
 
         EXPECT_EQ(status, [webView _audioRoutingArbitrationStatus]) << message;
@@ -146,7 +146,7 @@ TEST_F(AudioRoutingArbitration, Updating)
         if ([webView _audioRoutingArbitrationUpdateTime] > arbitrationUpdateTime)
             break;
 
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     } while (++tries <= 100);
 
     EXPECT_LT(arbitrationUpdateTime, [webView _audioRoutingArbitrationUpdateTime]) << "Arbitration was not updated";

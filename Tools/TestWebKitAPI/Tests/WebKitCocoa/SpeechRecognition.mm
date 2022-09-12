@@ -229,7 +229,7 @@ TEST(WebKit2, SpeechRecognitionPageBecomesInvisible)
     // Hide page.
     receivedScriptMessage = false;
     [webView.get().window setIsVisible:NO];
-    Util::sleep(0.1);
+    Util::runFor(0.1_s);
     // Ongoing recognition does not stop automatically.
     EXPECT_FALSE(receivedScriptMessage);
     [webView stringByEvaluatingJavaScript:@"stop()"];
@@ -272,7 +272,7 @@ TEST(WebKit2, SpeechRecognitionPageIsDestroyed)
         TestWebKitAPI::Util::run(&finishedRunningScript);
     }
 
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
 
     EXPECT_TRUE(!!createdWebView);
 }
@@ -328,7 +328,7 @@ TEST(WebKit2, SpeechRecognitionWebProcessCrash)
         [webView _killWebContentProcess];
     }
 
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
 }
 
 } // namespace TestWebKitAPI

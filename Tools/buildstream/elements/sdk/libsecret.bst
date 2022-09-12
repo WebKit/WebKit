@@ -8,7 +8,7 @@ build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 - freedesktop-sdk.bst:components/libxslt.bst
 depends:
-- sdk/glib.bst
+- freedesktop-sdk.bst:components/glib.bst
 - freedesktop-sdk.bst:components/gobject-introspection.bst
 - freedesktop-sdk.bst:components/libgcrypt.bst
 - freedesktop-sdk.bst:bootstrap-import.bst

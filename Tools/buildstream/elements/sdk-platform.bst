@@ -16,13 +16,10 @@ depends:
 - sdk/cargo-c.bst
 - sdk/ccls.bst
 - sdk/clangd.bst
-- sdk/cmake-lsp.bst
 - sdk/eigen.bst
 - sdk/enchant-2.bst
 - sdk/ffmpeg.bst
 - sdk/gi-docgen.bst
-- sdk/glib-networking.bst
-- sdk/glib.bst
 - sdk/graphviz.bst
 - sdk/gst-libav.bst
 - sdk/gst-plugin-closedcaption.bst
@@ -37,15 +34,11 @@ depends:
 - sdk/icecc.bst
 - sdk/krb5.bst
 - sdk/libavif.bst
-- sdk/libcap-ng.bst
 - sdk/libevent.bst
-- sdk/libgcrypt.bst
 - sdk/libjxl.bst
 - sdk/libkate.bst
 - sdk/libmanette.bst
-- sdk/libnotify.bst
 - sdk/libsecret.bst
-- sdk/libsoup3.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
 - sdk/mold.bst
@@ -54,7 +47,6 @@ depends:
 - sdk/os-release.bst
 - sdk/patchelf.bst
 - sdk/psmisc.bst
-- sdk/pygls.bst
 - sdk/ruby-json.bst
 - sdk/ruby-highline.bst
 - sdk/ruby-webrick.bst
@@ -102,6 +94,8 @@ depends:
 - freedesktop-sdk.bst:components/gdk-pixbuf.bst
 - freedesktop-sdk.bst:components/gettext.bst
 - freedesktop-sdk.bst:components/giflib.bst
+- freedesktop-sdk.bst:components/glib.bst
+- freedesktop-sdk.bst:components/glib-networking.bst
 - freedesktop-sdk.bst:components/gmp.bst
 - freedesktop-sdk.bst:components/gnu-free-fonts.bst
 - freedesktop-sdk.bst:components/gnupg.bst
@@ -127,6 +121,7 @@ depends:
 - freedesktop-sdk.bst:components/libarchive.bst
 - freedesktop-sdk.bst:components/libassuan.bst
 - freedesktop-sdk.bst:components/libcap.bst
+- freedesktop-sdk.bst:components/libcap-ng.bst
 - freedesktop-sdk.bst:components/libdatrie.bst
 - freedesktop-sdk.bst:components/libdrm.bst
 - freedesktop-sdk.bst:components/libepoxy.bst
@@ -134,6 +129,7 @@ depends:
 - freedesktop-sdk.bst:components/libexif.bst
 - freedesktop-sdk.bst:components/libffi.bst
 - freedesktop-sdk.bst:components/libflac.bst
+- freedesktop-sdk.bst:components/libgcrypt.bst
 - freedesktop-sdk.bst:components/libglvnd.bst
 - freedesktop-sdk.bst:components/libgpg-error.bst
 - freedesktop-sdk.bst:components/libidn2.bst
@@ -142,13 +138,13 @@ depends:
 - freedesktop-sdk.bst:components/libnice.bst
 - freedesktop-sdk.bst:components/libogg.bst
 - freedesktop-sdk.bst:components/libpng.bst
-- freedesktop-sdk.bst:components/libportal.bst
 - freedesktop-sdk.bst:components/libproxy.bst
 - freedesktop-sdk.bst:components/libpsl.bst
 - freedesktop-sdk.bst:components/libpulse.bst
 - freedesktop-sdk.bst:components/libsamplerate.bst
 - freedesktop-sdk.bst:components/libseccomp.bst
 - freedesktop-sdk.bst:components/libsoup.bst
+- freedesktop-sdk.bst:components/libsoup2.bst
 - freedesktop-sdk.bst:components/libsrtp2.bst
 - freedesktop-sdk.bst:components/libtasn1.bst
 - freedesktop-sdk.bst:components/libthai.bst
@@ -157,7 +153,6 @@ depends:
 - freedesktop-sdk.bst:components/libtool.bst
 - freedesktop-sdk.bst:components/libunistring.bst
 - freedesktop-sdk.bst:components/libva.bst
-- freedesktop-sdk.bst:components/libvdpau.bst
 - freedesktop-sdk.bst:components/libvorbis.bst
 - freedesktop-sdk.bst:components/libvpx.bst
 - freedesktop-sdk.bst:components/libwebp.bst
@@ -172,6 +167,7 @@ depends:
 - freedesktop-sdk.bst:components/mythes.bst
 - freedesktop-sdk.bst:components/nano.bst
 - freedesktop-sdk.bst:components/nettle.bst
+- freedesktop-sdk.bst:components/noto-emoji.bst
 - freedesktop-sdk.bst:components/npth.bst
 - freedesktop-sdk.bst:components/nspr.bst
 - freedesktop-sdk.bst:components/nss.bst
@@ -179,7 +175,6 @@ depends:
 - freedesktop-sdk.bst:components/openal.bst
 - freedesktop-sdk.bst:components/opencl.bst
 - freedesktop-sdk.bst:components/openjpeg.bst
-- freedesktop-sdk.bst:components/openmoji.bst
 - freedesktop-sdk.bst:components/openssh.bst
 - freedesktop-sdk.bst:components/openssl.bst
 - freedesktop-sdk.bst:components/opus.bst
@@ -200,11 +195,6 @@ depends:
 - freedesktop-sdk.bst:components/python3-usercustomize.bst
 - freedesktop-sdk.bst:components/python3-virtualenv.bst
 - freedesktop-sdk.bst:components/python3.bst
-- freedesktop-sdk.bst:components/sdl2-image.bst
-- freedesktop-sdk.bst:components/sdl2-mixer.bst
-- freedesktop-sdk.bst:components/sdl2-net.bst
-- freedesktop-sdk.bst:components/sdl2-ttf.bst
-- freedesktop-sdk.bst:components/sdl2.bst
 - freedesktop-sdk.bst:components/shared-mime-info.bst
 - freedesktop-sdk.bst:components/sndfile.bst
 - freedesktop-sdk.bst:components/speex.bst

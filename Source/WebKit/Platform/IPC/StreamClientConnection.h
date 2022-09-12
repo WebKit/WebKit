@@ -68,7 +68,7 @@ public:
 
     struct StreamConnectionWithDedicatedConnection {
         std::unique_ptr<StreamClientConnection> streamConnection;
-        Attachment connectionIdentifier;
+        IPC::Connection::Handle connectionHandle;
         // FIXME: Once IPC can treat handles as first class objects, add stream buffer as
         // a handle here.
     };
@@ -76,7 +76,7 @@ public:
     // Creates StreamClientConnection where the out of stream messages and server replies are
     // sent through a dedidcated, new IPC::Connection. The messages from the server are delivered to
     // the caller through the passed IPC::MessageReceiver.
-    // The caller should send StreamConnectionWithDedicatedConnection::connectionIdentifier and
+    // The caller should send StreamConnectionWithDedicatedConnection::connectionHandle and
     // StreamClientConnection::streamBuffer() to the server via an existing IPC::Connection.
     static StreamConnectionWithDedicatedConnection createWithDedicatedConnection(MessageReceiver&, size_t bufferSize);
 

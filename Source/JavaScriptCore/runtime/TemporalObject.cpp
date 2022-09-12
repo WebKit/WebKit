@@ -158,6 +158,16 @@ static StringView singularUnit(StringView unit)
     return unit.endsWith('s') ? unit.left(unit.length() - 1) : unit;
 }
 
+double nonNegativeModulo(double x, double y)
+{
+    double result = std::fmod(x, y);
+    if (!result)
+        return 0;
+    if (result < 0)
+        result += y;
+    return result;
+}
+
 // For use in error messages where a string value is potentially unbounded
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String& string)
 {

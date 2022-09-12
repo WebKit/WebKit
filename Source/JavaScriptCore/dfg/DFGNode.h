@@ -1785,7 +1785,7 @@ public:
         case Construct:
         case DirectConstruct:
         case CallVarargs:
-        case CallEval:
+        case CallDirectEval:
         case TailCallVarargsInlinedCaller:
         case ConstructVarargs:
         case CallForwardVarargs:
@@ -2349,7 +2349,7 @@ public:
     bool hasECMAMode()
     {
         switch (op()) {
-        case CallEval:
+        case CallDirectEval:
         case DeleteById:
         case DeleteByVal:
         case PutById:
@@ -2372,7 +2372,7 @@ public:
     {
         ASSERT(hasECMAMode());
         switch (op()) {
-        case CallEval:
+        case CallDirectEval:
         case DeleteByVal:
         case PutByValWithThis:
         case ToThis:

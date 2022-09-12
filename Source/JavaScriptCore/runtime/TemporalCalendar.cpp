@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@
 
 #include "JSObjectInlines.h"
 #include "StructureInlines.h"
+#include "TemporalDuration.h"
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"
@@ -229,6 +231,110 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
     }
 
     return plainDate;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-balanceisodate
+static bool balanceISODate(double& year, double& month, double& day)
+{
+    ASSERT(isInteger(day));
+    ASSERT(month >= 1 && month <= 12);
+    if (!ISO8601::isYearWithinLimits(year))
+        return false;
+
+    double daysFrom1970 = day + dateToDaysFrom1970(static_cast<int>(year), static_cast<int>(month - 1), 1) - 1;
+
+    double balancedYear = std::floor(daysFrom1970 / 365.2425) + 1970;
+    if (!ISO8601::isYearWithinLimits(balancedYear))
+        return false;
+
+    double daysUntilYear = daysFrom1970ToYear(static_cast<int>(balancedYear));
+    if (daysUntilYear > daysFrom1970) {
+        balancedYear--;
+        daysUntilYear -= daysInYear(static_cast<int>(balancedYear));
+    } else {
+        double daysUntilFollowingYear = daysUntilYear + daysInYear(static_cast<int>(balancedYear));
+        if (daysUntilFollowingYear <= daysFrom1970) {
+            daysUntilYear = daysUntilFollowingYear;
+            balancedYear++;
+        }
+    }
+
+    ASSERT(daysFrom1970 - daysUntilYear >= 0);
+    auto dayInYear = static_cast<unsigned>(daysFrom1970 - daysUntilYear + 1);
+
+    unsigned daysUntilMonth = 0;
+    unsigned balancedMonth = 1;
+    for (; balancedMonth < 12; balancedMonth++) {
+        auto monthDays = balancedMonth != 2 ? ISO8601::daysInMonth(balancedMonth) : ISO8601::daysInMonth(static_cast<int>(balancedYear), balancedMonth);
+        if (daysUntilMonth + monthDays >= dayInYear)
+            break;
+        daysUntilMonth += monthDays;
+    }
+
+    year = balancedYear;
+    month = balancedMonth;
+    day = dayInYear - daysUntilMonth;
+    return true;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-addisodate
+ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, const ISO8601::PlainDate& plainDate, const ISO8601::Duration& duration, TemporalOverflow overflow)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    ISO8601::Duration balancedDuration = duration;
+    TemporalDuration::balance(balancedDuration, TemporalUnit::Day);
+
+    double year = plainDate.year() + duration.years();
+    double month = plainDate.month() + duration.months();
+    if (month < 1 || month > 12) {
+        year += std::floor((month - 1) / 12);
+        month = nonNegativeModulo((month - 1), 12) + 1;
+    }
+
+    double daysInMonth = ISO8601::daysInMonth(year, month);
+    double day = plainDate.day();
+    if (overflow == TemporalOverflow::Constrain)
+        day = std::min<double>(day, daysInMonth);
+    else if (day > daysInMonth) {
+        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+        return { };
+    }
+
+    day += balancedDuration.days() + 7 * duration.weeks();
+    if (day < 1 || day > daysInMonth) {
+        if (!balanceISODate(year, month, day)) {
+            throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+            return { };
+        }
+    }
+
+    auto result = TemporalPlainDate::toPlainDate(globalObject, ISO8601::Duration(year, month, 0, day, 0, 0, 0, 0, 0, 0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!ISO8601::isDateTimeWithinLimits(result.year(), result.month(), result.day(), 12, 0, 0, 0, 0, 0)) {
+        throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
+        return { };
+    }
+
+    return result;
+}
+
+bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* other)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (other == this)
+        return true;
+
+    JSString* thisString = toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, false);
+    JSString* thatString = other->toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, false);
+
+    RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
 }
 
 } // namespace JSC

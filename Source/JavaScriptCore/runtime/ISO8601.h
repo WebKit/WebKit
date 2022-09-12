@@ -230,6 +230,7 @@ public:
             && lhs.microsecond() == rhs.microsecond()
             && lhs.nanosecond() == rhs.nanosecond();
     }
+    friend bool operator!=(PlainTime lhs, PlainTime rhs) { return !(lhs == rhs); }
 
 private:
     uint8_t m_hour { 0 };
@@ -259,6 +260,14 @@ public:
         , m_day(day)
     {
     }
+
+    friend bool operator==(PlainDate lhs, PlainDate rhs)
+    {
+        return lhs.year() == rhs.year()
+            && lhs.month() == rhs.month()
+            && lhs.day() == rhs.day();
+    }
+    friend bool operator!=(PlainDate lhs, PlainDate rhs) { return !(lhs == rhs); }
 
     int32_t year() const { return m_year; }
     uint8_t month() const { return m_month; }
@@ -316,6 +325,7 @@ bool isValidDuration(const Duration&);
 std::optional<ExactTime> parseInstant(StringView);
 
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
+bool isYearWithinLimits(double year);
 
 } // namespace ISO8601
 } // namespace JSC

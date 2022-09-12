@@ -113,7 +113,7 @@ TEST(Gamepad, Basic)
     mapping.vendorID = HIDVendorID::Fake;
     auto gamepad = makeUnique<VirtualGamepad>(mapping);
     while (![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting])
-        Util::sleep(0.1);
+        Util::runFor(0.1_s);
 
     // Press a button on it, waiting for the web page to see it
     gamepad->setButtonValue(0, 1.0);
@@ -172,7 +172,7 @@ TEST(Gamepad, GCFVersusHID)
     gamepads[4] = makeUnique<VirtualGamepad>(VirtualGamepad::sunLightApplicationGenericNESMapping());
 
     while ([webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting] != TestGamepadCount)
-        Util::sleep(0.1);
+        Util::runFor(0.1_s);
 
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 2u);
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 3u);
@@ -260,7 +260,7 @@ TEST(Gamepad, GamepadState)
     // Connect a gamepad and make it visible to the page
     auto gamepad = makeUnique<VirtualGamepad>(VirtualGamepad::shenzhenLongshengweiTechnologyGamepadMapping());
     while (![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting])
-        Util::sleep(0.01);
+        Util::runFor(0.01_s);
 
     Vector<double> expectedButtons = { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
     Vector<double> expectedAxes = { -0.9921568627450981, -0.003921568627450966, -0.003921568627450966, -0.003921568627450966, -0.003921568627450966 };
@@ -394,7 +394,7 @@ TEST(Gamepad, Dualshock3Basic)
     // Connect a gamepad and make it visible to the page
     auto gamepad = makeUnique<VirtualGamepad>(VirtualGamepad::sonyDualshock3Mapping());
     while (![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting])
-        Util::sleep(0.01);
+        Util::runFor(0.01_s);
 
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 1u);
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 0u);
@@ -457,7 +457,7 @@ TEST(Gamepad, Stadia)
     // Connect a gamepad and make it visible to the page
     auto gamepad = makeUnique<VirtualGamepad>(VirtualGamepad::googleStadiaMapping());
     while (![webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting])
-        Util::sleep(0.01);
+        Util::runFor(0.01_s);
 
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 1u);
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 0u);
@@ -527,7 +527,7 @@ TEST(Gamepad, LogitechBasic)
     auto gamepad1 = makeUnique<VirtualGamepad>(VirtualGamepad::logitechF310Mapping());
     auto gamepad2 = makeUnique<VirtualGamepad>(VirtualGamepad::logitechF710Mapping());
     while ([webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting] != 2u)
-        Util::sleep(0.01);
+        Util::runFor(0.01_s);
 
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedHIDGamepadsForTesting], 2u);
     EXPECT_EQ([webView.get().configuration.processPool _numberOfConnectedGameControllerFrameworkGamepadsForTesting], 0u);
@@ -603,7 +603,7 @@ TEST(Gamepad, FullInfoAfterConnection)
     // Connect a gamepad and make it visible to the page
     auto gamepad1 = makeUnique<VirtualGamepad>(VirtualGamepad::logitechF310Mapping());
     while ([webView.get().configuration.processPool _numberOfConnectedGamepadsForTesting] != 1u)
-        Util::sleep(0.01);
+        Util::runFor(0.01_s);
 
     gamepad1->setButtonValue(0, 1.0);
     gamepad1->publishReport();

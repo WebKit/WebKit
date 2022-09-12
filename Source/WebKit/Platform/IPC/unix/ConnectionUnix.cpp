@@ -638,6 +638,6 @@ void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
     Connection::SocketPair socketPair = Connection::createPlatformConnection();
-    return ConnectionIdentifierPair { Identifier { socketPair.server }, Attachment { UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } } };
+    return ConnectionIdentifierPair { Identifier { UnixFileDescriptor { socketPair.server,  UnixFileDescriptor::Adopt } }, UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } };
 }
 } // namespace IPC

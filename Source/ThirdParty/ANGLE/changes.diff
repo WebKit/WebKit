@@ -1,3 +1,24 @@
+diff --git a/src/common/angle_version_info.h b/src/common/angle_version_info.h
+index 27de24182bdb30b736c17ac025df19d2aea56712..1d5392068c277d4999a0710eb56ab87ff6857129 100644
+--- a/src/common/angle_version_info.h
++++ b/src/common/angle_version_info.h
+@@ -5,8 +5,8 @@
+ //
+ // angle_version_info.h: ANGLE version queries.
+ 
+-#ifndef COMMON_VERSION_H_
+-#define COMMON_VERSION_H_
++#ifndef COMMON_VERSION_INFO_H_
++#define COMMON_VERSION_INFO_H_
+ 
+ namespace angle
+ {
+@@ -17,4 +17,4 @@ int GetANGLECommitHashSize();
+ bool GetANGLEHasBinaryLoading();
+ }  // namespace angle
+ 
+-#endif  // COMMON_VERSION_H_
++#endif  // COMMON_VERSION_INFO_H_
 diff --git a/src/common/apple_platform_utils.mm b/src/common/apple_platform_utils.mm
 index a9757cbb72b7c75f155a1cfedd84a2e98120b564..eebe70cdcc3e1db0d7922f083ae9287b3c0cb16d 100644
 --- a/src/common/apple_platform_utils.mm

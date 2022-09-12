@@ -95,7 +95,7 @@ static constexpr unsigned stateChangeQueryMaxCount = 30;
     do {
         if (expectedState == _displayCaptureState)
             return YES;
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     } while (++tries <= stateChangeQueryMaxCount);
 
     return expectedState == _displayCaptureState;
@@ -107,7 +107,7 @@ static constexpr unsigned stateChangeQueryMaxCount = 30;
     do {
         if (expectedState == _displayCaptureSurfaces)
             return YES;
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     } while (++tries <= stateChangeQueryMaxCount);
 
     return expectedState == _displayCaptureSurfaces;

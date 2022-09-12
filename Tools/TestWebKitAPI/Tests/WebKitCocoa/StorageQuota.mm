@@ -350,7 +350,7 @@ TEST(WebKit, QuotaDelegate)
     Util::run(&receivedMessage);
 
     while (!delegate2.get().quotaDelegateCalled)
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
 
     [delegate2 denyQuota];
 

@@ -93,7 +93,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
     , m_owner(owner)
 {
     ASSERT(m_stream);
-    m_id = AtomString::fromLatin1(gst_stream_get_stream_id(m_stream));
+    m_id = AtomString::fromLatin1(gst_stream_get_stream_id(m_stream.get()));
 
     // We can't call notifyTrackOfTagsChanged() directly, because we need tagsChanged() to setup m_tags.
     tagsChanged();
@@ -172,7 +172,7 @@ void TrackPrivateBaseGStreamer::tagsChanged()
             i++;
         } while (tagEvent);
     } else if (m_stream)
-        tags = adoptGRef(gst_stream_get_tags(m_stream));
+        tags = adoptGRef(gst_stream_get_tags(m_stream.get()));
 
     if (!tags)
         tags = adoptGRef(gst_tag_list_new_empty());

@@ -12,7 +12,6 @@ depends:
 - filename: freedesktop-sdk.bst:components/mpg123.bst
 - filename: freedesktop-sdk.bst:components/openal.bst
 - filename: freedesktop-sdk.bst:components/libpulse.bst
-- filename: freedesktop-sdk.bst:components/sdl2.bst
 - filename: freedesktop-sdk.bst:components/aom.bst
 - filename: freedesktop-sdk.bst:public-stacks/buildsystem-autotools.bst
   type: build
@@ -107,8 +106,6 @@ variables:
     --enable-libvpx
     --enable-libwebp
     --enable-openal
-    --enable-opengl
-    --enable-sdl2
     --enable-vulkan
     --enable-zlib
     --enable-libv4l2

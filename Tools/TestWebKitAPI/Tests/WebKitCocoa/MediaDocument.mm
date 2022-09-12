@@ -44,7 +44,7 @@ TEST(MediaDocument, WirelessPlaybackEnabled)
     [webView loadFileURL:videoURL allowingReadAccessToURL:videoURL];
 
     while (![webView _wirelessVideoPlaybackDisabled])
-        Util::sleep(0.1);
+        Util::runFor(0.1_s);
 }
 
 #endif // ENABLE(VIDEO_PRESENTATION_MODE)

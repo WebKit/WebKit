@@ -239,3 +239,34 @@ shouldBe(pdt.toPlainTime().toString(), '04:05:06.007008009');
 
 shouldBe(Temporal.PlainDateTime.prototype.valueOf.length, 0);
 shouldThrow(() => pdt.valueOf(), TypeError);
+
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,2,3,4,5,6,7,8,9)), true);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(2,2,3,4,5,6,7,8,9)), false);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,3,3,4,5,6,7,8,9)), false);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,2,4,4,5,6,7,8,9)), false);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,2,3,5,5,6,7,8,9)), false);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,2,3,4,6,6,7,8,9)), false);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,2,3,4,5,7,7,8,9)), false);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,2,3,4,5,6,8,8,9)), false);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,2,3,4,5,6,7,9,9)), false);
+shouldBe(pdt.equals(new Temporal.PlainDateTime(1,2,3,4,5,6,7,8,1)), false);
+
+shouldBe(Temporal.PlainDateTime.prototype.add.length, 1);
+shouldBe(pdt.add(new Temporal.Duration()).toString(), '0001-02-03T04:05:06.007008009');
+shouldBe(pdt.add(new Temporal.Duration(1,1,1,1,1,1,1,1,1,1)).toString(), '0002-03-11T05:06:07.00800901');
+shouldBe(pdt.add('-P1Y1M1DT1H1M1.001001001S').toString(), '0000-01-02T03:04:05.006007008');
+shouldBe(pdt.add({ hours: 24 }).toString(), '0001-02-04T04:05:06.007008009');
+shouldBe(pdt.add(new Temporal.Duration(0,10,3,7,19,54,53,992,991,991)).toString(), '0002-01-01T00:00:00');
+shouldBe(Temporal.PlainDateTime.from('2020-01-30').add({ months: 1 }).toString(), '2020-02-29T00:00:00');
+shouldThrow(() => { Temporal.PlainDateTime.from('2020-01-30').add({ months: 1 }, { overflow: 'reject' }); }, RangeError);
+shouldThrow(() => { pdt.add({ years: 300000 }); }, RangeError);
+
+shouldBe(Temporal.PlainDateTime.prototype.subtract.length, 1);
+shouldBe(pdt.subtract(new Temporal.Duration()).toString(), '0001-02-03T04:05:06.007008009');
+shouldBe(pdt.subtract(new Temporal.Duration(1,1,0,1,1,1,1,1,1,1)).toString(), '0000-01-02T03:04:05.006007008');
+shouldBe(pdt.subtract('-P1Y1M1W1DT1H1M1.001001001S').toString(), '0002-03-11T05:06:07.00800901');
+shouldBe(pdt.subtract({ hours: 24 }).toString(), '0001-02-02T04:05:06.007008009');
+shouldBe(pdt.subtract(new Temporal.Duration(0,1,5,3,4,5,6,7,8,10)).toString(), '0000-11-25T23:59:59.999999999');
+shouldBe(Temporal.PlainDateTime.from('2020-03-30').subtract({ months: 1 }).toString(), '2020-02-29T00:00:00');
+shouldThrow(() => { Temporal.PlainDateTime.from('2020-03-30').subtract({ months: 1 }, { overflow: 'reject' }); }, RangeError);
+shouldThrow(() => { pdt.subtract({ years: 300000 }); }, RangeError);

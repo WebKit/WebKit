@@ -271,7 +271,7 @@ bool doesGC(Graph& graph, Node* node)
     case CreateClonedArguments:
     case CreateArgumentsButterfly:
     case Call:
-    case CallEval:
+    case CallDirectEval:
     case CallForwardVarargs:
     case CallObjectConstructor:
     case CallVarargs:

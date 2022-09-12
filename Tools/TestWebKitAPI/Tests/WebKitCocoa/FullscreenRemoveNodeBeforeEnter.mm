@@ -65,14 +65,14 @@ TEST(Fullscreen, RemoveNodeBeforeEnter)
     TestWebKitAPI::Util::run(&nodeRemoved);
 
     // Allow the potential negative result time to occur.
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
 
     // Fullscreen mode should eventually close.
     int tries = 0;
     do {
         if (![webView _isInFullscreen])
             break;
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     } while (++tries <= 100);
 
     ASSERT_FALSE([webView _isInFullscreen]);

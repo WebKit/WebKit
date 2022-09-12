@@ -1,6 +1,6 @@
-kind: meson
+kind: cmake
 build-depends:
-- freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
+- freedesktop-sdk.bst:public-stacks/buildsystem-cmake.bst
 
 depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
@@ -12,11 +12,6 @@ depends:
 - sdk/eigen.bst
 - sdk/gst-plugins-base.bst
 
-variables:
-  meson-local: >-
-    -Ddocs=disabled
-    -Dtracking=disabled
-
 public:
   bst:
     integration-commands:
@@ -26,5 +21,5 @@ public:
 sources:
 - kind: git_tag
   url: gitlab_freedesktop_org:monado/monado
-  track: master
-  ref: v0.4.1-305-g948101308104052aec0173d3166fcfb72dbfc88b
+  track: main
+  ref: v21.0.0-2412-gd47d0ce2d9314768aedff8398871e51238789d04

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,37 +28,41 @@
 
 #include <wtf/RunLoop.h>
 
-namespace TestWebKitAPI {
-namespace Util {
+namespace TestWebKitAPI::Util {
+
+#if !PLATFORM(COCOA)
 
 void run(bool* done)
 {
-    while (!*done) {
-        MSG message;
-        BOOL result = GetMessage(&message, 0, 0, 0);
-        if (!result)
-            break;
-        TranslateMessage(&message);
-        DispatchMessage(&message);
-    }
+    while (!*done)
+        RunLoop::current().cycle();
 }
 
 void spinRunLoop(uint64_t count)
 {
-    for (uint64_t i = 0; i < count; i++) {
-        MSG message;
-        BOOL result = GetMessage(&message, 0, 0, 0);
-        if (!result)
-            break;
-        TranslateMessage(&message);
-        DispatchMessage(&message);
-    }
+    while (count--)
+        RunLoop::current().cycle();
 }
 
-void sleep(double seconds)
+bool runFor(bool* done, Seconds duration)
 {
-    WTF::sleep(Seconds(seconds));
+    ApproximateTime start = ApproximateTime::now();
+    while (!*done) {
+        if (ApproximateTime::now() - start > duration)
+            return false;
+        RunLoop::current().cycle();
+    }
+    return true;
 }
 
-} // namespace Util
-} // namespace TestWebKitAPI
+void runFor(Seconds duration)
+{
+    RunLoop::current().dispatchAfter(duration, [] {
+        RunLoop::current().stop();
+    });
+    RunLoop::current().run();
+}
+
+#endif
+
+}

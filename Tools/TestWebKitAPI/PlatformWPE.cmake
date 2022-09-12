@@ -14,11 +14,11 @@ set(test_main_SOURCES generic/main.cpp)
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
 
+    Utilities.cpp
+
     Tests/WTF/glib/GRefPtr.cpp
     Tests/WTF/glib/GUniquePtr.cpp
     Tests/WTF/glib/WorkQueueGLib.cpp
-
-    glib/UtilitiesGLib.cpp
 )
 
 list(APPEND TestWTF_SYSTEM_INCLUDE_DIRECTORIES
@@ -34,11 +34,11 @@ list(APPEND TestJavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 
+    Utilities.cpp
+
     Tests/WebCore/UserAgentQuirks.cpp
     Tests/WebCore/gstreamer/GStreamerTest.cpp
     Tests/WebCore/gstreamer/GstMappedBuffer.cpp
-
-    glib/UtilitiesGLib.cpp
 )
 
 list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
@@ -54,7 +54,7 @@ list(APPEND TestWebCore_SYSTEM_INCLUDE_DIRECTORIES
 list(APPEND TestWebKit_SOURCES
     ${test_main_SOURCES}
 
-    glib/UtilitiesGLib.cpp
+    Utilities.cpp
 
     wpe/PlatformUtilitiesWPE.cpp
     wpe/PlatformWebViewWPE.cpp
@@ -84,7 +84,7 @@ target_include_directories(TestWebKitAPIBase PRIVATE
 
 # TestWebKitAPIInjectedBundle
 target_sources(TestWebKitAPIInjectedBundle PRIVATE
-    glib/UtilitiesGLib.cpp
+    Utilities.cpp
 
     wpe/PlatformUtilitiesWPE.cpp
 )

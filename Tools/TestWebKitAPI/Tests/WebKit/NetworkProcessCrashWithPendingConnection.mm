@@ -104,7 +104,7 @@ TEST(WebKit, NetworkProcessCrashWithPendingConnection)
     kill(relaunchedNetworkProcessIdentifier, SIGSTOP);
 
     [webView2.get() loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
-    Util::sleep(0.5); // Wait for the WebContent process to send CreateNetworkConnectionToWebProcess
+    Util::runFor(0.5_s); // Wait for the WebContent process to send CreateNetworkConnectionToWebProcess
     kill(relaunchedNetworkProcessIdentifier, SIGKILL);
     Util::run(&networkProcessCrashed);
 

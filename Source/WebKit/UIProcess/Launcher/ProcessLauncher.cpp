@@ -30,6 +30,11 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/WorkQueue.h>
 
+#if OS(DARWIN)
+#include <mach/mach_init.h>
+#include <mach/mach_traps.h>
+#endif
+
 namespace WebKit {
 
 ProcessLauncher::ProcessLauncher(Client* client, LaunchOptions&& launchOptions)

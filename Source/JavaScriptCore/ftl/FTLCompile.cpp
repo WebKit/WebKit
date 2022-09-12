@@ -107,8 +107,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
 
     }
 
-    // Note that the scope register could be invalid here if the original code had CallEval but it
-    // got killed. That's because it takes the CallEval to cause the scope register to be kept alive
+    // Note that the scope register could be invalid here if the original code had CallDirectEval but it
+    // got killed. That's because it takes the CallDirectEval to cause the scope register to be kept alive
     // unless the debugger is also enabled.
     if (graph.needsScopeRegister() && codeBlock->scopeRegister().isValid())
         codeBlock->setScopeRegister(codeBlock->scopeRegister() + localsOffset);

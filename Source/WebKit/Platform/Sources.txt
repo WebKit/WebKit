@@ -4,7 +4,6 @@ Platform/Module.cpp
 Platform/SharedMemory.cpp
 
 Platform/IPC/ArgumentCoders.cpp
-Platform/IPC/Attachment.cpp
 Platform/IPC/Connection.cpp
 Platform/IPC/DaemonConnection.cpp
 Platform/IPC/DaemonDecoder.cpp

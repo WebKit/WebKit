@@ -192,7 +192,7 @@ static void runLockRequestWaitingOnAnotherPage(ShouldUseSameProcess shouldUseSam
         EXPECT_NULL(error);
     }];
 
-    TestWebKitAPI::Util::sleep(0.5);
+    TestWebKitAPI::Util::runFor(0.5_s);
     EXPECT_FALSE(lockAcquired);
 
     done = false;

@@ -60,7 +60,6 @@ StreamClientConnection::StreamConnectionWithDedicatedConnection StreamClientConn
     std::unique_ptr<StreamClientConnection> streamConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSize, WTFMove(dedicatedConnectionClient)) };
     // FIXME(http://webkit.org/b238944): Make IPC::Attachment really movable on OS(DARWIN).
     return { WTFMove(streamConnection), WTFMove(connectionIdentifiers->client) };
-#
 }
 
 StreamClientConnection::StreamClientConnection(Ref<Connection>&& connection, size_t bufferSize, std::unique_ptr<DedicatedConnectionClient>&& dedicatedConnectionClient)

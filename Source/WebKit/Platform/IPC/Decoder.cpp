@@ -164,8 +164,10 @@ const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t alignment
 
 std::optional<Attachment> Decoder::takeLastAttachment()
 {
-    if (m_attachments.isEmpty())
+    if (m_attachments.isEmpty()) {
+        markInvalid();
         return std::nullopt;
+    }
     return m_attachments.takeLast();
 }
 

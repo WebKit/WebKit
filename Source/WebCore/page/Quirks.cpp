@@ -237,11 +237,13 @@ bool Quirks::shouldDisableResolutionMediaQuery() const
     if (equalLettersIgnoringASCIICase(host, "www.cheaptickets.com"_s))
         return true;
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
     if (topPrivatelyControlledDomain(host.toString()).startsWith("ebookers."_s))
         return true;
 
     if (topPrivatelyControlledDomain(host.toString()).startsWith("expedia."_s))
         return true;
+#endif
 
     if (host.endsWithIgnoringASCIICase(".hoteis.com"_s))
         return true;

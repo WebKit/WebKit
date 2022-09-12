@@ -14,6 +14,6 @@ sources:
 - kind: git_tag
   url: github_com:rr-debugger/rr
   track: master
-  ref: 5.5.0-180-g4aca8b4d44618b8c27915c30a2c43cd2cf7b22d0
+  ref: 5.6.0-12-g452f652321f87722da64ca363c3deea568ea0b67
 - kind: patch
   path: patches/rr/0001-cmake-Look-for-resources-in-cmake-s-install-lib-dir.patch

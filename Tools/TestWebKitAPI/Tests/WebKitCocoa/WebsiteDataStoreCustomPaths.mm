@@ -161,7 +161,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     while (retryCount--) {
         if ([[NSFileManager defaultManager] fileExistsAtPath:cookieStorageFile.path])
             break;
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     }
     EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:cookieStorageFile.path]);
 
@@ -319,7 +319,7 @@ TEST(WebKit, CustomDataStoreDestroyWhileFetchingNetworkProcessData)
         auto* allProcessPools = [WKProcessPool _allProcessPoolsForTesting];
         ASSERT_EQ(0U, [allProcessPools count]);
         while (![dataStore _networkProcessIdentifier])
-            TestWebKitAPI::Util::sleep(0.01);
+            TestWebKitAPI::Util::runFor(0.01_s);
         kill([dataStore _networkProcessIdentifier], SIGKILL);
         allProcessPools = nil;
         dataStore = nil;

@@ -56,7 +56,7 @@ SpeculatedType PredictionFileCreatingFuzzerAgent::getPredictionInternal(CodeBloc
     case op_construct:
     case op_construct_varargs:
     case op_call:
-    case op_call_eval:
+    case op_call_direct_eval:
     case op_call_varargs:
     case op_tail_call:
     case op_tail_call_varargs:

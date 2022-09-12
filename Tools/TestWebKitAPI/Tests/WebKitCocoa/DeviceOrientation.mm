@@ -146,7 +146,7 @@ static void runDeviceOrientationTest(DeviceOrientationPermission deviceOrientati
         TestWebKitAPI::Util::run(&didReceiveMessage);
         EXPECT_WK_STREQ(@"received-event", receivedMessages.get()[1]);
     } else {
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
         EXPECT_FALSE(didReceiveMessage);
     }
     didReceiveMessage = false;

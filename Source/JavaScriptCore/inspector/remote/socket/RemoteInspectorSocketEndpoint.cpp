@@ -138,7 +138,7 @@ void RemoteInspectorSocketEndpoint::workerThread()
 
     while (!m_shouldAbortWorkerThread) {
 #if USE(GENERIC_EVENT_LOOP) || USE(WINDOWS_EVENT_LOOP)
-        RunLoop::iterate();
+        RunLoop::cycle();
 #endif
 
         Vector<PollingDescriptor> pollfds;

@@ -1073,7 +1073,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             ExpressionType result;
             WASM_TRY_ADD_TO_CONTEXT(addI31New(value, result));
 
-            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, Nullable::No, static_cast<TypeIndex>(TypeKind::I31ref) }, result);
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::I31ref) }, result);
             return { };
         }
         case GCOpType::I31GetS: {
@@ -1153,9 +1153,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_PARSER_FAIL_IF(!parseHeapType(m_info, heapType), "ref.null heaptype must be funcref, externref or type_idx");
             if (isTypeIndexHeapType(heapType)) {
                 TypeIndex typeIndex = TypeInformation::get(m_info.typeSignatures[heapType].get());
-                typeOfNull = Type { TypeKind::RefNull, Nullable::Yes, typeIndex };
+                typeOfNull = Type { TypeKind::RefNull, typeIndex };
             } else
-                typeOfNull = Type { TypeKind::RefNull, Nullable::Yes, static_cast<TypeIndex>(heapType) };
+                typeOfNull = Type { TypeKind::RefNull, static_cast<TypeIndex>(heapType) };
         } else
             WASM_PARSER_FAIL_IF(!parseRefType(m_info, typeOfNull), "ref.null type must be a reference type");
         m_expressionStack.constructAndAppend(typeOfNull, m_context.addConstant(typeOfNull, JSValue::encode(jsNull())));
@@ -1184,7 +1184,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         if (Options::useWebAssemblyTypedFunctionReferences()) {
             TypeIndex typeIndex = m_info.typeIndexFromFunctionIndexSpace(index);
-            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, Nullable::No, typeIndex }, result);
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, typeIndex }, result);
             return { };
         }
 

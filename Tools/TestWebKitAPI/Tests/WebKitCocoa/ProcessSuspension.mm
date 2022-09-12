@@ -78,11 +78,11 @@ TEST(ProcessSuspension, DestroyWebPageDuringWebProcessSuspension)
 
     [webView3 _processWillSuspendForTesting:^{ }];
     [webView1 _close];
-    TestWebKitAPI::Util::sleep(0.1);
+    TestWebKitAPI::Util::runFor(0.1_s);
     [webView2 _close];
 
     EXPECT_EQ(pid1, [webView3 _webProcessIdentifier]);
-    TestWebKitAPI::Util::sleep(1);
+    TestWebKitAPI::Util::runFor(1_s);
     EXPECT_EQ(pid1, [webView3 _webProcessIdentifier]);
 }
 

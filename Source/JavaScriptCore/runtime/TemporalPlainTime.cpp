@@ -143,16 +143,6 @@ TemporalPlainTime* TemporalPlainTime::tryCreateIfValid(JSGlobalObject* globalObj
     return TemporalPlainTime::create(vm, structure, WTFMove(plainTime));
 }
 
-static double nonNegativeModulo(double x, double y)
-{
-    double result = std::fmod(x, y);
-    if (!result)
-        return 0;
-    if (result < 0)
-        result += y;
-    return result;
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-balancetime
 static ISO8601::Duration balanceTime(double hour, double minute, double second, double millisecond, double microsecond, double nanosecond)
 {
@@ -482,7 +472,8 @@ int32_t TemporalPlainTime::compare(const ISO8601::PlainTime& t1, const ISO8601::
     return 0;
 }
 
-static ISO8601::Duration addTime(const ISO8601::PlainTime& plainTime, const ISO8601::Duration& duration)
+// https://tc39.es/proposal-temporal/#sec-temporal-addtime
+ISO8601::Duration TemporalPlainTime::addTime(const ISO8601::PlainTime& plainTime, const ISO8601::Duration& duration)
 {
     return balanceTime(
         plainTime.hour() + duration.hours(),
@@ -491,28 +482,6 @@ static ISO8601::Duration addTime(const ISO8601::PlainTime& plainTime, const ISO8
         plainTime.millisecond() + duration.milliseconds(),
         plainTime.microsecond() + duration.microseconds(),
         plainTime.nanosecond() + duration.nanoseconds());
-}
-
-ISO8601::PlainTime TemporalPlainTime::add(JSGlobalObject* globalObject, JSValue temporalDurationLike) const
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto duration = TemporalDuration::toISO8601Duration(globalObject, temporalDurationLike);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    RELEASE_AND_RETURN(scope, toPlainTime(globalObject, addTime(m_plainTime, duration)));
-}
-
-ISO8601::PlainTime TemporalPlainTime::subtract(JSGlobalObject* globalObject, JSValue temporalDurationLike) const
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto duration = TemporalDuration::toISO8601Duration(globalObject, temporalDurationLike);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    RELEASE_AND_RETURN(scope, toPlainTime(globalObject, addTime(m_plainTime, -duration)));
 }
 
 ISO8601::PlainTime TemporalPlainTime::with(JSGlobalObject* globalObject, JSObject* temporalTimeLike, JSValue optionsValue) const

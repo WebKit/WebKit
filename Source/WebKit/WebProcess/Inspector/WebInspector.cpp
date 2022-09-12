@@ -75,7 +75,7 @@ void WebInspector::openLocalInspectorFrontend(bool underTest)
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::OpenLocalInspectorFrontend(canAttachWindow(), underTest), m_page->identifier());
 }
 
-void WebInspector::setFrontendConnection(IPC::Attachment encodedConnectionIdentifier)
+void WebInspector::setFrontendConnection(IPC::Connection::Handle&& connectionHandle)
 {
     // We might receive multiple updates if this web process got swapped into a WebPageProxy
     // shortly after another process established the connection.
@@ -84,19 +84,10 @@ void WebInspector::setFrontendConnection(IPC::Attachment encodedConnectionIdenti
         m_frontendConnection = nullptr;
     }
 
-#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.release().release());
-#elif OS(DARWIN)
-    IPC::Connection::Identifier connectionIdentifier(encodedConnectionIdentifier.leakSendRight());
-#else
-    notImplemented();
-    return;
-#endif
-
-    if (!connectionIdentifier)
+    if (!connectionHandle)
         return;
 
-    m_frontendConnection = IPC::Connection::createClientConnection(connectionIdentifier, *this);
+    m_frontendConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }, *this);
     m_frontendConnection->open();
 
     for (auto& callback : m_frontendConnectionActions)

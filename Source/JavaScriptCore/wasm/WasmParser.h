@@ -289,7 +289,7 @@ ALWAYS_INLINE typename Parser<SuccessType>::PartialResult Parser<SuccessType>::p
 {
     int8_t typeKind;
     if (peekInt7(typeKind) && isValidTypeKind(typeKind)) {
-        Type type = {static_cast<TypeKind>(typeKind), Nullable::Yes, 0};
+        Type type = { static_cast<TypeKind>(typeKind), 0 };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: ", makeString(type.kind), " is not a value type or Void");
         result = m_typeInformation.thunkFor(type);
         m_offset++;
@@ -340,13 +340,11 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
         return false;
 
     TypeKind typeKind = static_cast<TypeKind>(kind);
-    bool isNullable = true;
     TypeIndex typeIndex = 0;
     if (Options::useWebAssemblyTypedFunctionReferences() && (typeKind == TypeKind::Funcref || typeKind == TypeKind::Externref || typeKind == TypeKind::I31ref)) {
         typeIndex = static_cast<TypeIndex>(typeKind);
         typeKind = TypeKind::RefNull;
     } else if (typeKind == TypeKind::Ref || typeKind == TypeKind::RefNull) {
-        isNullable = typeKind == TypeKind::RefNull;
         int32_t heapType;
         if (!parseHeapType(info, heapType))
             return false;
@@ -365,7 +363,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
         }
     }
 
-    Type type = { typeKind, static_cast<Nullable>(isNullable), typeIndex };
+    Type type = { typeKind, typeIndex };
     if (!isValueType(type))
         return false;
     result = type;

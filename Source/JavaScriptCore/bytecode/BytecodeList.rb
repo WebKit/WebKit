@@ -862,12 +862,14 @@ op :tail_call,
         profile: ValueProfile,
     }
 
-op :call_eval,
+op :call_direct_eval,
     args: {
         dst: VirtualRegister,
         callee: VirtualRegister,
         argc: unsigned,
         argv: unsigned,
+        thisValue: VirtualRegister,
+        scope: VirtualRegister,
         ecmaMode: ECMAMode,
     },
     metadata: {
@@ -1464,7 +1466,7 @@ op :op_iterator_next_slow_return_location
 op :op_tail_call_slow_return_location
 op :op_tail_call_forward_arguments_slow_return_location
 op :op_tail_call_varargs_slow_return_location
-op :op_call_eval_slow_return_location
+op :op_call_direct_eval_slow_return_location
 
 op :js_trampoline_op_call
 op :js_trampoline_op_construct
@@ -1479,7 +1481,7 @@ op :js_trampoline_op_call_varargs_slow
 op :js_trampoline_op_tail_call_varargs_slow
 op :js_trampoline_op_tail_call_forward_arguments_slow
 op :js_trampoline_op_construct_varargs_slow
-op :js_trampoline_op_call_eval_slow
+op :js_trampoline_op_call_direct_eval_slow
 op :js_trampoline_op_iterator_next_slow
 op :js_trampoline_op_iterator_open_slow
 op :js_trampoline_llint_function_for_call_arity_check_untag

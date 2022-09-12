@@ -154,26 +154,20 @@ class SummarizedResultsTest(unittest.TestCase):
         host = MockHost(initialize_scm_by_default=False, create_stub_repository_files=True)
         self.port = host.port_factory.get(port_name='test', options=MockOptions(http=True, pixel_tests=False, world_leaks=False))
 
-    def test_no_svn_revision(self):
+    def test_no_git_revision(self):
         summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
         self.assertNotIn('revision', summary)
 
-    def test_svn_revision_exists(self):
+    def test_git_revision_exists(self):
         self.port._options.builder_name = 'dummy builder'
         summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
         self.assertNotEqual(summary['revision'], '')
 
-    def test_svn_revision(self):
-        with mocks.local.Svn(path='/'), mocks.local.Git():
+    def test_git_revision_identifier(self):
+        with mocks.local.Git(path='/'), OutputCapture():
             self.port._options.builder_name = 'dummy builder'
             summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-            self.assertEqual(summary['revision'], '6')
-
-    def test_svn_revision_git(self):
-        with mocks.local.Svn(), mocks.local.Git(path='/', git_svn=True), OutputCapture():
-            self.port._options.builder_name = 'dummy builder'
-            summary = summarized_results(self.port, expected=False, passing=False, flaky=False)
-            self.assertEqual(summary['revision'], '9')
+            self.assertEqual(summary['revision'], '5@main')
 
     def test_summarized_results_wontfix(self):
         self.port._options.builder_name = 'dummy builder'

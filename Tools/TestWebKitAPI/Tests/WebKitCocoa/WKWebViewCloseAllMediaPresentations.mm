@@ -51,12 +51,12 @@ static void loadPictureInPicture(RetainPtr<TestWKWebView> webView)
     [webView performAfterReceivingMessage:@"presentationmodechanged" action:^{ presentationModeChanged = true; }];
 
     [webView objectByEvaluatingJavaScriptWithUserGesture:@"document.querySelector('video').webkitSetPresentationMode('picture-in-picture')"];
-    ASSERT_UNUSED(presentationModeChanged, TestWebKitAPI::Util::runFor(&presentationModeChanged, 10));
+    ASSERT_UNUSED(presentationModeChanged, TestWebKitAPI::Util::runFor(&presentationModeChanged, 10_s));
     do {
         if (![webView stringByEvaluatingJavaScript:@"window.internals.isChangingPresentationMode(document.querySelector('video'))"].boolValue)
             break;
 
-        TestWebKitAPI::Util::sleep(0.5);
+        TestWebKitAPI::Util::runFor(0.5_s);
     } while (true);
 }
 
@@ -107,7 +107,7 @@ TEST(WKWebViewCloseAllMediaPresentationsInternal, PictureInPicture)
         if (![webView stringByEvaluatingJavaScript:@"window.internals.isChangingPresentationMode(document.querySelector('video'))"].boolValue)
             break;
 
-        TestWebKitAPI::Util::sleep(0.5);
+        TestWebKitAPI::Util::runFor(0.5_s);
     } while (true);
 
     EXPECT_TRUE([webView _allMediaPresentationsClosed]);
@@ -137,7 +137,7 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
         if (![webView stringByEvaluatingJavaScript:@"window.internals.isChangingPresentationMode(document.querySelector('video'))"].boolValue)
             break;
 
-        TestWebKitAPI::Util::sleep(0.5);
+        TestWebKitAPI::Util::runFor(0.5_s);
     } while (true);
 
     static bool isDone = false;

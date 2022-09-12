@@ -312,11 +312,11 @@ TEST(WebKit, OpenWindowThenDocumentOpen)
     [webView loadRequest:request];
 
     while (!openedWebView)
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
 
     // Both WebViews should have the same URL because of document.open().
     while (![[[openedWebView URL] absoluteString] isEqualToString:[[webView URL] absoluteString]])
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
 
     EXPECT_TRUE([[[openedWebView _mainFrameURL] absoluteString] isEqualToString:[[webView URL] absoluteString]]);
 }

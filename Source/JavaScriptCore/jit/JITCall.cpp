@@ -164,22 +164,26 @@ JIT::compileSetupFrame(const Op& bytecode)
 }
 
 template<typename Op>
-bool JIT::compileCallEval(const Op&)
+bool JIT::compileCallDirectEval(const Op&)
 {
     return false;
 }
 
 template<>
-bool JIT::compileCallEval(const OpCallEval& bytecode)
+bool JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 {
-    addPtr(TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), stackPointerRegister, argumentGPR1);
-    storePtr(callFrameRegister, Address(argumentGPR1, CallFrame::callerFrameOffset()));
+    using BaselineJITRegisters::CallDirectEval::SlowPath::calleeFrameGPR;
+    using BaselineJITRegisters::CallDirectEval::SlowPath::thisValueJSR;
+    using BaselineJITRegisters::CallDirectEval::SlowPath::scopeGPR;
+
+    addPtr(TrustedImm32(-static_cast<ptrdiff_t>(sizeof(CallerFrameAndPC))), stackPointerRegister, calleeFrameGPR);
+    storePtr(callFrameRegister, Address(calleeFrameGPR, CallFrame::callerFrameOffset()));
 
     resetSP();
 
-    move(TrustedImm32(bytecode.m_ecmaMode.value()), argumentGPR2);
-    loadGlobalObject(argumentGPR0);
-    callOperation(operationCallEval, argumentGPR0, argumentGPR1, argumentGPR2);
+    emitGetVirtualRegister(bytecode.m_thisValue, thisValueJSR);
+    emitGetVirtualRegisterPayload(bytecode.m_scope, scopeGPR);
+    callOperation(bytecode.m_ecmaMode.isStrict() ? operationCallDirectEvalStrict : operationCallDirectEvalSloppy, calleeFrameGPR, scopeGPR, thisValueJSR);
     addSlowCase(branchIfEmpty(returnValueJSR));
 
     setFastPathResumePoint();
@@ -188,11 +192,11 @@ bool JIT::compileCallEval(const OpCallEval& bytecode)
     return true;
 }
 
-void JIT::compileCallEvalSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::compileCallDirectEvalSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkAllSlowCases(iter);
 
-    auto bytecode = instruction->as<OpCallEval>();
+    auto bytecode = instruction->as<OpCallDirectEval>();
     int registerOffset = -bytecode.m_argv;
 
     addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
@@ -200,7 +204,7 @@ void JIT::compileCallEvalSlowCase(const JSInstruction* instruction, Vector<SlowC
     static_assert(noOverlap(BaselineJITRegisters::Call::calleeJSR, BaselineJITRegisters::Call::callLinkInfoGPR, regT3));
     loadValue(Address(stackPointerRegister, sizeof(Register) * CallFrameSlot::callee - sizeof(CallerFrameAndPC)), BaselineJITRegisters::Call::calleeJSR);
     loadGlobalObject(regT3);
-    materializePointerIntoMetadata(bytecode, OpCallEval::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
+    materializePointerIntoMetadata(bytecode, OpCallDirectEval::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
     emitVirtualCallWithoutMovingGlobalObject(*m_vm, BaselineJITRegisters::Call::callLinkInfoGPR, CallMode::Regular);
     resetSP();
 }
@@ -250,7 +254,7 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
     */
 
     UnlinkedCallLinkInfo* info = nullptr;
-    if (opcodeID != op_call_eval) {
+    if (opcodeID != op_call_direct_eval) {
         info = addUnlinkedCallLinkInfo();
         info->bytecodeIndex = m_bytecodeIndex;
         ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
@@ -266,7 +270,7 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
     emitGetVirtualRegister(callee, BaselineJITRegisters::Call::calleeJSR);
     storeValue(BaselineJITRegisters::Call::calleeJSR, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
 
-    if (compileCallEval(bytecode))
+    if (compileCallDirectEval(bytecode))
         return;
 
 #if USE(JSVALUE32_64)
@@ -307,7 +311,7 @@ void JIT::compileOpCallSlowCase(const JSInstruction* instruction, Vector<SlowCas
 {
     OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
-    ASSERT(opcodeID != op_call_eval);
+    ASSERT(opcodeID != op_call_direct_eval);
 
     linkAllSlowCases(iter);
 
@@ -335,9 +339,9 @@ void JIT::emit_op_tail_call(const JSInstruction* currentInstruction)
     compileOpCall<OpTailCall>(currentInstruction, m_callLinkInfoIndex++);
 }
 
-void JIT::emit_op_call_eval(const JSInstruction* currentInstruction)
+void JIT::emit_op_call_direct_eval(const JSInstruction* currentInstruction)
 {
-    compileOpCall<OpCallEval>(currentInstruction, m_callLinkInfoIndex);
+    compileOpCall<OpCallDirectEval>(currentInstruction, m_callLinkInfoIndex);
 }
 
 void JIT::emit_op_call_varargs(const JSInstruction* currentInstruction)
@@ -375,9 +379,9 @@ void JIT::emitSlow_op_tail_call(const JSInstruction* currentInstruction, Vector<
     compileOpCallSlowCase<OpTailCall>(currentInstruction, iter, m_callLinkInfoIndex++);
 }
 
-void JIT::emitSlow_op_call_eval(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+void JIT::emitSlow_op_call_direct_eval(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    compileCallEvalSlowCase(currentInstruction, iter);
+    compileCallDirectEvalSlowCase(currentInstruction, iter);
 }
 
 void JIT::emitSlow_op_call_varargs(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

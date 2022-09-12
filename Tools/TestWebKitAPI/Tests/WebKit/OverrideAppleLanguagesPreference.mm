@@ -130,7 +130,7 @@ TEST_F(AppleLanguagesTest, DISABLED_UpdateAppleLanguages)
     };
     unsigned timeout = 0;
     while (getLanguageFromNSUserDefaults() != "en-GB"_s && ++timeout < 100)
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     EXPECT_WK_STREQ(@"en-GB", getLanguageFromNSUserDefaults());
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -141,7 +141,7 @@ TEST_F(AppleLanguagesTest, DISABLED_UpdateAppleLanguages)
     [[NSNotificationCenter defaultCenter] postNotificationName:NSApplicationDidBecomeActiveNotification object:NSApp userInfo:nil];
     timeout = 0;
     while (!preferenceObserverSharedInstanceCalled && ++timeout < 100)
-        TestWebKitAPI::Util::sleep(0.1);
+        TestWebKitAPI::Util::runFor(0.1_s);
     EXPECT_TRUE(preferenceObserverSharedInstanceCalled);
     if (!preferenceObserverSharedInstanceCalled)
         return;

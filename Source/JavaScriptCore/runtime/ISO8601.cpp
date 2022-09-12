@@ -45,6 +45,9 @@ static constexpr int64_t nsPerSecond = 1000LL * 1000 * 1000;
 static constexpr int64_t nsPerMillisecond = 1000LL * 1000;
 static constexpr int64_t nsPerMicrosecond = 1000LL;
 
+static constexpr int32_t maxYear = 275760;
+static constexpr int32_t minYear = -271821;
+
 std::optional<TimeZoneID> parseTimeZoneName(StringView string)
 {
     const auto& timeZones = intlAvailableTimeZones();
@@ -1166,8 +1169,7 @@ uint8_t weekOfYear(PlainDate plainDate)
 
     if (week == 53) {
         // Check whether this is in next year's week 1.
-        int32_t daysInYear = isLeapYear(plainDate.year()) ? 366 : 365;
-        if ((daysInYear - dayOfYear) < (4 - dayOfWeek))
+        if ((daysInYear(plainDate.year()) - dayOfYear) < (4 - dayOfWeek))
             return 1;
     }
 
@@ -1458,6 +1460,12 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
     if (nanoseconds >= (ExactTime::maxValue + ExactTime::nsPerDay))
         return false;
     return true;
+}
+
+// More effective for our purposes than isInBounds<int32_t>.
+bool isYearWithinLimits(double year)
+{
+    return year >= minYear && year <= maxYear;
 }
 
 } // namespace ISO8601

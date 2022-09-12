@@ -544,11 +544,8 @@ void PlatformCAAnimationWin::setTimingFunctions(const Vector<Ref<const TimingFun
         return;
 
     RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
-    for (size_t i = 0; i < value.size(); ++i) {
-        // FIXME: This seems wrong. We should be passing in a float* instead of a TimingFunction**.
-        RetainPtr<CFNumberRef> v = adoptCF(CFNumberCreate(0, kCFNumberFloatType, &value[i]));
-        CFArrayAppendValue(array.get(), toCACFTimingFunction(value[i], reverse).get());
-    }
+    for (size_t i = 0; i < value.size(); ++i)
+        CFArrayAppendValue(array.get(), toCACFTimingFunction(value[i].ptr(), reverse).get());
 
     CACFAnimationSetTimingFunctions(m_animation.get(), array.get());
 }

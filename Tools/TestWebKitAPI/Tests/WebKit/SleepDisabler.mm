@@ -106,7 +106,7 @@ public:
             if ([webView _hasSleepDisabler] == shouldHaveSleepDisabler)
                 break;
 
-            TestWebKitAPI::Util::sleep(0.1);
+            TestWebKitAPI::Util::runFor(0.1_s);
         } while (++tries <= 100);
 
         EXPECT_EQ(shouldHaveSleepDisabler, [webView _hasSleepDisabler]);

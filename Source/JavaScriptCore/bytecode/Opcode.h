@@ -120,7 +120,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
     macro(OpToThis) \
     macro(OpCall) \
     macro(OpTailCall) \
-    macro(OpCallEval) \
+    macro(OpCallDirectEval) \
     macro(OpConstruct) \
     macro(OpGetFromScope) \
     macro(OpBitand) \
@@ -134,7 +134,7 @@ static constexpr unsigned bitWidthForMaxBytecodeStructLength = WTF::getMSBSetCon
 #define FOR_EACH_OPCODE_WITH_CALL_LINK_INFO(macro) \
     macro(OpCall) \
     macro(OpTailCall) \
-    macro(OpCallEval) \
+    macro(OpCallDirectEval) \
     macro(OpConstruct) \
     macro(OpIteratorOpen) \
     macro(OpIteratorNext) \

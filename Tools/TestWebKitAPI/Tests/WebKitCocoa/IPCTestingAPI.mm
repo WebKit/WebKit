@@ -160,7 +160,7 @@ TEST(IPCTestingAPI, CanDetectNilReplyBlocks)
         // mostly zero objects + "v@?c" (objective-C method signature)
         "0x0,0x0,0x1,0x0,0x0,0x0,0x2c,0x0,0x0,0x0,0x59,0x1,0x0,0x0,0x0,0x9b,0x0,0x0,0x4,0x0,0x0,0x0,0x1,0x76,0x40,0x3f,0x63,0x0,]);"
         "for(var x=0; x<100; x++) IPC.sendMessage('UI', x, IPC.messages.RemoteObjectRegistry_InvokeMethod.name, [buf]);</script>"];
-    TestWebKitAPI::Util::runFor(&done, 1);
+    TestWebKitAPI::Util::runFor(&done, 1_s);
 
     // Make sure sayHello was not called, as the reply block was nil.
     EXPECT_FALSE([delegate.get() sayHelloWasCalled]);

@@ -53,22 +53,14 @@ Ref<StreamServerConnection> StreamServerConnection::create(Connection& connectio
     return adoptRef(*new StreamServerConnection(Ref { connection }, WTFMove(streamBuffer), workQueue, HasDedicatedConnection::No));
 }
 
-Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnection(Attachment&& connectionIdentifier, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
+Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnection(Connection::Handle&& connectionHandle, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
 {
-#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
-    IPC::Connection::Identifier connectionHandle { connectionIdentifier.release().release() };
-#elif OS(DARWIN)
-    IPC::Connection::Identifier connectionHandle { connectionIdentifier.leakSendRight() };
-#else
-    notImplemented();
-    IPC::Connection::Identifier connectionHandle { };
-#endif
     static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
     static std::once_flag s_onceFlag;
     std::call_once(s_onceFlag, [] {
         s_dedicatedConnectionClient.construct();
     });
-    auto connection = IPC::Connection::createClientConnection(connectionHandle, s_dedicatedConnectionClient.get());
+    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }, s_dedicatedConnectionClient.get());
     auto streamConnection = adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(streamBuffer), workQueue, HasDedicatedConnection::Yes));
     return streamConnection;
 }

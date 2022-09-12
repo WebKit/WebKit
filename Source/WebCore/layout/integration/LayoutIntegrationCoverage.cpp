@@ -378,6 +378,8 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         if (!renderer.parent()->style().isLeftToRightDirection())
             return false;
 #endif
+        if (renderer.style().shapeOutside())
+            return false;
         if (renderer.isOutOfFlowPositioned()) {
             if (!is<RenderReplaced>(renderer))
                 return false;

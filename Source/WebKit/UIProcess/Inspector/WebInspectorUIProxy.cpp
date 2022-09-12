@@ -234,12 +234,12 @@ void WebInspectorUIProxy::updateForNewPageProcess(WebPageProxy& inspectedPage)
         m_inspectorPage->send(Messages::WebInspectorUI::UpdateConnection());
 }
 
-void WebInspectorUIProxy::setFrontendConnection(IPC::Attachment connectionIdentifier)
+void WebInspectorUIProxy::setFrontendConnection(IPC::Connection::Handle&& connectionIdentifier)
 {
     if (!m_inspectedPage)
         return;
 
-    m_inspectedPage->send(Messages::WebInspector::SetFrontendConnection(connectionIdentifier));
+    m_inspectedPage->send(Messages::WebInspector::SetFrontendConnection(WTFMove(connectionIdentifier)));
 }
 
 void WebInspectorUIProxy::showConsole()
