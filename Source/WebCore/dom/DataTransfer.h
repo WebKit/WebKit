@@ -119,6 +119,11 @@ private:
     enum class Type { CopyAndPaste, DragAndDropData, DragAndDropFiles, InputEvent };
     DataTransfer(StoreMode, std::unique_ptr<Pasteboard>, Type = Type::CopyAndPaste, String&& effectAllowed = "uninitialized"_s);
 
+    bool allowsFileAccess() const
+    {
+        return !forDrag() || forFileDrag();
+    }
+
 #if ENABLE(DRAG_SUPPORT)
     bool forDrag() const { return m_type == Type::DragAndDropData || m_type == Type::DragAndDropFiles; }
     bool forFileDrag() const { return m_type == Type::DragAndDropFiles; }

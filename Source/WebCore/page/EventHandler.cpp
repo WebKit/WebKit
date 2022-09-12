@@ -2299,6 +2299,12 @@ Element* EventHandler::draggingElement() const
     return dragState().source.get();
 }
 
+bool EventHandler::canDropCurrentlyDraggedImageAsFile() const
+{
+    auto sourceOrigin = dragState().restrictedOriginForImageData;
+    return !sourceOrigin || m_frame.document()->securityOrigin().canReceiveDragData(*sourceOrigin);
+}
+
 static std::pair<bool, RefPtr<Frame>> contentFrameForNode(Node* target)
 {
     if (!is<HTMLFrameElementBase>(target))
@@ -4067,6 +4073,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     // Careful that the drag starting logic stays in sync with eventMayStartDrag().
     if (m_mouseDownMayStartDrag && !dragState().source) {
         dragState().shouldDispatchEvents = updateDragSourceActionsAllowed().contains(DragSourceAction::DHTML);
+        dragState().restrictedOriginForImageData = nullptr;
 
         // Try to find an element that wants to be dragged.
         HitTestResult result(m_mouseDownContentsPosition);
@@ -4163,6 +4170,14 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
                 invalidateDataTransfer();
                 dragState().source = nullptr;
                 return true;
+            }
+        }
+
+        if (dragState().source && dragState().type == DragSourceAction::Image) {
+            if (auto* renderImage = dynamicDowncast<RenderImage>(dragState().source->renderer())) {
+                auto* image = renderImage->cachedImage();
+                if (image && !image->isCORSSameOrigin())
+                    dragState().restrictedOriginForImageData = SecurityOrigin::create(image->url());
             }
         }
 
