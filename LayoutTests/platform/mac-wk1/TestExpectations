@@ -1216,7 +1216,7 @@ webkit.org/b/189756 compositing/filters/opacity-change-on-filtered-paints-into-a
 
 webkit.org/b/189723 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Pass Failure ]
 
-webkit.org/b/190832 [ Debug ] fast/forms/state-restore-to-non-edited-controls.html [ Pass Failure ]
+webkit.org/b/190832 fast/forms/state-restore-to-non-edited-controls.html [ Pass Failure ]
 
 webkit.org/b/190849 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Pass Failure ]
 
