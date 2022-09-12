@@ -882,8 +882,10 @@ static NSSet *dataTypes()
 - (void)setFindBarView:(NSView *)findBarView
 {
     _textFindBarView = findBarView;
+    _textFindBarView.autoresizingMask = NSViewMaxYMargin | NSViewWidthSizable;
+    _textFindBarView.frame = NSMakeRect(0, 0, containerView.bounds.size.width, _textFindBarView.frame.size.height);
+
     _findBarVisible = YES;
-    [_textFindBarView setFrame:NSMakeRect(0, 0, containerView.bounds.size.width, _textFindBarView.frame.size.height)];
 }
 
 - (BOOL)isFindBarVisible
