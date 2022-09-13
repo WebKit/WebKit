@@ -536,7 +536,7 @@ public:
     void rotateWithEvent(NSEvent *);
     void smartMagnifyWithEvent(NSEvent *);
 
-    void setLastMouseDownEvent(NSEvent *);
+    RetainPtr<NSEvent> setLastMouseDownEvent(NSEvent *);
 
     void gestureEventWasNotHandledByWebCore(NSEvent *);
     void gestureEventWasNotHandledByWebCoreFromViewOnly(NSEvent *);

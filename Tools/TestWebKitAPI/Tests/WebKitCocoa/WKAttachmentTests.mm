@@ -2140,6 +2140,25 @@ TEST(WKAttachmentTestsMac, DragDirectoryAttachment)
     TestWebKitAPI::Util::run(&didLoadIcon);
 }
 
+TEST(WKAttachmentTestsMac, CallAcceptsFirstMouseWhileDraggingAttachment)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration _setAttachmentElementEnabled:YES];
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadHTMLString:attachmentEditingTestMarkup];
+
+    auto fileWrapper = adoptNS([[NSFileWrapper alloc] initWithURL:testPDFFileURL() options:0 error:nil]);
+    RetainPtr attachment = [webView synchronouslyInsertAttachmentWithFileWrapper:fileWrapper.get() contentType:@"application/pdf"];
+    [simulator setWillBeginDraggingHandler:^{
+        [webView acceptsFirstMouseAtPoint:NSMakePoint(100, 100)];
+    }];
+    [simulator runFrom:webView.attachmentElementMidPoint to:CGPointMake(300, 300)];
+
+    auto pasteboard = [simulator draggingInfo].draggingPasteboard;
+    EXPECT_WK_STREQ("com.adobe.pdf", [pasteboard stringForType:(__bridge NSString *)kPasteboardTypeFilePromiseContent]);
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)
