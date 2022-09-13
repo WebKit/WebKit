@@ -42,6 +42,7 @@
 OBJC_CLASS NSArray;
 OBJC_CLASS NSString;
 #include <wtf/RetainPtr.h>
+#include <wtf/WeakObjCPtr.h>
 using PlatformUIElement = id;
 #elif USE(ATSPI)
 namespace WebCore {
@@ -73,7 +74,7 @@ public:
     ~AccessibilityUIElement();
 
 #if PLATFORM(COCOA)
-    id platformUIElement() { return m_element.get(); }
+    id platformUIElement() { return m_element.getAutoreleased(); }
 #elif USE(ATSPI)
     PlatformUIElement platformUIElement() { return m_element.get(); }
 #else
@@ -430,7 +431,7 @@ private:
     // A retained, platform specific object used to help manage notifications for this object.
 #if ENABLE(ACCESSIBILITY)
 #if PLATFORM(COCOA)
-    RetainPtr<id> m_element;
+    WeakObjCPtr<id> m_element;
     RetainPtr<id> m_notificationHandler;
     static RefPtr<AccessibilityController> s_controller;
 

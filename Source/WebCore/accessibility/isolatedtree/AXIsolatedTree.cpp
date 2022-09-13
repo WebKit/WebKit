@@ -71,16 +71,13 @@ AXIsolatedTree::~AXIsolatedTree()
     AXTRACE("AXIsolatedTree::~AXIsolatedTree"_s);
 }
 
-void AXIsolatedTree::clear()
+void AXIsolatedTree::queueForDestruction()
 {
-    AXTRACE("AXIsolatedTree::clear"_s);
+    AXTRACE("AXIsolatedTree::queueForDestruction"_s);
     ASSERT(isMainThread());
-    m_axObjectCache = nullptr;
-    m_nodeMap.clear();
 
     Locker locker { m_changeLogLock };
-    m_pendingSubtreeRemovals.append(m_rootNode->objectID());
-    m_rootNode = nullptr;
+    m_queuedForDestruction = true;
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForID(AXIsolatedTreeID treeID)
@@ -130,12 +127,10 @@ void AXIsolatedTree::removeTreeForPageID(PageIdentifier pageID)
 {
     AXTRACE("AXIsolatedTree::removeTreeForPageID"_s);
     ASSERT(isMainThread());
-    Locker locker { s_cacheLock };
 
-    if (auto tree = treePageCache().take(pageID)) {
-        tree->clear();
-        treeIDCache().remove(tree->treeID());
-    }
+    Locker locker { s_cacheLock };
+    if (auto tree = treePageCache().take(pageID))
+        tree->queueForDestruction();
 }
 
 RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(PageIdentifier pageID)
@@ -627,7 +622,9 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
 {
     AXTRACE("AXIsolatedTree::focusedNode"_s);
-    RELEASE_ASSERT(!isMainThread());
+    ASSERT(!isMainThread());
+    // applyPendingChanges can destroy `this` tree, so protect it until the end of this method.
+    Ref protectedThis { *this };
     // Apply pending changes in case focus has changed and hasn't been updated.
     applyPendingChanges();
     AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString()));
@@ -759,6 +756,28 @@ void AXIsolatedTree::applyPendingChanges()
         return;
 
     Locker locker { m_changeLogLock };
+
+    if (UNLIKELY(m_queuedForDestruction)) {
+        // Protect this until we have fully self-destructed.
+        Ref protectedThis { *this };
+
+        for (const auto& object : m_readerThreadNodeMap.values())
+            object->detach(AccessibilityDetachmentType::CacheDestroyed);
+
+        Locker locker { s_cacheLock };
+#ifndef NDEBUG
+        ASSERT(treeIDCache().contains(treeID()));
+        auto iterator = treeIDCache().find(treeID());
+        if (iterator != treeIDCache().end()) {
+            // At this point, there should only be two references left to this tree -- one in the treeIDCache() map,
+            // and the `protectedThis` above.
+            ASSERT(iterator->value->refCount() == 2, "Unexpected refcount before attempting to destroy isolated tree: %d", iterator->value->refCount());
+        }
+#endif
+
+        treeIDCache().remove(treeID());
+        return;
+    }
 
     if (m_pendingFocusedNodeID != m_focusedNodeID) {
         AXLOG(makeString("focusedNodeID ", m_focusedNodeID.loggingString(), " pendingFocusedNodeID ", m_pendingFocusedNodeID.loggingString()));

@@ -477,6 +477,9 @@ http/tests/misc/image-checks-for-accept.html [ Skip ]
 # Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244126.
 accessibility/dynamically-unignored-contenteditable.html [ Skip ]
 
+# Fails because AccessibilityUIElement holds a strong reference to m_element.
+accessibility/ax-object-destroyed-on-reload.html [ Skip ]
+
 # Timing out since added in https://bugs.webkit.org/show_bug.cgi?id=240750 (likely some missing AccessibilityUIElement implementation).
 accessibility/table-exposure-updates-dynamically.html [ Skip ]
 

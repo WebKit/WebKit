@@ -2149,6 +2149,9 @@ webkit.org/b/98348 accessibility/radio-button-group-members.html [ Skip ]
 webkit.org/b/156045 accessibility/attachment-element.html [ Skip ]
 webkit.org/b/193623 accessibility/set-selected-editable.html [ Skip ]
 
+# Fails because AccessibilityUIElement holds a strong reference to m_element.
+accessibility/ax-object-destroyed-on-reload.html [ Skip ]
+
 # No support for GPUProcess yet
 fast/mediastream/captureInGPUProcess.html [ Skip ]
 fast/mediastream/video-rotation-gpu-process-crash.html [ Skip ]
