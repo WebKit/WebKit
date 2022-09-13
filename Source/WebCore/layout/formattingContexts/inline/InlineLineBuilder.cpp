@@ -948,7 +948,7 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
         return true;
     }
 
-    // Shrink the line box with the intrusive float box' margin box.
+    // Shrink the line box with the intrusive float box's margin box.
     m_contentIsConstrainedByFloat = true;
     auto floatBoxWidth = inlineItemWidth(floatItem, { });
     if (floatBox.isLeftFloatingPositioned())

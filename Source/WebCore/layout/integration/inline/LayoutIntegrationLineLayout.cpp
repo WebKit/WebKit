@@ -486,6 +486,8 @@ void LineLayout::prepareFloatingState()
     if (!flow().containsFloats())
         return;
 
+    if (flow().containingBlock())
+        floatingState.setIsLeftToRightDirection(flow().containingBlock()->style().isLeftToRightDirection());
     for (auto& floatingObject : *flow().floatingObjectSet()) {
         auto& visualRect = floatingObject->frameRect();
         auto position = floatingObject->type() == FloatingObject::FloatRight
