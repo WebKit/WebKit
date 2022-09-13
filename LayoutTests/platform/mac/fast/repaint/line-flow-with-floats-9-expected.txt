@@ -39,18 +39,17 @@ layer at (0,0) size 800x600
                   text run at (106,186) width 255: "unrolled itself, and was in the act of"
                   text run at (6,204) width 181: "crawling away: besides all "
                   text run at (186,204) width 175: "this, there was generally a"
-                  text run at (6,222) width 252: "ridge or furrow in the way wherever "
-                  text run at (257,222) width 155: "she wanted to send the"
-                  text run at (6,240) width 264: "hedgehog to, and, as the doubled-up "
-                  text run at (269,240) width 143: "soldiers were always"
-                  text run at (6,258) width 292: "getting up and walking off to other parts of "
-                  text run at (297,258) width 115: "the ground, Alice"
-                  text run at (57,276) width 305: "soon came to the conclusion that it was a very "
+                  text run at (6,222) width 260: "ridge or furrow in the way wherever "
+                  text run at (265,222) width 96: "she wanted to"
+                  text run at (6,240) width 318: "send the hedgehog to, and, as the doubled-up "
+                  text run at (323,240) width 89: "soldiers were"
+                  text run at (6,258) width 333: "always getting up and walking off to other parts of "
+                  text run at (338,258) width 74: "the ground,"
+                  text run at (57,276) width 355: "Alice soon came to the conclusion that it was a very"
                 RenderBlock (floating) {SPAN} at (6,279) size 48x65 [bgcolor=#ADD8E6]
-                RenderText {#text} at (361,276) size 355x36
-                  text run at (361,276) width 51: "difficult"
-                  text run at (57,294) width 86: "game indeed."
-                RenderBR {BR} at (142,294) size 1x18
+                RenderText {#text} at (57,294) size 141x18
+                  text run at (57,294) width 141: "difficult game indeed."
+                RenderBR {BR} at (197,294) size 1x18
                 RenderText {#text} at (57,312) size 304x18
                   text run at (57,312) width 304: "The players all played at once without waiting"
                 RenderBlock (floating) {SPAN} at (364,315) size 48x81 [bgcolor=#90EE90]
@@ -65,8 +64,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (6,366) size 355x54
                   text run at (6,366) width 226: "was in a furious passion, and went "
                   text run at (231,366) width 130: "stamping about, and"
-                  text run at (6,384) width 288: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
-                  text run at (293,384) width 68: "her head!\x{2019}"
+                  text run at (6,384) width 289: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
+                  text run at (294,384) width 67: "her head!\x{2019}"
                   text run at (6,402) width 150: "about once in a minute."
                 RenderBR {BR} at (155,402) size 1x18
                 RenderText {#text} at (6,420) size 406x90

@@ -85,11 +85,11 @@ layer at (8,599) size 310x74 clip at (9,600) size 308x72 scrollX 429 scrollWidth
     RenderBR {BR} at (-405,55) size 1x18
 layer at (8,734) size 310x31 clip at (9,735) size 308x29 scrollX 458 scrollWidth 766
   RenderBlock {DIV} at (0,725) size 310x32 [border: (1px solid #000000)]
-    RenderText {#text} at (123,12) size 186x18
-      text run at (123,12) width 186 RTL: "Lorem ipsum dolor sit amet, "
-    RenderImage {IMG} at (98,1) size 26x25
-    RenderText {#text} at (-456,12) size 556x18
-      text run at (-456,12) width 555 RTL: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
+    RenderText {#text} at (122,12) size 187x18
+      text run at (122,12) width 187 RTL: "Lorem ipsum dolor sit amet, "
+    RenderImage {IMG} at (97,1) size 26x25
+    RenderText {#text} at (-457,12) size 556x18
+      text run at (-457,12) width 555 RTL: " consectetur adipiscing elit. Vivamus vitae eros non libero faucibus sagittis sed ut eros."
 layer at (8,825) size 310x31 clip at (9,826) size 308x29 scrollX 454 scrollWidth 762
   RenderBlock {DIV} at (0,817) size 310x32 [border: (1px solid #000000)]
     RenderText {#text} at (31,12) size 278x18

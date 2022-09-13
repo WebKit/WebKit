@@ -278,7 +278,7 @@ layer at (0,0) size 785x669
                 RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,93) size 634x116
             RenderTableCell {TD} at (148,93) size 303x116 [bgcolor=#FFFFFF] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=2]
-              RenderInline {A} at (0,0) size 0x0
+              RenderInline {A} at (0,0) size 0x18
                 RenderImage {IMG} at (4,4) size 288x26
               RenderBR {BR} at (295,4) size 0x18
               RenderBR {BR} at (295,22) size 0x18
@@ -288,7 +288,7 @@ layer at (0,0) size 785x669
                     text run at (4,40) width 268: "Looking for a new approach to investing?"
                     text run at (4,58) width 278: "How about a portfolio where every holding"
                     text run at (4,76) width 212: "has a word for its stock symbol? "
-              RenderBR {BR} at (0,0) size 0x0
+              RenderBR {BR} at (215,76) size 1x18
               RenderInline {SPAN} at (0,0) size 47x18
                 RenderInline {A} at (0,0) size 47x18
                   RenderText {#text} at (4,94) size 47x18
