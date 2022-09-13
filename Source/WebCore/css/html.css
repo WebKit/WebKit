@@ -762,7 +762,10 @@ textarea {
 ::placeholder {
     -webkit-text-security: none;
     color: darkGray;
+    direction: inherit !important;
     pointer-events: none !important;
+    text-orientation: inherit !important;
+    writing-mode: inherit !important;
 }
 
 input::placeholder {
