@@ -243,8 +243,8 @@ void JSTestTypedefsPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestTypedefs::s_info = { "TestTypedefs"_s, &Base::s_info, &JSTestTypedefsTable, nullptr, CREATE_METHOD_TABLE(JSTestTypedefs) };
 
-JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTypedefs>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestTypedefs>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestTypedefs::JSTestTypedefs(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestTypedefs>&& impl)
+    : JSDOMWrapper<TestTypedefs>(structure, globalObject, WTFMove(impl))
 {
 }
 

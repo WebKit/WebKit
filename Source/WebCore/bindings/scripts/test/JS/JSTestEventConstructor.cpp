@@ -235,8 +235,8 @@ void JSTestEventConstructorPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestEventConstructor::s_info = { "TestEventConstructor"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventConstructor) };
 
-JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEventConstructor>&& impl, JSC::Butterfly* butterfly)
-    : JSEvent(structure, globalObject, WTFMove(impl), butterfly)
+JSTestEventConstructor::JSTestEventConstructor(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEventConstructor>&& impl)
+    : JSEvent(structure, globalObject, WTFMove(impl))
 {
 }
 

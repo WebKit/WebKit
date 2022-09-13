@@ -253,8 +253,8 @@ void JSTestOverloadedConstructorsPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestOverloadedConstructors::s_info = { "TestOverloadedConstructors"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestOverloadedConstructors) };
 
-JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOverloadedConstructors>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestOverloadedConstructors>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestOverloadedConstructors::JSTestOverloadedConstructors(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestOverloadedConstructors>&& impl)
+    : JSDOMWrapper<TestOverloadedConstructors>(structure, globalObject, WTFMove(impl))
 {
 }
 

@@ -1,3 +1,0 @@
-
-PASS NodeList (static collection) "length" getter tampered (Array.prototype.indexOf)
-

@@ -58,7 +58,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestDefaultToJSONFilteredByExposed(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONFilteredByExposed>&&, JSC::Butterfly* = nullptr);
+    JSTestDefaultToJSONFilteredByExposed(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONFilteredByExposed>&&);
 
     void finishCreation(JSC::VM&);
 };

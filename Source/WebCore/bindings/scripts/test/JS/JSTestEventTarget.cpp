@@ -128,8 +128,8 @@ void JSTestEventTargetPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestEventTarget::s_info = { "TestEventTarget"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestEventTarget) };
 
-JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEventTarget>&& impl, JSC::Butterfly* butterfly)
-    : JSEventTarget(structure, globalObject, WTFMove(impl), butterfly)
+JSTestEventTarget::JSTestEventTarget(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEventTarget>&& impl)
+    : JSEventTarget(structure, globalObject, WTFMove(impl))
 {
 }
 

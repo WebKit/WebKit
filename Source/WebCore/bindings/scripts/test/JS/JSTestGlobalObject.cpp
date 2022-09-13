@@ -663,8 +663,8 @@ void JSTestGlobalObjectPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestGlobalObject::s_info = { "TestGlobalObject"_s, &Base::s_info, &JSTestGlobalObjectTable, nullptr, CREATE_METHOD_TABLE(JSTestGlobalObject) };
 
-JSTestGlobalObject::JSTestGlobalObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGlobalObject>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestGlobalObject>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestGlobalObject::JSTestGlobalObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGlobalObject>&& impl)
+    : JSDOMWrapper<TestGlobalObject>(structure, globalObject, WTFMove(impl))
 {
 }
 

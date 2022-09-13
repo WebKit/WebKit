@@ -3233,7 +3233,7 @@ sub GenerateHeader
     } elsif (!NeedsImplementationClass($interface)) {
         push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject&);\n\n");
      } else {
-        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject&, Ref<$implType>&&, JSC::Butterfly* = nullptr);\n\n");
+        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject&, Ref<$implType>&&);\n\n");
     }
 
     if ($interfaceName eq "DOMWindow" || $interfaceName eq "RemoteDOMWindow") {
@@ -4713,8 +4713,8 @@ sub GenerateImplementation
         push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject)\n");
         push(@implContent, "    : $parentClassName(structure, globalObject) { }\n\n");
     } else {
-        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject, Ref<$implType>&& impl, JSC::Butterfly* butterfly)\n");
-        push(@implContent, "    : $parentClassName(structure, globalObject, WTFMove(impl), butterfly)\n");
+        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject& globalObject, Ref<$implType>&& impl)\n");
+        push(@implContent, "    : $parentClassName(structure, globalObject, WTFMove(impl))\n");
         push(@implContent, "{\n");
         push(@implContent, "}\n\n");
     }

@@ -123,8 +123,8 @@ void JSTestGenerateAddOpaqueRootPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestGenerateAddOpaqueRoot::s_info = { "TestGenerateAddOpaqueRoot"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateAddOpaqueRoot) };
 
-JSTestGenerateAddOpaqueRoot::JSTestGenerateAddOpaqueRoot(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestGenerateAddOpaqueRoot>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestGenerateAddOpaqueRoot::JSTestGenerateAddOpaqueRoot(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGenerateAddOpaqueRoot>&& impl)
+    : JSDOMWrapper<TestGenerateAddOpaqueRoot>(structure, globalObject, WTFMove(impl))
 {
 }
 

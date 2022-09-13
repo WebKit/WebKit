@@ -66,7 +66,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpureForPropertyAbsence | JSC::HasStaticPropertyTable | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot | JSC::OverridesPut | JSC::ProhibitsPropertyCaching;
 protected:
-    JSTestNamedSetterWithLegacyUnforgeableProperties(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&&, JSC::Butterfly* = nullptr);
+    JSTestNamedSetterWithLegacyUnforgeableProperties(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedSetterWithLegacyUnforgeableProperties>&&);
 
     void finishCreation(JSC::VM&);
 };

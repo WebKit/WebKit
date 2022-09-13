@@ -436,7 +436,7 @@ public:
             }
             FALLTHROUGH;
         }
-        case ALL_WRITABLE_FAST_PUT_CONTIGUOUS_INDEXING_TYPES: {
+        case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES: {
             if (i >= butterfly->vectorLength())
                 return false;
             butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
@@ -474,8 +474,6 @@ public:
                 return false;
             setIndexQuicklyForArrayStorageIndexingType(vm, i, v);
             return true;
-        case NonArrayWithAlwaysSlowPutContiguous:
-            return false;
         default:
             RELEASE_ASSERT(isCopyOnWrite(indexingMode()));
             return false;
@@ -495,7 +493,7 @@ public:
             }
             FALLTHROUGH;
         }
-        case ALL_FAST_PUT_CONTIGUOUS_INDEXING_TYPES: {
+        case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < butterfly->vectorLength());
             butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
             if (i >= butterfly->publicLength())
@@ -862,7 +860,7 @@ public:
     bool isFrozen(VM& vm) { return structure()->isFrozen(vm); }
 
     JS_EXPORT_PRIVATE bool anyObjectInChainMayInterceptIndexedAccesses() const;
-    JS_EXPORT_PRIVATE bool needsSlowPutIndexing() const;
+    bool needsSlowPutIndexing() const;
 
 private:
     TransitionKind suggestedArrayStorageTransition() const;
@@ -989,7 +987,6 @@ public:
 
     JS_EXPORT_PRIVATE JSValue getMethod(JSGlobalObject*, CallData&, const Identifier&, const String& errorMessage);
 
-    bool canDoFastIndexedAccess();
     bool canPerformFastPutInline(VM&, PropertyName);
     bool canPerformFastPutInlineExcludingProto();
 
@@ -1084,7 +1081,7 @@ protected:
     ArrayStorage* convertContiguousToArrayStorage(VM&);
 
         
-    JS_EXPORT_PRIVATE ArrayStorage* ensureArrayStorageExistsAndEnterDictionaryIndexingMode(VM&);
+    ArrayStorage* ensureArrayStorageExistsAndEnterDictionaryIndexingMode(VM&);
         
     bool defineOwnNonIndexProperty(JSGlobalObject*, PropertyName, const PropertyDescriptor&, bool throwException);
 

@@ -66,7 +66,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return globalObject()->scriptExecutionContext(); }
 
 protected:
-    WEBCORE_EXPORT JSDOMObject(JSC::Structure*, JSC::JSGlobalObject&, JSC::Butterfly* = nullptr);
+    WEBCORE_EXPORT JSDOMObject(JSC::Structure*, JSC::JSGlobalObject&);
 };
 
 template<typename ImplementationClass, typename PtrTraits = RawPtrTraits<ImplementationClass>>
@@ -80,8 +80,8 @@ public:
     constexpr static bool hasCustomPtrTraits() { return !std::is_same_v<PtrTraits, RawPtrTraits<ImplementationClass>>; };
     
 protected:
-    JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl, JSC::Butterfly* butterfly = nullptr)
-        : Base(structure, globalObject, butterfly)
+    JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject& globalObject, Ref<ImplementationClass>&& impl)
+        : Base(structure, globalObject)
         , m_wrapped(WTFMove(impl)) { }
 
 private:

@@ -36,8 +36,6 @@ AdaptiveInferredPropertyValueWatchpointBase::AdaptiveInferredPropertyValueWatchp
     RELEASE_ASSERT(key.kind() == PropertyCondition::Equivalence);
 }
 
-AdaptiveInferredPropertyValueWatchpointBase::~AdaptiveInferredPropertyValueWatchpointBase() = default;
-
 void AdaptiveInferredPropertyValueWatchpointBase::initialize(const ObjectPropertyCondition& key)
 {
     m_key = key;

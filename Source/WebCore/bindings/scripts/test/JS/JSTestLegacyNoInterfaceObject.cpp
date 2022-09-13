@@ -128,8 +128,8 @@ void JSTestLegacyNoInterfaceObjectPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestLegacyNoInterfaceObject::s_info = { "TestLegacyNoInterfaceObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestLegacyNoInterfaceObject) };
 
-JSTestLegacyNoInterfaceObject::JSTestLegacyNoInterfaceObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestLegacyNoInterfaceObject>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestLegacyNoInterfaceObject>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestLegacyNoInterfaceObject::JSTestLegacyNoInterfaceObject(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestLegacyNoInterfaceObject>&& impl)
+    : JSDOMWrapper<TestLegacyNoInterfaceObject>(structure, globalObject, WTFMove(impl))
 {
 }
 

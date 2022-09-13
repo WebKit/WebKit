@@ -61,7 +61,7 @@ public:
         return static_cast<TestDefaultToJSONInherit&>(Base::wrapped());
     }
 protected:
-    JSTestDefaultToJSONInherit(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONInherit>&&, JSC::Butterfly* = nullptr);
+    JSTestDefaultToJSONInherit(JSC::Structure*, JSDOMGlobalObject&, Ref<TestDefaultToJSONInherit>&&);
 
     void finishCreation(JSC::VM&);
 };

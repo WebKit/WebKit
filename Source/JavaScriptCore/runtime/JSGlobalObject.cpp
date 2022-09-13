@@ -982,7 +982,6 @@ void JSGlobalObject::init(VM& vm)
     m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(Int32Shape)].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithInt32));
     m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(DoubleShape)].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithDouble));
     m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(ContiguousShape)].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithContiguous));
-    m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(AlwaysSlowPutContiguousShape)].setMayBeNull(vm, this, nullptr);
     m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(ArrayStorageShape)].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithArrayStorage));
     m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(SlowPutArrayStorageShape)].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), ArrayWithSlowPutArrayStorage));
     m_originalArrayStructureForIndexingShape[arrayIndexFromIndexingType(CopyOnWriteArrayWithInt32)].set(vm, this, JSArray::createStructure(vm, this, m_arrayPrototype.get(), CopyOnWriteArrayWithInt32));
@@ -2484,9 +2483,6 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_typedArrayProto.visit(visitor);
     thisObject->m_typedArraySuperConstructor.visit(visitor);
     thisObject->m_regExpGlobalData.visitAggregate(visitor);
-
-    for (Structure* structure : thisObject->m_originalAlwaysSlowPutContiguousStructureSet)
-        visitor.appendUnbarriered(structure);
 }
 
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(JS_EXPORT_PRIVATE, JSGlobalObject);
@@ -2888,12 +2884,6 @@ JSGlobalObject* JSGlobalObject::createWithCustomMethodTable(VM& vm, Structure* s
     JSGlobalObject* globalObject = new (NotNull, allocateCell<JSGlobalObject>(vm)) JSGlobalObject(vm, structure, methodTable);
     globalObject->finishCreation(vm);
     return globalObject;
-}
-
-void JSGlobalObject::recordOriginalAlwaysSlowPutContiguousStructure(Structure* structure)
-{
-    ASSERT(structure->globalObject() == this);
-    m_originalAlwaysSlowPutContiguousStructureSet.add(structure);
 }
 
 void JSGlobalObject::finishCreation(VM& vm)

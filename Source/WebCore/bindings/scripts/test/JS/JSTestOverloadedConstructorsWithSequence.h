@@ -58,7 +58,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestOverloadedConstructorsWithSequence(JSC::Structure*, JSDOMGlobalObject&, Ref<TestOverloadedConstructorsWithSequence>&&, JSC::Butterfly* = nullptr);
+    JSTestOverloadedConstructorsWithSequence(JSC::Structure*, JSDOMGlobalObject&, Ref<TestOverloadedConstructorsWithSequence>&&);
 
     void finishCreation(JSC::VM&);
 };
