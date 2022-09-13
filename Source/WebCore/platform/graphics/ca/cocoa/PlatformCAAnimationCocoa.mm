@@ -324,18 +324,18 @@ void PlatformCAAnimationCocoa::setFillMode(FillModeType value)
     [m_animation setFillMode:toCAFillModeType(value)];
 }
 
-void PlatformCAAnimationCocoa::setTimingFunction(const TimingFunction* value, bool reverse)
+void PlatformCAAnimationCocoa::setTimingFunction(const TimingFunction* timingFunction, bool reverse)
 {
-    ASSERT(value);
+    ASSERT(timingFunction);
     switch (animationType()) {
     case Basic:
     case Keyframe:
-        [m_animation setTimingFunction:toCAMediaTimingFunction(*value, reverse)];
+        [m_animation setTimingFunction:toCAMediaTimingFunction(*timingFunction, reverse)];
         break;
     case Spring:
-        if (value->isSpringTimingFunction()) {
+        if (timingFunction->isSpringTimingFunction()) {
             // FIXME: Handle reverse.
-            auto& function = *static_cast<const SpringTimingFunction*>(value);
+            auto& function = *static_cast<const SpringTimingFunction*>(timingFunction);
             CASpringAnimation *springAnimation = (CASpringAnimation *)m_animation.get();
             springAnimation.mass = function.mass();
             springAnimation.stiffness = function.stiffness();
@@ -561,9 +561,9 @@ void PlatformCAAnimationCocoa::copyKeyTimesFrom(const PlatformCAAnimation& value
     [static_cast<CAKeyframeAnimation *>(m_animation.get()) setKeyTimes:[other keyTimes]];
 }
 
-void PlatformCAAnimationCocoa::setTimingFunctions(const Vector<Ref<const TimingFunction>>& value, bool reverse)
+void PlatformCAAnimationCocoa::setTimingFunctions(const Vector<Ref<const TimingFunction>>& timingFunctions, bool reverse)
 {
-    [static_cast<CAKeyframeAnimation *>(m_animation.get()) setTimingFunctions:createNSArray(value, [&] (auto& function) {
+    [static_cast<CAKeyframeAnimation *>(m_animation.get()) setTimingFunctions:createNSArray(timingFunctions, [&] (auto& function) {
         return toCAMediaTimingFunction(function.get(), reverse);
     }).get()];
 }
