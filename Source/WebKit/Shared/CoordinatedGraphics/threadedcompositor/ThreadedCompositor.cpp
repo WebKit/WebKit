@@ -312,7 +312,7 @@ void ThreadedCompositor::frameComplete()
 
 void ThreadedCompositor::targetRefreshRateDidChange(unsigned rate)
 {
-    ASSERT(!RunLoop::isMain());
+    ASSERT(RunLoop::isMain());
     m_displayRefreshMonitor->setTargetRefreshRate(rate);
 }
 
