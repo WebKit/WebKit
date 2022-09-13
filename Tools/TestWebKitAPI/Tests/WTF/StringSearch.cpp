@@ -30,7 +30,7 @@ namespace TestWebKitAPI {
 
 TEST(WTF_StringSearch, ConstexprBMHFind)
 {
-    static constexpr BoyerMooreHorspoolTable<uint8_t> table("Hello World"_s);
+    static BoyerMooreHorspoolTable<uint8_t> table("Hello World"_s);
     size_t result = table.find("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZHello WorldabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"_s, "Hello World"_s);
     EXPECT_EQ(result, 104U);
 }
