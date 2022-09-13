@@ -1,5 +1,5 @@
 http/tests/paymentrequest/ApplePayModifier-paymentMethodType.https.html [ Skip ]
-webkit.org/b/229837 [ Release ] webgl/2.0.0/conformance2/textures/video/tex-2d-r8ui-red_integer-unsigned_byte.html [ Pass Timeout ]
+
 webkit.org/b/229502 [ Debug ] http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html [ Pass Failure ]
 
 webkit.org/b/229837 http/tests/storageAccess/has-storage-access-under-general-third-party-cookie-blocking-without-cookie.html [ Pass Failure ]
