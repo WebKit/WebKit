@@ -3532,6 +3532,34 @@ class TestRevertPullRequestChanges(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SKIPPED, state_string='Reverted pull request changes (skipped)')
         return self.runStep()
 
+    def test_glib_cleanup(self):
+        self.setupStep(RevertPullRequestChanges())
+        self.setProperty('got_revision', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c')
+        self.setProperty('github.number', 1234)
+        self.setProperty('platform', 'gtk')
+        self.setProperty('configuration', 'release')
+        self.expectHidden(False)
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'clean', '-f', '-d'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['git', 'checkout', 'b2db8d1da7b74b5ddf075e301370e64d914eef7c'],
+            ) + 0, ExpectShell(
+                workdir='wkdir',
+                logEnviron=False,
+                timeout=5 * 60,
+                command=['rm', '-f', 'WebKitBuild/GTK/Release/build-webkit-options.txt'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Reverted pull request changes')
+        return self.runStep()
+
 
 class TestCheckChangeRelevance(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):

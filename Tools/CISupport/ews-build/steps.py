@@ -2049,6 +2049,14 @@ class RevertPullRequestChanges(steps.ShellSequence):
             ['git', 'checkout', self.getProperty('ews_revision') or self.getProperty('got_revision')],
         ]:
             self.commands.append(util.ShellArg(command=command, logname='stdio'))
+
+        platform = self.getProperty('platform')
+        if platform in ('gtk', 'wpe'):
+            # Force cmake reconfigure to ensure the recovery after patches breaking cmake configure step
+            platform = platform.upper()
+            config = self.getProperty('configuration').capitalize()
+            target = os.path.join("WebKitBuild", platform, config, "build-webkit-options.txt")
+            self.commands.append(util.ShellArg(command=['rm', '-f', target], logname='stdio'))
         return super(RevertPullRequestChanges, self).run()
 
     def doStepIf(self, step):
