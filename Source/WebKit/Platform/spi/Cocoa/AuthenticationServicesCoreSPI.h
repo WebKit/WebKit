@@ -27,14 +27,10 @@
 
 #if HAVE(ASC_AUTH_UI) || HAVE(UNIFIED_ASC_AUTH_UI)
 
-#if USE(APPLE_INTERNAL_SDK) && HAVE(ASC_WEBKIT_SPI)
-#import <AuthenticationServicesCore/ASCWebKitSPISupport.h>
-#else
 @interface ASCWebKitSPISupport : NSObject
 @property (class, nonatomic) BOOL shouldUseAlternateCredentialStore;
 + (BOOL)arePasskeysDisallowedForRelyingParty:(nonnull NSString *)relyingParty;
 @end
-#endif
 
 // FIXME: Most of the forward declarations below should be behind a non-Apple-internal SDK compile-time flag.
 // When building with an Apple-internal SDK, we should instead import the private headers directly from the
