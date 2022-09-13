@@ -2035,7 +2035,7 @@ void Element::attributeChanged(const QualifiedName& name, const AtomString& oldV
     invalidateNodeListAndCollectionCachesInAncestorsForAttribute(name);
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->deferAttributeChangeIfNeeded(name, this);
+        cache->deferAttributeChangeIfNeeded(this, name, oldValue, newValue);
 }
 
 ExplicitlySetAttrElementsMap& Element::explicitlySetAttrElementsMap()
