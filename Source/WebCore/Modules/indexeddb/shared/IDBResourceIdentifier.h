@@ -44,7 +44,6 @@ class IDBConnectionToClient;
 using IDBConnectionIdentifier = ProcessIdentifier;
 
 class IDBResourceIdentifier {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&);
     IDBResourceIdentifier(const IDBClient::IDBConnectionProxy&, const IDBRequest&);

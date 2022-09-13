@@ -261,6 +261,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VKCImageAnalyzer : NSObject
 @property (nonatomic, strong, nullable) dispatch_queue_t callbackQueue;
 @property (nonatomic, class, readonly) NSArray<NSString *> *supportedRecognitionLanguages;
+- (void)cancelAllRequests;
 - (void)cancelRequestID:(VKImageAnalysisRequestID)requestID;
 - (VKImageAnalysisRequestID)processRequest:(VKCImageAnalyzerRequest *)request progressHandler:(void (^_Nullable)(double progress))progressHandler completionHandler:(void (^)(VKCImageAnalysis* _Nullable analysis, NSError * _Nullable error))completionHandler;
 @end
@@ -294,6 +295,39 @@ NS_ASSUME_NONNULL_END
 
 #endif
 #endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS)
+#if __has_include(<VisionKitCore/VKCImageAnalysisInteraction.h>)
+#import <VisionKitCore/VKCImageAnalysisInteraction.h>
+#else
+
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol VKCImageAnalysisInteractionDelegate <NSObject>
+@end
+
+@interface VKCImageAnalysisInteraction : NSObject <UIInteraction>
+@property (nonatomic) BOOL actionInfoLiveTextButtonDisabled;
+@property (nonatomic) BOOL actionInfoQuickActionsDisabled;
+@property (nonatomic) BOOL actionInfoViewHidden;
+@property (nonatomic) VKImageAnalysisInteractionTypes activeInteractionTypes;
+@property (nullable, nonatomic, strong) VKCImageAnalysis *analysis;
+@property (nonatomic, readonly) UIButton *analysisButton;
+@property (nonatomic) BOOL analysisButtonRequiresVisibleContentGating;
+@property (nonatomic, weak) id<VKCImageAnalysisInteractionDelegate> delegate;
+@property (nonatomic, readonly) BOOL hasActiveTextSelection;
+@property (nonatomic, readwrite) BOOL highlightSelectableItems;
+@property (nonatomic, readwrite, copy, nullable) UIButtonConfigurationUpdateHandler quickActionConfigurationUpdateHandler;
+@property (nonatomic) BOOL wantsAutomaticContentsRectCalculation;
+- (BOOL)interactableItemExistsAtPoint:(CGPoint)point;
+- (void)resetSelection;
+- (void)setActionInfoViewHidden:(BOOL)hidden animated:(BOOL)animated;
+@end
+
+NS_ASSUME_NONNULL_END
+
+#endif
+#endif // PLATFORM(IOS)
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 

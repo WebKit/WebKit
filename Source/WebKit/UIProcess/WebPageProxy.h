@@ -1288,6 +1288,7 @@ public:
     float footerHeightForPrinting(WebFrameProxy&);
     void drawHeaderForPrinting(WebFrameProxy&, WebCore::FloatRect&&);
     void drawFooterForPrinting(WebFrameProxy&, WebCore::FloatRect&&);
+    void drawPageBorderForPrinting(WebFrameProxy&, WebCore::FloatSize&&);
 
 #if PLATFORM(COCOA)
     // Dictionary.

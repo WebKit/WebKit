@@ -1,12 +1,28 @@
-<script>
-if (window.internals) {
-    // Force software rendering mode.
-    window.internals.settings.setAcceleratedCompositingEnabled(false);
-}
-</script>
-<img style="filter: invert(0)" src="resources/reference.png">
-<img style="filter: invert(0.2)" src="resources/reference.png">
-<img style="filter: invert(0.4)" src="resources/reference.png">
-<img style="filter: invert(0.6)" src="resources/reference.png">
-<img style="filter: invert(0.8)" src="resources/reference.png">
-<img style="filter: invert(1.0)" src="resources/reference.png">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-48; totalPixels=0-8900" />
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <script src="resources/filter-helpers.js"></script>
+    <script>
+    if (window.internals) {
+        // Force software rendering mode.
+        window.internals.settings.setAcceleratedCompositingEnabled(false);
+    }
+    </script>
+</head>
+<body>
+    <script>
+        const filters = [
+            'invert(0)',
+            'invert(0.2)',
+            'invert(0.4)',
+            'invert(0.6)',
+            'invert(0.8)',
+            'invert(1.0)',
+        ];
+
+        buildCSSFilteredBoxes(filters);
+    </script>
+</body>
+</html>

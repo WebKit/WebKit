@@ -545,6 +545,7 @@ public:
 
     virtual void pinnedStateWillChange() { }
     virtual void pinnedStateDidChange() { }
+    virtual void drawPageBorderForPrinting(WebCore::FloatSize&& size) { }
     virtual bool scrollingUpdatesDisabledForTesting() { return false; }
 
     virtual bool hasSafeBrowsingWarning() const { return false; }

@@ -71,6 +71,8 @@ public:
 
     FloatingState::FloatItem toFloatItem(const Box& floatBox) const;
 
+    bool isLeftToRightDirection() const { return floatingState().isLeftToRightDirection(); }
+
 private:
     std::optional<LayoutUnit> bottom(Clear) const;
 

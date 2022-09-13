@@ -40,12 +40,9 @@ public:
 
 private:
     explicit AXImage(RenderImage*);
-    bool isAXImageInstance() const override { return true; }
 
     AccessibilityRole roleValue() const override;
     std::optional<AccessibilityChildrenVector> imageOverlayElements() override;
 };
 
 } // namespace WebCore 
-
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AXImage, isAXImageInstance())

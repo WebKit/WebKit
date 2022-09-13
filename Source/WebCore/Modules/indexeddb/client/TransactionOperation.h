@@ -127,7 +127,7 @@ protected:
     IDBResourceIdentifier m_identifier;
     uint64_t m_objectStoreIdentifier { 0 };
     uint64_t m_indexIdentifier { 0 };
-    std::unique_ptr<IDBResourceIdentifier> m_cursorIdentifier;
+    std::optional<IDBResourceIdentifier> m_cursorIdentifier;
     IndexedDB::IndexRecordType m_indexRecordType { IndexedDB::IndexRecordType::Key };
     Function<void()> m_performFunction;
     Function<void(const IDBResultData&)> m_completeFunction;
@@ -136,7 +136,7 @@ private:
     IDBResourceIdentifier transactionIdentifier() const { return m_transaction->info().identifier(); }
     uint64_t objectStoreIdentifier() const { return m_objectStoreIdentifier; }
     uint64_t indexIdentifier() const { return m_indexIdentifier; }
-    IDBResourceIdentifier* cursorIdentifier() const { return m_cursorIdentifier.get(); }
+    std::optional<IDBResourceIdentifier> cursorIdentifier() const { return m_cursorIdentifier; }
     IDBTransaction& transaction() { return m_transaction.get(); }
     IndexedDB::IndexRecordType indexRecordType() const { return m_indexRecordType; }
 

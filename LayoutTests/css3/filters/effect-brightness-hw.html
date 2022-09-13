@@ -1,12 +1,31 @@
-<style>
-img {
-    -webkit-transform:translateZ(0);
-}
-</style>
-<img style="filter: brightness(0)" src="resources/reference.png">
-<img style="filter: brightness(0.4)" src="resources/reference.png">
-<img style="filter: brightness(0.7)" src="resources/reference.png">
-<img style="filter: brightness()" src="resources/reference.png">
-<img style="filter: brightness(1.3)" src="resources/reference.png">
-<img style="filter: brightness(1.6)" src="resources/reference.png">
-<img style="filter: brightness(2)" src="resources/reference.png">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-100; totalPixels=0-39500">
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <style>
+        img {
+            will-change: transform;
+        }
+    </style>
+    <script src="resources/filter-helpers.js"></script>
+</head>
+<body>
+    <script>
+        const filters = [
+           "brightness(1.0)",
+           "brightness(-1)",
+           "brightness(-0.6)",
+           "brightness(-0.3)",
+           "brightness()",
+           "brightness(0)",
+           "brightness(0.3)",
+           "brightness(0.6)",
+           "brightness(1.2)",
+           "brightness(2.0)",
+        ];
+
+        buildCSSFilteredBoxes(filters);
+    </script>
+</body>
+</html>

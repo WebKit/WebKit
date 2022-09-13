@@ -177,7 +177,8 @@ TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPausedVideoOu
     [webView expectControlsManager:NO afterReceivingMessage:@"paused"];
 }
 
-TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
+// FIXME: Re-enable after webkit.org/b/243675 is resolved
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollPlayingVideoWithSoundOutOfView)
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
@@ -240,7 +241,8 @@ TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosSwitchCont
     EXPECT_TRUE([[webView controlledElementID] isEqualToString:@"second"]);
 }
 
-TEST(VideoControlsManager, VideoControlsManagerMultipleVideosScrollOnlyLargeVideoOutOfView)
+// FIXME: Re-enable after webkit.org/b/243675 is resolved
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollOnlyLargeVideoOutOfView)
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 

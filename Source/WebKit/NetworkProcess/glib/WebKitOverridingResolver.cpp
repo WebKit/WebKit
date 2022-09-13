@@ -26,10 +26,11 @@
 #include "config.h"
 #include "WebKitOverridingResolver.h"
 
+#include <wtf/HashSet.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
-
-using namespace WebKit;
+#include <wtf/text/StringHash.h>
+#include <wtf/text/WTFString.h>
 
 typedef struct {
     GRefPtr<GResolver> wrappedResolver;

@@ -75,6 +75,7 @@ IGNORE_WARNINGS_END
 @property (readonly) BOOL isLowConfidence;
 @end
 
+#if !HAVE(NSTEXTLIST_MARKER_FORMATS)
 @interface NSParagraphStyle ()
 - (NSArray *)textLists;
 @end
@@ -83,6 +84,7 @@ IGNORE_WARNINGS_END
 @property NSInteger startingItemNumber;
 @property (readonly, copy) NSString *markerFormat;
 @end
+#endif
 
 WTF_EXTERN_C_BEGIN
 
@@ -128,9 +130,11 @@ WTF_EXTERN_C_END
 - (void)setNextPreviousItemsVisible:(BOOL)visible;
 @end
 
+#if !HAVE(UIKIT_BAR_BUTTON_LAYOUT_CUSTOMIZATION)
 @interface UIBarButtonItemGroup ()
 @property (nonatomic, readwrite, assign, getter=_isHidden, setter=_setHidden:) BOOL hidden;
 @end
+#endif
 
 @protocol UITextInputMultiDocument <NSObject>
 @optional
@@ -212,6 +216,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
     UIWKGestureLoupe
 };
 
+@class RVItem;
 @protocol UIWKInteractionViewProtocol
 - (void)pasteWithCompletionHandler:(void (^)(void))completionHandler;
 - (void)requestAutocorrectionRectsForString:(NSString *)input withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForInput))completionHandler;
@@ -229,6 +234,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 
 @optional
 - (void)insertTextPlaceholderWithSize:(CGSize)size completionHandler:(void (^)(UITextPlaceholder *))completionHandler;
+- (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem * rvItem))completionHandler;
 - (void)removeTextPlaceholder:(UITextPlaceholder *)placeholder willInsertText:(BOOL)willInsertText completionHandler:(void (^)(void))completionHandler;
 @end
 
@@ -295,6 +301,24 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 
 @interface UIAction ()
 - (void)_performActionWithSender:(id)sender;
+@end
+
+typedef NS_ENUM(NSInteger, _UITextSearchMatchMethod) {
+    _UITextSearchMatchMethodContains,
+    _UITextSearchMatchMethodStartsWith,
+    _UITextSearchMatchMethodFullWord,
+};
+
+@protocol _UITextSearching <NSObject>
+
+@optional
+- (void)didBeginTextSearchOperation;
+- (void)didEndTextSearchOperation;
+@end
+
+
+@interface _UIFindInteraction : NSObject <UIInteraction>
+@property (nonatomic, strong) id<_UITextSearching> searchableObject;
 @end
 
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -377,6 +401,7 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 @property (nonatomic, readwrite) UITextSearchMatchMethod wordMatchMethod;
 @property (nonatomic, readwrite) NSStringCompareOptions stringCompareOptions;
 @end
+
 #endif
 
 #endif // PLATFORM(IOS_FAMILY)

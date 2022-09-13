@@ -45,7 +45,7 @@
 #include <pal/Logging.h>
 #include <wtf/OptionSet.h>
 
-#define ALLOW_FLOATS 0
+#define ALLOW_FLOATS 1
 #define ALLOW_RTL_FLOATS 0
 
 #ifndef NDEBUG

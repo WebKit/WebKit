@@ -32,6 +32,7 @@
 
 #if ENABLE(WEBGL)
 #include "JSExecState.h"
+#include "ScriptExecutionContext.h"
 #include "WebGLProgram.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLSampler.h"

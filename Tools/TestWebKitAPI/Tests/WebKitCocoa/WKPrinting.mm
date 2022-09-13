@@ -34,13 +34,13 @@
 
 typedef void (^CallCompletionBlock)();
 
-@interface PrintUIDelegate : NSObject <WKUIDelegate>
+@interface PrintWithSimulatedPageComputationUIDelegate : NSObject <WKUIDelegate>
 
 - (void)waitForPagination;
 
 @end
 
-@implementation PrintUIDelegate {
+@implementation PrintWithSimulatedPageComputationUIDelegate {
     bool _isDone;
 }
 
@@ -76,7 +76,7 @@ TEST(Printing, PrintWithDelayedCompletion)
 {
     auto configuration = adoptNS([WKWebViewConfiguration new]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
-    auto delegate = adoptNS([PrintUIDelegate new]);
+    auto delegate = adoptNS([PrintWithSimulatedPageComputationUIDelegate new]);
     [webView setUIDelegate:delegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
@@ -86,3 +86,63 @@ TEST(Printing, PrintWithDelayedCompletion)
     [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
     [delegate waitForPagination];
 }
+
+#if PLATFORM(MAC)
+@interface WKPrintPageBordersWebView : TestWKWebView
+@end
+
+@implementation WKPrintPageBordersWebView {
+    bool _didDrawPageBorder;
+}
+
+- (void)drawPageBorderWithSize:(NSSize)borderSize
+{
+    _didDrawPageBorder = true;
+}
+
+- (void)_waitUntilPageBorderDrawn
+{
+    TestWebKitAPI::Util::run(&_didDrawPageBorder);
+}
+
+@end
+
+@interface PrintShowingPrintPanelUIDelegate : NSObject <WKUIDelegate>
+
+@end
+
+@implementation PrintShowingPrintPanelUIDelegate
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame pdfFirstPageSize:(CGSize)size completionHandler:(void (^)(void))completionHandler
+{
+    auto printInfo = adoptNS([[NSPrintInfo alloc] init]);
+
+    NSPrintOperation *operation = [webView _printOperationWithPrintInfo:printInfo.get() forFrame:frame];
+
+    operation.showsPrintPanel = YES;
+    NSPrintPanel *printPanel = operation.printPanel;
+    printPanel.options = printPanel.options | NSPrintPanelShowsPaperSize | NSPrintPanelShowsOrientation | NSPrintPanelShowsScaling | NSPrintPanelShowsPreview;
+
+    [operation runOperationModalForWindow:webView.window delegate:nil didRunSelector:nil contextInfo:nil];
+
+    if (completionHandler)
+        completionHandler();
+}
+
+@end
+
+TEST(Printing, PrintPageBorders)
+{
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    auto webView = adoptNS([[WKPrintPageBordersWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate = adoptNS([PrintShowingPrintPanelUIDelegate new]);
+    [webView setUIDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+    [webView _test_waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"window.print()" completionHandler:nil];
+    [webView _waitUntilPageBorderDrawn];
+}
+#endif

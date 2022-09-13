@@ -1,15 +1,26 @@
-<script>
-if (window.internals) {
-    // Force software rendering mode.
-    window.internals.settings.setAcceleratedCompositingEnabled(false);
-}
-</script>
-<style>
-img {
-    margin: 10px;
-}
-</style>
-<img style="filter: blur(0)" src="resources/reference.png">
-<img style="filter: blur(2px)" src="resources/reference.png">
-<img style="filter: blur(3px)" src="resources/reference.png">
-<img style="filter: blur(10px)" src="resources/reference.png">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-50; totalPixels=0-2500">
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <script src="resources/filter-helpers.js"></script>
+    <script>
+    if (window.internals) {
+        // Force software rendering mode.
+        window.internals.settings.setAcceleratedCompositingEnabled(false);
+    }
+    </script>
+</head>
+<body>
+    <script>
+        const filters = [
+            'blur(0)',
+            'blur(2px)',
+            'blur(3px)',
+            'blur(10px)',
+        ];
+
+        buildCSSFilteredBoxes(filters);
+    </script>
+</body>
+</html>

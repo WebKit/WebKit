@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PolyProtoAccessChain.h"
 
+#include "CacheableIdentifierInlines.h"
 #include "JSCInlines.h"
 
 namespace JSC {

@@ -340,27 +340,26 @@ void FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
     ASSERT(!floatingObject->isInPlacedTree());
 
     floatingObject->setIsPlaced(true);
-    if (m_placedFloatsTree)
+    if (m_placedFloatsTree) {
         m_placedFloatsTree->add(intervalForFloatingObject(floatingObject));
-
 #if ASSERT_ENABLED
-    floatingObject->setIsInPlacedTree(true);
+        floatingObject->setIsInPlacedTree(true);
 #endif
+    }
 }
 
 void FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
 {
-    ASSERT(floatingObject->isPlaced() && floatingObject->isInPlacedTree());
+    ASSERT(floatingObject->isPlaced());
 
     if (m_placedFloatsTree) {
-        bool removed = m_placedFloatsTree->remove(intervalForFloatingObject(floatingObject));
+        auto removed = m_placedFloatsTree->remove(intervalForFloatingObject(floatingObject));
         ASSERT_UNUSED(removed, removed);
-    }
-
-    floatingObject->setIsPlaced(false);
 #if ASSERT_ENABLED
-    floatingObject->setIsInPlacedTree(false);
+        floatingObject->setIsInPlacedTree(false);
 #endif
+    }
+    floatingObject->setIsPlaced(false);
 }
 
 FloatingObject* FloatingObjects::add(std::unique_ptr<FloatingObject> floatingObject)

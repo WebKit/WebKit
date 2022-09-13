@@ -54,6 +54,8 @@ private:
     
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilityAttachment, isAttachmentElement())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilityAttachment) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAttachmentElement(); } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

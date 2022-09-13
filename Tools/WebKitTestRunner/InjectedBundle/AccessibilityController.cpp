@@ -55,6 +55,11 @@ AccessibilityController::~AccessibilityController()
 {
 }
 
+void AccessibilityController::setRetainedElement(AccessibilityUIElement* uiElement)
+{
+    m_retainedElement = uiElement;
+}
+
 void AccessibilityController::setIsolatedTreeMode(bool flag)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

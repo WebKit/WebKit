@@ -816,21 +816,21 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
     if (factories.hasElementForMediaType(codecElement, "video/x-h264") && factories.hasElementForMediaType(rtpElement, "video/x-h264")) {
         // FIXME: Profile levels are hardcoded here for the time being. It might be a good idea to
         // actually probe those on the selected encoder.
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=640c1f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42e01f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=640c1f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42e01f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=42001f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=42001f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=1;profile-level-id=4d001f"_s });
-        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000,
+        capabilities.codecs.append({ .mimeType = "video/H264"_s, .clockRate = 90000, .channels = { },
             .sdpFmtpLine = "level-asymmetry-allowed=1;packetization-mode=0;profile-level-id=4d001f"_s });
     }
 
@@ -838,13 +838,13 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
     // FIXME: Probe for video/AV1 capabilies.
 
     if (factories.hasElementForMediaType(codecElement, "video/x-vp8") && factories.hasElementForMediaType(rtpElement, "video/x-vp8"))
-        capabilities.codecs.append({ .mimeType = "video/VP8"_s, .clockRate = 90000 });
+        capabilities.codecs.append({ .mimeType = "video/VP8"_s, .clockRate = 90000, .channels = { }, .sdpFmtpLine = { } });
 
     if (factories.hasElementForMediaType(codecElement, "video/x-vp9") && factories.hasElementForMediaType(rtpElement, "video/x-vp9")) {
         // FIXME: Profile levels are hardcoded here for the time being. It might be a good idea to
         // actually probe those on the selected encoder.
-        capabilities.codecs.append({ .mimeType = "video/VP9"_s, .clockRate = 90000, .sdpFmtpLine = "profile-id=0"_s });
-        capabilities.codecs.append({ .mimeType = "video/VP9"_s, .clockRate = 90000, .sdpFmtpLine = "profile-id=2"_s });
+        capabilities.codecs.append({ .mimeType = "video/VP9"_s, .clockRate = 90000, .channels = { }, .sdpFmtpLine = "profile-id=0"_s });
+        capabilities.codecs.append({ .mimeType = "video/VP9"_s, .clockRate = 90000, .channels = { }, .sdpFmtpLine = "profile-id=2"_s });
     }
 }
 

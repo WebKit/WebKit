@@ -28,6 +28,7 @@ webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/multi_neste
 webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_struct_array.html [ Pass Failure ]
 webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformapi/value_assigned.html [ Pass Failure ]
 webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_basic_array.html [ Pass Failure ]
+webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_struct.html [ Pass Failure ]
 
 webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/basic_copyteximage2d.html [ Pass Failure ]
 webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/fboinvalidate/format_02.html [ Pass Failure ]

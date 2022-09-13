@@ -1,12 +1,28 @@
-<script>
-if (window.internals) {
-    // Force software rendering mode.
-    window.internals.settings.setAcceleratedCompositingEnabled(false);
-}
-</script>
-<img style="filter: sepia(0)" src="resources/reference.png">
-<img style="filter: sepia(0.2)" src="resources/reference.png">
-<img style="filter: sepia(0.4)" src="resources/reference.png">
-<img style="filter: sepia(0.6)" src="resources/reference.png">
-<img style="filter: sepia(0.8)" src="resources/reference.png">
-<img style="filter: sepia(1.0)" src="resources/reference.png">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-48; totalPixels=0-2500">
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <script src="resources/filter-helpers.js"></script>
+    <script>
+    if (window.internals) {
+        // Force software rendering mode.
+        window.internals.settings.setAcceleratedCompositingEnabled(false);
+    }
+    </script>
+</head>
+<body>
+    <script>
+        const filters = [
+            'sepia(0)',
+            'sepia(0.2)',
+            'sepia(0.4)',
+            'sepia(0.6)',
+            'sepia(0.8)',
+            'sepia(1.0)',            
+        ];
+
+        buildCSSFilteredBoxes(filters);
+    </script>
+</body>
+</html>

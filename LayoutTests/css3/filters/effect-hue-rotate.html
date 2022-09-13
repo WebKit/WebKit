@@ -1,12 +1,28 @@
-<script>
-if (window.internals) {
-    // Force software rendering mode.
-    window.internals.settings.setAcceleratedCompositingEnabled(false);
-}
-</script>
-<img style="filter: hue-rotate(0deg)" src="resources/reference.png">
-<img style="filter: hue-rotate(45deg)" src="resources/reference.png">
-<img style="filter: hue-rotate(90deg)" src="resources/reference.png">
-<img style="filter: hue-rotate(180deg)" src="resources/reference.png">
-<img style="filter: hue-rotate(270deg)" src="resources/reference.png">
-<img style="filter: hue-rotate(360deg)" src="resources/reference.png">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="fuzzy" content="maxDifference=0-48; totalPixels=0-2500">
+    <link rel="stylesheet" href="resources/filter-helpers.css">
+    <script src="resources/filter-helpers.js"></script>
+    <script>
+    if (window.internals) {
+        // Force software rendering mode.
+        window.internals.settings.setAcceleratedCompositingEnabled(false);
+    }
+    </script>
+</head>
+<body>
+    <script>
+        const filters = [
+            'hue-rotate(0)',
+            'hue-rotate(0.125turn)',
+            'hue-rotate(0.25turn)',
+            'hue-rotate(0.5turn)',
+            'hue-rotate(0.75turn)',
+            'hue-rotate(1turn)',
+        ];
+
+        buildCSSFilteredBoxes(filters);
+    </script>
+</body>
+</html>

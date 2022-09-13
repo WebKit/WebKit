@@ -26,8 +26,10 @@
 #include "config.h"
 #include "TemporalPlainDateTimePrototype.h"
 
+#include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include "TemporalDuration.h"
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"

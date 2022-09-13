@@ -38,6 +38,7 @@ class Page;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
 class VoidCallback;
+class WeakPtrImplWithEventTargetData;
 
 class PointerLockController {
     WTF_MAKE_NONCOPYABLE(PointerLockController);

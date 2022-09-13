@@ -64,7 +64,7 @@ public:
     IndexedDB::IndexRecordType indexRecordType() const;
     IDBResourceIdentifier cursorIdentifier() const;
 
-    const IDBDatabaseIdentifier& databaseIdentifier() const;
+    WEBCORE_EXPORT IDBDatabaseIdentifier databaseIdentifier() const;
     uint64_t requestedVersion() const;
 
     bool isOpenRequest() const { return m_requestType == IndexedDB::RequestType::Open; }
@@ -74,40 +74,20 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<IDBRequestData, void>;
-    IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, std::unique_ptr<IDBResourceIdentifier> requestIdentifier, std::unique_ptr<IDBResourceIdentifier> transactionIdentifier, std::unique_ptr<IDBResourceIdentifier> cursorIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType indexRecordType, std::optional<IDBDatabaseIdentifier> databaseIdentifier, uint64_t requestedVersion, IndexedDB::RequestType requestType)
-        : m_serverConnectionIdentifier(WTFMove(serverConnectionIdentifier))
-        , m_requestIdentifier(WTFMove(requestIdentifier))
-        , m_transactionIdentifier(WTFMove(transactionIdentifier))
-        , m_cursorIdentifier(WTFMove(cursorIdentifier))
-        , m_objectStoreIdentifier(WTFMove(objectStoreIdentifier))
-        , m_indexIdentifier(WTFMove(indexIdentifier))
-        , m_indexRecordType(WTFMove(indexRecordType))
-        , m_databaseIdentifier(WTFMove(databaseIdentifier))
-        , m_requestedVersion(WTFMove(requestedVersion))
-        , m_requestType(WTFMove(requestType)) { }
-
+    WEBCORE_EXPORT IDBRequestData(IDBConnectionIdentifier serverConnectionIdentifier, IDBResourceIdentifier requestIdentifier, std::optional<IDBResourceIdentifier>&& transactionIdentifier, std::optional<IDBResourceIdentifier>&& cursorIdentifier, uint64_t objectStoreIdentifier, uint64_t indexIdentifier, IndexedDB::IndexRecordType, std::optional<IDBDatabaseIdentifier>&&, uint64_t requestedVersion, IndexedDB::RequestType);
     static void isolatedCopy(const IDBRequestData& source, IDBRequestData& destination);
 
     IDBConnectionIdentifier m_serverConnectionIdentifier;
-    std::unique_ptr<IDBResourceIdentifier> m_requestIdentifier;
-    std::unique_ptr<IDBResourceIdentifier> m_transactionIdentifier;
-    std::unique_ptr<IDBResourceIdentifier> m_cursorIdentifier;
+    IDBResourceIdentifier m_requestIdentifier;
+    std::optional<IDBResourceIdentifier> m_transactionIdentifier;
+    std::optional<IDBResourceIdentifier> m_cursorIdentifier;
     uint64_t m_objectStoreIdentifier { 0 };
     uint64_t m_indexIdentifier { 0 };
     IndexedDB::IndexRecordType m_indexRecordType { IndexedDB::IndexRecordType::Key };
-
-    mutable std::optional<IDBDatabaseIdentifier> m_databaseIdentifier;
+    std::optional<IDBDatabaseIdentifier> m_databaseIdentifier;
     uint64_t m_requestedVersion { 0 };
 
     IndexedDB::RequestType m_requestType { IndexedDB::RequestType::Other };
 };
-
-inline const IDBDatabaseIdentifier& IDBRequestData::databaseIdentifier() const
-{
-    ASSERT(m_databaseIdentifier);
-    if (!m_databaseIdentifier)
-        m_databaseIdentifier = IDBDatabaseIdentifier { };
-    return *m_databaseIdentifier;
-}
 
 } // namespace WebCore

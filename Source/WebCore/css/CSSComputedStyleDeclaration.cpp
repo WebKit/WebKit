@@ -643,10 +643,14 @@ static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle
     auto list = CSSValueList::createSpaceSeparated();
     list->append(zoomAdjustedPixelValueForLength(translate->x(), style));
 
-    if (!translate->y().isZero() || !translate->z().isZero())
+    auto includeLength = [](const Length& length) -> bool {
+        return !length.isZero() || length.isPercent();
+    };
+
+    if (includeLength(translate->y()) || includeLength(translate->z()))
         list->append(zoomAdjustedPixelValueForLength(translate->y(), style));
 
-    if (!translate->z().isZero())
+    if (includeLength(translate->z()))
         list->append(zoomAdjustedPixelValueForLength(translate->z(), style));
 
     return list;

@@ -1859,7 +1859,6 @@ webkit.org/b/234782 imported/w3c/web-platform-tests/css/css-writing-modes/text-s
 
 # WPT css/css-pseudo import (webkit.org/b/235197)
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/target-text-007.html [ Failure ]
 
 # WebGL on GTK renders pixels with opacity slightly differently
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]

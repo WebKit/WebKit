@@ -89,7 +89,6 @@ public:
     AccessibilityObject* nextSibling() const override;
     AccessibilityObject* parentObject() const override;
     AccessibilityObject* parentObjectIfExists() const override;
-    AccessibilityObject* parentObjectUnignored() const override;
     AccessibilityObject* observableObject() const override;
     AccessibilityChildrenVector linkedObjects() const override;
     AccessibilityObject* titleUIElement() const override;
@@ -172,7 +171,6 @@ public:
     VisiblePosition visiblePositionForIndex(int) const override;
     int indexForVisiblePosition(const VisiblePosition&) const override;
 
-    void lineBreaks(Vector<int>&) const override;
     PlainTextRange doAXRangeForLine(unsigned) const override;
     PlainTextRange doAXRangeForIndex(unsigned) const override;
     

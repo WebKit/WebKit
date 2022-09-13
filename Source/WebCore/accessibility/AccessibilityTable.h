@@ -88,8 +88,6 @@ protected:
     RefPtr<AccessibilityObject> m_headerContainer;
     bool m_isExposable;
 
-    bool hasARIARole() const;
-
     // Used in type checking function is<AccessibilityTable>.
     bool isAccessibilityTableInstance() const final { return true; }
 
@@ -102,6 +100,7 @@ private:
     void addChildrenFromSection(RenderTableSection*, unsigned& maxColumnCount);
     void addTableCellChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
 
+    bool hasNonTableARIARole() const;
     // isDataTable is whether it is exposed as an AccessibilityTable because the heuristic
     // think this "looks" like a data-based table (instead of a table used for layout).
     bool isDataTable() const;

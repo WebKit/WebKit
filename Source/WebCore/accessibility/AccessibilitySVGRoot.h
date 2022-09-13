@@ -52,4 +52,6 @@ private:
 
 } // namespace WebCore 
 
-SPECIALIZE_TYPE_TRAITS_ACCESSIBILITY(AccessibilitySVGRoot, isAccessibilitySVGRoot())
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilitySVGRoot) \
+    static bool isType(const WebCore::AccessibilityObject& object) { return object.isAccessibilitySVGRoot(); } \
+SPECIALIZE_TYPE_TRAITS_END()

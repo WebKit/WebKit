@@ -108,7 +108,7 @@
 
 .network-table.highlight-initiated > .table li.initiated .cell.name::after {
     display: inline-block;
-    float: right;
+    float: inline-end;
     width: 4px;
     height: 4px;
     margin-top: 8px;

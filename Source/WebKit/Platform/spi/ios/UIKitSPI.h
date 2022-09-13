@@ -348,6 +348,10 @@ typedef id<NSCoding, NSCopying> _UITextSearchDocumentIdentifier;
 
 - (void)clearAllDecoratedFoundText;
 
+@optional
+
+- (BOOL)supportsTextReplacement;
+
 @end
 
 @interface _UIFindInteraction : NSObject <UIInteraction>
@@ -1550,6 +1554,10 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 @end
 #endif
 
+@interface UIPasteboard ()
++ (void)_performAsDataOwner:(_UIDataOwner)dataOwner block:(void(^ NS_NOESCAPE)(void))block;
+@end
+
 @interface UIResponder ()
 - (UIResponder *)firstResponder;
 - (void)pasteAndMatchStyle:(id)sender;
@@ -1674,6 +1682,7 @@ extern NSString * const NSTextSizeMultiplierDocumentOption;
 
 extern NSNotificationName const _UISceneWillBeginSystemSnapshotSequence;
 extern NSNotificationName const _UISceneDidCompleteSystemSnapshotSequence;
+extern NSNotificationName const _UIWindowSceneEnhancedWindowingModeChanged;
 
 extern CGRect UIRectInsetEdges(CGRect, UIRectEdge edges, CGFloat v);
 extern CGRect UIRectInset(CGRect, CGFloat top, CGFloat right, CGFloat bottom, CGFloat left);

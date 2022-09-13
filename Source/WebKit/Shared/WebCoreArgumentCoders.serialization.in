@@ -216,9 +216,9 @@ class WebCore::IDBValue {
 header: <WebCore/IDBRequestData.h>
 class WebCore::IDBRequestData {
     WebCore::IDBConnectionIdentifier m_serverConnectionIdentifier;
-    std::unique_ptr<WebCore::IDBResourceIdentifier> m_requestIdentifier;
-    std::unique_ptr<WebCore::IDBResourceIdentifier> m_transactionIdentifier;
-    std::unique_ptr<WebCore::IDBResourceIdentifier> m_cursorIdentifier;
+    WebCore::IDBResourceIdentifier m_requestIdentifier;
+    std::optional<WebCore::IDBResourceIdentifier> m_transactionIdentifier;
+    std::optional<WebCore::IDBResourceIdentifier> m_cursorIdentifier;
     uint64_t m_objectStoreIdentifier;
     uint64_t m_indexIdentifier;
     WebCore::IndexedDB::IndexRecordType m_indexRecordType;

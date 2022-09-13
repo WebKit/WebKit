@@ -315,6 +315,9 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ Wont
 # Default ARIA for custom elements are not yet enabled
 accessibility/custom-elements/role.html [ Skip ]
 
+# Missing necessary testing logic (AccessibilityController::{get,set}RetainedElement)
+accessibility/ax-object-destroyed-on-reload.html [ Skip ]
+
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]
@@ -1216,7 +1219,7 @@ webkit.org/b/189756 compositing/filters/opacity-change-on-filtered-paints-into-a
 
 webkit.org/b/189723 http/tests/security/cross-origin-xsl-redirect-BLOCKED.html [ Pass Failure ]
 
-webkit.org/b/190832 [ Debug ] fast/forms/state-restore-to-non-edited-controls.html [ Pass Failure ]
+webkit.org/b/190832 fast/forms/state-restore-to-non-edited-controls.html [ Pass Failure ]
 
 webkit.org/b/190849 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Pass Failure ]
 
@@ -2106,3 +2109,6 @@ webkit.org/b/245008 fast/attachment/mac/attachment-keynote.html [ Skip ]
 webkit.org/b/245014 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
 
 webkit.org/b/245035 imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass Failure ]
+
+webkit.org/b/245102 imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noreferrer.html [ Pass Failure ]
+

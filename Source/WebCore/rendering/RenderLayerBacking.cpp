@@ -2620,7 +2620,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(PaintedContents
         return;
     }
 
-    if (!contentsInfo.isSimpleContainer() || (is<RenderBox>(renderer()) && !downcast<RenderBox>(renderer()).paintsOwnBackground())) {
+    if (!contentsInfo.isSimpleContainer() || (is<RenderBox>(renderer()) && !BackgroundPainter::paintsOwnBackground(*renderBox()))) {
         m_graphicsLayer->setContentsToSolidColor(Color());
         return;
     }

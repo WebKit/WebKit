@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'none';
+        connect-src 'self';
+        script-src 'self' 'sha256-kSyfQ4joIKFsQ/vuAU0PsTihY+jZ6waGXCmEWp6wMf4=';
+        style-src 'self' 'sha256-abBtF99/+bWrkA5qp1+WvGjHjqVlNpUWZD8/uEg8wKA=';
+        " />
+    <style>
+        .section {
+            height: 50vh;
+            width: 100vw;
+            background: paleturquoise;
+            display: flex;
+            flex-direction: COLUMN;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="section" id="section">
+        </div>
+    </div>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        let section = document.getElementById("section");
+        section.style.backgroundColor = "#2196f3";
+        section.setAttribute("style", "background-color: #2196f3");
+        section.removeAttribute("style");
+
+        if (section.style.backgroundColor == "rgb(33, 150, 243)") {
+            console.log("FAIL: style attribute was not removed.");
+        }
+        else {
+            console.log("PASS: style attribute successfully removed.");
+        }
+        testRunner.notifyDone();
+    </script>
+</body>
+
+</html>

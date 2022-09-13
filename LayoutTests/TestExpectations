@@ -2160,6 +2160,10 @@ webkit.org/b/135053 [ Debug ] html5lib/webkit-resumer.html [ Slow ]
 [ Debug ] js/dom/line-column-numbers.html [ Slow ]
 [ Debug ] css3/flexbox/multiline-justify-content.html [ Slow ]
 
+webkit.org/b/207586 css3/filters/effect-combined-hw.html [ ImageOnlyFailure ]
+webkit.org/b/207586 css3/filters/effect-drop-shadow-hw.html [ ImageOnlyFailure ]
+webkit.org/b/207586 css3/filters/effect-drop-shadow.html [ ImageOnlyFailure ]
+
 webkit.org/b/142175 js/promises-tests/promises-tests-2-1-2.html [ Pass Timeout ]
 
 webkit.org/b/139840 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html [ Pass Failure ]
@@ -4854,7 +4858,6 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-intrinsic.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-layout-breaks-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-004.html [ ImageOnlyFailure ]
@@ -5391,6 +5394,13 @@ imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-si
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/vertical-rl-viewport-size-change-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout-vertical.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/nested-overflow-subtree-layout.html [ Skip ]
+
+# Expected layout is produced by legacy line layout (1px diff).
+imported/w3c/web-platform-tests/css/css-writing-modes/float-rgt-orthog-htb-in-vlr-003.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-writing-modes/float-lft-orthog-htb-in-vlr-002.xht [ ImageOnlyFailure ]
+
+# Disagreeing with the expected result (content should not wrap).
+webkit.org/b/245080 fast/text/whitespace/nowrap-clear-float.html [ Failure ]
 
 # This is marked as passing on WK2.
 fast/canvas/large-getImageData.html [ Skip ]

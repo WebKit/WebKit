@@ -338,8 +338,10 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
 {
     auto initialSDP = description ? description->sdp().isolatedCopy() : emptyString();
     auto remoteDescription = m_peerConnectionBackend.connection().remoteDescription();
+    String remoteDescriptionSdp = remoteDescription ? remoteDescription->sdp() : emptyString();
+    std::optional<RTCSdpType> remoteDescriptionSdpType = remoteDescription ? std::make_optional(remoteDescription->type()) : std::nullopt;
 
-    setDescription(description, DescriptionType::Local, [](const auto&) { }, [protectedThis = Ref(*this), this, initialSDP = WTFMove(initialSDP), remoteDescription](const GstSDPMessage& message) {
+    setDescription(description, DescriptionType::Local, [](const auto&) { }, [protectedThis = Ref(*this), this, initialSDP = WTFMove(initialSDP), remoteDescriptionSdp = WTFMove(remoteDescriptionSdp), remoteDescriptionSdpType = WTFMove(remoteDescriptionSdpType)](const GstSDPMessage& message) {
         if (protectedThis->isStopped())
             return;
 
@@ -354,9 +356,9 @@ void GStreamerMediaEndpoint::doSetLocalDescription(const RTCSessionDescription* 
             else if (!descriptions->currentLocalDescriptionSdp.isEmpty())
                 descriptions->currentLocalDescriptionSdp = initialSDP;
 
-            if (remoteDescription) {
-                descriptions->pendingRemoteDescriptionSdp = remoteDescription->sdp();
-                descriptions->pendingRemoteDescriptionSdpType = remoteDescription->type();
+            if (!remoteDescriptionSdp.isEmpty()) {
+                descriptions->pendingRemoteDescriptionSdp = remoteDescriptionSdp;
+                descriptions->pendingRemoteDescriptionSdpType = remoteDescriptionSdpType;
             }
         }
 
@@ -377,6 +379,8 @@ void GStreamerMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
 {
     auto initialSDP = description.sdp().isolatedCopy();
     auto localDescription = m_peerConnectionBackend.connection().localDescription();
+    String localDescriptionSdp = localDescription ? localDescription->sdp() : emptyString();
+    std::optional<RTCSdpType> localDescriptionSdpType = localDescription ? std::make_optional(localDescription->type()) : std::nullopt;
 
     setDescription(&description, DescriptionType::Remote, [this](const auto& message) {
         unsigned numberOfMedias = gst_sdp_message_medias_len(&message);
@@ -394,7 +398,7 @@ void GStreamerMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
             else
                 g_signal_emit_by_name(m_webrtcBin.get(), "add-transceiver", direction, caps.get(), &rtcTransceiver.outPtr());
         }
-    }, [protectedThis = Ref(*this), this, initialSDP = WTFMove(initialSDP), localDescription](const GstSDPMessage& message) {
+    }, [protectedThis = Ref(*this), this, initialSDP = WTFMove(initialSDP), localDescriptionSdp = WTFMove(localDescriptionSdp), localDescriptionSdpType = WTFMove(localDescriptionSdpType)](const GstSDPMessage& message) {
         if (protectedThis->isStopped())
             return;
 
@@ -422,9 +426,9 @@ void GStreamerMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
             else if (!descriptions->currentRemoteDescriptionSdp.isEmpty())
                 descriptions->currentRemoteDescriptionSdp = initialSDP;
 
-            if (localDescription) {
-                descriptions->pendingLocalDescriptionSdp = localDescription->sdp();
-                descriptions->pendingLocalDescriptionSdpType = localDescription->type();
+            if (!localDescriptionSdp.isEmpty()) {
+                descriptions->pendingLocalDescriptionSdp = localDescriptionSdp;
+                descriptions->pendingLocalDescriptionSdpType = localDescriptionSdpType;
             }
         }
 

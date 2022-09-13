@@ -2028,9 +2028,10 @@ static RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSSParserMo
 
     // If we have a calc() or non-zero y value, we can directly add it to the list. We only
     // want to add a zero y value if a non-zero z value is specified.
+    // Always include 0% in serialization per-spec.
     if (is<CSSPrimitiveValue>(y)) {
         auto& yPrimitiveValue = downcast<CSSPrimitiveValue>(*y);
-        if (yPrimitiveValue.isCalculated() || !*yPrimitiveValue.isZero())
+        if (yPrimitiveValue.isCalculated() || yPrimitiveValue.isPercentage() || !*yPrimitiveValue.isZero())
             list->append(*y);
     }
 
@@ -2039,8 +2040,8 @@ static RefPtr<CSSValue> consumeTranslate(CSSParserTokenRange& range, CSSParserMo
 
     if (is<CSSPrimitiveValue>(z)) {
         auto& zPrimitiveValue = downcast<CSSPrimitiveValue>(*z);
-        // If the z value is a zero value, we have nothing left to add to the list.
-        if (!zPrimitiveValue.isCalculated() && *zPrimitiveValue.isZero())
+        // If the z value is a zero value and not a percent value, we have nothing left to add to the list.
+        if (!zPrimitiveValue.isCalculated() && !zPrimitiveValue.isPercentage() && *zPrimitiveValue.isZero())
             return list;
         // Add the zero value for y if we did not already add a y value.
         if (list->length() == 1)

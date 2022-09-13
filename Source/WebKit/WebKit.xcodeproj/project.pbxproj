@@ -725,7 +725,6 @@
 		312CC9F2215B06F100DE40CA /* HighPerformanceGPUManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 31ABA79C215AF9E000C90E31 /* HighPerformanceGPUManager.h */; };
 		3131261F148FF82C00BA2A39 /* NotificationPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261A148FF82B00BA2A39 /* NotificationPermissionRequestManager.h */; };
 		31312621148FF82C00BA2A39 /* WebNotificationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3131261C148FF82B00BA2A39 /* WebNotificationManager.h */; };
-		3155EE0D2673F4F00085E59A /* VisionKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3155EE0C2673F4EF0085E59A /* VisionKitSPI.h */; };
 		3157135F2040A9B20084F9CF /* SystemPreviewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3157135D2040A9B20084F9CF /* SystemPreviewController.h */; };
 		316B8B642054B55800BD4A62 /* WKUSDPreviewView.h in Headers */ = {isa = PBXBuildFile; fileRef = 316B8B622054B55800BD4A62 /* WKUSDPreviewView.h */; };
 		317FE7C51C487A6C00A0CA89 /* APIExperimentalFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C21C487A6600A0CA89 /* APIExperimentalFeature.h */; };
@@ -4250,7 +4249,6 @@
 		3131261D148FF82C00BA2A39 /* WebNotificationManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebNotificationManager.messages.in; sourceTree = "<group>"; };
 		314888FE1D91B11D00377042 /* WKTextChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKTextChecker.cpp; sourceTree = "<group>"; };
 		314888FF1D91B11D00377042 /* WKTextChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTextChecker.h; sourceTree = "<group>"; };
-		3155EE0C2673F4EF0085E59A /* VisionKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisionKitSPI.h; sourceTree = "<group>"; };
 		3157135C2040A9B20084F9CF /* SystemPreviewControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SystemPreviewControllerCocoa.mm; sourceTree = "<group>"; };
 		3157135D2040A9B20084F9CF /* SystemPreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemPreviewController.h; sourceTree = "<group>"; };
 		31607F3819627002009B87DA /* LegacySessionStateCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacySessionStateCoding.h; sourceTree = "<group>"; };
@@ -9463,7 +9461,6 @@
 				5CB6AE432609799C00B6ED5A /* ReasonSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
 				448AC24D267135A600B28921 /* SynapseSPI.h */,
-				3155EE0C2673F4EF0085E59A /* VisionKitSPI.h */,
 			);
 			path = Cocoa;
 			sourceTree = "<group>";
@@ -14693,7 +14690,6 @@
 				52CDC5C82731DA0D00A3E3EB /* VirtualService.h in Headers */,
 				2684054418B85A630022C38B /* VisibleContentRectUpdateInfo.h in Headers */,
 				2DD5A7291EBF08D5009BA597 /* VisibleWebPageCounter.h in Headers */,
-				3155EE0D2673F4F00085E59A /* VisionKitSPI.h in Headers */,
 				1A0F29E4120B44420053D1B9 /* VisitedLinkStore.h in Headers */,
 				1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */,
 				1AF4CEF018BC481800BC2D34 /* VisitedLinkTableController.h in Headers */,

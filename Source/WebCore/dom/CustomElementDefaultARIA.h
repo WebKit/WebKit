@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/HashMap.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
 

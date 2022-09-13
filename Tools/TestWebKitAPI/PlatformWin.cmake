@@ -13,7 +13,6 @@ set(test_main_SOURCES
 # TestWTF
 list(APPEND TestWTF_SOURCES
     ${test_main_SOURCES}
-    Utilities.cpp
 )
 
 WEBKIT_WRAP_EXECUTABLE(TestWTF
@@ -118,15 +117,11 @@ endif ()
 # TestWebKit
 if (ENABLE_WEBKIT)
     target_sources(TestWebKitAPIInjectedBundle PRIVATE
-        Utilities.cpp
-
         win/PlatformUtilitiesWin.cpp
     )
 
     list(APPEND TestWebKit_SOURCES
         ${test_main_SOURCES}
-
-        Utilities.cpp
 
         Tests/WebKit/CookieStorageFile.cpp
 

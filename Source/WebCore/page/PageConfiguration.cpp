@@ -38,7 +38,6 @@
 #include "DragClient.h"
 #include "EditorClient.h"
 #include "FrameLoaderClient.h"
-#include "LibWebRTCProvider.h"
 #include "MediaRecorderProvider.h"
 #include "ModelPlayerProvider.h"
 #include "PerformanceLoggingClient.h"
