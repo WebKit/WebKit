@@ -1096,6 +1096,12 @@ class WebkitFlatpak:
                                 Console.message("Removing %s", cache_path)
                                 os.remove(cache_path)
 
+                            if platform == 'WPE':
+                                cog_build_dir = os.path.join(get_build_dir(platform, build_type), 'Tools', 'cog-prefix')
+                                if os.path.isdir(cog_build_dir):
+                                    Console.message("Removing Cog build directory %s", cog_build_dir)
+                                    shutil.rmtree(cog_build_dir)
+
                     self._reset_repository()
                     break
 
