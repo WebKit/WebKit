@@ -29,6 +29,9 @@
     undefined enableEnhancedAccessibility(boolean enable);
     readonly attribute boolean enhancedAccessibilityEnabled;
     undefined setIsolatedTreeMode(boolean enable);
+    undefined setRetainedElement(AccessibilityUIElement axElement);
+    AccessibilityUIElement retainedElement();
+
     readonly attribute DOMString platformName;
     readonly attribute AccessibilityUIElement rootElement;
     readonly attribute AccessibilityUIElement focusedElement;

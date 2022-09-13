@@ -573,7 +573,7 @@ private:
     String innerHTML() const override;
     String outerHTML() const override;
 
-    RefPtr<AXIsolatedTree> m_cachedTree;
+    WeakPtr<AXIsolatedTree> m_cachedTree;
     AXID m_parentID;
     AXID m_id;
     Vector<AXID> m_childrenIDs;

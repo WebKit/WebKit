@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<button id="button">Click me</button>
+
+<script>
+    var testOutput = "This test ensures that when a page is reloaded, we properly clean up the AX objects from the previous iteration of the page.\n\n";
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        const axButton = accessibilityController.accessibleElementById("button");
+        const storageKey = "webkit-test-did-reload";
+        if (window.localStorage.getItem(storageKey) === null) {
+            window.localStorage.setItem(storageKey, "true")
+            // Before forcing a reload, retain this AccessibilityUIElement (which wraps a WebAccessibilityObjectWrapper
+            // on Cocoa platforms) so we can use it post-reload. This is similar behavior to some AX clients who preserve
+            // references to elements across page loads for certain features.
+            accessibilityController.setRetainedElement(axButton);
+            // Note that this reloads the test, too.
+            internals.forceReload(true);
+        } else {
+            window.localStorage.removeItem(storageKey);
+            // The wrapper backing this AccessibilityUIElement should've been deleted by the reload, so no role should
+            // be returned here, and the AccessibilityUIElement should be considered invalid.
+            testOutput += `Role of #button element retained from first page load: ${accessibilityController.retainedElement().role}\n`;
+            testOutput += `#button element retained from first page load is valid: ${accessibilityController.retainedElement().isValid}\n`;
+
+            testOutput += `\nRole of #button element from second page load: ${axButton.role}\n`;
+            testOutput += `#button element from second page load is valid: ${axButton.isValid}\n`;
+
+            debug(testOutput);
+            finishJSTest();
+        }
+    }
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,12 @@
+This test ensures that when a page is reloaded, we properly clean up the AX objects from the previous iteration of the page.
+
+Role of #button element retained from first page load: null
+#button element retained from first page load is valid: false
+
+Role of #button element from second page load: Button
+#button element from second page load is valid: true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me

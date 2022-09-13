@@ -278,7 +278,7 @@ struct AXPropertyChange {
     AXPropertyMap properties; // Changed properties.
 };
 
-class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree> {
+class AXIsolatedTree : public ThreadSafeRefCounted<AXIsolatedTree>, public CanMakeWeakPtr<AXIsolatedTree> {
     WTF_MAKE_NONCOPYABLE(AXIsolatedTree); WTF_MAKE_FAST_ALLOCATED;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXIsolatedTree&);
     friend void streamIsolatedSubtreeOnMainThread(TextStream&, const AXIsolatedTree&, AXID, const OptionSet<AXStreamOptions>&);
@@ -341,7 +341,11 @@ public:
 
 private:
     AXIsolatedTree(AXObjectCache*);
-    void clear();
+
+    // Queue this isolated tree up to destroy itself on the secondary thread.
+    // We can't destroy the tree on the main-thread (by removing all `Ref`s to it)
+    // because it could be being used by the secondary thread to service an AX request.
+    void queueForDestruction();
 
     static Lock s_cacheLock;
     static HashMap<AXIsolatedTreeID, Ref<AXIsolatedTree>>& treeIDCache() WTF_REQUIRES_LOCK(s_cacheLock);
@@ -389,6 +393,7 @@ private:
     Vector<AXID> m_pendingSubtreeRemovals WTF_GUARDED_BY_LOCK(m_changeLogLock); // Nodes whose subtrees are to be removed from the tree.
     Vector<std::pair<AXID, Vector<AXID>>> m_pendingChildrenUpdates WTF_GUARDED_BY_LOCK(m_changeLogLock);
     AXID m_pendingFocusedNodeID WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    bool m_queuedForDestruction WTF_GUARDED_BY_LOCK(m_changeLogLock) { false };
     AXID m_focusedNodeID;
     std::atomic<double> m_loadingProgress { 0 };
 

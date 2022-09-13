@@ -53,7 +53,11 @@ JSClassRef AccessibilityUIElement::wrapperClass()
 
 bool AccessibilityUIElement::isValid() const
 {
-    return m_element;            
+#if PLATFORM(COCOA)
+    return m_element.getAutoreleased();
+#else
+    return m_element;
+#endif
 }
 
 #if !ENABLE(ACCESSIBILITY_ISOLATED_TREE)

@@ -49,6 +49,9 @@ public:
     static Ref<AccessibilityController> create();
     ~AccessibilityController();
 
+    void setRetainedElement(AccessibilityUIElement*);
+    AccessibilityUIElement* retainedElement() { return m_retainedElement.get(); }
+
     void makeWindowObject(JSContextRef);
     virtual JSClassRef wrapperClass();
     
@@ -99,6 +102,8 @@ private:
 #elif USE(ATSPI)
     std::unique_ptr<AccessibilityNotificationHandler> m_globalNotificationHandler;
 #endif
+
+    RefPtr<AccessibilityUIElement> m_retainedElement;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void updateIsolatedTreeMode();
