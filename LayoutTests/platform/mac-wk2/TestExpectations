@@ -1768,3 +1768,5 @@ webkit.org/b/244968 [ arm64 ] imported/w3c/web-platform-tests/web-animations/tim
 webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure ]
 
 webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
+
+webkit.org/b/245140 [ Monterey ] http/wpt/webrtc/video-script-transform-keyframe-only.html  [ Pass Failure ]
