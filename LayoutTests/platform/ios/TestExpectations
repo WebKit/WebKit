@@ -2448,7 +2448,10 @@ fast/attachment/attachment-truncated-action.html [ Pass ]
 fast/attachment/attachment-wrapping-action.html [ Pass ]
 fast/attachment/attachment-borderless.html [ Pass ]
 fast/attachment/attachment-dynamic-type.html [ Pass ]
-fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html [ Pass ]
+
+#rdar://97465449 (REGRESSION (252627@main): [iOS] fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html is timing out (243126))
+fast/attachment/attachment-thumbnail-preserves-aspect-ratio.html [ Skip ]
+
 fast/images/pdf-as-image-dest-rect-change.html [ Pass ]
 
 fast/events/page-visibility-iframe-move-test.html [ Skip ]
