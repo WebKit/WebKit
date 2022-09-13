@@ -515,6 +515,17 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
             return parent;
     }
 
+#if USE(ATSPI)
+    // Expose markers that are not direct children of a list item too.
+    if (m_renderer->isListMarker()) {
+        if (auto* listItem = ancestorsOfType<RenderListItem>(*m_renderer).first()) {
+            AccessibilityObject* parent = axObjectCache()->getOrCreate(listItem);
+            if (downcast<AccessibilityRenderObject>(*parent).markerRenderer() == m_renderer)
+                return parent;
+        }
+    }
+#endif
+
     AXObjectCache* cache = axObjectCache();
     if (!cache)
         return nullptr;
@@ -527,22 +538,6 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
         return cache->getOrCreate(&m_renderer->view().frameView());
     
     return nullptr;
-}
-
-AccessibilityObject* AccessibilityRenderObject::parentObjectUnignored() const
-{
-#if USE(ATSPI)
-    // Expose markers that are not direct children of a list item too.
-    if (m_renderer && m_renderer->isListMarker()) {
-        if (auto* listItem = ancestorsOfType<RenderListItem>(*m_renderer).first()) {
-            AccessibilityObject* parent = axObjectCache()->getOrCreate(listItem);
-            if (downcast<AccessibilityRenderObject>(*parent).markerRenderer() == m_renderer)
-                return parent;
-        }
-    }
-#endif
-
-    return AccessibilityObject::parentObjectUnignored();
 }
 
 bool AccessibilityRenderObject::isAttachment() const
