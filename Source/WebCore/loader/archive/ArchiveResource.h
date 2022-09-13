@@ -32,6 +32,10 @@
 
 namespace WebCore {
 
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
+static constexpr auto webArchivePrefix { "webarchive+"_s };
+#endif
+
 class ArchiveResource : public SubstituteResource {
 public:
     static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&, const ResourceResponse&);

@@ -196,11 +196,13 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         return nullptr;
     }
 
-    auto url = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceURLKey));
-    if (url && CFGetTypeID(url) != CFStringGetTypeID()) {
+    auto cfURL = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceURLKey));
+    if (cfURL && CFGetTypeID(cfURL) != CFStringGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - URL is not of type CFString, cannot create invalid resource");
         return nullptr;
     }
+
+    URL url { webArchivePrefix + String { cfURL } };
 
     auto textEncoding = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceTextEncodingNameKey));
     if (textEncoding && CFGetTypeID(textEncoding) != CFStringGetTypeID()) {
@@ -225,7 +227,7 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         response = createResourceResponseFromPropertyListData(resourceResponseData, resourceResponseVersion);
     }
 
-    return ArchiveResource::create(SharedBuffer::create(resourceData), URL { url }, mimeType, textEncoding, frameName, response);
+    return ArchiveResource::create(SharedBuffer::create(resourceData), url, mimeType, textEncoding, frameName, response);
 }
 
 Ref<LegacyWebArchive> LegacyWebArchive::create()

@@ -53,18 +53,32 @@ void ArchiveResourceCollection::addAllResources(Archive& archive)
 // Can we change the design in a manner that will let us deprecate that API without reducing functionality of those apps?
 void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 {
-    auto& url = resource->url();
+    auto url = resource->url();
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
+    if (!url.protocol().startsWith(webArchivePrefix))
+        url.setProtocol(String { webArchivePrefix + url.protocol() });
+#endif
     m_subresources.set(url.string(), WTFMove(resource));
 }
 
-ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(const URL& url)
+ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(URL url)
 {
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
+    const auto httpsScheme = String { webArchivePrefix + "https"_str };
+    const auto httpScheme = String { webArchivePrefix + "http"_str };
+    if (!url.protocol().startsWith(webArchivePrefix))
+        url.setProtocol(String { webArchivePrefix + url.protocol() });
+#else
+    constexpr auto httpsScheme = "https"_s;
+    constexpr auto httpScheme = "http"_s;
+#endif
+
     if (auto* resource = m_subresources.get(url.string()))
         return resource;
-    if (!url.protocolIs("https"_s))
+    if (!url.protocolIs(httpsScheme))
         return nullptr;
     URL httpURL = url;
-    httpURL.setProtocol("http"_s);
+    httpURL.setProtocol(httpScheme);
     return m_subresources.get(httpURL.string());
 }
 
