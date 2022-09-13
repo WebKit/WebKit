@@ -48,7 +48,9 @@
 
 #if USE(KEYCHAIN_ACCESS_CONTROL_LISTS)
 #import <wtf/cf/TypeCastsCF.h>
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 WTF_DECLARE_CF_TYPE_TRAIT(SecACL);
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 namespace WebCore {
@@ -98,14 +100,18 @@ static std::optional<Vector<uint8_t>> createAndStoreMasterKey()
 
 #if USE(KEYCHAIN_ACCESS_CONTROL_LISTS)
     SecAccessRef accessRef;
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = SecAccessCreate((__bridge CFStringRef)localizedItemName, nullptr, &accessRef);
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (status) {
         WTFLogAlways("Cannot create a security access object for storing WebCrypto master key, error %d", (int)status);
         return std::nullopt;
     }
     RetainPtr<SecAccessRef> access = adoptCF(accessRef);
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<CFArrayRef> acls = adoptCF(SecAccessCopyMatchingACLList(accessRef, kSecACLAuthorizationExportClear));
+ALLOW_DEPRECATED_DECLARATIONS_END
     SecACLRef acl = checked_cf_cast<SecACLRef>(CFArrayGetValueAtIndex(acls.get(), 0));
 
     SecTrustedApplicationRef trustedAppRef;
@@ -118,7 +124,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     RetainPtr<SecTrustedApplicationRef> trustedApp = adoptCF(trustedAppRef);
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     status = SecACLSetContents(acl, (__bridge CFArrayRef)@[ (__bridge id)trustedApp.get() ], (__bridge CFStringRef)localizedItemName, kSecKeychainPromptRequirePassphase);
+ALLOW_DEPRECATED_DECLARATIONS_END
     if (status) {
         WTFLogAlways("Cannot set ACL for WebCrypto master key, error %d", (int)status);
         return std::nullopt;
