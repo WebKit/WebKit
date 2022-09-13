@@ -337,6 +337,7 @@ def serialized_identifiers():
 def types_that_cannot_be_forward_declared():
     return frozenset([
         'CVPixelBufferRef',
+        'GCGLint',
         'IPC::DataReference',
         'IPC::FilterReference',
         'IPC::FontReference',
@@ -708,6 +709,7 @@ def headers_for_type(type):
 
     special_cases = {
         'CVPixelBufferRef': ['<WebCore/CVUtilities.h>'],
+        'GCGLint': ['<WebCore/GraphicsTypesGL.h>'],
         'IPC::Semaphore': ['"IPCSemaphore.h"'],
         'Inspector::ExtensionError': ['"InspectorExtensionTypes.h"'],
         'Inspector::FrontendChannel::ConnectionType': ['<JavaScriptCore/InspectorFrontendChannel.h>'],
@@ -805,6 +807,7 @@ def headers_for_type(type):
         'WebCore::FrameLoadType': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::GenericCueData': ['<WebCore/InbandGenericCue.h>'],
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
+        'WebCore::GraphicsContextGLActiveInfo': ['<WebCore/GraphicsContextGL.h>'],
         'WebCore::HasInsecureContent': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::HighlightRequestOriginatedInApp': ['<WebCore/AppHighlight.h>'],
         'WebCore::HighlightVisibility': ['<WebCore/HighlightVisibility.h>'],

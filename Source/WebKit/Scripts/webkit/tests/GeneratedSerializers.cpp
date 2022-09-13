@@ -209,8 +209,12 @@ void ArgumentCoder<Namespace::EmptyConstructorNullable>::encode(Encoder& encoder
     encoder << instance.m_isNull;
     if (instance.m_isNull)
         return;
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     encoder << instance.m_type;
+#endif
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     encoder << instance.m_value;
+#endif
 }
 
 std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::EmptyConstructorNullable>::decode(Decoder& decoder)
@@ -222,20 +226,28 @@ std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::Empt
     if (*m_isNull)
         return { Namespace::EmptyConstructorNullable { } };
 
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     std::optional<MemberType> m_type;
     decoder >> m_type;
     if (!m_type)
         return std::nullopt;
+#endif
 
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     std::optional<OtherMemberType> m_value;
     decoder >> m_value;
     if (!m_value)
         return std::nullopt;
+#endif
 
     Namespace::EmptyConstructorNullable result;
     result.m_isNull = WTFMove(*m_isNull);
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     result.m_type = WTFMove(*m_type);
+#endif
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     result.m_value = WTFMove(*m_value);
+#endif
     return { WTFMove(result) };
 }
 

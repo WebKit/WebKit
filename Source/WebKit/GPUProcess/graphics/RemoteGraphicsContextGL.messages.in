@@ -111,8 +111,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void FramebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level)
     void FrontFace(uint32_t mode)
     void GenerateMipmap(uint32_t target)
-    void GetActiveAttrib(uint32_t program, uint32_t index) -> (bool returnValue, WebCore::GraphicsContextGL::ActiveInfo arg2) Synchronous
-    void GetActiveUniform(uint32_t program, uint32_t index) -> (bool returnValue, WebCore::GraphicsContextGL::ActiveInfo arg2) Synchronous
+    void GetActiveAttrib(uint32_t program, uint32_t index) -> (bool returnValue, struct WebCore::GraphicsContextGLActiveInfo arg2) Synchronous
+    void GetActiveUniform(uint32_t program, uint32_t index) -> (bool returnValue, struct WebCore::GraphicsContextGLActiveInfo arg2) Synchronous
     void GetAttribLocation(uint32_t arg0, String name) -> (int32_t returnValue) Synchronous
     void GetBufferParameteri(uint32_t target, uint32_t pname) -> (int32_t returnValue) Synchronous
     void GetString(uint32_t name) -> (String returnValue) Synchronous
@@ -283,7 +283,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void BeginTransformFeedback(uint32_t primitiveMode)
     void EndTransformFeedback()
     void TransformFeedbackVaryings(uint32_t program, Vector<String> varyings, uint32_t bufferMode)
-    void GetTransformFeedbackVarying(uint32_t program, uint32_t index) -> (WebCore::GraphicsContextGL::ActiveInfo arg2) Synchronous
+    void GetTransformFeedbackVarying(uint32_t program, uint32_t index) -> (struct WebCore::GraphicsContextGLActiveInfo arg2) Synchronous
     void PauseTransformFeedback()
     void ResumeTransformFeedback()
     void BindBufferBase(uint32_t target, uint32_t index, uint32_t buffer)

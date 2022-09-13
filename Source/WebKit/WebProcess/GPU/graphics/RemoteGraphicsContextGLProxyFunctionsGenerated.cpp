@@ -505,7 +505,7 @@ void RemoteGraphicsContextGLProxy::generateMipmap(GCGLenum target)
     }
 }
 
-bool RemoteGraphicsContextGLProxy::getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo& arg2)
+bool RemoteGraphicsContextGLProxy::getActiveAttrib(PlatformGLObject program, GCGLuint index, struct WebCore::GraphicsContextGLActiveInfo& arg2)
 {
     bool returnValue = { };
     if (!isContextLost()) {
@@ -516,7 +516,7 @@ bool RemoteGraphicsContextGLProxy::getActiveAttrib(PlatformGLObject program, GCG
     return returnValue;
 }
 
-bool RemoteGraphicsContextGLProxy::getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo& arg2)
+bool RemoteGraphicsContextGLProxy::getActiveUniform(PlatformGLObject program, GCGLuint index, struct WebCore::GraphicsContextGLActiveInfo& arg2)
 {
     bool returnValue = { };
     if (!isContextLost()) {
@@ -2170,7 +2170,7 @@ void RemoteGraphicsContextGLProxy::transformFeedbackVaryings(PlatformGLObject pr
     }
 }
 
-void RemoteGraphicsContextGLProxy::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo& arg2)
+void RemoteGraphicsContextGLProxy::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, struct WebCore::GraphicsContextGLActiveInfo& arg2)
 {
     if (!isContextLost()) {
         auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetTransformFeedbackVarying(program, index), Messages::RemoteGraphicsContextGL::GetTransformFeedbackVarying::Reply(arg2));

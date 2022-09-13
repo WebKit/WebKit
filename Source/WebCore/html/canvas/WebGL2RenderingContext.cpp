@@ -2279,7 +2279,7 @@ RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebG
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "getTransformFeedbackVarying", "program not linked");
         return nullptr;
     }
-    GraphicsContextGL::ActiveInfo info;
+    GraphicsContextGLActiveInfo info;
     m_context->getTransformFeedbackVarying(program.object(), index, info);
 
     if (!info.name || !info.type || !info.size)

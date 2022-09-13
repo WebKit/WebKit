@@ -58,6 +58,12 @@ class MediaPlayer;
 class VideoFrame;
 #endif
 
+struct GraphicsContextGLActiveInfo {
+    String name;
+    GCGLenum type;
+    GCGLint size;
+};
+
 // Base class for graphics context for implementing WebGL rendering model.
 class GraphicsContextGL : public RefCounted<GraphicsContextGL> {
 public:
@@ -1068,12 +1074,6 @@ public:
         virtual void dispatchContextChangedNotification() = 0;
     };
 
-    struct ActiveInfo {
-        String name;
-        GCGLenum type;
-        GCGLint size;
-    };
-
     WEBCORE_EXPORT GraphicsContextGL(GraphicsContextGLAttributes);
     WEBCORE_EXPORT virtual ~GraphicsContextGL();
 
@@ -1139,8 +1139,8 @@ public:
 
     virtual void generateMipmap(GCGLenum target) = 0;
 
-    virtual bool getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo&) = 0;
-    virtual bool getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo&) = 0;
+    virtual bool getActiveAttrib(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&) = 0;
+    virtual bool getActiveUniform(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&) = 0;
 
     virtual GCGLint getAttribLocation(PlatformGLObject, const String& name) = 0;
 
@@ -1371,7 +1371,7 @@ public:
     virtual void beginTransformFeedback(GCGLenum primitiveMode) = 0;
     virtual void endTransformFeedback() = 0;
     virtual void transformFeedbackVaryings(PlatformGLObject program, const Vector<String>& varyings, GCGLenum bufferMode) = 0;
-    virtual void getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo&) = 0;
+    virtual void getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&) = 0;
     virtual void pauseTransformFeedback() = 0;
     virtual void resumeTransformFeedback() = 0;
 

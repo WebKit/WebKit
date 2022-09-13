@@ -51,8 +51,8 @@ public:
     void logFontLoad(const WebCore::Document&, const String& familyName, bool loadStatus) final;
     void logCanvasRead(const WebCore::Document&) final;
     void logCanvasWriteOrMeasure(const WebCore::Document&, const String& textWritten) final;
-    void logNavigatorAPIAccessed(const WebCore::Document&, const WebCore::ResourceLoadStatistics::NavigatorAPI) final;
-    void logScreenAPIAccessed(const WebCore::Document&, const WebCore::ResourceLoadStatistics::ScreenAPI) final;
+    void logNavigatorAPIAccessed(const WebCore::Document&, const WebCore::NavigatorAPIsAccessed) final;
+    void logScreenAPIAccessed(const WebCore::Document&, const WebCore::ScreenAPIsAccessed) final;
     void logSubresourceLoadingForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification);
 
 #if !RELEASE_LOG_DISABLED
