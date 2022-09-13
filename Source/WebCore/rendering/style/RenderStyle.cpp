@@ -1493,7 +1493,7 @@ FloatPoint RenderStyle::computePerspectiveOrigin(const FloatRect& boundingBox) c
     return boundingBox.location() + floatPointForLengthPoint(perspectiveOrigin(), boundingBox.size());
 }
 
-void RenderStyle::applyPerspective(TransformationMatrix& transform, const RenderObject& renderer, const FloatPoint& originTranslate) const
+void RenderStyle::applyPerspective(TransformationMatrix& transform, const FloatPoint& originTranslate) const
 {
     // https://www.w3.org/TR/css-transforms-2/#perspective
     // The perspective matrix is computed as follows:
@@ -1503,7 +1503,7 @@ void RenderStyle::applyPerspective(TransformationMatrix& transform, const Render
     transform.translate(originTranslate.x(), originTranslate.y());
 
     // 3. Multiply by the matrix that would be obtained from the perspective() transform function, where the length is provided by the value of the perspective property
-    transform.applyPerspective(usedPerspective(renderer));
+    transform.applyPerspective(usedPerspective());
 
     // 4. Translate by the negated computed X and Y values of perspective-origin
     transform.translate(-originTranslate.x(), -originTranslate.y());
@@ -1912,11 +1912,6 @@ AnimationList& RenderStyle::ensureTransitions()
     if (!m_rareNonInheritedData.access().transitions)
         m_rareNonInheritedData.access().transitions = AnimationList::create();
     return *m_rareNonInheritedData->transitions;
-}
-
-float RenderStyle::usedPerspective(const RenderObject& object) const
-{
-    return object.document().settings().css3DTransformInteroperabilityEnabled() ? std::max(1.0f, perspective()) : perspective();
 }
 
 const FontCascade& RenderStyle::fontCascade() const
