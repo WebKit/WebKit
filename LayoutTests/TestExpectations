@@ -4733,6 +4733,7 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 
 # CSS containment tests that fail
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
+
 # webkit-ruby-text
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-paint-clip-016.html [ ImageOnlyFailure ]
