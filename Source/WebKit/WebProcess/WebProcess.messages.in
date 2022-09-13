@@ -43,7 +43,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     RegisterURLSchemeAsCanDisplayOnlyIfCanRequest(String scheme)
 
     SetDefaultRequestTimeoutInterval(double timeoutInterval)
-    SetAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
     SetShouldUseFontSmoothing(bool useFontSmoothing)
     SetResourceLoadStatisticsEnabled(bool resourceLoadStatisticsEnabled);
     ClearResourceLoadStatistics();

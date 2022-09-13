@@ -321,11 +321,6 @@ unsigned WKContextGetMaximumNumberOfProcesses(WKContextRef)
     return std::numeric_limits<unsigned>::max();
 }
 
-void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef contextRef, bool alwaysUseComplexTextCodePath)
-{
-    WebKit::toImpl(contextRef)->setAlwaysUsesComplexTextCodePath(alwaysUseComplexTextCodePath);
-}
-
 void WKContextSetShouldUseFontSmoothing(WKContextRef contextRef, bool useFontSmoothing)
 {
     WebKit::toImpl(contextRef)->setShouldUseFontSmoothing(useFontSmoothing);

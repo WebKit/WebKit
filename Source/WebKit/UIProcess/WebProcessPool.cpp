@@ -808,7 +808,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.urlSchemesRegisteredAsCachePartitioned = copyToVector(m_schemesToRegisterAsCachePartitioned);
     parameters.urlSchemesRegisteredAsCanDisplayOnlyIfCanRequest = copyToVector(m_schemesToRegisterAsCanDisplayOnlyIfCanRequest);
 
-    parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
 
     parameters.textCheckerState = TextChecker::state();
@@ -1274,12 +1273,6 @@ void WebProcessPool::activePagesOriginsInWebProcessForTesting(ProcessID pid, Com
             return process->activePagesDomainsForTesting(WTFMove(completionHandler));
     }
     completionHandler({ });
-}
-
-void WebProcessPool::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
-{
-    m_alwaysUsesComplexTextCodePath = alwaysUseComplexText;
-    sendToAllProcesses(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText));
 }
 
 void WebProcessPool::setShouldUseFontSmoothing(bool useFontSmoothing)

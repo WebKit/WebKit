@@ -312,9 +312,6 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def serial_test_check_for_world_leaks(self):
         self.assertTrue(passing_run(['--world-leaks']))
 
-    def serial_test_complex_text(self):
-        self.assertTrue(passing_run(['--complex-text']))
-
     def serial_test_threaded(self):
         self.assertTrue(passing_run(['--threaded']))
 

@@ -203,7 +203,7 @@ public:
 
     static bool isSubpixelAntialiasingAvailable();
 
-    enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
+    enum class CodePath : uint8_t { Simple, Complex, SimpleWithGlyphOverflow };
     CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return CodePath::Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
@@ -261,11 +261,6 @@ public:
             && m_wordSpacing == other.m_wordSpacing;
     }
 #endif
-
-    // Useful for debugging the different font rendering code paths.
-    WEBCORE_EXPORT static void setCodePath(CodePath);
-    static CodePath codePath();
-    static CodePath s_codePath;
 
     FontSelector* fontSelector() const;
     static bool treatAsSpace(UChar32 c) { return c == space || c == tabCharacter || c == newlineCharacter || c == noBreakSpace; }

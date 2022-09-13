@@ -534,8 +534,6 @@ class Driver(object):
         cmd.append(self._port._path_to_driver())
         if self._port.get_option('gc_between_tests'):
             cmd.append('--gc-between-tests')
-        if self._port.get_option('complex_text'):
-            cmd.append('--complex-text')
         if self._port.get_option('accelerated_drawing'):
             cmd.append('--accelerated-drawing')
         if self._port.get_option('remote_layer_tree'):

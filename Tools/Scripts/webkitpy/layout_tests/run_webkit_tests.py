@@ -115,8 +115,6 @@ def parse_args(args):
     option_group_definitions.append(("Printing Options", printing.print_options()))
 
     option_group_definitions.append(("Feature Switches", [
-        optparse.make_option("--complex-text", action="store_true", default=False,
-            help="Use the complex text code path for all text (OS X and Windows only)"),
         optparse.make_option("--accelerated-drawing", action="store_true", default=False,
             help="Use accelerated drawing (OS X only)"),
         optparse.make_option("--remote-layer-tree", action="store_true", default=False,

@@ -104,14 +104,4 @@ bool WebCoreShouldUseFontSmoothing()
     return shouldUseFontSmoothing;
 }
 
-void WebCoreSetAlwaysUsesComplexTextCodePath(bool complex)
-{
-    FontCascade::setCodePath(complex ? FontCascade::CodePath::Complex : FontCascade::CodePath::Auto);
-}
-
-bool WebCoreAlwaysUsesComplexTextCodePath()
-{
-    return FontCascade::codePath() == FontCascade::CodePath::Complex;
-}
-
 } // namespace WebCore

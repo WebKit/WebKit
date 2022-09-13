@@ -58,12 +58,6 @@ static bool handleOptionPixelTests(Options& options, const char*, const char*)
     return true;
 }
 
-static bool handleOptionComplexText(Options& options, const char*, const char*)
-{
-    options.forceComplexText = true;
-    return true;
-}
-
 static bool handleOptionAcceleratedDrawing(Options& options, const char*, const char*)
 {
     options.features.boolWebPreferenceFeatures.insert_or_assign("AcceleratedDrawingEnabled", true);
@@ -178,7 +172,6 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--gc-between-tests", "Garbage collection between tests.", handleOptionGcBetweenTests));
     optionList.append(Option("--pixel-tests", "Check pixels.", handleOptionPixelTests));
     optionList.append(Option("-p", "Check pixels.", handleOptionPixelTests));
-    optionList.append(Option("--complex-text", "Force complex tests.", handleOptionComplexText));
     optionList.append(Option("--accelerated-drawing", "Use accelerated drawing.", handleOptionAcceleratedDrawing));
     optionList.append(Option("--remote-layer-tree", "Use remote layer tree.", handleOptionRemoteLayerTree));
     optionList.append(Option("--allowed-host", "Allows access to the specified host from tests.", handleOptionAllowedHost, true));

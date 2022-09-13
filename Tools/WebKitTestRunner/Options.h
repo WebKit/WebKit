@@ -46,7 +46,6 @@ struct Options {
     bool verbose { false };
     bool gcBetweenTests { false };
     bool shouldDumpPixelsForAllTests { false };
-    bool forceComplexText { false };
     bool checkForWorldLeaks { false };
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
     bool enableAllExperimentalFeatures { true };
