@@ -56,27 +56,27 @@
                     { "name": "bot687", "platform": "*" },
                     { "name": "bot688", "platform": "*" },
 
-                    { "name": "bot210", "platform": "ios-simulator-15" },
-                    { "name": "bot303", "platform": "ios-simulator-15" },
-                    { "name": "bot304", "platform": "ios-15" },
-                    { "name": "bot305", "platform": "ios-simulator-15" },
-                    { "name": "bot306", "platform": "ios-simulator-15" },
-                    { "name": "bot307", "platform": "ios-simulator-15" },
-                    { "name": "bot308", "platform": "ios-simulator-15" },
-                    { "name": "bot600", "platform": "ios-simulator-15" },
-                    { "name": "bot673", "platform": "ios-15" },
-                    { "name": "bot614", "platform": "ios-simulator-15" },
-                    { "name": "bot651", "platform": "ios-simulator-15" },
-                    { "name": "bot652", "platform": "ios-simulator-15" },
-                    { "name": "bot653", "platform": "ios-simulator-15" },
-                    { "name": "bot654", "platform": "ios-simulator-15" },
-                    { "name": "bot641", "platform": "ios-simulator-15" },
-                    { "name": "bot682", "platform": "ios-simulator-15" },
-                    { "name": "bot685", "platform": "ios-simulator-15" },
-                    { "name": "bot694", "platform": "ios-simulator-15" },
-                    { "name": "bot695", "platform": "ios-simulator-15" },
-                    { "name": "bot667", "platform": "ios-simulator-15"},
-                    { "name": "bot664", "platform": "ios-simulator-15"},
+                    { "name": "bot210", "platform": "ios-simulator-16" },
+                    { "name": "bot303", "platform": "ios-simulator-16" },
+                    { "name": "bot304", "platform": "ios-16" },
+                    { "name": "bot305", "platform": "ios-simulator-16" },
+                    { "name": "bot306", "platform": "ios-simulator-16" },
+                    { "name": "bot307", "platform": "ios-simulator-16" },
+                    { "name": "bot308", "platform": "ios-simulator-16" },
+                    { "name": "bot600", "platform": "ios-simulator-16" },
+                    { "name": "bot673", "platform": "ios-16" },
+                    { "name": "bot614", "platform": "ios-simulator-16" },
+                    { "name": "bot651", "platform": "ios-simulator-16" },
+                    { "name": "bot652", "platform": "ios-simulator-16" },
+                    { "name": "bot653", "platform": "ios-simulator-16" },
+                    { "name": "bot654", "platform": "ios-simulator-16" },
+                    { "name": "bot641", "platform": "ios-simulator-16" },
+                    { "name": "bot682", "platform": "ios-simulator-16" },
+                    { "name": "bot685", "platform": "ios-simulator-16" },
+                    { "name": "bot694", "platform": "ios-simulator-16" },
+                    { "name": "bot695", "platform": "ios-simulator-16" },
+                    { "name": "bot667", "platform": "ios-simulator-16"},
+                    { "name": "bot664", "platform": "ios-simulator-16"},
 
                     { "name": "bot607", "platform": "tvos-15" },
                     { "name": "bot608", "platform": "tvos-simulator-15" },
@@ -312,55 +312,55 @@
                       "workernames": ["bot183"]
                     },
                     {
-                      "name": "Apple-iOS-15-Release-Build", "factory": "BuildFactory",
-                      "platform": "ios-15", "configuration": "release", "architectures": ["arm64"],
+                      "name": "Apple-iOS-16-Release-Build", "factory": "BuildFactory",
+                      "platform": "ios-16", "configuration": "release", "architectures": ["arm64"],
                       "workernames": ["bot673", "bot304"]
                     },
                     {
-                      "name": "Apple-iOS-15-Simulator-Release-Build", "factory": "BuildFactory",
-                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"],
-                      "triggers": ["ios-simulator-15-release-arm64-tests-wk2", "ios-simulator-15-release-gpuprocess-tests-wk2", "ios-simulator-15-release-tests-wk2", "ipados-simulator-15-release-tests-wk2"],
+                      "name": "Apple-iOS-16-Simulator-Release-Build", "factory": "BuildFactory",
+                      "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"],
+                      "triggers": ["ios-simulator-16-release-arm64-tests-wk2", "ios-simulator-16-release-gpuprocess-tests-wk2", "ios-simulator-16-release-tests-wk2", "ipados-simulator-16-release-tests-wk2"],
                       "workernames": ["bot614", "bot641", "bot682", "bot685", "bot303", "bot305", "bot306"]
                     },
                     {
-                      "name": "Apple-iOS-15-Simulator-Debug-Build", "factory": "BuildFactory",
-                      "platform": "ios-simulator-15", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-15-debug-tests-wk2", "ipados-simulator-15-debug-tests-wk2"],
+                      "name": "Apple-iOS-16-Simulator-Debug-Build", "factory": "BuildFactory",
+                      "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["ios-simulator-16-debug-tests-wk2", "ipados-simulator-16-debug-tests-wk2"],
                       "workernames": ["bot694", "bot695", "bot307", "bot308"]
                     },
                     {
-                      "name": "Apple-iOS-15-Simulator-Release-arm64-WK2-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                      "name": "Apple-iOS-16-Simulator-Release-arm64-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot210"]
                     },
                     {
-                      "name": "Apple-iOS-15-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                      "name": "Apple-iOS-16-Simulator-Release-GPUProcess-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures", "--use-gpu-process"],
                       "workernames": ["bot600"]
                     },
                     {
-                      "name": "Apple-iOS-15-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                      "name": "Apple-iOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot651", "bot652"]
                     },
                     {
-                      "name": "Apple-iOS-15-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "ios-simulator-15", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
+                      "name": "Apple-iOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"], "device_model": "iphone",
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "workernames": ["bot653", "bot654"]
                     },
                     {
-                      "name": "Apple-iPadOS-15-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "ios-simulator-15", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
+                      "name": "Apple-iPadOS-16-Simulator-Release-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-16", "configuration": "release", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
                       "additionalArguments": ["--no-retry-failures"],
                       "workernames": ["bot667"]
                     },
                     {
-                      "name": "Apple-iPadOS-15-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                      "platform": "ios-simulator-15", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
+                      "name": "Apple-iPadOS-16-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                      "platform": "ios-simulator-16", "configuration": "debug", "architectures": ["x86_64"], "device_model": "ipad",
                       "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "workernames": ["bot664"]
                     },
@@ -738,11 +738,11 @@
                     { "type": "Triggerable", "name": "bigsur-debug-tests-wk2-gpuprocess",
                       "builderNames": ["Apple-BigSur-Debug-WK2-GPUProcess-Tests"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-15", "branch": "main", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-iOS-15-Release-Build"]
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-16", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-iOS-16-Release-Build"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-15", "branch": "main", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple-iOS-15-Simulator-Release-Build", "Apple-iOS-15-Simulator-Debug-Build"]
+                    { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-16", "branch": "main", "treeStableTimer": 45.0,
+                      "builderNames": ["Apple-iOS-16-Simulator-Release-Build", "Apple-iOS-16-Simulator-Debug-Build"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "tvos-15", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-tvOS-15-Release-Build"]
@@ -759,23 +759,23 @@
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "main", "treeStableTimer": 45.0,
                       "builderNames": ["Apple-Win-10-Release-Build", "Apple-Win-10-Debug-Build"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-15-release-arm64-tests-wk2",
-                      "builderNames": ["Apple-iOS-15-Simulator-Release-arm64-WK2-Tests"]
+                    { "type": "Triggerable", "name": "ios-simulator-16-release-arm64-tests-wk2",
+                      "builderNames": ["Apple-iOS-16-Simulator-Release-arm64-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-15-release-gpuprocess-tests-wk2",
-                      "builderNames": ["Apple-iOS-15-Simulator-Release-GPUProcess-WK2-Tests"]
+                    { "type": "Triggerable", "name": "ios-simulator-16-release-gpuprocess-tests-wk2",
+                      "builderNames": ["Apple-iOS-16-Simulator-Release-GPUProcess-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-15-release-tests-wk2",
-                      "builderNames": ["Apple-iOS-15-Simulator-Release-WK2-Tests"]
+                    { "type": "Triggerable", "name": "ios-simulator-16-release-tests-wk2",
+                      "builderNames": ["Apple-iOS-16-Simulator-Release-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "ios-simulator-15-debug-tests-wk2",
-                      "builderNames": ["Apple-iOS-15-Simulator-Debug-WK2-Tests"]
+                    { "type": "Triggerable", "name": "ios-simulator-16-debug-tests-wk2",
+                      "builderNames": ["Apple-iOS-16-Simulator-Debug-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "ipados-simulator-15-release-tests-wk2",
-                      "builderNames": ["Apple-iPadOS-15-Simulator-Release-WK2-Tests"]
+                    { "type": "Triggerable", "name": "ipados-simulator-16-release-tests-wk2",
+                      "builderNames": ["Apple-iPadOS-16-Simulator-Release-WK2-Tests"]
                     },
-                    { "type": "Triggerable", "name": "ipados-simulator-15-debug-tests-wk2",
-                      "builderNames": ["Apple-iPadOS-15-Simulator-Debug-WK2-Tests"]
+                    { "type": "Triggerable", "name": "ipados-simulator-16-debug-tests-wk2",
+                      "builderNames": ["Apple-iPadOS-16-Simulator-Debug-WK2-Tests"]
                     },
                     { "type": "Triggerable", "name": "win10-release-tests",
                       "builderNames": ["Apple-Win-10-Release-Tests"]

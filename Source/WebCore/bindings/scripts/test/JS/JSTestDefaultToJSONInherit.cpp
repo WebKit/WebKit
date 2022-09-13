@@ -145,8 +145,8 @@ void JSTestDefaultToJSONInheritPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestDefaultToJSONInherit::s_info = { "TestDefaultToJSONInherit"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONInherit) };
 
-JSTestDefaultToJSONInherit::JSTestDefaultToJSONInherit(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONInherit>&& impl, JSC::Butterfly* butterfly)
-    : JSTestDefaultToJSON(structure, globalObject, WTFMove(impl), butterfly)
+JSTestDefaultToJSONInherit::JSTestDefaultToJSONInherit(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONInherit>&& impl)
+    : JSTestDefaultToJSON(structure, globalObject, WTFMove(impl))
 {
 }
 

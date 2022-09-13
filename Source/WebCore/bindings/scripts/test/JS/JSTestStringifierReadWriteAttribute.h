@@ -58,7 +58,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestStringifierReadWriteAttribute(JSC::Structure*, JSDOMGlobalObject&, Ref<TestStringifierReadWriteAttribute>&&, JSC::Butterfly* = nullptr);
+    JSTestStringifierReadWriteAttribute(JSC::Structure*, JSDOMGlobalObject&, Ref<TestStringifierReadWriteAttribute>&&);
 
     void finishCreation(JSC::VM&);
 };

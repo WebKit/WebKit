@@ -34,7 +34,7 @@ namespace JSC {
 
 // FIXME: This isn't actually a Watchpoint. We should probably have a name which better reflects that:
 // https://bugs.webkit.org/show_bug.cgi?id=202381
-class JS_EXPORT_PRIVATE AdaptiveInferredPropertyValueWatchpointBase {
+class AdaptiveInferredPropertyValueWatchpointBase {
     WTF_MAKE_NONCOPYABLE(AdaptiveInferredPropertyValueWatchpointBase);
     WTF_MAKE_FAST_ALLOCATED;
 
@@ -47,7 +47,7 @@ public:
     void initialize(const ObjectPropertyCondition&);
     void install(VM&);
 
-    virtual ~AdaptiveInferredPropertyValueWatchpointBase();
+    virtual ~AdaptiveInferredPropertyValueWatchpointBase() = default;
 
     class StructureWatchpoint final : public Watchpoint {
     public:

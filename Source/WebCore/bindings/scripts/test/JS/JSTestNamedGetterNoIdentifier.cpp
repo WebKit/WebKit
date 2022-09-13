@@ -120,8 +120,8 @@ void JSTestNamedGetterNoIdentifierPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNamedGetterNoIdentifier::s_info = { "TestNamedGetterNoIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterNoIdentifier) };
 
-JSTestNamedGetterNoIdentifier::JSTestNamedGetterNoIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedGetterNoIdentifier>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestNamedGetterNoIdentifier>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestNamedGetterNoIdentifier::JSTestNamedGetterNoIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedGetterNoIdentifier>&& impl)
+    : JSDOMWrapper<TestNamedGetterNoIdentifier>(structure, globalObject, WTFMove(impl))
 {
 }
 

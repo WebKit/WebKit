@@ -477,7 +477,7 @@ void CachedResource::setResponse(const ResourceResponse& response)
     }
 #endif
     m_response.setRedirected(m_redirectChainCacheStatus.status != RedirectChainCacheStatus::Status::NoRedirection);
-    if (m_response.tainting() == ResourceResponse::Tainting::Basic || m_response.tainting() == ResourceResponse::Tainting::Cors)
+    if ((m_response.tainting() == ResourceResponse::Tainting::Basic || m_response.tainting() == ResourceResponse::Tainting::Cors) && !m_response.url().protocolIsData())
         m_response.setTainting(m_responseTainting);
 }
 

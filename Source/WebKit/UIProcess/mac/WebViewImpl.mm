@@ -2074,9 +2074,9 @@ bool WebViewImpl::acceptsFirstMouse(NSEvent *event)
     if (![m_view hitTest:event.locationInWindow])
         return false;
 
-    setLastMouseDownEvent(event);
+    auto previousEvent = setLastMouseDownEvent(event);
     bool result = m_page->acceptsFirstMouse(event.eventNumber, WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.getAutoreleased()));
-    setLastMouseDownEvent(nil);
+    setLastMouseDownEvent(previousEvent.get());
     return result;
 }
 
@@ -2093,9 +2093,9 @@ bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
     if (![m_view hitTest:event.locationInWindow])
         return false;
 
-    setLastMouseDownEvent(event);
+    auto previousEvent = setLastMouseDownEvent(event);
     bool result = m_page->shouldDelayWindowOrderingForEvent(WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.getAutoreleased()));
-    setLastMouseDownEvent(nil);
+    setLastMouseDownEvent(previousEvent.get());
     return result;
 }
 
@@ -4044,6 +4044,12 @@ void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap
         [provider setUserInfo:context.get()];
         auto draggingItem = adoptNS([[NSDraggingItem alloc] initWithPasteboardWriter:provider.get()]);
         [draggingItem setDraggingFrame:NSMakeRect(clientDragLocation.x(), clientDragLocation.y() - size.height(), size.width(), size.height()) contents:dragNSImage.get()];
+
+        if (!m_lastMouseDownEvent) {
+            m_page->dragCancelled();
+            return;
+        }
+
         [m_view beginDraggingSessionWithItems:@[draggingItem.get()] event:m_lastMouseDownEvent.get() source:(id <NSDraggingSource>)m_view.getAutoreleased()];
 
         ASSERT(info.additionalTypes.size() == info.additionalData.size());
@@ -4524,14 +4530,11 @@ void WebViewImpl::smartMagnifyWithEvent(NSEvent *event)
     ensureGestureController().handleSmartMagnificationGesture([m_view convertPoint:event.locationInWindow fromView:nil]);
 }
 
-void WebViewImpl::setLastMouseDownEvent(NSEvent *event)
+RetainPtr<NSEvent> WebViewImpl::setLastMouseDownEvent(NSEvent *event)
 {
     ASSERT(!event || event.type == NSEventTypeLeftMouseDown || event.type == NSEventTypeRightMouseDown || event.type == NSEventTypeOtherMouseDown);
 
-    if (event == m_lastMouseDownEvent.get())
-        return;
-
-    m_lastMouseDownEvent = event;
+    return std::exchange(m_lastMouseDownEvent, event);
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)

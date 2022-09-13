@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Error: Script error.
+CONSOLE MESSAGE: NetworkError: Network response is CORS-cross-origin
 Test importScripts with error.
 
 
@@ -20,7 +20,7 @@ filename: http://127.0.0.1:8000/workers/resources/worker-importScripts-error.js,
 initEvent: function initEvent() { [native code] },
 isTrusted: true,
 lineno: 2,
-message: Error: Script error.,
+message: NetworkError: Network response is CORS-cross-origin,
 preventDefault: function preventDefault() { [native code] },
 returnValue: true,
 srcElement: [object Worker],

@@ -248,6 +248,7 @@ void WorkerScriptLoader::didReceiveResponse(ResourceLoaderIdentifier identifier,
     m_certificateInfo = response.certificateInfo() ? *response.certificateInfo() : CertificateInfo();
     m_responseMIMEType = response.mimeType();
     m_responseSource = response.source();
+    m_responseTainting = response.tainting();
     m_isRedirected = response.isRedirected();
     m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };
     if (m_isCOEPEnabled)

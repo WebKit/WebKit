@@ -64,6 +64,13 @@ auto SectionParser::parseType() -> PartialResult
             WASM_FAIL_IF_HELPER_FAILS(parseStructType(i, signature));
             break;
         }
+        case TypeKind::Array: {
+            if (!Options::useWebAssemblyGC())
+                return fail(i, "th type failed to parse because array types are not enabled");
+
+            WASM_FAIL_IF_HELPER_FAILS(parseArrayType(i, signature));
+            break;
+        }
         case TypeKind::Rec: {
             if (!Options::useWebAssemblyGC())
                 return fail(i, "th type failed to parse because rec types are not enabled");
@@ -72,7 +79,7 @@ auto SectionParser::parseType() -> PartialResult
             break;
         }
         default:
-            return fail(i, "th Type is non-Func and non-Struct ", typeKind);
+            return fail(i, "th Type is non-Func, non-Struct, and non-Array ", typeKind);
         }
 
         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's ", i, "th signature");
@@ -719,7 +726,7 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
     uint32_t fieldCount;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(fieldCount), "can't get ", position, "th struct type's field count");
     WASM_PARSER_FAIL_IF(fieldCount > maxStructFieldCount, "number of fields for struct type at position ", position, " is too big ", fieldCount, " maximum ", maxStructFieldCount);
-    Vector<StructField> fields;
+    Vector<FieldType> fields;
     WASM_PARSER_FAIL_IF(!fields.tryReserveCapacity(fieldCount), "can't allocate enough memory for struct fields ", fieldCount, " entries");
 
     for (uint32_t fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
@@ -730,10 +737,25 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
         WASM_PARSER_FAIL_IF(!parseUInt8(mutability), position, "can't get ", fieldIndex, "th field mutability");
         WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Field's mutability: 0x", hex(mutability, 2, Lowercase));
 
-        fields.uncheckedAppend(StructField { fieldType, static_cast<Mutability>(mutability) });
+        fields.uncheckedAppend(FieldType { fieldType, static_cast<Mutability>(mutability) });
     }
 
     structType = TypeInformation::typeDefinitionForStruct(fields);
+    return { };
+}
+
+auto SectionParser::parseArrayType(uint32_t position, RefPtr<TypeDefinition>& arrayType) -> PartialResult
+{
+    ASSERT(Options::useWebAssemblyGC());
+
+    Type elementType;
+    WASM_PARSER_FAIL_IF(!parseValueType(m_info, elementType), "can't get array's element Type");
+
+    uint8_t mutability;
+    WASM_PARSER_FAIL_IF(!parseUInt8(mutability), position, "can't get array's mutability");
+    WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid array mutability: 0x", hex(mutability, 2, Lowercase));
+
+    arrayType = TypeInformation::typeDefinitionForArray(FieldType { elementType, static_cast<Mutability>(mutability) });
     return { };
 }
 
@@ -763,9 +785,12 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
             WASM_FAIL_IF_HELPER_FAILS(parseStructType(i, signature));
             break;
         }
-        // FIXME: Add Array types when they are implemented.
+        case TypeKind::Array: {
+            WASM_FAIL_IF_HELPER_FAILS(parseArrayType(i, signature));
+            break;
+        }
         default:
-            return fail(i, "th Type is non-Func and non-Struct ", typeKind);
+            return fail(i, "th Type is non-Func, non-Struct, and non-Array ", typeKind);
         }
 
         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for recursion group's ", i, "th signature");

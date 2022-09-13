@@ -32,8 +32,10 @@ class Namespace::OtherClass {
 
 [LegacyPopulateFrom=EmptyConstructor] class Namespace::EmptyConstructorNullable {
     [ReturnEarlyIfTrue] bool m_isNull;
+#if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     MemberType m_type;
     OtherMemberType m_value;
+#endif
 }
 
 class WithoutNamespace {

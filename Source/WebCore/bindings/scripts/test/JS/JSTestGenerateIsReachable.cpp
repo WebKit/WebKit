@@ -133,8 +133,8 @@ void JSTestGenerateIsReachablePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestGenerateIsReachable::s_info = { "TestGenerateIsReachable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestGenerateIsReachable) };
 
-JSTestGenerateIsReachable::JSTestGenerateIsReachable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGenerateIsReachable>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestGenerateIsReachable>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestGenerateIsReachable::JSTestGenerateIsReachable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestGenerateIsReachable>&& impl)
+    : JSDOMWrapper<TestGenerateIsReachable>(structure, globalObject, WTFMove(impl))
 {
 }
 

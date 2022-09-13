@@ -60,7 +60,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::HasStaticPropertyTable;
 protected:
-    JSTestEnabledForContext(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEnabledForContext>&&, JSC::Butterfly* = nullptr);
+    JSTestEnabledForContext(JSC::Structure*, JSDOMGlobalObject&, Ref<TestEnabledForContext>&&);
 
     void finishCreation(JSC::VM&);
 };

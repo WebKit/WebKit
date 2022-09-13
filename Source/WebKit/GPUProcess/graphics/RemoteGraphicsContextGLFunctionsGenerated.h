@@ -296,18 +296,18 @@
         assertIsCurrent(workQueue());
         m_context->generateMipmap(target);
     }
-    void getActiveAttrib(uint32_t program, uint32_t index, CompletionHandler<void(bool, WebCore::GraphicsContextGL::ActiveInfo&&)>&& completionHandler)
+    void getActiveAttrib(uint32_t program, uint32_t index, CompletionHandler<void(bool, struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
     {
         bool returnValue = { };
-        WebCore::GraphicsContextGL::ActiveInfo arg2 { };
+        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         assertIsCurrent(workQueue());
         returnValue = m_context->getActiveAttrib(program, index, arg2);
         completionHandler(returnValue, WTFMove(arg2));
     }
-    void getActiveUniform(uint32_t program, uint32_t index, CompletionHandler<void(bool, WebCore::GraphicsContextGL::ActiveInfo&&)>&& completionHandler)
+    void getActiveUniform(uint32_t program, uint32_t index, CompletionHandler<void(bool, struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
     {
         bool returnValue = { };
-        WebCore::GraphicsContextGL::ActiveInfo arg2 { };
+        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         assertIsCurrent(workQueue());
         returnValue = m_context->getActiveUniform(program, index, arg2);
         completionHandler(returnValue, WTFMove(arg2));
@@ -1261,9 +1261,9 @@
         assertIsCurrent(workQueue());
         m_context->transformFeedbackVaryings(program, varyings, bufferMode);
     }
-    void getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(WebCore::GraphicsContextGL::ActiveInfo&&)>&& completionHandler)
+    void getTransformFeedbackVarying(uint32_t program, uint32_t index, CompletionHandler<void(struct WebCore::GraphicsContextGLActiveInfo&&)>&& completionHandler)
     {
-        WebCore::GraphicsContextGL::ActiveInfo arg2 { };
+        struct WebCore::GraphicsContextGLActiveInfo arg2 { };
         assertIsCurrent(workQueue());
         m_context->getTransformFeedbackVarying(program, index, arg2);
         completionHandler(WTFMove(arg2));

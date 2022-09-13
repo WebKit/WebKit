@@ -993,6 +993,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
     if (outlineBoxRect.isEmpty())
         return;
 
+    auto& document = this->document();
     float outlineWidth = styleToUse.outlineWidth();
     BorderStyle outlineStyle = styleToUse.outlineStyle();
     bool antialias = BorderPainter::shouldAntialiasLines(graphicsContext);
@@ -1021,7 +1022,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
         bottomRight.move(0, -2 * outlineOffset);
         adjacentWidth2 = -outlineWidth;
     }
-    drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BoxSide::Left, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    BorderPainter::drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Left, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     
     // right edge
     topLeft = outlineBoxRect.maxXMinYCorner();
@@ -1040,7 +1041,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
         bottomRight.move(outlineWidth, -2 * outlineOffset);
         adjacentWidth2 = -outlineWidth;
     }
-    drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BoxSide::Right, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+    BorderPainter::drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Right, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
 
     // upper edge
     if (thisLine.x() < previousLine.x()) {
@@ -1054,7 +1055,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
             adjacentWidth2 = -outlineWidth;
         } else
             adjacentWidth2 = outlineWidth;
-        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+        BorderPainter::drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     }
     
     if (previousLine.maxX() < thisLine.maxX()) {
@@ -1068,7 +1069,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
         bottomRight = outlineBoxRect.maxXMinYCorner();
         bottomRight.move(outlineWidth, 0);
         adjacentWidth2 = outlineWidth;
-        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+        BorderPainter::drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     }
 
     if (thisLine.x() == thisLine.maxX()) {
@@ -1078,7 +1079,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
         bottomRight = outlineBoxRect.maxXMinYCorner();
         bottomRight.move(outlineWidth, 0);
         adjacentWidth2 = outlineWidth;
-        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+        BorderPainter::drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Top, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     }
 
     // lower edge
@@ -1093,7 +1094,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
             adjacentWidth2 = -outlineWidth;
         } else
             adjacentWidth2 = outlineWidth;
-        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+        BorderPainter::drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     }
     
     if (nextLine.maxX() < thisLine.maxX()) {
@@ -1107,7 +1108,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
         bottomRight = outlineBoxRect.maxXMaxYCorner();
         bottomRight.move(outlineWidth, outlineWidth);
         adjacentWidth2 = outlineWidth;
-        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+        BorderPainter::drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     }
 
     if (thisLine.x() == thisLine.maxX()) {
@@ -1117,7 +1118,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext& graphicsContext, const L
         bottomRight = outlineBoxRect.maxXMaxYCorner();
         bottomRight.move(outlineWidth, outlineWidth);
         adjacentWidth2 = outlineWidth;
-        drawLineForBoxSide(graphicsContext, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
+        BorderPainter::drawLineForBoxSide(graphicsContext, document, FloatRect(topLeft, bottomRight), BoxSide::Bottom, outlineColor, outlineStyle, adjacentWidth1, adjacentWidth2, antialias);
     }
 }
 

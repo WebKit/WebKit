@@ -3858,7 +3858,6 @@ private:
             case Array::Int32:
             case Array::Double:
             case Array::Contiguous:
-            case Array::AlwaysSlowPutContiguous:
                 speculate(
                     Uncountable, noValue(), nullptr,
                     m_out.aboveOrEqual(property, m_out.constInt32(MIN_SPARSE_ARRAY_INDEX)));
@@ -3876,7 +3875,6 @@ private:
             vmCall(Void, operationEnsureDouble, m_vmValue, cell);
             break;
         case Array::Contiguous:
-        case Array::AlwaysSlowPutContiguous:
             vmCall(Void, operationEnsureContiguous, m_vmValue, cell);
             break;
         case Array::ArrayStorage:
@@ -5153,8 +5151,7 @@ IGNORE_CLANG_WARNINGS_END
         case Array::Undecided:
         case Array::Int32:
         case Array::Double:
-        case Array::Contiguous:
-        case Array::AlwaysSlowPutContiguous: {
+        case Array::Contiguous: {
             setInt32(m_out.load32NonNegative(lowStorage(m_node->child2()), m_heaps.Butterfly_publicLength));
             return;
         }
@@ -5300,8 +5297,7 @@ IGNORE_CLANG_WARNINGS_END
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         switch (m_node->arrayMode().type()) {
         case Array::Int32:
-        case Array::Contiguous:
-        case Array::AlwaysSlowPutContiguous: {
+        case Array::Contiguous: {
             LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
             
@@ -5315,13 +5311,13 @@ IGNORE_CLANG_WARNINGS_END
                 LValue isHole = m_out.isZero64(result);
                 if (m_node->arrayMode().isInBoundsSaneChain()) {
                     DFG_ASSERT(
-                        m_graph, m_node, m_node->arrayMode().isAnyKindOfContiguous(), m_node->arrayMode().type());
+                        m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous, m_node->arrayMode().type());
                     result = m_out.select(
                         isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
                 } else
                     speculate(LoadFromHole, noValue(), nullptr, isHole);
                 // We have to keep base alive to keep content in storage alive.
-                if (m_node->arrayMode().isAnyKindOfContiguous())
+                if (m_node->arrayMode().type() == Array::Contiguous)
                     ensureStillAliveHere(base);
                 return result;
             }
@@ -5353,7 +5349,7 @@ IGNORE_CLANG_WARNINGS_END
             
             m_out.appendTo(continuation, lastNext);
             // We have to keep base alive to keep content in storage alive.
-            if (m_node->arrayMode().isAnyKindOfContiguous())
+            if (m_node->arrayMode().type() == Array::Contiguous)
                 ensureStillAliveHere(base);
             return m_out.phi(Int64, fastResult, slowResult);
         }
@@ -6233,7 +6229,6 @@ IGNORE_CLANG_WARNINGS_END
         case Array::ForceExit:
         case Array::Generic:
         case Array::ScopedArguments:
-        case Array::AlwaysSlowPutContiguous:
         case Array::SelectUsingArguments:
         case Array::SelectUsingPredictions:
         case Array::Undecided:
@@ -6825,15 +6820,15 @@ IGNORE_CLANG_WARNINGS_END
                 searchElement = lowJSValue(searchElementEdge, ManualOperandSpeculation);
                 break;
             case ObjectUse:
-                ASSERT(m_node->arrayMode().isAnyKindOfContiguous());
+                ASSERT(m_node->arrayMode().type() == Array::Contiguous);
                 searchElement = lowObject(searchElementEdge);
                 break;
             case SymbolUse:
-                ASSERT(m_node->arrayMode().isAnyKindOfContiguous());
+                ASSERT(m_node->arrayMode().type() == Array::Contiguous);
                 searchElement = lowSymbol(searchElementEdge);
                 break;
             case OtherUse:
-                ASSERT(m_node->arrayMode().isAnyKindOfContiguous());
+                ASSERT(m_node->arrayMode().type() == Array::Contiguous);
                 speculate(searchElementEdge);
                 searchElement = lowJSValue(searchElementEdge, ManualOperandSpeculation);
                 break;
@@ -6901,7 +6896,7 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         case StringUse:
-            ASSERT(m_node->arrayMode().isAnyKindOfContiguous());
+            ASSERT(m_node->arrayMode().type() == Array::Contiguous);
             // We have to keep base alive since that keeps storage alive.
             ensureStillAliveHere(base);
             setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfString, weakPointer(globalObject), storage, lowString(searchElementEdge), startIndex)));
@@ -6913,7 +6908,6 @@ IGNORE_CLANG_WARNINGS_END
                 setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfValueDouble, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex)));
                 return;
             case Array::Contiguous:
-            case Array::AlwaysSlowPutContiguous:
                 // We have to keep base alive since that keeps content of storage alive.
                 ensureStillAliveHere(base);
                 FALLTHROUGH;
@@ -19911,7 +19905,6 @@ IGNORE_CLANG_WARNINGS_END
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
-        case Array::AlwaysSlowPutContiguous:
         case Array::Undecided:
         case Array::ArrayStorage: {
             IndexingType indexingModeMask = IsArray | IndexingShapeMask;
@@ -20007,7 +20000,6 @@ IGNORE_CLANG_WARNINGS_END
         case Array::Int32:
         case Array::Double:
         case Array::Contiguous:
-        case Array::AlwaysSlowPutContiguous:
         case Array::Undecided:
         case Array::ArrayStorage:
         case Array::SlowPutArrayStorage:

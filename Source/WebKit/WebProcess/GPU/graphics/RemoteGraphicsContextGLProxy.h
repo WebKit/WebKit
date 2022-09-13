@@ -138,8 +138,8 @@ public:
     void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject arg3, GCGLint level) final;
     void frontFace(GCGLenum mode) final;
     void generateMipmap(GCGLenum target) final;
-    bool getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo& arg2) final;
-    bool getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo& arg2) final;
+    bool getActiveAttrib(PlatformGLObject program, GCGLuint index, struct WebCore::GraphicsContextGLActiveInfo& arg2) final;
+    bool getActiveUniform(PlatformGLObject program, GCGLuint index, struct WebCore::GraphicsContextGLActiveInfo& arg2) final;
     GCGLint getAttribLocation(PlatformGLObject arg0, const String& name) final;
     GCGLint getBufferParameteri(GCGLenum target, GCGLenum pname) final;
     String getString(GCGLenum name) final;
@@ -310,7 +310,7 @@ public:
     void beginTransformFeedback(GCGLenum primitiveMode) final;
     void endTransformFeedback() final;
     void transformFeedbackVaryings(PlatformGLObject program, const Vector<String>& varyings, GCGLenum bufferMode) final;
-    void getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo& arg2) final;
+    void getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, struct WebCore::GraphicsContextGLActiveInfo& arg2) final;
     void pauseTransformFeedback() final;
     void resumeTransformFeedback() final;
     void bindBufferBase(GCGLenum target, GCGLuint index, PlatformGLObject buffer) final;

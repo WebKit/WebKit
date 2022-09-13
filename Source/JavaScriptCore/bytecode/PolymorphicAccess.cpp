@@ -987,9 +987,6 @@ void printInternal(PrintStream& out, AccessCase::AccessType type)
     case AccessCase::IndexedContiguousLoad:
         out.print("IndexedContiguousLoad");
         return;
-    case AccessCase::IndexedAlwaysSlowPutContiguousLoad:
-        out.print("IndexedAlwaysSlowPutContiguousLoad");
-        return;
     case AccessCase::IndexedArrayStorageLoad:
         out.print("IndexedArrayStorageLoad");
         return;

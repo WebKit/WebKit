@@ -120,8 +120,8 @@ void JSTestNamedSetterThrowingExceptionPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNamedSetterThrowingException::s_info = { "TestNamedSetterThrowingException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedSetterThrowingException) };
 
-JSTestNamedSetterThrowingException::JSTestNamedSetterThrowingException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterThrowingException>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestNamedSetterThrowingException>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestNamedSetterThrowingException::JSTestNamedSetterThrowingException(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedSetterThrowingException>&& impl)
+    : JSDOMWrapper<TestNamedSetterThrowingException>(structure, globalObject, WTFMove(impl))
 {
 }
 

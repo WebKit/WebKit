@@ -152,8 +152,8 @@ void JSTestMapLikeWithOverriddenOperationsPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestMapLikeWithOverriddenOperations::s_info = { "TestMapLikeWithOverriddenOperations"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestMapLikeWithOverriddenOperations) };
 
-JSTestMapLikeWithOverriddenOperations::JSTestMapLikeWithOverriddenOperations(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestMapLikeWithOverriddenOperations>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestMapLikeWithOverriddenOperations>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestMapLikeWithOverriddenOperations::JSTestMapLikeWithOverriddenOperations(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestMapLikeWithOverriddenOperations>&& impl)
+    : JSDOMWrapper<TestMapLikeWithOverriddenOperations>(structure, globalObject, WTFMove(impl))
 {
 }
 

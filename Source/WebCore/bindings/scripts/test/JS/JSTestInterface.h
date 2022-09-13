@@ -86,7 +86,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::OverridesPut;
 protected:
-    JSTestInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterface>&&, JSC::Butterfly* = nullptr);
+    JSTestInterface(JSC::Structure*, JSDOMGlobalObject&, Ref<TestInterface>&&);
 
     void finishCreation(JSC::VM&);
 };

@@ -135,8 +135,8 @@ void JSTestIterablePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestIterable::s_info = { "TestIterable"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestIterable) };
 
-JSTestIterable::JSTestIterable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIterable>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestIterable>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestIterable::JSTestIterable(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestIterable>&& impl)
+    : JSDOMWrapper<TestIterable>(structure, globalObject, WTFMove(impl))
 {
 }
 
