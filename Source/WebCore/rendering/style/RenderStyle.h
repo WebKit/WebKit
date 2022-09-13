@@ -1644,6 +1644,9 @@ public:
     static float initialVerticalBorderSpacing() { return 0; }
     static CursorType initialCursor() { return CursorType::Auto; }
     static Color initialColor() { return Color::black; }
+    static Color initialTextStrokeColor() { return currentColor(); }
+    static Color initialTextFillColor() { return currentColor(); }
+    static Color initialTextDecorationColor() { return currentColor(); }
     static StyleImage* initialListStyleImage() { return 0; }
     static float initialBorderWidth() { return 3; }
     static unsigned short initialColumnRuleWidth() { return 3; }
