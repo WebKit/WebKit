@@ -30,6 +30,7 @@
 
 #import "ARKitBadgeSystemImage.h"
 #import "BitmapImage.h"
+#import "BorderPainter.h"
 #import "CSSPrimitiveValue.h"
 #import "CSSToLengthConversionData.h"
 #import "CSSValueKey.h"
@@ -863,7 +864,7 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
 
     float separatorPosition = isRTL ? (clip.x() + MenuListButtonPaddingAfter) : (clip.maxX() - MenuListButtonPaddingAfter);
 
-    box.drawLineForBoxSide(paintInfo.context(), FloatRect(FloatPoint(separatorPosition - borderTopWidth, clip.y()), FloatPoint(separatorPosition, clip.maxY())), BoxSide::Right, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
+    BorderPainter::drawLineForBoxSide(paintInfo.context(), box.document(), FloatRect(FloatPoint(separatorPosition - borderTopWidth, clip.y()), FloatPoint(separatorPosition, clip.maxY())), BoxSide::Right, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
 
     FloatRect buttonClip;
     if (isRTL)
