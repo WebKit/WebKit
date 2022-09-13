@@ -1817,7 +1817,7 @@ TransformationMatrix RenderLayer::perspectiveTransform() const
 
     TransformationMatrix transform;
     style.unapplyTransformOrigin(transform, transformOrigin);
-    style.applyPerspective(transform, renderer(), perspectiveOrigin);
+    style.applyPerspective(transform, perspectiveOrigin);
     style.applyTransformOrigin(transform, transformOrigin);
     return transform;
 }
