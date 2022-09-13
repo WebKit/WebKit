@@ -29,6 +29,7 @@
 
 #include "FloatSize.h"
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ struct ViewportAttributes {
     float orientation;
     float shrinkToFit;
 
-    ViewportFit viewportFit;
+    OptionSet<ViewportFit> viewportFit;
 };
 
 struct ViewportArguments {
