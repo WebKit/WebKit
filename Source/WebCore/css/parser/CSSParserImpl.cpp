@@ -383,9 +383,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
     case CSSAtRuleFontPaletteValues:
         return consumeFontPaletteValuesRule(prelude, block);
     case CSSAtRuleWebkitKeyframes:
-        return consumeKeyframesRule(true, prelude, block);
     case CSSAtRuleKeyframes:
-        return consumeKeyframesRule(false, prelude, block);
+        return consumeKeyframesRule(prelude, block);
     case CSSAtRulePage:
         return consumePageRule(prelude, block);
     case CSSAtRuleCounterStyle:
@@ -639,7 +638,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     return StyleRuleFontPaletteValues::create(AtomString { name->stringValue() }, AtomString { fontFamily }, WTFMove(basePalette), WTFMove(overrideColors));
 }
 
-RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefixed, CSSParserTokenRange prelude, CSSParserTokenRange block)
+RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
     CSSParserTokenRange rangeCopy = prelude; // For inspector callbacks
     const CSSParserToken& nameToken = prelude.consumeIncludingWhitespace();
@@ -649,7 +648,7 @@ RefPtr<StyleRuleKeyframes> CSSParserImpl::consumeKeyframesRule(bool webkitPrefix
     AtomString name;
     if (nameToken.type() == IdentToken) {
         name = nameToken.value().toAtomString();
-    } else if (nameToken.type() == StringToken && webkitPrefixed)
+    } else if (nameToken.type() == StringToken)
         name = nameToken.value().toAtomString();
     else
         return nullptr; // Parse error; expected ident token in @keyframes header
