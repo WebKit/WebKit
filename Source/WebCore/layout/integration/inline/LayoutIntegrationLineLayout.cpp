@@ -402,6 +402,8 @@ void LineLayout::constructContent()
     inlineContentBuilder.build(m_inlineFormattingState, ensureInlineContent());
     ASSERT(m_inlineContent);
 
+    auto& rootGeometry = m_layoutState.geometryForRootBox();
+    auto isLeftToRightInlineDirection = rootLayoutBox().style().isLeftToRightDirection();
     auto& boxAndRendererList = m_boxTree.boxAndRendererList();
     for (auto& boxAndRenderer : boxAndRendererList) {
         auto& layoutBox = boxAndRenderer.box.get();
@@ -422,8 +424,16 @@ void LineLayout::constructContent()
         if (layoutBox.isFloatingPositioned()) {
             auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
             auto marginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(boxGeometry) };
+            auto marginLeft = isLeftToRightInlineDirection ? boxGeometry.marginStart() : boxGeometry.marginEnd();
+            auto marginTop = boxGeometry.marginBefore();
+            if (!isLeftToRightInlineDirection) {
+                // FIXME: This is temporary until after the floating state can mix and match floats coming from different inline directions.
+                // Computed float geometry in visual coords will make this code redundant (and that's why this flip should not go to the display builders).
+                marginBoxRect.setX(rootGeometry.borderBoxWidth() - marginBoxRect.maxX());
+                visualBorderBoxRect.setX(marginBoxRect.x() + marginLeft);
+            }
             floatingObject.setFrameRect(marginBoxRect);
-            floatingObject.setMarginOffset({ boxGeometry.marginStart(), boxGeometry.marginBefore() });
+            floatingObject.setMarginOffset({ marginLeft, marginTop });
             floatingObject.setIsPlaced(true);
         }
 
