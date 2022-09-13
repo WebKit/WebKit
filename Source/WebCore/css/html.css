@@ -56,6 +56,7 @@ address, article, aside, div, footer, header, hgroup, main, nav, section {
 
 marquee {
     display: inline-block;
+    text-align: initial;
 }
 
 blockquote {
@@ -104,6 +105,7 @@ hr {
     margin-inline-end: auto;
     border-style: inset;
     border-width: 1px;
+    overflow: hidden;
 }
 
 /* media elements */
@@ -373,7 +375,7 @@ fieldset {
     padding-inline-end: 0.75em;
     padding-block-end: 0.625em;
     border: 2px groove ThreeDFace;
-    min-width: min-content;
+    min-inline-size: min-content;
 }
 
 button {
@@ -1353,6 +1355,16 @@ details {
 
 summary {
     display: block;
+}
+
+details > summary:first-of-type {
+    display: list-item;
+    counter-increment: list-item 0;
+    list-style: disclosure-closed inside;
+}
+
+  details[open] > summary {
+    list-style-type: disclosure-open;
 }
 
 summary::-webkit-details-marker {
