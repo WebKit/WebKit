@@ -242,7 +242,7 @@ TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosSwitchCont
 }
 
 // FIXME: Re-enable after webkit.org/b/243675 is resolved
-TEST(VideoControlsManager, DISABLED_ VideoControlsManagerMultipleVideosScrollOnlyLargeVideoOutOfView)
+TEST(VideoControlsManager, DISABLED_VideoControlsManagerMultipleVideosScrollOnlyLargeVideoOutOfView)
 {
     RetainPtr<VideoControlsManagerTestWebView> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 500, 500));
 
