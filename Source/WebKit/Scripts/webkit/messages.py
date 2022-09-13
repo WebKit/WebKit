@@ -314,10 +314,8 @@ def serialized_identifiers():
         'WebKit::RemoteLegacyCDMIdentifier',
         'WebKit::RemoteLegacyCDMSessionIdentifier',
         'WebKit::RemoteMediaResourceIdentifier',
-        'WebKit::RemoteMediaSourceIdentifier',
         'WebKit::RemoteVideoFrameIdentifier',
         'WebKit::RemoteRemoteCommandListenerIdentifier',
-        'WebKit::RemoteSourceBufferIdentifier',
         'WebKit::RenderingBackendIdentifier',
         'WebKit::SampleBufferDisplayLayerIdentifier',
         'WebKit::StorageAreaIdentifier',
@@ -330,7 +328,6 @@ def serialized_identifiers():
         'WebKit::WebGPUIdentifier',
         'WebKit::WebPageProxyIdentifier',
         'WebKit::WebURLSchemeHandlerIdentifier',
-        'WebKit::XRDeviceIdentifier',
     ]
 
 
@@ -377,6 +374,8 @@ def types_that_cannot_be_forward_declared():
         'WebKit::ImageBufferBackendHandle',
         'WebKit::LayerHostingContextID',
         'WebKit::LegacyCustomProtocolID',
+        'WebKit::RemoteMediaSourceIdentifier',
+        'WebKit::RemoteSourceBufferIdentifier',
         'WebKit::RemoteVideoFrameWriteReference',
         'WebKit::RemoteVideoFrameReadReference',
         'WebKit::RenderingUpdateID',
@@ -384,6 +383,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::TransactionID',
         'WebKit::WCLayerTreeHostIdentifier',
         'WebKit::WCContentBufferIdentifier',
+        'WebKit::XRDeviceIdentifier',
     ] + serialized_identifiers())
 
 
