@@ -165,7 +165,7 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(JSGlobalObject* globalObjec
                 return false;
             if (object->type() == ProxyObjectType && slot.internalMethodType() == PropertySlot::InternalMethodType::HasProperty)
                 return false;
-            if (isTypedArrayType(object->type()) && isCanonicalNumericIndexString(propertyName))
+            if (isTypedArrayType(object->type()) && isCanonicalNumericIndexString(propertyName.uid()))
                 return false;
         }
         JSValue prototype;
