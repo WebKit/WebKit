@@ -60,7 +60,6 @@ private:
     void imageChanged(WrappedImagePtr, const IntRect* = nullptr) override;
 
     bool isRenderScrollbarPart() const override { return true; }
-    void computePreferredLogicalWidths() override;
 
     void layoutHorizontalPart();
     void layoutVerticalPart();
