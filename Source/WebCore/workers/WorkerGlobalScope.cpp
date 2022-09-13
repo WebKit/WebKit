@@ -404,6 +404,9 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
         if (auto exception = scriptLoader->loadSynchronously(this, url, WorkerScriptLoader::Source::ClassicWorkerImport, FetchOptions::Mode::NoCors, cachePolicy, cspEnforcement, resourceRequestIdentifier()))
             return WTFMove(*exception);
 
+        // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-classic-worker-imported-script (step 7).
+        bool mutedErrors = scriptLoader->responseTainting() == ResourceResponse::Tainting::Opaque || scriptLoader->responseTainting() == ResourceResponse::Tainting::Opaqueredirect;
+
         InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script().toString());
 
         WeakPtr<ScriptBufferSourceProvider> sourceProvider;
@@ -413,6 +416,8 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
             sourceProvider = static_cast<ScriptBufferSourceProvider&>(sourceCode.provider());
             script()->evaluate(sourceCode, exception);
             if (exception) {
+                if (mutedErrors)
+                    return Exception { NetworkError, "Network response is CORS-cross-origin"_s };
                 script()->setException(exception);
                 return { };
             }
