@@ -55,7 +55,7 @@ static void buildAndPerformTest(NSEventType buttonEvent, NSEventModifierFlags mo
         auto pme = WebCore::PlatformEventFactory::createPlatformMouseEvent(event, nil, webView.get());
 
         EXPECT_EQ(expectedButton, pme.button());
-        EXPECT_TRUE(!modifierFlags || pme.modifierFlags() & modifierFlags);
+        EXPECT_TRUE(!modifierFlags || pme.mouseModifierFlags() & modifierFlags);
         EXPECT_EQ(expectedMenu, pme.menuTypeForEvent());
         if (canCallMenuTypeForEvent())
             EXPECT_EQ(expectedMenu, [NSMenu menuTypeForEvent:event]);
