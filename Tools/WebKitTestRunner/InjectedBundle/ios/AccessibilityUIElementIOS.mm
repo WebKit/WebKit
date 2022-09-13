@@ -39,6 +39,10 @@
 #import <wtf/Vector.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+#import <Accessibility/Accessibility.h>
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (UIAccessibilityHidden)
@@ -485,6 +489,18 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::customContent() const
+{
+#if HAVE(ACCESSIBILITY_FRAMEWORK)
+    auto customContent = adoptNS([[NSMutableArray alloc] init]);
+    for (AXCustomContent *content in [m_element accessibilityCustomContent])
+        [customContent addObject:[NSString stringWithFormat:@"%@: %@", content.label, content.value]];
+    return [[customContent.get() componentsJoinedByString:@"\n"] createJSStringRef];
+#else
+    return nullptr;
+#endif
 }
 
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)

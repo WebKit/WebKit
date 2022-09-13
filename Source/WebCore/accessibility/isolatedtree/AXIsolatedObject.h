@@ -281,6 +281,7 @@ private:
     String brailleRoleDescription() const override { return stringAttributeValue(AXPropertyName::BrailleRoleDescription); }
     String embeddedImageDescription() const override { return stringAttributeValue(AXPropertyName::EmbeddedImageDescription); }
     std::optional<AccessibilityChildrenVector> imageOverlayElements() override { return std::nullopt; }
+    String extendedDescription() const override { return stringAttributeValue(AXPropertyName::ExtendedDescription); }
 
     String computedRoleString() const override { return stringAttributeValue(AXPropertyName::ComputedRoleString); }
     bool isValueAutofillAvailable() const override { return boolAttributeValue(AXPropertyName::IsValueAutofillAvailable); }

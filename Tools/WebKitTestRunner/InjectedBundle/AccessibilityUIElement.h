@@ -235,6 +235,7 @@ public:
     int columnCount();
     JSValueRef rowHeaders() const;
     JSValueRef columnHeaders() const;
+    JSRetainPtr<JSStringRef> customContent() const;
 
     // Tree/Outline specific attributes
     RefPtr<AccessibilityUIElement> selectedRowAtIndex(unsigned);

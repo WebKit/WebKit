@@ -104,6 +104,7 @@ enum class AXPropertyName : uint16_t {
     EditableAncestor,
     EmbeddedImageDescription,
     ExpandedTextValue,
+    ExtendedDescription,
     FileUploadButtonReturnsValueInTitle,
     FocusableAncestor,
     HasARIAValueNow,

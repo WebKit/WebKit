@@ -179,6 +179,7 @@
     long columnCount();
     object columnHeaders();
     object rowHeaders();
+    readonly attribute DOMString customContent;
 
     object detailsElements();
     object errorMessageElements();

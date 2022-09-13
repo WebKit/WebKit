@@ -1073,6 +1073,7 @@ public:
     virtual String brailleRoleDescription() const = 0;
     virtual String embeddedImageDescription() const = 0;
     virtual std::optional<AccessibilityChildrenVector> imageOverlayElements() = 0;
+    virtual String extendedDescription() const = 0;
 
     virtual bool supportsARIAOwns() const = 0;
 

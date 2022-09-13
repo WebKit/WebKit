@@ -8,6 +8,7 @@ accessibility/insert-newline.html [ Pass ]
 accessibility/url-test.html [ Pass ]
 accessibility/keyevents-posted-for-dismiss-action.html [ Pass ]
 accessibility/embedded-image-description.html [ Pass ]
+accessibility/aria-description.html [ Pass ]
 fast/multicol/flexbox-rows.html [ Skip ]
 
 fast/forms/input-text-word-wrap.html [ Skip ]
