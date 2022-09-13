@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 WTF_MAKE_ISO_ALLOCATED_IMPL(ElementInternals);
 
 ShadowRoot* ElementInternals::shadowRoot() const
