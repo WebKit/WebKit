@@ -543,6 +543,7 @@ void ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary()
 
     if (!vectorEqualsArray<String, ASCIILiteral, 13>(columns, currentSchemaColumns)) {
         close();
+        ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsDatabaseStore::openAndUpdateSchemaIfNecessary failed schema check; will create new database", this);
         FileSystem::deleteFile(m_storageFilePath);
         openITPDatabase();
         return;
