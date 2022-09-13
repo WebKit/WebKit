@@ -4,6 +4,7 @@ PASS e.style['transform'] = "matrix(1, 0, 0, 1, 0, 0)" should set the property v
 PASS e.style['transform'] = "matrix(1, 2, 3, 4, 5, 6)" should set the property value
 PASS e.style['transform'] = "matrix(-0.1, -0.2, -0.3, -0.4, -0.5, -0.6)" should set the property value
 PASS e.style['transform'] = "translate(1px)" should set the property value
+PASS e.style['transform'] = "translate(1px, 0%)" should set the property value
 PASS e.style['transform'] = "translate(2%, -3%)" should set the property value
 PASS e.style['transform'] = "translateX(-4px)" should set the property value
 PASS e.style['transform'] = "translateY(5%)" should set the property value
