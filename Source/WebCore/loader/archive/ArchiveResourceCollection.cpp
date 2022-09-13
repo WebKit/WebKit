@@ -31,6 +31,10 @@
 
 #include "Archive.h"
 
+#if PLATFORM(COCOA)
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#endif
+
 namespace WebCore {
 
 void ArchiveResourceCollection::addAllResources(Archive& archive)
@@ -55,7 +59,7 @@ void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 {
     auto url = resource->url();
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-    if (!url.protocol().startsWith(webArchivePrefix))
+    if (!url.protocol().startsWith(webArchivePrefix) && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SelfContainedWebArchive))
         url.setProtocol(String { webArchivePrefix + url.protocol() });
 #endif
     m_subresources.set(url.string(), WTFMove(resource));
@@ -64,8 +68,9 @@ void ArchiveResourceCollection::addResource(Ref<ArchiveResource>&& resource)
 ArchiveResource* ArchiveResourceCollection::archiveResourceForURL(URL url)
 {
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
-    const auto httpsScheme = String { webArchivePrefix + "https"_str };
-    const auto httpScheme = String { webArchivePrefix + "http"_str };
+    auto schemePrefix = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SelfContainedWebArchive) ? webArchivePrefix : ""_s;
+    const auto httpsScheme = String { schemePrefix + "https"_str };
+    const auto httpScheme = String { schemePrefix + "http"_str };
     if (!url.protocol().startsWith(webArchivePrefix))
         url.setProtocol(String { webArchivePrefix + url.protocol() });
 #else

@@ -80,6 +80,7 @@ enum class SDKAlignedBehavior {
     ProcessSwapOnCrossSiteNavigation,
     RequiresUserGestureToLoadVideo,
     RestrictsBaseURLSchemes,
+    SelfContainedWebArchive,
     ScrollViewContentInsetsAreNotObscuringInsets,
     SendsNativeMouseEvents,
     SessionCleanupByDefault,

@@ -172,6 +172,9 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
     if (linkedBefore(dyld_spring_2022_os_versions, DYLD_IOS_VERSION_15_4, DYLD_MACOSX_VERSION_12_3))
         disableBehavior(SDKAlignedBehavior::AuthorizationHeaderOnSameOriginRedirects);
 
+    if (linkedBefore(dyld_fall_2022_os_versions, DYLD_IOS_VERSION_16_0, DYLD_MACOSX_VERSION_13_0))
+        disableBehavior(SDKAlignedBehavior::SelfContainedWebArchive);
+
     disableAdditionalSDKAlignedBehaviors(behaviors);
 
     return behaviors;

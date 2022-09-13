@@ -56,6 +56,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URLHash.h>
+#include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/CString.h>
 
@@ -202,7 +203,8 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         return nullptr;
     }
 
-    URL url { webArchivePrefix + String { cfURL } };
+    auto schemePrefix = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SelfContainedWebArchive) ? webArchivePrefix : ""_s;
+    URL url { schemePrefix + String { cfURL } };
 
     auto textEncoding = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceTextEncodingNameKey));
     if (textEncoding && CFGetTypeID(textEncoding) != CFStringGetTypeID()) {

@@ -239,6 +239,10 @@ WTF_EXTERN_C_BEGIN
 #define dyld_spring_2022_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
 #endif
 
+#ifndef dyld_fall_2022_os_versions
+#define dyld_fall_2022_os_versions ({ (dyld_build_version_t) { 0, 0 }; })
+#endif
+
 uint32_t dyld_get_program_sdk_version();
 bool dyld_program_sdk_at_least(dyld_build_version_t);
 extern const char* dyld_shared_cache_file_path(void);
