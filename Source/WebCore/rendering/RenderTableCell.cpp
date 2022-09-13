@@ -270,9 +270,6 @@ void RenderTableCell::setCellLogicalWidth(LayoutUnit tableLayoutLogicalWidth)
     setNeedsLayout(MarkOnlyThis);
     row()->setChildNeedsLayout(MarkOnlyThis);
 
-    if (!table()->selfNeedsLayout() && checkForRepaintDuringLayout())
-        repaint();
-
     setLogicalWidth(tableLayoutLogicalWidth);
     setCellWidthChanged(true);
 }
