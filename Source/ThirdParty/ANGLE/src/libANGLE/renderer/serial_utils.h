@@ -84,7 +84,7 @@ class Serial final
 class AtomicQueueSerial final
 {
   public:
-    constexpr AtomicQueueSerial() : mValue(kInvalid) { ASSERT(mValue.is_lock_free()); }
+    AtomicQueueSerial() : mValue(kInvalid) { ASSERT(mValue.is_lock_free()); }
     AtomicQueueSerial &operator=(const Serial &other)
     {
         mValue.store(other.mValue, std::memory_order_release);
