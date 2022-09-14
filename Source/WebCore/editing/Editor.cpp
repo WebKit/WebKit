@@ -278,6 +278,8 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection, I
             options.add(FrameSelection::SmoothScroll);
         if (m_options & TemporarySelectionOption::RevealSelectionBounds)
             options.add(FrameSelection::RevealSelectionBounds);
+        if (m_options & TemporarySelectionOption::ForceCenterScroll)
+            options.add(FrameSelection::ForceCenterScroll);
     }
 
     m_document->selection().setSelection(selection, options);

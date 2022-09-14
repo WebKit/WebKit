@@ -33,8 +33,10 @@
 
 namespace TestWebKitAPI {
 
-namespace {
+static constexpr Seconds kDefaultWaitForTimeout = 1_s;
 
+static constexpr Seconds kWaitForAbsenceTimeout = 300_ms;
+namespace {
 struct MessageInfo {
     IPC::MessageName messageName;
     uint64_t destinationID;
@@ -53,14 +55,26 @@ public:
         ASSERT(m_messages.isEmpty()); // Received unexpected messages.
     }
 
-    MessageInfo waitForMessage()
+    MessageInfo waitForMessage(Seconds timeout)
     {
         if (m_messages.isEmpty()) {
             m_continueWaitForMessage = false;
-            Util::run(&m_continueWaitForMessage);
+            Util::runFor(&m_continueWaitForMessage, timeout);
         }
         ASSERT(m_messages.size() >= 1);
         return m_messages.takeLast();
+    }
+
+    bool gotDidClose() const
+    {
+        return m_didClose;
+    }
+
+    bool waitForDidClose(Seconds timeout)
+    {
+        ASSERT(!m_didClose); // Caller checks this.
+        Util::runFor(&m_didClose, timeout);
+        return m_didClose;
     }
 
     // IPC::Connection::Client overrides.
@@ -109,7 +123,7 @@ TEST_F(ConnectionTest, CreateServerConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server), m_mockServerClient);
+    Ref<IPC::Connection> connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
     connection->invalidate();
 }
 
@@ -117,7 +131,7 @@ TEST_F(ConnectionTest, CreateClientConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() }, m_mockClientClient);
+    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
     connection->invalidate();
 }
 
@@ -125,39 +139,167 @@ TEST_F(ConnectionTest, ConnectLocalConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server), m_mockServerClient);
-    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() }, m_mockClientClient);
-    serverConnection->open();
-    clientConnection->open();
+    Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
+    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+    serverConnection->open(m_mockServerClient);
+    clientConnection->open(m_mockClientClient);
     serverConnection->invalidate();
     clientConnection->invalidate();
 }
 
-TEST_F(ConnectionTest, SendLocalMessage)
+enum class ConnectionTestDirection {
+    ServerIsA,
+    ClientIsA
+};
+
+void PrintTo(ConnectionTestDirection value, ::std::ostream* o)
 {
-    auto identifiers = IPC::Connection::createConnectionIdentifierPair();
-    ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server), m_mockServerClient);
-    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() }, m_mockClientClient);
-    serverConnection->open();
-    clientConnection->open();
+    if (value == ConnectionTestDirection::ServerIsA)
+        *o << "ServerIsA";
+    else if (value == ConnectionTestDirection::ClientIsA)
+        *o << "ClientIsA";
+    else
+        *o << "Unknown";
+}
+
+class OpenedConnectionTest : public testing::TestWithParam<std::tuple<ConnectionTestDirection>> {
+public:
+    bool serverIsA() const { return std::get<0>(GetParam()) == ConnectionTestDirection::ServerIsA; }
+
+    void SetUp()
+    {
+        WTF::initializeMainThread();
+        auto identifiers = IPC::Connection::createConnectionIdentifierPair();
+        if (!identifiers) {
+            FAIL();
+            return;
+        }
+        m_connections[serverIsA() ? 0 : 1].connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
+        m_connections[serverIsA() ? 1 : 0].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+    }
+
+    void TearDown()
+    {
+        for (auto& c : m_connections) {
+            if (c.connection)
+                c.connection->invalidate();
+            c.connection = nullptr;
+        }
+    }
+
+    ::testing::AssertionResult openA()
+    {
+        if (!a())
+            return ::testing::AssertionFailure() << "No A.";
+        if (!a()->open(aClient()))
+            return ::testing::AssertionFailure() << "Failed to open A";
+        return ::testing::AssertionSuccess();
+    }
+
+    ::testing::AssertionResult openB()
+    {
+        if (!b())
+            return ::testing::AssertionFailure() << "No b.";
+        if (!b()->open(bClient()))
+            return ::testing::AssertionFailure() << "Failed to open B";
+
+        return ::testing::AssertionSuccess();
+    }
+
+    ::testing::AssertionResult openBoth()
+    {
+        auto result = openA();
+        if (result)
+            result = openB();
+        return result;
+    }
+
+    IPC::Connection* a()
+    {
+        return m_connections[0].connection.get();
+    }
+
+    MockConnectionClient& aClient()
+    {
+        return m_connections[0].client;
+    }
+
+    IPC::Connection* b()
+    {
+        return m_connections[1].connection.get();
+    }
+
+    MockConnectionClient& bClient()
+    {
+        return m_connections[1].client;
+    }
+
+    void deleteA()
+    {
+        m_connections[0].connection = nullptr;
+    }
+
+    void deleteB()
+    {
+        m_connections[1].connection = nullptr;
+    }
+
+protected:
+    struct {
+        RefPtr<IPC::Connection> connection;
+        MockConnectionClient client;
+    } m_connections[2];
+};
+
+TEST_P(OpenedConnectionTest, SendLocalMessage)
+{
+    ASSERT_TRUE(openBoth());
 
     for (uint64_t i = 0u; i < 55u; ++i)
-        serverConnection->send(MockTestMessage1 { }, i);
+        a()->send(MockTestMessage1 { }, i);
     for (uint64_t i = 100u; i < 160u; ++i)
-        clientConnection->send(MockTestMessage1 { }, i);
+        b()->send(MockTestMessage1 { }, i);
     for (uint64_t i = 0u; i < 55u; ++i) {
-        auto message = m_mockClientClient.waitForMessage();
+        auto message = bClient().waitForMessage(kDefaultWaitForTimeout);
         EXPECT_EQ(message.messageName, MockTestMessage1::name());
         EXPECT_EQ(message.destinationID, i);
     }
     for (uint64_t i = 100u; i < 160u; ++i) {
-        auto message = m_mockServerClient.waitForMessage();
+        auto message = aClient().waitForMessage(kDefaultWaitForTimeout);
         EXPECT_EQ(message.messageName, MockTestMessage1::name());
         EXPECT_EQ(message.destinationID, i);
     }
-    serverConnection->invalidate();
-    clientConnection->invalidate();
 }
+
+TEST_P(OpenedConnectionTest, AInvalidateDeliversBDidClose)
+{
+    ASSERT_TRUE(openBoth());
+    a()->invalidate();
+    ASSERT_FALSE(bClient().gotDidClose());
+    EXPECT_TRUE(bClient().waitForDidClose(kDefaultWaitForTimeout));
+    EXPECT_FALSE(aClient().gotDidClose());
+}
+
+TEST_P(OpenedConnectionTest, AAndBInvalidateDoesNotDeliverDidClose)
+{
+    ASSERT_TRUE(openBoth());
+    a()->invalidate();
+    b()->invalidate();
+    EXPECT_FALSE(aClient().waitForDidClose(kWaitForAbsenceTimeout));
+    EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
+}
+
+TEST_P(OpenedConnectionTest, UnopenedAAndInvalidateDoesNotDeliverBDidClose)
+{
+    ASSERT_TRUE(openB());
+    a()->invalidate();
+    deleteA();
+    EXPECT_FALSE(bClient().waitForDidClose(kWaitForAbsenceTimeout));
+}
+
+INSTANTIATE_TEST_SUITE_P(ConnectionTest,
+    OpenedConnectionTest,
+    testing::Values(ConnectionTestDirection::ServerIsA, ConnectionTestDirection::ClientIsA),
+    TestParametersToStringFormatter());
 
 }

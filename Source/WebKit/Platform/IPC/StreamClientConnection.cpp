@@ -56,7 +56,7 @@ StreamClientConnection::StreamConnectionWithDedicatedConnection StreamClientConn
     // The "Client" in StreamClientConnection means the party that mostly does sending, e.g. untrusted party.
     // The "Server" in StreamServerConnection means the party that mostly does receiving, e.g. the trusted party which holds the destination object to communicate with.
     auto dedicatedConnectionClient = makeUnique<DedicatedConnectionClient>(receiver);
-    auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server, *dedicatedConnectionClient);
+    auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server);
     std::unique_ptr<StreamClientConnection> streamConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSize, WTFMove(dedicatedConnectionClient)) };
     // FIXME(http://webkit.org/b238944): Make IPC::Attachment really movable on OS(DARWIN).
     return { WTFMove(streamConnection), WTFMove(connectionIdentifiers->client) };
@@ -86,7 +86,7 @@ StreamClientConnection::~StreamClientConnection()
 void StreamClientConnection::open()
 {
     if (m_dedicatedConnectionClient)
-        m_connection->open();
+        m_connection->open(*m_dedicatedConnectionClient);
 }
 
 void StreamClientConnection::invalidate()
