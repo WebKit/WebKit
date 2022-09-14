@@ -256,6 +256,8 @@ bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, con
         parseSuccess = parser.parseFontPaletteValuesDescriptor(propertyID);
     else if (ruleType == StyleRuleType::CounterStyle)
         parseSuccess = parser.parseCounterStyleDescriptor(propertyID, context);
+    else if (ruleType == StyleRuleType::Keyframe)
+        parseSuccess = parser.parseKeyframeDescriptor(propertyID, important);
     else
         parseSuccess = parser.parseValueStart(propertyID, important);
 
@@ -5169,6 +5171,27 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID propId)
 
     addProperty(propId, CSSPropertyInvalid, *parsedValue, false);
     return true;
+}
+
+bool CSSPropertyParser::parseKeyframeDescriptor(CSSPropertyID propertyID, bool important)
+{
+    // https://www.w3.org/TR/css-animations-1/#keyframes
+    // The <declaration-list> inside of <keyframe-block> accepts any CSS property except those
+    // defined in this specification, but does accept the animation-timing-function property and
+    // interprets it specially.
+    switch (propertyID) {
+    case CSSPropertyAnimation:
+    case CSSPropertyAnimationDelay:
+    case CSSPropertyAnimationDirection:
+    case CSSPropertyAnimationDuration:
+    case CSSPropertyAnimationFillMode:
+    case CSSPropertyAnimationIterationCount:
+    case CSSPropertyAnimationName:
+    case CSSPropertyAnimationPlayState:
+        return false;
+    default:
+        return parseValueStart(propertyID, important);
+    }
 }
 
 static RefPtr<CSSPrimitiveValue> consumeBasePaletteDescriptor(CSSParserTokenRange& range)
