@@ -17,15 +17,23 @@ import xml.etree.ElementTree as etree
 
 from enum import Enum
 
-xml_inputs = [
-    'cl.xml',
+khronos_xml_inputs = [
+    '../third_party/EGL-Registry/src/api/egl.xml',
+    '../third_party/OpenCL-Docs/src/xml/cl.xml',
+    # TODO(jmadill): Use canonical XML. http://anglebug.com/6461
+    # '../third_party/OpenGL-Registry/src/xml/gl.xml',
     'gl.xml',
+    '../third_party/OpenGL-Registry/src/xml/glx.xml',
+    '../third_party/OpenGL-Registry/src/xml/wgl.xml',
+]
+
+angle_xml_inputs = [
     'gl_angle_ext.xml',
-    'egl.xml',
     'egl_angle_ext.xml',
-    'wgl.xml',
     'registry_xml.py',
 ]
+
+xml_inputs = sorted(khronos_xml_inputs + angle_xml_inputs)
 
 # Notes on categories of extensions:
 # 'Requestable' extensions are extensions that can be enabled with ANGLE_request_extension
@@ -376,9 +384,6 @@ check_sorted('strip_suffixes', strip_suffixes)
 # Toggle generation here.
 support_EGL_ANGLE_explicit_context = True
 
-# For ungrouped GLenum types
-default_enum_group_name = "DefaultGroup"
-
 # Group names that appear in command/param, but not present in groups/group
 unsupported_enum_group_names = {
     'GetMultisamplePNameNV',
@@ -402,6 +407,7 @@ DESKTOP_GL_VERSIONS = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 0), (
 GLES_VERSIONS = [(2, 0), (3, 0), (3, 1), (3, 2), (1, 0)]
 EGL_VERSIONS = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5)]
 WGL_VERSIONS = [(1, 0)]
+GLX_VERSIONS = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4)]
 CL_VERSIONS = [(1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2), (3, 0)]
 
 
@@ -410,8 +416,13 @@ class apis:
     GL = 'GL'
     GLES = 'GLES'
     WGL = 'WGL'
+    GLX = 'GLX'
     EGL = 'EGL'
     CL = 'CL'
+
+# For GLenum types
+api_enums = {apis.GL: 'BigGLEnum', apis.GLES: 'GLESEnum'}
+default_enum_group_name = 'AllEnums'
 
 
 def script_relative(path):
@@ -424,6 +435,13 @@ def path_to(folder, file):
 
 def strip_api_prefix(cmd_name):
     return cmd_name.lstrip("cwegl")
+
+
+def find_xml_input(xml_file):
+    for found_xml in xml_inputs:
+        if found_xml == xml_file or found_xml.endswith('/' + xml_file):
+            return found_xml
+    raise Exception('Could not find XML input: ' + xml_file)
 
 
 def get_cmd_name(command_node):
@@ -459,10 +477,10 @@ class CommandNames:
 class RegistryXML:
 
     def __init__(self, xml_file, ext_file=None):
-        tree = etree.parse(script_relative(xml_file))
+        tree = etree.parse(script_relative(find_xml_input(xml_file)))
         self.root = tree.getroot()
         if (ext_file):
-            self._AppendANGLEExts(ext_file)
+            self._AppendANGLEExts(find_xml_input(ext_file))
         self.all_commands = self.root.findall('commands/command')
         self.all_cmd_names = CommandNames()
         self.commands = {}
@@ -496,6 +514,9 @@ class RegistryXML:
 
     def _ClassifySupport(self, extension):
         supported = extension.attrib['supported']
+        # Desktop GL extensions exposed in ANGLE GLES for Chrome.
+        if extension.attrib['name'] in ['GL_ARB_sync', 'GL_NV_robustness_video_memory_purge']:
+            supported += "|gles2"
         if 'gles2' in supported:
             return 'gl2ext'
         elif 'gles1' in supported:
@@ -504,6 +525,8 @@ class RegistryXML:
             return 'eglext'
         elif 'wgl' in supported:
             return 'wglext'
+        elif 'glx' in supported:
+            return 'glxext'
         elif 'cl' in supported:
             return 'clext'
         else:
@@ -571,7 +594,7 @@ class EntryPoints:
             cmd_name = get_cmd_name(command_node)
 
             if api == apis.WGL:
-                cmd_name = cmd_name if cmd_name[:3] == 'wgl' else 'wgl' + cmd_name
+                cmd_name = cmd_name if cmd_name.startswith('wgl') else 'wgl' + cmd_name
 
             if cmd_name not in commands:
                 continue

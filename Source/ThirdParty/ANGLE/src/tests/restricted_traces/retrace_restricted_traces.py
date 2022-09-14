@@ -197,7 +197,7 @@ def upgrade_traces(args, traces):
                     f'There was a problem tracing "{trace}", could not find json file: {json_file}'
                 )
                 failures += [trace]
-        except:
+        except subprocess.CalledProcessError:
             logging.exception('There was an exception running "%s":' % trace)
             failures += [trace]
 
@@ -226,7 +226,7 @@ def validate_traces(args, traces):
         max_steps = min(args.limit, num_frames) if args.limit else num_frames
         try:
             run_test_suite(args, trace, max_steps, additional_args, additional_env)
-        except:
+        except subprocess.CalledProcessError:
             logging.error('There was a failure running "%s".' % trace)
             failures += [trace]
 

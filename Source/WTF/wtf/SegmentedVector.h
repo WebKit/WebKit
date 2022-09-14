@@ -47,8 +47,8 @@ namespace WTF {
         using iterator_category = std::forward_iterator_tag;
         using value_type = T;
         using difference_type = ptrdiff_t;
-        using pointer = const T*;
-        using reference = const T&;
+        using pointer = T*;
+        using reference = T&;
 
         ~SegmentedVectorIterator() { }
 

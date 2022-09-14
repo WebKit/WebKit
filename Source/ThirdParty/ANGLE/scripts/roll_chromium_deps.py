@@ -73,6 +73,7 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/qemu-linux-x64',
     'third_party/qemu-mac-x64',
     'third_party/r8',
+    'third_party/r8/d8',
     'third_party/requests/src',
     'third_party/six',
     'third_party/turbine',

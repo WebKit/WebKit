@@ -32,11 +32,6 @@
 6743 OPENGL : SimpleStateChangeTestES3.RespecifyBufferAfterBeginTransformFeedback/* = SKIP
 6743 GLES : SimpleStateChangeTestES3.RespecifyBufferAfterBeginTransformFeedback/* = SKIP
 
-// Direct SPIR-V generation.  The following tests pass on some platforms but not others.  Need to investigate.
-4889 VULKAN : GeometryShaderTest.LayeredFramebufferPreRenderClear2DArrayColor/* = SKIP
-4889 VULKAN : GeometryShaderTest.LayeredFramebufferPreRenderClear3DColor/* = SKIP
-4889 VULKAN : GLSLTest_ES31.VaryingTessellationSampleInAndOut/* = SKIP
-
 // Vulkan generic
 6641 VULKAN : UniformTest.UnusedStructInlineUniform/* = SKIP
 6641 VULKAN : UniformTest.UnusedStructInlineUniformWithSampler/* = SKIP
@@ -538,6 +533,22 @@
 7158 PIXEL6 VULKAN : ImageTestES3.SourceAHBMipTarget2DMip/* = SKIP
 7158 PIXEL6 VULKAN : ImageTestES3.SourceAHBMipTarget2DMipGenerateMipmap/* = SKIP
 7279 PIXEL6 VULKAN : PixelLocalStorageTest.EarlyFragmentTests/ES3_1_Vulkan_EmulatePixelLocalStorage* = SKIP
+// New failures after TP1A.220624.021 upgrade
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidate/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateAndClear/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDetachModifyTexAttachDrawWithBlend/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDisableDraw/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDisableDrawEnable/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDisableEnableDraw/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDraw/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDrawAndDeleteRenderbuffer/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDrawDisableEnable/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDrawDisableEnableInvalidate/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateDrawDisableEnableInvalidateDraw/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DepthStencilInvalidateSub/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DisableDrawInvalidateEnable/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.DisableInvalidateDraw/* = SKIP
+7583 PIXEL6 VULKAN : VulkanPerformanceCounterTest.ReadOnlyDepthBufferLayout/* = SKIP
 
 // ARM drivers cannot support xfb emulation because they lack support for the
 // vertexPipelineStoresAndAtomics Vulkan feature.  The tests that force-enable this feature are
@@ -587,7 +598,7 @@
 
 // ASAN flakes with Vulkan / SwiftShader / AsyncCommandQueue
 6875 ASAN VULKAN SWIFTSHADER : ComputeShaderTest.*/ES3_1_Vulkan_SwiftShader_AsyncCommandQueue = SKIP
-6875 SWIFTSHADER : TransformFeedbackTest.SpanMultipleRenderPasses/* = SKIP
+6875 SWIFTSHADER : TransformFeedbackTest.SpanMultipleRenderPasses/*AsyncCommandQueue* = SKIP
 
 7112 SWIFTSHADER : TransformFeedbackTest.BaseInstance/* = SKIP
 7112 PIXEL4ORXL VULKAN : TransformFeedbackTest.BaseInstance/* = SKIP
@@ -662,17 +673,13 @@
 3032 D3D11 : GLSLTest_ES31.AliasedLoadStore/* = SKIP
 7398 OpenGL : GLSLTest_ES31.AliasedLoadStore/* = SKIP
 
-// image2D handles do not work as function arguments.
-7484 D3D11 : GLSLTest_ES31.*Image2DAsFunctionArg/* = SKIP
-7484 OpenGL : GLSLTest_ES31.*Image2DAsFunctionArg/* = SKIP
-7484 GLES : GLSLTest_ES31.*Image2DAsFunctionArg/* = SKIP
+// On D3D: readonly image2D handles don't return the texture's existing contents.
+7611 D3D11 : GLSLTest_ES31.ReadOnlyImage2DAsFunctionArg/* = SKIP
 
 // Flaky hangs on Linux SwANGLE
-7431 LINUX SWIFTSHADER : MultithreadingTestES3.ThreadB*BeforeThreadASyncFinish/ES3_Vulkan_SwiftShader = SKIP
-7431 LINUX SWIFTSHADER : MultithreadingTestES3.ThreadB*BeforeThreadASyncFlush/ES3_Vulkan_SwiftShader = SKIP
 7419 SWIFTSHADER : MultithreadingTestES3.CreateFramebufferFetchBeforeRenderPass/* = SKIP
 7419 WIN SWIFTSHADER : MultithreadingTestES3.CreateFramebufferFetchMidRenderPass/* = SKIP
-7419 SWIFTSHADER : MultithreadingTestES3.ThreadCWaitBeforeThreadBSyncFinish/* = SKIP
+7419 SWIFTSHADER : MultithreadingTestES3.Thread* = SKIP
 
 // Timeout with SwiftShader and MAC OpenGL due to large workloads
 7389 SWIFTSHADER : Texture2DTest.ManySupersedingTextureUpdates/* = SKIP
@@ -681,12 +688,23 @@
 // GL, GLES run into issues with cleanup
 7495 WIN OpenGL : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP
 7495 WIN GLES : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP
+7495 OpenGL : EGLContextSharingTestNoFixture.InactiveThreadDoesntPreventCleanup/* = SKIP
+7495 WIN GLES : EGLContextSharingTestNoFixture.InactiveThreadDoesntPreventCleanup/* = SKIP
+// Also causes crashes/failures in other tests on Pixel 4 and Win Intel
+7602 PIXEL4ORXL GLES : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP
+7602 WIN INTEL VULKAN : EGLMultiContextTest.ReuseUnterminatedDisplay/* = SKIP
 
 7546 LINUX VULKAN : FramebufferTest_ES3.SurfaceDimensionsChangeAndFragCoord/* = SKIP
+
+7624 WIN INTEL : *EmulateCopyTexImage2DFromRenderbuffers* = SKIP
+
+7625 WIN SWIFTSHADER : VulkanPerformanceCounterTest.EndXfbAfterRenderPassClosed/* = SKIP
 
 // Slow tests, should appear last in this file
 5076 : GLSLTest.VerifyMaxVertexUniformVectors* = TIMEOUT
 5076 : GLSLTest.VerifyMaxFragmentUniformVectors* = TIMEOUT
-6251 : MultithreadingTest* = TIMEOUT
+6261 : MultithreadingTest* = TIMEOUT
 // Please do not add expectations below this line,
 // so that TIMEOUT expectations above don't override more precise SKIP expectations
+
+7629 VULKAN : EGLRobustnessTestES3.Context*ResetOnInvalidLocalShaderVariableAccess_ShareGroupAfterProgramCreation/* = SKIP

@@ -133,7 +133,7 @@ def write_header(enums, path_prefix, file_name, data_source_name, includes, name
     header = header_template.format(
         content=''.join(content),
         data_source_name=data_source_name,
-        script_name=sys.argv[0],
+        script_name=os.path.basename(sys.argv[0]),
         file_name=file_name,
         include_guard=generate_include_guard(file_name),
         includes=includes,
@@ -229,7 +229,7 @@ def write_cpp(enums, path_prefix, file_name, data_source_name, namespace, api_en
     cpp = cpp_template.format(
         content=''.join(content),
         data_source_name=data_source_name,
-        script_name=sys.argv[0],
+        script_name=os.path.basename(sys.argv[0]),
         file_name=file_name,
         header_name=header_name_from_cpp_name(file_name),
         namespace=namespace,

@@ -544,7 +544,7 @@ const char *QueryString(Thread *thread, Display *display, EGLint name)
     switch (name)
     {
         case EGL_CLIENT_APIS:
-            result = "OpenGL_ES";
+            result = display->getClientAPIString().c_str();
             break;
         case EGL_EXTENSIONS:
             if (display == EGL_NO_DISPLAY)

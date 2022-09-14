@@ -129,7 +129,7 @@ private:
     template<typename T>
     bool send(T&& message) const
     {
-        return m_streamConnection->connection().send(WTFMove(message), m_identifier);
+        return m_streamConnection->send(WTFMove(message), m_identifier);
     }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;

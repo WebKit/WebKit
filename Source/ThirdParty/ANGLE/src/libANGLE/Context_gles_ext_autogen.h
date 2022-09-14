@@ -71,7 +71,7 @@
     /* GL_ANGLE_pack_reverse_row_order */                                                          \
     /* GL_ANGLE_texture_usage */                                                                   \
     /* GL_ANGLE_translated_shader_source */                                                        \
-    void getTranslatedShaderSource(ShaderProgramID shaderPacked, GLsizei bufsize, GLsizei *length, \
+    void getTranslatedShaderSource(ShaderProgramID shaderPacked, GLsizei bufSize, GLsizei *length, \
                                    GLchar *source);                                                \
     /* GL_APPLE_clip_distance */                                                                   \
     /* GL_ARB_sync */                                                                              \
@@ -127,7 +127,7 @@
     /* GL_EXT_draw_elements_base_vertex */                                                         \
     void multiDrawElementsBaseVertex(PrimitiveMode modePacked, const GLsizei *count,               \
                                      DrawElementsType typePacked, const void *const *indices,      \
-                                     GLsizei primcount, const GLint *basevertex);                  \
+                                     GLsizei drawcount, const GLint *basevertex);                  \
     /* GL_EXT_external_buffer */                                                                   \
     void bufferStorageExternal(BufferBinding targetPacked, GLintptr offset, GLsizeiptr size,       \
                                GLeglClientBufferEXT clientBuffer, GLbitfield flags);               \

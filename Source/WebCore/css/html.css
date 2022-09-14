@@ -56,6 +56,7 @@ address, article, aside, div, footer, header, hgroup, main, nav, section {
 
 marquee {
     display: inline-block;
+    text-align: initial;
 }
 
 blockquote {
@@ -373,7 +374,7 @@ fieldset {
     padding-inline-end: 0.75em;
     padding-block-end: 0.625em;
     border: 2px groove ThreeDFace;
-    min-width: min-content;
+    min-inline-size: min-content;
 }
 
 button {
@@ -1293,19 +1294,11 @@ input[type="file"]:focus::file-selector-button {
 a:any-link {
     color: -webkit-link;
     text-decoration: underline;
-    cursor: pointer;
+    cursor: auto;
 }
 
 a:any-link:active {
     color: -webkit-activelink;
-}
-
-a:any-link:read-write {
-    cursor: text;
-}
-
-area:any-link {
-    cursor: pointer;
 }
 
 /* HTML5 ruby elements */

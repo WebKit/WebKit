@@ -205,11 +205,6 @@ void *OpenSystemLibraryWithExtensionAndGetError(const char *libraryName,
     }
 
     std::string fullPath = directory + libraryName;
-#if ANGLE_PLATFORM_IOS
-    // On iOS, dlopen needs a suffix on the framework name to work.
-    fullPath = fullPath + "/" + libraryName;
-#endif
-
     return OpenPosixLibrary(fullPath, extraFlags, errorOut);
 }
 

@@ -19,8 +19,9 @@
 
 namespace gl
 {
-enum class GLenumGroup;
-}
+enum class BigGLEnum;
+enum class GLESEnum;
+}  // namespace gl
 
 namespace angle
 {
@@ -38,7 +39,8 @@ struct ParamCapture : angle::NonCopyable
     std::string name;
     ParamType type;
     ParamValue value;
-    gl::GLenumGroup enumGroup;  // only used for param type GLenum, GLboolean and GLbitfield
+    gl::GLESEnum enumGroup;   // only used for param type GLenum, GLboolean and GLbitfield
+    gl::BigGLEnum bigGLEnum;  // only used for param type GLenum, GLboolean and GLbitfield
     ParamData data;
     int dataNElements           = 0;
     int arrayClientPointerIndex = -1;
@@ -60,7 +62,12 @@ class ParamBuffer final : angle::NonCopyable
     void setValueParamAtIndex(const char *paramName, ParamType paramType, T paramValue, int index);
     template <typename T>
     void addEnumParam(const char *paramName,
-                      gl::GLenumGroup enumGroup,
+                      gl::GLESEnum enumGroup,
+                      ParamType paramType,
+                      T paramValue);
+    template <typename T>
+    void addEnumParam(const char *paramName,
+                      gl::BigGLEnum enumGroup,
                       ParamType paramType,
                       T paramValue);
 
@@ -841,8 +848,6 @@ class FrameCaptureShared final : angle::NonCopyable
     bool mCaptureActive;
     std::vector<uint32_t> mActiveFrameIndices;
 
-    bool mMidExecutionCaptureActive;
-
     // Cache most recently compiled and linked sources.
     ShaderSourceMap mCachedShaderSource;
     ProgramSourceMap mCachedProgramSources;
@@ -892,13 +897,25 @@ void ParamBuffer::setValueParamAtIndex(const char *paramName,
 
 template <typename T>
 void ParamBuffer::addEnumParam(const char *paramName,
-                               gl::GLenumGroup enumGroup,
+                               gl::GLESEnum enumGroup,
                                ParamType paramType,
                                T paramValue)
 {
     ParamCapture capture(paramName, paramType);
     InitParamValue(paramType, paramValue, &capture.value);
     capture.enumGroup = enumGroup;
+    mParamCaptures.emplace_back(std::move(capture));
+}
+
+template <typename T>
+void ParamBuffer::addEnumParam(const char *paramName,
+                               gl::BigGLEnum enumGroup,
+                               ParamType paramType,
+                               T paramValue)
+{
+    ParamCapture capture(paramName, paramType);
+    InitParamValue(paramType, paramValue, &capture.value);
+    capture.bigGLEnum = enumGroup;
     mParamCaptures.emplace_back(std::move(capture));
 }
 

@@ -233,7 +233,7 @@ def _run_test_suite(args, cmd_args, env):
 
 
 def _run_calibration(args, common_args, env):
-    exit_code, calibrate_output = _run_test_suite(
+    exit_code, calibrate_output, json_results = _run_test_suite(
         args, common_args + [
             '--calibration',
             '--warmup-loops',
@@ -241,11 +241,15 @@ def _run_calibration(args, common_args, env):
         ], env)
     if exit_code != EXIT_SUCCESS:
         raise RuntimeError('%s failed. Output:\n%s' % (args.test_suite, calibrate_output))
+    if SKIP in json_results['num_failures_by_type']:
+        return SKIP, None
+
     steps_per_trial = _get_results_from_output(calibrate_output, 'steps_to_run')
     if not steps_per_trial:
-        return None
+        return FAIL, None
+
     assert (len(steps_per_trial) == 1)
-    return int(steps_per_trial[0])
+    return PASS, int(steps_per_trial[0])
 
 
 def _run_perf(args, common_args, env, steps_per_trial):
@@ -267,20 +271,35 @@ def _run_perf(args, common_args, env, steps_per_trial):
     with common.temporary_file() as histogram_file_path:
         run_args += ['--isolated-script-test-perf-output=%s' % histogram_file_path]
 
-        exit_code, output = _run_test_suite(args, run_args, env)
+        exit_code, output, json_results = _run_test_suite(args, run_args, env)
         if exit_code != EXIT_SUCCESS:
             raise RuntimeError('%s failed. Output:\n%s' % (args.test_suite, output))
+        if SKIP in json_results['num_failures_by_type']:
+            return SKIP, None, None
 
         sample_wall_times = _get_results_from_output(output, 'wall_time')
         if sample_wall_times:
             sample_histogram = _read_histogram(histogram_file_path)
-            return sample_wall_times, sample_histogram
+            return PASS, sample_wall_times, sample_histogram
 
-    return None, None
+    return FAIL, None, None
 
 
 class _MaxErrorsException(Exception):
     pass
+
+
+def _skipped_or_glmark2(test, test_status):
+    if test_status == SKIP:
+        logging.info('Test skipped by suite: %s' % test)
+        return True
+
+    # GLMark2Benchmark logs .fps/.score instead of our perf metrics.
+    if test.startswith('GLMark2Benchmark.Run/'):
+        logging.info('GLMark2Benchmark missing metrics (as expected, skipping): %s' % test)
+        return True
+
+    return False
 
 
 def _run_tests(tests, args, extra_flags, env):
@@ -312,16 +331,20 @@ def _run_tests(tests, args, extra_flags, env):
             steps_per_trial = args.steps_per_trial
         else:
             try:
-                steps_per_trial = _run_calibration(args, common_args, env)
+                test_status, steps_per_trial = _run_calibration(args, common_args, env)
             except RuntimeError as e:
                 logging.fatal(e)
                 total_errors += 1
                 results.result_fail(test)
                 continue
 
-            if not steps_per_trial:
-                logging.warning('Skipping test %s' % test)
+            if _skipped_or_glmark2(test, test_status):
                 results.result_skip(test)
+                continue
+
+            if not steps_per_trial:
+                logging.error('Test %s missing steps_per_trial' % test)
+                results.result_fail(test)
                 continue
 
         logging.info('Test %d/%d: %s (samples=%d trials_per_sample=%d steps_per_trial=%d)' %
@@ -332,17 +355,21 @@ def _run_tests(tests, args, extra_flags, env):
         test_histogram_set = histogram_set.HistogramSet()
         for sample in range(args.samples_per_test):
             try:
-                sample_wall_times, sample_histogram = _run_perf(args, common_args, env,
-                                                                steps_per_trial)
+                test_status, sample_wall_times, sample_histogram = _run_perf(
+                    args, common_args, env, steps_per_trial)
             except RuntimeError as e:
                 logging.error(e)
                 results.result_fail(test)
                 total_errors += 1
                 break
 
+            if _skipped_or_glmark2(test, test_status):
+                results.result_skip(test)
+                break
+
             if not sample_wall_times:
-                # This can be intentional for skipped tests. They are handled below.
-                logging.warning('Test %s failed to produce a sample output' % test)
+                logging.error('Test %s failed to produce a sample output' % test)
+                results.result_fail(test)
                 break
 
             logging.info('Test %d/%d Sample %d/%d wall_times: %s' %
@@ -353,10 +380,7 @@ def _run_tests(tests, args, extra_flags, env):
             test_histogram_set.Merge(sample_histogram)
 
         if not results.has_result(test):
-            if not wall_times:
-                logging.warning('Skipping test %s. Assuming this is intentional.' % test)
-                results.result_skip(test)
-            elif len(wall_times) == (args.samples_per_test * args.trials_per_sample):
+            if len(wall_times) == (args.samples_per_test * args.trials_per_sample):
                 stats = _wall_times_stats(wall_times)
                 if stats:
                     logging.info('Test %d/%d: %s: %s' % (test_index + 1, len(tests), test, stats))
@@ -450,7 +474,7 @@ def main():
     if angle_test_util.IsAndroid():
         tests = android_helper.ListTests(args.test_suite)
     else:
-        exit_code, output = _run_test_suite(args, ['--list-tests', '--verbose'], env)
+        exit_code, output, _ = _run_test_suite(args, ['--list-tests', '--verbose'], env)
         if exit_code != EXIT_SUCCESS:
             logging.fatal('Could not find test list from test output:\n%s' % output)
         tests = _get_tests_from_output(output)

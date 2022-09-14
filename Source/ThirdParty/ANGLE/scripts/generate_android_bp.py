@@ -12,10 +12,16 @@ import sys
 import re
 import os
 import argparse
+import functools
+import collections
 
 root_targets = [
     "//:libGLESv2",
     "//:libGLESv1_CM",
+    "//:libEGL",
+]
+
+codegen_targets = [
     "//:libEGL",
 ]
 
@@ -28,6 +34,30 @@ abi_x86 = 'x86'
 abi_x64 = 'x86_64'
 
 abi_targets = [abi_arm, abi_arm64, abi_x86, abi_x64]
+
+
+# Makes dict cache-able "by reference" (assumed not to be mutated)
+class BuildInfo(dict):
+
+    def __hash__(self):
+        return 0
+
+    def __eq__(self, other):
+        return self is other
+
+
+# TODO: replace with functools.cache once on python3
+def cache(f):
+    cache = {}
+
+    @functools.wraps(f)
+    def wrapper(*args):
+        key = tuple(args)
+        if key not in cache:
+            cache[key] = f(*args)
+        return cache[key]
+
+    return wrapper
 
 
 def tabs(indent):
@@ -107,8 +137,7 @@ def gn_target_to_blueprint_target(target, target_info):
 
     # Split the gn target name (in the form of //gn_file_path:target_name) into gn_file_path and
     # target_name
-    target_regex = re.compile(r"^//([a-zA-Z0-9\-\+_/]*):([a-zA-Z0-9\-\+_.]+)$")
-    match = re.match(target_regex, target)
+    match = re.match(r"^//([a-zA-Z0-9\-\+_/]*):([a-zA-Z0-9\-\+_.]+)$", target)
     assert match is not None
 
     gn_file_path = match.group(1)
@@ -193,7 +222,9 @@ include_blocklist = [
 ]
 
 
-def gn_deps_to_blueprint_deps(target_info, build_info):
+@cache
+def gn_deps_to_blueprint_deps(abi, target, build_info):
+    target_info = build_info[abi][target]
     static_libs = []
     shared_libs = []
     defaults = []
@@ -202,10 +233,14 @@ def gn_deps_to_blueprint_deps(target_info, build_info):
     if 'deps' not in target_info:
         return static_libs, defaults
 
+    if target in codegen_targets:
+        target_name = gn_target_to_blueprint_target(target, target_info)
+        defaults.append(target_name + '_android_codegen')
+
     for dep in target_info['deps']:
         if dep not in target_blockist and (not dep.startswith('//third_party') or any(
                 dep.startswith(substring) for substring in third_party_target_allowlist)):
-            dep_info = build_info[dep]
+            dep_info = build_info[abi][dep]
             blueprint_dep_name = gn_target_to_blueprint_target(dep, dep_info)
 
             # Depending on the dep type, blueprints reference it differently.
@@ -220,8 +255,8 @@ def gn_deps_to_blueprint_deps(target_info, build_info):
                 generated_headers.append(blueprint_dep_name)
 
             # Blueprints do not chain linking of static libraries.
-            (child_static_libs, _, _, child_generated_headers, _) = gn_deps_to_blueprint_deps(
-                dep_info, build_info)
+            (child_static_libs, _, _, child_generated_headers,
+             _) = gn_deps_to_blueprint_deps(abi, dep, build_info)
 
             # Each target needs to link all child static library dependencies.
             static_libs += child_static_libs
@@ -234,7 +269,7 @@ def gn_deps_to_blueprint_deps(target_info, build_info):
             # chrome_zlib needs cpufeatures from the Android NDK. Rather than including the
             # entire NDK is a dep in the ANGLE checkout, use the library that's already part
             # of Android.
-            dep_info = build_info[dep]
+            dep_info = build_info[abi][dep]
             blueprint_dep_name = gn_target_to_blueprint_target(dep, dep_info)
             static_libs.append('cpufeatures')
 
@@ -313,7 +348,7 @@ blueprint_library_target_types = {
 def merge_bps(bps_for_abis):
     common_bp = {}
     for abi in abi_targets:
-        for key in bps_for_abis[abi]:
+        for key in bps_for_abis[abi].keys():
             if isinstance(bps_for_abis[abi][key], list):
                 # Find list values that are common to all ABIs
                 for value in bps_for_abis[abi][key]:
@@ -364,7 +399,7 @@ def library_target_to_blueprint(target, build_info):
             bp['srcs'] = gn_sources_to_blueprint_sources(target_info['sources'])
 
         (bp['static_libs'], bp['shared_libs'], bp['defaults'], bp['generated_headers'],
-         bp['header_libs']) = gn_deps_to_blueprint_deps(target_info, build_info[abi])
+         bp['header_libs']) = gn_deps_to_blueprint_deps(abi, target, build_info)
         bp['shared_libs'] += gn_libs_to_blueprint_shared_libraries(target_info)
 
         bp['local_include_dirs'] = gn_include_dirs_to_blueprint_include_dirs(target_info)
@@ -433,8 +468,8 @@ def is_input_in_tool_files(tool_files, input):
     return input in tool_files
 
 
-def action_target_to_blueprint(target, build_info):
-    target_info = build_info[target]
+def action_target_to_blueprint(abi, target, build_info):
+    target_info = build_info[abi][target]
     blueprint_type = blueprint_gen_types[target_info['type']]
 
     bp = {'name': gn_target_to_blueprint_target(target, target_info)}
@@ -486,26 +521,29 @@ def gn_target_to_blueprint(target, build_info):
         if gn_type in blueprint_library_target_types:
             return library_target_to_blueprint(target, build_info)
         elif gn_type in blueprint_gen_types:
-            return action_target_to_blueprint(target, build_info[abi])
+            return action_target_to_blueprint(abi, target, build_info)
         else:
             # Target is not used by this ABI
             continue
 
 
-def get_gn_target_dependencies(output_dependencies, build_info, target):
-    if target not in output_dependencies:
-        output_dependencies.insert(0, target)
+@cache
+def get_gn_target_dependencies(abi, target, build_info):
+    result = collections.OrderedDict()
+    result[target] = 1
 
-    for dep in build_info[target]['deps']:
+    for dep in build_info[abi][target]['deps']:
         if dep in target_blockist:
             # Blocklisted dep
             continue
-        if dep not in build_info:
+        if dep not in build_info[abi]:
             # No info for this dep, skip it
             continue
 
         # Recurse
-        get_gn_target_dependencies(output_dependencies, build_info, dep)
+        result.update(get_gn_target_dependencies(abi, dep, build_info))
+
+    return result
 
 
 def main():
@@ -522,22 +560,40 @@ def main():
             'gn desc in json format. Generated with \'gn desc <out_dir> --format=json "*"\'.')
     args = vars(parser.parse_args())
 
-    build_info = {}
+    infos = {}
     for abi in abi_targets:
         fixed_abi = abi
         if abi == abi_x64:
             fixed_abi = 'x64'  # gn uses x64, rather than x86_64
         with open(args['gn_json_' + fixed_abi], 'r') as f:
-            build_info[abi] = json.load(f)
+            infos[abi] = json.load(f)
 
-    targets_to_write = []
+    build_info = BuildInfo(infos)
+    targets_to_write = collections.OrderedDict()
     for abi in abi_targets:
         for root_target in root_targets:
-            get_gn_target_dependencies(targets_to_write, build_info[abi], root_target)
+            targets_to_write.update(get_gn_target_dependencies(abi, root_target, build_info))
 
     blueprint_targets = []
-    for target in targets_to_write:
-        blueprint_targets.append(gn_target_to_blueprint(target, build_info))
+
+    blueprint_targets.append(('bootstrap_go_package', {
+        'name': 'soong-angle-codegen',
+        'pkgPath': 'android/soong/external/angle',
+        'deps': [
+            'blueprint', 'blueprint-pathtools', 'soong', 'soong-android', 'soong-cc',
+            'soong-genrule'
+        ],
+        'srcs': ['scripts/angle_android_codegen.go'],
+        'pluginFor': ['soong_build'],
+    }))
+
+    for target in reversed(targets_to_write.keys()):
+        blueprint_type, bp = gn_target_to_blueprint(target, build_info)
+        if target in codegen_targets:
+            blueprint_targets.append(('angle_android_codegen', {
+                'name': bp['name'] + '_android_codegen',
+            }))
+        blueprint_targets.append((blueprint_type, bp))
 
     # Add license build rules
     blueprint_targets.append(('package', {

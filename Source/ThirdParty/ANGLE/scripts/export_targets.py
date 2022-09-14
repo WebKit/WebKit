@@ -233,9 +233,9 @@ IGNORED_INCLUDES = {
     b'vulkan_xcb.h',
     b'vulkan_xlib.h',
     b'vulkan_xlib_xrandr.h',
-# rapidjson adds these include stubs into their documentation
-# comments. Since the script doesn't skip comments they are
-# erroneously marked as valid includes
+    # rapidjson adds these include stubs into their documentation
+    # comments. Since the script doesn't skip comments they are
+    # erroneously marked as valid includes
     b'rapidjson/...',
     # Validation layers support building with robin hood hashing, but we are not enabling that
     # See http://anglebug.com/5791
@@ -248,6 +248,9 @@ IGNORED_INCLUDES = {
     b'libGLESv2/entry_points_gl_3_autogen.h',
     b'libGLESv2/entry_points_gl_4_autogen.h',
     b'libGLESv2/entry_points_wgl.h',
+    # From a comment in vulkan-validation-layers/src/layers/vk_mem_alloc.h
+    b'my_custom_assert.h',
+    b'my_custom_min.h',
 }
 
 IGNORED_INCLUDE_PREFIXES = {

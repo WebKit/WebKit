@@ -76,17 +76,22 @@ int FindIOSurfaceFormatIndex(GLenum internalFormat, GLenum type)
 }  // anonymous namespace
 
 IOSurfaceSurfaceCGL::IOSurfaceSurfaceCGL(const egl::SurfaceState &state,
+                                         RendererGL *renderer,
                                          CGLContextObj cglContext,
                                          EGLClientBuffer buffer,
                                          const egl::AttributeMap &attribs)
     : SurfaceGL(state),
+      mFunctions(renderer->getFunctions()),
+      mStateManager(renderer->getStateManager()),
       mCGLContext(cglContext),
       mIOSurface(nullptr),
       mWidth(0),
       mHeight(0),
       mPlane(0),
       mFormatIndex(-1),
-      mAlphaInitialized(false)
+      mAlphaInitialized(false),
+      mTextureID(0),
+      mFramebufferID(0)
 {
     // Keep reference to the IOSurface so it doesn't get deleted while the pbuffer exists.
     mIOSurface = reinterpret_cast<IOSurfaceRef>(buffer);
@@ -108,6 +113,14 @@ IOSurfaceSurfaceCGL::IOSurfaceSurfaceCGL(const egl::SurfaceState &state,
 
 IOSurfaceSurfaceCGL::~IOSurfaceSurfaceCGL()
 {
+    if (mFramebufferID != 0)
+    {
+        mStateManager->deleteFramebuffer(mFramebufferID);
+        mFramebufferID = 0;
+        mStateManager->deleteTexture(mTextureID);
+        mTextureID = 0;
+    }
+
     if (mIOSurface != nullptr)
     {
         CFRelease(mIOSurface);
@@ -263,62 +276,6 @@ bool IOSurfaceSurfaceCGL::validateAttributes(EGLClientBuffer buffer,
     return true;
 }
 
-// Wraps a FramebufferGL to hook the destroy function to delete the texture associated with the
-// framebuffer.
-class IOSurfaceFramebuffer : public FramebufferGL
-{
-  public:
-    IOSurfaceFramebuffer(const gl::FramebufferState &data,
-                         GLuint id,
-                         GLuint textureId,
-                         bool isDefault,
-                         bool emulatedAlpha)
-        : FramebufferGL(data, id, isDefault, emulatedAlpha), mTextureId(textureId)
-    {}
-    void destroy(const gl::Context *context) override
-    {
-        GetFunctionsGL(context)->deleteTextures(1, &mTextureId);
-        FramebufferGL::destroy(context);
-    }
-
-  private:
-    GLuint mTextureId;
-};
-
-FramebufferImpl *IOSurfaceSurfaceCGL::createDefaultFramebuffer(const gl::Context *context,
-                                                               const gl::FramebufferState &state)
-{
-    const FunctionsGL *functions = GetFunctionsGL(context);
-    StateManagerGL *stateManager = GetStateManagerGL(context);
-
-    GLuint texture = 0;
-    functions->genTextures(1, &texture);
-    const auto &format = kIOSurfaceFormats[mFormatIndex];
-    stateManager->bindTexture(gl::TextureType::Rectangle, texture);
-    CGLError error = CGLTexImageIOSurface2D(
-        mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,
-        format.nativeFormat, format.nativeType, mIOSurface, mPlane);
-    if (error != kCGLNoError)
-    {
-        ERR() << "CGLTexImageIOSurface2D failed: " << CGLErrorString(error);
-    }
-    ASSERT(error == kCGLNoError);
-
-    if (IsError(initializeAlphaChannel(context, texture)))
-    {
-        ERR() << "Failed to initialize IOSurface alpha channel.";
-    }
-
-    GLuint framebuffer = 0;
-    functions->genFramebuffers(1, &framebuffer);
-    stateManager->bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    stateManager->bindTexture(gl::TextureType::Rectangle, texture);
-    functions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE,
-                                    texture, 0);
-
-    return new IOSurfaceFramebuffer(state, framebuffer, texture, true, hasEmulatedAlphaChannel());
-}
-
 angle::Result IOSurfaceSurfaceCGL::initializeAlphaChannel(const gl::Context *context,
                                                           GLuint texture)
 {
@@ -338,6 +295,57 @@ bool IOSurfaceSurfaceCGL::hasEmulatedAlphaChannel() const
 {
     const auto &format = kIOSurfaceFormats[mFormatIndex];
     return format.internalFormat == GL_RGB;
+}
+
+egl::Error IOSurfaceSurfaceCGL::attachToFramebuffer(const gl::Context *context,
+                                                    gl::Framebuffer *framebuffer)
+{
+    FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
+    ASSERT(framebufferGL->getFramebufferID() == 0);
+    if (mFramebufferID == 0)
+    {
+        GLuint textureID = 0;
+        mFunctions->genTextures(1, &textureID);
+        const auto &format = kIOSurfaceFormats[mFormatIndex];
+        mStateManager->bindTexture(gl::TextureType::Rectangle, textureID);
+        CGLError error = CGLTexImageIOSurface2D(
+            mCGLContext, GL_TEXTURE_RECTANGLE, format.nativeInternalFormat, mWidth, mHeight,
+            format.nativeFormat, format.nativeType, mIOSurface, mPlane);
+        if (error != kCGLNoError)
+        {
+            return egl::EglContextLost()
+                   << "CGLTexImageIOSurface2D failed: " << CGLErrorString(error);
+        }
+        ASSERT(error == kCGLNoError);
+
+        // TODO: pass context
+        if (IsError(initializeAlphaChannel(context, textureID)))
+        {
+            return egl::EglContextLost() << "Failed to initialize IOSurface alpha channel.";
+        }
+
+        GLuint framebufferID = 0;
+        mFunctions->genFramebuffers(1, &framebufferID);
+        mStateManager->bindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+        mStateManager->bindTexture(gl::TextureType::Rectangle, textureID);
+        mFunctions->framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE,
+                                         textureID, 0);
+        mTextureID     = textureID;
+        mFramebufferID = framebufferID;
+    }
+
+    framebufferGL->setFramebufferID(mFramebufferID);
+    return egl::NoError();
+}
+
+egl::Error IOSurfaceSurfaceCGL::detachFromFramebuffer(const gl::Context *context,
+                                                      gl::Framebuffer *framebuffer)
+{
+    FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
+    ASSERT(framebufferGL->getFramebufferID() == mFramebufferID);
+
+    framebufferGL->setFramebufferID(0);
+    return egl::NoError();
 }
 
 }  // namespace rx

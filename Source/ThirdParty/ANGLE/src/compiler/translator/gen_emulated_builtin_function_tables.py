@@ -137,7 +137,7 @@ def main():
         emulated_functions += gen_emulated_function(item)
 
     hlsl_gen = template_emulated_builtin_functions_hlsl.format(
-        script_name=sys.argv[0],
+        script_name=os.path.basename(sys.argv[0]),
         data_source_name=input_script,
         emulated_functions="".join(emulated_functions))
 

@@ -22,12 +22,6 @@ SurfaceGL::SurfaceGL(const egl::SurfaceState &state) : SurfaceImpl(state) {}
 
 SurfaceGL::~SurfaceGL() {}
 
-FramebufferImpl *SurfaceGL::createDefaultFramebuffer(const gl::Context *context,
-                                                     const gl::FramebufferState &data)
-{
-    return new FramebufferGL(data, 0, true, false);
-}
-
 egl::Error SurfaceGL::getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc)
 {
     UNREACHABLE();
@@ -71,6 +65,17 @@ angle::Result SurfaceGL::initializeContents(const gl::Context *context,
 bool SurfaceGL::hasEmulatedAlphaChannel() const
 {
     return false;
+}
+
+egl::Error SurfaceGL::attachToFramebuffer(const gl::Context *context, gl::Framebuffer *framebuffer)
+{
+    return egl::NoError();
+}
+
+egl::Error SurfaceGL::detachFromFramebuffer(const gl::Context *context,
+                                            gl::Framebuffer *framebuffer)
+{
+    return egl::NoError();
 }
 
 }  // namespace rx

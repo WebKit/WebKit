@@ -385,6 +385,13 @@ void Destruct(ShHandle handle)
         DeleteCompiler(base->getAsCompiler());
 }
 
+ShBuiltInResources GetBuiltInResources(const ShHandle handle)
+{
+    TCompiler *compiler = GetCompilerFromHandle(handle);
+    ASSERT(compiler);
+    return compiler->getBuiltInResources();
+}
+
 const std::string &GetBuiltInResourcesString(const ShHandle handle)
 {
     TCompiler *compiler = GetCompilerFromHandle(handle);
@@ -1052,3 +1059,33 @@ const char *InterpolationTypeToString(InterpolationType type)
     }
 }
 }  // namespace sh
+
+ShCompileOptions::ShCompileOptions()
+{
+    memset(this, 0, sizeof(*this));
+}
+
+ShCompileOptions::ShCompileOptions(const ShCompileOptions &other)
+{
+    memcpy(this, &other, sizeof(*this));
+}
+ShCompileOptions &ShCompileOptions::operator=(const ShCompileOptions &other)
+{
+    memcpy(this, &other, sizeof(*this));
+    return *this;
+}
+
+ShBuiltInResources::ShBuiltInResources()
+{
+    memset(this, 0, sizeof(*this));
+}
+
+ShBuiltInResources::ShBuiltInResources(const ShBuiltInResources &other)
+{
+    memcpy(this, &other, sizeof(*this));
+}
+ShBuiltInResources &ShBuiltInResources::operator=(const ShBuiltInResources &other)
+{
+    memcpy(this, &other, sizeof(*this));
+    return *this;
+}

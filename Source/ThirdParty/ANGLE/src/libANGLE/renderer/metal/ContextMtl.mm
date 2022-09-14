@@ -283,7 +283,7 @@ angle::Result ContextMtl::ensureIncompleteTexturesCreated(const gl::Context *con
 // Flush and finish.
 angle::Result ContextMtl::flush(const gl::Context *context)
 {
-    flushCommandBuffer(mtl::WaitUntilScheduled);
+    flushCommandBuffer(mtl::NoWait);
     return angle::Result::Continue;
 }
 angle::Result ContextMtl::finish(const gl::Context *context)
@@ -1404,7 +1404,7 @@ ProgramImpl *ContextMtl::createProgram(const gl::ProgramState &state)
 // Framebuffer creation
 FramebufferImpl *ContextMtl::createFramebuffer(const gl::FramebufferState &state)
 {
-    return new FramebufferMtl(state, this, false, nullptr);
+    return new FramebufferMtl(state, this, /* flipY */ false);
 }
 
 // Texture creation
@@ -1881,7 +1881,12 @@ mtl::ComputeCommandEncoder *ContextMtl::getIndexPreprocessingCommandEncoder()
 void ContextMtl::ensureCommandBufferReady()
 {
     flushCommandBufferIfNeeded();
-    mProvokingVertexHelper.ensureCommandBufferReady();
+
+    if (getDisplay()->getFeatures().preemptivelyStartProvokingVertexCommandBuffer.enabled)
+    {
+        mProvokingVertexHelper.ensureCommandBufferReady();
+    }
+
     if (!mCmdBuffer.ready())
     {
         mCmdBuffer.restart();

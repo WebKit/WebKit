@@ -1923,9 +1923,21 @@ TEST_P(PixelLocalStorageTest, Coherency)
 
 ANGLE_INSTANTIATE_TEST(
     PixelLocalStorageTest,
+    ES31_D3D11().enable(Feature::EmulatePixelLocalStorage),
+    ES31_D3D11()
+        .enable(Feature::DisableRasterizerOrderViews)
+        .enable(Feature::EmulatePixelLocalStorage),
     ES31_OPENGL().enable(Feature::EmulatePixelLocalStorage),
+    ES31_OPENGL()
+        .disable(Feature::SupportsFragmentShaderInterlockNV)
+        .disable(Feature::SupportsFragmentShaderOrderingINTEL)
+        .disable(Feature::SupportsFragmentShaderInterlockARB)
+        .enable(Feature::EmulatePixelLocalStorage),
     ES31_OPENGLES().enable(Feature::EmulatePixelLocalStorage),
     ES31_VULKAN().enable(Feature::EmulatePixelLocalStorage),
+    ES31_VULKAN()
+        .disable(Feature::SupportsFragmentShaderPixelInterlock)
+        .enable(Feature::EmulatePixelLocalStorage),
     ES31_VULKAN_SWIFTSHADER().enable(Feature::EmulatePixelLocalStorage),
     ES31_VULKAN().enable(Feature::EmulatePixelLocalStorage).enable(Feature::AsyncCommandQueue),
     ES31_VULKAN_SWIFTSHADER()

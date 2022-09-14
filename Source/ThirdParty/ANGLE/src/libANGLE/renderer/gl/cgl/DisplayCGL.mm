@@ -18,6 +18,7 @@
 
 #    include "common/debug.h"
 #    include "common/gl/cgl/FunctionsCGL.h"
+#    include "common/system_utils.h"
 #    include "gpu_info_util/SystemInfo.h"
 #    include "libANGLE/Display.h"
 #    include "libANGLE/Error.h"
@@ -36,7 +37,7 @@ const char *kDefaultOpenGLDylibName =
     "/System/Library/Frameworks/OpenGL.framework/Libraries/libGL.dylib";
 const char *kFallbackOpenGLDylibName = "GL";
 
-}
+}  // namespace
 
 namespace rx
 {
@@ -235,7 +236,7 @@ egl::Error DisplayCGL::initialize(egl::Display *display)
     {
         return egl::EglNotInitialized() << "Could not make the CGL context current.";
     }
-    mThreadsWithCurrentContext.insert(std::this_thread::get_id());
+    mThreadsWithCurrentContext.insert(angle::GetCurrentThreadUniqueId());
 
     // There is no equivalent getProcAddress in CGL so we open the dylib directly
     void *handle = dlopen(kDefaultOpenGLDylibName, RTLD_NOW);
@@ -297,7 +298,7 @@ egl::Error DisplayCGL::prepareForCall()
     {
         return egl::EglNotInitialized() << "Context not allocated.";
     }
-    auto threadId = std::this_thread::get_id();
+    auto threadId = angle::GetCurrentThreadUniqueId();
     if (mDeviceContextIsVolatile ||
         mThreadsWithCurrentContext.find(threadId) == mThreadsWithCurrentContext.end())
     {
@@ -313,7 +314,7 @@ egl::Error DisplayCGL::prepareForCall()
 egl::Error DisplayCGL::releaseThread()
 {
     ASSERT(mContext);
-    auto threadId = std::this_thread::get_id();
+    auto threadId = angle::GetCurrentThreadUniqueId();
     if (mThreadsWithCurrentContext.find(threadId) != mThreadsWithCurrentContext.end())
     {
         if (CGLSetCurrentContext(nullptr) != kCGLNoError)
@@ -356,7 +357,7 @@ SurfaceImpl *DisplayCGL::createPbufferFromClientBuffer(const egl::SurfaceState &
 {
     ASSERT(buftype == EGL_IOSURFACE_ANGLE);
 
-    return new IOSurfaceSurfaceCGL(state, mContext, clientBuffer, attribs);
+    return new IOSurfaceSurfaceCGL(state, getRenderer(), mContext, clientBuffer, attribs);
 }
 
 SurfaceImpl *DisplayCGL::createPixmapSurface(const egl::SurfaceState &state,
