@@ -322,7 +322,7 @@ def main():
 
     angle_format_cases = parse_json_into_switch_angle_format_string(json_map, json_data)
     output_cpp = template_texture_format_table_autogen_cpp.format(
-        script_name=sys.argv[0],
+        script_name=os.path.basename(sys.argv[0]),
         angle_format_info_cases=angle_format_cases,
         data_source_name=data_source_name)
     with open('texture_format_table_autogen.cpp', 'wt') as out_file:

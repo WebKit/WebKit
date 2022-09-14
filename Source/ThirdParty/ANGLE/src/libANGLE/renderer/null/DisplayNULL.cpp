@@ -142,6 +142,11 @@ gl::Version DisplayNULL::getMaxSupportedESVersion() const
     return gl::Version(3, 2);
 }
 
+Optional<gl::Version> DisplayNULL::getMaxSupportedDesktopVersion() const
+{
+    return Optional<gl::Version>::Invalid();
+}
+
 gl::Version DisplayNULL::getMaxConformantESVersion() const
 {
     return getMaxSupportedESVersion();

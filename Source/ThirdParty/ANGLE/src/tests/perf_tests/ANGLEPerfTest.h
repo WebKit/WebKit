@@ -15,7 +15,6 @@
 #include <mutex>
 #include <queue>
 #include <string>
-#include <thread>
 #include <unordered_map>
 #include <vector>
 
@@ -265,7 +264,7 @@ class ANGLERenderTest : public ANGLEPerfTest
     // Handle to the entry point binding library.
     std::unique_ptr<angle::Library> mEntryPointsLib;
 
-    std::vector<std::thread::id> mThreadIDs;
+    std::vector<uint64_t> mThreadIDs;
     std::mutex mTraceEventMutex;
 };
 

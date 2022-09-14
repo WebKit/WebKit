@@ -13,6 +13,7 @@
 #    import "libANGLE/renderer/gl/eagl/DisplayEAGL.h"
 
 #    import "common/debug.h"
+#    import "common/system_utils.h"
 #    import "gpu_info_util/SystemInfo.h"
 #    import "libANGLE/Display.h"
 #    import "libANGLE/renderer/gl/eagl/ContextEAGL.h"
@@ -78,7 +79,7 @@ egl::Error DisplayEAGL::initialize(egl::Display *display)
     {
         return egl::EglNotInitialized() << "Could set the EAGL context current.";
     }
-    mThreadsWithContextCurrent.insert(std::this_thread::get_id());
+    mThreadsWithContextCurrent.insert(angle::GetCurrentThreadUniqueId());
 
     // There is no equivalent getProcAddress in EAGL so we open the dylib directly
     void *handle = dlopen(kOpenGLESDylibName, RTLD_NOW);
@@ -121,7 +122,7 @@ void DisplayEAGL::terminate()
 
 egl::Error DisplayEAGL::prepareForCall()
 {
-    auto threadId = std::this_thread::get_id();
+    auto threadId = angle::GetCurrentThreadUniqueId();
     if (mDeviceContextIsVolatile ||
         mThreadsWithContextCurrent.find(threadId) == mThreadsWithContextCurrent.end())
     {
@@ -136,7 +137,7 @@ egl::Error DisplayEAGL::prepareForCall()
 
 egl::Error DisplayEAGL::releaseThread()
 {
-    auto threadId = std::this_thread::get_id();
+    auto threadId = angle::GetCurrentThreadUniqueId();
     if (mThreadsWithContextCurrent.find(threadId) != mThreadsWithContextCurrent.end())
     {
         if (![getEAGLContextClass() setCurrentContext:nil])
@@ -169,7 +170,7 @@ SurfaceImpl *DisplayEAGL::createPbufferFromClientBuffer(const egl::SurfaceState 
                                                         const egl::AttributeMap &attribs)
 {
     ASSERT(buftype == EGL_IOSURFACE_ANGLE);
-    return new IOSurfaceSurfaceEAGL(state, mContext, clientBuffer, attribs);
+    return new IOSurfaceSurfaceEAGL(state, mRenderer.get(), mContext, clientBuffer, attribs);
 }
 
 SurfaceImpl *DisplayEAGL::createPixmapSurface(const egl::SurfaceState &state,
@@ -405,6 +406,6 @@ RendererGL *DisplayEAGL::getRenderer() const
     return mRenderer.get();
 }
 
-}
+}  // namespace rx
 
 #endif  // defined(ANGLE_ENABLE_EAGL)

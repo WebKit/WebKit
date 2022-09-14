@@ -137,17 +137,18 @@ bool EmulateGLDrawID(TCompiler *compiler,
         if (shouldCollect)
         {
             ShaderVariable uniform;
-            uniform.name       = kEmulatedGLDrawIDName.data();
-            uniform.mappedName = kEmulatedGLDrawIDName.data();
-            uniform.type       = GLVariableType(*type);
-            uniform.precision  = GLVariablePrecision(*type);
-            uniform.staticUse  = symbolTable->isStaticallyUsed(*builtInVariable);
-            uniform.active     = true;
-            uniform.binding    = type->getLayoutQualifier().binding;
-            uniform.location   = type->getLayoutQualifier().location;
-            uniform.offset     = type->getLayoutQualifier().offset;
-            uniform.readonly   = type->getMemoryQualifier().readonly;
-            uniform.writeonly  = type->getMemoryQualifier().writeonly;
+            uniform.name          = kEmulatedGLDrawIDName.data();
+            uniform.mappedName    = kEmulatedGLDrawIDName.data();
+            uniform.type          = GLVariableType(*type);
+            uniform.precision     = GLVariablePrecision(*type);
+            uniform.staticUse     = symbolTable->isStaticallyUsed(*builtInVariable);
+            uniform.active        = true;
+            uniform.binding       = type->getLayoutQualifier().binding;
+            uniform.location      = type->getLayoutQualifier().location;
+            uniform.offset        = type->getLayoutQualifier().offset;
+            uniform.rasterOrdered = type->getLayoutQualifier().rasterOrdered;
+            uniform.readonly      = type->getMemoryQualifier().readonly;
+            uniform.writeonly     = type->getMemoryQualifier().writeonly;
             uniforms->push_back(uniform);
         }
 
@@ -206,9 +207,10 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
             uniformBaseVertex.binding   = type.getLayoutQualifier().binding;
             uniformBaseVertex.location  = type.getLayoutQualifier().location;
             uniformBaseVertex.offset    = type.getLayoutQualifier().offset;
-            uniformBaseVertex.readonly  = type.getMemoryQualifier().readonly;
-            uniformBaseVertex.writeonly = type.getMemoryQualifier().writeonly;
-            addBaseVertex               = true;
+            uniformBaseVertex.rasterOrdered = type.getLayoutQualifier().rasterOrdered;
+            uniformBaseVertex.readonly      = type.getMemoryQualifier().readonly;
+            uniformBaseVertex.writeonly     = type.getMemoryQualifier().writeonly;
+            addBaseVertex                   = true;
         }
 
         DeclareGlobalVariable(root, baseVertex);
@@ -238,13 +240,14 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
             uniformBaseInstance.precision  = GLVariablePrecision(type);
             uniformBaseInstance.staticUse =
                 symbolTable->isStaticallyUsed(*builtInVariableBaseInstance);
-            uniformBaseInstance.active    = true;
-            uniformBaseInstance.binding   = type.getLayoutQualifier().binding;
-            uniformBaseInstance.location  = type.getLayoutQualifier().location;
-            uniformBaseInstance.offset    = type.getLayoutQualifier().offset;
-            uniformBaseInstance.readonly  = type.getMemoryQualifier().readonly;
-            uniformBaseInstance.writeonly = type.getMemoryQualifier().writeonly;
-            addBaseInstance               = true;
+            uniformBaseInstance.active        = true;
+            uniformBaseInstance.binding       = type.getLayoutQualifier().binding;
+            uniformBaseInstance.location      = type.getLayoutQualifier().location;
+            uniformBaseInstance.offset        = type.getLayoutQualifier().offset;
+            uniformBaseInstance.rasterOrdered = type.getLayoutQualifier().rasterOrdered;
+            uniformBaseInstance.readonly      = type.getMemoryQualifier().readonly;
+            uniformBaseInstance.writeonly     = type.getMemoryQualifier().writeonly;
+            addBaseInstance                   = true;
         }
 
         DeclareGlobalVariable(root, baseInstance);

@@ -35,10 +35,12 @@
 #endif  // !defined(ANGLE_REPLAY_EXPORT)
 
 using DecompressCallback              = uint8_t *(*)(const std::vector<uint8_t> &);
+using DeleteCallback                  = void (*)(uint8_t *);
 using ValidateSerializedStateCallback = void (*)(const char *, const char *, uint32_t);
 
 extern "C" {
-ANGLE_REPLAY_EXPORT void SetBinaryDataDecompressCallback(DecompressCallback callback);
+ANGLE_REPLAY_EXPORT void SetBinaryDataDecompressCallback(DecompressCallback decompressCallback,
+                                                         DeleteCallback deleteCallback);
 ANGLE_REPLAY_EXPORT void SetBinaryDataDir(const char *dataDir);
 ANGLE_REPLAY_EXPORT void SetupReplay();
 ANGLE_REPLAY_EXPORT void ReplayFrame(uint32_t frameIndex);

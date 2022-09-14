@@ -299,6 +299,14 @@ EGLenum GLComponentTypeToEGLColorComponentType(GLenum glComponentType);
 EGLClientBuffer GLObjectHandleToEGLClientBuffer(GLuint handle);
 }  // namespace gl_egl
 
+namespace angle
+{
+bool IsDrawEntryPoint(EntryPoint entryPoint);
+bool IsDispatchEntryPoint(EntryPoint entryPoint);
+bool IsClearEntryPoint(EntryPoint entryPoint);
+bool IsQueryEntryPoint(EntryPoint entryPoint);
+}  // namespace angle
+
 #if !defined(ANGLE_ENABLE_WINDOWS_UWP)
 void writeFile(const char *path, const void *data, size_t size);
 #endif

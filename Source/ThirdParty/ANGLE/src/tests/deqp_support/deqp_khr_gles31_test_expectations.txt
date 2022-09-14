@@ -104,6 +104,9 @@
 // Test timeout due to it loops so many glTexStorageMultisample calls
 5806 VULKAN NVIDIA : KHR-GLES31.core.texture_storage_multisample.APIDependencies.fbo_with_renderbuffer_and_multisample_texture_attachments_with_different_number_of_samples = SKIP
 
+// New test in VK-GL-CTS roll 2022-08-19
+7592 ANDROID VULKAN : KHR-GLES31.core.shader_atomic_counters.negative-large-offset = FAIL
+
 // Pixel 4 expectations.
 5990 PIXEL4ORXL VULKAN : KHR-GLES31.core.compute_shader.built-in-variables = SKIP
 5990 PIXEL4ORXL VULKAN : KHR-GLES31.core.compute_shader.resource-ubo = SKIP

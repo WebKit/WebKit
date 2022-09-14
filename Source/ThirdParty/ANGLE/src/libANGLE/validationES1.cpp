@@ -46,7 +46,7 @@ bool ValidateAlphaFuncCommon(const Context *context,
         case AlphaTestFunc::NotEqual:
             return true;
         default:
-            context->validationError(entryPoint, GL_INVALID_ENUM, kEnumNotSupported);
+            context->validationError(entryPoint, GL_INVALID_ENUM, kEnumInvalid);
             return false;
     }
 }

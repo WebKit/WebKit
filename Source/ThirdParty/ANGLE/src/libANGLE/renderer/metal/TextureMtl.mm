@@ -1800,6 +1800,8 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
 
     if (unpackBuffer)
     {
+        // TODO: handle the unpackLastRowSeparatelyForPaddingInclusion feature for unpack buffers
+
         uintptr_t offset = reinterpret_cast<uintptr_t>(pixels);
         GLuint minRowPitch;
         ANGLE_CHECK_GL_MATH(contextMtl, internalFormat.computeRowPitch(
@@ -1838,10 +1840,37 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
     }
     else
     {
-        // Upload texture data directly
-        ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mtlArea,
-                                        mtl::kZeroNativeMipLevel, slice, pixels, pixelsRowPitch,
-                                        pixelsDepthPitch, image));
+        const angle::FeaturesMtl &features = contextMtl->getDisplay()->getFeatures();
+        bool updateLastRowSeparately =
+            features.unpackLastRowSeparatelyForPaddingInclusion.enabled &&
+            mtlArea.size.height > 1 && mtlArea.size.depth == 1 && !internalFormat.compressed;
+        if (updateLastRowSeparately)
+        {
+            // Upload all but the last row
+            MTLRegion mainRegion = mtlArea;
+            mainRegion.size.height--;
+            ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mainRegion,
+                                            mtl::kZeroNativeMipLevel, slice, pixels, pixelsRowPitch,
+                                            0, image));
+
+            // Upload the last row "manually"
+            MTLRegion lastRowRegion = mtlArea;
+            lastRowRegion.origin.y += (mtlArea.size.height - 1);
+            lastRowRegion.size.height    = 1;
+            size_t lastRowOffset         = (mtlArea.size.height - 1) * pixelsRowPitch;
+            const GLubyte *lastRowPixels = pixels + lastRowOffset;
+            size_t lastRowSize = internalFormat.computePixelBytes(type) * mtlArea.size.width;
+            ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), lastRowRegion,
+                                            mtl::kZeroNativeMipLevel, slice, lastRowPixels,
+                                            lastRowSize, 0, image));
+        }
+        else
+        {
+            // Upload texture data directly
+            ANGLE_TRY(UploadTextureContents(context, mFormat.actualAngleFormat(), mtlArea,
+                                            mtl::kZeroNativeMipLevel, slice, pixels, pixelsRowPitch,
+                                            pixelsDepthPitch, image));
+        }
     }
     return angle::Result::Continue;
 }

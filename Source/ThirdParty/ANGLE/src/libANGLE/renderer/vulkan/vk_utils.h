@@ -1031,6 +1031,9 @@ void InitExtendedDynamicState2EXTFunctions(VkDevice device);
 // VK_KHR_fragment_shading_rate
 void InitFragmentShadingRateKHRFunctions(VkDevice device);
 
+// VK_GOOGLE_display_timing
+void InitGetPastPresentationTimingGoogleFunction(VkDevice device);
+
 #endif  // !defined(ANGLE_SHARED_LIBVULKAN)
 
 GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, angle::FormatID formatID);

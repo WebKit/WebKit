@@ -431,6 +431,7 @@ Renderer11::Renderer11(egl::Display *display)
     mRenderer11DeviceCaps.supportsDXGI1_2                        = false;
     mRenderer11DeviceCaps.allowES3OnFL10_0                       = false;
     mRenderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats  = false;
+    mRenderer11DeviceCaps.supportsRasterizerOrderViews           = false;
     mRenderer11DeviceCaps.B5G6R5support                          = 0;
     mRenderer11DeviceCaps.B4G4R4A4support                        = 0;
     mRenderer11DeviceCaps.B5G5R5A1support                        = 0;
@@ -1090,6 +1091,10 @@ void Renderer11::populateRenderer11DeviceCaps()
         {
             mRenderer11DeviceCaps.supportsTypedUAVLoadAdditionalFormats =
                 d3d11Options2.TypedUAVLoadAdditionalFormats;
+            if (!getFeatures().disableRasterizerOrderViews.enabled)
+            {
+                mRenderer11DeviceCaps.supportsRasterizerOrderViews = d3d11Options2.ROVsSupported;
+            }
         }
     }
 

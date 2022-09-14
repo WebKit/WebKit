@@ -51,7 +51,8 @@ class OutputHLSL : public TIntermTraverser
                TSymbolTable *symbolTable,
                PerformanceDiagnostics *perfDiagnostics,
                const std::map<int, const TInterfaceBlock *> &uniformBlockOptimizedMap,
-               const std::vector<InterfaceBlock> &shaderStorageBlocks);
+               const std::vector<InterfaceBlock> &shaderStorageBlocks,
+               bool isEarlyFragmentTestsSpecified);
 
     ~OutputHLSL() override;
 
@@ -280,6 +281,7 @@ class OutputHLSL : public TIntermTraverser
     bool needStructMapping(TIntermTyped *node);
 
     ShaderStorageBlockOutputHLSL *mSSBOOutputHLSL;
+    bool mIsEarlyFragmentTestsSpecified;
     bool mNeedStructMapping;
 };
 }  // namespace sh

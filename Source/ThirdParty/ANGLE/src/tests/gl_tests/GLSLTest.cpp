@@ -13,7 +13,6 @@ using namespace angle;
 
 namespace
 {
-
 class GLSLTest : public ANGLETest<>
 {
   protected:
@@ -9919,13 +9918,6 @@ TEST_P(GLSLTest_ES3, InitSameNameArray)
 // Tests using gl_FragData[0] instead of gl_FragColor.
 TEST_P(GLSLTest, FragData)
 {
-    // Ensures that we don't regress and emit Vulkan layer warnings.
-    // TODO(jonahr): http://anglebug.com/3900 - Remove check once warnings are cleaned up
-    if (IsVulkan())
-    {
-        treatPlatformWarningsAsErrors();
-    }
-
     constexpr char kFS[] = R"(void main() { gl_FragData[0] = vec4(1, 0, 0, 1); })";
     ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), kFS);
     drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
@@ -16006,6 +15998,1257 @@ TEST_P(GLSLTest_ES3, MonomorphizeForAndContinue)
 )";
     CompileShader(GL_FRAGMENT_SHADER, kFS);
     ASSERT_GL_NO_ERROR();
+}
+
+// Test that shader caching maintains uniforms across compute shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheComputeWithUniform)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    constexpr char kCS[] = R"(#version 310 es
+layout (local_size_x = 2, local_size_y = 3, local_size_z = 1) in;
+
+uniform uint inputs[6];
+
+layout (binding = 0, std430) buffer OutputBuffer {
+    uint outputs[6];
+};
+
+void main() {
+    outputs[gl_LocalInvocationIndex] = inputs[gl_LocalInvocationIndex];
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(unusedProgram, kCS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr std::array<GLuint, 6> kInputUniform = {1, 2, 3, 4, 5, 6};
+    for (int i = 0; i < static_cast<int>(kInputUniform.size()); ++i)
+    {
+        const std::string uniformName =
+            std::string("inputs[") + std::to_string(i) + std::string("]");
+        int inputLocation =
+            glGetUniformLocation(program, static_cast<const GLchar *>(uniformName.c_str()));
+        glUniform1ui(inputLocation, kInputUniform[i]);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    constexpr std::array<GLuint, 6> kOutputInitData = {0, 0, 0, 0, 0, 0};
+    GLBuffer outputBuffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLuint) * kOutputInitData.size(),
+                 kOutputInitData.data(), GL_STATIC_READ);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
+
+    glDispatchCompute(1, 1, 1);
+    glDeleteProgram(program);
+    ASSERT_GL_NO_ERROR();
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+
+    auto outputData = static_cast<const GLuint *>(glMapBufferRange(
+        GL_SHADER_STORAGE_BUFFER, 0, sizeof(GLuint) * kOutputInitData.size(), GL_MAP_READ_BIT));
+    for (int i = 0; i < static_cast<int>(kInputUniform.size()); ++i)
+    {
+        EXPECT_EQ(kInputUniform[i], outputData[i]);
+    }
+}
+
+// Test that shader caching maintains uniform blocks across shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheComputeWithUniformBlocks)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    constexpr char kCS[] = R"(#version 310 es
+layout (local_size_x = 2, local_size_y = 3, local_size_z = 1) in;
+
+layout (std140) uniform Input1 {
+    uint input1;
+};
+
+layout (std140) uniform Input2 {
+    uint input2;
+};
+
+layout (binding = 0, std430) buffer OutputBuffer {
+    uint outputs[6];
+};
+
+void main() {
+    if (gl_LocalInvocationIndex < uint(3))
+    {
+        outputs[gl_LocalInvocationIndex] = input1;
+    }
+    else
+    {
+        outputs[gl_LocalInvocationIndex] = input2;
+    }
+}
+)";
+
+    ANGLE_GL_COMPUTE_PROGRAM(unusedProgram, kCS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_COMPUTE_PROGRAM(program, kCS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLuint kInput1Data = 1;
+    GLBuffer input1;
+    glBindBuffer(GL_UNIFORM_BUFFER, input1);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLuint), &kInput1Data, GL_STATIC_COPY);
+    const GLuint kInput1Index = glGetUniformBlockIndex(program, "Input1");
+    glUniformBlockBinding(program, kInput1Index, 1);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 1, input1);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr GLuint kInput2Data = 2;
+    GLBuffer input2;
+    glBindBuffer(GL_UNIFORM_BUFFER, input2);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLuint), &kInput2Data, GL_STATIC_COPY);
+    const GLuint kInput2Index = glGetUniformBlockIndex(program, "Input2");
+    glUniformBlockBinding(program, kInput2Index, 2);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 2, input2);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    constexpr std::array<GLuint, 6> kOutputInitData = {0, 0, 0, 0, 0, 0};
+    GLBuffer outputBuffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, outputBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLuint) * kOutputInitData.size(),
+                 kOutputInitData.data(), GL_STATIC_READ);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, outputBuffer);
+    ASSERT_GL_NO_ERROR();
+
+    glDispatchCompute(1, 1, 1);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    glDeleteProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    auto outputData                       = static_cast<const GLuint *>(glMapBufferRange(
+                              GL_SHADER_STORAGE_BUFFER, 0, sizeof(GLuint) * kOutputInitData.size(), GL_MAP_READ_BIT));
+    constexpr std::array<GLuint, 6> kWant = {kInput1Data, kInput1Data, kInput1Data,
+                                             kInput2Data, kInput2Data, kInput2Data};
+    for (int i = 0; i < static_cast<int>(kWant.size()); ++i)
+    {
+        EXPECT_EQ(kWant[i], outputData[i]);
+    }
+}
+
+// Test that shader caching maintains uniforms across vertex shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheVertexWithUniform)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    constexpr char kVS[] = R"(#version 310 es
+
+precision mediump float;
+
+layout (location = 0) in vec4 a_position;
+
+uniform float redInput;
+
+out float redValue;
+
+void main() {
+    gl_Position = a_position;
+    redValue = redInput;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+
+precision mediump float;
+
+in float redValue;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM(unusedProgram, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kRedValue = 1.0f;
+    int redInputLocation        = glGetUniformLocation(program, "redInput");
+    glUniform1f(redInputLocation, kRedValue);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniform blocks across vertex shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheVertexWithUniformBlock)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    constexpr char kVS[] = R"(#version 310 es
+
+precision mediump float;
+
+layout (location = 0) in vec4 a_position;
+
+layout (std140) uniform Input {
+    float redInput;
+};
+
+out float redValue;
+
+void main() {
+    gl_Position = a_position;
+    redValue = redInput;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+
+precision mediump float;
+
+in float redValue;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM(unusedProgram, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_UNIFORM_BUFFER, input);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    const GLuint kInputIndex = glGetUniformBlockIndex(program, "Input");
+    glUniformBlockBinding(program, kInputIndex, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, input);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains SSBOs across vertex shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheVertexWithSSBO)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Check that GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS is at least 1.
+    GLint maxVertexShaderStorageBlocks;
+    glGetIntegerv(GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS, &maxVertexShaderStorageBlocks);
+    ANGLE_SKIP_TEST_IF(maxVertexShaderStorageBlocks == 0);
+    constexpr char kVS[] = R"(#version 310 es
+
+precision mediump float;
+
+layout (location = 0) in vec4 a_position;
+
+layout (binding = 0, std430) buffer Input {
+    float redInput;
+};
+
+out float redValue;
+
+void main() {
+    gl_Position = a_position;
+    redValue = redInput;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+
+precision mediump float;
+
+in float redValue;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM(unusedProgram, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, input);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, input);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniforms across vertex shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheFragmentWithUniform)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    constexpr char kFS[] = R"(#version 310 es
+
+precision mediump float;
+
+uniform float redValue;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM(unusedProgram, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    GLfloat redValue     = 1.0f;
+    int redInputLocation = glGetUniformLocation(program, "redValue");
+    glUniform1f(redInputLocation, redValue);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniform blocks across vertex shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheFragmentWithUniformBlock)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    constexpr char kFS[] = R"(#version 310 es
+
+precision mediump float;
+
+layout (std140) uniform Input {
+    float redValue;
+};
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM(unusedProgram, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_UNIFORM_BUFFER, input);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    const GLuint kInputIndex = glGetUniformBlockIndex(program, "Input");
+    glUniformBlockBinding(program, kInputIndex, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, input);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains SSBOs across vertex shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheFragmentWithSSBO)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    constexpr char kFS[] = R"(#version 310 es
+
+precision mediump float;
+
+layout (binding = 0, std430) buffer Input {
+    float redValue;
+};
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM(unusedProgram, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, input);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, input);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains whether GL_ARB_sample_shading is enabled across shader
+// compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheFragmentWithARBSampleShading)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARB_sample_shading"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_ARB_sample_shading : enable
+
+precision mediump float;
+
+out vec4 fragColor;
+
+void main()
+{
+#ifdef GL_ARB_sample_shading
+    fragColor = vec4(1., 0., 0., 1.);
+#else
+    fragColor = vec4(0.);
+#endif
+})";
+
+    ANGLE_GL_PROGRAM(unusedProgram, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains which advanced blending equations (provided by
+// GL_KHR_blend_equation_advanced) are used across shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheFragmentWithKHRAdvancedBlendEquations)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_blend_equation_advanced"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_KHR_blend_equation_advanced : require
+
+layout (blend_support_multiply) out;
+
+precision mediump float;
+
+out vec4 fragColor;
+
+void main()
+{
+    fragColor = vec4(1., 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM(unusedProgram, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniforms in geometry shaders across shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheGeometryWithUniform)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+precision mediump float;
+
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+
+uniform float redInput;
+
+out float redValue;
+
+void main() {
+    gl_Position = gl_in[0].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    gl_Position = gl_in[1].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    gl_Position = gl_in[2].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    EndPrimitive();
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_GS(unusedProgram, essl31_shaders::vs::Simple(), kGS, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_GS(program, essl31_shaders::vs::Simple(), kGS, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kRedValue = 1.0f;
+    int redInputLocation        = glGetUniformLocation(program, "redInput");
+    glUniform1f(redInputLocation, kRedValue);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniform blocks in geometry shaders across shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheGeometryWithUniformBlock)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+precision mediump float;
+
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+
+layout (std140) uniform Input {
+    float redInput;
+};
+
+out float redValue;
+
+void main() {
+    gl_Position = gl_in[0].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    gl_Position = gl_in[1].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    gl_Position = gl_in[2].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    EndPrimitive();
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_GS(unusedProgram, essl31_shaders::vs::Simple(), kGS, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_GS(program, essl31_shaders::vs::Simple(), kGS, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_UNIFORM_BUFFER, input);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    const GLuint kInputIndex = glGetUniformBlockIndex(program, "Input");
+    glUniformBlockBinding(program, kInputIndex, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, input);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains SSBO in geometry shaders across shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheGeometryWithSSBO)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    GLint maxGeometryShaderStorageBlocks = 0;
+    glGetIntegerv(GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS_EXT, &maxGeometryShaderStorageBlocks);
+    ANGLE_SKIP_TEST_IF(maxGeometryShaderStorageBlocks == 0);
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+precision mediump float;
+
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+
+layout (binding = 0, std430) buffer Input {
+    float redInput;
+};
+
+out float redValue;
+
+void main() {
+    gl_Position = gl_in[0].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    gl_Position = gl_in[1].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    gl_Position = gl_in[2].gl_Position;
+    redValue = redInput;
+    EmitVertex();
+
+    EndPrimitive();
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_GS(unusedProgram, essl31_shaders::vs::Simple(), kGS, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_GS(program, essl31_shaders::vs::Simple(), kGS, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, input);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, input);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains the number of invocations in geometry shaders across shader
+// compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheGeometryWithInvocations)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+precision mediump float;
+
+layout (triangles, invocations = 2) in;
+layout (triangle_strip, max_vertices = 3) out;
+
+out float redValue;
+
+void main() {
+    float redOut = 0.;
+    if (gl_InvocationID == 1) {
+        redOut = 1.;
+    }
+
+    gl_Position = gl_in[0].gl_Position;
+    redValue = redOut;
+    EmitVertex();
+
+    gl_Position = gl_in[1].gl_Position;
+    redValue = redOut;
+    EmitVertex();
+
+    gl_Position = gl_in[2].gl_Position;
+    redValue = redOut;
+    EmitVertex();
+
+    EndPrimitive();
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_GS(unusedProgram, essl31_shaders::vs::Simple(), kGS, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_GS(program, essl31_shaders::vs::Simple(), kGS, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniforms in tessellation control shaders across shader
+// compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheTessellationControlWithUniform)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kTCS[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (vertices = 1) out;
+
+uniform float redInput;
+
+patch out float redValueCS;
+
+void main()
+{
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    gl_TessLevelInner[0] = 1.0;
+    gl_TessLevelInner[1] = 1.0;
+    gl_TessLevelOuter[0] = 1.0;
+    gl_TessLevelOuter[1] = 1.0;
+    gl_TessLevelOuter[2] = 1.0;
+    gl_TessLevelOuter[3] = 1.0;
+
+    redValueCS = redInput;
+}
+
+)";
+
+    constexpr char kTES[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (quads, cw, fractional_odd_spacing) in;
+
+patch in float redValueCS;
+
+out float redValue;
+
+void main()
+{
+    gl_Position = vec4(gl_TessCoord.xy * 2. - 1., 0, 1);
+
+    redValue = redValueCS;
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_TESS(unusedProgram, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_TESS(program, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kRedValue = 1.0f;
+    int redInputLocation        = glGetUniformLocation(program, "redInput");
+    glUniform1f(redInputLocation, kRedValue);
+    ASSERT_GL_NO_ERROR();
+
+    drawPatches(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniform blocks in tessellation control shaders across shader
+// compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheTessellationControlWithUniformBlock)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kTCS[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (vertices = 1) out;
+
+layout (std140) uniform Input {
+    float redInput;
+};
+
+patch out float redValueCS;
+
+void main()
+{
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    gl_TessLevelInner[0] = 1.0;
+    gl_TessLevelInner[1] = 1.0;
+    gl_TessLevelOuter[0] = 1.0;
+    gl_TessLevelOuter[1] = 1.0;
+    gl_TessLevelOuter[2] = 1.0;
+    gl_TessLevelOuter[3] = 1.0;
+
+    redValueCS = redInput;
+}
+
+)";
+
+    constexpr char kTES[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (quads, cw, fractional_odd_spacing) in;
+
+patch in float redValueCS;
+
+out float redValue;
+
+void main()
+{
+    gl_Position = vec4(gl_TessCoord.xy * 2. - 1., 0, 1);
+
+    redValue = redValueCS;
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_TESS(unusedProgram, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_TESS(program, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_UNIFORM_BUFFER, input);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    const GLuint kInputIndex = glGetUniformBlockIndex(program, "Input");
+    glUniformBlockBinding(program, kInputIndex, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, input);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawPatches(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains SSBOs in tessellation control shaders across shader
+// compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheTessellationControlWithSSBO)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    GLint maxTessControlShaderStorageBlocks;
+    glGetIntegerv(GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS_EXT,
+                  &maxTessControlShaderStorageBlocks);
+    ANGLE_SKIP_TEST_IF(maxTessControlShaderStorageBlocks == 0);
+
+    constexpr char kTCS[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (vertices = 1) out;
+
+layout (binding = 0, std430) buffer Input {
+    float redInput;
+};
+
+patch out float redValueCS;
+
+void main()
+{
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    gl_TessLevelInner[0] = 1.0;
+    gl_TessLevelInner[1] = 1.0;
+    gl_TessLevelOuter[0] = 1.0;
+    gl_TessLevelOuter[1] = 1.0;
+    gl_TessLevelOuter[2] = 1.0;
+    gl_TessLevelOuter[3] = 1.0;
+
+    redValueCS = redInput;
+}
+
+)";
+
+    constexpr char kTES[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (quads, cw, fractional_odd_spacing) in;
+
+patch in float redValueCS;
+
+out float redValue;
+
+void main()
+{
+    gl_Position = vec4(gl_TessCoord.xy * 2. - 1., 0, 1);
+
+    redValue = redValueCS;
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_TESS(unusedProgram, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_TESS(program, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, input);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, input);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawPatches(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniforms in tessellation evaluation shaders across shader
+// compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheTessellationEvalWithUniform)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kTCS[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (vertices = 1) out;
+
+void main()
+{
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    gl_TessLevelInner[0] = 1.0;
+    gl_TessLevelInner[1] = 1.0;
+    gl_TessLevelOuter[0] = 1.0;
+    gl_TessLevelOuter[1] = 1.0;
+    gl_TessLevelOuter[2] = 1.0;
+    gl_TessLevelOuter[3] = 1.0;
+}
+
+)";
+
+    constexpr char kTES[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (quads, cw, fractional_odd_spacing) in;
+
+uniform float redInput;
+
+out float redValue;
+
+void main()
+{
+    gl_Position = vec4(gl_TessCoord.xy * 2. - 1., 0, 1);
+
+    redValue = redInput;
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_TESS(unusedProgram, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_TESS(program, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kRedValue = 1.0f;
+    int redInputLocation        = glGetUniformLocation(program, "redInput");
+    glUniform1f(redInputLocation, kRedValue);
+    ASSERT_GL_NO_ERROR();
+
+    drawPatches(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains uniform blocks in tessellation evaluation shaders across
+// shader compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheTessellationEvalWithUniformBlock)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    constexpr char kTCS[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (vertices = 1) out;
+
+void main()
+{
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    gl_TessLevelInner[0] = 1.0;
+    gl_TessLevelInner[1] = 1.0;
+    gl_TessLevelOuter[0] = 1.0;
+    gl_TessLevelOuter[1] = 1.0;
+    gl_TessLevelOuter[2] = 1.0;
+    gl_TessLevelOuter[3] = 1.0;
+}
+
+)";
+
+    constexpr char kTES[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (quads, cw, fractional_odd_spacing) in;
+
+layout (std140) uniform Input {
+    float redInput;
+};
+
+out float redValue;
+
+void main()
+{
+    gl_Position = vec4(gl_TessCoord.xy * 2. - 1., 0, 1);
+
+    redValue = redInput;
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_TESS(unusedProgram, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_TESS(program, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_UNIFORM_BUFFER, input);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    const GLuint kInputIndex = glGetUniformBlockIndex(program, "Input");
+    glUniformBlockBinding(program, kInputIndex, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, input);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawPatches(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test that shader caching maintains SSBOs in tessellation evaluation shaders across shader
+// compilations.
+TEST_P(GLSLTest_ES31, ShaderCacheTessellationEvalWithSSBO)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_tessellation_shader"));
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+    GLint maxTessEvalShaderStorageBlocks;
+    glGetIntegerv(GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS_EXT,
+                  &maxTessEvalShaderStorageBlocks);
+    ANGLE_SKIP_TEST_IF(maxTessEvalShaderStorageBlocks == 0);
+
+    constexpr char kTCS[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (vertices = 1) out;
+
+void main()
+{
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+    gl_TessLevelInner[0] = 1.0;
+    gl_TessLevelInner[1] = 1.0;
+    gl_TessLevelOuter[0] = 1.0;
+    gl_TessLevelOuter[1] = 1.0;
+    gl_TessLevelOuter[2] = 1.0;
+    gl_TessLevelOuter[3] = 1.0;
+}
+
+)";
+
+    constexpr char kTES[] = R"(#version 310 es
+#extension GL_EXT_tessellation_shader : require
+precision mediump float;
+
+layout (quads, cw, fractional_odd_spacing) in;
+
+layout (binding = 0, std430) buffer Input {
+    float redInput;
+};
+
+out float redValue;
+
+void main()
+{
+    gl_Position = vec4(gl_TessCoord.xy * 2. - 1., 0, 1);
+
+    redValue = redInput;
+}
+)";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+
+out vec4 fragColor;
+
+in float redValue;
+
+void main()
+{
+    fragColor = vec4(redValue, 0., 0., 1.);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_TESS(unusedProgram, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    // Delete the shader and recompile to fetch from cache.
+    glDeleteProgram(unusedProgram);
+    ANGLE_GL_PROGRAM_WITH_TESS(program, essl31_shaders::vs::Simple(), kTCS, kTES, kFS);
+    ASSERT_GL_NO_ERROR();
+    glUseProgram(program);
+
+    constexpr GLfloat kInputData = 1.0f;
+    GLBuffer input;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, input);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GLfloat), &kInputData, GL_STATIC_COPY);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, input);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    ASSERT_GL_NO_ERROR();
+
+    drawPatches(program, essl31_shaders::PositionAttrib(), 0.5f, 1.0f, GL_FALSE);
+    ASSERT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
 }
 
 }  // anonymous namespace

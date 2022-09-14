@@ -476,7 +476,6 @@ std::unique_ptr<rx::LinkEvent> ProgramExecutableVk::load(ContextVk *contextVk,
                 {
                     LoadShaderInterfaceVariableXfbInfo(stream, &xfb);
                 }
-                info.useRelaxedPrecision     = stream->readBool();
                 info.builtinIsInput          = stream->readBool();
                 info.builtinIsOutput         = stream->readBool();
                 info.attributeComponentCount = stream->readInt<uint8_t>();
@@ -593,7 +592,6 @@ void ProgramExecutableVk::save(ContextVk *contextVk,
                 {
                     SaveShaderInterfaceVariableXfbInfo(xfb, stream);
                 }
-                stream->writeBool(info.useRelaxedPrecision);
                 stream->writeBool(info.builtinIsInput);
                 stream->writeBool(info.builtinIsOutput);
                 stream->writeInt(info.attributeComponentCount);

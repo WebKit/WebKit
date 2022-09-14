@@ -140,7 +140,7 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetIntegeri_v(GLenum target, GLuint index, GLin
 ANGLE_EXPORT void GL_APIENTRY GL_GetInternalformativ(GLenum target,
                                                      GLenum internalformat,
                                                      GLenum pname,
-                                                     GLsizei bufSize,
+                                                     GLsizei count,
                                                      GLint *params);
 ANGLE_EXPORT void GL_APIENTRY GL_GetProgramBinary(GLuint program,
                                                   GLsizei bufSize,
@@ -155,7 +155,7 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetSamplerParameterfv(GLuint sampler,
 ANGLE_EXPORT void GL_APIENTRY GL_GetSamplerParameteriv(GLuint sampler, GLenum pname, GLint *params);
 ANGLE_EXPORT const GLubyte *GL_APIENTRY GL_GetStringi(GLenum name, GLuint index);
 ANGLE_EXPORT void GL_APIENTRY
-GL_GetSynciv(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values);
+GL_GetSynciv(GLsync sync, GLenum pname, GLsizei count, GLsizei *length, GLint *values);
 ANGLE_EXPORT void GL_APIENTRY GL_GetTransformFeedbackVarying(GLuint program,
                                                              GLuint index,
                                                              GLsizei bufSize,

@@ -350,9 +350,7 @@ void main()
 //     2. Remove the call to "eglReleaseThread" in the for loop
 TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
 {
-    // GL and GLES drivers don't seem to perform appropriate cleanup
-    // SwiftShader fails with "Extension not supported" error on the bots
-    ANGLE_SKIP_TEST_IF(!IsVulkan() || isSwiftshader());
+    ANGLE_SKIP_TEST_IF(!platformSupportsMultithreading());
 
     // Release all resources in parent thread
     getEGLWindow()->destroyGL();
@@ -360,7 +358,9 @@ TEST_P(EGLMultiContextTest, RepeatedEglInitAndTerminate)
     EGLDisplay dpy;
     EGLSurface srf;
     EGLContext ctx;
-    EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(), EGL_NONE};
+    EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
+                          EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, GetParam().getDeviceType(),
+                          EGL_NONE};
 
     for (int i = 0; i < 100; i++)
     {

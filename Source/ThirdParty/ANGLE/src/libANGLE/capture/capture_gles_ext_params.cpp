@@ -188,7 +188,7 @@ void CaptureDrawElementsInstancedBaseInstanceEXT_indices(const State &glState,
                                                          GLuint baseinstance,
                                                          angle::ParamCapture *indicesParam)
 {
-    UNIMPLEMENTED();
+    CaptureDrawElements_indices(glState, isCallValid, mode, count, type, indices, indicesParam);
 }
 
 void CaptureDrawElementsInstancedBaseVertexBaseInstanceEXT_indices(
@@ -203,7 +203,8 @@ void CaptureDrawElementsInstancedBaseVertexBaseInstanceEXT_indices(
     GLuint baseInstance,
     angle::ParamCapture *indicesParam)
 {
-    UNIMPLEMENTED();
+    CaptureDrawElements_indices(glState, isCallValid, modePacked, count, typePacked, indices,
+                                indicesParam);
 }
 
 void CaptureDrawElementsBaseVertexEXT_indices(const State &glState,

@@ -589,6 +589,17 @@ void DispatchTableGL::initProcsDesktopGL(const gl::Version &version,
         ASSIGN("glUniformSubroutinesuiv", uniformSubroutinesuiv);
     }
 
+    if (extensions.count("GL_ARB_sync") != 0)
+    {
+        ASSIGN("glClientWaitSync", clientWaitSync);
+        ASSIGN("glDeleteSync", deleteSync);
+        ASSIGN("glFenceSync", fenceSync);
+        ASSIGN("glGetInteger64v", getInteger64v);
+        ASSIGN("glGetSynciv", getSynciv);
+        ASSIGN("glIsSync", isSync);
+        ASSIGN("glWaitSync", waitSync);
+    }
+
     if (extensions.count("GL_ARB_tessellation_shader") != 0)
     {
         ASSIGN("glPatchParameterfv", patchParameterfv);
@@ -958,10 +969,7 @@ void DispatchTableGL::initProcsDesktopGL(const gl::Version &version,
         ASSIGN("glTextureParameterfvEXT", textureParameterfv);
         ASSIGN("glTextureParameteriEXT", textureParameteri);
         ASSIGN("glTextureParameterivEXT", textureParameteriv);
-        ASSIGN("glTextureStorage1DEXT", textureStorage1D);
-        ASSIGN("glTextureStorage2DEXT", textureStorage2D);
         ASSIGN("glTextureStorage2DMultisampleEXT", textureStorage2DMultisample);
-        ASSIGN("glTextureStorage3DEXT", textureStorage3D);
         ASSIGN("glTextureStorage3DMultisampleEXT", textureStorage3DMultisample);
         ASSIGN("glTextureSubImage1DEXT", textureSubImage1D);
         ASSIGN("glTextureSubImage2DEXT", textureSubImage2D);
@@ -1012,6 +1020,8 @@ void DispatchTableGL::initProcsDesktopGL(const gl::Version &version,
         ASSIGN("glBindFragDataLocationEXT", bindFragDataLocation);
         ASSIGN("glGetFragDataLocationEXT", getFragDataLocation);
         ASSIGN("glGetUniformuivEXT", getUniformuiv);
+        ASSIGN("glGetVertexAttribIivEXT", getVertexAttribIiv);
+        ASSIGN("glGetVertexAttribIuivEXT", getVertexAttribIuiv);
         ASSIGN("glUniform1uiEXT", uniform1ui);
         ASSIGN("glUniform1uivEXT", uniform1uiv);
         ASSIGN("glUniform2uiEXT", uniform2ui);
@@ -1020,6 +1030,27 @@ void DispatchTableGL::initProcsDesktopGL(const gl::Version &version,
         ASSIGN("glUniform3uivEXT", uniform3uiv);
         ASSIGN("glUniform4uiEXT", uniform4ui);
         ASSIGN("glUniform4uivEXT", uniform4uiv);
+        ASSIGN("glVertexAttribI1iEXT", vertexAttribI1i);
+        ASSIGN("glVertexAttribI1ivEXT", vertexAttribI1iv);
+        ASSIGN("glVertexAttribI1uiEXT", vertexAttribI1ui);
+        ASSIGN("glVertexAttribI1uivEXT", vertexAttribI1uiv);
+        ASSIGN("glVertexAttribI2iEXT", vertexAttribI2i);
+        ASSIGN("glVertexAttribI2ivEXT", vertexAttribI2iv);
+        ASSIGN("glVertexAttribI2uiEXT", vertexAttribI2ui);
+        ASSIGN("glVertexAttribI2uivEXT", vertexAttribI2uiv);
+        ASSIGN("glVertexAttribI3iEXT", vertexAttribI3i);
+        ASSIGN("glVertexAttribI3ivEXT", vertexAttribI3iv);
+        ASSIGN("glVertexAttribI3uiEXT", vertexAttribI3ui);
+        ASSIGN("glVertexAttribI3uivEXT", vertexAttribI3uiv);
+        ASSIGN("glVertexAttribI4bvEXT", vertexAttribI4bv);
+        ASSIGN("glVertexAttribI4iEXT", vertexAttribI4i);
+        ASSIGN("glVertexAttribI4ivEXT", vertexAttribI4iv);
+        ASSIGN("glVertexAttribI4svEXT", vertexAttribI4sv);
+        ASSIGN("glVertexAttribI4ubvEXT", vertexAttribI4ubv);
+        ASSIGN("glVertexAttribI4uiEXT", vertexAttribI4ui);
+        ASSIGN("glVertexAttribI4uivEXT", vertexAttribI4uiv);
+        ASSIGN("glVertexAttribI4usvEXT", vertexAttribI4usv);
+        ASSIGN("glVertexAttribIPointerEXT", vertexAttribIPointer);
     }
 
     if (extensions.count("GL_EXT_point_parameters") != 0)
@@ -2086,16 +2117,6 @@ void DispatchTableGL::initProcsGLES(const gl::Version &version,
         ASSIGN("glTexBufferRangeEXT", texBufferRangeEXT);
     }
 
-    if (extensions.count("GL_EXT_texture_storage") != 0)
-    {
-        ASSIGN("glTexStorage1DEXT", texStorage1D);
-        ASSIGN("glTexStorage2DEXT", texStorage2D);
-        ASSIGN("glTexStorage3DEXT", texStorage3D);
-        ASSIGN("glTextureStorage1DEXT", textureStorage1D);
-        ASSIGN("glTextureStorage2DEXT", textureStorage2D);
-        ASSIGN("glTextureStorage3DEXT", textureStorage3D);
-    }
-
     if (extensions.count("GL_EXT_texture_view") != 0)
     {
         ASSIGN("glTextureViewEXT", textureView);
@@ -2639,17 +2660,6 @@ void DispatchTableGL::initProcsGLES(const gl::Version &version,
 
 void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &extensions)
 {
-    if (extensions.count("GL_ARB_sync") != 0)
-    {
-        ASSIGN("glClientWaitSync", clientWaitSync);
-        ASSIGN("glDeleteSync", deleteSync);
-        ASSIGN("glFenceSync", fenceSync);
-        ASSIGN("glGetInteger64v", getInteger64v);
-        ASSIGN("glGetSynciv", getSynciv);
-        ASSIGN("glIsSync", isSync);
-        ASSIGN("glWaitSync", waitSync);
-    }
-
     if (extensions.count("GL_EXT_blend_minmax") != 0)
     {
         ASSIGN("glBlendEquationEXT", blendEquation);
@@ -2781,6 +2791,16 @@ void DispatchTableGL::initProcsSharedExtensions(const std::set<std::string> &ext
         ASSIGN("glProgramUniformMatrix4x3fvEXT", programUniformMatrix4x3fv);
         ASSIGN("glUseProgramStagesEXT", useProgramStages);
         ASSIGN("glValidateProgramPipelineEXT", validateProgramPipeline);
+    }
+
+    if (extensions.count("GL_EXT_texture_storage") != 0)
+    {
+        ASSIGN("glTexStorage1DEXT", texStorage1D);
+        ASSIGN("glTexStorage2DEXT", texStorage2D);
+        ASSIGN("glTexStorage3DEXT", texStorage3D);
+        ASSIGN("glTextureStorage1DEXT", textureStorage1D);
+        ASSIGN("glTextureStorage2DEXT", textureStorage2D);
+        ASSIGN("glTextureStorage3DEXT", textureStorage3D);
     }
 
     if (extensions.count("GL_KHR_parallel_shader_compile") != 0)
@@ -3377,6 +3397,17 @@ void DispatchTableGL::initProcsDesktopGLNULL(const gl::Version &version,
         uniformSubroutinesuiv          = &glUniformSubroutinesuivNULL;
     }
 
+    if (extensions.count("GL_ARB_sync") != 0)
+    {
+        clientWaitSync = &glClientWaitSyncNULL;
+        deleteSync     = &glDeleteSyncNULL;
+        fenceSync      = &glFenceSyncNULL;
+        getInteger64v  = &glGetInteger64vNULL;
+        getSynciv      = &glGetSyncivNULL;
+        isSync         = &glIsSyncNULL;
+        waitSync       = &glWaitSyncNULL;
+    }
+
     if (extensions.count("GL_ARB_tessellation_shader") != 0)
     {
         patchParameterfv = &glPatchParameterfvNULL;
@@ -3745,10 +3776,7 @@ void DispatchTableGL::initProcsDesktopGLNULL(const gl::Version &version,
         textureParameterfv                       = &glTextureParameterfvNULL;
         textureParameteri                        = &glTextureParameteriNULL;
         textureParameteriv                       = &glTextureParameterivNULL;
-        textureStorage1D                         = &glTextureStorage1DNULL;
-        textureStorage2D                         = &glTextureStorage2DNULL;
         textureStorage2DMultisample              = &glTextureStorage2DMultisampleNULL;
-        textureStorage3D                         = &glTextureStorage3DNULL;
         textureStorage3DMultisample              = &glTextureStorage3DMultisampleNULL;
         textureSubImage1D                        = &glTextureSubImage1DNULL;
         textureSubImage2D                        = &glTextureSubImage2DNULL;
@@ -3799,6 +3827,8 @@ void DispatchTableGL::initProcsDesktopGLNULL(const gl::Version &version,
         bindFragDataLocation = &glBindFragDataLocationNULL;
         getFragDataLocation  = &glGetFragDataLocationNULL;
         getUniformuiv        = &glGetUniformuivNULL;
+        getVertexAttribIiv   = &glGetVertexAttribIivNULL;
+        getVertexAttribIuiv  = &glGetVertexAttribIuivNULL;
         uniform1ui           = &glUniform1uiNULL;
         uniform1uiv          = &glUniform1uivNULL;
         uniform2ui           = &glUniform2uiNULL;
@@ -3807,6 +3837,27 @@ void DispatchTableGL::initProcsDesktopGLNULL(const gl::Version &version,
         uniform3uiv          = &glUniform3uivNULL;
         uniform4ui           = &glUniform4uiNULL;
         uniform4uiv          = &glUniform4uivNULL;
+        vertexAttribI1i      = &glVertexAttribI1iNULL;
+        vertexAttribI1iv     = &glVertexAttribI1ivNULL;
+        vertexAttribI1ui     = &glVertexAttribI1uiNULL;
+        vertexAttribI1uiv    = &glVertexAttribI1uivNULL;
+        vertexAttribI2i      = &glVertexAttribI2iNULL;
+        vertexAttribI2iv     = &glVertexAttribI2ivNULL;
+        vertexAttribI2ui     = &glVertexAttribI2uiNULL;
+        vertexAttribI2uiv    = &glVertexAttribI2uivNULL;
+        vertexAttribI3i      = &glVertexAttribI3iNULL;
+        vertexAttribI3iv     = &glVertexAttribI3ivNULL;
+        vertexAttribI3ui     = &glVertexAttribI3uiNULL;
+        vertexAttribI3uiv    = &glVertexAttribI3uivNULL;
+        vertexAttribI4bv     = &glVertexAttribI4bvNULL;
+        vertexAttribI4i      = &glVertexAttribI4iNULL;
+        vertexAttribI4iv     = &glVertexAttribI4ivNULL;
+        vertexAttribI4sv     = &glVertexAttribI4svNULL;
+        vertexAttribI4ubv    = &glVertexAttribI4ubvNULL;
+        vertexAttribI4ui     = &glVertexAttribI4uiNULL;
+        vertexAttribI4uiv    = &glVertexAttribI4uivNULL;
+        vertexAttribI4usv    = &glVertexAttribI4usvNULL;
+        vertexAttribIPointer = &glVertexAttribIPointerNULL;
     }
 
     if (extensions.count("GL_EXT_point_parameters") != 0)
@@ -4872,16 +4923,6 @@ void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,
         texBufferRangeEXT = &glTexBufferRangeEXTNULL;
     }
 
-    if (extensions.count("GL_EXT_texture_storage") != 0)
-    {
-        texStorage1D     = &glTexStorage1DNULL;
-        texStorage2D     = &glTexStorage2DNULL;
-        texStorage3D     = &glTexStorage3DNULL;
-        textureStorage1D = &glTextureStorage1DNULL;
-        textureStorage2D = &glTextureStorage2DNULL;
-        textureStorage3D = &glTextureStorage3DNULL;
-    }
-
     if (extensions.count("GL_EXT_texture_view") != 0)
     {
         textureView = &glTextureViewNULL;
@@ -5425,17 +5466,6 @@ void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,
 
 void DispatchTableGL::initProcsSharedExtensionsNULL(const std::set<std::string> &extensions)
 {
-    if (extensions.count("GL_ARB_sync") != 0)
-    {
-        clientWaitSync = &glClientWaitSyncNULL;
-        deleteSync     = &glDeleteSyncNULL;
-        fenceSync      = &glFenceSyncNULL;
-        getInteger64v  = &glGetInteger64vNULL;
-        getSynciv      = &glGetSyncivNULL;
-        isSync         = &glIsSyncNULL;
-        waitSync       = &glWaitSyncNULL;
-    }
-
     if (extensions.count("GL_EXT_blend_minmax") != 0)
     {
         blendEquation = &glBlendEquationNULL;
@@ -5567,6 +5597,16 @@ void DispatchTableGL::initProcsSharedExtensionsNULL(const std::set<std::string> 
         programUniformMatrix4x3fv = &glProgramUniformMatrix4x3fvNULL;
         useProgramStages          = &glUseProgramStagesNULL;
         validateProgramPipeline   = &glValidateProgramPipelineNULL;
+    }
+
+    if (extensions.count("GL_EXT_texture_storage") != 0)
+    {
+        texStorage1D     = &glTexStorage1DNULL;
+        texStorage2D     = &glTexStorage2DNULL;
+        texStorage3D     = &glTexStorage3DNULL;
+        textureStorage1D = &glTextureStorage1DNULL;
+        textureStorage2D = &glTextureStorage2DNULL;
+        textureStorage3D = &glTextureStorage3DNULL;
     }
 
     if (extensions.count("GL_KHR_parallel_shader_compile") != 0)

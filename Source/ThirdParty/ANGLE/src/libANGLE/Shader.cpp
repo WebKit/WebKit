@@ -19,6 +19,9 @@
 #include "libANGLE/Compiler.h"
 #include "libANGLE/Constants.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
+#include "libANGLE/MemoryShaderCache.h"
+#include "libANGLE/Program.h"
 #include "libANGLE/ResourceManager.h"
 #include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/ShaderImpl.h"
@@ -29,6 +32,8 @@ namespace gl
 
 namespace
 {
+constexpr uint32_t kShaderCacheIdentifier = 0x12345678;
+
 template <typename VarT>
 std::vector<VarT> GetActiveShaderVariables(const std::vector<VarT> *variableList)
 {
@@ -52,6 +57,46 @@ const std::vector<VarT> &GetShaderVariables(const std::vector<VarT> *variableLis
     return *variableList;
 }
 
+void WriteInterfaceBlock(gl::BinaryOutputStream *stream, const sh::InterfaceBlock &block)
+{
+    stream->writeString(block.name);
+    stream->writeString(block.mappedName);
+    stream->writeString(block.instanceName);
+    stream->writeInt(block.arraySize);
+    stream->writeEnum(block.layout);
+    stream->writeBool(block.isRowMajorLayout);
+    stream->writeInt(block.binding);
+    stream->writeBool(block.staticUse);
+    stream->writeBool(block.active);
+    stream->writeEnum(block.blockType);
+
+    stream->writeInt(block.fields.size());
+    for (const sh::ShaderVariable &shaderVariable : block.fields)
+    {
+        WriteShaderVar(stream, shaderVariable);
+    }
+}
+
+void LoadInterfaceBlock(gl::BinaryInputStream *stream, sh::InterfaceBlock &block)
+{
+    stream->readString(&block.name);
+    stream->readString(&block.mappedName);
+    stream->readString(&block.instanceName);
+    stream->readInt(&block.arraySize);
+    stream->readEnum(&block.layout);
+    stream->readBool(&block.isRowMajorLayout);
+    stream->readInt(&block.binding);
+    stream->readBool(&block.staticUse);
+    stream->readBool(&block.active);
+    stream->readEnum(&block.blockType);
+
+    size_t size = stream->readInt<size_t>();
+    block.fields.resize(size);
+    for (sh::ShaderVariable &shaderVariable : block.fields)
+    {
+        LoadShaderVar(stream, &shaderVariable);
+    }
+}
 }  // anonymous namespace
 
 // true if varying x has a higher priority in packing than y
@@ -118,6 +163,7 @@ struct Shader::CompilingState
 {
     std::shared_ptr<rx::WaitableCompileEvent> compileEvent;
     ShCompilerInstance shCompilerInstance;
+    egl::BlobCache::Key shaderHash;
 };
 
 ShaderState::ShaderState(ShaderType shaderType)
@@ -353,8 +399,9 @@ void Shader::compile(const Context *context)
     mState.mEnablesPerSampleShading = false;
     mState.mSpecConstUsageBits.reset();
 
-    mState.mCompileStatus = CompileStatus::COMPILE_REQUESTED;
-    mBoundCompiler.set(context, context->getCompiler());
+    mCurrentMaxComputeWorkGroupInvocations =
+        static_cast<GLuint>(context->getCaps().maxComputeWorkGroupInvocations);
+    mMaxComputeSharedMemory = context->getCaps().maxComputeSharedMemorySize;
 
     ShCompileOptions options = {};
     options.objectCode       = true;
@@ -397,10 +444,7 @@ void Shader::compile(const Context *context)
         options.initializeUninitializedLocals = true;
     }
 
-    mCurrentMaxComputeWorkGroupInvocations =
-        static_cast<GLuint>(context->getCaps().maxComputeWorkGroupInvocations);
-
-    mMaxComputeSharedMemory = context->getCaps().maxComputeSharedMemorySize;
+    mBoundCompiler.set(context, context->getCompiler());
 
     ASSERT(mBoundCompiler.get());
     ShCompilerInstance compilerInstance = mBoundCompiler->getInstance(mState.mShaderType);
@@ -408,16 +452,32 @@ void Shader::compile(const Context *context)
     ASSERT(compilerHandle);
     mCompilerResourcesString = compilerInstance.getBuiltinResourcesString();
 
+    // Find a shader in Blob Cache
+    egl::BlobCache::Key shaderHash = {0};
+    MemoryShaderCache *shaderCache = context->getMemoryShaderCache();
+    if (shaderCache)
+    {
+        angle::Result cacheResult =
+            shaderCache->getShader(context, this, options, compilerInstance, &shaderHash);
+
+        if (cacheResult == angle::Result::Continue)
+        {
+            compilerInstance.destroy();
+            return;
+        }
+    }
+
+    // Cache load failed, fall through normal compiling.
+    mState.mCompileStatus = CompileStatus::COMPILE_REQUESTED;
     mCompilingState.reset(new CompilingState());
     mCompilingState->shCompilerInstance = std::move(compilerInstance);
+    mCompilingState->shaderHash         = shaderHash;
     mCompilingState->compileEvent =
         mImplementation->compile(context, &(mCompilingState->shCompilerInstance), &options);
 }
 
 void Shader::resolveCompile(const Context *context)
 {
-    ANGLE_UNUSED_VARIABLE(context);
-
     if (!mState.compilePending())
     {
         return;
@@ -620,6 +680,18 @@ void Shader::resolveCompile(const Context *context)
 
     bool success          = mCompilingState->compileEvent->postTranslate(&mInfoLog);
     mState.mCompileStatus = success ? CompileStatus::COMPILED : CompileStatus::NOT_COMPILED;
+
+    MemoryShaderCache *shaderCache = context->getMemoryShaderCache();
+    if (success && shaderCache)
+    {
+        // Save to the shader cache.
+        if (shaderCache->putShader(context, mCompilingState->shaderHash, this) !=
+            angle::Result::Continue)
+        {
+            ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+                               "Failed to save compiled shader to memory shader cache.");
+        }
+    }
 }
 
 void Shader::addRef()
@@ -840,6 +912,420 @@ GLenum Shader::getTessGenPointMode(const Context *context)
 const std::string &Shader::getCompilerResourcesString() const
 {
     return mCompilerResourcesString;
+}
+
+angle::Result Shader::serialize(const Context *context, angle::MemoryBuffer *binaryOut) const
+{
+    BinaryOutputStream stream;
+
+    stream.writeInt(kShaderCacheIdentifier);
+    stream.writeString(mState.mLabel);
+    stream.writeInt(mState.mShaderVersion);
+    stream.writeString(mCompilerResourcesString);
+
+    stream.writeInt(mState.mUniforms.size());
+    for (const sh::ShaderVariable &shaderVariable : mState.mUniforms)
+    {
+        WriteShaderVar(&stream, shaderVariable);
+    }
+
+    stream.writeInt(mState.mUniformBlocks.size());
+    for (const sh::InterfaceBlock &interfaceBlock : mState.mUniformBlocks)
+    {
+        WriteInterfaceBlock(&stream, interfaceBlock);
+    }
+
+    stream.writeInt(mState.mShaderStorageBlocks.size());
+    for (const sh::InterfaceBlock &interfaceBlock : mState.mShaderStorageBlocks)
+    {
+        WriteInterfaceBlock(&stream, interfaceBlock);
+    }
+
+    stream.writeInt(mState.mSpecConstUsageBits.bits());
+
+    switch (mType)
+    {
+        case ShaderType::Compute:
+        {
+            stream.writeInt(mState.mAllAttributes.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mAllAttributes)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mActiveAttributes.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mActiveAttributes)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mLocalSize[0]);
+            stream.writeInt(mState.mLocalSize[1]);
+            stream.writeInt(mState.mLocalSize[2]);
+            break;
+        }
+
+        case ShaderType::Vertex:
+        {
+            stream.writeInt(mState.mOutputVaryings.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mOutputVaryings)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mAllAttributes.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mAllAttributes)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mActiveAttributes.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mActiveAttributes)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mNumViews);
+            break;
+        }
+        case ShaderType::Fragment:
+        {
+            stream.writeInt(mState.mInputVaryings.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mInputVaryings)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mActiveOutputVariables.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mActiveOutputVariables)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeBool(mState.mEnablesPerSampleShading);
+            stream.writeInt(mState.mAdvancedBlendEquations.bits());
+            break;
+        }
+        case ShaderType::Geometry:
+        {
+            bool valid;
+
+            stream.writeInt(mState.mInputVaryings.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mInputVaryings)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mOutputVaryings.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mOutputVaryings)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+
+            valid = (bool)mState.mGeometryShaderInputPrimitiveType.valid();
+            stream.writeBool(valid);
+            if (valid)
+            {
+                unsigned char value =
+                    (unsigned char)mState.mGeometryShaderInputPrimitiveType.value();
+                stream.writeBytes(&value, 1);
+            }
+            valid = (bool)mState.mGeometryShaderOutputPrimitiveType.valid();
+            stream.writeBool(valid);
+            if (valid)
+            {
+                unsigned char value =
+                    (unsigned char)mState.mGeometryShaderOutputPrimitiveType.value();
+                stream.writeBytes(&value, 1);
+            }
+            valid = mState.mGeometryShaderMaxVertices.valid();
+            stream.writeBool(valid);
+            if (valid)
+            {
+                int value = (int)mState.mGeometryShaderMaxVertices.value();
+                stream.writeInt(value);
+            }
+
+            stream.writeInt(mState.mGeometryShaderInvocations);
+            break;
+        }
+        case ShaderType::TessControl:
+        {
+            stream.writeInt(mState.mInputVaryings.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mInputVaryings)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mOutputVaryings.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mOutputVaryings)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mTessControlShaderVertices);
+            break;
+        }
+        case ShaderType::TessEvaluation:
+        {
+            unsigned int value;
+
+            stream.writeInt(mState.mInputVaryings.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mInputVaryings)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+            stream.writeInt(mState.mOutputVaryings.size());
+            for (const sh::ShaderVariable &shaderVariable : mState.mOutputVaryings)
+            {
+                WriteShaderVar(&stream, shaderVariable);
+            }
+
+            value = (unsigned int)(mState.mTessGenMode);
+            stream.writeInt(value);
+
+            value = (unsigned int)mState.mTessGenSpacing;
+            stream.writeInt(value);
+
+            value = (unsigned int)mState.mTessGenVertexOrder;
+            stream.writeInt(value);
+
+            value = (unsigned int)mState.mTessGenPointMode;
+            stream.writeInt(value);
+            break;
+        }
+        default:
+            UNREACHABLE();
+    }
+
+    stream.writeIntVector(mState.mCompiledBinary);
+    stream.writeEnum(mState.mCompileStatus);
+
+    ASSERT(binaryOut);
+    if (!binaryOut->resize(stream.length()))
+    {
+        std::stringstream sstream;
+        sstream << "Failed to allocate enough memory to serialize a shader. (" << stream.length()
+                << " bytes )";
+        ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+                           sstream.str().c_str());
+        return angle::Result::Incomplete;
+    }
+
+    memcpy(binaryOut->data(), stream.data(), stream.length());
+
+    return angle::Result::Continue;
+}
+
+angle::Result Shader::deserialize(const Context *context, BinaryInputStream &stream)
+{
+    size_t size;
+
+    if (stream.readInt<uint32_t>() != kShaderCacheIdentifier)
+    {
+        return angle::Result::Stop;
+    }
+
+    stream.readString(&mState.mLabel);
+    stream.readInt(&mState.mShaderVersion);
+    stream.readString(&mCompilerResourcesString);
+
+    size = stream.readInt<size_t>();
+    mState.mUniforms.resize(size);
+    for (sh::ShaderVariable &shaderVariable : mState.mUniforms)
+    {
+        LoadShaderVar(&stream, &shaderVariable);
+    }
+
+    size = stream.readInt<size_t>();
+    mState.mUniformBlocks.resize(size);
+    for (sh::InterfaceBlock &interfaceBlock : mState.mUniformBlocks)
+    {
+        LoadInterfaceBlock(&stream, interfaceBlock);
+    }
+
+    size = stream.readInt<size_t>();
+    mState.mShaderStorageBlocks.resize(size);
+    for (sh::InterfaceBlock &interfaceBlock : mState.mShaderStorageBlocks)
+    {
+        LoadInterfaceBlock(&stream, interfaceBlock);
+    }
+
+    mState.mSpecConstUsageBits = rx::SpecConstUsageBits(stream.readInt<uint32_t>());
+
+    switch (mType)
+    {
+        case ShaderType::Compute:
+        {
+            size = stream.readInt<size_t>();
+            mState.mAllAttributes.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mAllAttributes)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            size = stream.readInt<size_t>();
+            mState.mActiveAttributes.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mActiveAttributes)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            stream.readInt(&mState.mLocalSize[0]);
+            stream.readInt(&mState.mLocalSize[1]);
+            stream.readInt(&mState.mLocalSize[2]);
+            break;
+        }
+        case ShaderType::Vertex:
+        {
+            size = stream.readInt<size_t>();
+            mState.mOutputVaryings.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mOutputVaryings)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            size = stream.readInt<size_t>();
+            mState.mAllAttributes.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mAllAttributes)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            size = stream.readInt<size_t>();
+            mState.mActiveAttributes.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mActiveAttributes)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            stream.readInt(&mState.mNumViews);
+            break;
+        }
+        case ShaderType::Fragment:
+        {
+            size = stream.readInt<size_t>();
+            mState.mInputVaryings.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mInputVaryings)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            size = stream.readInt<size_t>();
+            mState.mActiveOutputVariables.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mActiveOutputVariables)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            stream.readBool(&mState.mEnablesPerSampleShading);
+            int advancedBlendEquationBits;
+            stream.readInt(&advancedBlendEquationBits);
+            mState.mAdvancedBlendEquations = BlendEquationBitSet(advancedBlendEquationBits);
+            break;
+        }
+        case ShaderType::Geometry:
+        {
+            bool valid;
+
+            size = stream.readInt<size_t>();
+            mState.mInputVaryings.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mInputVaryings)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            size = stream.readInt<size_t>();
+            mState.mOutputVaryings.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mOutputVaryings)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+
+            stream.readBool(&valid);
+            if (valid)
+            {
+                unsigned char value;
+                stream.readBytes(&value, 1);
+                mState.mGeometryShaderInputPrimitiveType = static_cast<PrimitiveMode>(value);
+            }
+            else
+            {
+                mState.mGeometryShaderInputPrimitiveType.reset();
+            }
+
+            stream.readBool(&valid);
+            if (valid)
+            {
+                unsigned char value;
+                stream.readBytes(&value, 1);
+                mState.mGeometryShaderOutputPrimitiveType = static_cast<PrimitiveMode>(value);
+            }
+            else
+            {
+                mState.mGeometryShaderOutputPrimitiveType.reset();
+            }
+
+            stream.readBool(&valid);
+            if (valid)
+            {
+                int value;
+                stream.readInt(&value);
+                mState.mGeometryShaderMaxVertices = static_cast<GLint>(value);
+            }
+            else
+            {
+                mState.mGeometryShaderMaxVertices.reset();
+            }
+
+            stream.readInt(&mState.mGeometryShaderInvocations);
+            break;
+        }
+        case ShaderType::TessControl:
+        {
+            size = stream.readInt<size_t>();
+            mState.mInputVaryings.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mInputVaryings)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            size = stream.readInt<size_t>();
+            mState.mOutputVaryings.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mOutputVaryings)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            stream.readInt(&mState.mTessControlShaderVertices);
+            break;
+        }
+        case ShaderType::TessEvaluation:
+        {
+            unsigned int value;
+
+            size = stream.readInt<size_t>();
+            mState.mInputVaryings.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mInputVaryings)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+            size = stream.readInt<size_t>();
+            mState.mOutputVaryings.resize(size);
+            for (sh::ShaderVariable &shaderVariable : mState.mOutputVaryings)
+            {
+                LoadShaderVar(&stream, &shaderVariable);
+            }
+
+            stream.readInt(&value);
+            mState.mTessGenMode = (GLenum)value;
+
+            stream.readInt(&value);
+            mState.mTessGenSpacing = (GLenum)value;
+
+            stream.readInt(&value);
+            mState.mTessGenVertexOrder = (GLenum)value;
+
+            stream.readInt(&value);
+            mState.mTessGenPointMode = (GLenum)value;
+            break;
+        }
+        default:
+            UNREACHABLE();
+    }
+
+    stream.readIntVector<unsigned int>(&mState.mCompiledBinary);
+    mState.mCompileStatus = stream.readEnum<CompileStatus>();
+
+    return angle::Result::Continue;
+}
+
+angle::Result Shader::loadBinary(const Context *context, const void *binary, GLsizei length)
+{
+    BinaryInputStream stream(binary, length);
+    ANGLE_TRY(deserialize(context, stream));
+
+    return angle::Result::Continue;
 }
 
 }  // namespace gl

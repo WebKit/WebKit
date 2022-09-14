@@ -29,20 +29,27 @@ PbufferSurfaceCGL::PbufferSurfaceCGL(const egl::SurfaceState &state,
       mHeight(height),
       mFunctions(renderer->getFunctions()),
       mStateManager(renderer->getStateManager()),
+      mFramebuffer(0),
       mColorRenderbuffer(0),
       mDSRenderbuffer(0)
 {}
 
 PbufferSurfaceCGL::~PbufferSurfaceCGL()
 {
+    if (mFramebuffer != 0)
+    {
+        mStateManager->deleteFramebuffer(mFramebuffer);
+        mFramebuffer = 0;
+    }
+
     if (mColorRenderbuffer != 0)
     {
-        mFunctions->deleteRenderbuffers(1, &mColorRenderbuffer);
+        mStateManager->deleteRenderbuffer(mColorRenderbuffer);
         mColorRenderbuffer = 0;
     }
     if (mDSRenderbuffer != 0)
     {
-        mFunctions->deleteRenderbuffers(1, &mDSRenderbuffer);
+        mStateManager->deleteRenderbuffer(mDSRenderbuffer);
         mDSRenderbuffer = 0;
     }
 }
@@ -122,21 +129,34 @@ EGLint PbufferSurfaceCGL::getSwapBehavior() const
     return EGL_BUFFER_PRESERVED;
 }
 
-FramebufferImpl *PbufferSurfaceCGL::createDefaultFramebuffer(const gl::Context *context,
-                                                             const gl::FramebufferState &state)
+egl::Error PbufferSurfaceCGL::attachToFramebuffer(const gl::Context *context,
+                                                  gl::Framebuffer *framebuffer)
 {
-    const FunctionsGL *functions = GetFunctionsGL(context);
-    StateManagerGL *stateManager = GetStateManagerGL(context);
+    FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
+    ASSERT(framebufferGL->getFramebufferID() == 0);
 
-    GLuint framebuffer = 0;
-    functions->genFramebuffers(1, &framebuffer);
-    stateManager->bindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                       mColorRenderbuffer);
-    functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                                       mDSRenderbuffer);
+    if (mFramebuffer == 0)
+    {
+        GLuint framebufferID = 0;
+        mFunctions->genFramebuffers(1, &framebufferID);
+        mStateManager->bindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+        mFunctions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                            mColorRenderbuffer);
+        mFunctions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                            GL_RENDERBUFFER, mDSRenderbuffer);
+        mFramebuffer = framebufferID;
+    }
+    framebufferGL->setFramebufferID(mFramebuffer);
+    return egl::NoError();
+}
 
-    return new FramebufferGL(state, framebuffer, true, false);
+egl::Error PbufferSurfaceCGL::detachFromFramebuffer(const gl::Context *context,
+                                                    gl::Framebuffer *framebuffer)
+{
+    FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
+    ASSERT(framebufferGL->getFramebufferID() == mFramebuffer);
+    framebufferGL->setFramebufferID(0);
+    return egl::NoError();
 }
 
 }  // namespace rx

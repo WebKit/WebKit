@@ -74,7 +74,7 @@ ANGLE_EXPORT void GL_APIENTRY GL_GetProgramResourceiv(GLuint program,
                                                       GLuint index,
                                                       GLsizei propCount,
                                                       const GLenum *props,
-                                                      GLsizei bufSize,
+                                                      GLsizei count,
                                                       GLsizei *length,
                                                       GLint *params);
 ANGLE_EXPORT void GL_APIENTRY GL_GetTexLevelParameterfv(GLenum target,

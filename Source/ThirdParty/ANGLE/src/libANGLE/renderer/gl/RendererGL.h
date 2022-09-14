@@ -11,7 +11,6 @@
 
 #include <list>
 #include <mutex>
-#include <thread>
 
 #include "libANGLE/Caps.h"
 #include "libANGLE/Error.h"
@@ -169,7 +168,7 @@ class RendererGL : angle::NonCopyable
     bool mWorkDoneSinceLastFlush = false;
 
     // The thread-to-context mapping for the currently active worker threads.
-    angle::HashMap<std::thread::id, std::unique_ptr<WorkerContext>> mCurrentWorkerContexts;
+    angle::HashMap<uint64_t, std::unique_ptr<WorkerContext>> mCurrentWorkerContexts;
     // The worker contexts available to use.
     std::list<std::unique_ptr<WorkerContext>> mWorkerContextPool;
     // Protect the concurrent accesses to worker contexts.

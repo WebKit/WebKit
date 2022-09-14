@@ -1147,13 +1147,13 @@
         </extension>
         <extension name="GL_ANGLE_memory_object_fuchsia" supported="gl|gles2">
             <require>
-                <enum name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE"/>
+                <enum name="GL_HANDLE_TYPE_ZIRCON_VMO_ANGLE" group="ExternalHandleType"/>
                 <command name="glImportMemoryZirconHandleANGLE"/>
             </require>
         </extension>
         <extension name="GL_ANGLE_semaphore_fuchsia" supported="gl|gles2">
             <require>
-                <enum name="GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE"/>
+                <enum name="GL_HANDLE_TYPE_ZIRCON_EVENT_ANGLE" group="ExternalHandleType"/>
                 <command name="glImportSemaphoreZirconHandleANGLE"/>
             </require>
         </extension>

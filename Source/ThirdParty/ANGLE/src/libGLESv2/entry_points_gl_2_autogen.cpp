@@ -12,6 +12,7 @@
 
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
+#include "libANGLE/capture/capture_gl_2_autogen.h"
 #include "libANGLE/capture/gl_enum_utils.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/validationEGL.h"
@@ -35,7 +36,7 @@ void GL_APIENTRY GL_GetVertexAttribdv(GLuint index, GLenum pname, GLdouble *para
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetVertexAttribdv,
           "context = %d, index = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context), index,
-          GLenumToString(GLenumGroup::DefaultGroup, pname), (uintptr_t)params);
+          GLenumToString(BigGLEnum::AllEnums, pname), (uintptr_t)params);
 
     if (context)
     {

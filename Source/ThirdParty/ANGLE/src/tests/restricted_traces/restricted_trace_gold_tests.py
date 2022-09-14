@@ -114,7 +114,7 @@ def run_angle_system_info_test(sysinfo_args, args, env):
     with temporary_dir() as temp_dir:
         sysinfo_args += ['--render-test-output-dir=' + temp_dir]
 
-        result, _ = angle_test_util.RunTestSuite(
+        result, _, _ = angle_test_util.RunTestSuite(
             'angle_system_info_test', sysinfo_args, env, use_xvfb=args.xvfb)
         if result != 0:
             raise Exception('Error getting system info.')
@@ -331,7 +331,7 @@ def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_resu
                     '--render-test-output-dir=%s' % screenshot_dir,
                     '--save-screenshots',
                 ] + extra_flags
-                result, test_output = angle_test_util.RunTestSuite(
+                result, _, json_results = angle_test_util.RunTestSuite(
                     args.test_suite, cmd_args, env, use_xvfb=args.xvfb)
                 batch_result = PASS if result == 0 else FAIL
 
@@ -341,8 +341,9 @@ def _run_tests(args, tests, extra_flags, env, screenshot_dir, results, test_resu
 
                     if batch_result == PASS:
                         test_prefix = SWIFTSHADER_TEST_PREFIX if args.swiftshader else DEFAULT_TEST_PREFIX
-                        trace_skipped_notice = '[  SKIPPED ] ' + test_prefix + trace + '\n'
-                        if trace_skipped_notice in (test_output + '\n'):
+                        test_name = test_prefix + trace
+                        if json_results['tests'][test_name]['actual'] == 'SKIP':
+                            logging.info('Test skipped by suite: %s' % test_name)
                             result = SKIP
                         else:
                             logging.debug('upload test result: %s' % trace)

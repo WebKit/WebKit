@@ -885,7 +885,14 @@ void main()
 
     EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
     EXPECT_PIXEL_COLOR_EQ(1, 3, GLColor::red);
-    EXPECT_PIXEL_COLOR_EQ(3, 3, GLColor::green);
+
+    // The result below is undefined. The glBufferData at the top puts
+    // [red, red, red, ..., zero, zero, zero, ...]
+    // in the buffer and the glMap,glUnmap tries to overwrite the zeros with green
+    // but because UNSYNCHRONIZED was passed in there's no guarantee those
+    // zeros have been written yet. If they haven't they'll overwrite the
+    // greens.
+    // EXPECT_PIXEL_COLOR_EQ(3, 3, GLColor::green);
 }
 
 // Verify that we can map and write the buffer between draws and the second draw sees the new buffer
@@ -977,6 +984,40 @@ TEST_P(BufferDataTest, BufferSizeValidation32Bit)
     GLubyte data = 0;
     glBufferSubData(GL_ARRAY_BUFFER, std::numeric_limits<uint32_t>::max(), 1, &data);
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
+}
+
+// Some drivers generate errors when array buffer bindings are left mapped during draw calls.
+// crbug.com/1345777
+TEST_P(BufferDataTestES3, GLDriverErrorWhenMappingArrayBuffersDuringDraw)
+{
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    ASSERT_NE(program, 0u);
+
+    glUseProgram(program);
+
+    auto quadVertices = GetQuadVertices();
+
+    GLBuffer vb;
+    glBindBuffer(GL_ARRAY_BUFFER, vb.get());
+    glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * quadVertices.size(), quadVertices.data(),
+                 GL_STATIC_DRAW);
+
+    GLint positionLocation = glGetAttribLocation(program, essl3_shaders::PositionAttrib());
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
+
+    GLBuffer pb;
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pb);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, 1024, nullptr, GL_STREAM_DRAW);
+    glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, 1024, GL_MAP_WRITE_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    EXPECT_GL_NO_ERROR();
 }
 
 // Tests a null crash bug caused by copying from null back-end buffer pointer

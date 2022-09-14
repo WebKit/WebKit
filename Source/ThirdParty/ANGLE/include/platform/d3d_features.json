@@ -177,6 +177,14 @@
             "description": [
                 "Allow ES3 on 10.0 devices"
             ]
+        },
+        {
+            "name": "disable_rasterizer_order_views",
+            "category": "Workarounds",
+            "description": [
+                "Disable ROVs for testing"
+            ],
+            "issue": "http://anglebug.com/7279"
         }
     ]
 }

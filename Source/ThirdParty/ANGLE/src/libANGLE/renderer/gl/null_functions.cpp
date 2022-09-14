@@ -923,7 +923,7 @@ void INTERNAL_GL_APIENTRY glGetActiveAttribNULL(GLuint program,
 void INTERNAL_GL_APIENTRY glGetActiveSubroutineNameNULL(GLuint program,
                                                         GLenum shadertype,
                                                         GLuint index,
-                                                        GLsizei bufsize,
+                                                        GLsizei bufSize,
                                                         GLsizei *length,
                                                         GLchar *name)
 {}
@@ -931,7 +931,7 @@ void INTERNAL_GL_APIENTRY glGetActiveSubroutineNameNULL(GLuint program,
 void INTERNAL_GL_APIENTRY glGetActiveSubroutineUniformNameNULL(GLuint program,
                                                                GLenum shadertype,
                                                                GLuint index,
-                                                               GLsizei bufsize,
+                                                               GLsizei bufSize,
                                                                GLsizei *length,
                                                                GLchar *name)
 {}
@@ -1092,21 +1092,21 @@ void INTERNAL_GL_APIENTRY glGetInternalformatSampleivNVNULL(GLenum target,
                                                             GLenum internalformat,
                                                             GLsizei samples,
                                                             GLenum pname,
-                                                            GLsizei bufSize,
+                                                            GLsizei count,
                                                             GLint *params)
 {}
 
 void INTERNAL_GL_APIENTRY glGetInternalformati64vNULL(GLenum target,
                                                       GLenum internalformat,
                                                       GLenum pname,
-                                                      GLsizei bufSize,
+                                                      GLsizei count,
                                                       GLint64 *params)
 {}
 
 void INTERNAL_GL_APIENTRY glGetInternalformativNULL(GLenum target,
                                                     GLenum internalformat,
                                                     GLenum pname,
-                                                    GLsizei bufSize,
+                                                    GLsizei count,
                                                     GLint *params)
 {}
 
@@ -1229,7 +1229,7 @@ void INTERNAL_GL_APIENTRY glGetProgramResourceivNULL(GLuint program,
                                                      GLuint index,
                                                      GLsizei propCount,
                                                      const GLenum *props,
-                                                     GLsizei bufSize,
+                                                     GLsizei count,
                                                      GLsizei *length,
                                                      GLint *params)
 {}
@@ -1351,7 +1351,7 @@ GLint INTERNAL_GL_APIENTRY glGetSubroutineUniformLocationNULL(GLuint program,
 }
 
 void INTERNAL_GL_APIENTRY
-glGetSyncivNULL(GLsync sync, GLenum pname, GLsizei bufSize, GLsizei *length, GLint *values)
+glGetSyncivNULL(GLsync sync, GLenum pname, GLsizei count, GLsizei *length, GLint *values)
 {}
 
 void INTERNAL_GL_APIENTRY
@@ -2325,7 +2325,7 @@ void INTERNAL_GL_APIENTRY glSetFenceNVNULL(GLuint fence, GLenum condition) {}
 
 void INTERNAL_GL_APIENTRY glShaderBinaryNULL(GLsizei count,
                                              const GLuint *shaders,
-                                             GLenum binaryformat,
+                                             GLenum binaryFormat,
                                              const void *binary,
                                              GLsizei length)
 {}

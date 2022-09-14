@@ -11,6 +11,7 @@
 import angle_format
 import json
 import math
+import os
 import pprint
 import re
 import sys
@@ -424,7 +425,7 @@ def main():
     angle_format_cases = parse_angle_format_table(all_angle, json_data, angle_to_gl)
     switch_data = gen_map_switch_string(gl_to_angle)
     output_cpp = template_autogen_inl.format(
-        script_name=sys.argv[0],
+        script_name=os.path.basename(sys.argv[0]),
         angle_format_info_cases=angle_format_cases,
         angle_format_switch=switch_data,
         data_source_name=data_source_name)
@@ -435,7 +436,7 @@ def main():
     enum_data = gen_enum_string(all_angle)
     num_angle_formats = len(all_angle)
     output_h = template_autogen_h.format(
-        script_name=sys.argv[0],
+        script_name=os.path.basename(sys.argv[0]),
         angle_format_enum=enum_data,
         data_source_name=data_source_name,
         num_angle_formats=num_angle_formats)

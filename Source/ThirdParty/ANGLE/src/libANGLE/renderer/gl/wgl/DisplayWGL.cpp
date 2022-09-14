@@ -9,6 +9,7 @@
 #include "libANGLE/renderer/gl/wgl/DisplayWGL.h"
 
 #include "common/debug.h"
+#include "common/system_utils.h"
 #include "libANGLE/Config.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
@@ -678,7 +679,8 @@ egl::Error DisplayWGL::makeCurrent(egl::Display *display,
                                    egl::Surface *readSurface,
                                    gl::Context *context)
 {
-    CurrentNativeContext &currentContext = mCurrentNativeContexts[std::this_thread::get_id()];
+    CurrentNativeContext &currentContext =
+        mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
 
     HDC newDC = mDeviceContext;
     if (drawSurface)
@@ -907,9 +909,10 @@ egl::Error DisplayWGL::createRenderer(std::shared_ptr<RendererWGL> *outRenderer)
     {
         return egl::EglNotInitialized() << "Failed to make the intermediate WGL context current.";
     }
-    CurrentNativeContext &currentContext = mCurrentNativeContexts[std::this_thread::get_id()];
-    currentContext.dc                    = mDeviceContext;
-    currentContext.glrc                  = context;
+    CurrentNativeContext &currentContext =
+        mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()];
+    currentContext.dc   = mDeviceContext;
+    currentContext.glrc = context;
 
     std::unique_ptr<FunctionsGL> functionsGL(
         new FunctionsGLWindows(mOpenGLModule, mFunctionsWGL->getProcAddress));

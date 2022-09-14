@@ -889,7 +889,7 @@ bool ValidateSampleMaskiANGLE(const Context *context,
 bool ValidateGetTranslatedShaderSourceANGLE(const Context *context,
                                             angle::EntryPoint entryPoint,
                                             ShaderProgramID shaderPacked,
-                                            GLsizei bufsize,
+                                            GLsizei bufSize,
                                             const GLsizei *length,
                                             const GLchar *source);
 
@@ -1231,7 +1231,7 @@ bool ValidateMultiDrawElementsBaseVertexEXT(const Context *context,
                                             const GLsizei *count,
                                             DrawElementsType typePacked,
                                             const void *const *indices,
-                                            GLsizei primcount,
+                                            GLsizei drawcount,
                                             const GLint *basevertex);
 
 // GL_EXT_external_buffer
@@ -1411,6 +1411,8 @@ bool ValidateRenderbufferStorageMultisampleEXT(const Context *context,
                                                GLenum internalformat,
                                                GLsizei width,
                                                GLsizei height);
+
+// GL_EXT_multisampled_render_to_texture2
 
 // GL_EXT_occlusion_query_boolean
 

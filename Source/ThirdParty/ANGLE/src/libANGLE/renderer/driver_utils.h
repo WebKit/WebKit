@@ -171,6 +171,23 @@ bool Is9thGenIntel(uint32_t DeviceId);
 bool Is11thGenIntel(uint32_t DeviceId);
 bool Is12thGenIntel(uint32_t DeviceId);
 
+struct MajorMinorPatchVersion
+{
+    MajorMinorPatchVersion();
+    MajorMinorPatchVersion(int major, int minor, int patch);
+
+    int majorVersion = 0;
+    int minorVersion = 0;
+    int patchVersion = 0;
+};
+bool operator==(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b);
+bool operator!=(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b);
+bool operator<(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b);
+bool operator>=(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b);
+
+using ARMDriverVersion = MajorMinorPatchVersion;
+ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion);
+
 // Platform helpers
 inline bool IsWindows()
 {
@@ -238,19 +255,7 @@ inline bool IsIOS()
 bool IsWayland();
 bool IsWin10OrGreater();
 
-struct OSVersion
-{
-    OSVersion();
-    OSVersion(int major, int minor, int patch);
-
-    int majorVersion = 0;
-    int minorVersion = 0;
-    int patchVersion = 0;
-};
-bool operator==(const OSVersion &a, const OSVersion &b);
-bool operator!=(const OSVersion &a, const OSVersion &b);
-bool operator<(const OSVersion &a, const OSVersion &b);
-bool operator>=(const OSVersion &a, const OSVersion &b);
+using OSVersion = MajorMinorPatchVersion;
 
 OSVersion GetMacOSVersion();
 
