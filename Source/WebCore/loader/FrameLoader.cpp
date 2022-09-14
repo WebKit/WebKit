@@ -372,7 +372,6 @@ void FrameLoader::initForSynthesizedDocument(const URL&)
     setDocumentLoader(loader.ptr());
 
     m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocument);
-    m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
     m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
     m_client->transitionToCommittedForNewPage();
 
@@ -605,7 +604,7 @@ void FrameLoader::didExplicitOpen()
 
     // Calling document.open counts as committing the first real document load.
     if (!m_stateMachine.committedFirstRealDocumentLoad())
-        m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
 
     if (auto* document = m_frame.document())
         m_client->dispatchDidExplicitOpen(document->url(), document->contentType());
@@ -688,9 +687,6 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     m_checkTimer.stop();
     m_shouldCallCheckCompleted = false;
     m_shouldCallCheckLoadComplete = false;
-
-    if (m_stateMachine.isDisplayingInitialEmptyDocument() && m_stateMachine.committedFirstRealDocumentLoad())
-        m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
 }
 
 void FrameLoader::receivedFirstData()
@@ -737,9 +733,9 @@ void FrameLoader::didBeginDocument(bool dispatch)
     m_didCallImplicitClose = false;
     m_frame.document()->setReadyState(Document::Loading);
 
-    if (m_pendingStateObject) {
-        m_frame.document()->statePopped(*m_pendingStateObject);
-        m_pendingStateObject = nullptr;
+    if (history().currentItem()) {
+        RefPtr<SerializedScriptValue> stateObject = history().currentItem()->stateObject();
+        m_frame.document()->statePopped(stateObject ? stateObject.releaseNonNull() : SerializedScriptValue::nullValue());
     }
 
     if (dispatch)
@@ -1078,8 +1074,6 @@ void FrameLoader::setOpener(Frame* opener)
 
 void FrameLoader::provisionalLoadStarted()
 {
-    if (m_stateMachine.firstLayoutDone())
-        m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
     m_frame.navigationScheduler().cancel(NewLoadInProgress::Yes);
     m_client->provisionalLoadStarted();
 
@@ -2159,7 +2153,7 @@ void FrameLoader::commitProvisionalLoad()
     }
 }
 
-void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
+void FrameLoader::transitionToCommitted(CachedPage*)
 {
     ASSERT(m_client->hasWebView());
     ASSERT(m_state == FrameState::Provisional);
@@ -2173,7 +2167,6 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     }
 
     m_client->setCopiesOnScroll();
-    history().updateForCommit();
 
     // The call to closeURL() invokes the unload event handler, which can execute arbitrary
     // JavaScript. If the script initiates a new load, we need to abandon the current load,
@@ -2200,67 +2193,8 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
 
     // Nothing else can interrupt this commit - set the Provisional->Committed transition in stone
     setState(FrameState::CommittedPage);
-
-    // Handle adding the URL to the back/forward list.
-    auto documentLoader = m_documentLoader;
-
-    switch (m_loadType) {
-    case FrameLoadType::Forward:
-    case FrameLoadType::Back:
-    case FrameLoadType::IndexedBackForward:
-        if (m_frame.page()) {
-            // If the first load within a frame is a navigation within a back/forward list that was attached
-            // without any of the items being loaded then we need to update the history in a similar manner as
-            // for a standard load with the exception of updating the back/forward list (<rdar://problem/8091103>).
-            if (!m_stateMachine.committedFirstRealDocumentLoad() && m_frame.isMainFrame())
-                history().updateForStandardLoad(HistoryController::UpdateAllExceptBackForwardList);
-
-            history().updateForBackForwardNavigation();
-
-            // For cached pages, CachedFrame::restore will take care of firing the popstate event with the history item's state object
-            if (history().currentItem() && !cachedPage)
-                m_pendingStateObject = history().currentItem()->stateObject();
-
-            // Create a document view for this document, or used the cached view.
-            if (cachedPage) {
-                ASSERT(cachedPage->documentLoader());
-                cachedPage->documentLoader()->attachToFrame(m_frame);
-                m_client->transitionToCommittedFromCachedFrame(cachedPage->cachedMainFrame());
-            } else
-                m_client->transitionToCommittedForNewPage();
-        }
-        break;
-
-    case FrameLoadType::Reload:
-    case FrameLoadType::ReloadFromOrigin:
-    case FrameLoadType::ReloadExpiredOnly:
-    case FrameLoadType::Same:
-    case FrameLoadType::Replace:
-        history().updateForReload();
-        m_client->transitionToCommittedForNewPage();
-        break;
-
-    case FrameLoadType::Standard:
-        history().updateForStandardLoad();
-        if (m_frame.view())
-            m_frame.view()->setScrollbarsSuppressed(true);
-        m_client->transitionToCommittedForNewPage();
-        break;
-
-    case FrameLoadType::RedirectWithLockedBackForwardList:
-        history().updateForRedirectWithLockedBackForwardList();
-        m_client->transitionToCommittedForNewPage();
-        break;
-    }
-
-    if (documentLoader)
-        documentLoader->writer().setMIMEType(documentLoader->responseMIMEType());
-
-    if (m_stateMachine.creatingInitialEmptyDocument())
-        return;
-
-    if (!m_stateMachine.committedFirstRealDocumentLoad())
-        m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
+    history().updateForCommit();
+    m_client->transitionToCommittedForNewPage();
 }
 
 void FrameLoader::clientRedirectCancelledOrFinished(NewLoadInProgress newLoadInProgress)
@@ -2371,7 +2305,6 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     // Use the previous ScrollView's frame rect.
     if (previousViewFrameRect)
         view->setFrameRect(previousViewFrameRect.value());
-
 
     // Setting the document builds the render tree and runs post style resolution callbacks that can do anything,
     // including loading a child frame before its been re-attached to the frame tree as part of this restore.
@@ -2585,9 +2518,6 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 history().restoreScrollPositionAndViewState();
         }
 
-        if (m_stateMachine.creatingInitialEmptyDocument() || !m_stateMachine.committedFirstRealDocumentLoad())
-            return;
-
         m_progressTracker->progressCompleted();
         Page* page = m_frame.page();
         if (page) {
@@ -2693,8 +2623,8 @@ void FrameLoader::didFirstLayout()
     if (m_frame.page() && isBackForwardLoadType(m_loadType))
         history().restoreScrollPositionAndViewState();
 
-    if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
-        m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
+    if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument())
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
 }
 
 void FrameLoader::didReachVisuallyNonEmptyState()
@@ -2710,11 +2640,6 @@ void FrameLoader::frameLoadCompleted()
     m_client->frameLoadCompleted();
 
     history().updateForFrameLoadCompleted();
-
-    // After a canceled provisional load, firstLayoutDone is false.
-    // Reset it to true if we're displaying a page.
-    if (m_documentLoader && m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
-        m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
 }
 
 void FrameLoader::detachChildren()
@@ -3484,7 +3409,7 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
 
     bool isFirstNavigationInFrame = false;
     if (!m_stateMachine.committedFirstRealDocumentLoad()) {
-        m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
+        m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
         isFirstNavigationInFrame = true;
     }
 

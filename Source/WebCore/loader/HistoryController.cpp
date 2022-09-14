@@ -376,7 +376,7 @@ void FrameLoader::HistoryController::updateForReload()
 //     2) Global history: Handled by the client.
 //     3) Visited links: Handled by the PageGroup.
 
-void FrameLoader::HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
+void FrameLoader::HistoryController::updateForStandardLoad()
 {
     LOG(History, "HistoryController %p updateForStandardLoad: Updating History for standard load in frame %p (main frame %d) %s", this, &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader()->url().string().ascii().data());
 
@@ -387,8 +387,7 @@ void FrameLoader::HistoryController::updateForStandardLoad(HistoryUpdateType upd
 
     if (!frameLoader.documentLoader()->isClientRedirect()) {
         if (!historyURL.isEmpty()) {
-            if (updateType != UpdateAllExceptBackForwardList)
-                updateBackForwardListClippedAtTarget(true);
+            updateBackForwardListClippedAtTarget(true);
             if (!usesEphemeralSession) {
                 frameLoader.client().updateGlobalHistory();
                 frameLoader.documentLoader()->setDidCreateGlobalHistoryEntry(true);
@@ -493,6 +492,28 @@ void FrameLoader::HistoryController::updateForCommit()
         // restore their scroll position.  We'll avoid this frame (which has already
         // committed) and its children (which will be replaced).
         m_frame.mainFrame().loader().history().recursiveUpdateForCommit();
+    }
+
+    switch (type) {
+    case FrameLoadType::Forward:
+    case FrameLoadType::Back:
+    case FrameLoadType::IndexedBackForward:
+        updateForBackForwardNavigation();
+        return;
+    case FrameLoadType::Reload:
+    case FrameLoadType::ReloadFromOrigin:
+    case FrameLoadType::Same:
+    case FrameLoadType::Replace:
+        updateForReload();
+        return;
+    case FrameLoadType::Standard:
+        updateForStandardLoad();
+        return;
+    case FrameLoadType::RedirectWithLockedBackForwardList:
+        updateForRedirectWithLockedBackForwardList();
+        return;
+    default:
+        ASSERT_NOT_REACHED();
     }
 }
 

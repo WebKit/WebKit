@@ -46,7 +46,7 @@ bool FrameLoaderStateMachine::committingFirstRealLoad() const
 
 bool FrameLoaderStateMachine::committedFirstRealDocumentLoad() const 
 {
-    return m_state >= DisplayingInitialEmptyDocumentPostCommit;
+    return m_state >= CommittedFirstRealLoad;
 }
 
 bool FrameLoaderStateMachine::creatingInitialEmptyDocument() const 
@@ -56,17 +56,12 @@ bool FrameLoaderStateMachine::creatingInitialEmptyDocument() const
 
 bool FrameLoaderStateMachine::isDisplayingInitialEmptyDocument() const 
 {
-    return m_state == DisplayingInitialEmptyDocument || m_state == DisplayingInitialEmptyDocumentPostCommit;
-}
-
-bool FrameLoaderStateMachine::firstLayoutDone() const
-{
-    return m_state == FirstLayoutDone;
+    return m_state == DisplayingInitialEmptyDocument;
 }
 
 void FrameLoaderStateMachine::advanceTo(State state)
 {
-    ASSERT(State(m_state + 1) == state || (firstLayoutDone() && state == CommittedFirstRealLoad));
+    ASSERT(State(m_state + 1) == state);
     m_state = state;
 }
 

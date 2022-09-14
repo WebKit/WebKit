@@ -45,16 +45,13 @@ public:
     enum State {
         CreatingInitialEmptyDocument,
         DisplayingInitialEmptyDocument,
-        DisplayingInitialEmptyDocumentPostCommit,
-        CommittedFirstRealLoad,
-        FirstLayoutDone
+        CommittedFirstRealLoad
     };
 
     WEBCORE_EXPORT bool committingFirstRealLoad() const;
-    bool committedFirstRealDocumentLoad() const;
+    WEBCORE_EXPORT bool committedFirstRealDocumentLoad() const;
     WEBCORE_EXPORT bool creatingInitialEmptyDocument() const;
     WEBCORE_EXPORT bool isDisplayingInitialEmptyDocument() const;
-    WEBCORE_EXPORT bool firstLayoutDone() const;
     void advanceTo(State);
 
     State stateForDebugging() const { return m_state; }

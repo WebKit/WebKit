@@ -62,10 +62,6 @@ public:
 
     void invalidateCurrentItemCachedPage();
 
-    void updateForBackForwardNavigation();
-    void updateForReload();
-    void updateForStandardLoad(HistoryUpdateType updateType = UpdateAll);
-    void updateForRedirectWithLockedBackForwardList();
     void updateForClientRedirect();
     void updateForCommit();
     void updateForSameDocumentNavigation();
@@ -96,6 +92,11 @@ private:
     void initializeItem(HistoryItem&);
     Ref<HistoryItem> createItem();
     Ref<HistoryItem> createItemTree(Frame& targetFrame, bool clipAtTarget);
+
+    void updateForBackForwardNavigation();
+    void updateForReload();
+    void updateForStandardLoad();
+    void updateForRedirectWithLockedBackForwardList();
 
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*);
     void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad);
