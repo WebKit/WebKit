@@ -1450,6 +1450,11 @@ void RenderElement::notifyFinished(CachedResource& resource, const NetworkLoadMe
     document().cachedResourceLoader().notifyFinished(resource);
 }
 
+bool RenderElement::allowsAnimation() const
+{
+    return page().imageAnimationEnabled();
+}
+
 void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
 {
     if (hasPausedImageAnimations())

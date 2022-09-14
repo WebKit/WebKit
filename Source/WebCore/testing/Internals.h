@@ -221,6 +221,9 @@ public:
     void setImageFrameDecodingDuration(HTMLImageElement&, float duration);
     void resetImageAnimation(HTMLImageElement&);
     bool isImageAnimating(HTMLImageElement&);
+    void setImageAnimationEnabled(bool);
+    void resumeImageAnimation(HTMLImageElement&);
+    void pauseImageAnimation(HTMLImageElement&);
     unsigned imagePendingDecodePromisesCountForTesting(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool enabled);
     unsigned imageDecodeCount(HTMLImageElement&);

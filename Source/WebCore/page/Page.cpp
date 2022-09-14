@@ -1945,6 +1945,14 @@ void Page::setLoadSchedulingMode(LoadSchedulingMode mode)
     platformStrategies()->loaderStrategy()->setResourceLoadSchedulingMode(*this, m_loadSchedulingMode);
 }
 
+void Page::setImageAnimationEnabled(bool enabled)
+{
+    if (m_imageAnimationEnabled == enabled)
+        return;
+    m_imageAnimationEnabled = enabled;
+    repaintAnimatedImages();
+}
+
 void Page::suspendScriptedAnimations()
 {
     m_scriptedAnimationsSuspended = true;
@@ -4009,6 +4017,12 @@ void Page::forceRepaintAllFrames()
 
         frameView->renderView()->repaintViewAndCompositedLayers();
     }
+}
+
+void Page::repaintAnimatedImages()
+{
+    if (auto* view = mainFrame().view())
+        view->repaintVisibleImageAnimationsIncludingSubframes();
 }
 
 } // namespace WebCore

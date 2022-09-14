@@ -247,8 +247,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
 
     RefPtr<NativeImage> image;
     if (options.decodingMode() == DecodingMode::Asynchronous) {
-        ASSERT(!canAnimate());
-        ASSERT(!m_currentFrame || m_animationFinished);
+        ASSERT(!m_currentFrame || !canAnimate());
 
         bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, DecodingOptions(sizeForDrawing));
         bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, DecodingOptions(sizeForDrawing));
@@ -374,7 +373,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
 
 bool BitmapImage::shouldAnimate() const
 {
-    return repetitionCount() && !m_animationFinished && imageObserver();
+    return repetitionCount() && !m_animationFinished && imageObserver() && imageObserver()->allowsAnimation(*this);
 }
 
 bool BitmapImage::canAnimate() const
@@ -636,7 +635,7 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
         LOG(Images, "BitmapImage::%s - %p - url: %s [More data makes frameCount() > 1]", __FUNCTION__, this, sourceURL().string().utf8().data());
     }
 
-    ASSERT(index == m_currentFrame && !m_currentFrame);
+    ASSERT((!index && !m_currentFrame) || !canAnimate());
     if (m_source->isAsyncDecodingQueueIdle())
         m_source->stopAsyncDecodingQueue();
 

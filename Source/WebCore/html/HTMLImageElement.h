@@ -155,6 +155,10 @@ public:
 
     bool allowsOrientationOverride() const;
 
+    bool allowsAnimation() const;
+    WEBCORE_EXPORT void setAllowsAnimation(bool);
+    WEBCORE_EXPORT void resetAllowsAnimation();
+
 protected:
     HTMLImageElement(const QualifiedName&, Document&, HTMLFormElement* = nullptr);
 
@@ -236,6 +240,8 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     String m_pendingClonedAttachmentID;
 #endif
+
+    Image* image() const;
 
     friend class HTMLPictureElement;
 };

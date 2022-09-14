@@ -767,6 +767,32 @@ bool HTMLImageElement::allowsOrientationOverride() const
     return !image || image->sourceURL().protocolIsData() || cachedImage->isCORSSameOrigin();
 }
 
+Image* HTMLImageElement::image() const
+{
+    if (auto* cachedImage = this->cachedImage())
+        return cachedImage->image();
+    return nullptr;
+}
+
+bool HTMLImageElement::allowsAnimation() const
+{
+    if (auto* image = this->image())
+        return image->allowsAnimation().value_or(document().page() ? document().page()->imageAnimationEnabled() : false);
+    return false;
+}
+
+void HTMLImageElement::setAllowsAnimation(bool allowsAnimation)
+{
+    if (auto* image = this->image())
+        return image->setAllowsAnimation(allowsAnimation);
+}
+
+void HTMLImageElement::resetAllowsAnimation()
+{
+    if (auto* image = this->image())
+        return image->setAllowsAnimation(std::nullopt);
+}
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachment)

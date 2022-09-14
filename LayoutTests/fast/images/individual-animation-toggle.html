@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<img src="resources/animation.gif" id="testImage" />
+<!-- To make this test able to pass in WK1, use this <div style="..."> to setAutodisplay:YES (rdar://42625657 has more details). -->
+<div style="will-change: transform"></div>
+
+<script>
+    description("This test ensures that when image animation is disabled page-wide, individual image animations can still be toggled on and off individually.\n\n");
+    jsTestIsAsync = true;
+    internals.settings.setImageAnimationControlEnabled(true);
+
+    internals.setImageAnimationEnabled(false);
+    var image = document.getElementById("testImage");
+    window.onload = function() {
+        shouldBecomeEqual("internals.isImageAnimating(image)", "false", function() {
+            internals.resumeImageAnimation(image);
+            shouldBecomeEqual("internals.isImageAnimating(image)", "true", function() {
+                internals.pauseImageAnimation(image);
+                shouldBecomeEqual("internals.isImageAnimating(image)", "false", function() {
+                    internals.setImageAnimationEnabled(true);
+                    internals.clearMemoryCache();
+                    finishJSTest();
+                });
+            });
+        });
+    };
+</script>
+
+</body>
+</html>

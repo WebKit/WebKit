@@ -52,6 +52,8 @@ public:
     virtual void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) = 0;
     virtual void changedInRect(const Image&, const IntRect* changeRect = nullptr) = 0;
     virtual void scheduleRenderingUpdate(const Image&) = 0;
+
+    virtual bool allowsAnimation(const Image&) const { return true; }
 };
 
 }
