@@ -343,7 +343,7 @@ public:
     WEBCORE_EXPORT void cancelSelectionAutoscroll();
 #endif
 
-    WEBCORE_EXPORT std::optional<Cursor> selectCursor(const HitTestResult&);
+    WEBCORE_EXPORT std::optional<Cursor> selectCursor(const HitTestResult&, bool shiftKey);
 
 #if ENABLE(KINETIC_SCROLLING)
     std::optional<WheelScrollGestureState> wheelScrollGestureState() const { return m_wheelScrollGestureState; }
@@ -405,7 +405,7 @@ private:
 
     bool internalKeyEvent(const PlatformKeyboardEvent&);
 
-    void updateCursor(FrameView&, const HitTestResult&);
+    void updateCursor(FrameView&, const HitTestResult&, bool shiftKey);
 
     void hoverTimerFired();
 
