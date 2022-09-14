@@ -3245,7 +3245,7 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
 
     auto hitTestResult = eventHandler.hitTestResultAtPoint(request.point, hitTestRequestTypes);
     if (auto* hitFrame = hitTestResult.innerNodeFrame()) {
-        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResult);
+        info.cursor = hitFrame->eventHandler().selectCursor(hitTestResult, false);
         if (request.includeCaretContext)
             populateCaretContext(hitTestResult, request, info);
     }
