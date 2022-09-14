@@ -1059,11 +1059,6 @@ webkit.org/b/165541 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
 webkit.org/b/154612 compositing/repaint/fixed-background-scroll.html [ Pass Failure ]
 
-webkit.org/b/245030 compositing/contents-opaque/body-background-skipped.html [ Pass Failure ]
-webkit.org/b/245030 compositing/rtl/rtl-fixed.html [ Pass Failure ]
-webkit.org/b/245030 compositing/contents-opaque/body-background-painted.html [ Pass Failure ]
-webkit.org/b/245030 compositing/fixed-image-loading.html [ Pass Failure ]
-
 webkit.org/b/165589 pointer-lock/lock-lost-on-esc-in-fullscreen.html [ Skip ]
 webkit.org/b/244304 pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
 
