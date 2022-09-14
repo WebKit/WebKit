@@ -282,7 +282,9 @@ ExceptionOr<void> SourceBuffer::abort()
 
 ExceptionOr<void> SourceBuffer::remove(double start, double end)
 {
-    return remove(MediaTime::createWithDouble(start), MediaTime::createWithDouble(end));
+    // Limit timescale to 1/1000 of microsecond so samples won't accidentally overlap with removal range by precision lost (e.g. by 0.000000000000X [sec]).
+    static const uint32_t timescale = 1000000000;
+    return remove(MediaTime::createWithDouble(start, timescale), MediaTime::createWithDouble(end, timescale));
 }
 
 ExceptionOr<void> SourceBuffer::remove(const MediaTime& start, const MediaTime& end)
