@@ -4607,18 +4607,27 @@ void WebPage::notifyReportObservers(FrameIdentifier frameID, Ref<WebCore::Report
         document->reportingScope().notifyReportObservers(WTFMove(report));
 }
 
-void WebPage::sendReportToEndpoints(FrameIdentifier frameID, URL&& baseURL, Vector<String>&& endPoints, IPC::FormDataReference&& reportData, WebCore::ViolationReportType reportType)
+void WebPage::sendReportToEndpoints(FrameIdentifier frameID, URL&& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, IPC::FormDataReference&& reportData, WebCore::ViolationReportType reportType)
 {
     auto report = reportData.takeData();
     if (!report)
         return;
 
     RefPtr frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
+    if (!frame || !frame->coreFrame())
         return;
 
-    for (const auto& url : endPoints)
+    for (auto& url : endpointURIs)
         PingLoader::sendViolationReport(*frame->coreFrame(), URL { baseURL, url }, Ref { *report.get() }, reportType);
+
+    auto* document = frame->coreFrame()->document();
+    if (!document)
+        return;
+
+    for (auto& token : endpointTokens) {
+        if (auto url = document->endpointURIForToken(token); !url.isEmpty())
+            PingLoader::sendViolationReport(*frame->coreFrame(), URL { baseURL, url }, Ref { *report.get() }, reportType);
+    }
 }
 
 NotificationPermissionRequestManager* WebPage::notificationPermissionRequestManager()

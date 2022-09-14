@@ -34,6 +34,7 @@ class Frame;
 class ResourceResponse;
 class ScriptExecutionContext;
 
+struct ReportingClient;
 struct SecurityOriginData;
 
 // https://html.spec.whatwg.org/multipage/origin.html#embedder-policy-value
@@ -101,5 +102,7 @@ enum class COEPDisposition : bool { Reporting , Enforce };
 
 WEBCORE_EXPORT CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse&, const ScriptExecutionContext*);
 WEBCORE_EXPORT void addCrossOriginEmbedderPolicyHeaders(ResourceResponse&, const CrossOriginEmbedderPolicy&);
+WEBCORE_EXPORT void sendCOEPInheritenceViolation(ReportingClient&, const URL& embedderURL, const String& endpoint, COEPDisposition, const String& type, const URL& blockedURL);
+WEBCORE_EXPORT void sendCOEPCORPViolation(ReportingClient&, const URL& embedderURL, const String& endpoint, COEPDisposition, FetchOptions::Destination, const URL& blockedURL);
 
 } // namespace WebCore

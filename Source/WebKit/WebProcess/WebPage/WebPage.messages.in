@@ -29,7 +29,7 @@ messages -> WebPage LegacyReceiver {
 
     AddConsoleMessage(WebCore::FrameIdentifier frameID, enum:uint8_t JSC::MessageSource messageSource, enum:uint8_t JSC::MessageLevel messageLevel, String message, std::optional<WebCore::ResourceLoaderIdentifier> requestID)
     EnqueueSecurityPolicyViolationEvent(WebCore::FrameIdentifier frameID, struct WebCore::SecurityPolicyViolationEventInit eventInit)
-    SendReportToEndpoints(WebCore::FrameIdentifier frameID, URL baseURL, Vector<String> endPoints, IPC::FormDataReference reportData, enum:uint8_t WebCore::ViolationReportType reportType);
+    SendReportToEndpoints(WebCore::FrameIdentifier frameID, URL baseURL, Vector<String> endpointURIs, Vector<String> endpointTokens, IPC::FormDataReference reportData, enum:uint8_t WebCore::ViolationReportType reportType);
 
     NotifyReportObservers(WebCore::FrameIdentifier frameID, Ref<WebCore::Report> report)
 

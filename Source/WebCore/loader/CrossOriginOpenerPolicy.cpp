@@ -35,12 +35,12 @@
 #include "NavigationRequester.h"
 #include "Page.h"
 #include "PingLoader.h"
+#include "Report.h"
 #include "ReportingClient.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityPolicy.h"
 #include "ViolationReportType.h"
-#include <wtf/JSONValues.h>
 
 namespace WebCore {
 
@@ -73,25 +73,6 @@ static ASCIILiteral crossOriginOpenerPolicyValueToEffectivePolicyString(CrossOri
     return "unsafe-none"_s;
 }
 
-static Ref<FormData> createViolationReportObject(ReportingClient& reportingClient, const URL& url, const Function<void(JSON::Object&)>& populateBody)
-{
-    auto body = JSON::Object::create();
-    populateBody(body);
-
-    auto reportObject = JSON::Object::create();
-    reportObject->setString("type"_s, "coop"_s);
-    if (url.isValid())
-        reportObject->setString("url"_s, url.string());
-    reportObject->setString("user_agent"_s, reportingClient.httpUserAgent());
-    reportObject->setInteger("age"_s, 0); // We currently do not delay sending the reports.
-    reportObject->setObject("body"_s, WTFMove(body));
-
-    auto reportList = JSON::Array::create();
-    reportList->pushObject(reportObject);
-
-    return FormData::create(reportList->toJSONString().utf8());
-}
-
 // https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-to
 static void sendViolationReportWhenNavigatingToCOOPResponse(ReportingClient& reportingClient, CrossOriginOpenerPolicy coop, COOPDisposition disposition, const URL& coopURL, const URL& previousResponseURL, const SecurityOrigin& coopOrigin, const SecurityOrigin& previousResponseOrigin, const String& referrer)
 {
@@ -99,18 +80,14 @@ static void sendViolationReportWhenNavigatingToCOOPResponse(ReportingClient& rep
     if (endpoint.isEmpty())
         return;
 
-    auto reportToURI = reportingClient.endpointURIForToken(endpoint);
-    if (reportToURI.isEmpty())
-        return;
-
-    auto report = createViolationReportObject(reportingClient, coopURL, [&](auto& body) {
+    auto report = Report::createReportFormDataForViolation("coop"_s, coopURL, reportingClient.httpUserAgent(), [&](auto& body) {
         body.setString("disposition"_s, disposition == COOPDisposition::Reporting ? "reporting"_s : "enforce"_s);
         body.setString("effectivePolicy"_s, crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value));
         body.setString("previousResponseURL"_s, coopOrigin.isSameOriginAs(previousResponseOrigin) ? PingLoader::sanitizeURLForReport(previousResponseURL) : String());
         body.setString("type"_s, "navigation-to-response"_s);
         body.setString("referrer"_s, referrer);
     });
-    reportingClient.sendReportToEndpoints(coopURL, { reportToURI }, WTFMove(report), ViolationReportType::CrossOriginOpenerPolicy);
+    reportingClient.sendReportToEndpoints(coopURL, { }, { endpoint }, WTFMove(report), ViolationReportType::CrossOriginOpenerPolicy);
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#coop-violation-navigation-from
@@ -120,18 +97,14 @@ static void sendViolationReportWhenNavigatingAwayFromCOOPResponse(ReportingClien
     if (endpoint.isEmpty())
         return;
 
-    auto reportToURI = reportingClient.endpointURIForToken(endpoint);
-    if (reportToURI.isEmpty())
-        return;
-
-    auto report = createViolationReportObject(reportingClient, coopURL, [&](auto& body) {
+    auto report = Report::createReportFormDataForViolation("coop"_s, coopURL, reportingClient.httpUserAgent(), [&](auto& body) {
         body.setString("disposition"_s, disposition == COOPDisposition::Reporting ? "reporting"_s : "enforce"_s);
         body.setString("effectivePolicy"_s, crossOriginOpenerPolicyValueToEffectivePolicyString(disposition == COOPDisposition::Reporting ? coop.reportOnlyValue : coop.value));
         body.setString("nextResponseURL"_s, coopOrigin.isSameOriginAs(nextResponseOrigin) || isCOOPResponseNavigationSource ? PingLoader::sanitizeURLForReport(nextResponseURL) : String());
         body.setString("type"_s, "navigation-from-response"_s);
     });
 
-    reportingClient.sendReportToEndpoints(coopURL, { reportToURI }, WTFMove(report), ViolationReportType::CrossOriginOpenerPolicy);
+    reportingClient.sendReportToEndpoints(coopURL, { }, { endpoint }, WTFMove(report), ViolationReportType::CrossOriginOpenerPolicy);
 }
 
 // https://html.spec.whatwg.org/multipage/origin.html#check-browsing-context-group-switch-coop-value

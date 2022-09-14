@@ -98,6 +98,8 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
         encoder << *topOrigin;
     encoder << options;
     encoder << cspResponseHeaders;
+    encoder << parentFrameURL;
+    encoder << frameURL;
     encoder << parentCrossOriginEmbedderPolicy;
     encoder << crossOriginEmbedderPolicy;
     encoder << originalRequestHeaders;
@@ -246,6 +248,18 @@ std::optional<NetworkResourceLoadParameters> NetworkResourceLoadParameters::deco
 
     if (!decoder.decode(result.cspResponseHeaders))
         return std::nullopt;
+
+    std::optional<URL> parentFrameURL;
+    decoder >> parentFrameURL;
+    if (!parentFrameURL)
+        return std::nullopt;
+    result.parentFrameURL = WTFMove(*parentFrameURL);
+
+    std::optional<URL> frameURL;
+    decoder >> frameURL;
+    if (!frameURL)
+        return std::nullopt;
+    result.frameURL = WTFMove(*frameURL);
 
     std::optional<WebCore::CrossOriginEmbedderPolicy> parentCrossOriginEmbedderPolicy;
     decoder >> parentCrossOriginEmbedderPolicy;
