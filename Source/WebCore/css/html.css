@@ -104,6 +104,7 @@ hr {
     margin-inline-end: auto;
     border-style: inset;
     border-width: 1px;
+    overflow: hidden;
 }
 
 /* media elements */
