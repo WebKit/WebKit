@@ -2457,20 +2457,54 @@ void FrameView::textFragmentIndicatorTimerFired()
     ASSERT(frame().document());
     auto& document = *frame().document();
     
-    if (!m_pendingTextFragmentIndicatorRange)
+    if (!m_pendingTextFragmentIndicatorRange) {
+        cancelScheduledTextFragmentIndicatorTimer();
         return;
+    }
     
-    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
+    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value())) {
+        cancelScheduledTextFragmentIndicatorTimer();
         return;
+    }
     
     auto range = m_pendingTextFragmentIndicatorRange.value();
     TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
     
     auto textIndicator = TextIndicator::createWithRange(range, { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
-    if (textIndicator)
-        document.page()->chrome().client().setTextIndicator(textIndicator->data());
+    
+    auto* page = frame().page();
     
     cancelScheduledTextFragmentIndicatorTimer();
+    
+    if (!page)
+        return;
+    
+    if (textIndicator) {
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+        
+        auto textRects = RenderFlexibleBox::absoluteTextRects(range);
+        
+        HitTestResult result;
+        result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.first().center()), hitType);
+        if (!intersects(range, *result.targetNode()))
+            return;
+        
+        if (textRects.size() >= 2) {
+            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[1].center()), hitType);
+            if (!intersects(range, *result.targetNode()))
+                return;
+        }
+        
+        if (textRects.size() >= 4) {
+            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.last().center()), hitType);
+            if (!intersects(range, *result.targetNode()))
+                return;
+            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[textRects.size() - 2].center()), hitType);
+            if (!intersects(range, *result.targetNode()))
+                return;
+        }
+        document.page()->chrome().client().setTextIndicator(textIndicator->data());
+    }
 }
 
 void FrameView::cancelScheduledTextFragmentIndicatorTimer()
