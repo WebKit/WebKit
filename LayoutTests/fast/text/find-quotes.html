@@ -22,6 +22,31 @@
         var rightDoubleQuotationMark = String.fromCharCode(0x201D);
         var rightSingleQuotationMark = String.fromCharCode(0x2019);
 
+        var rightWhiteCornerBracket = String.fromCharCode(0x300F);
+        var singleLow9QuotationMark = String.fromCharCode(0x201B);
+        var singleLeftPointingAngleQuotationMark = String.fromCharCode(0x2039);
+        var singleRightPointingAngleQuotationMark = String.fromCharCode(0x203A);
+        var rightPointingDoubleAngleQuotationMark = String.fromCharCode(0x00BB);
+        var reversedDoublePrimeQuotationMark = String.fromCharCode(0x301D);
+        var rightCornerBracket = String.fromCharCode(0x300D);
+        var presentationFormForVerticalLeftCornerBracket = String.fromCharCode(0xFE41);
+        var presentationFormForVerticalRightCornerBracket = String.fromCharCode(0xFE42);
+        var presentationFormForVerticalLeftWhiteCornerBracket = String.fromCharCode(0xFE43);
+        var presentationFormForVerticalRightWhiteCornerBracket = String.fromCharCode(0xFE44);
+        var leftWhiteCornerBracket = String.fromCharCode(0x300E);
+        var lowDoublePrimeQuotationMark = String.fromCharCode(0x301F);
+        var leftPointingDoubleAngleQuotationMark = String.fromCharCode(0x00AB);
+        var leftCornerBracket = String.fromCharCode(0x300C);
+        var fullwidthQuotationMark = String.fromCharCode(0xFF02);
+        var fullwidthApostrophe = String.fromCharCode(0xFF07);
+        var halfwidthLeftCornerBracket = String.fromCharCode(0xFF62);
+        var halfwidthRightCornerBracket = String.fromCharCode(0xFF63);
+        var doubleHighReversed9QuotationMark = String.fromCharCode(0x201F);
+        var doubleLow9QuotationMark = String.fromCharCode(0x201E);
+        var doubleLowReversedQuotationMark = String.fromCharCode(0x2E42);
+        var doublePrimeQuotationMark = String.fromCharCode(0x301E);
+        var doubleLowReversed9QuotationMark = String.fromCharCode(0x2E42);
+
         var success = true;
 
         var message = "FAILURE:";
@@ -51,8 +76,8 @@
             if (window.testRunner)
                 testRunner.dumpAsText();
 
-            var singleQuotes = [ "apostrophe", "hebrewPunctuationGeresh", "leftSingleQuotationMark", "rightSingleQuotationMark", "leftLowSingleQuotationMark"];
-            var doubleQuotes = [ "quotationMark", "hebrewPunctuationGershayim", "leftDoubleQuotationMark", "rightDoubleQuotationMark", "leftLowDoubleQuotationMark"];
+            var singleQuotes = [ "apostrophe", "hebrewPunctuationGeresh", "leftSingleQuotationMark", "rightSingleQuotationMark", "leftLowSingleQuotationMark", "singleLow9QuotationMark", "singleLeftPointingAngleQuotationMark", "singleRightPointingAngleQuotationMark", "leftCornerBracket", "rightCornerBracket", "leftWhiteCornerBracket", "rightWhiteCornerBracket", "presentationFormForVerticalLeftCornerBracket", "presentationFormForVerticalRightCornerBracket", "presentationFormForVerticalLeftWhiteCornerBracket", "presentationFormForVerticalRightWhiteCornerBracket", "fullwidthApostrophe", "halfwidthLeftCornerBracket", "halfwidthRightCornerBracket"];
+            var doubleQuotes = [ "quotationMark", "hebrewPunctuationGershayim", "leftDoubleQuotationMark", "rightDoubleQuotationMark", "leftLowDoubleQuotationMark", "leftPointingDoubleAngleQuotationMark", "rightPointingDoubleAngleQuotationMark", "doubleLow9QuotationMark", "doubleHighReversed9QuotationMark", "doubleLowReversed9QuotationMark", "reversedDoublePrimeQuotationMark", "doublePrimeQuotationMark", "lowDoublePrimeQuotationMark", "fullwidthQuotationMark"];
 
             for (var i = 0; i < singleQuotes.length; ++i) {
                 for (var j = 0; j < singleQuotes.length; ++j)

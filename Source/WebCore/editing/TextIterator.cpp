@@ -1622,11 +1622,33 @@ static inline UChar foldQuoteMark(UChar c)
         case leftDoubleQuotationMark:
         case leftLowDoubleQuotationMark:
         case rightDoubleQuotationMark:
+        case leftPointingDoubleAngleQuotationMark:
+        case rightPointingDoubleAngleQuotationMark:
+        case doubleHighReversed9QuotationMark:
+        case doubleLowReversed9QuotationMark:
+        case reversedDoublePrimeQuotationMark:
+        case doublePrimeQuotationMark:
+        case lowDoublePrimeQuotationMark:
+        case fullwidthQuotationMark:
             return '"';
         case hebrewPunctuationGeresh:
         case leftSingleQuotationMark:
         case leftLowSingleQuotationMark:
         case rightSingleQuotationMark:
+        case singleLow9QuotationMark:
+        case singleLeftPointingAngleQuotationMark:
+        case singleRightPointingAngleQuotationMark:
+        case leftCornerBracket:
+        case rightCornerBracket:
+        case leftWhiteCornerBracket:
+        case rightWhiteCornerBracket:
+        case presentationFormForVerticalLeftCornerBracket:
+        case presentationFormForVerticalRightCornerBracket:
+        case presentationFormForVerticalLeftWhiteCornerBracket:
+        case presentationFormForVerticalRightWhiteCornerBracket:
+        case fullwidthApostrophe:
+        case halfwidthLeftCornerBracket:
+        case halfwidthRightCornerBracket:
             return '\'';
         default:
             return c;
@@ -1645,6 +1667,28 @@ String foldQuoteMarks(const String& stringToFold)
     result = makeStringByReplacingAll(result, leftSingleQuotationMark, '\'');
     result = makeStringByReplacingAll(result, leftLowSingleQuotationMark, '\'');
     result = makeStringByReplacingAll(result, rightDoubleQuotationMark, '"');
+    result = makeStringByReplacingAll(result, singleLow9QuotationMark, '\'');
+    result = makeStringByReplacingAll(result, singleLeftPointingAngleQuotationMark, '\'');
+    result = makeStringByReplacingAll(result, singleRightPointingAngleQuotationMark, '\'');
+    result = makeStringByReplacingAll(result, leftCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, rightCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, leftWhiteCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, rightWhiteCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, presentationFormForVerticalLeftCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, presentationFormForVerticalRightCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, presentationFormForVerticalLeftWhiteCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, presentationFormForVerticalRightWhiteCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, fullwidthApostrophe, '\'');
+    result = makeStringByReplacingAll(result, halfwidthLeftCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, halfwidthRightCornerBracket, '\'');
+    result = makeStringByReplacingAll(result, leftPointingDoubleAngleQuotationMark, '"');
+    result = makeStringByReplacingAll(result, rightPointingDoubleAngleQuotationMark, '"');
+    result = makeStringByReplacingAll(result, doubleHighReversed9QuotationMark, '"');
+    result = makeStringByReplacingAll(result, doubleLowReversed9QuotationMark, '"');
+    result = makeStringByReplacingAll(result, reversedDoublePrimeQuotationMark, '"');
+    result = makeStringByReplacingAll(result, doublePrimeQuotationMark, '"');
+    result = makeStringByReplacingAll(result, lowDoublePrimeQuotationMark, '"');
+    result = makeStringByReplacingAll(result, fullwidthQuotationMark, '"');
     return makeStringByReplacingAll(result, rightSingleQuotationMark, '\'');
 }
 
