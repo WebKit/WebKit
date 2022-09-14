@@ -111,7 +111,7 @@ enum class MailBlockquoteHandling {
 class HTMLAttachmentElement;
 #endif
 
-enum class TemporarySelectionOption : uint8_t {
+enum class TemporarySelectionOption : uint16_t {
     RevealSelection = 1 << 0,
     DoNotSetFocus = 1 << 1,
 
@@ -128,6 +128,8 @@ enum class TemporarySelectionOption : uint8_t {
     RevealSelectionBounds = 1 << 6,
 
     UserTriggered = 1 << 7,
+    
+    ForceCenterScroll = 1 << 8,
 };
 
 class TemporarySelectionChange {
