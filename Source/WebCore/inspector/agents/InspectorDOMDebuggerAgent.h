@@ -50,6 +50,7 @@ namespace WebCore {
 
 class Event;
 class RegisteredEventListener;
+class ResourceRequest;
 class ScriptExecutionContext;
 
 class InspectorDOMDebuggerAgent : public InspectorAgentBase, public Inspector::DOMDebuggerBackendDispatcherHandler, public Inspector::InspectorDebuggerAgent::Listener {
@@ -82,6 +83,8 @@ public:
     void didHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     void willFireTimer(bool oneShot);
     void didFireTimer(bool oneShot);
+    void willSendRequest(ResourceRequest&);
+    void willSendRequestOfType(ResourceRequest&);
 
 protected:
     InspectorDOMDebuggerAgent(WebAgentContext&, Inspector::InspectorDebuggerAgent*);
@@ -93,8 +96,7 @@ protected:
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 
 private:
-    enum class URLBreakpointSource { Fetch, XHR };
-    void breakOnURLIfNeeded(const String& url, URLBreakpointSource);
+    void breakOnURLIfNeeded(const String&);
 
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;

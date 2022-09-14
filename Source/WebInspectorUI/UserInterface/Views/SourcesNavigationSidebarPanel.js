@@ -1874,8 +1874,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             this._updatePauseReasonForBreakpoint(WI.domDebuggerManager.allTimeoutsBreakpoint, WI.UIString("setTimeout Fired"));
             return true;
 
-        case WI.DebuggerManager.PauseReason.Fetch:
-        case WI.DebuggerManager.PauseReason.XHR: {
+        case WI.DebuggerManager.PauseReason.URL: {
             console.assert(WI.domDebuggerManager.supported);
             console.assert(pauseData, "Expected URL breakpoint data, but found none.");
             if (!pauseData)

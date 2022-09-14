@@ -61,7 +61,7 @@ public:
         return *this;
     }
 
-    static bool isEventAllowedInMainThread()
+    static bool isScriptAllowedInMainThread()
     {
         return !isInWebProcess() || !isMainThread() || !s_count;
     }
