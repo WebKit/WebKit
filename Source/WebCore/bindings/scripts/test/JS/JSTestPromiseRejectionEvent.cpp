@@ -231,8 +231,8 @@ void JSTestPromiseRejectionEventPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestPromiseRejectionEvent::s_info = { "TestPromiseRejectionEvent"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPromiseRejectionEvent) };
 
-JSTestPromiseRejectionEvent::JSTestPromiseRejectionEvent(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestPromiseRejectionEvent>&& impl, JSC::Butterfly* butterfly)
-    : JSEvent(structure, globalObject, WTFMove(impl), butterfly)
+JSTestPromiseRejectionEvent::JSTestPromiseRejectionEvent(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestPromiseRejectionEvent>&& impl)
+    : JSEvent(structure, globalObject, WTFMove(impl))
 {
 }
 

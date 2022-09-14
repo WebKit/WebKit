@@ -212,7 +212,7 @@ void WebResourceLoadObserver::logCanvasWriteOrMeasure(const Document& document, 
 #endif
 }
     
-void WebResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, const ResourceLoadStatistics::NavigatorAPI functionName)
+void WebResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, const NavigatorAPIsAccessed functionName)
 {
     if (isEphemeral())
         return;
@@ -236,7 +236,7 @@ void WebResourceLoadObserver::logNavigatorAPIAccessed(const Document& document, 
 #endif
 }
     
-void WebResourceLoadObserver::logScreenAPIAccessed(const Document& document, const ResourceLoadStatistics::ScreenAPI functionName)
+void WebResourceLoadObserver::logScreenAPIAccessed(const Document& document, const ScreenAPIsAccessed functionName)
 {
     if (isEphemeral())
         return;

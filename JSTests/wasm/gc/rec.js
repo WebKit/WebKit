@@ -21,7 +21,20 @@ function testRecDeclaration() {
 
   instantiate(`
     (module
+      (rec (type (func)) (type (array i32)))
+    )
+  `);
+
+  instantiate(`
+    (module
       (rec (type (func)) (type (struct)))
+      (func (type 0))
+    )
+  `);
+
+  instantiate(`
+    (module
+      (rec (type (func)) (type (array f32)))
       (func (type 0))
     )
   `);
@@ -30,6 +43,17 @@ function testRecDeclaration() {
     () => compile(`
       (module
         (rec (type (struct)) (type (func)))
+        (func (type 0))
+      )
+    `),
+    WebAssembly.CompileError,
+    "type signature was not a function signature"
+  );
+
+  assert.throws(
+    () => compile(`
+      (module
+        (rec (type (array i64)) (type (func)))
         (func (type 0))
       )
     `),

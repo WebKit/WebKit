@@ -487,21 +487,6 @@ inline bool JSObject::canGetIndexQuicklyForTypedArray(unsigned i) const
     }
 }
 
-inline bool JSObject::canDoFastIndexedAccess()
-{
-    if (LIKELY(isJSArray(this)))
-        return asArray(this)->canDoFastIndexedAccess();
-
-    Structure* structure = this->structure();
-    if (structure->typeInfo().interceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero())
-        return false;
-
-    if (structure->holesMustForwardToPrototype(this))
-        return false;
-
-    return true;
-}
-
 inline JSValue JSObject::getIndexQuicklyForTypedArray(unsigned i, ArrayProfile* arrayProfile) const
 {
 #if USE(LARGE_TYPED_ARRAYS)

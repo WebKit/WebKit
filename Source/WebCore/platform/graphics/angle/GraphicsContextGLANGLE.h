@@ -114,10 +114,10 @@ public:
     void framebufferTexture2D(GCGLenum target, GCGLenum attachment, GCGLenum textarget, PlatformGLObject, GCGLint level) final;
     void frontFace(GCGLenum mode) final;
     void generateMipmap(GCGLenum target) final;
-    bool getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo&) final;
-    bool getActiveAttribImpl(PlatformGLObject program, GCGLuint index, ActiveInfo&);
-    bool getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo&) final;
-    bool getActiveUniformImpl(PlatformGLObject program, GCGLuint index, ActiveInfo&);
+    bool getActiveAttrib(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&) final;
+    bool getActiveAttribImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&);
+    bool getActiveUniform(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&) final;
+    bool getActiveUniformImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&);
     void getAttachedShaders(PlatformGLObject program, GCGLsizei maxCount, GCGLsizei* count, PlatformGLObject* shaders);
     GCGLint getAttribLocation(PlatformGLObject, const String& name) final;
     void getBooleanv(GCGLenum pname, GCGLSpan<GCGLboolean> value) final;
@@ -292,7 +292,7 @@ public:
     void beginTransformFeedback(GCGLenum primitiveMode) final;
     void endTransformFeedback() final;
     void transformFeedbackVaryings(PlatformGLObject program, const Vector<String>& varyings, GCGLenum bufferMode) final;
-    void getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo&) final;
+    void getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&) final;
     void pauseTransformFeedback() final;
     void resumeTransformFeedback() final;
     void bindBufferBase(GCGLenum target, GCGLuint index, PlatformGLObject buffer) final;

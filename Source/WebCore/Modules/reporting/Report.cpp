@@ -26,8 +26,10 @@
 #include "config.h"
 #include "Report.h"
 
+#include "FormData.h"
 #include "ReportBody.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/URL.h>
 
 namespace WebCore {
 
@@ -60,6 +62,25 @@ const String& Report::url() const
 const RefPtr<ReportBody>& Report::body()
 {
     return m_body;
+}
+
+Ref<FormData> Report::createReportFormDataForViolation(const String& type, const URL& url, const String& userAgent, const Function<void(JSON::Object&)>& populateBody)
+{
+    auto body = JSON::Object::create();
+    populateBody(body);
+
+    auto reportObject = JSON::Object::create();
+    reportObject->setString("type"_s, type);
+    if (url.isValid())
+        reportObject->setString("url"_s, url.string());
+    reportObject->setString("user_agent"_s, userAgent);
+    reportObject->setInteger("age"_s, 0); // We currently do not delay sending the reports.
+    reportObject->setObject("body"_s, WTFMove(body));
+
+    auto reportList = JSON::Array::create();
+    reportList->pushObject(reportObject);
+
+    return FormData::create(reportList->toJSONString().utf8());
 }
 
 } // namespace WebCore

@@ -66,5 +66,3 @@ __cmake_systeminformation/
 
 # Local overrides configuration files
 LocalOverrides.xcconfig
-
-/BenchmarkTemp

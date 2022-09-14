@@ -57,8 +57,8 @@ public:
     virtual void logFontLoad(const Document&, const String& /* familyName */, bool /* loadStatus */) { }
     virtual void logCanvasRead(const Document&) { }
     virtual void logCanvasWriteOrMeasure(const Document&, const String& /* textWritten */) { }
-    virtual void logNavigatorAPIAccessed(const Document&, const ResourceLoadStatistics::NavigatorAPI) { }
-    virtual void logScreenAPIAccessed(const Document&, const ResourceLoadStatistics::ScreenAPI) { }
+    virtual void logNavigatorAPIAccessed(const Document&, const NavigatorAPIsAccessed) { }
+    virtual void logScreenAPIAccessed(const Document&, const ScreenAPIsAccessed) { }
     virtual void logSubresourceLoadingForTesting(const RegistrableDomain& /* firstPartyDomain */, const RegistrableDomain& /* thirdPartyDomain */, bool /* shouldScheduleNotification */) { }
 
     virtual String statisticsForURL(const URL&) { return { }; }

@@ -2699,6 +2699,19 @@
    },
    {
       "emails" : [
+         "gavin.p@apple.com"
+      ],
+      "expertise" : "Security",
+      "github" : "gavin-apple",
+      "name" : "Gavin Phillips",
+      "nicks" : [
+         "gavin-apple",
+         "gavin.p"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "geofflang@google.com"
       ],
       "name" : "Geoff Lang"

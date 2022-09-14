@@ -126,8 +126,8 @@ void JSTestNamedGetterWithIdentifierPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestNamedGetterWithIdentifier::s_info = { "TestNamedGetterWithIdentifier"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterWithIdentifier) };
 
-JSTestNamedGetterWithIdentifier::JSTestNamedGetterWithIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedGetterWithIdentifier>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestNamedGetterWithIdentifier>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestNamedGetterWithIdentifier::JSTestNamedGetterWithIdentifier(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestNamedGetterWithIdentifier>&& impl)
+    : JSDOMWrapper<TestNamedGetterWithIdentifier>(structure, globalObject, WTFMove(impl))
 {
 }
 

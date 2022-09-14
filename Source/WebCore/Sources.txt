@@ -1640,6 +1640,8 @@ layout/formattingContexts/table/TableFormattingState.cpp
 layout/formattingContexts/table/TableGrid.cpp
 layout/formattingContexts/table/TableLayout.cpp
 loader/ApplicationManifestLoader.cpp
+loader/COEPInheritenceViolationReportBody.cpp
+loader/CORPViolationReportBody.cpp
 loader/CanvasActivityRecord.cpp
 loader/ContentFilter.cpp
 loader/CookieJar.cpp
@@ -3031,6 +3033,8 @@ JSCSSStyleSheet.cpp
 JSCSSSupportsRule.cpp
 JSCSSTransition.cpp
 JSCSSUnknownRule.cpp
+JSCOEPInheritenceViolationReportBody.cpp
+JSCORPViolationReportBody.cpp
 JSCacheQueryOptions.cpp
 JSCanvasCaptureMediaStreamTrack.cpp
 JSCanvasCompositing.cpp

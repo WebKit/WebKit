@@ -619,7 +619,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     builtins/BuiltinNames.h
     builtins/BuiltinUtils.h
 
-    bytecode/AdaptiveInferredPropertyValueWatchpointBase.h
     bytecode/ArithProfile.h
     bytecode/ArrayAllocationProfile.h
     bytecode/ArrayProfile.h
@@ -1134,7 +1133,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/NumericStrings.h
     runtime/ObjectConstructor.h
     runtime/ObjectInitializationScope.h
-    runtime/ObjectPropertyChangeAdaptiveWatchpoint.h
     runtime/ObjectPrototype.h
     runtime/Operations.h
     runtime/Options.h

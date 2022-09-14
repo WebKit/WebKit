@@ -3090,7 +3090,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveAttrib(WebGLProgram&
 {
     if (!validateWebGLProgramOrShader("getActiveAttrib", &program))
         return nullptr;
-    GraphicsContextGL::ActiveInfo info;
+    GraphicsContextGLActiveInfo info;
     if (!m_context->getActiveAttrib(program.object(), index, info))
         return nullptr;
 
@@ -3103,7 +3103,7 @@ RefPtr<WebGLActiveInfo> WebGLRenderingContextBase::getActiveUniform(WebGLProgram
 {
     if (!validateWebGLProgramOrShader("getActiveUniform", &program))
         return nullptr;
-    GraphicsContextGL::ActiveInfo info;
+    GraphicsContextGLActiveInfo info;
     if (!m_context->getActiveUniform(program.object(), index, info))
         return nullptr;
     // FIXME: Do we still need this for the ANGLE backend?
@@ -3944,7 +3944,7 @@ RefPtr<WebGLUniformLocation> WebGLRenderingContextBase::getUniformLocation(WebGL
     static_cast<GraphicsContextGLOpenGL*>(m_context.get())->getNonBuiltInActiveSymbolCount(program.object(), GraphicsContextGL::ACTIVE_UNIFORMS, &activeUniforms);
 #endif
     for (GCGLint i = 0; i < activeUniforms; i++) {
-        GraphicsContextGL::ActiveInfo info;
+        GraphicsContextGLActiveInfo info;
         if (!m_context->getActiveUniform(program.object(), i, info))
             return nullptr;
         // Strip "[0]" from the name if it's an array.

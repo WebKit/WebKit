@@ -153,8 +153,8 @@ void JSTestDefaultToJSONFilteredByExposedPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestDefaultToJSONFilteredByExposed::s_info = { "TestDefaultToJSONFilteredByExposed"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestDefaultToJSONFilteredByExposed) };
 
-JSTestDefaultToJSONFilteredByExposed::JSTestDefaultToJSONFilteredByExposed(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONFilteredByExposed>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestDefaultToJSONFilteredByExposed>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestDefaultToJSONFilteredByExposed::JSTestDefaultToJSONFilteredByExposed(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDefaultToJSONFilteredByExposed>&& impl)
+    : JSDOMWrapper<TestDefaultToJSONFilteredByExposed>(structure, globalObject, WTFMove(impl))
 {
 }
 

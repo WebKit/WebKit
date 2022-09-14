@@ -271,7 +271,11 @@ def generate_cpp(serialized_types, serialized_enums, headers):
         if type.populate_from_empty_constructor:
             result.append('    ' + type.namespace_and_name() + ' result;')
             for member in type.members:
+                if member.condition is not None:
+                    result.append('#if ' + member.condition)
                 result.append('    result.' + member.name + ' = WTFMove(*' + member.name + ');')
+                if member.condition is not None:
+                    result.append('#endif')
             result.append('    return { WTFMove(result) };')
         else:
             if type.return_ref:

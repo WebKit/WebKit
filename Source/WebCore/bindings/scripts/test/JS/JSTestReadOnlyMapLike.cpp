@@ -142,8 +142,8 @@ void JSTestReadOnlyMapLikePrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestReadOnlyMapLike::s_info = { "TestReadOnlyMapLike"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestReadOnlyMapLike) };
 
-JSTestReadOnlyMapLike::JSTestReadOnlyMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReadOnlyMapLike>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestReadOnlyMapLike>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestReadOnlyMapLike::JSTestReadOnlyMapLike(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestReadOnlyMapLike>&& impl)
+    : JSDOMWrapper<TestReadOnlyMapLike>(structure, globalObject, WTFMove(impl))
 {
 }
 

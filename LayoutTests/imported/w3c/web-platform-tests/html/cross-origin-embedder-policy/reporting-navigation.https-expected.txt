@@ -1,47 +1,32 @@
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-embedder-policy,require-corp) because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-embedder-policy,require-corp) because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html?pipe= because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/blank.html?pipe= because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-resource-policy,cross-origin)' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-resource-policy,cross-origin)' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin)' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin)' in a frame because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors%20%27none%27) because it does not appear in the frame-ancestors directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to load https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors%20%27none%27) because it does not appear in the frame-ancestors directive of the Content Security Policy.
-CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny)' in a frame because it set 'X-Frame-Options' to 'deny'.
-CONSOLE MESSAGE: Refused to display 'https://127.0.0.1:9443/common/blank.html?pipe=|header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny)' in a frame because it set 'X-Frame-Options' to 'deny'.
-
-
-Harness Error (TIMEOUT), message = null
 
 PASS parent: (none), target: (none), with empty frame: false
 PASS parent: (none), target: (none), with empty frame: true
 PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false
 PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: false Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: true Test timed out
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: (none), with empty frame: true
 PASS parent: (none), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false
 PASS parent: (none), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true Test timed out
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true
 PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
 PASS parent: (none), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
 PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
 PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
-TIMEOUT parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: false Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: true Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true Test timed out
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: (none), with empty frame: true
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-resource-policy,cross-origin), with empty frame: true
 PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
 PASS parent: |header(cross-origin-embedder-policy-report-only,require-corp), target: |header(cross-origin-embedder-policy,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true Test timed out
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-embedder-policy-report-only,require-corp)|header(cross-origin-resource-policy,cross-origin), with empty frame: true
 PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors 'none'), with empty frame: false
 PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(content-security-policy,frame-ancestors 'none'), with empty frame: true
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny), with empty frame: false Test timed out
-TIMEOUT parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny), with empty frame: true Test timed out
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny), with empty frame: false
+PASS parent: |header(cross-origin-embedder-policy,require-corp), target: |header(cross-origin-resource-policy,cross-origin)|header(x-frame-options,deny), with empty frame: true
 

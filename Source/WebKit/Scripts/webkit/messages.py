@@ -314,10 +314,8 @@ def serialized_identifiers():
         'WebKit::RemoteLegacyCDMIdentifier',
         'WebKit::RemoteLegacyCDMSessionIdentifier',
         'WebKit::RemoteMediaResourceIdentifier',
-        'WebKit::RemoteMediaSourceIdentifier',
         'WebKit::RemoteVideoFrameIdentifier',
         'WebKit::RemoteRemoteCommandListenerIdentifier',
-        'WebKit::RemoteSourceBufferIdentifier',
         'WebKit::RenderingBackendIdentifier',
         'WebKit::SampleBufferDisplayLayerIdentifier',
         'WebKit::StorageAreaIdentifier',
@@ -330,13 +328,13 @@ def serialized_identifiers():
         'WebKit::WebGPUIdentifier',
         'WebKit::WebPageProxyIdentifier',
         'WebKit::WebURLSchemeHandlerIdentifier',
-        'WebKit::XRDeviceIdentifier',
     ]
 
 
 def types_that_cannot_be_forward_declared():
     return frozenset([
         'CVPixelBufferRef',
+        'GCGLint',
         'IPC::DataReference',
         'IPC::FilterReference',
         'IPC::FontReference',
@@ -376,6 +374,8 @@ def types_that_cannot_be_forward_declared():
         'WebKit::ImageBufferBackendHandle',
         'WebKit::LayerHostingContextID',
         'WebKit::LegacyCustomProtocolID',
+        'WebKit::RemoteMediaSourceIdentifier',
+        'WebKit::RemoteSourceBufferIdentifier',
         'WebKit::RemoteVideoFrameWriteReference',
         'WebKit::RemoteVideoFrameReadReference',
         'WebKit::RenderingUpdateID',
@@ -383,6 +383,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::TransactionID',
         'WebKit::WCLayerTreeHostIdentifier',
         'WebKit::WCContentBufferIdentifier',
+        'WebKit::XRDeviceIdentifier',
     ] + serialized_identifiers())
 
 
@@ -708,6 +709,7 @@ def headers_for_type(type):
 
     special_cases = {
         'CVPixelBufferRef': ['<WebCore/CVUtilities.h>'],
+        'GCGLint': ['<WebCore/GraphicsTypesGL.h>'],
         'IPC::Semaphore': ['"IPCSemaphore.h"'],
         'Inspector::ExtensionError': ['"InspectorExtensionTypes.h"'],
         'Inspector::FrontendChannel::ConnectionType': ['<JavaScriptCore/InspectorFrontendChannel.h>'],
@@ -805,6 +807,7 @@ def headers_for_type(type):
         'WebCore::FrameLoadType': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::GenericCueData': ['<WebCore/InbandGenericCue.h>'],
         'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
+        'WebCore::GraphicsContextGLActiveInfo': ['<WebCore/GraphicsContextGL.h>'],
         'WebCore::HasInsecureContent': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::HighlightRequestOriginatedInApp': ['<WebCore/AppHighlight.h>'],
         'WebCore::HighlightVisibility': ['<WebCore/HighlightVisibility.h>'],

@@ -734,7 +734,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'prune-coresymbolicationd-cache-if-too-large',
             'compile-webkit'
         ],
-        'Apple-iOS-15-Release-Build': [
+        'Apple-iOS-16-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -745,7 +745,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-iOS-15-Simulator-Release-Build': [
+        'Apple-iOS-16-Simulator-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -762,7 +762,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'transfer-to-s3',
             'trigger'
         ],
-        'Apple-iOS-15-Simulator-Debug-Build': [
+        'Apple-iOS-16-Simulator-Debug-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -779,7 +779,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'transfer-to-s3',
             'trigger'
         ],
-        'Apple-iOS-15-Simulator-Release-arm64-WK2-Tests': [
+        'Apple-iOS-16-Simulator-Release-arm64-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -804,7 +804,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iOS-15-Simulator-Release-GPUProcess-WK2-Tests': [
+        'Apple-iOS-16-Simulator-Release-GPUProcess-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -829,7 +829,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iOS-15-Simulator-Release-WK2-Tests': [
+        'Apple-iOS-16-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -854,7 +854,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iOS-15-Simulator-Debug-WK2-Tests': [
+        'Apple-iOS-16-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -879,7 +879,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iPadOS-15-Simulator-Release-WK2-Tests': [
+        'Apple-iPadOS-16-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -904,7 +904,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iPadOS-15-Simulator-Debug-WK2-Tests': [
+        'Apple-iPadOS-16-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',

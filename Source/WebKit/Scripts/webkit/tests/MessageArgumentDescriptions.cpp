@@ -55,9 +55,7 @@
 #include "RemoteLegacyCDMIdentifier.h"
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include "RemoteMediaResourceIdentifier.h"
-#include "RemoteMediaSourceIdentifier.h"
 #include "RemoteRemoteCommandListenerIdentifier.h"
-#include "RemoteSourceBufferIdentifier.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "RenderingBackendIdentifier.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
@@ -70,7 +68,6 @@
 #include "WebGPUIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandlerIdentifier.h"
-#include "XRDeviceIdentifier.h"
 #include <WebCore/BroadcastChannelIdentifier.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/FetchIdentifier.h>
@@ -429,10 +426,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteLegacyCDMSessionIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaResourceIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteMediaSourceIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteVideoFrameIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteRemoteCommandListenerIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteSourceBufferIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RenderingBackendIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::SampleBufferDisplayLayerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::StorageAreaIdentifier));
@@ -445,7 +440,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebGPUIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebPageProxyIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebKit::XRDeviceIdentifier));
     return {
         "WebCore::BroadcastChannelIdentifier"_s,
         "WebCore::DisplayList::ItemBufferIdentifier"_s,
@@ -504,10 +498,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::RemoteLegacyCDMIdentifier"_s,
         "WebKit::RemoteLegacyCDMSessionIdentifier"_s,
         "WebKit::RemoteMediaResourceIdentifier"_s,
-        "WebKit::RemoteMediaSourceIdentifier"_s,
         "WebKit::RemoteVideoFrameIdentifier"_s,
         "WebKit::RemoteRemoteCommandListenerIdentifier"_s,
-        "WebKit::RemoteSourceBufferIdentifier"_s,
         "WebKit::RenderingBackendIdentifier"_s,
         "WebKit::SampleBufferDisplayLayerIdentifier"_s,
         "WebKit::StorageAreaIdentifier"_s,
@@ -520,7 +512,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::WebGPUIdentifier"_s,
         "WebKit::WebPageProxyIdentifier"_s,
         "WebKit::WebURLSchemeHandlerIdentifier"_s,
-        "WebKit::XRDeviceIdentifier"_s,
     };
 }
 

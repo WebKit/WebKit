@@ -238,8 +238,8 @@ void JSTestEnabledBySettingPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestEnabledBySetting::s_info = { "TestEnabledBySetting"_s, &Base::s_info, &JSTestEnabledBySettingTable, nullptr, CREATE_METHOD_TABLE(JSTestEnabledBySetting) };
 
-JSTestEnabledBySetting::JSTestEnabledBySetting(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEnabledBySetting>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestEnabledBySetting>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestEnabledBySetting::JSTestEnabledBySetting(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestEnabledBySetting>&& impl)
+    : JSDOMWrapper<TestEnabledBySetting>(structure, globalObject, WTFMove(impl))
 {
 }
 

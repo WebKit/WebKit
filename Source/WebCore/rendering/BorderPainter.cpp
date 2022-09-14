@@ -690,7 +690,7 @@ void BorderPainter::paintOneBorderSide(const RenderStyle& style, const RoundedRe
             mitreAdjacentSide1 = false;
             mitreAdjacentSide2 = false;
         }
-        m_renderer.drawLineForBoxSide(graphicsContext, sideRect, side, colorToPaint, edgeToRender.style(), mitreAdjacentSide1 ? adjacentEdge1.widthForPainting() : 0, mitreAdjacentSide2 ? adjacentEdge2.widthForPainting() : 0, antialias);
+        drawLineForBoxSide(graphicsContext, document(), sideRect, side, colorToPaint, edgeToRender.style(), mitreAdjacentSide1 ? adjacentEdge1.widthForPainting() : 0, mitreAdjacentSide2 ? adjacentEdge2.widthForPainting() : 0, antialias);
     }
 }
 
@@ -941,6 +941,273 @@ void BorderPainter::clipBorderSidePolygon(const RoundedRect& outerBorder, const 
     graphicsContext.clipPath(Path::polygonPathFromPoints(secondQuad), WindRule::NonZero);
 
     graphicsContext.setShouldAntialias(wasAntialiased);
+}
+
+void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const Document& document, const FloatRect& rect, BoxSide side, Color color, BorderStyle borderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias)
+{
+    auto drawBorderRect = [&graphicsContext](const FloatRect& rect)
+    {
+        if (rect.isEmpty())
+            return;
+        graphicsContext.drawRect(rect);
+    };
+
+    auto drawLineFor = [&graphicsContext, &document, color, antialias](const FloatRect& rect, BoxSide side, BorderStyle borderStyle, const FloatSize& adjacent)
+    {
+        if (rect.isEmpty())
+            return;
+        drawLineForBoxSide(graphicsContext, document, rect, side, color, borderStyle, adjacent.width(), adjacent.height(), antialias);
+    };
+
+    float x1 = rect.x();
+    float x2 = rect.maxX();
+    float y1 = rect.y();
+    float y2 = rect.maxY();
+    float thickness;
+    float length;
+    if (side == BoxSide::Top || side == BoxSide::Bottom) {
+        thickness = y2 - y1;
+        length = x2 - x1;
+    } else {
+        thickness = x2 - x1;
+        length = y2 - y1;
+    }
+    // FIXME: We really would like this check to be an ASSERT as we don't want to draw empty borders. However
+    // nothing guarantees that the following recursive calls to drawLineForBoxSide will have non-null dimensions.
+    if (!thickness || !length)
+        return;
+
+    float deviceScaleFactor = document.deviceScaleFactor();
+    if (borderStyle == BorderStyle::Double && (thickness * deviceScaleFactor) < 3)
+        borderStyle = BorderStyle::Solid;
+
+    switch (borderStyle) {
+    case BorderStyle::None:
+    case BorderStyle::Hidden:
+        return;
+    case BorderStyle::Dotted:
+    case BorderStyle::Dashed: {
+        bool wasAntialiased = graphicsContext.shouldAntialias();
+        StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();
+        graphicsContext.setShouldAntialias(antialias);
+        graphicsContext.setStrokeColor(color);
+        graphicsContext.setStrokeThickness(thickness);
+        graphicsContext.setStrokeStyle(borderStyle == BorderStyle::Dashed ? DashedStroke : DottedStroke);
+        graphicsContext.drawLine(roundPointToDevicePixels(LayoutPoint(x1, y1), deviceScaleFactor), roundPointToDevicePixels(LayoutPoint(x2, y2), deviceScaleFactor));
+        graphicsContext.setShouldAntialias(wasAntialiased);
+        graphicsContext.setStrokeStyle(oldStrokeStyle);
+        break;
+    }
+    case BorderStyle::Double: {
+        float thirdOfThickness = ceilToDevicePixel(thickness / 3, deviceScaleFactor);
+        ASSERT(thirdOfThickness);
+
+        if (!adjacentWidth1 && !adjacentWidth2) {
+            StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();
+            graphicsContext.setStrokeStyle(NoStroke);
+            graphicsContext.setFillColor(color);
+
+            bool wasAntialiased = graphicsContext.shouldAntialias();
+            graphicsContext.setShouldAntialias(antialias);
+
+            switch (side) {
+            case BoxSide::Top:
+            case BoxSide::Bottom:
+                drawBorderRect(snapRectToDevicePixels(LayoutRect(x1, y1, length, thirdOfThickness), deviceScaleFactor));
+                drawBorderRect(snapRectToDevicePixels(LayoutRect(x1, y2 - thirdOfThickness, length, thirdOfThickness), deviceScaleFactor));
+                break;
+            case BoxSide::Left:
+            case BoxSide::Right:
+                drawBorderRect(snapRectToDevicePixels(LayoutRect(x1, y1, thirdOfThickness, length), deviceScaleFactor));
+                drawBorderRect(snapRectToDevicePixels(LayoutRect(x2 - thirdOfThickness, y1, thirdOfThickness, length), deviceScaleFactor));
+                break;
+            }
+
+            graphicsContext.setShouldAntialias(wasAntialiased);
+            graphicsContext.setStrokeStyle(oldStrokeStyle);
+        } else {
+            float adjacent1BigThird = ceilToDevicePixel(adjacentWidth1 / 3, deviceScaleFactor);
+            float adjacent2BigThird = ceilToDevicePixel(adjacentWidth2 / 3, deviceScaleFactor);
+
+            float offset1 = floorToDevicePixel(fabs(adjacentWidth1) * 2 / 3, deviceScaleFactor);
+            float offset2 = floorToDevicePixel(fabs(adjacentWidth2) * 2 / 3, deviceScaleFactor);
+
+            float mitreOffset1 = adjacentWidth1 < 0 ? offset1 : 0;
+            float mitreOffset2 = adjacentWidth1 > 0 ? offset1 : 0;
+            float mitreOffset3 = adjacentWidth2 < 0 ? offset2 : 0;
+            float mitreOffset4 = adjacentWidth2 > 0 ? offset2 : 0;
+
+            FloatRect paintBorderRect;
+            switch (side) {
+            case BoxSide::Top:
+                paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset1, y1, (x2 - mitreOffset3) - (x1 + mitreOffset1), thirdOfThickness), deviceScaleFactor);
+                drawLineFor(paintBorderRect, side, BorderStyle::Solid, FloatSize(adjacent1BigThird, adjacent2BigThird));
+
+                paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset2, y2 - thirdOfThickness, (x2 - mitreOffset4) - (x1 + mitreOffset2), thirdOfThickness), deviceScaleFactor);
+                drawLineFor(paintBorderRect, side, BorderStyle::Solid, FloatSize(adjacent1BigThird, adjacent2BigThird));
+                break;
+            case BoxSide::Left:
+                paintBorderRect = snapRectToDevicePixels(LayoutRect(x1, y1 + mitreOffset1, thirdOfThickness, (y2 - mitreOffset3) - (y1 + mitreOffset1)), deviceScaleFactor);
+                drawLineFor(paintBorderRect, side, BorderStyle::Solid, FloatSize(adjacent1BigThird, adjacent2BigThird));
+
+                paintBorderRect = snapRectToDevicePixels(LayoutRect(x2 - thirdOfThickness, y1 + mitreOffset2, thirdOfThickness, (y2 - mitreOffset4) - (y1 + mitreOffset2)), deviceScaleFactor);
+                drawLineFor(paintBorderRect, side, BorderStyle::Solid, FloatSize(adjacent1BigThird, adjacent2BigThird));
+                break;
+            case BoxSide::Bottom:
+                paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset2, y1, (x2 - mitreOffset4) - (x1 + mitreOffset2), thirdOfThickness), deviceScaleFactor);
+                drawLineFor(paintBorderRect, side, BorderStyle::Solid, FloatSize(adjacent1BigThird, adjacent2BigThird));
+
+                paintBorderRect = snapRectToDevicePixels(LayoutRect(x1 + mitreOffset1, y2 - thirdOfThickness, (x2 - mitreOffset3) - (x1 + mitreOffset1), thirdOfThickness), deviceScaleFactor);
+                drawLineFor(paintBorderRect, side, BorderStyle::Solid, FloatSize(adjacent1BigThird, adjacent2BigThird));
+                break;
+            case BoxSide::Right:
+                paintBorderRect = snapRectToDevicePixels(LayoutRect(x1, y1 + mitreOffset2, thirdOfThickness, (y2 - mitreOffset4) - (y1 + mitreOffset2)), deviceScaleFactor);
+                drawLineFor(paintBorderRect, side, BorderStyle::Solid, FloatSize(adjacent1BigThird, adjacent2BigThird));
+
+                paintBorderRect = snapRectToDevicePixels(LayoutRect(x2 - thirdOfThickness, y1 + mitreOffset1, thirdOfThickness, (y2 - mitreOffset3) - (y1 + mitreOffset1)), deviceScaleFactor);
+                drawLineFor(paintBorderRect, side, BorderStyle::Solid, FloatSize(adjacent1BigThird, adjacent2BigThird));
+                break;
+            default:
+                break;
+            }
+        }
+        break;
+    }
+    case BorderStyle::Ridge:
+    case BorderStyle::Groove: {
+        BorderStyle s1;
+        BorderStyle s2;
+        if (borderStyle == BorderStyle::Groove) {
+            s1 = BorderStyle::Inset;
+            s2 = BorderStyle::Outset;
+        } else {
+            s1 = BorderStyle::Outset;
+            s2 = BorderStyle::Inset;
+        }
+
+        float adjacent1BigHalf = ceilToDevicePixel(adjacentWidth1 / 2, deviceScaleFactor);
+        float adjacent2BigHalf = ceilToDevicePixel(adjacentWidth2 / 2, deviceScaleFactor);
+
+        float adjacent1SmallHalf = floorToDevicePixel(adjacentWidth1 / 2, deviceScaleFactor);
+        float adjacent2SmallHalf = floorToDevicePixel(adjacentWidth2 / 2, deviceScaleFactor);
+
+        float offset1 = 0;
+        float offset2 = 0;
+        float offset3 = 0;
+        float offset4 = 0;
+
+        if (((side == BoxSide::Top || side == BoxSide::Left) && adjacentWidth1 < 0) || ((side == BoxSide::Bottom || side == BoxSide::Right) && adjacentWidth1 > 0))
+            offset1 = floorToDevicePixel(adjacentWidth1 / 2, deviceScaleFactor);
+
+        if (((side == BoxSide::Top || side == BoxSide::Left) && adjacentWidth2 < 0) || ((side == BoxSide::Bottom || side == BoxSide::Right) && adjacentWidth2 > 0))
+            offset2 = ceilToDevicePixel(adjacentWidth2 / 2, deviceScaleFactor);
+
+        if (((side == BoxSide::Top || side == BoxSide::Left) && adjacentWidth1 > 0) || ((side == BoxSide::Bottom || side == BoxSide::Right) && adjacentWidth1 < 0))
+            offset3 = floorToDevicePixel(fabs(adjacentWidth1) / 2, deviceScaleFactor);
+
+        if (((side == BoxSide::Top || side == BoxSide::Left) && adjacentWidth2 > 0) || ((side == BoxSide::Bottom || side == BoxSide::Right) && adjacentWidth2 < 0))
+            offset4 = ceilToDevicePixel(adjacentWidth2 / 2, deviceScaleFactor);
+
+        float adjustedX = ceilToDevicePixel((x1 + x2) / 2, deviceScaleFactor);
+        float adjustedY = ceilToDevicePixel((y1 + y2) / 2, deviceScaleFactor);
+        // Quads can't use the default snapping rect functions.
+        x1 = roundToDevicePixel(x1, deviceScaleFactor);
+        x2 = roundToDevicePixel(x2, deviceScaleFactor);
+        y1 = roundToDevicePixel(y1, deviceScaleFactor);
+        y2 = roundToDevicePixel(y2, deviceScaleFactor);
+
+        switch (side) {
+        case BoxSide::Top:
+            drawLineFor(FloatRect(FloatPoint(x1 + offset1, y1), FloatPoint(x2 - offset2, adjustedY)), side, s1, FloatSize(adjacent1BigHalf, adjacent2BigHalf));
+            drawLineFor(FloatRect(FloatPoint(x1 + offset3, adjustedY), FloatPoint(x2 - offset4, y2)), side, s2, FloatSize(adjacent1SmallHalf, adjacent2SmallHalf));
+            break;
+        case BoxSide::Left:
+            drawLineFor(FloatRect(FloatPoint(x1, y1 + offset1), FloatPoint(adjustedX, y2 - offset2)), side, s1, FloatSize(adjacent1BigHalf, adjacent2BigHalf));
+            drawLineFor(FloatRect(FloatPoint(adjustedX, y1 + offset3), FloatPoint(x2, y2 - offset4)), side, s2, FloatSize(adjacent1SmallHalf, adjacent2SmallHalf));
+            break;
+        case BoxSide::Bottom:
+            drawLineFor(FloatRect(FloatPoint(x1 + offset1, y1), FloatPoint(x2 - offset2, adjustedY)), side, s2, FloatSize(adjacent1BigHalf, adjacent2BigHalf));
+            drawLineFor(FloatRect(FloatPoint(x1 + offset3, adjustedY), FloatPoint(x2 - offset4, y2)), side, s1, FloatSize(adjacent1SmallHalf, adjacent2SmallHalf));
+            break;
+        case BoxSide::Right:
+            drawLineFor(FloatRect(FloatPoint(x1, y1 + offset1), FloatPoint(adjustedX, y2 - offset2)), side, s2, FloatSize(adjacent1BigHalf, adjacent2BigHalf));
+            drawLineFor(FloatRect(FloatPoint(adjustedX, y1 + offset3), FloatPoint(x2, y2 - offset4)), side, s1, FloatSize(adjacent1SmallHalf, adjacent2SmallHalf));
+            break;
+        }
+        break;
+    }
+    case BorderStyle::Inset:
+    case BorderStyle::Outset:
+        color = calculateBorderStyleColor(borderStyle, side, color);
+        FALLTHROUGH;
+    case BorderStyle::Solid: {
+        StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();
+        ASSERT(x2 >= x1);
+        ASSERT(y2 >= y1);
+        if (!adjacentWidth1 && !adjacentWidth2) {
+            graphicsContext.setStrokeStyle(NoStroke);
+            graphicsContext.setFillColor(color);
+            bool wasAntialiased = graphicsContext.shouldAntialias();
+            graphicsContext.setShouldAntialias(antialias);
+            drawBorderRect(snapRectToDevicePixels(LayoutRect(x1, y1, x2 - x1, y2 - y1), deviceScaleFactor));
+            graphicsContext.setShouldAntialias(wasAntialiased);
+            graphicsContext.setStrokeStyle(oldStrokeStyle);
+            return;
+        }
+
+        // FIXME: These roundings should be replaced by ASSERT(device pixel positioned) when all the callers have transitioned to device pixels.
+        x1 = roundToDevicePixel(x1, deviceScaleFactor);
+        y1 = roundToDevicePixel(y1, deviceScaleFactor);
+        x2 = roundToDevicePixel(x2, deviceScaleFactor);
+        y2 = roundToDevicePixel(y2, deviceScaleFactor);
+
+        Vector<FloatPoint> quad;
+        switch (side) {
+        case BoxSide::Top:
+            quad = {
+                { x1 + std::max<float>(-adjacentWidth1, 0), y1 },
+                { x1 + std::max<float>(adjacentWidth1, 0), y2 },
+                { x2 - std::max<float>(adjacentWidth2, 0), y2 },
+                { x2 - std::max<float>(-adjacentWidth2, 0), y1 }
+            };
+            break;
+        case BoxSide::Bottom:
+            quad = {
+                { x1 + std::max<float>(adjacentWidth1, 0), y1 },
+                { x1 + std::max<float>(-adjacentWidth1, 0), y2 },
+                { x2 - std::max<float>(-adjacentWidth2, 0), y2 },
+                { x2 - std::max<float>(adjacentWidth2, 0), y1 }
+            };
+            break;
+        case BoxSide::Left:
+            quad = {
+                { x1, y1 + std::max<float>(-adjacentWidth1, 0) },
+                { x1, y2 - std::max<float>(-adjacentWidth2, 0) },
+                { x2, y2 - std::max<float>(adjacentWidth2, 0) },
+                { x2, y1 + std::max<float>(adjacentWidth1, 0) }
+            };
+            break;
+        case BoxSide::Right:
+            quad = {
+                { x1, y1 + std::max<float>(adjacentWidth1, 0) },
+                { x1, y2 - std::max<float>(adjacentWidth2, 0) },
+                { x2, y2 - std::max<float>(-adjacentWidth2, 0) },
+                { x2, y1 + std::max<float>(-adjacentWidth1, 0) }
+            };
+            break;
+        }
+
+        graphicsContext.setStrokeStyle(NoStroke);
+        graphicsContext.setFillColor(color);
+        bool wasAntialiased = graphicsContext.shouldAntialias();
+        graphicsContext.setShouldAntialias(antialias);
+        graphicsContext.fillPath(Path::polygonPathFromPoints(quad));
+        graphicsContext.setShouldAntialias(wasAntialiased);
+
+        graphicsContext.setStrokeStyle(oldStrokeStyle);
+        break;
+    }
+    }
 }
 
 LayoutRect BorderPainter::borderInnerRectAdjustedForBleedAvoidance(const LayoutRect& rect, BackgroundBleedAvoidance bleedAvoidance) const

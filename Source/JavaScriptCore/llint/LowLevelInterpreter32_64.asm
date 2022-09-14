@@ -1771,8 +1771,8 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     jmp .opGetByValNotEmpty
 
 .opGetByValNotDouble:
-    bieq t2, AlwaysSlowPutContiguousShape, .opGetByValIsContiguous
-    bilt t2, ArrayStorageShape, .opGetByValNotIndexedStorage
+    subi ArrayStorageShape, t2
+    bia t2, SlowPutArrayStorageShape - ArrayStorageShape, .opGetByValNotIndexedStorage
     biaeq t1, -sizeof IndexingHeader + IndexingHeader::u.lengths.vectorLength[t3], .opGetByValSlow
     loadi ArrayStorage::m_vector + TagOffset[t3, t1, 8], t2
     loadi ArrayStorage::m_vector + PayloadOffset[t3, t1, 8], t1

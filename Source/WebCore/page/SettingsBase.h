@@ -165,6 +165,7 @@ protected:
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     void layerBasedSVGEngineEnabledChanged();
 #endif
+    void setImageAnimationControlEnabledChanged();
 
     Page* m_page;
 

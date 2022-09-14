@@ -1040,7 +1040,7 @@ void GraphicsContextGLOpenGL::generateMipmap(GCGLenum target)
     ::glGenerateMipmap(target);
 }
 
-bool GraphicsContextGLOpenGL::getActiveAttribImpl(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+bool GraphicsContextGLOpenGL::getActiveAttribImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     if (!program) {
         synthesizeGLError(INVALID_VALUE);
@@ -1072,7 +1072,7 @@ bool GraphicsContextGLOpenGL::getActiveAttribImpl(PlatformGLObject program, GCGL
     return true;
 }
 
-bool GraphicsContextGLOpenGL::getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+bool GraphicsContextGLOpenGL::getActiveAttrib(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     GCGLint symbolCount;
     auto result = m_shaderProgramSymbolCountMap.find(program);
@@ -1087,7 +1087,7 @@ bool GraphicsContextGLOpenGL::getActiveAttrib(PlatformGLObject program, GCGLuint
     return getActiveAttribImpl(program, rawIndex, info);
 }
 
-bool GraphicsContextGLOpenGL::getActiveUniformImpl(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+bool GraphicsContextGLOpenGL::getActiveUniformImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     if (!program) {
         synthesizeGLError(INVALID_VALUE);
@@ -1121,7 +1121,7 @@ bool GraphicsContextGLOpenGL::getActiveUniformImpl(PlatformGLObject program, GCG
     return true;
 }
 
-bool GraphicsContextGLOpenGL::getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+bool GraphicsContextGLOpenGL::getActiveUniform(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     GCGLint symbolCount;
     auto result = m_shaderProgramSymbolCountMap.find(program);
@@ -1956,7 +1956,7 @@ void GraphicsContextGLOpenGL::getNonBuiltInActiveSymbolCount(PlatformGLObject pr
     GCGLint attributeCount = 0;
     ::glGetProgramiv(program, ACTIVE_ATTRIBUTES, &attributeCount);
     for (GCGLint i = 0; i < attributeCount; ++i) {
-        ActiveInfo info;
+        GraphicsContextGLActiveInfo info;
         getActiveAttribImpl(program, i, info);
         if (info.name.startsWith("gl_"_s))
             continue;
@@ -1968,7 +1968,7 @@ void GraphicsContextGLOpenGL::getNonBuiltInActiveSymbolCount(PlatformGLObject pr
     GCGLint uniformCount = 0;
     ::glGetProgramiv(program, ACTIVE_UNIFORMS, &uniformCount);
     for (GCGLint i = 0; i < uniformCount; ++i) {
-        ActiveInfo info;
+        GraphicsContextGLActiveInfo info;
         getActiveUniformImpl(program, i, info);
         if (info.name.startsWith("gl_"_s))
             continue;
@@ -2910,7 +2910,7 @@ void GraphicsContextGLOpenGL::transformFeedbackVaryings(PlatformGLObject program
     UNUSED_PARAM(bufferMode);
 }
 
-void GraphicsContextGLOpenGL::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo&)
+void GraphicsContextGLOpenGL::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo&)
 {
     UNUSED_PARAM(program);
     UNUSED_PARAM(index);

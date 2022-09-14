@@ -1185,7 +1185,7 @@ void GraphicsContextGLANGLE::generateMipmap(GCGLenum target)
     GL_GenerateMipmap(target);
 }
 
-bool GraphicsContextGLANGLE::getActiveAttribImpl(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+bool GraphicsContextGLANGLE::getActiveAttribImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     if (!program) {
         synthesizeGLError(INVALID_VALUE);
@@ -1210,12 +1210,12 @@ bool GraphicsContextGLANGLE::getActiveAttribImpl(PlatformGLObject program, GCGLu
     return true;
 }
 
-bool GraphicsContextGLANGLE::getActiveAttrib(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+bool GraphicsContextGLANGLE::getActiveAttrib(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     return getActiveAttribImpl(program, index, info);
 }
 
-bool GraphicsContextGLANGLE::getActiveUniformImpl(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+bool GraphicsContextGLANGLE::getActiveUniformImpl(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     if (!program) {
         synthesizeGLError(INVALID_VALUE);
@@ -1241,7 +1241,7 @@ bool GraphicsContextGLANGLE::getActiveUniformImpl(PlatformGLObject program, GCGL
     return true;
 }
 
-bool GraphicsContextGLANGLE::getActiveUniform(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+bool GraphicsContextGLANGLE::getActiveUniform(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     return getActiveUniformImpl(program, index, info);
 }
@@ -2359,7 +2359,7 @@ void GraphicsContextGLANGLE::transformFeedbackVaryings(PlatformGLObject program,
     GL_TransformFeedbackVaryings(program, pointersToVaryings.size(), pointersToVaryings.data(), bufferMode);
 }
 
-void GraphicsContextGLANGLE::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, ActiveInfo& info)
+void GraphicsContextGLANGLE::getTransformFeedbackVarying(PlatformGLObject program, GCGLuint index, GraphicsContextGLActiveInfo& info)
 {
     if (!makeContextCurrent())
         return;

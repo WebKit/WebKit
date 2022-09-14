@@ -1,6 +1,6 @@
 
 PASS nested @supports serialize properly
-FAIL @keyframes nested in @supports serialize properly assert_equals: expected "@media all { @supports (padding: 0) { @keyframes foo { 0% { top: 0px; left: 0px; } 100% { top: 100px; left: 100px; } } } }" but got "@media all { @supports (padding: 0) { @-webkit-keyframes foo { 0% { top: 0px; left: 0px; } 100% { top: 100px; left: 100px; } } } }"
+PASS @keyframes nested in @supports serialize properly
 PASS The style sheet structure is properly represented
 PASS Deleting the top level of a nested structue works
 PASS Rule insertion works in nested @supports rules

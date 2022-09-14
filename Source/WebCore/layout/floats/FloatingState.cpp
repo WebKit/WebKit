@@ -53,6 +53,7 @@ FloatingState::FloatItem::FloatItem(Position position, BoxGeometry absoluteBoxGe
 FloatingState::FloatingState(LayoutState& layoutState, const ContainerBox& formattingContextRoot)
     : m_layoutState(layoutState)
     , m_formattingContextRoot(formattingContextRoot)
+    , m_isLeftToRightDirection(formattingContextRoot.style().isLeftToRightDirection())
 {
 }
 

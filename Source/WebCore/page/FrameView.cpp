@@ -2228,7 +2228,7 @@ bool FrameView::scrollToFragment(const URL& url)
             
             if (highlightRanges.size()) {
                 auto range = highlightRanges.first();
-                TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered });
+                TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
                 m_pendingTextFragmentIndicatorRange = range;
                 m_pendingTextFragmentIndicatorText = plainText(range);
                 if (frame().settings().scrollToTextFragmentIndicatorEnabled())
@@ -2464,7 +2464,7 @@ void FrameView::textFragmentIndicatorTimerFired()
         return;
     
     auto range = m_pendingTextFragmentIndicatorRange.value();
-    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered });
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
     
     auto textIndicator = TextIndicator::createWithRange(range, { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
     if (textIndicator)
@@ -2758,6 +2758,15 @@ void FrameView::resumeVisibleImageAnimations(const IntRect& visibleRect)
         renderView->resumePausedImageAnimationsIfNeeded(visibleRect);
 }
 
+void FrameView::repaintVisibleImageAnimations(const IntRect& visibleRect)
+{
+    if (visibleRect.isEmpty())
+        return;
+
+    if (auto* renderView = frame().contentRenderer())
+        renderView->repaintImageAnimationsIfNeeded(visibleRect);
+}
+
 void FrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect)
 {
     if (frame().isMainFrame())
@@ -2790,6 +2799,13 @@ void FrameView::resumeVisibleImageAnimationsIncludingSubframes()
 {
     applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {
         frameView.resumeVisibleImageAnimations(visibleRect);
+    });
+}
+
+void FrameView::repaintVisibleImageAnimationsIncludingSubframes()
+{
+    applyRecursivelyWithVisibleRect([] (FrameView& frameView, const IntRect& visibleRect) {
+        frameView.repaintVisibleImageAnimations(visibleRect);
     });
 }
 

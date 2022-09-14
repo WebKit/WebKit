@@ -65,7 +65,7 @@ public:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | JSC::GetOwnPropertySlotIsImpureForPropertyAbsence | JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | JSC::OverridesGetOwnPropertyNames | JSC::OverridesGetOwnPropertySlot;
 protected:
-    JSTestNamedDeleterWithIdentifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedDeleterWithIdentifier>&&, JSC::Butterfly* = nullptr);
+    JSTestNamedDeleterWithIdentifier(JSC::Structure*, JSDOMGlobalObject&, Ref<TestNamedDeleterWithIdentifier>&&);
 
     void finishCreation(JSC::VM&);
 };

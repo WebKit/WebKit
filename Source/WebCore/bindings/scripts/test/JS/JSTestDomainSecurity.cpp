@@ -152,8 +152,8 @@ void JSTestDomainSecurityPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSTestDomainSecurity::s_info = { "TestDomainSecurity"_s, &Base::s_info, &JSTestDomainSecurityTable, nullptr, CREATE_METHOD_TABLE(JSTestDomainSecurity) };
 
-JSTestDomainSecurity::JSTestDomainSecurity(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDomainSecurity>&& impl, JSC::Butterfly* butterfly)
-    : JSDOMWrapper<TestDomainSecurity>(structure, globalObject, WTFMove(impl), butterfly)
+JSTestDomainSecurity::JSTestDomainSecurity(Structure* structure, JSDOMGlobalObject& globalObject, Ref<TestDomainSecurity>&& impl)
+    : JSDOMWrapper<TestDomainSecurity>(structure, globalObject, WTFMove(impl))
 {
 }
 

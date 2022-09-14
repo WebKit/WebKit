@@ -48,6 +48,9 @@ void TypeDefinition::dump(PrintStream& out) const
     if (is<StructType>())
         return as<StructType>()->dump(out);
 
+    if (is<ArrayType>())
+        return as<ArrayType>()->dump(out);
+
     if (is<RecursionGroup>())
         return as<RecursionGroup>()->dump(out);
 
@@ -95,6 +98,20 @@ void StructType::dump(PrintStream& out) const
     out.print(")");
 }
 
+String ArrayType::toString() const
+{
+    return WTF::toString(*this);
+}
+
+void ArrayType::dump(PrintStream& out) const
+{
+    out.print("(");
+    CommaPrinter comma;
+    out.print(comma, makeString(elementType().type.kind));
+    out.print(comma, elementType().mutability ? "immutable" : "mutable");
+    out.print(")");
+}
+
 String RecursionGroup::toString() const
 {
     return WTF::toString(*this);
@@ -139,7 +156,7 @@ static unsigned computeSignatureHash(size_t returnCount, const Type* returnTypes
     return accumulator;
 }
 
-static unsigned computeStructTypeHash(size_t fieldCount, const StructField* fields)
+static unsigned computeStructTypeHash(size_t fieldCount, const FieldType* fields)
 {
     unsigned accumulator = 0x15d2546;
     for (uint32_t i = 0; i < fieldCount; ++i) {
@@ -147,6 +164,15 @@ static unsigned computeStructTypeHash(size_t fieldCount, const StructField* fiel
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].type.index)));
         accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(fields[i].mutability)));
     }
+    return accumulator;
+}
+
+static unsigned computeArrayTypeHash(FieldType elementType)
+{
+    unsigned accumulator = 0x7835ab;
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(elementType.type.kind)));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<TypeIndex>::hash(elementType.type.index));
+    accumulator = WTF::pairIntHash(accumulator, WTF::IntHash<uint8_t>::hash(static_cast<uint8_t>(elementType.mutability)));
     return accumulator;
 }
 
@@ -178,6 +204,11 @@ unsigned TypeDefinition::hash() const
         return computeStructTypeHash(structType->fieldCount(), structType->storage(0));
     }
 
+    if (is<ArrayType>()) {
+        const ArrayType* arrayType = as<ArrayType>();
+        return computeArrayTypeHash(arrayType->elementType());
+    }
+
     if (is<RecursionGroup>()) {
         const RecursionGroup* recursionGroup = as<RecursionGroup>();
         return computeRecursionGroupHash(recursionGroup->typeCount(), recursionGroup->storage(0));
@@ -207,6 +238,17 @@ RefPtr<TypeDefinition> TypeDefinition::tryCreateStructType(StructFieldCount fiel
     if (!result.getValue(memory))
         return nullptr;
     TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::StructType, fieldCount);
+    return adoptRef(signature);
+}
+
+RefPtr<TypeDefinition> TypeDefinition::tryCreateArrayType()
+{
+    // We use WTF_MAKE_FAST_ALLOCATED for this class.
+    auto result = tryFastMalloc(allocatedArraySize());
+    void* memory = nullptr;
+    if (!result.getValue(memory))
+        return nullptr;
+    TypeDefinition* signature = new (NotNull, memory) TypeDefinition(TypeDefinitionKind::ArrayType);
     return adoptRef(signature);
 }
 
@@ -272,11 +314,11 @@ const TypeDefinition& TypeDefinition::replacePlaceholders(TypeIndex projectee) c
 
     if (is<StructType>()) {
         const StructType* structType = as<StructType>();
-        Vector<StructField> newFields;
+        Vector<FieldType> newFields;
         newFields.tryReserveCapacity(structType->fieldCount());
         for (unsigned i = 0; i < structType->fieldCount(); i++) {
-            StructField field = structType->field(i);
-            newFields.uncheckedAppend(StructField { substitute(field.type, projectee), field.mutability });
+            FieldType field = structType->field(i);
+            newFields.uncheckedAppend(FieldType { substitute(field.type, projectee), field.mutability });
         }
 
         RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForStruct(newFields);
@@ -383,7 +425,7 @@ struct FunctionParameterTypes {
 };
 
 struct StructParameterTypes {
-    const Vector<StructField>& fields;
+    const Vector<FieldType>& fields;
 
     static unsigned hash(const StructParameterTypes& params)
     {
@@ -415,6 +457,39 @@ struct StructParameterTypes {
         StructType* structType = signature->as<StructType>();
         for (unsigned i = 0; i < params.fields.size(); ++i)
             structType->getField(i) = params.fields[i];
+
+        entry.key = WTFMove(signature);
+    }
+};
+
+struct ArrayParameterTypes {
+    FieldType elementType;
+
+    static unsigned hash(const ArrayParameterTypes& params)
+    {
+        return computeArrayTypeHash(params.elementType);
+    }
+
+    static bool equal(const TypeHash& sig, const ArrayParameterTypes& params)
+    {
+        if (!sig.key->is<ArrayType>())
+            return false;
+
+        const ArrayType* arrayType = sig.key->as<ArrayType>();
+
+        if (arrayType->elementType() != params.elementType)
+            return false;
+
+        return true;
+    }
+
+    static void translate(TypeHash& entry, const ArrayParameterTypes& params, unsigned)
+    {
+        RefPtr<TypeDefinition> signature = TypeDefinition::tryCreateArrayType();
+        RELEASE_ASSERT(signature);
+
+        ArrayType* arrayType = signature->as<ArrayType>();
+        arrayType->getElementType() = params.elementType;
 
         entry.key = WTFMove(signature);
     }
@@ -505,12 +580,21 @@ RefPtr<TypeDefinition> TypeInformation::typeDefinitionForFunction(const Vector<T
     return addResult.iterator->key;
 }
 
-RefPtr<TypeDefinition> TypeInformation::typeDefinitionForStruct(const Vector<StructField>& fields)
+RefPtr<TypeDefinition> TypeInformation::typeDefinitionForStruct(const Vector<FieldType>& fields)
 {
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
 
     auto addResult = info.m_typeSet.template add<StructParameterTypes>(StructParameterTypes { fields });
+    return addResult.iterator->key;
+}
+
+RefPtr<TypeDefinition> TypeInformation::typeDefinitionForArray(FieldType elementType)
+{
+    TypeInformation& info = singleton();
+    Locker locker { info.m_lock };
+
+    auto addResult = info.m_typeSet.template add<ArrayParameterTypes>(ArrayParameterTypes { elementType });
     return addResult.iterator->key;
 }
 

@@ -1703,6 +1703,7 @@ public:
     std::optional<PAL::SessionID> sessionID() const final;
 
     ReportingScope& reportingScope() const { return m_reportingScope.get(); }
+    WEBCORE_EXPORT String endpointURIForToken(const String&) const final;
 
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
@@ -1832,8 +1833,7 @@ private:
     NotificationClient* notificationClient() final;
 
     void notifyReportObservers(Ref<Report>&&) final;
-    String endpointURIForToken(const String&) const final;
-    void sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType) final;
+    void sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType) final;
     String httpUserAgent() const final;
 
     const Ref<const Settings> m_settings;

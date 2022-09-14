@@ -62,7 +62,7 @@ public:
         return static_cast<ExposedStar&>(Base::wrapped());
     }
 protected:
-    JSExposedStar(JSC::Structure*, JSDOMGlobalObject&, Ref<ExposedStar>&&, JSC::Butterfly* = nullptr);
+    JSExposedStar(JSC::Structure*, JSDOMGlobalObject&, Ref<ExposedStar>&&);
 
     void finishCreation(JSC::VM&);
 };

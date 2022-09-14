@@ -1,30 +1,26 @@
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/html/cross-origin-embedder-policy/resources/nothing-same-origin-corp.txt due to access control checks.
-CONSOLE MESSAGE: Cancelled load to https://127.0.0.1:9443/common/text-plain.txt because it violates the resource's Cross-Origin-Resource-Policy response header.
-CONSOLE MESSAGE: Fetch API cannot load https://127.0.0.1:9443/common/text-plain.txt due to access control checks.
 
 
 Harness Error (TIMEOUT), message = null
 
 PASS [document] same-origin
 PASS [document] blocked by CORP: same-origin
-TIMEOUT [document] blocked due to COEP Test timed out
-NOTRUN [document] blocked during redirect
-NOTRUN [dedicated worker] same-origin
-NOTRUN [dedicated worker] blocked by CORP: same-origin
-NOTRUN [dedicated worker] blocked due to COEP
-NOTRUN [dedicated worker] blocked during redirect
-NOTRUN [shared worker] same-origin
-NOTRUN [shared worker] blocked by CORP: same-origin
-NOTRUN [shared worker] blocked due to COEP
-NOTRUN [shared worker] blocked during redirect
-NOTRUN [service worker] same-origin
-NOTRUN [service worker] blocked by CORP: same-origin
-NOTRUN [service worker] blocked due to COEP
-NOTRUN [service worker] blocked during redirect
-NOTRUN [between service worker and page] same-origin
-NOTRUN [between service worker and page] blocked by CORP: same-origin
-NOTRUN [between service worker and page] blocked due to COEP
+PASS [document] blocked due to COEP
+PASS [document] blocked during redirect
+PASS [dedicated worker] same-origin
+PASS [dedicated worker] blocked by CORP: same-origin
+FAIL [dedicated worker] blocked due to COEP assert_equals: expected 2 but got 0
+FAIL [dedicated worker] blocked during redirect assert_equals: expected 2 but got 0
+PASS [shared worker] same-origin
+PASS [shared worker] blocked by CORP: same-origin
+FAIL [shared worker] blocked due to COEP assert_equals: expected 2 but got 0
+FAIL [shared worker] blocked during redirect assert_equals: expected 2 but got 0
+PASS [service worker] same-origin
+PASS [service worker] blocked by CORP: same-origin
+FAIL [service worker] blocked due to COEP assert_equals: expected 2 but got 0
+FAIL [service worker] blocked during redirect assert_equals: expected 2 but got 0
+PASS [between service worker and page] same-origin
+PASS [between service worker and page] blocked by CORP: same-origin
+TIMEOUT [between service worker and page] blocked due to COEP Test timed out
 NOTRUN [between service worker and page] blocked during redirect
 NOTRUN destination: script
 

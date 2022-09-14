@@ -71,6 +71,7 @@ private:
 
     PartialResult WARN_UNUSED_RETURN parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&);
     PartialResult WARN_UNUSED_RETURN parseStructType(uint32_t position, RefPtr<TypeDefinition>&);
+    PartialResult WARN_UNUSED_RETURN parseArrayType(uint32_t position, RefPtr<TypeDefinition>&);
     PartialResult WARN_UNUSED_RETURN parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>&);
 
     PartialResult WARN_UNUSED_RETURN validateElementTableIdx(uint32_t);

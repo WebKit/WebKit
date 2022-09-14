@@ -61,7 +61,7 @@ public:
 
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestReportExtraMemoryCost(JSC::Structure*, JSDOMGlobalObject&, Ref<TestReportExtraMemoryCost>&&, JSC::Butterfly* = nullptr);
+    JSTestReportExtraMemoryCost(JSC::Structure*, JSDOMGlobalObject&, Ref<TestReportExtraMemoryCost>&&);
 
     void finishCreation(JSC::VM&);
 };

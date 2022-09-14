@@ -60,7 +60,7 @@ public:
     static JSC::GCClient::IsoSubspace* subspaceForImpl(JSC::VM& vm);
     static void analyzeHeap(JSCell*, JSC::HeapAnalyzer&);
 protected:
-    JSTestOperationConditional(JSC::Structure*, JSDOMGlobalObject&, Ref<TestOperationConditional>&&, JSC::Butterfly* = nullptr);
+    JSTestOperationConditional(JSC::Structure*, JSDOMGlobalObject&, Ref<TestOperationConditional>&&);
 
     void finishCreation(JSC::VM&);
 };

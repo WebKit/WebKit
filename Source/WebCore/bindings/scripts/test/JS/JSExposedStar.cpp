@@ -147,8 +147,8 @@ void JSExposedStarPrototype::finishCreation(VM& vm)
 
 const ClassInfo JSExposedStar::s_info = { "ExposedStar"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSExposedStar) };
 
-JSExposedStar::JSExposedStar(Structure* structure, JSDOMGlobalObject& globalObject, Ref<ExposedStar>&& impl, JSC::Butterfly* butterfly)
-    : JSEventTarget(structure, globalObject, WTFMove(impl), butterfly)
+JSExposedStar::JSExposedStar(Structure* structure, JSDOMGlobalObject& globalObject, Ref<ExposedStar>&& impl)
+    : JSEventTarget(structure, globalObject, WTFMove(impl))
 {
 }
 

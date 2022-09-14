@@ -1049,6 +1049,24 @@ bool Internals::isImageAnimating(HTMLImageElement& element)
     return image && (image->isAnimating() || image->animationPending());
 }
 
+void Internals::setImageAnimationEnabled(bool enabled)
+{
+    if (auto* page = contextDocument() ? contextDocument()->page() : nullptr) {
+        if (page->settings().imageAnimationControlEnabled())
+            page->setImageAnimationEnabled(enabled);
+    }
+}
+
+void Internals::resumeImageAnimation(HTMLImageElement& element)
+{
+    element.setAllowsAnimation(true);
+}
+
+void Internals::pauseImageAnimation(HTMLImageElement& element)
+{
+    element.setAllowsAnimation(false);
+}
+
 unsigned Internals::imagePendingDecodePromisesCountForTesting(HTMLImageElement& element)
 {
     return element.pendingDecodePromisesCountForTesting();

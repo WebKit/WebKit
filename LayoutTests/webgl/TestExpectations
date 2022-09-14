@@ -18,23 +18,23 @@ webgl/2.0.0/deqp/functional/gles3/shaderoperator/binary_operator [ Timeout Pass 
 webgl/2.0.0/deqp/functional/gles3/vertexarrays/multiple_attributes.stride.html [ Timeout Pass ]
 
 # Flaky Failures
-webkit.org/b/244980 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_basic_type.html [ Pass Failure ]
-
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/instance_array_basic_type.html [ Pass Failure ]
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformapi/value_initial.html [ Pass Failure ]
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformapi/random.html [ Pass Failure ]
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_nested_struct.html [ Pass Failure ]
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/multi_nested_struct.html [ Pass Failure ]
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_struct_array.html [ Pass Failure ]
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformapi/value_assigned.html [ Pass Failure ]
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_basic_array.html [ Pass Failure ]
-webkit.org/b/244983 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_struct.html [ Pass Failure ]
-
-webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/basic_copyteximage2d.html [ Pass Failure ]
 webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/fboinvalidate/format_02.html [ Pass Failure ]
-webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_pbo_params.html [ Pass Failure ]
 webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/shaderbuiltinvar.html [ Pass Failure ]
 webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_unpack_params.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/teximage3d_pbo_params.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/texturespecification/basic_copyteximage2d.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformapi/value_initial.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformapi/random.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_nested_struct.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/multi_nested_struct.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_struct_array.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformapi/value_assigned.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_basic_array.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_struct.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_basic_type.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/instance_array_basic_type.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/random.html [ Pass Failure ]
+webkit.org/b/244979 webgl/2.0.0/deqp/functional/gles3/uniformbuffers/single_struct.html [ Pass Failure ]
 
 # Incorrect tests
 webgl/2.0.0/deqp/functional/gles3/builtinprecision/ [ Skip ]

@@ -58,6 +58,8 @@ public:
     Seconds maximumBufferingTime;
     WebCore::FetchOptions options;
     std::optional<WebCore::ContentSecurityPolicyResponseHeaders> cspResponseHeaders;
+    URL parentFrameURL;
+    URL frameURL;
     WebCore::CrossOriginEmbedderPolicy parentCrossOriginEmbedderPolicy;
     WebCore::CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     WebCore::HTTPHeaderMap originalRequestHeaders;
@@ -87,7 +89,6 @@ public:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;
-    URL frameURL;
     std::optional<UserContentControllerIdentifier> userContentControllerIdentifier;
 #endif
     

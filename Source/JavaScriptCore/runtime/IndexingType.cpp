@@ -88,9 +88,6 @@ void dumpIndexingType(PrintStream& out, IndexingType indexingType)
     case NonArrayWithContiguous:
         basicName = "NonArrayWithContiguous";
         break;
-    case NonArrayWithAlwaysSlowPutContiguous:
-        basicName = "NonArrayWithAlwaysSlowPutContiguous";
-        break;
     case NonArrayWithArrayStorage:
         basicName = "NonArrayWithArrayStorage";
         break;
