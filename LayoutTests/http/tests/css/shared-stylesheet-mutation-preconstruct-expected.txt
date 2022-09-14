@@ -13,7 +13,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: red; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -29,7 +29,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
 }
 @page :right { margin-left: 3cm; }
 #testdiv { background-color: green; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -41,7 +41,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
 
 #testdiv { background-color: green; }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -57,7 +57,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: green; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -71,7 +71,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
 @media all {
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -86,7 +86,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: green; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -101,7 +101,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -116,7 +116,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: green; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -131,7 +131,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #dontmatch { background-color: red; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -146,7 +146,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: red; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -161,7 +161,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: red; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -183,7 +183,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: red; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -198,7 +198,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: red; }
 }
 @page foo { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
@@ -213,7 +213,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: red; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
   40% { left: 40px; }
@@ -229,7 +229,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: red; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
 }
 @font-face { font-family: Foo; }
@@ -243,7 +243,7 @@ PASS getComputedStyle(testElement, null).getPropertyValue('background-color') is
   #testdiv { background-color: red; }
 }
 @page :right { margin-left: 3cm; }
-@-webkit-keyframes bounce {
+@keyframes bounce {
   0% { left: 0px; }
   100% { left: 200px; }
 }
