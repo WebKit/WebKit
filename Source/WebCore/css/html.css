@@ -373,7 +373,7 @@ fieldset {
     padding-inline-end: 0.75em;
     padding-block-end: 0.625em;
     border: 2px groove ThreeDFace;
-    min-width: min-content;
+    min-inline-size: min-content;
 }
 
 button {
