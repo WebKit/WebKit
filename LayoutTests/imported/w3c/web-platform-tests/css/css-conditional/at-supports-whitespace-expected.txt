@@ -1,0 +1,18 @@
+
+PASS @supports ((a)) {}
+PASS @supports ((a) ) {}
+PASS @supports ( (a)) {}
+PASS @supports ( (a) ) {}
+PASS @supports (not (a)) {}
+PASS @supports (not (a) ) {}
+PASS @supports ( not (a)) {}
+PASS @supports ( not (a) ) {}
+PASS @supports ((a) and (b)) {}
+PASS @supports ((a) and (b) ) {}
+PASS @supports ( (a) and (b)) {}
+PASS @supports ( (a) and (b) ) {}
+PASS @supports ((a) or (b)) {}
+PASS @supports ((a) or (b) ) {}
+PASS @supports ( (a) or (b)) {}
+PASS @supports ( (a) or (b) ) {}
+

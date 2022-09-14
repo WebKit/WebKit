@@ -1897,6 +1897,8 @@ imported/w3c/web-platform-tests/css/css-conditional/at-supports-046.html [ Image
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-conditional/css-supports-036.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-format-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-tech-001.html [ ImageOnlyFailure ]
 
 transitions/svg-text-shadow-transition.html [ Failure ]
 webkit.org/b/137883 transitions/background-transitions.html [ Failure Pass ]

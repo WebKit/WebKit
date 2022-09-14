@@ -895,6 +895,7 @@
         "web-platform-tests/css/css-color/yellowsquare-ref.html",
         "web-platform-tests/css/css-conditional/at-supports-001-ref.html",
         "web-platform-tests/css/css-conditional/at-supports-027-ref.html",
+        "web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-forgiving-argument-ref.html",
         "web-platform-tests/css/css-conditional/support/at-media-dynamic-001-inner.html",
         "web-platform-tests/css/css-conditional/support/pass.xht",
         "web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001-ref.html",
