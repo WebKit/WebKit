@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<img src="resources/animation.gif" id="img" />
+<!-- To make this test able to pass in WK1, use this <div style="..."> to setAutodisplay:YES (rdar://42625657 has more details). -->
+<div style="will-change: transform"></div>
+
+<script>
+    description("This test ensures that animation play / pause state is updated when the page-wide 'animations disabled' flag changes.\n\n");
+    jsTestIsAsync = true;
+    internals.settings.setImageAnimationControlEnabled(true);
+    var image = document.getElementById("img");
+
+    internals.setImageAnimationEnabled(false);
+    window.onload = function() {
+        shouldBecomeEqual("internals.isImageAnimating(image)", "false", function() {
+            internals.setImageAnimationEnabled(true);
+            shouldBecomeEqual("internals.isImageAnimating(image)", "true", function() {
+                internals.clearMemoryCache();
+                finishJSTest();
+            });
+        });
+    };
+</script>
+</body>
+</html>

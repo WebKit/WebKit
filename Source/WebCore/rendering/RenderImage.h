@@ -81,6 +81,9 @@ public:
 
     String accessibilityDescription() const { return imageResource().image()->accessibilityDescription(); }
 
+    bool hasAnimatedImage() const;
+    bool allowsAnimation() const final;
+
 protected:
     void willBeDestroyed() override;
 

@@ -293,10 +293,10 @@ void PlatformCAAnimationWin::setFillMode(FillModeType value)
     CACFAnimationSetFillMode(m_animation.get(), toCACFFillModeType(value));
 }
 
-void PlatformCAAnimationWin::setTimingFunction(const TimingFunction* value, bool reverse)
+void PlatformCAAnimationWin::setTimingFunction(const TimingFunction* timingFunction, bool reverse)
 {
-    ASSERT(value);
-    CACFAnimationSetTimingFunction(m_animation.get(), toCACFTimingFunction(*value, reverse).get());
+    ASSERT(timingFunction);
+    CACFAnimationSetTimingFunction(m_animation.get(), toCACFTimingFunction(*timingFunction, reverse).get());
 }
 
 void PlatformCAAnimationWin::copyTimingFunctionFrom(const PlatformCAAnimation& value)
@@ -537,13 +537,13 @@ void PlatformCAAnimationWin::copyKeyTimesFrom(const PlatformCAAnimation& value)
     CACFAnimationSetKeyTimes(m_animation.get(), CACFAnimationGetKeyTimes(downcast<PlatformCAAnimationWin>(value).platformAnimation()));
 }
 
-void PlatformCAAnimationWin::setTimingFunctions(const Vector<Ref<const TimingFunction>>& value, bool reverse)
+void PlatformCAAnimationWin::setTimingFunctions(const Vector<Ref<const TimingFunction>>& timingFunctions, bool reverse)
 {
     if (animationType() != Keyframe)
         return;
 
-    RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, value.size(), &kCFTypeArrayCallBacks));
-    for (auto& timingFunction : value)
+    RetainPtr<CFMutableArrayRef> array = adoptCF(CFArrayCreateMutable(0, timingFunctions.size(), &kCFTypeArrayCallBacks));
+    for (auto& timingFunction : timingFunctions)
         CFArrayAppendValue(array.get(), toCACFTimingFunction(timingFunction.get(), reverse).get());
 
     CACFAnimationSetTimingFunctions(m_animation.get(), array.get());

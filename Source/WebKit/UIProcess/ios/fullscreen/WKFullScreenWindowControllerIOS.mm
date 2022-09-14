@@ -549,6 +549,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_window setHidden:NO];
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
     [_window setFrame:CGRectMake(0, 0, 960, 540)];
+    [_window setNeedsLayout];
+    [_window layoutIfNeeded];
 #endif
 
     _rootViewController = adoptNS([[UIViewController alloc] init]);

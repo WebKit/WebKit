@@ -124,6 +124,7 @@ private:
     Timer m_derefElementTimer;
     RefPtr<Element> m_protectedElement;
     AtomString m_failedLoadURL;
+    AtomString m_pendingURL;
     Vector<RefPtr<DeferredPromise>> m_decodingPromises;
     bool m_hasPendingBeforeLoadEvent : 1;
     bool m_hasPendingLoadEvent : 1;

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<img id="img" src="">
+<!-- To make this test able to pass in WK1, use this <div style="..."> to setAutodisplay:YES (rdar://42625657 has more details). -->
+<div style="will-change: transform"></div>
+
+<script>
+    var image = document.getElementById("img");
+
+    var currentlyDisplayedFrameIndex;
+    function drawNextFrame() {
+        return new Promise((resolve) => {
+            document.body.offsetHeight;
+            testRunner.display();
+            currentlyDisplayedFrameIndex = internals.imageFrameIndex(image);
+
+            image.addEventListener("webkitImageFrameReady", function listener() {
+                debug(`Image frame ${currentlyDisplayedFrameIndex} was displayed.`);
+                image.removeEventListener("webkitImageFrameReady", listener, true);
+                internals.pauseImageAnimation(image);
+
+                setTimeout((currentlyDisplayedFrameIndex) => {
+                    shouldBeTrue("internals.imageFrameIndex(image) === currentlyDisplayedFrameIndex + 1");
+                    internals.resumeImageAnimation(image);
+                    resolve();
+                }, 50);
+            }, true);
+        });
+    }
+
+    function drawImage(frameCount) {
+        internals.resumeImageAnimation(image);
+        let promise = drawNextFrame();
+        for (let i = 1; i < frameCount; i++) {
+            promise = promise.then(() => {
+                return drawNextFrame();
+            });
+        }
+        return promise;
+    }
+
+    function loadAndDrawImage(src, frameCount) {
+        return new Promise((resolve) => {
+            image.onload = (() => {
+                debug("Image was loaded successfully.");
+                drawImage(frameCount).then(resolve);
+            });
+            image.src = src;
+        });
+    }
+
+    (function() {
+        window.jsTestIsAsync = true;
+        if (window.internals) {
+            internals.clearMemoryCache();
+            internals.settings.setWebkitImageReadyEventEnabled(true);
+            internals.settings.setAnimatedImageAsyncDecodingEnabled(true);
+            internals.settings.setImageAnimationControlEnabled(true);
+            internals.setImageAnimationEnabled(false);
+        }
+
+        description("This test verifies resumed animations start at the frame they were paused at.");
+
+        loadAndDrawImage("resources/animated-4-frames.gif", 3).then(() => {
+            debug("The animation was loaded and paused/resumed correctly.");
+            internals.setImageAnimationEnabled(true);
+            internals.clearMemoryCache();
+            finishJSTest();
+        });
+    })();
+</script>
+
+</body>
+</html>

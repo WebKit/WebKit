@@ -852,19 +852,13 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     violationEventInit.bubbles = true;
     violationEventInit.composed = true;
 
-    Vector<String> reportURIs;
+    Vector<String> endpointURIs;
+    Vector<String> endpointTokens;
     if (usesReportTo && m_reportingClient) {
         m_reportingClient->notifyReportObservers(Report::create(CSPViolationReportBody::cspReportType(), info.documentURI, CSPViolationReportBody::create(SecurityPolicyViolationEventInit { violationEventInit })));
-
-        for (auto& token : violatedDirectiveList.reportToTokens()) {
-            auto reportToURI = m_reportingClient->endpointURIForToken(token);
-            if (reportToURI.isNull() || reportToURI.isEmpty())
-                continue;
-
-            reportURIs.append(WTFMove(reportToURI));
-        }
+        endpointTokens = violatedDirectiveList.reportToTokens();
     } else
-        reportURIs = violatedDirectiveList.reportURIs();
+        endpointURIs = violatedDirectiveList.reportURIs();
 
     if (m_client)
         m_client->enqueueSecurityPolicyViolationEvent(WTFMove(violationEventInit));
@@ -877,7 +871,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     }
 
     // 2. Send violation report (if applicable).
-    if (reportURIs.isEmpty())
+    if (endpointURIs.isEmpty() && endpointTokens.isEmpty())
         return;
 
     RELEASE_ASSERT(m_reportingClient || (!m_client && !m_scriptExecutionContext));
@@ -888,7 +882,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     auto report = CSPViolationReportBody::createReportFormDataForViolation(info, usesReportTo, violatedDirectiveList.isReportOnly(), effectiveViolatedDirective, m_referrer, violatedDirectiveList.header(), blockedURI, httpStatusCode);
 
-    m_reportingClient->sendReportToEndpoints(m_protectedURL, WTFMove(reportURIs), WTFMove(report), ViolationReportType::ContentSecurityPolicy);
+    m_reportingClient->sendReportToEndpoints(m_protectedURL, endpointURIs, endpointTokens, WTFMove(report), ViolationReportType::ContentSecurityPolicy);
 }
 
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const

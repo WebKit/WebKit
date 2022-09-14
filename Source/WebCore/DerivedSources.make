@@ -1231,7 +1231,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/track/VTTRegion.idl \
     $(WebCore)/html/track/VTTRegionList.idl \
     $(WebCore)/html/track/VideoTrack.idl \
-	$(WebCore)/html/track/VideoTrackConfiguration.idl \
+    $(WebCore)/html/track/VideoTrackConfiguration.idl \
     $(WebCore)/html/track/VideoTrackList.idl \
     $(WebCore)/mathml/MathMLElement.idl \
     $(WebCore)/mathml/MathMLMathElement.idl \
@@ -1240,6 +1240,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/inspector/InspectorAuditDOMObject.idl \
     $(WebCore)/inspector/InspectorAuditResourcesObject.idl \
     $(WebCore)/inspector/InspectorFrontendHost.idl \
+    $(WebCore)/loader/COEPInheritenceViolationReportBody.idl \
+    $(WebCore)/loader/CORPViolationReportBody.idl \
     $(WebCore)/loader/appcache/DOMApplicationCache.idl \
     $(WebCore)/page/BarProp.idl \
     $(WebCore)/page/Crypto.idl \

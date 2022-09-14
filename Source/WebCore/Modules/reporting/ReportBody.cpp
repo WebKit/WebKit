@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ReportBody.h"
 
+#include "FormData.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

@@ -9277,10 +9277,14 @@ String Document::httpUserAgent() const
     return userAgent(url());
 }
 
-void Document::sendReportToEndpoints(const URL& baseURL, Vector<String>&& endPoints, Ref<FormData>&& report, ViolationReportType reportType)
+void Document::sendReportToEndpoints(const URL& baseURL, const Vector<String>& endpointURIs, const Vector<String>& endpointTokens, Ref<FormData>&& report, ViolationReportType reportType)
 {
-    for (const auto& url : endPoints)
-        PingLoader::sendViolationReport(*frame(), URL { baseURL, url }, report.copyRef(), reportType);    
+    for (auto& url : endpointURIs)
+        PingLoader::sendViolationReport(*frame(), URL { baseURL, url }, report.copyRef(), reportType);
+    for (auto& token : endpointTokens) {
+        if (auto url = endpointURIForToken(token); !url.isEmpty())
+            PingLoader::sendViolationReport(*frame(), URL { baseURL, url }, report.copyRef(), reportType);
+    }
 }
 
 } // namespace WebCore

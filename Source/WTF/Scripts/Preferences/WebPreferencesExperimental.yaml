@@ -783,6 +783,19 @@ HighlightAPIEnabled:
     WebKit:
       default: false
 
+ImageAnimationControlEnabled:
+  type: bool
+  webcoreOnChange: setImageAnimationControlEnabledChanged
+  humanReadableName: "Image Animation Control Enabled"
+  humanReadableDescription: "Control image animations."
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ImageBitmapEnabled:
   type: bool
   humanReadableName: "ImageBitmap"

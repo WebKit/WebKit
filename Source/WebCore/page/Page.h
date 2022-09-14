@@ -654,6 +654,9 @@ public:
     WEBCORE_EXPORT void resumeScriptedAnimations();
     bool scriptedAnimationsSuspended() const { return m_scriptedAnimationsSuspended; }
 
+    WEBCORE_EXPORT void setImageAnimationEnabled(bool);
+    bool imageAnimationEnabled() const { return m_imageAnimationEnabled; }
+
     void userStyleSheetLocationChanged();
     const String& userStyleSheet() const;
 
@@ -693,6 +696,7 @@ public:
 
     WEBCORE_EXPORT VisibilityState visibilityState() const;
     WEBCORE_EXPORT void resumeAnimatingImages();
+    void repaintAnimatedImages();
 
     void didFinishLoadingImageForElement(HTMLImageElement&);
 
@@ -1140,6 +1144,7 @@ private:
     JSC::Debugger* m_debugger { nullptr };
 
     bool m_canStartMedia { true };
+    bool m_imageAnimationEnabled { true };
 
     TimerThrottlingState m_timerThrottlingState { TimerThrottlingState::Disabled };
     MonotonicTime m_timerThrottlingStateLastChangedTime;

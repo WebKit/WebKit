@@ -146,6 +146,8 @@ public:
     virtual void resetAnimation() {}
     virtual bool isAnimating() const { return false; }
     bool animationPending() const { return m_animationStartTimer && m_animationStartTimer->isActive(); }
+    std::optional<bool> allowsAnimation() const { return m_allowsAnimation; }
+    void setAllowsAnimation(std::optional<bool> allowsAnimation) { m_allowsAnimation = allowsAnimation; }
 
     // Typically the CachedImage that owns us.
     ImageObserver* imageObserver() const { return m_imageObserver; }
@@ -211,6 +213,9 @@ private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;
     ImageObserver* m_imageObserver;
     std::unique_ptr<Timer> m_animationStartTimer;
+
+    // A value of true or false will override the default Page::imageAnimationEnabled state.
+    std::optional<bool> m_allowsAnimation { std::nullopt };
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Image&);

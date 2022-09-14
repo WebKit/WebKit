@@ -99,6 +99,7 @@ public:
     bool canSkipRevalidation(const CachedResourceLoader&, const CachedResourceRequest&) const;
 
     bool isVisibleInViewport(const Document&) const;
+    bool allowsAnimation(const Image&) const;
 
 private:
     void clear();
@@ -158,6 +159,8 @@ private:
         void imageFrameAvailable(const Image&, ImageAnimatingState, const IntRect* changeRect = nullptr, DecodingStatus = DecodingStatus::Invalid) final;
         void changedInRect(const Image&, const IntRect*) final;
         void scheduleRenderingUpdate(const Image&) final;
+
+        bool allowsAnimation(const Image&) const final;
 
         HashSet<CachedImage*> m_cachedImages;
     };

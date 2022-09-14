@@ -28,6 +28,8 @@
 namespace WebCore {
 
 enum class ViolationReportType : uint8_t {
+    COEPInheritenceViolation, // https://html.spec.whatwg.org/multipage/origin.html#queue-a-cross-origin-embedder-policy-inheritance-violation
+    CORPViolation, // https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
     ContentSecurityPolicy,
     CrossOriginOpenerPolicy,
     StandardReportingAPIViolation, // https://www.w3.org/TR/reporting/#try-delivery
@@ -42,6 +44,8 @@ namespace WTF {
 template<> struct EnumTraits<WebCore::ViolationReportType> {
     using values = EnumValues<
     WebCore::ViolationReportType,
+    WebCore::ViolationReportType::COEPInheritenceViolation,
+    WebCore::ViolationReportType::CORPViolation,
     WebCore::ViolationReportType::ContentSecurityPolicy,
     WebCore::ViolationReportType::CrossOriginOpenerPolicy,
     WebCore::ViolationReportType::StandardReportingAPIViolation,

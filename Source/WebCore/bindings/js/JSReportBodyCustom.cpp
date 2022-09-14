@@ -26,7 +26,11 @@
 #include "config.h"
 #include "JSReportBody.h"
 
+#include "COEPInheritenceViolationReportBody.h"
+#include "CORPViolationReportBody.h"
 #include "CSPViolationReportBody.h"
+#include "JSCOEPInheritenceViolationReportBody.h"
+#include "JSCORPViolationReportBody.h"
 #include "JSCSPViolationReportBody.h"
 #include "JSDOMBinding.h"
 #include "JSTestReportBody.h"
@@ -41,6 +45,10 @@ JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, 
 {
     if (is<CSPViolationReportBody>(reportBody))
         return createWrapper<CSPViolationReportBody>(globalObject, WTFMove(reportBody));
+    if (is<COEPInheritenceViolationReportBody>(reportBody))
+        return createWrapper<COEPInheritenceViolationReportBody>(globalObject, WTFMove(reportBody));
+    if (is<CORPViolationReportBody>(reportBody))
+        return createWrapper<CORPViolationReportBody>(globalObject, WTFMove(reportBody));
     if (is<TestReportBody>(reportBody))
         return createWrapper<TestReportBody>(globalObject, WTFMove(reportBody));
     return createWrapper<ReportBody>(globalObject, WTFMove(reportBody));

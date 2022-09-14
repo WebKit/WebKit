@@ -229,13 +229,13 @@ imported/w3c/web-platform-tests/speech-api/ [ Skip ]
 # Support for COEP violation reporting is missing.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/access-reporting/
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/document-reporting/
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-document-reporting-endpoint.https.window.html
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-frame-owner.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-worker-owner.https.html
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/cache-storage-reporting-document.https.html [ Skip ]
+
+# This test is failing in all major browser engines as of Sept 2022. The reason is that the Reporting-Endpoints header
+# is served on the parent of the reporting frame, not the reporting frame.
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-endpoint.https.html
 
 # Only Mac and iOS have an implementation of UIScriptController::doAsyncTask().
 fast/harness/uiscriptcontroller [ Skip ]
@@ -439,11 +439,15 @@ http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConso
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/anonymous-iframe/embedding.tentative.https.window.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/failure-check-sequence.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken.html [ DumpJSConsoleLogInStdErr Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/location-protocol-setter-non-broken-weird.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/sandboxing/sandbox-disallow-popups.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/blob.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-navigation.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-subresource-corp.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/reporting-to-document-reporting-endpoint.https.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-cached-images.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/require-corp-revalidated-images.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-csp-sandbox.https.html [ DumpJSConsoleLogInStdErr ]

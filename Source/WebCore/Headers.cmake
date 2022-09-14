@@ -1041,6 +1041,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/layouttree/LayoutInitialContainingBlock.h
     layout/layouttree/LayoutInlineTextBox.h
 
+    loader/COEPInheritenceViolationReportBody.h
+    loader/CORPViolationReportBody.h
     loader/CanvasActivityRecord.h
     loader/ContentFilterClient.h
     loader/CookieJar.h

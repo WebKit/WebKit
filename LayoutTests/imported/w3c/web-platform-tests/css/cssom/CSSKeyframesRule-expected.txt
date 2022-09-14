@@ -1,3 +1,3 @@
 
-FAIL CSSOM -  CSSKeyframesRule interface assert_equals: CSSKeyframesRule cssText attribute expected "@keyframesbar{}" but got "@-webkit-keyframesbar{}"
+FAIL CSSOM -  CSSKeyframesRule interface assert_equals: CSSKeyframesRule cssText attribute with CSS-wide keyword name expected "@keyframes\"initial\"{}" but got "@keyframesinitial{}"
 

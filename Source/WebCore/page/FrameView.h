@@ -321,6 +321,7 @@ public:
 
     void viewportContentsChanged();
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
+    void repaintVisibleImageAnimationsIncludingSubframes();
 
     String mediaType() const;
     WEBCORE_EXPORT void setMediaType(const String&);
@@ -772,6 +773,7 @@ private:
 
     void applyRecursivelyWithVisibleRect(const Function<void(FrameView& frameView, const IntRect& visibleRect)>&);
     void resumeVisibleImageAnimations(const IntRect& visibleRect);
+    void repaintVisibleImageAnimations(const IntRect& visibleRect);
     void updateScriptedAnimationsAndTimersThrottlingState(const IntRect& visibleRect);
 
     WEBCORE_EXPORT void adjustTiledBackingCoverage();

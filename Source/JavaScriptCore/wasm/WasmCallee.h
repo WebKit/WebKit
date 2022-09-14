@@ -48,16 +48,13 @@ namespace Wasm {
 
 class Callee : public ThreadSafeRefCounted<Callee> {
     WTF_MAKE_FAST_ALLOCATED;
-
 public:
-    JS_EXPORT_PRIVATE virtual ~Callee();
-
     IndexOrName indexOrName() const { return m_indexOrName; }
     CompilationMode compilationMode() const { return m_compilationMode; }
 
-    virtual CodePtr<WasmEntryPtrTag> entrypoint() const = 0;
-    virtual RegisterAtOffsetList* calleeSaveRegisters() = 0;
-    virtual std::tuple<void*, void*> range() const = 0;
+    CodePtr<WasmEntryPtrTag> entrypoint() const;
+    RegisterAtOffsetList* calleeSaveRegisters();
+    std::tuple<void*, void*> range() const;
 
     const HandlerInfo* handlerForIndex(Instance&, unsigned, const Tag*);
 
@@ -65,9 +62,16 @@ public:
 
     void dump(PrintStream&) const;
 
+    JS_EXPORT_PRIVATE void operator delete(Callee*, std::destroying_delete_t);
+
 protected:
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode);
     JS_EXPORT_PRIVATE Callee(Wasm::CompilationMode, size_t, std::pair<const Name*, RefPtr<NameSection>>&&);
+
+    template<typename Func>
+    void runWithDowncast(const Func&);
+    template<typename Func>
+    void runWithDowncast(const Func&) const;
 
 private:
     CompilationMode m_compilationMode;
@@ -79,20 +83,23 @@ protected:
 
 class JITCallee : public Callee {
 public:
-    CodePtr<WasmEntryPtrTag> entrypoint() const override { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
-    RegisterAtOffsetList* calleeSaveRegisters() override { return &m_entrypoint.calleeSaveRegisters; }
+    friend class Callee;
     FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
 
 protected:
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, Wasm::Entrypoint&&);
     JS_EXPORT_PRIVATE JITCallee(Wasm::CompilationMode, Wasm::Entrypoint&&, size_t, std::pair<const Name*, RefPtr<NameSection>>&&, Vector<UnlinkedWasmToWasmCall>&&);
 
-    std::tuple<void*, void*> range() const override
+    std::tuple<void*, void*> rangeImpl() const
     {
         void* start = m_entrypoint.compilation->codeRef().executableMemory()->start().untaggedPtr();
         void* end = m_entrypoint.compilation->codeRef().executableMemory()->end().untaggedPtr();
         return { start, end };
     }
+
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint.compilation->code().retagged<WasmEntryPtrTag>(); }
+
+    RegisterAtOffsetList* calleeSaveRegistersImpl() { return &m_entrypoint.calleeSaveRegisters; }
 
 private:
     FixedVector<UnlinkedWasmToWasmCall> m_wasmToWasmCallsites;
@@ -218,17 +225,17 @@ private:
 
 class LLIntCallee final : public Callee {
     friend LLIntOffsetsExtractor;
-
+    friend class Callee;
 public:
     static Ref<LLIntCallee> create(FunctionCodeBlockGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
         return adoptRef(*new LLIntCallee(generator, index, WTFMove(name)));
     }
 
-    JS_EXPORT_PRIVATE void setEntrypoint(CodePtr<WasmEntryPtrTag>);
-    JS_EXPORT_PRIVATE CodePtr<WasmEntryPtrTag> entrypoint() const final;
-    JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegisters() final;
-    JS_EXPORT_PRIVATE std::tuple<void*, void*> range() const final;
+    void setEntrypoint(CodePtr<WasmEntryPtrTag> entrypoint)
+    {
+        m_entrypoint = entrypoint;
+    }
 
     uint32_t functionIndex() const { return m_functionIndex; }
     unsigned numVars() const { return m_numVars; }
@@ -291,6 +298,10 @@ public:
 
 private:
     LLIntCallee(FunctionCodeBlockGenerator&, size_t index, std::pair<const Name*, RefPtr<NameSection>>&&);
+
+    CodePtr<WasmEntryPtrTag> entrypointImpl() const { return m_entrypoint; }
+    std::tuple<void*, void*> rangeImpl() const { return { nullptr, nullptr }; };
+    JS_EXPORT_PRIVATE RegisterAtOffsetList* calleeSaveRegistersImpl();
 
     uint32_t m_functionIndex { 0 };
 

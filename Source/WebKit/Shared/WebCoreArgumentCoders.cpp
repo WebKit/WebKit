@@ -38,6 +38,8 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/ByteArrayPixelBuffer.h>
+#include <WebCore/COEPInheritenceViolationReportBody.h>
+#include <WebCore/CORPViolationReportBody.h>
 #include <WebCore/CSPViolationReportBody.h>
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CacheStorageConnection.h>
@@ -2710,6 +2712,12 @@ void ArgumentCoder<RefPtr<WebCore::ReportBody>>::encode(Encoder& encoder, const 
     case ViolationReportType::ContentSecurityPolicy:
         downcast<CSPViolationReportBody>(reportBody.get())->encode(encoder);
         return;
+    case ViolationReportType::COEPInheritenceViolation:
+        downcast<COEPInheritenceViolationReportBody>(reportBody.get())->encode(encoder);
+        return;
+    case ViolationReportType::CORPViolation:
+        downcast<CORPViolationReportBody>(reportBody.get())->encode(encoder);
+        return;
     case ViolationReportType::Test:
         downcast<TestReportBody>(reportBody.get())->encode(encoder);
         return;
@@ -2740,6 +2748,10 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
     switch (*reportBodyType) {
     case ViolationReportType::ContentSecurityPolicy:
         return CSPViolationReportBody::decode(decoder);
+    case ViolationReportType::COEPInheritenceViolation:
+        return COEPInheritenceViolationReportBody::decode(decoder);
+    case ViolationReportType::CORPViolation:
+        return CORPViolationReportBody::decode(decoder);
     case ViolationReportType::Test:
         return TestReportBody::decode(decoder);
     case ViolationReportType::CrossOriginOpenerPolicy:

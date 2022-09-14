@@ -442,6 +442,13 @@ bool RenderImage::hasNonBitmapImage() const
     return image && !is<BitmapImage>(image);
 }
 
+bool RenderImage::hasAnimatedImage() const
+{
+    if (auto* image = cachedImage() ? cachedImage()->image() : nullptr)
+        return image->isAnimated();
+    return false;
+}
+
 void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint paintOffset, LayoutUnit borderWidth) const
 {
     auto contentSize = this->contentSize();
@@ -890,6 +897,13 @@ RenderBox* RenderImage::embeddedContentBox() const
         return downcast<SVGImage>(*cachedImage->image()).embeddedContentBox();
 
     return nullptr;
+}
+
+bool RenderImage::allowsAnimation() const
+{
+    if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
+        return imageElement->allowsAnimation();
+    return RenderReplaced::allowsAnimation();
 }
 
 } // namespace WebCore
