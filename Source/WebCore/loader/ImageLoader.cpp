@@ -224,9 +224,14 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 
         auto crossOriginAttribute = element().attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
 
-        // Use url from original request for lazy loads that are no longer in deferred state.
-        URL imageURL = m_lazyImageLoadState == LazyImageLoadState::LoadImmediately
-            ? m_image->url() : document.completeURL(sourceURI(attr));
+        // Use URL from original request for same URL loads in order to preserve the original base URL.
+        URL imageURL;
+        if (m_image && attr == m_pendingURL)
+            imageURL = m_image->url();
+        else {
+            imageURL = document.completeURL(sourceURI(attr));
+            m_pendingURL = attr;
+        }
         ResourceRequest resourceRequest(imageURL);
         resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(m_element));
 
@@ -379,6 +384,8 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
 
     ASSERT(m_failedLoadURL.isEmpty());
     ASSERT_UNUSED(resource, &resource == m_image.get());
+
+    m_pendingURL = { };
 
     if (isDeferred()) {
         LazyLoadImageObserver::unobserve(element(), element().document());
