@@ -348,7 +348,7 @@ static OptionSet<AvoidanceReason> canUseForRenderInlineChild(const RenderInline&
     return reasons;
 }
 
-static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, IncludeReasons includeReasons)
+static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, const RenderObject& child, IncludeReasons includeReasons)
 {
     OptionSet<AvoidanceReason> reasons;
 
@@ -372,10 +372,16 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
                 return false;
         }
 #if !ALLOW_FLOATS
+        UNUSED_PARAM(flow);
         if (renderer.isFloating())
             return false;
 #elif !ALLOW_RTL_FLOATS
+        UNUSED_PARAM(flow);
         if (!renderer.parent()->style().isLeftToRightDirection())
+            return false;
+#else
+        auto intrusiveFloatsWithMismatchingInlineDirection = flow.containsFloats() && flow.containingBlock() && flow.containingBlock()->style().isLeftToRightDirection() != flow.style().isLeftToRightDirection();
+        if (renderer.isFloating() && intrusiveFloatsWithMismatchingInlineDirection)
             return false;
 #endif
         if (renderer.style().shapeOutside())
@@ -492,7 +498,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
 
     for (auto walker = InlineWalker(flow); !walker.atEnd(); walker.advance()) {
         auto& child = *walker.current();
-        if (auto childReasons = canUseForChild(child, includeReasons))
+        if (auto childReasons = canUseForChild(flow, child, includeReasons))
             ADD_REASONS_AND_RETURN_IF_NEEDED(childReasons, reasons, includeReasons);
     }
     auto styleReasons = canUseForStyle(flow, includeReasons);
