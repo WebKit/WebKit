@@ -257,6 +257,7 @@ Modules/paymentrequest/PaymentRequest.cpp
 Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
 Modules/paymentrequest/PaymentRequestUtilities.cpp
 Modules/paymentrequest/PaymentResponse.cpp
+Modules/permissions/MainThreadPermissionObserver.cpp
 Modules/permissions/NavigatorPermissions.cpp
 Modules/permissions/PermissionController.cpp
 Modules/permissions/PermissionStatus.cpp

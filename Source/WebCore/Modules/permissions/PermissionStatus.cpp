@@ -30,41 +30,70 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "EventNames.h"
+#include "MainThreadPermissionObserver.h"
 #include "PermissionController.h"
+#include "PermissionState.h"
+#include "Permissions.h"
+#include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerThread.h"
+#include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
+#include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(PermissionStatus);
 
-Ref<PermissionStatus> PermissionStatus::create(ScriptExecutionContext& context, PermissionState state, const PermissionDescriptor& descriptor)
+static HashMap<MainThreadPermissionObserverIdentifier, std::unique_ptr<MainThreadPermissionObserver>>& allMainThreadPermissionObservers()
 {
-    auto status = adoptRef(*new PermissionStatus(context, state, descriptor));
+    static MainThreadNeverDestroyed<HashMap<MainThreadPermissionObserverIdentifier, std::unique_ptr<MainThreadPermissionObserver>>> map;
+    return map;
+}
+
+Ref<PermissionStatus> PermissionStatus::create(ScriptExecutionContext& context, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, WeakPtr<Page>&& page)
+{
+    auto status = adoptRef(*new PermissionStatus(context, state, descriptor, source, WTFMove(page)));
     status->suspendIfNeeded();
     return status;
 }
 
-PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionState state, const PermissionDescriptor& descriptor)
+PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, WeakPtr<Page>&& page)
     : ActiveDOMObject(&context)
     , m_state(state)
     , m_descriptor(descriptor)
+    , m_source(source)
+    , m_page(WTFMove(page))
 {
     auto* origin = context.securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
     m_origin = ClientOrigin { context.topOrigin().data(), WTFMove(originData) };
     
-    // FIXME: Add support for workers. Currently, this only works for Window objects.
-    if (isMainThread())
+    if (source == PermissionQuerySource::Window) {
         PermissionController::shared().addObserver(*this);
+        return;
+    }
+
+    m_mainThreadPermissionObserverIdentifier = MainThreadPermissionObserverIdentifier::generateThreadSafe();
+
+    callOnMainThread([weakThis = WeakPtr { *this }, contextIdentifier = context.identifier(), state = m_state, descriptor = m_descriptor, source = m_source, page = m_page, origin = m_origin.isolatedCopy(), identifier = m_mainThreadPermissionObserverIdentifier]() mutable {
+        auto mainThreadPermissionObserver = makeUnique<MainThreadPermissionObserver>(WTFMove(weakThis), contextIdentifier, state, descriptor, source, WTFMove(page), WTFMove(origin));
+
+        allMainThreadPermissionObservers().add(identifier, WTFMove(mainThreadPermissionObserver));
+    });
 }
 
 PermissionStatus::~PermissionStatus()
 {
-    // FIXME: Add support for workers. Currently, this only works for Window objects.
-    if (isMainThread())
-        PermissionController::shared().removeObserver(*this);
+    if (!m_mainThreadPermissionObserverIdentifier)
+        return;
+
+    callOnMainThread([identifier = m_mainThreadPermissionObserverIdentifier] {
+        allMainThreadPermissionObservers().remove(identifier);
+    });
 }
 
 void PermissionStatus::stateChanged(PermissionState newState)
@@ -72,7 +101,12 @@ void PermissionStatus::stateChanged(PermissionState newState)
     if (m_state == newState)
         return;
 
-    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()); !document->isFullyActive())
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    auto* document = dynamicDowncast<Document>(context);
+    if (document && !document->isFullyActive())
         return;
 
     m_state = newState;
