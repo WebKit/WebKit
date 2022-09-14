@@ -119,8 +119,10 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
     if (typeID == SecCertificateGetTypeID())
         return CFType::SecCertificate;
 #if HAVE(SEC_KEYCHAIN)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (typeID == SecKeychainItemGetTypeID())
         return CFType::SecKeychainItem;
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 #if HAVE(SEC_ACCESS_CONTROL)
     if (typeID == SecAccessControlGetTypeID())
@@ -848,11 +850,13 @@ void ArgumentCoder<SecKeychainItemRef>::encode(Encoder& encoder, SecKeychainItem
 {
     RELEASE_ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessCredentials));
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     CFDataRef data;
     if (SecKeychainItemCreatePersistentReference(keychainItem, &data) == errSecSuccess) {
         encoder << data;
         CFRelease(data);
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 template void ArgumentCoder<SecKeychainItemRef>::encode<Encoder>(Encoder&, SecKeychainItemRef);
@@ -872,10 +876,12 @@ std::optional<RetainPtr<SecKeychainItemRef>> ArgumentCoder<RetainPtr<SecKeychain
     if (!CFDataGetLength(dref))
         return std::nullopt;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     SecKeychainItemRef item;
     if (SecKeychainItemCopyFromPersistentReference(dref, &item) != errSecSuccess || !item)
         return std::nullopt;
-    
+ALLOW_DEPRECATED_DECLARATIONS_END
+
     return adoptCF(item);
 }
 #endif
