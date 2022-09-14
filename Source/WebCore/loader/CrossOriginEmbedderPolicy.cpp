@@ -32,7 +32,7 @@
 #include "FrameLoader.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
-#include "JSFetchRequest.h"
+#include "JSFetchRequestDestination.h"
 #include "PingLoader.h"
 #include "Report.h"
 #include "ReportingClient.h"

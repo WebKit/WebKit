@@ -23,14 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledBySetting=ReportingEnabled,
-    LegacyNoInterfaceObject
-] interface CORPViolationReportBody : ReportBody {
-    readonly attribute DOMString disposition;
-    readonly attribute DOMString type;
-    readonly attribute USVString blockedURL;
-    readonly attribute FetchRequestDestination destination;
+#pragma once
 
-    [Default] object toJSON();
-};
+#include "FetchOptions.h"
+
+namespace WebCore {
+
+using FetchRequestDestination = FetchOptions::Destination;
+
+}

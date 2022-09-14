@@ -285,6 +285,7 @@ $(PROJECT_DIR)/Modules/fetch/FetchReferrerPolicy.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequest.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestCache.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestCredentials.idl
+$(PROJECT_DIR)/Modules/fetch/FetchRequestDestination.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestInit.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestMode.idl
 $(PROJECT_DIR)/Modules/fetch/FetchRequestRedirect.idl

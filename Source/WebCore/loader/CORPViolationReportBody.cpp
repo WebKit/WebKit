@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CORPViolationReportBody.h"
 
-#include "JSFetchRequest.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -55,11 +54,6 @@ const AtomString& CORPViolationReportBody::type() const
 String CORPViolationReportBody::disposition() const
 {
     return m_disposition == COEPDisposition::Reporting ? "reporting"_s : "enforce"_s;
-}
-
-String CORPViolationReportBody::destination() const
-{
-    return convertEnumerationToString(m_destination);
 }
 
 } // namespace WebCore
