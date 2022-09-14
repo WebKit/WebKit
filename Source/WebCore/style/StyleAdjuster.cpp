@@ -284,18 +284,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
     if (style.display() != DisplayType::None && style.display() != DisplayType::Contents) {
         if (m_element) {
-            // If we have a <td> that specifies a float property, in quirks mode we just drop the float
-            // property.
-            // Sites also commonly use display:inline/block on <td>s and <table>s. In quirks mode we force
-            // these tags to retain their display types.
-            if (m_document.inQuirksMode()) {
-                if (m_element->hasTagName(tdTag)) {
-                    style.setEffectiveDisplay(DisplayType::TableCell);
-                    style.setFloating(Float::None);
-                } else if (is<HTMLTableElement>(*m_element))
-                    style.setEffectiveDisplay(style.isDisplayInlineType() ? DisplayType::InlineTable : DisplayType::Table);
-            }
-
             if (m_element->hasTagName(tdTag) || m_element->hasTagName(thTag)) {
                 if (style.whiteSpace() == WhiteSpace::KHTMLNoWrap) {
                     // Figure out if we are really nowrapping or if we should just
