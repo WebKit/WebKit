@@ -81,10 +81,10 @@ namespace WebKit {
 using namespace WebCore;
 
 NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier, HTTPCookieAcceptPolicy cookieAcceptPolicy)
-    : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
+    : m_connection(IPC::Connection::createClientConnection(connectionIdentifier))
     , m_cookieAcceptPolicy(cookieAcceptPolicy)
 {
-    m_connection->open();
+    m_connection->open(*this);
 
     if (WebRTCProvider::webRTCAvailable())
         WebProcess::singleton().libWebRTCNetwork().setConnection(m_connection.copyRef());

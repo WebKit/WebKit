@@ -239,7 +239,7 @@ Ref<GPUConnectionToWebProcess> GPUConnectionToWebProcess::create(GPUProcess& gpu
 }
 
 GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, WebCore::ProcessIdentifier webProcessIdentifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters)
-    : m_connection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }, *this))
+    : m_connection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }))
     , m_gpuProcess(gpuProcess)
     , m_webProcessIdentifier(webProcessIdentifier)
     , m_webProcessIdentity(WTFMove(parameters.webProcessIdentity))
@@ -278,7 +278,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
     // Otherwise, the WebProcess would process incoming synchronous IPC while waiting for a synchronous IPC
     // reply from the GPU process, which would be unsafe.
     m_connection->setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(true);
-    m_connection->open();
+    m_connection->open(*this);
 
 #if ENABLE(VP9)
     bool hasVP9HardwareDecoder;
