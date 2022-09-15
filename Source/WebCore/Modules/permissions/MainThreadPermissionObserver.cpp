@@ -34,8 +34,8 @@
 
 namespace WebCore {
 
-MainThreadPermissionObserver::MainThreadPermissionObserver(WeakPtr<PermissionObserver>&& permissionObserver, ScriptExecutionContextIdentifier contextIdentifier, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, WeakPtr<Page>&& page, ClientOrigin&& origin)
-    : m_permissionObserver(WTFMove(permissionObserver))
+MainThreadPermissionObserver::MainThreadPermissionObserver(WeakPtr<PermissionStatus, WeakPtrImplWithEventTargetData>&& permissionStatus, ScriptExecutionContextIdentifier contextIdentifier, PermissionState state, PermissionDescriptor descriptor, PermissionQuerySource source, WeakPtr<Page>&& page, ClientOrigin&& origin)
+    : m_permissionStatus(WTFMove(permissionStatus))
     , m_contextIdentifier(contextIdentifier)
     , m_state(state)
     , m_descriptor(descriptor)
@@ -57,9 +57,9 @@ void MainThreadPermissionObserver::stateChanged(PermissionState newPermissionSta
 {
     m_state = newPermissionState;
 
-    ScriptExecutionContext::postTaskTo(m_contextIdentifier, [permissionObserver = m_permissionObserver, newPermissionState](auto&) {
-        if (permissionObserver)
-            permissionObserver->stateChanged(newPermissionState);
+    ScriptExecutionContext::ensureOnContextThread(m_contextIdentifier, [permissionStatus = m_permissionStatus, newPermissionState](auto&) {
+        if (permissionStatus)
+            permissionStatus->stateChanged(newPermissionState);
     });
 }
 
