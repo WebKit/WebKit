@@ -3231,7 +3231,7 @@ private:
 
 #if ENABLE(SPEECH_SYNTHESIS)
     struct SpeechSynthesisData {
-        std::unique_ptr<WebCore::PlatformSpeechSynthesizer> synthesizer;
+        Ref<WebCore::PlatformSpeechSynthesizer> synthesizer;
         RefPtr<WebCore::PlatformSpeechSynthesisUtterance> utterance;
         CompletionHandler<void()> speakingStartedCompletionHandler;
         CompletionHandler<void()> speakingFinishedCompletionHandler;
