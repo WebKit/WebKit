@@ -132,8 +132,8 @@ AsyncClipboardAPIEnabled:
 AudioDescriptionsEnabled:
   type: bool
   condition: ENABLE(VIDEO)
-  humanReadableName: "Audio descriptions for video"
-  humanReadableDescription: "Enable audio descriptions for video"
+  humanReadableName: "Audio descriptions for video - Standard"
+  humanReadableDescription: "Enable standard audio descriptions for video"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -637,6 +637,19 @@ ExposeSpeakersEnabled:
   humanReadableName: "Allow speaker device selection"
   humanReadableDescription: "Allow speaker device selection"
   condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+ExtendedAudioDescriptionsEnabled:
+  type: bool
+  condition: ENABLE(VIDEO)
+  humanReadableName: "Audio descriptions for video - Extended"
+  humanReadableDescription: "Enable extended audio descriptions for video"
   defaultValue:
     WebKitLegacy:
       default: false

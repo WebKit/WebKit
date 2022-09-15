@@ -1347,18 +1347,35 @@ void VTTCue::toJSON(JSON::Object& object) const
     object.setString("align"_s, align());
 }
 
-void VTTCue::speak(double rate, double volume, SpeakCueCompletionHandler&& completion)
+static float mapVideoRateToSpeechRate(float rate)
+{
+    // WebSpeech says to go from .1 -> 10 (default 1)
+    // Video rate is 0 -> 2 (default 1). [The spec has no maximum rate, but the default controls only go to 2x, so use that]
+    // 1 -> (1 + (0 * 9)) => 1
+    // 2 -> (1 + (1 * 9)) => 10
+    if (rate > 1)
+        rate = 1.0 + ((rate - 1.0) * (10 - 1));
+
+    return rate;
+}
+
+void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, double volume, SpeakCueCompletionHandler&& completion)
 {
 #if ENABLE(SPEECH_SYNTHESIS)
+    ASSERT(!m_speechSynthesis);
     ASSERT(!m_speechUtterance);
     ASSERT(rate);
     ASSERT(track());
-    if (m_content.isEmpty() || !track())
+    if (m_content.isEmpty() || !track()) {
+        completion(*this);
         return;
+    }
 
     auto& track = *this->track();
+    m_speechSynthesis = &speechSynthesis;
     m_speechUtterance = SpeechSynthesisUtterance::create(track.document(), m_content, [protectedThis = Ref { *this }, completion = WTFMove(completion)](const SpeechSynthesisUtterance&) {
         protectedThis->m_speechUtterance = nullptr;
+        protectedThis->m_speechSynthesis = nullptr;
         completion(protectedThis.get());
     });
 
@@ -1368,13 +1385,46 @@ void VTTCue::speak(double rate, double volume, SpeakCueCompletionHandler&& compl
 
     m_speechUtterance->setLang(trackLanguage);
     m_speechUtterance->setVolume(volume);
-    m_speechUtterance->setRate(rate);
-
-    track.speechSynthesis().speak(*m_speechUtterance);
+    m_speechUtterance->setRate(mapVideoRateToSpeechRate(rate));
 #else
     UNUSED_PARAM(rate);
     UNUSED_PARAM(volume);
     UNUSED_PARAM(completion);
+#endif
+}
+
+void VTTCue::beginSpeaking()
+{
+#if ENABLE(SPEECH_SYNTHESIS)
+    ASSERT(m_speechSynthesis);
+    ASSERT(m_speechUtterance);
+
+    if (m_speechSynthesis->paused())
+        m_speechSynthesis->resume();
+    else
+        m_speechSynthesis->speak(*m_speechUtterance);
+#endif
+}
+
+void VTTCue::pauseSpeaking()
+{
+#if ENABLE(SPEECH_SYNTHESIS)
+    if (!m_speechSynthesis)
+        return;
+
+    m_speechSynthesis->pause();
+#endif
+}
+
+void VTTCue::cancelSpeaking()
+{
+#if ENABLE(SPEECH_SYNTHESIS)
+    if (!m_speechSynthesis)
+        return;
+
+    m_speechSynthesis->cancel();
+    m_speechSynthesis = nullptr;
+    m_speechUtterance = nullptr;
 #endif
 }
 

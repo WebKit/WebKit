@@ -537,7 +537,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [self _invalidateEVOrganizationName];
 
 #if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
-    _lastKnownParentWindow = adoptNS([webView window]);
+    _lastKnownParentWindow = [webView window];
 #endif
     _fullScreenState = WebKit::WaitingToEnterFullScreen;
     _blocksReturnToFullscreenFromPictureInPicture = manager->blocksReturnToFullscreenFromPictureInPicture();

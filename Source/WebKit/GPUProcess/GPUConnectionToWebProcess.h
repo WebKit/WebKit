@@ -99,7 +99,6 @@ class RemoteMediaResourceManager;
 class RemoteMediaSessionHelperProxy;
 class RemoteRemoteCommandListenerProxy;
 class RemoteRenderingBackend;
-class RemoteGraphicsContextGL;
 class RemoteSampleBufferDisplayLayerManager;
 class UserMediaCaptureManagerProxy;
 struct GPUProcessConnectionParameters;
@@ -113,6 +112,10 @@ class RemoteWCLayerTreeHost;
 
 #if ENABLE(VIDEO)
 class RemoteVideoFrameObjectHeap;
+#endif
+
+#if ENABLE(WEBGL)
+class RemoteGraphicsContextGL;
 #endif
 
 class GPUConnectionToWebProcess

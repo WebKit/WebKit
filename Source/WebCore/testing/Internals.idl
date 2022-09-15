@@ -787,6 +787,8 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     undefined enableMockMediaCapabilities();
 
     [Conditional=SPEECH_SYNTHESIS] undefined enableMockSpeechSynthesizer();
+    [Conditional=SPEECH_SYNTHESIS] undefined enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement element);
+    [Conditional=SPEECH_SYNTHESIS] undefined setSpeechUtteranceDuration(double duration);
 
     DOMString getImageSourceURL(Element element);
 

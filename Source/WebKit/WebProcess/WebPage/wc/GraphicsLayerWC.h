@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "WCUpateInfo.h"
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <wtf/DoublyLinkedList.h>
@@ -133,3 +135,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

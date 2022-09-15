@@ -7,10 +7,10 @@
         <script src=../media-file.js></script>
     </head>
     <body>
-        <video controls muted>
+        <video controls>
         </video>
         
-        <script>            
+        <script>
 
 promise_test(async (t) => {
 
@@ -18,8 +18,9 @@ promise_test(async (t) => {
 
     if (window.internals) {
         internals.settings.setShouldDisplayTrackKind('TextDescriptions', true);
-        internals.settings.setAudioDescriptionsEnabled(true);
+        internals.settings.setExtendedAudioDescriptionsEnabled(true);
         internals.enableMockSpeechSynthesizerForMediaElement(video);
+        internals.setSpeechUtteranceDuration(2);
     }
 
     video.src = findMediaFile('video', '../content/test');
@@ -27,15 +28,15 @@ promise_test(async (t) => {
 
     let descriptionsTrack = document.createElement('track');
     descriptionsTrack.setAttribute('kind', 'descriptions');
-    descriptionsTrack.setAttribute('src', 'captions-webvtt/captions-descriptions.vtt');
+    descriptionsTrack.setAttribute('src', 'captions-webvtt/captions-extended-descriptions.vtt');
     video.appendChild(descriptionsTrack);
     await new Promise(resolve => descriptionsTrack.onload = resolve);
 
     let cues = descriptionsTrack.track.cues;
-    assert_equals(cues.length, 3);
+    assert_equals(cues.length, 2);
 
-    let checkCue = (cue, expectedText) => {
-        assert_equals(cue.text, expectedText);
+    let checkCue = (cue, expectedId) => {
+        assert_equals(cue.id, expectedId);
         if (!window.internals)
             return;
         
@@ -49,23 +50,29 @@ promise_test(async (t) => {
 
         let utterance = window.internals.speechSynthesisUtteranceForCue(spokenCue);
         assert_not_equals(utterance, null, 'cue utterance is not null');
-        assert_equals(utterance.text, expectedText, 'correct text is being spoken');
+        assert_equals(utterance.text, cue.text, 'correct text is being spoken');
     }
 
-    // Seek into the range for the first cue.
-    video.currentTime = 1.1;
+    // Play into the range of the first cue...
+    video.currentTime = 1;
+    video.play();
     await new Promise(resolve => cues[0].onenter = resolve);
-    checkCue(cues[0], '1 - The first cue');
+    checkCue(cues[0], '1');
 
-    video.currentTime = 2.9;
-    await new Promise(resolve => video.onseeked = resolve);
+    // playback should pause...
+    await new Promise(resolve => video.onpause = resolve);
+    
+    // and resume.
+    await new Promise(resolve => video.onplay = resolve);
 
     // Play into the range of the second cue.
+    video.currentTime = 2.9;
+    await new Promise(resolve => video.onseeked = resolve);
     video.play();
     await new Promise(resolve => cues[1].onenter = (e) => { video.pause(); resolve() });
-    checkCue(cues[1], '2 - The second cue, from time 3 to 15');
+    checkCue(cues[1], '2');
     
-}, "WebVTT audio descriptions");
+}, "WebVTT extended audio descriptions");
 
         </script>
 
