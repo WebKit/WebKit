@@ -284,18 +284,6 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
     if (style.display() != DisplayType::None && style.display() != DisplayType::Contents) {
         if (m_element) {
-            if (m_element->hasTagName(tdTag) || m_element->hasTagName(thTag)) {
-                if (style.whiteSpace() == WhiteSpace::KHTMLNoWrap) {
-                    // Figure out if we are really nowrapping or if we should just
-                    // use normal instead. If the width of the cell is fixed, then
-                    // we don't actually use WhiteSpace::NoWrap.
-                    if (style.width().isFixed())
-                        style.setWhiteSpace(WhiteSpace::Normal);
-                    else
-                        style.setWhiteSpace(WhiteSpace::NoWrap);
-                }
-            }
-
             // Tables never support the -webkit-* values for text-align and will reset back to the default.
             if (is<HTMLTableElement>(*m_element) && (style.textAlign() == TextAlignMode::WebKitLeft || style.textAlign() == TextAlignMode::WebKitCenter || style.textAlign() == TextAlignMode::WebKitRight))
                 style.setTextAlign(TextAlignMode::Start);
