@@ -49,11 +49,12 @@ public:
     FloatRect floatLinesBoundingBox() const;
 
     SVGInlineTextBox* firstTextBox() const;
+    
+    RefPtr<StringImpl> originalText() const override;
 
 private:
     ASCIILiteral renderName() const override { return "RenderSVGInlineText"_s; }
 
-    String originalText() const override;
     void setRenderedText(const String&) override;
     void styleDidChange(StyleDifference, const RenderStyle*) override;
 

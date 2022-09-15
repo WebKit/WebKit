@@ -78,8 +78,13 @@ RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
 {
 }
 
-String RenderSVGInlineText::originalText() const
+RefPtr<StringImpl> RenderSVGInlineText::originalText() const
 {
+    RefPtr<StringImpl> result = RenderText::originalText();
+    if (!result)
+        return nullptr;
+    return applySVGWhitespaceRules(result, style() && style()->whiteSpace() == PRE);
+    } else {
     return textNode().data();
 }
 
@@ -97,13 +102,8 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
 
     bool newPreserves = style().whiteSpace() == WhiteSpace::Pre;
     bool oldPreserves = oldStyle ? oldStyle->whiteSpace() == WhiteSpace::Pre : false;
-    if (oldPreserves && !newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), false), true);
-        return;
-    }
-
-    if (!oldPreserves && newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), true), true);
+    if (oldPreserves != newPreserves) {
+        setText(originalText(), true);
         return;
     }
 
