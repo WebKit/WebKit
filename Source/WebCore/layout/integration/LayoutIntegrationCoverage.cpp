@@ -375,15 +375,16 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
         UNUSED_PARAM(flow);
         if (renderer.isFloating())
             return false;
-#elif !ALLOW_RTL_FLOATS
+#endif
+#if !ALLOW_RTL_FLOATS
         UNUSED_PARAM(flow);
-        if (!renderer.parent()->style().isLeftToRightDirection())
+        if (renderer.isFloating() && !renderer.parent()->style().isLeftToRightDirection())
             return false;
-#else
+#endif
         auto intrusiveFloatsWithMismatchingInlineDirection = flow.containsFloats() && flow.containingBlock() && flow.containingBlock()->style().isLeftToRightDirection() != flow.style().isLeftToRightDirection();
         if (renderer.isFloating() && intrusiveFloatsWithMismatchingInlineDirection)
             return false;
-#endif
+
         if (renderer.style().shapeOutside())
             return false;
         if (renderer.isOutOfFlowPositioned()) {
