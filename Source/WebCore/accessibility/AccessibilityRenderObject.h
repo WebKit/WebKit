@@ -134,7 +134,6 @@ public:
     FrameView* documentFrameView() const override;
 
     void clearChildren() override;
-    void updateChildrenIfNecessary() override;
     
     void setFocused(bool) override;
     void setSelectedTextRange(const PlainTextRange&) override;
@@ -214,9 +213,6 @@ private:
     PlainTextRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
-    void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
-    bool needsToUpdateChildren() const override { return m_childrenDirty; }
-    void setNeedsToUpdateSubtree() override { m_subtreeDirty = true; }
     Path elementPath() const override;
     
     bool isTabItemSelected() const;

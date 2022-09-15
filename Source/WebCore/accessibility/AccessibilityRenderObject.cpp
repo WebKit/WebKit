@@ -2933,14 +2933,6 @@ void AccessibilityRenderObject::addImageMapChildren()
     }
 }
 
-void AccessibilityRenderObject::updateChildrenIfNecessary()
-{
-    if (needsToUpdateChildren())
-        clearChildren();
-    
-    AccessibilityObject::updateChildrenIfNecessary();
-}
-    
 void AccessibilityRenderObject::addTextFieldChildren()
 {
     Node* node = this->node();

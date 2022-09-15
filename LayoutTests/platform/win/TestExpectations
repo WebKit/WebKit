@@ -528,6 +528,7 @@ accessibility/ancestor-computation.html [ Skip ]
 
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
 accessibility/aria-modal-with-text-crash.html [ Skip ]
+accessibility/display-contents-dynamically-added-children.html [ Skip ]
 accessibility/display-contents-object-ordering.html [ Skip ]
 accessibility/display-contents-search-traversal.html [ Skip ]
 accessibility/search-traversal-after-role-change.html [ Skip ]

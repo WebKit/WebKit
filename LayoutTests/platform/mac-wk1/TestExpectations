@@ -318,6 +318,8 @@ accessibility/custom-elements/role.html [ Skip ]
 # Missing necessary testing logic (AccessibilityController::{get,set}RetainedElement)
 accessibility/ax-object-destroyed-on-reload.html [ Skip ]
 
+accessibility/display-contents-dynamically-added-children.html [ Skip ]
+
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]
