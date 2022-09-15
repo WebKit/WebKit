@@ -27,16 +27,16 @@
 #include "config.h"
 #include "RemoteGraphicsContextGL.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && PLATFORM(WIN)
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GRAPHICS_LAYER_WC)
 #include "GPUConnectionToWebProcess.h"
 #include "WCContentBufferManager.h"
 
 namespace WebKit {
 
-class RemoteGraphicsContextGLWin final : public RemoteGraphicsContextGL {
+class RemoteGraphicsContextGLWC final : public RemoteGraphicsContextGL {
 public:
-    RemoteGraphicsContextGLWin(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, IPC::StreamConnectionBuffer&&);
-    ~RemoteGraphicsContextGLWin() final = default;
+    RemoteGraphicsContextGLWC(GPUConnectionToWebProcess&, GraphicsContextGLIdentifier, RemoteRenderingBackend&, IPC::StreamConnectionBuffer&&);
+    ~RemoteGraphicsContextGLWC() final = default;
 
     // RemoteGraphicsContextGL overrides.
     void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) final;
@@ -45,22 +45,22 @@ public:
 
 Ref<RemoteGraphicsContextGL> RemoteGraphicsContextGL::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, WebCore::GraphicsContextGLAttributes&& attributes, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
 {
-    auto instance = adoptRef(*new RemoteGraphicsContextGLWin(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream)));
+    auto instance = adoptRef(*new RemoteGraphicsContextGLWC(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream)));
     instance->initialize(WTFMove(attributes));
     return instance;
 }
 
-RemoteGraphicsContextGLWin::RemoteGraphicsContextGLWin(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
+RemoteGraphicsContextGLWC::RemoteGraphicsContextGLWC(GPUConnectionToWebProcess& gpuConnectionToWebProcess, GraphicsContextGLIdentifier graphicsContextGLIdentifier, RemoteRenderingBackend& renderingBackend, IPC::StreamConnectionBuffer&& stream)
     : RemoteGraphicsContextGL(gpuConnectionToWebProcess, graphicsContextGLIdentifier, renderingBackend, WTFMove(stream))
 {
 }
 
-void RemoteGraphicsContextGLWin::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
+void RemoteGraphicsContextGLWC::platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&& attributes)
 {
-    m_context = WebCore::GraphicsContextGLTextureMapperANGLE::create(WTFMove(attributes));
+    m_context = GCGLContext::create(WTFMove(attributes));
 }
 
-void RemoteGraphicsContextGLWin::prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&& completionHandler)
+void RemoteGraphicsContextGLWC::prepareForDisplay(CompletionHandler<void(std::optional<WCContentBufferIdentifier>)>&& completionHandler)
 {
     m_context->prepareForDisplay();
     auto identifier = WCContentBufferManager::singleton().acquireContentBufferIdentifier(m_webProcessIdentifier, m_context->layerContentsDisplayDelegate()->platformLayer());
@@ -69,4 +69,4 @@ void RemoteGraphicsContextGLWin::prepareForDisplay(CompletionHandler<void(std::o
 
 }
 
-#endif
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(GRAPHICS_LAYER_WC)

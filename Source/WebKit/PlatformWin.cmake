@@ -7,7 +7,7 @@ set(PluginProcess_OUTPUT_NAME WebKitPluginProcess)
 include(Headers.cmake)
 
 list(APPEND WebKit_SOURCES
-    GPUProcess/graphics/RemoteGraphicsContextGLWin.cpp
+    GPUProcess/graphics/RemoteGraphicsContextGLWC.cpp
 
     GPUProcess/graphics/wc/RemoteWCLayerTreeHost.cpp
     GPUProcess/graphics/wc/WCContentBufferManager.cpp
