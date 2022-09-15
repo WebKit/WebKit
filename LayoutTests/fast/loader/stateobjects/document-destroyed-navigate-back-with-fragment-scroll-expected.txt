@@ -8,7 +8,6 @@ ALERT: Navigating back...
 main frame - has 1 onunload handler(s)
 ALERT: LOADED
 ALERT: Last path component of location is document-destroyed-navigate-back-with-fragment-scroll.html#SecondEntryWillLaterBeReactivated
-ALERT: State popped - SecondEntryWillLaterBeReactivated (type string)
 ALERT: State popped - FirstEntryWillLaterBeReactivated (type string)
 ALERT: hashChanged - Last path component of location is document-destroyed-navigate-back-with-fragment-scroll.html#FirstEntryWillLaterBeReactivated
 ALERT: Test complete
