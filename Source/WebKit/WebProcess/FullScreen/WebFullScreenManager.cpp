@@ -178,7 +178,13 @@ void WebFullScreenManager::enterFullScreenForElement(WebCore::Element* element)
 #endif
 
     m_initialFrame = screenRectOfContents(m_element.get());
-    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElement);
+#if ENABLE(VIDEO)
+    updateMainVideoElement();
+    auto videoDimensions = m_mainVideoElement ? FloatSize(m_mainVideoElement->videoWidth(), m_mainVideoElement->videoHeight()) : FloatSize(m_initialFrame.width(), m_initialFrame.height());
+#else
+    FloatSize videoDimensions;
+#endif
+    m_page->injectedBundleFullScreenClient().enterFullScreenForElement(m_page.get(), element, m_element->document().quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), isVideoElement, videoDimensions);
 }
 
 void WebFullScreenManager::exitFullScreenForElement(WebCore::Element* element)

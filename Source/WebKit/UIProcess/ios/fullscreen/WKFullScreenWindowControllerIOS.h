@@ -34,7 +34,7 @@
 @property (readonly, assign, nonatomic) BOOL isFullScreen;
 
 - (id)initWithWebView:(WKWebView *)webView;
-- (void)enterFullScreen;
+- (void)enterFullScreen:(CGSize)videoDimensions;
 - (void)beganEnterFullScreenWithInitialFrame:(CGRect)initialFrame finalFrame:(CGRect)finalFrame;
 - (void)requestEnterFullScreen;
 - (void)requestExitFullScreen;
