@@ -480,6 +480,7 @@ public:
 
     bool scrollToFragment(const URL&);
     void maintainScrollPositionAtAnchor(ContainerNode*);
+    void maintainScrollPositionAtScrollToTextFragmentRange(SimpleRange&);
     WEBCORE_EXPORT void scrollElementToRect(const Element&, const IntRect&);
 
     // Coordinate systems:
@@ -854,6 +855,7 @@ private:
 
     bool scrollToFragmentInternal(StringView);
     void scrollToAnchor();
+    void scrollToTextFragmentRange();
     void scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
     void scrollableAreaSetChanged();
     void scheduleScrollEvent();
@@ -925,6 +927,7 @@ private:
     RefPtr<Node> m_nodeToDraw;
     std::optional<SimpleRange> m_pendingTextFragmentIndicatorRange;
     String m_pendingTextFragmentIndicatorText;
+    bool m_skipScrollResetOfScrollToTextFragmentRange { false };
 
     // Renderer to hold our custom scroll corner.
     RenderPtr<RenderScrollbarPart> m_scrollCorner;
