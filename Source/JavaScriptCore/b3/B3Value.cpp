@@ -52,7 +52,7 @@ namespace JSC { namespace B3 {
 #if ASSERT_ENABLED
 String Value::generateCompilerConstructionSite()
 {
-    if (!Options::dumpDisassembly())
+    if (!Options::dumpDisassembly() || true)
         return emptyString();
 
     StringPrintStream s;

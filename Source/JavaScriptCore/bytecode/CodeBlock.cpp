@@ -2160,6 +2160,12 @@ DFG::CapabilityLevel CodeBlock::computeCapabilityLevel()
 
 #endif // ENABLE(JIT)
 
+SUPPRESS_ASAN
+static void dumpDetail(const FireDetail* detail)
+{
+    dataLog(*detail);
+}
+
 void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mode, const FireDetail* detail)
 {
 #if !ENABLE(DFG_JIT)
@@ -2182,8 +2188,10 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         if (mode == CountReoptimization)
             dataLog(" and counting reoptimization");
         dataLog(" due to ", reason);
-        if (detail)
-            dataLog(", ", *detail);
+        if (detail) {
+            dataLog(", ");
+            dumpDetail(detail);
+        }
         dataLog(".\n");
     }
     
