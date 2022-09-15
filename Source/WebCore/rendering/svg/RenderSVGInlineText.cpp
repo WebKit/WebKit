@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- * Copyright (C) 2006 Apple Inc.
+ * Copyright (C) 2006-2022 Apple Inc.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2008 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
@@ -80,7 +80,10 @@ RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
 
 String RenderSVGInlineText::originalText() const
 {
-    return textNode().data();
+    auto result = RenderText::originalText();
+    if (!result)
+        return textNode().data();
+    return applySVGWhitespaceRules(result, style() && style().whiteSpace() == WhiteSpace::Pre);
 }
 
 void RenderSVGInlineText::setRenderedText(const String& text)
@@ -97,14 +100,8 @@ void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle
 
     bool newPreserves = style().whiteSpace() == WhiteSpace::Pre;
     bool oldPreserves = oldStyle ? oldStyle->whiteSpace() == WhiteSpace::Pre : false;
-    if (oldPreserves && !newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), false), true);
-        return;
-    }
-
-    if (!oldPreserves && newPreserves) {
-        setText(applySVGWhitespaceRules(originalText(), true), true);
-        return;
+    if (oldPreserves != newPreserves) {
+        setText(originalText(), true);
     }
 
     if (diff != StyleDifference::Layout)
@@ -119,7 +116,7 @@ std::unique_ptr<LegacyInlineTextBox> RenderSVGInlineText::createTextBox()
 {
     auto box = makeUnique<SVGInlineTextBox>(*this);
     box->setHasVirtualLogicalHeight();
-    return box; 
+    return box;
 }
 
 FloatRect RenderSVGInlineText::floatLinesBoundingBox() const
@@ -183,8 +180,7 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, 
             if (!fragmentTransform.isIdentity())
                 fragmentRect = fragmentTransform.mapRect(fragmentRect);
 
-            float distance = powf(fragmentRect.x() - absolutePoint.x(), 2) +
-                             powf(fragmentRect.y() + fragmentRect.height() / 2 - absolutePoint.y(), 2);
+            float distance = powf(fragmentRect.x() - absolutePoint.x(), 2) + powf(fragmentRect.y() + fragmentRect.height() / 2 - absolutePoint.y(), 2);
 
             if (distance < closestDistance) {
                 closestDistance = distance;
