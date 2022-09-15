@@ -523,7 +523,7 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 #pragma mark -
 #pragma mark External Interface
 
-- (void)enterFullScreen
+- (void)enterFullScreen:(CGSize)videoDimensions
 {
     if ([self isFullScreen])
         return;
@@ -548,7 +548,8 @@ static const NSTimeInterval kAnimationDuration = 0.2;
     [_window setWindowLevel:UIWindowLevelNormal - 1];
     [_window setHidden:NO];
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    [_window setFrame:CGRectMake(0, 0, 960, 540)];
+    CGFloat aspectRatio = videoDimensions.height ? (videoDimensions.width / videoDimensions.height) : (960.0 / 540.0);
+    [_window setFrame:CGRectMake(0, 0, 540 * aspectRatio, 540)];
     [_window setNeedsLayout];
     [_window layoutIfNeeded];
 #endif

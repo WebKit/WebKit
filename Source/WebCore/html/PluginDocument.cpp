@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,8 @@ void PluginDocumentParser::createDocumentStructure()
     auto rootElement = HTMLHtmlElement::create(document);
     document.appendChild(rootElement);
     rootElement->insertedByParser();
+    rootElement->setInlineStyleProperty(CSSPropertyHeight, 100, CSSUnitType::CSS_PERCENTAGE);
+    rootElement->setInlineStyleProperty(CSSPropertyWidth, 100, CSSUnitType::CSS_PERCENTAGE);
 
     if (document.frame())
         document.frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);
@@ -85,9 +87,9 @@ void PluginDocumentParser::createDocumentStructure()
     body->setAttributeWithoutSynchronization(marginwidthAttr, "0"_s);
     body->setAttributeWithoutSynchronization(marginheightAttr, "0"_s);
 #if PLATFORM(IOS_FAMILY)
-    body->setAttribute(styleAttr, "background-color: rgb(217,224,233)"_s);
+    body->setAttribute(styleAttr, "background-color: rgb(217,224,233); height: 100%; width: 100%; overflow:hidden; margin: 0"_s);
 #else
-    body->setAttribute(styleAttr, "background-color: rgb(38,38,38)"_s);
+    body->setAttribute(styleAttr, "background-color: rgb(38,38,38); height: 100%; width: 100%; overflow:hidden; margin: 0"_s);
 #endif
 
     rootElement->appendChild(body);
@@ -147,7 +149,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter&, const uint8_t*, size_t)
 PluginDocument::PluginDocument(Frame& frame, const URL& url)
     : HTMLDocument(&frame, frame.settings(), url, { }, { DocumentClass::Plugin })
 {
-    setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
     lockCompatibilityMode();
 }
 

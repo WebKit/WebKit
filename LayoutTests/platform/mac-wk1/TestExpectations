@@ -1764,8 +1764,8 @@ imported/w3c/web-platform-tests/speech-api/SpeechSynthesis-pause-resume.tentativ
 fast/scrolling/rtl-scrollbars-alternate-iframe-body-dir-attr-does-not-update-scrollbar-placement.html [ ImageOnlyFailure ]
 
 # webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.  
-[ BigSur+ arm64 ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
-[ BigSur+ arm64 ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
+[ BigSur+ release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
+[ BigSur+ release ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 # Push subscription tests don't work without service worker support.
 http/tests/push-api [ Skip ]
@@ -2078,8 +2078,6 @@ webkit.org/b/244336 fast/canvas/canvas-createPattern-video-loading.html [ Pass T
 webkit.org/b/244347 storage/domstorage/sessionstorage/window-open-remove-item.html [ Pass Failure ]
 
 webkit.org/b/244372 imported/w3c/web-platform-tests/intersection-observer/target-in-different-window.html [ Pass Failure ]
-
-webkit.org/b/244395 [ Release X86_64 ] editing/execCommand/paste-as-quotation-disconnected-paragraph-ancestor-crash.html [ Skip ]
 
 webkit.org/b/244404 js/dom/modules/missing-exception-check-for-import.html [ Crash ]
 
