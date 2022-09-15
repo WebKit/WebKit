@@ -71,40 +71,38 @@ SharedMemory::Handle& SharedMemory::Handle::operator=(Handle&& other) = default;
 
 void SharedMemory::Handle::clear()
 {
-    m_attachment = IPC::Attachment();
+    *this = { };
 }
 
 bool SharedMemory::Handle::isNull() const
 {
-    return m_attachment.isNull();
+    return !m_handle;
 }
 
 void SharedMemory::Handle::encode(IPC::Encoder& encoder) const
 {
-    encoder << releaseAttachment();
+    encoder << m_size << WTFMove(m_handle);
 }
 
 bool SharedMemory::Handle::decode(IPC::Decoder& decoder, SharedMemory::Handle& handle)
 {
     ASSERT_ARG(handle, handle.isNull());
-    IPC::Attachment attachment;
-    if (!decoder.decode(attachment))
+    size_t size;
+    if (!decoder.decode(size))
         return false;
-    handle.m_size = attachment.size();
-    handle.adoptAttachment(WTFMove(attachment));
+
+    auto fd = decoder.decode<UnixFileDescriptor>();
+    if (UNLIKELY(!decoder.isValid()))
+        return false;
+
+    handle.m_size = size;
+    handle.m_handle = WTFMove(*fd);
     return true;
 }
 
-IPC::Attachment SharedMemory::Handle::releaseAttachment() const
+UnixFileDescriptor SharedMemory::Handle::releaseHandle()
 {
-    return WTFMove(m_attachment);
-}
-
-void SharedMemory::Handle::adoptAttachment(IPC::Attachment&& attachment)
-{
-    ASSERT(isNull());
-
-    m_attachment = WTFMove(attachment);
+    return WTFMove(m_handle);
 }
 
 static inline int accessModeMMap(SharedMemory::Protection protection)
@@ -120,7 +118,7 @@ static inline int accessModeMMap(SharedMemory::Protection protection)
     return PROT_READ | PROT_WRITE;
 }
 
-static int createSharedMemory()
+static UnixFileDescriptor createSharedMemory()
 {
     int fileDescriptor = -1;
 
@@ -132,10 +130,10 @@ static int createSharedMemory()
         } while (fileDescriptor == -1 && errno == EINTR);
 
         if (fileDescriptor != -1)
-            return fileDescriptor;
+            return UnixFileDescriptor { fileDescriptor, UnixFileDescriptor::Adopt };
 
         if (errno != ENOSYS)
-            return fileDescriptor;
+            return { };
 
         isMemFdAvailable = false;
     }
@@ -160,33 +158,29 @@ static int createSharedMemory()
         shm_unlink(tempName.data());
 #endif
 
-    return fileDescriptor;
+    return UnixFileDescriptor { fileDescriptor, UnixFileDescriptor::Adopt };
 }
 
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
-    int fileDescriptor = createSharedMemory();
-    if (fileDescriptor == -1) {
+    auto fileDescriptor = createSharedMemory();
+    if (!fileDescriptor) {
         WTFLogAlways("Failed to create shared memory: %s", safeStrerror(errno).data());
         return nullptr;
     }
 
-    while (ftruncate(fileDescriptor, size) == -1) {
-        if (errno != EINTR) {
-            closeWithRetry(fileDescriptor);
+    while (ftruncate(fileDescriptor.value(), size) == -1) {
+        if (errno != EINTR)
             return nullptr;
-        }
     }
 
-    void* data = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor, 0);
-    if (data == MAP_FAILED) {
-        closeWithRetry(fileDescriptor);
+    void* data = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fileDescriptor.value(), 0);
+    if (data == MAP_FAILED)
         return nullptr;
-    }
 
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
     instance->m_data = data;
-    instance->m_fileDescriptor = fileDescriptor;
+    instance->m_fileDescriptor = WTFMove(fileDescriptor);
     instance->m_size = size;
     return instance;
 }
@@ -194,15 +188,12 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 RefPtr<SharedMemory> SharedMemory::map(const Handle& handle, Protection protection)
 {
     ASSERT(!handle.isNull());
-
-    UnixFileDescriptor fd = handle.m_attachment.release();
-    void* data = mmap(0, handle.m_attachment.size(), accessModeMMap(protection), MAP_SHARED, fd.value(), 0);
-    fd = { };
+    void* data = mmap(0, handle.size(), accessModeMMap(protection), MAP_SHARED, handle.m_handle.value(), 0);
+    handle.m_handle = { };
     if (data == MAP_FAILED)
         return nullptr;
 
-    RefPtr<SharedMemory> instance = wrapMap(data, handle.m_attachment.size(), -1);
-    instance->m_fileDescriptor = std::nullopt;
+    RefPtr<SharedMemory> instance = wrapMap(data, handle.size(), -1);
     instance->m_isWrappingMap = false;
     return instance;
 }
@@ -212,19 +203,20 @@ RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, int fileDesc
     RefPtr<SharedMemory> instance = adoptRef(new SharedMemory());
     instance->m_data = data;
     instance->m_size = size;
-    instance->m_fileDescriptor = fileDescriptor;
+    instance->m_fileDescriptor = UnixFileDescriptor { fileDescriptor, UnixFileDescriptor::Adopt };
     instance->m_isWrappingMap = true;
     return instance;
 }
 
 SharedMemory::~SharedMemory()
 {
-    if (m_isWrappingMap)
+    if (m_isWrappingMap) {
+        auto wrapped = m_fileDescriptor.release();
+        UNUSED_VARIABLE(wrapped);
         return;
+    }
 
     munmap(m_data, m_size);
-    if (m_fileDescriptor)
-        closeWithRetry(m_fileDescriptor.value());
 }
 
 bool SharedMemory::createHandle(Handle& handle, Protection)
@@ -240,7 +232,8 @@ bool SharedMemory::createHandle(Handle& handle, Protection)
         ASSERT_NOT_REACHED();
         return false;
     }
-    handle.m_attachment = IPC::Attachment(WTFMove(duplicate), m_size);
+    handle.m_handle = WTFMove(duplicate);
+    handle.m_size = m_size;
     return true;
 }
 

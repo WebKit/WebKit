@@ -86,17 +86,6 @@ public:
 
     void setType(Attachment::Type type) { m_type = type; }
     Attachment::Type type() const { return m_type; }
-    void setSize(size_t size)
-    {
-        ASSERT(m_type == Attachment::MappedMemoryType);
-        m_size = size;
-    }
-
-    size_t size() const
-    {
-        ASSERT(m_type == Attachment::MappedMemoryType);
-        return m_size;
-    }
 
     // The attachment is not null unless explicitly set.
     void setNull() { m_isNull = true; }
@@ -106,7 +95,6 @@ private:
     // The AttachmentInfo will be copied using memcpy, so all members must be trivially copyable.
     Attachment::Type m_type;
     bool m_isNull;
-    size_t m_size;
 };
 
 static_assert(sizeof(MessageInfo) + sizeof(AttachmentInfo) * attachmentMaxAmount <= messageMaxSize, "messageMaxSize is too small.");
@@ -179,8 +167,7 @@ bool Connection::processMessage()
 
         for (size_t i = 0; i < attachmentCount; ++i) {
             switch (attachmentInfo[i].type()) {
-            case Attachment::MappedMemoryType:
-            case Attachment::SocketType:
+            case Attachment::FileDescriptorType:
                 if (!attachmentInfo[i].isNull())
                     attachmentFileDescriptorCount++;
                 break;
@@ -201,12 +188,7 @@ bool Connection::processMessage()
     for (size_t i = 0; i < attachmentCount; ++i) {
         int fd = -1;
         switch (attachmentInfo[i].type()) {
-        case Attachment::MappedMemoryType:
-            if (!attachmentInfo[i].isNull())
-                fd = m_fileDescriptors[fdIndex++];
-            attachments[attachmentCount - i - 1] = Attachment(UnixFileDescriptor(fd, UnixFileDescriptor::Adopt), attachmentInfo[i].size());
-            break;
-        case Attachment::SocketType:
+        case Attachment::FileDescriptorType:
             if (!attachmentInfo[i].isNull())
                 fd = m_fileDescriptors[fdIndex++];
             attachments[attachmentCount - i - 1] = Attachment(UnixFileDescriptor(fd, UnixFileDescriptor::Adopt));
@@ -224,13 +206,14 @@ bool Connection::processMessage()
     if (messageInfo.isBodyOutOfLine()) {
         ASSERT(messageInfo.bodySize());
 
-        if (attachmentInfo[attachmentCount].isNull() || attachmentInfo[attachmentCount].size() != messageInfo.bodySize()) {
+        if (attachmentInfo[attachmentCount].isNull()) {
             ASSERT_NOT_REACHED();
             return false;
         }
 
         WebKit::SharedMemory::Handle handle;
-        handle.adoptAttachment(Attachment(UnixFileDescriptor(m_fileDescriptors[attachmentFileDescriptorCount - 1], UnixFileDescriptor::Adopt), attachmentInfo[attachmentCount].size()));
+        handle.m_size = messageInfo.bodySize();
+        handle.m_handle = UnixFileDescriptor { m_fileDescriptors[attachmentFileDescriptorCount - 1], UnixFileDescriptor::Adopt };
 
         oolMessageBody = WebKit::SharedMemory::map(handle, WebKit::SharedMemory::Protection::ReadOnly);
         if (!oolMessageBody) {
@@ -446,7 +429,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
     size_t messageSizeWithBodyInline = sizeof(MessageInfo) + (outputMessage.attachments().size() * sizeof(AttachmentInfo)) + outputMessage.bodySize();
     if (messageSizeWithBodyInline > messageMaxSize && outputMessage.bodySize()) {
-        RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::allocate(encoder->bufferSize());
+        RefPtr<WebKit::SharedMemory> oolMessageBody = WebKit::SharedMemory::allocate(outputMessage.bodySize());
         if (!oolMessageBody)
             return false;
 
@@ -458,7 +441,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 
         memcpy(oolMessageBody->data(), outputMessage.body(), outputMessage.bodySize());
 
-        outputMessage.appendAttachment(handle.releaseAttachment());
+        outputMessage.appendAttachment(Attachment { handle.releaseHandle() });
     }
 
     return sendOutputMessage(outputMessage);
@@ -515,10 +498,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
             attachmentInfo[i].setType(attachments[i].type());
 
             switch (attachments[i].type()) {
-            case Attachment::MappedMemoryType:
-                attachmentInfo[i].setSize(attachments[i].size());
-                FALLTHROUGH;
-            case Attachment::SocketType:
+            case Attachment::FileDescriptorType:
                 if (!attachments[i].isNull()) {
                     ASSERT(fdPtr);
                     fdPtr[fdIndex++] = attachments[i].fd().value();
