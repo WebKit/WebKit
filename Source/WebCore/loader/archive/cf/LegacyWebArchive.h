@@ -42,7 +42,7 @@ class LegacyWebArchive final : public Archive {
 public:
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create();
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(FragmentedSharedBuffer&);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, FragmentedSharedBuffer&);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, FragmentedSharedBuffer&, ArchiveResource::EnforceCrossOrigin = ArchiveResource::EnforceCrossOrigin::Yes);
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create(Ref<ArchiveResource>&& mainResource, Vector<Ref<ArchiveResource>>&& subresources, Vector<Ref<LegacyWebArchive>>&& subframeArchives);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, Function<bool(Frame&)>&& frameFilter = { });
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Frame&);
@@ -62,14 +62,14 @@ private:
     enum MainResourceStatus { Subresource, MainResource };
 
     static RefPtr<LegacyWebArchive> create(const String& markupString, Frame&, const Vector<Node*>& nodes, Function<bool(Frame&)>&& frameFilter);
-    static RefPtr<ArchiveResource> createResource(CFDictionaryRef);
+    static RefPtr<ArchiveResource> createResource(CFDictionaryRef, ArchiveResource::EnforceCrossOrigin = ArchiveResource::EnforceCrossOrigin::Yes);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);
     static RetainPtr<CFDataRef> createPropertyListRepresentation(const ResourceResponse&);
     static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(Archive&);
     static RetainPtr<CFDictionaryRef> createPropertyListRepresentation(ArchiveResource*, MainResourceStatus);
 
-    bool extract(CFDictionaryRef);
+    bool extract(CFDictionaryRef, ArchiveResource::EnforceCrossOrigin = ArchiveResource::EnforceCrossOrigin::Yes);
 };
 
 } // namespace WebCore

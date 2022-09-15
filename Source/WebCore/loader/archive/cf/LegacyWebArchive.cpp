@@ -172,7 +172,7 @@ ResourceResponse LegacyWebArchive::createResourceResponseFromPropertyListData(CF
     return ResourceResponse();
 }
 
-RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef dictionary)
+RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef dictionary, ArchiveResource::EnforceCrossOrigin enforceCrossOrigin)
 {
     ASSERT(dictionary);
     if (!dictionary)
@@ -196,11 +196,17 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         return nullptr;
     }
 
-    auto url = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceURLKey));
-    if (url && CFGetTypeID(url) != CFStringGetTypeID()) {
+    auto cfURL = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceURLKey));
+    if (cfURL && CFGetTypeID(cfURL) != CFStringGetTypeID()) {
         LOG(Archives, "LegacyWebArchive - URL is not of type CFString, cannot create invalid resource");
         return nullptr;
     }
+
+    String stringURL { cfURL };
+    // FIXME Delete file: exception when it doesn't cause so much breakage.
+    auto setSchemePrefix = enforceCrossOrigin == ArchiveResource::EnforceCrossOrigin::Yes && !stringURL.startsWith("file://"_s);
+    auto& schemePrefix = setSchemePrefix ? webArchivePrefix : ""_s;
+    URL url { schemePrefix + stringURL };
 
     auto textEncoding = static_cast<CFStringRef>(CFDictionaryGetValue(dictionary, LegacyWebArchiveResourceTextEncodingNameKey));
     if (textEncoding && CFGetTypeID(textEncoding) != CFStringGetTypeID()) {
@@ -225,7 +231,7 @@ RefPtr<ArchiveResource> LegacyWebArchive::createResource(CFDictionaryRef diction
         response = createResourceResponseFromPropertyListData(resourceResponseData, resourceResponseVersion);
     }
 
-    return ArchiveResource::create(SharedBuffer::create(resourceData), URL { url }, mimeType, textEncoding, frameName, response);
+    return ArchiveResource::create(SharedBuffer::create(resourceData), url, mimeType, textEncoding, frameName, response);
 }
 
 Ref<LegacyWebArchive> LegacyWebArchive::create()
@@ -253,7 +259,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(FragmentedSharedBuffer& data)
     return create(URL(), data);
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBuffer& data)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBuffer& data, ArchiveResource::EnforceCrossOrigin enforceCrossOrigin)
 {
     LOG(Archives, "LegacyWebArchive - Creating from raw data");
 
@@ -282,13 +288,13 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const URL&, FragmentedSharedBu
         return nullptr;
     }
 
-    if (!archive->extract(plist.get()))
+    if (!archive->extract(plist.get(), enforceCrossOrigin))
         return nullptr;
 
     return WTFMove(archive);
 }
 
-bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
+bool LegacyWebArchive::extract(CFDictionaryRef dictionary, ArchiveResource::EnforceCrossOrigin enforceCrossOrigin)
 {
     ASSERT(dictionary);
     if (!dictionary) {
@@ -306,7 +312,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
         return false;
     }
 
-    auto mainResource = createResource(mainResourceDict);
+    auto mainResource = createResource(mainResourceDict, enforceCrossOrigin);
     if (!mainResource) {
         LOG(Archives, "LegacyWebArchive - Failed to parse main resource from CFDictionary or main resource does not exist, aborting invalid WebArchive");
         return false;
@@ -334,7 +340,7 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
                 return false;
             }
 
-            if (auto subresource = createResource(subresourceDict))
+            if (auto subresource = createResource(subresourceDict, enforceCrossOrigin))
                 addSubresource(subresource.releaseNonNull());
         }
     }

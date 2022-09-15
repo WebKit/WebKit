@@ -429,7 +429,7 @@ struct MarkupAndArchive {
 
 static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buffer, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
-    auto archive = LegacyWebArchive::create(URL(), buffer);
+    auto archive = LegacyWebArchive::create(URL(), buffer, ArchiveResource::EnforceCrossOrigin::No);
     if (!archive)
         return std::nullopt;
 

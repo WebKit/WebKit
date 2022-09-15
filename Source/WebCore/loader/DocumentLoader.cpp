@@ -1230,14 +1230,9 @@ bool DocumentLoader::isLoadingRemoteArchive() const
 
 void DocumentLoader::commitData(const SharedBuffer& data)
 {
-#if ENABLE(WEB_ARCHIVE)
-    URL documentOrEmptyURL = isLoadingRemoteArchive() ? URL() : documentURL();
-#else
-    URL documentOrEmptyURL = documentURL();
-#endif
     if (!m_gotFirstByte) {
         m_gotFirstByte = true;
-        bool hasBegun = m_writer.begin(documentOrEmptyURL, false, nullptr, m_resultingClientId);
+        bool hasBegun = m_writer.begin(documentURL(), false, nullptr, m_resultingClientId);
         if (!hasBegun)
             return;
 
@@ -1261,7 +1256,6 @@ void DocumentLoader::commitData(const SharedBuffer& data)
 
 #if ENABLE(WEB_ARCHIVE)
         if (isLoadingRemoteArchive()) {
-            document.setBaseURLOverride(m_archive->mainResource()->url());
             if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(documentURL().protocol().toStringWithoutCopying()))
                 document.securityOrigin().grantLoadLocalResources();
         }
@@ -1821,7 +1815,7 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader& loader, const ResourceR
         return false;
 
 #if ENABLE(WEB_ARCHIVE)
-    if (isLoadingRemoteArchive()) {
+    if (isLoadingRemoteArchive() && !(request.url().protocolIsData() || request.url().isLocalFile())) {
         DOCUMENTLOADER_RELEASE_LOG("scheduleArchiveLoad: Failed to unarchive subresource");
         loader.didFail(ResourceError(errorDomainWebKitInternal, 0, request.url(), "Failed to unarchive subresource"_s));
         return true;

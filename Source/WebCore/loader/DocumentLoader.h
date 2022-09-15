@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "ArchiveResource.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ContentFilterClient.h"
@@ -72,7 +73,6 @@ namespace WebCore {
 class ApplicationCacheHost;
 class ApplicationManifestLoader;
 class Archive;
-class ArchiveResource;
 class ArchiveResourceCollection;
 class CachedRawResource;
 class CachedResourceLoader;

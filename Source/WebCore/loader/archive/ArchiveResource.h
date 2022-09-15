@@ -32,8 +32,14 @@
 
 namespace WebCore {
 
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
+static constexpr auto webArchivePrefix { "webarchive+"_s };
+#endif
+
 class ArchiveResource : public SubstituteResource {
 public:
+    enum class EnforceCrossOrigin : bool { No, Yes };
+
     static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&, const ResourceResponse&);
     WEBCORE_EXPORT static RefPtr<ArchiveResource> create(RefPtr<FragmentedSharedBuffer>&&, const URL&,
         const String& mimeType, const String& textEncoding, const String& frameName,
