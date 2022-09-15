@@ -3479,21 +3479,17 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
     if (is<HTMLSelectElement>(*focusedElement)) {
         HTMLSelectElement& element = downcast<HTMLSelectElement>(*focusedElement);
         information.elementType = InputType::Select;
-        const Vector<HTMLElement*>& items = element.listItems();
-        size_t count = items.size();
+
         int parentGroupID = 0;
         // The parent group ID indicates the group the option belongs to and is 0 for group elements.
         // If there are option elements in between groups, they are given it's own group identifier.
         // If a select does not have groups, all the option elements have group ID 0.
-        for (size_t i = 0; i < count; ++i) {
-            HTMLElement* item = items[i];
-            if (is<HTMLOptionElement>(*item)) {
-                HTMLOptionElement& option = downcast<HTMLOptionElement>(*item);
-                information.selectOptions.append(OptionItem(option.text(), false, parentGroupID, option.selected(), option.hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr)));
-            } else if (is<HTMLOptGroupElement>(*item)) {
-                HTMLOptGroupElement& group = downcast<HTMLOptGroupElement>(*item);
+        for (auto& item : element.listItems()) {
+            if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(item.get()))
+                information.selectOptions.append(OptionItem(optionElement->text(), false, parentGroupID, optionElement->selected(), optionElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr)));
+            else if (auto* optGroupElement = dynamicDowncast<HTMLOptGroupElement>(item.get())) {
                 parentGroupID++;
-                information.selectOptions.append(OptionItem(group.groupLabelText(), true, 0, false, group.hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr)));
+                information.selectOptions.append(OptionItem(optGroupElement->groupLabelText(), true, 0, false, optGroupElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr)));
             }
         }
         information.selectedIndex = element.selectedIndex();
