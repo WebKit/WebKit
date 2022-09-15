@@ -159,13 +159,15 @@ protected:
         Yes
     };
     AccessibilityRole determineAccessibilityRoleFromNode(TreatStyleFormatGroupAsInline = TreatStyleFormatGroupAsInline::No) const;
-    void addChildren() override;
-
-    bool canHaveChildren() const override;
     AccessibilityRole ariaRoleAttribute() const override;
     virtual AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
+
+    void addChildren() override;
+    void updateChildrenIfNecessary() override;
+    bool canHaveChildren() const override;
     bool isDescendantOfBarrenParent() const override;
+
     enum class StepAction : bool { Decrement, Increment };
     void alterRangeValue(StepAction);
     void changeValueByStep(StepAction);
@@ -211,7 +213,11 @@ private:
     void setNodeValue(StepAction, float);
     bool performDismissAction() final;
     bool hasTextAlternative() const;
-    
+
+    void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
+    bool needsToUpdateChildren() const override { return m_childrenDirty; }
+    void setNeedsToUpdateSubtree() override { m_subtreeDirty = true; }
+
     bool isDescendantOfElementType(const HashSet<QualifiedName>&) const;
 
     Node* m_node;
