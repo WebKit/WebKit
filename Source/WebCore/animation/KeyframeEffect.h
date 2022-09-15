@@ -225,7 +225,7 @@ private:
     void clearBlendingKeyframes();
     void updateBlendingKeyframes(RenderStyle& elementStyle, const Style::ResolutionContext&);
     void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
-    void computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle);
+    void computeCSSTransitionBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
     void setBlendingKeyframes(KeyframeList&);
     bool isTargetingTransformRelatedProperty() const;

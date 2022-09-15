@@ -3265,8 +3265,6 @@ void Document::implicitClose()
 
     dispatchWindowLoadEvent();
     dispatchPageshowEvent(PageshowEventNotPersisted);
-    if (m_pendingStateObject)
-        dispatchPopstateEvent(WTFMove(m_pendingStateObject));
 
     if (f)
         f->loader().dispatchOnloadEvents();
@@ -6578,12 +6576,7 @@ void Document::statePopped(Ref<SerializedScriptValue>&& stateObject)
     if (!frame())
         return;
     
-    // Per step 11 of section 6.5.9 (history traversal) of the HTML5 spec, we 
-    // defer firing of popstate until we're in the complete state.
-    if (m_readyState == Complete)
-        dispatchPopstateEvent(WTFMove(stateObject));
-    else
-        m_pendingStateObject = WTFMove(stateObject);
+    dispatchPopstateEvent(WTFMove(stateObject));
 }
 
 void Document::attachRange(Range& range)

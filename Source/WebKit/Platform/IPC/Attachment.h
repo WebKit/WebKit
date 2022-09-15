@@ -55,12 +55,10 @@ public:
 
     enum Type {
         Uninitialized,
-        SocketType,
-        MappedMemoryType,
+        FileDescriptorType,
         CustomWriterType,
     };
 
-    explicit Attachment(UnixFileDescriptor&&, size_t);
     explicit Attachment(UnixFileDescriptor&&);
 
     Attachment(Attachment&&);
@@ -75,7 +73,6 @@ public:
     Type type() const { return m_type; }
 
     bool isNull() const { return !m_fd; }
-    size_t size() const { return m_size; }
 
     const UnixFileDescriptor& fd() const { return m_fd; }
     UnixFileDescriptor release() { return std::exchange(m_fd, UnixFileDescriptor { }); }
@@ -88,7 +85,6 @@ private:
     Type m_type;
 
     UnixFileDescriptor m_fd;
-    size_t m_size;
     CustomWriter m_customWriter;
 };
 #endif

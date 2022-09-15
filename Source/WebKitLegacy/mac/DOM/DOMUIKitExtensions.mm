@@ -367,7 +367,7 @@ static WebCore::Node* firstNodeAfter(const WebCore::BoundaryPoint& point)
 
 - (DOMNode *)listItemAtIndex:(int)anIndex
 {
-    return kit(core(self)->listItems()[anIndex]);
+    return kit(core(self)->listItems()[anIndex].get());
 }
 
 @end

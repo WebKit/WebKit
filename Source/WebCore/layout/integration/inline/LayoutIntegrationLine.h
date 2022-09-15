@@ -37,7 +37,11 @@ namespace LayoutIntegration {
 class Line {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal, std::optional<FloatRect> ellipsisVisualRect, bool isFirstAfterPageBreak = false)
+    struct Ellipsis {
+        FloatRect visualRect;
+        bool isLeftPositioned { true };
+    };
+    Line(size_t firstBoxIndex, size_t boxCount, const FloatRect& lineBoxRect, float enclosingContentTop, float enclosingContentBottom, const FloatRect& scrollableOverflow, const FloatRect& inkOverflow, float baseline, FontBaseline baselineType, float contentLogicalOffset, float contentLogicalWidth, bool isHorizontal, std::optional<Ellipsis> ellipsis, bool isFirstAfterPageBreak = false)
         : m_firstBoxIndex(firstBoxIndex)
         , m_boxCount(boxCount)
         , m_lineBoxRect(lineBoxRect)
@@ -50,7 +54,7 @@ public:
         , m_contentLogicalWidth(contentLogicalWidth)
         , m_baselineType(baselineType)
         , m_isHorizontal(isHorizontal)
-        , m_ellipsisVisualRect(ellipsisVisualRect)
+        , m_ellipsis(ellipsis)
         , m_isFirstAfterPageBreak(isFirstAfterPageBreak)
     {
     }
@@ -75,8 +79,8 @@ public:
     float baseline() const { return m_baseline; }
     FontBaseline baselineType() const { return m_baselineType; }
 
-    bool hasEllipsis() const { return m_ellipsisVisualRect.has_value(); }
-    FloatRect ellipsisVisualRect() const { return *m_ellipsisVisualRect; }
+    bool hasEllipsis() const { return m_ellipsis.has_value(); }
+    FloatRect ellipsisVisualRect() const { return m_ellipsis->visualRect; }
     TextRun ellipsisText() const { return TextRun { Layout::TextUtil::ellipsisTextRun(isHorizontal()) }; }
 
     bool isHorizontal() const { return m_isHorizontal; }
@@ -104,17 +108,21 @@ private:
     FontBaseline m_baselineType { AlphabeticBaseline };
     bool m_isHorizontal { true };
     // This is visual rect ignoring block direction.
-    std::optional<FloatRect> m_ellipsisVisualRect { };
+    std::optional<Ellipsis> m_ellipsis;
     // FIXME: This is to match paginated legacy lines. Move it to some other, paginated related structure.
     bool m_isFirstAfterPageBreak { false };
 };
 
 inline FloatRect Line::visibleRectIgnoringBlockDirection() const
 {
-    if (!m_ellipsisVisualRect)
+    if (!hasEllipsis())
         return m_lineBoxRect;
-    auto visibleLineBoxRight = std::min(m_lineBoxRect.maxX(), m_ellipsisVisualRect->maxX());
-    return { m_lineBoxRect.location(), FloatPoint { visibleLineBoxRight, m_lineBoxRect.maxY() } };
+    if (m_ellipsis->isLeftPositioned) {
+        auto visibleLineBoxRight = std::min(m_lineBoxRect.maxX(), m_ellipsis->visualRect.maxX());
+        return { m_lineBoxRect.location(), FloatPoint { visibleLineBoxRight, m_lineBoxRect.maxY() } };
+    }
+    auto visibleLineBoxLeft = std::max(m_lineBoxRect.x(), m_ellipsis->visualRect.x());
+    return { FloatPoint { visibleLineBoxLeft, m_lineBoxRect.y() }, FloatPoint { m_lineBoxRect.maxX(), m_lineBoxRect.maxY() } };
 }
 
 }

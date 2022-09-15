@@ -92,21 +92,22 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
     auto& boxes = inlineContent.boxes;
     size_t boxIndex = 0;
     inlineContent.lines.reserveInitialCapacity(lines.size());
+
+    auto& rootBoxStyle = m_blockFlow.style();
     for (size_t lineIndex = 0; lineIndex < lines.size(); ++lineIndex) {
         auto& line = lines[lineIndex];
         auto scrollableOverflowRect = line.scrollableOverflow();
 
         auto adjustOverflowLogicalWidthWithBlockFlowQuirk = [&] {
-            auto& rootStyle = m_blockFlow.style();
-            auto isHorizontalWritingMode = rootStyle.isHorizontalWritingMode();
+            auto isHorizontalWritingMode = rootBoxStyle.isHorizontalWritingMode();
             auto adjustedOverflowLogicalWidth = lineOverflowLogicalWidth(m_blockFlow, line.contentLogicalWidth());
             auto scrollableOverflowLogicalWidth = isHorizontalWritingMode ? scrollableOverflowRect.width() : scrollableOverflowRect.height();
             if (adjustedOverflowLogicalWidth > scrollableOverflowLogicalWidth) {
                 auto overflowValue = adjustedOverflowLogicalWidth - scrollableOverflowLogicalWidth;
                 if (isHorizontalWritingMode)
-                    rootStyle.isLeftToRightDirection() ? scrollableOverflowRect.shiftMaxXEdgeBy(overflowValue) : scrollableOverflowRect.shiftXEdgeBy(-overflowValue);
+                    rootBoxStyle.isLeftToRightDirection() ? scrollableOverflowRect.shiftMaxXEdgeBy(overflowValue) : scrollableOverflowRect.shiftXEdgeBy(-overflowValue);
                 else
-                    rootStyle.isLeftToRightDirection() ? scrollableOverflowRect.shiftMaxYEdgeBy(overflowValue) : scrollableOverflowRect.shiftYEdgeBy(-overflowValue);
+                    rootBoxStyle.isLeftToRightDirection() ? scrollableOverflowRect.shiftMaxYEdgeBy(overflowValue) : scrollableOverflowRect.shiftYEdgeBy(-overflowValue);
             }
         };
         adjustOverflowLogicalWidthWithBlockFlowQuirk();
@@ -143,7 +144,10 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         auto boxCount = boxIndex - firstBoxIndex;
         if (!inlineContent.hasVisualOverflow() && lineInkOverflowRect != line.scrollableOverflow())
             inlineContent.setHasVisualOverflow();
-        inlineContent.lines.append({ firstBoxIndex, boxCount, FloatRect { line.lineBoxRect() }, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.baselineType(), line.contentLogicalOffset(), line.contentLogicalWidth(), line.isHorizontal(), line.ellipsisVisualRect() });
+        auto ellipsis = std::optional<Line::Ellipsis> { };
+        if (auto ellipsisVisualRect = line.ellipsisVisualRect())
+            ellipsis = { *ellipsisVisualRect, rootBoxStyle.isLeftToRightDirection() };
+        inlineContent.lines.append({ firstBoxIndex, boxCount, FloatRect { line.lineBoxRect() }, line.enclosingTopAndBottom().top, line.enclosingTopAndBottom().bottom, scrollableOverflowRect, lineInkOverflowRect, line.baseline(), line.baselineType(), line.contentLogicalOffset(), line.contentLogicalWidth(), line.isHorizontal(), ellipsis });
     }
 }
 

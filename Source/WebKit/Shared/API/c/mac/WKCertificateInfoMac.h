@@ -29,17 +29,18 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <Security/SecTrust.h>
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust);
-WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain);
-WK_EXPORT SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfo);
+WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithServerTrust(SecTrustRef serverTrust) WK_C_API_DEPRECATED;
+WK_EXPORT WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(CFArrayRef certificateChain) WK_C_API_DEPRECATED;
+WK_EXPORT SecTrustRef WKCertificateInfoGetServerTrust(WKCertificateInfoRef certificateInfo) WK_C_API_DEPRECATED;
 
 // Deprecated
-WK_EXPORT CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfo);
+WK_EXPORT CFArrayRef WKCertificateInfoGetCertificateChain(WKCertificateInfoRef certificateInfo) WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

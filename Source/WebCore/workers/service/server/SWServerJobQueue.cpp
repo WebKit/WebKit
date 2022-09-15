@@ -59,7 +59,7 @@ bool SWServerJobQueue::isCurrentlyProcessingJob(const ServiceWorkerJobDataIdenti
 
 static bool doCertificatesMatch(const CertificateInfo& first, const CertificateInfo& second)
 {
-#if PLATFORM(COCOA) && HAVE(SEC_TRUST_SERIALIZATION)
+#if PLATFORM(COCOA)
     return first.trust() == second.trust() || certificatesMatch(first.trust(), second.trust());
 #else
     // FIXME: Add support for certificate matching in CertificateInfo.

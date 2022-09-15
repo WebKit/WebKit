@@ -65,23 +65,15 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
     : ActiveDOMObject(&context)
     , m_state(state)
     , m_descriptor(descriptor)
-    , m_source(source)
-    , m_page(WTFMove(page))
 {
     auto* origin = context.securityOrigin();
     auto originData = origin ? origin->data() : SecurityOriginData { };
-    m_origin = ClientOrigin { context.topOrigin().data(), WTFMove(originData) };
-    
-    if (source == PermissionQuerySource::Window) {
-        PermissionController::shared().addObserver(*this);
-        return;
-    }
+    ClientOrigin clientOrigin { context.topOrigin().data(), WTFMove(originData) };
 
     m_mainThreadPermissionObserverIdentifier = MainThreadPermissionObserverIdentifier::generateThreadSafe();
 
-    callOnMainThread([weakThis = WeakPtr { *this }, contextIdentifier = context.identifier(), state = m_state, descriptor = m_descriptor, source = m_source, page = m_page, origin = m_origin.isolatedCopy(), identifier = m_mainThreadPermissionObserverIdentifier]() mutable {
+    ensureOnMainThread([weakThis = WeakPtr { *this }, contextIdentifier = context.identifier(), state = m_state, descriptor = m_descriptor, source, page = WTFMove(page), origin = WTFMove(clientOrigin).isolatedCopy(), identifier = m_mainThreadPermissionObserverIdentifier]() mutable {
         auto mainThreadPermissionObserver = makeUnique<MainThreadPermissionObserver>(WTFMove(weakThis), contextIdentifier, state, descriptor, source, WTFMove(page), WTFMove(origin));
-
         allMainThreadPermissionObservers().add(identifier, WTFMove(mainThreadPermissionObserver));
     });
 }

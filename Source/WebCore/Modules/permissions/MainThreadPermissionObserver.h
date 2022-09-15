@@ -31,6 +31,7 @@
 #include "PermissionObserver.h"
 #include "PermissionQuerySource.h"
 #include "PermissionState.h"
+#include "PermissionStatus.h"
 #include "ScriptExecutionContextIdentifier.h"
 
 namespace WebCore {
@@ -41,7 +42,7 @@ class MainThreadPermissionObserver final : public PermissionObserver {
     WTF_MAKE_NONCOPYABLE(MainThreadPermissionObserver);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MainThreadPermissionObserver(WeakPtr<PermissionObserver>&&, ScriptExecutionContextIdentifier, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&, ClientOrigin&&);
+    MainThreadPermissionObserver(WeakPtr<PermissionStatus, WeakPtrImplWithEventTargetData>&&, ScriptExecutionContextIdentifier, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&, ClientOrigin&&);
     ~MainThreadPermissionObserver();
 
 private:
@@ -53,7 +54,7 @@ private:
     PermissionQuerySource source() const final { return m_source; }
     const WeakPtr<Page>& page() const final { return m_page; }
 
-    WeakPtr<PermissionObserver> m_permissionObserver;
+    WeakPtr<PermissionStatus, WeakPtrImplWithEventTargetData> m_permissionStatus;
     ScriptExecutionContextIdentifier m_contextIdentifier;
     PermissionState m_state;
     PermissionDescriptor m_descriptor;
