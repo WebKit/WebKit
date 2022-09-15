@@ -13,7 +13,7 @@ PASS Child document attempts to navigate cross-origin parent via location.href
 PASS Child document attempts to navigate cross-origin parent via location.pathname
 PASS Child document attempts to navigate cross-origin parent via location.protocol
 PASS Child document attempts to navigate cross-origin parent via location.reload()
-FAIL Child document attempts to navigate cross-origin parent via location.replace() assert_array_equals: expected property 0 to be "error: SecurityError" but got "success" (expected array ["error: SecurityError"] got ["success"])
+PASS Child document attempts to navigate cross-origin parent via location.replace()
 PASS Child document attempts to navigate cross-origin parent via location.search
 PASS Child document attempts to navigate cross-origin parent via non-standard location property
 
