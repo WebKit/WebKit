@@ -29,6 +29,8 @@
 #include "config.h"
 #include "DrawingAreaProxyWC.h"
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "DrawingAreaMessages.h"
 #include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
@@ -101,3 +103,5 @@ void DrawingAreaProxyWC::discardBackingStore()
 }
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

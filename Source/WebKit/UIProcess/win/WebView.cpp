@@ -29,7 +29,6 @@
 
 #include "APIPageConfiguration.h"
 #include "DrawingAreaProxyCoordinatedGraphics.h"
-#include "DrawingAreaProxyWC.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -66,7 +65,11 @@
 #if USE(CAIRO)
 #include <cairo-win32.h>
 #include <cairo.h>
-#endif 
+#endif
+
+#if USE(GRAPHICS_LAYER_WC)
+#include "DrawingAreaProxyWC.h"
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -498,9 +501,11 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
                 drawPageBackground(hdc, m_page.get(), rect);
         };
         switch (m_page->drawingArea()->type()) {
+#if USE(GRAPHICS_LAYER_WC)
         case DrawingAreaType::WC:
             painter(static_cast<DrawingAreaProxyWC*>(m_page->drawingArea()));
             break;
+#endif
         case DrawingAreaType::CoordinatedGraphics:
             painter(static_cast<DrawingAreaProxyCoordinatedGraphics*>(m_page->drawingArea()));
             break;
