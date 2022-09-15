@@ -1074,7 +1074,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     if (resetStage == ResetStage::AfterTest)
         WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), toWK("Reset").get(), resetMessageBody.get());
 
-    WKContextSetShouldUseFontSmoothing(TestController::singleton().context(), false);
+    WKContextSetShouldUseFontSmoothingForTesting(TestController::singleton().context(), false);
     WKContextSetCacheModel(TestController::singleton().context(), kWKCacheModelDocumentBrowser);
 
     WKWebsiteDataStoreClearCachedCredentials(websiteDataStore());

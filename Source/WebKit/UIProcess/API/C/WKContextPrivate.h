@@ -48,7 +48,7 @@ WK_EXPORT void WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, W
 
 WK_EXPORT void WKContextSetAlwaysUsesComplexTextCodePath(WKContextRef context, bool alwaysUseComplexTextCodePath);
 
-WK_EXPORT void WKContextSetShouldUseFontSmoothing(WKContextRef context, bool useFontSmoothing);
+WK_EXPORT void WKContextSetShouldUseFontSmoothingForTesting(WKContextRef context, bool useFontSmoothing);
 
 WK_EXPORT void WKContextRegisterURLSchemeAsSecure(WKContextRef context, WKStringRef urlScheme);
 

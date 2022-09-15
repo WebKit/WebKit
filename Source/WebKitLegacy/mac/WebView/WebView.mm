@@ -3527,16 +3527,6 @@ IGNORE_WARNINGS_END
 
 #endif /* ENABLE(DASHBOARD_SUPPORT) */
 
-+ (void)_setShouldUseFontSmoothing:(BOOL)f
-{
-    WebCore::FontCascade::setShouldUseSmoothing(f);
-}
-
-+ (BOOL)_shouldUseFontSmoothing
-{
-    return WebCore::FontCascade::shouldUseSmoothing();
-}
-
 #if !PLATFORM(IOS_FAMILY)
 + (void)_setUsesTestModeFocusRingColor:(BOOL)f
 {

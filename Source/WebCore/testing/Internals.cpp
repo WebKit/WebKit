@@ -1852,7 +1852,7 @@ void Internals::invalidateFontCache()
 
 void Internals::setFontSmoothingEnabled(bool enabled)
 {
-    FontCascade::setShouldUseSmoothing(enabled);
+    FontCascade::setShouldUseSmoothingForTesting(enabled);
 }
 
 ExceptionOr<void> Internals::setLowPowerModeEnabled(bool isEnabled)
