@@ -123,6 +123,11 @@ std::optional<size_t> MemoryPressureHandler::thresholdForMemoryKill()
     if (m_configuration.killThresholdFraction)
         return m_configuration.baseThreshold * (*m_configuration.killThresholdFraction);
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+    // We don't want to kill the process unless there's a killThreshold set in the configuration.
+    return std::nullopt;
+#endif
+
     switch (m_processState) {
     case WebsamProcessState::Inactive:
         return thresholdForMemoryKillOfInactiveProcess(m_pageCount);
@@ -216,10 +221,12 @@ void MemoryPressureHandler::measurementTimerFired()
         break;
     }
 
+#if !PLATFORM(GTK) && !PLATFORM(WPE)
     if (processState() == WebsamProcessState::Active && footprint > thresholdForMemoryKillOfInactiveProcess(m_pageCount))
         doesExceedInactiveLimitWhileActive();
     else
         doesNotExceedInactiveLimitWhileActive();
+#endif
 }
 
 void MemoryPressureHandler::doesExceedInactiveLimitWhileActive()
