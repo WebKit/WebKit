@@ -1348,11 +1348,11 @@ ReportingEnabled:
   humanReadableDescription: "Enable Reporting API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 RequestIdleCallbackEnabled:
   type: bool
