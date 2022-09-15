@@ -105,6 +105,7 @@ hr {
     margin-inline-end: auto;
     border-style: inset;
     border-width: 1px;
+    overflow: hidden;
 }
 
 /* media elements */
@@ -1346,6 +1347,16 @@ details {
 
 summary {
     display: block;
+}
+
+details > summary:first-of-type {
+    display: list-item;
+    counter-increment: list-item 0;
+    list-style: disclosure-closed inside;
+}
+
+  details[open] > summary {
+    list-style-type: disclosure-open;
 }
 
 summary::-webkit-details-marker {
