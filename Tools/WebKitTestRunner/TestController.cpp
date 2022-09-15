@@ -379,6 +379,18 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
         }
     }
 
+    if (toWTFString(string) == "geolocation"_s) {
+        m_geolocationPermissionQueryOrigins.add(toWTFString(adoptWK(WKSecurityOriginCopyToString(securityOrigin))));
+
+        if (m_isGeolocationPermissionSet) {
+            if (m_isGeolocationPermissionAllowed)
+                WKQueryPermissionResultCallbackCompleteWithGranted(callback);
+            else
+                WKQueryPermissionResultCallbackCompleteWithDenied(callback);
+            return;
+        }
+    }
+
     WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
 }
 
@@ -1126,6 +1138,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_geolocationPermissionRequests.clear();
     m_isGeolocationPermissionSet = false;
     m_isGeolocationPermissionAllowed = false;
+    m_geolocationPermissionQueryOrigins.clear();
 
     // Reset UserMedia permissions.
     m_userMediaPermissionRequests.clear();
@@ -2473,9 +2486,19 @@ void TestController::simulateWebNotificationClickForServiceWorkerNotifications()
 
 void TestController::setGeolocationPermission(bool enabled)
 {
+    bool permissionChanged = false;
+    if (!m_isGeolocationPermissionSet || m_isGeolocationPermissionAllowed != enabled)
+        permissionChanged = true;
+
     m_isGeolocationPermissionSet = true;
     m_isGeolocationPermissionAllowed = enabled;
     decidePolicyForGeolocationPermissionRequestIfPossible();
+
+    if (!permissionChanged)
+        return;
+
+    for (auto& originString : m_geolocationPermissionQueryOrigins)
+        WKPagePermissionChanged(toWK("geolocation").get(), toWK(originString).get());
 }
 
 void TestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy, std::optional<double> altitude, std::optional<double> altitudeAccuracy, std::optional<double> heading, std::optional<double> speed, std::optional<double> floorLevel)

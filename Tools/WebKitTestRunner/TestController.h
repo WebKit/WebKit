@@ -588,6 +588,8 @@ private:
     WebNotificationProvider m_webNotificationProvider;
     HashSet<String> m_notificationOriginsToDenyOnPrompt;
 
+    HashSet<String> m_geolocationPermissionQueryOrigins;
+
     std::unique_ptr<PlatformWebView> m_mainWebView;
     Vector<UniqueRef<PlatformWebView>> m_auxiliaryWebViews;
     WKRetainPtr<WKContextRef> m_context;

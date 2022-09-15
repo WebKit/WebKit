@@ -28,9 +28,12 @@
 #include "ActiveDOMObject.h"
 #include "ClientOrigin.h"
 #include "EventTarget.h"
+#include "MainThreadPermissionObserverIdentifier.h"
+#include "Page.h"
 #include "PermissionDescriptor.h"
 #include "PermissionName.h"
 #include "PermissionObserver.h"
+#include "PermissionQuerySource.h"
 #include "PermissionState.h"
 
 namespace WebCore {
@@ -40,7 +43,7 @@ class ScriptExecutionContext;
 class PermissionStatus final : public PermissionObserver, public ActiveDOMObject, public RefCounted<PermissionStatus>, public EventTarget  {
     WTF_MAKE_ISO_ALLOCATED(PermissionStatus);
 public:
-    static Ref<PermissionStatus> create(ScriptExecutionContext&, PermissionState, const PermissionDescriptor&);
+    static Ref<PermissionStatus> create(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&);
     ~PermissionStatus();
 
     PermissionState state() const { return m_state; }
@@ -54,14 +57,15 @@ public:
     using PermissionObserver::WeakPtrImplType;
 
 private:
-    PermissionStatus(ScriptExecutionContext&, PermissionState, const PermissionDescriptor&);
+    PermissionStatus(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&);
 
     // PermissionObserver
     PermissionState currentState() const final { return m_state; }
     void stateChanged(PermissionState) final;
     const ClientOrigin& origin() const final { return m_origin; }
-    const PermissionDescriptor& descriptor() const final { return m_descriptor; }
-    const ScriptExecutionContext* context() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    PermissionDescriptor descriptor() const final { return m_descriptor; }
+    PermissionQuerySource source() const final { return m_source; }
+    const WeakPtr<Page>& page() const final { return m_page; }
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -76,7 +80,10 @@ private:
 
     PermissionState m_state;
     PermissionDescriptor m_descriptor;
+    PermissionQuerySource m_source;
+    WeakPtr<Page> m_page;
     ClientOrigin m_origin;
+    MainThreadPermissionObserverIdentifier m_mainThreadPermissionObserverIdentifier;
     std::atomic<bool> m_hasChangeEventListener;
 };
 

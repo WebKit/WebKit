@@ -3962,9 +3962,10 @@ void FrameLoader::loadItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadTy
     // If we're continuing this history navigation in a new process, then doing a same document navigation never makes sense.
     ASSERT(!sameDocumentNavigation || shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::No);
 
-    if (sameDocumentNavigation)
+    if (sameDocumentNavigation) {
+        m_loadType = loadType;
         loadSameDocumentItem(item);
-    else
+    } else
         loadDifferentDocumentItem(item, fromItem, loadType, MayAttemptCacheOnlyLoadForFormSubmissionItem, shouldTreatAsContinuingLoad);
 }
 

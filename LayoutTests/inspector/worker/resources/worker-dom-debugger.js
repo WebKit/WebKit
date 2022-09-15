@@ -15,11 +15,14 @@ const functions = {
             clearInterval(intervalId);
         });
     },
-    triggerXHR() {
+    triggerXHRRequest() {
         loadResourceXHR("dataXHR.json");
     },
-    triggerFetch() {
+    triggerFetchRequest() {
         loadResourceFetch("dataFetch.json");
+    },
+    triggerDOMRequest() {
+        loadResourceDOM("dataDOM.json");
     },
 };
 

@@ -40,7 +40,7 @@ public:
     String disposition() const;
     const AtomString& type() const final;
     const String& blockedURL() const { return m_blockedURL.string(); }
-    String destination() const;
+    FetchOptions::Destination destination() const { return m_destination; }
 
     template<typename Encoder> void encode(Encoder&) const;
     template<typename Decoder> static std::optional<RefPtr<CORPViolationReportBody>> decode(Decoder&);

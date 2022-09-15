@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT status is not garbage collected when it goes out of scope Test timed out
+PASS status is not garbage collected when it goes out of scope
 
