@@ -10,8 +10,11 @@ window.onunload = function() {
   // No page cache
 }
 
-window.onpopstate = function(e) {
-  alert("onpopstate");
-  top.opener.notifyDone(window == parent ? "FAIL" : "PASS");
+window.onpageshow = function(e) {
+  alert("onpageshow");
+  if (sessionStorage.alreadyShown)
+    top.opener.notifyDone(window == parent ? "FAIL" : "PASS");
+  else
+    sessionStorage.alreadyShown = true;
 }
 </script>
