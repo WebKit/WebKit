@@ -71,7 +71,7 @@ void ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
         scrollingTree().activePositionedNodes().add(*this);
 }
 
-void ScrollingTreePositionedNode::applyLayerPositions()
+FloatSize ScrollingTreePositionedNode::scrollDeltaSinceLastCommit() const
 {
     FloatSize delta;
     for (auto nodeID : m_relatedOverflowScrollingNodes) {
@@ -83,6 +83,13 @@ void ScrollingTreePositionedNode::applyLayerPositions()
         }
     }
 
+    // Positioned nodes compensate for scrolling, so negate the scroll delta.
+    return -delta;
+}
+
+void ScrollingTreePositionedNode::applyLayerPositions()
+{
+    FloatSize delta = scrollDeltaSinceLastCommit();
     FloatPoint layerPosition = m_constraints.layerPositionAtLastLayout() + delta;
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreePositionedNode " << scrollingNodeID() << " applyLayerPositions: overflow delta " << delta << " moving layer to " << layerPosition);
