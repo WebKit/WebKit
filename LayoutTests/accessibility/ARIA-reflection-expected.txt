@@ -102,7 +102,7 @@ PASS element.getAttribute(currentAttribute) is dataAttribute
 element.setAttribute("aria-disabled", otherData);
 PASS element[currentProperty] is otherDataProperty
 
-Test ariaErrorMessageElement < - > aria-errormessage
+Test ariaErrorMessageElements < - > aria-errormessage
 PASS element[currentProperty] is null
 PASS element.getAttribute(currentAttribute) is null
 PASS element.getAttribute(currentAttribute) is dataAttribute
