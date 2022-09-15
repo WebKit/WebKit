@@ -645,11 +645,7 @@ void WebInspectorUIProxy::platformShowCertificate(const CertificateInfo& certifi
     if (!window)
         window = [NSApp keyWindow];
 
-#if HAVE(SEC_TRUST_SERIALIZATION)
     [certificatePanel beginSheetForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nullptr trust:certificateInfo.trust() showGroup:YES];
-#else
-    [certificatePanel beginSheetForWindow:window modalDelegate:nil didEndSelector:NULL contextInfo:nullptr certificates:(NSArray *)certificateInfo.certificateChain() showGroup:YES];
-#endif
 
     // This must be called after the trust panel has been displayed, because the certificateView doesn't exist beforehand.
     SFCertificateView *certificateView = [certificatePanel certificateView];

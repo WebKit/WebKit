@@ -65,6 +65,14 @@ bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
     return true;
 }
 
+RetainPtr<SecTrustRef> CertificateInfo::secTrustFromCertificateChain(CFArrayRef certificateChain)
+{
+    SecTrustRef trustRef = nullptr;
+    if (SecTrustCreateWithCertificates(certificateChain, nullptr, &trustRef) != noErr)
+        return nullptr;
+    return adoptCF(trustRef);
+}
+
 RetainPtr<CFArrayRef> CertificateInfo::certificateChainFromSecTrust(SecTrustRef trust)
 {
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
@@ -79,33 +87,9 @@ RetainPtr<CFArrayRef> CertificateInfo::certificateChainFromSecTrust(SecTrustRef 
 }
 #endif
 
-CertificateInfo::Type CertificateInfo::type() const
-{
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    if (m_trust)
-        return Type::Trust;
-#endif
-    if (m_certificateChain)
-        return Type::CertificateChain;
-    return Type::None;
-}
-
-CFArrayRef CertificateInfo::certificateChain() const
-{
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    if (m_certificateChain)
-        return m_certificateChain.get();
-
-    if (m_trust) 
-        m_certificateChain = CertificateInfo::certificateChainFromSecTrust(m_trust.get());
-#endif
-
-    return m_certificateChain.get();
-}
-
 bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 {
-#if HAVE(SEC_TRUST_SERIALIZATION)
+#if PLATFORM(COCOA)
     if (m_trust) {
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
         auto chain = adoptCF(SecTrustCopyCertificateChain(trust()));
@@ -123,34 +107,20 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 
         return false;
     }
-#endif // HAVE(SEC_TRUST_SERIALIZATION)
-
-#if PLATFORM(COCOA)
-    if (m_certificateChain) {
-        // Allow only the root certificate (the last in the chain) to be SHA1.
-        for (CFIndex i = 0, size = CFArrayGetCount(m_certificateChain.get()) - 1; i < size; ++i) {
-            auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(m_certificateChain.get(), i));
-            if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
-                return true;
-        }
-        return false;
-    }
 #endif
-
     return false;
 }
 
 std::optional<CertificateSummary> CertificateInfo::summary() const
 {
-    auto chain = certificateChain();
-    if (!chain)
+    CertificateSummary summaryInfo;
+#if PLATFORM(COCOA)
+    auto chain = certificateChainFromSecTrust(m_trust.get());
+    if (!chain || !CFArrayGetCount(chain.get()))
         return std::nullopt;
 
-    CertificateSummary summaryInfo;
-
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
-    auto leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain, 0));
-
+#if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
+    auto leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
     auto subjectCF = adoptCF(SecCertificateCopySubjectSummary(leafCertificate));
     summaryInfo.subject = subjectCF.get();
 #endif
@@ -194,16 +164,38 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
             }
         }
     }
-#endif
-
+#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)
     return summaryInfo;
 }
+
+// FIXME: Remove this when WebKit::NetworkCache::Storage::version is incremented.
+enum class LegacyCertificateInfoType {
+    None,
+    CertificateChain,
+#if PLATFORM(COCOA)
+    Trust,
+#endif
+};
 
 } // namespace WebCore
 
 namespace WTF {
-namespace Persistence {
+template<> struct EnumTraits<WebCore::LegacyCertificateInfoType> {
+    using values = EnumValues<
+        WebCore::LegacyCertificateInfoType,
+        WebCore::LegacyCertificateInfoType::None,
+        WebCore::LegacyCertificateInfoType::CertificateChain
+#if PLATFORM(COCOA)
+        , WebCore::LegacyCertificateInfoType::Trust
+#endif
+    >;
+};
+}
 
+namespace WTF::Persistence {
+
+#if PLATFORM(COCOA)
 static void encodeCFData(Encoder& encoder, CFDataRef data)
 {
     uint64_t length = CFDataGetLength(data);
@@ -228,7 +220,6 @@ static std::optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)
     return adoptCF(CFDataCreate(nullptr, pointer, *size));
 }
 
-#if HAVE(SEC_TRUST_SERIALIZATION)
 static void encodeSecTrustRef(Encoder& encoder, SecTrustRef trust)
 {
     auto data = adoptCF(SecTrustSerialize(trust, nullptr));
@@ -264,22 +255,6 @@ static std::optional<RetainPtr<SecTrustRef>> decodeSecTrustRef(Decoder& decoder)
 #endif
 
 #if PLATFORM(COCOA)
-static void encodeCertificateChain(Encoder& encoder, CFArrayRef certificateChain)
-{
-    CFIndex size = CFArrayGetCount(certificateChain);
-    Vector<CFTypeRef, 32> values(size);
-
-    CFArrayGetValues(certificateChain, CFRangeMake(0, size), values.data());
-
-    encoder << static_cast<uint64_t>(size);
-
-    for (CFIndex i = 0; i < size; ++i) {
-        ASSERT(values[i]);
-        auto data = adoptCF(SecCertificateCopyData(checked_cf_cast<SecCertificateRef>(values[i])));
-        encodeCFData(encoder, data.get());
-    }
-}
-
 static std::optional<RetainPtr<CFArrayRef>> decodeCertificateChain(Decoder& decoder)
 {
     std::optional<uint64_t> size;
@@ -304,59 +279,39 @@ static std::optional<RetainPtr<CFArrayRef>> decodeCertificateChain(Decoder& deco
 
 void Coder<WebCore::CertificateInfo>::encode(Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
 {
-    encoder << certificateInfo.type();
-
-    switch (certificateInfo.type()) {
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    case WebCore::CertificateInfo::Type::Trust:
-        encodeSecTrustRef(encoder, certificateInfo.trust());
-        break;
-#endif
 #if PLATFORM(COCOA)
-    case WebCore::CertificateInfo::Type::CertificateChain: {
-        encodeCertificateChain(encoder, certificateInfo.certificateChain());
-        break;
-    }
+    encoder << WebCore::LegacyCertificateInfoType::Trust;
+    encodeSecTrustRef(encoder, certificateInfo.trust());
 #endif
-    case WebCore::CertificateInfo::Type::None:
-        // Do nothing.
-        break;
-    }
 }
 
 std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(Decoder& decoder)
 {
-    std::optional<WebCore::CertificateInfo::Type> certificateInfoType;
+    std::optional<WebCore::LegacyCertificateInfoType> certificateInfoType;
     decoder >> certificateInfoType;
     if (!certificateInfoType)
         return std::nullopt;
 
     switch (*certificateInfoType) {
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    case WebCore::CertificateInfo::Type::Trust: {
+#if PLATFORM(COCOA)
+    case WebCore::LegacyCertificateInfoType::Trust: {
         auto trust = decodeSecTrustRef(decoder);
         if (!trust)
             return std::nullopt;
 
         return WebCore::CertificateInfo(WTFMove(*trust));
     }
-#endif
-#if PLATFORM(COCOA)
-    case WebCore::CertificateInfo::Type::CertificateChain: {
+    case WebCore::LegacyCertificateInfoType::CertificateChain: {
         auto certificateChain = decodeCertificateChain(decoder);
         if (!certificateChain)
             return std::nullopt;
-
-        return WebCore::CertificateInfo(WTFMove(*certificateChain));
+        return WebCore::CertificateInfo(WebCore::CertificateInfo::secTrustFromCertificateChain(certificateChain->get()));
     }
 #endif
-    case WebCore::CertificateInfo::Type::None:
+    case WebCore::LegacyCertificateInfoType::None:
         // Do nothing.
         return WebCore::CertificateInfo();
     }
-
-    return std::nullopt;
 }
 
-} // namespace Persistence
-} // namespace WTF
+} // namespace WTF::Persistence

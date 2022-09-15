@@ -45,43 +45,38 @@ struct CertificateSummary;
 
 class CertificateInfo {
 public:
-     CertificateInfo() = default;
- 
-    enum class Type {
-        None,
-        CertificateChain,
-#if HAVE(SEC_TRUST_SERIALIZATION)
-        Trust,
-#endif
-    };
-
-#if HAVE(SEC_TRUST_SERIALIZATION)
+    CertificateInfo() = default;
+#if PLATFORM(COCOA)
     explicit CertificateInfo(RetainPtr<SecTrustRef>&& trust)
         : m_trust(WTFMove(trust))
     {
     }
- 
     SecTrustRef trust() const { return m_trust.get(); }
-#endif
-
+#elif PLATFORM(WIN)
     CertificateInfo(RetainPtr<CFArrayRef>&& certificateChain)
         : m_certificateChain(WTFMove(certificateChain))
     {
     }
-
+    CFArrayRef certificateChain() const { return m_certificateChain.get(); }
+#endif
     CertificateInfo isolatedCopy() const { return *this; }
 
-    WEBCORE_EXPORT CFArrayRef certificateChain() const;
-
-    WEBCORE_EXPORT Type type() const;
     WEBCORE_EXPORT bool containsNonRootSHA1SignedCertificate() const;
 
     std::optional<CertificateSummary> summary() const;
 
-    bool isEmpty() const { return type() == Type::None; }
+    bool isEmpty() const
+    {
+#if PLATFORM(COCOA)
+        return !m_trust;
+#elif PLATFORM(WIN)
+        return !m_certificateChain;
+#endif
+    }
 
 #if PLATFORM(COCOA)
-    static RetainPtr<CFArrayRef> certificateChainFromSecTrust(SecTrustRef);
+    WEBCORE_EXPORT static RetainPtr<CFArrayRef> certificateChainFromSecTrust(SecTrustRef);
+    WEBCORE_EXPORT static RetainPtr<SecTrustRef> secTrustFromCertificateChain(CFArrayRef);
 #endif
 
 #ifndef NDEBUG
@@ -91,10 +86,11 @@ public:
 #endif
 
 private:
-#if HAVE(SEC_TRUST_SERIALIZATION)
+#if PLATFORM(COCOA)
     RetainPtr<SecTrustRef> m_trust;
+#elif PLATFORM(WIN)
+    RetainPtr<CFArrayRef> m_certificateChain;
 #endif
-    mutable RetainPtr<CFArrayRef> m_certificateChain;
 };
 
 #if PLATFORM(COCOA)
@@ -103,20 +99,7 @@ WEBCORE_EXPORT bool certificatesMatch(SecTrustRef, SecTrustRef);
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::CertificateInfo::Type> {
-    using values = EnumValues<
-        WebCore::CertificateInfo::Type,
-        WebCore::CertificateInfo::Type::None,
-        WebCore::CertificateInfo::Type::CertificateChain
-#if HAVE(SEC_TRUST_SERIALIZATION)
-        , WebCore::CertificateInfo::Type::Trust
-#endif
-    >;
-};
-
-namespace Persistence {
+namespace WTF::Persistence {
 
 template<> struct Coder<WebCore::CertificateInfo> {
     static WEBCORE_EXPORT void encode(Encoder&, const WebCore::CertificateInfo&);
@@ -124,5 +107,3 @@ template<> struct Coder<WebCore::CertificateInfo> {
 };
 
 } // namespace WTF::Persistence
-
-} // namespace WTF
