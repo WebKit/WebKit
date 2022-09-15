@@ -45,4 +45,24 @@ std::optional<MachSendRight> ArgumentCoder<MachSendRight>::decode(Decoder& decod
     return decoder.takeLastAttachment();
 }
 
+#if HAVE(AUDIT_TOKEN)
+
+void ArgumentCoder<audit_token_t>::encode(Encoder& encoder, const audit_token_t& auditToken)
+{
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++)
+        encoder << auditToken.val[i];
+}
+
+std::optional<audit_token_t> ArgumentCoder<audit_token_t>::decode(Decoder& decoder)
+{
+    audit_token_t auditToken;
+    for (unsigned i = 0; i < WTF_ARRAY_LENGTH(auditToken.val); i++) {
+        if (!decoder.decode(auditToken.val[i]))
+            return std::nullopt;
+    }
+    return WTFMove(auditToken);
+}
+
+#endif // HAVE(AUDIT_TOKEN)
+
 }

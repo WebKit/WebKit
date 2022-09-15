@@ -131,7 +131,7 @@ void ClientConnection::setDebugModeIsEnabled(bool enabled)
     broadcastDebugMessage(makeString("Turned Debug Mode ", m_debugModeEnabled ? "on" : "off"));
 }
 
-void ClientConnection::broadcastDebugMessage(StringView message)
+void ClientConnection::broadcastDebugMessage(const String& message)
 {
     String messageIdentifier;
     auto signingIdentifier = hostAppCodeSigningIdentifier();
@@ -143,7 +143,7 @@ void ClientConnection::broadcastDebugMessage(StringView message)
     Daemon::singleton().broadcastDebugMessage(makeString(messageIdentifier, message));
 }
 
-void ClientConnection::sendDebugMessage(StringView message)
+void ClientConnection::sendDebugMessage(const String& message)
 {
     // FIXME: We currently send the debug message twice.
     // After getting all debug message clients onto the encoder/decoder mechanism, remove the old style message.

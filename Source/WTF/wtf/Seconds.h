@@ -241,17 +241,6 @@ public:
         return Seconds(*seconds);
     }
 
-    template<class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, Seconds& seconds)
-    {
-        double value;
-        if (!decoder.decode(value))
-            return false;
-
-        seconds = Seconds(value);
-        return true;
-    }
-
     struct MarkableTraits;
 
 private:

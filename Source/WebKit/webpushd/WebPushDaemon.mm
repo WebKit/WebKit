@@ -375,7 +375,7 @@ void Daemon::incomingPushTransactionTimerFired()
     m_incomingPushTransaction = nullptr;
 }
 
-void Daemon::broadcastDebugMessage(StringView message)
+void Daemon::broadcastDebugMessage(const String& message)
 {
     for (auto& iterator : m_connectionMap) {
         if (iterator.value->debugModeIsEnabled())

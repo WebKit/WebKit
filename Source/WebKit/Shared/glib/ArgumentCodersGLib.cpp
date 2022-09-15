@@ -67,7 +67,6 @@ std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decode
     return std::optional<GRefPtr<GVariant> >(g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE));
 }
 
-template<typename Encoder>
 void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, GRefPtr<GTlsCertificate> certificate)
 {
     if (!certificate) {
@@ -106,10 +105,7 @@ void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, GRefPtr<G
         encoder << IPC::DataReference(certificateData->data, certificateData->len);
     }
 }
-template void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode<Encoder>(Encoder&, GRefPtr<GTlsCertificate>);
-template void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, GRefPtr<GTlsCertificate>);
 
-template<typename Decoder>
 std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode(Decoder& decoder)
 {
     std::optional<uint32_t> chainLength;
@@ -163,7 +159,5 @@ std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>:
 
     return certificate;
 }
-template std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode<Decoder>(Decoder&);
-template std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 } // namespace IPC
