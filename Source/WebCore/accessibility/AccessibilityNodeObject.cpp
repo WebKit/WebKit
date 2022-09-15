@@ -447,6 +447,14 @@ bool AccessibilityNodeObject::isDescendantOfElementType(const HashSet<QualifiedN
     return false;
 }
 
+void AccessibilityNodeObject::updateChildrenIfNecessary()
+{
+    if (needsToUpdateChildren())
+        clearChildren();
+
+    AccessibilityObject::updateChildrenIfNecessary();
+}
+
 void AccessibilityNodeObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
