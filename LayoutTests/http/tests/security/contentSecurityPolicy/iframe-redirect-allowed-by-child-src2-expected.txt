@@ -1,2 +1,4 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'child-src' has been deprecated. Instead, you should use 'worker-src'.
+CONSOLE MESSAGE: The Content Security Policy directive 'child-src' has been deprecated. Instead, you should use 'worker-src'.
 CONSOLE MESSAGE: PASS
 

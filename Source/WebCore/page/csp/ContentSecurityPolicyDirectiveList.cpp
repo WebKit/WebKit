@@ -643,8 +643,6 @@ void ContentSecurityPolicyDirectiveList::addDirective(ParsedDirective&& directiv
     else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::workerSrc))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTFMove(directive), m_workerSrc);
     else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::frameSrc)) {
-        // FIXME: Log to console "The frame-src directive is deprecated. Use the child-src directive instead."
-        // See <https://bugs.webkit.org/show_bug.cgi?id=155773>.
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTFMove(directive), m_frameSrc);
     } else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::imgSrc))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTFMove(directive), m_imgSrc);
@@ -658,8 +656,10 @@ void ContentSecurityPolicyDirectiveList::addDirective(ParsedDirective&& directiv
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTFMove(directive), m_mediaSrc);
     else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::connectSrc))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTFMove(directive), m_connectSrc);
-    else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::childSrc))
+    else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::childSrc)) {
+        m_policy.reportDeprecatedDirective(ContentSecurityPolicyDirectiveNames::childSrc, ContentSecurityPolicyDirectiveNames::workerSrc);
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTFMove(directive), m_childSrc);
+    }
     else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::formAction))
         setCSPDirective<ContentSecurityPolicySourceListDirective>(WTFMove(directive), m_formAction);
     else if (equalIgnoringASCIICase(directive.name, ContentSecurityPolicyDirectiveNames::baseURI))

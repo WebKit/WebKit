@@ -900,6 +900,11 @@ void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const
     logToConsole(message);
 }
 
+void ContentSecurityPolicy::reportDeprecatedDirective(const String& deprecated, const String& preferred)
+{
+    logToConsole("The Content Security Policy directive '" + deprecated + "' has been deprecated. Instead, you should use '" + preferred + "'.");
+}
+
 void ContentSecurityPolicy::reportDirectiveAsSourceExpression(const String& directiveName, StringView sourceExpression) const
 {
     logToConsole("The Content Security Policy directive '" + directiveName + "' contains '" + sourceExpression + "' as a source expression. Did you mean '" + directiveName + " ...; " + sourceExpression + "...' (note the semicolon)?");

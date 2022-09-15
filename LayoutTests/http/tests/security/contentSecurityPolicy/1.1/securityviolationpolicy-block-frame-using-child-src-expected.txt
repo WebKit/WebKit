@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'child-src' has been deprecated. Instead, you should use 'worker-src'.
+CONSOLE MESSAGE: The Content Security Policy directive 'child-src' has been deprecated. Instead, you should use 'worker-src'.
 CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.html because it does not appear in the frame-src directive of the Content Security Policy.
 Check that a SecurityPolicyViolationEvent is fired upon blocking an frame by the child-src directive.
 

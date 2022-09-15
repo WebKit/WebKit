@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'child-src' has been deprecated. Instead, you should use 'worker-src'.
 CONSOLE MESSAGE: Refused to load http://127.0.0.1:8000/security/contentSecurityPolicy/resources/alert-fail.js because it does not appear in the worker-src directive of the Content Security Policy.
 Workers should be governed by 'child-src'.
 

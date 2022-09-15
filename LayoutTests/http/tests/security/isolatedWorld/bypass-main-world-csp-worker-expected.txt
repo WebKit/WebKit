@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: The Content Security Policy directive 'child-src' has been deprecated. Instead, you should use 'worker-src'.
 This tests that in an isolated world the Content Security Policy of the parent origin (this page) is bypassed and a Web Worker is allowed to be instantiated with a script URL not listed in the CSP of the page.
 
 PASS worker instantiated.

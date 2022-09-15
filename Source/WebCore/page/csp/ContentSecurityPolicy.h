@@ -161,6 +161,7 @@ public:
     bool allowContentSecurityPolicySourceStarToMatchAnyProtocol() const;
 
     // Used by ContentSecurityPolicyDirectiveList
+    void reportDeprecatedDirective(const String& deprecated, const String& preferred);
     void reportDuplicateDirective(const String&) const;
     void reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const;
     void reportInvalidSandboxFlags(const String&) const;
