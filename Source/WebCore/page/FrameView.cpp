@@ -267,6 +267,8 @@ void FrameView::reset()
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
     m_delayedTextFragmentIndicatorTimer.stop();
+    m_pendingTextFragmentIndicatorRange.reset();
+    m_pendingTextFragmentIndicatorText = String();
     m_lastViewportSize = IntSize();
     m_lastZoomFactor = 1.0f;
     m_isTrackingRepaints = false;
@@ -2229,8 +2231,7 @@ bool FrameView::scrollToFragment(const URL& url)
             if (highlightRanges.size()) {
                 auto range = highlightRanges.first();
                 TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
-                m_pendingTextFragmentIndicatorRange = range;
-                m_pendingTextFragmentIndicatorText = plainText(range);
+                maintainScrollPositionAtScrollToTextFragmentRange(range);
                 if (frame().settings().scrollToTextFragmentIndicatorEnabled())
                     m_delayedTextFragmentIndicatorTimer.startOneShot(100_ms);
                 return true;
@@ -2319,6 +2320,18 @@ void FrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
         layoutContext().layout();
     else
         scrollToAnchor();
+}
+
+void FrameView::maintainScrollPositionAtScrollToTextFragmentRange(SimpleRange& range)
+{
+    LOG(Scrolling, "FrameView::maintainScrollPositionAtScrollToTextFragmentRange at %p", range);
+
+    m_pendingTextFragmentIndicatorRange = range;
+    m_pendingTextFragmentIndicatorText = plainText(range);
+    if (!m_pendingTextFragmentIndicatorRange)
+        return;
+
+    scrollToTextFragmentRange();
 }
 
 void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
@@ -2457,24 +2470,23 @@ void FrameView::textFragmentIndicatorTimerFired()
     ASSERT(frame().document());
     auto& document = *frame().document();
     
-    if (!m_pendingTextFragmentIndicatorRange) {
-        cancelScheduledTextFragmentIndicatorTimer();
-        return;
-    }
+    m_delayedTextFragmentIndicatorTimer.stop();
     
-    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value())) {
-        cancelScheduledTextFragmentIndicatorTimer();
+    if (!m_pendingTextFragmentIndicatorRange)
         return;
-    }
+    
+    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
+        return;
     
     auto range = m_pendingTextFragmentIndicatorRange.value();
+    
     TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+    
+    maintainScrollPositionAtScrollToTextFragmentRange(range);
     
     auto textIndicator = TextIndicator::createWithRange(range, { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
     
     auto* page = frame().page();
-    
-    cancelScheduledTextFragmentIndicatorTimer();
     
     if (!page)
         return;
@@ -2509,6 +2521,8 @@ void FrameView::textFragmentIndicatorTimerFired()
 
 void FrameView::cancelScheduledTextFragmentIndicatorTimer()
 {
+    if (m_skipScrollResetOfScrollToTextFragmentRange)
+        return;
     m_pendingTextFragmentIndicatorRange.reset();
     m_pendingTextFragmentIndicatorText = String();
     m_delayedTextFragmentIndicatorTimer.stop();
@@ -3531,6 +3545,30 @@ void FrameView::scrollToAnchor()
     cancelScheduledScrolls();
 }
 
+void FrameView::scrollToTextFragmentRange()
+{
+    if (!m_pendingTextFragmentIndicatorRange)
+        return;
+
+    auto rangeText = plainText(m_pendingTextFragmentIndicatorRange.value());
+    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
+        return;
+
+    auto range = m_pendingTextFragmentIndicatorRange.value();
+
+    LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToTextFragmentRange() " << range);
+
+    if (!range.startContainer().renderer() || !range.endContainer().renderer())
+        return;
+
+    ASSERT(frame().document());
+    Ref document = *frame().document();
+
+    SetForScope skipScrollResetOfScrollToTextFragmentRange(m_skipScrollResetOfScrollToTextFragmentRange, true);
+    
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+}
+
 void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 {
     // No need to update if it's already crashed or known to be missing.
@@ -3654,6 +3692,8 @@ void FrameView::performPostLayoutTasks()
     }
 
     scrollToAnchor();
+    
+    scrollToTextFragmentRange();
 
     scheduleResizeEventIfNeeded();
     
