@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "TestCommand.h"
+#include "TestFeatures.h"
 
 namespace WTR {
 
@@ -109,6 +110,8 @@ TestCommand parseInputLine(const std::string& inputLine)
             result.absolutePath = tokenizer.next();
         else if (arg == "--force-dump-pixels")
             result.forceDumpPixels = true;
+        else if (arg == "--signposts")
+            Signpost::enabled = true;
         else
             die(inputLine);
     }

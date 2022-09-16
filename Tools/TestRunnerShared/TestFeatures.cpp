@@ -316,4 +316,30 @@ TestFeatures featureDefaultsFromSelfComparisonHeader(const TestCommand& command,
     return parseTestHeaderString(command.selfComparisonHeader, command.absolutePath, keyTypeMap);
 }
 
+bool Signpost::enabled = false;
+
+Signpost::Signpost(const char* const arg)
+    : name(arg)
+{
+    gettimeofday(&m_start, nullptr);
+}
+Signpost::~Signpost()
+{
+    if (!enabled)
+        return;
+    struct timeval stop;
+    gettimeofday(&stop, nullptr);
+
+    struct timeval elapsed;
+    elapsed.tv_sec = stop.tv_sec - m_start.tv_sec;
+    if (m_start.tv_usec > stop.tv_usec) {
+        elapsed.tv_sec -= 1;
+        stop.tv_usec += 1000000;
+    }
+    elapsed.tv_usec = stop.tv_usec - m_start.tv_usec;
+
+    fprintf(stderr, "SIGNPOST %s %ld.%06d\n", name, elapsed.tv_sec, elapsed.tv_usec);
+    
+}
+
 } // namespace WTF
