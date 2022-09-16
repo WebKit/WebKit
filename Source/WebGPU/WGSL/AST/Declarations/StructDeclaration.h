@@ -25,47 +25,61 @@
 
 #pragma once
 
+#include "ASTNode.h"
 #include "Attribute.h"
 #include "CompilationMessage.h"
-#include "Decl.h"
-#include "Expression.h"
+#include "Declaration.h"
 #include "TypeReference.h"
-#include "VariableQualifier.h"
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringView.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/UniqueRef.h>
+
 
 namespace WGSL::AST {
 
-class VariableDecl final : public Decl {
+class StructMember final : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    VariableDecl(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeReference>&& type, std::unique_ptr<Expression>&& initializer, Attributes&& attributes)
-        : Decl(span)
+    StructMember(SourceSpan span, StringView name, UniqueRef<TypeReference>&& type, Attributes&& attributes)
+        : ASTNode(span)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
-        , m_qualifier(WTFMove(qualifier))
         , m_type(WTFMove(type))
-        , m_initializer(WTFMove(initializer))
     {
-        ASSERT(m_type || m_initializer);
     }
 
-    Kind kind() const override { return Kind::Variable; }
     const StringView& name() const { return m_name; }
+    TypeReference& type() { return m_type; }
     Attributes& attributes() { return m_attributes; }
-    VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
-    TypeReference* maybeType() { return m_type.get(); }
-    Expression* maybeInitializer() { return m_initializer.get(); }
 
 private:
     StringView m_name;
     Attributes m_attributes;
-    // Each of the following may be null
-    // But at least one of type and initializer must be non-null
-    std::unique_ptr<VariableQualifier> m_qualifier;
-    std::unique_ptr<TypeReference> m_type;
-    std::unique_ptr<Expression> m_initializer;
+    UniqueRef<TypeReference> m_type;
+};
+
+class StructDeclaration final : public Declaration {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    StructDeclaration(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<StructMember>>&& members, Attributes&& attributes)
+        : Declaration(sourceSpan)
+        , m_name(name)
+        , m_attributes(WTFMove(attributes))
+        , m_members(WTFMove(members))
+    {
+    }
+
+    Kind kind() const override { return Kind::Struct; }
+    const StringView& name() const { return m_name; }
+    Attributes& attributes() { return m_attributes; }
+    Vector<UniqueRef<StructMember>>& members() { return m_members; }
+
+private:
+    StringView m_name;
+    Attributes m_attributes;
+    Vector<UniqueRef<StructMember>> m_members;
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(VariableDecl, isVariable())
+SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(StructDeclaration, isStruct())

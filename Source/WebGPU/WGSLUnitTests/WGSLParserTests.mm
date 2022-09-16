@@ -256,7 +256,7 @@
     XCTAssertEqual(shader->functions().size(), 1u);
 
     {
-        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        auto& func = shader->functions()[0].get();
         // @vertex
         XCTAssertEqual(func.attributes().size(), 1u);
         XCTAssertTrue(func.attributes()[0]->isStage());
@@ -273,7 +273,7 @@
         // var x = vec4<f32>(0.4, 0.4, 0.8, 1.0);
         XCTAssertTrue(func.body().statements()[0]->isVariable());
         auto& varStmt = downcast<WGSL::AST::VariableStatement>(func.body().statements()[0].get());
-        auto& varDecl = downcast<WGSL::AST::VariableDecl>(varStmt.declaration());
+        auto& varDecl = downcast<WGSL::AST::VariableDeclaration>(varStmt.declaration());
         XCTAssertEqual(varDecl.name(), "x"_s);
         XCTAssertTrue(varDecl.attributes().isEmpty());
         XCTAssertEqual(varDecl.maybeQualifier(), nullptr);
@@ -330,7 +330,7 @@
         auto& base = downcast<WGSL::AST::IdentifierExpression>(arrayAccess.base().get());
         XCTAssertEqual(base.identifier(), "x"_s);
         XCTAssertTrue(arrayAccess.index()->isInt32Literal());
-        WGSL::AST::Int32Literal& index = downcast<WGSL::AST::Int32Literal>(arrayAccess.index().get());
+        auto& index = downcast<WGSL::AST::Int32Literal>(arrayAccess.index().get());
         XCTAssertEqual(index.value(), 42);
     }
 }
@@ -350,7 +350,7 @@
     XCTAssertEqual(shader->functions().size(), 1u);
 
     {
-        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        auto& func = shader->functions()[0].get();
         // @vertex
         XCTAssertTrue(func.attributes().isEmpty());
 
@@ -370,7 +370,7 @@
         auto& retExpr = downcast<WGSL::AST::UnaryExpression>(*retStmt.maybeExpression());
         XCTAssertEqual(retExpr.operation(), WGSL::AST::UnaryOperation::Negate);
         XCTAssertTrue(retExpr.expression().isIdentifier());
-        WGSL::AST::IdentifierExpression& negateExpr = downcast<WGSL::AST::IdentifierExpression>(retExpr.expression());
+        auto& negateExpr = downcast<WGSL::AST::IdentifierExpression>(retExpr.expression());
         XCTAssertEqual(negateExpr.identifier(), "x"_s);
     }
 }
@@ -404,7 +404,7 @@
 
     // fn main(...)
     {
-        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        auto& func = shader->functions()[0].get();
         // @vertex
         XCTAssertEqual(func.attributes().size(), 1u);
 
@@ -420,12 +420,12 @@
 
     // var pos = array<vec2<f32>, 3>(...);
     {
-        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        auto& func = shader->functions()[0].get();
         XCTAssertTrue(func.body().statements().size() >= 1u);
         auto& stmt = func.body().statements()[0].get();
         XCTAssertTrue(stmt.isVariable());
         auto& varStmt = downcast<WGSL::AST::VariableStatement>(func.body().statements()[0].get());
-        auto& varDecl = downcast<WGSL::AST::VariableDecl>(varStmt.declaration());
+        auto& varDecl = downcast<WGSL::AST::VariableDeclaration>(varStmt.declaration());
         XCTAssertEqual(varDecl.name(), "pos"_s);
         XCTAssertTrue(varDecl.attributes().isEmpty());
         XCTAssertEqual(varDecl.maybeQualifier(), nullptr);
@@ -443,7 +443,7 @@
 
     // return vec4<f32>(..);
     {
-        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        auto& func = shader->functions()[0].get();
         XCTAssertTrue(func.body().statements().size() >= 1u);
         auto& stmt = func.body().statements()[1].get();
         XCTAssertTrue(stmt.isReturn());

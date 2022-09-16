@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Decl.h"
+#include "Declaration.h"
 #include "Statement.h"
 #include <wtf/UniqueRef.h>
 
@@ -34,17 +34,17 @@ namespace WGSL::AST {
 class VariableStatement final : public Statement {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    VariableStatement(SourceSpan span, VariableDecl&& decl)
+    VariableStatement(SourceSpan span, VariableDeclaration&& decl)
         : Statement(span)
-        , m_decl(makeUniqueRef<VariableDecl>(WTFMove(decl)))
+        , m_declaration(makeUniqueRef<VariableDeclaration>(WTFMove(decl)))
     {
     }
 
     Kind kind() const override { return Kind::Variable; }
-    Decl& declaration() { return m_decl.get(); }
+    VariableDeclaration& declaration() { return m_declaration.get(); }
 
 private:
-    UniqueRef<Decl> m_decl;
+    UniqueRef<VariableDeclaration> m_declaration;
 };
 
 } // namespace WGSL::AST

@@ -29,42 +29,60 @@ namespace WGSL {
 
 namespace AST {
 
-class AbstractFloatLiteral;
-class AbstractIntLiteral;
-class ArrayAccess;
-class ArrayTypeReference;
-class AssignmentStatement;
+#pragma mark -
+#pragma mark Shader Module
+class ShaderModule;
+class GlobalDirective;
+
+#pragma mark -
+#pragma mark Attribute
 class Attribute;
 class BindingAttribute;
-class BoolLiteral;
 class BuiltinAttribute;
-class CallableExpression;
-class CompoundStatement;
-class Decl;
-class Expression;
-class Float32Literal;
-class FunctionDecl;
-class GlobalDirective;
 class GroupAttribute;
-class IdentifierExpression;
-class Int32Literal;
 class LocationAttribute;
-class NamedTypeReference;
-class Parameter;
-class ParameterizedTypeReference;
-class ReturnStatement;
-class ShaderModule;
 class StageAttribute;
-class Statement;
-class StructDecl;
+
+#pragma mark -
+#pragma mark Declaration
+class Declaration;
+class FunctionDeclaration;
+class StructDeclaration;
 class StructMember;
-class StructureAccess;
-class TypeReference;
-class Uint32Literal;
-class UnaryExpression;
-class VariableDecl;
+class VariableDeclaration;
 class VariableQualifier;
+
+#pragma mark -
+#pragma mark Expression
+class Expression;
+class BoolLiteral;
+class Int32Literal;
+class Uint32Literal;
+class Float32Literal;
+class AbstractIntLiteral;
+class AbstractFloatLiteral;
+class IdentifierExpression;
+class ArrayAccess;
+class StructureAccess;
+class CallableExpression;
+class UnaryExpression;
+
+class Parameter;
+
+#pragma mark -
+#pragma mark Statement
+class Statement;
+class AssignmentStatement;
+class CompoundStatement;
+class ReturnStatement;
 class VariableStatement;
+
+#pragma mark -
+#pragma mark Types
+class TypeReference;
+class ArrayTypeReference;
+class NamedTypeReference;
+class ParameterizedTypeReference;
 
 } // namespace AST
 

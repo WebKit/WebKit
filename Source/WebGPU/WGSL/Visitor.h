@@ -46,10 +46,10 @@ public:
     virtual void visit(AST::BuiltinAttribute&);
     virtual void visit(AST::CallableExpression&);
     virtual void visit(AST::CompoundStatement&);
-    virtual void visit(AST::Decl&);
+    virtual void visit(AST::Declaration&);
     virtual void visit(AST::Expression&);
     virtual void visit(AST::Float32Literal&);
-    virtual void visit(AST::FunctionDecl&);
+    virtual void visit(AST::FunctionDeclaration&);
     virtual void visit(AST::GlobalDirective&);
     virtual void visit(AST::GroupAttribute&);
     virtual void visit(AST::IdentifierExpression&);
@@ -62,13 +62,13 @@ public:
     virtual void visit(AST::ShaderModule&);
     virtual void visit(AST::StageAttribute&);
     virtual void visit(AST::Statement&);
-    virtual void visit(AST::StructDecl&);
+    virtual void visit(AST::StructDeclaration&);
     virtual void visit(AST::StructMember&);
     virtual void visit(AST::StructureAccess&);
     virtual void visit(AST::TypeReference&);
     virtual void visit(AST::Uint32Literal&);
     virtual void visit(AST::UnaryExpression&);
-    virtual void visit(AST::VariableDecl&);
+    virtual void visit(AST::VariableDeclaration&);
     virtual void visit(AST::VariableQualifier&);
     virtual void visit(AST::VariableStatement&);
 

@@ -47,20 +47,20 @@ public:
     Expected<AST::ShaderModule, Error> parseShader();
 
     // UniqueRef whenever it can return multiple types.
-    Expected<UniqueRef<AST::Decl>, Error> parseGlobalDecl();
+    Expected<UniqueRef<AST::Declaration>, Error> parseGlobalDeclaration();
     Expected<AST::Attributes, Error> parseAttributes();
     Expected<UniqueRef<AST::Attribute>, Error> parseAttribute();
-    Expected<AST::StructDecl, Error> parseStructDecl(AST::Attributes&&);
+    Expected<AST::StructDeclaration, Error> parseStructDeclaration(AST::Attributes&&);
     Expected<AST::StructMember, Error> parseStructMember();
     Expected<UniqueRef<AST::TypeReference>, Error> parseTypeReference();
     Expected<UniqueRef<AST::TypeReference>, Error> parseTypeReferenceAfterIdentifier(StringView&&, SourcePosition start);
     Expected<UniqueRef<AST::TypeReference>, Error> parseArrayType();
-    Expected<AST::VariableDecl, Error> parseVariableDecl();
-    Expected<AST::VariableDecl, Error> parseVariableDeclWithAttributes(AST::Attributes&&);
+    Expected<AST::VariableDeclaration, Error> parseVariableDeclaration();
+    Expected<AST::VariableDeclaration, Error> parseVariableDeclarationWithAttributes(AST::Attributes&&);
     Expected<AST::VariableQualifier, Error> parseVariableQualifier();
     Expected<AST::StorageClass, Error> parseStorageClass();
     Expected<AST::AccessMode, Error> parseAccessMode();
-    Expected<AST::FunctionDecl, Error> parseFunctionDecl(AST::Attributes&&);
+    Expected<AST::FunctionDeclaration, Error> parseFunctionDeclaration(AST::Attributes&&);
     Expected<AST::Parameter, Error> parseParameter();
     Expected<UniqueRef<AST::Statement>, Error> parseStatement();
     Expected<AST::CompoundStatement, Error> parseCompoundStatement();

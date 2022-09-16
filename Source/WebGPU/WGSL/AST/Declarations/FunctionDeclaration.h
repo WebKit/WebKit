@@ -28,8 +28,8 @@
 #include "ASTNode.h"
 #include "Attribute.h"
 #include "CompilationMessage.h"
-#include "Decl.h"
-#include "Statements/CompoundStatement.h"
+#include "Declaration.h"
+#include "CompoundStatement.h"
 #include "TypeReference.h"
 
 namespace WGSL::AST {
@@ -55,11 +55,11 @@ private:
     Attributes m_attributes;
 };
 
-class FunctionDecl final : public Decl {
+class FunctionDeclaration final : public Declaration {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FunctionDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<Parameter>>&& parameters, std::unique_ptr<TypeReference>&& returnType, CompoundStatement&& body, Attributes&& attributes, Attributes&& returnAttributes)
-        : Decl(sourceSpan)
+    FunctionDeclaration(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<Parameter>>&& parameters, std::unique_ptr<TypeReference>&& returnType, CompoundStatement&& body, Attributes&& attributes, Attributes&& returnAttributes)
+        : Declaration(sourceSpan)
         , m_name(name)
         , m_parameters(WTFMove(parameters))
         , m_attributes(WTFMove(attributes))
@@ -88,4 +88,4 @@ private:
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(FunctionDecl, isFunction())
+SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(FunctionDeclaration, isFunction())

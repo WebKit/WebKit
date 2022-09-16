@@ -26,11 +26,11 @@
 #pragma once
 
 #include "ASTNode.h"
-#include "Decl.h"
-#include "FunctionDecl.h"
+#include "Declaration.h"
+#include "FunctionDeclaration.h"
 #include "GlobalDirective.h"
-#include "StructureDecl.h"
-#include "VariableDecl.h"
+#include "StructDeclaration.h"
+#include "VariableDeclaration.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -40,40 +40,40 @@ namespace WGSL::AST {
 class ShaderModule final : ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ShaderModule(SourceSpan span, Vector<UniqueRef<GlobalDirective>>&& directives, Vector<UniqueRef<Decl>>&& decls)
+    ShaderModule(SourceSpan span, Vector<UniqueRef<GlobalDirective>>&& directives, Vector<UniqueRef<Declaration>>&& decls)
         : ASTNode(span)
         , m_directives(WTFMove(directives))
     {
         for (auto& decl : decls) {
-            if (is<StructDecl>(decl.get())) {
+            if (is<StructDeclaration>(decl.get())) {
                 // We want to go from UniqueRef<BaseClass> to UniqueRef<DerivedClass>, but that is not supported by downcast.
                 // So instead we do UniqueRef -> unique_ptr -> raw_pointer -(downcast)-> raw_pointer -> unique_ptr -> UniqueRef...
-                Decl* rawPtr = decl.moveToUniquePtr().release();
-                StructDecl* downcastedRawPtr = downcast<StructDecl>(rawPtr);
-                m_structs.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<StructDecl>(downcastedRawPtr)));
-            } else if (is<VariableDecl>(decl.get())) {
-                Decl* rawPtr = decl.moveToUniquePtr().release();
-                VariableDecl* downcastedRawPtr = downcast<VariableDecl>(rawPtr);
-                m_globalVars.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<VariableDecl>(downcastedRawPtr)));
+                Declaration* rawPtr = decl.moveToUniquePtr().release();
+                StructDeclaration* downcastedRawPtr = downcast<StructDeclaration>(rawPtr);
+                m_structs.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<StructDeclaration>(downcastedRawPtr)));
+            } else if (is<VariableDeclaration>(decl.get())) {
+                Declaration* rawPtr = decl.moveToUniquePtr().release();
+                VariableDeclaration* downcastedRawPtr = downcast<VariableDeclaration>(rawPtr);
+                m_globalVars.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<VariableDeclaration>(downcastedRawPtr)));
             } else {
-                Decl* rawPtr = decl.moveToUniquePtr().release();
-                FunctionDecl* func = downcast<FunctionDecl>(rawPtr);
-                m_functions.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<FunctionDecl>(func)));
+                Declaration* rawPtr = decl.moveToUniquePtr().release();
+                FunctionDeclaration* func = downcast<FunctionDeclaration>(rawPtr);
+                m_functions.append(makeUniqueRefFromNonNullUniquePtr(std::unique_ptr<FunctionDeclaration>(func)));
             }
         }
     }
 
     Vector<UniqueRef<GlobalDirective>>& directives() { return m_directives; }
-    Vector<UniqueRef<StructDecl>>& structs() { return m_structs; }
-    Vector<UniqueRef<VariableDecl>>& globalVars() { return m_globalVars; }
-    Vector<UniqueRef<FunctionDecl>>& functions() { return m_functions; }
+    Vector<UniqueRef<StructDeclaration>>& structs() { return m_structs; }
+    Vector<UniqueRef<VariableDeclaration>>& globalVars() { return m_globalVars; }
+    Vector<UniqueRef<FunctionDeclaration>>& functions() { return m_functions; }
 
 private:
     Vector<UniqueRef<GlobalDirective>> m_directives;
 
-    Vector<UniqueRef<StructDecl>> m_structs;
-    Vector<UniqueRef<VariableDecl>> m_globalVars;
-    Vector<UniqueRef<FunctionDecl>> m_functions;
+    Vector<UniqueRef<StructDeclaration>> m_structs;
+    Vector<UniqueRef<VariableDeclaration>> m_globalVars;
+    Vector<UniqueRef<FunctionDeclaration>> m_functions;
 };
 
 } // namespace WGSL::AST

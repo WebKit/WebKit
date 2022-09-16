@@ -26,60 +26,35 @@
 #pragma once
 
 #include "ASTNode.h"
-#include "Attribute.h"
-#include "CompilationMessage.h"
-#include "Decl.h"
-#include "TypeReference.h"
-#include <wtf/text/StringView.h>
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
-
+#include <wtf/TypeCasts.h>
 
 namespace WGSL::AST {
 
-class StructMember final : public ASTNode {
+class Declaration : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeReference>&& type, Attributes&& attributes)
+    enum class Kind {
+        Variable,
+        Struct,
+        Function,
+    };
+
+    Declaration(SourceSpan span)
         : ASTNode(span)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_type(WTFMove(type))
     {
     }
 
-    const StringView& name() const { return m_name; }
-    TypeReference& type() { return m_type; }
-    Attributes& attributes() { return m_attributes; }
+    virtual ~Declaration() { }
 
-private:
-    StringView m_name;
-    Attributes m_attributes;
-    UniqueRef<TypeReference> m_type;
-};
-
-class StructDecl final : public Decl {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    StructDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<StructMember>>&& members, Attributes&& attributes)
-        : Decl(sourceSpan)
-        , m_name(name)
-        , m_attributes(WTFMove(attributes))
-        , m_members(WTFMove(members))
-    {
-    }
-
-    Kind kind() const override { return Kind::Struct; }
-    const StringView& name() const { return m_name; }
-    Attributes& attributes() { return m_attributes; }
-    Vector<UniqueRef<StructMember>>& members() { return m_members; }
-
-private:
-    StringView m_name;
-    Attributes m_attributes;
-    Vector<UniqueRef<StructMember>> m_members;
+    virtual Kind kind() const = 0;
+    bool isVariable() const { return kind() == Kind::Variable; }
+    bool isStruct() const { return kind() == Kind::Struct; }
+    bool isFunction() const { return kind() == Kind::Function; }
 };
 
 } // namespace WGSL::AST
 
-SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(StructDecl, isStruct())
+#define SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
+    static bool isType(const WGSL::AST::Declaration& decl) { return decl.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()

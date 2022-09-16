@@ -25,36 +25,47 @@
 
 #pragma once
 
-#include "ASTNode.h"
-#include <wtf/TypeCasts.h>
+#include "Attribute.h"
+#include "CompilationMessage.h"
+#include "Declaration.h"
+#include "Expression.h"
+#include "TypeReference.h"
+#include "VariableQualifier.h"
+#include <wtf/text/WTFString.h>
 
 namespace WGSL::AST {
 
-class Decl : public ASTNode {
+class VariableDeclaration final : public Declaration {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Kind {
-        Variable,
-        Struct,
-        Function,
-    };
-
-    Decl(SourceSpan span)
-        : ASTNode(span)
+    VariableDeclaration(SourceSpan span, StringView name, std::unique_ptr<VariableQualifier>&& qualifier, std::unique_ptr<TypeReference>&& type, std::unique_ptr<Expression>&& initializer, Attributes&& attributes)
+        : Declaration(span)
+        , m_name(name)
+        , m_attributes(WTFMove(attributes))
+        , m_qualifier(WTFMove(qualifier))
+        , m_type(WTFMove(type))
+        , m_initializer(WTFMove(initializer))
     {
+        ASSERT(m_type || m_initializer);
     }
 
-    virtual ~Decl() { }
+    Kind kind() const override { return Kind::Variable; }
+    const StringView& name() const { return m_name; }
+    Attributes& attributes() { return m_attributes; }
+    VariableQualifier* maybeQualifier() { return m_qualifier.get(); }
+    TypeReference* maybeType() { return m_type.get(); }
+    Expression* maybeInitializer() { return m_initializer.get(); }
 
-    virtual Kind kind() const = 0;
-    bool isVariable() const { return kind() == Kind::Variable; }
-    bool isStruct() const { return kind() == Kind::Struct; }
-    bool isFunction() const { return kind() == Kind::Function; }
+private:
+    StringView m_name;
+    Attributes m_attributes;
+    // Each of the following may be null
+    // But at least one of type and initializer must be non-null
+    std::unique_ptr<VariableQualifier> m_qualifier;
+    std::unique_ptr<TypeReference> m_type;
+    std::unique_ptr<Expression> m_initializer;
 };
 
 } // namespace WGSL::AST
 
-#define SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(ToValueTypeName, predicate) \
-SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::Decl& decl) { return decl.predicate; } \
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_WGSL_GLOBAL_DECL(VariableDeclaration, isVariable())

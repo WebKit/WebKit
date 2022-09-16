@@ -132,22 +132,22 @@ void Visitor::visit(AST::LocationAttribute&)
 #pragma mark -
 #pragma mark Declaration
 
-void Visitor::visit(AST::Decl& declaration)
+void Visitor::visit(AST::Declaration& declaration)
 {
     switch (declaration.kind()) {
-    case AST::Decl::Kind::Function:
-        checkErrorAndVisit(downcast<AST::FunctionDecl>(declaration));
+    case AST::Declaration::Kind::Function:
+        checkErrorAndVisit(downcast<AST::FunctionDeclaration>(declaration));
         break;
-    case AST::Decl::Kind::Struct:
-        checkErrorAndVisit(downcast<AST::StructDecl>(declaration));
+    case AST::Declaration::Kind::Struct:
+        checkErrorAndVisit(downcast<AST::StructDeclaration>(declaration));
         break;
-    case AST::Decl::Kind::Variable:
-        checkErrorAndVisit(downcast<AST::VariableDecl>(declaration));
+    case AST::Declaration::Kind::Variable:
+        checkErrorAndVisit(downcast<AST::VariableDeclaration>(declaration));
         break;
     }
 }
 
-void Visitor::visit(AST::FunctionDecl& functionDeclaration)
+void Visitor::visit(AST::FunctionDeclaration& functionDeclaration)
 {
     for (auto& attribute: functionDeclaration.attributes())
         checkErrorAndVisit(attribute);
@@ -159,7 +159,7 @@ void Visitor::visit(AST::FunctionDecl& functionDeclaration)
     checkErrorAndVisit(functionDeclaration.body());
 }
 
-void Visitor::visit(AST::StructDecl& structDeclaration)
+void Visitor::visit(AST::StructDeclaration& structDeclaration)
 {
     for (auto& attribute: structDeclaration.attributes())
         checkErrorAndVisit(attribute);
@@ -167,7 +167,7 @@ void Visitor::visit(AST::StructDecl& structDeclaration)
         checkErrorAndVisit(member);
 }
 
-void Visitor::visit(AST::VariableDecl& varDeclaration)
+void Visitor::visit(AST::VariableDeclaration& varDeclaration)
 {
     for (auto& attribute: varDeclaration.attributes())
         checkErrorAndVisit(attribute);
