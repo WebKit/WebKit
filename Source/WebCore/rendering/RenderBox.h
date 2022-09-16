@@ -423,7 +423,7 @@ override;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;
 
     virtual void updateLogicalWidth();
-    virtual void updateLogicalHeight();
+    void updateLogicalHeight();
     virtual LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const;
 
     void cacheIntrinsicContentLogicalHeightForFlexItem(LayoutUnit) const;
