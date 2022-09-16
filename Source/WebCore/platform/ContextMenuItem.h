@@ -211,20 +211,11 @@ private:
     Vector<ContextMenuItem> m_subMenuItems;
 };
 
-WEBCORE_EXPORT bool isValidContextMenuAction(ContextMenuAction);
-
 } // namespace WebCore
 
 namespace WTF {
 
-template<>
-struct EnumTraits<WebCore::ContextMenuAction> {
-    template<typename T>
-    static std::enable_if_t<sizeof(T) == sizeof(WebCore::ContextMenuAction), bool> isValidEnum(T action)
-    {
-        return WebCore::isValidContextMenuAction(static_cast<WebCore::ContextMenuAction>(action));
-    };
-};
+template<> WEBCORE_EXPORT bool isValidEnum<WebCore::ContextMenuAction, void>(std::underlying_type_t<WebCore::ContextMenuAction>);
 
 template<> struct EnumTraits<WebCore::ContextMenuItemType> {
     using values = EnumValues<

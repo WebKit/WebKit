@@ -90,7 +90,7 @@ template<> struct ArgumentCoder<WithoutNamespaceWithAttributes> {
 
 namespace WTF {
 
-template<> bool isValidEnum<EnumNamespace::EnumType>(uint16_t);
+template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t);
 template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<EnumNamespace2::OptionSetEnumType>);
 
 } // namespace WTF
