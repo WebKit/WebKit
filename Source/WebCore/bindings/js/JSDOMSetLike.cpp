@@ -74,6 +74,7 @@ void addToBackingSet(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& ba
     ASSERT(callData.type != JSC::CallData::Type::None);
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(item);
+    ASSERT(!arguments.hasOverflowed());
     JSC::call(&lexicalGlobalObject, function, callData, &backingSet, arguments);
 }
 

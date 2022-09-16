@@ -71,6 +71,7 @@ void setToBackingMap(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSObject& ba
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(key);
     arguments.append(value);
+    ASSERT(!arguments.hasOverflowed());
     JSC::call(&lexicalGlobalObject, function, callData, &backingMap, arguments);
 }
 

@@ -629,6 +629,7 @@ ValueOrException ScriptController::callInWorld(RunJavaScriptParameters&& paramet
         if (argument != parameters.arguments->end())
             functionStringBuilder.append(',');
     }
+    ASSERT(!markedArguments.hasOverflowed());
 
     if (!errorMessage.isEmpty())
         return makeUnexpected(ExceptionDetails { errorMessage });
@@ -751,6 +752,7 @@ void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(fulfillHandler);
     arguments.append(rejectHandler);
+    ASSERT(!arguments.hasOverflowed());
 
     call(&globalObject, thenFunction, callData, result.value(), arguments);
 }

@@ -66,6 +66,7 @@ auto DOMPromise::whenPromiseIsSettled(JSDOMGlobalObject* globalObject, JSC::JSOb
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(handler);
     arguments.append(handler);
+    ASSERT(!arguments.hasOverflowed());
 
     auto callData = JSC::getCallData(thenFunction);
     ASSERT(callData.type != JSC::CallData::Type::None);

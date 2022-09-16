@@ -1226,6 +1226,7 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
     MarkedArgumentBuffer args;
     args.append(promise.get());
     args.append(promise->result(*this));
+    ASSERT(!args.hasOverflowed());
     call(promise->globalObject(), callback, callData, jsNull(), args);
     scope.clearException();
 }

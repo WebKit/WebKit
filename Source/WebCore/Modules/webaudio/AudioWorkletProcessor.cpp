@@ -251,6 +251,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
 
     MarkedArgumentBuffer args;
     buildJSArguments(vm, globalObject, args, inputs, outputs, paramValuesMap);
+    ASSERT(!args.hasOverflowed());
 
     NakedPtr<JSC::Exception> returnedException;
     auto result = JSCallbackData::invokeCallback(globalObject, wrapper(), jsUndefined(), args, JSCallbackData::CallbackType::Object, Identifier::fromString(vm, "process"_s), returnedException);
