@@ -272,7 +272,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
                     svgText.setNeedsTextMetricsUpdate();
                     svgText.setNeedsPositioningValuesUpdate();
                 }
-
+                child.setNeedsTransformUpdate();
                 needsLayout = true;
             }
         }
