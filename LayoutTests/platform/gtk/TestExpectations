@@ -211,6 +211,9 @@ webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
 # ARIA description needs to be supported on GTK.
 accessibility/aria-description.html [ Skip ]
 
+# default ARIA for custom elements tests that timeout in GTK:
+accessibility/custom-elements/modal.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 # Legacy Expectations sections below

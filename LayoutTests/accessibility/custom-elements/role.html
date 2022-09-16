@@ -5,9 +5,7 @@
 <script src="../../resources/accessibility-helper.js"></script>
 <custom-element id="custom-element"></custom-element>
 <custom-checkbox id="custom-checkbox"></custom-checkbox>
-<custom-checkbox id="button-checkbox" role="button" aria-roledescription="other description" aria-label="other label"></custom-checkbox>
-<p id="description"></p>
-<div id="console"></div>
+<custom-checkbox id="button-checkbox" role="button" aria-roledescription="other description" aria-label="other label" aria-checked="false"></custom-checkbox>
 <script>
 
 customElements.define('custom-element', class CustomElement extends HTMLElement {});
@@ -19,6 +17,7 @@ customElements.define('custom-checkbox', class CustomElement extends HTMLElement
         internals.role = 'checkbox';
         internals.ariaRoleDescription = 'some description';
         internals.ariaLabel = 'some label';
+        internals.ariaChecked = 'true';
     }
 });
 
@@ -30,13 +29,13 @@ else {
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-checkbox").role', 'AXRole: AXCheckBox');
     shouldBeEqualToString('accessibilityController.accessibleElementById("custom-checkbox").roleDescription', 'AXRoleDescription: some description');
     shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("custom-checkbox"))', 'some label');
+    shouldBe('accessibilityController.accessibleElementById("custom-checkbox").isChecked', 'true');
     shouldBeEqualToString('accessibilityController.accessibleElementById("button-checkbox").role', 'AXRole: AXButton');
     shouldBeEqualToString('accessibilityController.accessibleElementById("button-checkbox").roleDescription', 'AXRoleDescription: other description');
     shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("button-checkbox"))', 'other label');
+    shouldBe('accessibilityController.accessibleElementById("button-checkbox").isChecked', 'false');
 }
 
 </script>
-
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ElementInternals.h"
 
+#include "AXObjectCache.h"
 #include "ElementRareData.h"
 #include "ShadowRoot.h"
 #include <wtf/IsoMallocInlines.h>
@@ -47,47 +48,27 @@ ShadowRoot* ElementInternals::shadowRoot() const
     return shadowRoot;
 }
 
-void ElementInternals::setRole(const AtomString& role)
+void ElementInternals::setAttributeWithoutSynchronization(const QualifiedName& name, const AtomString& value)
 {
-    setAriaValueForAttribute(roleAttr->localName(), role);
+    RefPtr element = m_element.get();
+
+    auto* defaultARIA = m_element->customElementDefaultARIAIfExists();
+    auto oldValue = defaultARIA ? defaultARIA->valueForAttribute(name) : nullAtom();
+    if (oldValue.isNull())
+        oldValue = element->attributeWithoutSynchronization(name);
+
+    element->customElementDefaultARIA().setValueForAttribute(name, value);
+
+    if (AXObjectCache* cache = element->document().existingAXObjectCache())
+        cache->deferAttributeChangeIfNeeded(element.get(), name, oldValue, value);
 }
 
-const AtomString& ElementInternals::role()
-{
-    return ariaValueForAttribute(roleAttr->localName());
-}
-
-void ElementInternals::setAriaRoleDescription(const AtomString& description)
-{
-    setAriaValueForAttribute(aria_roledescriptionAttr->localName(), description);
-}
-
-const AtomString& ElementInternals::ariaRoleDescription()
-{
-    return ariaValueForAttribute(aria_roledescriptionAttr->localName());
-}
-
-void ElementInternals::setAriaLabel(const AtomString& label)
-{
-    setAriaValueForAttribute(aria_labelAttr->localName(), label);
-}
-
-const AtomString& ElementInternals::ariaLabel()
-{
-    return ariaValueForAttribute(aria_labelAttr->localName());
-}
-
-void ElementInternals::setAriaValueForAttribute(const AtomString& key, const AtomString& value)
-{
-    m_element->customElementDefaultARIA().setValueForAttribute(key, value);
-}
-
-const AtomString& ElementInternals::ariaValueForAttribute(const AtomString& key)
+const AtomString& ElementInternals::attributeWithoutSynchronization(const QualifiedName& name) const
 {
     auto* defaultARIA = m_element->customElementDefaultARIAIfExists();
     if (!defaultARIA)
         return nullAtom();
-    return defaultARIA->valueForAttribute(key);
+    return defaultARIA->valueForAttribute(name);
 }
 
 } // namespace WebCore
