@@ -35,27 +35,6 @@ namespace WebKit::WebGPU {
 struct BlendState {
     BlendComponent color;
     BlendComponent alpha;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << color;
-        encoder << alpha;
-    }
-
-    template<class Decoder> static std::optional<BlendState> decode(Decoder& decoder)
-    {
-        std::optional<BlendComponent> color;
-        decoder >> color;
-        if (!color)
-            return std::nullopt;
-
-        std::optional<BlendComponent> alpha;
-        decoder >> alpha;
-        if (!alpha)
-            return std::nullopt;
-
-        return { { WTFMove(*color), WTFMove(*alpha) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

@@ -38,33 +38,6 @@ struct StorageTextureBindingLayout {
     PAL::WebGPU::StorageTextureAccess access { PAL::WebGPU::StorageTextureAccess::WriteOnly };
     PAL::WebGPU::TextureFormat format { PAL::WebGPU::TextureFormat::R8unorm };
     PAL::WebGPU::TextureViewDimension viewDimension { PAL::WebGPU::TextureViewDimension::_2d };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << access;
-        encoder << format;
-        encoder << viewDimension;
-    }
-
-    template<class Decoder> static std::optional<StorageTextureBindingLayout> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::StorageTextureAccess> access;
-        decoder >> access;
-        if (!access)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::TextureFormat> format;
-        decoder >> format;
-        if (!format)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::TextureViewDimension> viewDimension;
-        decoder >> viewDimension;
-        if (!viewDimension)
-            return std::nullopt;
-
-        return { { WTFMove(*access), WTFMove(*format), WTFMove(*viewDimension) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

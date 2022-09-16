@@ -39,33 +39,6 @@ struct VertexBufferLayout {
     PAL::WebGPU::Size64 arrayStride { 0 };
     PAL::WebGPU::VertexStepMode stepMode { PAL::WebGPU::VertexStepMode::Vertex };
     Vector<VertexAttribute> attributes;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << arrayStride;
-        encoder << stepMode;
-        encoder << attributes;
-    }
-
-    template<class Decoder> static std::optional<VertexBufferLayout> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::Size64> arrayStride;
-        decoder >> arrayStride;
-        if (!arrayStride)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::VertexStepMode> stepMode;
-        decoder >> stepMode;
-        if (!stepMode)
-            return std::nullopt;
-
-        std::optional<Vector<VertexAttribute>> attributes;
-        decoder >> attributes;
-        if (!attributes)
-            return std::nullopt;
-
-        return { { WTFMove(*arrayStride), WTFMove(*stepMode), WTFMove(*attributes) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

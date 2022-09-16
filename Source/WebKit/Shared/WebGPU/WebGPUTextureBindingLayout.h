@@ -37,33 +37,6 @@ struct TextureBindingLayout {
     PAL::WebGPU::TextureSampleType sampleType { PAL::WebGPU::TextureSampleType::Float };
     PAL::WebGPU::TextureViewDimension viewDimension { PAL::WebGPU::TextureViewDimension::_2d };
     bool multisampled { false };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << sampleType;
-        encoder << viewDimension;
-        encoder << multisampled;
-    }
-
-    template<class Decoder> static std::optional<TextureBindingLayout> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::TextureSampleType> sampleType;
-        decoder >> sampleType;
-        if (!sampleType)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::TextureViewDimension> viewDimension;
-        decoder >> viewDimension;
-        if (!viewDimension)
-            return std::nullopt;
-
-        std::optional<bool> multisampled;
-        decoder >> multisampled;
-        if (!multisampled)
-            return std::nullopt;
-
-        return { { WTFMove(*sampleType), WTFMove(*viewDimension), WTFMove(*multisampled) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

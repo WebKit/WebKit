@@ -34,21 +34,6 @@ namespace WebKit::WebGPU {
 
 struct ObjectDescriptorBase {
     String label;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << label;
-    }
-
-    template<class Decoder> static std::optional<ObjectDescriptorBase> decode(Decoder& decoder)
-    {
-        std::optional<String> label;
-        decoder >> label;
-        if (!label)
-            return std::nullopt;
-
-        return { { WTFMove(*label) } };
-    }
 };
 
 } // namespace WebKit::WebGPU
