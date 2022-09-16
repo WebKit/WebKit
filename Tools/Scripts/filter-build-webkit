@@ -43,6 +43,7 @@ use File::Basename;
 use FindBin;
 use lib $FindBin::Bin;
 use Getopt::Long;
+use Term::ANSIColor qw(color);
 use VCSUtils;
 
 use constant {
@@ -80,9 +81,6 @@ sub setOutputFormatOption($$);
 sub shouldIgnoreLine($$);
 sub usageAndExit();
 
-# Defined in VCSUtils.
-sub possiblyColored($$);
-
 # Global variables used only in global scope.
 my $outputPath = "&STDOUT";
 my $platform = "mac";
@@ -90,9 +88,8 @@ my $showHelp;
 
 # Global variables used in global and subroutine scope.
 our $logUnfilteredOutput;
-our $outputFormat = "text";
+our $outputFormat = -t STDOUT ? "color" : "text";
 our $unfilteredOutputPath = "build.log";
-our $useColor = -t STDOUT;
 our $inEntitlements = 0;
 our $inDevicePreparationWarnings = 0;
 
@@ -105,10 +102,11 @@ Usage: @{[ basename($0) ]} [options] buildlog1 [buildlog2 ...]
   -p|--platform Logfile type (default: $platform)
 Output Options:
   -o|--output   Path for output (default: STDOUT)
-  -f|--format   Output format (default: $outputFormat)
-                  text: Plain text
+  -f|--format   Output format (default: color)
                   html: Standalone HTML document
-  --[no-]color  ANSI color output for text (default: on, if -o is STDOUT)
+                  text: Plain text
+                  color: Plain text with colors
+                  oneline: Plain text with colors on one line
 Unfiltered Logging Options:
   -l|--log      Save unfiltered output to file (see --log-file)
   --logfile     Path to save unfiltered output (implies --log, default: $unfilteredOutputPath)
@@ -122,7 +120,6 @@ sub main() {
         'o|output=s'            => \$outputPath,
         'p|platform=s'          => \$platform,
         'f|format=s'            => \&setOutputFormatOption,
-        'color!'                => \$useColor,
         'l|log'                 => \$logUnfilteredOutput,
         'logfile=s'             => \&setLogfileOption,
     );
@@ -266,18 +263,28 @@ sub printLine($$)
         elsif ($style == STYLE_SUCCESS) { print OUTPUT_HANDLE "<p class=\"success\">$line</p>"; }
         elsif ($style == STYLE_ALERT)   { print OUTPUT_HANDLE "<p class=\"alert\">$line</p>"; }
         else                            { print OUTPUT_HANDLE "<p>$line</p>"; }
-    } else {
-        if ($useColor) {
-            my $colors = "reset";
-            if ($style == STYLE_HEADER)  { $colors = "blue"; }
-            if ($style == STYLE_SUCCESS) { $colors = "green"; }
-            if ($style == STYLE_ALERT)   { $colors = "red"; }
-            print OUTPUT_HANDLE possiblyColored($colors, $line);
-        } else {
-            print OUTPUT_HANDLE $line;
+        return;
+    }
+    my $erase = "";
+    my $color = "";
+    my $reset = "";
+    my $endl = "\n";
+    if ($outputFormat eq "color" or $outputFormat eq "oneline") {
+        $reset = color("reset");
+        if ($style == STYLE_HEADER)    { $color = color("blue"); }
+        elsif ($style == STYLE_SUCCESS) { $color = color("green"); }
+        elsif ($style == STYLE_ALERT)   { $color = color("red"); }
+        if ($outputFormat eq "oneline") {
+            $erase = "\33[2K\r";
+            if ($style != STYLE_ALERT && $style != STYLE_SUCCESS) {
+                $endl = "\r";
+            }
         }
     }
-    print OUTPUT_HANDLE "\n";
+    print OUTPUT_HANDLE $erase, $color, $line, $reset, $endl;
+    if ($outputFormat eq "oneline") {
+        OUTPUT_HANDLE->flush();
+    }
 }
 
 sub setLogfileOption($$)
@@ -291,8 +298,8 @@ sub setOutputFormatOption($$)
 {
     my ($opt, $value) = @_;
     $value = lc($value);
-    if ($value ne "html" && $value ne "text") {
-        die "The $opt option must be either \"html\" or \"text\"";
+    if ($value ne "html" && $value ne "text" && $value ne "color" && $value ne "oneline") {
+        die "The $opt option must be either \"html\", \"text\", \”color\" or \”oneline\"";
     }
     $outputFormat = $value;
 }
