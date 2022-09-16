@@ -201,10 +201,10 @@ class MacTest(darwin_testcase.DarwinTest):
         self.assertEqual(search_path[4], '/additional_testing_path/mac-add-mountainlion-wk1')
         self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/mac-mountainlion-wk1')
 
-    def test_monterey_baseline_search_path(self):
-        search_path = self.make_port(port_name='macos-monterey').default_baseline_search_path()
-        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-monterey-wk1')
-        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-monterey')
+    def test_ventura_baseline_search_path(self):
+        search_path = self.make_port(port_name='macos-ventura').default_baseline_search_path()
+        self.assertEqual(search_path[0], '/mock-checkout/LayoutTests/platform/mac-ventura-wk1')
+        self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-ventura')
         self.assertEqual(search_path[2], '/mock-checkout/LayoutTests/platform/mac-wk1')
         self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/mac')
 
