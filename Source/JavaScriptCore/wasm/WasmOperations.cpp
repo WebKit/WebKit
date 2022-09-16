@@ -533,8 +533,11 @@ JSC_DEFINE_JIT_OPERATION(operationIterateResults, void, (CallFrame* callFrame, I
     MarkedArgumentBuffer buffer;
     JSValue result = JSValue::decode(encResult);
     forEachInIterable(globalObject, result, [&] (VM&, JSGlobalObject*, JSValue value) -> void {
-        if (buffer.size() < signature->returnCount())
+        if (buffer.size() < signature->returnCount()) {
             buffer.append(value);
+            if (UNLIKELY(buffer.hasOverflowed()))
+                throwOutOfMemoryError(globalObject, scope);
+        }
         ++iterationCount;
     });
     RETURN_IF_EXCEPTION(scope, void());
