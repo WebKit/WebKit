@@ -15,14 +15,13 @@ jsTestIsAsync = true;
     expectedData = null;
     receivedPostMessageResponse = false;
 
-    var worker = new SharedWorker('shared-worker-permission-status-onchange-event.js');
+    var worker = new SharedWorker('permission-status-onchange-event-shared-worker.js');
     worker.port.onmessage = function(message) {
         window.message = message;
         shouldBeEqualToString("message.data", expectedData);
         receivedPostMessageResponse = true;
     }
 
-    debug("No permission state is set");
     receivedPostMessageResponse = false;
     expectedData = "prompt";
     worker.port.postMessage(1);
@@ -31,7 +30,6 @@ jsTestIsAsync = true;
     receivedPostMessageResponse = false;
     expectedData = "granted";
     testRunner.setGeolocationPermission(true);
-    debug("Permission has been granted");
     await shouldBecomeEqual("receivedPostMessageResponse", "true");
     finishJSTest();
 })();

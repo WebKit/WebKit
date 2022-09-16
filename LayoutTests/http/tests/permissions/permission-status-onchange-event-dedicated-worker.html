@@ -7,7 +7,7 @@
 <body>
 <script>
 
-description("This test checks that the Permissions API change event works for service workers")
+description("This test checks that the Permissions API change event works for dedicated workers")
 
 jsTestIsAsync = true;
 
@@ -15,25 +15,21 @@ jsTestIsAsync = true;
     expectedData = null;
     receivedPostMessageResponse = false;
 
-    navigator.serviceWorker.register('service-worker-permission-status-onchange-event.js');
-    navigator.serviceWorker.addEventListener('message', (message) => {
+    var worker = new Worker('permission-status-onchange-event-dedicated-worker.js');
+    worker.onmessage = function(message) {
         window.message = message;
         shouldBeEqualToString("message.data", expectedData);
         receivedPostMessageResponse = true;
-    });
+    }
 
-    debug("No permission state is set");
     receivedPostMessageResponse = false;
     expectedData = "prompt";
-    navigator.serviceWorker.ready.then((registration) => {
-        registration.active.postMessage(1);
-    });
+    worker.postMessage(1);
     await shouldBecomeEqual("receivedPostMessageResponse", "true");
 
     receivedPostMessageResponse = false;
     expectedData = "granted";
     testRunner.setGeolocationPermission(true);
-    debug("Permission has been granted");
     await shouldBecomeEqual("receivedPostMessageResponse", "true");
     finishJSTest();
 })();
