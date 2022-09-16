@@ -102,6 +102,144 @@ for my $i (0..scalar(@undefinedSymbolsLines) - 1) {
     is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
 }
 
+my @ruleScriptLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+RuleScriptExecution /Users/u/Build/Debug/LLIntOffsets/arm64e/LLIntDesiredOffsets.h /Users/u/Build/JavaScriptCore.build/Debug/JSCLLIntOffsetsExtractor.build/LowLevelInterpreter.d /Users/u/WebKit/OpenSource/Source/JavaScriptCore/llint/LowLevelInterpreter.asm normal undefined_arch (in target 'JSCLLIntOffsetsExtractor' from project 'JavaScriptCore')
+    cd /Users/u/WebKit/OpenSource/Source/JavaScriptCore
+    /bin/sh -c set\ -e'
+''
+'OFFLINEASM_ARGS\=\"\"'
+'if\ \[\[\ \"\$\{DEPLOYMENT_LOCATION\}\"\ \=\=\ \"YES\"\ \]\]\;\ then'
+'\ \ \ \ OFFLINEASM_ARGS\=\"\$\{OFFLINEASM_ARGS\}\ --webkit-additions-path\=\$\{WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH\}\"'
+'fi'
+''
+'/usr/bin/env\ ruby\ \"\$\{SRCROOT\}/offlineasm/generate_offset_extractor.rb\"\ \"-I\$\{BUILT_PRODUCTS_DIR\}/DerivedSources/JavaScriptCore\"\ \"\$\{INPUT_FILE_PATH\}\"\ \ \"\$\{BUILT_PRODUCTS_DIR\}/JSCLLIntSettingsExtractor\"\ \"\$\{SCRIPT_OUTPUT_FILE_0\}\"\ \"\$\{ARCHS\}\ C_LOOP\"\ \"\$\{BUILD_VARIANTS\}\"\ \$\{OFFLINEASM_ARGS\}\ --depfile\=\"\$\{TARGET_TEMP_DIR\}/\$\{INPUT_FILE_BASE\}.d\"'
+''
+'
+RuleScriptExecution /Users/u/Build/Debug/usr/local/include/absl/utility/utility.h /Users/u/WebKit/OpenSource/Source/ThirdParty/libwebrtc/Source/third_party/abseil-cpp/absl/utility/utility.h normal undefined_arch (in target 'absl' from project 'libwebrtc')
+    cd /Users/u/WebKit/OpenSource/Source/ThirdParty/libwebrtc
+    /bin/sh -c cp\ -f\ \"\$\{INPUT_FILE_PATH\}\"\ \"\$\{SCRIPT_OUTPUT_FILE_0\}\"'
+'
+RuleScriptExecution stoptest.h
+END
+
+for my $i (0..scalar(@ruleScriptLines) - 1) {
+    my $previousLine = $i ? $ruleScriptLines[$i - 1] : "";
+    my $line = $ruleScriptLines[$i];
+    if ($line =~ /RuleScriptExecution/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+
+# Investigate these in https://bugs.webkit.org/show_bug.cgi?id=245263.
+my @diagProblemLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+CompileC /Users/u/Build/WebCore.build/Debug/WebCore.build/Objects-normal/arm64e/UnifiedSource245.o /Users/u/Build/Debug/DerivedSources/WebCore/unified-sources/UnifiedSource245.cpp normal arm64e c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'WebCore' from project 'WebCore')
+    cd /Users/u/WebKit/OpenSource/Source/WebCore
+    /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/clang -x c++ -target arm64e-apple-macos13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -std\=c++2a -stdlib\=libc++ -gmodules -Wno-trigraphs -fno-exceptions -fno-rtti -fno-sanitize\=vptr -fpascal-strings -O0 -fno-common -Werror -Wno-missing-field-initializers -Wmissing-prototypes -Wunreachable-code -Wnon-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wunused-function -Wno-unused-label -Wno-unused-parameter -Wunused-variable -Wunused-value -Wempty-body -Wuninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wconstant-conversion -Wint-conversion -Wbool-conversion -Wenum-conversion -Wno-float-conversion -Wnon-literal-null-conversion -Wobjc-literal-conversion -Wsign-compare -Wno-shorten-64-to-32 -Wnewline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -DBUILDING_WEBKIT -DGL_SILENCE_DEPRECATION\=1 -DGLES_SILENCE_DEPRECATION\=1 -isysroot /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -fvisibility\=hidden -fvisibility-inlines-hidden -fno-threadsafe-statics -Wno-sign-conversion -Winfinite-recursion -Wmove -Wcomma -Wblock-capture-autoreleasing -Wstrict-prototypes -Wrange-loop-analysis -Wno-semicolon-before-method-body -index-store-path /Users/u/Library/Developer/Xcode/DerivedData/WebKit-hbntwurqoeetjbbukcpuwpfssnio/Index.noindex/DataStore -iquote /Users/u/Build/WebCore.build/Debug/WebCore.build/WebCore-generated-files.hmap -I/Users/u/Build/WebCore.build/Debug/WebCore.build/WebCore-own-target-headers.hmap -I/Users/u/Build/WebCore.build/Debug/WebCore.build/WebCore-all-target-headers.hmap -iquote /Users/u/Build/WebCore.build/Debug/WebCore.build/WebCore-project-headers.hmap -I/Users/u/Build/Debug/include -IPAL -IForwardingHeaders -I/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/usr/include/libxslt -I/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/usr/include/libxml2 -I/Users/u/Build/Debug/DerivedSources/WebCore -I/Users/u/Build/Debug/usr/local/include -I/Users/u/Build/Debug/usr/local/include/WebKitAdditions -I/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/usr/local/include/WebKitAdditions -I/Users/u/Build/Debug/usr/local/include -I/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/usr/local/include -I/Users/u/Build/Debug/usr/local/include/webrtc -I/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/usr/local/include/webrtc -I/Users/u/Build/Debug/usr/local/include/webrtc/sdk/objc/Framework/Headers -I/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/usr/local/include/webrtc/sdk/objc/Framework/Headers -I/Users/u/WebKit/OpenSource/Source/WebCore -I/Users/u/Build/WebCore.build/Debug/WebCore.build/DerivedSources-normal/arm64e -I/Users/u/Build/WebCore.build/Debug/WebCore.build/DerivedSources/arm64e -I/Users/u/Build/WebCore.build/Debug/WebCore.build/DerivedSources -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wconditional-uninitialized -Wextra-tokens -Wformat\=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wno-unknown-warning-option -Wliteral-conversion -Wthread-safety -Wno-profile-instr-out-of-date -Wno-profile-instr-unprofiled -F/Users/u/Build/Debug -iframework /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/System/Library/PrivateFrameworks -iframework /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/Library/Apple/System/Library/PrivateFrameworks -iframework /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/System/Library/Frameworks -isystem /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/System/Library/Frameworks/System.framework/PrivateHeaders -include /Users/u/Build/PrecompiledHeaders/SharedPrecompiledHeaders/15890480973332163591/WebCorePrefix.h -MMD -MT dependencies -MF /Users/u/Build/WebCore.build/Debug/WebCore.build/Objects-normal/arm64e/UnifiedSource245.d --serialize-diagnostics /Users/u/Build/WebCore.build/Debug/WebCore.build/Objects-normal/arm64e/UnifiedSource245.dia -c /Users/u/Build/Debug/DerivedSources/WebCore/unified-sources/UnifiedSource245.cpp -o /Users/u/Build/WebCore.build/Debug/WebCore.build/Objects-normal/arm64e/UnifiedSource245.o -index-unit-output-path /WebCore.build/Debug/WebCore.build/Objects-normal/arm64e/UnifiedSource245.o
+/Users/u/Build/WebCore.build/Debug/WebCore.build/Objects-normal/arm64e/UnifiedSource245.dia:1:1: warning: Could not read serialized diagnostics file: error("Failed to open diagnostics file") (in target 'WebCore' from project 'WebCore')
+
+CompileC stoptest
+END
+
+for my $i (0..scalar(@diagProblemLines) - 1) {
+    my $previousLine = $i ? $diagProblemLines[$i - 1] : "";
+    my $line = $diagProblemLines[$i];
+    if ($line =~ /CompileC/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+
+my @productPackagingLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+ProcessProductPackaging "" /Users/u/Build/libwebrtc.build/Debug/yasm.build/yasm.xcent (in target 'yasm' from project 'libwebrtc')
+    cd /Users/u/WebKit/OpenSource/Source/ThirdParty/libwebrtc
+
+    Entitlements:
+
+    {
+    "com.apple.security.get-task-allow" = 1;
+}
+
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/u/Build/libwebrtc.build/Debug/yasm.build/yasm.xcent
+
+ProcessProductPackaging stoptest.h
+END
+for my $i (0..scalar(@productPackagingLines) - 1) {
+    my $previousLine = $i ? $productPackagingLines[$i - 1] : "";
+    my $line = $productPackagingLines[$i];
+    if ($line =~ /ProcessProductPackaging/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+
+
+my @processProductPackagingDER = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+ProcessProductPackagingDER /Users/u/Build/DumpRenderTree.build/Debug/DumpRenderTree.app.build/DumpRenderTree.app.xcent /Users/u/Build/DumpRenderTree.build/Debug/DumpRenderTree.app.build/DumpRenderTree.app.xcent.der (in target 'DumpRenderTree.app' from project 'DumpRenderTree')
+    cd /Users/u/WebKit/OpenSource/Tools/DumpRenderTree
+    /usr/bin/derq query -f xml -i /Users/u/Build/DumpRenderTree.build/Debug/DumpRenderTree.app.build/DumpRenderTree.app.xcent -o /Users/u/Build/DumpRenderTree.build/Debug/DumpRenderTree.app.build/DumpRenderTree.app.xcent.der --raw
+
+ProcessProductPackagingDER stoptest
+END
+for my $i (0..scalar(@processProductPackagingDER) - 1) {
+    my $previousLine = $i ? $processProductPackagingDER[$i - 1] : "";
+    my $line = $processProductPackagingDER[$i];
+    if ($line =~ /ProcessProductPackagingDER/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+
+# Two below once https://bugs.webkit.org/show_bug.cgi?id=175997 is fixed.
+my @libtoolSameMemberLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+Libtool /Users/u/Build/Debug/libWTF.a normal (in target 'WTF' from project 'WTF')
+    cd /Users/u/WebKit/OpenSource/Source/WTF
+    /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool -static -arch_only arm64e -D -syslibroot /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk -L/Users/u/Build/Debug -L/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.Internal.sdk/usr/local/lib -filelist /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/WTF.LinkFileList -lbmalloc -dependency_info /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/WTF_libtool_dependency_info.dat -o /Users/u/Build/Debug/libWTF.a
+/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool: warning same member name (DebugHeap.o) in output file used for input files: /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/DebugHeap.o and: /Users/u/Build/Debug/libbmalloc.a(DebugHeap.o) due to use of basename, truncation and blank padding
+/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool: warning same member name (Gigacage.o) in output file used for input files: /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/Gigacage.o and: /Users/u/Build/Debug/libbmalloc.a(Gigacage.o) due to use of basename, truncation and blank padding
+/Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool: warning same member name (Logging.o) in output file used for input files: /Users/u/Build/WTF.build/Debug/WTF.build/Objects-normal/arm64e/Logging.o and: /Users/u/Build/Debug/libbmalloc.a(Logging.o) due to use of basename, truncation and blank padding
+
+Libtool stoptest
+END
+
+for my $i (0..scalar(@libtoolSameMemberLines) - 1) {
+    my $previousLine = $i ? $libtoolSameMemberLines[$i - 1] : "";
+    my $line = $libtoolSameMemberLines[$i];
+    if ($line =~ /Libtool/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+
+my @dsymNoObjectFileLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+GenerateDSYMFile /Users/u/Build/Debug/TestWTF.dSYM /Users/u/Build/Debug/TestWTF (in target 'TestWTF' from project 'TestWebKitAPI')
+    cd /Users/u/WebKit/OpenSource/Tools/TestWebKitAPI
+    /Volumes/Xcode14A6270e_m20A2411_m22A338_i20A358_FastSim_Boost_Encrypted_53GB/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/dsymutil /Users/u/Build/Debug/TestWTF -o /Users/u/Build/Debug/TestWTF.dSYM
+warning: (arm64e)  could not find object file symbol for symbol __ZNK3WTF10AtomString23convertToASCIILowercaseEv
+warning: (arm64e)  could not find object file symbol for symbol __ZNK3WTF10AtomString16convertASCIICaseILNS0_15CaseConvertTypeE1EEES0_v
+warning: (arm64e)  could not find object file symbol for symbol __ZNK3WTF10AtomString23convertToASCIIUppercaseEv
+warning: (arm64e)  could not find object file symbol for symbol __ZNK3WTF10AtomString16convertASCIICaseILNS0_15CaseConvertTypeE0EEES0_v
+warning: (arm64e)  could not find object file symbol for symbol __ZN3WTF10AtomString6numberEi
+warning: (arm64e)  could not find object file symbol for symbol __ZN3WTF20numberToStringSignedINS_10AtomStringEiEENS_30IntegerToStringConversionTraitIT_E10ReturnTypeET0_PNS4_22AdditionalArgumentTypeE
+warning: (arm64e)  could not find object file symbol for symbol __ZN3WTF10AtomString6numberEj
+
+GenerateDSYMFile stoptest
+END
+for my $i (0..scalar(@dsymNoObjectFileLines) - 1) {
+    my $previousLine = $i ? $dsymNoObjectFileLines[$i - 1] : "";
+    my $line = $dsymNoObjectFileLines[$i];
+    if ($line =~ /GenerateDSYMFile/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+
 done_testing();
 
 sub description($)

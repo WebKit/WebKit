@@ -91,6 +91,7 @@ our $logUnfilteredOutput;
 our $outputFormat = -t STDOUT ? "color" : "text";
 our $unfilteredOutputPath = "build.log";
 our $inEntitlements = 0;
+our $inMultilineShellCommand = 0;
 our $inDevicePreparationWarnings = 0;
 
 sub usageAndExit()
@@ -157,7 +158,7 @@ sub main() {
             printLine($line, STYLE_PLAIN);
         } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
             printLine("Build Succeeded", STYLE_SUCCESS);
-        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
+        } elsif ($line =~ /^(\e\[1m)?(PhaseScriptExecution|RuleScriptExecution|ClCompile|CompileC|Distributed-CompileC|Ld|PBXCp|CpResource|CopyPNGFile|CopyTiffFile|CpHeader|Preprocess|Processing|ProcessInfoPlistFile|ProcessPCH|ProcessPCH\+\+|Touch|Libtool|CopyStringsFile|Mig|CreateUniversalBinary|Analyze|AnalyzeShallow|ProcessProductPackaging|ProcessProductPackagingDER|CodeSign|Validate|SymLink|Updating|CompileDTraceScript|CompileXIB|StripNIB|CopyPlistFile|GenerateDSYMFile|GenerateTAPI|CompileStoryboard|ExternalBuildToolExecution|CreateBuildDirectory|WriteAuxiliaryFile|RegisterWithLaunchServices|RegisterExecutionPolicyException|MkDir|Strip|MetalLink|CompileMetalFile|ValidateEmbeddedBinary|Copy)(\e\[0m)? ("[^"]+"|(\\|(?<=\\)\s|\S)+)?/) {
             my ($command, $path) = ($2, basename($4));
             $path =~ s/("|\\|\.[ah]$)//g;
             printLine("$command $path", STYLE_PLAIN);
@@ -318,7 +319,7 @@ sub shouldIgnoreLine($$)
 {
     my ($previousLine, $line) = @_;
 
-    if ($line =~ /^Entitlements:$/) {
+    if ($line =~ /^\s*Entitlements:$/) {
         $inEntitlements = 1;
         return 1
     }
@@ -337,6 +338,15 @@ sub shouldIgnoreLine($$)
     if ($line =~ /iPhoneConnect:/) {
         $inDevicePreparationWarnings = 1;
         return 1
+    }
+
+    if ($line =~ /^\s*\/bin\/sh -c [^\']*\'$/) {
+        $inMultilineShellCommand = 1;
+        return 1;
+    }
+    if ($inMultilineShellCommand) {
+        $inMultilineShellCommand = 0 if $line =~ /^\'$/;
+        return 1;
     }
 
     return 1 if $line =~ /^\s*$/;
@@ -402,6 +412,11 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^.* Run script build phase '/;
     return 1 if $line =~ /^.* Traditional headermap style is no longer supported;/;
     return 1 if $line =~ /^.* Skipping duplicate build file in/;
+    # Investigate these in https://bugs.webkit.org/show_bug.cgi?id=245263.
+    return 1 if $line =~ /warning: Could not read serialized diagnostics file: error\(\"Failed to open diagnostics file\"\)/;
+    # Remove two below once https://bugs.webkit.org/show_bug.cgi?id=175997 is fixed.
+    return 1 if $line =~ /libtool: warning same member name \(.*\) in output file used for input files:/;
+    return 1 if $line =~ /warning: \(.*\)  could not find object file symbol for symbol/;
 
     if ($platform eq "win") {
         return 1 if $line =~ /^\s*(touch|perl|cat|rm -f|del|python|\/usr\/bin\/g\+\+|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file) /;
