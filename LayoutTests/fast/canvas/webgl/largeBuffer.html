@@ -9,10 +9,15 @@ const gl = canvas.getContext("webgl");
 
 const b = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b);
+shouldBeEqualToNumber("gl.getError()", gl.NO_ERROR);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, 0xf000000000, gl.STREAM_DRAW);
+shouldBeEqualToNumber("gl.getError()", gl.INVALID_VALUE);
 const size = gl.getBufferParameter(gl.ELEMENT_ARRAY_BUFFER, gl.BUFFER_SIZE);
 shouldBeEqualToNumber("size", 0);
 gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0x4444444444, new ArrayBuffer(32));
+shouldBeEqualToNumber("gl.getError()", gl.INVALID_VALUE);
+shouldBeEqualToNumber("gl.getError()", gl.NO_ERROR);
+
 </script>
 </body>
 </html>

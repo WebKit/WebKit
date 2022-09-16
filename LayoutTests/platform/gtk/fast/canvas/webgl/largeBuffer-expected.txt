@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferData: size more than 32-bits
+CONSOLE MESSAGE: WebGL: INVALID_VALUE: bufferSubData: offset out of range
 PASS gl.getError() is 0
 PASS gl.getError() is 1281
 PASS size is 0

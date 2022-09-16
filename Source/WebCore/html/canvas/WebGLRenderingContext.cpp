@@ -382,6 +382,7 @@ GCGLint WebGLRenderingContext::getMaxColorAttachments()
     return m_maxColorAttachments;
 }
 
+#if !USE(ANGLE)
 bool WebGLRenderingContext::validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired)
 {
     // Performs conservative validation by caching a maximum index of
@@ -446,6 +447,7 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GCGLenum type, unsign
 
     return true;
 }
+#endif
 
 bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GCGLenum mode)
 {
