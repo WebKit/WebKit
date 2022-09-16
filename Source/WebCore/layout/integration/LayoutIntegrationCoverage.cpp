@@ -46,7 +46,7 @@
 #include <wtf/OptionSet.h>
 
 #define ALLOW_FLOATS 1
-#define ALLOW_RTL_FLOATS 0
+#define ALLOW_RTL_FLOATS 1
 #define ALLOW_VERTICAL_FLOATS 0
 
 #ifndef NDEBUG
@@ -373,17 +373,14 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
                 return false;
         }
 #if !ALLOW_FLOATS
-        UNUSED_PARAM(flow);
         if (renderer.isFloating())
             return false;
 #endif
 #if !ALLOW_RTL_FLOATS
-        UNUSED_PARAM(flow);
         if (renderer.isFloating() && !renderer.parent()->style().isLeftToRightDirection())
             return false;
 #endif
 #if !ALLOW_VERTICAL_FLOATS
-        UNUSED_PARAM(flow);
         if (renderer.isFloating() && !renderer.parent()->style().isHorizontalWritingMode())
             return false;
 #endif
