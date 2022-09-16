@@ -270,9 +270,7 @@ bool KeyboardScrollingAnimator::beginKeyboardScrollGesture(ScrollDirection direc
 
     auto scrollableDirections = scrollableDirectionsFromPosition(m_scrollAnimator.currentPosition());
     if (!scrollableDirections.at(boxSideForDirection(direction))) {
-        m_scrollTriggeringKeyIsPressed = false;
-        m_scrollController.didStopKeyboardScrolling();
-        m_velocity = { };
+        stopScrollingImmediately();
         return false;
     }
 
@@ -345,7 +343,13 @@ void KeyboardScrollingAnimator::handleKeyUpEvent()
         return;
 
     stopKeyboardScrollAnimation();
+}
+
+void KeyboardScrollingAnimator::stopScrollingImmediately()
+{
     m_scrollTriggeringKeyIsPressed = false;
+    m_scrollController.didStopKeyboardScrolling();
+    m_velocity = { };
 }
 
 } // namespace WebCore

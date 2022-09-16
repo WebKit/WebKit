@@ -57,6 +57,7 @@ public:
     bool beginKeyboardScrollGesture(ScrollDirection, ScrollGranularity);
     void handleKeyUpEvent();
     void updateKeyboardScrollPosition(MonotonicTime);
+    WEBCORE_EXPORT void stopScrollingImmediately();
 
 private:
     void stopKeyboardScrollAnimation();
