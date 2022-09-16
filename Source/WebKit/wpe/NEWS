@@ -1,3 +1,18 @@
+=================
+WPE WebKit 2.38.0
+=================
+
+What's new in WPE WebKit 2.38.0?
+
+  - Fix jumpy elements when scrolling GitLab with async scrolling.
+  - Fix kinetic scrolling with elements that use overflow scrolling.
+  - Fix WebKitWebView:web-process-terminated signal not being emitted
+    for the first web view when sandboxing is enabled.
+  - Fix build with CMake < 3.17.
+  - Fix the build with GStreamer < 1.18.
+  - Fix the build when targeting Android.
+  - Fix several crashes and rendering issues.
+
 ==================
 WPE WebKit 2.37.91
 ==================
