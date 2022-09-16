@@ -33,6 +33,7 @@
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameSelection.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GeometryUtilities.h>
 #include <WebCore/GraphicsContext.h>
@@ -131,7 +132,11 @@ void WebFoundTextRangeController::decorateTextRangeWithStyle(const WebFoundTextR
         simpleRange->start.document().markers().addMarker(*simpleRange, WebCore::DocumentMarker::TextMatch);
     else if (style == FindDecorationStyle::Highlighted) {
         m_highlightedRange = range;
-        setTextIndicatorWithRange(*simpleRange);
+
+        if (m_findPageOverlay)
+            setTextIndicatorWithRange(*simpleRange);
+        else
+            flashTextIndicatorAndUpdateSelectionWithRange(*simpleRange);
     }
 
     if (m_findPageOverlay)
@@ -317,7 +322,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
     }
 }
 
-void WebFoundTextRangeController::setTextIndicatorWithRange(const WebCore::SimpleRange& range)
+RefPtr<WebCore::TextIndicator> WebFoundTextRangeController::createTextIndicatorForRange(const WebCore::SimpleRange& range, WebCore::TextIndicatorPresentationTransition transition)
 {
     constexpr int indicatorMargin = 1;
 
@@ -332,7 +337,21 @@ void WebFoundTextRangeController::setTextIndicatorWithRange(const WebCore::Simpl
     frame->selection().setUpdateAppearanceEnabled(false);
 #endif
 
-    m_textIndicator = WebCore::TextIndicator::createWithRange(range, options, WebCore::TextIndicatorPresentationTransition::None, WebCore::FloatSize(indicatorMargin, indicatorMargin));
+    return WebCore::TextIndicator::createWithRange(range, options, transition, WebCore::FloatSize(indicatorMargin, indicatorMargin));
+}
+
+void WebFoundTextRangeController::setTextIndicatorWithRange(const WebCore::SimpleRange& range)
+{
+    m_textIndicator = createTextIndicatorForRange(range, WebCore::TextIndicatorPresentationTransition::None);
+}
+
+void WebFoundTextRangeController::flashTextIndicatorAndUpdateSelectionWithRange(const WebCore::SimpleRange& range)
+{
+    auto& document = range.startContainer().document();
+    document.selection().setSelection(WebCore::VisibleSelection(range), WebCore::FrameSelection::defaultSetSelectionOptions(WebCore::UserTriggered));
+
+    if (auto textIndicator = createTextIndicatorForRange(range, WebCore::TextIndicatorPresentationTransition::Bounce))
+        m_webPage->setTextIndicator(textIndicator->data());
 }
 
 Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRect(WebCore::IntRect clipRect)
