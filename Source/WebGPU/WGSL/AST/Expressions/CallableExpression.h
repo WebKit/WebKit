@@ -47,16 +47,8 @@ public:
     }
 
     Kind kind() const override { return Kind::CallableExpression; }
-    const TypeDecl& target() const { return m_target; }
-    Vector<std::reference_wrapper<const Expression>> arguments() const 
-    {
-        Vector<std::reference_wrapper<const Expression>> arguments;
-
-        for (const auto& argument : m_arguments)
-            arguments.append(std::cref(argument.get()));
-
-        return arguments;
-    }
+    TypeDecl& target() { return m_target; }
+    Vector<UniqueRef<Expression>>& arguments() { return m_arguments; }
 
 private:
     // If m_target is a NamedType, it could either be a:

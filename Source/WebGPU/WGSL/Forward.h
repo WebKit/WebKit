@@ -25,31 +25,47 @@
 
 #pragma once
 
-#include "Expression.h"
-#include <wtf/text/StringView.h>
-#include <wtf/UniqueRef.h>
+namespace WGSL {
 
-namespace WGSL::AST {
+namespace AST {
 
-class ArrayAccess final : public Expression {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    ArrayAccess(SourceSpan span, UniqueRef<Expression>&& base, UniqueRef<Expression>&& index)
-        : Expression(span)
-        , m_base(WTFMove(base))
-        , m_index(WTFMove(index))
-    {
-    }
+class AbstractFloatLiteral;
+class AbstractIntLiteral;
+class ArrayAccess;
+class ArrayType;
+class AssignmentStatement;
+class Attribute;
+class BindingAttribute;
+class BoolLiteral;
+class BuiltinAttribute;
+class CallableExpression;
+class CompoundStatement;
+class Decl;
+class Expression;
+class Float32Literal;
+class FunctionDecl;
+class GlobalDirective;
+class GroupAttribute;
+class IdentifierExpression;
+class Int32Literal;
+class LocationAttribute;
+class NamedType;
+class Parameter;
+class ParameterizedType;
+class ReturnStatement;
+class ShaderModule;
+class StageAttribute;
+class Statement;
+class StructDecl;
+class StructMember;
+class StructureAccess;
+class TypeDecl;
+class Uint32Literal;
+class UnaryExpression;
+class VariableDecl;
+class VariableQualifier;
+class VariableStatement;
 
-    Kind kind() const override { return Kind::ArrayAccess; }
-    UniqueRef<Expression>& base() { return m_base; }
-    UniqueRef<Expression>& index() { return m_index; }
+} // namespace AST
 
-private:
-    UniqueRef<Expression> m_base;
-    UniqueRef<Expression> m_index;
-};
-
-} // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_WGSL_EXPRESSION(ArrayAccess, isArrayAccess())
+} // namespace WGSL

@@ -78,6 +78,9 @@
 		33EA188427BC268600A1DD52 /* StructureAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188327BC268600A1DD52 /* StructureAccess.h */; };
 		33EA188627BC26DF00A1DD52 /* CallableExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188527BC26DF00A1DD52 /* CallableExpression.h */; };
 		33EA188827BC361E00A1DD52 /* LiteralExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA188727BC361E00A1DD52 /* LiteralExpressions.h */; };
+		3A3DD41028D4445C0073224E /* Visitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3DD40F28D4445B0073224E /* Visitor.h */; };
+		3A3DD41228D4450B0073224E /* Forward.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3DD41128D4450A0073224E /* Forward.h */; };
+		3A3DD41428D449940073224E /* Visitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3DD41328D449940073224E /* Visitor.cpp */; };
 		3A7E164C28C57BB8003F49C9 /* ArrayAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */; };
 		3AAE4EB428C56E9A00DA484B /* UnaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */; };
 		3AE27DB528C1BA480043A8E0 /* VariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* VariableStatement.h */; };
@@ -335,6 +338,9 @@
 		33EA188327BC268600A1DD52 /* StructureAccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StructureAccess.h; sourceTree = "<group>"; };
 		33EA188527BC26DF00A1DD52 /* CallableExpression.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallableExpression.h; sourceTree = "<group>"; };
 		33EA188727BC361E00A1DD52 /* LiteralExpressions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LiteralExpressions.h; sourceTree = "<group>"; };
+		3A3DD40F28D4445B0073224E /* Visitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Visitor.h; sourceTree = "<group>"; };
+		3A3DD41128D4450A0073224E /* Forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
+		3A3DD41328D449940073224E /* Visitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Visitor.cpp; sourceTree = "<group>"; };
 		3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayAccess.h; sourceTree = "<group>"; };
 		3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnaryExpression.h; sourceTree = "<group>"; };
 		3AE27DB428C1BA480043A8E0 /* VariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableStatement.h; sourceTree = "<group>"; };
@@ -652,6 +658,7 @@
 				33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */,
 				33EA186527BC1AD500A1DD52 /* CompilationMessage.h */,
 				1CEBD8042716BFAB00A5254D /* config.h */,
+				3A3DD41128D4450A0073224E /* Forward.h */,
 				338BB2D527B6B68700E066AB /* Lexer.cpp */,
 				338BB2D327B6B66C00E066AB /* Lexer.h */,
 				339B7B1A27D800090072BF9A /* Parser.cpp */,
@@ -660,6 +667,8 @@
 				338BB2D127B6B63F00E066AB /* SourceSpan.h */,
 				338BB2CF27B6B61B00E066AB /* Token.cpp */,
 				338BB2CD27B6B60200E066AB /* Token.h */,
+				3A3DD41328D449940073224E /* Visitor.cpp */,
+				3A3DD40F28D4445B0073224E /* Visitor.h */,
 				1CEBD8022716BF8200A5254D /* WGSL.cpp */,
 				1CEBD7F72716B34400A5254D /* WGSL.h */,
 			);
@@ -777,6 +786,7 @@
 				33EA187B27BC230E00A1DD52 /* CompoundStatement.h in Headers */,
 				33EA186227BC19C100A1DD52 /* Decl.h in Headers */,
 				33EA186C27BC1CBC00A1DD52 /* Expression.h in Headers */,
+				3A3DD41228D4450B0073224E /* Forward.h in Headers */,
 				33EA187627BC216B00A1DD52 /* FunctionDecl.h in Headers */,
 				33EA186027BC198100A1DD52 /* GlobalDirective.h in Headers */,
 				33EA188227BC25D000A1DD52 /* IdentifierExpression.h in Headers */,
@@ -792,11 +802,11 @@
 				33EA187427BC204900A1DD52 /* StructureDecl.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
 				33EA186E27BC1D4C00A1DD52 /* TypeDecl.h in Headers */,
-				3AAE4EB228C494D500DA484B /* UnaryExpression.h in Headers */,
 				3AAE4EB428C56E9A00DA484B /* UnaryExpression.h in Headers */,
 				33EA186427BC1A1D00A1DD52 /* VariableDecl.h in Headers */,
 				33EA187227BC1FE100A1DD52 /* VariableQualifier.h in Headers */,
 				3AE27DB528C1BA480043A8E0 /* VariableStatement.h in Headers */,
+				3A3DD41028D4445C0073224E /* Visitor.h in Headers */,
 				1CEBD7F82716B34400A5254D /* WGSL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1060,6 +1070,7 @@
 				338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */,
 				339B7B1B27D800090072BF9A /* Parser.cpp in Sources */,
 				338BB2D027B6B61B00E066AB /* Token.cpp in Sources */,
+				3A3DD41428D449940073224E /* Visitor.cpp in Sources */,
 				1CEBD8032716BF8200A5254D /* WGSL.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
