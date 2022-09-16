@@ -4634,6 +4634,12 @@
    },
    {
       "emails" : [
+         "madsmith@apple.com"
+      ],
+      "name" : "Madeline Smith"
+   },
+   {
+      "emails" : [
          "ager@chromium.org"
       ],
       "expertise" : "V8",
