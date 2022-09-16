@@ -497,11 +497,12 @@ void TextBoxPainter<TextBoxPath>::collectDecoratingBoxesForTextBox(DecoratingBox
                 return;
         }
 
+        auto borderAndPaddingBefore = !inlineBox->isRootInlineBox() ? inlineBox->renderer().borderAndPaddingBefore() : LayoutUnit(0_lu);
         decoratingBoxList.append({
             inlineBox,
             style,
             useOverriderDecorationStyle == UseOverriderDecorationStyle::Yes ? overrideDecorationStyle : computedDecorationStyle(),
-            { textBoxLocation.x(), m_paintOffset.y() + inlineBox->logicalTop() }
+            { textBoxLocation.x(), m_paintOffset.y() + inlineBox->logicalTop() + borderAndPaddingBefore }
         });
     };
 
