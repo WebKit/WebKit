@@ -1,3 +1,15 @@
+================
+WebKitGTK 2.38.0
+================
+
+What's new in WebKitGTK 2.38.0?
+
+  - Fix jumpy elements whewn scrolling gitlab with async scrolling.
+  - Fix web-process-terminated signal not being emitted for the first web view when sandbox is enabled.
+  - Fix build with CMake < 3.17.
+  - Fix the build with GStreamer < 1.18.
+  - Fix several crashes and rendering issues.
+
 =================
 WebKitGTK 2.37.91
 =================
