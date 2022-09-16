@@ -2482,17 +2482,6 @@ WebArchiveDebugModeEnabled:
     WebCore:
       default: false
 
-WebArchiveTestingModeEnabled:
-  type: bool
-  condition: ENABLE(WEB_ARCHIVE)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 WebAudioEnabled:
   type: bool
   condition: ENABLE(WEB_AUDIO)
