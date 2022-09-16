@@ -44,8 +44,10 @@
 #include <WebCore/GraphicsContextGLCocoa.h>
 #elif USE(LIBGBM)
 #include <WebCore/GraphicsContextGLGBM.h>
-#else
+#elif USE(ANGLE)
 #include <WebCore/GraphicsContextGLTextureMapperANGLE.h>
+#else
+#include <WebCore/GraphicsContextGLTextureMapper.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -153,8 +155,10 @@ protected:
     using GCGLContext = WebCore::GraphicsContextGLCocoa;
 #elif USE(LIBGBM)
     using GCGLContext = WebCore::GraphicsContextGLGBM;
-#else
+#elif USE(ANGLE)
     using GCGLContext = WebCore::GraphicsContextGLTextureMapperANGLE;
+#else
+    using GCGLContext = WebCore::GraphicsContextGLTextureMapper;
 #endif
     RefPtr<GCGLContext> m_context WTF_GUARDED_BY_CAPABILITY(workQueue());
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier;

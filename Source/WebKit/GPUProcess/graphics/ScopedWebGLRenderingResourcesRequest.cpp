@@ -28,21 +28,25 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
+#if USE(ANGLE)
 #include "RemoteGraphicsContextGL.h"
 #include "StreamConnectionWorkQueue.h"
 #include <WebCore/GraphicsContextGLANGLE.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#endif
 
 namespace WebKit {
 
 std::atomic<unsigned> ScopedWebGLRenderingResourcesRequest::s_requests;
+#if USE(ANGLE)
 static constexpr Seconds freeWebGLRenderingResourcesTimeout = 1_s;
 static bool didScheduleFreeWebGLRenderingResources;
+#endif
 
 void ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources()
 {
-#if !USE(GRAPHICS_LAYER_WC)
+#if USE(ANGLE) && !USE(GRAPHICS_LAYER_WC)
     if (didScheduleFreeWebGLRenderingResources)
         return;
     RunLoop::main().dispatchAfter(freeWebGLRenderingResourcesTimeout, freeWebGLRenderingResources);
@@ -52,14 +56,16 @@ void ScopedWebGLRenderingResourcesRequest::scheduleFreeWebGLRenderingResources()
 
 void ScopedWebGLRenderingResourcesRequest::freeWebGLRenderingResources()
 {
+#if USE(ANGLE)
     didScheduleFreeWebGLRenderingResources = false;
     if (s_requests)
         return;
     remoteGraphicsContextGLStreamWorkQueue().dispatch([] {
         WebCore::GraphicsContextGLANGLE::releaseThreadResources(WebCore::GraphicsContextGLANGLE::ReleaseThreadResourceBehavior::TerminateAndReleaseThreadResources);
     });
-}
-
-}
-
 #endif
+}
+
+}
+
+#endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
