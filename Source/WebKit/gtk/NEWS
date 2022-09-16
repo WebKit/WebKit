@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.36.8
+================
+
+What's new in WebKitGTK 2.36.8?
+
+  - Fix jumpy elements when scrolling GitLab and other web sites.
+  - Fix WebKitWebView:web-process-terminated signal not being emitted
+    for the first web view when sandboxing is enabled.
+  - Fix hang when opening HTML <select> elements in GTK4 builds.
+  - Fix kinetic scrolling with elements that use overflow scrolling.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.36.7
 ================
 
