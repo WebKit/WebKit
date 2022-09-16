@@ -28,6 +28,7 @@
 
 #include "CatchScope.h"
 #include "Debugger.h"
+#include "DeferTermination.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "Microtask.h"
@@ -62,9 +63,16 @@ Ref<Microtask> createJSMicrotask(VM& vm, JSValue job, JSValue argument0, JSValue
 void JSMicrotask::run(JSGlobalObject* globalObject)
 {
     VM& vm = globalObject->vm();
+
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
+    // If termination is issued, do not run microtasks. Otherwise, microtask should not care about exceptions.
+    if (UNLIKELY(!scope.clearExceptionExceptTermination()))
+        return;
+
     auto handlerCallData = JSC::getCallData(m_job.get());
+    if (UNLIKELY(!scope.clearExceptionExceptTermination()))
+        return;
     ASSERT(handlerCallData.type != CallData::Type::None);
 
     MarkedArgumentBuffer handlerArguments;
@@ -77,14 +85,22 @@ void JSMicrotask::run(JSGlobalObject* globalObject)
     if (UNLIKELY(handlerArguments.hasOverflowed()))
         return;
 
-    if (UNLIKELY(globalObject->hasDebugger()))
-        globalObject->debugger()->willRunMicrotask();
+    if (UNLIKELY(globalObject->hasDebugger())) {
+        DeferTerminationForAWhile deferTerminationForAWhile(vm);
+        globalObject->debugger()->willRunMicrotask(globalObject, identifier);
+        scope.clearException();
+    }
 
-    profiledCall(globalObject, ProfilingReason::Microtask, m_job.get(), handlerCallData, jsUndefined(), handlerArguments);
-    scope.clearException();
+    if (LIKELY(!vm.hasPendingTerminationException())) {
+        profiledCall(globalObject, ProfilingReason::Microtask, m_job.get(), handlerCallData, jsUndefined(), handlerArguments);
+        scope.clearExceptionExceptTermination();
+    }
 
-    if (UNLIKELY(globalObject->hasDebugger()))
-        globalObject->debugger()->didRunMicrotask();
+    if (UNLIKELY(globalObject->hasDebugger())) {
+        DeferTerminationForAWhile deferTerminationForAWhile(vm);
+        globalObject->debugger()->didRunMicrotask(globalObject, identifier);
+        scope.clearException();
+    }
 }
 
 } // namespace JSC
