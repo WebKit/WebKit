@@ -42,6 +42,7 @@ public:
     static Ref<WebGLBuffer> create(WebGLRenderingContextBase&);
     virtual ~WebGLBuffer();
 
+#if !USE(ANGLE)
     bool associateBufferData(GCGLsizeiptr size);
     bool associateBufferData(JSC::ArrayBuffer*);
     bool associateBufferData(JSC::ArrayBufferView*);
@@ -58,10 +59,10 @@ public:
     std::optional<unsigned> getCachedMaxIndex(GCGLenum type);
     // Sets the cached max index for the given type.
     void setCachedMaxIndex(GCGLenum type, unsigned value);
+#endif
 
     GCGLenum getTarget() const { return m_target; }
-    void setTarget(GCGLenum);
-
+    void setTarget(GCGLenum target) { m_target = target; }
     bool hasEverBeenBound() const { return object() && m_target; }
 
 private:
@@ -71,6 +72,7 @@ private:
 
     GCGLenum m_target { 0 };
 
+#if !USE(ANGLE)
     RefPtr<JSC::ArrayBuffer> m_elementArrayBuffer;
     GCGLsizeiptr m_byteLength { 0 };
 
@@ -87,7 +89,7 @@ private:
     };
     // OpenGL ES 2.0 only has two valid index types (UNSIGNED_BYTE
     // and UNSIGNED_SHORT) plus one extension (UNSIGNED_INT).
-    MaxIndexCacheEntry m_maxIndexCache[4];
+    MaxIndexCacheEntry m_maxIndexCache[4] { };
     unsigned m_nextAvailableCacheEntry { 0 };
 
     // Clears all of the cached max indices.
@@ -97,6 +99,7 @@ private:
     bool associateBufferDataImpl(const void* data, GCGLsizeiptr byteLength);
     // Helper function called by the two associateBufferSubData().
     bool associateBufferSubDataImpl(GCGLintptr offset, const void* data, GCGLsizeiptr byteLength);
+#endif
 };
 
 } // namespace WebCore
