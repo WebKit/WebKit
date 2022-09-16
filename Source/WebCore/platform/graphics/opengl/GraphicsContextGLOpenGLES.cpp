@@ -58,7 +58,7 @@ void GraphicsContextGLOpenGL::readnPixels(GCGLint x, GCGLint y, GCGLsizei width,
         ::glFlush();
     }
 
-    ::glReadPixels(x, y, width, height, format, type, data.data);
+    ::glReadPixels(x, y, width, height, format, type, data.data());
 
     if (attributes.antialias && m_state.boundDrawFBO == m_multisampleFBO)
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
@@ -214,28 +214,28 @@ void GraphicsContextGLOpenGL::getIntegerv(GCGLenum pname, GCGLSpan<GCGLint> valu
     if (!makeContextCurrent())
         return;
 
-    ::glGetIntegerv(pname, value.data);
+    ::glGetIntegerv(pname, value.data());
 }
 
 void GraphicsContextGLOpenGL::getShaderPrecisionFormat(GCGLenum shaderType, GCGLenum precisionType, GCGLSpan<GCGLint, 2> range, GCGLint* precision)
 {
-    ASSERT(range.data);
+    ASSERT(range.data());
     ASSERT(precision);
 
     if (!makeContextCurrent())
         return;
 
-    ::glGetShaderPrecisionFormat(shaderType, precisionType, range.data, precision);
+    ::glGetShaderPrecisionFormat(shaderType, precisionType, range.data(), precision);
 }
 
 void GraphicsContextGLOpenGL::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLSpan<const GCGLvoid> pixels)
 {
-    if (width && height && !pixels.data) {
+    if (width && height && !pixels.data()) {
         synthesizeGLError(INVALID_VALUE);
         return;
     }
 
-    texImage2DDirect(target, level, internalformat, width, height, border, format, type, pixels.data);
+    texImage2DDirect(target, level, internalformat, width, height, border, format, type, pixels.data());
 }
 
 void GraphicsContextGLOpenGL::validateAttributes()
