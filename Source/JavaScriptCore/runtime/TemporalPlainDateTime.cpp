@@ -253,4 +253,109 @@ uint8_t TemporalPlainDateTime::weekOfYear() const
     return ISO8601::weekOfYear(m_plainDate);
 }
 
+TemporalPlainDateTime* TemporalPlainDateTime::with(JSGlobalObject* globalObject, JSObject* temporalDateTimeLike, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    rejectObjectWithCalendarOrTimeZone(globalObject, temporalDateTimeLike);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (!calendar()->isISO8601()) {
+        throwRangeError(globalObject, scope, "unimplemented: from non-ISO8601 calendar"_s);
+        return { };
+    }
+
+    auto [optionalYear, optionalMonth, optionalDay] = TemporalPlainDate::toPartialDate(globalObject, temporalDateTimeLike);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    TemporalOverflow overflow = toTemporalOverflow(globalObject, options);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    bool requiresTimeProperty = !optionalYear && !optionalMonth && !optionalDay;
+    auto [optionalHour, optionalMinute, optionalSecond, optionalMillisecond, optionalMicrosecond, optionalNanosecond] = TemporalPlainTime::toPartialTime(globalObject, temporalDateTimeLike, !requiresTimeProperty);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    double y = optionalYear.value_or(year());
+    double m = optionalMonth.value_or(month());
+    double d = optionalDay.value_or(day());
+    auto plainDate = TemporalCalendar::isoDateFromFields(globalObject, y, m, d, overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    ISO8601::Duration duration { };
+    duration.setHours(optionalHour.value_or(hour()));
+    duration.setMinutes(optionalMinute.value_or(minute()));
+    duration.setSeconds(optionalSecond.value_or(second()));
+    duration.setMilliseconds(optionalMillisecond.value_or(millisecond()));
+    duration.setMicroseconds(optionalMicrosecond.value_or(microsecond()));
+    duration.setNanoseconds(optionalNanosecond.value_or(nanosecond()));
+    auto plainTime = TemporalPlainTime::regulateTime(globalObject, WTFMove(duration), overflow);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(plainDate), WTFMove(plainTime)));
+}
+
+TemporalPlainDateTime* TemporalPlainDateTime::round(JSGlobalObject* globalObject, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* options = nullptr;
+    std::optional<TemporalUnit> smallest;
+    if (optionsValue.isString()) {
+        auto string = optionsValue.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        smallest = temporalUnitType(string);
+        if (!smallest) {
+            throwRangeError(globalObject, scope, "smallestUnit is an invalid Temporal unit"_s);
+            return { };
+        }
+
+        if (smallest.value() <= TemporalUnit::Week) {
+            throwRangeError(globalObject, scope, "smallestUnit is a disallowed unit"_s);
+            return { };
+        }
+    } else {
+        options = intlGetOptionsObject(globalObject, optionsValue);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        smallest = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week });
+        RETURN_IF_EXCEPTION(scope, { });
+        if (!smallest) {
+            throwRangeError(globalObject, scope, "Cannot round without a smallestUnit option"_s);
+            return { };
+        }
+    }
+    TemporalUnit smallestUnit = smallest.value();
+
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::HalfExpand);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    std::optional<double> maximum = smallestUnit == TemporalUnit::Day ? 1 : maximumRoundingIncrement(smallestUnit);
+    auto increment = temporalRoundingIncrement(globalObject, options, maximum, false);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto duration = TemporalPlainTime::roundTime(m_plainTime, increment, smallestUnit, roundingMode, std::nullopt);
+    auto plainTime = TemporalPlainTime::toPlainTime(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    double extraDays = duration.days();
+    duration.setYears(year());
+    duration.setMonths(month());
+    duration.setDays(day());
+    if (extraDays) {
+        ASSERT(extraDays == 1);
+        incrementDay(duration);
+    }
+
+    auto plainDate = TemporalPlainDate::toPlainDate(globalObject, duration);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(plainDate), WTFMove(plainTime)));
+}
+
 } // namespace JSC

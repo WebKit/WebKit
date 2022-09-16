@@ -41,18 +41,13 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth
     - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDate/prototype/until
-    - test/built-ins/Temporal/PlainDate/prototype/with
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
-    - test/built-ins/Temporal/PlainDateTime/prototype/round
     - test/built-ins/Temporal/PlainDateTime/prototype/since
     - test/built-ins/Temporal/PlainDateTime/prototype/toPlainMonthDay
     - test/built-ins/Temporal/PlainDateTime/prototype/toPlainYearMonth
     - test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDateTime/prototype/until
-    - test/built-ins/Temporal/PlainDateTime/prototype/with
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
-    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate
-    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime
     - test/built-ins/Temporal/PlainMonthDay
     - test/built-ins/Temporal/PlainTime/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainYearMonth
@@ -423,6 +418,13 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/toString/calendarname-wrong-type.js
     - test/built-ins/Temporal/PlainDate/prototype/toString/options-undefined.js
     - test/built-ins/Temporal/PlainDate/prototype/weekOfYear/custom.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/calendar-fields-iterable.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/calendar-fromfields-called-with-null-prototype-fields.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/calendar-invalid-return.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/calendar-merge-fields-returns-primitive.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/calendar-mergefields-called-with-null-prototype-fields.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/copies-merge-fields-object.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/custom.js
     - test/built-ins/Temporal/PlainDate/prototype/year/calendar-returns-infinity.js
     - test/built-ins/Temporal/PlainDateTime/calendar-number.js
     - test/built-ins/Temporal/PlainDateTime/calendar-temporal-object.js
@@ -462,6 +464,8 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/inLeapYear/custom.js
     - test/built-ins/Temporal/PlainDateTime/prototype/month/calendar-returns-infinity.js
     - test/built-ins/Temporal/PlainDateTime/prototype/monthsInYear/custom.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-plurals-accepted.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/round/smallestunit-string-shorthand.js
     - test/built-ins/Temporal/PlainDateTime/prototype/subtract/calendar-dateadd.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-always.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-auto.js
@@ -471,6 +475,28 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-wrong-type.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/options-undefined.js
     - test/built-ins/Temporal/PlainDateTime/prototype/weekOfYear/custom.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-fields-iterable.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-fromfields-called-with-null-prototype-fields.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-merge-fields-returns-primitive.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-mergefields-called-with-null-prototype-fields.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-options.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/with/calendar-temporal-object-throws.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/with/copies-merge-fields-object.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-calendar-datefromfields-called-with-null-prototype-fields.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-noniso.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-same-id.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar-same-object.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-plaindate-calendar.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-invalid.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-string-iso-calendar.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/calendar-datefromfields-called-with-options-undefined.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/calendar-fields-iterable.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/non-compatible-calendars-throw.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/calendar-temporal-object.js
     - test/built-ins/Temporal/PlainDateTime/prototype/year/calendar-returns-infinity.js
     - test/built-ins/Temporal/PlainTime/compare/calendar-temporal-object.js
     - test/built-ins/Temporal/PlainTime/from/argument-string-with-calendar.js
@@ -494,6 +520,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted-string.js
     - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted.js
     - test/built-ins/Temporal/Instant/prototype/toString/smallestunit-plurals-accepted.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/plaindatelike-invalid.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-plurals-accepted.js
@@ -601,6 +628,18 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-zoneddatetime-convert.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-zoneddatetime-slots.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-balance-negative-time-units.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-negative-epochnanoseconds.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-out-of-range.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-wrong-type.js
     - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-non-integer.js
     - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-timezone-getoffsetnanosecondsfor-not-callable.js

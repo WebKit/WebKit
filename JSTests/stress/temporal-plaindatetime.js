@@ -270,3 +270,27 @@ shouldBe(pdt.subtract(new Temporal.Duration(0,1,5,3,4,5,6,7,8,10)).toString(), '
 shouldBe(Temporal.PlainDateTime.from('2020-03-30').subtract({ months: 1 }).toString(), '2020-02-29T00:00:00');
 shouldThrow(() => { Temporal.PlainDateTime.from('2020-03-30').subtract({ months: 1 }, { overflow: 'reject' }); }, RangeError);
 shouldThrow(() => { pdt.subtract({ years: 300000 }); }, RangeError);
+
+shouldBe(Temporal.PlainDateTime.prototype.with.length, 1);
+shouldBe(pdt.with({ year: 2000, month: 10, hour: 1, minute: 3, millisecond: 0, microsecond: 0, nanosecond: 0 }).toString(), '2000-10-03T01:03:06');
+shouldBe(pdt.with({ second: 15 }).toString(), '0001-02-03T04:05:15.007008009');
+shouldBe(pdt.with({ day: 30 }).toString(), '0001-02-28T04:05:06.007008009');
+shouldThrow(() => { pdt.with({ day: 30 }, { overflow: 'reject' }); }, RangeError);
+
+shouldBe(Temporal.PlainDateTime.prototype.withPlainDate.length, 1);
+shouldThrow(() => { pdt.withPlainDate(); }, RangeError);
+shouldBe(pdt.withPlainDate({ year: 2000, month: 10, day: 30 }).toString(), '2000-10-30T04:05:06.007008009');
+
+shouldBe(Temporal.PlainDateTime.prototype.withPlainTime.length, 0);
+shouldBe(pdt.withPlainTime().toString(), '0001-02-03T00:00:00');
+shouldBe(pdt.withPlainTime({ hour: 1, minute: 2, second: 3 }).toString(), '0001-02-03T01:02:03');
+
+shouldBe(Temporal.PlainDateTime.prototype.round.length, 1);
+shouldBe(pdt.round('hour').toString(), '0001-02-03T04:00:00');
+shouldBe(pdt.round({ smallestUnit: 'hour' }).toString(), '0001-02-03T04:00:00');
+shouldBe(pdt.round({ smallestUnit: 'minute', roundingIncrement: 2 }).toString(), '0001-02-03T04:06:00');
+shouldBe(pdt.round({ smallestUnit: 'minute', roundingIncrement: 2, roundingMode: 'floor' }).toString(), '0001-02-03T04:04:00');
+shouldThrow(() => { pdt.round({}); }, RangeError);
+shouldThrow(() => { pdt.round({ smallestUnit: 'bogus' }); }, RangeError);
+shouldThrow(() => { pdt.round({ smallestUnit: 'minute', roundingIncrement: 24 }); }, RangeError);
+shouldThrow(() => { pdt.round({ smallestUnit: 'minute', roundingMode: 'bogus' }); }, RangeError);

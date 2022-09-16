@@ -65,6 +65,9 @@ public:
     JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD);
 #undef JSC_DEFINE_TEMPORAL_PLAIN_TIME_FIELD
 
+    TemporalPlainDateTime* with(JSGlobalObject*, JSObject* temporalDateLike, JSValue options);
+    TemporalPlainDateTime* round(JSGlobalObject*, JSValue options);
+
     String monthCode() const;
     uint8_t dayOfWeek() const;
     uint16_t dayOfYear() const;
