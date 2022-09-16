@@ -810,6 +810,8 @@ compositing/iframes/overlapped-nested-iframes.html [ Pass Failure ]
 compositing/clipping/border-radius-async-overflow-non-stacking.html [ ImageOnlyFailure ]
 compositing/visibility/visibility-change-in-subframe.html [ Failure ]
 
+webkit.org/b/245250 compositing/tiling/sticky-change-to-tiled.html [ ImageOnlyFailure ]
+
 # Disk cache is WK2 only
 http/tests/cache/disk-cache
 http/tests/inspector/network/resource-response-source-disk-cache.html
@@ -2108,5 +2110,3 @@ webkit.org/b/245014 imported/w3c/web-platform-tests/cookies/value/value-ctl.html
 webkit.org/b/245035 imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass Failure ]
 
 webkit.org/b/245102 imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noreferrer.html [ Pass Failure ]
-
-webkit.org/b/245250 compositing/tiling/sticky-change-to-tiled.html [ Pass ImageOnlyFailure ]
