@@ -38,7 +38,7 @@ public:
     virtual void visit(AST::AbstractFloatLiteral&);
     virtual void visit(AST::AbstractIntLiteral&);
     virtual void visit(AST::ArrayAccess&);
-    virtual void visit(AST::ArrayType&);
+    virtual void visit(AST::ArrayTypeReference&);
     virtual void visit(AST::AssignmentStatement&);
     virtual void visit(AST::Attribute&);
     virtual void visit(AST::BindingAttribute&);
@@ -55,9 +55,9 @@ public:
     virtual void visit(AST::IdentifierExpression&);
     virtual void visit(AST::Int32Literal&);
     virtual void visit(AST::LocationAttribute&);
-    virtual void visit(AST::NamedType&);
+    virtual void visit(AST::NamedTypeReference&);
     virtual void visit(AST::Parameter&);
-    virtual void visit(AST::ParameterizedType&);
+    virtual void visit(AST::ParameterizedTypeReference&);
     virtual void visit(AST::ReturnStatement&);
     virtual void visit(AST::ShaderModule&);
     virtual void visit(AST::StageAttribute&);
@@ -65,7 +65,7 @@ public:
     virtual void visit(AST::StructDecl&);
     virtual void visit(AST::StructMember&);
     virtual void visit(AST::StructureAccess&);
-    virtual void visit(AST::TypeDecl&);
+    virtual void visit(AST::TypeReference&);
     virtual void visit(AST::Uint32Literal&);
     virtual void visit(AST::UnaryExpression&);
     virtual void visit(AST::VariableDecl&);

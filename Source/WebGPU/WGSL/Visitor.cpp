@@ -38,7 +38,7 @@
 #include "ReturnStatement.h"
 #include "AssignmentStatement.h"
 #include "VariableStatement.h"
-#include "TypeDecl.h"
+#include "TypeReference.h"
 #include "Visitor.h"
 #include <wtf/UniqueRef.h>
 
@@ -172,7 +172,7 @@ void Visitor::visit(AST::VariableDecl& varDeclaration)
     for (auto& attribute: varDeclaration.attributes())
         checkErrorAndVisit(attribute);
     maybeCheckErrorAndVisit(varDeclaration.maybeQualifier());
-    maybeCheckErrorAndVisit(varDeclaration.maybeTypeDecl());
+    maybeCheckErrorAndVisit(varDeclaration.maybeType());
     maybeCheckErrorAndVisit(varDeclaration.maybeInitializer());
 }
 
@@ -333,35 +333,35 @@ void Visitor::visit(AST::VariableStatement& varStatement)
 #pragma mark -
 #pragma mark Types
 
-void Visitor::visit(AST::TypeDecl& typeDecl)
+void Visitor::visit(AST::TypeReference& typeReference)
 {
-    switch (typeDecl.kind())
+    switch (typeReference.kind())
     {
-    case AST::TypeDecl::Kind::Array:
-        checkErrorAndVisit(downcast<AST::ArrayType>(typeDecl));
+    case AST::TypeReference::Kind::Array:
+        checkErrorAndVisit(downcast<AST::ArrayTypeReference>(typeReference));
         break;
-    case AST::TypeDecl::Kind::Named:
-        checkErrorAndVisit(downcast<AST::NamedType>(typeDecl));
+    case AST::TypeReference::Kind::Named:
+        checkErrorAndVisit(downcast<AST::NamedTypeReference>(typeReference));
         break;
-    case AST::TypeDecl::Kind::Parameterized:
-        checkErrorAndVisit(downcast<AST::ParameterizedType>(typeDecl));
+    case AST::TypeReference::Kind::Parameterized:
+        checkErrorAndVisit(downcast<AST::ParameterizedTypeReference>(typeReference));
         break;
     }
 }
 
-void Visitor::visit(AST::ArrayType& arrayType)
+void Visitor::visit(AST::ArrayTypeReference& arrayTypeReference)
 {
-    maybeCheckErrorAndVisit(arrayType.maybeElementType());
-    maybeCheckErrorAndVisit(arrayType.maybeElementCount());
+    maybeCheckErrorAndVisit(arrayTypeReference.maybeElementType());
+    maybeCheckErrorAndVisit(arrayTypeReference.maybeElementCount());
 }
 
-void Visitor::visit(AST::NamedType&)
+void Visitor::visit(AST::NamedTypeReference&)
 {
 }
 
-void Visitor::visit(AST::ParameterizedType& parameterizedType)
+void Visitor::visit(AST::ParameterizedTypeReference& parameterizedTypeReference)
 {
-    checkErrorAndVisit(parameterizedType.elementType());
+    checkErrorAndVisit(parameterizedTypeReference.elementType());
 }
 
 } // namespace WGSL

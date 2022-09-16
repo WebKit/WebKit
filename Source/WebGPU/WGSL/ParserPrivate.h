@@ -52,9 +52,9 @@ public:
     Expected<UniqueRef<AST::Attribute>, Error> parseAttribute();
     Expected<AST::StructDecl, Error> parseStructDecl(AST::Attributes&&);
     Expected<AST::StructMember, Error> parseStructMember();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDecl();
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(StringView&&, SourcePosition start);
-    Expected<UniqueRef<AST::TypeDecl>, Error> parseArrayType();
+    Expected<UniqueRef<AST::TypeReference>, Error> parseTypeReference();
+    Expected<UniqueRef<AST::TypeReference>, Error> parseTypeReferenceAfterIdentifier(StringView&&, SourcePosition start);
+    Expected<UniqueRef<AST::TypeReference>, Error> parseArrayType();
     Expected<AST::VariableDecl, Error> parseVariableDecl();
     Expected<AST::VariableDecl, Error> parseVariableDeclWithAttributes(AST::Attributes&&);
     Expected<AST::VariableQualifier, Error> parseVariableQualifier();

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "Expression.h"
-#include "TypeDecl.h"
+#include "TypeReference.h"
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
@@ -39,7 +39,7 @@ namespace WGSL::AST {
 class CallableExpression final : public Expression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CallableExpression(SourceSpan span, UniqueRef<TypeDecl>&& target, Vector<UniqueRef<Expression>>&& arguments)
+    CallableExpression(SourceSpan span, UniqueRef<TypeReference>&& target, Vector<UniqueRef<Expression>>&& arguments)
         : Expression(span)
         , m_target(WTFMove(target))
         , m_arguments(WTFMove(arguments))
@@ -47,7 +47,7 @@ public:
     }
 
     Kind kind() const override { return Kind::CallableExpression; }
-    TypeDecl& target() { return m_target; }
+    TypeReference& target() { return m_target; }
     Vector<UniqueRef<Expression>>& arguments() { return m_arguments; }
 
 private:
@@ -55,7 +55,7 @@ private:
     //   * Type that does not accept parameters (bool, i32, u32, ...)
     //   * Identifier that refers to a type alias.
     //   * Identifier that refers to a function.
-    UniqueRef<TypeDecl> m_target;
+    UniqueRef<TypeReference> m_target;
     Vector<UniqueRef<Expression>> m_arguments;
 };
 

@@ -31,7 +31,7 @@
 
 namespace WGSL::AST {
 
-class TypeDecl : public ASTNode {
+class TypeReference : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
@@ -41,12 +41,12 @@ public:
         Parameterized,
     };
 
-    TypeDecl(SourceSpan span)
+    TypeReference(SourceSpan span)
         : ASTNode(span)
     {
     }
 
-    virtual ~TypeDecl() {}
+    virtual ~TypeReference() {}
 
     virtual Kind kind() const = 0;
     bool isArray() const { return kind() == Kind::Array; }
@@ -54,30 +54,30 @@ public:
     bool isParameterized() const { return kind() == Kind::Parameterized; }
 };
 
-class ArrayType final : public TypeDecl {
+class ArrayTypeReference final : public TypeReference {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ArrayType(SourceSpan span, std::unique_ptr<TypeDecl>&& elementType, std::unique_ptr<Expression>&& elementCount)
-        : TypeDecl(span)
+    ArrayTypeReference(SourceSpan span, std::unique_ptr<TypeReference>&& elementType, std::unique_ptr<Expression>&& elementCount)
+        : TypeReference(span)
         , m_elementType(WTFMove(elementType))
         , m_elementCount(WTFMove(elementCount))
     {
     }
 
     Kind kind() const override { return Kind::Array; }
-    TypeDecl* maybeElementType() const { return m_elementType.get(); }
+    TypeReference* maybeElementType() const { return m_elementType.get(); }
     Expression* maybeElementCount() const { return m_elementCount.get(); }
 
 private:
-    std::unique_ptr<TypeDecl> m_elementType;
+    std::unique_ptr<TypeReference> m_elementType;
     std::unique_ptr<Expression> m_elementCount;
 };
 
-class NamedType final : public TypeDecl {
+class NamedTypeReference final : public TypeReference {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NamedType(SourceSpan span, StringView&& name)
-        : TypeDecl(span)
+    NamedTypeReference(SourceSpan span, StringView&& name)
+        : TypeReference(span)
         , m_name(WTFMove(name))
     {
     }
@@ -89,7 +89,7 @@ private:
     StringView m_name;
 };
 
-class ParameterizedType : public TypeDecl {
+class ParameterizedTypeReference : public TypeReference {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Base {
@@ -107,8 +107,8 @@ public:
         Mat4x4
     };
 
-    ParameterizedType(SourceSpan span, Base base, UniqueRef<TypeDecl>&& elementType)
-        : TypeDecl(span)
+    ParameterizedTypeReference(SourceSpan span, Base base, UniqueRef<TypeReference>&& elementType)
+        : TypeReference(span)
         , m_base(base)
         , m_elementType(WTFMove(elementType))
     {
@@ -145,20 +145,20 @@ public:
 
     Kind kind() const override { return Kind::Parameterized; }
     Base base() const { return m_base; }
-    TypeDecl& elementType() { return m_elementType; }
+    TypeReference& elementType() { return m_elementType; }
 
 private:
     Base m_base;
-    UniqueRef<TypeDecl> m_elementType;
+    UniqueRef<TypeReference> m_elementType;
 };
 
 } // namespace WGSL::AST
 
 #define SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WGSL::AST::ToValueTypeName) \
-    static bool isType(const WGSL::AST::TypeDecl& type) { return type.predicate; } \
+    static bool isType(const WGSL::AST::TypeReference& type) { return type.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
 
-SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ArrayType, isArray())
-SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(NamedType, isNamed())
-SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ParameterizedType, isParameterized())
+SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ArrayTypeReference, isArray())
+SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(NamedTypeReference, isNamed())
+SPECIALIZE_TYPE_TRAITS_WGSL_TYPE(ParameterizedTypeReference, isParameterized())

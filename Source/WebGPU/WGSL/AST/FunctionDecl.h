@@ -30,14 +30,14 @@
 #include "CompilationMessage.h"
 #include "Decl.h"
 #include "Statements/CompoundStatement.h"
-#include "TypeDecl.h"
+#include "TypeReference.h"
 
 namespace WGSL::AST {
 
 class Parameter final : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Parameter(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attributes&& attributes)
+    Parameter(SourceSpan span, StringView name, UniqueRef<TypeReference>&& type, Attributes&& attributes)
         : ASTNode(span)
         , m_name(WTFMove(name))
         , m_type(WTFMove(type))
@@ -46,19 +46,19 @@ public:
     }
 
     const StringView& name() const { return m_name; }
-    TypeDecl& type() { return m_type; }
+    TypeReference& type() { return m_type; }
     Attributes& attributes() { return m_attributes; }
 
 private:
     StringView m_name;
-    UniqueRef<TypeDecl> m_type;
+    UniqueRef<TypeReference> m_type;
     Attributes m_attributes;
 };
 
 class FunctionDecl final : public Decl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FunctionDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<Parameter>>&& parameters, std::unique_ptr<TypeDecl>&& returnType, CompoundStatement&& body, Attributes&& attributes, Attributes&& returnAttributes)
+    FunctionDecl(SourceSpan sourceSpan, StringView name, Vector<UniqueRef<Parameter>>&& parameters, std::unique_ptr<TypeReference>&& returnType, CompoundStatement&& body, Attributes&& attributes, Attributes&& returnAttributes)
         : Decl(sourceSpan)
         , m_name(name)
         , m_parameters(WTFMove(parameters))
@@ -74,7 +74,7 @@ public:
     Vector<UniqueRef<Parameter>>& parameters() { return m_parameters; }
     Attributes& attributes() { return m_attributes; }
     Attributes& returnAttributes() { return m_returnAttributes; }
-    TypeDecl* maybeReturnType() { return m_returnType.get(); }
+    TypeReference* maybeReturnType() { return m_returnType.get(); }
     CompoundStatement& body() { return m_body; }
 
 private:
@@ -82,7 +82,7 @@ private:
     Vector<UniqueRef<Parameter>> m_parameters;
     Attributes m_attributes;
     Attributes m_returnAttributes;
-    std::unique_ptr<TypeDecl> m_returnType;
+    std::unique_ptr<TypeReference> m_returnType;
     CompoundStatement m_body;
 };
 

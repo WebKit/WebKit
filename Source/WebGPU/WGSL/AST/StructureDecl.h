@@ -29,7 +29,7 @@
 #include "Attribute.h"
 #include "CompilationMessage.h"
 #include "Decl.h"
-#include "TypeDecl.h"
+#include "TypeReference.h"
 #include <wtf/text/StringView.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -40,7 +40,7 @@ namespace WGSL::AST {
 class StructMember final : public ASTNode {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StructMember(SourceSpan span, StringView name, UniqueRef<TypeDecl>&& type, Attributes&& attributes)
+    StructMember(SourceSpan span, StringView name, UniqueRef<TypeReference>&& type, Attributes&& attributes)
         : ASTNode(span)
         , m_name(name)
         , m_attributes(WTFMove(attributes))
@@ -49,13 +49,13 @@ public:
     }
 
     const StringView& name() const { return m_name; }
-    TypeDecl& type() { return m_type; }
+    TypeReference& type() { return m_type; }
     Attributes& attributes() { return m_attributes; }
 
 private:
     StringView m_name;
     Attributes m_attributes;
-    UniqueRef<TypeDecl> m_type;
+    UniqueRef<TypeReference> m_type;
 };
 
 class StructDecl final : public Decl {

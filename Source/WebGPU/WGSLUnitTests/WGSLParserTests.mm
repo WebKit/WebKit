@@ -56,10 +56,10 @@
 #define ASSERT_VEC_T(type, vec_type, param_type) \
     do { \
         XCTAssert((type).isParameterized()); \
-        auto& paramType = downcast<WGSL::AST::ParameterizedType>((type)); \
-        XCTAssert(paramType.base() == WGSL::AST::ParameterizedType::Base::vec_type); \
+        auto& paramType = downcast<WGSL::AST::ParameterizedTypeReference>((type)); \
+        XCTAssert(paramType.base() == WGSL::AST::ParameterizedTypeReference::Base::vec_type); \
         XCTAssert(paramType.elementType().isNamed()); \
-        XCTAssert(downcast<WGSL::AST::NamedType>(paramType.elementType()).name() == (param_type)); \
+        XCTAssert(downcast<WGSL::AST::NamedTypeReference>(paramType.elementType()).name() == (param_type)); \
     } while (false)
 
 
@@ -92,7 +92,7 @@
     XCTAssertTrue(str.members()[0]->attributes().isEmpty());
     XCTAssertEqual(str.members()[0]->name(), "a"_s);
     XCTAssertTrue(str.members()[0]->type().isNamed());
-    auto& memberType = downcast<WGSL::AST::NamedType>(str.members()[0]->type());
+    auto& memberType = downcast<WGSL::AST::NamedTypeReference>(str.members()[0]->type());
     XCTAssertEqual(memberType.name(), "i32"_s);
 }
 
@@ -118,9 +118,9 @@
     XCTAssertTrue(var.maybeQualifier());
     XCTAssertEqual(var.maybeQualifier()->storageClass(), WGSL::AST::StorageClass::Storage);
     XCTAssertEqual(var.maybeQualifier()->accessMode(), WGSL::AST::AccessMode::ReadWrite);
-    XCTAssertTrue(var.maybeTypeDecl());
-    XCTAssertTrue(var.maybeTypeDecl()->isNamed());
-    auto& namedType = downcast<WGSL::AST::NamedType>(*var.maybeTypeDecl());
+    XCTAssertTrue(var.maybeType());
+    XCTAssertTrue(var.maybeType()->isNamed());
+    auto& namedType = downcast<WGSL::AST::NamedTypeReference>(*var.maybeType());
     XCTAssertEqual(namedType.name(), "B"_s);
     XCTAssertFalse(var.maybeInitializer());
 }
@@ -193,10 +193,10 @@
         XCTAssertTrue(func.parameters()[0]->attributes()[0]->isLocation());
         XCTAssertEqual(downcast<WGSL::AST::LocationAttribute>(func.parameters()[0]->attributes()[0].get()).location(), 0u);
         XCTAssertTrue(func.parameters()[0]->type().isParameterized());
-        auto& paramType = downcast<WGSL::AST::ParameterizedType>(func.parameters()[0]->type());
-        XCTAssertEqual(paramType.base(), WGSL::AST::ParameterizedType::Base::Vec4);
+        auto& paramType = downcast<WGSL::AST::ParameterizedTypeReference>(func.parameters()[0]->type());
+        XCTAssertEqual(paramType.base(), WGSL::AST::ParameterizedTypeReference::Base::Vec4);
         XCTAssertTrue(paramType.elementType().isNamed());
-        XCTAssertEqual(downcast<WGSL::AST::NamedType>(paramType.elementType()).name(), "f32"_s);
+        XCTAssertEqual(downcast<WGSL::AST::NamedTypeReference>(paramType.elementType()).name(), "f32"_s);
         XCTAssertEqual(func.returnAttributes().size(), 1u);
         XCTAssertTrue(func.returnAttributes()[0]->isBuiltin());
         XCTAssertEqual(downcast<WGSL::AST::BuiltinAttribute>(func.returnAttributes()[0].get()).name(), "position"_s);
@@ -277,7 +277,7 @@
         XCTAssertEqual(varDecl.name(), "x"_s);
         XCTAssertTrue(varDecl.attributes().isEmpty());
         XCTAssertEqual(varDecl.maybeQualifier(), nullptr);
-        XCTAssertEqual(varDecl.maybeTypeDecl(), nullptr);
+        XCTAssertEqual(varDecl.maybeType(), nullptr);
         XCTAssertTrue(varDecl.maybeInitializer());
         auto& varInitExpr = downcast<WGSL::AST::CallableExpression>(*varDecl.maybeInitializer());
         XCTAssertTrue(varInitExpr.target().isParameterized());
@@ -422,18 +422,18 @@
     {
         WGSL::AST::FunctionDecl& func = shader->functions()[0];
         XCTAssertTrue(func.body().statements().size() >= 1u);
-        WGSL::AST::Statement& stmt = func.body().statements()[0].get();
+        auto& stmt = func.body().statements()[0].get();
         XCTAssertTrue(stmt.isVariable());
-        WGSL::AST::VariableStatement& varStmt = downcast<WGSL::AST::VariableStatement>(func.body().statements()[0].get());
-        WGSL::AST::VariableDecl& varDecl = downcast<WGSL::AST::VariableDecl>(varStmt.declaration());
+        auto& varStmt = downcast<WGSL::AST::VariableStatement>(func.body().statements()[0].get());
+        auto& varDecl = downcast<WGSL::AST::VariableDecl>(varStmt.declaration());
         XCTAssertEqual(varDecl.name(), "pos"_s);
         XCTAssertTrue(varDecl.attributes().isEmpty());
         XCTAssertEqual(varDecl.maybeQualifier(), nullptr);
-        XCTAssertEqual(varDecl.maybeTypeDecl(), nullptr);
+        XCTAssertEqual(varDecl.maybeType(), nullptr);
         XCTAssertTrue(varDecl.maybeInitializer());
         auto& varInitExpr = downcast<WGSL::AST::CallableExpression>(*varDecl.maybeInitializer());
         XCTAssertTrue(varInitExpr.target().isArray());
-        auto& varInitArrayType = downcast<WGSL::AST::ArrayType>(varInitExpr.target());
+        auto& varInitArrayType = downcast<WGSL::AST::ArrayTypeReference>(varInitExpr.target());
         XCTAssertTrue(varInitArrayType.maybeElementType());
         ASSERT_VEC2_F32(*varInitArrayType.maybeElementType());
         XCTAssertTrue(varInitArrayType.maybeElementCount());
@@ -445,9 +445,9 @@
     {
         WGSL::AST::FunctionDecl& func = shader->functions()[0];
         XCTAssertTrue(func.body().statements().size() >= 1u);
-        WGSL::AST::Statement& stmt = func.body().statements()[1].get();
+        auto& stmt = func.body().statements()[1].get();
         XCTAssertTrue(stmt.isReturn());
-        WGSL::AST::ReturnStatement& retStmt = downcast<WGSL::AST::ReturnStatement>(stmt);
+        auto& retStmt = downcast<WGSL::AST::ReturnStatement>(stmt);
         XCTAssertTrue(retStmt.maybeExpression());
         XCTAssertTrue(retStmt.maybeExpression()->isCallableExpression());
         auto& expr = downcast<WGSL::AST::CallableExpression>(*retStmt.maybeExpression());
