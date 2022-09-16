@@ -616,19 +616,7 @@ void WebGL2RenderingContext::copyBufferSubData(GCGLenum readTarget, GCGLenum wri
         return;
     }
 
-    if (!writeBuffer->associateCopyBufferSubData(*readBuffer, checkedReadOffset, checkedWriteOffset, checkedSize)) {
-        this->synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "copyBufferSubData", "offset out of range");
-        return;
-    }
-
-    m_context->moveErrorsToSyntheticErrorList();
-#if PLATFORM(COCOA)
     m_context->copyBufferSubData(readTarget, writeTarget, checkedReadOffset, checkedWriteOffset, checkedSize);
-#endif
-    if (m_context->moveErrorsToSyntheticErrorList()) {
-        // The bufferSubData function failed. Tell the buffer it doesn't have the data it thinks it does.
-        writeBuffer->disassociateBufferData();
-    }
 }
 
 void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByteOffset, RefPtr<ArrayBufferView>&& dstData, GCGLuint dstOffset, GCGLuint length)
@@ -681,15 +669,6 @@ void WebGL2RenderingContext::getBufferSubData(GCGLenum target, long long srcByte
         return;
     }
 
-    Checked<GCGLintptr, RecordOverflow> checkedSrcByteOffset(srcByteOffset);
-    Checked<GCGLintptr, RecordOverflow> checkedCopyLengthPtr(copyLength);
-    Checked<GCGLintptr, RecordOverflow> checkedElementSize(elementSize);
-    auto checkedSourceEnd = checkedSrcByteOffset + checkedCopyLengthPtr * checkedElementSize;
-    if (checkedSourceEnd.hasOverflowed() || checkedSourceEnd > buffer->byteLength()) {
-        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "getBufferSubData", "Parameters would read outside the bounds of the source buffer");
-        return;
-    }
-    
     if (!copyLength)
         return;
 
@@ -3186,58 +3165,6 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     }
 }
 
-bool WebGL2RenderingContext::validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired)
-{
-    // Performs conservative validation by caching a maximum index of
-    // the given type per element array buffer. If all of the bound
-    // array buffers have enough elements to satisfy that maximum
-    // index, skips the expensive per-draw-call iteration in
-    // validateIndexArrayPrecise.
-
-    RefPtr<WebGLBuffer> elementArrayBuffer = m_boundVertexArrayObject->getElementArrayBuffer();
-
-    if (!elementArrayBuffer)
-        return false;
-
-    GCGLsizeiptr numElements = elementArrayBuffer->byteLength();
-    // The case count==0 is already dealt with in drawElements before validateIndexArrayConservative.
-    if (!numElements)
-        return false;
-    auto buffer = elementArrayBuffer->elementArrayBuffer();
-    ASSERT(buffer);
-
-    std::optional<unsigned> maxIndex = elementArrayBuffer->getCachedMaxIndex(type);
-    if (!maxIndex) {
-        // Compute the maximum index in the entire buffer for the given type of index.
-        switch (type) {
-        case GraphicsContextGL::UNSIGNED_BYTE:
-            maxIndex = getMaxIndex<GCGLubyte>(buffer, 0, numElements);
-            break;
-        case GraphicsContextGL::UNSIGNED_SHORT:
-            maxIndex = getMaxIndex<GCGLushort>(buffer, 0, numElements / sizeof(GCGLushort));
-            break;
-        case GraphicsContextGL::UNSIGNED_INT:
-            maxIndex = getMaxIndex<GCGLuint>(buffer, 0, numElements / sizeof(GCGLuint));
-            break;
-        default:
-            return false;
-        }
-        if (maxIndex)
-            elementArrayBuffer->setCachedMaxIndex(type, maxIndex.value());
-    }
-
-    if (!maxIndex)
-        return false;
-
-    // The number of required elements is one more than the maximum
-    // index that will be accessed.
-    auto checkedNumElementsRequired = checkedAddAndMultiply<unsigned>(maxIndex.value(), 1, 1);
-    if (!checkedNumElementsRequired)
-        return false;
-    numElementsRequired = checkedNumElementsRequired.value();
-
-    return true;
-}
 
 bool WebGL2RenderingContext::validateBlendEquation(const char* functionName, GCGLenum mode)
 {

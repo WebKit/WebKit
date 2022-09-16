@@ -542,6 +542,7 @@ protected:
     // like GL_FLOAT, GL_INT, etc.
     unsigned sizeInBytes(GCGLenum type);
 
+#if !USE(ANGLE)
     // Basic validation of count and offset against number of elements in element array buffer
     bool validateElementArraySize(GCGLsizei count, GCGLenum type, GCGLintptr offset);
 
@@ -551,6 +552,7 @@ protected:
     // Precise but slow index validation -- only done if conservative checks fail
     bool validateIndexArrayPrecise(GCGLsizei count, GCGLenum type, GCGLintptr offset, unsigned& numElementsRequired);
     bool validateVertexAttributes(unsigned elementCount, unsigned primitiveCount = 0);
+#endif
 
     // Validates the incoming WebGL object, which is assumed to be non-null.
     // Checks that the object belongs to this context and that it's not marked for
@@ -1183,8 +1185,10 @@ protected:
     OffscreenCanvas* offscreenCanvas();
 #endif
 
+#if !USE(ANGLE)
     template <typename T> inline std::optional<T> checkedAddAndMultiply(T value, T add, T multiply);
     template <typename T> unsigned getMaxIndex(const RefPtr<JSC::ArrayBuffer> elementArrayBuffer, GCGLintptr uoffset, GCGLsizei n);
+#endif
 
     bool validateArrayBufferType(const char* functionName, GCGLenum type, std::optional<JSC::TypedArrayType>);
 
@@ -1209,6 +1213,7 @@ private:
     uint64_t m_activeOrdinal { 0 };
 };
 
+#if !USE(ANGLE)
 template <typename T>
 inline std::optional<T> WebGLRenderingContextBase::checkedAddAndMultiply(T value, T add, T multiply)
 {
@@ -1221,17 +1226,12 @@ inline std::optional<T> WebGLRenderingContextBase::checkedAddAndMultiply(T value
     return checkedResult.value();
 }
 
+
 template<typename T>
 inline unsigned WebGLRenderingContextBase::getMaxIndex(const RefPtr<JSC::ArrayBuffer> elementArrayBuffer, GCGLintptr uoffset, GCGLsizei n)
 {
     unsigned maxIndex = 0;
     T restartIndex = 0;
-
-#if ENABLE(WEBGL2)
-    // WebGL 2 spec enforces that GL_PRIMITIVE_RESTART_FIXED_INDEX is always enabled, so ignore the restart index.
-    if (isWebGL2())
-        restartIndex = std::numeric_limits<T>::max();
-#endif
 
     // Make uoffset an element offset.
     uoffset /= sizeof(T);
@@ -1244,6 +1244,7 @@ inline unsigned WebGLRenderingContextBase::getMaxIndex(const RefPtr<JSC::ArrayBu
 
     return maxIndex;
 }
+#endif
 
 WebCoreOpaqueRoot root(WebGLRenderingContextBase*);
 
