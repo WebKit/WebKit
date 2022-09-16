@@ -169,8 +169,11 @@ static inline std::pair<const AtomString&, InputTypeFactory*> findFactory(const 
 RefPtr<InputType> InputType::createIfDifferent(HTMLInputElement& element, const AtomString& typeName, InputType* currentInputType)
 {
     if (!typeName.isEmpty()) {
+        auto& currentTypeName = currentInputType ? currentInputType->formControlType() : nullAtom();
+        if (typeName == currentTypeName)
+            return nullptr;
         if (auto factory = findFactory(typeName); LIKELY(factory.second)) {
-            if (currentInputType && factory.first == currentInputType->formControlType())
+            if (factory.first == currentTypeName)
                 return nullptr;
             if (!factory.second->conditionalFunction || std::invoke(factory.second->conditionalFunction, element.document().settings()))
                 return factory.second->factoryFunction(element);
