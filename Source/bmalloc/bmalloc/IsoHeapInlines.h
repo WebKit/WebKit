@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BPlatform.h"
 #include "DeferredDecommitInlines.h"
 #include "DeferredTriggerInlines.h"
 #include "EligibilityResultInlines.h"
