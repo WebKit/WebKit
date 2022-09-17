@@ -128,6 +128,14 @@ void CCallHelpers::emitCTIThunkEpilogue()
 #endif
 }
 
+void CCallHelpers::emitDebuggerHook(VM& vm)
+{
+    setupArguments<decltype(operationDebuggerWillCallNativeExecutable)>(TrustedImmPtr(&vm));
+    prepareCallOperation(vm);
+    move(TrustedImmPtr(tagCFunction<OperationPtrTag>(operationDebuggerWillCallNativeExecutable)), GPRInfo::nonArgGPR0);
+    call(GPRInfo::nonArgGPR0, OperationPtrTag);
+}
+
 } // namespace JSC
 
 #endif // ENABLE(JIT)

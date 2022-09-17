@@ -3655,11 +3655,19 @@ JSC_DEFINE_JIT_OPERATION(operationValueSubProfiledNoOptimize, EncodedJSValue, (J
     return profiledSub(vm, globalObject, encodedOp1, encodedOp2, *arithProfile);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationDebuggerWillCallNativeExecutable, void, (CallFrame* callFrame))
+JSC_DEFINE_JIT_OPERATION(operationDebuggerWillCallNativeExecutable, void, (VM* vmPointer))
 {
+    VM& vm = *vmPointer;
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
     ASSERT(!callFrame->isWasmFrame());
 
-    auto* globalObject = callFrame->jsCallee()->globalObject();
+    auto* jsCallee = callFrame->jsCallee();
+    if (!jsCallee)
+        return;
+
+    auto* globalObject = jsCallee->globalObject();
     if (!globalObject)
         return;
 
