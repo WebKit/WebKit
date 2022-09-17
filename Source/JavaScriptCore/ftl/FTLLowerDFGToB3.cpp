@@ -16513,6 +16513,7 @@ IGNORE_CLANG_WARNINGS_END
             }
             restore();
             jit.moveValue(baselineCodeBlock->globalObject(), JSValueRegs { GPRInfo::returnValueGPR });
+            jit.loadPtr(CCallHelpers::Address(GPRInfo::returnValueGPR, JSGlobalObject::offsetOfGlobalThis()), GPRInfo::returnValueGPR);
             params.code().emitEpilogue(jit); 
 
             skipEarlyReturn.link(&jit);

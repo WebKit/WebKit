@@ -1466,6 +1466,7 @@ void JIT::emit_op_loop_hint(const JSInstruction* instruction)
         auto skipEarlyReturn = branchPtr(Below, regT0, TrustedImmPtr(Options::earlyReturnFromInfiniteLoopsLimit()));
 
         loadGlobalObject(returnValueJSR.payloadGPR());
+        loadPtr(Address(returnValueJSR.payloadGPR(), JSGlobalObject::offsetOfGlobalThis()), returnValueJSR.payloadGPR());
         boxCell(returnValueJSR.payloadGPR(), returnValueJSR);
 
         checkStackPointerAlignment();
