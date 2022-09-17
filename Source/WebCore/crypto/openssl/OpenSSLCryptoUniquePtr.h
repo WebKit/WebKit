@@ -27,8 +27,13 @@
 #pragma once
 
 #include <memory>
-#include <openssl/X509.h>
+#include <openssl/ec.h>
 #include <openssl/hmac.h>
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#include <openssl/kdf.h>
+#include <openssl/param_build.h>
+#endif
+#include <openssl/x509.h>
 
 namespace WebCore {
 
@@ -40,134 +45,45 @@ struct OpenSSLCryptoPtrDeleter {
 template <typename T>
 using OpenSSLCryptoPtr = std::unique_ptr<T, OpenSSLCryptoPtrDeleter<T>>;
 
-template <>
-struct OpenSSLCryptoPtrDeleter<EVP_CIPHER_CTX> {
-    void operator()(EVP_CIPHER_CTX* ptr) const
-    {
-        EVP_CIPHER_CTX_free(ptr);
-    }
-};
+#define DEFINE_OPENSSL_CRYPTO_PTR_FULL(alias, typeName, deleterFunc) \
+    template<> struct OpenSSLCryptoPtrDeleter<typeName> { \
+        void operator()(typeName* ptr) const { \
+            deleterFunc;                                             \
+        }                                                            \
+    };                                                               \
+    using alias = OpenSSLCryptoPtr<typeName>;
 
-using EvpCipherCtxPtr = OpenSSLCryptoPtr<EVP_CIPHER_CTX>;
+#define DEFINE_OPENSSL_CRYPTO_PTR(alias, typeName, deleterFunc)      \
+    DEFINE_OPENSSL_CRYPTO_PTR_FULL(alias, typeName, deleterFunc(ptr))
 
-template <>
-struct OpenSSLCryptoPtrDeleter<EVP_MD_CTX> {
-    void operator()(EVP_MD_CTX* ptr) const
-    {
-        EVP_MD_CTX_free(ptr);
-    }
-};
+DEFINE_OPENSSL_CRYPTO_PTR(EvpCipherCtxPtr, EVP_CIPHER_CTX, EVP_CIPHER_CTX_free)
+DEFINE_OPENSSL_CRYPTO_PTR(EvpDigestCtxPtr, EVP_MD_CTX, EVP_MD_CTX_free)
+DEFINE_OPENSSL_CRYPTO_PTR(EvpPKeyPtr, EVP_PKEY, EVP_PKEY_free)
+DEFINE_OPENSSL_CRYPTO_PTR(EvpPKeyCtxPtr, EVP_PKEY_CTX, EVP_PKEY_CTX_free)
 
-using EvpDigestCtxPtr = OpenSSLCryptoPtr<EVP_MD_CTX>;
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+DEFINE_OPENSSL_CRYPTO_PTR(OsslParamBldPtr, OSSL_PARAM_BLD, OSSL_PARAM_BLD_free)
+DEFINE_OPENSSL_CRYPTO_PTR(OsslParamPtr, OSSL_PARAM, OSSL_PARAM_free)
+DEFINE_OPENSSL_CRYPTO_PTR(EVPKDFCtxPtr, EVP_KDF_CTX, EVP_KDF_CTX_free)
+DEFINE_OPENSSL_CRYPTO_PTR(EVPKDFPtr, EVP_KDF, EVP_KDF_free)
+#endif // OPENSSL_VERSION_NUMBER >= 0x30000000L
 
-template <>
-struct OpenSSLCryptoPtrDeleter<EVP_PKEY> {
-    void operator()(EVP_PKEY* ptr) const
-    {
-        EVP_PKEY_free(ptr);
-    }
-};
+// These are deprecated in OpenSSL 3. FIXME: Migrate to EvpKey. See Bug #245146.
+DEFINE_OPENSSL_CRYPTO_PTR(RSAPtr, RSA, RSA_free)
+DEFINE_OPENSSL_CRYPTO_PTR(ECKeyPtr, EC_KEY, EC_KEY_free)
+DEFINE_OPENSSL_CRYPTO_PTR(HMACCtxPtr, HMAC_CTX, HMAC_CTX_free)
 
-using EvpPKeyPtr = OpenSSLCryptoPtr<EVP_PKEY>;
+DEFINE_OPENSSL_CRYPTO_PTR(ECPointPtr, EC_POINT, EC_POINT_clear_free)
+DEFINE_OPENSSL_CRYPTO_PTR(PKCS8PrivKeyInfoPtr, PKCS8_PRIV_KEY_INFO, PKCS8_PRIV_KEY_INFO_free)
+DEFINE_OPENSSL_CRYPTO_PTR(BIGNUMPtr, BIGNUM, BN_clear_free)
+DEFINE_OPENSSL_CRYPTO_PTR(BNCtxPtr, BN_CTX, BN_CTX_free)
+DEFINE_OPENSSL_CRYPTO_PTR(ECDSASigPtr, ECDSA_SIG, ECDSA_SIG_free)
+DEFINE_OPENSSL_CRYPTO_PTR(X509Ptr, X509, X509_free)
+DEFINE_OPENSSL_CRYPTO_PTR(BIOPtr, BIO, BIO_free)
 
-template <>
-struct OpenSSLCryptoPtrDeleter<EVP_PKEY_CTX> {
-    void operator()(EVP_PKEY_CTX* ptr) const
-    {
-        EVP_PKEY_CTX_free(ptr);
-    }
-};
+DEFINE_OPENSSL_CRYPTO_PTR_FULL(ASN1SequencePtr, ASN1_SEQUENCE_ANY, sk_ASN1_TYPE_pop_free(ptr, ASN1_TYPE_free))
 
-using EvpPKeyCtxPtr = OpenSSLCryptoPtr<EVP_PKEY_CTX>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<RSA> {
-    void operator()(RSA* ptr) const
-    {
-        RSA_free(ptr);
-    }
-};
-
-using RSAPtr = OpenSSLCryptoPtr<RSA>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<EC_KEY> {
-    void operator()(EC_KEY* ptr) const
-    {
-        EC_KEY_free(ptr);
-    }
-};
-
-using ECKeyPtr = OpenSSLCryptoPtr<EC_KEY>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<EC_POINT> {
-    void operator()(EC_POINT* ptr) const
-    {
-        EC_POINT_clear_free(ptr);
-    }
-};
-
-using ECPointPtr = OpenSSLCryptoPtr<EC_POINT>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<HMAC_CTX> {
-    void operator()(HMAC_CTX* ptr) const
-    {
-        HMAC_CTX_free(ptr);
-    }
-};
-
-using HMACCtxPtr = OpenSSLCryptoPtr<HMAC_CTX>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<PKCS8_PRIV_KEY_INFO> {
-    void operator()(PKCS8_PRIV_KEY_INFO* ptr) const
-    {
-        PKCS8_PRIV_KEY_INFO_free(ptr);
-    }
-};
-
-using PKCS8PrivKeyInfoPtr = OpenSSLCryptoPtr<PKCS8_PRIV_KEY_INFO>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<BIGNUM> {
-    void operator()(BIGNUM* ptr) const
-    {
-        BN_clear_free(ptr);
-    }
-};
-
-using BIGNUMPtr = OpenSSLCryptoPtr<BIGNUM>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<BN_CTX> {
-    void operator()(BN_CTX* ptr) const
-    {
-        BN_CTX_free(ptr);
-    }
-};
-
-using BNCtxPtr = OpenSSLCryptoPtr<BN_CTX>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<ECDSA_SIG> {
-    void operator()(ECDSA_SIG* ptr) const
-    {
-        ECDSA_SIG_free(ptr);
-    }
-};
-
-using ECDSASigPtr = OpenSSLCryptoPtr<ECDSA_SIG>;
-
-template <>
-struct OpenSSLCryptoPtrDeleter<ASN1_SEQUENCE_ANY> {
-    void operator()(ASN1_SEQUENCE_ANY* ptr) const
-    {
-        sk_ASN1_TYPE_pop_free(ptr, ASN1_TYPE_free);
-    }
-};
-
-using ASN1SequencePtr = OpenSSLCryptoPtr<ASN1_SEQUENCE_ANY>;
+#undef DEFINE_OPENSSL_CRYPTO_PTR
+#undef DEFINE_OPENSSL_CRYPTO_PTR_FULL
 
 } // namespace WebCore
