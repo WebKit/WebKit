@@ -141,6 +141,9 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     BOOL _scrollEnabledInternal;
     BOOL _zoomEnabledByClient;
     BOOL _zoomEnabledInternal;
+    BOOL _bouncesSetByClient;
+    BOOL _bouncesHorizontalInternal;
+    BOOL _bouncesVerticalInternal;
     std::optional<UIEdgeInsets> _contentScrollInsetFromClient;
     std::optional<UIEdgeInsets> _contentScrollInsetInternal;
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
@@ -159,6 +162,9 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     _scrollEnabledInternal = YES;
     _zoomEnabledByClient = YES;
     _zoomEnabledInternal = YES;
+    _bouncesSetByClient = YES;
+    _bouncesHorizontalInternal = YES;
+    _bouncesVerticalInternal = YES;
 
     self.alwaysBounceVertical = YES;
     self.directionalLockEnabled = YES;
@@ -471,6 +477,25 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
 - (void)_updateScrollability
 {
     [super setScrollEnabled:(_scrollEnabledByClient && _scrollEnabledInternal)];
+}
+
+- (void)setBounces:(BOOL)value
+{
+    _bouncesSetByClient = value;
+    [self _updateBouncability];
+}
+
+- (void)_setBouncesInternal:(BOOL)horizontal vertical:(BOOL)vertical
+{
+    _bouncesHorizontalInternal = horizontal;
+    _bouncesVerticalInternal = vertical;
+    [self _updateBouncability];
+}
+
+- (void)_updateBouncability
+{
+    [super setBouncesHorizontally:(_bouncesSetByClient && _bouncesHorizontalInternal)];
+    [super setBouncesVertically:(_bouncesSetByClient && _bouncesVerticalInternal)];
 }
 
 - (void)setZoomEnabled:(BOOL)value
