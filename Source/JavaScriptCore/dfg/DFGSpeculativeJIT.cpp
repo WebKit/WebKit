@@ -2154,7 +2154,9 @@ void SpeculativeJIT::compileLoopHint(Node* node)
 
             constexpr JSValueRegs resultRegs = JSRInfo::returnValueJSR;
 
-            m_jit.moveValue(baselineCodeBlock->globalObject(), resultRegs);
+            m_jit.loadLinkableConstant(JITCompiler::LinkableConstant(m_jit, baselineCodeBlock->globalObject()), resultRegs.payloadGPR());
+            m_jit.loadPtr(JITCompiler::Address(resultRegs.payloadGPR(), JSGlobalObject::offsetOfGlobalThis()), resultRegs.payloadGPR());
+            m_jit.boxCell(resultRegs.payloadGPR(), resultRegs);
             m_jit.emitRestoreCalleeSaves();
             m_jit.emitFunctionEpilogue();
             m_jit.ret();

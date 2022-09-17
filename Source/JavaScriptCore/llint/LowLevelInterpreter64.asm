@@ -3535,5 +3535,6 @@ end)
 op(fuzzer_return_early_from_loop_hint, macro ()
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalObject[t0], t0
+    loadp JSGlobalObject::m_globalThis[t0], t0
     doReturn()
 end)
