@@ -74,9 +74,12 @@ ICStats::ICStats()
                     break;
                 
                 dataLog("ICStats:\n");
-                auto list = m_spectrum.buildList();
-                for (unsigned i = list.size(); i--;)
-                    dataLog("    ", list[i].key, ": ", list[i].count, "\n");
+                {
+                    Locker spectrumLocker { m_spectrum.getLock() };
+                    auto list = m_spectrum.buildList(spectrumLocker);
+                    for (unsigned i = list.size(); i--;)
+                        dataLog("    ", *list[i].key, ": ", list[i].count, "\n");
+                }
             }
         });
 }
