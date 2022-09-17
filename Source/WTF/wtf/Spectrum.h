@@ -76,7 +76,7 @@ public:
         KeyAndCount() { }
         
         KeyAndCount(const T& key, CounterType count)
-            : key(key)
+            : key(&key)
             , count(count)
         {
         }
@@ -88,20 +88,21 @@ public:
             // This causes lower-ordered keys being returned first; this is really just
             // here to make sure that the order is somewhat deterministic rather than being
             // determined by hashing.
-            return key > other.key;
+            return *key > *other.key;
         }
 
-        T key;
+        const T* key;
         CounterType count;
     };
+
+    Lock& getLock() { return m_lock; }
     
     // Returns a list ordered from lowest-count to highest-count.
-    Vector<KeyAndCount> buildList() const
+    Vector<KeyAndCount> buildList(AbstractLocker&) const
     {
-        Locker locker(m_lock);
         Vector<KeyAndCount> list;
-        for (const_iterator iter = begin(); iter != end(); ++iter)
-            list.append(KeyAndCount(iter->key, iter->value));
+        for (const auto& entry : *this)
+            list.append(KeyAndCount(entry.key, entry.value));
         
         std::sort(list.begin(), list.end());
         return list;
