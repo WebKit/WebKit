@@ -29,6 +29,7 @@ import urllib
 from .base import Base
 
 from webkitbugspy import User, Issue
+from webkitbugspy.mocks.radar import Radar as RadarMock
 from webkitcorepy import mocks
 
 
@@ -144,6 +145,35 @@ class Bugzilla(Base, mocks.Requests):
                 issue['component'] = data['component']
             if data.get('version'):
                 issue['version'] = data['version']
+
+            if not issue.get('watchers', None):
+                issue['watchers'] = []
+            for candidate in data.get('cc', {}).get('add', []):
+                if candidate in [u.emails for u in issue['watchers']]:
+                    continue
+                candidate = self.users.get(candidate)
+                if not candidate:
+                    continue
+                issue['watchers'].append(candidate)
+                if 'Radar' not in candidate.name or 'Bug Importer' not in candidate.name:
+                    continue
+                radar_id = issue['id']
+                if RadarMock.top:
+                    print('Ugh, this is the problem')
+                    radar_id = RadarMock.top.add(dict(
+                        title='{} ({})'.format(issue['description'], issue['id']),
+                        timestamp=time.time(),
+                        opened=True,
+                        creator=candidate,
+                        assignee=user,
+                        description='From <https://{}/show_bug.cgi?id={}>:\n\n{}'.format(self.hosts[0], issue['id'], issue['description']),
+                        project=issue.get('project'),
+                        component=issue.get('component'),
+                        watchers=[candidate, user],
+                    ))
+                issue['comments'].append(
+                    Issue.Comment(user=candidate, timestamp=int(time.time()), content='<rdar://problem/{}>'.format(radar_id)),
+                )
 
         return mocks.Response.fromJson(dict(
             bugs=[dict(

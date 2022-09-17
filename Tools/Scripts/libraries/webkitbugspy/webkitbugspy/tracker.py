@@ -50,22 +50,29 @@ class Tracker(object):
         data = data if isinstance(data, (dict, list, tuple)) else json.loads(data)
         if isinstance(data, (list, tuple)):
             return [cls.from_json(datum) for datum in data]
+
+        if data.get('type') not in ('bugzilla', 'github', 'radar'):
+            raise TypeError("'{}' is not a recognized tracker type".format(data.get('type')))
+
+        unpacked = dict(
+            redact=data.get('redact'),
+        )
         if data.get('type') in ('bugzilla', 'github'):
-            return dict(
-                bugzilla=bugzilla.Tracker,
-                github=github.Tracker
-            )[data['type']](
-                url=data.get('url'),
-                res=[re.compile(r) for r in data.get('res', [])],
-                redact=data.get('redact'),
-            )
+            unpacked['url'] = data.get('url')
+            unpacked['res'] = [re.compile(r) for r in data.get('res', [])]
+        if data.get('type') == 'bugzilla':
+            unpacked['radar_importer'] = data.get('radar_importer')
+
         if data.get('type') == 'radar':
-            return radar.Tracker(
-                project=data.get('project', None),
-                projects=data.get('projects', []),
-                redact=data.get('redact'),
-            )
-        raise TypeError("'{}' is not a recognized tracker type".format(data.get('type')))
+            unpacked['project'] = data.get('project', None)
+            unpacked['projects'] = data.get('projects', [])
+            unpacked['project'] = data.get('project', None)
+
+        return dict(
+            bugzilla=bugzilla.Tracker,
+            github=github.Tracker,
+            radar=radar.Tracker,
+        )[data['type']](**unpacked)
 
 
     @classmethod
@@ -133,4 +140,7 @@ class Tracker(object):
         raise NotImplementedError()
 
     def create(self, title, description, **kwargs):
+        raise NotImplementedError()
+
+    def cc_radar(self, issue, block=False, timeout=None):
         raise NotImplementedError()

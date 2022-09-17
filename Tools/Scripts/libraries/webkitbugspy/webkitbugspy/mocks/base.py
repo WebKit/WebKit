@@ -59,3 +59,4 @@ class Base(object):
                 self.users.add(type(self).transform_user(user))
 
         self.issues[id] = copy.deepcopy(bug_data)
+        return id

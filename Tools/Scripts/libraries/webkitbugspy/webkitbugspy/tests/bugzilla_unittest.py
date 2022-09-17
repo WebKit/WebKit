@@ -22,9 +22,11 @@
 
 import json
 import re
+import logging
 import unittest
 
-from webkitbugspy import Tracker, User, bugzilla, mocks
+from mock import patch
+from webkitbugspy import Tracker, User, bugzilla, mocks, radar
 from webkitcorepy import OutputCapture, mocks as wkmocks
 
 
@@ -422,3 +424,59 @@ What version of 'WebKit' should the bug be associated with?:
             self.assertEqual(bugzilla.Tracker(self.URL, redact={'project:WebKit': True}).issue(1).redacted, True)
             self.assertEqual(bugzilla.Tracker(self.URL, redact={'component:Text': True}).issue(1).redacted, True)
             self.assertEqual(bugzilla.Tracker(self.URL, redact={'version:Other': True}).issue(1).redacted, True)
+
+    def test_cc_no_radar(self):
+        with OutputCapture(level=logging.INFO), mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            issue = bugzilla.Tracker(self.URL, radar_importer=mocks.USERS['Radar WebKit Bug Importer']).issue(1)
+            self.assertEqual(issue.references, [])
+            self.assertIsNone(issue.cc_radar(block=True))
+
+    def test_cc_no_importer(self):
+        with OutputCapture(level=logging.INFO), mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS), mocks.NoRadar():
+            radar_tracker = radar.Tracker()
+            bugzilla_tracker = bugzilla.Tracker(self.URL)
+
+            with patch('webkitbugspy.Tracker._trackers', [radar_tracker, bugzilla_tracker]):
+                issue = bugzilla_tracker.issue(1)
+                self.assertEqual(issue.references, [])
+                self.assertIsNone(issue.cc_radar(block=True))
+
+    def test_cc_with_radar(self):
+        with OutputCapture(level=logging.INFO), mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS), mocks.NoRadar():
+            radar_tracker = radar.Tracker()
+            bugzilla_tracker = bugzilla.Tracker(self.URL, radar_importer=mocks.USERS['Radar WebKit Bug Importer'])
+
+            with patch('webkitbugspy.Tracker._trackers', [radar_tracker, bugzilla_tracker]):
+                issue = bugzilla_tracker.issue(1)
+                self.assertEqual(issue.references, [])
+                self.assertIsNotNone(issue.cc_radar(block=True))
+                self.assertEqual(len(issue.references), 1)
+                self.assertEqual(issue.references[0].link, '<rdar://1>')
+                self.assertEqual(issue.references[0].title, None)
+
+    def test_cc_with_radarclient(self):
+        with OutputCapture(level=logging.INFO), mocks.Bugzilla(self.URL.split('://')[1], environment=wkmocks.Environment(
+            BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+            BUGS_EXAMPLE_COM_PASSWORD='password',
+        ), users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS), mocks.Radar(
+            users=mocks.USERS, issues=mocks.ISSUES, projects=mocks.PROJECTS,
+        ):
+            radar_tracker = radar.Tracker()
+            bugzilla_tracker = bugzilla.Tracker(self.URL, radar_importer=mocks.USERS['Radar WebKit Bug Importer'])
+
+            with patch('webkitbugspy.Tracker._trackers', [radar_tracker, bugzilla_tracker]):
+                issue = bugzilla_tracker.issue(1)
+                self.assertEqual(issue.references, [])
+                self.assertIsNotNone(issue.cc_radar(block=True))
+                self.assertEqual(len(issue.references), 1)
+                self.assertEqual(issue.references[0].link, '<rdar://4>')
+                self.assertEqual(issue.references[0].title, 'An example issue for testing (1)')

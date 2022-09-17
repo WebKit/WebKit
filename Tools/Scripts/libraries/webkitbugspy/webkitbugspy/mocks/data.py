@@ -27,14 +27,22 @@ USERS = User.Mapping()
 USERS.create(
     name='Tim Contributor',
     emails=['tcontributor@example.com'],
+    username='tcontributor@example.com',
 )
 USERS.create(
     name='Felix Filer',
     emails=['ffiler@example.com'],
+    username='ffiler@example.com',
 )
 USERS.create(
     name='Wilma Watcher',
     emails=['wwatcher@example.com'],
+    username='wwatcher@example.com',
+)
+USERS.create(
+    name='Radar WebKit Bug Importer',
+    emails=['webkit-bug-importer@group.apple.com'],
+    username='webkit-bug-importer@group.apple.com',
 )
 
 ISSUES = [
