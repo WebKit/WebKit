@@ -10,5 +10,4 @@ PASS e.style['min-width'] = "min-content max-content" should not set the propert
 PASS e.style['min-width'] = "available" should not set the property value
 PASS e.style['min-width'] = "10px border-box" should not set the property value
 PASS e.style['min-width'] = "content-box 20%" should not set the property value
-FAIL e.style['min-width'] = "fit-content" should not set the property value assert_equals: expected "" but got "fit-content"
 

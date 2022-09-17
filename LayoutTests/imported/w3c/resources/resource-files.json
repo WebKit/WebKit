@@ -1779,6 +1779,7 @@
         "web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-024-ref.html",
         "web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-025-ref.html",
         "web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-026-ref.html",
+        "web-platform-tests/css/css-sizing/support/dynamic-available-size-iframe.html",
         "web-platform-tests/css/css-text-decor/text-decoration-color-selection-002.html",
         "web-platform-tests/css/css-text-decor/text-decoration-visibility-001.xht",
         "web-platform-tests/css/css-text-decor/text-decoration-visibility-002.xht",
