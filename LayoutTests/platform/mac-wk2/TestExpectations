@@ -1752,6 +1752,7 @@ webkit.org/b/242462 [ Monterey Release ] imported/w3c/web-platform-tests/Indexed
 webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failure ]
 
 webkit.org/b/240987 fast/images/heic-as-background-image.html [ ImageOnlyFailure ]
+webkit.org/b/240987 fast/images/avif-heif-container-as-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/243589 [ Debug ] http/wpt/service-workers/update-with-importScripts.html [ Pass Crash ]
 webkit.org/b/243589 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/credentials.https.html [ Pass Crash ]

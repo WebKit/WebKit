@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class SharedBuffer;
+
 class ImageDecoderCG final : public ImageDecoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -50,7 +52,7 @@ public:
     IntSize size() const final { return IntSize(); }
     size_t frameCount() const final;
     RepetitionCount repetitionCount() const final;
-    String uti() const final;
+    String uti() const final { return m_uti; }
     String filenameExtension() const final;
     String accessibilityDescription() const final;
     std::optional<IntPoint> hotSpot() const final;
@@ -71,8 +73,11 @@ public:
     void clearFrameBufferCache(size_t) final { }
 
 private:
+    String decodeUTI(const SharedBuffer&) const;
+    
     bool m_isAllDataReceived { false };
     mutable EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::Unknown };
+    String m_uti;
     RetainPtr<CGImageSourceRef> m_nativeDecoder;
 };
 

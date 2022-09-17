@@ -130,21 +130,6 @@ fast/scrolling/latching [ Skip ]
 fast/forms/search/search-padding-cancel-results-buttons.html [ Skip ]
 fast/forms/search/search-results-hidden-crash.html [ Skip ]
 
-# These tests don't have to be platform-specific, but they are only implemented on Mac now.
-fast/images/eps-as-image.html [ Skip ]
-
-# These tests don't have to be platform-specific, but they are only implemented on GTK now.
-fast/images/avif-image-decoding.html [ Skip ]
-fast/images/avif-as-image.html [ Skip ]
-fast/images/animated-avif.html [ Skip ]
-http/tests/images/avif-partial-load-crash.html [ Skip ]
-
-# Only applicable on platforms with JPEG XL support
-fast/images/jpegxl-image-decoding.html [ Skip ]
-fast/images/jpegxl-as-image.html [ Skip ]
-fast/images/jpegxl-with-color-profile.html [ Skip ]
-fast/images/animated-jpegxl-loop-count.html [ Skip ]
-
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
 fast/css/apple-system-control-colors.html [ Skip ]
@@ -2245,6 +2230,22 @@ fast/images/heic-as-background-image.html [ Skip ]
 fast/images/webp-as-image.html [ Skip ]
 fast/images/animated-webp-as-image.html [ Skip ]
 fast/images/animated-webp.html [ Skip ]
+
+# These tests don't have to be platform-specific, but they are only implemented on Mac now.
+fast/images/eps-as-image.html [ Skip ]
+
+# AVIF images are only supported on GTK and on macOS and iOS post Ventura.
+fast/images/avif-image-decoding.html [ Skip ]
+fast/images/avif-as-image.html [ Skip ]
+fast/images/avif-heif-container-as-image.html [ Skip ]
+fast/images/animated-avif.html [ Skip ]
+http/tests/images/avif-partial-load-crash.html [ Skip ]
+
+# Only applicable on platforms with JPEG XL support
+fast/images/jpegxl-image-decoding.html [ Skip ]
+fast/images/jpegxl-as-image.html [ Skip ]
+fast/images/jpegxl-with-color-profile.html [ Skip ]
+fast/images/animated-jpegxl-loop-count.html [ Skip ]
 
 # Experimental H265 support.
 webrtc/h265.html [ Pass Failure ]
