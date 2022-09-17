@@ -209,10 +209,10 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncLookupGetter, (JSGlobalObject* globalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
     bool hasProperty = thisObject->getPropertySlot(globalObject, propertyName, slot);
@@ -225,7 +225,9 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncLookupGetter, (JSGlobalObject* globalObj
         if (slot.attributes() & PropertyAttribute::CustomAccessor) {
             PropertyDescriptor descriptor;
             ASSERT(slot.slotBase());
-            if (slot.slotBase()->getOwnPropertyDescriptor(globalObject, propertyName, descriptor))
+            bool result = slot.slotBase()->getOwnPropertyDescriptor(globalObject, propertyName, descriptor);
+            EXCEPTION_ASSERT(!scope.exception() || !result);
+            if (result)
                 return descriptor.getterPresent() ? JSValue::encode(descriptor.getter()) : JSValue::encode(jsUndefined());
         }
     }
@@ -239,10 +241,10 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncLookupSetter, (JSGlobalObject* globalObj
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* thisObject = callFrame->thisValue().toThis(globalObject, ECMAMode::strict()).toObject(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     auto propertyName = callFrame->argument(0).toPropertyKey(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
     bool hasProperty = thisObject->getPropertySlot(globalObject, propertyName, slot);
@@ -255,7 +257,9 @@ JSC_DEFINE_HOST_FUNCTION(objectProtoFuncLookupSetter, (JSGlobalObject* globalObj
         if (slot.attributes() & PropertyAttribute::CustomAccessor) {
             PropertyDescriptor descriptor;
             ASSERT(slot.slotBase());
-            if (slot.slotBase()->getOwnPropertyDescriptor(globalObject, propertyName, descriptor))
+            bool result = slot.slotBase()->getOwnPropertyDescriptor(globalObject, propertyName, descriptor);
+            EXCEPTION_ASSERT(!scope.exception() || !result);
+            if (result)
                 return descriptor.setterPresent() ? JSValue::encode(descriptor.setter()) : JSValue::encode(jsUndefined());
         }
     }
