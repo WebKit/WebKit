@@ -44,8 +44,13 @@ using namespace Inspector;
 PageNetworkAgent::PageNetworkAgent(PageAgentContext& context, InspectorClient* client)
     : InspectorNetworkAgent(context)
     , m_inspectedPage(context.inspectedPage)
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     , m_client(client)
+#endif
 {
+#if !ENABLE(INSPECTOR_NETWORK_THROTTLING)
+    UNUSED_PARAM(client);
+#endif
 }
 
 PageNetworkAgent::~PageNetworkAgent() = default;

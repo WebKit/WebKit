@@ -121,6 +121,8 @@ void WheelEventTestMonitor::receivedWheelEvent(const PlatformWheelEvent& event)
 
     if (event.momentumPhase() == PlatformWheelEventPhase::Ended)
         m_receivedMomentumEnd = true;
+#else
+    UNUSED_PARAM(event);
 #endif
 }
 

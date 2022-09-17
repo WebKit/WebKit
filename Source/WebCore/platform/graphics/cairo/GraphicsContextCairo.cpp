@@ -242,6 +242,7 @@ void GraphicsContextCairo::drawFocusRing(const Path& path, float width, float of
     UNUSED_PARAM(offset);
     return;
 #else
+    UNUSED_PARAM(offset);
     Cairo::drawFocusRing(*this, path, width, color);
 #endif
 }
@@ -254,6 +255,7 @@ void GraphicsContextCairo::drawFocusRing(const Vector<FloatRect>& rects, float w
     UNUSED_PARAM(offset);
     return;
 #else
+    UNUSED_PARAM(offset);
     Cairo::drawFocusRing(*this, rects, width, color);
 #endif
 }

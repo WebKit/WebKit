@@ -140,8 +140,10 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 
             auto* window = document.frame() ? document.frame()->window() : nullptr;
             if (!window || !window->consumeTransientActivation()) {
+#if !RELEASE_LOG_DISABLED
                 Seconds lastActivationDuration = window ? MonotonicTime::now() - window->lastActivationTimestamp() : Seconds::infinity();
                 RELEASE_LOG_ERROR(Push, "Failing PushManager.subscribe call due to failed transient activation check; last activated %.2f sec ago", lastActivationDuration.value());
+#endif
 
                 auto errorMessage = "Push notification prompting can only be done from a user gesture."_s;
                 document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
