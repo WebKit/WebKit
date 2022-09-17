@@ -142,5 +142,5 @@ class Tracker(object):
     def create(self, title, description, **kwargs):
         raise NotImplementedError()
 
-    def cc_radar(self, issue, block=False, timeout=None):
+    def cc_radar(self, issue, block=False, timeout=None, radar=None):
         raise NotImplementedError()

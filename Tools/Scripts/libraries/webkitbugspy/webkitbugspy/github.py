@@ -602,6 +602,6 @@ with 'repo' and 'workflow' access and appropriate 'Expiration' for your {host} u
 
         return 'Error Message: {}\n{}'.format(message, ''.join(error_messages))
 
-    def cc_radar(self, issue, block=False, timeout=None):
+    def cc_radar(self, issue, block=False, timeout=None, radar=None):
         sys.stderr.write('No radar CC implemented for GitHub Issues\n')
         return None
