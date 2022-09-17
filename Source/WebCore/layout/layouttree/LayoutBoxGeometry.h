@@ -136,6 +136,8 @@ public:
     void setVerticalSpaceForScrollbar(LayoutUnit scrollbarHeight) { m_verticalSpaceForScrollbar = scrollbarHeight; }
     void setHorizontalSpaceForScrollbar(LayoutUnit scrollbarWidth) { m_horizontalSpaceForScrollbar = scrollbarWidth; }
 
+    BoxGeometry geometryForWritingModeAndDirection(bool isHorizontalWritingMode, bool isLeftToRightDirection, LayoutUnit containerLogicalWidth) const;
+
 private:
     LayoutUnit logicalTop() const;
     LayoutUnit logicalLeft() const;
@@ -414,6 +416,46 @@ inline LayoutUnit BoxGeometry::borderEnd() const
 {
     ASSERT(m_hasValidBorder);
     return m_border.horizontal.right;
+}
+
+inline BoxGeometry BoxGeometry::geometryForWritingModeAndDirection(bool isHorizontalWritingMode, bool isLeftToRightDirection, LayoutUnit containerLogicalWidth) const
+{
+    if (isHorizontalWritingMode && isLeftToRightDirection)
+        return *this;
+
+    auto visualGeometry = *this;
+    if (isHorizontalWritingMode) {
+        // Horizontal flip.
+        visualGeometry.m_horizontalMargin = { m_horizontalMargin.end, m_horizontalMargin.start };
+        visualGeometry.m_border.horizontal = { m_border.horizontal.right, m_border.horizontal.left };
+        if (m_padding)
+            visualGeometry.m_padding->horizontal = { m_padding->horizontal.right, m_padding->horizontal.left };
+
+        visualGeometry.m_topLeft.setX(containerLogicalWidth - (m_topLeft.x() + borderBoxWidth())); 
+        return visualGeometry;
+    }
+
+    // Vertical flip.
+    visualGeometry.m_contentWidth = m_contentHeight;
+    visualGeometry.m_contentHeight = m_contentWidth;
+
+    visualGeometry.m_horizontalMargin = { m_verticalMargin.after, m_verticalMargin.before };
+    visualGeometry.m_verticalMargin = { m_horizontalMargin.start, m_horizontalMargin.end };
+
+    auto left = isLeftToRightDirection ? m_topLeft.x() : containerLogicalWidth - (m_topLeft.x() + borderBoxWidth());
+    auto marginBoxOffset = LayoutSize { left - m_horizontalMargin.start, m_topLeft.y() - m_verticalMargin.before }.transposedSize();
+    visualGeometry.m_topLeft = { visualGeometry.m_horizontalMargin.start, visualGeometry.m_verticalMargin.before };
+    visualGeometry.m_topLeft.move(marginBoxOffset);
+
+    visualGeometry.m_border = { { m_border.vertical.bottom, m_border.vertical.top }, { m_border.horizontal.left, m_border.horizontal.right } };
+
+    if (m_padding)
+        visualGeometry.m_padding = Layout::Edges { { m_padding->vertical.bottom, m_padding->vertical.top }, { m_padding->horizontal.left, m_padding->horizontal.right } };
+
+    visualGeometry.m_verticalSpaceForScrollbar = m_horizontalSpaceForScrollbar;
+    visualGeometry.m_horizontalSpaceForScrollbar = m_verticalSpaceForScrollbar;
+
+    return visualGeometry;
 }
 
 }
