@@ -33,9 +33,7 @@ namespace JSC {
 class VM;
 template<PtrTag> class MacroAssemblerCodeRef;
 
-enum class IncludeDebuggerHook : bool { No, Yes };
-
-using ThunkGenerator = MacroAssemblerCodeRef<JITThunkPtrTag> (*)(VM&, IncludeDebuggerHook);
+using ThunkGenerator = MacroAssemblerCodeRef<JITThunkPtrTag> (*)(VM&);
 
 #define FINALIZE_THUNK(linkBufferReference, resultPtrTag, ...) \
     (linkBufferReference.setIsThunk(), FINALIZE_CODE(linkBufferReference, resultPtrTag, __VA_ARGS__))

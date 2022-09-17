@@ -48,7 +48,6 @@
 #include "RegularExpression.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
-#include "ThunkGenerator.h"
 #include "Weak.h"
 #include <wtf/Box.h>
 #include <wtf/Function.h>
@@ -678,7 +677,7 @@ static String functionName(JSC::FunctionExecutable& functionExecutable)
 
 static String functionName(JSC::CodeBlock& codeBlock)
 {
-    if (auto* functionExecutable = codeBlock.ownerExecutable() ? JSC::jsDynamicCast<JSC::FunctionExecutable*>(codeBlock.ownerExecutable()) : nullptr)
+    if (auto* functionExecutable = JSC::jsDynamicCast<JSC::FunctionExecutable*>(codeBlock.ownerExecutable()))
         return functionName(*functionExecutable);
 
     return nullString();
@@ -686,13 +685,13 @@ static String functionName(JSC::CodeBlock& codeBlock)
 
 static String functionName(JSC::CallFrame* callFrame)
 {
-    if (auto* jsFunction = callFrame->jsCallee() ? JSC::jsDynamicCast<JSC::JSFunction*>(callFrame->jsCallee()) : nullptr) {
-        if (auto* nativeExecutable = jsFunction->executable() ? JSC::jsDynamicCast<JSC::NativeExecutable*>(jsFunction->executable()) : nullptr)
-            return functionName(*nativeExecutable);
-    }
-
     if (auto* codeBlock = callFrame->codeBlock())
         return functionName(*codeBlock);
+
+    if (auto* jsFunction = JSC::jsDynamicCast<JSC::JSFunction*>(callFrame->jsCallee())) {
+        if (auto* nativeExecutable = JSC::jsDynamicCast<JSC::NativeExecutable*>(jsFunction->executable()))
+            return functionName(*nativeExecutable);
+    }
 
     return nullString();
 }
@@ -713,30 +712,21 @@ struct ReplacedThunk {
                 return;
 
             JSC::JITCode::CodeRef<JSC::JSEntryPtrTag> oldJITCodeRef;
-            CodePtr<JSC::JSEntryPtrTag> oldWithArityCheckJITCodePtr;
-            CodePtr<JSC::JSEntryPtrTag> oldNativeExecutableWithArityCheckJITCodePtr;
-
+            CodePtr<JSC::JSEntryPtrTag> oldArityJITCodeRef;
             switch (kind) {
             case JSC::CodeForCall:
                 oldJITCodeRef = WTFMove(callThunk);
-                oldWithArityCheckJITCodePtr = WTFMove(callWithArityCheckThunk);
-                oldNativeExecutableWithArityCheckJITCodePtr = WTFMove(nativeExecutableCallWithArityCheckThunk);
+                oldArityJITCodeRef = WTFMove(callArityThunk);
                 break;
 
             case JSC::CodeForConstruct:
                 oldJITCodeRef = WTFMove(constructThunk);
-                oldWithArityCheckJITCodePtr = WTFMove(constructWithArityCheckThunk);
-                oldNativeExecutableWithArityCheckJITCodePtr = WTFMove(nativeExecutableConstructWithArityCheckThunk);
+                oldArityJITCodeRef = WTFMove(constructArityThunk);
                 break;
             }
 
             jitCode->swapCodeRefForDebugger(WTFMove(oldJITCodeRef));
-            if (jitCode->canSwapCodePtrWithArityCheckForDebugger())
-                jitCode->swapCodePtrWithArityCheckForDebugger(WTFMove(oldWithArityCheckJITCodePtr));
-            else
-                RELEASE_ASSERT(!oldWithArityCheckJITCodePtr);
-
-            nativeExecutable->swapGeneratedJITCodeWithArityCheckForDebugger(kind, oldNativeExecutableWithArityCheckJITCodePtr);
+            nativeExecutable->swapGeneratedJITCodeWithArityCheckForDebugger(kind, oldArityJITCodeRef);
         };
 
         restoreThunks(JSC::CodeForCall);
@@ -746,12 +736,10 @@ struct ReplacedThunk {
     JSC::Weak<JSC::NativeExecutable> nativeExecutable;
 
     JSC::JITCode::CodeRef<JSC::JSEntryPtrTag> callThunk;
-    CodePtr<JSC::JSEntryPtrTag> callWithArityCheckThunk;
-    CodePtr<JSC::JSEntryPtrTag> nativeExecutableCallWithArityCheckThunk;
+    CodePtr<JSC::JSEntryPtrTag> callArityThunk;
 
     JSC::JITCode::CodeRef<JSC::JSEntryPtrTag> constructThunk;
-    CodePtr<JSC::JSEntryPtrTag> constructWithArityCheckThunk;
-    CodePtr<JSC::JSEntryPtrTag> nativeExecutableConstructWithArityCheckThunk;
+    CodePtr<JSC::JSEntryPtrTag> constructArityThunk;
 
     size_t matchCount { 0 };
 
@@ -836,6 +824,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::addSymbolicBreakpoint(cons
     }
 #endif
 
+    // FIXME: <https://webkit.org/b/243994> Web Inspector: Debugger: symbolic breakpoints should work with intrinsic functions
     // FIXME: <https://webkit.org/b/243717> Web Inspector: Debugger: symbolic breakpoints should work when functions change their `name`
 
     return { };
@@ -1447,56 +1436,38 @@ void InspectorDebuggerAgent::didCreateNativeExecutable(JSC::NativeExecutable& na
         CodePtr<JSC::JITThunkPtrTag> thunk;
         switch (kind) {
         case JSC::CodeForCall:
-            if (auto thunkGenerator = vm.thunkGeneratorForIntrinsic(jitCode->intrinsic()))
-                thunk = thunkGenerator(vm, JSC::IncludeDebuggerHook::Yes).code();
-            else
-                thunk = vm.jitStubs->ctiNativeCall(vm, JSC::IncludeDebuggerHook::Yes);
+            thunk = vm.jitStubs->ctiNativeCallWithDebuggerHook(vm);
             break;
 
         case JSC::CodeForConstruct:
-            thunk = vm.jitStubs->ctiNativeConstruct(vm, JSC::IncludeDebuggerHook::Yes);
+            thunk = vm.jitStubs->ctiNativeConstructWithDebuggerHook(vm);
             break;
         }
 
         RELEASE_ASSERT(nativeExecutable.generatedJITCodeWithArityCheckFor(kind) == jitCode->addressForCall(JSC::MustCheckArity));
 
         auto oldJITCodeRef = jitCode->swapCodeRefForDebugger(createJITCodeRef(thunk));
-        auto oldWithArityCheckJITCodePtr = jitCode->canSwapCodePtrWithArityCheckForDebugger() ? jitCode->swapCodePtrWithArityCheckForDebugger(thunk.retagged<JSC::JSEntryPtrTag>()) : CodePtr<JSC::JSEntryPtrTag>();
-        auto oldNativeExecutableWithArityCheckJITCodePtr = nativeExecutable.swapGeneratedJITCodeWithArityCheckForDebugger(kind, jitCode->addressForCall(JSC::MustCheckArity));
-
-        RELEASE_ASSERT(!jitCode->canSwapCodePtrWithArityCheckForDebugger() || oldJITCodeRef.code() == oldWithArityCheckJITCodePtr);
+        auto oldArityJITCodeRef = nativeExecutable.swapGeneratedJITCodeWithArityCheckForDebugger(kind, jitCode->addressForCall(JSC::MustCheckArity));
 
         switch (kind) {
         case JSC::CodeForCall:
             ASSERT(!replacedThunk->callThunk);
             replacedThunk->callThunk = WTFMove(oldJITCodeRef);
 
-            ASSERT(!replacedThunk->callWithArityCheckThunk);
-            if (oldWithArityCheckJITCodePtr)
-                replacedThunk->callWithArityCheckThunk = WTFMove(oldWithArityCheckJITCodePtr);
+            ASSERT(!replacedThunk->callArityThunk);
+            replacedThunk->callArityThunk = WTFMove(oldArityJITCodeRef);
 
-            ASSERT(!replacedThunk->nativeExecutableCallWithArityCheckThunk);
-            replacedThunk->nativeExecutableCallWithArityCheckThunk = WTFMove(oldNativeExecutableWithArityCheckJITCodePtr);
-
-            if (vm.thunkGeneratorForIntrinsic(jitCode->intrinsic())) {
-                // Intrinsic thunks are not cached, so we cannot compare the old thunk with the
-                // result of the generator (without debugger hooks) to make sure it matches.
-            } else
-                RELEASE_ASSERT(oldJITCodeRef.code() == createJITCodeRef(vm.jitStubs->ctiNativeCall(vm, JSC::IncludeDebuggerHook::No)).code());
+            RELEASE_ASSERT(oldJITCodeRef.code() == createJITCodeRef(vm.jitStubs->ctiNativeCall(vm)).code());
             break;
 
         case JSC::CodeForConstruct:
             ASSERT(!replacedThunk->constructThunk);
             replacedThunk->constructThunk = WTFMove(oldJITCodeRef);
 
-            ASSERT(!replacedThunk->constructWithArityCheckThunk);
-            if (oldWithArityCheckJITCodePtr)
-                replacedThunk->constructWithArityCheckThunk = WTFMove(oldWithArityCheckJITCodePtr);
+            ASSERT(!replacedThunk->constructArityThunk);
+            replacedThunk->constructArityThunk = WTFMove(oldArityJITCodeRef);
 
-            ASSERT(!replacedThunk->nativeExecutableConstructWithArityCheckThunk);
-            replacedThunk->nativeExecutableConstructWithArityCheckThunk = WTFMove(oldNativeExecutableWithArityCheckJITCodePtr);
-
-            RELEASE_ASSERT(oldJITCodeRef.code() == createJITCodeRef(vm.jitStubs->ctiNativeConstruct(vm, JSC::IncludeDebuggerHook::No)).code());
+            RELEASE_ASSERT(oldJITCodeRef.code() == createJITCodeRef(vm.jitStubs->ctiNativeConstruct(vm)).code());
             break;
         }
 

@@ -168,6 +168,8 @@ void RenderSVGBlock::mapLocalToContainer(const RenderLayerModelObject* ancestorC
         RenderBlock::mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
         return;
     }
+#else
+    UNUSED_PARAM(mode);
 #endif
     SVGRenderSupport::mapLocalToContainer(*this, ancestorContainer, transformState, wasFixed);
 }

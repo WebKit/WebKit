@@ -777,23 +777,12 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     handleTrailingOpenInlineBoxes();
 }
 
-void InlineDisplayContentBuilder::processFloatBoxes(const LineBuilder::LineContent& lineContent)
+void InlineDisplayContentBuilder::processFloatBoxes(const LineBuilder::LineContent&)
 {
     // Float boxes are not part of the inline content so we don't construct inline display boxes for them.
     // However box geometry still needs flipping from logical to visual.
-    auto writingMode = root().style().writingMode();
-    if (WebCore::isHorizontalWritingMode(writingMode)) {
-        // FIXME: Add right-to-left support
-        return;
-    }
-
-    for (auto* inlineFloatItem : lineContent.placedFloats) {
-        auto& boxGeometry = formattingState().boxGeometry(inlineFloatItem->layoutBox());
-        auto borderBoxLogicalRect = LayoutRect { BoxGeometry::borderBoxRect(boxGeometry) };
-        auto visualRect = flipLogicalRectToVisualForWritingMode(InlineRect { borderBoxLogicalRect }, writingMode);
-
-        boxGeometry.setLogicalTopLeft(toLayoutPoint(visualRect.topLeft()));
-    }
+    // FIXME: Figure out how to preserve logical coordinates for subsequent layout frames and have visual output the same time. For the time being
+    // this is done at LineLayout::constructContent.  
 }
 
 void InlineDisplayContentBuilder::collectInkOverflowForInlineBoxes(DisplayBoxes& boxes)

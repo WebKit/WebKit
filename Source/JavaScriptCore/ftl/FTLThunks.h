@@ -30,7 +30,6 @@
 #include "FTLLocation.h"
 #include "FTLSlowPathCallKey.h"
 #include "MacroAssemblerCodeRef.h"
-#include "ThunkGenerator.h"
 #include <wtf/HashMap.h>
 
 namespace JSC {
@@ -39,8 +38,8 @@ class VM;
 
 namespace FTL {
 
-MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM&, const SlowPathCallKey&);
 
 template<typename KeyTypeArgument>

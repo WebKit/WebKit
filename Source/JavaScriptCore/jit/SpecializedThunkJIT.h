@@ -37,16 +37,20 @@ namespace JSC {
     class SpecializedThunkJIT : public JSInterfaceJIT {
     public:
         static constexpr int ThisArgument = -1;
+        SpecializedThunkJIT(VM& vm, int expectedArgCount)
+            : JSInterfaceJIT(&vm)
+        {
+            emitFunctionPrologue();
+            emitSaveThenMaterializeTagRegisters();
+            // Check that we have the expected number of arguments
+            m_failures.append(branch32(NotEqual, payloadFor(CallFrameSlot::argumentCountIncludingThis), TrustedImm32(expectedArgCount + 1)));
+        }
+        
         explicit SpecializedThunkJIT(VM& vm)
             : JSInterfaceJIT(&vm)
         {
             emitFunctionPrologue();
             emitSaveThenMaterializeTagRegisters();
-        }
-
-        void checkArgCount(int expectedArgCount)
-        {
-            m_failures.append(branch32(NotEqual, payloadFor(CallFrameSlot::argumentCountIncludingThis), TrustedImm32(expectedArgCount + 1)));
         }
         
         void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)

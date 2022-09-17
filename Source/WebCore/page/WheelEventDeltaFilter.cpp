@@ -58,6 +58,7 @@ bool WheelEventDeltaFilter::shouldApplyFilteringForEvent(const PlatformWheelEven
     auto phase = event.phase();
     return phase == PlatformWheelEventPhase::Began || phase == PlatformWheelEventPhase::Changed;
 #else
+    UNUSED_PARAM(event);
     return false;
 #endif
 }

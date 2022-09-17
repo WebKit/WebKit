@@ -675,10 +675,8 @@ void JIT::emitRestoreCalleeSaves()
 }
 
 #if ASSERT_ENABLED
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::consistencyCheckGenerator(VM&)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     CCallHelpers jit;
 
     constexpr GPRReg stackOffsetGPR = regT0; // Incoming

@@ -47,7 +47,7 @@
 
 #define ALLOW_FLOATS 1
 #define ALLOW_RTL_FLOATS 1
-#define ALLOW_VERTICAL_FLOATS 0
+#define ALLOW_VERTICAL_FLOATS 1
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \

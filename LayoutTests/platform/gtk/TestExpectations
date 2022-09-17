@@ -1219,8 +1219,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/as
 
 fast/frames/lots-of-iframes.html [ Slow ]
 
-imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-negative-innerwidth-innerheight.html [ Slow ]
-
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Slow ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Slow ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.html [ Slow ]
@@ -1644,8 +1642,6 @@ webkit.org/b/172271 fast/text/tatechuyoko.html [ Failure ]
 webkit.org/b/172272 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure Crash ]
 
 webkit.org/b/172273 fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Failure Crash ]
-
-webkit.org/b/172275 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Failure ]
 
 webkit.org/b/172811 fast/block/float/032.html [ Failure ]
 webkit.org/b/172811 fast/forms/input-text-word-wrap.html [ Failure ]

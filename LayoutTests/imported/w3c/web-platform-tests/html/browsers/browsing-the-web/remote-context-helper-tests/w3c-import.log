@@ -1,0 +1,32 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addHTML.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addIframe.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addScripts.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addWindow-defaults.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addWindow-extra-config.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addWindow-features.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addWindow-invalid-origin.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addWindow-startOn.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addWindow-target.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/addWorker.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/constructor.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/createContext-bad-executorCreator.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/navigateToNew.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/navigation-bfcache.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/navigation-helpers.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/remote-context-helper-tests/navigation-same-document.window.js

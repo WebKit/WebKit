@@ -3783,7 +3783,7 @@ bool FrameLoader::shouldTreatURLAsSameAsCurrent(const SecurityOrigin* requesterO
 {
     if (!history().currentItem())
         return false;
-    if (requesterOrigin && (!m_frame.document() | !requesterOrigin->isSameOriginAs(m_frame.document()->securityOrigin())))
+    if (requesterOrigin && (!m_frame.document() || !requesterOrigin->isSameOriginAs(m_frame.document()->securityOrigin())))
         return false;
     return url == history().currentItem()->url() || url == history().currentItem()->originalURL();
 }

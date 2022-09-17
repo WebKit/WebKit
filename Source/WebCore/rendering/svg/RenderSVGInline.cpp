@@ -76,6 +76,8 @@ LayoutRect RenderSVGInline::clippedOverflowRect(const RenderLayerModelObject* re
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return RenderInline::clippedOverflowRect(repaintContainer, context);
+#else
+    UNUSED_PARAM(context);
 #endif
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer);
 }
@@ -98,6 +100,8 @@ void RenderSVGInline::mapLocalToContainer(const RenderLayerModelObject* ancestor
         RenderInline::mapLocalToContainer(ancestorContainer, transformState, mode, wasFixed);
         return;
     }
+#else
+    UNUSED_PARAM(mode);
 #endif
     SVGRenderSupport::mapLocalToContainer(*this, ancestorContainer, transformState, wasFixed);
 }

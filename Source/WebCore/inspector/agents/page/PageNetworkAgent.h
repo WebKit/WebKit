@@ -52,7 +52,9 @@ private:
     bool shouldForceBufferingNetworkResourceData() const { return false; }
 
     Page& m_inspectedPage;
+#if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     InspectorClient* m_client { nullptr };
+#endif
 };
 
 } // namespace WebCore

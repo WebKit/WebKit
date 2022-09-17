@@ -1,6 +1,0 @@
-
-PASS first argument: absolute url
-PASS first argument: empty url
-PASS second argument: passing a non-empty name
-PASS second argument: setting name after opening
-

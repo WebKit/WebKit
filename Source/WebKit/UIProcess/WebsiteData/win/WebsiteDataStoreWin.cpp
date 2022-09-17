@@ -48,72 +48,52 @@ void WebsiteDataStore::platformRemoveRecentSearches(WallTime)
 
 String WebsiteDataStore::defaultApplicationCacheDirectory(const String& baseCacheDirectory)
 {
-    if (!baseCacheDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseCacheDirectory, "ApplicationCache"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ApplicationCache"_s);
+    return cacheDirectoryFileSystemRepresentation("ApplicationCache"_s, baseCacheDirectory);
 }
 
 String WebsiteDataStore::defaultCacheStorageDirectory(const String& baseCacheDirectory)
 {
-    if (!baseCacheDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseCacheDirectory, "CacheStorage"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "CacheStorage"_s);
+    return cacheDirectoryFileSystemRepresentation("CacheStorage"_s, baseCacheDirectory);
 }
 
 String WebsiteDataStore::defaultNetworkCacheDirectory(const String& baseCacheDirectory)
 {
-    if (!baseCacheDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseCacheDirectory, "NetworkCache"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "NetworkCache"_s);
+    return cacheDirectoryFileSystemRepresentation("NetworkCache"_s, baseCacheDirectory);
 }
 
 String WebsiteDataStore::defaultGeneralStorageDirectory(const String& baseDataDirectory)
 {
-    if (!baseDataDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseDataDirectory, "Storage"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "Storage"_s);
+    return websiteDataDirectoryFileSystemRepresentation("Storage"_s, baseDataDirectory);
 }
 
 String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDataDirectory)
 {
-    if (!baseDataDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseDataDirectory, "IndexedDB"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "IndexedDB"_s);
+    return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s, baseDataDirectory);
 }
 
 String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDataDirectory)
 {
-    if (!baseDataDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseDataDirectory, "ServiceWorkers"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ServiceWorkers"_s);
+    return websiteDataDirectoryFileSystemRepresentation("ServiceWorkers"_s, baseDataDirectory);
 }
 
 String WebsiteDataStore::defaultLocalStorageDirectory(const String& baseDataDirectory)
 {
-    if (!baseDataDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseDataDirectory, "LocalStorage"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "LocalStorage"_s);
+    return websiteDataDirectoryFileSystemRepresentation("LocalStorage"_s, baseDataDirectory);
 }
 
 String WebsiteDataStore::defaultMediaKeysStorageDirectory(const String& baseDataDirectory)
 {
-    if (!baseDataDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseDataDirectory, "MediaKeyStorage"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "MediaKeyStorage"_s);
+    return websiteDataDirectoryFileSystemRepresentation("MediaKeyStorage"_s, baseDataDirectory);
 }
 
 String WebsiteDataStore::defaultWebSQLDatabaseDirectory(const String& baseDataDirectory)
 {
-    if (!baseDataDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseDataDirectory, "WebSQL"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "WebSQL"_s);
+    return websiteDataDirectoryFileSystemRepresentation("WebSQL"_s, baseDataDirectory);
 }
 
 String WebsiteDataStore::defaultResourceLoadStatisticsDirectory(const String& baseDataDirectory)
 {
-    if (!baseDataDirectory.isNull())
-        return FileSystem::pathByAppendingComponent(baseDataDirectory, "ResourceLoadStatistics"_s);
-    return FileSystem::pathByAppendingComponent(FileSystem::localUserSpecificStorageDirectory(), "ResourceLoadStatistics"_s);
+    return websiteDataDirectoryFileSystemRepresentation("ResourceLoadStatistics"_s, baseDataDirectory);
 }
 
 String WebsiteDataStore::cacheDirectoryFileSystemRepresentation(const String& directoryName, const String& baseCacheDirectory, ShouldCreateDirectory)

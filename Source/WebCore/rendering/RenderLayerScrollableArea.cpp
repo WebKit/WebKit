@@ -249,6 +249,10 @@ bool RenderLayerScrollableArea::requestScrollPositionUpdate(const ScrollPosition
 
     if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
         return scrollingCoordinator->requestScrollPositionUpdate(*this, position, scrollType, clamping);
+#else
+    UNUSED_PARAM(position);
+    UNUSED_PARAM(scrollType);
+    UNUSED_PARAM(clamping);
 #endif
     return false;
 }
@@ -260,6 +264,9 @@ bool RenderLayerScrollableArea::requestAnimatedScrollToPosition(const ScrollPosi
 
     if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
         return scrollingCoordinator->requestAnimatedScrollToPosition(*this, destinationPosition, clamping);
+#else
+    UNUSED_PARAM(destinationPosition);
+    UNUSED_PARAM(clamping);
 #endif
     return false;
 }

@@ -1347,6 +1347,7 @@ void VTTCue::toJSON(JSON::Object& object) const
     object.setString("align"_s, align());
 }
 
+#if ENABLE(SPEECH_SYNTHESIS)
 static float mapVideoRateToSpeechRate(float rate)
 {
     // WebSpeech says to go from .1 -> 10 (default 1)
@@ -1358,6 +1359,7 @@ static float mapVideoRateToSpeechRate(float rate)
 
     return rate;
 }
+#endif
 
 void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, double volume, SpeakCueCompletionHandler&& completion)
 {
@@ -1387,6 +1389,7 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
     m_speechUtterance->setVolume(volume);
     m_speechUtterance->setRate(mapVideoRateToSpeechRate(rate));
 #else
+    UNUSED_PARAM(speechSynthesis);
     UNUSED_PARAM(rate);
     UNUSED_PARAM(volume);
     UNUSED_PARAM(completion);
