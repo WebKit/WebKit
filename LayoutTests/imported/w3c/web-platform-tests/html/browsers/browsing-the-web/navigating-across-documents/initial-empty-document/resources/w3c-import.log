@@ -14,4 +14,5 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/resources/code-injector.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/resources/helpers.js

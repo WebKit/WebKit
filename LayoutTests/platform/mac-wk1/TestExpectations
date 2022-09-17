@@ -913,7 +913,6 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/hist
 # Newly imported WPT tests that are flaky only on WK1.
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_after_load.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-location-interface/assign_before_load.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-top.html [ Pass Failure ]
 
 # Console logs are flaky.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity.html [ DumpJSConsoleLogInStdErr ]
@@ -2100,6 +2099,16 @@ webkit.org/b/244652 [ Debug ] imported/w3c/web-platform-tests/html/semantics/emb
 webkit.org/b/244677 media/media-source/media-source-istypesupported-vp8-without-vp9.html [ Pass Failure ]
 
 webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Skip ]
+
+# www.localhost domain is not supported and "Blocked access to external URL" message causes flakiness.
+imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html [ Failure Pass ]
+
+# These tests have been flaky on WK1 since their import.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/iframe-nosrc.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/iframe-src-204-fragment.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/iframe-src-204.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/iframe-src-aboutblank-navigate-immediately.html [ Failure Pass ]
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/iframe-src-aboutblank-wait-for-load.html [ Failure Pass ]
 
 webkit.org/b/245008 fast/attachment/mac/attachment-numbers.html [ Skip ]
 webkit.org/b/245008 fast/attachment/mac/attachment-pages.html [ Skip ]

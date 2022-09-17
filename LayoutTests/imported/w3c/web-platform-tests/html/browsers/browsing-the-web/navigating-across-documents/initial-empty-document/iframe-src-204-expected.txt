@@ -1,0 +1,8 @@
+
+PASS Navigating to a different document with src
+PASS Navigating to a different document with location.href
+PASS Navigating to a different document with location.assign
+PASS Navigating to a different document with window.open
+FAIL Navigating to a different document with link click assert_equals: history.length must not change after normal navigation on document loaded by iframe with no src expected 6 but got 7
+FAIL Navigating to a different document with form submission assert_equals: history.length increases after normal navigation from  non-initial empty document expected 8 but got 7
+

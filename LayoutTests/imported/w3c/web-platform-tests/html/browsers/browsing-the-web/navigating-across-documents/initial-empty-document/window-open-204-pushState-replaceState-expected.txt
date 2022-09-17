@@ -1,0 +1,4 @@
+
+FAIL history.pushState promise_test: Unhandled rejection with value: object "SecurityError: Blocked attempt to use history.pushState() to change session history URL from  to about:blank#foo. Protocols, domains, ports, usernames, and passwords must match."
+FAIL history.replaceState promise_test: Unhandled rejection with value: object "SecurityError: Blocked attempt to use history.replaceState() to change session history URL from  to about:blank#foo. Protocols, domains, ports, usernames, and passwords must match."
+

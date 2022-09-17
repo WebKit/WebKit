@@ -1,3 +1,0 @@
-
-FAIL Running defer script in window.close() assert_unreached: Reached unreachable code
-

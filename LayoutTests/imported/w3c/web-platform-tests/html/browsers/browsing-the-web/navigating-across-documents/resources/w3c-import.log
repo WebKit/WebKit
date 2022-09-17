@@ -29,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/resources/message-parent.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/resources/multi-globals-subframe-1.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/resources/multi-globals-subframe-2.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/resources/no-cache-single-redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/resources/page-that-post-message-to-opener.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/resources/page-with-top-navigating-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/resources/redirect.py

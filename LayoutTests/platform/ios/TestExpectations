@@ -92,6 +92,9 @@ media/encrypted-media/
 # FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iOS
 printing
 
+# Tests that rely on custom domain names.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/nav-cancelation-2.sub.html [ Skip ]
+
 # Web Notifications are not supported on iOS.
 http/tests/notifications
 http/wpt/notifications

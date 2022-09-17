@@ -22,7 +22,7 @@ PASS location.hash must be allowed to change (part 2)
 PASS pushState must not alter location.hash when no URL is provided
 PASS pushState must remove all history after the current state
 PASS pushState must be able to set location.hash
-FAIL pushState must remove any tasks queued by the history traversal task source assert_equals: expected "test4" but got "test3"
+FAIL pushState must remove any tasks queued by the history traversal task source assert_equals: expected "test4" but got "test"
 PASS pushState must not fire hashchange events
 PASS pushState must be able to set location.pathname
 PASS pushState must be able to set absolute URLs to the same host
