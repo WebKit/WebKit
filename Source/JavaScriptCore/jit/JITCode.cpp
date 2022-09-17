@@ -144,6 +144,11 @@ JITCode::CodeRef<JSEntryPtrTag> JITCode::swapCodeRefForDebugger(JITCode::CodeRef
     return CodeRef<JSEntryPtrTag>();
 }
 
+CodePtr<JSEntryPtrTag> JITCode::swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>)
+{
+    return CodePtr<JSEntryPtrTag>();
+}
+
 JITCodeWithCodeRef::JITCodeWithCodeRef(JITType jitType)
     : JITCode(jitType)
 {
@@ -256,6 +261,15 @@ CodePtr<JSEntryPtrTag> DirectJITCode::addressForCall(ArityCheckMode arity)
     }
     RELEASE_ASSERT_NOT_REACHED();
     return CodePtr<JSEntryPtrTag>();
+}
+
+CodePtr<JSEntryPtrTag> DirectJITCode::swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag> withArityCheck)
+{
+    RELEASE_ASSERT(m_withArityCheck);
+    RELEASE_ASSERT(withArityCheck);
+    auto old = m_withArityCheck;
+    m_withArityCheck = withArityCheck;
+    return old;
 }
 
 NativeJITCode::NativeJITCode(JITType jitType)

@@ -36,6 +36,7 @@
 #include "Weak.h"
 #include "WeakHandleOwner.h"
 #include <tuple>
+#include <wtf/CompactPointerTuple.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PackedRefPtr.h>
@@ -56,16 +57,14 @@ public:
     JITThunks();
     ~JITThunks() final;
 
-    CodePtr<JITThunkPtrTag> ctiNativeCall(VM&);
-    CodePtr<JITThunkPtrTag> ctiNativeCallWithDebuggerHook(VM&);
-    CodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&);
-    CodePtr<JITThunkPtrTag> ctiNativeConstructWithDebuggerHook(VM&);
-    CodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&);
-    CodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM&);
-    CodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);
-    CodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
+    CodePtr<JITThunkPtrTag> ctiNativeCall(VM&, IncludeDebuggerHook);
+    CodePtr<JITThunkPtrTag> ctiNativeConstruct(VM&, IncludeDebuggerHook);
+    CodePtr<JITThunkPtrTag> ctiNativeTailCall(VM&, IncludeDebuggerHook);
+    CodePtr<JITThunkPtrTag> ctiNativeTailCallWithoutSavedTags(VM&, IncludeDebuggerHook);
+    CodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&, IncludeDebuggerHook);
+    CodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&, IncludeDebuggerHook);
 
-    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator, IncludeDebuggerHook);
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);
 
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ImplementationVisibility, const String& name);
@@ -74,7 +73,7 @@ public:
 
 private:
     template <typename GenerateThunk>
-    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStubImpl(ThunkGenerator key, GenerateThunk);
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStubImpl(ThunkGenerator key, IncludeDebuggerHook, GenerateThunk);
 
     void finalize(Handle<Unknown>, void* context) final;
     
@@ -84,6 +83,7 @@ private:
     };
     using CTIStubMap = HashMap<ThunkGenerator, Entry>;
     CTIStubMap m_ctiStubMap;
+    CTIStubMap m_ctiStubIncludingDebuggerHookMap;
 
     using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, ImplementationVisibility, String>;
 

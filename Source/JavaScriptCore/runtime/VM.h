@@ -601,6 +601,7 @@ public:
     SourceProviderCacheMap sourceProviderCacheMap;
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;
+    ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic);
     MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(ThunkGenerator);
     std::unique_ptr<SharedJITStubSet> m_sharedJITStubs;
 #endif

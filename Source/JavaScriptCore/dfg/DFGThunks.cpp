@@ -41,8 +41,10 @@
 
 namespace JSC { namespace DFG {
 
-MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
 {
+    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
+
     CCallHelpers jit(nullptr);
 
     // This needs to happen before we use the scratch buffer because this function also uses the scratch buffer.
@@ -130,8 +132,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DFG OSR exit generation thunk");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
 {
+    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
+
     AssemblyHelpers jit(nullptr);
 
     // We get passed the address of a scratch buffer in GPRInfo::returnValueGPR2.

@@ -164,6 +164,9 @@ public:
 
     virtual bool canSwapCodeRefForDebugger() const { return false; }
     virtual CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>);
+
+    virtual bool canSwapCodePtrWithArityCheckForDebugger() const { return false; }
+    virtual CodePtr<JSEntryPtrTag> swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>);
     
     enum class ShareAttribute : uint8_t {
         NotShared,
@@ -249,6 +252,7 @@ public:
     size_t size() override;
     bool contains(void*) override;
 
+    bool canSwapCodeRefForDebugger() const override { return true; }
     CodeRef<JSEntryPtrTag> swapCodeRefForDebugger(CodeRef<JSEntryPtrTag>) override;
 
 protected:
@@ -266,6 +270,9 @@ public:
     
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
 
+    bool canSwapCodePtrWithArityCheckForDebugger() const override { return true; }
+    CodePtr<JSEntryPtrTag> swapCodePtrWithArityCheckForDebugger(CodePtr<JSEntryPtrTag>) override;
+
 protected:
     void initializeCodeRefForDFG(CodeRef<JSEntryPtrTag>, CodePtr<JSEntryPtrTag> withArityCheck);
 
@@ -280,8 +287,6 @@ public:
     ~NativeJITCode() override;
 
     CodePtr<JSEntryPtrTag> addressForCall(ArityCheckMode) override;
-
-    bool canSwapCodeRefForDebugger() const override { return true; }
 };
 
 class NativeDOMJITCode final : public NativeJITCode {
