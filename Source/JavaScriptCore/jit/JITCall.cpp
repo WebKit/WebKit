@@ -53,10 +53,8 @@ void JIT::emit_op_ret(const JSInstruction* currentInstruction)
     emitNakedNearJump(vm().getCTIStub(returnFromBaselineGenerator).code());
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> JIT::returnFromBaselineGenerator(VM&, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> JIT::returnFromBaselineGenerator(VM&)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     CCallHelpers jit;
 
     jit.checkStackPointerAlignment();

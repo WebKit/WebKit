@@ -28,7 +28,6 @@
 #if ENABLE(DFG_JIT)
 
 #include "MacroAssemblerCodeRef.h"
-#include "ThunkGenerator.h"
 
 namespace JSC {
 
@@ -36,8 +35,8 @@ class VM;
 
 namespace DFG {
 
-MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> osrEntryThunkGenerator(VM&);
 
 } } // namespace JSC::DFG
 

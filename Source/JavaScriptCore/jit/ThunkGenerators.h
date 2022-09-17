@@ -30,7 +30,6 @@
 #include "CallMode.h"
 #include "CodeSpecializationKind.h"
 #include "JSCPtrTag.h"
-#include "ThunkGenerator.h"
 
 namespace JSC {
 
@@ -39,48 +38,50 @@ enum class CallMode;
 template<PtrTag> class MacroAssemblerCodeRef;
 class VM;
 
-MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM&);
 
 MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM&, CallMode);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallWithoutSavedTagsGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionConstructGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallWithDebuggerHookGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructWithDebuggerHookGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallWithoutSavedTagsGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionConstructGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> charAtThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> clz32ThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> fromCharCodeThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> expThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> logThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> sqrtThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> imulThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> randomThunkGenerator(VM&, IncludeDebuggerHook);
-MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> charAtThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> clz32ThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> fromCharCodeThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> expThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> logThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> sqrtThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> imulThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> randomThunkGenerator(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM&);
 
-MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM&, IncludeDebuggerHook);
+MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM&);
 
 } // namespace JSC
 #endif // ENABLE(JIT)

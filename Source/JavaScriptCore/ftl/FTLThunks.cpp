@@ -124,19 +124,15 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> genericGenerationThunkGenerator(
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "%s", name);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> osrExitGenerationThunkGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     unsigned extraPopsToRestore = 0;
     return genericGenerationThunkGenerator(
         vm, operationCompileFTLOSRExit, OSRExitPtrTag, "FTL OSR exit generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::Needed);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     unsigned extraPopsToRestore = 1;
     return genericGenerationThunkGenerator(
         vm, operationCompileFTLLazySlowPath, JITStubRoutinePtrTag, "FTL lazy slow path generation thunk", extraPopsToRestore, FrameAndStackAdjustmentRequirement::NotNeeded);

@@ -93,48 +93,58 @@ inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutab
     return aExecutable.function() == std::get<0>(b) && aExecutable.constructor() == std::get<1>(b) && aExecutable.implementationVisibility() == std::get<2>(b) && aExecutable.name() == std::get<3>(b);
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCall(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(vm, nativeCallGenerator, includeDebuggerHook).code();
+    return ctiStub(vm, nativeCallGenerator).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstruct(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeCallWithDebuggerHook(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(vm, nativeConstructGenerator, includeDebuggerHook).code();
+    return ctiStub(vm, nativeCallWithDebuggerHookGenerator).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCall(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstruct(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(vm, nativeTailCallGenerator, includeDebuggerHook).code();
+    return ctiStub(vm, nativeConstructGenerator).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCallWithoutSavedTags(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeConstructWithDebuggerHook(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(vm, nativeTailCallWithoutSavedTagsGenerator, includeDebuggerHook).code();
+    return ctiStub(vm, nativeConstructWithDebuggerHookGenerator).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCall(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(vm, internalFunctionCallGenerator, includeDebuggerHook).code();
+    return ctiStub(vm, nativeTailCallGenerator).code();
 }
 
-CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+CodePtr<JITThunkPtrTag> JITThunks::ctiNativeTailCallWithoutSavedTags(VM& vm)
 {
     ASSERT(Options::useJIT());
-    return ctiStub(vm, internalFunctionConstructGenerator, includeDebuggerHook).code();
+    return ctiStub(vm, nativeTailCallWithoutSavedTagsGenerator).code();
+}
+
+CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionCall(VM& vm)
+{
+    ASSERT(Options::useJIT());
+    return ctiStub(vm, internalFunctionCallGenerator).code();
+}
+
+CodePtr<JITThunkPtrTag> JITThunks::ctiInternalFunctionConstruct(VM& vm)
+{
+    ASSERT(Options::useJIT());
+    return ctiStub(vm, internalFunctionConstructGenerator).code();
 }
 
 template <typename GenerateThunk>
-MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStubImpl(ThunkGenerator key, IncludeDebuggerHook includeDebuggerHook, GenerateThunk generateThunk)
+MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStubImpl(ThunkGenerator key, GenerateThunk generateThunk)
 {
     Locker locker { m_lock };
-
-    auto& ctiStubMap = includeDebuggerHook == IncludeDebuggerHook::Yes ? m_ctiStubIncludingDebuggerHookMap : m_ctiStubMap;
 
     auto handleEntry = [&] (Entry& entry) {
         if (entry.needsCrossModifyingCodeFence && !isCompilationThread()) {
@@ -152,8 +162,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStubImpl(ThunkGenerator key,
     };
 
     {
-        auto iter = ctiStubMap.find(key);
-        if (iter != ctiStubMap.end())
+        auto iter = m_ctiStubMap.find(key);
+        if (iter != m_ctiStubMap.end())
             return handleEntry(iter->value);
     }
 
@@ -161,22 +171,22 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStubImpl(ThunkGenerator key,
     MacroAssemblerCodeRef<JITThunkPtrTag> codeRef = generateThunk();
 
     bool needsCrossModifyingCodeFence = isCompilationThread();
-    auto addResult = ctiStubMap.add(key, Entry { PackedRefPtr<ExecutableMemoryHandle>(codeRef.executableMemory()), needsCrossModifyingCodeFence });
+    auto addResult = m_ctiStubMap.add(key, Entry { PackedRefPtr<ExecutableMemoryHandle>(codeRef.executableMemory()), needsCrossModifyingCodeFence });
     RELEASE_ASSERT(addResult.isNewEntry); // Thunks aren't recursive, so anything we generated transitively shouldn't have generated 'key'.
     return handleEntry(addResult.iterator->value);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(VM& vm, ThunkGenerator generator, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(VM& vm, ThunkGenerator generator)
 {
-    return ctiStubImpl(generator, includeDebuggerHook, [&] {
-        return generator(vm, includeDebuggerHook);
+    return ctiStubImpl(generator, [&] {
+        return generator(vm);
     });
 }
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiSlowPathFunctionStub(VM& vm, SlowPathFunction slowPathFunction)
 {
     auto key = bitwise_cast<ThunkGenerator>(slowPathFunction);
-    return ctiStubImpl(key, IncludeDebuggerHook::No, [&] {
+    return ctiStubImpl(key, [&] {
         return JITSlowPathCall::generateThunk(vm, slowPathFunction);
     });
 }
@@ -233,15 +243,14 @@ NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction funct
 
     RefPtr<JITCode> forCall;
     if (generator) {
-        ASSERT(generator == vm.thunkGeneratorForIntrinsic(intrinsic));
-        MacroAssemblerCodeRef<JSEntryPtrTag> entry = generator(vm, IncludeDebuggerHook::No).retagged<JSEntryPtrTag>();
+        MacroAssemblerCodeRef<JSEntryPtrTag> entry = generator(vm).retagged<JSEntryPtrTag>();
         forCall = adoptRef(new DirectJITCode(entry, entry.code(), JITType::HostCallThunk, intrinsic));
     } else if (signature)
-        forCall = adoptRef(new NativeDOMJITCode(MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(ctiNativeCall(vm, IncludeDebuggerHook::No).retagged<JSEntryPtrTag>()), JITType::HostCallThunk, intrinsic, signature));
+        forCall = adoptRef(new NativeDOMJITCode(MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(ctiNativeCall(vm).retagged<JSEntryPtrTag>()), JITType::HostCallThunk, intrinsic, signature));
     else
-        forCall = adoptRef(new NativeJITCode(MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(ctiNativeCall(vm, IncludeDebuggerHook::No).retagged<JSEntryPtrTag>()), JITType::HostCallThunk, intrinsic));
+        forCall = adoptRef(new NativeJITCode(MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(ctiNativeCall(vm).retagged<JSEntryPtrTag>()), JITType::HostCallThunk, intrinsic));
     
-    Ref<JITCode> forConstruct = adoptRef(*new NativeJITCode(MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(ctiNativeConstruct(vm, IncludeDebuggerHook::No).retagged<JSEntryPtrTag>()), JITType::HostCallThunk, NoIntrinsic));
+    Ref<JITCode> forConstruct = adoptRef(*new NativeJITCode(MacroAssemblerCodeRef<JSEntryPtrTag>::createSelfManagedCodeRef(ctiNativeConstruct(vm).retagged<JSEntryPtrTag>()), JITType::HostCallThunk, NoIntrinsic));
     
     NativeExecutable* nativeExecutable = NativeExecutable::create(vm, forCall.releaseNonNull(), function, WTFMove(forConstruct), constructor, implementationVisibility, name);
     {

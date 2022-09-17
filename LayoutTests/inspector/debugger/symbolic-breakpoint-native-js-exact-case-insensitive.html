@@ -42,7 +42,7 @@ function test()
             InspectorTest.log("Adding breakpoint...");
             let breakpoint = new WI.SymbolicBreakpoint("rEvErS", {caseSensitive: false});
             WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
-            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("reverse").length, "Should not match breakpoint.");
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint").length, "Should not match breakpoint.");
 
             InspectorTest.log("Triggering breakpoint...");
             await triggerBreakpoint();
@@ -73,7 +73,7 @@ function test()
             InspectorTest.log("Adding breakpoint...");
             let breakpoint = new WI.SymbolicBreakpoint("rEvErSe", {caseSensitive: false, disabled: true});
             WI.debuggerManager.addSymbolicBreakpoint(breakpoint);
-            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("reverse").length, "Should not match breakpoint.");
+            InspectorTest.assert(!WI.debuggerManager.symbolicBreakpointsForSymbol("triggerSymbolicBreakpoint").length, "Should not match breakpoint.");
 
             InspectorTest.log("Triggering breakpoint...");
             await triggerBreakpoint();

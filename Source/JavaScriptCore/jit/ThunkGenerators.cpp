@@ -43,10 +43,8 @@
 
 namespace JSC {
 
-MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     CCallHelpers jit;
 
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
@@ -61,10 +59,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionGenerator(VM& vm, IncludeDe
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "handleException");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     CCallHelpers jit;
 
     jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
@@ -79,10 +75,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> handleExceptionWithCallFrameRollbackGenera
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "handleExceptionWithCallFrameRollback");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     CCallHelpers jit;
 
     jit.emitCTIThunkEpilogue();
@@ -98,10 +92,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     CCallHelpers jit;
 
     // This thunk is tail called from other thunks, and the return address is always already tagged
@@ -154,10 +146,8 @@ inline void emitPointerValidation(CCallHelpers& jit, GPRReg pointerGPR, TagType 
 
 // We will jump here if the JIT code tries to make a call, but the
 // linking helper (C++ code) decides to throw an exception instead.
-MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> throwExceptionFromCallSlowPathGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     CCallHelpers jit;
     
     // The call pushed a return address, so we need to pop it back off to re-align the stack,
@@ -231,10 +221,8 @@ static void slowPathFor(CCallHelpers& jit, VM& vm, Sprt_JITOperation_EGCli slowP
     jit.farJump(GPRInfo::returnValueGPR, JSEntryPtrTag);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     // The return address is on the stack or in the link register. We will hence
     // save the return address to the call frame while we make a C++ function call
     // to perform linking and lazy compilation if necessary. We expect the callee
@@ -250,10 +238,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> linkCallThunkGenerator(VM& vm, IncludeDebu
 
 // For closure optimizations, we only include calls, since if you're using closures for
 // object construction then you're going to lose big time anyway.
-MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     CCallHelpers jit;
 
     slowPathFor(jit, vm, operationLinkPolymorphicCall);
@@ -266,10 +252,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> linkPolymorphicCallThunkGenerator(VM& vm, 
 // path virtual call so that we can enable fast tail calls for megamorphic
 // virtual calls by using the shuffler.
 // https://bugs.webkit.org/show_bug.cgi?id=148831
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mode, CodeSpecializationKind kind, IncludeDebuggerHook includeDebuggerHook)
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mode, CodeSpecializationKind kind)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     // The callee is in regT0 (for JSVALUE32_64, the tag is in regT1).
     // The return address is on the stack, or in the link register. We will hence
     // jump to the callee, or save the return address to the call frame while we
@@ -356,19 +340,19 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
         mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
 }
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm)
 {
-    return virtualThunkFor(vm, CallMode::Regular, CodeForCall, includeDebuggerHook);
+    return virtualThunkFor(vm, CallMode::Regular, CodeForCall);
 }
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM& vm)
 {
-    return virtualThunkFor(vm, CallMode::Tail, CodeForCall, includeDebuggerHook);
+    return virtualThunkFor(vm, CallMode::Tail, CodeForCall);
 }
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstructConstruct(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstructConstruct(VM& vm)
 {
-    return virtualThunkFor(vm, CallMode::Construct, CodeForConstruct, includeDebuggerHook);
+    return virtualThunkFor(vm, CallMode::Construct, CodeForConstruct);
 }
 
 MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallMode callMode)
@@ -389,8 +373,9 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallMode cal
 
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };
 enum class ThunkFunctionType { JSFunction, InternalFunction };
+enum class IncludeDebuggerHook { No, Yes };
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFunctionType thunkFunctionType, CodeSpecializationKind kind, ThunkEntryType entryType, IncludeDebuggerHook includeDebuggerHook)
+static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFunctionType thunkFunctionType, CodeSpecializationKind kind, ThunkEntryType entryType = EnterViaCall, IncludeDebuggerHook includeDebuggerHook = IncludeDebuggerHook::No)
 {
     // FIXME: This should be able to log ShadowChicken prologue packets.
     // https://bugs.webkit.org/show_bug.cgi?id=155689
@@ -418,8 +403,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     jit.emitPutToCallFrameHeader(nullptr, CallFrameSlot::codeBlock);
     jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
+    if (includeDebuggerHook == IncludeDebuggerHook::Yes) {
+        jit.move(JSInterfaceJIT::framePointerRegister, GPRInfo::argumentGPR0);
+        auto debuggerWillCallNativeExecutable = jit.call(OperationPtrTag);
+        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
+            linkBuffer.link<OperationPtrTag>(debuggerWillCallNativeExecutable, operationDebuggerWillCallNativeExecutable);
+        });
+    }
 
     // Host function signature: f(JSGlobalObject*, CallFrame*);
 #if CPU(X86_64) && OS(WINDOWS)
@@ -509,40 +499,48 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> nativeForGenerator(VM& vm, ThunkFun
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "%s %s%s%s trampoline", thunkFunctionType == ThunkFunctionType::JSFunction ? "native" : "internal", entryType == EnterViaJumpWithSavedTags ? "Tail With Saved Tags " : entryType == EnterViaJumpWithoutSavedTags ? "Tail Without Saved Tags " : "", toCString(kind).data(), includeDebuggerHook == IncludeDebuggerHook::Yes ? " Debugger" : "");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallGenerator(VM& vm)
 {
-    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall, EnterViaCall, includeDebuggerHook);
+    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeCallWithDebuggerHookGenerator(VM& vm)
 {
-    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall, EnterViaJumpWithSavedTags, includeDebuggerHook);
+    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall, EnterViaCall, IncludeDebuggerHook::Yes);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallWithoutSavedTagsGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallGenerator(VM& vm)
 {
-    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall, EnterViaJumpWithoutSavedTags, includeDebuggerHook);
+    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall, EnterViaJumpWithSavedTags);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeTailCallWithoutSavedTagsGenerator(VM& vm)
 {
-    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForConstruct, EnterViaCall, includeDebuggerHook);
+    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForCall, EnterViaJumpWithoutSavedTags);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructGenerator(VM& vm)
 {
-    return nativeForGenerator(vm, ThunkFunctionType::InternalFunction, CodeForCall, EnterViaCall, includeDebuggerHook);
+    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForConstruct);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionConstructGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> nativeConstructWithDebuggerHookGenerator(VM& vm)
 {
-    return nativeForGenerator(vm, ThunkFunctionType::InternalFunction, CodeForConstruct, EnterViaCall, includeDebuggerHook);
+    return nativeForGenerator(vm, ThunkFunctionType::JSFunction, CodeForConstruct, EnterViaCall, IncludeDebuggerHook::Yes);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionCallGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
+    return nativeForGenerator(vm, ThunkFunctionType::InternalFunction, CodeForCall);
+}
 
+MacroAssemblerCodeRef<JITThunkPtrTag> internalFunctionConstructGenerator(VM& vm)
+{
+    return nativeForGenerator(vm, ThunkFunctionType::InternalFunction, CodeForConstruct);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm)
+{
     JSInterfaceJIT jit(&vm);
 
     // We enter with fixup count in argumentGPR0
@@ -690,10 +688,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> arityFixupGenerator(VM& vm, IncludeDebugge
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "fixup arity");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     JSInterfaceJIT jit(&vm);
 
     jit.breakpoint();
@@ -702,10 +698,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> unreachableGenerator(VM& vm, IncludeDebugg
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "unreachable thunk");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> stringGetByValGenerator(VM& vm)
 {
-    ASSERT_UNUSED(includeDebuggerHook, includeDebuggerHook == IncludeDebuggerHook::No);
-
     // regT0 is JSString*, and regT1 (64bit) or regT2 (32bit) is int index.
     // Return regT0 = result JSString* if succeeds. Otherwise, return regT0 = 0.
 #if USE(JSVALUE64)
@@ -793,59 +787,36 @@ static void charToString(SpecializedThunkJIT& jit, VM& vm, MacroAssembler::Regis
     jit.appendFailure(jit.branchTestPtr(MacroAssembler::Zero, dst));
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> charCodeAtThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+    SpecializedThunkJIT jit(vm, 1);
     stringCharLoad(jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "charCodeAt");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "charCodeAt");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> charAtThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> charAtThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+    SpecializedThunkJIT jit(vm, 1);
     stringCharLoad(jit);
     charToString(jit, vm, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "charAt");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "charAt");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> fromCharCodeThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> fromCharCodeThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+    SpecializedThunkJIT jit(vm, 1);
     // load char code
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0);
     charToString(jit, vm, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "fromCharCode");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "fromCharCode");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
+    SpecializedThunkJIT jit(vm, 1);
 
     // load string
     jit.loadJSStringArgument(SpecializedThunkJIT::ThisArgument, GPRInfo::regT0);
@@ -884,18 +855,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(V
     done.link(&jit);
 
     jit.returnInt32(GPRInfo::regT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "codePointAt");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "codePointAt");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> clz32ThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> clz32ThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+    SpecializedThunkJIT jit(vm, 1);
     MacroAssembler::Jump nonIntArgJump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntArgJump);
 
@@ -911,25 +876,19 @@ MacroAssemblerCodeRef<JITThunkPtrTag> clz32ThunkGenerator(VM& vm, IncludeDebugge
     } else
         jit.appendFailure(nonIntArgJump);
 
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "clz32");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "clz32");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> sqrtThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> sqrtThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
+    SpecializedThunkJIT jit(vm, 1);
     if (!jit.supportsFloatingPointSqrt())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
 
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "sqrt");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "sqrt");
 }
 
 
@@ -1088,19 +1047,12 @@ defineUnaryDoubleOpWrapper(floor);
 defineUnaryDoubleOpWrapper(ceil);
 defineUnaryDoubleOpWrapper(trunc);
     
-MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (!UnaryDoubleOpWrapper(floor) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+    SpecializedThunkJIT jit(vm, 1);
     MacroAssembler::Jump nonIntJump;
+    if (!UnaryDoubleOpWrapper(floor) || !jit.supportsFloatingPoint())
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
     jit.returnInt32(SpecializedThunkJIT::regT0);
     nonIntJump.link(&jit);
@@ -1113,7 +1065,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM& vm, IncludeDebugge
         jit.returnInt32(SpecializedThunkJIT::regT0);
         doubleResult.link(&jit);
         jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-        return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "floor");
+        return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "floor");
     }
 
     SpecializedThunkJIT::Jump intResult;
@@ -1135,21 +1087,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> floorThunkGenerator(VM& vm, IncludeDebugge
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "floor");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "floor");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
+    SpecializedThunkJIT jit(vm, 1);
     if (!UnaryDoubleOpWrapper(ceil) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
     MacroAssembler::Jump nonIntJump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
     jit.returnInt32(SpecializedThunkJIT::regT0);
@@ -1165,21 +1110,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> ceilThunkGenerator(VM& vm, IncludeDebugger
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "ceil");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "ceil");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
+    SpecializedThunkJIT jit(vm, 1);
     if (!UnaryDoubleOpWrapper(trunc) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
     MacroAssembler::Jump nonIntJump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
     jit.returnInt32(SpecializedThunkJIT::regT0);
@@ -1195,21 +1133,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> truncThunkGenerator(VM& vm, IncludeDebugge
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "trunc");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "trunc");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
+    SpecializedThunkJIT jit(vm, 1);
     if (!UnaryDoubleOpWrapper(jsRound) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
     MacroAssembler::Jump nonIntJump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
     jit.returnInt32(SpecializedThunkJIT::regT0);
@@ -1241,56 +1172,40 @@ MacroAssemblerCodeRef<JITThunkPtrTag> roundThunkGenerator(VM& vm, IncludeDebugge
     jit.returnInt32(SpecializedThunkJIT::regT0);
     doubleResult.link(&jit);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "round");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "round");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> expThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> expThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (!UnaryDoubleOpWrapper(exp) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+    if (!UnaryDoubleOpWrapper(exp))
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
+    SpecializedThunkJIT jit(vm, 1);
+    if (!jit.supportsFloatingPoint())
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(exp));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "exp");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "exp");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> logThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> logThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (!UnaryDoubleOpWrapper(log) || !jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
-
+    if (!UnaryDoubleOpWrapper(log))
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
+    SpecializedThunkJIT jit(vm, 1);
+    if (!jit.supportsFloatingPoint())
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.callDoubleToDoublePreservingReturn(UnaryDoubleOpWrapper(log));
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "log");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "log");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
+    SpecializedThunkJIT jit(vm, 1);
     if (!jit.supportsFloatingPointAbs())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(1);
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
 
 #if USE(JSVALUE64)
     VirtualRegister virtualRegister = CallFrameSlot::firstArgument;
@@ -1340,18 +1255,12 @@ MacroAssemblerCodeRef<JITThunkPtrTag> absThunkGenerator(VM& vm, IncludeDebuggerH
     jit.absDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
     jit.returnDouble(SpecializedThunkJIT::fpRegT1);
 #endif
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "abs");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "abs");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> imulThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> imulThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(2);
-
+    SpecializedThunkJIT jit(vm, 2);
     MacroAssembler::Jump nonIntArg0Jump;
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntArg0Jump);
     SpecializedThunkJIT::Label doneLoadingArg0(&jit);
@@ -1377,32 +1286,26 @@ MacroAssemblerCodeRef<JITThunkPtrTag> imulThunkGenerator(VM& vm, IncludeDebugger
     } else
         jit.appendFailure(nonIntArg1Jump);
 
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "imul");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "imul");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> randomThunkGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> randomThunkGenerator(VM& vm)
 {
-    SpecializedThunkJIT jit(vm);
-
+    SpecializedThunkJIT jit(vm, 0);
     if (!jit.supportsFloatingPoint())
-        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
-
-    if (includeDebuggerHook == IncludeDebuggerHook::Yes)
-        jit.emitDebuggerHook();
-
-    jit.checkArgCount(0);
+        return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
 
 #if USE(JSVALUE64)
     jit.emitRandomThunk(vm, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT2, SpecializedThunkJIT::regT3, SpecializedThunkJIT::fpRegT0);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
 
-    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm, includeDebuggerHook), "random");
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "random");
 #else
-    return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm, includeDebuggerHook));
+    return MacroAssemblerCodeRef<JITThunkPtrTag>::createSelfManagedCodeRef(vm.jitStubs->ctiNativeCall(vm));
 #endif
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
 {
     CCallHelpers jit;
     
@@ -1532,11 +1435,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm, Include
     jit.ret();
     
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::BoundFunctionThunk);
-    linkBuffer.link(noCode, CodeLocationLabel<JITThunkPtrTag>(vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm, includeDebuggerHook)));
+    linkBuffer.link(noCode, CodeLocationLabel<JITThunkPtrTag>(vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm)));
     return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "Specialized thunk for bound function calls with no arguments");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm, IncludeDebuggerHook includeDebuggerHook)
+MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
 {
     CCallHelpers jit;
     jit.emitFunctionPrologue();
@@ -1736,7 +1639,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm, Includ
     jit.jumpToExceptionHandler(vm);
 
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::RemoteFunctionThunk);
-    linkBuffer.link(noCode, CodeLocationLabel<JITThunkPtrTag>(vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm, includeDebuggerHook)));
+    linkBuffer.link(noCode, CodeLocationLabel<JITThunkPtrTag>(vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm)));
     return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "Specialized thunk for remote function calls");
 }
 
