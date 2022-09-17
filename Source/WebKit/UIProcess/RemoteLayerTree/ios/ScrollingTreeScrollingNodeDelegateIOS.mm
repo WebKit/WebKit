@@ -33,6 +33,7 @@
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingTree.h"
 #import "UIKitSPI.h"
+#import "WKScrollView.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/QuartzCore.h>
 #import <UIKit/UIPanGestureRecognizer.h>
@@ -223,8 +224,12 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateBeforeChildren(const Scro
 
 void ScrollingTreeScrollingNodeDelegateIOS::updateScrollViewForOverscrollBehavior(UIScrollView *scrollView, const WebCore::OverscrollBehavior horizontalOverscrollBehavior, WebCore::OverscrollBehavior verticalOverscrollBehavior, AllowOverscrollToPreventScrollPropagation allowPropogation)
 {
-    scrollView.bouncesHorizontally = horizontalOverscrollBehavior != OverscrollBehavior::None;
-    scrollView.bouncesVertically = verticalOverscrollBehavior != OverscrollBehavior::None;
+    if ([scrollView isKindOfClass:[WKScrollView class]])
+        [(WKScrollView*)scrollView _setBouncesInternal:horizontalOverscrollBehavior != WebCore::OverscrollBehavior::None vertical: verticalOverscrollBehavior != WebCore::OverscrollBehavior::None];
+    else {
+        scrollView.bouncesHorizontally = horizontalOverscrollBehavior != OverscrollBehavior::None;
+        scrollView.bouncesVertically = verticalOverscrollBehavior != OverscrollBehavior::None;
+    }
     if (allowPropogation == AllowOverscrollToPreventScrollPropagation::Yes) {
 #if HAVE(UIKIT_OVERSCROLL_BEHAVIOR_SUPPORT)
         scrollView._allowsParentToBeginHorizontally = horizontalOverscrollBehavior == OverscrollBehavior::Auto;
