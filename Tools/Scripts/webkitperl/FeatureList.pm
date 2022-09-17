@@ -87,6 +87,7 @@ my (
     $downloadAttributeSupport,
     $dragSupportSupport,
     $encryptedMediaSupport,
+    $fatalWarnings,
     $filtersLevel2Support,
     $ftlJITSupport,
     $ftpDirSupport,
@@ -191,6 +192,9 @@ my (
 );
 
 my @features = (
+    { option => "fatal-warnings", desc => "Toggle warnings as errors (CMake only)",
+      define => "DEVELOPER_MODE_FATAL_WARNINGS", value => \$fatalWarnings },
+
     { option => "3d-rendering", desc => "Toggle 3D rendering support",
       define => "ENABLE_3D_TRANSFORMS", value => \$threeDTransformsSupport },
 
