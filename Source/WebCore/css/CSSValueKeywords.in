@@ -624,7 +624,6 @@ underline
 wavy
 ink
 objects
--webkit-nowrap
 
 // CSS3 Values
 // CSS_PROP_BOX_ALIGN

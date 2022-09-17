@@ -44,45 +44,6 @@ struct PrimitiveState {
 
     // Requires "depth-clip-control" feature.
     bool unclippedDepth;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << topology;
-        encoder << stripIndexFormat;
-        encoder << frontFace;
-        encoder << cullMode;
-        encoder << unclippedDepth;
-    }
-
-    template<class Decoder> static std::optional<PrimitiveState> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::PrimitiveTopology> topology;
-        decoder >> topology;
-        if (!topology)
-            return std::nullopt;
-
-        std::optional<std::optional<PAL::WebGPU::IndexFormat>> stripIndexFormat;
-        decoder >> stripIndexFormat;
-        if (!stripIndexFormat)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::FrontFace> frontFace;
-        decoder >> frontFace;
-        if (!frontFace)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::CullMode> cullMode;
-        decoder >> cullMode;
-        if (!cullMode)
-            return std::nullopt;
-
-        std::optional<bool> unclippedDepth;
-        decoder >> unclippedDepth;
-        if (!unclippedDepth)
-            return std::nullopt;
-
-        return { { WTFMove(*topology), WTFMove(*stripIndexFormat), WTFMove(*frontFace), WTFMove(*cullMode), WTFMove(*unclippedDepth) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

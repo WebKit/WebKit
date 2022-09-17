@@ -331,6 +331,13 @@ GstElement* makeGStreamerBin(const char* description, bool ghostUnlinkedPads);
 
 String gstStructureToJSONString(const GstStructure*);
 
+// gst_element_get_current_running_time() is GStreamer 1.18 API, so for older versions we use a local
+// vendored copy of the function.
+#if !GST_CHECK_VERSION(1, 18, 0)
+GstClockTime webkitGstElementGetCurrentRunningTime(GstElement*);
+#define gst_element_get_current_running_time webkitGstElementGetCurrentRunningTime
+#endif
+
 }
 
 #ifndef GST_BUFFER_DTS_OR_PTS
@@ -362,13 +369,6 @@ inline void gstStateUnlock(void* object) { GST_STATE_UNLOCK(object); }
 using GstObjectLocker = ExternalLocker<void, gstObjectLock, gstObjectUnlock>;
 using GstPadStreamLocker = ExternalLocker<GstPad, gstPadStreamLock, gstPadStreamUnlock>;
 using GstStateLocker = ExternalLocker<void, gstStateLock, gstStateUnlock>;
-
-// gst_element_get_current_running_time() is GStreamer 1.18 API, so for older versions we use a local
-// vendored copy of the function.
-#if !GST_CHECK_VERSION(1, 18, 0)
-GstClockTime webkitGstElementGetCurrentRunningTime(GstElement*);
-#define gst_element_get_current_running_time webkitGstElementGetCurrentRunningTime
-#endif
 
 template <typename T>
 class GstIteratorAdaptor {

@@ -521,9 +521,30 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/API/APIGeometry.serialization.in
 
+    Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
+    Shared/WebGPU/WebGPUBlendComponent.serialization.in
+    Shared/WebGPU/WebGPUBlendState.serialization.in
+    Shared/WebGPU/WebGPUBufferBinding.serialization.in
+    Shared/WebGPU/WebGPUBufferBindingLayout.serialization.in
+    Shared/WebGPU/WebGPUCanvasConfiguration.serialization.in
+    Shared/WebGPU/WebGPUColor.serialization.in
+    Shared/WebGPU/WebGPUColorTargetState.serialization.in
+    Shared/WebGPU/WebGPUComputePassTimestampWrites.serialization.in
+    Shared/WebGPU/WebGPUObjectDescriptorBase.serialization.in
     Shared/WebGPU/WebGPUOrigin3D.serialization.in
+    Shared/WebGPU/WebGPUPrimitiveState.serialization.in
+    Shared/WebGPU/WebGPUProgrammableStage.serialization.in
+    Shared/WebGPU/WebGPURenderPassColorAttachment.serialization.in
+    Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.serialization.in
+    Shared/WebGPU/WebGPURenderPassTimestampWrites.serialization.in
+    Shared/WebGPU/WebGPUStencilFaceState.serialization.in
+    Shared/WebGPU/WebGPUStorageTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUSupportedFeatures.serialization.in
+    Shared/WebGPU/WebGPUSupportedLimits.serialization.in
+    Shared/WebGPU/WebGPUTextureBindingLayout.serialization.in
     Shared/WebGPU/WebGPUValidationError.serialization.in
+    Shared/WebGPU/WebGPUVertexAttribute.serialization.in
+    Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
 
     Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
 )

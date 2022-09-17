@@ -911,8 +911,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/mu
 imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies.any.html [ Failure Pass ]
 imported/w3c/web-platform-tests/fetch/content-length/parsing.window.html [ Failure Pass ]
 imported/w3c/web-platform-tests/fetch/redirects/subresource-fragments.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url-with-fragment.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/joint-session-history/joint-session-history-only-fully-active.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/001.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/002.html [ Failure Pass ]
@@ -4175,15 +4173,12 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/scale-tra
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-007.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-008.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-box/fill-box-002.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-box/view-box-mutation-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-box/view-box-mutation-002.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-box/view-box-mutation-003.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-004.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-005.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-006.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-007.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-percent-010.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-003.html [ ImageOnlyFailure ]
@@ -4431,6 +4426,7 @@ webkit.org/b/233196 imported/w3c/web-platform-tests/css/css-flexbox/percentage-h
 
 # Static position alignment in Flexbox.
 webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-align-self-safe-001.html [ ImageOnlyFailure ]
+webkit.org/b/221472 imported/w3c/web-platform-tests/css/css-flexbox/abspos/flex-abspos-staticpos-fallback-align-content-001.html [ ImageOnlyFailure ]
 
 # Tables as flex items.
 webkit.org/b/221473 imported/w3c/web-platform-tests/css/css-flexbox/table-as-item-min-height-1.html [ ImageOnlyFailure ]
@@ -4717,6 +4713,8 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/floats-aspect-ratio-001.html [ ImageOnlyFailure ]
 
 # contain-intrinsic-size
+webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-007.html [ Skip ]
+webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-003.html [ Skip ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-002.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-003.html [ ImageOnlyFailure ]

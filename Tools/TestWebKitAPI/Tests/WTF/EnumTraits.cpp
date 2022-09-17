@@ -41,10 +41,6 @@ template<> struct EnumTraits<TestEnum> {
 
 namespace TestWebKitAPI {
 
-static_assert(WTF::isValidEnum<TestEnum>(0));
-static_assert(!WTF::isValidEnum<TestEnum>(-1));
-static_assert(!WTF::isValidEnum<TestEnum>(3));
-
 TEST(WTF_EnumTraits, IsValidEnum)
 {
     EXPECT_TRUE(isValidEnum<TestEnum>(0));

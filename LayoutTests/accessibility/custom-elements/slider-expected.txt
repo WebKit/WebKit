@@ -1,0 +1,19 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById("slider-1").role is "AXRole: AXSlider"
+PASS accessibilityController.accessibleElementById("slider-1").intValue is 5
+PASS accessibilityController.accessibleElementById("slider-1").maxValue is 10
+PASS accessibilityController.accessibleElementById("slider-1").minValue is 1
+PASS accessibilityController.accessibleElementById("slider-1").valueDescription is "AXValueDescription: 5/10"
+PASS accessibilityController.accessibleElementById("slider-2").role is "AXRole: AXSlider"
+PASS accessibilityController.accessibleElementById("slider-2").intValue is 7
+PASS accessibilityController.accessibleElementById("slider-2").maxValue is 15
+PASS accessibilityController.accessibleElementById("slider-2").minValue is 3
+PASS accessibilityController.accessibleElementById("slider-2").valueDescription is "AXValueDescription: 7 out of 15"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

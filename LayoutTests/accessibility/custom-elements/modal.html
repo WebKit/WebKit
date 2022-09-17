@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<p role="group" id="background-content">background</p>
+<custom-dialog id="custom-dialog">modal content</custom-dialog>
+<script>
+
+customElements.define('custom-dialog', class CustomDialog extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'dialog';
+        internals.ariaModal = 'true';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    jsTestIsAsync = true;
+    (async () => {
+        await expectAsyncExpression('!accessibilityController.accessibleElementById("background-content") || accessibilityController.accessibleElementById("background-content").isIgnored', 'true');
+        document.getElementById('custom-dialog').setAttribute('aria-modal', 'false');
+        await new Promise(requestAnimationFrame);
+        await expectAsyncExpression('accessibilityController.accessibleElementById("background-content").isIgnored', 'false');
+        finishJSTest();
+    })();
+}
+
+</script>
+</body>
+</html>

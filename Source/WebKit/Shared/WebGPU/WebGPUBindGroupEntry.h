@@ -47,39 +47,6 @@ struct BindGroupEntry {
     BufferBinding bufferBinding;
     WebGPUIdentifier identifier;
     BindingResourceType type { BindingResourceType::Sampler };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << binding;
-        encoder << bufferBinding;
-        encoder << identifier;
-        encoder << type;
-    }
-
-    template<class Decoder> static std::optional<BindGroupEntry> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::Index32> binding;
-        decoder >> binding;
-        if (!binding)
-            return std::nullopt;
-
-        std::optional<BufferBinding> bufferBinding;
-        decoder >> bufferBinding;
-        if (!bufferBinding)
-            return std::nullopt;
-
-        std::optional<WebGPUIdentifier> identifier;
-        decoder >> identifier;
-        if (!identifier)
-            return std::nullopt;
-
-        std::optional<BindingResourceType> type;
-        decoder >> type;
-        if (!type)
-            return std::nullopt;
-
-        return { { WTFMove(*binding), WTFMove(*bufferBinding), WTFMove(*identifier), WTFMove(*type) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

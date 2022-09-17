@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include "QualifiedName.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/text/AtomString.h>
-#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
@@ -38,11 +38,12 @@ public:
     CustomElementDefaultARIA();
     ~CustomElementDefaultARIA();
 
-    void setValueForAttribute(const AtomString& key, const AtomString& value);
-    const AtomString& valueForAttribute(const AtomString& key) const;
+    bool hasAttribute(const QualifiedName&) const;
+    const AtomString& valueForAttribute(const QualifiedName&) const;
+    void setValueForAttribute(const QualifiedName&, const AtomString&);
 
 private:
-    HashMap<AtomString, AtomString> m_map;
+    HashMap<QualifiedName, AtomString> m_map;
 };
 
 }; // namespace WebCore

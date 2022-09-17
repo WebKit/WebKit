@@ -2259,11 +2259,17 @@ bool AccessibilityObject::hasTagName(const QualifiedName& tagName) const
     
 bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
 {
-    Node* node = this->node();
-    if (!is<Element>(node))
+    RefPtr element = this->element();
+    if (!element)
         return false;
-    
-    return downcast<Element>(*node).hasAttributeWithoutSynchronization(attribute);
+
+    if (element->hasAttributeWithoutSynchronization(attribute))
+        return true;
+
+    if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
+        return defaultARIA->hasAttribute(attribute);
+
+    return false;
 }
     
 const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribute) const
@@ -2273,7 +2279,7 @@ const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribu
         if (!value.isNull())
             return value;
         if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
-            return defaultARIA->valueForAttribute(attribute.localName());
+            return defaultARIA->valueForAttribute(attribute);
     }
     return nullAtom();
 }

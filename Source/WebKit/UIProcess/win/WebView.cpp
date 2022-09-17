@@ -863,14 +863,6 @@ void WebView::setViewNeedsDisplay(const WebCore::Region& region)
     ::InvalidateRect(m_window, &r, true);
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-PassRefPtr<WebColorChooserProxy> WebView::createColorChooserProxy(WebPageProxy*, const WebCore::Color&, const WebCore::IntRect&)
-{
-    notImplemented();
-    return 0;
-}
-#endif
-
 void WebView::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
 }

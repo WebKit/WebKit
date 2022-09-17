@@ -296,9 +296,9 @@ std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWith
 
 namespace WTF {
 
-template<> bool isValidEnum<EnumNamespace::EnumType>(uint16_t value)
+template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t value)
 {
-    switch (value) {
+    switch (static_cast<EnumNamespace::EnumType>(value)) {
     case EnumNamespace::EnumType::FirstValue:
     case EnumNamespace::EnumType::SecondValue:
         return true;

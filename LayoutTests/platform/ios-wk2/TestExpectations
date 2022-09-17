@@ -2353,3 +2353,5 @@ webkit.org/b/245009 http/wpt/service-workers/controlled-sharedworker.https.html 
 webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
 
 webkit.org/b/245091 http/wpt/shared-workers/connect-event-ordering.html [ Pass Failure ]
+
+webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html [ Failure ]

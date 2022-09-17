@@ -66,6 +66,7 @@
 #include "AccessibilityTree.h"
 #include "AccessibilityTreeItem.h"
 #include "CaretRectComputation.h"
+#include "CustomElementDefaultARIA.h"
 #include "Document.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -261,8 +262,12 @@ AXObjectCache::~AXObjectCache()
 bool AXObjectCache::isModalElement(Element& element) const
 {
     bool hasDialogRole = nodeHasRole(&element, "dialog"_s) || nodeHasRole(&element, "alertdialog"_s);
-    bool isAriaModal = equalLettersIgnoringASCIICase(element.attributeWithoutSynchronization(aria_modalAttr), "true"_s);
-
+    AtomString modalValue = element.attributeWithoutSynchronization(aria_modalAttr);
+    if (modalValue.isNull()) {
+        if (auto* defaultARIA = element.customElementDefaultARIAIfExists())
+            modalValue = defaultARIA->valueForAttribute(aria_modalAttr);
+    }
+    bool isAriaModal = equalLettersIgnoringASCIICase(modalValue, "true"_s);
     return (hasDialogRole && isAriaModal) || (is<HTMLDialogElement>(element) && downcast<HTMLDialogElement>(element).isModal());
 }
 
@@ -536,7 +541,11 @@ bool nodeHasRole(Node* node, StringView role)
     if (!node || !is<Element>(node))
         return false;
 
-    auto& roleValue = downcast<Element>(*node).attributeWithoutSynchronization(roleAttr);
+    AtomString roleValue = downcast<Element>(*node).attributeWithoutSynchronization(roleAttr);
+    if (roleValue.isNull()) {
+        if (auto* defaultARIA = downcast<Element>(*node).customElementDefaultARIAIfExists())
+            roleValue = defaultARIA->valueForAttribute(roleAttr);
+    }
     if (role.isNull())
         return roleValue.isEmpty();
     if (roleValue.isEmpty())

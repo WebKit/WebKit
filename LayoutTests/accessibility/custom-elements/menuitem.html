@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-menuitem id="item-1"></custom-menuitem>
+<custom-menuitem id="item-2" aria-disabled="false" aria-expanded="false" aria-haspopup="false"></custom-menuitem>
+<script>
+
+customElements.define('custom-menuitem', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'menuitem';
+        internals.ariaDisabled = 'true';
+        internals.ariaExpanded = 'true';
+        internals.ariaHasPopup = 'true';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBe('accessibilityController.accessibleElementById("item-1").isEnabled', 'false');
+    shouldBe('accessibilityController.accessibleElementById("item-1").isExpanded', 'true');
+    shouldBe('accessibilityController.accessibleElementById("item-1").hasPopup', 'true');
+    shouldBe('accessibilityController.accessibleElementById("item-2").isEnabled', 'true');
+    shouldBe('accessibilityController.accessibleElementById("item-2").isExpanded', 'false');
+    shouldBe('accessibilityController.accessibleElementById("item-2").hasPopup', 'false');
+}
+
+</script>
+</body>
+</html>

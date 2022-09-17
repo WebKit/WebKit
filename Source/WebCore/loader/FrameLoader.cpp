@@ -1020,7 +1020,7 @@ void FrameLoader::loadArchive(Ref<Archive>&& archive)
 
     auto documentLoader = m_client->createDocumentLoader(request, substituteData);
     documentLoader->setArchive(WTFMove(archive));
-    load(documentLoader.get());
+    load(documentLoader.get(), nullptr);
 }
 
 #endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -1118,7 +1118,7 @@ void FrameLoader::setFirstPartyForCookies(const URL& url)
 
 // This does the same kind of work that didOpenURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
-void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stateObject, bool isNewNavigation)
+void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stateObject, const SecurityOrigin* requesterOrigin, bool isNewNavigation)
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadInSameDocument: frame load started");
 
@@ -1130,7 +1130,7 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
     m_frame.document()->setURL(url);
     setOutgoingReferrer(url);
     documentLoader()->replaceRequestURLForSameDocumentNavigation(url);
-    if (isNewNavigation && !shouldTreatURLAsSameAsCurrent(url) && !stateObject) {
+    if (isNewNavigation && !shouldTreatURLAsSameAsCurrent(requesterOrigin, url) && !stateObject) {
         // NB: must happen after replaceRequestURLForSameDocumentNavigation(), since we add 
         // based on the current request. Must also happen before we openURL and displace the 
         // scroll position, since adding the BF item will save away scroll state.
@@ -1403,7 +1403,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     RefPtr<DocumentLoader> oldDocumentLoader = m_documentLoader;
 
-    bool sameURL = shouldTreatURLAsSameAsCurrent(newURL);
+    bool sameURL = shouldTreatURLAsSameAsCurrent(&frameLoadRequest.requesterSecurityOrigin(), newURL);
     const String& httpMethod = request.httpMethod();
     
     // Make sure to do scroll to fragment processing even if the URL is
@@ -1415,8 +1415,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         policyChecker().stopCheck();
         policyChecker().setLoadType(newLoadType);
         RELEASE_ASSERT(!isBackForwardLoadType(newLoadType) || history().provisionalItem());
-        policyChecker().checkNavigationPolicy(WTFMove(request), ResourceResponse { } /* redirectResponse */, oldDocumentLoader.get(), WTFMove(formState), [this, protectedFrame = Ref { m_frame }] (const ResourceRequest& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) {
-            continueFragmentScrollAfterNavigationPolicy(request, navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad);
+        policyChecker().checkNavigationPolicy(WTFMove(request), ResourceResponse { } /* redirectResponse */, oldDocumentLoader.get(), WTFMove(formState), [this, protectedFrame = Ref { m_frame }, requesterOrigin = Ref { frameLoadRequest.requesterSecurityOrigin() }] (const ResourceRequest& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) {
+            continueFragmentScrollAfterNavigationPolicy(request, requesterOrigin.ptr(), navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad);
         }, PolicyDecisionMode::Synchronous);
         return;
     }
@@ -1502,7 +1502,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
     }
 
     SetForScope continuingLoadGuard(m_currentLoadContinuingState, request.shouldTreatAsContinuingLoad() != ShouldTreatAsContinuingLoad::No ? LoadContinuingState::ContinuingWithRequest : LoadContinuingState::NotContinuing);
-    load(loader.get());
+    load(loader.get(), &request.requesterSecurityOrigin());
 }
 
 void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, NavigationAction&& action, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, CompletionHandler<void()>&& completionHandler)
@@ -1528,7 +1528,7 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, Navig
     loadWithDocumentLoader(loader.ptr(), type, WTFMove(formState), allowNavigationToInvalidURL, WTFMove(completionHandler));
 }
 
-void FrameLoader::load(DocumentLoader& newDocumentLoader)
+void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* requesterOrigin)
 {
     FRAMELOADER_RELEASE_LOG(ResourceLoading, "load (DocumentLoader): frame load started");
 
@@ -1538,10 +1538,10 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader)
     updateRequestAndAddExtraFields(r, IsMainResource::Yes, m_loadType, ShouldUpdateAppInitiatedValue::No);
     FrameLoadType type;
 
-    if (shouldTreatURLAsSameAsCurrent(newDocumentLoader.originalRequest().url())) {
+    if (shouldTreatURLAsSameAsCurrent(requesterOrigin, newDocumentLoader.originalRequest().url())) {
         r.setCachePolicy(ResourceRequestCachePolicy::ReloadIgnoringCacheData);
         type = FrameLoadType::Same;
-    } else if (shouldTreatURLAsSameAsCurrent(newDocumentLoader.unreachableURL()) && isReload(m_loadType))
+    } else if (shouldTreatURLAsSameAsCurrent(requesterOrigin, newDocumentLoader.unreachableURL()) && isReload(m_loadType))
         type = m_loadType;
     else if (m_loadType == FrameLoadType::RedirectWithLockedBackForwardList && ((!newDocumentLoader.unreachableURL().isEmpty() && newDocumentLoader.substituteData().isValid()) || shouldTreatCurrentLoadAsContinuingLoad()))
         type = FrameLoadType::RedirectWithLockedBackForwardList;
@@ -1622,8 +1622,11 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         oldDocumentLoader->setLastCheckedRequest(ResourceRequest());
         policyChecker().stopCheck();
         RELEASE_ASSERT(!isBackForwardLoadType(policyChecker().loadType()) || history().provisionalItem());
-        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { }  /* redirectResponse */, oldDocumentLoader.get(), WTFMove(formState), [this, protectedFrame = Ref { m_frame }] (const ResourceRequest& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) {
-            continueFragmentScrollAfterNavigationPolicy(request, navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad);
+        RefPtr<SecurityOrigin> requesterOrigin;
+        if (auto& requester = loader->triggeringAction().requester())
+            requesterOrigin = requester->securityOrigin.copyRef();
+        policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { }  /* redirectResponse */, oldDocumentLoader.get(), WTFMove(formState), [this, protectedFrame = Ref { m_frame }, requesterOrigin = WTFMove(requesterOrigin)] (const ResourceRequest& request, WeakPtr<FormState>&&, NavigationPolicyDecision navigationPolicyDecision) {
+            continueFragmentScrollAfterNavigationPolicy(request, requesterOrigin.get(), navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad);
         }, PolicyDecisionMode::Synchronous);
         return;
     }
@@ -3229,7 +3232,7 @@ void FrameLoader::receivedMainResourceError(const ResourceError& error)
         checkLoadComplete();
 }
 
-void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
+void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequest& request, const SecurityOrigin* requesterOrigin, bool shouldContinue)
 {
     m_quickRedirectComing = false;
 
@@ -3254,7 +3257,7 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     }
 
     bool isRedirect = m_quickRedirectComing || policyChecker().loadType() == FrameLoadType::RedirectWithLockedBackForwardList;
-    loadInSameDocument(request.url(), nullptr, !isRedirect);
+    loadInSameDocument(request.url(), nullptr, requesterOrigin, !isRedirect);
 }
 
 bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const String& httpMethod, FrameLoadType loadType, const URL& url)
@@ -3776,9 +3779,11 @@ void FrameLoader::loadProvisionalItemFromCachedPage()
     commitProvisionalLoad();
 }
 
-bool FrameLoader::shouldTreatURLAsSameAsCurrent(const URL& url) const
+bool FrameLoader::shouldTreatURLAsSameAsCurrent(const SecurityOrigin* requesterOrigin, const URL& url) const
 {
     if (!history().currentItem())
+        return false;
+    if (requesterOrigin && (!m_frame.document() | !requesterOrigin->isSameOriginAs(m_frame.document()->securityOrigin())))
         return false;
     return url == history().currentItem()->url() || url == history().currentItem()->originalURL();
 }
@@ -3827,7 +3832,7 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
     history().setCurrentItem(item);
         
     // loadInSameDocument() actually changes the URL and notifies load delegates of a "fake" load
-    loadInSameDocument(item.url(), item.stateObject(), false);
+    loadInSameDocument(item.url(), item.stateObject(), nullptr, false);
 
     // Restore user view state from the current history item here since we don't do a normal load.
     history().restoreScrollPositionAndViewState();

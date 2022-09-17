@@ -30,8 +30,9 @@ html {
 #endif
 }
 
-/* children of the <head> element all have display:none */
-head, link, meta, script, style, title {
+/* children of the <head> element all have display:none as below */
+area, base, basefont, datalist, head, link, meta, noembed, noframes,
+param, rp, script, style, template, title {
     display: none;
 }
 
@@ -957,10 +958,6 @@ select:disabled {
 
 #endif
 
-area, param {
-    display: none;
-}
-
 input[type="checkbox"] {
 #if !(defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
     box-sizing: border-box;
@@ -1324,10 +1321,6 @@ ruby > rp {
 
 /* other elements */
 
-noframes {
-    display: none;
-}
-
 frameset, frame {
     display: block;
 }
@@ -1353,10 +1346,6 @@ summary::-webkit-details-marker {
     width: 0.66em;
     height: 0.66em;
     margin-right: 0.4em;
-}
-
-template {
-    display: none;
 }
 
 bdi, output {

@@ -113,11 +113,17 @@ JSObject* TemporalCalendar::from(JSGlobalObject* globalObject, JSValue calendarL
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (calendarLike.isObject()) {
+        // FIXME: Also support PlainMonthDay, PlainYearMonth, ZonedDateTime.
+        if (calendarLike.inherits<TemporalPlainDate>())
+            return jsCast<TemporalPlainDate*>(calendarLike)->calendar();
+
+        if (calendarLike.inherits<TemporalPlainDateTime>())
+            return jsCast<TemporalPlainDateTime*>(calendarLike)->calendar();
+
+        if (calendarLike.inherits<TemporalPlainTime>())
+            return jsCast<TemporalPlainTime*>(calendarLike)->calendar();
+
         JSObject* calendarLikeObject = jsCast<JSObject*>(calendarLike);
-
-        // FIXME: We need to implement code retrieving Calendar from Temporal Date Like objects. But
-        // currently they are not implemented yet.
-
         bool hasProperty = calendarLikeObject->hasProperty(globalObject, vm.propertyNames->calendar);
         RETURN_IF_EXCEPTION(scope, { });
         if (!hasProperty)
@@ -161,7 +167,7 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
     double day = dayProperty.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (!(day > 0 && std::isfinite(day))) {
-        throwRangeError(globalObject, scope, "Temporal.PlainDate day property must be positive and finite"_s);
+        throwRangeError(globalObject, scope, "day property must be positive and finite"_s);
         return { };
     }
 
@@ -182,7 +188,7 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
         }
 
         if (!(month > 0 && std::isfinite(month))) {
-            throwRangeError(globalObject, scope, "Temporal.PlainDate month property must be positive and finite"_s);
+            throwRangeError(globalObject, scope, "month property must be positive and finite"_s);
             return { };
         }
     } else {
@@ -213,9 +219,21 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
     double year = yearProperty.toIntegerOrInfinity(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     if (!std::isfinite(year)) {
-        throwRangeError(globalObject, scope, "Temporal.PlainDate year property must be finite"_s);
+        throwRangeError(globalObject, scope, "year property must be finite"_s);
         return { };
     }
+
+    RELEASE_AND_RETURN(scope, isoDateFromFields(globalObject, year, month, day, overflow));
+}
+
+ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObject, double year, double month, double day, TemporalOverflow overflow)
+{
+    ASSERT(isInteger(year));
+    ASSERT(isInteger(month) && month > 0);
+    ASSERT(isInteger(day) && day > 0);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (overflow == TemporalOverflow::Constrain) {
         month = std::min<unsigned>(month, 12);

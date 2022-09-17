@@ -211,6 +211,9 @@ webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
 # ARIA description needs to be supported on GTK.
 accessibility/aria-description.html [ Skip ]
 
+# default ARIA for custom elements tests that timeout in GTK:
+accessibility/custom-elements/modal.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
 # Legacy Expectations sections below
@@ -1976,3 +1979,5 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-0
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-03.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-05.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps.html [ ImageOnlyFailure ]
+
+webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html [ Failure ]

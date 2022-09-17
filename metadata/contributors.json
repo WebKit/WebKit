@@ -4634,6 +4634,12 @@
    },
    {
       "emails" : [
+         "madsmith@apple.com"
+      ],
+      "name" : "Madeline Smith"
+   },
+   {
+      "emails" : [
          "ager@chromium.org"
       ],
       "expertise" : "V8",
@@ -5984,7 +5990,8 @@
    },
    {
       "emails" : [
-         "rmittal2@apple.com"
+         "rmittal2@apple.com",
+         "rupinmittal@ucla.edu"
       ],
       "github" : "RupinMittal",
       "name" : "Rupin Mittal",

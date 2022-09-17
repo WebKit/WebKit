@@ -1271,7 +1271,6 @@ def generate_message_names_header(receivers):
     result.append('\n')
     result.append('ReceiverName receiverName(MessageName);\n')
     result.append('const char* description(MessageName);\n')
-    result.append('bool isValidMessageName(MessageName);\n')
     result.append('constexpr bool messageIsSync(MessageName name)\n')
     result.append('{\n')
     first_synchronous = next((e for e in message_enumerators if e.messages[0].has_attribute(SYNCHRONOUS_ATTRIBUTE)), None)
@@ -1286,16 +1285,7 @@ def generate_message_names_header(receivers):
     result.append('\n')
     result.append('namespace WTF {\n')
     result.append('\n')
-    result.append('template<>\n')
-    result.append('struct EnumTraits<IPC::MessageName> {\n')
-    result.append('    template<typename T>\n')
-    result.append('    static std::enable_if_t<sizeof(T) == sizeof(IPC::MessageName) && std::is_unsigned_v<T>, bool> isValidEnum(T messageName)\n')
-    result.append('    {\n')
-    result.append('        if (messageName > WTF::enumToUnderlyingType(IPC::MessageName::Last))\n')
-    result.append('            return false;\n')
-    result.append('        return IPC::isValidMessageName(static_cast<IPC::MessageName>(messageName));\n')
-    result.append('    }\n')
-    result.append('};\n')
+    result.append('template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName>);\n')
     result.append('\n')
     result.append('} // namespace WTF\n')
     return ''.join(result)
@@ -1338,8 +1328,12 @@ def generate_message_names_implementation(receivers):
     result.append('    return ReceiverName::Invalid;\n')
     result.append('}\n')
     result.append('\n')
-    result.append('bool isValidMessageName(MessageName messageName)\n')
+    result.append('} // namespace IPC\n')
+    result.append('\n')
+    result.append('namespace WTF {\n')
+    result.append('template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName> underlyingType)\n')
     result.append('{\n')
+    result.append('    auto messageName = static_cast<IPC::MessageName>(underlyingType);\n')
     for enumerator in message_enumerators:
         for message in enumerator.messages:
             if message.condition:
@@ -1351,7 +1345,7 @@ def generate_message_names_implementation(receivers):
     result.append('    return false;\n')
     result.append('};\n')
     result.append('\n')
-    result.append('} // namespace IPC\n')
+    result.append('} // namespace WTF\n')
     return ''.join(result)
 
 

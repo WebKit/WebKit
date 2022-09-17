@@ -2926,9 +2926,9 @@ JSC_DEFINE_JIT_OPERATION(operationStrCat2, JSString*, (JSGlobalObject* globalObj
     ASSERT(!JSValue::decode(a).isSymbol());
     ASSERT(!JSValue::decode(b).isSymbol());
     JSString* str1 = JSValue::decode(a).toString(globalObject);
-    scope.assertNoException(); // Impossible, since we must have been given non-Symbol primitives.
+    RETURN_IF_EXCEPTION(scope, nullptr); // OOM exception can happen from ToString(BigInt).
     JSString* str2 = JSValue::decode(b).toString(globalObject);
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     RELEASE_AND_RETURN(scope, jsString(globalObject, str1, str2));
 }
@@ -2945,11 +2945,11 @@ JSC_DEFINE_JIT_OPERATION(operationStrCat3, JSString*, (JSGlobalObject* globalObj
     ASSERT(!JSValue::decode(b).isSymbol());
     ASSERT(!JSValue::decode(c).isSymbol());
     JSString* str1 = JSValue::decode(a).toString(globalObject);
-    scope.assertNoException(); // Impossible, since we must have been given non-Symbol primitives.
+    RETURN_IF_EXCEPTION(scope, nullptr); // OOM exception can happen from ToString(BigInt).
     JSString* str2 = JSValue::decode(b).toString(globalObject);
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, nullptr);
     JSString* str3 = JSValue::decode(c).toString(globalObject);
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     RELEASE_AND_RETURN(scope, jsString(globalObject, str1, str2, str3));
 }

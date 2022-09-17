@@ -3097,6 +3097,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForCompile, (JSGloba
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::Validation, nullptr);
     MarkedArgumentBuffer args;
     args.append(compiler);
+    ASSERT(!args.hasOverflowed());
     call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
     if (UNLIKELY(scope.exception()))
         scope.clearException();
@@ -3124,6 +3125,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiate, (JSG
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::FullCompile, importObject);
     MarkedArgumentBuffer args;
     args.append(compiler);
+    ASSERT(!args.hasOverflowed());
     call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
     if (UNLIKELY(scope.exception()))
         scope.clearException();

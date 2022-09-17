@@ -31,6 +31,7 @@
 #include "GPRInfo.h"
 #include "JSCJSValue.h"
 #include "JSString.h"
+#include "LinkBuffer.h"
 #include "MacroAssembler.h"
 
 #if ENABLE(JIT)
@@ -48,6 +49,15 @@ namespace JSC {
         inline Jump emitLoadJSCell(VirtualRegister, RegisterID payload);
         inline Jump emitLoadInt32(VirtualRegister, RegisterID dst);
         inline Jump emitLoadDouble(VirtualRegister, FPRegisterID dst, RegisterID scratch);
+
+        inline void emitDebuggerHook()
+        {
+            move(MacroAssembler::framePointerRegister, GPRInfo::argumentGPR0);
+            auto debuggerWillCallNativeExecutable = call(OperationPtrTag);
+            addLinkTask([=] (LinkBuffer& linkBuffer) {
+                linkBuffer.link<OperationPtrTag>(debuggerWillCallNativeExecutable, operationDebuggerWillCallNativeExecutable);
+            });
+        }
 
         VM* vm() const { return m_vm; }
 

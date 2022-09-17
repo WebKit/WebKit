@@ -547,7 +547,7 @@ accessibility/live-region-attributes-update-after-dynamic-change.html [ Skip ]
 accessibility/ignored-textfield-still-accessible.html [ Skip ]
 
 # Default ARIA for custom elements are not yet enabled
-accessibility/custom-elements/role.html [ Skip ]
+accessibility/custom-elements/ [ Skip ]
 
 # TODO Conic gradients
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]

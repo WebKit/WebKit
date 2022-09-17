@@ -1940,33 +1940,6 @@ class CloseBug(buildstep.BuildStep, BugzillaMixin):
         return not self.doStepIf(step)
 
 
-class ClosePullRequest(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
-    name = 'close-pull-request'
-    flunkOnFailure = False
-    haltOnFailure = False
-
-    def start(self):
-        self.pr_number = self.getProperty('github.number', '')
-        if self.close_pr(self.pr_number, self.getProperty('repository')):
-            self.finished(SUCCESS)
-        else:
-            self.finished(FAILURE)
-        return None
-
-    def getResultSummary(self):
-        if self.results == FAILURE:
-            return {'step': f'Failed to close PR {self.pr_number}'}
-        if self.results == SUCCESS:
-            return {'step': f'Closed PR {self.pr_number}'}
-        return buildstep.BuildStep.getResultSummary(self)
-
-    def doStepIf(self, step):
-        return self.getProperty('github.number')
-
-    def hideStepIf(self, results, step):
-        return not self.doStepIf(step)
-
-
 class LeaveComment(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     name = 'leave-comment'
     flunkOnFailure = False
@@ -4599,7 +4572,7 @@ class PushCommitToWebKitRepo(shell.ShellCommand):
                 DetermineLandedIdentifier(),
                 LeaveComment(),
                 RemoveFlagsOnPatch(), RemoveLabelsFromPullRequest(),
-                CloseBug(), ClosePullRequest(),
+                CloseBug(),
             ]
             self.build.addStepsAfterCurrentStep(steps_to_add)
 

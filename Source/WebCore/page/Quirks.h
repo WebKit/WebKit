@@ -161,7 +161,6 @@ public:
 #if PLATFORM(IOS)
     WEBCORE_EXPORT bool allowLayeredFullscreenVideos() const;
 #endif
-    bool hasBrokenPermissionsAPISupportQuirk() const;
     bool shouldEnableApplicationCacheQuirk() const;
     bool shouldEnableFontLoadingAPIQuirk() const;
     
@@ -213,7 +212,6 @@ private:
 #if PLATFORM(IOS)
     mutable std::optional<bool> m_allowLayeredFullscreenVideos;
 #endif
-    mutable std::optional<bool> m_hasBrokenPermissionsAPISupportQuirk;
 #if PLATFORM(IOS_FAMILY)
     mutable std::optional<bool> m_shouldEnableApplicationCacheQuirk;
 #endif

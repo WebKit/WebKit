@@ -43,23 +43,15 @@ public:
     Element* element() const { return m_element.get(); }
     ShadowRoot* shadowRoot() const;
 
-    void setRole(const AtomString&);
-    const AtomString& role();
-
-    void setAriaLabel(const AtomString&);
-    const AtomString& ariaLabel();
-
-    void setAriaRoleDescription(const AtomString&);
-    const AtomString& ariaRoleDescription();
+    // For ARIAMixin
+    const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
+    void setAttributeWithoutSynchronization(const QualifiedName&, const AtomString& value);
 
 private:
     ElementInternals(HTMLElement& element)
         : m_element(element)
     {
     }
-
-    void setAriaValueForAttribute(const AtomString& key, const AtomString& value);
-    const AtomString& ariaValueForAttribute(const AtomString&);
 
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_element;
 };

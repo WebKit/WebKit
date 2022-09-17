@@ -41,7 +41,7 @@ enum ViewportErrorCode {
     MaximumScaleTooLargeError
 };
 
-enum class ViewportFit {
+enum class ViewportFit : uint8_t {
     Auto,
     Contain,
     Cover

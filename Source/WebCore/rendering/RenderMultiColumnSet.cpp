@@ -585,7 +585,7 @@ LayoutRect RenderMultiColumnSet::fragmentedFlowPortionOverflowRect(const LayoutR
 
     // Calculate the overflow rectangle, based on the flow thread's, clipped at column logical
     // top/bottom unless it's the first/last column.
-    LayoutRect overflowRect = overflowRectForFragmentedFlowPortion(portionRect, isFirstColumn && isFirstFragment(), isLastColumn && isLastFragment(), VisualOverflow);
+    LayoutRect overflowRect = overflowRectForFragmentedFlowPortion(portionRect, isFirstColumn && isFirstFragment(), isLastColumn && isLastFragment());
 
     // For RenderViews only (i.e., iBooks), avoid overflowing into neighboring columns, by clipping in the middle of adjacent column gaps. Also make sure that we avoid rounding errors.
     if (&view() == parent()) {
@@ -923,12 +923,6 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
         translationOffset = translationOffset.transposedPoint();
     
     return translationOffset;
-}
-
-void RenderMultiColumnSet::adjustFragmentBoundsFromFragmentedFlowPortionRect(LayoutRect&) const
-{
-    // This only fires for named flow thread compositing code, so let's make sure to ASSERT if this ever gets invoked.
-    ASSERT_NOT_REACHED();
 }
 
 void RenderMultiColumnSet::addOverflowFromChildren()

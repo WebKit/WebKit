@@ -1,0 +1,13 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById("custom-list").role is "AXRole: AXComboBox"
+PASS accessibilityController.accessibleElementById("custom-list").stringAttributeValue("AXAutocompleteValue") is "list"
+PASS accessibilityController.accessibleElementById("custom-textbox").role is "AXRole: AXTextField"
+PASS accessibilityController.accessibleElementById("custom-textbox").stringAttributeValue("AXAutocompleteValue") is "inline"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -126,6 +126,7 @@ JSArray* JSModuleLoader::dependencyKeysIfEvaluated(JSGlobalObject* globalObject,
 
     MarkedArgumentBuffer arguments;
     arguments.append(key);
+    ASSERT(!arguments.hasOverflowed());
 
     JSValue result = call(globalObject, function, callData, this, arguments);
     RETURN_IF_EXCEPTION(scope, nullptr);

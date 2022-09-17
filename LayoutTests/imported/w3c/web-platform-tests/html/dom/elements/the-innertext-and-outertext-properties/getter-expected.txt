@@ -248,7 +248,7 @@ PASS innerText not supported on SVG elements ("<svg>abc")
 PASS innerText not supported on MathML elements ("<math>abc")
 PASS <rt> and no <rp> ("<div><ruby>abc<rt>def</rt></ruby>")
 FAIL <rp> ("<div><ruby>abc<rp>(</rp><rt>def</rt><rp>)</rp></ruby>") assert_equals: innerText expected "abcdef" but got "abcdef\n"
-FAIL Lone <rp> ("<div><rp>abc</rp>") assert_equals: innerText expected "" but got "abc"
+PASS Lone <rp> ("<div><rp>abc</rp>")
 PASS visibility:hidden <rp> ("<div><rp style='visibility:hidden'>abc</rp>")
 PASS display:block <rp> ("<div><rp style='display:block'>abc</rp>def")
 PASS display:block <rp> with whitespace ("<div><rp style='display:block'> abc </rp>def")

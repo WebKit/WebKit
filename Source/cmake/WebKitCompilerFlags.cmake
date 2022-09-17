@@ -87,6 +87,20 @@ macro(WEBKIT_ADD_TARGET_CXX_FLAGS _target)
 endmacro()
 
 
+option(DEVELOPER_MODE_FATAL_WARNINGS "Build with warnings as errors if DEVELOPER_MODE is also enabled" OFF)
+if (DEVELOPER_MODE AND DEVELOPER_MODE_FATAL_WARNINGS)
+    if (MSVC)
+        set(FATAL_WARNINGS_FLAG /WX)
+    else ()
+        set(FATAL_WARNINGS_FLAG -Werror)
+    endif ()
+
+    check_cxx_compiler_flag(${FATAL_WARNINGS_FLAG} CXX_COMPILER_SUPPORTS_WERROR)
+    if (CXX_COMPILER_SUPPORTS_WERROR)
+        set(DEVELOPER_MODE_CXX_FLAGS ${FATAL_WARNINGS_FLAG})
+    endif ()
+endif ()
+
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fno-strict-aliasing)
 

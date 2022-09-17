@@ -1,0 +1,53 @@
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+header: "WebGPUSupportedLimits.h"
+
+#if ENABLE(GPU_PROCESS)
+[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::SupportedLimits {
+    uint32_t maxTextureDimension1D 
+    uint32_t maxTextureDimension2D 
+    uint32_t maxTextureDimension3D 
+    uint32_t maxTextureArrayLayers 
+    uint32_t maxBindGroups 
+    uint32_t maxDynamicUniformBuffersPerPipelineLayout 
+    uint32_t maxDynamicStorageBuffersPerPipelineLayout 
+    uint32_t maxSampledTexturesPerShaderStage 
+    uint32_t maxSamplersPerShaderStage 
+    uint32_t maxStorageBuffersPerShaderStage 
+    uint32_t maxStorageTexturesPerShaderStage 
+    uint32_t maxUniformBuffersPerShaderStage 
+    uint64_t maxUniformBufferBindingSize 
+    uint64_t maxStorageBufferBindingSize 
+    uint32_t minUniformBufferOffsetAlignment 
+    uint32_t minStorageBufferOffsetAlignment 
+    uint32_t maxVertexBuffers 
+    uint32_t maxVertexAttributes 
+    uint32_t maxVertexBufferArrayStride 
+    uint32_t maxInterStageShaderComponents 
+    uint32_t maxComputeWorkgroupStorageSize 
+    uint32_t maxComputeInvocationsPerWorkgroup 
+    uint32_t maxComputeWorkgroupSizeX 
+    uint32_t maxComputeWorkgroupSizeY 
+    uint32_t maxComputeWorkgroupSizeZ 
+    uint32_t maxComputeWorkgroupsPerDimension 
+}

@@ -329,8 +329,12 @@ ReceiverName receiverName(MessageName messageName)
     return ReceiverName::Invalid;
 }
 
-bool isValidMessageName(MessageName messageName)
+} // namespace IPC
+
+namespace WTF {
+template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName> underlyingType)
 {
+    auto messageName = static_cast<IPC::MessageName>(underlyingType);
 #if USE(AVFOUNDATION)
     if (messageName == IPC::MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer)
         return true;
@@ -590,4 +594,4 @@ bool isValidMessageName(MessageName messageName)
     return false;
 };
 
-} // namespace IPC
+} // namespace WTF

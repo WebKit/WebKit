@@ -162,9 +162,6 @@ struct ExceptionDetails;
 struct FontAttributes;
 struct FileChooserSettings;
 struct TextRecognitionDataDetector;
-struct RawFile;
-struct ShareData;
-struct ShareDataWithParsedURL;
 struct Length;
 struct GrammarDetail;
 struct MimeClassInfo;
@@ -285,11 +282,6 @@ template<> struct ArgumentCoder<WebCore::ViewportArguments> {
 };
 
 #endif
-
-template<> struct ArgumentCoder<WebCore::ViewportAttributes> {
-    static void encode(Encoder&, const WebCore::ViewportAttributes&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ViewportAttributes&);
-};
 
 template<> struct ArgumentCoder<WebCore::Length> {
     static void encode(Encoder&, const WebCore::Length&);
@@ -444,21 +436,6 @@ template<> struct ArgumentCoder<WebCore::DictationAlternative> {
 template<> struct ArgumentCoder<WebCore::FileChooserSettings> {
     static void encode(Encoder&, const WebCore::FileChooserSettings&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FileChooserSettings&);
-};
-    
-template<> struct ArgumentCoder<WebCore::RawFile> {
-    static void encode(Encoder&, const WebCore::RawFile&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::RawFile&);
-};
-
-template<> struct ArgumentCoder<WebCore::ShareData> {
-    static void encode(Encoder&, const WebCore::ShareData&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ShareData&);
-};
-    
-template<> struct ArgumentCoder<WebCore::ShareDataWithParsedURL> {
-    static void encode(Encoder&, const WebCore::ShareDataWithParsedURL&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ShareDataWithParsedURL&);
 };
 
 template<> struct ArgumentCoder<WebCore::GrammarDetail> {

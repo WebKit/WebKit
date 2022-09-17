@@ -164,9 +164,9 @@
   <autotools id="pixman"
              autogen-sh="configure"
              autogenargs="--enable-gtk=no">
-    <branch module="releases/pixman-0.34.0.tar.gz" version="0.34.0"
+    <branch module="releases/pixman-${version}.tar.gz" version="0.40.0"
             repo="cairographics.org"
-            hash="sha1:a1b1683c1a55acce9d928fea1ab6ceb79142ddc7"/>
+            hash="sha256:6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc"/>
   </autotools>
 
   <autotools id="cairo"

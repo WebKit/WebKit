@@ -79,7 +79,9 @@ private:
     bool mouseEvent(WebCore::PageOverlay&, const WebCore::PlatformMouseEvent&) override;
     void drawRect(WebCore::PageOverlay&, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) override;
 
+    RefPtr<WebCore::TextIndicator> createTextIndicatorForRange(const WebCore::SimpleRange&, WebCore::TextIndicatorPresentationTransition);
     void setTextIndicatorWithRange(const WebCore::SimpleRange&);
+    void flashTextIndicatorAndUpdateSelectionWithRange(const WebCore::SimpleRange&);
 
     Vector<WebCore::FloatRect> rectsForTextMatchesInRect(WebCore::IntRect clipRect);
 

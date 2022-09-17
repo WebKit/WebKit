@@ -46,7 +46,8 @@
 #include <wtf/OptionSet.h>
 
 #define ALLOW_FLOATS 1
-#define ALLOW_RTL_FLOATS 0
+#define ALLOW_RTL_FLOATS 1
+#define ALLOW_VERTICAL_FLOATS 0
 
 #ifndef NDEBUG
 #define SET_REASON_AND_RETURN_IF_NEEDED(reason, reasons, includeReasons) { \
@@ -372,13 +373,15 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderBlockFlow& flow, co
                 return false;
         }
 #if !ALLOW_FLOATS
-        UNUSED_PARAM(flow);
         if (renderer.isFloating())
             return false;
 #endif
 #if !ALLOW_RTL_FLOATS
-        UNUSED_PARAM(flow);
         if (renderer.isFloating() && !renderer.parent()->style().isLeftToRightDirection())
+            return false;
+#endif
+#if !ALLOW_VERTICAL_FLOATS
+        if (renderer.isFloating() && !renderer.parent()->style().isHorizontalWritingMode())
             return false;
 #endif
         auto intrusiveFloatsWithMismatchingInlineDirection = flow.containsFloats() && flow.containingBlock() && flow.containingBlock()->style().isLeftToRightDirection() != flow.style().isLeftToRightDirection();

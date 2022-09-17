@@ -41,33 +41,6 @@ struct ProgrammableStage {
     WebGPUIdentifier module;
     String entryPoint;
     Vector<KeyValuePair<String, PipelineConstantValue>> constants;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << module;
-        encoder << entryPoint;
-        encoder << constants;
-    }
-
-    template<class Decoder> static std::optional<ProgrammableStage> decode(Decoder& decoder)
-    {
-        std::optional<WebGPUIdentifier> module;
-        decoder >> module;
-        if (!module)
-            return std::nullopt;
-
-        std::optional<String> entryPoint;
-        decoder >> entryPoint;
-        if (!entryPoint)
-            return std::nullopt;
-
-        std::optional<Vector<KeyValuePair<String, PipelineConstantValue>>> constants;
-        decoder >> constants;
-        if (!constants)
-            return std::nullopt;
-
-        return { { WTFMove(*module), WTFMove(*entryPoint), WTFMove(*constants) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

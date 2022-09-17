@@ -28,6 +28,7 @@
 
 #include "CatchScope.h"
 #include "Debugger.h"
+#include "DeferTermination.h"
 #include "JSGlobalObject.h"
 #include "JSObjectInlines.h"
 #include "Microtask.h"
@@ -66,9 +67,16 @@ Ref<Microtask> createJSMicrotask(VM& vm, JSValue job, JSValue argument0, JSValue
 void runJSMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier, JSValue job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
 {
     VM& vm = globalObject->vm();
+
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
+    // If termination is issued, do not run microtasks. Otherwise, microtask should not care about exceptions.
+    if (UNLIKELY(!scope.clearExceptionExceptTermination()))
+        return;
+
     auto handlerCallData = JSC::getCallData(job);
+    if (UNLIKELY(!scope.clearExceptionExceptTermination()))
+        return;
     ASSERT(handlerCallData.type != CallData::Type::None);
 
     MarkedArgumentBuffer handlerArguments;
@@ -79,14 +87,22 @@ void runJSMicrotask(JSGlobalObject* globalObject, MicrotaskIdentifier identifier
     if (UNLIKELY(handlerArguments.hasOverflowed()))
         return;
 
-    if (UNLIKELY(globalObject->hasDebugger()))
+    if (UNLIKELY(globalObject->hasDebugger())) {
+        DeferTerminationForAWhile deferTerminationForAWhile(vm);
         globalObject->debugger()->willRunMicrotask(globalObject, identifier);
+        scope.clearException();
+    }
 
-    profiledCall(globalObject, ProfilingReason::Microtask, job, handlerCallData, jsUndefined(), handlerArguments);
-    scope.clearException();
+    if (LIKELY(!vm.hasPendingTerminationException())) {
+        profiledCall(globalObject, ProfilingReason::Microtask, job, handlerCallData, jsUndefined(), handlerArguments);
+        scope.clearExceptionExceptTermination();
+    }
 
-    if (UNLIKELY(globalObject->hasDebugger()))
+    if (UNLIKELY(globalObject->hasDebugger())) {
+        DeferTerminationForAWhile deferTerminationForAWhile(vm);
         globalObject->debugger()->didRunMicrotask(globalObject, identifier);
+        scope.clearException();
+    }
 }
 
 void JSMicrotask::run(JSGlobalObject* globalObject)

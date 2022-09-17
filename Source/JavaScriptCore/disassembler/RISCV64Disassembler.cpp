@@ -635,7 +635,7 @@ CString disassembleOpcode(uint32_t *pc)
 
 bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, void*, void*, const char* prefix, PrintStream& out)
 {
-    uint32_t* currentPC = codePtr.untaggedExecutableAddress<uint32_t*>();
+    uint32_t* currentPC = codePtr.untaggedPtr<uint32_t*>();
     size_t byteCount = size;
 
     while (byteCount) {

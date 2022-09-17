@@ -2230,7 +2230,8 @@ bool FrameView::scrollToFragment(const URL& url)
             
             if (highlightRanges.size()) {
                 auto range = highlightRanges.first();
-                TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+                // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
+                TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
                 maintainScrollPositionAtScrollToTextFragmentRange(range);
                 if (frame().settings().scrollToTextFragmentIndicatorEnabled())
                     m_delayedTextFragmentIndicatorTimer.startOneShot(100_ms);
@@ -2477,8 +2478,9 @@ void FrameView::textFragmentIndicatorTimerFired()
         return;
     
     auto range = m_pendingTextFragmentIndicatorRange.value();
-    
-    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+
+    // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
     
     maintainScrollPositionAtScrollToTextFragmentRange(range);
     
@@ -3563,8 +3565,9 @@ void FrameView::scrollToTextFragmentRange()
     Ref document = *frame().document();
 
     SetForScope skipScrollResetOfScrollToTextFragmentRange(m_skipScrollResetOfScrollToTextFragmentRange, true);
-    
-    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+
+    // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
 }
 
 void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)

@@ -1,0 +1,17 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL accessibilityController.accessibleElementById("item-1") should be null (of type object). Was undefined (of type undefined).
+PASS accessibilityController.accessibleElementById("item-2").role is "AXRole: AXButton"
+PASS accessibilityController.accessibleElementById("item-2").stringAttributeValue("AXInvalid") is "grammar"
+PASS accessibilityController.accessibleElementById("item-2").stringAttributeValue("AXKeyShortcutsValue") is "Shift + E"
+PASS accessibilityController.accessibleElementById("item-3").role is "AXRole: AXButton"
+PASS accessibilityController.accessibleElementById("item-3").stringAttributeValue("AXInvalid") is "spelling"
+PASS accessibilityController.accessibleElementById("item-3").stringAttributeValue("AXKeyShortcutsValue") is "Command + T"
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

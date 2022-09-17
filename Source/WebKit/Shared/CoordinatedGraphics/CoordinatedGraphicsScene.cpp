@@ -397,6 +397,14 @@ void CoordinatedGraphicsScene::updateSceneState()
         layersByBacking.backingStore = { };
     }
 
+    // Invalidate the proxies that are not used anymore before activating the new ones:
+    // a layer's proxy can be replaced with a new one. If we don't invalidate the old proxy
+    // before activating the new one, the contentLayer set to the layer by the activation of
+    // the new proxy will be removed by the invalidation of the old one.
+    for (auto& proxy : replacedProxiesToInvalidate)
+        proxy->invalidate();
+    replacedProxiesToInvalidate = { };
+
     {
         for (auto& entry : layersByBacking.contentLayer) {
             auto& proxy = entry.proxy.get();
@@ -431,10 +439,6 @@ void CoordinatedGraphicsScene::updateSceneState()
 
     for (auto& proxy : proxiesForSwapping)
         proxy->swapBuffer();
-
-    for (auto& proxy : replacedProxiesToInvalidate)
-        proxy->invalidate();
-    replacedProxiesToInvalidate = { };
 
     // Eject any backing store container whose only reference is held in this scene's HashSet cache.
     m_imageBackingStoreContainers.removeIf(

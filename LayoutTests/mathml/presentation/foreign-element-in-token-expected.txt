@@ -25,7 +25,6 @@ code:
 mi
 
 datalist:
-mi
 
 data:
 mi
@@ -139,7 +138,6 @@ code:
 mn
 
 datalist:
-mn
 
 data:
 mn
@@ -253,7 +251,6 @@ code:
 mtext
 
 datalist:
-mtext
 
 data:
 mtext
@@ -367,7 +364,6 @@ code:
 mo
 
 datalist:
-mo
 
 data:
 mo

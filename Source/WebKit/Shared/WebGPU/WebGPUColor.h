@@ -39,39 +39,6 @@ struct ColorDict {
     double g { 0 };
     double b { 0 };
     double a { 0 };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << r;
-        encoder << g;
-        encoder << b;
-        encoder << a;
-    }
-
-    template<class Decoder> static std::optional<ColorDict> decode(Decoder& decoder)
-    {
-        std::optional<double> r;
-        decoder >> r;
-        if (!r)
-            return std::nullopt;
-
-        std::optional<double> g;
-        decoder >> g;
-        if (!g)
-            return std::nullopt;
-
-        std::optional<double> b;
-        decoder >> b;
-        if (!b)
-            return std::nullopt;
-
-        std::optional<double> a;
-        decoder >> a;
-        if (!a)
-            return std::nullopt;
-
-        return { { WTFMove(*r), WTFMove(*g), WTFMove(*b), WTFMove(*a) } };
-    }
 };
 
 using Color = std::variant<Vector<double>, ColorDict>;

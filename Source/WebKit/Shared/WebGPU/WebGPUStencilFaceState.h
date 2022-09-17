@@ -38,39 +38,6 @@ struct StencilFaceState {
     PAL::WebGPU::StencilOperation failOp { PAL::WebGPU::StencilOperation::Keep };
     PAL::WebGPU::StencilOperation depthFailOp { PAL::WebGPU::StencilOperation::Keep };
     PAL::WebGPU::StencilOperation passOp { PAL::WebGPU::StencilOperation::Keep };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << compare;
-        encoder << failOp;
-        encoder << depthFailOp;
-        encoder << passOp;
-    }
-
-    template<class Decoder> static std::optional<StencilFaceState> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::CompareFunction> compare;
-        decoder >> compare;
-        if (!compare)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::StencilOperation> failOp;
-        decoder >> failOp;
-        if (!failOp)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::StencilOperation> depthFailOp;
-        decoder >> depthFailOp;
-        if (!depthFailOp)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::StencilOperation> passOp;
-        decoder >> passOp;
-        if (!passOp)
-            return std::nullopt;
-
-        return { { WTFMove(*compare), WTFMove(*failOp), WTFMove(*depthFailOp), WTFMove(*passOp) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

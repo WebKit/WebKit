@@ -38,33 +38,6 @@ struct BufferBinding {
     WebGPUIdentifier buffer;
     PAL::WebGPU::Size64 offset { 0 };
     std::optional<PAL::WebGPU::Size64> size;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << buffer;
-        encoder << offset;
-        encoder << size;
-    }
-
-    template<class Decoder> static std::optional<BufferBinding> decode(Decoder& decoder)
-    {
-        std::optional<WebGPUIdentifier> buffer;
-        decoder >> buffer;
-        if (!buffer)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::Size64> offset;
-        decoder >> offset;
-        if (!offset)
-            return std::nullopt;
-
-        std::optional<std::optional<PAL::WebGPU::Size64>> size;
-        decoder >> size;
-        if (!size)
-            return std::nullopt;
-
-        return { { WTFMove(*buffer), WTFMove(*offset), WTFMove(*size) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

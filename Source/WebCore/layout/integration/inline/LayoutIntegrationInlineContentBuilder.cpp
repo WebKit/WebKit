@@ -129,7 +129,7 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
                     childInkOverflow.move(box.left(), box.top());
                     lineInkOverflowRect.unite(childInkOverflow);
                 }
-                auto childScrollableOverflow = renderer.logicalLayoutOverflowRectForPropagation(&renderer.parent()->style());
+                auto childScrollableOverflow = renderer.layoutOverflowRectForPropagation(&renderer.parent()->style());
                 childScrollableOverflow.move(box.left(), box.top());
                 scrollableOverflowRect.unite(childScrollableOverflow);
             }

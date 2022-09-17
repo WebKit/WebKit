@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-element id="custom-element"></custom-element>
+<custom-liveregion id="custom-liveregion"></custom-checkbox>
+<custom-liveregion id="text-liveregion" aria-atomic="false" aria-busy="false" aria-live="assertive" aria-relevant="text"></custom-checkbox>
+<script>
+
+customElements.define('custom-element', class CustomElement extends HTMLElement {});
+customElements.define('custom-liveregion', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.ariaAtomic = 'true';
+        internals.ariaBusy = 'true';
+        internals.ariaLive = 'polite';
+        internals.ariaRelevant = 'additions';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBe('accessibilityController.accessibleElementById("custom-element")', 'null');
+
+    shouldBe('accessibilityController.accessibleElementById("custom-liveregion").boolAttributeValue("AXARIAAtomic")', 'true');
+    shouldBe('accessibilityController.accessibleElementById("custom-liveregion").boolAttributeValue("AXElementBusy")', 'true');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-liveregion").stringAttributeValue("AXARIALive")', 'polite');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-liveregion").stringAttributeValue("AXARIARelevant")', 'additions');
+
+    shouldBe('accessibilityController.accessibleElementById("text-liveregion").boolAttributeValue("AXARIAAtomic")', 'false');
+    shouldBe('accessibilityController.accessibleElementById("text-liveregion").boolAttributeValue("AXElementBusy")', 'false');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("text-liveregion").stringAttributeValue("AXARIALive")', 'assertive');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("text-liveregion").stringAttributeValue("AXARIARelevant")', 'text');
+}
+
+</script>
+</body>
+</html>

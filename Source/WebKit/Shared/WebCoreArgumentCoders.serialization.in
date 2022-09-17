@@ -391,3 +391,42 @@ header: <WebCore/ResourceLoadStatistics.h>
     GCGLint size;
 };
 #endif
+
+enum class WebCore::ViewportFit : uint8_t {
+    Auto,
+    Contain,
+    Cover,
+};
+
+header: <WebCore/ViewportArguments.h>
+struct WebCore::ViewportAttributes {
+    WebCore::FloatSize layoutSize;
+
+    float initialScale;
+    float minimumScale;
+    float maximumScale;
+
+    float userScalable;
+    float orientation;
+    float shrinkToFit;
+
+    WebCore::ViewportFit viewportFit;
+};
+
+header: <WebCore/ShareData.h>
+struct WebCore::ShareDataWithParsedURL {
+    WebCore::ShareData shareData;
+    std::optional<URL> url;
+    Vector<WebCore::RawFile> files;
+};
+
+struct WebCore::ShareData {
+    String title;
+    String text;
+    String url;
+};
+
+struct WebCore::RawFile {
+    String fileName;
+    RefPtr<WebCore::SharedBuffer> fileData;
+};
