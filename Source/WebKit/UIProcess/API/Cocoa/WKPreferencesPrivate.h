@@ -186,7 +186,7 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setDefaultTextEncodingName:) NSString *_defaultTextEncodingName WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setAuthorAndUserStylesEnabled:) BOOL _authorAndUserStylesEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setDOMTimersThrottlingEnabled:) BOOL _domTimersThrottlingEnabled WK_API_AVAILABLE(macos(10.13.4));
-@property (nonatomic, setter=_setWebArchiveDebugModeEnabled:) BOOL _webArchiveDebugModeEnabled WK_API_AVAILABLE(macos(10.13.4));
+@property (nonatomic, setter=_setWebArchiveTestingModeEnabled:) BOOL _webArchiveTestingModeEnabled WK_API_AVAILABLE(macos(13.0));
 @property (nonatomic, setter=_setLocalFileContentSniffingEnabled:) BOOL _localFileContentSniffingEnabled WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setUsesPageCache:) BOOL _usesPageCache WK_API_AVAILABLE(macos(10.13.4));
 @property (nonatomic, setter=_setPageCacheSupportsPlugins:) BOOL _pageCacheSupportsPlugins WK_API_AVAILABLE(macos(10.13.4));
@@ -231,6 +231,6 @@ typedef NS_ENUM(NSInteger, _WKPitchCorrectionAlgorithm) {
 @property (nonatomic, setter=_setRequestAnimationFrameEnabled:) BOOL _requestAnimationFrameEnabled WK_API_DEPRECATED("requestAnimationFrame is always enabled", macos(10.15.4, 13.0), ios(13.4, 16.0));
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setSubpixelCSSOMElementMetricsEnabled:) BOOL _subpixelCSSOMElementMetricsEnabled WK_API_DEPRECATED("Subpixel CSSOM element metrics are no longer supported", macos(10.13.4, 10.15));
+@property (nonatomic, setter=_setWebArchiveDebugModeEnabled:) BOOL _webArchiveDebugModeEnabled WK_API_DEPRECATED("WebArchive Debug Mode is no longer supported", macos(10.13.4, 13.0));
 #endif
-
 @end
