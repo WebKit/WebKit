@@ -309,7 +309,7 @@ void WebUserContentController::addUserScriptMessageHandlers(const Vector<WebScri
             continue;
         }
 
-        addUserScriptMessageHandlerInternal(*it->value.first, handler.identifier, handler.name);
+        addUserScriptMessageHandlerInternal(*it->value.first, handler.identifier, AtomString(handler.name));
     }
 #else
     UNUSED_PARAM(scriptMessageHandlers);
