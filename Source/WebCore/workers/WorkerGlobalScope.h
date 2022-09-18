@@ -121,6 +121,7 @@ public:
     WorkerNavigator& navigator();
 
     void setIsOnline(bool);
+    bool isOnline() const { return m_isOnline; }
 
     ExceptionOr<int> setTimeout(std::unique_ptr<ScheduledAction>, int timeout, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments);
     void clearTimeout(int timeoutId);

@@ -77,6 +77,7 @@ private:
     // requests and to send callbacks back to WorkerGlobalScope.
     bool isWorkerMessagingProxy() const final { return true; }
     void postTaskToLoader(ScriptExecutionContext::Task&&) final;
+    ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
     RefPtr<CacheStorageConnection> createCacheStorageConnection() final;
     StorageConnection* storageConnection() final;
     RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() final;
@@ -91,6 +92,7 @@ private:
     Worker* workerObject() const { return m_workerObject; }
 
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    ScriptExecutionContextIdentifier m_loaderContextIdentifier;
     RefPtr<WorkerInspectorProxy> m_inspectorProxy;
     RefPtr<WorkerUserGestureForwarder> m_userGestureForwarder;
     Worker* m_workerObject;

@@ -11,7 +11,7 @@ PASS Verify a no-cors cross-origin worker script served by a service worker fail
 PASS Register a service worker for worker subresource interception tests.
 PASS Requests on a dedicated worker controlled by a service worker.
 PASS Requests on a shared worker controlled by a service worker.
-FAIL Requests on a dedicated worker nested in a dedicated worker and controlled by a service worker assert_equals: expected "This load was successfully intercepted." but got "Unexpected error! Can't find variable: Worker"
+FAIL Requests on a dedicated worker nested in a dedicated worker and controlled by a service worker assert_equals: expected "This load was successfully intercepted." but got "{\"error\": {\"code\": 404, \"message\": \"404\"}}"
 FAIL Requests on a dedicated worker nested in a shared worker and controlled by a service worker assert_equals: expected "This load was successfully intercepted." but got "Unexpected error! Can't find variable: Worker"
 PASS Unregister a service worker for subresource interception tests.
 

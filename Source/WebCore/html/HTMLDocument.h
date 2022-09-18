@@ -67,7 +67,9 @@ private:
 
 inline Ref<HTMLDocument> HTMLDocument::create(Frame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier identifier)
 {
-    return adoptRef(*new HTMLDocument(frame, settings, url, identifier, { DocumentClass::HTML }, 0));
+    auto document = adoptRef(*new HTMLDocument(frame, settings, url, identifier, { DocumentClass::HTML }, 0));
+    document->addToContextsMap();
+    return document;
 }
 
 } // namespace WebCore

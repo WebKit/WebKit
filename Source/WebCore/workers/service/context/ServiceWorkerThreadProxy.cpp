@@ -118,6 +118,11 @@ bool ServiceWorkerThreadProxy::postTaskForModeToWorkerOrWorkletGlobalScope(Scrip
     return true;
 }
 
+ScriptExecutionContextIdentifier ServiceWorkerThreadProxy::loaderContextIdentifier() const
+{
+    return m_document->identifier();
+}
+
 void ServiceWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
     callOnMainThread([task = WTFMove(task), this, protectedThis = Ref { *this }] () mutable {

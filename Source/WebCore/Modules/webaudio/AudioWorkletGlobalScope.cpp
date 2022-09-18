@@ -54,7 +54,9 @@ RefPtr<AudioWorkletGlobalScope> AudioWorkletGlobalScope::tryCreate(AudioWorkletT
     auto vm = JSC::VM::tryCreate();
     if (!vm)
         return nullptr;
-    return adoptRef(*new AudioWorkletGlobalScope(thread, vm.releaseNonNull(), parameters));
+    auto scope = adoptRef(*new AudioWorkletGlobalScope(thread, vm.releaseNonNull(), parameters));
+    scope->addToContextsMap();
+    return scope;
 }
 
 AudioWorkletGlobalScope::AudioWorkletGlobalScope(AudioWorkletThread& thread, Ref<JSC::VM>&& vm, const WorkletParameters& parameters)

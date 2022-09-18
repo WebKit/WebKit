@@ -46,7 +46,9 @@ RefPtr<PaintWorkletGlobalScope> PaintWorkletGlobalScope::tryCreate(Document& doc
     RefPtr<VM> vm = VM::tryCreate();
     if (!vm)
         return nullptr;
-    return adoptRef(*new PaintWorkletGlobalScope(document, vm.releaseNonNull(), WTFMove(code)));
+    auto scope = adoptRef(*new PaintWorkletGlobalScope(document, vm.releaseNonNull(), WTFMove(code)));
+    scope->addToContextsMap();
+    return scope;
 }
 
 PaintWorkletGlobalScope::PaintWorkletGlobalScope(Document& document, Ref<VM>&& vm, ScriptSourceCode&& code)

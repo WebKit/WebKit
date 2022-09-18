@@ -56,6 +56,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(ServiceWorkerGlobalScope);
 Ref<ServiceWorkerGlobalScope> ServiceWorkerGlobalScope::create(ServiceWorkerContextData&& contextData, ServiceWorkerData&& workerData, const WorkerParameters& params, Ref<SecurityOrigin>&& origin, ServiceWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, std::unique_ptr<NotificationClient>&& notificationClient)
 {
     auto scope = adoptRef(*new ServiceWorkerGlobalScope { WTFMove(contextData), WTFMove(workerData), params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider, WTFMove(notificationClient) });
+    scope->addToContextsMap();
     scope->applyContentSecurityPolicyResponseHeaders(params.contentSecurityPolicyResponseHeaders);
     scope->notifyServiceWorkerPageOfCreationIfNecessary();
     return scope;
@@ -74,6 +75,9 @@ ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(ServiceWorkerContextData&& co
 
 ServiceWorkerGlobalScope::~ServiceWorkerGlobalScope()
 {
+    // We need to remove from the contexts map very early in the destructor so that calling postTask() on this WorkerGlobalScope from another thread is safe.
+    removeFromContextsMap();
+
     // NotificationClient might have some interactions pending with the main thread,
     // so it should also be destroyed there.
     callOnMainThread([notificationClient = WTFMove(m_notificationClient)] { });

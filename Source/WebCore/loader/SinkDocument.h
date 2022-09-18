@@ -34,7 +34,9 @@ class SinkDocument final : public HTMLDocument {
 public:
     static Ref<SinkDocument> create(Frame& frame, const URL& url)
     {
-        return adoptRef(*new SinkDocument(frame, url));
+        auto document = adoptRef(*new SinkDocument(frame, url));
+        document->addToContextsMap();
+        return document;
     }
 
 private:
