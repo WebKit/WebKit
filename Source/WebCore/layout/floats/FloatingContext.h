@@ -73,6 +73,8 @@ public:
 
     bool isLeftToRightDirection() const { return floatingState().isLeftToRightDirection(); }
 
+    bool isLeftFloatingPositioned(const Box&) const;
+
 private:
     std::optional<LayoutUnit> bottom(Clear) const;
 
@@ -90,6 +92,16 @@ private:
     const FormattingContext& m_formattingContext;
     const FloatingState& m_floatingState;
 };
+
+inline bool FloatingContext::isLeftFloatingPositioned(const Box& floatBox) const
+{
+    ASSERT(floatBox.isFloatingPositioned());
+    auto inlineDirection = root().style().direction();
+    auto floatingValue = floatBox.style().floating();
+    return floatingValue == Float::InlineStart
+        || (inlineDirection == TextDirection::LTR && floatingValue == Float::Left)
+        || (inlineDirection == TextDirection::RTL && floatingValue == Float::Right);
+}
 
 }
 }

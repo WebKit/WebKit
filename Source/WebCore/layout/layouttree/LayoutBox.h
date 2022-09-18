@@ -87,8 +87,6 @@ public:
     bool isAbsolutelyPositioned() const;
     bool isFixedPositioned() const;
     bool isFloatingPositioned() const;
-    bool isLeftFloatingPositioned() const;
-    bool isRightFloatingPositioned() const;
     bool hasFloatClear() const;
     bool isFloatAvoider() const;
 

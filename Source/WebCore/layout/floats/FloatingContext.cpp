@@ -226,7 +226,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
         auto alignWithContainingBlock = [&]() -> Position {
             // If there is no floating to align with, push the box to the left/right edge of its containing block's content box.
-            if (layoutBox.isLeftFloatingPositioned())
+            if (isLeftFloatingPositioned(layoutBox))
                 return { horizontalConstraints.logicalLeft + boxGeometry.marginStart() };
             return { horizontalConstraints.logicalRight() - boxGeometry.marginEnd() - boxGeometry.borderBoxWidth() };
         };
@@ -268,7 +268,7 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const Horizo
     absoluteTopLeft.setY(verticalPositionCandidate);
     auto horizontalMargin = computedHorizontalMargin(layoutBox, horizontalConstraints.logicalWidth);
     auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto isLeftAligned = layoutBox.isFloatingPositioned() ? layoutBox.isLeftFloatingPositioned() : layoutBox.style().isLeftToRightDirection();
+    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isLeftFloatingPositioned(layoutBox) : layoutBox.style().isLeftToRightDirection();
     auto floatBox = FloatAvoider { absoluteTopLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, layoutBox.isFloatingPositioned(), isLeftAligned };
     findAvailablePosition(floatBox, m_floatingState.floats());
     // Convert box coordinates from formatting root back to containing block.
@@ -290,7 +290,7 @@ LayoutPoint FloatingContext::positionForNonFloatingFloatAvoider(const Box& layou
     auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
     auto horizontalMargin = computedHorizontalMargin(layoutBox, horizontalConstraints.logicalWidth);
     auto margins = Edges { { *horizontalMargin.start, *horizontalMargin.end }, { boxGeometry.marginBefore(), boxGeometry.marginAfter() } };
-    auto isLeftAligned = layoutBox.isFloatingPositioned() ? layoutBox.isLeftFloatingPositioned() : layoutBox.style().isLeftToRightDirection();
+    auto isLeftAligned = layoutBox.isFloatingPositioned() ? isLeftFloatingPositioned(layoutBox) : layoutBox.style().isLeftToRightDirection();
     auto floatAvoider = FloatAvoider { absoluteCoordinates.topLeft, boxGeometry.borderBoxWidth(), margins, absoluteCoordinates.containingBlockContentBox, layoutBox.isFloatingPositioned(), isLeftAligned };
     findPositionForFormattingContextRoot(floatAvoider);
     auto containingBlockTopLeft = absoluteCoordinates.containingBlockTopLeft;
@@ -453,7 +453,7 @@ FloatingState::FloatItem FloatingContext::toFloatItem(const Box& floatBox) const
 {
     auto absoluteBoxGeometry = BoxGeometry(formattingContext().geometryForBox(floatBox));
     absoluteBoxGeometry.setLogicalTopLeft(mapTopLeftToFloatingStateRoot(floatBox));
-    return { floatBox, absoluteBoxGeometry };
+    return { floatBox, isLeftFloatingPositioned(floatBox) ? FloatingState::FloatItem::Position::Left : FloatingState::FloatItem::Position::Right, absoluteBoxGeometry };
 }
 
 void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAvoider) const
