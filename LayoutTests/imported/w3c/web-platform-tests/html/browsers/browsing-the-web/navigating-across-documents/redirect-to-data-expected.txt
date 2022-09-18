@@ -1,7 +1,7 @@
 
 
-FAIL Loading an iframe with src=redirecting URL assert_unreached: must not be messaged Reached unreachable code
-FAIL Navigating an iframe to a redirecting URL assert_unreached: must not be messaged Reached unreachable code
+PASS Loading an iframe with src=redirecting URL
+PASS Navigating an iframe to a redirecting URL
 PASS Loading a popup directly to the redirecting URL
 PASS Loading a popup that eventually goes to the redirecting URL
 

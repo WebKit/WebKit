@@ -1,16 +1,14 @@
+CONSOLE MESSAGE: Not allowed to redirect to about:blank due to its scheme
+CONSOLE MESSAGE: Not allowed to redirect to about:blank due to its scheme
+CONSOLE MESSAGE: Not allowed to redirect to about:srcdoc due to its scheme
+CONSOLE MESSAGE: Not allowed to redirect to about:srcdoc due to its scheme
+CONSOLE MESSAGE: Not allowed to redirect to about:nonstandard due to its scheme
+CONSOLE MESSAGE: Not allowed to redirect to about:nonstandard due to its scheme
 
-FAIL An iframe with src set to a redirect to about:blank assert_throws_dom: function "() => {
-      iframe.contentWindow.document;
-    }" did not throw
-FAIL An iframe that is navigated to a redirect to about:blank assert_throws_dom: function "() => {
-      iframe.contentWindow.document;
-    }" did not throw
-FAIL An iframe with src set to a redirect to about:srcdoc assert_throws_dom: function "() => {
-      iframe.contentWindow.document;
-    }" did not throw
-FAIL An iframe that is navigated to a redirect to about:srcdoc assert_throws_dom: function "() => {
-      iframe.contentWindow.document;
-    }" did not throw
+PASS An iframe with src set to a redirect to about:blank
+PASS An iframe that is navigated to a redirect to about:blank
+PASS An iframe with src set to a redirect to about:srcdoc
+PASS An iframe that is navigated to a redirect to about:srcdoc
 PASS An iframe with src set to a redirect to about:nonstandard
 PASS An iframe that is navigated to a redirect to about:nonstandard
 
