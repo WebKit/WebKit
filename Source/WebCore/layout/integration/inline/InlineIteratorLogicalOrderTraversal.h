@@ -74,7 +74,7 @@ Vector<LeafBoxIterator> leafBoxesInLogicalOrder(const LineBoxIterator& lineBox, 
         boxes.append(box);
     }
 
-    if (lineBox->containingBlock().style().rtlOrdering() == Order::Visual)
+    if (lineBox->formattingContextRoot().style().rtlOrdering() == Order::Visual)
         return boxes;
 
     // Reverse of reordering of the line (L2 according to Bidi spec):

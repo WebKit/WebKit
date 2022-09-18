@@ -93,7 +93,7 @@ const RenderObject& InlineContent::rendererForLayoutBox(const Layout::Box& layou
     return lineLayout().rendererForLayoutBox(layoutBox);
 }
 
-const RenderBlockFlow& InlineContent::containingBlock() const
+const RenderBlockFlow& InlineContent::formattingContextRoot() const
 {
     return lineLayout().flow();
 }

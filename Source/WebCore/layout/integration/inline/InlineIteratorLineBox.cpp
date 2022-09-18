@@ -169,7 +169,7 @@ RenderObject::HighlightState LineBox::ellipsisSelectionState() const
     if (!selectionRange.truncation)
         return RenderObject::HighlightState::None;
 
-    auto [selectionStart, selectionEnd] = containingBlock().view().selection().rangeForTextBox(text.renderer(), selectionRange);
+    auto [selectionStart, selectionEnd] = formattingContextRoot().view().selection().rangeForTextBox(text.renderer(), selectionRange);
     return selectionStart <= *selectionRange.truncation && selectionEnd >= *selectionRange.truncation ? RenderObject::HighlightState::Inside : RenderObject::HighlightState::None;
 }
 
