@@ -1492,7 +1492,8 @@ bool RenderBlock::isSelectionRoot() const
         || isPositioned() || isFloating()
         || isTableCell() || isInlineBlockOrInlineTable()
         || hasTransform() || hasReflection() || hasMask() || isWritingModeRoot()
-        || isRenderFragmentedFlow() || style().columnSpan() == ColumnSpan::All)
+        || isRenderFragmentedFlow() || style().columnSpan() == ColumnSpan::All
+        || isFlexItemIncludingDeprecated() || isGridItem())
         return true;
     
     if (view().selection().start()) {
