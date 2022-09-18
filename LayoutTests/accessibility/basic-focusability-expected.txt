@@ -1,0 +1,18 @@
+This test ensures you can set focus to AX elements via the AX API (not the DOM).
+
+Checking initial button focus state.
+#button isFocused: false
+#canvas isFocused: false
+
+Focusing #button.
+#button isFocused: true
+#canvas isFocused: false
+
+Focusing #canvas.
+#button isFocused: false
+#canvas isFocused: true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Click me
