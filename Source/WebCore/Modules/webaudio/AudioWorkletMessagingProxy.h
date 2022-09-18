@@ -53,6 +53,7 @@ public:
     AudioWorkletThread& workletThread() { return m_workletThread.get(); }
 
     void postTaskToAudioWorklet(Function<void(AudioWorklet&)>&&);
+    ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
 
 private:
     explicit AudioWorkletMessagingProxy(AudioWorklet&);

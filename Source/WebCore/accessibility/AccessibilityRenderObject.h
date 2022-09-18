@@ -133,8 +133,6 @@ public:
     AccessibilityChildrenVector documentLinks() override;
     FrameView* documentFrameView() const override;
 
-    void clearChildren() override;
-    
     void setFocused(bool) override;
     void setSelectedTextRange(const PlainTextRange&) override;
     bool setValue(const String&) override;

@@ -36,7 +36,9 @@ class ModelDocument final : public HTMLDocument {
 public:
     static Ref<ModelDocument> create(Frame* frame, const Settings& settings, const URL& url)
     {
-        return adoptRef(*new ModelDocument(frame, settings, url));
+        auto document = adoptRef(*new ModelDocument(frame, settings, url));
+        document->addToContextsMap();
+        return document;
     }
 
     virtual ~ModelDocument() = default;

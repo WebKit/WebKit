@@ -630,6 +630,7 @@ void Document::createNewIdentifier()
 Ref<Document> Document::create(Document& contextDocument)
 {
     auto document = adoptRef(*new Document(nullptr, contextDocument.m_settings, URL(), { }));
+    document->addToContextsMap();
     document->setContextDocument(contextDocument);
     document->setSecurityOriginPolicy(contextDocument.securityOriginPolicy());
     return document;
@@ -637,7 +638,9 @@ Ref<Document> Document::create(Document& contextDocument)
 
 Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& url)
 {
-    return adoptRef(*new Document(&frame, frame.settings(), url, { }, NonRenderedPlaceholder));
+    auto document = adoptRef(*new Document(&frame, frame.settings(), url, { }, NonRenderedPlaceholder));
+    document->addToContextsMap();
+    return document;
 }
 
 Document::~Document()

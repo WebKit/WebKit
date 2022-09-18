@@ -59,7 +59,9 @@ inline AXObjectCache* Document::existingAXObjectCache() const
 
 inline Ref<Document> Document::create(const Settings& settings, const URL& url)
 {
-    return adoptRef(*new Document(nullptr, settings, url));
+    auto document = adoptRef(*new Document(nullptr, settings, url));
+    document->addToContextsMap();
+    return document;
 }
 
 inline void Document::invalidateAccessKeyCache()

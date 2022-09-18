@@ -6,6 +6,6 @@ PASS query() reports pending and held locks
 PASS query() reports held shared locks with appropriate count
 PASS query() reports pending shared locks with appropriate count
 PASS query() reports the same clientId for held locks from the same context
-FAIL query() reports different ids for held locks from different contexts promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL query() can observe a deadlock promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
+PASS query() reports different ids for held locks from different contexts
+PASS query() can observe a deadlock
 

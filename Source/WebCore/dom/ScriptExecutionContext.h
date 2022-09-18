@@ -337,6 +337,7 @@ protected:
     ReasonForSuspension reasonForSuspendingActiveDOMObjects() const { return m_reasonForSuspendingActiveDOMObjects; }
 
     bool hasPendingActivity() const;
+    WEBCORE_EXPORT void addToContextsMap();
     void removeFromContextsMap();
     void removeRejectedPromiseTracker();
     void regenerateIdentifier();

@@ -33,7 +33,9 @@ class FTPDirectoryDocument final : public HTMLDocument {
 public:
     static Ref<FTPDirectoryDocument> create(Frame* frame, const Settings& settings, const URL& url)
     {
-        return adoptRef(*new FTPDirectoryDocument(frame, settings, url));
+        auto document = adoptRef(*new FTPDirectoryDocument(frame, settings, url));
+        document->addToContextsMap();
+        return document;
     }
 
 private:

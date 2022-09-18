@@ -467,6 +467,7 @@ imported/w3c/web-platform-tests/web-locks/mode-mixed.tentative.https.any.html [ 
 imported/w3c/web-platform-tests/web-locks/steal.tentative.https.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-minimum.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audionode-interface/audionode-disconnect-audioparam.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/websockets/Create-on-worker-shutdown.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/workers/same-origin-check.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/mixed-content [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests [ DumpJSConsoleLogInStdErr ]

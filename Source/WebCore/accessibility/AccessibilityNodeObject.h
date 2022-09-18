@@ -164,6 +164,7 @@ protected:
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
 
     void addChildren() override;
+    void clearChildren() override;
     void updateChildrenIfNecessary() override;
     bool canHaveChildren() const override;
     bool isDescendantOfBarrenParent() const override;

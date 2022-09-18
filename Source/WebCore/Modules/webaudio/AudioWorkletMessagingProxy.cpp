@@ -98,6 +98,11 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> AudioWorkletMessagingProxy::create
     return m_document->page()->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
+ScriptExecutionContextIdentifier AudioWorkletMessagingProxy::loaderContextIdentifier() const
+{
+    return m_document->identifier();
+}
+
 void AudioWorkletMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
     m_document->postTask(WTFMove(task));

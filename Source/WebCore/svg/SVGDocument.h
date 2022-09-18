@@ -46,7 +46,9 @@ private:
 
 inline Ref<SVGDocument> SVGDocument::create(Frame* frame, const Settings& settings, const URL& url)
 {
-    return adoptRef(*new SVGDocument(frame, settings, url));
+    auto document = adoptRef(*new SVGDocument(frame, settings, url));
+    document->addToContextsMap();
+    return document;
 }
 
 } // namespace WebCore

@@ -1,11 +1,14 @@
+Blocked access to external URL https://www1.localhost:9443/workers/modules/resources/export-on-load-script.py
 
-FAIL Static import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Static import (cross-origin). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Static import (redirect). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Nested static import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Static import and then dynamic import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Dynamic import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Nested dynamic import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL Dynamic import and then static import. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
-FAIL eval(import()). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: Worker"
+Harness Error (FAIL), message = Error in remote: Importing a module script failed.
+
+PASS Static import.
+TIMEOUT Static import (cross-origin). Test timed out
+NOTRUN Static import (redirect).
+NOTRUN Nested static import.
+NOTRUN Static import and then dynamic import.
+NOTRUN Dynamic import.
+NOTRUN Nested dynamic import.
+NOTRUN Dynamic import and then static import.
+NOTRUN eval(import()).
 

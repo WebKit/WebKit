@@ -102,6 +102,11 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
     ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
         || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().thread() == &Thread::current()));
 
+    if (is<Document>(*m_scriptExecutionContext))
+        m_loaderContextIdentifier = m_scriptExecutionContext->identifier();
+    else
+        m_loaderContextIdentifier = downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().workerLoaderProxy().loaderContextIdentifier();
+
     // Nobody outside this class ref counts this object. The original ref
     // is balanced by the deref in workerGlobalScopeDestroyedInternal.
 }
@@ -109,29 +114,36 @@ WorkerMessagingProxy::WorkerMessagingProxy(Worker& workerObject)
 WorkerMessagingProxy::~WorkerMessagingProxy()
 {
     ASSERT(!m_workerObject);
-    ASSERT((is<Document>(*m_scriptExecutionContext) && isMainThread())
+    ASSERT(!m_scriptExecutionContext
+        || (is<Document>(*m_scriptExecutionContext) && isMainThread())
         || (is<WorkerGlobalScope>(*m_scriptExecutionContext) && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).thread().thread() == &Thread::current()));
 }
 
 void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::SessionID sessionID, const String& name, WorkerInitializationData&& initializationData, const ScriptBuffer& sourceCode, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicyResponseHeaders, bool shouldBypassMainWorldContentSecurityPolicy, const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy, MonotonicTime timeOrigin, ReferrerPolicy referrerPolicy, WorkerType workerType, FetchRequestCredentials credentials, JSC::RuntimeFlags runtimeFlags)
 {
-    // FIXME: This need to be revisited when we support nested worker one day
-    ASSERT(m_scriptExecutionContext);
-    Document& document = downcast<Document>(*m_scriptExecutionContext);
+    if (!m_scriptExecutionContext)
+        return;
+
+    auto* parentWorkerGlobalScope = dynamicDowncast<WorkerGlobalScope>(m_scriptExecutionContext.get());
     WorkerThreadStartMode startMode = m_inspectorProxy->workerStartMode(*m_scriptExecutionContext.get());
     String identifier = m_inspectorProxy->identifier();
 
-    IDBClient::IDBConnectionProxy* proxy = document.idbConnectionProxy();
+    IDBClient::IDBConnectionProxy* proxy = m_scriptExecutionContext->idbConnectionProxy();
 
-    SocketProvider* socketProvider = document.socketProvider();
+    SocketProvider* socketProvider = m_scriptExecutionContext->socketProvider();
 
-    WorkerParameters params { scriptURL, document.url(), name, identifier, WTFMove(initializationData.userAgent), platformStrategies()->loaderStrategy()->isOnLine(), contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, document.settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
+    bool isOnline = parentWorkerGlobalScope ? parentWorkerGlobalScope->isOnline() : platformStrategies()->loaderStrategy()->isOnLine();
+
+    WorkerParameters params { scriptURL, m_scriptExecutionContext->url(), name, identifier, WTFMove(initializationData.userAgent), isOnline, contentSecurityPolicyResponseHeaders, shouldBypassMainWorldContentSecurityPolicy, crossOriginEmbedderPolicy, timeOrigin, referrerPolicy, workerType, credentials, m_scriptExecutionContext->settingsValues(), WorkerThreadMode::CreateNewThread, sessionID,
 #if ENABLE(SERVICE_WORKER)
         WTFMove(initializationData.serviceWorkerData),
 #endif
         initializationData.clientIdentifier.value_or(ScriptExecutionContextIdentifier { })
     };
-    auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, startMode, document.topOrigin(), proxy, socketProvider, runtimeFlags);
+    auto thread = DedicatedWorkerThread::create(params, sourceCode, *this, *this, *this, startMode, m_scriptExecutionContext->topOrigin(), proxy, socketProvider, runtimeFlags);
+
+    if (parentWorkerGlobalScope)
+        parentWorkerGlobalScope->thread().addChildThread(thread);
 
     workerThreadCreated(thread.get());
     thread->start();
@@ -141,6 +153,9 @@ void WorkerMessagingProxy::startWorkerGlobalScope(const URL& scriptURL, PAL::Ses
 
 void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& message)
 {
+    if (!m_scriptExecutionContext)
+        return;
+
     // Pass a RefPtr to the WorkerUserGestureForwarder, if present, into the main thread
     // task; the m_userGestureForwarder ivar may be cleared after this function returns.
     m_scriptExecutionContext->postTask([this, message = WTFMove(message), userGestureForwarder = m_userGestureForwarder] (auto& context) mutable {
@@ -158,6 +173,9 @@ void WorkerMessagingProxy::postMessageToWorkerObject(MessageWithMessagePorts&& m
 
 void WorkerMessagingProxy::postTaskToWorkerObject(Function<void(Worker&)>&& function)
 {
+    if (!m_scriptExecutionContext)
+        return;
+
     m_scriptExecutionContext->postTask([this, function = WTFMove(function)](auto&) mutable {
         auto* workerObject = this->workerObject();
         if (!workerObject || askedToTerminate())
@@ -168,7 +186,10 @@ void WorkerMessagingProxy::postTaskToWorkerObject(Function<void(Worker&)>&& func
 
 void WorkerMessagingProxy::postMessageToWorkerGlobalScope(MessageWithMessagePorts&& message)
 {
-    auto userGestureForwarder = WorkerUserGestureForwarder::create(UserGestureIndicator::currentUserGesture());
+    RefPtr<WorkerUserGestureForwarder> userGestureForwarder;
+    if (isMainThread())
+        userGestureForwarder = WorkerUserGestureForwarder::create(UserGestureIndicator::currentUserGesture());
+
     postTaskToWorkerGlobalScope([this, protectedThis = Ref { *this }, message = WTFMove(message), userGestureForwarder = WTFMove(userGestureForwarder)](auto& scriptContext) mutable {
         ASSERT_WITH_SECURITY_IMPLICATION(scriptContext.isWorkerGlobalScope());
         auto& context = static_cast<DedicatedWorkerGlobalScope&>(scriptContext);
@@ -217,40 +238,53 @@ void WorkerMessagingProxy::resumeForBackForwardCache()
         m_askedToSuspend = false;
 }
 
+ScriptExecutionContextIdentifier WorkerMessagingProxy::loaderContextIdentifier() const
+{
+    return m_loaderContextIdentifier;
+}
+
 void WorkerMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
-    // FIXME: In case of nested workers, this should go directly to the root Document context.
-    ASSERT(m_scriptExecutionContext->isDocument());
-    m_scriptExecutionContext->postTask(WTFMove(task));
+    ScriptExecutionContext::postTaskTo(m_loaderContextIdentifier, WTFMove(task));
 }
 
 RefPtr<CacheStorageConnection> WorkerMessagingProxy::createCacheStorageConnection()
 {
     ASSERT(isMainThread());
-    auto& document = downcast<Document>(*m_scriptExecutionContext);
-    if (!document.page())
+    if (!m_scriptExecutionContext)
         return nullptr;
-    return document.page()->cacheStorageProvider().createCacheStorageConnection();
+
+    auto* document = dynamicDowncast<Document>(*m_scriptExecutionContext);
+    ASSERT(document);
+    if (!document || !document->page())
+        return nullptr;
+    return document->page()->cacheStorageProvider().createCacheStorageConnection();
 }
 
 StorageConnection* WorkerMessagingProxy::storageConnection()
 {
     ASSERT(isMainThread());
-    auto& document = downcast<Document>(*m_scriptExecutionContext);
-    return document.storageConnection();
+    auto* document = dynamicDowncast<Document>(*m_scriptExecutionContext);
+    ASSERT(document);
+
+    return document ? document->storageConnection() : nullptr;
 }
 
 RefPtr<RTCDataChannelRemoteHandlerConnection> WorkerMessagingProxy::createRTCDataChannelRemoteHandlerConnection()
 {
     ASSERT(isMainThread());
-    auto& document = downcast<Document>(*m_scriptExecutionContext);
-    if (!document.page())
+    auto* document = dynamicDowncast<Document>(*m_scriptExecutionContext);
+    ASSERT(document);
+    if (!document || !document->page())
         return nullptr;
-    return document.page()->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
+    return document->page()->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
 void WorkerMessagingProxy::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL)
 {
+    if (!m_scriptExecutionContext)
+        return;
+
     m_scriptExecutionContext->postTask([this, errorMessage = errorMessage.isolatedCopy(), sourceURL = sourceURL.isolatedCopy(), lineNumber, columnNumber] (ScriptExecutionContext&) {
         Worker* workerObject = this->workerObject();
         if (!workerObject)
@@ -305,6 +339,9 @@ void WorkerMessagingProxy::workerThreadCreated(DedicatedWorkerThread& workerThre
 void WorkerMessagingProxy::workerObjectDestroyed()
 {
     m_workerObject = nullptr;
+    if (!m_scriptExecutionContext)
+        return;
+
     m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
         m_mayBeDestroyed = true;
         if (m_workerThread)
@@ -331,6 +368,9 @@ void WorkerMessagingProxy::notifyNetworkStateChange(bool isOnline)
 
 void WorkerMessagingProxy::workerGlobalScopeDestroyed()
 {
+    if (!m_scriptExecutionContext)
+        return;
+
     m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
         workerGlobalScopeDestroyedInternal();
     });
@@ -338,6 +378,9 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyed()
 
 void WorkerMessagingProxy::workerGlobalScopeClosed()
 {
+    if (!m_scriptExecutionContext)
+        return;
+
     m_scriptExecutionContext->postTask([this] (ScriptExecutionContext&) {
         terminateWorkerGlobalScope();
     });
@@ -351,6 +394,11 @@ void WorkerMessagingProxy::workerGlobalScopeDestroyedInternal()
     m_workerThread = nullptr;
 
     m_inspectorProxy->workerTerminated();
+
+    if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(m_scriptExecutionContext.get()); workerGlobalScope && m_workerThread)
+        workerGlobalScope->thread().removeChildThread(*m_workerThread);
+
+    m_scriptExecutionContext = nullptr;
 
     // This balances the original ref in construction.
     if (m_mayBeDestroyed)
@@ -371,6 +419,9 @@ void WorkerMessagingProxy::terminateWorkerGlobalScope()
 
 void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
+    if (!m_scriptExecutionContext)
+        return;
+
     m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
         reportPendingActivityInternal(true, hasPendingActivity);
     });
@@ -378,6 +429,9 @@ void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivit
 
 void WorkerMessagingProxy::reportPendingActivity(bool hasPendingActivity)
 {
+    if (!m_scriptExecutionContext)
+        return;
+
     m_scriptExecutionContext->postTask([this, hasPendingActivity] (ScriptExecutionContext&) {
         reportPendingActivityInternal(false, hasPendingActivity);
     });

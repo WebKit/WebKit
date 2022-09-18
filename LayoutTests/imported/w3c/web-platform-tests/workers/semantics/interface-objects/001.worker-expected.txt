@@ -1,7 +1,7 @@
 
 PASS The WorkerGlobalScope interface object should be exposed.
 PASS The DedicatedWorkerGlobalScope interface object should be exposed.
-FAIL The Worker interface object should be exposed. assert_own_property: expected property "Worker" missing
+PASS The Worker interface object should be exposed.
 FAIL The SharedWorker interface object should be exposed. assert_own_property: expected property "SharedWorker" missing
 PASS The MessagePort interface object should be exposed.
 PASS The MessageEvent interface object should be exposed.
