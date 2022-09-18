@@ -2902,12 +2902,6 @@ bool AccessibilityRenderObject::canSetTextRangeAttributes() const
     return isTextControl();
 }
 
-void AccessibilityRenderObject::clearChildren()
-{
-    AccessibilityObject::clearChildren();
-    m_childrenDirty = false;
-}
-
 void AccessibilityRenderObject::addImageMapChildren()
 {
     RenderBoxModelObject* cssBox = renderBoxModelObject();
