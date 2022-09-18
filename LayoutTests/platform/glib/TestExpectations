@@ -2061,6 +2061,34 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.
 # UNSUPPORTED tests. Things we must skip.
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Skip iOS and watchOS tests. Too many of those crashing, specially on WPE Debug
+# bot, leading to early bailout from the tests and filling the disks with crash
+# dumps.
+fast/css/ios [ Skip ]
+fast/css/variables/env/ios [ Skip ]
+fast/css/watchos [ Skip ]
+fast/dom/Window/watchos [ Skip ]
+fast/events/ios [ Skip ]
+fast/events/pointer/ios [ Skip ]
+fast/events/touch/ios [ Skip ]
+fast/events/watchos [ Skip ]
+fast/forms/ios [ Skip ]
+fast/forms/textarea/ios [ Skip ]
+fast/forms/watchos [ Skip ]
+fast/history/ios [ Skip ]
+fast/images/text-recognition/ios [ Skip ]
+fast/media/ios [ Skip ]
+fast/sandbox/ios [ Skip ]
+fast/scrolling/ios [ Skip ]
+fast/shadow-dom/ios [ Skip ]
+fast/speechrecognition/ios [ Skip ]
+fast/text-autosizing/ios [ Skip ]
+fast/viewport/ios [ Skip ]
+fast/viewport/watchos [ Skip ]
+fast/visual-viewport/ios [ Skip ]
+fast/visual-viewport/watchos [ Skip ]
+fast/zooming/ios [ Skip ]
+
 # Tests behavior specific to MediaSessionManagerCocoa
 media/audio-session-category.html [ Skip ]
 media/audio-session-category-at-most-recent-playback.html [ Skip ]
