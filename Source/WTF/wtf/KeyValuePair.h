@@ -36,7 +36,9 @@ struct KeyValuePair {
     using KeyType = KeyTypeArg;
     using ValueType = ValueTypeArg;
 
-    KeyValuePair() = default;
+    KeyValuePair()
+    {
+    }
 
     KeyValuePair(KeyTypeArg&& key, ValueTypeArg&& value)
         : key(WTFMove(key))
