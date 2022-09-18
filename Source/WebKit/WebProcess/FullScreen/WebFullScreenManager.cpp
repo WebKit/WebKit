@@ -53,6 +53,8 @@
 
 namespace WebKit {
 
+using WebCore::FloatSize;
+
 static WebCore::IntRect screenRectOfContents(WebCore::Element* element)
 {
     ASSERT(element);
