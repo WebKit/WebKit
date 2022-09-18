@@ -2517,8 +2517,10 @@ static ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalO
     size_t matchStart;
     if constexpr (useTable == StringReplaceUseTable::Yes)
         matchStart = table->find(string, search);
-    else
+    else {
+        UNUSED_PARAM(table);
         matchStart = string.find(search);
+    }
     if (matchStart == notFound)
         return stringCell;
 
