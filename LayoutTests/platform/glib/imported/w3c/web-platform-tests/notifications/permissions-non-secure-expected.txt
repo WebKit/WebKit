@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: The Notification permission may only be requested in a secure context.
+
+PASS Notification.requestPermission must be called from a secure context
+PASS Notification.permission must be called from a secure context
+

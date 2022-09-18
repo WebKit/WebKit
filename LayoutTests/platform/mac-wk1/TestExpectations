@@ -189,6 +189,7 @@ imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtas
 imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-success.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/acquire.tentative.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/held.tentative.https.any.sharedworker.html [ Skip ]

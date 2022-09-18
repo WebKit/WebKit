@@ -3064,6 +3064,8 @@ webkit.org/b/193628 fast/css/content-counter-010.htm [ ImageOnlyFailure ]
 
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
 
+webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash ]
+
 # Failure since import.
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.tentative.sub.html [ Failure ]
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore_batchGetAll_largeValue.tentative.any.html [ Failure ]
