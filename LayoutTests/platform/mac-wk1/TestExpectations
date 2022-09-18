@@ -2103,6 +2103,8 @@ webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/brow
 # www.localhost domain is not supported and "Blocked access to external URL" message causes flakiness.
 imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html [ Failure Pass ]
 
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/redirect-to-unparseable-url.html [ Failure Pass ]
+
 # These tests have been flaky on WK1 since their import.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/iframe-nosrc.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/iframe-src-204-fragment.html [ Failure Pass ]
