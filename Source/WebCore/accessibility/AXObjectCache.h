@@ -557,8 +557,7 @@ private:
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_currentModalElement;
     // Multiple aria-modals behavior is undefined by spec. We keep them sorted based on DOM order here.
-    // If that changes to require only one aria-modal we could change this to a WeakHashSet, or discard the set completely.
-    ListHashSet<Element*> m_modalElementsSet;
+    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> m_modalElements;
     bool m_modalNodesInitialized { false };
     bool m_isRetrievingCurrentModalNode { false };
 
