@@ -276,7 +276,7 @@ void AXObjectCache::findModalNodes()
     // Traverse the DOM tree to look for the aria-modal=true nodes or modal <dialog> elements.
     for (Element* element = ElementTraversal::firstWithin(document().rootNode()); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
         if (isModalElement(*element))
-            m_modalElementsSet.add(element);
+            m_modalElements.append(element);
     }
 
     m_modalNodesInitialized = true;
@@ -325,12 +325,12 @@ Element* AXObjectCache::updateCurrentModalNodeInternal()
 {
     // There might be multiple modal dialog nodes.
     // We use this function to pick the one we want.
-    if (m_modalElementsSet.isEmpty())
+    if (m_modalElements.isEmpty())
         return nullptr;
 
     // Pick the document active modal <dialog> element if it exists.
     if (Element* activeModalDialog = document().activeModalDialog()) {
-        ASSERT(m_modalElementsSet.contains(activeModalDialog));
+        ASSERT(m_modalElements.contains(activeModalDialog));
         return activeModalDialog;
     }
 
@@ -339,18 +339,18 @@ Element* AXObjectCache::updateCurrentModalNodeInternal()
     // If not, we want to pick the last visible dialog in the DOM.
     RefPtr<Element> focusedElement = document().focusedElement();
     RefPtr<Element> lastVisible;
-    for (auto& element : m_modalElementsSet) {
+    for (auto& element : m_modalElements) {
         // Elements in m_modalElementsSet may have become un-modal since we added them, but not yet removed
         // as part of the asynchronous m_deferredModalChangedList handling. Skip these.
         if (!element || !isModalElement(*element))
             continue;
 
         // To avoid trapping users in an empty modal, skip any non-visible element, or any element without accessible content.
-        if (!isNodeVisible(element) || !modalElementHasAccessibleContent(*element))
+        if (!isNodeVisible(element.get()) || !modalElementHasAccessibleContent(*element))
             continue;
 
-        lastVisible = element;
-        if (focusedElement && focusedElement->isDescendantOf(element))
+        lastVisible = element.get();
+        if (focusedElement && focusedElement->isDescendantOf(*element))
             break;
     }
     return lastVisible.get();
@@ -394,7 +394,7 @@ Node* AXObjectCache::modalNode()
     if (!m_modalNodesInitialized)
         findModalNodes();
 
-    if (m_modalElementsSet.isEmpty())
+    if (m_modalElements.isEmpty())
         return nullptr;
 
     // Check the cached current valid aria modal node first.
@@ -942,7 +942,9 @@ void AXObjectCache::remove(Node& node)
         m_deferredAttributeChange.removeAllMatching([&node] (const auto& entry) {
             return entry.element == &node;
         });
-        m_modalElementsSet.remove(downcast<Element>(&node));
+        m_modalElements.removeAllMatching([&node] (const auto& element) {
+            return downcast<Element>(&node) == element.get();
+        });
         m_deferredRecomputeIsIgnoredList.remove(downcast<Element>(node));
         m_deferredRecomputeTableIsExposedList.remove(downcast<Element>(node));
         m_deferredSelectedChildredChangedList.remove(downcast<Element>(node));
@@ -3408,7 +3410,6 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
 {
     HashSet<Ref<Node>> nodesToRemove;
     filterListForRemoval(m_textMarkerNodes, document, nodesToRemove);
-    filterListForRemoval(m_modalElementsSet, document, nodesToRemove);
     filterListForRemoval(m_deferredTextChangedList, document, nodesToRemove);
     filterListForRemoval(m_deferredNodeAddedOrRemovedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);
@@ -3422,6 +3423,11 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
     for (const auto& entry : m_deferredAttributeChange) {
         if (entry.element && (!entry.element->isConnected() || &entry.element->document() == &document))
             nodesToRemove.add(*entry.element);
+    }
+
+    for (const auto& element : m_modalElements) {
+        if (element && (!element->isConnected() || &element->document() == &document))
+            nodesToRemove.add(*element);
     }
 
     for (auto& node : nodesToRemove)
@@ -3535,9 +3541,12 @@ void AXObjectCache::performDeferredCacheUpdate()
         if (isModalElement(element)) {
             // Add the newly modified node to the modal nodes set.
             // We will recompute the current valid aria modal node in modalNode() when this node is not visible.
-            m_modalElementsSet.add(&element);
-        } else
-            m_modalElementsSet.remove(&element);
+            m_modalElements.append(&element);
+        } else {
+            m_modalElements.removeAllMatching([&element] (const auto& modalElement) {
+                return &element == modalElement.get();
+            });
+        }
     }
     m_deferredModalChangedList.clear();
 
