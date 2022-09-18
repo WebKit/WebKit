@@ -1064,6 +1064,24 @@ webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscr
 # Failing since r277543.
 webkit.org/b/225870 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.worker.html [ Failure ]
 
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.missingargs.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.conformance.requirements.missingargs.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/transformations/2d.transformation.getTransform.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.ltr.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.end.rtl.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.left.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.right.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.ltr.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.align.start.rtl.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.alphabetic.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.bottom.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.hanging.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.ideographic.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.middle.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.baseline.top.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fill.basic-manual.worker.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/2d.text.draw.fill.maxWidth.bound.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
