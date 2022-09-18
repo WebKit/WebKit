@@ -455,6 +455,12 @@ void AccessibilityNodeObject::updateChildrenIfNecessary()
     AccessibilityObject::updateChildrenIfNecessary();
 }
 
+void AccessibilityNodeObject::clearChildren()
+{
+    AccessibilityObject::clearChildren();
+    m_childrenDirty = false;
+}
+
 void AccessibilityNodeObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
