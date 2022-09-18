@@ -43,10 +43,7 @@ public:
 
     static constexpr size_t nearJumpRange = 2 * GB;
 
-    MacroAssemblerMIPS()
-        : m_fixedWidth(false)
-    {
-    }
+    MacroAssemblerMIPS() = default;
 
     static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {
@@ -3779,7 +3776,7 @@ public:
 private:
     // If m_fixedWidth is true, we will generate a fixed number of instructions.
     // Otherwise, we can emit any number of instructions.
-    bool m_fixedWidth;
+    bool m_fixedWidth { false };
 
     friend class LinkBuffer;
 

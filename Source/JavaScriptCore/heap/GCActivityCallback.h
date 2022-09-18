@@ -67,18 +67,16 @@ protected:
 
     GCActivityCallback(VM& vm)
         : Base(vm)
-        , m_enabled(true)
-        , m_delay(s_decade)
     {
     }
 
-    bool m_enabled;
+    bool m_enabled { true };
 
 protected:
     void scheduleTimer(Seconds);
 
 private:
-    Seconds m_delay;
+    Seconds m_delay { s_decade };
 };
 
 } // namespace JSC

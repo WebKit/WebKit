@@ -93,14 +93,14 @@ public:
     public:
         typedef size_t ReturnType;
 
-        CountFunctor() : m_count(0) { }
+        CountFunctor() = default;
         void count(size_t count) const { m_count += count; }
         ReturnType returnValue() const { return m_count; }
 
     private:
         // FIXME: This is mutable because we're using a functor rather than C++ lambdas.
         // https://bugs.webkit.org/show_bug.cgi?id=159644
-        mutable ReturnType m_count;
+        mutable ReturnType m_count { 0 };
     };
 
     class Handle {
@@ -248,7 +248,7 @@ public:
     class Header {
     public:
         Header(VM&, Handle&);
-        ~Header();
+        ~Header() = default;
 
         static ptrdiff_t offsetOfVM() { return OBJECT_OFFSETOF(Header, m_vm); }
         

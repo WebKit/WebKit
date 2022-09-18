@@ -39,9 +39,9 @@ struct ScratchBuffer;
 
 class ScratchRegisterAllocator {
 public:
-    ScratchRegisterAllocator() { }
+    ScratchRegisterAllocator() = default;
     ScratchRegisterAllocator(const RegisterSet& usedRegisters);
-    ~ScratchRegisterAllocator();
+    ~ScratchRegisterAllocator() = default;
 
     void lock(GPRReg);
     void lock(FPRReg);
@@ -98,7 +98,7 @@ private:
     RegisterSet m_usedRegisters;
     RegisterSet m_lockedRegisters;
     RegisterSet m_scratchRegisters;
-    unsigned m_numberOfReusedRegisters;
+    unsigned m_numberOfReusedRegisters { 0 };
 };
 
 } // namespace JSC

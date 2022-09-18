@@ -34,9 +34,7 @@
 
 namespace JSC { namespace B3 {
 
-ConstDoubleValue::~ConstDoubleValue()
-{
-}
+ConstDoubleValue::~ConstDoubleValue() = default;
 
 Value* ConstDoubleValue::negConstant(Procedure& proc) const
 {

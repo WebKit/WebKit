@@ -37,7 +37,7 @@ namespace JSC {
 
 class ASTBuilder {
     struct BinaryOpInfo {
-        BinaryOpInfo() {}
+        BinaryOpInfo() = default;
         BinaryOpInfo(const JSTextPosition& otherStart, const JSTextPosition& otherDivot, const JSTextPosition& otherEnd, bool rhsHasAssignment)
             : start(otherStart)
             , divot(otherDivot)
@@ -60,7 +60,7 @@ class ASTBuilder {
     
     
     struct AssignmentInfo {
-        AssignmentInfo() {}
+        AssignmentInfo() = default;
         AssignmentInfo(ExpressionNode* node, const JSTextPosition& start, const JSTextPosition& divot, int initAssignments, Operator op)
             : m_node(node)
             , m_start(start)
@@ -82,7 +82,6 @@ public:
         : m_vm(vm)
         , m_parserArena(parserArena)
         , m_sourceCode(sourceCode)
-        , m_evalCount(0)
     {
     }
     
@@ -1091,13 +1090,10 @@ public:
     
 private:
     struct Scope {
-        Scope()
-            : m_features(0)
-            , m_numConstants(0)
-        {
-        }
-        int m_features;
-        int m_numConstants;
+        Scope() = default;
+
+        int m_features { 0 };
+        int m_numConstants { 0 };
     };
 
     static void setExceptionLocation(ThrowableExpressionData* node, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd)
@@ -1183,7 +1179,7 @@ private:
     Vector<AssignmentInfo, 10, UnsafeVectorOverflow> m_assignmentInfoStack;
     Vector<std::pair<int, int>, 10, UnsafeVectorOverflow> m_binaryOperatorStack;
     Vector<std::pair<int, JSTextPosition>, 10, UnsafeVectorOverflow> m_unaryTokenStack;
-    int m_evalCount;
+    int m_evalCount { 0 };
 };
 
 ExpressionNode* ASTBuilder::makeTypeOfNode(const JSTokenLocation& location, ExpressionNode* expr)

@@ -83,7 +83,7 @@ public:
     
 private:
     struct Widths {
-        Widths() { }
+        Widths() = default;
 
         Widths(Bank bank)
             : use(minimumWidth(bank))

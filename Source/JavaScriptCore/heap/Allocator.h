@@ -39,7 +39,7 @@ class LocalAllocator;
 
 class Allocator {
 public:
-    Allocator() { }
+    Allocator() = default;
     
     explicit Allocator(LocalAllocator* localAllocator)
         : m_localAllocator(localAllocator)

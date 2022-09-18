@@ -54,17 +54,20 @@ public:
 
     class CheckPoint {
     public:
-        CheckPoint() { }
+        // Left an empty body on purpose, or we get several unused variable warnings
+        CheckPoint() { }; // NOLINT
     };
 
     class PerThreadStats {
     public:
-        PerThreadStats() { }
+        // Left an empty body on purpose, or we get several unused variable warnings
+        PerThreadStats() { }; // NOLINT
     };
 
     class LayoutCheckPoint {
     public:
-        LayoutCheckPoint() { }
+        // Left an empty body on purpose, or we get several unused variable warnings
+        LayoutCheckPoint() { }; // NOLINT
     };
 
     static void probe() { }

@@ -79,7 +79,7 @@ struct MemoryResult {
         return nullptr;
     }
     
-    MemoryResult() { }
+    MemoryResult() = default;
     
     MemoryResult(void* basePtr, Kind kind)
         : basePtr(basePtr)

@@ -92,9 +92,9 @@ private:
         ASSERT_WITH_SECURITY_IMPLICATION(i < m_length);
         return m_arguments.get(length())[i];
     }
-    
-    uint32_t m_length;
-    bool m_locked; // Being locked means that there are multiple references to this object and none of them expect to see the others' modifications. This means that modifications need to make a copy first.
+
+    uint32_t m_length { 0 };
+    bool m_locked { false }; // Being locked means that there are multiple references to this object and none of them expect to see the others' modifications. This means that modifications need to make a copy first.
     ArgumentsPtr m_arguments;
 };
 

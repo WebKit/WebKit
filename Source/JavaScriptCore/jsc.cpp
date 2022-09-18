@@ -2030,9 +2030,7 @@ Message::Message(Content&& contents, int32_t index)
 {
 }
 
-Message::~Message()
-{
-}
+Message::~Message() = default;
 
 Worker::Worker(Workers& workers, bool isMain)
     : m_workers(workers)
@@ -2081,9 +2079,7 @@ ThreadSpecific<Worker*>& Worker::currentWorker()
     return *result;
 }
 
-Workers::Workers()
-{
-}
+Workers::Workers() = default;
 
 Workers::~Workers()
 {

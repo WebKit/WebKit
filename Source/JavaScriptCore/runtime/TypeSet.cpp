@@ -34,11 +34,7 @@
 
 namespace JSC {
 
-TypeSet::TypeSet()
-    : m_isOverflown(false)
-    , m_seenTypes(TypeNothing)
-{
-}
+TypeSet::TypeSet() = default;
 
 void TypeSet::addTypeInformation(RuntimeType type, RefPtr<StructureShape>&& passedNewShape, Structure* structure, bool sawPolyProtoStructure)
 {
@@ -316,13 +312,7 @@ String TypeSet::toJSONString() const
     return json.toString();
 }
 
-StructureShape::StructureShape()
-    : m_final(false)
-    , m_isInDictionaryMode(false)
-    , m_proto(nullptr)
-    , m_propertyHash(nullptr)
-{
-}
+StructureShape::StructureShape() = default;
 
 void StructureShape::markAsFinal()
 {

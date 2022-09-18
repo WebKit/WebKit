@@ -62,7 +62,7 @@ enum OpcodeID : unsigned;
 // that is the source of the return address.
 class ReturnAddressPtr {
 public:
-    ReturnAddressPtr() { }
+    ReturnAddressPtr() = default;
 
     explicit ReturnAddressPtr(const void* returnAddress)
     {

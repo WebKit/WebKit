@@ -36,7 +36,7 @@ public:
         Variable
     };
     
-    JITAllocator() { }
+    JITAllocator() = default;
     
     static JITAllocator constant(Allocator allocator)
     {

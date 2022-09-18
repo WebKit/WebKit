@@ -58,7 +58,7 @@ class ConcurrentPtrHashSet final {
 
 public:
     WTF_EXPORT_PRIVATE ConcurrentPtrHashSet();
-    WTF_EXPORT_PRIVATE ~ConcurrentPtrHashSet();
+    WTF_EXPORT_PRIVATE ~ConcurrentPtrHashSet() = default;
     
     template<typename T>
     bool contains(T value) const

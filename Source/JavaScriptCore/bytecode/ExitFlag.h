@@ -35,7 +35,7 @@ namespace JSC {
 
 class ExitFlag {
 public:
-    ExitFlag() { }
+    ExitFlag() = default;
     
     ExitFlag(bool value, ExitingInlineKind inlineKind)
     {

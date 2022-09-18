@@ -215,7 +215,7 @@ public:
     typedef ValueType& reference;
     typedef std::bidirectional_iterator_tag iterator_category;
 
-    ListHashSetIterator() { }
+    ListHashSetIterator() = default;
 
     // default copy, assignment and destructor are OK
 
@@ -272,9 +272,7 @@ public:
     typedef const ValueType& reference;
     typedef std::bidirectional_iterator_tag iterator_category;
 
-    ListHashSetConstIterator()
-    {
-    }
+    ListHashSetConstIterator() = default;
 
     const ValueType* get() const
     {

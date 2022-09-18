@@ -34,19 +34,14 @@
 
 namespace JSC { namespace DFG {
 
-DesiredWeakReferences::DesiredWeakReferences()
-    : m_codeBlock(nullptr)
-{
-}
+DesiredWeakReferences::DesiredWeakReferences() = default;
 
 DesiredWeakReferences::DesiredWeakReferences(CodeBlock* codeBlock)
     : m_codeBlock(codeBlock)
 {
 }
 
-DesiredWeakReferences::~DesiredWeakReferences()
-{
-}
+DesiredWeakReferences::~DesiredWeakReferences() = default;
 
 void DesiredWeakReferences::addLazily(JSCell* cell)
 {

@@ -40,7 +40,7 @@ template<typename T, size_t Capacity>
 class FixedVector {
     static_assert(std::is_trivially_destructible<T>::value, "FixedVector must have a trivial destructor.");
 public:
-    FixedVector();
+    FixedVector() = default;
 
     const T* begin() const { return &m_buffer[0]; }
     const T* end() const { return begin() + size(); }
@@ -61,15 +61,9 @@ public:
     bool isEmpty() { return !m_size; }
 
 private:
-    size_t m_size;
+    size_t m_size { 0 };
     std::array<T, Capacity> m_buffer;
 };
-
-template<typename T, size_t Capacity>
-inline FixedVector<T, Capacity>::FixedVector()
-    : m_size(0)
-{
-}
 
 template<typename T, size_t Capacity>
 inline T& FixedVector<T, Capacity>::operator[](size_t i)

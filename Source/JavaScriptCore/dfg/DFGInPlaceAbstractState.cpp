@@ -41,11 +41,10 @@ InPlaceAbstractState::InPlaceAbstractState(Graph& graph)
     : m_graph(graph)
     , m_abstractValues(*graph.m_abstractValuesCache)
     , m_variables(OperandsLike, graph.block(0)->variablesAtHead)
-    , m_block(nullptr)
 {
 }
 
-InPlaceAbstractState::~InPlaceAbstractState() { }
+InPlaceAbstractState::~InPlaceAbstractState() = default;
 
 void InPlaceAbstractState::beginBasicBlock(BasicBlock* basicBlock)
 {

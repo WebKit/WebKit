@@ -40,8 +40,6 @@ static constexpr bool verbose = false;
 }
 
 CallLinkStatus::CallLinkStatus(JSValue value)
-    : m_couldTakeSlowPath(false)
-    , m_isProved(false)
 {
     if (!value || !value.isCell()) {
         m_couldTakeSlowPath = true;

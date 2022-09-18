@@ -31,13 +31,9 @@
 
 namespace JSC {
 
-CodeBlockSet::CodeBlockSet()
-{
-}
+CodeBlockSet::CodeBlockSet() = default;
 
-CodeBlockSet::~CodeBlockSet()
-{
-}
+CodeBlockSet::~CodeBlockSet() = default;
 
 bool CodeBlockSet::contains(const AbstractLocker&, void* candidateCodeBlock)
 {

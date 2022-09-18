@@ -61,7 +61,7 @@ namespace Inspector {
 
 class JS_EXPORT_PRIVATE InspectorValue {
 public:
-    virtual ~InspectorValue() { }
+    virtual ~InspectorValue() = default;
 
     static Ref<InspectorValue> null();
     static Ref<InspectorValue> create(bool);

@@ -40,8 +40,7 @@ namespace JSC {
         WTF_FORBID_HEAP_ALLOCATION;
     public:
         CachedCall(JSGlobalObject* globalObject, CallFrame* callFrame, JSFunction* function, int argumentCount)
-            : m_valid(false)
-            , m_vm(globalObject->vm())
+            : m_vm(globalObject->vm())
             , m_interpreter(m_vm.interpreter)
             , m_entryScope(m_vm, function->scope()->globalObject())
         {
@@ -73,7 +72,7 @@ namespace JSC {
         bool hasOverflowedArguments() { return m_arguments.hasOverflowed(); }
 
     private:
-        bool m_valid;
+        bool m_valid { false };
         VM& m_vm;
         Interpreter& m_interpreter;
         VMEntryScope m_entryScope;

@@ -308,9 +308,9 @@ private:
 
     unsigned m_indexSize;
     unsigned m_indexMask;
-    uintptr_t m_indexVector;
-    unsigned m_keyCount;
-    unsigned m_deletedCount;
+    uintptr_t m_indexVector { 0 };
+    unsigned m_keyCount { 0 };
+    unsigned m_deletedCount { 0 };
     std::unique_ptr<Vector<PropertyOffset>> m_deletedOffsets;
 
     static constexpr unsigned MinimumTableSize = 16;

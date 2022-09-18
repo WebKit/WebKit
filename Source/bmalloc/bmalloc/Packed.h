@@ -101,7 +101,7 @@ public:
     }
 
 private:
-    std::array<uint8_t, sizeof(T)> m_storage;
+    std::array<uint8_t, sizeof(T)> m_storage { };
 };
 
 // PackedAlignedPtr can take alignment parameter too. PackedAlignedPtr only uses this alignment information if it is profitable: we use
@@ -118,15 +118,9 @@ public:
     static constexpr unsigned alignmentShiftSize = isAlignmentShiftProfitable ? alignmentShiftSizeIfProfitable : 0;
     static constexpr unsigned storageSize = storageSizeWithAlignmentShift;
 
-    constexpr PackedAlignedPtr()
-        : m_storage()
-    {
-    }
+    constexpr PackedAlignedPtr() = default;
 
-    constexpr PackedAlignedPtr(std::nullptr_t)
-        : m_storage()
-    {
-    }
+    constexpr PackedAlignedPtr(std::nullptr_t) { }
 
     PackedAlignedPtr(T* value)
     {

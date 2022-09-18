@@ -116,10 +116,7 @@ public:
     bool asString(String&) const;
 
 protected:
-    Value()
-        : m_type { Type::Null }
-    {
-    }
+    Value() = default;
 
     explicit Value(Type type)
         : m_type(type)
@@ -176,7 +173,7 @@ public:
     WTF_EXPORT_PRIVATE size_t memoryCost() const final;
 
 protected:
-    ~ObjectBase() override;
+    ~ObjectBase() override = default;
 
     // FIXME: use templates to reduce the amount of duplicated set*() methods.
     void setBoolean(const String& name, bool);
@@ -272,7 +269,7 @@ public:
     RefPtr<Array> asArray() final;
 
 protected:
-    ~ArrayBase() override;
+    ~ArrayBase() override = default;
 
     void pushBoolean(bool);
     void pushInteger(int);
@@ -400,7 +397,7 @@ inline void ArrayBase::pushArray(Ref<ArrayBase>&& value)
 template<typename T>
 class ArrayOf final : public ArrayBase {
 private:
-    ArrayOf() { }
+    ArrayOf() = default;
 
     Array& castedArray()
     {

@@ -78,9 +78,7 @@
 
 namespace WTF {
 
-Thread::~Thread()
-{
-}
+Thread::~Thread() = default;
 
 #if !OS(DARWIN)
 class Semaphore final {

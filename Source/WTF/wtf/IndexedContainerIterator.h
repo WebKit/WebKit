@@ -33,11 +33,7 @@ template<class Container>
 class IndexedContainerIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    IndexedContainerIterator()
-        : m_container(nullptr)
-        , m_index(0)
-    {
-    }
+    IndexedContainerIterator() =  default;
 
     IndexedContainerIterator(const Container& container, unsigned index)
         : m_container(&container)
@@ -75,8 +71,8 @@ private:
         return index;
     }
 
-    const Container* m_container;
-    unsigned m_index;
+    const Container* m_container { nullptr };
+    unsigned m_index { 0 };
 };
 
 } // namespace WTF

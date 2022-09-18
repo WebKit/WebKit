@@ -39,7 +39,7 @@ class RegisterAtOffsetList;
 
 class RegisterSet {
 public:
-    constexpr RegisterSet() { }
+    constexpr RegisterSet() = default;
 
     template<typename... Regs>
     constexpr explicit RegisterSet(Regs... regs)
@@ -148,9 +148,7 @@ public:
     
     class iterator {
     public:
-        iterator()
-        {
-        }
+        iterator() = default;
         
         iterator(const RegisterBitmap::iterator& iter)
             : m_iter(iter)

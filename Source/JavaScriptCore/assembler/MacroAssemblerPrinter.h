@@ -142,7 +142,7 @@ struct Memory {
     DumpStyle dumpStyle;
     size_t numBytes;
     union UnionedAddress {
-        UnionedAddress() { }
+        UnionedAddress() { }  // NOLINT
 
         Address address;
         AbsoluteAddress absoluteAddress;

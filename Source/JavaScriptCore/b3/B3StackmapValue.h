@@ -244,11 +244,7 @@ public:
             using pointer = void;
             using reference = ConstrainedValue;
 
-            iterator()
-                : m_collection(nullptr)
-                , m_index(0)
-            {
-            }
+            iterator() = default;
 
             iterator(const ConstrainedValueCollection& collection, unsigned index)
                 : m_collection(&collection)
@@ -279,8 +275,8 @@ public:
             }
             
         private:
-            const ConstrainedValueCollection* m_collection;
-            unsigned m_index;
+            const ConstrainedValueCollection* m_collection { nullptr };
+            unsigned m_index { 0 };
         };
 
         iterator begin() const { return iterator(*this, 0); }

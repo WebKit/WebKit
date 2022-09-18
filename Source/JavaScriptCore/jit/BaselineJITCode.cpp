@@ -53,9 +53,7 @@ BaselineJITCode::BaselineJITCode(CodeRef<JSEntryPtrTag> code, CodePtr<JSEntryPtr
     , MathICHolder()
 { }
 
-BaselineJITCode::~BaselineJITCode()
-{
-}
+BaselineJITCode::~BaselineJITCode() = default;
 
 } // namespace JSC
 

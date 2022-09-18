@@ -40,9 +40,7 @@ template<typename T>
 class IndexSet {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    IndexSet()
-    {
-    }
+    IndexSet() = default;
 
     bool add(const T& value)
     {
@@ -93,10 +91,7 @@ public:
         class iterator {
             WTF_MAKE_FAST_ALLOCATED;
         public:
-            iterator()
-                : m_collection(nullptr)
-            {
-            }
+            iterator() = default;
 
             iterator(const CollectionType& collection, BitVector::iterator iter)
                 : m_collection(&collection)

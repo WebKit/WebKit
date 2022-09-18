@@ -71,9 +71,7 @@ class ShadowChicken {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     struct Packet {
-        Packet()
-        {
-        }
+        Packet() = default;
         
         static constexpr unsigned unlikelyValue = 0x7a11;
 
@@ -136,9 +134,7 @@ public:
     };
     
     struct Frame {
-        Frame()
-        {
-        }
+        Frame() = default;
         
         Frame(JSObject* callee, CallFrame* frame, bool isTailDeleted, JSValue thisValue = JSValue(), JSScope* scope = nullptr, CodeBlock* codeBlock = nullptr, CallSiteIndex callSiteIndex = CallSiteIndex())
             : callee(callee)

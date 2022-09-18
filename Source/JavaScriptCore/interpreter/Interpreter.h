@@ -124,8 +124,8 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
 
     public:
         Interpreter();
-        ~Interpreter();
-        
+        ~Interpreter() = default;
+
 #if ENABLE(C_LOOP)
         CLoopStack& cloopStack() { return m_cloopStack; }
         const CLoopStack& cloopStack() const { return m_cloopStack; }

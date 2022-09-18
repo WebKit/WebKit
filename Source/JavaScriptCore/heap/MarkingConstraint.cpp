@@ -42,9 +42,7 @@ MarkingConstraint::MarkingConstraint(CString abbreviatedName, CString name, Cons
 {
 }
 
-MarkingConstraint::~MarkingConstraint()
-{
-}
+MarkingConstraint::~MarkingConstraint() = default;
 
 void MarkingConstraint::resetStats()
 {

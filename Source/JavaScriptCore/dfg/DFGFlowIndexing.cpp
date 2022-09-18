@@ -34,14 +34,11 @@ namespace JSC { namespace DFG {
 
 FlowIndexing::FlowIndexing(Graph& graph)
     : m_graph(graph)
-    , m_numIndices(0)
 {
     recompute();
 }
 
-FlowIndexing::~FlowIndexing()
-{
-}
+FlowIndexing::~FlowIndexing() = default;
 
 void FlowIndexing::recompute()
 {

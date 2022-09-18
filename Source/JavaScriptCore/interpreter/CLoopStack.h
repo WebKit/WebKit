@@ -100,7 +100,7 @@ namespace JSC {
         PageReservation m_reservation;
         void* m_lastStackPointer;
         void* m_currentStackPointer;
-        ptrdiff_t m_softReservedZoneSizeInRegisters;
+        ptrdiff_t m_softReservedZoneSizeInRegisters { 0 };
 
         friend class LLIntOffsetsExtractor;
     };

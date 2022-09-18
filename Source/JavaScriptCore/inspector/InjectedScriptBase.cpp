@@ -53,9 +53,7 @@ InjectedScriptBase::InjectedScriptBase(const String& name, Deprecated::ScriptObj
 {
 }
 
-InjectedScriptBase::~InjectedScriptBase()
-{
-}
+InjectedScriptBase::~InjectedScriptBase() = default;
 
 bool InjectedScriptBase::hasAccessToInspectedScriptState() const
 {

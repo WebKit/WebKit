@@ -41,7 +41,7 @@ class Database;
 
 class OriginStack {
 public:
-    OriginStack() { }
+    OriginStack() = default;
     
     OriginStack(WTF::HashTableDeletedValueType);
     

@@ -39,9 +39,7 @@ struct RegExpKey {
     OptionSet<Yarr::Flags> flagsValue;
     PackedRefPtr<StringImpl> pattern;
 
-    RegExpKey()
-    {
-    }
+    RegExpKey() = default;
 
     RegExpKey(OptionSet<Yarr::Flags> flags)
         : flagsValue(flags)

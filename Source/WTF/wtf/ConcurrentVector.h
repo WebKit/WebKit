@@ -42,7 +42,7 @@ private:
 public:
     typedef ConcurrentVectorIterator<T, SegmentSize> Iterator;
 
-    ~ConcurrentVectorIterator() { }
+    ~ConcurrentVectorIterator() = default;
 
     T& operator*() const { return m_vector.at(m_index); }
     T* operator->() const { return &m_vector.at(m_index); }
@@ -104,10 +104,7 @@ public:
     typedef ConcurrentVectorIterator<T, SegmentSize> Iterator;
 
     ConcurrentVector() = default;
-
-    ~ConcurrentVector()
-    {
-    }
+    ~ConcurrentVector() = default;
 
     // This may return a size that is bigger than the underlying storage, since this does not fence
     // manipulations of size. So if you access at size()-1, you may crash because this hasn't

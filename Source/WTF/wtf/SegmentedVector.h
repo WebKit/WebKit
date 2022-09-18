@@ -50,7 +50,7 @@ namespace WTF {
         using pointer = T*;
         using reference = T&;
 
-        ~SegmentedVectorIterator() { }
+        ~SegmentedVectorIterator() = default;
 
         T& operator*() const { return m_vector.at(m_index); }
         T* operator->() const { return &m_vector.at(m_index); }

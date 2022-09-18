@@ -193,7 +193,7 @@ inline int StrLength(const char* string) {
 template <typename T>
 class BufferReference {
  public:
-  BufferReference() : start_(nullptr), length_(0) {}
+  BufferReference() = default;
   BufferReference(T* data, int len) : start_(data), length_(len) {
     ASSERT(len == 0 || (len > 0 && data != NULL));
   }
@@ -227,8 +227,8 @@ class BufferReference {
   T& last() { return start_[length_ - 1]; }
 
  private:
-  T* start_;
-  int length_;
+  T* start_ { nullptr };
+  int length_ { 0 };
 };
 
 
@@ -238,7 +238,7 @@ class BufferReference {
 class StringBuilder {
  public:
   StringBuilder(char* buffer, int buffer_size)
-      : buffer_(buffer, buffer_size), position_(0) { }
+      : buffer_(buffer, buffer_size) { }
 
   ~StringBuilder() { if (!is_finalized()) Finalize(); }
 
@@ -309,7 +309,7 @@ class StringBuilder {
 
  private:
   BufferReference<char> buffer_;
-  int position_;
+  int position_ { 0 };
 
   bool is_finalized() const { return position_ < 0; }
 

@@ -40,7 +40,7 @@ class JSGlobalObject;
 
 class ConsoleClient : public CanMakeWeakPtr<ConsoleClient> {
 public:
-    virtual ~ConsoleClient() { }
+    virtual ~ConsoleClient() = default;
 
     JS_EXPORT_PRIVATE static void printConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned lineNumber, unsigned columnNumber);
     JS_EXPORT_PRIVATE static void printConsoleMessageWithArguments(MessageSource, MessageType, MessageLevel, JSC::JSGlobalObject*, Ref<Inspector::ScriptArguments>&&);

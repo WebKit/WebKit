@@ -145,9 +145,7 @@ private:
             m_unused.remove(0);
     }
 
-    TextBreakIteratorCache()
-    {
-    }
+    TextBreakIteratorCache() = default;
 
     static constexpr int capacity = 2;
     // FIXME: Break this up into different Vectors per mode.
@@ -335,7 +333,7 @@ public:
     operator UBreakIterator*() const { return m_iterator; }
 
 private:
-    UBreakIterator* m_iterator;
+    UBreakIterator* m_iterator { nullptr };
 };
 
 // Counts the number of grapheme clusters. A surrogate pair or a sequence

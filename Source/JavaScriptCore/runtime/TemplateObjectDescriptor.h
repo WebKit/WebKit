@@ -92,7 +92,6 @@ inline TemplateObjectDescriptor::TemplateObjectDescriptor(DeletedValueTag)
 }
 
 inline TemplateObjectDescriptor::TemplateObjectDescriptor(EmptyValueTag)
-    : m_hash(0)
 {
 }
 

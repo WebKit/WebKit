@@ -119,9 +119,7 @@ private:
     bool m_isScheduled { };
 };
 
-RunLoop::RunLoop()
-{
-}
+RunLoop::RunLoop() = default;
 
 RunLoop::~RunLoop()
 {

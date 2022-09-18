@@ -132,11 +132,11 @@ private:
     void expandCapacityIfNeeded();
     void expandCapacity();
 
-    size_t m_start;
-    size_t m_end;
+    size_t m_start { 0 };
+    size_t m_end { 0 };
     Buffer m_buffer;
 #ifndef NDEBUG
-    mutable IteratorBase* m_iterators;
+    mutable IteratorBase* m_iterators { nullptr };
 #endif
 };
 
@@ -166,7 +166,7 @@ private:
     void checkValidity() const;
     void checkValidity(const DequeIteratorBase&) const;
 
-    Deque<T, inlineCapacity>* m_deque;
+    Deque<T, inlineCapacity>* m_deque { nullptr };
     size_t m_index;
 
     friend class Deque<T, inlineCapacity>;
@@ -301,11 +301,6 @@ void Deque<T, inlineCapacity>::invalidateIterators()
 
 template<typename T, size_t inlineCapacity>
 inline Deque<T, inlineCapacity>::Deque()
-    : m_start(0)
-    , m_end(0)
-#ifndef NDEBUG
-    , m_iterators(0)
-#endif
 {
     checkValidity();
 }
@@ -323,9 +318,6 @@ inline Deque<T, inlineCapacity>::Deque(const Deque& other)
     : m_start(other.m_start)
     , m_end(other.m_end)
     , m_buffer(other.m_buffer.capacity())
-#ifndef NDEBUG
-    , m_iterators(0)
-#endif
 {
     const T* otherBuffer = other.m_buffer.buffer();
     if (m_start <= m_end)
@@ -697,10 +689,7 @@ void DequeIteratorBase<T, inlineCapacity>::removeFromIteratorsList()
 #endif
 
 template<typename T, size_t inlineCapacity>
-inline DequeIteratorBase<T, inlineCapacity>::DequeIteratorBase()
-    : m_deque(0)
-{
-}
+inline DequeIteratorBase<T, inlineCapacity>::DequeIteratorBase() = default;
 
 template<typename T, size_t inlineCapacity>
 inline DequeIteratorBase<T, inlineCapacity>::DequeIteratorBase(const Deque<T, inlineCapacity>* deque, size_t index)

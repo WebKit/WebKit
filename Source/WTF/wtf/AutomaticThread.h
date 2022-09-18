@@ -71,7 +71,7 @@ class AutomaticThreadCondition : public ThreadSafeRefCounted<AutomaticThreadCond
 public:
     static WTF_EXPORT_PRIVATE Ref<AutomaticThreadCondition> create();
     
-    WTF_EXPORT_PRIVATE ~AutomaticThreadCondition();
+    WTF_EXPORT_PRIVATE ~AutomaticThreadCondition() = default;
     
     WTF_EXPORT_PRIVATE void notifyOne(const AbstractLocker&);
     WTF_EXPORT_PRIVATE void notifyAll(const AbstractLocker&);

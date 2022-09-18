@@ -29,7 +29,7 @@ template<typename T>
 class MainThreadData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MainThreadData() { }
+    MainThreadData() = default;
     explicit MainThreadData(T&& data)
         : m_data(WTFMove(data))
     { }

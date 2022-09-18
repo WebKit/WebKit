@@ -41,7 +41,7 @@ namespace DFG {
 
 #if ENABLE(DFG_JIT)
 struct OSREntryReshuffling {
-    OSREntryReshuffling() { }
+    OSREntryReshuffling() = default;
     
     OSREntryReshuffling(int fromOffset, int toOffset)
         : fromOffset(fromOffset)

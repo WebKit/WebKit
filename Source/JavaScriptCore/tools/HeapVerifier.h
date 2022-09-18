@@ -108,7 +108,7 @@ private:
     void reportCell(CellProfile&, int cycleIndex, HeapVerifier::GCCycle&, CellList&, const char* prefix = nullptr);
 
     Heap* m_heap;
-    int m_currentCycle;
+    int m_currentCycle { 0 };
     int m_numberOfCycles;
     bool m_didPrintLogs { false };
     UniqueArray<GCCycle> m_cycles;

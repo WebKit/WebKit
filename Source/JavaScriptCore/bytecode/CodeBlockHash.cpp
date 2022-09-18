@@ -38,7 +38,6 @@ CodeBlockHash::CodeBlockHash(const char* string)
 }
 
 CodeBlockHash::CodeBlockHash(const SourceCode& sourceCode, CodeSpecializationKind kind)
-    : m_hash(0)
 {
     SHA1 sha1;
 

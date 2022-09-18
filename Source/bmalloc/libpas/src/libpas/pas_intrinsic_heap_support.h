@@ -37,13 +37,13 @@ struct pas_intrinsic_heap_support;
 typedef struct pas_intrinsic_heap_support pas_intrinsic_heap_support;
 
 struct pas_intrinsic_heap_support {
-    pas_compact_atomic_segregated_size_directory_ptr index_to_size_directory[
-        PAS_NUM_INTRINSIC_SIZE_CLASSES];
-    pas_allocator_index index_to_allocator_index[PAS_NUM_INTRINSIC_SIZE_CLASSES];
+    pas_compact_atomic_segregated_size_directory_ptr index_to_size_directory[ // NOLINT
+        PAS_NUM_INTRINSIC_SIZE_CLASSES]; // NOLINT
+    pas_allocator_index index_to_allocator_index[PAS_NUM_INTRINSIC_SIZE_CLASSES]; // NOLINT
 #ifdef __cplusplus
     constexpr pas_intrinsic_heap_support(cpp_initialization_t)
-        : index_to_size_directory { }
-        , index_to_allocator_index { }
+        : index_to_size_directory { } // NOLINT
+        , index_to_allocator_index { } // NOLINT
     {
         for (unsigned i = 0; i < PAS_NUM_INTRINSIC_SIZE_CLASSES; ++i) {
             index_to_size_directory[i] = PAS_COMPACT_ATOMIC_PTR_INITIALIZER;

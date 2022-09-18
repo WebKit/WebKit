@@ -111,11 +111,7 @@ public:
     }
     
     HeapLocation(WTF::HashTableDeletedValueType)
-        : m_kind(InvalidLocationKind)
-        , m_heap(WTF::HashTableDeletedValue)
-        , m_base(nullptr)
-        , m_index(nullptr)
-        , m_descriptor(nullptr)
+        : m_heap(WTF::HashTableDeletedValue)
     {
     }
     
@@ -148,11 +144,11 @@ public:
     void dump(PrintStream& out) const;
     
 private:
-    LocationKind m_kind;
+    LocationKind m_kind { InvalidLocationKind };
     AbstractHeap m_heap;
-    Node* m_base;
-    LazyNode m_index;
-    Node* m_descriptor;
+    Node* m_base { nullptr };
+    LazyNode m_index { nullptr };
+    Node* m_descriptor { nullptr };
 };
 
 struct HeapLocationHash {

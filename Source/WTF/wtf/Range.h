@@ -43,11 +43,7 @@ class Range {
 public:
     typedef PassedType Type;
     
-    Range()
-        : m_begin(0)
-        , m_end(0)
-    {
-    }
+    Range() = default;
 
     explicit Range(Type value)
         : m_begin(value)
@@ -135,8 +131,8 @@ public:
     }
 
 private:
-    Type m_begin;
-    Type m_end;
+    Type m_begin { 0 };
+    Type m_end { 0 };
 };
 
 } // namespace WTF

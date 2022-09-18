@@ -30,9 +30,7 @@
 
 namespace JSC { namespace B3 {
 
-CheckValue::~CheckValue()
-{
-}
+CheckValue::~CheckValue() = default;
 
 void CheckValue::convertToAdd()
 {

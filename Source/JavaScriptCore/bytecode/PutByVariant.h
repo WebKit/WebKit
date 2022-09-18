@@ -45,9 +45,7 @@ public:
     };
     
     PutByVariant(CacheableIdentifier identifier)
-        : m_kind(NotSet)
-        , m_offset(invalidOffset)
-        , m_newStructure(nullptr)
+        : m_offset(invalidOffset)
         , m_identifier(WTFMove(identifier))
     {
     }
@@ -153,7 +151,7 @@ public:
 private:
     bool attemptToMergeTransitionWithReplace(const PutByVariant& replace);
     
-    Kind m_kind;
+    Kind m_kind { NotSet };
     PropertyOffset m_offset;
     StructureSet m_oldStructure;
     Structure* m_newStructure { nullptr };

@@ -74,9 +74,7 @@ namespace JSC {
         MacroAssembler::Call from;
         CodePtr<tag> callee;
 
-        CallRecord()
-        {
-        }
+        CallRecord() = default;
 
         CallRecord(MacroAssembler::Call from, CodePtr<tag> callee)
             : from(from)
@@ -959,8 +957,8 @@ namespace JSC {
         HashMap<const JSInstruction*, void*> m_instructionToMathIC;
         HashMap<const JSInstruction*, UniqueRef<MathICGenerationState>> m_instructionToMathICGenerationState;
 
-        bool m_canBeOptimized;
-        bool m_shouldEmitProfiling;
+        bool m_canBeOptimized { false };
+        bool m_shouldEmitProfiling { false };
         BytecodeIndex m_loopOSREntryBytecodeIndex;
 
         CodeBlock* const m_profiledCodeBlock { nullptr };

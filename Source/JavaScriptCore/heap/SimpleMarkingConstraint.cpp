@@ -38,9 +38,7 @@ SimpleMarkingConstraint::SimpleMarkingConstraint(
 {
 }
 
-SimpleMarkingConstraint::~SimpleMarkingConstraint()
-{
-}
+SimpleMarkingConstraint::~SimpleMarkingConstraint() = default;
 
 template<typename Visitor>
 void SimpleMarkingConstraint::executeImplImpl(Visitor& visitor)

@@ -283,9 +283,7 @@ struct StringRange {
     {
     }
 
-    StringRange()
-    {
-    }
+    StringRange() = default;
 
     int position;
     int length;

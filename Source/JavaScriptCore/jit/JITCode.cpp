@@ -41,9 +41,7 @@ JITCode::JITCode(JITType jitType, ShareAttribute shareAttribute)
 {
 }
 
-JITCode::~JITCode()
-{
-}
+JITCode::~JITCode() = default;
 
 ASCIILiteral JITCode::typeName(JITType jitType)
 {
@@ -231,9 +229,7 @@ DirectJITCode::DirectJITCode(JITCode::CodeRef<JSEntryPtrTag> ref, CodePtr<JSEntr
     ASSERT(m_withArityCheck);
 }
 
-DirectJITCode::~DirectJITCode()
-{
-}
+DirectJITCode::~DirectJITCode() = default;
 
 void DirectJITCode::initializeCodeRefForDFG(JITCode::CodeRef<JSEntryPtrTag> ref, CodePtr<JSEntryPtrTag> withArityCheck)
 {
@@ -269,9 +265,7 @@ NativeJITCode::NativeJITCode(CodeRef<JSEntryPtrTag> ref, JITType jitType, Intrin
     m_intrinsic = intrinsic;
 }
 
-NativeJITCode::~NativeJITCode()
-{
-}
+NativeJITCode::~NativeJITCode() = default;
 
 CodePtr<JSEntryPtrTag> NativeJITCode::addressForCall(ArityCheckMode arity)
 {

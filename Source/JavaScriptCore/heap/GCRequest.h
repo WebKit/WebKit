@@ -33,7 +33,7 @@
 namespace JSC {
 
 struct GCRequest {
-    GCRequest() { }
+    GCRequest() = default;
     
     GCRequest(CollectionScope scope)
         : scope(scope)

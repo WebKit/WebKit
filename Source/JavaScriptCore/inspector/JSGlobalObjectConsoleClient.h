@@ -41,7 +41,7 @@ class JSGlobalObjectConsoleClient final : public JSC::ConsoleClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit JSGlobalObjectConsoleClient(InspectorConsoleAgent*);
-    ~JSGlobalObjectConsoleClient() final { }
+    ~JSGlobalObjectConsoleClient() final = default;
 
     static bool logToSystemConsole();
     static void setLogToSystemConsole(bool);

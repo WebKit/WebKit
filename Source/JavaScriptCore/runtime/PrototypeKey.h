@@ -34,7 +34,7 @@ class JSObject;
 
 class PrototypeKey {
 public:
-    PrototypeKey() { }
+    PrototypeKey() = default;
     
     PrototypeKey(JSObject* prototype, FunctionExecutable* executable, unsigned inlineCapacity, const ClassInfo* classInfo)
         : m_prototype(prototype)

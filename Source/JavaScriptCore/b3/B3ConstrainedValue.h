@@ -35,9 +35,7 @@ class Value;
 
 class ConstrainedValue {
 public:
-    ConstrainedValue()
-    {
-    }
+    ConstrainedValue() = default;
 
     ConstrainedValue(Value* value)
         : m_value(value)

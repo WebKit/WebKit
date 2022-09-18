@@ -32,8 +32,7 @@
 
 namespace WTF {
 
-PrintStream::PrintStream() { }
-PrintStream::~PrintStream() { } // Force the vtable to be in this module
+PrintStream::PrintStream() = default;
 
 void PrintStream::printf(const char* format, ...)
 {

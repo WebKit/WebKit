@@ -39,8 +39,8 @@ class Code;
 // Phased insertions allow you to ascribe phases to the things inserted at an instruction boundary.
 class PhaseInsertion : public Insertion {
 public:
-    PhaseInsertion() { }
-    
+    PhaseInsertion() = default;
+
     template<typename T>
     PhaseInsertion(size_t index, unsigned phase, T&& element)
         : Insertion(index, std::forward<T>(element))
@@ -63,10 +63,8 @@ private:
 
 class PhaseInsertionSet {
 public:
-    PhaseInsertionSet()
-    {
-    }
-    
+    PhaseInsertionSet() = default;
+
     template<typename T>
     void appendInsertion(T&& insertion)
     {

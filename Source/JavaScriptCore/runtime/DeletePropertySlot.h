@@ -34,12 +34,7 @@ class DeletePropertySlot {
 public:
     enum Type : uint8_t { Uncacheable, DeleteHit, ConfigurableDeleteMiss, Nonconfigurable };
 
-    DeletePropertySlot()
-        : m_offset(invalidOffset)
-        , m_cacheability(CachingAllowed)
-        , m_type(Uncacheable)
-    {
-    }
+    DeletePropertySlot() = default;
 
     void setConfigurableMiss()
     {
@@ -75,9 +70,9 @@ public:
 private:
     bool isCacheable() const { return m_cacheability == CachingAllowed; }
 
-    PropertyOffset m_offset;
-    CacheabilityType m_cacheability;
-    Type m_type;
+    PropertyOffset m_offset { invalidOffset };
+    CacheabilityType m_cacheability { CachingAllowed };
+    Type m_type { Uncacheable };
 };
 
 } // namespace JSC

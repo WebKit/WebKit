@@ -31,7 +31,7 @@ namespace JSC {
 
 class HeapObserver {
 public:
-    virtual ~HeapObserver() { }
+    virtual ~HeapObserver() = default;
     virtual void willGarbageCollect() = 0;
     virtual void didGarbageCollect(CollectionScope) = 0;
 };

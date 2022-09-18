@@ -272,14 +272,6 @@ private:
 CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock& other)
     : JSCell(vm, structure)
     , m_globalObject(other.m_globalObject)
-    , m_shouldAlwaysBeInlined(true)
-#if ENABLE(JIT)
-    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
-#endif
-    , m_didFailJITCompilation(false)
-    , m_didFailFTLCompilation(false)
-    , m_hasBeenCompiledWithFTL(false)
-    , m_isJettisoned(false)
     , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
     , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
@@ -324,14 +316,6 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
 CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope)
     : JSCell(vm, structure)
     , m_globalObject(vm, this, scope->globalObject())
-    , m_shouldAlwaysBeInlined(true)
-#if ENABLE(JIT)
-    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
-#endif
-    , m_didFailJITCompilation(false)
-    , m_didFailFTLCompilation(false)
-    , m_hasBeenCompiledWithFTL(false)
-    , m_isJettisoned(false)
     , m_numCalleeLocals(unlinkedCodeBlock->numCalleeLocals())
     , m_numVars(unlinkedCodeBlock->numVars())
     , m_hasDebuggerStatement(false)
@@ -2312,8 +2296,6 @@ public:
         : m_startCallFrame(startCallFrame)
         , m_codeBlock(codeBlock)
         , m_depthToCheck(depthToCheck)
-        , m_foundStartCallFrame(false)
-        , m_didRecurse(false)
     { }
 
     IterationStatus operator()(StackVisitor& visitor) const
@@ -2342,8 +2324,8 @@ private:
     CallFrame* const m_startCallFrame;
     CodeBlock* const m_codeBlock;
     mutable unsigned m_depthToCheck;
-    mutable bool m_foundStartCallFrame;
-    mutable bool m_didRecurse;
+    mutable bool m_foundStartCallFrame { false };
+    mutable bool m_didRecurse { false };
 };
 
 void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)

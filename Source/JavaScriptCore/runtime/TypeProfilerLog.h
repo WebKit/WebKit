@@ -69,7 +69,7 @@ private:
     friend class LLIntOffsetsExtractor;
 
     VM& m_vm;
-    unsigned m_logSize;
+    unsigned m_logSize { 50000 };
     LogEntry* m_logStartPtr;
     LogEntry* m_currentLogEntryPtr;
     LogEntry* m_logEndPtr;

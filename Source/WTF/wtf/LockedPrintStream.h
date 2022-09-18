@@ -35,7 +35,7 @@ namespace WTF {
 class LockedPrintStream final : public PrintStream {
 public:
     LockedPrintStream(std::unique_ptr<PrintStream> target);
-    ~LockedPrintStream() final;
+    ~LockedPrintStream() final = default;
     
     void vprintf(const char* format, va_list) final WTF_ATTRIBUTE_PRINTF(2, 0);
     void flush() final;

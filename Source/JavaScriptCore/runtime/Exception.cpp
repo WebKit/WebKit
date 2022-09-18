@@ -72,9 +72,7 @@ Exception::Exception(VM& vm)
 {
 }
 
-Exception::~Exception()
-{
-}
+Exception::~Exception() = default;
 
 void Exception::finishCreation(VM& vm, JSValue thrownValue, StackCaptureAction action)
 {

@@ -40,9 +40,6 @@ class GCArraySegment : public DoublyLinkedListNode<GCArraySegment<T>> {
 public:
     GCArraySegment()
         : DoublyLinkedListNode<GCArraySegment<T>>()
-#if ASSERT_ENABLED
-        , m_top(0)
-#endif
     {
     }
 
@@ -59,7 +56,7 @@ public:
     GCArraySegment* m_prev;
     GCArraySegment* m_next;
 #if ASSERT_ENABLED
-    size_t m_top;
+    size_t m_top { 0 };
 #endif
 };
 
@@ -109,19 +106,15 @@ protected:
     DoublyLinkedList<GCArraySegment<T>> m_segments;
 
     JS_EXPORT_PRIVATE static const size_t s_segmentCapacity = CapacityFromSize<GCArraySegment<T>::blockSize>::value;
-    size_t m_top;
-    size_t m_numberOfSegments;
+    size_t m_top { 0 };
+    size_t m_numberOfSegments { 0 };
 };
 
 template <typename T>
 class GCSegmentedArrayIterator {
     friend class GCSegmentedArray<T>;
 public:
-    GCSegmentedArrayIterator()
-        : m_currentSegment(nullptr)
-        , m_currentOffset(0)
-    {
-    }
+    GCSegmentedArrayIterator() = default;
 
     T& get() { return m_currentSegment->data()[m_currentOffset]; }
     T& operator*() { return get(); }
@@ -155,15 +148,14 @@ public:
 private:
     GCSegmentedArrayIterator(GCArraySegment<T>* start, size_t top)
         : m_currentSegment(start)
-        , m_currentOffset(0)
         , m_offsetLimit(top)
     {
         if (!m_offsetLimit)
             m_currentSegment = nullptr;
     }
 
-    GCArraySegment<T>* m_currentSegment;
-    size_t m_currentOffset;
+    GCArraySegment<T>* m_currentSegment { nullptr };
+    size_t m_currentOffset { 0 };
     size_t m_offsetLimit;
 };
 

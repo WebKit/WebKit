@@ -36,9 +36,7 @@ public:
     PropertyNameVector& propertyNameVector() { return m_propertyNameVector; }
 
 private:
-    PropertyNameArrayData()
-    {
-    }
+    PropertyNameArrayData() = default;
 
     PropertyNameVector m_propertyNameVector;
 };

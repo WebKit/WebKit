@@ -30,15 +30,11 @@
 #include "HeapInlines.h"
 #include "Subspace.h"
 
-namespace JSC { 
+namespace JSC {
 
-AlignedMemoryAllocator::AlignedMemoryAllocator()
-{
-}
+AlignedMemoryAllocator::AlignedMemoryAllocator() = default;
 
-AlignedMemoryAllocator::~AlignedMemoryAllocator()
-{
-}
+AlignedMemoryAllocator::~AlignedMemoryAllocator() = default;
 
 void AlignedMemoryAllocator::registerDirectory(Heap& heap, BlockDirectory* directory)
 {

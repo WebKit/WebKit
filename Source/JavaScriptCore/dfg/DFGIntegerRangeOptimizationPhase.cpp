@@ -114,14 +114,8 @@ public:
         return kind;
     }
     
-    Relationship()
-        : m_left(nullptr)
-        , m_right(nullptr)
-        , m_kind(Equal)
-        , m_offset(0)
-    {
-    }
-    
+    Relationship() = default;
+
     Relationship(NodeFlowProjection left, NodeFlowProjection right, Kind kind, int offset = 0)
         : m_left(left)
         , m_right(right)
@@ -1005,10 +999,10 @@ private:
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    NodeFlowProjection m_left;
-    NodeFlowProjection m_right;
-    Kind m_kind;
-    int m_offset; // This offset can be arbitrarily large.
+    NodeFlowProjection m_left { nullptr };
+    NodeFlowProjection m_right { nullptr };
+    Kind m_kind { Equal };
+    int m_offset { 0 }; // This offset can be arbitrarily large.
 };
 
 typedef HashMap<NodeFlowProjection, Vector<Relationship>> RelationshipMap;
@@ -1017,7 +1011,6 @@ class IntegerRangeOptimizationPhase : public Phase {
 public:
     IntegerRangeOptimizationPhase(Graph& graph)
         : Phase(graph, "integer range optimization")
-        , m_zero(nullptr)
         , m_relationshipsAtHead(graph)
         , m_insertionSet(graph)
     {
@@ -1916,8 +1909,8 @@ private:
     {
         return sortedRelationships(m_relationships);
     }
-    
-    Node* m_zero;
+
+    Node* m_zero { nullptr };
     RelationshipMap m_relationships;
     BlockSet m_seenBlocks;
     BlockMap<RelationshipMap> m_relationshipsAtHead;

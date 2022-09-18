@@ -40,8 +40,8 @@ class CompilerTimingScopeState {
     WTF_MAKE_NONCOPYABLE(CompilerTimingScopeState);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CompilerTimingScopeState() { }
-    
+    CompilerTimingScopeState() = default;
+
     Seconds addToTotal(const char* compilerName, const char* name, Seconds duration)
     {
         Locker locker { lock };

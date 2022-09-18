@@ -48,7 +48,7 @@ struct ModuleInformation : public ThreadSafeRefCounted<ModuleInformation> {
         return adoptRef(*new ModuleInformation);
     }
 
-    JS_EXPORT_PRIVATE ~ModuleInformation();
+    JS_EXPORT_PRIVATE ~ModuleInformation() = default;
     
     size_t functionIndexSpaceSize() const { return importFunctionTypeIndices.size() + internalFunctionTypeIndices.size(); }
     bool isImportedFunctionFromFunctionIndexSpace(size_t functionIndex) const

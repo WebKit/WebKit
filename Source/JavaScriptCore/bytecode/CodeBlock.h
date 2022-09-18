@@ -768,17 +768,17 @@ public:
     // concurrent compilation threads finish what they're doing.
     mutable ConcurrentJSLock m_lock;
 
-    bool m_shouldAlwaysBeInlined; // Not a bitfield because the JIT wants to store to it.
+    bool m_shouldAlwaysBeInlined { true }; // Not a bitfield because the JIT wants to store to it.
     static ptrdiff_t offsetOfShouldAlwaysBeInlined() { return OBJECT_OFFSETOF(CodeBlock, m_shouldAlwaysBeInlined); }
 
 #if ENABLE(JIT)
-    unsigned m_capabilityLevelState : 2; // DFG::CapabilityLevel
+    unsigned m_capabilityLevelState : 2 { DFG::CapabilityLevelNotSet }; // DFG::CapabilityLevel
 #endif
 
-    bool m_didFailJITCompilation : 1;
-    bool m_didFailFTLCompilation : 1;
-    bool m_hasBeenCompiledWithFTL : 1;
-    bool m_isJettisoned : 1;
+    bool m_didFailJITCompilation : 1 { false };
+    bool m_didFailFTLCompilation : 1 { false };
+    bool m_hasBeenCompiledWithFTL : 1 { false };
+    bool m_isJettisoned : 1 { false };
 
     bool m_visitChildrenSkippedDueToOldAge { false };
 

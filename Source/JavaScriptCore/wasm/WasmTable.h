@@ -90,7 +90,7 @@ protected:
     const std::optional<uint32_t> m_maximum;
 
     MallocPtr<WriteBarrier<Unknown>, VMMalloc> m_jsValues;
-    JSObject* m_owner;
+    JSObject* m_owner { nullptr };
 };
 
 class FuncRefTable : public Table {

@@ -46,13 +46,10 @@ using namespace JSC;
 InjectedScriptManager::InjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& injectedScriptHost)
     : m_environment(environment)
     , m_injectedScriptHost(WTFMove(injectedScriptHost))
-    , m_nextInjectedScriptId(1)
 {
 }
 
-InjectedScriptManager::~InjectedScriptManager()
-{
-}
+InjectedScriptManager::~InjectedScriptManager() = default;
 
 void InjectedScriptManager::connect()
 {

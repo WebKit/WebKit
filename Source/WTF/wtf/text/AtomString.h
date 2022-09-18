@@ -63,9 +63,9 @@ public:
 
     // We have to declare the copy constructor and copy assignment operator as well, otherwise
     // they'll be implicitly deleted by adding the move constructor and move assignment operator.
-    AtomString(const AtomString& other) : m_string(other.m_string) { }
+    AtomString(const AtomString& other) = default;
     AtomString(AtomString&& other) : m_string(WTFMove(other.m_string)) { }
-    AtomString& operator=(const AtomString& other) { m_string = other.m_string; return *this; }
+    AtomString& operator=(const AtomString& other) = default;
     AtomString& operator=(AtomString&& other) { m_string = WTFMove(other.m_string); return *this; }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
@@ -189,9 +189,7 @@ bool startsWithLettersIgnoringASCIICase(const AtomString&, ASCIILiteral);
 WTF_EXPORT_PRIVATE AtomString replaceUnpairedSurrogatesWithReplacementCharacter(AtomString&&);
 WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacter(String&&);
 
-inline AtomString::AtomString()
-{
-}
+inline AtomString::AtomString() = default;
 
 inline AtomString::AtomString(const char* string)
     : m_string(AtomStringImpl::addCString(string))

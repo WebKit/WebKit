@@ -153,7 +153,7 @@ protected:
 #else
     uint32_t m_byteOffset : 31;
 #endif
-    bool m_isDetachable : 1;
+    bool m_isDetachable : 1 { true };
     UCPURegister m_byteLength;
 
     using BaseAddress = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;

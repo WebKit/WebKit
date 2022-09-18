@@ -192,22 +192,22 @@ private:
     HashMap<FreeSpacePtr, FreeSpaceNode*> m_freeSpaceStartAddressMap;
     HashMap<FreeSpacePtr, FreeSpaceNode*> m_freeSpaceEndAddressMap;
     HashMap<uintptr_t, size_t> m_pageOccupancyMap;
-    
-    size_t m_bytesAllocated;
-    size_t m_bytesReserved;
-    size_t m_bytesCommitted;
-    
+
+    size_t m_bytesAllocated { 0 };
+    size_t m_bytesReserved { 0 };
+    size_t m_bytesCommitted { 0 };
+
     Lock& m_lock;
 
     MetaAllocatorTracker* m_tracker { nullptr };
 
 #ifndef NDEBUG
-    size_t m_mallocBalance;
+    size_t m_mallocBalance { 0 };
 #endif
 
 #if ENABLE(META_ALLOCATOR_PROFILE)
-    unsigned m_numAllocations;
-    unsigned m_numFrees;
+    unsigned m_numAllocations { 0 };
+    unsigned m_numFrees { 0 };
 #endif
 };
 

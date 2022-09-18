@@ -66,7 +66,7 @@ private:
 
     Lock m_lock;
     ARC4Stream m_stream;
-    int m_count;
+    int m_count { 0 };
 };
 
 ARC4Stream::ARC4Stream()
@@ -77,10 +77,7 @@ ARC4Stream::ARC4Stream()
     j = 0;
 }
 
-ARC4RandomNumberGenerator::ARC4RandomNumberGenerator()
-    : m_count(0)
-{
-}
+ARC4RandomNumberGenerator::ARC4RandomNumberGenerator() = default;
 
 void ARC4RandomNumberGenerator::addRandomData(unsigned char* data, int length)
 {

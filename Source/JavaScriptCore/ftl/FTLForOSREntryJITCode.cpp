@@ -30,14 +30,9 @@
 
 namespace JSC { namespace FTL {
 
-ForOSREntryJITCode::ForOSREntryJITCode()
-    : m_entryFailureCount(0)
-{
-}
+ForOSREntryJITCode::ForOSREntryJITCode() = default;
 
-ForOSREntryJITCode::~ForOSREntryJITCode()
-{
-}
+ForOSREntryJITCode::~ForOSREntryJITCode() = default;
 
 ForOSREntryJITCode* ForOSREntryJITCode::ftlForOSREntry()
 {

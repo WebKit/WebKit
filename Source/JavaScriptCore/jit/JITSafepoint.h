@@ -39,21 +39,17 @@ class Safepoint {
 public:
     class Result {
     public:
-        Result()
-            : m_didGetCancelled(false)
-            , m_wasChecked(true)
-        {
-        }
-        
+        Result() = default;
+
         ~Result();
         
         bool didGetCancelled();
         
     private:
         friend class Safepoint;
-        
-        bool m_didGetCancelled;
-        bool m_wasChecked;
+
+        bool m_didGetCancelled { false };
+        bool m_wasChecked { true };
     };
     
     Safepoint(JITPlan&, Result&);
@@ -74,7 +70,7 @@ private:
     VM* m_vm;
     JITPlan& m_plan;
     Vector<Scannable*> m_scannables;
-    bool m_didCallBegin;
+    bool m_didCallBegin { false };
     Result& m_result;
 };
 

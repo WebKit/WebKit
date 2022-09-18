@@ -90,7 +90,7 @@ public:
     };
     typedef WeakHashSetConstIterator const_iterator;
 
-    WeakHashSet() { }
+    WeakHashSet() = default;
 
     const_iterator begin() const { return WeakHashSetConstIterator(m_set, m_set.begin()); }
     const_iterator end() const { return WeakHashSetConstIterator(m_set, m_set.end()); }

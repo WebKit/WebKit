@@ -39,9 +39,7 @@ ToFTLForOSREntryDeferredCompilationCallback::ToFTLForOSREntryDeferredCompilation
 {
 }
 
-ToFTLForOSREntryDeferredCompilationCallback::~ToFTLForOSREntryDeferredCompilationCallback()
-{
-}
+ToFTLForOSREntryDeferredCompilationCallback::~ToFTLForOSREntryDeferredCompilationCallback() = default;
 
 Ref<ToFTLForOSREntryDeferredCompilationCallback>ToFTLForOSREntryDeferredCompilationCallback::create(JITCode::TriggerReason* forcedOSREntryTrigger)
 {

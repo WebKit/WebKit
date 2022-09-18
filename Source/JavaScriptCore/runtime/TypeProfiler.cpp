@@ -35,10 +35,7 @@ namespace TypeProfilerInternal {
 static constexpr bool verbose = false;
 }
 
-TypeProfiler::TypeProfiler()
-    : m_nextUniqueVariableID(1)
-{ 
-}
+TypeProfiler::TypeProfiler() = default;
 
 void TypeProfiler::logTypesForTypeLocation(TypeLocation* location, VM& vm)
 {

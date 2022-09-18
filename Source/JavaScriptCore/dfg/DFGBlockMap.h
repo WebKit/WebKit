@@ -37,9 +37,7 @@ template<typename T>
 class BlockMap {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BlockMap()
-    {
-    }
+    BlockMap() = default;
     
     BlockMap(Graph&);
     

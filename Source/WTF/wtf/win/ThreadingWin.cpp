@@ -329,9 +329,7 @@ void Thread::SpecificStorage::destroySlots()
     }
 }
 
-Mutex::~Mutex()
-{
-}
+Mutex::~Mutex() = default;
 
 void Mutex::lock()
 {
@@ -364,9 +362,7 @@ static DWORD absoluteTimeToWaitTimeoutInterval(WallTime absoluteTime)
     return static_cast<DWORD>((absoluteTime - currentTime).milliseconds());
 }
 
-ThreadCondition::~ThreadCondition()
-{
-}
+ThreadCondition::~ThreadCondition() = default;
 
 void ThreadCondition::wait(Mutex& mutex)
 {

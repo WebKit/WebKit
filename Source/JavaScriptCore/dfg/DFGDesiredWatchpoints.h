@@ -179,10 +179,7 @@ class GenericDesiredWatchpoints {
     typedef HashMap<WatchpointSetType, bool> StateMap;
 #endif
 public:
-    GenericDesiredWatchpoints()
-        : m_reallyAdded(false)
-    {
-    }
+    GenericDesiredWatchpoints() = default;
     
     void addLazily(const WatchpointSetType& set)
     {
@@ -227,7 +224,7 @@ public:
 
 private:
     HashSet<WatchpointSetType> m_sets;
-    bool m_reallyAdded;
+    bool m_reallyAdded { false };
 };
 
 class DesiredWatchpoints {

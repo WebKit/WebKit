@@ -37,7 +37,7 @@ struct MathICGenerationState;
 
 class JITSubGenerator {
 public:
-    JITSubGenerator() { }
+    JITSubGenerator() = default;
 
     JITSubGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,

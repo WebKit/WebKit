@@ -45,8 +45,7 @@ namespace {
 class DeltaCompressionBuilder {
 public:
     DeltaCompressionBuilder(size_t maxSize)
-        : m_offset(0)
-        , m_maxSize(maxSize)
+        : m_maxSize(maxSize)
     {
         m_buffer = static_cast<uint8_t*>(fastMalloc(m_maxSize));
     }
@@ -63,8 +62,8 @@ public:
         }
     }
 
-    uint8_t* m_buffer; 
-    size_t m_offset;
+    uint8_t* m_buffer;
+    size_t m_offset { 0 };
     size_t m_maxSize;
 };
 
@@ -73,7 +72,6 @@ public:
     DeltaCompresseionReader(uint8_t* buffer, size_t size)
         : m_buffer(buffer)
         , m_size(size)
-        , m_offset(0)
     { }
 
     template <typename T>
@@ -94,7 +92,7 @@ public:
 private:
     uint8_t* m_buffer;
     size_t m_size;
-    size_t m_offset;
+    size_t m_offset { 0 };
 };
 
 } // anonymous namespace
@@ -127,7 +125,6 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(JSTag, VM& vm, B3::PCToOrigin
 
 #if ENABLE(WEBASSEMBLY_B3JIT)
 PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(WasmTag, B3::PCToOriginMap b3PCToOriginMap)
-    : m_shouldBuildMapping(true)
 {
     for (const B3::PCToOriginMap::OriginRange& originRange : b3PCToOriginMap.ranges()) {
         B3::Origin b3Origin = originRange.origin;

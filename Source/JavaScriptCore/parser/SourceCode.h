@@ -38,8 +38,7 @@ class SourceCode : public UnlinkedSourceCode {
 
 public:
     SourceCode()
-        : UnlinkedSourceCode()
-        , m_firstLine(OrdinalNumber::beforeFirst())
+        : m_firstLine(OrdinalNumber::beforeFirst())
         , m_startColumn(OrdinalNumber::beforeFirst())
     {
     }

@@ -122,7 +122,7 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
     worklist.enqueue(*m_plan.get());
 }
 
-CalleeGroup::~CalleeGroup() { }
+CalleeGroup::~CalleeGroup() = default;
 
 void CalleeGroup::waitUntilFinished()
 {

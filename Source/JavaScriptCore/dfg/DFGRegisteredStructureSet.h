@@ -44,8 +44,7 @@ class StructureAbstractValue;
 class RegisteredStructureSet : public TinyPtrSet<RegisteredStructure> {
 public:
 
-    RegisteredStructureSet()
-    { }
+    RegisteredStructureSet() = default;
     
     RegisteredStructureSet(RegisteredStructure structure)
         : TinyPtrSet(structure)

@@ -28,7 +28,7 @@
 namespace JSC {
 
 struct ExceptionEventLocation {
-    ExceptionEventLocation() { }
+    ExceptionEventLocation() = default;
     ExceptionEventLocation(void* stackPosition, const char* functionName, const char* file, unsigned line)
         : stackPosition(stackPosition)
         , functionName(functionName)

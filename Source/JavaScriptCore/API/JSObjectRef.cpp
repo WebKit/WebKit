@@ -782,12 +782,11 @@ struct OpaqueJSPropertyNameArray {
 public:
     // FIXME: Why not inherit from RefCounted?
     OpaqueJSPropertyNameArray(VM* vm)
-        : refCount(0)
-        , vm(vm)
+        : vm(vm)
     {
     }
-    
-    unsigned refCount;
+
+    unsigned refCount { 0 };
     VM* vm;
     Vector<Ref<OpaqueJSString>> array;
 };

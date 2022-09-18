@@ -109,9 +109,7 @@ RunLoop::RunLoop()
     RELEASE_ASSERT(::IsWindow(m_runLoopMessageWindow));
 }
 
-RunLoop::~RunLoop()
-{
-}
+RunLoop::~RunLoop() = default;
 
 void RunLoop::wakeUp()
 {

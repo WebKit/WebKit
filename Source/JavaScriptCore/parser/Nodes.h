@@ -113,7 +113,7 @@ namespace JSC {
 
     class ParserArenaDeletable {
     public:
-        virtual ~ParserArenaDeletable() { }
+        virtual ~ParserArenaDeletable() = default;
 
         // ParserArenaDeletable objects are deleted when the arena is deleted.
         // Clients must not call delete directly on such objects.
@@ -140,7 +140,7 @@ namespace JSC {
 
     public:
         ParserArena& parserArena() { return m_arena; }
-        virtual ~ParserArenaRoot() { }
+        virtual ~ParserArenaRoot() = default;
 
     protected:
         ParserArena m_arena;
@@ -151,7 +151,7 @@ namespace JSC {
         Node(const JSTokenLocation&);
 
     public:
-        virtual ~Node() { }
+        virtual ~Node() = default;
 
         int firstLine() const { return m_position.line; }
         int startOffset() const { return m_position.offset; }
@@ -375,7 +375,7 @@ namespace JSC {
 
         const Identifier& m_value;
         const uint8_t m_radix;
-        const bool m_sign;
+        const bool m_sign { false };
     };
 
     class ThrowableExpressionData {
@@ -421,20 +421,10 @@ namespace JSC {
 
     class ThrowableSubExpressionData : public ThrowableExpressionData {
     public:
-        ThrowableSubExpressionData()
-            : m_subexpressionDivotOffset(0)
-            , m_subexpressionEndOffset(0)
-            , m_subexpressionLineOffset(0)
-            , m_subexpressionLineStartOffset(0)
-        {
-        }
+        ThrowableSubExpressionData() = default;
 
         ThrowableSubExpressionData(const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
             : ThrowableExpressionData(divot, divotStart, divotEnd)
-            , m_subexpressionDivotOffset(0)
-            , m_subexpressionEndOffset(0)
-            , m_subexpressionLineOffset(0)
-            , m_subexpressionLineStartOffset(0)
         {
         }
 
@@ -468,28 +458,18 @@ namespace JSC {
         JSTextPosition subexpressionEnd() { return divotEnd() - static_cast<int>(m_subexpressionEndOffset); }
 
     protected:
-        uint16_t m_subexpressionDivotOffset;
-        uint16_t m_subexpressionEndOffset;
-        uint16_t m_subexpressionLineOffset;
-        uint16_t m_subexpressionLineStartOffset;
+        uint16_t m_subexpressionDivotOffset { 0 };
+        uint16_t m_subexpressionEndOffset { 0 };
+        uint16_t m_subexpressionLineOffset { 0 };
+        uint16_t m_subexpressionLineStartOffset { 0 };
     };
     
     class ThrowablePrefixedSubExpressionData : public ThrowableExpressionData {
     public:
-        ThrowablePrefixedSubExpressionData()
-            : m_subexpressionDivotOffset(0)
-            , m_subexpressionStartOffset(0)
-            , m_subexpressionLineOffset(0)
-            , m_subexpressionLineStartOffset(0)
-        {
-        }
+        ThrowablePrefixedSubExpressionData() = default;
 
         ThrowablePrefixedSubExpressionData(const JSTextPosition& divot, const JSTextPosition& start, const JSTextPosition& end)
             : ThrowableExpressionData(divot, start, end)
-            , m_subexpressionDivotOffset(0)
-            , m_subexpressionStartOffset(0)
-            , m_subexpressionLineOffset(0)
-            , m_subexpressionLineStartOffset(0)
         {
         }
 
@@ -523,10 +503,10 @@ namespace JSC {
         JSTextPosition subexpressionEnd() { return divotEnd(); }
 
     protected:
-        uint16_t m_subexpressionDivotOffset;
-        uint16_t m_subexpressionStartOffset;
-        uint16_t m_subexpressionLineOffset;
-        uint16_t m_subexpressionLineStartOffset;
+        uint16_t m_subexpressionDivotOffset { 0 };
+        uint16_t m_subexpressionStartOffset { 0 };
+        uint16_t m_subexpressionLineOffset { 0 };
+        uint16_t m_subexpressionLineStartOffset { 0 };
     };
 
     class TemplateExpressionListNode final : public ParserArenaFreeable {
@@ -581,7 +561,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
         TemplateStringListNode* m_templateStrings;
-        TemplateExpressionListNode* m_templateExpressions;
+        TemplateExpressionListNode* m_templateExpressions { nullptr };
     };
 
     class TaggedTemplateNode final : public ExpressionNode, public ThrowableExpressionData {
@@ -729,8 +709,8 @@ namespace JSC {
 
         bool isSimpleArray() const final;
 
-        ElementNode* m_element;
-        int m_elision;
+        ElementNode* m_element { nullptr };
+        int m_elision { 0 };
     };
 
     enum class ClassElementTag : uint8_t { No, Instance, Static, LastTag };
@@ -772,14 +752,14 @@ namespace JSC {
 
     private:
         friend class PropertyListNode;
-        const Identifier* m_name;
-        ExpressionNode* m_expression;
+        const Identifier* m_name { nullptr };
+        ExpressionNode* m_expression { nullptr };
         ExpressionNode* m_assign;
         unsigned m_type : 10;
         unsigned m_needsSuperBinding : 1;
         static_assert(1 << 2 > static_cast<unsigned>(ClassElementTag::LastTag), "ClassElementTag shouldn't use more than two bits");
         unsigned m_classElementTag : 2;
-        unsigned m_isOverriddenByDuplicate : 1;
+        unsigned m_isOverriddenByDuplicate : 1 { false };
     };
 
     class PropertyListNode final : public ExpressionNode {
@@ -841,7 +821,7 @@ namespace JSC {
     private:
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
-        PropertyListNode* m_list;
+        PropertyListNode* m_list { nullptr };
     };
     
     class BracketAccessorNode final : public ExpressionNode, public ThrowableExpressionData {
@@ -944,7 +924,7 @@ namespace JSC {
 
         bool hasAssignments() const { return m_hasAssignments; }
 
-        ArgumentListNode* m_listNode;
+        ArgumentListNode* m_listNode { nullptr };
     private:
         bool m_hasAssignments { false };
     };
@@ -958,7 +938,7 @@ namespace JSC {
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = nullptr) final;
 
         ExpressionNode* m_expr;
-        ArgumentsNode* m_args;
+        ArgumentsNode* m_args { nullptr };
     };
 
     class EvalFunctionCallNode final : public ExpressionNode, public ThrowableExpressionData {
@@ -1959,14 +1939,14 @@ namespace JSC {
         unsigned m_startLineStartOffset;
 
     private:
-        CodeFeatures m_features;
+        CodeFeatures m_features { NoFeatures };
         LexicalScopeFeatures m_lexicalScopeFeatures;
-        InnerArrowFunctionCodeFeatures m_innerArrowFunctionCodeFeatures;
+        InnerArrowFunctionCodeFeatures m_innerArrowFunctionCodeFeatures { NoInnerArrowFunctionFeatures };
         SourceCode m_source;
         VariableEnvironment m_varDeclarations;
         UniquedStringImplPtrSet m_sloppyModeHoistedFunctions;
-        int m_numConstants;
-        SourceElements* m_statements;
+        int m_numConstants { 0 };
+        SourceElements* m_statements { nullptr };
     };
 
     class ProgramNode final : public ScopeNode {
@@ -2425,7 +2405,7 @@ namespace JSC {
 
     class DestructuringPatternNode : public ParserArenaFreeable {
     public:
-        virtual ~DestructuringPatternNode() { }
+        virtual ~DestructuringPatternNode() = default;
         virtual void collectBoundIdentifiers(Vector<Identifier>&) const = 0;
         virtual void bindValue(BytecodeGenerator&, RegisterID* source) const = 0;
         virtual void toString(StringBuilder&) const = 0;

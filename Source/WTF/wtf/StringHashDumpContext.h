@@ -36,7 +36,7 @@ namespace WTF {
 template<typename T>
 class StringHashDumpContext {
 public:
-    StringHashDumpContext() { }
+    StringHashDumpContext() = default;
     
     CString getID(const T* value)
     {

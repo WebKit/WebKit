@@ -99,8 +99,6 @@ private:
     BumpPointerPool(const PageAllocation& allocation)
         : m_current(allocation.base())
         , m_start(allocation.base())
-        , m_next(nullptr)
-        , m_previous(nullptr)
         , m_allocation(allocation)
     {
     }
@@ -196,8 +194,8 @@ private:
 
     void* m_current;
     void* m_start;
-    BumpPointerPool* m_next;
-    BumpPointerPool* m_previous;
+    BumpPointerPool* m_next { nullptr };
+    BumpPointerPool* m_previous { nullptr };
     PageAllocation m_allocation;
 
     friend class BumpPointerAllocator;
@@ -221,10 +219,7 @@ private:
 class BumpPointerAllocator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BumpPointerAllocator()
-        : m_head(nullptr)
-    {
-    }
+    BumpPointerAllocator() = default;
 
     ~BumpPointerAllocator()
     {
@@ -246,7 +241,7 @@ public:
     }
 
 private:
-    BumpPointerPool* m_head;
+    BumpPointerPool* m_head { nullptr };
 };
 
 }

@@ -2045,17 +2045,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
 
 class NoOpClobberize {
 public:
-    NoOpClobberize() { }
+    NoOpClobberize() = default;
     template<typename... T>
     void operator()(T...) const { }
 };
 
 class CheckClobberize {
 public:
-    CheckClobberize()
-        : m_result(false)
-    {
-    }
+    CheckClobberize() = default;
     
     template<typename... T>
     void operator()(T...) const { m_result = true; }
@@ -2063,7 +2060,7 @@ public:
     bool result() const { return m_result; }
     
 private:
-    mutable bool m_result;
+    mutable bool m_result { false };
 };
 
 bool doesWrites(Graph&, Node*);
@@ -2072,7 +2069,6 @@ class AbstractHeapOverlaps {
 public:
     AbstractHeapOverlaps(AbstractHeap heap)
         : m_heap(heap)
-        , m_result(false)
     {
     }
     
@@ -2087,7 +2083,7 @@ public:
 
 private:
     AbstractHeap m_heap;
-    mutable bool m_result;
+    mutable bool m_result { false };
 };
 
 bool accessesOverlap(Graph&, Node*, AbstractHeap);

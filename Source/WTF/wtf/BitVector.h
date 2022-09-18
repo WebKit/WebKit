@@ -63,19 +63,14 @@ namespace WTF {
 class BitVector final {
     WTF_MAKE_FAST_ALLOCATED;
 public: 
-    BitVector()
-        : m_bitsOrPointer(makeInlineBits(0))
-    {
-    }
-    
+    BitVector() = default;
+
     explicit BitVector(size_t numBits)
-        : m_bitsOrPointer(makeInlineBits(0))
     {
         ensureSize(numBits);
     }
-    
+
     BitVector(const BitVector& other)
-        : m_bitsOrPointer(makeInlineBits(0))
     {
         (*this) = other;
     }
@@ -300,11 +295,7 @@ public:
     class iterator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        iterator()
-            : m_bitVector(nullptr)
-            , m_index(0)
-        {
-        }
+        iterator() = default;
         
         iterator(const BitVector& bitVector, size_t index)
             : m_bitVector(&bitVector)
@@ -342,8 +333,8 @@ public:
             return !(*this == other);
         }
     private:
-        const BitVector* m_bitVector;
-        size_t m_index;
+        const BitVector* m_bitVector { nullptr };
+        size_t m_index { 0 };
     };
 
     // Use this to iterate over set bits.
@@ -492,7 +483,7 @@ private:
         return outOfLineBits()->bits();
     }
     
-    uintptr_t m_bitsOrPointer;
+    uintptr_t m_bitsOrPointer { makeInlineBits(0) };
 };
 
 struct BitVectorHash {

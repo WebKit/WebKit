@@ -64,7 +64,7 @@ class BEXPORT IsoTLSEntry {
     IsoTLSEntry(const IsoTLSEntry&) = delete;
     IsoTLSEntry& operator=(const IsoTLSEntry&) = delete;
 public:
-    virtual ~IsoTLSEntry();
+    virtual ~IsoTLSEntry() = default;
     
     size_t offset() const { return m_offset; }
     size_t alignment() const { return sizeof(void*); }

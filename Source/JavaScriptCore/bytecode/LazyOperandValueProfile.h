@@ -120,15 +120,10 @@ template<> struct HashTraits<JSC::LazyOperandValueProfileKey> : public GenericHa
 namespace JSC {
 
 struct LazyOperandValueProfile : public MinimalValueProfile {
-    LazyOperandValueProfile()
-        : MinimalValueProfile()
-        , m_operand(VirtualRegister())
-    {
-    }
-    
+    LazyOperandValueProfile() = default;
+
     explicit LazyOperandValueProfile(const LazyOperandValueProfileKey& key)
-        : MinimalValueProfile()
-        , m_key(key)
+        : m_key(key)
     {
     }
     

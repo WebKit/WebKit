@@ -44,9 +44,7 @@ class CallLinkInfo;
 class CallLinkStatus final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CallLinkStatus()
-    {
-    }
+    CallLinkStatus() = default;
     
     static CallLinkStatus takesSlowPath()
     {

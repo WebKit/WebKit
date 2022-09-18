@@ -238,13 +238,7 @@ private:
 
 class YarrCodeBlock : public YarrBoyerMooreData {
     struct InlineStats {
-        InlineStats()
-            : m_insnCount(0)
-            , m_stackSize(0)
-            , m_needsTemp2(false)
-            , m_canInline(false)
-        {
-        }
+        InlineStats() = default;
 
         void set(unsigned insnCount, unsigned stackSize, bool canInline, bool needsTemp2)
         {
@@ -264,10 +258,10 @@ class YarrCodeBlock : public YarrBoyerMooreData {
         bool canInline() const { return m_canInline; }
         bool needsTemp2() const { return m_needsTemp2; }
 
-        unsigned m_insnCount;
-        unsigned m_stackSize : 30;
-        bool m_needsTemp2 : 1;
-        bool m_canInline : 1;
+        unsigned m_insnCount { 0 };
+        unsigned m_stackSize : 30 { 0 };
+        bool m_needsTemp2 : 1 { false };
+        bool m_canInline : 1 { false };
     };
 
     WTF_MAKE_FAST_ALLOCATED;

@@ -369,12 +369,7 @@ public:
     }
 
 protected:
-    VectorBufferBase()
-        : m_buffer(nullptr)
-        , m_capacity(0)
-        , m_size(0)
-    {
-    }
+    VectorBufferBase() = default;
 
     VectorBufferBase(T* buffer, size_t capacity, size_t size)
         : m_buffer(buffer)
@@ -383,14 +378,12 @@ protected:
     {
     }
 
-    ~VectorBufferBase()
-    {
-        // FIXME: It would be nice to find a way to ASSERT that m_buffer hasn't leaked here.
-    }
+    // FIXME: It would be nice to find a way to ASSERT that m_buffer hasn't leaked here.
+    ~VectorBufferBase() = default;
 
-    T* m_buffer;
-    unsigned m_capacity;
-    unsigned m_size; // Only used by the Vector subclass, but placed here to avoid padding the struct.
+    T* m_buffer { nullptr };
+    unsigned m_capacity { 0 };
+    unsigned m_size { 0 }; // Only used by the Vector subclass, but placed here to avoid padding the struct.
 };
 
 template<typename T, size_t inlineCapacity, typename Malloc = VectorMalloc> class VectorBuffer;
@@ -400,9 +393,7 @@ class VectorBuffer<T, 0, Malloc> : private VectorBufferBase<T, Malloc> {
 private:
     typedef VectorBufferBase<T, Malloc> Base;
 public:
-    VectorBuffer()
-    {
-    }
+    VectorBuffer() = default;
 
     VectorBuffer(size_t capacity, size_t size = 0)
     {
@@ -678,9 +669,7 @@ public:
     typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
-    Vector()
-    {
-    }
+    Vector() = default;
 
     // Unlike in std::vector, this constructor does not initialize POD types.
     explicit Vector(size_t size)

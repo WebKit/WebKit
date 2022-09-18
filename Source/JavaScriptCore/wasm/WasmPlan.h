@@ -56,7 +56,7 @@ public:
 
     // Note: This constructor should only be used if you are not actually building a module e.g. validation/function tests
     JS_EXPORT_PRIVATE Plan(VM&, CompletionTask&&);
-    virtual JS_EXPORT_PRIVATE ~Plan();
+    virtual JS_EXPORT_PRIVATE ~Plan() = default;
 
     // If you guarantee the ordering here, you can rely on FIFO of the
     // completion tasks being called.

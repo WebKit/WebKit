@@ -39,8 +39,8 @@ template<typename Config> class IsoHeapImpl;
 
 class IsoDirectoryBaseBase {
 public:
-    IsoDirectoryBaseBase() { }
-    virtual ~IsoDirectoryBaseBase() { }
+    IsoDirectoryBaseBase() = default;
+    virtual ~IsoDirectoryBaseBase() = default;
 
     virtual void didDecommit(unsigned index) = 0;
 };

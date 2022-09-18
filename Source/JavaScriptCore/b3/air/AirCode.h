@@ -253,11 +253,7 @@ public:
 
     class iterator {
     public:
-        iterator()
-            : m_code(nullptr)
-            , m_index(0)
-        {
-        }
+        iterator() = default;
 
         iterator(const Code& code, unsigned index)
             : m_code(&code)
@@ -287,8 +283,8 @@ public:
         }
 
     private:
-        const Code* m_code;
-        unsigned m_index;
+        const Code* m_code { nullptr };
+        unsigned m_index { 0 };
     };
 
     iterator begin() const { return iterator(*this, 0); }
@@ -408,7 +404,7 @@ private:
     Vector<MacroAssembler::Label> m_entrypointLabels; // This is empty until code generation.
     Vector<Ref<PrologueGenerator>, 1> m_prologueGenerators;
     RefPtr<WasmBoundsCheckGenerator> m_wasmBoundsCheckGenerator;
-    const char* m_lastPhaseName;
+    const char* m_lastPhaseName { "initial" };
     std::unique_ptr<Disassembler> m_disassembler;
     Ref<PrologueGenerator> m_defaultPrologueGenerator;
 };

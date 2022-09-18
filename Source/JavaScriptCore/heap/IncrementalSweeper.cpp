@@ -44,7 +44,6 @@ void IncrementalSweeper::scheduleTimer()
 
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : Base(heap->vm())
-    , m_currentDirectory(nullptr)
 {
 }
 

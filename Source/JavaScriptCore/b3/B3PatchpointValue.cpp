@@ -30,9 +30,7 @@
 
 namespace JSC { namespace B3 {
 
-PatchpointValue::~PatchpointValue()
-{
-}
+PatchpointValue::~PatchpointValue() = default;
 
 void PatchpointValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {

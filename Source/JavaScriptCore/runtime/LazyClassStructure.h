@@ -62,9 +62,7 @@ public:
         JSObject* constructor { nullptr };
     };
     
-    LazyClassStructure()
-    {
-    }
+    LazyClassStructure() = default;
     
     template<typename Callback>
     void initLater(const Callback&);

@@ -34,7 +34,7 @@ namespace JSC {
 // global object.
 class ScopeOffset : public GenericOffset<ScopeOffset> {
 public:
-    ScopeOffset() { }
+    ScopeOffset() = default;
     
     explicit ScopeOffset(unsigned offset)
         : GenericOffset(offset)

@@ -60,13 +60,11 @@ public:
 
 private:
     const JSValue m_jsValue;
-    WeakHandleOwner* m_weakHandleOwner;
-    void* m_context;
+    WeakHandleOwner* m_weakHandleOwner { nullptr };
+    void* m_context { nullptr };
 };
 
 inline WeakImpl::WeakImpl()
-    : m_weakHandleOwner(nullptr)
-    , m_context(nullptr)
 {
     setState(Deallocated);
 }
