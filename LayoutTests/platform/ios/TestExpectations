@@ -3692,3 +3692,6 @@ http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
 # iOS user agent styles are preventing these from passing for <input type=search>
 webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/appearance-textfield-001.html [ ImageOnlyFailure ]
 webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html [ ImageOnlyFailure ]
+
+rdar://99992321 ([ iOS ] imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html is an almost constant failue)
+imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html [ ImageOnlyFailure ]
