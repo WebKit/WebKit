@@ -45,13 +45,6 @@ public:
     JS_EXPORT_PRIVATE ~CatchScope();
 
     void clearException() { m_vm.clearException(); }
-    bool clearExceptionExceptTermination()
-    {
-        if (UNLIKELY(m_vm.hasPendingTerminationException()))
-            return false;
-        m_vm.clearException();
-        return true;
-    }
 };
 
 #define DECLARE_CATCH_SCOPE(vm__) \
@@ -68,13 +61,6 @@ public:
     CatchScope(CatchScope&&) = default;
 
     ALWAYS_INLINE void clearException() { m_vm.clearException(); }
-    ALWAYS_INLINE bool clearExceptionExceptTermination()
-    {
-        if (UNLIKELY(m_vm.hasPendingTerminationException()))
-            return false;
-        m_vm.clearException();
-        return true;
-    }
 };
 
 #define DECLARE_CATCH_SCOPE(vm__) \

@@ -57,44 +57,26 @@ Ref<Microtask> createJSDOMMicrotask(VM& vm, JSObject* job)
 
 void JSDOMMicrotask::run(JSGlobalObject* globalObject)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-
     JSObject* job = m_job.get();
-
 
     auto* lexicalGlobalObject = job->globalObject();
     auto* context = jsCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext();
     if (!context || context->activeDOMObjectsAreSuspended() || context->activeDOMObjectsAreStopped())
         return;
 
-    if (UNLIKELY(!scope.clearExceptionExceptTermination()))
-        return;
-
     auto callData = JSC::getCallData(job);
-    if (UNLIKELY(!scope.clearExceptionExceptTermination()))
-        return;
     ASSERT(callData.type != CallData::Type::None);
 
-    if (UNLIKELY(globalObject->hasDebugger())) {
-        JSC::DeferTerminationForAWhile deferTerminationForAWhile(vm);
-        globalObject->debugger()->willRunMicrotask(globalObject, identifier());
-        scope.clearException();
-    }
+    if (UNLIKELY(globalObject->hasDebugger()))
+        globalObject->debugger()->willRunMicrotask();
 
     NakedPtr<JSC::Exception> returnedException = nullptr;
-    if (LIKELY(!vm.hasPendingTerminationException())) {
-        JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Microtask, job, callData, jsUndefined(), ArgList(), returnedException);
-        if (returnedException)
-            reportException(lexicalGlobalObject, returnedException);
-        scope.clearExceptionExceptTermination();
-    }
+    JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Microtask, job, callData, jsUndefined(), ArgList(), returnedException);
+    if (returnedException)
+        reportException(lexicalGlobalObject, returnedException);
 
-    if (UNLIKELY(globalObject->hasDebugger())) {
-        JSC::DeferTerminationForAWhile deferTerminationForAWhile(vm);
-        globalObject->debugger()->didRunMicrotask(globalObject, identifier());
-        scope.clearException();
-    }
+    if (UNLIKELY(globalObject->hasDebugger()))
+        globalObject->debugger()->didRunMicrotask();
 }
 
 } // namespace WebCore

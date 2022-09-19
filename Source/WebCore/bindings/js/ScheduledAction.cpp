@@ -111,8 +111,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
             throwOutOfMemoryError(lexicalGlobalObject, throwScope);
         }
         NakedPtr<JSC::Exception> exception = catchScope.exception();
-        if (UNLIKELY(!catchScope.clearExceptionExceptTermination()))
-            return;
+        catchScope.clearException();
         reportException(lexicalGlobalObject, exception);
         return;
     }
@@ -121,7 +120,7 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
 
     NakedPtr<JSC::Exception> exception;
     JSExecState::profiledCall(lexicalGlobalObject, JSC::ProfilingReason::Other, m_function.get(), callData, thisValue, arguments, exception);
-    catchScope.assertNoExceptionExceptTermination();
+    EXCEPTION_ASSERT(!catchScope.exception());
     
     InspectorInstrumentation::didCallFunction(&context);
 
