@@ -592,7 +592,7 @@ uint64_t Connection::sendWithAsyncReply(T&& message, C&& completionHandler, uint
             T::callReply(*decoder, WTFMove(completionHandler));
         else
             T::cancelReply(WTFMove(completionHandler));
-    }, CompletionHandlerCallThread::MainThread));
+    }));
     encoder.get() << listenerID;
     encoder.get() << message.arguments();
     sendMessage(WTFMove(encoder), sendOptions);
