@@ -1743,8 +1743,6 @@ webkit.org/b/242164 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 
 webkit.org/b/242138 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Crash ImageOnlyFailure ]
 
-webkit.org/b/242212 [ Monterey+ ] media/media-source/media-webm-vorbis-partial.html [ Failure ]
-
 webkit.org/b/227555 http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html [ Pass Failure ]
 
 webkit.org/b/242462 [ Monterey Release ] imported/w3c/web-platform-tests/IndexedDB/string-list-ordering.htm [ Pass Crash ]
