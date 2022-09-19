@@ -33,6 +33,7 @@
 #include "JSObjectInlines.h"
 #include "Microtask.h"
 #include "StrongInlines.h"
+#include "VMTrapsInlines.h"
 
 namespace JSC {
 
