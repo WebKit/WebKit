@@ -103,10 +103,10 @@ struct ValueProfileBase {
     
     CString briefDescription(const ConcurrentJSLocker& locker)
     {
-        computeUpdatedPrediction(locker);
+        SpeculatedType prediction = computeUpdatedPrediction(locker);
         
         StringPrintStream out;
-        out.print("predicting ", SpeculationDump(m_prediction));
+        out.print("predicting ", SpeculationDump(prediction));
         return out.toCString();
     }
     
@@ -129,15 +129,18 @@ struct ValueProfileBase {
     
     SpeculatedType computeUpdatedPrediction(const ConcurrentJSLocker&)
     {
+        SpeculatedType merged = SpecNone;
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
             if (!value)
                 continue;
             
-            mergeSpeculation(m_prediction, speculationFromValue(value));
+            mergeSpeculation(merged, speculationFromValue(value));
             
             m_buckets[i] = JSValue::encode(JSValue());
         }
+
+        mergeSpeculation(m_prediction, merged);
         
         return m_prediction;
     }

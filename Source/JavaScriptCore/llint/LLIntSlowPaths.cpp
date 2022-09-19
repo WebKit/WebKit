@@ -372,7 +372,8 @@ inline bool jitCompileAndSetHeuristics(VM& vm, CodeBlock* codeBlock, BytecodeInd
     DeferGCForAWhile deferGC(vm); // My callers don't set top callframe, so we don't want to GC here at all.
     ASSERT(Options::useJIT());
     
-    codeBlock->updateAllValueProfilePredictions(ConcurrentJSLocker(codeBlock->m_lock));
+    codeBlock->updateAllNonLazyValueProfilePredictions(ConcurrentJSLocker(codeBlock->valueProfileLock()));
+    codeBlock->updateAllLazyValueProfilePredictions(ConcurrentJSLocker(codeBlock->m_lock));
 
     if (codeBlock->jitType() != JITType::BaselineJIT) {
         if (RefPtr<BaselineJITCode> baselineRef = codeBlock->unlinkedCodeBlock()->m_unlinkedBaselineCode) {
