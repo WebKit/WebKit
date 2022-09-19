@@ -32,26 +32,16 @@ namespace WebCore {
 class BorderValue {
 friend class RenderStyle;
 public:
-    BorderValue()
-        : m_style(static_cast<unsigned>(BorderStyle::None))
-        , m_isAuto(static_cast<unsigned>(OutlineIsAuto::Off))
-    {
-    }
+    BorderValue();
 
     bool nonZero() const
     {
         return width() && style() != BorderStyle::None;
     }
 
-    bool isTransparent() const
-    {
-        return m_color.isValid() && !m_color.isVisible();
-    }
+    bool isTransparent() const;
 
-    bool isVisible() const
-    {
-        return nonZero() && !isTransparent() && style() != BorderStyle::Hidden;
-    }
+    bool isVisible() const;
 
     bool operator==(const BorderValue& o) const
     {
