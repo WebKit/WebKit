@@ -3693,12 +3693,15 @@ http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
 webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/appearance-textfield-001.html [ ImageOnlyFailure ]
 webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-textfield-001.html [ ImageOnlyFailure ]
 
-rdar://99992321 ([ iOS ] imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html is an almost constant failue)
+#rdar://99992321 ([ iOS ] imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html is an almost constant failue)
 imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html [ ImageOnlyFailure ]
 
-rdar://99992637 ([ iOS ] 5X imported/w3c/web-platform-tests/css/css-values/angle-units-(Layout tests) are constant failures)
+#rdar://99992637 ([ iOS ] 5X imported/w3c/web-platform-tests/css/css-values/angle-units-(Layout tests) are constant failures)
 imported/w3c/web-platform-tests/css/css-values/angle-units-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/angle-units-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/angle-units-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/angle-units-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-values/angle-units-005.html [ ImageOnlyFailure ]
+
+#rdar://99993194 ([ iOS ] imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-040.html is a constant failure)
+imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-040.html [ ImageOnlyFailure ]
