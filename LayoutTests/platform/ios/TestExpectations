@@ -3722,3 +3722,6 @@ imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-s
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html [ ImageOnlyFailure ]
+
+#rdar://100001717 ([ iOS ] imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.tentative.html is a constant failure)
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.tentative.html [ Skip ]
