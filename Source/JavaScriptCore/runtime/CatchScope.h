@@ -77,8 +77,12 @@ ALWAYS_INLINE void CatchScope::clearException()
 
 ALWAYS_INLINE bool CatchScope::clearExceptionExceptTermination()
 {
-    if (UNLIKELY(m_vm.hasPendingTerminationException()))
+    if (UNLIKELY(m_vm.hasPendingTerminationException())) {
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+        m_vm.exception();
+#endif
         return false;
+    }
     m_vm.clearException();
     return true;
 }
