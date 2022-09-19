@@ -571,8 +571,6 @@ UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm @no-unif
 UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm
 UIProcess/WebAuthentication/Cocoa/CcidConnection.mm
 UIProcess/WebAuthentication/Cocoa/CcidService.mm
-UIProcess/WebAuthentication/Cocoa/HidConnection.mm
-UIProcess/WebAuthentication/Cocoa/HidService.mm
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticationSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/LocalAuthenticator.mm
 UIProcess/WebAuthentication/Cocoa/LocalConnection.mm
