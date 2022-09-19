@@ -61,6 +61,7 @@ GITHUB_URL = 'https://github.com/'
 GITHUB_PROJECTS = ['WebKit/WebKit', 'apple/WebKit', 'WebKit/WebKit-security']
 HASH_LENGTH_TO_DISPLAY = 8
 DEFAULT_BRANCH = 'main'
+DEFAULT_REMOTE = 'origin'
 LAYOUT_TESTS_URL = '{}{}/blob/{}/LayoutTests/'.format(GITHUB_URL, GITHUB_PROJECTS[0], DEFAULT_BRANCH)
 
 
@@ -578,7 +579,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
 
         project = self.getProperty('project')
         if project == GITHUB_PROJECTS[0]:
-            self.setProperty('remote', 'origin')
+            self.setProperty('remote', DEFAULT_REMOTE)
             self.setProperty('sensitive', False)
         elif project in GITHUB_PROJECTS:
             self.setProperty('remote', project.split('-')[-1] if '-' in project else project.split('/')[0])
@@ -705,11 +706,11 @@ class FetchBranches(steps.ShellSequence, ShellMixin):
         super(FetchBranches, self).__init__(timeout=5 * 60, logEnviron=False, **kwargs)
 
     def run(self):
-        self.commands = [util.ShellArg(command=['git', 'fetch', 'origin', '--prune'], logname='stdio')]
+        self.commands = [util.ShellArg(command=['git', 'fetch', DEFAULT_REMOTE, '--prune'], logname='stdio')]
 
         project = self.getProperty('project', GITHUB_PROJECTS[0])
-        remote = self.getProperty('remote', 'origin')
-        if remote != 'origin':
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
+        if remote != DEFAULT_REMOTE:
             for command in [
                 ['git', 'config', 'credential.helper', '!echo_credentials() { sleep 1; echo "username=${GIT_USER}"; echo "password=${GIT_PASSWORD}"; }; echo_credentials'],
                 self.shell_command('git remote add {} {}{}.git || {}'.format(remote, GITHUB_URL, project, self.shell_exit_0())),
@@ -832,7 +833,7 @@ class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
 
     @defer.inlineCallbacks
     def run(self):
-        remote = self.getProperty('remote', 'origin')
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
         base = self.getProperty('github.base.ref', DEFAULT_BRANCH)
 
         commands = [
@@ -842,7 +843,7 @@ class UpdateWorkingDirectory(steps.ShellSequence, ShellMixin):
         ]
         if base != DEFAULT_BRANCH:
             commands.append(self.shell_command('git branch -D {} || {}'.format(DEFAULT_BRANCH, self.shell_exit_0())))
-            commands.append(['git', 'branch', '--track', DEFAULT_BRANCH, 'remotes/origin/{}'.format(DEFAULT_BRANCH)])
+            commands.append(['git', 'branch', '--track', DEFAULT_BRANCH, f'remotes/{DEFAULT_REMOTE}/{DEFAULT_BRANCH}'])
 
         self.commands = []
         for command in commands:
@@ -988,7 +989,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
     def run(self):
         self.commands = []
 
-        remote = self.getProperty('github.head.repo.full_name', 'origin').split('/')[0]
+        remote = self.getProperty('github.head.repo.full_name', DEFAULT_REMOTE).split('/')[0]
         project = self.getProperty('github.head.repo.full_name', self.getProperty('project'))
         pr_branch = self.getProperty('github.head.ref', DEFAULT_BRANCH)
         rebase_target_hash = self.getProperty('ews_revision') or self.getProperty('got_revision')
@@ -4473,7 +4474,7 @@ class CleanGitRepo(steps.ShellSequence, ShellMixin):
     flunkOnFailure = False
     logEnviron = False
 
-    def __init__(self, default_branch=DEFAULT_BRANCH, remote='origin', **kwargs):
+    def __init__(self, default_branch=DEFAULT_BRANCH, remote=DEFAULT_REMOTE, **kwargs):
         super(CleanGitRepo, self).__init__(timeout=5 * 60, **kwargs)
         self.default_branch = default_branch
         self.git_remote = remote
@@ -4759,13 +4760,13 @@ class ValidateRemote(shell.ShellCommand):
         super(ValidateRemote, self).__init__(logEnviron=False, **kwargs)
 
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
-        remote = self.getProperty('remote', 'origin')
+        base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
+        remote = self.getProperty('remote', DEFAULT_REMOTE)
 
         self.command = [
             'git', 'merge-base', '--is-ancestor',
             f'remotes/{remote}/{base_ref}',
-            f'remotes/origin/{base_ref}',
+            f'remotes/{DEFAULT_REMOTE}/{base_ref}',
         ]
 
         return super(ValidateRemote, self).start()
@@ -4776,7 +4777,7 @@ class ValidateRemote(shell.ShellCommand):
         return super(ValidateRemote, self).getResultSummary()
 
     def evaluateCommand(self, cmd):
-        base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
+        base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         rc = super(ValidateRemote, self).evaluateCommand(cmd)
 
         if rc == SUCCESS:
@@ -4802,7 +4803,7 @@ class ValidateRemote(shell.ShellCommand):
         remote = self.getProperty('remote', None)
         if not remote:
             return False
-        return remote != 'origin'
+        return remote != DEFAULT_REMOTE
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -4818,7 +4819,7 @@ class ValidateSquashed(shell.ShellCommand):
         super(ValidateSquashed, self).__init__(logEnviron=False, **kwargs)
 
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
+        base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
         self.command = ['git', 'log', '--oneline', head_ref, f'^{base_ref}', '--max-count=2']
 
@@ -4910,7 +4911,7 @@ class AddReviewerToCommitMessage(shell.ShellCommand, AddReviewerMixin):
         super(AddReviewerToCommitMessage, self).__init__(logEnviron=False, timeout=60, **kwargs)
 
     def start(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
+        base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
 
         gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
@@ -4994,7 +4995,7 @@ class ValidateCommitMessage(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
     @defer.inlineCallbacks
     def run(self, BufferLogObserverClass=logobserver.BufferLogObserver):
-        base_ref = self.getProperty('github.base.ref', f'origin/{DEFAULT_BRANCH}')
+        base_ref = self.getProperty('github.base.ref', f'{DEFAULT_REMOTE}/{DEFAULT_BRANCH}')
         head_ref = self.getProperty('github.head.ref', 'HEAD')
         reviewers = self.getProperty('reviewers_full_names', None)
         reviewer_error_msg = '' if reviewers else ' and no reviewer found'
@@ -5098,8 +5099,6 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
             commands += [['git', 'checkout', base_ref]]
         commands.append(['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1' if self.rebase_enabled else '3'])
 
-        
-
         if self.getProperty('github.number', ''):
             committer = (self.getProperty('owners', []) or [''])[0]
         else:
@@ -5119,9 +5118,6 @@ class Canonicalize(steps.ShellSequence, ShellMixin, AddToLogMixin):
 
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
-
-        
-
         return super(Canonicalize, self).run()
 
     def getResultSummary(self):
