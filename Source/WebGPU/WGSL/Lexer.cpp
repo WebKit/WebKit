@@ -236,6 +236,8 @@ Token Lexer<T>::lex()
                 return makeToken(TokenType::KeywordWorkgroup);
             if (view == "write"_s)
                 return makeToken(TokenType::KeywordWrite);
+            if (view == "array"_s)
+                return makeToken(TokenType::KeywordArray);
             if (view == "asm"_s || view == "bf16"_s || view == "const"_s || view == "do"_s || view == "enum"_s
                 || view == "f16"_s || view == "f64"_s || view == "handle"_s || view == "i8"_s || view == "i16"_s
                 || view == "i64"_s || view == "mat"_s || view == "premerge"_s || view == "regardless"_s

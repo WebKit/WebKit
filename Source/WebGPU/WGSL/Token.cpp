@@ -49,6 +49,8 @@ String toString(TokenType type)
         return "Identifier"_s;
     case TokenType::ReservedWord:
         return "ReservedWord"_s;
+    case TokenType::KeywordArray:
+        return "array"_s;
     case TokenType::KeywordStruct:
         return "struct"_s;
     case TokenType::KeywordFn:
