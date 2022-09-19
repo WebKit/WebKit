@@ -530,6 +530,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlayback.idl \
     $(WebCore)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl \
+    $(WebCore)/Modules/reporting/DeprecationReportBody.idl \
     $(WebCore)/Modules/reporting/Report.idl \
     $(WebCore)/Modules/reporting/ReportBody.idl \
     $(WebCore)/Modules/reporting/ReportingObserver.idl \

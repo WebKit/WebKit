@@ -162,6 +162,7 @@
     "web-platform-tests/css/web-animations": "import", 
     "web-platform-tests/custom-elements": "import", 
     "web-platform-tests/custom-elements/v0": "skip", 
+    "web-platform-tests/deprecation-reporting": "import", 
     "web-platform-tests/docs": "import", 
     "web-platform-tests/dom": "import", 
     "web-platform-tests/dom/events": "import", 

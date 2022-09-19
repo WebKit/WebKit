@@ -32,6 +32,7 @@ enum class ViolationReportType : uint8_t {
     CORPViolation, // https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
     ContentSecurityPolicy,
     CrossOriginOpenerPolicy,
+    Deprecation, // https://wicg.github.io/deprecation-reporting/
     StandardReportingAPIViolation, // https://www.w3.org/TR/reporting/#try-delivery
     Test, // https://www.w3.org/TR/reporting-1/#generate-test-report-command
     // More to come
@@ -48,6 +49,7 @@ template<> struct EnumTraits<WebCore::ViolationReportType> {
     WebCore::ViolationReportType::CORPViolation,
     WebCore::ViolationReportType::ContentSecurityPolicy,
     WebCore::ViolationReportType::CrossOriginOpenerPolicy,
+    WebCore::ViolationReportType::Deprecation,
     WebCore::ViolationReportType::StandardReportingAPIViolation,
     WebCore::ViolationReportType::Test
     >;

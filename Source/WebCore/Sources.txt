@@ -279,6 +279,7 @@ Modules/push-api/PushSubscriptionOptions.cpp
 Modules/push-api/PushManager.cpp
 Modules/push-api/ServiceWorkerRegistrationPushAPI.cpp
 Modules/remoteplayback/RemotePlayback.cpp
+Modules/reporting/DeprecationReportBody.cpp
 Modules/reporting/Report.cpp
 Modules/reporting/ReportBody.cpp
 Modules/reporting/ReportingObserver.cpp
@@ -3163,6 +3164,7 @@ JSDeprecatedCSSOMRGBColor.cpp
 JSDeprecatedCSSOMRect.cpp
 JSDeprecatedCSSOMValue.cpp
 JSDeprecatedCSSOMValueList.cpp
+JSDeprecationReportBody.cpp
 JSDeviceMotionEvent.cpp
 JSDeviceOrientationEvent.cpp
 JSDeviceOrientationOrMotionPermissionState.cpp

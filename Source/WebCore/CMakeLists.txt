@@ -552,6 +552,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/remoteplayback/RemotePlayback.idl
     Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
 
+    Modules/reporting/DeprecationReportBody.idl
     Modules/reporting/Report.idl
     Modules/reporting/ReportBody.idl
     Modules/reporting/ReportingObserver.idl

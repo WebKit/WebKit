@@ -46,6 +46,7 @@ static bool isVisibleToReportingObservers(const AtomString& type)
     static NeverDestroyed<Vector<AtomString>> visibleTypes(std::initializer_list<AtomString> {
         AtomString { "csp-violation"_s },
         AtomString { "coep"_s },
+        AtomString { "deprecation"_s },
         AtomString { "test"_s },
     });
     return visibleTypes->contains(type);
