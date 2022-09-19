@@ -64,6 +64,7 @@ class _Result(_Message):
 
     def __call__(self, caller):
         if caller:
+            caller.pending_count -= 1
             caller.callbacks.pop(self.id, lambda value: value)(self.value)
         return self.value
 
@@ -360,6 +361,7 @@ class TaskPool(object):
 
         self.callbacks = {}
         self._id_count = 0
+        self.pending_count = 0
         self.grace_period = grace_period
         self.block_size = block_size
         self.force_fork = force_fork
@@ -407,12 +409,13 @@ class TaskPool(object):
 
         if callback:
             self.callbacks[self._id_count] = callback
+        self.pending_count += 1
         self.queue.send(self.Task(function, self._id_count, *args, **kwargs))
         self._id_count += 1
 
         # For every block of tasks passed to our workers, we need consume messages so we don't get deadlocked
         if not self._id_count % self.block_size:
-            while True:
+            while self.pending_count > 2 * self._num_workers:
                 try:
                     self.queue.receive(blocking=False)(self)
                 except Queue.Empty:
