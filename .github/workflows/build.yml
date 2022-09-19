@@ -91,7 +91,7 @@ jobs:
           mkdir -p $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore
           cp -r $THIS_DIR/Source/JavaScriptCore/Scripts $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore
           cp $THIS_DIR/Source/JavaScriptCore/create_hash_table $RUNNER_TEMP/bun-webkit/Source/JavaScriptCore
-          echo '{ "name": "${{matrix.label}}", "version": "0.0.1-${{github.sha}}", "os": "darwin", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > $RUNNER_TEMP/bun-webkit/package.json
+          echo '{ "name": "${{matrix.label}}", "version": "0.0.1-${{github.sha}}", "os": ["darwin"], "cpu": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > $RUNNER_TEMP/bun-webkit/package.json
           cd $RUNNER_TEMP
           tar -czf bun-webkit.tar.gz bun-webkit
       - uses: actions/upload-artifact@v3
@@ -135,7 +135,7 @@ jobs:
           CPU="native" cpu=native LTO_FLAG=${{matrix.lto_flag}} temp=${{runner.temp}} bash release.sh
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
-          echo '{ "name": "${{matrix.label}}", "version": "0.0.1-${{github.sha}}", "os": "linux", "arch": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > bun-webkit/package.json
+          echo '{ "name": "${{matrix.label}}", "version": "0.0.1-${{github.sha}}", "os": ["linux"], "cpu": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > bun-webkit/package.json
           rm -rf bun-webkit/lib/*.so
           rm -rf bun-webkit/lib/*.so.*
           tar -czf bun-webkit.tar.gz bun-webkit
