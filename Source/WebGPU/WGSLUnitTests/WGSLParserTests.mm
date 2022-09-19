@@ -40,6 +40,32 @@
 #import <XCTest/XCTest.h>
 #import <wtf/DataLog.h>
 
+#define ASSERT_BUILTIN(attr, attr_name) \
+    do { \
+        XCTAssert((attr)->isBuiltin()); \
+        XCTAssert(downcast<WGSL::AST::BuiltinAttribute>((attr).get()).name() == (attr_name)); \
+    } while (false)
+
+#define ASSERT_INT_LITERAL(node, int_value) \
+    do { \
+        XCTAssertTrue((node).isAbstractIntLiteral()); \
+        WGSL::AST::AbstractIntLiteral& intLiteral = downcast<WGSL::AST::AbstractIntLiteral>(node); \
+        XCTAssertEqual(intLiteral.value(), (int_value)); \
+    } while (false)
+
+#define ASSERT_VEC_T(type, vec_type, param_type) \
+    do { \
+        XCTAssert((type).isParameterized()); \
+        WGSL::AST::ParameterizedType& paramType = downcast<WGSL::AST::ParameterizedType>((type)); \
+        XCTAssert(paramType.base() == WGSL::AST::ParameterizedType::Base::vec_type); \
+        XCTAssert(paramType.elementType().isNamed()); \
+        XCTAssert(downcast<WGSL::AST::NamedType>(paramType.elementType()).name() == (param_type)); \
+    } while (false)
+
+
+#define ASSERT_VEC2_F32(type) ASSERT_VEC_T(type, Vec2, "f32"_s)
+#define ASSERT_VEC4_F32(type) ASSERT_VEC_T(type, Vec4, "f32"_s)
+
 @interface WGSLParserTests : XCTestCase
 
 @end
@@ -348,6 +374,102 @@
         WGSL::AST::IdentifierExpression& negateExpr = downcast<WGSL::AST::IdentifierExpression>(retExpr.expression());
         XCTAssertEqual(negateExpr.identifier(), "x"_s);
     }
+}
+
+#pragma mark -
+#pragma mark WebGPU Example Shaders
+
+- (void) testParsingTriangleVert {
+    auto shader = WGSL::parseLChar(
+        "@vertex\n"
+        "fn main(\n"
+        "    @builtin(vertex_index) VertexIndex : u32\n"
+        ") -> @builtin(position) vec4<f32> {\n"
+        "    var pos = array<vec2<f32>, 3>(\n"
+        "        vec2<f32>(0.0, 0.5),\n"
+        "        vec2<f32>(-0.5, -0.5),\n"
+        "        vec2<f32>(0.5, -0.5)\n"
+        "    );\n\n"
+        "    return vec4<f32>(pos[VertexIndex], 0.0, 1.0);\n"
+        "}\n"_s);
+
+    if (!shader.has_value()) {
+        auto& error = shader.error();
+        XCTFail(@"%u:%u length:%u: %s\n", error.lineNumber(), error.lineOffset(), error.length(), error.message().characters8());
+    }
+    XCTAssertTrue(shader.has_value());
+    XCTAssertTrue(shader->directives().isEmpty());
+    XCTAssertTrue(shader->structs().isEmpty());
+    XCTAssertTrue(shader->globalVars().isEmpty());
+    XCTAssertEqual(shader->functions().size(), 1u);
+
+    // fn main(...)
+    {
+        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        // @vertex
+        XCTAssertEqual(func.attributes().size(), 1u);
+
+        // fn main(@builtin(vertex_index) VertexIndex : u32) -> @builtin(position) vec4<f32> {
+        XCTAssertEqual(func.name(), "main"_s);
+        XCTAssertEqual(func.parameters().size(), 1u);
+        XCTAssertEqual(func.returnAttributes().size(), 1u);
+        XCTAssert(func.maybeReturnType());
+        ASSERT_VEC4_F32(*func.maybeReturnType());
+        XCTAssertEqual(func.returnAttributes().size(), 1u);
+        ASSERT_BUILTIN(func.returnAttributes()[0], "position"_s);
+    }
+
+    // var pos = array<vec2<f32>, 3>(...);
+    {
+        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        XCTAssertTrue(func.body().statements().size() >= 1u);
+        WGSL::AST::Statement& stmt = func.body().statements()[0].get();
+        XCTAssertTrue(stmt.isVariable());
+        WGSL::AST::VariableStatement& varStmt = downcast<WGSL::AST::VariableStatement>(func.body().statements()[0].get());
+        WGSL::AST::VariableDecl& varDecl = downcast<WGSL::AST::VariableDecl>(varStmt.declaration());
+        XCTAssertEqual(varDecl.name(), "pos"_s);
+        XCTAssertEqual(varDecl.attributes().size(), 0u);
+        XCTAssertEqual(varDecl.maybeQualifier(), nullptr);
+        XCTAssertEqual(varDecl.maybeTypeDecl(), nullptr);
+        XCTAssert(varDecl.maybeInitializer());
+        WGSL::AST::CallableExpression& varInitExpr = downcast<WGSL::AST::CallableExpression>(*varDecl.maybeInitializer());
+        XCTAssert(varInitExpr.target().isArray());
+        const WGSL::AST::ArrayType& varInitArrayType = downcast<const WGSL::AST::ArrayType>(varInitExpr.target());
+        XCTAssertTrue(varInitArrayType.maybeElementType());
+        ASSERT_VEC2_F32(*varInitArrayType.maybeElementType());
+        XCTAssertTrue(varInitArrayType.maybeElementCount());
+        XCTAssertTrue(varInitArrayType.maybeElementCount()->isAbstractIntLiteral());
+        ASSERT_INT_LITERAL(*varInitArrayType.maybeElementCount(), 3);
+    }
+
+    // return vec4<f32>(..);
+    {
+        WGSL::AST::FunctionDecl& func = shader->functions()[0];
+        XCTAssertTrue(func.body().statements().size() >= 1u);
+        WGSL::AST::Statement& stmt = func.body().statements()[1].get();
+        XCTAssertTrue(stmt.isReturn());
+        WGSL::AST::ReturnStatement& retStmt = downcast<WGSL::AST::ReturnStatement>(stmt);
+        XCTAssertTrue(retStmt.maybeExpression());
+        XCTAssertTrue(retStmt.maybeExpression()->isCallableExpression());
+        WGSL::AST::CallableExpression& expr = downcast<WGSL::AST::CallableExpression>(*retStmt.maybeExpression());
+        XCTAssert(expr.target().isParameterized());
+    }
+}
+
+- (void) testParsingRedFrag {
+    auto shader = WGSL::parseLChar(
+        "@fragment\n"
+        "fn main() -> @location(0) vec4<f32> {\n"
+        "    return vec4<f32>(1.0, 0.0, 0.0, 1.0);\n"
+        "}\n"_s);
+
+    if (!shader.has_value())
+        dataLogLn(shader.error());
+    XCTAssert(shader.has_value());
+    XCTAssert(!shader->directives().size());
+    XCTAssert(shader->structs().isEmpty());
+    XCTAssert(shader->globalVars().isEmpty());
+    XCTAssertEqual(shader->functions().size(), 1u);
 }
 
 @end

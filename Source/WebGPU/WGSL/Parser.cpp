@@ -293,6 +293,8 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDecl()
 {
     START_PARSE();
 
+    if (current().m_type == TokenType::KeywordArray)
+        return parseArrayType();
     if (current().m_type == TokenType::KeywordI32) {
         consume();
         RETURN_NODE_REF(NamedType, StringView { "i32"_s });
@@ -329,8 +331,40 @@ Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseTypeDeclAfterIdent
     RETURN_NODE_REF(NamedType, WTFMove(name));
 }
 
-// VariableDecl:
-//      'var' VariableQualifier? Ident (':' TypeDecl)? ('=' Expression)?
+template<typename Lexer>
+Expected<UniqueRef<AST::TypeDecl>, Error> Parser<Lexer>::parseArrayType()
+{
+    START_PARSE();
+
+    CONSUME_TYPE(KeywordArray);
+
+    std::unique_ptr<AST::TypeDecl> maybeElementType;
+    std::unique_ptr<AST::Expression> maybeElementCount;
+
+    if (current().m_type == TokenType::LT) {
+        // We differ from the WGSL grammar here by allowing the type to be optional,
+        // which allows us to use `parseArrayType` in `parseCallableExpression`.
+        consume();
+
+        PARSE(elementType, TypeDecl);
+        maybeElementType = elementType.moveToUniquePtr();
+
+        if (current().m_type == TokenType::Comma) {
+            consume();
+            // FIXME: According to https://www.w3.org/TR/WGSL/#syntax-element_count_expression
+            // this should be: AdditiveExpression | BitwiseExpression.
+            //
+            // The WGSL grammar doesn't specify expression operator precedence so
+            // until then just parse AdditiveExpression.
+            PARSE(elementCount, AdditiveExpression);
+            maybeElementCount = elementCount.moveToUniquePtr();
+        }
+        CONSUME_TYPE(GT);
+    }
+
+    RETURN_NODE_REF(ArrayType, WTFMove(maybeElementType), WTFMove(maybeElementCount));
+}
+
 template<typename Lexer>
 Expected<AST::VariableDecl, Error> Parser<Lexer>::parseVariableDecl()
 {
@@ -675,6 +709,11 @@ Expected<UniqueRef<AST::Expression>, Error> Parser<Lexer>::parsePrimaryExpressio
             RETURN_NODE_REF(CallableExpression, WTFMove(type), WTFMove(arguments));
         }
         RETURN_NODE_REF(IdentifierExpression, ident.m_ident);
+    }
+    case TokenType::KeywordArray: {
+        PARSE(arrayType, ArrayType);
+        PARSE(arguments, ArgumentExpressionList);
+        RETURN_NODE_REF(CallableExpression, WTFMove(arrayType), WTFMove(arguments));
     }
 
     // const_literal
