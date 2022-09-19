@@ -72,7 +72,7 @@ class CallStatsCollector {
 };
 class AudioReceiveStatsCollector {
  public:
-  void AddStats(AudioReceiveStream::Stats sample);
+  void AddStats(AudioReceiveStreamInterface::Stats sample);
   CollectedAudioReceiveStats& stats() { return stats_; }
 
  private:
@@ -90,7 +90,7 @@ class VideoSendStatsCollector {
 };
 class VideoReceiveStatsCollector {
  public:
-  void AddStats(VideoReceiveStream::Stats sample);
+  void AddStats(VideoReceiveStreamInterface::Stats sample);
   CollectedVideoReceiveStats& stats() { return stats_; }
 
  private:

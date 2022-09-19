@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/gmock.h"
 #include "test/gtest.h"

@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
@@ -25,6 +26,7 @@
 #include "rtc_base/event.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "test/call_test.h"
+#include "test/testsupport/perf_test.h"
 
 namespace webrtc {
 
@@ -42,7 +44,7 @@ class RampUpTester : public test::EndToEndTest {
                size_t num_flexfec_streams,
                unsigned int start_bitrate_bps,
                int64_t min_run_time_ms,
-               const std::string& extension_type,
+               absl::string_view extension_type,
                bool rtx,
                bool red,
                bool report_perf_stats,
@@ -64,9 +66,10 @@ class RampUpTester : public test::EndToEndTest {
                        size_t* padding_sent,
                        size_t* media_sent) const;
 
-  void ReportResult(const std::string& measurement,
+  void ReportResult(absl::string_view measurement,
                     size_t value,
-                    const std::string& units) const;
+                    absl::string_view units,
+                    test::ImproveDirection improve_direction) const;
   void TriggerTestDone();
 
   Clock* const clock_;
@@ -87,19 +90,19 @@ class RampUpTester : public test::EndToEndTest {
   class VideoStreamFactory;
 
   void ModifySenderBitrateConfig(BitrateConstraints* bitrate_config) override;
-  void OnVideoStreamsCreated(
-      VideoSendStream* send_stream,
-      const std::vector<VideoReceiveStream*>& receive_streams) override;
+  void OnVideoStreamsCreated(VideoSendStream* send_stream,
+                             const std::vector<VideoReceiveStreamInterface*>&
+                                 receive_streams) override;
   std::unique_ptr<test::PacketTransport> CreateSendTransport(
       TaskQueueBase* task_queue,
       Call* sender_call) override;
   void ModifyVideoConfigs(
       VideoSendStream::Config* send_config,
-      std::vector<VideoReceiveStream::Config>* receive_configs,
+      std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
       VideoEncoderConfig* encoder_config) override;
-  void ModifyAudioConfigs(
-      AudioSendStream::Config* send_config,
-      std::vector<AudioReceiveStream::Config>* receive_configs) override;
+  void ModifyAudioConfigs(AudioSendStream::Config* send_config,
+                          std::vector<AudioReceiveStreamInterface::Config>*
+                              receive_configs) override;
   void ModifyFlexfecConfigs(
       std::vector<FlexfecReceiveStream::Config>* receive_configs) override;
   void OnCallsCreated(Call* sender_call, Call* receiver_call) override;
@@ -126,7 +129,7 @@ class RampUpDownUpTester : public RampUpTester {
                      size_t num_audio_streams,
                      size_t num_flexfec_streams,
                      unsigned int start_bitrate_bps,
-                     const std::string& extension_type,
+                     absl::string_view extension_type,
                      bool rtx,
                      bool red,
                      const std::vector<int>& loss_rates,

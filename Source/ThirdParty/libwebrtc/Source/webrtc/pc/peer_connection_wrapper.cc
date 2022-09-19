@@ -12,8 +12,6 @@
 
 #include <stdint.h>
 
-#include <memory>
-#include <string>
 #include <utility>
 #include <vector>
 
@@ -24,7 +22,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ref_counted_object.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -137,7 +134,7 @@ std::unique_ptr<SessionDescriptionInterface> PeerConnectionWrapper::CreateSdp(
     rtc::FunctionView<void(CreateSessionDescriptionObserver*)> fn,
     std::string* error_out) {
   auto observer = rtc::make_ref_counted<MockCreateSessionDescriptionObserver>();
-  fn(observer);
+  fn(observer.get());
   EXPECT_EQ_WAIT(true, observer->called(), kDefaultTimeout);
   if (error_out && !observer->result()) {
     *error_out = observer->error();
@@ -168,8 +165,7 @@ bool PeerConnectionWrapper::SetRemoteDescription(
 bool PeerConnectionWrapper::SetRemoteDescription(
     std::unique_ptr<SessionDescriptionInterface> desc,
     RTCError* error_out) {
-  rtc::scoped_refptr<FakeSetRemoteDescriptionObserver> observer =
-      new FakeSetRemoteDescriptionObserver();
+  auto observer = rtc::make_ref_counted<FakeSetRemoteDescriptionObserver>();
   pc()->SetRemoteDescription(std::move(desc), observer);
   EXPECT_EQ_WAIT(true, observer->called(), kDefaultTimeout);
   bool ok = observer->error().ok();
@@ -182,7 +178,7 @@ bool PeerConnectionWrapper::SetSdp(
     rtc::FunctionView<void(SetSessionDescriptionObserver*)> fn,
     std::string* error_out) {
   auto observer = rtc::make_ref_counted<MockSetSessionDescriptionObserver>();
-  fn(observer);
+  fn(observer.get());
   EXPECT_EQ_WAIT(true, observer->called(), kDefaultTimeout);
   if (error_out && !observer->result()) {
     *error_out = observer->error();
@@ -280,7 +276,8 @@ rtc::scoped_refptr<AudioTrackInterface> PeerConnectionWrapper::CreateAudioTrack(
 
 rtc::scoped_refptr<VideoTrackInterface> PeerConnectionWrapper::CreateVideoTrack(
     const std::string& label) {
-  return pc_factory()->CreateVideoTrack(label, FakeVideoTrackSource::Create());
+  return pc_factory()->CreateVideoTrack(label,
+                                        FakeVideoTrackSource::Create().get());
 }
 
 rtc::scoped_refptr<RtpSenderInterface> PeerConnectionWrapper::AddTrack(
@@ -332,7 +329,7 @@ bool PeerConnectionWrapper::IsIceConnected() {
 rtc::scoped_refptr<const webrtc::RTCStatsReport>
 PeerConnectionWrapper::GetStats() {
   auto callback = rtc::make_ref_counted<MockRTCStatsCollectorCallback>();
-  pc()->GetStats(callback);
+  pc()->GetStats(callback.get());
   EXPECT_TRUE_WAIT(callback->called(), kDefaultTimeout);
   return callback->report();
 }

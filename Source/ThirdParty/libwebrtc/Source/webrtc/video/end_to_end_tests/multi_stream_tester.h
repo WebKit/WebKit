@@ -50,8 +50,9 @@ class MultiStreamTester {
                                 VideoSendStream::Config* send_config,
                                 VideoEncoderConfig* encoder_config,
                                 test::FrameGeneratorCapturer** frame_generator);
-  virtual void UpdateReceiveConfig(size_t stream_index,
-                                   VideoReceiveStream::Config* receive_config);
+  virtual void UpdateReceiveConfig(
+      size_t stream_index,
+      VideoReceiveStreamInterface::Config* receive_config);
   virtual std::unique_ptr<test::DirectTransport> CreateSendTransport(
       TaskQueueBase* task_queue,
       Call* sender_call);

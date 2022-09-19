@@ -21,9 +21,11 @@ rtc_library("audio_encoder_g711") {
   ]
   deps = [
     "..:audio_codecs_api",
+    "../../../api:field_trials_view",
     "../../../modules/audio_coding:g711",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_conversions",
     "../../../rtc_base:safe_minmax",
+    "../../../rtc_base:stringutils",
     "../../../rtc_base/system:rtc_export",
   ]
   absl_deps = [
@@ -41,8 +43,9 @@ rtc_library("audio_decoder_g711") {
   ]
   deps = [
     "..:audio_codecs_api",
+    "../../../api:field_trials_view",
     "../../../modules/audio_coding:g711",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:safe_conversions",
     "../../../rtc_base/system:rtc_export",
   ]
   absl_deps = [

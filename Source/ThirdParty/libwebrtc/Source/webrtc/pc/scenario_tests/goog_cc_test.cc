@@ -75,7 +75,7 @@ TEST(GoogCcPeerScenarioTest, MAYBE_NoBweChangeFromVideoUnmute) {
   auto get_bwe = [&] {
     auto callback =
         rtc::make_ref_counted<webrtc::MockRTCStatsCollectorCallback>();
-    caller->pc()->GetStats(callback);
+    caller->pc()->GetStats(callback.get());
     s.net()->time_controller()->Wait([&] { return callback->called(); });
     auto stats =
         callback->report()->GetStatsOfType<RTCIceCandidatePairStats>()[0];
@@ -93,13 +93,16 @@ TEST(GoogCcPeerScenarioTest, MAYBE_NoBweChangeFromVideoUnmute) {
 
   // Resume video but stop audio. Bandwidth should not drop.
   video.capturer->Start();
-  RTCError status = caller->pc()->RemoveTrackNew(audio.sender);
+  RTCError status = caller->pc()->RemoveTrackOrError(audio.sender);
   ASSERT_TRUE(status.ok());
   audio.track->set_enabled(false);
   for (int i = 0; i < 10; i++) {
     s.ProcessMessages(TimeDelta::Seconds(1));
     EXPECT_GE(get_bwe(), initial_bwe);
   }
+
+  caller->pc()->Close();
+  callee->pc()->Close();
 }
 
 }  // namespace test

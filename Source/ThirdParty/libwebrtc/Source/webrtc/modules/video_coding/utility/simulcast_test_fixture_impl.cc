@@ -143,7 +143,7 @@ class SimulcastTestFixtureImpl::TestDecodedImageCallback
     return 0;
   }
   int32_t Decoded(VideoFrame& decoded_image, int64_t decode_time_ms) override {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return -1;
   }
   void Decoded(VideoFrame& decoded_image,
@@ -188,7 +188,7 @@ void ConfigureStream(int width,
                      int min_bitrate,
                      int target_bitrate,
                      float max_framerate,
-                     SpatialLayer* stream,
+                     SimulcastStream* stream,
                      int num_temporal_layers) {
   RTC_DCHECK(stream);
   stream->width = width;
@@ -242,13 +242,12 @@ void SimulcastTestFixtureImpl::DefaultSettings(
                   kMinBitrates[2], kTargetBitrates[2], kMaxFramerates[2],
                   &settings->simulcastStream[layer_order[2]],
                   temporal_layer_profile[2]);
+  settings->SetFrameDropEnabled(true);
   if (codec_type == kVideoCodecVP8) {
     settings->VP8()->denoisingOn = true;
     settings->VP8()->automaticResizeOn = false;
-    settings->VP8()->frameDroppingOn = true;
     settings->VP8()->keyFrameInterval = 3000;
   } else {
-    settings->H264()->frameDroppingOn = true;
     settings->H264()->keyFrameInterval = 3000;
   }
 }

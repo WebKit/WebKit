@@ -29,8 +29,8 @@ EncodedImage VideoFrameTrackingIdInjector::InjectData(
 
 EncodedImageExtractionResult VideoFrameTrackingIdInjector::ExtractData(
     const EncodedImage& source) {
-  return EncodedImageExtractionResult{source.VideoFrameTrackingId().value_or(0),
-                                      source, /*discard=*/false};
+  return EncodedImageExtractionResult{source.VideoFrameTrackingId(), source,
+                                      /*discard=*/false};
 }
 
 }  // namespace webrtc_pc_e2e

@@ -11,10 +11,10 @@
 #ifndef RTC_BASE_ASYNC_INVOKER_INL_H_
 #define RTC_BASE_ASYNC_INVOKER_INL_H_
 
+#include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/event.h"
 #include "rtc_base/message_handler.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
@@ -23,7 +23,7 @@ namespace rtc {
 
 class DEPRECATED_AsyncInvoker;
 
-// Helper class for AsyncInvoker. Runs a task and triggers a callback
+// Helper class for DEPRECATED_AsyncInvoker. Runs a task and triggers a callback
 // on the calling thread if necessary.
 class AsyncClosure {
  public:
@@ -39,7 +39,7 @@ class AsyncClosure {
   // an AsyncClosure's destructor that's about to call
   // "invocation_complete_->Set()", it's not dereferenced after being
   // destroyed.
-  rtc::Ref<Event>::Ptr invocation_complete_;
+  rtc::scoped_refptr<FinalRefCountedObject<Event>> invocation_complete_;
 };
 
 // Simple closure that doesn't trigger a callback for the calling thread.

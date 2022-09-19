@@ -13,14 +13,18 @@
 
 #include <stdio.h>
 
+#include <atomic>
 #include <list>
 #include <memory>
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "api/function_view.h"
 #include "modules/audio_processing/aec3/echo_canceller3.h"
 #include "modules/audio_processing/agc/agc_manager_direct.h"
+#include "modules/audio_processing/agc/analog_gain_stats_reporter.h"
 #include "modules/audio_processing/agc/gain_control.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/capture_levels_adjuster/capture_levels_adjuster.h"
@@ -32,14 +36,11 @@
 #include "modules/audio_processing/include/audio_frame_proxies.h"
 #include "modules/audio_processing/include/audio_processing.h"
 #include "modules/audio_processing/include/audio_processing_statistics.h"
-#include "modules/audio_processing/level_estimator.h"
 #include "modules/audio_processing/ns/noise_suppressor.h"
 #include "modules/audio_processing/optionally_built_submodule_creators.h"
 #include "modules/audio_processing/render_queue_item_verifier.h"
-#include "modules/audio_processing/residual_echo_detector.h"
 #include "modules/audio_processing/rms_level.h"
 #include "modules/audio_processing/transient/transient_suppressor.h"
-#include "modules/audio_processing/voice_detection.h"
 #include "rtc_base/gtest_prod_util.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/swap_queue.h"
@@ -51,28 +52,26 @@ namespace webrtc {
 class ApmDataDumper;
 class AudioConverter;
 
+constexpr int RuntimeSettingQueueSize() {
+  return 100;
+}
+
 class AudioProcessingImpl : public AudioProcessing {
  public:
   // Methods forcing APM to run in a single-threaded manner.
   // Acquires both the render and capture locks.
   AudioProcessingImpl();
-  // AudioProcessingImpl takes ownership of capture post processor.
-  AudioProcessingImpl(std::unique_ptr<CustomProcessing> capture_post_processor,
+  AudioProcessingImpl(const AudioProcessing::Config& config,
+                      std::unique_ptr<CustomProcessing> capture_post_processor,
                       std::unique_ptr<CustomProcessing> render_pre_processor,
                       std::unique_ptr<EchoControlFactory> echo_control_factory,
                       rtc::scoped_refptr<EchoDetector> echo_detector,
                       std::unique_ptr<CustomAudioAnalyzer> capture_analyzer);
   ~AudioProcessingImpl() override;
   int Initialize() override;
-  int Initialize(int capture_input_sample_rate_hz,
-                 int capture_output_sample_rate_hz,
-                 int render_sample_rate_hz,
-                 ChannelLayout capture_input_layout,
-                 ChannelLayout capture_output_layout,
-                 ChannelLayout render_input_layout) override;
   int Initialize(const ProcessingConfig& processing_config) override;
   void ApplyConfig(const AudioProcessing::Config& config) override;
-  bool CreateAndAttachAecDump(const std::string& file_name,
+  bool CreateAndAttachAecDump(absl::string_view file_name,
                               int64_t max_log_size_bytes,
                               rtc::TaskQueue* worker_queue) override;
   bool CreateAndAttachAecDump(FILE* handle,
@@ -182,11 +181,13 @@ class AudioProcessingImpl : public AudioProcessing {
     SwapQueue<RuntimeSetting>& runtime_settings_;
   };
 
-  std::unique_ptr<ApmDataDumper> data_dumper_;
-  static int instance_count_;
+  const std::unique_ptr<ApmDataDumper> data_dumper_;
+  static std::atomic<int> instance_count_;
   const bool use_setup_specific_default_aec3_config_;
 
   const bool use_denormal_disabler_;
+
+  const TransientSuppressor::VadMode transient_suppressor_vad_mode_;
 
   SwapQueue<RuntimeSetting> capture_runtime_settings_;
   SwapQueue<RuntimeSetting> render_runtime_settings_;
@@ -195,7 +196,7 @@ class AudioProcessingImpl : public AudioProcessing {
   RuntimeSettingEnqueuer render_runtime_settings_enqueuer_;
 
   // EchoControl factory.
-  std::unique_ptr<EchoControlFactory> echo_control_factory_;
+  const std::unique_ptr<EchoControlFactory> echo_control_factory_;
 
   class SubmoduleStates {
    public:
@@ -205,13 +206,12 @@ class AudioProcessingImpl : public AudioProcessing {
     // Updates the submodule state and returns true if it has changed.
     bool Update(bool high_pass_filter_enabled,
                 bool mobile_echo_controller_enabled,
-                bool residual_echo_detector_enabled,
                 bool noise_suppressor_enabled,
                 bool adaptive_gain_controller_enabled,
                 bool gain_controller2_enabled,
+                bool voice_activity_detector_enabled,
                 bool gain_adjustment_enabled,
                 bool echo_controller_enabled,
-                bool voice_detector_enabled,
                 bool transient_suppressor_enabled);
     bool CaptureMultiBandSubModulesActive() const;
     bool CaptureMultiBandProcessingPresent() const;
@@ -229,13 +229,12 @@ class AudioProcessingImpl : public AudioProcessing {
     const bool capture_analyzer_enabled_ = false;
     bool high_pass_filter_enabled_ = false;
     bool mobile_echo_controller_enabled_ = false;
-    bool residual_echo_detector_enabled_ = false;
     bool noise_suppressor_enabled_ = false;
     bool adaptive_gain_controller_enabled_ = false;
+    bool voice_activity_detector_enabled_ = false;
     bool gain_controller2_enabled_ = false;
     bool gain_adjustment_enabled_ = false;
     bool echo_controller_enabled_ = false;
-    bool voice_detector_enabled_ = false;
     bool transient_suppressor_enabled_ = false;
     bool first_update_ = true;
   };
@@ -267,15 +266,22 @@ class AudioProcessingImpl : public AudioProcessing {
   void InitializeEchoController()
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_render_, mutex_capture_);
 
-  // Initializations of capture-only submodules, requiring the capture lock
+  // Initializations of capture-only sub-modules, requiring the capture lock
   // already acquired.
   void InitializeHighPassFilter(bool forced_reset)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
-  void InitializeVoiceDetector() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   void InitializeGainController1() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   void InitializeTransientSuppressor()
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
-  void InitializeGainController2() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
+  // Initializes the `GainController2` sub-module. If the sub-module is enabled
+  // and `config_has_changed` is true, recreates the sub-module.
+  void InitializeGainController2(bool config_has_changed)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
+  // Initializes the `VoiceActivityDetectorWrapper` sub-module. If the
+  // sub-module is enabled and `config_has_changed` is true, recreates the
+  // sub-module.
+  void InitializeVoiceActivityDetector(bool config_has_changed)
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   void InitializeNoiseSuppressor() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
   void InitializeCaptureLevelsAdjuster()
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_capture_);
@@ -389,20 +395,19 @@ class AudioProcessingImpl : public AudioProcessing {
           render_pre_processor(std::move(render_pre_processor)),
           capture_analyzer(std::move(capture_analyzer)) {}
     // Accessed internally from capture or during initialization.
+    const rtc::scoped_refptr<EchoDetector> echo_detector;
+    const std::unique_ptr<CustomProcessing> capture_post_processor;
+    const std::unique_ptr<CustomProcessing> render_pre_processor;
+    const std::unique_ptr<CustomAudioAnalyzer> capture_analyzer;
     std::unique_ptr<AgcManagerDirect> agc_manager;
     std::unique_ptr<GainControlImpl> gain_control;
     std::unique_ptr<GainController2> gain_controller2;
+    std::unique_ptr<VoiceActivityDetectorWrapper> voice_activity_detector;
     std::unique_ptr<HighPassFilter> high_pass_filter;
-    rtc::scoped_refptr<EchoDetector> echo_detector;
     std::unique_ptr<EchoControl> echo_controller;
     std::unique_ptr<EchoControlMobileImpl> echo_control_mobile;
     std::unique_ptr<NoiseSuppressor> noise_suppressor;
     std::unique_ptr<TransientSuppressor> transient_suppressor;
-    std::unique_ptr<CustomProcessing> capture_post_processor;
-    std::unique_ptr<CustomProcessing> render_pre_processor;
-    std::unique_ptr<CustomAudioAnalyzer> capture_analyzer;
-    std::unique_ptr<LevelEstimator> output_level_estimator;
-    std::unique_ptr<VoiceDetection> voice_detector;
     std::unique_ptr<CaptureLevelsAdjuster> capture_levels_adjuster;
   } submodules_;
 
@@ -414,10 +419,10 @@ class AudioProcessingImpl : public AudioProcessing {
   struct ApmFormatState {
     ApmFormatState()
         :  // Format of processing streams at input/output call sites.
-          api_format({{{kSampleRate16kHz, 1, false},
-                       {kSampleRate16kHz, 1, false},
-                       {kSampleRate16kHz, 1, false},
-                       {kSampleRate16kHz, 1, false}}}),
+          api_format({{{kSampleRate16kHz, 1},
+                       {kSampleRate16kHz, 1},
+                       {kSampleRate16kHz, 1},
+                       {kSampleRate16kHz, 1}}}),
           render_processing_format(kSampleRate16kHz, 1) {}
     ProcessingConfig api_format;
     StreamConfig render_processing_format;
@@ -464,11 +469,6 @@ class AudioProcessingImpl : public AudioProcessing {
     int playout_volume;
     int prev_playout_volume;
     AudioProcessingStats stats;
-    struct KeyboardInfo {
-      void Extract(const float* const* data, const StreamConfig& stream_config);
-      size_t num_keyboard_frames = 0;
-      const float* keyboard_data = nullptr;
-    } keyboard_info;
     int cached_stream_analog_level_ = 0;
   } capture_ RTC_GUARDED_BY(mutex_capture_);
 
@@ -529,6 +529,9 @@ class AudioProcessingImpl : public AudioProcessing {
   RmsLevel capture_input_rms_ RTC_GUARDED_BY(mutex_capture_);
   RmsLevel capture_output_rms_ RTC_GUARDED_BY(mutex_capture_);
   int capture_rms_interval_counter_ RTC_GUARDED_BY(mutex_capture_) = 0;
+
+  AnalogGainStatsReporter analog_gain_stats_reporter_
+      RTC_GUARDED_BY(mutex_capture_);
 
   // Lock protection not needed.
   std::unique_ptr<

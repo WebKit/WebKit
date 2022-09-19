@@ -29,25 +29,25 @@ CoreAudioOutput::CoreAudioOutput(bool automatic_restart)
           automatic_restart,
           [this](uint64_t freq) { return OnDataCallback(freq); },
           [this](ErrorType err) { return OnErrorCallback(err); }) {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   thread_checker_audio_.Detach();
 }
 
 CoreAudioOutput::~CoreAudioOutput() {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   Terminate();
 }
 
 int CoreAudioOutput::Init() {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   return 0;
 }
 
 int CoreAudioOutput::Terminate() {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   StopPlayout();
   return 0;
@@ -59,17 +59,17 @@ int CoreAudioOutput::NumDevices() const {
 }
 
 int CoreAudioOutput::SetDevice(int index) {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": " << index;
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << ": " << index;
   RTC_DCHECK_GE(index, 0);
   RTC_DCHECK_RUN_ON(&thread_checker_);
   return CoreAudioBase::SetDevice(index);
 }
 
 int CoreAudioOutput::SetDevice(AudioDeviceModule::WindowsDeviceType device) {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": "
-                 << ((device == AudioDeviceModule::kDefaultDevice)
-                         ? "Default"
-                         : "DefaultCommunication");
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << ": "
+                    << ((device == AudioDeviceModule::kDefaultDevice)
+                            ? "Default"
+                            : "DefaultCommunication");
   RTC_DCHECK_RUN_ON(&thread_checker_);
   return SetDevice((device == AudioDeviceModule::kDefaultDevice) ? 0 : 1);
 }
@@ -77,26 +77,26 @@ int CoreAudioOutput::SetDevice(AudioDeviceModule::WindowsDeviceType device) {
 int CoreAudioOutput::DeviceName(int index,
                                 std::string* name,
                                 std::string* guid) {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": " << index;
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << ": " << index;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   RTC_DCHECK(name);
   return CoreAudioBase::DeviceName(index, name, guid);
 }
 
 void CoreAudioOutput::AttachAudioBuffer(AudioDeviceBuffer* audio_buffer) {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   audio_device_buffer_ = audio_buffer;
 }
 
 bool CoreAudioOutput::PlayoutIsInitialized() const {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   return initialized_;
 }
 
 int CoreAudioOutput::InitPlayout() {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": " << IsRestarting();
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << ": " << IsRestarting();
   RTC_DCHECK(!initialized_);
   RTC_DCHECK(!Playing());
   RTC_DCHECK(!audio_render_client_);
@@ -150,7 +150,7 @@ int CoreAudioOutput::InitPlayout() {
 }
 
 int CoreAudioOutput::StartPlayout() {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": " << IsRestarting();
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << ": " << IsRestarting();
   RTC_DCHECK(!Playing());
   RTC_DCHECK(fine_audio_buffer_);
   RTC_DCHECK(audio_device_buffer_);
@@ -180,7 +180,7 @@ int CoreAudioOutput::StartPlayout() {
 }
 
 int CoreAudioOutput::StopPlayout() {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": " << IsRestarting();
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << ": " << IsRestarting();
   if (!initialized_) {
     return 0;
   }
@@ -188,7 +188,7 @@ int CoreAudioOutput::StopPlayout() {
   // Release resources allocated in InitPlayout() and then return if this
   // method is called without any active output audio.
   if (!Playing()) {
-    RTC_DLOG(WARNING) << "No output stream is active";
+    RTC_DLOG(LS_WARNING) << "No output stream is active";
     ReleaseCOMObjects();
     initialized_ = false;
     return 0;
@@ -214,7 +214,7 @@ int CoreAudioOutput::StopPlayout() {
 }
 
 bool CoreAudioOutput::Playing() {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": " << is_active_;
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << ": " << is_active_;
   return is_active_;
 }
 
@@ -222,7 +222,7 @@ bool CoreAudioOutput::Playing() {
 // are not compatible with the old ADM implementation since it allows accessing
 // the volume control with any active audio output stream.
 int CoreAudioOutput::VolumeIsAvailable(bool* available) {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   return IsVolumeControlAvailable(available) ? 0 : -1;
 }
@@ -230,7 +230,7 @@ int CoreAudioOutput::VolumeIsAvailable(bool* available) {
 // Triggers the restart sequence. Only used for testing purposes to emulate
 // a real event where e.g. an active output device is removed.
 int CoreAudioOutput::RestartPlayout() {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   if (!Playing()) {
     return 0;
@@ -243,20 +243,20 @@ int CoreAudioOutput::RestartPlayout() {
 }
 
 bool CoreAudioOutput::Restarting() const {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   return IsRestarting();
 }
 
 int CoreAudioOutput::SetSampleRate(uint32_t sample_rate) {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_);
   sample_rate_ = sample_rate;
   return 0;
 }
 
 void CoreAudioOutput::ReleaseCOMObjects() {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   CoreAudioBase::ReleaseCOMObjects();
   if (audio_render_client_.Get()) {
     audio_render_client_.Reset();
@@ -264,7 +264,7 @@ void CoreAudioOutput::ReleaseCOMObjects() {
 }
 
 bool CoreAudioOutput::OnErrorCallback(ErrorType error) {
-  RTC_DLOG(INFO) << __FUNCTION__ << ": " << as_integer(error);
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << ": " << as_integer(error);
   RTC_DCHECK_RUN_ON(&thread_checker_audio_);
   if (!initialized_ || !Playing()) {
     return true;
@@ -273,7 +273,7 @@ bool CoreAudioOutput::OnErrorCallback(ErrorType error) {
   if (error == CoreAudioBase::ErrorType::kStreamDisconnected) {
     HandleStreamDisconnected();
   } else {
-    RTC_DLOG(WARNING) << "Unsupported error type";
+    RTC_DLOG(LS_WARNING) << "Unsupported error type";
   }
   return true;
 }
@@ -281,7 +281,7 @@ bool CoreAudioOutput::OnErrorCallback(ErrorType error) {
 bool CoreAudioOutput::OnDataCallback(uint64_t device_frequency) {
   RTC_DCHECK_RUN_ON(&thread_checker_audio_);
   if (num_data_callbacks_ == 0) {
-    RTC_LOG(INFO) << "--- Output audio stream is alive ---";
+    RTC_LOG(LS_INFO) << "--- Output audio stream is alive ---";
   }
   // Get the padding value which indicates the amount of valid unread data that
   // the endpoint buffer currently contains.
@@ -329,7 +329,7 @@ bool CoreAudioOutput::OnDataCallback(uint64_t device_frequency) {
     // TODO(henrika): note that FineAudioBuffer adds latency as well.
     latency_ms_ = EstimateOutputLatencyMillis(device_frequency);
     if (num_data_callbacks_ % 500 == 0) {
-      RTC_DLOG(INFO) << "latency: " << latency_ms_;
+      RTC_DLOG(LS_INFO) << "latency: " << latency_ms_;
     }
   }
 
@@ -394,7 +394,7 @@ int CoreAudioOutput::EstimateOutputLatencyMillis(uint64_t device_frequency) {
 // safe.
 // TODO(henrika): add more details.
 bool CoreAudioOutput::HandleStreamDisconnected() {
-  RTC_DLOG(INFO) << "<<<--- " << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << "<<<--- " << __FUNCTION__;
   RTC_DCHECK_RUN_ON(&thread_checker_audio_);
   RTC_DCHECK(automatic_restart());
 
@@ -413,7 +413,7 @@ bool CoreAudioOutput::HandleStreamDisconnected() {
     return false;
   }
 
-  RTC_DLOG(INFO) << __FUNCTION__ << " --->>>";
+  RTC_DLOG(LS_INFO) << __FUNCTION__ << " --->>>";
   return true;
 }
 

@@ -29,9 +29,15 @@
 
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/rtc_base/network.h>
 #include <webrtc/rtc_base/thread.h>
 #include <wtf/WeakPtr.h>
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/rtc_base/network.h>
+
+ALLOW_COMMA_END
+
 
 namespace IPC {
 class Connection;

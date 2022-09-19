@@ -184,9 +184,12 @@ To find the branch corresponding to a Chrome release check the
 
 ## Contributing Patches
 
-Please see [Contributing Fixes][webrtc-contributing] for information on how to run
+Please see [Contributing Fixes][contributing] for information on how to run
 `git cl upload`, getting your patch reviewed, and getting it submitted. You can also
 find info on how to run trybots and applying for try rights.
+
+[contributing]: https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/development/contributing.md
+
 
 ## Chromium Committers
 
@@ -277,7 +280,6 @@ Target name `turnserver`. Used for unit tests.
 [webrtc-ios-development]: https://webrtc.googlesource.com/src/+/main/docs/native-code/ios/index.md
 [chromium-work-branches]: https://www.chromium.org/developers/how-tos/get-the-code/working-with-branches
 [chromium-work-release-branches]: https://www.chromium.org/developers/how-tos/get-the-code/working-with-release-branches
-[webrtc-contributing]: https://webrtc.org/support/contributing/
 [depot-tools]: http://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up
 [rfc-5389]: https://tools.ietf.org/html/rfc5389
 [rfc-5766]: https://tools.ietf.org/html/rfc5766

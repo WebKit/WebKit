@@ -35,9 +35,7 @@ void RunNormalUsageTest(size_t num_render_channels,
   std::vector<std::array<float, kFftLengthBy2Plus1>> E2_refined(
       num_capture_channels);
   std::vector<std::array<float, kFftLengthBy2Plus1>> Y2(num_capture_channels);
-  std::vector<std::vector<std::vector<float>>> x(
-      kNumBands, std::vector<std::vector<float>>(
-                     num_render_channels, std::vector<float>(kBlockSize, 0.f)));
+  Block x(kNumBands, num_render_channels);
   EchoPathVariability echo_path_variability(
       false, EchoPathVariability::DelayAdjustment::kNone, false);
   std::vector<std::array<float, kBlockSize>> y(num_capture_channels);
@@ -52,9 +50,9 @@ void RunNormalUsageTest(size_t num_render_channels,
   }
   Aec3Fft fft;
   std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>>
-  converged_filter_frequency_response(
-      num_capture_channels,
-      std::vector<std::array<float, kFftLengthBy2Plus1>>(10));
+      converged_filter_frequency_response(
+          num_capture_channels,
+          std::vector<std::array<float, kFftLengthBy2Plus1>>(10));
   for (auto& v_ch : converged_filter_frequency_response) {
     for (auto& v : v_ch) {
       v.fill(0.01f);
@@ -72,7 +70,7 @@ void RunNormalUsageTest(size_t num_render_channels,
   // Verify that linear AEC usability is true when the filter is converged
   for (size_t band = 0; band < kNumBands; ++band) {
     for (size_t ch = 0; ch < num_render_channels; ++ch) {
-      std::fill(x[band][ch].begin(), x[band][ch].end(), 101.f);
+      std::fill(x.begin(band, ch), x.end(band, ch), 101.f);
     }
   }
   for (int k = 0; k < 3000; ++k) {
@@ -100,7 +98,7 @@ void RunNormalUsageTest(size_t num_render_channels,
 
   // Verify that the active render detection works as intended.
   for (size_t ch = 0; ch < num_render_channels; ++ch) {
-    std::fill(x[0][ch].begin(), x[0][ch].end(), 101.f);
+    std::fill(x.begin(0, ch), x.end(0, ch), 101.f);
   }
   render_delay_buffer->Insert(x);
   for (size_t ch = 0; ch < num_capture_channels; ++ch) {
@@ -125,14 +123,14 @@ void RunNormalUsageTest(size_t num_render_channels,
   EXPECT_TRUE(state.ActiveRender());
 
   // Verify that the ERL is properly estimated
-  for (auto& band : x) {
-    for (auto& channel : band) {
-      channel = std::vector<float>(kBlockSize, 0.f);
+  for (int band = 0; band < x.NumBands(); ++band) {
+    for (int channel = 0; channel < x.NumChannels(); ++channel) {
+      std::fill(x.begin(band, channel), x.end(band, channel), 0.0f);
     }
   }
 
   for (size_t ch = 0; ch < num_render_channels; ++ch) {
-    x[0][ch][0] = 5000.f;
+    x.View(/*band=*/0, ch)[0] = 5000.f;
   }
   for (size_t k = 0;
        k < render_delay_buffer->GetRenderBuffer()->GetFftBuffer().size(); ++k) {
@@ -266,9 +264,9 @@ TEST(AecState, ConvergedFilterDelay) {
   y.fill(0.f);
 
   std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>>
-  frequency_response(
-      kNumCaptureChannels,
-      std::vector<std::array<float, kFftLengthBy2Plus1>>(kFilterLengthBlocks));
+      frequency_response(kNumCaptureChannels,
+                         std::vector<std::array<float, kFftLengthBy2Plus1>>(
+                             kFilterLengthBlocks));
   for (auto& v_ch : frequency_response) {
     for (auto& v : v_ch) {
       v.fill(0.01f);

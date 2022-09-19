@@ -17,7 +17,7 @@
 #include "api/scoped_refptr.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_geometry.h"
-#include "modules/desktop_capture/linux/shared_x_display.h"
+#include "modules/desktop_capture/linux/x11/shared_x_display.h"
 #include "modules/desktop_capture/rgba_color.h"
 #include "modules/desktop_capture/screen_drawer.h"
 #include "modules/desktop_capture/screen_drawer_lock_posix.h"
@@ -63,7 +63,7 @@ ScreenDrawerLinux::ScreenDrawerLinux() {
   if (!XGetWindowAttributes(display_->display(),
                             RootWindow(display_->display(), screen_num_),
                             &root_attributes)) {
-    RTC_NOTREACHED() << "Failed to get root window size.";
+    RTC_DCHECK_NOTREACHED() << "Failed to get root window size.";
   }
   window_ = XCreateSimpleWindow(
       display_->display(), RootWindow(display_->display(), screen_num_), 0, 0,
@@ -85,7 +85,7 @@ ScreenDrawerLinux::ScreenDrawerLinux() {
   if (!XTranslateCoordinates(display_->display(), window_,
                              RootWindow(display_->display(), screen_num_), 0, 0,
                              &x, &y, &child)) {
-    RTC_NOTREACHED() << "Failed to get window position.";
+    RTC_DCHECK_NOTREACHED() << "Failed to get window position.";
   }
   // Some window manager does not allow a window to cover two or more monitors.
   // So if the window is on the first monitor of a two-monitor system, the

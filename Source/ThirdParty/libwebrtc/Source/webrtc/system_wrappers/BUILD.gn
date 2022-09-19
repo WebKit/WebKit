@@ -36,6 +36,9 @@ rtc_library("system_wrappers") {
     "../api/units:timestamp",
     "../modules:module_api_public",
     "../rtc_base:checks",
+    "../rtc_base:logging",
+    "../rtc_base:safe_conversions",
+    "../rtc_base:timeutils",
     "../rtc_base/synchronization:mutex",
     "../rtc_base/system:arch",
     "../rtc_base/system:rtc_export",
@@ -73,10 +76,7 @@ rtc_library("system_wrappers") {
     deps += [ "../rtc_base:win32" ]
   }
 
-  deps += [
-    "../rtc_base:rtc_base_approved",
-    "../rtc_base:rtc_numerics",
-  ]
+  deps += [ "../rtc_base:rtc_numerics" ]
 }
 
 rtc_library("field_trial") {
@@ -103,9 +103,11 @@ rtc_library("metrics") {
   }
   deps = [
     "../rtc_base:checks",
-    "../rtc_base:rtc_base_approved",
+    "../rtc_base:macromagic",
+    "../rtc_base:stringutils",
     "../rtc_base/synchronization:mutex",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("denormal_disabler") {
@@ -140,7 +142,8 @@ if (rtc_include_tests && !build_with_chromium) {
       ":metrics",
       ":system_wrappers",
       "../rtc_base:checks",
-      "../rtc_base:rtc_base_approved",
+      "../rtc_base:random",
+      "../rtc_base:stringutils",
       "../test:rtc_expect_death",
       "../test:test_main",
       "../test:test_support",

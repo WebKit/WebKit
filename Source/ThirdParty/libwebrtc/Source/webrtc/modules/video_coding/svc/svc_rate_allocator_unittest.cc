@@ -275,7 +275,7 @@ TEST(SvcRateAllocatorTest, SupportsAv1) {
   codec.width = 640;
   codec.height = 360;
   codec.codecType = kVideoCodecAV1;
-  codec.SetScalabilityMode("L3T3");
+  codec.SetScalabilityMode(ScalabilityMode::kL3T3);
   codec.spatialLayers[0].active = true;
   codec.spatialLayers[0].minBitrate = 30;
   codec.spatialLayers[0].targetBitrate = 51;
@@ -304,7 +304,7 @@ TEST(SvcRateAllocatorTest, SupportsAv1WithSkippedLayer) {
   codec.width = 640;
   codec.height = 360;
   codec.codecType = kVideoCodecAV1;
-  codec.SetScalabilityMode("L3T3");
+  codec.SetScalabilityMode(ScalabilityMode::kL3T3);
   codec.spatialLayers[0].active = false;
   codec.spatialLayers[0].minBitrate = 30;
   codec.spatialLayers[0].targetBitrate = 51;
@@ -333,7 +333,7 @@ TEST(SvcRateAllocatorTest, UsesScalabilityModeToGetNumberOfLayers) {
   codec.width = 640;
   codec.height = 360;
   codec.codecType = kVideoCodecAV1;
-  codec.SetScalabilityMode("L2T2");
+  codec.SetScalabilityMode(ScalabilityMode::kL2T2);
   codec.spatialLayers[0].active = true;
   codec.spatialLayers[0].minBitrate = 30;
   codec.spatialLayers[0].targetBitrate = 51;

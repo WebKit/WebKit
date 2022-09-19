@@ -27,12 +27,13 @@ rtc_library("congestion_controller") {
   ]
 
   deps = [
-    "..:module_api",
     "../../api/transport:field_trial_based_config",
     "../../api/transport:network_control",
     "../../api/units:data_rate",
     "../../api/units:time_delta",
     "../../api/units:timestamp",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
     "../../rtc_base/synchronization:mutex",
     "../pacing",
     "../remote_bitrate_estimator",

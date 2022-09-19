@@ -28,10 +28,12 @@ TEST(TimeDeltaTest, ConstExpr) {
 
   static_assert(kTimeDeltaPlusInf > kTimeDeltaZero, "");
 
+  constexpr TimeDelta kTimeDeltaMinutes = TimeDelta::Minutes(kValue);
   constexpr TimeDelta kTimeDeltaSeconds = TimeDelta::Seconds(kValue);
   constexpr TimeDelta kTimeDeltaMs = TimeDelta::Millis(kValue);
   constexpr TimeDelta kTimeDeltaUs = TimeDelta::Micros(kValue);
 
+  static_assert(kTimeDeltaMinutes.seconds_or(0) == kValue * 60, "");
   static_assert(kTimeDeltaSeconds.seconds_or(0) == kValue, "");
   static_assert(kTimeDeltaMs.ms_or(0) == kValue, "");
   static_assert(kTimeDeltaUs.us_or(0) == kValue, "");
@@ -54,10 +56,12 @@ TEST(TimeDeltaTest, GetDifferentPrefix) {
   EXPECT_EQ(TimeDelta::Micros(kValue).seconds(), kValue / 1000000);
   EXPECT_EQ(TimeDelta::Millis(kValue).seconds(), kValue / 1000);
   EXPECT_EQ(TimeDelta::Micros(kValue).ms(), kValue / 1000);
+  EXPECT_EQ(TimeDelta::Minutes(kValue / 60).seconds(), kValue);
 
   EXPECT_EQ(TimeDelta::Millis(kValue).us(), kValue * 1000);
   EXPECT_EQ(TimeDelta::Seconds(kValue).ms(), kValue * 1000);
   EXPECT_EQ(TimeDelta::Seconds(kValue).us(), kValue * 1000000);
+  EXPECT_EQ(TimeDelta::Minutes(kValue / 60).seconds(), kValue);
 }
 
 TEST(TimeDeltaTest, IdentityChecks) {
@@ -183,14 +187,6 @@ TEST(TimeDeltaTest, MathOperations) {
   EXPECT_EQ((delta_a + delta_b).ms(), kValueA + kValueB);
   EXPECT_EQ((delta_a - delta_b).ms(), kValueA - kValueB);
 
-  const int32_t kInt32Value = 123;
-  const double kFloatValue = 123.0;
-  EXPECT_EQ((TimeDelta::Micros(kValueA) * kValueB).us(), kValueA * kValueB);
-  EXPECT_EQ((TimeDelta::Micros(kValueA) * kInt32Value).us(),
-            kValueA * kInt32Value);
-  EXPECT_EQ((TimeDelta::Micros(kValueA) * kFloatValue).us(),
-            kValueA * kFloatValue);
-
   EXPECT_EQ((delta_b / 10).ms(), kValueB / 10);
   EXPECT_EQ(delta_b / delta_a, static_cast<double>(kValueB) / kValueA);
 
@@ -202,6 +198,26 @@ TEST(TimeDeltaTest, MathOperations) {
   EXPECT_EQ(mutable_delta, TimeDelta::Millis(kValueA + kValueB));
   mutable_delta -= TimeDelta::Millis(kValueB);
   EXPECT_EQ(mutable_delta, TimeDelta::Millis(kValueA));
+}
+
+TEST(TimeDeltaTest, MultiplyByScalar) {
+  const TimeDelta kValue = TimeDelta::Micros(267);
+  const int64_t kInt64 = 450;
+  const int32_t kInt32 = 123;
+  const size_t kUnsignedInt = 125;
+  const double kFloat = 123.0;
+
+  EXPECT_EQ((kValue * kInt64).us(), kValue.us() * kInt64);
+  EXPECT_EQ(kValue * kInt64, kInt64 * kValue);
+
+  EXPECT_EQ((kValue * kInt32).us(), kValue.us() * kInt32);
+  EXPECT_EQ(kValue * kInt32, kInt32 * kValue);
+
+  EXPECT_EQ((kValue * kUnsignedInt).us(), kValue.us() * int64_t{kUnsignedInt});
+  EXPECT_EQ(kValue * kUnsignedInt, kUnsignedInt * kValue);
+
+  EXPECT_DOUBLE_EQ((kValue * kFloat).us(), kValue.us() * kFloat);
+  EXPECT_EQ(kValue * kFloat, kFloat * kValue);
 }
 
 TEST(TimeDeltaTest, InfinityOperations) {

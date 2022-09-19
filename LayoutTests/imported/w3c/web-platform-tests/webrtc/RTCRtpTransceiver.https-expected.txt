@@ -21,7 +21,7 @@ PASS checkAddTrackPairs
 PASS checkReplaceTrackNullDoesntPreventPairing
 PASS checkRemoveAndReadd
 PASS checkAddTrackExistingTransceiverThenRemove
-FAIL checkRemoveTrackNegotiation assert_equals: Rollback should have added two tracks expected 2 but got 0
+FAIL checkRemoveTrackNegotiation assert_equals: expected "[{currentDirection:\"inactive\"},{currentDirection:\"inactive\"}]" but got "[{currentDirection:\"inactive\"},{currentDirection:\"inactive\"},{},{}]"
 FAIL checkMute assert_true: expected true got false
 FAIL checkStop assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:{kind:\"audio\"}}}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\",receiver:{track:{kind:\"audio\",readyState:\"ended\"}},sender:{track:null}}]"
 FAIL checkStopAfterCreateOffer assert_equals: expected "[{currentDirection:\"sendrecv\",direction:\"stopped\"}]" but got "[{currentDirection:\"sendrecv\",direction:\"inactive\"}]"

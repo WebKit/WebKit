@@ -106,13 +106,13 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
     m_receivedNetworkList = true;
 
     WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }, networks, ipv4, ipv6, forceSignaling] {
-        std::vector<rtc::Network*> networkList(networks.size());
+        std::vector<std::unique_ptr<rtc::Network>> networkList(networks.size());
         for (size_t index = 0; index < networks.size(); ++index)
-            networkList[index] = new rtc::Network(networks[index].value());
+            networkList[index] = std::make_unique<rtc::Network>(networks[index].value());
 
         bool hasChanged;
         set_default_local_addresses(ipv4.value, ipv6.value);
-        MergeNetworkList(networkList, &hasChanged);
+        MergeNetworkList(WTFMove(networkList), &hasChanged);
         if (hasChanged || forceSignaling)
             SignalNetworksChanged();
     });
@@ -133,12 +133,12 @@ void LibWebRTCNetworkManager::networkProcessCrashed()
 
 void LibWebRTCNetworkManager::CreateNameForAddress(const rtc::IPAddress& address, NameCreatedCallback callback)
 {
-    callOnMainRunLoop([weakThis = WeakPtr { *this }, address, callback = WTFMove(callback)]() mutable {
+    callOnMainRunLoop([weakThis = WeakPtr { *this }, address, callback = std::move(callback)]() mutable {
         if (!weakThis)
             return;
 
-        WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(weakThis->m_documentIdentifier, fromStdString(address.ToString()), [address, callback = WTFMove(callback)](auto name, auto error) mutable {
-            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([address, callback = WTFMove(callback), name = WTFMove(name).isolatedCopy(), error] {
+        WebProcess::singleton().libWebRTCNetwork().mdnsRegister().registerMDNSName(weakThis->m_documentIdentifier, fromStdString(address.ToString()), [address, callback = std::move(callback)](auto name, auto error) mutable {
+            WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([address, callback = std::move(callback), name = WTFMove(name).isolatedCopy(), error] {
                 RELEASE_LOG_ERROR_IF(error, WebRTC, "MDNS registration of a host candidate failed with error %d", *error);
                 // In case of error, we provide the name to let gathering complete.
                 callback(address, name.utf8().data());

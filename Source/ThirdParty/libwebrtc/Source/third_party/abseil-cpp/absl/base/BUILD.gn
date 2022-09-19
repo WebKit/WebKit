@@ -35,6 +35,7 @@ absl_source_set("raw_logging_internal") {
     ":atomic_hook",
     ":config",
     ":core_headers",
+    ":errno_saver",
     ":log_severity",
   ]
   visibility = [ "//third_party/abseil-cpp/absl/*" ]
@@ -231,44 +232,19 @@ absl_source_set("endian") {
   ]
 }
 
-absl_source_set("exponential_biased") {
-  sources = [ "internal/exponential_biased.cc" ]
-  public = [ "internal/exponential_biased.h" ]
-  public_deps = [
-    ":config",
-    ":core_headers",
-  ]
-  visibility = [ "//third_party/abseil-cpp/absl/*" ]
-}
-
-absl_source_set("periodic_sampler") {
-  sources = [ "internal/periodic_sampler.cc" ]
-  public = [ "internal/periodic_sampler.h" ]
-  public_deps = [
-    ":core_headers",
-    ":exponential_biased",
-  ]
-}
-
 absl_source_set("scoped_set_env") {
   testonly = true
   public = [ "internal/scoped_set_env.h" ]
   sources = [ "internal/scoped_set_env.cc" ]
-  public_deps = [
-    ":config",
-  ]
-  deps = [
-    ":raw_logging_internal",
-  ]
+  public_deps = [ ":config" ]
+  deps = [ ":raw_logging_internal" ]
   visibility = [ "//third_party/abseil-cpp/absl/*" ]
 }
 
 absl_source_set("strerror") {
   sources = [ "internal/strerror.cc" ]
   public = [ "internal/strerror.h" ]
-  public_deps = [
-    ":config",
-  ]
+  public_deps = [ ":config" ]
   deps = [
     ":core_headers",
     ":errno_saver",
@@ -280,6 +256,21 @@ absl_source_set("fast_type_id") {
   public = [ "internal/fast_type_id.h" ]
   public_deps = [ ":config" ]
   visibility = [ "//third_party/abseil-cpp/absl/*" ]
+}
+
+absl_source_set("prefetch") {
+  public = [ "internal/prefetch.h" ]
+  deps = [ ":config" ]
+  visibility = [ "//third_party/abseil-cpp/absl/*" ]
+}
+
+absl_source_set("prefetch_test") {
+  testonly = true
+  sources = [ "internal/prefetch_test.cc" ]
+  deps = [
+    ":prefetch",
+    "//third_party/googletest:gtest",
+  ]
 }
 
 absl_source_set("config_test") {

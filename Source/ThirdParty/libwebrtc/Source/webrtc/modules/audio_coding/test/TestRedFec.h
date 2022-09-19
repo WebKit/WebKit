@@ -19,6 +19,7 @@
 #include "common_audio/vad/include/vad.h"
 #include "modules/audio_coding/test/Channel.h"
 #include "modules/audio_coding/test/PCMFile.h"
+#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 
@@ -37,6 +38,7 @@ class TestRedFec {
   void Run();
   void OpenOutFile(int16_t testNumber);
 
+  test::ScopedKeyValueConfig field_trials_;
   const rtc::scoped_refptr<AudioEncoderFactory> encoder_factory_;
   const rtc::scoped_refptr<AudioDecoderFactory> decoder_factory_;
   std::unique_ptr<AudioCodingModule> _acmA;

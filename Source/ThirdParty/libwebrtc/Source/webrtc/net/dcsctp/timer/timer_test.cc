@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "absl/types/optional.h"
+#include "api/task_queue/task_queue_base.h"
 #include "net/dcsctp/public/timeout.h"
 #include "net/dcsctp/timer/fake_timeout.h"
 #include "rtc_base/gunit.h"
@@ -25,7 +26,9 @@ class TimerTest : public testing::Test {
  protected:
   TimerTest()
       : timeout_manager_([this]() { return now_; }),
-        manager_([this]() { return timeout_manager_.CreateTimeout(); }) {
+        manager_([this](webrtc::TaskQueueBase::DelayPrecision precision) {
+          return timeout_manager_.CreateTimeout(precision);
+        }) {
     ON_CALL(on_expired_, Call).WillByDefault(Return(absl::nullopt));
   }
 
@@ -421,6 +424,35 @@ TEST_F(TimerTest, DurationStaysWithinMaxTimerBackOffDuration) {
   AdvanceTimeAndRunTimers(DurationMs(4999));
   EXPECT_CALL(on_expired_, Call).Times(1);
   AdvanceTimeAndRunTimers(DurationMs(1));
+}
+
+TEST(TimerManagerTest, TimerManagerPassesPrecisionToCreateTimeoutMethod) {
+  FakeTimeoutManager timeout_manager([&]() { return TimeMs(0); });
+  absl::optional<webrtc::TaskQueueBase::DelayPrecision> create_timer_precison;
+  TimerManager manager([&](webrtc::TaskQueueBase::DelayPrecision precision) {
+    create_timer_precison = precision;
+    return timeout_manager.CreateTimeout(precision);
+  });
+  // Default TimerOptions.
+  manager.CreateTimer(
+      "test_timer", []() { return absl::optional<DurationMs>(); },
+      TimerOptions(DurationMs(123)));
+  EXPECT_EQ(create_timer_precison, webrtc::TaskQueueBase::DelayPrecision::kLow);
+  // High precision TimerOptions.
+  manager.CreateTimer(
+      "test_timer", []() { return absl::optional<DurationMs>(); },
+      TimerOptions(DurationMs(123), TimerBackoffAlgorithm::kExponential,
+                   absl::nullopt, absl::nullopt,
+                   webrtc::TaskQueueBase::DelayPrecision::kHigh));
+  EXPECT_EQ(create_timer_precison,
+            webrtc::TaskQueueBase::DelayPrecision::kHigh);
+  // Low precision TimerOptions.
+  manager.CreateTimer(
+      "test_timer", []() { return absl::optional<DurationMs>(); },
+      TimerOptions(DurationMs(123), TimerBackoffAlgorithm::kExponential,
+                   absl::nullopt, absl::nullopt,
+                   webrtc::TaskQueueBase::DelayPrecision::kLow));
+  EXPECT_EQ(create_timer_precison, webrtc::TaskQueueBase::DelayPrecision::kLow);
 }
 
 }  // namespace

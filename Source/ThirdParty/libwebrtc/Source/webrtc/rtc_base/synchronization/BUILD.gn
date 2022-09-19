@@ -21,9 +21,8 @@ rtc_library("yield") {
   deps = []
 }
 
-rtc_library("mutex") {
+rtc_source_set("mutex") {
   sources = [
-    "mutex.cc",
     "mutex.h",
     "mutex_critical_section.h",
     "mutex_pthread.h",
@@ -87,7 +86,9 @@ if (rtc_include_tests) {
         ":yield",
         ":yield_policy",
         "..:checks",
+        "..:location",
         "..:macromagic",
+        "..:platform_thread",
         "..:rtc_base",
         "..:rtc_event",
         "..:threading",

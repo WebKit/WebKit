@@ -1,0 +1,24 @@
+Infra failure in WebRTC on {{ .Build.Builder.Builder }}
+
+<p>There was a failure on builder "{{ .Build.Builder.Builder }}".</p>
+
+<p><a href="https://ci.chromium.org/b/{{ .Build.Id }}">Full details are available here.</a></p>
+
+<table>
+  <tr>
+    <td>New status:</td>
+    <td><b><a href="https://ci.chromium.org/b/{{ .Build.Id }}">{{ .Build.Status }}</a></b></td>
+  </tr>
+  <tr>
+    <td>Previous status:</td>
+    <td>{{ .OldStatus }}</td>
+  </tr>
+  <tr>
+    <td>Created at:</td>
+    <td>{{ .Build.CreateTime | time }}</td>
+  </tr>
+  <tr>
+    <td>Finished at:</td>
+    <td>{{ .Build.EndTime | time }}</td>
+  </tr>
+</table>

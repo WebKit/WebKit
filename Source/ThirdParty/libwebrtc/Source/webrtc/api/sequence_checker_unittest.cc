@@ -76,20 +76,16 @@ TEST(SequenceCheckerTest, DetachFromThreadAndUseOnTaskQueue) {
   SequenceChecker sequence_checker;
   sequence_checker.Detach();
   TaskQueueForTest queue;
-  queue.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); },
-                 RTC_FROM_HERE);
+  queue.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
 }
 
 TEST(SequenceCheckerTest, DetachFromTaskQueueAndUseOnThread) {
   TaskQueueForTest queue;
-  queue.SendTask(
-      [] {
-        SequenceChecker sequence_checker;
-        sequence_checker.Detach();
-        RunOnDifferentThread(
-            [&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
-      },
-      RTC_FROM_HERE);
+  queue.SendTask([] {
+    SequenceChecker sequence_checker;
+    sequence_checker.Detach();
+    RunOnDifferentThread([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
+  });
 }
 
 TEST(SequenceCheckerTest, MethodNotAllowedOnDifferentThreadInDebug) {
@@ -102,8 +98,7 @@ TEST(SequenceCheckerTest, MethodNotAllowedOnDifferentTaskQueueInDebug) {
   SequenceChecker sequence_checker;
   TaskQueueForTest queue;
   queue.SendTask(
-      [&] { EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON); },
-      RTC_FROM_HERE);
+      [&] { EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON); });
 }
 
 TEST(SequenceCheckerTest, DetachFromTaskQueueInDebug) {
@@ -111,15 +106,13 @@ TEST(SequenceCheckerTest, DetachFromTaskQueueInDebug) {
   sequence_checker.Detach();
 
   TaskQueueForTest queue1;
-  queue1.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); },
-                  RTC_FROM_HERE);
+  queue1.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
 
   // IsCurrent should return false in debug builds after moving to
   // another task queue.
   TaskQueueForTest queue2;
   queue2.SendTask(
-      [&] { EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON); },
-      RTC_FROM_HERE);
+      [&] { EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON); });
 }
 
 class TestAnnotations {
@@ -146,7 +139,7 @@ TEST(SequenceCheckerTest, TestAnnotations) {
 void TestAnnotationsOnWrongQueue() {
   TestAnnotations annotations;
   TaskQueueForTest queue;
-  queue.SendTask([&] { annotations.ModifyTestVar(); }, RTC_FROM_HERE);
+  queue.SendTask([&] { annotations.ModifyTestVar(); });
 }
 
 #if RTC_DCHECK_IS_ON

@@ -12,8 +12,8 @@
 #define MODULES_DESKTOP_CAPTURE_FULL_SCREEN_APPLICATION_HANDLER_H_
 
 #include <memory>
+
 #include "modules/desktop_capture/desktop_capturer.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -24,6 +24,10 @@ namespace webrtc {
 class FullScreenApplicationHandler {
  public:
   virtual ~FullScreenApplicationHandler() {}
+
+  FullScreenApplicationHandler(const FullScreenApplicationHandler&) = delete;
+  FullScreenApplicationHandler& operator=(const FullScreenApplicationHandler&) =
+      delete;
 
   explicit FullScreenApplicationHandler(DesktopCapturer::SourceId sourceId);
 
@@ -39,8 +43,6 @@ class FullScreenApplicationHandler {
 
  private:
   const DesktopCapturer::SourceId source_id_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(FullScreenApplicationHandler);
 };
 
 }  // namespace webrtc

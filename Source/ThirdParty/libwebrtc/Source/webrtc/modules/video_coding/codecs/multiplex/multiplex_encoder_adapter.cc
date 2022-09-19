@@ -141,8 +141,6 @@ int MultiplexEncoderAdapter::InitEncode(
       encoder_info_.apply_alignment_to_all_simulcast_layers = true;
     }
 
-    encoder_info_.has_internal_source = false;
-
     encoders_.emplace_back(std::move(encoder));
   }
   encoder_info_.implementation_name += ")";

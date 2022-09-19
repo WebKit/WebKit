@@ -17,10 +17,13 @@
 #include <string>
 #include <vector>
 
+<<<<<<< HEAD
+#include "absl/strings/string_view.h"
+#include "modules/rtp_rtcp/source/rtp_util.h"
+=======
 #include "modules/rtp_rtcp/source/rtp_utility.h"
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 #include "rtc_base/checks.h"
-#include "rtc_base/constructor_magic.h"
-#include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/system/arch.h"
 
@@ -119,6 +122,9 @@ class RtpDumpReader : public RtpFileReaderImpl {
     }
   }
 
+  RtpDumpReader(const RtpDumpReader&) = delete;
+  RtpDumpReader& operator=(const RtpDumpReader&) = delete;
+
   bool Init(FILE* file, const std::set<uint32_t>& ssrc_filter) override {
     file_ = file;
 
@@ -188,8 +194,6 @@ class RtpDumpReader : public RtpFileReaderImpl {
 
  private:
   FILE* file_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(RtpDumpReader);
 };
 
 enum {
@@ -254,6 +258,9 @@ class PcapReader : public RtpFileReaderImpl {
     }
   }
 
+  PcapReader(const PcapReader&) = delete;
+  PcapReader& operator=(const PcapReader&) = delete;
+
   bool Init(FILE* file, const std::set<uint32_t>& ssrc_filter) override {
     return Initialize(file, ssrc_filter) == kResultSuccess;
   }
@@ -288,15 +295,21 @@ class PcapReader : public RtpFileReaderImpl {
     }
 
     printf("Total packets in file: %d\n", total_packet_count);
-    printf("Total RTP/RTCP packets: %" RTC_PRIuS "\n", packets_.size());
+    printf("Total RTP/RTCP packets: %zu\n", packets_.size());
 
     for (SsrcMapIterator mit = packets_by_ssrc_.begin();
          mit != packets_by_ssrc_.end(); ++mit) {
       uint32_t ssrc = mit->first;
       const std::vector<uint32_t>& packet_indices = mit->second;
+<<<<<<< HEAD
+      int pt = packets_[packet_indices[0]].payload_type;
+      printf("SSRC: %08x, %zu packets, pt=%d\n", ssrc, packet_indices.size(),
+             pt);
+=======
       uint8_t pt = packets_[packet_indices[0]].rtp_header.payloadType;
       printf("SSRC: %08x, %" RTC_PRIuS " packets, pt=%d\n", ssrc,
              packet_indices.size(), pt);
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
     }
 
     // TODO(solenberg): Better validation of identified SSRC streams.
@@ -619,8 +632,6 @@ class PcapReader : public RtpFileReaderImpl {
   SsrcMap packets_by_ssrc_;
   std::vector<RtpPacketMarker> packets_;
   PacketIterator next_packet_it_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(PcapReader);
 };
 
 RtpFileReaderImpl* CreateReaderForFormat(RtpFileReader::FileFormat format) {
@@ -664,12 +675,13 @@ RtpFileReader* RtpFileReader::Create(FileFormat format,
 }
 
 RtpFileReader* RtpFileReader::Create(FileFormat format,
-                                     const std::string& filename,
+                                     absl::string_view filename,
                                      const std::set<uint32_t>& ssrc_filter) {
   RtpFileReaderImpl* reader = CreateReaderForFormat(format);
-  FILE* file = fopen(filename.c_str(), "rb");
+  std::string filename_str = std::string(filename);
+  FILE* file = fopen(filename_str.c_str(), "rb");
   if (file == nullptr) {
-    printf("ERROR: Can't open file: %s\n", filename.c_str());
+    printf("ERROR: Can't open file: %s\n", filename_str.c_str());
     return nullptr;
   }
 
@@ -681,7 +693,7 @@ RtpFileReader* RtpFileReader::Create(FileFormat format,
 }
 
 RtpFileReader* RtpFileReader::Create(FileFormat format,
-                                     const std::string& filename) {
+                                     absl::string_view filename) {
   return RtpFileReader::Create(format, filename, std::set<uint32_t>());
 }
 

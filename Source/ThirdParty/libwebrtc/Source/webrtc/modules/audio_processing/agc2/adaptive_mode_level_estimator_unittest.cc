@@ -33,10 +33,12 @@ constexpr float kConvergenceSpeedTestsLevelTolerance = 0.5f;
 
 // Provides the `vad_level` value `num_iterations` times to `level_estimator`.
 void RunOnConstantLevel(int num_iterations,
-                        const VadLevelAnalyzer::Result& vad_level,
+                        float rms_dbfs,
+                        float peak_dbfs,
+                        float speech_probability,
                         AdaptiveModeLevelEstimator& level_estimator) {
   for (int i = 0; i < num_iterations; ++i) {
-    level_estimator.Update(vad_level);
+    level_estimator.Update(rms_dbfs, peak_dbfs, speech_probability);
   }
 }
 
@@ -47,6 +49,10 @@ constexpr AdaptiveDigitalConfig GetAdaptiveDigitalConfig(
   return config;
 }
 
+constexpr float kNoSpeechProbability = 0.0f;
+constexpr float kLowSpeechProbability = kVadConfidenceThreshold / 2.0f;
+constexpr float kMaxSpeechProbability = 1.0f;
+
 // Level estimator with data dumper.
 struct TestLevelEstimator {
   explicit TestLevelEstimator(int adjacent_speech_frames_threshold)
@@ -55,36 +61,31 @@ struct TestLevelEstimator {
             &data_dumper,
             GetAdaptiveDigitalConfig(adjacent_speech_frames_threshold))),
         initial_speech_level_dbfs(estimator->level_dbfs()),
-        vad_level_rms(initial_speech_level_dbfs / 2.0f),
-        vad_level_peak(initial_speech_level_dbfs / 3.0f),
-        vad_data_speech(
-            {/*speech_probability=*/1.0f, vad_level_rms, vad_level_peak}),
-        vad_data_non_speech(
-            {/*speech_probability=*/kVadConfidenceThreshold / 2.0f,
-             vad_level_rms, vad_level_peak}) {
-    RTC_DCHECK_LT(vad_level_rms, vad_level_peak);
-    RTC_DCHECK_LT(initial_speech_level_dbfs, vad_level_rms);
-    RTC_DCHECK_GT(vad_level_rms - initial_speech_level_dbfs, 5.0f)
-        << "Adjust `vad_level_rms` so that the difference from the initial "
+        level_rms_dbfs(initial_speech_level_dbfs / 2.0f),
+        level_peak_dbfs(initial_speech_level_dbfs / 3.0f) {
+    RTC_DCHECK_LT(level_rms_dbfs, level_peak_dbfs);
+    RTC_DCHECK_LT(initial_speech_level_dbfs, level_rms_dbfs);
+    RTC_DCHECK_GT(level_rms_dbfs - initial_speech_level_dbfs, 5.0f)
+        << "Adjust `level_rms_dbfs` so that the difference from the initial "
            "level is wide enough for the tests";
   }
   ApmDataDumper data_dumper;
   std::unique_ptr<AdaptiveModeLevelEstimator> estimator;
   const float initial_speech_level_dbfs;
-  const float vad_level_rms;
-  const float vad_level_peak;
-  const VadLevelAnalyzer::Result vad_data_speech;
-  const VadLevelAnalyzer::Result vad_data_non_speech;
+  const float level_rms_dbfs;
+  const float level_peak_dbfs;
 };
 
 // Checks that the level estimator converges to a constant input speech level.
 TEST(GainController2AdaptiveModeLevelEstimator, LevelStabilizes) {
   TestLevelEstimator level_estimator(/*adjacent_speech_frames_threshold=*/1);
   RunOnConstantLevel(/*num_iterations=*/kNumFramesToConfidence,
-                     level_estimator.vad_data_speech,
+                     level_estimator.level_rms_dbfs,
+                     level_estimator.level_peak_dbfs, kMaxSpeechProbability,
                      *level_estimator.estimator);
   const float estimated_level_dbfs = level_estimator.estimator->level_dbfs();
-  RunOnConstantLevel(/*num_iterations=*/1, level_estimator.vad_data_speech,
+  RunOnConstantLevel(/*num_iterations=*/1, level_estimator.level_rms_dbfs,
+                     level_estimator.level_peak_dbfs, kMaxSpeechProbability,
                      *level_estimator.estimator);
   EXPECT_NEAR(level_estimator.estimator->level_dbfs(), estimated_level_dbfs,
               0.1f);
@@ -95,7 +96,8 @@ TEST(GainController2AdaptiveModeLevelEstimator, LevelStabilizes) {
 TEST(GainController2AdaptiveModeLevelEstimator, IsNotConfident) {
   TestLevelEstimator level_estimator(/*adjacent_speech_frames_threshold=*/1);
   RunOnConstantLevel(/*num_iterations=*/kNumFramesToConfidence / 2,
-                     level_estimator.vad_data_speech,
+                     level_estimator.level_rms_dbfs,
+                     level_estimator.level_peak_dbfs, kMaxSpeechProbability,
                      *level_estimator.estimator);
   EXPECT_FALSE(level_estimator.estimator->IsConfident());
 }
@@ -105,7 +107,8 @@ TEST(GainController2AdaptiveModeLevelEstimator, IsNotConfident) {
 TEST(GainController2AdaptiveModeLevelEstimator, IsConfident) {
   TestLevelEstimator level_estimator(/*adjacent_speech_frames_threshold=*/1);
   RunOnConstantLevel(/*num_iterations=*/kNumFramesToConfidence,
-                     level_estimator.vad_data_speech,
+                     level_estimator.level_rms_dbfs,
+                     level_estimator.level_peak_dbfs, kMaxSpeechProbability,
                      *level_estimator.estimator);
   EXPECT_TRUE(level_estimator.estimator->IsConfident());
 }
@@ -117,15 +120,14 @@ TEST(GainController2AdaptiveModeLevelEstimator,
   TestLevelEstimator level_estimator(/*adjacent_speech_frames_threshold=*/1);
   // Simulate speech.
   RunOnConstantLevel(/*num_iterations=*/kNumFramesToConfidence,
-                     level_estimator.vad_data_speech,
+                     level_estimator.level_rms_dbfs,
+                     level_estimator.level_peak_dbfs, kMaxSpeechProbability,
                      *level_estimator.estimator);
   const float estimated_level_dbfs = level_estimator.estimator->level_dbfs();
   // Simulate full-scale non-speech.
   RunOnConstantLevel(/*num_iterations=*/kNumFramesToConfidence,
-                     VadLevelAnalyzer::Result{/*speech_probability=*/0.0f,
-                                              /*rms_dbfs=*/0.0f,
-                                              /*peak_dbfs=*/0.0f},
-                     *level_estimator.estimator);
+                     /*rms_dbfs=*/0.0f, /*peak_dbfs=*/0.0f,
+                     kNoSpeechProbability, *level_estimator.estimator);
   // No estimated level change is expected.
   EXPECT_FLOAT_EQ(level_estimator.estimator->level_dbfs(),
                   estimated_level_dbfs);
@@ -136,10 +138,11 @@ TEST(GainController2AdaptiveModeLevelEstimator,
      ConvergenceSpeedBeforeConfidence) {
   TestLevelEstimator level_estimator(/*adjacent_speech_frames_threshold=*/1);
   RunOnConstantLevel(/*num_iterations=*/kNumFramesToConfidence,
-                     level_estimator.vad_data_speech,
+                     level_estimator.level_rms_dbfs,
+                     level_estimator.level_peak_dbfs, kMaxSpeechProbability,
                      *level_estimator.estimator);
   EXPECT_NEAR(level_estimator.estimator->level_dbfs(),
-              level_estimator.vad_data_speech.rms_dbfs,
+              level_estimator.level_rms_dbfs,
               kConvergenceSpeedTestsLevelTolerance);
 }
 
@@ -150,11 +153,9 @@ TEST(GainController2AdaptiveModeLevelEstimator,
   // Reach confidence using the initial level estimate.
   RunOnConstantLevel(
       /*num_iterations=*/kNumFramesToConfidence,
-      VadLevelAnalyzer::Result{
-          /*speech_probability=*/1.0f,
-          /*rms_dbfs=*/level_estimator.initial_speech_level_dbfs,
-          /*peak_dbfs=*/level_estimator.initial_speech_level_dbfs + 6.0f},
-      *level_estimator.estimator);
+      /*rms_dbfs=*/level_estimator.initial_speech_level_dbfs,
+      /*peak_dbfs=*/level_estimator.initial_speech_level_dbfs + 6.0f,
+      kMaxSpeechProbability, *level_estimator.estimator);
   // No estimate change should occur, but confidence is achieved.
   ASSERT_FLOAT_EQ(level_estimator.estimator->level_dbfs(),
                   level_estimator.initial_speech_level_dbfs);
@@ -165,9 +166,10 @@ TEST(GainController2AdaptiveModeLevelEstimator,
       kConvergenceTimeAfterConfidenceNumFrames > kNumFramesToConfidence, "");
   RunOnConstantLevel(
       /*num_iterations=*/kConvergenceTimeAfterConfidenceNumFrames,
-      level_estimator.vad_data_speech, *level_estimator.estimator);
+      level_estimator.level_rms_dbfs, level_estimator.level_peak_dbfs,
+      kMaxSpeechProbability, *level_estimator.estimator);
   EXPECT_NEAR(level_estimator.estimator->level_dbfs(),
-              level_estimator.vad_data_speech.rms_dbfs,
+              level_estimator.level_rms_dbfs,
               kConvergenceSpeedTestsLevelTolerance);
 }
 
@@ -181,22 +183,28 @@ TEST_P(AdaptiveModeLevelEstimatorParametrization,
        DoNotAdaptToShortSpeechSegments) {
   TestLevelEstimator level_estimator(adjacent_speech_frames_threshold());
   const float initial_level = level_estimator.estimator->level_dbfs();
-  ASSERT_LT(initial_level, level_estimator.vad_data_speech.peak_dbfs);
+  ASSERT_LT(initial_level, level_estimator.level_peak_dbfs);
   for (int i = 0; i < adjacent_speech_frames_threshold() - 1; ++i) {
     SCOPED_TRACE(i);
-    level_estimator.estimator->Update(level_estimator.vad_data_speech);
+    level_estimator.estimator->Update(level_estimator.level_rms_dbfs,
+                                      level_estimator.level_peak_dbfs,
+                                      kMaxSpeechProbability);
     EXPECT_EQ(initial_level, level_estimator.estimator->level_dbfs());
   }
-  level_estimator.estimator->Update(level_estimator.vad_data_non_speech);
+  level_estimator.estimator->Update(level_estimator.level_rms_dbfs,
+                                    level_estimator.level_peak_dbfs,
+                                    kLowSpeechProbability);
   EXPECT_EQ(initial_level, level_estimator.estimator->level_dbfs());
 }
 
 TEST_P(AdaptiveModeLevelEstimatorParametrization, AdaptToEnoughSpeechSegments) {
   TestLevelEstimator level_estimator(adjacent_speech_frames_threshold());
   const float initial_level = level_estimator.estimator->level_dbfs();
-  ASSERT_LT(initial_level, level_estimator.vad_data_speech.peak_dbfs);
+  ASSERT_LT(initial_level, level_estimator.level_peak_dbfs);
   for (int i = 0; i < adjacent_speech_frames_threshold(); ++i) {
-    level_estimator.estimator->Update(level_estimator.vad_data_speech);
+    level_estimator.estimator->Update(level_estimator.level_rms_dbfs,
+                                      level_estimator.level_peak_dbfs,
+                                      kMaxSpeechProbability);
   }
   EXPECT_LT(initial_level, level_estimator.estimator->level_dbfs());
 }

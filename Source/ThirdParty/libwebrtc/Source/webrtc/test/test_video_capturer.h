@@ -41,6 +41,9 @@ class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
     MutexLock lock(&lock_);
     preprocessor_ = std::move(preprocessor);
   }
+  void OnOutputFormatRequest(int width,
+                             int height,
+                             const absl::optional<int>& max_fps);
 
  protected:
   void OnFrame(const VideoFrame& frame);

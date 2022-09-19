@@ -19,7 +19,7 @@ TEST(AudioFrameTest, ConstructFromAudioBuffer) {
   constexpr int kNumChannels = 2;
   constexpr float kFloatConstant = 1272.f;
   constexpr float kIntConstant = 17252;
-  const webrtc::StreamConfig stream_config(kSampleRateHz, kNumChannels, false);
+  const webrtc::StreamConfig stream_config(kSampleRateHz, kNumChannels);
   webrtc::AudioBuffer buffer(
       stream_config.sample_rate_hz(), stream_config.num_channels(),
       stream_config.sample_rate_hz(), stream_config.num_channels(),

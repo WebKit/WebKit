@@ -26,123 +26,139 @@ if (NOT APPLE)
 endif ()
 
 set(webrtc_SOURCES
-    Source/third_party/abseil-cpp/absl/strings/match.cc
+    Source/third_party/abseil-cpp/absl/base/inline_variable_test_a.cc
+    Source/third_party/abseil-cpp/absl/base/inline_variable_test_b.cc
+    Source/third_party/abseil-cpp/absl/base/internal/atomic_hook_test_helper.cc
+    Source/third_party/abseil-cpp/absl/base/internal/cycleclock.cc
+    Source/third_party/abseil-cpp/absl/base/internal/exception_safety_testing.cc
+    Source/third_party/abseil-cpp/absl/base/internal/low_level_alloc.cc
+    Source/third_party/abseil-cpp/absl/base/internal/raw_logging.cc
+    Source/third_party/abseil-cpp/absl/base/internal/scoped_set_env.cc
+    Source/third_party/abseil-cpp/absl/base/internal/spinlock.cc
+    Source/third_party/abseil-cpp/absl/base/internal/spinlock_wait.cc
+    Source/third_party/abseil-cpp/absl/base/internal/strerror.cc
+    Source/third_party/abseil-cpp/absl/base/internal/sysinfo.cc
+    Source/third_party/abseil-cpp/absl/base/internal/thread_identity.cc
+    Source/third_party/abseil-cpp/absl/base/internal/throw_delegate.cc
+    Source/third_party/abseil-cpp/absl/base/internal/unscaledcycleclock.cc
+    Source/third_party/abseil-cpp/absl/base/log_severity.cc
+    Source/third_party/abseil-cpp/absl/container/internal/hash_generator_testing.cc
+    Source/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler.cc
+    Source/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler_force_weak_definition.cc
+    Source/third_party/abseil-cpp/absl/container/internal/raw_hash_set.cc
+    Source/third_party/abseil-cpp/absl/container/internal/test_instance_tracker.cc
+    Source/third_party/abseil-cpp/absl/debugging/failure_signal_handler.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/demangle.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/stack_consumption.cc
+    Source/third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc
+    Source/third_party/abseil-cpp/absl/debugging/leak_check.cc
+    Source/third_party/abseil-cpp/absl/debugging/stacktrace.cc
+    Source/third_party/abseil-cpp/absl/debugging/symbolize.cc
+    Source/third_party/abseil-cpp/absl/flags/commandlineflag.cc
+    Source/third_party/abseil-cpp/absl/flags/flag.cc
+    Source/third_party/abseil-cpp/absl/flags/flag_test_defs.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/commandlineflag.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/flag.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/private_handle_accessor.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/program_name.cc
+    Source/third_party/abseil-cpp/absl/flags/internal/usage.cc
+    Source/third_party/abseil-cpp/absl/flags/marshalling.cc
+    Source/third_party/abseil-cpp/absl/flags/parse.cc
+    Source/third_party/abseil-cpp/absl/flags/reflection.cc
+    Source/third_party/abseil-cpp/absl/flags/usage.cc
+    Source/third_party/abseil-cpp/absl/flags/usage_config.cc
+    Source/third_party/abseil-cpp/absl/hash/internal/city.cc
+    Source/third_party/abseil-cpp/absl/hash/internal/hash.cc
+    Source/third_party/abseil-cpp/absl/hash/internal/low_level_hash.cc
+    Source/third_party/abseil-cpp/absl/hash/internal/print_hash_of.cc
+    Source/third_party/abseil-cpp/absl/numeric/int128.cc
+    Source/third_party/abseil-cpp/absl/profiling/internal/exponential_biased.cc
+    Source/third_party/abseil-cpp/absl/profiling/internal/periodic_sampler.cc
+    Source/third_party/abseil-cpp/absl/random/discrete_distribution.cc
+    Source/third_party/abseil-cpp/absl/random/gaussian_distribution.cc
+    Source/third_party/abseil-cpp/absl/random/internal/chi_square.cc
+    Source/third_party/abseil-cpp/absl/random/internal/distribution_test_util.cc
+    Source/third_party/abseil-cpp/absl/random/internal/gaussian_distribution_gentables.cc
+    Source/third_party/abseil-cpp/absl/random/internal/nanobenchmark.cc
+    Source/third_party/abseil-cpp/absl/random/internal/pool_urbg.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen_detect.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen_hwaes.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen_round_keys.cc
+    Source/third_party/abseil-cpp/absl/random/internal/randen_slow.cc
+    Source/third_party/abseil-cpp/absl/random/internal/seed_material.cc
+    Source/third_party/abseil-cpp/absl/random/seed_gen_exception.cc
+    Source/third_party/abseil-cpp/absl/random/seed_sequences.cc
+    Source/third_party/abseil-cpp/absl/status/status.cc
+    Source/third_party/abseil-cpp/absl/status/statusor.cc
+    Source/third_party/abseil-cpp/absl/status/status_payload_printer.cc
+    Source/third_party/abseil-cpp/absl/strings/ascii.cc
+    Source/third_party/abseil-cpp/absl/strings/charconv.cc
+    Source/third_party/abseil-cpp/absl/strings/cord_analysis.cc
+    Source/third_party/abseil-cpp/absl/strings/cord_buffer.cc
+    Source/third_party/abseil-cpp/absl/strings/cord.cc
+    Source/third_party/abseil-cpp/absl/strings/escaping.cc
     Source/third_party/abseil-cpp/absl/strings/internal/charconv_bigint.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/cordz_info.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/cord_internal.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/cordz_sample_token.cc
     Source/third_party/abseil-cpp/absl/strings/internal/charconv_parse.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/str_format/arg.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/str_format/float_conversion.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/str_format/output.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/str_format/bind.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/str_format/parser.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/str_format/extension.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cord_internal.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cord_rep_btree.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cord_rep_btree_navigator.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cord_rep_btree_reader.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cord_rep_consume.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cord_rep_crc.cc
     Source/third_party/abseil-cpp/absl/strings/internal/cord_rep_ring.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cordz_functions.cc
     Source/third_party/abseil-cpp/absl/strings/internal/cordz_handle.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cordz_info.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/cordz_sample_token.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/escaping.cc
     Source/third_party/abseil-cpp/absl/strings/internal/memutil.cc
     Source/third_party/abseil-cpp/absl/strings/internal/ostringstream.cc
     Source/third_party/abseil-cpp/absl/strings/internal/pow10_helper.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/arg.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/bind.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/extension.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/float_conversion.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/output.cc
+    Source/third_party/abseil-cpp/absl/strings/internal/str_format/parser.cc
     Source/third_party/abseil-cpp/absl/strings/internal/utf8.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/cordz_functions.cc
-    Source/third_party/abseil-cpp/absl/strings/internal/escaping.cc
-    Source/third_party/abseil-cpp/absl/strings/string_view.cc
-    Source/third_party/abseil-cpp/absl/strings/str_cat.cc
-    Source/third_party/abseil-cpp/absl/strings/cord.cc
-    Source/third_party/abseil-cpp/absl/strings/ascii.cc
+    Source/third_party/abseil-cpp/absl/strings/match.cc
     Source/third_party/abseil-cpp/absl/strings/numbers.cc
-    Source/third_party/abseil-cpp/absl/strings/charconv.cc
+    Source/third_party/abseil-cpp/absl/strings/str_cat.cc
+    Source/third_party/abseil-cpp/absl/strings/string_view.cc
+    Source/third_party/abseil-cpp/absl/strings/str_replace.cc
     Source/third_party/abseil-cpp/absl/strings/str_split.cc
     Source/third_party/abseil-cpp/absl/strings/substitute.cc
-    Source/third_party/abseil-cpp/absl/strings/escaping.cc
-    Source/third_party/abseil-cpp/absl/strings/str_replace.cc
+    Source/third_party/abseil-cpp/absl/synchronization/barrier.cc
+    Source/third_party/abseil-cpp/absl/synchronization/blocking_counter.cc
+    Source/third_party/abseil-cpp/absl/synchronization/internal/create_thread_identity.cc
+    Source/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc
+    Source/third_party/abseil-cpp/absl/synchronization/internal/per_thread_sem.cc
+    Source/third_party/abseil-cpp/absl/synchronization/internal/waiter.cc
+    Source/third_party/abseil-cpp/absl/synchronization/mutex.cc
+    Source/third_party/abseil-cpp/absl/synchronization/notification.cc
+    Source/third_party/abseil-cpp/absl/time/civil_time.cc
+    Source/third_party/abseil-cpp/absl/time/clock.cc
+    Source/third_party/abseil-cpp/absl/time/duration.cc
+    Source/third_party/abseil-cpp/absl/time/format.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/civil_time_detail.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_fixed.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_format.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_if.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_impl.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_lookup.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_posix.cc
+    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/zone_info_source.cc
+    Source/third_party/abseil-cpp/absl/time/internal/test_util.cc
+    Source/third_party/abseil-cpp/absl/time/time.cc
     Source/third_party/abseil-cpp/absl/types/bad_any_cast.cc
     Source/third_party/abseil-cpp/absl/types/bad_optional_access.cc
     Source/third_party/abseil-cpp/absl/types/bad_variant_access.cc
-    Source/third_party/abseil-cpp/absl/flags/parse.cc
-    Source/third_party/abseil-cpp/absl/flags/usage.cc
-    Source/third_party/abseil-cpp/absl/flags/internal/private_handle_accessor.cc
-    Source/third_party/abseil-cpp/absl/flags/internal/usage.cc
-    Source/third_party/abseil-cpp/absl/flags/internal/program_name.cc
-    Source/third_party/abseil-cpp/absl/flags/internal/flag.cc
-    Source/third_party/abseil-cpp/absl/flags/internal/commandlineflag.cc
-    Source/third_party/abseil-cpp/absl/flags/reflection.cc
-    Source/third_party/abseil-cpp/absl/flags/usage_config.cc
-    Source/third_party/abseil-cpp/absl/flags/flag.cc
-    Source/third_party/abseil-cpp/absl/flags/marshalling.cc
-    Source/third_party/abseil-cpp/absl/flags/commandlineflag.cc
-    Source/third_party/abseil-cpp/absl/synchronization/blocking_counter.cc
-    Source/third_party/abseil-cpp/absl/synchronization/mutex.cc
-    Source/third_party/abseil-cpp/absl/synchronization/internal/per_thread_sem.cc
-    Source/third_party/abseil-cpp/absl/synchronization/internal/create_thread_identity.cc
-    Source/third_party/abseil-cpp/absl/synchronization/internal/waiter.cc
-    Source/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc
-    Source/third_party/abseil-cpp/absl/synchronization/barrier.cc
-    Source/third_party/abseil-cpp/absl/synchronization/notification.cc
-    Source/third_party/abseil-cpp/absl/hash/internal/wyhash.cc
-    Source/third_party/abseil-cpp/absl/hash/internal/hash.cc
-    Source/third_party/abseil-cpp/absl/hash/internal/print_hash_of.cc
-    Source/third_party/abseil-cpp/absl/hash/internal/city.cc
-    Source/third_party/abseil-cpp/absl/debugging/symbolize.cc
-    Source/third_party/abseil-cpp/absl/debugging/failure_signal_handler.cc
-    Source/third_party/abseil-cpp/absl/debugging/leak_check_disable.cc
-    Source/third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc
-    Source/third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc
-    Source/third_party/abseil-cpp/absl/debugging/internal/stack_consumption.cc
-    Source/third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc
-    Source/third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc
-    Source/third_party/abseil-cpp/absl/debugging/internal/demangle.cc
-    Source/third_party/abseil-cpp/absl/debugging/leak_check.cc
-    Source/third_party/abseil-cpp/absl/debugging/stacktrace.cc
-    Source/third_party/abseil-cpp/absl/status/status_payload_printer.cc
-    Source/third_party/abseil-cpp/absl/status/status.cc
-    Source/third_party/abseil-cpp/absl/status/statusor.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_format.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_impl.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_lookup.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_if.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_fixed.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/zone_info_source.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/civil_time_detail.cc
-    Source/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_posix.cc
-    Source/third_party/abseil-cpp/absl/time/clock.cc
-    Source/third_party/abseil-cpp/absl/time/duration.cc
-    Source/third_party/abseil-cpp/absl/time/civil_time.cc
-    Source/third_party/abseil-cpp/absl/time/format.cc
-    Source/third_party/abseil-cpp/absl/time/time.cc
-    Source/third_party/abseil-cpp/absl/container/internal/raw_hash_set.cc
-    Source/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler_force_weak_definition.cc
-    Source/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler.cc
-    Source/third_party/abseil-cpp/absl/numeric/int128.cc
-    Source/third_party/abseil-cpp/absl/random/gaussian_distribution.cc
-    Source/third_party/abseil-cpp/absl/random/discrete_distribution.cc
-    Source/third_party/abseil-cpp/absl/random/seed_gen_exception.cc
-    Source/third_party/abseil-cpp/absl/random/internal/gaussian_distribution_gentables.cc
-    Source/third_party/abseil-cpp/absl/random/internal/seed_material.cc
-    Source/third_party/abseil-cpp/absl/random/internal/randen_slow.cc
-    Source/third_party/abseil-cpp/absl/random/internal/chi_square.cc
-    Source/third_party/abseil-cpp/absl/random/internal/randen.cc
-    Source/third_party/abseil-cpp/absl/random/internal/randen_detect.cc
-    Source/third_party/abseil-cpp/absl/random/internal/randen_round_keys.cc
-    Source/third_party/abseil-cpp/absl/random/internal/randen_hwaes.cc
-    Source/third_party/abseil-cpp/absl/random/internal/pool_urbg.cc
-    Source/third_party/abseil-cpp/absl/random/seed_sequences.cc
-    Source/third_party/abseil-cpp/absl/base/internal/spinlock_wait.cc
-    Source/third_party/abseil-cpp/absl/base/internal/periodic_sampler.cc
-    Source/third_party/abseil-cpp/absl/base/internal/cycleclock.cc
-    Source/third_party/abseil-cpp/absl/base/internal/spinlock.cc
-    Source/third_party/abseil-cpp/absl/base/internal/unscaledcycleclock.cc
-    Source/third_party/abseil-cpp/absl/base/internal/scoped_set_env.cc
-    Source/third_party/abseil-cpp/absl/base/internal/sysinfo.cc
-    Source/third_party/abseil-cpp/absl/base/internal/raw_logging.cc
-    Source/third_party/abseil-cpp/absl/base/internal/throw_delegate.cc
-    Source/third_party/abseil-cpp/absl/base/internal/strerror.cc
-    Source/third_party/abseil-cpp/absl/base/internal/thread_identity.cc
-    Source/third_party/abseil-cpp/absl/base/internal/exponential_biased.cc
-    Source/third_party/abseil-cpp/absl/base/internal/low_level_alloc.cc
-    Source/third_party/abseil-cpp/absl/base/log_severity.cc
     Source/third_party/boringssl/err_data.c
     Source/third_party/boringssl/src/crypto/asn1/a_bitstr.c
     Source/third_party/boringssl/src/crypto/asn1/a_bool.c
@@ -197,6 +213,7 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/chacha/chacha.c
     Source/third_party/boringssl/src/crypto/cipher_extra/cipher_extra.c
     Source/third_party/boringssl/src/crypto/cipher_extra/derive_key.c
+    Source/third_party/boringssl/src/crypto/cipher_extra/e_aesccm.c
     Source/third_party/boringssl/src/crypto/cipher_extra/e_aesctrhmac.c
     Source/third_party/boringssl/src/crypto/cipher_extra/e_aesgcmsiv.c
     Source/third_party/boringssl/src/crypto/cipher_extra/e_chacha20poly1305.c
@@ -207,7 +224,13 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/cipher_extra/tls_cbc.c
     Source/third_party/boringssl/src/crypto/cmac/cmac.c
     Source/third_party/boringssl/src/crypto/conf/conf.c
+    Source/third_party/boringssl/src/crypto/cpu-aarch64-fuchsia.c
+    Source/third_party/boringssl/src/crypto/cpu-aarch64-linux.c
+    Source/third_party/boringssl/src/crypto/cpu-aarch64-win.c
+    Source/third_party/boringssl/src/crypto/cpu-arm-linux.c
+    Source/third_party/boringssl/src/crypto/cpu-arm.c
     Source/third_party/boringssl/src/crypto/cpu-intel.c
+    Source/third_party/boringssl/src/crypto/cpu-ppc64le.c
     Source/third_party/boringssl/src/crypto/crypto.c
     Source/third_party/boringssl/src/crypto/curve25519/curve25519.c
     Source/third_party/boringssl/src/crypto/curve25519/spake25519.c
@@ -217,6 +240,8 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/dsa/dsa.c
     Source/third_party/boringssl/src/crypto/dsa/dsa_asn1.c
     Source/third_party/boringssl/src/crypto/ec_extra/ec_asn1.c
+    Source/third_party/boringssl/src/crypto/ec_extra/ec_derive.c
+    Source/third_party/boringssl/src/crypto/ec_extra/hash_to_curve.c
     Source/third_party/boringssl/src/crypto/ecdh_extra/ecdh_extra.c
     Source/third_party/boringssl/src/crypto/ecdsa_extra/ecdsa_asn1.c
     Source/third_party/boringssl/src/crypto/engine/engine.c
@@ -239,12 +264,82 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/evp/scrypt.c
     Source/third_party/boringssl/src/crypto/evp/sign.c
     Source/third_party/boringssl/src/crypto/ex_data.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/aes/aes.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/aes/aes_nohw.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/aes/key_wrap.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/aes/mode_wrappers.c
     Source/third_party/boringssl/src/crypto/fipsmodule/bcm.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/add.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/asm/x86_64-gcc.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/bn.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/bytes.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/cmp.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/ctx.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/div.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/div_extra.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/exponentiation.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/gcd.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/gcd_extra.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/generic.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/jacobi.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/montgomery.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/montgomery_inv.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/mul.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/prime.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/random.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/rsaz_exp.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/shift.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/bn/sqrt.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/cipher/aead.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/cipher/cipher.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/cipher/e_aes.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/cipher/e_des.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/des/des.c
     Source/third_party/boringssl/src/crypto/fipsmodule/dh/check.c
     Source/third_party/boringssl/src/crypto/fipsmodule/dh/dh.c
-    Source/third_party/boringssl/src/crypto/fipsmodule/ecdh/ecdh.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/digest/digest.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/digest/digests.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/ec.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/ec_key.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/ec_montgomery.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/felem.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/oct.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/p224-64.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/p256-x86_64.c
     Source/third_party/boringssl/src/crypto/fipsmodule/ec/p256.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/scalar.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/simple.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/simple_mul.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/util.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ec/wnaf.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ecdh/ecdh.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/ecdsa/ecdsa.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/fips_shared_support.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/hmac/hmac.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/md4/md4.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/md5/md5.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/modes/cbc.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/modes/cfb.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/modes/ctr.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/modes/gcm.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/modes/gcm_nohw.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/modes/ofb.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/modes/polyval.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/rand/ctrdrbg.c
     Source/third_party/boringssl/src/crypto/fipsmodule/rand/fork_detect.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/rand/rand.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/rand/urandom.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/rsa/blinding.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/rsa/padding.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/rsa/rsa.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/rsa/rsa_impl.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/self_check/fips.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/self_check/self_check.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/sha/sha1-altivec.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/sha/sha1.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/sha/sha256.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/sha/sha512.c
+    Source/third_party/boringssl/src/crypto/fipsmodule/tls/kdf.c
     Source/third_party/boringssl/src/crypto/hkdf/hkdf.c
     Source/third_party/boringssl/src/crypto/hpke/hpke.c
     Source/third_party/boringssl/src/crypto/hrss/hrss.c
@@ -266,22 +361,29 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/pkcs8/pkcs8.c
     Source/third_party/boringssl/src/crypto/pkcs8/pkcs8_x509.c
     Source/third_party/boringssl/src/crypto/poly1305/poly1305.c
+    Source/third_party/boringssl/src/crypto/poly1305/poly1305_arm.c
     Source/third_party/boringssl/src/crypto/poly1305/poly1305_vec.c
     Source/third_party/boringssl/src/crypto/pool/pool.c
     Source/third_party/boringssl/src/crypto/rand_extra/deterministic.c
     Source/third_party/boringssl/src/crypto/rand_extra/forkunsafe.c
     Source/third_party/boringssl/src/crypto/rand_extra/fuchsia.c
+    Source/third_party/boringssl/src/crypto/rand_extra/passive.c
     Source/third_party/boringssl/src/crypto/rand_extra/rand_extra.c
     Source/third_party/boringssl/src/crypto/rand_extra/windows.c
     Source/third_party/boringssl/src/crypto/rc4/rc4.c
     Source/third_party/boringssl/src/crypto/refcount_c11.c
     Source/third_party/boringssl/src/crypto/refcount_lock.c
     Source/third_party/boringssl/src/crypto/rsa_extra/rsa_asn1.c
+    Source/third_party/boringssl/src/crypto/rsa_extra/rsa_print.c
+    Source/third_party/boringssl/src/crypto/siphash/siphash.c
     Source/third_party/boringssl/src/crypto/stack/stack.c
     Source/third_party/boringssl/src/crypto/thread.c
     Source/third_party/boringssl/src/crypto/thread_none.c
     Source/third_party/boringssl/src/crypto/thread_pthread.c
     Source/third_party/boringssl/src/crypto/thread_win.c
+    Source/third_party/boringssl/src/crypto/trust_token/pmbtoken.c
+    Source/third_party/boringssl/src/crypto/trust_token/trust_token.c
+    Source/third_party/boringssl/src/crypto/trust_token/voprf.c
     Source/third_party/boringssl/src/crypto/x509/a_digest.c
     Source/third_party/boringssl/src/crypto/x509/a_sign.c
     Source/third_party/boringssl/src/crypto/x509/a_strex.c
@@ -361,6 +463,23 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/crypto/x509v3/v3_purp.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_skey.c
     Source/third_party/boringssl/src/crypto/x509v3/v3_utl.c
+    Source/third_party/boringssl/src/decrepit/bio/base64_bio.c
+    Source/third_party/boringssl/src/decrepit/blowfish/blowfish.c
+    Source/third_party/boringssl/src/decrepit/cast/cast.c
+    Source/third_party/boringssl/src/decrepit/cast/cast_tables.c
+    Source/third_party/boringssl/src/decrepit/cfb/cfb.c
+    Source/third_party/boringssl/src/decrepit/des/cfb64ede.c
+    Source/third_party/boringssl/src/decrepit/dh/dh_decrepit.c
+    Source/third_party/boringssl/src/decrepit/dsa/dsa_decrepit.c
+    Source/third_party/boringssl/src/decrepit/evp/dss1.c
+    Source/third_party/boringssl/src/decrepit/evp/evp_do_all.c
+    Source/third_party/boringssl/src/decrepit/obj/obj_decrepit.c
+    Source/third_party/boringssl/src/decrepit/rc4/rc4_decrepit.c
+    Source/third_party/boringssl/src/decrepit/ripemd/ripemd.c
+    Source/third_party/boringssl/src/decrepit/rsa/rsa_decrepit.c
+    Source/third_party/boringssl/src/decrepit/ssl/ssl_decrepit.c
+    Source/third_party/boringssl/src/decrepit/x509/x509_decrepit.c
+    Source/third_party/boringssl/src/decrepit/xts/xts.c
     Source/third_party/boringssl/src/ssl/bio_ssl.cc
     Source/third_party/boringssl/src/ssl/d1_both.cc
     Source/third_party/boringssl/src/ssl/d1_lib.cc
@@ -379,10 +498,12 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/ssl/ssl_aead_ctx.cc
     Source/third_party/boringssl/src/ssl/ssl_asn1.cc
     Source/third_party/boringssl/src/ssl/ssl_buffer.cc
+    Source/third_party/boringssl/src/ssl/ssl_c_test.c
     Source/third_party/boringssl/src/ssl/ssl_cert.cc
     Source/third_party/boringssl/src/ssl/ssl_cipher.cc
     Source/third_party/boringssl/src/ssl/ssl_file.cc
     Source/third_party/boringssl/src/ssl/ssl_key_share.cc
+    Source/third_party/boringssl/src/ssl/ssl_lib.cc
     Source/third_party/boringssl/src/ssl/ssl_lib.cc
     Source/third_party/boringssl/src/ssl/ssl_privkey.cc
     Source/third_party/boringssl/src/ssl/ssl_session.cc
@@ -392,18 +513,53 @@ set(webrtc_SOURCES
     Source/third_party/boringssl/src/ssl/ssl_x509.cc
     Source/third_party/boringssl/src/ssl/t1_enc.cc
     Source/third_party/boringssl/src/ssl/t1_lib.cc
+    Source/third_party/boringssl/src/ssl/test/async_bio.cc
+    Source/third_party/boringssl/src/ssl/test/bssl_shim.cc
+    Source/third_party/boringssl/src/ssl/test/handshake_util.cc
+    Source/third_party/boringssl/src/ssl/test/handshaker.cc
+    Source/third_party/boringssl/src/ssl/test/mock_quic_transport.cc
+    Source/third_party/boringssl/src/ssl/test/packeted_bio.cc
+    Source/third_party/boringssl/src/ssl/test/settings_writer.cc
+    Source/third_party/boringssl/src/ssl/test/test_config.cc
+    Source/third_party/boringssl/src/ssl/test/test_state.cc
     Source/third_party/boringssl/src/ssl/tls13_both.cc
     Source/third_party/boringssl/src/ssl/tls13_client.cc
     Source/third_party/boringssl/src/ssl/tls13_enc.cc
     Source/third_party/boringssl/src/ssl/tls13_server.cc
     Source/third_party/boringssl/src/ssl/tls_method.cc
     Source/third_party/boringssl/src/ssl/tls_record.cc
+    Source/third_party/boringssl/src/tool/args.cc
+    Source/third_party/boringssl/src/tool/ciphers.cc
+    Source/third_party/boringssl/src/tool/client.cc
+    Source/third_party/boringssl/src/tool/const.cc
+    Source/third_party/boringssl/src/tool/digest.cc
+    Source/third_party/boringssl/src/tool/fd.cc
+    Source/third_party/boringssl/src/tool/file.cc
+    Source/third_party/boringssl/src/tool/generate_ed25519.cc
+    Source/third_party/boringssl/src/tool/genrsa.cc
+    Source/third_party/boringssl/src/tool/pkcs12.cc
+    Source/third_party/boringssl/src/tool/rand.cc
+    Source/third_party/boringssl/src/tool/server.cc
+    Source/third_party/boringssl/src/tool/sign.cc
+    Source/third_party/boringssl/src/tool/speed.cc
+    Source/third_party/boringssl/src/tool/tool.cc
+    Source/third_party/boringssl/src/tool/transport_common.cc
+    Source/third_party/boringssl/src/util/ar/testdata/sample/bar.cc
+    Source/third_party/boringssl/src/util/ar/testdata/sample/foo.c
+    Source/third_party/boringssl/src/util/fipstools/acvp/modulewrapper/main.cc
+    Source/third_party/boringssl/src/util/fipstools/acvp/modulewrapper/modulewrapper.cc
+    Source/third_party/boringssl/src/util/fipstools/cavp/cavp_main.cc
+    Source/third_party/boringssl/src/util/fipstools/cavp/cavp_test_util.cc
+    Source/third_party/boringssl/src/util/fipstools/cavp/test_fips.c
+    Source/third_party/libyuv/source/compare.cc
     Source/third_party/libyuv/source/compare_common.cc
     Source/third_party/libyuv/source/compare_gcc.cc
-    Source/third_party/libyuv/source/convert.cc
+    Source/third_party/libyuv/source/compare_mmi.cc
+    Source/third_party/libyuv/source/compare_msa.cc
     Source/third_party/libyuv/source/convert_argb.cc
-    Source/third_party/libyuv/source/convert_from.cc
+    Source/third_party/libyuv/source/convert.cc
     Source/third_party/libyuv/source/convert_from_argb.cc
+    Source/third_party/libyuv/source/convert_from.cc
     Source/third_party/libyuv/source/convert_jpeg.cc
     Source/third_party/libyuv/source/convert_to_argb.cc
     Source/third_party/libyuv/source/convert_to_i420.cc
@@ -411,30 +567,47 @@ set(webrtc_SOURCES
     Source/third_party/libyuv/source/mjpeg_decoder.cc
     Source/third_party/libyuv/source/mjpeg_validate.cc
     Source/third_party/libyuv/source/planar_functions.cc
-    Source/third_party/libyuv/source/rotate.cc
     Source/third_party/libyuv/source/rotate_any.cc
     Source/third_party/libyuv/source/rotate_argb.cc
+    Source/third_party/libyuv/source/rotate.cc
     Source/third_party/libyuv/source/rotate_common.cc
     Source/third_party/libyuv/source/rotate_gcc.cc
+    Source/third_party/libyuv/source/rotate_lsx.cc
+    Source/third_party/libyuv/source/rotate_mmi.cc
+    Source/third_party/libyuv/source/rotate_msa.cc
+    Source/third_party/libyuv/source/rotate_win.cc
     Source/third_party/libyuv/source/row_any.cc
     Source/third_party/libyuv/source/row_common.cc
     Source/third_party/libyuv/source/row_gcc.cc
+    Source/third_party/libyuv/source/row_lasx.cc
+    Source/third_party/libyuv/source/row_lsx.cc
+    Source/third_party/libyuv/source/row_mmi.cc
+    Source/third_party/libyuv/source/row_msa.cc
+    Source/third_party/libyuv/source/row_win.cc
     Source/third_party/libyuv/source/scale_any.cc
     Source/third_party/libyuv/source/scale_argb.cc
+    Source/third_party/libyuv/source/scale.cc
     Source/third_party/libyuv/source/scale_common.cc
     Source/third_party/libyuv/source/scale_gcc.cc
+    Source/third_party/libyuv/source/scale_lsx.cc
+    Source/third_party/libyuv/source/scale_mmi.cc
+    Source/third_party/libyuv/source/scale_msa.cc
+    Source/third_party/libyuv/source/scale_rgb.cc
     Source/third_party/libyuv/source/scale_uv.cc
+    Source/third_party/libyuv/source/scale_win.cc
     Source/third_party/libyuv/source/video_common.cc
+    Source/third_party/libyuv/util/color.cc
+    Source/third_party/libyuv/util/compare.cc
+    Source/third_party/libyuv/util/i444tonv12_eg.cc
+    Source/third_party/libyuv/util/psnr.cc
+    Source/third_party/libyuv/util/psnr_main.cc
+    Source/third_party/libyuv/util/ssim.cc
+    Source/third_party/libyuv/util/yuvconvert.cc
     Source/third_party/pffft/src/pffft.c
     Source/third_party/rnnoise/src/rnn_vad_weights.cc
     Source/webrtc/api/adaptation/resource.cc
     Source/webrtc/api/audio/audio_frame.cc
-    Source/webrtc/api/audio/echo_detector_creator.cc
     Source/webrtc/api/audio/channel_layout.cc
-    Source/webrtc/api/audio/echo_canceller3_config.cc
-    Source/webrtc/api/audio/echo_canceller3_factory.cc
-    Source/webrtc/api/audio_codecs/L16/audio_decoder_L16.cc
-    Source/webrtc/api/audio_codecs/L16/audio_encoder_L16.cc
     Source/webrtc/api/audio_codecs/audio_codec_pair_id.cc
     Source/webrtc/api/audio_codecs/audio_decoder.cc
     Source/webrtc/api/audio_codecs/audio_encoder.cc
@@ -451,12 +624,19 @@ set(webrtc_SOURCES
     Source/webrtc/api/audio_codecs/isac/audio_decoder_isac_float.cc
     Source/webrtc/api/audio_codecs/isac/audio_encoder_isac_fix.cc
     Source/webrtc/api/audio_codecs/isac/audio_encoder_isac_float.cc
+    Source/webrtc/api/audio_codecs/L16/audio_decoder_L16.cc
+    Source/webrtc/api/audio_codecs/L16/audio_encoder_L16.cc
+    Source/webrtc/api/audio_codecs/opus_audio_decoder_factory.cc
     Source/webrtc/api/audio_codecs/opus/audio_decoder_multi_channel_opus.cc
     Source/webrtc/api/audio_codecs/opus/audio_decoder_opus.cc
+    Source/webrtc/api/audio_codecs/opus_audio_encoder_factory.cc
     Source/webrtc/api/audio_codecs/opus/audio_encoder_multi_channel_opus.cc
     Source/webrtc/api/audio_codecs/opus/audio_encoder_multi_channel_opus_config.cc
     Source/webrtc/api/audio_codecs/opus/audio_encoder_opus.cc
     Source/webrtc/api/audio_codecs/opus/audio_encoder_opus_config.cc
+    Source/webrtc/api/audio/echo_canceller3_config.cc
+    Source/webrtc/api/audio/echo_canceller3_factory.cc
+    Source/webrtc/api/audio/echo_detector_creator.cc
     Source/webrtc/api/audio_options.cc
     Source/webrtc/api/call/transport.cc
     Source/webrtc/api/candidate.cc
@@ -464,6 +644,7 @@ set(webrtc_SOURCES
     Source/webrtc/api/crypto/crypto_options.cc
     Source/webrtc/api/data_channel_interface.cc
     Source/webrtc/api/dtls_transport_interface.cc
+    Source/webrtc/api/field_trials.cc
     Source/webrtc/api/ice_transport_factory.cc
     Source/webrtc/api/jsep.cc
     Source/webrtc/api/jsep_ice_candidate.cc
@@ -473,6 +654,7 @@ set(webrtc_SOURCES
     Source/webrtc/api/neteq/default_neteq_controller_factory.cc
     Source/webrtc/api/neteq/neteq.cc
     Source/webrtc/api/neteq/tick_timer.cc
+    Source/webrtc/api/numerics/samples_stats_counter.cc
     Source/webrtc/api/peer_connection_interface.cc
     Source/webrtc/api/rtc_error.cc
     Source/webrtc/api/rtc_event_log_output_file.cc
@@ -487,13 +669,17 @@ set(webrtc_SOURCES
     Source/webrtc/api/rtp_transceiver_interface.cc
     Source/webrtc/api/sctp_transport_interface.cc
     Source/webrtc/api/stats_types.cc
+    Source/webrtc/api/task_queue/default_task_queue_factory_libevent.cc
     Source/webrtc/api/task_queue/default_task_queue_factory_stdlib.cc
+    Source/webrtc/api/task_queue/default_task_queue_factory_win.cc
+    Source/webrtc/api/task_queue/pending_task_safety_flag.cc
     Source/webrtc/api/task_queue/task_queue_base.cc
+    Source/webrtc/rtc_base/task_queue_libevent.cc
     Source/webrtc/api/transport/bitrate_settings.cc
     Source/webrtc/api/transport/field_trial_based_config.cc
     Source/webrtc/api/transport/goog_cc_factory.cc
-    Source/webrtc/api/transport/rtp/dependency_descriptor.cc
     Source/webrtc/api/transport/network_types.cc
+    Source/webrtc/api/transport/rtp/dependency_descriptor.cc
     Source/webrtc/api/transport/stun.cc
     Source/webrtc/api/units/data_rate.cc
     Source/webrtc/api/units/data_size.cc
@@ -501,27 +687,14 @@ set(webrtc_SOURCES
     Source/webrtc/api/units/time_delta.cc
     Source/webrtc/api/units/timestamp.cc
     Source/webrtc/api/video/builtin_video_bitrate_allocator_factory.cc
-    Source/webrtc/api/video/color_space.cc
-    Source/webrtc/api/video/encoded_frame.cc
-    Source/webrtc/api/video/encoded_image.cc
-    Source/webrtc/api/video/hdr_metadata.cc
-    Source/webrtc/api/video/i010_buffer.cc
-    Source/webrtc/api/video/i420_buffer.cc
-    Source/webrtc/api/video/nv12_buffer.cc
-    Source/webrtc/api/video/video_adaptation_counters.cc
-    Source/webrtc/api/video/video_bitrate_allocation.cc
-    Source/webrtc/api/video/video_bitrate_allocator.cc
-    Source/webrtc/api/video/video_content_type.cc
-    Source/webrtc/api/video/video_frame.cc
-    Source/webrtc/api/video/video_frame_buffer.cc
-    Source/webrtc/api/video/video_frame_metadata.cc
-    Source/webrtc/api/video/video_source_interface.cc
-    Source/webrtc/api/video/video_stream_decoder_create.cc
-    Source/webrtc/api/video/video_timing.cc
+    Source/webrtc/api/video_codecs/av1_profile.cc
     Source/webrtc/api/video_codecs/builtin_video_decoder_factory.cc
     Source/webrtc/api/video_codecs/builtin_video_encoder_factory.cc
     Source/webrtc/api/video_codecs/h264_profile_level_id.cc
+    Source/webrtc/api/video_codecs/scalability_mode.cc
     Source/webrtc/api/video_codecs/sdp_video_format.cc
+    Source/webrtc/api/video_codecs/simulcast_stream.cc
+    Source/webrtc/api/video_codecs/spatial_layer.cc
     Source/webrtc/api/video_codecs/video_codec.cc
     Source/webrtc/api/video_codecs/video_decoder.cc
     Source/webrtc/api/video_codecs/video_decoder_software_fallback_wrapper.cc
@@ -532,6 +705,29 @@ set(webrtc_SOURCES
     Source/webrtc/api/video_codecs/vp8_temporal_layers.cc
     Source/webrtc/api/video_codecs/vp8_temporal_layers_factory.cc
     Source/webrtc/api/video_codecs/vp9_profile.cc
+    Source/webrtc/api/video/color_space.cc
+    Source/webrtc/api/video/encoded_frame.cc
+    Source/webrtc/api/video/encoded_image.cc
+    Source/webrtc/api/video/frame_buffer.cc
+    Source/webrtc/api/video/hdr_metadata.cc
+    Source/webrtc/api/video/i010_buffer.cc
+    Source/webrtc/api/video/i210_buffer.cc
+    Source/webrtc/api/video/i420_buffer.cc
+    Source/webrtc/api/video/i422_buffer.cc
+    Source/webrtc/api/video/i444_buffer.cc
+    Source/webrtc/api/video/nv12_buffer.cc
+    Source/webrtc/api/video/rtp_video_frame_assembler.cc
+    Source/webrtc/api/video/video_adaptation_counters.cc
+    Source/webrtc/api/video/video_bitrate_allocation.cc
+    Source/webrtc/api/video/video_bitrate_allocator.cc
+    Source/webrtc/api/video/video_content_type.cc
+    Source/webrtc/api/video/video_frame_buffer.cc
+    Source/webrtc/api/video/video_frame.cc
+    Source/webrtc/api/video/video_frame_metadata.cc
+    Source/webrtc/api/video/video_source_interface.cc
+    Source/webrtc/api/video/video_stream_decoder_create.cc
+    Source/webrtc/api/video/video_timing.cc
+    Source/webrtc/api/voip/voip_engine_factory.cc
     Source/webrtc/api/wrapping_async_dns_resolver.cc
     Source/webrtc/audio/audio_level.cc
     Source/webrtc/audio/audio_receive_stream.cc
@@ -542,18 +738,24 @@ set(webrtc_SOURCES
     Source/webrtc/audio/channel_receive_frame_transformer_delegate.cc
     Source/webrtc/audio/channel_send.cc
     Source/webrtc/audio/channel_send_frame_transformer_delegate.cc
-    Source/webrtc/audio/null_audio_poller.cc
     Source/webrtc/audio/remix_resample.cc
     Source/webrtc/audio/utility/audio_frame_operations.cc
     Source/webrtc/audio/utility/channel_mixer.cc
     Source/webrtc/audio/utility/channel_mixing_matrix.cc
-    Source/webrtc/call/adaptation/video_stream_input_state_provider.cc
-    Source/webrtc/call/adaptation/degradation_preference_provider.cc
-    Source/webrtc/call/adaptation/broadcast_resource_listener.cc
-    Source/webrtc/call/adaptation/video_stream_input_state.cc
+    Source/webrtc/audio/voip/audio_channel.cc
+    Source/webrtc/audio/voip/audio_egress.cc
+    Source/webrtc/audio/voip/audio_ingress.cc
+    Source/webrtc/audio/voip/voip_core.cc
     Source/webrtc/call/adaptation/adaptation_constraint.cc
+    Source/webrtc/call/adaptation/broadcast_resource_listener.cc
+    Source/webrtc/call/adaptation/degradation_preference_provider.cc
+    Source/webrtc/call/adaptation/encoder_settings.cc
     Source/webrtc/call/adaptation/resource_adaptation_processor.cc
+    Source/webrtc/call/adaptation/resource_adaptation_processor_interface.cc
+    Source/webrtc/call/adaptation/video_source_restrictions.cc
     Source/webrtc/call/adaptation/video_stream_adapter.cc
+    Source/webrtc/call/adaptation/video_stream_input_state.cc
+    Source/webrtc/call/adaptation/video_stream_input_state_provider.cc
     Source/webrtc/call/audio_receive_stream.cc
     Source/webrtc/call/audio_send_stream.cc
     Source/webrtc/call/audio_state.cc
@@ -579,21 +781,21 @@ set(webrtc_SOURCES
     Source/webrtc/call/version.cc
     Source/webrtc/call/video_receive_stream.cc
     Source/webrtc/call/video_send_stream.cc
-    Source/webrtc/call/adaptation/encoder_settings.cc
-    Source/webrtc/call/adaptation/resource_adaptation_processor_interface.cc
-    Source/webrtc/call/adaptation/video_source_restrictions.cc
     Source/webrtc/common_audio/audio_converter.cc
     Source/webrtc/common_audio/audio_util.cc
     Source/webrtc/common_audio/channel_buffer.cc
     Source/webrtc/common_audio/fir_filter_c.cc
     Source/webrtc/common_audio/fir_filter_factory.cc
+    Source/webrtc/common_audio/fir_filter_sse.cc
     Source/webrtc/common_audio/real_fourier.cc
     Source/webrtc/common_audio/real_fourier_ooura.cc
     Source/webrtc/common_audio/resampler/push_resampler.cc
     Source/webrtc/common_audio/resampler/push_sinc_resampler.cc
     Source/webrtc/common_audio/resampler/resampler.cc
     Source/webrtc/common_audio/resampler/sinc_resampler.cc
-    Source/webrtc/common_audio/ring_buffer.c
+    Source/webrtc/common_audio/resampler/sinc_resampler_sse.cc
+    Source/webrtc/common_audio/resampler/sinusoidal_linear_chirp_source.cc
+    Source/webrtc/common_audio/signal_processing/dot_product_with_scale.cc
     Source/webrtc/common_audio/signal_processing/auto_corr_to_refl_coef.c
     Source/webrtc/common_audio/signal_processing/auto_correlation.c
     Source/webrtc/common_audio/signal_processing/complex_bit_reverse.c
@@ -601,7 +803,6 @@ set(webrtc_SOURCES
     Source/webrtc/common_audio/signal_processing/copy_set_operations.c
     Source/webrtc/common_audio/signal_processing/cross_correlation.c
     Source/webrtc/common_audio/signal_processing/division_operations.c
-    Source/webrtc/common_audio/signal_processing/dot_product_with_scale.cc
     Source/webrtc/common_audio/signal_processing/downsample_fast.c
     Source/webrtc/common_audio/signal_processing/energy.c
     Source/webrtc/common_audio/signal_processing/filter_ar.c
@@ -627,8 +828,10 @@ set(webrtc_SOURCES
     Source/webrtc/common_audio/signal_processing/splitting_filter.c
     Source/webrtc/common_audio/signal_processing/sqrt_of_one_minus_x_squared.c
     Source/webrtc/common_audio/signal_processing/vector_scaling_operations.c
+    Source/webrtc/common_audio/ring_buffer.c
     Source/webrtc/common_audio/smoothing_filter.cc
     Source/webrtc/common_audio/third_party/ooura/fft_size_128/ooura_fft.cc
+    Source/webrtc/common_audio/third_party/ooura/fft_size_128/ooura_fft_sse2.cc
     Source/webrtc/common_audio/third_party/ooura/fft_size_256/fft4g.cc
     Source/webrtc/common_audio/third_party/spl_sqrt_floor/spl_sqrt_floor.c
     Source/webrtc/common_audio/vad/vad.cc
@@ -658,15 +861,28 @@ set(webrtc_SOURCES
     Source/webrtc/common_video/video_frame_buffer.cc
     Source/webrtc/common_video/video_frame_buffer_pool.cc
     Source/webrtc/common_video/video_render_frames.cc
+    Source/webrtc/logging/rtc_event_log/encoder/bit_writer.cc
+    Source/webrtc/logging/rtc_event_log/encoder/blob_encoding.cc
+    Source/webrtc/logging/rtc_event_log/encoder/delta_encoding.cc
+    Source/webrtc/logging/rtc_event_log/encoder/rtc_event_log_encoder_common.cc
+    Source/webrtc/logging/rtc_event_log/encoder/rtc_event_log_encoder_v3.cc
+    Source/webrtc/logging/rtc_event_log/encoder/var_int.cc
+    Source/webrtc/logging/rtc_event_log/events/fixed_length_encoding_parameters_v3.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_alr_state.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_audio_network_adaptation.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_audio_playout.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_audio_receive_stream_config.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_audio_send_stream_config.cc
+    Source/webrtc/logging/rtc_event_log/events/rtc_event_begin_log.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_dtls_transport_state.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_dtls_writable_state.cc
+    Source/webrtc/logging/rtc_event_log/events/rtc_event_end_log.cc
+    Source/webrtc/logging/rtc_event_log/events/rtc_event_field_encoding.cc
+    Source/webrtc/logging/rtc_event_log/events/rtc_event_field_encoding_parser.cc
+    Source/webrtc/logging/rtc_event_log/events/rtc_event_field_extraction.cc
+    Source/webrtc/logging/rtc_event_log/events/rtc_event_frame_decoded.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_generic_ack_received.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_generic_packet_received.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_generic_packet_sent.cc
@@ -683,7 +899,6 @@ set(webrtc_SOURCES
     Source/webrtc/logging/rtc_event_log/events/rtc_event_video_receive_stream_config.cc
     Source/webrtc/logging/rtc_event_log/events/rtc_event_video_send_stream_config.cc
     Source/webrtc/logging/rtc_event_log/ice_logger.cc
-    Source/webrtc/logging/rtc_event_log/logged_events.cc
     Source/webrtc/logging/rtc_event_log/rtc_event_log_impl.cc
     Source/webrtc/logging/rtc_event_log/rtc_event_processor.cc
     Source/webrtc/logging/rtc_event_log/rtc_stream_config.cc
@@ -696,6 +911,7 @@ set(webrtc_SOURCES
     Source/webrtc/media/base/rtp_utils.cc
     Source/webrtc/media/base/sdp_video_format_utils.cc
     Source/webrtc/media/base/stream_params.cc
+    Source/webrtc/media/base/test_utils.cc
     Source/webrtc/media/base/turn_utils.cc
     Source/webrtc/media/base/video_adapter.cc
     Source/webrtc/media/base/video_broadcaster.cc
@@ -714,8 +930,8 @@ set(webrtc_SOURCES
     Source/webrtc/media/engine/webrtc_media_engine_defaults.cc
     Source/webrtc/media/engine/webrtc_video_engine.cc
     Source/webrtc/media/engine/webrtc_voice_engine.cc
+    Source/webrtc/media/sctp/dcsctp_transport.cc
     Source/webrtc/media/sctp/sctp_transport_factory.cc
-    Source/webrtc/media/sctp/usrsctp_transport.cc
     Source/webrtc/modules/async_audio_processing/async_audio_processing.cc
     Source/webrtc/modules/audio_coding/acm2/acm_receiver.cc
     Source/webrtc/modules/audio_coding/acm2/acm_remixing.cc
@@ -731,7 +947,9 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_coding/audio_network_adaptor/debug_dump_writer.cc
     Source/webrtc/modules/audio_coding/audio_network_adaptor/dtx_controller.cc
     Source/webrtc/modules/audio_coding/audio_network_adaptor/event_log_writer.cc
+    Source/webrtc/modules/audio_coding/audio_network_adaptor/fec_controller_plr_based.cc
     Source/webrtc/modules/audio_coding/audio_network_adaptor/frame_length_controller.cc
+    Source/webrtc/modules/audio_coding/audio_network_adaptor/frame_length_controller_v2.cc
     Source/webrtc/modules/audio_coding/codecs/cng/audio_encoder_cng.cc
     Source/webrtc/modules/audio_coding/codecs/cng/webrtc_cng.cc
     Source/webrtc/modules/audio_coding/codecs/g711/audio_decoder_pcm.cc
@@ -742,11 +960,78 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_coding/codecs/g722/g722_interface.c
     Source/webrtc/modules/audio_coding/codecs/ilbc/audio_decoder_ilbc.cc
     Source/webrtc/modules/audio_coding/codecs/ilbc/audio_encoder_ilbc.cc
+    Source/webrtc/modules/audio_coding/codecs/ilbc/abs_quant.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/abs_quant_loop.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/augmented_cb_corr.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/bw_expand.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/cb_construct.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/cb_mem_energy.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/cb_mem_energy_augmentation.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/cb_mem_energy_calc.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/cb_search.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/cb_search_core.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/cb_update_best_index.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/chebyshev.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/comp_corr.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/constants.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/create_augmented_vec.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/decode.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/decode_residual.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/decoder_interpolate_lsf.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/do_plc.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/encode.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/energy_inverse.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/enh_upsample.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/enhancer.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/enhancer_interface.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/filtered_cb_vecs.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/frame_classify.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/gain_dequant.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/gain_quant.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/get_cd_vec.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/get_lsp_poly.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/get_sync_seq.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/hp_input.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/hp_output.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/ilbc.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/index_conv_dec.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/index_conv_enc.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/init_decode.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/init_encode.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/interpolate.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/interpolate_samples.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/lpc_encode.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/lsf_check.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/lsf_interpolate_to_poly_dec.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/lsf_interpolate_to_poly_enc.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/lsf_to_lsp.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/lsf_to_poly.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/lsp_to_lsf.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/my_corr.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/nearest_neighbor.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/pack_bits.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/poly_to_lsf.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/poly_to_lsp.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/refiner.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/simple_interpolate_lsf.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/simple_lpc_analysis.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/simple_lsf_dequant.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/simple_lsf_quant.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/smooth.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/smooth_out_data.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/sort_sq.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/split_vq.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/state_construct.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/state_search.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/swap_bytes.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/unpack_bits.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/vq3.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/vq4.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/window32_w32.c
+    Source/webrtc/modules/audio_coding/codecs/ilbc/xcorr_coef.c
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/arith_routines.c
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/arith_routines_hist.c
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/arith_routines_logist.c
-    Source/webrtc/modules/audio_coding/codecs/isac/fix/source/audio_decoder_isacfix.cc
-    Source/webrtc/modules/audio_coding/codecs/isac/fix/source/audio_encoder_isacfix.cc
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/bandwidth_estimator.c
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/decode.c
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/decode_bwe.c
@@ -772,8 +1057,9 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/spectrum_ar_model_tables.c
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/transform.c
     Source/webrtc/modules/audio_coding/codecs/isac/fix/source/transform_tables.c
-    Source/webrtc/modules/audio_coding/codecs/isac/main/source/audio_decoder_isac.cc
-    Source/webrtc/modules/audio_coding/codecs/isac/main/source/audio_encoder_isac.cc
+    Source/webrtc/modules/audio_coding/codecs/isac/main/source/arith_routines.c
+    Source/webrtc/modules/audio_coding/codecs/isac/main/source/arith_routines_hist.c
+    Source/webrtc/modules/audio_coding/codecs/isac/main/source/arith_routines_logist.c
     Source/webrtc/modules/audio_coding/codecs/isac/main/source/bandwidth_estimator.c
     Source/webrtc/modules/audio_coding/codecs/isac/main/source/crc.c
     Source/webrtc/modules/audio_coding/codecs/isac/main/source/decode.c
@@ -798,6 +1084,13 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_coding/codecs/isac/main/source/pitch_lag_tables.c
     Source/webrtc/modules/audio_coding/codecs/isac/main/source/spectrum_ar_model_tables.c
     Source/webrtc/modules/audio_coding/codecs/isac/main/source/transform.c
+    Source/webrtc/modules/audio_coding/codecs/isac/main/test/simpleKenny.c
+    Source/webrtc/modules/audio_coding/codecs/isac/main/util/utility.c
+    Source/webrtc/modules/audio_coding/codecs/isac/empty.cc
+    Source/webrtc/modules/audio_coding/codecs/isac/fix/source/audio_decoder_isacfix.cc
+    Source/webrtc/modules/audio_coding/codecs/isac/fix/source/audio_encoder_isacfix.cc
+    Source/webrtc/modules/audio_coding/codecs/isac/main/source/audio_decoder_isac.cc
+    Source/webrtc/modules/audio_coding/codecs/isac/main/source/audio_encoder_isac.cc
     Source/webrtc/modules/audio_coding/codecs/legacy_encoded_audio_frame.cc
     Source/webrtc/modules/audio_coding/codecs/opus/audio_coder_opus_common.cc
     Source/webrtc/modules/audio_coding/codecs/opus/audio_decoder_multi_channel_opus_impl.cc
@@ -831,14 +1124,14 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_coding/neteq/nack_tracker.cc
     Source/webrtc/modules/audio_coding/neteq/neteq_impl.cc
     Source/webrtc/modules/audio_coding/neteq/normal.cc
-    Source/webrtc/modules/audio_coding/neteq/packet.cc
+    Source/webrtc/modules/audio_coding/neteq/packet_arrival_history.cc
     Source/webrtc/modules/audio_coding/neteq/packet_buffer.cc
+    Source/webrtc/modules/audio_coding/neteq/packet.cc
     Source/webrtc/modules/audio_coding/neteq/post_decode_vad.cc
     Source/webrtc/modules/audio_coding/neteq/preemptive_expand.cc
     Source/webrtc/modules/audio_coding/neteq/random_vector.cc
     Source/webrtc/modules/audio_coding/neteq/red_payload_splitter.cc
     Source/webrtc/modules/audio_coding/neteq/reorder_optimizer.cc
-    Source/webrtc/modules/audio_coding/neteq/relative_arrival_delay_tracker.cc
     Source/webrtc/modules/audio_coding/neteq/statistics_calculator.cc
     Source/webrtc/modules/audio_coding/neteq/sync_buffer.cc
     Source/webrtc/modules/audio_coding/neteq/time_stretch.cc
@@ -848,16 +1141,31 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_coding/neteq/tools/constant_pcm_packet_source.cc
     Source/webrtc/modules/audio_coding/neteq/tools/encode_neteq_input.cc
     Source/webrtc/modules/audio_coding/neteq/tools/fake_decode_from_file.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/initial_packet_inserter_neteq_input.cc
     Source/webrtc/modules/audio_coding/neteq/tools/input_audio_file.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/neteq_delay_analyzer.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/neteq_input.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/neteq_packet_source_input.cc
     Source/webrtc/modules/audio_coding/neteq/tools/neteq_replacement_input.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/neteq_rtpplay.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/neteq_stats_getter.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/neteq_stats_plotter.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/neteq_test_factory.cc
     Source/webrtc/modules/audio_coding/neteq/tools/packet.cc
     Source/webrtc/modules/audio_coding/neteq/tools/packet_source.cc
     Source/webrtc/modules/audio_coding/neteq/tools/resample_input_audio_file.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/rtp_analyze.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/rtpcat.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/rtp_encode.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/rtp_file_source.cc
     Source/webrtc/modules/audio_coding/neteq/tools/rtp_generator.cc
+    Source/webrtc/modules/audio_coding/neteq/tools/rtp_jitter.cc
     Source/webrtc/modules/audio_coding/neteq/underrun_optimizer.cc
     Source/webrtc/modules/audio_device/audio_device_buffer.cc
+    Source/webrtc/modules/audio_device/audio_device_data_observer.cc
     Source/webrtc/modules/audio_device/audio_device_generic.cc
     Source/webrtc/modules/audio_device/audio_device_impl.cc
+    Source/webrtc/modules/audio_device/audio_device_name.cc
     Source/webrtc/modules/audio_device/dummy/audio_device_dummy.cc
     Source/webrtc/modules/audio_device/dummy/file_audio_device.cc
     Source/webrtc/modules/audio_device/dummy/file_audio_device_factory.cc
@@ -866,6 +1174,8 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_mixer/audio_mixer_impl.cc
     Source/webrtc/modules/audio_mixer/default_output_rate_calculator.cc
     Source/webrtc/modules/audio_mixer/frame_combiner.cc
+    Source/webrtc/modules/audio_mixer/gain_change_calculator.cc
+    Source/webrtc/modules/audio_mixer/sine_wave_generator.cc
     Source/webrtc/modules/audio_processing/aec3/adaptive_fir_filter.cc
     Source/webrtc/modules/audio_processing/aec3/adaptive_fir_filter_erl.cc
     Source/webrtc/modules/audio_processing/aec3/aec3_common.cc
@@ -881,6 +1191,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/aec3/clockdrift_detector.cc
     Source/webrtc/modules/audio_processing/aec3/coarse_filter_update_gain.cc
     Source/webrtc/modules/audio_processing/aec3/comfort_noise_generator.cc
+    Source/webrtc/modules/audio_processing/aec3/config_selector.cc
     Source/webrtc/modules/audio_processing/aec3/decimator.cc
     Source/webrtc/modules/audio_processing/aec3/dominant_nearend_detector.cc
     Source/webrtc/modules/audio_processing/aec3/downsampled_render_buffer.cc
@@ -899,6 +1210,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/aec3/matched_filter.cc
     Source/webrtc/modules/audio_processing/aec3/matched_filter_lag_aggregator.cc
     Source/webrtc/modules/audio_processing/aec3/moving_average.cc
+    Source/webrtc/modules/audio_processing/aec3/multi_channel_content_detector.cc
     Source/webrtc/modules/audio_processing/aec3/refined_filter_update_gain.cc
     Source/webrtc/modules/audio_processing/aec3/render_buffer.cc
     Source/webrtc/modules/audio_processing/aec3/render_delay_buffer.cc
@@ -925,15 +1237,8 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/aecm/aecm_core.cc
     Source/webrtc/modules/audio_processing/aecm/aecm_core_c.cc
     Source/webrtc/modules/audio_processing/aecm/echo_control_mobile.cc
-    Source/webrtc/modules/audio_processing/agc/agc.cc
-    Source/webrtc/modules/audio_processing/agc/agc_manager_direct.cc
-    Source/webrtc/modules/audio_processing/agc/clipping_predictor.cc
-    Source/webrtc/modules/audio_processing/agc/clipping_predictor_evaluator.cc
-    Source/webrtc/modules/audio_processing/agc/clipping_predictor_level_buffer.cc
-    Source/webrtc/modules/audio_processing/agc/loudness_histogram.cc
-    Source/webrtc/modules/audio_processing/agc/utility.cc
-    Source/webrtc/modules/audio_processing/agc2/adaptive_agc.cc
     Source/webrtc/modules/audio_processing/agc2/adaptive_digital_gain_applier.cc
+    Source/webrtc/modules/audio_processing/agc2/adaptive_digital_gain_controller.cc
     Source/webrtc/modules/audio_processing/agc2/adaptive_mode_level_estimator.cc
     Source/webrtc/modules/audio_processing/agc2/biquad_filter.cc
     Source/webrtc/modules/audio_processing/agc2/compute_interpolated_gain_curve.cc
@@ -942,6 +1247,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/agc2/gain_applier.cc
     Source/webrtc/modules/audio_processing/agc2/interpolated_gain_curve.cc
     Source/webrtc/modules/audio_processing/agc2/limiter.cc
+    Source/webrtc/modules/audio_processing/agc2/limiter_db_gain_curve.cc
     Source/webrtc/modules/audio_processing/agc2/noise_level_estimator.cc
     Source/webrtc/modules/audio_processing/agc2/rnn_vad/auto_correlation.cc
     Source/webrtc/modules/audio_processing/agc2/rnn_vad/features_extraction.cc
@@ -951,14 +1257,19 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/agc2/rnn_vad/rnn.cc
     Source/webrtc/modules/audio_processing/agc2/rnn_vad/rnn_fc.cc
     Source/webrtc/modules/audio_processing/agc2/rnn_vad/rnn_gru.cc
+    Source/webrtc/modules/audio_processing/agc2/rnn_vad/rnn_vad_tool.cc
     Source/webrtc/modules/audio_processing/agc2/rnn_vad/spectral_features.cc
     Source/webrtc/modules/audio_processing/agc2/rnn_vad/spectral_features_internal.cc
-    Source/webrtc/modules/audio_processing/agc2/saturation_protector.cc
     Source/webrtc/modules/audio_processing/agc2/saturation_protector_buffer.cc
-    Source/webrtc/modules/audio_processing/agc2/vad_with_level.cc
+    Source/webrtc/modules/audio_processing/agc2/saturation_protector.cc
+    Source/webrtc/modules/audio_processing/agc2/vad_wrapper.cc
     Source/webrtc/modules/audio_processing/agc2/vector_float_frame.cc
     Source/webrtc/modules/audio_processing/agc/agc.cc
     Source/webrtc/modules/audio_processing/agc/agc_manager_direct.cc
+    Source/webrtc/modules/audio_processing/agc/analog_gain_stats_reporter.cc
+    Source/webrtc/modules/audio_processing/agc/clipping_predictor.cc
+    Source/webrtc/modules/audio_processing/agc/clipping_predictor_evaluator.cc
+    Source/webrtc/modules/audio_processing/agc/clipping_predictor_level_buffer.cc
     Source/webrtc/modules/audio_processing/agc/legacy/analog_agc.cc
     Source/webrtc/modules/audio_processing/agc/legacy/digital_agc.cc
     Source/webrtc/modules/audio_processing/agc/loudness_histogram.cc
@@ -980,7 +1291,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/include/audio_frame_proxies.cc
     Source/webrtc/modules/audio_processing/include/audio_processing.cc
     Source/webrtc/modules/audio_processing/include/audio_processing_statistics.cc
-    Source/webrtc/modules/audio_processing/level_estimator.cc
     Source/webrtc/modules/audio_processing/logging/apm_data_dumper.cc
     Source/webrtc/modules/audio_processing/ns/fast_math.cc
     Source/webrtc/modules/audio_processing/ns/histograms.cc
@@ -999,17 +1309,15 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/residual_echo_detector.cc
     Source/webrtc/modules/audio_processing/rms_level.cc
     Source/webrtc/modules/audio_processing/splitting_filter.cc
-    Source/webrtc/modules/audio_processing/test/conversational_speech/config.cc
-    Source/webrtc/modules/audio_processing/test/conversational_speech/timing.cc
-    Source/webrtc/modules/audio_processing/test/py_quality_assessment/quality_assessment/vad.cc
     Source/webrtc/modules/audio_processing/three_band_filter_bank.cc
+    Source/webrtc/modules/audio_processing/transient/click_annotate.cc
     Source/webrtc/modules/audio_processing/transient/file_utils.cc
     Source/webrtc/modules/audio_processing/transient/moving_moments.cc
     Source/webrtc/modules/audio_processing/transient/transient_detector.cc
     Source/webrtc/modules/audio_processing/transient/transient_suppressor_impl.cc
+    Source/webrtc/modules/audio_processing/transient/voice_probability_delay_unit.cc
     Source/webrtc/modules/audio_processing/transient/wpd_node.cc
     Source/webrtc/modules/audio_processing/transient/wpd_tree.cc
-    Source/webrtc/modules/audio_processing/typing_detection.cc
     Source/webrtc/modules/audio_processing/utility/cascaded_biquad_filter.cc
     Source/webrtc/modules/audio_processing/utility/delay_estimator.cc
     Source/webrtc/modules/audio_processing/utility/delay_estimator_wrapper.cc
@@ -1022,7 +1330,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/audio_processing/vad/vad_audio_proc.cc
     Source/webrtc/modules/audio_processing/vad/vad_circular_buffer.cc
     Source/webrtc/modules/audio_processing/vad/voice_activity_detector.cc
-    Source/webrtc/modules/audio_processing/voice_detection.cc
     Source/webrtc/modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator.cc
     Source/webrtc/modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.cc
     Source/webrtc/modules/congestion_controller/goog_cc/alr_detector.cc
@@ -1040,27 +1347,34 @@ set(webrtc_SOURCES
     Source/webrtc/modules/congestion_controller/goog_cc/send_side_bandwidth_estimation.cc
     Source/webrtc/modules/congestion_controller/goog_cc/trendline_estimator.cc
     Source/webrtc/modules/congestion_controller/pcc/bitrate_controller.cc
-    Source/webrtc/modules/congestion_controller/remb_throttler.cc
+    Source/webrtc/modules/congestion_controller/pcc/monitor_interval.cc
+    Source/webrtc/modules/congestion_controller/pcc/pcc_factory.cc
+    Source/webrtc/modules/congestion_controller/pcc/pcc_network_controller.cc
+    Source/webrtc/modules/congestion_controller/pcc/rtt_tracker.cc
+    Source/webrtc/modules/congestion_controller/pcc/utility_function.cc
     Source/webrtc/modules/congestion_controller/receive_side_congestion_controller.cc
+    Source/webrtc/modules/congestion_controller/remb_throttler.cc
     Source/webrtc/modules/congestion_controller/rtp/control_handler.cc
     Source/webrtc/modules/congestion_controller/rtp/transport_feedback_adapter.cc
     Source/webrtc/modules/congestion_controller/rtp/transport_feedback_demuxer.cc
     Source/webrtc/modules/pacing/bitrate_prober.cc
     Source/webrtc/modules/pacing/interval_budget.cc
-    Source/webrtc/modules/pacing/paced_sender.cc
     Source/webrtc/modules/pacing/pacing_controller.cc
     Source/webrtc/modules/pacing/packet_router.cc
+    Source/webrtc/modules/pacing/prioritized_packet_queue.cc
     Source/webrtc/modules/pacing/round_robin_packet_queue.cc
     Source/webrtc/modules/pacing/task_queue_paced_sender.cc
     Source/webrtc/modules/remote_bitrate_estimator/aimd_rate_control.cc
     Source/webrtc/modules/remote_bitrate_estimator/bwe_defines.cc
     Source/webrtc/modules/remote_bitrate_estimator/inter_arrival.cc
-    Source/webrtc/modules/remote_bitrate_estimator/packet_arrival_map.cc
     Source/webrtc/modules/remote_bitrate_estimator/overuse_detector.cc
     Source/webrtc/modules/remote_bitrate_estimator/overuse_estimator.cc
+    Source/webrtc/modules/remote_bitrate_estimator/packet_arrival_map.cc
     Source/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_abs_send_time.cc
     Source/webrtc/modules/remote_bitrate_estimator/remote_bitrate_estimator_single_stream.cc
     Source/webrtc/modules/remote_bitrate_estimator/remote_estimator_proxy.cc
+    Source/webrtc/modules/remote_bitrate_estimator/tools/bwe_rtp.cc
+    Source/webrtc/modules/remote_bitrate_estimator/tools/rtp_to_text.cc
     Source/webrtc/modules/rtp_rtcp/include/report_block_data.cc
     Source/webrtc/modules/rtp_rtcp/include/rtp_rtcp_defines.cc
     Source/webrtc/modules/rtp_rtcp/source/absolute_capture_time_interpolator.cc
@@ -1068,6 +1382,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/active_decode_targets_helper.cc
     Source/webrtc/modules/rtp_rtcp/source/capture_clock_offset_updater.cc
     Source/webrtc/modules/rtp_rtcp/source/create_video_rtp_depacketizer.cc
+    Source/webrtc/modules/rtp_rtcp/source/deprecated/deprecated_rtp_sender_egress.cc
     Source/webrtc/modules/rtp_rtcp/source/dtmf_queue.cc
     Source/webrtc/modules/rtp_rtcp/source/fec_private_tables_bursty.cc
     Source/webrtc/modules/rtp_rtcp/source/fec_private_tables_random.cc
@@ -1088,7 +1403,6 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/rtcp_packet/common_header.cc
     Source/webrtc/modules/rtp_rtcp/source/rtcp_packet/compound_packet.cc
     Source/webrtc/modules/rtp_rtcp/source/rtcp_packet/dlrr.cc
-    Source/webrtc/modules/rtp_rtcp/source/rtcp_packet/extended_jitter_report.cc
     Source/webrtc/modules/rtp_rtcp/source/rtcp_packet/extended_reports.cc
     Source/webrtc/modules/rtp_rtcp/source/rtcp_packet/fir.cc
     Source/webrtc/modules/rtp_rtcp/source/rtcp_packet/loss_notification.cc
@@ -1120,6 +1434,7 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/rtp_descriptor_authentication.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_format.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_format_h264.cc
+    Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_format_video_generic.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_format_vp8.cc
     Source/webrtc/modules/rtp_rtcp/source/rtp_format_vp9.cc
@@ -1149,9 +1464,9 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/tmmbr_help.cc
     Source/webrtc/modules/rtp_rtcp/source/ulpfec_generator.cc
     Source/webrtc/modules/rtp_rtcp/source/ulpfec_header_reader_writer.cc
-    Source/webrtc/modules/rtp_rtcp/source/ulpfec_receiver_impl.cc
-    Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer.cc
+    Source/webrtc/modules/rtp_rtcp/source/ulpfec_receiver.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_av1.cc
+    Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_generic.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_h264.cc
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_raw.cc
@@ -1159,21 +1474,33 @@ set(webrtc_SOURCES
     Source/webrtc/modules/rtp_rtcp/source/video_rtp_depacketizer_vp9.cc
     Source/webrtc/modules/third_party/g722/g722_decode.c
     Source/webrtc/modules/third_party/g722/g722_encode.c
-    Source/webrtc/modules/utility/source/process_thread_impl.cc
+    Source/webrtc/modules/third_party/g711/g711.c
+    Source/webrtc/modules/video_capture/device_info_impl.cc
+    Source/webrtc/modules/video_capture/linux/device_info_linux.cc
+    Source/webrtc/modules/video_capture/linux/device_info_v4l2.cc
+    Source/webrtc/modules/video_capture/linux/video_capture_linux.cc
+    Source/webrtc/modules/video_capture/linux/video_capture_v4l2.cc
+    Source/webrtc/modules/video_capture/video_capture_factory.cc
+    Source/webrtc/modules/video_capture/video_capture_factory_null.cc
+    Source/webrtc/modules/video_capture/video_capture_impl.cc
     Source/webrtc/modules/video_coding/chain_diff_calculator.cc
     Source/webrtc/modules/video_coding/codecs/av1/av1_svc_config.cc
     Source/webrtc/modules/video_coding/codecs/interface/libvpx_interface.cc
+    Source/webrtc/modules/video_coding/codecs/multiplex/augmented_video_frame_buffer.cc
+    Source/webrtc/modules/video_coding/codecs/multiplex/multiplex_decoder_adapter.cc
+    Source/webrtc/modules/video_coding/codecs/multiplex/multiplex_encoded_image_packer.cc
+    Source/webrtc/modules/video_coding/codecs/multiplex/multiplex_encoder_adapter.cc
     Source/webrtc/modules/video_coding/codecs/vp8/default_temporal_layers.cc
     Source/webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_decoder.cc
     Source/webrtc/modules/video_coding/codecs/vp8/libvpx_vp8_encoder.cc
     Source/webrtc/modules/video_coding/codecs/vp8/screenshare_layers.cc
     Source/webrtc/modules/video_coding/codecs/vp8/temporal_layers_checker.cc
-    Source/webrtc/modules/video_coding/codecs/vp9/svc_config.cc
-    Source/webrtc/modules/video_coding/codecs/vp9/vp9.cc
+    Source/webrtc/modules/video_coding/codecs/vp8/vp8_scalability.cc
     Source/webrtc/modules/video_coding/codecs/vp9/libvpx_vp9_decoder.cc
     Source/webrtc/modules/video_coding/codecs/vp9/libvpx_vp9_encoder.cc
+    Source/webrtc/modules/video_coding/codecs/vp9/svc_config.cc
+    Source/webrtc/modules/video_coding/codecs/vp9/vp9.cc
     Source/webrtc/modules/video_coding/codecs/vp9/vp9_frame_buffer_pool.cc
-    Source/webrtc/modules/video_coding/codec_timer.cc
     Source/webrtc/modules/video_coding/decoder_database.cc
     Source/webrtc/modules/video_coding/decoding_state.cc
     Source/webrtc/modules/video_coding/encoded_frame.cc
@@ -1182,16 +1509,16 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/frame_buffer2.cc
     Source/webrtc/modules/video_coding/frame_buffer.cc
     Source/webrtc/modules/video_coding/frame_dependencies_calculator.cc
+    Source/webrtc/modules/video_coding/frame_helpers.cc
     Source/webrtc/modules/video_coding/frame_object.cc
     Source/webrtc/modules/video_coding/generic_decoder.cc
+    Source/webrtc/modules/video_coding/h264_packet_buffer.cc
     Source/webrtc/modules/video_coding/h264_sprop_parameter_sets.cc
     Source/webrtc/modules/video_coding/h264_sps_pps_tracker.cc
     Source/webrtc/modules/video_coding/h265_vps_sps_pps_tracker.cc
     Source/webrtc/modules/video_coding/histogram.cc
     Source/webrtc/modules/video_coding/include/video_codec_interface.cc
-    Source/webrtc/modules/video_coding/inter_frame_delay.cc
     Source/webrtc/modules/video_coding/jitter_buffer.cc
-    Source/webrtc/modules/video_coding/jitter_estimator.cc
     Source/webrtc/modules/video_coding/loss_notification_controller.cc
     Source/webrtc/modules/video_coding/media_opt_util.cc
     Source/webrtc/modules/video_coding/nack_requester.cc
@@ -1204,22 +1531,26 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/rtp_seq_num_only_ref_finder.cc
     Source/webrtc/modules/video_coding/rtp_vp8_ref_finder.cc
     Source/webrtc/modules/video_coding/rtp_vp9_ref_finder.cc
-    Source/webrtc/modules/video_coding/rtt_filter.cc
     Source/webrtc/modules/video_coding/session_info.cc
     Source/webrtc/modules/video_coding/svc/create_scalability_structure.cc
+    Source/webrtc/modules/video_coding/svc/scalability_mode_util.cc
     Source/webrtc/modules/video_coding/svc/scalability_structure_full_svc.cc
     Source/webrtc/modules/video_coding/svc/scalability_structure_key_svc.cc
     Source/webrtc/modules/video_coding/svc/scalability_structure_l2t2_key_shift.cc
     Source/webrtc/modules/video_coding/svc/scalability_structure_simulcast.cc
     Source/webrtc/modules/video_coding/svc/scalable_video_controller_no_layering.cc
     Source/webrtc/modules/video_coding/svc/svc_rate_allocator.cc
-    Source/webrtc/modules/video_coding/timestamp_map.cc
-    Source/webrtc/modules/video_coding/timing.cc
-    Source/webrtc/modules/video_coding/unique_timestamp_counter.cc
+    Source/webrtc/modules/video_coding/timing/codec_timer.cc
+    Source/webrtc/modules/video_coding/timing/frame_delay_delta_kalman_filter.cc
+    Source/webrtc/modules/video_coding/timing/inter_frame_delay.cc
+    Source/webrtc/modules/video_coding/timing/jitter_estimator.cc
+    Source/webrtc/modules/video_coding/timing/rtt_filter.cc
+    Source/webrtc/modules/video_coding/timing/timing.cc
     Source/webrtc/modules/video_coding/utility/bandwidth_quality_scaler.cc
     Source/webrtc/modules/video_coding/utility/decoded_frames_history.cc
     Source/webrtc/modules/video_coding/utility/frame_dropper.cc
     Source/webrtc/modules/video_coding/utility/framerate_controller_deprecated.cc
+    Source/webrtc/modules/video_coding/utility/ivf_file_reader.cc
     Source/webrtc/modules/video_coding/utility/ivf_file_writer.cc
     Source/webrtc/modules/video_coding/utility/qp_parser.cc
     Source/webrtc/modules/video_coding/utility/quality_scaler.cc
@@ -1232,6 +1563,12 @@ set(webrtc_SOURCES
     Source/webrtc/modules/video_coding/video_coding_impl.cc
     Source/webrtc/modules/video_coding/video_receiver2.cc
     Source/webrtc/modules/video_coding/video_receiver.cc
+    Source/webrtc/modules/video_processing/util/denoiser_filter.cc
+    Source/webrtc/modules/video_processing/util/denoiser_filter_c.cc
+    Source/webrtc/modules/video_processing/util/denoiser_filter_sse2.cc
+    Source/webrtc/modules/video_processing/util/noise_estimation.cc
+    Source/webrtc/modules/video_processing/util/skin_detection.cc
+    Source/webrtc/modules/video_processing/video_denoiser.cc
     Source/webrtc/p2p/base/async_stun_tcp_socket.cc
     Source/webrtc/p2p/base/basic_async_resolver_factory.cc
     Source/webrtc/p2p/base/basic_ice_controller.cc
@@ -1243,6 +1580,7 @@ set(webrtc_SOURCES
     Source/webrtc/p2p/base/dtls_transport_internal.cc
     Source/webrtc/p2p/base/ice_controller_interface.cc
     Source/webrtc/p2p/base/ice_credentials_iterator.cc
+    Source/webrtc/p2p/base/ice_switch_reason.cc
     Source/webrtc/p2p/base/ice_transport_internal.cc
     Source/webrtc/p2p/base/p2p_constants.cc
     Source/webrtc/p2p/base/p2p_transport_channel.cc
@@ -1256,16 +1594,17 @@ set(webrtc_SOURCES
     Source/webrtc/p2p/base/stun_request.cc
     Source/webrtc/p2p/base/stun_server.cc
     Source/webrtc/p2p/base/tcp_port.cc
+    Source/webrtc/p2p/base/test_stun_server.cc
     Source/webrtc/p2p/base/transport_description.cc
     Source/webrtc/p2p/base/transport_description_factory.cc
     Source/webrtc/p2p/base/turn_port.cc
     Source/webrtc/p2p/base/turn_server.cc
     Source/webrtc/p2p/client/basic_port_allocator.cc
     Source/webrtc/p2p/client/turn_port_factory.cc
+    Source/webrtc/p2p/stunprober/stun_prober.cc
     Source/webrtc/pc/audio_rtp_receiver.cc
     Source/webrtc/pc/audio_track.cc
     Source/webrtc/pc/channel.cc
-    Source/webrtc/pc/channel_manager.cc
     Source/webrtc/pc/connection_context.cc
     Source/webrtc/pc/data_channel_controller.cc
     Source/webrtc/pc/data_channel_utils.cc
@@ -1281,6 +1620,7 @@ set(webrtc_SOURCES
     Source/webrtc/pc/jsep_transport.cc
     Source/webrtc/pc/jsep_transport_collection.cc
     Source/webrtc/pc/jsep_transport_controller.cc
+    Source/webrtc/pc/legacy_stats_collector.cc
     Source/webrtc/pc/local_audio_source.cc
     Source/webrtc/pc/media_protocol_names.cc
     Source/webrtc/pc/media_session.cc
@@ -1289,6 +1629,7 @@ set(webrtc_SOURCES
     Source/webrtc/pc/peer_connection.cc
     Source/webrtc/pc/peer_connection_factory.cc
     Source/webrtc/pc/peer_connection_message_handler.cc
+    Source/webrtc/pc/proxy.cc
     Source/webrtc/pc/remote_audio_source.cc
     Source/webrtc/pc/rtcp_mux_filter.cc
     Source/webrtc/pc/rtc_stats_collector.cc
@@ -1312,7 +1653,6 @@ set(webrtc_SOURCES
     Source/webrtc/pc/srtp_filter.cc
     Source/webrtc/pc/srtp_session.cc
     Source/webrtc/pc/srtp_transport.cc
-    Source/webrtc/pc/stats_collector.cc
     Source/webrtc/pc/track_media_info_map.cc
     Source/webrtc/pc/transceiver_list.cc
     Source/webrtc/pc/transport_stats.cc
@@ -1339,12 +1679,13 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/byte_buffer.cc
     Source/webrtc/rtc_base/checks.cc
     Source/webrtc/rtc_base/callback_list.cc
+    Source/webrtc/rtc_base/containers/flat_tree.cc
     Source/webrtc/rtc_base/copy_on_write_buffer.cc
     Source/webrtc/rtc_base/cpu_time.cc
     Source/webrtc/rtc_base/crc32.cc
     Source/webrtc/rtc_base/crypt_string.cc
-    Source/webrtc/rtc_base/deprecated/recursive_critical_section.cc
     Source/webrtc/rtc_base/data_rate_limiter.cc
+    Source/webrtc/rtc_base/deprecated/recursive_critical_section.cc
     Source/webrtc/rtc_base/event.cc
     Source/webrtc/rtc_base/event_tracer.cc
     Source/webrtc/rtc_base/experiments/alr_experiment.cc
@@ -1355,7 +1696,6 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/experiments/field_trial_list.cc
     Source/webrtc/rtc_base/experiments/field_trial_parser.cc
     Source/webrtc/rtc_base/experiments/field_trial_units.cc
-    Source/webrtc/rtc_base/experiments/jitter_upper_bound_experiment.cc
     Source/webrtc/rtc_base/experiments/keyframe_interval_settings.cc
     Source/webrtc/rtc_base/experiments/min_video_bitrate_experiment.cc
     Source/webrtc/rtc_base/experiments/normalize_simulcast_size_experiment.cc
@@ -1372,7 +1712,6 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/firewall_socket_server.cc
     Source/webrtc/rtc_base/helpers.cc
     Source/webrtc/rtc_base/http_common.cc
-    Source/webrtc/rtc_base/ifaddrs_android.cc
     Source/webrtc/rtc_base/ifaddrs_converter.cc
     Source/webrtc/rtc_base/internal/default_socket_server.cc
     Source/webrtc/rtc_base/ip_address.cc
@@ -1443,7 +1782,6 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/strings/string_format.cc
     Source/webrtc/rtc_base/string_to_number.cc
     Source/webrtc/rtc_base/string_utils.cc
-    Source/webrtc/rtc_base/synchronization/mutex.cc
     Source/webrtc/rtc_base/synchronization/sequence_checker_internal.cc
     Source/webrtc/rtc_base/synchronization/yield.cc
     Source/webrtc/rtc_base/synchronization/yield_policy.cc
@@ -1452,7 +1790,8 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/task_queue.cc
     Source/webrtc/rtc_base/task_queue_stdlib.cc
     Source/webrtc/rtc_base/task_utils/repeating_task.cc
-    Source/webrtc/rtc_base/task_utils/pending_task_safety_flag.cc
+    Source/webrtc/rtc_base/test_echo_server.cc
+    Source/webrtc/rtc_base/test_utils.cc
     Source/webrtc/rtc_base/third_party/base64/base64.cc
     Source/webrtc/rtc_base/third_party/sigslot/sigslot.cc
     Source/webrtc/rtc_base/thread.cc
@@ -1460,6 +1799,7 @@ set(webrtc_SOURCES
     Source/webrtc/rtc_base/timestamp_aligner.cc
     Source/webrtc/rtc_base/time_utils.cc
     Source/webrtc/rtc_base/unique_id_generator.cc
+    Source/webrtc/rtc_base/virtual_socket_server.cc
     Source/webrtc/rtc_base/weak_ptr.cc
     Source/webrtc/rtc_base/zero_memory.cc
     Source/webrtc/stats/rtc_stats.cc
@@ -1467,15 +1807,13 @@ set(webrtc_SOURCES
     Source/webrtc/stats/rtc_stats_report.cc
     Source/webrtc/system_wrappers/source/clock.cc
     Source/webrtc/system_wrappers/source/cpu_features.cc
+    Source/webrtc/system_wrappers/source/cpu_features_linux.cc
     Source/webrtc/system_wrappers/source/cpu_info.cc
     Source/webrtc/system_wrappers/source/denormal_disabler.cc
     Source/webrtc/system_wrappers/source/field_trial.cc
     Source/webrtc/system_wrappers/source/metrics.cc
     Source/webrtc/system_wrappers/source/rtp_to_ntp_estimator.cc
     Source/webrtc/system_wrappers/source/sleep.cc
-    Source/webrtc/test/encoder_settings.cc
-    Source/webrtc/test/field_trial.cc
-    Source/webrtc/test/testsupport/file_utils.cc
     Source/webrtc/video/adaptation/balanced_constraint.cc
     Source/webrtc/video/adaptation/bandwidth_quality_scaler_resource.cc
     Source/webrtc/video/adaptation/bitrate_constraint.cc
@@ -1488,36 +1826,36 @@ set(webrtc_SOURCES
     Source/webrtc/video/adaptation/video_stream_encoder_resource_manager.cc
     Source/webrtc/video/alignment_adjuster.cc
     Source/webrtc/video/buffered_frame_decryptor.cc
-    Source/webrtc/video/call_stats.cc
     Source/webrtc/video/call_stats2.cc
+    Source/webrtc/video/decode_synchronizer.cc
     Source/webrtc/video/encoder_bitrate_adjuster.cc
     Source/webrtc/video/encoder_overshoot_detector.cc
     Source/webrtc/video/encoder_rtcp_feedback.cc
+    Source/webrtc/video/frame_cadence_adapter.cc
+    Source/webrtc/video/frame_decode_timing.cc
     Source/webrtc/video/frame_dumping_decoder.cc
     Source/webrtc/video/frame_encode_metadata_writer.cc
     Source/webrtc/video/quality_limitation_reason_tracker.cc
     Source/webrtc/video/quality_threshold.cc
-    Source/webrtc/video/receive_statistics_proxy.cc
     Source/webrtc/video/receive_statistics_proxy2.cc
     Source/webrtc/video/report_block_stats.cc
-    Source/webrtc/video/rtp_streams_synchronizer.cc
     Source/webrtc/video/rtp_streams_synchronizer2.cc
-    Source/webrtc/video/rtp_video_stream_receiver.cc
     Source/webrtc/video/rtp_video_stream_receiver2.cc
     Source/webrtc/video/rtp_video_stream_receiver_frame_transformer_delegate.cc
     Source/webrtc/video/send_delay_stats.cc
     Source/webrtc/video/send_statistics_proxy.cc
     Source/webrtc/video/stats_counter.cc
     Source/webrtc/video/stream_synchronization.cc
+    Source/webrtc/video/task_queue_frame_decode_scheduler.cc
     Source/webrtc/video/transport_adapter.cc
-    Source/webrtc/video/video_quality_observer.cc
+    Source/webrtc/video/unique_timestamp_counter.cc
     Source/webrtc/video/video_quality_observer2.cc
-    Source/webrtc/video/video_receive_stream.cc
     Source/webrtc/video/video_receive_stream2.cc
+    Source/webrtc/video/video_receive_stream_timeout_tracker.cc
     Source/webrtc/video/video_send_stream.cc
     Source/webrtc/video/video_send_stream_impl.cc
     Source/webrtc/video/video_source_sink_controller.cc
-    Source/webrtc/video/video_stream_decoder.cc
+    Source/webrtc/video/video_stream_buffer_controller.cc
     Source/webrtc/video/video_stream_decoder2.cc
     Source/webrtc/video/video_stream_decoder_impl.cc
     Source/webrtc/video/video_stream_encoder.cc

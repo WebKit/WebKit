@@ -16,7 +16,6 @@
 #include <string>
 
 #include "rtc_base/checks.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -38,6 +37,9 @@ class RtpDumpWriter : public RtpFileWriter {
       file_ = NULL;
     }
   }
+
+  RtpDumpWriter(const RtpDumpWriter&) = delete;
+  RtpDumpWriter& operator=(const RtpDumpWriter&) = delete;
 
   bool WritePacket(const RtpPacket* packet) override {
     uint16_t len = static_cast<uint16_t>(packet->length + kPacketHeaderSize);
@@ -86,8 +88,6 @@ class RtpDumpWriter : public RtpFileWriter {
   }
 
   FILE* file_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(RtpDumpWriter);
 };
 
 RtpFileWriter* RtpFileWriter::Create(FileFormat format,

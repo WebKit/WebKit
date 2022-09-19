@@ -18,7 +18,6 @@
 #include <random>
 
 #include "absl/algorithm/container.h"
-#include "rtc_base/constructor_magic.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -30,11 +29,11 @@ class PercentileFilterTest : public ::testing::TestWithParam<float> {
     srand(42);
   }
 
+  PercentileFilterTest(const PercentileFilterTest&) = delete;
+  PercentileFilterTest& operator=(const PercentileFilterTest&) = delete;
+
  protected:
   PercentileFilter<int64_t> filter_;
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(PercentileFilterTest);
 };
 
 INSTANTIATE_TEST_SUITE_P(PercentileFilterTests,

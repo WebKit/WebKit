@@ -29,7 +29,7 @@ class SsrcEndToEndTest : public test::CallTest {
 TEST_F(SsrcEndToEndTest, ReceiverUsesLocalSsrc) {
   class SyncRtcpObserver : public test::EndToEndTest {
    public:
-    SyncRtcpObserver() : EndToEndTest(kDefaultTimeoutMs) {}
+    SyncRtcpObserver() : EndToEndTest(kDefaultTimeout) {}
 
     Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
       test::RtcpPacketParser parser;
@@ -55,7 +55,7 @@ TEST_F(SsrcEndToEndTest, UnknownRtpPacketGivesUnknownSsrcReturnCode) {
     explicit PacketInputObserver(PacketReceiver* receiver)
         : receiver_(receiver) {}
 
-    bool Wait() { return delivered_packet_.Wait(kDefaultTimeoutMs); }
+    bool Wait() { return delivered_packet_.Wait(kDefaultTimeout.ms()); }
 
    private:
     DeliveryStatus DeliverPacket(MediaType media_type,
@@ -81,7 +81,7 @@ TEST_F(SsrcEndToEndTest, UnknownRtpPacketGivesUnknownSsrcReturnCode) {
   std::unique_ptr<PacketInputObserver> input_observer;
 
   SendTask(
-      RTC_FROM_HERE, task_queue(),
+      task_queue(),
       [this, &send_transport, &receive_transport, &input_observer]() {
         CreateCalls();
 
@@ -117,14 +117,13 @@ TEST_F(SsrcEndToEndTest, UnknownRtpPacketGivesUnknownSsrcReturnCode) {
   // Wait() waits for a received packet.
   EXPECT_TRUE(input_observer->Wait());
 
-  SendTask(RTC_FROM_HERE, task_queue(),
-           [this, &send_transport, &receive_transport]() {
-             Stop();
-             DestroyStreams();
-             send_transport.reset();
-             receive_transport.reset();
-             DestroyCalls();
-           });
+  SendTask(task_queue(), [this, &send_transport, &receive_transport]() {
+    Stop();
+    DestroyStreams();
+    send_transport.reset();
+    receive_transport.reset();
+    DestroyCalls();
+  });
 }
 
 void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
@@ -135,7 +134,7 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
                   size_t num_ssrcs,
                   bool send_single_ssrc_first,
                   TaskQueueBase* task_queue)
-        : EndToEndTest(kDefaultTimeoutMs),
+        : EndToEndTest(kDefaultTimeout),
           num_ssrcs_(num_ssrcs),
           send_single_ssrc_first_(send_single_ssrc_first),
           ssrcs_to_observe_(num_ssrcs),
@@ -176,7 +175,7 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
 
     void ModifyVideoConfigs(
         VideoSendStream::Config* send_config,
-        std::vector<VideoReceiveStream::Config>* receive_configs,
+        std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       // Set low simulcast bitrates to not have to wait for bandwidth ramp-up.
       encoder_config->max_bitrate_bps = 50000;
@@ -190,9 +189,9 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
         encoder_config->number_of_streams = 1;
     }
 
-    void OnVideoStreamsCreated(
-        VideoSendStream* send_stream,
-        const std::vector<VideoReceiveStream*>& receive_streams) override {
+    void OnVideoStreamsCreated(VideoSendStream* send_stream,
+                               const std::vector<VideoReceiveStreamInterface*>&
+                                   receive_streams) override {
       send_stream_ = send_stream;
     }
 
@@ -203,7 +202,7 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
 
       if (send_single_ssrc_first_) {
         // Set full simulcast and continue with the rest of the SSRCs.
-        SendTask(RTC_FROM_HERE, task_queue_, [&]() {
+        SendTask(task_queue_, [&]() {
           send_stream_->ReconfigureVideoEncoder(
               std::move(video_encoder_config_all_streams_));
         });
@@ -245,7 +244,7 @@ TEST_F(SsrcEndToEndTest, DISABLED_RedundantPayloadsTransmittedOnAllSsrcs) {
   class ObserveRedundantPayloads : public test::EndToEndTest {
    public:
     ObserveRedundantPayloads()
-        : EndToEndTest(kDefaultTimeoutMs),
+        : EndToEndTest(kDefaultTimeout),
           ssrcs_to_observe_(kNumSimulcastStreams) {
       for (size_t i = 0; i < kNumSimulcastStreams; ++i) {
         registered_rtx_ssrc_[kSendRtxSsrcs[i]] = true;
@@ -278,7 +277,7 @@ TEST_F(SsrcEndToEndTest, DISABLED_RedundantPayloadsTransmittedOnAllSsrcs) {
 
     void ModifyVideoConfigs(
         VideoSendStream::Config* send_config,
-        std::vector<VideoReceiveStream::Config>* receive_configs,
+        std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       // Set low simulcast bitrates to not have to wait for bandwidth ramp-up.
       encoder_config->max_bitrate_bps = 50000;

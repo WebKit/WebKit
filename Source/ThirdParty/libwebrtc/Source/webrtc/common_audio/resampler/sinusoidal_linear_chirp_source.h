@@ -15,7 +15,6 @@
 #define COMMON_AUDIO_RESAMPLER_SINUSOIDAL_LINEAR_CHIRP_SOURCE_H_
 
 #include "common_audio/resampler/sinc_resampler.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -33,6 +32,10 @@ class SinusoidalLinearChirpSource : public SincResamplerCallback {
 
   ~SinusoidalLinearChirpSource() override {}
 
+  SinusoidalLinearChirpSource(const SinusoidalLinearChirpSource&) = delete;
+  SinusoidalLinearChirpSource& operator=(const SinusoidalLinearChirpSource&) =
+      delete;
+
   void Run(size_t frames, float* destination) override;
 
   double Frequency(size_t position);
@@ -46,8 +49,6 @@ class SinusoidalLinearChirpSource : public SincResamplerCallback {
   double k_;
   size_t current_index_;
   double delay_samples_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(SinusoidalLinearChirpSource);
 };
 
 }  // namespace webrtc

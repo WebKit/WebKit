@@ -12,6 +12,7 @@
 #define MODULES_DESKTOP_CAPTURE_WIN_WGC_CAPTURE_SOURCE_H_
 
 #include <windows.graphics.capture.h>
+#include <windows.graphics.h>
 #include <wrl/client.h>
 
 #include <memory>
@@ -34,6 +35,7 @@ class WgcCaptureSource {
   virtual DesktopVector GetTopLeft() = 0;
   virtual bool IsCapturable();
   virtual bool FocusOnSource();
+  virtual ABI::Windows::Graphics::SizeInt32 GetSize();
   HRESULT GetCaptureItem(
       Microsoft::WRL::ComPtr<
           ABI::Windows::Graphics::Capture::IGraphicsCaptureItem>* result);
@@ -96,6 +98,7 @@ class WgcWindowSource final : public WgcCaptureSource {
   ~WgcWindowSource() override;
 
   DesktopVector GetTopLeft() override;
+  ABI::Windows::Graphics::SizeInt32 GetSize() override;
   bool IsCapturable() override;
   bool FocusOnSource() override;
 
@@ -117,6 +120,7 @@ class WgcScreenSource final : public WgcCaptureSource {
   ~WgcScreenSource() override;
 
   DesktopVector GetTopLeft() override;
+  ABI::Windows::Graphics::SizeInt32 GetSize() override;
   bool IsCapturable() override;
 
  private:

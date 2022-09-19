@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/candidate.h"
 #include "api/packet_socket_factory.h"
@@ -63,8 +64,8 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/virtual_socket_server.h"
-#include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 using rtc::AsyncListenSocket;
 using rtc::AsyncPacketSocket;
@@ -87,6 +88,7 @@ constexpr int kShortTimeout = 1000;
 constexpr int kMaxExpectedSimulatedRtt = 200;
 const SocketAddress kLocalAddr1("192.168.1.2", 0);
 const SocketAddress kLocalAddr2("192.168.1.3", 0);
+const SocketAddress kLinkLocalIPv6Addr("fe80::aabb:ccff:fedd:eeff", 0);
 const SocketAddress kNatAddr1("77.77.77.77", rtc::NAT_SERVER_UDP_PORT);
 const SocketAddress kNatAddr2("88.88.88.88", rtc::NAT_SERVER_UDP_PORT);
 const SocketAddress kStunAddr("99.99.99.1", STUN_SERVER_PORT);
@@ -135,13 +137,13 @@ bool WriteStunMessage(const StunMessage& msg, ByteBufferWriter* buf) {
 class TestPort : public Port {
  public:
   TestPort(rtc::Thread* thread,
-           const std::string& type,
+           absl::string_view type,
            rtc::PacketSocketFactory* factory,
-           rtc::Network* network,
+           const rtc::Network* network,
            uint16_t min_port,
            uint16_t max_port,
-           const std::string& username_fragment,
-           const std::string& password)
+           absl::string_view username_fragment,
+           absl::string_view password)
       : Port(thread,
              type,
              factory,
@@ -178,7 +180,7 @@ class TestPort : public Port {
                ICE_TYPE_PREFERENCE_HOST, 0, "", true);
   }
 
-  virtual bool SupportsProtocol(const std::string& protocol) const {
+  virtual bool SupportsProtocol(absl::string_view protocol) const {
     return true;
   }
 
@@ -191,7 +193,7 @@ class TestPort : public Port {
   }
   void AddCandidateAddress(const rtc::SocketAddress& addr,
                            const rtc::SocketAddress& base_address,
-                           const std::string& type,
+                           absl::string_view type,
                            int type_preference,
                            bool final) {
     AddAddress(addr, base_address, rtc::SocketAddress(), "udp", "", "", type,
@@ -200,7 +202,7 @@ class TestPort : public Port {
 
   virtual Connection* CreateConnection(const Candidate& remote_candidate,
                                        CandidateOrigin origin) {
-    Connection* conn = new ProxyConnection(this, 0, remote_candidate);
+    Connection* conn = new ProxyConnection(NewWeakPtr(), 0, remote_candidate);
     AddOrReplaceConnection(conn);
     // Set use-candidate attribute flag as this will add USE-CANDIDATE attribute
     // in STUN binding requests.
@@ -274,6 +276,8 @@ class TestChannel : public sigslot::has_slots<> {
         [this](PortInterface* port) { OnSrcPortDestroyed(port); });
   }
 
+  ~TestChannel() { Stop(); }
+
   int complete_count() { return complete_count_; }
   Connection* conn() { return conn_; }
   const SocketAddress& remote_address() { return remote_address_; }
@@ -281,10 +285,10 @@ class TestChannel : public sigslot::has_slots<> {
 
   void Start() { port_->PrepareAddress(); }
   void CreateConnection(const Candidate& remote_candidate) {
+    RTC_DCHECK(!conn_);
     conn_ = port_->CreateConnection(remote_candidate, Port::ORIGIN_MESSAGE);
     IceMode remote_ice_mode =
         (ice_mode_ == ICEMODE_FULL) ? ICEMODE_LITE : ICEMODE_FULL;
-    conn_->set_remote_ice_mode(remote_ice_mode);
     conn_->set_use_candidate_attr(remote_ice_mode == ICEMODE_FULL);
     conn_->SignalStateChange.connect(this,
                                      &TestChannel::OnConnectionStateChange);
@@ -293,6 +297,7 @@ class TestChannel : public sigslot::has_slots<> {
                                      &TestChannel::OnConnectionReadyToSend);
     connection_ready_to_send_ = false;
   }
+
   void OnConnectionStateChange(Connection* conn) {
     if (conn->write_state() == Connection::STATE_WRITABLE) {
       conn->set_use_candidate_attr(true);
@@ -300,6 +305,10 @@ class TestChannel : public sigslot::has_slots<> {
     }
   }
   void AcceptConnection(const Candidate& remote_candidate) {
+    if (conn_) {
+      conn_->SignalDestroyed.disconnect(this);
+      conn_ = nullptr;
+    }
     ASSERT_TRUE(remote_request_.get() != NULL);
     Candidate c = remote_candidate;
     c.set_address(remote_address_);
@@ -312,7 +321,8 @@ class TestChannel : public sigslot::has_slots<> {
   void Ping(int64_t now) { conn_->Ping(now); }
   void Stop() {
     if (conn_) {
-      conn_->Destroy();
+      port_->DestroyConnection(conn_);
+      conn_ = nullptr;
     }
   }
 
@@ -350,8 +360,8 @@ class TestChannel : public sigslot::has_slots<> {
 
   void OnDestroyed(Connection* conn) {
     ASSERT_EQ(conn_, conn);
-    RTC_LOG(INFO) << "OnDestroy connection " << conn << " deleted";
-    conn_ = NULL;
+    RTC_LOG(LS_INFO) << "OnDestroy connection " << conn << " deleted";
+    conn_ = nullptr;
     // When the connection is destroyed, also clear these fields so future
     // connections are possible.
     remote_request_.reset();
@@ -402,11 +412,18 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
         nat_socket_factory1_(&nat_factory1_),
         nat_socket_factory2_(&nat_factory2_),
         stun_server_(TestStunServer::Create(ss_.get(), kStunAddr)),
-        turn_server_(&main_, kTurnUdpIntAddr, kTurnUdpExtAddr),
+        turn_server_(&main_, ss_.get(), kTurnUdpIntAddr, kTurnUdpExtAddr),
         username_(rtc::CreateRandomString(ICE_UFRAG_LENGTH)),
         password_(rtc::CreateRandomString(ICE_PWD_LENGTH)),
         role_conflict_(false),
         ports_destroyed_(0) {}
+
+  ~PortTest() {
+    // Workaround for tests that trigger async destruction of objects that we
+    // need to give an opportunity here to run, before proceeding with other
+    // teardown.
+    rtc::Thread::Current()->ProcessMessages(0);
+  }
 
  protected:
   std::string password() { return password_; }
@@ -499,6 +516,18 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
     return &networks_.back();
   }
 
+  rtc::Network* MakeNetworkMultipleAddrs(
+      const SocketAddress& global_addr,
+      const SocketAddress& link_local_addr,
+      const webrtc::FieldTrialsView* field_trials) {
+    networks_.emplace_back("unittest", "unittest", global_addr.ipaddr(), 32,
+                           rtc::ADAPTER_TYPE_UNKNOWN, field_trials);
+    networks_.back().AddIP(link_local_addr.ipaddr());
+    networks_.back().AddIP(global_addr.ipaddr());
+    networks_.back().AddIP(link_local_addr.ipaddr());
+    return &networks_.back();
+  }
+
   // helpers for above functions
   std::unique_ptr<UDPPort> CreateUdpPort(const SocketAddress& addr) {
     return CreateUdpPort(addr, &socket_factory_);
@@ -506,8 +535,18 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
   std::unique_ptr<UDPPort> CreateUdpPort(const SocketAddress& addr,
                                          PacketSocketFactory* socket_factory) {
     return UDPPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
-                           username_, password_, std::string(), true,
-                           absl::nullopt);
+                           username_, password_, true, absl::nullopt,
+                           &field_trials_);
+  }
+  std::unique_ptr<UDPPort> CreateUdpPortMultipleAddrs(
+      const SocketAddress& global_addr,
+      const SocketAddress& link_local_addr,
+      PacketSocketFactory* socket_factory,
+      const webrtc::test::ScopedKeyValueConfig& field_trials) {
+    return UDPPort::Create(
+        &main_, socket_factory,
+        MakeNetworkMultipleAddrs(global_addr, link_local_addr, &field_trials),
+        0, 0, username_, password_, true, absl::nullopt, &field_trials);
   }
   std::unique_ptr<TCPPort> CreateTcpPort(const SocketAddress& addr) {
     return CreateTcpPort(addr, &socket_factory_);
@@ -515,15 +554,15 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
   std::unique_ptr<TCPPort> CreateTcpPort(const SocketAddress& addr,
                                          PacketSocketFactory* socket_factory) {
     return TCPPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
-                           username_, password_, true);
+                           username_, password_, true, &field_trials_);
   }
   std::unique_ptr<StunPort> CreateStunPort(const SocketAddress& addr,
                                            rtc::PacketSocketFactory* factory) {
     ServerAddresses stun_servers;
     stun_servers.insert(kStunAddr);
     return StunPort::Create(&main_, factory, MakeNetwork(addr), 0, 0, username_,
-                            password_, stun_servers, std::string(),
-                            absl::nullopt);
+                            password_, stun_servers, absl::nullopt,
+                            &field_trials_);
   }
   std::unique_ptr<Port> CreateRelayPort(const SocketAddress& addr,
                                         ProtocolType int_proto,
@@ -545,11 +584,22 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
       ProtocolType int_proto,
       ProtocolType ext_proto,
       const rtc::SocketAddress& server_addr) {
-    return TurnPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
-                            username_, password_,
-                            ProtocolAddress(server_addr, int_proto),
-                            kRelayCredentials, 0, "", {}, {}, nullptr, nullptr);
+    RelayServerConfig config;
+    config.credentials = kRelayCredentials;
+    ProtocolAddress server_address(server_addr, int_proto);
+    CreateRelayPortArgs args;
+    args.network_thread = &main_;
+    args.socket_factory = socket_factory;
+    args.network = MakeNetwork(addr);
+    args.username = username_;
+    args.password = password_;
+    args.server_address = &server_address;
+    args.config = &config;
+    args.field_trials = &field_trials_;
+
+    return TurnPort::Create(args, 0, 0);
   }
+
   std::unique_ptr<rtc::NATServer> CreateNatServer(const SocketAddress& addr,
                                                   rtc::NATType type) {
     return std::make_unique<rtc::NATServer>(type, ss_.get(), addr, addr,
@@ -589,9 +639,9 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
   void ExpectPortsCanConnect(bool can_connect, Port* p1, Port* p2);
 
   // This does all the work and then deletes `port1` and `port2`.
-  void TestConnectivity(const char* name1,
+  void TestConnectivity(absl::string_view name1,
                         std::unique_ptr<Port> port1,
-                        const char* name2,
+                        absl::string_view name2,
                         std::unique_ptr<Port> port2,
                         bool accept,
                         bool same_addr1,
@@ -647,12 +697,12 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
     // Ensure redundant SignalClose events on TcpConnection won't break tcp
     // reconnection. Chromium will fire SignalClose for all outstanding IPC
     // packets during reconnection.
-    tcp_conn1->socket()->SignalClose(tcp_conn1->socket(), 0);
-    tcp_conn2->socket()->SignalClose(tcp_conn2->socket(), 0);
+    tcp_conn1->socket()->NotifyClosedForTest(0);
+    tcp_conn2->socket()->NotifyClosedForTest(0);
 
     // Speed up destroying ch2's connection such that the test is ready to
     // accept a new connection from ch1 before ch1's connection destroys itself.
-    ch2->conn()->Destroy();
+    ch2->Stop();
     EXPECT_TRUE_WAIT(ch2->conn() == NULL, kDefaultTimeout);
   }
 
@@ -731,23 +781,21 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
     EXPECT_TRUE_WAIT(ch2.conn() == NULL, kDefaultTimeout);
   }
 
-  std::unique_ptr<IceMessage> CreateStunMessage(int type) {
-    auto msg = std::make_unique<IceMessage>();
-    msg->SetType(type);
-    msg->SetTransactionID("TESTTESTTEST");
+  std::unique_ptr<IceMessage> CreateStunMessage(StunMessageType type) {
+    auto msg = std::make_unique<IceMessage>(type, "TESTTESTTEST");
     return msg;
   }
   std::unique_ptr<IceMessage> CreateStunMessageWithUsername(
-      int type,
-      const std::string& username) {
+      StunMessageType type,
+      absl::string_view username) {
     std::unique_ptr<IceMessage> msg = CreateStunMessage(type);
     msg->AddAttribute(std::make_unique<StunByteStringAttribute>(
-        STUN_ATTR_USERNAME, username));
+        STUN_ATTR_USERNAME, std::string(username)));
     return msg;
   }
   std::unique_ptr<TestPort> CreateTestPort(const rtc::SocketAddress& addr,
-                                           const std::string& username,
-                                           const std::string& password) {
+                                           absl::string_view username,
+                                           absl::string_view password) {
     auto port =
         std::make_unique<TestPort>(&main_, "test", &socket_factory_,
                                    MakeNetwork(addr), 0, 0, username, password);
@@ -755,8 +803,8 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
     return port;
   }
   std::unique_ptr<TestPort> CreateTestPort(const rtc::SocketAddress& addr,
-                                           const std::string& username,
-                                           const std::string& password,
+                                           absl::string_view username,
+                                           absl::string_view password,
                                            cricket::IceRole role,
                                            int tiebreaker) {
     auto port = CreateTestPort(addr, username, password);
@@ -765,9 +813,9 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
     return port;
   }
   // Overload to create a test port given an rtc::Network directly.
-  std::unique_ptr<TestPort> CreateTestPort(rtc::Network* network,
-                                           const std::string& username,
-                                           const std::string& password) {
+  std::unique_ptr<TestPort> CreateTestPort(const rtc::Network* network,
+                                           absl::string_view username,
+                                           absl::string_view password) {
     auto port = std::make_unique<TestPort>(&main_, "test", &socket_factory_,
                                            network, 0, 0, username, password);
     port->SignalRoleConflict.connect(this, &PortTest::OnRoleConflict);
@@ -811,11 +859,12 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
   std::string password_;
   bool role_conflict_;
   int ports_destroyed_;
+  webrtc::test::ScopedKeyValueConfig field_trials_;
 };
 
-void PortTest::TestConnectivity(const char* name1,
+void PortTest::TestConnectivity(absl::string_view name1,
                                 std::unique_ptr<Port> port1,
-                                const char* name2,
+                                absl::string_view name2,
                                 std::unique_ptr<Port> port2,
                                 bool accept,
                                 bool same_addr1,
@@ -1002,7 +1051,10 @@ class FakePacketSocketFactory : public rtc::PacketSocketFactory {
   void set_next_client_tcp_socket(AsyncPacketSocket* next_client_tcp_socket) {
     next_client_tcp_socket_ = next_client_tcp_socket;
   }
-  rtc::AsyncResolverInterface* CreateAsyncResolver() override { return NULL; }
+  std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver()
+      override {
+    return nullptr;
+  }
 
  private:
   AsyncPacketSocket* next_udp_socket_;
@@ -1055,6 +1107,24 @@ class FakeAsyncPacketSocket : public AsyncPacketSocket {
  private:
   int error_ = 0;
   State state_;
+};
+
+class FakeAsyncListenSocket : public AsyncListenSocket {
+ public:
+  // Returns current local address. Address may be set to NULL if the
+  // socket is not bound yet (GetState() returns STATE_BINDING).
+  virtual SocketAddress GetLocalAddress() const { return local_address_; }
+  void Bind(const SocketAddress& address) {
+    local_address_ = address;
+    state_ = State::kBound;
+  }
+  virtual int GetOption(Socket::Option opt, int* value) { return 0; }
+  virtual int SetOption(Socket::Option opt, int value) { return 0; }
+  virtual State GetState() const { return state_; }
+
+ private:
+  SocketAddress local_address_;
+  State state_ = State::kClosed;
 };
 
 // Local -> XXXX
@@ -1427,7 +1497,7 @@ TEST_F(PortTest, TestLoopbackCall) {
   const StunByteStringAttribute* username_attr =
       msg->GetByteString(STUN_ATTR_USERNAME);
   modified_req->AddAttribute(std::make_unique<StunByteStringAttribute>(
-      STUN_ATTR_USERNAME, username_attr->GetString()));
+      STUN_ATTR_USERNAME, username_attr->string_view()));
   // To make sure we receive error response, adding tiebreaker less than
   // what's present in request.
   modified_req->AddAttribute(std::make_unique<StunUInt64Attribute>(
@@ -1480,12 +1550,51 @@ TEST_F(PortTest, TestIceRoleConflict) {
 }
 
 TEST_F(PortTest, TestTcpNoDelay) {
+  rtc::ScopedFakeClock clock;
   auto port1 = CreateTcpPort(kLocalAddr1);
   port1->SetIceRole(cricket::ICEROLE_CONTROLLING);
   int option_value = -1;
   int success = port1->GetOption(rtc::Socket::OPT_NODELAY, &option_value);
   ASSERT_EQ(0, success);  // GetOption() should complete successfully w/ 0
-  ASSERT_EQ(1, option_value);
+  EXPECT_EQ(1, option_value);
+
+  auto port2 = CreateTcpPort(kLocalAddr2);
+  port2->SetIceRole(cricket::ICEROLE_CONTROLLED);
+
+  // Set up a connection, and verify that option is set on connected sockets at
+  // both ends.
+  TestChannel ch1(std::move(port1));
+  TestChannel ch2(std::move(port2));
+  // Acquire addresses.
+  ch1.Start();
+  ch2.Start();
+  ASSERT_EQ_SIMULATED_WAIT(1, ch1.complete_count(), kDefaultTimeout, clock);
+  ASSERT_EQ_SIMULATED_WAIT(1, ch2.complete_count(), kDefaultTimeout, clock);
+  // Connect and send a ping from src to dst.
+  ch1.CreateConnection(GetCandidate(ch2.port()));
+  ASSERT_TRUE(ch1.conn() != NULL);
+  EXPECT_TRUE_SIMULATED_WAIT(ch1.conn()->connected(), kDefaultTimeout,
+                             clock);  // for TCP connect
+  ch1.Ping();
+  SIMULATED_WAIT(!ch2.remote_address().IsNil(), kShortTimeout, clock);
+
+  // Accept the connection.
+  ch2.AcceptConnection(GetCandidate(ch1.port()));
+  ASSERT_TRUE(ch2.conn() != NULL);
+
+  option_value = -1;
+  success = static_cast<TCPConnection*>(ch1.conn())
+                ->socket()
+                ->GetOption(rtc::Socket::OPT_NODELAY, &option_value);
+  ASSERT_EQ(0, success);
+  EXPECT_EQ(1, option_value);
+
+  option_value = -1;
+  success = static_cast<TCPConnection*>(ch2.conn())
+                ->socket()
+                ->GetOption(rtc::Socket::OPT_NODELAY, &option_value);
+  ASSERT_EQ(0, success);
+  EXPECT_EQ(1, option_value);
 }
 
 TEST_F(PortTest, TestDelayedBindingUdp) {
@@ -1505,8 +1614,8 @@ TEST_F(PortTest, TestDelayedBindingUdp) {
 }
 
 TEST_F(PortTest, TestDisableInterfaceOfTcpPort) {
-  FakeAsyncPacketSocket* lsocket = new FakeAsyncPacketSocket();
-  FakeAsyncPacketSocket* rsocket = new FakeAsyncPacketSocket();
+  FakeAsyncListenSocket* lsocket = new FakeAsyncListenSocket();
+  FakeAsyncListenSocket* rsocket = new FakeAsyncListenSocket();
   FakePacketSocketFactory socket_factory;
 
   socket_factory.set_next_server_tcp_socket(lsocket);
@@ -1515,10 +1624,8 @@ TEST_F(PortTest, TestDisableInterfaceOfTcpPort) {
   socket_factory.set_next_server_tcp_socket(rsocket);
   auto rport = CreateTcpPort(kLocalAddr2, &socket_factory);
 
-  lsocket->set_state(AsyncPacketSocket::STATE_BOUND);
-  lsocket->local_address_ = kLocalAddr1;
-  rsocket->set_state(AsyncPacketSocket::STATE_BOUND);
-  rsocket->local_address_ = kLocalAddr2;
+  lsocket->Bind(kLocalAddr1);
+  rsocket->Bind(kLocalAddr2);
 
   lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
   lport->SetIceTiebreaker(kTiebreaker1);
@@ -1541,7 +1648,7 @@ TEST_F(PortTest, TestDisableInterfaceOfTcpPort) {
   lconn->Ping(0);
 
   // Now disconnect the client socket...
-  socket->SignalClose(socket, 1);
+  socket->NotifyClosedForTest(1);
 
   // And prevent new sockets from being created.
   socket_factory.set_next_client_tcp_socket(nullptr);
@@ -1557,17 +1664,17 @@ void PortTest::TestCrossFamilyPorts(int type) {
       SocketAddress("192.168.1.3", 0), SocketAddress("192.168.1.4", 0),
       SocketAddress("2001:db8::1", 0), SocketAddress("2001:db8::2", 0)};
   for (int i = 0; i < 4; i++) {
-    FakeAsyncPacketSocket* socket = new FakeAsyncPacketSocket();
     if (type == SOCK_DGRAM) {
+      FakeAsyncPacketSocket* socket = new FakeAsyncPacketSocket();
       factory.set_next_udp_socket(socket);
       ports[i] = CreateUdpPort(addresses[i], &factory);
       socket->set_state(AsyncPacketSocket::STATE_BINDING);
       socket->SignalAddressReady(socket, addresses[i]);
     } else if (type == SOCK_STREAM) {
+      FakeAsyncListenSocket* socket = new FakeAsyncListenSocket();
       factory.set_next_server_tcp_socket(socket);
       ports[i] = CreateTcpPort(addresses[i], &factory);
-      socket->set_state(AsyncPacketSocket::STATE_BOUND);
-      socket->local_address_ = addresses[i];
+      socket->Bind(addresses[i]);
     }
     ports[i]->PrepareAddress();
   }
@@ -1620,7 +1727,7 @@ void PortTest::ExpectPortsCanConnect(bool can_connect, Port* p1, Port* p2) {
   }
 }
 
-TEST_F(PortTest, TestUdpV6CrossTypePorts) {
+TEST_F(PortTest, TestUdpSingleAddressV6CrossTypePorts) {
   FakePacketSocketFactory factory;
   std::unique_ptr<Port> ports[4];
   SocketAddress addresses[4] = {
@@ -1648,6 +1755,42 @@ TEST_F(PortTest, TestUdpV6CrossTypePorts) {
   ExpectPortsCanConnect(true, link_local1, link_local2);
   ExpectPortsCanConnect(true, localhost, standard);
   ExpectPortsCanConnect(true, standard, localhost);
+}
+
+TEST_F(PortTest, TestUdpMultipleAddressesV6CrossTypePorts) {
+  webrtc::test::ScopedKeyValueConfig field_trials(
+      "WebRTC-IPv6NetworkResolutionFixes/Enabled/");
+  FakePacketSocketFactory factory;
+  std::unique_ptr<Port> ports[5];
+  SocketAddress addresses[5] = {
+      SocketAddress("2001:db8::1", 0), SocketAddress("2001:db8::2", 0),
+      SocketAddress("fe80::1", 0), SocketAddress("fe80::2", 0),
+      SocketAddress("::1", 0)};
+  for (int i = 0; i < 5; i++) {
+    FakeAsyncPacketSocket* socket = new FakeAsyncPacketSocket();
+    factory.set_next_udp_socket(socket);
+    ports[i] = CreateUdpPortMultipleAddrs(addresses[i], kLinkLocalIPv6Addr,
+                                          &factory, field_trials);
+    socket->set_state(AsyncPacketSocket::STATE_BINDING);
+    socket->SignalAddressReady(socket, addresses[i]);
+    ports[i]->PrepareAddress();
+  }
+
+  Port* standard1 = ports[0].get();
+  Port* standard2 = ports[1].get();
+  Port* link_local1 = ports[2].get();
+  Port* link_local2 = ports[3].get();
+  Port* localhost = ports[4].get();
+
+  ExpectPortsCanConnect(false, link_local1, standard1);
+  ExpectPortsCanConnect(false, standard1, link_local1);
+  ExpectPortsCanConnect(false, link_local1, localhost);
+  ExpectPortsCanConnect(false, localhost, link_local1);
+
+  ExpectPortsCanConnect(true, link_local1, link_local2);
+  ExpectPortsCanConnect(true, localhost, standard1);
+  ExpectPortsCanConnect(true, standard1, localhost);
+  ExpectPortsCanConnect(true, standard2, standard1);
 }
 
 // This test verifies DSCP value set through SetOption interface can be
@@ -1710,7 +1853,7 @@ TEST_F(PortTest, TestSendStunMessage) {
   const StunUInt32Attribute* priority_attr = msg->GetUInt32(STUN_ATTR_PRIORITY);
   ASSERT_TRUE(priority_attr != NULL);
   EXPECT_EQ(kDefaultPrflxPriority, priority_attr->value());
-  EXPECT_EQ("rfrag:lfrag", username_attr->GetString());
+  EXPECT_EQ("rfrag:lfrag", username_attr->string_view());
   EXPECT_TRUE(msg->GetByteString(STUN_ATTR_MESSAGE_INTEGRITY) != NULL);
   EXPECT_EQ(StunMessage::IntegrityStatus::kIntegrityOk,
             msg->ValidateMessageIntegrity("rpass"));
@@ -2027,7 +2170,7 @@ TEST_F(PortTest, TestNetworkInfoAttribute) {
   rport->SetIceTiebreaker(kTiebreaker2);
 
   uint16_t lnetwork_id = 9;
-  lport->Network()->set_id(lnetwork_id);
+  test_network->set_id(lnetwork_id);
   // Send a fake ping from lport to rport.
   lport->PrepareAddress();
   rport->PrepareAddress();
@@ -2048,7 +2191,7 @@ TEST_F(PortTest, TestNetworkInfoAttribute) {
   // Send a fake ping from rport to lport.
   test_network->set_type(rtc::ADAPTER_TYPE_CELLULAR);
   uint16_t rnetwork_id = 8;
-  rport->Network()->set_id(rnetwork_id);
+  test_network->set_id(rnetwork_id);
   Connection* rconn =
       rport->CreateConnection(lport->Candidates()[0], Port::ORIGIN_MESSAGE);
   rconn->Ping(0);
@@ -2235,7 +2378,7 @@ TEST_F(PortTest, TestHandleStunMessageBadFingerprint) {
 
   // Now, add a fingerprint, but munge the message so it's not valid.
   in_msg->AddFingerprint();
-  in_msg->SetTransactionID("TESTTESTBADD");
+  in_msg->SetTransactionIdForTesting("TESTTESTBADD");
   WriteStunMessage(*in_msg, buf.get());
   EXPECT_FALSE(port->GetStunMessage(buf->Data(), buf->Length(), addr, &out_msg,
                                     &username));
@@ -2253,7 +2396,7 @@ TEST_F(PortTest, TestHandleStunMessageBadFingerprint) {
 
   // Now, add a fingerprint, but munge the message so it's not valid.
   in_msg->AddFingerprint();
-  in_msg->SetTransactionID("TESTTESTBADD");
+  in_msg->SetTransactionIdForTesting("TESTTESTBADD");
   WriteStunMessage(*in_msg, buf.get());
   EXPECT_FALSE(port->GetStunMessage(buf->Data(), buf->Length(), addr, &out_msg,
                                     &username));
@@ -2272,7 +2415,7 @@ TEST_F(PortTest, TestHandleStunMessageBadFingerprint) {
 
   // Now, add a fingerprint, but munge the message so it's not valid.
   in_msg->AddFingerprint();
-  in_msg->SetTransactionID("TESTTESTBADD");
+  in_msg->SetTransactionIdForTesting("TESTTESTBADD");
   WriteStunMessage(*in_msg, buf.get());
   EXPECT_FALSE(port->GetStunMessage(buf->Data(), buf->Length(), addr, &out_msg,
                                     &username));
@@ -2535,7 +2678,7 @@ TEST_F(PortTest, TestCandidateFoundation) {
   // Running a second turn server, to get different base IP address.
   SocketAddress kTurnUdpIntAddr2("99.99.98.4", STUN_SERVER_PORT);
   SocketAddress kTurnUdpExtAddr2("99.99.98.5", 0);
-  TestTurnServer turn_server2(rtc::Thread::Current(), kTurnUdpIntAddr2,
+  TestTurnServer turn_server2(rtc::Thread::Current(), vss(), kTurnUdpIntAddr2,
                               kTurnUdpExtAddr2);
   auto turnport3 = CreateTurnPort(kLocalAddr1, nat_socket_factory1(), PROTO_UDP,
                                   PROTO_UDP, kTurnUdpIntAddr2);
@@ -2546,7 +2689,7 @@ TEST_F(PortTest, TestCandidateFoundation) {
 
   // Start a TCP turn server, and check that two turn candidates have
   // different foundations if their relay protocols are different.
-  TestTurnServer turn_server3(rtc::Thread::Current(), kTurnTcpIntAddr,
+  TestTurnServer turn_server3(rtc::Thread::Current(), vss(), kTurnTcpIntAddr,
                               kTurnUdpExtAddr, PROTO_TCP);
   auto turnport4 =
       CreateTurnPort(kLocalAddr1, nat_socket_factory1(), PROTO_TCP, PROTO_UDP);
@@ -2557,7 +2700,7 @@ TEST_F(PortTest, TestCandidateFoundation) {
 }
 
 // This test verifies the related addresses of different types of
-// ICE candiates.
+// ICE candidates.
 TEST_F(PortTest, TestCandidateRelatedAddress) {
   auto nat_server = CreateNatServer(kNatAddr1, NAT_OPEN_CONE);
   auto udpport = CreateUdpPort(kLocalAddr1);
@@ -3327,9 +3470,8 @@ TEST_F(PortTest, TestErrorResponseMakesGoogPingFallBackToStunBinding) {
   ASSERT_EQ(response2->type(), GOOG_PING_RESPONSE);
 
   // But rather than the RESPONSE...feedback an error.
-  StunMessage error_response;
-  error_response.SetType(GOOG_PING_ERROR_RESPONSE);
-  error_response.SetTransactionID(response2->transaction_id());
+  StunMessage error_response(GOOG_PING_ERROR_RESPONSE);
+  error_response.SetTransactionIdForTesting(response2->transaction_id());
   error_response.AddMessageIntegrity32("rpass");
   rtc::ByteBufferWriter buf;
   error_response.Write(&buf);

@@ -64,6 +64,12 @@ ABSL_FLAG(int,
           webrtc::test::CallTest::kUlpfecPayloadType,
           "ULPFEC payload type");
 
+// Flag for FLEXFEC payload type.
+ABSL_FLAG(int,
+          flexfec_payload_type,
+          webrtc::test::CallTest::kFlexfecPayloadType,
+          "FLEXFEC payload type");
+
 ABSL_FLAG(int,
           media_payload_type_rtx,
           webrtc::test::CallTest::kSendRtxPayloadType,
@@ -83,6 +89,11 @@ ABSL_FLAG(uint32_t,
           ssrc_rtx,
           webrtc::test::CallTest::kSendRtxSsrcs[0],
           "Incoming RTX SSRC");
+
+ABSL_FLAG(uint32_t,
+          ssrc_flexfec,
+          webrtc::test::CallTest::kFlexfecSendSsrc,
+          "Incoming FLEXFEC SSRC");
 
 // Flag for abs-send-time id.
 ABSL_FLAG(int, abs_send_time_id, -1, "RTP extension ID for abs-send-time");
@@ -160,6 +171,10 @@ static int UlpfecPayloadType() {
   return absl::GetFlag(FLAGS_ulpfec_payload_type);
 }
 
+static int FlexfecPayloadType() {
+  return absl::GetFlag(FLAGS_flexfec_payload_type);
+}
+
 static int MediaPayloadTypeRtx() {
   return absl::GetFlag(FLAGS_media_payload_type_rtx);
 }
@@ -174,6 +189,10 @@ static uint32_t Ssrc() {
 
 static uint32_t SsrcRtx() {
   return absl::GetFlag(FLAGS_ssrc_rtx);
+}
+
+static uint32_t SsrcFlexfec() {
+  return absl::GetFlag(FLAGS_ssrc_flexfec);
 }
 
 static int AbsSendTimeId() {
@@ -290,9 +309,11 @@ class DecoderIvfFileWriter : public test::FakeDecoder {
       video_codec_type_ = VideoCodecType::kVideoCodecVP9;
     } else if (codec == "H264") {
       video_codec_type_ = VideoCodecType::kVideoCodecH264;
+    } else if (codec == "AV1") {
+      video_codec_type_ = VideoCodecType::kVideoCodecAV1;
     } else {
       RTC_LOG(LS_ERROR) << "Unsupported video codec " << codec;
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
     }
   }
   ~DecoderIvfFileWriter() override { file_writer_->Close(); }
@@ -312,7 +333,7 @@ class DecoderIvfFileWriter : public test::FakeDecoder {
 };
 
 // The RtpReplayer is responsible for parsing the configuration provided by the
-// user, setting up the windows, recieve streams and decoders and then replaying
+// user, setting up the windows, receive streams and decoders and then replaying
 // the provided RTP dump.
 class RtpReplayer final {
  public:
@@ -334,7 +355,7 @@ class RtpReplayer final {
 
     // Creation of the streams must happen inside a task queue because it is
     // resued as a worker thread.
-    worker_thread->PostTask(ToQueuedTask([&]() {
+    worker_thread->PostTask([&]() {
       call.reset(Call::Create(call_config));
 
       // Attempt to load the configuration
@@ -354,7 +375,7 @@ class RtpReplayer final {
         receive_stream->Start();
       }
       sync_event.Set();
-    }));
+    });
 
     // Attempt to create an RtpReader from the input file.
     std::unique_ptr<test::RtpFileReader> rtp_reader =
@@ -371,24 +392,28 @@ class RtpReplayer final {
 
     // Destruction of streams and the call must happen on the same thread as
     // their creation.
-    worker_thread->PostTask(ToQueuedTask([&]() {
+    worker_thread->PostTask([&]() {
       for (const auto& receive_stream : stream_state->receive_streams) {
         call->DestroyVideoReceiveStream(receive_stream);
       }
+      for (const auto& flexfec_stream : stream_state->flexfec_streams) {
+        call->DestroyFlexfecReceiveStream(flexfec_stream);
+      }
       call.reset();
       sync_event.Set();
-    }));
+    });
     sync_event.Wait(/*give_up_after_ms=*/10000);
   }
 
  private:
-  // Holds all the shared memory structures required for a recieve stream. This
+  // Holds all the shared memory structures required for a receive stream. This
   // structure is used to prevent members being deallocated before the replay
   // has been finished.
   struct StreamState {
     test::NullTransport transport;
     std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>> sinks;
-    std::vector<VideoReceiveStream*> receive_streams;
+    std::vector<VideoReceiveStreamInterface*> receive_streams;
+    std::vector<FlexfecReceiveStream*> flexfec_streams;
     std::unique_ptr<VideoDecoderFactory> decoder_factory;
   };
 
@@ -455,7 +480,8 @@ class RtpReplayer final {
     stream_state->sinks.push_back(std::move(playback_video));
     stream_state->sinks.push_back(std::move(file_passthrough));
     // Setup the configuration from the flags.
-    VideoReceiveStream::Config receive_config(&(stream_state->transport));
+    VideoReceiveStreamInterface::Config receive_config(
+        &(stream_state->transport));
     receive_config.rtp.remote_ssrc = Ssrc();
     receive_config.rtp.local_ssrc = kReceiverLocalSsrc;
     receive_config.rtp.rtx_ssrc = SsrcRtx();
@@ -466,6 +492,20 @@ class RtpReplayer final {
     receive_config.rtp.ulpfec_payload_type = UlpfecPayloadType();
     receive_config.rtp.red_payload_type = RedPayloadType();
     receive_config.rtp.nack.rtp_history_ms = 1000;
+
+    if (FlexfecPayloadType() != -1) {
+      receive_config.rtp.protected_by_flexfec = true;
+      webrtc::FlexfecReceiveStream::Config flexfec_config(
+          &(stream_state->transport));
+      flexfec_config.payload_type = FlexfecPayloadType();
+      flexfec_config.protected_media_ssrcs.push_back(Ssrc());
+      flexfec_config.rtp.remote_ssrc = SsrcFlexfec();
+      FlexfecReceiveStream* flexfec_stream =
+          call->CreateFlexfecReceiveStream(flexfec_config);
+      receive_config.rtp.packet_sink_ = flexfec_stream;
+      stream_state->flexfec_streams.push_back(flexfec_stream);
+    }
+
     if (TransmissionOffsetId() != -1) {
       receive_config.rtp.extensions.push_back(RtpExtension(
           RtpExtension::kTimestampOffsetUri, TransmissionOffsetId()));
@@ -477,7 +517,7 @@ class RtpReplayer final {
     receive_config.renderer = stream_state->sinks.back().get();
 
     // Setup the receiving stream
-    VideoReceiveStream::Decoder decoder;
+    VideoReceiveStreamInterface::Decoder decoder;
     decoder = test::CreateMatchingDecoder(MediaPayloadType(), Codec());
     if (!DecoderBitstreamFilename().empty()) {
       // Replace decoder with file writer if we're writing the bitstream to a
@@ -566,12 +606,12 @@ class RtpReplayer final {
 
       ++num_packets;
       PacketReceiver::DeliveryStatus result = PacketReceiver::DELIVERY_OK;
-      worker_thread->PostTask(ToQueuedTask([&]() {
+      worker_thread->PostTask([&]() {
         result = call->Receiver()->DeliverPacket(webrtc::MediaType::VIDEO,
                                                  std::move(packet_buffer),
                                                  /* packet_time_us */ -1);
         event.Set();
-      }));
+      });
       event.Wait(/*give_up_after_ms=*/10000);
       switch (result) {
         case PacketReceiver::DELIVERY_OK:
@@ -619,6 +659,8 @@ int main(int argc, char* argv[]) {
       ValidateOptionalPayloadType(absl::GetFlag(FLAGS_red_payload_type_rtx)));
   RTC_CHECK(
       ValidateOptionalPayloadType(absl::GetFlag(FLAGS_ulpfec_payload_type)));
+  RTC_CHECK(
+      ValidateOptionalPayloadType(absl::GetFlag(FLAGS_flexfec_payload_type)));
   RTC_CHECK(
       ValidateRtpHeaderExtensionId(absl::GetFlag(FLAGS_abs_send_time_id)));
   RTC_CHECK(ValidateRtpHeaderExtensionId(

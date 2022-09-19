@@ -20,7 +20,9 @@ rtc_library("audio_frame_api") {
   deps = [
     "..:rtp_packet_info",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:timeutils",
   ]
 }
 
@@ -35,7 +37,8 @@ rtc_source_set("audio_mixer_api") {
 
   deps = [
     ":audio_frame_api",
-    "../../rtc_base:rtc_base_approved",
+    "..:make_ref_counted",
+    "../../rtc_base:refcount",
   ]
 }
 
@@ -47,7 +50,6 @@ rtc_library("aec3_config") {
   ]
   deps = [
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
     "../../rtc_base:safe_minmax",
     "../../rtc_base/system:rtc_export",
   ]
@@ -63,8 +65,9 @@ rtc_library("aec3_config_json") {
   deps = [
     ":aec3_config",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:logging",
     "../../rtc_base:rtc_json",
+    "../../rtc_base:stringutils",
     "../../rtc_base/system:rtc_export",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
@@ -82,7 +85,6 @@ rtc_library("aec3_factory") {
     ":aec3_config",
     ":echo_control",
     "../../modules/audio_processing/aec3",
-    "../../rtc_base:rtc_base_approved",
     "../../rtc_base/system:rtc_export",
   ]
 }
@@ -95,14 +97,15 @@ rtc_source_set("echo_control") {
 
 rtc_source_set("echo_detector_creator") {
   visibility = [ "*" ]
+  allow_poison = [ "default_echo_detector" ]
   sources = [
     "echo_detector_creator.cc",
     "echo_detector_creator.h",
   ]
   deps = [
+    "..:make_ref_counted",
     "../../api:scoped_refptr",
     "../../modules/audio_processing:api",
-    "../../modules/audio_processing:audio_processing",
-    "../../rtc_base:refcount",
+    "../../modules/audio_processing:residual_echo_detector",
   ]
 }

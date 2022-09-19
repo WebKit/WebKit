@@ -10,6 +10,7 @@
 
 #include "pc/used_ids.h"
 
+#include "absl/strings/string_view.h"
 #include "test/gtest.h"
 
 using cricket::UsedIds;

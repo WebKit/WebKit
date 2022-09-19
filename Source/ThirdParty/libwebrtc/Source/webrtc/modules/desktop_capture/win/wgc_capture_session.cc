@@ -10,9 +10,12 @@
 
 #include "modules/desktop_capture/win/wgc_capture_session.h"
 
+#include <DispatcherQueue.h>
 #include <windows.graphics.capture.interop.h>
 #include <windows.graphics.directX.direct3d11.interop.h>
-#include <wrl.h>
+#include <windows.graphics.h>
+#include <wrl/client.h>
+#include <wrl/event.h>
 
 #include <memory>
 #include <utility>
@@ -34,13 +37,13 @@ namespace {
 
 // We must use a BGRA pixel format that has 4 bytes per pixel, as required by
 // the DesktopFrame interface.
-const auto kPixelFormat = ABI::Windows::Graphics::DirectX::DirectXPixelFormat::
-    DirectXPixelFormat_B8G8R8A8UIntNormalized;
+constexpr auto kPixelFormat = ABI::Windows::Graphics::DirectX::
+    DirectXPixelFormat::DirectXPixelFormat_B8G8R8A8UIntNormalized;
 
-// We only want 1 buffer in our frame pool to reduce latency. If we had more,
-// they would sit in the pool for longer and be stale by the time we are asked
-// for a new frame.
-const int kNumBuffers = 1;
+// The maximum time `GetFrame` will wait for a frame to arrive, if we don't have
+// any in the pool.
+constexpr int kMaxWaitForFrameMs = 50;
+constexpr int kMaxWaitForFirstFrameMs = 500;
 
 // These values are persisted to logs. Entries should not be renumbered and
 // numeric values should never be reused.
@@ -52,9 +55,9 @@ enum class StartCaptureResult {
   kD3dDelayLoadFailed = 4,
   kD3dDeviceCreationFailed = 5,
   kFramePoolActivationFailed = 6,
-  kFramePoolCastFailed = 7,
-  kGetItemSizeFailed = 8,
-  kCreateFreeThreadedFailed = 9,
+  // kFramePoolCastFailed = 7, (deprecated)
+  // kGetItemSizeFailed = 8, (deprecated)
+  kCreateFramePoolFailed = 9,
   kCreateCaptureSessionFailed = 10,
   kStartCaptureFailed = 11,
   kMaxValue = kStartCaptureFailed
@@ -93,9 +96,14 @@ void RecordGetFrameResult(GetFrameResult error) {
 }  // namespace
 
 WgcCaptureSession::WgcCaptureSession(ComPtr<ID3D11Device> d3d11_device,
-                                     ComPtr<WGC::IGraphicsCaptureItem> item)
-    : d3d11_device_(std::move(d3d11_device)), item_(std::move(item)) {}
-WgcCaptureSession::~WgcCaptureSession() = default;
+                                     ComPtr<WGC::IGraphicsCaptureItem> item,
+                                     ABI::Windows::Graphics::SizeInt32 size)
+    : d3d11_device_(std::move(d3d11_device)),
+      item_(std::move(item)),
+      size_(size) {}
+WgcCaptureSession::~WgcCaptureSession() {
+  RemoveEventHandlers();
+}
 
 HRESULT WgcCaptureSession::StartCapture() {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
@@ -113,12 +121,13 @@ HRESULT WgcCaptureSession::StartCapture() {
   // Listen for the Closed event, to detect if the source we are capturing is
   // closed (e.g. application window is closed or monitor is disconnected). If
   // it is, we should abort the capture.
+  item_closed_token_ = std::make_unique<EventRegistrationToken>();
   auto closed_handler =
       Microsoft::WRL::Callback<ABI::Windows::Foundation::ITypedEventHandler<
           WGC::GraphicsCaptureItem*, IInspectable*>>(
           this, &WgcCaptureSession::OnItemClosed);
-  EventRegistrationToken item_closed_token;
-  HRESULT hr = item_->add_Closed(closed_handler.Get(), &item_closed_token);
+  HRESULT hr =
+      item_->add_Closed(closed_handler.Get(), item_closed_token_.get());
   if (FAILED(hr)) {
     RecordStartCaptureResult(StartCaptureResult::kAddClosedFailed);
     return hr;
@@ -144,7 +153,7 @@ HRESULT WgcCaptureSession::StartCapture() {
 
   ComPtr<WGC::IDirect3D11CaptureFramePoolStatics> frame_pool_statics;
   hr = GetActivationFactory<
-      ABI::Windows::Graphics::Capture::IDirect3D11CaptureFramePoolStatics,
+      WGC::IDirect3D11CaptureFramePoolStatics,
       RuntimeClass_Windows_Graphics_Capture_Direct3D11CaptureFramePool>(
       &frame_pool_statics);
   if (FAILED(hr)) {
@@ -152,32 +161,25 @@ HRESULT WgcCaptureSession::StartCapture() {
     return hr;
   }
 
-  // Cast to FramePoolStatics2 so we can use CreateFreeThreaded and avoid the
-  // need to have a DispatcherQueue. We don't listen for the FrameArrived event,
-  // so there's no difference.
-  ComPtr<WGC::IDirect3D11CaptureFramePoolStatics2> frame_pool_statics2;
-  hr = frame_pool_statics->QueryInterface(IID_PPV_ARGS(&frame_pool_statics2));
+  hr = frame_pool_statics->Create(direct3d_device_.Get(), kPixelFormat,
+                                  kNumBuffers, size_, &frame_pool_);
   if (FAILED(hr)) {
-    RecordStartCaptureResult(StartCaptureResult::kFramePoolCastFailed);
+    RecordStartCaptureResult(StartCaptureResult::kCreateFramePoolFailed);
     return hr;
   }
 
-  ABI::Windows::Graphics::SizeInt32 item_size;
-  hr = item_.Get()->get_Size(&item_size);
-  if (FAILED(hr)) {
-    RecordStartCaptureResult(StartCaptureResult::kGetItemSizeFailed);
-    return hr;
-  }
+  frames_in_pool_ = 0;
 
-  previous_size_ = item_size;
-
-  hr = frame_pool_statics2->CreateFreeThreaded(direct3d_device_.Get(),
-                                               kPixelFormat, kNumBuffers,
-                                               item_size, &frame_pool_);
-  if (FAILED(hr)) {
-    RecordStartCaptureResult(StartCaptureResult::kCreateFreeThreadedFailed);
-    return hr;
-  }
+  // Because `WgcCapturerWin` created a `DispatcherQueue`, and we created
+  // `frame_pool_` via `Create`, the `FrameArrived` event will be delivered on
+  // the current thread.
+  frame_arrived_token_ = std::make_unique<EventRegistrationToken>();
+  auto frame_arrived_handler =
+      Microsoft::WRL::Callback<ABI::Windows::Foundation::ITypedEventHandler<
+          WGC::Direct3D11CaptureFramePool*, IInspectable*>>(
+          this, &WgcCaptureSession::OnFrameArrived);
+  hr = frame_pool_->add_FrameArrived(frame_arrived_handler.Get(),
+                                     frame_arrived_token_.get());
 
   hr = frame_pool_->CreateCaptureSession(item_.Get(), &session_);
   if (FAILED(hr)) {
@@ -210,6 +212,10 @@ HRESULT WgcCaptureSession::GetFrame(
 
   RTC_DCHECK(is_capture_started_);
 
+  if (frames_in_pool_ < 1)
+    wait_for_frame_event_.Wait(first_frame_ ? kMaxWaitForFirstFrameMs
+                                            : kMaxWaitForFrameMs);
+
   ComPtr<WGC::IDirect3D11CaptureFrame> capture_frame;
   HRESULT hr = frame_pool_->TryGetNextFrame(&capture_frame);
   if (FAILED(hr)) {
@@ -223,8 +229,11 @@ HRESULT WgcCaptureSession::GetFrame(
     return hr;
   }
 
-  // We need to get this CaptureFrame as an ID3D11Texture2D so that we can get
-  // the raw image data in the format required by the DesktopFrame interface.
+  first_frame_ = false;
+  --frames_in_pool_;
+
+  // We need to get `capture_frame` as an `ID3D11Texture2D` so that we can get
+  // the raw image data in the format required by the `DesktopFrame` interface.
   ComPtr<ABI::Windows::Graphics::DirectX::Direct3D11::IDirect3DSurface>
       d3d_surface;
   hr = capture_frame->get_Surface(&d3d_surface);
@@ -261,16 +270,6 @@ HRESULT WgcCaptureSession::GetFrame(
   // Otherwise it would only be readable by the GPU.
   ComPtr<ID3D11DeviceContext> d3d_context;
   d3d11_device_->GetImmediateContext(&d3d_context);
-  d3d_context->CopyResource(mapped_texture_.Get(), texture_2D.Get());
-
-  D3D11_MAPPED_SUBRESOURCE map_info;
-  hr = d3d_context->Map(mapped_texture_.Get(), /*subresource_index=*/0,
-                        D3D11_MAP_READ, /*D3D11_MAP_FLAG_DO_NOT_WAIT=*/0,
-                        &map_info);
-  if (FAILED(hr)) {
-    RecordGetFrameResult(GetFrameResult::kMapFrameFailed);
-    return hr;
-  }
 
   ABI::Windows::Graphics::SizeInt32 new_size;
   hr = capture_frame->get_ContentSize(&new_size);
@@ -279,36 +278,10 @@ HRESULT WgcCaptureSession::GetFrame(
     return hr;
   }
 
-  // If the size has changed since the last capture, we must be sure to use
-  // the smaller dimensions. Otherwise we might overrun our buffer, or
-  // read stale data from the last frame.
-  int image_height = std::min(previous_size_.Height, new_size.Height);
-  int image_width = std::min(previous_size_.Width, new_size.Width);
-  int row_data_length = image_width * DesktopFrame::kBytesPerPixel;
-
-  // Make a copy of the data pointed to by `map_info.pData` so we are free to
-  // unmap our texture.
-  uint8_t* src_data = static_cast<uint8_t*>(map_info.pData);
-  std::vector<uint8_t> image_data;
-  image_data.reserve(image_height * row_data_length);
-  uint8_t* image_data_ptr = image_data.data();
-  for (int i = 0; i < image_height; i++) {
-    memcpy(image_data_ptr, src_data, row_data_length);
-    image_data_ptr += row_data_length;
-    src_data += map_info.RowPitch;
-  }
-
-  // Transfer ownership of `image_data` to the output_frame.
-  DesktopSize size(image_width, image_height);
-  *output_frame = std::make_unique<WgcDesktopFrame>(size, row_data_length,
-                                                    std::move(image_data));
-
-  d3d_context->Unmap(mapped_texture_.Get(), 0);
-
-  // If the size changed, we must resize the texture and frame pool to fit the
-  // new size.
-  if (previous_size_.Height != new_size.Height ||
-      previous_size_.Width != new_size.Width) {
+  // If the size changed, we must resize `mapped_texture_` and `frame_pool_` to
+  // fit the new size. This must be done before `CopySubresourceRegion` so that
+  // the textures are the same size.
+  if (size_.Height != new_size.Height || size_.Width != new_size.Width) {
     hr = CreateMappedTexture(texture_2D, new_size.Width, new_size.Height);
     if (FAILED(hr)) {
       RecordGetFrameResult(GetFrameResult::kResizeMappedTextureFailed);
@@ -323,9 +296,57 @@ HRESULT WgcCaptureSession::GetFrame(
     }
   }
 
-  RecordGetFrameResult(GetFrameResult::kSuccess);
+  // If the size has changed since the last capture, we must be sure to use
+  // the smaller dimensions. Otherwise we might overrun our buffer, or
+  // read stale data from the last frame.
+  int image_height = std::min(size_.Height, new_size.Height);
+  int image_width = std::min(size_.Width, new_size.Width);
 
-  previous_size_ = new_size;
+  D3D11_BOX copy_region;
+  copy_region.left = 0;
+  copy_region.top = 0;
+  copy_region.right = image_width;
+  copy_region.bottom = image_height;
+  // Our textures are 2D so we just want one "slice" of the box.
+  copy_region.front = 0;
+  copy_region.back = 1;
+  d3d_context->CopySubresourceRegion(mapped_texture_.Get(),
+                                     /*dst_subresource_index=*/0, /*dst_x=*/0,
+                                     /*dst_y=*/0, /*dst_z=*/0, texture_2D.Get(),
+                                     /*src_subresource_index=*/0, &copy_region);
+
+  D3D11_MAPPED_SUBRESOURCE map_info;
+  hr = d3d_context->Map(mapped_texture_.Get(), /*subresource_index=*/0,
+                        D3D11_MAP_READ, /*D3D11_MAP_FLAG_DO_NOT_WAIT=*/0,
+                        &map_info);
+  if (FAILED(hr)) {
+    RecordGetFrameResult(GetFrameResult::kMapFrameFailed);
+    return hr;
+  }
+
+  int row_data_length = image_width * DesktopFrame::kBytesPerPixel;
+
+  // Make a copy of the data pointed to by `map_info.pData` so we are free to
+  // unmap our texture.
+  uint8_t* src_data = static_cast<uint8_t*>(map_info.pData);
+  std::vector<uint8_t> image_data;
+  image_data.resize(image_height * row_data_length);
+  uint8_t* image_data_ptr = image_data.data();
+  for (int i = 0; i < image_height; i++) {
+    memcpy(image_data_ptr, src_data, row_data_length);
+    image_data_ptr += row_data_length;
+    src_data += map_info.RowPitch;
+  }
+
+  d3d_context->Unmap(mapped_texture_.Get(), 0);
+
+  // Transfer ownership of `image_data` to the output_frame.
+  DesktopSize size(image_width, image_height);
+  *output_frame = std::make_unique<WgcDesktopFrame>(size, row_data_length,
+                                                    std::move(image_data));
+
+  size_ = new_size;
+  RecordGetFrameResult(GetFrameResult::kSuccess);
   return hr;
 }
 
@@ -351,6 +372,16 @@ HRESULT WgcCaptureSession::CreateMappedTexture(
   return d3d11_device_->CreateTexture2D(&map_desc, nullptr, &mapped_texture_);
 }
 
+HRESULT WgcCaptureSession::OnFrameArrived(
+    WGC::IDirect3D11CaptureFramePool* sender,
+    IInspectable* event_args) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  RTC_DCHECK_LT(frames_in_pool_, kNumBuffers);
+  ++frames_in_pool_;
+  wait_for_frame_event_.Set();
+  return S_OK;
+}
+
 HRESULT WgcCaptureSession::OnItemClosed(WGC::IGraphicsCaptureItem* sender,
                                         IInspectable* event_args) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
@@ -358,6 +389,8 @@ HRESULT WgcCaptureSession::OnItemClosed(WGC::IGraphicsCaptureItem* sender,
   RTC_LOG(LS_INFO) << "Capture target has been closed.";
   item_closed_ = true;
   is_capture_started_ = false;
+
+  RemoveEventHandlers();
 
   mapped_texture_ = nullptr;
   session_ = nullptr;
@@ -367,6 +400,24 @@ HRESULT WgcCaptureSession::OnItemClosed(WGC::IGraphicsCaptureItem* sender,
   d3d11_device_ = nullptr;
 
   return S_OK;
+}
+
+void WgcCaptureSession::RemoveEventHandlers() {
+  HRESULT hr;
+  if (frame_pool_ && frame_arrived_token_) {
+    hr = frame_pool_->remove_FrameArrived(*frame_arrived_token_);
+    frame_arrived_token_.reset();
+    if (FAILED(hr)) {
+      RTC_LOG(LS_WARNING) << "Failed to remove FrameArrived event handler: "
+                          << hr;
+    }
+  }
+  if (item_ && item_closed_token_) {
+    hr = item_->remove_Closed(*item_closed_token_);
+    item_closed_token_.reset();
+    if (FAILED(hr))
+      RTC_LOG(LS_WARNING) << "Failed to remove Closed event handler: " << hr;
+  }
 }
 
 }  // namespace webrtc

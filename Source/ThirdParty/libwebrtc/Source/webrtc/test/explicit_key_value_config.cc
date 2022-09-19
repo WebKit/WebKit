@@ -10,14 +10,14 @@
 
 #include "test/explicit_key_value_config.h"
 
-#include "api/transport/webrtc_key_value_config.h"
+#include "absl/strings/string_view.h"
+#include "api/field_trials_view.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/field_trial.h"
 
 namespace webrtc {
 namespace test {
 
-ExplicitKeyValueConfig::ExplicitKeyValueConfig(const std::string& s) {
+ExplicitKeyValueConfig::ExplicitKeyValueConfig(absl::string_view s) {
   std::string::size_type field_start = 0;
   while (field_start < s.size()) {
     std::string::size_type separator_pos = s.find('/', field_start);
@@ -25,7 +25,7 @@ ExplicitKeyValueConfig::ExplicitKeyValueConfig(const std::string& s) {
         << "Missing separator '/' after field trial key.";
     RTC_CHECK_GT(separator_pos, field_start)
         << "Field trial key cannot be empty.";
-    std::string key = s.substr(field_start, separator_pos - field_start);
+    std::string key(s.substr(field_start, separator_pos - field_start));
     field_start = separator_pos + 1;
 
     RTC_CHECK_LT(field_start, s.size())
@@ -35,7 +35,7 @@ ExplicitKeyValueConfig::ExplicitKeyValueConfig(const std::string& s) {
         << "Missing terminating '/' in field trial string.";
     RTC_CHECK_GT(separator_pos, field_start)
         << "Field trial value cannot be empty.";
-    std::string value = s.substr(field_start, separator_pos - field_start);
+    std::string value(s.substr(field_start, separator_pos - field_start));
     field_start = separator_pos + 1;
 
     key_value_map_[key] = value;
@@ -47,7 +47,7 @@ ExplicitKeyValueConfig::ExplicitKeyValueConfig(const std::string& s) {
 }
 
 std::string ExplicitKeyValueConfig::Lookup(absl::string_view key) const {
-  auto it = key_value_map_.find(std::string(key));
+  auto it = key_value_map_.find(key);
   if (it != key_value_map_.end())
     return it->second;
   return "";

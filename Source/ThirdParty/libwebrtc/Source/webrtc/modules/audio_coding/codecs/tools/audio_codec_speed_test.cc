@@ -11,7 +11,6 @@
 #include "modules/audio_coding/codecs/tools/audio_codec_speed_test.h"
 
 #include "rtc_base/checks.h"
-#include "rtc_base/format_macros.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -100,7 +99,7 @@ void AudioCodecSpeedTest::EncodeDecode(size_t audio_duration_sec) {
   size_t time_now_ms = 0;
   float time_ms;
 
-  printf("Coding %d kHz-sampled %" RTC_PRIuS "-channel audio at %d bps ...\n",
+  printf("Coding %d kHz-sampled %zu-channel audio at %d bps ...\n",
          input_sampling_khz_, channels_, bit_rate_);
 
   while (time_now_ms < audio_duration_sec * 1000) {

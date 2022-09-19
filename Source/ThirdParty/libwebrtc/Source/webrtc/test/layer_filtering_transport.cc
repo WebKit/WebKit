@@ -163,7 +163,7 @@ bool LayerFilteringTransport::SendRtp(const uint8_t* packet,
         }
       }
     } else {
-      RTC_NOTREACHED() << "Parse error";
+      RTC_DCHECK_NOTREACHED() << "Parse error";
     }
   }
 

@@ -131,8 +131,8 @@ void AudioFrameOperations::DownmixChannels(const int16_t* src_audio,
     return;
   }
 
-  RTC_NOTREACHED() << "src_channels: " << src_channels
-                   << ", dst_channels: " << dst_channels;
+  RTC_DCHECK_NOTREACHED() << "src_channels: " << src_channels
+                          << ", dst_channels: " << dst_channels;
 }
 
 void AudioFrameOperations::DownmixChannels(size_t dst_channels,
@@ -149,8 +149,8 @@ void AudioFrameOperations::DownmixChannels(size_t dst_channels,
     int err = QuadToStereo(frame);
     RTC_DCHECK_EQ(err, 0);
   } else {
-    RTC_NOTREACHED() << "src_channels: " << frame->num_channels_
-                     << ", dst_channels: " << dst_channels;
+    RTC_DCHECK_NOTREACHED() << "src_channels: " << frame->num_channels_
+                            << ", dst_channels: " << dst_channels;
   }
 }
 

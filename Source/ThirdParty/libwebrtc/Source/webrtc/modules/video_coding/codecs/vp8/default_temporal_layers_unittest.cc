@@ -354,61 +354,6 @@ TEST_F(TemporalLayersTest, SearchOrderWithDrop) {
   EXPECT_EQ(tl_config.second_reference, Vp8BufferReference::kLast);
 }
 
-TEST_F(TemporalLayersTest, 4Layers) {
-  constexpr int kNumLayers = 4;
-  DefaultTemporalLayers tl(kNumLayers);
-  DefaultTemporalLayersChecker checker(kNumLayers);
-  tl.OnRatesUpdated(0,
-                    GetTemporalLayerRates(kDefaultBytesPerFrame,
-                                          kDefaultFramerate, kNumLayers),
-                    kDefaultFramerate);
-  tl.UpdateConfiguration(0);
-  int expected_flags[16] = {
-      kTemporalUpdateLast,
-      kTemporalUpdateNoneNoRefGoldenAltRef,
-      kTemporalUpdateAltrefWithoutDependency,
-      kTemporalUpdateNoneNoRefGolden,
-      kTemporalUpdateGoldenWithoutDependency,
-      kTemporalUpdateNone,
-      kTemporalUpdateAltref,
-      kTemporalUpdateNone,
-      kTemporalUpdateLast,
-      kTemporalUpdateNone,
-      kTemporalUpdateAltref,
-      kTemporalUpdateNone,
-      kTemporalUpdateGolden,
-      kTemporalUpdateNone,
-      kTemporalUpdateAltref,
-      kTemporalUpdateNone,
-  };
-  int expected_temporal_idx[16] = {0, 3, 2, 3, 1, 3, 2, 3,
-                                   0, 3, 2, 3, 1, 3, 2, 3};
-
-  bool expected_layer_sync[16] = {false, true,  true,  false, true,  false,
-                                  false, false, false, false, false, false,
-                                  false, false, false, false};
-
-  uint32_t timestamp = 0;
-  for (int i = 0; i < 16; ++i) {
-    const bool is_keyframe = (i == 0);
-    CodecSpecificInfo info;
-    Vp8FrameConfig tl_config = tl.NextFrameConfig(0, timestamp);
-    EXPECT_EQ(is_keyframe ? kKeyFrameFlags : expected_flags[i],
-              LibvpxVp8Encoder::EncodeFlags(tl_config))
-        << i;
-    tl.OnEncodeDone(0, timestamp, kDefaultBytesPerFrame, is_keyframe,
-                    kDefaultQp, &info);
-    EXPECT_TRUE(checker.CheckTemporalConfig(is_keyframe, tl_config));
-    EXPECT_EQ(expected_temporal_idx[i], info.codecSpecific.VP8.temporalIdx);
-    EXPECT_EQ(expected_temporal_idx[i], tl_config.packetizer_temporal_idx);
-    EXPECT_EQ(expected_temporal_idx[i], tl_config.encoder_layer_id);
-    EXPECT_EQ(is_keyframe || expected_layer_sync[i],
-              info.codecSpecific.VP8.layerSync);
-    EXPECT_EQ(expected_layer_sync[i], tl_config.layer_sync);
-    timestamp += 3000;
-  }
-}
-
 TEST_F(TemporalLayersTest, DoesNotReferenceDroppedFrames) {
   constexpr int kNumLayers = 3;
   // Use a repeating pattern of tl 0, 2, 1, 2.

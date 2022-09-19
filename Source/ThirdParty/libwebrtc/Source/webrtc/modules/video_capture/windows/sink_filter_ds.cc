@@ -58,7 +58,7 @@ class EnumPins : public IEnumPins {
   }
 
   STDMETHOD(Clone)(IEnumPins** pins) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return E_NOTIMPL;
   }
 
@@ -83,7 +83,7 @@ class EnumPins : public IEnumPins {
   }
 
   STDMETHOD(Skip)(ULONG count) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return E_NOTIMPL;
   }
 
@@ -274,7 +274,7 @@ class MediaTypesEnum : public IEnumMediaTypes {
 
   // IEnumMediaTypes
   STDMETHOD(Clone)(IEnumMediaTypes** pins) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return E_NOTIMPL;
   }
 
@@ -359,12 +359,12 @@ class MediaTypesEnum : public IEnumMediaTypes {
         media_type->subtype = MEDIASUBTYPE_MJPG;
         break;
       default:
-        RTC_NOTREACHED();
+        RTC_DCHECK_NOTREACHED();
     }
   }
 
   STDMETHOD(Skip)(ULONG count) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return E_NOTIMPL;
   }
 
@@ -513,7 +513,8 @@ HRESULT CaptureInputPin::CheckDirection(IPin* pin) const {
   return pd == info_.dir ? VFW_E_INVALID_DIRECTION : S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::QueryInterface(REFIID riid, void** ppv) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureInputPin::QueryInterface(REFIID riid,
+                                                                  void** ppv) {
   (*ppv) = nullptr;
   if (riid == IID_IUnknown || riid == IID_IMemInputPin) {
     *ppv = static_cast<IMemInputPin*>(this);
@@ -528,8 +529,8 @@ STDMETHODIMP CaptureInputPin::QueryInterface(REFIID riid, void** ppv) {
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::Connect(IPin* receive_pin,
-                                      const AM_MEDIA_TYPE* media_type) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::Connect(IPin* receive_pin, const AM_MEDIA_TYPE* media_type) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   if (!media_type || !receive_pin)
     return E_POINTER;
@@ -538,7 +539,7 @@ STDMETHODIMP CaptureInputPin::Connect(IPin* receive_pin,
     return VFW_E_NOT_STOPPED;
 
   if (receive_pin_) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return VFW_E_ALREADY_CONNECTED;
   }
 
@@ -557,14 +558,14 @@ STDMETHODIMP CaptureInputPin::Connect(IPin* receive_pin,
   return connected ? S_OK : VFW_E_NO_ACCEPTABLE_TYPES;
 }
 
-STDMETHODIMP CaptureInputPin::ReceiveConnection(
-    IPin* connector,
-    const AM_MEDIA_TYPE* media_type) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::ReceiveConnection(IPin* connector,
+                                   const AM_MEDIA_TYPE* media_type) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   RTC_DCHECK(Filter()->IsStopped());
 
   if (receive_pin_) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return VFW_E_ALREADY_CONNECTED;
   }
 
@@ -585,7 +586,7 @@ STDMETHODIMP CaptureInputPin::ReceiveConnection(
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::Disconnect() {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureInputPin::Disconnect() {
   RTC_DCHECK_RUN_ON(&main_checker_);
   if (!Filter()->IsStopped())
     return VFW_E_NOT_STOPPED;
@@ -599,7 +600,7 @@ STDMETHODIMP CaptureInputPin::Disconnect() {
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::ConnectedTo(IPin** pin) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureInputPin::ConnectedTo(IPin** pin) {
   RTC_DCHECK_RUN_ON(&main_checker_);
 
   if (!receive_pin_)
@@ -611,7 +612,8 @@ STDMETHODIMP CaptureInputPin::ConnectedTo(IPin** pin) {
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::ConnectionMediaType(AM_MEDIA_TYPE* media_type) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::ConnectionMediaType(AM_MEDIA_TYPE* media_type) {
   RTC_DCHECK_RUN_ON(&main_checker_);
 
   if (!receive_pin_)
@@ -622,7 +624,8 @@ STDMETHODIMP CaptureInputPin::ConnectionMediaType(AM_MEDIA_TYPE* media_type) {
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::QueryPinInfo(PIN_INFO* info) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::QueryPinInfo(PIN_INFO* info) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   *info = info_;
   if (info_.pFilter)
@@ -630,13 +633,14 @@ STDMETHODIMP CaptureInputPin::QueryPinInfo(PIN_INFO* info) {
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::QueryDirection(PIN_DIRECTION* pin_dir) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::QueryDirection(PIN_DIRECTION* pin_dir) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   *pin_dir = info_.dir;
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::QueryId(LPWSTR* id) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureInputPin::QueryId(LPWSTR* id) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   size_t len = lstrlenW(info_.achName);
   *id = reinterpret_cast<LPWSTR>(CoTaskMemAlloc((len + 1) * sizeof(wchar_t)));
@@ -644,7 +648,8 @@ STDMETHODIMP CaptureInputPin::QueryId(LPWSTR* id) {
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::QueryAccept(const AM_MEDIA_TYPE* media_type) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::QueryAccept(const AM_MEDIA_TYPE* media_type) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   RTC_DCHECK(Filter()->IsStopped());
   VideoCaptureCapability capability(resulting_capability_);
@@ -653,43 +658,46 @@ STDMETHODIMP CaptureInputPin::QueryAccept(const AM_MEDIA_TYPE* media_type) {
              : S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::EnumMediaTypes(IEnumMediaTypes** types) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::EnumMediaTypes(IEnumMediaTypes** types) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   *types = new ComRefCount<MediaTypesEnum>(requested_capability_);
   (*types)->AddRef();
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::QueryInternalConnections(IPin** pins,
-                                                       ULONG* count) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::QueryInternalConnections(IPin** pins, ULONG* count) {
   return E_NOTIMPL;
 }
 
-STDMETHODIMP CaptureInputPin::EndOfStream() {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureInputPin::EndOfStream() {
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::BeginFlush() {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureInputPin::BeginFlush() {
   RTC_DCHECK_RUN_ON(&main_checker_);
   flushing_ = true;
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::EndFlush() {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureInputPin::EndFlush() {
   RTC_DCHECK_RUN_ON(&main_checker_);
   flushing_ = false;
   runtime_error_ = false;
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::NewSegment(REFERENCE_TIME start,
-                                         REFERENCE_TIME stop,
-                                         double rate) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::NewSegment(REFERENCE_TIME start,
+                            REFERENCE_TIME stop,
+                            double rate) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::GetAllocator(IMemAllocator** allocator) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::GetAllocator(IMemAllocator** allocator) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   if (allocator_ == nullptr) {
     HRESULT hr = CoCreateInstance(CLSID_MemoryAllocator, 0,
@@ -699,13 +707,13 @@ STDMETHODIMP CaptureInputPin::GetAllocator(IMemAllocator** allocator) {
       return hr;
     allocator_.swap(allocator);
   }
-  *allocator = allocator_;
+  *allocator = allocator_.get();
   allocator_->AddRef();
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::NotifyAllocator(IMemAllocator* allocator,
-                                              BOOL read_only) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::NotifyAllocator(IMemAllocator* allocator, BOOL read_only) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   allocator_.swap(&allocator);
   if (allocator_)
@@ -715,12 +723,13 @@ STDMETHODIMP CaptureInputPin::NotifyAllocator(IMemAllocator* allocator,
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::GetAllocatorRequirements(
-    ALLOCATOR_PROPERTIES* props) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::GetAllocatorRequirements(ALLOCATOR_PROPERTIES* props) {
   return E_NOTIMPL;
 }
 
-STDMETHODIMP CaptureInputPin::Receive(IMediaSample* media_sample) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::Receive(IMediaSample* media_sample) {
   RTC_DCHECK_RUN_ON(&capture_checker_);
 
   CaptureSinkFilter* const filter = static_cast<CaptureSinkFilter*>(Filter());
@@ -765,9 +774,10 @@ STDMETHODIMP CaptureInputPin::Receive(IMediaSample* media_sample) {
   return S_OK;
 }
 
-STDMETHODIMP CaptureInputPin::ReceiveMultiple(IMediaSample** samples,
-                                              long count,
-                                              long* processed) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureInputPin::ReceiveMultiple(IMediaSample** samples,
+                                 long count,
+                                 long* processed) {
   HRESULT hr = S_OK;
   *processed = 0;
   while (count-- > 0) {
@@ -779,7 +789,7 @@ STDMETHODIMP CaptureInputPin::ReceiveMultiple(IMediaSample** samples,
   return hr;
 }
 
-STDMETHODIMP CaptureInputPin::ReceiveCanBlock() {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureInputPin::ReceiveCanBlock() {
   return S_FALSE;
 }
 
@@ -800,29 +810,33 @@ HRESULT CaptureSinkFilter::SetRequestedCapability(
   return input_pin_->SetRequestedCapability(capability);
 }
 
-STDMETHODIMP CaptureSinkFilter::GetState(DWORD msecs, FILTER_STATE* state) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::GetState(DWORD msecs, FILTER_STATE* state) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   *state = state_;
   return S_OK;
 }
 
-STDMETHODIMP CaptureSinkFilter::SetSyncSource(IReferenceClock* clock) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::SetSyncSource(IReferenceClock* clock) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   return S_OK;
 }
 
-STDMETHODIMP CaptureSinkFilter::GetSyncSource(IReferenceClock** clock) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::GetSyncSource(IReferenceClock** clock) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   return E_NOTIMPL;
 }
 
-STDMETHODIMP CaptureSinkFilter::Pause() {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureSinkFilter::Pause() {
   RTC_DCHECK_RUN_ON(&main_checker_);
   state_ = State_Paused;
   return S_OK;
 }
 
-STDMETHODIMP CaptureSinkFilter::Run(REFERENCE_TIME tStart) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::Run(REFERENCE_TIME tStart) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   if (state_ == State_Stopped)
     Pause();
@@ -833,7 +847,7 @@ STDMETHODIMP CaptureSinkFilter::Run(REFERENCE_TIME tStart) {
   return S_OK;
 }
 
-STDMETHODIMP CaptureSinkFilter::Stop() {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureSinkFilter::Stop() {
   RTC_DCHECK_RUN_ON(&main_checker_);
   if (state_ == State_Stopped)
     return S_OK;
@@ -844,21 +858,24 @@ STDMETHODIMP CaptureSinkFilter::Stop() {
   return S_OK;
 }
 
-STDMETHODIMP CaptureSinkFilter::EnumPins(IEnumPins** pins) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::EnumPins(IEnumPins** pins) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   *pins = new ComRefCount<class EnumPins>(input_pin_.get());
   (*pins)->AddRef();
   return S_OK;
 }
 
-STDMETHODIMP CaptureSinkFilter::FindPin(LPCWSTR id, IPin** pin) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureSinkFilter::FindPin(LPCWSTR id,
+                                                             IPin** pin) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   // There's no ID assigned to our input pin, so looking it up based on one
   // is pointless (and in practice, this method isn't being used).
   return VFW_E_NOT_FOUND;
 }
 
-STDMETHODIMP CaptureSinkFilter::QueryFilterInfo(FILTER_INFO* info) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::QueryFilterInfo(FILTER_INFO* info) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   *info = info_;
   if (info->pGraph)
@@ -866,8 +883,8 @@ STDMETHODIMP CaptureSinkFilter::QueryFilterInfo(FILTER_INFO* info) {
   return S_OK;
 }
 
-STDMETHODIMP CaptureSinkFilter::JoinFilterGraph(IFilterGraph* graph,
-                                                LPCWSTR name) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::JoinFilterGraph(IFilterGraph* graph, LPCWSTR name) {
   RTC_DCHECK_RUN_ON(&main_checker_);
   RTC_DCHECK(IsStopped());
 
@@ -893,7 +910,8 @@ STDMETHODIMP CaptureSinkFilter::JoinFilterGraph(IFilterGraph* graph,
   return S_OK;
 }
 
-STDMETHODIMP CaptureSinkFilter::QueryVendorInfo(LPWSTR* vendor_info) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::QueryVendorInfo(LPWSTR* vendor_info) {
   return E_NOTIMPL;
 }
 
@@ -922,7 +940,8 @@ bool CaptureSinkFilter::IsStopped() const {
   return state_ == State_Stopped;
 }
 
-STDMETHODIMP CaptureSinkFilter::QueryInterface(REFIID riid, void** ppv) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP
+CaptureSinkFilter::QueryInterface(REFIID riid, void** ppv) {
   if (riid == IID_IUnknown || riid == IID_IPersist || riid == IID_IBaseFilter) {
     *ppv = static_cast<IBaseFilter*>(this);
     AddRef();
@@ -931,7 +950,7 @@ STDMETHODIMP CaptureSinkFilter::QueryInterface(REFIID riid, void** ppv) {
   return E_NOINTERFACE;
 }
 
-STDMETHODIMP CaptureSinkFilter::GetClassID(CLSID* clsid) {
+COM_DECLSPEC_NOTHROW STDMETHODIMP CaptureSinkFilter::GetClassID(CLSID* clsid) {
   *clsid = CLSID_SINKFILTER;
   return S_OK;
 }

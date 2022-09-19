@@ -62,6 +62,25 @@ const char* const RTCQualityLimitationReason::kOther = "other";
 const char* const RTCContentType::kUnspecified = "unspecified";
 const char* const RTCContentType::kScreenshare = "screenshare";
 
+// https://w3c.github.io/webrtc-stats/#dom-rtcdtlsrole
+const char* const RTCDtlsRole::kUnknown = "unknown";
+const char* const RTCDtlsRole::kClient = "client";
+const char* const RTCDtlsRole::kServer = "server";
+
+// https://www.w3.org/TR/webrtc/#rtcicerole
+const char* const RTCIceRole::kUnknown = "unknown";
+const char* const RTCIceRole::kControlled = "controlled";
+const char* const RTCIceRole::kControlling = "controlling";
+
+// https://www.w3.org/TR/webrtc/#dom-rtcicetransportstate
+const char* const RTCIceTransportState::kNew = "new";
+const char* const RTCIceTransportState::kChecking = "checking";
+const char* const RTCIceTransportState::kConnected = "connected";
+const char* const RTCIceTransportState::kCompleted = "completed";
+const char* const RTCIceTransportState::kDisconnected = "disconnected";
+const char* const RTCIceTransportState::kFailed = "failed";
+const char* const RTCIceTransportState::kClosed = "closed";
+
 // clang-format off
 WEBRTC_RTCSTATS_IMPL(RTCCertificateStats, RTCStats, "certificate",
     &fingerprint,
@@ -172,7 +191,6 @@ WEBRTC_RTCSTATS_IMPL(RTCIceCandidatePairStats, RTCStats, "candidate-pair",
     &priority,
     &nominated,
     &writable,
-    &readable,
     &packets_sent,
     &packets_received,
     &bytes_sent,
@@ -185,12 +203,7 @@ WEBRTC_RTCSTATS_IMPL(RTCIceCandidatePairStats, RTCStats, "candidate-pair",
     &requests_sent,
     &responses_received,
     &responses_sent,
-    &retransmissions_received,
-    &retransmissions_sent,
-    &consent_requests_received,
     &consent_requests_sent,
-    &consent_responses_received,
-    &consent_responses_sent,
     &packets_discarded_on_send,
     &bytes_discarded_on_send)
 // clang-format on
@@ -209,7 +222,6 @@ RTCIceCandidatePairStats::RTCIceCandidatePairStats(std::string&& id,
       priority("priority"),
       nominated("nominated"),
       writable("writable"),
-      readable("readable"),
       packets_sent("packetsSent"),
       packets_received("packetsReceived"),
       bytes_sent("bytesSent"),
@@ -222,12 +234,7 @@ RTCIceCandidatePairStats::RTCIceCandidatePairStats(std::string&& id,
       requests_sent("requestsSent"),
       responses_received("responsesReceived"),
       responses_sent("responsesSent"),
-      retransmissions_received("retransmissionsReceived"),
-      retransmissions_sent("retransmissionsSent"),
-      consent_requests_received("consentRequestsReceived"),
       consent_requests_sent("consentRequestsSent"),
-      consent_responses_received("consentResponsesReceived"),
-      consent_responses_sent("consentResponsesSent"),
       packets_discarded_on_send("packetsDiscardedOnSend"),
       bytes_discarded_on_send("bytesDiscardedOnSend") {}
 
@@ -241,7 +248,6 @@ RTCIceCandidatePairStats::RTCIceCandidatePairStats(
       priority(other.priority),
       nominated(other.nominated),
       writable(other.writable),
-      readable(other.readable),
       packets_sent(other.packets_sent),
       packets_received(other.packets_received),
       bytes_sent(other.bytes_sent),
@@ -254,12 +260,7 @@ RTCIceCandidatePairStats::RTCIceCandidatePairStats(
       requests_sent(other.requests_sent),
       responses_received(other.responses_received),
       responses_sent(other.responses_sent),
-      retransmissions_received(other.retransmissions_received),
-      retransmissions_sent(other.retransmissions_sent),
-      consent_requests_received(other.consent_requests_received),
       consent_requests_sent(other.consent_requests_sent),
-      consent_responses_received(other.consent_responses_received),
-      consent_responses_sent(other.consent_responses_sent),
       packets_discarded_on_send(other.packets_discarded_on_send),
       bytes_discarded_on_send(other.bytes_discarded_on_send) {}
 
@@ -277,7 +278,9 @@ WEBRTC_RTCSTATS_IMPL(RTCIceCandidateStats, RTCStats, "abstract-ice-candidate",
     &relay_protocol,
     &candidate_type,
     &priority,
-    &url)
+    &url,
+    &vpn,
+    &network_adapter_type)
 // clang-format on
 
 RTCIceCandidateStats::RTCIceCandidateStats(const std::string& id,
@@ -299,7 +302,9 @@ RTCIceCandidateStats::RTCIceCandidateStats(std::string&& id,
       relay_protocol("relayProtocol"),
       candidate_type("candidateType"),
       priority("priority"),
-      url("url") {}
+      url("url"),
+      vpn("vpn"),
+      network_adapter_type("networkAdapterType") {}
 
 RTCIceCandidateStats::RTCIceCandidateStats(const RTCIceCandidateStats& other)
     : RTCStats(other.id(), other.timestamp_us()),
@@ -313,7 +318,9 @@ RTCIceCandidateStats::RTCIceCandidateStats(const RTCIceCandidateStats& other)
       relay_protocol(other.relay_protocol),
       candidate_type(other.candidate_type),
       priority(other.priority),
-      url(other.url) {}
+      url(other.url),
+      vpn(other.vpn),
+      network_adapter_type(other.network_adapter_type) {}
 
 RTCIceCandidateStats::~RTCIceCandidateStats() {}
 
@@ -387,15 +394,11 @@ WEBRTC_RTCSTATS_IMPL(RTCMediaStreamTrackStats, RTCStats, "track",
                      &jitter_buffer_emitted_count,
                      &frame_width,
                      &frame_height,
-                     &frames_per_second,
                      &frames_sent,
                      &huge_frames_sent,
                      &frames_received,
                      &frames_decoded,
                      &frames_dropped,
-                     &frames_corrupted,
-                     &partial_frames_lost,
-                     &full_frames_lost,
                      &audio_level,
                      &total_audio_energy,
                      &echo_return_loss,
@@ -410,7 +413,6 @@ WEBRTC_RTCSTATS_IMPL(RTCMediaStreamTrackStats, RTCStats, "track",
                      &jitter_buffer_flushes,
                      &delayed_packet_outage_samples,
                      &relative_packet_arrival_delay,
-                     &jitter_buffer_target_delay,
                      &interruption_count,
                      &total_interruption_duration,
                      &freeze_count,
@@ -440,15 +442,11 @@ RTCMediaStreamTrackStats::RTCMediaStreamTrackStats(std::string&& id,
       jitter_buffer_emitted_count("jitterBufferEmittedCount"),
       frame_width("frameWidth"),
       frame_height("frameHeight"),
-      frames_per_second("framesPerSecond"),
       frames_sent("framesSent"),
       huge_frames_sent("hugeFramesSent"),
       frames_received("framesReceived"),
       frames_decoded("framesDecoded"),
       frames_dropped("framesDropped"),
-      frames_corrupted("framesCorrupted"),
-      partial_frames_lost("partialFramesLost"),
-      full_frames_lost("fullFramesLost"),
       audio_level("audioLevel"),
       total_audio_energy("totalAudioEnergy"),
       echo_return_loss("echoReturnLoss"),
@@ -470,7 +468,6 @@ RTCMediaStreamTrackStats::RTCMediaStreamTrackStats(std::string&& id,
       relative_packet_arrival_delay(
           "relativePacketArrivalDelay",
           {NonStandardGroupId::kRtcStatsRelativePacketArrivalDelay}),
-      jitter_buffer_target_delay("jitterBufferTargetDelay"),
       interruption_count("interruptionCount"),
       total_interruption_duration("totalInterruptionDuration"),
       freeze_count("freezeCount"),
@@ -496,15 +493,11 @@ RTCMediaStreamTrackStats::RTCMediaStreamTrackStats(
       jitter_buffer_emitted_count(other.jitter_buffer_emitted_count),
       frame_width(other.frame_width),
       frame_height(other.frame_height),
-      frames_per_second(other.frames_per_second),
       frames_sent(other.frames_sent),
       huge_frames_sent(other.huge_frames_sent),
       frames_received(other.frames_received),
       frames_decoded(other.frames_decoded),
       frames_dropped(other.frames_dropped),
-      frames_corrupted(other.frames_corrupted),
-      partial_frames_lost(other.partial_frames_lost),
-      full_frames_lost(other.full_frames_lost),
       audio_level(other.audio_level),
       total_audio_energy(other.total_audio_energy),
       echo_return_loss(other.echo_return_loss),
@@ -520,7 +513,6 @@ RTCMediaStreamTrackStats::RTCMediaStreamTrackStats(
       jitter_buffer_flushes(other.jitter_buffer_flushes),
       delayed_packet_outage_samples(other.delayed_packet_outage_samples),
       relative_packet_arrival_delay(other.relative_packet_arrival_delay),
-      jitter_buffer_target_delay(other.jitter_buffer_target_delay),
       interruption_count(other.interruption_count),
       total_interruption_duration(other.total_interruption_duration),
       freeze_count(other.freeze_count),
@@ -645,6 +637,8 @@ RTCSentRtpStreamStats::~RTCSentRtpStreamStats() {}
 // clang-format off
 WEBRTC_RTCSTATS_IMPL(
     RTCInboundRTPStreamStats, RTCReceivedRtpStreamStats, "inbound-rtp",
+    &track_identifier,
+    &mid,
     &remote_id,
     &packets_received,
     &fec_packets_received,
@@ -653,6 +647,8 @@ WEBRTC_RTCSTATS_IMPL(
     &header_bytes_received,
     &last_packet_received_timestamp,
     &jitter_buffer_delay,
+    &jitter_buffer_target_delay,
+    &jitter_buffer_minimum_delay,
     &jitter_buffer_emitted_count,
     &total_samples_received,
     &concealed_samples,
@@ -664,24 +660,16 @@ WEBRTC_RTCSTATS_IMPL(
     &total_audio_energy,
     &total_samples_duration,
     &frames_received,
-    &round_trip_time,
-    &packets_repaired,
-    &burst_packets_lost,
-    &burst_packets_discarded,
-    &burst_loss_count,
-    &burst_discard_count,
-    &burst_loss_rate,
-    &burst_discard_rate,
-    &gap_loss_rate,
-    &gap_discard_rate,
     &frame_width,
     &frame_height,
-    &frame_bit_depth,
     &frames_per_second,
     &frames_decoded,
     &key_frames_decoded,
     &frames_dropped,
     &total_decode_time,
+    &total_processing_delay,
+    &total_assembly_time,
+    &frames_assembled_from_multiple_packets,
     &total_inter_frame_delay,
     &total_squared_inter_frame_delay,
     &content_type,
@@ -690,7 +678,8 @@ WEBRTC_RTCSTATS_IMPL(
     &fir_count,
     &pli_count,
     &nack_count,
-    &qp_sum)
+    &qp_sum,
+    &min_playout_delay)
 // clang-format on
 
 RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(const std::string& id,
@@ -700,6 +689,8 @@ RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(const std::string& id,
 RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(std::string&& id,
                                                    int64_t timestamp_us)
     : RTCReceivedRtpStreamStats(std::move(id), timestamp_us),
+      track_identifier("trackIdentifier"),
+      mid("mid"),
       remote_id("remoteId"),
       packets_received("packetsReceived"),
       fec_packets_received("fecPacketsReceived"),
@@ -708,6 +699,8 @@ RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(std::string&& id,
       header_bytes_received("headerBytesReceived"),
       last_packet_received_timestamp("lastPacketReceivedTimestamp"),
       jitter_buffer_delay("jitterBufferDelay"),
+      jitter_buffer_target_delay("jitterBufferTargetDelay"),
+      jitter_buffer_minimum_delay("jitterBufferMinimumDelay"),
       jitter_buffer_emitted_count("jitterBufferEmittedCount"),
       total_samples_received("totalSamplesReceived"),
       concealed_samples("concealedSamples"),
@@ -719,24 +712,17 @@ RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(std::string&& id,
       total_audio_energy("totalAudioEnergy"),
       total_samples_duration("totalSamplesDuration"),
       frames_received("framesReceived"),
-      round_trip_time("roundTripTime"),
-      packets_repaired("packetsRepaired"),
-      burst_packets_lost("burstPacketsLost"),
-      burst_packets_discarded("burstPacketsDiscarded"),
-      burst_loss_count("burstLossCount"),
-      burst_discard_count("burstDiscardCount"),
-      burst_loss_rate("burstLossRate"),
-      burst_discard_rate("burstDiscardRate"),
-      gap_loss_rate("gapLossRate"),
-      gap_discard_rate("gapDiscardRate"),
       frame_width("frameWidth"),
       frame_height("frameHeight"),
-      frame_bit_depth("frameBitDepth"),
       frames_per_second("framesPerSecond"),
       frames_decoded("framesDecoded"),
       key_frames_decoded("keyFramesDecoded"),
       frames_dropped("framesDropped"),
       total_decode_time("totalDecodeTime"),
+      total_processing_delay("totalProcessingDelay"),
+      total_assembly_time("totalAssemblyTime"),
+      frames_assembled_from_multiple_packets(
+          "framesAssembledFromMultiplePackets"),
       total_inter_frame_delay("totalInterFrameDelay"),
       total_squared_inter_frame_delay("totalSquaredInterFrameDelay"),
       content_type("contentType"),
@@ -745,11 +731,14 @@ RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(std::string&& id,
       fir_count("firCount"),
       pli_count("pliCount"),
       nack_count("nackCount"),
-      qp_sum("qpSum") {}
+      qp_sum("qpSum"),
+      min_playout_delay("minPlayoutDelay") {}
 
 RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(
     const RTCInboundRTPStreamStats& other)
     : RTCReceivedRtpStreamStats(other),
+      track_identifier(other.track_identifier),
+      mid(other.mid),
       remote_id(other.remote_id),
       packets_received(other.packets_received),
       fec_packets_received(other.fec_packets_received),
@@ -758,6 +747,8 @@ RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(
       header_bytes_received(other.header_bytes_received),
       last_packet_received_timestamp(other.last_packet_received_timestamp),
       jitter_buffer_delay(other.jitter_buffer_delay),
+      jitter_buffer_target_delay(other.jitter_buffer_target_delay),
+      jitter_buffer_minimum_delay(other.jitter_buffer_minimum_delay),
       jitter_buffer_emitted_count(other.jitter_buffer_emitted_count),
       total_samples_received(other.total_samples_received),
       concealed_samples(other.concealed_samples),
@@ -770,24 +761,17 @@ RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(
       total_audio_energy(other.total_audio_energy),
       total_samples_duration(other.total_samples_duration),
       frames_received(other.frames_received),
-      round_trip_time(other.round_trip_time),
-      packets_repaired(other.packets_repaired),
-      burst_packets_lost(other.burst_packets_lost),
-      burst_packets_discarded(other.burst_packets_discarded),
-      burst_loss_count(other.burst_loss_count),
-      burst_discard_count(other.burst_discard_count),
-      burst_loss_rate(other.burst_loss_rate),
-      burst_discard_rate(other.burst_discard_rate),
-      gap_loss_rate(other.gap_loss_rate),
-      gap_discard_rate(other.gap_discard_rate),
       frame_width(other.frame_width),
       frame_height(other.frame_height),
-      frame_bit_depth(other.frame_bit_depth),
       frames_per_second(other.frames_per_second),
       frames_decoded(other.frames_decoded),
       key_frames_decoded(other.key_frames_decoded),
       frames_dropped(other.frames_dropped),
       total_decode_time(other.total_decode_time),
+      total_processing_delay(other.total_processing_delay),
+      total_assembly_time(other.total_assembly_time),
+      frames_assembled_from_multiple_packets(
+          other.frames_assembled_from_multiple_packets),
       total_inter_frame_delay(other.total_inter_frame_delay),
       total_squared_inter_frame_delay(other.total_squared_inter_frame_delay),
       content_type(other.content_type),
@@ -796,7 +780,8 @@ RTCInboundRTPStreamStats::RTCInboundRTPStreamStats(
       fir_count(other.fir_count),
       pli_count(other.pli_count),
       nack_count(other.nack_count),
-      qp_sum(other.qp_sum) {}
+      qp_sum(other.qp_sum),
+      min_playout_delay(other.min_playout_delay) {}
 
 RTCInboundRTPStreamStats::~RTCInboundRTPStreamStats() {}
 
@@ -805,6 +790,7 @@ WEBRTC_RTCSTATS_IMPL(
     RTCOutboundRTPStreamStats, RTCRTPStreamStats, "outbound-rtp",
     &media_source_id,
     &remote_id,
+    &mid,
     &rid,
     &packets_sent,
     &retransmitted_packets_sent,
@@ -830,7 +816,8 @@ WEBRTC_RTCSTATS_IMPL(
     &fir_count,
     &pli_count,
     &nack_count,
-    &qp_sum)
+    &qp_sum,
+    &active)
 // clang-format on
 
 RTCOutboundRTPStreamStats::RTCOutboundRTPStreamStats(const std::string& id,
@@ -842,6 +829,7 @@ RTCOutboundRTPStreamStats::RTCOutboundRTPStreamStats(std::string&& id,
     : RTCRTPStreamStats(std::move(id), timestamp_us),
       media_source_id("mediaSourceId"),
       remote_id("remoteId"),
+      mid("mid"),
       rid("rid"),
       packets_sent("packetsSent"),
       retransmitted_packets_sent("retransmittedPacketsSent"),
@@ -868,13 +856,15 @@ RTCOutboundRTPStreamStats::RTCOutboundRTPStreamStats(std::string&& id,
       fir_count("firCount"),
       pli_count("pliCount"),
       nack_count("nackCount"),
-      qp_sum("qpSum") {}
+      qp_sum("qpSum"),
+      active("active") {}
 
 RTCOutboundRTPStreamStats::RTCOutboundRTPStreamStats(
     const RTCOutboundRTPStreamStats& other)
     : RTCRTPStreamStats(other),
       media_source_id(other.media_source_id),
       remote_id(other.remote_id),
+      mid(other.mid),
       rid(other.rid),
       packets_sent(other.packets_sent),
       retransmitted_packets_sent(other.retransmitted_packets_sent),
@@ -901,7 +891,8 @@ RTCOutboundRTPStreamStats::RTCOutboundRTPStreamStats(
       fir_count(other.fir_count),
       pli_count(other.pli_count),
       nack_count(other.nack_count),
-      qp_sum(other.qp_sum) {}
+      qp_sum(other.qp_sum),
+      active(other.active) {}
 
 RTCOutboundRTPStreamStats::~RTCOutboundRTPStreamStats() {}
 
@@ -1076,8 +1067,12 @@ WEBRTC_RTCSTATS_IMPL(RTCTransportStats, RTCStats, "transport",
     &remote_certificate_id,
     &tls_version,
     &dtls_cipher,
+    &dtls_role,
     &srtp_cipher,
-    &selected_candidate_pair_changes)
+    &selected_candidate_pair_changes,
+    &ice_role,
+    &ice_local_username_fragment,
+    &ice_state)
 // clang-format on
 
 RTCTransportStats::RTCTransportStats(const std::string& id,
@@ -1097,8 +1092,12 @@ RTCTransportStats::RTCTransportStats(std::string&& id, int64_t timestamp_us)
       remote_certificate_id("remoteCertificateId"),
       tls_version("tlsVersion"),
       dtls_cipher("dtlsCipher"),
+      dtls_role("dtlsRole"),
       srtp_cipher("srtpCipher"),
-      selected_candidate_pair_changes("selectedCandidatePairChanges") {}
+      selected_candidate_pair_changes("selectedCandidatePairChanges"),
+      ice_role("iceRole"),
+      ice_local_username_fragment("iceLocalUsernameFragment"),
+      ice_state("iceState") {}
 
 RTCTransportStats::RTCTransportStats(const RTCTransportStats& other)
     : RTCStats(other.id(), other.timestamp_us()),
@@ -1113,8 +1112,12 @@ RTCTransportStats::RTCTransportStats(const RTCTransportStats& other)
       remote_certificate_id(other.remote_certificate_id),
       tls_version(other.tls_version),
       dtls_cipher(other.dtls_cipher),
+      dtls_role(other.dtls_role),
       srtp_cipher(other.srtp_cipher),
-      selected_candidate_pair_changes(other.selected_candidate_pair_changes) {}
+      selected_candidate_pair_changes(other.selected_candidate_pair_changes),
+      ice_role(other.ice_role),
+      ice_local_username_fragment(other.ice_local_username_fragment),
+      ice_state(other.ice_state) {}
 
 RTCTransportStats::~RTCTransportStats() {}
 

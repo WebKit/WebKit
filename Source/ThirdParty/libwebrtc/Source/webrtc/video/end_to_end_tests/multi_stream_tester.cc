@@ -50,7 +50,7 @@ void MultiStreamTester::RunTest() {
   auto task_queue = task_queue_factory->CreateTaskQueue(
       "TaskQueue", TaskQueueFactory::Priority::HIGH);
   Call::Config config(&event_log);
-  FieldTrialBasedConfig field_trials;
+  test::ScopedKeyValueConfig field_trials;
   config.trials = &field_trials;
   config.task_queue_factory = task_queue_factory.get();
   std::unique_ptr<Call> sender_call;
@@ -59,7 +59,7 @@ void MultiStreamTester::RunTest() {
   std::unique_ptr<test::DirectTransport> receiver_transport;
 
   VideoSendStream* send_streams[kNumStreams];
-  VideoReceiveStream* receive_streams[kNumStreams];
+  VideoReceiveStreamInterface* receive_streams[kNumStreams];
   test::FrameGeneratorCapturer* frame_generators[kNumStreams];
   test::FunctionVideoEncoderFactory encoder_factory(
       []() { return VP8Encoder::Create(); });
@@ -67,7 +67,7 @@ void MultiStreamTester::RunTest() {
       CreateBuiltinVideoBitrateAllocatorFactory();
   InternalDecoderFactory decoder_factory;
 
-  SendTask(RTC_FROM_HERE, task_queue.get(), [&]() {
+  SendTask(task_queue.get(), [&]() {
     sender_call = absl::WrapUnique(Call::Create(config));
     receiver_call = absl::WrapUnique(Call::Create(config));
     sender_transport = CreateSendTransport(task_queue.get(), sender_call.get());
@@ -99,11 +99,12 @@ void MultiStreamTester::RunTest() {
           send_config.Copy(), encoder_config.Copy());
       send_streams[i]->Start();
 
-      VideoReceiveStream::Config receive_config(receiver_transport.get());
+      VideoReceiveStreamInterface::Config receive_config(
+          receiver_transport.get());
       receive_config.rtp.remote_ssrc = ssrc;
       receive_config.rtp.local_ssrc = test::CallTest::kReceiverLocalVideoSsrc;
       receive_config.decoder_factory = &decoder_factory;
-      VideoReceiveStream::Decoder decoder =
+      VideoReceiveStreamInterface::Decoder decoder =
           test::CreateMatchingDecoder(send_config);
       receive_config.decoders.push_back(decoder);
 
@@ -128,7 +129,7 @@ void MultiStreamTester::RunTest() {
 
   Wait();
 
-  SendTask(RTC_FROM_HERE, task_queue.get(), [&]() {
+  SendTask(task_queue.get(), [&]() {
     for (size_t i = 0; i < kNumStreams; ++i) {
       frame_generators[i]->Stop();
       sender_call->DestroyVideoSendStream(send_streams[i]);
@@ -152,7 +153,7 @@ void MultiStreamTester::UpdateSendConfig(
 
 void MultiStreamTester::UpdateReceiveConfig(
     size_t stream_index,
-    VideoReceiveStream::Config* receive_config) {}
+    VideoReceiveStreamInterface::Config* receive_config) {}
 
 std::unique_ptr<test::DirectTransport> MultiStreamTester::CreateSendTransport(
     TaskQueueBase* task_queue,

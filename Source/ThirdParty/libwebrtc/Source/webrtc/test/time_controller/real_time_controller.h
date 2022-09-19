@@ -16,7 +16,6 @@
 #include "api/task_queue/task_queue_factory.h"
 #include "api/test/time_controller.h"
 #include "api/units/time_delta.h"
-#include "modules/utility/include/process_thread.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -26,8 +25,6 @@ class RealTimeController : public TimeController {
 
   Clock* GetClock() override;
   TaskQueueFactory* GetTaskQueueFactory() override;
-  std::unique_ptr<ProcessThread> CreateProcessThread(
-      const char* thread_name) override;
   std::unique_ptr<rtc::Thread> CreateThread(
       const std::string& name,
       std::unique_ptr<rtc::SocketServer> socket_server) override;

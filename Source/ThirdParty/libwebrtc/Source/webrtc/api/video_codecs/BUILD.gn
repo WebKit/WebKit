@@ -12,13 +12,30 @@ if (is_android) {
   import("//build/config/android/rules.gni")
 }
 
+rtc_source_set("scalability_mode") {
+  visibility = [ "*" ]
+  sources = [
+    "scalability_mode.cc",
+    "scalability_mode.h",
+  ]
+  deps = [
+    "../../rtc_base:checks",
+    "../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+}
+
 rtc_library("video_codecs_api") {
   visibility = [ "*" ]
   sources = [
+    "av1_profile.cc",
+    "av1_profile.h",
     "h264_profile_level_id.cc",
     "h264_profile_level_id.h",
     "sdp_video_format.cc",
     "sdp_video_format.h",
+    "simulcast_stream.cc",
+    "simulcast_stream.h",
     "spatial_layer.cc",
     "spatial_layer.h",
     "video_codec.cc",
@@ -41,12 +58,15 @@ rtc_library("video_codecs_api") {
   ]
 
   deps = [
+    ":scalability_mode",
     "..:fec_controller_api",
     "..:scoped_refptr",
     "../../api:array_view",
     "../../modules/video_coding:codec_globals_headers",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:refcount",
+    "../../rtc_base:stringutils",
     "../../rtc_base/system:rtc_export",
     "../units:data_rate",
     "../video:encoded_image",
@@ -112,6 +132,108 @@ rtc_library("builtin_video_encoder_factory") {
   absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
+rtc_source_set("video_encoder_factory_template") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_encoder_factory_template.h" ]
+
+  deps = [
+    ":video_codecs_api",
+    "../../api:array_view",
+    "../../modules/video_coding/svc:scalability_mode_util",
+  ]
+
+  absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]
+}
+
+rtc_source_set("video_encoder_factory_template_libvpx_vp8_adapter") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_encoder_factory_template_libvpx_vp8_adapter.h" ]
+
+  deps = [
+    "../../modules/video_coding:webrtc_vp8",
+    "../../modules/video_coding:webrtc_vp8_scalability",
+  ]
+
+  absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
+}
+
+rtc_source_set("video_encoder_factory_template_libvpx_vp9_adapter") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_encoder_factory_template_libvpx_vp9_adapter.h" ]
+
+  deps = [ "../../modules/video_coding:webrtc_vp9" ]
+}
+
+rtc_source_set("video_encoder_factory_template_open_h264_adapter") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_encoder_factory_template_open_h264_adapter.h" ]
+
+  deps = [ "../../modules/video_coding:webrtc_h264" ]
+}
+
+rtc_source_set("video_encoder_factory_template_libaom_av1_adapter") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_encoder_factory_template_libaom_av1_adapter.h" ]
+
+  deps = [
+    ":scalability_mode",
+    "../../modules/video_coding/codecs/av1:av1_svc_config",
+    "../../modules/video_coding/codecs/av1:libaom_av1_encoder",
+    "../../modules/video_coding/svc:scalability_mode_util",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/container:inlined_vector" ]
+}
+
+rtc_source_set("video_decoder_factory_template") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_decoder_factory_template.h" ]
+
+  deps = [
+    ":video_codecs_api",
+    "../../api:array_view",
+  ]
+
+  absl_deps = [ "//third_party/abseil-cpp/absl/algorithm:container" ]
+}
+
+rtc_source_set("video_decoder_factory_template_libvpx_vp8_adapter") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_decoder_factory_template_libvpx_vp8_adapter.h" ]
+
+  deps = [ "../../modules/video_coding:webrtc_vp8" ]
+}
+
+rtc_source_set("video_decoder_factory_template_libvpx_vp9_adapter") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_decoder_factory_template_libvpx_vp9_adapter.h" ]
+
+  deps = [ "../../modules/video_coding:webrtc_vp9" ]
+}
+
+rtc_source_set("video_decoder_factory_template_open_h264_adapter") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_decoder_factory_template_open_h264_adapter.h" ]
+
+  deps = [ "../../modules/video_coding:webrtc_h264" ]
+}
+
+rtc_source_set("video_decoder_factory_template_dav1d_adapter") {
+  visibility = [ "*" ]
+  allow_poison = [ "software_video_codecs" ]
+  public = [ "video_decoder_factory_template_dav1d_adapter.h" ]
+
+  deps = [ "../../modules/video_coding/codecs/av1:dav1d_decoder" ]
+}
+
 rtc_library("vp8_temporal_layers_factory") {
   visibility = [ "*" ]
   allow_poison = [ "software_video_codecs" ]
@@ -147,7 +269,8 @@ rtc_library("rtc_software_fallback_wrappers") {
     "../../modules/video_coding:video_codec_interface",
     "../../modules/video_coding:video_coding_utility",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:event_tracer",
+    "../../rtc_base:logging",
     "../../rtc_base/system:rtc_export",
     "../../system_wrappers:field_trial",
     "../../system_wrappers:metrics",

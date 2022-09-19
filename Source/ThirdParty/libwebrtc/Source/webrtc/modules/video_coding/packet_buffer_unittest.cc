@@ -291,6 +291,13 @@ TEST_F(PacketBufferTest, ClearSinglePacket) {
       Insert(seq_num + kMaxSize, kDeltaFrame, kFirst, kLast).buffer_cleared);
 }
 
+TEST_F(PacketBufferTest, ClearPacketBeforeFullyReceivedFrame) {
+  Insert(0, kKeyFrame, kFirst, kNotLast);
+  Insert(1, kKeyFrame, kNotFirst, kNotLast);
+  packet_buffer_.ClearTo(0);
+  EXPECT_THAT(Insert(2, kKeyFrame, kNotFirst, kLast).packets, IsEmpty());
+}
+
 TEST_F(PacketBufferTest, ClearFullBuffer) {
   for (int i = 0; i < kMaxSize; ++i)
     Insert(i, kDeltaFrame, kFirst, kLast);
@@ -710,6 +717,18 @@ TEST_P(PacketBufferH264ParameterizedTest, FindFramesOnPadding) {
               IsEmpty());
 
   EXPECT_THAT(packet_buffer_.InsertPadding(1), StartSeqNumsAre(2));
+}
+
+TEST_P(PacketBufferH264ParameterizedTest, FindFramesOnReorderedPadding) {
+  EXPECT_THAT(InsertH264(0, kKeyFrame, kFirst, kLast, 1001),
+              StartSeqNumsAre(0));
+  EXPECT_THAT(InsertH264(1, kDeltaFrame, kFirst, kNotLast, 1002).packets,
+              IsEmpty());
+  EXPECT_THAT(packet_buffer_.InsertPadding(3).packets, IsEmpty());
+  EXPECT_THAT(InsertH264(4, kDeltaFrame, kFirst, kLast, 1003).packets,
+              IsEmpty());
+  EXPECT_THAT(InsertH264(2, kDeltaFrame, kNotFirst, kLast, 1002),
+              StartSeqNumsAre(1, 4));
 }
 
 class PacketBufferH264XIsKeyframeTest : public PacketBufferH264Test {

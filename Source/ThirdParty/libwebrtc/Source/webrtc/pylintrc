@@ -28,6 +28,7 @@ disable=
   exec-used,
   fixme,
   import-error,
+  import-outside-toplevel,
   missing-docstring,
   no-init,
   no-member,
@@ -96,6 +97,9 @@ max-line-length=80
 
 # Maximum number of lines in a module
 max-module-lines=1000
+
+# We use two spaces for indents, instead of the usual four spaces or tab.
+indent-string='  '
 
 
 [BASIC]
@@ -191,10 +195,6 @@ max-public-methods=20
 
 
 [CLASSES]
-
-# List of interface methods to ignore, separated by a comma. This is used for
-# instance to not check methods defines in Zope's Interface base class.
-ignore-iface-methods=isImplementedBy,deferred,extends,names,namesAndDescriptions,queryDescriptionFor,getBases,getDescriptionFor,getDoc,getName,getTaggedValue,getTaggedValueTags,isEqualOrExtendedBy,setTaggedValue,isImplementedByInstancesOf,adaptWith,is_implemented_by
 
 # List of method names used to declare (i.e. assign) instance attributes.
 defining-attr-methods=__init__,__new__,setUp

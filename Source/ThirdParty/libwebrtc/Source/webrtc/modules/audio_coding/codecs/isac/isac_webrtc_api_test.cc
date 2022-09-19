@@ -51,8 +51,8 @@ std::unique_ptr<PCMFile> GetPcmTestFileReader(int sample_rate_hz) {
       filename = test::ResourcePath("audio_coding/testfile32kHz", "pcm");
       break;
     default:
-      RTC_NOTREACHED() << "No test file available for " << sample_rate_hz
-                       << " Hz.";
+      RTC_DCHECK_NOTREACHED()
+          << "No test file available for " << sample_rate_hz << " Hz.";
   }
   auto pcm_file = std::make_unique<PCMFile>();
   pcm_file->ReadStereo(false);

@@ -45,6 +45,8 @@ class RTC_EXPORT AdaptedVideoTrackSource
   // plain memory frame, it is rotated. Subclasses producing native frames must
   // handle apply_rotation() themselves.
   void OnFrame(const webrtc::VideoFrame& frame);
+  // Indication from source that a frame was dropped.
+  void OnFrameDropped();
 
   // Reports the appropriate frame size after adaptation. Returns true
   // if a frame is wanted. Returns false if there are no interested
@@ -86,6 +88,8 @@ class RTC_EXPORT AdaptedVideoTrackSource
       rtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>* sink) override {}
   void RemoveEncodedSink(
       rtc::VideoSinkInterface<webrtc::RecordableEncodedFrame>* sink) override {}
+  void ProcessConstraints(
+      const webrtc::VideoTrackSourceConstraints& constraints) override;
 
   cricket::VideoAdapter video_adapter_;
 

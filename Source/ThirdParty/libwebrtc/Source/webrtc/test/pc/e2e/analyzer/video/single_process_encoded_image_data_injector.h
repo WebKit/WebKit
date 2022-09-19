@@ -37,8 +37,15 @@ namespace webrtc_pc_e2e {
 // This injector won't add any extra overhead into EncodedImage payload and
 // support frames with any size of payload. Also assumes that every EncodedImage
 // payload size is greater or equals to 3 bytes
+<<<<<<< HEAD
+//
+// This injector doesn't support video frames/encoded images without frame ID.
+class SingleProcessEncodedImageDataInjector
+    : public EncodedImageDataPropagator {
+=======
 class SingleProcessEncodedImageDataInjector : public EncodedImageDataInjector,
                                               public EncodedImageDataExtractor {
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
  public:
   SingleProcessEncodedImageDataInjector();
   ~SingleProcessEncodedImageDataInjector() override;
@@ -55,6 +62,7 @@ class SingleProcessEncodedImageDataInjector : public EncodedImageDataInjector,
     expected_receivers_count_ = expected_receivers_count;
   }
   void AddParticipantInCall() override;
+  void RemoveParticipantInCall() override;
   EncodedImageExtractionResult ExtractData(const EncodedImage& source) override;
 
  private:

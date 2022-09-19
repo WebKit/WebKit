@@ -77,8 +77,15 @@ int TestCpuEnv(int cpu_info) {
   if (TestEnv("LIBYUV_DISABLE_MSA")) {
     cpu_info &= ~libyuv::kCpuHasMSA;
   }
-  if (TestEnv("LIBYUV_DISABLE_MMI")) {
-    cpu_info &= ~libyuv::kCpuHasMMI;
+#endif
+#if defined(__longarch__) && defined(__linux__)
+  if (TestEnv("LIBYUV_DISABLE_LSX")) {
+    cpu_info &= ~libyuv::kCpuHasLSX;
+  }
+#endif
+#if defined(__longarch__) && defined(__linux__)
+  if (TestEnv("LIBYUV_DISABLE_LASX")) {
+    cpu_info &= ~libyuv::kCpuHasLASX;
   }
 #endif
 #if !defined(__pnacl__) && !defined(__CLR_VER) &&                   \
@@ -119,6 +126,9 @@ int TestCpuEnv(int cpu_info) {
   }
   if (TestEnv("LIBYUV_DISABLE_AVX512VL")) {
     cpu_info &= ~libyuv::kCpuHasAVX512VL;
+  }
+  if (TestEnv("LIBYUV_DISABLE_AVX512VNNI")) {
+    cpu_info &= ~libyuv::kCpuHasAVX512VNNI;
   }
   if (TestEnv("LIBYUV_DISABLE_AVX512VBMI")) {
     cpu_info &= ~libyuv::kCpuHasAVX512VBMI;

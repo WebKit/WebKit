@@ -46,7 +46,7 @@ namespace test {
 
 class FilePlayingSource : public AudioMixer::Source {
  public:
-  explicit FilePlayingSource(std::string filename)
+  explicit FilePlayingSource(absl::string_view filename)
       : wav_reader_(new WavReader(filename)),
         sample_rate_hz_(wav_reader_->sample_rate()),
         samples_per_channel_(sample_rate_hz_ / 100),

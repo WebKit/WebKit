@@ -248,13 +248,13 @@ bool UpdateMetrics(uint8_t* ch_org,
                    int number_of_frames,
                    metric* cur_distortion_psnr,
                    metric* distorted_frame,
-                   bool do_psnr) {
+                   bool compute_psnr) {
   const int uv_offset = (do_swap_uv ? uv_size : 0);
   const uint8_t* const u_org = ch_org + y_size + uv_offset;
   const uint8_t* const u_rec = ch_rec + y_size;
   const uint8_t* const v_org = ch_org + y_size + (uv_size - uv_offset);
   const uint8_t* const v_rec = ch_rec + y_size + uv_size;
-  if (do_psnr) {
+  if (compute_psnr) {
 #ifdef HAVE_JPEG
     double y_err = static_cast<double>(
         libyuv::ComputeSumSquareError(ch_org, ch_rec, y_size));

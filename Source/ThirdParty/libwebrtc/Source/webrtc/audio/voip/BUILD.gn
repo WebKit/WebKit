@@ -23,7 +23,6 @@ rtc_library("voip_core") {
     "../../modules/audio_device:audio_device_api",
     "../../modules/audio_mixer:audio_mixer_impl",
     "../../modules/audio_processing:api",
-    "../../modules/utility:utility",
     "../../rtc_base:criticalsection",
     "../../rtc_base:logging",
     "../../rtc_base/synchronization:mutex",
@@ -46,11 +45,10 @@ rtc_library("audio_channel") {
     "../../modules/audio_device:audio_device_api",
     "../../modules/rtp_rtcp",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
-    "../../modules/utility",
     "../../rtc_base:criticalsection",
+    "../../rtc_base:location",
     "../../rtc_base:logging",
     "../../rtc_base:refcount",
-    "../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -71,7 +69,6 @@ rtc_library("audio_ingress") {
     "../../modules/audio_coding",
     "../../modules/rtp_rtcp",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
-    "../../modules/utility",
     "../../rtc_base:criticalsection",
     "../../rtc_base:logging",
     "../../rtc_base:safe_minmax",

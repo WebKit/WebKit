@@ -83,6 +83,39 @@ void SetPlane(uint8_t* dst_y,
               int height,
               uint32_t value);
 
+// Convert a plane of tiles of 16 x H to linear.
+LIBYUV_API
+void DetilePlane(const uint8_t* src_y,
+                 int src_stride_y,
+                 uint8_t* dst_y,
+                 int dst_stride_y,
+                 int width,
+                 int height,
+                 int tile_height);
+
+// Convert a UV plane of tiles of 16 x H into linear U and V planes.
+LIBYUV_API
+void DetileSplitUVPlane(const uint8_t* src_uv,
+                        int src_stride_uv,
+                        uint8_t* dst_u,
+                        int dst_stride_u,
+                        uint8_t* dst_v,
+                        int dst_stride_v,
+                        int width,
+                        int height,
+                        int tile_height);
+
+// Convert a Y and UV plane of tiles into interlaced YUY2.
+void DetileToYUY2(const uint8_t* src_y,
+                  int src_stride_y,
+                  const uint8_t* src_uv,
+                  int src_stride_uv,
+                  uint8_t* dst_yuy2,
+                  int dst_stride_yuy2,
+                  int width,
+                  int height,
+                  int tile_height);
+
 // Split interleaved UV plane into separate U and V planes.
 LIBYUV_API
 void SplitUVPlane(const uint8_t* src_uv,
@@ -330,6 +363,24 @@ int I444Copy(const uint8_t* src_y,
              int width,
              int height);
 
+// Copy I210 to I210.
+#define I210ToI210 I210Copy
+LIBYUV_API
+int I210Copy(const uint16_t* src_y,
+             int src_stride_y,
+             const uint16_t* src_u,
+             int src_stride_u,
+             const uint16_t* src_v,
+             int src_stride_v,
+             uint16_t* dst_y,
+             int dst_stride_y,
+             uint16_t* dst_u,
+             int dst_stride_u,
+             uint16_t* dst_v,
+             int dst_stride_v,
+             int width,
+             int height);
+
 // Copy NV12. Supports inverting.
 int NV12Copy(const uint8_t* src_y,
              int src_stride_y,
@@ -416,6 +467,14 @@ int NV21ToNV12(const uint8_t* src_y,
 LIBYUV_API
 int YUY2ToY(const uint8_t* src_yuy2,
             int src_stride_yuy2,
+            uint8_t* dst_y,
+            int dst_stride_y,
+            int width,
+            int height);
+
+LIBYUV_API
+int UYVYToY(const uint8_t* src_uyvy,
+            int src_stride_uyvy,
             uint8_t* dst_y,
             int dst_stride_y,
             int width,
@@ -942,6 +1001,21 @@ int InterpolatePlane(const uint8_t* src0,
                      int width,
                      int height,
                      int interpolation);
+
+// Interpolate between two images using specified amount of interpolation
+// (0 to 255) and store to destination.
+// 'interpolation' is specified as 8 bit fraction where 0 means 100% src0
+// and 255 means 1% src0 and 99% src1.
+LIBYUV_API
+int InterpolatePlane_16(const uint16_t* src0,
+                        int src_stride0,  // measured in 16 bit pixels
+                        const uint16_t* src1,
+                        int src_stride1,
+                        uint16_t* dst,
+                        int dst_stride,
+                        int width,
+                        int height,
+                        int interpolation);
 
 // Interpolate between two ARGB images using specified amount of interpolation
 // Internally calls InterpolatePlane with width * 4 (bpp).

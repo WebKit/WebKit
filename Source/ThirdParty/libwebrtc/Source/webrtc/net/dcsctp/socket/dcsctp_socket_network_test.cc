@@ -18,6 +18,8 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/task_queue/pending_task_safety_flag.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/test/create_network_emulation_manager.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/units/time_delta.h"
@@ -33,16 +35,17 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/strings/string_format.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "rtc_base/time_utils.h"
 #include "test/gmock.h"
 
-#if !defined(WEBRTC_ANDROID) && defined(NDEBUG)
+#if !defined(WEBRTC_ANDROID) && defined(NDEBUG) && \
+    !defined(THREAD_SANITIZER) && !defined(MEMORY_SANITIZER)
 #define DCSCTP_NDEBUG_TEST(t) t
 #else
-// In debug mode, these tests are too expensive to run due to extensive
-// consistency checks that iterate on all outstanding chunks. Same with low-end
-// Android devices, which have difficulties with these tests.
+// In debug mode, and when MSAN or TSAN sanitizers are enabled, these tests are
+// too expensive to run due to extensive consistency checks that iterate on all
+// outstanding chunks. Same with low-end Android devices, which have
+// difficulties with these tests.
 #define DCSCTP_NDEBUG_TEST(t) DISABLED_##t
 #endif
 
@@ -59,7 +62,8 @@ constexpr size_t kSmallPayloadSize = 10;
 constexpr size_t kLargePayloadSize = 10000;
 constexpr size_t kHugePayloadSize = 262144;
 constexpr size_t kBufferedAmountLowThreshold = kLargePayloadSize * 2;
-constexpr int kPrintBandwidthDurationMillis = 1000;
+constexpr webrtc::TimeDelta kPrintBandwidthDuration =
+    webrtc::TimeDelta::Seconds(1);
 constexpr webrtc::TimeDelta kBenchmarkRuntime(webrtc::TimeDelta::Seconds(10));
 constexpr webrtc::TimeDelta kAWhile(webrtc::TimeDelta::Seconds(1));
 
@@ -89,10 +93,6 @@ enum class ActorMode {
   kThroughputSender,
   kThroughputReceiver,
   kLimitedRetransmissionSender,
-};
-
-enum class MessageId : uint32_t {
-  kPrintBandwidth = 1,
 };
 
 // An abstraction around EmulatedEndpoint, representing a bound socket that
@@ -132,9 +132,7 @@ class BoundSocket : public webrtc::EmulatedNetworkReceiverInterface {
 };
 
 // Sends at a constant rate but with random packet sizes.
-class SctpActor : public rtc::MessageHandlerAutoCleanup,
-                  public DcSctpSocketCallbacks,
-                  public sigslot::has_slots<> {
+class SctpActor : public DcSctpSocketCallbacks {
  public:
   SctpActor(absl::string_view name,
             BoundSocket& emulated_socket,
@@ -154,30 +152,27 @@ class SctpActor : public rtc::MessageHandlerAutoCleanup,
     emulated_socket.SetReceiver([this](rtc::CopyOnWriteBuffer buf) {
       // The receiver will be executed on the NetworkEmulation task queue, but
       // the dcSCTP socket is owned by `thread_` and is not thread-safe.
-      thread_->PostTask(webrtc::ToQueuedTask(
-          [this, buf] { this->sctp_socket_.ReceivePacket(buf); }));
+      thread_->PostTask([this, buf] { this->sctp_socket_.ReceivePacket(buf); });
     });
   }
 
-  void OnMessage(rtc::Message* pmsg) override {
-    if (pmsg->message_id == static_cast<uint32_t>(MessageId::kPrintBandwidth)) {
-      TimeMs now = TimeMillis();
-      DurationMs duration = now - last_bandwidth_printout_;
+  void PrintBandwidth() {
+    TimeMs now = TimeMillis();
+    DurationMs duration = now - last_bandwidth_printout_;
 
-      double bitrate_mbps =
-          static_cast<double>(received_bytes_ * 8) / *duration / 1000;
-      RTC_LOG(LS_INFO) << log_prefix()
-                       << rtc::StringFormat("Received %0.2f Mbps",
-                                            bitrate_mbps);
+    double bitrate_mbps =
+        static_cast<double>(received_bytes_ * 8) / *duration / 1000;
+    RTC_LOG(LS_INFO) << log_prefix()
+                     << rtc::StringFormat("Received %0.2f Mbps", bitrate_mbps);
 
-      received_bitrate_mbps_.push_back(bitrate_mbps);
-      received_bytes_ = 0;
-      last_bandwidth_printout_ = now;
-      // Print again in a second.
-      if (mode_ == ActorMode::kThroughputReceiver) {
-        thread_->PostDelayed(RTC_FROM_HERE, kPrintBandwidthDurationMillis, this,
-                             static_cast<uint32_t>(MessageId::kPrintBandwidth));
-      }
+    received_bitrate_mbps_.push_back(bitrate_mbps);
+    received_bytes_ = 0;
+    last_bandwidth_printout_ = now;
+    // Print again in a second.
+    if (mode_ == ActorMode::kThroughputReceiver) {
+      thread_->PostDelayedTask(
+          SafeTask(safety_.flag(), [this] { PrintBandwidth(); }),
+          kPrintBandwidthDuration);
     }
   }
 
@@ -185,8 +180,9 @@ class SctpActor : public rtc::MessageHandlerAutoCleanup,
     emulated_socket_.SendPacket(data);
   }
 
-  std::unique_ptr<Timeout> CreateTimeout() override {
-    return timeout_factory_.CreateTimeout();
+  std::unique_ptr<Timeout> CreateTimeout(
+      webrtc::TaskQueueBase::DelayPrecision precision) override {
+    return timeout_factory_.CreateTimeout(precision);
   }
 
   TimeMs TimeMillis() override { return TimeMs(rtc::TimeMillis()); }
@@ -280,8 +276,9 @@ class SctpActor : public rtc::MessageHandlerAutoCleanup,
                         SendOptions());
 
     } else if (mode == ActorMode::kThroughputReceiver) {
-      thread_->PostDelayed(RTC_FROM_HERE, kPrintBandwidthDurationMillis, this,
-                           static_cast<uint32_t>(MessageId::kPrintBandwidth));
+      thread_->PostDelayedTask(
+          SafeTask(safety_.flag(), [this] { PrintBandwidth(); }),
+          kPrintBandwidthDuration);
     }
   }
 
@@ -290,8 +287,6 @@ class SctpActor : public rtc::MessageHandlerAutoCleanup,
   double avg_received_bitrate_mbps(size_t remove_first_n = 3) const {
     std::vector<double> bitrates = received_bitrate_mbps_;
     bitrates.erase(bitrates.begin(), bitrates.begin() + remove_first_n);
-    // The last entry isn't full - remove it as well.
-    bitrates.pop_back();
 
     double sum = 0;
     for (double bitrate : bitrates) {
@@ -322,6 +317,7 @@ class SctpActor : public rtc::MessageHandlerAutoCleanup,
   TimeMs last_bandwidth_printout_;
   // Per-second received bitrates, in Mbps
   std::vector<double> received_bitrate_mbps_;
+  webrtc::ScopedTaskSafety safety_;
 };
 
 class DcSctpSocketNetworkTest : public testing::Test {
@@ -516,7 +512,7 @@ TEST_F(DcSctpSocketNetworkTest, DCSCTP_NDEBUG_TEST(HasHighBandwidth)) {
 
   // Verify that the bitrate is in the range of 540-640 Mbps
   double bitrate = receiver.avg_received_bitrate_mbps();
-  EXPECT_THAT(bitrate, AllOf(Ge(540), Le(640)));
+  EXPECT_THAT(bitrate, AllOf(Ge(520), Le(640)));
 }
 }  // namespace
 }  // namespace dcsctp

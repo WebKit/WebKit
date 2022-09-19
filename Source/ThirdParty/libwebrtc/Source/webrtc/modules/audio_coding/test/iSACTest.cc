@@ -10,7 +10,6 @@
 
 #include "modules/audio_coding/test/iSACTest.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -59,81 +58,6 @@ void SetISACConfigDefault(ACMTestISACConfig& isacConfig) {
 }
 
 }  // namespace
-
-ISACTest::ACMTestTimer::ACMTestTimer() : _msec(0), _sec(0), _min(0), _hour(0) {
-  return;
-}
-
-ISACTest::ACMTestTimer::~ACMTestTimer() {
-  return;
-}
-
-void ISACTest::ACMTestTimer::Reset() {
-  _msec = 0;
-  _sec = 0;
-  _min = 0;
-  _hour = 0;
-  return;
-}
-void ISACTest::ACMTestTimer::Tick10ms() {
-  _msec += 10;
-  Adjust();
-  return;
-}
-
-void ISACTest::ACMTestTimer::Tick1ms() {
-  _msec++;
-  Adjust();
-  return;
-}
-
-void ISACTest::ACMTestTimer::Tick100ms() {
-  _msec += 100;
-  Adjust();
-  return;
-}
-
-void ISACTest::ACMTestTimer::Tick1sec() {
-  _sec++;
-  Adjust();
-  return;
-}
-
-void ISACTest::ACMTestTimer::CurrentTimeHMS(char* currTime) {
-  sprintf(currTime, "%4lu:%02u:%06.3f", _hour, _min,
-          (double)_sec + (double)_msec / 1000.);
-  return;
-}
-
-void ISACTest::ACMTestTimer::CurrentTime(unsigned long& h,
-                                         unsigned char& m,
-                                         unsigned char& s,
-                                         unsigned short& ms) {
-  h = _hour;
-  m = _min;
-  s = _sec;
-  ms = _msec;
-  return;
-}
-
-void ISACTest::ACMTestTimer::Adjust() {
-  unsigned int n;
-  if (_msec >= 1000) {
-    n = _msec / 1000;
-    _msec -= (1000 * n);
-    _sec += n;
-  }
-  if (_sec >= 60) {
-    n = _sec / 60;
-    _sec -= (n * 60);
-    _min += n;
-  }
-  if (_min >= 60) {
-    n = _min / 60;
-    _min -= (n * 60);
-    _hour += n;
-  }
-}
 
 ISACTest::ISACTest()
     : _acmA(AudioCodingModule::Create(
@@ -257,20 +181,11 @@ void ISACTest::EncodeDecode(int testNr,
                   wbISACConfig),
       kISAC16kPayloadType));
 
-  bool adaptiveMode = false;
-  if ((swbISACConfig.currentRateBitPerSec == -1) ||
-      (wbISACConfig.currentRateBitPerSec == -1)) {
-    adaptiveMode = true;
-  }
-  _myTimer.Reset();
   _channel_A2B->ResetStats();
   _channel_B2A->ResetStats();
 
-  char currentTime[500];
   while (!(_inFileA.EndOfFile() || _inFileA.Rewinded())) {
     Run10ms();
-    _myTimer.Tick10ms();
-    _myTimer.CurrentTimeHMS(currentTime);
   }
 
   _channel_A2B->ResetStats();
@@ -309,12 +224,8 @@ void ISACTest::SwitchingSamplingRate(int testNr, int maxSampRateChange) {
       kISAC16kPayloadType));
 
   int numSendCodecChanged = 0;
-  _myTimer.Reset();
-  char currentTime[50];
   while (numSendCodecChanged < (maxSampRateChange << 1)) {
     Run10ms();
-    _myTimer.Tick10ms();
-    _myTimer.CurrentTimeHMS(currentTime);
     if (_inFileA.EndOfFile()) {
       if (_inFileA.SamplingFrequency() == 16000) {
         // Switch side A to send super-wideband.

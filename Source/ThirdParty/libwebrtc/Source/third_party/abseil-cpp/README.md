@@ -1,7 +1,7 @@
 # Abseil - C++ Common Libraries
 
 The repository contains the Abseil C++ library code. Abseil is an open-source
-collection of C++ code (compliant to C++11) designed to augment the C++
+collection of C++ code (compliant to C++14) designed to augment the C++
 standard library.
 
 ## Table of Contents
@@ -56,10 +56,12 @@ Quickstart](https://abseil.io/docs/cpp/quickstart-cmake).
 
 ## Support
 
-Abseil is officially supported on many platforms. See the [Abseil
-platform support
-guide](https://abseil.io/docs/cpp/platforms/platforms) for details on
-supported operating systems, compilers, CPUs, etc.
+Abseil follows Google's [Foundational C++ Support
+Policy](https://opensource.google/documentation/policies/cplusplus-support). See
+[this
+table](https://github.com/google/oss-policies-info/blob/main/foundational-cxx-support-matrix.md)
+for a list of currently supported versions compilers, platforms, and build
+tools.
 
 ## Codemap
 
@@ -85,19 +87,23 @@ Abseil contains the following C++ library components:
   <br /> The `hash` library contains the hashing framework and default hash
   functor implementations for hashable types in Abseil.
 * [`memory`](absl/memory/)
-  <br /> The `memory` library contains C++11-compatible versions of
-  `std::make_unique()` and related memory management facilities.
+  <br /> The `memory` library contains memory management facilities that
+  augment C++'s `<memory>` library.
 * [`meta`](absl/meta/)
-  <br /> The `meta` library contains C++11-compatible versions of type checks
+  <br /> The `meta` library contains compatible versions of type checks
   available within C++14 and C++17 versions of the C++ `<type_traits>` library.
 * [`numeric`](absl/numeric/)
-  <br /> The `numeric` library contains C++11-compatible 128-bit integers.
+  <br /> The `numeric` library contains 128-bit integer types as well as
+  implementations of C++20's bitwise math functions.
+* [`profiling`](absl/profiling/)
+  <br /> The `profiling` library contains utility code for profiling C++
+  entities.  It is currently a private dependency of other Abseil libraries.
 * [`status`](absl/status/)
   <br /> The `status` contains abstractions for error handling, specifically
   `absl::Status` and `absl::StatusOr<T>`.
 * [`strings`](absl/strings/)
   <br /> The `strings` library contains a variety of strings routines and
-  utilities, including a C++11-compatible version of the C++17
+  utilities, including a C++14-compatible version of the C++17
   `std::string_view` type.
 * [`synchronization`](absl/synchronization/)
   <br /> The `synchronization` library contains concurrency primitives (Abseil's
@@ -109,7 +115,7 @@ Abseil contains the following C++ library components:
   time zones.
 * [`types`](absl/types/)
   <br /> The `types` library contains non-container utility types, like a
-  C++11-compatible version of the C++17 `std::optional` type.
+  C++14-compatible version of the C++17 `std::optional` type.
 * [`utility`](absl/utility/)
   <br /> The `utility` library contains utility and helper code.
 

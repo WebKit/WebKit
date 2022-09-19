@@ -13,6 +13,7 @@
 #include <stddef.h>
 
 #include <memory>
+#include <string>
 
 #include "absl/algorithm/container.h"
 #include "api/scoped_refptr.h"
@@ -55,13 +56,12 @@ RemoteAudioSource::RemoteAudioSource(
     : main_thread_(rtc::Thread::Current()),
       worker_thread_(worker_thread),
       on_audio_channel_gone_action_(on_audio_channel_gone_action),
-      state_(MediaSourceInterface::kLive) {
+      state_(MediaSourceInterface::kInitializing) {
   RTC_DCHECK(main_thread_);
   RTC_DCHECK(worker_thread_);
 }
 
 RemoteAudioSource::~RemoteAudioSource() {
-  RTC_DCHECK_RUN_ON(main_thread_);
   RTC_DCHECK(audio_observers_.empty());
   if (!sinks_.empty()) {
     RTC_LOG(LS_WARNING)
@@ -133,11 +133,6 @@ void RemoteAudioSource::UnregisterAudioObserver(AudioObserver* observer) {
 void RemoteAudioSource::AddSink(AudioTrackSinkInterface* sink) {
   RTC_DCHECK_RUN_ON(main_thread_);
   RTC_DCHECK(sink);
-
-  if (state_ != MediaSourceInterface::kLive) {
-    RTC_LOG(LS_ERROR) << "Can't register sink as the source isn't live.";
-    return;
-  }
 
   MutexLock lock(&sink_lock_);
   RTC_DCHECK(!absl::c_linear_search(sinks_, sink));

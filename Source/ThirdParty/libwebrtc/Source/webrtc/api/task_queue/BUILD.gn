@@ -11,7 +11,6 @@ import("../../webrtc.gni")
 rtc_library("task_queue") {
   visibility = [ "*" ]
   public = [
-    "queued_task.h",
     "task_queue_base.h",
     "task_queue_factory.h",
   ]
@@ -21,10 +20,12 @@ rtc_library("task_queue") {
     "../../rtc_base:checks",
     "../../rtc_base:macromagic",
     "../../rtc_base/system:rtc_export",
+    "../units:time_delta",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/base:config",
     "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/functional:any_invocable",
     "//third_party/abseil-cpp/absl/strings",
   ]
 }
@@ -55,20 +56,20 @@ rtc_library("task_queue_test") {
       "../../test:test_support",
     ]
     absl_deps = [
-      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/cleanup",
       "//third_party/abseil-cpp/absl/strings",
     ]
   } else {
     deps = [
       ":task_queue",
+      "../../api/units:time_delta",
       "../../rtc_base:refcount",
       "../../rtc_base:rtc_event",
       "../../rtc_base:timeutils",
-      "../../rtc_base/task_utils:to_queued_task",
       "../../test:test_support",
     ]
     absl_deps = [
-      "//third_party/abseil-cpp/absl/memory",
+      "//third_party/abseil-cpp/absl/cleanup",
       "//third_party/abseil-cpp/absl/strings",
     ]
   }
@@ -97,6 +98,22 @@ rtc_library("default_task_queue_factory") {
   }
 }
 
+rtc_library("pending_task_safety_flag") {
+  visibility = [ "*" ]
+  sources = [
+    "pending_task_safety_flag.cc",
+    "pending_task_safety_flag.h",
+  ]
+  deps = [
+    "../../api:refcountedbase",
+    "../../api:scoped_refptr",
+    "../../api:sequence_checker",
+    "../../rtc_base:checks",
+    "../../rtc_base/system:no_unique_address",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/functional:any_invocable" ]
+}
+
 if (rtc_include_tests) {
   rtc_library("task_queue_default_factory_unittests") {
     testonly = true
@@ -104,6 +121,19 @@ if (rtc_include_tests) {
     deps = [
       ":default_task_queue_factory",
       ":task_queue_test",
+      "../../test:test_support",
+    ]
+  }
+
+  rtc_library("pending_task_safety_flag_unittests") {
+    testonly = true
+    sources = [ "pending_task_safety_flag_unittest.cc" ]
+    deps = [
+      ":pending_task_safety_flag",
+      "../../rtc_base:logging",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:task_queue_for_test",
       "../../test:test_support",
     ]
   }

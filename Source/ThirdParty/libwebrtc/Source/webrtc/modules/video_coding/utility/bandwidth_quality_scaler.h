@@ -1,5 +1,5 @@
 /*
- *  Copyright 2021 The WebRTC project authors. All Rights Reserved.
+ *  Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -26,9 +26,7 @@
 #include "rtc_base/numerics/exp_filter.h"
 #include "rtc_base/rate_statistics.h"
 #include "rtc_base/ref_count.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/weak_ptr.h"
 
 namespace webrtc {

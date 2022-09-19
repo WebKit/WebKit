@@ -37,6 +37,7 @@ rtc_library("transient_suppressor_impl") {
   ]
   deps = [
     ":transient_suppressor_api",
+    ":voice_probability_delay_unit",
     "../../../common_audio:common_audio",
     "../../../common_audio:common_audio_c",
     "../../../common_audio:fir_filter",
@@ -46,6 +47,14 @@ rtc_library("transient_suppressor_impl") {
     "../../../rtc_base:gtest_prod",
     "../../../rtc_base:logging",
   ]
+}
+
+rtc_library("voice_probability_delay_unit") {
+  sources = [
+    "voice_probability_delay_unit.cc",
+    "voice_probability_delay_unit.h",
+  ]
+  deps = [ "../../../rtc_base:checks" ]
 }
 
 if (rtc_include_tests) {
@@ -71,12 +80,14 @@ if (rtc_include_tests) {
         "file_utils.cc",
         "file_utils.h",
         "transient_suppression_test.cc",
+        "voice_probability_delay_unit_unittest.cc",
       ]
       deps = [
+        ":transient_suppressor_api",
         ":transient_suppressor_impl",
+        ":voice_probability_delay_unit",
         "..:audio_processing",
         "../../../common_audio",
-        "../../../rtc_base:rtc_base_approved",
         "../../../rtc_base/system:file_wrapper",
         "../../../system_wrappers",
         "../../../test:fileutils",
@@ -85,6 +96,7 @@ if (rtc_include_tests) {
         "//testing/gtest",
         "//third_party/abseil-cpp/absl/flags:flag",
         "//third_party/abseil-cpp/absl/flags:parse",
+        "//third_party/abseil-cpp/absl/types:optional",
       ]
     }
   }
@@ -99,16 +111,23 @@ if (rtc_include_tests) {
       "moving_moments_unittest.cc",
       "transient_detector_unittest.cc",
       "transient_suppressor_unittest.cc",
+      "voice_probability_delay_unit_unittest.cc",
       "wpd_node_unittest.cc",
       "wpd_tree_unittest.cc",
     ]
     deps = [
+      ":transient_suppressor_api",
       ":transient_suppressor_impl",
+      ":voice_probability_delay_unit",
       "../../../rtc_base:stringutils",
       "../../../rtc_base/system:file_wrapper",
       "../../../test:fileutils",
       "../../../test:test_support",
       "//testing/gtest",
+    ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/types:optional",
     ]
   }
 }

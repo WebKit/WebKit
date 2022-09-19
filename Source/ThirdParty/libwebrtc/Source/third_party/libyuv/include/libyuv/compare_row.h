@@ -84,11 +84,6 @@ extern "C" {
 #define HAS_SUMSQUAREERROR_MSA
 #endif
 
-#if !defined(LIBYUV_DISABLE_MMI) && defined(_MIPS_ARCH_LOONGSON3A)
-#define HAS_HAMMINGDISTANCE_MMI
-#define HAS_SUMSQUAREERROR_MMI
-#endif
-
 uint32_t HammingDistance_C(const uint8_t* src_a,
                            const uint8_t* src_b,
                            int count);
@@ -107,9 +102,6 @@ uint32_t HammingDistance_NEON(const uint8_t* src_a,
 uint32_t HammingDistance_MSA(const uint8_t* src_a,
                              const uint8_t* src_b,
                              int count);
-uint32_t HammingDistance_MMI(const uint8_t* src_a,
-                             const uint8_t* src_b,
-                             int count);
 uint32_t SumSquareError_C(const uint8_t* src_a,
                           const uint8_t* src_b,
                           int count);
@@ -123,9 +115,6 @@ uint32_t SumSquareError_NEON(const uint8_t* src_a,
                              const uint8_t* src_b,
                              int count);
 uint32_t SumSquareError_MSA(const uint8_t* src_a,
-                            const uint8_t* src_b,
-                            int count);
-uint32_t SumSquareError_MMI(const uint8_t* src_a,
                             const uint8_t* src_b,
                             int count);
 

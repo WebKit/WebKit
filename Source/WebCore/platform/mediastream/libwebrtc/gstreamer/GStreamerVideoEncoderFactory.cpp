@@ -60,7 +60,7 @@ class GStreamerEncodedImageBuffer : public webrtc::EncodedImageBufferInterface {
 public:
     static rtc::scoped_refptr<GStreamerEncodedImageBuffer> create(GRefPtr<GstSample>&& sample)
     {
-        return new rtc::RefCountedObject<GStreamerEncodedImageBuffer>(WTFMove(sample));
+        return rtc::make_ref_counted<GStreamerEncodedImageBuffer>(WTFMove(sample));
     }
 
     const uint8_t* data() const final { return m_mappedBuffer->data(); }

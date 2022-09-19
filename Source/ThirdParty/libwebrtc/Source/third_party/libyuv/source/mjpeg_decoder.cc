@@ -417,10 +417,6 @@ void init_source(j_decompress_ptr cinfo) {
 boolean fill_input_buffer(j_decompress_ptr cinfo) {
   BufferVector* buf_vec = reinterpret_cast<BufferVector*>(cinfo->client_data);
   if (buf_vec->pos >= buf_vec->len) {
-    // Don't assert-fail when fuzzing.
-#ifndef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
-    assert(0 && "No more data");
-#endif
     // ERROR: No more data
     return FALSE;
   }

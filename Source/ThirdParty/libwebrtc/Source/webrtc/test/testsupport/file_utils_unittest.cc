@@ -16,6 +16,7 @@
 #include <fstream>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "rtc_base/checks.h"
 #include "test/gmock.h"
@@ -32,15 +33,20 @@ namespace test {
 
 namespace {
 
-std::string Path(const std::string& path) {
-  std::string result = path;
-  std::replace(result.begin(), result.end(), '/', *kPathDelimiter);
+std::string Path(absl::string_view path) {
+  std::string result(path);
+  std::replace(result.begin(), result.end(), '/', kPathDelimiter[0]);
   return result;
 }
 
 // Remove files and directories in a directory non-recursively and writes the
+<<<<<<< HEAD
+// number of deleted items in `num_deleted_entries`.
+void CleanDir(absl::string_view dir, size_t* num_deleted_entries) {
+=======
 // number of deleted items in |num_deleted_entries|.
 void CleanDir(const std::string& dir, size_t* num_deleted_entries) {
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
   RTC_DCHECK(num_deleted_entries);
   *num_deleted_entries = 0;
   absl::optional<std::vector<std::string>> dir_content = ReadDirectory(dir);
@@ -58,8 +64,8 @@ void CleanDir(const std::string& dir, size_t* num_deleted_entries) {
   }
 }
 
-void WriteStringInFile(const std::string& what, const std::string& file_path) {
-  std::ofstream out(file_path);
+void WriteStringInFile(absl::string_view what, absl::string_view file_path) {
+  std::ofstream out(std::string{file_path});
   out << what;
   out.close();
 }
@@ -110,7 +116,7 @@ TEST_F(FileUtilsTest, OutputPathFromUnchangedWorkingDir) {
 // Tests with current working directory set to a directory higher up in the
 // directory tree than the project root dir.
 TEST_F(FileUtilsTest, OutputPathFromRootWorkingDir) {
-  ASSERT_EQ(0, chdir(kPathDelimiter));
+  ASSERT_EQ(0, chdir(kPathDelimiter.data()));
 
   std::string expected_end = ExpectedRootDirByPlatform();
   std::string result = webrtc::test::OutputPath();
@@ -179,7 +185,7 @@ TEST_F(FileUtilsTest, ResourcePathReturnsCorrectPath) {
 }
 
 TEST_F(FileUtilsTest, ResourcePathFromRootWorkingDir) {
-  ASSERT_EQ(0, chdir(kPathDelimiter));
+  ASSERT_EQ(0, chdir(kPathDelimiter.data()));
   std::string resource = webrtc::test::ResourcePath("whatever", "ext");
 #if !defined(WEBRTC_IOS)
   ASSERT_NE(resource.find("resources"), std::string::npos);
@@ -197,7 +203,7 @@ TEST_F(FileUtilsTest, GetFileSizeExistingFile) {
   ASSERT_GT(fprintf(file, "%s", "Dummy data"), 0)
       << "Failed to write to file: " << temp_filename;
   fclose(file);
-  ASSERT_GT(webrtc::test::GetFileSize(std::string(temp_filename.c_str())), 0u);
+  ASSERT_GT(webrtc::test::GetFileSize(temp_filename), 0u);
   remove(temp_filename.c_str());
 }
 

@@ -34,7 +34,8 @@ TEST(VideoFrameTrackingIdInjectorTest, InjectExtractDiscardFalse) {
   EncodedImageExtractionResult out =
       injector.ExtractData(injector.InjectData(512, false, source));
 
-  EXPECT_EQ(out.id, 512);
+  ASSERT_TRUE(out.id.has_value());
+  EXPECT_EQ(*out.id, 512);
   EXPECT_FALSE(out.discard);
   EXPECT_EQ(out.image.size(), 10ul);
   for (int i = 0; i < 10; ++i) {

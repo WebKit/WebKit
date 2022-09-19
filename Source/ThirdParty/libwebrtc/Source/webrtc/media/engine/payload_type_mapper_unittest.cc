@@ -15,6 +15,7 @@
 
 #include "absl/strings/string_view.h"
 #include "media/base/media_constants.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace cricket {
@@ -133,7 +134,7 @@ TEST_F(PayloadTypeMapperTest, ToAudioCodec) {
     EXPECT_EQ(codec.name, format.name);
     EXPECT_EQ(codec.clockrate, format.clockrate_hz);
     EXPECT_EQ(codec.channels, format.num_channels);
-    EXPECT_EQ(codec.params, format.parameters);
+    EXPECT_THAT(codec.params, ::testing::ContainerEq(format.parameters));
   }
 }
 

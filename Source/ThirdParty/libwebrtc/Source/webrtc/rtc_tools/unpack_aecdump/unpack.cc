@@ -25,12 +25,13 @@
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "api/function_view.h"
+#include "common_audio/include/audio_util.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/test/protobuf_utils.h"
-#include "modules/audio_processing/test/test_utils.h"
-#include "rtc_base/format_macros.h"
+#include "rtc_base/checks.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_base/system/arch.h"
 
 RTC_PUSH_IGNORING_WUNDEF()
 #include "modules/audio_processing/debug.pb.h"
@@ -104,15 +105,77 @@ using audioproc::ReverseStream;
 using audioproc::Stream;
 
 namespace {
+class RawFile final {
+ public:
+  explicit RawFile(const std::string& filename)
+      : file_handle_(fopen(filename.c_str(), "wb")) {}
+  ~RawFile() { fclose(file_handle_); }
+
+  RawFile(const RawFile&) = delete;
+  RawFile& operator=(const RawFile&) = delete;
+
+  void WriteSamples(const int16_t* samples, size_t num_samples) {
+#ifndef WEBRTC_ARCH_LITTLE_ENDIAN
+#error "Need to convert samples to little-endian when writing to PCM file"
+#endif
+    fwrite(samples, sizeof(*samples), num_samples, file_handle_);
+  }
+
+  void WriteSamples(const float* samples, size_t num_samples) {
+    fwrite(samples, sizeof(*samples), num_samples, file_handle_);
+  }
+
+ private:
+  FILE* file_handle_;
+};
+
+void WriteIntData(const int16_t* data,
+                  size_t length,
+                  WavWriter* wav_file,
+                  RawFile* raw_file) {
+  if (wav_file) {
+    wav_file->WriteSamples(data, length);
+  }
+  if (raw_file) {
+    raw_file->WriteSamples(data, length);
+  }
+}
+
+void WriteFloatData(const float* const* data,
+                    size_t samples_per_channel,
+                    size_t num_channels,
+                    WavWriter* wav_file,
+                    RawFile* raw_file) {
+  size_t length = num_channels * samples_per_channel;
+  std::unique_ptr<float[]> buffer(new float[length]);
+  Interleave(data, samples_per_channel, num_channels, buffer.get());
+  if (raw_file) {
+    raw_file->WriteSamples(buffer.get(), length);
+  }
+  // TODO(aluebs): Use ScaleToInt16Range() from audio_util
+  for (size_t i = 0; i < length; ++i) {
+    buffer[i] = buffer[i] > 0
+                    ? buffer[i] * std::numeric_limits<int16_t>::max()
+                    : -buffer[i] * std::numeric_limits<int16_t>::min();
+  }
+  if (wav_file) {
+    wav_file->WriteSamples(buffer.get(), length);
+  }
+}
+
+// Exits on failure; do not use in unit tests.
+FILE* OpenFile(const std::string& filename, const char* mode) {
+  FILE* file = fopen(filename.c_str(), mode);
+  RTC_CHECK(file) << "Unable to open file " << filename;
+  return file;
+}
 
 void WriteData(const void* data,
                size_t size,
                FILE* file,
                const std::string& filename) {
-  if (fwrite(data, size, 1, file) != 1) {
-    printf("Error when writing to %s\n", filename.c_str());
-    exit(1);
-  }
+  RTC_CHECK_EQ(fwrite(data, size, 1, file), 1)
+      << "Error when writing to " << filename.c_str();
 }
 
 void WriteCallOrderData(const bool render_call,
@@ -480,14 +543,11 @@ int do_main(int argc, char* argv[]) {
       fprintf(settings_file, "  Reverse sample rate: %d\n",
               reverse_sample_rate);
       num_input_channels = msg.num_input_channels();
-      fprintf(settings_file, "  Input channels: %" RTC_PRIuS "\n",
-              num_input_channels);
+      fprintf(settings_file, "  Input channels: %zu\n", num_input_channels);
       num_output_channels = msg.num_output_channels();
-      fprintf(settings_file, "  Output channels: %" RTC_PRIuS "\n",
-              num_output_channels);
+      fprintf(settings_file, "  Output channels: %zu\n", num_output_channels);
       num_reverse_channels = msg.num_reverse_channels();
-      fprintf(settings_file, "  Reverse channels: %" RTC_PRIuS "\n",
-              num_reverse_channels);
+      fprintf(settings_file, "  Reverse channels: %zu\n", num_reverse_channels);
       if (msg.has_timestamp_ms()) {
         const int64_t timestamp = msg.timestamp_ms();
         fprintf(settings_file, "  Timestamp in millisecond: %" PRId64 "\n",

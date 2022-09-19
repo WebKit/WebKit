@@ -21,7 +21,6 @@
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
-#include "modules/utility/include/process_thread.h"
 #include "modules/video_capture/video_capture_factory.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
@@ -169,7 +168,7 @@ class VideoCaptureTest : public ::testing::Test {
     rtc::scoped_refptr<VideoCaptureModule> module(
         VideoCaptureFactory::Create(unique_name));
     if (module.get() == NULL)
-      return NULL;
+      return nullptr;
 
     EXPECT_FALSE(module->CaptureStarted());
 

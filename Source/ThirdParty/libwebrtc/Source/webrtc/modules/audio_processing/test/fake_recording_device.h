@@ -48,8 +48,8 @@ class FakeRecordingDevice final {
   ~FakeRecordingDevice();
 
   int MicLevel() const;
-  void SetMicLevel(const int level);
-  void SetUndoMicLevel(const int level);
+  void SetMicLevel(int level);
+  void SetUndoMicLevel(int level);
 
   // Simulates the analog gain.
   // If `real_device_level` is a valid level, the unmodified mic signal is

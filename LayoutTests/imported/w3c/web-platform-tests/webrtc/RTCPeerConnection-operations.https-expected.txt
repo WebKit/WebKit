@@ -23,7 +23,7 @@ FAIL setParameters does NOT use the operations chain assert_equals: Method is as
 PASS pc.getStats does NOT use the operations chain
 PASS sender.getStats does NOT use the operations chain
 PASS receiver.getStats does NOT use the operations chain
-FAIL addIceCandidate chains onto SRD, fails before assert_equals: expected "InvalidStateError" but got "OperationError"
+PASS addIceCandidate chains onto SRD, fails before
 PASS Operations queue not vulnerable to recursion by chained negotiationneeded
 PASS Pack operations queue with implicit offer and answer
 PASS Negotiate solely by operations queue and signaling state

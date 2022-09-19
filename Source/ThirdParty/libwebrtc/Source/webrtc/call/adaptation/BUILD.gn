@@ -32,6 +32,8 @@ rtc_library("resource_adaptation") {
     "video_stream_input_state_provider.h",
   ]
   deps = [
+    "../../api:field_trials_view",
+    "../../api:make_ref_counted",
     "../../api:rtp_parameters",
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
@@ -43,15 +45,19 @@ rtc_library("resource_adaptation") {
     "../../api/video_codecs:video_codecs_api",
     "../../modules/video_coding:video_coding_utility",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:refcount",
     "../../rtc_base:rtc_task_queue",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base:stringutils",
     "../../rtc_base/experiments:balanced_degradation_settings",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:no_unique_address",
-    "../../rtc_base/task_utils:to_queued_task",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
     "//third_party/abseil-cpp/absl/types:variant",
   ]
@@ -80,12 +86,14 @@ if (rtc_include_tests) {
       "../../api/video_codecs:video_codecs_api",
       "../../rtc_base:checks",
       "../../rtc_base:gunit_helpers",
-      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:rtc_event",
       "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:stringutils",
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base/synchronization:mutex",
       "../../test:field_trial",
       "../../test:rtc_expect_death",
+      "../../test:scoped_key_value_config",
       "../../test:test_support",
     ]
     absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
@@ -107,15 +115,17 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":resource_adaptation",
+      "../../api:make_ref_counted",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
       "../../api/adaptation:resource_adaptation_api",
       "../../api/task_queue:task_queue",
       "../../api/video:video_stream_encoder",
-      "../../rtc_base:rtc_base_approved",
-      "../../rtc_base/task_utils:to_queued_task",
       "../../test:test_support",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
   }
 }

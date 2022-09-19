@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "common_audio/vad/mock/mock_vad.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "test/gtest.h"
 #include "test/mock_audio_encoder.h"
@@ -49,6 +48,9 @@ class AudioEncoderCngTest : public ::testing::Test {
     memset(audio_, 0, kMaxNumSamples * 2);
     EXPECT_CALL(*mock_encoder_, NumChannels()).WillRepeatedly(Return(1));
   }
+
+  AudioEncoderCngTest(const AudioEncoderCngTest&) = delete;
+  AudioEncoderCngTest& operator=(const AudioEncoderCngTest&) = delete;
 
   void TearDown() override {
     EXPECT_CALL(*mock_vad_, Die()).Times(1);
@@ -208,8 +210,6 @@ class AudioEncoderCngTest : public ::testing::Test {
   rtc::Buffer encoded_;
   AudioEncoder::EncodedInfo encoded_info_;
   int sample_rate_hz_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(AudioEncoderCngTest);
 };
 
 TEST_F(AudioEncoderCngTest, CreateAndDestroy) {

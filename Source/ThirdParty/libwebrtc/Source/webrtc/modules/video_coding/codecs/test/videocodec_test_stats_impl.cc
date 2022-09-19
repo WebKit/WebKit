@@ -332,6 +332,16 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
                                  ? 1000000.0f / mean_decode_time_us
                                  : std::numeric_limits<float>::max();
 
+  video_stat.avg_encode_latency_sec =
+      frame_encoding_time_us.GetMean().value_or(0) / 1000000.0f;
+  video_stat.max_encode_latency_sec =
+      frame_encoding_time_us.GetMax().value_or(0) / 1000000.0f;
+
+  video_stat.avg_decode_latency_sec =
+      frame_decoding_time_us.GetMean().value_or(0) / 1000000.0f;
+  video_stat.max_decode_latency_sec =
+      frame_decoding_time_us.GetMax().value_or(0) / 1000000.0f;
+
   auto MaxDelaySec = [target_bitrate_kbps](
                          const webrtc_impl::RunningStatistics<size_t>& stats) {
     return 8 * stats.GetMax().value_or(0) / 1000 / target_bitrate_kbps;
@@ -339,7 +349,7 @@ VideoStatistics VideoCodecTestStatsImpl::SliceAndCalcVideoStatistic(
 
   video_stat.avg_delay_sec = buffer_level_sec.GetMean().value_or(0);
   video_stat.max_key_frame_delay_sec = MaxDelaySec(key_frame_size_bytes);
-  video_stat.max_delta_frame_delay_sec = MaxDelaySec(key_frame_size_bytes);
+  video_stat.max_delta_frame_delay_sec = MaxDelaySec(delta_frame_size_bytes);
 
   video_stat.avg_bitrate_mismatch_pct =
       100 * (bitrate_bps - target_bitrate_bps) / target_bitrate_bps;

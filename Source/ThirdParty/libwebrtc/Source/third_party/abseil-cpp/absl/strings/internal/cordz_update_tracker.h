@@ -40,6 +40,7 @@ class CordzUpdateTracker {
   enum MethodIdentifier {
     kUnknown,
     kAppendCord,
+    kAppendCordBuffer,
     kAppendExternalMemory,
     kAppendString,
     kAssignCord,
@@ -49,15 +50,18 @@ class CordzUpdateTracker {
     kConstructorString,
     kCordReader,
     kFlatten,
+    kGetAppendBuffer,
     kGetAppendRegion,
     kMakeCordFromExternal,
     kMoveAppendCord,
     kMoveAssignCord,
     kMovePrependCord,
     kPrependCord,
+    kPrependCordBuffer,
     kPrependString,
     kRemovePrefix,
     kRemoveSuffix,
+    kSetExpectedChecksum,
     kSubCord,
 
     // kNumMethods defines the number of entries: must be the last entry.

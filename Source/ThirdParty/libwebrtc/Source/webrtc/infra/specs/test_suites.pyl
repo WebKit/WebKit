@@ -1,0 +1,265 @@
+# Copyright (c) 2022 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+{
+  'basic_suites': {
+    'android_junit_tests': {
+      'android_examples_junit_tests': {},
+      'android_sdk_junit_tests': {},
+    },
+    'android_perf_tests': {
+      'low_bandwidth_audio_perf_test': {
+        'mixins': ['perf-low-bandwidth-audio-perf-test'],
+        'args': [
+          '.',
+          '--remove',
+          '--android',
+          '--adb-path',
+          '../../third_party/android_sdk/public/platform-tools/adb',
+        ]
+      },
+      'webrtc_perf_tests': {
+        'mixins': ['perf-webrtc-perf-tests'],
+      },
+    },
+    'android_tests': {
+      'AppRTCMobile_test_apk': {},
+      'android_instrumentation_test_apk': {},
+      'audio_decoder_unittests': {},
+      'common_audio_unittests': {},
+      'common_video_unittests': {},
+      'dcsctp_unittests': {},
+      'modules_tests': {
+        'mixins': ['shards-2'],
+      },
+      'modules_unittests': {
+        'mixins': ['shards-6'],
+      },
+      'peerconnection_unittests': {
+        'mixins': ['shards-4'],
+      },
+      'rtc_media_unittests': {},
+      'rtc_pc_unittests': {},
+      'rtc_stats_unittests': {},
+      'rtc_unittests': {
+        'mixins': ['shards-6'],
+      },
+      'slow_peer_connection_unittests': {},
+      'svc_tests': {},
+      'system_wrappers_unittests': {},
+      'test_support_unittests': {},
+      'tools_unittests': {},
+      'video_engine_tests': {
+        'mixins': ['shards-4'],
+      },
+      'voip_unittests': {},
+      'webrtc_nonparallel_tests': {},
+    },
+    'android_webrtc_perf_tests_tryserver': {
+      'webrtc_perf_tests': {
+        'mixins': ['quick-perf-tests'],
+      }
+    },
+    'desktop_perf_tests': {
+      'low_bandwidth_audio_perf_test': {
+        'mixins': ['perf-low-bandwidth-audio-perf-test'],
+        'args': ['.', '--remove'],
+      },
+      'webrtc_perf_tests': {
+        'mixins': ['perf-webrtc-perf-tests'],
+        'args': [
+          '--test_artifacts_dir=${ISOLATED_OUTDIR}',
+          '--save_worst_frame',
+        ],
+      },
+    },
+    'desktop_tests': {
+      'audio_decoder_unittests': {},
+      'common_audio_unittests': {},
+      'common_video_unittests': {},
+      'dcsctp_unittests': {},
+      'low_bandwidth_audio_test': {
+        'args': ['--quick']
+      },
+      'modules_tests': {
+        'mixins': ['shards-2'],
+      },
+      'modules_unittests': {
+        'mixins': ['shards-6'],
+      },
+      'peerconnection_unittests': {
+        'mixins': ['shards-4'],
+      },
+      'rtc_media_unittests': {},
+      'rtc_pc_unittests': {},
+      'rtc_stats_unittests': {},
+      'rtc_unittests': {
+        'mixins': ['shards-6'],
+      },
+      'slow_peer_connection_unittests': {},
+      'svc_tests': {},
+      'system_wrappers_unittests': {},
+      'test_support_unittests': {},
+      'tools_unittests': {},
+      'video_engine_tests': {
+        'mixins': ['shards-4'],
+      },
+      'voip_unittests': {},
+      'webrtc_nonparallel_tests': {},
+    },
+    'ios_device_tests': {
+      # TODO(bugs.webrtc.org/11362): Real XCTests fail to start on devices.
+      #'apprtcmobile_tests': {'mixins': ['xcodebuild-device-runner']},
+      'common_audio_unittests': {},
+      'common_video_unittests': {},
+      'modules_tests': {
+        'mixins': ['shards-2', 'timeout-2h'],
+        'args': [
+          # Some tests exceed the default 180 seconds readline timeout.
+          '--readline-timeout=1200',
+        ]
+      },
+      'modules_unittests': {
+        'mixins': ['shards-6'],
+      },
+      'rtc_pc_unittests': {},
+      'rtc_stats_unittests': {},
+      # TODO(bugs.webrtc.org/11362): Real XCTests fail to start on devices.
+      #'sdk_framework_unittests': {'mixins': ['xcodebuild-device-runner']},
+      #'sdk_unittests': {'mixins': ['xcodebuild-device-runner']},
+      'system_wrappers_unittests': {},
+      'test_support_unittests': {},
+      'tools_unittests': {},
+      'video_capture_tests': {},
+      'video_engine_tests': {
+        'mixins': ['shards-4'],
+      },
+    },
+    'ios_simulator_tests': {
+      'apprtcmobile_tests': {
+        'mixins': ['xcode_parallelization']
+      },
+      'audio_decoder_unittests': {},
+      'common_audio_unittests': {},
+      'common_video_unittests': {},
+      'dcsctp_unittests': {},
+      'modules_tests': {
+        'mixins': ['shards-2'],
+      },
+      'modules_unittests': {
+        'mixins': ['shards-6'],
+      },
+      'rtc_media_unittests': {},
+      'rtc_pc_unittests': {},
+      'rtc_stats_unittests': {},
+      'rtc_unittests': {
+        'mixins': ['shards-6'],
+      },
+      'sdk_framework_unittests': {
+        'mixins': ['xcode_parallelization']
+      },
+      'sdk_unittests': {
+        'mixins': ['xcode_parallelization']
+      },
+      'svc_tests': {},
+      'system_wrappers_unittests': {},
+      'test_support_unittests': {},
+      'tools_unittests': {},
+      'video_capture_tests': {},
+      'video_engine_tests': {
+        'mixins': ['shards-4'],
+      },
+      'voip_unittests': {},
+      'webrtc_nonparallel_tests': {},
+    },
+    'linux_video_capture_tests': {
+      'video_capture_tests': {
+        'remove_mixins': ['linux-bionic'],
+        'mixins': ['linux', 'baremetal-pool'],
+      }
+    },
+    'linux_video_capture_tests_tryserver': {
+      'video_capture_tests': {
+        'remove_mixins': ['linux-bionic'],
+        'mixins': ['linux', 'baremetal-try-pool'],
+      }
+    },
+    'mac_video_capture_tests': {
+      'video_capture_tests': {
+        'remove_mixins': ['mac11'],
+        'mixins': ['mac', 'baremetal-pool'],
+      }
+    },
+    'mac_video_capture_tests_tryserver': {
+      'video_capture_tests': {
+        'remove_mixins': ['mac11'],
+        'mixins': ['mac', 'baremetal-try-pool'],
+      }
+    },
+    'more_configs_tests': {
+      'peerconnection_unittests': {
+        'swarming': {
+          'shards': 4
+        },
+      },
+    },
+    'webrtc_perf_tests': {
+      'webrtc_perf_tests': {
+        'mixins': ['perf-webrtc-perf-tests'],
+      },
+    },
+    'webrtc_perf_tests_tryserver': {
+      'webrtc_perf_tests': {
+        'mixins': ['quick-perf-tests', 'resultdb-gtest-json-format'],
+      }
+    },
+    'win_video_capture_tests': {
+      'video_capture_tests': {
+        'mixins': ['win', 'baremetal-pool'],
+      }
+    },
+    'win_video_capture_tests_tryserver': {
+      'video_capture_tests': {
+        'mixins': ['win', 'baremetal-try-pool'],
+      }
+    },
+  },
+  'compound_suites': {
+    'android_tests_tryserver': [
+      'android_tests',
+      'android_webrtc_perf_tests_tryserver',
+    ],
+    'linux_tests': [
+      'desktop_tests',
+      'linux_video_capture_tests',
+    ],
+    'linux_tests_tryserver': [
+      'desktop_tests',
+      'linux_video_capture_tests_tryserver',
+      'webrtc_perf_tests_tryserver',
+    ],
+    'mac_tests': [
+      'desktop_tests',
+      'mac_video_capture_tests',
+    ],
+    'mac_tests_tryserver': [
+      'desktop_tests',
+      'mac_video_capture_tests_tryserver',
+      'webrtc_perf_tests_tryserver',
+    ],
+    'win_tests': [
+      'desktop_tests',
+      'win_video_capture_tests',
+    ],
+    'win_tests_tryserver': [
+      'desktop_tests',
+      'win_video_capture_tests_tryserver',
+      'webrtc_perf_tests_tryserver',
+    ],
+  },
+}

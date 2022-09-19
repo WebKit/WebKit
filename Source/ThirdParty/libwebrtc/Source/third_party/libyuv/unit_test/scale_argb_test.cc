@@ -22,6 +22,12 @@ namespace libyuv {
 #define STRINGIZE(line) #line
 #define FILELINESTR(file, line) file ":" STRINGIZE(line)
 
+#if !defined(DISABLE_SLOW_TESTS) || defined(__x86_64__) || defined(__i386__)
+// SLOW TESTS are those that are unoptimized C code.
+// FULL TESTS are optimized but test many variations of the same code.
+#define ENABLE_FULL_TESTS
+#endif
+
 // Test scaling with C vs Opt and return maximum pixel difference. 0 = exact.
 static int ARGBTestFilter(int src_width,
                           int src_height,
@@ -251,23 +257,30 @@ static int ARGBClipTestFilter(int src_width,
 
 // Test a scale factor with all 4 filters.  Expect unfiltered to be exact, but
 // filtering is different fixed point implementations for SSSE3, Neon and C.
-#ifdef ENABLE_SLOW_TESTS
+#ifndef DISABLE_SLOW_TESTS
 #define TEST_FACTOR(name, nom, denom)           \
   TEST_FACTOR1(, name, None, nom, denom, 0)     \
   TEST_FACTOR1(, name, Linear, nom, denom, 3)   \
   TEST_FACTOR1(, name, Bilinear, nom, denom, 3) \
   TEST_FACTOR1(, name, Box, nom, denom, 3)
 #else
+#if defined(ENABLE_FULL_TESTS)
 #define TEST_FACTOR(name, nom, denom)                    \
   TEST_FACTOR1(DISABLED_, name, None, nom, denom, 0)     \
   TEST_FACTOR1(DISABLED_, name, Linear, nom, denom, 3)   \
   TEST_FACTOR1(DISABLED_, name, Bilinear, nom, denom, 3) \
   TEST_FACTOR1(DISABLED_, name, Box, nom, denom, 3)
+#else
+#define TEST_FACTOR(name, nom, denom) \
+  TEST_FACTOR1(DISABLED_, name, Bilinear, nom, denom, 3)
+#endif
 #endif
 
 TEST_FACTOR(2, 1, 2)
 TEST_FACTOR(4, 1, 4)
-// TEST_FACTOR(8, 1, 8)  Disable for benchmark performance.
+#ifndef DISABLE_SLOW_TESTS
+TEST_FACTOR(8, 1, 8)
+#endif
 TEST_FACTOR(3by4, 3, 4)
 TEST_FACTOR(3by8, 3, 8)
 TEST_FACTOR(3, 1, 3)
@@ -305,28 +318,33 @@ TEST_FACTOR(3, 1, 3)
     EXPECT_LE(diff, max_diff);                                                 \
   }
 
-/// Test scale to a specified size with all 4 filters.
-#ifdef ENABLE_SLOW_TESTS
+#ifndef DISABLE_SLOW_TESTS
+// Test scale to a specified size with all 4 filters.
 #define TEST_SCALETO(name, width, height)         \
   TEST_SCALETO1(, name, width, height, None, 0)   \
   TEST_SCALETO1(, name, width, height, Linear, 3) \
   TEST_SCALETO1(, name, width, height, Bilinear, 3)
 #else
+#if defined(ENABLE_FULL_TESTS)
 #define TEST_SCALETO(name, width, height)                  \
   TEST_SCALETO1(DISABLED_, name, width, height, None, 0)   \
   TEST_SCALETO1(DISABLED_, name, width, height, Linear, 3) \
   TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3)
+#else
+#define TEST_SCALETO(name, width, height) \
+  TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3)
+#endif
 #endif
 
 TEST_SCALETO(ARGBScale, 1, 1)
-TEST_SCALETO(ARGBScale, 256, 144) /* 128x72 * 2 */
-TEST_SCALETO(ARGBScale, 320, 240)
 TEST_SCALETO(ARGBScale, 569, 480)
 TEST_SCALETO(ARGBScale, 640, 360)
-#ifdef ENABLE_SLOW_TESTS
+#ifndef DISABLE_SLOW_TESTS
+TEST_SCALETO(ARGBScale, 256, 144) /* 128x72 * 2 */
+TEST_SCALETO(ARGBScale, 320, 240)
 TEST_SCALETO(ARGBScale, 1280, 720)
 TEST_SCALETO(ARGBScale, 1920, 1080)
-#endif  // ENABLE_SLOW_TESTS
+#endif  // DISABLE_SLOW_TESTS
 #undef TEST_SCALETO1
 #undef TEST_SCALETO
 
@@ -339,10 +357,14 @@ TEST_SCALETO(ARGBScale, 1920, 1080)
     EXPECT_LE(diff, max_diff);                                          \
   }
 
+#if defined(ENABLE_FULL_TESTS)
 // Test scale with swapped width and height with all 3 filters.
 TEST_SCALESWAPXY1(ARGBScale, None, 0)
 TEST_SCALESWAPXY1(ARGBScale, Linear, 0)
 TEST_SCALESWAPXY1(ARGBScale, Bilinear, 0)
+#else
+TEST_SCALESWAPXY1(ARGBScale, Bilinear, 0)
+#endif
 #undef TEST_SCALESWAPXY1
 
 // Scale with YUV conversion to ARGB and clipping.
@@ -490,11 +512,11 @@ TEST_F(LibYUVScaleTest, YUVToRGBScaleDown) {
 }
 
 TEST_F(LibYUVScaleTest, ARGBTest3x) {
-  const int kSrcStride = 48 * 4;
-  const int kDstStride = 16 * 4;
+  const int kSrcStride = 480 * 4;
+  const int kDstStride = 160 * 4;
   const int kSize = kSrcStride * 3;
   align_buffer_page_end(orig_pixels, kSize);
-  for (int i = 0; i < 48 * 3; ++i) {
+  for (int i = 0; i < 480 * 3; ++i) {
     orig_pixels[i * 4 + 0] = i;
     orig_pixels[i * 4 + 1] = 255 - i;
     orig_pixels[i * 4 + 2] = i + 1;
@@ -502,36 +524,36 @@ TEST_F(LibYUVScaleTest, ARGBTest3x) {
   }
   align_buffer_page_end(dest_pixels, kDstStride);
 
-  int iterations16 =
-      benchmark_width_ * benchmark_height_ / (16 * 1) * benchmark_iterations_;
-  for (int i = 0; i < iterations16; ++i) {
-    ARGBScale(orig_pixels, kSrcStride, 48, 3, dest_pixels, kDstStride, 16, 1,
+  int iterations160 = (benchmark_width_ * benchmark_height_ + (160 - 1)) / 160 *
+                      benchmark_iterations_;
+  for (int i = 0; i < iterations160; ++i) {
+    ARGBScale(orig_pixels, kSrcStride, 480, 3, dest_pixels, kDstStride, 160, 1,
               kFilterBilinear);
   }
 
-  EXPECT_EQ(49, dest_pixels[0]);
-  EXPECT_EQ(255 - 49, dest_pixels[1]);
-  EXPECT_EQ(50, dest_pixels[2]);
-  EXPECT_EQ(59, dest_pixels[3]);
+  EXPECT_EQ(225, dest_pixels[0]);
+  EXPECT_EQ(255 - 225, dest_pixels[1]);
+  EXPECT_EQ(226, dest_pixels[2]);
+  EXPECT_EQ(235, dest_pixels[3]);
 
-  ARGBScale(orig_pixels, kSrcStride, 48, 3, dest_pixels, kDstStride, 16, 1,
+  ARGBScale(orig_pixels, kSrcStride, 480, 3, dest_pixels, kDstStride, 160, 1,
             kFilterNone);
 
-  EXPECT_EQ(49, dest_pixels[0]);
-  EXPECT_EQ(255 - 49, dest_pixels[1]);
-  EXPECT_EQ(50, dest_pixels[2]);
-  EXPECT_EQ(59, dest_pixels[3]);
+  EXPECT_EQ(225, dest_pixels[0]);
+  EXPECT_EQ(255 - 225, dest_pixels[1]);
+  EXPECT_EQ(226, dest_pixels[2]);
+  EXPECT_EQ(235, dest_pixels[3]);
 
   free_aligned_buffer_page_end(dest_pixels);
   free_aligned_buffer_page_end(orig_pixels);
 }
 
 TEST_F(LibYUVScaleTest, ARGBTest4x) {
-  const int kSrcStride = 64 * 4;
-  const int kDstStride = 16 * 4;
+  const int kSrcStride = 640 * 4;
+  const int kDstStride = 160 * 4;
   const int kSize = kSrcStride * 4;
   align_buffer_page_end(orig_pixels, kSize);
-  for (int i = 0; i < 64 * 4; ++i) {
+  for (int i = 0; i < 640 * 4; ++i) {
     orig_pixels[i * 4 + 0] = i;
     orig_pixels[i * 4 + 1] = 255 - i;
     orig_pixels[i * 4 + 2] = i + 1;
@@ -539,26 +561,25 @@ TEST_F(LibYUVScaleTest, ARGBTest4x) {
   }
   align_buffer_page_end(dest_pixels, kDstStride);
 
-  int iterations16 =
-      benchmark_width_ * benchmark_height_ / (16 * 1) * benchmark_iterations_;
-  for (int i = 0; i < iterations16; ++i) {
-    ARGBScale(orig_pixels, kSrcStride, 64, 4, dest_pixels, kDstStride, 16, 1,
+  int iterations160 = (benchmark_width_ * benchmark_height_ + (160 - 1)) / 160 *
+                      benchmark_iterations_;
+  for (int i = 0; i < iterations160; ++i) {
+    ARGBScale(orig_pixels, kSrcStride, 640, 4, dest_pixels, kDstStride, 160, 1,
               kFilterBilinear);
   }
 
-  EXPECT_NEAR((65 + 66 + 129 + 130 + 2) / 4, dest_pixels[0], 4);
-  EXPECT_NEAR((255 - 65 + 255 - 66 + 255 - 129 + 255 - 130 + 2) / 4,
-              dest_pixels[1], 4);
-  EXPECT_NEAR((1 * 4 + 65 + 66 + 129 + 130 + 2) / 4, dest_pixels[2], 4);
-  EXPECT_NEAR((10 * 4 + 65 + 66 + 129 + 130 + 2) / 4, dest_pixels[3], 4);
+  EXPECT_NEAR(66, dest_pixels[0], 4);
+  EXPECT_NEAR(255 - 66, dest_pixels[1], 4);
+  EXPECT_NEAR(67, dest_pixels[2], 4);
+  EXPECT_NEAR(76, dest_pixels[3], 4);
 
-  ARGBScale(orig_pixels, kSrcStride, 64, 4, dest_pixels, kDstStride, 16, 1,
+  ARGBScale(orig_pixels, kSrcStride, 640, 4, dest_pixels, kDstStride, 160, 1,
             kFilterNone);
 
-  EXPECT_EQ(130, dest_pixels[0]);
-  EXPECT_EQ(255 - 130, dest_pixels[1]);
-  EXPECT_EQ(130 + 1, dest_pixels[2]);
-  EXPECT_EQ(130 + 10, dest_pixels[3]);
+  EXPECT_EQ(2, dest_pixels[0]);
+  EXPECT_EQ(255 - 2, dest_pixels[1]);
+  EXPECT_EQ(3, dest_pixels[2]);
+  EXPECT_EQ(12, dest_pixels[3]);
 
   free_aligned_buffer_page_end(dest_pixels);
   free_aligned_buffer_page_end(orig_pixels);

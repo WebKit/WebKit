@@ -8,10 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <string>
-
 #ifndef TEST_TESTSUPPORT_FILE_UTILS_OVERRIDE_H_
 #define TEST_TESTSUPPORT_FILE_UTILS_OVERRIDE_H_
+
+#include <string>
+
+#include "absl/strings/string_view.h"
 
 namespace webrtc {
 namespace test {
@@ -46,7 +48,7 @@ std::string WorkingDir();
 //           If a directory path is prepended to the filename, a subdirectory
 //           hierarchy reflecting that path is assumed to be present.
 //    extension - File extension, without the dot, i.e. "bmp" or "yuv".
-std::string ResourcePath(const std::string& name, const std::string& extension);
+std::string ResourcePath(absl::string_view name, absl::string_view extension);
 
 }  // namespace internal
 }  // namespace test

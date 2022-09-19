@@ -51,7 +51,7 @@ bool SequenceCheckerImpl::IsCurrent() const {
     valid_system_queue_ = current_system_queue;
     return true;
   }
-  if (valid_queue_ || current_queue) {
+  if (valid_queue_) {
     return valid_queue_ == current_queue;
   }
   if (valid_system_queue_ && valid_system_queue_ == current_system_queue) {

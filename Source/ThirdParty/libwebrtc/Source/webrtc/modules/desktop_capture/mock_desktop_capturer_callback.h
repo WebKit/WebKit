@@ -22,15 +22,16 @@ class MockDesktopCapturerCallback : public DesktopCapturer::Callback {
   MockDesktopCapturerCallback();
   ~MockDesktopCapturerCallback() override;
 
+  MockDesktopCapturerCallback(const MockDesktopCapturerCallback&) = delete;
+  MockDesktopCapturerCallback& operator=(const MockDesktopCapturerCallback&) =
+      delete;
+
   MOCK_METHOD(void,
               OnCaptureResultPtr,
               (DesktopCapturer::Result result,
                std::unique_ptr<DesktopFrame>* frame));
   void OnCaptureResult(DesktopCapturer::Result result,
                        std::unique_ptr<DesktopFrame> frame) final;
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(MockDesktopCapturerCallback);
 };
 
 }  // namespace webrtc

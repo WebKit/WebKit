@@ -43,6 +43,7 @@ message Event {
     ALR_STATE_EVENT = 19;
     ICE_CANDIDATE_PAIR_CONFIG = 20;
     ICE_CANDIDATE_PAIR_EVENT = 21;
+    REMOTE_ESTIMATE = 22;
   }
 
   // required - Indicates the type of this event
@@ -93,6 +94,9 @@ message Event {
 
     // required if type == ICE_CANDIDATE_PAIR_EVENT
     IceCandidatePairEvent ice_candidate_pair_event = 21;
+
+    // required if type == REMOTE_ESTIMATE
+    RemoteEstimate remote_estimate = 22;
   }
 }
 
@@ -325,6 +329,14 @@ message BweProbeResult {
 
   // optional - but required if result == SUCCESS. The resulting bitrate in bps.
   optional int32 bitrate_bps = 3;
+}
+
+message RemoteEstimate {
+  // optional - Lower estimate of link capacity.
+  optional uint32 link_capacity_lower_kbps = 1;
+
+  // optional - Upper estimate of link capacity.
+  optional uint32 link_capacity_upper_kbps = 2;
 }
 
 message AlrState {

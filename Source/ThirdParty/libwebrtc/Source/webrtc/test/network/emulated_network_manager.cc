@@ -34,7 +34,7 @@ EmulatedNetworkManager::EmulatedNetworkManager(
 void EmulatedNetworkManager::EnableEndpoint(EmulatedEndpointImpl* endpoint) {
   RTC_CHECK(endpoints_container_->HasEndpoint(endpoint))
       << "No such interface: " << endpoint->GetPeerLocalAddress().ToString();
-  network_thread_->PostTask(RTC_FROM_HERE, [this, endpoint]() {
+  network_thread_->PostTask([this, endpoint]() {
     endpoint->Enable();
     UpdateNetworksOnce();
   });
@@ -43,7 +43,7 @@ void EmulatedNetworkManager::EnableEndpoint(EmulatedEndpointImpl* endpoint) {
 void EmulatedNetworkManager::DisableEndpoint(EmulatedEndpointImpl* endpoint) {
   RTC_CHECK(endpoints_container_->HasEndpoint(endpoint))
       << "No such interface: " << endpoint->GetPeerLocalAddress().ToString();
-  network_thread_->PostTask(RTC_FROM_HERE, [this, endpoint]() {
+  network_thread_->PostTask([this, endpoint]() {
     endpoint->Disable();
     UpdateNetworksOnce();
   });
@@ -59,11 +59,9 @@ void EmulatedNetworkManager::StartUpdating() {
     // we should trigger network signal immediately for the new clients
     // to start allocating ports.
     if (sent_first_update_)
-      network_thread_->PostTask(RTC_FROM_HERE,
-                                [this]() { MaybeSignalNetworksChanged(); });
+      network_thread_->PostTask([this]() { MaybeSignalNetworksChanged(); });
   } else {
-    network_thread_->PostTask(RTC_FROM_HERE,
-                              [this]() { UpdateNetworksOnce(); });
+    network_thread_->PostTask([this]() { UpdateNetworksOnce(); });
   }
   ++start_count_;
 }
@@ -90,15 +88,15 @@ void EmulatedNetworkManager::GetStats(
 void EmulatedNetworkManager::UpdateNetworksOnce() {
   RTC_DCHECK_RUN_ON(network_thread_.get());
 
-  std::vector<rtc::Network*> networks;
+  std::vector<std::unique_ptr<rtc::Network>> networks;
   for (std::unique_ptr<rtc::Network>& net :
        endpoints_container_->GetEnabledNetworks()) {
     net->set_default_local_address_provider(this);
-    networks.push_back(net.release());
+    networks.push_back(std::move(net));
   }
 
   bool changed;
-  MergeNetworkList(networks, &changed);
+  MergeNetworkList(std::move(networks), &changed);
   if (changed || !sent_first_update_) {
     MaybeSignalNetworksChanged();
     sent_first_update_ = true;

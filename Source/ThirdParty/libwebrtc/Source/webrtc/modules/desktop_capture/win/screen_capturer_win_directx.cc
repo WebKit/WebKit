@@ -125,17 +125,23 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
 
   int64_t capture_start_time_nanos = rtc::TimeNanos();
 
-  frames_.MoveToNextFrame();
-  if (!frames_.current_frame()) {
-    frames_.ReplaceCurrentFrame(
+  // Note that the [] operator will create the ScreenCaptureFrameQueue if it
+  // doesn't exist, so this is safe.
+  ScreenCaptureFrameQueue<DxgiFrame>& frames =
+      frame_queue_map_[current_screen_id_];
+
+  frames.MoveToNextFrame();
+
+  if (!frames.current_frame()) {
+    frames.ReplaceCurrentFrame(
         std::make_unique<DxgiFrame>(shared_memory_factory_.get()));
   }
 
   DxgiDuplicatorController::Result result;
   if (current_screen_id_ == kFullDesktopScreenId) {
-    result = controller_->Duplicate(frames_.current_frame());
+    result = controller_->Duplicate(frames.current_frame());
   } else {
-    result = controller_->DuplicateMonitor(frames_.current_frame(),
+    result = controller_->DuplicateMonitor(frames.current_frame(),
                                            current_screen_id_);
   }
 
@@ -172,7 +178,7 @@ void ScreenCapturerWinDirectx::CaptureFrame() {
     }
     case DuplicateResult::SUCCEEDED: {
       std::unique_ptr<DesktopFrame> frame =
-          frames_.current_frame()->frame()->Share();
+          frames.current_frame()->frame()->Share();
 
       int capture_time_ms = (rtc::TimeNanos() - capture_start_time_nanos) /
                             rtc::kNumNanosecsPerMillisec;

@@ -56,7 +56,7 @@ class NetworkQualityMetricsReporter
   void ReportPCStats(const std::string& pc_label, const PCStats& stats);
   void ReportResult(const std::string& metric_name,
                     const std::string& network_label,
-                    const double value,
+                    double value,
                     const std::string& unit) const;
   std::string GetTestCaseName(const std::string& network_label) const;
 

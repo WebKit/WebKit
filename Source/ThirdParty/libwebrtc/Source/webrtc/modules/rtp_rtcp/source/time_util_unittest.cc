@@ -9,6 +9,10 @@
  */
 #include "modules/rtp_rtcp/source/time_util.h"
 
+#include <cstdint>
+#include <limits>
+
+#include "api/units/time_delta.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -21,18 +25,16 @@ TEST(TimeUtilTest, CompactNtp) {
   EXPECT_EQ(kNtpMid, CompactNtp(kNtp));
 }
 
-TEST(TimeUtilTest, CompactNtpRttToMs) {
+TEST(TimeUtilTest, CompactNtpRttToTimeDelta) {
   const NtpTime ntp1(0x12345, 0x23456);
   const NtpTime ntp2(0x12654, 0x64335);
   int64_t ms_diff = ntp2.ToMs() - ntp1.ToMs();
   uint32_t ntp_diff = CompactNtp(ntp2) - CompactNtp(ntp1);
 
-  int64_t ntp_to_ms_diff = CompactNtpRttToMs(ntp_diff);
-
-  EXPECT_NEAR(ms_diff, ntp_to_ms_diff, 1);
+  EXPECT_NEAR(CompactNtpRttToTimeDelta(ntp_diff).ms(), ms_diff, 1);
 }
 
-TEST(TimeUtilTest, CompactNtpRttToMsWithWrap) {
+TEST(TimeUtilTest, CompactNtpRttToTimeDeltaWithWrap) {
   const NtpTime ntp1(0x1ffff, 0x23456);
   const NtpTime ntp2(0x20000, 0x64335);
   int64_t ms_diff = ntp2.ToMs() - ntp1.ToMs();
@@ -43,51 +45,84 @@ TEST(TimeUtilTest, CompactNtpRttToMsWithWrap) {
   ASSERT_LT(CompactNtp(ntp2), CompactNtp(ntp1));
 
   uint32_t ntp_diff = CompactNtp(ntp2) - CompactNtp(ntp1);
-  int64_t ntp_to_ms_diff = CompactNtpRttToMs(ntp_diff);
-
-  EXPECT_NEAR(ms_diff, ntp_to_ms_diff, 1);
+  EXPECT_NEAR(CompactNtpRttToTimeDelta(ntp_diff).ms(), ms_diff, 1);
 }
 
-TEST(TimeUtilTest, CompactNtpRttToMsLarge) {
+TEST(TimeUtilTest, CompactNtpRttToTimeDeltaLarge) {
   const NtpTime ntp1(0x10000, 0x00006);
   const NtpTime ntp2(0x17fff, 0xffff5);
   int64_t ms_diff = ntp2.ToMs() - ntp1.ToMs();
   // Ntp difference close to 2^15 seconds should convert correctly too.
   ASSERT_NEAR(ms_diff, ((1 << 15) - 1) * 1000, 1);
   uint32_t ntp_diff = CompactNtp(ntp2) - CompactNtp(ntp1);
-  int64_t ntp_to_ms_diff = CompactNtpRttToMs(ntp_diff);
-
-  EXPECT_NEAR(ms_diff, ntp_to_ms_diff, 1);
+  EXPECT_NEAR(CompactNtpRttToTimeDelta(ntp_diff).ms(), ms_diff, 1);
 }
 
-TEST(TimeUtilTest, CompactNtpRttToMsNegative) {
+TEST(TimeUtilTest, CompactNtpRttToTimeDeltaNegative) {
   const NtpTime ntp1(0x20000, 0x23456);
   const NtpTime ntp2(0x1ffff, 0x64335);
   int64_t ms_diff = ntp2.ToMs() - ntp1.ToMs();
   ASSERT_GT(0, ms_diff);
   // Ntp difference close to 2^16 seconds should be treated as negative.
   uint32_t ntp_diff = CompactNtp(ntp2) - CompactNtp(ntp1);
-  int64_t ntp_to_ms_diff = CompactNtpRttToMs(ntp_diff);
-  EXPECT_EQ(1, ntp_to_ms_diff);
+  EXPECT_EQ(CompactNtpRttToTimeDelta(ntp_diff), TimeDelta::Millis(1));
 }
 
-TEST(TimeUtilTest, SaturatedUsToCompactNtp) {
+TEST(TimeUtilTest, SaturatedToCompactNtp) {
   // Converts negative to zero.
-  EXPECT_EQ(SaturatedUsToCompactNtp(-1), 0u);
-  EXPECT_EQ(SaturatedUsToCompactNtp(0), 0u);
+  EXPECT_EQ(SaturatedToCompactNtp(TimeDelta::Micros(-1)), 0u);
+  EXPECT_EQ(SaturatedToCompactNtp(TimeDelta::Zero()), 0u);
   // Converts values just above and just below max uint32_t.
-  EXPECT_EQ(SaturatedUsToCompactNtp(65536000000), 0xffffffff);
-  EXPECT_EQ(SaturatedUsToCompactNtp(65535999985), 0xffffffff);
-  EXPECT_EQ(SaturatedUsToCompactNtp(65535999970), 0xfffffffe);
+  EXPECT_EQ(SaturatedToCompactNtp(TimeDelta::Micros(65536000000)), 0xffffffff);
+  EXPECT_EQ(SaturatedToCompactNtp(TimeDelta::Micros(65535999985)), 0xffffffff);
+  EXPECT_EQ(SaturatedToCompactNtp(TimeDelta::Micros(65535999970)), 0xfffffffe);
   // Converts half-seconds.
-  EXPECT_EQ(SaturatedUsToCompactNtp(500000), 0x8000u);
-  EXPECT_EQ(SaturatedUsToCompactNtp(1000000), 0x10000u);
-  EXPECT_EQ(SaturatedUsToCompactNtp(1500000), 0x18000u);
-  // Convert us -> compact_ntp -> ms. Compact ntp precision is ~15us.
-  EXPECT_EQ(CompactNtpRttToMs(SaturatedUsToCompactNtp(1516)), 2);
-  EXPECT_EQ(CompactNtpRttToMs(SaturatedUsToCompactNtp(15000)), 15);
-  EXPECT_EQ(CompactNtpRttToMs(SaturatedUsToCompactNtp(5485)), 5);
-  EXPECT_EQ(CompactNtpRttToMs(SaturatedUsToCompactNtp(5515)), 6);
+  EXPECT_EQ(SaturatedToCompactNtp(TimeDelta::Millis(500)), 0x8000u);
+  EXPECT_EQ(SaturatedToCompactNtp(TimeDelta::Seconds(1)), 0x10000u);
+  EXPECT_EQ(SaturatedToCompactNtp(TimeDelta::Millis(1'500)), 0x18000u);
+  // Convert us -> compact_ntp -> TimeDelta. Compact ntp precision is ~15us.
+  EXPECT_NEAR(
+      CompactNtpRttToTimeDelta(SaturatedToCompactNtp(TimeDelta::Micros(1'516)))
+          .us(),
+      1'516, 16);
+  EXPECT_NEAR(
+      CompactNtpRttToTimeDelta(SaturatedToCompactNtp(TimeDelta::Millis(15)))
+          .us(),
+      15'000, 16);
+  EXPECT_NEAR(
+      CompactNtpRttToTimeDelta(SaturatedToCompactNtp(TimeDelta::Micros(5'485)))
+          .us(),
+      5'485, 16);
+  EXPECT_NEAR(
+      CompactNtpRttToTimeDelta(SaturatedToCompactNtp(TimeDelta::Micros(5'515)))
+          .us(),
+      5'515, 16);
+}
+
+TEST(TimeUtilTest, ToNtpUnits) {
+  EXPECT_EQ(ToNtpUnits(TimeDelta::Zero()), 0);
+  EXPECT_EQ(ToNtpUnits(TimeDelta::Seconds(1)), int64_t{1} << 32);
+  EXPECT_EQ(ToNtpUnits(TimeDelta::Seconds(-1)), -(int64_t{1} << 32));
+
+  EXPECT_EQ(ToNtpUnits(TimeDelta::Millis(500)), int64_t{1} << 31);
+  EXPECT_EQ(ToNtpUnits(TimeDelta::Millis(-1'500)), -(int64_t{3} << 31));
+
+  // Smallest TimeDelta that can be converted without precision loss.
+  EXPECT_EQ(ToNtpUnits(TimeDelta::Micros(15'625)), int64_t{1} << 26);
+
+  // 1 us ~= 4'294.97 NTP units. ToNtpUnits makes no rounding promises.
+  EXPECT_GE(ToNtpUnits(TimeDelta::Micros(1)), 4'294);
+  EXPECT_LE(ToNtpUnits(TimeDelta::Micros(1)), 4'295);
+
+  // Test near maximum and minimum supported values.
+  static constexpr int64_t k35MinutesInNtpUnits = int64_t{35 * 60} << 32;
+  EXPECT_EQ(ToNtpUnits(TimeDelta::Seconds(35 * 60)), k35MinutesInNtpUnits);
+  EXPECT_EQ(ToNtpUnits(TimeDelta::Seconds(-35 * 60)), -k35MinutesInNtpUnits);
+
+  // The result for too large or too small values is unspecified, but
+  // shouldn't cause integer overflow or other undefined behavior.
+  ToNtpUnits(TimeDelta::Micros(std::numeric_limits<int64_t>::max() - 1));
+  ToNtpUnits(TimeDelta::Micros(std::numeric_limits<int64_t>::min() + 1));
 }
 
 }  // namespace webrtc

@@ -17,8 +17,8 @@
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/physical_socket_server.h"
 #include "rtc_base/socket.h"
-#include "rtc_base/socket_server.h"
 #include "rtc_base/test_echo_server.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
@@ -39,9 +39,9 @@ namespace {
   }
 
 void TestUdpInternal(const SocketAddress& loopback) {
-  Thread* main = Thread::Current();
-  Socket* socket =
-      main->socketserver()->CreateSocket(loopback.family(), SOCK_DGRAM);
+  rtc::PhysicalSocketServer socket_server;
+  rtc::AutoSocketServerThread main_thread(&socket_server);
+  Socket* socket = socket_server.CreateSocket(loopback.family(), SOCK_DGRAM);
   socket->Bind(loopback);
 
   TestClient client(std::make_unique<AsyncUDPSocket>(socket));
@@ -53,11 +53,11 @@ void TestUdpInternal(const SocketAddress& loopback) {
 }
 
 void TestTcpInternal(const SocketAddress& loopback) {
-  Thread* main = Thread::Current();
-  TestEchoServer server(main, loopback);
+  rtc::PhysicalSocketServer socket_server;
+  rtc::AutoSocketServerThread main_thread(&socket_server);
+  TestEchoServer server(&main_thread, loopback);
 
-  Socket* socket =
-      main->socketserver()->CreateSocket(loopback.family(), SOCK_STREAM);
+  Socket* socket = socket_server.CreateSocket(loopback.family(), SOCK_STREAM);
   std::unique_ptr<AsyncTCPSocket> tcp_socket = absl::WrapUnique(
       AsyncTCPSocket::Create(socket, loopback, server.address()));
   ASSERT_TRUE(tcp_socket != nullptr);

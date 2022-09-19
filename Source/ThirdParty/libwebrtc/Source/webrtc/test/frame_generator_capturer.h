@@ -132,6 +132,16 @@ class FrameGeneratorCapturer : public TestVideoCapturer {
   void ChangeResolution(size_t width, size_t height);
   void ChangeFramerate(int target_framerate);
 
+  struct Resolution {
+    int width;
+    int height;
+  };
+  absl::optional<Resolution> GetResolution();
+
+  void OnOutputFormatRequest(int width,
+                             int height,
+                             const absl::optional<int>& max_fps);
+
   void SetSinkWantsObserver(SinkWantsObserver* observer);
 
   void AddOrUpdateSink(rtc::VideoSinkInterface<VideoFrame>* sink,
@@ -167,6 +177,10 @@ class FrameGeneratorCapturer : public TestVideoCapturer {
   absl::optional<ColorSpace> fake_color_space_ RTC_GUARDED_BY(&lock_);
 
   int64_t first_frame_capture_time_;
+
+  Mutex stats_lock_;
+  absl::optional<Resolution> source_resolution_ RTC_GUARDED_BY(&stats_lock_);
+
   // Must be the last field, so it will be deconstructed first as tasks
   // in the TaskQueue access other fields of the instance of this class.
   rtc::TaskQueue task_queue_;

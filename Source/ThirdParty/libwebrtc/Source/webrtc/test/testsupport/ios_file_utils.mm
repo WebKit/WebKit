@@ -15,6 +15,7 @@
 
 #import "sdk/objc/helpers/NSString+StdString.h"
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -23,11 +24,11 @@ namespace test {
 // For iOS, resource files are added to the application bundle in the root
 // and not in separate folders as is the case for other platforms. This method
 // therefore removes any prepended folders and uses only the actual file name.
-std::string IOSResourcePath(std::string name, std::string extension) {
+std::string IOSResourcePath(absl::string_view name, absl::string_view extension) {
   @autoreleasepool {
-    NSString* path = [NSString stringForStdString:name];
+    NSString* path = [NSString stringForAbslStringView:name];
     NSString* fileName = path.lastPathComponent;
-    NSString* fileType = [NSString stringForStdString:extension];
+    NSString* fileType = [NSString stringForAbslStringView:extension];
     // Get full pathname for the resource identified by the name and extension.
     NSString* pathString = [[NSBundle mainBundle] pathForResource:fileName
                                                            ofType:fileType];

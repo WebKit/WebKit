@@ -15,6 +15,7 @@
 #include <utility>
 
 #include "absl/memory/memory.h"
+#include "absl/strings/string_view.h"
 #include "api/dtls_transport_interface.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "logging/rtc_event_log/events/rtc_event_dtls_transport_state.h"
@@ -226,7 +227,7 @@ bool DtlsTransport::GetSslCipherSuite(int* cipher) {
   return dtls_->GetSslCipherSuite(cipher);
 }
 
-bool DtlsTransport::SetRemoteFingerprint(const std::string& digest_alg,
+bool DtlsTransport::SetRemoteFingerprint(absl::string_view digest_alg,
                                          const uint8_t* digest,
                                          size_t digest_len) {
   rtc::Buffer remote_fingerprint_value(digest, digest_len);
@@ -264,7 +265,7 @@ bool DtlsTransport::SetRemoteFingerprint(const std::string& digest_alg,
   // At this point we know we are doing DTLS
   bool fingerprint_changing = remote_fingerprint_value_.size() > 0u;
   remote_fingerprint_value_ = std::move(remote_fingerprint_value);
-  remote_fingerprint_algorithm_ = digest_alg;
+  remote_fingerprint_algorithm_ = std::string(digest_alg);
 
   if (dtls_ && !fingerprint_changing) {
     // This can occur if DTLS is set up before a remote fingerprint is
@@ -312,7 +313,7 @@ std::unique_ptr<rtc::SSLCertChain> DtlsTransport::GetRemoteSSLCertChain()
   return dtls_->GetPeerSSLCertChain();
 }
 
-bool DtlsTransport::ExportKeyingMaterial(const std::string& label,
+bool DtlsTransport::ExportKeyingMaterial(absl::string_view label,
                                          const uint8_t* context,
                                          size_t context_len,
                                          bool use_context,
@@ -433,7 +434,7 @@ int DtlsTransport::SendPacket(const char* data,
                            "webrtc::DtlsTransportState::kClosed.";
       return -1;
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       return -1;
   }
 }
@@ -532,7 +533,7 @@ void DtlsTransport::OnWritableState(rtc::PacketTransportInternal* transport) {
                            "webrtc::DtlsTransportState::kClosed.";
       break;
     case webrtc::DtlsTransportState::kNumValues:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       break;
   }
 }
@@ -720,7 +721,7 @@ void DtlsTransport::MaybeStartDtls() {
       // packets in this state, the incoming queue must be empty. We
       // ignore write errors, thus any errors must be because of
       // configuration and therefore are our fault.
-      RTC_NOTREACHED() << "StartSSL failed.";
+      RTC_DCHECK_NOTREACHED() << "StartSSL failed.";
       RTC_LOG(LS_ERROR) << ToString() << ": Couldn't start DTLS handshake";
       set_dtls_state(webrtc::DtlsTransportState::kFailed);
       return;

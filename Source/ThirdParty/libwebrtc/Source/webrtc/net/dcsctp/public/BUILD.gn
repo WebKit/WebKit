@@ -10,8 +10,8 @@ import("../../../webrtc.gni")
 
 rtc_source_set("types") {
   deps = [
-    "../../../rtc_base:rtc_base_approved",
     "../../../api:array_view",
+    "../../../rtc_base:strong_alias",
   ]
   sources = [
     "dcsctp_message.h",
@@ -23,12 +23,11 @@ rtc_source_set("types") {
 
 rtc_source_set("socket") {
   deps = [
-    "../../../rtc_base:rtc_base_approved",
     ":types",
     "../../../api:array_view",
-    "../../../rtc_base",
+    "../../../api/task_queue:task_queue",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:strong_alias",
   ]
   sources = [
     "dcsctp_handover_state.cc",
@@ -58,8 +57,12 @@ rtc_source_set("factory") {
 
 rtc_source_set("mocks") {
   testonly = true
-  sources = [ "mock_dcsctp_socket.h" ]
+  sources = [
+    "mock_dcsctp_socket.h",
+    "mock_dcsctp_socket_factory.h",
+  ]
   deps = [
+    ":factory",
     ":socket",
     "../../../test:test_support",
   ]
@@ -90,7 +93,6 @@ if (rtc_include_tests) {
       ":types",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
     ]
     sources = [

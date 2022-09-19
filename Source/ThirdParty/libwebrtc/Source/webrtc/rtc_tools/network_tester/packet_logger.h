@@ -14,7 +14,6 @@
 #include <fstream>
 #include <string>
 
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/ignore_wundef.h"
 
 #ifdef WEBRTC_NETWORK_TESTER_PROTO
@@ -33,12 +32,13 @@ class PacketLogger {
   explicit PacketLogger(const std::string& log_file_path);
   ~PacketLogger();
 
+  PacketLogger(const PacketLogger&) = delete;
+  PacketLogger& operator=(const PacketLogger&) = delete;
+
   void LogPacket(const NetworkTesterPacket& packet);
 
  private:
   std::ofstream packet_logger_stream_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(PacketLogger);
 };
 
 }  // namespace webrtc

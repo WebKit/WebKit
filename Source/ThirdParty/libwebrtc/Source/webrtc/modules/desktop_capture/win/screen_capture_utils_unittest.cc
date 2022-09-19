@@ -34,8 +34,9 @@ TEST(ScreenCaptureUtilsTest, GetScreenList) {
 TEST(ScreenCaptureUtilsTest, DeviceIndexToHmonitor) {
   DesktopCapturer::SourceList screens;
   ASSERT_TRUE(GetScreenList(&screens));
-  if (screens.size() == 0) {
-    RTC_LOG(LS_INFO) << "Skip screen capture test on systems with no monitors.";
+  if (screens.empty()) {
+    RTC_LOG(LS_INFO)
+        << "Skip ScreenCaptureUtilsTest on systems with no monitors.";
     GTEST_SKIP();
   }
 
@@ -45,10 +46,31 @@ TEST(ScreenCaptureUtilsTest, DeviceIndexToHmonitor) {
 }
 
 TEST(ScreenCaptureUtilsTest, FullScreenDeviceIndexToHmonitor) {
+  if (!HasActiveDisplay()) {
+    RTC_LOG(LS_INFO)
+        << "Skip ScreenCaptureUtilsTest on systems with no monitors.";
+    GTEST_SKIP();
+  }
+
   HMONITOR hmonitor;
   ASSERT_TRUE(GetHmonitorFromDeviceIndex(kFullDesktopScreenId, &hmonitor));
   ASSERT_EQ(hmonitor, static_cast<HMONITOR>(0));
   ASSERT_TRUE(IsMonitorValid(hmonitor));
+}
+
+TEST(ScreenCaptureUtilsTest, NoMonitors) {
+  if (HasActiveDisplay()) {
+    RTC_LOG(LS_INFO) << "Skip ScreenCaptureUtilsTest designed specifically for "
+                        "systems with no monitors";
+    GTEST_SKIP();
+  }
+
+  HMONITOR hmonitor;
+  ASSERT_TRUE(GetHmonitorFromDeviceIndex(kFullDesktopScreenId, &hmonitor));
+  ASSERT_EQ(hmonitor, static_cast<HMONITOR>(0));
+
+  // The monitor should be invalid since the system has no attached displays.
+  ASSERT_FALSE(IsMonitorValid(hmonitor));
 }
 
 TEST(ScreenCaptureUtilsTest, InvalidDeviceIndexToHmonitor) {

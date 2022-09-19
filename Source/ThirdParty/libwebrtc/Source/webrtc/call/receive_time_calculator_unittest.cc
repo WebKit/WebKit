@@ -21,6 +21,7 @@
 #include "rtc_base/random.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 namespace test {
@@ -168,6 +169,7 @@ class EmulatedNonMonotoneousClock : public EmulatedClock {
 };
 
 TEST(ClockRepair, NoClockDrift) {
+  webrtc::test::ScopedKeyValueConfig field_trials;
   const int kSeeds = 10;
   const int kFirstSeed = 1;
   const int64_t kRuntimeUs = 10 * rtc::kNumMicrosecsPerSec;
@@ -177,7 +179,7 @@ TEST(ClockRepair, NoClockDrift) {
     EmulatedMonotoneousClock monotone_clock(seed);
     EmulatedNonMonotoneousClock non_monotone_clock(
         seed + 1, kRuntimeUs + rtc::kNumMicrosecsPerSec, kDrift);
-    ReceiveTimeCalculator reception_time_tracker;
+    ReceiveTimeCalculator reception_time_tracker(field_trials);
     int64_t corrected_clock_0 = 0;
     int64_t reset_during_stall_tol_us = 0;
     bool initial_clock_stall = true;

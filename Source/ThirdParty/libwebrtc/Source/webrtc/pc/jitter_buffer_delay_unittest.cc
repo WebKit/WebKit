@@ -10,9 +10,6 @@
 
 #include "pc/jitter_buffer_delay.h"
 
-#include <stdint.h>
-
-#include "absl/types/optional.h"
 #include "test/gtest.h"
 
 namespace webrtc {

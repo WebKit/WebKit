@@ -15,7 +15,6 @@
 
 #include "modules/desktop_capture/desktop_region.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -25,10 +24,11 @@ class CroppedDesktopFrame : public DesktopFrame {
   CroppedDesktopFrame(std::unique_ptr<DesktopFrame> frame,
                       const DesktopRect& rect);
 
+  CroppedDesktopFrame(const CroppedDesktopFrame&) = delete;
+  CroppedDesktopFrame& operator=(const CroppedDesktopFrame&) = delete;
+
  private:
   const std::unique_ptr<DesktopFrame> frame_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(CroppedDesktopFrame);
 };
 
 std::unique_ptr<DesktopFrame> CreateCroppedDesktopFrame(

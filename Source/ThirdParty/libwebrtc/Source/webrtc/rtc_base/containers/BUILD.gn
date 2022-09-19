@@ -10,14 +10,11 @@ import("../../webrtc.gni")
 
 rtc_library("flat_containers_internal") {
   sources = [
-    "as_const.h",
     "flat_tree.cc",
     "flat_tree.h",
     "identity.h",
     "invoke.h",
     "move_only_int.h",
-    "not_fn.h",
-    "void_t.h",
   ]
   deps = [
     "..:checks",

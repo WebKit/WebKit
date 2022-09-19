@@ -3,7 +3,7 @@
 # Run with -DTEST=ON to build unit tests
 
 PROJECT ( YUV C CXX )	# "C" is required even for C++ projects
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
+CMAKE_MINIMUM_REQUIRED( VERSION 2.8.12 )
 OPTION( TEST "Built unit tests" OFF )
 
 SET ( ly_base_dir	${PROJECT_SOURCE_DIR} )
@@ -22,6 +22,10 @@ LIST ( SORT			ly_unittest_sources )
 
 INCLUDE_DIRECTORIES( BEFORE ${ly_inc_dir} )
 
+if(MSVC)
+  ADD_DEFINITIONS ( -D_CRT_SECURE_NO_WARNINGS )
+endif()
+
 # this creates the static library (.a)
 ADD_LIBRARY				( ${ly_lib_static} STATIC ${ly_source_files} )
 
@@ -29,6 +33,9 @@ ADD_LIBRARY				( ${ly_lib_static} STATIC ${ly_source_files} )
 ADD_LIBRARY				( ${ly_lib_shared} SHARED ${ly_source_files} )
 SET_TARGET_PROPERTIES	( ${ly_lib_shared} PROPERTIES OUTPUT_NAME "${ly_lib_name}" )
 SET_TARGET_PROPERTIES	( ${ly_lib_shared} PROPERTIES PREFIX "lib" )
+if(WIN32)
+  SET_TARGET_PROPERTIES	( ${ly_lib_shared} PROPERTIES IMPORT_PREFIX "lib" )
+endif()
 
 # this creates the conversion tool
 ADD_EXECUTABLE			( yuvconvert ${ly_base_dir}/util/yuvconvert.cc )

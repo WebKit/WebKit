@@ -466,7 +466,9 @@ class EmulatedNetworkNode : public EmulatedNetworkReceiverInterface {
       rtc::TaskQueue* task_queue,
       std::unique_ptr<NetworkBehaviorInterface> network_behavior);
   ~EmulatedNetworkNode() override;
-  RTC_DISALLOW_COPY_AND_ASSIGN(EmulatedNetworkNode);
+
+  EmulatedNetworkNode(const EmulatedNetworkNode&) = delete;
+  EmulatedNetworkNode& operator=(const EmulatedNetworkNode&) = delete;
 
   void OnPacketReceived(EmulatedIpPacket packet) override;
 

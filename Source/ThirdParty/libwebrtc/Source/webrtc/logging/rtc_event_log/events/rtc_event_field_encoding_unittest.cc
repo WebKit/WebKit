@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/rtc_event_log/rtc_event.h"
 #include "logging/rtc_event_log/encoder/var_int.h"
 #include "logging/rtc_event_log/events/rtc_event_field_encoding_parser.h"
@@ -52,7 +53,7 @@ size_t ExpectedBaseValueSize(const FieldParameters& params, T value) {
     default:
       break;
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return 0;
 }
 
@@ -158,7 +159,7 @@ class RtcTestEvent final : public RtcEvent {
                absl::optional<int32_t> optional_signed32,
                absl::optional<int64_t> optional_signed64,
                uint32_t wrapping21,
-               std::string string)
+               absl::string_view string)
       : b_(b),
         signed32_(signed32),
         unsigned32_(unsigned32),
@@ -255,7 +256,7 @@ class RtcEventFieldTest : public ::testing::Test {
     }
   }
 
-  void PrintBytes(const std::string& s) {
+  void PrintBytes(absl::string_view s) {
     for (auto c : s) {
       fprintf(stderr, "%d ", static_cast<uint8_t>(c));
     }

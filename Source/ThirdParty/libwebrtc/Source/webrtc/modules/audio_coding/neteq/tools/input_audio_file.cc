@@ -10,14 +10,15 @@
 
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
 namespace test {
 
-InputAudioFile::InputAudioFile(const std::string file_name, bool loop_at_end)
+InputAudioFile::InputAudioFile(absl::string_view file_name, bool loop_at_end)
     : loop_at_end_(loop_at_end) {
-  fp_ = fopen(file_name.c_str(), "rb");
+  fp_ = fopen(std::string(file_name).c_str(), "rb");
   RTC_DCHECK(fp_) << file_name << " could not be opened.";
 }
 

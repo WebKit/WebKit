@@ -23,10 +23,8 @@
 #include "api/scoped_refptr.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_description_factory.h"
-#include "pc/channel_manager.h"
 #include "pc/media_session.h"
 #include "pc/sdp_state_provider.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/message_handler.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/rtc_certificate_generator.h"
@@ -80,17 +78,21 @@ class WebRtcSessionDescriptionFactory : public rtc::MessageHandler,
   // asynchronously. If a certificate is given, will use that for identifying
   // over DTLS. If neither is specified, DTLS is disabled.
   WebRtcSessionDescriptionFactory(
-      rtc::Thread* signaling_thread,
-      cricket::ChannelManager* channel_manager,
+      ConnectionContext* context,
       const SdpStateProvider* sdp_info,
       const std::string& session_id,
       bool dtls_enabled,
       std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
       const rtc::scoped_refptr<rtc::RTCCertificate>& certificate,
-      rtc::UniqueRandomIdGenerator* ssrc_generator,
       std::function<void(const rtc::scoped_refptr<rtc::RTCCertificate>&)>
-          on_certificate_ready);
+          on_certificate_ready,
+      const FieldTrialsView& field_trials);
   virtual ~WebRtcSessionDescriptionFactory();
+
+  WebRtcSessionDescriptionFactory(const WebRtcSessionDescriptionFactory&) =
+      delete;
+  WebRtcSessionDescriptionFactory& operator=(
+      const WebRtcSessionDescriptionFactory&) = delete;
 
   static void CopyCandidatesFromSessionDescription(
       const SessionDescriptionInterface* source_desc,
@@ -159,8 +161,6 @@ class WebRtcSessionDescriptionFactory : public rtc::MessageHandler,
 
   std::function<void(const rtc::scoped_refptr<rtc::RTCCertificate>&)>
       on_certificate_ready_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(WebRtcSessionDescriptionFactory);
 };
 }  // namespace webrtc
 

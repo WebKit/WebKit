@@ -15,6 +15,8 @@ if (is_android) {
   import("//build/config/mac/rules.gni")
 } else if (is_ios) {
   import("//build/config/ios/rules.gni")
+} else if (is_linux || is_chromeos) {
+  import("//build/config/linux/pkg_config.gni")
 }
 
 group("examples") {
@@ -67,7 +69,12 @@ rtc_library("read_auth_file") {
     "turnserver/read_auth_file.cc",
     "turnserver/read_auth_file.h",
   ]
-  deps = [ "../rtc_base" ]
+  deps = [
+    "../api:array_view",
+    "../rtc_base",
+    "../rtc_base:stringutils",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings:strings" ]
 }
 
 if (rtc_include_tests) {
@@ -89,7 +96,7 @@ if (is_android) {
     apk_name = "AppRTCMobile"
     android_manifest = "androidapp/AndroidManifest.xml"
     min_sdk_version = 21
-    target_sdk_version = 29
+    target_sdk_version = 31
 
     deps = [
       ":AppRTCMobile_javalib",
@@ -199,7 +206,7 @@ if (is_android) {
     apk_name = "AppRTCMobileTest"
     android_manifest = "androidtests/AndroidManifest.xml"
     min_sdk_version = 21
-    target_sdk_version = 21
+    target_sdk_version = 31
 
     sources = [
       "androidtests/src/org/appspot/apprtc/test/PeerConnectionClientTest.java",
@@ -482,6 +489,7 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
       deps = [
         "../api:libjingle_peerconnection_api",
         "../api:scoped_refptr",
+        "../api:sequence_checker",
         "../api/audio_codecs:builtin_audio_decoder_factory",
         "../api/audio_codecs:builtin_audio_encoder_factory",
         "../api/rtc_event_log:rtc_event_log_factory",
@@ -654,6 +662,18 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
 }
 
 if (is_linux || is_chromeos || is_win) {
+  if (is_linux || is_chromeos) {
+    pkg_config("gtk_config") {
+      packages = [
+        # Gtk requires gmodule, but it does not list it as a dependency in some
+        # misconfigured systems.
+        "gmodule-2.0",
+        "gthread-2.0",
+        "gtk+-3.0",
+      ]
+    }
+  }
+
   rtc_executable("peerconnection_client") {
     testonly = true
     sources = [
@@ -673,6 +693,8 @@ if (is_linux || is_chromeos || is_win) {
       "../api:scoped_refptr",
       "../api/audio:audio_mixer_api",
       "../api/audio_codecs:audio_codecs_api",
+      "../api/task_queue:pending_task_safety_flag",
+      "../api/units:time_delta",
       "../api/video:video_frame",
       "../api/video:video_rtp_headers",
       "../api/video_codecs:video_codecs_api",
@@ -680,7 +702,11 @@ if (is_linux || is_chromeos || is_win) {
       "../p2p:rtc_p2p",
       "../pc:video_track_source",
       "../rtc_base:checks",
+      "../rtc_base:logging",
+      "../rtc_base:macromagic",
       "../rtc_base:net_helpers",
+      "../rtc_base:refcount",
+      "../rtc_base:stringutils",
       "../rtc_base:threading",
       "../rtc_base/third_party/sigslot",
       "../system_wrappers:field_trial",
@@ -716,7 +742,7 @@ if (is_linux || is_chromeos || is_win) {
         "Xext",
         "Xrender",
       ]
-      deps += [ "//build/config/linux/gtk" ]
+      configs += [ ":gtk_config" ]
     }
 
     deps += [
@@ -733,9 +759,7 @@ if (is_linux || is_chromeos || is_win) {
       "../modules/audio_processing:api",
       "../modules/video_capture:video_capture_module",
       "../pc:libjingle_peerconnection",
-      "../pc:peerconnection",
       "../rtc_base",
-      "../rtc_base:rtc_base_approved",
       "../rtc_base:rtc_json",
       "../test:video_test_common",
       "//third_party/abseil-cpp/absl/flags:flag",
@@ -757,7 +781,7 @@ if (is_linux || is_chromeos || is_win) {
     ]
     deps = [
       "../rtc_base:checks",
-      "../rtc_base:rtc_base_approved",
+      "../rtc_base:stringutils",
       "../system_wrappers:field_trial",
       "../test:field_trial",
       "//third_party/abseil-cpp/absl/flags:flag",
@@ -775,10 +799,10 @@ if (is_linux || is_chromeos || is_win) {
       "../pc:rtc_pc",
       "../rtc_base",
       "../rtc_base:ip_address",
-      "../rtc_base:rtc_base_approved",
       "../rtc_base:socket_address",
       "../rtc_base:socket_server",
       "../rtc_base:threading",
+      "//third_party/abseil-cpp/absl/strings:strings",
     ]
   }
   rtc_executable("stunserver") {
@@ -789,7 +813,6 @@ if (is_linux || is_chromeos || is_win) {
       "../p2p:rtc_p2p",
       "../pc:rtc_pc",
       "../rtc_base",
-      "../rtc_base:rtc_base_approved",
       "../rtc_base:socket_address",
       "../rtc_base:socket_server",
       "../rtc_base:threading",
@@ -838,7 +861,6 @@ if (is_win || is_android) {
       "../modules/audio_processing:api",
       "../modules/video_capture:video_capture_module",
       "../pc:libjingle_peerconnection",
-      "../pc:peerconnection",
       "../pc:video_track_source",
       "../rtc_base",
       "../test:platform_video_capturer",
@@ -849,6 +871,7 @@ if (is_win || is_android) {
       deps += [
         "../modules/utility",
         "../sdk/android:libjingle_peerconnection_jni",
+        "../sdk/android:native_api_jni",
       ]
     }
   }
@@ -884,7 +907,7 @@ if (is_android) {
     ]
   }
 
-  junit_binary("android_examples_junit_tests") {
+  robolectric_binary("android_examples_junit_tests") {
     sources = [
       "androidjunit/src/org/appspot/apprtc/BluetoothManagerTest.java",
       "androidjunit/src/org/appspot/apprtc/DirectRTCClientTest.java",
@@ -894,7 +917,6 @@ if (is_android) {
     deps = [
       ":AppRTCMobile_javalib",
       "../sdk/android:peerconnection_java",
-      "//base:base_java_test_support",
       "//third_party/androidx:androidx_test_core_java",
       "//third_party/google-truth:google_truth_java",
     ]
@@ -916,9 +938,11 @@ if (!build_with_chromium) {
       "../p2p:rtc_p2p",
       "../rtc_base",
       "../rtc_base:checks",
-      "../rtc_base:rtc_base_approved",
+      "../rtc_base:logging",
       "../rtc_base:socket_address",
       "../rtc_base:threading",
+      "../rtc_base:timeutils",
+      "../test:scoped_key_value_config",
       "//third_party/abseil-cpp/absl/flags:flag",
       "//third_party/abseil-cpp/absl/flags:parse",
     ]

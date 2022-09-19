@@ -62,14 +62,8 @@ TEST_P(EchoRemoverMultiChannel, BasicApiCalls) {
     std::unique_ptr<RenderDelayBuffer> render_buffer(RenderDelayBuffer::Create(
         EchoCanceller3Config(), rate, num_render_channels));
 
-    std::vector<std::vector<std::vector<float>>> render(
-        NumBandsForRate(rate),
-        std::vector<std::vector<float>>(num_render_channels,
-                                        std::vector<float>(kBlockSize, 0.f)));
-    std::vector<std::vector<std::vector<float>>> capture(
-        NumBandsForRate(rate),
-        std::vector<std::vector<float>>(num_capture_channels,
-                                        std::vector<float>(kBlockSize, 0.f)));
+    Block render(NumBandsForRate(rate), num_render_channels);
+    Block capture(NumBandsForRate(rate), num_capture_channels);
     for (size_t k = 0; k < 100; ++k) {
       EchoPathVariability echo_path_variability(
           k % 3 == 0 ? true : false,
@@ -97,27 +91,6 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongSampleRate) {
                "");
 }
 
-// Verifies the check for the capture block size.
-TEST(EchoRemoverDeathTest, WrongCaptureBlockSize) {
-  absl::optional<DelayEstimate> delay_estimate;
-  for (auto rate : {16000, 32000, 48000}) {
-    SCOPED_TRACE(ProduceDebugText(rate));
-    std::unique_ptr<EchoRemover> remover(
-        EchoRemover::Create(EchoCanceller3Config(), rate, 1, 1));
-    std::unique_ptr<RenderDelayBuffer> render_buffer(
-        RenderDelayBuffer::Create(EchoCanceller3Config(), rate, 1));
-    std::vector<std::vector<std::vector<float>>> capture(
-        NumBandsForRate(rate), std::vector<std::vector<float>>(
-                                   1, std::vector<float>(kBlockSize - 1, 0.f)));
-    EchoPathVariability echo_path_variability(
-        false, EchoPathVariability::DelayAdjustment::kNone, false);
-    EXPECT_DEATH(remover->ProcessCapture(
-                     echo_path_variability, false, delay_estimate,
-                     render_buffer->GetRenderBuffer(), nullptr, &capture),
-                 "");
-  }
-}
-
 // Verifies the check for the number of capture bands.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH
 // tests on test bots has been fixed.c
@@ -129,10 +102,7 @@ TEST(EchoRemoverDeathTest, DISABLED_WrongCaptureNumBands) {
         EchoRemover::Create(EchoCanceller3Config(), rate, 1, 1));
     std::unique_ptr<RenderDelayBuffer> render_buffer(
         RenderDelayBuffer::Create(EchoCanceller3Config(), rate, 1));
-    std::vector<std::vector<std::vector<float>>> capture(
-        NumBandsForRate(rate == 48000 ? 16000 : rate + 16000),
-        std::vector<std::vector<float>>(1,
-                                        std::vector<float>(kBlockSize, 0.f)));
+    Block capture(NumBandsForRate(rate == 48000 ? 16000 : rate + 16000), 1);
     EchoPathVariability echo_path_variability(
         false, EchoPathVariability::DelayAdjustment::kNone, false);
     EXPECT_DEATH(remover->ProcessCapture(
@@ -167,14 +137,8 @@ TEST(EchoRemover, BasicEchoRemoval) {
   absl::optional<DelayEstimate> delay_estimate;
   for (size_t num_channels : {1, 2, 4}) {
     for (auto rate : {16000, 32000, 48000}) {
-      std::vector<std::vector<std::vector<float>>> x(
-          NumBandsForRate(rate),
-          std::vector<std::vector<float>>(num_channels,
-                                          std::vector<float>(kBlockSize, 0.f)));
-      std::vector<std::vector<std::vector<float>>> y(
-          NumBandsForRate(rate),
-          std::vector<std::vector<float>>(num_channels,
-                                          std::vector<float>(kBlockSize, 0.f)));
+      Block x(NumBandsForRate(rate), num_channels);
+      Block y(NumBandsForRate(rate), num_channels);
       EchoPathVariability echo_path_variability(
           false, EchoPathVariability::DelayAdjustment::kNone, false);
       for (size_t delay_samples : {0, 64, 150, 200, 301}) {
@@ -187,13 +151,13 @@ TEST(EchoRemover, BasicEchoRemoval) {
         render_buffer->AlignFromDelay(delay_samples / kBlockSize);
 
         std::vector<std::vector<std::unique_ptr<DelayBuffer<float>>>>
-            delay_buffers(x.size());
+            delay_buffers(x.NumBands());
         for (size_t band = 0; band < delay_buffers.size(); ++band) {
-          delay_buffers[band].resize(x[0].size());
+          delay_buffers[band].resize(x.NumChannels());
         }
 
-        for (size_t band = 0; band < x.size(); ++band) {
-          for (size_t channel = 0; channel < x[0].size(); ++channel) {
+        for (int band = 0; band < x.NumBands(); ++band) {
+          for (int channel = 0; channel < x.NumChannels(); ++channel) {
             delay_buffers[band][channel].reset(
                 new DelayBuffer<float>(delay_samples));
           }
@@ -204,22 +168,23 @@ TEST(EchoRemover, BasicEchoRemoval) {
         for (int k = 0; k < kNumBlocksToProcess; ++k) {
           const bool silence = k < 100 || (k % 100 >= 10);
 
-          for (size_t band = 0; band < x.size(); ++band) {
-            for (size_t channel = 0; channel < x[0].size(); ++channel) {
+          for (int band = 0; band < x.NumBands(); ++band) {
+            for (int channel = 0; channel < x.NumChannels(); ++channel) {
               if (silence) {
-                std::fill(x[band][channel].begin(), x[band][channel].end(),
-                          0.f);
+                std::fill(x.begin(band, channel), x.end(band, channel), 0.f);
               } else {
-                RandomizeSampleVector(&random_generator, x[band][channel]);
+                RandomizeSampleVector(&random_generator, x.View(band, channel));
               }
-              delay_buffers[band][channel]->Delay(x[band][channel],
-                                                  y[band][channel]);
+              delay_buffers[band][channel]->Delay(x.View(band, channel),
+                                                  y.View(band, channel));
             }
           }
 
           if (k > kNumBlocksToProcess / 2) {
-            input_energy = std::inner_product(y[0][0].begin(), y[0][0].end(),
-                                              y[0][0].begin(), input_energy);
+            input_energy = std::inner_product(
+                y.begin(/*band=*/0, /*channel=*/0),
+                y.end(/*band=*/0, /*channel=*/0),
+                y.begin(/*band=*/0, /*channel=*/0), input_energy);
           }
 
           render_buffer->Insert(x);
@@ -230,8 +195,10 @@ TEST(EchoRemover, BasicEchoRemoval) {
                                   &y);
 
           if (k > kNumBlocksToProcess / 2) {
-            output_energy = std::inner_product(y[0][0].begin(), y[0][0].end(),
-                                               y[0][0].begin(), output_energy);
+            output_energy = std::inner_product(
+                y.begin(/*band=*/0, /*channel=*/0),
+                y.end(/*band=*/0, /*channel=*/0),
+                y.begin(/*band=*/0, /*channel=*/0), output_energy);
           }
         }
         EXPECT_GT(input_energy, 10.f * output_energy);

@@ -12,6 +12,8 @@
 
 #include <stddef.h>
 
+#include "absl/strings/string_view.h"
+#include "api/array_view.h"
 #include "rtc_base/string_encode.h"
 
 namespace webrtc_examples {
@@ -23,8 +25,8 @@ std::map<std::string, std::string> ReadAuthFile(std::istream* s) {
     if (sep == std::string::npos)
       continue;
     char buf[32];
-    size_t len = rtc::hex_decode(buf, sizeof(buf), line.data() + sep + 1,
-                                 line.size() - sep - 1);
+    size_t len = rtc::hex_decode(rtc::ArrayView<char>(buf),
+                                 absl::string_view(line).substr(sep + 1));
     if (len > 0) {
       name_to_key.emplace(line.substr(0, sep), std::string(buf, len));
     }

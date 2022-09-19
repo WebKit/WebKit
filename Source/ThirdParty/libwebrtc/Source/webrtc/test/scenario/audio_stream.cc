@@ -175,7 +175,7 @@ ReceiveAudioStream::ReceiveAudioStream(
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
     Transport* feedback_transport)
     : receiver_(receiver), config_(config) {
-  AudioReceiveStream::Config recv_config;
+  AudioReceiveStreamInterface::Config recv_config;
   recv_config.rtp.local_ssrc = receiver_->GetNextAudioLocalSsrc();
   recv_config.rtcp_send_transport = feedback_transport;
   recv_config.rtp.remote_ssrc = send_stream->ssrc_;
@@ -210,8 +210,8 @@ void ReceiveAudioStream::Stop() {
   receiver_->SendTask([&] { receive_stream_->Stop(); });
 }
 
-AudioReceiveStream::Stats ReceiveAudioStream::GetStats() const {
-  AudioReceiveStream::Stats result;
+AudioReceiveStreamInterface::Stats ReceiveAudioStream::GetStats() const {
+  AudioReceiveStreamInterface::Stats result;
   receiver_->SendTask([&] {
     result = receive_stream_->GetStats(/*get_and_clear_legacy_stats=*/true);
   });

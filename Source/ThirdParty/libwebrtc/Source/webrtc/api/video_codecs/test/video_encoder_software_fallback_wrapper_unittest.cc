@@ -71,13 +71,6 @@ VideoEncoder::EncoderInfo GetEncoderInfoWithHardwareAccelerated(
   return info;
 }
 
-VideoEncoder::EncoderInfo GetEncoderInfoWithInternalSource(
-    bool internal_source) {
-  VideoEncoder::EncoderInfo info;
-  info.has_internal_source = internal_source;
-  return info;
-}
-
 class FakeEncodedImageCallback : public EncodedImageCallback {
  public:
   Result OnEncodedImage(const EncodedImage& encoded_image,
@@ -210,7 +203,7 @@ void VideoEncoderSoftwareFallbackWrapperTestBase::EncodeFrame(
     int expected_ret) {
   rtc::scoped_refptr<I420Buffer> buffer =
       I420Buffer::Create(codec_.width, codec_.height);
-  I420Buffer::SetBlack(buffer);
+  I420Buffer::SetBlack(buffer.get());
   std::vector<VideoFrameType> types(1, VideoFrameType::kVideoFrameKey);
 
   frame_ =
@@ -515,7 +508,7 @@ class ForcedFallbackTest : public VideoEncoderSoftwareFallbackWrapperTestBase {
     codec_.height = kHeight;
     codec_.VP8()->numberOfTemporalLayers = 1;
     codec_.VP8()->automaticResizeOn = true;
-    codec_.VP8()->frameDroppingOn = true;
+    codec_.SetFrameDropEnabled(true);
     rate_allocator_.reset(new SimulcastRateAllocator(codec_));
   }
 
@@ -803,35 +796,6 @@ TEST(SoftwareFallbackEncoderTest, ReportsHardwareAccelerated) {
   EXPECT_FALSE(wrapper->GetEncoderInfo().is_hardware_accelerated);
 }
 
-TEST(SoftwareFallbackEncoderTest, ReportsInternalSource) {
-  auto* sw_encoder = new ::testing::NiceMock<MockVideoEncoder>();
-  auto* hw_encoder = new ::testing::NiceMock<MockVideoEncoder>();
-  EXPECT_CALL(*sw_encoder, GetEncoderInfo())
-      .WillRepeatedly(Return(GetEncoderInfoWithInternalSource(false)));
-  EXPECT_CALL(*hw_encoder, GetEncoderInfo())
-      .WillRepeatedly(Return(GetEncoderInfoWithInternalSource(true)));
-
-  std::unique_ptr<VideoEncoder> wrapper =
-      CreateVideoEncoderSoftwareFallbackWrapper(
-          std::unique_ptr<VideoEncoder>(sw_encoder),
-          std::unique_ptr<VideoEncoder>(hw_encoder));
-  EXPECT_TRUE(wrapper->GetEncoderInfo().has_internal_source);
-
-  VideoCodec codec_ = {};
-  codec_.width = 100;
-  codec_.height = 100;
-  wrapper->InitEncode(&codec_, kSettings);
-
-  // Trigger fallback to software.
-  EXPECT_CALL(*hw_encoder, Encode)
-      .WillOnce(Return(WEBRTC_VIDEO_CODEC_FALLBACK_SOFTWARE));
-  VideoFrame frame = VideoFrame::Builder()
-                         .set_video_frame_buffer(I420Buffer::Create(100, 100))
-                         .build();
-  wrapper->Encode(frame, nullptr);
-  EXPECT_FALSE(wrapper->GetEncoderInfo().has_internal_source);
-}
-
 class PreferTemporalLayersFallbackTest : public ::testing::Test {
  public:
   PreferTemporalLayersFallbackTest() {}
@@ -982,7 +946,7 @@ TEST_F(PreferTemporalLayersFallbackTest, PrimesEncoderOnSwitch) {
   wrapper_->RegisterEncodeCompleteCallback(&callback1);
 
   EXPECT_CALL(*hw_, SetFecControllerOverride(&fec_controller_override1));
-  EXPECT_CALL(*sw_, SetFecControllerOverride).Times(0);
+  EXPECT_CALL(*sw_, SetFecControllerOverride).Times(1);
   wrapper_->SetFecControllerOverride(&fec_controller_override1);
 
   EXPECT_CALL(*hw_, SetRates(rate_params1));
@@ -1007,7 +971,7 @@ TEST_F(PreferTemporalLayersFallbackTest, PrimesEncoderOnSwitch) {
   EXPECT_CALL(*sw_, RegisterEncodeCompleteCallback(&callback1));
   EXPECT_CALL(*hw_, RegisterEncodeCompleteCallback).Times(0);
 
-  EXPECT_CALL(*sw_, SetFecControllerOverride(&fec_controller_override1));
+  EXPECT_CALL(*sw_, SetFecControllerOverride).Times(0);
   EXPECT_CALL(*hw_, SetFecControllerOverride).Times(0);
 
   // Rate control parameters are cleared on InitEncode.
@@ -1041,7 +1005,7 @@ TEST_F(PreferTemporalLayersFallbackTest, PrimesEncoderOnSwitch) {
   wrapper_->RegisterEncodeCompleteCallback(&callback2);
 
   EXPECT_CALL(*sw_, SetFecControllerOverride(&fec_controller_override2));
-  EXPECT_CALL(*hw_, SetFecControllerOverride).Times(0);
+  EXPECT_CALL(*hw_, SetFecControllerOverride).Times(1);
   wrapper_->SetFecControllerOverride(&fec_controller_override2);
 
   EXPECT_CALL(*sw_, SetRates(rate_params2));
@@ -1066,7 +1030,7 @@ TEST_F(PreferTemporalLayersFallbackTest, PrimesEncoderOnSwitch) {
   EXPECT_CALL(*hw_, RegisterEncodeCompleteCallback(&callback2));
   EXPECT_CALL(*sw_, RegisterEncodeCompleteCallback).Times(0);
 
-  EXPECT_CALL(*hw_, SetFecControllerOverride(&fec_controller_override2));
+  EXPECT_CALL(*hw_, SetFecControllerOverride).Times(0);
   EXPECT_CALL(*sw_, SetFecControllerOverride).Times(0);
 
   // Rate control parameters are cleared on InitEncode.

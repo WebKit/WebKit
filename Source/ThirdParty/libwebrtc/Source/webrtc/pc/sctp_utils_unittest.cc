@@ -12,6 +12,8 @@
 
 #include <stdint.h>
 
+#include "absl/types/optional.h"
+#include "api/priority.h"
 #include "rtc_base/byte_buffer.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "test/gtest.h"

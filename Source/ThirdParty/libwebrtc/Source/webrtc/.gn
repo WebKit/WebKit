@@ -24,7 +24,12 @@ secondary_source = "//build/secondary/"
 # matching these patterns (see "gn help label_pattern" for format) will not have
 # their includes checked for proper dependencies when you run either
 # "gn check" or "gn gen --check".
-no_check_targets = [ "//third_party/icu/*" ]
+no_check_targets = [
+  "//third_party/icu/*",
+
+  # TODO(crbug.com/1151236) Remove once fixed.
+  "//base/allocator/partition_allocator:partition_alloc",
+]
 
 # These are the list of GN files that run exec_script. This whitelist exists
 # to force additional review for new uses of exec_script, which is strongly
@@ -57,4 +62,10 @@ default_args = {
   enable_libaom = true
 
   gtest_enable_absl_printers = true
+
+  # Differently from Chromium, WebRTC still support SDK 21.
+  default_min_sdk_version = 21
+
+  # Prevent jsoncpp to pass -Wno-deprecated-declarations to users
+  jsoncpp_no_deprecated_declarations = false
 }

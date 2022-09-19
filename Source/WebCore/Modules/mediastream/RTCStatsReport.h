@@ -201,6 +201,7 @@ public:
         MediaStreamTrackStats() { type = RTCStatsReport::Type::Track; }
 
         String trackIdentifier;
+        String kind;
         std::optional<bool> remoteSource;
         std::optional<bool> ended;
         std::optional<bool> detached;

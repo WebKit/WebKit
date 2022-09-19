@@ -23,6 +23,7 @@ using ::testing::Matches;
 using ::testing::MatchResultListener;
 using ::testing::Pointee;
 using ::testing::Property;
+using ::testing::SizeIs;
 using ::testing::UnorderedElementsAreArray;
 
 namespace webrtc {
@@ -700,6 +701,19 @@ TEST_F(RtpVp9RefFinderTest, SpatialIndex) {
               Contains(Pointee(Property(&EncodedFrame::SpatialIndex, 1))));
   EXPECT_THAT(frames_,
               Contains(Pointee(Property(&EncodedFrame::SpatialIndex, 2))));
+}
+
+TEST_F(RtpVp9RefFinderTest, StashedFramesDoNotWrapTl0Backwards) {
+  GofInfoVP9 ss;
+  ss.SetGofInfoVP9(kTemporalStructureMode1);
+
+  Insert(Frame().Pid(0).SidAndTid(0, 0).Tl0(0));
+  EXPECT_THAT(frames_, SizeIs(0));
+
+  Insert(Frame().Pid(128).SidAndTid(0, 0).Tl0(128).AsKeyFrame().Gof(&ss));
+  EXPECT_THAT(frames_, SizeIs(1));
+  Insert(Frame().Pid(129).SidAndTid(0, 0).Tl0(129));
+  EXPECT_THAT(frames_, SizeIs(2));
 }
 
 }  // namespace webrtc

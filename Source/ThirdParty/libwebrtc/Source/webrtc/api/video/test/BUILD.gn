@@ -12,6 +12,9 @@ rtc_library("rtc_api_video_unittests") {
   testonly = true
   sources = [
     "color_space_unittest.cc",
+    "i210_buffer_unittest.cc",
+    "i422_buffer_unittest.cc",
+    "i444_buffer_unittest.cc",
     "nv12_buffer_unittest.cc",
     "video_adaptation_counters_unittest.cc",
     "video_bitrate_allocation_unittest.cc",
@@ -20,6 +23,7 @@ rtc_library("rtc_api_video_unittests") {
     "..:video_adaptation",
     "..:video_bitrate_allocation",
     "..:video_frame",
+    "..:video_frame_i010",
     "..:video_rtp_headers",
     "../../../test:frame_utils",
     "../../../test:test_support",
@@ -34,6 +38,18 @@ rtc_source_set("mock_recordable_encoded_frame") {
 
   deps = [
     "..:recordable_encoded_frame",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_source_set("video_frame_matchers") {
+  testonly = true
+  visibility = [ "*" ]
+  sources = [ "video_frame_matchers.h" ]
+
+  deps = [
+    "..:video_frame",
+    "../..:rtp_packet_info",
     "../../../test:test_support",
   ]
 }

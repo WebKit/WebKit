@@ -47,9 +47,6 @@ bool RtcpPacketParser::Parse(const void* data, size_t length) {
       case rtcp::ExtendedReports::kPacketType:
         xr_.Parse(header, &sender_ssrc_);
         break;
-      case rtcp::ExtendedJitterReport::kPacketType:
-        ij_.Parse(header);
-        break;
       case rtcp::Psfb::kPacketType:
         switch (header.fmt()) {
           case rtcp::Fir::kFeedbackMessageType:

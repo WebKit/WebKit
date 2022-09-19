@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/adaptation/resource.h"
 #include "api/scoped_refptr.h"
@@ -23,9 +24,9 @@ namespace webrtc {
 // Fake resource used for testing.
 class FakeResource : public Resource {
  public:
-  static rtc::scoped_refptr<FakeResource> Create(std::string name);
+  static rtc::scoped_refptr<FakeResource> Create(absl::string_view name);
 
-  explicit FakeResource(std::string name);
+  explicit FakeResource(absl::string_view name);
   ~FakeResource() override;
 
   void SetUsageState(ResourceUsageState usage_state);

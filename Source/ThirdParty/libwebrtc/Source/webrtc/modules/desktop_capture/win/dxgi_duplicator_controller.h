@@ -41,6 +41,10 @@ namespace webrtc {
 // but a later Duplicate() returns false, this usually means the display mode is
 // changing. Consumers should retry after a while. (Typically 50 milliseconds,
 // but according to hardware performance, this time may vary.)
+// The underyling DxgiOutputDuplicators may take an additional reference on the
+// frame passed in to the Duplicate methods so that they can guarantee delivery
+// of new frames when requested; since if there have been no updates to the
+// surface, they may be unable to capture a frame.
 class RTC_EXPORT DxgiDuplicatorController {
  public:
   using Context = DxgiFrameContext;
@@ -89,7 +93,8 @@ class RTC_EXPORT DxgiDuplicatorController {
   // function returns false, the information in `info` may not accurate.
   bool RetrieveD3dInfo(D3dInfo* info);
 
-  // Captures current screen and writes into `frame`.
+  // Captures current screen and writes into `frame`. May retain a reference to
+  // `frame`'s underlying |SharedDesktopFrame|.
   // TODO(zijiehe): Windows cannot guarantee the frames returned by each
   // IDXGIOutputDuplication are synchronized. But we are using a totally
   // different threading model than the way Windows suggested, it's hard to
@@ -98,7 +103,8 @@ class RTC_EXPORT DxgiDuplicatorController {
 
   // Captures one monitor and writes into target. `monitor_id` should >= 0. If
   // `monitor_id` is greater than the total screen count of all the Duplicators,
-  // this function returns false.
+  // this function returns false. May retain a reference to `frame`'s underlying
+  // |SharedDesktopFrame|.
   Result DuplicateMonitor(DxgiFrame* frame, int monitor_id);
 
   // Returns dpi of current system. Returns an empty DesktopVector if system

@@ -11,9 +11,9 @@
 #include <algorithm>
 
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "modules/rtp_rtcp/include/ulpfec_receiver.h"
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "modules/rtp_rtcp/source/ulpfec_receiver.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
 namespace webrtc {
@@ -36,8 +36,8 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   uint16_t media_seq_num = ByteReader<uint16_t>::ReadLittleEndian(data + 10);
 
   DummyCallback callback;
-  std::unique_ptr<UlpfecReceiver> receiver(
-      UlpfecReceiver::Create(ulpfec_ssrc, &callback, {}));
+  UlpfecReceiver receiver(ulpfec_ssrc, 0, &callback, {},
+                          Clock::GetRealTimeClock());
 
   test::FuzzDataHelper fuzz_data(rtc::MakeArrayView(data, size));
   while (fuzz_data.CanReadBytes(kMinDataNeeded)) {
@@ -63,10 +63,10 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       parsed_packet.SetSsrc(media_ssrc);
     }
 
-    receiver->AddReceivedRedPacket(parsed_packet, 0);
+    receiver.AddReceivedRedPacket(parsed_packet);
   }
 
-  receiver->ProcessReceivedFec();
+  receiver.ProcessReceivedFec();
 }
 
 }  // namespace webrtc

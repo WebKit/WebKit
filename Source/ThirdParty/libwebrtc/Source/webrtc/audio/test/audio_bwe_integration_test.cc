@@ -12,7 +12,7 @@
 
 #include <memory>
 
-#include "api/task_queue/queued_task.h"
+#include "absl/functional/any_invocable.h"
 #include "api/task_queue/task_queue_base.h"
 #include "call/fake_network_pipe.h"
 #include "call/simulated_network.h"
@@ -35,7 +35,7 @@ enum : int {  // The first valid value is 1.
 constexpr int kExtraProcessTimeMs = 1000;
 }  // namespace
 
-AudioBweTest::AudioBweTest() : EndToEndTest(CallTest::kDefaultTimeoutMs) {}
+AudioBweTest::AudioBweTest() : EndToEndTest(CallTest::kDefaultTimeout) {}
 
 size_t AudioBweTest::GetNumVideoStreams() const {
   return 0;
@@ -84,30 +84,24 @@ void AudioBweTest::PerformTest() {
   SleepMs(GetNetworkPipeConfig().queue_delay_ms + kExtraProcessTimeMs);
 }
 
-class StatsPollTask : public QueuedTask {
- public:
-  explicit StatsPollTask(Call* sender_call) : sender_call_(sender_call) {}
-
- private:
-  bool Run() override {
-    RTC_CHECK(sender_call_);
-    Call::Stats call_stats = sender_call_->GetStats();
+absl::AnyInvocable<void() &&> StatsPollTask(Call* sender_call) {
+  RTC_CHECK(sender_call);
+  return [sender_call] {
+    Call::Stats call_stats = sender_call->GetStats();
     EXPECT_GT(call_stats.send_bandwidth_bps, 25000);
-    TaskQueueBase::Current()->PostDelayedTask(std::unique_ptr<QueuedTask>(this),
-                                              100);
-    return false;
-  }
-  Call* sender_call_;
-};
+    TaskQueueBase::Current()->PostDelayedTask(StatsPollTask(sender_call),
+                                              TimeDelta::Millis(100));
+  };
+}
 
 class NoBandwidthDropAfterDtx : public AudioBweTest {
  public:
   NoBandwidthDropAfterDtx()
       : sender_call_(nullptr), stats_poller_("stats poller task queue") {}
 
-  void ModifyAudioConfigs(
-      AudioSendStream::Config* send_config,
-      std::vector<AudioReceiveStream::Config>* receive_configs) override {
+  void ModifyAudioConfigs(AudioSendStream::Config* send_config,
+                          std::vector<AudioReceiveStreamInterface::Config>*
+                              receive_configs) override {
     send_config->send_codec_spec = AudioSendStream::Config::SendCodecSpec(
         test::CallTest::kAudioSendPayloadType,
         {"OPUS",
@@ -120,7 +114,7 @@ class NoBandwidthDropAfterDtx : public AudioBweTest {
     send_config->rtp.extensions.push_back(
         RtpExtension(RtpExtension::kTransportSequenceNumberUri,
                      kTransportSequenceNumberExtensionId));
-    for (AudioReceiveStream::Config& recv_config : *receive_configs) {
+    for (AudioReceiveStreamInterface::Config& recv_config : *receive_configs) {
       recv_config.rtp.transport_cc = true;
       recv_config.rtp.extensions = send_config->rtp.extensions;
       recv_config.rtp.remote_ssrc = send_config->rtp.ssrc;
@@ -144,8 +138,8 @@ class NoBandwidthDropAfterDtx : public AudioBweTest {
   }
 
   void PerformTest() override {
-    stats_poller_.PostDelayedTask(std::make_unique<StatsPollTask>(sender_call_),
-                                  100);
+    stats_poller_.PostDelayedTask(StatsPollTask(sender_call_),
+                                  TimeDelta::Millis(100));
     sender_call_->OnAudioTransportOverheadChanged(0);
     AudioBweTest::PerformTest();
   }

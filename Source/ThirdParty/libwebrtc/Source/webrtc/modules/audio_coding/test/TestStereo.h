@@ -31,11 +31,11 @@ class TestPackStereo : public AudioPacketizationCallback {
 
   void RegisterReceiverACM(AudioCodingModule* acm);
 
-  int32_t SendData(const AudioFrameType frame_type,
-                   const uint8_t payload_type,
-                   const uint32_t timestamp,
+  int32_t SendData(AudioFrameType frame_type,
+                   uint8_t payload_type,
+                   uint32_t timestamp,
                    const uint8_t* payload_data,
-                   const size_t payload_size,
+                   size_t payload_size,
                    int64_t absolute_capture_timestamp_ms) override;
 
   uint16_t payload_size();

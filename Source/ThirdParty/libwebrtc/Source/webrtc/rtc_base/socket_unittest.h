@@ -11,6 +11,7 @@
 #ifndef RTC_BASE_SOCKET_UNITTEST_H_
 #define RTC_BASE_SOCKET_UNITTEST_H_
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/thread.h"
 
@@ -74,7 +75,7 @@ class SocketTest : public ::testing::Test {
  private:
   void ConnectInternal(const IPAddress& loopback);
   void ConnectWithDnsLookupInternal(const IPAddress& loopback,
-                                    const std::string& host);
+                                    absl::string_view host);
   void ConnectFailInternal(const IPAddress& loopback);
 
   void ConnectWithDnsLookupFailInternal(const IPAddress& loopback);

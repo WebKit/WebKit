@@ -61,7 +61,7 @@
   NSInteger yOrigin = nextYOrigin_;
   NSRect windowFrame = NSMakeRect(xOrigin, yOrigin, width_, height_);
   window_ = [[NSWindow alloc] initWithContentRect:windowFrame
-                                        styleMask:NSTitledWindowMask
+                                        styleMask:NSWindowStyleMaskTitled
                                           backing:NSBackingStoreBuffered
                                             defer:NO];
 

@@ -44,11 +44,6 @@ TaskQueueFactory* RealTimeController::GetTaskQueueFactory() {
   return task_queue_factory_.get();
 }
 
-std::unique_ptr<ProcessThread> RealTimeController::CreateProcessThread(
-    const char* thread_name) {
-  return ProcessThread::Create(thread_name);
-}
-
 std::unique_ptr<rtc::Thread> RealTimeController::CreateThread(
     const std::string& name,
     std::unique_ptr<rtc::SocketServer> socket_server) {

@@ -25,6 +25,26 @@
 
 namespace webrtc {
 
+namespace {
+
+constexpr DWORD kInvalidSessionId = 0xFFFFFFFF;
+
+DWORD GetCurrentSessionId() {
+  DWORD session_id = kInvalidSessionId;
+  if (!::ProcessIdToSessionId(::GetCurrentProcessId(), &session_id)) {
+    RTC_LOG(LS_WARNING)
+        << "Failed to retrieve current session Id, current binary "
+           "may not have required priviledge.";
+  }
+  return session_id;
+}
+
+bool IsConsoleSession() {
+  return WTSGetActiveConsoleSessionId() == GetCurrentSessionId();
+}
+
+}  // namespace
+
 // static
 std::string DxgiDuplicatorController::ResultName(
     DxgiDuplicatorController::Result result) {
@@ -57,14 +77,8 @@ DxgiDuplicatorController::Instance() {
 
 // static
 bool DxgiDuplicatorController::IsCurrentSessionSupported() {
-  DWORD session_id = 0;
-  if (!::ProcessIdToSessionId(::GetCurrentProcessId(), &session_id)) {
-    RTC_LOG(LS_WARNING)
-        << "Failed to retrieve current session Id, current binary "
-           "may not have required priviledge.";
-    return false;
-  }
-  return session_id != 0;
+  DWORD current_session_id = GetCurrentSessionId();
+  return current_session_id != kInvalidSessionId && current_session_id != 0;
 }
 
 DxgiDuplicatorController::DxgiDuplicatorController() : refcount_(0) {}
@@ -423,15 +437,28 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
   // On a modern system, the FPS / monitor refresh rate is usually larger than
   // or equal to 60. So 17 milliseconds is enough to capture at least one frame.
   const int64_t ms_per_frame = 17;
-  // Skips the first frame to ensure a full frame refresh has happened before
-  // this function returns.
-  const int64_t frames_to_skip = 1;
+  // Skip frames to ensure a full frame refresh has occurred and the DXGI
+  // machinery is producing frames before this function returns.
+  int64_t frames_to_skip = 1;
   // The total time out milliseconds for this function. If we cannot get enough
   // frames during this time interval, this function returns false, and cause
   // the DXGI components to be reinitialized. This usually should not happen
   // unless the system is switching display mode when this function is being
   // called. 500 milliseconds should be enough for ~30 frames.
   const int64_t timeout_ms = 500;
+
+  if (GetNumFramesCaptured() == 0 && !IsConsoleSession()) {
+    // When capturing a console session, waiting for a single frame is
+    // sufficient to ensure that DXGI output duplication is working. When the
+    // session is not attached to the console, it has been observed that DXGI
+    // may produce up to 4 frames (typically 1-2 though) before stopping. When
+    // this condition occurs, no errors are returned from the output duplication
+    // API, it simply appears that nothing is changing on the screen. Thus for
+    // detached sessions, we need to capture a few extra frames before we can be
+    // confident that output duplication was initialized properly.
+    frames_to_skip = 5;
+  }
+
   if (GetNumFramesCaptured() >= frames_to_skip) {
     return true;
   }
@@ -450,17 +477,16 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
   }
 
   const int64_t start_ms = rtc::TimeMillis();
-  int64_t last_frame_start_ms = 0;
   while (GetNumFramesCaptured() < frames_to_skip) {
-    if (GetNumFramesCaptured() > 0) {
-      // Sleep `ms_per_frame` before capturing next frame to ensure the screen
-      // has been updated by the video adapter.
-      webrtc::SleepMs(ms_per_frame - (rtc::TimeMillis() - last_frame_start_ms));
-    }
-    last_frame_start_ms = rtc::TimeMillis();
     if (!DoDuplicateAll(context, shared_frame)) {
       return false;
     }
+
+    // Calling DoDuplicateAll() may change the number of frames captured.
+    if (GetNumFramesCaptured() >= frames_to_skip) {
+      break;
+    }
+
     if (rtc::TimeMillis() - start_ms > timeout_ms) {
       RTC_LOG(LS_ERROR) << "Failed to capture " << frames_to_skip
                         << " frames "
@@ -468,6 +494,10 @@ bool DxgiDuplicatorController::EnsureFrameCaptured(Context* context,
                         << timeout_ms << " milliseconds.";
       return false;
     }
+
+    // Sleep `ms_per_frame` before attempting to capture the next frame to
+    // ensure the video adapter has time to update the screen.
+    webrtc::SleepMs(ms_per_frame);
   }
   return true;
 }

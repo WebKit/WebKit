@@ -46,9 +46,8 @@ void StartIceSignalingForRoute(PeerScenarioClient* caller,
       [=](const IceCandidateInterface* candidate) {
         IceMessage msg(candidate);
         send_route->NetworkDelayedAction(kIcePacketSize, [callee, msg]() {
-          callee->thread()->PostTask(RTC_FROM_HERE, [callee, msg]() {
-            callee->AddIceCandidate(msg.AsCandidate());
-          });
+          callee->thread()->PostTask(
+              [callee, msg]() { callee->AddIceCandidate(msg.AsCandidate()); });
         });
       });
 }

@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "absl/strings/string_view.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
 #include "rtc_base/checks.h"
 
@@ -128,7 +129,6 @@ int64_t StreamGenerator::GenerateFrame(std::vector<PacketResult>* packets,
   auto it =
       std::min_element(streams_.begin(), streams_.end(), RtpStream::Compare);
   (*it)->GenerateFrame(time_now_us, packets);
-  int i = 0;
   for (PacketResult& packet : *packets) {
     int capacity_bpus = capacity_ / 1000;
     int64_t required_network_time_us =
@@ -138,15 +138,17 @@ int64_t StreamGenerator::GenerateFrame(std::vector<PacketResult>* packets,
         std::max(time_now_us + required_network_time_us,
                  prev_arrival_time_us_ + required_network_time_us);
     packet.receive_time = Timestamp::Micros(prev_arrival_time_us_);
-    ++i;
   }
   it = std::min_element(streams_.begin(), streams_.end(), RtpStream::Compare);
   return std::max((*it)->next_rtp_time(), time_now_us);
 }
 }  // namespace test
 
-DelayBasedBweTest::DelayBasedBweTest()
-    : field_trial(std::make_unique<test::ScopedFieldTrials>(GetParam())),
+DelayBasedBweTest::DelayBasedBweTest() : DelayBasedBweTest("") {}
+
+DelayBasedBweTest::DelayBasedBweTest(absl::string_view field_trial_string)
+    : field_trial(
+          std::make_unique<test::ScopedFieldTrials>(field_trial_string)),
       clock_(100000000),
       acknowledged_bitrate_estimator_(
           AcknowledgedBitrateEstimatorInterface::Create(&field_trial_config_)),
@@ -178,10 +180,17 @@ void DelayBasedBweTest::IncomingFeedback(int64_t arrival_time_ms,
                                          size_t payload_size,
                                          const PacedPacketInfo& pacing_info) {
   RTC_CHECK_GE(arrival_time_ms + arrival_time_offset_ms_, 0);
+  IncomingFeedback(Timestamp::Millis(arrival_time_ms + arrival_time_offset_ms_),
+                   Timestamp::Millis(send_time_ms), payload_size, pacing_info);
+}
+
+void DelayBasedBweTest::IncomingFeedback(Timestamp receive_time,
+                                         Timestamp send_time,
+                                         size_t payload_size,
+                                         const PacedPacketInfo& pacing_info) {
   PacketResult packet;
-  packet.receive_time =
-      Timestamp::Millis(arrival_time_ms + arrival_time_offset_ms_);
-  packet.sent_packet.send_time = Timestamp::Millis(send_time_ms);
+  packet.receive_time = receive_time;
+  packet.sent_packet.send_time = send_time;
   packet.sent_packet.size = DataSize::Bytes(payload_size);
   packet.sent_packet.pacing_info = pacing_info;
   if (packet.sent_packet.pacing_info.probe_cluster_id !=

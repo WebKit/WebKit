@@ -19,8 +19,9 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/message_handler.h"
 #ifdef OPENSSL_IS_BORINGSSL
 #include "rtc_base/boringssl_identity.h"
 #else
@@ -36,8 +37,15 @@
 
 namespace rtc {
 
-class OpenSSLAdapter final : public SSLAdapter,
-                             public MessageHandlerAutoCleanup {
+namespace webrtc_openssl_adapter_internal {
+
+// Local definition, since absl::StrJoin is not allow-listed. Declared in header
+// file only for unittests.
+std::string StrJoin(const std::vector<std::string>& list, char delimiter);
+
+}  // namespace webrtc_openssl_adapter_internal
+
+class OpenSSLAdapter final : public SSLAdapter {
  public:
   static bool InitializeSSL();
   static bool CleanupSSL();
@@ -60,8 +68,7 @@ class OpenSSLAdapter final : public SSLAdapter,
   void SetCertVerifier(SSLCertificateVerifier* ssl_cert_verifier) override;
   void SetIdentity(std::unique_ptr<SSLIdentity> identity) override;
   void SetRole(SSLRole role) override;
-  Socket* Accept(SocketAddress* paddr) override;
-  int StartSSL(const char* hostname) override;
+  int StartSSL(absl::string_view hostname) override;
   int Send(const void* pv, size_t cb) override;
   int SendTo(const void* pv, size_t cb, const SocketAddress& addr) override;
   int Recv(void* pv, size_t cb, int64_t* timestamp) override;
@@ -106,18 +113,16 @@ class OpenSSLAdapter final : public SSLAdapter,
     SSL_ERROR
   };
 
-  enum { MSG_TIMEOUT };
-
   int BeginSSL();
   int ContinueSSL();
-  void Error(const char* context, int err, bool signal = true);
+  void Error(absl::string_view context, int err, bool signal = true);
   void Cleanup();
+  void OnTimeout();
 
   // Return value and arguments have the same meanings as for Send; `error` is
   // an output parameter filled with the result of SSL_get_error.
   int DoSslWrite(const void* pv, size_t cb, int* error);
-  void OnMessage(Message* msg) override;
-  bool SSLPostConnectionCheck(SSL* ssl, const std::string& host);
+  bool SSLPostConnectionCheck(SSL* ssl, absl::string_view host);
 
 #if !defined(NDEBUG)
   // In debug builds, logs info about the state of the SSL connection.
@@ -177,6 +182,8 @@ class OpenSSLAdapter final : public SSLAdapter,
   std::vector<std::string> elliptic_curves_;
   // Holds the result of the call to run of the ssl_cert_verify_->Verify()
   bool custom_cert_verifier_status_;
+  // Flag to cancel pending timeout task.
+  webrtc::ScopedTaskSafety timer_;
 };
 
 // The OpenSSLAdapterFactory is responsbile for creating multiple new
@@ -191,10 +198,21 @@ class OpenSSLAdapterFactory : public SSLAdapterFactory {
   // the first adapter is created with the factory. If it is called after it
   // will DCHECK.
   void SetMode(SSLMode mode) override;
+
   // Set a custom certificate verifier to be passed down to each instance
   // created with this factory. This should only ever be set before the first
   // call to the factory and cannot be changed after the fact.
   void SetCertVerifier(SSLCertificateVerifier* ssl_cert_verifier) override;
+
+  void SetIdentity(std::unique_ptr<SSLIdentity> identity) override;
+
+  // Choose whether the socket acts as a server socket or client socket.
+  void SetRole(SSLRole role) override;
+
+  // Methods that control server certificate verification, used in unit tests.
+  // Do not call these methods in production code.
+  void SetIgnoreBadCert(bool ignore) override;
+
   // Constructs a new socket using the shared OpenSSLSessionCache. This means
   // existing SSLSessions already in the cache will be reused instead of
   // re-created for improved performance.
@@ -203,6 +221,11 @@ class OpenSSLAdapterFactory : public SSLAdapterFactory {
  private:
   // Holds the SSLMode (DTLS,TLS) that will be used to set the session cache.
   SSLMode ssl_mode_ = SSL_MODE_TLS;
+  SSLRole ssl_role_ = SSL_CLIENT;
+  bool ignore_bad_cert_ = false;
+
+  std::unique_ptr<SSLIdentity> identity_;
+
   // Holds a cache of existing SSL Sessions.
   std::unique_ptr<OpenSSLSessionCache> ssl_session_cache_;
   // Provides an optional custom callback for verifying SSL certificates, this

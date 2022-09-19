@@ -189,7 +189,6 @@ In memory R is the lowest and A is the highest.
 Each channel has value ranges from 0 to 65535.
 AR64 is similar to ARGB.
 
-
 # NV12 and NV21
 
 NV12 is a biplanar format with a full sized Y plane followed by a single
@@ -200,3 +199,10 @@ height chroma channel, and therefore is a 420 subsampling.
 NV16 is 16 bits per pixel, with half width and full height.  aka 422.
 NV24 is 24 bits per pixel with full sized chroma channel. aka 444.
 Most NV12 functions allow the destination Y pointer to be NULL.
+
+# YUY2 and UYVY
+
+YUY2 is a packed YUV format with half width, full height.
+
+YUY2 is YUYV in memory
+UYVY is UYVY in memory

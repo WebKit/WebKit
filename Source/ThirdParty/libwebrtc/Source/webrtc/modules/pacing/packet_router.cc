@@ -23,6 +23,7 @@
 #include "modules/rtp_rtcp/source/rtp_rtcp_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/system/unused.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"
 
@@ -142,8 +143,11 @@ void PacketRouter::SendPacket(std::unique_ptr<RtpPacketToSend> packet,
   MutexLock lock(&modules_mutex_);
   // With the new pacer code path, transport sequence numbers are only set here,
   // on the pacer thread. Therefore we don't need atomics/synchronization.
-  if (packet->HasExtension<TransportSequenceNumber>()) {
-    packet->SetExtension<TransportSequenceNumber>((++transport_seq_) & 0xFFFF);
+  bool assign_transport_sequence_number =
+      packet->HasExtension<TransportSequenceNumber>();
+  if (assign_transport_sequence_number) {
+    packet->SetExtension<TransportSequenceNumber>((transport_seq_ + 1) &
+                                                  0xFFFF);
   }
 
   uint32_t ssrc = packet->Ssrc();
@@ -160,6 +164,12 @@ void PacketRouter::SendPacket(std::unique_ptr<RtpPacketToSend> packet,
   if (!rtp_module->TrySendPacket(packet.get(), cluster_info)) {
     RTC_LOG(LS_WARNING) << "Failed to send packet, rejected by RTP module.";
     return;
+  }
+
+  // Sending succeeded.
+
+  if (assign_transport_sequence_number) {
+    ++transport_seq_;
   }
 
   if (rtp_module->SupportsRtxPayloadPadding()) {
@@ -214,14 +224,13 @@ std::vector<std::unique_ptr<RtpPacketToSend>> PacketRouter::GeneratePadding(
     }
   }
 
-#if RTC_TRACE_EVENTS_ENABLED
   for (auto& packet : padding_packets) {
+    RTC_UNUSED(packet);
     TRACE_EVENT2(TRACE_DISABLED_BY_DEFAULT("webrtc"),
                  "PacketRouter::GeneratePadding::Loop", "sequence_number",
                  packet->SequenceNumber(), "rtp_timestamp",
                  packet->Timestamp());
   }
-#endif
 
   return padding_packets;
 }

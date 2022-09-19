@@ -337,24 +337,21 @@ TEST_F(RtpRtcpImplTest, NoSrBeforeMedia) {
   receiver_.transport_.SimulateNetworkDelay(0, &clock_);
 
   sender_.impl_->Process();
-  EXPECT_EQ(-1, sender_.RtcpSent().first_packet_time_ms);
+  EXPECT_EQ(sender_.transport_.NumRtcpSent(), 0u);
 
   // Verify no SR is sent before media has been sent, RR should still be sent
   // from the receiving module though.
   clock_.AdvanceTimeMilliseconds(2000);
-  int64_t current_time = clock_.TimeInMilliseconds();
   sender_.impl_->Process();
   receiver_.impl_->Process();
-  EXPECT_EQ(-1, sender_.RtcpSent().first_packet_time_ms);
-  EXPECT_EQ(receiver_.RtcpSent().first_packet_time_ms, current_time);
+  EXPECT_EQ(sender_.transport_.NumRtcpSent(), 0u);
+  EXPECT_EQ(receiver_.transport_.NumRtcpSent(), 1u);
 
   SendFrame(&sender_, sender_video_.get(), kBaseLayerTid);
-  EXPECT_EQ(sender_.RtcpSent().first_packet_time_ms, current_time);
+  EXPECT_EQ(sender_.transport_.NumRtcpSent(), 1u);
 }
 
 TEST_F(RtpRtcpImplTest, RtcpPacketTypeCounter_Nack) {
-  EXPECT_EQ(-1, receiver_.RtcpSent().first_packet_time_ms);
-  EXPECT_EQ(-1, sender_.RtcpReceived().first_packet_time_ms);
   EXPECT_EQ(0U, sender_.RtcpReceived().nack_packets);
   EXPECT_EQ(0U, receiver_.RtcpSent().nack_packets);
 
@@ -363,17 +360,13 @@ TEST_F(RtpRtcpImplTest, RtcpPacketTypeCounter_Nack) {
   uint16_t nack_list[kNackLength] = {123};
   EXPECT_EQ(0, receiver_.impl_->SendNACK(nack_list, kNackLength));
   EXPECT_EQ(1U, receiver_.RtcpSent().nack_packets);
-  EXPECT_GT(receiver_.RtcpSent().first_packet_time_ms, -1);
 
   // Send module receives the NACK.
   EXPECT_EQ(1U, sender_.RtcpReceived().nack_packets);
-  EXPECT_GT(sender_.RtcpReceived().first_packet_time_ms, -1);
 }
 
 TEST_F(RtpRtcpImplTest, AddStreamDataCounters) {
   StreamDataCounters rtp;
-  const int64_t kStartTimeMs = 1;
-  rtp.first_packet_time_ms = kStartTimeMs;
   rtp.transmitted.packets = 1;
   rtp.transmitted.payload_bytes = 1;
   rtp.transmitted.header_bytes = 2;
@@ -383,7 +376,6 @@ TEST_F(RtpRtcpImplTest, AddStreamDataCounters) {
                                               rtp.transmitted.padding_bytes);
 
   StreamDataCounters rtp2;
-  rtp2.first_packet_time_ms = -1;
   rtp2.transmitted.packets = 10;
   rtp2.transmitted.payload_bytes = 10;
   rtp2.retransmitted.header_bytes = 4;
@@ -394,7 +386,6 @@ TEST_F(RtpRtcpImplTest, AddStreamDataCounters) {
 
   StreamDataCounters sum = rtp;
   sum.Add(rtp2);
-  EXPECT_EQ(kStartTimeMs, sum.first_packet_time_ms);
   EXPECT_EQ(11U, sum.transmitted.packets);
   EXPECT_EQ(11U, sum.transmitted.payload_bytes);
   EXPECT_EQ(2U, sum.transmitted.header_bytes);
@@ -406,11 +397,6 @@ TEST_F(RtpRtcpImplTest, AddStreamDataCounters) {
   EXPECT_EQ(8U, sum.fec.packets);
   EXPECT_EQ(sum.transmitted.TotalBytes(),
             rtp.transmitted.TotalBytes() + rtp2.transmitted.TotalBytes());
-
-  StreamDataCounters rtp3;
-  rtp3.first_packet_time_ms = kStartTimeMs + 10;
-  sum.Add(rtp3);
-  EXPECT_EQ(kStartTimeMs, sum.first_packet_time_ms);  // Holds oldest time.
 }
 
 TEST_F(RtpRtcpImplTest, SendsInitialNackList) {
@@ -525,19 +511,16 @@ TEST_F(RtpRtcpImplTest, ConfigurableRtcpReportInterval) {
 
   // Initial state
   sender_.impl_->Process();
-  EXPECT_EQ(sender_.RtcpSent().first_packet_time_ms, -1);
   EXPECT_EQ(0u, sender_.transport_.NumRtcpSent());
 
   // Move ahead to the last ms before a rtcp is expected, no action.
   clock_.AdvanceTimeMilliseconds(kVideoReportInterval / 2 - 1);
   sender_.impl_->Process();
-  EXPECT_EQ(sender_.RtcpSent().first_packet_time_ms, -1);
   EXPECT_EQ(sender_.transport_.NumRtcpSent(), 0u);
 
   // Move ahead to the first rtcp. Send RTCP.
   clock_.AdvanceTimeMilliseconds(1);
   sender_.impl_->Process();
-  EXPECT_GT(sender_.RtcpSent().first_packet_time_ms, -1);
   EXPECT_EQ(sender_.transport_.NumRtcpSent(), 1u);
 
   SendFrame(&sender_, sender_video_.get(), kBaseLayerTid);

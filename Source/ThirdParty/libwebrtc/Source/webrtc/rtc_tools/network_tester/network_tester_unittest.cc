@@ -20,6 +20,7 @@
 namespace webrtc {
 
 TEST(NetworkTesterTest, ServerClient) {
+  rtc::AutoThread main_thread;
   TestController client(
       0, 0, webrtc::test::ResourcePath("network_tester/client_config", "dat"),
       webrtc::test::OutputPath() + "client_packet_log.dat");

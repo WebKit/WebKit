@@ -15,6 +15,7 @@
 #include <cmath>
 
 #include "absl/flags/flag.h"
+#include "absl/strings/string_view.h"
 #include "modules/audio_coding/neteq/default_neteq_factory.h"
 #include "modules/audio_coding/neteq/tools/neteq_quality_test.h"
 #include "modules/audio_coding/neteq/tools/output_audio_file.h"
@@ -105,13 +106,13 @@ const int kInitSeed = 0x12345678;
 const int kPacketLossTimeUnitMs = 10;
 
 // Common validator for file names.
-static bool ValidateFilename(const std::string& value, bool is_output) {
+static bool ValidateFilename(absl::string_view value, bool is_output) {
   if (!is_output) {
     RTC_CHECK_NE(value.substr(value.find_last_of('.') + 1), "wav")
         << "WAV file input is not supported";
   }
-  FILE* fid =
-      is_output ? fopen(value.c_str(), "wb") : fopen(value.c_str(), "rb");
+  FILE* fid = is_output ? fopen(std::string(value).c_str(), "wb")
+                        : fopen(std::string(value).c_str(), "rb");
   if (fid == nullptr)
     return false;
   fclose(fid);

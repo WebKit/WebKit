@@ -24,7 +24,6 @@
 
 messages -> NetworkRTCProvider {
     CreateUDPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain)
-    CreateServerTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, uint16_t minPort, uint16_t maxPort, int options)
     CreateClientTCPSocket(WebCore::LibWebRTCSocketIdentifier identifier, WebKit::RTCNetwork::SocketAddress localAddress, WebKit::RTCNetwork::SocketAddress remoteAddress, String userAgent, int options, WebKit::WebPageProxyIdentifier pageIdentifier, bool isFirstParty, bool isRelayDisabled, WebCore::RegistrableDomain domain)
     WrapNewTCPConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newConnectionSocketIdentifier)
 

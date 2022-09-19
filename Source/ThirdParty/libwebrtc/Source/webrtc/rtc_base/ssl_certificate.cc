@@ -15,6 +15,7 @@
 #include <utility>
 
 #include "absl/algorithm/container.h"
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/openssl.h"
 #ifdef OPENSSL_IS_BORINGSSL
@@ -121,7 +122,7 @@ std::unique_ptr<SSLCertificateStats> SSLCertChain::GetStats() const {
 
 // static
 std::unique_ptr<SSLCertificate> SSLCertificate::FromPEMString(
-    const std::string& pem_string) {
+    absl::string_view pem_string) {
 #ifdef OPENSSL_IS_BORINGSSL
   return BoringSSLCertificate::FromPEMString(pem_string);
 #else

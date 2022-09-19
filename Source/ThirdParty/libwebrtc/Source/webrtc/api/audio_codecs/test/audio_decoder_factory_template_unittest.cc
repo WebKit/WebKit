@@ -22,6 +22,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_audio_decoder.h"
+#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 
@@ -77,9 +78,11 @@ struct AudioDecoderFakeApi {
 }  // namespace
 
 TEST(AudioDecoderFactoryTemplateTest, NoDecoderTypes) {
+  test::ScopedKeyValueConfig field_trials;
   rtc::scoped_refptr<AudioDecoderFactory> factory(
       rtc::make_ref_counted<
-          audio_decoder_factory_template_impl::AudioDecoderFactoryT<>>());
+          audio_decoder_factory_template_impl::AudioDecoderFactoryT<>>(
+          &field_trials));
   EXPECT_THAT(factory->GetSupportedDecoders(), ::testing::IsEmpty());
   EXPECT_FALSE(factory->IsSupportedDecoder({"foo", 8000, 1}));
   EXPECT_EQ(nullptr,

@@ -10,7 +10,12 @@
 
 #include "pc/video_rtp_track_source.h"
 
-#include "rtc_base/ref_counted_object.h"
+#include "absl/types/optional.h"
+#include "api/scoped_refptr.h"
+#include "api/units/timestamp.h"
+#include "api/video/color_space.h"
+#include "api/video/encoded_image.h"
+#include "api/video/video_codec_type.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -116,7 +121,7 @@ class TestFrame : public RecordableEncodedFrame {
   EncodedResolution resolution() const override {
     return EncodedResolution{0, 0};
   }
-  Timestamp render_time() const override { return Timestamp::Millis(0); }
+  Timestamp render_time() const override { return Timestamp::Zero(); }
 };
 
 TEST(VideoRtpTrackSourceTest, BroadcastsFrames) {

@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
 #include "api/test/video_quality_analyzer_interface.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
@@ -112,12 +113,24 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
   // from received EncodedImage to resulted VideoFrame.
   Mutex lock_;
 
+<<<<<<< HEAD
+  // Name of the video codec type used. Ex: VP8, VP9, H264 etc.
+  std::string codec_name_ RTC_GUARDED_BY(mutex_);
+  std::map<uint32_t, absl::optional<uint16_t>> timestamp_to_frame_id_
+      RTC_GUARDED_BY(mutex_);
+  // Stores currently being decoded images by timestamp. Because
+  // EncodedImageDataExtractor can create new copy on EncodedImage we need to
+  // ensure, that this image won't be deleted during async decoding. To do it
+  // all images are putted into this map and removed from here inside callback.
+  std::map<uint32_t, EncodedImage> decoding_images_ RTC_GUARDED_BY(mutex_);
+=======
   std::map<uint32_t, uint16_t> timestamp_to_frame_id_ RTC_GUARDED_BY(lock_);
   // Stores currently being decoded images by frame id. Because
   // EncodedImageDataExtractor can create new copy on EncodedImage we need to
   // ensure, that this image won't be deleted during async decoding. To do it
   // all images are putted into this map and removed from here inside callback.
   std::map<uint16_t, EncodedImage> decoding_images_ RTC_GUARDED_BY(lock_);
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 };
 
 // Produces QualityAnalyzingVideoDecoder, which hold decoders, produced by

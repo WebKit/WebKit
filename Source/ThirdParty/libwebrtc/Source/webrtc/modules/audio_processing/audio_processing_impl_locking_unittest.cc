@@ -24,8 +24,10 @@
 #include "test/gtest.h"
 
 namespace webrtc {
-
 namespace {
+
+constexpr int kMaxFrameSize = 480;
+constexpr int kTestTimeOutLimit = 10 * 60 * 1000;
 
 class AudioProcessingImplLockTest;
 
@@ -305,14 +307,14 @@ class CaptureProcessor {
                    rtc::Event* render_call_event,
                    rtc::Event* capture_call_event,
                    FrameCounters* shared_counters_state,
-                   TestConfig* test_config,
+                   const TestConfig* test_config,
                    AudioProcessing* apm);
   void Process();
 
  private:
-  static const int kMaxCallDifference = 10;
-  static const float kCaptureInputFloatLevel;
-  static const int kCaptureInputFixLevel = 1024;
+  static constexpr int kMaxCallDifference = 10;
+  static constexpr float kCaptureInputFloatLevel = 0.03125f;
+  static constexpr int kCaptureInputFixLevel = 1024;
 
   void PrepareFrame();
   void CallApmCaptureSide();
@@ -331,13 +333,13 @@ class CaptureProcessor {
 class StatsProcessor {
  public:
   StatsProcessor(RandomGenerator* rand_gen,
-                 TestConfig* test_config,
+                 const TestConfig* test_config,
                  AudioProcessing* apm);
   void Process();
 
  private:
   RandomGenerator* rand_gen_ = nullptr;
-  TestConfig* test_config_ = nullptr;
+  const TestConfig* const test_config_ = nullptr;
   AudioProcessing* apm_ = nullptr;
 };
 
@@ -349,14 +351,14 @@ class RenderProcessor {
                   rtc::Event* render_call_event,
                   rtc::Event* capture_call_event,
                   FrameCounters* shared_counters_state,
-                  TestConfig* test_config,
+                  const TestConfig* test_config,
                   AudioProcessing* apm);
   void Process();
 
  private:
-  static const int kMaxCallDifference = 10;
-  static const int kRenderInputFixLevel = 16384;
-  static const float kRenderInputFloatLevel;
+  static constexpr int kMaxCallDifference = 10;
+  static constexpr int kRenderInputFixLevel = 16384;
+  static constexpr float kRenderInputFloatLevel = 0.5f;
 
   void PrepareFrame();
   void CallApmRenderSide();
@@ -380,10 +382,6 @@ class AudioProcessingImplLockTest
   bool MaybeEndTest();
 
  private:
-  static const int kTestTimeOutLimit = 10 * 60 * 1000;
-  static const int kMaxFrameSize = 480;
-
-  // ::testing::TestWithParam<> implementation
   void SetUp() override;
   void TearDown() override;
 
@@ -428,8 +426,8 @@ class AudioProcessingImplLockTest
   // Thread related variables.
   mutable RandomGenerator rand_gen_;
 
+  const TestConfig test_config_;
   rtc::scoped_refptr<AudioProcessing> apm_;
-  TestConfig test_config_;
   FrameCounters frame_counters_;
   RenderProcessor render_thread_state_;
   CaptureProcessor capture_thread_state_;
@@ -476,8 +474,23 @@ void PopulateAudioFrame(float amplitude,
   }
 }
 
+AudioProcessing::Config GetApmTestConfig(AecType aec_type) {
+  AudioProcessing::Config apm_config;
+  apm_config.echo_canceller.enabled = aec_type != AecType::AecTurnedOff;
+  apm_config.echo_canceller.mobile_mode =
+      aec_type == AecType::BasicWebRtcAecSettingsWithAecMobile;
+  apm_config.gain_controller1.enabled = true;
+  apm_config.gain_controller1.mode =
+      AudioProcessing::Config::GainController1::kAdaptiveDigital;
+  apm_config.noise_suppression.enabled = true;
+  return apm_config;
+}
+
 AudioProcessingImplLockTest::AudioProcessingImplLockTest()
-    : apm_(AudioProcessingBuilderForTesting().Create()),
+    : test_config_(GetParam()),
+      apm_(AudioProcessingBuilderForTesting()
+               .SetConfig(GetApmTestConfig(test_config_.aec_type))
+               .Create()),
       render_thread_state_(kMaxFrameSize,
                            &rand_gen_,
                            &render_call_event_,
@@ -508,23 +521,7 @@ bool AudioProcessingImplLockTest::MaybeEndTest() {
   return false;
 }
 
-// Setup of test and APM.
-void AudioProcessingImplLockTest::SetUp() {
-  test_config_ = static_cast<TestConfig>(GetParam());
-
-  AudioProcessing::Config apm_config = apm_->GetConfig();
-  apm_config.echo_canceller.enabled =
-      (test_config_.aec_type != AecType::AecTurnedOff);
-  apm_config.echo_canceller.mobile_mode =
-      (test_config_.aec_type == AecType::BasicWebRtcAecSettingsWithAecMobile);
-  apm_config.gain_controller1.enabled = true;
-  apm_config.gain_controller1.mode =
-      AudioProcessing::Config::GainController1::kAdaptiveDigital;
-  apm_config.noise_suppression.enabled = true;
-  apm_config.voice_detection.enabled = true;
-  apm_config.level_estimation.enabled = true;
-  apm_->ApplyConfig(apm_config);
-}
+void AudioProcessingImplLockTest::SetUp() {}
 
 void AudioProcessingImplLockTest::TearDown() {
   render_call_event_.Set();
@@ -532,7 +529,7 @@ void AudioProcessingImplLockTest::TearDown() {
 }
 
 StatsProcessor::StatsProcessor(RandomGenerator* rand_gen,
-                               TestConfig* test_config,
+                               const TestConfig* test_config,
                                AudioProcessing* apm)
     : rand_gen_(rand_gen), test_config_(test_config), apm_(apm) {}
 
@@ -557,14 +554,12 @@ void StatsProcessor::Process() {
   apm_->GetStatistics();
 }
 
-const float CaptureProcessor::kCaptureInputFloatLevel = 0.03125f;
-
 CaptureProcessor::CaptureProcessor(int max_frame_size,
                                    RandomGenerator* rand_gen,
                                    rtc::Event* render_call_event,
                                    rtc::Event* capture_call_event,
                                    FrameCounters* shared_counters_state,
-                                   TestConfig* test_config,
+                                   const TestConfig* test_config,
                                    AudioProcessing* apm)
     : rand_gen_(rand_gen),
       render_call_event_(render_call_event),
@@ -611,8 +606,7 @@ void CaptureProcessor::PrepareFrame() {
 
   // Prepare the audio data.
   StreamConfig input_stream_config(frame_data_.input_sample_rate_hz,
-                                   frame_data_.input_number_of_channels,
-                                   /*has_keyboard=*/false);
+                                   frame_data_.input_number_of_channels);
 
   PopulateAudioFrame(kCaptureInputFixLevel, input_stream_config.num_channels(),
                      input_stream_config.num_frames(), frame_data_.frame,
@@ -636,11 +630,9 @@ void CaptureProcessor::CallApmCaptureSide() {
 
   // Call the specified capture side API processing method.
   StreamConfig input_stream_config(frame_data_.input_sample_rate_hz,
-                                   frame_data_.input_number_of_channels,
-                                   /*has_keyboard=*/false);
+                                   frame_data_.input_number_of_channels);
   StreamConfig output_stream_config(frame_data_.output_sample_rate_hz,
-                                    frame_data_.output_number_of_channels,
-                                    /*has_keyboard=*/false);
+                                    frame_data_.output_number_of_channels);
   int result = AudioProcessing::kNoError;
   switch (test_config_->capture_api_function) {
     case CaptureApiImpl::ProcessStreamImplInteger:
@@ -788,14 +780,12 @@ void CaptureProcessor::ApplyRuntimeSettingScheme() {
                frame_data_.input_number_of_channels);
 }
 
-const float RenderProcessor::kRenderInputFloatLevel = 0.5f;
-
 RenderProcessor::RenderProcessor(int max_frame_size,
                                  RandomGenerator* rand_gen,
                                  rtc::Event* render_call_event,
                                  rtc::Event* capture_call_event,
                                  FrameCounters* shared_counters_state,
-                                 TestConfig* test_config,
+                                 const TestConfig* test_config,
                                  AudioProcessing* apm)
     : rand_gen_(rand_gen),
       render_call_event_(render_call_event),
@@ -853,8 +843,7 @@ void RenderProcessor::PrepareFrame() {
 
   // Prepare the audio data.
   StreamConfig input_stream_config(frame_data_.input_sample_rate_hz,
-                                   frame_data_.input_number_of_channels,
-                                   /*has_keyboard=*/false);
+                                   frame_data_.input_number_of_channels);
 
   PopulateAudioFrame(kRenderInputFixLevel, input_stream_config.num_channels(),
                      input_stream_config.num_frames(), frame_data_.frame,
@@ -872,11 +861,9 @@ void RenderProcessor::CallApmRenderSide() {
 
   // Call the specified render side API processing method.
   StreamConfig input_stream_config(frame_data_.input_sample_rate_hz,
-                                   frame_data_.input_number_of_channels,
-                                   /*has_keyboard=*/false);
+                                   frame_data_.input_number_of_channels);
   StreamConfig output_stream_config(frame_data_.output_sample_rate_hz,
-                                    frame_data_.output_number_of_channels,
-                                    /*has_keyboard=*/false);
+                                    frame_data_.output_number_of_channels);
   int result = AudioProcessing::kNoError;
   switch (test_config_->render_api_function) {
     case RenderApiImpl::ProcessReverseStreamImplInteger:
@@ -1004,7 +991,7 @@ void RenderProcessor::ApplyRuntimeSettingScheme() {
                frame_data_.input_number_of_channels);
 }
 
-}  // anonymous namespace
+}  // namespace
 
 TEST_P(AudioProcessingImplLockTest, LockTest) {
   // Run test and verify that it did not time out.

@@ -85,7 +85,8 @@ int I420ToI010(const uint8_t* src_y,
                int height) {
   int halfwidth = (width + 1) >> 1;
   int halfheight = (height + 1) >> 1;
-  if (!src_u || !src_v || !dst_u || !dst_v || width <= 0 || height == 0) {
+  if ((!src_y && dst_y) || !src_u || !src_v || !dst_u || !dst_v || width <= 0 ||
+      height == 0) {
     return -1;
   }
   // Negative height means invert the image.
@@ -129,7 +130,8 @@ int I420ToI012(const uint8_t* src_y,
                int height) {
   int halfwidth = (width + 1) >> 1;
   int halfheight = (height + 1) >> 1;
-  if (!src_u || !src_v || !dst_u || !dst_v || width <= 0 || height == 0) {
+  if ((!src_y && dst_y) || !src_u || !src_v || !dst_u || !dst_v || width <= 0 ||
+      height == 0) {
     return -1;
   }
   // Negative height means invert the image.
@@ -436,19 +438,19 @@ int I420ToYUY2(const uint8_t* src_y,
     }
   }
 #endif
-#if defined(HAS_I422TOYUY2ROW_MMI)
-  if (TestCpuFlag(kCpuHasMMI)) {
-    I422ToYUY2Row = I422ToYUY2Row_Any_MMI;
-    if (IS_ALIGNED(width, 8)) {
-      I422ToYUY2Row = I422ToYUY2Row_MMI;
-    }
-  }
-#endif
 #if defined(HAS_I422TOYUY2ROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     I422ToYUY2Row = I422ToYUY2Row_Any_MSA;
     if (IS_ALIGNED(width, 32)) {
       I422ToYUY2Row = I422ToYUY2Row_MSA;
+    }
+  }
+#endif
+#if defined(HAS_I422TOYUY2ROW_LASX)
+  if (TestCpuFlag(kCpuHasLASX)) {
+    I422ToYUY2Row = I422ToYUY2Row_Any_LASX;
+    if (IS_ALIGNED(width, 32)) {
+      I422ToYUY2Row = I422ToYUY2Row_LASX;
     }
   }
 #endif
@@ -523,19 +525,19 @@ int I422ToUYVY(const uint8_t* src_y,
     }
   }
 #endif
-#if defined(HAS_I422TOUYVYROW_MMI)
-  if (TestCpuFlag(kCpuHasMMI)) {
-    I422ToUYVYRow = I422ToUYVYRow_Any_MMI;
-    if (IS_ALIGNED(width, 8)) {
-      I422ToUYVYRow = I422ToUYVYRow_MMI;
-    }
-  }
-#endif
 #if defined(HAS_I422TOUYVYROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     I422ToUYVYRow = I422ToUYVYRow_Any_MSA;
     if (IS_ALIGNED(width, 32)) {
       I422ToUYVYRow = I422ToUYVYRow_MSA;
+    }
+  }
+#endif
+#if defined(HAS_I422TOUYVYROW_LASX)
+  if (TestCpuFlag(kCpuHasLASX)) {
+    I422ToUYVYRow = I422ToUYVYRow_Any_LASX;
+    if (IS_ALIGNED(width, 32)) {
+      I422ToUYVYRow = I422ToUYVYRow_LASX;
     }
   }
 #endif
@@ -598,19 +600,19 @@ int I420ToUYVY(const uint8_t* src_y,
     }
   }
 #endif
-#if defined(HAS_I422TOUYVYROW_MMI)
-  if (TestCpuFlag(kCpuHasMMI)) {
-    I422ToUYVYRow = I422ToUYVYRow_Any_MMI;
-    if (IS_ALIGNED(width, 8)) {
-      I422ToUYVYRow = I422ToUYVYRow_MMI;
-    }
-  }
-#endif
 #if defined(HAS_I422TOUYVYROW_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     I422ToUYVYRow = I422ToUYVYRow_Any_MSA;
     if (IS_ALIGNED(width, 32)) {
       I422ToUYVYRow = I422ToUYVYRow_MSA;
+    }
+  }
+#endif
+#if defined(HAS_I422TOUYVYROW_LASX)
+  if (TestCpuFlag(kCpuHasLASX)) {
+    I422ToUYVYRow = I422ToUYVYRow_Any_LASX;
+    if (IS_ALIGNED(width, 32)) {
+      I422ToUYVYRow = I422ToUYVYRow_LASX;
     }
   }
 #endif
@@ -645,8 +647,7 @@ int I420ToNV12(const uint8_t* src_y,
                int height) {
   int halfwidth = (width + 1) / 2;
   int halfheight = (height + 1) / 2;
-  if (!src_y || !src_u || !src_v || !dst_y || !dst_uv || width <= 0 ||
-      height == 0) {
+  if (!src_y || !src_u || !src_v || !dst_uv || width <= 0 || height == 0) {
     return -1;
   }
   // Negative height means invert the image.
@@ -772,7 +773,8 @@ int ConvertFromI420(const uint8_t* y,
                    height);
       break;
     case FOURCC_NV12: {
-      uint8_t* dst_uv = dst_sample + width * height;
+      int dst_y_stride = dst_sample_stride ? dst_sample_stride : width;
+      uint8_t* dst_uv = dst_sample + dst_y_stride * height;
       r = I420ToNV12(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                      dst_sample_stride ? dst_sample_stride : width, dst_uv,
                      dst_sample_stride ? dst_sample_stride : width, width,
@@ -780,7 +782,8 @@ int ConvertFromI420(const uint8_t* y,
       break;
     }
     case FOURCC_NV21: {
-      uint8_t* dst_vu = dst_sample + width * height;
+      int dst_y_stride = dst_sample_stride ? dst_sample_stride : width;
+      uint8_t* dst_vu = dst_sample + dst_y_stride * height;
       r = I420ToNV21(y, y_stride, u, u_stride, v, v_stride, dst_sample,
                      dst_sample_stride ? dst_sample_stride : width, dst_vu,
                      dst_sample_stride ? dst_sample_stride : width, width,

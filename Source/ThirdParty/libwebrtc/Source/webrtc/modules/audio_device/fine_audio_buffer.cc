@@ -29,21 +29,21 @@ FineAudioBuffer::FineAudioBuffer(AudioDeviceBuffer* audio_device_buffer)
       playout_channels_(audio_device_buffer->PlayoutChannels()),
       record_channels_(audio_device_buffer->RecordingChannels()) {
   RTC_DCHECK(audio_device_buffer_);
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   if (IsReadyForPlayout()) {
-    RTC_DLOG(INFO) << "playout_samples_per_channel_10ms: "
-                   << playout_samples_per_channel_10ms_;
-    RTC_DLOG(INFO) << "playout_channels: " << playout_channels_;
+    RTC_DLOG(LS_INFO) << "playout_samples_per_channel_10ms: "
+                      << playout_samples_per_channel_10ms_;
+    RTC_DLOG(LS_INFO) << "playout_channels: " << playout_channels_;
   }
   if (IsReadyForRecord()) {
-    RTC_DLOG(INFO) << "record_samples_per_channel_10ms: "
-                   << record_samples_per_channel_10ms_;
-    RTC_DLOG(INFO) << "record_channels: " << record_channels_;
+    RTC_DLOG(LS_INFO) << "record_samples_per_channel_10ms: "
+                      << record_samples_per_channel_10ms_;
+    RTC_DLOG(LS_INFO) << "record_channels: " << record_channels_;
   }
 }
 
 FineAudioBuffer::~FineAudioBuffer() {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
 }
 
 void FineAudioBuffer::ResetPlayout() {

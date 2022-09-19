@@ -25,6 +25,7 @@
 
 #include "WebKitUtilities.h"
 
+#include "api/make_ref_counted.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
 #include "native/src/objc_frame_buffer.h"
@@ -50,12 +51,12 @@ void setApplicationStatus(bool isActive)
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> pixelBufferToFrame(CVPixelBufferRef pixelBuffer)
 {
     RTCCVPixelBuffer *frameBuffer = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:pixelBuffer];
-    return new rtc::RefCountedObject<ObjCFrameBuffer>(frameBuffer);
+    return rtc::make_ref_counted<ObjCFrameBuffer>(frameBuffer);
 }
 
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> toWebRTCVideoFrameBuffer(void* pointer, GetBufferCallback getBufferCallback, ReleaseBufferCallback releaseBufferCallback, int width, int height)
 {
-    return new rtc::RefCountedObject<ObjCFrameBuffer>(ObjCFrameBuffer::BufferProvider { pointer, getBufferCallback, releaseBufferCallback }, width, height);
+    return rtc::make_ref_counted<ObjCFrameBuffer>(ObjCFrameBuffer::BufferProvider { pointer, getBufferCallback, releaseBufferCallback }, width, height);
 }
 
 void* videoFrameBufferProvider(const VideoFrame& frame)
@@ -169,13 +170,13 @@ CVPixelBufferRef createPixelBufferFromFrameBuffer(VideoFrameBuffer& buffer, cons
     if (buffer.type() != VideoFrameBuffer::Type::kNative) {
         auto type = buffer.type();
         if (type != VideoFrameBuffer::Type::kI420 && type != VideoFrameBuffer::Type::kI010) {
-            RTC_LOG(WARNING) << "Video frame buffer type is not expected.";
+            RTC_LOG(LS_WARNING) << "Video frame buffer type is not expected.";
             return nullptr;
         }
 
         auto pixelBuffer = createPixelBuffer(buffer.width(), buffer.height(), type == VideoFrameBuffer::Type::kI420 ? BufferType::I420 : BufferType::I010);
         if (!pixelBuffer) {
-            RTC_LOG(WARNING) << "Pixel buffer creation failed.";
+            RTC_LOG(LS_WARNING) << "Pixel buffer creation failed.";
             return nullptr;
         }
 

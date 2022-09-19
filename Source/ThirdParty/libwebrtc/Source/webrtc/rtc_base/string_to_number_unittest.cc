@@ -15,6 +15,8 @@
 #include <limits>
 #include <string>
 
+#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
 #include "test/gtest.h"
 
 namespace rtc {
@@ -80,6 +82,10 @@ TYPED_TEST_P(BasicNumberTest, TestInvalidInputs) {
   const char kInvalidCharArray[] = "Invalid string containing 47";
   const char kPlusMinusCharArray[] = "+-100";
   const char kNumberFollowedByCruft[] = "640x480";
+  const char kEmbeddedNul[] = {'1', '2', '\0', '3', '4'};
+  const char kBeginningEmbeddedNul[] = {'\0', '1', '2', '3', '4'};
+  const char kTrailingEmbeddedNul[] = {'1', '2', '3', '4', '\0'};
+
   EXPECT_EQ(absl::nullopt, StringToNumber<T>(kInvalidCharArray));
   EXPECT_EQ(absl::nullopt, StringToNumber<T>(std::string(kInvalidCharArray)));
   EXPECT_EQ(absl::nullopt, StringToNumber<T>(kPlusMinusCharArray));
@@ -92,6 +98,23 @@ TYPED_TEST_P(BasicNumberTest, TestInvalidInputs) {
   EXPECT_EQ(absl::nullopt, StringToNumber<T>("- 5"));
   EXPECT_EQ(absl::nullopt, StringToNumber<T>(" -5"));
   EXPECT_EQ(absl::nullopt, StringToNumber<T>("5 "));
+  // Test various types of empty inputs
+  EXPECT_EQ(absl::nullopt, StringToNumber<T>({nullptr, 0}));
+  EXPECT_EQ(absl::nullopt, StringToNumber<T>(""));
+  EXPECT_EQ(absl::nullopt, StringToNumber<T>(std::string()));
+  EXPECT_EQ(absl::nullopt, StringToNumber<T>(std::string("")));
+  EXPECT_EQ(absl::nullopt, StringToNumber<T>(absl::string_view()));
+  EXPECT_EQ(absl::nullopt, StringToNumber<T>(absl::string_view(nullptr, 0)));
+  EXPECT_EQ(absl::nullopt, StringToNumber<T>(absl::string_view("")));
+  // Test strings with embedded nuls.
+  EXPECT_EQ(absl::nullopt, StringToNumber<T>(absl::string_view(
+                               kEmbeddedNul, sizeof(kEmbeddedNul))));
+  EXPECT_EQ(absl::nullopt,
+            StringToNumber<T>(absl::string_view(
+                kBeginningEmbeddedNul, sizeof(kBeginningEmbeddedNul))));
+  EXPECT_EQ(absl::nullopt,
+            StringToNumber<T>(absl::string_view(kTrailingEmbeddedNul,
+                                                sizeof(kTrailingEmbeddedNul))));
 }
 
 REGISTER_TYPED_TEST_SUITE_P(BasicNumberTest,

@@ -16,7 +16,6 @@
 
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/string_encode.h"
 #include "rtc_base/system/arch.h"
@@ -30,6 +29,9 @@ class AudioChecksum : public AudioSink {
       : checksum_(rtc::MessageDigestFactory::Create(rtc::DIGEST_MD5)),
         checksum_result_(checksum_->Size()),
         finished_(false) {}
+
+  AudioChecksum(const AudioChecksum&) = delete;
+  AudioChecksum& operator=(const AudioChecksum&) = delete;
 
   bool WriteArray(const int16_t* audio, size_t num_samples) override {
     if (finished_)
@@ -48,16 +50,13 @@ class AudioChecksum : public AudioSink {
       finished_ = true;
       checksum_->Finish(checksum_result_.data(), checksum_result_.size());
     }
-    return rtc::hex_encode(checksum_result_.data<char>(),
-                           checksum_result_.size());
+    return rtc::hex_encode(checksum_result_);
   }
 
  private:
   std::unique_ptr<rtc::MessageDigest> checksum_;
   rtc::Buffer checksum_result_;
   bool finished_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(AudioChecksum);
 };
 
 }  // namespace test

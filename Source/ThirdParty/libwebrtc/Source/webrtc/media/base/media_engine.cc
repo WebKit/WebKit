@@ -152,7 +152,7 @@ webrtc::RTCError CheckRtpParametersInvalidModificationAndValues(
 }
 
 CompositeMediaEngine::CompositeMediaEngine(
-    std::unique_ptr<webrtc::WebRtcKeyValueConfig> trials,
+    std::unique_ptr<webrtc::FieldTrialsView> trials,
     std::unique_ptr<VoiceEngineInterface> audio_engine,
     std::unique_ptr<VideoEngineInterface> video_engine)
     : trials_(std::move(trials)),

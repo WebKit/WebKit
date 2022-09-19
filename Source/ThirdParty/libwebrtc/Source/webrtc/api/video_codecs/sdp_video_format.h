@@ -14,7 +14,9 @@
 #include <map>
 #include <string>
 
+#include "absl/container/inlined_vector.h"
 #include "api/array_view.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -26,6 +28,11 @@ struct RTC_EXPORT SdpVideoFormat {
 
   explicit SdpVideoFormat(const std::string& name);
   SdpVideoFormat(const std::string& name, const Parameters& parameters);
+  SdpVideoFormat(
+      const std::string& name,
+      const Parameters& parameters,
+      const absl::InlinedVector<ScalabilityMode, kScalabilityModeCount>&
+          scalability_modes);
   SdpVideoFormat(const SdpVideoFormat&);
   SdpVideoFormat(SdpVideoFormat&&);
   SdpVideoFormat& operator=(const SdpVideoFormat&);
@@ -51,6 +58,7 @@ struct RTC_EXPORT SdpVideoFormat {
 
   std::string name;
   Parameters parameters;
+  absl::InlinedVector<ScalabilityMode, kScalabilityModeCount> scalability_modes;
 };
 
 }  // namespace webrtc

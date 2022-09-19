@@ -12,8 +12,6 @@
 
 #include <stddef.h>
 
-#include <string>
-
 #include "pc/audio_track.h"
 #include "pc/test/fake_video_track_source.h"
 #include "pc/video_track.h"
@@ -63,7 +61,7 @@ class MediaStreamTest : public ::testing::Test {
     ASSERT_TRUE(video_track_.get() != NULL);
     EXPECT_EQ(MediaStreamTrackInterface::kLive, video_track_->state());
 
-    audio_track_ = AudioTrack::Create(kAudioTrackId, NULL);
+    audio_track_ = AudioTrack::Create(kAudioTrackId, nullptr);
 
     ASSERT_TRUE(audio_track_.get() != NULL);
     EXPECT_EQ(MediaStreamTrackInterface::kLive, audio_track_->state());
@@ -82,6 +80,7 @@ class MediaStreamTest : public ::testing::Test {
     EXPECT_FALSE(track->enabled());
   }
 
+  rtc::AutoThread main_thread_;
   scoped_refptr<MediaStreamInterface> stream_;
   scoped_refptr<AudioTrackInterface> audio_track_;
   scoped_refptr<VideoTrackInterface> video_track_;
@@ -120,7 +119,7 @@ TEST_F(MediaStreamTest, GetTrackInfo) {
 }
 
 TEST_F(MediaStreamTest, RemoveTrack) {
-  MockObserver observer(stream_);
+  MockObserver observer(stream_.get());
 
   EXPECT_CALL(observer, OnChanged()).Times(Exactly(2));
 
@@ -135,8 +134,8 @@ TEST_F(MediaStreamTest, RemoveTrack) {
   EXPECT_EQ(0u, stream_->GetVideoTracks().size());
   EXPECT_EQ(0u, stream_->GetVideoTracks().size());
 
-  EXPECT_FALSE(stream_->RemoveTrack(static_cast<AudioTrackInterface*>(NULL)));
-  EXPECT_FALSE(stream_->RemoveTrack(static_cast<VideoTrackInterface*>(NULL)));
+  EXPECT_FALSE(stream_->RemoveTrack(rtc::scoped_refptr<AudioTrackInterface>()));
+  EXPECT_FALSE(stream_->RemoveTrack(rtc::scoped_refptr<VideoTrackInterface>()));
 }
 
 TEST_F(MediaStreamTest, ChangeVideoTrack) {

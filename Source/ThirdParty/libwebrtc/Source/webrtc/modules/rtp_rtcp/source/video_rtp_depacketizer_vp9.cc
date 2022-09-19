@@ -211,8 +211,8 @@ int VideoRtpDepacketizerVp9::ParseRtpPayload(
       video_header->height = vp9_header.height[0];
     }
   }
-  video_header->is_first_packet_in_frame =
-      b_bit && (!l_bit || !vp9_header.inter_layer_predicted);
+  video_header->is_first_packet_in_frame = b_bit;
+  video_header->is_last_packet_in_frame = e_bit;
 
   int num_remaining_bits = parser.RemainingBitCount();
   if (num_remaining_bits <= 0) {

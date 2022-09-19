@@ -14,7 +14,7 @@
 
 #ifdef RTC_ENABLE_VP9
 
-#include "api/transport/webrtc_key_value_config.h"
+#include "api/field_trials_view.h"
 #include "api/video_codecs/video_decoder.h"
 #include "common_video/include/video_frame_buffer_pool.h"
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
@@ -26,7 +26,7 @@ namespace webrtc {
 class LibvpxVp9Decoder : public VP9Decoder {
  public:
   LibvpxVp9Decoder();
-  explicit LibvpxVp9Decoder(const WebRtcKeyValueConfig& trials);
+  explicit LibvpxVp9Decoder(const FieldTrialsView& trials);
 
   virtual ~LibvpxVp9Decoder();
 

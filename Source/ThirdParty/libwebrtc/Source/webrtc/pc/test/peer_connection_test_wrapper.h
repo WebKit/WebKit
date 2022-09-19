@@ -40,6 +40,7 @@ class PeerConnectionTestWrapper
                       PeerConnectionTestWrapper* callee);
 
   PeerConnectionTestWrapper(const std::string& name,
+                            rtc::SocketServer* socket_server,
                             rtc::Thread* network_thread,
                             rtc::Thread* worker_thread);
   virtual ~PeerConnectionTestWrapper();
@@ -99,10 +100,8 @@ class PeerConnectionTestWrapper
                           bool video);
 
   // sigslots
-  sigslot::signal1<std::string*> SignalOnIceCandidateCreated;
   sigslot::signal3<const std::string&, int, const std::string&>
       SignalOnIceCandidateReady;
-  sigslot::signal1<std::string*> SignalOnSdpCreated;
   sigslot::signal1<const std::string&> SignalOnSdpReady;
   sigslot::signal1<webrtc::DataChannelInterface*> SignalOnDataChannel;
 
@@ -118,6 +117,7 @@ class PeerConnectionTestWrapper
       bool video);
 
   std::string name_;
+  rtc::SocketServer* const socket_server_;
   rtc::Thread* const network_thread_;
   rtc::Thread* const worker_thread_;
   webrtc::SequenceChecker pc_thread_checker_;

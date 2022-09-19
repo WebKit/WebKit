@@ -27,13 +27,13 @@ bool ValidForApm(float x) {
 }
 
 void GenerateFloatFrame(test::FuzzDataHelper* fuzz_data,
-                        size_t input_rate,
-                        size_t num_channels,
+                        int input_rate,
+                        int num_channels,
                         float* const* float_frames) {
-  const size_t samples_per_input_channel =
-      rtc::CheckedDivExact(input_rate, static_cast<size_t>(100));
+  const int samples_per_input_channel =
+      AudioProcessing::GetFrameSize(input_rate);
   RTC_DCHECK_LE(samples_per_input_channel, 480);
-  for (size_t i = 0; i < num_channels; ++i) {
+  for (int i = 0; i < num_channels; ++i) {
     std::fill(float_frames[i], float_frames[i] + samples_per_input_channel, 0);
     const size_t read_bytes = sizeof(float) * samples_per_input_channel;
     if (fuzz_data->CanReadBytes(read_bytes)) {
@@ -43,7 +43,7 @@ void GenerateFloatFrame(test::FuzzDataHelper* fuzz_data,
     }
 
     // Sanitize input.
-    for (size_t j = 0; j < samples_per_input_channel; ++j) {
+    for (int j = 0; j < samples_per_input_channel; ++j) {
       if (!ValidForApm(float_frames[i][j])) {
         float_frames[i][j] = 0.f;
       }
@@ -52,18 +52,19 @@ void GenerateFloatFrame(test::FuzzDataHelper* fuzz_data,
 }
 
 void GenerateFixedFrame(test::FuzzDataHelper* fuzz_data,
-                        size_t input_rate,
-                        size_t num_channels,
+                        int input_rate,
+                        int num_channels,
                         AudioFrame* fixed_frame) {
-  const size_t samples_per_input_channel =
-      rtc::CheckedDivExact(input_rate, static_cast<size_t>(100));
+  const int samples_per_input_channel =
+      AudioProcessing::GetFrameSize(input_rate);
+
   fixed_frame->samples_per_channel_ = samples_per_input_channel;
   fixed_frame->sample_rate_hz_ = input_rate;
   fixed_frame->num_channels_ = num_channels;
 
   RTC_DCHECK_LE(samples_per_input_channel * num_channels,
                 AudioFrame::kMaxDataSizeSamples);
-  for (size_t i = 0; i < samples_per_input_channel * num_channels; ++i) {
+  for (int i = 0; i < samples_per_input_channel * num_channels; ++i) {
     fixed_frame->mutable_data()[i] = fuzz_data->ReadOrDefaultValue<int16_t>(0);
   }
 }
@@ -82,9 +83,8 @@ void FuzzAudioProcessing(test::FuzzDataHelper* fuzz_data,
   }
   float* const* ptr_to_float_frames = &float_frame_ptrs[0];
 
-  using Rate = AudioProcessing::NativeRate;
-  const Rate rate_kinds[] = {Rate::kSampleRate8kHz, Rate::kSampleRate16kHz,
-                             Rate::kSampleRate32kHz, Rate::kSampleRate48kHz};
+  constexpr int kSampleRatesHz[] = {8000,  11025, 16000, 22050,
+                                    32000, 44100, 48000};
 
   // We may run out of fuzz data in the middle of a loop iteration. In
   // that case, default values will be used for the rest of that
@@ -92,14 +92,11 @@ void FuzzAudioProcessing(test::FuzzDataHelper* fuzz_data,
   while (fuzz_data->CanReadBytes(1)) {
     const bool is_float = fuzz_data->ReadOrDefaultValue(true);
     // Decide input/output rate for this iteration.
-    const auto input_rate =
-        static_cast<size_t>(fuzz_data->SelectOneOf(rate_kinds));
-    const auto output_rate =
-        static_cast<size_t>(fuzz_data->SelectOneOf(rate_kinds));
+    const int input_rate = fuzz_data->SelectOneOf(kSampleRatesHz);
+    const int output_rate = fuzz_data->SelectOneOf(kSampleRatesHz);
 
     const uint8_t stream_delay = fuzz_data->ReadOrDefaultValue<uint8_t>(0);
-
-    // API call needed for AEC-2 and AEC-m to run.
+    // API call needed for AECM to run.
     apm->set_stream_delay_ms(stream_delay);
 
     const bool key_pressed = fuzz_data->ReadOrDefaultValue(true);

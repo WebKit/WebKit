@@ -18,6 +18,7 @@
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/crypto/crypto_options.h"
+#include "api/field_trials_view.h"
 #include "api/frame_transformer_interface.h"
 #include "api/function_view.h"
 #include "api/task_queue/task_queue_factory.h"
@@ -91,7 +92,7 @@ class ChannelSendInterface {
                                                 int payload_frequency) = 0;
   virtual bool SendTelephoneEventOutband(int event, int duration_ms) = 0;
   virtual void OnBitrateAllocation(BitrateAllocationUpdate update) = 0;
-  virtual int GetBitrate() const = 0;
+  virtual int GetTargetBitrate() const = 0;
   virtual void SetInputMute(bool muted) = 0;
 
   virtual void ProcessAndEncodeAudio(
@@ -135,7 +136,8 @@ std::unique_ptr<ChannelSendInterface> CreateChannelSend(
     int rtcp_report_interval_ms,
     uint32_t ssrc,
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-    TransportFeedbackObserver* feedback_observer);
+    TransportFeedbackObserver* feedback_observer,
+    const FieldTrialsView& field_trials);
 
 }  // namespace voe
 }  // namespace webrtc

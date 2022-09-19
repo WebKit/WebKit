@@ -45,13 +45,7 @@ TEST(AudioDecoderMultiOpusTest, InvalidChannelMappings) {
                                      {"num_streams", "2"}});
     const absl::optional<AudioDecoderMultiChannelOpus::Config> decoder_config =
         AudioDecoderMultiChannelOpus::SdpToConfig(sdp_format);
-    ASSERT_TRUE(decoder_config.has_value());
-    EXPECT_FALSE(decoder_config->IsOk());
-
-    const std::unique_ptr<AudioDecoder> opus_decoder =
-        AudioDecoderMultiChannelOpus::MakeAudioDecoder(*decoder_config);
-
-    EXPECT_FALSE(opus_decoder);
+    EXPECT_FALSE(decoder_config.has_value());
   }
   {
     // The mapping is too long. There are only 5 channels, but 6 elements in the
@@ -62,13 +56,7 @@ TEST(AudioDecoderMultiOpusTest, InvalidChannelMappings) {
                                      {"num_streams", "2"}});
     const absl::optional<AudioDecoderMultiChannelOpus::Config> decoder_config =
         AudioDecoderMultiChannelOpus::SdpToConfig(sdp_format);
-    ASSERT_TRUE(decoder_config.has_value());
-    EXPECT_FALSE(decoder_config->IsOk());
-
-    const std::unique_ptr<AudioDecoder> opus_decoder =
-        AudioDecoderMultiChannelOpus::MakeAudioDecoder(*decoder_config);
-
-    EXPECT_FALSE(opus_decoder);
+    EXPECT_FALSE(decoder_config.has_value());
   }
   {
     // The mapping doesn't parse correctly.

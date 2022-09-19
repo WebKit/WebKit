@@ -78,7 +78,7 @@ std::vector<std::vector<FrameType>> GetTimingFrames(
   codec_settings.numberOfSimulcastStreams = num_streams;
   codec_settings.timing_frame_thresholds = {delay_ms,
                                             kDefaultOutlierFrameSizePercent};
-  encode_timer.OnEncoderInit(codec_settings, false);
+  encode_timer.OnEncoderInit(codec_settings);
   const size_t kFramerate = 30;
   VideoBitrateAllocation bitrate_allocation;
   for (int si = 0; si < num_streams; ++si) {
@@ -205,7 +205,7 @@ TEST(FrameEncodeMetadataWriterTest, NoTimingFrameIfNoEncodeStartTime) {
   VideoCodec codec_settings;
   // Make all frames timing frames.
   codec_settings.timing_frame_thresholds.delay_ms = 1;
-  encode_timer.OnEncoderInit(codec_settings, false);
+  encode_timer.OnEncoderInit(codec_settings);
   VideoBitrateAllocation bitrate_allocation;
   bitrate_allocation.SetBitrate(0, 0, 500000);
   encode_timer.OnSetRates(bitrate_allocation, 30);
@@ -228,51 +228,6 @@ TEST(FrameEncodeMetadataWriterTest, NoTimingFrameIfNoEncodeStartTime) {
   EXPECT_FALSE(IsTimingFrame(image));
 }
 
-TEST(FrameEncodeMetadataWriterTest,
-     AdjustsCaptureTimeForInternalSourceEncoder) {
-  const int64_t kEncodeStartDelayMs = 2;
-  const int64_t kEncodeFinishDelayMs = 10;
-  constexpr size_t kFrameSize = 500;
-
-  int64_t timestamp = 1;
-  EncodedImage image;
-  image.SetEncodedData(EncodedImageBuffer::Create(kFrameSize));
-  image.capture_time_ms_ = timestamp;
-  image.SetTimestamp(static_cast<uint32_t>(timestamp * 90));
-
-  FakeEncodedImageCallback sink;
-  FrameEncodeMetadataWriter encode_timer(&sink);
-
-  VideoCodec codec_settings;
-  // Make all frames timing frames.
-  codec_settings.timing_frame_thresholds.delay_ms = 1;
-  encode_timer.OnEncoderInit(codec_settings, true);
-
-  VideoBitrateAllocation bitrate_allocation;
-  bitrate_allocation.SetBitrate(0, 0, 500000);
-  encode_timer.OnSetRates(bitrate_allocation, 30);
-
-  // Verify a single frame without encode timestamps isn't a timing frame.
-  encode_timer.FillTimingInfo(0, &image);
-  EXPECT_FALSE(IsTimingFrame(image));
-
-  // New frame, but this time with encode timestamps set in timing_.
-  // This should be a timing frame.
-  image.capture_time_ms_ = ++timestamp;
-  image.SetTimestamp(static_cast<uint32_t>(timestamp * 90));
-  image.timing_ = EncodedImage::Timing();
-  image.timing_.encode_start_ms = timestamp + kEncodeStartDelayMs;
-  image.timing_.encode_finish_ms = timestamp + kEncodeFinishDelayMs;
-
-  encode_timer.FillTimingInfo(0, &image);
-  EXPECT_TRUE(IsTimingFrame(image));
-
-  // Frame is captured kEncodeFinishDelayMs before it's encoded, so restored
-  // capture timestamp should be kEncodeFinishDelayMs in the past.
-  EXPECT_NEAR(image.capture_time_ms_, rtc::TimeMillis() - kEncodeFinishDelayMs,
-              1);
-}
-
 TEST(FrameEncodeMetadataWriterTest, NotifiesAboutDroppedFrames) {
   const int64_t kTimestampMs1 = 47721840;
   const int64_t kTimestampMs2 = 47721850;
@@ -281,7 +236,7 @@ TEST(FrameEncodeMetadataWriterTest, NotifiesAboutDroppedFrames) {
 
   FakeEncodedImageCallback sink;
   FrameEncodeMetadataWriter encode_timer(&sink);
-  encode_timer.OnEncoderInit(VideoCodec(), false);
+  encode_timer.OnEncoderInit(VideoCodec());
   // Any non-zero bitrate needed to be set before the first frame.
   VideoBitrateAllocation bitrate_allocation;
   bitrate_allocation.SetBitrate(0, 0, 500000);
@@ -338,7 +293,7 @@ TEST(FrameEncodeMetadataWriterTest, RestoresCaptureTimestamps) {
   FakeEncodedImageCallback sink;
 
   FrameEncodeMetadataWriter encode_timer(&sink);
-  encode_timer.OnEncoderInit(VideoCodec(), false);
+  encode_timer.OnEncoderInit(VideoCodec());
   // Any non-zero bitrate needed to be set before the first frame.
   VideoBitrateAllocation bitrate_allocation;
   bitrate_allocation.SetBitrate(0, 0, 500000);
@@ -363,7 +318,7 @@ TEST(FrameEncodeMetadataWriterTest, CopiesRotation) {
   FakeEncodedImageCallback sink;
 
   FrameEncodeMetadataWriter encode_timer(&sink);
-  encode_timer.OnEncoderInit(VideoCodec(), false);
+  encode_timer.OnEncoderInit(VideoCodec());
   // Any non-zero bitrate needed to be set before the first frame.
   VideoBitrateAllocation bitrate_allocation;
   bitrate_allocation.SetBitrate(0, 0, 500000);
@@ -389,7 +344,7 @@ TEST(FrameEncodeMetadataWriterTest, SetsContentType) {
   FrameEncodeMetadataWriter encode_timer(&sink);
   VideoCodec codec;
   codec.mode = VideoCodecMode::kScreensharing;
-  encode_timer.OnEncoderInit(codec, false);
+  encode_timer.OnEncoderInit(codec);
   // Any non-zero bitrate needed to be set before the first frame.
   VideoBitrateAllocation bitrate_allocation;
   bitrate_allocation.SetBitrate(0, 0, 500000);
@@ -413,7 +368,7 @@ TEST(FrameEncodeMetadataWriterTest, CopiesColorSpace) {
   FakeEncodedImageCallback sink;
 
   FrameEncodeMetadataWriter encode_timer(&sink);
-  encode_timer.OnEncoderInit(VideoCodec(), false);
+  encode_timer.OnEncoderInit(VideoCodec());
   // Any non-zero bitrate needed to be set before the first frame.
   VideoBitrateAllocation bitrate_allocation;
   bitrate_allocation.SetBitrate(0, 0, 500000);
@@ -440,7 +395,7 @@ TEST(FrameEncodeMetadataWriterTest, CopiesPacketInfos) {
   FakeEncodedImageCallback sink;
 
   FrameEncodeMetadataWriter encode_timer(&sink);
-  encode_timer.OnEncoderInit(VideoCodec(), false);
+  encode_timer.OnEncoderInit(VideoCodec());
   // Any non-zero bitrate needed to be set before the first frame.
   VideoBitrateAllocation bitrate_allocation;
   bitrate_allocation.SetBitrate(0, 0, 500000);

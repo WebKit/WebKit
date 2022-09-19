@@ -24,14 +24,8 @@ struct RTC_EXPORT AudioProcessingStats {
   AudioProcessingStats(const AudioProcessingStats& other);
   ~AudioProcessingStats();
 
-  // The root mean square (RMS) level in dBFS (decibels from digital
-  // full-scale) of the last capture frame, after processing. It is
-  // constrained to [-127, 0].
-  // The computation follows: https://tools.ietf.org/html/rfc6465
-  // with the intent that it can provide the RTP audio level indication.
-  // Only reported if level estimation is enabled in AudioProcessing::Config.
-  absl::optional<int> output_rms_dbfs;
-
+  // Deprecated.
+  // TODO(bugs.webrtc.org/11226): Remove.
   // True if voice is detected in the last capture frame, after processing.
   // It is conservative in flagging audio as speech, with low likelihood of
   // incorrectly flagging a frame as voice.

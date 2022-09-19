@@ -103,7 +103,6 @@ const char kComfortNoiseCodecName[] = "CN";
 const char kVp8CodecName[] = "VP8";
 const char kVp9CodecName[] = "VP9";
 const char kAv1CodecName[] = "AV1";
-const char kAv1xCodecName[] = "AV1X";
 const char kH264CodecName[] = "H264";
 
 // RFC 6184 RTP Payload Format for H.264 video
@@ -114,6 +113,8 @@ const char kH264FmtpSpropParameterSets[] = "sprop-parameter-sets";
 const char kH264FmtpSpsPpsIdrInKeyframe[] = "sps-pps-idr-in-keyframe";
 const char kH264ProfileLevelConstrainedBaseline[] = "42e01f";
 const char kH264ProfileLevelConstrainedHigh[] = "640c1f";
+
+const char kVP9ProfileId[] = "profile-id";
 
 const int kDefaultVideoMaxFramerate = 60;
 

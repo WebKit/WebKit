@@ -13,14 +13,16 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
+
 namespace webrtc {
 namespace test {
 namespace conversational_speech {
 
 struct Config {
-  Config(const std::string& audiotracks_path,
-         const std::string& timing_filepath,
-         const std::string& output_path)
+  Config(absl::string_view audiotracks_path,
+         absl::string_view timing_filepath,
+         absl::string_view output_path)
       : audiotracks_path_(audiotracks_path),
         timing_filepath_(timing_filepath),
         output_path_(output_path) {}

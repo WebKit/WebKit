@@ -11,7 +11,6 @@
 #include "pc/rtc_stats_traversal.h"
 
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "api/stats/rtcstats_objects.h"

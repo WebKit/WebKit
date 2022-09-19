@@ -34,6 +34,7 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_COMMA_BEGIN
 
 #include <webrtc/api/jsep.h>
 #include <webrtc/api/peer_connection_interface.h>
@@ -42,6 +43,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
+ALLOW_COMMA_END
 
 #include <wtf/LoggerHelper.h>
 #include <wtf/RobinHoodHashMap.h>

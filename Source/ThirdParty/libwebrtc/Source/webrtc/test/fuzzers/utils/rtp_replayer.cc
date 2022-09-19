@@ -15,6 +15,7 @@
 #include <string>
 #include <utility>
 
+#include "absl/memory/memory.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/transport/field_trial_based_config.h"
 #include "rtc_base/strings/json.h"
@@ -33,7 +34,7 @@ void RtpReplayer::Replay(const std::string& replay_config_filepath,
                          const uint8_t* rtp_dump_data,
                          size_t rtp_dump_size) {
   auto stream_state = std::make_unique<StreamState>();
-  std::vector<VideoReceiveStream::Config> receive_stream_configs =
+  std::vector<VideoReceiveStreamInterface::Config> receive_stream_configs =
       ReadConfigFromFile(replay_config_filepath, &(stream_state->transport));
   return Replay(std::move(stream_state), std::move(receive_stream_configs),
                 rtp_dump_data, rtp_dump_size);
@@ -41,7 +42,7 @@ void RtpReplayer::Replay(const std::string& replay_config_filepath,
 
 void RtpReplayer::Replay(
     std::unique_ptr<StreamState> stream_state,
-    std::vector<VideoReceiveStream::Config> receive_stream_configs,
+    std::vector<VideoReceiveStreamInterface::Config> receive_stream_configs,
     const uint8_t* rtp_dump_data,
     size_t rtp_dump_size) {
   RunLoop loop;
@@ -82,19 +83,23 @@ void RtpReplayer::Replay(
   }
 }
 
-std::vector<VideoReceiveStream::Config> RtpReplayer::ReadConfigFromFile(
-    const std::string& replay_config,
-    Transport* transport) {
-  Json::Reader json_reader;
+std::vector<VideoReceiveStreamInterface::Config>
+RtpReplayer::ReadConfigFromFile(const std::string& replay_config,
+                                Transport* transport) {
+  Json::CharReaderBuilder factory;
+  std::unique_ptr<Json::CharReader> json_reader =
+      absl::WrapUnique(factory.newCharReader());
   Json::Value json_configs;
-  if (!json_reader.parse(replay_config, json_configs)) {
+  Json::String errors;
+  if (!json_reader->parse(replay_config.data(),
+                          replay_config.data() + replay_config.length(),
+                          &json_configs, &errors)) {
     RTC_LOG(LS_ERROR)
-        << "Error parsing JSON replay configuration for the fuzzer"
-        << json_reader.getFormatedErrorMessages();
+        << "Error parsing JSON replay configuration for the fuzzer: " << errors;
     return {};
   }
 
-  std::vector<VideoReceiveStream::Config> receive_stream_configs;
+  std::vector<VideoReceiveStreamInterface::Config> receive_stream_configs;
   receive_stream_configs.reserve(json_configs.size());
   for (const auto& json : json_configs) {
     receive_stream_configs.push_back(
@@ -104,7 +109,7 @@ std::vector<VideoReceiveStream::Config> RtpReplayer::ReadConfigFromFile(
 }
 
 void RtpReplayer::SetupVideoStreams(
-    std::vector<VideoReceiveStream::Config>* receive_stream_configs,
+    std::vector<VideoReceiveStreamInterface::Config>* receive_stream_configs,
     StreamState* stream_state,
     Call* call) {
   stream_state->decoder_factory = std::make_unique<InternalDecoderFactory>();

@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "test/testsupport/file_utils.h"
@@ -18,8 +19,8 @@
 namespace webrtc {
 namespace webrtc_impl {
 
-FileLogWriter::FileLogWriter(std::string file_path)
-    : out_(std::fopen(file_path.c_str(), "wb")) {
+FileLogWriter::FileLogWriter(absl::string_view file_path)
+    : out_(std::fopen(std::string(file_path).c_str(), "wb")) {
   RTC_CHECK(out_ != nullptr)
       << "Failed to open file: '" << file_path << "' for writing.";
 }
@@ -32,7 +33,7 @@ bool FileLogWriter::IsActive() const {
   return true;
 }
 
-bool FileLogWriter::Write(const std::string& value) {
+bool FileLogWriter::Write(absl::string_view value) {
   // We don't expect the write to fail. If it does, we don't want to risk
   // silently ignoring it.
   RTC_CHECK_EQ(std::fwrite(value.data(), 1, value.size(), out_), value.size())
@@ -46,7 +47,7 @@ void FileLogWriter::Flush() {
 
 }  // namespace webrtc_impl
 
-FileLogWriterFactory::FileLogWriterFactory(std::string base_path)
+FileLogWriterFactory::FileLogWriterFactory(absl::string_view base_path)
     : base_path_(base_path) {
   for (size_t i = 0; i < base_path.size(); ++i) {
     if (base_path[i] == '/')
@@ -57,7 +58,8 @@ FileLogWriterFactory::FileLogWriterFactory(std::string base_path)
 FileLogWriterFactory::~FileLogWriterFactory() {}
 
 std::unique_ptr<RtcEventLogOutput> FileLogWriterFactory::Create(
-    std::string filename) {
-  return std::make_unique<webrtc_impl::FileLogWriter>(base_path_ + filename);
+    absl::string_view filename) {
+  return std::make_unique<webrtc_impl::FileLogWriter>(base_path_ +
+                                                      std::string(filename));
 }
 }  // namespace webrtc

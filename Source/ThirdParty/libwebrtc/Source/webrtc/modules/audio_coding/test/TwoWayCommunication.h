@@ -31,9 +31,9 @@ class TwoWayCommunication {
  private:
   void SetUpAutotest(AudioEncoderFactory* const encoder_factory,
                      const SdpAudioFormat& format1,
-                     const int payload_type1,
+                     int payload_type1,
                      const SdpAudioFormat& format2,
-                     const int payload_type2);
+                     int payload_type2);
 
   std::unique_ptr<AudioCodingModule> _acmA;
   std::unique_ptr<AudioCodingModule> _acmB;

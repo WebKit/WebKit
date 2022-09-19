@@ -21,6 +21,7 @@
 
 #include "absl/types/optional.h"
 #include "api/adaptation/resource.h"
+#include "api/field_trials_view.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/task_queue_base.h"
@@ -39,7 +40,6 @@
 #include "rtc_base/ref_count.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/synchronization/mutex.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
 #include "video/adaptation/balanced_constraint.h"
@@ -79,10 +79,11 @@ class VideoStreamEncoderResourceManager
       Clock* clock,
       bool experiment_cpu_load_estimator,
       std::unique_ptr<OveruseFrameDetector> overuse_detector,
-      DegradationPreferenceProvider* degradation_preference_provider);
+      DegradationPreferenceProvider* degradation_preference_provider,
+      const FieldTrialsView& field_trials);
   ~VideoStreamEncoderResourceManager() override;
 
-  void Initialize(rtc::TaskQueue* encoder_queue);
+  void Initialize(TaskQueueBase* encoder_queue);
   void SetAdaptationProcessor(
       ResourceAdaptationProcessorInterface* adaptation_processor,
       VideoStreamAdapter* stream_adapter);
@@ -151,7 +152,8 @@ class VideoStreamEncoderResourceManager
   // QualityRampUpExperimentListener implementation.
   void OnQualityRampUp() override;
 
-  static bool IsSimulcast(const VideoEncoderConfig& encoder_config);
+  static bool IsSimulcastOrMultipleSpatialLayers(
+      const VideoEncoderConfig& encoder_config);
 
  private:
   class InitialFrameDropper;
@@ -181,6 +183,7 @@ class VideoStreamEncoderResourceManager
       const std::map<VideoAdaptationReason, VideoAdaptationCounters>&
           active_counts);
 
+  const FieldTrialsView& field_trials_;
   DegradationPreferenceProvider* const degradation_preference_provider_;
   std::unique_ptr<BitrateConstraint> bitrate_constraint_
       RTC_GUARDED_BY(encoder_queue_);
@@ -192,7 +195,7 @@ class VideoStreamEncoderResourceManager
   const rtc::scoped_refptr<BandwidthQualityScalerResource>
       bandwidth_quality_scaler_resource_;
 
-  rtc::TaskQueue* encoder_queue_;
+  TaskQueueBase* encoder_queue_;
   VideoStreamInputStateProvider* const input_state_provider_
       RTC_GUARDED_BY(encoder_queue_);
   ResourceAdaptationProcessorInterface* adaptation_processor_;
@@ -213,6 +216,8 @@ class VideoStreamEncoderResourceManager
   const std::unique_ptr<InitialFrameDropper> initial_frame_dropper_
       RTC_GUARDED_BY(encoder_queue_);
   const bool quality_scaling_experiment_enabled_ RTC_GUARDED_BY(encoder_queue_);
+  const bool pixel_limit_resource_experiment_enabled_
+      RTC_GUARDED_BY(encoder_queue_);
   absl::optional<uint32_t> encoder_target_bitrate_bps_
       RTC_GUARDED_BY(encoder_queue_);
   absl::optional<VideoEncoder::RateControlParameters> encoder_rates_

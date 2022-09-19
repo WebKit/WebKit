@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
 #
 #  Use of this source code is governed by a BSD-style license
@@ -14,59 +14,61 @@ or
 """
 
 from __future__ import division
+from __future__ import absolute_import
 import random
 import unittest
+from six.moves import range
+from six.moves import zip
 
 import misc
 
-
 class TestMisc(unittest.TestCase):
-    def testUnwrapMod3(self):
-        data = [0, 1, 2, 0, -1, -2, -3, -4]
-        unwrapped_3 = misc.Unwrap(data, 3)
-        self.assertEqual([0, 1, 2, 3, 2, 1, 0, -1], unwrapped_3)
+  def testUnwrapMod3(self):
+    data = [0, 1, 2, 0, -1, -2, -3, -4]
+    unwrapped_3 = misc.Unwrap(data, 3)
+    self.assertEqual([0, 1, 2, 3, 2, 1, 0, -1], unwrapped_3)
 
-    def testUnwrapMod4(self):
-        data = [0, 1, 2, 0, -1, -2, -3, -4]
-        unwrapped_4 = misc.Unwrap(data, 4)
-        self.assertEqual([0, 1, 2, 0, -1, -2, -3, -4], unwrapped_4)
+  def testUnwrapMod4(self):
+    data = [0, 1, 2, 0, -1, -2, -3, -4]
+    unwrapped_4 = misc.Unwrap(data, 4)
+    self.assertEqual([0, 1, 2, 0, -1, -2, -3, -4], unwrapped_4)
 
-    def testDataShouldNotChangeAfterUnwrap(self):
-        data = [0, 1, 2, 0, -1, -2, -3, -4]
-        _ = misc.Unwrap(data, 4)
+  def testDataShouldNotChangeAfterUnwrap(self):
+    data = [0, 1, 2, 0, -1, -2, -3, -4]
+    _ = misc.Unwrap(data, 4)
 
-        self.assertEqual([0, 1, 2, 0, -1, -2, -3, -4], data)
+    self.assertEqual([0, 1, 2, 0, -1, -2, -3, -4], data)
 
-    def testRandomlyMultiplesOfModAdded(self):
-        # `unwrap` definition says only multiples of mod are added.
-        random_data = [random.randint(0, 9) for _ in range(100)]
+  def testRandomlyMultiplesOfModAdded(self):
+    # `unwrap` definition says only multiples of mod are added.
+    random_data = [random.randint(0, 9) for _ in range(100)]
 
-        for mod in range(1, 100):
-            random_data_unwrapped_mod = misc.Unwrap(random_data, mod)
+    for mod in range(1, 100):
+      random_data_unwrapped_mod = misc.Unwrap(random_data, mod)
 
-            for (old_a, a) in zip(random_data, random_data_unwrapped_mod):
-                self.assertEqual((old_a - a) % mod, 0)
+      for (old_a, a) in zip(random_data, random_data_unwrapped_mod):
+        self.assertEqual((old_a - a) % mod, 0)
 
-    def testRandomlyAgainstInequalityDefinition(self):
-        # Data has to satisfy -mod/2 <= difference < mod/2 for every
-        # difference between consecutive values after unwrap.
-        random_data = [random.randint(0, 9) for _ in range(100)]
+  def testRandomlyAgainstInequalityDefinition(self):
+    # Data has to satisfy -mod/2 <= difference < mod/2 for every
+    # difference between consecutive values after unwrap.
+    random_data = [random.randint(0, 9) for _ in range(100)]
 
-        for mod in range(1, 100):
-            random_data_unwrapped_mod = misc.Unwrap(random_data, mod)
+    for mod in range(1, 100):
+      random_data_unwrapped_mod = misc.Unwrap(random_data, mod)
 
-            for (a, b) in zip(random_data_unwrapped_mod,
-                              random_data_unwrapped_mod[1:]):
-                self.assertTrue(-mod / 2 <= b - a < mod / 2)
+      for (a, b) in zip(random_data_unwrapped_mod,
+                        random_data_unwrapped_mod[1:]):
+        self.assertTrue(-mod / 2 <= b - a < mod / 2)
 
-    def testRandomlyDataShouldNotChangeAfterUnwrap(self):
-        random_data = [random.randint(0, 9) for _ in range(100)]
-        random_data_copy = random_data[:]
-        for mod in range(1, 100):
-            _ = misc.Unwrap(random_data, mod)
+  def testRandomlyDataShouldNotChangeAfterUnwrap(self):
+    random_data = [random.randint(0, 9) for _ in range(100)]
+    random_data_copy = random_data[:]
+    for mod in range(1, 100):
+      _ = misc.Unwrap(random_data, mod)
 
-            self.assertEqual(random_data, random_data_copy)
+      self.assertEqual(random_data, random_data_copy)
 
 
 if __name__ == "__main__":
-    unittest.main()
+  unittest.main()

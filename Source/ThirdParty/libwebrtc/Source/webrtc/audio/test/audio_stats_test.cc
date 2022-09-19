@@ -63,9 +63,8 @@ class NoLossTest : public AudioEndToEndTest {
     EXPECT_FALSE(send_stats.apm_statistics.echo_return_loss_enhancement);
     EXPECT_FALSE(send_stats.apm_statistics.residual_echo_likelihood);
     EXPECT_FALSE(send_stats.apm_statistics.residual_echo_likelihood_recent_max);
-    EXPECT_EQ(false, send_stats.typing_noise_detected);
 
-    AudioReceiveStream::Stats recv_stats =
+    AudioReceiveStreamInterface::Stats recv_stats =
         receive_stream()->GetStats(/*get_and_clear_legacy_stats=*/true);
     EXPECT_PRED2(IsNear, kBytesSent, recv_stats.payload_bytes_rcvd);
     EXPECT_PRED2(IsNear, kPacketsSent, recv_stats.packets_rcvd);

@@ -7,4 +7,8 @@ specific_include_rules = {
   "task_queue_test\.h": [
     "+test/gtest.h",
   ],
+  "pending_task_safety_flag.h": [
+    "+rtc_base/checks.h",
+    "+rtc_base/system/no_unique_address.h",
+  ],
 }

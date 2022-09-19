@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdint.h>
 #include <stdio.h>
 
 #include <string>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "test/testsupport/frame_writer.h"
 
 namespace webrtc {
@@ -34,8 +34,7 @@ YuvFrameWriterImpl::~YuvFrameWriterImpl() {
 
 bool YuvFrameWriterImpl::Init() {
   if (width_ <= 0 || height_ <= 0) {
-    fprintf(stderr, "Frame width and height must be >0, was %d x %d\n", width_,
-            height_);
+    RTC_LOG(LS_ERROR) << "Frame width and height must be positive.";
     return false;
   }
   frame_length_in_bytes_ =
@@ -43,8 +42,8 @@ bool YuvFrameWriterImpl::Init() {
 
   output_file_ = fopen(output_filename_.c_str(), "wb");
   if (output_file_ == nullptr) {
-    fprintf(stderr, "Couldn't open output file for writing: %s\n",
-            output_filename_.c_str());
+    RTC_LOG(LS_ERROR) << "Couldn't open output file: "
+                      << output_filename_.c_str();
     return false;
   }
   return true;
@@ -53,15 +52,14 @@ bool YuvFrameWriterImpl::Init() {
 bool YuvFrameWriterImpl::WriteFrame(const uint8_t* frame_buffer) {
   RTC_DCHECK(frame_buffer);
   if (output_file_ == nullptr) {
-    fprintf(stderr,
-            "YuvFrameWriterImpl is not initialized (output file is NULL)\n");
+    RTC_LOG(LS_ERROR) << "YuvFrameWriterImpl is not initialized.";
     return false;
   }
   size_t bytes_written =
       fwrite(frame_buffer, 1, frame_length_in_bytes_, output_file_);
   if (bytes_written != frame_length_in_bytes_) {
-    fprintf(stderr, "Failed to write %zu bytes to file %s\n",
-            frame_length_in_bytes_, output_filename_.c_str());
+    RTC_LOG(LS_ERROR) << "Cound't write frame to file: "
+                      << output_filename_.c_str();
     return false;
   }
   return true;

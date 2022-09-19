@@ -79,7 +79,7 @@ TEST(MultiStreamEndToEndTest, SendsAndReceivesMultipleStreams) {
 
     void UpdateReceiveConfig(
         size_t stream_index,
-        VideoReceiveStream::Config* receive_config) override {
+        VideoReceiveStreamInterface::Config* receive_config) override {
       receive_config->renderer = observers_[stream_index].get();
     }
 

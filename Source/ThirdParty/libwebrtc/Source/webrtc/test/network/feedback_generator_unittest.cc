@@ -28,4 +28,20 @@ TEST(FeedbackGeneratorTest, ReportsFeedbackForSentPackets) {
     }
   }
 }
+
+TEST(FeedbackGeneratorTest, FeedbackIncludesLostPackets) {
+  size_t kPacketSize = 1000;
+  auto gen = CreateFeedbackGenerator(FeedbackGenerator::Config());
+  BuiltInNetworkBehaviorConfig send_config_with_loss;
+  send_config_with_loss.loss_percent = 50;
+  gen->SetSendConfig(send_config_with_loss);
+  for (int i = 0; i < 20; ++i) {
+    gen->SendPacket(kPacketSize);
+    gen->Sleep(TimeDelta::Millis(5));
+  }
+  auto feedback_list = gen->PopFeedback();
+  ASSERT_GT(feedback_list.size(), 0u);
+  EXPECT_NEAR(feedback_list[0].LostWithSendInfo().size(),
+              feedback_list[0].ReceivedWithSendInfo().size(), 2);
+}
 }  // namespace webrtc

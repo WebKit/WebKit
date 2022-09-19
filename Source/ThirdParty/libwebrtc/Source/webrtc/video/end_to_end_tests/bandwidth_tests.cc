@@ -12,6 +12,7 @@
 
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
+#include "api/units/time_delta.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "call/fake_network_pipe.h"
@@ -20,7 +21,6 @@
 #include "rtc_base/rate_limiter.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue_for_test.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/call_test.h"
 #include "test/fake_encoder.h"
@@ -46,11 +46,11 @@ class BandwidthEndToEndTest : public test::CallTest {
 TEST_F(BandwidthEndToEndTest, ReceiveStreamSendsRemb) {
   class RembObserver : public test::EndToEndTest {
    public:
-    RembObserver() : EndToEndTest(kDefaultTimeoutMs) {}
+    RembObserver() : EndToEndTest(kDefaultTimeout) {}
 
     void ModifyVideoConfigs(
         VideoSendStream::Config* send_config,
-        std::vector<VideoReceiveStream::Config>* receive_configs,
+        std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       send_config->rtp.extensions.clear();
       send_config->rtp.extensions.push_back(
@@ -85,7 +85,7 @@ TEST_F(BandwidthEndToEndTest, ReceiveStreamSendsRemb) {
 class BandwidthStatsTest : public test::EndToEndTest {
  public:
   BandwidthStatsTest(bool send_side_bwe, TaskQueueBase* task_queue)
-      : EndToEndTest(test::CallTest::kDefaultTimeoutMs),
+      : EndToEndTest(test::CallTest::kDefaultTimeout),
         sender_call_(nullptr),
         receiver_call_(nullptr),
         has_seen_pacer_delay_(false),
@@ -95,12 +95,12 @@ class BandwidthStatsTest : public test::EndToEndTest {
   ~BandwidthStatsTest() override {
     // Block until all already posted tasks run to avoid races when such task
     // accesses `this`.
-    SendTask(RTC_FROM_HERE, task_queue_, [] {});
+    SendTask(task_queue_, [] {});
   }
 
   void ModifyVideoConfigs(
       VideoSendStream::Config* send_config,
-      std::vector<VideoReceiveStream::Config>* receive_configs,
+      std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
       VideoEncoderConfig* encoder_config) override {
     send_config->rtp.extensions.clear();
     if (!send_side_bwe_) {
@@ -130,7 +130,7 @@ class BandwidthStatsTest : public test::EndToEndTest {
   Action OnSendRtp(const uint8_t* packet, size_t length) override {
     // Stats need to be fetched on the thread where the caller objects were
     // constructed.
-    task_queue_->PostTask(ToQueuedTask([this]() {
+    task_queue_->PostTask([this]() {
       if (!sender_call_ || !receiver_call_) {
         return;
       }
@@ -146,7 +146,7 @@ class BandwidthStatsTest : public test::EndToEndTest {
           observation_complete_.Set();
         }
       }
-    }));
+    });
 
     return SEND_PACKET;
   }
@@ -194,7 +194,7 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
   class BweObserver : public test::EndToEndTest {
    public:
     explicit BweObserver(TaskQueueBase* task_queue)
-        : EndToEndTest(kDefaultTimeoutMs),
+        : EndToEndTest(kDefaultTimeout),
           sender_call_(nullptr),
           clock_(Clock::GetRealTimeClock()),
           sender_ssrc_(0),
@@ -204,12 +204,7 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
           retransmission_rate_limiter_(clock_, 1000),
           task_queue_(task_queue) {}
 
-    ~BweObserver() override {
-      // Block until all already posted tasks run to avoid races when such task
-      // accesses `this`. Also make sure we free `rtp_rtcp_` on the correct
-      // thread/task queue.
-      SendTask(RTC_FROM_HERE, task_queue_, [this]() { rtp_rtcp_ = nullptr; });
-    }
+    void OnStreamsStopped() override { rtp_rtcp_ = nullptr; }
 
     std::unique_ptr<test::PacketTransport> CreateReceiveTransport(
         TaskQueueBase* task_queue) override {
@@ -231,7 +226,7 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
 
     void ModifyVideoConfigs(
         VideoSendStream::Config* send_config,
-        std::vector<VideoReceiveStream::Config>* receive_configs,
+        std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       ASSERT_EQ(1u, send_config->rtp.ssrcs.size());
       sender_ssrc_ = send_config->rtp.ssrcs[0];
@@ -253,7 +248,7 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
     void OnCallsCreated(Call* sender_call, Call* receiver_call) override {
       RTC_DCHECK(sender_call);
       sender_call_ = sender_call;
-      task_queue_->PostTask(ToQueuedTask([this]() { PollStats(); }));
+      task_queue_->PostTask([this]() { PollStats(); });
     }
 
     void PollStats() {
@@ -289,7 +284,8 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
           break;
       }
 
-      task_queue_->PostDelayedTask(ToQueuedTask([this] { PollStats(); }), 1000);
+      task_queue_->PostDelayedTask([this] { PollStats(); },
+                                   TimeDelta::Seconds(1));
     }
 
     void PerformTest() override {
@@ -324,7 +320,7 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
                                public test::FakeEncoder {
    public:
     explicit EncoderRateStatsTest(TaskQueueBase* task_queue)
-        : EndToEndTest(kDefaultTimeoutMs),
+        : EndToEndTest(kDefaultTimeout),
           FakeEncoder(Clock::GetRealTimeClock()),
           task_queue_(task_queue),
           send_stream_(nullptr),
@@ -333,15 +329,15 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
               CreateBuiltinVideoBitrateAllocatorFactory()),
           bitrate_kbps_(0) {}
 
-    void OnVideoStreamsCreated(
-        VideoSendStream* send_stream,
-        const std::vector<VideoReceiveStream*>& receive_streams) override {
+    void OnVideoStreamsCreated(VideoSendStream* send_stream,
+                               const std::vector<VideoReceiveStreamInterface*>&
+                                   receive_streams) override {
       send_stream_ = send_stream;
     }
 
     void ModifyVideoConfigs(
         VideoSendStream::Config* send_config,
-        std::vector<VideoReceiveStream::Config>* receive_configs,
+        std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       send_config->encoder_settings.encoder_factory = &encoder_factory_;
       send_config->encoder_settings.bitrate_allocator_factory =
@@ -362,7 +358,7 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
       ASSERT_TRUE(Wait())
           << "Timed out while waiting for encoder SetRates() call.";
 
-      SendTask(RTC_FROM_HERE, task_queue_, [this]() {
+      SendTask(task_queue_, [this]() {
         WaitForEncoderTargetBitrateMatchStats();
         send_stream_->Stop();
         WaitForStatsReportZeroTargetBitrate();
@@ -372,7 +368,7 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
     }
 
     void WaitForEncoderTargetBitrateMatchStats() {
-      for (int i = 0; i < kDefaultTimeoutMs; ++i) {
+      for (int i = 0; i < kDefaultTimeout.ms(); ++i) {
         VideoSendStream::Stats stats = send_stream_->GetStats();
         {
           MutexLock lock(&mutex_);
@@ -388,7 +384,7 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
     }
 
     void WaitForStatsReportZeroTargetBitrate() {
-      for (int i = 0; i < kDefaultTimeoutMs; ++i) {
+      for (int i = 0; i < kDefaultTimeout.ms(); ++i) {
         if (send_stream_->GetStats().target_media_bitrate_bps == 0) {
           return;
         }

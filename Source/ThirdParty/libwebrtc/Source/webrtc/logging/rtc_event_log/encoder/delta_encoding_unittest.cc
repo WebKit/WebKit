@@ -44,7 +44,7 @@ void MaybeSetSignedness(DeltaSignedness signedness) {
       SetFixedLengthEncoderDeltaSignednessForTesting(true);
       return;
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
 }
 
 uint64_t RandomWithMaxBitWidth(Random* prng, uint64_t max_width) {

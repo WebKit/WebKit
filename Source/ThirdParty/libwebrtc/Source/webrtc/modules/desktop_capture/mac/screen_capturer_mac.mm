@@ -15,7 +15,6 @@
 #include "modules/desktop_capture/mac/desktop_frame_provider.h"
 #include "modules/desktop_capture/mac/window_list_utils.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/time_utils.h"
 #include "rtc_base/trace_event.h"

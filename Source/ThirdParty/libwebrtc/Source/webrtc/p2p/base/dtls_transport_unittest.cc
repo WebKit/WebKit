@@ -15,6 +15,7 @@
 #include <set>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/dtls_transport_interface.h"
 #include "p2p/base/fake_ice_transport.h"
 #include "p2p/base/packet_transport_internal.h"
@@ -64,7 +65,7 @@ void SetRemoteFingerprintFromCert(
 
 class DtlsTestClient : public sigslot::has_slots<> {
  public:
-  explicit DtlsTestClient(const std::string& name) : name_(name) {}
+  explicit DtlsTestClient(absl::string_view name) : name_(name) {}
   void CreateCertificate(rtc::KeyType key_type) {
     certificate_ =
         rtc::RTCCertificate::Create(rtc::SSLIdentity::Create(name_, key_type));
@@ -380,6 +381,7 @@ class DtlsTransportTestBase {
   }
 
  protected:
+  rtc::AutoThread main_thread_;
   rtc::ScopedFakeClock fake_clock_;
   DtlsTestClient client1_;
   DtlsTestClient client2_;

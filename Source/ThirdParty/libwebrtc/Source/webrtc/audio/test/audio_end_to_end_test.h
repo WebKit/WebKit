@@ -28,7 +28,9 @@ class AudioEndToEndTest : public test::EndToEndTest {
  protected:
   TestAudioDeviceModule* send_audio_device() { return send_audio_device_; }
   const AudioSendStream* send_stream() const { return send_stream_; }
-  const AudioReceiveStream* receive_stream() const { return receive_stream_; }
+  const AudioReceiveStreamInterface* receive_stream() const {
+    return receive_stream_;
+  }
 
   virtual BuiltInNetworkBehaviorConfig GetNetworkPipeConfig() const;
 
@@ -49,19 +51,19 @@ class AudioEndToEndTest : public test::EndToEndTest {
   std::unique_ptr<test::PacketTransport> CreateReceiveTransport(
       TaskQueueBase* task_queue) override;
 
-  void ModifyAudioConfigs(
-      AudioSendStream::Config* send_config,
-      std::vector<AudioReceiveStream::Config>* receive_configs) override;
-  void OnAudioStreamsCreated(
-      AudioSendStream* send_stream,
-      const std::vector<AudioReceiveStream*>& receive_streams) override;
+  void ModifyAudioConfigs(AudioSendStream::Config* send_config,
+                          std::vector<AudioReceiveStreamInterface::Config>*
+                              receive_configs) override;
+  void OnAudioStreamsCreated(AudioSendStream* send_stream,
+                             const std::vector<AudioReceiveStreamInterface*>&
+                                 receive_streams) override;
 
   void PerformTest() override;
 
  private:
   TestAudioDeviceModule* send_audio_device_ = nullptr;
   AudioSendStream* send_stream_ = nullptr;
-  AudioReceiveStream* receive_stream_ = nullptr;
+  AudioReceiveStreamInterface* receive_stream_ = nullptr;
 };
 
 }  // namespace test

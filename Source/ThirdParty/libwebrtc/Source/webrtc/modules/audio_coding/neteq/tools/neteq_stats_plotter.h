@@ -14,6 +14,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "modules/audio_coding/neteq/tools/neteq_delay_analyzer.h"
 #include "modules/audio_coding/neteq/tools/neteq_stats_getter.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
@@ -26,9 +27,9 @@ class NetEqStatsPlotter : public NetEqSimulationEndedCallback {
   NetEqStatsPlotter(bool make_matlab_plot,
                     bool make_python_plot,
                     bool show_concealment_events,
-                    std::string base_file_name);
+                    absl::string_view base_file_name);
 
-  void SimulationEnded(int64_t simulation_time_ms, NetEq* neteq) override;
+  void SimulationEnded(int64_t simulation_time_ms) override;
 
   NetEqStatsGetter* stats_getter() { return stats_getter_.get(); }
 

@@ -22,6 +22,12 @@
 #define STRINGIZE(line) #line
 #define FILELINESTR(file, line) file ":" STRINGIZE(line)
 
+#if !defined(DISABLE_SLOW_TESTS) || defined(__x86_64__) || defined(__i386__)
+// SLOW TESTS are those that are unoptimized C code.
+// FULL TESTS are optimized but test many variations of the same code.
+#define ENABLE_FULL_TESTS
+#endif
+
 namespace libyuv {
 
 // Test scaling with C vs Opt and return maximum pixel difference. 0 = exact.
@@ -882,23 +888,31 @@ static int NV12TestFilter(int src_width,
 
 // Test a scale factor with all 4 filters.  Expect unfiltered to be exact, but
 // filtering is different fixed point implementations for SSSE3, Neon and C.
-#ifdef ENABLE_SLOW_TESTS
+#ifndef DISABLE_SLOW_TESTS
 #define TEST_FACTOR(name, nom, denom, boxdiff)  \
   TEST_FACTOR1(, name, None, nom, denom, 0)     \
   TEST_FACTOR1(, name, Linear, nom, denom, 3)   \
   TEST_FACTOR1(, name, Bilinear, nom, denom, 3) \
   TEST_FACTOR1(, name, Box, nom, denom, boxdiff)
 #else
+#if defined(ENABLE_FULL_TESTS)
 #define TEST_FACTOR(name, nom, denom, boxdiff)           \
   TEST_FACTOR1(DISABLED_, name, None, nom, denom, 0)     \
   TEST_FACTOR1(DISABLED_, name, Linear, nom, denom, 3)   \
   TEST_FACTOR1(DISABLED_, name, Bilinear, nom, denom, 3) \
   TEST_FACTOR1(DISABLED_, name, Box, nom, denom, boxdiff)
+#else
+#define TEST_FACTOR(name, nom, denom, boxdiff)           \
+  TEST_FACTOR1(DISABLED_, name, Bilinear, nom, denom, 3) \
+  TEST_FACTOR1(DISABLED_, name, Box, nom, denom, boxdiff)
+#endif
 #endif
 
 TEST_FACTOR(2, 1, 2, 0)
 TEST_FACTOR(4, 1, 4, 0)
-// TEST_FACTOR(8, 1, 8, 0) Disable for benchmark performance.  Takes 90 seconds.
+#ifndef DISABLE_SLOW_TESTS
+TEST_FACTOR(8, 1, 8, 0)
+#endif
 TEST_FACTOR(3by4, 3, 4, 1)
 TEST_FACTOR(3by8, 3, 8, 1)
 TEST_FACTOR(3, 1, 3, 0)
@@ -1008,7 +1022,7 @@ TEST_FACTOR(3, 1, 3, 0)
     EXPECT_LE(diff, max_diff);                                                \
   }
 
-#ifdef ENABLE_SLOW_TESTS
+#ifndef DISABLE_SLOW_TESTS
 // Test scale to a specified size with all 4 filters.
 #define TEST_SCALETO(name, width, height)           \
   TEST_SCALETO1(, name, width, height, None, 0)     \
@@ -1016,23 +1030,28 @@ TEST_FACTOR(3, 1, 3, 0)
   TEST_SCALETO1(, name, width, height, Bilinear, 3) \
   TEST_SCALETO1(, name, width, height, Box, 3)
 #else
-// Test scale to a specified size with all 4 filters.
+#if defined(ENABLE_FULL_TESTS)
 #define TEST_SCALETO(name, width, height)                    \
   TEST_SCALETO1(DISABLED_, name, width, height, None, 0)     \
   TEST_SCALETO1(DISABLED_, name, width, height, Linear, 3)   \
   TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3) \
   TEST_SCALETO1(DISABLED_, name, width, height, Box, 3)
+#else
+#define TEST_SCALETO(name, width, height)                    \
+  TEST_SCALETO1(DISABLED_, name, width, height, Bilinear, 3) \
+  TEST_SCALETO1(DISABLED_, name, width, height, Box, 3)
+#endif
 #endif
 
 TEST_SCALETO(Scale, 1, 1)
-TEST_SCALETO(Scale, 256, 144) /* 128x72 * 2 */
-TEST_SCALETO(Scale, 320, 240)
 TEST_SCALETO(Scale, 569, 480)
 TEST_SCALETO(Scale, 640, 360)
+#ifndef DISABLE_SLOW_TESTS
+TEST_SCALETO(Scale, 256, 144) /* 128x72 * 2 */
+TEST_SCALETO(Scale, 320, 240)
 TEST_SCALETO(Scale, 1280, 720)
-#ifdef ENABLE_SLOW_TESTS
 TEST_SCALETO(Scale, 1920, 1080)
-#endif  // ENABLE_SLOW_TESTS
+#endif  // DISABLE_SLOW_TESTS
 #undef TEST_SCALETO1
 #undef TEST_SCALETO
 
@@ -1088,16 +1107,21 @@ TEST_SCALETO(Scale, 1920, 1080)
   }
 
 // Test scale to a specified size with all 4 filters.
-#ifdef ENABLE_SLOW_TESTS
+#ifndef DISABLE_SLOW_TESTS
 TEST_SCALESWAPXY1(, Scale, None, 0)
 TEST_SCALESWAPXY1(, Scale, Linear, 3)
 TEST_SCALESWAPXY1(, Scale, Bilinear, 3)
 TEST_SCALESWAPXY1(, Scale, Box, 3)
 #else
+#if defined(ENABLE_FULL_TESTS)
 TEST_SCALESWAPXY1(DISABLED_, Scale, None, 0)
 TEST_SCALESWAPXY1(DISABLED_, Scale, Linear, 3)
 TEST_SCALESWAPXY1(DISABLED_, Scale, Bilinear, 3)
 TEST_SCALESWAPXY1(DISABLED_, Scale, Box, 3)
+#else
+TEST_SCALESWAPXY1(DISABLED_, Scale, Bilinear, 3)
+TEST_SCALESWAPXY1(DISABLED_, Scale, Box, 3)
+#endif
 #endif
 
 #undef TEST_SCALESWAPXY1
@@ -1197,10 +1221,6 @@ extern "C" void ScaleRowUp2_16_NEON(const uint16_t* src_ptr,
                                     ptrdiff_t src_stride,
                                     uint16_t* dst,
                                     int dst_width);
-extern "C" void ScaleRowUp2_16_MMI(const uint16_t* src_ptr,
-                                   ptrdiff_t src_stride,
-                                   uint16_t* dst,
-                                   int dst_width);
 extern "C" void ScaleRowUp2_16_C(const uint16_t* src_ptr,
                                  ptrdiff_t src_stride,
                                  uint16_t* dst,
@@ -1224,13 +1244,6 @@ TEST_F(LibYUVScaleTest, TestScaleRowUp2_16) {
     int has_neon = TestCpuFlag(kCpuHasNEON);
     if (has_neon) {
       ScaleRowUp2_16_NEON(&orig_pixels[0], 640, &dst_pixels_opt[0], 1280);
-    } else {
-      ScaleRowUp2_16_C(&orig_pixels[0], 640, &dst_pixels_opt[0], 1280);
-    }
-#elif !defined(LIBYUV_DISABLE_MMI) && defined(_MIPS_ARCH_LOONGSON3A)
-    int has_mmi = TestCpuFlag(kCpuHasMMI);
-    if (has_mmi) {
-      ScaleRowUp2_16_MMI(&orig_pixels[0], 640, &dst_pixels_opt[0], 1280);
     } else {
       ScaleRowUp2_16_C(&orig_pixels[0], 640, &dst_pixels_opt[0], 1280);
     }
@@ -1385,56 +1398,56 @@ TEST_FACTOR(3, 1, 3, 0)
 #undef DX
 
 TEST_F(LibYUVScaleTest, PlaneTest3x) {
-  const int kSrcStride = 48;
-  const int kDstStride = 16;
+  const int kSrcStride = 480;
+  const int kDstStride = 160;
   const int kSize = kSrcStride * 3;
   align_buffer_page_end(orig_pixels, kSize);
-  for (int i = 0; i < 48 * 3; ++i) {
+  for (int i = 0; i < 480 * 3; ++i) {
     orig_pixels[i] = i;
   }
   align_buffer_page_end(dest_pixels, kDstStride);
 
-  int iterations16 =
-      benchmark_width_ * benchmark_height_ / (16 * 1) * benchmark_iterations_;
-  for (int i = 0; i < iterations16; ++i) {
-    ScalePlane(orig_pixels, kSrcStride, 48, 3, dest_pixels, kDstStride, 16, 1,
+  int iterations160 = (benchmark_width_ * benchmark_height_ + (160 - 1)) / 160 *
+                      benchmark_iterations_;
+  for (int i = 0; i < iterations160; ++i) {
+    ScalePlane(orig_pixels, kSrcStride, 480, 3, dest_pixels, kDstStride, 160, 1,
                kFilterBilinear);
   }
 
-  EXPECT_EQ(49, dest_pixels[0]);
+  EXPECT_EQ(225, dest_pixels[0]);
 
-  ScalePlane(orig_pixels, kSrcStride, 48, 3, dest_pixels, kDstStride, 16, 1,
+  ScalePlane(orig_pixels, kSrcStride, 480, 3, dest_pixels, kDstStride, 160, 1,
              kFilterNone);
 
-  EXPECT_EQ(49, dest_pixels[0]);
+  EXPECT_EQ(225, dest_pixels[0]);
 
   free_aligned_buffer_page_end(dest_pixels);
   free_aligned_buffer_page_end(orig_pixels);
 }
 
 TEST_F(LibYUVScaleTest, PlaneTest4x) {
-  const int kSrcStride = 64;
-  const int kDstStride = 16;
+  const int kSrcStride = 640;
+  const int kDstStride = 160;
   const int kSize = kSrcStride * 4;
   align_buffer_page_end(orig_pixels, kSize);
-  for (int i = 0; i < 64 * 4; ++i) {
+  for (int i = 0; i < 640 * 4; ++i) {
     orig_pixels[i] = i;
   }
   align_buffer_page_end(dest_pixels, kDstStride);
 
-  int iterations16 =
-      benchmark_width_ * benchmark_height_ / (16 * 1) * benchmark_iterations_;
-  for (int i = 0; i < iterations16; ++i) {
-    ScalePlane(orig_pixels, kSrcStride, 64, 4, dest_pixels, kDstStride, 16, 1,
+  int iterations160 = (benchmark_width_ * benchmark_height_ + (160 - 1)) / 160 *
+                      benchmark_iterations_;
+  for (int i = 0; i < iterations160; ++i) {
+    ScalePlane(orig_pixels, kSrcStride, 640, 4, dest_pixels, kDstStride, 160, 1,
                kFilterBilinear);
   }
 
-  EXPECT_EQ((65 + 66 + 129 + 130 + 2) / 4, dest_pixels[0]);
+  EXPECT_EQ(66, dest_pixels[0]);
 
-  ScalePlane(orig_pixels, kSrcStride, 64, 4, dest_pixels, kDstStride, 16, 1,
+  ScalePlane(orig_pixels, kSrcStride, 640, 4, dest_pixels, kDstStride, 160, 1,
              kFilterNone);
 
-  EXPECT_EQ(130, dest_pixels[0]);  // expect the 3rd pixel of the 3rd row
+  EXPECT_EQ(2, dest_pixels[0]);  // expect the 3rd pixel of the 3rd row
 
   free_aligned_buffer_page_end(dest_pixels);
   free_aligned_buffer_page_end(orig_pixels);
@@ -1532,4 +1545,57 @@ TEST_F(LibYUVScaleTest, PlaneTestRotate_Box) {
   free_aligned_buffer_page_end(orig_pixels);
 }
 
+TEST_F(LibYUVScaleTest, PlaneTest1_Box) {
+  align_buffer_page_end(orig_pixels, 3);
+  align_buffer_page_end(dst_pixels, 3);
+
+  // Pad the 1x1 byte image with invalid values before and after in case libyuv
+  // reads outside the memory boundaries.
+  orig_pixels[0] = 0;
+  orig_pixels[1] = 1;  // scale this pixel
+  orig_pixels[2] = 2;
+  dst_pixels[0] = 3;
+  dst_pixels[1] = 3;
+  dst_pixels[2] = 3;
+
+  libyuv::ScalePlane(orig_pixels + 1, /* src_stride= */ 1, /* src_width= */ 1,
+                     /* src_height= */ 1, dst_pixels, /* dst_stride= */ 1,
+                     /* dst_width= */ 1, /* dst_height= */ 2,
+                     libyuv::kFilterBox);
+
+  EXPECT_EQ(dst_pixels[0], 1);
+  EXPECT_EQ(dst_pixels[1], 1);
+  EXPECT_EQ(dst_pixels[2], 3);
+
+  free_aligned_buffer_page_end(dst_pixels);
+  free_aligned_buffer_page_end(orig_pixels);
+}
+
+TEST_F(LibYUVScaleTest, PlaneTest1_16_Box) {
+  align_buffer_page_end(orig_pixels_alloc, 3 * 2);
+  align_buffer_page_end(dst_pixels_alloc, 3 * 2);
+  uint16_t* orig_pixels = (uint16_t*)orig_pixels_alloc;
+  uint16_t* dst_pixels = (uint16_t*)dst_pixels_alloc;
+
+  // Pad the 1x1 byte image with invalid values before and after in case libyuv
+  // reads outside the memory boundaries.
+  orig_pixels[0] = 0;
+  orig_pixels[1] = 1;  // scale this pixel
+  orig_pixels[2] = 2;
+  dst_pixels[0] = 3;
+  dst_pixels[1] = 3;
+  dst_pixels[2] = 3;
+
+  libyuv::ScalePlane_16(
+      orig_pixels + 1, /* src_stride= */ 1, /* src_width= */ 1,
+      /* src_height= */ 1, dst_pixels, /* dst_stride= */ 1,
+      /* dst_width= */ 1, /* dst_height= */ 2, libyuv::kFilterNone);
+
+  EXPECT_EQ(dst_pixels[0], 1);
+  EXPECT_EQ(dst_pixels[1], 1);
+  EXPECT_EQ(dst_pixels[2], 3);
+
+  free_aligned_buffer_page_end(dst_pixels_alloc);
+  free_aligned_buffer_page_end(orig_pixels_alloc);
+}
 }  // namespace libyuv

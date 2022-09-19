@@ -14,7 +14,11 @@
 #include "rtc_base/system/rtc_export.h"
 
 #if defined(WEBRTC_USE_X11)
-#include "modules/desktop_capture/linux/shared_x_display.h"
+#include "modules/desktop_capture/linux/x11/shared_x_display.h"
+#endif
+
+#if defined(WEBRTC_USE_PIPEWIRE)
+#include "modules/desktop_capture/linux/wayland/shared_screencast_stream.h"
 #endif
 
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
@@ -43,7 +47,9 @@ class RTC_EXPORT DesktopCaptureOptions {
   DesktopCaptureOptions& operator=(DesktopCaptureOptions&& options);
 
 #if defined(WEBRTC_USE_X11)
-  SharedXDisplay* x_display() const { return x_display_; }
+  const rtc::scoped_refptr<SharedXDisplay>& x_display() const {
+    return x_display_;
+  }
   void set_x_display(rtc::scoped_refptr<SharedXDisplay> x_display) {
     x_display_ = x_display;
   }
@@ -53,7 +59,8 @@ class RTC_EXPORT DesktopCaptureOptions {
   // TODO(zijiehe): Remove both DesktopConfigurationMonitor and
   // FullScreenChromeWindowDetector out of DesktopCaptureOptions. It's not
   // reasonable for external consumers to set these two parameters.
-  DesktopConfigurationMonitor* configuration_monitor() const {
+  const rtc::scoped_refptr<DesktopConfigurationMonitor>& configuration_monitor()
+      const {
     return configuration_monitor_;
   }
   // If nullptr is set, ScreenCapturer won't work and WindowCapturer may return
@@ -67,7 +74,8 @@ class RTC_EXPORT DesktopCaptureOptions {
   void set_allow_iosurface(bool allow) { allow_iosurface_ = allow; }
 #endif
 
-  FullScreenWindowDetector* full_screen_window_detector() const {
+  const rtc::scoped_refptr<FullScreenWindowDetector>&
+  full_screen_window_detector() const {
     return full_screen_window_detector_;
   }
   void set_full_screen_window_detector(
@@ -155,19 +163,49 @@ class RTC_EXPORT DesktopCaptureOptions {
   // precedence over the cropping, directx, and magnification flags.
   bool allow_wgc_capturer() const { return allow_wgc_capturer_; }
   void set_allow_wgc_capturer(bool allow) { allow_wgc_capturer_ = allow; }
+
+  // This flag enables the WGC capturer for fallback capturer.
+  // The flag is useful when the first capturer (eg. WindowCapturerWinGdi) is
+  // unreliable in certain devices where WGC is supported, but not used by
+  // default.
+  bool allow_wgc_capturer_fallback() const {
+    return allow_wgc_capturer_fallback_;
+  }
+  void set_allow_wgc_capturer_fallback(bool allow) {
+    allow_wgc_capturer_fallback_ = allow;
+  }
 #endif  // defined(RTC_ENABLE_WIN_WGC)
 #endif  // defined(WEBRTC_WIN)
 
 #if defined(WEBRTC_USE_PIPEWIRE)
   bool allow_pipewire() const { return allow_pipewire_; }
   void set_allow_pipewire(bool allow) { allow_pipewire_ = allow; }
+
+  const rtc::scoped_refptr<SharedScreenCastStream>& screencast_stream() const {
+    return screencast_stream_;
+  }
+  void set_screencast_stream(
+      rtc::scoped_refptr<SharedScreenCastStream> stream) {
+    screencast_stream_ = stream;
+  }
+
+  void set_width(uint32_t width) { width_ = width; }
+  uint32_t get_width() const { return width_; }
+
+  void set_height(uint32_t height) { height_ = height; }
+  uint32_t get_height() const { return height_; }
 #endif
 
  private:
 #if defined(WEBRTC_USE_X11)
   rtc::scoped_refptr<SharedXDisplay> x_display_;
 #endif
-
+#if defined(WEBRTC_USE_PIPEWIRE)
+  // An instance of shared PipeWire ScreenCast stream we share between
+  // BaseCapturerPipeWire and MouseCursorMonitorPipeWire as cursor information
+  // is sent together with screen content.
+  rtc::scoped_refptr<SharedScreenCastStream> screencast_stream_;
+#endif
 #if defined(WEBRTC_MAC) && !defined(WEBRTC_IOS)
   rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
   bool allow_iosurface_ = false;
@@ -182,6 +220,7 @@ class RTC_EXPORT DesktopCaptureOptions {
   bool allow_cropping_window_capturer_ = false;
 #if defined(RTC_ENABLE_WIN_WGC)
   bool allow_wgc_capturer_ = false;
+  bool allow_wgc_capturer_fallback_ = false;
 #endif
 #endif
 #if defined(WEBRTC_USE_X11)
@@ -193,6 +232,8 @@ class RTC_EXPORT DesktopCaptureOptions {
   bool detect_updated_region_ = false;
 #if defined(WEBRTC_USE_PIPEWIRE)
   bool allow_pipewire_ = false;
+  uint32_t width_ = 0;
+  uint32_t height_ = 0;
 #endif
 };
 

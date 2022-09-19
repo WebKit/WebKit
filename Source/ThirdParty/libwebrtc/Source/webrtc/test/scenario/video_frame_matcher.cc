@@ -29,7 +29,7 @@ VideoFrameMatcher::VideoFrameMatcher(
       task_queue_("VideoAnalyzer") {}
 
 VideoFrameMatcher::~VideoFrameMatcher() {
-  task_queue_.SendTask([this] { Finalize(); }, RTC_FROM_HERE);
+  task_queue_.SendTask([this] { Finalize(); });
 }
 
 void VideoFrameMatcher::RegisterLayer(int layer_id) {

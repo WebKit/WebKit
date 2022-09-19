@@ -74,7 +74,8 @@ TEST_F(VideoGeometryAlignerTest, CropAndZoomLeft) {
       std::vector<uint8_t>(cropped_frame->DataV(), cropped_frame->DataV() + 4));
 }
 
-TEST_F(VideoGeometryAlignerTest, CropAndZoomTop) {
+// TODO(magjed): Re-enable when libyuv filtering is updated.
+TEST_F(VideoGeometryAlignerTest, DISABLED_CropAndZoomTop) {
   CropRegion region;
   region.top = 2;
   const rtc::scoped_refptr<I420BufferInterface> cropped_frame =
@@ -108,7 +109,8 @@ TEST_F(VideoGeometryAlignerTest, CropAndZoomRight) {
       std::vector<uint8_t>(cropped_frame->DataV(), cropped_frame->DataV() + 4));
 }
 
-TEST_F(VideoGeometryAlignerTest, CropAndZoomBottom) {
+// TODO(magjed): Re-enable when libyuv filtering is updated.
+TEST_F(VideoGeometryAlignerTest, DISABLED_CropAndZoomBottom) {
   CropRegion region;
   region.bottom = 2;
   const rtc::scoped_refptr<I420BufferInterface> cropped_frame =

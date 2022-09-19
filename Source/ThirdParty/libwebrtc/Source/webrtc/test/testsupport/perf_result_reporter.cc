@@ -71,7 +71,7 @@ std::string UnitToString(Unit unit) {
     case Unit::kSigma:
       return "sigma";
     default:
-      RTC_NOTREACHED() << "Unknown unit " << unit;
+      RTC_DCHECK_NOTREACHED() << "Unknown unit " << unit;
       return "unitless";
   }
 }

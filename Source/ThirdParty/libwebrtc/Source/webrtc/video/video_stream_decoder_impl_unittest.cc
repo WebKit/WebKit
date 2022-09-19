@@ -14,14 +14,15 @@
 
 #include "api/video/i420_buffer.h"
 #include "api/video_codecs/video_decoder.h"
+#include "test/fake_encoded_frame.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
 namespace {
 using ::testing::_;
-using ::testing::ByMove;
 using ::testing::NiceMock;
 using ::testing::Return;
 
@@ -126,35 +127,6 @@ class FakeVideoDecoderFactory : public VideoDecoderFactory {
   NiceMock<StubVideoDecoder> av1_decoder_;
 };
 
-class FakeEncodedFrame : public EncodedFrame {
- public:
-  int64_t ReceivedTime() const override { return 0; }
-  int64_t RenderTime() const override { return 0; }
-
-  // Setters for protected variables.
-  void SetPayloadType(int payload_type) { _payloadType = payload_type; }
-};
-
-class FrameBuilder {
- public:
-  FrameBuilder() : frame_(std::make_unique<FakeEncodedFrame>()) {}
-
-  FrameBuilder& WithPayloadType(int payload_type) {
-    frame_->SetPayloadType(payload_type);
-    return *this;
-  }
-
-  FrameBuilder& WithPictureId(int picture_id) {
-    frame_->SetId(picture_id);
-    return *this;
-  }
-
-  std::unique_ptr<FakeEncodedFrame> Build() { return std::move(frame_); }
-
- private:
-  std::unique_ptr<FakeEncodedFrame> frame_;
-};
-
 class VideoStreamDecoderImplTest : public ::testing::Test {
  public:
   VideoStreamDecoderImplTest()
@@ -163,12 +135,14 @@ class VideoStreamDecoderImplTest : public ::testing::Test {
                               &decoder_factory_,
                               time_controller_.GetTaskQueueFactory(),
                               {{1, std::make_pair(SdpVideoFormat("VP8"), 1)},
-                               {2, std::make_pair(SdpVideoFormat("AV1"), 1)}}) {
+                               {2, std::make_pair(SdpVideoFormat("AV1"), 1)}},
+                              &field_trials_) {
     // Set the min playout delay to a value greater than zero to not activate
     // the low-latency renderer.
     video_stream_decoder_.SetMinPlayoutDelay(TimeDelta::Millis(10));
   }
 
+  test::ScopedKeyValueConfig field_trials_;
   NiceMock<MockVideoStreamDecoderCallbacks> callbacks_;
   FakeVideoDecoderFactory decoder_factory_;
   GlobalSimulatedTimeController time_controller_;
@@ -176,7 +150,8 @@ class VideoStreamDecoderImplTest : public ::testing::Test {
 };
 
 TEST_F(VideoStreamDecoderImplTest, InsertAndDecodeFrame) {
-  video_stream_decoder_.OnFrame(FrameBuilder().WithPayloadType(1).Build());
+  video_stream_decoder_.OnFrame(
+      test::FakeFrameBuilder().PayloadType(1).AsLast().Build());
   EXPECT_CALL(callbacks_, OnDecodedFrame);
   time_controller_.AdvanceTime(TimeDelta::Millis(1));
 }
@@ -187,7 +162,8 @@ TEST_F(VideoStreamDecoderImplTest, NonDecodableStateWaitingForKeyframe) {
 }
 
 TEST_F(VideoStreamDecoderImplTest, NonDecodableStateWaitingForDeltaFrame) {
-  video_stream_decoder_.OnFrame(FrameBuilder().WithPayloadType(1).Build());
+  video_stream_decoder_.OnFrame(
+      test::FakeFrameBuilder().PayloadType(1).AsLast().Build());
   EXPECT_CALL(callbacks_, OnDecodedFrame);
   time_controller_.AdvanceTime(TimeDelta::Millis(1));
   EXPECT_CALL(callbacks_, OnNonDecodableState);
@@ -195,7 +171,8 @@ TEST_F(VideoStreamDecoderImplTest, NonDecodableStateWaitingForDeltaFrame) {
 }
 
 TEST_F(VideoStreamDecoderImplTest, InsertAndDecodeFrameWithKeyframeRequest) {
-  video_stream_decoder_.OnFrame(FrameBuilder().WithPayloadType(1).Build());
+  video_stream_decoder_.OnFrame(
+      test::FakeFrameBuilder().PayloadType(1).AsLast().Build());
   EXPECT_CALL(decoder_factory_.Vp8Decoder(), DecodeCall)
       .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK_REQUEST_KEYFRAME));
   EXPECT_CALL(callbacks_, OnDecodedFrame);
@@ -204,7 +181,12 @@ TEST_F(VideoStreamDecoderImplTest, InsertAndDecodeFrameWithKeyframeRequest) {
 }
 
 TEST_F(VideoStreamDecoderImplTest, FailToInitDecoder) {
-  video_stream_decoder_.OnFrame(FrameBuilder().WithPayloadType(1).Build());
+  video_stream_decoder_.OnFrame(
+      test::FakeFrameBuilder()
+          .ReceivedTime(time_controller_.GetClock()->CurrentTime())
+          .PayloadType(1)
+          .AsLast()
+          .Build());
   ON_CALL(decoder_factory_.Vp8Decoder(), Configure)
       .WillByDefault(Return(false));
   EXPECT_CALL(callbacks_, OnNonDecodableState);
@@ -212,7 +194,8 @@ TEST_F(VideoStreamDecoderImplTest, FailToInitDecoder) {
 }
 
 TEST_F(VideoStreamDecoderImplTest, FailToDecodeFrame) {
-  video_stream_decoder_.OnFrame(FrameBuilder().WithPayloadType(1).Build());
+  video_stream_decoder_.OnFrame(
+      test::FakeFrameBuilder().PayloadType(1).AsLast().Build());
   ON_CALL(decoder_factory_.Vp8Decoder(), DecodeCall)
       .WillByDefault(Return(WEBRTC_VIDEO_CODEC_ERROR));
   EXPECT_CALL(callbacks_, OnNonDecodableState);
@@ -222,13 +205,13 @@ TEST_F(VideoStreamDecoderImplTest, FailToDecodeFrame) {
 TEST_F(VideoStreamDecoderImplTest, ChangeFramePayloadType) {
   constexpr TimeDelta kFrameInterval = TimeDelta::Millis(1000 / 60);
   video_stream_decoder_.OnFrame(
-      FrameBuilder().WithPayloadType(1).WithPictureId(0).Build());
+      test::FakeFrameBuilder().PayloadType(1).Id(0).AsLast().Build());
   EXPECT_CALL(decoder_factory_.Vp8Decoder(), DecodeCall);
   EXPECT_CALL(callbacks_, OnDecodedFrame);
   time_controller_.AdvanceTime(kFrameInterval);
 
   video_stream_decoder_.OnFrame(
-      FrameBuilder().WithPayloadType(2).WithPictureId(1).Build());
+      test::FakeFrameBuilder().PayloadType(2).Id(1).AsLast().Build());
   EXPECT_CALL(decoder_factory_.Av1Decoder(), DecodeCall);
   EXPECT_CALL(callbacks_, OnDecodedFrame);
   time_controller_.AdvanceTime(kFrameInterval);

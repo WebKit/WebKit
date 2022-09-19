@@ -1,7 +1,7 @@
 mbonadei@chromium.org
 fbarchard@chromium.org
 magjed@chromium.org
-pbos@chromium.org
+wtc@google.com
 
 per-file *.gn=mbonadei@chromium.org
 per-file .gitignore=*

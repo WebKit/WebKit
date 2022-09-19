@@ -35,7 +35,7 @@ VideoCaptureDS::~VideoCaptureDS() {
   }
   if (_graphBuilder) {
     if (sink_filter_)
-      _graphBuilder->RemoveFilter(sink_filter_);
+      _graphBuilder->RemoveFilter(sink_filter_.get());
     if (_captureFilter)
       _graphBuilder->RemoveFilter(_captureFilter);
     if (_dvFilter)
@@ -101,13 +101,13 @@ int32_t VideoCaptureDS::Init(const char* deviceUniqueIdUTF8) {
   // Create the sink filte used for receiving Captured frames.
   sink_filter_ = new ComRefCount<CaptureSinkFilter>(this);
 
-  hr = _graphBuilder->AddFilter(sink_filter_, SINK_FILTER_NAME);
+  hr = _graphBuilder->AddFilter(sink_filter_.get(), SINK_FILTER_NAME);
   if (FAILED(hr)) {
     RTC_LOG(LS_INFO) << "Failed to add the send filter to the graph.";
     return -1;
   }
 
-  _inputSendPin = GetInputPin(sink_filter_);
+  _inputSendPin = GetInputPin(sink_filter_.get());
   if (!_inputSendPin) {
     RTC_LOG(LS_INFO) << "Failed to get input send pin";
     return -1;

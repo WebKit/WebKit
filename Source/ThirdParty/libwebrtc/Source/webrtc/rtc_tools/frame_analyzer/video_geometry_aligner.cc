@@ -12,9 +12,9 @@
 
 #include <map>
 
+#include "api/make_ref_counted.h"
 #include "api/video/i420_buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_tools/frame_analyzer/video_quality_analysis.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
 
@@ -132,7 +132,7 @@ rtc::scoped_refptr<I420BufferInterface> AdjustCropping(
 rtc::scoped_refptr<Video> AdjustCropping(
     const rtc::scoped_refptr<Video>& reference_video,
     const rtc::scoped_refptr<Video>& test_video) {
-  class CroppedVideo : public rtc::RefCountedObject<Video> {
+  class CroppedVideo : public Video {
    public:
     CroppedVideo(const rtc::scoped_refptr<Video>& reference_video,
                  const rtc::scoped_refptr<Video>& test_video)
@@ -171,7 +171,7 @@ rtc::scoped_refptr<Video> AdjustCropping(
     mutable std::map<size_t, CropRegion> crop_regions_;
   };
 
-  return new CroppedVideo(reference_video, test_video);
+  return rtc::make_ref_counted<CroppedVideo>(reference_video, test_video);
 }
 
 }  // namespace test

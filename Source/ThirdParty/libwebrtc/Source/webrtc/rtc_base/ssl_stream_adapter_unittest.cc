@@ -8,12 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/ssl_stream_adapter.h"
+
 #include <algorithm>
 #include <memory>
 #include <set>
 #include <string>
 
 #include "absl/memory/memory.h"
+#include "absl/strings/string_view.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "rtc_base/buffer_queue.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
@@ -24,16 +28,14 @@
 #include "rtc_base/openssl_stream_adapter.h"
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/ssl_identity.h"
-#include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/stream.h"
-#include "rtc_base/task_utils/pending_task_safety_flag.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "test/field_trial.h"
 
 using ::testing::Combine;
 using ::testing::tuple;
 using ::testing::Values;
 using ::testing::WithParamInterface;
+using ::webrtc::SafeTask;
 
 static const int kBlockSize = 4096;
 static const char kExporterLabel[] = "label";
@@ -147,7 +149,7 @@ class SSLDummyStreamBase : public rtc::StreamInterface,
                            public sigslot::has_slots<> {
  public:
   SSLDummyStreamBase(SSLStreamAdapterTestBase* test,
-                     const std::string& side,
+                     absl::string_view side,
                      rtc::StreamInterface* in,
                      rtc::StreamInterface* out)
       : test_base_(test), side_(side), in_(in), out_(out), first_packet_(true) {
@@ -218,7 +220,7 @@ class SSLDummyStreamBase : public rtc::StreamInterface,
 
  private:
   void PostEvent(int events, int err) {
-    thread_->PostTask(webrtc::ToQueuedTask(task_safety_, [this, events, err]() {
+    thread_->PostTask(SafeTask(task_safety_.flag(), [this, events, err]() {
       SignalEvent(this, events, err);
     }));
   }
@@ -235,7 +237,7 @@ class SSLDummyStreamBase : public rtc::StreamInterface,
 class SSLDummyStreamTLS : public SSLDummyStreamBase {
  public:
   SSLDummyStreamTLS(SSLStreamAdapterTestBase* test,
-                    const std::string& side,
+                    absl::string_view side,
                     rtc::FifoBuffer* in,
                     rtc::FifoBuffer* out)
       : SSLDummyStreamBase(test, side, in, out) {}
@@ -290,7 +292,7 @@ class BufferQueueStream : public rtc::StreamInterface {
 
  private:
   void PostEvent(int events, int err) {
-    thread_->PostTask(webrtc::ToQueuedTask(task_safety_, [this, events, err]() {
+    thread_->PostTask(SafeTask(task_safety_.flag(), [this, events, err]() {
       SignalEvent(this, events, err);
     }));
   }
@@ -303,7 +305,7 @@ class BufferQueueStream : public rtc::StreamInterface {
 class SSLDummyStreamDTLS : public SSLDummyStreamBase {
  public:
   SSLDummyStreamDTLS(SSLStreamAdapterTestBase* test,
-                     const std::string& side,
+                     absl::string_view side,
                      BufferQueueStream* in,
                      BufferQueueStream* out)
       : SSLDummyStreamBase(test, side, in, out) {}
@@ -317,8 +319,8 @@ class SSLStreamAdapterTestBase : public ::testing::Test,
                                  public sigslot::has_slots<> {
  public:
   SSLStreamAdapterTestBase(
-      const std::string& client_cert_pem,
-      const std::string& client_private_key_pem,
+      absl::string_view client_cert_pem,
+      absl::string_view client_private_key_pem,
       bool dtls,
       rtc::KeyParams client_key_type = rtc::KeyParams(rtc::KT_DEFAULT),
       rtc::KeyParams server_key_type = rtc::KeyParams(rtc::KT_DEFAULT))
@@ -508,6 +510,49 @@ class SSLStreamAdapterTestBase : public ::testing::Test,
     }
   }
 
+  // This tests that we give up after 12 DTLS resends.
+  void TestHandshakeTimeout() {
+    rtc::ScopedFakeClock clock;
+    int64_t time_start = clock.TimeNanos();
+    webrtc::TimeDelta time_increment = webrtc::TimeDelta::Millis(1000);
+    server_ssl_->SetMode(dtls_ ? rtc::SSL_MODE_DTLS : rtc::SSL_MODE_TLS);
+    client_ssl_->SetMode(dtls_ ? rtc::SSL_MODE_DTLS : rtc::SSL_MODE_TLS);
+
+    if (!dtls_) {
+      // Make sure we simulate a reliable network for TLS.
+      // This is just a check to make sure that people don't write wrong
+      // tests.
+      RTC_CHECK_EQ(1460, mtu_);
+      RTC_CHECK(!loss_);
+      RTC_CHECK(!lose_first_packet_);
+    }
+
+    if (!identities_set_)
+      SetPeerIdentitiesByDigest(true, true);
+
+    // Start the handshake
+    int rv;
+
+    server_ssl_->SetServerRole();
+    rv = server_ssl_->StartSSL();
+    ASSERT_EQ(0, rv);
+
+    rv = client_ssl_->StartSSL();
+    ASSERT_EQ(0, rv);
+
+    // Now wait for the handshake to timeout (or fail after an hour of simulated
+    // time).
+    while (client_ssl_->GetState() == rtc::SS_OPENING &&
+           (rtc::TimeDiff(clock.TimeNanos(), time_start) <
+            3600 * rtc::kNumNanosecsPerSec)) {
+      EXPECT_TRUE_WAIT(!((client_ssl_->GetState() == rtc::SS_OPEN) &&
+                         (server_ssl_->GetState() == rtc::SS_OPEN)),
+                       1000);
+      clock.AdvanceTime(time_increment);
+    }
+    RTC_CHECK_EQ(client_ssl_->GetState(), rtc::SS_CLOSED);
+  }
+
   // This tests that the handshake can complete before the identity is verified,
   // and the identity will be verified after the fact. It also verifies that
   // packets can't be read or written before the identity has been verified.
@@ -683,7 +728,7 @@ class SSLStreamAdapterTestBase : public ::testing::Test,
       return server_ssl_->GetSslVersion();
   }
 
-  bool ExportKeyingMaterial(const char* label,
+  bool ExportKeyingMaterial(absl::string_view label,
                             const unsigned char* context,
                             size_t context_len,
                             bool use_context,
@@ -717,6 +762,7 @@ class SSLStreamAdapterTestBase : public ::testing::Test,
     return server_ssl_->GetIdentityForTesting();
   }
 
+  rtc::AutoThread main_thread_;
   std::string client_cert_pem_;
   std::string client_private_key_pem_;
   rtc::KeyParams client_key_type_;
@@ -864,8 +910,8 @@ class SSLStreamAdapterTestDTLSBase : public SSLStreamAdapterTestBase {
         count_(0),
         sent_(0) {}
 
-  SSLStreamAdapterTestDTLSBase(const std::string& cert_pem,
-                               const std::string& private_key_pem)
+  SSLStreamAdapterTestDTLSBase(absl::string_view cert_pem,
+                               absl::string_view private_key_pem)
       : SSLStreamAdapterTestBase(cert_pem, private_key_pem, true),
         client_buffer_(kBufferCapacity, kDefaultBufferSize),
         server_buffer_(kBufferCapacity, kDefaultBufferSize),
@@ -983,8 +1029,8 @@ class SSLStreamAdapterTestDTLS
       : SSLStreamAdapterTestDTLSBase(::testing::get<0>(GetParam()),
                                      ::testing::get<1>(GetParam())) {}
 
-  SSLStreamAdapterTestDTLS(const std::string& cert_pem,
-                           const std::string& private_key_pem)
+  SSLStreamAdapterTestDTLS(absl::string_view cert_pem,
+                           absl::string_view private_key_pem)
       : SSLStreamAdapterTestDTLSBase(cert_pem, private_key_pem) {}
 };
 
@@ -1213,6 +1259,12 @@ TEST_P(SSLStreamAdapterTestDTLS, DISABLED_TestDTLSConnectWithSmallMtu) {
   SetMtu(700);
   SetHandshakeWait(20000);
   TestHandshake();
+}
+
+// Test a handshake with total loss and timing out.
+TEST_P(SSLStreamAdapterTestDTLS, TestDTLSConnectTimeout) {
+  SetLoss(100);
+  TestHandshakeTimeout();
 }
 
 // Test transfer -- trivial
@@ -1551,8 +1603,8 @@ class SSLStreamAdapterTestDTLSLegacyProtocols
   // initialized, so we set the experiment while creationg client_ssl_
   // and server_ssl_.
 
-  void ConfigureClient(std::string experiment) {
-    webrtc::test::ScopedFieldTrials trial(experiment);
+  void ConfigureClient(absl::string_view experiment) {
+    webrtc::test::ScopedFieldTrials trial{std::string(experiment)};
     client_stream_ =
         new SSLDummyStreamDTLS(this, "c2s", &client_buffer_, &server_buffer_);
     client_ssl_ =
@@ -1564,8 +1616,8 @@ class SSLStreamAdapterTestDTLSLegacyProtocols
     client_ssl_->SetIdentity(std::move(client_identity));
   }
 
-  void ConfigureServer(std::string experiment) {
-    webrtc::test::ScopedFieldTrials trial(experiment);
+  void ConfigureServer(absl::string_view experiment) {
+    webrtc::test::ScopedFieldTrials trial{std::string(experiment)};
     server_stream_ =
         new SSLDummyStreamDTLS(this, "s2c", &server_buffer_, &client_buffer_);
     server_ssl_ =

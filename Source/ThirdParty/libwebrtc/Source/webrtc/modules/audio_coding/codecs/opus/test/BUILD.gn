@@ -47,7 +47,7 @@ if (rtc_include_tests) {
       ":test",
       "../../../../../common_audio",
       "../../../../../common_audio:common_audio_c",
-      "../../../../../rtc_base:rtc_base_approved",
+      "../../../../../rtc_base:macromagic",
       "../../../../../test:test_support",
       "//testing/gtest",
     ]

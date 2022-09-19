@@ -18,6 +18,7 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/platform_thread_types.h"
@@ -205,7 +206,7 @@ bool LoadAudiosesDll() {
       L"%WINDIR%\\system32\\audioses.dll";
   wchar_t path[MAX_PATH] = {0};
   ExpandEnvironmentStringsW(kAudiosesDLL, path, arraysize(path));
-  RTC_DLOG(INFO) << rtc::ToUtf8(path);
+  RTC_DLOG(LS_INFO) << rtc::ToUtf8(path);
   return (LoadLibraryExW(path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH) !=
           nullptr);
 }
@@ -214,7 +215,7 @@ bool LoadAvrtDll() {
   static const wchar_t* const kAvrtDLL = L"%WINDIR%\\system32\\Avrt.dll";
   wchar_t path[MAX_PATH] = {0};
   ExpandEnvironmentStringsW(kAvrtDLL, path, arraysize(path));
-  RTC_DLOG(INFO) << rtc::ToUtf8(path);
+  RTC_DLOG(LS_INFO) << rtc::ToUtf8(path);
   return (LoadLibraryExW(path, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH) !=
           nullptr);
 }
@@ -280,13 +281,13 @@ bool IsDeviceActive(IMMDevice* device) {
 
 // Retrieve an audio device specified by `device_id` or a default device
 // specified by data-flow direction and role if `device_id` is default.
-ComPtr<IMMDevice> CreateDeviceInternal(const std::string& device_id,
+ComPtr<IMMDevice> CreateDeviceInternal(absl::string_view device_id,
                                        EDataFlow data_flow,
                                        ERole role) {
-  RTC_DLOG(INFO) << "CreateDeviceInternal: "
-                    "id="
-                 << device_id << ", flow=" << FlowToString(data_flow)
-                 << ", role=" << RoleToString(role);
+  RTC_DLOG(LS_INFO) << "CreateDeviceInternal: "
+                       "id="
+                    << device_id << ", flow=" << FlowToString(data_flow)
+                    << ", role=" << RoleToString(role);
   ComPtr<IMMDevice> audio_endpoint_device;
 
   // Create the IMMDeviceEnumerator interface.
@@ -587,10 +588,10 @@ bool GetDeviceNamesInternal(EDataFlow data_flow,
   // [2] friendly name: Headset Microphone (2- Arctis 7 Chat)
   // [2] unique id    : {0.0.1.00000000}.{ff9eed76-196e-467a-b295-26986e69451c}
   for (size_t i = 0; i < device_names->size(); ++i) {
-    RTC_DLOG(INFO) << "[" << i
-                   << "] friendly name: " << (*device_names)[i].device_name;
-    RTC_DLOG(INFO) << "[" << i
-                   << "] unique id    : " << (*device_names)[i].unique_id;
+    RTC_DLOG(LS_INFO) << "[" << i
+                      << "] friendly name: " << (*device_names)[i].device_name;
+    RTC_DLOG(LS_INFO) << "[" << i
+                      << "] unique id    : " << (*device_names)[i].unique_id;
   }
 
   return true;
@@ -614,8 +615,8 @@ HRESULT GetPreferredAudioParametersInternal(IAudioClient* client,
   // Override default sample rate if `fixed_sample_rate` is set and different
   // from the default rate.
   if (fixed_sample_rate > 0 && fixed_sample_rate != sample_rate) {
-    RTC_DLOG(INFO) << "Using fixed sample rate instead of the preferred: "
-                   << sample_rate << " is replaced by " << fixed_sample_rate;
+    RTC_DLOG(LS_INFO) << "Using fixed sample rate instead of the preferred: "
+                      << sample_rate << " is replaced by " << fixed_sample_rate;
     sample_rate = fixed_sample_rate;
   }
   // TODO(henrika): utilize full mix_format.Format.wBitsPerSample.
@@ -634,7 +635,7 @@ HRESULT GetPreferredAudioParametersInternal(IAudioClient* client,
 
   AudioParameters audio_params(sample_rate, channels, frames_per_buffer);
   *params = audio_params;
-  RTC_DLOG(INFO) << audio_params.ToString();
+  RTC_DLOG(LS_INFO) << audio_params.ToString();
 
   return hr;
 }
@@ -669,13 +670,13 @@ size_t WaveFormatWrapper::size() const {
 }
 
 bool IsSupported() {
-  RTC_DLOG(INFO) << "IsSupported";
+  RTC_DLOG(LS_INFO) << "IsSupported";
   static bool g_is_supported = IsSupportedInternal();
   return g_is_supported;
 }
 
 bool IsMMCSSSupported() {
-  RTC_DLOG(INFO) << "IsMMCSSSupported";
+  RTC_DLOG(LS_INFO) << "IsMMCSSSupported";
   return LoadAvrtDll();
 }
 
@@ -698,7 +699,7 @@ int NumberOfActiveDevices(EDataFlow data_flow) {
   } else if (data_flow == eAll) {
     str = "Total number of devices: ";
   }
-  RTC_DLOG(INFO) << str << number_of_active_devices;
+  RTC_DLOG(LS_INFO) << str << number_of_active_devices;
   return static_cast<int>(number_of_active_devices);
 }
 
@@ -713,59 +714,59 @@ uint32_t GetAudioClientVersion() {
 }
 
 ComPtr<IMMDeviceEnumerator> CreateDeviceEnumerator() {
-  RTC_DLOG(INFO) << "CreateDeviceEnumerator";
+  RTC_DLOG(LS_INFO) << "CreateDeviceEnumerator";
   return CreateDeviceEnumeratorInternal(true);
 }
 
 std::string GetDefaultInputDeviceID() {
-  RTC_DLOG(INFO) << "GetDefaultInputDeviceID";
+  RTC_DLOG(LS_INFO) << "GetDefaultInputDeviceID";
   ComPtr<IMMDevice> device(
       CreateDevice(AudioDeviceName::kDefaultDeviceId, eCapture, eConsole));
   return device.Get() ? GetDeviceIdInternal(device.Get()) : std::string();
 }
 
 std::string GetDefaultOutputDeviceID() {
-  RTC_DLOG(INFO) << "GetDefaultOutputDeviceID";
+  RTC_DLOG(LS_INFO) << "GetDefaultOutputDeviceID";
   ComPtr<IMMDevice> device(
       CreateDevice(AudioDeviceName::kDefaultDeviceId, eRender, eConsole));
   return device.Get() ? GetDeviceIdInternal(device.Get()) : std::string();
 }
 
 std::string GetCommunicationsInputDeviceID() {
-  RTC_DLOG(INFO) << "GetCommunicationsInputDeviceID";
+  RTC_DLOG(LS_INFO) << "GetCommunicationsInputDeviceID";
   ComPtr<IMMDevice> device(CreateDevice(AudioDeviceName::kDefaultDeviceId,
                                         eCapture, eCommunications));
   return device.Get() ? GetDeviceIdInternal(device.Get()) : std::string();
 }
 
 std::string GetCommunicationsOutputDeviceID() {
-  RTC_DLOG(INFO) << "GetCommunicationsOutputDeviceID";
+  RTC_DLOG(LS_INFO) << "GetCommunicationsOutputDeviceID";
   ComPtr<IMMDevice> device(CreateDevice(AudioDeviceName::kDefaultDeviceId,
                                         eRender, eCommunications));
   return device.Get() ? GetDeviceIdInternal(device.Get()) : std::string();
 }
 
-ComPtr<IMMDevice> CreateDevice(const std::string& device_id,
+ComPtr<IMMDevice> CreateDevice(absl::string_view device_id,
                                EDataFlow data_flow,
                                ERole role) {
-  RTC_DLOG(INFO) << "CreateDevice";
+  RTC_DLOG(LS_INFO) << "CreateDevice";
   return CreateDeviceInternal(device_id, data_flow, role);
 }
 
 AudioDeviceName GetDeviceName(IMMDevice* device) {
-  RTC_DLOG(INFO) << "GetDeviceName";
+  RTC_DLOG(LS_INFO) << "GetDeviceName";
   RTC_DCHECK(device);
   AudioDeviceName device_name(GetDeviceFriendlyNameInternal(device),
                               GetDeviceIdInternal(device));
-  RTC_DLOG(INFO) << "friendly name: " << device_name.device_name;
-  RTC_DLOG(INFO) << "unique id    : " << device_name.unique_id;
+  RTC_DLOG(LS_INFO) << "friendly name: " << device_name.device_name;
+  RTC_DLOG(LS_INFO) << "unique id    : " << device_name.unique_id;
   return device_name;
 }
 
-std::string GetFriendlyName(const std::string& device_id,
+std::string GetFriendlyName(absl::string_view device_id,
                             EDataFlow data_flow,
                             ERole role) {
-  RTC_DLOG(INFO) << "GetFriendlyName";
+  RTC_DLOG(LS_INFO) << "GetFriendlyName";
   ComPtr<IMMDevice> audio_device = CreateDevice(device_id, data_flow, role);
   if (!audio_device.Get())
     return std::string();
@@ -775,7 +776,7 @@ std::string GetFriendlyName(const std::string& device_id,
 }
 
 EDataFlow GetDataFlow(IMMDevice* device) {
-  RTC_DLOG(INFO) << "GetDataFlow";
+  RTC_DLOG(LS_INFO) << "GetDataFlow";
   RTC_DCHECK(device);
   ComPtr<IMMEndpoint> endpoint;
   _com_error error = device->QueryInterface(endpoint.GetAddressOf());
@@ -796,32 +797,32 @@ EDataFlow GetDataFlow(IMMDevice* device) {
 }
 
 bool GetInputDeviceNames(webrtc::AudioDeviceNames* device_names) {
-  RTC_DLOG(INFO) << "GetInputDeviceNames";
+  RTC_DLOG(LS_INFO) << "GetInputDeviceNames";
   RTC_DCHECK(device_names);
   RTC_DCHECK(device_names->empty());
   return GetDeviceNamesInternal(eCapture, device_names);
 }
 
 bool GetOutputDeviceNames(webrtc::AudioDeviceNames* device_names) {
-  RTC_DLOG(INFO) << "GetOutputDeviceNames";
+  RTC_DLOG(LS_INFO) << "GetOutputDeviceNames";
   RTC_DCHECK(device_names);
   RTC_DCHECK(device_names->empty());
   return GetDeviceNamesInternal(eRender, device_names);
 }
 
 ComPtr<IAudioSessionManager2> CreateSessionManager2(IMMDevice* device) {
-  RTC_DLOG(INFO) << "CreateSessionManager2";
+  RTC_DLOG(LS_INFO) << "CreateSessionManager2";
   return CreateSessionManager2Internal(device);
 }
 
 Microsoft::WRL::ComPtr<IAudioSessionEnumerator> CreateSessionEnumerator(
     IMMDevice* device) {
-  RTC_DLOG(INFO) << "CreateSessionEnumerator";
+  RTC_DLOG(LS_INFO) << "CreateSessionEnumerator";
   return CreateSessionEnumeratorInternal(device);
 }
 
 int NumberOfActiveSessions(IMMDevice* device) {
-  RTC_DLOG(INFO) << "NumberOfActiveSessions";
+  RTC_DLOG(LS_INFO) << "NumberOfActiveSessions";
   ComPtr<IAudioSessionEnumerator> session_enumerator =
       CreateSessionEnumerator(device);
 
@@ -833,7 +834,7 @@ int NumberOfActiveSessions(IMMDevice* device) {
                       << ErrorToString(error);
     return 0;
   }
-  RTC_DLOG(INFO) << "Total number of audio sessions: " << session_count;
+  RTC_DLOG(LS_INFO) << "Total number of audio sessions: " << session_count;
 
   int num_active = 0;
   for (int session = 0; session < session_count; session++) {
@@ -849,8 +850,8 @@ int NumberOfActiveSessions(IMMDevice* device) {
     // Log the display name of the audio session for debugging purposes.
     LPWSTR display_name;
     if (SUCCEEDED(session_control->GetDisplayName(&display_name))) {
-      RTC_DLOG(INFO) << "display name: "
-                     << rtc::ToUtf8(display_name, wcslen(display_name));
+      RTC_DLOG(LS_INFO) << "display name: "
+                        << rtc::ToUtf8(display_name, wcslen(display_name));
       CoTaskMemFree(display_name);
     }
 
@@ -867,36 +868,36 @@ int NumberOfActiveSessions(IMMDevice* device) {
     }
   }
 
-  RTC_DLOG(INFO) << "Number of active audio sessions: " << num_active;
+  RTC_DLOG(LS_INFO) << "Number of active audio sessions: " << num_active;
   return num_active;
 }
 
-ComPtr<IAudioClient> CreateClient(const std::string& device_id,
+ComPtr<IAudioClient> CreateClient(absl::string_view device_id,
                                   EDataFlow data_flow,
                                   ERole role) {
-  RTC_DLOG(INFO) << "CreateClient";
+  RTC_DLOG(LS_INFO) << "CreateClient";
   ComPtr<IMMDevice> device(CreateDevice(device_id, data_flow, role));
   return CreateClientInternal(device.Get());
 }
 
-ComPtr<IAudioClient2> CreateClient2(const std::string& device_id,
+ComPtr<IAudioClient2> CreateClient2(absl::string_view device_id,
                                     EDataFlow data_flow,
                                     ERole role) {
-  RTC_DLOG(INFO) << "CreateClient2";
+  RTC_DLOG(LS_INFO) << "CreateClient2";
   ComPtr<IMMDevice> device(CreateDevice(device_id, data_flow, role));
   return CreateClient2Internal(device.Get());
 }
 
-ComPtr<IAudioClient3> CreateClient3(const std::string& device_id,
+ComPtr<IAudioClient3> CreateClient3(absl::string_view device_id,
                                     EDataFlow data_flow,
                                     ERole role) {
-  RTC_DLOG(INFO) << "CreateClient3";
+  RTC_DLOG(LS_INFO) << "CreateClient3";
   ComPtr<IMMDevice> device(CreateDevice(device_id, data_flow, role));
   return CreateClient3Internal(device.Get());
 }
 
 HRESULT SetClientProperties(IAudioClient2* client) {
-  RTC_DLOG(INFO) << "SetClientProperties";
+  RTC_DLOG(LS_INFO) << "SetClientProperties";
   RTC_DCHECK(client);
   if (GetAudioClientVersion() < 2) {
     RTC_LOG(LS_WARNING) << "Requires IAudioClient2 or higher";
@@ -919,10 +920,10 @@ HRESULT SetClientProperties(IAudioClient2* client) {
     RTC_LOG(LS_ERROR) << "IAudioClient2::IsOffloadCapable failed: "
                       << ErrorToString(error);
   }
-  RTC_DLOG(INFO) << "supports_offload: " << supports_offload;
+  RTC_DLOG(LS_INFO) << "supports_offload: " << supports_offload;
   props.bIsOffload = false;
 #if (NTDDI_VERSION < NTDDI_WINBLUE)
-  RTC_DLOG(INFO) << "options: Not supported in this build";
+  RTC_DLOG(LS_INFO) << "options: Not supported in this build";
 #else
   // TODO(henrika): pros and cons compared with AUDCLNT_STREAMOPTIONS_NONE?
   props.Options |= AUDCLNT_STREAMOPTIONS_NONE;
@@ -939,7 +940,7 @@ HRESULT SetClientProperties(IAudioClient2* client) {
   // an appropriate interface to use for communications scenarios.
   // This interface is mainly meant for pro audio scenarios.
   // props.Options |= AUDCLNT_STREAMOPTIONS_MATCH_FORMAT;
-  RTC_DLOG(INFO) << "options: 0x" << rtc::ToHex(props.Options);
+  RTC_DLOG(LS_INFO) << "options: 0x" << rtc::ToHex(props.Options);
 #endif
   error = client->SetClientProperties(&props);
   if (FAILED(error.Error())) {
@@ -953,7 +954,7 @@ HRESULT GetBufferSizeLimits(IAudioClient2* client,
                             const WAVEFORMATEXTENSIBLE* format,
                             REFERENCE_TIME* min_buffer_duration,
                             REFERENCE_TIME* max_buffer_duration) {
-  RTC_DLOG(INFO) << "GetBufferSizeLimits";
+  RTC_DLOG(LS_INFO) << "GetBufferSizeLimits";
   RTC_DCHECK(client);
   if (GetAudioClientVersion() < 2) {
     RTC_LOG(LS_WARNING) << "Requires IAudioClient2 or higher";
@@ -975,15 +976,15 @@ HRESULT GetBufferSizeLimits(IAudioClient2* client,
   } else {
     *min_buffer_duration = min_duration;
     *max_buffer_duration = max_duration;
-    RTC_DLOG(INFO) << "min_buffer_duration: " << min_buffer_duration;
-    RTC_DLOG(INFO) << "max_buffer_duration: " << max_buffer_duration;
+    RTC_DLOG(LS_INFO) << "min_buffer_duration: " << min_buffer_duration;
+    RTC_DLOG(LS_INFO) << "max_buffer_duration: " << max_buffer_duration;
   }
   return error.Error();
 }
 
 HRESULT GetSharedModeMixFormat(IAudioClient* client,
                                WAVEFORMATEXTENSIBLE* format) {
-  RTC_DLOG(INFO) << "GetSharedModeMixFormat";
+  RTC_DLOG(LS_INFO) << "GetSharedModeMixFormat";
   RTC_DCHECK(client);
 
   // The GetMixFormat method retrieves the stream format that the audio engine
@@ -1020,7 +1021,7 @@ HRESULT GetSharedModeMixFormat(IAudioClient* client,
   // Log a warning for the rare case where `mix_format` only contains a
   // stand-alone WAVEFORMATEX structure but don't return.
   if (!wrapped_format.IsExtensible()) {
-    RTC_DLOG(WARNING)
+    RTC_DLOG(LS_WARNING)
         << "The returned format contains no extended information. "
            "The size is "
         << wrapped_format.size() << " bytes.";
@@ -1030,7 +1031,7 @@ HRESULT GetSharedModeMixFormat(IAudioClient* client,
   // the returned structure is correctly extended or not.
   RTC_CHECK_LE(wrapped_format.size(), sizeof(WAVEFORMATEXTENSIBLE));
   memcpy(format, wrapped_format.get(), wrapped_format.size());
-  RTC_DLOG(INFO) << WaveFormatToString(format);
+  RTC_DLOG(LS_INFO) << WaveFormatToString(format);
 
   return error.Error();
 }
@@ -1038,7 +1039,7 @@ HRESULT GetSharedModeMixFormat(IAudioClient* client,
 bool IsFormatSupported(IAudioClient* client,
                        AUDCLNT_SHAREMODE share_mode,
                        const WAVEFORMATEXTENSIBLE* format) {
-  RTC_DLOG(INFO) << "IsFormatSupported";
+  RTC_DLOG(LS_INFO) << "IsFormatSupported";
   RTC_DCHECK(client);
   ScopedCoMem<WAVEFORMATEX> closest_match;
   // This method provides a way for a client to determine, before calling
@@ -1049,23 +1050,23 @@ bool IsFormatSupported(IAudioClient* client,
   _com_error error = client->IsFormatSupported(
       share_mode, reinterpret_cast<const WAVEFORMATEX*>(format),
       &closest_match);
-  RTC_LOG(INFO) << WaveFormatToString(
+  RTC_LOG(LS_INFO) << WaveFormatToString(
       const_cast<WAVEFORMATEXTENSIBLE*>(format));
   if ((error.Error() == S_OK) && (closest_match == nullptr)) {
-    RTC_DLOG(INFO)
+    RTC_DLOG(LS_INFO)
         << "The audio endpoint device supports the specified stream format";
   } else if ((error.Error() == S_FALSE) && (closest_match != nullptr)) {
     // Call succeeded with a closest match to the specified format. This log can
     // only be triggered for shared mode.
     RTC_LOG(LS_WARNING)
         << "Exact format is not supported, but a closest match exists";
-    RTC_LOG(INFO) << WaveFormatToString(closest_match.Get());
+    RTC_LOG(LS_INFO) << WaveFormatToString(closest_match.Get());
   } else if ((error.Error() == AUDCLNT_E_UNSUPPORTED_FORMAT) &&
              (closest_match == nullptr)) {
     // The audio engine does not support the caller-specified format or any
     // similar format.
-    RTC_DLOG(INFO) << "The audio endpoint device does not support the "
-                      "specified stream format";
+    RTC_DLOG(LS_INFO) << "The audio endpoint device does not support the "
+                         "specified stream format";
   } else {
     RTC_LOG(LS_ERROR) << "IAudioClient::IsFormatSupported failed: "
                       << ErrorToString(error);
@@ -1077,7 +1078,7 @@ bool IsFormatSupported(IAudioClient* client,
 HRESULT GetDevicePeriod(IAudioClient* client,
                         AUDCLNT_SHAREMODE share_mode,
                         REFERENCE_TIME* device_period) {
-  RTC_DLOG(INFO) << "GetDevicePeriod";
+  RTC_DLOG(LS_INFO) << "GetDevicePeriod";
   RTC_DCHECK(client);
   // The `default_period` parameter specifies the default scheduling period
   // for a shared-mode stream. The `minimum_period` parameter specifies the
@@ -1094,10 +1095,10 @@ HRESULT GetDevicePeriod(IAudioClient* client,
 
   *device_period = (share_mode == AUDCLNT_SHAREMODE_SHARED) ? default_period
                                                             : minimum_period;
-  RTC_LOG(INFO) << "device_period: "
-                << ReferenceTimeToTimeDelta(*device_period).ms() << " [ms]";
-  RTC_LOG(INFO) << "minimum_period: "
-                << ReferenceTimeToTimeDelta(minimum_period).ms() << " [ms]";
+  RTC_LOG(LS_INFO) << "device_period: "
+                   << ReferenceTimeToTimeDelta(*device_period).ms() << " [ms]";
+  RTC_LOG(LS_INFO) << "minimum_period: "
+                   << ReferenceTimeToTimeDelta(minimum_period).ms() << " [ms]";
   return error.Error();
 }
 
@@ -1107,7 +1108,7 @@ HRESULT GetSharedModeEnginePeriod(IAudioClient3* client3,
                                   uint32_t* fundamental_period_in_frames,
                                   uint32_t* min_period_in_frames,
                                   uint32_t* max_period_in_frames) {
-  RTC_DLOG(INFO) << "GetSharedModeEnginePeriod";
+  RTC_DLOG(LS_INFO) << "GetSharedModeEnginePeriod";
   RTC_DCHECK(client3);
 
   UINT32 default_period = 0;
@@ -1125,15 +1126,17 @@ HRESULT GetSharedModeEnginePeriod(IAudioClient3* client3,
 
   WAVEFORMATEX format_ex = format->Format;
   const WORD sample_rate = format_ex.nSamplesPerSec;
-  RTC_LOG(INFO) << "default_period_in_frames: " << default_period << " ("
-                << FramesToMilliseconds(default_period, sample_rate) << " ms)";
-  RTC_LOG(INFO) << "fundamental_period_in_frames: " << fundamental_period
-                << " (" << FramesToMilliseconds(fundamental_period, sample_rate)
-                << " ms)";
-  RTC_LOG(INFO) << "min_period_in_frames: " << min_period << " ("
-                << FramesToMilliseconds(min_period, sample_rate) << " ms)";
-  RTC_LOG(INFO) << "max_period_in_frames: " << max_period << " ("
-                << FramesToMilliseconds(max_period, sample_rate) << " ms)";
+  RTC_LOG(LS_INFO) << "default_period_in_frames: " << default_period << " ("
+                   << FramesToMilliseconds(default_period, sample_rate)
+                   << " ms)";
+  RTC_LOG(LS_INFO) << "fundamental_period_in_frames: " << fundamental_period
+                   << " ("
+                   << FramesToMilliseconds(fundamental_period, sample_rate)
+                   << " ms)";
+  RTC_LOG(LS_INFO) << "min_period_in_frames: " << min_period << " ("
+                   << FramesToMilliseconds(min_period, sample_rate) << " ms)";
+  RTC_LOG(LS_INFO) << "max_period_in_frames: " << max_period << " ("
+                   << FramesToMilliseconds(max_period, sample_rate) << " ms)";
   *default_period_in_frames = default_period;
   *fundamental_period_in_frames = fundamental_period;
   *min_period_in_frames = min_period;
@@ -1143,7 +1146,7 @@ HRESULT GetSharedModeEnginePeriod(IAudioClient3* client3,
 
 HRESULT GetPreferredAudioParameters(IAudioClient* client,
                                     AudioParameters* params) {
-  RTC_DLOG(INFO) << "GetPreferredAudioParameters";
+  RTC_DLOG(LS_INFO) << "GetPreferredAudioParameters";
   RTC_DCHECK(client);
   return GetPreferredAudioParametersInternal(client, params, -1);
 }
@@ -1151,7 +1154,7 @@ HRESULT GetPreferredAudioParameters(IAudioClient* client,
 HRESULT GetPreferredAudioParameters(IAudioClient* client,
                                     webrtc::AudioParameters* params,
                                     uint32_t sample_rate) {
-  RTC_DLOG(INFO) << "GetPreferredAudioParameters: " << sample_rate;
+  RTC_DLOG(LS_INFO) << "GetPreferredAudioParameters: " << sample_rate;
   RTC_DCHECK(client);
   return GetPreferredAudioParametersInternal(client, params, sample_rate);
 }
@@ -1162,8 +1165,9 @@ HRESULT SharedModeInitialize(IAudioClient* client,
                              REFERENCE_TIME buffer_duration,
                              bool auto_convert_pcm,
                              uint32_t* endpoint_buffer_size) {
-  RTC_DLOG(INFO) << "SharedModeInitialize: buffer_duration=" << buffer_duration
-                 << ", auto_convert_pcm=" << auto_convert_pcm;
+  RTC_DLOG(LS_INFO) << "SharedModeInitialize: buffer_duration="
+                    << buffer_duration
+                    << ", auto_convert_pcm=" << auto_convert_pcm;
   RTC_DCHECK(client);
   RTC_DCHECK_GE(buffer_duration, 0);
   if (buffer_duration != 0) {
@@ -1188,7 +1192,7 @@ HRESULT SharedModeInitialize(IAudioClient* client,
       (event_handle != nullptr && event_handle != INVALID_HANDLE_VALUE);
   if (use_event) {
     stream_flags |= AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
-    RTC_DLOG(INFO) << "The stream is initialized to be event driven";
+    RTC_DLOG(LS_INFO) << "The stream is initialized to be event driven";
   }
 
   // Check if sample-rate conversion is requested.
@@ -1197,11 +1201,11 @@ HRESULT SharedModeInitialize(IAudioClient* client,
     // from our (the client's) format to the audio engine mix format.
     // Currently only supported for testing, i.e., not possible to enable using
     // public APIs.
-    RTC_DLOG(INFO) << "The stream is initialized to support rate conversion";
+    RTC_DLOG(LS_INFO) << "The stream is initialized to support rate conversion";
     stream_flags |= AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM;
     stream_flags |= AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY;
   }
-  RTC_DLOG(INFO) << "stream_flags: 0x" << rtc::ToHex(stream_flags);
+  RTC_DLOG(LS_INFO) << "stream_flags: 0x" << rtc::ToHex(stream_flags);
 
   // Initialize the shared mode client for minimal delay if `buffer_duration`
   // is 0 or possibly a higher delay (more robust) if `buffer_duration` is
@@ -1243,23 +1247,23 @@ HRESULT SharedModeInitialize(IAudioClient* client,
   }
 
   *endpoint_buffer_size = buffer_size_in_frames;
-  RTC_DLOG(INFO) << "endpoint buffer size: " << buffer_size_in_frames
-                 << " [audio frames]";
+  RTC_DLOG(LS_INFO) << "endpoint buffer size: " << buffer_size_in_frames
+                    << " [audio frames]";
   const double size_in_ms = static_cast<double>(buffer_size_in_frames) /
                             (format->Format.nSamplesPerSec / 1000.0);
-  RTC_DLOG(INFO) << "endpoint buffer size: "
-                 << static_cast<int>(size_in_ms + 0.5) << " [ms]";
-  RTC_DLOG(INFO) << "bytes per audio frame: " << format->Format.nBlockAlign;
-  RTC_DLOG(INFO) << "endpoint buffer size: "
-                 << buffer_size_in_frames * format->Format.nChannels *
-                        (format->Format.wBitsPerSample / 8)
-                 << " [bytes]";
+  RTC_DLOG(LS_INFO) << "endpoint buffer size: "
+                    << static_cast<int>(size_in_ms + 0.5) << " [ms]";
+  RTC_DLOG(LS_INFO) << "bytes per audio frame: " << format->Format.nBlockAlign;
+  RTC_DLOG(LS_INFO) << "endpoint buffer size: "
+                    << buffer_size_in_frames * format->Format.nChannels *
+                           (format->Format.wBitsPerSample / 8)
+                    << " [bytes]";
 
   // TODO(henrika): utilize when delay measurements are added.
   REFERENCE_TIME latency = 0;
   error = client->GetStreamLatency(&latency);
-  RTC_DLOG(INFO) << "stream latency: " << ReferenceTimeToTimeDelta(latency).ms()
-                 << " [ms]";
+  RTC_DLOG(LS_INFO) << "stream latency: "
+                    << ReferenceTimeToTimeDelta(latency).ms() << " [ms]";
   return error.Error();
 }
 
@@ -1269,9 +1273,9 @@ HRESULT SharedModeInitializeLowLatency(IAudioClient3* client,
                                        uint32_t period_in_frames,
                                        bool auto_convert_pcm,
                                        uint32_t* endpoint_buffer_size) {
-  RTC_DLOG(INFO) << "SharedModeInitializeLowLatency: period_in_frames="
-                 << period_in_frames
-                 << ", auto_convert_pcm=" << auto_convert_pcm;
+  RTC_DLOG(LS_INFO) << "SharedModeInitializeLowLatency: period_in_frames="
+                    << period_in_frames
+                    << ", auto_convert_pcm=" << auto_convert_pcm;
   RTC_DCHECK(client);
   RTC_DCHECK_GT(period_in_frames, 0);
   if (auto_convert_pcm) {
@@ -1284,13 +1288,13 @@ HRESULT SharedModeInitializeLowLatency(IAudioClient3* client,
       (event_handle != nullptr && event_handle != INVALID_HANDLE_VALUE);
   if (use_event) {
     stream_flags |= AUDCLNT_STREAMFLAGS_EVENTCALLBACK;
-    RTC_DLOG(INFO) << "The stream is initialized to be event driven";
+    RTC_DLOG(LS_INFO) << "The stream is initialized to be event driven";
   }
   if (auto_convert_pcm) {
     stream_flags |= AUDCLNT_STREAMFLAGS_AUTOCONVERTPCM;
     stream_flags |= AUDCLNT_STREAMFLAGS_SRC_DEFAULT_QUALITY;
   }
-  RTC_DLOG(INFO) << "stream_flags: 0x" << rtc::ToHex(stream_flags);
+  RTC_DLOG(LS_INFO) << "stream_flags: 0x" << rtc::ToHex(stream_flags);
 
   // Initialize the shared mode client for lowest possible latency.
   // It is assumed that GetSharedModeEnginePeriod() has been used to query the
@@ -1324,17 +1328,17 @@ HRESULT SharedModeInitializeLowLatency(IAudioClient3* client,
   }
 
   *endpoint_buffer_size = buffer_size_in_frames;
-  RTC_DLOG(INFO) << "endpoint buffer size: " << buffer_size_in_frames
-                 << " [audio frames]";
+  RTC_DLOG(LS_INFO) << "endpoint buffer size: " << buffer_size_in_frames
+                    << " [audio frames]";
   const double size_in_ms = static_cast<double>(buffer_size_in_frames) /
                             (format->Format.nSamplesPerSec / 1000.0);
-  RTC_DLOG(INFO) << "endpoint buffer size: "
-                 << static_cast<int>(size_in_ms + 0.5) << " [ms]";
-  RTC_DLOG(INFO) << "bytes per audio frame: " << format->Format.nBlockAlign;
-  RTC_DLOG(INFO) << "endpoint buffer size: "
-                 << buffer_size_in_frames * format->Format.nChannels *
-                        (format->Format.wBitsPerSample / 8)
-                 << " [bytes]";
+  RTC_DLOG(LS_INFO) << "endpoint buffer size: "
+                    << static_cast<int>(size_in_ms + 0.5) << " [ms]";
+  RTC_DLOG(LS_INFO) << "bytes per audio frame: " << format->Format.nBlockAlign;
+  RTC_DLOG(LS_INFO) << "endpoint buffer size: "
+                    << buffer_size_in_frames * format->Format.nChannels *
+                           (format->Format.wBitsPerSample / 8)
+                    << " [bytes]";
 
   // TODO(henrika): utilize when delay measurements are added.
   REFERENCE_TIME latency = 0;
@@ -1343,14 +1347,14 @@ HRESULT SharedModeInitializeLowLatency(IAudioClient3* client,
     RTC_LOG(LS_WARNING) << "IAudioClient::GetStreamLatency failed: "
                         << ErrorToString(error);
   } else {
-    RTC_DLOG(INFO) << "stream latency: "
-                   << ReferenceTimeToTimeDelta(latency).ms() << " [ms]";
+    RTC_DLOG(LS_INFO) << "stream latency: "
+                      << ReferenceTimeToTimeDelta(latency).ms() << " [ms]";
   }
   return error.Error();
 }
 
 ComPtr<IAudioRenderClient> CreateRenderClient(IAudioClient* client) {
-  RTC_DLOG(INFO) << "CreateRenderClient";
+  RTC_DLOG(LS_INFO) << "CreateRenderClient";
   RTC_DCHECK(client);
   // Get access to the IAudioRenderClient interface. This interface
   // enables us to write output data to a rendering endpoint buffer.
@@ -1366,7 +1370,7 @@ ComPtr<IAudioRenderClient> CreateRenderClient(IAudioClient* client) {
 }
 
 ComPtr<IAudioCaptureClient> CreateCaptureClient(IAudioClient* client) {
-  RTC_DLOG(INFO) << "CreateCaptureClient";
+  RTC_DLOG(LS_INFO) << "CreateCaptureClient";
   RTC_DCHECK(client);
   // Get access to the IAudioCaptureClient interface. This interface
   // enables us to read input data from a capturing endpoint buffer.
@@ -1382,7 +1386,7 @@ ComPtr<IAudioCaptureClient> CreateCaptureClient(IAudioClient* client) {
 }
 
 ComPtr<IAudioClock> CreateAudioClock(IAudioClient* client) {
-  RTC_DLOG(INFO) << "CreateAudioClock";
+  RTC_DLOG(LS_INFO) << "CreateAudioClock";
   RTC_DCHECK(client);
   // Get access to the IAudioClock interface. This interface enables us to
   // monitor a stream's data rate and the current position in the stream.
@@ -1397,7 +1401,7 @@ ComPtr<IAudioClock> CreateAudioClock(IAudioClient* client) {
 }
 
 ComPtr<IAudioSessionControl> CreateAudioSessionControl(IAudioClient* client) {
-  RTC_DLOG(INFO) << "CreateAudioSessionControl";
+  RTC_DLOG(LS_INFO) << "CreateAudioSessionControl";
   RTC_DCHECK(client);
   ComPtr<IAudioSessionControl> audio_session_control;
   _com_error error = client->GetService(IID_PPV_ARGS(&audio_session_control));
@@ -1410,7 +1414,7 @@ ComPtr<IAudioSessionControl> CreateAudioSessionControl(IAudioClient* client) {
 }
 
 ComPtr<ISimpleAudioVolume> CreateSimpleAudioVolume(IAudioClient* client) {
-  RTC_DLOG(INFO) << "CreateSimpleAudioVolume";
+  RTC_DLOG(LS_INFO) << "CreateSimpleAudioVolume";
   RTC_DCHECK(client);
   // Get access to the ISimpleAudioVolume interface. This interface enables a
   // client to control the master volume level of an audio session.
@@ -1427,7 +1431,7 @@ ComPtr<ISimpleAudioVolume> CreateSimpleAudioVolume(IAudioClient* client) {
 
 bool FillRenderEndpointBufferWithSilence(IAudioClient* client,
                                          IAudioRenderClient* render_client) {
-  RTC_DLOG(INFO) << "FillRenderEndpointBufferWithSilence";
+  RTC_DLOG(LS_INFO) << "FillRenderEndpointBufferWithSilence";
   RTC_DCHECK(client);
   RTC_DCHECK(render_client);
   UINT32 endpoint_buffer_size = 0;
@@ -1447,11 +1451,11 @@ bool FillRenderEndpointBufferWithSilence(IAudioClient* client,
                       << ErrorToString(error);
     return false;
   }
-  RTC_DLOG(INFO) << "num_queued_frames: " << num_queued_frames;
+  RTC_DLOG(LS_INFO) << "num_queued_frames: " << num_queued_frames;
 
   BYTE* data = nullptr;
   int num_frames_to_fill = endpoint_buffer_size - num_queued_frames;
-  RTC_DLOG(INFO) << "num_frames_to_fill: " << num_frames_to_fill;
+  RTC_DLOG(LS_INFO) << "num_frames_to_fill: " << num_frames_to_fill;
   error = render_client->GetBuffer(num_frames_to_fill, &data);
   if (FAILED(error.Error())) {
     RTC_LOG(LS_ERROR) << "IAudioRenderClient::GetBuffer failed: "

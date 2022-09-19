@@ -88,7 +88,7 @@ class SplitBySamplesTest : public ::testing::TestWithParam<NetEqDecoder> {
         samples_per_ms_ = 8;
         break;
       default:
-        RTC_NOTREACHED();
+        RTC_DCHECK_NOTREACHED();
         break;
     }
   }
@@ -138,7 +138,6 @@ TEST_P(SplitBySamplesTest, PayloadSizes) {
 
     EXPECT_EQ(expected_split.num_frames, results.size());
     uint32_t expected_timestamp = kBaseTimestamp;
-    uint32_t expected_byte_offset = 0;
     uint8_t value = 0;
     for (size_t i = 0; i != expected_split.num_frames; ++i) {
       const auto& result = results[i];
@@ -155,7 +154,6 @@ TEST_P(SplitBySamplesTest, PayloadSizes) {
 
       expected_timestamp += rtc::checked_cast<uint32_t>(
           expected_split.frame_sizes[i] * samples_per_ms_);
-      expected_byte_offset += rtc::checked_cast<uint32_t>(length_bytes);
     }
   }
 }

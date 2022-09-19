@@ -47,10 +47,7 @@ class ResidualEchoEstimatorTest {
         Y2_(num_capture_channels_),
         R2_(num_capture_channels_),
         R2_unbounded_(num_capture_channels_),
-        x_(kNumBands,
-           std::vector<std::vector<float>>(
-               num_render_channels_,
-               std::vector<float>(kBlockSize, 0.0f))),
+        x_(kNumBands, num_render_channels_),
         H2_(num_capture_channels_,
             std::vector<std::array<float, kFftLengthBy2Plus1>>(10)),
         h_(num_capture_channels_,
@@ -84,7 +81,8 @@ class ResidualEchoEstimatorTest {
   }
 
   void RunOneFrame(bool dominant_nearend) {
-    RandomizeSampleVector(&random_generator_, x_[0][0]);
+    RandomizeSampleVector(&random_generator_,
+                          x_.View(/*band=*/0, /*channel=*/0));
     render_delay_buffer_->Insert(x_);
     if (first_frame_) {
       render_delay_buffer_->Reset();
@@ -116,7 +114,7 @@ class ResidualEchoEstimatorTest {
   std::vector<std::array<float, kFftLengthBy2Plus1>> Y2_;
   std::vector<std::array<float, kFftLengthBy2Plus1>> R2_;
   std::vector<std::array<float, kFftLengthBy2Plus1>> R2_unbounded_;
-  std::vector<std::vector<std::vector<float>>> x_;
+  Block x_;
   std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>> H2_;
   std::vector<std::vector<float>> h_;
   Random random_generator_;

@@ -9,11 +9,15 @@
  */
 
 #include "modules/desktop_capture/mac/full_screen_mac_application_handler.h"
+
 #include <libproc.h>
+
 #include <algorithm>
 #include <functional>
 #include <string>
+
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "api/function_view.h"
 #include "modules/desktop_capture/mac/window_list_utils.h"
 
@@ -21,44 +25,46 @@ namespace webrtc {
 namespace {
 
 static constexpr const char* kPowerPointSlideShowTitles[] = {
-    u8"PowerPoint-Bildschirmpräsentation",
-    u8"Προβολή παρουσίασης PowerPoint",
-    u8"PowerPoint スライド ショー",
-    u8"PowerPoint Slide Show",
-    u8"PowerPoint 幻灯片放映",
-    u8"Presentación de PowerPoint",
-    u8"PowerPoint-slideshow",
-    u8"Presentazione di PowerPoint",
-    u8"Prezentácia programu PowerPoint",
-    u8"Apresentação do PowerPoint",
-    u8"PowerPoint-bildspel",
-    u8"Prezentace v aplikaci PowerPoint",
-    u8"PowerPoint 슬라이드 쇼",
-    u8"PowerPoint-lysbildefremvisning",
-    u8"PowerPoint-vetítés",
-    u8"PowerPoint Slayt Gösterisi",
-    u8"Pokaz slajdów programu PowerPoint",
-    u8"PowerPoint 投影片放映",
-    u8"Демонстрация PowerPoint",
-    u8"Diaporama PowerPoint",
-    u8"PowerPoint-diaesitys",
-    u8"Peragaan Slide PowerPoint",
-    u8"PowerPoint-diavoorstelling",
-    u8"การนำเสนอสไลด์ PowerPoint",
-    u8"Apresentação de slides do PowerPoint",
-    u8"הצגת שקופיות של PowerPoint",
-    u8"عرض شرائح في PowerPoint"};
+    "PowerPoint-Bildschirmpräsentation",
+    "Προβολή παρουσίασης PowerPoint",
+    "PowerPoint スライド ショー",
+    "PowerPoint Slide Show",
+    "PowerPoint 幻灯片放映",
+    "Presentación de PowerPoint",
+    "PowerPoint-slideshow",
+    "Presentazione di PowerPoint",
+    "Prezentácia programu PowerPoint",
+    "Apresentação do PowerPoint",
+    "PowerPoint-bildspel",
+    "Prezentace v aplikaci PowerPoint",
+    "PowerPoint 슬라이드 쇼",
+    "PowerPoint-lysbildefremvisning",
+    "PowerPoint-vetítés",
+    "PowerPoint Slayt Gösterisi",
+    "Pokaz slajdów programu PowerPoint",
+    "PowerPoint 投影片放映",
+    "Демонстрация PowerPoint",
+    "Diaporama PowerPoint",
+    "PowerPoint-diaesitys",
+    "Peragaan Slide PowerPoint",
+    "PowerPoint-diavoorstelling",
+    "การนำเสนอสไลด์ PowerPoint",
+    "Apresentação de slides do PowerPoint",
+    "הצגת שקופיות של PowerPoint",
+    "عرض شرائح في PowerPoint"};
 
 class FullScreenMacApplicationHandler : public FullScreenApplicationHandler {
  public:
   using TitlePredicate =
-      std::function<bool(const std::string&, const std::string&)>;
+      std::function<bool(absl::string_view, absl::string_view)>;
 
   FullScreenMacApplicationHandler(DesktopCapturer::SourceId sourceId,
-                                  TitlePredicate title_predicate)
+                                  TitlePredicate title_predicate,
+                                  bool ignore_original_window)
       : FullScreenApplicationHandler(sourceId),
         title_predicate_(title_predicate),
-        owner_pid_(GetWindowOwnerPid(sourceId)) {}
+        owner_pid_(GetWindowOwnerPid(sourceId)),
+        ignore_original_window_(ignore_original_window) {}
 
  protected:
   using CachePredicate =
@@ -119,7 +125,7 @@ class FullScreenMacApplicationHandler : public FullScreenApplicationHandler {
   DesktopCapturer::SourceId FindFullScreenWindow(
       const DesktopCapturer::SourceList& source_list,
       int64_t timestamp) const override {
-    return IsWindowOnScreen(GetSourceId())
+    return !ignore_original_window_ && IsWindowOnScreen(GetSourceId())
                ? 0
                : FindFullScreenWindowWithSamePid(source_list, timestamp);
   }
@@ -127,18 +133,19 @@ class FullScreenMacApplicationHandler : public FullScreenApplicationHandler {
  protected:
   const TitlePredicate title_predicate_;
   const int owner_pid_;
+  const bool ignore_original_window_;
   mutable int64_t cache_timestamp_ = 0;
   mutable DesktopCapturer::SourceList cache_sources_;
 };
 
-bool equal_title_predicate(const std::string& original_title,
-                           const std::string& title) {
+bool equal_title_predicate(absl::string_view original_title,
+                           absl::string_view title) {
   return original_title == title;
 }
 
-bool slide_show_title_predicate(const std::string& original_title,
-                                const std::string& title) {
-  if (title.find(original_title) == std::string::npos)
+bool slide_show_title_predicate(absl::string_view original_title,
+                                absl::string_view title) {
+  if (title.find(original_title) == absl::string_view::npos)
     return false;
 
   for (const char* pp_slide_title : kPowerPointSlideShowTitles) {
@@ -151,7 +158,7 @@ bool slide_show_title_predicate(const std::string& original_title,
 class OpenOfficeApplicationHandler : public FullScreenMacApplicationHandler {
  public:
   OpenOfficeApplicationHandler(DesktopCapturer::SourceId sourceId)
-      : FullScreenMacApplicationHandler(sourceId, nullptr) {}
+      : FullScreenMacApplicationHandler(sourceId, nullptr, false) {}
 
   DesktopCapturer::SourceId FindFullScreenWindow(
       const DesktopCapturer::SourceList& source_list,
@@ -207,10 +214,12 @@ CreateFullScreenMacApplicationHandler(DesktopCapturer::SourceId sourceId) {
     const std::string name{last_slash ? last_slash + 1 : buffer};
     const std::string owner_name = GetWindowOwnerName(sourceId);
     FullScreenMacApplicationHandler::TitlePredicate predicate = nullptr;
+    bool ignore_original_window = false;
     if (name.find("Google Chrome") == 0 || name == "Chromium") {
       predicate = equal_title_predicate;
     } else if (name == "Microsoft PowerPoint") {
       predicate = slide_show_title_predicate;
+      ignore_original_window = true;
     } else if (name == "Keynote") {
       predicate = equal_title_predicate;
     } else if (owner_name == "OpenOffice") {
@@ -218,7 +227,8 @@ CreateFullScreenMacApplicationHandler(DesktopCapturer::SourceId sourceId) {
     }
 
     if (predicate) {
-      result.reset(new FullScreenMacApplicationHandler(sourceId, predicate));
+      result.reset(new FullScreenMacApplicationHandler(sourceId, predicate,
+                                                       ignore_original_window));
     }
   }
 

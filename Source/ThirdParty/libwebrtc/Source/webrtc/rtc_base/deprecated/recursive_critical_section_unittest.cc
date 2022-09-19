@@ -21,7 +21,6 @@
 
 #include "absl/base/attributes.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/atomic_ops.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/location.h"
@@ -94,7 +93,7 @@ class RunnerBase : public MessageHandlerAutoCleanup {
     return done_event_.Wait(kLongTime);
   }
 
-  void SetExpectedThreadCount(int count) { threads_active_ = count; }
+  void SetExpectedThreadCount(int count) { threads_active_.store(count); }
 
   int shared_value() const { return shared_value_; }
 
@@ -105,14 +104,14 @@ class RunnerBase : public MessageHandlerAutoCleanup {
 
   // Returns true if all threads have finished.
   bool AfterEnd() {
-    if (AtomicOps::Decrement(&threads_active_) == 0) {
+    if (threads_active_.fetch_sub(1) == 1) {
       done_event_.Set();
       return true;
     }
     return false;
   }
 
-  int threads_active_;
+  std::atomic<int> threads_active_;
   Event start_event_;
   Event done_event_;
   int shared_value_;
@@ -156,49 +155,6 @@ class LockRunner : public RunnerBase {
   Lock lock_;
 };
 
-template <class Op, class Verifier>
-class AtomicOpRunner : public RunnerBase {
- public:
-  explicit AtomicOpRunner(int initial_value) : RunnerBase(initial_value) {}
-
-  void OnMessage(Message* msg) override {
-    BeforeStart();
-
-    std::vector<int> values;
-    values.reserve(kOperationsToRun);
-
-    // Generate a bunch of values by updating shared_value_ atomically.
-    for (int i = 0; i < kOperationsToRun; ++i) {
-      values.push_back(Op::AtomicOp(&shared_value_));
-    }
-
-    {  // Add them all to the set.
-      CritScope cs(&all_values_crit_);
-      verifier_.Verify(values);
-    }
-
-    if (AfterEnd()) {
-      verifier_.Finalize();
-    }
-  }
-
- private:
-  RecursiveCriticalSection all_values_crit_;
-  Verifier verifier_;
-};
-
-struct IncrementOp {
-  static int AtomicOp(int* i) { return AtomicOps::Increment(i); }
-};
-
-struct DecrementOp {
-  static int AtomicOp(int* i) { return AtomicOps::Decrement(i); }
-};
-
-struct CompareAndSwapOp {
-  static int AtomicOp(int* i) { return AtomicOps::CompareAndSwap(i, 0, 1); }
-};
-
 void StartThreads(std::vector<std::unique_ptr<Thread>>* threads,
                   MessageHandler* handler) {
   for (int i = 0; i < kNumThreads; ++i) {
@@ -210,77 +166,6 @@ void StartThreads(std::vector<std::unique_ptr<Thread>>* threads,
 }
 
 }  // namespace
-
-TEST(AtomicOpsTest, Simple) {
-  int value = 0;
-  EXPECT_EQ(1, AtomicOps::Increment(&value));
-  EXPECT_EQ(1, value);
-  EXPECT_EQ(2, AtomicOps::Increment(&value));
-  EXPECT_EQ(2, value);
-  EXPECT_EQ(1, AtomicOps::Decrement(&value));
-  EXPECT_EQ(1, value);
-  EXPECT_EQ(0, AtomicOps::Decrement(&value));
-  EXPECT_EQ(0, value);
-}
-
-TEST(AtomicOpsTest, SimplePtr) {
-  class Foo {};
-  Foo* volatile foo = nullptr;
-  std::unique_ptr<Foo> a(new Foo());
-  std::unique_ptr<Foo> b(new Foo());
-  // Reading the initial value should work as expected.
-  EXPECT_TRUE(rtc::AtomicOps::AcquireLoadPtr(&foo) == nullptr);
-  // Setting using compare and swap should work.
-  EXPECT_TRUE(rtc::AtomicOps::CompareAndSwapPtr(
-                  &foo, static_cast<Foo*>(nullptr), a.get()) == nullptr);
-  EXPECT_TRUE(rtc::AtomicOps::AcquireLoadPtr(&foo) == a.get());
-  // Setting another value but with the wrong previous pointer should fail
-  // (remain a).
-  EXPECT_TRUE(rtc::AtomicOps::CompareAndSwapPtr(
-                  &foo, static_cast<Foo*>(nullptr), b.get()) == a.get());
-  EXPECT_TRUE(rtc::AtomicOps::AcquireLoadPtr(&foo) == a.get());
-  // Replacing a with b should work.
-  EXPECT_TRUE(rtc::AtomicOps::CompareAndSwapPtr(&foo, a.get(), b.get()) ==
-              a.get());
-  EXPECT_TRUE(rtc::AtomicOps::AcquireLoadPtr(&foo) == b.get());
-}
-
-TEST(AtomicOpsTest, Increment) {
-  // Create and start lots of threads.
-  AtomicOpRunner<IncrementOp, UniqueValueVerifier> runner(0);
-  std::vector<std::unique_ptr<Thread>> threads;
-  StartThreads(&threads, &runner);
-  runner.SetExpectedThreadCount(kNumThreads);
-
-  // Release the hounds!
-  EXPECT_TRUE(runner.Run());
-  EXPECT_EQ(kOperationsToRun * kNumThreads, runner.shared_value());
-}
-
-TEST(AtomicOpsTest, Decrement) {
-  // Create and start lots of threads.
-  AtomicOpRunner<DecrementOp, UniqueValueVerifier> runner(kOperationsToRun *
-                                                          kNumThreads);
-  std::vector<std::unique_ptr<Thread>> threads;
-  StartThreads(&threads, &runner);
-  runner.SetExpectedThreadCount(kNumThreads);
-
-  // Release the hounds!
-  EXPECT_TRUE(runner.Run());
-  EXPECT_EQ(0, runner.shared_value());
-}
-
-TEST(AtomicOpsTest, CompareAndSwap) {
-  // Create and start lots of threads.
-  AtomicOpRunner<CompareAndSwapOp, CompareAndSwapVerifier> runner(0);
-  std::vector<std::unique_ptr<Thread>> threads;
-  StartThreads(&threads, &runner);
-  runner.SetExpectedThreadCount(kNumThreads);
-
-  // Release the hounds!
-  EXPECT_TRUE(runner.Run());
-  EXPECT_EQ(1, runner.shared_value());
-}
 
 TEST(RecursiveCriticalSectionTest, Basic) {
   // Create and start lots of threads.

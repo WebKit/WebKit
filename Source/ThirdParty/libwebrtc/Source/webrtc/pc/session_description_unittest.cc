@@ -9,8 +9,6 @@
  */
 #include "pc/session_description.h"
 
-#include <memory>
-
 #include "test/gtest.h"
 
 namespace cricket {

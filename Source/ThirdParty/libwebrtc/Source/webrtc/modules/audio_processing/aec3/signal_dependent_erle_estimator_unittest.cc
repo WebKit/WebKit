@@ -24,7 +24,7 @@ namespace webrtc {
 
 namespace {
 
-void GetActiveFrame(std::vector<std::vector<std::vector<float>>>* x) {
+void GetActiveFrame(Block* x) {
   const std::array<float, kBlockSize> frame = {
       7459.88, 17209.6, 17383,   20768.9, 16816.7, 18386.3, 4492.83, 9675.85,
       6665.52, 14808.6, 9342.3,  7483.28, 19261.7, 4145.98, 1622.18, 13475.2,
@@ -34,10 +34,10 @@ void GetActiveFrame(std::vector<std::vector<std::vector<float>>>* x) {
       11405,   15031.4, 14541.6, 19765.5, 18346.3, 19350.2, 3157.47, 18095.8,
       1743.68, 21328.2, 19727.5, 7295.16, 10332.4, 11055.5, 20107.4, 14708.4,
       12416.2, 16434,   2454.69, 9840.8,  6867.23, 1615.75, 6059.9,  8394.19};
-  for (size_t band = 0; band < x->size(); ++band) {
-    for (size_t channel = 0; channel < (*x)[band].size(); ++channel) {
-      RTC_DCHECK_GE((*x)[band][channel].size(), frame.size());
-      std::copy(frame.begin(), frame.end(), (*x)[band][channel].begin());
+  for (int band = 0; band < x->NumBands(); ++band) {
+    for (int channel = 0; channel < x->NumChannels(); ++channel) {
+      RTC_DCHECK_GE(kBlockSize, frame.size());
+      std::copy(frame.begin(), frame.end(), x->begin(band, channel));
     }
   }
 }
@@ -74,7 +74,7 @@ class TestInputs {
   std::vector<std::array<float, kFftLengthBy2Plus1>> Y2_;
   std::vector<std::array<float, kFftLengthBy2Plus1>> E2_;
   std::vector<std::vector<std::array<float, kFftLengthBy2Plus1>>> H2_;
-  std::vector<std::vector<std::vector<float>>> x_;
+  Block x_;
   std::vector<bool> converged_filters_;
 };
 
@@ -88,9 +88,7 @@ TestInputs::TestInputs(const EchoCanceller3Config& cfg,
       H2_(num_capture_channels,
           std::vector<std::array<float, kFftLengthBy2Plus1>>(
               cfg.filter.refined.length_blocks)),
-      x_(1,
-         std::vector<std::vector<float>>(num_render_channels,
-                                         std::vector<float>(kBlockSize, 0.f))),
+      x_(1, num_render_channels),
       converged_filters_(num_capture_channels, true) {
   render_delay_buffer_->AlignFromDelay(4);
   render_buffer_ = render_delay_buffer_->GetRenderBuffer();
@@ -108,7 +106,8 @@ TestInputs::~TestInputs() = default;
 
 void TestInputs::Update() {
   if (n_ % 2 == 0) {
-    std::fill(x_[0][0].begin(), x_[0][0].end(), 0.f);
+    std::fill(x_.begin(/*band=*/0, /*channel=*/0),
+              x_.end(/*band=*/0, /*channel=*/0), 0.f);
   } else {
     GetActiveFrame(&x_);
   }

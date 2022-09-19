@@ -12,6 +12,7 @@
 
 #include <cstddef>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "common_audio/wav_file.h"
 #include "rtc_base/checks.h"
@@ -24,7 +25,7 @@ using conversational_speech::WavReaderInterface;
 
 class WavReaderAdaptor final : public WavReaderInterface {
  public:
-  explicit WavReaderAdaptor(const std::string& filepath)
+  explicit WavReaderAdaptor(absl::string_view filepath)
       : wav_reader_(filepath) {}
   ~WavReaderAdaptor() override = default;
 
@@ -55,7 +56,7 @@ WavReaderFactory::WavReaderFactory() = default;
 WavReaderFactory::~WavReaderFactory() = default;
 
 std::unique_ptr<WavReaderInterface> WavReaderFactory::Create(
-    const std::string& filepath) const {
+    absl::string_view filepath) const {
   return std::unique_ptr<WavReaderAdaptor>(new WavReaderAdaptor(filepath));
 }
 

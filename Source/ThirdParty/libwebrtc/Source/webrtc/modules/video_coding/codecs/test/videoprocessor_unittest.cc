@@ -59,12 +59,11 @@ class VideoProcessorTest : public ::testing::Test {
           video_processor_ = std::make_unique<VideoProcessor>(
               &encoder_mock_, &decoders_, &frame_reader_mock_, config_, &stats_,
               &encoded_frame_writers_, /*decoded_frame_writers=*/nullptr);
-        },
-        RTC_FROM_HERE);
+        });
   }
 
   ~VideoProcessorTest() {
-    q_.SendTask([this] { video_processor_.reset(); }, RTC_FROM_HERE);
+    q_.SendTask([this] { video_processor_.reset(); });
   }
 
   void ExpectInit() {
@@ -106,8 +105,7 @@ TEST_F(VideoProcessorTest, ProcessFrames_FixedFramerate) {
       SetRates(Field(&VideoEncoder::RateControlParameters::framerate_fps,
                      static_cast<double>(kFramerateFps))))
       .Times(1);
-  q_.SendTask([=] { video_processor_->SetRates(kBitrateKbps, kFramerateFps); },
-              RTC_FROM_HERE);
+  q_.SendTask([=] { video_processor_->SetRates(kBitrateKbps, kFramerateFps); });
 
   EXPECT_CALL(frame_reader_mock_, ReadFrame())
       .WillRepeatedly(Return(I420Buffer::Create(kWidth, kHeight)));
@@ -115,13 +113,13 @@ TEST_F(VideoProcessorTest, ProcessFrames_FixedFramerate) {
       encoder_mock_,
       Encode(Property(&VideoFrame::timestamp, 1 * 90000 / kFramerateFps), _))
       .Times(1);
-  q_.SendTask([this] { video_processor_->ProcessFrame(); }, RTC_FROM_HERE);
+  q_.SendTask([this] { video_processor_->ProcessFrame(); });
 
   EXPECT_CALL(
       encoder_mock_,
       Encode(Property(&VideoFrame::timestamp, 2 * 90000 / kFramerateFps), _))
       .Times(1);
-  q_.SendTask([this] { video_processor_->ProcessFrame(); }, RTC_FROM_HERE);
+  q_.SendTask([this] { video_processor_->ProcessFrame(); });
 
   ExpectRelease();
 }
@@ -136,15 +134,14 @@ TEST_F(VideoProcessorTest, ProcessFrames_VariableFramerate) {
                      static_cast<double>(kStartFramerateFps))))
       .Times(1);
   q_.SendTask(
-      [=] { video_processor_->SetRates(kBitrateKbps, kStartFramerateFps); },
-      RTC_FROM_HERE);
+      [=] { video_processor_->SetRates(kBitrateKbps, kStartFramerateFps); });
 
   EXPECT_CALL(frame_reader_mock_, ReadFrame())
       .WillRepeatedly(Return(I420Buffer::Create(kWidth, kHeight)));
   EXPECT_CALL(encoder_mock_,
               Encode(Property(&VideoFrame::timestamp, kStartTimestamp), _))
       .Times(1);
-  q_.SendTask([this] { video_processor_->ProcessFrame(); }, RTC_FROM_HERE);
+  q_.SendTask([this] { video_processor_->ProcessFrame(); });
 
   const int kNewFramerateFps = 13;
   EXPECT_CALL(
@@ -153,15 +150,14 @@ TEST_F(VideoProcessorTest, ProcessFrames_VariableFramerate) {
                      static_cast<double>(kNewFramerateFps))))
       .Times(1);
   q_.SendTask(
-      [=] { video_processor_->SetRates(kBitrateKbps, kNewFramerateFps); },
-      RTC_FROM_HERE);
+      [=] { video_processor_->SetRates(kBitrateKbps, kNewFramerateFps); });
 
   EXPECT_CALL(encoder_mock_,
               Encode(Property(&VideoFrame::timestamp,
                               kStartTimestamp + 90000 / kNewFramerateFps),
                      _))
       .Times(1);
-  q_.SendTask([this] { video_processor_->ProcessFrame(); }, RTC_FROM_HERE);
+  q_.SendTask([this] { video_processor_->ProcessFrame(); });
 
   ExpectRelease();
 }
@@ -180,8 +176,7 @@ TEST_F(VideoProcessorTest, SetRates) {
                      Field(&VideoEncoder::RateControlParameters::framerate_fps,
                            static_cast<double>(kFramerateFps)))))
       .Times(1);
-  q_.SendTask([=] { video_processor_->SetRates(kBitrateKbps, kFramerateFps); },
-              RTC_FROM_HERE);
+  q_.SendTask([=] { video_processor_->SetRates(kBitrateKbps, kFramerateFps); });
 
   const uint32_t kNewBitrateKbps = 456;
   const int kNewFramerateFps = 34;
@@ -196,8 +191,7 @@ TEST_F(VideoProcessorTest, SetRates) {
                            static_cast<double>(kNewFramerateFps)))))
       .Times(1);
   q_.SendTask(
-      [=] { video_processor_->SetRates(kNewBitrateKbps, kNewFramerateFps); },
-      RTC_FROM_HERE);
+      [=] { video_processor_->SetRates(kNewBitrateKbps, kNewFramerateFps); });
 
   ExpectRelease();
 }

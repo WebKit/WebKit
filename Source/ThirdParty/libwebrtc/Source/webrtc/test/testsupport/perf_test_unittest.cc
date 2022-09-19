@@ -14,6 +14,7 @@
 #include <limits>
 #include <string>
 
+#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/rtc_expect_death.h"
 
@@ -162,11 +163,7 @@ TEST_F(PerfTest, TestGetPerfResultsHistogramsWithStatsCounter) {
   // histogram writer itself).
   EXPECT_EQ(hist.unit().unit(), proto::MS_BEST_FIT_FORMAT);
   EXPECT_EQ(hist.sample_values_size(), 5);
-  EXPECT_EQ(hist.sample_values(0), 1);
-  EXPECT_EQ(hist.sample_values(1), 2);
-  EXPECT_EQ(hist.sample_values(2), 3);
-  EXPECT_EQ(hist.sample_values(3), 4);
-  EXPECT_EQ(hist.sample_values(4), 5);
+  EXPECT_THAT(hist.sample_values(), testing::ElementsAre(1, 2, 3, 4, 5));
 
   EXPECT_EQ(hist.diagnostics().diagnostic_map().count("stories"), 1u);
   const proto::Diagnostic& stories =

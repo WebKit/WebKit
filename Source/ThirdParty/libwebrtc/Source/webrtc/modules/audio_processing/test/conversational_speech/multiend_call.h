@@ -20,11 +20,11 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/test/conversational_speech/timing.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_abstract_factory.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -34,13 +34,13 @@ class MultiEndCall {
  public:
   struct SpeakingTurn {
     // Constructor required in order to use std::vector::emplace_back().
-    SpeakingTurn(std::string new_speaker_name,
-                 std::string new_audiotrack_file_name,
+    SpeakingTurn(absl::string_view new_speaker_name,
+                 absl::string_view new_audiotrack_file_name,
                  size_t new_begin,
                  size_t new_end,
                  int gain)
-        : speaker_name(std::move(new_speaker_name)),
-          audiotrack_file_name(std::move(new_audiotrack_file_name)),
+        : speaker_name(new_speaker_name),
+          audiotrack_file_name(new_audiotrack_file_name),
           begin(new_begin),
           end(new_end),
           gain(gain) {}
@@ -53,9 +53,12 @@ class MultiEndCall {
 
   MultiEndCall(
       rtc::ArrayView<const Turn> timing,
-      const std::string& audiotracks_path,
+      absl::string_view audiotracks_path,
       std::unique_ptr<WavReaderAbstractFactory> wavreader_abstract_factory);
   ~MultiEndCall();
+
+  MultiEndCall(const MultiEndCall&) = delete;
+  MultiEndCall& operator=(const MultiEndCall&) = delete;
 
   const std::set<std::string>& speaker_names() const { return speaker_names_; }
   const std::map<std::string, std::unique_ptr<WavReaderInterface>>&
@@ -83,7 +86,7 @@ class MultiEndCall {
   bool CheckTiming();
 
   rtc::ArrayView<const Turn> timing_;
-  const std::string& audiotracks_path_;
+  std::string audiotracks_path_;
   std::unique_ptr<WavReaderAbstractFactory> wavreader_abstract_factory_;
   std::set<std::string> speaker_names_;
   std::map<std::string, std::unique_ptr<WavReaderInterface>>
@@ -92,8 +95,6 @@ class MultiEndCall {
   int sample_rate_hz_;
   size_t total_duration_samples_;
   std::vector<SpeakingTurn> speaking_turns_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(MultiEndCall);
 };
 
 }  // namespace conversational_speech

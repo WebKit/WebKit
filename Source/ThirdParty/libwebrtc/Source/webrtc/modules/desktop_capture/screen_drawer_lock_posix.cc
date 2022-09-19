@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -32,7 +33,7 @@ ScreenDrawerLockPosix::ScreenDrawerLockPosix(const char* name) {
   semaphore_ = sem_open(name, O_CREAT, S_IRWXU | S_IRWXG | S_IRWXO, 1);
   if (semaphore_ == SEM_FAILED) {
     RTC_LOG_ERRNO(LS_ERROR) << "Failed to create named semaphore with " << name;
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
   }
 
   sem_wait(semaphore_);
@@ -51,8 +52,8 @@ ScreenDrawerLockPosix::~ScreenDrawerLockPosix() {
 }
 
 // static
-void ScreenDrawerLockPosix::Unlink(const char* name) {
-  sem_unlink(name);
+void ScreenDrawerLockPosix::Unlink(absl::string_view name) {
+  sem_unlink(std::string(name).c_str());
 }
 
 }  // namespace webrtc

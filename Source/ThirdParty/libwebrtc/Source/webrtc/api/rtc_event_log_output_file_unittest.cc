@@ -72,7 +72,7 @@ TEST_F(RtcEventLogOutputFileTest, UnlimitedOutputFile) {
   EXPECT_EQ(GetOutputFileContents(), output_str);
 }
 
-// Do not allow writing more bytes to the file than
+// Do not allow writing more bytes to the file than max file size.
 TEST_F(RtcEventLogOutputFileTest, LimitedOutputFileCappedToCapacity) {
   // Fit two bytes, then the third should be rejected.
   auto output_file =

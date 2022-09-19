@@ -147,8 +147,8 @@ class AndroidVoipClient : public webrtc::Transport,
   // Overloaded methods having native C++ variables as arguments.
   void SetEncoder(const std::string& encoder);
   void SetDecoders(const std::vector<std::string>& decoders);
-  void SetLocalAddress(const std::string& ip_address, const int port_number);
-  void SetRemoteAddress(const std::string& ip_address, const int port_number);
+  void SetLocalAddress(const std::string& ip_address, int port_number);
+  void SetRemoteAddress(const std::string& ip_address, int port_number);
 
   // Methods to send and receive RTP/RTCP packets. Takes in a
   // copy of a packet as a vector to prolong the lifetime of

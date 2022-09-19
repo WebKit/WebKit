@@ -16,7 +16,6 @@
 #include <string>
 
 #include "modules/audio_coding/neteq/tools/packet_source.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -30,6 +29,9 @@ class ConstantPcmPacketSource : public PacketSource {
                           int16_t sample_value,
                           int sample_rate_hz,
                           int payload_type);
+
+  ConstantPcmPacketSource(const ConstantPcmPacketSource&) = delete;
+  ConstantPcmPacketSource& operator=(const ConstantPcmPacketSource&) = delete;
 
   std::unique_ptr<Packet> NextPacket() override;
 
@@ -46,8 +48,6 @@ class ConstantPcmPacketSource : public PacketSource {
   uint16_t seq_number_;
   uint32_t timestamp_;
   const uint32_t payload_ssrc_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(ConstantPcmPacketSource);
 };
 
 }  // namespace test

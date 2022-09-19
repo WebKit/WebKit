@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env vpython3
+
 #  Copyright (c) 2020 The WebRTC project authors. All Rights Reserved.
 #
 # Use of this source code is governed by a BSD-style license
@@ -12,36 +13,34 @@ import re
 import sys
 
 
-def replace_double_quote(line):
-    re_rtc_import = re.compile(
-        r'(\s*)#import\s+"(\S+/|)(\w+\+|)RTC(\w+)\.h"(.*)', re.DOTALL)
-    match = re_rtc_import.match(line)
-    if not match:
-        return line
+def _ReplaceDoubleQuote(line):
+  re_rtc_import = re.compile(r'(\s*)#import\s+"(\S+/|)(\w+\+|)RTC(\w+)\.h"(.*)',
+                             re.DOTALL)
+  match = re_rtc_import.match(line)
+  if not match:
+    return line
 
-    return '%s#import <WebRTC/%sRTC%s.h>%s' % (match.group(1), match.group(3),
-                                               match.group(4), match.group(5))
+  return '%s#import <WebRTC/%sRTC%s.h>%s' % (match.group(1), match.group(3),
+                                             match.group(4), match.group(5))
 
 
-def process(input_file, output_file):
-    with open(input_file, 'rb') as fb, open(output_file, 'wb') as fw:
-        for line in fb.read().decode('UTF-8').splitlines():
-            fw.write(replace_double_quote(line).encode('UTF-8'))
-            fw.write(b"\n")
+def Process(input_file, output_file):
+  with open(input_file, 'rb') as fb, open(output_file, 'wb') as fw:
+    for line in fb.read().decode('UTF-8').splitlines():
+      fw.write(_ReplaceDoubleQuote(line).encode('UTF-8'))
+      fw.write(b"\n")
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description=
-        "Copy headers of framework and replace double-quoted includes to" +
-        " angle-bracketed respectively.")
-    parser.add_argument('--input',
-                        help='Input header files to copy.',
-                        type=str)
-    parser.add_argument('--output', help='Output file.', type=str)
-    parsed_args = parser.parse_args()
-    return process(parsed_args.input, parsed_args.output)
+  parser = argparse.ArgumentParser(
+      description=
+      "Copy headers of framework and replace double-quoted includes to" +
+      " angle-bracketed respectively.")
+  parser.add_argument('--input', help='Input header files to copy.', type=str)
+  parser.add_argument('--output', help='Output file.', type=str)
+  parsed_args = parser.parse_args()
+  return Process(parsed_args.input, parsed_args.output)
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+  sys.exit(main())

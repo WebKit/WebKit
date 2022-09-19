@@ -9,6 +9,7 @@
  */
 
 #include "audio/voip/voip_core.h"
+
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/task_queue/default_task_queue_factory.h"
@@ -16,6 +17,7 @@
 #include "modules/audio_processing/include/mock_audio_processing.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 namespace {
@@ -46,6 +48,7 @@ class VoipCoreTest : public ::testing::Test {
         std::move(audio_processing));
   }
 
+  test::RunLoop run_loop_;
   std::unique_ptr<VoipCore> voip_core_;
   NiceMock<MockTransport> transport_;
   rtc::scoped_refptr<test::MockAudioDeviceModule> audio_device_;

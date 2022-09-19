@@ -14,6 +14,7 @@
 
 #include "api/scoped_refptr.h"
 #include "api/video/i420_buffer.h"
+#include "rtc_base/logging.h"
 #include "test/frame_utils.h"
 #include "test/testsupport/file_utils.h"
 #include "test/testsupport/frame_reader.h"
@@ -86,32 +87,38 @@ YuvFrameReaderImpl::~YuvFrameReaderImpl() {
 
 bool YuvFrameReaderImpl::Init() {
   if (input_width_ <= 0 || input_height_ <= 0) {
-    fprintf(stderr, "Frame width and height must be >0, was %d x %d\n",
-            input_width_, input_height_);
+    RTC_LOG(LS_ERROR) << "Frame width and height must be positive. Was: "
+                      << input_width_ << "x" << input_height_;
     return false;
   }
   input_file_ = fopen(input_filename_.c_str(), "rb");
   if (input_file_ == nullptr) {
-    fprintf(stderr, "Couldn't open input file for reading: %s\n",
-            input_filename_.c_str());
+    RTC_LOG(LS_ERROR) << "Couldn't open input file: "
+                      << input_filename_.c_str();
     return false;
   }
   // Calculate total number of frames.
   size_t source_file_size = GetFileSize(input_filename_);
   if (source_file_size <= 0u) {
-    fprintf(stderr, "Found empty file: %s\n", input_filename_.c_str());
+    RTC_LOG(LS_ERROR) << "Input file " << input_filename_.c_str()
+                      << " is empty.";
     return false;
   }
   number_of_frames_ =
       static_cast<int>(source_file_size / frame_length_in_bytes_);
+
+  if (number_of_frames_ == 0) {
+    RTC_LOG(LS_ERROR) << "Input file " << input_filename_.c_str()
+                      << " is too small.";
+  }
+
   current_frame_index_ = 0;
   return true;
 }
 
 rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame() {
   if (input_file_ == nullptr) {
-    fprintf(stderr,
-            "YuvFrameReaderImpl is not initialized (input file is NULL)\n");
+    RTC_LOG(LS_ERROR) << "YuvFrameReaderImpl is not initialized.";
     return nullptr;
   }
 
@@ -142,8 +149,8 @@ rtc::scoped_refptr<I420Buffer> YuvFrameReaderImpl::ReadFrame() {
 
     buffer = ReadI420Buffer(input_width_, input_height_, input_file_);
     if (!buffer && ferror(input_file_)) {
-      fprintf(stderr, "Error reading from input file: %s\n",
-              input_filename_.c_str());
+      RTC_LOG(LS_ERROR) << "Couldn't read frame from file: "
+                        << input_filename_.c_str();
     }
   } while (dropper_ &&
            dropper_->UpdateLevel() == DropperUtil::DropDecision::kDropframe);

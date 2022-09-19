@@ -47,32 +47,31 @@ class StreamSynchronizationTest : public ::testing::Test {
         static_cast<int>(kDefaultVideoFrequency * video_clock_drift_ + 0.5);
 
     // Generate NTP/RTP timestamp pair for both streams corresponding to RTCP.
-    bool new_sr;
     StreamSynchronization::Measurements audio;
     StreamSynchronization::Measurements video;
     NtpTime ntp_time = clock_sender_.CurrentNtpTime();
     uint32_t rtp_timestamp =
         clock_sender_.CurrentTime().ms() * audio_frequency / 1000;
-    EXPECT_TRUE(audio.rtp_to_ntp.UpdateMeasurements(
-        ntp_time.seconds(), ntp_time.fractions(), rtp_timestamp, &new_sr));
+    EXPECT_EQ(audio.rtp_to_ntp.UpdateMeasurements(ntp_time, rtp_timestamp),
+              RtpToNtpEstimator::kNewMeasurement);
     clock_sender_.AdvanceTimeMilliseconds(100);
     clock_receiver_.AdvanceTimeMilliseconds(100);
     ntp_time = clock_sender_.CurrentNtpTime();
     rtp_timestamp = clock_sender_.CurrentTime().ms() * video_frequency / 1000;
-    EXPECT_TRUE(video.rtp_to_ntp.UpdateMeasurements(
-        ntp_time.seconds(), ntp_time.fractions(), rtp_timestamp, &new_sr));
+    EXPECT_EQ(video.rtp_to_ntp.UpdateMeasurements(ntp_time, rtp_timestamp),
+              RtpToNtpEstimator::kNewMeasurement);
     clock_sender_.AdvanceTimeMilliseconds(900);
     clock_receiver_.AdvanceTimeMilliseconds(900);
     ntp_time = clock_sender_.CurrentNtpTime();
     rtp_timestamp = clock_sender_.CurrentTime().ms() * audio_frequency / 1000;
-    EXPECT_TRUE(audio.rtp_to_ntp.UpdateMeasurements(
-        ntp_time.seconds(), ntp_time.fractions(), rtp_timestamp, &new_sr));
+    EXPECT_EQ(audio.rtp_to_ntp.UpdateMeasurements(ntp_time, rtp_timestamp),
+              RtpToNtpEstimator::kNewMeasurement);
     clock_sender_.AdvanceTimeMilliseconds(100);
     clock_receiver_.AdvanceTimeMilliseconds(100);
     ntp_time = clock_sender_.CurrentNtpTime();
     rtp_timestamp = clock_sender_.CurrentTime().ms() * video_frequency / 1000;
-    EXPECT_TRUE(video.rtp_to_ntp.UpdateMeasurements(
-        ntp_time.seconds(), ntp_time.fractions(), rtp_timestamp, &new_sr));
+    EXPECT_EQ(video.rtp_to_ntp.UpdateMeasurements(ntp_time, rtp_timestamp),
+              RtpToNtpEstimator::kNewMeasurement);
     clock_sender_.AdvanceTimeMilliseconds(900);
     clock_receiver_.AdvanceTimeMilliseconds(900);
 

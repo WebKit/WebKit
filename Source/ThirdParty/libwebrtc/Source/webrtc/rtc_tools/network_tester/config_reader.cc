@@ -21,7 +21,8 @@ ConfigReader::ConfigReader(const std::string& config_file_path)
     : proto_config_index_(0) {
   std::ifstream config_stream(config_file_path,
                               std::ios_base::in | std::ios_base::binary);
-  RTC_DCHECK(config_stream.is_open());
+  RTC_DCHECK(config_stream.is_open())
+      << "Config " << config_file_path << " open failed";
   RTC_DCHECK(config_stream.good());
   std::string config_data((std::istreambuf_iterator<char>(config_stream)),
                           (std::istreambuf_iterator<char>()));

@@ -11,8 +11,9 @@
 #ifndef TEST_FIELD_TRIAL_H_
 #define TEST_FIELD_TRIAL_H_
 
-#include <map>
 #include <string>
+
+#include "absl/strings/string_view.h"
 
 namespace webrtc {
 namespace test {
@@ -23,7 +24,7 @@ void ValidateFieldTrialsStringOrDie(const std::string&);
 // After this class goes out of scope previous field trials will be restored.
 class ScopedFieldTrials {
  public:
-  explicit ScopedFieldTrials(const std::string& config);
+  explicit ScopedFieldTrials(absl::string_view config);
   ScopedFieldTrials(const ScopedFieldTrials&) = delete;
   ScopedFieldTrials& operator=(const ScopedFieldTrials&) = delete;
   ~ScopedFieldTrials();

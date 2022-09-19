@@ -9,11 +9,13 @@
  */
 
 #include "modules/desktop_capture/win/full_screen_win_application_handler.h"
+
 #include <algorithm>
-#include <cwctype>
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "absl/strings/ascii.h"
 #include "absl/strings/match.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "modules/desktop_capture/win/window_capture_utils.h"
@@ -145,7 +147,8 @@ class FullScreenPowerPointHandler : public FullScreenApplicationHandler {
   std::string GetDocumentFromEditorTitle(HWND window) const {
     std::string title = WindowText(window);
     auto position = title.find(kDocumentTitleSeparator);
-    return rtc::string_trim(title.substr(0, position));
+    return std::string(absl::StripAsciiWhitespace(
+        absl::string_view(title).substr(0, position)));
   }
 
   std::string GetDocumentFromSlideShowTitle(HWND window) const {
@@ -158,12 +161,13 @@ class FullScreenPowerPointHandler : public FullScreenApplicationHandler {
 
     if (right_pos > left_pos + kSeparatorLength) {
       auto result_len = right_pos - left_pos - kSeparatorLength;
-      auto document = title.substr(left_pos + kSeparatorLength, result_len);
-      return rtc::string_trim(document);
+      auto document = absl::string_view(title).substr(
+          left_pos + kSeparatorLength, result_len);
+      return std::string(absl::StripAsciiWhitespace(document));
     } else {
-      auto document =
-          title.substr(left_pos + kSeparatorLength, std::wstring::npos);
-      return rtc::string_trim(document);
+      auto document = absl::string_view(title).substr(
+          left_pos + kSeparatorLength, std::wstring::npos);
+      return std::string(absl::StripAsciiWhitespace(document));
     }
   }
 

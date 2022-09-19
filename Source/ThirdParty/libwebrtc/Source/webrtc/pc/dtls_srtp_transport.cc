@@ -27,8 +27,9 @@ static const char kDtlsSrtpExporterLabel[] = "EXTRACTOR-dtls_srtp";
 
 namespace webrtc {
 
-DtlsSrtpTransport::DtlsSrtpTransport(bool rtcp_mux_enabled)
-    : SrtpTransport(rtcp_mux_enabled) {}
+DtlsSrtpTransport::DtlsSrtpTransport(bool rtcp_mux_enabled,
+                                     const FieldTrialsView& field_trials)
+    : SrtpTransport(rtcp_mux_enabled, field_trials) {}
 
 void DtlsSrtpTransport::SetDtlsTransports(
     cricket::DtlsTransportInternal* rtp_dtls_transport,
@@ -235,7 +236,7 @@ bool DtlsSrtpTransport::ExtractParams(
                                             false, &dtls_buffer[0],
                                             dtls_buffer.size())) {
     RTC_LOG(LS_WARNING) << "DTLS-SRTP key export failed";
-    RTC_NOTREACHED();  // This should never happen
+    RTC_DCHECK_NOTREACHED();  // This should never happen
     return false;
   }
 

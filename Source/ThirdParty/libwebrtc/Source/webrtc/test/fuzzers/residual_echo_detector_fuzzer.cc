@@ -17,7 +17,6 @@
 
 #include "api/audio/echo_detector_creator.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ref_counted_object.h"
 
 namespace webrtc {
 

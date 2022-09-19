@@ -11,7 +11,6 @@
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -22,6 +21,9 @@ class WindowCapturerNull : public DesktopCapturer {
   WindowCapturerNull();
   ~WindowCapturerNull() override;
 
+  WindowCapturerNull(const WindowCapturerNull&) = delete;
+  WindowCapturerNull& operator=(const WindowCapturerNull&) = delete;
+
   // DesktopCapturer interface.
   void Start(Callback* callback) override;
   void CaptureFrame() override;
@@ -30,8 +32,6 @@ class WindowCapturerNull : public DesktopCapturer {
 
  private:
   Callback* callback_ = nullptr;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(WindowCapturerNull);
 };
 
 WindowCapturerNull::WindowCapturerNull() {}

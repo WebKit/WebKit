@@ -81,7 +81,7 @@ TEST(ReceiveSideCongestionControllerTest,
 }
 
 TEST(ReceiveSideCongestionControllerTest, ConvergesToCapacity) {
-  Scenario s("recieve_cc_unit/converge");
+  Scenario s("receive_cc_unit/converge");
   NetworkSimulationConfig net_conf;
   net_conf.bandwidth = DataRate::KilobitsPerSec(1000);
   net_conf.delay = TimeDelta::Millis(50);
@@ -100,7 +100,7 @@ TEST(ReceiveSideCongestionControllerTest, ConvergesToCapacity) {
 }
 
 TEST(ReceiveSideCongestionControllerTest, IsFairToTCP) {
-  Scenario s("recieve_cc_unit/tcp_fairness");
+  Scenario s("receive_cc_unit/tcp_fairness");
   NetworkSimulationConfig net_conf;
   net_conf.bandwidth = DataRate::KilobitsPerSec(1000);
   net_conf.delay = TimeDelta::Millis(50);

@@ -54,8 +54,9 @@ class StatsBasedNetworkQualityMetricsReporter
 
  private:
   struct PCStats {
-    // TODO(nisse): Separate audio and video counters. Depends on standard stat
-    // counters, enabled by field trial "WebRTC-UseStandardBytesStats".
+    // TODO(bugs.webrtc.org/10525): Separate audio and video counters. Depends
+    // on standard stat counters, enabled by field trial
+    // "WebRTC-UseStandardBytesStats".
     DataSize payload_received = DataSize::Zero();
     DataSize payload_sent = DataSize::Zero();
 
@@ -94,7 +95,7 @@ class StatsBasedNetworkQualityMetricsReporter
                    const Timestamp& end_time);
   void ReportResult(const std::string& metric_name,
                     const std::string& network_label,
-                    const double value,
+                    double value,
                     const std::string& unit) const;
   void ReportResult(const std::string& metric_name,
                     const std::string& network_label,

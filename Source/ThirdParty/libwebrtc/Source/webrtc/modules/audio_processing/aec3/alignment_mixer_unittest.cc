@@ -60,12 +60,9 @@ TEST(AlignmentMixer, GeneralAdaptiveMode) {
                               /*adaptive_selection*/ true, excitation_limit,
                               prefer_first_two_channels);
 
-            std::vector<std::vector<float>> x(
-                num_channels, std::vector<float>(kBlockSize, 0.f));
+            Block x(
+                /*num_bands=*/1, num_channels);
             if (initial_silence) {
-              for (int ch = 0; ch < num_channels; ++ch) {
-                std::fill(x[ch].begin(), x[ch].end(), 0.f);
-              }
               std::array<float, kBlockSize> y;
               for (int frame = 0; frame < 10 * kNumBlocksPerSecond; ++frame) {
                 am.ProduceOutput(x, y);
@@ -82,7 +79,8 @@ TEST(AlignmentMixer, GeneralAdaptiveMode) {
               for (int ch = 0; ch < num_channels; ++ch) {
                 float scaling =
                     ch == strongest_ch ? kStrongestSignalScaling : 1.f;
-                std::fill(x[ch].begin(), x[ch].end(),
+                auto x_ch = x.View(/*band=*/0, ch);
+                std::fill(x_ch.begin(), x_ch.end(),
                           channel_value(frame, ch) * scaling);
               }
 
@@ -92,13 +90,15 @@ TEST(AlignmentMixer, GeneralAdaptiveMode) {
 
               if (frame > 1 * kNumBlocksPerSecond) {
                 if (!prefer_first_two_channels || huge_activity_threshold) {
-                  EXPECT_THAT(y, AllOf(Each(x[strongest_ch][0])));
+                  EXPECT_THAT(y,
+                              AllOf(Each(x.View(/*band=*/0, strongest_ch)[0])));
                 } else {
                   bool left_or_right_chosen;
                   for (int ch = 0; ch < 2; ++ch) {
                     left_or_right_chosen = true;
+                    const auto x_ch = x.View(/*band=*/0, ch);
                     for (size_t k = 0; k < kBlockSize; ++k) {
-                      if (y[k] != x[ch][k]) {
+                      if (y[k] != x_ch[k]) {
                         left_or_right_chosen = false;
                         break;
                       }
@@ -124,14 +124,14 @@ TEST(AlignmentMixer, DownmixMode) {
                       /*adaptive_selection*/ false, /*excitation_limit*/ 1.f,
                       /*prefer_first_two_channels*/ false);
 
-    std::vector<std::vector<float>> x(num_channels,
-                                      std::vector<float>(kBlockSize, 0.f));
+    Block x(/*num_bands=*/1, num_channels);
     const auto channel_value = [](int frame_index, int channel_index) {
       return static_cast<float>(frame_index + channel_index);
     };
     for (int frame = 0; frame < 10; ++frame) {
       for (int ch = 0; ch < num_channels; ++ch) {
-        std::fill(x[ch].begin(), x[ch].end(), channel_value(frame, ch));
+        auto x_ch = x.View(/*band=*/0, ch);
+        std::fill(x_ch.begin(), x_ch.end(), channel_value(frame, ch));
       }
 
       std::array<float, kBlockSize> y;
@@ -155,20 +155,20 @@ TEST(AlignmentMixer, FixedMode) {
                       /*adaptive_selection*/ false, /*excitation_limit*/ 1.f,
                       /*prefer_first_two_channels*/ false);
 
-    std::vector<std::vector<float>> x(num_channels,
-                                      std::vector<float>(kBlockSize, 0.f));
+    Block x(/*num_band=*/1, num_channels);
     const auto channel_value = [](int frame_index, int channel_index) {
       return static_cast<float>(frame_index + channel_index);
     };
     for (int frame = 0; frame < 10; ++frame) {
       for (int ch = 0; ch < num_channels; ++ch) {
-        std::fill(x[ch].begin(), x[ch].end(), channel_value(frame, ch));
+        auto x_ch = x.View(/*band=*/0, ch);
+        std::fill(x_ch.begin(), x_ch.end(), channel_value(frame, ch));
       }
 
       std::array<float, kBlockSize> y;
       y.fill(-1.f);
       am.ProduceOutput(x, y);
-      EXPECT_THAT(y, AllOf(Each(x[0][0])));
+      EXPECT_THAT(y, AllOf(Each(x.View(/*band=*/0, /*channel=*/0)[0])));
     }
   }
 }

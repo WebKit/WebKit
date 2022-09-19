@@ -25,20 +25,21 @@ rtc_library("rtp_replayer") {
     "../../../common_video",
     "../../../media:rtc_internal_video_codecs",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:rtc_base_tests_utils",
     "../../../rtc_base:rtc_json",
+    "../../../rtc_base:timeutils",
     "../../../system_wrappers",
     "../../../test:call_config_utils",
     "../../../test:encoder_settings",
     "../../../test:fake_video_codecs",
     "../../../test:null_transport",
     "../../../test:rtp_test_utils",
+    "../../../test:run_loop",
     "../../../test:run_test",
     "../../../test:run_test_interface",
-    "../../../test:test_common",
     "../../../test:test_renderer",
     "../../../test:test_support",
     "../../../test:video_test_common",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/memory:memory" ]
 }

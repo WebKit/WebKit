@@ -11,6 +11,7 @@
 #include "sdk/objc/native/src/objc_frame_buffer.h"
 
 #import "base/RTCVideoFrameBuffer.h"
+#import "api/make_ref_counted.h"
 #import "sdk/objc/api/video_frame_buffer/RTCNativeI420Buffer+Private.h"
 #import "sdk/objc/components/video_frame_buffer/RTCCVPixelBuffer.h"
 
@@ -81,7 +82,7 @@ int ObjCFrameBuffer::height() const {
 
 rtc::scoped_refptr<I420BufferInterface> ObjCFrameBuffer::ToI420() {
   rtc::scoped_refptr<I420BufferInterface> buffer =
-      new rtc::RefCountedObject<ObjCI420FrameBuffer>([wrapped_frame_buffer() toI420]);
+    rtc::make_ref_counted<ObjCI420FrameBuffer>([wrapped_frame_buffer() toI420]);
 
   return buffer;
 }

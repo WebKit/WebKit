@@ -51,7 +51,7 @@ std::unique_ptr<VideoRtpDepacketizer> CreateDepacketizer(
     case RtpVideoFrameAssembler::kGeneric:
       return std::make_unique<VideoRtpDepacketizerGeneric>();
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return nullptr;
 }
 }  // namespace
@@ -92,16 +92,16 @@ RtpVideoFrameAssembler::Impl::Impl(
 
 RtpVideoFrameAssembler::FrameVector RtpVideoFrameAssembler::Impl::InsertPacket(
     const RtpPacketReceived& rtp_packet) {
+  if (rtp_packet.payload_size() == 0) {
+    ClearOldData(rtp_packet.SequenceNumber());
+    return UpdateWithPadding(rtp_packet.SequenceNumber());
+  }
+
   absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> parsed_payload =
       depacketizer_->Parse(rtp_packet.PayloadBuffer());
 
   if (parsed_payload == absl::nullopt) {
     return {};
-  }
-
-  if (parsed_payload->video_payload.size() == 0) {
-    ClearOldData(rtp_packet.SequenceNumber());
-    return UpdateWithPadding(rtp_packet.SequenceNumber());
   }
 
   if (rtp_packet.HasExtension<RtpDependencyDescriptorExtension>()) {
@@ -187,7 +187,10 @@ RtpVideoFrameAssembler::Impl::FindReferences(RtpFrameVector frames) {
   for (auto& frame : frames) {
     auto complete_frames = reference_finder_.ManageFrame(std::move(frame));
     for (std::unique_ptr<RtpFrameObject>& complete_frame : complete_frames) {
-      res.push_back(std::move(complete_frame));
+      uint16_t rtp_seq_num_start = complete_frame->first_seq_num();
+      uint16_t rtp_seq_num_end = complete_frame->last_seq_num();
+      res.emplace_back(rtp_seq_num_start, rtp_seq_num_end,
+                       std::move(complete_frame));
     }
   }
   return res;
@@ -199,8 +202,12 @@ RtpVideoFrameAssembler::Impl::UpdateWithPadding(uint16_t seq_num) {
       FindReferences(AssembleFrames(packet_buffer_.InsertPadding(seq_num)));
   auto ref_finder_update = reference_finder_.PaddingReceived(seq_num);
 
-  res.insert(res.end(), std::make_move_iterator(ref_finder_update.begin()),
-             std::make_move_iterator(ref_finder_update.end()));
+  for (std::unique_ptr<RtpFrameObject>& complete_frame : ref_finder_update) {
+    uint16_t rtp_seq_num_start = complete_frame->first_seq_num();
+    uint16_t rtp_seq_num_end = complete_frame->last_seq_num();
+    res.emplace_back(rtp_seq_num_start, rtp_seq_num_end,
+                     std::move(complete_frame));
+  }
 
   return res;
 }

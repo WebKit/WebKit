@@ -11,7 +11,6 @@
 #ifndef TEST_MAC_VIDEO_RENDERER_MAC_H_
 #define TEST_MAC_VIDEO_RENDERER_MAC_H_
 
-#include "rtc_base/constructor_magic.h"
 #include "test/gl/gl_renderer.h"
 
 @class CocoaWindow;
@@ -24,6 +23,9 @@ class MacRenderer : public GlRenderer {
   MacRenderer();
   virtual ~MacRenderer();
 
+  MacRenderer(const MacRenderer&) = delete;
+  MacRenderer& operator=(const MacRenderer&) = delete;
+
   bool Init(const char* window_title, int width, int height);
 
   // Implements GlRenderer.
@@ -31,8 +33,6 @@ class MacRenderer : public GlRenderer {
 
  private:
   CocoaWindow* window_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(MacRenderer);
 };
 }  // namespace test
 }  // namespace webrtc

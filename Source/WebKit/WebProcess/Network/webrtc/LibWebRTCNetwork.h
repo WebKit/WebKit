@@ -76,7 +76,6 @@ private:
     void signalAddressReady(WebCore::LibWebRTCSocketIdentifier, const RTCNetwork::SocketAddress&);
     void signalConnect(WebCore::LibWebRTCSocketIdentifier);
     void signalClose(WebCore::LibWebRTCSocketIdentifier, int);
-    void signalNewConnection(WebCore::LibWebRTCSocketIdentifier socketIdentifier, WebCore::LibWebRTCSocketIdentifier newSocketIdentifier, const WebKit::RTCNetwork::SocketAddress&);
 #endif
 
     // FunctionDispatcher

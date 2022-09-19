@@ -70,8 +70,9 @@ float FecControllerDefault::GetProtectionOverheadRateThreshold() {
                      << overhead_threshold;
     return overhead_threshold;
   } else if (overhead_threshold < 0 || overhead_threshold > 1) {
-    RTC_LOG(WARNING) << "ProtectionOverheadRateThreshold field trial is set to "
-                        "an invalid value, expecting a value between (0, 1].";
+    RTC_LOG(LS_WARNING)
+        << "ProtectionOverheadRateThreshold field trial is set to "
+           "an invalid value, expecting a value between (0, 1].";
   }
   // WebRTC-ProtectionOverheadRateThreshold field trial string is not found, use
   // the default value.

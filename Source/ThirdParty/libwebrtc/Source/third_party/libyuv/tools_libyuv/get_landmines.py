@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 # Copyright 2016 The LibYuv Project Authors. All rights reserved.
 #
 # Use of this source code is governed by a BSD-style license
@@ -25,8 +26,8 @@ def print_landmines():
   # dependency problems, fix the dependency problems instead of adding a
   # landmine.
   # See the Chromium version in src/build/get_landmines.py for usage examples.
-  print 'Clobber to remove GYP artifacts after switching bots to GN.'
-  print 'Another try to remove GYP artifacts after switching bots to GN.'
+  print('Clobber to remove GYP artifacts after switching bots to GN.')
+  print('Another try to remove GYP artifacts after switching bots to GN.')
 
 
 def main():

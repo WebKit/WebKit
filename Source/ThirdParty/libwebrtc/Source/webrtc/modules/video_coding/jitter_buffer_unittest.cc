@@ -23,11 +23,10 @@
 #include "modules/video_coding/test/stream_generator.h"
 #include "rtc_base/location.h"
 #include "system_wrappers/include/clock.h"
-#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
-#include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 
@@ -37,7 +36,7 @@ class TestBasicJitterBuffer : public ::testing::Test {
   void SetUp() override {
     clock_.reset(new SimulatedClock(0));
     jitter_buffer_.reset(new VCMJitterBuffer(
-        clock_.get(), absl::WrapUnique(EventWrapper::Create())));
+        clock_.get(), absl::WrapUnique(EventWrapper::Create()), field_trials_));
     jitter_buffer_->Start();
     seq_num_ = 1234;
     timestamp_ = 0;
@@ -118,6 +117,7 @@ class TestBasicJitterBuffer : public ::testing::Test {
   uint32_t timestamp_;
   int size_;
   uint8_t data_[1500];
+  test::ScopedKeyValueConfig field_trials_;
   std::unique_ptr<VCMPacket> packet_;
   std::unique_ptr<SimulatedClock> clock_;
   std::unique_ptr<VCMJitterBuffer> jitter_buffer_;
@@ -132,7 +132,7 @@ class TestRunningJitterBuffer : public ::testing::Test {
     max_nack_list_size_ = 150;
     oldest_packet_to_nack_ = 250;
     jitter_buffer_ = new VCMJitterBuffer(
-        clock_.get(), absl::WrapUnique(EventWrapper::Create()));
+        clock_.get(), absl::WrapUnique(EventWrapper::Create()), field_trials_);
     stream_generator_ = new StreamGenerator(0, clock_->TimeInMilliseconds());
     jitter_buffer_->Start();
     jitter_buffer_->SetNackSettings(max_nack_list_size_, oldest_packet_to_nack_,
@@ -212,6 +212,7 @@ class TestRunningJitterBuffer : public ::testing::Test {
     return ret;
   }
 
+  test::ScopedKeyValueConfig field_trials_;
   VCMJitterBuffer* jitter_buffer_;
   StreamGenerator* stream_generator_;
   std::unique_ptr<SimulatedClock> clock_;

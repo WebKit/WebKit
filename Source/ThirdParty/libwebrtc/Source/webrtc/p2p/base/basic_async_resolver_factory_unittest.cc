@@ -49,10 +49,12 @@ class BasicAsyncResolverFactoryTest : public ::testing::Test,
 // This test is primarily intended to let tools check that the created resolver
 // doesn't leak.
 TEST_F(BasicAsyncResolverFactoryTest, TestCreate) {
+  rtc::AutoThread main_thread;
   TestCreate();
 }
 
 TEST(WrappingAsyncDnsResolverFactoryTest, TestCreateAndResolve) {
+  rtc::AutoThread main_thread;
   WrappingAsyncDnsResolverFactory factory(
       std::make_unique<BasicAsyncResolverFactory>());
 
@@ -67,6 +69,7 @@ TEST(WrappingAsyncDnsResolverFactoryTest, TestCreateAndResolve) {
 }
 
 TEST(WrappingAsyncDnsResolverFactoryTest, WrapOtherResolver) {
+  rtc::AutoThread main_thread;
   BasicAsyncResolverFactory non_owned_factory;
   WrappingAsyncDnsResolverFactory factory(&non_owned_factory);
   std::unique_ptr<AsyncDnsResolverInterface> resolver(factory.Create());
@@ -92,11 +95,7 @@ void CallResolver(WrappingAsyncDnsResolverFactory& factory) {
 }
 
 TEST(WrappingAsyncDnsResolverFactoryDeathTest, DestroyResolverInCallback) {
-  // This test requires the main thread to be wrapped. So we defeat the
-  // workaround in test/test_main_lib.cc by explicitly wrapping the main
-  // thread here.
-  auto thread = rtc::Thread::CreateWithSocketServer();
-  thread->WrapCurrent();
+  rtc::AutoThread main_thread;
   // TODO(bugs.webrtc.org/12652): Rewrite as death test in loop style when it
   // works.
   WrappingAsyncDnsResolverFactory factory(
@@ -106,11 +105,6 @@ TEST(WrappingAsyncDnsResolverFactoryDeathTest, DestroyResolverInCallback) {
   // we wrap the whole creation section in EXPECT_DEATH.
   RTC_EXPECT_DEATH(CallResolver(factory),
                    "Check failed: !within_resolve_result_");
-  // If we get here, we have to unwrap the thread.
-  thread->Quit();
-  thread->Run();
-  thread->UnwrapCurrent();
-  thread = nullptr;
 }
 #endif
 

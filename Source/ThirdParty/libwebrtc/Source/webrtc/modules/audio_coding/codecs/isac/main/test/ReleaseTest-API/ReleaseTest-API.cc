@@ -22,7 +22,6 @@
 /* include API */
 #include "modules/audio_coding/codecs/isac/main/include/isac.h"
 #include "modules/audio_coding/codecs/isac/main/util/utility.h"
-#include "rtc_base/format_macros.h"
 
 /* Defines */
 #define SEED_FILE                                             \
@@ -287,7 +286,7 @@ int main(int argc, char* argv[]) {
 
     /* Packet loss test */
     if (!strcmp("-PL", argv[i])) {
-      if (isdigit(*argv[i + 1])) {
+      if (isdigit(static_cast<unsigned char>(*argv[i + 1]))) {
         packetLossPercent = atoi(argv[i + 1]);
         if ((packetLossPercent < 0) | (packetLossPercent > 100)) {
           printf("\nInvalid packet loss perentage \n");
@@ -887,7 +886,7 @@ int main(int argc, char* argv[]) {
 #endif
   }
   printf("\n");
-  printf("total bits               = %" RTC_PRIuS " bits\n", totalbits);
+  printf("total bits               = %zu bits\n", totalbits);
   printf("measured average bitrate = %0.3f kbits/s\n",
          (double)totalbits * (sampFreqKHz) / totalsmpls);
   if (doTransCoding) {
@@ -906,14 +905,16 @@ int main(int argc, char* argv[]) {
          (100 * runtime / length_file));
 
   if (maxStreamLen30 != 0) {
-    printf("Maximum payload size 30ms Frames %" RTC_PRIuS
-           " bytes (%0.3f kbps)\n",
-           maxStreamLen30, maxStreamLen30 * 8 / 30.);
+    printf(
+        "Maximum payload size 30ms Frames %zu"
+        " bytes (%0.3f kbps)\n",
+        maxStreamLen30, maxStreamLen30 * 8 / 30.);
   }
   if (maxStreamLen60 != 0) {
-    printf("Maximum payload size 60ms Frames %" RTC_PRIuS
-           " bytes (%0.3f kbps)\n",
-           maxStreamLen60, maxStreamLen60 * 8 / 60.);
+    printf(
+        "Maximum payload size 60ms Frames %zu"
+        " bytes (%0.3f kbps)\n",
+        maxStreamLen60, maxStreamLen60 * 8 / 60.);
   }
   // fprintf(stderr, "\n");
 
@@ -921,12 +922,12 @@ int main(int argc, char* argv[]) {
   fprintf(stderr, "   %0.1f kbps",
           (double)totalbits * (sampFreqKHz) / totalsmpls);
   if (maxStreamLen30 != 0) {
-    fprintf(stderr, "   plmax-30ms %" RTC_PRIuS " bytes (%0.0f kbps)",
-            maxStreamLen30, maxStreamLen30 * 8 / 30.);
+    fprintf(stderr, "   plmax-30ms %zu bytes (%0.0f kbps)", maxStreamLen30,
+            maxStreamLen30 * 8 / 30.);
   }
   if (maxStreamLen60 != 0) {
-    fprintf(stderr, "   plmax-60ms %" RTC_PRIuS " bytes (%0.0f kbps)",
-            maxStreamLen60, maxStreamLen60 * 8 / 60.);
+    fprintf(stderr, "   plmax-60ms %zu bytes (%0.0f kbps)", maxStreamLen60,
+            maxStreamLen60 * 8 / 60.);
   }
   if (doTransCoding) {
     fprintf(stderr, "  transcoding rate %.0f kbps",

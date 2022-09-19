@@ -18,7 +18,6 @@ rtc_source_set("resource_adaptation_api") {
     "../../api:scoped_refptr",
     "../../rtc_base:checks",
     "../../rtc_base:refcount",
-    "../../rtc_base:rtc_base_approved",
     "../../rtc_base/system:rtc_export",
   ]
 }

@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -19,12 +20,12 @@ namespace {
 class MemoryLogWriter final : public RtcEventLogOutput {
  public:
   explicit MemoryLogWriter(std::map<std::string, std::string>* target,
-                           std::string filename)
+                           absl::string_view filename)
       : target_(target), filename_(filename) {}
   ~MemoryLogWriter() final { target_->insert({filename_, std::move(buffer_)}); }
   bool IsActive() const override { return true; }
-  bool Write(const std::string& value) override {
-    buffer_.append(value);
+  bool Write(absl::string_view value) override {
+    buffer_.append(value.data(), value.size());
     return true;
   }
   void Flush() override {}
@@ -39,8 +40,14 @@ class MemoryLogWriterFactory : public LogWriterFactoryInterface {
  public:
   explicit MemoryLogWriterFactory(std::map<std::string, std::string>* target)
       : target_(target) {}
+<<<<<<< HEAD
+  ~MemoryLogWriterFactory() override {}
+  std::unique_ptr<RtcEventLogOutput> Create(
+      absl::string_view filename) override {
+=======
   ~MemoryLogWriterFactory() final {}
   std::unique_ptr<RtcEventLogOutput> Create(std::string filename) override {
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
     return std::make_unique<MemoryLogWriter>(target_, filename);
   }
 

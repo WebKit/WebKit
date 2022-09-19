@@ -21,8 +21,8 @@ if (rtc_include_tests) {
     ]
     deps = [
       "..:audio_codecs_api",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:audio_codec_mocks",
+      "../../../test:scoped_key_value_config",
       "../../../test:test_support",
       "../L16:audio_decoder_L16",
       "../L16:audio_encoder_L16",

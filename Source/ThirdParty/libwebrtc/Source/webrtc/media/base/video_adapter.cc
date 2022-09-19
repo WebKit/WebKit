@@ -132,7 +132,7 @@ VideoAdapter::VideoAdapter(int source_resolution_alignment)
       adaption_changes_(0),
       previous_width_(0),
       previous_height_(0),
-      variable_start_scale_factor_(webrtc::field_trial::IsEnabled(
+      variable_start_scale_factor_(!webrtc::field_trial::IsDisabled(
           "WebRTC-Video-VariableStartScaleFactor")),
       source_resolution_alignment_(source_resolution_alignment),
       resolution_alignment_(source_resolution_alignment),

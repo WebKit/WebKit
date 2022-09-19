@@ -28,6 +28,7 @@
 #include "system_wrappers/include/metrics.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/test_flags.h"
 #include "test/testsupport/perf_test.h"
 #include "test/testsupport/resources_dir_flag.h"
 
@@ -57,25 +58,12 @@ ABSL_FLAG(
     "described by histogram.proto in "
     "https://chromium.googlesource.com/catapult/.");
 
-#else
-
-ABSL_FLAG(
-    std::string,
-    isolated_script_test_perf_output,
-    "",
-    "Path where the perf results should be stored in proto format described "
-    "described by histogram.proto in "
-    "https://chromium.googlesource.com/catapult/.");
-
 #endif
 
-constexpr char kPlotAllMetrics[] = "all";
-ABSL_FLAG(std::vector<std::string>,
-          plot,
-          {},
-          "List of metrics that should be exported for plotting (if they are "
-          "available). Example: psnr,ssim,encode_time. To plot all available "
-          " metrics pass 'all' as flag value");
+ABSL_FLAG(std::string,
+          isolated_script_test_output,
+          "",
+          "Path to output an empty JSON file which Chromium infra requires.");
 
 ABSL_FLAG(bool, logs, true, "print logs to stderr");
 ABSL_FLAG(bool, verbose, false, "verbose logs to stderr");
@@ -86,75 +74,14 @@ ABSL_FLAG(std::string,
           "Path to collect trace events (json file) for chrome://tracing. "
           "If not set, events aren't captured.");
 
-ABSL_FLAG(std::string,
-          force_fieldtrials,
-          "",
-          "Field trials control experimental feature code which can be forced. "
-          "E.g. running with --force_fieldtrials=WebRTC-FooFeature/Enable/"
-          " will assign the group Enable to field trial WebRTC-FooFeature.");
-
 namespace webrtc {
 
 namespace {
 
+constexpr char kPlotAllMetrics[] = "all";
+
 class TestMainImpl : public TestMain {
  public:
-  // In order to set up a fresh rtc::Thread state for each test and avoid
-  // accidentally carrying over pending tasks that might be sent from one test
-  // and executed while another test is running, we inject a TestListener
-  // that sets up a new rtc::Thread instance for the main thread, per test.
-  class TestListener : public ::testing::EmptyTestEventListener {
-   public:
-    TestListener() = default;
-
-   private:
-    bool IsDeathTest(const char* test_case_name, const char* test_name) {
-      // Workaround to avoid wrapping the main thread when we run death tests.
-      // The approach we take for detecting death tests is essentially the same
-      // as gtest does internally. Gtest does this:
-      //
-      // static const char kDeathTestCaseFilter[] = "*DeathTest:*DeathTest/*";
-      // ::testing::internal::UnitTestOptions::MatchesFilter(
-      //     test_case_name, kDeathTestCaseFilter);
-      //
-      // Our approach is a little more straight forward.
-      if (absl::EndsWith(test_case_name, "DeathTest"))
-        return true;
-
-      return absl::EndsWith(test_name, "DeathTest");
-    }
-
-    void OnTestStart(const ::testing::TestInfo& test_info) override {
-      if (!IsDeathTest(test_info.test_suite_name(), test_info.name())) {
-        // Ensure that main thread gets wrapped as an rtc::Thread.
-        // TODO(bugs.webrtc.org/9714): It might be better to avoid wrapping the
-        // main thread, or leave it to individual tests that need it. But as
-        // long as we have automatic thread wrapping, we need this to avoid that
-        // some other random thread (which one depending on which tests are run)
-        // gets automatically wrapped.
-        thread_ = rtc::Thread::CreateWithSocketServer();
-        thread_->WrapCurrent();
-        RTC_DCHECK_EQ(rtc::Thread::Current(), thread_.get());
-      } else {
-        RTC_LOG(LS_INFO) << "No thread auto wrap for death test.";
-      }
-    }
-
-    void OnTestEnd(const ::testing::TestInfo& test_info) override {
-      // Terminate the message loop. Note that if the test failed to clean
-      // up pending messages, this may execute part of the test. Ideally we
-      // should print a warning message here, or even fail the test if it leaks.
-      if (thread_) {
-        thread_->Quit();  // Signal quit.
-        thread_->Run();   // Flush + process Quit signal.
-        thread_->UnwrapCurrent();
-        thread_ = nullptr;
-      }
-    }
-
-    std::unique_ptr<rtc::Thread> thread_;
-  };
-
   int Init(int* argc, char* argv[]) override { return Init(); }
 
   int Init() override {
@@ -188,8 +115,6 @@ class TestMainImpl : public TestMain {
     rtc::InitializeSSL();
     rtc::SSLStreamAdapter::EnableTimeCallbackForTesting();
 
-    ::testing::UnitTest::GetInstance()->listeners().Append(new TestListener());
-
     return 0;
   }
 
@@ -198,7 +123,7 @@ class TestMainImpl : public TestMain {
     const bool capture_events = !trace_event_path.empty();
     if (capture_events) {
       rtc::tracing::SetupInternalTracer();
-      rtc::tracing::StartInternalCapture(trace_event_path.c_str());
+      rtc::tracing::StartInternalCapture(trace_event_path);
     }
 
     absl::optional<std::vector<std::string>> metrics_to_plot =
@@ -231,6 +156,13 @@ class TestMainImpl : public TestMain {
     }
     if (metrics_to_plot) {
       webrtc::test::PrintPlottableResults(*metrics_to_plot);
+    }
+
+    std::string result_filename =
+        absl::GetFlag(FLAGS_isolated_script_test_output);
+    if (!result_filename.empty()) {
+      std::ofstream result_file(result_filename);
+      result_file << "{\"version\": 3}";
     }
 #endif
 

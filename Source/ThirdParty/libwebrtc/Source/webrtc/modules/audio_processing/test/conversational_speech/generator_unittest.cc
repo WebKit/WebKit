@@ -43,6 +43,7 @@
 #include <memory>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "common_audio/wav_file.h"
 #include "modules/audio_processing/test/conversational_speech/config.h"
@@ -98,7 +99,7 @@ std::unique_ptr<MockWavReaderFactory> CreateMockWavReaderFactory() {
                                kDefaultMockWavReaderFactoryParamsMap));
 }
 
-void CreateSineWavFile(const std::string& filepath,
+void CreateSineWavFile(absl::string_view filepath,
                        const MockWavReaderFactory::Params& params,
                        float frequency = 440.0f) {
   // Create samples.
@@ -139,7 +140,7 @@ std::string CreateTemporarySineAudioTracks(
 }
 
 void CheckAudioTrackParams(const WavReaderFactory& wav_reader_factory,
-                           const std::string& filepath,
+                           absl::string_view filepath,
                            const MockWavReaderFactory::Params& expeted_params) {
   auto wav_reader = wav_reader_factory.Create(filepath);
   EXPECT_EQ(expeted_params.sample_rate, wav_reader->SampleRate());
@@ -147,7 +148,7 @@ void CheckAudioTrackParams(const WavReaderFactory& wav_reader_factory,
   EXPECT_EQ(expeted_params.num_samples, wav_reader->NumSamples());
 }
 
-void DeleteFolderAndContents(const std::string& dir) {
+void DeleteFolderAndContents(absl::string_view dir) {
   if (!DirExists(dir)) {
     return;
   }

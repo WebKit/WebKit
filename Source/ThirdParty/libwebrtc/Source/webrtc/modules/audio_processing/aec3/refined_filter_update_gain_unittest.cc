@@ -84,9 +84,7 @@ void RunFilterUpdateTest(int num_blocks_to_process,
   RefinedFilterUpdateGain refined_gain(
       config.filter.refined, config.filter.config_change_duration_blocks);
   Random random_generator(42U);
-  std::vector<std::vector<std::vector<float>>> x(
-      kNumBands, std::vector<std::vector<float>>(
-                     kNumRenderChannels, std::vector<float>(kBlockSize, 0.f)));
+  Block x(kNumBands, kNumRenderChannels);
   std::vector<float> y(kBlockSize, 0.f);
   config.delay.default_delay = 1;
   std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
@@ -131,19 +129,19 @@ void RunFilterUpdateTest(int num_blocks_to_process,
 
     // Create the render signal.
     if (use_silent_render_in_second_half && k > num_blocks_to_process / 2) {
-      for (size_t band = 0; band < x.size(); ++band) {
-        for (size_t channel = 0; channel < x[band].size(); ++channel) {
-          std::fill(x[band][channel].begin(), x[band][channel].end(), 0.f);
+      for (int band = 0; band < x.NumBands(); ++band) {
+        for (int channel = 0; channel < x.NumChannels(); ++channel) {
+          std::fill(x.begin(band, channel), x.end(band, channel), 0.f);
         }
       }
     } else {
-      for (size_t band = 0; band < x.size(); ++band) {
-        for (size_t channel = 0; channel < x[band].size(); ++channel) {
-          RandomizeSampleVector(&random_generator, x[band][channel]);
+      for (int band = 0; band < x.NumChannels(); ++band) {
+        for (int channel = 0; channel < x.NumChannels(); ++channel) {
+          RandomizeSampleVector(&random_generator, x.View(band, channel));
         }
       }
     }
-    delay_buffer.Delay(x[0][0], y);
+    delay_buffer.Delay(x.View(/*band=*/0, /*channel=*/0), y);
 
     render_delay_buffer->Insert(x);
     if (k == 0) {

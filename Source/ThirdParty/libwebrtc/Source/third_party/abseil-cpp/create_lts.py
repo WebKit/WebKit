@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright 2021 The Abseil Authors.
 #
@@ -95,6 +95,13 @@ def main(argv):
         'datestamp={} is not in the YYYYMMDD format'.format(datestamp))
 
   # Replacement directives go here.
+  ReplaceStringsInFile(
+      'absl/base/config.h', {
+          '#undef ABSL_LTS_RELEASE_VERSION':
+              '#define ABSL_LTS_RELEASE_VERSION {}'.format(datestamp),
+          '#undef ABSL_LTS_RELEASE_PATCH_LEVEL':
+              '#define ABSL_LTS_RELEASE_PATCH_LEVEL 0'
+      })
   ReplaceStringsInFile(
       'absl/base/options.h', {
           '#define ABSL_OPTION_USE_INLINE_NAMESPACE 0':

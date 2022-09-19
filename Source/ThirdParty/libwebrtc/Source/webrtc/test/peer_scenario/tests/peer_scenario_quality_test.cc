@@ -29,7 +29,7 @@ TEST(PeerScenarioQualityTest, MAYBE_PsnrIsCollected) {
     video_conf.generator.squares_video->framerate = 20;
     auto video = caller->CreateVideo("VIDEO", video_conf);
     auto link_builder = s.net()->NodeBuilder().delay_ms(100).capacity_kbps(600);
-    s.AttachVideoQualityAnalyzer(&analyzer, video.track, callee);
+    s.AttachVideoQualityAnalyzer(&analyzer, video.track.get(), callee);
     s.SimpleConnection(caller, callee, {link_builder.Build().node},
                        {link_builder.Build().node});
     s.ProcessMessages(TimeDelta::Seconds(2));

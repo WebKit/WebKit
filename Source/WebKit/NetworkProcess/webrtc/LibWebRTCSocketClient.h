@@ -56,7 +56,6 @@ private:
     void signalAddressReady(rtc::AsyncPacketSocket*, const rtc::SocketAddress&);
     void signalConnect(rtc::AsyncPacketSocket*);
     void signalClose(rtc::AsyncPacketSocket*, int);
-    void signalNewConnection(rtc::AsyncPacketSocket* socket, rtc::AsyncPacketSocket* newSocket);
 
     void signalAddressReady();
 

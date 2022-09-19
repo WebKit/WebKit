@@ -26,21 +26,21 @@ constexpr float kPi = 3.141592f;
 void ProduceSinusoid(int sample_rate_hz,
                      float sinusoidal_frequency_hz,
                      size_t* sample_counter,
-                     std::vector<std::vector<std::vector<float>>>* x) {
+                     Block* x) {
   // Produce a sinusoid of the specified frequency.
   for (size_t k = *sample_counter, j = 0; k < (*sample_counter + kBlockSize);
        ++k, ++j) {
-    for (size_t channel = 0; channel < (*x)[0].size(); ++channel) {
-      (*x)[0][channel][j] =
+    for (int channel = 0; channel < x->NumChannels(); ++channel) {
+      x->View(/*band=*/0, channel)[j] =
           32767.f *
           std::sin(2.f * kPi * sinusoidal_frequency_hz * k / sample_rate_hz);
     }
   }
   *sample_counter = *sample_counter + kBlockSize;
 
-  for (size_t band = 1; band < x->size(); ++band) {
-    for (size_t channel = 0; channel < (*x)[band].size(); ++channel) {
-      std::fill((*x)[band][channel].begin(), (*x)[band][channel].end(), 0.f);
+  for (int band = 1; band < x->NumBands(); ++band) {
+    for (int channel = 0; channel < x->NumChannels(); ++channel) {
+      std::fill(x->begin(band, channel), x->end(band, channel), 0.f);
     }
   }
 }
@@ -84,21 +84,23 @@ TEST(SuppressionFilter, ComfortNoiseInUnityGain) {
   cn_high_bands[0].re.fill(1.f);
   cn_high_bands[0].im.fill(1.f);
 
-  std::vector<std::vector<std::vector<float>>> e(
-      3,
-      std::vector<std::vector<float>>(1, std::vector<float>(kBlockSize, 0.f)));
-  std::vector<std::vector<std::vector<float>>> e_ref = e;
+  Block e(3, kBlockSize);
+  Block e_ref = e;
 
   std::vector<FftData> E(1);
-  fft.PaddedFft(e[0][0], e_old_, Aec3Fft::Window::kSqrtHanning, &E[0]);
-  std::copy(e[0][0].begin(), e[0][0].end(), e_old_.begin());
+  fft.PaddedFft(e.View(/*band=*/0, /*channel=*/0), e_old_,
+                Aec3Fft::Window::kSqrtHanning, &E[0]);
+  std::copy(e.begin(/*band=*/0, /*channel=*/0),
+            e.end(/*band=*/0, /*channel=*/0), e_old_.begin());
 
   filter.ApplyGain(cn, cn_high_bands, gain, 1.f, E, &e);
 
-  for (size_t band = 0; band < e.size(); ++band) {
-    for (size_t channel = 0; channel < e[band].size(); ++channel) {
-      for (size_t sample = 0; sample < e[band][channel].size(); ++sample) {
-        EXPECT_EQ(e_ref[band][channel][sample], e[band][channel][sample]);
+  for (int band = 0; band < e.NumBands(); ++band) {
+    for (int channel = 0; channel < e.NumChannels(); ++channel) {
+      const auto e_view = e.View(band, channel);
+      const auto e_ref_view = e_ref.View(band, channel);
+      for (size_t sample = 0; sample < e_view.size(); ++sample) {
+        EXPECT_EQ(e_ref_view[sample], e_view[sample]);
       }
     }
   }
@@ -116,9 +118,7 @@ TEST(SuppressionFilter, SignalSuppression) {
   std::array<float, kFftLengthBy2> e_old_;
   Aec3Fft fft;
   std::array<float, kFftLengthBy2Plus1> gain;
-  std::vector<std::vector<std::vector<float>>> e(
-      kNumBands, std::vector<std::vector<float>>(
-                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
+  Block e(kNumBands, kNumChannels);
   e_old_.fill(0.f);
 
   gain.fill(1.f);
@@ -135,16 +135,20 @@ TEST(SuppressionFilter, SignalSuppression) {
   float e0_output = 0.f;
   for (size_t k = 0; k < 100; ++k) {
     ProduceSinusoid(16000, 16000 * 40 / kFftLengthBy2 / 2, &sample_counter, &e);
-    e0_input = std::inner_product(e[0][0].begin(), e[0][0].end(),
-                                  e[0][0].begin(), e0_input);
+    e0_input = std::inner_product(e.begin(/*band=*/0, /*channel=*/0),
+                                  e.end(/*band=*/0, /*channel=*/0),
+                                  e.begin(/*band=*/0, /*channel=*/0), e0_input);
 
     std::vector<FftData> E(1);
-    fft.PaddedFft(e[0][0], e_old_, Aec3Fft::Window::kSqrtHanning, &E[0]);
-    std::copy(e[0][0].begin(), e[0][0].end(), e_old_.begin());
+    fft.PaddedFft(e.View(/*band=*/0, /*channel=*/0), e_old_,
+                  Aec3Fft::Window::kSqrtHanning, &E[0]);
+    std::copy(e.begin(/*band=*/0, /*channel=*/0),
+              e.end(/*band=*/0, /*channel=*/0), e_old_.begin());
 
     filter.ApplyGain(cn, cn_high_bands, gain, 1.f, E, &e);
-    e0_output = std::inner_product(e[0][0].begin(), e[0][0].end(),
-                                   e[0][0].begin(), e0_output);
+    e0_output = std::inner_product(
+        e.begin(/*band=*/0, /*channel=*/0), e.end(/*band=*/0, /*channel=*/0),
+        e.begin(/*band=*/0, /*channel=*/0), e0_output);
   }
 
   EXPECT_LT(e0_output, e0_input / 1000.f);
@@ -163,9 +167,7 @@ TEST(SuppressionFilter, SignalTransparency) {
   Aec3Fft fft;
   std::vector<FftData> cn_high_bands(1);
   std::array<float, kFftLengthBy2Plus1> gain;
-  std::vector<std::vector<std::vector<float>>> e(
-      kNumBands, std::vector<std::vector<float>>(
-                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
+  Block e(kNumBands, kNumChannels);
   e_old_.fill(0.f);
   gain.fill(1.f);
   std::for_each(gain.begin() + 30, gain.end(), [](float& a) { a = 0.f; });
@@ -181,16 +183,20 @@ TEST(SuppressionFilter, SignalTransparency) {
   float e0_output = 0.f;
   for (size_t k = 0; k < 100; ++k) {
     ProduceSinusoid(16000, 16000 * 10 / kFftLengthBy2 / 2, &sample_counter, &e);
-    e0_input = std::inner_product(e[0][0].begin(), e[0][0].end(),
-                                  e[0][0].begin(), e0_input);
+    e0_input = std::inner_product(e.begin(/*band=*/0, /*channel=*/0),
+                                  e.end(/*band=*/0, /*channel=*/0),
+                                  e.begin(/*band=*/0, /*channel=*/0), e0_input);
 
     std::vector<FftData> E(1);
-    fft.PaddedFft(e[0][0], e_old_, Aec3Fft::Window::kSqrtHanning, &E[0]);
-    std::copy(e[0][0].begin(), e[0][0].end(), e_old_.begin());
+    fft.PaddedFft(e.View(/*band=*/0, /*channel=*/0), e_old_,
+                  Aec3Fft::Window::kSqrtHanning, &E[0]);
+    std::copy(e.begin(/*band=*/0, /*channel=*/0),
+              e.end(/*band=*/0, /*channel=*/0), e_old_.begin());
 
     filter.ApplyGain(cn, cn_high_bands, gain, 1.f, E, &e);
-    e0_output = std::inner_product(e[0][0].begin(), e[0][0].end(),
-                                   e[0][0].begin(), e0_output);
+    e0_output = std::inner_product(
+        e.begin(/*band=*/0, /*channel=*/0), e.end(/*band=*/0, /*channel=*/0),
+        e.begin(/*band=*/0, /*channel=*/0), e0_output);
   }
 
   EXPECT_LT(0.9f * e0_input, e0_output);
@@ -208,9 +214,7 @@ TEST(SuppressionFilter, Delay) {
   std::array<float, kFftLengthBy2> e_old_;
   Aec3Fft fft;
   std::array<float, kFftLengthBy2Plus1> gain;
-  std::vector<std::vector<std::vector<float>>> e(
-      kNumBands, std::vector<std::vector<float>>(
-                     kNumChannels, std::vector<float>(kBlockSize, 0.f)));
+  Block e(kNumBands, kNumChannels);
 
   gain.fill(1.f);
 
@@ -222,23 +226,27 @@ TEST(SuppressionFilter, Delay) {
   for (size_t k = 0; k < 100; ++k) {
     for (size_t band = 0; band < kNumBands; ++band) {
       for (size_t channel = 0; channel < kNumChannels; ++channel) {
+        auto e_view = e.View(band, channel);
         for (size_t sample = 0; sample < kBlockSize; ++sample) {
-          e[band][channel][sample] = k * kBlockSize + sample + channel;
+          e_view[sample] = k * kBlockSize + sample + channel;
         }
       }
     }
 
     std::vector<FftData> E(1);
-    fft.PaddedFft(e[0][0], e_old_, Aec3Fft::Window::kSqrtHanning, &E[0]);
-    std::copy(e[0][0].begin(), e[0][0].end(), e_old_.begin());
+    fft.PaddedFft(e.View(/*band=*/0, /*channel=*/0), e_old_,
+                  Aec3Fft::Window::kSqrtHanning, &E[0]);
+    std::copy(e.begin(/*band=*/0, /*channel=*/0),
+              e.end(/*band=*/0, /*channel=*/0), e_old_.begin());
 
     filter.ApplyGain(cn, cn_high_bands, gain, 1.f, E, &e);
     if (k > 2) {
       for (size_t band = 0; band < kNumBands; ++band) {
         for (size_t channel = 0; channel < kNumChannels; ++channel) {
+          const auto e_view = e.View(band, channel);
           for (size_t sample = 0; sample < kBlockSize; ++sample) {
             EXPECT_NEAR(k * kBlockSize + sample - kBlockSize + channel,
-                        e[band][channel][sample], 0.01);
+                        e_view[sample], 0.01);
           }
         }
       }

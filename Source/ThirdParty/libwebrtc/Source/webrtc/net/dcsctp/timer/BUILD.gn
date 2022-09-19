@@ -11,9 +11,9 @@ import("../../../webrtc.gni")
 rtc_library("timer") {
   deps = [
     "../../../api:array_view",
-    "../../../rtc_base",
+    "../../../api/task_queue:task_queue",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:strong_alias",
     "../../../rtc_base/containers:flat_map",
     "../../../rtc_base/containers:flat_set",
     "../public:socket",
@@ -25,6 +25,7 @@ rtc_library("timer") {
     "timer.h",
   ]
   absl_deps = [
+    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -33,12 +34,11 @@ rtc_library("timer") {
 rtc_library("task_queue_timeout") {
   deps = [
     "../../../api:array_view",
+    "../../../api/task_queue:pending_task_safety_flag",
     "../../../api/task_queue:task_queue",
-    "../../../rtc_base",
+    "../../../api/units:time_delta",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
-    "../../../rtc_base/task_utils:pending_task_safety_flag",
-    "../../../rtc_base/task_utils:to_queued_task",
+    "../../../rtc_base:logging",
     "../public:socket",
     "../public:types",
   ]
@@ -57,9 +57,10 @@ if (rtc_include_tests) {
       ":task_queue_timeout",
       ":timer",
       "../../../api:array_view",
+      "../../../api/task_queue:task_queue",
+      "../../../api/task_queue/test:mock_task_queue_base",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "../../../test/time_controller:time_controller",
       "../public:socket",

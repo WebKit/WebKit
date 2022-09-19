@@ -33,6 +33,7 @@ rtc_library("video_adaptation") {
   ]
 
   deps = [
+    "../../api:field_trials_view",
     "../../api:rtp_parameters",
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
@@ -46,12 +47,16 @@ rtc_library("video_adaptation") {
     "../../api/video_codecs:video_codecs_api",
     "../../call/adaptation:resource_adaptation",
     "../../modules/video_coding:video_coding_utility",
+    "../../modules/video_coding/svc:scalability_mode_util",
     "../../rtc_base:checks",
+    "../../rtc_base:event_tracer",
     "../../rtc_base:logging",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:refcount",
     "../../rtc_base:rtc_event",
     "../../rtc_base:rtc_numerics",
-    "../../rtc_base:rtc_task_queue",
+    "../../rtc_base:safe_conversions",
+    "../../rtc_base:stringutils",
     "../../rtc_base:timeutils",
     "../../rtc_base/experiments:balanced_degradation_settings",
     "../../rtc_base/experiments:field_trial_parser",
@@ -60,7 +65,6 @@ rtc_library("video_adaptation") {
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:no_unique_address",
     "../../rtc_base/task_utils:repeating_task",
-    "../../rtc_base/task_utils:to_queued_task",
     "../../system_wrappers:field_trial",
     "../../system_wrappers:system_wrappers",
   ]
@@ -84,6 +88,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":video_adaptation",
+      "../../api:field_trials_view",
       "../../api:scoped_refptr",
       "../../api/task_queue:task_queue",
       "../../api/units:time_delta",
@@ -91,24 +96,28 @@ if (rtc_include_tests) {
       "../../api/video:encoded_image",
       "../../api/video:video_adaptation",
       "../../api/video:video_frame",
+      "../../api/video_codecs:scalability_mode",
       "../../api/video_codecs:video_codecs_api",
       "../../call/adaptation:resource_adaptation",
       "../../call/adaptation:resource_adaptation_test_utilities",
       "../../modules/video_coding:video_coding_utility",
       "../../rtc_base:checks",
       "../../rtc_base:logging",
-      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:random",
       "../../rtc_base:rtc_base_tests_utils",
       "../../rtc_base:rtc_event",
       "../../rtc_base:rtc_numerics",
-      "../../rtc_base:rtc_task_queue",
       "../../rtc_base:task_queue_for_test",
-      "../../rtc_base/task_utils:to_queued_task",
+      "../../rtc_base:threading",
       "../../test:field_trial",
       "../../test:rtc_expect_death",
+      "../../test:scoped_key_value_config",
       "../../test:test_support",
       "../../test/time_controller:time_controller",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
   }
 }

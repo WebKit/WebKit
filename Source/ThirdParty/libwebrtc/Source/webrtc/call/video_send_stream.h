@@ -98,7 +98,7 @@ class VideoSendStream {
     ~Stats();
     std::string ToString(int64_t time_ms) const;
     std::string encoder_implementation_name = "unknown";
-    int input_frame_rate = 0;
+    double input_frame_rate = 0;
     int encode_frame_rate = 0;
     int avg_encode_time_ms = 0;
     int encode_usage_percent = 0;
@@ -190,6 +190,11 @@ class VideoSendStream {
     // default.
     rtc::scoped_refptr<webrtc::FrameEncryptorInterface> frame_encryptor;
 
+    // An optional encoder selector provided by the user.
+    // Overrides VideoEncoderFactory::GetEncoderSelector().
+    // Owned by RtpSenderBase.
+    VideoEncoderFactory::EncoderSelectorInterface* encoder_selector = nullptr;
+
     // Per PeerConnection cryptography options.
     CryptoOptions crypto_options;
 
@@ -208,8 +213,7 @@ class VideoSendStream {
   // Note: This starts stream activity if it is inactive and one of the layers
   // is active. This stops stream activity if it is active and all layers are
   // inactive.
-  virtual void UpdateActiveSimulcastLayers(
-      const std::vector<bool> active_layers) = 0;
+  virtual void UpdateActiveSimulcastLayers(std::vector<bool> active_layers) = 0;
 
   // Starts stream activity.
   // When a stream is active, it can receive, process and deliver packets.

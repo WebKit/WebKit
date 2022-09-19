@@ -53,11 +53,11 @@ void FillEncoderConfiguration(VideoCodecType codec_type,
                               size_t num_streams,
                               VideoEncoderConfig* configuration);
 
-VideoReceiveStream::Decoder CreateMatchingDecoder(
+VideoReceiveStreamInterface::Decoder CreateMatchingDecoder(
     int payload_type,
     const std::string& payload_name);
 
-VideoReceiveStream::Decoder CreateMatchingDecoder(
+VideoReceiveStreamInterface::Decoder CreateMatchingDecoder(
     const VideoSendStream::Config& config);
 }  // namespace test
 }  // namespace webrtc

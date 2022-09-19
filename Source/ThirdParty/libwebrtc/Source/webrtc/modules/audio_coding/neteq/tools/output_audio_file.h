@@ -15,8 +15,8 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -25,14 +25,17 @@ class OutputAudioFile : public AudioSink {
  public:
   // Creates an OutputAudioFile, opening a file named `file_name` for writing.
   // The file format is 16-bit signed host-endian PCM.
-  explicit OutputAudioFile(const std::string& file_name) {
-    out_file_ = fopen(file_name.c_str(), "wb");
+  explicit OutputAudioFile(absl::string_view file_name) {
+    out_file_ = fopen(std::string(file_name).c_str(), "wb");
   }
 
   virtual ~OutputAudioFile() {
     if (out_file_)
       fclose(out_file_);
   }
+
+  OutputAudioFile(const OutputAudioFile&) = delete;
+  OutputAudioFile& operator=(const OutputAudioFile&) = delete;
 
   bool WriteArray(const int16_t* audio, size_t num_samples) override {
     RTC_DCHECK(out_file_);
@@ -41,8 +44,6 @@ class OutputAudioFile : public AudioSink {
 
  private:
   FILE* out_file_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(OutputAudioFile);
 };
 
 }  // namespace test

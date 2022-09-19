@@ -4,3 +4,6 @@
 #include <sys/socket.h>
 #include <ext/alloc_traits.h>
 #include <netinet/in.h>
+#include <__memory/unique_ptr.h>
+#include <__tree>
+#include <iosfwd>

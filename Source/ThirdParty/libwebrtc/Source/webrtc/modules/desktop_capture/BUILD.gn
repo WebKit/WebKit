@@ -6,6 +6,7 @@
 # in the file PATENTS.  All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
+import("//build/config/linux/gtk/gtk.gni")
 import("//build/config/linux/pkg_config.gni")
 import("//build/config/ui.gni")
 import("//tools/generate_stubs/rules.gni")
@@ -38,6 +39,7 @@ rtc_library("primitives") {
   deps = [
     "../../api:scoped_refptr",
     "../../rtc_base:checks",
+    "../../rtc_base:refcount",
     "../../rtc_base/system:rtc_export",
     "//third_party/libyuv",
   ]
@@ -55,9 +57,14 @@ if (rtc_include_tests) {
     defines = []
     sources = []
     deps = [
+      ":desktop_capture",
       "../../api:function_view",
       "../../api:scoped_refptr",
       "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:platform_thread",
+      "../../rtc_base:random",
+      "../../rtc_base:timeutils",
     ]
     if (rtc_desktop_capture_supported) {
       deps += [
@@ -65,7 +72,6 @@ if (rtc_include_tests) {
         ":primitives",
         ":screen_drawer",
         "../../rtc_base",
-        "../../rtc_base:rtc_base_approved",
         "../../rtc_base/third_party/base64",
         "../../system_wrappers",
         "../../test:test_support",
@@ -76,7 +82,16 @@ if (rtc_include_tests) {
         "screen_drawer_unittest.cc",
         "window_finder_unittest.cc",
       ]
+
+      if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+        configs += [ ":gio" ]
+      }
+
       public_configs = [ ":x11_config" ]
+
+      if (is_win) {
+        deps += [ "../../rtc_base/win:windows_version" ]
+      }
     }
   }
 
@@ -101,6 +116,30 @@ if (rtc_include_tests) {
       "test_utils.h",
       "test_utils_unittest.cc",
     ]
+
+    if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+      configs += [ ":gio" ]
+    }
+
+    deps = [
+      ":desktop_capture",
+      ":desktop_capture_mock",
+      ":primitives",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:random",
+      "../../rtc_base:timeutils",
+
+      # TODO(bugs.webrtc.org/9987): Remove this dep on rtc_base:rtc_base once
+      # rtc_base:threading is fully defined.
+      "../../rtc_base:rtc_base",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base:threading",
+      "../../system_wrappers",
+      "../../test:test_support",
+    ]
+
     if (is_win) {
       sources += [
         "win/cursor_unittest.cc",
@@ -112,21 +151,12 @@ if (rtc_include_tests) {
         "win/test_support/test_window.h",
         "win/window_capture_utils_unittest.cc",
       ]
+      deps += [
+        "../../rtc_base/win:scoped_com_initializer",
+        "../../rtc_base/win:windows_version",
+      ]
     }
-    deps = [
-      ":desktop_capture",
-      ":desktop_capture_mock",
-      ":primitives",
-      "../../rtc_base:checks",
 
-      # TODO(bugs.webrtc.org/9987): Remove this dep on rtc_base:rtc_base once
-      # rtc_base:threading is fully defined.
-      "../../rtc_base:rtc_base",
-      "../../rtc_base:rtc_base_approved",
-      "../../rtc_base:threading",
-      "../../system_wrappers",
-      "../../test:test_support",
-    ]
     if (rtc_desktop_capture_supported) {
       sources += [
         "screen_capturer_helper_unittest.cc",
@@ -153,8 +183,6 @@ if (rtc_include_tests) {
   rtc_library("screen_drawer") {
     testonly = true
 
-    public_deps = [ ":desktop_capture" ]  # no-presubmit-check TODO(webrtc:8603)
-
     sources = [
       "screen_drawer.cc",
       "screen_drawer.h",
@@ -162,6 +190,7 @@ if (rtc_include_tests) {
 
     if (is_linux || is_chromeos) {
       sources += [ "screen_drawer_linux.cc" ]
+      libs = [ "X11" ]
     }
 
     if (is_mac) {
@@ -173,12 +202,14 @@ if (rtc_include_tests) {
     }
 
     deps = [
+      ":desktop_capture",
       ":primitives",
       "../../api:scoped_refptr",
       "../../rtc_base:checks",
-      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:logging",
       "../../system_wrappers",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 
     if (is_posix || is_fuchsia) {
       sources += [
@@ -191,16 +222,18 @@ if (rtc_include_tests) {
   rtc_library("desktop_capture_mock") {
     testonly = true
 
-    public_deps = [ ":desktop_capture" ]  # no-presubmit-check TODO(webrtc:8603)
-
     sources = [
       "mock_desktop_capturer_callback.cc",
       "mock_desktop_capturer_callback.h",
     ]
 
+    if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+      configs += [ ":gio" ]
+    }
+
     deps = [
+      ":desktop_capture",
       ":primitives",
-      "../../rtc_base:rtc_base_approved",
       "../../test:test_support",
     ]
   }
@@ -249,15 +282,19 @@ if (is_linux || is_chromeos) {
           ":libdrm",
         ]
         deps = [ "../../rtc_base" ]
-        extra_header = "linux/pipewire_stub_header.fragment"
+        extra_header = "linux/wayland/pipewire_stub_header.fragment"
         logging_function = "RTC_LOG(LS_VERBOSE)"
         logging_include = "rtc_base/logging.h"
-        output_name = "linux/pipewire_stubs"
-        path_from_source = "modules/desktop_capture/linux"
+        output_name = "linux/wayland/pipewire_stubs"
+        path_from_source = "modules/desktop_capture/linux/wayland"
         sigs = [
-          "linux/pipewire.sigs",
-          "linux/drm.sigs",
+          "linux/wayland/pipewire.sigs",
+          "linux/wayland/drm.sigs",
         ]
+        if (!build_with_chromium) {
+          macro_include = "rtc_base/system/no_cfi_icall.h"
+          macro_deps = [ "../../rtc_base/system:no_cfi_icall" ]
+        }
       }
     }
 
@@ -266,63 +303,22 @@ if (is_linux || is_chromeos) {
       if (!rtc_link_pipewire) {
         defines += [ "WEBRTC_DLOPEN_PIPEWIRE" ]
       }
+
+      # Chromecast build config overrides `WEBRTC_USE_PIPEWIRE` even when
+      # `rtc_use_pipewire` is not set, which causes pipewire_config to not be
+      # included in targets. More details in: webrtc:13898
+      if (is_linux && !is_castos) {
+        defines += [ "WEBRTC_USE_GIO" ]
+      }
     }
   }
 }
 
-rtc_source_set("desktop_capture") {
+rtc_library("desktop_capture") {
   visibility = [ "*" ]
-  public_deps =  # no-presubmit-check TODO(webrtc:8603)
-      [ ":desktop_capture_generic" ]
-  if (is_mac) {
-    public_deps += [ ":desktop_capture_objc" ]
-  }
-}
-
-if (is_mac) {
-  rtc_library("desktop_capture_objc") {
-    visibility = [ ":desktop_capture" ]
-    sources = [
-      "mac/desktop_configuration.mm",
-      "mac/desktop_frame_cgimage.h",
-      "mac/desktop_frame_cgimage.mm",
-      "mac/desktop_frame_iosurface.h",
-      "mac/desktop_frame_iosurface.mm",
-      "mac/desktop_frame_provider.h",
-      "mac/desktop_frame_provider.mm",
-      "mac/screen_capturer_mac.h",
-      "mac/screen_capturer_mac.mm",
-      "mouse_cursor_monitor_mac.mm",
-      "screen_capturer_darwin.mm",
-      "window_capturer_mac.mm",
-      "window_finder_mac.h",
-      "window_finder_mac.mm",
-    ]
-    deps = [
-      ":desktop_capture_generic",
-      ":primitives",
-      "../../api:scoped_refptr",
-      "../../rtc_base",
-      "../../rtc_base:checks",
-      "../../rtc_base:rtc_base_approved",
-      "../../rtc_base/system:rtc_export",
-      "../../sdk:helpers_objc",
-    ]
-    frameworks = [
-      "AppKit.framework",
-      "IOKit.framework",
-      "IOSurface.framework",
-    ]
-  }
-}
-
-rtc_library("desktop_capture_generic") {
   defines = []
+  deps = []
   public_configs = [ ":x11_config" ]
-  visibility = [
-    ":desktop_capture",
-    ":desktop_capture_objc",
-  ]
   sources = [
     "blank_detector_desktop_capturer_wrapper.cc",
     "blank_detector_desktop_capturer_wrapper.h",
@@ -369,7 +365,9 @@ rtc_library("desktop_capture_generic") {
     "window_finder.cc",
     "window_finder.h",
   ]
-
+  if (is_linux && !is_castos && rtc_use_pipewire) {
+    sources += [ "desktop_capture_metadata.h" ]
+  }
   if (is_mac) {
     sources += [
       "mac/desktop_configuration.h",
@@ -380,6 +378,7 @@ rtc_library("desktop_capture_generic") {
       "mac/window_list_utils.cc",
       "mac/window_list_utils.h",
     ]
+    deps += [ ":desktop_capture_objc" ]
   }
 
   if (build_with_mozilla) {
@@ -395,7 +394,6 @@ rtc_library("desktop_capture_generic") {
       ]
     }
   }
-
   if (rtc_use_x11_extensions || rtc_use_pipewire) {
     sources += [
       "mouse_cursor_monitor_linux.cc",
@@ -406,37 +404,37 @@ rtc_library("desktop_capture_generic") {
     if (build_with_mozilla && (is_linux || is_chromeos)) {
       sources += [
         "app_capturer_linux.cc",
-        "linux/app_capturer_x11.cc",
-        "linux/desktop_device_info_linux.cc",
-        "linux/desktop_device_info_linux.h",
-        "linux/shared_x_util.cc",
-        "linux/shared_x_util.h",
+        "linux/x11/app_capturer_x11.cc",
+        "linux/x11/desktop_device_info_linux.cc",
+        "linux/x11/desktop_device_info_linux.h",
+        "linux/x11/shared_x_util.cc",
+        "linux/x11/shared_x_util.h",
       ]
     }
   }
 
   if (rtc_use_x11_extensions) {
     sources += [
-      "linux/mouse_cursor_monitor_x11.cc",
-      "linux/mouse_cursor_monitor_x11.h",
-      "linux/screen_capturer_x11.cc",
-      "linux/screen_capturer_x11.h",
-      "linux/shared_x_display.cc",
-      "linux/shared_x_display.h",
-      "linux/window_capturer_x11.cc",
-      "linux/window_capturer_x11.h",
-      "linux/window_finder_x11.cc",
-      "linux/window_finder_x11.h",
-      "linux/window_list_utils.cc",
-      "linux/window_list_utils.h",
-      "linux/x_atom_cache.cc",
-      "linux/x_atom_cache.h",
-      "linux/x_error_trap.cc",
-      "linux/x_error_trap.h",
-      "linux/x_server_pixel_buffer.cc",
-      "linux/x_server_pixel_buffer.h",
-      "linux/x_window_property.cc",
-      "linux/x_window_property.h",
+      "linux/x11/mouse_cursor_monitor_x11.cc",
+      "linux/x11/mouse_cursor_monitor_x11.h",
+      "linux/x11/screen_capturer_x11.cc",
+      "linux/x11/screen_capturer_x11.h",
+      "linux/x11/shared_x_display.cc",
+      "linux/x11/shared_x_display.h",
+      "linux/x11/window_capturer_x11.cc",
+      "linux/x11/window_capturer_x11.h",
+      "linux/x11/window_finder_x11.cc",
+      "linux/x11/window_finder_x11.h",
+      "linux/x11/window_list_utils.cc",
+      "linux/x11/window_list_utils.h",
+      "linux/x11/x_atom_cache.cc",
+      "linux/x11/x_atom_cache.h",
+      "linux/x11/x_error_trap.cc",
+      "linux/x11/x_error_trap.h",
+      "linux/x11/x_server_pixel_buffer.cc",
+      "linux/x11/x_server_pixel_buffer.h",
+      "linux/x11/x_window_property.cc",
+      "linux/x11/x_window_property.h",
     ]
     libs = [
       "X11",
@@ -450,7 +448,8 @@ rtc_library("desktop_capture_generic") {
     ]
   }
 
-  if (!is_win && !is_mac && !rtc_use_x11_extensions && !rtc_use_pipewire) {
+  if (!is_win && !is_mac && !rtc_use_x11_extensions && !rtc_use_pipewire &&
+      !is_fuchsia) {
     sources += [
       "mouse_cursor_monitor_null.cc",
       "screen_capturer_null.cc",
@@ -458,20 +457,44 @@ rtc_library("desktop_capture_generic") {
     ]
   }
 
-  deps = [
+  deps += [
     ":primitives",
     "../../api:function_view",
+    "../../api:make_ref_counted",
     "../../api:refcountedbase",
     "../../api:scoped_refptr",
     "../../api:sequence_checker",
-    "../../rtc_base",  # TODO(kjellander): Cleanup in bugs.webrtc.org/3806.
     "../../rtc_base:checks",
+    "../../rtc_base:event_tracer",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:random",
+    "../../rtc_base:stringutils",
+    "../../rtc_base:timeutils",
     "../../rtc_base/synchronization:mutex",
     "../../rtc_base/system:arch",
+    "../../rtc_base/system:no_unique_address",
     "../../rtc_base/system:rtc_export",
     "../../system_wrappers",
     "../../system_wrappers:metrics",
   ]
+
+  if (is_fuchsia) {
+    sources += [
+      "mouse_cursor_monitor_null.cc",
+      "screen_capturer_fuchsia.cc",
+      "screen_capturer_fuchsia.h",
+      "window_capturer_null.cc",
+    ]
+    deps += [
+      "../../rtc_base:divide_round",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.sysmem",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.composition",
+      "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.scenic",
+      "//third_party/fuchsia-sdk/sdk/pkg/scenic_cpp",
+      "//third_party/fuchsia-sdk/sdk/pkg/sys_cpp",
+    ]
+  }
 
   if (is_win) {
     sources += [
@@ -534,8 +557,10 @@ rtc_library("desktop_capture_generic") {
       "dxgi.lib",
     ]
     deps += [
-      "../../rtc_base:rtc_base_approved",
       "../../rtc_base:win32",
+      "../../rtc_base/win:create_direct3d_device",
+      "../../rtc_base/win:get_activation_factory",
+      "../../rtc_base/win:windows_version",
     ]
   }
 
@@ -549,9 +574,7 @@ rtc_library("desktop_capture_generic") {
     deps += [ "../../rtc_base:sanitizer" ]
   }
 
-  if (build_with_mozilla) {
-    deps += [ "../../rtc_base:rtc_base_approved" ]
-  } else {
+  if (!build_with_mozilla) {
     deps += [ "//third_party/libyuv" ]
   }
 
@@ -561,14 +584,31 @@ rtc_library("desktop_capture_generic") {
 
   if (rtc_use_pipewire) {
     sources += [
-      "linux/base_capturer_pipewire.cc",
-      "linux/base_capturer_pipewire.h",
-      "linux/egl_dmabuf.cc",
-      "linux/egl_dmabuf.h",
+      "linux/wayland/base_capturer_pipewire.cc",
+      "linux/wayland/base_capturer_pipewire.h",
+      "linux/wayland/egl_dmabuf.cc",
+      "linux/wayland/egl_dmabuf.h",
+      "linux/wayland/mouse_cursor_monitor_pipewire.cc",
+      "linux/wayland/mouse_cursor_monitor_pipewire.h",
+      "linux/wayland/portal_request_response.h",
+      "linux/wayland/restore_token_manager.cc",
+      "linux/wayland/restore_token_manager.h",
+      "linux/wayland/scoped_glib.cc",
+      "linux/wayland/scoped_glib.h",
+      "linux/wayland/screen_capture_portal_interface.cc",
+      "linux/wayland/screen_capture_portal_interface.h",
+      "linux/wayland/screencast_portal.cc",
+      "linux/wayland/screencast_portal.h",
+      "linux/wayland/screencast_stream_utils.cc",
+      "linux/wayland/screencast_stream_utils.h",
+      "linux/wayland/shared_screencast_stream.cc",
+      "linux/wayland/shared_screencast_stream.h",
+      "linux/wayland/xdg_desktop_portal_utils.cc",
+      "linux/wayland/xdg_desktop_portal_utils.h",
+      "linux/wayland/xdg_session_details.h",
     ]
 
     configs += [
-      ":pipewire_config",
       ":gio",
       ":pipewire",
       ":gbm",
@@ -580,6 +620,8 @@ rtc_library("desktop_capture_generic") {
     if (!rtc_link_pipewire) {
       deps += [ ":pipewire_stubs" ]
     }
+
+    public_configs += [ ":pipewire_config" ]
 
     deps += [ "../../rtc_base:sanitizer" ]
   }
@@ -594,6 +636,76 @@ rtc_library("desktop_capture_generic") {
       "win/wgc_capturer_win.h",
       "win/wgc_desktop_frame.cc",
       "win/wgc_desktop_frame.h",
+    ]
+    libs += [ "dwmapi.lib" ]
+    deps += [
+      "../../rtc_base:rtc_event",
+      "../../rtc_base/win:hstring",
+    ]
+  }
+}
+
+if (is_mac) {
+  rtc_library("desktop_capture_objc") {
+    # This target, needs to be separated from ":desktop_capture" because
+    # that is the C++ part of the target while this one is the Obj-C++ part.
+    # Aside from this, both represent a "desktop_capture" target.
+    # This target separation based on programming languages introduces a
+    # dependency cycle between ":desktop_capture" and
+    # ":desktop_capture_objc".
+    # To break this, ":desktop_capture_objc" shares some .h files with
+    # ":desktop_capture" but when external targets need one of these
+    # headers, they should depend on ":desktop_capture" and consider
+    # this target as private.
+    visibility = [ ":desktop_capture" ]
+    sources = [
+      "desktop_capture_options.h",
+      "desktop_capturer.h",
+      "full_screen_application_handler.h",
+      "full_screen_window_detector.h",
+      "mac/desktop_configuration.h",
+      "mac/desktop_configuration.mm",
+      "mac/desktop_configuration_monitor.h",
+      "mac/desktop_frame_cgimage.h",
+      "mac/desktop_frame_cgimage.mm",
+      "mac/desktop_frame_iosurface.h",
+      "mac/desktop_frame_iosurface.mm",
+      "mac/desktop_frame_provider.h",
+      "mac/desktop_frame_provider.mm",
+      "mac/screen_capturer_mac.h",
+      "mac/screen_capturer_mac.mm",
+      "mac/window_list_utils.h",
+      "mouse_cursor.h",
+      "mouse_cursor_monitor.h",
+      "mouse_cursor_monitor_mac.mm",
+      "screen_capture_frame_queue.h",
+      "screen_capturer_darwin.mm",
+      "screen_capturer_helper.h",
+      "window_capturer_mac.mm",
+      "window_finder.h",
+      "window_finder_mac.h",
+      "window_finder_mac.mm",
+    ]
+    deps = [
+      ":primitives",
+      "../../api:function_view",
+      "../../api:refcountedbase",
+      "../../api:scoped_refptr",
+      "../../api:sequence_checker",
+      "../../rtc_base",
+      "../../rtc_base:checks",
+      "../../rtc_base:event_tracer",
+      "../../rtc_base:logging",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:timeutils",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/system:rtc_export",
+      "../../sdk:helpers_objc",
+    ]
+    frameworks = [
+      "AppKit.framework",
+      "IOKit.framework",
+      "IOSurface.framework",
     ]
   }
 }

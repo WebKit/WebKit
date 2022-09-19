@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/crypto/crypto_options.h"
 #include "api/fec_controller.h"
@@ -96,7 +97,7 @@ class RtpTransportControllerSendInterface {
   virtual PacketRouter* packet_router() = 0;
 
   virtual RtpVideoSenderInterface* CreateRtpVideoSender(
-      std::map<uint32_t, RtpState> suspended_ssrcs,
+      const std::map<uint32_t, RtpState>& suspended_ssrcs,
       // TODO(holmer): Move states into RtpTransportControllerSend.
       const std::map<uint32_t, RtpPayloadState>& states,
       const RtpConfig& rtp_config,
@@ -127,7 +128,7 @@ class RtpTransportControllerSendInterface {
   virtual void RegisterTargetTransferRateObserver(
       TargetTransferRateObserver* observer) = 0;
   virtual void OnNetworkRouteChanged(
-      const std::string& transport_name,
+      absl::string_view transport_name,
       const rtc::NetworkRoute& network_route) = 0;
   virtual void OnNetworkAvailability(bool network_available) = 0;
   virtual RtcpBandwidthObserver* GetBandwidthObserver() = 0;

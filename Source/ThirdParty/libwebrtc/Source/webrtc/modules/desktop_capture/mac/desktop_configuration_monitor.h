@@ -18,7 +18,6 @@
 
 #include "api/ref_counted_base.h"
 #include "modules/desktop_capture/mac/desktop_configuration.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
@@ -30,6 +29,10 @@ class DesktopConfigurationMonitor final
  public:
   DesktopConfigurationMonitor();
   ~DesktopConfigurationMonitor();
+
+  DesktopConfigurationMonitor(const DesktopConfigurationMonitor&) = delete;
+  DesktopConfigurationMonitor& operator=(const DesktopConfigurationMonitor&) =
+      delete;
 
   // Returns the current desktop configuration.
   MacDesktopConfiguration desktop_configuration();
@@ -45,8 +48,6 @@ class DesktopConfigurationMonitor final
   MacDesktopConfiguration desktop_configuration_
       RTC_GUARDED_BY(&desktop_configuration_lock_);
   std::set<CGDirectDisplayID> reconfiguring_displays_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(DesktopConfigurationMonitor);
 };
 
 }  // namespace webrtc

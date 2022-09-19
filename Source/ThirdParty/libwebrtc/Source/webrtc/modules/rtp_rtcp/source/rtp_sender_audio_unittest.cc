@@ -19,6 +19,7 @@
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
+#include "rtc_base/thread.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -82,6 +83,7 @@ class RtpSenderAudioTest : public ::testing::Test {
     rtp_module_->SetSequenceNumber(kSeqNum);
   }
 
+  rtc::AutoThread main_thread_;
   SimulatedClock fake_clock_;
   LoopbackTransportTest transport_;
   std::unique_ptr<ModuleRtpRtcpImpl2> rtp_module_;

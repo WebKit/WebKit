@@ -13,8 +13,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include <memory>
-#include <string>
 #include <utility>
 #include <vector>
 
@@ -29,6 +27,7 @@
 #include "pc/session_description.h"
 #include "pc/webrtc_sdp.h"
 #include "rtc_base/helpers.h"
+#include "rtc_base/net_helper.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/string_encode.h"
 #include "test/gtest.h"

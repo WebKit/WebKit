@@ -18,17 +18,16 @@
 
 #include "absl/base/attributes.h"
 #include "absl/types/optional.h"
+#include "api/field_trials_view.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/transport/network_control.h"
-#include "api/transport/webrtc_key_value_config.h"
 #include "api/units/data_rate.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/experiments/field_trial_parser.h"
 
 namespace webrtc {
 
 struct ProbeControllerConfig {
-  explicit ProbeControllerConfig(const WebRtcKeyValueConfig* key_value_config);
+  explicit ProbeControllerConfig(const FieldTrialsView* key_value_config);
   ProbeControllerConfig(const ProbeControllerConfig&);
   ProbeControllerConfig& operator=(const ProbeControllerConfig&) = default;
   ~ProbeControllerConfig();
@@ -52,6 +51,11 @@ struct ProbeControllerConfig {
   FieldTrialOptional<double> second_allocation_probe_scale;
   FieldTrialFlag allocation_allow_further_probing;
   FieldTrialParameter<DataRate> allocation_probe_max;
+
+  // The minimum number probing packets used.
+  FieldTrialParameter<int> min_probe_packets_sent;
+  // The minimum probing duration.
+  FieldTrialParameter<TimeDelta> min_probe_duration;
 };
 
 // This class controls initiation of probing to estimate initial channel
@@ -59,9 +63,12 @@ struct ProbeControllerConfig {
 // bitrate is adjusted by an application.
 class ProbeController {
  public:
-  explicit ProbeController(const WebRtcKeyValueConfig* key_value_config,
+  explicit ProbeController(const FieldTrialsView* key_value_config,
                            RtcEventLog* event_log);
   ~ProbeController();
+
+  ProbeController(const ProbeController&) = delete;
+  ProbeController& operator=(const ProbeController&) = delete;
 
   ABSL_MUST_USE_RESULT std::vector<ProbeClusterConfig> SetBitrates(
       int64_t min_bitrate_bps,
@@ -133,7 +140,6 @@ class ProbeController {
   int64_t max_total_allocated_bitrate_;
 
   const bool in_rapid_recovery_experiment_;
-  const bool limit_probes_with_allocateable_rate_;
   // For WebRTC.BWE.MidCallProbing.* metric.
   bool mid_call_probing_waiting_for_result_;
   int64_t mid_call_probing_bitrate_bps_;
@@ -143,8 +149,6 @@ class ProbeController {
   int32_t next_probe_cluster_id_ = 1;
 
   ProbeControllerConfig config_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(ProbeController);
 };
 
 }  // namespace webrtc

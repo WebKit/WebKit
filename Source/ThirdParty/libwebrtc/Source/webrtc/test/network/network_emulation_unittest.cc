@@ -20,6 +20,7 @@
 #include "rtc_base/event.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/network/network_emulation_manager.h"
@@ -207,6 +208,15 @@ TEST(NetworkEmulationManagerTest, Run) {
 
   rtc::CopyOnWriteBuffer data("Hello");
   for (uint64_t j = 0; j < 2; j++) {
+<<<<<<< HEAD
+    rtc::Socket* s1 = nullptr;
+    rtc::Socket* s2 = nullptr;
+    SendTask(t1, [&] {
+      s1 = t1->socketserver()->CreateSocket(AF_INET, SOCK_DGRAM);
+    });
+    SendTask(t2, [&] {
+      s2 = t2->socketserver()->CreateSocket(AF_INET, SOCK_DGRAM);
+=======
     rtc::AsyncSocket* s1 = nullptr;
     rtc::AsyncSocket* s2 = nullptr;
     t1->Invoke<void>(RTC_FROM_HERE, [&] {
@@ -214,6 +224,7 @@ TEST(NetworkEmulationManagerTest, Run) {
     });
     t2->Invoke<void>(RTC_FROM_HERE, [&] {
       s2 = t2->socketserver()->CreateAsyncSocket(AF_INET, SOCK_DGRAM);
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
     });
 
     SocketReader r1(s1, t1);
@@ -222,23 +233,21 @@ TEST(NetworkEmulationManagerTest, Run) {
     rtc::SocketAddress a1(alice_endpoint->GetPeerLocalAddress(), 0);
     rtc::SocketAddress a2(bob_endpoint->GetPeerLocalAddress(), 0);
 
-    t1->Invoke<void>(RTC_FROM_HERE, [&] {
+    SendTask(t1, [&] {
       s1->Bind(a1);
       a1 = s1->GetLocalAddress();
     });
-    t2->Invoke<void>(RTC_FROM_HERE, [&] {
+    SendTask(t2, [&] {
       s2->Bind(a2);
       a2 = s2->GetLocalAddress();
     });
 
-    t1->Invoke<void>(RTC_FROM_HERE, [&] { s1->Connect(a2); });
-    t2->Invoke<void>(RTC_FROM_HERE, [&] { s2->Connect(a1); });
+    SendTask(t1, [&] { s1->Connect(a2); });
+    SendTask(t2, [&] { s2->Connect(a1); });
 
     for (uint64_t i = 0; i < 1000; i++) {
-      t1->PostTask(RTC_FROM_HERE,
-                   [&]() { s1->Send(data.data(), data.size()); });
-      t2->PostTask(RTC_FROM_HERE,
-                   [&]() { s2->Send(data.data(), data.size()); });
+      t1->PostTask([&]() { s1->Send(data.data(), data.size()); });
+      t2->PostTask([&]() { s2->Send(data.data(), data.size()); });
     }
 
     network_manager.time_controller()->AdvanceTime(TimeDelta::Seconds(1));
@@ -246,8 +255,8 @@ TEST(NetworkEmulationManagerTest, Run) {
     EXPECT_EQ(r1.ReceivedCount(), 1000);
     EXPECT_EQ(r2.ReceivedCount(), 1000);
 
-    t1->Invoke<void>(RTC_FROM_HERE, [&] { delete s1; });
-    t2->Invoke<void>(RTC_FROM_HERE, [&] { delete s2; });
+    SendTask(t1, [&] { delete s1; });
+    SendTask(t2, [&] { delete s2; });
   }
 
   const int64_t single_packet_size = data.size() + kOverheadIpv4Udp;
@@ -363,6 +372,15 @@ TEST(NetworkEmulationManagerTest, DebugStatsCollectedInDebugMode) {
 
   rtc::CopyOnWriteBuffer data("Hello");
   for (uint64_t j = 0; j < 2; j++) {
+<<<<<<< HEAD
+    rtc::Socket* s1 = nullptr;
+    rtc::Socket* s2 = nullptr;
+    SendTask(t1, [&] {
+      s1 = t1->socketserver()->CreateSocket(AF_INET, SOCK_DGRAM);
+    });
+    SendTask(t2, [&] {
+      s2 = t2->socketserver()->CreateSocket(AF_INET, SOCK_DGRAM);
+=======
     rtc::AsyncSocket* s1 = nullptr;
     rtc::AsyncSocket* s2 = nullptr;
     t1->Invoke<void>(RTC_FROM_HERE, [&] {
@@ -370,6 +388,7 @@ TEST(NetworkEmulationManagerTest, DebugStatsCollectedInDebugMode) {
     });
     t2->Invoke<void>(RTC_FROM_HERE, [&] {
       s2 = t2->socketserver()->CreateAsyncSocket(AF_INET, SOCK_DGRAM);
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
     });
 
     SocketReader r1(s1, t1);
@@ -378,23 +397,21 @@ TEST(NetworkEmulationManagerTest, DebugStatsCollectedInDebugMode) {
     rtc::SocketAddress a1(alice_endpoint->GetPeerLocalAddress(), 0);
     rtc::SocketAddress a2(bob_endpoint->GetPeerLocalAddress(), 0);
 
-    t1->Invoke<void>(RTC_FROM_HERE, [&] {
+    SendTask(t1, [&] {
       s1->Bind(a1);
       a1 = s1->GetLocalAddress();
     });
-    t2->Invoke<void>(RTC_FROM_HERE, [&] {
+    SendTask(t2, [&] {
       s2->Bind(a2);
       a2 = s2->GetLocalAddress();
     });
 
-    t1->Invoke<void>(RTC_FROM_HERE, [&] { s1->Connect(a2); });
-    t2->Invoke<void>(RTC_FROM_HERE, [&] { s2->Connect(a1); });
+    SendTask(t1, [&] { s1->Connect(a2); });
+    SendTask(t2, [&] { s2->Connect(a1); });
 
     for (uint64_t i = 0; i < 1000; i++) {
-      t1->PostTask(RTC_FROM_HERE,
-                   [&]() { s1->Send(data.data(), data.size()); });
-      t2->PostTask(RTC_FROM_HERE,
-                   [&]() { s2->Send(data.data(), data.size()); });
+      t1->PostTask([&]() { s1->Send(data.data(), data.size()); });
+      t2->PostTask([&]() { s2->Send(data.data(), data.size()); });
     }
 
     network_manager.time_controller()->AdvanceTime(TimeDelta::Seconds(1));
@@ -402,8 +419,8 @@ TEST(NetworkEmulationManagerTest, DebugStatsCollectedInDebugMode) {
     EXPECT_EQ(r1.ReceivedCount(), 1000);
     EXPECT_EQ(r2.ReceivedCount(), 1000);
 
-    t1->Invoke<void>(RTC_FROM_HERE, [&] { delete s1; });
-    t2->Invoke<void>(RTC_FROM_HERE, [&] { delete s2; });
+    SendTask(t1, [&] { delete s1; });
+    SendTask(t2, [&] { delete s2; });
   }
 
   const int64_t single_packet_size = data.size() + kOverheadIpv4Udp;
@@ -467,6 +484,14 @@ TEST(NetworkEmulationManagerTest, ThroughputStats) {
   constexpr int64_t kSinglePacketSize = kUdpPayloadSize + kOverheadIpv4Udp;
   rtc::CopyOnWriteBuffer data(kUdpPayloadSize);
 
+<<<<<<< HEAD
+  rtc::Socket* s1 = nullptr;
+  rtc::Socket* s2 = nullptr;
+  SendTask(t1,
+           [&] { s1 = t1->socketserver()->CreateSocket(AF_INET, SOCK_DGRAM); });
+  SendTask(t2,
+           [&] { s2 = t2->socketserver()->CreateSocket(AF_INET, SOCK_DGRAM); });
+=======
   rtc::AsyncSocket* s1 = nullptr;
   rtc::AsyncSocket* s2 = nullptr;
   t1->Invoke<void>(RTC_FROM_HERE, [&] {
@@ -475,6 +500,7 @@ TEST(NetworkEmulationManagerTest, ThroughputStats) {
   t2->Invoke<void>(RTC_FROM_HERE, [&] {
     s2 = t2->socketserver()->CreateAsyncSocket(AF_INET, SOCK_DGRAM);
   });
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 
   SocketReader r1(s1, t1);
   SocketReader r2(s2, t2);
@@ -482,24 +508,24 @@ TEST(NetworkEmulationManagerTest, ThroughputStats) {
   rtc::SocketAddress a1(alice_endpoint->GetPeerLocalAddress(), 0);
   rtc::SocketAddress a2(bob_endpoint->GetPeerLocalAddress(), 0);
 
-  t1->Invoke<void>(RTC_FROM_HERE, [&] {
+  SendTask(t1, [&] {
     s1->Bind(a1);
     a1 = s1->GetLocalAddress();
   });
-  t2->Invoke<void>(RTC_FROM_HERE, [&] {
+  SendTask(t2, [&] {
     s2->Bind(a2);
     a2 = s2->GetLocalAddress();
   });
 
-  t1->Invoke<void>(RTC_FROM_HERE, [&] { s1->Connect(a2); });
-  t2->Invoke<void>(RTC_FROM_HERE, [&] { s2->Connect(a1); });
+  SendTask(t1, [&] { s1->Connect(a2); });
+  SendTask(t2, [&] { s2->Connect(a1); });
 
   // Send 11 packets, totalizing 1 second between the first and the last.
   const int kNumPacketsSent = 11;
   const TimeDelta kDelay = TimeDelta::Millis(100);
   for (int i = 0; i < kNumPacketsSent; i++) {
-    t1->PostTask(RTC_FROM_HERE, [&]() { s1->Send(data.data(), data.size()); });
-    t2->PostTask(RTC_FROM_HERE, [&]() { s2->Send(data.data(), data.size()); });
+    t1->PostTask([&]() { s1->Send(data.data(), data.size()); });
+    t2->PostTask([&]() { s2->Send(data.data(), data.size()); });
     network_manager.time_controller()->AdvanceTime(kDelay);
   }
 
@@ -522,8 +548,8 @@ TEST(NetworkEmulationManagerTest, ThroughputStats) {
   EXPECT_EQ(r1.ReceivedCount(), 11);
   EXPECT_EQ(r2.ReceivedCount(), 11);
 
-  t1->Invoke<void>(RTC_FROM_HERE, [&] { delete s1; });
-  t2->Invoke<void>(RTC_FROM_HERE, [&] { delete s2; });
+  SendTask(t1, [&] { delete s1; });
+  SendTask(t2, [&] { delete s2; });
 }
 
 // Testing that packets are delivered via all routes using a routing scheme as
@@ -655,8 +681,7 @@ TEST(NetworkEmulationManagerTURNTest, ClientTraffic) {
   int port = ep->BindReceiver(0, &recv).value();
 
   // Construct a STUN BINDING.
-  cricket::StunMessage ping;
-  ping.SetType(cricket::STUN_BINDING_REQUEST);
+  cricket::StunMessage ping(cricket::STUN_BINDING_REQUEST);
   rtc::ByteBufferWriter buf;
   ping.Write(&buf);
   rtc::CopyOnWriteBuffer packet(buf.Data(), buf.Length());

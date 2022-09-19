@@ -147,19 +147,8 @@ class VideoAdapterTest : public ::testing::Test,
   const bool use_new_format_request_;
 };
 
-class VideoAdapterTestVariableStartScale : public VideoAdapterTest {
- public:
-  VideoAdapterTestVariableStartScale()
-      : VideoAdapterTest("WebRTC-Video-VariableStartScaleFactor/Enabled/",
-                         /*source_resolution_alignment=*/1) {}
-};
-
 INSTANTIATE_TEST_SUITE_P(OnOutputFormatRequests,
                          VideoAdapterTest,
-                         ::testing::Values(true, false));
-
-INSTANTIATE_TEST_SUITE_P(OnOutputFormatRequests,
-                         VideoAdapterTestVariableStartScale,
                          ::testing::Values(true, false));
 
 // Do not adapt the frame rate or the resolution. Expect no frame drop, no
@@ -955,8 +944,8 @@ TEST_P(VideoAdapterTest, TestAdaptToVerySmallResolution) {
   EXPECT_TRUE(adapter_.AdaptFrameResolution(
       w, h, 0, &cropped_width_, &cropped_height_, &out_width_, &out_height_));
 
-  EXPECT_EQ(180, out_width_);
-  EXPECT_EQ(99, out_height_);
+  EXPECT_EQ(160, out_width_);
+  EXPECT_EQ(90, out_height_);
 }
 
 TEST_P(VideoAdapterTest, AdaptFrameResolutionDropWithResolutionRequest) {
@@ -1053,7 +1042,7 @@ TEST(VideoAdapterTestMultipleOrientation, TestForcePortrait) {
   EXPECT_EQ(640, out_height);
 }
 
-TEST_P(VideoAdapterTest, AdaptResolutionInSteps) {
+TEST_P(VideoAdapterTest, AdaptResolutionInStepsFirst3_4) {
   const int kWidth = 1280;
   const int kHeight = 720;
   OnOutputFormatRequest(kWidth, kHeight, absl::nullopt);  // 16:9 aspect.
@@ -1081,40 +1070,7 @@ TEST_P(VideoAdapterTest, AdaptResolutionInSteps) {
   }
 }
 
-// Scale factors are 3/4, 2/3, 3/4, 2/3, ... (see test above).
-// In VideoAdapterTestVariableStartScale, first scale factor depends on
-// resolution. May start with:
-// - 2/3 (if width/height multiple of 3) or
-// - 2/3, 2/3 (if width/height multiple of 9).
-TEST_P(VideoAdapterTestVariableStartScale, AdaptResolutionInStepsFirst3_4) {
-  const int kWidth = 1280;
-  const int kHeight = 720;
-  OnOutputFormatRequest(kWidth, kHeight, absl::nullopt);  // 16:9 aspect.
-
-  // Scale factors: 3/4, 2/3, 3/4, 2/3, ...
-  // Scale        : 3/4, 1/2, 3/8, 1/4, 3/16, 1/8.
-  const int kExpectedWidths[] = {960, 640, 480, 320, 240, 160};
-  const int kExpectedHeights[] = {540, 360, 270, 180, 135, 90};
-
-  int request_width = kWidth;
-  int request_height = kHeight;
-
-  for (size_t i = 0; i < arraysize(kExpectedWidths); ++i) {
-    // Adapt down one step.
-    adapter_.OnSinkWants(BuildSinkWants(absl::nullopt,
-                                        request_width * request_height - 1,
-                                        std::numeric_limits<int>::max()));
-    EXPECT_TRUE(adapter_.AdaptFrameResolution(kWidth, kHeight, 0,
-                                              &cropped_width_, &cropped_height_,
-                                              &out_width_, &out_height_));
-    EXPECT_EQ(kExpectedWidths[i], out_width_);
-    EXPECT_EQ(kExpectedHeights[i], out_height_);
-    request_width = out_width_;
-    request_height = out_height_;
-  }
-}
-
-TEST_P(VideoAdapterTestVariableStartScale, AdaptResolutionInStepsFirst2_3) {
+TEST_P(VideoAdapterTest, AdaptResolutionInStepsFirst2_3) {
   const int kWidth = 1920;
   const int kHeight = 1080;
   OnOutputFormatRequest(kWidth, kHeight, absl::nullopt);  // 16:9 aspect.
@@ -1142,7 +1098,7 @@ TEST_P(VideoAdapterTestVariableStartScale, AdaptResolutionInStepsFirst2_3) {
   }
 }
 
-TEST_P(VideoAdapterTestVariableStartScale, AdaptResolutionInStepsFirst2x2_3) {
+TEST_P(VideoAdapterTest, AdaptResolutionInStepsFirst2x2_3) {
   const int kWidth = 1440;
   const int kHeight = 1080;
   OnOutputFormatRequest(kWidth, kHeight, absl::nullopt);  // 4:3 aspect.

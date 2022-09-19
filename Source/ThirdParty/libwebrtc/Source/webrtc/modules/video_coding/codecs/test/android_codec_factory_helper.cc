@@ -10,25 +10,19 @@
 
 #include "modules/video_coding/codecs/test/android_codec_factory_helper.h"
 
+#include <jni.h>
 #include <pthread.h>
+#include <stddef.h>
 
 #include <memory>
 
+#include "modules/utility/include/jvm_android.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ignore_wundef.h"
-#include "sdk/android/native_api/base/init.h"
 #include "sdk/android/native_api/codecs/wrapper.h"
 #include "sdk/android/native_api/jni/class_loader.h"
 #include "sdk/android/native_api/jni/jvm.h"
 #include "sdk/android/native_api/jni/scoped_java_ref.h"
-
-// Note: this dependency is dangerous since it reaches into Chromium's base.
-// There's a risk of e.g. macro clashes. This file may only be used in tests.
-// Since we use Chrome's build system for creating the gtest binary, this should
-// be fine.
-RTC_PUSH_IGNORING_WUNDEF()
-#include "base/android/jni_android.h"
-RTC_POP_IGNORING_WUNDEF()
+#include "sdk/android/src/jni/jvm.h"
 
 namespace webrtc {
 namespace test {
@@ -37,16 +31,15 @@ namespace {
 
 static pthread_once_t g_initialize_once = PTHREAD_ONCE_INIT;
 
-// There can only be one JNI_OnLoad in each binary. So since this is a GTEST
-// C++ runner binary, we want to initialize the same global objects we normally
-// do if this had been a Java binary.
 void EnsureInitializedOnce() {
-  RTC_CHECK(::base::android::IsVMInitialized());
-  JNIEnv* env = ::base::android::AttachCurrentThread();
-  JavaVM* jvm = nullptr;
-  RTC_CHECK_EQ(0, env->GetJavaVM(&jvm));
+  RTC_CHECK(::webrtc::jni::GetJVM() != nullptr);
 
-  InitAndroid(jvm);
+  JNIEnv* jni = ::webrtc::jni::AttachCurrentThreadIfNeeded();
+  JavaVM* jvm = NULL;
+  RTC_CHECK_EQ(0, jni->GetJavaVM(&jvm));
+
+  // Initialize the Java environment (currently only used by the audio manager).
+  webrtc::JVM::Initialize(jvm);
 }
 
 }  // namespace

@@ -26,6 +26,7 @@
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
+#include "test/scoped_key_value_config.h"
 
 using stunprober::AsyncCallback;
 using stunprober::StunProber;
@@ -123,14 +124,14 @@ int main(int argc, char* argv[]) {
 
   rtc::InitializeSSL();
   rtc::InitRandom(rtc::Time32());
+  webrtc::test::ScopedKeyValueConfig field_trials;
   rtc::PhysicalSocketServer socket_server;
   rtc::AutoSocketServerThread thread(&socket_server);
   auto socket_factory =
       std::make_unique<rtc::BasicPacketSocketFactory>(&socket_server);
   std::unique_ptr<rtc::BasicNetworkManager> network_manager(
-      new rtc::BasicNetworkManager());
-  rtc::NetworkManager::NetworkList networks;
-  network_manager->GetNetworks(&networks);
+      new rtc::BasicNetworkManager(&socket_server, &field_trials));
+  std::vector<const rtc::Network*> networks = network_manager->GetNetworks();
   auto prober = std::make_unique<StunProber>(socket_factory.get(),
                                              rtc::Thread::Current(), networks);
   auto finish_callback = [&thread](StunProber* prober, int result) {

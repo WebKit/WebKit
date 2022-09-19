@@ -11,6 +11,8 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_VIDEO_QUALITY_ANALYZER_INJECTION_HELPER_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_VIDEO_QUALITY_ANALYZER_INJECTION_HELPER_H_
 
+#include <stdio.h>
+
 #include <map>
 #include <memory>
 #include <string>
@@ -26,6 +28,7 @@
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "system_wrappers/include/clock.h"
 #include "test/pc/e2e/analyzer/video/encoded_image_data_injector.h"
 #include "test/test_video_capturer.h"
 #include "test/testsupport/video_frame_writer.h"
@@ -40,6 +43,7 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
   using VideoConfig = PeerConnectionE2EQualityTestFixture::VideoConfig;
 
   VideoQualityAnalyzerInjectionHelper(
+      Clock* clock,
       std::unique_ptr<VideoQualityAnalyzerInterface> analyzer,
       EncodedImageDataInjector* injector,
       EncodedImageDataExtractor* extractor);
@@ -83,9 +87,23 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
   void Start(std::string test_case_name,
              rtc::ArrayView<const std::string> peer_names,
              int max_threads_count = 1);
+<<<<<<< HEAD
+
+  // Registers new call participant to the underlying video quality analyzer.
+  // The method should be called before the participant is actually added.
+  void RegisterParticipantInCall(absl::string_view peer_name);
+
+  // Will be called after test removed existing participant in the middle of the
+  // call.
+  void UnregisterParticipantInCall(absl::string_view peer_name);
+
+  // Forwards `stats_reports` for Peer Connection `pc_label` to
+  // `analyzer_`.
+=======
 
   // Forwards |stats_reports| for Peer Connection |pc_label| to
   // |analyzer_|.
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
   void OnStatsReports(
       absl::string_view pc_label,
       const rtc::scoped_refptr<const RTCStatsReport>& report) override;
@@ -111,6 +129,55 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
     VideoQualityAnalyzerInjectionHelper* const helper_;
   };
 
+<<<<<<< HEAD
+  struct ReceiverStream {
+    ReceiverStream(absl::string_view peer_name, absl::string_view stream_label)
+        : peer_name(peer_name), stream_label(stream_label) {}
+
+    std::string peer_name;
+    std::string stream_label;
+
+    // Define operators required to use ReceiverStream as std::map key.
+    bool operator==(const ReceiverStream& o) const {
+      return peer_name == o.peer_name && stream_label == o.stream_label;
+    }
+    bool operator<(const ReceiverStream& o) const {
+      return (peer_name == o.peer_name) ? stream_label < o.stream_label
+                                        : peer_name < o.peer_name;
+    }
+  };
+
+  class VideoFrameIdsWriter {
+   public:
+    explicit VideoFrameIdsWriter(absl::string_view file_name);
+    ~VideoFrameIdsWriter();
+
+    void WriteFrameId(uint16_t frame_id);
+
+   private:
+    const std::string file_name_;
+    FILE* output_file_;
+  };
+
+  class VideoWriter2 final : public rtc::VideoSinkInterface<VideoFrame> {
+   public:
+    VideoWriter2(test::VideoFrameWriter* video_writer,
+                 VideoFrameIdsWriter* frame_ids_writer,
+                 int sampling_modulo);
+    ~VideoWriter2() override = default;
+
+    void OnFrame(const VideoFrame& frame) override;
+
+   private:
+    test::VideoFrameWriter* const video_writer_;
+    VideoFrameIdsWriter* const frame_ids_writer_;
+    const int sampling_modulo_;
+
+    int64_t frames_counter_ = 0;
+  };
+
+=======
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
   test::VideoFrameWriter* MaybeCreateVideoWriter(
       absl::optional<std::string> file_name,
       const PeerConnectionE2EQualityTestFixture::VideoConfig& config);
@@ -120,11 +187,13 @@ class VideoQualityAnalyzerInjectionHelper : public StatsObserverInterface {
   std::vector<std::unique_ptr<rtc::VideoSinkInterface<VideoFrame>>>*
   PopulateSinks(const std::string& stream_label);
 
+  Clock* const clock_;
   std::unique_ptr<VideoQualityAnalyzerInterface> analyzer_;
   EncodedImageDataInjector* injector_;
   EncodedImageDataExtractor* extractor_;
 
   std::vector<std::unique_ptr<test::VideoFrameWriter>> video_writers_;
+  std::vector<std::unique_ptr<VideoFrameIdsWriter>> frame_ids_writers_;
 
   Mutex lock_;
   std::map<std::string, VideoConfig> known_video_configs_ RTC_GUARDED_BY(lock_);

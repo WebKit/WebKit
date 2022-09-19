@@ -15,7 +15,6 @@
 
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_geometry.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -29,6 +28,9 @@ class RTC_EXPORT MouseCursor {
 
   ~MouseCursor();
 
+  MouseCursor(const MouseCursor&) = delete;
+  MouseCursor& operator=(const MouseCursor&) = delete;
+
   static MouseCursor* CopyOf(const MouseCursor& cursor);
 
   void set_image(DesktopFrame* image) { image_.reset(image); }
@@ -40,8 +42,6 @@ class RTC_EXPORT MouseCursor {
  private:
   std::unique_ptr<DesktopFrame> image_;
   DesktopVector hotspot_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(MouseCursor);
 };
 
 }  // namespace webrtc

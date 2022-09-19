@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "rtc_base/containers/move_only_int.h"
@@ -220,7 +221,7 @@ TEST(FlatMap, AtFunction) {
   EXPECT_EQ("b", m.at(2));
 
   // Const reference works.
-  const std::string& const_ref = webrtc::as_const(m).at(1);
+  const std::string& const_ref = std::as_const(m).at(1);
   EXPECT_EQ("a", const_ref);
 
   // Reference works, can operate on the string.
@@ -234,7 +235,7 @@ TEST(FlatMap, AtFunction) {
   // Heterogeneous look-up works.
   flat_map<std::string, int> m2 = {{"a", 1}, {"b", 2}};
   EXPECT_EQ(1, m2.at(absl::string_view("a")));
-  EXPECT_EQ(2, webrtc::as_const(m2).at(absl::string_view("b")));
+  EXPECT_EQ(2, std::as_const(m2).at(absl::string_view("b")));
 }
 
 // insert_or_assign(K&&, M&&)

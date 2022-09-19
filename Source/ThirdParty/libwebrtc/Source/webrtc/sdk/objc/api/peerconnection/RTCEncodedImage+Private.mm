@@ -13,14 +13,14 @@
 #import <objc/runtime.h>
 
 #include "rtc_base/numerics/safe_conversions.h"
-#include "rtc_base/ref_counted_object.h"
+#include "api/make_ref_counted.h"
 
 namespace {
 // An implementation of EncodedImageBufferInterface that doesn't perform any copies.
 class ObjCEncodedImageBuffer : public webrtc::EncodedImageBufferInterface {
  public:
   static rtc::scoped_refptr<ObjCEncodedImageBuffer> Create(NSData *data) {
-    return new rtc::RefCountedObject<ObjCEncodedImageBuffer>(data);
+    return rtc::make_ref_counted<ObjCEncodedImageBuffer>(data);
   }
   const uint8_t *data() const override { return static_cast<const uint8_t *>(data_.bytes); }
   // TODO(bugs.webrtc.org/9378): delete this non-const data method.

@@ -12,8 +12,6 @@
 
 #include <string.h>
 
-#include <memory>
-#include <set>
 #include <vector>
 
 #include "call/rtp_demuxer.h"
@@ -25,9 +23,11 @@
 #include "rtc_base/async_packet_socket.h"
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/containers/flat_set.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 using rtc::kSrtpAeadAes128Gcm;
 using rtc::kTestKey1;
@@ -58,8 +58,10 @@ class SrtpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
     rtp_packet_transport1_->SetDestination(rtp_packet_transport2_.get(),
                                            asymmetric);
 
-    srtp_transport1_ = std::make_unique<SrtpTransport>(rtcp_mux_enabled);
-    srtp_transport2_ = std::make_unique<SrtpTransport>(rtcp_mux_enabled);
+    srtp_transport1_ =
+        std::make_unique<SrtpTransport>(rtcp_mux_enabled, field_trials_);
+    srtp_transport2_ =
+        std::make_unique<SrtpTransport>(rtcp_mux_enabled, field_trials_);
 
     srtp_transport1_->SetRtpPacketTransport(rtp_packet_transport1_.get());
     srtp_transport2_->SetRtpPacketTransport(rtp_packet_transport2_.get());
@@ -71,7 +73,7 @@ class SrtpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
 
     RtpDemuxerCriteria demuxer_criteria;
     // 0x00 is the payload type used in kPcmuFrame.
-    demuxer_criteria.payload_types = {0x00};
+    demuxer_criteria.payload_types().insert(0x00);
 
     srtp_transport1_->RegisterRtpDemuxerSink(demuxer_criteria, &rtp_sink1_);
     srtp_transport2_->RegisterRtpDemuxerSink(demuxer_criteria, &rtp_sink2_);
@@ -101,7 +103,7 @@ class SrtpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
         EXPECT_EQ(80 / 8, overhead);  // 80-bit tag.
         break;
       default:
-        RTC_NOTREACHED();
+        RTC_DCHECK_NOTREACHED();
         break;
     }
 
@@ -334,6 +336,7 @@ class SrtpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
   TransportObserver rtp_sink2_;
 
   int sequence_number_ = 0;
+  webrtc::test::ScopedKeyValueConfig field_trials_;
 };
 
 class SrtpTransportTestWithExternalAuth

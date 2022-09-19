@@ -37,7 +37,7 @@ TEST(RtpPacketInfoTest, Ssrc) {
   rhs = RtpPacketInfo();
   EXPECT_NE(rhs.ssrc(), value);
 
-  rhs = RtpPacketInfo(value, {}, {}, {}, {}, Timestamp::Millis(0));
+  rhs = RtpPacketInfo(value, {}, {}, {}, {}, Timestamp::Zero());
   EXPECT_EQ(rhs.ssrc(), value);
 }
 
@@ -64,7 +64,7 @@ TEST(RtpPacketInfoTest, Csrcs) {
   rhs = RtpPacketInfo();
   EXPECT_NE(rhs.csrcs(), value);
 
-  rhs = RtpPacketInfo({}, value, {}, {}, {}, Timestamp::Millis(0));
+  rhs = RtpPacketInfo({}, value, {}, {}, {}, Timestamp::Zero());
   EXPECT_EQ(rhs.csrcs(), value);
 }
 
@@ -91,7 +91,7 @@ TEST(RtpPacketInfoTest, RtpTimestamp) {
   rhs = RtpPacketInfo();
   EXPECT_NE(rhs.rtp_timestamp(), value);
 
-  rhs = RtpPacketInfo({}, {}, value, {}, {}, Timestamp::Millis(0));
+  rhs = RtpPacketInfo({}, {}, value, {}, {}, Timestamp::Zero());
   EXPECT_EQ(rhs.rtp_timestamp(), value);
 }
 
@@ -118,7 +118,7 @@ TEST(RtpPacketInfoTest, AudioLevel) {
   rhs = RtpPacketInfo();
   EXPECT_NE(rhs.audio_level(), value);
 
-  rhs = RtpPacketInfo({}, {}, {}, value, {}, Timestamp::Millis(0));
+  rhs = RtpPacketInfo({}, {}, {}, value, {}, Timestamp::Zero());
   EXPECT_EQ(rhs.audio_level(), value);
 }
 
@@ -145,7 +145,7 @@ TEST(RtpPacketInfoTest, AbsoluteCaptureTime) {
   rhs = RtpPacketInfo();
   EXPECT_NE(rhs.absolute_capture_time(), value);
 
-  rhs = RtpPacketInfo({}, {}, {}, {}, value, Timestamp::Millis(0));
+  rhs = RtpPacketInfo({}, {}, {}, {}, value, Timestamp::Zero());
   EXPECT_EQ(rhs.absolute_capture_time(), value);
 }
 
@@ -174,7 +174,7 @@ TEST(RtpPacketInfoTest, LocalCaptureClockOffset) {
 
   // Default local capture clock offset is null.
   rhs = RtpPacketInfo({}, {}, {}, {}, AbsoluteCaptureTime{12, 34},
-                      Timestamp::Millis(0));
+                      Timestamp::Zero());
   EXPECT_EQ(rhs.local_capture_clock_offset(), absl::nullopt);
 }
 

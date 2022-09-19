@@ -509,7 +509,7 @@ class FecPacketMaskMetricsTest : public ::testing::Test {
     } else if (code_type == xor_bursty_code) {
       CopyMetrics(&kMetricsXorBursty[code_index], metrics_code);
     } else {
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
     }
   }
 

@@ -43,10 +43,7 @@ void RunBasicSetupAndApiCallTest(int sample_rate_hz, int num_iterations) {
   std::unique_ptr<BlockProcessor> block_processor(
       BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
                              kNumRenderChannels, kNumCaptureChannels));
-  std::vector<std::vector<std::vector<float>>> block(
-      NumBandsForRate(sample_rate_hz),
-      std::vector<std::vector<float>>(kNumRenderChannels,
-                                      std::vector<float>(kBlockSize, 1000.f)));
+  Block block(NumBandsForRate(sample_rate_hz), kNumRenderChannels, 1000.f);
   for (int k = 0; k < num_iterations; ++k) {
     block_processor->BufferRender(block);
     block_processor->ProcessCapture(false, false, nullptr, &block);
@@ -62,28 +59,9 @@ void RunRenderBlockSizeVerificationTest(int sample_rate_hz) {
   std::unique_ptr<BlockProcessor> block_processor(
       BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
                              kNumRenderChannels, kNumCaptureChannels));
-  std::vector<std::vector<std::vector<float>>> block(
-      NumBandsForRate(sample_rate_hz),
-      std::vector<std::vector<float>>(kNumRenderChannels,
-                                      std::vector<float>(kBlockSize - 1, 0.f)));
+  Block block(NumBandsForRate(sample_rate_hz), kNumRenderChannels);
 
   EXPECT_DEATH(block_processor->BufferRender(block), "");
-}
-
-void RunCaptureBlockSizeVerificationTest(int sample_rate_hz) {
-  constexpr size_t kNumRenderChannels = 1;
-  constexpr size_t kNumCaptureChannels = 1;
-
-  std::unique_ptr<BlockProcessor> block_processor(
-      BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
-                             kNumRenderChannels, kNumCaptureChannels));
-  std::vector<std::vector<std::vector<float>>> block(
-      NumBandsForRate(sample_rate_hz),
-      std::vector<std::vector<float>>(kNumRenderChannels,
-                                      std::vector<float>(kBlockSize - 1, 0.f)));
-
-  EXPECT_DEATH(block_processor->ProcessCapture(false, false, nullptr, &block),
-               "");
 }
 
 void RunRenderNumBandsVerificationTest(int sample_rate_hz) {
@@ -96,10 +74,7 @@ void RunRenderNumBandsVerificationTest(int sample_rate_hz) {
   std::unique_ptr<BlockProcessor> block_processor(
       BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
                              kNumRenderChannels, kNumCaptureChannels));
-  std::vector<std::vector<std::vector<float>>> block(
-      wrong_num_bands,
-      std::vector<std::vector<float>>(kNumRenderChannels,
-                                      std::vector<float>(kBlockSize, 0.f)));
+  Block block(wrong_num_bands, kNumRenderChannels);
 
   EXPECT_DEATH(block_processor->BufferRender(block), "");
 }
@@ -114,10 +89,7 @@ void RunCaptureNumBandsVerificationTest(int sample_rate_hz) {
   std::unique_ptr<BlockProcessor> block_processor(
       BlockProcessor::Create(EchoCanceller3Config(), sample_rate_hz,
                              kNumRenderChannels, kNumCaptureChannels));
-  std::vector<std::vector<std::vector<float>>> block(
-      wrong_num_bands,
-      std::vector<std::vector<float>>(kNumRenderChannels,
-                                      std::vector<float>(kBlockSize, 0.f)));
+  Block block(wrong_num_bands, kNumRenderChannels);
 
   EXPECT_DEATH(block_processor->ProcessCapture(false, false, nullptr, &block),
                "");
@@ -170,18 +142,14 @@ TEST(BlockProcessor, DISABLED_DelayControllerIntegration) {
         EchoCanceller3Config(), rate, kNumRenderChannels, kNumCaptureChannels,
         std::move(render_delay_buffer_mock)));
 
-    std::vector<std::vector<std::vector<float>>> render_block(
-        NumBandsForRate(rate),
-        std::vector<std::vector<float>>(kNumRenderChannels,
-                                        std::vector<float>(kBlockSize, 0.f)));
-    std::vector<std::vector<std::vector<float>>> capture_block(
-        NumBandsForRate(rate),
-        std::vector<std::vector<float>>(kNumCaptureChannels,
-                                        std::vector<float>(kBlockSize, 0.f)));
+    Block render_block(NumBandsForRate(rate), kNumRenderChannels);
+    Block capture_block(NumBandsForRate(rate), kNumCaptureChannels);
     DelayBuffer<float> signal_delay_buffer(kDelayInSamples);
     for (size_t k = 0; k < kNumBlocks; ++k) {
-      RandomizeSampleVector(&random_generator, render_block[0][0]);
-      signal_delay_buffer.Delay(render_block[0][0], capture_block[0][0]);
+      RandomizeSampleVector(&random_generator,
+                            render_block.View(/*band=*/0, /*capture=*/0));
+      signal_delay_buffer.Delay(render_block.View(/*band=*/0, /*capture=*/0),
+                                capture_block.View(/*band=*/0, /*capture=*/0));
       block_processor->BufferRender(render_block);
       block_processor->ProcessCapture(false, false, nullptr, &capture_block);
     }
@@ -228,18 +196,14 @@ TEST(BlockProcessor, DISABLED_SubmoduleIntegration) {
         std::move(render_delay_buffer_mock),
         std::move(render_delay_controller_mock), std::move(echo_remover_mock)));
 
-    std::vector<std::vector<std::vector<float>>> render_block(
-        NumBandsForRate(rate),
-        std::vector<std::vector<float>>(kNumRenderChannels,
-                                        std::vector<float>(kBlockSize, 0.f)));
-    std::vector<std::vector<std::vector<float>>> capture_block(
-        NumBandsForRate(rate),
-        std::vector<std::vector<float>>(kNumCaptureChannels,
-                                        std::vector<float>(kBlockSize, 0.f)));
+    Block render_block(NumBandsForRate(rate), kNumRenderChannels);
+    Block capture_block(NumBandsForRate(rate), kNumCaptureChannels);
     DelayBuffer<float> signal_delay_buffer(640);
     for (size_t k = 0; k < kNumBlocks; ++k) {
-      RandomizeSampleVector(&random_generator, render_block[0][0]);
-      signal_delay_buffer.Delay(render_block[0][0], capture_block[0][0]);
+      RandomizeSampleVector(&random_generator,
+                            render_block.View(/*band=*/0, /*capture=*/0));
+      signal_delay_buffer.Delay(render_block.View(/*band=*/0, /*capture=*/0),
+                                capture_block.View(/*band=*/0, /*capture=*/0));
       block_processor->BufferRender(render_block);
       block_processor->ProcessCapture(false, false, nullptr, &capture_block);
       block_processor->UpdateEchoLeakageStatus(false);
@@ -265,13 +229,6 @@ TEST(BlockProcessorDeathTest, DISABLED_VerifyRenderBlockSizeCheck) {
   for (auto rate : {16000, 32000, 48000}) {
     SCOPED_TRACE(ProduceDebugText(rate));
     RunRenderBlockSizeVerificationTest(rate);
-  }
-}
-
-TEST(BlockProcessorDeathTest, VerifyCaptureBlockSizeCheck) {
-  for (auto rate : {16000, 32000, 48000}) {
-    SCOPED_TRACE(ProduceDebugText(rate));
-    RunCaptureBlockSizeVerificationTest(rate);
   }
 }
 
@@ -333,14 +290,8 @@ TEST(BlockProcessor, ExternalDelayAppliedCorrectlyWithInitialCaptureCalls) {
       std::move(delay_buffer), /*delay_controller=*/nullptr,
       std::move(echo_remover_mock)));
 
-  std::vector<std::vector<std::vector<float>>> render_block(
-      NumBandsForRate(kSampleRateHz),
-      std::vector<std::vector<float>>(kNumRenderChannels,
-                                      std::vector<float>(kBlockSize, 0.f)));
-  std::vector<std::vector<std::vector<float>>> capture_block(
-      NumBandsForRate(kSampleRateHz),
-      std::vector<std::vector<float>>(kNumCaptureChannels,
-                                      std::vector<float>(kBlockSize, 0.f)));
+  Block render_block(NumBandsForRate(kSampleRateHz), kNumRenderChannels);
+  Block capture_block(NumBandsForRate(kSampleRateHz), kNumCaptureChannels);
 
   // Process...
   // - 10 capture calls, where no render data is available,
@@ -354,11 +305,12 @@ TEST(BlockProcessor, ExternalDelayAppliedCorrectlyWithInitialCaptureCalls) {
   int render_call_counter = 0;
   for (size_t k = 0; k < 10; ++k) {
     FillSampleVector(++capture_call_counter, kDelayInBlocks,
-                     capture_block[0][0]);
+                     capture_block.View(/*band=*/0, /*capture=*/0));
     block_processor->ProcessCapture(false, false, nullptr, &capture_block);
   }
   for (size_t k = 0; k < 10; ++k) {
-    FillSampleVector(++render_call_counter, 0, render_block[0][0]);
+    FillSampleVector(++render_call_counter, 0,
+                     render_block.View(/*band=*/0, /*capture=*/0));
     block_processor->BufferRender(render_block);
   }
 
@@ -367,19 +319,22 @@ TEST(BlockProcessor, ExternalDelayAppliedCorrectlyWithInitialCaptureCalls) {
           [](EchoPathVariability /*echo_path_variability*/,
              bool /*capture_signal_saturation*/,
              const absl::optional<DelayEstimate>& /*external_delay*/,
-             RenderBuffer* render_buffer,
-             std::vector<std::vector<std::vector<float>>>* /*linear_output*/,
-             std::vector<std::vector<std::vector<float>>>* capture) {
-            const auto& render = render_buffer->Block(0);
+             RenderBuffer* render_buffer, Block* /*linear_output*/,
+             Block* capture) {
+            const auto& render = render_buffer->GetBlock(0);
+            const auto render_view = render.View(/*band=*/0, /*channel=*/0);
+            const auto capture_view = capture->View(/*band=*/0, /*channel=*/0);
             for (size_t i = 0; i < kBlockSize; ++i) {
-              EXPECT_FLOAT_EQ(render[0][0][i], (*capture)[0][0][i]);
+              EXPECT_FLOAT_EQ(render_view[i], capture_view[i]);
             }
           });
 
-  FillSampleVector(++capture_call_counter, kDelayInBlocks, capture_block[0][0]);
+  FillSampleVector(++capture_call_counter, kDelayInBlocks,
+                   capture_block.View(/*band=*/0, /*capture=*/0));
   block_processor->ProcessCapture(false, false, nullptr, &capture_block);
 
-  FillSampleVector(++capture_call_counter, kDelayInBlocks, capture_block[0][0]);
+  FillSampleVector(++capture_call_counter, kDelayInBlocks,
+                   capture_block.View(/*band=*/0, /*capture=*/0));
   block_processor->ProcessCapture(false, false, nullptr, &capture_block);
 }
 

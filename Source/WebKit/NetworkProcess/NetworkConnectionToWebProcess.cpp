@@ -502,17 +502,6 @@ void NetworkConnectionToWebProcess::removeSocketChannel(WebSocketIdentifier iden
     m_networkSocketChannels.remove(identifier);
 }
 
-void NetworkConnectionToWebProcess::cleanupForSuspension(Function<void()>&& completionHandler)
-{
-#if USE(LIBWEBRTC)
-    if (m_rtcProvider) {
-        m_rtcProvider->closeListeningSockets(WTFMove(completionHandler));
-        return;
-    }
-#endif
-    completionHandler();
-}
-
 void NetworkConnectionToWebProcess::endSuspension()
 {
 #if USE(LIBWEBRTC)

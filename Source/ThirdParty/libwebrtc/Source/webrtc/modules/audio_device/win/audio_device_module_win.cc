@@ -13,12 +13,12 @@
 #include <memory>
 #include <utility>
 
+#include "api/make_ref_counted.h"
 #include "api/sequence_checker.h"
 #include "modules/audio_device/audio_device_buffer.h"
 #include "modules/audio_device/include/audio_device.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/string_utils.h"
 
 namespace webrtc {
@@ -95,12 +95,12 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
         task_queue_factory_(task_queue_factory) {
     RTC_CHECK(input_);
     RTC_CHECK(output_);
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
   }
 
   ~WindowsAudioDeviceModule() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     Terminate();
   }
@@ -110,7 +110,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   int32_t ActiveAudioLayer(
       AudioDeviceModule::AudioLayer* audioLayer) const override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     // TODO(henrika): it might be possible to remove this unique signature.
     *audioLayer = AudioDeviceModule::kWindowsCoreAudio2;
@@ -118,14 +118,14 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
   int32_t RegisterAudioCallback(AudioTransport* audioCallback) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK(audio_device_buffer_);
     RTC_DCHECK_RUN_ON(&thread_checker_);
     return audio_device_buffer_->RegisterAudioCallback(audioCallback);
   }
 
   int32_t Init() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     RETURN_IF_INPUT_RESTARTS(0);
@@ -153,7 +153,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
   int32_t Terminate() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     RETURN_IF_INPUT_RESTARTS(0);
@@ -172,14 +172,14 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
   int16_t PlayoutDevices() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     return output_->NumDevices();
   }
 
   int16_t RecordingDevices() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_INPUT_RESTARTS(0);
     return input_->NumDevices();
@@ -188,7 +188,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   int32_t PlayoutDeviceName(uint16_t index,
                             char name[kAdmMaxDeviceNameSize],
                             char guid[kAdmMaxGuidSize]) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     std::string name_str, guid_str;
@@ -205,7 +205,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   int32_t RecordingDeviceName(uint16_t index,
                               char name[kAdmMaxDeviceNameSize],
                               char guid[kAdmMaxGuidSize]) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_INPUT_RESTARTS(0);
     std::string name_str, guid_str;
@@ -221,7 +221,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
   int32_t SetPlayoutDevice(uint16_t index) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     return output_->SetDevice(index);
@@ -229,33 +229,33 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   int32_t SetPlayoutDevice(
       AudioDeviceModule::WindowsDeviceType device) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     return output_->SetDevice(device);
   }
   int32_t SetRecordingDevice(uint16_t index) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     return input_->SetDevice(index);
   }
 
   int32_t SetRecordingDevice(
       AudioDeviceModule::WindowsDeviceType device) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     return input_->SetDevice(device);
   }
 
   int32_t PlayoutIsAvailable(bool* available) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     *available = true;
     return 0;
   }
 
   int32_t InitPlayout() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     RETURN_IF_OUTPUT_IS_INITIALIZED(0);
@@ -263,21 +263,21 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
   bool PlayoutIsInitialized() const override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(true);
     return output_->PlayoutIsInitialized();
   }
 
   int32_t RecordingIsAvailable(bool* available) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     *available = true;
     return 0;
   }
 
   int32_t InitRecording() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_INPUT_RESTARTS(0);
     RETURN_IF_INPUT_IS_INITIALIZED(0);
@@ -285,14 +285,14 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
   bool RecordingIsInitialized() const override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_INPUT_RESTARTS(true);
     return input_->RecordingIsInitialized();
   }
 
   int32_t StartPlayout() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     RETURN_IF_OUTPUT_IS_ACTIVE(0);
@@ -300,21 +300,21 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
   int32_t StopPlayout() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(-1);
     return output_->StopPlayout();
   }
 
   bool Playing() const override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(true);
     return output_->Playing();
   }
 
   int32_t StartRecording() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_INPUT_RESTARTS(0);
     RETURN_IF_INPUT_IS_ACTIVE(0);
@@ -322,41 +322,41 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   }
 
   int32_t StopRecording() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_INPUT_RESTARTS(-1);
     return input_->StopRecording();
   }
 
   bool Recording() const override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RETURN_IF_INPUT_RESTARTS(true);
     return input_->Recording();
   }
 
   int32_t InitSpeaker() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RTC_DLOG(LS_WARNING) << "This method has no effect";
     return initialized_ ? 0 : -1;
   }
 
   bool SpeakerIsInitialized() const override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RTC_DLOG(LS_WARNING) << "This method has no effect";
     return initialized_;
   }
 
   int32_t InitMicrophone() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RTC_DLOG(LS_WARNING) << "This method has no effect";
     return initialized_ ? 0 : -1;
   }
 
   bool MicrophoneIsInitialized() const override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RTC_DLOG(LS_WARNING) << "This method has no effect";
     return initialized_;
@@ -364,7 +364,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   int32_t SpeakerVolumeIsAvailable(bool* available) override {
     // TODO(henrika): improve support.
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     *available = false;
     return 0;
@@ -377,7 +377,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   int32_t MicrophoneVolumeIsAvailable(bool* available) override {
     // TODO(henrika): improve support.
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     *available = false;
     return 0;
@@ -398,7 +398,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   int32_t StereoPlayoutIsAvailable(bool* available) const override {
     // TODO(henrika): improve support.
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     *available = true;
     return 0;
@@ -406,14 +406,14 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   int32_t SetStereoPlayout(bool enable) override {
     // TODO(henrika): improve support.
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     return 0;
   }
 
   int32_t StereoPlayout(bool* enabled) const override {
     // TODO(henrika): improve support.
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     *enabled = true;
     return 0;
@@ -421,7 +421,7 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   int32_t StereoRecordingIsAvailable(bool* available) const override {
     // TODO(henrika): improve support.
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     *available = true;
     return 0;
@@ -429,14 +429,14 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
 
   int32_t SetStereoRecording(bool enable) override {
     // TODO(henrika): improve support.
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     return 0;
   }
 
   int32_t StereoRecording(bool* enabled) const override {
     // TODO(henrika): improve support.
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     *enabled = true;
     return 0;
@@ -453,33 +453,33 @@ class WindowsAudioDeviceModule : public AudioDeviceModuleForTest {
   int32_t EnableBuiltInNS(bool enable) override { return 0; }
 
   int32_t AttachAudioBuffer() {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     output_->AttachAudioBuffer(audio_device_buffer_.get());
     input_->AttachAudioBuffer(audio_device_buffer_.get());
     return 0;
   }
 
   int RestartPlayoutInternally() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     RETURN_IF_OUTPUT_RESTARTS(0);
     return output_->RestartPlayout();
   }
 
   int RestartRecordingInternally() override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     return input_->RestartRecording();
   }
 
   int SetPlayoutSampleRate(uint32_t sample_rate) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     return output_->SetSampleRate(sample_rate);
   }
 
   int SetRecordingSampleRate(uint32_t sample_rate) override {
-    RTC_DLOG(INFO) << __FUNCTION__;
+    RTC_DLOG(LS_INFO) << __FUNCTION__;
     RTC_DCHECK_RUN_ON(&thread_checker_);
     return input_->SetSampleRate(sample_rate);
   }
@@ -513,7 +513,7 @@ CreateWindowsCoreAudioAudioDeviceModuleFromInputAndOutput(
     std::unique_ptr<AudioInput> audio_input,
     std::unique_ptr<AudioOutput> audio_output,
     TaskQueueFactory* task_queue_factory) {
-  RTC_DLOG(INFO) << __FUNCTION__;
+  RTC_DLOG(LS_INFO) << __FUNCTION__;
   return rtc::make_ref_counted<WindowsAudioDeviceModule>(
       std::move(audio_input), std::move(audio_output), task_queue_factory);
 }

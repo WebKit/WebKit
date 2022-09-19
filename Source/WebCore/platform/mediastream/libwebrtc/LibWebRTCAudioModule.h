@@ -29,14 +29,16 @@
 
 #include "LibWebRTCMacros.h"
 #include "Timer.h"
-
-ALLOW_UNUSED_PARAMETERS_BEGIN
-
-#include <webrtc/modules/audio_device/include/audio_device.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/WorkQueue.h>
 
+ALLOW_UNUSED_PARAMETERS_BEGIN
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/modules/audio_device/include/audio_device.h>
+
 ALLOW_UNUSED_PARAMETERS_END
+ALLOW_COMMA_END
 
 namespace WebCore {
 class BaseAudioMediaStreamTrackRendererUnit;

@@ -88,7 +88,7 @@ TEST_F(CallOperationEndToEndTest, RendersSingleDelayedFrame) {
       event_.Set();
     }
 
-    bool Wait() { return event_.Wait(kDefaultTimeoutMs); }
+    bool Wait() { return event_.Wait(kDefaultTimeout.ms()); }
 
     rtc::Event event_;
   } renderer;
@@ -98,9 +98,8 @@ TEST_F(CallOperationEndToEndTest, RendersSingleDelayedFrame) {
   std::unique_ptr<test::DirectTransport> receiver_transport;
 
   SendTask(
-      RTC_FROM_HERE, task_queue(),
-      [this, &renderer, &frame_forwarder, &sender_transport,
-       &receiver_transport]() {
+      task_queue(), [this, &renderer, &frame_forwarder, &sender_transport,
+                     &receiver_transport]() {
         CreateCalls();
 
         sender_transport = std::make_unique<test::DirectTransport>(
@@ -146,14 +145,13 @@ TEST_F(CallOperationEndToEndTest, RendersSingleDelayedFrame) {
   EXPECT_TRUE(renderer.Wait())
       << "Timed out while waiting for the frame to render.";
 
-  SendTask(RTC_FROM_HERE, task_queue(),
-           [this, &sender_transport, &receiver_transport]() {
-             Stop();
-             DestroyStreams();
-             sender_transport.reset();
-             receiver_transport.reset();
-             DestroyCalls();
-           });
+  SendTask(task_queue(), [this, &sender_transport, &receiver_transport]() {
+    Stop();
+    DestroyStreams();
+    sender_transport.reset();
+    receiver_transport.reset();
+    DestroyCalls();
+  });
 }
 
 TEST_F(CallOperationEndToEndTest, TransmitsFirstFrame) {
@@ -161,7 +159,7 @@ TEST_F(CallOperationEndToEndTest, TransmitsFirstFrame) {
    public:
     void OnFrame(const VideoFrame& video_frame) override { event_.Set(); }
 
-    bool Wait() { return event_.Wait(kDefaultTimeoutMs); }
+    bool Wait() { return event_.Wait(kDefaultTimeout.ms()); }
 
     rtc::Event event_;
   } renderer;
@@ -173,9 +171,8 @@ TEST_F(CallOperationEndToEndTest, TransmitsFirstFrame) {
   std::unique_ptr<test::DirectTransport> receiver_transport;
 
   SendTask(
-      RTC_FROM_HERE, task_queue(),
-      [this, &renderer, &frame_generator, &frame_forwarder, &sender_transport,
-       &receiver_transport]() {
+      task_queue(), [this, &renderer, &frame_generator, &frame_forwarder,
+                     &sender_transport, &receiver_transport]() {
         CreateCalls();
 
         sender_transport = std::make_unique<test::DirectTransport>(
@@ -216,14 +213,13 @@ TEST_F(CallOperationEndToEndTest, TransmitsFirstFrame) {
   EXPECT_TRUE(renderer.Wait())
       << "Timed out while waiting for the frame to render.";
 
-  SendTask(RTC_FROM_HERE, task_queue(),
-           [this, &sender_transport, &receiver_transport]() {
-             Stop();
-             DestroyStreams();
-             sender_transport.reset();
-             receiver_transport.reset();
-             DestroyCalls();
-           });
+  SendTask(task_queue(), [this, &sender_transport, &receiver_transport]() {
+    Stop();
+    DestroyStreams();
+    sender_transport.reset();
+    receiver_transport.reset();
+    DestroyCalls();
+  });
 }
 
 }  // namespace webrtc

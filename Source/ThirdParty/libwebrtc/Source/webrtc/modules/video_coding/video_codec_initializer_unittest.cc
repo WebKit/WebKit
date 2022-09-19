@@ -27,7 +27,6 @@
 #include "api/video_codecs/vp8_temporal_layers_factory.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -302,8 +301,8 @@ TEST_F(VideoCodecInitializerTest, Vp9SvcAdjustedLayering) {
   VideoStream stream = DefaultStream();
   stream.num_temporal_layers = 3;
   // Set resolution which is only enough to produce 2 spatial layers.
-  stream.width = kMinVp9SpatialLayerWidth * 2;
-  stream.height = kMinVp9SpatialLayerHeight * 2;
+  stream.width = kMinVp9SpatialLayerLongSideLength * 2;
+  stream.height = kMinVp9SpatialLayerShortSideLength * 2;
 
   streams_.push_back(stream);
 
@@ -430,7 +429,7 @@ TEST_F(VideoCodecInitializerTest, Av1SingleSpatialLayerBitratesAreConsistent) {
   VideoEncoderConfig config;
   config.codec_type = VideoCodecType::kVideoCodecAV1;
   std::vector<VideoStream> streams = {DefaultStream()};
-  streams[0].scalability_mode = "L1T2";
+  streams[0].scalability_mode = ScalabilityMode::kL1T2;
 
   VideoCodec codec;
   EXPECT_TRUE(VideoCodecInitializer::SetupCodec(config, streams, &codec));
@@ -445,7 +444,7 @@ TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersBitratesAreConsistent) {
   VideoEncoderConfig config;
   config.codec_type = VideoCodecType::kVideoCodecAV1;
   std::vector<VideoStream> streams = {DefaultStream()};
-  streams[0].scalability_mode = "L2T2";
+  streams[0].scalability_mode = ScalabilityMode::kL2T2;
 
   VideoCodec codec;
   EXPECT_TRUE(VideoCodecInitializer::SetupCodec(config, streams, &codec));
@@ -465,7 +464,7 @@ TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersActiveByDefault) {
   VideoEncoderConfig config;
   config.codec_type = VideoCodecType::kVideoCodecAV1;
   std::vector<VideoStream> streams = {DefaultStream()};
-  streams[0].scalability_mode = "L2T2";
+  streams[0].scalability_mode = ScalabilityMode::kL2T2;
   config.spatial_layers = {};
 
   VideoCodec codec;
@@ -479,7 +478,7 @@ TEST_F(VideoCodecInitializerTest, Av1TwoSpatialLayersOneDeactivated) {
   VideoEncoderConfig config;
   config.codec_type = VideoCodecType::kVideoCodecAV1;
   std::vector<VideoStream> streams = {DefaultStream()};
-  streams[0].scalability_mode = "L2T2";
+  streams[0].scalability_mode = ScalabilityMode::kL2T2;
   config.spatial_layers.resize(2);
   config.spatial_layers[0].active = true;
   config.spatial_layers[1].active = false;

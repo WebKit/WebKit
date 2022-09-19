@@ -18,9 +18,9 @@
 #include <vector>
 
 #include "api/array_view.h"
+#include "api/make_ref_counted.h"
 #include "api/video/i420_buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_tools/frame_analyzer/linear_least_squares.h"
 #include "third_party/libyuv/include/libyuv/planar_functions.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
@@ -155,7 +155,7 @@ ColorTransformationMatrix CalculateColorTransformationMatrix(
 rtc::scoped_refptr<Video> AdjustColors(
     const ColorTransformationMatrix& color_transformation,
     const rtc::scoped_refptr<Video>& video) {
-  class ColorAdjustedVideo : public rtc::RefCountedObject<Video> {
+  class ColorAdjustedVideo : public Video {
    public:
     ColorAdjustedVideo(const ColorTransformationMatrix& color_transformation,
                        const rtc::scoped_refptr<Video>& video)
@@ -177,7 +177,7 @@ rtc::scoped_refptr<Video> AdjustColors(
     const rtc::scoped_refptr<Video> video_;
   };
 
-  return new ColorAdjustedVideo(color_transformation, video);
+  return rtc::make_ref_counted<ColorAdjustedVideo>(color_transformation, video);
 }
 
 rtc::scoped_refptr<I420BufferInterface> AdjustColors(

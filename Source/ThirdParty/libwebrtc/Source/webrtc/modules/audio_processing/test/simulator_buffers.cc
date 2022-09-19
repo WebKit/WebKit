@@ -58,7 +58,7 @@ void SimulatorBuffers::CreateConfigAndBuffer(
     std::vector<float*>* buffer_data,
     std::vector<float>* buffer_data_samples) {
   int samples_per_channel = rtc::CheckedDivExact(sample_rate_hz, 100);
-  *config = StreamConfig(sample_rate_hz, num_channels, false);
+  *config = StreamConfig(sample_rate_hz, num_channels);
   buffer->reset(
       new AudioBuffer(config->sample_rate_hz(), config->num_channels(),
                       config->sample_rate_hz(), config->num_channels(),

@@ -73,7 +73,6 @@ import java.util.concurrent.TimeUnit;
  *      correct value, and then returns to back to correct reading.  Both when
  *      jumping up and back down we might create faulty CPU load readings.
  */
-@TargetApi(Build.VERSION_CODES.KITKAT)
 class CpuMonitor {
   private static final String TAG = "CpuMonitor";
   private static final int MOVING_AVERAGE_SAMPLES = 5;
@@ -159,8 +158,7 @@ class CpuMonitor {
   }
 
   public static boolean isSupported() {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-        && Build.VERSION.SDK_INT < Build.VERSION_CODES.N;
+    return Build.VERSION.SDK_INT < Build.VERSION_CODES.N;
   }
 
   public CpuMonitor(Context context) {

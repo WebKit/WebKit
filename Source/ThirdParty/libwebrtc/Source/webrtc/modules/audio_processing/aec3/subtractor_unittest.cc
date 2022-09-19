@@ -45,11 +45,8 @@ std::vector<float> RunSubtractorTest(
   Subtractor subtractor(config, num_render_channels, num_capture_channels,
                         &data_dumper, DetectOptimization());
   absl::optional<DelayEstimate> delay_estimate;
-  std::vector<std::vector<std::vector<float>>> x(
-      kNumBands, std::vector<std::vector<float>>(
-                     num_render_channels, std::vector<float>(kBlockSize, 0.f)));
-  std::vector<std::vector<float>> y(num_capture_channels,
-                                    std::vector<float>(kBlockSize, 0.f));
+  Block x(kNumBands, num_render_channels);
+  Block y(/*num_bands=*/1, num_capture_channels);
   std::array<float, kBlockSize> x_old;
   std::vector<SubtractorOutput> output(num_capture_channels);
   config.delay.default_delay = 1;
@@ -101,32 +98,34 @@ std::vector<float> RunSubtractorTest(
 
   for (int k = 0; k < num_blocks_to_process; ++k) {
     for (size_t render_ch = 0; render_ch < num_render_channels; ++render_ch) {
-      RandomizeSampleVector(&random_generator, x[0][render_ch]);
+      RandomizeSampleVector(&random_generator, x.View(/*band=*/0, render_ch));
     }
     if (uncorrelated_inputs) {
       for (size_t capture_ch = 0; capture_ch < num_capture_channels;
            ++capture_ch) {
-        RandomizeSampleVector(&random_generator, y[capture_ch]);
+        RandomizeSampleVector(&random_generator,
+                              y.View(/*band=*/0, capture_ch));
       }
     } else {
       for (size_t capture_ch = 0; capture_ch < num_capture_channels;
            ++capture_ch) {
+        rtc::ArrayView<float> y_view = y.View(/*band=*/0, capture_ch);
         for (size_t render_ch = 0; render_ch < num_render_channels;
              ++render_ch) {
           std::array<float, kBlockSize> y_channel;
-          delay_buffer[capture_ch][render_ch]->Delay(x[0][render_ch],
-                                                     y_channel);
-          for (size_t k = 0; k < y.size(); ++k) {
-            y[capture_ch][k] += y_channel[k] / num_render_channels;
+          delay_buffer[capture_ch][render_ch]->Delay(
+              x.View(/*band=*/0, render_ch), y_channel);
+          for (size_t k = 0; k < kBlockSize; ++k) {
+            y_view[k] += y_channel[k] / num_render_channels;
           }
         }
       }
     }
     for (size_t ch = 0; ch < num_render_channels; ++ch) {
-      x_hp_filter[ch]->Process(x[0][ch]);
+      x_hp_filter[ch]->Process(x.View(/*band=*/0, ch));
     }
     for (size_t ch = 0; ch < num_capture_channels; ++ch) {
-      y_hp_filter[ch]->Process(y[ch]);
+      y_hp_filter[ch]->Process(y.View(/*band=*/0, ch));
     }
 
     render_delay_buffer->Insert(x);
@@ -162,7 +161,8 @@ std::vector<float> RunSubtractorTest(
         output[ch].e_refined.begin(), output[ch].e_refined.end(),
         output[ch].e_refined.begin(), 0.f);
     const float y_power =
-        std::inner_product(y[ch].begin(), y[ch].end(), y[ch].begin(), 0.f);
+        std::inner_product(y.begin(/*band=*/0, ch), y.end(/*band=*/0, ch),
+                           y.begin(/*band=*/0, ch), 0.f);
     if (y_power == 0.f) {
       ADD_FAILURE();
       results[ch] = -1.f;
@@ -192,23 +192,6 @@ std::string ProduceDebugText(size_t num_render_channels,
 TEST(SubtractorDeathTest, NullDataDumper) {
   EXPECT_DEATH(
       Subtractor(EchoCanceller3Config(), 1, 1, nullptr, DetectOptimization()),
-      "");
-}
-
-// Verifies the check for the capture signal size.
-TEST(Subtractor, WrongCaptureSize) {
-  ApmDataDumper data_dumper(42);
-  EchoCanceller3Config config;
-  Subtractor subtractor(config, 1, 1, &data_dumper, DetectOptimization());
-  std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-      RenderDelayBuffer::Create(config, 48000, 1));
-  RenderSignalAnalyzer render_signal_analyzer(config);
-  std::vector<std::vector<float>> y(1, std::vector<float>(kBlockSize - 1, 0.f));
-  std::array<SubtractorOutput, 1> output;
-
-  EXPECT_DEATH(
-      subtractor.Process(*render_delay_buffer->GetRenderBuffer(), y,
-                         render_signal_analyzer, AecState(config, 1), output),
       "");
 }
 

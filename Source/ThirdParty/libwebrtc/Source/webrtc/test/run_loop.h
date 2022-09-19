@@ -10,7 +10,10 @@
 #ifndef TEST_RUN_LOOP_H_
 #define TEST_RUN_LOOP_H_
 
-#include "rtc_base/task_utils/to_queued_task.h"
+#include <utility>
+
+#include "absl/functional/any_invocable.h"
+#include "api/task_queue/task_queue_base.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -31,16 +34,8 @@ class RunLoop {
 
   void Flush();
 
-  // Convenience methods since TaskQueueBase doesn't support this sort of magic.
-  template <typename Closure>
-  void PostTask(Closure&& task) {
-    task_queue()->PostTask(ToQueuedTask(std::forward<Closure>(task)));
-  }
-
-  template <typename Closure>
-  void PostDelayedTask(Closure&& task, uint32_t milliseconds) {
-    task_queue()->PostDelayedTask(ToQueuedTask(std::forward<Closure>(task)),
-                                  milliseconds);
+  void PostTask(absl::AnyInvocable<void() &&> task) {
+    task_queue()->PostTask(std::move(task));
   }
 
  private:

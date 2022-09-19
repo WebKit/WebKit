@@ -15,7 +15,7 @@
 
 namespace webrtc {
 
-const bool kIsLibaomAv1DecoderSupported = false;
+ABSL_CONST_INIT const bool kIsLibaomAv1DecoderSupported = false;
 
 std::unique_ptr<VideoDecoder> CreateLibaomAv1Decoder() {
   return nullptr;

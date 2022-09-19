@@ -155,7 +155,7 @@ class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
         RTC_LOG(LS_WARNING)
             << "Trying to access encoder in uninitialized fallback wrapper.";
         // Return main encoder to preserve previous behavior.
-        ABSL_FALLTHROUGH_INTENDED;
+        [[fallthrough]];
       case EncoderState::kMainEncoderUsed:
         return encoder_.get();
       case EncoderState::kFallbackDueToFailure:
@@ -180,7 +180,6 @@ class VideoEncoderSoftwareFallbackWrapper final : public VideoEncoder {
   // The last channel parameters set.
   absl::optional<float> packet_loss_;
   absl::optional<int64_t> rtt_;
-  FecControllerOverride* fec_controller_override_;
   absl::optional<LossNotification> loss_notification_;
 
   enum class EncoderState {
@@ -205,8 +204,7 @@ VideoEncoderSoftwareFallbackWrapper::VideoEncoderSoftwareFallbackWrapper(
     std::unique_ptr<webrtc::VideoEncoder> sw_encoder,
     std::unique_ptr<webrtc::VideoEncoder> hw_encoder,
     bool prefer_temporal_support)
-    : fec_controller_override_(nullptr),
-      encoder_state_(EncoderState::kUninitialized),
+    : encoder_state_(EncoderState::kUninitialized),
       encoder_(std::move(hw_encoder)),
       fallback_encoder_(std::move(sw_encoder)),
       callback_(nullptr),
@@ -234,9 +232,7 @@ void VideoEncoderSoftwareFallbackWrapper::PrimeEncoder(
   if (packet_loss_.has_value()) {
     encoder->OnPacketLossRateUpdate(packet_loss_.value());
   }
-  if (fec_controller_override_) {
-    encoder->SetFecControllerOverride(fec_controller_override_);
-  }
+
   if (loss_notification_.has_value()) {
     encoder->OnLossNotification(loss_notification_.value());
   }
@@ -277,8 +273,8 @@ void VideoEncoderSoftwareFallbackWrapper::SetFecControllerOverride(
   // `fec_controller_override` at a given time. This is the responsibility
   // of `this` to maintain.
 
-  fec_controller_override_ = fec_controller_override;
-  current_encoder()->SetFecControllerOverride(fec_controller_override);
+  encoder_->SetFecControllerOverride(fec_controller_override);
+  fallback_encoder_->SetFecControllerOverride(fec_controller_override);
 }
 
 int32_t VideoEncoderSoftwareFallbackWrapper::InitEncode(
@@ -362,8 +358,8 @@ int32_t VideoEncoderSoftwareFallbackWrapper::EncodeWithMainEncoder(
         fallback_encoder_->GetEncoderInfo().supports_native_handle) {
       return fallback_encoder_->Encode(frame, frame_types);
     } else {
-      RTC_LOG(INFO) << "Fallback encoder does not support native handle - "
-                       "converting frame to I420";
+      RTC_LOG(LS_INFO) << "Fallback encoder does not support native handle - "
+                          "converting frame to I420";
       rtc::scoped_refptr<I420BufferInterface> src_buffer =
           frame.video_frame_buffer()->ToI420();
       if (!src_buffer) {

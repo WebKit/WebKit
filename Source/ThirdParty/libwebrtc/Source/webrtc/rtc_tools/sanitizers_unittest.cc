@@ -55,6 +55,7 @@ TEST(SanitizersDeathTest, AddressSanitizer) {
 void SignedIntegerOverflow() {
   int32_t x = 1234567890;
   x *= 2;
+  (void)x;
 }
 
 // For ubsan_vptr:
@@ -86,6 +87,9 @@ class IncrementThread : public Thread {
   explicit IncrementThread(int* value)
       : Thread(std::make_unique<NullSocketServer>()), value_(value) {}
 
+  IncrementThread(const IncrementThread&) = delete;
+  IncrementThread& operator=(const IncrementThread&) = delete;
+
   void Run() override {
     ++*value_;
     Thread::Current()->SleepMs(100);
@@ -96,8 +100,6 @@ class IncrementThread : public Thread {
 
  private:
   int* value_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(IncrementThread);
 };
 
 void DataRace() {

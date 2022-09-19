@@ -19,10 +19,7 @@
 #include "api/call/transport.h"
 #include "call/video_receive_stream.h"
 #include "modules/rtp_rtcp/source/rtp_descriptor_authentication.h"
-#include "modules/utility/include/process_thread.h"
 #include "rtc_base/event.h"
-#include "rtc_base/ref_counted_object.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_frame_transformer.h"
@@ -98,6 +95,7 @@ TEST(RtpVideoStreamReceiverFrameTransformerDelegateTest, TransformFrame) {
 
 TEST(RtpVideoStreamReceiverFrameTransformerDelegateTest,
      ManageFrameOnTransformedFrame) {
+  rtc::AutoThread main_thread_;
   TestRtpVideoFrameReceiver receiver;
   auto mock_frame_transformer(
       rtc::make_ref_counted<NiceMock<MockFrameTransformer>>());

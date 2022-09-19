@@ -116,8 +116,6 @@ class FakeWebRtcVideoEncoderFactory : public webrtc::VideoEncoderFactory {
   std::vector<webrtc::SdpVideoFormat> GetSupportedFormats() const override;
   std::unique_ptr<webrtc::VideoEncoder> CreateVideoEncoder(
       const webrtc::SdpVideoFormat& format) override;
-  CodecInfo QueryVideoEncoder(
-      const webrtc::SdpVideoFormat& format) const override;
 
   bool WaitForCreatedVideoEncoders(int num_encoders);
   void EncoderDestroyed(FakeWebRtcVideoEncoder* encoder);
@@ -133,7 +131,6 @@ class FakeWebRtcVideoEncoderFactory : public webrtc::VideoEncoderFactory {
   std::vector<webrtc::SdpVideoFormat> formats_;
   std::vector<FakeWebRtcVideoEncoder*> encoders_ RTC_GUARDED_BY(mutex_);
   int num_created_encoders_ RTC_GUARDED_BY(mutex_);
-  bool encoders_have_internal_sources_;
   bool vp8_factory_mode_;
 };
 

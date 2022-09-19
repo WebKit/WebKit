@@ -76,6 +76,26 @@ class ScalabilityStructureS2T1 : public ScalabilityStructureSimulcast {
   FrameDependencyStructure DependencyStructure() const override;
 };
 
+// S1T2       3   7
+//            |  /
+// S1T1       / 5
+//           |_/
+// S1T0     1-------9...
+//
+// S0T2       2   6
+//            |  /
+// S0T1       / 4
+//           |_/
+// S0T0     0-------8...
+// Time->   0 1 2 3 4
+class ScalabilityStructureS2T3 : public ScalabilityStructureSimulcast {
+ public:
+  ScalabilityStructureS2T3() : ScalabilityStructureSimulcast(2, 3) {}
+  ~ScalabilityStructureS2T3() override = default;
+
+  FrameDependencyStructure DependencyStructure() const override;
+};
+
 class ScalabilityStructureS3T3 : public ScalabilityStructureSimulcast {
  public:
   ScalabilityStructureS3T3() : ScalabilityStructureSimulcast(3, 3) {}

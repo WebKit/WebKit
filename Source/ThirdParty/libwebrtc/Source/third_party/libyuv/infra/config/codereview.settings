@@ -1,0 +1,6 @@
+# This file is used by gcl and git-cl to get repository specific information.
+CODE_REVIEW_SERVER: codereview.chromium.org
+PROJECT: libyuv
+GERRIT_HOST: True
+VIEW_VC: https://chromium.googlesource.com/libyuv/libyuv/+/
+

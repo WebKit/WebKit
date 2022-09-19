@@ -15,6 +15,7 @@
 #include <set>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/audio/audio_frame.h"
 #include "api/neteq/neteq.h"
 #include "api/rtp_headers.h"
@@ -39,12 +40,12 @@ class NetEqDecodingTest : public ::testing::Test {
   NetEqDecodingTest();
   virtual void SetUp();
   virtual void TearDown();
-  void OpenInputFile(const std::string& rtp_file);
+  void OpenInputFile(absl::string_view rtp_file);
   void Process();
 
-  void DecodeAndCompare(const std::string& rtp_file,
-                        const std::string& output_checksum,
-                        const std::string& network_stats_checksum,
+  void DecodeAndCompare(absl::string_view rtp_file,
+                        absl::string_view output_checksum,
+                        absl::string_view network_stats_checksum,
                         bool gen_ref);
 
   static void PopulateRtpInfo(int frame_index,

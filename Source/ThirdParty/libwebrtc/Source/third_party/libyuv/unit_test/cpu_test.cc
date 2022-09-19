@@ -40,6 +40,7 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
   int has_gfni = TestCpuFlag(kCpuHasGFNI);
   int has_avx512bw = TestCpuFlag(kCpuHasAVX512BW);
   int has_avx512vl = TestCpuFlag(kCpuHasAVX512VL);
+  int has_avx512vnni = TestCpuFlag(kCpuHasAVX512VNNI);
   int has_avx512vbmi = TestCpuFlag(kCpuHasAVX512VBMI);
   int has_avx512vbmi2 = TestCpuFlag(kCpuHasAVX512VBMI2);
   int has_avx512vbitalg = TestCpuFlag(kCpuHasAVX512VBITALG);
@@ -57,6 +58,7 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
   printf("Has GFNI %d\n", has_gfni);
   printf("Has AVX512BW %d\n", has_avx512bw);
   printf("Has AVX512VL %d\n", has_avx512vl);
+  printf("Has AVX512VNNI %d\n", has_avx512vnni);
   printf("Has AVX512VBMI %d\n", has_avx512vbmi);
   printf("Has AVX512VBMI2 %d\n", has_avx512vbmi2);
   printf("Has AVX512VBITALG %d\n", has_avx512vbitalg);
@@ -67,8 +69,15 @@ TEST_F(LibYUVBaseTest, TestCpuHas) {
   printf("Has MIPS %d\n", has_mips);
   int has_msa = TestCpuFlag(kCpuHasMSA);
   printf("Has MSA %d\n", has_msa);
-  int has_mmi = TestCpuFlag(kCpuHasMMI);
-  printf("Has MMI %d\n", has_mmi);
+#endif
+
+#if defined(__loongarch__)
+  int has_loongarch = TestCpuFlag(kCpuHasLOONGARCH);
+  printf("Has LOONGARCH %d\n", has_loongarch);
+  int has_lsx = TestCpuFlag(kCpuHasLSX);
+  printf("Has LSX %d\n", has_lsx);
+  int has_lasx = TestCpuFlag(kCpuHasLASX);
+  printf("Has LASX %d\n", has_lasx);
 #endif
 }
 
@@ -149,6 +158,9 @@ TEST_F(LibYUVBaseTest, TestCompilerMacros) {
 #ifdef _MIPS_ARCH_LOONGSON3A
   printf("_MIPS_ARCH_LOONGSON3A %d\n", _MIPS_ARCH_LOONGSON3A);
 #endif
+#ifdef __loongarch__
+  printf("__loongarch__ %d\n", __loongarch__);
+#endif
 #ifdef _WIN32
   printf("_WIN32 %d\n", _WIN32);
 #endif
@@ -228,21 +240,24 @@ TEST_F(LibYUVBaseTest, TestLinuxNeon) {
     printf("WARNING: unable to load \"../../unit_test/testdata/arm_v7.txt\"\n");
   }
 #if defined(__linux__) && defined(__ARM_NEON__)
-  EXPECT_EQ(kCpuHasNEON, ArmCpuCaps("/proc/cpuinfo"));
+  if (FileExists("/proc/cpuinfo")) {
+    if (kCpuHasNEON != ArmCpuCaps("/proc/cpuinfo")) {
+      // This can happen on ARM emulator but /proc/cpuinfo is from host.
+      printf("WARNING: Neon build enabled but CPU does not have NEON\n");
+    }
+  } else {
+    printf("WARNING: unable to load \"/proc/cpuinfo\"\n");
+  }
 #endif
 }
 
-TEST_F(LibYUVBaseTest, TestLinuxMipsMsaMmi) {
+TEST_F(LibYUVBaseTest, TestLinuxMipsMsa) {
   if (FileExists("../../unit_test/testdata/mips.txt")) {
     printf("Note: testing to load \"../../unit_test/testdata/mips.txt\"\n");
 
     EXPECT_EQ(0, MipsCpuCaps("../../unit_test/testdata/mips.txt"));
-    EXPECT_EQ(kCpuHasMMI,
-              MipsCpuCaps("../../unit_test/testdata/mips_loongson3.txt"));
-    EXPECT_EQ(kCpuHasMMI,
-              MipsCpuCaps("../../unit_test/testdata/mips_loongson_mmi.txt"));
     EXPECT_EQ(kCpuHasMSA, MipsCpuCaps("../../unit_test/testdata/mips_msa.txt"));
-    EXPECT_EQ(kCpuHasMMI | kCpuHasMSA,
+    EXPECT_EQ(kCpuHasMSA,
               MipsCpuCaps("../../unit_test/testdata/mips_loongson2k.txt"));
   } else {
     printf("WARNING: unable to load \"../../unit_test/testdata/mips.txt\"\n");

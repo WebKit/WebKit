@@ -88,6 +88,7 @@ void GainApplier::ApplyGain(AudioFrameView<float> signal) {
   }
 }
 
+// TODO(bugs.webrtc.org/7494): Remove once switched to gains in dB.
 void GainApplier::SetGainFactor(float gain_factor) {
   RTC_DCHECK_GT(gain_factor, 0.f);
   current_gain_factor_ = gain_factor;

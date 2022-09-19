@@ -32,6 +32,7 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_COMMA_BEGIN
 
 #include <webrtc/api/peer_connection_interface.h>
 #include <webrtc/api/scoped_refptr.h>
@@ -40,6 +41,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
+ALLOW_COMMA_END
 
 namespace rtc {
 class NetworkManager;

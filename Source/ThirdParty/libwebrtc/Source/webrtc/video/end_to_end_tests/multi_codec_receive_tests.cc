@@ -42,7 +42,7 @@ uint8_t PayloadNameToPayloadType(const std::string& payload_name) {
   } else if (payload_name == "H264") {
     return test::CallTest::kPayloadTypeH264;
   } else {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return 0;
   }
 }
@@ -63,7 +63,7 @@ int RemoveOlderOrEqual(uint32_t timestamp, std::vector<uint32_t>* timestamps) {
 class FrameObserver : public test::RtpRtcpObserver,
                       public rtc::VideoSinkInterface<VideoFrame> {
  public:
-  FrameObserver() : test::RtpRtcpObserver(test::CallTest::kDefaultTimeoutMs) {}
+  FrameObserver() : test::RtpRtcpObserver(test::CallTest::kDefaultTimeout) {}
 
   void Reset(uint8_t expected_payload_type) {
     MutexLock lock(&mutex_);
@@ -129,7 +129,7 @@ class FrameObserver : public test::RtpRtcpObserver,
 class MultiCodecReceiveTest : public test::CallTest {
  public:
   MultiCodecReceiveTest() {
-    SendTask(RTC_FROM_HERE, task_queue(), [this]() {
+    SendTask(task_queue(), [this]() {
       CreateCalls();
 
       send_transport_.reset(new test::PacketTransport(
@@ -151,7 +151,7 @@ class MultiCodecReceiveTest : public test::CallTest {
   }
 
   virtual ~MultiCodecReceiveTest() {
-    SendTask(RTC_FROM_HERE, task_queue(), [this]() {
+    SendTask(task_queue(), [this]() {
       send_transport_.reset();
       receive_transport_.reset();
       DestroyCalls();
@@ -186,8 +186,10 @@ void MultiCodecReceiveTest::ConfigureDecoders(
   std::set<std::string> unique_payload_names;
   for (const auto& config : configs)
     if (unique_payload_names.insert(config.payload_name).second) {
-      VideoReceiveStream::Decoder decoder = test::CreateMatchingDecoder(
-          PayloadNameToPayloadType(config.payload_name), config.payload_name);
+      VideoReceiveStreamInterface::Decoder decoder =
+          test::CreateMatchingDecoder(
+              PayloadNameToPayloadType(config.payload_name),
+              config.payload_name);
 
       video_receive_configs_[0].decoders.push_back(decoder);
     }
@@ -223,7 +225,7 @@ void MultiCodecReceiveTest::RunTestWithCodecs(
         if (format.name == "H264") {
           return H264Encoder::Create(cricket::VideoCodec("H264"));
         }
-        RTC_NOTREACHED() << format.name;
+        RTC_DCHECK_NOTREACHED() << format.name;
         return nullptr;
       });
   test::FunctionVideoDecoderFactory decoder_factory(
@@ -237,11 +239,11 @@ void MultiCodecReceiveTest::RunTestWithCodecs(
         if (format.name == "H264") {
           return H264Decoder::Create();
         }
-        RTC_NOTREACHED() << format.name;
+        RTC_DCHECK_NOTREACHED() << format.name;
         return nullptr;
       });
   // Create and start call.
-  SendTask(RTC_FROM_HERE, task_queue(),
+  SendTask(task_queue(),
            [this, &configs, &encoder_factory, &decoder_factory]() {
              CreateSendConfig(1, 0, 0, send_transport_.get());
              ConfigureEncoder(configs[0], &encoder_factory);
@@ -259,21 +261,20 @@ void MultiCodecReceiveTest::RunTestWithCodecs(
 
   for (size_t i = 1; i < configs.size(); ++i) {
     // Recreate VideoSendStream with new config (codec, temporal layers).
-    SendTask(
-        RTC_FROM_HERE, task_queue(), [this, i, &configs, &encoder_factory]() {
-          DestroyVideoSendStreams();
-          observer_.Reset(PayloadNameToPayloadType(configs[i].payload_name));
+    SendTask(task_queue(), [this, i, &configs, &encoder_factory]() {
+      DestroyVideoSendStreams();
+      observer_.Reset(PayloadNameToPayloadType(configs[i].payload_name));
 
-          ConfigureEncoder(configs[i], &encoder_factory);
-          CreateVideoSendStreams();
-          GetVideoSendStream()->Start();
-          CreateFrameGeneratorCapturer(kFps, kWidth / 2, kHeight / 2);
-          ConnectVideoSourcesToStreams();
-        });
+      ConfigureEncoder(configs[i], &encoder_factory);
+      CreateVideoSendStreams();
+      GetVideoSendStream()->Start();
+      CreateFrameGeneratorCapturer(kFps, kWidth / 2, kHeight / 2);
+      ConnectVideoSourcesToStreams();
+    });
     EXPECT_TRUE(observer_.Wait()) << "Timed out waiting for frames.";
   }
 
-  SendTask(RTC_FROM_HERE, task_queue(), [this]() {
+  SendTask(task_queue(), [this]() {
     Stop();
     DestroyStreams();
   });

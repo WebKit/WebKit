@@ -106,7 +106,7 @@ absl::optional<DataRate> GetExperimentalMinVideoBitrate(VideoCodecType type) {
         return absl::nullopt;
     }
 
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
   }
 
   return absl::nullopt;

@@ -12,7 +12,6 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_RTP_GENERATOR_H_
 
 #include "api/rtp_headers.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -34,6 +33,9 @@ class RtpGenerator {
 
   virtual ~RtpGenerator() {}
 
+  RtpGenerator(const RtpGenerator&) = delete;
+  RtpGenerator& operator=(const RtpGenerator&) = delete;
+
   // Writes the next RTP header to `rtp_header`, which will be of type
   // `payload_type`. Returns the send time for this packet (in ms). The value of
   // `payload_length_samples` determines the send time for the next packet.
@@ -50,9 +52,6 @@ class RtpGenerator {
   const uint32_t ssrc_;
   const int samples_per_ms_;
   double drift_factor_;
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(RtpGenerator);
 };
 
 class TimestampJumpRtpGenerator : public RtpGenerator {
@@ -66,6 +65,10 @@ class TimestampJumpRtpGenerator : public RtpGenerator {
         jump_from_timestamp_(jump_from_timestamp),
         jump_to_timestamp_(jump_to_timestamp) {}
 
+  TimestampJumpRtpGenerator(const TimestampJumpRtpGenerator&) = delete;
+  TimestampJumpRtpGenerator& operator=(const TimestampJumpRtpGenerator&) =
+      delete;
+
   uint32_t GetRtpHeader(uint8_t payload_type,
                         size_t payload_length_samples,
                         RTPHeader* rtp_header) override;
@@ -73,7 +76,6 @@ class TimestampJumpRtpGenerator : public RtpGenerator {
  private:
   uint32_t jump_from_timestamp_;
   uint32_t jump_to_timestamp_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(TimestampJumpRtpGenerator);
 };
 
 }  // namespace test

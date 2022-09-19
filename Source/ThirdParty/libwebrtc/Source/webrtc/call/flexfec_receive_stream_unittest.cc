@@ -26,6 +26,7 @@
 #include "modules/rtp_rtcp/source/byte_io.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
+#include "rtc_base/thread.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -96,6 +97,7 @@ class FlexfecReceiveStreamTest : public ::testing::Test {
     receive_stream_->UnregisterFromTransport();
   }
 
+  rtc::AutoThread main_thread_;
   MockTransport rtcp_send_transport_;
   FlexfecReceiveStream::Config config_;
   MockRecoveredPacketReceiver recovered_packet_receiver_;
@@ -141,19 +143,13 @@ TEST_F(FlexfecReceiveStreamTest, RecoversPacket) {
       kPayloadBits,    kPayloadBits,    kPayloadBits,       kPayloadBits};
   // clang-format on
 
-  ::testing::StrictMock<MockRecoveredPacketReceiver> recovered_packet_receiver;
-  FlexfecReceiveStreamImpl receive_stream(Clock::GetRealTimeClock(), config_,
-                                          &recovered_packet_receiver,
-                                          &rtt_stats_);
-  receive_stream.RegisterWithTransport(&rtp_stream_receiver_controller_);
-
-  EXPECT_CALL(recovered_packet_receiver,
+  EXPECT_CALL(recovered_packet_receiver_,
               OnRecoveredPacket(_, kRtpHeaderSize + kPayloadLength[1]));
 
-  receive_stream.OnRtpPacket(ParsePacket(kFlexfecPacket));
+  receive_stream_->OnRtpPacket(ParsePacket(kFlexfecPacket));
 
   // Tear-down
-  receive_stream.UnregisterFromTransport();
+  receive_stream_->UnregisterFromTransport();
 }
 
 }  // namespace webrtc

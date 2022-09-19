@@ -2,9 +2,8 @@
 
 ## Development Environment
 
-In case you need to build the framework manually
-(for instance if you need to support bitcode) or you want to try out the demo application
-AppRTCMobile, follow the instructions illustrated bellow.
+In case you need to build the framework manually or you want to try out the
+demo application AppRTCMobile, follow the instructions illustrated bellow.
 
 A macOS machine is required for iOS development. While it's possible to
 develop purely from the command line with text editors, it's easiest to use
@@ -170,11 +169,6 @@ If you need a FAT `.framework`, that is, a binary that contains code for
 multiple architectures, and will work both on device and in the simulator,
 a script is available [here][framework-script]
 
-To build the framework with bitcode support, pass the `--bitcode` flag to the script like so
-
-```
-$ python tools_webrtc/ios/build_ios_libs.py --bitcode
-```
 The resulting framework can be found in out_ios_libs/.
 
 Please note that you can not ship the FAT framework binary with your app

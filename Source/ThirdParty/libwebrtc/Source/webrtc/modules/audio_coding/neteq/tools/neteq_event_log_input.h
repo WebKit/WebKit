@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "modules/audio_coding/neteq/tools/neteq_packet_source_input.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 
@@ -28,10 +29,10 @@ class RtcEventLogSource;
 class NetEqEventLogInput final : public NetEqPacketSourceInput {
  public:
   static NetEqEventLogInput* CreateFromFile(
-      const std::string& file_name,
+      absl::string_view file_name,
       absl::optional<uint32_t> ssrc_filter);
   static NetEqEventLogInput* CreateFromString(
-      const std::string& file_contents,
+      absl::string_view file_contents,
       absl::optional<uint32_t> ssrc_filter);
 
   absl::optional<int64_t> NextOutputEventTime() const override;

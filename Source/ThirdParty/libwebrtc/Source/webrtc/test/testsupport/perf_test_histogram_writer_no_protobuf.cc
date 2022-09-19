@@ -14,8 +14,9 @@ namespace webrtc {
 namespace test {
 
 PerfTestResultWriter* CreateHistogramWriter() {
-  RTC_NOTREACHED() << "Cannot run perf tests with rtc_enable_protobuf = false. "
-                      "Perf write results as protobufs.";
+  RTC_DCHECK_NOTREACHED()
+      << "Cannot run perf tests with rtc_enable_protobuf = false. "
+         "Perf write results as protobufs.";
   return nullptr;
 }
 

@@ -15,7 +15,6 @@
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/mock_desktop_capturer_callback.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/logging.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -76,9 +75,11 @@ class FakeSharedMemory : public SharedMemory {
       : SharedMemory(buffer, size, 0, kTestSharedMemoryId), buffer_(buffer) {}
   ~FakeSharedMemory() override { delete[] buffer_; }
 
+  FakeSharedMemory(const FakeSharedMemory&) = delete;
+  FakeSharedMemory& operator=(const FakeSharedMemory&) = delete;
+
  private:
   char* buffer_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(FakeSharedMemory);
 };
 
 class FakeSharedMemoryFactory : public SharedMemoryFactory {
@@ -86,13 +87,13 @@ class FakeSharedMemoryFactory : public SharedMemoryFactory {
   FakeSharedMemoryFactory() {}
   ~FakeSharedMemoryFactory() override {}
 
+  FakeSharedMemoryFactory(const FakeSharedMemoryFactory&) = delete;
+  FakeSharedMemoryFactory& operator=(const FakeSharedMemoryFactory&) = delete;
+
   std::unique_ptr<SharedMemory> CreateSharedMemory(size_t size) override {
     return std::unique_ptr<SharedMemory>(
         new FakeSharedMemory(new char[size], size));
   }
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(FakeSharedMemoryFactory);
 };
 
 ACTION_P(SaveUniquePtrArg, dest) {

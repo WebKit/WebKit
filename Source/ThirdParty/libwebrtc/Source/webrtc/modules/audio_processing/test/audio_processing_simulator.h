@@ -38,7 +38,7 @@ struct Int16Frame {
     samples_per_channel =
         rtc::CheckedDivExact(sample_rate_hz, kChunksPerSecond);
     this->num_channels = num_channels;
-    config = StreamConfig(sample_rate_hz, num_channels, /*has_keyboard=*/false);
+    config = StreamConfig(sample_rate_hz, num_channels);
     data.resize(num_channels * samples_per_channel);
   }
 
@@ -105,10 +105,8 @@ struct SimulationSettings {
   absl::optional<bool> use_ns;
   absl::optional<int> use_ts;
   absl::optional<bool> use_analog_agc;
-  absl::optional<bool> use_vad;
-  absl::optional<bool> use_le;
   absl::optional<bool> use_all;
-  absl::optional<bool> analog_agc_disable_digital_adaptive;
+  absl::optional<bool> analog_agc_use_digital_adaptive_controller;
   absl::optional<int> agc_mode;
   absl::optional<int> agc_target_level;
   absl::optional<bool> use_agc_limiter;
@@ -121,6 +119,7 @@ struct SimulationSettings {
   absl::optional<float> analog_mic_gain_emulation_initial_level;
   absl::optional<int> ns_level;
   absl::optional<bool> ns_analysis_on_linear_aec_output;
+  absl::optional<bool> override_key_pressed;
   absl::optional<int> maximum_internal_processing_rate;
   int initial_mic_level;
   bool simulate_mic_gain = false;

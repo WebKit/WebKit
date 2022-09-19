@@ -30,9 +30,7 @@ namespace webrtc {
 namespace {
 constexpr int kMaxNumberOfPackets = 200;
 constexpr int kTimeStepMs = 10;
-constexpr int kFs = 8000;
 constexpr int kFrameSizeMs = 20;
-constexpr int kTsIncrement = kFrameSizeMs * kFs / 1000;
 constexpr int kMaxBufferSizeMs = kMaxNumberOfPackets * kFrameSizeMs;
 
 }  // namespace
@@ -41,25 +39,22 @@ class DelayManagerTest : public ::testing::Test {
  protected:
   DelayManagerTest();
   virtual void SetUp();
-  absl::optional<int> InsertNextPacket();
+  void Update(int delay);
   void IncreaseTime(int inc_ms);
 
-  DelayManager dm_;
   TickTimer tick_timer_;
-  uint32_t ts_;
+  DelayManager dm_;
 };
 
 DelayManagerTest::DelayManagerTest()
-    : dm_(DelayManager::Config(), &tick_timer_), ts_(0x12345678) {}
+    : dm_(DelayManager::Config(), &tick_timer_) {}
 
 void DelayManagerTest::SetUp() {
   dm_.SetPacketAudioLength(kFrameSizeMs);
 }
 
-absl::optional<int> DelayManagerTest::InsertNextPacket() {
-  auto relative_delay = dm_.Update(ts_, kFs);
-  ts_ += kTsIncrement;
-  return relative_delay;
+void DelayManagerTest::Update(int delay) {
+  dm_.Update(delay, false);
 }
 
 void DelayManagerTest::IncreaseTime(int inc_ms) {
@@ -74,61 +69,29 @@ TEST_F(DelayManagerTest, CreateAndDestroy) {
 }
 
 TEST_F(DelayManagerTest, UpdateNormal) {
-  // First packet arrival.
-  InsertNextPacket();
-  // Advance time by one frame size.
-  IncreaseTime(kFrameSizeMs);
-  // Second packet arrival.
-  InsertNextPacket();
+  for (int i = 0; i < 50; ++i) {
+    Update(0);
+    IncreaseTime(kFrameSizeMs);
+  }
   EXPECT_EQ(20, dm_.TargetDelayMs());
 }
 
-TEST_F(DelayManagerTest, UpdateLongInterArrivalTime) {
-  // First packet arrival.
-  InsertNextPacket();
-  // Advance time by two frame size.
-  IncreaseTime(2 * kFrameSizeMs);
-  // Second packet arrival.
-  InsertNextPacket();
-  EXPECT_EQ(40, dm_.TargetDelayMs());
-}
-
 TEST_F(DelayManagerTest, MaxDelay) {
-  const int kExpectedTarget = 5 * kFrameSizeMs;
-  // First packet arrival.
-  InsertNextPacket();
-  // Second packet arrival.
-  IncreaseTime(kExpectedTarget);
-  InsertNextPacket();
-
-  // No limit is set.
-  EXPECT_EQ(kExpectedTarget, dm_.TargetDelayMs());
-
-  const int kMaxDelayMs = 3 * kFrameSizeMs;
+  Update(0);
+  const int kMaxDelayMs = 60;
+  EXPECT_GT(dm_.TargetDelayMs(), kMaxDelayMs);
   EXPECT_TRUE(dm_.SetMaximumDelay(kMaxDelayMs));
-  IncreaseTime(kFrameSizeMs);
-  InsertNextPacket();
+  Update(0);
   EXPECT_EQ(kMaxDelayMs, dm_.TargetDelayMs());
-
-  // Target level at least should be one packet.
-  EXPECT_FALSE(dm_.SetMaximumDelay(kFrameSizeMs - 1));
 }
 
 TEST_F(DelayManagerTest, MinDelay) {
-  const int kExpectedTarget = 5 * kFrameSizeMs;
-  // First packet arrival.
-  InsertNextPacket();
-  // Second packet arrival.
-  IncreaseTime(kExpectedTarget);
-  InsertNextPacket();
-
-  // No limit is applied.
-  EXPECT_EQ(kExpectedTarget, dm_.TargetDelayMs());
-
+  Update(0);
   int kMinDelayMs = 7 * kFrameSizeMs;
+  EXPECT_LT(dm_.TargetDelayMs(), kMinDelayMs);
   dm_.SetMinimumDelay(kMinDelayMs);
   IncreaseTime(kFrameSizeMs);
-  InsertNextPacket();
+  Update(0);
   EXPECT_EQ(kMinDelayMs, dm_.TargetDelayMs());
 }
 
@@ -251,60 +214,21 @@ TEST_F(DelayManagerTest, MinimumDelayMemorization) {
 }
 
 TEST_F(DelayManagerTest, BaseMinimumDelay) {
-  const int kExpectedTarget = 5 * kFrameSizeMs;
   // First packet arrival.
-  InsertNextPacket();
-  // Second packet arrival.
-  IncreaseTime(kExpectedTarget);
-  InsertNextPacket();
-
-  // No limit is applied.
-  EXPECT_EQ(kExpectedTarget, dm_.TargetDelayMs());
+  Update(0);
 
   constexpr int kBaseMinimumDelayMs = 7 * kFrameSizeMs;
+  EXPECT_LT(dm_.TargetDelayMs(), kBaseMinimumDelayMs);
   EXPECT_TRUE(dm_.SetBaseMinimumDelay(kBaseMinimumDelayMs));
   EXPECT_EQ(dm_.GetBaseMinimumDelay(), kBaseMinimumDelayMs);
 
   IncreaseTime(kFrameSizeMs);
-  InsertNextPacket();
-  EXPECT_EQ(dm_.GetBaseMinimumDelay(), kBaseMinimumDelayMs);
-  EXPECT_EQ(kBaseMinimumDelayMs, dm_.TargetDelayMs());
-}
-
-TEST_F(DelayManagerTest, BaseMinimumDelayAffectsTargetDelay) {
-  const int kExpectedTarget = 5;
-  const int kTimeIncrement = kExpectedTarget * kFrameSizeMs;
-  // First packet arrival.
-  InsertNextPacket();
-  // Second packet arrival.
-  IncreaseTime(kTimeIncrement);
-  InsertNextPacket();
-
-  // No limit is applied.
-  EXPECT_EQ(kTimeIncrement, dm_.TargetDelayMs());
-
-  // Minimum delay is lower than base minimum delay, that is why base minimum
-  // delay is used to calculate target level.
-  constexpr int kMinimumDelayPackets = kExpectedTarget + 1;
-  constexpr int kBaseMinimumDelayPackets = kExpectedTarget + 2;
-
-  constexpr int kMinimumDelayMs = kMinimumDelayPackets * kFrameSizeMs;
-  constexpr int kBaseMinimumDelayMs = kBaseMinimumDelayPackets * kFrameSizeMs;
-
-  EXPECT_TRUE(kMinimumDelayMs < kBaseMinimumDelayMs);
-  EXPECT_TRUE(dm_.SetMinimumDelay(kMinimumDelayMs));
-  EXPECT_TRUE(dm_.SetBaseMinimumDelay(kBaseMinimumDelayMs));
-  EXPECT_EQ(dm_.GetBaseMinimumDelay(), kBaseMinimumDelayMs);
-
-  IncreaseTime(kFrameSizeMs);
-  InsertNextPacket();
+  Update(0);
   EXPECT_EQ(dm_.GetBaseMinimumDelay(), kBaseMinimumDelayMs);
   EXPECT_EQ(kBaseMinimumDelayMs, dm_.TargetDelayMs());
 }
 
 TEST_F(DelayManagerTest, Failures) {
-  // Wrong sample rate.
-  EXPECT_EQ(absl::nullopt, dm_.Update(0, -1));
   // Wrong packet size.
   EXPECT_EQ(-1, dm_.SetPacketAudioLength(0));
   EXPECT_EQ(-1, dm_.SetPacketAudioLength(-1));
@@ -317,15 +241,6 @@ TEST_F(DelayManagerTest, Failures) {
   EXPECT_TRUE(dm_.SetMaximumDelay(100));
   EXPECT_TRUE(dm_.SetMinimumDelay(80));
   EXPECT_FALSE(dm_.SetMaximumDelay(60));
-}
-
-TEST_F(DelayManagerTest, RelativeArrivalDelayStatistic) {
-  EXPECT_EQ(absl::nullopt, InsertNextPacket());
-  IncreaseTime(kFrameSizeMs);
-  EXPECT_EQ(0, InsertNextPacket());
-  IncreaseTime(2 * kFrameSizeMs);
-
-  EXPECT_EQ(20, InsertNextPacket());
 }
 
 }  // namespace webrtc

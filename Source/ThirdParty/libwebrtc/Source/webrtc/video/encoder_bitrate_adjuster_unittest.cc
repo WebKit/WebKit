@@ -345,25 +345,6 @@ TEST_F(EncoderBitrateAdjusterTest, ThreeTemporalLayersSkewedOvershoot) {
              current_adjusted_allocation_, 0.01);
 }
 
-TEST_F(EncoderBitrateAdjusterTest, FourTemporalLayersSkewedOvershoot) {
-  // Three temporal layers, 40%/30%/15%/15% bps distro.
-  // 10% overshoot on base layer, 20% on higher layers.
-  current_input_allocation_.SetBitrate(0, 0, 120000);
-  current_input_allocation_.SetBitrate(0, 1, 90000);
-  current_input_allocation_.SetBitrate(0, 2, 45000);
-  current_input_allocation_.SetBitrate(0, 3, 45000);
-  target_framerate_fps_ = 30;
-  SetUpAdjuster(1, 4, false);
-  InsertFrames({{1.1, 1.2, 1.2, 1.2}}, kWindowSizeMs);
-  current_adjusted_allocation_ =
-      adjuster_->AdjustRateAllocation(VideoEncoder::RateControlParameters(
-          current_input_allocation_, target_framerate_fps_));
-  // Expected overshoot is weighted by bitrate:
-  // (0.4 * 1.1 + 0.3 * 1.2 + 0.15 * 1.2 + 0.15 * 1.2) = 1.16
-  ExpectNear(MultiplyAllocation(current_input_allocation_, 1 / 1.16),
-             current_adjusted_allocation_, 0.01);
-}
-
 TEST_F(EncoderBitrateAdjusterTest, ThreeTemporalLayersNonLayeredEncoder) {
   // Three temporal layers, 60%/20%/20% bps allocation, 10% overshoot,
   // encoder does not actually support temporal layers.

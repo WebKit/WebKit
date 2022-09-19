@@ -293,6 +293,8 @@ CFStringRef ExtractProfile(const webrtc::H264ProfileLevelId &profile_level_id) {
 #else
       return kVTProfileLevel_H264_High_AutoLevel;
 #endif
+    case webrtc::H264Profile::kProfilePredictiveHigh444:
+      return kVTProfileLevel_H264_High_AutoLevel;
   }
 }
 

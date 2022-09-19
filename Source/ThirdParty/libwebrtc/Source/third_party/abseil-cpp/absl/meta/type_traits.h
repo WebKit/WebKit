@@ -35,7 +35,7 @@
 #ifndef ABSL_META_TYPE_TRAITS_H_
 #define ABSL_META_TYPE_TRAITS_H_
 
-#include <stddef.h>
+#include <cstddef>
 #include <functional>
 #include <type_traits>
 
@@ -46,6 +46,14 @@
 #if defined(_MSC_VER) && !defined(__clang__) && !defined(__GNUC__)
 #define ABSL_META_INTERNAL_STD_CONSTRUCTION_TRAITS_DONT_CHECK_DESTRUCTION 1
 #endif
+
+// Defines the default alignment. `__STDCPP_DEFAULT_NEW_ALIGNMENT__` is a C++17
+// feature.
+#if defined(__STDCPP_DEFAULT_NEW_ALIGNMENT__)
+#define ABSL_INTERNAL_DEFAULT_NEW_ALIGNMENT __STDCPP_DEFAULT_NEW_ALIGNMENT__
+#else  // defined(__STDCPP_DEFAULT_NEW_ALIGNMENT__)
+#define ABSL_INTERNAL_DEFAULT_NEW_ALIGNMENT alignof(std::max_align_t)
+#endif  // defined(__STDCPP_DEFAULT_NEW_ALIGNMENT__)
 
 namespace absl {
 ABSL_NAMESPACE_BEGIN
@@ -290,8 +298,12 @@ struct is_function
 // https://gcc.gnu.org/onlinedocs/gcc/Type-Traits.html#Type-Traits.
 template <typename T>
 struct is_trivially_destructible
+#ifdef ABSL_HAVE_STD_IS_TRIVIALLY_DESTRUCTIBLE
+    : std::is_trivially_destructible<T> {
+#else
     : std::integral_constant<bool, __has_trivial_destructor(T) &&
                                    std::is_destructible<T>::value> {
+#endif
 #ifdef ABSL_HAVE_STD_IS_TRIVIALLY_DESTRUCTIBLE
  private:
   static constexpr bool compliant = std::is_trivially_destructible<T>::value ==
@@ -339,9 +351,13 @@ struct is_trivially_destructible
 // Nontrivially destructible types will cause the expression to be nontrivial.
 template <typename T>
 struct is_trivially_default_constructible
+#if defined(ABSL_HAVE_STD_IS_TRIVIALLY_CONSTRUCTIBLE)
+    : std::is_trivially_default_constructible<T> {
+#else
     : std::integral_constant<bool, __has_trivial_constructor(T) &&
                                    std::is_default_constructible<T>::value &&
                                    is_trivially_destructible<T>::value> {
+#endif
 #if defined(ABSL_HAVE_STD_IS_TRIVIALLY_CONSTRUCTIBLE) && \
     !defined(                                            \
         ABSL_META_INTERNAL_STD_CONSTRUCTION_TRAITS_DONT_CHECK_DESTRUCTION)
@@ -373,10 +389,14 @@ struct is_trivially_default_constructible
 // expression to be nontrivial.
 template <typename T>
 struct is_trivially_move_constructible
+#if defined(ABSL_HAVE_STD_IS_TRIVIALLY_CONSTRUCTIBLE)
+    : std::is_trivially_move_constructible<T> {
+#else
     : std::conditional<
           std::is_object<T>::value && !std::is_array<T>::value,
           type_traits_internal::IsTriviallyMoveConstructibleObject<T>,
           std::is_reference<T>>::type::type {
+#endif
 #if defined(ABSL_HAVE_STD_IS_TRIVIALLY_CONSTRUCTIBLE) && \
     !defined(                                            \
         ABSL_META_INTERNAL_STD_CONSTRUCTION_TRAITS_DONT_CHECK_DESTRUCTION)
@@ -482,9 +502,13 @@ struct is_trivially_move_assignable
 // `is_trivially_assignable<T&, const T&>`.
 template <typename T>
 struct is_trivially_copy_assignable
+#ifdef ABSL_HAVE_STD_IS_TRIVIALLY_ASSIGNABLE
+    : std::is_trivially_copy_assignable<T> {
+#else
     : std::integral_constant<
           bool, __has_trivial_assign(typename std::remove_reference<T>::type) &&
                     absl::is_copy_assignable<T>::value> {
+#endif
 #ifdef ABSL_HAVE_STD_IS_TRIVIALLY_ASSIGNABLE
  private:
   static constexpr bool compliant =
@@ -536,6 +560,11 @@ namespace type_traits_internal {
 // destructible. Arrays of trivially copyable types are trivially copyable.
 //
 // We expose this metafunction only for internal use within absl.
+
+#if defined(ABSL_HAVE_STD_IS_TRIVIALLY_COPYABLE)
+template <typename T>
+struct is_trivially_copyable : std::is_trivially_copyable<T> {};
+#else
 template <typename T>
 class is_trivially_copyable_impl {
   using ExtentsRemoved = typename std::remove_all_extents<T>::type;
@@ -561,6 +590,7 @@ template <typename T>
 struct is_trivially_copyable
     : std::integral_constant<
           bool, type_traits_internal::is_trivially_copyable_impl<T>::kValue> {};
+#endif
 }  // namespace type_traits_internal
 
 // -----------------------------------------------------------------------------
@@ -634,7 +664,8 @@ using underlying_type_t = typename std::underlying_type<T>::type;
 
 namespace type_traits_internal {
 
-#if __cplusplus >= 201703L || (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
+#if (defined(__cpp_lib_is_invocable) && __cpp_lib_is_invocable >= 201703L) || \
+    (defined(_MSVC_LANG) && _MSVC_LANG >= 201703L)
 // std::result_of is deprecated (C++17) or removed (C++20)
 template<typename> struct result_of;
 template<typename F, typename... Args>

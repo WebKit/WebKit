@@ -10,7 +10,6 @@
 
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
 #include "modules/audio_coding/neteq/tools/audio_loop.h"
-#include "rtc_base/format_macros.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"

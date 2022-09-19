@@ -46,28 +46,6 @@ void DEPRECATED_AsyncInvoker::OnMessage(Message* msg) {
   delete data;
 }
 
-void DEPRECATED_AsyncInvoker::Flush(Thread* thread,
-                                    uint32_t id /*= MQID_ANY*/) {
-  // If the destructor is waiting for invocations to finish, don't start
-  // running even more tasks.
-  if (destroying_.load(std::memory_order_relaxed))
-    return;
-
-  // Run this on `thread` to reduce the number of context switches.
-  if (Thread::Current() != thread) {
-    thread->Invoke<void>(RTC_FROM_HERE,
-                         [this, thread, id] { Flush(thread, id); });
-    return;
-  }
-
-  MessageList removed;
-  thread->Clear(this, id, &removed);
-  for (MessageList::iterator it = removed.begin(); it != removed.end(); ++it) {
-    // This message was pending on this thread, so run it now.
-    thread->Send(it->posted_from, it->phandler, it->message_id, it->pdata);
-  }
-}
-
 void DEPRECATED_AsyncInvoker::Clear() {
   ThreadManager::Clear(this);
 }

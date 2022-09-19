@@ -55,7 +55,7 @@ Rotation DxgiRotationToRotation(DXGI_MODE_ROTATION rotation) {
       return Rotation::CLOCK_WISE_270;
   }
 
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return Rotation::CLOCK_WISE_0;
 }
 

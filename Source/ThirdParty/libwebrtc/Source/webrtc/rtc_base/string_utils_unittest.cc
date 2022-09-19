@@ -14,14 +14,6 @@
 
 namespace rtc {
 
-TEST(string_trim_Test, Trimming) {
-  EXPECT_EQ("temp", string_trim("\n\r\t temp \n\r\t"));
-  EXPECT_EQ("temp\n\r\t temp", string_trim(" temp\n\r\t temp "));
-  EXPECT_EQ("temp temp", string_trim("temp temp"));
-  EXPECT_EQ("", string_trim(" \r\n\t"));
-  EXPECT_EQ("", string_trim(""));
-}
-
 TEST(string_toHexTest, ToHex) {
   EXPECT_EQ(ToHex(0), "0");
   EXPECT_EQ(ToHex(0X1243E), "1243e");

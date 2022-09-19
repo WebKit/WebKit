@@ -131,7 +131,6 @@ public:
 
     RefPtr<WebCore::BlobDataFileReference> getBlobDataFileReferenceForPath(const String& path);
 
-    void cleanupForSuspension(Function<void()>&&);
     void endSuspension();
 
     void getNetworkLoadInformationResponse(WebCore::ResourceLoaderIdentifier identifier, CompletionHandler<void(const WebCore::ResourceResponse&)>&& completionHandler)

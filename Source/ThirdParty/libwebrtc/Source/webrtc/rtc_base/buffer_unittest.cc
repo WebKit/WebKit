@@ -13,6 +13,7 @@
 #include <cstdint>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
@@ -71,6 +72,13 @@ TEST(BufferTest, TestConstructArray) {
   EXPECT_EQ(buf.capacity(), 16u);
   EXPECT_FALSE(buf.empty());
   EXPECT_EQ(0, memcmp(buf.data(), kTestData, 16));
+}
+
+TEST(BufferTest, TestStringViewConversion) {
+  Buffer buf(kTestData);
+  absl::string_view view = buf;
+  EXPECT_EQ(view,
+            absl::string_view(reinterpret_cast<const char*>(kTestData), 16u));
 }
 
 TEST(BufferTest, TestSetData) {

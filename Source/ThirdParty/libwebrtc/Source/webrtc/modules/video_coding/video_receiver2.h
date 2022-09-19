@@ -11,12 +11,13 @@
 #ifndef MODULES_VIDEO_CODING_VIDEO_RECEIVER2_H_
 #define MODULES_VIDEO_CODING_VIDEO_RECEIVER2_H_
 
+#include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/decoder_database.h"
 #include "modules/video_coding/encoded_frame.h"
 #include "modules/video_coding/generic_decoder.h"
-#include "modules/video_coding/timing.h"
+#include "modules/video_coding/timing/timing.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
@@ -28,7 +29,9 @@ namespace webrtc {
 // VideoCodingModule api.
 class VideoReceiver2 {
  public:
-  VideoReceiver2(Clock* clock, VCMTiming* timing);
+  VideoReceiver2(Clock* clock,
+                 VCMTiming* timing,
+                 const FieldTrialsView& field_trials);
   ~VideoReceiver2();
 
   void RegisterReceiveCodec(uint8_t payload_type,
@@ -42,7 +45,7 @@ class VideoReceiver2 {
   int32_t Decode(const webrtc::VCMEncodedFrame* frame);
 
   // Notification methods that are used to check our internal state and validate
-  // threading assumptions. These are called by VideoReceiveStream.
+  // threading assumptions. These are called by VideoReceiveStreamInterface.
   // See `IsDecoderThreadRunning()` for more details.
   void DecoderThreadStarting();
   void DecoderThreadStopped();

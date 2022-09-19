@@ -29,11 +29,20 @@
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder.h"
+#include "api/video_codecs/video_decoder_factory_template.h"
+#include "api/video_codecs/video_decoder_factory_template_dav1d_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_libvpx_vp9_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_open_h264_adapter.h"
 #include "api/video_codecs/video_encoder_config.h"
+#include "api/video_codecs/video_encoder_factory.h"
+#include "api/video_codecs/video_encoder_factory_template.h"
+#include "api/video_codecs/video_encoder_factory_template_libaom_av1_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
 #include "common_video/h264/h264_common.h"
 #include "media/base/media_constants.h"
-#include "media/engine/internal_decoder_factory.h"
-#include "media/engine/internal_encoder_factory.h"
 #include "media/engine/simulcast.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
 #include "modules/video_coding/codecs/vp9/svc_config.h"
@@ -70,7 +79,7 @@ void ConfigureSimulcast(VideoCodec* codec_settings) {
       /* is_screenshare = */ false, true, trials);
 
   for (size_t i = 0; i < streams.size(); ++i) {
-    SpatialLayer* ss = &codec_settings->simulcastStream[i];
+    SimulcastStream* ss = &codec_settings->simulcastStream[i];
     ss->width = static_cast<uint16_t>(streams[i].width);
     ss->height = static_cast<uint16_t>(streams[i].height);
     ss->numberOfTemporalLayers =
@@ -104,29 +113,24 @@ std::string CodecSpecificToString(const VideoCodec& codec) {
   rtc::SimpleStringBuilder ss(buf);
   switch (codec.codecType) {
     case kVideoCodecVP8:
-      ss << "complexity: " << static_cast<int>(codec.VP8().complexity);
       ss << "\nnum_temporal_layers: "
          << static_cast<int>(codec.VP8().numberOfTemporalLayers);
       ss << "\ndenoising: " << codec.VP8().denoisingOn;
       ss << "\nautomatic_resize: " << codec.VP8().automaticResizeOn;
-      ss << "\nframe_dropping: " << codec.VP8().frameDroppingOn;
       ss << "\nkey_frame_interval: " << codec.VP8().keyFrameInterval;
       break;
     case kVideoCodecVP9:
-      ss << "complexity: " << static_cast<int>(codec.VP9().complexity);
       ss << "\nnum_temporal_layers: "
          << static_cast<int>(codec.VP9().numberOfTemporalLayers);
       ss << "\nnum_spatial_layers: "
          << static_cast<int>(codec.VP9().numberOfSpatialLayers);
       ss << "\ndenoising: " << codec.VP9().denoisingOn;
-      ss << "\nframe_dropping: " << codec.VP9().frameDroppingOn;
       ss << "\nkey_frame_interval: " << codec.VP9().keyFrameInterval;
       ss << "\nadaptive_qp_mode: " << codec.VP9().adaptiveQpMode;
       ss << "\nautomatic_resize: " << codec.VP9().automaticResizeOn;
       ss << "\nflexible_mode: " << codec.VP9().flexibleMode;
       break;
     case kVideoCodecH264:
-      ss << "frame_dropping: " << codec.H264().frameDroppingOn;
       ss << "\nkey_frame_interval: " << codec.H264().keyFrameInterval;
       ss << "\nnum_temporal_layers: "
          << static_cast<int>(codec.H264().numberOfTemporalLayers);
@@ -148,6 +152,29 @@ std::string FilenameWithParams(
     const VideoCodecTestFixtureImpl::Config& config) {
   return config.filename + "_" + config.CodecName() + "_" +
          std::to_string(config.codec_settings.startBitrate);
+}
+
+SdpVideoFormat CreateSdpVideoFormat(
+    const VideoCodecTestFixtureImpl::Config& config) {
+  if (config.codec_settings.codecType == kVideoCodecH264) {
+    const char* packetization_mode =
+        config.h264_codec_settings.packetization_mode ==
+                H264PacketizationMode::NonInterleaved
+            ? "1"
+            : "0";
+    SdpVideoFormat::Parameters codec_params = {
+        {cricket::kH264FmtpProfileLevelId,
+         *H264ProfileLevelIdToString(H264ProfileLevelId(
+             config.h264_codec_settings.profile, H264Level::kLevel3_1))},
+        {cricket::kH264FmtpPacketizationMode, packetization_mode},
+        {cricket::kH264FmtpLevelAsymmetryAllowed, "1"}};
+
+    return SdpVideoFormat(config.codec_name, codec_params);
+  } else if (config.codec_settings.codecType == kVideoCodecVP9) {
+    return SdpVideoFormat(config.codec_name, {{"profile-id", "0"}});
+  }
+
+  return SdpVideoFormat(config.codec_name);
 }
 
 }  // namespace
@@ -191,20 +218,19 @@ void VideoCodecTestFixtureImpl::Config::SetCodecSettings(
       num_simulcast_streams <= 1 ? 0
                                  : static_cast<uint8_t>(num_simulcast_streams);
 
+  codec_settings.SetFrameDropEnabled(frame_dropper_on);
   switch (codec_settings.codecType) {
     case kVideoCodecVP8:
       codec_settings.VP8()->numberOfTemporalLayers =
           static_cast<uint8_t>(num_temporal_layers);
       codec_settings.VP8()->denoisingOn = denoising_on;
       codec_settings.VP8()->automaticResizeOn = spatial_resize_on;
-      codec_settings.VP8()->frameDroppingOn = frame_dropper_on;
       codec_settings.VP8()->keyFrameInterval = kBaseKeyFrameInterval;
       break;
     case kVideoCodecVP9:
       codec_settings.VP9()->numberOfTemporalLayers =
           static_cast<uint8_t>(num_temporal_layers);
       codec_settings.VP9()->denoisingOn = denoising_on;
-      codec_settings.VP9()->frameDroppingOn = frame_dropper_on;
       codec_settings.VP9()->keyFrameInterval = kBaseKeyFrameInterval;
       codec_settings.VP9()->automaticResizeOn = spatial_resize_on;
       codec_settings.VP9()->numberOfSpatialLayers =
@@ -214,7 +240,6 @@ void VideoCodecTestFixtureImpl::Config::SetCodecSettings(
       codec_settings.qpMax = 63;
       break;
     case kVideoCodecH264:
-      codec_settings.H264()->frameDroppingOn = frame_dropper_on;
       codec_settings.H264()->keyFrameInterval = kBaseKeyFrameInterval;
       codec_settings.H264()->numberOfTemporalLayers =
           static_cast<uint8_t>(num_temporal_layers);
@@ -282,11 +307,15 @@ std::string VideoCodecTestFixtureImpl::Config::ToString() const {
   ss << "\nnum_simulcast_streams: "
      << static_cast<int>(codec_settings.numberOfSimulcastStreams);
   ss << "\n\n--> codec_settings." << codec_type;
+  ss << "complexity: "
+     << static_cast<int>(codec_settings.GetVideoEncoderComplexity());
+  ss << "\nframe_dropping: " << codec_settings.GetFrameDropEnabled();
   ss << "\n" << CodecSpecificToString(codec_settings);
   if (codec_settings.numberOfSimulcastStreams > 1) {
     for (int i = 0; i < codec_settings.numberOfSimulcastStreams; ++i) {
       ss << "\n\n--> codec_settings.simulcastStream[" << i << "]";
-      const SpatialLayer& simulcast_stream = codec_settings.simulcastStream[i];
+      const SimulcastStream& simulcast_stream =
+          codec_settings.simulcastStream[i];
       ss << "\nwidth: " << simulcast_stream.width;
       ss << "\nheight: " << simulcast_stream.height;
       ss << "\nnum_temporal_layers: "
@@ -350,7 +379,7 @@ void VideoCodecTestFixtureImpl::H264KeyframeChecker::CheckEncodedFrame(
     EXPECT_FALSE(contains_pps) << "Delta frame should not contain PPS.";
     EXPECT_FALSE(contains_idr) << "Delta frame should not contain IDR.";
   } else {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
   }
 }
 
@@ -389,8 +418,16 @@ class VideoCodecTestFixtureImpl::CpuProcessTime final {
 };
 
 VideoCodecTestFixtureImpl::VideoCodecTestFixtureImpl(Config config)
-    : encoder_factory_(std::make_unique<InternalEncoderFactory>()),
-      decoder_factory_(std::make_unique<InternalDecoderFactory>()),
+    : encoder_factory_(std::make_unique<webrtc::VideoEncoderFactoryTemplate<
+                           webrtc::LibvpxVp8EncoderTemplateAdapter,
+                           webrtc::LibvpxVp9EncoderTemplateAdapter,
+                           webrtc::OpenH264EncoderTemplateAdapter,
+                           webrtc::LibaomAv1EncoderTemplateAdapter>>()),
+      decoder_factory_(std::make_unique<webrtc::VideoDecoderFactoryTemplate<
+                           webrtc::LibvpxVp8DecoderTemplateAdapter,
+                           webrtc::LibvpxVp9DecoderTemplateAdapter,
+                           webrtc::OpenH264DecoderTemplateAdapter,
+                           webrtc::Dav1dDecoderTemplateAdapter>>()),
       config_(config) {}
 
 VideoCodecTestFixtureImpl::VideoCodecTestFixtureImpl(
@@ -466,7 +503,7 @@ void VideoCodecTestFixtureImpl::ProcessAllFrames(
   task_queue->PostTask([this] { processor_->Finalize(); });
 
   // Wait until we know that the last frame has been sent for encode.
-  task_queue->SendTask([] {}, RTC_FROM_HERE);
+  task_queue->SendTask([] {});
 
   // Give the VideoProcessor pipeline some time to process the last frame,
   // and then release the codecs.
@@ -611,23 +648,21 @@ void VideoCodecTestFixtureImpl::VerifyVideoStatistic(
 }
 
 bool VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
-  SdpVideoFormat::Parameters params;
-  if (config_.codec_settings.codecType == kVideoCodecH264) {
-    const char* packetization_mode =
-        config_.h264_codec_settings.packetization_mode ==
-                H264PacketizationMode::NonInterleaved
-            ? "1"
-            : "0";
-    params = {{cricket::kH264FmtpProfileLevelId,
-               *H264ProfileLevelIdToString(H264ProfileLevelId(
-                   config_.h264_codec_settings.profile, H264Level::kLevel3_1))},
-              {cricket::kH264FmtpPacketizationMode, packetization_mode}};
-  } else {
-    params = {};
-  }
-  SdpVideoFormat format(config_.codec_name, params);
+  SdpVideoFormat encoder_format(CreateSdpVideoFormat(config_));
+  SdpVideoFormat decoder_format = encoder_format;
 
-  encoder_ = encoder_factory_->CreateVideoEncoder(format);
+  // Override encoder and decoder formats with explicitly provided ones.
+  if (config_.encoder_format) {
+    RTC_DCHECK_EQ(config_.encoder_format->name, config_.codec_name);
+    encoder_format = *config_.encoder_format;
+  }
+
+  if (config_.decoder_format) {
+    RTC_DCHECK_EQ(config_.decoder_format->name, config_.codec_name);
+    decoder_format = *config_.decoder_format;
+  }
+
+  encoder_ = encoder_factory_->CreateVideoEncoder(encoder_format);
   EXPECT_TRUE(encoder_) << "Encoder not successfully created.";
   if (encoder_ == nullptr) {
     return false;
@@ -636,15 +671,13 @@ bool VideoCodecTestFixtureImpl::CreateEncoderAndDecoder() {
   const size_t num_simulcast_or_spatial_layers = std::max(
       config_.NumberOfSimulcastStreams(), config_.NumberOfSpatialLayers());
   for (size_t i = 0; i < num_simulcast_or_spatial_layers; ++i) {
-    decoders_.push_back(std::unique_ptr<VideoDecoder>(
-        decoder_factory_->CreateVideoDecoder(format)));
-  }
-
-  for (const auto& decoder : decoders_) {
+    std::unique_ptr<VideoDecoder> decoder =
+        decoder_factory_->CreateVideoDecoder(decoder_format);
     EXPECT_TRUE(decoder) << "Decoder not successfully created.";
     if (decoder == nullptr) {
       return false;
     }
+    decoders_.push_back(std::move(decoder));
   }
 
   return true;
@@ -687,24 +720,13 @@ bool VideoCodecTestFixtureImpl::SetUpAndInitObjects(
   cpu_process_time_.reset(new CpuProcessTime(config_));
 
   bool is_codec_created = false;
-  task_queue->SendTask(
-      [this, &is_codec_created]() {
-        is_codec_created = CreateEncoderAndDecoder();
-      },
-      RTC_FROM_HERE);
+  task_queue->SendTask([this, &is_codec_created]() {
+    is_codec_created = CreateEncoderAndDecoder();
+  });
 
   if (!is_codec_created) {
     return false;
   }
-
-  task_queue->SendTask(
-      [this]() {
-        processor_ = std::make_unique<VideoProcessor>(
-            encoder_.get(), &decoders_, source_frame_reader_.get(), config_,
-            &stats_, &encoded_frame_writers_,
-            decoded_frame_writers_.empty() ? nullptr : &decoded_frame_writers_);
-      },
-      RTC_FROM_HERE);
 
   if (config_.visualization_params.save_encoded_ivf ||
       config_.visualization_params.save_decoded_y4m) {
@@ -748,18 +770,23 @@ bool VideoCodecTestFixtureImpl::SetUpAndInitObjects(
     }
   }
 
+  task_queue->SendTask(
+      [this]() {
+        processor_ = std::make_unique<VideoProcessor>(
+            encoder_.get(), &decoders_, source_frame_reader_.get(), config_,
+            &stats_, &encoded_frame_writers_,
+            decoded_frame_writers_.empty() ? nullptr : &decoded_frame_writers_);
+      });
   return true;
 }
 
 void VideoCodecTestFixtureImpl::ReleaseAndCloseObjects(
     TaskQueueForTest* task_queue) {
-  task_queue->SendTask(
-      [this]() {
-        processor_.reset();
-        // The VideoProcessor must be destroyed before the codecs.
-        DestroyEncoderAndDecoder();
-      },
-      RTC_FROM_HERE);
+  task_queue->SendTask([this]() {
+    processor_.reset();
+    // The VideoProcessor must be destroyed before the codecs.
+    DestroyEncoderAndDecoder();
+  });
 
   source_frame_reader_->Close();
 
@@ -778,15 +805,13 @@ std::string VideoCodecTestFixtureImpl::GetCodecName(
     TaskQueueForTest* task_queue,
     bool is_encoder) const {
   std::string codec_name;
-  task_queue->SendTask(
-      [this, is_encoder, &codec_name] {
-        if (is_encoder) {
-          codec_name = encoder_->GetEncoderInfo().implementation_name;
-        } else {
-          codec_name = decoders_.at(0)->ImplementationName();
-        }
-      },
-      RTC_FROM_HERE);
+  task_queue->SendTask([this, is_encoder, &codec_name] {
+    if (is_encoder) {
+      codec_name = encoder_->GetEncoderInfo().implementation_name;
+    } else {
+      codec_name = decoders_.at(0)->ImplementationName();
+    }
+  });
   return codec_name;
 }
 

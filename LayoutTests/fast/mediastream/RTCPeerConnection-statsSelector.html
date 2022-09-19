@@ -39,10 +39,18 @@
                 result = r;
                 testPassed("statsHandler2 was called");
                 shouldBeGreaterThanOrEqual('result.size', '1');
-                local = result.get(result.keys().next().value);
+                const values = result.values();
+                while (true) {
+                    const iteratorValue = values.next();
+                    if (iteratorValue.done)
+                        break;
+                    local = iteratorValue.value;
+                    if (local.type === 'outbound-rtp')
+                        break;
+                }
                 timestamp = local.timestamp;
                 shouldBeGreaterThanOrEqual('timestamp', 'startTime');
-                shouldBe('local.type', '"video"');
+                shouldBe('local.kind', '"video"');
                 finishJSTest();
             }
 

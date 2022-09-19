@@ -13,6 +13,7 @@
 
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "modules/audio_processing/test/audio_processing_simulator.h"
 
 namespace webrtc {
@@ -51,7 +52,7 @@ class WavBasedSimulator final : public AudioProcessingSimulator {
   void PrepareReverseProcessStreamCall();
   static std::vector<SimulationEventType> GetDefaultEventChain();
   static std::vector<SimulationEventType> GetCustomEventChain(
-      const std::string& filename);
+      absl::string_view filename);
 
   std::vector<SimulationEventType> call_chain_;
 };

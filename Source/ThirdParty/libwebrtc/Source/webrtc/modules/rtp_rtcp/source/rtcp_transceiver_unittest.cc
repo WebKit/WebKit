@@ -13,6 +13,7 @@
 #include <memory>
 #include <utility>
 
+#include "api/units/timestamp.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/sender_report.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
@@ -37,6 +38,7 @@ using ::webrtc::RtcpTransceiver;
 using ::webrtc::RtcpTransceiverConfig;
 using ::webrtc::SimulatedClock;
 using ::webrtc::TaskQueueForTest;
+using ::webrtc::Timestamp;
 using ::webrtc::rtcp::RemoteEstimate;
 using ::webrtc::rtcp::RtcpPacket;
 using ::webrtc::rtcp::TransportFeedback;
@@ -309,7 +311,7 @@ TEST(RtcpTransceiverTest, SendsCombinedRtcpPacketOnTaskQueue) {
   // Create minimalistic transport feedback packet.
   std::vector<std::unique_ptr<RtcpPacket>> packets;
   auto transport_feedback = std::make_unique<TransportFeedback>();
-  transport_feedback->AddReceivedPacket(321, 10000);
+  transport_feedback->AddReceivedPacket(321, Timestamp::Millis(10));
   packets.push_back(std::move(transport_feedback));
 
   auto remote_estimate = std::make_unique<RemoteEstimate>();

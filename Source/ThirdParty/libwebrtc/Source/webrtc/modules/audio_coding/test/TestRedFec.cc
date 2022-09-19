@@ -190,7 +190,8 @@ void TestRedFec::RegisterSendCodec(
       AudioEncoderCopyRed::Config config;
       config.payload_type = red_payload_type;
       config.speech_encoder = std::move(encoder);
-      encoder = std::make_unique<AudioEncoderCopyRed>(std::move(config));
+      encoder = std::make_unique<AudioEncoderCopyRed>(std::move(config),
+                                                      field_trials_);
       receive_codecs.emplace(
           std::make_pair(red_payload_type,
                          SdpAudioFormat("red", codec_format.clockrate_hz, 1)));

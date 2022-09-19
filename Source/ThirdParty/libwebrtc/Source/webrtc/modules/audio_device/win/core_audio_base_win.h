@@ -16,6 +16,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/sequence_checker.h"
 #include "modules/audio_device/win/core_audio_utility_win.h"
@@ -117,8 +118,8 @@ class CoreAudioBase : public IAudioSessionEvents {
   bool IsOutput() const;
   bool IsDefaultDevice(int index) const;
   bool IsDefaultCommunicationsDevice(int index) const;
-  bool IsDefaultDeviceId(const std::string& device_id) const;
-  bool IsDefaultCommunicationsDeviceId(const std::string& device_id) const;
+  bool IsDefaultDeviceId(absl::string_view device_id) const;
+  bool IsDefaultCommunicationsDeviceId(absl::string_view device_id) const;
   EDataFlow GetDataFlow() const;
   bool IsRestarting() const;
   int64_t TimeSinceStart() const;

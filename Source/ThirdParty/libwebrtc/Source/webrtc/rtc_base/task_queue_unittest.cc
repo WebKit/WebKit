@@ -16,11 +16,13 @@
 #endif
 
 #include <stdint.h>
+
 #include <memory>
 #include <utility>
 #include <vector>
 
 #include "absl/memory/memory.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/event.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/time_utils.h"
@@ -29,6 +31,7 @@
 namespace rtc {
 
 namespace {
+using ::webrtc::TimeDelta;
 // Noop on all platforms except Windows, where it turns on high precision
 // multimedia timers which increases the precision of TimeMillis() while in
 // scope.
@@ -66,7 +69,8 @@ TEST(TaskQueueTest, DISABLED_PostDelayedHighRes) {
   webrtc::TaskQueueForTest queue(kQueueName, TaskQueue::Priority::HIGH);
 
   uint32_t start = Time();
-  queue.PostDelayedTask([&event, &queue] { CheckCurrent(&event, &queue); }, 3);
+  queue.PostDelayedTask([&event, &queue] { CheckCurrent(&event, &queue); },
+                        TimeDelta::Millis(3));
   EXPECT_TRUE(event.Wait(1000));
   uint32_t end = TimeMillis();
   // These tests are a little relaxed due to how "powerful" our test bots can

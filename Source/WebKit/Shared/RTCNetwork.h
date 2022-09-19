@@ -29,9 +29,14 @@
 
 #include <WebCore/LibWebRTCMacros.h>
 #include <optional>
-#include <webrtc/rtc_base/network.h>
-#include <webrtc/rtc_base/socket_address.h>
 #include <wtf/Forward.h>
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/rtc_base/socket_address.h>
+#include <webrtc/rtc_base/network.h>
+
+ALLOW_COMMA_END
 
 namespace IPC {
 class Decoder;

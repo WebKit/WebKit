@@ -21,6 +21,8 @@
 #include "absl/base/config.h"
 #include "absl/strings/cord.h"
 #include "absl/strings/internal/cord_internal.h"
+#include "absl/strings/internal/cord_rep_btree.h"
+#include "absl/strings/internal/cord_rep_crc.h"
 #include "absl/strings/internal/cord_rep_flat.h"
 #include "absl/strings/internal/cord_rep_ring.h"
 #include "absl/strings/internal/cordz_info.h"
@@ -41,6 +43,8 @@ inline void PrintTo(const CordzStatistics& stats, std::ostream* s) {
 }
 
 namespace {
+
+using ::testing::Ge;
 
 // Creates a flat of the specified allocated size
 CordRepFlat* Flat(size_t size) {
@@ -70,16 +74,6 @@ CordRepSubstring* Substring(CordRep* rep) {
   substring->tag = SUBSTRING;
   substring->child = rep;
   return substring;
-}
-
-// Creates a concat on the provided reps
-CordRepConcat* Concat(CordRep* left, CordRep* right) {
-  auto* concat = new CordRepConcat;
-  concat->length = left->length + right->length;
-  concat->tag = CONCAT;
-  concat->left = left;
-  concat->right = right;
-  return concat;
 }
 
 // Reference count helper
@@ -134,8 +128,8 @@ size_t SizeOf(const CordRepRing* rep) {
 }
 
 // Computes fair share memory used in a naive 'we dare to recurse' way.
-size_t FairShare(CordRep* rep, size_t ref = 1) {
-  size_t self = 0, children = 0;
+double FairShareImpl(CordRep* rep, size_t ref) {
+  double self = 0.0, children = 0.0;
   ref *= rep->refcount.Get();
   if (rep->tag >= FLAT) {
     self = SizeOf(rep->flat());
@@ -143,20 +137,26 @@ size_t FairShare(CordRep* rep, size_t ref = 1) {
     self = SizeOf(rep->external());
   } else if (rep->tag == SUBSTRING) {
     self = SizeOf(rep->substring());
-    children = FairShare(rep->substring()->child, ref);
+    children = FairShareImpl(rep->substring()->child, ref);
+  } else if (rep->tag == BTREE) {
+    self = SizeOf(rep->btree());
+    for (CordRep*edge : rep->btree()->Edges()) {
+      children += FairShareImpl(edge, ref);
+    }
   } else if (rep->tag == RING) {
     self = SizeOf(rep->ring());
     rep->ring()->ForEach([&](CordRepRing::index_type i) {
-      self += FairShare(rep->ring()->entry_child(i));
+      self += FairShareImpl(rep->ring()->entry_child(i), 1);
     });
-  } else if (rep->tag == CONCAT) {
-    self = SizeOf(rep->concat());
-    children = FairShare(rep->concat()->left, ref) +
-               FairShare(rep->concat()->right, ref);
   } else {
     assert(false);
   }
   return self / ref + children;
+}
+
+// Returns the fair share memory size from `ShareFhareImpl()` as a size_t.
+size_t FairShare(CordRep* rep, size_t ref = 1) {
+  return static_cast<size_t>(FairShareImpl(rep, ref));
 }
 
 // Samples the cord and returns CordzInfo::GetStatistics()
@@ -191,6 +191,7 @@ MATCHER_P(EqStatistics, stats, "Statistics equal expected values") {
   STATS_MATCHER_EXPECT_EQ(node_counts.concat);
   STATS_MATCHER_EXPECT_EQ(node_counts.substring);
   STATS_MATCHER_EXPECT_EQ(node_counts.ring);
+  STATS_MATCHER_EXPECT_EQ(node_counts.btree);
   STATS_MATCHER_EXPECT_EQ(estimated_memory_usage);
   STATS_MATCHER_EXPECT_EQ(estimated_fair_share_memory_usage);
 
@@ -292,80 +293,6 @@ TEST(CordzInfoStatisticsTest, SharedSubstring) {
   EXPECT_THAT(SampleCord(substring), EqStatistics(expected));
 }
 
-TEST(CordzInfoStatisticsTest, Concat) {
-  RefHelper ref;
-  auto* flat1 = Flat(300);
-  auto* flat2 = Flat(2000);
-  auto* concat = ref.NeedsUnref(Concat(flat1, flat2));
-
-  CordzStatistics expected;
-  expected.size = concat->length;
-  expected.estimated_memory_usage =
-      SizeOf(concat) + SizeOf(flat1) + SizeOf(flat2);
-  expected.estimated_fair_share_memory_usage = expected.estimated_memory_usage;
-  expected.node_count = 3;
-  expected.node_counts.flat = 2;
-  expected.node_counts.flat_512 = 1;
-  expected.node_counts.concat = 1;
-
-  EXPECT_THAT(SampleCord(concat), EqStatistics(expected));
-}
-
-TEST(CordzInfoStatisticsTest, DeepConcat) {
-  RefHelper ref;
-  auto* flat1 = Flat(300);
-  auto* flat2 = Flat(2000);
-  auto* flat3 = Flat(400);
-  auto* external = External(3000);
-  auto* substring = Substring(external);
-  auto* concat1 = Concat(flat1, flat2);
-  auto* concat2 = Concat(flat3, substring);
-  auto* concat = ref.NeedsUnref(Concat(concat1, concat2));
-
-  CordzStatistics expected;
-  expected.size = concat->length;
-  expected.estimated_memory_usage = SizeOf(concat) * 3 + SizeOf(flat1) +
-                                    SizeOf(flat2) + SizeOf(flat3) +
-                                    SizeOf(external) + SizeOf(substring);
-  expected.estimated_fair_share_memory_usage = expected.estimated_memory_usage;
-
-  expected.node_count = 8;
-  expected.node_counts.flat = 3;
-  expected.node_counts.flat_512 = 2;
-  expected.node_counts.external = 1;
-  expected.node_counts.concat = 3;
-  expected.node_counts.substring = 1;
-
-  EXPECT_THAT(SampleCord(concat), EqStatistics(expected));
-}
-
-TEST(CordzInfoStatisticsTest, DeepSharedConcat) {
-  RefHelper ref;
-  auto* flat1 = Flat(40);
-  auto* flat2 = ref.Ref(Flat(2000), 4);
-  auto* flat3 = Flat(70);
-  auto* external = ref.Ref(External(3000));
-  auto* substring = ref.Ref(Substring(external), 3);
-  auto* concat1 = Concat(flat1, flat2);
-  auto* concat2 = Concat(flat3, substring);
-  auto* concat = ref.Ref(ref.NeedsUnref(Concat(concat1, concat2)));
-
-  CordzStatistics expected;
-  expected.size = concat->length;
-  expected.estimated_memory_usage = SizeOf(concat) * 3 + SizeOf(flat1) +
-                                    SizeOf(flat2) + SizeOf(flat3) +
-                                    SizeOf(external) + SizeOf(substring);
-  expected.estimated_fair_share_memory_usage = FairShare(concat);
-  expected.node_count = 8;
-  expected.node_counts.flat = 3;
-  expected.node_counts.flat_64 = 1;
-  expected.node_counts.flat_128 = 1;
-  expected.node_counts.external = 1;
-  expected.node_counts.concat = 3;
-  expected.node_counts.substring = 1;
-
-  EXPECT_THAT(SampleCord(concat), EqStatistics(expected));
-}
 
 TEST(CordzInfoStatisticsTest, Ring) {
   RefHelper ref;
@@ -424,6 +351,120 @@ TEST(CordzInfoStatisticsTest, SharedSubstringRing) {
   EXPECT_THAT(SampleCord(substring), EqStatistics(expected));
 }
 
+TEST(CordzInfoStatisticsTest, BtreeLeaf) {
+  ASSERT_THAT(CordRepBtree::kMaxCapacity, Ge(3));
+  RefHelper ref;
+  auto* flat1 = Flat(2000);
+  auto* flat2 = Flat(200);
+  auto* substr = Substring(flat2);
+  auto* external = External(3000);
+
+  CordRepBtree* tree = CordRepBtree::Create(flat1);
+  tree = CordRepBtree::Append(tree, substr);
+  tree = CordRepBtree::Append(tree, external);
+  size_t flat3_count = CordRepBtree::kMaxCapacity - 3;
+  size_t flat3_size = 0;
+  for (size_t i = 0; i < flat3_count; ++i) {
+    auto* flat3 = Flat(70);
+    flat3_size += SizeOf(flat3);
+    tree = CordRepBtree::Append(tree, flat3);
+  }
+  ref.NeedsUnref(tree);
+
+  CordzStatistics expected;
+  expected.size = tree->length;
+  expected.estimated_memory_usage = SizeOf(tree) + SizeOf(flat1) +
+                                    SizeOf(flat2) + SizeOf(substr) +
+                                    flat3_size + SizeOf(external);
+  expected.estimated_fair_share_memory_usage = expected.estimated_memory_usage;
+  expected.node_count = 1 + 3 + 1 + flat3_count;
+  expected.node_counts.flat = 2 + flat3_count;
+  expected.node_counts.flat_128 = flat3_count;
+  expected.node_counts.flat_256 = 1;
+  expected.node_counts.external = 1;
+  expected.node_counts.substring = 1;
+  expected.node_counts.btree = 1;
+
+  EXPECT_THAT(SampleCord(tree), EqStatistics(expected));
+}
+
+TEST(CordzInfoStatisticsTest, BtreeNodeShared) {
+  RefHelper ref;
+  static constexpr int leaf_count = 3;
+  const size_t flat3_count = CordRepBtree::kMaxCapacity - 3;
+  ASSERT_THAT(flat3_count, Ge(0));
+
+  CordRepBtree* tree = nullptr;
+  size_t mem_size = 0;
+  for (int i = 0; i < leaf_count; ++i) {
+    auto* flat1 = ref.Ref(Flat(2000), 9);
+    mem_size += SizeOf(flat1);
+    if (i == 0) {
+      tree = CordRepBtree::Create(flat1);
+    } else {
+      tree = CordRepBtree::Append(tree, flat1);
+    }
+
+    auto* flat2 = Flat(200);
+    auto* substr = Substring(flat2);
+    mem_size += SizeOf(flat2) + SizeOf(substr);
+    tree = CordRepBtree::Append(tree, substr);
+
+    auto* external = External(30);
+    mem_size += SizeOf(external);
+    tree = CordRepBtree::Append(tree, external);
+
+    for (size_t i = 0; i < flat3_count; ++i) {
+      auto* flat3 = Flat(70);
+      mem_size += SizeOf(flat3);
+      tree = CordRepBtree::Append(tree, flat3);
+    }
+
+    if (i == 0) {
+      mem_size += SizeOf(tree);
+    } else {
+      mem_size += SizeOf(tree->Edges().back()->btree());
+    }
+  }
+  ref.NeedsUnref(tree);
+
+  // Ref count: 2 for top (add 1), 5 for leaf 0 (add 4).
+  ref.Ref(tree, 1);
+  ref.Ref(tree->Edges().front(), 4);
+
+  CordzStatistics expected;
+  expected.size = tree->length;
+  expected.estimated_memory_usage = SizeOf(tree) + mem_size;
+  expected.estimated_fair_share_memory_usage = FairShare(tree);
+
+  expected.node_count = 1 + leaf_count * (1 + 3 + 1 + flat3_count);
+  expected.node_counts.flat = leaf_count * (2 + flat3_count);
+  expected.node_counts.flat_128 = leaf_count * flat3_count;
+  expected.node_counts.flat_256 = leaf_count;
+  expected.node_counts.external = leaf_count;
+  expected.node_counts.substring = leaf_count;
+  expected.node_counts.btree = 1 + leaf_count;
+
+  EXPECT_THAT(SampleCord(tree), EqStatistics(expected));
+}
+
+TEST(CordzInfoStatisticsTest, Crc) {
+  RefHelper ref;
+  auto* left = Flat(1000);
+  auto* crc = ref.NeedsUnref(CordRepCrc::New(left, 12345));
+
+  CordzStatistics expected;
+  expected.size = left->length;
+  expected.estimated_memory_usage = SizeOf(crc) + SizeOf(left);
+  expected.estimated_fair_share_memory_usage = expected.estimated_memory_usage;
+  expected.node_count = 2;
+  expected.node_counts.flat = 1;
+  expected.node_counts.flat_1k = 1;
+  expected.node_counts.crc = 1;
+
+  EXPECT_THAT(SampleCord(crc), EqStatistics(expected));
+}
+
 TEST(CordzInfoStatisticsTest, ThreadSafety) {
   Notification stop;
   static constexpr int kNumThreads = 8;
@@ -471,9 +512,15 @@ TEST(CordzInfoStatisticsTest, ThreadSafety) {
                 CordRep::Unref(cord.as_tree());
                 cord.set_inline_size(0);
               } else {
-                // 50/50 Ring or Flat coin toss
+                // Coin toss to 25% ring, 25% btree, and 50% flat.
                 CordRep* rep = Flat(256);
-                rep = (coin_toss(gen) != 0) ? CordRepRing::Create(rep) : rep;
+                if (coin_toss(gen) != 0) {
+                  if (coin_toss(gen) != 0) {
+                    rep = CordRepRing::Create(rep);
+                  } else {
+                    rep = CordRepBtree::Create(rep);
+                  }
+                }
                 cord.make_tree(rep);
 
                 // 50/50 sample

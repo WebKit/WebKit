@@ -1567,7 +1567,6 @@ webkit.org/b/235885 webrtc/vp9-svc.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/simulcast [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/simulcast-answer.html [ Skip ]
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/protocol/simulcast-offer.html [ Skip ]
-webkit.org/b/191006 webkit.org/b/235885 webrtc/simulcast-h264.html [ Skip ]
 
 # DTMF not supported.
 webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-insertDTMF.https.html [ Skip ]

@@ -40,8 +40,14 @@
 #include <WebCore/Page.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/Settings.h>
+
 #include <webrtc/api/async_resolver_factory.h>
+
+ALLOW_COMMA_BEGIN
+
 #include <webrtc/pc/peer_connection_factory.h>
+
+ALLOW_COMMA_END
 
 namespace WebKit {
 using namespace WebCore;
@@ -91,7 +97,7 @@ public:
 private:
     // SuspendableSocketFactory
     rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort) final;
-    rtc::AsyncPacketSocket* CreateServerTcpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options) final;
+    rtc::AsyncListenSocket* CreateServerTcpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options) final { return nullptr; }
     rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, const rtc::PacketSocketTcpOptions&) final;
     rtc::AsyncResolverInterface* CreateAsyncResolver() final;
     void suspend() final;
@@ -116,11 +122,6 @@ RTCSocketFactory::RTCSocketFactory(WebPageProxyIdentifier pageIdentifier, String
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateUdpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort)
 {
     return WebProcess::singleton().libWebRTCNetwork().socketFactory().createUdpSocket(this, address, minPort, maxPort, m_pageIdentifier, m_isFirstParty, m_isRelayDisabled, m_domain);
-}
-
-rtc::AsyncPacketSocket* RTCSocketFactory::CreateServerTcpSocket(const rtc::SocketAddress& address, uint16_t minPort, uint16_t maxPort, int options)
-{
-    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createServerTcpSocket(this, address, minPort, maxPort, options);
 }
 
 rtc::AsyncPacketSocket* RTCSocketFactory::CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, const rtc::PacketSocketTcpOptions& options)

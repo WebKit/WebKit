@@ -117,7 +117,6 @@ class ObjCVideoEncoder : public VideoEncoder {
                                             ScalingSettings::kOff;
 
     info.is_hardware_accelerated = true;
-    info.has_internal_source = false;
     return info;
   }
 
@@ -156,14 +155,6 @@ std::vector<SdpVideoFormat> ObjCVideoEncoderFactory::GetImplementations() const 
     return supported_formats;
   }
   return GetSupportedFormats();
-}
-
-VideoEncoderFactory::CodecInfo ObjCVideoEncoderFactory::QueryVideoEncoder(
-    const SdpVideoFormat &format) const {
-
-  VideoEncoderFactory::CodecInfo codec_info;
-  codec_info.has_internal_source = false;
-  return codec_info;
 }
 
 std::unique_ptr<VideoEncoder> ObjCVideoEncoderFactory::CreateVideoEncoder(

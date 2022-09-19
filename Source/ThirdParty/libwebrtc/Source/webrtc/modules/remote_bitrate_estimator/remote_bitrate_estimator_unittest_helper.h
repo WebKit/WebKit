@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "modules/remote_bitrate_estimator/include/remote_bitrate_estimator.h"
-#include "rtc_base/constructor_magic.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gtest.h"
 
@@ -71,6 +70,10 @@ class RtpStream {
             uint32_t frequency,
             uint32_t timestamp_offset,
             int64_t rtcp_receive_time);
+
+  RtpStream(const RtpStream&) = delete;
+  RtpStream& operator=(const RtpStream&) = delete;
+
   void set_rtp_timestamp_offset(uint32_t offset);
 
   // Generates a new frame for this stream. If called too soon after the
@@ -104,8 +107,6 @@ class RtpStream {
   int64_t next_rtcp_time_;
   uint32_t rtp_timestamp_offset_;
   const double kNtpFracPerMs;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(RtpStream);
 };
 
 class StreamGenerator {
@@ -115,6 +116,9 @@ class StreamGenerator {
   StreamGenerator(int capacity, int64_t time_now);
 
   ~StreamGenerator();
+
+  StreamGenerator(const StreamGenerator&) = delete;
+  StreamGenerator& operator=(const StreamGenerator&) = delete;
 
   // Add a new stream.
   void AddStream(RtpStream* stream);
@@ -142,8 +146,6 @@ class StreamGenerator {
   int64_t prev_arrival_time_us_;
   // All streams being transmitted on this simulated channel.
   StreamMap streams_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(StreamGenerator);
 };
 }  // namespace testing
 
@@ -151,6 +153,10 @@ class RemoteBitrateEstimatorTest : public ::testing::Test {
  public:
   RemoteBitrateEstimatorTest();
   virtual ~RemoteBitrateEstimatorTest();
+
+  RemoteBitrateEstimatorTest(const RemoteBitrateEstimatorTest&) = delete;
+  RemoteBitrateEstimatorTest& operator=(const RemoteBitrateEstimatorTest&) =
+      delete;
 
  protected:
   virtual void SetUp() = 0;
@@ -213,8 +219,6 @@ class RemoteBitrateEstimatorTest : public ::testing::Test {
   std::unique_ptr<RemoteBitrateEstimator> bitrate_estimator_;
   std::unique_ptr<testing::StreamGenerator> stream_generator_;
   int64_t arrival_time_offset_ms_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(RemoteBitrateEstimatorTest);
 };
 }  // namespace webrtc
 

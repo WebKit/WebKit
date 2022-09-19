@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-#
+#!/usr/bin/env vpython3
+
 # Copyright 2014 The LibYuv Project Authors. All rights reserved.
 #
 # Use of this source code is governed by a BSD-style license

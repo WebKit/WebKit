@@ -14,8 +14,12 @@
 #include "modules/desktop_capture/mouse_cursor_monitor.h"
 
 #if defined(WEBRTC_USE_X11)
-#include "modules/desktop_capture/linux/mouse_cursor_monitor_x11.h"
+#include "modules/desktop_capture/linux/x11/mouse_cursor_monitor_x11.h"
 #endif  // defined(WEBRTC_USE_X11)
+
+#if defined(WEBRTC_USE_PIPEWIRE)
+#include "modules/desktop_capture/linux/wayland/mouse_cursor_monitor_pipewire.h"
+#endif  // defined(WEBRTC_USE_PIPEWIRE)
 
 namespace webrtc {
 
@@ -44,6 +48,13 @@ MouseCursorMonitor* MouseCursorMonitor::CreateForScreen(
 // static
 std::unique_ptr<MouseCursorMonitor> MouseCursorMonitor::Create(
     const DesktopCaptureOptions& options) {
+#if defined(WEBRTC_USE_PIPEWIRE)
+  if (options.allow_pipewire() && DesktopCapturer::IsRunningUnderWayland() &&
+      options.screencast_stream()) {
+    return std::make_unique<MouseCursorMonitorPipeWire>(options);
+  }
+#endif  // defined(WEBRTC_USE_PIPEWIRE)
+
 #if defined(WEBRTC_USE_X11)
   return MouseCursorMonitorX11::Create(options);
 #else
