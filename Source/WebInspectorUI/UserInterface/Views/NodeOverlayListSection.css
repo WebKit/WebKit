@@ -23,12 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.node-overlay-list-section {
-    margin-inline: 6px;
-    margin-bottom: 4px;
-    padding-inline-start: 6px;
-}
-
 .node-overlay-list-section > .node-overlay-list {
     list-style: none;
     margin: 0;
@@ -60,19 +54,25 @@
     opacity: 0;
 }
 
-.node-overlay-list-section > .heading,
-.node-overlay-list-section > .container > .title {
+.node-overlay-list-section > h2 {
     font-size: 11px;
-    margin-top: 5px;
+    margin-top: 0;
     margin-bottom: 5px;
+    padding-top: 5px;
     font-weight: 500;
     color: var(--text-color)
 }
 
-.node-overlay-list-section > .heading > label > .toggle-all {
-    padding-inline-start: 4px;
+.node-overlay-list-section > h2 > .options {
+    float: inline-end;
+    width: 15px;
+    height: 15px;
 }
 
-.node-overlay-list-section :is(.setting-editor, .node-overlay-list-item-container, .heading) input[type="checkbox"] {
+.node-overlay-list-section:not(:hover) > h2 > .options {
+    display: none;
+}
+
+.node-overlay-list-section .node-overlay-list-item-container input[type="checkbox"] {
     margin-inline-end: 0;
 }

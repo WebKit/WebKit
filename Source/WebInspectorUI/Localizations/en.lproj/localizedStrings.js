@@ -515,6 +515,7 @@ localizedStrings["Diagonal Fractions @ Font Details Sidebar Property Value"] = "
 localizedStrings["Dimensions"] = "Dimensions";
 /* Section header for the group of CSS variables with dimensions as values */
 localizedStrings["Dimensions @ Computed style variables section"] = "Dimensions";
+localizedStrings["Disable All"] = "Disable All";
 localizedStrings["Disable Audit"] = "Disable Audit";
 localizedStrings["Disable Breakpoint"] = "Disable Breakpoint";
 localizedStrings["Disable Breakpoints"] = "Disable Breakpoints";
@@ -621,6 +622,7 @@ localizedStrings["Elements Tab Name"] = "Elements";
 localizedStrings["Emulate User Gesture @ Console"] = "Emulate User Gesture";
 /* Checkbox shown when configuring log/evaluate/probe breakpoint actions to cause it to be evaluated as though it was in response to user interaction. */
 localizedStrings["Emulate User Gesture @ breakpoint action configuration"] = "Emulate User Gesture";
+localizedStrings["Enable All"] = "Enable All";
 localizedStrings["Enable Audit"] = "Enable Audit";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
 localizedStrings["Enable Breakpoints"] = "Enable Breakpoints";

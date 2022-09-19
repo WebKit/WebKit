@@ -188,10 +188,6 @@ body[dir=rtl] .details-section > .header::before {
     background-color: var(--background-color-intermediate);
 }
 
-.details-section > .content > .group:nth-child(even) > .row:matches(.simple:first-child > *, :not(.simple):first-child) {
-    border-top: 1px solid var(--border-color);
-}
-
 .details-section > .content > .group > .row.simple {
     display: table-row;
 }

@@ -79,7 +79,7 @@ WI.SettingsView = class SettingsView extends WI.View
     {
         let containerElement = document.createElement("div");
         containerElement.append(...nodes);
-        containerElement.classList.add("container", "container-centered");
+        containerElement.classList.add("container", "centered");
         this.element.append(containerElement);
 
         return containerElement;

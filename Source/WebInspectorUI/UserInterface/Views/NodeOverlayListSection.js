@@ -25,16 +25,16 @@
 
 WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
 {
-    constructor()
+    constructor(id, label)
     {
         super();
 
-        this.element.classList.add("node-overlay-list-section");
+        this._label = label;
+
+        this.element.classList.add("node-overlay-list-section", id);
 
         this._nodeSet = new Set;
         this._checkboxElementByNodeMap = new WeakMap;
-        this._toggleAllCheckboxElement = null;
-        this._suppressUpdateToggleAllCheckbox = false;
     }
 
     // Public
@@ -46,11 +46,6 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
     }
 
     // Protected
-
-    get sectionLabel()
-    {
-        throw WI.NotImplementedError.subclassMustOverride();
-    }
 
     attached()
     {
@@ -73,15 +68,20 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
         super.initialLayout();
 
         let listHeading = this.element.appendChild(document.createElement("h2"));
-        listHeading.classList.add("heading");
+        listHeading.textContent = this._label;
 
-        let label = listHeading.createChild("label");
-        this._toggleAllCheckboxElement = label.createChild("input");
-        this._toggleAllCheckboxElement.type = "checkbox";
-        this._toggleAllCheckboxElement.addEventListener("change", this._handleToggleAllCheckboxChanged.bind(this));
-
-        let labelInner = label.createChild("span", "toggle-all");
-        labelInner.textContent = this.sectionLabel;
+        let optionsElement = listHeading.appendChild(WI.ImageUtilities.useSVGSymbol("Images/Gear.svg", "options", WI.UIString("Options")));
+        WI.addMouseDownContextMenuHandlers(optionsElement, (contextMenu) => {
+            let shouldDisable = this._nodeSet.some((domNode) => domNode.layoutOverlayShowing);
+            contextMenu.appendItem(shouldDisable ? WI.UIString("Disable All") : WI.UIString("Enable All"), () => {
+                for (let node of this._nodeSet) {
+                    if (shouldDisable)
+                        node.hideLayoutOverlay();
+                    else
+                        node.showLayoutOverlay();
+                }
+            });
+        });
 
         this._listElement = this.element.appendChild(document.createElement("ul"));
         this._listElement.classList.add("node-overlay-list");
@@ -128,8 +128,6 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
             buttonElement.title = WI.repeatedUIString.revealInDOMTree();
             WI.bindInteractionsForNodeToElement(domNode, buttonElement);
         }
-
-        this._updateToggleAllCheckbox();
     }
 
     // Private
@@ -141,47 +139,5 @@ WI.NodeOverlayListSection = class NodeOverlayListSection extends WI.View
             return;
 
         checkboxElement.checked = event.target.layoutOverlayShowing;
-        this._updateToggleAllCheckbox();
-    }
-
-    _handleToggleAllCheckboxChanged(event)
-    {
-        let isChecked = event.target.checked;
-        this._suppressUpdateToggleAllCheckbox = true;
-
-        for (let domNode of this._nodeSet) {
-            if (isChecked && !domNode.layoutOverlayShowing)
-                domNode.showLayoutOverlay();
-            else if (!isChecked && domNode.layoutOverlayShowing)
-                domNode.hideLayoutOverlay();
-        }
-
-        this._suppressUpdateToggleAllCheckbox = false;
-    }
-
-    _updateToggleAllCheckbox()
-    {
-        if (this._suppressUpdateToggleAllCheckbox)
-            return;
-
-        let hasVisible = false;
-        let hasHidden = false;
-        for (let domNode of this._nodeSet) {
-            if (domNode.layoutOverlayShowing)
-                hasVisible = true;
-            else
-                hasHidden = true;
-
-            // Exit early as soon as the partial state is determined.
-            if (hasVisible && hasHidden)
-                break;
-        }
-
-        if (hasVisible && hasHidden)
-            this._toggleAllCheckboxElement.indeterminate = true;
-        else {
-            this._toggleAllCheckboxElement.indeterminate = false;
-            this._toggleAllCheckboxElement.checked = hasVisible;
-        }
     }
 };

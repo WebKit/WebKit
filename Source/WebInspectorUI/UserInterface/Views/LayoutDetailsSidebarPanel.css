@@ -27,3 +27,24 @@
 .details-section:is(.layout-css-flexbox, .layout-css-grid) > .content > .group {
     display: block;
 }
+
+.details-section:is(.layout-css-flexbox, .layout-css-grid) > .content > .group > .row {
+    padding-inline: 12px 6px;
+    padding-bottom: 4px;
+}
+
+.details-section:is(.layout-css-flexbox, .layout-css-grid) > .content > .group > .row.empty {
+    padding-top: 4px;
+}
+
+.details-section:is(.layout-css-flexbox, .layout-css-grid) > .content .settings-group > .title {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-color)
+}
+
+.details-section:is(.layout-css-flexbox, .layout-css-grid) > .content .setting-editor input[type="checkbox"] {
+    margin-inline-end: 0;
+}
