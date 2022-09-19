@@ -3695,3 +3695,10 @@ webkit.org/b/241095 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance
 
 rdar://99992321 ([ iOS ] imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html is an almost constant failue)
 imported/w3c/web-platform-tests/css/css-variables/vars-background-shorthand-001.html [ ImageOnlyFailure ]
+
+rdar://99992637 ([ iOS ] 5X imported/w3c/web-platform-tests/css/css-values/angle-units-(Layout tests) are constant failures)
+imported/w3c/web-platform-tests/css/css-values/angle-units-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-values/angle-units-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-values/angle-units-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-values/angle-units-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-values/angle-units-005.html [ ImageOnlyFailure ]
