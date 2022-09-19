@@ -227,7 +227,36 @@ MediaTime MediaPlayerPrivateGStreamerMSE::durationMediaTime() const
 void MediaPlayerPrivateGStreamerMSE::seek(const MediaTime& time)
 {
     GST_DEBUG_OBJECT(pipeline(), "Requested seek to %s", time.toString().utf8().data());
-    doSeek(time, m_playbackRate, GST_SEEK_FLAG_FLUSH);
+
+    if (m_isSeekPending) {
+        if (m_seekTime != time) {
+            m_seekTime = time;
+            m_mediaSource->seekToTime(m_seekTime);
+        }
+        return;
+    }
+
+    GstState state;
+    GstStateChangeReturn getStateResult = gst_element_get_state(m_pipeline.get(), &state, nullptr, 0);
+    if (getStateResult == GST_STATE_CHANGE_FAILURE || getStateResult == GST_STATE_CHANGE_NO_PREROLL) {
+        GST_DEBUG_OBJECT(pipeline(), "[Seek] cannot seek, current state change is %s", gst_element_state_change_return_get_name(getStateResult));
+        return;
+    }
+    if (state < GST_STATE_PAUSED) {
+        m_isSeekPending = true;
+        m_isSeeking = true;
+        m_seekTime = time;
+        m_isEndReached = false;
+        m_mediaSource->seekToTime(m_seekTime);
+    } else {
+        // We can seek now.
+        if (!doSeek(time, m_playbackRate, GST_SEEK_FLAG_FLUSH)) {
+            GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(time).utf8().data());
+            return;
+        }
+        // Notify MediaSource and have new frames enqueued (when they're available).
+        m_mediaSource->seekToTime(time);
+    }
 }
 
 bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rate, GstSeekFlags seekFlags)
@@ -238,6 +267,7 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
     // pre-roll (e.g. to start playback at a non-zero position) is supported in WebKitMediaSrc but not in regular
     // playback. This is relevant in MSE because pre-roll may never occur if the JS code never appends a range starting
     // at zero, creating a chicken and egg problem.
+    bool ret = true;
 
     // GStreamer doesn't support zero as a valid playback rate. Instead, that is implemented in WebKit by pausing
     // the pipeline.
@@ -251,13 +281,11 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const MediaTime& position, float rat
 
     // Important: In order to ensure correct propagation whether pre-roll has happened or not, we send the seek directly
     // to the source element, rather than letting playbin do the routing.
-    gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, seekFlags,
+    ret = gst_element_seek(m_source.get(), rate, GST_FORMAT_TIME, seekFlags,
         GST_SEEK_TYPE_SET, toGstClockTime(m_seekTime), GST_SEEK_TYPE_NONE, 0);
     invalidateCachedPosition();
 
-    // Notify MediaSource and have new frames enqueued (when they're available).
-    m_mediaSource->seekToTime(m_seekTime);
-    return true;
+    return ret;
 }
 
 void MediaPlayerPrivateGStreamerMSE::setNetworkState(MediaPlayer::NetworkState networkState)
@@ -327,8 +355,9 @@ void MediaPlayerPrivateGStreamerMSE::asyncStateChangeDone()
     // that order.
 
     if (m_isSeeking) {
-        m_isSeeking = false;
-        GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentMediaTime().toString().utf8().data());
+        m_isSeeking = m_isSeekPending;
+        if (!m_isSeekPending)
+            GST_DEBUG("Seek complete because of preroll. currentMediaTime = %s", currentMediaTime().toString().utf8().data());
         // By calling timeChanged(), m_isSeeking will be checked an a "seeked" event will be emitted.
         m_player->timeChanged();
     }
@@ -363,6 +392,16 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
         if (!changePipelineState(GST_STATE_PAUSED))
             GST_ERROR_OBJECT(pipeline(), "Setting the pipeline to PAUSED failed");
         m_isPipelinePlaying = false;
+    }
+
+    if (m_isSeekPending) {
+        GST_DEBUG_OBJECT(pipeline(), "[Seek] committing pending seek to %s", toString(m_seekTime).utf8().data());
+        m_isSeekPending = false;
+        m_isSeeking = doSeek(m_seekTime, m_player->rate(), static_cast<GstSeekFlags>(GST_SEEK_FLAG_FLUSH));
+        if (!m_isSeeking) {
+            invalidateCachedPosition();
+            GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(m_seekTime).utf8().data());
+        }
     }
 }
 
