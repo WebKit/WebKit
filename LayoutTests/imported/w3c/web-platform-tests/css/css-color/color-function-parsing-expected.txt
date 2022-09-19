@@ -13,10 +13,6 @@ PASS Two missing components are 0
 PASS All components missing
 PASS Display P3 color
 PASS Different case for Display P3
-PASS sRGB color with negative component should not clamp to 0
-PASS sRGB color with component > 1 should not clamp
-PASS Display P3 color with negative component should not clamp to 0
-PASS Display P3 color with component > 1 should not clamp
 PASS Alpha > 1 should clamp
 PASS Negative alpha should clamp
 PASS Empty
