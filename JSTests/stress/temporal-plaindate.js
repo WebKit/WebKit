@@ -353,8 +353,8 @@ shouldThrow(() => { Temporal.PlainDate.from('2007-01-09').valueOf(); }, TypeErro
     shouldBe(ones.equals(new Temporal.PlainDate(1,1,2)), false);
 }
 
-shouldBe(Temporal.PlainDateTime.prototype.add.length, 1);
-shouldBe(Temporal.PlainDateTime.prototype.subtract.length, 1);
+shouldBe(Temporal.PlainDate.prototype.add.length, 1);
+shouldBe(Temporal.PlainDate.prototype.subtract.length, 1);
 {
     const date = Temporal.PlainDate.from('2020-02-28');
     shouldBe(date.add(new Temporal.Duration()).toString(), '2020-02-28');
@@ -376,4 +376,12 @@ shouldBe(Temporal.PlainDateTime.prototype.subtract.length, 1);
     shouldBe(Temporal.PlainDate.from('2020-03-30').subtract({ months: 1 }).toString(), '2020-02-29');
     shouldThrow(() => { Temporal.PlainDate.from('2020-03-30').subtract({ months: 1 }, { overflow: 'reject' }); }, RangeError);
     shouldThrow(() => { date.subtract({ years: 300000 }); }, RangeError);
+}
+
+shouldBe(Temporal.PlainDate.prototype.with.length, 1);
+{
+    const date = new Temporal.PlainDate(2020,1,30);
+    shouldBe(date.with({ year: 2021, month: 3, day: 5 }).toString(), '2021-03-05');
+    shouldBe(date.with({ month: 2 }).toString(), '2020-02-29');
+    shouldThrow(() => { date.with({ month: 2 }, { overflow: 'reject' }); }, RangeError);
 }

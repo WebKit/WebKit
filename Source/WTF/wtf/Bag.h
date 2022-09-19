@@ -108,10 +108,7 @@ public:
     class iterator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        iterator()
-            : m_node(0)
-        {
-        }
+        iterator() = default;
         
         // This is sort of cheating; it's equivalent to iter == end().
         bool operator!() const { return !m_node; }
@@ -136,7 +133,7 @@ public:
 
     private:
         template<typename, typename> friend class WTF::Bag;
-        Node* m_node;
+        Node* m_node { nullptr };
     };
     
     iterator begin()

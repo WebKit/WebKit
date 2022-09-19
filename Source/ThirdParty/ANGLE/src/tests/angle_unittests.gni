@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+import("../../gni/angle.gni")
+
 angle_unittests_sources = [
   "../../util/test_utils_unittest.cpp",
   "../../util/test_utils_unittest_helper.h",
@@ -159,7 +161,7 @@ angle_unittests_gl_sources =
 
 angle_unittests_msl_sources = [ "../tests/compiler_tests/MSLOutput_test.cpp" ]
 
-if (is_android) {
+if (!angle_enable_desktop_glsl) {
   angle_unittests_sources +=
       [ "compiler_tests/ImmutableString_test_ESSL_autogen.cpp" ]
 } else {

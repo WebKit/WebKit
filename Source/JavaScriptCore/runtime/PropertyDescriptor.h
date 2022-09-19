@@ -35,11 +35,7 @@ class GetterSetter;
 
 class PropertyDescriptor {
 public:
-    PropertyDescriptor()
-        : m_attributes(defaultAttributes)
-        , m_seenAttributes(0)
-    {
-    }
+    PropertyDescriptor() = default;
     PropertyDescriptor(JSValue value, unsigned attributes)
         : m_value(value)
         , m_attributes(attributes)
@@ -91,8 +87,8 @@ private:
     JSValue m_value;
     JSValue m_getter;
     JSValue m_setter;
-    unsigned m_attributes;
-    unsigned m_seenAttributes;
+    unsigned m_attributes { defaultAttributes };
+    unsigned m_seenAttributes { 0 };
 };
 
 inline PropertyDescriptor toPropertyDescriptor(JSValue value, JSValue getter, JSValue setter, DefinePropertyAttributes attributes)

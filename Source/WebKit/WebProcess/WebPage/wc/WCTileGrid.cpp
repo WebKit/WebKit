@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WCTileGrid.h"
 
+#if USE(GRAPHICS_LAYER_WC)
+
 namespace WebKit {
 
 WCTileGrid::Tile::Tile(WebCore::IntRect rect)
@@ -137,3 +139,5 @@ bool WCTileGrid::setCoverageRect(const WebCore::IntRect& coverage)
 }
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

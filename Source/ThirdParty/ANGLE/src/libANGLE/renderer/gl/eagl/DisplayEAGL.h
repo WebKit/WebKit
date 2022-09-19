@@ -9,7 +9,6 @@
 #ifndef LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
 #define LIBANGLE_RENDERER_GL_EAGL_DISPLAYEAGL_H_
 
-#include <thread>
 #include <unordered_set>
 
 #import "common/platform.h"
@@ -98,7 +97,7 @@ class DisplayEAGL : public DisplayGL
 
     egl::Display *mEGLDisplay;
     EAGLContextObj mContext;
-    std::unordered_set<std::thread::id> mThreadsWithContextCurrent;
+    std::unordered_set<uint64_t> mThreadsWithContextCurrent;
     bool mDeviceContextIsVolatile = false;
 };
 

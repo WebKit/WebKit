@@ -227,6 +227,22 @@
                 "Metal iOS has a limit on the number of color target bits per pixel."
             ],
             "issue": "http://anglebug.com/7280"
+        },
+        {
+            "name": "preemptively_start_provoking_vertex_command_buffer",
+            "category": "Features",
+            "description": [
+                "AMD Metal Drivers appear to have a bug this works around"
+            ],
+            "issue": "http://anglebug.com/7635"
+        },
+        {
+            "name": "unpack_last_row_separately_for_padding_inclusion",
+            "category": "Workarounds",
+            "description": [
+                "When uploading textures, some drivers count an extra row padding"
+            ],
+            "issue": "http://anglebug.com/7573"
         }
     ]
 }

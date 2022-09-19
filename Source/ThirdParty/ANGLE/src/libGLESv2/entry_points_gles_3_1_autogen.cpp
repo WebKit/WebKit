@@ -62,8 +62,8 @@ void GL_APIENTRY GL_BindImageTexture(GLuint unit,
           "context = %d, unit = %u, texture = %u, level = %d, layered = %s, layer = %d, access = "
           "%s, format = %s",
           CID(context), unit, texture, level, GLbooleanToString(layered), layer,
-          GLenumToString(GLenumGroup::BufferAccessARB, access),
-          GLenumToString(GLenumGroup::InternalFormat, format));
+          GLenumToString(GLESEnum::BufferAccessARB, access),
+          GLenumToString(GLESEnum::InternalFormat, format));
 
     if (context)
     {
@@ -145,7 +145,7 @@ GLuint GL_APIENTRY GL_CreateShaderProgramv(GLenum type, GLsizei count, const GLc
     Context *context = GetValidGlobalContext();
     EVENT(context, GLCreateShaderProgramv,
           "context = %d, type = %s, count = %d, strings = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::ShaderType, type), count, (uintptr_t)strings);
+          GLenumToString(GLESEnum::ShaderType, type), count, (uintptr_t)strings);
 
     GLuint returnValue;
     if (context)
@@ -256,7 +256,7 @@ void GL_APIENTRY GL_DrawArraysIndirect(GLenum mode, const void *indirect)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLDrawArraysIndirect, "context = %d, mode = %s, indirect = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::PrimitiveType, mode), (uintptr_t)indirect);
+          CID(context), GLenumToString(GLESEnum::PrimitiveType, mode), (uintptr_t)indirect);
 
     if (context)
     {
@@ -283,8 +283,8 @@ void GL_APIENTRY GL_DrawElementsIndirect(GLenum mode, GLenum type, const void *i
     Context *context = GetValidGlobalContext();
     EVENT(context, GLDrawElementsIndirect,
           "context = %d, mode = %s, type = %s, indirect = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::PrimitiveType, mode),
-          GLenumToString(GLenumGroup::DrawElementsType, type), (uintptr_t)indirect);
+          GLenumToString(GLESEnum::PrimitiveType, mode),
+          GLenumToString(GLESEnum::DrawElementsType, type), (uintptr_t)indirect);
 
     if (context)
     {
@@ -312,8 +312,8 @@ void GL_APIENTRY GL_FramebufferParameteri(GLenum target, GLenum pname, GLint par
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLFramebufferParameteri, "context = %d, target = %s, pname = %s, param = %d",
-          CID(context), GLenumToString(GLenumGroup::FramebufferTarget, target),
-          GLenumToString(GLenumGroup::FramebufferParameterName, pname), param);
+          CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
+          GLenumToString(GLESEnum::FramebufferParameterName, pname), param);
 
     if (context)
     {
@@ -365,7 +365,7 @@ void GL_APIENTRY GL_GetBooleani_v(GLenum target, GLuint index, GLboolean *data)
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetBooleani_v,
           "context = %d, target = %s, index = %u, data = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::BufferTargetARB, target), index, (uintptr_t)data);
+          GLenumToString(GLESEnum::BufferTargetARB, target), index, (uintptr_t)data);
 
     if (context)
     {
@@ -390,9 +390,8 @@ void GL_APIENTRY GL_GetFramebufferParameteriv(GLenum target, GLenum pname, GLint
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetFramebufferParameteriv,
           "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::FramebufferTarget, target),
-          GLenumToString(GLenumGroup::FramebufferAttachmentParameterName, pname),
-          (uintptr_t)params);
+          GLenumToString(GLESEnum::FramebufferTarget, target),
+          GLenumToString(GLESEnum::FramebufferAttachmentParameterName, pname), (uintptr_t)params);
 
     if (context)
     {
@@ -418,7 +417,7 @@ void GL_APIENTRY GL_GetMultisamplefv(GLenum pname, GLuint index, GLfloat *val)
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetMultisamplefv,
           "context = %d, pname = %s, index = %u, val = 0x%016" PRIxPTR "", CID(context),
-          GLenumToString(GLenumGroup::DefaultGroup, pname), index, (uintptr_t)val);
+          GLenumToString(GLESEnum::AllEnums, pname), index, (uintptr_t)val);
 
     if (context)
     {
@@ -447,8 +446,8 @@ void GL_APIENTRY GL_GetProgramInterfaceiv(GLuint program,
     EVENT(context, GLGetProgramInterfaceiv,
           "context = %d, program = %u, programInterface = %s, pname = %s, params = 0x%016" PRIxPTR
           "",
-          CID(context), program, GLenumToString(GLenumGroup::ProgramInterface, programInterface),
-          GLenumToString(GLenumGroup::ProgramInterfacePName, pname), (uintptr_t)params);
+          CID(context), program, GLenumToString(GLESEnum::ProgramInterface, programInterface),
+          GLenumToString(GLESEnum::ProgramInterfacePName, pname), (uintptr_t)params);
 
     if (context)
     {
@@ -508,7 +507,7 @@ void GL_APIENTRY GL_GetProgramPipelineiv(GLuint pipeline, GLenum pname, GLint *p
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramPipelineiv,
           "context = %d, pipeline = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
-          pipeline, GLenumToString(GLenumGroup::PipelineParameterName, pname), (uintptr_t)params);
+          pipeline, GLenumToString(GLESEnum::PipelineParameterName, pname), (uintptr_t)params);
 
     if (context)
     {
@@ -537,7 +536,7 @@ GLuint GL_APIENTRY GL_GetProgramResourceIndex(GLuint program,
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramResourceIndex,
           "context = %d, program = %u, programInterface = %s, name = 0x%016" PRIxPTR "",
-          CID(context), program, GLenumToString(GLenumGroup::ProgramInterface, programInterface),
+          CID(context), program, GLenumToString(GLESEnum::ProgramInterface, programInterface),
           (uintptr_t)name);
 
     GLuint returnValue;
@@ -576,7 +575,7 @@ GLint GL_APIENTRY GL_GetProgramResourceLocation(GLuint program,
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramResourceLocation,
           "context = %d, program = %u, programInterface = %s, name = 0x%016" PRIxPTR "",
-          CID(context), program, GLenumToString(GLenumGroup::ProgramInterface, programInterface),
+          CID(context), program, GLenumToString(GLESEnum::ProgramInterface, programInterface),
           (uintptr_t)name);
 
     GLint returnValue;
@@ -621,7 +620,7 @@ void GL_APIENTRY GL_GetProgramResourceName(GLuint program,
     EVENT(context, GLGetProgramResourceName,
           "context = %d, program = %u, programInterface = %s, index = %u, bufSize = %d, length = "
           "0x%016" PRIxPTR ", name = 0x%016" PRIxPTR "",
-          CID(context), program, GLenumToString(GLenumGroup::ProgramInterface, programInterface),
+          CID(context), program, GLenumToString(GLESEnum::ProgramInterface, programInterface),
           index, bufSize, (uintptr_t)length, (uintptr_t)name);
 
     if (context)
@@ -651,33 +650,32 @@ void GL_APIENTRY GL_GetProgramResourceiv(GLuint program,
                                          GLuint index,
                                          GLsizei propCount,
                                          const GLenum *props,
-                                         GLsizei bufSize,
+                                         GLsizei count,
                                          GLsizei *length,
                                          GLint *params)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramResourceiv,
           "context = %d, program = %u, programInterface = %s, index = %u, propCount = %d, props = "
-          "0x%016" PRIxPTR ", bufSize = %d, length = 0x%016" PRIxPTR ", params = 0x%016" PRIxPTR "",
-          CID(context), program, GLenumToString(GLenumGroup::ProgramInterface, programInterface),
-          index, propCount, (uintptr_t)props, bufSize, (uintptr_t)length, (uintptr_t)params);
+          "0x%016" PRIxPTR ", count = %d, length = 0x%016" PRIxPTR ", params = 0x%016" PRIxPTR "",
+          CID(context), program, GLenumToString(GLESEnum::ProgramInterface, programInterface),
+          index, propCount, (uintptr_t)props, count, (uintptr_t)length, (uintptr_t)params);
 
     if (context)
     {
         ShaderProgramID programPacked = PackParam<ShaderProgramID>(program);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             ValidateGetProgramResourceiv(context, angle::EntryPoint::GLGetProgramResourceiv,
-                                          programPacked, programInterface, index, propCount, props,
-                                          bufSize, length, params));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateGetProgramResourceiv(
+                                context, angle::EntryPoint::GLGetProgramResourceiv, programPacked,
+                                programInterface, index, propCount, props, count, length, params));
         if (isCallValid)
         {
             context->getProgramResourceiv(programPacked, programInterface, index, propCount, props,
-                                          bufSize, length, params);
+                                          count, length, params);
         }
         ANGLE_CAPTURE_GL(GetProgramResourceiv, isCallValid, context, programPacked,
-                         programInterface, index, propCount, props, bufSize, length, params);
+                         programInterface, index, propCount, props, count, length, params);
     }
     else
     {
@@ -693,8 +691,8 @@ void GL_APIENTRY GL_GetTexLevelParameterfv(GLenum target,
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetTexLevelParameterfv,
           "context = %d, target = %s, level = %d, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level,
-          GLenumToString(GLenumGroup::GetTextureParameter, pname), (uintptr_t)params);
+          CID(context), GLenumToString(GLESEnum::TextureTarget, target), level,
+          GLenumToString(GLESEnum::GetTextureParameter, pname), (uintptr_t)params);
 
     if (context)
     {
@@ -722,8 +720,8 @@ void GL_APIENTRY GL_GetTexLevelParameteriv(GLenum target, GLint level, GLenum pn
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetTexLevelParameteriv,
           "context = %d, target = %s, level = %d, pname = %s, params = 0x%016" PRIxPTR "",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), level,
-          GLenumToString(GLenumGroup::GetTextureParameter, pname), (uintptr_t)params);
+          CID(context), GLenumToString(GLESEnum::TextureTarget, target), level,
+          GLenumToString(GLESEnum::GetTextureParameter, pname), (uintptr_t)params);
 
     if (context)
     {
@@ -782,7 +780,7 @@ void GL_APIENTRY GL_MemoryBarrier(GLbitfield barriers)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLMemoryBarrier, "context = %d, barriers = %s", CID(context),
-          GLbitfieldToString(GLenumGroup::MemoryBarrierMask, barriers).c_str());
+          GLbitfieldToString(GLESEnum::MemoryBarrierMask, barriers).c_str());
 
     if (context)
     {
@@ -806,7 +804,7 @@ void GL_APIENTRY GL_MemoryBarrierByRegion(GLbitfield barriers)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLMemoryBarrierByRegion, "context = %d, barriers = %s", CID(context),
-          GLbitfieldToString(GLenumGroup::MemoryBarrierMask, barriers).c_str());
+          GLbitfieldToString(GLESEnum::MemoryBarrierMask, barriers).c_str());
 
     if (context)
     {
@@ -1871,7 +1869,7 @@ void GL_APIENTRY GL_SampleMaski(GLuint maskNumber, GLbitfield mask)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLSampleMaski, "context = %d, maskNumber = %u, mask = %s", CID(context),
-          maskNumber, GLbitfieldToString(GLenumGroup::DefaultGroup, mask).c_str());
+          maskNumber, GLbitfieldToString(GLESEnum::AllEnums, mask).c_str());
 
     if (context)
     {
@@ -1902,8 +1900,8 @@ void GL_APIENTRY GL_TexStorage2DMultisample(GLenum target,
     EVENT(context, GLTexStorage2DMultisample,
           "context = %d, target = %s, samples = %d, internalformat = %s, width = %d, height = %d, "
           "fixedsamplelocations = %s",
-          CID(context), GLenumToString(GLenumGroup::TextureTarget, target), samples,
-          GLenumToString(GLenumGroup::InternalFormat, internalformat), width, height,
+          CID(context), GLenumToString(GLESEnum::TextureTarget, target), samples,
+          GLenumToString(GLESEnum::SizedInternalFormat, internalformat), width, height,
           GLbooleanToString(fixedsamplelocations));
 
     if (context)
@@ -1932,8 +1930,8 @@ void GL_APIENTRY GL_UseProgramStages(GLuint pipeline, GLbitfield stages, GLuint 
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLUseProgramStages, "context = %d, pipeline = %u, stages = %s, program = %u",
-          CID(context), pipeline,
-          GLbitfieldToString(GLenumGroup::UseProgramStageMask, stages).c_str(), program);
+          CID(context), pipeline, GLbitfieldToString(GLESEnum::UseProgramStageMask, stages).c_str(),
+          program);
 
     if (context)
     {
@@ -2017,7 +2015,7 @@ void GL_APIENTRY GL_VertexAttribFormat(GLuint attribindex,
     EVENT(context, GLVertexAttribFormat,
           "context = %d, attribindex = %u, size = %d, type = %s, normalized = %s, relativeoffset = "
           "%u",
-          CID(context), attribindex, size, GLenumToString(GLenumGroup::DefaultGroup, type),
+          CID(context), attribindex, size, GLenumToString(GLESEnum::VertexAttribType, type),
           GLbooleanToString(normalized), relativeoffset);
 
     if (context)
@@ -2049,7 +2047,7 @@ void GL_APIENTRY GL_VertexAttribIFormat(GLuint attribindex,
     Context *context = GetValidGlobalContext();
     EVENT(context, GLVertexAttribIFormat,
           "context = %d, attribindex = %u, size = %d, type = %s, relativeoffset = %u", CID(context),
-          attribindex, size, GLenumToString(GLenumGroup::DefaultGroup, type), relativeoffset);
+          attribindex, size, GLenumToString(GLESEnum::VertexAttribIType, type), relativeoffset);
 
     if (context)
     {

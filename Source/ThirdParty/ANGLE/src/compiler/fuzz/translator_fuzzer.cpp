@@ -55,10 +55,8 @@ struct TCompilerDeleter
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-    // Reserve some size for future compile options
-    const size_t kHeaderSize = 128;
-
-    if (size <= kHeaderSize)
+    ShaderDumpHeader header{};
+    if (size <= sizeof(header))
     {
         return 0;
     }
@@ -69,10 +67,15 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         return 0;
     }
 
-    uint32_t type            = *reinterpret_cast<const uint32_t *>(data);
-    uint32_t spec            = *reinterpret_cast<const uint32_t *>(data + 4);
-    uint32_t output          = *reinterpret_cast<const uint32_t *>(data + 8);
-    ShCompileOptions options = *reinterpret_cast<const ShCompileOptions *>(data + 12);
+    memcpy(&header, data, sizeof(header));
+    ShCompileOptions options{};
+    memcpy(&options, &header.basicCompileOptions, offsetof(ShCompileOptions, metal));
+    memcpy(&options.metal, &header.metalCompileOptions, sizeof(options.metal));
+    memcpy(&options.pls, &header.plsCompileOptions, sizeof(options.pls));
+    size -= sizeof(header);
+    data += sizeof(header);
+    uint32_t type = header.type;
+    uint32_t spec = header.spec;
 
     if (type != GL_FRAGMENT_SHADER && type != GL_VERTEX_SHADER)
     {
@@ -85,9 +88,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
         return 0;
     }
 
-    ShShaderOutput shaderOutput = static_cast<ShShaderOutput>(output);
+    ShShaderOutput shaderOutput = static_cast<ShShaderOutput>(header.output);
 
     bool hasUnsupportedOptions = false;
+
+    const bool hasMacGLSLOptions = options.rewriteFloatUnaryMinusOperator ||
+                                   options.addAndTrueToLoopCondition ||
+                                   options.rewriteDoWhileLoops || options.unfoldShortCircuit ||
+                                   options.rewriteRowMajorMatrices;
 
     if (!IsOutputGLSL(shaderOutput) && !IsOutputESSL(shaderOutput))
     {
@@ -96,10 +104,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
             options.regenerateStructNames || options.rewriteRepeatedAssignToSwizzled ||
             options.useUnusedStandardSharedBlocks || options.selectViewInNvGLSLVertexShader;
 
+        hasUnsupportedOptions = hasUnsupportedOptions || hasMacGLSLOptions;
+    }
+    else
+    {
 #if !defined(ANGLE_PLATFORM_APPLE)
-        hasUnsupportedOptions = hasUnsupportedOptions || options.rewriteFloatUnaryMinusOperator ||
-                                options.addAndTrueToLoopCondition || options.rewriteDoWhileLoops ||
-                                options.unfoldShortCircuit || options.rewriteRowMajorMatrices;
+        hasUnsupportedOptions = hasUnsupportedOptions || hasMacGLSLOptions;
 #endif
     }
     if (!IsOutputVulkan(shaderOutput))
@@ -147,15 +157,12 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     bool found = false;
     for (auto valid : validOutputs)
     {
-        found = found || (valid == output);
+        found = found || (valid == shaderOutput);
     }
     if (!found)
     {
         return 0;
     }
-
-    size -= kHeaderSize;
-    data += kHeaderSize;
 
     sh::InitializeGlslang();
     if (!sh::Initialize())
@@ -166,7 +173,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
     TranslatorCacheKey key;
     key.type   = type;
     key.spec   = spec;
-    key.output = output;
+    key.output = shaderOutput;
 
     using UniqueTCompiler = std::unique_ptr<TCompiler, TCompilerDeleter>;
     static angle::base::NoDestructor<angle::HashMap<TranslatorCacheKey, UniqueTCompiler>>

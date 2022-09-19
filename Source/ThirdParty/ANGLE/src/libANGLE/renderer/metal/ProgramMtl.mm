@@ -173,7 +173,8 @@ void InitArgumentBufferEncoder(mtl::Context *context,
                                uint32_t bufferIndex,
                                ProgramArgumentBufferEncoderMtl *encoder)
 {
-    encoder->metalArgBufferEncoder = mtl::adoptObjCObj([function newArgumentEncoderWithBufferIndex:bufferIndex]);
+    encoder->metalArgBufferEncoder =
+        mtl::adoptObjCObj([function newArgumentEncoderWithBufferIndex:bufferIndex]);
     if (encoder->metalArgBufferEncoder)
     {
         encoder->bufferPool.initialize(context, encoder->metalArgBufferEncoder.get().encodedLength,

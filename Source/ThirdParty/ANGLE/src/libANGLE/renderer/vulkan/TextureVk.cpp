@@ -2434,7 +2434,8 @@ angle::Result TextureVk::getAttachmentRenderTarget(const gl::Context *context,
     }
 
     const bool hasRenderToTextureEXT =
-        contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled;
+        contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled ||
+        contextVk->getFeatures().supportsMultisampledRenderToSingleSampledGOOGLEX.enabled;
 
     // If samples > 1 here, we have a singlesampled texture that's being multisampled rendered to.
     // In this case, create a multisampled image that is otherwise identical to the single sampled
@@ -3165,6 +3166,13 @@ angle::Result TextureVk::initImage(ContextVk *contextVk,
     if (mState.hasProtectedContent())
     {
         mImageCreateFlags |= VK_IMAGE_CREATE_PROTECTED_BIT;
+    }
+    if (mOwnsImage && samples == 1 &&
+        contextVk->getFeatures().supportsMultisampledRenderToSingleSampled.enabled)
+    {
+        // Conservatively add the MSRTSS flag, because any texture might end up as an MSRTT
+        // attachment.
+        mImageCreateFlags |= VK_IMAGE_CREATE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_BIT_EXT;
     }
 
     ANGLE_TRY(mImage->initExternal(

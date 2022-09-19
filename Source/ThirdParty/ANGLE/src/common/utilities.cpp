@@ -1375,6 +1375,100 @@ EGLClientBuffer GLObjectHandleToEGLClientBuffer(GLuint handle)
 
 }  // namespace gl_egl
 
+namespace angle
+{
+bool IsDrawEntryPoint(EntryPoint entryPoint)
+{
+    switch (entryPoint)
+    {
+        case EntryPoint::GLDrawArrays:
+        case EntryPoint::GLDrawArraysIndirect:
+        case EntryPoint::GLDrawArraysInstanced:
+        case EntryPoint::GLDrawArraysInstancedANGLE:
+        case EntryPoint::GLDrawArraysInstancedBaseInstance:
+        case EntryPoint::GLDrawArraysInstancedBaseInstanceANGLE:
+        case EntryPoint::GLDrawArraysInstancedEXT:
+        case EntryPoint::GLDrawElements:
+        case EntryPoint::GLDrawElementsBaseVertex:
+        case EntryPoint::GLDrawElementsBaseVertexEXT:
+        case EntryPoint::GLDrawElementsBaseVertexOES:
+        case EntryPoint::GLDrawElementsIndirect:
+        case EntryPoint::GLDrawElementsInstanced:
+        case EntryPoint::GLDrawElementsInstancedANGLE:
+        case EntryPoint::GLDrawElementsInstancedBaseInstance:
+        case EntryPoint::GLDrawElementsInstancedBaseVertex:
+        case EntryPoint::GLDrawElementsInstancedBaseVertexBaseInstance:
+        case EntryPoint::GLDrawElementsInstancedBaseVertexBaseInstanceANGLE:
+        case EntryPoint::GLDrawElementsInstancedBaseVertexEXT:
+        case EntryPoint::GLDrawElementsInstancedBaseVertexOES:
+        case EntryPoint::GLDrawElementsInstancedEXT:
+        case EntryPoint::GLDrawPixels:
+        case EntryPoint::GLDrawRangeElements:
+        case EntryPoint::GLDrawRangeElementsBaseVertex:
+        case EntryPoint::GLDrawRangeElementsBaseVertexEXT:
+        case EntryPoint::GLDrawRangeElementsBaseVertexOES:
+        case EntryPoint::GLDrawTexfOES:
+        case EntryPoint::GLDrawTexfvOES:
+        case EntryPoint::GLDrawTexiOES:
+        case EntryPoint::GLDrawTexivOES:
+        case EntryPoint::GLDrawTexsOES:
+        case EntryPoint::GLDrawTexsvOES:
+        case EntryPoint::GLDrawTexxOES:
+        case EntryPoint::GLDrawTexxvOES:
+        case EntryPoint::GLDrawTransformFeedback:
+        case EntryPoint::GLDrawTransformFeedbackInstanced:
+        case EntryPoint::GLDrawTransformFeedbackStream:
+        case EntryPoint::GLDrawTransformFeedbackStreamInstanced:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsDispatchEntryPoint(EntryPoint entryPoint)
+{
+    switch (entryPoint)
+    {
+        case EntryPoint::GLDispatchCompute:
+        case EntryPoint::GLDispatchComputeIndirect:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsClearEntryPoint(EntryPoint entryPoint)
+{
+    switch (entryPoint)
+    {
+        case EntryPoint::GLClear:
+        case EntryPoint::GLClearBufferfi:
+        case EntryPoint::GLClearBufferfv:
+        case EntryPoint::GLClearBufferiv:
+        case EntryPoint::GLClearBufferuiv:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool IsQueryEntryPoint(EntryPoint entryPoint)
+{
+    switch (entryPoint)
+    {
+        case EntryPoint::GLBeginQuery:
+        case EntryPoint::GLBeginQueryEXT:
+        case EntryPoint::GLBeginQueryIndexed:
+        case EntryPoint::GLEndQuery:
+        case EntryPoint::GLEndQueryEXT:
+        case EntryPoint::GLEndQueryIndexed:
+            return true;
+        default:
+            return false;
+    }
+}
+}  // namespace angle
+
 #if !defined(ANGLE_ENABLE_WINDOWS_UWP)
 void writeFile(const char *path, const void *content, size_t size)
 {

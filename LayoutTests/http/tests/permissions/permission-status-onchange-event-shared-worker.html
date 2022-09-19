@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/notifications-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("This test checks that the Permissions API change event works for shared workers")
+
+jsTestIsAsync = true;
+
+(async function() {
+    expectedData = null;
+    receivedPostMessageResponse = false;
+
+    var worker = new SharedWorker('permission-status-onchange-event-shared-worker.js');
+    worker.port.onmessage = function(message) {
+        window.message = message;
+        shouldBeEqualToString("message.data", expectedData);
+        receivedPostMessageResponse = true;
+    }
+
+    receivedPostMessageResponse = false;
+    expectedData = "prompt";
+    worker.port.postMessage(1);
+    await shouldBecomeEqual("receivedPostMessageResponse", "true");
+
+    receivedPostMessageResponse = false;
+    expectedData = "granted";
+    testRunner.setGeolocationPermission(true);
+    await shouldBecomeEqual("receivedPostMessageResponse", "true");
+    finishJSTest();
+})();
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1936,7 +1936,7 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
 
 static inline bool isElementReflectionAttribute(const QualifiedName& name)
 {
-    return name == HTMLNames::aria_activedescendantAttr || name == HTMLNames::aria_errormessageAttr;
+    return name == HTMLNames::aria_activedescendantAttr;
 }
 
 static inline bool isElementsArrayReflectionAttribute(const QualifiedName& name)
@@ -1944,6 +1944,7 @@ static inline bool isElementsArrayReflectionAttribute(const QualifiedName& name)
     return name == HTMLNames::aria_controlsAttr
         || name == HTMLNames::aria_describedbyAttr
         || name == HTMLNames::aria_detailsAttr
+        || name == HTMLNames::aria_errormessageAttr
         || name == HTMLNames::aria_flowtoAttr
         || name == HTMLNames::aria_labelledbyAttr
         || name == HTMLNames::aria_ownsAttr;

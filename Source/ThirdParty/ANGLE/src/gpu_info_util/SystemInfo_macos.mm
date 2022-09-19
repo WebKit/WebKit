@@ -47,7 +47,7 @@ std::string GetMachineModel()
 
     if (platformExpert == IO_OBJECT_NULL)
     {
-        return "";
+        return {};
     }
 
     CFDataRef modelData = static_cast<CFDataRef>(
@@ -55,10 +55,10 @@ std::string GetMachineModel()
     if (modelData == nullptr)
     {
         IOObjectRelease(platformExpert);
-        return "";
+        return {};
     }
 
-    std::string result = reinterpret_cast<const char *>(CFDataGetBytePtr(modelData));
+    std::string result(reinterpret_cast<const char *>(CFDataGetBytePtr(modelData)));
 
     IOObjectRelease(platformExpert);
     CFRelease(modelData);

@@ -891,7 +891,7 @@ angle::CallCapture CaptureSampleMaskiANGLE(const State &glState,
 angle::CallCapture CaptureGetTranslatedShaderSourceANGLE(const State &glState,
                                                          bool isCallValid,
                                                          ShaderProgramID shaderPacked,
-                                                         GLsizei bufsize,
+                                                         GLsizei bufSize,
                                                          GLsizei *length,
                                                          GLchar *source);
 
@@ -1240,7 +1240,7 @@ angle::CallCapture CaptureMultiDrawElementsBaseVertexEXT(const State &glState,
                                                          const GLsizei *count,
                                                          DrawElementsType typePacked,
                                                          const void *const *indices,
-                                                         GLsizei primcount,
+                                                         GLsizei drawcount,
                                                          const GLint *basevertex);
 
 // GL_EXT_external_buffer
@@ -1422,6 +1422,8 @@ angle::CallCapture CaptureRenderbufferStorageMultisampleEXT(const State &glState
                                                             GLenum internalformat,
                                                             GLsizei width,
                                                             GLsizei height);
+
+// GL_EXT_multisampled_render_to_texture2
 
 // GL_EXT_occlusion_query_boolean
 
@@ -4073,14 +4075,14 @@ void CaptureGetMultisamplefvANGLE_val(const State &glState,
 void CaptureGetTranslatedShaderSourceANGLE_length(const State &glState,
                                                   bool isCallValid,
                                                   ShaderProgramID shaderPacked,
-                                                  GLsizei bufsize,
+                                                  GLsizei bufSize,
                                                   GLsizei *length,
                                                   GLchar *source,
                                                   angle::ParamCapture *paramCapture);
 void CaptureGetTranslatedShaderSourceANGLE_source(const State &glState,
                                                   bool isCallValid,
                                                   ShaderProgramID shaderPacked,
-                                                  GLsizei bufsize,
+                                                  GLsizei bufSize,
                                                   GLsizei *length,
                                                   GLchar *source,
                                                   angle::ParamCapture *paramCapture);
@@ -4299,7 +4301,7 @@ void CaptureMultiDrawElementsBaseVertexEXT_count(const State &glState,
                                                  const GLsizei *count,
                                                  DrawElementsType typePacked,
                                                  const void *const *indices,
-                                                 GLsizei primcount,
+                                                 GLsizei drawcount,
                                                  const GLint *basevertex,
                                                  angle::ParamCapture *paramCapture);
 void CaptureMultiDrawElementsBaseVertexEXT_indices(const State &glState,
@@ -4308,7 +4310,7 @@ void CaptureMultiDrawElementsBaseVertexEXT_indices(const State &glState,
                                                    const GLsizei *count,
                                                    DrawElementsType typePacked,
                                                    const void *const *indices,
-                                                   GLsizei primcount,
+                                                   GLsizei drawcount,
                                                    const GLint *basevertex,
                                                    angle::ParamCapture *paramCapture);
 void CaptureMultiDrawElementsBaseVertexEXT_basevertex(const State &glState,
@@ -4317,7 +4319,7 @@ void CaptureMultiDrawElementsBaseVertexEXT_basevertex(const State &glState,
                                                       const GLsizei *count,
                                                       DrawElementsType typePacked,
                                                       const void *const *indices,
-                                                      GLsizei primcount,
+                                                      GLsizei drawcount,
                                                       const GLint *basevertex,
                                                       angle::ParamCapture *paramCapture);
 void CaptureDrawElementsInstancedEXT_indices(const State &glState,

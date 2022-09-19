@@ -476,7 +476,10 @@ angle::Result SyncVk::getStatus(const gl::Context *context, GLint *outResult)
 }
 
 EGLSyncVk::EGLSyncVk(const egl::AttributeMap &attribs)
-    : EGLSyncImpl(), mSyncHelper(nullptr), mAttribs(attribs)
+    : EGLSyncImpl(),
+      mSyncHelper(nullptr),
+      mNativeFenceFD(
+          attribs.getAsInt(EGL_SYNC_NATIVE_FENCE_FD_ANDROID, EGL_NO_NATIVE_FENCE_FD_ANDROID))
 {}
 
 EGLSyncVk::~EGLSyncVk()
@@ -499,7 +502,6 @@ egl::Error EGLSyncVk::initialize(const egl::Display *display,
     switch (type)
     {
         case EGL_SYNC_FENCE_KHR:
-            ASSERT(mAttribs.isEmpty());
             mSyncHelper = new vk::SyncHelper();
             if (mSyncHelper->initialize(vk::GetImpl(context), true) == angle::Result::Stop)
             {
@@ -510,9 +512,7 @@ egl::Error EGLSyncVk::initialize(const egl::Display *display,
         {
             vk::SyncHelperNativeFence *syncHelper = new vk::SyncHelperNativeFence();
             mSyncHelper                           = syncHelper;
-            int nativeFd = static_cast<EGLint>(mAttribs.getAsInt(EGL_SYNC_NATIVE_FENCE_FD_ANDROID,
-                                                                 EGL_NO_NATIVE_FENCE_FD_ANDROID));
-            return angle::ToEGL(syncHelper->initializeWithFd(vk::GetImpl(context), nativeFd),
+            return angle::ToEGL(syncHelper->initializeWithFd(vk::GetImpl(context), mNativeFenceFD),
                                 vk::GetImpl(display), EGL_BAD_ALLOC);
         }
         default:

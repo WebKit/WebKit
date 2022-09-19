@@ -161,6 +161,11 @@ RefPtr<RTCDataChannelRemoteHandlerConnection> SharedWorkerThreadProxy::createRTC
     return m_page->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
 }
 
+ScriptExecutionContextIdentifier SharedWorkerThreadProxy::loaderContextIdentifier() const
+{
+    return m_document->identifier();
+}
+
 void SharedWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
     callOnMainThread([task = WTFMove(task), protectedThis = Ref { *this }] () mutable {

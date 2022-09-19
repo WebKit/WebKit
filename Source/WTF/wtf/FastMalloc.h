@@ -128,8 +128,9 @@ public:
     WTF_EXPORT_PRIVATE ForbidMallocUseForCurrentThreadScope();
     WTF_EXPORT_PRIVATE ~ForbidMallocUseForCurrentThreadScope();
 #else
-    ForbidMallocUseForCurrentThreadScope() = default;
-    ~ForbidMallocUseForCurrentThreadScope() { }
+    // Left an empty body on purpose, or we get several unused variable warnings
+    ForbidMallocUseForCurrentThreadScope() { } // NOLINT
+    ~ForbidMallocUseForCurrentThreadScope() = default;
 #endif
 
     ForbidMallocUseForCurrentThreadScope(const ForbidMallocUseForCurrentThreadScope&) = delete;
@@ -144,8 +145,9 @@ public:
     WTF_EXPORT_PRIVATE DisableMallocRestrictionsForCurrentThreadScope();
     WTF_EXPORT_PRIVATE ~DisableMallocRestrictionsForCurrentThreadScope();
 #else
-    DisableMallocRestrictionsForCurrentThreadScope() = default;
-    ~DisableMallocRestrictionsForCurrentThreadScope() { }
+    // Left an empty body on purpose, or we get several unused variable warnings
+    DisableMallocRestrictionsForCurrentThreadScope() { } // NOLINT
+    ~DisableMallocRestrictionsForCurrentThreadScope() = default;
 #endif
 
     DisableMallocRestrictionsForCurrentThreadScope(const DisableMallocRestrictionsForCurrentThreadScope&) = delete;

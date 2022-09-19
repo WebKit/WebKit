@@ -305,16 +305,6 @@ std::optional<ViewportArguments> ArgumentCoder<ViewportArguments>::decode(Decode
 
 #endif // ENABLE(META_VIEWPORT)
 
-void ArgumentCoder<ViewportAttributes>::encode(Encoder& encoder, const ViewportAttributes& viewportAttributes)
-{
-    SimpleArgumentCoder<ViewportAttributes>::encode(encoder, viewportAttributes);
-}
-
-bool ArgumentCoder<ViewportAttributes>::decode(Decoder& decoder, ViewportAttributes& viewportAttributes)
-{
-    return SimpleArgumentCoder<ViewportAttributes>::decode(decoder, viewportAttributes);
-}
-
 void ArgumentCoder<RecentSearch>::encode(Encoder& encoder, const RecentSearch& recentSearch)
 {
     encoder << recentSearch.string << recentSearch.time;
@@ -1369,58 +1359,7 @@ bool ArgumentCoder<FileChooserSettings>::decode(Decoder& decoder, FileChooserSet
 
     return true;
 }
-
-void ArgumentCoder<RawFile>::encode(Encoder& encoder, const RawFile& file)
-{
-    encoder << file.fileName;
-    encoder << file.fileData;
-}
-
-bool ArgumentCoder<RawFile>::decode(Decoder& decoder, RawFile& file)
-{
-    if (!decoder.decode(file.fileName))
-        return false;
-    if (!decoder.decode(file.fileData))
-        return false;
-    return true;
-}
     
-void ArgumentCoder<ShareData>::encode(Encoder& encoder, const ShareData& settings)
-{
-    encoder << settings.title;
-    encoder << settings.text;
-    encoder << settings.url;
-}
-
-bool ArgumentCoder<ShareData>::decode(Decoder& decoder, ShareData& settings)
-{
-    if (!decoder.decode(settings.title))
-        return false;
-    if (!decoder.decode(settings.text))
-        return false;
-    if (!decoder.decode(settings.url))
-        return false;
-    return true;
-}
-    
-void ArgumentCoder<ShareDataWithParsedURL>::encode(Encoder& encoder, const ShareDataWithParsedURL& settings)
-{
-    encoder << settings.shareData;
-    encoder << settings.url;
-    encoder << settings.files;
-}
-
-bool ArgumentCoder<ShareDataWithParsedURL>::decode(Decoder& decoder, ShareDataWithParsedURL& settings)
-{
-    if (!decoder.decode(settings.shareData))
-        return false;
-    if (!decoder.decode(settings.url))
-        return false;
-    if (!decoder.decode(settings.files))
-        return false;
-    return true;
-}
-
 void ArgumentCoder<GrammarDetail>::encode(Encoder& encoder, const GrammarDetail& detail)
 {
     encoder << detail.range;

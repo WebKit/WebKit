@@ -91,10 +91,6 @@ Ref<Instance> Instance::create(VM& vm, Ref<Module>&& module)
     return adoptRef(*new (NotNull, fastMalloc(allocationSize(module->moduleInformation().importFunctionCount(), module->moduleInformation().tableCount()))) Instance(vm, WTFMove(module)));
 }
 
-Instance::~Instance()
-{
-}
-
 size_t Instance::extraMemoryAllocated() const
 {
     return globalMemoryByteSize(m_module.get()) + allocationSize(m_numImportFunctions, m_module->moduleInformation().tableCount());

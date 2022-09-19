@@ -938,10 +938,10 @@ bool isLogicalEndOfLine(const VisiblePosition& p)
 
 static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(InlineIterator::LineBoxIterator& lineBox, int lineDirectionPoint)
 {
-    auto& containingBlock = lineBox->containingBlock();
-    FloatPoint absoluteBlockPoint = containingBlock.localToAbsolute(FloatPoint()) - toFloatSize(containingBlock.scrollPosition());
+    auto& root = lineBox->formattingContextRoot();
+    auto absoluteBlockPoint = root.localToAbsolute(FloatPoint()) - toFloatSize(root.scrollPosition());
 
-    if (containingBlock.isHorizontalWritingMode())
+    if (root.isHorizontalWritingMode())
         return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), contentStartInBlockDirection(*lineBox));
 
     return IntPoint(contentStartInBlockDirection(*lineBox), lineDirectionPoint - absoluteBlockPoint.y());

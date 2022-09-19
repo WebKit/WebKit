@@ -190,8 +190,6 @@ void Plan::updateCallSitesToCallUs(const AbstractLocker& calleeGroupLocker, Call
 }
 #endif
 
-Plan::~Plan() { }
-
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

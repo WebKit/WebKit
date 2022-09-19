@@ -20,7 +20,6 @@
 #include "config.h"
 #include "WebKitPrintOperation.h"
 
-#include "Attachment.h"
 #include "SharedMemory.h"
 #include "WebKitError.h"
 #include "WebKitPrintCustomWidgetPrivate.h"
@@ -87,7 +86,7 @@ struct _WebKitPrintOperationPrivate {
     GRefPtr<GtkPrinter> printer;
 #if HAVE(GTK_UNIX_PRINTING)
     GRefPtr<GtkPrintJob> printJob;
-    IPC::Attachment attachment;
+    UnixFileDescriptor data;
 #endif
 };
 
@@ -333,7 +332,7 @@ static void webkitPrintOperationFinished(WebKitPrintOperation* printOperation)
 {
     auto* priv = printOperation->priv;
     priv->printJob = nullptr;
-    priv->attachment = { };
+    priv->data = { };
 
     g_signal_emit(printOperation, signals[FINISHED], 0);
 }
@@ -372,9 +371,9 @@ static void webkitPrintOperationPrintPagesForFrame(WebKitPrintOperation* printOp
             return;
         }
 
-        priv->attachment = data->releaseAttachment();
+        priv->data = data->releaseHandle();
         GUniqueOutPtr<GError> jobError;
-        gtk_print_job_set_source_fd(priv->printJob.get(), priv->attachment.fd().value(), &jobError.outPtr());
+        gtk_print_job_set_source_fd(priv->printJob.get(), priv->data.value(), &jobError.outPtr());
         if (jobError) {
             webkitPrintOperationFailed(printOperation.get(), GUniquePtr<GError> { g_error_new_literal(WEBKIT_PRINT_ERROR, WEBKIT_PRINT_ERROR_GENERAL, jobError->message) });
             webkitPrintOperationFinished(printOperation.get());

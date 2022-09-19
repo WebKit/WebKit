@@ -3446,17 +3446,6 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
         case spv::DecorationDescriptorSet:
             newDecorationValue = info->descriptorSet;
             break;
-        case spv::DecorationFlat:
-        case spv::DecorationNoPerspective:
-        case spv::DecorationCentroid:
-        case spv::DecorationSample:
-            if (info->useRelaxedPrecision)
-            {
-                // Change the id to replacement variable
-                spirv::WriteDecorate(mSpirvBlobOut, id, decoration, decorationValues);
-                return TransformationState::Transformed;
-            }
-            break;
         case spv::DecorationBlock:
             // If this is the Block decoration of a shader I/O block, add the transform feedback
             // decorations to its members right away.
@@ -3716,7 +3705,7 @@ TransformationState SpirvTransformer::transformAccessChain(const uint32_t *instr
         return TransformationState::Unchanged;
     }
 
-    if (info->activeStages[mOptions.shaderType] && !info->useRelaxedPrecision)
+    if (info->activeStages[mOptions.shaderType])
     {
         return TransformationState::Unchanged;
     }

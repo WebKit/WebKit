@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+        <script src=../media-file.js></script>
+    </head>
+    <body>
+        <video controls>
+        </video>
+        
+        <script>
+
+promise_test(async (t) => {
+
+    let video = document.getElementsByTagName('video')[0];
+
+    if (window.internals) {
+        internals.settings.setShouldDisplayTrackKind('TextDescriptions', true);
+        internals.settings.setExtendedAudioDescriptionsEnabled(true);
+        internals.enableMockSpeechSynthesizerForMediaElement(video);
+        internals.setSpeechUtteranceDuration(2);
+    }
+
+    video.src = findMediaFile('video', '../content/test');
+    await new Promise(resolve => video.oncanplaythrough = resolve);
+
+    let descriptionsTrack = document.createElement('track');
+    descriptionsTrack.setAttribute('kind', 'descriptions');
+    descriptionsTrack.setAttribute('src', 'captions-webvtt/captions-extended-descriptions.vtt');
+    video.appendChild(descriptionsTrack);
+    await new Promise(resolve => descriptionsTrack.onload = resolve);
+
+    let cues = descriptionsTrack.track.cues;
+    assert_equals(cues.length, 2);
+
+    let checkCue = (cue, expectedId) => {
+        assert_equals(cue.id, expectedId);
+        if (!window.internals)
+            return;
+        
+        let spokenCue = window.internals.mediaElementCurrentlySpokenCue(video);
+        assert_not_equals(spokenCue, null, 'descriptive cue is being spoken');
+
+        let props = ['vertical', 'snapToLines', 'line', 'lineAlign', 'position', 'positionAlign', 'size', 'align', 'text', 'region', 'id', 'startTime', 'endTime', 'pauseOnExit'];
+        props.forEach(prop => {
+            assert_equals(cue[prop], spokenCue[prop], `spoken cue has correct "${prop}" value`);
+        });
+
+        let utterance = window.internals.speechSynthesisUtteranceForCue(spokenCue);
+        assert_not_equals(utterance, null, 'cue utterance is not null');
+        assert_equals(utterance.text, cue.text, 'correct text is being spoken');
+    }
+
+    // Play into the range of the first cue...
+    video.currentTime = 1;
+    video.play();
+    await new Promise(resolve => cues[0].onenter = resolve);
+    checkCue(cues[0], '1');
+
+    // playback should pause...
+    await new Promise(resolve => video.onpause = resolve);
+    
+    // and resume.
+    await new Promise(resolve => video.onplay = resolve);
+
+    // Play into the range of the second cue.
+    video.currentTime = 2.9;
+    await new Promise(resolve => video.onseeked = resolve);
+    video.play();
+    await new Promise(resolve => cues[1].onenter = (e) => { video.pause(); resolve() });
+    checkCue(cues[1], '2');
+    
+}, "WebVTT extended audio descriptions");
+
+        </script>
+
+    </body>
+</html>

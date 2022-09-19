@@ -75,9 +75,7 @@ class RegisterBank {
     static constexpr SpillHint SpillHintInvalid = 0xffffffff;
 
 public:
-    RegisterBank()
-    {
-    }
+    RegisterBank() = default;
 
     // Attempt to allocate a register - this function finds an unlocked
     // register, locks it, and returns it. If none can be found, this
@@ -351,16 +349,11 @@ private:
     // being managed by the RegisterBank. For each register we track a lock
     // count, name and spillOrder hint.
     struct MapEntry {
-        MapEntry()
-            : name(VirtualRegister())
-            , spillOrder(SpillHintInvalid)
-            , lockCount(0)
-        {
-        }
+        MapEntry() = default;
 
         VirtualRegister name;
-        SpillHint spillOrder;
-        uint32_t lockCount;
+        SpillHint spillOrder { SpillHintInvalid };
+        uint32_t lockCount { 0 };
     };
 
     // Holds the current status of all registers.

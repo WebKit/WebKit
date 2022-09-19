@@ -33,9 +33,9 @@ layer at (20,20) size 644x433
           RenderIFrame {IFRAME} at (0,0) size 0x0
             layer at (0,0) size 1x1
               RenderView at (0,0) size 0x0
-            layer at (0,0) size 0x1
-              RenderBlock {HTML} at (0,0) size 0x1
-                RenderBody {BODY} at (0,0) size 0x1
+            layer at (0,0) size 0x0
+              RenderBlock {HTML} at (0,0) size 0x0
+                RenderBody {BODY} at (0,0) size 0x0
                   RenderImage {IMG} at (0,0) size 1x1
           RenderIFrame {IFRAME} at (0,0) size 0x0
             layer at (0,0) size 16x2171

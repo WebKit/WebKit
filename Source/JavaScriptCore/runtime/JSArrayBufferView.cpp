@@ -46,7 +46,6 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     , m_vector(vector, length)
     , m_length(length)
     , m_mode(FastTypedArray)
-    , m_butterfly(nullptr)
 {
     ASSERT(!Gigacage::isEnabled() || (Gigacage::contains(vector) && Gigacage::contains(static_cast<const uint8_t*>(vector) + length - 1)));
     ASSERT(vector == removeArrayPtrTag(vector));
@@ -54,11 +53,8 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 }
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(
-    VM& vm, Structure* structure, size_t length, unsigned elementSize,
-    InitializationMode mode)
-    : m_structure(nullptr)
-    , m_length(length)
-    , m_butterfly(nullptr)
+    VM& vm, Structure* structure, size_t length, unsigned elementSize, InitializationMode mode)
+    : m_length(length)
 {
     if (length <= fastSizeLimit) {
         // Attempt GC allocation.
@@ -118,7 +114,6 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
     : m_structure(structure)
     , m_length(length)
     , m_mode(DataViewMode)
-    , m_butterfly(nullptr)
 {
     ASSERT(arrayBuffer->data() == removeArrayPtrTag(arrayBuffer->data()));
     m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset, length);

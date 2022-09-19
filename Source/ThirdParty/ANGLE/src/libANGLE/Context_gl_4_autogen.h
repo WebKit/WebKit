@@ -16,9 +16,9 @@
     void drawTransformFeedbackStream(GLenum mode, TransformFeedbackID idPacked, GLuint stream);    \
     void endQueryIndexed(GLenum target, GLuint index);                                             \
     void getActiveSubroutineName(ShaderProgramID programPacked, GLenum shadertype, GLuint index,   \
-                                 GLsizei bufsize, GLsizei *length, GLchar *name);                  \
+                                 GLsizei bufSize, GLsizei *length, GLchar *name);                  \
     void getActiveSubroutineUniformName(ShaderProgramID programPacked, GLenum shadertype,          \
-                                        GLuint index, GLsizei bufsize, GLsizei *length,            \
+                                        GLuint index, GLsizei bufSize, GLsizei *length,            \
                                         GLchar *name);                                             \
     void getActiveSubroutineUniformiv(ShaderProgramID programPacked, GLenum shadertype,            \
                                       GLuint index, GLenum pname, GLint *values);                  \
@@ -126,8 +126,8 @@
                          const void *data);                                                        \
     void clearBufferSubData(GLenum target, GLenum internalformat, GLintptr offset,                 \
                             GLsizeiptr size, GLenum format, GLenum type, const void *data);        \
-    void getInternalformati64v(GLenum target, GLenum internalformat, GLenum pname,                 \
-                               GLsizei bufSize, GLint64 *params);                                  \
+    void getInternalformati64v(GLenum target, GLenum internalformat, GLenum pname, GLsizei count,  \
+                               GLint64 *params);                                                   \
     void invalidateBufferData(BufferID bufferPacked);                                              \
     void invalidateBufferSubData(BufferID bufferPacked, GLintptr offset, GLsizeiptr length);       \
     void invalidateTexImage(TextureID texturePacked, GLint level);                                 \

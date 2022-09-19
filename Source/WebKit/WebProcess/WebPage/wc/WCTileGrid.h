@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include <WebCore/IntRect.h>
 #include <WebCore/TextureMapperSparseBackingStore.h>
 
@@ -69,3 +71,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

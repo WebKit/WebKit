@@ -59,7 +59,7 @@ public:
         m_owner = owner;
     }
 
-    JS_EXPORT_PRIVATE ~Instance();
+    JS_EXPORT_PRIVATE ~Instance() = default;
 
     template<typename T> T* owner() const { return reinterpret_cast<T*>(m_owner); }
     static ptrdiff_t offsetOfOwner() { return OBJECT_OFFSETOF(Instance, m_owner); }

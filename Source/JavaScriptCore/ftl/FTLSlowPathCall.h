@@ -35,7 +35,7 @@ namespace JSC { namespace FTL {
 
 class SlowPathCall {
 public:
-    SlowPathCall() { }
+    SlowPathCall() = default;
     
     SlowPathCall(MacroAssembler::Call call, const SlowPathCallKey& key)
         : m_call(call)

@@ -38,44 +38,27 @@ using namespace WebCore;
 
 static RetainPtr<SecCertificateRef> leafCertificate(const CertificateInfo& certificateInfo)
 {
-#if HAVE(SEC_TRUST_SERIALIZATION)
-
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
-    if (certificateInfo.type() == CertificateInfo::Type::Trust)
-        return checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(certificateInfo.trust())).get(), 0));
+    return checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(adoptCF(SecTrustCopyCertificateChain(certificateInfo.trust())).get(), 0));
 #else
-    if (certificateInfo.type() == CertificateInfo::Type::Trust)
-        return SecTrustGetCertificateAtIndex(certificateInfo.trust(), 0);
+    return SecTrustGetCertificateAtIndex(certificateInfo.trust(), 0);
 #endif // HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
-
-#endif // HAVE(SEC_TRUST_SERIALIZATION)
-    ASSERT(certificateInfo.type() == CertificateInfo::Type::CertificateChain);
-    ASSERT(CFArrayGetCount(certificateInfo.certificateChain()));
-    return checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(certificateInfo.certificateChain(), 0));
 }
 
 static NSArray *chain(const CertificateInfo& certificateInfo)
 {
-#if HAVE(SEC_TRUST_SERIALIZATION)
-    if (certificateInfo.type() == CertificateInfo::Type::Trust) {
-        CFIndex count = SecTrustGetCertificateCount(certificateInfo.trust());
-        if (count < 2)
-            return nil;
-
+    CFIndex count = SecTrustGetCertificateCount(certificateInfo.trust());
+    if (count < 2)
+        return nil;
 #if HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
-        return (__bridge NSArray *)adoptCF(SecTrustCopyCertificateChain(certificateInfo.trust())).autorelease();
+    return (__bridge NSArray *)adoptCF(SecTrustCopyCertificateChain(certificateInfo.trust())).autorelease();
 #else
-        NSMutableArray *array = [NSMutableArray array];
-        for (CFIndex i = 1; i < count; ++i)
-            [array addObject:(id)SecTrustGetCertificateAtIndex(certificateInfo.trust(), i)];
+    NSMutableArray *array = [NSMutableArray array];
+    for (CFIndex i = 1; i < count; ++i)
+        [array addObject:(id)SecTrustGetCertificateAtIndex(certificateInfo.trust(), i)];
 
-        return array;
+    return array;
 #endif // HAVE(SEC_TRUST_COPY_CERTIFICATE_CHAIN)
-    }
-#endif // HAVE(SEC_TRUST_SERIALIZATION)
-    ASSERT(certificateInfo.type() == CertificateInfo::Type::CertificateChain);
-    CFIndex chainCount = CFArrayGetCount(certificateInfo.certificateChain());
-    return chainCount > 1 ? [(__bridge NSArray *)certificateInfo.certificateChain() subarrayWithRange:NSMakeRange(1, chainCount - 1)] : nil;
 }
 
 WebCredential::WebCredential(WebCertificateInfo* certificateInfo)

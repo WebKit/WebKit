@@ -141,12 +141,6 @@ egl::Error SurfaceD3D::initialize(const egl::Display *display)
     return egl::NoError();
 }
 
-FramebufferImpl *SurfaceD3D::createDefaultFramebuffer(const gl::Context *context,
-                                                      const gl::FramebufferState &data)
-{
-    return mRenderer->createDefaultFramebuffer(data);
-}
-
 egl::Error SurfaceD3D::bindTexImage(const gl::Context *, gl::Texture *, EGLint)
 {
     return egl::NoError();
@@ -438,6 +432,17 @@ egl::Error SurfaceD3D::querySurfacePointerANGLE(EGLint attribute, void **value)
 const angle::Format *SurfaceD3D::getD3DTextureColorFormat() const
 {
     return mColorFormat;
+}
+
+egl::Error SurfaceD3D::attachToFramebuffer(const gl::Context *context, gl::Framebuffer *framebuffer)
+{
+    return egl::NoError();
+}
+
+egl::Error SurfaceD3D::detachFromFramebuffer(const gl::Context *context,
+                                             gl::Framebuffer *framebuffer)
+{
+    return egl::NoError();
 }
 
 angle::Result SurfaceD3D::getAttachmentRenderTarget(const gl::Context *context,

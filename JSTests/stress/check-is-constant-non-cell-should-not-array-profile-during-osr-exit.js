@@ -1,4 +1,5 @@
 //@ skip if $memoryLimited
+//@ requireOptions("--watchdog=1000", "--watchdog-exception-ok")
 
 function foo() {
   function bar(a0) {

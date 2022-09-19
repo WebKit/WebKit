@@ -30,8 +30,6 @@ class MockSurfaceImpl : public rx::SurfaceImpl
 
     MOCK_METHOD1(destroy, void(const egl::Display *));
     MOCK_METHOD1(initialize, egl::Error(const egl::Display *));
-    MOCK_METHOD2(createDefaultFramebuffer,
-                 rx::FramebufferImpl *(const gl::Context *, const gl::FramebufferState &data));
     MOCK_METHOD1(swap, egl::Error(const gl::Context *));
     MOCK_METHOD3(swapWithDamage, egl::Error(const gl::Context *, const EGLint *, EGLint));
     MOCK_METHOD5(postSubBuffer, egl::Error(const gl::Context *, EGLint, EGLint, EGLint, EGLint));
@@ -51,7 +49,8 @@ class MockSurfaceImpl : public rx::SurfaceImpl
                                const gl::ImageIndex &,
                                GLsizei,
                                rx::FramebufferAttachmentRenderTarget **));
-
+    MOCK_METHOD2(attachToFramebuffer, egl::Error(const gl::Context *, gl::Framebuffer *));
+    MOCK_METHOD2(detachFromFramebuffer, egl::Error(const gl::Context *, gl::Framebuffer *));
     MOCK_METHOD0(destructor, void());
 
     egl::SurfaceState mockState;

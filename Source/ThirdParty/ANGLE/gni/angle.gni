@@ -30,8 +30,14 @@ declare_args() {
 }
 
 declare_args() {
-  # Expose WGL entry points by default when using Desktop GL on Windows
-  angle_expose_wgl_entry_points = angle_enable_gl_desktop_frontend && is_win
+  # Expose WGL entry points, which is necessary for running windows desktop GL applications against ANGLE.
+  # TODO(http://anglebug.com/7628): This condition should be `angle_enable_gl_desktop_frontend && is_win`
+  # This is disabled by default on Windows because it was causing some test failures. Once the WGL frontend
+  # has more functionality implemented, we can re-enable this.
+  angle_expose_wgl_entry_points = false
+
+  # Expose GLX entry points by default when using Desktop GL on Linux.
+  angle_expose_glx_entry_points = angle_enable_gl_desktop_frontend && is_linux
 }
 
 if (angle_has_build) {
@@ -188,6 +194,10 @@ declare_args() {
   angle_has_astc_encoder = angle_has_build && angle_standalone && !is_android
 }
 
+declare_args() {
+  angle_test_enable_system_egl = false
+}
+
 # OpenCL is not supported on Windows UWP, because the CL headers include DX9, which is not
 # supported by UWP. A workaround might be possible if CL support on UWP is required.
 assert(!angle_is_winuwp || !angle_enable_cl,
@@ -204,7 +214,7 @@ declare_args() {
       angle_enable_vulkan && !is_android && !is_ggp && is_clang
 
   # Translator frontend support:
-  angle_enable_desktop_glsl = angle_enable_gl_desktop_backend
+  angle_enable_desktop_glsl = angle_enable_gl_desktop_frontend
 
   # Translator backend support:
   angle_enable_hlsl = angle_enable_d3d9 || angle_enable_d3d11

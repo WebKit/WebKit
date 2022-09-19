@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(GRAPHICS_LAYER_WC) && ENABLE(WEBGL)
+
 #include "GraphicsContextGLIdentifier.h"
 #include "WCContentBufferIdentifier.h"
 #include <WebCore/WCPlatformLayer.h>
@@ -50,3 +52,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC) && ENABLE(WEBGL)

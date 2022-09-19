@@ -240,7 +240,7 @@ class Tracker(GenericTracker):
             for text in [issue.description] + [comment.content for comment in issue.comments]:
                 for match in self.REFERENCE_RE.findall(text):
                     candidate = GenericTracker.from_string(match[0]) or self.from_string(match[0])
-                    if not candidate or candidate.link in refs or candidate.id == issue.id:
+                    if not candidate or candidate.link in refs or (isinstance(candidate.tracker, type(issue.tracker)) and candidate.id == issue.id):
                         continue
                     issue._references.append(candidate)
                     refs.add(candidate.link)
@@ -467,7 +467,7 @@ class Tracker(GenericTracker):
             return None
         return self.issue(response.json()['id'])
 
-    def cc_radar(self, issue, block=False, timeout=None):
+    def cc_radar(self, issue, block=False, timeout=None, radar=None):
         if not self.radar_importer:
             sys.stderr.write('No radar importer specified\n')
             return None
@@ -479,28 +479,55 @@ class Tracker(GenericTracker):
             sys.stderr.write('Project does not define radar tracker\n')
             return None
 
+        keyword_to_add = None
+        comment_to_make = None
+        user_to_cc = self.radar_importer.name if self.radar_importer not in issue.watchers else None
+        if radar and isinstance(radar.tracker, RadarTracker):
+            if radar not in issue.references:
+                comment_to_make = '<rdar://problem/{}>'.format(issue.id)
+            if user_to_cc:
+                keyword_to_add = 'InRadar'
+            elif comment_to_make:
+                sys.stderr.write("{} already CCed '{}' and tracking a different bug\n".format(
+                    self.radar_importer.name,
+                    issue.references[0] if issue.references else '?',
+                ))
+
         did_modify_cc = False
-        if self.radar_importer not in issue.watchers:
+        if user_to_cc or keyword_to_add:
             log.info('CCing {}'.format(self.radar_importer.name))
             response = None
             try:
+                data = dict(ids=[issue.id])
+                if user_to_cc:
+                    data['cc'] = dict(add=[self.radar_importer.username])
+                if comment_to_make:
+                    data['comment'] = dict(body=comment_to_make)
+                if keyword_to_add:
+                    data['keywords'] = dict(add=[keyword_to_add])
                 response = requests.put(
                     '{}/rest/bug/{}{}'.format(self.url, issue.id, self._login_arguments(required=True)),
-                    json=dict(
-                        ids=[issue.id],
-                        cc=dict(add=[self.radar_importer.username]),
-                    ),
+                    json=data,
                 )
             except RuntimeError as e:
                 sys.stderr.write('{}\n'.format(e))
             if response and response.status_code // 100 == 4 and self._logins_left:
                 self._logins_left -= 1
-            if response and response.status_code // 100 == 2:
+            if not response or response.status_code // 100 != 2:
+                sys.stderr.write("Failed to cc {} on '{}'\n".format(self.radar_importer.name, issue))
+            elif radar and isinstance(radar.tracker, RadarTracker):
+                if comment_to_make:
+                    issue._references = None
+                    issue._comments.append(Issue.Comment(
+                        user=self.me(),
+                        timestamp=int(time.time()),
+                        content=comment_to_make,
+                    ))
+                return radar
+            else:
                 did_modify_cc = True
                 issue._comments = None
                 issue._references = None
-            else:
-                sys.stderr.write("Failed to cc {} on '{}'\n".format(self.radar_importer.name, issue))
 
         start = time.time()
         while start + (timeout or 60) > time.time():

@@ -105,16 +105,17 @@ void WriteSpirvHeader(std::vector<uint32_t> *blob, uint32_t idCount)
     //  - Version (1.0)
     //  - ANGLE's Generator number:
     //     * 24 for tool id (higher 16 bits)
-    //     * 0 for tool version (lower 16 bits))
+    //     * 1 for tool version (lower 16 bits))
     //  - Bound (idCount)
     //  - 0 (reserved)
     constexpr uint32_t kANGLEGeneratorId = 24;
+    constexpr uint32_t kANGLEGeneratorVersion = 1;
 
     ASSERT(blob->empty());
 
     blob->push_back(spv::MagicNumber);
     blob->push_back(0x00010000);
-    blob->push_back(kANGLEGeneratorId << 16 | 0);
+    blob->push_back(kANGLEGeneratorId << 16 | kANGLEGeneratorVersion);
     blob->push_back(idCount);
     blob->push_back(0x00000000);
 }
@@ -223,7 +224,7 @@ class Writer:
         # Write out the files.
         data_source_base_name = os.path.basename(SPIRV_GRAMMAR_FILE)
         builder_template_args = {
-            'script_name': sys.argv[0],
+            'script_name': os.path.basename(sys.argv[0]),
             'data_source_name': data_source_base_name,
             'file_name': SPIRV_BUILDER_FILE,
             'file_name_capitalized': remove_chars(SPIRV_BUILDER_FILE.upper(), '_'),
@@ -233,7 +234,7 @@ class Writer:
             'function_list': ''.join(self.instruction_builder_impl)
         }
         parser_template_args = {
-            'script_name': sys.argv[0],
+            'script_name': os.path.basename(sys.argv[0]),
             'data_source_name': data_source_base_name,
             'file_name': SPIRV_PARSER_FILE,
             'file_name_capitalized': remove_chars(SPIRV_PARSER_FILE.upper(), '_'),

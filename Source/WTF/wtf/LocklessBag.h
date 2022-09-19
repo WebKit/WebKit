@@ -44,10 +44,7 @@ public:
         Node* next;
     };
 
-    LocklessBag()
-        : m_head(nullptr)
-    {
-    }
+    LocklessBag() = default;
 
     enum PushResult { Empty, NonEmpty };
     PushResult add(T&& element)
@@ -106,7 +103,7 @@ public:
     }
 
 private:
-    Atomic<Node*> m_head;
+    Atomic<Node*> m_head { nullptr };
 };
     
 } // namespace WTF

@@ -367,6 +367,8 @@
 		7B76083D289832BD000012A1 /* VertexArrayImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B760838289832BD000012A1 /* VertexArrayImpl.cpp */; };
 		7B76083E289832BD000012A1 /* ProgramImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B760839289832BD000012A1 /* ProgramImpl.cpp */; };
 		7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */; };
+		7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */; };
+		7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */; };
 		7BCF49C528AD1C8C0090D34A /* apple_platform_utils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */; };
 		7BCF49C628AD1C8C0090D34A /* CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */; };
 		7BCF49C728AD1C8C0090D34A /* apple_platform_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */; };
@@ -1405,6 +1407,8 @@
 		7B760838289832BD000012A1 /* VertexArrayImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArrayImpl.cpp; sourceTree = "<group>"; };
 		7B760839289832BD000012A1 /* ProgramImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramImpl.cpp; sourceTree = "<group>"; };
 		7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedbackImpl.cpp; sourceTree = "<group>"; };
+		7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryShaderCache.cpp; sourceTree = "<group>"; };
+		7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryShaderCache.h; sourceTree = "<group>"; };
 		7BCF49C228AD1C8C0090D34A /* apple_platform_utils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = apple_platform_utils.mm; sourceTree = "<group>"; };
 		7BCF49C328AD1C8C0090D34A /* CircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircularBuffer.h; sourceTree = "<group>"; };
 		7BCF49C428AD1C8C0090D34A /* apple_platform_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform_utils.h; sourceTree = "<group>"; };
@@ -2163,6 +2167,8 @@
 				5CCD595E2284F7960018F2D8 /* MemoryObject.h */,
 				315EBDDC1FCE452B00AC7A89 /* MemoryProgramCache.cpp */,
 				315EBDD61FCE452900AC7A89 /* MemoryProgramCache.h */,
+				7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */,
+				7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */,
 				5CCD595B2284F7960018F2D8 /* Observer.cpp */,
 				5CCD59582284F7950018F2D8 /* Observer.h */,
 				A315988623299037000619B9 /* Overlay.cpp */,
@@ -3327,6 +3333,7 @@
 				31CD0025249184E700486F27 /* MemoryObjectGL.h in Headers */,
 				31CD0032249184F400486F27 /* MemoryObjectImpl.h in Headers */,
 				31CD0053249184FC00486F27 /* MemoryProgramCache.h in Headers */,
+				7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */,
 				FF194FE727432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.h in Headers */,
 				FF4BB3662769467600994EBF /* mtl_context_device.h in Headers */,
 				FF4BB3652769467600994EBF /* mtl_resource_spi.h in Headers */,
@@ -3846,6 +3853,7 @@
 				DF83E3092639FE17000825EF /* MemoryObject.cpp in Sources */,
 				DF83E3452639FE92000825EF /* MemoryObjectGL.cpp in Sources */,
 				DF83E31E2639FE17000825EF /* MemoryProgramCache.cpp in Sources */,
+				7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */,
 				DF83E2382639FCD5000825EF /* ModifyStruct.cpp in Sources */,
 				FF194FE927432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp in Sources */,
 				DF83E3802639FEB8000825EF /* mtl_buffer_pool.mm in Sources */,

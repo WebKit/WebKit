@@ -350,13 +350,9 @@ private:
         // enough things from them, deletes (or resizes) their backing store eagerly. Hence
         // HashMaps induce a lot of malloc traffic.
         static constexpr unsigned capacity = 100;
-    
-        SmallMaps()
-            : m_pureLength(0)
-            , m_impureLength(0)
-        {
-        }
-    
+
+        SmallMaps() = default;
+
         void clear()
         {
             m_pureLength = 0;
@@ -415,16 +411,14 @@ private:
     private:
         WTF::KeyValuePair<PureValue, Node*> m_pureMap[capacity];
         WTF::KeyValuePair<HeapLocation, LazyNode> m_impureMap[capacity];
-        unsigned m_pureLength;
-        unsigned m_impureLength;
+        unsigned m_pureLength { 0 };
+        unsigned m_impureLength { 0 };
     };
 
     class LargeMaps {
     public:
-        LargeMaps()
-        {
-        }
-    
+        LargeMaps() = default;
+
         void clear()
         {
             m_pureMap.clear();
@@ -957,14 +951,11 @@ public:
     }
     
     struct ImpureBlockData {
-        ImpureBlockData()
-            : didVisit(false)
-        {
-        }
-        
+        ImpureBlockData() = default;
+
         ClobberSet writes;
         ImpureMap availableAtTail;
-        bool didVisit;
+        bool didVisit { false };
     };
     
     Vector<BasicBlock*> m_preOrder;

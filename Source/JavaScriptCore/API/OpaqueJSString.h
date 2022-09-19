@@ -71,10 +71,7 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
 private:
     friend class WTF::ThreadSafeRefCounted<OpaqueJSString>;
 
-    OpaqueJSString()
-        : m_characters(nullptr)
-    {
-    }
+    OpaqueJSString() = default;
 
     OpaqueJSString(const String& string)
         : m_string(string.isolatedCopy())
@@ -90,7 +87,6 @@ private:
 
     OpaqueJSString(const LChar* characters, unsigned length)
         : m_string(characters, length)
-        , m_characters(nullptr)
     {
     }
 
@@ -103,7 +99,7 @@ private:
     String m_string;
 
     // This will be initialized on demand when characters() is called if the string needs up-conversion.
-    std::atomic<UChar*> m_characters;
+    std::atomic<UChar*> m_characters { nullptr };
 };
 
 #endif

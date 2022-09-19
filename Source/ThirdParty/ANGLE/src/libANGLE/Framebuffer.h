@@ -196,20 +196,19 @@ class Framebuffer final : public angle::ObserverInterface,
                           public angle::Subject
 {
   public:
+    // Constructor to build default framebuffers.
+    Framebuffer(const Context *context, rx::GLImplFactory *factory);
     // Constructor to build application-defined framebuffers
-    Framebuffer(const Caps &caps,
-                rx::GLImplFactory *factory,
-                FramebufferID id,
-                egl::ShareGroup *shareGroup);
-    // Constructor to build default framebuffers for a surface and context pair
-    Framebuffer(const Context *context, egl::Surface *surface, egl::Surface *readSurface);
-    // Constructor to build a fake default framebuffer when surfaceless
-    Framebuffer(const Context *context, rx::GLImplFactory *factory, egl::Surface *readSurface);
+    Framebuffer(const Context *context, rx::GLImplFactory *factory, FramebufferID id);
 
     ~Framebuffer() override;
     void onDestroy(const Context *context);
 
+    egl::Error setSurfaces(const Context *context,
+                           egl::Surface *surface,
+                           egl::Surface *readSurface);
     void setReadSurface(const Context *context, egl::Surface *readSurface);
+    egl::Error unsetSurfaces(const Context *context);
     angle::Result setLabel(const Context *context, const std::string &label) override;
     const std::string &getLabel() const override;
 

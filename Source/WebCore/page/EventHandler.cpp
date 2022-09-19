@@ -1420,18 +1420,18 @@ void EventHandler::updateCursor()
     HitTestResult result(view->windowToContents(*m_lastKnownMousePosition));
     document->hitTest(hitType, result);
 
-    updateCursor(*view, result);
+    updateCursor(*view, result, shiftKey);
 }
 
-void EventHandler::updateCursor(FrameView& view, const HitTestResult& result)
+void EventHandler::updateCursor(FrameView& view, const HitTestResult& result, bool shiftKey)
 {
-    if (auto optionalCursor = selectCursor(result)) {
+    if (auto optionalCursor = selectCursor(result, shiftKey)) {
         m_currentMouseCursor = WTFMove(optionalCursor.value());
         view.setCursor(m_currentMouseCursor);
     }
 }
 
-std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result)
+std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bool shiftKey)
 {
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
         return std::nullopt;
@@ -1458,8 +1458,8 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result)
     if (!node)
         return std::nullopt;
 
-    // We are using the node's computed style instead of renderer()->style because we need style info for nodes without a renderer, e.g.: <area>
-    auto* style = node->computedStyle();
+    auto renderer = node->renderer();
+    auto* style = renderer ? &renderer->style() : nullptr;
     bool horizontalText = !style || style->isHorizontalWritingMode();
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
 
@@ -1470,7 +1470,6 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result)
         cancelAutoHideCursorTimer();
 #endif
 
-    auto* renderer = node->renderer();
     if (renderer) {
         Cursor overrideCursor;
         switch (renderer->getCursor(roundedIntPoint(result.localPoint()), overrideCursor)) {
@@ -1537,6 +1536,9 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result)
         }
 
         bool editable = node->hasEditableStyle();
+
+        if (useHandCursor(node.get(), result.isOverLink(), shiftKey))
+            return handCursor();
 
         bool inResizer = false;
         if (renderer && renderer->hasLayer()) {
@@ -2042,7 +2044,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
 
     if (!newSubframe || mouseEvent.scrollbar()) {
         if (RefPtr view = m_frame.view())
-            updateCursor(*view, mouseEvent.hitTestResult());
+            updateCursor(*view, mouseEvent.hitTestResult(), platformMouseEvent.shiftKey());
     }
 
     m_lastMouseMoveEventSubframe = newSubframe;

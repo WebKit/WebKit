@@ -38,16 +38,10 @@ class Graph;
 
 class FrozenValue {
 public:
-    FrozenValue()
-        : m_structure(nullptr)
-        , m_strength(WeakValue)
-    {
-    }
-    
+    FrozenValue() = default;
+
     FrozenValue(JSValue value)
         : m_value(value)
-        , m_structure(nullptr)
-        , m_strength(WeakValue)
     {
         RELEASE_ASSERT(!value || !value.isCell());
     }
@@ -121,8 +115,8 @@ private:
     }
 
     JSValue m_value;
-    Structure* m_structure;
-    ValueStrength m_strength;
+    Structure* m_structure { nullptr };
+    ValueStrength m_strength { WeakValue };
 };
 
 } } // namespace JSC::DFG

@@ -31,6 +31,11 @@
     "script": "//scripts/run_gtest_angle_test.py",
     "type": "script",
   },
+  "angle_deqp_gl46_tests": {
+    "label": "//src/tests:angle_deqp_gl46_tests",
+    "script": "//scripts/run_gtest_angle_test.py",
+    "type": "script",
+  },
   "angle_deqp_gles2_tests": {
     "label": "//src/tests:angle_deqp_gles2_tests",
     "script": "//scripts/run_gtest_angle_test.py",

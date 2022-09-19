@@ -35,9 +35,7 @@ namespace JSC { namespace DFG {
 
 class AbstractValueClobberEpoch {
 public:
-    AbstractValueClobberEpoch()
-    {
-    }
+    AbstractValueClobberEpoch() = default;
     
     static AbstractValueClobberEpoch first(StructureClobberState clobberState)
     {

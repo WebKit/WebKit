@@ -37,9 +37,6 @@ OSLogPrintStream::OSLogPrintStream(os_log_t log, os_log_type_t logType)
 {
 }
 
-OSLogPrintStream::~OSLogPrintStream()
-{ }
-
 std::unique_ptr<OSLogPrintStream> OSLogPrintStream::open(const char* subsystem, const char* category, os_log_type_t logType)
 {
     os_log_t log = os_log_create(subsystem, category);

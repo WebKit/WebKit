@@ -52,6 +52,7 @@ class VisiblePosition;
 
 enum EUserTriggered : bool { NotUserTriggered, UserTriggered };
 enum RevealExtentOption : bool { RevealExtent, DoNotRevealExtent };
+enum ForceCenterScrollOption : bool { DoNotForceCenterScroll, ForceCenterScroll };
 
 class CaretBase {
     WTF_MAKE_NONCOPYABLE(CaretBase);
@@ -128,7 +129,8 @@ public:
         RevealSelectionUpToMainFrame = 1 << 8,
         SmoothScroll = 1 << 9,
         DelegateMainFrameScroll = 1 << 10,
-        RevealSelectionBounds = 1 << 11
+        RevealSelectionBounds = 1 << 11,
+        ForceCenterScroll = 1 << 12,
     };
     static constexpr OptionSet<SetSelectionOption> defaultSetSelectionOptions(EUserTriggered = NotUserTriggered);
 
@@ -268,7 +270,7 @@ public:
 
 private:
     void updateSelectionAppearanceNow();
-    void updateAndRevealSelection(const AXTextStateChangeIntent&, ScrollBehavior = ScrollBehavior::Instant, RevealExtentOption = RevealExtentOption::RevealExtent);
+    void updateAndRevealSelection(const AXTextStateChangeIntent&, ScrollBehavior = ScrollBehavior::Instant, RevealExtentOption = RevealExtentOption::RevealExtent, ForceCenterScrollOption = ForceCenterScrollOption::DoNotForceCenterScroll);
     void updateDataDetectorsForSelection();
 
     bool setSelectionWithoutUpdatingAppearance(const VisibleSelection&, OptionSet<SetSelectionOption>, CursorAlignOnScroll, TextGranularity);

@@ -38,33 +38,6 @@ struct VertexAttribute {
     PAL::WebGPU::Size64 offset { 0 };
 
     PAL::WebGPU::Index32 shaderLocation { 0 };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << format;
-        encoder << offset;
-        encoder << shaderLocation;
-    }
-
-    template<class Decoder> static std::optional<VertexAttribute> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::VertexFormat> format;
-        decoder >> format;
-        if (!format)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::Size64> offset;
-        decoder >> offset;
-        if (!offset)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::Index32> shaderLocation;
-        decoder >> shaderLocation;
-        if (!shaderLocation)
-            return std::nullopt;
-
-        return { { WTFMove(*format), WTFMove(*offset), WTFMove(*shaderLocation) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

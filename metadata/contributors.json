@@ -210,7 +210,8 @@
    },
    {
       "emails" : [
-         "ahmad.saleem792@gmail.com"
+         "ahmad.saleem792@gmail.com",
+         "ahmad.saleem792+github@gmail.com"
       ],
       "github" : "Ahmad-S792",
       "name" : "Ahmad Saleem",
@@ -2699,6 +2700,19 @@
    },
    {
       "emails" : [
+         "gavin.p@apple.com"
+      ],
+      "expertise" : "Security",
+      "github" : "gavin-apple",
+      "name" : "Gavin Phillips",
+      "nicks" : [
+         "gavin-apple",
+         "gavin.p"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "geofflang@google.com"
       ],
       "name" : "Geoff Lang"
@@ -4621,6 +4635,12 @@
    },
    {
       "emails" : [
+         "madsmith@apple.com"
+      ],
+      "name" : "Madeline Smith"
+   },
+   {
+      "emails" : [
          "ager@chromium.org"
       ],
       "expertise" : "V8",
@@ -5971,7 +5991,8 @@
    },
    {
       "emails" : [
-         "rmittal2@apple.com"
+         "rmittal2@apple.com",
+         "rupinmittal@ucla.edu"
       ],
       "github" : "RupinMittal",
       "name" : "Rupin Mittal",

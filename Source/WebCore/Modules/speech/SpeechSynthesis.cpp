@@ -74,9 +74,9 @@ SpeechSynthesis::SpeechSynthesis(ScriptExecutionContext& context)
 
 SpeechSynthesis::~SpeechSynthesis() = default;
 
-void SpeechSynthesis::setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer> synthesizer)
+void SpeechSynthesis::setPlatformSynthesizer(Ref<PlatformSpeechSynthesizer>&& synthesizer)
 {
-    m_platformSpeechSynthesizer = WTFMove(synthesizer);
+    m_platformSpeechSynthesizer = synthesizer.ptr();
     m_voiceList.clear();
     m_currentSpeechUtterance = nullptr;
     m_utteranceQueue.clear();
@@ -93,7 +93,7 @@ void SpeechSynthesis::voicesDidChange()
 PlatformSpeechSynthesizer& SpeechSynthesis::ensurePlatformSpeechSynthesizer()
 {
     if (!m_platformSpeechSynthesizer)
-        m_platformSpeechSynthesizer = makeUnique<PlatformSpeechSynthesizer>(this);
+        m_platformSpeechSynthesizer = PlatformSpeechSynthesizer::create(*this);
     return *m_platformSpeechSynthesizer;
 }
 

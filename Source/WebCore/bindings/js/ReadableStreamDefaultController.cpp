@@ -62,6 +62,7 @@ void ReadableStreamDefaultController::close()
 {
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(&jsController());
+    ASSERT(!arguments.hasOverflowed());
 
     auto* clientData = static_cast<JSVMClientData*>(globalObject().vm().clientData);
     auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerClosePrivateName();
@@ -86,6 +87,7 @@ void ReadableStreamDefaultController::error(const Exception& exception)
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(&jsController());
     arguments.append(value);
+    ASSERT(!arguments.hasOverflowed());
 
     auto* clientData = static_cast<JSVMClientData*>(vm.clientData);
     auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerErrorPrivateName();
@@ -102,6 +104,7 @@ bool ReadableStreamDefaultController::enqueue(JSC::JSValue value)
     JSC::MarkedArgumentBuffer arguments;
     arguments.append(&jsController());
     arguments.append(value);
+    ASSERT(!arguments.hasOverflowed());
 
     auto* clientData = static_cast<JSVMClientData*>(lexicalGlobalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().readableStreamDefaultControllerEnqueuePrivateName();

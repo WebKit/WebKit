@@ -9,6 +9,7 @@
 
 import sys
 import angle_format
+import os
 
 from functools import reduce
 
@@ -146,7 +147,7 @@ def main():
 
     with open('dxgi_format_map_autogen.cpp', 'wt') as out_file:
         output_cpp = template_cpp.format(
-            script_name=sys.argv[0],
+            script_name=os.path.basename(sys.argv[0]),
             data_source_name=input_data,
             component_type_cases=component_cases,
             format_cases=format_cases)

@@ -106,17 +106,23 @@ if (EGL_EXTRAS)
     list(APPEND WebCore_INTERFACE_DEPENDENCIES EGLExtras_Copy)
 endif ()
 
-PLAYSTATION_COPY_MODULES(WebCore
-    TARGETS
-        CURL
-        Cairo
-        EGL
-        Fontconfig
-        Freetype
-        HarfBuzz
-        JPEG
-        OpenSSL
-        PNG
-        WebKitRequirements
-        WebP
+set(WebCore_MODULES
+    CURL
+    Cairo
+    EGL
+    Fontconfig
+    Freetype
+    HarfBuzz
+    ICU
+    JPEG
+    OpenSSL
+    PNG
+    WebKitRequirements
+    WebP
 )
+
+if (USE_WPE_BACKEND_PLAYSTATION)
+    list(APPEND WebCore_MODULES WPE)
+endif ()
+
+PLAYSTATION_COPY_MODULES(WebCore TARGETS ${WebCore_MODULES})

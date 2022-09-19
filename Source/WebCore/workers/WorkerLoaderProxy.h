@@ -55,6 +55,8 @@ public:
 
     virtual RefPtr<RTCDataChannelRemoteHandlerConnection> createRTCDataChannelRemoteHandlerConnection() = 0;
 
+    virtual ScriptExecutionContextIdentifier loaderContextIdentifier() const = 0;
+
     // Posts a task to the thread which runs the loading code (normally, the main thread).
     virtual void postTaskToLoader(ScriptExecutionContext::Task&&) = 0;
 };

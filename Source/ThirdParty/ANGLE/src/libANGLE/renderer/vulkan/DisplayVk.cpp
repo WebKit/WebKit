@@ -211,6 +211,11 @@ gl::Version DisplayVk::getMaxConformantESVersion() const
     return mRenderer->getMaxConformantESVersion();
 }
 
+Optional<gl::Version> DisplayVk::getMaxSupportedDesktopVersion() const
+{
+    return gl::Version{4, 6};
+}
+
 egl::Error DisplayVk::validateImageClientBuffer(const gl::Context *context,
                                                 EGLenum target,
                                                 EGLClientBuffer clientBuffer,
@@ -352,6 +357,13 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
         getRenderer()->getFeatures().supportsLockSurfaceExtension.enabled;
 
     outExtensions->partialUpdateKHR = true;
+
+    outExtensions->timestampSurfaceAttributeANGLE =
+        getRenderer()->getFeatures().supportsTimestampSurfaceAttribute.enabled;
+
+    outExtensions->eglColorspaceAttributePassthroughANGLE =
+        outExtensions->glColorspace &&
+        getRenderer()->getFeatures().eglColorspaceAttributePassthrough.enabled;
 }
 
 void DisplayVk::generateCaps(egl::Caps *outCaps) const

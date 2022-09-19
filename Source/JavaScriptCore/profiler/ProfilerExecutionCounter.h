@@ -33,14 +33,14 @@ namespace JSC { namespace Profiler {
 class ExecutionCounter {
     WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(ExecutionCounter);
 public:
-    ExecutionCounter() : m_counter(0) { }
+    ExecutionCounter() = default;
     
     uint64_t* address() { return &m_counter; }
     
     uint64_t count() const { return m_counter; }
 
 private:
-    uint64_t m_counter;
+    uint64_t m_counter { 0 };
 };
 
 } } // namespace JSC::Profiler

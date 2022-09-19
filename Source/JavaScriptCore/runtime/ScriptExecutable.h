@@ -152,13 +152,13 @@ protected:
     CodeFeatures m_features;
     unsigned m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
     OptionSet<CodeGenerationMode> m_codeGenerationModeForGeneratorBody;
-    bool m_hasCapturedVariables : 1;
-    bool m_neverInline : 1;
-    bool m_neverOptimize : 1;
-    bool m_neverFTLOptimize : 1;
+    bool m_hasCapturedVariables : 1 { false };
+    bool m_neverInline : 1 { false };
+    bool m_neverOptimize : 1 { false };
+    bool m_neverFTLOptimize : 1 { false };
     bool m_isArrowFunctionContext : 1;
-    bool m_canUseOSRExitFuzzing : 1;
-    bool m_codeForGeneratorBodyWasGenerated : 1;
+    bool m_canUseOSRExitFuzzing : 1 { true };
+    bool m_codeForGeneratorBodyWasGenerated : 1 { false };
     bool m_isInsideOrdinaryFunction : 1;
     unsigned m_derivedContextType : 2; // DerivedContextType
     unsigned m_evalContextType : 2; // EvalContextType

@@ -136,9 +136,9 @@ RefPtr<GPUProcessConnection> GPUProcessConnection::create(IPC::Connection& paren
 }
 
 GPUProcessConnection::GPUProcessConnection(IPC::Connection::Identifier&& connectionIdentifier)
-    : m_connection(IPC::Connection::createServerConnection(connectionIdentifier, *this))
+    : m_connection(IPC::Connection::createServerConnection(connectionIdentifier))
 {
-    m_connection->open();
+    m_connection->open(*this);
 
     addLanguageChangeObserver(this, languagesChanged);
 

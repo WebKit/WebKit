@@ -69,8 +69,8 @@ public:
 private:
     // This summarizes everything we need to remember about a barrier.
     struct ChildAndOrigin {
-        ChildAndOrigin() { }
-        
+        ChildAndOrigin() = default;
+
         ChildAndOrigin(Node* child, CodeOrigin semanticOrigin)
             : child(child)
             , semanticOrigin(semanticOrigin)

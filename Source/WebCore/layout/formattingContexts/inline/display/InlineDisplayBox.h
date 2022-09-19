@@ -220,8 +220,12 @@ inline Box::Text::Text(size_t start, size_t length, const String& originalConten
 inline FloatRect Box::visibleRectIgnoringBlockDirection(const Box& box, const FloatRect& visibleLineRect)
 {
     auto visualRectIgnoringBlockDirection = box.visualRectIgnoringBlockDirection();
+    auto visibleBoxLeft = std::max(visualRectIgnoringBlockDirection.x(), visibleLineRect.x());
+    visualRectIgnoringBlockDirection.setX(visibleBoxLeft);
+
     auto visibleBoxRight = std::min(visualRectIgnoringBlockDirection.maxX(), visibleLineRect.maxX());
     visualRectIgnoringBlockDirection.shiftMaxXEdgeTo(visibleBoxRight);
+
     return visualRectIgnoringBlockDirection;
 }
 

@@ -35,10 +35,13 @@
 #include "TemporalInstantConstructor.h"
 #include "TemporalInstantPrototype.h"
 #include "TemporalNow.h"
+#include "TemporalPlainDate.h"
 #include "TemporalPlainDateConstructor.h"
 #include "TemporalPlainDatePrototype.h"
+#include "TemporalPlainDateTime.h"
 #include "TemporalPlainDateTimeConstructor.h"
 #include "TemporalPlainDateTimePrototype.h"
+#include "TemporalPlainTime.h"
 #include "TemporalPlainTimeConstructor.h"
 #include "TemporalPlainTimePrototype.h"
 #include "TemporalTimeZoneConstructor.h"
@@ -540,6 +543,35 @@ TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSObject* opti
     return intlOption<TemporalOverflow>(globalObject, options, globalObject->vm().propertyNames->overflow,
         { { "constrain"_s, TemporalOverflow::Constrain }, { "reject"_s, TemporalOverflow::Reject } },
         "overflow must be either \"constrain\" or \"reject\""_s, TemporalOverflow::Constrain);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-rejectobjectwithcalendarortimezone
+void rejectObjectWithCalendarOrTimeZone(JSGlobalObject* globalObject, JSObject* object)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // FIXME: Also support PlainMonthDay, PlainYearMonth, ZonedDateTime.
+    if (object->inherits<TemporalPlainDate>()
+        || object->inherits<TemporalPlainDateTime>()
+        || object->inherits<TemporalPlainTime>()) {
+        throwTypeError(globalObject, scope, "argument object must not have calendar or timeZone property"_s);
+        return;
+    }
+
+    auto calendar = object->get(globalObject, vm.propertyNames->calendar);    
+    RETURN_IF_EXCEPTION(scope, void());
+    if (!calendar.isUndefined()) {
+        throwTypeError(globalObject, scope, "argument object must not have calendar property"_s);
+        return;
+    }
+
+    auto timeZone = object->get(globalObject, vm.propertyNames->timeZone);    
+    RETURN_IF_EXCEPTION(scope, void());
+    if (!timeZone.isUndefined()) {
+        throwTypeError(globalObject, scope, "argument object must not have timeZone property"_s);
+        return;
+    }
 }
 
 } // namespace JSC

@@ -38,6 +38,7 @@
 - (void)_setContentSizePreservingContentOffsetDuringRubberband:(CGSize)contentSize;
 - (void)_setScrollEnabledInternal:(BOOL)enabled;
 - (void)_setZoomEnabledInternal:(BOOL)enabled;
+- (void)_setBouncesInternal:(BOOL)horizontal vertical:(BOOL)vertical;
 - (BOOL)_setContentScrollInsetInternal:(UIEdgeInsets)insets;
 - (void)_setDecelerationRateInternal:(UIScrollViewDecelerationRate)rate;
 

@@ -114,6 +114,14 @@
                 "Emulate ANGLE_shader_pixel_local_storage using shader images"
             ],
             "issue": "http://anglebug.com/7279"
+        },
+        {
+            "name": "cache_compiled_shader",
+            "category": "Features",
+            "description": [
+                "Enable to cache compiled shaders"
+            ],
+            "issue": "http://anglebug.com/7036"
         }
     ]
 }

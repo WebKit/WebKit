@@ -361,11 +361,8 @@ inline InternalDependencyType opaqueMixture(T value, Arguments... arguments)
 class Dependency {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Dependency()
-        : m_value(0)
-    {
-    }
-    
+    Dependency() = default;
+
     // On TSO architectures, this is a load-load fence and the value it returns is not meaningful (it's
     // zero). The load-load fence is usually just a compiler fence. On ARM, this is a self-xor that
     // produces zero, but it's concealed from the compiler. The CPU understands this dummy op to be a
@@ -466,14 +463,14 @@ public:
     }
     
 private:
-    InternalDependencyType m_value;
+    InternalDependencyType m_value { 0 };
 };
 
 template<typename InputType, typename ValueType>
 struct InputAndValue {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    InputAndValue() { }
+    InputAndValue() = default;
     
     InputAndValue(InputType input, ValueType value)
         : input(input)

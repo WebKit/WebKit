@@ -130,7 +130,6 @@ public:
         { }
         
         explicit TrustedImmPtr(std::nullptr_t)
-            : m_value(nullptr)
         { }
 
         explicit TrustedImmPtr(FrozenValue* value)
@@ -153,7 +152,7 @@ public:
         }
 
     private:
-        MacroAssembler::TrustedImmPtr m_value;
+        MacroAssembler::TrustedImmPtr m_value { nullptr };
     };
 
     bool compile();
@@ -1235,7 +1234,7 @@ public:
     void emitBranch(Node*);
     
     struct StringSwitchCase {
-        StringSwitchCase() { }
+        StringSwitchCase() = default;
         
         StringSwitchCase(StringImpl* string, BasicBlock* target)
             : string(string)
@@ -1783,9 +1782,9 @@ public:
 
     // The current node being generated.
     BasicBlock* m_block;
-    Node* m_currentNode;
-    NodeType m_lastGeneratedNode;
-    unsigned m_indexInBlock;
+    Node* m_currentNode { nullptr };
+    NodeType m_lastGeneratedNode { LastNodeType };
+    unsigned m_indexInBlock { 0 };
 
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;
@@ -1796,7 +1795,7 @@ public:
     // can statically determine a speculation will fail (for example, when two nodes
     // will make conflicting speculations about the same operand). In such cases this
     // flag is cleared, indicating no further code generation should take place.
-    bool m_compileOkay;
+    bool m_compileOkay { true };
 
     Vector<MacroAssembler::Label> m_osrEntryHeads;
     
@@ -1847,11 +1846,6 @@ public:
     explicit JSValueOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
         , m_edge(edge)
-#if USE(JSVALUE64)
-        , m_gprOrInvalid(InvalidGPRReg)
-#elif USE(JSVALUE32_64)
-        , m_isDouble(false)
-#endif
     {
         ASSERT(m_jit);
         if (!edge)
@@ -1986,7 +1980,7 @@ private:
     SpeculativeJIT* m_jit;
     Edge m_edge;
 #if USE(JSVALUE64)
-    GPRReg m_gprOrInvalid;
+    GPRReg m_gprOrInvalid { InvalidGPRReg };
 #elif USE(JSVALUE32_64)
     union {
         struct {
@@ -1995,7 +1989,7 @@ private:
         } pair;
         FPRReg fpr;
     } m_register;
-    bool m_isDouble;
+    bool m_isDouble { false };
 #endif
 };
 
@@ -2134,8 +2128,8 @@ public:
     }
 
 private:
-    SpeculativeJIT* m_jit;
-    GPRReg m_gpr;
+    SpeculativeJIT* m_jit { nullptr };
+    GPRReg m_gpr { InvalidGPRReg };
 };
 
 class JSValueRegsTemporary {
@@ -2310,9 +2304,6 @@ public:
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
-#ifndef NDEBUG
-        , m_format(DataFormatNone)
-#endif
     {
         ASSERT(m_jit);
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == Int32Use || edge.useKind() == KnownInt32Use));
@@ -2359,7 +2350,7 @@ private:
     SpeculativeJIT* m_jit;
     Edge m_edge;
     GPRReg m_gprOrInvalid;
-    DataFormat m_format;
+    DataFormat m_format { DataFormatNone };
 };
 
 class SpeculateStrictInt32Operand {

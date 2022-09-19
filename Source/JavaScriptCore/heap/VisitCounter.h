@@ -31,8 +31,8 @@ namespace JSC {
 
 class VisitCounter {
 public:
-    VisitCounter() { }
-    
+    VisitCounter() = default;
+
     VisitCounter(AbstractSlotVisitor& visitor)
         : m_visitor(&visitor)
         , m_initialVisitCount(visitor.visitCount())

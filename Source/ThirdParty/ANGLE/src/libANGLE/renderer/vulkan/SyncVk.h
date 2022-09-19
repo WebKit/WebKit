@@ -131,7 +131,7 @@ class EGLSyncVk final : public EGLSyncImpl
   private:
     EGLenum mType;
     vk::SyncHelper *mSyncHelper;  // SyncHelper or SyncHelperNativeFence decided at run-time.
-    const egl::AttributeMap &mAttribs;
+    EGLint mNativeFenceFD;
 };
 }  // namespace rx
 

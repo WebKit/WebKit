@@ -9,6 +9,7 @@
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
 import sys
+import os
 
 sys.path.append('renderer')
 import angle_format
@@ -193,7 +194,7 @@ def main():
 
     with open('format_map_autogen.cpp', 'wt') as out_file:
         output_cpp = template_cpp.format(
-            script_name=sys.argv[0],
+            script_name=os.path.basename(sys.argv[0]),
             data_source_name=input_script,
             es3_data_source_name=combo_data_file,
             format_cases=format_cases,

@@ -155,11 +155,10 @@ class Bugzilla(Base, mocks.Requests):
                 if not candidate:
                     continue
                 issue['watchers'].append(candidate)
-                if 'Radar' not in candidate.name or 'Bug Importer' not in candidate.name:
+                if 'Radar' not in candidate.name or 'Bug Importer' not in candidate.name or 'InRadar' in data.get('keywords', {}).get('add', []):
                     continue
                 radar_id = issue['id']
                 if RadarMock.top:
-                    print('Ugh, this is the problem')
                     radar_id = RadarMock.top.add(dict(
                         title='{} ({})'.format(issue['description'], issue['id']),
                         timestamp=time.time(),

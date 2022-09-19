@@ -37,7 +37,6 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
-class SpeechSynthesis;
 class TextTrack;
 class TextTrackList;
 class TextTrackClient;
@@ -137,10 +136,6 @@ public:
 
     Document& document() const;
 
-#if ENABLE(SPEECH_SYNTHESIS)
-    SpeechSynthesis& speechSynthesis();
-#endif
-    
 protected:
     TextTrack(ScriptExecutionContext*, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType);
 
@@ -181,9 +176,6 @@ private:
     ReadinessState m_readinessState { NotLoaded };
     std::optional<int> m_trackIndex;
     std::optional<int> m_renderedTrackIndex;
-#if ENABLE(SPEECH_SYNTHESIS)
-    RefPtr<SpeechSynthesis> m_speechSynthesis;
-#endif
     bool m_hasBeenConfigured { false };
 };
 

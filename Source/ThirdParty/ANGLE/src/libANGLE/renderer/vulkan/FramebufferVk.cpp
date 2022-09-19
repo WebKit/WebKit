@@ -312,25 +312,9 @@ bool IsAnyAttachment3DWithoutAllLayers(const RenderTargetCache<RenderTargetVk> &
 }
 }  // anonymous namespace
 
-// static
-FramebufferVk *FramebufferVk::CreateUserFBO(RendererVk *renderer, const gl::FramebufferState &state)
-{
-    return new FramebufferVk(renderer, state, nullptr);
-}
-
-// static
-FramebufferVk *FramebufferVk::CreateDefaultFBO(RendererVk *renderer,
-                                               const gl::FramebufferState &state,
-                                               WindowSurfaceVk *backbuffer)
-{
-    return new FramebufferVk(renderer, state, backbuffer);
-}
-
-FramebufferVk::FramebufferVk(RendererVk *renderer,
-                             const gl::FramebufferState &state,
-                             WindowSurfaceVk *backbuffer)
+FramebufferVk::FramebufferVk(RendererVk *renderer, const gl::FramebufferState &state)
     : FramebufferImpl(state),
-      mBackbuffer(backbuffer),
+      mBackbuffer(nullptr),
       mActiveColorComponentMasksForClear(0),
       mReadOnlyDepthFeedbackLoopMode(false)
 {

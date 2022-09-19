@@ -47,10 +47,7 @@ public:
         LoadFromPrototype
     };
     
-    GetByOffsetMethod()
-        : m_kind(Invalid)
-    {
-    }
+    GetByOffsetMethod() = default;
     
     static GetByOffsetMethod constant(FrozenValue* value)
     {
@@ -110,14 +107,12 @@ private:
             PropertyOffset offset;
         } load;
     } u;
-    Kind m_kind;
+    Kind m_kind { Invalid };
 };
 
 class MultiGetByOffsetCase {
 public:
-    MultiGetByOffsetCase()
-    {
-    }
+    MultiGetByOffsetCase() = default;
     
     MultiGetByOffsetCase(const RegisteredStructureSet& set, const GetByOffsetMethod& method)
         : m_set(set)

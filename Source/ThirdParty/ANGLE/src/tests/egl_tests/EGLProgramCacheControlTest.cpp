@@ -183,6 +183,7 @@ TEST_P(EGLProgramCacheControlTest, SaveAndReload)
     constexpr char kVS[] = "attribute vec4 position; void main() { gl_Position = position; }";
     constexpr char kFS[] = "void main() { gl_FragColor = vec4(1, 0, 0, 1); }";
 
+    mCachedBinary.clear();
     // Link a program, which will miss the cache.
     {
         glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -194,10 +195,10 @@ TEST_P(EGLProgramCacheControlTest, SaveAndReload)
         EXPECT_GL_NO_ERROR();
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     }
+    // Assert that the cache insertion added a program to the cache.
+    EXPECT_TRUE(!mCachedBinary.empty());
 
     EGLDisplay display = getEGLWindow()->getDisplay();
-    EGLint cacheSize   = eglProgramCacheGetAttribANGLE(display, EGL_PROGRAM_CACHE_SIZE_ANGLE);
-    EXPECT_EQ(1, cacheSize);
 
     EGLint keySize    = 0;
     EGLint binarySize = 0;
@@ -273,6 +274,7 @@ TEST_P(EGLProgramCacheControlTest, DisableProgramCache)
     constexpr char kVS[] = "attribute vec4 position; void main() { gl_Position = position; }";
     constexpr char kFS[] = "void main() { gl_FragColor = vec4(1, 0, 0, 1); }";
 
+    mCachedBinary.clear();
     // Link a program, which will miss the cache.
     {
         glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -285,9 +287,8 @@ TEST_P(EGLProgramCacheControlTest, DisableProgramCache)
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     }
 
-    EGLDisplay display = getEGLWindow()->getDisplay();
-    EGLint cacheSize   = eglProgramCacheGetAttribANGLE(display, EGL_PROGRAM_CACHE_SIZE_ANGLE);
-    EXPECT_EQ(0, cacheSize);
+    // Expect that no program binary was inserted into the cache.
+    EXPECT_TRUE(mCachedBinary.empty());
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLProgramCacheControlTest);

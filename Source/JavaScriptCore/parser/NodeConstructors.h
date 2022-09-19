@@ -94,7 +94,6 @@ namespace JSC {
         : ConstantNode(location, ResultType::bigIntType())
         , m_value(value)
         , m_radix(radix)
-        , m_sign(false)
     {
     }
     
@@ -144,7 +143,6 @@ namespace JSC {
     inline TemplateLiteralNode::TemplateLiteralNode(const JSTokenLocation& location, TemplateStringListNode* templateStrings)
         : ExpressionNode(location)
         , m_templateStrings(templateStrings)
-        , m_templateExpressions(nullptr)
     {
     }
 
@@ -231,7 +229,6 @@ namespace JSC {
 
     inline ArrayNode::ArrayNode(const JSTokenLocation& location, int elision)
         : ExpressionNode(location)
-        , m_element(nullptr)
         , m_elision(elision)
     {
     }
@@ -239,7 +236,6 @@ namespace JSC {
     inline ArrayNode::ArrayNode(const JSTokenLocation& location, ElementNode* element)
         : ExpressionNode(location)
         , m_element(element)
-        , m_elision(0)
     {
     }
 
@@ -252,34 +248,27 @@ namespace JSC {
 
     inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
         : m_name(&name)
-        , m_expression(nullptr)
         , m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
-        , m_isOverriddenByDuplicate(false)
     {
     }
     
     inline PropertyNode::PropertyNode(ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
-        : m_name(nullptr)
-        , m_expression(nullptr)
-        , m_assign(assign)
+        : m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
-        , m_isOverriddenByDuplicate(false)
     {
     }
 
     inline PropertyNode::PropertyNode(ExpressionNode* name, ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
-        : m_name(nullptr)
-        , m_expression(name)
+        : m_expression(name)
         , m_assign(assign)
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
-        , m_isOverriddenByDuplicate(false)
     {
     }
 
@@ -290,7 +279,6 @@ namespace JSC {
         , m_type(type)
         , m_needsSuperBinding(superBinding == SuperBinding::Needed)
         , m_classElementTag(static_cast<unsigned>(tag))
-        , m_isOverriddenByDuplicate(false)
     {
     }
 
@@ -309,7 +297,6 @@ namespace JSC {
 
     inline ObjectLiteralNode::ObjectLiteralNode(const JSTokenLocation& location)
         : ExpressionNode(location)
-        , m_list(nullptr)
     {
     }
 
@@ -366,10 +353,7 @@ namespace JSC {
         listNode->m_next = this;
     }
 
-    inline ArgumentsNode::ArgumentsNode()
-        : m_listNode(nullptr)
-    {
-    }
+    inline ArgumentsNode::ArgumentsNode() = default;
 
     inline ArgumentsNode::ArgumentsNode(ArgumentListNode* listNode, bool hasAssignments)
         : m_listNode(listNode)
@@ -380,7 +364,6 @@ namespace JSC {
     inline NewExprNode::NewExprNode(const JSTokenLocation& location, ExpressionNode* expr)
         : ExpressionNode(location)
         , m_expr(expr)
-        , m_args(nullptr)
     {
     }
 
@@ -820,9 +803,7 @@ namespace JSC {
     {
     }
 
-    inline SourceElements::SourceElements()
-    {
-    }
+    inline SourceElements::SourceElements() = default;
 
     inline EmptyStatementNode::EmptyStatementNode(const JSTokenLocation& location)
         : StatementNode(location)
@@ -1007,11 +988,8 @@ namespace JSC {
     {
     }
 
-    inline FunctionParameters::FunctionParameters()
-    {
-    }
+    inline FunctionParameters::FunctionParameters() = default;
 
-    
     inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source, FunctionMode functionMode)
         : ExpressionNode(location)
         , m_metadata(metadata)
@@ -1146,24 +1124,15 @@ namespace JSC {
         , m_isForAwait(isForAwait)
     {
     }
-    
-    inline DestructuringPatternNode::DestructuringPatternNode()
-    {
-    }
 
-    inline ArrayPatternNode::ArrayPatternNode()
-        : DestructuringPatternNode()
-    {
-    }
-    
-    inline ObjectPatternNode::ObjectPatternNode()
-        : DestructuringPatternNode()
-    {
-    }
-    
+    inline DestructuringPatternNode::DestructuringPatternNode() = default;
+
+    inline ArrayPatternNode::ArrayPatternNode() = default;
+
+    inline ObjectPatternNode::ObjectPatternNode() = default;
+
     inline BindingNode::BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
-        : DestructuringPatternNode()
-        , m_divotStart(start)
+        : m_divotStart(start)
         , m_divotEnd(end)
         , m_boundProperty(boundProperty)
         , m_bindingContext(context)
@@ -1171,16 +1140,14 @@ namespace JSC {
     }
 
     inline AssignmentElementNode::AssignmentElementNode(ExpressionNode* assignmentTarget, const JSTextPosition& start, const JSTextPosition& end)
-        : DestructuringPatternNode()
-        , m_divotStart(start)
+        : m_divotStart(start)
         , m_divotEnd(end)
         , m_assignmentTarget(assignmentTarget)
     {
     }
 
     inline RestParameterNode::RestParameterNode(DestructuringPatternNode* pattern, unsigned numParametersToSkip)
-        : DestructuringPatternNode()
-        , m_pattern(pattern)
+        : m_pattern(pattern)
         , m_numParametersToSkip(numParametersToSkip)
     {
         ASSERT(!pattern->isRestParameter());

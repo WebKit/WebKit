@@ -57,11 +57,12 @@ class DXGISwapChainWindowSurfaceWGL : public SurfaceWGL
 
     EGLint isPostSubBufferSupported() const override;
     EGLint getSwapBehavior() const override;
-
-    FramebufferImpl *createDefaultFramebuffer(const gl::Context *context,
-                                              const gl::FramebufferState &data) override;
-
     HDC getDC() const override;
+
+    egl::Error attachToFramebuffer(const gl::Context *context,
+                                   gl::Framebuffer *framebuffer) override;
+    egl::Error detachFromFramebuffer(const gl::Context *context,
+                                     gl::Framebuffer *framebuffer) override;
 
   private:
     egl::Error setObjectsLocked(bool locked);
@@ -88,6 +89,7 @@ class DXGISwapChainWindowSurfaceWGL : public SurfaceWGL
     IDXGISwapChain *mSwapChain;
     IDXGISwapChain1 *mSwapChain1;
 
+    GLuint mFramebufferID;
     GLuint mColorRenderbufferID;
     HANDLE mRenderbufferBufferHandle;
 

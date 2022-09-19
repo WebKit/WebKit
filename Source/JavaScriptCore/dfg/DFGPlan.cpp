@@ -143,9 +143,7 @@ Plan::Plan(CodeBlock* passedCodeBlock, CodeBlock* profiledDFGCodeBlock,
     m_inlineCallFrames->disableThreadingChecks();
 }
 
-Plan::~Plan()
-{
-}
+Plan::~Plan() = default;
 
 size_t Plan::codeSize() const
 {

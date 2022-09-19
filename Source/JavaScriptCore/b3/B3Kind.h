@@ -60,16 +60,11 @@ class Kind {
 public:
     Kind(Opcode opcode)
         : m_opcode(opcode)
-        , m_isChill(false)
-        , m_traps(false)
     {
     }
     
-    Kind()
-        : Kind(Oops)
-    {
-    }
-    
+    Kind() = default;
+
     Opcode opcode() const { return m_opcode; }
     void setOpcode(Opcode opcode) { m_opcode = opcode; }
     
@@ -177,11 +172,9 @@ public:
         // anything else. We can live with some kind hash collisions.
         return m_opcode + (static_cast<unsigned>(m_isChill) << 16) + (static_cast<unsigned>(m_traps) << 7);
     }
-    
+
     Kind(WTF::HashTableDeletedValueType)
-        : m_opcode(Oops)
-        , m_isChill(true)
-        , m_traps(false)
+        : m_isChill(true)
     {
     }
     
@@ -191,9 +184,9 @@ public:
     }
     
 private:
-    Opcode m_opcode;
-    bool m_isChill : 1;
-    bool m_traps : 1;
+    Opcode m_opcode { Oops };
+    bool m_isChill : 1 { false };
+    bool m_traps : 1 { false };
 };
 
 // For every flag 'foo' you add, it's customary to create a Kind B3::foo(Kind) function that makes

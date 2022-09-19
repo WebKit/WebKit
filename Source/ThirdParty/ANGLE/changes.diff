@@ -19,23 +19,8 @@ index 27de24182bdb30b736c17ac025df19d2aea56712..1d5392068c277d4999a0710eb56ab87f
  
 -#endif  // COMMON_VERSION_H_
 +#endif  // COMMON_VERSION_INFO_H_
-diff --git a/src/common/apple_platform_utils.mm b/src/common/apple_platform_utils.mm
-index a9757cbb72b7c75f155a1cfedd84a2e98120b564..eebe70cdcc3e1db0d7922f083ae9287b3c0cb16d 100644
---- a/src/common/apple_platform_utils.mm
-+++ b/src/common/apple_platform_utils.mm
-@@ -67,6 +67,10 @@ bool IsMetalRendererAvailable()
-                     if ([device supportsFeatureSet:static_cast<MTLFeatureSet>(iosFamily3v1)])
-                         gpuFamilySufficient = true;
-                 }
-+#elif defined(ANGLE_PLATFORM_IOS) && TARGET_OS_SIMULATOR
-+                // FIXME: Currently we do not have good simulator query, as it does not support
-+                // the whole feature set needed for iOS.
-+                gpuFamilySufficient = true;
- #endif
-             }
-         }
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
-index 6fa028f23f1473e358cbe6e1a8e39cbb98d20cb8..d576ef22114e0d3af42c74dc1bd5e6614d09846c 100644
+index f8b85a05dbf6b801907808e3a3cc92c76522e2ad..b390525d81197a50fbff9e231beec99bf0f1dcfd 100644
 --- a/src/common/utilities.cpp
 +++ b/src/common/utilities.cpp
 @@ -6,6 +6,12 @@
@@ -196,10 +181,10 @@ index ce9c26e401ffd4fa59eb8308a5210998970bec8c..dcaa142fc2a5e0d45ddf7e8fcaac14bb
                                                                  uint32_t bufferIndex) const;
  
 diff --git a/src/libANGLE/renderer/glslang_wrapper_utils.h b/src/libANGLE/renderer/glslang_wrapper_utils.h
-index 448f08e7b51791fe83a35b0d756bafe15a6cf54a..d3d7669beaa1e3adee795ba3f9cb10b0bce30af4 100644
+index 2f9390f79909a01e3d2441cb7e25a044a389a401..ca1c5c9ca2239c2902508b524369480b7dd2092e 100644
 --- a/src/libANGLE/renderer/glslang_wrapper_utils.h
 +++ b/src/libANGLE/renderer/glslang_wrapper_utils.h
-@@ -156,7 +156,7 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
+@@ -151,7 +151,7 @@ void GlslangAssignTransformFeedbackLocations(gl::ShaderType shaderType,
                                               bool isTransformFeedbackStage,
                                               GlslangProgramInterfaceInfo *programInterfaceInfo,
                                               ShaderInterfaceVariableInfoMap *variableInfoMapOut);
@@ -208,7 +193,7 @@ index 448f08e7b51791fe83a35b0d756bafe15a6cf54a..d3d7669beaa1e3adee795ba3f9cb10b0
  // Retrieves the compiled SPIR-V code for each shader stage, and calls |GlslangAssignLocations|.
  void GlslangGetShaderSpirvCode(const gl::Context *context,
                                 const GlslangSourceOptions &options,
-@@ -170,6 +170,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
+@@ -165,6 +165,7 @@ angle::Result GlslangTransformSpirvCode(const GlslangSpirvOptions &options,
                                          const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                          const angle::spirv::Blob &initialSpirvBlob,
                                          angle::spirv::Blob *spirvBlobOut);
@@ -239,10 +224,10 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 7a42a4dfa032925c449039fb74d25820c9811970..85d8475ecb729c47d7e1c22cd1fa3592e74c60b8 100644
+index b91d003f8b04ff815244b07e673678efb61983f1..989d76652a709fe238ea20c858c67058aa291794 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1245,8 +1245,7 @@ bool IsMetalDisplayAvailable()
+@@ -1253,8 +1253,7 @@ bool IsMetalDisplayAvailable()
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -252,19 +237,6 @@ index 7a42a4dfa032925c449039fb74d25820c9811970..85d8475ecb729c47d7e1c22cd1fa3592
      if (@available(ios 14.0, macOS 11.0, *))
      {
          return [mMetalDevice supports32BitFloatFiltering];
-diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index 28be9fe2a99431a834f0a7d701f6315fb2f5feb0..b88e1604660e85b808509fb71ead8159c8098c0f 100644
---- a/src/libANGLE/renderer/metal/ProgramMtl.mm
-+++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
-@@ -173,7 +173,7 @@ void InitArgumentBufferEncoder(mtl::Context *context,
-                                uint32_t bufferIndex,
-                                ProgramArgumentBufferEncoderMtl *encoder)
- {
--    encoder->metalArgBufferEncoder = [function newArgumentEncoderWithBufferIndex:bufferIndex];
-+    encoder->metalArgBufferEncoder = mtl::adoptObjCObj([function newArgumentEncoderWithBufferIndex:bufferIndex]);
-     if (encoder->metalArgBufferEncoder)
-     {
-         encoder->bufferPool.initialize(context, encoder->metalArgBufferEncoder.get().encodedLength,
 diff --git a/src/libANGLE/renderer/metal/mtl_buffer_pool.h b/src/libANGLE/renderer/metal/mtl_buffer_pool.h
 index c3be11f78156c7fab4ee8a90733de2f3b049de7e..204ebb949873112c010242b2b16b0860cd40c00a 100644
 --- a/src/libANGLE/renderer/metal/mtl_buffer_pool.h
@@ -620,3 +592,16 @@ index d218c13ed14be57f514cbf3c9dbeedefcdd49621..b236d92655d0307bb0b61ce51bf6406e
                                                            AutoObjCPtr<NSError *> *error);
  
  bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily);
+diff --git a/src/libANGLE/renderer/serial_utils.h b/src/libANGLE/renderer/serial_utils.h
+index e1f113e2e000bd21b266a93b174c2d91a1d721bf..1b56298962c192b050289cb1e9cc0bb064b42694 100644
+--- a/src/libANGLE/renderer/serial_utils.h
++++ b/src/libANGLE/renderer/serial_utils.h
+@@ -84,7 +84,7 @@ class Serial final
+ class AtomicQueueSerial final
+ {
+   public:
+-    constexpr AtomicQueueSerial() : mValue(kInvalid) { ASSERT(mValue.is_lock_free()); }
++    AtomicQueueSerial() : mValue(kInvalid) { ASSERT(mValue.is_lock_free()); }
+     AtomicQueueSerial &operator=(const Serial &other)
+     {
+         mValue.store(other.mValue, std::memory_order_release);

@@ -705,7 +705,6 @@ enum class WhiteSpace : uint8_t {
     PreWrap,
     PreLine,
     NoWrap,
-    KHTMLNoWrap,
     BreakSpaces
 };
 

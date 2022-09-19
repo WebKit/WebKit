@@ -161,6 +161,18 @@ static TString InterfaceBlockScalarVectorFieldPaddingString(const TType &type)
     return "";
 }
 
+static bool IsAnyRasterOrdered(const TVector<const TVariable *> &imageVars)
+{
+    for (const TVariable *imageVar : imageVars)
+    {
+        if (imageVar->getType().getLayoutQualifier().rasterOrdered)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 }  // anonymous namespace
 
 ResourcesHLSL::ResourcesHLSL(StructureHLSL *structureHLSL,
@@ -415,6 +427,9 @@ void ResourcesHLSL::outputHLSLImageUniformGroup(TInfoSinkBase &out,
     {
         return;
     }
+
+    // ROVs should all be written out in DynamicImage2DHLSL.cpp.
+    ASSERT(!IsAnyRasterOrdered(group));
 
     unsigned int groupRegisterCount = 0;
     outputHLSLImageUniformIndices(out, group, *groupTextureRegisterIndex, &groupRegisterCount);

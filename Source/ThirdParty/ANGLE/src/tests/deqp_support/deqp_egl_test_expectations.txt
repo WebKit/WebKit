@@ -139,10 +139,6 @@
 
 // Tests failing since the Jan 2018 roll of dEQP
 2341 : dEQP-EGL.functional.swap_buffers.* = SKIP
-2330 : dEQP-EGL.functional.robustness.create_context.no_reset_notification = SKIP
-2330 : dEQP-EGL.functional.robustness.create_context.lose_context_on_reset = SKIP
-2330 : dEQP-EGL.functional.robustness.reset_context.fixed_function_pipeline.reset_status.index_buffer_out_of_bounds = SKIP
-2330 : dEQP-EGL.functional.robustness.reset_context.fixed_function_pipeline.reset_status.vertex_buffer_out_of_bounds = SKIP
 
 // EGL images with the GL back-ends are not supported
 4606 OPENGL : dEQP-EGL.functional.image.api.create_image_gles2_* = FAIL
@@ -151,6 +147,11 @@
 // Very slow on Vulkan Linux
 5170 VULKAN LINUX : dEQP-EGL.functional.swap_buffers_with_damage.resize_after_swap.* = SKIP
 5170 VULKAN LINUX : dEQP-EGL.functional.swap_buffers_with_damage.resize_before_swap.* = SKIP
+
+// Tests that fail when the GL desktop frontend is enabled
+// TODO(http://anglebug.com/7566): Get these tests to pass.
+7533 : dEQP-EGL.functional.create_context_ext.gl_30.* = SKIP
+7533 : dEQP-EGL.functional.create_context_ext.robust_gl_30.* = SKIP
 
 //// Metal
 

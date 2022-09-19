@@ -70,9 +70,7 @@ AbstractInterpreter<AbstractStateType>::AbstractInterpreter(Graph& graph, Abstra
 }
 
 template<typename AbstractStateType>
-AbstractInterpreter<AbstractStateType>::~AbstractInterpreter()
-{
-}
+AbstractInterpreter<AbstractStateType>::~AbstractInterpreter() = default;
 
 template<typename AbstractStateType>
 TriState AbstractInterpreter<AbstractStateType>::booleanResult(Node* node, AbstractValue& value)

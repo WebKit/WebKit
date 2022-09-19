@@ -43,7 +43,7 @@ public:
         , m_origin(jit->m_origin) 
     {
     }
-    virtual ~SlowPathGenerator() { }
+    virtual ~SlowPathGenerator() = default;
     void generate(SpeculativeJIT* jit)
     {
         m_label = jit->m_jit.label();

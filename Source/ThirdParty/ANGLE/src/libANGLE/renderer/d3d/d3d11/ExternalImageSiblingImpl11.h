@@ -53,16 +53,14 @@ class ExternalImageSiblingImpl11 : public ExternalImageSiblingImpl
 
     TextureHelper11 mTexture;
 
-    gl::Format mFormat        = gl::Format::Invalid();
-    bool mIsRenderable        = false;
-    bool mIsTexturable        = false;
-    bool mIsTextureArray      = false;
-    bool mYUV                 = false;
-    bool mHasProtectedContent = false;
-    EGLint mWidth             = 0;
-    EGLint mHeight            = 0;
-    GLsizei mSamples          = 0;
-    UINT mArraySlice          = 0;
+    gl::Format mFormat   = gl::Format::Invalid();
+    bool mIsRenderable   = false;
+    bool mIsTexturable   = false;
+    bool mIsTextureArray = false;
+    EGLint mWidth        = 0;
+    EGLint mHeight       = 0;
+    GLsizei mSamples     = 0;
+    UINT mArraySlice     = 0;
 
     std::unique_ptr<RenderTargetD3D> mRenderTarget;
 };

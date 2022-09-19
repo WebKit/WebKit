@@ -36,7 +36,9 @@ class MediaDocument final : public HTMLDocument {
 public:
     static Ref<MediaDocument> create(Frame* frame, const Settings& settings, const URL& url)
     {
-        return adoptRef(*new MediaDocument(frame, settings, url));
+        auto document = adoptRef(*new MediaDocument(frame, settings, url));
+        document->addToContextsMap();
+        return document;
     }
     virtual ~MediaDocument();
 

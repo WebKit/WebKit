@@ -249,10 +249,12 @@ void Connection::invokeWriteEventHandler()
     });
 }
 
-bool Connection::open()
+bool Connection::open(Client& client)
 {
+    ASSERT(!m_client);
     // We connected the two ends of the pipe in createServerAndClientIdentifiers.
     m_isConnected = true;
+    m_client = &client;
 
     // Start listening for read and write state events.
     m_readListener.open([this] {

@@ -46,17 +46,13 @@ class OrderMaker {
         {
         }
 
-        Node()
-        {
-        }
+        Node() = default;
 
         T payload { };
     };
     
 public:
-    OrderMaker()
-    {
-    }
+    OrderMaker() = default;
 
     void prepend(T value)
     {
@@ -84,9 +80,7 @@ public:
 
     class iterator {
     public:
-        iterator()
-        {
-        }
+        iterator() = default;
 
         iterator(typename SentinelLinkedList<Node>::iterator iter)
             : m_iter(iter)

@@ -52,7 +52,7 @@ ANGLE_APPLE_UNUSED
 std::string GetMetalCaptureFile()
 {
 #if !ANGLE_METAL_FRAME_CAPTURE_ENABLED
-    return "";
+    return {};
 #else
     auto var                   = std::getenv("ANGLE_METAL_FRAME_CAPTURE_FILE");
     const std::string filePath = var ? var : "";

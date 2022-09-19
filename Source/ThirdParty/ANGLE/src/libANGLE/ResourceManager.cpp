@@ -347,12 +347,11 @@ FramebufferManager::~FramebufferManager() = default;
 // static
 Framebuffer *FramebufferManager::AllocateNewObject(rx::GLImplFactory *factory,
                                                    FramebufferID handle,
-                                                   const Caps &caps,
-                                                   egl::ShareGroup *shareGroup)
+                                                   const Context *context)
 {
     // Make sure the caller isn't using a reserved handle.
     ASSERT(handle != Framebuffer::kDefaultDrawFramebufferHandle);
-    return new Framebuffer(caps, factory, handle, shareGroup);
+    return new Framebuffer(context, factory, handle);
 }
 
 // static

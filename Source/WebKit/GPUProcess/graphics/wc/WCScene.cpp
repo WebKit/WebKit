@@ -33,8 +33,7 @@
 #include "WCContentBufferManager.h"
 #include "WCSceneContext.h"
 #include "WCUpateInfo.h"
-#include <WebCore/ANGLEHeaders.h>
-#include <WebCore/GraphicsContextGLOpenGL.h>
+#include <WebCore/TextureMapperGLHeaders.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
 #include <WebCore/TextureMapperSparseBackingStore.h>
@@ -230,7 +229,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
     std::optional<UpdateInfo> result;
     if (m_usesOffscreenRendering) {
         auto bitmap = ShareableBitmap::create(windowSize, { });
-        glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA_EXT, GL_UNSIGNED_BYTE, bitmap->data());
+        glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA, GL_UNSIGNED_BYTE, bitmap->data());
         ShareableBitmap::Handle handle;
         if (bitmap->createHandle(handle)) {
             result.emplace();

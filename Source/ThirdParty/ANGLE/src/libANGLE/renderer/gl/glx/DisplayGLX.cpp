@@ -14,6 +14,7 @@
 #include <fstream>
 
 #include "common/debug.h"
+#include "common/system_utils.h"
 #include "libANGLE/Config.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
@@ -265,7 +266,7 @@ egl::Error DisplayGLX::initialize(egl::Display *display)
     }
     ASSERT(mContext);
 
-    mCurrentNativeContexts[std::this_thread::get_id()] = mContext;
+    mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()] = mContext;
 
     // FunctionsGL and DisplayGL need to make a few GL calls, for example to
     // query the version of the context so we need to make the context current.
@@ -408,14 +409,14 @@ egl::Error DisplayGLX::makeCurrent(egl::Display *display,
         newContext  = 0;
     }
     if (newDrawable != mCurrentDrawable ||
-        newContext != mCurrentNativeContexts[std::this_thread::get_id()])
+        newContext != mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()])
     {
         if (mGLX.makeCurrent(newDrawable, newContext) != True)
         {
             return egl::EglContextLost() << "Failed to make the GLX context current";
         }
-        mCurrentNativeContexts[std::this_thread::get_id()] = newContext;
-        mCurrentDrawable                                   = newDrawable;
+        mCurrentNativeContexts[angle::GetCurrentThreadUniqueId()] = newContext;
+        mCurrentDrawable                                          = newDrawable;
     }
 
     return DisplayGL::makeCurrent(display, drawSurface, readSurface, context);

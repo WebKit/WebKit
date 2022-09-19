@@ -44,9 +44,7 @@ Compilation::Compilation(Compilation&& other)
 {
 }
 
-Compilation::~Compilation()
-{
-}
+Compilation::~Compilation() = default;
 
 } // namespace JSC
 

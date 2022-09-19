@@ -847,15 +847,11 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (SecTrustRef)serverTrust
 {
-#if HAVE(SEC_TRUST_SERIALIZATION)
     auto certificateInfo = _page->pageLoadState().certificateInfo();
     if (!certificateInfo)
         return nil;
 
     return certificateInfo->certificateInfo().trust();
-#else
-    return nil;
-#endif
 }
 
 - (BOOL)canGoBack
@@ -2656,7 +2652,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
-        return mainFrame->certificateInfo() ? (__bridge NSArray *)mainFrame->certificateInfo()->certificateInfo().certificateChain() : nil;
+        return mainFrame->certificateInfo() ? (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(mainFrame->certificateInfo()->certificateInfo().trust()).autorelease() : nil;
 
     return nil;
 }
@@ -3960,7 +3956,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
     if (!certificateInfo)
         return @[ ];
 
-    return (__bridge NSArray *)certificateInfo->certificateInfo().certificateChain() ?: @[ ];
+    return (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(certificateInfo->certificateInfo().trust()).autorelease() ?: @[ ];
 }
 
 @end

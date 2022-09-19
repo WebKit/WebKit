@@ -424,7 +424,8 @@ bool ValidateColorspaceAttribute(const ValidationContext *val,
         case EGL_GL_COLORSPACE_LINEAR:
             break;
         case EGL_GL_COLORSPACE_DISPLAY_P3_LINEAR_EXT:
-            if (!displayExtensions.glColorspaceDisplayP3Linear)
+            if (!displayExtensions.glColorspaceDisplayP3Linear &&
+                !displayExtensions.eglColorspaceAttributePassthroughANGLE)
             {
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EXT_gl_colorspace_display_p3_linear is not available.");
@@ -432,14 +433,16 @@ bool ValidateColorspaceAttribute(const ValidationContext *val,
             }
             break;
         case EGL_GL_COLORSPACE_DISPLAY_P3_EXT:
-            if (!displayExtensions.glColorspaceDisplayP3)
+            if (!displayExtensions.glColorspaceDisplayP3 &&
+                !displayExtensions.eglColorspaceAttributePassthroughANGLE)
             {
                 val->setError(EGL_BAD_ATTRIBUTE, "EXT_gl_colorspace_display_p3 is not available.");
                 return false;
             }
             break;
         case EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT:
-            if (!displayExtensions.glColorspaceDisplayP3Passthrough)
+            if (!displayExtensions.glColorspaceDisplayP3Passthrough &&
+                !displayExtensions.eglColorspaceAttributePassthroughANGLE)
             {
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EGL_EXT_gl_colorspace_display_p3_passthrough is not available.");
@@ -447,14 +450,16 @@ bool ValidateColorspaceAttribute(const ValidationContext *val,
             }
             break;
         case EGL_GL_COLORSPACE_SCRGB_EXT:
-            if (!displayExtensions.glColorspaceScrgb)
+            if (!displayExtensions.glColorspaceScrgb &&
+                !displayExtensions.eglColorspaceAttributePassthroughANGLE)
             {
                 val->setError(EGL_BAD_ATTRIBUTE, "EXT_gl_colorspace_scrgb is not available.");
                 return false;
             }
             break;
         case EGL_GL_COLORSPACE_SCRGB_LINEAR_EXT:
-            if (!displayExtensions.glColorspaceScrgbLinear)
+            if (!displayExtensions.glColorspaceScrgbLinear &&
+                !displayExtensions.eglColorspaceAttributePassthroughANGLE)
             {
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EXT_gl_colorspace_scrgb_linear is not available.");
@@ -2446,7 +2451,15 @@ bool ValidateCreateContext(const ValidationContext *val,
             break;
 
         case EGL_OPENGL_API:
-            // TODO: validate desktop OpenGL versions and profile mask
+            // The requested configuration must use EGL_OPENGL_BIT if EGL_OPENGL_BIT is the
+            // currently bound API.
+            if ((configuration != EGL_NO_CONFIG_KHR) &&
+                !(configuration->renderableType & EGL_OPENGL_BIT))
+            {
+                val->setError(EGL_BAD_CONFIG);
+                return false;
+            }
+            // TODO(http://anglebug.com/7533): validate desktop OpenGL versions and profile mask
             break;
 
         default:
@@ -5358,7 +5371,8 @@ bool ValidateSurfaceAttrib(const ValidationContext *val,
             break;
 
         case EGL_TIMESTAMPS_ANDROID:
-            if (!display->getExtensions().getFrameTimestamps)
+            if (!display->getExtensions().getFrameTimestamps &&
+                !display->getExtensions().timestampSurfaceAttributeANGLE)
             {
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EGL_TIMESTAMPS_ANDROID cannot be used without "
@@ -5507,7 +5521,8 @@ bool ValidateQuerySurface(const ValidationContext *val,
             break;
 
         case EGL_TIMESTAMPS_ANDROID:
-            if (!display->getExtensions().getFrameTimestamps)
+            if (!display->getExtensions().getFrameTimestamps &&
+                !display->getExtensions().timestampSurfaceAttributeANGLE)
             {
                 val->setError(EGL_BAD_ATTRIBUTE,
                               "EGL_TIMESTAMPS_ANDROID cannot be used without "

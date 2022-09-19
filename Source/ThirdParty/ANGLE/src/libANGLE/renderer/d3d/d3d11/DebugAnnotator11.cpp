@@ -12,6 +12,8 @@
 
 #include <versionhelpers.h>
 
+#include "common/system_utils.h"
+
 namespace rx
 {
 
@@ -67,7 +69,8 @@ bool DebugAnnotator11::getStatus()
 
 bool DebugAnnotator11::loggingEnabledForThisThread() const
 {
-    return mUserDefinedAnnotation != nullptr && std::this_thread::get_id() == mAnnotationThread;
+    return mUserDefinedAnnotation != nullptr &&
+           angle::GetCurrentThreadUniqueId() == mAnnotationThread;
 }
 
 void DebugAnnotator11::initialize(ID3D11DeviceContext *context)
@@ -81,7 +84,7 @@ void DebugAnnotator11::initialize(ID3D11DeviceContext *context)
     if (IsWindows10OrGreater())
 #endif
     {
-        mAnnotationThread = std::this_thread::get_id();
+        mAnnotationThread = angle::GetCurrentThreadUniqueId();
         mUserDefinedAnnotation.Attach(
             d3d11::DynamicCastComObject<ID3DUserDefinedAnnotation>(context));
     }

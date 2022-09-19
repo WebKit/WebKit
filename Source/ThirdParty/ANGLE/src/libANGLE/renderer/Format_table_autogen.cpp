@@ -18,7 +18,7 @@ namespace angle
 {
 
 static constexpr rx::FastCopyFunctionMap::Entry BGRAEntry  = {angle::FormatID::R8G8B8A8_UNORM,
-                                                             CopyBGRA8ToRGBA8};
+                                                              CopyBGRA8ToRGBA8};
 static constexpr rx::FastCopyFunctionMap BGRACopyFunctions = {&BGRAEntry, 1};
 static constexpr rx::FastCopyFunctionMap NoCopyFunctions;
 

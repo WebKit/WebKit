@@ -260,14 +260,14 @@ struct Connection::PendingSyncReply {
     }
 };
 
-Ref<Connection> Connection::createServerConnection(Identifier identifier, Client& client)
+Ref<Connection> Connection::createServerConnection(Identifier identifier)
 {
-    return adoptRef(*new Connection(identifier, true, client));
+    return adoptRef(*new Connection(identifier, true));
 }
 
-Ref<Connection> Connection::createClientConnection(Identifier identifier, Client& client)
+Ref<Connection> Connection::createClientConnection(Identifier identifier)
 {
-    return adoptRef(*new Connection(identifier, false, client));
+    return adoptRef(*new Connection(identifier, false));
 }
 
 HashMap<IPC::Connection::UniqueID, Connection*>& Connection::connectionMap()
@@ -286,9 +286,8 @@ static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>&
 
 static void clearAsyncReplyHandlers(const Connection&);
 
-Connection::Connection(Identifier identifier, bool isServer, Client& client)
-    : m_client(client)
-    , m_uniqueID(UniqueID::generate())
+Connection::Connection(Identifier identifier, bool isServer)
+    : m_uniqueID(UniqueID::generate())
     , m_isServer(isServer)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
 {
@@ -434,11 +433,10 @@ void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWo
 void Connection::invalidate()
 {
     ASSERT(RunLoop::isMain());
-
-    if (std::exchange(m_didInvalidationOnMainThread, true))
-        return;
-
     m_isValid = false;
+    if (!m_client)
+        return;
+    m_client = nullptr;
 
     clearAsyncReplyHandlers(*this);
 
@@ -937,12 +935,11 @@ void Connection::connectionDidClose()
 
     RunLoop::main().dispatch([protectedThis = Ref { *this }]() mutable {
         // If the connection has been explicitly invalidated before dispatchConnectionDidClose was called,
-        // then the connection will be invalid here.
-        if (std::exchange(protectedThis->m_didInvalidationOnMainThread, true))
+        // then the connection client will be nullptr here.
+        if (!protectedThis->m_client)
             return;
-
-        protectedThis->m_client.didClose(protectedThis.get());
-
+        auto client = std::exchange(protectedThis->m_client, nullptr);
+        client->didClose(protectedThis.get());
         clearAsyncReplyHandlers(protectedThis.get());
     });
 }
@@ -1008,7 +1005,7 @@ void Connection::dispatchSyncMessage(Decoder& decoder)
         SyncMessageState::singleton().dispatchMessages();
     } else {
         // Hand off both the decoder and encoder to the client.
-        wasHandled = m_client.didReceiveSyncMessage(*this, decoder, replyEncoder);
+        wasHandled = m_client->didReceiveSyncMessage(*this, decoder, replyEncoder);
     }
 
 #if ENABLE(IPC_TESTING_API)
@@ -1026,7 +1023,7 @@ void Connection::dispatchDidReceiveInvalidMessage(MessageName messageName)
     ensureOnMainRunLoop([this, protectedThis = Ref { *this }, messageName]() mutable {
         if (!isValid())
             return;
-        m_client.didReceiveInvalidMessage(*this, messageName);
+        m_client->didReceiveInvalidMessage(*this, messageName);
     });
 }
 
@@ -1072,7 +1069,7 @@ void Connection::enqueueIncomingMessage(std::unique_ptr<Decoder> incomingMessage
 void Connection::dispatchMessage(Decoder& decoder)
 {
     ASSERT(RunLoop::isMain());
-    RELEASE_ASSERT(!m_didInvalidationOnMainThread);
+    RELEASE_ASSERT(m_client);
     if (decoder.messageReceiverName() == ReceiverName::AsyncReply) {
         auto handler = takeAsyncReplyHandler(*this, decoder.destinationID());
         if (!handler) {
@@ -1102,7 +1099,7 @@ void Connection::dispatchMessage(Decoder& decoder)
     }
 #endif
 
-    m_client.didReceiveMessage(*this, decoder);
+    m_client->didReceiveMessage(*this, decoder);
 }
 
 void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
@@ -1127,7 +1124,7 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
 
     if (message->shouldUseFullySynchronousModeForTesting()) {
         if (!m_fullySynchronousModeIsAllowedForTesting) {
-            m_client.didReceiveInvalidMessage(*this, message->messageName());
+            m_client->didReceiveInvalidMessage(*this, message->messageName());
             return;
         }
         m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting++;
@@ -1161,7 +1158,7 @@ void Connection::dispatchMessage(std::unique_ptr<Decoder> message)
         m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting--;
 
     if (m_didReceiveInvalidMessage && isValid())
-        m_client.didReceiveInvalidMessage(*this, message->messageName());
+        m_client->didReceiveInvalidMessage(*this, message->messageName());
 
     m_didReceiveInvalidMessage = oldDidReceiveInvalidMessage;
 }

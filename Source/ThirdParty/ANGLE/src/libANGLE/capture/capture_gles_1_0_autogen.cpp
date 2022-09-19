@@ -76,7 +76,7 @@ CallCapture CaptureClientActiveTexture(const State &glState, bool isCallValid, G
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("texture", GLenumGroup::TextureUnit, ParamType::TGLenum, texture);
+    paramBuffer.addEnumParam("texture", GLESEnum::TextureUnit, ParamType::TGLenum, texture);
 
     return CallCapture(angle::EntryPoint::GLClientActiveTexture, std::move(paramBuffer));
 }
@@ -85,7 +85,7 @@ CallCapture CaptureClipPlanef(const State &glState, bool isCallValid, GLenum p, 
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("p", GLenumGroup::ClipPlaneName, ParamType::TGLenum, p);
+    paramBuffer.addEnumParam("p", GLESEnum::ClipPlaneName, ParamType::TGLenum, p);
 
     if (isCallValid)
     {
@@ -112,7 +112,7 @@ CallCapture CaptureClipPlanex(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("plane", GLenumGroup::ClipPlaneName, ParamType::TGLenum, plane);
+    paramBuffer.addEnumParam("plane", GLESEnum::ClipPlaneName, ParamType::TGLenum, plane);
 
     if (isCallValid)
     {
@@ -251,7 +251,7 @@ CallCapture CaptureFogf(const State &glState, bool isCallValid, GLenum pname, GL
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::FogParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::FogParameter, ParamType::TGLenum, pname);
     paramBuffer.addValueParam("param", ParamType::TGLfloat, param);
 
     return CallCapture(angle::EntryPoint::GLFogf, std::move(paramBuffer));
@@ -264,7 +264,7 @@ CallCapture CaptureFogfv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::FogParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::FogParameter, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -288,7 +288,7 @@ CallCapture CaptureFogx(const State &glState, bool isCallValid, GLenum pname, GL
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::FogPName, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::FogPName, ParamType::TGLenum, pname);
     paramBuffer.addValueParam("param", ParamType::TGLfixed, param);
 
     return CallCapture(angle::EntryPoint::GLFogx, std::move(paramBuffer));
@@ -298,7 +298,7 @@ CallCapture CaptureFogxv(const State &glState, bool isCallValid, GLenum pname, c
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::FogPName, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::FogPName, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -367,7 +367,7 @@ CallCapture CaptureGetClipPlanef(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("plane", GLenumGroup::ClipPlaneName, ParamType::TGLenum, plane);
+    paramBuffer.addEnumParam("plane", GLESEnum::ClipPlaneName, ParamType::TGLenum, plane);
 
     if (isCallValid)
     {
@@ -394,7 +394,7 @@ CallCapture CaptureGetClipPlanex(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("plane", GLenumGroup::ClipPlaneName, ParamType::TGLenum, plane);
+    paramBuffer.addEnumParam("plane", GLESEnum::ClipPlaneName, ParamType::TGLenum, plane);
 
     if (isCallValid)
     {
@@ -418,7 +418,7 @@ CallCapture CaptureGetFixedv(const State &glState, bool isCallValid, GLenum pnam
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::GetPName, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::GetPName, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -446,7 +446,7 @@ CallCapture CaptureGetLightfv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("light", GLenumGroup::LightName, ParamType::TGLenum, light);
+    paramBuffer.addEnumParam("light", GLESEnum::LightName, ParamType::TGLenum, light);
     paramBuffer.addValueParam("pnamePacked", ParamType::TLightParameter, pnamePacked);
 
     if (isCallValid)
@@ -475,7 +475,7 @@ CallCapture CaptureGetLightxv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("light", GLenumGroup::LightName, ParamType::TGLenum, light);
+    paramBuffer.addEnumParam("light", GLESEnum::LightName, ParamType::TGLenum, light);
     paramBuffer.addValueParam("pnamePacked", ParamType::TLightParameter, pnamePacked);
 
     if (isCallValid)
@@ -504,7 +504,7 @@ CallCapture CaptureGetMaterialfv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLenumGroup::MaterialFace, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::MaterialFace, ParamType::TGLenum, face);
     paramBuffer.addValueParam("pnamePacked", ParamType::TMaterialParameter, pnamePacked);
 
     if (isCallValid)
@@ -533,7 +533,7 @@ CallCapture CaptureGetMaterialxv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLenumGroup::MaterialFace, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::MaterialFace, ParamType::TGLenum, face);
     paramBuffer.addValueParam("pnamePacked", ParamType::TMaterialParameter, pnamePacked);
 
     if (isCallValid)
@@ -652,7 +652,7 @@ CallCapture CaptureGetTexParameterxv(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
-    paramBuffer.addEnumParam("pname", GLenumGroup::GetTextureParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::GetTextureParameter, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -677,7 +677,7 @@ CallCapture CaptureLightModelf(const State &glState, bool isCallValid, GLenum pn
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::LightModelParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::LightModelParameter, ParamType::TGLenum, pname);
     paramBuffer.addValueParam("param", ParamType::TGLfloat, param);
 
     return CallCapture(angle::EntryPoint::GLLightModelf, std::move(paramBuffer));
@@ -690,7 +690,7 @@ CallCapture CaptureLightModelfv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::LightModelParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::LightModelParameter, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -714,7 +714,7 @@ CallCapture CaptureLightModelx(const State &glState, bool isCallValid, GLenum pn
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::LightModelParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::LightModelParameter, ParamType::TGLenum, pname);
     paramBuffer.addValueParam("param", ParamType::TGLfixed, param);
 
     return CallCapture(angle::EntryPoint::GLLightModelx, std::move(paramBuffer));
@@ -727,7 +727,7 @@ CallCapture CaptureLightModelxv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::LightModelParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::LightModelParameter, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -755,7 +755,7 @@ CallCapture CaptureLightf(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("light", GLenumGroup::LightName, ParamType::TGLenum, light);
+    paramBuffer.addEnumParam("light", GLESEnum::LightName, ParamType::TGLenum, light);
     paramBuffer.addValueParam("pnamePacked", ParamType::TLightParameter, pnamePacked);
     paramBuffer.addValueParam("param", ParamType::TGLfloat, param);
 
@@ -770,7 +770,7 @@ CallCapture CaptureLightfv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("light", GLenumGroup::LightName, ParamType::TGLenum, light);
+    paramBuffer.addEnumParam("light", GLESEnum::LightName, ParamType::TGLenum, light);
     paramBuffer.addValueParam("pnamePacked", ParamType::TLightParameter, pnamePacked);
 
     if (isCallValid)
@@ -799,7 +799,7 @@ CallCapture CaptureLightx(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("light", GLenumGroup::LightName, ParamType::TGLenum, light);
+    paramBuffer.addEnumParam("light", GLESEnum::LightName, ParamType::TGLenum, light);
     paramBuffer.addValueParam("pnamePacked", ParamType::TLightParameter, pnamePacked);
     paramBuffer.addValueParam("param", ParamType::TGLfixed, param);
 
@@ -814,7 +814,7 @@ CallCapture CaptureLightxv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("light", GLenumGroup::LightName, ParamType::TGLenum, light);
+    paramBuffer.addEnumParam("light", GLESEnum::LightName, ParamType::TGLenum, light);
     paramBuffer.addValueParam("pnamePacked", ParamType::TLightParameter, pnamePacked);
 
     if (isCallValid)
@@ -912,7 +912,7 @@ CallCapture CaptureMaterialf(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLenumGroup::MaterialFace, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::MaterialFace, ParamType::TGLenum, face);
     paramBuffer.addValueParam("pnamePacked", ParamType::TMaterialParameter, pnamePacked);
     paramBuffer.addValueParam("param", ParamType::TGLfloat, param);
 
@@ -927,7 +927,7 @@ CallCapture CaptureMaterialfv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLenumGroup::MaterialFace, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::MaterialFace, ParamType::TGLenum, face);
     paramBuffer.addValueParam("pnamePacked", ParamType::TMaterialParameter, pnamePacked);
 
     if (isCallValid)
@@ -956,7 +956,7 @@ CallCapture CaptureMaterialx(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLenumGroup::MaterialFace, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::MaterialFace, ParamType::TGLenum, face);
     paramBuffer.addValueParam("pnamePacked", ParamType::TMaterialParameter, pnamePacked);
     paramBuffer.addValueParam("param", ParamType::TGLfixed, param);
 
@@ -971,7 +971,7 @@ CallCapture CaptureMaterialxv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("face", GLenumGroup::MaterialFace, ParamType::TGLenum, face);
+    paramBuffer.addEnumParam("face", GLESEnum::MaterialFace, ParamType::TGLenum, face);
     paramBuffer.addValueParam("pnamePacked", ParamType::TMaterialParameter, pnamePacked);
 
     if (isCallValid)
@@ -1055,7 +1055,7 @@ CallCapture CaptureMultiTexCoord4f(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("target", GLenumGroup::TextureUnit, ParamType::TGLenum, target);
+    paramBuffer.addEnumParam("target", GLESEnum::TextureUnit, ParamType::TGLenum, target);
     paramBuffer.addValueParam("s", ParamType::TGLfloat, s);
     paramBuffer.addValueParam("t", ParamType::TGLfloat, t);
     paramBuffer.addValueParam("r", ParamType::TGLfloat, r);
@@ -1074,7 +1074,7 @@ CallCapture CaptureMultiTexCoord4x(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("texture", GLenumGroup::TextureUnit, ParamType::TGLenum, texture);
+    paramBuffer.addEnumParam("texture", GLESEnum::TextureUnit, ParamType::TGLenum, texture);
     paramBuffer.addValueParam("s", ParamType::TGLfixed, s);
     paramBuffer.addValueParam("t", ParamType::TGLfixed, t);
     paramBuffer.addValueParam("r", ParamType::TGLfixed, r);
@@ -1564,7 +1564,7 @@ CallCapture CaptureTexParameterx(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
-    paramBuffer.addEnumParam("pname", GLenumGroup::GetTextureParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::GetTextureParameter, ParamType::TGLenum, pname);
     paramBuffer.addValueParam("param", ParamType::TGLfixed, param);
 
     return CallCapture(angle::EntryPoint::GLTexParameterx, std::move(paramBuffer));
@@ -1579,7 +1579,7 @@ CallCapture CaptureTexParameterxv(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
-    paramBuffer.addEnumParam("pname", GLenumGroup::GetTextureParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::GetTextureParameter, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {

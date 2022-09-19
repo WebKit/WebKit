@@ -241,7 +241,8 @@ class CaptureReplayTests
 
         if (traceInfo.isBinaryDataCompressed)
         {
-            mTraceLibrary->setBinaryDataDecompressCallback(angle::DecompressBinaryData);
+            mTraceLibrary->setBinaryDataDecompressCallback(angle::DecompressBinaryData,
+                                                           angle::DeleteBinaryData);
         }
 
         std::stringstream binaryPathStream;
@@ -256,6 +257,7 @@ class CaptureReplayTests
 
     void cleanupTest()
     {
+        mTraceLibrary->finishReplay();
         mTraceLibrary.reset(nullptr);
         mEGLWindow->destroyGL();
         mOSWindow->destroy();

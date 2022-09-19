@@ -307,7 +307,10 @@ float underlineOffsetForTextBoxPainting(const InlineIterator::InlineBox& inlineB
 
     if (underlinePositionValue == TextUnderlinePosition::Under) {
         auto textRunOffset = boxOffsetFromBottomMost(inlineBox.lineBox(), inlineBox.renderer(), inlineBox.logicalTop(), inlineBox.logicalBottom());
-        textUnderlinePositionUnder = TextUnderlinePositionUnder { inlineBox.logicalHeight(), textRunOffset };
+        auto inlineBoxContentBoxHeight = inlineBox.logicalHeight();
+        if (!inlineBox.isRootInlineBox())
+            inlineBoxContentBoxHeight -= (inlineBox.renderer().borderAndPaddingBefore() + inlineBox.renderer().borderAndPaddingAfter());
+        textUnderlinePositionUnder = TextUnderlinePositionUnder { inlineBoxContentBoxHeight, textRunOffset };
     }
 
     return computedUnderlineOffset({ style, underlinePositionValue, defaultGap(style), textUnderlinePositionUnder });

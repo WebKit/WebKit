@@ -30,8 +30,10 @@
 
 namespace WebCore {
 
+class Page;
 class ScriptExecutionContext;
 enum class PermissionState : uint8_t;
+enum class PermissionQuerySource : uint8_t;
 struct ClientOrigin;
 struct PermissionDescriptor;
 
@@ -42,8 +44,9 @@ public:
     virtual PermissionState currentState() const = 0;
     virtual void stateChanged(PermissionState) = 0;
     virtual const ClientOrigin& origin() const = 0;
-    virtual const PermissionDescriptor& descriptor() const = 0;
-    virtual const ScriptExecutionContext* context() const = 0;
+    virtual PermissionDescriptor descriptor() const = 0;
+    virtual PermissionQuerySource source() const = 0;
+    virtual const WeakPtr<Page>& page() const = 0;
 };
 
 } // namespace WebCore

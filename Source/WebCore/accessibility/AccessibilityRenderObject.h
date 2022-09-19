@@ -58,7 +58,6 @@ public:
     
     bool isAttachment() const override;
     bool isSelected() const override;
-    bool isFocused() const override;
     bool isLoaded() const override;
     bool isOffScreen() const override;
     bool isUnvisited() const override;
@@ -133,10 +132,6 @@ public:
     AccessibilityChildrenVector documentLinks() override;
     FrameView* documentFrameView() const override;
 
-    void clearChildren() override;
-    void updateChildrenIfNecessary() override;
-    
-    void setFocused(bool) override;
     void setSelectedTextRange(const PlainTextRange&) override;
     bool setValue(const String&) override;
     void setSelectedRows(AccessibilityChildrenVector&) override;
@@ -214,9 +209,6 @@ private:
     PlainTextRange documentBasedSelectedTextRange() const;
     Element* rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
-    void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
-    bool needsToUpdateChildren() const override { return m_childrenDirty; }
-    void setNeedsToUpdateSubtree() override { m_subtreeDirty = true; }
     Path elementPath() const override;
     
     bool isTabItemSelected() const;

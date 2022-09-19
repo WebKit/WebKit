@@ -139,6 +139,9 @@ class PbufferTest : public ANGLETest<>
     bool mSupportsBindTexImage;
 };
 
+class PbufferColorspaceTest : public PbufferTest
+{};
+
 // Test clearing a Pbuffer and checking the color is correct
 TEST_P(PbufferTest, Clearing)
 {
@@ -540,4 +543,53 @@ TEST_P(PbufferTest, BindTexImageAndRedefineTexture)
     glDeleteTextures(1, &texture);
 }
 
+// Test that passing colorspace attributes do not generate EGL validation errors
+// when EGL_ANGLE_colorspace_attribute_passthrough extension is supported.
+TEST_P(PbufferColorspaceTest, CreateSurfaceWithColorspace)
+{
+    EGLDisplay dpy = getEGLWindow()->getDisplay();
+    const bool extensionSupported =
+        IsEGLDisplayExtensionEnabled(dpy, "EGL_EXT_gl_colorspace_display_p3_passthrough");
+    const bool passthroughExtensionSupported =
+        IsEGLDisplayExtensionEnabled(dpy, "EGL_ANGLE_colorspace_attribute_passthrough");
+
+    EGLSurface pbufferSurface        = EGL_NO_SURFACE;
+    const EGLint pBufferAttributes[] = {
+        EGL_WIDTH,         static_cast<EGLint>(mPbufferSize),
+        EGL_HEIGHT,        static_cast<EGLint>(mPbufferSize),
+        EGL_GL_COLORSPACE, EGL_GL_COLORSPACE_DISPLAY_P3_PASSTHROUGH_EXT,
+        EGL_NONE,          EGL_NONE,
+    };
+
+    pbufferSurface = eglCreatePbufferSurface(dpy, getEGLWindow()->getConfig(), pBufferAttributes);
+    if (extensionSupported)
+    {
+        // If EGL_EXT_gl_colorspace_display_p3_passthrough is supported
+        // "pbufferSurface" should be a valid pbuffer surface.
+        ASSERT_NE(pbufferSurface, EGL_NO_SURFACE);
+        ASSERT_EGL_SUCCESS();
+    }
+    else if (!extensionSupported && passthroughExtensionSupported)
+    {
+        // If EGL_ANGLE_colorspace_attribute_passthrough was the only extension supported
+        // we should not expect a validation error.
+        ASSERT_NE(eglGetError(), EGL_BAD_ATTRIBUTE);
+    }
+    else
+    {
+        // Otherwise we should expect an EGL_BAD_ATTRIBUTE validation error.
+        ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    }
+
+    // Cleanup
+    if (pbufferSurface != EGL_NO_SURFACE)
+    {
+        eglDestroySurface(dpy, pbufferSurface);
+    }
+}
+
 ANGLE_INSTANTIATE_TEST_ES2(PbufferTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PbufferColorspaceTest);
+ANGLE_INSTANTIATE_TEST_ES3_AND(PbufferColorspaceTest,
+                               ES3_VULKAN().enable(Feature::EglColorspaceAttributePassthrough));

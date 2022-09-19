@@ -272,14 +272,6 @@ private:
 CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock& other)
     : JSCell(vm, structure)
     , m_globalObject(other.m_globalObject)
-    , m_shouldAlwaysBeInlined(true)
-#if ENABLE(JIT)
-    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
-#endif
-    , m_didFailJITCompilation(false)
-    , m_didFailFTLCompilation(false)
-    , m_hasBeenCompiledWithFTL(false)
-    , m_isJettisoned(false)
     , m_numCalleeLocals(other.m_numCalleeLocals)
     , m_numVars(other.m_numVars)
     , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
@@ -324,14 +316,6 @@ void CodeBlock::finishCreation(VM& vm, CopyParsedBlockTag, CodeBlock& other)
 CodeBlock::CodeBlock(VM& vm, Structure* structure, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlinkedCodeBlock, JSScope* scope)
     : JSCell(vm, structure)
     , m_globalObject(vm, this, scope->globalObject())
-    , m_shouldAlwaysBeInlined(true)
-#if ENABLE(JIT)
-    , m_capabilityLevelState(DFG::CapabilityLevelNotSet)
-#endif
-    , m_didFailJITCompilation(false)
-    , m_didFailFTLCompilation(false)
-    , m_hasBeenCompiledWithFTL(false)
-    , m_isJettisoned(false)
     , m_numCalleeLocals(unlinkedCodeBlock->numCalleeLocals())
     , m_numVars(unlinkedCodeBlock->numVars())
     , m_hasDebuggerStatement(false)
@@ -2312,8 +2296,6 @@ public:
         : m_startCallFrame(startCallFrame)
         , m_codeBlock(codeBlock)
         , m_depthToCheck(depthToCheck)
-        , m_foundStartCallFrame(false)
-        , m_didRecurse(false)
     { }
 
     IterationStatus operator()(StackVisitor& visitor) const
@@ -2342,8 +2324,8 @@ private:
     CallFrame* const m_startCallFrame;
     CodeBlock* const m_codeBlock;
     mutable unsigned m_depthToCheck;
-    mutable bool m_foundStartCallFrame;
-    mutable bool m_didRecurse;
+    mutable bool m_foundStartCallFrame { false };
+    mutable bool m_didRecurse { false };
 };
 
 void CodeBlock::noticeIncomingCall(CallFrame* callerFrame)
@@ -2746,12 +2728,6 @@ ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeInde
     return nullptr;
 }
 
-ArrayProfile* CodeBlock::getArrayProfile(BytecodeIndex bytecodeIndex)
-{
-    ConcurrentJSLocker locker(m_lock);
-    return getArrayProfile(locker, bytecodeIndex);
-}
-
 #if ENABLE(DFG_JIT)
 DFG::CodeOriginPool& CodeBlock::codeOrigins()
 {
@@ -2833,7 +2809,7 @@ bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
 }
 #endif
 
-void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(const ConcurrentJSLocker& locker, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
+void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const ConcurrentJSLocker& locker, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles)
 {
     numberOfLiveNonArgumentValueProfiles = 0;
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
@@ -2865,20 +2841,27 @@ void CodeBlock::updateAllValueProfilePredictionsAndCountLiveness(const Concurren
             }
         });
     }
-
-#if ENABLE(DFG_JIT)
-    lazyOperandValueProfiles(locker).computeUpdatedPredictions(locker);
-#endif
 }
 
-void CodeBlock::updateAllValueProfilePredictions(const ConcurrentJSLocker& locker)
+void CodeBlock::updateAllNonLazyValueProfilePredictions(const ConcurrentJSLocker& locker)
 {
     unsigned ignoredValue1, ignoredValue2;
-    updateAllValueProfilePredictionsAndCountLiveness(locker, ignoredValue1, ignoredValue2);
+    updateAllNonLazyValueProfilePredictionsAndCountLiveness(locker, ignoredValue1, ignoredValue2);
+}
+
+void CodeBlock::updateAllLazyValueProfilePredictions(const ConcurrentJSLocker& locker)
+{
+    ASSERT(m_lock.isLocked());
+#if ENABLE(DFG_JIT)
+    lazyOperandValueProfiles(locker).computeUpdatedPredictions(locker);
+#else
+    UNUSED_PARAM(locker);
+#endif
 }
 
 void CodeBlock::updateAllArrayProfilePredictions(const ConcurrentJSLocker& locker)
 {
+    ASSERT(m_lock.isLocked());
     if (!m_metadata)
         return;
 
@@ -2910,10 +2893,8 @@ void CodeBlock::updateAllArrayProfilePredictions(const ConcurrentJSLocker& locke
     });
 }
 
-void CodeBlock::updateAllArrayPredictions(const ConcurrentJSLocker& locker)
+void CodeBlock::updateAllArrayAllocationProfilePredictions()
 {
-    updateAllArrayProfilePredictions(locker);
-    
     forEachArrayAllocationProfile([&](ArrayAllocationProfile& profile) {
         profile.updateProfile();
     });
@@ -2921,9 +2902,13 @@ void CodeBlock::updateAllArrayPredictions(const ConcurrentJSLocker& locker)
 
 void CodeBlock::updateAllPredictions()
 {
-    ConcurrentJSLocker locker(m_lock);
-    updateAllValueProfilePredictions(locker);
-    updateAllArrayPredictions(locker);
+    updateAllNonLazyValueProfilePredictions(ConcurrentJSLocker(valueProfileLock()));
+    updateAllArrayAllocationProfilePredictions();
+    {
+        ConcurrentJSLocker locker(m_lock);
+        updateAllLazyValueProfilePredictions(locker);
+        updateAllArrayProfilePredictions(locker);
+    }
 }
 
 bool CodeBlock::shouldOptimizeNow()
@@ -2936,9 +2921,13 @@ bool CodeBlock::shouldOptimizeNow()
     unsigned numberOfLiveNonArgumentValueProfiles;
     unsigned numberOfSamplesInProfiles;
     {
-        ConcurrentJSLocker locker(m_lock);
-        updateAllArrayPredictions(locker);
-        updateAllValueProfilePredictionsAndCountLiveness(locker, numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
+        updateAllNonLazyValueProfilePredictionsAndCountLiveness(ConcurrentJSLocker(valueProfileLock()), numberOfLiveNonArgumentValueProfiles, numberOfSamplesInProfiles);
+        updateAllArrayAllocationProfilePredictions();
+        {
+            ConcurrentJSLocker locker(m_lock);
+            updateAllArrayProfilePredictions(locker);
+            updateAllLazyValueProfilePredictions(locker);
+        }
     }
 
     if (Options::verboseOSR()) {

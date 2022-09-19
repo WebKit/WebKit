@@ -7,11 +7,18 @@
 // system_utils.cpp: Implementation of common functions
 
 #include "common/system_utils.h"
+#include "common/debug.h"
 
 #include <stdlib.h>
+#include <atomic>
 
 #if defined(ANGLE_PLATFORM_ANDROID)
 #    include <sys/system_properties.h>
+#endif
+
+#if defined(ANGLE_PLATFORM_APPLE)
+#    include <dispatch/dispatch.h>
+#    include <pthread.h>
 #endif
 
 namespace angle
@@ -212,6 +219,12 @@ void *OpenSystemLibraryAndGetError(const char *libraryName,
                                    std::string *errorOut)
 {
     std::string libraryWithExtension = std::string(libraryName) + "." + GetSharedLibraryExtension();
+#if ANGLE_PLATFORM_IOS
+    // On iOS, libraryWithExtension is a directory in which the library resides.
+    // The actual library name doesn't have an extension at all.
+    // E.g. "libEGL.framework/libEGL"
+    libraryWithExtension = libraryWithExtension + "/" + libraryName;
+#endif
     return OpenSystemLibraryWithExtensionAndGetError(libraryWithExtension.c_str(), searchType,
                                                      errorOut);
 }
@@ -221,4 +234,34 @@ std::string StripFilenameFromPath(const std::string &path)
     size_t lastPathSepLoc = path.find_last_of("\\/");
     return (lastPathSepLoc != std::string::npos) ? path.substr(0, lastPathSepLoc) : "";
 }
+
+static std::atomic<uint64_t> globalThreadSerial(1);
+
+#if defined(ANGLE_PLATFORM_APPLE)
+// https://anglebug.com/6479, similar to egl::GetCurrentThread() in libGLESv2/global_state.cpp
+uint64_t GetCurrentThreadUniqueId()
+{
+    static pthread_key_t tlsIndex;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+      ASSERT(pthread_key_create(&tlsIndex, nullptr) == 0);
+    });
+
+    void *tlsValue = pthread_getspecific(tlsIndex);
+    if (tlsValue == nullptr)
+    {
+        uint64_t threadId = globalThreadSerial++;
+        ASSERT(pthread_setspecific(tlsIndex, reinterpret_cast<void *>(threadId)) == 0);
+        return threadId;
+    }
+    return reinterpret_cast<uint64_t>(tlsValue);
+}
+#else
+uint64_t GetCurrentThreadUniqueId()
+{
+    thread_local uint64_t threadId(globalThreadSerial++);
+    return threadId;
+}
+#endif
+
 }  // namespace angle

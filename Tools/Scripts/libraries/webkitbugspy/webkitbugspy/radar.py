@@ -456,6 +456,6 @@ class Tracker(GenericTracker):
             result.assign(self.me())
         return result
 
-    def cc_radar(self, issue, block=False, timeout=None):
+    def cc_radar(self, issue, block=False, timeout=None, radar=None):
         # cc-ing radar is a no-op for radar
         return issue

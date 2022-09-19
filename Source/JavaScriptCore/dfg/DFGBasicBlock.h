@@ -186,22 +186,22 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
     BlockIndex index;
 
-    StructureClobberState cfaStructureClobberStateAtHead;
-    StructureClobberState cfaStructureClobberStateAtTail;
-    BranchDirection cfaBranchDirection;
-    bool cfaHasVisited;
-    bool cfaShouldRevisit;
+    StructureClobberState cfaStructureClobberStateAtHead { StructuresAreWatched };
+    StructureClobberState cfaStructureClobberStateAtTail { StructuresAreWatched };
+    BranchDirection cfaBranchDirection { InvalidBranchDirection };
+    bool cfaHasVisited { false };
+    bool cfaShouldRevisit { false };
     bool cfaThinksShouldTryConstantFolding { false };
-    bool cfaDidFinish;
-    bool intersectionOfCFAHasVisited;
-    bool isOSRTarget;
-    bool isCatchEntrypoint;
+    bool cfaDidFinish { true };
+    bool intersectionOfCFAHasVisited { true };
+    bool isOSRTarget { false };
+    bool isCatchEntrypoint { false };
 
 #if ASSERT_ENABLED
-    bool isLinked;
+    bool isLinked { false };
 #endif
-    bool isReachable;
-    
+    bool isReachable { false };
+
     Vector<Node*> phis;
     PredecessorList predecessors;
     

@@ -351,10 +351,6 @@ Interpreter::Interpreter()
 #endif // ASSERT_ENABLED
 }
 
-Interpreter::~Interpreter()
-{
-}
-
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
@@ -491,10 +487,7 @@ ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, Co
 
 class GetCatchHandlerFunctor {
 public:
-    GetCatchHandlerFunctor()
-        : m_handler(nullptr)
-    {
-    }
+    GetCatchHandlerFunctor() = default;
 
     HandlerInfo* handler() { return m_handler; }
 
@@ -514,7 +507,7 @@ public:
     }
 
 private:
-    mutable HandlerInfo* m_handler;
+    mutable HandlerInfo* m_handler { nullptr };
 };
 
 CatchInfo::CatchInfo(const HandlerInfo* handler, CodeBlock* codeBlock)

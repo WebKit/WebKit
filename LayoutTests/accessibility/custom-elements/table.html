@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-table id="table-1">
+    <custom-row id="row-header" aria-rowindex="1">
+        <custom-cell id="header-1" role="columnheader" aria-sort="ascending"></custom-cell>
+    </custom-row>
+    <custom-row id="row-1">
+        <custom-cell id="cell1"></custom-cell>
+        <custom-cell id="cell2" aria-colindex="3"></custom-cell>
+        <custom-rowspan-cell id="cell3"></custom-rowspan-cell>
+        <custom-rowspan-cell id="cell4" aria-colindex="5" aria-rowspan="3"></custom-rowspan-cell>
+    </custom-row>
+    <custom-row id="row-2" role="row" aria-rowindex="8">
+        <custom-colspan-cell id="cell5"></custom-colspan-cell>
+    </custom-row>
+    <custom-row id="row-3" role="row" aria-rowindex="9">
+        <custom-colspan-cell id="cell6" aria-colspan="3"></custom-colspan-cell>
+    </custom-row>
+</custom-table>
+<script>
+
+customElements.define('custom-table', class CustomTable extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'grid';
+        internals.ariaColCount = '4';
+        internals.ariaRowCount = '8';
+    }
+});
+
+customElements.define('custom-row', class CustomRow extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'row';
+        internals.ariaRowIndex = 7;
+    }
+});
+
+customElements.define('custom-cell', class CustomCell extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'gridcell';
+        internals.ariaColIndex = 2;
+    }
+});
+
+customElements.define('custom-rowspan-cell', class CustomRowspanCell extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'gridcell';
+        internals.ariaColIndex = 4;
+        internals.ariaRowSpan = 2;
+    }
+});
+
+customElements.define('custom-colspan-cell', class CustomColspanCell extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'gridcell';
+        internals.ariaColIndex = 2;
+        internals.ariaColSpan = 2;
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("table-1").role', 'AXRole: AXTable');
+    shouldBe('accessibilityController.accessibleElementById("table-1").rowCount', '4');
+    shouldBe('accessibilityController.accessibleElementById("table-1").columnCount', '4');
+    shouldBe('accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIAColumnCount")', '4');
+    shouldBe('accessibilityController.accessibleElementById("table-1").numberAttributeValue("AXARIARowCount")', '8');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("row-header").role', 'AXRole: AXRow');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("header-1").role', 'AXRole: AXCell');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("header-1").sortDirection', 'AXAscendingSortDirection');
+
+    shouldBeEqualToString('accessibilityController.accessibleElementById("row-1").role', 'AXRole: AXRow');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell1").role', 'AXRole: AXCell');
+    shouldBe('accessibilityController.accessibleElementById("cell1").numberAttributeValue("AXARIARowIndex")', '7');
+    shouldBe('accessibilityController.accessibleElementById("cell1").numberAttributeValue("AXARIAColumnIndex")', '2');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell2").role', 'AXRole: AXCell');
+    shouldBe('accessibilityController.accessibleElementById("cell2").numberAttributeValue("AXARIARowIndex")', '7');
+    shouldBe('accessibilityController.accessibleElementById("cell2").numberAttributeValue("AXARIAColumnIndex")', '3');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell3").role', 'AXRole: AXCell');
+    shouldBe('accessibilityController.accessibleElementById("cell3").numberAttributeValue("AXARIARowIndex")', '7');
+    shouldBe('accessibilityController.accessibleElementById("cell3").numberAttributeValue("AXARIAColumnIndex")', '4');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell3").rowIndexRange()', '{1, 2}');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell4").role', 'AXRole: AXCell');
+    shouldBe('accessibilityController.accessibleElementById("cell4").numberAttributeValue("AXARIARowIndex")', '7');
+    shouldBe('accessibilityController.accessibleElementById("cell4").numberAttributeValue("AXARIAColumnIndex")', '5');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell4").rowIndexRange()', '{1, 3}');
+
+    shouldBeEqualToString('accessibilityController.accessibleElementById("row-2").role', 'AXRole: AXRow');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell5").role', 'AXRole: AXCell');
+    shouldBe('accessibilityController.accessibleElementById("cell5").numberAttributeValue("AXARIARowIndex")', '8');
+    shouldBe('accessibilityController.accessibleElementById("cell5").numberAttributeValue("AXARIAColumnIndex")', '2');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell5").rowIndexRange()', '{2, 1}');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell5").columnIndexRange()', '{0, 2}');
+
+    shouldBeEqualToString('accessibilityController.accessibleElementById("row-3").role', 'AXRole: AXRow');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell6").role', 'AXRole: AXCell');
+    shouldBe('accessibilityController.accessibleElementById("cell6").numberAttributeValue("AXARIARowIndex")', '9');
+    shouldBe('accessibilityController.accessibleElementById("cell6").numberAttributeValue("AXARIAColumnIndex")', '2');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell6").rowIndexRange()', '{3, 1}');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("cell6").columnIndexRange()', '{0, 3}');
+
+}
+
+</script>
+</body>
+</html>

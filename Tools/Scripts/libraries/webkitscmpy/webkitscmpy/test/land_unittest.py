@@ -365,8 +365,8 @@ class TestLandGitHub(testing.PathTestCase):
         os.mkdir(os.path.join(self.path, '.svn'))
 
     @classmethod
-    def webserver(cls, approved=None, labels=None):
-        result = mocks.remote.GitHub(labels=labels)
+    def webserver(cls, approved=None, labels=None, environment=None):
+        result = mocks.remote.GitHub(labels=labels, environment=environment)
         result.users.create('Ricky Reviewer', 'rreviewer', ['rreviewer@webkit.org'])
         result.users.create('Tim Contributor', 'tcontributor', ['tcontributor@webkit.org'])
         result.issues = {
@@ -490,6 +490,10 @@ class TestLandGitHub(testing.PathTestCase):
     def test_merge_queue(self):
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
             approved=True, labels={'merge-queue': dict(color='3AE653', description="Send PR to merge-queue")},
+            environment=Environment(
+                GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+                GITHUB_EXAMPLE_COM_TOKEN='token',
+            ),
         ) as remote, mocks.local.Svn(), repository(
             self.path, has_oops=True,
             remote='https://{}'.format(remote.remote),
@@ -532,6 +536,10 @@ class TestLandGitHub(testing.PathTestCase):
         self.maxDiff = None
         with OutputCapture(level=logging.INFO) as captured, MockTerminal.input('y', 'n'), self.webserver(
             approved=True, labels={'merge-queue': dict(color='3AE653', description="Send PR to merge-queue")},
+            environment=Environment(
+                GITHUB_EXAMPLE_COM_USERNAME='tcontributor',
+                GITHUB_EXAMPLE_COM_TOKEN='token',
+            ),
         ) as remote, mocks.local.Svn(), repository(
             self.path, has_oops=True,
             issue_url='{}/show_bug.cgi?id=1'.format(self.BUGZILLA),

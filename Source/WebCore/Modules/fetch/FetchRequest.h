@@ -33,6 +33,7 @@
 #include "FetchBodyOwner.h"
 #include "FetchIdentifier.h"
 #include "FetchOptions.h"
+#include "FetchRequestDestination.h"
 #include "FetchRequestInit.h"
 #include "ResourceRequest.h"
 #include "URLKeepingBlobAlive.h"

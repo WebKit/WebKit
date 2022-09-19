@@ -286,6 +286,11 @@ std::shared_ptr<WaitableCompileEvent> ShaderD3D::compile(const gl::Context *cont
     {
         options->initializeBuiltinsForInstancedMultiview = true;
     }
+    if (extensions.shaderPixelLocalStorageCoherentANGLE)
+    {
+        options->pls.fragmentSynchronizationType =
+            ShFragmentSynchronizationType::RasterizerOrderViews_D3D;
+    }
 
     auto postTranslateFunctor = [this](gl::ShCompilerInstance *compiler, std::string *infoLog) {
         // TODO(jmadill): We shouldn't need to cache this.

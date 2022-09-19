@@ -67,7 +67,7 @@ private:
     FixedVector<DFG::FlushFormat> m_argumentFlushFormats;
     ScratchBuffer* m_entryBuffer; // Only for OSR entry code blocks.
     BytecodeIndex m_bytecodeIndex;
-    unsigned m_entryFailureCount;
+    unsigned m_entryFailureCount { 0 };
 };
 
 } } // namespace JSC::FTL

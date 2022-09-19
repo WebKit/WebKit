@@ -79,10 +79,7 @@ enum ValueRecoveryTechnique : uint8_t {
 
 class ValueRecovery {
 public:
-    ValueRecovery()
-        : m_technique(DontKnow)
-    {
-    }
+    ValueRecovery() = default;
     
     bool isSet() const { return m_technique != DontKnow; }
     bool operator!() const { return !isSet(); }
@@ -447,7 +444,7 @@ public:
 #endif
 
 private:
-    ValueRecoveryTechnique m_technique;
+    ValueRecoveryTechnique m_technique { DontKnow };
     union UnionType {
         MacroAssembler::RegisterID gpr;
         MacroAssembler::FPRegisterID fpr;

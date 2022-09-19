@@ -55,10 +55,7 @@ UseCounts::UseCounts(Procedure& procedure)
     }
 }
 
-UseCounts::~UseCounts()
-{
-}
-
+UseCounts::~UseCounts() = default;
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

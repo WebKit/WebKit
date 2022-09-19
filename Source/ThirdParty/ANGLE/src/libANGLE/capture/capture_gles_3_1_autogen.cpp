@@ -50,8 +50,8 @@ CallCapture CaptureBindImageTexture(const State &glState,
     paramBuffer.addValueParam("level", ParamType::TGLint, level);
     paramBuffer.addValueParam("layered", ParamType::TGLboolean, layered);
     paramBuffer.addValueParam("layer", ParamType::TGLint, layer);
-    paramBuffer.addEnumParam("access", GLenumGroup::BufferAccessARB, ParamType::TGLenum, access);
-    paramBuffer.addEnumParam("format", GLenumGroup::InternalFormat, ParamType::TGLenum, format);
+    paramBuffer.addEnumParam("access", GLESEnum::BufferAccessARB, ParamType::TGLenum, access);
+    paramBuffer.addEnumParam("format", GLESEnum::InternalFormat, ParamType::TGLenum, format);
 
     return CallCapture(angle::EntryPoint::GLBindImageTexture, std::move(paramBuffer));
 }
@@ -243,8 +243,8 @@ CallCapture CaptureFramebufferParameteri(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("target", GLenumGroup::FramebufferTarget, ParamType::TGLenum, target);
-    paramBuffer.addEnumParam("pname", GLenumGroup::FramebufferParameterName, ParamType::TGLenum,
+    paramBuffer.addEnumParam("target", GLESEnum::FramebufferTarget, ParamType::TGLenum, target);
+    paramBuffer.addEnumParam("pname", GLESEnum::FramebufferParameterName, ParamType::TGLenum,
                              pname);
     paramBuffer.addValueParam("param", ParamType::TGLint, param);
 
@@ -288,7 +288,7 @@ CallCapture CaptureGetBooleani_v(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("target", GLenumGroup::BufferTargetARB, ParamType::TGLenum, target);
+    paramBuffer.addEnumParam("target", GLESEnum::BufferTargetARB, ParamType::TGLenum, target);
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
 
     if (isCallValid)
@@ -317,8 +317,8 @@ CallCapture CaptureGetFramebufferParameteriv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("target", GLenumGroup::FramebufferTarget, ParamType::TGLenum, target);
-    paramBuffer.addEnumParam("pname", GLenumGroup::FramebufferAttachmentParameterName,
+    paramBuffer.addEnumParam("target", GLESEnum::FramebufferTarget, ParamType::TGLenum, target);
+    paramBuffer.addEnumParam("pname", GLESEnum::FramebufferAttachmentParameterName,
                              ParamType::TGLenum, pname);
 
     if (isCallValid)
@@ -347,7 +347,7 @@ CallCapture CaptureGetMultisamplefv(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("pname", GLenumGroup::DefaultGroup, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::AllEnums, ParamType::TGLenum, pname);
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
 
     if (isCallValid)
@@ -378,10 +378,9 @@ CallCapture CaptureGetProgramInterfaceiv(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addEnumParam("programInterface", GLenumGroup::ProgramInterface, ParamType::TGLenum,
+    paramBuffer.addEnumParam("programInterface", GLESEnum::ProgramInterface, ParamType::TGLenum,
                              programInterface);
-    paramBuffer.addEnumParam("pname", GLenumGroup::ProgramInterfacePName, ParamType::TGLenum,
-                             pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::ProgramInterfacePName, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -457,8 +456,7 @@ CallCapture CaptureGetProgramPipelineiv(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("pipelinePacked", ParamType::TProgramPipelineID, pipelinePacked);
-    paramBuffer.addEnumParam("pname", GLenumGroup::PipelineParameterName, ParamType::TGLenum,
-                             pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::PipelineParameterName, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -488,7 +486,7 @@ CallCapture CaptureGetProgramResourceIndex(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addEnumParam("programInterface", GLenumGroup::ProgramInterface, ParamType::TGLenum,
+    paramBuffer.addEnumParam("programInterface", GLESEnum::ProgramInterface, ParamType::TGLenum,
                              programInterface);
 
     if (isCallValid)
@@ -524,7 +522,7 @@ CallCapture CaptureGetProgramResourceLocation(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addEnumParam("programInterface", GLenumGroup::ProgramInterface, ParamType::TGLenum,
+    paramBuffer.addEnumParam("programInterface", GLESEnum::ProgramInterface, ParamType::TGLenum,
                              programInterface);
 
     if (isCallValid)
@@ -562,7 +560,7 @@ CallCapture CaptureGetProgramResourceName(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addEnumParam("programInterface", GLenumGroup::ProgramInterface, ParamType::TGLenum,
+    paramBuffer.addEnumParam("programInterface", GLESEnum::ProgramInterface, ParamType::TGLenum,
                              programInterface);
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
     paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
@@ -608,14 +606,14 @@ CallCapture CaptureGetProgramResourceiv(const State &glState,
                                         GLuint index,
                                         GLsizei propCount,
                                         const GLenum *props,
-                                        GLsizei bufSize,
+                                        GLsizei count,
                                         GLsizei *length,
                                         GLint *params)
 {
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
-    paramBuffer.addEnumParam("programInterface", GLenumGroup::ProgramInterface, ParamType::TGLenum,
+    paramBuffer.addEnumParam("programInterface", GLESEnum::ProgramInterface, ParamType::TGLenum,
                              programInterface);
     paramBuffer.addValueParam("index", ParamType::TGLuint, index);
     paramBuffer.addValueParam("propCount", ParamType::TGLsizei, propCount);
@@ -625,7 +623,7 @@ CallCapture CaptureGetProgramResourceiv(const State &glState,
         ParamCapture propsParam("props", ParamType::TGLenumConstPointer);
         InitParamValue(ParamType::TGLenumConstPointer, props, &propsParam.value);
         CaptureGetProgramResourceiv_props(glState, isCallValid, programPacked, programInterface,
-                                          index, propCount, props, bufSize, length, params,
+                                          index, propCount, props, count, length, params,
                                           &propsParam);
         paramBuffer.addParam(std::move(propsParam));
     }
@@ -637,14 +635,14 @@ CallCapture CaptureGetProgramResourceiv(const State &glState,
         paramBuffer.addParam(std::move(propsParam));
     }
 
-    paramBuffer.addValueParam("bufSize", ParamType::TGLsizei, bufSize);
+    paramBuffer.addValueParam("count", ParamType::TGLsizei, count);
 
     if (isCallValid)
     {
         ParamCapture lengthParam("length", ParamType::TGLsizeiPointer);
         InitParamValue(ParamType::TGLsizeiPointer, length, &lengthParam.value);
         CaptureGetProgramResourceiv_length(glState, isCallValid, programPacked, programInterface,
-                                           index, propCount, props, bufSize, length, params,
+                                           index, propCount, props, count, length, params,
                                            &lengthParam);
         paramBuffer.addParam(std::move(lengthParam));
     }
@@ -661,7 +659,7 @@ CallCapture CaptureGetProgramResourceiv(const State &glState,
         ParamCapture paramsParam("params", ParamType::TGLintPointer);
         InitParamValue(ParamType::TGLintPointer, params, &paramsParam.value);
         CaptureGetProgramResourceiv_params(glState, isCallValid, programPacked, programInterface,
-                                           index, propCount, props, bufSize, length, params,
+                                           index, propCount, props, count, length, params,
                                            &paramsParam);
         paramBuffer.addParam(std::move(paramsParam));
     }
@@ -686,7 +684,7 @@ CallCapture CaptureGetTexLevelParameterfv(const State &glState,
 
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureTarget, targetPacked);
     paramBuffer.addValueParam("level", ParamType::TGLint, level);
-    paramBuffer.addEnumParam("pname", GLenumGroup::GetTextureParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::GetTextureParameter, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -718,7 +716,7 @@ CallCapture CaptureGetTexLevelParameteriv(const State &glState,
 
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureTarget, targetPacked);
     paramBuffer.addValueParam("level", ParamType::TGLint, level);
-    paramBuffer.addEnumParam("pname", GLenumGroup::GetTextureParameter, ParamType::TGLenum, pname);
+    paramBuffer.addEnumParam("pname", GLESEnum::GetTextureParameter, ParamType::TGLenum, pname);
 
     if (isCallValid)
     {
@@ -758,7 +756,7 @@ CallCapture CaptureMemoryBarrier(const State &glState, bool isCallValid, GLbitfi
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("barriers", GLenumGroup::MemoryBarrierMask, ParamType::TGLbitfield,
+    paramBuffer.addEnumParam("barriers", GLESEnum::MemoryBarrierMask, ParamType::TGLbitfield,
                              barriers);
 
     return CallCapture(angle::EntryPoint::GLMemoryBarrier, std::move(paramBuffer));
@@ -770,7 +768,7 @@ CallCapture CaptureMemoryBarrierByRegion(const State &glState,
 {
     ParamBuffer paramBuffer;
 
-    paramBuffer.addEnumParam("barriers", GLenumGroup::MemoryBarrierMask, ParamType::TGLbitfield,
+    paramBuffer.addEnumParam("barriers", GLESEnum::MemoryBarrierMask, ParamType::TGLbitfield,
                              barriers);
 
     return CallCapture(angle::EntryPoint::GLMemoryBarrierByRegion, std::move(paramBuffer));
@@ -1690,7 +1688,7 @@ CallCapture CaptureSampleMaski(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("maskNumber", ParamType::TGLuint, maskNumber);
-    paramBuffer.addEnumParam("mask", GLenumGroup::DefaultGroup, ParamType::TGLbitfield, mask);
+    paramBuffer.addEnumParam("mask", GLESEnum::AllEnums, ParamType::TGLbitfield, mask);
 
     return CallCapture(angle::EntryPoint::GLSampleMaski, std::move(paramBuffer));
 }
@@ -1708,7 +1706,7 @@ CallCapture CaptureTexStorage2DMultisample(const State &glState,
 
     paramBuffer.addValueParam("targetPacked", ParamType::TTextureType, targetPacked);
     paramBuffer.addValueParam("samples", ParamType::TGLsizei, samples);
-    paramBuffer.addEnumParam("internalformat", GLenumGroup::InternalFormat, ParamType::TGLenum,
+    paramBuffer.addEnumParam("internalformat", GLESEnum::SizedInternalFormat, ParamType::TGLenum,
                              internalformat);
     paramBuffer.addValueParam("width", ParamType::TGLsizei, width);
     paramBuffer.addValueParam("height", ParamType::TGLsizei, height);
@@ -1726,7 +1724,7 @@ CallCapture CaptureUseProgramStages(const State &glState,
     ParamBuffer paramBuffer;
 
     paramBuffer.addValueParam("pipelinePacked", ParamType::TProgramPipelineID, pipelinePacked);
-    paramBuffer.addEnumParam("stages", GLenumGroup::UseProgramStageMask, ParamType::TGLbitfield,
+    paramBuffer.addEnumParam("stages", GLESEnum::UseProgramStageMask, ParamType::TGLbitfield,
                              stages);
     paramBuffer.addValueParam("programPacked", ParamType::TShaderProgramID, programPacked);
 

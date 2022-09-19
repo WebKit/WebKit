@@ -265,7 +265,11 @@ TemporarySelectionChange::~TemporarySelectionChange()
 
 void TemporarySelectionChange::setSelection(const VisibleSelection& selection, IsTemporarySelection isTemporarySelection)
 {
-    auto options = FrameSelection::defaultSetSelectionOptions(m_options.contains(TemporarySelectionOption::UserTriggered) ? UserTriggered : NotUserTriggered);
+    auto options = FrameSelection::defaultSetSelectionOptions();
+
+    if (m_options & TemporarySelectionOption::UserTriggered)
+        options.add(FrameSelection::IsUserTriggered);
+
     if (m_options & TemporarySelectionOption::DoNotSetFocus)
         options.add(FrameSelection::DoNotSetFocus);
 
@@ -278,6 +282,8 @@ void TemporarySelectionChange::setSelection(const VisibleSelection& selection, I
             options.add(FrameSelection::SmoothScroll);
         if (m_options & TemporarySelectionOption::RevealSelectionBounds)
             options.add(FrameSelection::RevealSelectionBounds);
+        if (m_options & TemporarySelectionOption::ForceCenterScroll)
+            options.add(FrameSelection::ForceCenterScroll);
     }
 
     m_document->selection().setSelection(selection, options);

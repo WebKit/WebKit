@@ -93,7 +93,7 @@ extern const SecAsn1Template kSecAsn1SubjectPublicKeyInfoTemplate[];
 ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
-#if HAVE(SEC_TRUST_SERIALIZATION)
+#if PLATFORM(COCOA)
 CF_RETURNS_RETAINED CFDataRef SecTrustSerialize(SecTrustRef, CFErrorRef *);
 CF_RETURNS_RETAINED SecTrustRef SecTrustDeserialize(CFDataRef serializedTrust, CFErrorRef *);
 #endif

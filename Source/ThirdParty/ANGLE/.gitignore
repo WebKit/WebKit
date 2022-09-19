@@ -42,6 +42,7 @@
 /third_party/cherry
 /third_party/colorama/src
 /third_party/depot_tools
+/third_party/EGL-Registry/src
 /third_party/fuchsia-sdk
 /third_party/gles1_conform
 /third_party/glmark2/src
@@ -56,12 +57,15 @@
 /third_party/llvm-build
 /third_party/markupsafe
 /third_party/nasm
+/third_party/OpenCL-Docs/src
 /third_party/OpenCL-ICD-Loader/src
+/third_party/OpenGL-Registry/src
 /third_party/proguard/lib
 /third_party/protobuf
 /third_party/Python-Markdown
 /third_party/qemu-linux-x64
 /third_party/qemu-mac-x64
+/third_party/r8/d8
 /third_party/r8/lib
 /third_party/rapidjson/src
 /third_party/requests/src

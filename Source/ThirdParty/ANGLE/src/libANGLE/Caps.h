@@ -554,6 +554,9 @@ struct DisplayExtensions
     // EGL_ANDROID_get_frame_timestamps
     bool getFrameTimestamps = false;
 
+    // EGL_ANGLE_timestamp_surface_attribute
+    bool timestampSurfaceAttributeANGLE = false;
+
     // EGL_ANDROID_recordable
     bool recordable = false;
 
@@ -604,6 +607,9 @@ struct DisplayExtensions
 
     // EGL_EXT_gl_colorspace_display_p3_passthrough
     bool glColorspaceDisplayP3Passthrough = false;
+
+    // EGL_ANGLE_colorspace_attribute_passthrough
+    bool eglColorspaceAttributePassthroughANGLE = false;
 
     // EGL_ANDROID_framebuffer_target
     bool framebufferTargetANDROID = false;

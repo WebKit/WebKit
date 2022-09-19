@@ -23,15 +23,28 @@ void UpdateResourceMap(GLuint *resourceMap, GLuint id, GLsizei readBufferOffset)
 }
 
 DecompressCallback gDecompressCallback;
+DeleteCallback gDeleteCallback;
 std::string gBinaryDataDir = ".";
+
+void DeleteBinaryData()
+{
+    if (gBinaryData)
+    {
+        if (gDeleteCallback)
+        {
+            gDeleteCallback(gBinaryData);
+        }
+        else
+        {
+            delete[] gBinaryData;
+        }
+        gBinaryData = nullptr;
+    }
+}
 
 void LoadBinaryData(const char *fileName)
 {
-    // TODO(b/179188489): Fix cross-module deallocation.
-    if (gBinaryData != nullptr)
-    {
-        delete[] gBinaryData;
-    }
+    DeleteBinaryData();
     char pathBuffer[1000] = {};
 
     snprintf(pathBuffer, sizeof(pathBuffer), "%s/%s", gBinaryDataDir.c_str(), fileName);
@@ -130,9 +143,11 @@ ClientBufferMap gClientBufferMap;
 EGLImageMap gEGLImageMap;
 SurfaceMap gSurfaceMap;
 
-void SetBinaryDataDecompressCallback(DecompressCallback callback)
+void SetBinaryDataDecompressCallback(DecompressCallback decompressCallback,
+                                     DeleteCallback deleteCallback)
 {
-    gDecompressCallback = callback;
+    gDecompressCallback = decompressCallback;
+    gDeleteCallback     = deleteCallback;
 }
 
 void SetBinaryDataDir(const char *dataDir)
@@ -212,6 +227,8 @@ void FinishReplay()
     delete[] gSemaphoreMap;
     delete[] gTransformFeedbackMap;
     delete[] gVertexArrayMap;
+
+    DeleteBinaryData();
 }
 
 void SetValidateSerializedStateCallback(ValidateSerializedStateCallback callback)

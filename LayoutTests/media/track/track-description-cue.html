@@ -7,21 +7,29 @@
         <script src=../media-file.js></script>
     </head>
     <body>
-        <video controls muted id=video>
-            <track id='testTrack' src='captions-webvtt/captions-descriptions.vtt' kind='descriptions' >
+        <video controls muted>
         </video>
         
         <script>            
 
 promise_test(async (t) => {
 
-    let descriptionsTrack = document.querySelector("track");
+    let video = document.getElementsByTagName('video')[0];
 
-    if (window.internals)
+    if (window.internals) {
         internals.settings.setShouldDisplayTrackKind('TextDescriptions', true);
+        internals.settings.setAudioDescriptionsEnabled(true);
+        internals.enableMockSpeechSynthesizerForMediaElement(video);
+    }
 
     video.src = findMediaFile('video', '../content/test');
     await new Promise(resolve => video.oncanplaythrough = resolve);
+
+    let descriptionsTrack = document.createElement('track');
+    descriptionsTrack.setAttribute('kind', 'descriptions');
+    descriptionsTrack.setAttribute('src', 'captions-webvtt/captions-descriptions.vtt');
+    video.appendChild(descriptionsTrack);
+    await new Promise(resolve => descriptionsTrack.onload = resolve);
 
     let cues = descriptionsTrack.track.cues;
     assert_equals(cues.length, 3);

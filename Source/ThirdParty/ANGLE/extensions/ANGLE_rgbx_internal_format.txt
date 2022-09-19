@@ -46,6 +46,9 @@ Overview
     glReadPixels() will accept the following format+type combinations:
         1. format = GL_RGBX8_ANGLE, type = GL_UNSIGNED_BYTE
 
+    glTexSubImage* will accept the following format+type combinations:
+        1. format = GL_RGB, type = GL_UNSIGNED_BYTE
+
 New Types
 
     None.

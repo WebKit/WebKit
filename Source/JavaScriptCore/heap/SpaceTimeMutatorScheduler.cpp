@@ -57,9 +57,7 @@ SpaceTimeMutatorScheduler::SpaceTimeMutatorScheduler(Heap& heap)
 {
 }
 
-SpaceTimeMutatorScheduler::~SpaceTimeMutatorScheduler()
-{
-}
+SpaceTimeMutatorScheduler::~SpaceTimeMutatorScheduler() = default;
 
 MutatorScheduler::State SpaceTimeMutatorScheduler::state() const
 {

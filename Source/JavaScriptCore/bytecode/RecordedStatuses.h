@@ -36,7 +36,7 @@
 namespace JSC {
 
 struct RecordedStatuses {
-    RecordedStatuses() { }
+    RecordedStatuses() = default;
     
     RecordedStatuses& operator=(const RecordedStatuses& other) = delete;
     

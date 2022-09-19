@@ -26,7 +26,6 @@
     function isElementReflectionProperty(property) {
         switch (property) {
             case "ariaActiveDescendantElement":
-            case "ariaErrorMessageElement":
                 return true;
         }
         return false;
@@ -37,6 +36,7 @@
             case "ariaControlsElements":
             case "ariaDescribedByElements":
             case "ariaDetailsElements":
+            case "ariaErrorMessageElements":
             case "ariaFlowToElements":
             case "ariaLabelledByElements":
             case "ariaOwnsElements":

@@ -55,9 +55,6 @@ egl::Error ExternalImageSiblingImpl11::initialize(const egl::Display *display)
 
     mIsTextureArray = (textureDesc.ArraySize > 1);
 
-    mYUV = (textureDesc.Format == DXGI_FORMAT_NV12 || textureDesc.Format == DXGI_FORMAT_P010 ||
-            textureDesc.Format == DXGI_FORMAT_P016);
-
     return egl::NoError();
 }
 
@@ -78,12 +75,12 @@ bool ExternalImageSiblingImpl11::isTexturable(const gl::Context *context) const
 
 bool ExternalImageSiblingImpl11::isYUV() const
 {
-    return mYUV;
+    return false;
 }
 
 bool ExternalImageSiblingImpl11::hasProtectedContent() const
 {
-    return mHasProtectedContent;
+    return false;
 }
 
 gl::Extents ExternalImageSiblingImpl11::getSize() const

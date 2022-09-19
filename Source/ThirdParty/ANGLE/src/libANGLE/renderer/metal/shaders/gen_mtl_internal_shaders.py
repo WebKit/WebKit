@@ -95,7 +95,8 @@ def main():
 
     os.chdir(sys.path[0])
 
-    boilerplate_code = template_header_boilerplate.format(script_name=sys.argv[0])
+    boilerplate_code = template_header_boilerplate.format(
+        script_name=os.path.basename(sys.argv[0]))
 
     # -------- Generate shader constants -----------
     angle_to_gl = angle_format.load_inverse_table('../../angle_format_map.json')

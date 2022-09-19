@@ -28,9 +28,7 @@
 
 namespace JSC {
 
-FuzzerAgent::~FuzzerAgent()
-{
-}
+FuzzerAgent::~FuzzerAgent() = default;
 
 SpeculatedType FuzzerAgent::getPrediction(CodeBlock*, const CodeOrigin&, SpeculatedType result)
 {

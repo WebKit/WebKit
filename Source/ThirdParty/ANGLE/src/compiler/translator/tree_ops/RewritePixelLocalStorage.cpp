@@ -309,6 +309,8 @@ class RewriteToImagesTraverser : public TIntermTraverser
             default:
                 UNREACHABLE();
         }
+        layoutQualifier.rasterOrdered = mCompileOptions->pls.fragmentSynchronizationType ==
+                                        ShFragmentSynchronizationType::RasterizerOrderViews_D3D;
         imageType->setLayoutQualifier(layoutQualifier);
 
         TMemoryQualifier memoryQualifier{};

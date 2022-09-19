@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "DrawingArea.h"
 #include "GraphicsLayerWC.h"
 #include "RemoteWCLayerTreeHostProxy.h"
@@ -94,3 +96,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

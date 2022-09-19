@@ -14,6 +14,7 @@
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
 #include "util/OSWindow.h"
+#include "util/test_utils.h"
 
 using namespace angle;
 
@@ -765,6 +766,103 @@ TEST_P(EGLContextSharingTest, DeleteReaderOfSharedTexture)
         eglDestroySurface(dpy, surface[t]);
         eglDestroyContext(dpy, ctx[t]);
     }
+}
+
+// Test that an inactive but alive thread doesn't prevent memory cleanup.
+TEST_P(EGLContextSharingTestNoFixture, InactiveThreadDoesntPreventCleanup)
+{
+    EGLint dispattrs[] = {EGL_PLATFORM_ANGLE_TYPE_ANGLE, GetParam().getRenderer(),
+                          EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, GetParam().getDeviceType(),
+                          EGL_NONE};
+
+    // Synchronization tools to ensure the two threads are interleaved as designed by this test.
+    std::mutex mutex;
+    std::condition_variable condVar;
+
+    enum class Step
+    {
+        Start,
+        Thread0Initialize,
+        Thread0MakeCurrent,
+        Thread1MakeCurrent,
+        Thread0Terminate,
+        Thread1Render,
+        Finish,
+        Abort,
+    };
+    Step currentStep = Step::Start;
+
+    std::thread thread0 = std::thread([&]() {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Start));
+
+        mDisplay = eglGetPlatformDisplayEXT(
+            EGL_PLATFORM_ANGLE_ANGLE, reinterpret_cast<void *>(EGL_DEFAULT_DISPLAY), dispattrs);
+        EXPECT_TRUE(mDisplay != EGL_NO_DISPLAY);
+        EXPECT_EGL_TRUE(eglInitialize(mDisplay, nullptr, nullptr));
+
+        threadSynchronization.nextStep(Step::Thread0Initialize);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1MakeCurrent));
+
+        EGLContext ctx;
+        EGLSurface srf;
+        EGLConfig config = EGL_NO_CONFIG_KHR;
+        EXPECT_TRUE(chooseConfig(&config));
+        EXPECT_TRUE(createContext(config, &ctx));
+
+        EXPECT_TRUE(createPbufferSurface(mDisplay, config, 1280, 720, &srf));
+        ASSERT_EGL_SUCCESS() << "eglCreatePbufferSurface failed.";
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, srf, srf, ctx));
+        threadSynchronization.nextStep(Step::Thread0MakeCurrent);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread1Render));
+
+        eglTerminate(mDisplay);
+        EXPECT_EGL_SUCCESS();
+        EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        threadSynchronization.nextStep(Step::Thread0Terminate);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Finish));
+
+        // Wait a little to simulate an inactive but alive thread.
+        angle::Sleep(100);
+    });
+
+    std::thread thread1 = std::thread([&]() {
+        ThreadSynchronization<Step> threadSynchronization(&currentStep, &mutex, &condVar);
+
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0Initialize));
+
+        EGLContext ctx;
+        EGLSurface srf;
+        EGLConfig config = EGL_NO_CONFIG_KHR;
+        EXPECT_TRUE(chooseConfig(&config));
+        EXPECT_TRUE(createContext(config, &ctx));
+
+        EXPECT_TRUE(createPbufferSurface(mDisplay, config, 1280, 720, &srf));
+        ASSERT_EGL_SUCCESS() << "eglCreatePbufferSurface failed.";
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, srf, srf, ctx));
+
+        threadSynchronization.nextStep(Step::Thread1MakeCurrent);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0MakeCurrent));
+
+        // Clear and read back to make sure thread uses context and surface.
+        glClearColor(1.0, 0.0, 0.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_PIXEL_EQ(0, 0, 255, 0, 0, 255);
+
+        threadSynchronization.nextStep(Step::Thread1Render);
+        ASSERT_TRUE(threadSynchronization.waitForStep(Step::Thread0Terminate));
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        threadSynchronization.nextStep(Step::Finish);
+    });
+
+    thread1.join();
+    thread0.join();
+
+    ASSERT_NE(currentStep, Step::Abort);
 }
 
 // Test that eglTerminate() with a thread doesn't cause other threads to crash.

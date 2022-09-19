@@ -101,11 +101,8 @@ public:
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
-    virtual void adjustFragmentBoundsFromFragmentedFlowPortionRect(LayoutRect& fragmentBounds) const;
-
     void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
     void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);
-    LayoutRect layoutOverflowRectForBox(const RenderBox*);
     LayoutRect visualOverflowRectForBox(const RenderBoxModelObject&);
     LayoutRect layoutOverflowRectForBoxForPropagation(const RenderBox*);
     LayoutRect visualOverflowRectForBoxForPropagation(const RenderBoxModelObject&);
@@ -130,17 +127,10 @@ protected:
     void computePreferredLogicalWidths() override;
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
-    enum OverflowType {
-        LayoutOverflow = 0,
-        VisualOverflow
-    };
-
-    LayoutRect overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType);
+    LayoutRect overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion);
     void repaintFragmentedFlowContentRectangle(const LayoutRect& repaintRect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect = 0);
 
     LayoutRect fragmentedFlowContentRectangle(const LayoutRect&, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect = 0);
-
-    void computeOverflowFromFragmentedFlow();
 
 private:
     bool isRenderFragmentContainer() const final { return true; }

@@ -34,11 +34,8 @@ namespace JSC {
 
 class RegisterAtOffset {
 public:
-    RegisterAtOffset()
-        : m_offset(0)
-    {
-    }
-    
+    RegisterAtOffset() = default;
+
     RegisterAtOffset(Reg reg, ptrdiff_t offset)
         : m_reg(reg)
         , m_offset(offset)
@@ -69,7 +66,7 @@ public:
 
 private:
     Reg m_reg;
-    ptrdiff_t m_offset : (sizeof(ptrdiff_t) - sizeof(Reg)) * CHAR_BIT;
+    ptrdiff_t m_offset : (sizeof(ptrdiff_t) - sizeof(Reg)) * CHAR_BIT { 0 };
 };
 
 } // namespace JSC

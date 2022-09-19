@@ -152,19 +152,26 @@ angle::Result BufferGL::map(const gl::Context *context, GLenum access, void **ma
     {
         *mapPtr = mShadowCopy.data();
     }
-    else if (functions->mapBuffer)
-    {
-        stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-        *mapPtr = ANGLE_GL_TRY(
-            context, functions->mapBuffer(gl::ToGLenum(DestBufferOperationTarget), access));
-    }
     else
     {
-        ASSERT(functions->mapBufferRange && access == GL_WRITE_ONLY_OES);
         stateManager->bindBuffer(DestBufferOperationTarget, mBufferID);
-        *mapPtr =
-            ANGLE_GL_TRY(context, functions->mapBufferRange(gl::ToGLenum(DestBufferOperationTarget),
-                                                            0, mBufferSize, GL_MAP_WRITE_BIT));
+        if (functions->mapBuffer)
+        {
+            *mapPtr = ANGLE_GL_TRY(
+                context, functions->mapBuffer(gl::ToGLenum(DestBufferOperationTarget), access));
+        }
+        else
+        {
+            ASSERT(functions->mapBufferRange && access == GL_WRITE_ONLY_OES);
+            *mapPtr = ANGLE_GL_TRY(
+                context, functions->mapBufferRange(gl::ToGLenum(DestBufferOperationTarget), 0,
+                                                   mBufferSize, GL_MAP_WRITE_BIT));
+        }
+
+        // Unbind the mapped buffer from the array buffer binding. Some drivers generate errors if
+        // any mapped buffer is bound to array buffer bindings.
+        // crbug.com/1345777
+        stateManager->bindBuffer(DestBufferOperationTarget, 0);
     }
 
     mIsMapped  = true;
@@ -197,6 +204,11 @@ angle::Result BufferGL::mapRange(const gl::Context *context,
         *mapPtr =
             ANGLE_GL_TRY(context, functions->mapBufferRange(gl::ToGLenum(DestBufferOperationTarget),
                                                             offset, length, access));
+
+        // Unbind the mapped buffer from the array buffer binding. Some drivers generate errors if
+        // any mapped buffer is bound to array buffer bindings.
+        // crbug.com/1345777
+        stateManager->bindBuffer(DestBufferOperationTarget, 0);
     }
 
     mIsMapped  = true;

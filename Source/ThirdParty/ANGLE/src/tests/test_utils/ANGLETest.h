@@ -502,9 +502,6 @@ class ANGLETestBase
 
     void ignoreD3D11SDKLayersWarnings();
 
-    // Allows a test to be more restrictive about platform warnings.
-    void treatPlatformWarningsAsErrors();
-
     OSWindow *getOSWindow() { return mFixture->osWindow; }
 
     GLuint get2DTexturedQuadProgram();

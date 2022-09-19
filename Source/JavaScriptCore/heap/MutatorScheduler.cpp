@@ -30,13 +30,9 @@
 
 namespace JSC {
 
-MutatorScheduler::MutatorScheduler()
-{
-}
+MutatorScheduler::MutatorScheduler() = default;
 
-MutatorScheduler::~MutatorScheduler()
-{
-}
+MutatorScheduler::~MutatorScheduler() = default;
 
 void MutatorScheduler::didStop()
 {

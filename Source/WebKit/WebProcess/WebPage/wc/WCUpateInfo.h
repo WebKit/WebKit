@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "WCBackingStore.h"
 #include "WCContentBufferIdentifier.h"
 #include "WebCoreArgumentCoders.h"
@@ -349,3 +351,5 @@ template<> struct EnumTraits<WebKit::WCLayerChange> {
 };
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

@@ -630,6 +630,7 @@ void Document::createNewIdentifier()
 Ref<Document> Document::create(Document& contextDocument)
 {
     auto document = adoptRef(*new Document(nullptr, contextDocument.m_settings, URL(), { }));
+    document->addToContextsMap();
     document->setContextDocument(contextDocument);
     document->setSecurityOriginPolicy(contextDocument.securityOriginPolicy());
     return document;
@@ -637,7 +638,9 @@ Ref<Document> Document::create(Document& contextDocument)
 
 Ref<Document> Document::createNonRenderedPlaceholder(Frame& frame, const URL& url)
 {
-    return adoptRef(*new Document(&frame, frame.settings(), url, { }, NonRenderedPlaceholder));
+    auto document = adoptRef(*new Document(&frame, frame.settings(), url, { }, NonRenderedPlaceholder));
+    document->addToContextsMap();
+    return document;
 }
 
 Document::~Document()
@@ -3265,8 +3268,6 @@ void Document::implicitClose()
 
     dispatchWindowLoadEvent();
     dispatchPageshowEvent(PageshowEventNotPersisted);
-    if (m_pendingStateObject)
-        dispatchPopstateEvent(WTFMove(m_pendingStateObject));
 
     if (f)
         f->loader().dispatchOnloadEvents();
@@ -6578,12 +6579,7 @@ void Document::statePopped(Ref<SerializedScriptValue>&& stateObject)
     if (!frame())
         return;
     
-    // Per step 11 of section 6.5.9 (history traversal) of the HTML5 spec, we 
-    // defer firing of popstate until we're in the complete state.
-    if (m_readyState == Complete)
-        dispatchPopstateEvent(WTFMove(stateObject));
-    else
-        m_pendingStateObject = WTFMove(stateObject);
+    dispatchPopstateEvent(WTFMove(stateObject));
 }
 
 void Document::attachRange(Range& range)

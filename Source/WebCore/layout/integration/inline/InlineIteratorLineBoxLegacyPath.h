@@ -71,7 +71,7 @@ public:
     bool isHorizontal() const { return m_rootInlineBox->isHorizontal(); }
     FontBaseline baselineType() const { return m_rootInlineBox->baselineType(); }
 
-    const RenderBlockFlow& containingBlock() const { return m_rootInlineBox->blockFlow(); }
+    const RenderBlockFlow& formattingContextRoot() const { return m_rootInlineBox->blockFlow(); }
 
     RenderFragmentContainer* containingFragment() const { return m_rootInlineBox->containingFragment(); }
     bool isFirstAfterPageBreak() const { return m_rootInlineBox->isFirstAfterPageBreak(); }

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "GraphicsLayerWC.h"
 #include <WebCore/GraphicsLayerFactory.h>
 
@@ -42,3 +44,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

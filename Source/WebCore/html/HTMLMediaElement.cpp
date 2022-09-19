@@ -295,6 +295,22 @@ String convertEnumerationToString(HTMLMediaElement::TextTrackVisibilityCheckType
     return values[static_cast<size_t>(enumerationValue)];
 }
 
+String convertEnumerationToString(HTMLMediaElement::SpeechSynthesisState enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("None"),
+        MAKE_STATIC_STRING_IMPL("Speaking"),
+        MAKE_STATIC_STRING_IMPL("CompletingExtendedDescription"),
+        MAKE_STATIC_STRING_IMPL("Paused"),
+    };
+    static_assert(static_cast<size_t>(HTMLMediaElement::SpeechSynthesisState::None) == 0, "SpeechSynthesisState::None is not 0 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElement::SpeechSynthesisState::Speaking) == 1, "SpeechSynthesisState::Speaking is not 1 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElement::SpeechSynthesisState::CompletingExtendedDescription) == 2, "SpeechSynthesisState::CompletingExtendedDescription is not 2 as expected");
+    static_assert(static_cast<size_t>(HTMLMediaElement::SpeechSynthesisState::Paused) == 3, "SpeechSynthesisState::Paused is not 3 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+
 class TrackDisplayUpdateScope {
 public:
     TrackDisplayUpdateScope(HTMLMediaElement& element)
@@ -681,6 +697,13 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 void HTMLMediaElement::unregisterWithDocument(Document& document)
 {
     document.unregisterMediaElement(*this);
+
+#if ENABLE(SPEECH_SYNTHESIS)
+    if (m_speechSynthesis) {
+        m_speechSynthesis->cancel();
+        m_speechSynthesis = nullptr;
+    }
+#endif
 
     if (m_mediaSession)
         m_mediaSession->unregisterWithDocument(document);
@@ -1850,8 +1873,10 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
     std::sort(eventTasks.begin(), eventTasks.end(), eventTimeCueCompare);
 
     for (auto& eventTask : eventTasks) {
-        if (!affectedTracks.contains(eventTask.second->track()))
-            affectedTracks.append(eventTask.second->track());
+        auto& [eventTime, eventCue] = eventTask;
+
+        if (!affectedTracks.contains(eventCue->track()))
+            affectedTracks.append(eventCue->track());
 
         // 13 - Queue each task in events, in list order.
 
@@ -1859,12 +1884,12 @@ void HTMLMediaElement::updateActiveTextTrackCues(const MediaTime& movieTime)
         // depending on the time that is associated with the event. This
         // correctly identifies the type of the event, if the startTime is
         // less than the endTime in the cue.
-        if (eventTask.second->startTime() >= eventTask.second->endTime()) {
-            executeCueEnterOrLeaveAction(*eventTask.second, CueAction::Enter);
-            executeCueEnterOrLeaveAction(*eventTask.second, CueAction::Exit);
+        if (eventCue->startTime() >= eventCue->endTime()) {
+            executeCueEnterOrExitActionForTime(*eventCue, CueAction::Enter);
+            executeCueEnterOrExitActionForTime(*eventCue, CueAction::Exit);
         } else {
-            CueAction action = eventTask.first == eventTask.second->startMediaTime() ? CueAction::Enter : CueAction::Exit;
-            executeCueEnterOrLeaveAction(*eventTask.second, action);
+            CueAction action = eventTime == eventCue->startMediaTime() ? CueAction::Enter : CueAction::Exit;
+            executeCueEnterOrExitActionForTime(*eventCue, action);
         }
     }
 
@@ -1910,36 +1935,49 @@ void HTMLMediaElement::setSpeechSynthesisState(SpeechSynthesisState state)
 #if ENABLE(SPEECH_SYNTHESIS)
     constexpr double volumeMultiplierWhenSpeakingCueText = .4;
 
-    auto setVolumeMultiplier = [this] (double multiplier) {
+    if (m_changingSynthesisState || state == m_speechState)
+        return;
+
+    if (m_cueBeingSpoken)
+        ALWAYS_LOG(LOGIDENTIFIER, "changing state from ", m_speechState, " to ", state, ", at time ", currentMediaTime(), ", for cue ", m_cueBeingSpoken->startTime(), "..", m_cueBeingSpoken->endTime());
+    else
+        ALWAYS_LOG(LOGIDENTIFIER, "changing state from ", m_speechState, " to ", state, ", at time ", currentMediaTime());
+
+    SetForScope<bool> changingState { m_changingSynthesisState, true };
+    auto setSpeechVolumeMultiplier = [this] (double multiplier) {
         m_volumeMultiplierForSpeechSynthesis = multiplier;
         updateVolume();
     };
 
     auto oldState = m_speechState;
     m_speechState = state;
-    RefPtr<SpeechSynthesis> speechSynthesis = m_cueBeingSpoken && m_cueBeingSpoken->track() ? &m_cueBeingSpoken->track()->speechSynthesis() : nullptr;
     switch (state) {
     case SpeechSynthesisState::None:
-        setVolumeMultiplier(1);
-        m_cueBeingSpoken = nullptr;
-        if (!speechSynthesis)
+        setSpeechVolumeMultiplier(1);
+        if (oldState == SpeechSynthesisState::CompletingExtendedDescription && m_paused)
+            play();
+
+        if (!m_cueBeingSpoken)
             return;
 
-        if (oldState != SpeechSynthesisState::None)
-            speechSynthesis->cancel();
+        m_cueBeingSpoken->cancelSpeaking();
+        m_cueBeingSpoken = nullptr;
         break;
+
     case SpeechSynthesisState::Speaking:
-        ASSERT(speechSynthesis);
-        setVolumeMultiplier(volumeMultiplierWhenSpeakingCueText);
-        if (speechSynthesis && oldState == SpeechSynthesisState::Paused)
-            speechSynthesis->resume();
-        else if (m_paused || m_pausedInternal)
-            pauseSpeakingCueText();
+        ASSERT(m_cueBeingSpoken);
+        setSpeechVolumeMultiplier(volumeMultiplierWhenSpeakingCueText);
+        m_cueBeingSpoken->beginSpeaking();
         break;
+
+    case SpeechSynthesisState::CompletingExtendedDescription:
+        if (m_cueBeingSpoken)
+            pauseInternal();
+        break;
+
     case SpeechSynthesisState::Paused:
-        ASSERT(speechSynthesis);
-        if (speechSynthesis)
-            speechSynthesis->pause();
+        if (m_cueBeingSpoken)
+            m_cueBeingSpoken->pauseSpeaking();
         break;
     }
 #else
@@ -1959,7 +1997,7 @@ void HTMLMediaElement::speakCueText(TextTrackCue& cue)
         cancelSpeakingCueText();
 
     m_cueBeingSpoken = &cue;
-    cue.speak(m_reportedPlaybackRate ? m_reportedPlaybackRate : m_requestedPlaybackRate, volume(), [weakThis = WeakPtr { *this }](const TextTrackCue&) {
+    m_cueBeingSpoken->prepareToSpeak(speechSynthesis(), m_reportedPlaybackRate ? m_reportedPlaybackRate : m_requestedPlaybackRate, volume(), [weakThis = WeakPtr { *this }](const TextTrackCue&) {
         ASSERT(isMainThread());
         if (!weakThis)
             return;
@@ -1979,7 +2017,7 @@ void HTMLMediaElement::speakCueText(TextTrackCue& cue)
 void HTMLMediaElement::pauseSpeakingCueText()
 {
 #if ENABLE(SPEECH_SYNTHESIS)
-    if (m_speechState != SpeechSynthesisState::Speaking)
+    if (m_speechState != SpeechSynthesisState::Speaking && m_speechState != SpeechSynthesisState::CompletingExtendedDescription)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -1990,7 +2028,7 @@ void HTMLMediaElement::pauseSpeakingCueText()
 void HTMLMediaElement::resumeSpeakingCueText()
 {
 #if ENABLE(SPEECH_SYNTHESIS)
-    if (m_speechState != SpeechSynthesisState::Paused)
+    if (m_speechState != SpeechSynthesisState::Paused && m_speechState != SpeechSynthesisState::CompletingExtendedDescription)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -2006,6 +2044,17 @@ void HTMLMediaElement::cancelSpeakingCueText()
 
     ALWAYS_LOG(LOGIDENTIFIER);
     setSpeechSynthesisState(SpeechSynthesisState::None);
+#endif
+}
+
+void HTMLMediaElement::pausePlaybackForExtendedTextDescription()
+{
+#if ENABLE(SPEECH_SYNTHESIS)
+    if (m_speechState != SpeechSynthesisState::Speaking)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER);
+    setSpeechSynthesisState(SpeechSynthesisState::CompletingExtendedDescription);
 #endif
 }
 
@@ -2030,14 +2079,30 @@ RefPtr<TextTrackCue> HTMLMediaElement::cueBeingSpoken() const
     return m_cueBeingSpoken;
 }
 
-void HTMLMediaElement::executeCueEnterOrLeaveAction(TextTrackCue& cue, CueAction type)
+#if ENABLE(SPEECH_SYNTHESIS)
+SpeechSynthesis& HTMLMediaElement::speechSynthesis()
+{
+    if (!m_speechSynthesis) {
+        m_speechSynthesis = SpeechSynthesis::create(document());
+        m_speechSynthesis->removeBehaviorRestriction(SpeechSynthesis::RequireUserGestureForSpeechStartRestriction);
+    }
+
+    return *m_speechSynthesis;
+}
+#endif
+
+void HTMLMediaElement::executeCueEnterOrExitActionForTime(TextTrackCue& cue, CueAction type)
 {
     ASSERT(cue.track());
     if (!cue.track())
         return;
 
-    if (m_userPrefersTextDescriptions && cue.track()->isSpoken() && type == CueAction::Enter && cue.startTime() < cue.endTime())
-        speakCueText(cue);
+    if (m_userPrefersTextDescriptions && cue.track()->isSpoken() && cue.startTime() < cue.endTime()) {
+        if (type == CueAction::Enter)
+            speakCueText(cue);
+        else if (m_userPrefersExtendedDescriptions)
+            pausePlaybackForExtendedTextDescription();
+    }
 
     auto event = Event::create(type == CueAction::Enter ? eventNames().enterEvent : eventNames().exitEvent, Event::CanBubble::No, Event::IsCancelable::No);
     scheduleEventOn(cue, WTFMove(event));
@@ -4485,6 +4550,7 @@ void HTMLMediaElement::addTextTrack(Ref<TextTrack>&& track)
             auto& captionPreferences = page->group().ensureCaptionPreferences();
             m_captionDisplayMode = captionPreferences.captionDisplayMode();
             m_userPrefersTextDescriptions = captionPreferences.userPrefersTextDescriptions();
+            m_userPrefersExtendedDescriptions = m_userPrefersTextDescriptions && document.settings().extendedAudioDescriptionsEnabled();
         }
     }
 
@@ -4656,7 +4722,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
     ASSERT(group.tracks.size());
 
     Page* page = document().page();
-    CaptionUserPreferences* captionPreferences = page ? &page->group().ensureCaptionPreferences() : 0;
+    CaptionUserPreferences* captionPreferences = page ? &page->group().ensureCaptionPreferences() : nullptr;
     CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences ? captionPreferences->captionDisplayMode() : CaptionUserPreferences::Automatic;
 
     // First, find the track in the group that should be enabled (if any).
@@ -4716,7 +4782,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             if (group.kind != TrackGroup::CaptionsAndSubtitles || displayMode != CaptionUserPreferences::ForcedOnly)
                 defaultTrack = textTrack;
         } else if (group.kind == TrackGroup::Description) {
-            if (!defaultTrack && !fallbackTrack && document().settings().shouldDisplayTextDescriptions())
+            if (!defaultTrack && !fallbackTrack && m_userPrefersTextDescriptions)
                 fallbackTrack = textTrack;
         }
     }
@@ -5842,13 +5908,16 @@ void HTMLMediaElement::updatePlayState()
             }
 
             playPlayer();
+            resumeSpeakingCueText();
         }
 
         startPlaybackProgressTimer();
         setPlaying(true);
     } else {
-        if (!playerPaused)
+        if (!playerPaused) {
             pausePlayer();
+            pauseSpeakingCueText();
+        }
         refreshCachedTime();
 
         m_playbackProgressTimer.stop();
@@ -5872,8 +5941,6 @@ void HTMLMediaElement::playPlayer()
     ASSERT(m_player);
     if (!m_player)
         return;
-
-    resumeSpeakingCueText();
 
 #if USE(AUDIO_SESSION)
     m_categoryAtMostRecentPlayback = AudioSession::sharedSession().category();
@@ -5912,7 +5979,6 @@ void HTMLMediaElement::pausePlayer()
     if (!m_player)
         return;
 
-    pauseSpeakingCueText();
     m_player->pause();
 }
 
@@ -7087,6 +7153,7 @@ void HTMLMediaElement::captionPreferencesChanged()
 
     auto& captionPreferences = document().page()->group().ensureCaptionPreferences();
     m_userPrefersTextDescriptions = captionPreferences.userPrefersTextDescriptions();
+    m_userPrefersExtendedDescriptions = m_userPrefersTextDescriptions && document().settings().extendedAudioDescriptionsEnabled();
 
     CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences.captionDisplayMode();
     if (captionDisplayMode() == displayMode)

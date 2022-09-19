@@ -58,6 +58,7 @@ struct Renderer11DeviceCaps
                                                  // when multisampled.  Textures will need to be
                                                  // resolved before reading. crbug.com/656989
     bool supportsTypedUAVLoadAdditionalFormats;  //
+    bool supportsRasterizerOrderViews;
     bool allowES3OnFL10_0;
     UINT B5G6R5support;     // Bitfield of D3D11_FORMAT_SUPPORT values for DXGI_FORMAT_B5G6R5_UNORM
     UINT B5G6R5maxSamples;  // Maximum number of samples supported by DXGI_FORMAT_B5G6R5_UNORM

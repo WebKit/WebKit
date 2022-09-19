@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Testcase for element with renderer. -->
+<button id="button">Click me</button>
+
+<!-- Testcase for element with no renderer. -->
+<canvas id="canvas" tabindex="0">
+    <div aria-label="Some canvas fallback content" role="group">
+        Foo
+    </div>
+</canvas>
+
+<!-- When the bug preventing display:contents elements from gaining focus is fixed, we should add a testcase for that too. -->
+
+<script>
+    var testOutput = "This test ensures you can set focus to AX elements via the AX API (not the DOM).\n\n";
+
+    function checkFocusState() {
+        testOutput += `#button isFocused: ${accessibilityController.accessibleElementById("button").isFocused}\n`;
+        testOutput += `#canvas isFocused: ${accessibilityController.accessibleElementById("canvas").isFocused}\n`;
+    }
+
+    async function waitForFocusOf(id) {
+        testOutput += `\nFocusing #${id}.\n`;
+        const axElement = accessibilityController.accessibleElementById(id);
+        axElement.takeFocus();
+        await waitFor(() => {
+            const focusedElement = accessibilityController.focusedElement;
+            return focusedElement && focusedElement.domIdentifier == axElement.domIdentifier;
+        });
+        checkFocusState();
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+
+        testOutput += "Checking initial button focus state.\n";
+        checkFocusState();
+
+        setTimeout(async function() {
+            await waitForFocusOf("button");
+            await waitForFocusOf("canvas");
+
+            debug(testOutput);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>
+

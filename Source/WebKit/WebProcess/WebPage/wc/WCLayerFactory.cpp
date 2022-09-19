@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WCLayerFactory.h"
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "GraphicsLayerWC.h"
 
 namespace WebKit {
@@ -42,3 +44,5 @@ Ref<WebCore::GraphicsLayer> WCLayerFactory::createGraphicsLayer(WebCore::Graphic
 }
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

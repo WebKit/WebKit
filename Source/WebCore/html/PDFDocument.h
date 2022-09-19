@@ -38,7 +38,9 @@ class PDFDocument final : public HTMLDocument {
 public:
     static Ref<PDFDocument> create(Frame& frame, const URL& url)
     {
-        return adoptRef(*new PDFDocument(frame, url));
+        auto document = adoptRef(*new PDFDocument(frame, url));
+        document->addToContextsMap();
+        return document;
     }
 
     void updateDuringParsing();

@@ -141,10 +141,9 @@ void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& 
         addPropertyToPresentationalHintStyle(style, CSSPropertyFontSize, convertMathSizeIfNeeded(value));
     else if (name == mathcolorAttr)
         addPropertyToPresentationalHintStyle(style, CSSPropertyColor, value);
-    else if (name == dirAttr) {
-        if (document().settings().coreMathMLEnabled() || hasTagName(mathTag) || hasTagName(mrowTag) || hasTagName(mstyleTag) || isMathMLToken())
-            addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
-    } else if (name == displaystyleAttr) {
+    else if (name == dirAttr)
+        addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
+    else if (name == displaystyleAttr) {
         if (equalLettersIgnoringASCIICase(value, "false"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyMathStyle, CSSValueCompact);
         else if (equalLettersIgnoringASCIICase(value, "true"_s))

@@ -761,9 +761,9 @@ public:
     };
 
 private:
-    unsigned m_usesNonStrictEval : 1;
-    unsigned m_nestedLexicalScope : 1; // Non-function LexicalScope.
-    unsigned m_scopeType : 3; // ScopeType
+    unsigned m_usesNonStrictEval : 1 { false };
+    unsigned m_nestedLexicalScope : 1 { false }; // Non-function LexicalScope.
+    unsigned m_scopeType : 3 { VarScope }; // ScopeType
 
     std::unique_ptr<SymbolTableRareData> m_rareData;
 

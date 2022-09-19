@@ -20,8 +20,6 @@ class SurfaceGL : public SurfaceImpl
     SurfaceGL(const egl::SurfaceState &state);
     ~SurfaceGL() override;
 
-    FramebufferImpl *createDefaultFramebuffer(const gl::Context *context,
-                                              const gl::FramebufferState &data) override;
     egl::Error getSyncValues(EGLuint64KHR *ust, EGLuint64KHR *msc, EGLuint64KHR *sbc) override;
     egl::Error getMscRate(EGLint *numerator, EGLint *denominator) override;
 
@@ -30,6 +28,11 @@ class SurfaceGL : public SurfaceImpl
                                      const gl::ImageIndex &imageIndex) override;
 
     virtual bool hasEmulatedAlphaChannel() const;
+
+    egl::Error attachToFramebuffer(const gl::Context *context,
+                                   gl::Framebuffer *framebuffer) override;
+    egl::Error detachFromFramebuffer(const gl::Context *context,
+                                     gl::Framebuffer *framebuffer) override;
 };
 
 }  // namespace rx

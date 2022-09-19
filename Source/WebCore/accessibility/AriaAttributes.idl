@@ -38,7 +38,7 @@ interface mixin AriaAttributes {
     [CEReactions, CustomGetter, Reflect=aria_describedby, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaDescribedByElements;
     [CEReactions, CustomGetter, Reflect=aria_details, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaDetailsElements;
     [CEReactions, Reflect=aria_disabled]         attribute DOMString? ariaDisabled;
-    [CEReactions, Reflect=aria_errormessage, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute Element? ariaErrorMessageElement;
+    [CEReactions, CustomGetter, Reflect=aria_errormessage, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaErrorMessageElements;
     [CEReactions, Reflect=aria_expanded]         attribute DOMString? ariaExpanded;
     [CEReactions, CustomGetter, Reflect=aria_flowto, EnabledBySetting=AriaReflectionForElementReferencesEnabled] attribute FrozenArray<Element>? ariaFlowToElements;
     [CEReactions, Reflect=aria_haspopup]         attribute DOMString? ariaHasPopup;

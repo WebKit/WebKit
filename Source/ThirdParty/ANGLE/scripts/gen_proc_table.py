@@ -7,11 +7,13 @@
 #  Code generation for entry point loading tables.
 #  NOTE: don't run this script directly. Run scripts/run_code_generation.py.
 
+import os
 import sys
 import registry_xml
 
 out_file_name_gles = "../src/libGLESv2/proc_table_egl_autogen.cpp"
 out_file_name_wgl = "../src/libGLESv2/proc_table_wgl_autogen.cpp"
+out_file_name_glx = "../src/libGLESv2/proc_table_glx_autogen.cpp"
 out_file_name_cl = "../src/libGLESv2/proc_table_cl_autogen.cpp"
 out_file_name_cl_map = "../src/libOpenCL/libOpenCL_autogen.map"
 
@@ -133,6 +135,25 @@ includes_wgl = """#include "libGLESv2/proc_table_wgl.h"
 #include <iterator>
 """
 
+includes_glx = """#include "libGLESv2/proc_table_glx.h"
+
+#include "libGLESv2/entry_points_egl_ext_autogen.h"
+#include "libGLESv2/entry_points_gles_1_0_autogen.h"
+#include "libGLESv2/entry_points_gles_2_0_autogen.h"
+#include "libGLESv2/entry_points_gles_3_0_autogen.h"
+#include "libGLESv2/entry_points_gles_3_1_autogen.h"
+#include "libGLESv2/entry_points_gles_3_2_autogen.h"
+#include "libGLESv2/entry_points_gles_ext_autogen.h"
+#include "platform/PlatformMethods.h"
+#include "libGLESv2/entry_points_gl_1_autogen.h"
+#include "libGLESv2/entry_points_gl_2_autogen.h"
+#include "libGLESv2/entry_points_gl_3_autogen.h"
+#include "libGLESv2/entry_points_gl_4_autogen.h"
+#include "libGLESv2/entry_points_glx.h"
+
+#include <iterator>
+"""
+
 includes_cl = """#include "libGLESv2/proc_table_cl.h"
 
 #include "libGLESv2/entry_points_cl_autogen.h"
@@ -156,7 +177,10 @@ def main():
     # auto_script parameters.
     if len(sys.argv) > 1:
         inputs = [source for source in registry_xml.xml_inputs]
-        outputs = [out_file_name_gles, out_file_name_wgl, out_file_name_cl, out_file_name_cl_map]
+        outputs = [
+            out_file_name_gles, out_file_name_wgl, out_file_name_glx, out_file_name_cl,
+            out_file_name_cl_map
+        ]
         if sys.argv[1] == 'inputs':
             print(','.join(inputs))
         elif sys.argv[1] == 'outputs':
@@ -231,7 +255,7 @@ def main():
 
     with open(out_file_name_gles, 'w') as out_file:
         output_cpp = template_cpp.format(
-            script_name=sys.argv[0],
+            script_name=os.path.basename(sys.argv[0]),
             data_source_name="gl.xml, gl_angle_ext.xml, egl.xml, egl_angle_ext.xml",
             includes=includes_gles,
             cast="__eglMustCastToProperFunctionPointerType",
@@ -242,39 +266,45 @@ def main():
         out_file.write(output_cpp)
         out_file.close()
 
+    def WriteWindowingProcTable(api_name, out_file_name, includes, cast):
+        xml_file_name = '{}.xml'.format(api_name)
+        xml = registry_xml.RegistryXML(xml_file_name)
+        annotations = _get_annotations(
+            getattr(registry_xml, '{}_VERSIONS'.format(api_name.upper())))
+        for annotation in annotations:
+            name_prefix = "{}_VERSION_".format(api_name.upper())
+            feature_name = "{}{}".format(name_prefix, annotation)
+            xml.AddCommands(feature_name, annotation)
 
-    # WGL proc table
-    wglxml = registry_xml.RegistryXML('wgl.xml')
-    for annotation in _get_annotations(registry_xml.WGL_VERSIONS):
-        name_prefix = "WGL_VERSION_"
-        feature_name = "{}{}".format(name_prefix, annotation)
-        wglxml.AddCommands(feature_name, annotation)
+        commands = [
+            # Some WGL EP's need to have "wgl" appended to their names
+            cmd if api_name != 'wgl' or cmd.startswith(api_name) else api_name + cmd
+            for cmd in xml.all_cmd_names.get_all_commands()
+        ]
 
-    wgl_commands = [
-        cmd if cmd.startswith('wgl') else 'wgl' + cmd
-        for cmd in wglxml.all_cmd_names.get_all_commands()
-    ]
+        # Start with all of the GLES + Desktop entry points, filtering out the EGL ones
+        proc_data = [
+            '    {"%s", P(%s)},' % (func, angle_func)
+            for func, angle_func in sorted(all_functions.items())
+            if not func.startswith('egl')
+        ]
+        proc_data.extend(['    {"%s", P(%s)},' % (cmd, cmd) for cmd in sorted(commands)])
 
-    # Start with all of the GLES + Desktop entry points, filtering out the EGL ones
-    wgl_proc_data = [
-        '    {"%s", P(%s)},' % (func, angle_func)
-        for func, angle_func in sorted(all_functions.items())
-        if not func.startswith('egl')
-    ]
-    wgl_proc_data.extend(['    {"%s", P(%s)},' % (cmd, cmd) for cmd in sorted(wgl_commands)])
+        with open(out_file_name, 'w') as out_file:
+            output_cpp = template_cpp.format(
+                script_name=os.path.basename(sys.argv[0]),
+                data_source_name="gl.xml, gl_angle_ext.xml, {}".format(xml_file_name),
+                includes=includes,
+                cast=cast,
+                namespace=api_name,
+                proc_data="\n".join(proc_data),
+                num_procs="std::size(g_procTable)",
+                desktop_only_macro_definition='')
+            out_file.write(output_cpp)
+            out_file.close()
 
-    with open(out_file_name_wgl, 'w') as out_file:
-        output_cpp = template_cpp.format(
-            script_name=sys.argv[0],
-            data_source_name="gl.xml, gl_angle_ext.xml, wgl.xml",
-            includes=includes_wgl,
-            cast="PROC",
-            namespace="wgl",
-            proc_data="\n".join(wgl_proc_data),
-            num_procs="std::size(g_procTable)",
-            desktop_only_macro_definition='')
-        out_file.write(output_cpp)
-        out_file.close()
+    WriteWindowingProcTable('wgl', out_file_name_wgl, includes_wgl, "PROC")
+    WriteWindowingProcTable('glx', out_file_name_glx, includes_glx, "__GLXextFuncPtr")
 
     # libCL proc table
     clxml = registry_xml.RegistryXML('cl.xml')
@@ -301,7 +331,7 @@ def main():
 
     with open(out_file_name_cl, 'w') as out_file:
         output_cpp = template_map_cpp.format(
-            script_name=sys.argv[0],
+            script_name=os.path.basename(sys.argv[0]),
             data_source_name="cl.xml",
             includes=includes_cl,
             cast="void *",
@@ -312,7 +342,9 @@ def main():
 
     with open(out_file_name_cl_map, 'w') as out_file:
         output_map = template_map.format(
-            script_name=sys.argv[0], data_source_name="cl.xml", symbol_maps="\n".join(symbol_maps))
+            script_name=os.path.basename(sys.argv[0]),
+            data_source_name="cl.xml",
+            symbol_maps="\n".join(symbol_maps))
         out_file.write(output_map)
         out_file.close()
 

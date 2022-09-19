@@ -150,7 +150,7 @@ public:
 
 private:
     JSIPCConnection(IPC::Connection::Identifier&& testedConnectionIdentifier)
-        : m_testedConnection { IPC::Connection::createServerConnection(testedConnectionIdentifier, *this) }
+        : m_testedConnection { IPC::Connection::createServerConnection(testedConnectionIdentifier) }
     {
     }
 
@@ -751,7 +751,7 @@ JSValueRef JSIPCConnection::open(JSContextRef context, JSObjectRef, JSObjectRef 
         *exception = createTypeError(context, "Wrong type"_s);
         return JSValueMakeUndefined(context);
     }
-    self->m_testedConnection->open();
+    self->m_testedConnection->open(*self);
     return JSValueMakeUndefined(context);
 }
 

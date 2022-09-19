@@ -16,31 +16,30 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 #if !defined(XXH_NO_LONG_LONG)
     // Test 64-bit hash.
-    size_t seedSize64 = sizeof(unsigned long long);
-    if (size < seedSize64)
+    unsigned long long seed64 = 0ull;
+    size_t seedSize64         = sizeof(seed64);
+    if (size >= seedSize64)
     {
-        XXH64(data, size, 0ull);
+        memcpy(&seed64, data, seedSize64);
     }
     else
     {
-        unsigned long long seed64;
-        memcpy(&seed64, data, seedSize64);
-        XXH64(&data[seedSize64], size - seedSize64, seed64);
+        seedSize64 = 0;
     }
+    XXH64(&data[seedSize64], size - seedSize64, seed64);
 #endif  // !defined(XXH_NO_LONG_LONG)
 
     // Test 32-bit hash.
-    size_t seedSize32 = sizeof(unsigned int);
-    if (size < seedSize32)
+    unsigned int seed32 = 0u;
+    size_t seedSize32   = sizeof(seed32);
+    if (size >= seedSize32)
     {
-        XXH64(data, size, 0ull);
+        memcpy(&seed32, data, seedSize32);
     }
     else
     {
-        unsigned long long seed32;
-        memcpy(&seed32, data, seedSize32);
-        XXH32(&data[seedSize32], size - seedSize32, seed32);
+        seedSize32 = 0;
     }
-
+    XXH32(&data[seedSize32], size - seedSize32, seed32);
     return 0;
 }

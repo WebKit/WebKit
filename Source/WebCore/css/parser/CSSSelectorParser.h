@@ -92,6 +92,7 @@ private:
     bool m_disallowHasPseudoClass { false };
     bool m_resistDefaultNamespace { false };
     bool m_ignoreDefaultNamespace { false };
+    bool m_disableForgivingParsing { false };
     std::optional<CSSSelector::PseudoElementType> m_precedingPseudoElement;
 };
 

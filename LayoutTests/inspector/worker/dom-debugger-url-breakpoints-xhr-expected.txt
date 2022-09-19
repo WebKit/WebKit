@@ -1,0 +1,16 @@
+Tests for URL breakpoint functionality (DOMDebugger) in a Worker.
+
+
+== Running test suite: Worker.DOMDebugger.URLBreakpoint
+-- Running test case: Worker.DOMDebugger.URLBreakpoint.XHR
+PASS: Should have paused.
+PASS: Pause reason should have been URL.
+PASS: Pause data URL should include "XHR".
+CALL STACK:
+0: [F] loadResourceXHR
+1: [F] triggerXHRRequest
+2: [F] handleMessage
+ASYNC CALL STACK:
+3: --- addEventListener ---
+4: [P] Global Code
+

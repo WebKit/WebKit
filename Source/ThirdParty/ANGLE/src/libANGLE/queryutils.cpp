@@ -3606,6 +3606,13 @@ bool GetQueryParameterInfo(const State &glState,
         return true;
     }
 
+    if (extensions.provokingVertexANGLE && pname == GL_PROVOKING_VERTEX)
+    {
+        *type      = GL_INT;
+        *numParams = 1;
+        return true;
+    }
+
     if (glState.getClientVersion() < Version(2, 0))
     {
         switch (pname)

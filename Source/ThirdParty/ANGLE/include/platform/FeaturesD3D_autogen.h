@@ -164,6 +164,10 @@ struct FeaturesD3D : FeatureSetBase
         "Allow ES3 on 10.0 devices",
         &members,
     };
+
+    FeatureInfo disableRasterizerOrderViews = {
+        "disableRasterizerOrderViews", FeatureCategory::D3DWorkarounds, "Disable ROVs for testing",
+        &members, "http://anglebug.com/7279"};
 };
 
 inline FeaturesD3D::FeaturesD3D()  = default;

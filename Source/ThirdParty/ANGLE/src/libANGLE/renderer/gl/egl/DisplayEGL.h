@@ -11,7 +11,6 @@
 
 #include <map>
 #include <string>
-#include <thread>
 #include <vector>
 
 #include "libANGLE/renderer/gl/DisplayGL.h"
@@ -153,7 +152,7 @@ class DisplayEGL : public DisplayGL
         // unset when an external context is current.
         bool isExternalContext = false;
     };
-    angle::HashMap<std::thread::id, CurrentNativeContext> mCurrentNativeContexts;
+    angle::HashMap<uint64_t, CurrentNativeContext> mCurrentNativeContexts;
 
     void generateCaps(egl::Caps *outCaps) const override;
 

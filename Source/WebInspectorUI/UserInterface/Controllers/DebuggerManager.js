@@ -315,8 +315,6 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.EventListener;
         case InspectorBackend.Enum.Debugger.PausedReason.Exception:
             return WI.DebuggerManager.PauseReason.Exception;
-        case InspectorBackend.Enum.Debugger.PausedReason.Fetch:
-            return WI.DebuggerManager.PauseReason.Fetch;
         case InspectorBackend.Enum.Debugger.PausedReason.FunctionCall:
             return WI.DebuggerManager.PauseReason.FunctionCall;
         case InspectorBackend.Enum.Debugger.PausedReason.Interval:
@@ -331,8 +329,10 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return WI.DebuggerManager.PauseReason.Timeout;
         case InspectorBackend.Enum.Debugger.PausedReason.Timer:
             return WI.DebuggerManager.PauseReason.Timer;
-        case InspectorBackend.Enum.Debugger.PausedReason.XHR:
-            return WI.DebuggerManager.PauseReason.XHR;
+        case InspectorBackend.Enum.Debugger.PausedReason.URL:
+        case InspectorBackend.Enum.Debugger.PausedReason.Fetch: // COMPATIBILITY (macOS 13.0, iOS 16.0): Debugger.paused.reason.Fetch was replaced by Debugger.paused.reason.URL
+        case InspectorBackend.Enum.Debugger.PausedReason.XHR: // COMPATIBILITY (macOS 13.0, iOS 16.0): Debugger.paused.reason.XHR was replaced by Debugger.paused.reason.URL
+            return WI.DebuggerManager.PauseReason.URL;
         default:
             return WI.DebuggerManager.PauseReason.Other;
         }
@@ -1715,14 +1715,13 @@ WI.DebuggerManager.PauseReason = {
     DebuggerStatement: "debugger-statement",
     DOM: "DOM",
     Exception: "exception",
-    Fetch: "fetch",
     FunctionCall: "function-call",
     Interval: "interval",
     Listener: "listener",
     Microtask: "microtask",
     PauseOnNextStatement: "pause-on-next-statement",
     Timeout: "timeout",
-    XHR: "xhr",
+    URL: "url",
     Other: "other",
 
     // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointType.Timer was replaced by DOMDebugger.EventBreakpointType.Interval and DOMDebugger.EventBreakpointType.Timeout.

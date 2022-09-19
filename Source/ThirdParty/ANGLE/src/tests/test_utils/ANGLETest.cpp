@@ -1503,15 +1503,6 @@ void ANGLETestBase::ignoreD3D11SDKLayersWarnings()
     mIgnoreD3D11SDKLayersWarnings = true;
 }
 
-void ANGLETestBase::treatPlatformWarningsAsErrors()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    // Only do warnings-as-errors on 8 and above. We may fall back to the old
-    // compiler DLL on Windows 7.
-    gPlatformContext.warningsAsErrors = IsWindows8OrGreater();
-#endif  // defined(ANGLE_PLATFORM_WINDOWS)
-}
-
 ANGLETestBase::ScopedIgnorePlatformMessages::ScopedIgnorePlatformMessages()
 {
     gPlatformContext.ignoreMessages = true;

@@ -118,7 +118,7 @@ struct WebProcessCreationParameters {
     bool shouldAlwaysUseComplexTextCodePath { false };
     bool shouldEnableMemoryPressureReliefLogging { false };
     bool shouldSuppressMemoryPressureHandler { false };
-    bool shouldUseFontSmoothing { true };
+    bool shouldUseFontSmoothingForTesting { true };
     bool fullKeyboardAccessEnabled { false };
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     bool hasMouseDevice { false };

@@ -38,7 +38,6 @@ public:
     EdgeDominates(Graph& graph, BasicBlock* block)
         : m_graph(graph)
         , m_block(block)
-        , m_result(true)
     {
         ASSERT(graph.m_form == SSA);
     }
@@ -59,7 +58,7 @@ public:
 private:
     Graph& m_graph;
     BasicBlock* m_block;
-    bool m_result;
+    bool m_result { true };
 };
 
 inline bool edgesDominate(Graph& graph, Node* node, BasicBlock* block)

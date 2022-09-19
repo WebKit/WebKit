@@ -1274,7 +1274,7 @@ void WebChromeClient::storeAppHighlight(WebCore::AppHighlight&& highlight) const
 
 void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicatorData) const
 {
-    m_page.send(Messages::WebPageProxy::SetTextIndicator(indicatorData, static_cast<uint64_t>(WebCore::TextIndicatorLifetime::Temporary)));
+    m_page.setTextIndicator(indicatorData);
 }
 
 String WebChromeClient::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL& url) const

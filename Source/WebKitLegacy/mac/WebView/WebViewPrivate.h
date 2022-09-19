@@ -560,9 +560,6 @@ Could be worth adding to the API.
 - (BOOL)_dashboardBehavior:(WebDashboardBehavior)behavior;
 #endif
 
-+ (void)_setShouldUseFontSmoothing:(BOOL)f;
-+ (BOOL)_shouldUseFontSmoothing;
-
 #if !TARGET_OS_IPHONE
 // These two methods are useful for a test harness that needs a consistent appearance for the focus rings
 // regardless of OS X version.

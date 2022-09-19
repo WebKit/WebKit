@@ -247,11 +247,10 @@ void HTMLSelectElement::remove(int optionIndex)
 
 String HTMLSelectElement::value() const
 {
-    for (auto* item : listItems()) {
-        if (is<HTMLOptionElement>(*item)) {
-            HTMLOptionElement& option = downcast<HTMLOptionElement>(*item);
-            if (option.selected())
-                return option.value();
+    for (auto& item : listItems()) {
+        if (auto* option = dynamicDowncast<HTMLOptionElement>(item.get())) {
+            if (option->selected())
+                return option->value();
         }
     }
     return emptyString();
@@ -260,18 +259,14 @@ String HTMLSelectElement::value() const
 void HTMLSelectElement::setValue(const String& value)
 {
     // Find the option with value() matching the given parameter and make it the current selection.
-    unsigned optionIndex = 0;
-    for (auto* item : listItems()) {
-        if (is<HTMLOptionElement>(*item)) {
-            if (downcast<HTMLOptionElement>(*item).value() == value) {
-                setSelectedIndex(optionIndex);
-                return;
-            }
-            ++optionIndex;
-        }
-    }
+    auto optionIndex = listItems().findIf([&] (const auto& item) {
+        if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(item.get()))
+            return optionElement->value() == value;
 
-    setSelectedIndex(-1);
+        return false;
+    });
+
+    setSelectedIndex(optionIndex);
 }
 
 bool HTMLSelectElement::hasPresentationalHintsForAttribute(const QualifiedName& name) const
@@ -764,13 +759,13 @@ void HTMLSelectElement::setOptionsChangedOnRenderer()
     }
 }
 
-const Vector<HTMLElement*>& HTMLSelectElement::listItems() const
+const Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>>& HTMLSelectElement::listItems() const
 {
     if (m_shouldRecalcListItems)
         recalcListItems();
     else {
 #if ASSERT_ENABLED
-        Vector<HTMLElement*> items = m_listItems;
+        Vector<WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData>> items = m_listItems;
         recalcListItems(false);
         ASSERT(items == m_listItems);
 #endif
@@ -882,7 +877,7 @@ void HTMLSelectElement::selectOption(int optionIndex, SelectOptionFlags flags)
 
     RefPtr<HTMLElement> element;
     if (listIndex >= 0)
-        element = items[listIndex];
+        element = items[listIndex].get();
 
     if (shouldDeselect)
         deselectItemsWithoutValidation(element.get());

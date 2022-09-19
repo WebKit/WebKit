@@ -36,7 +36,9 @@ class PluginDocument final : public HTMLDocument {
 public:
     static Ref<PluginDocument> create(Frame& frame, const URL& url)
     {
-        return adoptRef(*new PluginDocument(frame, url));
+        auto document = adoptRef(*new PluginDocument(frame, url));
+        document->addToContextsMap();
+        return document;
     }
 
     WEBCORE_EXPORT PluginViewBase* pluginWidget();

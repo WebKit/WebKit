@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-textbox id="multiline-textbox"></custom-textbox>
+<custom-textbox id="singleline-textbox" aria-multiline="false" aria-placeholder="another text" aria-readonly="false"></custom-textbox>
+<script>
+
+customElements.define('custom-textbox', class CustomTextbox extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'textbox';
+        internals.ariaMultiLine = 'true';
+        internals.ariaPlaceholder = 'some text';
+        internals.ariaReadOnly = 'true';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("multiline-textbox").role', 'AXRole: AXTextArea');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("multiline-textbox").stringAttributeValue("AXPlaceholderValue")', 'some text');
+    shouldBeFalse('accessibilityController.accessibleElementById("multiline-textbox").isAttributeSettable("AXValue")');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("singleline-textbox").role', 'AXRole: AXTextField');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("singleline-textbox").stringAttributeValue("AXPlaceholderValue")', 'another text');
+    shouldBeTrue('accessibilityController.accessibleElementById("singleline-textbox").isAttributeSettable("AXValue")');
+}
+
+</script>
+</body>
+</html>

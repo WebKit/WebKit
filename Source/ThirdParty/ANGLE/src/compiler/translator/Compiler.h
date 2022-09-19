@@ -140,6 +140,7 @@ class TCompiler : public TShHandleBase
     TSymbolTable &getSymbolTable() { return mSymbolTable; }
     ShShaderSpec getShaderSpec() const { return mShaderSpec; }
     ShShaderOutput getOutputType() const { return mOutputType; }
+    ShBuiltInResources getBuiltInResources() const { return mResources; }
     const std::string &getBuiltInResourcesString() const { return mBuiltInResourcesString; }
 
     bool isHighPrecisionSupported() const;
@@ -372,6 +373,18 @@ class TCompiler : public TShHandleBase
 //
 TCompiler *ConstructCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output);
 void DeleteCompiler(TCompiler *);
+
+struct ShaderDumpHeader
+{
+    uint32_t type;
+    uint32_t spec;
+    uint32_t output;
+    uint8_t basicCompileOptions[32];
+    uint8_t metalCompileOptions[32];
+    uint8_t plsCompileOptions[32];
+    uint8_t padding[20];
+};
+static_assert(sizeof(ShaderDumpHeader) == 128);
 
 }  // namespace sh
 

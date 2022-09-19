@@ -165,6 +165,10 @@ class MockMediaSessionCoordinator;
 class HTMLModelElement;
 #endif
 
+#if ENABLE(SPEECH_SYNTHESIS)
+class PlatformSpeechSynthesizerMock;
+#endif
+
 template<typename IDLType> class DOMPromiseDeferred;
 
 struct MockWebAuthenticationConfiguration;
@@ -657,6 +661,8 @@ public:
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void enableMockSpeechSynthesizer();
+    void enableMockSpeechSynthesizerForMediaElement(HTMLMediaElement&);
+    ExceptionOr<void> setSpeechUtteranceDuration(double);
 #endif
 
 #if ENABLE(MEDIA_STREAM)
@@ -1386,6 +1392,9 @@ private:
     RefPtr<WebXRTest> m_xrTest;
 #endif
 
+#if ENABLE(SPEECH_SYNTHESIS)
+    RefPtr<PlatformSpeechSynthesizerMock> m_platformSpeechSynthesizer;
+#endif
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
     RefPtr<MockMediaSessionCoordinator> m_mockMediaSessionCoordinator;
 #endif

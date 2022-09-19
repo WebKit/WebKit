@@ -892,6 +892,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestCache.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestCache.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestCredentials.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestCredentials.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestDestination.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestDestination.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestInit.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestInit.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSFetchRequestMode.cpp

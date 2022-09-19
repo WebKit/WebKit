@@ -37,33 +37,6 @@ struct BlendComponent {
     PAL::WebGPU::BlendOperation operation { PAL::WebGPU::BlendOperation::Add };
     PAL::WebGPU::BlendFactor srcFactor { PAL::WebGPU::BlendFactor::One };
     PAL::WebGPU::BlendFactor dstFactor { PAL::WebGPU::BlendFactor::Zero };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << operation;
-        encoder << srcFactor;
-        encoder << dstFactor;
-    }
-
-    template<class Decoder> static std::optional<BlendComponent> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::BlendOperation> operation;
-        decoder >> operation;
-        if (!operation)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::BlendFactor> srcFactor;
-        decoder >> srcFactor;
-        if (!srcFactor)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::BlendFactor> dstFactor;
-        decoder >> dstFactor;
-        if (!dstFactor)
-            return std::nullopt;
-
-        return { { WTFMove(*operation), WTFMove(*srcFactor), WTFMove(*dstFactor) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

@@ -1085,7 +1085,7 @@ ANGLE_INLINE bool ValidateDrawElementsBase(const Context *context,
         }
 
         ASSERT(type == DrawElementsType::InvalidEnum);
-        context->validationError(entryPoint, GL_INVALID_ENUM, err::kEnumNotSupported);
+        context->validationErrorF(entryPoint, GL_INVALID_ENUM, err::kEnumInvalid);
         return false;
     }
 

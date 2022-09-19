@@ -96,6 +96,12 @@ class BlobCache final : angle::NonCopyable
     // will be used.  Otherwise the value is cached in this object.
     void put(const BlobCache::Key &key, angle::MemoryBuffer &&value);
 
+    // Store a key-blob pair in the cache, but compress the blob before insertion. Returns false if
+    // compression fails, returns true otherwise.
+    bool compressAndPut(const BlobCache::Key &key,
+                        angle::MemoryBuffer &&uncompressedValue,
+                        size_t *compressedSize);
+
     // Store a key-blob pair in the application cache, only if application callbacks are set.
     void putApplication(const BlobCache::Key &key, const angle::MemoryBuffer &value);
 
@@ -116,6 +122,17 @@ class BlobCache final : angle::NonCopyable
     [[nodiscard]] bool getAt(size_t index,
                              const BlobCache::Key **keyOut,
                              BlobCache::Value *valueOut);
+
+    enum class GetAndDecompressResult
+    {
+        GetSuccess,
+        NotFound,
+        DecompressFailure,
+    };
+    [[nodiscard]] GetAndDecompressResult getAndDecompress(
+        angle::ScratchBuffer *scratchBuffer,
+        const BlobCache::Key &key,
+        angle::MemoryBuffer *uncompressedValueOut);
 
     // Evict a blob from the binary cache.
     void remove(const BlobCache::Key &key);
@@ -147,11 +164,13 @@ class BlobCache final : angle::NonCopyable
 
     bool isCachingEnabled() const { return areBlobCacheFuncsSet() || maxSize() > 0; }
 
+    std::mutex &getMutex() { return mBlobCacheMutex; }
+
   private:
     // This internal cache is used only if the application is not providing caching callbacks
     using CacheEntry = std::pair<angle::MemoryBuffer, CacheSource>;
 
-    std::mutex mBlobCacheMutex;
+    mutable std::mutex mBlobCacheMutex;
     angle::SizedMRUCache<BlobCache::Key, CacheEntry> mBlobCache;
 
     EGLSetBlobFuncANDROID mSetBlobFunc;

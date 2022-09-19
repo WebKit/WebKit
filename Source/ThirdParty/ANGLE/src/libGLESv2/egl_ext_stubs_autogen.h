@@ -69,6 +69,11 @@ EGLBoolean DestroyImageKHR(Thread *thread, egl::Display *dpyPacked, Image *image
 EGLBoolean DestroyStreamKHR(Thread *thread, egl::Display *dpyPacked, Stream *streamPacked);
 EGLBoolean DestroySyncKHR(Thread *thread, egl::Display *dpyPacked, Sync *syncPacked);
 EGLint DupNativeFenceFDANDROID(Thread *thread, egl::Display *dpyPacked, Sync *syncPacked);
+EGLBoolean GetMscRateANGLE(Thread *thread,
+                           egl::Display *dpyPacked,
+                           Surface *surfacePacked,
+                           EGLint *numerator,
+                           EGLint *denominator);
 EGLClientBuffer GetNativeClientBufferANDROID(Thread *thread, const struct AHardwareBuffer *buffer);
 EGLDisplay GetPlatformDisplayEXT(Thread *thread,
                                  EGLenum platform,
@@ -211,11 +216,6 @@ EGLBoolean StreamPostD3DTextureANGLE(Thread *thread,
                                      Stream *streamPacked,
                                      void *texture,
                                      const AttributeMap &attrib_listPacked);
-EGLBoolean GetMscRateANGLE(Thread *thread,
-                           egl::Display *dpyPacked,
-                           Surface *surfacePacked,
-                           EGLint *numerator,
-                           EGLint *denominator);
 EGLBoolean GetSyncValuesCHROMIUM(Thread *thread,
                                  egl::Display *dpyPacked,
                                  Surface *surfacePacked,

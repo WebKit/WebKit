@@ -32,9 +32,7 @@
 
 namespace JSC { namespace FTL {
 
-LazySlowPath::~LazySlowPath()
-{
-}
+LazySlowPath::~LazySlowPath() = default;
 
 void LazySlowPath::initialize(
     CodeLocationJump<JSInternalPtrTag> patchableJump, CodeLocationLabel<JSInternalPtrTag> done,

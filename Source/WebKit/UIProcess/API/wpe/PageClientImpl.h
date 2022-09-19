@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Attachment.h"
 #include "PageClient.h"
 #include "WebFullScreenManagerProxy.h"
 

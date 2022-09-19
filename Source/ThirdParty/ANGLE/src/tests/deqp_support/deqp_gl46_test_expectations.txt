@@ -1,0 +1,78 @@
+// Copyright 2022 The ANGLE Project Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// See README.md for format.
+
+7566 SWIFTSHADER : KHR-GL46.aggressive_optimizations.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.blend_equation_advanced.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.buffer_storage.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.clip_control.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.clip_distance.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.CommonBugs.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.compute_shader.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.conditional_render_inverted.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.constant_expressions.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.copy_image.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.cull_distance.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.direct_state_access.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.draw_indirect_43.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.draw_indirect.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.explicit_uniform_location.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.exposed_extensions.validate_extensions = SKIP
+7566 SWIFTSHADER : KHR-GL46.geometry_shader.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.get_texture_sub_image.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.glsl_noperspective.functionaltest = SKIP
+7566 SWIFTSHADER : KHR-GL46.gl_spirv.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.gpu_shader5.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.gpu_shader_fp64.fp64.state_query = SKIP
+7566 SWIFTSHADER : KHR-GL46.incomplete_texture_access.sampler = SKIP
+7566 SWIFTSHADER : KHR-GL46.indirect_parameters_tests.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.internalformat.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.layout_binding.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.layout_location.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.limits.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.map_buffer_alignment.query = SKIP
+7566 SWIFTSHADER : KHR-GL46.multi_bind.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.nearest_edge.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.packed_depth_stencil.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.packed_pixels.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.pipeline_statistics_query_tests_ARB.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.pixelstoragemodes.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.polygon_offset_clamp.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.program_interface_query.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.sample_variables.mask.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.separable_programs_tf.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.sepshaderobjs.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shader_atomic_counter_ops_tests.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shader_atomic_counters.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shader_draw_parameters_tests.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shader_group_vote.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shader_image_load_store.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shader_image_size.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shader_multisample_interpolation.render.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shaders30.declarations.declarations.redeclare_gl_Frag* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shaders30.glsl_constructors.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shaders42.declarations.declarations.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shaders44.preprocessor.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shaders.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shader_storage_buffer_object.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.shading_language_420pack.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.spirv_extensions.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.stencil_texturing.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.sync.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.tessellation_shader.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_barrier.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_border_clamp.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_buffer.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_cube_map_array.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_filter_anisotropic.drawing = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_gather.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_size_promotion.functional = SKIP
+7566 SWIFTSHADER : KHR-GL46.texture_swizzle.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.transform_feedback_overflow_query_ARB.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.transform_feedback.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.vertex_attrib_binding.* = SKIP
+7566 SWIFTSHADER : KHR-GL46.viewport_array.* = SKIP
+
+7566 SWIFTSHADER UBSAN : KHR-GL46.shader_bitfield_operation.bitfieldInsert.int_3 = SKIP

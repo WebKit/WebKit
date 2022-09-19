@@ -48,11 +48,8 @@ struct GenerationContext;
 struct Inst {
     typedef Vector<Arg, 3> ArgList;
 
-    Inst()
-        : origin(nullptr)
-    {
-    }
-    
+    Inst() = default;
+
     Inst(Kind kind, Value* origin)
         : origin(origin)
         , kind(kind)
@@ -208,7 +205,7 @@ struct Inst {
     void dump(PrintStream&) const;
 
     ArgList args;
-    Value* origin; // The B3::Value that this originated from.
+    Value* origin { nullptr }; // The B3::Value that this originated from.
     Kind kind;
 
 private:

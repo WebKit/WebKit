@@ -30,7 +30,7 @@ namespace WTF {
 template <typename Node>
 class SinglyLinkedList {
 public:
-    SinglyLinkedList();
+    SinglyLinkedList() = default;
     
     bool isEmpty();
 
@@ -38,13 +38,8 @@ public:
     Node* pop();
 
 private:
-    Node* m_head;
+    Node* m_head { nullptr };
 };
-
-template <typename Node> inline SinglyLinkedList<Node>::SinglyLinkedList()
-    : m_head(0)
-{
-}
 
 template <typename Node> inline bool SinglyLinkedList<Node>::isEmpty()
 {

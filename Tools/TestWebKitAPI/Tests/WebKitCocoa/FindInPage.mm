@@ -335,6 +335,8 @@ TEST(WebKit, FindTextInImageOverlay)
 
 // FIXME: (rdar://95125552) Remove conformance to _UITextSearching.
 @interface WKWebView () <UITextSearching>
+- (void)didBeginTextSearchOperation;
+- (void)didEndTextSearchOperation;
 @end
 
 @interface TestScrollViewDelegate : NSObject<UIScrollViewDelegate>  {
@@ -765,6 +767,29 @@ TEST(WebKit, ScrollToFoundRangeDoesNotFocusElement)
     [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
 
     TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
+}
+
+TEST(WebKit, ScrollToFoundRangeRepeated)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><div contenteditable><p>Top</p><p style='margin-top: 800px'>Bottom</p></div>"];
+    [webView objectByEvaluatingJavaScript:@"let p = document.querySelector('p'); document.getSelection().setBaseAndExtent(p, 0, p, 1)"];
+
+    auto scrollViewDelegate = adoptNS([[TestScrollViewDelegate alloc] init]);
+    [webView scrollView].delegate = scrollViewDelegate.get();
+
+    auto ranges = textRangesForQueryString(webView.get(), @"Bottom");
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+
+    TestWebKitAPI::Util::run(&scrollViewDelegate->_finishedScrolling);
+
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 664)));
+
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, CGPointMake(0, 664)));
 }
 
 TEST(WebKit, CannotHaveMultipleFindOverlays)

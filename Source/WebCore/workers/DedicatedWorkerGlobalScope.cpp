@@ -56,6 +56,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(DedicatedWorkerGlobalScope);
 Ref<DedicatedWorkerGlobalScope> DedicatedWorkerGlobalScope::create(const WorkerParameters& params, Ref<SecurityOrigin>&& origin, DedicatedWorkerThread& thread, Ref<SecurityOrigin>&& topOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider)
 {
     auto context = adoptRef(*new DedicatedWorkerGlobalScope(params, WTFMove(origin), thread, WTFMove(topOrigin), connectionProxy, socketProvider));
+    context->addToContextsMap();
     if (!params.shouldBypassMainWorldContentSecurityPolicy)
         context->applyContentSecurityPolicyResponseHeaders(params.contentSecurityPolicyResponseHeaders);
     return context;
@@ -67,7 +68,11 @@ DedicatedWorkerGlobalScope::DedicatedWorkerGlobalScope(const WorkerParameters& p
 {
 }
 
-DedicatedWorkerGlobalScope::~DedicatedWorkerGlobalScope() = default;
+DedicatedWorkerGlobalScope::~DedicatedWorkerGlobalScope()
+{
+    // We need to remove from the contexts map very early in the destructor so that calling postTask() on this WorkerGlobalScope from another thread is safe.
+    removeFromContextsMap();
+}
 
 EventTargetInterface DedicatedWorkerGlobalScope::eventTargetInterface() const
 {

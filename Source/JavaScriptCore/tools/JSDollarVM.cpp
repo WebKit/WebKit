@@ -605,7 +605,7 @@ IGNORE_WARNINGS_END
         return runtimeArray;
     }
 
-    ~RuntimeArray() { }
+    ~RuntimeArray() = default;
 
     static void destroy(JSCell* cell)
     {
@@ -2180,7 +2180,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionTotalGCTime);
 static JSC_DECLARE_HOST_FUNCTION(functionParseCount);
 static JSC_DECLARE_HOST_FUNCTION(functionIsWasmSupported);
 static JSC_DECLARE_HOST_FUNCTION(functionMake16BitStringIfPossible);
-static JSC_DECLARE_HOST_FUNCTION(functionGetStructureTransitionList);;
+static JSC_DECLARE_HOST_FUNCTION(functionGetStructureTransitionList);
 static JSC_DECLARE_HOST_FUNCTION(functionGetConcurrently);
 static JSC_DECLARE_HOST_FUNCTION(functionHasOwnLengthProperty);
 static JSC_DECLARE_HOST_FUNCTION(functionRejectPromiseAsHandled);
@@ -2209,7 +2209,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionResetJITSizeStatistics);
 
 static JSC_DECLARE_HOST_FUNCTION(functionEnsureArrayStorage);
 #if PLATFORM(COCOA)
-static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);;
+static JSC_DECLARE_HOST_FUNCTION(functionSetCrashLogMessage);
 #endif
 
 const ClassInfo JSDollarVM::s_info = { "DollarVM"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDollarVM) };
@@ -3097,6 +3097,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForCompile, (JSGloba
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::Validation, nullptr);
     MarkedArgumentBuffer args;
     args.append(compiler);
+    ASSERT(!args.hasOverflowed());
     call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
     if (UNLIKELY(scope.exception()))
         scope.clearException();
@@ -3124,6 +3125,7 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiate, (JSG
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::FullCompile, importObject);
     MarkedArgumentBuffer args;
     args.append(compiler);
+    ASSERT(!args.hasOverflowed());
     call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
     if (UNLIKELY(scope.exception()))
         scope.clearException();

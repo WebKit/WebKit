@@ -55,12 +55,7 @@ Ref<StreamServerConnection> StreamServerConnection::create(Connection& connectio
 
 Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnection(Connection::Handle&& connectionHandle, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
 {
-    static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
-    static std::once_flag s_onceFlag;
-    std::call_once(s_onceFlag, [] {
-        s_dedicatedConnectionClient.construct();
-    });
-    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) }, s_dedicatedConnectionClient.get());
+    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) });
     auto streamConnection = adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(streamBuffer), workQueue, HasDedicatedConnection::Yes));
     return streamConnection;
 }
@@ -81,9 +76,14 @@ StreamServerConnection::~StreamServerConnection()
 void StreamServerConnection::open()
 {
     if (m_hasDedicatedConnection) {
+        static LazyNeverDestroyed<DedicatedConnectionClient> s_dedicatedConnectionClient;
+        static std::once_flag s_onceFlag;
+        std::call_once(s_onceFlag, [] {
+            s_dedicatedConnectionClient.construct();
+        });
         // FIXME(http://webkit.org/b/238986): Workaround for not being able to deliver messages from the dedicated connection to the work queue the client uses.
         m_connection->addMessageReceiveQueue(*this, { });
-        m_connection->open();
+        m_connection->open(s_dedicatedConnectionClient.get());
     }
 }
 

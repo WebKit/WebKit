@@ -41,13 +41,9 @@ namespace JSC { namespace B3 {
 using Arg = Air::Arg;
 using Inst = Air::Inst;
 
-PatchpointSpecial::PatchpointSpecial()
-{
-}
+PatchpointSpecial::PatchpointSpecial() = default;
 
-PatchpointSpecial::~PatchpointSpecial()
-{
-}
+PatchpointSpecial::~PatchpointSpecial() = default;
 
 void PatchpointSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {

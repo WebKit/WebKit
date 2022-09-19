@@ -98,6 +98,7 @@ class ScriptController;
 class ScriptExecutionContext;
 class SleepDisabler;
 class SourceBuffer;
+class SpeechSynthesis;
 class TextTrackList;
 class TimeRanges;
 class VideoPlaybackQuality;
@@ -616,7 +617,11 @@ public:
     bool showingStats() const { return m_showingStats; }
     void setShowingStats(bool);
 
+    enum class SpeechSynthesisState : uint8_t { None, Speaking, CompletingExtendedDescription, Paused };
     WEBCORE_EXPORT RefPtr<TextTrackCue> cueBeingSpoken() const;
+#if ENABLE(SPEECH_SYNTHESIS)
+    WEBCORE_EXPORT SpeechSynthesis& speechSynthesis();
+#endif
 
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
@@ -840,14 +845,14 @@ private:
     HTMLTrackElement* showingTrackWithSameKind(HTMLTrackElement*) const;
 
     enum class CueAction : uint8_t { Enter, Exit };
-    void executeCueEnterOrLeaveAction(TextTrackCue&, CueAction);
+    void executeCueEnterOrExitActionForTime(TextTrackCue&, CueAction);
     void speakCueText(TextTrackCue&);
     void pauseSpeakingCueText();
     void resumeSpeakingCueText();
     void cancelSpeakingCueText();
     bool shouldSpeakCueTextForTime(const MediaTime&);
+    void pausePlaybackForExtendedTextDescription();
 
-    enum class SpeechSynthesisState : uint8_t { None, Speaking, Paused };
     void setSpeechSynthesisState(SpeechSynthesisState);
 
     enum ReconfigureMode { Immediately, AfterDelay };
@@ -1264,10 +1269,15 @@ private:
 
     bool m_showingStats { false };
 
+#if ENABLE(SPEECH_SYNTHESIS)
+    RefPtr<SpeechSynthesis> m_speechSynthesis;
+#endif
     SpeechSynthesisState m_speechState { SpeechSynthesisState::None };
     RefPtr<TextTrackCue> m_cueBeingSpoken;
     double m_volumeMultiplierForSpeechSynthesis { 1 };
     bool m_userPrefersTextDescriptions { false };
+    bool m_userPrefersExtendedDescriptions { false };
+    bool m_changingSynthesisState { false };
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<Logger> m_logger;
@@ -1276,6 +1286,7 @@ private:
 };
 
 String convertEnumerationToString(HTMLMediaElement::AutoplayEventPlaybackState);
+String convertEnumerationToString(HTMLMediaElement::SpeechSynthesisState);
 
 } // namespace WebCore
 
@@ -1283,6 +1294,10 @@ namespace WTF {
 
 template<> struct LogArgument<WebCore::HTMLMediaElement::AutoplayEventPlaybackState> {
     static String toString(WebCore::HTMLMediaElement::AutoplayEventPlaybackState reason) { return convertEnumerationToString(reason); }
+};
+
+template<> struct LogArgument<WebCore::HTMLMediaElement::SpeechSynthesisState> {
+    static String toString(WebCore::HTMLMediaElement::SpeechSynthesisState state) { return convertEnumerationToString(state); }
 };
 
 } // namespace WTF

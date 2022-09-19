@@ -122,7 +122,7 @@ struct PrintRecord {
     Callback printer;
 
 protected:
-    PrintRecord() { }
+    PrintRecord() = default;
 };
 
 template<typename T> struct Printer;

@@ -30,9 +30,7 @@
     readonly attribute DOMString disposition;
     readonly attribute DOMString type;
     readonly attribute USVString blockedURL;
-
-    // FIXME: Use enum FetchRequestDestination enum.
-    readonly attribute DOMString destination;
+    readonly attribute FetchRequestDestination destination;
 
     [Default] object toJSON();
 };

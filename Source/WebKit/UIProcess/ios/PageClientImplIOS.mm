@@ -731,9 +731,9 @@ bool PageClientImpl::isFullScreen()
     return [m_webView fullScreenWindowController].isFullScreen;
 }
 
-void PageClientImpl::enterFullScreen()
+void PageClientImpl::enterFullScreen(FloatSize videoDimensions)
 {
-    [[m_webView fullScreenWindowController] enterFullScreen];
+    [[m_webView fullScreenWindowController] enterFullScreen:videoDimensions];
 }
 
 void PageClientImpl::exitFullScreen()

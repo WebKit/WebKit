@@ -889,6 +889,8 @@ class Program final : public LabeledObject, public angle::Subject
     const ShaderProgramID mHandle;
 
     DirtyBits mDirtyBits;
+
+    std::mutex mHistogramMutex;
 };
 }  // namespace gl
 

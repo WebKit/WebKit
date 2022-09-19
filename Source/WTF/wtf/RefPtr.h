@@ -57,8 +57,8 @@ public:
 
     static constexpr bool isRefPtr = true;
 
-    ALWAYS_INLINE constexpr RefPtr() : m_ptr(nullptr) { }
-    ALWAYS_INLINE constexpr RefPtr(std::nullptr_t) : m_ptr(nullptr) { }
+    ALWAYS_INLINE constexpr RefPtr() = default;
+    ALWAYS_INLINE constexpr RefPtr(std::nullptr_t) { }
     ALWAYS_INLINE RefPtr(T* ptr) : m_ptr(ptr) { RefDerefTraits::refIfNotNull(ptr); }
     ALWAYS_INLINE RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { RefDerefTraits::refIfNotNull(PtrTraits::unwrap(m_ptr)); }
     template<typename X, typename Y, typename Z> RefPtr(const RefPtr<X, Y, Z>& o) : m_ptr(o.get()) { RefDerefTraits::refIfNotNull(PtrTraits::unwrap(m_ptr)); }
@@ -113,7 +113,7 @@ private:
     enum AdoptTag { Adopt };
     RefPtr(T* ptr, AdoptTag) : m_ptr(ptr) { }
 
-    typename PtrTraits::StorageType m_ptr;
+    typename PtrTraits::StorageType m_ptr { nullptr };
 };
 
 // Template deduction guide.

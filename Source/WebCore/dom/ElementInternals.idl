@@ -30,7 +30,49 @@
 ] interface ElementInternals {
     readonly attribute ShadowRoot? shadowRoot;
 
-    [CEReactions, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute [AtomString] DOMString? role;
-    [CEReactions, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute [AtomString] DOMString? ariaLabel;
-    [CEReactions, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute [AtomString] DOMString? ariaRoleDescription;
+    [CEReactions, Reflect, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? role;
+    [CEReactions, Reflect=aria_atomic, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaAtomic;
+    [CEReactions, Reflect=aria_autocomplete, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaAutoComplete;
+    [CEReactions, Reflect=aria_busy, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaBusy;
+    [CEReactions, Reflect=aria_checked, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaChecked;
+    [CEReactions, Reflect=aria_colcount, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaColCount;
+    [CEReactions, Reflect=aria_colindex, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaColIndex;
+    [CEReactions, Reflect=aria_colspan, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaColSpan;
+
+    [CEReactions, Reflect=aria_current, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaCurrent;
+
+    [CEReactions, Reflect=aria_disabled, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaDisabled;
+
+    [CEReactions, Reflect=aria_expanded, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaExpanded;
+
+    [CEReactions, Reflect=aria_haspopup, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaHasPopup;
+    [CEReactions, Reflect=aria_hidden, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaHidden;
+    [CEReactions, Reflect=aria_invalid, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaInvalid;
+    [CEReactions, Reflect=aria_keyshortcuts, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaKeyShortcuts;
+    [CEReactions, Reflect=aria_label, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaLabel;
+
+    [CEReactions, Reflect=aria_level, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaLevel;
+    [CEReactions, Reflect=aria_live, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaLive;
+    [CEReactions, Reflect=aria_modal, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaModal;
+    [CEReactions, Reflect=aria_multiline, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaMultiLine;
+    [CEReactions, Reflect=aria_multiselectable, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaMultiSelectable;
+    [CEReactions, Reflect=aria_orientation, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaOrientation;
+
+    [CEReactions, Reflect=aria_placeholder, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaPlaceholder;
+    [CEReactions, Reflect=aria_posinset, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaPosInSet;
+    [CEReactions, Reflect=aria_pressed, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaPressed;
+    [CEReactions, Reflect=aria_readonly, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaReadOnly;
+    [CEReactions, Reflect=aria_relevant, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaRelevant;
+    [CEReactions, Reflect=aria_required, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaRequired;
+    [CEReactions, Reflect=aria_roledescription, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaRoleDescription;
+    [CEReactions, Reflect=aria_rowcount, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaRowCount;
+    [CEReactions, Reflect=aria_rowindex, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaRowIndex;
+    [CEReactions, Reflect=aria_rowspan, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaRowSpan;
+    [CEReactions, Reflect=aria_selected, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaSelected;
+    [CEReactions, Reflect=aria_setsize, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaSetSize;
+    [CEReactions, Reflect=aria_sort, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaSort;
+    [CEReactions, Reflect=aria_valuemax, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaValueMax;
+    [CEReactions, Reflect=aria_valuemin, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaValueMin;
+    [CEReactions, Reflect=aria_valuenow, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaValueNow;
+    [CEReactions, Reflect=aria_valuetext, EnabledBySetting=DefaultARIAForCustomElementsEnabled] attribute DOMString? ariaValueText;
 };

@@ -58,10 +58,10 @@ public:
 private:
     void processCodeBlockIdentifiersIfNeeded();
 
-    CodeBlock* m_codeBlock;
+    CodeBlock* m_codeBlock { nullptr };
     Vector<UniquedStringImpl*> m_addedIdentifiers;
     HashMap<UniquedStringImpl*, unsigned> m_identifierNumberForName;
-    bool m_didProcessIdentifiers;
+    bool m_didProcessIdentifiers { false };
 };
 
 } } // namespace JSC::DFG

@@ -59,6 +59,7 @@ imported/w3c/web-platform-tests/speech-api/ [ Pass ]
 
 http/tests/media/fairplay [ Pass ]
 media/track/track-description-cue.html [ Pass ]
+media/track/track-extended-descriptions.html [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
@@ -90,6 +91,9 @@ media/encrypted-media/
 
 # FIXME: <rdar://problem/6512037> LayoutTests: Enable printing tests once printing is supported on iOS
 printing
+
+# Tests that rely on custom domain names.
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/nav-cancelation-2.sub.html [ Skip ]
 
 # Web Notifications are not supported on iOS.
 http/tests/notifications
@@ -216,7 +220,6 @@ platform/ios/ios/fast/forms/range-input-touches.html [ Skip ]
 platform/ios/ios/fast/text/data-detectors/phone-disabled.html [ Skip ]
 platform/ios/ios/fast/text/data-detectors/phone.html [ Skip ]
 platform/ios/ios/touch [ Skip ]
-platform/iphone-7/fast/events/touch [ Skip ]
 media/modern-media-controls/css/pointer-events-none.html [ Skip ]
 
 platform/ipad/fast/forms [ Skip ]
@@ -2131,6 +2134,8 @@ accessibility/aria-required-updates-after-dynamic-change.html [ Pass ]
 accessibility/aria-roles-unignored.html [ Pass ]
 accessibility/aria-slider-value.html [ Pass ]
 accessibility/ax-object-destroyed-on-reload.html [ Pass ]
+accessibility/basic-focusability.html [ Pass ]
+accessibility/display-contents-dynamically-added-children.html [ Pass ]
 accessibility/display-contents-element-roles.html [ Pass ]
 accessibility/display-contents-object-ordering.html [ Pass ]
 accessibility/dynamically-ignored-canvas.html [ Pass ]
@@ -3424,8 +3429,6 @@ webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-r
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-004.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-006.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-008.xht [ ImageOnlyFailure ]
-
-webkit.org/b/233267 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_window_open_download_block_downloads.tentative.html [ Pass Failure ]
 
 webkit.org/b/232181 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.html [ Pass Failure ]
 

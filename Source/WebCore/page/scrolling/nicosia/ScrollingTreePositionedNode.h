@@ -45,7 +45,11 @@ public:
     static Ref<ScrollingTreePositionedNode> create(ScrollingTree&, ScrollingNodeID);
     virtual ~ScrollingTreePositionedNode();
 
+    Nicosia::CompositionLayer* layer() const { return m_layer.get(); }
+
     const Vector<ScrollingNodeID>& relatedOverflowScrollingNodes() const { return m_relatedOverflowScrollingNodes; }
+
+    FloatSize scrollDeltaSinceLastCommit() const;
 
 private:
     ScrollingTreePositionedNode(ScrollingTree&, ScrollingNodeID);

@@ -133,11 +133,11 @@ private:
         return bitwise_cast<Offset32*>(m_rawBuffer + sizeof(LinkingData) + s_offset16TableSize);
     }
 
-    bool m_hasMetadata : 1;
-    bool m_isFinalized : 1;
-    bool m_isLinked : 1;
-    bool m_is32Bit : 1;
-    uint8_t* m_rawBuffer;
+    bool m_hasMetadata : 1 { false };
+    bool m_isFinalized : 1 { false };
+    bool m_isLinked : 1 { false };
+    bool m_is32Bit : 1 { false };
+    uint8_t* m_rawBuffer { nullptr };
 };
 
 } // namespace JSC

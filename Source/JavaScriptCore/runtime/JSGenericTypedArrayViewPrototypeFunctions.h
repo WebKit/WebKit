@@ -476,7 +476,7 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncFill(VM& vm, JSGlobal
 
     size_t count = end - start;
     typename ViewClass::ElementType* underlyingVector = thisObject->typedVector();
-    ASSERT(count <= length);
+    ASSERT_UNUSED(count, count <= length);
 
 #if OS(DARWIN)
     if constexpr (ViewClass::elementSize == 8) {

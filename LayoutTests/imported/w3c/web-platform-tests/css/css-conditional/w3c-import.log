@@ -131,6 +131,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-content-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-format-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-format-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-tech-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-font-tech-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-namespace-002-expected.html
@@ -143,6 +147,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-forgiving-argument-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-forgiving-argument-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-selector-detecting-invalid-in-forgiving-argument.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/at-supports-whitespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/css-supports-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/css-supports-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-conditional/css-supports-002-expected.xht

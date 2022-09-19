@@ -65,7 +65,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMenuList);
 #if PLATFORM(IOS_FAMILY)
 static size_t selectedOptionCount(const RenderMenuList& renderMenuList)
 {
-    const Vector<HTMLElement*>& listItems = renderMenuList.selectElement().listItems();
+    const auto& listItems = renderMenuList.selectElement().listItems();
     size_t numberOfItems = listItems.size();
 
     size_t count = 0;
@@ -192,11 +192,11 @@ void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* old
 void RenderMenuList::updateOptionsWidth()
 {
     float maxOptionWidth = 0;
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     int size = listItems.size();    
 
     for (int i = 0; i < size; ++i) {
-        HTMLElement* element = listItems[i];
+        RefPtr element = listItems[i].get();
         if (!is<HTMLOptionElement>(*element))
             continue;
 
@@ -246,13 +246,13 @@ void RenderMenuList::updateFromElement()
 
 void RenderMenuList::setTextFromOption(int optionIndex)
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     int size = listItems.size();
 
     int i = selectElement().optionToListIndex(optionIndex);
     String text = emptyString();
     if (i >= 0 && i < size) {
-        Element* element = listItems[i];
+        RefPtr element = listItems[i].get();
         if (is<HTMLOptionElement>(*element)) {
             text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
             auto* style = element->computedStyle();
@@ -448,7 +448,7 @@ String RenderMenuList::itemIcon(unsigned) const
 String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
 {
     // Allow the accessible name be changed if necessary.
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return String();
     return listItems[listIndex]->attributeWithoutSynchronization(aria_labelAttr);
@@ -456,7 +456,7 @@ String RenderMenuList::itemAccessibilityText(unsigned listIndex) const
     
 String RenderMenuList::itemToolTip(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return String();
     return listItems[listIndex]->title();
@@ -464,10 +464,10 @@ String RenderMenuList::itemToolTip(unsigned listIndex) const
 
 bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return false;
-    HTMLElement* element = listItems[listIndex];
+    HTMLElement* element = listItems[listIndex].get();
     if (!is<HTMLOptionElement>(*element))
         return false;
 
@@ -484,7 +484,7 @@ bool RenderMenuList::itemIsEnabled(unsigned listIndex) const
 
 PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size()) {
         // If we are making an out of bounds access, then we want to use the style
         // of a different option element (index 0). However, if there isn't an option element
@@ -495,7 +495,7 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
         // Try to retrieve the style of an option element we know exists (index 0).
         listIndex = 0;
     }
-    HTMLElement* element = listItems[listIndex];
+    HTMLElement* element = listItems[listIndex].get();
 
     Color itemBackgroundColor;
     bool itemHasCustomBackgroundColor;
@@ -509,13 +509,13 @@ PopupMenuStyle RenderMenuList::itemStyle(unsigned listIndex) const
 
 void RenderMenuList::getItemBackgroundColor(unsigned listIndex, Color& itemBackgroundColor, bool& itemHasCustomBackgroundColor) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size()) {
         itemBackgroundColor = style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
         itemHasCustomBackgroundColor = false;
         return;
     }
-    HTMLElement* element = listItems[listIndex];
+    HTMLElement* element = listItems[listIndex].get();
 
     Color backgroundColor = element->computedStyle()->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     itemHasCustomBackgroundColor = backgroundColor.isValid() && backgroundColor.isVisible();
@@ -614,22 +614,22 @@ void RenderMenuList::popupDidHide()
 
 bool RenderMenuList::itemIsSeparator(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     return listIndex < listItems.size() && listItems[listIndex]->hasTagName(hrTag);
 }
 
 bool RenderMenuList::itemIsLabel(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     return listIndex < listItems.size() && is<HTMLOptGroupElement>(*listItems[listIndex]);
 }
 
 bool RenderMenuList::itemIsSelected(unsigned listIndex) const
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     if (listIndex >= listItems.size())
         return false;
-    HTMLElement* element = listItems[listIndex];
+    HTMLElement* element = listItems[listIndex].get();
     return is<HTMLOptionElement>(*element) && downcast<HTMLOptionElement>(*element).selected();
 }
 

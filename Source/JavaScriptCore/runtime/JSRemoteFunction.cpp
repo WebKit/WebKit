@@ -40,7 +40,6 @@ const ClassInfo JSRemoteFunction::s_info = { "Function"_s, &Base::s_info, nullpt
 JSRemoteFunction::JSRemoteFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction)
     : Base(vm, executable, globalObject, structure)
     , m_targetFunction(vm, this, targetFunction)
-    , m_length(0.0)
 {
 }
 
@@ -132,9 +131,17 @@ JSC_DEFINE_HOST_FUNCTION(remoteFunctionCallGeneric, (JSGlobalObject* globalObjec
     JSGlobalObject* targetGlobalObject = targetFunction->globalObject();
 
     MarkedArgumentBuffer args;
+    auto clearArgOverflowCheckAndReturnAbortValue = [&] () -> EncodedJSValue {
+        // This is only called because we'll be imminently returning due to an
+        // exception i.e. we won't be using the args, and we don't care if they
+        // overflowed. However, we still need to call overflowCheckNotNeeded()
+        // to placate an ASSERT in the MarkedArgumentBuffer destructor.
+        args.overflowCheckNotNeeded();
+        return { };
+    };
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i) {
         JSValue wrappedValue = wrapArgument(globalObject, targetGlobalObject, callFrame->uncheckedArgument(i));
-        RETURN_IF_EXCEPTION(scope, { });
+        RETURN_IF_EXCEPTION(scope, clearArgOverflowCheckAndReturnAbortValue());
         args.append(wrappedValue);
     }
     if (UNLIKELY(args.hasOverflowed())) {

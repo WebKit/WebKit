@@ -18,7 +18,7 @@ namespace rx
 class NativeBufferImageSiblingAndroid : public ExternalImageSiblingEGL
 {
   public:
-    NativeBufferImageSiblingAndroid(EGLClientBuffer buffer);
+    NativeBufferImageSiblingAndroid(EGLClientBuffer buffer, const egl::AttributeMap &attribs);
     ~NativeBufferImageSiblingAndroid() override;
 
     egl::Error initialize(const egl::Display *display) override;
@@ -34,6 +34,7 @@ class NativeBufferImageSiblingAndroid : public ExternalImageSiblingEGL
 
     // ExternalImageSiblingEGL interface
     EGLClientBuffer getBuffer() const override;
+    void getImageCreationAttributes(std::vector<EGLint> *outAttributes) const override;
 
   private:
     EGLClientBuffer mBuffer;
@@ -41,6 +42,7 @@ class NativeBufferImageSiblingAndroid : public ExternalImageSiblingEGL
     gl::Format mFormat;
     bool mYUV;
     bool mHasProtectedContent;
+    GLint mColorSpace;
 };
 
 }  // namespace rx

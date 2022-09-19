@@ -36,7 +36,7 @@
 #include <wtf/Gigacage.h>
 #include <wtf/Lock.h>
 
-#if !USE(LIBPAS_JIT_HEAP)
+#if !ENABLE(LIBPAS_JIT_HEAP)
 #include <wtf/MetaAllocator.h>
 #endif
 

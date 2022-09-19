@@ -71,12 +71,12 @@ private:
     static Ref<StructureShape> merge(Ref<StructureShape>&&, Ref<StructureShape>&&);
     bool hasSamePrototypeChain(const StructureShape&);
 
-    bool m_final;
-    bool m_isInDictionaryMode;
+    bool m_final { false };
+    bool m_isInDictionaryMode { false };
     HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_fields;
     HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_optionalFields;
-    RefPtr<StructureShape> m_proto;
-    std::unique_ptr<String> m_propertyHash;
+    RefPtr<StructureShape> m_proto { nullptr };
+    std::unique_ptr<String> m_propertyHash { nullptr };
     String m_constructorName;
 };
 
@@ -101,8 +101,8 @@ public:
 
     ConcurrentJSLock m_lock;
 private:
-    bool m_isOverflown;
-    RuntimeTypeMask m_seenTypes;
+    bool m_isOverflown { false };
+    RuntimeTypeMask m_seenTypes { TypeNothing };
     Vector<Ref<StructureShape>> m_structureHistory;
     StructureSet m_structureSet;
 };

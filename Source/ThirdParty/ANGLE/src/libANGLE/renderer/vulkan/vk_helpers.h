@@ -2482,6 +2482,22 @@ class ImageHelper final : public Resource, public angle::Subject
 
     bool canCopyWithTransformForReadPixels(const PackPixelsParams &packPixelsParams,
                                            const angle::Format *readFormat);
+
+    // Returns true if source data and actual image format matches except color space differences.
+    bool isDataFormatMatchForCopy(angle::FormatID srcDataFormatID) const
+    {
+        if (mActualFormatID == srcDataFormatID)
+        {
+            return true;
+        }
+        angle::FormatID actualFormatLinear =
+            getActualFormat().isSRGB ? ConvertToLinear(mActualFormatID) : mActualFormatID;
+        angle::FormatID srcDataFormatIDLinear = angle::Format::Get(srcDataFormatID).isSRGB
+                                                    ? ConvertToLinear(srcDataFormatID)
+                                                    : srcDataFormatID;
+        return actualFormatLinear == srcDataFormatIDLinear;
+    }
+
     // Vulkan objects.
     Image mImage;
     DeviceMemory mDeviceMemory;

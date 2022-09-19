@@ -2673,13 +2673,15 @@ bool ValidateEGLImageTargetTexStorageEXT(const Context *context,
         case TextureType::External:
             if (!context->getExtensions().EGLImageExternalOES)
             {
-                context->validationError(entryPoint, GL_INVALID_ENUM, kEnumNotSupported);
+                context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported,
+                                          ToGLenum(targetType));
             }
             break;
         case TextureType::CubeMapArray:
             if (!context->getExtensions().textureCubeMapArrayAny())
             {
-                context->validationError(entryPoint, GL_INVALID_ENUM, kEnumNotSupported);
+                context->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported,
+                                          ToGLenum(targetType));
             }
             break;
         case TextureType::_2D:

@@ -190,16 +190,12 @@ static RetainPtr<NSArray> collectIcons(WebCore::Frame* frame, OptionSet<WebCore:
 
 - (NSArray *)_certificateChain
 {
-    return retainPtr((NSArray *)_frame->certificateInfo().certificateChain()).autorelease();
+    return (NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(_frame->certificateInfo().trust()).autorelease();
 }
 
 - (SecTrustRef)_serverTrust
 {
-#if HAVE(SEC_TRUST_SERIALIZATION)
     return _frame->certificateInfo().trust();
-#else
-    return nil;
-#endif
 }
 
 - (NSURL *)_provisionalURL

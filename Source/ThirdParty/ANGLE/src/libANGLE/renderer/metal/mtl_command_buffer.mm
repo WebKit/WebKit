@@ -546,8 +546,6 @@ void CommandQueue::onCommandBufferCommitted(id<MTLCommandBuffer> buf, uint64_t s
     std::lock_guard<std::mutex> lg(mLock);
 
     ANGLE_MTL_LOG("Committed MTLCommandBuffer %llu:%p", serial, buf);
-    ++mLastCommittedSerial;
-    ASSERT(serial == mLastCommittedSerial && "Verify that CommandBuffers are submitted in order");
 
     mCommittedBufferSerial.store(
         std::max(mCommittedBufferSerial.load(std::memory_order_relaxed), serial),

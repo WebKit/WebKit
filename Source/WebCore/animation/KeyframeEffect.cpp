@@ -1061,8 +1061,10 @@ void KeyframeEffect::computeDeclarativeAnimationBlendingKeyframes(const RenderSt
     ASSERT(is<DeclarativeAnimation>(animation()));
     if (is<CSSAnimation>(animation()))
         computeCSSAnimationBlendingKeyframes(newStyle, resolutionContext);
-    else if (is<CSSTransition>(animation()))
-        computeCSSTransitionBlendingKeyframes(oldStyle, newStyle);
+    else if (is<CSSTransition>(animation())) {
+        ASSERT(oldStyle);
+        computeCSSTransitionBlendingKeyframes(*oldStyle, newStyle);
+    }
 }
 
 void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const Style::ResolutionContext& resolutionContext)
@@ -1087,12 +1089,12 @@ void KeyframeEffect::computeCSSAnimationBlendingKeyframes(const RenderStyle& una
     setBlendingKeyframes(keyframeList);
 }
 
-void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle)
+void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle)
 {
     ASSERT(is<CSSTransition>(animation()));
     ASSERT(document());
 
-    if (!oldStyle || m_blendingKeyframes.size())
+    if (m_blendingKeyframes.size())
         return;
 
     auto property = downcast<CSSTransition>(animation())->property();
@@ -1103,7 +1105,7 @@ void KeyframeEffect::computeCSSTransitionBlendingKeyframes(const RenderStyle* ol
 
     KeyframeList keyframeList(m_keyframesName);
 
-    KeyframeValue fromKeyframeValue(0, RenderStyle::clonePtr(*oldStyle));
+    KeyframeValue fromKeyframeValue(0, RenderStyle::clonePtr(oldStyle));
     fromKeyframeValue.addProperty(property);
     keyframeList.insert(WTFMove(fromKeyframeValue));
 

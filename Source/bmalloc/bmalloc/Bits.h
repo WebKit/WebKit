@@ -38,9 +38,9 @@ constexpr size_t bitsArrayLength(size_t numBits) { return (numBits + 31) / 32; }
 class BitsWordView {
 public:
     typedef BitsWordView ViewType;
-    
-    BitsWordView() { }
-    
+
+    BitsWordView() = default;
+
     BitsWordView(const uint32_t* array, size_t numBits)
         : m_words(array)
         , m_numBits(numBits)
@@ -219,11 +219,8 @@ template<size_t> class Bits;
 template<typename Words>
 class BitsImpl {
 public:
-    BitsImpl()
-        : m_words()
-    {
-    }
-    
+    BitsImpl() = default;
+
     BitsImpl(const Words& words)
         : m_words(words)
     {
@@ -378,14 +375,14 @@ private:
         RELEASE_BASSERT(index < numBits());
         return !!(m_words.word(index >> 5) & (1 << (index & 31)));
     }
-    
-    Words m_words;
+
+    Words m_words { };
 };
 
 template<size_t passedNumBits>
 class Bits : public BitsImpl<BitsWordOwner<passedNumBits>> {
 public:
-    Bits() { }
+    Bits() = default;
     
     Bits(const Bits&) = default;
     Bits& operator=(const Bits&) = default;
@@ -465,7 +462,7 @@ public:
     
     class BitReference {
     public:
-        BitReference() { }
+        BitReference() = default;
         
         BitReference(uint32_t* word, uint32_t mask)
             : m_word(word)

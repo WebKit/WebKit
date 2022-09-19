@@ -294,6 +294,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     bool isRotatedAspectRatioForReadFBO() const;
     SurfaceRotation getRotationDrawFramebuffer() const;
     SurfaceRotation getRotationReadFramebuffer() const;
+    SurfaceRotation getSurfaceRotationImpl(const gl::Framebuffer *framebuffer,
+                                           const egl::Surface *surface);
 
     // View port (x, y, w, h) will be determined by a combination of -
     // 1. clip space origin
@@ -1025,8 +1027,10 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     void updateDepthRange(float nearPlane, float farPlane);
     void updateFlipViewportDrawFramebuffer(const gl::State &glState);
     void updateFlipViewportReadFramebuffer(const gl::State &glState);
-    void updateSurfaceRotationDrawFramebuffer(const gl::State &glState);
-    void updateSurfaceRotationReadFramebuffer(const gl::State &glState);
+    void updateSurfaceRotationDrawFramebuffer(const gl::State &glState,
+                                              const egl::Surface *currentDrawSurface);
+    void updateSurfaceRotationReadFramebuffer(const gl::State &glState,
+                                              const egl::Surface *currentReadSurface);
 
     angle::Result updateActiveTextures(const gl::Context *context, gl::Command command);
     template <typename CommandBufferHelperT>
@@ -1551,7 +1555,10 @@ ANGLE_INLINE angle::Result ContextVk::onVertexAttributeChange(size_t attribIndex
                                                               GLuint relativeOffset,
                                                               const vk::BufferHelper *vertexBuffer)
 {
-    const GLuint staticStride = getFeatures().supportsExtendedDynamicState.enabled ? 0 : stride;
+    const GLuint staticStride = getFeatures().supportsExtendedDynamicState.enabled &&
+                                        !getFeatures().forceStaticVertexStrideState.enabled
+                                    ? 0
+                                    : stride;
 
     invalidateCurrentGraphicsPipeline();
 

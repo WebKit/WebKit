@@ -19,6 +19,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-007.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/auto-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-001.html
@@ -99,7 +102,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-026.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-027-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-027.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-028.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-029.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-030.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-031.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-032.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-003.html

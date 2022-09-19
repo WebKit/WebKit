@@ -97,10 +97,8 @@ public:
         ProtoLookup
     };
 
-    ICEvent()
-    {
-    }
-    
+    ICEvent() = default;
+
     ICEvent(Kind kind, const ClassInfo* classInfo, const Identifier propertyName)
         : m_kind(kind)
         , m_classInfo(classInfo)

@@ -296,7 +296,7 @@ private:
     union U {
         T* buffer;
         T smallStorage[SmallArraySize];
-        U() { };
+        U() { } // NOLINT
     } m_inline;
 };
 

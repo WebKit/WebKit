@@ -25,7 +25,6 @@ a {
     top: 200px;
     -webkit-user-select: none;
 }
-
 </style>
 <script>
 addEventListener("load", () => {
@@ -50,28 +49,15 @@ addEventListener("load", () => {
     function testImage(imageID, expectedResult) {
         let image = document.getElementById(imageID);
         let rect = image.getBoundingClientRect();
-        eventSender.mouseMoveTo(rect.left, rect.top);
+        eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
         cursor = internals.getCurrentCursorInfo().match(/type=(\w+)\s/).pop();
         debug(`\nTesting &lt;img id="${imageID}"&gt;`);
         shouldBeEqualToString("cursor", expectedResult);
     }
 
-    function testOverlayDivFromImage(hostID, expectedResult) {
-        let image = document.getElementById(hostID);
-        let rect = image.getBoundingClientRect();
-        eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        cursor = internals.getCurrentCursorInfo().match(/type=(\w+)\s/).pop();
-        debug(`\nTesting overlay from &lt;img id="${hostID}"&gt;`);
-        shouldBeEqualToString("cursor", expectedResult);
-    }
-
-    testImage("inside-link", "Hand");
+    testImage("inside-link", "IBeam");
     testImage("cursor-zoom-in", "ZoomIn");
     testImage("user-select-none-in-link", "Hand");
-
-    testOverlayDivFromImage("inside-link", "IBeam");
-    testOverlayDivFromImage("cursor-zoom-in", "IBeam");
-    testOverlayDivFromImage("user-select-none-in-link", "Pointer");
 });
 </script>
 </head>

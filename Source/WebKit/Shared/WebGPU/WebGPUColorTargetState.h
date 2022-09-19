@@ -39,33 +39,6 @@ struct ColorTargetState {
 
     std::optional<BlendState> blend;
     PAL::WebGPU::ColorWriteFlags writeMask { PAL::WebGPU::ColorWrite::All };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << format;
-        encoder << blend;
-        encoder << writeMask;
-    }
-
-    template<class Decoder> static std::optional<ColorTargetState> decode(Decoder& decoder)
-    {
-        std::optional<PAL::WebGPU::TextureFormat> format;
-        decoder >> format;
-        if (!format)
-            return std::nullopt;
-
-        std::optional<std::optional<BlendState>> blend;
-        decoder >> blend;
-        if (!blend)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::ColorWriteFlags> writeMask;
-        decoder >> writeMask;
-        if (!writeMask)
-            return std::nullopt;
-
-        return { { WTFMove(*format), WTFMove(*blend), WTFMove(*writeMask) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

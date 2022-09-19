@@ -1642,6 +1642,66 @@ TEST_P(EGLSurfaceTest, CreateSurfaceSwapIntervalANGLE)
     }
 }
 
+// Test that setting a surface's timestamp attribute works when the extension
+// EGL_ANGLE_timestamp_surface_attribute is supported.
+TEST_P(EGLSurfaceTest, TimestampSurfaceAttribute)
+{
+    initializeDisplay();
+    ASSERT_NE(mDisplay, EGL_NO_DISPLAY);
+    mConfig = chooseDefaultConfig(true);
+    ASSERT_NE(mConfig, nullptr);
+    initializeSurface(mConfig);
+    ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+    initializeContext();
+    ASSERT_NE(mContext, EGL_NO_CONTEXT);
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    const bool extensionSupported =
+        IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANDROID_get_frame_timestamps") ||
+        IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANGLE_timestamp_surface_attribute");
+
+    EGLBoolean setSurfaceAttrib =
+        eglSurfaceAttrib(mDisplay, mWindowSurface, EGL_TIMESTAMPS_ANDROID, EGL_TRUE);
+
+    if (extensionSupported)
+    {
+        EXPECT_EGL_TRUE(setSurfaceAttrib);
+
+        // Swap so the swapchain gets created.
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, mWindowSurface));
+
+        // Query to confirm the attribute persists across swaps.
+        EGLint timestampEnabled = 0;
+        EXPECT_EGL_TRUE(
+            eglQuerySurface(mDisplay, mWindowSurface, EGL_TIMESTAMPS_ANDROID, &timestampEnabled));
+        EXPECT_NE(timestampEnabled, 0);
+
+        // Resize window and swap.
+        mOSWindow->resize(256, 256);
+        glClearColor(1.0, 1.0, 1.0, 1.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, mWindowSurface));
+
+        // Query to confirm the attribute persists across swapchain recreations.
+        timestampEnabled = 0;
+        EXPECT_EGL_TRUE(
+            eglQuerySurface(mDisplay, mWindowSurface, EGL_TIMESTAMPS_ANDROID, &timestampEnabled));
+        EXPECT_NE(timestampEnabled, 0);
+    }
+    else
+    {
+        EXPECT_EGL_FALSE(setSurfaceAttrib);
+        EXPECT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    }
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+}
+
 TEST_P(EGLSingleBufferTest, OnCreateWindowSurface)
 {
     EGLConfig config = EGL_NO_CONFIG_KHR;

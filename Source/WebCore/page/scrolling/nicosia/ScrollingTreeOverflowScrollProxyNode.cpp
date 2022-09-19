@@ -73,6 +73,16 @@ void ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
     }
 }
 
+FloatSize ScrollingTreeOverflowScrollProxyNode::scrollDeltaSinceLastCommit() const
+{
+    if (auto* node = scrollingTree().nodeForID(m_overflowScrollingNodeID)) {
+        if (is<ScrollingTreeOverflowScrollingNode>(node))
+            return downcast<ScrollingTreeOverflowScrollingNode>(*node).scrollDeltaSinceLastCommit();
+    }
+
+    return { };
+}
+
 void ScrollingTreeOverflowScrollProxyNode::applyLayerPositions()
 {
     FloatPoint scrollOffset;

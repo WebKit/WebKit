@@ -41,7 +41,7 @@ Module::Module(LLIntPlan& plan)
 {
 }
 
-Module::~Module() { }
+Module::~Module() = default;
 
 Wasm::TypeIndex Module::typeIndexFromFunctionIndexSpace(unsigned functionIndexSpace) const
 {

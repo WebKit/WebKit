@@ -35,6 +35,7 @@
 #include "JSWebAssemblyLinkError.h"
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
+#include "WasmTag.h"
 #include "WebAssemblyModuleRecord.h"
 #include <wtf/StdLibExtras.h>
 

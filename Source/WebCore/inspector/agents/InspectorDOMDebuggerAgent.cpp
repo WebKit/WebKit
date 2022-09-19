@@ -38,6 +38,8 @@
 #include "InstrumentingAgents.h"
 #include "JSEvent.h"
 #include "RegisteredEventListener.h"
+#include "ResourceRequest.h"
+#include "ScriptDisallowedScope.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/ContentSearchUtilities.h>
 #include <JavaScriptCore/InjectedScript.h>
@@ -320,6 +322,19 @@ void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
     m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
 }
 
+void InspectorDOMDebuggerAgent::willSendRequest(ResourceRequest& request)
+{
+    if (request.requester() == ResourceRequest::Requester::XHR || request.requester() == ResourceRequest::Requester::Fetch)
+        return;
+
+    breakOnURLIfNeeded(request.url().string());
+}
+
+void InspectorDOMDebuggerAgent::willSendRequestOfType(ResourceRequest& request)
+{
+    willSendRequest(request);
+}
+
 Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setURLBreakpoint(const String& url, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
 {
     Protocol::ErrorString errorString;
@@ -366,9 +381,13 @@ Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeURLBreakpoint(con
     return { };
 }
 
-void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url, URLBreakpointSource source)
+void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url)
 {
     if (!m_debuggerAgent->breakpointsActive())
+        return;
+
+    // FIXME: <https://webkit.org/b/245053> Web Inspector: URL breakpoints should still be able to pause when script is disallowed
+    if (!ScriptDisallowedScope::isScriptAllowedInMainThread())
         return;
 
     constexpr bool caseSensitive = false;
@@ -398,31 +417,20 @@ void InspectorDOMDebuggerAgent::breakOnURLIfNeeded(const String& url, URLBreakpo
     if (!breakpoint)
         return;
 
-    auto breakReason = Inspector::DebuggerFrontendDispatcher::Reason::Other;
-    switch (source) {
-    case URLBreakpointSource::Fetch:
-        breakReason = Inspector::DebuggerFrontendDispatcher::Reason::Fetch;
-        break;
-
-    case URLBreakpointSource::XHR:
-        breakReason = Inspector::DebuggerFrontendDispatcher::Reason::XHR;
-        break;
-    }
-
     Ref<JSON::Object> eventData = JSON::Object::create();
     eventData->setString("breakpointURL"_s, breakpointURL);
     eventData->setString("url"_s, url);
-    m_debuggerAgent->breakProgram(breakReason, WTFMove(eventData), WTFMove(breakpoint));
+    m_debuggerAgent->breakProgram(Inspector::DebuggerFrontendDispatcher::Reason::URL, WTFMove(eventData), WTFMove(breakpoint));
 }
 
 void InspectorDOMDebuggerAgent::willSendXMLHttpRequest(const String& url)
 {
-    breakOnURLIfNeeded(url, URLBreakpointSource::XHR);
+    breakOnURLIfNeeded(url);
 }
 
 void InspectorDOMDebuggerAgent::willFetch(const String& url)
 {
-    breakOnURLIfNeeded(url, URLBreakpointSource::Fetch);
+    breakOnURLIfNeeded(url);
 }
 
 } // namespace WebCore

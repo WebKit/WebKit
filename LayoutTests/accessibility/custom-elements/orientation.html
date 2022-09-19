@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-radio-group id="group-1"></custom-radio-group>
+<custom-radio-group id="group-2" aria-orientation="horizontal"></custom-radio-group>
+<script>
+
+customElements.define('custom-radio-group', class CustomGrid extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'radiogroup';
+        internals.ariaOrientation = 'vertical';
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("group-1").orientation', 'AXOrientation: AXVerticalOrientation');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("group-2").orientation', 'AXOrientation: AXHorizontalOrientation');
+}
+
+</script>
+</body>
+</html>

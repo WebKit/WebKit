@@ -86,10 +86,8 @@ struct TmpData {
 };
 
 struct Clobber {
-    Clobber()
-    {
-    }
-    
+    Clobber() = default;
+
     Clobber(size_t index, RegisterSet regs)
         : index(index)
         , regs(regs)

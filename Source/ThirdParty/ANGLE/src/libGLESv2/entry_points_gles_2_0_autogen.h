@@ -216,7 +216,7 @@ ANGLE_EXPORT void GL_APIENTRY GL_SampleCoverage(GLfloat value, GLboolean invert)
 ANGLE_EXPORT void GL_APIENTRY GL_Scissor(GLint x, GLint y, GLsizei width, GLsizei height);
 ANGLE_EXPORT void GL_APIENTRY GL_ShaderBinary(GLsizei count,
                                               const GLuint *shaders,
-                                              GLenum binaryformat,
+                                              GLenum binaryFormat,
                                               const void *binary,
                                               GLsizei length);
 ANGLE_EXPORT void GL_APIENTRY GL_ShaderSource(GLuint shader,

@@ -27,6 +27,8 @@
 #include "config.h"
 #include "GraphicsLayerWC.h"
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "WCPlatformLayerGCGL.h"
 #include "WCTileGrid.h"
 #include <WebCore/TransformState.h>
@@ -718,3 +720,5 @@ void GraphicsLayerWC::recursiveCommitChanges(const TransformState& state)
 }
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

@@ -36,7 +36,7 @@ public:
     static OrdinalNumber fromZeroBasedInt(int zeroBasedInt) { return OrdinalNumber(zeroBasedInt); }
     static OrdinalNumber fromOneBasedInt(int oneBasedInt) { return OrdinalNumber(oneBasedInt - 1); }
 
-    OrdinalNumber() : m_zeroBasedValue(0) { }
+    OrdinalNumber() = default;
 
     int zeroBasedInt() const { return m_zeroBasedValue; }
     int oneBasedInt() const { return m_zeroBasedValue + 1; }
@@ -47,7 +47,7 @@ public:
 
 private:
     OrdinalNumber(int zeroBasedInt) : m_zeroBasedValue(zeroBasedInt) { }
-    int m_zeroBasedValue;
+    int m_zeroBasedValue { 0 };
 };
 
 }

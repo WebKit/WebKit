@@ -505,8 +505,9 @@ struct PackedDynamicState1And2 final
     // is to support GraphicsPipelineDesc::hash(), allowing it to exclude this state from the hash.
     uint32_t supportsDynamicState1 : 1;
     uint32_t supportsDynamicState2 : 1;
+    uint32_t forceStaticVertexStrideState : 1;
 
-    uint32_t padding : 12;
+    uint32_t padding : 11;
 };
 
 constexpr size_t kPackedDynamicState1And2Size = sizeof(PackedDynamicState1And2);

@@ -56,7 +56,7 @@ def main():
     os.chdir(sys.path[0])
 
     boilerplate_code = template_header_boilerplate.format(
-        script_name=sys.argv[0], copyright_year=datetime.today().year)
+        script_name=os.path.basename(sys.argv[0]), copyright_year=datetime.today().year)
 
     # -------- Compile shaders -----------
     # boiler plate code

@@ -53,12 +53,8 @@ public:
     // Support for hash consing these things.
     class Key {
     public:
-        Key()
-            : m_stackmapRole(SameAsRep)
-            , m_numArgs(0)
-        {
-        }
-        
+        Key() = default;
+
         Key(Air::Kind kind, unsigned numArgs, RoleMode stackmapRole = SameAsRep)
             : m_kind(kind)
             , m_stackmapRole(stackmapRole)
@@ -89,8 +85,7 @@ public:
         void dump(PrintStream& out) const;
 
         Key(WTF::HashTableDeletedValueType)
-            : m_stackmapRole(SameAsRep)
-            , m_numArgs(1)
+            : m_numArgs(1)
         {
         }
 
@@ -107,8 +102,8 @@ public:
         
     private:
         Air::Kind m_kind;
-        RoleMode m_stackmapRole;
-        unsigned m_numArgs;
+        RoleMode m_stackmapRole { SameAsRep };
+        unsigned m_numArgs { 0 };
     };
     
     CheckSpecial(Air::Kind, unsigned numArgs, RoleMode stackmapRole = SameAsRep);

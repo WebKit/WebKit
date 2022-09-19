@@ -28,12 +28,9 @@
 
 namespace JSC {
 
-DumpContext::DumpContext()
-    : graph(nullptr)
-{
-}
+DumpContext::DumpContext() = default;
 
-DumpContext::~DumpContext() { }
+DumpContext::~DumpContext() = default;
 
 bool DumpContext::isEmpty() const
 {

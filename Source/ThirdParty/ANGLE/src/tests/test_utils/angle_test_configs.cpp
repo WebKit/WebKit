@@ -873,6 +873,11 @@ PlatformParameters ES3_WGL()
     return PlatformParameters(EGL_OPENGL_ES_API, 3, 0, 0, GLESDriverType::SystemWGL);
 }
 
+PlatformParameters ES1_EGL()
+{
+    return PlatformParameters(EGL_OPENGL_ES_API, 1, 0, 0, GLESDriverType::SystemEGL);
+}
+
 PlatformParameters ES2_EGL()
 {
     return PlatformParameters(EGL_OPENGL_ES_API, 2, 0, 0, GLESDriverType::SystemEGL);

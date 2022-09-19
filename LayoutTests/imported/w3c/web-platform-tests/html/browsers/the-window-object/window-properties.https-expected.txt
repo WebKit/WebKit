@@ -172,4 +172,13 @@ PASS Window replaceable attribute: outerWidth
 PASS Window replaceable attribute: outerHeight
 PASS Window replaceable attribute: devicePixelRatio
 PASS constructor
+PASS Window readonly getter: window
+PASS Window readonly getter in iframe: window
+PASS Window readonly getter in detached iframe: window
+PASS Window readonly getter: self
+PASS Window readonly getter in iframe: self
+PASS Window readonly getter in detached iframe: self
+PASS Window readonly getter: frames
+PASS Window readonly getter in iframe: frames
+PASS Window readonly getter in detached iframe: frames
 

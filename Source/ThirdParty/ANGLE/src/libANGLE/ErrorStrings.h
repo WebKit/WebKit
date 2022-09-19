@@ -18,6 +18,7 @@ namespace err
 // clang-format off
 MSG k3DDepthStencil = "Format cannot be GL_DEPTH_COMPONENT or GL_DEPTH_STENCIL if target is GL_TEXTURE_3D";
 MSG kANGLECopyTexture3DUnavailable = "GL_ANGLE_copy_texture_3d extension not available.";
+MSG kANGLECopyTextureMissingRequiredExtension = "Copy*TextureCHROMIUM from EXTERNAL_OES to integer format requires OES_EGL_image_external_essl3";
 MSG kAdvancedBlendEquationWithMRT = "Advanced blend equation can only be used when only one draw buffer is not NONE";
 MSG kAdvancedBlendExtensionNotEnabled = "GL_KHR_blend_equation_advanced extension not enabled.";
 MSG kAtomicCounterResourceName = "Active atomic counter resources are not assigned name strings.";
@@ -107,7 +108,8 @@ MSG kEGLImageTextureFormatNotSupported = "EGL image internal format is not suppo
 MSG kEGLImageTextureTargetMismatch = "The source EGL image is incompatible with the target texture type.";
 MSG kElementArrayBufferBoundForTransformFeedback = "It is undefined behavior to use an element array buffer that is bound for transform feedback.";
 MSG kElementArrayNoBufferOrPointer = "No element array buffer and no pointer.";
-MSG kEnumNotSupported = "Enum is not currently supported.";
+MSG kEnumInvalid = "Invalid enum provided.";
+MSG kEnumNotSupported = "Enum 0x%04X is currently not supported.";
 MSG kEnumRequiresGLES30 = "Enum requires GLES 3.0";
 MSG kEnumRequiresGLES31 = "Enum requires GLES 3.1";
 MSG kES1or32Required = "OpenGL ES 1.x or 3.2 Required";
@@ -298,7 +300,7 @@ MSG kInvalidImageLayout = "Invalid image layout.";
 MSG kInvalidImageFormat = "format is not one of supported image unit formats.";
 MSG kInvalidIndentifier = "Invalid identifier.";
 MSG kInvalidIndirectOffset = "indirect must be a multiple of the size of uint in basic machine units.";
-MSG kInvalidInternalFormat = "Invalid internal format.";
+MSG kInvalidInternalFormat = "Invalid internal format 0x%04X.";
 MSG kInvalidLight = "Invalid light.";
 MSG kInvalidLightModelParameter = "Invalid light model parameter.";
 MSG kInvalidLightParameter = "Invalid light parameter.";

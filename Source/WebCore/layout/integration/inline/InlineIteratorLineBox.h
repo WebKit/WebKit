@@ -69,7 +69,7 @@ public:
     float inkOverflowTop() const;
     float inkOverflowBottom() const;
 
-    const RenderStyle& style() const { return isFirst() ? containingBlock().firstLineStyle() : containingBlock().style(); }
+    const RenderStyle& style() const { return isFirst() ? formattingContextRoot().firstLineStyle() : formattingContextRoot().style(); }
 
     bool hasEllipsis() const;
     enum AdjustedForSelection : uint8_t { No, Yes };
@@ -77,7 +77,7 @@ public:
     TextRun ellipsisText() const;
     RenderObject::HighlightState ellipsisSelectionState() const;
 
-    const RenderBlockFlow& containingBlock() const;
+    const RenderBlockFlow& formattingContextRoot() const;
     RenderFragmentContainer* containingFragment() const;
 
     bool isHorizontal() const;
@@ -133,12 +133,12 @@ LeafBoxIterator closestBoxForHorizontalPosition(const LineBox&, float horizontal
 // -----------------------------------------------
 inline float previousLineBoxContentBottomOrBorderAndPadding(const LineBox& lineBox)
 {
-    return lineBox.isFirst() ? lineBox.containingBlock().borderAndPaddingBefore().toFloat() : lineBox.contentLogicalTopAdjustedForPrecedingLineBox(); 
+    return lineBox.isFirst() ? lineBox.formattingContextRoot().borderAndPaddingBefore().toFloat() : lineBox.contentLogicalTopAdjustedForPrecedingLineBox(); 
 }
 
 inline float contentStartInBlockDirection(const LineBox& lineBox)
 {
-    if (!lineBox.containingBlock().style().isFlippedBlocksWritingMode())
+    if (!lineBox.formattingContextRoot().style().isFlippedBlocksWritingMode())
         return std::max(lineBox.contentLogicalTop(), previousLineBoxContentBottomOrBorderAndPadding(lineBox));
     return std::min(lineBox.contentLogicalBottom(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox());
 }
@@ -221,15 +221,15 @@ inline FloatRect LineBox::ellipsisVisualRect(AdjustedForSelection adjustedForSel
 
     // FIXME: Add pixel snapping here.
     if (adjustedForSelection == AdjustedForSelection::No) {
-        containingBlock().flipForWritingMode(visualRect);
+        formattingContextRoot().flipForWritingMode(visualRect);
         return visualRect;
     }
-    auto selectionTop = containingBlock().adjustEnclosingTopForPrecedingBlock(LayoutUnit { contentLogicalTopAdjustedForPrecedingLineBox() });
+    auto selectionTop = formattingContextRoot().adjustEnclosingTopForPrecedingBlock(LayoutUnit { contentLogicalTopAdjustedForPrecedingLineBox() });
     auto selectionBottom = contentLogicalBottomAdjustedForFollowingLineBox();
 
     visualRect.setY(selectionTop);
     visualRect.setHeight(selectionBottom - selectionTop);
-    containingBlock().flipForWritingMode(visualRect);
+    formattingContextRoot().flipForWritingMode(visualRect);
     return visualRect;
 }
 
@@ -280,10 +280,10 @@ inline FontBaseline LineBox::baselineType() const
     });
 }
 
-inline const RenderBlockFlow& LineBox::containingBlock() const
+inline const RenderBlockFlow& LineBox::formattingContextRoot() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) -> const RenderBlockFlow& {
-        return path.containingBlock();
+        return path.formattingContextRoot();
     });
 }
 

@@ -47,8 +47,8 @@ private:
     bool sweepNextBlock(VM&);
     void doSweep(VM&, MonotonicTime startTime);
     void scheduleTimer();
-    
-    BlockDirectory* m_currentDirectory;
+
+    BlockDirectory* m_currentDirectory { nullptr };
     bool m_shouldFreeFastMallocMemoryAfterSweeping { false };
 };
 

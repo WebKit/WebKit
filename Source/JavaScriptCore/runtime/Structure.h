@@ -960,16 +960,16 @@ private:
     TypeInfoBlob m_blob;
     TypeInfo::OutOfLineTypeFlags m_outOfLineTypeFlags;
 
-    uint8_t m_inlineCapacity;
+    uint8_t m_inlineCapacity { 0 };
 
     ConcurrentJSLock m_lock;
 
-    uint32_t m_bitField;
+    uint32_t m_bitField { 0 };
 
     uint16_t m_transitionOffset;
     uint16_t m_maxOffset;
 
-    uint32_t m_propertyHash;
+    uint32_t m_propertyHash { 0 };
     TinyBloomFilter<CompactPtr<UniquedStringImpl>::StorageType> m_seenProperties;
 
 

@@ -768,9 +768,7 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> VM::getCTIVirtualCall(CallMode callM
     return LLInt::getCodeRef<JITStubRoutinePtrTag>(llint_virtual_call_trampoline);
 }
 
-VM::ClientData::~ClientData()
-{
-}
+VM::ClientData::~ClientData() = default;
 
 void VM::whenIdle(Function<void()>&& callback)
 {
@@ -1226,6 +1224,7 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
     MarkedArgumentBuffer args;
     args.append(promise.get());
     args.append(promise->result(*this));
+    ASSERT(!args.hasOverflowed());
     call(promise->globalObject(), callback, callData, jsNull(), args);
     scope.clearException();
 }

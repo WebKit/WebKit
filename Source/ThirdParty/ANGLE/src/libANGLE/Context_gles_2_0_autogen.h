@@ -131,7 +131,7 @@
     void renderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height); \
     void sampleCoverage(GLfloat value, GLboolean invert);                                          \
     void scissor(GLint x, GLint y, GLsizei width, GLsizei height);                                 \
-    void shaderBinary(GLsizei count, const ShaderProgramID *shadersPacked, GLenum binaryformat,    \
+    void shaderBinary(GLsizei count, const ShaderProgramID *shadersPacked, GLenum binaryFormat,    \
                       const void *binary, GLsizei length);                                         \
     void shaderSource(ShaderProgramID shaderPacked, GLsizei count, const GLchar *const *string,    \
                       const GLint *length);                                                        \

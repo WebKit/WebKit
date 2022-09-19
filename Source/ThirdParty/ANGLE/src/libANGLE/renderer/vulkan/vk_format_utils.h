@@ -74,6 +74,7 @@ class Format final : private angle::NonCopyable
     Format();
 
     bool valid() const { return mIntendedGLFormat != 0; }
+    GLenum getIntendedGLFormat() const { return mIntendedGLFormat; }
 
     // The intended format is the front-end format. For Textures this usually correponds to a
     // GLenum in the headers. Buffer formats don't always have a corresponding GLenum type.

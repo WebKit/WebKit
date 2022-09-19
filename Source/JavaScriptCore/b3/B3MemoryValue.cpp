@@ -33,9 +33,7 @@
 
 namespace JSC { namespace B3 {
 
-MemoryValue::~MemoryValue()
-{
-}
+MemoryValue::~MemoryValue() = default;
 
 bool MemoryValue::isLegalOffsetImpl(int64_t offset) const
 {

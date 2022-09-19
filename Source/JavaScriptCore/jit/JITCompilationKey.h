@@ -34,15 +34,10 @@ class JSCell;
 
 class JITCompilationKey {
 public:
-    JITCompilationKey()
-        : m_codeBlock(nullptr)
-        , m_mode(JITCompilationMode::InvalidCompilation)
-    {
-    }
-    
+    JITCompilationKey() = default;
+
     JITCompilationKey(WTF::HashTableDeletedValueType)
-        : m_codeBlock(nullptr)
-        , m_mode(JITCompilationMode::DFG)
+        : m_mode(JITCompilationMode::DFG)
     {
     }
     
@@ -79,8 +74,8 @@ public:
 
 private:
     // Either CodeBlock* or UnlinkedCodeBlock* for basleline JIT.
-    JSCell* m_codeBlock;
-    JITCompilationMode m_mode;
+    JSCell* m_codeBlock { nullptr };
+    JITCompilationMode m_mode { JITCompilationMode::InvalidCompilation };
 };
 
 struct JITCompilationKeyHash {

@@ -41,9 +41,7 @@ public:
     using ValuesConstIteratorRange = typename ImplType::KeysConstIteratorRange;
     using AddResult = typename ImplType::AddResult;
 
-    HashCountedSet()
-    {
-    }
+    HashCountedSet() = default;
 
     HashCountedSet(std::initializer_list<typename ImplType::KeyValuePairType> initializerList)
     {

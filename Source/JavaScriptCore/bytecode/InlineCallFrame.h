@@ -179,11 +179,11 @@ struct InlineCallFrame {
     WriteBarrier<CodeBlock> baselineCodeBlock;
     CodeOrigin directCaller;
 
-    unsigned argumentCountIncludingThis : 22; // Do not include fixups.
-    unsigned tmpOffset : 10;
-    signed stackOffset : 28;
-    unsigned kind : 3; // real type is Kind
-    bool isClosureCall : 1; // If false then we know that callee/scope are constants and the DFG won't treat them as variables, i.e. they have to be recovered manually.
+    unsigned argumentCountIncludingThis : 22 { 0 }; // Do not include fixups.
+    unsigned tmpOffset : 10 { 0 };
+    signed stackOffset : 28 { 0 };
+    unsigned kind : 3 { Call }; // real type is Kind
+    bool isClosureCall : 1 { false }; // If false then we know that callee/scope are constants and the DFG won't treat them as variables, i.e. they have to be recovered manually.
     VirtualRegister argumentCountRegister; // Only set when we inline a varargs call.
 
     ValueRecovery calleeRecovery;
@@ -191,14 +191,7 @@ struct InlineCallFrame {
     // There is really no good notion of a "default" set of values for
     // InlineCallFrame's fields. This constructor is here just to reduce confusion if
     // we forgot to initialize explicitly.
-    InlineCallFrame()
-        : argumentCountIncludingThis(0)
-        , tmpOffset(0)
-        , stackOffset(0)
-        , kind(Call)
-        , isClosureCall(false)
-    {
-    }
+    InlineCallFrame() = default;
     
     bool isVarargs() const
     {

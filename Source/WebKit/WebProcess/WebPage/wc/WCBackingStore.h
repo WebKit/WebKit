@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "ImageBufferBackendHandle.h"
 #include "ImageBufferBackendHandleSharing.h"
 #include <WebCore/ImageBuffer.h>
@@ -76,3 +78,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

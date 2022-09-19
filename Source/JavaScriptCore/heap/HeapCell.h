@@ -46,7 +46,7 @@ public:
         Auxiliary
     };
     
-    HeapCell() { }
+    HeapCell() = default;
     
     // We're intentionally only zapping the bits for the structureID and leaving
     // the rest of the cell header bits intact for crash analysis uses.

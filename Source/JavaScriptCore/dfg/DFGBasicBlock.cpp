@@ -37,19 +37,6 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BasicBlock);
 BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals, unsigned numTmps, float executionCount)
     : bytecodeBegin(bytecodeBegin)
     , index(NoBlock)
-    , cfaStructureClobberStateAtHead(StructuresAreWatched)
-    , cfaStructureClobberStateAtTail(StructuresAreWatched)
-    , cfaBranchDirection(InvalidBranchDirection)
-    , cfaHasVisited(false)
-    , cfaShouldRevisit(false)
-    , cfaDidFinish(true)
-    , intersectionOfCFAHasVisited(true)
-    , isOSRTarget(false)
-    , isCatchEntrypoint(false)
-#if ASSERT_ENABLED
-    , isLinked(false)
-#endif
-    , isReachable(false)
     , variablesAtHead(numArguments, numLocals, numTmps)
     , variablesAtTail(numArguments, numLocals, numTmps)
     , valuesAtHead(numArguments, numLocals, numTmps)
@@ -59,9 +46,7 @@ BasicBlock::BasicBlock(BytecodeIndex bytecodeBegin, unsigned numArguments, unsig
 {
 }
 
-BasicBlock::~BasicBlock()
-{
-}
+BasicBlock::~BasicBlock() = default;
 
 void BasicBlock::ensureLocals(unsigned newNumLocals)
 {
@@ -146,8 +131,7 @@ BasicBlock::SSAData::SSAData(BasicBlock* block)
     availabilityAtTail.m_locals = Operands<Availability>(OperandsLike, block->variablesAtHead);
 }
 
-BasicBlock::SSAData::~SSAData() { }
-
+BasicBlock::SSAData::~SSAData() = default;
 } } // namespace JSC::DFG
 
 namespace WTF {

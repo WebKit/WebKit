@@ -59,9 +59,6 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity)
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
-    , m_indexVector()
-    , m_keyCount(0)
-    , m_deletedCount(0)
 {
     ASSERT(isPowerOf2(m_indexSize));
     bool isCompact = tableCapacity() < UINT8_MAX;
@@ -96,9 +93,6 @@ PropertyTable::PropertyTable(VM& vm, unsigned initialCapacity, const PropertyTab
     : JSCell(vm, vm.propertyTableStructure.get())
     , m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
-    , m_indexVector()
-    , m_keyCount(0)
-    , m_deletedCount(0)
 {
     ASSERT(isPowerOf2(m_indexSize));
     ASSERT(initialCapacity >= other.m_keyCount);

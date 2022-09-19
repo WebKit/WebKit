@@ -185,6 +185,19 @@ void WorkerOrWorkletThread::workerOrWorkletThread()
     g_main_context_pop_thread_default(mainContext.get());
 #endif
 
+    if (!m_childThreads.isEmpty()) {
+        m_runWhenLastChildThreadIsGone = [this, protectedThis = WTFMove(protectedThis)]() mutable {
+            destroyWorkerGlobalScope(WTFMove(protectedThis));
+        };
+        return;
+    }
+    destroyWorkerGlobalScope(WTFMove(protectedThis));
+}
+
+void WorkerOrWorkletThread::destroyWorkerGlobalScope(Ref<WorkerOrWorkletThread>&& protectedThis)
+{
+    ASSERT(m_childThreads.isEmpty());
+
     RefPtr<Thread> protector = m_thread;
 
     ASSERT(m_globalScope->hasOneRef());
@@ -242,8 +255,6 @@ void WorkerOrWorkletThread::start(Function<void(const String&)>&& evaluateCallba
 
 void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
 {
-    ASSERT(isMainThread());
-
     // Mutex protection is necessary to ensure that m_workerGlobalScope isn't changed by
     // WorkerThread::workerThread() while we're accessing it. Note also that stop() can
     // be called before m_workerGlobalScope is fully created.
@@ -266,7 +277,8 @@ void WorkerOrWorkletThread::stop(Function<void()>&& stoppedCallback)
 
     // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
     if (globalScope()) {
-        globalScope()->script()->scheduleExecutionTermination();
+        if (auto* script = globalScope()->script())
+            script->scheduleExecutionTermination();
 
         if (is<WorkerMainRunLoop>(m_runLoop.get())) {
             auto globalScope = std::exchange(m_globalScope, nullptr);
@@ -333,6 +345,18 @@ void WorkerOrWorkletThread::releaseFastMallocFreeMemoryInAllThreads()
             WTF::releaseFastMallocFreeMemory();
         });
     }
+}
+
+void WorkerOrWorkletThread::addChildThread(WorkerOrWorkletThread& childThread)
+{
+    m_childThreads.add(&childThread);
+}
+
+void WorkerOrWorkletThread::removeChildThread(WorkerOrWorkletThread& childThread)
+{
+    m_childThreads.remove(&childThread);
+    if (m_childThreads.isEmpty() && m_runWhenLastChildThreadIsGone)
+        std::exchange(m_runWhenLastChildThreadIsGone, nullptr)();
 }
 
 } // namespace WebCore

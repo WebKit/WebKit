@@ -311,7 +311,8 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
                        TSymbolTable *symbolTable,
                        PerformanceDiagnostics *perfDiagnostics,
                        const std::map<int, const TInterfaceBlock *> &uniformBlockOptimizedMap,
-                       const std::vector<InterfaceBlock> &shaderStorageBlocks)
+                       const std::vector<InterfaceBlock> &shaderStorageBlocks,
+                       bool isEarlyFragmentTestsSpecified)
     : TIntermTraverser(true, true, true, symbolTable),
       mShaderType(shaderType),
       mShaderSpec(shaderSpec),
@@ -328,6 +329,7 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
       mCurrentFunctionMetadata(nullptr),
       mWorkGroupSize(workGroupSize),
       mPerfDiagnostics(perfDiagnostics),
+      mIsEarlyFragmentTestsSpecified(isEarlyFragmentTestsSpecified),
       mNeedStructMapping(false)
 {
     mUsesFragColor        = false;
@@ -2200,8 +2202,12 @@ bool OutputHLSL::visitFunctionDefinition(Visit visit, TIntermFunctionDefinition 
                     << "VS_OUTPUT main(VS_INPUT input)";
                 break;
             case GL_FRAGMENT_SHADER:
-                out << "@@ PIXEL OUTPUT @@\n\n"
-                    << "PS_OUTPUT main(@@ PIXEL MAIN PARAMETERS @@)";
+                out << "@@ PIXEL OUTPUT @@\n\n";
+                if (mIsEarlyFragmentTestsSpecified)
+                {
+                    out << "[earlydepthstencil]\n";
+                }
+                out << "PS_OUTPUT main(@@ PIXEL MAIN PARAMETERS @@)";
                 break;
             case GL_COMPUTE_SHADER:
                 out << "[numthreads(" << mWorkGroupSize[0] << ", " << mWorkGroupSize[1] << ", "

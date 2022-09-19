@@ -233,6 +233,9 @@ ExceptionOr<void> Location::replace(DOMWindow& activeWindow, DOMWindow& firstWin
     if (!completedURL.isValid())
         return Exception { SyntaxError };
 
+    if (!activeWindow.document()->canNavigate(frame, completedURL))
+        return Exception { SecurityError };
+
     // We call DOMWindow::setLocation directly here because replace() always operates on the current frame.
     frame->document()->domWindow()->setLocation(activeWindow, completedURL, LockHistoryAndBackForwardList);
     return { };

@@ -40,33 +40,6 @@ struct RenderPassTimestampWrite {
     WebGPUIdentifier querySet;
     PAL::WebGPU::Size32 queryIndex { 0 };
     PAL::WebGPU::RenderPassTimestampLocation location { PAL::WebGPU::RenderPassTimestampLocation::Beginning };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << querySet;
-        encoder << queryIndex;
-        encoder << location;
-    }
-
-    template<class Decoder> static std::optional<RenderPassTimestampWrite> decode(Decoder& decoder)
-    {
-        std::optional<WebGPUIdentifier> querySet;
-        decoder >> querySet;
-        if (!querySet)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::Size32> queryIndex;
-        decoder >> queryIndex;
-        if (!queryIndex)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::RenderPassTimestampLocation> location;
-        decoder >> location;
-        if (!location)
-            return std::nullopt;
-
-        return { { WTFMove(*querySet), WTFMove(*queryIndex), WTFMove(*location) } };
-    }
 };
 
 using RenderPassTimestampWrites = Vector<RenderPassTimestampWrite>;

@@ -40,7 +40,7 @@ public:
         Local
     };
 
-    virtual ~FrontendChannel() { }
+    virtual ~FrontendChannel() = default;
     virtual ConnectionType connectionType() const = 0;
     virtual void sendMessageToFrontend(const String& message) = 0;
 };

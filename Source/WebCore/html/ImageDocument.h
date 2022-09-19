@@ -36,7 +36,9 @@ class ImageDocument final : public HTMLDocument {
 public:
     static Ref<ImageDocument> create(Frame& frame, const URL& url)
     {
-        return adoptRef(*new ImageDocument(frame, url));
+        auto document = adoptRef(*new ImageDocument(frame, url));
+        document->addToContextsMap();
+        return document;
     }
 
     WEBCORE_EXPORT HTMLImageElement* imageElement() const;

@@ -143,6 +143,10 @@ macro(_WEBKIT_TARGET _target_logical_name _target_cmake_name)
     target_include_directories(${_target_cmake_name} SYSTEM PRIVATE "$<BUILD_INTERFACE:${${_target_logical_name}_SYSTEM_INCLUDE_DIRECTORIES}>")
     target_include_directories(${_target_cmake_name} PRIVATE "$<BUILD_INTERFACE:${${_target_logical_name}_PRIVATE_INCLUDE_DIRECTORIES}>")
 
+    if (DEVELOPER_MODE_CXX_FLAGS)
+        target_compile_options(${_target_cmake_name} PRIVATE ${DEVELOPER_MODE_CXX_FLAGS})
+    endif ()
+
     target_compile_definitions(${_target_cmake_name} PRIVATE "BUILDING_${_target_logical_name}")
     if (${_target_logical_name}_DEFINITIONS)
         target_compile_definitions(${_target_cmake_name} PUBLIC ${${_target_logical_name}_DEFINITIONS})

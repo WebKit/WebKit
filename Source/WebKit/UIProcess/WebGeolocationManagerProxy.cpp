@@ -40,7 +40,7 @@ namespace WebKit {
 
 static inline WebProcessProxy& connectionToWebProcessProxy(const IPC::Connection& connection)
 {
-    return static_cast<WebProcessProxy&>(connection.client());
+    return static_cast<WebProcessProxy&>(*connection.client());
 }
 
 const char* WebGeolocationManagerProxy::supplementName()

@@ -42,9 +42,7 @@ MarkingConstraintSolver::MarkingConstraintSolver(MarkingConstraintSet& set)
         });
 }
 
-MarkingConstraintSolver::~MarkingConstraintSolver()
-{
-}
+MarkingConstraintSolver::~MarkingConstraintSolver() = default;
 
 bool MarkingConstraintSolver::didVisitSomething() const
 {

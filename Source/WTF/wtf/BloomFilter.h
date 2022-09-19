@@ -40,7 +40,7 @@ class BloomFilter {
 public:
     static constexpr size_t tableSize = 1 << keyBits;
 
-    BloomFilter();
+    BloomFilter() = default;
 
     void add(unsigned hash);
     // For example SHA1::Digest.
@@ -70,14 +70,8 @@ private:
     bool isBitSet(unsigned key) const;
     void setBit(unsigned key);
 
-    std::array<unsigned, tableSize / bitsPerPosition> m_bitArray;
+    std::array<unsigned, tableSize / bitsPerPosition> m_bitArray { };
 };
-
-template <unsigned keyBits>
-inline BloomFilter<keyBits>::BloomFilter()
-    : m_bitArray()
-{
-}
 
 template <unsigned keyBits>
 inline bool BloomFilter<keyBits>::mayContain(unsigned hash) const
@@ -161,7 +155,7 @@ public:
     static constexpr size_t tableSize = 1 << keyBits;
     static unsigned maximumCount() { return std::numeric_limits<uint8_t>::max(); }
     
-    CountingBloomFilter();
+    CountingBloomFilter() = default;
 
     void add(unsigned hash);
     void remove(unsigned hash);
@@ -196,14 +190,8 @@ private:
     const uint8_t& firstBucket(unsigned hash) const { return m_buckets[hash & keyMask]; }
     const uint8_t& secondBucket(unsigned hash) const { return m_buckets[(hash >> 16) & keyMask]; }
 
-    std::array<uint8_t, tableSize> m_buckets;
+    std::array<uint8_t, tableSize> m_buckets { };
 };
-
-template <unsigned keyBits>
-inline CountingBloomFilter<keyBits>::CountingBloomFilter()
-    : m_buckets()
-{
-}
 
 template <unsigned keyBits>
 inline void CountingBloomFilter<keyBits>::add(unsigned hash)

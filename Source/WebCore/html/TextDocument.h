@@ -33,7 +33,9 @@ class TextDocument final : public HTMLDocument {
 public:
     static Ref<TextDocument> create(Frame* frame, const Settings& settings, const URL& url, ScriptExecutionContextIdentifier identifier)
     {
-        return adoptRef(*new TextDocument(frame, settings, url, identifier));
+        auto document = adoptRef(*new TextDocument(frame, settings, url, identifier));
+        document->addToContextsMap();
+        return document;
     }
 
 private:

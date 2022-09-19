@@ -198,8 +198,6 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalOb
         JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(globalObject)];
         id script = valueToObject(context, toRef(globalObject, callFrame->argument(0)));
 
-        MarkedArgumentBuffer args;
-
         auto rejectPromise = [&] (String message) {
             strongPromise.get()->reject(globalObject, createTypeError(globalObject, message));
             return encodedJSUndefined();

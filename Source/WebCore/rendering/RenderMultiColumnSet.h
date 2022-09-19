@@ -163,8 +163,6 @@ private:
 
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
 
-    void adjustFragmentBoundsFromFragmentedFlowPortionRect(LayoutRect& fragmentBounds) const override;
-
     Vector<LayoutRect> fragmentRectsForFlowContentRect(const LayoutRect&) final;
 
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;

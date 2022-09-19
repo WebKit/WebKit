@@ -83,7 +83,7 @@ public:
     RenderObject::HighlightState selectionState() const;
 
     const RenderObject& renderer() const;
-    const RenderBlockFlow& containingBlock() const;
+    const RenderBlockFlow& formattingContextRoot() const;
     const RenderStyle& style() const;
 
     // FIXME: Remove. For intermediate porting steps only.
@@ -227,10 +227,10 @@ inline const RenderObject& Box::renderer() const
     });
 }
 
-inline const RenderBlockFlow& Box::containingBlock() const
+inline const RenderBlockFlow& Box::formattingContextRoot() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) -> const RenderBlockFlow& {
-        return path.containingBlock();
+        return path.formattingContextRoot();
     });
 }
 

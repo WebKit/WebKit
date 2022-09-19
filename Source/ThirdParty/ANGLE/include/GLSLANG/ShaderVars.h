@@ -213,6 +213,7 @@ struct ShaderVariable
     int binding;
     GLenum imageUnitFormat;
     int offset;
+    bool rasterOrdered;
     bool readonly;
     bool writeonly;
 

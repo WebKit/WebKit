@@ -42,8 +42,8 @@
     void getProgramResourceName(ShaderProgramID programPacked, GLenum programInterface,            \
                                 GLuint index, GLsizei bufSize, GLsizei *length, GLchar *name);     \
     void getProgramResourceiv(ShaderProgramID programPacked, GLenum programInterface,              \
-                              GLuint index, GLsizei propCount, const GLenum *props,                \
-                              GLsizei bufSize, GLsizei *length, GLint *params);                    \
+                              GLuint index, GLsizei propCount, const GLenum *props, GLsizei count, \
+                              GLsizei *length, GLint *params);                                     \
     void getTexLevelParameterfv(TextureTarget targetPacked, GLint level, GLenum pname,             \
                                 GLfloat *params);                                                  \
     void getTexLevelParameteriv(TextureTarget targetPacked, GLint level, GLenum pname,             \

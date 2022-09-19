@@ -236,8 +236,8 @@ bool IsRenderPassStartedAndTransitionsImageLayout(
     return renderPassCommands.started() && renderPassCommands.isImageWithLayoutTransition(image);
 }
 
-SurfaceRotation DetermineSurfaceRotation(gl::Framebuffer *framebuffer,
-                                         WindowSurfaceVk *windowSurface)
+SurfaceRotation DetermineSurfaceRotation(const gl::Framebuffer *framebuffer,
+                                         const WindowSurfaceVk *windowSurface)
 {
     if (windowSurface && framebuffer->isDefault())
     {
@@ -325,7 +325,16 @@ vk::ResourceAccess GetDepthAccess(const gl::DepthStencilState &dsState,
     {
         return vk::ResourceAccess::Unused;
     }
-    return dsState.isDepthMaskedOut() ? vk::ResourceAccess::ReadOnly : vk::ResourceAccess::Write;
+
+    if (dsState.isDepthMaskedOut())
+    {
+        // If depthFunc is GL_ALWAYS or GL_NEVER, we do not need to load depth value.
+        return (dsState.depthFunc == GL_ALWAYS || dsState.depthFunc == GL_NEVER)
+                   ? vk::ResourceAccess::Unused
+                   : vk::ResourceAccess::ReadOnly;
+    }
+
+    return vk::ResourceAccess::Write;
 }
 
 vk::ResourceAccess GetStencilAccess(const gl::DepthStencilState &dsState,
@@ -756,15 +765,16 @@ ContextVk::ContextVk(const gl::State &state, gl::ErrorSet *errorSet, RendererVk 
     if (getFeatures().supportsExtendedDynamicState.enabled)
     {
         mDynamicStateDirtyBits |= DirtyBits{
-            DIRTY_BIT_DYNAMIC_CULL_MODE,
-            DIRTY_BIT_DYNAMIC_FRONT_FACE,
-            DIRTY_BIT_VERTEX_BUFFERS,
-            DIRTY_BIT_DYNAMIC_DEPTH_TEST_ENABLE,
-            DIRTY_BIT_DYNAMIC_DEPTH_WRITE_ENABLE,
-            DIRTY_BIT_DYNAMIC_DEPTH_COMPARE_OP,
-            DIRTY_BIT_DYNAMIC_STENCIL_TEST_ENABLE,
+            DIRTY_BIT_DYNAMIC_CULL_MODE,         DIRTY_BIT_DYNAMIC_FRONT_FACE,
+            DIRTY_BIT_DYNAMIC_DEPTH_TEST_ENABLE, DIRTY_BIT_DYNAMIC_DEPTH_WRITE_ENABLE,
+            DIRTY_BIT_DYNAMIC_DEPTH_COMPARE_OP,  DIRTY_BIT_DYNAMIC_STENCIL_TEST_ENABLE,
             DIRTY_BIT_DYNAMIC_STENCIL_OP,
         };
+
+        if (!getFeatures().forceStaticVertexStrideState.enabled)
+        {
+            mDynamicStateDirtyBits.set(DIRTY_BIT_VERTEX_BUFFERS);
+        }
     }
     if (getFeatures().supportsExtendedDynamicState2.enabled)
     {
@@ -2070,7 +2080,8 @@ angle::Result ContextVk::handleDirtyGraphicsVertexBuffers(DirtyBits::Iterator *d
     const gl::AttribArray<VkDeviceSize> &bufferOffsets =
         vertexArrayVk->getCurrentArrayBufferOffsets();
 
-    if (getFeatures().supportsExtendedDynamicState.enabled)
+    if (getFeatures().supportsExtendedDynamicState.enabled &&
+        !getFeatures().forceStaticVertexStrideState.enabled)
     {
         const gl::AttribArray<GLuint> &bufferStrides =
             vertexArrayVk->getCurrentArrayBufferStrides();
@@ -4212,6 +4223,18 @@ SurfaceRotation ContextVk::getRotationReadFramebuffer() const
     return mCurrentRotationReadFramebuffer;
 }
 
+SurfaceRotation ContextVk::getSurfaceRotationImpl(const gl::Framebuffer *framebuffer,
+                                                  const egl::Surface *surface)
+{
+    SurfaceRotation surfaceRotation = SurfaceRotation::Identity;
+    if (surface && surface->getType() == EGL_WINDOW_BIT)
+    {
+        const WindowSurfaceVk *windowSurface = GetImplAs<WindowSurfaceVk>(surface);
+        surfaceRotation                      = DetermineSurfaceRotation(framebuffer, windowSurface);
+    }
+    return surfaceRotation;
+}
+
 void ContextVk::updateColorMasks()
 {
     const gl::BlendStateExt &blendStateExt = mState.getBlendStateExt();
@@ -4689,6 +4712,23 @@ angle::Result ContextVk::invalidateProgramExecutableHelper(const gl::Context *co
             onColorAccessChange();
         }
 
+        // If permanentlySwitchToFramebufferFetchMode is enabled,
+        // mIsInFramebufferFetchMode will remain true throughout the entire time.
+        // If we switch from a program that doesn't use framebuffer fetch and doesn't
+        // read/write to the framebuffer color attachment, to a
+        // program that uses framebuffer fetch and needs to read from the framebuffer
+        // color attachment, we will miss the call
+        // onColorAccessChange() above and miss setting the dirty bit
+        // DIRTY_BIT_COLOR_ACCESS. This means we will not call
+        // handleDirtyGraphicsColorAccess that updates the access value of
+        // framebuffer color attachment from unused to readonly. This makes the
+        // color attachment to continue using LoadOpNone, and the second program
+        // will not be able to read the value in the color attachment.
+        if (getFeatures().permanentlySwitchToFramebufferFetchMode.enabled && hasFramebufferFetch)
+        {
+            onColorAccessChange();
+        }
+
         updateStencilWriteWorkaround();
     }
 
@@ -4936,7 +4976,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
                 break;
             case gl::State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING:
                 updateFlipViewportReadFramebuffer(context->getState());
-                updateSurfaceRotationReadFramebuffer(glState);
+                updateSurfaceRotationReadFramebuffer(glState, context->getCurrentReadSurface());
                 break;
             case gl::State::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING:
             {
@@ -4957,7 +4997,7 @@ angle::Result ContextVk::syncState(const gl::Context *context,
 
                 drawFramebufferVk->setReadOnlyDepthFeedbackLoopMode(false);
                 updateFlipViewportDrawFramebuffer(glState);
-                updateSurfaceRotationDrawFramebuffer(glState);
+                updateSurfaceRotationDrawFramebuffer(glState, context->getCurrentDrawSurface());
                 SpecConstUsageBits usageBits = getCurrentProgramSpecConstUsageBits();
                 updateGraphicsPipelineDescWithSpecConstUsageBits(usageBits);
                 updateViewport(drawFramebufferVk, glState.getViewport(), glState.getNearPlane(),
@@ -5182,7 +5222,8 @@ angle::Result ContextVk::onMakeCurrent(const gl::Context *context)
     mRenderer->reloadVolkIfNeeded();
 
     // Flip viewports if the user did not request that the surface is flipped.
-    egl::Surface *drawSurface = context->getCurrentDrawSurface();
+    const egl::Surface *drawSurface = context->getCurrentDrawSurface();
+    const egl::Surface *readSurface = context->getCurrentReadSurface();
     mFlipYForCurrentSurface =
         drawSurface != nullptr &&
         !IsMaskFlagSet(drawSurface->getOrientation(), EGL_SURFACE_ORIENTATION_INVERT_Y_ANGLE);
@@ -5199,8 +5240,8 @@ angle::Result ContextVk::onMakeCurrent(const gl::Context *context)
     const gl::State &glState = context->getState();
     updateFlipViewportDrawFramebuffer(glState);
     updateFlipViewportReadFramebuffer(glState);
-    updateSurfaceRotationDrawFramebuffer(glState);
-    updateSurfaceRotationReadFramebuffer(glState);
+    updateSurfaceRotationDrawFramebuffer(glState, drawSurface);
+    updateSurfaceRotationReadFramebuffer(glState, readSurface);
 
     invalidateDriverUniforms();
     if (!getFeatures().preferDriverUniformOverSpecConst.enabled)
@@ -5285,18 +5326,18 @@ void ContextVk::updateGraphicsPipelineDescWithSpecConstUsageBits(SpecConstUsageB
     }
 }
 
-void ContextVk::updateSurfaceRotationDrawFramebuffer(const gl::State &glState)
+void ContextVk::updateSurfaceRotationDrawFramebuffer(const gl::State &glState,
+                                                     const egl::Surface *currentDrawSurface)
 {
-    gl::Framebuffer *drawFramebuffer = glState.getDrawFramebuffer();
     mCurrentRotationDrawFramebuffer =
-        DetermineSurfaceRotation(drawFramebuffer, mCurrentWindowSurface);
+        getSurfaceRotationImpl(glState.getDrawFramebuffer(), currentDrawSurface);
 }
 
-void ContextVk::updateSurfaceRotationReadFramebuffer(const gl::State &glState)
+void ContextVk::updateSurfaceRotationReadFramebuffer(const gl::State &glState,
+                                                     const egl::Surface *currentReadSurface)
 {
-    gl::Framebuffer *readFramebuffer = glState.getReadFramebuffer();
     mCurrentRotationReadFramebuffer =
-        DetermineSurfaceRotation(readFramebuffer, mCurrentWindowSurface);
+        getSurfaceRotationImpl(glState.getReadFramebuffer(), currentReadSurface);
 }
 
 gl::Caps ContextVk::getNativeCaps() const
@@ -5336,7 +5377,7 @@ ProgramImpl *ContextVk::createProgram(const gl::ProgramState &state)
 
 FramebufferImpl *ContextVk::createFramebuffer(const gl::FramebufferState &state)
 {
-    return FramebufferVk::CreateUserFBO(mRenderer, state);
+    return new FramebufferVk(mRenderer, state);
 }
 
 TextureImpl *ContextVk::createTexture(const gl::TextureState &state)
@@ -5714,10 +5755,7 @@ angle::Result ContextVk::onPauseTransformFeedback()
             return flushCommandsAndEndRenderPass(RenderPassClosureReason::XfbPause);
         }
     }
-    else if (getFeatures().emulateTransformFeedback.enabled)
-    {
-        invalidateCurrentTransformFeedbackBuffers();
-    }
+    onTransformFeedbackStateChanged();
     return angle::Result::Continue;
 }
 

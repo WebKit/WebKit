@@ -80,7 +80,6 @@ angle::Result BufferBlock::init(Context *context,
     ASSERT(!mBuffer.valid());
     ASSERT(!mDeviceMemory.valid());
 
-    mVirtualBlockMutex.init(renderer->isAsyncCommandQueueEnabled());
     ANGLE_VK_TRY(context, mVirtualBlock.init(renderer->getDevice(), flags, size));
 
     mBuffer              = std::move(buffer);
@@ -126,7 +125,7 @@ void BufferBlock::unmap(const VkDevice device)
 
 void BufferBlock::free(VmaVirtualAllocation allocation, VkDeviceSize offset)
 {
-    std::lock_guard<ConditionalMutex> lock(mVirtualBlockMutex);
+    std::unique_lock<std::mutex> lock(mVirtualBlockMutex);
     mVirtualBlock.free(allocation, offset);
 }
 
@@ -137,7 +136,7 @@ int32_t BufferBlock::getAndIncrementEmptyCounter()
 
 void BufferBlock::calculateStats(vma::StatInfo *pStatInfo) const
 {
-    std::lock_guard<ConditionalMutex> lock(mVirtualBlockMutex);
+    std::unique_lock<std::mutex> lock(mVirtualBlockMutex);
     mVirtualBlock.calculateStats(pStatInfo);
 }
 

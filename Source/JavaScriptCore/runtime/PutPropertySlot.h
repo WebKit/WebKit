@@ -42,15 +42,11 @@ public:
     enum Context : uint8_t { UnknownContext, PutById, PutByIdEval, ReflectSet };
 
     PutPropertySlot(JSValue thisValue, bool isStrictMode = false, Context context = UnknownContext, bool isInitialization = false)
-        : m_base(nullptr)
-        , m_thisValue(thisValue)
+        : m_thisValue(thisValue)
         , m_offset(invalidOffset)
         , m_isStrictMode(isStrictMode)
         , m_isInitialization(isInitialization)
-        , m_isTaintedByOpaqueObject(false)
-        , m_type(Uncachable)
         , m_context(context)
-        , m_cacheability(CachingAllowed)
     {
     }
 
@@ -132,15 +128,15 @@ public:
 private:
     bool isCacheable() const { return m_cacheability == CachingAllowed; }
 
-    JSObject* m_base;
+    JSObject* m_base { nullptr };
     JSValue m_thisValue;
     PropertyOffset m_offset;
     bool m_isStrictMode : 1;
     bool m_isInitialization : 1;
-    bool m_isTaintedByOpaqueObject : 1;
-    Type m_type;
+    bool m_isTaintedByOpaqueObject : 1 { false };
+    Type m_type { Uncachable };
     Context m_context;
-    CacheabilityType m_cacheability;
+    CacheabilityType m_cacheability { CachingAllowed };
     CustomAccessorValueFunc m_putFunction;
 };
 

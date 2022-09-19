@@ -28,6 +28,14 @@
 
 #import <XCTest/XCTest.h>
 
+static WGSL::Token checkSingleToken(const String& string, WGSL::TokenType type)
+{
+    WGSL::Lexer<LChar> lexer(string);
+    WGSL::Token result = lexer.lex();
+    XCTAssertEqual(result.m_type, type);
+    return result;
+};
+
 @interface WGSLLexerTests : XCTestCase
 
 @end
@@ -65,14 +73,29 @@
     checkSingleLiteral("42e-a"_s, WGSL::TokenType::IntegerLiteral, 42);
 }
 
-- (void) testLexerOfSpecialTokens {
-    auto checkSingleToken = [] (const String& string, WGSL::TokenType type) {
-        WGSL::Lexer<LChar> lexer(string);
-        WGSL::Token result = lexer.lex();
-        XCTAssertEqual(result.m_type, type);
-        return result;
-    };
+- (void) testLexerOfKeywordTokens {
+    using WGSL::TokenType;
 
+    checkSingleToken("array"_s,      TokenType::KeywordArray);
+    checkSingleToken("fn"_s,         TokenType::KeywordFn);
+    checkSingleToken("function"_s,   TokenType::KeywordFunction);
+    checkSingleToken("private"_s,    TokenType::KeywordPrivate);
+    checkSingleToken("read"_s,       TokenType::KeywordRead);
+    checkSingleToken("read_write"_s, TokenType::KeywordReadWrite);
+    checkSingleToken("return"_s,     TokenType::KeywordReturn);
+    checkSingleToken("storage"_s,    TokenType::KeywordStorage);
+    checkSingleToken("struct"_s,     TokenType::KeywordStruct);
+    checkSingleToken("uniform"_s,    TokenType::KeywordUniform);
+    checkSingleToken("var"_s,        TokenType::KeywordVar);
+    checkSingleToken("workgroup"_s,  TokenType::KeywordWorkgroup);
+    checkSingleToken("write"_s,      TokenType::KeywordWrite);
+    checkSingleToken("i32"_s,        TokenType::KeywordI32);
+    checkSingleToken("u32"_s,        TokenType::KeywordU32);
+    checkSingleToken("f32"_s,        TokenType::KeywordF32);
+    checkSingleToken("bool"_s,       TokenType::KeywordBool);
+}
+
+- (void) testLexerOfSpecialTokens {
     checkSingleToken("->"_s, WGSL::TokenType::Arrow);
     checkSingleToken("@"_s,  WGSL::TokenType::Attribute);
     checkSingleToken("{"_s,  WGSL::TokenType::BraceLeft);
@@ -382,7 +405,7 @@
     checkNextTokenIs(WGSL::TokenType::KeywordVar);
     checkNextTokenIsIdentifier("pos"_s);
     checkNextTokenIs(WGSL::TokenType::Equal);
-    checkNextTokenIsIdentifier("array"_s);
+    checkNextTokenIs(WGSL::TokenType::KeywordArray);
     checkNextTokenIs(WGSL::TokenType::LT);
     checkNextTokenIsIdentifier("vec2"_s);
     checkNextTokenIs(WGSL::TokenType::LT);

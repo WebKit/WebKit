@@ -200,6 +200,11 @@ struct FeaturesVk : FeatureSetBase
                                                "extension with the independentResolveNone feature",
                                                &members, "http://anglebug.com/4836"};
 
+    FeatureInfo supportsMultisampledRenderToSingleSampledGOOGLEX = {
+        "supportsMultisampledRenderToSingleSampledGOOGLEX", FeatureCategory::VulkanFeatures,
+        "VkDevice supports the VK_GOOGLEX_multisampled_render_to_single_sampled extension",
+        &members, "http://anglebug.com/4836"};
+
     FeatureInfo supportsMultisampledRenderToSingleSampled = {
         "supportsMultisampledRenderToSingleSampled", FeatureCategory::VulkanFeatures,
         "VkDevice supports the VK_EXT_multisampled_render_to_single_sampled extension", &members,
@@ -285,11 +290,6 @@ struct FeaturesVk : FeatureSetBase
         "persistentlyMappedBuffers", FeatureCategory::VulkanFeatures,
         "Persistently map buffer memory to reduce map/unmap IOCTL overhead.", &members,
         "http://anglebug.com/2162"};
-
-    FeatureInfo extraBufferLoggingAndChecking = {
-        "extraBufferLoggingAndChecking", FeatureCategory::VulkanFeatures,
-        "Enable extra buffer logging and checking to catch rare crashes", &members,
-        "https://issuetracker.google.com/236098131"};
 
     FeatureInfo enablePreRotateSurfaces = {"enablePreRotateSurfaces",
                                            FeatureCategory::VulkanFeatures,
@@ -637,6 +637,12 @@ struct FeaturesVk : FeatureSetBase
         "Prefer adding HOST_VISIBLE flag for DEVICE_LOCAL memory when picking memory types",
         &members, "http://anglebug.com/7047"};
 
+    FeatureInfo forceStaticVertexStrideState = {
+        "forceStaticVertexStrideState", FeatureCategory::VulkanWorkarounds,
+        "Force static state for VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT due to"
+        "driver bugs",
+        &members, "https://bugs.fuchsia.dev/p/fuchsia/issues/detail?id=107106"};
+
     FeatureInfo supportsExtendedDynamicState = {
         "supportsExtendedDynamicState", FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_EXT_extended_dynamic_state extension", &members,
@@ -681,11 +687,9 @@ struct FeaturesVk : FeatureSetBase
         "http://anglebug.com/7553"};
 
     FeatureInfo preferLinearFilterForYUV = {
-        "preferLinearFilterForYUV",
-        FeatureCategory::VulkanFeatures,
-        "Prefer to use VK_FILTER_LINEAR for VkSamplerYcbcrConversion",
-        &members,
-    };
+        "preferLinearFilterForYUV", FeatureCategory::VulkanFeatures,
+        "Prefer to use VK_FILTER_LINEAR for VkSamplerYcbcrConversion", &members,
+        "https://anglebug.com/7382"};
 
     FeatureInfo supportsYuvTarget = {
         "supportsYuvTarget",
@@ -699,6 +703,44 @@ struct FeaturesVk : FeatureSetBase
         "Work around a driver bug where 0 in stencil write mask static state would make the"
         "corresponding dynamic state malfunction in the presence of discard or alpha to coverage",
         &members, "http://anglebug.com/7556"};
+
+    FeatureInfo mapUnspecifiedColorSpaceToPassThrough = {
+        "mapUnspecifiedColorSpaceToPassThrough",
+        FeatureCategory::VulkanFeatures,
+        "Use VK_COLOR_SPACE_PASS_THROUGH_EXT for EGL_NONE or unspecifed color "
+        "spaces",
+        &members,
+    };
+
+    FeatureInfo supportsTimestampSurfaceAttribute = {
+        "supportsTimestampSurfaceAttribute", FeatureCategory::VulkanFeatures,
+        "Platform supports setting frame timestamp surface attribute", &members,
+        "https://anglebug.com/7489"};
+
+    FeatureInfo supportsRasterizationOrderAttachmentAccess = {
+        "supportsRasterizationOrderAttachmentAccess", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_rasterization_order_attachment_access extension", &members,
+        "https://anglebug.com/7604"};
+
+    FeatureInfo eglColorspaceAttributePassthrough = {
+        "eglColorspaceAttributePassthrough", FeatureCategory::VulkanFeatures,
+        "Support passthrough of EGL colorspace attribute values", &members,
+        "https://anglebug.com/7319"};
+
+    FeatureInfo supportsPipelineRobustness = {
+        "supportsPipelineRobustness", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_pipeline_robustness extension", &members,
+        "https://anglebug.com/5845"};
+
+    FeatureInfo supportsVertexInputDynamicState = {
+        "supportsVertexInputDynamicState", FeatureCategory::VulkanFeatures,
+        "VkDevice supports VK_EXT_vertex_input_dynamic_state extension", &members,
+        "https://anglebug.com/7162"};
+
+    FeatureInfo supportsColorWriteEnable = {"supportsColorWriteEnable",
+                                            FeatureCategory::VulkanFeatures,
+                                            "VkDevice supports VK_EXT_color_write_enable extension",
+                                            &members, "https://anglebug.com/7161"};
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

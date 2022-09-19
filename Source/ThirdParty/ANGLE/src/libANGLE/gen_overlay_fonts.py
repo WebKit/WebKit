@@ -203,7 +203,7 @@ def main():
     with open(out_file_h, 'w') as outfile:
         outfile.write(
             template_out_file_h.format(
-                script_name=__file__,
+                script_name=os.path.basename(__file__),
                 font_file=font_file,
                 out_file_name=out_file_h,
                 font_count=len(font_defs),
@@ -219,7 +219,7 @@ def main():
     with open(out_file_cpp, 'w') as outfile:
         outfile.write(
             template_out_file_cpp.format(
-                script_name=__file__,
+                script_name=os.path.basename(__file__),
                 font_file=font_file,
                 out_file_name=out_file_cpp,
                 total_font_data_size=total_font_data_size,

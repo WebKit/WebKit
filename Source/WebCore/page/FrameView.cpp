@@ -267,6 +267,8 @@ void FrameView::reset()
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
     m_delayedTextFragmentIndicatorTimer.stop();
+    m_pendingTextFragmentIndicatorRange.reset();
+    m_pendingTextFragmentIndicatorText = String();
     m_lastViewportSize = IntSize();
     m_lastZoomFactor = 1.0f;
     m_isTrackingRepaints = false;
@@ -618,8 +620,8 @@ void FrameView::applyOverflowToViewport(const RenderElement& renderer, Scrollbar
 
     bool overrideHidden = frame().isMainFrame() && ((frame().frameScaleFactor() > 1) || headerHeight() || footerHeight());
 
-    Overflow overflowX = renderer.effectiveOverflowX();
-    Overflow overflowY = renderer.effectiveOverflowY();
+    Overflow overflowX = renderer.style().overflowX();
+    Overflow overflowY = renderer.style().overflowY();
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGRoot>(renderer)) {
@@ -2228,9 +2230,9 @@ bool FrameView::scrollToFragment(const URL& url)
             
             if (highlightRanges.size()) {
                 auto range = highlightRanges.first();
-                TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered });
-                m_pendingTextFragmentIndicatorRange = range;
-                m_pendingTextFragmentIndicatorText = plainText(range);
+                // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
+                TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+                maintainScrollPositionAtScrollToTextFragmentRange(range);
                 if (frame().settings().scrollToTextFragmentIndicatorEnabled())
                     m_delayedTextFragmentIndicatorTimer.startOneShot(100_ms);
                 return true;
@@ -2319,6 +2321,16 @@ void FrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
         layoutContext().layout();
     else
         scrollToAnchor();
+}
+
+void FrameView::maintainScrollPositionAtScrollToTextFragmentRange(SimpleRange& range)
+{
+    m_pendingTextFragmentIndicatorRange = range;
+    m_pendingTextFragmentIndicatorText = plainText(range);
+    if (!m_pendingTextFragmentIndicatorRange)
+        return;
+
+    scrollToTextFragmentRange();
 }
 
 void FrameView::scrollElementToRect(const Element& element, const IntRect& rect)
@@ -2457,6 +2469,8 @@ void FrameView::textFragmentIndicatorTimerFired()
     ASSERT(frame().document());
     auto& document = *frame().document();
     
+    m_delayedTextFragmentIndicatorTimer.stop();
+    
     if (!m_pendingTextFragmentIndicatorRange)
         return;
     
@@ -2464,17 +2478,51 @@ void FrameView::textFragmentIndicatorTimerFired()
         return;
     
     auto range = m_pendingTextFragmentIndicatorRange.value();
-    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::DelegateMainFrameScroll, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered });
+
+    // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+    
+    maintainScrollPositionAtScrollToTextFragmentRange(range);
     
     auto textIndicator = TextIndicator::createWithRange(range, { TextIndicatorOption::DoNotClipToVisibleRect }, WebCore::TextIndicatorPresentationTransition::Bounce);
-    if (textIndicator)
-        document.page()->chrome().client().setTextIndicator(textIndicator->data());
     
-    cancelScheduledTextFragmentIndicatorTimer();
+    auto* page = frame().page();
+    
+    if (!page)
+        return;
+    
+    if (textIndicator) {
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
+        
+        auto textRects = RenderFlexibleBox::absoluteTextRects(range);
+        
+        HitTestResult result;
+        result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.first().center()), hitType);
+        if (!intersects(range, *result.targetNode()))
+            return;
+        
+        if (textRects.size() >= 2) {
+            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[1].center()), hitType);
+            if (!intersects(range, *result.targetNode()))
+                return;
+        }
+        
+        if (textRects.size() >= 4) {
+            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects.last().center()), hitType);
+            if (!intersects(range, *result.targetNode()))
+                return;
+            result = page->mainFrame().eventHandler().hitTestResultAtPoint(LayoutPoint(textRects[textRects.size() - 2].center()), hitType);
+            if (!intersects(range, *result.targetNode()))
+                return;
+        }
+        document.page()->chrome().client().setTextIndicator(textIndicator->data());
+    }
 }
 
 void FrameView::cancelScheduledTextFragmentIndicatorTimer()
 {
+    if (m_skipScrollResetOfScrollToTextFragmentRange)
+        return;
     m_pendingTextFragmentIndicatorRange.reset();
     m_pendingTextFragmentIndicatorText = String();
     m_delayedTextFragmentIndicatorTimer.stop();
@@ -2915,6 +2963,8 @@ bool FrameView::requestScrollPositionUpdate(const ScrollPosition& position, Scro
         return scrollingCoordinator->requestScrollPositionUpdate(*this, position, scrollType, clamping);
 #else
     UNUSED_PARAM(position);
+    UNUSED_PARAM(scrollType);
+    UNUSED_PARAM(clamping);
 #endif
 
     return false;
@@ -2929,6 +2979,7 @@ bool FrameView::requestAnimatedScrollToPosition(const ScrollPosition& destinatio
         return scrollingCoordinator->requestAnimatedScrollToPosition(*this, destinationPosition, clamping);
 #else
     UNUSED_PARAM(destinationPosition);
+    UNUSED_PARAM(clamping);
 #endif
 
     return false;
@@ -3497,6 +3548,31 @@ void FrameView::scrollToAnchor()
     cancelScheduledScrolls();
 }
 
+void FrameView::scrollToTextFragmentRange()
+{
+    if (!m_pendingTextFragmentIndicatorRange)
+        return;
+
+    auto rangeText = plainText(m_pendingTextFragmentIndicatorRange.value());
+    if (m_pendingTextFragmentIndicatorText != plainText(m_pendingTextFragmentIndicatorRange.value()))
+        return;
+
+    auto range = m_pendingTextFragmentIndicatorRange.value();
+
+    LOG_WITH_STREAM(Scrolling, stream << *this << " scrollToTextFragmentRange() " << range);
+
+    if (!range.startContainer().renderer() || !range.endContainer().renderer())
+        return;
+
+    ASSERT(frame().document());
+    Ref document = *frame().document();
+
+    SetForScope skipScrollResetOfScrollToTextFragmentRange(m_skipScrollResetOfScrollToTextFragmentRange, true);
+
+    // FIXME: <http://webkit.org/b/245262> (Scroll To Text Fragment should use DelegateMainFrameScroll)
+    TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
+}
+
 void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
 {
     // No need to update if it's already crashed or known to be missing.
@@ -3620,6 +3696,8 @@ void FrameView::performPostLayoutTasks()
     }
 
     scrollToAnchor();
+    
+    scrollToTextFragmentRange();
 
     scheduleResizeEventIfNeeded();
     

@@ -356,6 +356,7 @@ def RunTests(test_suite, args, stdoutfile=None, log_output=True):
 
     result = 0
     output = b''
+    output_json = {}
     try:
         with contextlib.ExitStack() as stack:
             device_test_output_path = stack.enter_context(_TempDeviceFile())
@@ -400,7 +401,7 @@ def RunTests(test_suite, args, stdoutfile=None, log_output=True):
         logging.exception(e)
         result = 1
 
-    return result, output
+    return result, output, output_json
 
 
 def GetTraceFromTestName(test_name):

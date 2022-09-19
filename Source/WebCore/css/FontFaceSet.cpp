@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,8 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSFontFace.h"
 #include "JSFontFaceSet.h"
+#include "Quirks.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -165,6 +167,30 @@ void FontFaceSet::load(const String& font, const String& text, LoadPromise&& pro
 
     for (auto& face : matchingFaces)
         face.get().load();
+
+    if (is<Document>(scriptExecutionContext()) && downcast<Document>(scriptExecutionContext())->quirks().shouldEnableFontLoadingAPIQuirk()) {
+        // HBOMax.com expects that loading fonts will succeed, and will totally break when it doesn't. But when lockdown mode is enabled, fonts
+        // fail to load, because that's the whole point of lockdown mode.
+        //
+        // This is a bit of a hack to say "When lockdown mode is enabled, and lockdown mode has removed all the remote fonts, then just pretend
+        // that the fonts loaded successfully." If there are any non-remote fonts still present, don't make any behavior change.
+        //
+        // See also: https://github.com/w3c/csswg-drafts/issues/7680
+
+        bool hasSource = false;
+        for (auto& face : matchingFaces) {
+            if (face.get().sourceCount()) {
+                hasSource = true;
+                break;
+            }
+        }
+        if (!hasSource) {
+            promise.resolve(matchingFaces.map([scriptExecutionContext = scriptExecutionContext()] (const auto& matchingFace) {
+                return matchingFace.get().wrapper(scriptExecutionContext);
+            }));
+            return;
+        }
+    }
 
     for (auto& face : matchingFaces) {
         if (face.get().status() == CSSFontFace::Status::Failure) {

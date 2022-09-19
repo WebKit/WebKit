@@ -49,69 +49,6 @@ struct RenderPassDepthStencilAttachment {
     std::optional<PAL::WebGPU::LoadOp> stencilLoadOp;
     std::optional<PAL::WebGPU::StoreOp> stencilStoreOp;
     bool stencilReadOnly { false };
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << view;
-        encoder << depthClearValue;
-        encoder << depthLoadOp;
-        encoder << depthStoreOp;
-        encoder << depthReadOnly;
-        encoder << stencilClearValue;
-        encoder << stencilLoadOp;
-        encoder << stencilStoreOp;
-        encoder << stencilReadOnly;
-    }
-
-    template<class Decoder> static std::optional<RenderPassDepthStencilAttachment> decode(Decoder& decoder)
-    {
-        std::optional<WebGPUIdentifier> view;
-        decoder >> view;
-        if (!view)
-            return std::nullopt;
-
-        std::optional<float> depthClearValue;
-        decoder >> depthClearValue;
-        if (!depthClearValue)
-            return std::nullopt;
-
-        std::optional<std::optional<PAL::WebGPU::LoadOp>> depthLoadOp;
-        decoder >> depthLoadOp;
-        if (!depthLoadOp)
-            return std::nullopt;
-
-        std::optional<std::optional<PAL::WebGPU::StoreOp>> depthStoreOp;
-        decoder >> depthStoreOp;
-        if (!depthStoreOp)
-            return std::nullopt;
-
-        std::optional<bool> depthReadOnly;
-        decoder >> depthReadOnly;
-        if (!depthReadOnly)
-            return std::nullopt;
-
-        std::optional<PAL::WebGPU::StencilValue> stencilClearValue;
-        decoder >> stencilClearValue;
-        if (!stencilClearValue)
-            return std::nullopt;
-
-        std::optional<std::optional<PAL::WebGPU::LoadOp>> stencilLoadOp;
-        decoder >> stencilLoadOp;
-        if (!stencilLoadOp)
-            return std::nullopt;
-
-        std::optional<std::optional<PAL::WebGPU::StoreOp>> stencilStoreOp;
-        decoder >> stencilStoreOp;
-        if (!stencilStoreOp)
-            return std::nullopt;
-
-        std::optional<bool> stencilReadOnly;
-        decoder >> stencilReadOnly;
-        if (!stencilReadOnly)
-            return std::nullopt;
-
-        return { { WTFMove(*view), WTFMove(*depthClearValue), WTFMove(*depthLoadOp), WTFMove(*depthStoreOp), WTFMove(*depthReadOnly), WTFMove(*stencilClearValue), WTFMove(*stencilLoadOp), WTFMove(*stencilStoreOp), WTFMove(*stencilReadOnly) } };
-    }
 };
 
 } // namespace WebKit::WebGPU

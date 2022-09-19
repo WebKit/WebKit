@@ -1922,7 +1922,6 @@ private:
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
 
-    RefPtr<SerializedScriptValue> m_pendingStateObject;
 #if !LOG_DISABLED
     MonotonicTime m_documentCreationTime;
 #endif

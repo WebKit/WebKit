@@ -28,40 +28,33 @@
 #include "ActiveDOMObject.h"
 #include "ClientOrigin.h"
 #include "EventTarget.h"
+#include "MainThreadPermissionObserverIdentifier.h"
+#include "Page.h"
 #include "PermissionDescriptor.h"
 #include "PermissionName.h"
-#include "PermissionObserver.h"
+#include "PermissionQuerySource.h"
 #include "PermissionState.h"
 
 namespace WebCore {
 
 class ScriptExecutionContext;
 
-class PermissionStatus final : public PermissionObserver, public ActiveDOMObject, public RefCounted<PermissionStatus>, public EventTarget  {
+class PermissionStatus final : public ActiveDOMObject, public RefCounted<PermissionStatus>, public EventTarget  {
     WTF_MAKE_ISO_ALLOCATED(PermissionStatus);
 public:
-    static Ref<PermissionStatus> create(ScriptExecutionContext&, PermissionState, const PermissionDescriptor&);
+    static Ref<PermissionStatus> create(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&);
     ~PermissionStatus();
 
     PermissionState state() const { return m_state; }
     PermissionName name() const { return m_descriptor.name; }
 
+    void stateChanged(PermissionState);
+
     using RefCounted::ref;
     using RefCounted::deref;
 
-    using PermissionObserver::weakPtrFactory;
-    using PermissionObserver::WeakValueType;
-    using PermissionObserver::WeakPtrImplType;
-
 private:
-    PermissionStatus(ScriptExecutionContext&, PermissionState, const PermissionDescriptor&);
-
-    // PermissionObserver
-    PermissionState currentState() const final { return m_state; }
-    void stateChanged(PermissionState) final;
-    const ClientOrigin& origin() const final { return m_origin; }
-    const PermissionDescriptor& descriptor() const final { return m_descriptor; }
-    const ScriptExecutionContext* context() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    PermissionStatus(ScriptExecutionContext&, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -76,7 +69,7 @@ private:
 
     PermissionState m_state;
     PermissionDescriptor m_descriptor;
-    ClientOrigin m_origin;
+    MainThreadPermissionObserverIdentifier m_mainThreadPermissionObserverIdentifier;
     std::atomic<bool> m_hasChangeEventListener;
 };
 

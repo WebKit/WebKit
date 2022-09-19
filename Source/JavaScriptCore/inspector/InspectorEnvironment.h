@@ -45,7 +45,7 @@ typedef JSC::JSValue (*InspectorEvaluateHandler)(JSC::JSGlobalObject*, const JSC
 
 class InspectorEnvironment {
 public:
-    virtual ~InspectorEnvironment() { }
+    virtual ~InspectorEnvironment() = default;
     virtual bool developerExtrasEnabled() const = 0;
     virtual bool canAccessInspectedScriptState(JSC::JSGlobalObject*) const = 0;
     virtual InspectorFunctionCallHandler functionCallHandler() const = 0;

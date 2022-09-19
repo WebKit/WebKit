@@ -25,16 +25,23 @@
 
 #pragma once
 
-#if USE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
+#if ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 #include <wtf/CodePtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #else
 #include <wtf/MetaAllocatorHandle.h>
 #endif
 
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/BPlatform.h>
+#if BENABLE(LIBPAS) && (OS(DARWIN) || OS(LINUX))
+#define ENABLE_LIBPAS_JIT_HEAP 1
+#endif
+#endif
+
 namespace JSC {
 
-#if USE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
+#if ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 class ExecutableMemoryHandle : public ThreadSafeRefCounted<ExecutableMemoryHandle> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ExecutableMemoryHandle);
 
@@ -104,9 +111,9 @@ private:
     unsigned m_sizeInBytes;
     MemoryPtr m_start;
 };
-#else // not (USE(LIBPAS_JIT_HEAP) && ENABLE(JIT))
+#else // not (ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT))
 typedef WTF::MetaAllocatorHandle ExecutableMemoryHandle;
-#endif // USE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
+#endif // ENABLE(LIBPAS_JIT_HEAP) && ENABLE(JIT)
 
 } // namespace JSC
 

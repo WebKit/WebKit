@@ -104,9 +104,9 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
     ContentWorldIdentifier::enableGenerationProtection();
     WebPageProxyIdentifier::enableGenerationProtection();
 
-    m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier, *this);
+    m_connection = IPC::Connection::createClientConnection(parameters.connectionIdentifier);
     initializeConnection(m_connection.get());
-    m_connection->open();
+    m_connection->open(*this);
 }
 
 void AuxiliaryProcess::setProcessSuppressionEnabled(bool enabled)

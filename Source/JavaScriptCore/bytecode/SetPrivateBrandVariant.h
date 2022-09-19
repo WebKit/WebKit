@@ -39,7 +39,7 @@ class SetPrivateBrandVariant {
 public:
     SetPrivateBrandVariant(CacheableIdentifier, Structure* oldStructure, Structure* newStructure);
 
-    ~SetPrivateBrandVariant();
+    ~SetPrivateBrandVariant() = default;
 
     Structure* oldStructure() const { return m_oldStructure; }
     Structure* newStructure() const { return m_newStructure; }

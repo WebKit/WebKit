@@ -232,7 +232,7 @@ private:
     class ArgPromise {
         WTF_MAKE_NONCOPYABLE(ArgPromise);
     public:
-        ArgPromise() { }
+        ArgPromise() = default;
 
         ArgPromise(const Arg& arg, Value* valueToLock = nullptr)
             : m_arg(arg)

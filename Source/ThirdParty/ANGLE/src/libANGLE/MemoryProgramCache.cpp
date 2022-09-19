@@ -20,6 +20,7 @@
 #include "common/utilities.h"
 #include "libANGLE/BinaryStream.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Debug.h"
 #include "libANGLE/Uniform.h"
 #include "libANGLE/capture/FrameCapture.h"
 #include "libANGLE/histogram_macros.h"
@@ -31,8 +32,6 @@ namespace gl
 
 namespace
 {
-constexpr unsigned int kWarningLimit = 3;
-
 class HashStream final : angle::NonCopyable
 {
   public:
@@ -98,9 +97,7 @@ HashStream &operator<<(HashStream &stream, const std::vector<gl::VariableLocatio
 
 }  // anonymous namespace
 
-MemoryProgramCache::MemoryProgramCache(egl::BlobCache &blobCache)
-    : mBlobCache(blobCache), mIssuedWarnings(0)
-{}
+MemoryProgramCache::MemoryProgramCache(egl::BlobCache &blobCache) : mBlobCache(blobCache) {}
 
 MemoryProgramCache::~MemoryProgramCache() {}
 
@@ -147,47 +144,37 @@ angle::Result MemoryProgramCache::getProgram(const Context *context,
     }
 
     ComputeHash(context, program, hashOut);
-    egl::BlobCache::Value binaryProgram;
-    size_t programSize = 0;
-    if (get(context, *hashOut, &binaryProgram, &programSize))
+
+    angle::MemoryBuffer uncompressedData;
+    switch (mBlobCache.getAndDecompress(context->getScratchBuffer(), *hashOut, &uncompressedData))
     {
-        angle::MemoryBuffer uncompressedData;
-        if (!egl::DecompressBlobCacheData(binaryProgram.data(), programSize, &uncompressedData))
-        {
-            ERR() << "Error decompressing binary data.";
+        case egl::BlobCache::GetAndDecompressResult::NotFound:
             return angle::Result::Incomplete;
-        }
 
-        angle::Result result =
-            program->loadBinary(context, GL_PROGRAM_BINARY_ANGLE, uncompressedData.data(),
-                                static_cast<int>(uncompressedData.size()));
-        ANGLE_TRY(result);
+        case egl::BlobCache::GetAndDecompressResult::DecompressFailure:
+            ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+                               "Error decompressing program binary data fetched from cache.");
+            return angle::Result::Incomplete;
 
-        if (result == angle::Result::Continue)
-            return angle::Result::Continue;
+        case egl::BlobCache::GetAndDecompressResult::GetSuccess:
+            angle::Result result =
+                program->loadBinary(context, GL_PROGRAM_BINARY_ANGLE, uncompressedData.data(),
+                                    static_cast<int>(uncompressedData.size()));
+            ANGLE_TRY(result);
 
-        // Cache load failed, evict.
-        if (mIssuedWarnings++ < kWarningLimit)
-        {
-            WARN() << "Failed to load binary from cache.";
+            if (result == angle::Result::Continue)
+                return angle::Result::Continue;
 
-            if (mIssuedWarnings == kWarningLimit)
-            {
-                WARN() << "Reaching warning limit for cache load failures, silencing "
-                          "subsequent warnings.";
-            }
-        }
-        remove(*hashOut);
+            // Cache load failed, evict
+            ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+                               "Failed to load program binary from cache.");
+            remove(*hashOut);
+
+            return angle::Result::Incomplete;
     }
-    return angle::Result::Incomplete;
-}
 
-bool MemoryProgramCache::get(const Context *context,
-                             const egl::BlobCache::Key &programHash,
-                             egl::BlobCache::Value *programOut,
-                             size_t *programSizeOut)
-{
-    return mBlobCache.get(context->getScratchBuffer(), programHash, programOut, programSizeOut);
+    UNREACHABLE();
+    return angle::Result::Incomplete;
 }
 
 bool MemoryProgramCache::getAt(size_t index,
@@ -219,14 +206,20 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     if (!egl::CompressBlobCacheData(serializedProgram.size(), serializedProgram.data(),
                                     &compressedData))
     {
-        ERR() << "Error compressing binary data.";
+        ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
+                           "Error compressing binary data.");
         return angle::Result::Incomplete;
     }
 
-    // TODO(syoussefi): to be removed.  Compatibility for Chrome until it supports
-    // EGL_ANDROID_blob_cache. http://anglebug.com/2516
-    auto *platform = ANGLEPlatformCurrent();
-    platform->cacheProgram(platform, programHash, compressedData.size(), compressedData.data());
+    {
+        std::scoped_lock<std::mutex> lock(mBlobCache.getMutex());
+        // TODO: http://anglebug.com/7568
+        // This was a workaround for Chrome until it added support for EGL_ANDROID_blob_cache,
+        // tracked by http://anglebug.com/2516. This issue has since been closed, but removing this
+        // still causes a test failure.
+        auto *platform = ANGLEPlatformCurrent();
+        platform->cacheProgram(platform, programHash, compressedData.size(), compressedData.data());
+    }
 
     mBlobCache.put(programHash, std::move(compressedData));
     return angle::Result::Continue;
@@ -260,7 +253,6 @@ bool MemoryProgramCache::putBinary(const egl::BlobCache::Key &programHash,
 void MemoryProgramCache::clear()
 {
     mBlobCache.clear();
-    mIssuedWarnings = 0;
 }
 
 void MemoryProgramCache::resize(size_t maxCacheSizeBytes)

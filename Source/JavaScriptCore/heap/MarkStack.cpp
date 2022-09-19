@@ -30,10 +30,7 @@
 
 namespace JSC {
 
-MarkStackArray::MarkStackArray()
-    : GCSegmentedArray<const JSCell*>()
-{
-}
+MarkStackArray::MarkStackArray() = default;
 
 void MarkStackArray::transferTo(MarkStackArray& other)
 {

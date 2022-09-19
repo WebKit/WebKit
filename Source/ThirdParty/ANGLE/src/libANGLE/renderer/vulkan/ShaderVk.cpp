@@ -11,6 +11,7 @@
 
 #include "common/debug.h"
 #include "libANGLE/Context.h"
+#include "libANGLE/Display.h"
 #include "libANGLE/renderer/vulkan/ContextVk.h"
 #include "platform/FeaturesVk_autogen.h"
 
@@ -41,6 +42,15 @@ std::shared_ptr<WaitableCompileEvent> ShaderVk::compile(const gl::Context *conte
         {
             options->initOutputVariables = true;
         }
+    }
+
+    // robustBufferAccess on Vulkan doesn't support bound check on shader local variables
+    // but the GL_EXT_robustness does support.
+    // Enable the flag clampIndirectArrayBounds to ensure out of bounds local variable writes in
+    // shaders are protected when the context has GL_EXT_robustness enabled
+    if (contextVk->getShareGroup()->hasAnyContextWithRobustness())
+    {
+        options->clampIndirectArrayBounds = true;
     }
 
     if (contextVk->getFeatures().clampPointSize.enabled)

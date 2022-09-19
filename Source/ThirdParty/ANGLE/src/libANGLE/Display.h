@@ -24,6 +24,7 @@
 #include "libANGLE/Error.h"
 #include "libANGLE/LoggingAnnotator.h"
 #include "libANGLE/MemoryProgramCache.h"
+#include "libANGLE/MemoryShaderCache.h"
 #include "libANGLE/Observer.h"
 #include "libANGLE/Version.h"
 #include "platform/Feature.h"
@@ -151,7 +152,7 @@ class Display final : public LabeledObject,
 
     // Helpers to maintain active thread set to assist with freeing invalid EGL objects.
     void addActiveThread(Thread *thread);
-    void removeActiveThreadAndPerformCleanup(Thread *thread);
+    void threadCleanup(Thread *thread);
 
     static Display *GetDisplayFromDevice(Device *device, const AttributeMap &attribMap);
     static Display *GetDisplayFromNativeDisplay(EGLenum platform,
@@ -263,6 +264,7 @@ class Display final : public LabeledObject,
     const std::string &getExtensionString() const;
     const std::string &getVendorString() const;
     const std::string &getVersionString() const;
+    const std::string &getClientAPIString() const;
 
     std::string getBackendRendererDescription() const;
     std::string getBackendVendorString() const;
@@ -313,6 +315,8 @@ class Display final : public LabeledObject,
     std::mutex &getDisplayGlobalMutex() { return mDisplayGlobalMutex; }
     std::mutex &getProgramCacheMutex() { return mProgramCacheMutex; }
 
+    gl::MemoryShaderCache *getMemoryShaderCache() { return &mMemoryShaderCache; }
+
     // Installs LoggingAnnotator as the global DebugAnnotator, for back-ends that do not implement
     // their own DebugAnnotator.
     void setGlobalDebugAnnotator() { gl::InitializeDebugAnnotations(&mAnnotator); }
@@ -336,10 +340,12 @@ class Display final : public LabeledObject,
 
     Error restoreLostDevice();
     Error releaseContext(gl::Context *context, Thread *thread);
+    Error releaseContextImpl(gl::Context *context, ContextSet *contexts);
 
     void initDisplayExtensions();
     void initVendorString();
     void initVersionString();
+    void initClientAPIString();
     void initializeFrontendFeatures();
 
     angle::ScratchBuffer requestScratchBufferImpl(std::vector<angle::ScratchBuffer> *bufferVector);
@@ -370,7 +376,7 @@ class Display final : public LabeledObject,
     Error destroySurfaceImpl(Surface *surface, SurfaceSet *surfaces);
     void destroySyncImpl(Sync *sync, SyncSet *syncs);
 
-    std::mutex mInvalidEglObjectsMutex;
+    ContextSet mInvalidContextSet;
     ImageSet mInvalidImageSet;
     StreamSet mInvalidStreamSet;
     SurfaceSet mInvalidSurfaceSet;
@@ -386,6 +392,7 @@ class Display final : public LabeledObject,
 
     std::string mVendorString;
     std::string mVersionString;
+    std::string mClientAPIString;
 
     Device *mDevice;
     Surface *mSurface;
@@ -396,6 +403,7 @@ class Display final : public LabeledObject,
     gl::SemaphoreManager *mSemaphoreManager;
     BlobCache mBlobCache;
     gl::MemoryProgramCache mMemoryProgramCache;
+    gl::MemoryShaderCache mMemoryShaderCache;
     size_t mGlobalTextureShareGroupUsers;
     size_t mGlobalSemaphoreShareGroupUsers;
 
@@ -410,8 +418,7 @@ class Display final : public LabeledObject,
     std::mutex mDisplayGlobalMutex;
     std::mutex mProgramCacheMutex;
 
-    std::atomic<bool> mTerminatedByApi;
-    std::mutex mActiveThreadsMutex;
+    bool mTerminatedByApi;
     ThreadSet mActiveThreads;
 };
 

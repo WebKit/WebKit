@@ -140,7 +140,6 @@ enum class MessageName : uint16_t {
 
 ReceiverName receiverName(MessageName);
 const char* description(MessageName);
-bool isValidMessageName(MessageName);
 constexpr bool messageIsSync(MessageName name)
 {
     return name >= MessageName::TestWithLegacyReceiver_GetPluginProcessConnection;
@@ -150,15 +149,6 @@ constexpr bool messageIsSync(MessageName name)
 
 namespace WTF {
 
-template<>
-struct EnumTraits<IPC::MessageName> {
-    template<typename T>
-    static std::enable_if_t<sizeof(T) == sizeof(IPC::MessageName) && std::is_unsigned_v<T>, bool> isValidEnum(T messageName)
-    {
-        if (messageName > WTF::enumToUnderlyingType(IPC::MessageName::Last))
-            return false;
-        return IPC::isValidMessageName(static_cast<IPC::MessageName>(messageName));
-    }
-};
+template<> bool isValidEnum<IPC::MessageName, void>(std::underlying_type_t<IPC::MessageName>);
 
 } // namespace WTF

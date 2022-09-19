@@ -83,14 +83,11 @@ public:
     void postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>&&);
 
     static void forEachWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
-    static Worker* byIdentifier(ScriptExecutionContextIdentifier);
 
 private:
     Worker(ScriptExecutionContext&, JSC::RuntimeFlags, WorkerOptions&&);
 
     EventTargetInterface eventTargetInterface() const final { return WorkerEventTargetInterfaceType; }
-
-    void notifyNetworkStateChange(bool isOnline);
 
     void didReceiveResponse(ResourceLoaderIdentifier, const ResourceResponse&) final;
     void notifyFinished() final;
@@ -115,7 +112,7 @@ private:
     JSC::RuntimeFlags m_runtimeFlags;
     Deque<RefPtr<Event>> m_pendingEvents;
     bool m_wasTerminated { false };
-    ScriptExecutionContextIdentifier m_clientIdentifier;
+    const ScriptExecutionContextIdentifier m_clientIdentifier;
 };
 
 } // namespace WebCore

@@ -45,6 +45,7 @@ DXGISwapChainWindowSurfaceWGL::DXGISwapChainWindowSurfaceWGL(const egl::SurfaceS
       mFirstSwap(true),
       mSwapChain(nullptr),
       mSwapChain1(nullptr),
+      mFramebufferID(0),
       mColorRenderbufferID(0),
       mRenderbufferBufferHandle(nullptr),
       mDepthRenderbufferID(0),
@@ -62,6 +63,12 @@ DXGISwapChainWindowSurfaceWGL::~DXGISwapChainWindowSurfaceWGL()
     {
         mFunctionsWGL->dxUnlockObjectsNV(mDeviceHandle, 1, &mRenderbufferBufferHandle);
         mFunctionsWGL->dxUnregisterObjectNV(mDeviceHandle, mRenderbufferBufferHandle);
+    }
+
+    if (mFramebufferID != 0)
+    {
+        mStateManager->deleteFramebuffer(mFramebufferID);
+        mFramebufferID = 0;
     }
 
     if (mColorRenderbufferID != 0)
@@ -190,7 +197,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::bindTexImage(const gl::Context *contex
 
     ID3D11Texture2D *colorBuffer = nullptr;
     HRESULT result               = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-                                           reinterpret_cast<void **>(&colorBuffer));
+                                                         reinterpret_cast<void **>(&colorBuffer));
     if (FAILED(result))
     {
         return egl::EglBadAlloc() << "Failed to query texture from swap chain, "
@@ -267,41 +274,54 @@ EGLint DXGISwapChainWindowSurfaceWGL::getSwapBehavior() const
     return EGL_BUFFER_DESTROYED;
 }
 
-FramebufferImpl *DXGISwapChainWindowSurfaceWGL::createDefaultFramebuffer(
-    const gl::Context *context,
-    const gl::FramebufferState &data)
-{
-    const FunctionsGL *functions = GetFunctionsGL(context);
-    StateManagerGL *stateManager = GetStateManagerGL(context);
-
-    GLuint framebufferID = 0;
-    functions->genFramebuffers(1, &framebufferID);
-    stateManager->bindFramebuffer(GL_FRAMEBUFFER, framebufferID);
-    functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
-                                       mColorRenderbufferID);
-
-    if (mDepthBufferFormat != GL_NONE)
-    {
-        const gl::InternalFormat &depthStencilFormatInfo =
-            gl::GetSizedInternalFormatInfo(mDepthBufferFormat);
-        if (depthStencilFormatInfo.depthBits > 0)
-        {
-            functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-                                               mDepthRenderbufferID);
-        }
-        if (depthStencilFormatInfo.stencilBits > 0)
-        {
-            functions->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                               GL_RENDERBUFFER, mDepthRenderbufferID);
-        }
-    }
-
-    return new FramebufferGL(data, framebufferID, true, false);
-}
-
 HDC DXGISwapChainWindowSurfaceWGL::getDC() const
 {
     return mWGLDevice;
+}
+
+egl::Error DXGISwapChainWindowSurfaceWGL::attachToFramebuffer(const gl::Context *context,
+                                                              gl::Framebuffer *framebuffer)
+{
+    FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
+    ASSERT(framebufferGL->getFramebufferID() == 0);
+
+    if (mFramebufferID == 0)
+    {
+        GLuint framebufferID = 0;
+        mFunctionsGL->genFramebuffers(1, &framebufferID);
+        mStateManager->bindFramebuffer(GL_FRAMEBUFFER, framebufferID);
+        mFunctionsGL->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                              mColorRenderbufferID);
+
+        if (mDepthBufferFormat != GL_NONE)
+        {
+            const gl::InternalFormat &depthStencilFormatInfo =
+                gl::GetSizedInternalFormatInfo(mDepthBufferFormat);
+            if (depthStencilFormatInfo.depthBits > 0)
+            {
+                mFunctionsGL->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                                      GL_RENDERBUFFER, mDepthRenderbufferID);
+            }
+            if (depthStencilFormatInfo.stencilBits > 0)
+            {
+                mFunctionsGL->framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                                      GL_RENDERBUFFER, mDepthRenderbufferID);
+            }
+        }
+
+        mFramebufferID = framebufferID;
+    }
+    framebufferGL->setFramebufferID(mFramebufferID);
+    return egl::NoError();
+}
+
+egl::Error DXGISwapChainWindowSurfaceWGL::detachFromFramebuffer(const gl::Context *context,
+                                                                gl::Framebuffer *framebuffer)
+{
+    FramebufferGL *framebufferGL = GetImplAs<FramebufferGL>(framebuffer);
+    ASSERT(framebufferGL->getFramebufferID() == mFramebufferID);
+    framebufferGL->setFramebufferID(0);
+    return egl::NoError();
 }
 
 egl::Error DXGISwapChainWindowSurfaceWGL::setObjectsLocked(bool locked)
@@ -424,7 +444,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
 
     IDXGIFactory2 *dxgiFactory2 = nullptr;
     HRESULT result              = dxgiFactory->QueryInterface(__uuidof(IDXGIFactory2),
-                                                 reinterpret_cast<void **>(&dxgiFactory2));
+                                                              reinterpret_cast<void **>(&dxgiFactory2));
     if (SUCCEEDED(result))
     {
         ASSERT(dxgiFactory2 != nullptr);
@@ -490,7 +510,7 @@ egl::Error DXGISwapChainWindowSurfaceWGL::createSwapChain()
 
     ID3D11Texture2D *colorBuffer = nullptr;
     result                       = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-                                   reinterpret_cast<void **>(&colorBuffer));
+                                                         reinterpret_cast<void **>(&colorBuffer));
     if (FAILED(result))
     {
         return egl::EglBadAlloc() << "Failed to query texture from swap chain, "

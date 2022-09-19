@@ -48,7 +48,6 @@ void Table::setLength(uint32_t length)
 Table::Table(uint32_t initial, std::optional<uint32_t> maximum, TableElementType type)
     : m_type(type)
     , m_maximum(maximum)
-    , m_owner(nullptr)
 {
     setLength(initial);
     ASSERT(!m_maximum || *m_maximum >= m_length);

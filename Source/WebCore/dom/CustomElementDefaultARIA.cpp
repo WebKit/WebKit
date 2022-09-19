@@ -35,17 +35,22 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(CustomElementDefaultARIA);
 CustomElementDefaultARIA::CustomElementDefaultARIA() = default;
 CustomElementDefaultARIA::~CustomElementDefaultARIA() = default;
 
-void CustomElementDefaultARIA::setValueForAttribute(const AtomString& key, const AtomString& value)
+void CustomElementDefaultARIA::setValueForAttribute(const QualifiedName& name, const AtomString& value)
 {
-    m_map.set(key, value);
+    m_map.set(name, value);
 }
 
-const AtomString& CustomElementDefaultARIA::valueForAttribute(const AtomString& key) const
+const AtomString& CustomElementDefaultARIA::valueForAttribute(const QualifiedName& name) const
 {
-    auto it = m_map.find(key);
+    auto it = m_map.find(name);
     if (it == m_map.end())
         return nullAtom();
     return it->value;
+}
+
+bool CustomElementDefaultARIA::hasAttribute(const QualifiedName& name) const
+{
+    return m_map.find(name) != m_map.end();
 }
 
 }; // namespace WebCore

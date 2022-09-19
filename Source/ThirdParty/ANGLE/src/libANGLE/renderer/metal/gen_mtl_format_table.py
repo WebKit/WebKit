@@ -16,6 +16,7 @@
 
 import json
 import math
+import os
 import pprint
 import re
 import sys
@@ -706,7 +707,7 @@ def main():
     caps_init_str = gen_mtl_format_caps_init_string(map_image)
 
     output_cpp = template_autogen_inl.format(
-        script_name=sys.argv[0],
+        script_name=os.path.basename(sys.argv[0]),
         data_source_name=data_source_name,
         angle_image_format_switch=image_switch_data,
         mtl_pixel_format_switch=image_mtl_to_angle_switch_data,

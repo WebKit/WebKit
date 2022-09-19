@@ -40,13 +40,6 @@
             <param>const <ptype>EGLAttrib</ptype> *<name>attrib_list</name></param>
         </command>
         <command>
-            <proto><ptype>EGLBoolean</ptype> <name>eglGetMscRateANGLE</name></proto>
-            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
-            <param><ptype>EGLSurface</ptype> <name>surface</name></param>
-            <param><ptype>EGLint</ptype> *<name>numerator</name></param>
-            <param><ptype>EGLint</ptype> *<name>denominator</name></param>
-        </command>
-        <command>
             <proto><ptype>EGLBoolean</ptype> <name>eglGetSyncValuesCHROMIUM</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSurface</ptype> <name>surface</name></param>
@@ -175,11 +168,6 @@
                 <command name="eglGetSyncValuesCHROMIUM"/>
             </require>
         </extension>
-        <extension name="EGL_ANGLE_sync_control_rate" supported="egl">
-            <require>
-                <command name="eglGetMscRateANGLE"/>
-            </require>
-        </extension>
         <extension name="EGL_ANGLE_program_cache_control" supported="egl">
             <require>
                 <command name="eglProgramCacheGetAttribANGLE"/>
@@ -237,6 +225,7 @@
                 <enum name="EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_colorspace_attribute_passthrough" supported="egl" />
         <extension name="EGL_ANGLE_context_virtualization" supported="egl">
             <require>
                 <enum name="EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE"/>

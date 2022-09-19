@@ -126,15 +126,15 @@ void RenderListBox::updateFromElement()
         float width = 0;
         auto& normalFont = style().fontCascade();
         std::optional<FontCascade> boldFont;
-        for (auto* element : selectElement().listItems()) {
+        for (auto& element : selectElement().listItems()) {
             String text;
             Function<const FontCascade&()> selectFont = [&normalFont] () -> const FontCascade& {
                 return normalFont;
             };
-            if (is<HTMLOptionElement>(*element))
-                text = downcast<HTMLOptionElement>(*element).textIndentedToRespectGroupLabel();
-            else if (is<HTMLOptGroupElement>(*element)) {
-                text = downcast<HTMLOptGroupElement>(*element).groupLabelText();
+            if (RefPtr optionElement = dynamicDowncast<HTMLOptionElement>(element.get()))
+                text = optionElement->textIndentedToRespectGroupLabel();
+            else if (RefPtr optGroupElement = dynamicDowncast<HTMLOptGroupElement>(element.get())) {
+                text = optGroupElement->groupLabelText();
                 selectFont = [this, &normalFont, &boldFont] () -> const FontCascade& {
                     if (!boldFont)
                         boldFont = bolder(document(), normalFont);
@@ -289,7 +289,7 @@ std::optional<int> RenderListBox::optionRowIndex(const HTMLOptionElement& option
 {
     // We can't use optionElement.index(), because it doesn't account for optgroup items.
     int rowIndex = 0;
-    for (auto* item : selectElement().listItems()) {
+    for (auto& item : selectElement().listItems()) {
         if (item == &optionElement)
             return rowIndex;
 
@@ -316,7 +316,7 @@ std::optional<LayoutRect> RenderListBox::localBoundsOfOptGroup(const HTMLOptGrou
     std::optional<LayoutRect> boundingBox;
     int rowIndex = 0;
 
-    for (auto* item : selectElement().listItems()) {
+    for (auto& item : selectElement().listItems()) {
         if (is<HTMLOptGroupElement>(*item)) {
             if (item == &optGroupElement)
                 boundingBox = itemBoundingBoxRect({ }, rowIndex);
@@ -391,15 +391,14 @@ void RenderListBox::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoi
     }
 
     // No selected items, find the first non-disabled item.
-    int size = numItems();
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
-    for (int i = 0; i < size; ++i) {
-        HTMLElement* element = listItems[i];
-        if (is<HTMLOptionElement>(*element) && !element->isDisabledFormControl()) {
-            selectElement().setActiveSelectionEndIndex(i);
-            rects.append(itemBoundingBoxRect(additionalOffset, i));
+    int indexOfFirstEnabledOption = 0;
+    for (auto& item : selectElement().listItems()) {
+        if (is<HTMLOptionElement>(item.get()) && !item->isDisabledFormControl()) {
+            selectElement().setActiveSelectionEndIndex(indexOfFirstEnabledOption);
+            rects.append(itemBoundingBoxRect(additionalOffset, indexOfFirstEnabledOption));
             return;
         }
+        indexOfFirstEnabledOption++;
     }
 }
 
@@ -439,8 +438,8 @@ static LayoutSize itemOffsetForAlignment(TextRun textRun, const RenderStyle* ite
 
 void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
-    HTMLElement* listItemElement = listItems[listIndex];
+    const auto& listItems = selectElement().listItems();
+    RefPtr listItemElement = listItems[listIndex].get();
 
     auto& itemStyle = *listItemElement->computedStyle();
 
@@ -487,8 +486,8 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
 
 void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const LayoutPoint& paintOffset, int listIndex)
 {
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
-    HTMLElement* listItemElement = listItems[listIndex];
+    const auto& listItems = selectElement().listItems();
+    RefPtr listItemElement = listItems[listIndex].get();
     auto& itemStyle = *listItemElement->computedStyle();
 
     Color backColor;
@@ -809,17 +808,17 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     if (!RenderBlockFlow::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, hitTestAction))
         return false;
-    const Vector<HTMLElement*>& listItems = selectElement().listItems();
+    const auto& listItems = selectElement().listItems();
     int size = numItems();
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     for (int i = 0; i < size; ++i) {
         if (!itemBoundingBoxRect(adjustedLocation, i).contains(locationInContainer.point()))
             continue;
-        if (Element* node = listItems[i]) {
-            result.setInnerNode(node);
+        if (RefPtr node = listItems[i].get()) {
+            result.setInnerNode(node.get());
             if (!result.innerNonSharedNode())
-                result.setInnerNonSharedNode(node);
+                result.setInnerNonSharedNode(node.get());
             result.setLocalPoint(locationInContainer.point() - toLayoutSize(adjustedLocation));
             break;
         }

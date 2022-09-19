@@ -370,8 +370,12 @@ accessibility/aria-multiline.html [ Skip ]
 # Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244069.
 accessibility/dynamically-ignored-canvas.html [ Skip ]
 
+# Missing AccessibilityUIElement::takeFocus().
+accessibility/basic-focusability.html [ Skip ]
+
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
 accessibility/aria-modal-with-text-crash.html [ Skip ]
+accessibility/display-contents-dynamically-added-children.html [ Skip ]
 accessibility/display-contents-object-ordering.html [ Skip ]
 accessibility/display-contents-search-traversal.html [ Skip ]
 accessibility/search-traversal-after-role-change.html [ Skip ]
@@ -410,7 +414,8 @@ webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
 webkit.org/b/153292 accessibility/text-marker [ Skip ]
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Skip ]
 
-webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
+# Crashing in Debug too, see webkit.org/b/245214
+webkit.org/b/163383 accessibility/meter-element.html [ Failure Crash ]
 
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 
@@ -464,6 +469,12 @@ webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]
 webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Failure ]
 
 webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
+
+webkit.org/b/245214 [ Debug ] accessibility/aria-checkbox-text.html [ Crash ]
+webkit.org/b/245214 [ Debug ] accessibility/aria-invalid.html [ Crash ]
+webkit.org/b/245214 [ Debug ] accessibility/aria-switch-text.html [ Crash ]
+webkit.org/b/245214 [ Debug ] accessibility/aria-visible-element-roles.html [ Crash ]
+webkit.org/b/245214 [ Debug ] accessibility/content-editable-as-textarea.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
@@ -1062,6 +1073,11 @@ webkit.org/b/221311 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscr
 
 # Failing since r277543.
 webkit.org/b/225870 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.gradient.conic.worker.html [ Failure ]
+
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/2d.conformance.requirements.missingargs.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/conformance-requirements/2d.conformance.requirements.missingargs.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/manual/transformations/2d.transformation.getTransform.html [ Crash ]
+webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscreen/text/ [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of OffscreenCanvas-related bugs
@@ -1806,107 +1822,6 @@ webkit.org/b/232346 media/video-canvas-createPattern.html [ Failure ]
 webkit.org/b/232346 media/video-canvas-drawing-output.html [ Failure ]
 webkit.org/b/232346 media/video-orientation-canvas.html [ Failure ]
 
-# We run tests on http://web-platform.test so ServiceWorkers do not work on an insecure host and should be ran with https
-# it only worked on other ports because http://localhost was trustworthy.
-imported/w3c/web-platform-tests/dom/idlharness.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-blocks-wasm.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-unsafe-eval-allows-wasm.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-unsafe-eval-allows-wasm.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-wasm-unsafe-eval-allows-wasm.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/compression-bad-chunks.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/compression-constructor-error.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/compression-including-empty-chunk.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/compression-multiple-chunks.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/compression-output-length.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/compression-stream.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/decompression-bad-chunks.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/decompression-buffersource.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/decompression-constructor-error.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/decompression-correct-input.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/decompression-empty-input.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/decompression-split-chunk.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/compression/decompression-uint8array-output.tentative.any.serviceworker.html
-imported/w3c/web-platform-tests/fetch/cross-origin-resource-policy/fetch-in-service-worker.html [ Skip ]
-imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/messagechannel.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-object.any.serviceworker-module.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-resolve.any.serviceworker-module.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-url.any.serviceworker-module.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask-exceptions.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/idlharness.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-indexes-cursors.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-indexes.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store-cursors.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/IndexedDB/reading-autoincrement-store.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/no-dynamic-import-in-module.any.serviceworker-module.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/no-dynamic-import.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/Worker-base64.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/Worker-constructor-proto.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/Worker-custom-event.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/Worker-replace-event-handler.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/Worker-replace-global-constructor.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/Worker-replace-self.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/WorkerNavigator-hardware-concurrency.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/WorkerNavigator.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/examples/general.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/importscripts_mime.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/location/returns-same-object.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/self.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/catch.sub.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/multiple-workers/exposure.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/eventsource/eventsource-constructor-url-bogus.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/infrastructure/server/context.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
-imported/w3c/web-platform-tests/streams/idlharness.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/abort.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/close-propagation-backward.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/close-propagation-forward.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/error-propagation-backward.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/flow-control.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/general.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/multiple-propagation.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/pipe-through.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/then-interception.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/throwing-options.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/piping/transform-streams.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/queuing-strategies.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-byte-streams/bad-buffers-and-views.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-byte-streams/general.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-byte-streams/non-transferable-buffers.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-byte-streams/tee.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/async-iterator.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/bad-strategies.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/bad-underlying-sources.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/cancel.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/constructor.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/count-queuing-strategy-integration.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/default-reader.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/general.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/reentrant-strategies.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/tee.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/readable-streams/templated.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/backpressure.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/errors.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/flush.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/general.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/lipfuzz.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/patched-global.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/properties.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/reentrant-strategies.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/strategies.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/wasm/jsapi/exception/basic.tentative.any.serviceworker.html [ Skip ]
-imported/w3c/web-platform-tests/wasm/webapi/ [ Skip ]
-imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.sharedworker.html [ Skip ]
-
 # These have randomly generated tokens in their URLs that make console messages unreliable.
 imported/w3c/web-platform-tests/cors/304.htm [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/cors/cors-safelisted-request-header.any.html [ DumpJSConsoleLogInStdErr ]
@@ -2047,6 +1962,34 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.
 #////////////////////////////////////////////////////////////////////////////////////////
 # UNSUPPORTED tests. Things we must skip.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+# Skip iOS and watchOS tests. Too many of those crashing, specially on WPE Debug
+# bot, leading to early bailout from the tests and filling the disks with crash
+# dumps.
+fast/css/ios [ Skip ]
+fast/css/variables/env/ios [ Skip ]
+fast/css/watchos [ Skip ]
+fast/dom/Window/watchos [ Skip ]
+fast/events/ios [ Skip ]
+fast/events/pointer/ios [ Skip ]
+fast/events/touch/ios [ Skip ]
+fast/events/watchos [ Skip ]
+fast/forms/ios [ Skip ]
+fast/forms/textarea/ios [ Skip ]
+fast/forms/watchos [ Skip ]
+fast/history/ios [ Skip ]
+fast/images/text-recognition/ios [ Skip ]
+fast/media/ios [ Skip ]
+fast/sandbox/ios [ Skip ]
+fast/scrolling/ios [ Skip ]
+fast/shadow-dom/ios [ Skip ]
+fast/speechrecognition/ios [ Skip ]
+fast/text-autosizing/ios [ Skip ]
+fast/viewport/ios [ Skip ]
+fast/viewport/watchos [ Skip ]
+fast/visual-viewport/ios [ Skip ]
+fast/visual-viewport/watchos [ Skip ]
+fast/zooming/ios [ Skip ]
 
 # Tests behavior specific to MediaSessionManagerCocoa
 media/audio-session-category.html [ Skip ]
@@ -3019,6 +2962,8 @@ webkit.org/b/236298 fast/text/simple-line-layout-with-justified-punctuation.html
 webkit.org/b/193628 fast/css/content-counter-010.htm [ ImageOnlyFailure ]
 
 http/tests/webgpu/webgpu/api/operation/memory_sync/buffer/multiple_buffers.html [ Skip ]
+
+webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash ]
 
 # Failure since import.
 webkit.org/b/243614 imported/w3c/web-platform-tests/IndexedDB/idb-partitioned-coverage.tentative.sub.html [ Failure ]

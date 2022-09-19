@@ -22,7 +22,7 @@ Status
 
 Version
 
-    Version 6, May 12, 2020
+    Version 11, August 23, 2022
 
 Number
 
@@ -97,7 +97,11 @@ Additions to Chapter 2 of the EGL 1.2 Specification (EGL Operation)
     If the EGL_ANGLE_device_d3d extension is present, the provided D3D11 texture
     object must have been created by the same D3D11 device queried from the
     display. If these requirements are not met, an EGL_BAD_PARAMETER error is
-    generated."
+    generated.
+
+    The image may later be used as a GL_TEXTURE_2D or GL_TEXTURE_EXTERNAL_OES
+    target sibling based on the availability of GL_OES_EGL_image and/or
+    GL_OES_EGL_image_external extensions."
 
 Additions to Chapter 3 of the EGL 1.2 Specification (EGL Functions and Errors)
 
@@ -238,7 +242,9 @@ Issues
 
 Revision History
 
-    Version 9, 2022/06/15 - removed non-negative offsets restriction.
+    Version 11, 2022/08/23 - clarify that GL_TEXTURE_2D is also allowed.
+
+    Version 10, 2022/06/15 - removed non-negative offsets restriction.
 
     Version 9, 2021/09/07 - added support for R/RG formats and GL_RGB10_A2_EXT.
 

@@ -29,7 +29,7 @@ namespace JSC {
 
 class WeakGCHashTable {
 public:
-    virtual ~WeakGCHashTable() { }
+    virtual ~WeakGCHashTable() = default;
     virtual void pruneStaleEntries() = 0;
 };
 

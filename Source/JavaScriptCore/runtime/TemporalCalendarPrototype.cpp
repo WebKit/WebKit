@@ -183,12 +183,16 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields, (JSGlobalObject* g
                 shouldAddEraAndEraYear = true;
         }
         fieldNames.append(value);
+        if (UNLIKELY(fieldNames.hasOverflowed()))
+            throwStackOverflowError(globalObject, scope);
     });
     RETURN_IF_EXCEPTION(scope, { });
 
     if (shouldAddEraAndEraYear) {
         fieldNames.append(jsNontrivialString(vm, vm.propertyNames->era.impl()));
         fieldNames.append(jsNontrivialString(vm, vm.propertyNames->eraYear.impl()));
+        if (UNLIKELY(fieldNames.hasOverflowed()))
+            throwStackOverflowError(globalObject, scope);
     }
 
     RELEASE_AND_RETURN(scope, JSValue::encode(constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), fieldNames)));

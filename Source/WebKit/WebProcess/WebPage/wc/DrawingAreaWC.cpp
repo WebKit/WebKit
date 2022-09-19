@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DrawingAreaWC.h"
 
+#if USE(GRAPHICS_LAYER_WC)
+
 #include "DrawingAreaProxyMessages.h"
 #include "GraphicsLayerWC.h"
 #include "PlatformImageBufferShareableBackend.h"
@@ -382,3 +384,5 @@ void DrawingAreaWC::didUpdate()
 }
 
 } // namespace WebKit
+
+#endif // USE(GRAPHICS_LAYER_WC)

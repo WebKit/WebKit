@@ -45,7 +45,6 @@ WebGLBuffer::WebGLBuffer(WebGLRenderingContextBase& ctx)
     : WebGLSharedObject(ctx)
 {
     setObject(ctx.graphicsContextGL()->createBuffer());
-    clearCachedMaxIndices();
 }
 
 WebGLBuffer::~WebGLBuffer()
@@ -61,6 +60,7 @@ void WebGLBuffer::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* con
     context3d->deleteBuffer(object);
 }
 
+#if !USE(ANGLE)
 bool WebGLBuffer::associateBufferDataImpl(const void* data, GCGLsizeiptr byteLength)
 {
     if (byteLength < 0)
@@ -91,18 +91,6 @@ bool WebGLBuffer::associateBufferDataImpl(const void* data, GCGLsizeiptr byteLen
         m_byteLength = byteLength;
         return true;
     default:
-#if ENABLE(WEBGL2)
-        switch (m_target) {
-        case GraphicsContextGL::COPY_READ_BUFFER:
-        case GraphicsContextGL::COPY_WRITE_BUFFER:
-        case GraphicsContextGL::PIXEL_PACK_BUFFER:
-        case GraphicsContextGL::PIXEL_UNPACK_BUFFER:
-        case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
-        case GraphicsContextGL::UNIFORM_BUFFER:
-            m_byteLength = byteLength;
-            return true;
-        }
-#endif
         return false;
     }
 }
@@ -151,17 +139,6 @@ bool WebGLBuffer::associateBufferSubDataImpl(GCGLintptr offset, const void* data
     case GraphicsContextGL::ARRAY_BUFFER:
         return true;
     default:
-#if ENABLE(WEBGL2)
-        switch (m_target) {
-        case GraphicsContextGL::COPY_READ_BUFFER:
-        case GraphicsContextGL::COPY_WRITE_BUFFER:
-        case GraphicsContextGL::PIXEL_PACK_BUFFER:
-        case GraphicsContextGL::PIXEL_UNPACK_BUFFER:
-        case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
-        case GraphicsContextGL::UNIFORM_BUFFER:
-            return true;
-        }
-#endif
         return false;
     }
 }
@@ -210,17 +187,6 @@ bool WebGLBuffer::associateCopyBufferSubData(const WebGLBuffer& readBuffer, GCGL
     case GraphicsContextGL::ARRAY_BUFFER:
         return true;
     default:
-#if ENABLE(WEBGL2)
-        switch (m_target) {
-        case GraphicsContextGL::COPY_READ_BUFFER:
-        case GraphicsContextGL::COPY_WRITE_BUFFER:
-        case GraphicsContextGL::PIXEL_PACK_BUFFER:
-        case GraphicsContextGL::PIXEL_UNPACK_BUFFER:
-        case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER:
-        case GraphicsContextGL::UNIFORM_BUFFER:
-            return true;
-        }
-#endif
         return false;
     }
 }
@@ -263,16 +229,12 @@ void WebGLBuffer::setCachedMaxIndex(GCGLenum type, unsigned value)
     m_nextAvailableCacheEntry = (m_nextAvailableCacheEntry + 1) % WTF_ARRAY_LENGTH(m_maxIndexCache);
 }
 
-void WebGLBuffer::setTarget(GCGLenum target)
-{
-    m_target = target;
-}
-
 void WebGLBuffer::clearCachedMaxIndices()
 {
     memset(m_maxIndexCache, 0, sizeof(m_maxIndexCache));
 }
 
+#endif
 }
 
 #endif // ENABLE(WEBGL)

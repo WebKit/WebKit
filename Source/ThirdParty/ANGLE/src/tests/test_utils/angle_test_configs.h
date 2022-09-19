@@ -215,6 +215,7 @@ PlatformParameters ES3_METAL();
 PlatformParameters ES2_WGL();
 PlatformParameters ES3_WGL();
 
+PlatformParameters ES1_EGL();
 PlatformParameters ES2_EGL();
 PlatformParameters ES3_EGL();
 

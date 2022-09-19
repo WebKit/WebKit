@@ -1,7 +1,4 @@
-CONSOLE MESSAGE: Refused to load 'https://localhost:9443/html/cross-origin-embedder-policy/multi-globals/current/worker.js' worker because of Cross-Origin-Embedder-Policy.
-CONSOLE MESSAGE: Worker load was blocked by Cross-Origin-Embedder-Policy
-CONSOLE MESSAGE: Cannot load https://localhost:9443/html/cross-origin-embedder-policy/multi-globals/current/worker.js due to access control checks.
  Hello
 
-FAIL Multiple globals for Worker constructor: COEP reports assert_equals: expected 1 but got 0
+PASS Multiple globals for Worker constructor: COEP reports
 

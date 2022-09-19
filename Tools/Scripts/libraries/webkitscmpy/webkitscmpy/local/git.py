@@ -500,7 +500,7 @@ class Git(Scm):
             url = '{}://{}/{}'.format(http_match.group('protocol'), http_match.group('host'), http_match.group('path'))
 
         try:
-            return remote.Scm.from_url(url)
+            return remote.Scm.from_url(url, contributors=self.contributors)
         except OSError:
             pass
 

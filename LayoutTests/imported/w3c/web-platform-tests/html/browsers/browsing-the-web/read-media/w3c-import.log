@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/cross-origin-video.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-image-in-popup.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-image.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html

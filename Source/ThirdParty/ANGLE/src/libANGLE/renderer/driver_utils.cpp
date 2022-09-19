@@ -283,6 +283,42 @@ const char *GetVendorString(uint32_t vendorId)
     }
 }
 
+MajorMinorPatchVersion::MajorMinorPatchVersion() {}
+MajorMinorPatchVersion::MajorMinorPatchVersion(int major, int minor, int patch)
+    : majorVersion(major), minorVersion(minor), patchVersion(patch)
+{}
+
+bool operator==(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) ==
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator!=(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) !=
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator<(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) <
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+bool operator>=(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b)
+{
+    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) >=
+           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
+}
+
+ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion)
+{
+    // ARM driver versions are built with the following macro:
+    // ((((uint32_t)(major)) << 22) | (((uint32_t)(minor)) << 12) | ((uint32_t)(patch)))
+    constexpr uint32_t kMinorVersionMask = angle::BitMask<uint32_t>(10);
+    constexpr uint32_t kPatchMask        = angle::BitMask<uint32_t>(12);
+    return ARMDriverVersion(driverVersion >> 22, (driverVersion >> 12) & kMinorVersionMask,
+                            driverVersion & kPatchMask);
+}
+
 int GetAndroidSDKVersion()
 {
 #if defined(ANGLE_PLATFORM_ANDROID)
@@ -297,33 +333,6 @@ int GetAndroidSDKVersion()
     return 0;
 #endif
 }
-
-OSVersion::OSVersion() {}
-OSVersion::OSVersion(int major, int minor, int patch)
-    : majorVersion(major), minorVersion(minor), patchVersion(patch)
-{}
-
-bool operator==(const OSVersion &a, const OSVersion &b)
-{
-    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) ==
-           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
-}
-bool operator!=(const OSVersion &a, const OSVersion &b)
-{
-    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) !=
-           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
-}
-bool operator<(const OSVersion &a, const OSVersion &b)
-{
-    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) <
-           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
-}
-bool operator>=(const OSVersion &a, const OSVersion &b)
-{
-    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) >=
-           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
-}
-
 #if !defined(ANGLE_PLATFORM_MACOS)
 OSVersion GetMacOSVersion()
 {

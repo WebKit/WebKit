@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -209,7 +209,7 @@ ImageDocument::ImageDocument(Frame& frame, const URL& url)
 #endif
     , m_shouldShrinkImage(frame.settings().shrinksStandaloneImagesToFit() && frame.isMainFrame())
 {
-    setCompatibilityMode(DocumentCompatibilityMode::QuirksMode);
+    setCompatibilityMode(DocumentCompatibilityMode::NoQuirksMode);
     lockCompatibilityMode();
 }
     
@@ -223,6 +223,7 @@ void ImageDocument::createDocumentStructure()
     auto rootElement = HTMLHtmlElement::create(*this);
     appendChild(rootElement);
     rootElement->insertedByParser();
+    rootElement->setInlineStyleProperty(CSSPropertyHeight, 100, CSSUnitType::CSS_PERCENTAGE);
 
     frame()->injectUserScripts(UserScriptInjectionTime::DocumentStart);
 
@@ -231,7 +232,7 @@ void ImageDocument::createDocumentStructure()
     rootElement->appendChild(head);
 
     auto body = HTMLBodyElement::create(*this);
-    body->setAttribute(styleAttr, "margin: 0px"_s);
+    body->setAttribute(styleAttr, "margin: 0px; height: 100%"_s);
     if (MIMETypeRegistry::isPDFMIMEType(document().loader()->responseMIMEType()))
         body->setInlineStyleProperty(CSSPropertyBackgroundColor, "white"_s);
     rootElement->appendChild(body);
@@ -240,7 +241,7 @@ void ImageDocument::createDocumentStructure()
     if (m_shouldShrinkImage)
         imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; margin:auto; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_s);
     else
-        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_s);
+        imageElement->setAttribute(styleAttr, "-webkit-user-select:none; display:block; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_s);
     imageElement->setLoadManually(true);
     imageElement->setSrc(AtomString { url().string() });
     imageElement->cachedImage()->setResponse(loader()->response());

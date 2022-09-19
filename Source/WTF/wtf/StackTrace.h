@@ -56,7 +56,6 @@ public:
     StackTrace(void** stack, int size, const char* prefix = "")
         : m_prefix(prefix)
         , m_size(size)
-        , m_capacity(0)
         , m_borrowedStack(stack)
     { }
 
@@ -132,9 +131,10 @@ public:
 private:
     inline static size_t instanceSize(int capacity);
 
-    StackTrace()
-        : m_size(0)
-    { }
+    // We can't default initialize the member since it's not supported by windows
+    StackTrace() : m_size(0) // NOLINT
+    {
+    }
 
     const char* m_prefix { nullptr };
 

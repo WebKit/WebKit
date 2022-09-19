@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "RenderDescendantIterator.h"
 #include "RenderGeometryMap.h"
+#include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"

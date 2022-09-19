@@ -79,7 +79,7 @@ public:
         return m_inlineBox->renderer();
     }
 
-    const RenderBlockFlow& containingBlock() const
+    const RenderBlockFlow& formattingContextRoot() const
     {
         return m_inlineBox->root().blockFlow();
     }

@@ -280,14 +280,11 @@ private:
     struct JSGlobalObjectRareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        JSGlobalObjectRareData()
-            : profileGroup(0)
-        {
-        }
+        JSGlobalObjectRareData() = default;
 
         WeakMapSet weakMaps;
-        unsigned profileGroup;
-        
+        unsigned profileGroup { 0 };
+
         OpaqueJSClassDataMap opaqueJSClassData;
     };
 

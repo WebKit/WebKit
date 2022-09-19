@@ -5,4 +5,10 @@ PASS selector() function rejects unknown webkit pseudo-elements.
 PASS selector() function accepts known pseudo-elements
 PASS selector() with simple combinators
 FAIL selector() with unknown combinators assert_equals: expected false but got true
+PASS selector() with forgiving :is, 1 arg
+PASS selector() with forgiving :is, multiple args
+PASS selector() with forgiving :where, 1 arg
+PASS selector() with forgiving :where, multiple args
+PASS selector() with forgiving :has, 1 arg
+PASS selector() with forgiving :has, multiple args
 

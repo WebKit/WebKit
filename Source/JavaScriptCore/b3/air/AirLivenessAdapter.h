@@ -44,8 +44,8 @@ struct LivenessAdapter {
     typedef Vector<unsigned, 4> ActionsList;
     
     struct Actions {
-        Actions() { }
-        
+        Actions() = default;
+
         ActionsList use;
         ActionsList def;
     };

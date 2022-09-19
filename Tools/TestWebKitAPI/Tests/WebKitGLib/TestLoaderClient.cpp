@@ -682,18 +682,6 @@ static void testURIResponseHTTPHeaders(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(soup_message_headers_get_one(headers, "Foo"), ==, "bar");
 }
 
-static void testRedirectToDataURI(WebViewTest* test, gconstpointer)
-{
-    test->loadURI(kServer->getURIForPath("/redirect-to-data").data());
-    test->waitUntilLoadFinished();
-
-    static const char* expectedData = "data-uri";
-    size_t mainResourceDataSize = 0;
-    const char* mainResourceData = test->mainResourceData(mainResourceDataSize);
-    g_assert_cmpint(mainResourceDataSize, ==, strlen(expectedData));
-    g_assert_cmpint(strncmp(mainResourceData, expectedData, mainResourceDataSize), ==, 0);
-}
-
 static HashMap<CString, CString> s_userAgentMap;
 
 static void testUserAgent(WebViewTest* test, gconstpointer)
@@ -866,7 +854,6 @@ void beforeAll()
     WebViewTest::add("WebKitURIRequest", "http-headers", testURIRequestHTTPHeaders);
     WebViewTest::add("WebKitURIRequest", "http-method", testURIRequestHTTPMethod);
     WebViewTest::add("WebKitURIResponse", "http-headers", testURIResponseHTTPHeaders);
-    WebViewTest::add("WebKitWebPage", "redirect-to-data-uri", testRedirectToDataURI);
     WebViewTest::add("WebKitWebView", "user-agent", testUserAgent);
 }
 

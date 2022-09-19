@@ -56,13 +56,10 @@ const gl::InternalFormat &GetReadAttachmentInfo(const gl::Context *context,
 }  // namespace
 
 // FramebufferMtl implementation
-FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state,
-                               ContextMtl *context,
-                               bool flipY,
-                               WindowSurfaceMtl *backbuffer)
+FramebufferMtl::FramebufferMtl(const gl::FramebufferState &state, ContextMtl *context, bool flipY)
     : FramebufferImpl(state),
       mColorRenderTargets(context->getNativeCaps().maxColorAttachments, nullptr),
-      mBackbuffer(backbuffer),
+      mBackbuffer(nullptr),
       mFlipY(flipY)
 {
     reset();

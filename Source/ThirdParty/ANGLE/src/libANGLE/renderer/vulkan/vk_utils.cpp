@@ -1038,6 +1038,9 @@ PFN_vkCmdSetRasterizerDiscardEnableEXT vkCmdSetRasterizerDiscardEnableEXT = null
 PFN_vkGetPhysicalDeviceFragmentShadingRatesKHR vkGetPhysicalDeviceFragmentShadingRatesKHR = nullptr;
 PFN_vkCmdSetFragmentShadingRateKHR vkCmdSetFragmentShadingRateKHR                         = nullptr;
 
+// VK_GOOGLE_display_timing
+PFN_vkGetPastPresentationTimingGOOGLE vkGetPastPresentationTimingGOOGLE = nullptr;
+
 void InitDebugUtilsEXTFunctions(VkInstance instance)
 {
     GET_INSTANCE_FUNC(vkCreateDebugUtilsMessengerEXT);
@@ -1192,6 +1195,12 @@ void InitFragmentShadingRateKHRFunctions(VkDevice device)
 {
     GET_DEVICE_FUNC(vkGetPhysicalDeviceFragmentShadingRatesKHR);
     GET_DEVICE_FUNC(vkCmdSetFragmentShadingRateKHR);
+}
+
+// VK_GOOGLE_display_timing
+void InitGetPastPresentationTimingGoogleFunction(VkDevice device)
+{
+    GET_DEVICE_FUNC(vkGetPastPresentationTimingGOOGLE);
 }
 
 #    undef GET_INSTANCE_FUNC

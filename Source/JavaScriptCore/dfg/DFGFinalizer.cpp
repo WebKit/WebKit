@@ -35,10 +35,7 @@ Finalizer::Finalizer(Plan& plan)
 {
 }
 
-Finalizer::~Finalizer()
-{
-}
-
+Finalizer::~Finalizer() = default;
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

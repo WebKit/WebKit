@@ -63,7 +63,7 @@ public:
     const Vector<Ref<SpeechSynthesisVoice>>& getVoices();
 
     // Used in testing to use a mock platform synthesizer
-    WEBCORE_EXPORT void setPlatformSynthesizer(std::unique_ptr<PlatformSpeechSynthesizer>);
+    WEBCORE_EXPORT void setPlatformSynthesizer(Ref<PlatformSpeechSynthesizer>&&);
 
     // Restrictions to change default behaviors.
     enum BehaviorRestrictionFlags {
@@ -106,7 +106,7 @@ private:
     
     PlatformSpeechSynthesizer& ensurePlatformSpeechSynthesizer();
     
-    std::unique_ptr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
+    RefPtr<PlatformSpeechSynthesizer> m_platformSpeechSynthesizer;
     Vector<Ref<SpeechSynthesisVoice>> m_voiceList;
     RefPtr<SpeechSynthesisUtterance> m_currentSpeechUtterance;
     Deque<Ref<SpeechSynthesisUtterance>> m_utteranceQueue;

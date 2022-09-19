@@ -93,7 +93,6 @@ class ClobberSetOverlaps {
 public:
     ClobberSetOverlaps(const ClobberSet& set)
         : m_set(set)
-        , m_result(false)
     {
     }
     
@@ -106,7 +105,7 @@ public:
     
 private:
     const ClobberSet& m_set;
-    mutable bool m_result;
+    mutable bool m_result { false };
 };
 
 void addReads(Graph&, Node*, ClobberSet&);

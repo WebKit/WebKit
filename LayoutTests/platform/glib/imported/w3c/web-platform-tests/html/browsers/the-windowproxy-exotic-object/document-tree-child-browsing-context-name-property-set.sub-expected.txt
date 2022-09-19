@@ -1,0 +1,4 @@
+
+
+FAIL Cross origin child window's name shadows the second candidate of a same origin iframe assert_equals: expected (undefined) undefined but got (object) object "[object Window]"
+

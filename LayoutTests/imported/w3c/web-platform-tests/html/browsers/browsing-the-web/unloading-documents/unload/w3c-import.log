@@ -34,3 +34,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/009-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/009.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/pagehide-manual-1.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/unload-main-frame-cross-origin.window.js
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/unload/unload-main-frame-same-origin.window.js

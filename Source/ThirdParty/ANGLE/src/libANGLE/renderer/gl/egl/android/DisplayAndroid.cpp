@@ -50,7 +50,7 @@ ExternalImageSiblingImpl *DisplayAndroid::createExternalImageSibling(
     switch (target)
     {
         case EGL_NATIVE_BUFFER_ANDROID:
-            return new NativeBufferImageSiblingAndroid(buffer);
+            return new NativeBufferImageSiblingAndroid(buffer, attribs);
 
         default:
             return DisplayEGL::createExternalImageSibling(context, target, buffer, attribs);

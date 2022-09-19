@@ -34,11 +34,7 @@ namespace bmalloc {
 
 class Range {
 public:
-    Range()
-        : m_begin(0)
-        , m_size(0)
-    {
-    }
+    Range() = default;
 
     Range(void* start, size_t size)
         : m_begin(static_cast<char*>(start))
@@ -55,8 +51,8 @@ public:
     bool operator<(const Range& other) const { return m_begin < other.m_begin; }
 
 private:
-    char* m_begin;
-    size_t m_size;
+    char* m_begin { nullptr };
+    size_t m_size { 0 };
 };
 
 inline bool canMerge(const Range& a, const Range& b)
