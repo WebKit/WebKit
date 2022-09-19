@@ -65,7 +65,6 @@ public:
     FlexFormattingState& formattingStateForFlexFormattingContext(const ContainerBox& flexFormattingContextRoot) const;
 
     FormattingState& formattingStateForFormattingContext(const ContainerBox& formattingRoot) const;
-    FormattingState& formattingStateForBox(const Box&) const;
 
     bool hasFormattingState(const ContainerBox& formattingRoot) const;
     bool hasInlineFormattingState(const ContainerBox& formattingRoot) const { return m_inlineFormattingStates.contains(&formattingRoot); }

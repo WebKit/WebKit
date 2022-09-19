@@ -242,13 +242,12 @@ LayoutUnit FormattingGeometry::staticVerticalPositionForOutOfFlowPositioned(cons
 
     // Start with this box's border box offset from the parent's border box.
     auto& formattingContext = this->formattingContext();
-    LayoutUnit top;
+    auto top = LayoutUnit { };
     if (layoutBox.previousInFlowSibling() && layoutBox.previousInFlowSibling()->isBlockLevelBox()) {
         // Add sibling offset
         auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
         auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(previousInFlowSibling, FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
-        auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(previousInFlowSibling));
-        auto usedVerticalMarginForPreviousBox = formattingState.usedVerticalMargin(previousInFlowSibling);
+        auto usedVerticalMarginForPreviousBox = downcast<BlockFormattingState>(formattingContext.formattingState()).usedVerticalMargin(previousInFlowSibling);
 
         top += BoxGeometry::borderBoxRect(previousInFlowBoxGeometry).bottom() + usedVerticalMarginForPreviousBox.nonCollapsedValues.after;
     } else

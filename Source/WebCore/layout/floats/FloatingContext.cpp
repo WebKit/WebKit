@@ -322,7 +322,7 @@ std::optional<FloatingContext::PositionWithClearance> FloatingContext::verticalP
             // Clearance inhibits margin collapsing in block formatting context.
             if (auto* previousInFlowSibling = layoutBox.previousInFlowSibling()) {
                 // Does this box with clearance actually collapse its margin before with the previous inflow box's margin after?
-                auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(layoutBox));
+                auto& formattingState = downcast<BlockFormattingState>(formattingContext().formattingState());
                 auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
                 if (verticalMargin.collapsedValues.before) {
                     auto previousVerticalMarginAfter = formattingContext().geometryForBox(*previousInFlowSibling).marginAfter();

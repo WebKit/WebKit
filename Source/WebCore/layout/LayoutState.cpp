@@ -81,11 +81,6 @@ BoxGeometry& LayoutState::ensureGeometryForBoxSlow(const Box& layoutBox)
     }).iterator->value;
 }
 
-FormattingState& LayoutState::formattingStateForBox(const Box& layoutBox) const
-{
-    return formattingStateForFormattingContext(layoutBox.formattingContextRoot());
-}
-
 bool LayoutState::hasFormattingState(const ContainerBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
