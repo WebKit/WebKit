@@ -973,8 +973,6 @@ fast/dom/connected-subframe-counter-overflow.html [ Slow ]
 
 # Skip workers tests that are timing out or are SharedWorker related only
 imported/w3c/web-platform-tests/workers/interfaces/WorkerUtils/importScripts/006.html [ Skip ]
-imported/w3c/web-platform-tests/workers/nested_worker.worker.html [ Skip ]
-imported/w3c/web-platform-tests/workers/semantics/multiple-workers/003.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/dedicated-worker-options-credentials.html [ Skip ]
 imported/w3c/web-platform-tests/workers/modules/shared-worker-import-csp.html [ Skip ]
 
@@ -1747,7 +1745,6 @@ imported/w3c/web-platform-tests/resource-timing/cross-origin-status-codes.html [
 imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-embed.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-iframe.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-object.html [ Skip ]
-imported/w3c/web-platform-tests/resource-timing/resource_nested_dedicated_worker.worker.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/buffer-full-inspect-buffer-during-callback.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/buffer-full-set-to-current-buffer.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/document-domain-no-impact-opener.html [ Skip ]

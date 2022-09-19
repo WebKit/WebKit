@@ -1,10 +1,7 @@
 CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/echo-query?%C3%A5' failed: WebSocket is closed before the connection is established.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=e3b4acc5-7a85-48f9-87f4-f1226f09bb31' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=aff7d112-4148-4796-ba60-89c76804e540' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=3be6dd2b-41f7-4251-bedf-91b97adac4c3' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=bbbc95eb-4248-4abd-a3d9-37565b9230bb' because non CSS MIME types are not allowed in strict mode.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=3a6546f1-03df-4f16-80a5-d54660d98ccd' because non CSS MIME types are not allowed in strict mode.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=5dd7b0b7-1185-4558-b33a-4ac0e487b4e9' because non CSS MIME types are not allowed in strict mode.
 
 Harness Error (TIMEOUT), message = null
 
@@ -29,9 +26,7 @@ PASS submit form <input formaction>
 PASS submit form <button formaction>
 PASS <base href>
 PASS Worker constructor
-FAIL SharedWorker constructor null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
-      assert_equals(e.data, expected_current);
-    })')
+PASS SharedWorker constructor
 PASS EventSource constructor
 PASS EventSource#url
 PASS window.open()
@@ -45,22 +40,13 @@ PASS SVG <image>
 PASS SVG <use>
 PASS XMLHttpRequest#open()
 PASS importScripts() in a dedicated worker
-FAIL Worker() in a dedicated worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: Worker"
+PASS Worker() in a dedicated worker
 FAIL SharedWorker() in a dedicated worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: SharedWorker"
-FAIL importScripts() in a shared worker null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
-      assert_equals(e.data, expected_utf8);
-    })')
-FAIL Worker() in a shared worker null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
-      assert_equals(e.data, expected_utf8);
-    })')
-FAIL SharedWorker() in a shared worker null is not an object (evaluating 'worker.port.onmessage = this.step_func_done(function(e) {
-      assert_equals(e.data, expected_utf8);
-    })')
+FAIL importScripts() in a shared worker assert_equals: expected "%C3%A5" but got "importScripts failed to run"
+FAIL Worker() in a shared worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: Worker"
+FAIL SharedWorker() in a shared worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: SharedWorker"
 PASS WebSocket constructor
 PASS WebSocket#url
-PASS Parsing cache manifest (CACHE)
-PASS Parsing cache manifest (FALLBACK)
-PASS Parsing cache manifest (NETWORK)
 PASS CSS <link> (utf-8) #<id> { background-image:<url> }
 FAIL CSS <link> (windows-1252) #<id> { background-image:<url> } assert_equals: expected "%C3%A5" but got "%E5"
 PASS CSS <style> #<id> { background-image:<url> }

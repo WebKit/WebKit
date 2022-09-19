@@ -1,10 +1,7 @@
 CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:49001/echo-query?%C3%A5' failed: WebSocket is closed before the connection is established.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=1188282a-ca52-4f4d-bdf6-608096286893' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=9ca7bfe6-3b53-4239-8cc6-ae919066b3fd' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=9f7181df-04f9-4485-b25b-16c4c3895af3' because non CSS MIME types are not allowed in strict mode.
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
-CONSOLE MESSAGE: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=12eb74d2-e5c8-4006-8f5c-9e5bd9a46ec3' because non CSS MIME types are not allowed in strict mode.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=7bde69cd-9652-4542-ad92-24cd4a8e366c' because non CSS MIME types are not allowed in strict mode.
+CONSOLE MESSAGE: Did not parse stylesheet at 'http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/stash.py?q=%C3%A5&action=put&id=70f80937-d86e-4654-aa5e-6427fcf69bca' because non CSS MIME types are not allowed in strict mode.
 
 Harness Error (TIMEOUT), message = null
 
@@ -19,41 +16,37 @@ TIMEOUT loading image <embed src> Test timed out
 TIMEOUT loading image <object data> Test timed out
 FAIL loading image <input src> assert_equals: expected substring %26%23229%3B got unknown query expected (undefined) undefined but got (number) 256
 FAIL loading image <video poster> assert_equals: expected substring %26%23229%3B got unknown query expected (undefined) undefined but got (number) 256
-TIMEOUT loading video <video> Test timed out
-TIMEOUT loading video <video><source> Test timed out
-TIMEOUT loading video <audio> Test timed out
-TIMEOUT loading video <audio><source> Test timed out
+FAIL loading video <video> assert_equals: expected substring %26%23229%3B got unknown query expected (undefined) undefined but got (number) 300
+FAIL loading video <video><source> assert_equals: expected substring %26%23229%3B got unknown query expected (undefined) undefined but got (number) 300
+FAIL loading video <audio> assert_equals: expected substring %26%23229%3B got unknown query expected (undefined) undefined but got (number) 300
+FAIL loading video <audio><source> assert_equals: expected substring %26%23229%3B got unknown query expected (undefined) undefined but got (number) 300
 PASS loading webvtt <track>
 PASS submit form <form action>
 PASS submit form <input formaction>
 PASS submit form <button formaction>
 FAIL <base href> assert_true: expected substring %26%23229%3B got http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1251&type= expected true got false
 PASS Worker constructor
-FAIL SharedWorker constructor Can't find variable: SharedWorker
+PASS SharedWorker constructor
 PASS EventSource constructor
 PASS EventSource#url
-FAIL XMLDocument#load() doc.load is not a function. (In 'doc.load(input_url_svg)', 'doc.load' is undefined)
 PASS window.open()
 FAIL <a>.search assert_true: href content attribute expected substring %26%23229%3B got http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1251&type=html expected true got false
 FAIL <area>.search assert_true: href content attribute expected substring %26%23229%3B got http://localhost:8800/html/infrastructure/urls/resolving-urls/query-encoding/resources/resource.py?q=%C3%A5&encoding=windows-1251&type=html expected true got false
 FAIL history.pushState assert_equals: url was resolved against the iframe's URL instead of the settings object's API base URL expected -1 but got 76
 FAIL history.replaceState assert_equals: url was resolved against the iframe's URL instead of the settings object's API base URL expected -1 but got 76
 PASS SVG <a>
-TIMEOUT SVG <feImage>
+TIMEOUT SVG <feImage> Test timed out
 FAIL SVG <image> assert_equals: expected "%26%23229%3B" but got "%C3%A5"
 PASS SVG <use>
 FAIL XMLHttpRequest#open() assert_equals: expected "%C3%A5" but got "%26%23229%3B"
 PASS importScripts() in a dedicated worker
-FAIL Worker() in a dedicated worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: Worker"
+PASS Worker() in a dedicated worker
 FAIL SharedWorker() in a dedicated worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: SharedWorker"
-FAIL importScripts() in a shared worker Can't find variable: SharedWorker
-FAIL Worker() in a shared worker Can't find variable: SharedWorker
-FAIL SharedWorker() in a shared worker Can't find variable: SharedWorker
+FAIL importScripts() in a shared worker assert_equals: expected "%C3%A5" but got "importScripts failed to run"
+FAIL Worker() in a shared worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: Worker"
+FAIL SharedWorker() in a shared worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: SharedWorker"
 PASS WebSocket constructor
 PASS WebSocket#url
-PASS Parsing cache manifest (CACHE)
-PASS Parsing cache manifest (FALLBACK)
-PASS Parsing cache manifest (NETWORK)
 FAIL CSS <link> (windows-1251) #<id> { background-image:<url> } assert_equals: expected "%C3%A5" but got "%26%23229%3B"
 PASS CSS <link> (utf-8) #<id> { background-image:<url> }
 FAIL CSS <style> #<id> { background-image:<url> } assert_equals: expected "%C3%A5" but got "%26%23229%3B"
@@ -80,7 +73,7 @@ PASS URL constructor, url
 PASS URL constructor, base
 PASS Scheme ftp (getting <a>.href)
 PASS Scheme file (getting <a>.href)
-PASS Scheme gopher (getting <a>.href)
+FAIL Scheme gopher (getting <a>.href) assert_true: expected substring %26%23229%3B got gopher://example.invalid/?x=%C3%A5 expected true got false
 PASS Scheme http (getting <a>.href)
 PASS Scheme https (getting <a>.href)
 PASS Scheme ws (getting <a>.href)

@@ -1,11 +1,10 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: Worker
 
-Harness Error (FAIL), message = ReferenceError: Can't find variable: Worker
+Harness Error (TIMEOUT), message = null
 
-TIMEOUT Reporting to coep-none worker with coep-none worker Test timed out
-NOTRUN Reporting to coep-none worker with coep-report-only worker
-NOTRUN Reporting to coep-none worker with coep-require-corp worker
-NOTRUN Reporting to coep-report-only worker with coep-none worker
+PASS Reporting to coep-none worker with coep-none worker
+PASS Reporting to coep-none worker with coep-report-only worker
+PASS Reporting to coep-none worker with coep-require-corp worker
+TIMEOUT Reporting to coep-report-only worker with coep-none worker Test timed out
 NOTRUN Reporting to coep-report-only worker with coep-report-only worker
 NOTRUN Reporting to coep-report-only worker with coep-require-corp worker
 NOTRUN Reporting to coep-require-corp worker with coep-none worker
