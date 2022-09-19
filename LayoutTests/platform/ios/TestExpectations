@@ -3713,3 +3713,7 @@ imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-040.html [ 
 imported/w3c/web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-combination-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-combination-001.html [ ImageOnlyFailure ]
+
+#rdar://100001125 ([ iOS ] 2X imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-0(Layout tests) are constant failures)
+imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-017.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text/white-space/white-space-intrinsic-size-018.html [ ImageOnlyFailure ]
