@@ -3708,3 +3708,8 @@ imported/w3c/web-platform-tests/css/css-values/angle-units-005.html [ ImageOnlyF
 
 #rdar://99993194 ([ iOS ] imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-040.html is a constant failure)
 imported/w3c/web-platform-tests/css/css-transforms/matrix/svg-matrix-040.html [ ImageOnlyFailure ]
+
+#rdar://99996287 ([ iOS ] 3X imported/w3c/web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-(Layout Tests) are constant failures)
+imported/w3c/web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-combination-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-transforms/gradientTransform/svg-gradientTransform-combination-001.html [ ImageOnlyFailure ]
