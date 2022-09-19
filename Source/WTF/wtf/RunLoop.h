@@ -72,7 +72,7 @@ using RunLoopMode = unsigned;
 #define DefaultRunLoopMode 0
 #endif
 
-class WTF_CAPABILITY("is current") RunLoop final : public FunctionDispatcher, public ThreadSafeRefCounted<RunLoop> {
+class WTF_CAPABILITY("is current") RunLoop final : public SerialFunctionDispatcher, public ThreadSafeRefCounted<RunLoop> {
     WTF_MAKE_NONCOPYABLE(RunLoop);
 public:
     // Must be called from the main thread.
@@ -109,6 +109,10 @@ public:
     WTF_EXPORT_PRIVATE CycleResult static cycle(RunLoopMode = DefaultRunLoopMode);
 
     WTF_EXPORT_PRIVATE void threadWillExit();
+
+#if ASSERT_ENABLED
+    void assertIsCurrent() const final;
+#endif
 
 #if USE(GLIB_EVENT_LOOP)
     WTF_EXPORT_PRIVATE GMainContext* mainContext() const { return m_mainContext.get(); }
