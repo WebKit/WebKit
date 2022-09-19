@@ -2293,7 +2293,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             });
         }
 
-        contextMenu.appendItem(WI.UIString("Console Snippet..."), () => {
+        contextMenu.appendItem(WI.UIString("Console Snippet\u2026"), () => {
             if (!this._consoleSnippetsTreeOutline.children.length)
                 this._consoleSnippetsRow.showEmptyMessage();
 

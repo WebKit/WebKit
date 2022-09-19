@@ -79,7 +79,6 @@ WI.ConsoleSnippet = class ConsoleSnippet extends WI.LocalScript
                     if (!WI.consoleManager.snippets.has(this))
                         return;
 
-
                     const cookie = null;
                     WI.showRepresentedObject(this, cookie, {
                         ignoreNetworkTab: true,

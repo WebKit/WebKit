@@ -117,7 +117,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         }
 
         const consoleSnippetsImage = ""; // This is set in CSS to have dark mode support.
-        this._consoleSnippetsNavigationItem = new WI.ButtonNavigationItem("console-snippets", WI.UIString("Console Snippets..."), consoleSnippetsImage);
+        this._consoleSnippetsNavigationItem = new WI.ButtonNavigationItem("console-snippets", WI.UIString("Run Console Snippet\u2026"), consoleSnippetsImage);
         this._consoleSnippetsNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.Image;
         this._consoleSnippetsNavigationItem.imageType = WI.ButtonNavigationItem.ImageType.IMG;
         WI.addMouseDownContextMenuHandlers(this._consoleSnippetsNavigationItem.element, this._handleSnippetsNavigationItemContextMenu.bind(this));
@@ -964,7 +964,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         }, !WI.settings.clearLogOnNavigate.value);
     }
 
-    _handleSnippetsNavigationItemContextMenu(contextMenu) {
+    _handleSnippetsNavigationItemContextMenu(contextMenu)
+    {
         for (let consoleSnippet of WI.consoleManager.snippets) {
             contextMenu.appendItem(consoleSnippet.displayName, () => {
                 consoleSnippet.run();
@@ -973,7 +974,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         contextMenu.appendSeparator();
 
-        contextMenu.appendItem(WI.UIString("Create Console Snippet..."), () => {
+        contextMenu.appendItem(WI.UIString("Create Console Snippet\u2026"), () => {
             let popover = new WI.InputPopover("create-snippet-popover", WI.UIString("Name"), this);
             popover.show(this._consoleSnippetsNavigationItem.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
         });

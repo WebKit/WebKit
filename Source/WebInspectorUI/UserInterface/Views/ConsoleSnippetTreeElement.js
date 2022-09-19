@@ -54,6 +54,13 @@ WI.ConsoleSnippetTreeElement = class ConsoleSnippetTreeElement extends WI.Script
         return true;
     }
 
+    onenter()
+    {
+        this.representedObject.run();
+
+        return true;
+    }
+
     onspace()
     {
         this.representedObject.run();
@@ -67,6 +74,19 @@ WI.ConsoleSnippetTreeElement = class ConsoleSnippetTreeElement extends WI.Script
             return false;
 
         return super.canSelectOnMouseDown(event);
+    }
+
+    populateContextMenu(contextMenu, event)
+    {
+        contextMenu.appendSeparator();
+
+        contextMenu.appendItem(WI.UIString("Run Console Snippet"), () => {
+            this.representedObject.run();
+        });
+
+        contextMenu.appendSeparator();
+
+        super.populateContextMenu(contextMenu, event);
     }
 
     updateStatus()
