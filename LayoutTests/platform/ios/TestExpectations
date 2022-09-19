@@ -3706,8 +3706,6 @@ webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 
 webkit.org/b/243836 imported/w3c/web-platform-tests/css/css-flexbox/negative-overflow-002.html [ Pass Failure ]
 
-webkit.org/b/243946 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional.html [ Pass Failure ]
-
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/target-text-008.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.html [ Pass ImageOnlyFailure ]
 
