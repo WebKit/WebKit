@@ -36,6 +36,24 @@ function test()
     });
 
     suite.addTestCase({
+        name: "Set.prototype.some",
+        test() {
+            function test(set, callback, thisArg, expected, message) {
+                InspectorTest.expectEqual(set.some(callback, thisArg), expected, message);
+            }
+
+            const set1 = new Set([1, 2, 3, 4]);
+            const set2 = new Set([2, 4]);
+
+            test(set1, function(value) { return value % 2; }, null, true, "Set can 'some' based on the value.");
+            test(set1, function(value, key) { return key === 5; }, null, false, "Set can 'some' based on the key.");
+            test(set1, function(value, key, set) { return set === set1; }, null, true, "Set can 'some' based on the set object.");
+            test(set1, function(value, key, set) { return this.has(key); }, set2, true, "Set can 'some' with a different this.");
+            test(set1, function(value, key, set) { return this === set; }, set2, false, "Set can 'some' based on the set object with a different this.");
+        },
+    });
+
+    suite.addTestCase({
         name: "Set.prototype.pushAll",
         test() {
             function test(iterable) {

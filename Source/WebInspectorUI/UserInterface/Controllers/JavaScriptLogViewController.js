@@ -45,7 +45,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
 
         this._cleared = true;
         this._previousMessageView = null;
-        this._lastCommitted = "";
+        this._lastCommitted = {text: "", special: false};
         this._repeatCountWasInterrupted = false;
 
         this._sessions = [];
@@ -105,7 +105,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         let consoleSession = new WI.ConsoleSession(data);
 
         this._previousMessageView = null;
-        this._lastCommitted = "";
+        this._lastCommitted = {text: "", special: false};
         this._repeatCountWasInterrupted = false;
 
         this._sessions.push(consoleSession);
@@ -117,12 +117,19 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
         consoleSession.element.scrollIntoView();
     }
 
-    appendImmediateExecutionWithResult(text, result, addSpecialUserLogClass, shouldRevealConsole)
+    appendImmediateExecutionWithResult(text, result, {addSpecialUserLogClass, shouldRevealConsole, handleClick} = {})
     {
         console.assert(result instanceof WI.RemoteObject);
 
-        var commandMessageView = new WI.ConsoleCommandView(text, addSpecialUserLogClass ? "special-user-log" : null);
-        this._appendConsoleMessageView(commandMessageView, true);
+        if (this._lastCommitted.text !== text || this._lastCommitted.special !== addSpecialUserLogClass) {
+            let classNames = [];
+            if (addSpecialUserLogClass)
+                classNames.push("special-user-log");
+
+            let commandMessageView = new WI.ConsoleCommandView(text, {classNames, handleClick});
+            this._appendConsoleMessageView(commandMessageView, true);
+            this._lastCommitted = {text, special: addSpecialUserLogClass};
+        }
 
         function saveResultCallback(savedResultIndex)
         {
@@ -218,10 +225,10 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
     {
         console.assert(text);
 
-        if (this._lastCommitted !== text) {
+        if (this._lastCommitted.text !== text || this._lastCommitted.special) {
             let commandMessageView = new WI.ConsoleCommandView(text);
             this._appendConsoleMessageView(commandMessageView, true);
-            this._lastCommitted = text;
+            this._lastCommitted = {text, special: false};
         }
 
         function printResult(result, wasThrown, savedResultIndex)
@@ -277,7 +284,7 @@ WI.JavaScriptLogViewController = class JavaScriptLogViewController extends WI.Ob
             this._previousMessageView = messageView;
 
         if (messageView.message && messageView.message.source !== WI.ConsoleMessage.MessageSource.JS)
-            this._lastCommitted = "";
+            this._lastCommitted = {test: "", special: false};
 
         if (WI.consoleContentView.isAttached)
             this.renderPendingMessagesSoon();

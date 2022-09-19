@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.console-drawer {
-    border-top: 1px solid var(--border-color);
+ .tree-outline .item.console-snippet > .status {
+     display: flex;
+     align-items: center;
+     width: 16px;
+     height: 16px;
+ }
+
+ .tree-outline .item.console-snippet > .status > img {
+     width: 100%;
+     height: 100%;
+     content: url(../Images/Start.svg);
+ }
+
+.tree-outline .item.console-snippet:not(:hover) > .status > img {
+    display: none;
 }
 
-.console-drawer > .navigation-bar {
-    cursor: row-resize;
-    background-color: var(--panel-background-color);
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.console-snippet.selected:hover > .status > img {
+    filter: var(--filter-invert);
 }
 
-.console-drawer > .navigation-bar > .item.button:not(.clear-log) {
-    width: 30px;
-}
-
-.console-drawer > .navigation-bar > .item:not(.flexible-space) {
-    cursor: default;
-}
-
-.console-drawer > .navigation-bar > :matches(.item.button, .log-scope-bar) {
-    pointer-events: none;
-}
-
-.console-drawer > .navigation-bar > .item > :is(.glyph, img),
-.console-drawer > .navigation-bar > .log-scope-bar > li {
-    pointer-events: all;
+@media (prefers-color-scheme: dark) {
+    .tree-outline .item.console-snippet:hover > .status > img {
+        filter: var(--filter-invert) brightness(90%);
+    }
 }

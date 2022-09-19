@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.console-drawer {
-    border-top: 1px solid var(--border-color);
-}
+WI.ConsoleSnippetTreeElement = class ConsoleSnippetTreeElement extends WI.ScriptTreeElement
+{
+    constructor(consoleSnippet)
+    {
+        console.assert(consoleSnippet instanceof WI.ConsoleSnippet, consoleSnippet);
 
-.console-drawer > .navigation-bar {
-    cursor: row-resize;
-    background-color: var(--panel-background-color);
-}
+        super(consoleSnippet);
 
-.console-drawer > .navigation-bar > .item.button:not(.clear-log) {
-    width: 30px;
-}
+        this.addClassName("console-snippet");
+    }
 
-.console-drawer > .navigation-bar > .item:not(.flexible-space) {
-    cursor: default;
-}
+    // Protected
 
-.console-drawer > .navigation-bar > :matches(.item.button, .log-scope-bar) {
-    pointer-events: none;
-}
+    onattach()
+    {
+        super.onattach();
 
-.console-drawer > .navigation-bar > .item > :is(.glyph, img),
-.console-drawer > .navigation-bar > .log-scope-bar > li {
-    pointer-events: all;
-}
+        this.status = document.createElement("img");
+        this.status.title = WI.UIString("Run");
+        this.status.addEventListener("click", (event) => {
+            this.representedObject.run();
+        });
+    }
+
+    ondelete()
+    {
+        WI.consoleManager.removeSnippet(this.representedObject);
+
+        return true;
+    }
+
+    onspace()
+    {
+        this.representedObject.run();
+
+        return true;
+    }
+
+    canSelectOnMouseDown(event)
+    {
+        if (this.status.contains(event.target))
+            return false;
+
+        return super.canSelectOnMouseDown(event);
+    }
+
+    updateStatus()
+    {
+        // Do nothing. Do not allow ScriptTreeElement / SourceCodeTreeElement to modify our status element.
+    }
+};

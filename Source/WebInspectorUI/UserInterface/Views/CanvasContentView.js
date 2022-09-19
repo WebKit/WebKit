@@ -308,8 +308,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
                     return;
 
                 const text = WI.UIString("Selected Canvas Context");
-                const addSpecialUserLogClass = true;
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true});
             });
         });
 

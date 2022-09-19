@@ -165,6 +165,8 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.ScriptRemoved, this._scriptRemoved, this);
         WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetAdded, this._handleStyleSheetAdded, this);
         WI.cssManager.removeEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._handleStyleSheetRemoved, this);
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.SnippetAdded, this._handleConsoleSnippetAdded, this);
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.SnippetRemoved, this._handleConsoleSnippetRemoved, this);
 
         this._queryController.reset();
         this._updateFilterThrottler.cancel();
@@ -180,6 +182,8 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.ScriptRemoved, this._scriptRemoved, this);
         WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetAdded, this._handleStyleSheetAdded, this);
         WI.cssManager.addEventListener(WI.CSSManager.Event.StyleSheetRemoved, this._handleStyleSheetRemoved, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.SnippetAdded, this._handleConsoleSnippetAdded, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.SnippetRemoved, this._handleConsoleSnippetRemoved, this);
 
         if (WI.networkManager.mainFrame)
             this._addResourcesForFrame(WI.networkManager.mainFrame);
@@ -205,6 +209,9 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
             if (styleSheet.origin !== WI.CSSStyleSheet.Type.Author && !styleSheet.anonymous)
                 this._addResource(styleSheet);
         }
+
+        for (let consoleSnippet of WI.consoleManager.snippets)
+            this._addResource(consoleSnippet);
 
         this._updateFilterThrottler.force();
 
@@ -468,6 +475,16 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
             return;
 
         this._removeResource(styleSheet);
+    }
+
+    _handleConsoleSnippetAdded(event)
+    {
+        this._addResource(event.data.snippet);
+    }
+
+    _handleConsoleSnippetRemoved(event)
+    {
+        this._removeResource(event.data.snippet);
     }
 };
 

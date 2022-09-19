@@ -71,7 +71,7 @@
     content: url(../Images/DocumentIcons.svg#js-light-override);
 }
 
-.anonymous-script-icon .icon {
+:is(.anonymous-script-icon, .resource-icon.resource-type-script.console-snippet) .icon {
     content: url(../Images/ClippingIcons.svg#js-light);
 }
 
@@ -162,7 +162,7 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
         content: url(../Images/DocumentIcons.svg#js-dark-override);
     }
 
-    .anonymous-script-icon .icon {
+    :is(.anonymous-script-icon, .resource-icon.resource-type-script.console-snippet) .icon {
         content: url(../Images/ClippingIcons.svg#js-dark);
     }
 

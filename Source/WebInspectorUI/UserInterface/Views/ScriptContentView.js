@@ -248,7 +248,10 @@ WI.ScriptContentView = class ScriptContentView extends WI.ContentView
 
     _handleTextEditorContentDidChange(event)
     {
-        this._script.editableRevision.updateRevisionContent(this._textEditor.string);
+        this._updateRevisionContentDebouncer ||= new Debouncer(() => {
+            this._script.editableRevision.updateRevisionContent(this._textEditor.string);
+        });
+        this._updateRevisionContentDebouncer.delayForTime(250);
     }
 
     _togglePrettyPrint(event)

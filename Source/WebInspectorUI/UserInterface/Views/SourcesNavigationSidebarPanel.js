@@ -246,6 +246,28 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._localOverridesContainer.hidden = true;
         this._localOverridesContainer.appendChild(this._localOverridesSection.element);
 
+        this._consoleSnippetsTreeOutline = this.createContentTreeOutline({suppressFiltering: true});
+        this._consoleSnippetsTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._handleTreeSelectionDidChange, this);
+
+        this._consoleSnippetsRow = new WI.DetailsSectionRow(WI.UIString("No Console Snippets"));
+
+        let consoleSnippetNavigationBarWrapper = document.createElement("div");
+
+        let consoleSnippetNavigationBar = new WI.NavigationBar;
+        consoleSnippetNavigationBarWrapper.appendChild(consoleSnippetNavigationBar.element);
+
+        this._createConsoleSnippetButton = new WI.ButtonNavigationItem("create-console-snippet", WI.UIString("Create Console Snippet"), "Images/Plus13.svg", 13, 13);
+        this._createConsoleSnippetButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleCreateConsoleSnippetButtonClicked, this);
+        consoleSnippetNavigationBar.addNavigationItem(this._createConsoleSnippetButton);
+
+        let consoleSnippetsGroup = new WI.DetailsSectionGroup([this._consoleSnippetsRow]);
+        this._consoleSnippetsSection = new WI.DetailsSection("console-snippets", WI.UIString("Console Snippets"), [consoleSnippetsGroup], consoleSnippetNavigationBarWrapper);
+
+        this._consoleSnippetsContainer = this.contentView.element.appendChild(document.createElement("div"));
+        this._consoleSnippetsContainer.classList.add("console-snippets-container");
+        this._consoleSnippetsContainer.hidden = true;
+        this._consoleSnippetsContainer.appendChild(this._consoleSnippetsSection.element);
+
         this._resourcesNavigationBar = new WI.NavigationBar;
         this.contentView.addSubview(this._resourcesNavigationBar);
 
@@ -344,6 +366,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.IssueAdded, this._handleConsoleIssueAdded, this);
         WI.consoleManager.addEventListener(WI.ConsoleManager.Event.Cleared, this._handleConsoleCleared, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.SnippetAdded, this._handleConsoleSnippetAdded, this);
+        WI.consoleManager.addEventListener(WI.ConsoleManager.Event.SnippetRemoved, this._handleConsoleSnippetRemoved, this);
 
         WI.timelineManager.addEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
 
@@ -438,6 +462,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 this._handleAuditManagerTestScheduled();
         }
 
+        for (let consoleSnippet of WI.consoleManager.snippets)
+            this._addConsoleSnippet(consoleSnippet);
+
         this._updateBreakpointsDisabledBanner();
     }
 
@@ -507,6 +534,8 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.IssueAdded, this._handleConsoleIssueAdded, this);
         WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.Cleared, this._handleConsoleCleared, this);
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.SnippetAdded, this._handleConsoleSnippetAdded, this);
+        WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.SnippetRemoved, this._handleConsoleSnippetRemoved, this);
 
         WI.timelineManager.removeEventListener(WI.TimelineManager.Event.CapturingStateChanged, this._handleTimelineCapturingStateChanged, this);
 
@@ -551,6 +580,9 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         if (representedObject instanceof WI.Script && representedObject === WI.networkManager.bootstrapScript)
             return this._localOverridesTreeOutline.findTreeElement(representedObject);
+
+        if (representedObject instanceof WI.ConsoleSnippet)
+            return this._consoleSnippetsTreeOutline.findTreeElement(representedObject);
 
         if (!this._mainFrameTreeElement && (representedObject instanceof WI.Resource || representedObject instanceof WI.Frame || representedObject instanceof WI.Collection)) {
             // All resources are under the main frame, so we need to return early if we don't have the main frame yet.
@@ -761,7 +793,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         treeOutline.addEventListener(WI.TreeOutline.Event.ElementRevealed, function(event) {
             let treeElement = event.data.element;
-            let detailsSections = [this._pauseReasonSection, this._callStackSection, this._breakpointsSection, this._localOverridesSection];
+            let detailsSections = [
+                this._pauseReasonSection,
+                this._callStackSection,
+                this._breakpointsSection,
+                this._localOverridesSection,
+                this._consoleSnippetsSection,
+            ];
             let detailsSection = detailsSections.find((detailsSection) => detailsSection.element.contains(treeElement.listItemElement));
             if (!detailsSection)
                 return;
@@ -845,6 +883,11 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             return;
         }
 
+        if (popover instanceof WI.InputPopover) {
+            this._willDismissConsoleSnippetPopover(popover);
+            return;
+        }
+
         if (popover instanceof WI.EventBreakpointPopover) {
             this._willDismissEventBreakpointPopover(popover);
             return;
@@ -885,6 +928,33 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         let localResourceOverride = WI.LocalResourceOverride.create(serializedData.url, serializedData.type, serializedData);
         WI.networkManager.addLocalResourceOverride(localResourceOverride);
         WI.showLocalResourceOverride(localResourceOverride);
+    }
+
+    _willDismissConsoleSnippetPopover(popover)
+    {
+        let title = popover.value?.trim();
+        if (!title) {
+            if (!this._consoleSnippetsTreeOutline.children.length)
+                this._consoleSnippetsContainer.hidden = true;
+
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        // Do not conflict with an existing consoleSnippet.
+        if (WI.consoleManager.snippets.some((consoleSnippet) => consoleSnippet.title === title)) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let consoleSnippet = WI.ConsoleSnippet.createDefaultWithTitle(title);
+        WI.consoleManager.addSnippet(consoleSnippet);
+
+        const cookie = null;
+        WI.showRepresentedObject(consoleSnippet, cookie, {
+            ignoreNetworkTab: true,
+            ignoreSearchTab: true,
+        });
     }
 
     _willDismissEventBreakpointPopover(popover)
@@ -945,6 +1015,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         const rankFunctions = [
             (treeElement) => treeElement instanceof WI.ScriptTreeElement && treeElement.representedObject === WI.networkManager.bootstrapScript,
             (treeElement) => treeElement instanceof WI.LocalResourceOverrideTreeElement,
+            (treeElement) => treeElement instanceof WI.ScriptTreeElement && treeElement.representedObject instanceof WI.ConsoleSnippet,
             (treeElement) => treeElement instanceof WI.CSSStyleSheetTreeElement && treeElement.representedObject.isInspectorStyleSheet(),
             (treeElement) => treeElement === this._mainFrameTreeElement,
             (treeElement) => treeElement instanceof WI.FrameTreeElement,
@@ -1541,6 +1612,46 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         if (!parentTreeElement.children.length) {
             this._localOverridesContainer.hidden = true;
+
+            if (wasSelected && WI.networkManager.mainFrame && WI.networkManager.mainFrame.mainResource)
+                WI.showRepresentedObject(WI.networkManager.mainFrame.mainResource);
+        }
+    }
+
+    _addConsoleSnippet(consoleSnippet)
+    {
+        console.assert(consoleSnippet instanceof WI.ConsoleSnippet, consoleSnippet);
+
+        if (this._consoleSnippetsTreeOutline.findTreeElement(consoleSnippet))
+            return;
+
+        let parentTreeElement = this._consoleSnippetsTreeOutline;
+
+        let consoleSnippetTreeElement = new WI.ConsoleSnippetTreeElement(consoleSnippet);
+
+        let index = insertionIndexForObjectInListSortedByFunction(consoleSnippetTreeElement, parentTreeElement.children, this._boundCompareTreeElements);
+        parentTreeElement.insertChild(consoleSnippetTreeElement, index);
+
+        this._consoleSnippetsRow.hideEmptyMessage();
+        this._consoleSnippetsRow.element.appendChild(this._consoleSnippetsTreeOutline.element);
+        this._consoleSnippetsContainer.hidden = false;
+    }
+
+    _removeConsoleSnippet(consoleSnippet)
+    {
+        console.assert(consoleSnippet instanceof WI.ConsoleSnippet, consoleSnippet);
+
+        let consoleSnippetTreeElement = this._consoleSnippetsTreeOutline.findTreeElement(consoleSnippet);
+        if (!consoleSnippetTreeElement)
+            return;
+
+        let wasSelected = consoleSnippetTreeElement.selected;
+
+        let parentTreeElement = this._consoleSnippetsTreeOutline;
+        parentTreeElement.removeChild(consoleSnippetTreeElement);
+
+        if (!parentTreeElement.children.length) {
+            this._consoleSnippetsContainer.hidden = true;
 
             if (wasSelected && WI.networkManager.mainFrame && WI.networkManager.mainFrame.mainResource)
                 WI.showRepresentedObject(WI.networkManager.mainFrame.mainResource);
@@ -2159,6 +2270,12 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
     }
 
+    _handleCreateConsoleSnippetButtonClicked(event)
+    {
+        let popover = new WI.InputPopover("create-snippet-popover", WI.UIString("Name"), this);
+        popover.show(this._createConsoleSnippetButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+    }
+
     _populateCreateResourceContextMenu(contextMenu)
     {
         if (WI.NetworkManager.supportsOverridingResponses()) {
@@ -2175,6 +2292,19 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 });
             });
         }
+
+        contextMenu.appendItem(WI.UIString("Console Snippet..."), () => {
+            if (!this._consoleSnippetsTreeOutline.children.length)
+                this._consoleSnippetsRow.showEmptyMessage();
+
+            this._consoleSnippetsContainer.hidden = false;
+
+            this._createConsoleSnippetButton.element.scrollIntoViewIfNeeded(false);
+            requestAnimationFrame(() => {
+                let popover = new WI.InputPopover("create-snippet-popover", WI.UIString("Name"), this);
+                popover.show(this._createConsoleSnippetButton.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+            });
+        });
 
         if (WI.NetworkManager.supportsBootstrapScript()) {
             contextMenu.appendItem(WI.UIString("Inspector Bootstrap Script"), async () => {
@@ -2544,6 +2674,16 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         }
 
         issueTreeElements.forEach((treeElement) => treeElement.parent.removeChild(treeElement));
+    }
+
+    _handleConsoleSnippetAdded(event)
+    {
+        this._addConsoleSnippet(event.data.snippet);
+    }
+
+    _handleConsoleSnippetRemoved(event)
+    {
+        this._removeConsoleSnippet(event.data.snippet);
     }
 
     _handleTimelineCapturingStateChanged(event)

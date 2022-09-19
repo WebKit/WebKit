@@ -59,9 +59,6 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
         this.buttonStyle = this._image ? WI.ButtonNavigationItem.Style.Image : WI.ButtonNavigationItem.Style.Text;
 
         this.imageType = this._image ? WI.ButtonNavigationItem.ImageType.SVG : null;
-
-        if (this.buttonStyle === WI.ButtonNavigationItem.Style.Image)
-            this.tooltip = toolTipOrLabel;
     }
 
     // Public
@@ -221,16 +218,19 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
             switch (this._imageType) {
             case null:
             case WI.ButtonNavigationItem.ImageType.SVG: {
-                let glyphElement = WI.ImageUtilities.useSVGSymbol(this._image, "glyph");
-                glyphElement.style.width = this._imageWidth + "px";
-                glyphElement.style.height = this._imageHeight + "px";
-                this.element.appendChild(glyphElement);
+                if (this._image) {
+                    let glyphElement = WI.ImageUtilities.useSVGSymbol(this._image, "glyph");
+                    glyphElement.style.width = this._imageWidth + "px";
+                    glyphElement.style.height = this._imageHeight + "px";
+                    this.element.appendChild(glyphElement);
+                }
                 break;
             }
 
             case WI.ButtonNavigationItem.ImageType.IMG: {
                 let img = this.element.appendChild(document.createElement("img"));
-                img.src = this._image;
+                if (this._image)
+                    img.src = this._image;
                 break;
             }
             }
@@ -240,6 +240,9 @@ WI.ButtonNavigationItem = class ButtonNavigationItem extends WI.NavigationItem
                 labelElement.textContent = this._label;
             }
         }
+
+        if (this._buttonStyle === WI.ButtonNavigationItem.Style.Image)
+            this.tooltip ||= this._label;
     }
 
     _updateTabIndex()

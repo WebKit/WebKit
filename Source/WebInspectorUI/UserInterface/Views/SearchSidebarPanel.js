@@ -343,6 +343,8 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
         // FIXME: Resource search should work with Local Overrides if enabled.
 
+        // FIXME: Resource search should work with Console Snippets.
+
         // FIXME: Resource search should work in JSContext inspection.
         // <https://webkit.org/b/131252> Web Inspector: JSContext inspection Resource search does not work
     }

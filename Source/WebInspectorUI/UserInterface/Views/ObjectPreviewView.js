@@ -295,7 +295,7 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
             if (!isImpossible)
                 WI.quickConsole.prompt.pushHistoryItem(text);
 
-            WI.consoleLogViewController.appendImmediateExecutionWithResult(text, this._remoteObject, isImpossible);
+            WI.consoleLogViewController.appendImmediateExecutionWithResult(text, this._remoteObject, {addSpecialUserLogClass: isImpossible});
         });
     }
 };

@@ -67,7 +67,7 @@ WI.ObjectStore = class ObjectStore
 
         WI.ObjectStore._databaseCallbacks = [callback];
 
-        const version = 7; // Increment this for every edit to `WI.objectStores`.
+        const version = 8; // Increment this for every edit to `WI.objectStores`.
 
         let databaseRequest = window.indexedDB.open(WI.ObjectStore._databaseName, version);
         databaseRequest.addEventListener("upgradeneeded", (event) => {
@@ -278,4 +278,7 @@ WI.objectStores = {
 
     // Version 7
     symbolicBreakpoints: new WI.ObjectStore("debugger-symbolic-breakpoints", {keyPath: "__id"}),
+
+    // Version 8
+    consoleSnippets: new WI.ObjectStore("console-snippets", {keyPath: "__id"}),
 };
