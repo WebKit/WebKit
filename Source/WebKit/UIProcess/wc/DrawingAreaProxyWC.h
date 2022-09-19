@@ -48,8 +48,8 @@ private:
     void sizeDidChange() override;
     void dispatchAfterEnsuringDrawing(WTF::Function<void(CallbackBase::Error)>&&) override;
     // message handers
-    void update(uint64_t, const UpdateInfo&);
-    void enterAcceleratedCompositingMode(uint64_t, const LayerTreeContext&);
+    void update(uint64_t, const UpdateInfo&) override;
+    void enterAcceleratedCompositingMode(uint64_t, const LayerTreeContext&) override;
 
     void incorporateUpdate(const UpdateInfo&);
     void discardBackingStore();

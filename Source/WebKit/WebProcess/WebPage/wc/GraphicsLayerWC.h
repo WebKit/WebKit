@@ -64,9 +64,9 @@ public:
     void addChildBelow(Ref<GraphicsLayer>&&, GraphicsLayer* sibling) override;
     bool replaceChild(GraphicsLayer* oldChild, Ref<GraphicsLayer>&& newChild) override;
     void removeFromParent() override;
-    void setMaskLayer(RefPtr<GraphicsLayer>&&);
-    void setReplicatedLayer(GraphicsLayer*);
-    void setReplicatedByLayer(RefPtr<GraphicsLayer>&&);
+    void setMaskLayer(RefPtr<GraphicsLayer>&&) override;
+    void setReplicatedLayer(GraphicsLayer*) override;
+    void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;
     void setPosition(const WebCore::FloatPoint&) override;
     void setAnchorPoint(const WebCore::FloatPoint3D&) override;
     void setSize(const WebCore::FloatSize&) override;
