@@ -38,14 +38,6 @@ namespace WebKit {
 using namespace fido;
 
 namespace {
-inline bool compareVersion(NSData *data, const uint8_t version[], size_t versionSize)
-{
-    if (!data)
-        return false;
-    if (data.length != versionSize)
-        return false;
-    return !memcmp(data.bytes, version, versionSize);
-}
 
 // Confirm the FIDO applet is avaliable.
 // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-applet-selection
