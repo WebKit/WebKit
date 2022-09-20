@@ -158,6 +158,17 @@ const String& HTMLAttachmentElement::ensureUniqueIdentifier()
     return m_uniqueIdentifier;
 }
 
+void HTMLAttachmentElement::setUniqueIdentifier(const String& uniqueIdentifier)
+{
+    if (m_uniqueIdentifier == uniqueIdentifier)
+        return;
+
+    m_uniqueIdentifier = uniqueIdentifier;
+
+    if (auto image = enclosingImageElement())
+        image->didUpdateAttachmentIdentifier();
+}
+
 RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 {
     if (auto hostElement = shadowHost(); is<HTMLImageElement>(hostElement))

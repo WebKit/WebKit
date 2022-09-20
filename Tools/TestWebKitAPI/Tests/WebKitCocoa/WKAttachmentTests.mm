@@ -1771,6 +1771,40 @@ TEST(WKAttachmentTests, CloneImageWithAttachment)
     EXPECT_WK_STREQ([attachment uniqueIdentifier], clonedAttachmentIdentifier);
 }
 
+TEST(WKAttachmentTests, DuplicateImageWithAttachment)
+{
+    platformCopyPNG();
+    auto webView = webViewForTestingAttachments();
+
+    RetainPtr originalAttachment = [&] {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        return observer.observer().inserted.firstObject;
+    }();
+
+    RetainPtr newAttachment = [&] {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView stringByEvaluatingJavaScript:@"(function() {"
+            "    const original = document.querySelector('img');"
+            "    const clone = original.cloneNode();"
+            "    clone.id = 'clone';"
+            "    document.body.appendChild(clone);"
+            "})()"];
+        [webView waitForNextPresentationUpdate];
+        return observer.observer().inserted.firstObject;
+    }();
+
+    RetainPtr newAttachmentID = [webView stringByEvaluatingJavaScript:@"document.getElementById('clone').attachmentIdentifier"];
+    EXPECT_WK_STREQ([newAttachment uniqueIdentifier], newAttachmentID.get());
+    EXPECT_FALSE([[originalAttachment uniqueIdentifier] isEqualToString:newAttachmentID.get()]);
+
+    auto originalInfo = [originalAttachment info];
+    auto newInfo = [newAttachment info];
+    EXPECT_TRUE([originalInfo.data isEqualToData:newInfo.data]);
+    EXPECT_WK_STREQ(originalInfo.contentType, newInfo.contentType);
+    EXPECT_WK_STREQ(originalInfo.name, newInfo.name);
+}
+
 TEST(WKAttachmentTests, SetFileWrapperForPDFImageAttachment)
 {
     auto webView = webViewForTestingAttachments();
