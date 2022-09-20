@@ -96,8 +96,6 @@ public:
     bool isContainingBlockForFixedPosition() const;
     bool isContainingBlockForOutOfFlowPosition() const;
 
-    bool isInFormattingContextOf(const ContainerBox&) const;
-
     bool isAnonymous() const { return m_isAnonymous; }
 
     // Block level elements generate block level boxes.

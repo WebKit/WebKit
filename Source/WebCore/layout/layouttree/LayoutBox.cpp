@@ -242,22 +242,6 @@ const ContainerBox& Box::containingBlock() const
     return parent();
 }
 
-bool Box::isInFormattingContextOf(const ContainerBox& formattingContextRoot) const
-{ 
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    ASSERT(!is<InitialContainingBlock>(*this));
-    auto* ancestor = &containingBlock();
-    while (ancestor) {
-        if (ancestor == &formattingContextRoot)
-            return true;
-        if (is<InitialContainingBlock>(*ancestor))
-            return false;
-        ancestor = &ancestor->containingBlock();
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 bool Box::isInlineBlockBox() const
 {
     return m_style.display() == DisplayType::InlineBlock;
