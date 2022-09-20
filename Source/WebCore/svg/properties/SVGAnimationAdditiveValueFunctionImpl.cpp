@@ -48,10 +48,11 @@ Color SVGAnimationColorFunction::colorFromString(SVGElement& targetElement, cons
 std::optional<float> SVGAnimationColorFunction::calculateDistance(SVGElement&, const String& from, const String& to) const
 {
     Color fromColor = CSSParser::parseColorWithoutContext(from.stripWhiteSpace());
-    if (!fromColor.isValid())
+    if (RenderStyle::isCurrentColor(fromColor))
         return { };
+
     Color toColor = CSSParser::parseColorWithoutContext(to.stripWhiteSpace());
-    if (!toColor.isValid())
+    if (RenderStyle::isCurrentColor(toColor))
         return { };
 
     auto simpleFrom = fromColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
