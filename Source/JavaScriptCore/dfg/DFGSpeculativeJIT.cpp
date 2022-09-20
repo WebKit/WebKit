@@ -12860,9 +12860,10 @@ void SpeculativeJIT::emitSwitchString(Node* node, SwitchData* data)
         
         GPRReg op1GPR = op1.gpr();
         
+        speculateString(node->child1(), op1GPR);
+
         op1.use();
 
-        speculateString(node->child1(), op1GPR);
         emitSwitchStringOnString(node, data, op1GPR);
         noResult(node, UseChildrenCalledExplicitly);
         break;
@@ -16070,11 +16071,11 @@ void SpeculativeJIT::compileHeapBigIntEquality(Node* node)
     GPRReg rightGPR = right.gpr();
     GPRReg resultGPR = result.gpr();
 
-    left.use();
-    right.use();
-
     speculateHeapBigInt(node->child1(), leftGPR);
     speculateHeapBigInt(node->child2(), rightGPR);
+
+    left.use();
+    right.use();
 
     JITCompiler::Jump notEqualCase = m_jit.branchPtr(JITCompiler::NotEqual, leftGPR, rightGPR);
 
