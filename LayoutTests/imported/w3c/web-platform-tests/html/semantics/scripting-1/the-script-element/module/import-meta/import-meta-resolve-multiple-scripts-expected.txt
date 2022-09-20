@@ -1,5 +1,5 @@
 
-FAIL import.meta.resolve resolves URLs relative to the import.meta.url, not relative to the active script when it is called: another global's inline script frames[0].importMetaResolve is not a function. (In 'frames[0].importMetaResolve("./x")', 'frames[0].importMetaResolve' is undefined)
-FAIL import.meta.resolve still works if its global has been destroyed (by detaching the iframe) otherFrameImportMetaResolve is not a function. (In 'otherFrameImportMetaResolve("./x")', 'otherFrameImportMetaResolve' is undefined)
-FAIL import.meta.resolve resolves URLs relative to the import.meta.url, not relative to the active script when it is called: another module script otherImportMeta.resolve is not a function. (In 'otherImportMeta.resolve("./x")', 'otherImportMeta.resolve' is undefined)
+PASS import.meta.resolve resolves URLs relative to the import.meta.url, not relative to the active script when it is called: another global's inline script
+PASS import.meta.resolve still works if its global has been destroyed (by detaching the iframe)
+PASS import.meta.resolve resolves URLs relative to the import.meta.url, not relative to the active script when it is called: another module script
 

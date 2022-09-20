@@ -29,6 +29,7 @@
 #include "FormattingContext.h"
 #include "LayoutBox.h"
 #include "LayoutContainerBox.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutState.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -95,13 +96,9 @@ bool FloatingState::FloatItem::isInFormattingContextOf(const ContainerBox& forma
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     ASSERT(!is<InitialContainingBlock>(m_layoutBox));
-    auto* ancestor = &m_layoutBox->containingBlock();
-    while (ancestor) {
-        if (ancestor == &formattingContextRoot)
+    for (auto& containingBlock : containingBlockChain(*m_layoutBox)) {
+        if (&containingBlock == &formattingContextRoot)
             return true;
-        if (is<InitialContainingBlock>(*ancestor))
-            return false;
-        ancestor = &ancestor->containingBlock();
     }
     ASSERT_NOT_REACHED();
     return false;

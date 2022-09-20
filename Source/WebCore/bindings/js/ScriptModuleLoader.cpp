@@ -52,6 +52,7 @@
 #include <JavaScriptCore/AbstractModuleRecord.h>
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/JSInternalPromise.h>
+#include <JavaScriptCore/JSNativeStdFunction.h>
 #include <JavaScriptCore/JSScriptFetchParameters.h>
 #include <JavaScriptCore/JSScriptFetcher.h>
 #include <JavaScriptCore/JSSourceCode.h>
@@ -395,6 +396,8 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
 
 JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSValue moduleKeyValue, JSC::JSModuleRecord*, JSC::JSValue)
 {
+    // https://html.spec.whatwg.org/multipage/webappapis.html#hostgetimportmetaproperties
+
     auto& vm = jsGlobalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -406,6 +409,27 @@ JSC::JSObject* ScriptModuleLoader::createImportMetaProperties(JSC::JSGlobalObjec
 
     metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, "url"_s), JSC::jsString(vm, responseURL.string()));
     RETURN_IF_EXCEPTION(scope, nullptr);
+
+    String resolveName = "resolve"_s;
+    OwnerType ownerType = m_ownerType;
+    auto* function = JSC::JSNativeStdFunction::create(vm, jsGlobalObject, 1, resolveName, [ownerType, responseURL](JSC::JSGlobalObject* globalObject, JSC::CallFrame* callFrame) -> JSC::EncodedJSValue {
+        JSC::VM& vm = globalObject->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        auto specifier = callFrame->argument(0).toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        auto* context = jsCast<JSDOMGlobalObject*>(globalObject)->scriptExecutionContext();
+        if (UNLIKELY(!context))
+            return JSC::throwVMTypeError(globalObject, scope);
+
+        auto result = resolveModuleSpecifier(*context, ownerType, specifier, responseURL);
+        if (UNLIKELY(!result))
+            return JSC::throwVMTypeError(globalObject, scope, result.error());
+
+        return JSC::JSValue::encode(JSC::jsString(vm, result->string()));
+    });
+    metaProperties->putDirect(vm, JSC::Identifier::fromString(vm, resolveName), function);
 
     return metaProperties;
 }

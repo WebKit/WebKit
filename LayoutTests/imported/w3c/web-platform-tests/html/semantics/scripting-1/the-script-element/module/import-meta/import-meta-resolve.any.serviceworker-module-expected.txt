@@ -1,9 +1,9 @@
 
-FAIL import.meta.resolve is a function with the right properties assert_equals: expected "function" but got "undefined"
+PASS import.meta.resolve is a function with the right properties
 PASS import.meta.resolve is not a constructor
-FAIL import.meta.resolve ToString()s its argument import.meta.resolve is not a function. (In 'import.meta.resolve({ toString() { return "./x"; } })', 'import.meta.resolve' is undefined)
-FAIL Relative URL-like specifier resolution import.meta.resolve is not a function. (In 'import.meta.resolve("./x")', 'import.meta.resolve' is undefined)
-FAIL Absolute URL-like specifier resolution import.meta.resolve is not a function. (In 'import.meta.resolve("https://example.com/")', 'import.meta.resolve' is undefined)
+PASS import.meta.resolve ToString()s its argument
+PASS Relative URL-like specifier resolution
+PASS Absolute URL-like specifier resolution
 PASS Invalid module specifiers
-FAIL Works fine with no this value resolve is not a function. (In 'resolve("https://example.com/")', 'resolve' is undefined)
+PASS Works fine with no this value
 
