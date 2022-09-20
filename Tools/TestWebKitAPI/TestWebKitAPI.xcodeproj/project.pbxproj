@@ -242,6 +242,10 @@
 		448110C2253F40300097FC33 /* WebPreferencesTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = 448110C1253F40240097FC33 /* WebPreferencesTest.mm */; };
 		448D7E471EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */; };
 		44AC8BC621D0245A00CAFB34 /* RetainPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC029B161486AD6400817DA9 /* RetainPtr.cpp */; };
+		44B28A0528D18AD20010172C /* RetainPtrHashing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0991C50143C7D68007998F2 /* RetainPtrHashing.cpp */; };
+		44B28A0628D18AD50010172C /* SpanCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3FEB60267FCDB00054006A /* SpanCF.cpp */; };
+		44B28A0728D18ADA0010172C /* VectorCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44B289FC28D18AAA0010172C /* VectorCF.cpp */; };
+		44B28A0828D18AE70010172C /* SpanCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3FEB63267FCF740054006A /* SpanCocoa.mm */; };
 		44CDE4D426EE6E4A009F6ACB /* TypeCastsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44CDE4D326EE6E41009F6ACB /* TypeCastsCocoa.mm */; };
 		44CF31FD249941E8009CB6CB /* ContextMenuAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44CF31FB24993F66009CB6CB /* ContextMenuAction.cpp */; };
 		44D5008E26FE9ED6000EB12F /* RetainPtrARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44D5008D26FE9ED6000EB12F /* RetainPtrARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -905,8 +909,6 @@
 		BC22D31914DC68B900FFB1DD /* UserMessage_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22D31714DC68B800FFB1DD /* UserMessage_Bundle.cpp */; };
 		BC246D9C132F1FF000B56D7C /* CanHandleRequest_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC246D97132F1FE100B56D7C /* CanHandleRequest_Bundle.cpp */; };
 		BC2D006412AA04CE00E732A3 /* file-with-anchor.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC2D004A12A9FEB300E732A3 /* file-with-anchor.html */; };
-		BC3FEB61267FCDB00054006A /* SpanCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3FEB60267FCDB00054006A /* SpanCF.cpp */; };
-		BC3FEB64267FCF740054006A /* SpanCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3FEB63267FCF740054006A /* SpanCocoa.mm */; };
 		BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */; };
 		BC575AA2126E7660006F0F12 /* InjectedBundleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */; };
 		BC575AB0126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */; };
@@ -2228,6 +2230,7 @@
 		44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKRequestActivatedElementInfo.mm; sourceTree = "<group>"; };
 		448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentUtilitiesTest.cpp; sourceTree = "<group>"; };
 		44A622C114A0E2B60048515B /* WTFStringUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFStringUtilities.h; sourceTree = "<group>"; };
+		44B289FC28D18AAA0010172C /* VectorCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VectorCF.cpp; sourceTree = "<group>"; };
 		44C2FBE125E7592C00ABC72F /* WKAppHighlights.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKAppHighlights.mm; sourceTree = "<group>"; };
 		44CDE4D326EE6E41009F6ACB /* TypeCastsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TypeCastsCocoa.mm; sourceTree = "<group>"; };
 		44CF31FB24993F66009CB6CB /* ContextMenuAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextMenuAction.cpp; sourceTree = "<group>"; };
@@ -5383,6 +5386,7 @@
 				BC029B161486AD6400817DA9 /* RetainPtr.cpp */,
 				C0991C50143C7D68007998F2 /* RetainPtrHashing.cpp */,
 				BC3FEB60267FCDB00054006A /* SpanCF.cpp */,
+				44B289FC28D18AAA0010172C /* VectorCF.cpp */,
 			);
 			path = cf;
 			sourceTree = "<group>";
@@ -5956,6 +5960,7 @@
 				44AC8BC621D0245A00CAFB34 /* RetainPtr.cpp in Sources */,
 				7C83DF241D0A590C00FEBCF3 /* RetainPtr.mm in Sources */,
 				44D5008E26FE9ED6000EB12F /* RetainPtrARC.mm in Sources */,
+				44B28A0528D18AD20010172C /* RetainPtrHashing.cpp in Sources */,
 				E355A6322615718F001C1129 /* RobinHoodHashMap.cpp in Sources */,
 				E355A63026157174001C1129 /* RobinHoodHashSet.cpp in Sources */,
 				7C83DF051D0A590C00FEBCF3 /* RunLoop.cpp in Sources */,
@@ -5969,6 +5974,8 @@
 				33C2C9C12651F5B900E407F6 /* SmallSet.cpp in Sources */,
 				93FCDB34263631560046DD7D /* SortedArrayMap.cpp in Sources */,
 				BCA30C7E266D2F43000D230C /* Span.cpp in Sources */,
+				44B28A0628D18AD50010172C /* SpanCF.cpp in Sources */,
+				44B28A0828D18AE70010172C /* SpanCocoa.mm in Sources */,
 				FE2BCDC72470FDA300DEC33B /* StdLibExtras.cpp in Sources */,
 				7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */,
 				E3DE273C28A8D67800873DF2 /* StringCommon.cpp in Sources */,
@@ -6000,6 +6007,7 @@
 				7C83E03B1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */,
 				41D2A21F27906F9F0088FCCE /* UUID.cpp in Sources */,
 				7C83DF4C1D0A590C00FEBCF3 /* Vector.cpp in Sources */,
+				44B28A0728D18ADA0010172C /* VectorCF.cpp in Sources */,
 				37C7CC2D1EA4146B007BD956 /* WeakLinking.cpp in Sources */,
 				57C3FA661F7C248F009D4B80 /* WeakPtr.cpp in Sources */,
 				46BBEA1B25F9835700D4987A /* WorkQueue.cpp in Sources */,
@@ -6312,8 +6320,6 @@
 				510A91F824D3622100BFD89C /* SonyDualShock3.mm in Sources */,
 				51EB126424CA6B66000CB030 /* SonyDualShock4.mm in Sources */,
 				7CCE7F151A411AE600447C4C /* SpacebarScrolling.cpp in Sources */,
-				BC3FEB61267FCDB00054006A /* SpanCF.cpp in Sources */,
-				BC3FEB64267FCF740054006A /* SpanCocoa.mm in Sources */,
 				F4CDF3D227E97C7E00191928 /* SpellCheckerDocumentTag.mm in Sources */,
 				57F4AAA0208FAEF000A68E9E /* SSLKeyGenerator.mm in Sources */,
 				83BC5AC020E6C0DF00F5879F /* StartLoadInDidFailProvisionalLoad.mm in Sources */,

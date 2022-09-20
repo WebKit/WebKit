@@ -38,6 +38,7 @@ if (USE_CF)
         cf/CFURLExtras.h
         cf/SpanCF.h
         cf/TypeCastsCF.h
+        cf/VectorCF.h
 
         text/cf/StringConcatenateCF.h
         text/cf/TextBreakIteratorCF.h

@@ -34,6 +34,7 @@
 #include <WebCore/HistoryItem.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/URL.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -113,12 +114,8 @@ HRESULT WebHistoryItem::initFromDictionaryRepresentation(_In_opt_ void* dictiona
     bool lastVisitWasFailure = lastVisitWasFailureRef && CFBooleanGetValue(lastVisitWasFailureRef);
 
     std::unique_ptr<Vector<String>> redirectURLsVector;
-    if (CFArrayRef redirectURLsRef = static_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, redirectURLsKey))) {
-        CFIndex size = CFArrayGetCount(redirectURLsRef);
-        redirectURLsVector = makeUnique<Vector<String>>(size);
-        for (CFIndex i = 0; i < size; ++i)
-            (*redirectURLsVector)[i] = String(static_cast<CFStringRef>(CFArrayGetValueAtIndex(redirectURLsRef, i)));
-    }
+    if (CFArrayRef redirectURLsRef = dynamic_cf_cast<CFArrayRef>(CFDictionaryGetValue(dictionaryRef, redirectURLsKey)))
+        redirectURLsVector = makeUnique<Vector<String>>(makeVector<String>(redirectURLsRef));
 
     historyItemWrappers().remove(m_historyItem.get());
     m_historyItem = HistoryItem::create(urlStringRef, titleRef);
