@@ -30,6 +30,7 @@
 #include "ArrayConstructor.h"
 #include "BigIntObject.h"
 #include "BooleanObject.h"
+#include "GetterSetter.h"
 #include "JSArrayInlines.h"
 #include "JSCInlines.h"
 #include "LiteralParser.h"
@@ -96,20 +97,20 @@ private:
 
         JSObject* object() const { return m_object; }
         bool isArray() const { return m_isArray; }
-        bool hasFastObjectProperties() const { return m_hasFastObjectProperties; }
 
         bool appendNextProperty(Stringifier&, StringBuilder&);
 
     private:
+        using GenericPropertyNames = RefPtr<PropertyNameArrayData>;
+        using FastPropertyNamesAndOffsets = Vector<std::tuple<PropertyName, PropertyOffset>, 8>;
+
         JSObject* m_object { nullptr };
         Structure* m_structure { nullptr };
         const bool m_isJSArray { false };
         const bool m_isArray { false };
-        bool m_hasFastObjectProperties { false };
         unsigned m_index { 0 };
         unsigned m_size { 0 };
-        RefPtr<PropertyNameArrayData> m_propertyNames;
-        Vector<std::tuple<PropertyName, unsigned>, 8> m_propertiesAndOffsets;
+        std::variant<GenericPropertyNames, FastPropertyNamesAndOffsets> m_properties;
     };
 
     friend class Holder;
@@ -517,9 +518,10 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             builder.append('[');
         } else {
             if (stringifier.m_usingArrayReplacer) {
-                m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
-                m_size = m_propertyNames->propertyNameVector().size();
-            } else if (m_structure && m_object->structureID() == m_structure->id() && canPerformFastPropertyEnumerationForJSONStringify(m_structure)) {
+                m_properties = stringifier.m_arrayReplacerPropertyNames.data();
+                m_size = std::get<GenericPropertyNames>(m_properties)->propertyNameVector().size();
+            } else if (m_structure && m_object->structure() == m_structure && canPerformFastPropertyNameEnumerationForJSONStringifyWithSideEffect(m_structure)) {
+                m_properties.emplace<FastPropertyNamesAndOffsets>();
                 m_structure->forEachProperty(vm, [&](const PropertyTableEntry& entry) -> bool {
                     if (entry.attributes() & PropertyAttribute::DontEnum)
                         return true;
@@ -527,18 +529,21 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                     PropertyName propertyName(entry.key());
                     if (propertyName.isSymbol())
                         return true;
-                    m_propertiesAndOffsets.constructAndAppend(propertyName, entry.offset());
+                    PropertyOffset offset = entry.offset();
+                    if (!canPerformFastPropertyNameAndOffsetEnumerationForJSONStringifyWithSideEffect(m_structure))
+                        offset = invalidOffset;
+                    std::get<FastPropertyNamesAndOffsets>(m_properties).constructAndAppend(propertyName, offset);
                     return true;
                 });
-                m_hasFastObjectProperties = true;
-                m_size = m_propertiesAndOffsets.size();
+                m_size = std::get<FastPropertyNamesAndOffsets>(m_properties).size();
             } else {
                 PropertyNameArray objectPropertyNames(vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
                 m_object->methodTable()->getOwnPropertyNames(m_object, globalObject, objectPropertyNames, DontEnumPropertiesMode::Exclude);
                 RETURN_IF_EXCEPTION(scope, false);
-                m_propertyNames = objectPropertyNames.releaseData();
-                m_size = m_propertyNames->propertyNameVector().size();
+                m_properties = objectPropertyNames.releaseData();
+                m_size = std::get<GenericPropertyNames>(m_properties)->propertyNameVector().size();
             }
+
             builder.append('{');
         }
         stringifier.indent();
@@ -580,20 +585,28 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
     } else {
         PropertyName propertyName { nullptr };
         JSValue value;
-        if (m_hasFastObjectProperties) {
-            propertyName = std::get<0>(m_propertiesAndOffsets[index]);
-            if (m_object->structureID() == m_structure->id()) {
-                unsigned offset = std::get<1>(m_propertiesAndOffsets[index]);
-                value = m_object->getDirect(offset);
-            } else {
+        std::visit(WTF::makeVisitor(
+            [&](GenericPropertyNames& propertyNames) {
+                propertyName = propertyNames->propertyNameVector()[index];
                 value = m_object->get(globalObject, propertyName);
-                RETURN_IF_EXCEPTION(scope, false);
-            }
-        } else {
-            propertyName = m_propertyNames->propertyNameVector()[index];
-            value = m_object->get(globalObject, propertyName);
-            RETURN_IF_EXCEPTION(scope, false);
-        }
+            },
+            [&](FastPropertyNamesAndOffsets& propertiesAndOffsets) {
+                propertyName = std::get<0>(propertiesAndOffsets[index]);
+                unsigned offset = std::get<1>(propertiesAndOffsets[index]);
+                if (m_object->structure() == m_structure && isValidOffset(offset)) {
+                    JSValue slotValue = m_object->getDirect(offset);
+                    // We can skip Structure lookup if we can invoke GetterSetter / CustomGetterSetter directly without going to JSObject::get.
+                    if (slotValue) {
+                        if (slotValue.inherits<GetterSetter>())
+                            value = jsCast<GetterSetter*>(slotValue)->callGetter(globalObject, m_object);
+                        else if (!slotValue.inherits<CustomGetterSetter>())
+                            value = slotValue;
+                    }
+                }
+                if (!value)
+                    value = m_object->get(globalObject, propertyName);
+            }), m_properties);
+        RETURN_IF_EXCEPTION(scope, false);
 
         rollBackPoint = builder.length();
 

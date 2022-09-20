@@ -50,12 +50,34 @@ ALWAYS_INLINE bool canPerformFastPropertyEnumerationForObjectAssign(Structure* s
     // Cannot perform fast [[Put]] to |target| if the property names of the |source| contain "__proto__".
     if (structure->hasUnderscoreProtoPropertyExcludingOriginalProto())
         return false;
+    if (structure->hasNonReifiedStaticProperties())
+        return false;
     return true;
 }
 
-ALWAYS_INLINE bool canPerformFastPropertyEnumerationForJSONStringify(Structure* structure)
+ALWAYS_INLINE bool canPerformFastPropertyNameEnumerationForJSONStringifyWithSideEffect(Structure* structure)
 {
-    return canPerformFastPropertyEnumerationForObjectAssign(structure);
+    // We do not check GetterSetter, CustomGetterSetter, and custom getOwnPropertySlot because,
+    // 1. GetterSetter and CustomGetterSetter will be invoked, and we fall back to the a bit more generic mode when we detect structure transition.
+    // 2. When we found custom getOwnPropertySlot, we make property lookup a bit more generic mode, and it is checked with canPerformFastPropertyNameAndOffsetEnumerationForJSONStringifyWithSideEffect.
+    if (structure->typeInfo().overridesAnyFormOfGetOwnPropertyNames())
+        return false;
+    if (hasIndexedProperties(structure->indexingType()))
+        return false;
+    if (structure->isUncacheableDictionary())
+        return false;
+    if (structure->hasNonReifiedStaticProperties())
+        return false;
+    return true;
+}
+
+ALWAYS_INLINE bool canPerformFastPropertyNameAndOffsetEnumerationForJSONStringifyWithSideEffect(Structure* structure)
+{
+    if (!canPerformFastPropertyNameEnumerationForJSONStringifyWithSideEffect(structure))
+        return false;
+    if (structure->typeInfo().overridesGetOwnPropertySlot())
+        return false;
+    return true;
 }
 
 ALWAYS_INLINE void objectAssignFast(VM& vm, JSObject* target, JSObject* source, Vector<RefPtr<UniquedStringImpl>, 8>& properties, MarkedArgumentBuffer& values)
