@@ -178,7 +178,7 @@ void ColorInputType::attributeChanged(const QualifiedName& name)
 void ColorInputType::handleDOMActivateEvent(Event& event)
 {
     ASSERT(element());
-    if (element()->isDisabledFormControl() || !element()->renderer())
+    if (element()->isDisabledFormControl())
         return;
 
     if (!UserGestureIndicator::processingUserGesture())
