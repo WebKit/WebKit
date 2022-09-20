@@ -32,7 +32,6 @@
 #include "ClientOrigin.h"
 #include "Color.h"
 #include "ContainerNode.h"
-#include "CrossOriginOpenerPolicy.h"
 #include "DisabledAdaptations.h"
 #include "DocumentEventTiming.h"
 #include "FocusOptions.h"
@@ -413,9 +412,6 @@ public:
 #if ASSERT_ENABLED
     bool didDispatchViewportPropertiesChanged() const { return m_didDispatchViewportPropertiesChanged; }
 #endif
-
-    void setReferrerPolicy(ReferrerPolicy);
-    ReferrerPolicy referrerPolicy() const final { return m_referrerPolicy.value_or(ReferrerPolicy::Default); }
 
     WEBCORE_EXPORT DocumentType* doctype() const;
 
@@ -1192,6 +1188,8 @@ public:
     void initSecurityContext();
     void initContentSecurityPolicy();
 
+    void inheritPolicyContainerFrom(const PolicyContainer&) final;
+
     void updateURLForPushOrReplaceState(const URL&);
     void statePopped(Ref<SerializedScriptValue>&&);
 
@@ -1400,7 +1398,6 @@ public:
     bool shouldForceNoOpenerBasedOnCOOP() const;
 
     WEBCORE_EXPORT const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const final;
-    void setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy&);
 
     void willLoadScriptElement(const URL&);
     void willLoadFrameElement(const URL&);
@@ -2121,9 +2118,7 @@ private:
     MediaProducerMediaStateFlags m_mediaState;
     bool m_userHasInteractedWithMediaElement { false };
     BackForwardCacheState m_backForwardCacheState { NotInBackForwardCache };
-    std::optional<ReferrerPolicy> m_referrerPolicy;
     ReadyState m_readyState { Complete };
-    CrossOriginOpenerPolicy m_crossOriginOpenerPolicy;
 
     MutationObserverOptions m_mutationObserverTypes;
 

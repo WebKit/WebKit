@@ -164,19 +164,36 @@ SandboxFlags SecurityContext::parseSandboxPolicy(StringView policy, String& inva
     return flags;
 }
 
-const CrossOriginOpenerPolicy& SecurityContext::crossOriginOpenerPolicy() const
+void SecurityContext::setReferrerPolicy(ReferrerPolicy referrerPolicy)
 {
-    static NeverDestroyed<CrossOriginOpenerPolicy> coop;
-    return coop;
+    // Do not override existing referrer policy with the "empty string" one as the "empty string" means we should use
+    // the policy defined elsewhere.
+    if (referrerPolicy == ReferrerPolicy::EmptyString)
+        return;
+
+    m_referrerPolicy = referrerPolicy;
 }
 
 PolicyContainer SecurityContext::policyContainer() const
 {
+    ASSERT(m_contentSecurityPolicy);
     return {
+        m_contentSecurityPolicy->responseHeaders(),
         crossOriginEmbedderPolicy(),
         crossOriginOpenerPolicy(),
         referrerPolicy()
     };
+}
+
+void SecurityContext::inheritPolicyContainerFrom(const PolicyContainer& policyContainer)
+{
+    if (!contentSecurityPolicy())
+        setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { }, nullptr, nullptr));
+
+    contentSecurityPolicy()->inheritHeadersFrom(policyContainer.contentSecurityPolicyResponseHeaders);
+    setCrossOriginOpenerPolicy(policyContainer.crossOriginOpenerPolicy);
+    setCrossOriginEmbedderPolicy(policyContainer.crossOriginEmbedderPolicy);
+    setReferrerPolicy(policyContainer.referrerPolicy);
 }
 
 }

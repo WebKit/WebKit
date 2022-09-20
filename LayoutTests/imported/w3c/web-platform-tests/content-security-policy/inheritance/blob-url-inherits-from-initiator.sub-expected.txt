@@ -1,4 +1,4 @@
 
-FAIL Initiator is same-origin with target frame. assert_equals: Eval should be blocked by CSP in blob URL. expected "eval blocked" but got "eval allowed"
-FAIL Initiator is cross-origin with target frame. assert_equals: Eval should be blocked by CSP in blob URL. expected "eval blocked" but got "eval allowed"
+PASS Initiator is same-origin with target frame.
+PASS Initiator is cross-origin with target frame.
 
