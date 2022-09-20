@@ -286,7 +286,7 @@ class BitBucket(Scm):
 
         self.pull_requests = self.PRGenerator(self)
 
-    def credentials(self):
+    def credentials(self, required=True, validate=False, save_in_keyring=None):
         return None, None
 
     @property
