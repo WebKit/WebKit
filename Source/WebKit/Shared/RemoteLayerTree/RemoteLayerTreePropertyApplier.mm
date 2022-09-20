@@ -290,7 +290,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     if (properties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged)
-        updateLayersForInteractionRegions(layer, properties);
+        updateLayersForInteractionRegions(layer, *layerTreeHost, properties);
 #endif // ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
 }
 
