@@ -35,12 +35,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(DeprecationReportBody);
 
-const AtomString& DeprecationReportBody::deprecationReportType()
-{
-    static NeverDestroyed<AtomString> reportType { "deprecation"_s };
-    return reportType;
-}
-
 DeprecationReportBody::DeprecationReportBody(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber)
     : ReportBody(ViolationReportType::Deprecation)
     , m_id(WTFMove(id))
@@ -57,9 +51,10 @@ Ref<DeprecationReportBody> DeprecationReportBody::create(String&& id, WallTime a
     return adoptRef(*new DeprecationReportBody(WTFMove(id), anticipatedRemoval, WTFMove(message), WTFMove(sourceFile), lineNumber, columnNumber));
 }
 
-const AtomString& DeprecationReportBody::type() const
+const String& DeprecationReportBody::type() const
 {
-    return deprecationReportType();
+    static NeverDestroyed<const String> reportType(MAKE_STATIC_STRING_IMPL("deprecation"));
+    return reportType;
 }
 
 Ref<FormData> DeprecationReportBody::createReportFormDataForViolation() const
@@ -77,7 +72,7 @@ Ref<FormData> DeprecationReportBody::createReportFormDataForViolation() const
     }
 
     auto reportObject = JSON::Object::create();
-    reportObject->setString("type"_s, deprecationReportType());
+    reportObject->setString("type"_s, type());
     reportObject->setString("url"_s, ""_s);
     reportObject->setObject("body"_s, WTFMove(reportBody));
 

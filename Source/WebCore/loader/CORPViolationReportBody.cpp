@@ -45,9 +45,9 @@ CORPViolationReportBody::CORPViolationReportBody(COEPDisposition disposition, co
 {
 }
 
-const AtomString& CORPViolationReportBody::type() const
+const String& CORPViolationReportBody::type() const
 {
-    static MainThreadNeverDestroyed<const AtomString> corpType("corp"_s);
+    static NeverDestroyed<const String> corpType(MAKE_STATIC_STRING_IMPL("corp"));
     return corpType;
 }
 

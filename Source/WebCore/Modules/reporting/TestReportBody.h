@@ -34,24 +34,21 @@ namespace WebCore {
 
 class FormData;
 
-class WEBCORE_EXPORT TestReportBody final : public ReportBody {
+class TestReportBody final : public ReportBody {
     WTF_MAKE_ISO_ALLOCATED(TestReportBody);
 public:
-    static Ref<TestReportBody> create(String&& message);
+    WEBCORE_EXPORT static Ref<TestReportBody> create(String&& message);
 
+    const String& type() const final;
     const String& message() const;
 
-    static const AtomString& testReportType();
-
-    static Ref<FormData> createReportFormDataForViolation(const String& bodyMessage);
+    WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation() const;
 
     template<typename Encoder> void encode(Encoder&) const;
     template<typename Decoder> static std::optional<RefPtr<WebCore::TestReportBody>> decode(Decoder&);
 
 private:
     TestReportBody(String&& message);
-
-    const AtomString& type() const final;
 
     const String m_bodyMessage;
 };
@@ -70,7 +67,7 @@ std::optional<RefPtr<TestReportBody>> TestReportBody::decode(Decoder& decoder)
     if (!bodymessage)
         return std::nullopt;
 
-    return adoptRef(new TestReportBody(WTFMove(*bodymessage)));
+    return TestReportBody::create(WTFMove(*bodymessage));
 }
 
 } // namespace WebCore

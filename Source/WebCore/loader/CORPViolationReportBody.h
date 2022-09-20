@@ -38,7 +38,7 @@ public:
     WEBCORE_EXPORT static Ref<CORPViolationReportBody> create(COEPDisposition, const URL& blockedURL, FetchOptions::Destination);
 
     String disposition() const;
-    const AtomString& type() const final;
+    const String& type() const final;
     const String& blockedURL() const { return m_blockedURL.string(); }
     FetchOptions::Destination destination() const { return m_destination; }
 

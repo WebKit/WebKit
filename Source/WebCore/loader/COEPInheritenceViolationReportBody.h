@@ -34,21 +34,21 @@ namespace WebCore {
 class COEPInheritenceViolationReportBody : public ReportBody {
     WTF_MAKE_ISO_ALLOCATED(COEPInheritenceViolationReportBody);
 public:
-    WEBCORE_EXPORT static Ref<COEPInheritenceViolationReportBody> create(COEPDisposition, const URL& blockedURL, const AtomString& type);
+    WEBCORE_EXPORT static Ref<COEPInheritenceViolationReportBody> create(COEPDisposition, const URL& blockedURL, const String& type);
 
     String disposition() const;
-    const AtomString& type() const final { return m_type; }
+    const String& type() const final { return m_type; }
     const String& blockedURL() const { return m_blockedURL.string(); }
 
     template<typename Encoder> void encode(Encoder&) const;
     template<typename Decoder> static std::optional<RefPtr<COEPInheritenceViolationReportBody>> decode(Decoder&);
 
 private:
-    COEPInheritenceViolationReportBody(COEPDisposition, const URL& blockedURL, const AtomString& type);
+    COEPInheritenceViolationReportBody(COEPDisposition, const URL& blockedURL, const String& type);
 
     COEPDisposition m_disposition;
     URL m_blockedURL;
-    AtomString m_type;
+    String m_type;
 };
 
 template<typename Encoder>
@@ -70,7 +70,7 @@ std::optional<RefPtr<COEPInheritenceViolationReportBody>> COEPInheritenceViolati
     if (!blockedURL)
         return std::nullopt;
 
-    std::optional<AtomString> type;
+    std::optional<String> type;
     decoder >> type;
     if (!type)
         return std::nullopt;

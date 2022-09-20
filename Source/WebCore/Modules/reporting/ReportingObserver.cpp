@@ -41,13 +41,13 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ReportingObserver);
 
-static bool isVisibleToReportingObservers(const AtomString& type)
+static bool isVisibleToReportingObservers(const String& type)
 {
-    static NeverDestroyed<Vector<AtomString>> visibleTypes(std::initializer_list<AtomString> {
-        AtomString { "csp-violation"_s },
-        AtomString { "coep"_s },
-        AtomString { "deprecation"_s },
-        AtomString { "test"_s },
+    static NeverDestroyed<Vector<String>> visibleTypes(std::initializer_list<String> {
+        String { "csp-violation"_s },
+        String { "coep"_s },
+        String { "deprecation"_s },
+        String { "test"_s },
     });
     return visibleTypes->contains(type);
 }

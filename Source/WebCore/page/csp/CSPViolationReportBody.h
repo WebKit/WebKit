@@ -37,37 +37,33 @@ class FormData;
 struct CSPInfo;
 struct SecurityPolicyViolationEventInit;
 
-class WEBCORE_EXPORT CSPViolationReportBody final : public ReportBody {
+class CSPViolationReportBody final : public ReportBody {
     WTF_MAKE_ISO_ALLOCATED(CSPViolationReportBody);
 public:
     using Init = SecurityPolicyViolationEventInit;
 
-    static Ref<CSPViolationReportBody> create(Init&&);
+    WEBCORE_EXPORT static Ref<CSPViolationReportBody> create(Init&&);
 
-    const String& documentURL() const;
-    const String& referrer() const;
-    const String& blockedURL() const;
-    const String& effectiveDirective() const;
-    const String& originalPolicy() const;
-    const String& sourceFile() const;
-    const String& sample() const;
-    SecurityPolicyViolationEventDisposition disposition() const;
-    unsigned short statusCode() const;
-    unsigned long lineNumber() const;
-    unsigned long columnNumber() const;
-
-    static const AtomString& cspReportType();
-    static Ref<FormData> createReportFormDataForViolation(const CSPInfo&, bool usesReportTo, bool isReportOnly,
-        const String& effectiveViolatedDirective, const String& referrer, const String& originalPolicy, const String& blockedURI,
-        unsigned short httpStatusCode);
+    const String& type() const final;
+    const String& documentURL() const { return m_documentURL; }
+    const String& referrer() const { return m_referrer; }
+    const String& blockedURL() const { return m_blockedURL; }
+    const String& effectiveDirective() const { return m_effectiveDirective; }
+    const String& originalPolicy() const { return m_originalPolicy; }
+    const String& sourceFile() const { return m_sourceFile; }
+    const String& sample() const { return m_sample; }
+    SecurityPolicyViolationEventDisposition disposition() const { return m_disposition; }
+    unsigned short statusCode() const { return m_statusCode; }
+    unsigned long lineNumber() const { return m_lineNumber; }
+    unsigned long columnNumber() const { return m_columnNumber; }
+    
+    WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation(bool usesReportTo, bool isReportOnly) const;
 
     template<typename Encoder> void encode(Encoder&) const;
     template<typename Decoder> static std::optional<RefPtr<WebCore::CSPViolationReportBody>> decode(Decoder&);
 
 private:
     CSPViolationReportBody(Init&&);
-
-    const AtomString& type() const final;
 
     const String m_documentURL;
     const String m_referrer;
@@ -109,7 +105,7 @@ std::optional<RefPtr<CSPViolationReportBody>> CSPViolationReportBody::decode(Dec
     if (!Init::decode(decoder, init))
         return std::nullopt;
 
-    return adoptRef(new CSPViolationReportBody(WTFMove(init)));
+    return CSPViolationReportBody::create(WTFMove(init));
 }
 
 } // namespace WebCore

@@ -33,12 +33,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TestReportBody);
 
-const AtomString& TestReportBody::testReportType()
-{
-    static NeverDestroyed<AtomString> reportType { "test"_s };
-    return reportType;
-}
-
 TestReportBody::TestReportBody(String&& message)
     : ReportBody(ViolationReportType::Test)
     , m_bodyMessage(WTFMove(message))
@@ -50,9 +44,10 @@ Ref<TestReportBody> TestReportBody::create(String&& message)
     return adoptRef(*new TestReportBody(WTFMove(message)));
 }
 
-const AtomString& TestReportBody::type() const
+const String& TestReportBody::type() const
 {
-    return testReportType();
+    static NeverDestroyed<const String> testReportType(MAKE_STATIC_STRING_IMPL("test"));
+    return testReportType;
 }
 
 const String& TestReportBody::message() const
@@ -61,15 +56,15 @@ const String& TestReportBody::message() const
     return m_bodyMessage;
 }
 
-Ref<FormData> TestReportBody::createReportFormDataForViolation(const String& bodyMessage)
+Ref<FormData> TestReportBody::createReportFormDataForViolation() const
 {
     // https://w3c.github.io/reporting/#generate-test-report-command, Step 7.1.10
     // Suitable for network endpoints.
     auto reportBody = JSON::Object::create();
-    reportBody->setString("body_message"_s, bodyMessage);
+    reportBody->setString("body_message"_s, message());
 
     auto reportObject = JSON::Object::create();
-    reportObject->setString("type"_s, testReportType());
+    reportObject->setString("type"_s, type());
     reportObject->setString("url"_s, ""_s);
     reportObject->setObject("body"_s, WTFMove(reportBody));
 

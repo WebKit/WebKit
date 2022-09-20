@@ -170,7 +170,8 @@ void ReportingScope::generateTestReport(String&& message, String&& group)
         reportURL = document->url().strippedForUseAsReferrer();
 
     // https://w3c.github.io/reporting/#generate-test-report-command, step 7.1.10.
-    notifyReportObservers(Report::create(TestReportBody::testReportType(), WTFMove(reportURL), TestReportBody::create(WTFMove(message))));
+    auto reportBody = TestReportBody::create(WTFMove(message));
+    notifyReportObservers(Report::create(reportBody->type(), WTFMove(reportURL), WTFMove(reportBody)));
 
     // FIXME(244907): We should call sendReportToEndpoints here.
 }
