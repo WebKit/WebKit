@@ -33,6 +33,8 @@
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
+#include "LayoutContainingBlockChainIterator.h"
+#include "LayoutInitialContainingBlock.h"
 #include "RenderBox.h"
 #include "TableFormattingState.h"
 #include <wtf/IsoMallocInlines.h>
@@ -169,9 +171,12 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerB
         // Otherwise, the formatting context inherits the floats from the parent formatting context.
         // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
         auto parentFormattingState = [&] () -> FormattingState& {
-            auto* ancestor = &formattingContextRoot.containingBlock();
-            for (; !ancestor->establishesBlockFormattingContext(); ancestor = &ancestor->containingBlock()) { }
-            return formattingStateForFormattingContext(*ancestor);
+            for (auto& containingBlock : containingBlockChain(formattingContextRoot)) {
+                if (containingBlock.establishesBlockFormattingContext())
+                    return formattingStateForFormattingContext(containingBlock);
+            }
+            ASSERT_NOT_REACHED();
+            return formattingStateForFormattingContext(FormattingContext::initialContainingBlock(formattingContextRoot));
         };
         return makeUnique<InlineFormattingState>(parentFormattingState().floatingState(), *this);
     };

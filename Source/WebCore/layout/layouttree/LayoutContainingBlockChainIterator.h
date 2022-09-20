@@ -91,6 +91,7 @@ inline LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box&
 
 inline LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box& layoutBox, const ContainerBox& root)
 {
+    ASSERT(root.establishesFormattingContext());
     return containingBlockChain(layoutBox, root);
 }
 
