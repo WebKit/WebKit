@@ -324,13 +324,6 @@ void RenderSVGText::layout()
     // textElement().updateLengthContext();
 
     bool updateCachedBoundariesInParents = false;
-    if (!isLayerBasedSVGEngineEnabled()) {
-        if (m_needsTransformUpdate) {
-            m_localTransform = textElement().animatedLocalTransform();
-            m_needsTransformUpdate = false;
-            updateCachedBoundariesInParents = true;
-        }
-    }
 
     if (!everHadLayout()) {
         // When laying out initially, collect all layout attributes, build the character data map,
@@ -415,8 +408,15 @@ void RenderSVGText::layout()
     if (isLayerBasedSVGEngineEnabled()) {
         updateLayerTransform();
         updateCachedBoundariesInParents = false; // No longer needed for LBSE.
-    } else if (!updateCachedBoundariesInParents)
-        updateCachedBoundariesInParents = oldBoundaries != objectBoundingBox();
+    } else {
+        if (m_needsTransformUpdate) {
+            m_localTransform = textElement().animatedLocalTransform();
+            m_needsTransformUpdate = false;
+            updateCachedBoundariesInParents = true;
+        }
+        if (!updateCachedBoundariesInParents)
+            updateCachedBoundariesInParents = oldBoundaries != objectBoundingBox();
+    }
 
     // Invalidate all resources of this client if our layout changed.
     if (layoutChanged)
