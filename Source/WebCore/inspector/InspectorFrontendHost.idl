@@ -98,6 +98,8 @@
     boolean isBeingInspected();
     undefined setAllowsInspectingInspector(boolean allow);
 
+    boolean engineeringSettingsAllowed();
+
     readonly attribute boolean supportsDiagnosticLogging;
     [Conditional=INSPECTOR_TELEMETRY] undefined logDiagnosticEvent(DOMString eventName, DOMString content);
 

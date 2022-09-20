@@ -73,7 +73,7 @@ WI.DOMManager = class DOMManager extends WI.Object
                 this.ensureDocument();
             });
 
-            if (WI.isEngineeringBuild) {
+            if (WI.engineeringSettingsAllowed()) {
                 if (DOMManager.supportsEditingUserAgentShadowTrees({target}))
                     target.DOMAgent.setAllowEditingUserAgentShadowTrees(WI.settings.engineeringAllowEditingUserAgentShadowTrees.value);
             }

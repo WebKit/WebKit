@@ -75,6 +75,10 @@
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/text/Base64.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/spi/darwin/OSVariantSPI.h>
+#endif
+
 namespace WebCore {
 
 using namespace Inspector;
@@ -634,6 +638,21 @@ void InspectorFrontendHost::setAllowsInspectingInspector(bool allow)
     m_frontendPage->settings().setDeveloperExtrasEnabled(allow);
     if (m_client)
         m_client->setInspectorPageDeveloperExtrasEnabled(m_frontendPage->settings().developerExtrasEnabled());
+}
+
+bool InspectorFrontendHost::engineeringSettingsAllowed()
+{
+    if (!m_frontendPage)
+        return false;
+
+    if (!m_frontendPage->settings().webInspectorEngineeringSettingsAllowed())
+        return false;
+#if PLATFORM(COCOA)
+    static bool allowsInternalSecurityPolicies = os_variant_allows_internal_security_policies("com.apple.WebKit");
+    if (!allowsInternalSecurityPolicies)
+        return false;
+#endif
+    return true;
 }
 
 bool InspectorFrontendHost::supportsShowCertificate() const

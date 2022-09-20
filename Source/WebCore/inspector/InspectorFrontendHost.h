@@ -145,6 +145,8 @@ public:
     bool isBeingInspected();
     void setAllowsInspectingInspector(bool);
 
+    bool engineeringSettingsAllowed();
+
     bool supportsDiagnosticLogging();
 #if ENABLE(INSPECTOR_TELEMETRY)
     bool diagnosticLoggingAvailable();

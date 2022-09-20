@@ -151,7 +151,7 @@ WI.runBootstrapOperations = function() {
         };
 
         // Simulates the steps taken by WebInspectorUIExtensionController to create an extension tab in WebInspectorUI.
-        if (!WI.settings.engineeringShowMockWebExtensionTab.value) {
+        if (!WI.settings.debugShowMockWebExtensionTab.value) {
             if (WI.sharedApp.extensionController.registeredExtensionIDs.has(mockData.extensionID))
                 InspectorFrontendAPI.unregisterExtension(mockData.extensionID);
 
@@ -170,7 +170,7 @@ WI.runBootstrapOperations = function() {
             return;
         }
     }
-    WI.settings.engineeringShowMockWebExtensionTab.addEventListener(WI.Setting.Event.Changed, updateMockWebExtensionTab, WI.settings.engineeringShowMockWebExtensionTab);
+    WI.settings.debugShowMockWebExtensionTab.addEventListener(WI.Setting.Event.Changed, updateMockWebExtensionTab, WI.settings.debugShowMockWebExtensionTab);
     updateMockWebExtensionTab();
 
     WI.showDebugUISetting.addEventListener(WI.Setting.Event.Changed, function(event) {
