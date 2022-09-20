@@ -41,4 +41,10 @@ Ref<WebCore::CacheStorageConnection> WebCacheStorageProvider::createCacheStorage
     return *m_connection;
 }
 
+void WebCacheStorageProvider::networkProcessConnectionClosed()
+{
+    if (m_connection)
+        m_connection->networkProcessConnectionClosed();
+}
+
 }

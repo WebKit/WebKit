@@ -57,7 +57,14 @@ IPC::Connection& WebCacheStorageConnection::connection()
 
 void WebCacheStorageConnection::open(const WebCore::ClientOrigin& origin, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
 {
-    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::Open(origin, cacheName), WTFMove(callback));
+    auto newCallback = [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& result) mutable {
+        if (weakThis && result) {
+            if (auto identifier = result.value().identifier)
+                weakThis->m_connectedIdentifiers.add(identifier);
+        }
+        callback(WTFMove(result));
+    };
+    connection().sendWithAsyncReply(Messages::CacheStorageEngineConnection::Open(origin, cacheName), WTFMove(newCallback));
 }
 
 void WebCacheStorageConnection::remove(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
@@ -87,11 +94,17 @@ void WebCacheStorageConnection::batchPutOperation(uint64_t cacheIdentifier, Vect
 
 void WebCacheStorageConnection::reference(uint64_t cacheIdentifier)
 {
+    if (!m_connectedIdentifiers.contains(cacheIdentifier))
+        return;
+
     connection().send(Messages::CacheStorageEngineConnection::Reference(cacheIdentifier), 0);
 }
 
 void WebCacheStorageConnection::dereference(uint64_t cacheIdentifier)
 {
+    if (!m_connectedIdentifiers.contains(cacheIdentifier))
+        return;
+
     connection().send(Messages::CacheStorageEngineConnection::Dereference(cacheIdentifier), 0);
 }
 
@@ -108,6 +121,11 @@ void WebCacheStorageConnection::engineRepresentation(CompletionHandler<void(cons
 void WebCacheStorageConnection::updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin& origin)
 {
     connection().send(Messages::NetworkConnectionToWebProcess::UpdateQuotaBasedOnSpaceUsageForTesting(origin), 0);
+}
+
+void WebCacheStorageConnection::networkProcessConnectionClosed()
+{
+    m_connectedIdentifiers.clear();
 }
 
 }
