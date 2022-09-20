@@ -28,7 +28,7 @@ from .command import Command
 from .branch import Branch
 from .squash import Squash
 
-from webkitbugspy import Tracker
+from webkitbugspy import Tracker, radar
 from webkitcorepy import arguments, run, Terminal
 from webkitscmpy import local, log, remote
 
@@ -317,12 +317,23 @@ class PullRequest(Command):
             sys.stderr.write('Checks have failed, aborting pull request.\n')
             return 1
 
-        issue = None
+        issues = []
+        count = 0
         commits = list(repository.commits(begin=dict(hash=branch_point.hash), end=dict(branch=repository.branch)))
         for line in commits[0].message.split() if commits[0] and commits[0].message else []:
             issue = Tracker.from_string(line)
             if issue:
+                issues.append(issue)
+            if not line and count:
                 break
+            if not line:
+                count += 1
+
+        radar_issue = next(iter(filter(lambda issue: isinstance(issue.tracker, radar.Tracker), issues)), None)
+        not_radar = next(iter(filter(lambda issue: not isinstance(issue.tracker, radar.Tracker), issues)), None)
+        if radar_issue and not_radar and radar_issue.tracker.radarclient():
+            not_radar.cc_radar(radar=radar_issue)
+        issue = issues[0] if issues else None
 
         remote_repo = repository.remote(name=source_remote)
         if isinstance(remote_repo, remote.GitHub):
