@@ -96,51 +96,51 @@ PASS Rec BT.2020 with alpha, number and none
 PASS Rec BT.2020 with alpha, percent and none
 PASS Rec BT.2020 with alpha, number, percent and none
 PASS CIE XYZ D50 all numbers
-FAIL CIE XYZ D50 all percent assert_equals: expected "color(xyz-d50 1 0.5 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D50 mixed number and percent assert_equals: expected "color(xyz-d50 1 0.5 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D50 mixed number and percent 2 assert_equals: expected "color(xyz-d50 1 0.5 0.2)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ D50 all percent
+PASS CIE XYZ D50 mixed number and percent
+PASS CIE XYZ D50 mixed number and percent 2
 PASS CIE XYZ D50 all none
 PASS CIE XYZ D50 number and none
-FAIL CIE XYZ D50 percent and none assert_equals: expected "color(xyz-d50 1 none 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D50 number, percent and none assert_equals: expected "color(xyz-d50 1 none 0.2)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ D50 percent and none
+PASS CIE XYZ D50 number, percent and none
 PASS CIE XYZ D50 with alpha, all numbers
-FAIL CIE XYZ D50 with alpha, all percent assert_equals: expected "color(xyz-d50 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D50 with alpha, mixed number and percent assert_equals: expected "color(xyz-d50 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D50 with alpha, mixed number and percent 2 assert_equals: expected "color(xyz-d50 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ D50 with alpha, all percent
+PASS CIE XYZ D50 with alpha, mixed number and percent
+PASS CIE XYZ D50 with alpha, mixed number and percent 2
 PASS CIE XYZ D50 with alpha, all none
 PASS CIE XYZ D50 with alpha, number and none
-FAIL CIE XYZ D50 with alpha, percent and none assert_equals: expected "color(xyz-d50 1 none 0.2 / 0.3)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D50 with alpha, number, percent and none assert_equals: expected "color(xyz-d50 1 none 0.2 / 0.237)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ D50 with alpha, percent and none
+PASS CIE XYZ D50 with alpha, number, percent and none
 PASS CIE XYZ D65 all numbers
-FAIL CIE XYZ D65 all percent assert_equals: expected "color(xyz-d65 1 0.5 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D65 mixed number and percent assert_equals: expected "color(xyz-d65 1 0.5 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D65 mixed number and percent 2 assert_equals: expected "color(xyz-d65 1 0.5 0.2)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ D65 all percent
+PASS CIE XYZ D65 mixed number and percent
+PASS CIE XYZ D65 mixed number and percent 2
 PASS CIE XYZ D65 all none
 PASS CIE XYZ D65 number and none
-FAIL CIE XYZ D65 percent and none assert_equals: expected "color(xyz-d65 1 none 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D65 number, percent and none assert_equals: expected "color(xyz-d65 1 none 0.2)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ D65 percent and none
+PASS CIE XYZ D65 number, percent and none
 PASS CIE XYZ D65 with alpha, all numbers
-FAIL CIE XYZ D65 with alpha, all percent assert_equals: expected "color(xyz-d65 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D65 with alpha, mixed number and percent assert_equals: expected "color(xyz-d65 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D65 with alpha, mixed number and percent 2 assert_equals: expected "color(xyz-d65 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ D65 with alpha, all percent
+PASS CIE XYZ D65 with alpha, mixed number and percent
+PASS CIE XYZ D65 with alpha, mixed number and percent 2
 PASS CIE XYZ D65 with alpha, all none
 PASS CIE XYZ D65 with alpha, number and none
-FAIL CIE XYZ D65 with alpha, percent and none assert_equals: expected "color(xyz-d65 1 none 0.2 / 0.3)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ D65 with alpha, number, percent and none assert_equals: expected "color(xyz-d65 1 none 0.2 / 0.237)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ D65 with alpha, percent and none
+PASS CIE XYZ D65 with alpha, number, percent and none
 PASS CIE XYZ (implicit D65) all numbers
-FAIL CIE XYZ (implicit D65) all percent assert_equals: expected "color(xyz-d65 1 0.5 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ (implicit D65) mixed number and percent assert_equals: expected "color(xyz-d65 1 0.5 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ (implicit D65) mixed number and percent 2 assert_equals: expected "color(xyz-d65 1 0.5 0.2)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ (implicit D65) all percent
+PASS CIE XYZ (implicit D65) mixed number and percent
+PASS CIE XYZ (implicit D65) mixed number and percent 2
 PASS CIE XYZ (implicit D65) all none
 PASS CIE XYZ (implicit D65) number and none
-FAIL CIE XYZ (implicit D65) percent and none assert_equals: expected "color(xyz-d65 1 none 0.2)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ (implicit D65) number, percent and none assert_equals: expected "color(xyz-d65 1 none 0.2)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ (implicit D65) percent and none
+PASS CIE XYZ (implicit D65) number, percent and none
 PASS CIE XYZ (implicit D65) with alpha, all numbers
-FAIL CIE XYZ (implicit D65) with alpha, all percent assert_equals: expected "color(xyz-d65 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ (implicit D65) with alpha, mixed number and percent assert_equals: expected "color(xyz-d65 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ (implicit D65) with alpha, mixed number and percent 2 assert_equals: expected "color(xyz-d65 1 0.5 0.2 / 0.6)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ (implicit D65) with alpha, all percent
+PASS CIE XYZ (implicit D65) with alpha, mixed number and percent
+PASS CIE XYZ (implicit D65) with alpha, mixed number and percent 2
 PASS CIE XYZ (implicit D65) with alpha, all none
 PASS CIE XYZ (implicit D65) with alpha, number and none
-FAIL CIE XYZ (implicit D65) with alpha, percent and none assert_equals: expected "color(xyz-d65 1 none 0.2 / 0.3)" but got "rgb(0, 0, 0)"
-FAIL CIE XYZ (implicit D65) with alpha, number, percent and none assert_equals: expected "color(xyz-d65 1 none 0.2 / 0.237)" but got "rgb(0, 0, 0)"
+PASS CIE XYZ (implicit D65) with alpha, percent and none
+PASS CIE XYZ (implicit D65) with alpha, number, percent and none
 

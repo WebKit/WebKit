@@ -311,16 +311,15 @@ XYZA<float, WhitePoint::D65> ColorConversion<XYZA<float, WhitePoint::D65>, OKLab
 
     auto [lightness, a, b, alpha] = color.resolved();
 
-    // 1. Transform from precentage lightness to unit lightness.
-    auto components = ColorComponents<float, 3> { lightness / 100.0f, a, b };
+    auto components = ColorComponents<float, 3> { lightness, a, b };
 
-    // 2. Transform from Lab-coordinates into non-linear LMS "approximate cone responses".
+    // 1. Transform from Lab-coordinates into non-linear LMS "approximate cone responses".
     auto nonLinearLMS = OKLabToNonLinearLMS.transformedColorComponents(components);
 
-    // 3. Apply linearity.
+    // 2. Apply linearity.
     auto linearLMS = nonLinearLMS.map([] (float v) { return v * v * v; });
 
-    // 4. Convert to XYZ.
+    // 3. Convert to XYZ.
     auto [x, y, z] = LinearLMSToXYZD65.transformedColorComponents(linearLMS);
 
     return { x, y, z, alpha };
@@ -357,8 +356,7 @@ OKLab<float> ColorConversion<OKLab<float>, XYZA<float, WhitePoint::D65>>::conver
     // 3. Transform into Lab-coordinates.
     auto [lightness, a, b] = NonLinearLMSToOKLab.transformedColorComponents(nonLinearLMS);
 
-    // 4. Transform lightness from unit lightness to percentage lightness.
-    return makeFromComponentsClampingExceptAlpha<OKLab<float>>(lightness * 100.0f, a, b, alpha);
+    return makeFromComponentsClampingExceptAlpha<OKLab<float>>(lightness, a, b, alpha);
 }
 
 // MARK: OKLCH conversions.
