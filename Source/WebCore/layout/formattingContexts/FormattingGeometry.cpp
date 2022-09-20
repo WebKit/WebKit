@@ -242,13 +242,12 @@ LayoutUnit FormattingGeometry::staticVerticalPositionForOutOfFlowPositioned(cons
 
     // Start with this box's border box offset from the parent's border box.
     auto& formattingContext = this->formattingContext();
-    LayoutUnit top;
+    auto top = LayoutUnit { };
     if (layoutBox.previousInFlowSibling() && layoutBox.previousInFlowSibling()->isBlockLevelBox()) {
         // Add sibling offset
         auto& previousInFlowSibling = *layoutBox.previousInFlowSibling();
         auto& previousInFlowBoxGeometry = formattingContext.geometryForBox(previousInFlowSibling, FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
-        auto& formattingState = downcast<BlockFormattingState>(layoutState().formattingStateForBox(previousInFlowSibling));
-        auto usedVerticalMarginForPreviousBox = formattingState.usedVerticalMargin(previousInFlowSibling);
+        auto usedVerticalMarginForPreviousBox = downcast<BlockFormattingState>(formattingContext.formattingState()).usedVerticalMargin(previousInFlowSibling);
 
         top += BoxGeometry::borderBoxRect(previousInFlowBoxGeometry).bottom() + usedVerticalMarginForPreviousBox.nonCollapsedValues.after;
     } else
@@ -795,7 +794,7 @@ ContentHeightAndMargin FormattingGeometry::complicatedCases(const Box& layoutBox
             auto bottom = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*documentBox.lastInFlowChild())).bottom();
             // This is a special (quirk?) behavior since the document box is not a formatting context root and
             // all the float boxes end up at the ICB level.
-            auto& initialContainingBlock = documentBox.formattingContextRoot();
+            auto& initialContainingBlock = documentBox.initialContainingBlock();
             auto floatingContext = FloatingContext { formattingContext(), layoutState().formattingStateForFormattingContext(initialContainingBlock).floatingState() };
             if (auto floatBottom = floatingContext.bottom()) {
                 bottom = std::max<LayoutUnit>(*floatBottom, bottom);

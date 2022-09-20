@@ -39,7 +39,6 @@
 		143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143DDE9520C8BC37007F76FA /* Entitlements.mm */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		1469419D16EAB10A0024E146 /* AutodrainedPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */; };
-		1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */; };
 		1C181C7F1D3078DA00F5FA16 /* TextBreakIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C7D1D3078DA00F5FA16 /* TextBreakIterator.cpp */; };
 		1C181C8F1D307AB800F5FA16 /* UTextProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C891D307AB800F5FA16 /* UTextProvider.cpp */; };
 		1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C181C8B1D307AB800F5FA16 /* UTextProviderLatin1.cpp */; };
@@ -60,6 +59,7 @@
 		337B2D6A26546EB300DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 337B2D6826546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp */; };
 		339B7B1127C45EF50072BF9A /* FixedWidthDouble.h in Headers */ = {isa = PBXBuildFile; fileRef = 33479C1C27236F2000B2E1B7 /* FixedWidthDouble.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4427C5AA21F6D6C300A612A4 /* ASCIICType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4427C5A921F6D6C300A612A4 /* ASCIICType.cpp */; };
+		4448265228D18CA600D916E8 /* VectorCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 4448265128D18CA600D916E8 /* VectorCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		46449E8B2822E5680005A8BC /* WeakHashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 46449E8A2822E5670005A8BC /* WeakHashCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4655743627F5FC4A002D5522 /* ASCIILiteralCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */; };
 		46BEB6EB22FFE24900269867 /* RefCounted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BEB6E922FFDDD500269867 /* RefCounted.cpp */; };
@@ -1027,7 +1027,6 @@
 		14E785E71DFB330100209BD1 /* OrdinalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrdinalNumber.h; sourceTree = "<group>"; };
 		14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaturatedArithmetic.h; sourceTree = "<group>"; };
 		1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionDispatcher.h; sourceTree = "<group>"; };
-		1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionDispatcher.cpp; sourceTree = "<group>"; };
 		1A233C7C17DAA6E300A93ACF /* MallocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MallocPtr.h; sourceTree = "<group>"; };
 		1A3524AA1D63A2FF0031729B /* Scope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scope.h; sourceTree = "<group>"; };
 		1A3F6BE6174ADA2100B2EEA7 /* NeverDestroyed.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NeverDestroyed.h; sourceTree = "<group>"; };
@@ -1088,6 +1087,7 @@
 		430B47871AAAAC1A001223DA /* StringCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringCommon.h; sourceTree = "<group>"; };
 		4427C5A921F6D6C300A612A4 /* ASCIICType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASCIICType.cpp; sourceTree = "<group>"; };
 		4434F91B27948A65007E3E8A /* TollFreeBridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TollFreeBridging.h; sourceTree = "<group>"; };
+		4448265128D18CA600D916E8 /* VectorCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorCF.h; sourceTree = "<group>"; };
 		4468567225094FE8008CCA05 /* ThreadSanitizerSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSanitizerSupport.h; sourceTree = "<group>"; };
 		44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeCastsCocoa.h; sourceTree = "<group>"; };
 		46209A27266D543A007F8F4A /* CancellableTask.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CancellableTask.h; sourceTree = "<group>"; };
@@ -1803,6 +1803,7 @@
 				BC3FEB5D267FCD340054006A /* SpanCF.h */,
 				1AFDE647195201C300C48FFA /* TypeCastsCF.h */,
 				5C1F0594216437B30039302C /* URLCF.cpp */,
+				4448265128D18CA600D916E8 /* VectorCF.h */,
 			);
 			path = cf;
 			sourceTree = "<group>";
@@ -2027,7 +2028,6 @@
 				FE86A8741E59440200111BBF /* ForbidHeapAllocation.h */,
 				A8A472A6151A825A004123FF /* Forward.h */,
 				83F2BADE1CF9524E003E99C3 /* Function.h */,
-				1A1D8B9D1731879800141DA4 /* FunctionDispatcher.cpp */,
 				1A1D8B9B173186CE00141DA4 /* FunctionDispatcher.h */,
 				FEC26BF2289DBBD300639A59 /* FunctionPtr.h */,
 				53F1D98620477B9800EBC6BF /* FunctionTraits.h */,
@@ -3266,6 +3266,7 @@
 				DD3DC8C227A4BF8E007E5B61 /* UUID.h in Headers */,
 				DD3DC86D27A4BF8E007E5B61 /* ValueCheck.h in Headers */,
 				DD3DC90B27A4BF8E007E5B61 /* Vector.h in Headers */,
+				4448265228D18CA600D916E8 /* VectorCF.h in Headers */,
 				DDF3079727C086CD006A526F /* VectorCocoa.h in Headers */,
 				DD3DC8B127A4BF8E007E5B61 /* VectorHash.h in Headers */,
 				DD3DC95327A4BF8E007E5B61 /* VectorTraits.h in Headers */,
@@ -3645,7 +3646,6 @@
 				A331D96121F24A0A009F02AA /* FileSystemMac.mm in Sources */,
 				A331D96721F24ABD009F02AA /* FileSystemPOSIX.cpp in Sources */,
 				A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */,
-				1A1D8B9E1731879800141DA4 /* FunctionDispatcher.cpp in Sources */,
 				0F5BF1761F23D49A0029D91D /* Gigacage.cpp in Sources */,
 				0F30BA901E78708E002CA847 /* GlobalVersion.cpp in Sources */,
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,

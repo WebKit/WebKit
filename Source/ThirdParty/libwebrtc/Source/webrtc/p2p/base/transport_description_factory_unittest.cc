@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_description.h"
 #include "rtc_base/copy_on_write_buffer.h"
@@ -25,6 +26,7 @@
 #include "rtc_base/ssl_identity.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 using cricket::TransportDescription;
 using cricket::TransportDescriptionFactory;
@@ -36,16 +38,18 @@ class TransportDescriptionFactoryTest : public ::testing::Test {
  public:
   TransportDescriptionFactoryTest()
       : ice_credentials_({}),
+        f1_(field_trials_),
+        f2_(field_trials_),
         cert1_(rtc::RTCCertificate::Create(std::unique_ptr<rtc::SSLIdentity>(
             new rtc::FakeSSLIdentity("User1")))),
         cert2_(rtc::RTCCertificate::Create(std::unique_ptr<rtc::SSLIdentity>(
             new rtc::FakeSSLIdentity("User2")))) {}
 
   void CheckDesc(const TransportDescription* desc,
-                 const std::string& opt,
-                 const std::string& ice_ufrag,
-                 const std::string& ice_pwd,
-                 const std::string& dtls_alg) {
+                 absl::string_view opt,
+                 absl::string_view ice_ufrag,
+                 absl::string_view ice_pwd,
+                 absl::string_view dtls_alg) {
     ASSERT_TRUE(desc != NULL);
     EXPECT_EQ(!opt.empty(), desc->HasOption(opt));
     if (ice_ufrag.empty() && ice_pwd.empty()) {
@@ -156,6 +160,7 @@ class TransportDescriptionFactoryTest : public ::testing::Test {
     }
   }
 
+  webrtc::test::ScopedKeyValueConfig field_trials_;
   cricket::IceCredentialsIterator ice_credentials_;
   TransportDescriptionFactory f1_;
   TransportDescriptionFactory f2_;

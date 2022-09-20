@@ -1755,55 +1755,6 @@ TEST(ProcessSwap, ServerRedirect2)
     EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html", [[webView URL] absoluteString]);
 }
 
-TEST(ProcessSwap, ServerRedirectToAboutBlank)
-{
-    auto processPoolConfiguration = psonProcessPoolConfiguration();
-    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
-
-    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [webViewConfiguration setProcessPool:processPool.get()];
-    auto handler = adoptNS([[PSONScheme alloc] init]);
-    [handler addRedirectFromURLString:@"pson://www.webkit.org/main.html" toURLString:@"about:blank"];
-    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"pson"];
-
-    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
-    auto delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
-    [webView setNavigationDelegate:delegate.get()];
-
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.google.com/main.html"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    auto pidAfterFirstLoad = [webView _webProcessIdentifier];
-
-    EXPECT_EQ(1, numberOfDecidePolicyCalls);
-    EXPECT_EQ(1u, seenPIDs.size());
-    EXPECT_TRUE(*seenPIDs.begin() == pidAfterFirstLoad);
-
-    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main.html"]];
-    [webView loadRequest:request];
-
-    TestWebKitAPI::Util::run(&serverRedirected);
-    serverRedirected = false;
-
-    seenPIDs.add([webView _webProcessIdentifier]);
-    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
-        seenPIDs.add(provisionalPID);
-
-    TestWebKitAPI::Util::run(&done);
-    done = false;
-
-    seenPIDs.add([webView _webProcessIdentifier]);
-    if (auto provisionalPID = [webView _provisionalWebProcessIdentifier])
-        seenPIDs.add(provisionalPID);
-
-    EXPECT_FALSE(serverRedirected);
-    EXPECT_EQ(3, numberOfDecidePolicyCalls);
-    EXPECT_EQ(2u, seenPIDs.size());
-}
-
 enum class ShouldCacheProcessFirst { No, Yes };
 static void runSameOriginServerRedirectTest(ShouldCacheProcessFirst shouldCacheProcessFirst)
 {

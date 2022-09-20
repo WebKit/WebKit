@@ -3,42 +3,88 @@
 # Run the include-what-you-use tool (iwyu) on a file in the webrtc source
 # directory.
 #
-# The script uses a subsequent grep pass to remove #include files from .cc
-# that are also in the .h file, or are problematic to include.
+# The script uses a subsequent grep pass to remove #include files
+# that are problematic to include.
+#
+# In order to handle include paths correctly, you need to provide
+# a compile DB (aka compile_commands.json).
+# You can create it in one of the following ways:
+# "gn gen --export-compile-commands path/to/out"
+# "tools/clang/scripts/generate_compdb.py -p path/to/out > compile_commands.json"
+# If "out/Default" exists, the script will attempt to generate it for you.
 #
 # To get iwyu on Debian/glinux, do "sudo apt-get install iwyu".
 
-set -e
-set -x
-FILE=$1
-# If you want to exclude files that are in $FILE.h from $FILE.cc, set
-# the following variable to "yes". This is a style guide violation.
-REMOVE_CC_INCLUDES=no
+# Set this to 1 to get more debug information.
+# Set this to 2 to also get a dump of the iwyu tool output.
+DEBUG=0
 
-if [ ! -f $FILE ]; then
-  # See if we have the root name of a .cc/.h pair
-  if [ ! -f $FILE.h ]; then
-    echo "$FILE.h not found"
-    exit 1
+set -e
+if [ $DEBUG -gt 0 ]; then
+  set -x
+fi
+
+IWYU_TOOL="${IWYU_TOOL:-/usr/bin/iwyu_tool}"
+FIX_INCLUDE="${FIX_INCLUDE:-/usr/bin/fix_include}"
+FIX_INCLUDE_ARGS=''
+IWYU_TOOL_DIR="${IWYU_TOOL_DIR:-tools_webrtc/iwyu}"
+COMPILE_COMMANDS=''
+
+error() {
+  echo "$*" >&2
+  exit 1
+}
+
+usage() {
+  echo "Usage: $0 [ -c compile-commands-file.json ] [-r] file.cc"
+  echo "Runs the IWYU and fix-include on a CC file and its associated .h file"
+  echo "Arguments:"
+  echo " -c compile-commands: Compiler command file"
+  echo " -r : Remove non-required includes from .h file"
+  echo " -h : Print this help message"
+  echo "(default command file: out/Default/compile_commands.json - this"
+  echo "will be generated if not present"
+}
+
+while getopts 'c:rh' opts; do
+  case "${opts}" in
+    c) COMPILE_COMMANDS="${OPTARG}" ;;
+    r) FIX_INCLUDE_ARGS="${FIX_INCLUDE_ARGS} --nosafe_headers" ;;
+    h) usage; exit 1 ;;
+    *) error "Unexpected option ${opts}" ;;
+  esac
+done
+shift $(expr $OPTIND - 1 )
+
+if [[ -z "$COMPILE_COMMANDS" ]]; then
+  if [ -d "out/Default" ]; then
+    if [ ! -f "out/Default/compile_commands.json" ]; then
+      gn gen --export-compile-commands out/Default
+    fi
+    COMPILE_COMMANDS="out/Default/compile_commands.json"
+  else
+    error "compile_commands.json must be passed."
   fi
-  FILE_H=$FILE.h
-  if [ ! -f $FILE.cc ]; then
-    echo "$FILE.cc not found"
-    exit 1
-  fi
-  FILE_CC=$FILE.cc
+fi
+
+FILE="$1"
+
+if [ ! -f $FILE_CC ]; then
+  error "File $FILE is not found"
+fi
+
+# Find the .h file that IWYU will modify, if any.
+FILE_CC=$FILE
+if [ -f $(dirname $FILE)/$(basename -s .cc $FILE).h ]; then
+  FILE_H=$(dirname $FILE)/$(basename -s .cc $FILE).h
 else
-  # Exact file, no .h file
-  FILE_CC=$FILE
   FILE_H=""
 fi
 
 # IWYU has a confusing set of exit codes. Discard it.
-iwyu -Xiwyu --no_fwd_decls -D__X86_64__  -DWEBRTC_POSIX -I . \
-  -I third_party/abseil-cpp \
-  -I third_party/googletest/src/googlemock/include \
-  -I third_party/googletest/src/googletest/include \
-  $FILE_CC >& /tmp/includefixes$$ || echo "IWYU done, code $?"
+"$IWYU_TOOL" -p "$COMPILE_COMMANDS" "$FILE_CC" -- -Xiwyu --no_fwd_decls \
+  -Xiwyu --mapping_file=../../$IWYU_TOOL_DIR/mappings.imp \
+  >& /tmp/includefixes$$ || echo "IWYU done, code $?"
 
 if grep 'fatal error' /tmp/includefixes$$; then
   echo "iwyu run failed"
@@ -46,29 +92,23 @@ if grep 'fatal error' /tmp/includefixes$$; then
   rm /tmp/includefixes$$
   exit 1
 else
-  fix_include < /tmp/includefixes$$ || echo "Some files modified"
+  if [ $DEBUG -gt 1 ]; then
+    cat /tmp/includefixes$$
+  fi
+  # In compile_commands.json, the file name is recorded
+  # as a relative path to the build directory.
+  pushd "$(dirname "$COMPILE_COMMANDS")" || error "pushd failed"
+  "$FIX_INCLUDE" $FIX_INCLUDE_ARGS < /tmp/includefixes$$ || echo "Some files modified"
+  popd
   rm /tmp/includefixes$$
 fi
 
-if [ $REMOVE_CC_INCLUDES == "yes" ]; then
-  if [ -n "$FILE_H" ]; then
-    # Don't include in .cc what's already included in .h
-    grep ^#include $FILE_H | grep -v -f - $FILE_CC > $FILE_CC.new
-  else
-    cp $FILE_CC $FILE_CC.new
-  fi
-  # Don't include stuff on the banlist
-  grep -v -f tools_webrtc/iwyu/iwyu-filter-list $FILE_CC.new > $FILE_CC
-  rm $FILE.ccnew
-else
-  grep -v -f tools_webrtc/iwyu/iwyu-filter-list $FILE_CC > $FILE_CC.new
-  mv $FILE_CC.new $FILE_CC
-fi
+grep -v -f tools_webrtc/iwyu/iwyu-filter-list $FILE_CC > $FILE_CC.new
+mv $FILE_CC.new $FILE_CC
+
 if [ -n "$FILE_H" ]; then
   grep -v -f tools_webrtc/iwyu/iwyu-filter-list $FILE_H > $FILE_H.new
   mv $FILE_H.new $FILE_H
 fi
 
 echo "Finished. Check diff, compile and git cl format before uploading."
-
-

@@ -1,0 +1,68 @@
+# Copyright (c) 2021 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("create_direct3d_device") {
+  sources = [
+    "create_direct3d_device.cc",
+    "create_direct3d_device.h",
+  ]
+  data_deps = [ "//build/win:runtime_libs" ]
+}
+
+rtc_library("get_activation_factory") {
+  sources = [
+    "get_activation_factory.cc",
+    "get_activation_factory.h",
+  ]
+  data_deps = [ "//build/win:runtime_libs" ]
+  deps = [ ":hstring" ]
+}
+
+rtc_library("hstring") {
+  sources = [
+    "hstring.cc",
+    "hstring.h",
+  ]
+  data_deps = [ "//build/win:runtime_libs" ]
+}
+
+rtc_library("scoped_com_initializer") {
+  sources = [
+    "scoped_com_initializer.cc",
+    "scoped_com_initializer.h",
+  ]
+  data_deps = [ "//build/win:runtime_libs" ]
+  deps = [
+    "..:checks",
+    "..:logging",
+  ]
+}
+
+rtc_library("windows_version") {
+  sources = [
+    "windows_version.cc",
+    "windows_version.h",
+  ]
+  data_deps = [ "//build/win:runtime_libs" ]
+  deps = [
+    "..:checks",
+    "..:stringutils",
+  ]
+}
+
+rtc_library("windows_version_unittest") {
+  testonly = true
+  sources = [ "windows_version_unittest.cc" ]
+  deps = [
+    ":windows_version",
+    "..:gunit_helpers",
+    "..:logging",
+  ]
+}

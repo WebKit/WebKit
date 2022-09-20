@@ -180,6 +180,7 @@ void PingLoader::sendViolationReport(Frame& frame, const URL& reportURL, Ref<For
     case ViolationReportType::COEPInheritenceViolation:
     case ViolationReportType::CORPViolation:
     case ViolationReportType::CrossOriginOpenerPolicy:
+    case ViolationReportType::Deprecation:
     case ViolationReportType::StandardReportingAPIViolation:
     case ViolationReportType::Test:
         request.setHTTPContentType("application/reports+json"_s);

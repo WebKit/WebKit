@@ -39,6 +39,7 @@ rtc_library("emulated_network") {
   ]
   deps = [
     "../../api:array_view",
+    "../../api:field_trials_view",
     "../../api:network_emulation_manager_api",
     "../../api:packet_socket_factory",
     "../../api:scoped_refptr",
@@ -46,6 +47,7 @@ rtc_library("emulated_network") {
     "../../api:simulated_network_api",
     "../../api:time_controller",
     "../../api/numerics",
+    "../../api/task_queue:pending_task_safety_flag",
     "../../api/test/network_emulation",
     "../../api/transport:stun_types",
     "../../api/units:data_rate",
@@ -55,10 +57,18 @@ rtc_library("emulated_network") {
     "../../call:simulated_network",
     "../../p2p:p2p_server_utils",
     "../../rtc_base",
+<<<<<<< HEAD
+    "../../rtc_base:copy_on_write_buffer",
+=======
     "../../rtc_base:async_socket",
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
     "../../rtc_base:ip_address",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
     "../../rtc_base:network_constants",
+    "../../rtc_base:random",
     "../../rtc_base:rtc_base_tests_utils",
+    "../../rtc_base:rtc_event",
     "../../rtc_base:rtc_task_queue",
     "../../rtc_base:safe_minmax",
     "../../rtc_base:socket_address",
@@ -66,17 +76,18 @@ rtc_library("emulated_network") {
     "../../rtc_base:stringutils",
     "../../rtc_base:task_queue_for_test",
     "../../rtc_base:threading",
+    "../../rtc_base/memory:always_valid_pointer",
     "../../rtc_base/synchronization:mutex",
-    "../../rtc_base/task_utils:pending_task_safety_flag",
     "../../rtc_base/task_utils:repeating_task",
-    "../../rtc_base/task_utils:to_queued_task",
     "../../system_wrappers",
+    "../../test:scoped_key_value_config",
     "../scenario:column_printer",
     "../time_controller",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/memory",
+    "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
 }
@@ -93,6 +104,7 @@ rtc_library("network_emulation_unittest") {
     "../../rtc_base:gunit_helpers",
     "../../rtc_base:logging",
     "../../rtc_base:rtc_event",
+    "../../rtc_base:task_queue_for_test",
     "../../rtc_base/synchronization:mutex",
   ]
 }
@@ -122,6 +134,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../rtc_base:gunit_helpers",
       "../../rtc_base:logging",
       "../../rtc_base:rtc_event",
+      "../../rtc_base:task_queue_for_test",
     ]
   }
 }
@@ -156,6 +169,7 @@ if (rtc_include_tests) {
     ]
     deps = [
       ":emulated_network",
+      "../../api/transport:network_control",
       "../../api/transport:test_feedback_generator_interface",
       "../../call:simulated_network",
       "../../rtc_base:checks",

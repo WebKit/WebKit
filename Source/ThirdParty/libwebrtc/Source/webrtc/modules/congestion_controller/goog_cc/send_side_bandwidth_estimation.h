@@ -20,8 +20,9 @@
 #include <vector>
 
 #include "absl/types/optional.h"
+#include "api/field_trials_view.h"
+#include "api/network_state_predictor.h"
 #include "api/transport/network_types.h"
-#include "api/transport/webrtc_key_value_config.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -56,7 +57,7 @@ class LinkCapacityTracker {
 
 class RttBasedBackoff {
  public:
-  explicit RttBasedBackoff(const WebRtcKeyValueConfig* key_value_config);
+  explicit RttBasedBackoff(const FieldTrialsView* key_value_config);
   ~RttBasedBackoff();
   void UpdatePropagationRtt(Timestamp at_time, TimeDelta propagation_rtt);
   TimeDelta CorrectedRtt(Timestamp at_time) const;
@@ -77,7 +78,7 @@ class RttBasedBackoff {
 class SendSideBandwidthEstimation {
  public:
   SendSideBandwidthEstimation() = delete;
-  SendSideBandwidthEstimation(const WebRtcKeyValueConfig* key_value_config,
+  SendSideBandwidthEstimation(const FieldTrialsView* key_value_config,
                               RtcEventLog* event_log);
   ~SendSideBandwidthEstimation();
 
@@ -116,7 +117,8 @@ class SendSideBandwidthEstimation {
   int GetMinBitrate() const;
   void SetAcknowledgedRate(absl::optional<DataRate> acknowledged_rate,
                            Timestamp at_time);
-  void IncomingPacketFeedbackVector(const TransportPacketsFeedback& report);
+  void UpdateLossBasedEstimator(const TransportPacketsFeedback& report,
+                                BandwidthUsage delay_detector_state);
 
  private:
   friend class GoogCcStatePrinter;

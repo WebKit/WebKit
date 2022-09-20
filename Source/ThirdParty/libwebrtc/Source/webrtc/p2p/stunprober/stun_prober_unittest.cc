@@ -13,6 +13,7 @@
 #include <stdint.h>
 
 #include <memory>
+#include <utility>
 
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/test_stun_server.h"
@@ -40,7 +41,7 @@ const rtc::SocketAddress kStunMappedAddr("77.77.77.77", 0);
 class StunProberTest : public ::testing::Test {
  public:
   StunProberTest()
-      : ss_(new rtc::VirtualSocketServer()),
+      : ss_(std::make_unique<rtc::VirtualSocketServer>()),
         main_(ss_.get()),
         result_(StunProber::SUCCESS),
         stun_server_1_(cricket::TestStunServer::Create(ss_.get(), kStunAddr1)),
@@ -54,16 +55,17 @@ class StunProberTest : public ::testing::Test {
 
   void StartProbing(rtc::PacketSocketFactory* socket_factory,
                     const std::vector<rtc::SocketAddress>& addrs,
-                    const rtc::NetworkManager::NetworkList& networks,
+                    std::vector<const rtc::Network*> networks,
                     bool shared_socket,
                     uint16_t interval,
                     uint16_t pings_per_ip) {
-    prober.reset(
-        new StunProber(socket_factory, rtc::Thread::Current(), networks));
-    prober->Start(addrs, shared_socket, interval, pings_per_ip,
-                  100 /* timeout_ms */, [this](StunProber* prober, int result) {
-                    this->StopCallback(prober, result);
-                  });
+    prober_ = std::make_unique<StunProber>(
+        socket_factory, rtc::Thread::Current(), std::move(networks));
+    prober_->Start(addrs, shared_socket, interval, pings_per_ip,
+                   100 /* timeout_ms */,
+                   [this](StunProber* prober, int result) {
+                     StopCallback(prober, result);
+                   });
   }
 
   void RunProber(bool shared_mode) {
@@ -77,7 +79,7 @@ class StunProberTest : public ::testing::Test {
     rtc::Network ipv4_network1("test_eth0", "Test Network Adapter 1",
                                rtc::IPAddress(0x12345600U), 24);
     ipv4_network1.AddIP(rtc::IPAddress(0x12345678));
-    rtc::NetworkManager::NetworkList networks;
+    std::vector<const rtc::Network*> networks;
     networks.push_back(&ipv4_network1);
 
     auto socket_factory =
@@ -93,13 +95,13 @@ class StunProberTest : public ::testing::Test {
     // kFailedStunAddr.
     const uint32_t total_pings_reported = total_pings_tried - pings_per_ip;
 
-    StartProbing(socket_factory.get(), addrs, networks, shared_mode, 3,
-                 pings_per_ip);
+    StartProbing(socket_factory.get(), addrs, std::move(networks), shared_mode,
+                 3, pings_per_ip);
 
     WAIT(stopped_, 1000);
 
     StunProber::Stats stats;
-    EXPECT_TRUE(prober->GetStats(&stats));
+    EXPECT_TRUE(prober_->GetStats(&stats));
     EXPECT_EQ(stats.success_percent, 100);
     EXPECT_TRUE(stats.nat_type > stunprober::NATTYPE_NONE);
     EXPECT_EQ(stats.srflx_addrs, srflx_addresses);
@@ -117,7 +119,7 @@ class StunProberTest : public ::testing::Test {
 
   std::unique_ptr<rtc::VirtualSocketServer> ss_;
   rtc::AutoSocketServerThread main_;
-  std::unique_ptr<StunProber> prober;
+  std::unique_ptr<StunProber> prober_;
   int result_ = 0;
   bool stopped_ = false;
   std::unique_ptr<cricket::TestStunServer> stun_server_1_;

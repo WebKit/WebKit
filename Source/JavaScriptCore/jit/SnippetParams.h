@@ -37,7 +37,7 @@ namespace JSC {
 class SnippetParams {
 WTF_MAKE_NONCOPYABLE(SnippetParams);
 public:
-    virtual ~SnippetParams() { }
+    virtual ~SnippetParams() = default;
 
     class Value {
     public:

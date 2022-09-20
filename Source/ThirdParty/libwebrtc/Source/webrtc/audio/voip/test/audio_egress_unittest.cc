@@ -9,6 +9,7 @@
  */
 
 #include "audio/voip/audio_egress.h"
+
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/call/transport.h"
 #include "api/task_queue/default_task_queue_factory.h"
@@ -20,6 +21,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 namespace {
@@ -57,7 +59,6 @@ class AudioEgressTest : public ::testing::Test {
 
   AudioEgressTest()
       : fake_clock_(kStartTime), wave_generator_(1000.0, kAudioLevel) {
-    rtp_rtcp_ = CreateRtpStack(&fake_clock_, &transport_, kRemoteSsrc);
     task_queue_factory_ = CreateDefaultTaskQueueFactory();
     encoder_factory_ = CreateBuiltinAudioEncoderFactory();
   }
@@ -65,6 +66,7 @@ class AudioEgressTest : public ::testing::Test {
   // Prepare test on audio egress by using PCMu codec with specific
   // sequence number and its status to be running.
   void SetUp() override {
+    rtp_rtcp_ = CreateRtpStack(&fake_clock_, &transport_, kRemoteSsrc);
     egress_ = std::make_unique<AudioEgress>(rtp_rtcp_.get(), &fake_clock_,
                                             task_queue_factory_.get());
     constexpr int kPcmuPayload = 0;
@@ -81,6 +83,7 @@ class AudioEgressTest : public ::testing::Test {
     egress_->StopSend();
     rtp_rtcp_->SetSendingStatus(false);
     egress_.reset();
+    rtp_rtcp_.reset();
   }
 
   // Create an audio frame prepared for pcmu encoding. Timestamp is
@@ -97,6 +100,7 @@ class AudioEgressTest : public ::testing::Test {
     return frame;
   }
 
+  test::RunLoop run_loop_;
   // SimulatedClock doesn't directly affect this testcase as the the
   // AudioFrame's timestamp is driven by GetAudioFrame.
   SimulatedClock fake_clock_;

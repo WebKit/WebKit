@@ -8,6 +8,22 @@
 
 import("../../../webrtc.gni")
 
+rtc_source_set("scalability_mode_util") {
+  sources = [
+    "scalability_mode_util.cc",
+    "scalability_mode_util.h",
+  ]
+  deps = [
+    "../../../api/video_codecs:scalability_mode",
+    "../../../api/video_codecs:video_codecs_api",
+    "../../../rtc_base:checks",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
 rtc_source_set("scalable_video_controller") {
   sources = [
     "scalable_video_controller.h",
@@ -43,6 +59,7 @@ rtc_source_set("scalability_structures") {
     ":scalable_video_controller",
     "../../../api/transport/rtp:dependency_descriptor",
     "../../../api/video:video_bitrate_allocation",
+    "../../../api/video_codecs:scalability_mode",
     "../../../common_video/generic_frame_descriptor",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
@@ -75,6 +92,7 @@ if (rtc_include_tests) {
   rtc_source_set("scalability_structure_tests") {
     testonly = true
     sources = [
+      "scalability_mode_util_unittest.cc",
       "scalability_structure_full_svc_unittest.cc",
       "scalability_structure_key_svc_unittest.cc",
       "scalability_structure_l2t2_key_shift_unittest.cc",
@@ -83,6 +101,7 @@ if (rtc_include_tests) {
       "scalability_structure_unittest.cc",
     ]
     deps = [
+      ":scalability_mode_util",
       ":scalability_structures",
       ":scalable_video_controller",
       "..:chain_diff_calculator",
@@ -91,10 +110,15 @@ if (rtc_include_tests) {
       "../../../api/transport/rtp:dependency_descriptor",
       "../../../api/video:video_bitrate_allocation",
       "../../../api/video:video_frame_type",
+      "../../../api/video_codecs:scalability_mode",
       "../../../common_video/generic_frame_descriptor",
+      "../../../rtc_base:stringutils",
       "../../../test:test_support",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/strings",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
   }
 
   rtc_source_set("svc_rate_allocator_tests") {

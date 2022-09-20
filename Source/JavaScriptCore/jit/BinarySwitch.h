@@ -82,7 +82,7 @@ private:
     GPRReg m_value;
     
     struct Case {
-        Case() { }
+        Case() = default;
 
         Case(int64_t value, unsigned index)
             : value(value)
@@ -112,7 +112,7 @@ private:
     };
         
     struct BranchCode {
-        BranchCode() { }
+        BranchCode() = default;
         
         BranchCode(BranchKind kind, unsigned index = UINT_MAX)
             : kind(kind)
@@ -130,7 +130,7 @@ private:
     
     Vector<BranchCode> m_branches;
 
-    unsigned m_index;
+    unsigned m_index { 0 };
     unsigned m_caseIndex;
     Vector<MacroAssembler::Jump> m_jumpStack;
     

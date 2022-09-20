@@ -104,10 +104,11 @@ class PeerScenarioClient {
   };
 
   struct VideoSendTrack {
+    // Raw pointer to the capturer owned by `source`.
     FrameGeneratorCapturer* capturer;
-    FrameGeneratorCapturerVideoTrackSource* source;
-    VideoTrackInterface* track;
-    RtpSenderInterface* sender;
+    rtc::scoped_refptr<FrameGeneratorCapturerVideoTrackSource> source;
+    rtc::scoped_refptr<VideoTrackInterface> track;
+    rtc::scoped_refptr<RtpSenderInterface> sender;
   };
 
   PeerScenarioClient(

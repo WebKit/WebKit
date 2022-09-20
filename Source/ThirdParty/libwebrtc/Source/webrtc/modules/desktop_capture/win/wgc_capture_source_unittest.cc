@@ -19,10 +19,10 @@
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/win/screen_capture_utils.h"
 #include "modules/desktop_capture/win/test_support/test_window.h"
+#include "modules/desktop_capture/win/wgc_capturer_win.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/win/scoped_com_initializer.h"
-#include "rtc_base/win/windows_version.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -35,19 +35,11 @@ const int kFirstYCoord = 50;
 const int kSecondXCoord = 50;
 const int kSecondYCoord = 75;
 
-enum SourceType { kWindowSource = 0, kScreenSource = 1 };
-
 }  // namespace
 
-class WgcCaptureSourceTest : public ::testing::TestWithParam<SourceType> {
+class WgcCaptureSourceTest : public ::testing::TestWithParam<CaptureType> {
  public:
   void SetUp() override {
-    if (rtc::rtc_win::GetVersion() < rtc::rtc_win::Version::VERSION_WIN10_RS5) {
-      RTC_LOG(LS_INFO)
-          << "Skipping WgcCaptureSourceTests on Windows versions < RS5.";
-      GTEST_SKIP();
-    }
-
     com_initializer_ =
         std::make_unique<ScopedCOMInitializer>(ScopedCOMInitializer::kMTA);
     ASSERT_TRUE(com_initializer_->Succeeded());
@@ -82,6 +74,12 @@ class WgcCaptureSourceTest : public ::testing::TestWithParam<SourceType> {
 
 // Window specific test
 TEST_F(WgcCaptureSourceTest, WindowPosition) {
+  if (!IsWgcSupported(CaptureType::kWindow)) {
+    RTC_LOG(LS_INFO)
+        << "Skipping WgcCapturerWinTests on unsupported platforms.";
+    GTEST_SKIP();
+  }
+
   SetUpForWindowSource();
   source_ = source_factory_->CreateCaptureSource(source_id_);
   ASSERT_TRUE(source_);
@@ -100,6 +98,12 @@ TEST_F(WgcCaptureSourceTest, WindowPosition) {
 
 // Screen specific test
 TEST_F(WgcCaptureSourceTest, ScreenPosition) {
+  if (!IsWgcSupported(CaptureType::kScreen)) {
+    RTC_LOG(LS_INFO)
+        << "Skipping WgcCapturerWinTests on unsupported platforms.";
+    GTEST_SKIP();
+  }
+
   SetUpForScreenSource();
   source_ = source_factory_->CreateCaptureSource(source_id_);
   ASSERT_TRUE(source_);
@@ -113,7 +117,13 @@ TEST_F(WgcCaptureSourceTest, ScreenPosition) {
 
 // Source agnostic test
 TEST_P(WgcCaptureSourceTest, CreateSource) {
-  if (GetParam() == SourceType::kWindowSource) {
+  if (!IsWgcSupported(GetParam())) {
+    RTC_LOG(LS_INFO)
+        << "Skipping WgcCapturerWinTests on unsupported platforms.";
+    GTEST_SKIP();
+  }
+
+  if (GetParam() == CaptureType::kWindow) {
     SetUpForWindowSource();
   } else {
     SetUpForScreenSource();
@@ -132,7 +142,7 @@ TEST_P(WgcCaptureSourceTest, CreateSource) {
 
 INSTANTIATE_TEST_SUITE_P(SourceAgnostic,
                          WgcCaptureSourceTest,
-                         ::testing::Values(SourceType::kWindowSource,
-                                           SourceType::kScreenSource));
+                         ::testing::Values(CaptureType::kWindow,
+                                           CaptureType::kScreen));
 
 }  // namespace webrtc

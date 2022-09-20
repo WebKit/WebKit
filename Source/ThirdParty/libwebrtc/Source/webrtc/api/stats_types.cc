@@ -13,8 +13,8 @@
 #include <string.h>
 
 #include "absl/algorithm/container.h"
+#include "api/make_ref_counted.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/string_encode.h"
 
 // TODO(tommi): Could we have a static map of value name -> expected type
@@ -58,7 +58,7 @@ const char* InternalTypeToString(StatsReport::StatsType type) {
     case StatsReport::kStatsReportTypeDataChannel:
       return "datachannel";
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return nullptr;
 }
 
@@ -291,7 +291,7 @@ bool StatsReport::Value::Equals(const Value& other) const {
     case kId:
       return (*value_.id_)->Equals(*other.value_.id_);
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return false;
 }
 
@@ -648,12 +648,12 @@ const char* StatsReport::Value::display_name() const {
       return "googTrackId";
     case kStatsValueNameTimingFrameInfo:
       return "googTimingFrameInfo";
-    case kStatsValueNameTypingNoiseState:
-      return "googTypingNoiseState";
     case kStatsValueNameWritable:
       return "googWritable";
     case kStatsValueNameAudioDeviceUnderrunCounter:
       return "googAudioDeviceUnderrunCounter";
+    case kStatsValueNameLocalCandidateRelayProtocol:
+      return "googLocalCandidateRelayProtocol";
   }
 
   return nullptr;
@@ -676,7 +676,7 @@ std::string StatsReport::Value::ToString() const {
     case kId:
       return (*value_.id_)->ToString();
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return std::string();
 }
 

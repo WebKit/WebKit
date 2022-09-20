@@ -581,6 +581,18 @@ DefaultARIAForCustomElementsEnabled:
     WebCore:
       default: false
 
+DeprecationReportingEnabled:
+  type: bool
+  humanReadableName: "Deprecation Reporting"
+  humanReadableDescription: "Enable Deprecation Reporting"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DialogElementEnabled:
   type: bool
   humanReadableName: "Dialog Element"

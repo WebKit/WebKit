@@ -63,8 +63,8 @@ class FreeList {
 public:
     friend class VariadicBumpAllocator;
 
-    BEXPORT FreeList();
-    BEXPORT ~FreeList();
+    BEXPORT FreeList() = default;
+    BEXPORT ~FreeList() = default;
     
     BEXPORT void clear();
     

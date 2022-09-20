@@ -149,11 +149,6 @@ uint64_t ComputeHammingDistance(const uint8_t* src_a,
     HammingDistance = HammingDistance_AVX2;
   }
 #endif
-#if defined(HAS_HAMMINGDISTANCE_MMI)
-  if (TestCpuFlag(kCpuHasMMI)) {
-    HammingDistance = HammingDistance_MMI;
-  }
-#endif
 #if defined(HAS_HAMMINGDISTANCE_MSA)
   if (TestCpuFlag(kCpuHasMSA)) {
     HammingDistance = HammingDistance_MSA;
@@ -209,11 +204,6 @@ uint64_t ComputeSumSquareError(const uint8_t* src_a,
   if (TestCpuFlag(kCpuHasAVX2)) {
     // Note only used for multiples of 32 so count is not checked.
     SumSquareError = SumSquareError_AVX2;
-  }
-#endif
-#if defined(HAS_SUMSQUAREERROR_MMI)
-  if (TestCpuFlag(kCpuHasMMI)) {
-    SumSquareError = SumSquareError_MMI;
   }
 #endif
 #if defined(HAS_SUMSQUAREERROR_MSA)

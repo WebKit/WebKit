@@ -201,6 +201,7 @@ dictionary RTCOutboundRtpStreamStats : RTCSentRtpStreamStats {
 [ JSGenerateToJSObject ]
 dictionary RTCMediaStreamTrackStats : RTCStats {
     DOMString trackIdentifier;
+    DOMString kind;
     boolean remoteSource;
     boolean ended;
     boolean detached;

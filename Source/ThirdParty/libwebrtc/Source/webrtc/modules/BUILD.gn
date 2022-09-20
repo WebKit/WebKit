@@ -36,10 +36,7 @@ rtc_source_set("module_api_public") {
 
 rtc_source_set("module_api") {
   visibility = [ "*" ]
-  sources = [
-    "include/module.h",
-    "include/module_common_types.h",
-  ]
+  sources = [ "include/module_common_types.h" ]
 }
 
 rtc_source_set("module_fec_api") {
@@ -82,12 +79,14 @@ if (rtc_include_tests && !build_with_chromium) {
     data = modules_tests_resources
 
     if (is_android) {
+      use_default_launcher = false
       deps += [
         # NOTE(brandtr): Including Java classes seems only to be possible from
         # rtc_test targets. Therefore we include this target here, instead of
         # in video_coding_modules_tests, where it is actually used.
         "../sdk/android:libjingle_peerconnection_java",
-        "//testing/android/native_test:native_test_native_code",
+        "//sdk/android:native_test_jni_onload",
+        "//testing/android/native_test:native_test_support",
       ]
       shard_timeout = 900
     }
@@ -147,18 +146,28 @@ if (rtc_include_tests && !build_with_chromium) {
     "../resources/audio_processing/transient/wpd7.dat",
     "../resources/deflicker_before_cif_short.yuv",
     "../resources/far16_stereo.pcm",
+    "../resources/far176_stereo.pcm",
+    "../resources/far192_stereo.pcm",
+    "../resources/far22_stereo.pcm",
     "../resources/far32_stereo.pcm",
     "../resources/far44_stereo.pcm",
     "../resources/far48_stereo.pcm",
+    "../resources/far88_stereo.pcm",
     "../resources/far8_stereo.pcm",
+    "../resources/far96_stereo.pcm",
     "../resources/foremanColorEnhanced_cif_short.yuv",
     "../resources/foreman_cif.yuv",
     "../resources/foreman_cif_short.yuv",
     "../resources/near16_stereo.pcm",
+    "../resources/near176_stereo.pcm",
+    "../resources/near192_stereo.pcm",
+    "../resources/near22_stereo.pcm",
     "../resources/near32_stereo.pcm",
     "../resources/near44_stereo.pcm",
     "../resources/near48_stereo.pcm",
+    "../resources/near88_stereo.pcm",
     "../resources/near8_stereo.pcm",
+    "../resources/near96_stereo.pcm",
     "../resources/ref03.aecdump",
     "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_0_AST.bin",
     "../resources/remote_bitrate_estimator/VideoSendersTest_BweTest_IncreasingChoke1_0_TOF.bin",
@@ -219,8 +228,8 @@ if (rtc_include_tests && !build_with_chromium) {
       "pacing:pacing_unittests",
       "remote_bitrate_estimator:remote_bitrate_estimator_unittests",
       "rtp_rtcp:rtp_rtcp_unittests",
-      "utility:utility_unittests",
       "video_coding:video_coding_unittests",
+      "video_coding/timing:timing_unittests",
       "video_processing:video_processing_unittests",
     ]
 
@@ -231,6 +240,7 @@ if (rtc_include_tests && !build_with_chromium) {
     data = modules_unittests_resources
 
     if (is_android) {
+      use_default_launcher = false
       deps += [
         "../sdk/android:libjingle_peerconnection_java",
         "//testing/android/native_test:native_test_support",

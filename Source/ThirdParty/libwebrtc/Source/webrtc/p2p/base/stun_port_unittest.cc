@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "api/test/mock_async_dns_resolver.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/test_stun_server.h"
 #include "rtc_base/gunit.h"
@@ -20,34 +21,85 @@
 #include "rtc_base/ssl_adapter.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gmock.h"
+#include "test/scoped_key_value_config.h"
+
+namespace {
 
 using cricket::ServerAddresses;
 using rtc::SocketAddress;
 using ::testing::_;
+using ::testing::DoAll;
+using ::testing::InvokeArgument;
 using ::testing::Return;
+using ::testing::ReturnPointee;
+using ::testing::SetArgPointee;
+
+using DnsResolverExpectations =
+    std::function<void(webrtc::MockAsyncDnsResolver*,
+                       webrtc::MockAsyncDnsResolverResult*)>;
 
 static const SocketAddress kLocalAddr("127.0.0.1", 0);
+static const SocketAddress kIPv6LocalAddr("::1", 0);
 static const SocketAddress kStunAddr1("127.0.0.1", 5000);
 static const SocketAddress kStunAddr2("127.0.0.1", 4000);
 static const SocketAddress kStunAddr3("127.0.0.1", 3000);
+static const SocketAddress kIPv6StunAddr1("::1", 5000);
 static const SocketAddress kBadAddr("0.0.0.1", 5000);
-static const SocketAddress kStunHostnameAddr("localhost", 5000);
+static const SocketAddress kValidHostnameAddr("valid-hostname", 5000);
 static const SocketAddress kBadHostnameAddr("not-a-real-hostname", 5000);
 // STUN timeout (with all retries) is cricket::STUN_TOTAL_TIMEOUT.
 // Add some margin of error for slow bots.
 static const int kTimeoutMs = cricket::STUN_TOTAL_TIMEOUT;
-// stun prio = 100 << 24 | 30 (IPV4) << 8 | 256 - 0
-static const uint32_t kStunCandidatePriority = 1677729535;
+// stun prio = 100 (srflx) << 24 | 30 (IPv4) << 8 | 256 - 1 (component)
+static const uint32_t kStunCandidatePriority =
+    (100 << 24) | (30 << 8) | (256 - 1);
+// stun prio = 100 (srflx) << 24 | 60 (loopback IPv6) << 8 | 256 - 1 (component)
+static const uint32_t kIPv6StunCandidatePriority =
+    (100 << 24) | (60 << 8) | (256 - 1);
 static const int kInfiniteLifetime = -1;
 static const int kHighCostPortKeepaliveLifetimeMs = 2 * 60 * 1000;
 
-// Tests connecting a StunPort to a fake STUN server (cricket::StunServer)
+// A PacketSocketFactory implementation that uses a mock DnsResolver and allows
+// setting expectations on the resolver and results.
+class MockDnsResolverPacketSocketFactory
+    : public rtc::BasicPacketSocketFactory {
+ public:
+  explicit MockDnsResolverPacketSocketFactory(
+      rtc::SocketFactory* socket_factory)
+      : rtc::BasicPacketSocketFactory(socket_factory) {}
+
+  std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver()
+      override {
+    std::unique_ptr<webrtc::MockAsyncDnsResolver> resolver =
+        std::make_unique<webrtc::MockAsyncDnsResolver>();
+    if (expectations_) {
+      expectations_(resolver.get(), &resolver_result_);
+    }
+    return resolver;
+  }
+
+  void SetExpectations(DnsResolverExpectations expectations) {
+    expectations_ = expectations;
+  }
+
+ private:
+  webrtc::MockAsyncDnsResolverResult resolver_result_;
+  DnsResolverExpectations expectations_;
+};
+
+// Base class for tests connecting a StunPort to a fake STUN server
+// (cricket::StunServer).
 class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
  public:
   StunPortTestBase()
+      : StunPortTestBase(
+            rtc::Network("unittest", "unittest", kLocalAddr.ipaddr(), 32),
+            kLocalAddr.ipaddr()) {}
+
+  StunPortTestBase(rtc::Network network, const rtc::IPAddress address)
       : ss_(new rtc::VirtualSocketServer()),
         thread_(ss_.get()),
-        network_("unittest", "unittest", kLocalAddr.ipaddr(), 32),
+        network_(network),
         socket_factory_(ss_.get()),
         stun_server_1_(cricket::TestStunServer::Create(ss_.get(), kStunAddr1)),
         stun_server_2_(cricket::TestStunServer::Create(ss_.get(), kStunAddr2)),
@@ -55,29 +107,40 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
         error_(false),
         stun_keepalive_delay_(1),
         stun_keepalive_lifetime_(-1) {
-    network_.AddIP(kLocalAddr.ipaddr());
+    network_.AddIP(address);
   }
 
+  virtual rtc::PacketSocketFactory* socket_factory() {
+    return &socket_factory_;
+  }
+
+  rtc::VirtualSocketServer* ss() const { return ss_.get(); }
   cricket::UDPPort* port() const { return stun_port_.get(); }
   rtc::AsyncPacketSocket* socket() const { return socket_.get(); }
   bool done() const { return done_; }
   bool error() const { return error_; }
 
+  bool HasPendingRequest(int msg_type) {
+    return stun_port_->request_manager().HasRequestForTest(msg_type);
+  }
+
   void SetNetworkType(rtc::AdapterType adapter_type) {
     network_.set_type(adapter_type);
   }
 
-  void CreateStunPort(const rtc::SocketAddress& server_addr) {
+  void CreateStunPort(const rtc::SocketAddress& server_addr,
+                      const webrtc::FieldTrialsView* field_trials = nullptr) {
     ServerAddresses stun_servers;
     stun_servers.insert(server_addr);
-    CreateStunPort(stun_servers);
+    CreateStunPort(stun_servers, field_trials);
   }
 
-  void CreateStunPort(const ServerAddresses& stun_servers) {
+  void CreateStunPort(const ServerAddresses& stun_servers,
+                      const webrtc::FieldTrialsView* field_trials = nullptr) {
     stun_port_ = cricket::StunPort::Create(
-        rtc::Thread::Current(), &socket_factory_, &network_, 0, 0,
+        rtc::Thread::Current(), socket_factory(), &network_, 0, 0,
         rtc::CreateRandomString(16), rtc::CreateRandomString(22), stun_servers,
-        std::string(), absl::nullopt);
+        absl::nullopt, field_trials);
     stun_port_->set_stun_keepalive_delay(stun_keepalive_delay_);
     // If `stun_keepalive_lifetime_` is negative, let the stun port
     // choose its lifetime from the network type.
@@ -91,20 +154,22 @@ class StunPortTestBase : public ::testing::Test, public sigslot::has_slots<> {
         this, &StunPortTestBase::OnCandidateError);
   }
 
-  void CreateSharedUdpPort(const rtc::SocketAddress& server_addr,
-                           rtc::AsyncPacketSocket* socket) {
+  void CreateSharedUdpPort(
+      const rtc::SocketAddress& server_addr,
+      rtc::AsyncPacketSocket* socket,
+      const webrtc::FieldTrialsView* field_trials = nullptr) {
     if (socket) {
       socket_.reset(socket);
     } else {
-      socket_.reset(socket_factory_.CreateUdpSocket(
+      socket_.reset(socket_factory()->CreateUdpSocket(
           rtc::SocketAddress(kLocalAddr.ipaddr(), 0), 0, 0));
     }
     ASSERT_TRUE(socket_ != NULL);
     socket_->SignalReadPacket.connect(this, &StunPortTestBase::OnReadPacket);
     stun_port_ = cricket::UDPPort::Create(
-        rtc::Thread::Current(), &socket_factory_, &network_, socket_.get(),
-        rtc::CreateRandomString(16), rtc::CreateRandomString(22), std::string(),
-        false, absl::nullopt);
+        rtc::Thread::Current(), socket_factory(), &network_, socket_.get(),
+        rtc::CreateRandomString(16), rtc::CreateRandomString(22), false,
+        absl::nullopt, field_trials);
     ASSERT_TRUE(stun_port_ != NULL);
     ServerAddresses stun_servers;
     stun_servers.insert(server_addr);
@@ -209,8 +274,6 @@ TEST_F(StunPortTest, TestPrepareAddress) {
   EXPECT_TRUE(kLocalAddr.EqualIPs(port()->Candidates()[0].address()));
   std::string expected_server_url = "stun:127.0.0.1:5000";
   EXPECT_EQ(port()->Candidates()[0].url(), expected_server_url);
-
-  // TODO(deadbeef): Add IPv6 tests here.
 }
 
 // Test that we fail properly if we can't get an address.
@@ -230,15 +293,37 @@ TEST_F(StunPortTest, TestPrepareAddressFail) {
   ASSERT_EQ(error_event_.url, server_url);
 }
 
+class StunPortWithMockDnsResolverTest : public StunPortTest {
+ public:
+  StunPortWithMockDnsResolverTest() : StunPortTest(), socket_factory_(ss()) {}
+
+  rtc::PacketSocketFactory* socket_factory() override {
+    return &socket_factory_;
+  }
+
+  void SetDnsResolverExpectations(DnsResolverExpectations expectations) {
+    socket_factory_.SetExpectations(expectations);
+  }
+
+ private:
+  MockDnsResolverPacketSocketFactory socket_factory_;
+};
+
 // Test that we can get an address from a STUN server specified by a hostname.
-// Crashes on Linux, see webrtc:7416
-#if defined(WEBRTC_LINUX) || defined(WEBRTC_WIN)
-#define MAYBE_TestPrepareAddressHostname DISABLED_TestPrepareAddressHostname
-#else
-#define MAYBE_TestPrepareAddressHostname TestPrepareAddressHostname
-#endif
-TEST_F(StunPortTest, MAYBE_TestPrepareAddressHostname) {
-  CreateStunPort(kStunHostnameAddr);
+TEST_F(StunPortWithMockDnsResolverTest, TestPrepareAddressHostname) {
+  SetDnsResolverExpectations(
+      [](webrtc::MockAsyncDnsResolver* resolver,
+         webrtc::MockAsyncDnsResolverResult* resolver_result) {
+        EXPECT_CALL(*resolver, Start(kValidHostnameAddr, _))
+            .WillOnce(InvokeArgument<1>());
+        EXPECT_CALL(*resolver, result)
+            .WillRepeatedly(ReturnPointee(resolver_result));
+        EXPECT_CALL(*resolver_result, GetError).WillOnce(Return(0));
+        EXPECT_CALL(*resolver_result, GetResolvedAddress(AF_INET, _))
+            .WillOnce(DoAll(SetArgPointee<1>(SocketAddress("127.0.0.1", 5000)),
+                            Return(true)));
+      });
+  CreateStunPort(kValidHostnameAddr);
   PrepareAddress();
   EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
   ASSERT_EQ(1U, port()->Candidates().size());
@@ -279,7 +364,7 @@ TEST_F(StunPortTest, TestSharedSocketPrepareAddress) {
   EXPECT_TRUE(kLocalAddr.EqualIPs(port()->Candidates()[0].address()));
 }
 
-// Test that we still a get a local candidate with invalid stun server hostname.
+// Test that we still get a local candidate with invalid stun server hostname.
 // Also verifing that UDPPort can receive packets when stun address can't be
 // resolved.
 TEST_F(StunPortTestWithRealClock,
@@ -297,7 +382,8 @@ TEST_F(StunPortTestWithRealClock,
   // No crash is success.
 }
 
-// Test that the same address is added only once if two STUN servers are in use.
+// Test that the same address is added only once if two STUN servers are in
+// use.
 TEST_F(StunPortTest, TestNoDuplicatedAddressWithTwoStunServers) {
   ServerAddresses stun_servers;
   stun_servers.insert(kStunAddr1);
@@ -310,8 +396,8 @@ TEST_F(StunPortTest, TestNoDuplicatedAddressWithTwoStunServers) {
   EXPECT_EQ(port()->Candidates()[0].relay_protocol(), "");
 }
 
-// Test that candidates can be allocated for multiple STUN servers, one of which
-// is not reachable.
+// Test that candidates can be allocated for multiple STUN servers, one of
+// which is not reachable.
 TEST_F(StunPortTest, TestMultipleStunServersWithBadServer) {
   ServerAddresses stun_servers;
   stun_servers.insert(kStunAddr1);
@@ -390,9 +476,8 @@ TEST_F(StunPortTest, TestStunBindingRequestShortLifetime) {
   CreateStunPort(kStunAddr1);
   PrepareAddress();
   EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
-  EXPECT_TRUE_SIMULATED_WAIT(
-      !port()->HasPendingRequest(cricket::STUN_BINDING_REQUEST), 2000,
-      fake_clock);
+  EXPECT_TRUE_SIMULATED_WAIT(!HasPendingRequest(cricket::STUN_BINDING_REQUEST),
+                             2000, fake_clock);
 }
 
 // Test that by default, the STUN binding requests will last for a long time.
@@ -401,9 +486,8 @@ TEST_F(StunPortTest, TestStunBindingRequestLongLifetime) {
   CreateStunPort(kStunAddr1);
   PrepareAddress();
   EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
-  EXPECT_TRUE_SIMULATED_WAIT(
-      port()->HasPendingRequest(cricket::STUN_BINDING_REQUEST), 1000,
-      fake_clock);
+  EXPECT_TRUE_SIMULATED_WAIT(HasPendingRequest(cricket::STUN_BINDING_REQUEST),
+                             1000, fake_clock);
 }
 
 class MockAsyncPacketSocket : public rtc::AsyncPacketSocket {
@@ -460,3 +544,127 @@ TEST_F(StunPortTest, TestStunPacketsHaveDscpPacketOption) {
       .WillRepeatedly(Return(100));
   EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
 }
+
+class StunIPv6PortTestBase : public StunPortTestBase {
+ public:
+  StunIPv6PortTestBase()
+      : StunPortTestBase(rtc::Network("unittestipv6",
+                                      "unittestipv6",
+                                      kIPv6LocalAddr.ipaddr(),
+                                      128),
+                         kIPv6LocalAddr.ipaddr()) {
+    stun_server_ipv6_1_.reset(
+        cricket::TestStunServer::Create(ss(), kIPv6StunAddr1));
+  }
+
+ protected:
+  std::unique_ptr<cricket::TestStunServer> stun_server_ipv6_1_;
+};
+
+class StunIPv6PortTestWithRealClock : public StunIPv6PortTestBase {};
+
+class StunIPv6PortTest : public FakeClockBase, public StunIPv6PortTestBase {};
+
+// Test that we can get an address from a STUN server.
+TEST_F(StunIPv6PortTest, TestPrepareAddress) {
+  CreateStunPort(kIPv6StunAddr1);
+  PrepareAddress();
+  EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
+  ASSERT_EQ(1U, port()->Candidates().size());
+  EXPECT_TRUE(kIPv6LocalAddr.EqualIPs(port()->Candidates()[0].address()));
+  std::string expected_server_url = "stun:::1:5000";
+  EXPECT_EQ(port()->Candidates()[0].url(), expected_server_url);
+}
+
+// Test that we fail properly if we can't get an address.
+TEST_F(StunIPv6PortTest, TestPrepareAddressFail) {
+  CreateStunPort(kBadAddr);
+  PrepareAddress();
+  EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
+  EXPECT_TRUE(error());
+  EXPECT_EQ(0U, port()->Candidates().size());
+  EXPECT_EQ_SIMULATED_WAIT(error_event_.error_code,
+                           cricket::SERVER_NOT_REACHABLE_ERROR, kTimeoutMs,
+                           fake_clock);
+  ASSERT_NE(error_event_.error_text.find('.'), std::string::npos);
+  ASSERT_NE(
+      error_event_.address.find(kIPv6LocalAddr.HostAsSensitiveURIString()),
+      std::string::npos);
+  std::string server_url = "stun:" + kBadAddr.ToString();
+  ASSERT_EQ(error_event_.url, server_url);
+}
+
+// Test that we handle hostname lookup failures properly with a real clock.
+TEST_F(StunIPv6PortTestWithRealClock, TestPrepareAddressHostnameFail) {
+  CreateStunPort(kBadHostnameAddr);
+  PrepareAddress();
+  EXPECT_TRUE_WAIT(done(), kTimeoutMs);
+  EXPECT_TRUE(error());
+  EXPECT_EQ(0U, port()->Candidates().size());
+  EXPECT_EQ_WAIT(error_event_.error_code, cricket::SERVER_NOT_REACHABLE_ERROR,
+                 kTimeoutMs);
+}
+
+class StunIPv6PortTestWithMockDnsResolver : public StunIPv6PortTest {
+ public:
+  StunIPv6PortTestWithMockDnsResolver()
+      : StunIPv6PortTest(), socket_factory_(ss()) {}
+
+  rtc::PacketSocketFactory* socket_factory() override {
+    return &socket_factory_;
+  }
+
+  void SetDnsResolverExpectations(DnsResolverExpectations expectations) {
+    socket_factory_.SetExpectations(expectations);
+  }
+
+ private:
+  MockDnsResolverPacketSocketFactory socket_factory_;
+};
+
+// Test that we can get an address from a STUN server specified by a hostname.
+TEST_F(StunIPv6PortTestWithMockDnsResolver, TestPrepareAddressHostname) {
+  SetDnsResolverExpectations(
+      [](webrtc::MockAsyncDnsResolver* resolver,
+         webrtc::MockAsyncDnsResolverResult* resolver_result) {
+        EXPECT_CALL(*resolver, Start(kValidHostnameAddr, _))
+            .WillOnce(InvokeArgument<1>());
+        EXPECT_CALL(*resolver, result)
+            .WillRepeatedly(ReturnPointee(resolver_result));
+        EXPECT_CALL(*resolver_result, GetError).WillOnce(Return(0));
+        EXPECT_CALL(*resolver_result, GetResolvedAddress(AF_INET6, _))
+            .WillOnce(DoAll(SetArgPointee<1>(SocketAddress("::1", 5000)),
+                            Return(true)));
+      });
+  CreateStunPort(kValidHostnameAddr);
+  PrepareAddress();
+  EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
+  ASSERT_EQ(1U, port()->Candidates().size());
+  EXPECT_TRUE(kIPv6LocalAddr.EqualIPs(port()->Candidates()[0].address()));
+  EXPECT_EQ(kIPv6StunCandidatePriority, port()->Candidates()[0].priority());
+}
+
+TEST_F(StunIPv6PortTestWithMockDnsResolver, TestPrepareAddressHostnameFamily) {
+  webrtc::test::ScopedKeyValueConfig field_trials(
+      "WebRTC-IPv6NetworkResolutionFixes/Enabled/");
+  SetDnsResolverExpectations(
+      [](webrtc::MockAsyncDnsResolver* resolver,
+         webrtc::MockAsyncDnsResolverResult* resolver_result) {
+        EXPECT_CALL(*resolver, Start(kValidHostnameAddr, AF_INET6, _))
+            .WillOnce(InvokeArgument<2>());
+        EXPECT_CALL(*resolver, result)
+            .WillRepeatedly(ReturnPointee(resolver_result));
+        EXPECT_CALL(*resolver_result, GetError).WillOnce(Return(0));
+        EXPECT_CALL(*resolver_result, GetResolvedAddress(AF_INET6, _))
+            .WillOnce(DoAll(SetArgPointee<1>(SocketAddress("::1", 5000)),
+                            Return(true)));
+      });
+  CreateStunPort(kValidHostnameAddr, &field_trials);
+  PrepareAddress();
+  EXPECT_TRUE_SIMULATED_WAIT(done(), kTimeoutMs, fake_clock);
+  ASSERT_EQ(1U, port()->Candidates().size());
+  EXPECT_TRUE(kIPv6LocalAddr.EqualIPs(port()->Candidates()[0].address()));
+  EXPECT_EQ(kIPv6StunCandidatePriority, port()->Candidates()[0].priority());
+}
+
+}  // namespace

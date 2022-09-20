@@ -88,6 +88,8 @@ public:
     Node* node() const override { return m_node; }
     Document* document() const override;
 
+    void setFocused(bool) override;
+    bool isFocused() const override;
     bool canSetFocusAttribute() const override;
     unsigned headingLevel() const override;
 

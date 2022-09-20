@@ -32,39 +32,39 @@
 #pragma mark - RTCVideoEncoder
 
 - (void)setCallback:(RTCVideoEncoderCallback)callback {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
 }
 
 - (NSInteger)startEncodeWithSettings:(RTCVideoEncoderSettings *)settings
                        numberOfCores:(int)numberOfCores {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return 0;
 }
 
 - (NSInteger)releaseEncoder {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return 0;
 }
 
 - (NSInteger)encode:(RTCVideoFrame *)frame
     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)info
            frameTypes:(NSArray<NSNumber *> *)frameTypes {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return 0;
 }
 
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return 0;
 }
 
 - (NSString *)implementationName {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return nil;
 }
 
 - (nullable RTCVideoEncoderQpThresholds *)scalingSettings {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return nil;
 }
 

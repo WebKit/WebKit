@@ -87,20 +87,11 @@ RegularExpression::RegularExpression(StringView pattern, TextCaseSensitivity cas
 {
 }
 
-RegularExpression::RegularExpression(const RegularExpression& re)
-    : d(re.d)
-{
-}
+RegularExpression::RegularExpression(const RegularExpression&) = default;
 
-RegularExpression::~RegularExpression()
-{
-}
+RegularExpression::~RegularExpression() = default;
 
-RegularExpression& RegularExpression::operator=(const RegularExpression& re)
-{
-    d = re.d;
-    return *this;
-}
+RegularExpression& RegularExpression::operator=(const RegularExpression&) = default;
 
 int RegularExpression::match(StringView str, int startFrom, int* matchLength) const
 {

@@ -220,6 +220,7 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.delay.render_alignment_mixing);
     ReadParam(section, "capture_alignment_mixing",
               &cfg.delay.capture_alignment_mixing);
+    ReadParam(section, "detect_pre_echo", &cfg.delay.detect_pre_echo);
   }
 
   if (rtc::GetValueFromJsonObject(aec3_root, "filter", &section)) {
@@ -374,6 +375,9 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
       ReadParam(
           subsection, "use_during_initial_phase",
           &cfg.suppressor.dominant_nearend_detection.use_during_initial_phase);
+      ReadParam(subsection, "use_unbounded_echo_spectrum",
+                &cfg.suppressor.dominant_nearend_detection
+                     .use_unbounded_echo_spectrum);
     }
 
     if (rtc::GetValueFromJsonObject(section, "subband_nearend_detection",
@@ -411,6 +415,17 @@ void Aec3ConfigFromJsonString(absl::string_view json_string,
               &cfg.suppressor.floor_first_increase);
     ReadParam(section, "conservative_hf_suppression",
               &cfg.suppressor.conservative_hf_suppression);
+  }
+
+  if (rtc::GetValueFromJsonObject(aec3_root, "multi_channel", &section)) {
+    ReadParam(section, "detect_stereo_content",
+              &cfg.multi_channel.detect_stereo_content);
+    ReadParam(section, "stereo_detection_threshold",
+              &cfg.multi_channel.stereo_detection_threshold);
+    ReadParam(section, "stereo_detection_timeout_threshold_seconds",
+              &cfg.multi_channel.stereo_detection_timeout_threshold_seconds);
+    ReadParam(section, "stereo_detection_hysteresis_seconds",
+              &cfg.multi_channel.stereo_detection_hysteresis_seconds);
   }
 }
 
@@ -491,7 +506,9 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
       << (config.delay.capture_alignment_mixing.prefer_first_two_channels
               ? "true"
               : "false");
-  ost << "}";
+  ost << "},";
+  ost << "\"detect_pre_echo\": "
+      << (config.delay.detect_pre_echo ? "true" : "false");
   ost << "},";
 
   ost << "\"filter\": {";
@@ -571,7 +588,8 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
   ost << "\"erle_onset_compensation_in_dominant_nearend\": "
       << (config.ep_strength.erle_onset_compensation_in_dominant_nearend
               ? "true"
-              : "false") << ",";
+              : "false")
+      << ",";
   ost << "\"use_conservative_tail_frequency_response\": "
       << (config.ep_strength.use_conservative_tail_frequency_response
               ? "true"
@@ -684,20 +702,20 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
       << config.suppressor.last_lf_smoothing_band << ",";
   ost << "\"last_lf_band\": " << config.suppressor.last_lf_band << ",";
   ost << "\"first_hf_band\": " << config.suppressor.first_hf_band << ",";
-  ost << "\"dominant_nearend_detection\": {";
-  ost << "\"enr_threshold\": "
-      << config.suppressor.dominant_nearend_detection.enr_threshold << ",";
-  ost << "\"enr_exit_threshold\": "
-      << config.suppressor.dominant_nearend_detection.enr_exit_threshold << ",";
-  ost << "\"snr_threshold\": "
-      << config.suppressor.dominant_nearend_detection.snr_threshold << ",";
-  ost << "\"hold_duration\": "
-      << config.suppressor.dominant_nearend_detection.hold_duration << ",";
-  ost << "\"trigger_threshold\": "
-      << config.suppressor.dominant_nearend_detection.trigger_threshold << ",";
-  ost << "\"use_during_initial_phase\": "
-      << config.suppressor.dominant_nearend_detection.use_during_initial_phase;
-  ost << "},";
+  {
+    const auto& dnd = config.suppressor.dominant_nearend_detection;
+    ost << "\"dominant_nearend_detection\": {";
+    ost << "\"enr_threshold\": " << dnd.enr_threshold << ",";
+    ost << "\"enr_exit_threshold\": " << dnd.enr_exit_threshold << ",";
+    ost << "\"snr_threshold\": " << dnd.snr_threshold << ",";
+    ost << "\"hold_duration\": " << dnd.hold_duration << ",";
+    ost << "\"trigger_threshold\": " << dnd.trigger_threshold << ",";
+    ost << "\"use_during_initial_phase\": " << dnd.use_during_initial_phase
+        << ",";
+    ost << "\"use_unbounded_echo_spectrum\": "
+        << dnd.use_unbounded_echo_spectrum;
+    ost << "},";
+  }
   ost << "\"subband_nearend_detection\": {";
   ost << "\"nearend_average_blocks\": "
       << config.suppressor.subband_nearend_detection.nearend_average_blocks
@@ -733,7 +751,19 @@ std::string Aec3ConfigToJsonString(const EchoCanceller3Config& config) {
       << ",";
   ost << "\"conservative_hf_suppression\": "
       << config.suppressor.conservative_hf_suppression;
+  ost << "},";
+
+  ost << "\"multi_channel\": {";
+  ost << "\"detect_stereo_content\": "
+      << (config.multi_channel.detect_stereo_content ? "true" : "false") << ",";
+  ost << "\"stereo_detection_threshold\": "
+      << config.multi_channel.stereo_detection_threshold << ",";
+  ost << "\"stereo_detection_timeout_threshold_seconds\": "
+      << config.multi_channel.stereo_detection_timeout_threshold_seconds << ",";
+  ost << "\"stereo_detection_hysteresis_seconds\": "
+      << config.multi_channel.stereo_detection_hysteresis_seconds;
   ost << "}";
+
   ost << "}";
   ost << "}";
 

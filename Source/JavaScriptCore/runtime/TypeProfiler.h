@@ -45,11 +45,7 @@ enum TypeProfilerSearchDescriptor {
 };
 
 struct QueryKey {
-    QueryKey()
-        : m_sourceID(0)
-        , m_divot(0)
-        , m_searchDescriptor(TypeProfilerSearchDescriptorFunctionReturn)
-    { }
+    QueryKey() = default;
 
     QueryKey(SourceID sourceID, unsigned divot, TypeProfilerSearchDescriptor searchDescriptor)
         : m_sourceID(sourceID)
@@ -60,7 +56,6 @@ struct QueryKey {
     QueryKey(WTF::HashTableDeletedValueType)
         : m_sourceID(UINT_MAX)
         , m_divot(UINT_MAX)
-        , m_searchDescriptor(TypeProfilerSearchDescriptorFunctionReturn)
     { }
 
     bool isHashTableDeletedValue() const 
@@ -83,9 +78,9 @@ struct QueryKey {
         return hash;
     }
 
-    SourceID m_sourceID;
-    unsigned m_divot;
-    TypeProfilerSearchDescriptor m_searchDescriptor;
+    SourceID m_sourceID { 0 };
+    unsigned m_divot { 0 };
+    TypeProfilerSearchDescriptor m_searchDescriptor { TypeProfilerSearchDescriptorFunctionReturn };
 };
 
 struct QueryKeyHash {
@@ -132,7 +127,7 @@ private:
     TypeLocationCache m_typeLocationCache;
     typedef HashMap<QueryKey, TypeLocation*> TypeLocationQueryCache;
     TypeLocationQueryCache m_queryCache;
-    GlobalVariableID m_nextUniqueVariableID;
+    GlobalVariableID m_nextUniqueVariableID { 1 };
     Bag<TypeLocation> m_typeLocationInfo;
 };
 

@@ -35,7 +35,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCache);
 class SourceProviderCache : public RefCounted<SourceProviderCache> {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(SourceProviderCache);
 public:
-    SourceProviderCache() { }
+    SourceProviderCache() = default;
     JS_EXPORT_PRIVATE ~SourceProviderCache();
 
     JS_EXPORT_PRIVATE void clear();

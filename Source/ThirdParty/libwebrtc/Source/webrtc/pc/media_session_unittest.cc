@@ -10,32 +10,42 @@
 
 #include "pc/media_session.h"
 
+#include <stddef.h>
+
 #include <algorithm>
+#include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
-#include <utility>
+#include <tuple>
 #include <vector>
 
 #include "absl/algorithm/container.h"
-#include "absl/memory/memory.h"
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
+#include "api/candidate.h"
+#include "api/crypto_params.h"
 #include "media/base/codec.h"
+#include "media/base/media_constants.h"
 #include "media/base/test_utils.h"
 #include "media/sctp/sctp_transport_internal.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_description.h"
 #include "p2p/base/transport_info.h"
+#include "pc/media_protocol_names.h"
 #include "pc/rtp_media_utils.h"
-#include "pc/srtp_filter.h"
+#include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_ssl_identity.h"
-#include "rtc_base/gunit.h"
-#include "rtc_base/message_digest.h"
-#include "rtc_base/ssl_adapter.h"
+#include "rtc_base/rtc_certificate.h"
+#include "rtc_base/ssl_identity.h"
+#include "rtc_base/ssl_stream_adapter.h"
+#include "rtc_base/string_encode.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/unique_id_generator.h"
-#include "test/field_trial.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 #define ASSERT_CRYPTO(cd, s, cs)      \
   ASSERT_EQ(s, cd->cryptos().size()); \
@@ -363,7 +373,7 @@ static void AttachSenderToMediaDescriptionOptions(
                          num_sim_layer);
       break;
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
   }
 }
 
@@ -421,7 +431,10 @@ void PreferGcmCryptoParameters(CryptoParamsVec* cryptos) {
 class MediaSessionDescriptionFactoryTest : public ::testing::Test {
  public:
   MediaSessionDescriptionFactoryTest()
-      : f1_(&tdf1_, &ssrc_generator1), f2_(&tdf2_, &ssrc_generator2) {
+      : tdf1_(field_trials),
+        tdf2_(field_trials),
+        f1_(&tdf1_, &ssrc_generator1),
+        f2_(&tdf2_, &ssrc_generator2) {
     f1_.set_audio_codecs(MAKE_VECTOR(kAudioCodecs1),
                          MAKE_VECTOR(kAudioCodecs1));
     f1_.set_video_codecs(MAKE_VECTOR(kVideoCodecs1),
@@ -781,12 +794,13 @@ class MediaSessionDescriptionFactoryTest : public ::testing::Test {
   }
 
  protected:
+  webrtc::test::ScopedKeyValueConfig field_trials;
   UniqueRandomIdGenerator ssrc_generator1;
   UniqueRandomIdGenerator ssrc_generator2;
-  MediaSessionDescriptionFactory f1_;
-  MediaSessionDescriptionFactory f2_;
   TransportDescriptionFactory tdf1_;
   TransportDescriptionFactory tdf2_;
+  MediaSessionDescriptionFactory f1_;
+  MediaSessionDescriptionFactory f2_;
 };
 
 // Create a typical audio offer, and ensure it matches what we expect.
@@ -1291,6 +1305,27 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateAudioAnswerGcm) {
   EXPECT_EQ(cricket::kMediaProtocolSavpf, acd->protocol());
 }
 
+// Create an audio answer with no common codecs, and ensure it is rejected.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       TestCreateAudioAnswerWithNoCommonCodecs) {
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(MEDIA_TYPE_AUDIO, "audio",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+  std::vector f1_codecs = {AudioCodec(96, "opus", 48000, -1, 1)};
+  f1_.set_audio_codecs(f1_codecs, f1_codecs);
+
+  std::vector f2_codecs = {AudioCodec(0, "PCMU", 8000, -1, 1)};
+  f2_.set_audio_codecs(f2_codecs, f2_codecs);
+
+  std::unique_ptr<SessionDescription> offer = f1_.CreateOffer(opts, nullptr);
+  std::unique_ptr<SessionDescription> answer =
+      f2_.CreateAnswer(offer.get(), opts, NULL);
+  const ContentInfo* ac = answer->GetContentByName("audio");
+  ASSERT_TRUE(ac != NULL);
+  EXPECT_TRUE(ac->rejected);
+}
+
 // Create a typical video answer, and ensure it matches what we expect.
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoAnswer) {
   MediaSessionOptions opts;
@@ -1339,6 +1374,51 @@ TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoAnswerGcmOffer) {
 // and ensure it matches what we expect.
 TEST_F(MediaSessionDescriptionFactoryTest, TestCreateVideoAnswerGcmAnswer) {
   TestVideoGcmCipher(false, true);
+}
+
+// Create a video answer with no common codecs, and ensure it is rejected.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       TestCreateVideoAnswerWithNoCommonCodecs) {
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+  std::vector f1_codecs = {VideoCodec(96, "H264")};
+  f1_.set_video_codecs(f1_codecs, f1_codecs);
+
+  std::vector f2_codecs = {VideoCodec(97, "VP8")};
+  f2_.set_video_codecs(f2_codecs, f2_codecs);
+
+  std::unique_ptr<SessionDescription> offer = f1_.CreateOffer(opts, nullptr);
+  std::unique_ptr<SessionDescription> answer =
+      f2_.CreateAnswer(offer.get(), opts, NULL);
+  const ContentInfo* vc = answer->GetContentByName("video");
+  ASSERT_TRUE(vc != NULL);
+  EXPECT_TRUE(vc->rejected);
+}
+
+// Create a video answer with no common codecs (but a common FEC codec), and
+// ensure it is rejected.
+TEST_F(MediaSessionDescriptionFactoryTest,
+       TestCreateVideoAnswerWithOnlyFecCodecsCommon) {
+  MediaSessionOptions opts;
+  AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
+                             RtpTransceiverDirection::kSendRecv, kActive,
+                             &opts);
+  std::vector f1_codecs = {VideoCodec(96, "H264"),
+                           VideoCodec(118, "flexfec-03")};
+  f1_.set_video_codecs(f1_codecs, f1_codecs);
+
+  std::vector f2_codecs = {VideoCodec(97, "VP8"),
+                           VideoCodec(118, "flexfec-03")};
+  f2_.set_video_codecs(f2_codecs, f2_codecs);
+
+  std::unique_ptr<SessionDescription> offer = f1_.CreateOffer(opts, nullptr);
+  std::unique_ptr<SessionDescription> answer =
+      f2_.CreateAnswer(offer.get(), opts, NULL);
+  const ContentInfo* vc = answer->GetContentByName("video");
+  ASSERT_TRUE(vc != NULL);
+  EXPECT_TRUE(vc->rejected);
 }
 
 // The use_sctpmap flag should be set in an Sctp DataContentDescription by
@@ -3250,8 +3330,8 @@ TEST_F(MediaSessionDescriptionFactoryTest, SimSsrcsGenerateMultipleRtxSsrcs) {
 // Test that, when the FlexFEC codec is added, a FlexFEC ssrc is created
 // together with a FEC-FR grouping. Guarded by WebRTC-FlexFEC-03 trial.
 TEST_F(MediaSessionDescriptionFactoryTest, GenerateFlexfecSsrc) {
-  webrtc::test::ScopedFieldTrials override_field_trials(
-      "WebRTC-FlexFEC-03/Enabled/");
+  webrtc::test::ScopedKeyValueConfig override_field_trials(
+      field_trials, "WebRTC-FlexFEC-03/Enabled/");
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
@@ -3293,8 +3373,8 @@ TEST_F(MediaSessionDescriptionFactoryTest, GenerateFlexfecSsrc) {
 // TODO(brandtr): Remove this test when we support simulcast, either through
 // multiple FlexfecSenders, or through multistream protection.
 TEST_F(MediaSessionDescriptionFactoryTest, SimSsrcsGenerateNoFlexfecSsrcs) {
-  webrtc::test::ScopedFieldTrials override_field_trials(
-      "WebRTC-FlexFEC-03/Enabled/");
+  webrtc::test::ScopedKeyValueConfig override_field_trials(
+      field_trials, "WebRTC-FlexFEC-03/Enabled/");
   MediaSessionOptions opts;
   AddMediaDescriptionOptions(MEDIA_TYPE_VIDEO, "video",
                              RtpTransceiverDirection::kSendRecv, kActive,
@@ -4320,7 +4400,10 @@ TEST_F(MediaSessionDescriptionFactoryTest,
 class MediaProtocolTest : public ::testing::TestWithParam<const char*> {
  public:
   MediaProtocolTest()
-      : f1_(&tdf1_, &ssrc_generator1), f2_(&tdf2_, &ssrc_generator2) {
+      : tdf1_(field_trials_),
+        tdf2_(field_trials_),
+        f1_(&tdf1_, &ssrc_generator1),
+        f2_(&tdf2_, &ssrc_generator2) {
     f1_.set_audio_codecs(MAKE_VECTOR(kAudioCodecs1),
                          MAKE_VECTOR(kAudioCodecs1));
     f1_.set_video_codecs(MAKE_VECTOR(kVideoCodecs1),
@@ -4340,10 +4423,11 @@ class MediaProtocolTest : public ::testing::TestWithParam<const char*> {
   }
 
  protected:
-  MediaSessionDescriptionFactory f1_;
-  MediaSessionDescriptionFactory f2_;
+  webrtc::test::ScopedKeyValueConfig field_trials_;
   TransportDescriptionFactory tdf1_;
   TransportDescriptionFactory tdf2_;
+  MediaSessionDescriptionFactory f1_;
+  MediaSessionDescriptionFactory f2_;
   UniqueRandomIdGenerator ssrc_generator1;
   UniqueRandomIdGenerator ssrc_generator2;
 };
@@ -4379,14 +4463,15 @@ INSTANTIATE_TEST_SUITE_P(MediaProtocolDtlsPatternTest,
                          ::testing::ValuesIn(kMediaProtocolsDtls));
 
 TEST_F(MediaSessionDescriptionFactoryTest, TestSetAudioCodecs) {
-  TransportDescriptionFactory tdf;
+  webrtc::test::ScopedKeyValueConfig field_trials;
+  TransportDescriptionFactory tdf(field_trials);
   UniqueRandomIdGenerator ssrc_generator;
   MediaSessionDescriptionFactory sf(&tdf, &ssrc_generator);
   std::vector<AudioCodec> send_codecs = MAKE_VECTOR(kAudioCodecs1);
   std::vector<AudioCodec> recv_codecs = MAKE_VECTOR(kAudioCodecs2);
 
   // The merged list of codecs should contain any send codecs that are also
-  // nominally in the recieve codecs list. Payload types should be picked from
+  // nominally in the receive codecs list. Payload types should be picked from
   // the send codecs and a number-of-channels of 0 and 1 should be equivalent
   // (set to 1). This equals what happens when the send codecs are used in an
   // offer and the receive codecs are used in the following answer.
@@ -4435,13 +4520,14 @@ namespace {
 // Compare the two vectors of codecs ignoring the payload type.
 template <class Codec>
 bool CodecsMatch(const std::vector<Codec>& codecs1,
-                 const std::vector<Codec>& codecs2) {
+                 const std::vector<Codec>& codecs2,
+                 const webrtc::FieldTrialsView* field_trials) {
   if (codecs1.size() != codecs2.size()) {
     return false;
   }
 
   for (size_t i = 0; i < codecs1.size(); ++i) {
-    if (!codecs1[i].Matches(codecs2[i])) {
+    if (!codecs1[i].Matches(codecs2[i], field_trials)) {
       return false;
     }
   }
@@ -4449,7 +4535,8 @@ bool CodecsMatch(const std::vector<Codec>& codecs1,
 }
 
 void TestAudioCodecsOffer(RtpTransceiverDirection direction) {
-  TransportDescriptionFactory tdf;
+  webrtc::test::ScopedKeyValueConfig field_trials;
+  TransportDescriptionFactory tdf(field_trials);
   UniqueRandomIdGenerator ssrc_generator;
   MediaSessionDescriptionFactory sf(&tdf, &ssrc_generator);
   const std::vector<AudioCodec> send_codecs = MAKE_VECTOR(kAudioCodecs1);
@@ -4483,11 +4570,14 @@ void TestAudioCodecsOffer(RtpTransceiverDirection direction) {
     // might eventually be used anything, but we don't know more at this
     // moment.
     if (acd->direction() == RtpTransceiverDirection::kSendOnly) {
-      EXPECT_TRUE(CodecsMatch<AudioCodec>(send_codecs, acd->codecs()));
+      EXPECT_TRUE(
+          CodecsMatch<AudioCodec>(send_codecs, acd->codecs(), &field_trials));
     } else if (acd->direction() == RtpTransceiverDirection::kRecvOnly) {
-      EXPECT_TRUE(CodecsMatch<AudioCodec>(recv_codecs, acd->codecs()));
+      EXPECT_TRUE(
+          CodecsMatch<AudioCodec>(recv_codecs, acd->codecs(), &field_trials));
     } else {
-      EXPECT_TRUE(CodecsMatch<AudioCodec>(sendrecv_codecs, acd->codecs()));
+      EXPECT_TRUE(CodecsMatch<AudioCodec>(sendrecv_codecs, acd->codecs(),
+                                          &field_trials));
     }
   }
 }
@@ -4546,11 +4636,13 @@ std::vector<T> VectorFromIndices(const T* array, const int (&indices)[IDXS]) {
 void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
                            RtpTransceiverDirection answer_direction,
                            bool add_legacy_stream) {
-  TransportDescriptionFactory offer_tdf;
-  TransportDescriptionFactory answer_tdf;
+  webrtc::test::ScopedKeyValueConfig field_trials;
+  TransportDescriptionFactory offer_tdf(field_trials);
+  TransportDescriptionFactory answer_tdf(field_trials);
   UniqueRandomIdGenerator ssrc_generator1, ssrc_generator2;
   MediaSessionDescriptionFactory offer_factory(&offer_tdf, &ssrc_generator1);
   MediaSessionDescriptionFactory answer_factory(&answer_tdf, &ssrc_generator2);
+
   offer_factory.set_audio_codecs(
       VectorFromIndices(kOfferAnswerCodecs, kOfferSendCodecs),
       VectorFromIndices(kOfferAnswerCodecs, kOfferRecvCodecs));
@@ -4623,7 +4715,7 @@ void TestAudioCodecsAnswer(RtpTransceiverDirection offer_direction,
         break;
       case RtpTransceiverDirection::kStopped:
         // This does not happen in any current test.
-        RTC_NOTREACHED();
+        RTC_DCHECK_NOTREACHED();
     }
 
     auto format_codecs = [](const std::vector<AudioCodec>& codecs) {

@@ -48,14 +48,15 @@ public:
     static constexpr unsigned maxNumberOfAllowedPACBits = numberOfPointerBits - OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH);
     static constexpr uintptr_t nonPACBitsMask = (1ull << (numberOfPointerBits - maxNumberOfAllowedPACBits)) - 1;
 
-    CagedPtr() : CagedPtr(nullptr) { }
+    CagedPtr() = default;
     CagedPtr(std::nullptr_t)
-        : m_ptr(shouldTag ? tagArrayPtr<T>(nullptr, 0) : nullptr)
-    { }
+    {
+    }
 
     CagedPtr(T* ptr, size_t size)
         : m_ptr(shouldTag ? tagArrayPtr(ptr, size) : ptr)
-    { }
+    {
+    }
 
     T* get(size_t size) const
     {
@@ -150,7 +151,7 @@ protected:
 #endif
     }
 
-    typename PtrTraits::StorageType m_ptr;
+    typename PtrTraits::StorageType m_ptr { shouldTag ? tagArrayPtr<T>(nullptr, 0) : nullptr };
 };
 
 } // namespace WTF

@@ -56,7 +56,8 @@ TEST(ForwardTsnChunkTest, SerializeAndDeserialize) {
       ElementsAre(ForwardTsnChunk::SkippedStream(StreamID(1), SSN(23)),
                   ForwardTsnChunk::SkippedStream(StreamID(42), SSN(99))));
 
-  EXPECT_EQ(deserialized.ToString(), "FORWARD-TSN, new_cumulative_tsn=123");
+  EXPECT_EQ(deserialized.ToString(),
+            "FORWARD-TSN, new_cumulative_tsn=123, skip 1:23, skip 42:99");
 }
 
 }  // namespace

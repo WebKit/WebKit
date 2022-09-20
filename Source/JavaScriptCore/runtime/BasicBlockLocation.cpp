@@ -36,7 +36,6 @@ namespace JSC {
 BasicBlockLocation::BasicBlockLocation(int startOffset, int endOffset)
     : m_startOffset(startOffset)
     , m_endOffset(endOffset)
-    , m_executionCount(0)
 {
 }
 

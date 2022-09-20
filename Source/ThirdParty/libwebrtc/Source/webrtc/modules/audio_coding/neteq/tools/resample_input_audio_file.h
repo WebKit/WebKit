@@ -13,9 +13,9 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "common_audio/resampler/include/resampler.h"
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -23,19 +23,22 @@ namespace test {
 // Class for handling a looping input audio file with resampling.
 class ResampleInputAudioFile : public InputAudioFile {
  public:
-  ResampleInputAudioFile(const std::string file_name,
+  ResampleInputAudioFile(absl::string_view file_name,
                          int file_rate_hz,
                          bool loop_at_end = true)
       : InputAudioFile(file_name, loop_at_end),
         file_rate_hz_(file_rate_hz),
         output_rate_hz_(-1) {}
-  ResampleInputAudioFile(const std::string file_name,
+  ResampleInputAudioFile(absl::string_view file_name,
                          int file_rate_hz,
                          int output_rate_hz,
                          bool loop_at_end = true)
       : InputAudioFile(file_name, loop_at_end),
         file_rate_hz_(file_rate_hz),
         output_rate_hz_(output_rate_hz) {}
+
+  ResampleInputAudioFile(const ResampleInputAudioFile&) = delete;
+  ResampleInputAudioFile& operator=(const ResampleInputAudioFile&) = delete;
 
   bool Read(size_t samples, int output_rate_hz, int16_t* destination);
   bool Read(size_t samples, int16_t* destination) override;
@@ -45,7 +48,6 @@ class ResampleInputAudioFile : public InputAudioFile {
   const int file_rate_hz_;
   int output_rate_hz_;
   Resampler resampler_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(ResampleInputAudioFile);
 };
 
 }  // namespace test

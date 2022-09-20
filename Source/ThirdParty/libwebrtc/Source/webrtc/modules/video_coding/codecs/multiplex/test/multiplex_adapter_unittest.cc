@@ -38,7 +38,6 @@
 #include "modules/video_coding/codecs/vp9/include/vp9.h"
 #include "modules/video_coding/include/video_codec_interface.h"
 #include "modules/video_coding/include/video_error_codes.h"
-#include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/video_codec_settings.h"

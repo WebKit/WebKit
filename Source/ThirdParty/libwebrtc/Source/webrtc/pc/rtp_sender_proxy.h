@@ -11,6 +11,7 @@
 #ifndef PC_RTP_SENDER_PROXY_H_
 #define PC_RTP_SENDER_PROXY_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -44,6 +45,9 @@ PROXY_METHOD1(void, SetStreams, const std::vector<std::string>&)
 PROXY_METHOD1(void,
               SetEncoderToPacketizerFrameTransformer,
               rtc::scoped_refptr<FrameTransformerInterface>)
+PROXY_METHOD1(void,
+              SetEncoderSelector,
+              std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>)
 #if defined(WEBRTC_WEBKIT_BUILD)
 PROXY_METHOD0(void, GenerateKeyFrame)
 #endif

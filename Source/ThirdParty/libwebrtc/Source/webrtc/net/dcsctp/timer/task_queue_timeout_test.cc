@@ -11,13 +11,17 @@
 
 #include <memory>
 
+#include "api/task_queue/task_queue_base.h"
+#include "api/task_queue/test/mock_task_queue_base.h"
 #include "rtc_base/gunit.h"
 #include "test/gmock.h"
 #include "test/time_controller/simulated_time_controller.h"
 
 namespace dcsctp {
 namespace {
+using ::testing::_;
 using ::testing::MockFunction;
+using ::testing::NiceMock;
 
 class TaskQueueTimeoutTest : public testing::Test {
  protected:
@@ -111,5 +115,38 @@ TEST_F(TaskQueueTimeoutTest, KilledBeforeExpired) {
   EXPECT_CALL(on_expired_, Call).Times(0);
   AdvanceTime(DurationMs(1000));
 }
+
+TEST(TaskQueueTimeoutWithMockTaskQueueTest, CanSetTimeoutPrecisionToLow) {
+  NiceMock<webrtc::MockTaskQueueBase> mock_task_queue;
+  EXPECT_CALL(mock_task_queue, PostDelayedTask(_, _));
+  TaskQueueTimeoutFactory factory(
+      mock_task_queue, []() { return TimeMs(1337); },
+      [](TimeoutID timeout_id) {});
+  std::unique_ptr<Timeout> timeout =
+      factory.CreateTimeout(webrtc::TaskQueueBase::DelayPrecision::kLow);
+  timeout->Start(DurationMs(1), TimeoutID(1));
+}
+
+TEST(TaskQueueTimeoutWithMockTaskQueueTest, CanSetTimeoutPrecisionToHigh) {
+  NiceMock<webrtc::MockTaskQueueBase> mock_task_queue;
+  EXPECT_CALL(mock_task_queue, PostDelayedHighPrecisionTask(_, _));
+  TaskQueueTimeoutFactory factory(
+      mock_task_queue, []() { return TimeMs(1337); },
+      [](TimeoutID timeout_id) {});
+  std::unique_ptr<Timeout> timeout =
+      factory.CreateTimeout(webrtc::TaskQueueBase::DelayPrecision::kHigh);
+  timeout->Start(DurationMs(1), TimeoutID(1));
+}
+
+TEST(TaskQueueTimeoutWithMockTaskQueueTest, TimeoutPrecisionIsLowByDefault) {
+  NiceMock<webrtc::MockTaskQueueBase> mock_task_queue;
+  EXPECT_CALL(mock_task_queue, PostDelayedTask(_, _));
+  TaskQueueTimeoutFactory factory(
+      mock_task_queue, []() { return TimeMs(1337); },
+      [](TimeoutID timeout_id) {});
+  std::unique_ptr<Timeout> timeout = factory.CreateTimeout();
+  timeout->Start(DurationMs(1), TimeoutID(1));
+}
+
 }  // namespace
 }  // namespace dcsctp

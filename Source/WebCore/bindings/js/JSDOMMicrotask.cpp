@@ -33,6 +33,7 @@
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSObjectInlines.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/VMTrapsInlines.h>
 
 namespace WebCore {
 using namespace JSC;

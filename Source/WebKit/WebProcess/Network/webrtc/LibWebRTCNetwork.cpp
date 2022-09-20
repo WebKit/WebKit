@@ -144,12 +144,6 @@ void LibWebRTCNetwork::signalClose(WebCore::LibWebRTCSocketIdentifier identifier
         socket->signalClose(error);
 }
 
-void LibWebRTCNetwork::signalNewConnection(WebCore::LibWebRTCSocketIdentifier identifier, WebCore::LibWebRTCSocketIdentifier newSocketIdentifier, const RTCNetwork::SocketAddress& remoteAddress)
-{
-    ASSERT(!WTF::isMainRunLoop());
-    if (auto* socket = m_socketFactory.socket(identifier))
-        socket->signalNewConnection(m_socketFactory.createNewConnectionSocket(*socket, newSocketIdentifier, remoteAddress.value));
-}
 #endif
 
 } // namespace WebKit

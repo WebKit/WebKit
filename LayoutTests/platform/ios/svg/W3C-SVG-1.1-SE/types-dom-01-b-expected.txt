@@ -6,11 +6,11 @@ layer at (0,0) size 480x360
     RenderSVGContainer {g} at (10,9) size 365x294
       RenderSVGContainer {g} at (10,9) size 365x294
         RenderSVGContainer {g} at (17,9) size 358x155 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
-          RenderSVGText {text} at (30,133) size 343x22 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 343x21
+          RenderSVGText {text} at (30,134) size 343x20 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 343x20
               chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 342.40: "Rotated Text for testing SVGLocatable"
-          RenderSVGText {text} at (100,113) size 302x22 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 302x21
+          RenderSVGText {text} at (100,114) size 302x20 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 302x20
               chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 301.10: "Some other text with id 'otherText'"
           RenderSVGViewportContainer {svg} at (275,45) size 100x100
             RenderSVGEllipse {circle} at (275,45) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [cx=0.00] [cy=0.00] [r=50.00]

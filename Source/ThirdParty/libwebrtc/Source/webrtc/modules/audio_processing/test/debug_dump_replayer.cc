@@ -10,6 +10,9 @@
 
 #include "modules/audio_processing/test/debug_dump_replayer.h"
 
+#include <string>
+
+#include "absl/strings/string_view.h"
 #include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 #include "modules/audio_processing/test/protobuf_utils.h"
 #include "modules/audio_processing/test/runtime_setting_util.h"
@@ -44,8 +47,8 @@ DebugDumpReplayer::~DebugDumpReplayer() {
     fclose(debug_file_);
 }
 
-bool DebugDumpReplayer::SetDumpFile(const std::string& filename) {
-  debug_file_ = fopen(filename.c_str(), "rb");
+bool DebugDumpReplayer::SetDumpFile(absl::string_view filename) {
+  debug_file_ = fopen(std::string(filename).c_str(), "rb");
   LoadNextMessage();
   return debug_file_;
 }

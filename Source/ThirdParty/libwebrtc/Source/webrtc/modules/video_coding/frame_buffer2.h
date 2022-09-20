@@ -18,11 +18,13 @@
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
+#include "api/field_trials_view.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/task_queue_base.h"
 #include "api/video/encoded_frame.h"
 #include "modules/video_coding/include/video_coding_defines.h"
-#include "modules/video_coding/inter_frame_delay.h"
-#include "modules/video_coding/jitter_estimator.h"
+#include "modules/video_coding/timing/inter_frame_delay.h"
+#include "modules/video_coding/timing/jitter_estimator.h"
 #include "modules/video_coding/utility/decoded_frames_history.h"
 #include "rtc_base/event.h"
 #include "rtc_base/experiments/field_trial_parser.h"
@@ -30,7 +32,6 @@
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/task_queue.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -38,18 +39,16 @@ namespace webrtc {
 
 class Clock;
 class VCMReceiveStatisticsCallback;
-class VCMJitterEstimator;
+class JitterEstimator;
 class VCMTiming;
 
 namespace video_coding {
 
 class FrameBuffer {
  public:
-  enum ReturnReason { kFrameFound, kTimeout, kStopped };
-
   FrameBuffer(Clock* clock,
               VCMTiming* timing,
-              VCMReceiveStatisticsCallback* stats_callback);
+              const FieldTrialsView& field_trials);
 
   FrameBuffer() = delete;
   FrameBuffer(const FrameBuffer&) = delete;
@@ -61,13 +60,13 @@ class FrameBuffer {
   // of the last continuous frame or -1 if there is no continuous frame.
   int64_t InsertFrame(std::unique_ptr<EncodedFrame> frame);
 
-  // Get the next frame for decoding. Will return at latest after
-  // `max_wait_time_ms`.
-  void NextFrame(
-      int64_t max_wait_time_ms,
-      bool keyframe_required,
-      rtc::TaskQueue* callback_queue,
-      std::function<void(std::unique_ptr<EncodedFrame>, ReturnReason)> handler);
+  using NextFrameCallback = std::function<void(std::unique_ptr<EncodedFrame>)>;
+  // Get the next frame for decoding. `handler` is invoked with the next frame
+  // or with nullptr if no frame is ready for decoding after `max_wait_time_ms`.
+  void NextFrame(int64_t max_wait_time_ms,
+                 bool keyframe_required,
+                 TaskQueueBase* callback_queue,
+                 NextFrameCallback handler);
 
   // Tells the FrameBuffer which protection mode that is in use. Affects
   // the frame timing.
@@ -120,8 +119,9 @@ class FrameBuffer {
   // Check that the references of `frame` are valid.
   bool ValidReferences(const EncodedFrame& frame) const;
 
-  int64_t FindNextFrame(int64_t now_ms) RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
-  EncodedFrame* GetNextFrame() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  int64_t FindNextFrame(Timestamp now) RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+  std::unique_ptr<EncodedFrame> GetNextFrame()
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   void StartWaitForNextFrameOnQueue() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   void CancelCallback() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
@@ -142,21 +142,14 @@ class FrameBuffer {
                                         FrameMap::iterator info)
       RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
-  void UpdateJitterDelay() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
-
-  void UpdateTimingFrameInfo() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
-
   void ClearFramesAndHistory() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
-
-  bool HasBadRenderTiming(const EncodedFrame& frame, int64_t now_ms)
-      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
 
   // The cleaner solution would be to have the NextFrame function return a
   // vector of frames, but until the decoding pipeline can support decoding
   // multiple frames at the same time we combine all frames to one frame and
   // return it. See bugs.webrtc.org/10064
-  EncodedFrame* CombineAndDeleteFrames(
-      const std::vector<EncodedFrame*>& frames) const;
+  std::unique_ptr<EncodedFrame> CombineAndDeleteFrames(
+      std::vector<std::unique_ptr<EncodedFrame>> frames) const;
 
   RTC_NO_UNIQUE_ADDRESS SequenceChecker construction_checker_;
   RTC_NO_UNIQUE_ADDRESS SequenceChecker callback_checker_;
@@ -168,24 +161,20 @@ class FrameBuffer {
   Mutex mutex_;
   Clock* const clock_;
 
-  rtc::TaskQueue* callback_queue_ RTC_GUARDED_BY(mutex_);
+  TaskQueueBase* callback_queue_ RTC_GUARDED_BY(mutex_);
   RepeatingTaskHandle callback_task_ RTC_GUARDED_BY(mutex_);
-  std::function<void(std::unique_ptr<EncodedFrame>, ReturnReason)>
-      frame_handler_ RTC_GUARDED_BY(mutex_);
+  NextFrameCallback frame_handler_ RTC_GUARDED_BY(mutex_);
   int64_t latest_return_time_ms_ RTC_GUARDED_BY(mutex_);
   bool keyframe_required_ RTC_GUARDED_BY(mutex_);
 
-  VCMJitterEstimator jitter_estimator_ RTC_GUARDED_BY(mutex_);
+  JitterEstimator jitter_estimator_ RTC_GUARDED_BY(mutex_);
   VCMTiming* const timing_ RTC_GUARDED_BY(mutex_);
-  VCMInterFrameDelay inter_frame_delay_ RTC_GUARDED_BY(mutex_);
+  InterFrameDelay inter_frame_delay_ RTC_GUARDED_BY(mutex_);
   absl::optional<int64_t> last_continuous_frame_ RTC_GUARDED_BY(mutex_);
   std::vector<FrameMap::iterator> frames_to_decode_ RTC_GUARDED_BY(mutex_);
   bool stopped_ RTC_GUARDED_BY(mutex_);
   VCMVideoProtection protection_mode_ RTC_GUARDED_BY(mutex_);
-  VCMReceiveStatisticsCallback* const stats_callback_;
   int64_t last_log_non_decoded_ms_ RTC_GUARDED_BY(mutex_);
-
-  const bool add_rtt_to_playout_delay_;
 
   // rtt_mult experiment settings.
   const absl::optional<RttMultExperiment::Settings> rtt_mult_settings_;

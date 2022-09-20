@@ -527,11 +527,11 @@ void FakeVideoEngine::UnregisterChannel(VideoMediaChannel* channel) {
   RTC_DCHECK(it != channels_.end());
   channels_.erase(it);
 }
-std::vector<VideoCodec> FakeVideoEngine::send_codecs() const {
+std::vector<VideoCodec> FakeVideoEngine::send_codecs(bool use_rtx) const {
   return send_codecs_;
 }
 
-std::vector<VideoCodec> FakeVideoEngine::recv_codecs() const {
+std::vector<VideoCodec> FakeVideoEngine::recv_codecs(bool use_rtx) const {
   return recv_codecs_;
 }
 

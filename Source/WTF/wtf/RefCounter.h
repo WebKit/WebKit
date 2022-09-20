@@ -52,12 +52,11 @@ class RefCounter {
 
         Count(RefCounter& refCounter)
             : m_refCounter(&refCounter)
-            , m_value(0)
         {
         }
 
         RefCounter* m_refCounter;
-        size_t m_value;
+        size_t m_value { 0 };
         bool m_inValueDidChange { false };
     };
 

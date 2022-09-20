@@ -23,9 +23,11 @@
 namespace cricket {
 class IceTransportInternal;
 class PortAllocator;
+class IceControllerFactoryInterface;
 }  // namespace cricket
 
 namespace webrtc {
+class FieldTrialsView;
 
 // An ICE transport, as represented to the outside world.
 // This object is refcounted, and is therefore alive until the
@@ -74,12 +76,27 @@ struct IceTransportInit final {
   RtcEventLog* event_log() { return event_log_; }
   void set_event_log(RtcEventLog* event_log) { event_log_ = event_log; }
 
+  void set_ice_controller_factory(
+      cricket::IceControllerFactoryInterface* ice_controller_factory) {
+    ice_controller_factory_ = ice_controller_factory;
+  }
+  cricket::IceControllerFactoryInterface* ice_controller_factory() {
+    return ice_controller_factory_;
+  }
+
+  const FieldTrialsView* field_trials() { return field_trials_; }
+  void set_field_trials(const FieldTrialsView* field_trials) {
+    field_trials_ = field_trials;
+  }
+
  private:
   cricket::PortAllocator* port_allocator_ = nullptr;
   AsyncDnsResolverFactoryInterface* async_dns_resolver_factory_ = nullptr;
   // For backwards compatibility. Only one resolver factory can be set.
   AsyncResolverFactory* async_resolver_factory_ = nullptr;
   RtcEventLog* event_log_ = nullptr;
+  cricket::IceControllerFactoryInterface* ice_controller_factory_ = nullptr;
+  const FieldTrialsView* field_trials_ = nullptr;
   // TODO(https://crbug.com/webrtc/12657): Redesign to have const members.
 };
 

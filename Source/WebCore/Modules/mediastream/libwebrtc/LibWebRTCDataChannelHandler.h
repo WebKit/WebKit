@@ -36,10 +36,12 @@
 #include <wtf/WeakPtr.h>
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
+ALLOW_COMMA_BEGIN
 
 #include <webrtc/api/data_channel_interface.h>
 
 ALLOW_UNUSED_PARAMETERS_END
+ALLOW_COMMA_END
 
 namespace webrtc {
 struct DataChannelInit;

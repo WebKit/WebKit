@@ -12,25 +12,56 @@
 // PeerConnection and the underlying media engine, as well as tests that check
 // the media-related aspects of SDP.
 
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <map>
 #include <memory>
 #include <set>
+#include <string>
 #include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/types/optional.h"
+#include "api/audio_options.h"
 #include "api/call/call_factory_interface.h"
+#include "api/jsep.h"
+#include "api/media_types.h"
+#include "api/peer_connection_interface.h"
+#include "api/rtc_error.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
+#include "api/rtc_event_log/rtc_event_log_factory_interface.h"
+#include "api/rtp_parameters.h"
+#include "api/rtp_sender_interface.h"
+#include "api/rtp_transceiver_direction.h"
+#include "api/rtp_transceiver_interface.h"
+#include "api/scoped_refptr.h"
 #include "api/task_queue/default_task_queue_factory.h"
+#include "api/task_queue/task_queue_factory.h"
+#include "media/base/codec.h"
 #include "media/base/fake_media_engine.h"
+#include "media/base/media_constants.h"
+#include "media/base/media_engine.h"
+#include "media/base/stream_params.h"
 #include "p2p/base/fake_port_allocator.h"
+#include "p2p/base/p2p_constants.h"
+#include "p2p/base/port_allocator.h"
+#include "p2p/base/transport_info.h"
 #include "pc/media_session.h"
 #include "pc/peer_connection_wrapper.h"
 #include "pc/rtp_media_utils.h"
-#include "pc/sdp_utils.h"
+#include "pc/session_description.h"
+#include "pc/test/mock_peer_connection_observers.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/rtc_certificate_generator.h"
+#include "rtc_base/thread.h"
+#include "test/gtest.h"
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
 #endif
-#include "pc/test/fake_rtc_certificate_generator.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gmock.h"
@@ -106,17 +137,20 @@ class PeerConnectionMediaBaseTest : public ::testing::Test {
         CreateModularPeerConnectionFactory(std::move(factory_dependencies));
 
     auto fake_port_allocator = std::make_unique<cricket::FakePortAllocator>(
-        rtc::Thread::Current(), nullptr);
+        rtc::Thread::Current(),
+        std::make_unique<rtc::BasicPacketSocketFactory>(vss_.get()));
     auto observer = std::make_unique<MockPeerConnectionObserver>();
     auto modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
-    auto pc = pc_factory->CreatePeerConnection(modified_config,
-                                               std::move(fake_port_allocator),
-                                               nullptr, observer.get());
-    if (!pc) {
+    PeerConnectionDependencies pc_dependencies(observer.get());
+    pc_dependencies.allocator = std::move(fake_port_allocator);
+    auto result = pc_factory->CreatePeerConnectionOrError(
+        modified_config, std::move(pc_dependencies));
+    if (!result.ok()) {
       return nullptr;
     }
 
+    auto pc = result.MoveValue();
     observer->SetPeerConnectionInterface(pc.get());
     auto wrapper = std::make_unique<PeerConnectionWrapperForMediaTest>(
         pc_factory, pc, std::move(observer));
@@ -195,7 +229,7 @@ class PeerConnectionMediaTestUnifiedPlan : public PeerConnectionMediaBaseTest {
 class PeerConnectionMediaTestPlanB : public PeerConnectionMediaBaseTest {
  protected:
   PeerConnectionMediaTestPlanB()
-      : PeerConnectionMediaBaseTest(SdpSemantics::kPlanB) {}
+      : PeerConnectionMediaBaseTest(SdpSemantics::kPlanB_DEPRECATED) {}
 };
 
 TEST_P(PeerConnectionMediaTest,
@@ -312,8 +346,8 @@ TEST_F(PeerConnectionMediaTestPlanB, EmptyRemoteOfferRemovesRecvStreams) {
   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
 
   // Remove both tracks from caller.
-  caller->pc()->RemoveTrack(caller_audio_track);
-  caller->pc()->RemoveTrack(caller_video_track);
+  caller->pc()->RemoveTrackOrError(caller_audio_track);
+  caller->pc()->RemoveTrackOrError(caller_video_track);
 
   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
 
@@ -410,8 +444,8 @@ TEST_F(PeerConnectionMediaTestPlanB, EmptyLocalAnswerRemovesSendStreams) {
   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
 
   // Remove both tracks from callee.
-  callee->pc()->RemoveTrack(callee_audio_track);
-  callee->pc()->RemoveTrack(callee_video_track);
+  callee->pc()->RemoveTrackOrError(callee_audio_track);
+  callee->pc()->RemoveTrackOrError(callee_video_track);
 
   ASSERT_TRUE(caller->ExchangeOfferAnswerWith(callee.get()));
 
@@ -663,7 +697,7 @@ INSTANTIATE_TEST_SUITE_P(
     PeerConnectionMediaTest,
     PeerConnectionMediaOfferDirectionTest,
     Combine(
-        Values(SdpSemantics::kPlanB, SdpSemantics::kUnifiedPlan),
+        Values(SdpSemantics::kPlanB_DEPRECATED, SdpSemantics::kUnifiedPlan),
         Values(std::make_tuple(false, -1, RtpTransceiverDirection::kInactive),
                std::make_tuple(false, 0, RtpTransceiverDirection::kInactive),
                std::make_tuple(false, 1, RtpTransceiverDirection::kRecvOnly),
@@ -777,7 +811,7 @@ TEST_P(PeerConnectionMediaAnswerDirectionTest, VerifyRejected) {
 
 INSTANTIATE_TEST_SUITE_P(PeerConnectionMediaTest,
                          PeerConnectionMediaAnswerDirectionTest,
-                         Combine(Values(SdpSemantics::kPlanB,
+                         Combine(Values(SdpSemantics::kPlanB_DEPRECATED,
                                         SdpSemantics::kUnifiedPlan),
                                  Values(RtpTransceiverDirection::kInactive,
                                         RtpTransceiverDirection::kSendOnly,
@@ -1018,7 +1052,7 @@ constexpr char kMLinesOutOfOrder[] =
 INSTANTIATE_TEST_SUITE_P(
     PeerConnectionMediaTest,
     PeerConnectionMediaInvalidMediaTest,
-    Combine(Values(SdpSemantics::kPlanB, SdpSemantics::kUnifiedPlan),
+    Combine(Values(SdpSemantics::kPlanB_DEPRECATED, SdpSemantics::kUnifiedPlan),
             Values(std::make_tuple("remove video",
                                    RemoveVideoContent,
                                    kMLinesOutOfOrder),
@@ -1083,7 +1117,7 @@ TEST_P(PeerConnectionMediaTest, TestAVOfferWithAudioOnlyAnswer) {
   EXPECT_EQ(1u, callee_video->send_streams().size());
 
   // Callee removes video but keeps audio and rejects the video once again.
-  callee->pc()->RemoveTrack(callee_video_track);
+  callee->pc()->RemoveTrackOrError(callee_video_track);
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
   ASSERT_TRUE(
       callee->SetLocalDescription(callee->CreateAnswer(options_reject_video)));
@@ -1153,7 +1187,7 @@ TEST_P(PeerConnectionMediaTest, TestAVOfferWithVideoOnlyAnswer) {
   EXPECT_EQ(1u, callee_video->send_streams().size());
 
   // Callee removes audio but keeps video and rejects the audio once again.
-  callee->pc()->RemoveTrack(callee_audio_track);
+  callee->pc()->RemoveTrackOrError(callee_audio_track);
   ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
   ASSERT_TRUE(
       callee->SetLocalDescription(callee->CreateAnswer(options_reject_audio)));
@@ -2212,7 +2246,7 @@ TEST_F(PeerConnectionMediaTestUnifiedPlan,
 
 INSTANTIATE_TEST_SUITE_P(PeerConnectionMediaTest,
                          PeerConnectionMediaTest,
-                         Values(SdpSemantics::kPlanB,
+                         Values(SdpSemantics::kPlanB_DEPRECATED,
                                 SdpSemantics::kUnifiedPlan));
 
 }  // namespace webrtc

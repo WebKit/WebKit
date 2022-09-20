@@ -15,9 +15,7 @@ group("packet") {
 rtc_source_set("bounded_io") {
   deps = [
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
   ]
   sources = [
     "bounded_byte_reader.h",
@@ -29,9 +27,8 @@ rtc_library("tlv_trait") {
   deps = [
     ":bounded_io",
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/strings:strings",
@@ -45,9 +42,7 @@ rtc_library("tlv_trait") {
 
 rtc_source_set("data") {
   deps = [
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
     "../common:internal_types",
     "../public:types",
   ]
@@ -57,9 +52,7 @@ rtc_source_set("data") {
 rtc_library("crc32c") {
   deps = [
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
     "//third_party/crc32c",
   ]
   sources = [
@@ -74,9 +67,9 @@ rtc_library("parameter") {
     ":data",
     ":tlv_trait",
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../common:internal_types",
     "../common:math",
     "../common:str_join",
@@ -108,6 +101,7 @@ rtc_library("parameter") {
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -119,9 +113,9 @@ rtc_library("error_cause") {
     ":parameter",
     ":tlv_trait",
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../common:internal_types",
     "../common:math",
     "../common:str_join",
@@ -172,9 +166,9 @@ rtc_library("chunk") {
     ":parameter",
     ":tlv_trait",
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../common:math",
     "../common:str_join",
     "../packet:bounded_io",
@@ -229,9 +223,8 @@ rtc_library("chunk") {
 rtc_library("chunk_validators") {
   deps = [
     ":chunk",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
   ]
   sources = [
     "chunk_validators.cc",
@@ -245,9 +238,9 @@ rtc_library("sctp_packet") {
     ":chunk",
     ":crc32c",
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../common:internal_types",
     "../common:math",
     "../public:types",
@@ -276,9 +269,9 @@ if (rtc_include_tests) {
       ":sctp_packet",
       ":tlv_trait",
       "../../../api:array_view",
+      "../../../rtc_base:buffer",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "../common:internal_types",
       "../common:math",

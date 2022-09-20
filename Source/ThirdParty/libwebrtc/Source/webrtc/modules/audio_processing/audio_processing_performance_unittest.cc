@@ -10,14 +10,15 @@
 #include <math.h>
 
 #include <algorithm>
+#include <atomic>
 #include <memory>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "modules/audio_processing/audio_processing_impl.h"
 #include "modules/audio_processing/test/audio_processing_builder_for_testing.h"
 #include "modules/audio_processing/test/test_utils.h"
-#include "rtc_base/atomic_ops.h"
 #include "rtc_base/event.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/platform_thread.h"
@@ -134,16 +135,16 @@ struct SimulationConfig {
 // Handler for the frame counters.
 class FrameCounters {
  public:
-  void IncreaseRenderCounter() { rtc::AtomicOps::Increment(&render_count_); }
+  void IncreaseRenderCounter() { render_count_.fetch_add(1); }
 
-  void IncreaseCaptureCounter() { rtc::AtomicOps::Increment(&capture_count_); }
+  void IncreaseCaptureCounter() { capture_count_.fetch_add(1); }
 
   int CaptureMinusRenderCounters() const {
     // The return value will be approximate, but that's good enough since
     // by the time we return the value, it's not guaranteed to be correct
     // anyway.
-    return rtc::AtomicOps::AcquireLoad(&capture_count_) -
-           rtc::AtomicOps::AcquireLoad(&render_count_);
+    return capture_count_.load(std::memory_order_acquire) -
+           render_count_.load(std::memory_order_acquire);
   }
 
   int RenderMinusCaptureCounters() const {
@@ -153,28 +154,31 @@ class FrameCounters {
   bool BothCountersExceedeThreshold(int threshold) const {
     // TODO(tommi): We could use an event to signal this so that we don't need
     // to be polling from the main thread and possibly steal cycles.
-    const int capture_count = rtc::AtomicOps::AcquireLoad(&capture_count_);
-    const int render_count = rtc::AtomicOps::AcquireLoad(&render_count_);
+    const int capture_count = capture_count_.load(std::memory_order_acquire);
+    const int render_count = render_count_.load(std::memory_order_acquire);
     return (render_count > threshold && capture_count > threshold);
   }
 
  private:
-  int render_count_ = 0;
-  int capture_count_ = 0;
+  std::atomic<int> render_count_{0};
+  std::atomic<int> capture_count_{0};
 };
 
 // Class that represents a flag that can only be raised.
 class LockedFlag {
  public:
-  bool get_flag() const { return rtc::AtomicOps::AcquireLoad(&flag_); }
+  bool get_flag() const { return flag_.load(std::memory_order_acquire); }
 
   void set_flag() {
-    if (!get_flag())  // read-only operation to avoid affecting the cache-line.
-      rtc::AtomicOps::CompareAndSwap(&flag_, 0, 1);
+    if (!get_flag()) {
+      // read-only operation to avoid affecting the cache-line.
+      int zero = 0;
+      flag_.compare_exchange_strong(zero, 1);
+    }
   }
 
  private:
-  int flag_ = 0;
+  std::atomic<int> flag_{0};
 };
 
 // Parent class for the thread processors.
@@ -209,7 +213,7 @@ class TimedThreadApiProcessor {
   bool Process();
 
   // Method for printing out the simulation statistics.
-  void print_processor_statistics(const std::string& processor_name) const {
+  void print_processor_statistics(absl::string_view processor_name) const {
     const std::string modifier = "_api_call_duration";
 
     const std::string sample_rate_name =
@@ -343,7 +347,6 @@ class TimedThreadApiProcessor {
     frame_data_.input_stream_config.set_sample_rate_hz(
         simulation_config_->sample_rate_hz);
     frame_data_.input_stream_config.set_num_channels(num_channels_);
-    frame_data_.input_stream_config.set_has_keyboard(false);
     populate_audio_frame(input_level_, num_channels_,
                          (simulation_config_->sample_rate_hz *
                           AudioProcessing::kChunkSizeMs / 1000),
@@ -353,7 +356,6 @@ class TimedThreadApiProcessor {
     frame_data_.output_stream_config.set_sample_rate_hz(
         simulation_config_->sample_rate_hz);
     frame_data_.output_stream_config.set_num_channels(1);
-    frame_data_.output_stream_config.set_has_keyboard(false);
   }
 
   bool ReadyToProcess() {
@@ -367,7 +369,7 @@ class TimedThreadApiProcessor {
 
     // Should not be reached, but the return statement is needed for the code to
     // build successfully on Android.
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return false;
   }
 
@@ -443,8 +445,6 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
       apm_config.gain_controller1.enabled = true;
       apm_config.gain_controller1.mode =
           AudioProcessing::Config::GainController1::kAdaptiveDigital;
-      apm_config.level_estimation.enabled = true;
-      apm_config.voice_detection.enabled = true;
       apm->ApplyConfig(apm_config);
     };
 
@@ -456,8 +456,6 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
       apm_config.noise_suppression.enabled = true;
       apm_config.gain_controller1.mode =
           AudioProcessing::Config::GainController1::kAdaptiveDigital;
-      apm_config.level_estimation.enabled = true;
-      apm_config.voice_detection.enabled = true;
       apm->ApplyConfig(apm_config);
     };
 
@@ -467,9 +465,7 @@ class CallSimulator : public ::testing::TestWithParam<SimulationConfig> {
       AudioProcessing::Config apm_config = apm->GetConfig();
       apm_config.echo_canceller.enabled = false;
       apm_config.gain_controller1.enabled = false;
-      apm_config.level_estimation.enabled = false;
       apm_config.noise_suppression.enabled = false;
-      apm_config.voice_detection.enabled = false;
       apm->ApplyConfig(apm_config);
     };
 

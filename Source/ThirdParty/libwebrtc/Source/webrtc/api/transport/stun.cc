@@ -11,6 +11,7 @@
 #include "api/transport/stun.h"
 
 #include <string.h>
+
 #include <algorithm>
 #include <cstdint>
 #include <iterator>
@@ -20,6 +21,7 @@
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/crc32.h"
+#include "rtc_base/helpers.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/message_digest.h"
 
@@ -31,15 +33,14 @@ namespace cricket {
 namespace {
 
 const int k127Utf8CharactersLengthInBytes = 508;
-const int kDefaultMaxAttributeLength = 508;
 const int kMessageIntegrityAttributeLength = 20;
 const int kTheoreticalMaximumAttributeLength = 65535;
 
-uint32_t ReduceTransactionId(const std::string& transaction_id) {
+uint32_t ReduceTransactionId(absl::string_view transaction_id) {
   RTC_DCHECK(transaction_id.length() == cricket::kStunTransactionIdLength ||
-             transaction_id.length() ==
-                 cricket::kStunLegacyTransactionIdLength);
-  ByteBufferReader reader(transaction_id.c_str(), transaction_id.length());
+             transaction_id.length() == cricket::kStunLegacyTransactionIdLength)
+      << transaction_id.length();
+  ByteBufferReader reader(transaction_id.data(), transaction_id.size());
   uint32_t result = 0;
   uint32_t next;
   while (reader.ReadUInt32(&next)) {
@@ -68,12 +69,6 @@ bool LengthValid(int type, int length) {
     case STUN_ATTR_SOFTWARE:
       return length <=
              k127Utf8CharactersLengthInBytes;  // RFC 8489 section 14.14
-    case STUN_ATTR_ORIGIN:
-      // 0x802F is unassigned by IANA.
-      // RESPONSE-ORIGIN is defined in RFC 5780 section 7.3, but does not
-      // specify a maximum length. It's an URL, so return an arbitrary
-      // restriction.
-      return length <= kDefaultMaxAttributeLength;
     case STUN_ATTR_DATA:
       // No length restriction in RFC; it's the content of an UDP datagram,
       // which in theory can be up to 65.535 bytes.
@@ -83,7 +78,7 @@ bool LengthValid(int type, int length) {
       // Return an arbitrary restriction for all other types.
       return length <= kTheoreticalMaximumAttributeLength;
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return true;
 }
 
@@ -109,10 +104,15 @@ const int SERVER_NOT_REACHABLE_ERROR = 701;
 // StunMessage
 
 StunMessage::StunMessage()
-    : type_(0),
-      length_(0),
-      transaction_id_(EMPTY_TRANSACTION_ID),
-      stun_magic_cookie_(kStunMagicCookie) {
+    : StunMessage(STUN_INVALID_MESSAGE_TYPE, EMPTY_TRANSACTION_ID) {}
+
+StunMessage::StunMessage(uint16_t type)
+    : StunMessage(type, GenerateTransactionId()) {}
+
+StunMessage::StunMessage(uint16_t type, absl::string_view transaction_id)
+    : type_(type),
+      transaction_id_(transaction_id),
+      reduced_transaction_id_(ReduceTransactionId(transaction_id_)) {
   RTC_DCHECK(IsValidTransactionId(transaction_id_));
 }
 
@@ -123,15 +123,6 @@ bool StunMessage::IsLegacy() const {
     return true;
   RTC_DCHECK(transaction_id_.size() == kStunTransactionIdLength);
   return false;
-}
-
-bool StunMessage::SetTransactionID(const std::string& str) {
-  if (!IsValidTransactionId(str)) {
-    return false;
-  }
-  transaction_id_ = str;
-  reduced_transaction_id_ = ReduceTransactionId(transaction_id_);
-  return true;
 }
 
 static bool DesignatedExpertRange(int attr_type) {
@@ -371,22 +362,19 @@ bool StunMessage::ValidateMessageIntegrityOfType(int mi_attr_type,
                 mi_attr_size) == 0;
 }
 
-bool StunMessage::AddMessageIntegrity(const std::string& password) {
+bool StunMessage::AddMessageIntegrity(absl::string_view password) {
   return AddMessageIntegrityOfType(STUN_ATTR_MESSAGE_INTEGRITY,
-                                   kStunMessageIntegritySize, password.c_str(),
-                                   password.size());
+                                   kStunMessageIntegritySize, password);
 }
 
 bool StunMessage::AddMessageIntegrity32(absl::string_view password) {
   return AddMessageIntegrityOfType(STUN_ATTR_GOOG_MESSAGE_INTEGRITY_32,
-                                   kStunMessageIntegrity32Size, password.data(),
-                                   password.length());
+                                   kStunMessageIntegrity32Size, password);
 }
 
 bool StunMessage::AddMessageIntegrityOfType(int attr_type,
                                             size_t attr_size,
-                                            const char* key,
-                                            size_t keylen) {
+                                            absl::string_view key) {
   // Add the attribute with a dummy value. Since this is a known attribute, it
   // can't fail.
   RTC_DCHECK(attr_size <= kStunMessageIntegritySize);
@@ -403,8 +391,9 @@ bool StunMessage::AddMessageIntegrityOfType(int attr_type,
   int msg_len_for_hmac = static_cast<int>(
       buf.Length() - kStunAttributeHeaderSize - msg_integrity_attr->length());
   char hmac[kStunMessageIntegritySize];
-  size_t ret = rtc::ComputeHmac(rtc::DIGEST_SHA_1, key, keylen, buf.Data(),
-                                msg_len_for_hmac, hmac, sizeof(hmac));
+  size_t ret =
+      rtc::ComputeHmac(rtc::DIGEST_SHA_1, key.data(), key.size(), buf.Data(),
+                       msg_len_for_hmac, hmac, sizeof(hmac));
   RTC_DCHECK(ret == sizeof(hmac));
   if (ret != sizeof(hmac)) {
     RTC_LOG(LS_ERROR) << "HMAC computation failed. Message-Integrity "
@@ -414,7 +403,7 @@ bool StunMessage::AddMessageIntegrityOfType(int attr_type,
 
   // Insert correct HMAC into the attribute.
   msg_integrity_attr->CopyBytes(hmac, attr_size);
-  password_.assign(key, keylen);
+  password_ = std::string(key);
   integrity_ = IntegrityStatus::kIntegrityOk;
   return true;
 }
@@ -447,6 +436,11 @@ bool StunMessage::ValidateFingerprint(const char* data, size_t size) {
       rtc::GetBE32(fingerprint_attr_data + kStunAttributeHeaderSize);
   return ((fingerprint ^ STUN_FINGERPRINT_XOR_VALUE) ==
           rtc::ComputeCrc32(data, size - fingerprint_attr_size));
+}
+
+// static
+std::string StunMessage::GenerateTransactionId() {
+  return rtc::CreateRandomString(kStunTransactionIdLength);
 }
 
 bool StunMessage::IsStunMethod(rtc::ArrayView<int> methods,
@@ -596,6 +590,12 @@ void StunMessage::SetStunMagicCookie(uint32_t val) {
   stun_magic_cookie_ = val;
 }
 
+void StunMessage::SetTransactionIdForTesting(absl::string_view transaction_id) {
+  RTC_DCHECK(IsValidTransactionId(transaction_id));
+  transaction_id_ = std::string(transaction_id);
+  reduced_transaction_id_ = ReduceTransactionId(transaction_id_);
+}
+
 StunAttributeValueType StunMessage::GetAttributeValueType(int type) const {
   switch (type) {
     case STUN_ATTR_MAPPED_ADDRESS:
@@ -620,8 +620,6 @@ StunAttributeValueType StunMessage::GetAttributeValueType(int type) const {
       return STUN_VALUE_ADDRESS;
     case STUN_ATTR_FINGERPRINT:
       return STUN_VALUE_UINT32;
-    case STUN_ATTR_ORIGIN:
-      return STUN_VALUE_BYTE_STRING;
     case STUN_ATTR_RETRANSMIT_COUNT:
       return STUN_VALUE_UINT32;
     case STUN_ATTR_GOOG_LAST_ICE_CHECK_RECEIVED:
@@ -656,7 +654,7 @@ const StunAttribute* StunMessage::GetAttribute(int type) const {
   return NULL;
 }
 
-bool StunMessage::IsValidTransactionId(const std::string& transaction_id) {
+bool StunMessage::IsValidTransactionId(absl::string_view transaction_id) {
   return transaction_id.size() == kStunTransactionIdLength ||
          transaction_id.size() == kStunLegacyTransactionIdLength;
 }
@@ -1006,9 +1004,9 @@ StunByteStringAttribute::StunByteStringAttribute(uint16_t type)
     : StunAttribute(type, 0), bytes_(NULL) {}
 
 StunByteStringAttribute::StunByteStringAttribute(uint16_t type,
-                                                 const std::string& str)
+                                                 absl::string_view str)
     : StunAttribute(type, 0), bytes_(NULL) {
-  CopyBytes(str.c_str(), str.size());
+  CopyBytes(str);
 }
 
 StunByteStringAttribute::StunByteStringAttribute(uint16_t type,
@@ -1029,8 +1027,10 @@ StunAttributeValueType StunByteStringAttribute::value_type() const {
   return STUN_VALUE_BYTE_STRING;
 }
 
-void StunByteStringAttribute::CopyBytes(const char* bytes) {
-  CopyBytes(bytes, strlen(bytes));
+void StunByteStringAttribute::CopyBytes(absl::string_view bytes) {
+  char* new_bytes = new char[bytes.size()];
+  memcpy(new_bytes, bytes.data(), bytes.size());
+  SetBytes(new_bytes, bytes.size());
 }
 
 void StunByteStringAttribute::CopyBytes(const void* bytes, size_t length) {

@@ -29,7 +29,9 @@
 #include "api/video_codecs/vp8_temporal_layers_factory.h"
 #include "modules/video_coding/codecs/interface/common_constants.h"
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
+#include "modules/video_coding/codecs/vp8/vp8_scalability.h"
 #include "modules/video_coding/include/video_error_codes.h"
+#include "modules/video_coding/svc/scalability_mode_util.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/checks.h"
@@ -48,8 +50,6 @@ constexpr char kVP8IosMaxNumberOfThreadFieldTrial[] =
     "WebRTC-VP8IosMaxNumberOfThread";
 constexpr char kVP8IosMaxNumberOfThreadFieldTrialParameter[] = "max_thread";
 #endif
-
-constexpr absl::string_view kSupportedScalabilityModes[] = {"L1T2", "L1T3"};
 
 constexpr char kVp8ForcePartitionResilience[] =
     "WebRTC-VP8-ForcePartitionResilience";
@@ -205,7 +205,7 @@ void SetRawImagePlanes(vpx_image_t* raw_image, VideoFrameBuffer* buffer) {
       break;
     }
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
   }
 }
 
@@ -220,25 +220,6 @@ std::unique_ptr<VideoEncoder> VP8Encoder::Create(
     VP8Encoder::Settings settings) {
   return std::make_unique<LibvpxVp8Encoder>(LibvpxInterface::Create(),
                                             std::move(settings));
-}
-
-std::unique_ptr<VideoEncoder> VP8Encoder::Create(
-    std::unique_ptr<Vp8FrameBufferControllerFactory>
-        frame_buffer_controller_factory) {
-  VP8Encoder::Settings settings;
-  settings.frame_buffer_controller_factory =
-      std::move(frame_buffer_controller_factory);
-  return std::make_unique<LibvpxVp8Encoder>(LibvpxInterface::Create(),
-                                            std::move(settings));
-}
-
-bool VP8Encoder::SupportsScalabilityMode(absl::string_view scalability_mode) {
-  for (const auto& entry : kSupportedScalabilityModes) {
-    if (entry == scalability_mode) {
-      return true;
-    }
-  }
-  return false;
 }
 
 vpx_enc_frame_flags_t LibvpxVp8Encoder::EncodeFlags(
@@ -455,6 +436,13 @@ int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
     return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
   }
 
+  if (absl::optional<ScalabilityMode> scalability_mode =
+          inst->GetScalabilityMode();
+      scalability_mode.has_value() &&
+      !VP8SupportsScalabilityMode(*scalability_mode)) {
+    return WEBRTC_VIDEO_CODEC_ERR_PARAMETER;
+  }
+
   num_active_streams_ = 0;
   for (int i = 0; i < inst->numberOfSimulcastStreams; ++i) {
     if (inst->simulcastStream[i].active) {
@@ -591,7 +579,7 @@ int LibvpxVp8Encoder::InitEncode(const VideoCodec* inst,
   }
 
   // Allow the user to set the complexity for the base stream.
-  switch (inst->VP8().complexity) {
+  switch (inst->GetVideoEncoderComplexity()) {
     case VideoCodecComplexity::kComplexityHigh:
       cpu_speed_[0] = -5;
       break;
@@ -856,16 +844,19 @@ uint32_t LibvpxVp8Encoder::MaxIntraTarget(uint32_t optimalBuffersize) {
 }
 
 uint32_t LibvpxVp8Encoder::FrameDropThreshold(size_t spatial_idx) const {
-  bool enable_frame_dropping = codec_.VP8().frameDroppingOn;
+  if (!codec_.GetFrameDropEnabled()) {
+    return 0;
+  }
+
   // If temporal layers are used, they get to override the frame dropping
   // setting, as eg. ScreenshareLayers does not work as intended with frame
   // dropping on and DefaultTemporalLayers will have performance issues with
   // frame dropping off.
   RTC_DCHECK(frame_buffer_controller_);
   RTC_DCHECK_LT(spatial_idx, frame_buffer_controller_->StreamCount());
-  enable_frame_dropping =
-      frame_buffer_controller_->SupportsEncoderFrameDropping(spatial_idx);
-  return enable_frame_dropping ? 30 : 0;
+  return frame_buffer_controller_->SupportsEncoderFrameDropping(spatial_idx)
+             ? 30
+             : 0;
 }
 
 size_t LibvpxVp8Encoder::SteadyStateSize(int sid, int tid) {
@@ -1134,8 +1125,6 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
       }
     }
 
-    // TODO(nisse): Introduce some buffer cache or buffer pool, to reduce
-    // allocations and/or copy operations.
     auto buffer = EncodedImageBuffer::Create(encoded_size);
 
     iter = NULL;
@@ -1165,10 +1154,15 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
         encoded_images_[encoder_idx].SetSpatialIndex(stream_idx);
         PopulateCodecSpecific(&codec_specific, *pkt, stream_idx, encoder_idx,
                               input_image.timestamp());
+        if (codec_specific.codecSpecific.VP8.temporalIdx != kNoTemporalIdx) {
+          encoded_images_[encoder_idx].SetTemporalIndex(
+              codec_specific.codecSpecific.VP8.temporalIdx);
+        }
         break;
       }
     }
     encoded_images_[encoder_idx].SetTimestamp(input_image.timestamp());
+    encoded_images_[encoder_idx].SetColorSpace(input_image.color_space());
     encoded_images_[encoder_idx].SetRetransmissionAllowed(
         retransmission_allowed);
 
@@ -1184,6 +1178,8 @@ int LibvpxVp8Encoder::GetEncodedPartitions(const VideoFrame& input_image,
         libvpx_->codec_control(&encoders_[encoder_idx], VP8E_GET_LAST_QUANTIZER,
                                &qp_128);
         encoded_images_[encoder_idx].qp_ = qp_128;
+        encoded_images_[encoder_idx].SetAtTargetQuality(
+            qp_128 <= variable_framerate_experiment_.steady_state_qp);
         encoded_complete_callback_->OnEncodedImage(encoded_images_[encoder_idx],
                                                    &codec_specific);
         const size_t steady_state_size = SteadyStateSize(
@@ -1215,7 +1211,6 @@ VideoEncoder::EncoderInfo LibvpxVp8Encoder::GetEncoderInfo() const {
   info.has_trusted_rate_controller =
       rate_control_settings_.LibvpxVp8TrustedRateController();
   info.is_hardware_accelerated = false;
-  info.has_internal_source = false;
   info.supports_simulcast = true;
   if (!resolution_bitrate_limits_.empty()) {
     info.resolution_bitrate_limits = resolution_bitrate_limits_;
@@ -1293,8 +1288,8 @@ void LibvpxVp8Encoder::MaybeUpdatePixelFormat(vpx_img_fmt fmt) {
         << "Not all raw images had the right format!";
     return;
   }
-  RTC_LOG(INFO) << "Updating vp8 encoder pixel format to "
-                << (fmt == VPX_IMG_FMT_NV12 ? "NV12" : "I420");
+  RTC_LOG(LS_INFO) << "Updating vp8 encoder pixel format to "
+                   << (fmt == VPX_IMG_FMT_NV12 ? "NV12" : "I420");
   for (size_t i = 0; i < raw_images_.size(); ++i) {
     vpx_image_t& img = raw_images_[i];
     auto d_w = img.d_w;
@@ -1357,13 +1352,13 @@ LibvpxVp8Encoder::PrepareBuffers(rtc::scoped_refptr<VideoFrameBuffer> buffer) {
       MaybeUpdatePixelFormat(VPX_IMG_FMT_NV12);
       break;
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
   }
 
   // Prepare `raw_images_` from `mapped_buffer` and, if simulcast, scaled
   // versions of `buffer`.
   std::vector<rtc::scoped_refptr<VideoFrameBuffer>> prepared_buffers;
-  SetRawImagePlanes(&raw_images_[0], mapped_buffer);
+  SetRawImagePlanes(&raw_images_[0], mapped_buffer.get());
   prepared_buffers.push_back(mapped_buffer);
   for (size_t i = 1; i < encoders_.size(); ++i) {
     // Native buffers should implement optimized scaling and is the preferred
@@ -1399,13 +1394,14 @@ LibvpxVp8Encoder::PrepareBuffers(rtc::scoped_refptr<VideoFrameBuffer> buffer) {
                         << " instead of "
                         << VideoFrameBufferTypeToString(mapped_buffer->type())
                         << ". Can't encode frame.";
-      RTC_NOTREACHED() << "Scaled buffer type "
-                       << VideoFrameBufferTypeToString(scaled_buffer->type())
-                       << " is not compatible with mapped buffer type "
-                       << VideoFrameBufferTypeToString(mapped_buffer->type());
+      RTC_DCHECK_NOTREACHED()
+          << "Scaled buffer type "
+          << VideoFrameBufferTypeToString(scaled_buffer->type())
+          << " is not compatible with mapped buffer type "
+          << VideoFrameBufferTypeToString(mapped_buffer->type());
       return {};
     }
-    SetRawImagePlanes(&raw_images_[i], scaled_buffer);
+    SetRawImagePlanes(&raw_images_[i], scaled_buffer.get());
     prepared_buffers.push_back(scaled_buffer);
   }
   return prepared_buffers;

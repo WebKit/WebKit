@@ -9,7 +9,6 @@ LOCAL_SRC_FILES := \
     source/compare.cc           \
     source/compare_common.cc    \
     source/compare_gcc.cc       \
-    source/compare_mmi.cc       \
     source/compare_msa.cc       \
     source/compare_neon.cc      \
     source/compare_neon64.cc    \
@@ -27,7 +26,6 @@ LOCAL_SRC_FILES := \
     source/rotate_argb.cc       \
     source/rotate_common.cc     \
     source/rotate_gcc.cc        \
-    source/rotate_mmi.cc        \
     source/rotate_msa.cc        \
     source/rotate_neon.cc       \
     source/rotate_neon64.cc     \
@@ -35,7 +33,6 @@ LOCAL_SRC_FILES := \
     source/row_any.cc           \
     source/row_common.cc        \
     source/row_gcc.cc           \
-    source/row_mmi.cc           \
     source/row_msa.cc           \
     source/row_neon.cc          \
     source/row_neon64.cc        \
@@ -45,10 +42,10 @@ LOCAL_SRC_FILES := \
     source/scale_argb.cc        \
     source/scale_common.cc      \
     source/scale_gcc.cc         \
-    source/scale_mmi.cc         \
     source/scale_msa.cc         \
     source/scale_neon.cc        \
     source/scale_neon64.cc      \
+    source/scale_rgb.cc         \
     source/scale_uv.cc          \
     source/scale_win.cc         \
     source/video_common.cc
@@ -101,6 +98,7 @@ LOCAL_SRC_FILES := \
     unit_test/rotate_argb_test.cc \
     unit_test/rotate_test.cc      \
     unit_test/scale_argb_test.cc  \
+    unit_test/scale_rgb_test.cc   \
     unit_test/scale_test.cc       \
     unit_test/scale_uv_test.cc    \
     unit_test/unit_test.cc        \

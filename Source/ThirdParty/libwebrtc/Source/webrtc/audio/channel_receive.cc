@@ -21,6 +21,7 @@
 #include "api/frame_transformer_interface.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "audio/audio_level.h"
 #include "audio/channel_receive_frame_transformer_delegate.h"
@@ -39,17 +40,12 @@
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_config.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
-#include "modules/utility/include/process_thread.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/format_macros.h"
-#include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_minmax.h"
 #include "rtc_base/race_checker.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/task_utils/pending_task_safety_flag.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "rtc_base/time_utils.h"
 #include "system_wrappers/include/metrics.h"
 
@@ -96,7 +92,6 @@ class ChannelReceive : public ChannelReceiveInterface,
       size_t jitter_buffer_max_packets,
       bool jitter_buffer_fast_playout,
       int jitter_buffer_min_delay_ms,
-      bool jitter_buffer_enable_rtx_handling,
       bool enable_non_sender_rtt,
       rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
       absl::optional<AudioCodecPairId> codec_pair_id,
@@ -320,13 +315,13 @@ void ChannelReceive::OnReceivedPayloadData(
     // packet as discarded.
 
     // If we have a source_tracker_, tell it that the frame has been
-    // "delivered". Normally, this happens in AudioReceiveStream when audio
-    // frames are pulled out, but when playout is muted, nothing is pulling
-    // frames. The downside of this approach is that frames delivered this way
-    // won't be delayed for playout, and therefore will be unsynchronized with
-    // (a) audio delay when playing and (b) any audio/video synchronization. But
-    // the alternative is that muting playout also stops the SourceTracker from
-    // updating RtpSource information.
+    // "delivered". Normally, this happens in AudioReceiveStreamInterface when
+    // audio frames are pulled out, but when playout is muted, nothing is
+    // pulling frames. The downside of this approach is that frames delivered
+    // this way won't be delayed for playout, and therefore will be
+    // unsynchronized with (a) audio delay when playing and (b) any audio/video
+    // synchronization. But the alternative is that muting playout also stops
+    // the SourceTracker from updating RtpSource information.
     if (source_tracker_) {
       RtpPacketInfos::vector_type packet_vector = {
           RtpPacketInfo(rtpHeader, clock_->CurrentTime())};
@@ -485,7 +480,7 @@ AudioMixer::Source::AudioFrameInfo ChannelReceive::GetAudioFrameWithInfo(
   ++audio_frame_interval_count_;
   if (audio_frame_interval_count_ >= kHistogramReportingInterval) {
     audio_frame_interval_count_ = 0;
-    worker_thread_->PostTask(ToQueuedTask(worker_safety_, [this]() {
+    worker_thread_->PostTask(SafeTask(worker_safety_.flag(), [this]() {
       RTC_DCHECK_RUN_ON(&worker_thread_checker_);
       RTC_HISTOGRAM_COUNTS_1000("WebRTC.Audio.TargetJitterBufferDelayMs",
                                 acm_receiver_.TargetDelayMs());
@@ -525,7 +520,6 @@ ChannelReceive::ChannelReceive(
     size_t jitter_buffer_max_packets,
     bool jitter_buffer_fast_playout,
     int jitter_buffer_min_delay_ms,
-    bool jitter_buffer_enable_rtx_handling,
     bool enable_non_sender_rtt,
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
     absl::optional<AudioCodecPairId> codec_pair_id,
@@ -582,7 +576,6 @@ ChannelReceive::ChannelReceive(
     InitFrameTransformerDelegate(std::move(frame_transformer));
 
   rtp_rtcp_ = ModuleRtpRtcpImpl2::Create(configuration);
-  rtp_rtcp_->SetSendingMediaStatus(false);
   rtp_rtcp_->SetRemoteSSRC(remote_ssrc_);
 
   // Ensure that RTCP is enabled for the created channel.
@@ -648,7 +641,8 @@ void ChannelReceive::OnRtpPacket(const RtpPacketReceived& packet) {
   const auto& it = payload_type_frequencies_.find(packet.PayloadType());
   if (it == payload_type_frequencies_.end())
     return;
-  // TODO(nisse): Set payload_type_frequency earlier, when packet is parsed.
+  // TODO(bugs.webrtc.org/7135): Set payload_type_frequency earlier, when packet
+  // is parsed.
   RtpPacketReceived packet_copy(packet);
   packet_copy.set_payload_type_frequency(it->second);
 
@@ -750,12 +744,13 @@ void ChannelReceive::ReceivedRTCPPacket(const uint8_t* data, size_t length) {
 
   {
     MutexLock lock(&ts_stats_lock_);
-    ntp_estimator_.UpdateRtcpTimestamp(rtt, ntp_secs, ntp_frac, rtp_timestamp);
-    absl::optional<int64_t> remote_to_local_clock_offset_ms =
-        ntp_estimator_.EstimateRemoteToLocalClockOffsetMs();
-    if (remote_to_local_clock_offset_ms.has_value()) {
+    ntp_estimator_.UpdateRtcpTimestamp(
+        TimeDelta::Millis(rtt), NtpTime(ntp_secs, ntp_frac), rtp_timestamp);
+    absl::optional<int64_t> remote_to_local_clock_offset =
+        ntp_estimator_.EstimateRemoteToLocalClockOffset();
+    if (remote_to_local_clock_offset.has_value()) {
       capture_clock_offset_updater_.SetRemoteToLocalClockOffset(
-          Int64MsToQ32x32(*remote_to_local_clock_offset_ms));
+          *remote_to_local_clock_offset);
     }
   }
 }
@@ -847,14 +842,11 @@ CallReceiveStatistics ChannelReceive::GetRTCPStatistics() const {
   absl::optional<RtpRtcpInterface::SenderReportStats> rtcp_sr_stats =
       rtp_rtcp_->GetSenderReportStats();
   if (rtcp_sr_stats.has_value()) {
-    // Number of seconds since 1900 January 1 00:00 GMT (see
-    // https://tools.ietf.org/html/rfc868).
-    constexpr int64_t kNtpJan1970Millisecs =
-        2208988800 * rtc::kNumMillisecsPerSec;
     stats.last_sender_report_timestamp_ms =
-        rtcp_sr_stats->last_arrival_timestamp.ToMs() - kNtpJan1970Millisecs;
+        rtcp_sr_stats->last_arrival_timestamp.ToMs() -
+        rtc::kNtpJan1970Millisecs;
     stats.last_sender_report_remote_timestamp_ms =
-        rtcp_sr_stats->last_remote_timestamp.ToMs() - kNtpJan1970Millisecs;
+        rtcp_sr_stats->last_remote_timestamp.ToMs() - rtc::kNtpJan1970Millisecs;
     stats.sender_reports_packets_sent = rtcp_sr_stats->packets_sent;
     stats.sender_reports_bytes_sent = rtcp_sr_stats->bytes_sent;
     stats.sender_reports_reports_count = rtcp_sr_stats->reports_count;
@@ -918,7 +910,7 @@ void ChannelReceive::SetDepacketizerToDecoderFrameTransformer(
   // Depending on when the channel is created, the transformer might be set
   // twice. Don't replace the delegate if it was already initialized.
   if (!frame_transformer || frame_transformer_delegate_) {
-    RTC_NOTREACHED() << "Not setting the transformer?";
+    RTC_DCHECK_NOTREACHED() << "Not setting the transformer?";
     return;
   }
 
@@ -1043,8 +1035,8 @@ absl::optional<Syncable::Info> ChannelReceive::GetSyncInfo() const {
   return info;
 }
 
-// RTC_RUN_ON(worker_thread_checker_)
 void ChannelReceive::UpdatePlayoutTimestamp(bool rtcp, int64_t now_ms) {
+  RTC_DCHECK_RUN_ON(&worker_thread_checker_);
   // TODO(bugs.webrtc.org/11993): Expect to be called exclusively on the
   // network thread. Once that's done, we won't need video_sync_lock_.
 
@@ -1104,8 +1096,6 @@ int64_t ChannelReceive::GetRTT() const {
     return associated_send_channel_->GetRTT();
   }
 
-  // TODO(nisse): This method computes RTT based on sender reports, even though
-  // a receive stream is not supposed to do that.
   for (const ReportBlockData& data : report_blocks) {
     if (data.report_block().sender_ssrc == remote_ssrc_) {
       return data.last_rtt_ms();
@@ -1127,7 +1117,6 @@ std::unique_ptr<ChannelReceiveInterface> CreateChannelReceive(
     size_t jitter_buffer_max_packets,
     bool jitter_buffer_fast_playout,
     int jitter_buffer_min_delay_ms,
-    bool jitter_buffer_enable_rtx_handling,
     bool enable_non_sender_rtt,
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
     absl::optional<AudioCodecPairId> codec_pair_id,
@@ -1138,9 +1127,8 @@ std::unique_ptr<ChannelReceiveInterface> CreateChannelReceive(
       clock, neteq_factory, audio_device_module, rtcp_send_transport,
       rtc_event_log, local_ssrc, remote_ssrc, jitter_buffer_max_packets,
       jitter_buffer_fast_playout, jitter_buffer_min_delay_ms,
-      jitter_buffer_enable_rtx_handling, enable_non_sender_rtt, decoder_factory,
-      codec_pair_id, std::move(frame_decryptor), crypto_options,
-      std::move(frame_transformer));
+      enable_non_sender_rtt, decoder_factory, codec_pair_id,
+      std::move(frame_decryptor), crypto_options, std::move(frame_transformer));
 }
 
 }  // namespace voe

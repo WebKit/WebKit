@@ -64,6 +64,7 @@ class StunServerTest : public ::testing::Test {
   }
 
  private:
+  rtc::AutoThread main_thread;
   std::unique_ptr<rtc::VirtualSocketServer> ss_;
   rtc::Thread network_;
   std::unique_ptr<StunServer> server_;
@@ -75,11 +76,9 @@ class StunServerTest : public ::testing::Test {
 #if !defined(THREAD_SANITIZER)
 
 TEST_F(StunServerTest, TestGood) {
-  StunMessage req;
   // kStunLegacyTransactionIdLength = 16 for legacy RFC 3489 request
   std::string transaction_id = "0123456789abcdef";
-  req.SetType(STUN_BINDING_REQUEST);
-  req.SetTransactionID(transaction_id);
+  StunMessage req(STUN_BINDING_REQUEST, transaction_id);
   Send(req);
 
   StunMessage* msg = Receive();
@@ -97,12 +96,10 @@ TEST_F(StunServerTest, TestGood) {
 }
 
 TEST_F(StunServerTest, TestGoodXorMappedAddr) {
-  StunMessage req;
   // kStunTransactionIdLength = 12 for RFC 5389 request
   // StunMessage::Write will automatically insert magic cookie (0x2112A442)
   std::string transaction_id = "0123456789ab";
-  req.SetType(STUN_BINDING_REQUEST);
-  req.SetTransactionID(transaction_id);
+  StunMessage req(STUN_BINDING_REQUEST, transaction_id);
   Send(req);
 
   StunMessage* msg = Receive();
@@ -121,11 +118,9 @@ TEST_F(StunServerTest, TestGoodXorMappedAddr) {
 
 // Send legacy RFC 3489 request, should not get xor mapped addr
 TEST_F(StunServerTest, TestNoXorMappedAddr) {
-  StunMessage req;
   // kStunLegacyTransactionIdLength = 16 for legacy RFC 3489 request
   std::string transaction_id = "0123456789abcdef";
-  req.SetType(STUN_BINDING_REQUEST);
-  req.SetTransactionID(transaction_id);
+  StunMessage req(STUN_BINDING_REQUEST, transaction_id);
   Send(req);
 
   StunMessage* msg = Receive();

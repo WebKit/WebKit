@@ -49,7 +49,9 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
 
     m_socket->SignalReadPacket.connect(this, &LibWebRTCSocketClient::signalReadPacket);
     m_socket->SignalSentPacket.connect(this, &LibWebRTCSocketClient::signalSentPacket);
-    m_socket->SignalClose.connect(this, &LibWebRTCSocketClient::signalClose);
+    m_socket->SubscribeClose(this, [this](rtc::AsyncPacketSocket* socket, int error) {
+        signalClose(socket, error);
+    });
 
     switch (type) {
     case Type::ServerConnectionTCP:
@@ -57,11 +59,6 @@ LibWebRTCSocketClient::LibWebRTCSocketClient(WebCore::LibWebRTCSocketIdentifier 
     case Type::ClientTCP:
         m_socket->SignalConnect.connect(this, &LibWebRTCSocketClient::signalConnect);
         m_socket->SignalAddressReady.connect(this, &LibWebRTCSocketClient::signalAddressReady);
-        return;
-    case Type::ServerTCP:
-        m_socket->SignalConnect.connect(this, &LibWebRTCSocketClient::signalConnect);
-        m_socket->SignalNewConnection.connect(this, &LibWebRTCSocketClient::signalNewConnection);
-        signalAddressReady();
         return;
     case Type::UDP:
         m_socket->SignalConnect.connect(this, &LibWebRTCSocketClient::signalConnect);
@@ -107,12 +104,6 @@ void LibWebRTCSocketClient::signalSentPacket(rtc::AsyncPacketSocket* socket, con
 {
     ASSERT_UNUSED(socket, m_socket.get() == socket);
     m_connection->send(Messages::LibWebRTCNetwork::SignalSentPacket(m_identifier, sentPacket.packet_id, sentPacket.send_time_ms), 0);
-}
-
-void LibWebRTCSocketClient::signalNewConnection(rtc::AsyncPacketSocket* socket, rtc::AsyncPacketSocket* newSocket)
-{
-    ASSERT_UNUSED(socket, m_socket.get() == socket);
-    m_rtcProvider.newConnection(*this, std::unique_ptr<rtc::AsyncPacketSocket>(newSocket));
 }
 
 void LibWebRTCSocketClient::signalAddressReady(rtc::AsyncPacketSocket* socket, const rtc::SocketAddress& address)

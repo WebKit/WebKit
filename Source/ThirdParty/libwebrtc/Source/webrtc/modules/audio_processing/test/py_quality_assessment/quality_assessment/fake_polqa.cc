@@ -10,7 +10,9 @@
 
 #include <fstream>
 #include <iostream>
+#include <string>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -21,9 +23,9 @@ const char* const kErrorMessage = "-Out /path/to/output/file is mandatory";
 
 // Writes fake output intended to be parsed by
 // quality_assessment.eval_scores.PolqaScore.
-void WriteOutputFile(const std::string& output_file_path) {
+void WriteOutputFile(absl::string_view output_file_path) {
   RTC_CHECK_NE(output_file_path, "");
-  std::ofstream out(output_file_path);
+  std::ofstream out(std::string{output_file_path});
   RTC_CHECK(!out.bad());
   out << "* Fake Polqa output" << std::endl;
   out << "FakeField1\tPolqaScore\tFakeField2" << std::endl;

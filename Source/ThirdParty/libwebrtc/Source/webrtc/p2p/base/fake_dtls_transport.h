@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/crypto/crypto_options.h"
 #include "api/dtls_transport_interface.h"
 #include "p2p/base/dtls_transport_internal.h"
@@ -140,7 +141,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   const rtc::SSLFingerprint& dtls_fingerprint() const {
     return dtls_fingerprint_;
   }
-  bool SetRemoteFingerprint(const std::string& alg,
+  bool SetRemoteFingerprint(absl::string_view alg,
                             const uint8_t* digest,
                             size_t digest_len) override {
     dtls_fingerprint_ =
@@ -203,7 +204,7 @@ class FakeDtlsTransport : public DtlsTransportInternal {
     }
     return std::make_unique<rtc::SSLCertChain>(remote_cert_->Clone());
   }
-  bool ExportKeyingMaterial(const std::string& label,
+  bool ExportKeyingMaterial(absl::string_view label,
                             const uint8_t* context,
                             size_t context_len,
                             bool use_context,

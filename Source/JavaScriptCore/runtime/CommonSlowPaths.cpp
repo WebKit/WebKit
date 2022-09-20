@@ -829,7 +829,7 @@ ALWAYS_INLINE SlowPathReturnType iteratorNextTryFastImpl(VM& vm, JSGlobalObject*
     auto& metadata = bytecode.metadata(codeBlock);
 
     ASSERT(!GET(bytecode.m_next).jsValue());
-    JSObject* iterator = jsCast<JSObject*>(GET(bytecode.m_iterator).jsValue());;
+    JSObject* iterator = jsCast<JSObject*>(GET(bytecode.m_iterator).jsValue());
     JSCell* iterable = GET(bytecode.m_iterable).jsValue().asCell();
     if (auto arrayIterator = jsDynamicCast<JSArrayIterator*>(iterator)) {
         if (auto array = jsDynamicCast<JSArray*>(iterable)) {

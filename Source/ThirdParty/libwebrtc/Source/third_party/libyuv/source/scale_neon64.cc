@@ -601,8 +601,8 @@ void ScaleRowUp2_Bilinear_NEON(const uint8_t* src_ptr,
       "umlal       v4.8h, v1.8b, v31.8b          \n"  // 3*near+far (2, odd)
       "umlal       v5.8h, v0.8b, v31.8b          \n"  // 3*near+far (2, even)
 
-      "mov         v0.8h, v4.8h                  \n"
-      "mov         v1.8h, v5.8h                  \n"
+      "mov         v0.16b, v4.16b                \n"
+      "mov         v1.16b, v5.16b                \n"
       "mla         v4.8h, v2.8h, v30.8h          \n"  // 9 3 3 1 (1, odd)
       "mla         v5.8h, v3.8h, v30.8h          \n"  // 9 3 3 1 (1, even)
       "mla         v2.8h, v0.8h, v30.8h          \n"  // 9 3 3 1 (2, odd)
@@ -642,7 +642,7 @@ void ScaleRowUp2_Linear_12_NEON(const uint16_t* src_ptr,
       "ld1         {v1.8h}, [%1], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
 
-      "mov         v2.8h, v0.8h                  \n"
+      "mov         v2.16b, v0.16b                \n"
       "mla         v0.8h, v1.8h, v31.8h          \n"  // 3*near+far (odd)
       "mla         v1.8h, v2.8h, v31.8h          \n"  // 3*near+far (even)
 
@@ -679,7 +679,7 @@ void ScaleRowUp2_Bilinear_12_NEON(const uint16_t* src_ptr,
       "ld1         {v3.8h}, [%2], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%0, 448]          \n"  // prefetch 7 lines ahead
 
-      "mov         v0.8h, v2.8h                  \n"
+      "mov         v0.16b, v2.16b                \n"
       "mla         v2.8h, v3.8h, v31.8h          \n"  // 3*near+far (odd)
       "mla         v3.8h, v0.8h, v31.8h          \n"  // 3*near+far (even)
 
@@ -687,12 +687,12 @@ void ScaleRowUp2_Bilinear_12_NEON(const uint16_t* src_ptr,
       "ld1         {v5.8h}, [%3], #16            \n"  // 12345678 (16b)
       "prfm        pldl1keep, [%1, 448]          \n"  // prefetch 7 lines ahead
 
-      "mov         v0.8h, v4.8h                  \n"
+      "mov         v0.16b, v4.16b                \n"
       "mla         v4.8h, v5.8h, v31.8h          \n"  // 3*near+far (odd)
       "mla         v5.8h, v0.8h, v31.8h          \n"  // 3*near+far (even)
 
-      "mov         v0.8h, v4.8h                  \n"
-      "mov         v1.8h, v5.8h                  \n"
+      "mov         v0.16b, v4.16b                \n"
+      "mov         v1.16b, v5.16b                \n"
       "mla         v4.8h, v2.8h, v31.8h          \n"  // 9 3 3 1 (1, odd)
       "mla         v5.8h, v3.8h, v31.8h          \n"  // 9 3 3 1 (1, even)
       "mla         v2.8h, v0.8h, v31.8h          \n"  // 9 3 3 1 (2, odd)
@@ -887,8 +887,8 @@ void ScaleUVRowUp2_Bilinear_NEON(const uint8_t* src_ptr,
       "umlal       v4.8h, v1.8b, v31.8b          \n"  // 3*near+far (2, odd)
       "umlal       v5.8h, v0.8b, v31.8b          \n"  // 3*near+far (2, even)
 
-      "mov         v0.8h, v4.8h                  \n"
-      "mov         v1.8h, v5.8h                  \n"
+      "mov         v0.16b, v4.16b                \n"
+      "mov         v1.16b, v5.16b                \n"
       "mla         v4.8h, v2.8h, v30.8h          \n"  // 9 3 3 1 (1, odd)
       "mla         v5.8h, v3.8h, v30.8h          \n"  // 9 3 3 1 (1, even)
       "mla         v2.8h, v0.8h, v30.8h          \n"  // 9 3 3 1 (2, odd)

@@ -14,25 +14,20 @@
 #include <memory>
 
 #include "api/task_queue/task_queue_factory.h"
+#include "api/task_queue/test/mock_task_queue_base.h"
 #include "test/gmock.h"
 
 namespace webrtc {
 
 // MockTaskQueue enables immediate task run from global TaskQueueBase.
 // It's necessary for some tests depending on TaskQueueBase internally.
-class MockTaskQueue : public TaskQueueBase {
+class MockTaskQueue : public MockTaskQueueBase {
  public:
   MockTaskQueue() : current_(this) {}
 
   // Delete is deliberately defined as no-op as MockTaskQueue is expected to
   // hold onto current global TaskQueueBase throughout the testing.
   void Delete() override {}
-
-  MOCK_METHOD(void, PostTask, (std::unique_ptr<QueuedTask>), (override));
-  MOCK_METHOD(void,
-              PostDelayedTask,
-              (std::unique_ptr<QueuedTask>, uint32_t),
-              (override));
 
  private:
   CurrentTaskQueueSetter current_;

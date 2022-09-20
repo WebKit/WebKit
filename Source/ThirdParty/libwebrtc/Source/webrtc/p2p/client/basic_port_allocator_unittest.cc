@@ -14,6 +14,7 @@
 #include <ostream>  // no-presubmit-check TODO(webrtc:8982)
 
 #include "absl/algorithm/container.h"
+#include "absl/strings/string_view.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/p2p_constants.h"
 #include "p2p/base/stun_port.h"
@@ -42,9 +43,9 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "system_wrappers/include/metrics.h"
-#include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 using rtc::IPAddress;
 using rtc::SocketAddress;
@@ -153,13 +154,18 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
         nat_factory_(vss_.get(), kNatUdpAddr, kNatTcpAddr),
         nat_socket_factory_(new rtc::BasicPacketSocketFactory(&nat_factory_)),
         stun_server_(TestStunServer::Create(fss_.get(), kStunAddr)),
-        turn_server_(rtc::Thread::Current(), kTurnUdpIntAddr, kTurnUdpExtAddr),
+        turn_server_(rtc::Thread::Current(),
+                     fss_.get(),
+                     kTurnUdpIntAddr,
+                     kTurnUdpExtAddr),
         candidate_allocation_done_(false) {
     ServerAddresses stun_servers;
     stun_servers.insert(kStunAddr);
 
-    allocator_ =
-        std::make_unique<BasicPortAllocator>(&network_manager_, stun_servers);
+    allocator_ = std::make_unique<BasicPortAllocator>(
+        &network_manager_,
+        std::make_unique<rtc::BasicPacketSocketFactory>(fss_.get()),
+        stun_servers);
     allocator_->Initialize();
     allocator_->set_step_delay(kMinimumStepDelay);
     webrtc::metrics::Reset();
@@ -168,11 +174,11 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
   void AddInterface(const SocketAddress& addr) {
     network_manager_.AddInterface(addr);
   }
-  void AddInterface(const SocketAddress& addr, const std::string& if_name) {
+  void AddInterface(const SocketAddress& addr, absl::string_view if_name) {
     network_manager_.AddInterface(addr, if_name);
   }
   void AddInterface(const SocketAddress& addr,
-                    const std::string& if_name,
+                    absl::string_view if_name,
                     rtc::AdapterType type) {
     network_manager_.AddInterface(addr, if_name, type);
   }
@@ -196,7 +202,9 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
   }
   // Endpoint is on the public network. No STUN or TURN.
   void ResetWithNoServersOrNat() {
-    allocator_.reset(new BasicPortAllocator(&network_manager_));
+    allocator_.reset(new BasicPortAllocator(
+        &network_manager_,
+        std::make_unique<rtc::BasicPacketSocketFactory>(fss_.get())));
     allocator_->Initialize();
     allocator_->set_step_delay(kMinimumStepDelay);
   }
@@ -244,7 +252,7 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
     return true;
   }
 
-  bool CreateSession(int component, const std::string& content_name) {
+  bool CreateSession(int component, absl::string_view content_name) {
     session_ = CreateSession("session", content_name, component);
     if (!session_) {
       return false;
@@ -252,24 +260,24 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
     return true;
   }
 
-  std::unique_ptr<PortAllocatorSession> CreateSession(const std::string& sid,
+  std::unique_ptr<PortAllocatorSession> CreateSession(absl::string_view sid,
                                                       int component) {
     return CreateSession(sid, kContentName, component);
   }
 
   std::unique_ptr<PortAllocatorSession> CreateSession(
-      const std::string& sid,
-      const std::string& content_name,
+      absl::string_view sid,
+      absl::string_view content_name,
       int component) {
     return CreateSession(sid, content_name, component, kIceUfrag0, kIcePwd0);
   }
 
   std::unique_ptr<PortAllocatorSession> CreateSession(
-      const std::string& sid,
-      const std::string& content_name,
+      absl::string_view sid,
+      absl::string_view content_name,
       int component,
-      const std::string& ice_ufrag,
-      const std::string& ice_pwd) {
+      absl::string_view ice_ufrag,
+      absl::string_view ice_pwd) {
     std::unique_ptr<PortAllocatorSession> session =
         allocator_->CreateSession(content_name, component, ice_ufrag, ice_pwd);
     session->SignalPortReady.connect(this,
@@ -300,7 +308,7 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
   // Returns the number of ports that have matching type, protocol and
   // address.
   static int CountPorts(const std::vector<PortInterface*>& ports,
-                        const std::string& type,
+                        absl::string_view type,
                         ProtocolType protocol,
                         const SocketAddress& client_addr) {
     return absl::c_count_if(
@@ -311,8 +319,8 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
   }
 
   static int CountCandidates(const std::vector<Candidate>& candidates,
-                             const std::string& type,
-                             const std::string& proto,
+                             absl::string_view type,
+                             absl::string_view proto,
                              const SocketAddress& addr) {
     return absl::c_count_if(
         candidates, [type, proto, addr](const Candidate& c) {
@@ -323,8 +331,8 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
 
   // Find a candidate and return it.
   static bool FindCandidate(const std::vector<Candidate>& candidates,
-                            const std::string& type,
-                            const std::string& proto,
+                            absl::string_view type,
+                            absl::string_view proto,
                             const SocketAddress& addr,
                             Candidate* found) {
     auto it =
@@ -340,8 +348,8 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
 
   // Convenience method to call FindCandidate with no return.
   static bool HasCandidate(const std::vector<Candidate>& candidates,
-                           const std::string& type,
-                           const std::string& proto,
+                           absl::string_view type,
+                           absl::string_view proto,
                            const SocketAddress& addr) {
     return FindCandidate(candidates, type, proto, addr, nullptr);
   }
@@ -349,8 +357,8 @@ class BasicPortAllocatorTestBase : public ::testing::Test,
   // Version of HasCandidate that also takes a related address.
   static bool HasCandidateWithRelatedAddr(
       const std::vector<Candidate>& candidates,
-      const std::string& type,
-      const std::string& proto,
+      absl::string_view type,
+      absl::string_view proto,
       const SocketAddress& addr,
       const SocketAddress& related_addr) {
     return absl::c_any_of(
@@ -575,7 +583,9 @@ class BasicPortAllocatorTest : public FakeClockBase,
     // Add two IP addresses on the same interface.
     AddInterface(kClientAddr, "net1");
     AddInterface(kClientIPv6Addr, "net1");
-    allocator_.reset(new BasicPortAllocator(&network_manager_));
+    allocator_.reset(new BasicPortAllocator(
+        &network_manager_,
+        std::make_unique<rtc::BasicPacketSocketFactory>(fss_.get())));
     allocator_->Initialize();
     allocator_->SetConfiguration(allocator_->stun_servers(),
                                  allocator_->turn_servers(), 0,
@@ -616,7 +626,9 @@ class BasicPortAllocatorTest : public FakeClockBase,
       bool tcp_pruned) {
     turn_server_.AddInternalSocket(kTurnTcpIntAddr, PROTO_TCP);
     AddInterface(kClientAddr);
-    allocator_.reset(new BasicPortAllocator(&network_manager_));
+    allocator_.reset(new BasicPortAllocator(
+        &network_manager_,
+        std::make_unique<rtc::BasicPacketSocketFactory>(fss_.get())));
     allocator_->Initialize();
     allocator_->SetConfiguration(allocator_->stun_servers(),
                                  allocator_->turn_servers(), 0, prune_policy);
@@ -668,7 +680,9 @@ class BasicPortAllocatorTest : public FakeClockBase,
     AddInterface(kClientIPv6Addr, "net1", rtc::ADAPTER_TYPE_WIFI);
     AddInterface(kClientAddr2, "net2", rtc::ADAPTER_TYPE_CELLULAR);
     AddInterface(kClientIPv6Addr2, "net2", rtc::ADAPTER_TYPE_CELLULAR);
-    allocator_.reset(new BasicPortAllocator(&network_manager_));
+    allocator_.reset(new BasicPortAllocator(
+        &network_manager_,
+        std::make_unique<rtc::BasicPacketSocketFactory>(fss_.get())));
     allocator_->Initialize();
     allocator_->SetConfiguration(allocator_->stun_servers(),
                                  allocator_->turn_servers(), 0,
@@ -1634,7 +1648,9 @@ TEST_F(BasicPortAllocatorTest, TestSharedSocketWithNat) {
 TEST_F(BasicPortAllocatorTest, TestSharedSocketWithoutNatUsingTurn) {
   turn_server_.AddInternalSocket(kTurnTcpIntAddr, PROTO_TCP);
   AddInterface(kClientAddr);
-  allocator_.reset(new BasicPortAllocator(&network_manager_));
+  allocator_.reset(new BasicPortAllocator(
+      &network_manager_,
+      std::make_unique<rtc::BasicPacketSocketFactory>(fss_.get())));
   allocator_->Initialize();
 
   AddTurnServers(kTurnUdpIntAddr, kTurnTcpIntAddr);
@@ -1769,7 +1785,9 @@ TEST_F(BasicPortAllocatorTestWithRealClock,
   turn_server_.AddInternalSocket(rtc::SocketAddress("127.0.0.1", 3478),
                                  PROTO_UDP);
   AddInterface(kClientAddr);
-  allocator_.reset(new BasicPortAllocator(&network_manager_));
+  allocator_.reset(new BasicPortAllocator(
+      &network_manager_,
+      std::make_unique<rtc::BasicPacketSocketFactory>(fss_.get())));
   allocator_->Initialize();
   RelayServerConfig turn_server;
   RelayCredentials credentials(kTurnUsername, kTurnPassword);
@@ -2441,12 +2459,12 @@ TEST_F(BasicPortAllocatorTest, TestUseTurnServerAsStunSever) {
 }
 
 TEST_F(BasicPortAllocatorTest, TestDoNotUseTurnServerAsStunSever) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-UseTurnServerAsStunServer/Disabled/");
   ServerAddresses stun_servers;
   stun_servers.insert(kStunAddr);
   PortConfiguration port_config(stun_servers, "" /* user_name */,
-                                "" /* password */);
+                                "" /* password */, &field_trials);
   RelayServerConfig turn_servers =
       CreateTurnServers(kTurnUdpIntAddr, kTurnTcpIntAddr);
   port_config.AddRelay(turn_servers);

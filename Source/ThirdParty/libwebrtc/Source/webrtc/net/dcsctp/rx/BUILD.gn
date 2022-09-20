@@ -11,9 +11,9 @@ import("../../../webrtc.gni")
 rtc_library("data_tracker") {
   deps = [
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../common:sequence_numbers",
     "../packet:chunk",
     "../packet:data",
@@ -44,13 +44,34 @@ rtc_source_set("reassembly_streams") {
   absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
-rtc_library("traditional_reassembly_streams") {
+rtc_library("interleaved_reassembly_streams") {
   deps = [
     ":reassembly_streams",
     "../../../api:array_view",
     "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../common:sequence_numbers",
+    "../packet:chunk",
+    "../packet:data",
+    "../public:types",
+  ]
+  sources = [
+    "interleaved_reassembly_streams.cc",
+    "interleaved_reassembly_streams.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+rtc_library("traditional_reassembly_streams") {
+  deps = [
+    ":reassembly_streams",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
     "../common:sequence_numbers",
     "../packet:chunk",
     "../packet:data",
@@ -69,12 +90,12 @@ rtc_library("traditional_reassembly_streams") {
 
 rtc_library("reassembly_queue") {
   deps = [
+    ":interleaved_reassembly_streams",
     ":reassembly_streams",
     ":traditional_reassembly_streams",
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
     "../common:internal_types",
     "../common:sequence_numbers",
     "../common:str_join",
@@ -100,13 +121,14 @@ if (rtc_include_tests) {
 
     deps = [
       ":data_tracker",
+      ":interleaved_reassembly_streams",
       ":reassembly_queue",
       ":reassembly_streams",
       ":traditional_reassembly_streams",
       "../../../api:array_view",
+      "../../../api/task_queue:task_queue",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "../common:handover_testing",
       "../common:sequence_numbers",
@@ -119,6 +141,7 @@ if (rtc_include_tests) {
     absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
     sources = [
       "data_tracker_test.cc",
+      "interleaved_reassembly_streams_test.cc",
       "reassembly_queue_test.cc",
       "traditional_reassembly_streams_test.cc",
     ]

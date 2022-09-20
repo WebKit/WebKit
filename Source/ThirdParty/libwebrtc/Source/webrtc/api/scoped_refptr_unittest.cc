@@ -48,7 +48,7 @@ class ScopedRefCounted {
 
 TEST(ScopedRefptrTest, IsCopyConstructable) {
   FunctionsCalled called;
-  scoped_refptr<ScopedRefCounted> ptr = new ScopedRefCounted(&called);
+  scoped_refptr<ScopedRefCounted> ptr(new ScopedRefCounted(&called));
   scoped_refptr<ScopedRefCounted> another_ptr = ptr;
 
   EXPECT_TRUE(ptr);
@@ -59,7 +59,7 @@ TEST(ScopedRefptrTest, IsCopyConstructable) {
 TEST(ScopedRefptrTest, IsCopyAssignable) {
   FunctionsCalled called;
   scoped_refptr<ScopedRefCounted> another_ptr;
-  scoped_refptr<ScopedRefCounted> ptr = new ScopedRefCounted(&called);
+  scoped_refptr<ScopedRefCounted> ptr(new ScopedRefCounted(&called));
   another_ptr = ptr;
 
   EXPECT_TRUE(ptr);
@@ -69,7 +69,7 @@ TEST(ScopedRefptrTest, IsCopyAssignable) {
 
 TEST(ScopedRefptrTest, IsMoveConstructableWithoutExtraAddRefRelease) {
   FunctionsCalled called;
-  scoped_refptr<ScopedRefCounted> ptr = new ScopedRefCounted(&called);
+  scoped_refptr<ScopedRefCounted> ptr(new ScopedRefCounted(&called));
   scoped_refptr<ScopedRefCounted> another_ptr = std::move(ptr);
 
   EXPECT_FALSE(ptr);
@@ -81,7 +81,7 @@ TEST(ScopedRefptrTest, IsMoveConstructableWithoutExtraAddRefRelease) {
 TEST(ScopedRefptrTest, IsMoveAssignableWithoutExtraAddRefRelease) {
   FunctionsCalled called;
   scoped_refptr<ScopedRefCounted> another_ptr;
-  scoped_refptr<ScopedRefCounted> ptr = new ScopedRefCounted(&called);
+  scoped_refptr<ScopedRefCounted> ptr(new ScopedRefCounted(&called));
   another_ptr = std::move(ptr);
 
   EXPECT_FALSE(ptr);
@@ -100,8 +100,8 @@ TEST(ScopedRefptrTest, MovableDuringVectorReallocation) {
   std::vector<scoped_refptr<ScopedRefCounted>> ptrs;
   ptrs.reserve(1);
   // Insert more elements than reserved to provoke reallocation.
-  ptrs.push_back(new ScopedRefCounted(&called));
-  ptrs.push_back(new ScopedRefCounted(&called));
+  ptrs.emplace_back(new ScopedRefCounted(&called));
+  ptrs.emplace_back(new ScopedRefCounted(&called));
 
   EXPECT_EQ(called.addref, 2);
   EXPECT_EQ(called.release, 0);

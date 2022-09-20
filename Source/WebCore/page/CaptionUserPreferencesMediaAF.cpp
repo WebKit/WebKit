@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/SoftLinking.h>
 #include <wtf/URL.h>
+#include <wtf/cf/VectorCF.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -592,14 +593,7 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredLanguages() const
 Vector<String> CaptionUserPreferencesMediaAF::platformPreferredLanguages()
 {
     auto captionLanguages = adoptCF(MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
-    CFIndex captionLanguagesCount = captionLanguages ? CFArrayGetCount(captionLanguages.get()) : 0;
-
-    Vector<String> preferredLanguages;
-    preferredLanguages.reserveInitialCapacity(captionLanguagesCount);
-    for (CFIndex i = 0; i < captionLanguagesCount; i++)
-        preferredLanguages.uncheckedAppend(static_cast<CFStringRef>(CFArrayGetValueAtIndex(captionLanguages.get(), i)));
-
-    return preferredLanguages;
+    return captionLanguages ? makeVector<String>(captionLanguages.get()) : Vector<String> { };
 }
 
 void CaptionUserPreferencesMediaAF::setCachedPreferredLanguages(const Vector<String>& preferredLanguages)
@@ -626,12 +620,7 @@ Vector<String> CaptionUserPreferencesMediaAF::preferredAudioCharacteristics() co
     if (!characteristicCount)
         return CaptionUserPreferences::preferredAudioCharacteristics();
 
-    Vector<String> userPreferredAudioCharacteristics;
-    userPreferredAudioCharacteristics.reserveInitialCapacity(characteristicCount);
-    for (CFIndex i = 0; i < characteristicCount; i++)
-        userPreferredAudioCharacteristics.uncheckedAppend(static_cast<CFStringRef>(CFArrayGetValueAtIndex(characteristics.get(), i)));
-
-    return userPreferredAudioCharacteristics;
+    return makeVector<String>(characteristics.get());
 }
 #endif // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 

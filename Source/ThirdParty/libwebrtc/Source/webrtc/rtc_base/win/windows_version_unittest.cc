@@ -18,11 +18,11 @@ namespace rtc_win {
 namespace {
 
 void MethodSupportedOnWin10AndLater() {
-  RTC_DLOG(INFO) << "MethodSupportedOnWin10AndLater";
+  RTC_DLOG(LS_INFO) << "MethodSupportedOnWin10AndLater";
 }
 
 void MethodNotSupportedOnWin10AndLater() {
-  RTC_DLOG(INFO) << "MethodNotSupportedOnWin10AndLater";
+  RTC_DLOG(LS_INFO) << "MethodNotSupportedOnWin10AndLater";
 }
 
 // Use global GetVersion() and use it in a way a user would typically use it
@@ -39,7 +39,7 @@ TEST(WindowsVersion, GetVersionGlobalScopeAccessor) {
 TEST(WindowsVersion, ProcessorModelName) {
   std::string name = OSInfo::GetInstance()->processor_model_name();
   EXPECT_FALSE(name.empty());
-  RTC_DLOG(INFO) << "processor_model_name: " << name;
+  RTC_DLOG(LS_INFO) << "processor_model_name: " << name;
 }
 
 }  // namespace

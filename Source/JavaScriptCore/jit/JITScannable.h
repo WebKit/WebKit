@@ -34,8 +34,8 @@ class SlotVisitor;
 
 class Scannable {
 public:
-    Scannable() { }
-    virtual ~Scannable() { }
+    Scannable() = default;
+    virtual ~Scannable() = default;
 
     virtual void visitChildren(AbstractSlotVisitor&) = 0;
     virtual void visitChildren(SlotVisitor&) = 0;

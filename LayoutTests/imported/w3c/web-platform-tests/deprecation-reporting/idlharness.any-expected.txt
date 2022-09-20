@@ -1,0 +1,17 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS DeprecationReportBody interface: existence and properties of interface object
+PASS DeprecationReportBody interface object length
+PASS DeprecationReportBody interface object name
+PASS DeprecationReportBody interface: existence and properties of interface prototype object
+PASS DeprecationReportBody interface: existence and properties of interface prototype object's "constructor" property
+PASS DeprecationReportBody interface: existence and properties of interface prototype object's @@unscopables property
+PASS DeprecationReportBody interface: operation toJSON()
+PASS DeprecationReportBody interface: attribute id
+PASS DeprecationReportBody interface: attribute anticipatedRemoval
+PASS DeprecationReportBody interface: attribute message
+PASS DeprecationReportBody interface: attribute sourceFile
+PASS DeprecationReportBody interface: attribute lineNumber
+PASS DeprecationReportBody interface: attribute columnNumber
+

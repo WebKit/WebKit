@@ -1,4 +1,4 @@
-#!/usr/bin/env/python
+#!/usr/bin/env vpython3
 
 # Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
 #
@@ -24,7 +24,7 @@ following executable in your out folder:
 You will be able to compile the same executable targeting your host machine
 by running:
 
-  $ python tools_webrtc/executable_host_build.py --executable_name random_exec
+  $ vpython3 tools_webrtc/executable_host_build.py --executable_name random_exec
 
 The generated executable will have the same name as the input executable with
 suffix '_host'.
@@ -62,40 +62,39 @@ import find_depot_tools
 
 
 def _ParseArgs():
-    desc = 'Generates a GN executable targeting the host machine.'
-    parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument('--executable_name',
-                        required=True,
-                        help='Name of the executable to build')
-    args = parser.parse_args()
-    return args
+  desc = 'Generates a GN executable targeting the host machine.'
+  parser = argparse.ArgumentParser(description=desc)
+  parser.add_argument('--executable_name',
+                      required=True,
+                      help='Name of the executable to build')
+  args = parser.parse_args()
+  return args
 
 
 @contextmanager
 def HostBuildDir():
-    temp_dir = tempfile.mkdtemp()
-    try:
-        yield temp_dir
-    finally:
-        shutil.rmtree(temp_dir)
+  temp_dir = tempfile.mkdtemp()
+  try:
+    yield temp_dir
+  finally:
+    shutil.rmtree(temp_dir)
 
 
 def _RunCommand(argv, cwd=SRC_DIR, **kwargs):
-    with open(os.devnull, 'w') as devnull:
-        subprocess.check_call(argv, cwd=cwd, stdout=devnull, **kwargs)
+  with open(os.devnull, 'w') as devnull:
+    subprocess.check_call(argv, cwd=cwd, stdout=devnull, **kwargs)
 
 
 def DepotToolPath(*args):
-    return os.path.join(find_depot_tools.DEPOT_TOOLS_PATH, *args)
+  return os.path.join(find_depot_tools.DEPOT_TOOLS_PATH, *args)
 
 
 if __name__ == '__main__':
-    ARGS = _ParseArgs()
-    EXECUTABLE_TO_BUILD = ARGS.executable_name
-    EXECUTABLE_FINAL_NAME = ARGS.executable_name + '_host'
-    with HostBuildDir() as build_dir:
-        _RunCommand([sys.executable, DepotToolPath('gn.py'), 'gen', build_dir])
-        _RunCommand(
-            [DepotToolPath('ninja'), '-C', build_dir, EXECUTABLE_TO_BUILD])
-        shutil.copy(os.path.join(build_dir, EXECUTABLE_TO_BUILD),
-                    EXECUTABLE_FINAL_NAME)
+  ARGS = _ParseArgs()
+  EXECUTABLE_TO_BUILD = ARGS.executable_name
+  EXECUTABLE_FINAL_NAME = ARGS.executable_name + '_host'
+  with HostBuildDir() as build_dir:
+    _RunCommand([sys.executable, DepotToolPath('gn.py'), 'gen', build_dir])
+    _RunCommand([DepotToolPath('ninja'), '-C', build_dir, EXECUTABLE_TO_BUILD])
+    shutil.copy(os.path.join(build_dir, EXECUTABLE_TO_BUILD),
+                EXECUTABLE_FINAL_NAME)

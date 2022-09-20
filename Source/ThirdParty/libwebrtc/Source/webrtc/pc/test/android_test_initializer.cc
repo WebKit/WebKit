@@ -10,22 +10,14 @@
 
 #include "pc/test/android_test_initializer.h"
 
+#include <jni.h>
 #include <pthread.h>
-
-#include "rtc_base/ignore_wundef.h"
-
-// Note: this dependency is dangerous since it reaches into Chromium's base.
-// There's a risk of e.g. macro clashes. This file may only be used in tests.
-// Since we use Chromes build system for creating the gtest binary, this should
-// be fine.
-RTC_PUSH_IGNORING_WUNDEF()
-#include "base/android/jni_android.h"
-RTC_POP_IGNORING_WUNDEF()
+#include <stddef.h>
 
 #include "modules/utility/include/jvm_android.h"
 #include "rtc_base/checks.h"
-
-// TODO(phoglund): This include is also to a target we can't really depend on.
+#include "sdk/android/src/jni/jvm.h"
+// TODO(phoglund): This include is to a target we can't really depend on.
 // We need to either break it out into a smaller target or find some way to
 // not use it.
 #include "rtc_base/ssl_adapter.h"
@@ -40,8 +32,8 @@ static pthread_once_t g_initialize_once = PTHREAD_ONCE_INIT;
 // C++ runner binary, we want to initialize the same global objects we normally
 // do if this had been a Java binary.
 void EnsureInitializedOnce() {
-  RTC_CHECK(::base::android::IsVMInitialized());
-  JNIEnv* jni = ::base::android::AttachCurrentThread();
+  RTC_CHECK(::webrtc::jni::GetJVM() != nullptr);
+  JNIEnv* jni = ::webrtc::jni::AttachCurrentThreadIfNeeded();
   JavaVM* jvm = NULL;
   RTC_CHECK_EQ(0, jni->GetJavaVM(&jvm));
 

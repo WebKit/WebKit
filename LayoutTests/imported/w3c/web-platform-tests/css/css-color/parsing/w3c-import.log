@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mixed-num-pct.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/opacity-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/opacity-invalid.html

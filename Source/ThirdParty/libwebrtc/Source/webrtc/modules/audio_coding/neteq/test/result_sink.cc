@@ -10,8 +10,9 @@
 
 #include "modules/audio_coding/neteq/test/result_sink.h"
 
-#include <vector>
+#include <string>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/string_encode.h"
@@ -49,7 +50,7 @@ void Convert(const webrtc::NetEqNetworkStatistics& stats_raw,
 
 void AddMessage(FILE* file,
                 rtc::MessageDigest* digest,
-                const std::string& message) {
+                absl::string_view message) {
   int32_t size = message.length();
   if (file)
     ASSERT_EQ(1u, fwrite(&size, sizeof(size), 1, file));
@@ -63,11 +64,11 @@ void AddMessage(FILE* file,
 
 #endif  // WEBRTC_NETEQ_UNITTEST_BITEXACT
 
-ResultSink::ResultSink(const std::string& output_file)
+ResultSink::ResultSink(absl::string_view output_file)
     : output_fp_(nullptr),
       digest_(rtc::MessageDigestFactory::Create(rtc::DIGEST_SHA_1)) {
   if (!output_file.empty()) {
-    output_fp_ = fopen(output_file.c_str(), "wb");
+    output_fp_ = fopen(std::string(output_file).c_str(), "wb");
     EXPECT_TRUE(output_fp_ != NULL);
   }
 }
@@ -90,16 +91,16 @@ void ResultSink::AddResult(const NetEqNetworkStatistics& stats_raw) {
 #endif  // WEBRTC_NETEQ_UNITTEST_BITEXACT
 }
 
-void ResultSink::VerifyChecksum(const std::string& checksum) {
-  std::vector<char> buffer;
+void ResultSink::VerifyChecksum(absl::string_view checksum) {
+  std::string buffer;
   buffer.resize(digest_->Size());
-  digest_->Finish(&buffer[0], buffer.size());
-  const std::string result = rtc::hex_encode(&buffer[0], digest_->Size());
+  digest_->Finish(buffer.data(), buffer.size());
+  const std::string result = rtc::hex_encode(buffer);
   if (checksum.size() == result.size()) {
     EXPECT_EQ(checksum, result);
   } else {
     // Check result is one the '|'-separated checksums.
-    EXPECT_NE(checksum.find(result), std::string::npos)
+    EXPECT_NE(checksum.find(result), absl::string_view::npos)
         << result << " should be one of these:\n"
         << checksum;
   }

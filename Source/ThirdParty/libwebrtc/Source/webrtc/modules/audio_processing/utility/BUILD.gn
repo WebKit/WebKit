@@ -50,7 +50,6 @@ if (rtc_include_tests) {
     sources = [ "cascaded_biquad_filter_unittest.cc" ]
     deps = [
       ":cascaded_biquad_filter",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "//testing/gtest",
     ]
@@ -62,7 +61,6 @@ if (rtc_include_tests) {
     sources = [ "delay_estimator_unittest.cc" ]
     deps = [
       ":legacy_delay_estimator",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "//testing/gtest",
     ]

@@ -25,6 +25,10 @@ namespace {
 static const int kHeaderSize = 32;
 static const int kFrameHeaderSize = 12;
 static uint8_t dummy_payload[4] = {0, 1, 2, 3};
+// As the default parameter when the width and height of encodedImage are 0,
+// the values are copied from ivf_file_writer.cc
+constexpr int kDefaultWidth = 1280;
+constexpr int kDefaultHeight = 720;
 }  // namespace
 
 class IvfFileWriterTest : public ::testing::Test {
@@ -175,6 +179,114 @@ TEST_F(IvfFileWriterTest, WritesBasicUnknownCodecFileMsTimestamp) {
 TEST_F(IvfFileWriterTest, ClosesWhenReachesLimit) {
   const uint8_t fourcc[4] = {'V', 'P', '8', '0'};
   const int kWidth = 320;
+  const int kHeight = 240;
+  const int kNumFramesToWrite = 2;
+  const int kNumFramesToFit = 1;
+
+  file_writer_ = IvfFileWriter::Wrap(
+      FileWrapper::OpenWriteOnly(file_name_),
+      kHeaderSize +
+          kNumFramesToFit * (kFrameHeaderSize + sizeof(dummy_payload)));
+  ASSERT_TRUE(file_writer_.get());
+
+  ASSERT_FALSE(WriteDummyTestFrames(kVideoCodecVP8, kWidth, kHeight,
+                                    kNumFramesToWrite, true));
+  ASSERT_FALSE(file_writer_->Close());
+
+  FileWrapper out_file = FileWrapper::OpenReadOnly(file_name_);
+  VerifyIvfHeader(&out_file, fourcc, kWidth, kHeight, kNumFramesToFit, true);
+  VerifyDummyTestFrames(&out_file, kNumFramesToFit);
+
+  out_file.Close();
+}
+
+TEST_F(IvfFileWriterTest, UseDefaultValueWhenWidthAndHeightAreZero) {
+  const uint8_t fourcc[4] = {'V', 'P', '8', '0'};
+  const int kWidth = 0;
+  const int kHeight = 0;
+  const int kNumFramesToWrite = 2;
+  const int kNumFramesToFit = 1;
+
+  file_writer_ = IvfFileWriter::Wrap(
+      FileWrapper::OpenWriteOnly(file_name_),
+      kHeaderSize +
+          kNumFramesToFit * (kFrameHeaderSize + sizeof(dummy_payload)));
+  ASSERT_TRUE(file_writer_.get());
+
+  ASSERT_FALSE(WriteDummyTestFrames(kVideoCodecVP8, kWidth, kHeight,
+                                    kNumFramesToWrite, true));
+  ASSERT_FALSE(file_writer_->Close());
+
+  FileWrapper out_file = FileWrapper::OpenReadOnly(file_name_);
+  // When the width and height are zero, we should expect the width and height
+  // in IvfHeader to be kDefaultWidth and kDefaultHeight instead of kWidth and
+  // kHeight.
+  VerifyIvfHeader(&out_file, fourcc, kDefaultWidth, kDefaultHeight,
+                  kNumFramesToFit, true);
+  VerifyDummyTestFrames(&out_file, kNumFramesToFit);
+
+  out_file.Close();
+}
+
+TEST_F(IvfFileWriterTest, UseDefaultValueWhenOnlyWidthIsZero) {
+  const uint8_t fourcc[4] = {'V', 'P', '8', '0'};
+  const int kWidth = 0;
+  const int kHeight = 360;
+  const int kNumFramesToWrite = 2;
+  const int kNumFramesToFit = 1;
+
+  file_writer_ = IvfFileWriter::Wrap(
+      FileWrapper::OpenWriteOnly(file_name_),
+      kHeaderSize +
+          kNumFramesToFit * (kFrameHeaderSize + sizeof(dummy_payload)));
+  ASSERT_TRUE(file_writer_.get());
+
+  ASSERT_FALSE(WriteDummyTestFrames(kVideoCodecVP8, kWidth, kHeight,
+                                    kNumFramesToWrite, true));
+  ASSERT_FALSE(file_writer_->Close());
+
+  FileWrapper out_file = FileWrapper::OpenReadOnly(file_name_);
+  // When the width and height are zero, we should expect the width and height
+  // in IvfHeader to be kDefaultWidth and kDefaultHeight instead of kWidth and
+  // kHeight.
+  VerifyIvfHeader(&out_file, fourcc, kDefaultWidth, kDefaultHeight,
+                  kNumFramesToFit, true);
+  VerifyDummyTestFrames(&out_file, kNumFramesToFit);
+
+  out_file.Close();
+}
+
+TEST_F(IvfFileWriterTest, UseDefaultValueWhenOnlyHeightIsZero) {
+  const uint8_t fourcc[4] = {'V', 'P', '8', '0'};
+  const int kWidth = 240;
+  const int kHeight = 0;
+  const int kNumFramesToWrite = 2;
+  const int kNumFramesToFit = 1;
+
+  file_writer_ = IvfFileWriter::Wrap(
+      FileWrapper::OpenWriteOnly(file_name_),
+      kHeaderSize +
+          kNumFramesToFit * (kFrameHeaderSize + sizeof(dummy_payload)));
+  ASSERT_TRUE(file_writer_.get());
+
+  ASSERT_FALSE(WriteDummyTestFrames(kVideoCodecVP8, kWidth, kHeight,
+                                    kNumFramesToWrite, true));
+  ASSERT_FALSE(file_writer_->Close());
+
+  FileWrapper out_file = FileWrapper::OpenReadOnly(file_name_);
+  // When the width and height are zero, we should expect the width and height
+  // in IvfHeader to be kDefaultWidth and kDefaultHeight instead of kWidth and
+  // kHeight.
+  VerifyIvfHeader(&out_file, fourcc, kDefaultWidth, kDefaultHeight,
+                  kNumFramesToFit, true);
+  VerifyDummyTestFrames(&out_file, kNumFramesToFit);
+
+  out_file.Close();
+}
+
+TEST_F(IvfFileWriterTest, UseDefaultValueWhenHeightAndWidthAreNotZero) {
+  const uint8_t fourcc[4] = {'V', 'P', '8', '0'};
+  const int kWidth = 360;
   const int kHeight = 240;
   const int kNumFramesToWrite = 2;
   const int kNumFramesToFit = 1;

@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 
+#include "api/make_ref_counted.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/ref_count.h"
 #include "test/gmock.h"
@@ -98,7 +99,7 @@ class SignalingProxyTest : public ::testing::Test {
     ASSERT_TRUE(signaling_thread_->Start());
     fake_ = Fake::Create();
     fake_signaling_proxy_ =
-        FakeSignalingProxy::Create(signaling_thread_.get(), fake_.get());
+        FakeSignalingProxy::Create(signaling_thread_.get(), fake_);
   }
 
  protected:
@@ -186,8 +187,8 @@ class ProxyTest : public ::testing::Test {
     ASSERT_TRUE(signaling_thread_->Start());
     ASSERT_TRUE(worker_thread_->Start());
     fake_ = Fake::Create();
-    fake_proxy_ = FakeProxy::Create(signaling_thread_.get(),
-                                    worker_thread_.get(), fake_.get());
+    fake_proxy_ =
+        FakeProxy::Create(signaling_thread_.get(), worker_thread_.get(), fake_);
   }
 
  protected:
@@ -254,56 +255,6 @@ TEST_F(ProxyTest, WorkerMethod2) {
       .WillOnce(DoAll(InvokeWithoutArgs(this, &ProxyTest::CheckWorkerThread),
                       Return("Method2")));
   EXPECT_EQ("Method2", fake_proxy_->Method2(arg1, arg2));
-}
-
-// Interface for testing OWNED_PROXY_MAP.
-class FooInterface {
- public:
-  virtual ~FooInterface() {}
-  virtual void Bar() = 0;
-};
-
-class Foo : public FooInterface {
- public:
-  Foo() {}
-  MOCK_METHOD(void, Bar, (), (override));
-};
-
-BEGIN_OWNED_PROXY_MAP(Foo)
-PROXY_PRIMARY_THREAD_DESTRUCTOR()
-PROXY_METHOD0(void, Bar)
-END_PROXY_MAP(Foo)
-
-class OwnedProxyTest : public ::testing::Test {
- public:
-  OwnedProxyTest()
-      : signaling_thread_(rtc::Thread::Create()),
-        worker_thread_(rtc::Thread::Create()),
-        foo_(new Foo()),
-        foo_proxy_(FooProxy::Create(signaling_thread_.get(),
-                                    worker_thread_.get(),
-                                    std::unique_ptr<FooInterface>(foo_))) {
-    signaling_thread_->Start();
-    worker_thread_->Start();
-  }
-
-  void CheckSignalingThread() { EXPECT_TRUE(signaling_thread_->IsCurrent()); }
-  void CheckWorkerThread() { EXPECT_TRUE(worker_thread_->IsCurrent()); }
-
- protected:
-  std::unique_ptr<rtc::Thread> signaling_thread_;
-  std::unique_ptr<rtc::Thread> worker_thread_;
-  Foo* foo_;  // Owned by foo_proxy_, not this class.
-  std::unique_ptr<FooInterface> foo_proxy_;
-};
-
-// Just tests that a method can be invoked using an "owned proxy" (as opposed
-// to normal ref-counted version).
-TEST_F(OwnedProxyTest, BasicTest) {
-  EXPECT_CALL(*foo_, Bar())
-      .Times(Exactly(1))
-      .WillOnce(InvokeWithoutArgs(this, &OwnedProxyTest::CheckSignalingThread));
-  foo_proxy_->Bar();
 }
 
 }  // namespace webrtc

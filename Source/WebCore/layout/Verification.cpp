@@ -195,8 +195,8 @@ static bool outputMismatchingBlockBoxInformationIfNeeded(TextStream& stream, con
 
         auto marginBefore = boxGeometry.marginBefore();
         auto marginAfter = boxGeometry.marginAfter();
-        if (layoutBox.formattingContextRoot().establishesBlockFormattingContext()) {
-            auto& formattingState = downcast<BlockFormattingState>(layoutState.formattingStateForBox(layoutBox));
+        if (FormattingContext::formattingContextRoot(layoutBox).establishesBlockFormattingContext()) {
+            auto& formattingState = downcast<BlockFormattingState>(layoutState.formattingStateForFormattingContext(FormattingContext::formattingContextRoot(layoutBox)));
             auto verticalMargin = formattingState.usedVerticalMargin(layoutBox);
             marginBefore = verticalMargin.nonCollapsedValues.before;
             marginAfter = verticalMargin.nonCollapsedValues.after;

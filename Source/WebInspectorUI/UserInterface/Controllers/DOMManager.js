@@ -604,9 +604,7 @@ WI.DOMManager = class DOMManager extends WI.Object
             // Re-resolve the node in the console's object group when adding to the console.
             let domNode = this.nodeForId(nodeId);
             WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
-                const specialLogStyles = true;
-                const shouldRevealConsole = false;
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(WI.UIString("Selected Element"), remoteObject, specialLogStyles, shouldRevealConsole);
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(WI.UIString("Selected Element"), remoteObject, {addSpecialUserLogClass: true});
             });
         }
 

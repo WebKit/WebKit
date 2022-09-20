@@ -14,7 +14,7 @@
 
 #include "examples/unityplugin/class_reference_holder.h"
 #include "rtc_base/ssl_adapter.h"
-#include "sdk/android/src/jni/class_reference_holder.h"
+#include "sdk/android/native_api/jni/class_loader.h"
 #include "sdk/android/src/jni/jni_helpers.h"
 
 namespace webrtc {
@@ -27,14 +27,13 @@ extern "C" jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM* jvm, void* reserved) {
     return -1;
 
   RTC_CHECK(rtc::InitializeSSL()) << "Failed to InitializeSSL()";
-  LoadGlobalClassReferenceHolder();
+  webrtc::InitClassLoader(GetEnv());
   unity_plugin::LoadGlobalClassReferenceHolder();
 
   return ret;
 }
 
 extern "C" void JNIEXPORT JNICALL JNI_OnUnLoad(JavaVM* jvm, void* reserved) {
-  FreeGlobalClassReferenceHolder();
   unity_plugin::FreeGlobalClassReferenceHolder();
   RTC_CHECK(rtc::CleanupSSL()) << "Failed to CleanupSSL()";
 }

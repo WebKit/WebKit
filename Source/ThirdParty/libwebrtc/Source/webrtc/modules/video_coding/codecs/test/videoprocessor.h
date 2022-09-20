@@ -21,7 +21,6 @@
 
 #include "absl/types/optional.h"
 #include "api/sequence_checker.h"
-#include "api/task_queue/queued_task.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/videocodec_test_fixture.h"
 #include "api/video/encoded_image.h"
@@ -37,7 +36,6 @@
 #include "modules/video_coding/utility/ivf_file_writer.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
 #include "test/testsupport/frame_reader.h"
@@ -69,6 +67,9 @@ class VideoProcessor {
                  IvfFileWriterMap* encoded_frame_writers,
                  FrameWriterList* decoded_frame_writers);
   ~VideoProcessor();
+
+  VideoProcessor(const VideoProcessor&) = delete;
+  VideoProcessor& operator=(const VideoProcessor&) = delete;
 
   // Reads a frame and sends it to the encoder. When the encode callback
   // is received, the encoded frame is buffered. After encoding is finished
@@ -103,8 +104,11 @@ class VideoProcessor {
 
       // Post the callback to the right task queue, if needed.
       if (!task_queue_->IsCurrent()) {
-        task_queue_->PostTask(std::make_unique<EncodeCallbackTask>(
-            video_processor_, encoded_image, codec_specific_info));
+        VideoProcessor* video_processor = video_processor_;
+        task_queue_->PostTask([video_processor, encoded_image,
+                               codec_specific_info = *codec_specific_info] {
+          video_processor->FrameEncoded(encoded_image, codec_specific_info);
+        });
         return Result(Result::OK, 0);
       }
 
@@ -113,27 +117,6 @@ class VideoProcessor {
     }
 
    private:
-    class EncodeCallbackTask : public QueuedTask {
-     public:
-      EncodeCallbackTask(VideoProcessor* video_processor,
-                         const webrtc::EncodedImage& encoded_image,
-                         const webrtc::CodecSpecificInfo* codec_specific_info)
-          : video_processor_(video_processor),
-            encoded_image_(encoded_image),
-            codec_specific_info_(*codec_specific_info) {
-      }
-
-      bool Run() override {
-        video_processor_->FrameEncoded(encoded_image_, codec_specific_info_);
-        return true;
-      }
-
-     private:
-      VideoProcessor* const video_processor_;
-      webrtc::EncodedImage encoded_image_;
-      const webrtc::CodecSpecificInfo codec_specific_info_;
-    };
-
     VideoProcessor* const video_processor_;
     TaskQueueBase* const task_queue_;
   };
@@ -183,7 +166,7 @@ class VideoProcessor {
   // lower layer frames, we merge and store the layer frames in this method.
   const webrtc::EncodedImage* BuildAndStoreSuperframe(
       const EncodedImage& encoded_image,
-      const VideoCodecType codec,
+      VideoCodecType codec,
       size_t frame_number,
       size_t simulcast_svc_idx,
       bool inter_layer_predicted) RTC_RUN_ON(sequence_checker_);
@@ -270,8 +253,6 @@ class VideoProcessor {
 
   // This class must be operated on a TaskQueue.
   RTC_NO_UNIQUE_ADDRESS SequenceChecker sequence_checker_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(VideoProcessor);
 };
 
 }  // namespace test

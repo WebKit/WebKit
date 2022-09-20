@@ -70,7 +70,7 @@ private:
     RegExp* lookupOrCreate(const WTF::String& patternString, OptionSet<Yarr::Flags>);
     void addToStrongCache(RegExp*);
     RegExpCacheMap m_weakCache; // Holds all regular expressions currently live.
-    int m_nextEntryInStrongCache;
+    int m_nextEntryInStrongCache { 0 };
     std::array<Strong<RegExp>, maxStrongCacheableEntries> m_strongCache; // Holds a select few regular expressions that have compiled and executed
     Strong<RegExp> m_emptyRegExp;
     VM* const m_vm;

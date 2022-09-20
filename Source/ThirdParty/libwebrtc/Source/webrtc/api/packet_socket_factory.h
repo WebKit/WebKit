@@ -79,7 +79,7 @@ class RTC_EXPORT PacketSocketFactory {
   virtual AsyncResolverInterface* CreateAsyncResolver() {
     // Default implementation, so that downstream users can remove this
     // immediately after changing to CreateAsyncDnsResolver
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return nullptr;
   }
 

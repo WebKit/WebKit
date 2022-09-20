@@ -21,8 +21,9 @@
 
 namespace cricket {
 
-TransportDescriptionFactory::TransportDescriptionFactory()
-    : secure_(SEC_DISABLED) {}
+TransportDescriptionFactory::TransportDescriptionFactory(
+    const webrtc::FieldTrialsView& field_trials)
+    : secure_(SEC_DISABLED), field_trials_(field_trials) {}
 
 TransportDescriptionFactory::~TransportDescriptionFactory() = default;
 
@@ -109,7 +110,7 @@ std::unique_ptr<TransportDescription> TransportDescriptionFactory::CreateAnswer(
       } else {
         RTC_LOG(LS_ERROR) << "Remote offer connection role is " << role
                           << " which is a protocol violation";
-        RTC_NOTREACHED();
+        RTC_DCHECK_NOTREACHED();
       }
 
       if (!SetSecurityInfo(desc.get(), role)) {

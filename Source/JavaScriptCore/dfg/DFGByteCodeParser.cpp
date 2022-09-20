@@ -111,8 +111,6 @@ public:
         , m_codeBlock(graph.m_codeBlock)
         , m_profiledBlock(graph.m_profiledBlock)
         , m_graph(graph)
-        , m_currentBlock(nullptr)
-        , m_currentIndex(0)
         , m_constantUndefined(graph.freeze(jsUndefined()))
         , m_constantNull(graph.freeze(jsNull()))
         , m_constantNaN(graph.freeze(jsNumber(PNaN)))
@@ -120,10 +118,6 @@ public:
         , m_numArguments(m_codeBlock->numParameters())
         , m_numLocals(m_codeBlock->numCalleeLocals())
         , m_numTmps(m_codeBlock->numTmps())
-        , m_parameterSlots(0)
-        , m_numPassedVarArgs(0)
-        , m_inlineStackTop(nullptr)
-        , m_currentInstruction(nullptr)
         , m_hasDebuggerEnabled(graph.hasDebuggerEnabled())
     {
         ASSERT(m_profiledBlock);
@@ -986,13 +980,19 @@ private:
     ArrayMode getArrayMode(Array::Action action)
     {
         CodeBlock* codeBlock = m_inlineStackTop->m_profiledBlock;
-        ArrayProfile* profile = codeBlock->getArrayProfile(codeBlock->bytecodeIndex(m_currentInstruction));
-        return getArrayMode(*profile, action);
+        ConcurrentJSLocker locker(codeBlock->m_lock);
+        ArrayProfile* profile = codeBlock->getArrayProfile(locker, codeBlock->bytecodeIndex(m_currentInstruction));
+        return getArrayMode(locker, *profile, action);
     }
 
     ArrayMode getArrayMode(ArrayProfile& profile, Array::Action action)
     {
         ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+        return getArrayMode(locker, profile, action);
+    }
+
+    ArrayMode getArrayMode(const ConcurrentJSLocker& locker, ArrayProfile& profile, Array::Action action)
+    {
         profile.computeUpdatedPrediction(locker, m_inlineStackTop->m_profiledBlock);
         bool makeSafe = profile.outOfBounds(locker);
         return ArrayMode::fromObserved(locker, &profile, action, makeSafe);
@@ -1130,9 +1130,9 @@ private:
     Graph& m_graph;
 
     // The current block being generated.
-    BasicBlock* m_currentBlock;
+    BasicBlock* m_currentBlock { nullptr };
     // The bytecode index of the current instruction being generated.
-    BytecodeIndex m_currentIndex;
+    BytecodeIndex m_currentIndex { 0 };
     // The semantic origin of the current node if different from the current Index.
     CodeOrigin m_currentSemanticOrigin;
     // The exit origin of the current node if different from the current Index.
@@ -1159,9 +1159,9 @@ private:
     // number includes the CallFrame slots that we initialize for the callee
     // (but not the callee-initialized CallerFrame and ReturnPC slots).
     // This number is 0 if and only if this function is a leaf.
-    unsigned m_parameterSlots;
+    unsigned m_parameterSlots { 0 };
     // The number of var args passed to the next var arg node.
-    unsigned m_numPassedVarArgs;
+    unsigned m_numPassedVarArgs { 0 };
 
     struct InlineStackEntry {
         ByteCodeParser* const m_byteCodeParser;
@@ -1234,13 +1234,13 @@ private:
             return operand.virtualRegister() + m_inlineCallFrame->stackOffset;
         }
     };
-    
-    InlineStackEntry* m_inlineStackTop;
-    
+
+    InlineStackEntry* m_inlineStackTop { nullptr };
+
     ICStatusContextStack m_icContextStack;
     
     struct DelayedSetLocal {
-        DelayedSetLocal() { }
+        DelayedSetLocal() = default;
         DelayedSetLocal(const CodeOrigin& origin, Operand operand, Node* value, SetMode setMode)
             : m_origin(origin)
             , m_operand(operand)
@@ -1265,7 +1265,7 @@ private:
 
     Vector<DelayedSetLocal, 2> m_setLocalQueue;
 
-    const JSInstruction* m_currentInstruction;
+    const JSInstruction* m_currentInstruction { nullptr };
     const bool m_hasDebuggerEnabled;
     bool m_hasAnyForceOSRExits { false };
 };
@@ -2074,7 +2074,7 @@ bool ByteCodeParser::handleVarargsInlining(Node* callTargetNode, Operand result,
             // arguments received inside the callee. But that probably won't matter for most
             // calls.
             if (codeBlock && argument < static_cast<unsigned>(codeBlock->numParameters())) {
-                ConcurrentJSLocker locker(codeBlock->m_lock);
+                ConcurrentJSLocker locker(codeBlock->valueProfileLock());
                 ValueProfile& profile = codeBlock->valueProfileForArgument(argument);
                 variable->predict(profile.computeUpdatedPrediction(locker));
             }
@@ -3052,6 +3052,16 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             
             insertChecks();
             Node* resultNode = addToGraph(StringReplaceRegExp, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
+            setResult(resultNode);
+            return true;
+        }
+
+        case StringPrototypeReplaceStringIntrinsic: {
+            if (argumentCountIncludingThis < 3)
+                return false;
+
+            insertChecks();
+            Node* resultNode = addToGraph(StringReplaceString, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
             setResult(resultNode);
             return true;
         }
@@ -7077,9 +7087,9 @@ void ByteCodeParser::parseBlock(unsigned limit)
             HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenArguments;
 
             {
-                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->m_lock);
+                ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->valueProfileLock());
 
-                buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
+                buffer->forEach([&](ValueProfileAndVirtualRegister& profile) {
                     VirtualRegister operand(profile.m_operand);
                     SpeculatedType prediction = profile.computeUpdatedPrediction(locker);
                     if (operand.isLocal())

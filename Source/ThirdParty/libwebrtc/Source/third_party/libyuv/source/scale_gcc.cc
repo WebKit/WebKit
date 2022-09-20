@@ -779,7 +779,7 @@ static const uvec8 kLinearShuffleFar = {2,  3,  0, 1, 6,  7,  4,  5,
 static const uvec8 kLinearMadd31 = {3, 1, 1, 3, 3, 1, 1, 3,
                                     3, 1, 1, 3, 3, 1, 1, 3};
 
-#ifdef HAS_SCALEROWUP2LINEAR_SSE2
+#ifdef HAS_SCALEROWUP2_LINEAR_SSE2
 void ScaleRowUp2_Linear_SSE2(const uint8_t* src_ptr,
                              uint8_t* dst_ptr,
                              int dst_width) {
@@ -833,7 +833,7 @@ void ScaleRowUp2_Linear_SSE2(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2BILINEAR_SSE2
+#ifdef HAS_SCALEROWUP2_BILINEAR_SSE2
 void ScaleRowUp2_Bilinear_SSE2(const uint8_t* src_ptr,
                                ptrdiff_t src_stride,
                                uint8_t* dst_ptr,
@@ -949,7 +949,7 @@ void ScaleRowUp2_Bilinear_SSE2(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2LINEAR_12_SSSE3
+#ifdef HAS_SCALEROWUP2_LINEAR_12_SSSE3
 void ScaleRowUp2_Linear_12_SSSE3(const uint16_t* src_ptr,
                                  uint16_t* dst_ptr,
                                  int dst_width) {
@@ -999,7 +999,7 @@ void ScaleRowUp2_Linear_12_SSSE3(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2BILINEAR_12_SSSE3
+#ifdef HAS_SCALEROWUP2_BILINEAR_12_SSSE3
 void ScaleRowUp2_Bilinear_12_SSSE3(const uint16_t* src_ptr,
                                    ptrdiff_t src_stride,
                                    uint16_t* dst_ptr,
@@ -1098,7 +1098,7 @@ void ScaleRowUp2_Bilinear_12_SSSE3(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2LINEAR_16_SSE2
+#ifdef HAS_SCALEROWUP2_LINEAR_16_SSE2
 void ScaleRowUp2_Linear_16_SSE2(const uint16_t* src_ptr,
                                 uint16_t* dst_ptr,
                                 int dst_width) {
@@ -1149,7 +1149,7 @@ void ScaleRowUp2_Linear_16_SSE2(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2BILINEAR_16_SSE2
+#ifdef HAS_SCALEROWUP2_BILINEAR_16_SSE2
 void ScaleRowUp2_Bilinear_16_SSE2(const uint16_t* src_ptr,
                                   ptrdiff_t src_stride,
                                   uint16_t* dst_ptr,
@@ -1242,7 +1242,7 @@ void ScaleRowUp2_Bilinear_16_SSE2(const uint16_t* src_ptr,
       "pshufd      $0b11011000,%%xmm4,%%xmm4     \n"
       "movdqu      %%xmm4,(%1)                   \n"  // store above
       "packssdw    %%xmm2,%%xmm5                 \n"
-      "pshufd      $0b11011000,%%xmm4,%%xmm4     \n"
+      "pshufd      $0b11011000,%%xmm5,%%xmm5     \n"
       "movdqu      %%xmm5,(%1,%4,2)              \n"  // store below
 
       "lea         0x8(%0),%0                    \n"
@@ -1254,11 +1254,12 @@ void ScaleRowUp2_Bilinear_16_SSE2(const uint16_t* src_ptr,
         "+r"(dst_width)               // %2
       : "r"((intptr_t)(src_stride)),  // %3
         "r"((intptr_t)(dst_stride))   // %4
-      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6");
+      : "memory", "cc", "xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6",
+        "xmm7");
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2LINEAR_SSSE3
+#ifdef HAS_SCALEROWUP2_LINEAR_SSSE3
 void ScaleRowUp2_Linear_SSSE3(const uint8_t* src_ptr,
                               uint8_t* dst_ptr,
                               int dst_width) {
@@ -1283,9 +1284,8 @@ void ScaleRowUp2_Linear_SSSE3(const uint8_t* src_ptr,
       "paddw       %%xmm4,%%xmm2                 \n"  // 3*near+far+2 (hi)
       "psrlw       $2,%%xmm0                     \n"  // 3/4*near+1/4*far (lo)
       "psrlw       $2,%%xmm2                     \n"  // 3/4*near+1/4*far (hi)
-      "vpackuswb   %%xmm2,%%xmm0,%%xmm0          \n"
-      "vmovdqu     %%xmm0,(%1)                   \n"
-
+      "packuswb    %%xmm2,%%xmm0                 \n"
+      "movdqu      %%xmm0,(%1)                   \n"
       "lea         0x8(%0),%0                    \n"
       "lea         0x10(%1),%1                   \n"  // 8 sample to 16 sample
       "sub         $0x10,%2                      \n"
@@ -1298,7 +1298,7 @@ void ScaleRowUp2_Linear_SSSE3(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2BILINEAR_SSSE3
+#ifdef HAS_SCALEROWUP2_BILINEAR_SSSE3
 void ScaleRowUp2_Bilinear_SSSE3(const uint8_t* src_ptr,
                                 ptrdiff_t src_stride,
                                 uint8_t* dst_ptr,
@@ -1385,7 +1385,7 @@ void ScaleRowUp2_Bilinear_SSSE3(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2LINEAR_AVX2
+#ifdef HAS_SCALEROWUP2_LINEAR_AVX2
 void ScaleRowUp2_Linear_AVX2(const uint8_t* src_ptr,
                              uint8_t* dst_ptr,
                              int dst_width) {
@@ -1427,7 +1427,7 @@ void ScaleRowUp2_Linear_AVX2(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2BILINEAR_AVX2
+#ifdef HAS_SCALEROWUP2_BILINEAR_AVX2
 void ScaleRowUp2_Bilinear_AVX2(const uint8_t* src_ptr,
                                ptrdiff_t src_stride,
                                uint8_t* dst_ptr,
@@ -1511,7 +1511,7 @@ void ScaleRowUp2_Bilinear_AVX2(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2LINEAR_12_AVX2
+#ifdef HAS_SCALEROWUP2_LINEAR_12_AVX2
 void ScaleRowUp2_Linear_12_AVX2(const uint16_t* src_ptr,
                                 uint16_t* dst_ptr,
                                 int dst_width) {
@@ -1561,7 +1561,7 @@ void ScaleRowUp2_Linear_12_AVX2(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2BILINEAR_12_AVX2
+#ifdef HAS_SCALEROWUP2_BILINEAR_12_AVX2
 void ScaleRowUp2_Bilinear_12_AVX2(const uint16_t* src_ptr,
                                   ptrdiff_t src_stride,
                                   uint16_t* dst_ptr,
@@ -1625,7 +1625,7 @@ void ScaleRowUp2_Bilinear_12_AVX2(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2LINEAR_16_AVX2
+#ifdef HAS_SCALEROWUP2_LINEAR_16_AVX2
 void ScaleRowUp2_Linear_16_AVX2(const uint16_t* src_ptr,
                                 uint16_t* dst_ptr,
                                 int dst_width) {
@@ -1673,7 +1673,7 @@ void ScaleRowUp2_Linear_16_AVX2(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEROWUP2BILINEAR_16_AVX2
+#ifdef HAS_SCALEROWUP2_BILINEAR_16_AVX2
 void ScaleRowUp2_Bilinear_16_AVX2(const uint16_t* src_ptr,
                                   ptrdiff_t src_stride,
                                   uint16_t* dst_ptr,
@@ -2326,13 +2326,18 @@ int FixedDiv1_X86(int num, int div) {
   return num;
 }
 
-#ifdef HAS_SCALEUVROWDOWN2BOX_SSSE3
+#if defined(HAS_SCALEUVROWDOWN2BOX_SSSE3) || \
+    defined(HAS_SCALEUVROWDOWN2BOX_AVX2)
+
 // Shuffle table for splitting UV into upper and lower part of register.
 static const uvec8 kShuffleSplitUV = {0u, 2u, 4u, 6u, 8u, 10u, 12u, 14u,
                                       1u, 3u, 5u, 7u, 9u, 11u, 13u, 15u};
 static const uvec8 kShuffleMergeUV = {0u,   8u,   2u,   10u,  4u,   12u,
                                       6u,   14u,  0x80, 0x80, 0x80, 0x80,
                                       0x80, 0x80, 0x80, 0x80};
+#endif
+
+#ifdef HAS_SCALEUVROWDOWN2BOX_SSSE3
 
 void ScaleUVRowDown2Box_SSSE3(const uint8_t* src_ptr,
                               ptrdiff_t src_stride,
@@ -2418,7 +2423,7 @@ void ScaleUVRowDown2Box_AVX2(const uint8_t* src_ptr,
 static const uvec8 kUVLinearMadd31 = {3, 1, 3, 1, 1, 3, 1, 3,
                                       3, 1, 3, 1, 1, 3, 1, 3};
 
-#ifdef HAS_SCALEUVROWUP2LINEAR_SSSE3
+#ifdef HAS_SCALEUVROWUP2_LINEAR_SSSE3
 void ScaleUVRowUp2_Linear_SSSE3(const uint8_t* src_ptr,
                                 uint8_t* dst_ptr,
                                 int dst_width) {
@@ -2457,7 +2462,7 @@ void ScaleUVRowUp2_Linear_SSSE3(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEUVROWUP2BILINEAR_SSSE3
+#ifdef HAS_SCALEUVROWUP2_BILINEAR_SSSE3
 void ScaleUVRowUp2_Bilinear_SSSE3(const uint8_t* src_ptr,
                                   ptrdiff_t src_stride,
                                   uint8_t* dst_ptr,
@@ -2542,7 +2547,7 @@ void ScaleUVRowUp2_Bilinear_SSSE3(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEUVROWUP2LINEAR_AVX2
+#ifdef HAS_SCALEUVROWUP2_LINEAR_AVX2
 
 void ScaleUVRowUp2_Linear_AVX2(const uint8_t* src_ptr,
                                uint8_t* dst_ptr,
@@ -2584,7 +2589,7 @@ void ScaleUVRowUp2_Linear_AVX2(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEUVROWUP2BILINEAR_AVX2
+#ifdef HAS_SCALEUVROWUP2_BILINEAR_AVX2
 void ScaleUVRowUp2_Bilinear_AVX2(const uint8_t* src_ptr,
                                  ptrdiff_t src_stride,
                                  uint8_t* dst_ptr,
@@ -2666,10 +2671,10 @@ void ScaleUVRowUp2_Bilinear_AVX2(const uint8_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEUVROWUP2LINEAR_16_SSE2
-void ScaleUVRowUp2_Linear_16_SSE2(const uint16_t* src_ptr,
-                                  uint16_t* dst_ptr,
-                                  int dst_width) {
+#ifdef HAS_SCALEUVROWUP2_LINEAR_16_SSE41
+void ScaleUVRowUp2_Linear_16_SSE41(const uint16_t* src_ptr,
+                                   uint16_t* dst_ptr,
+                                   int dst_width) {
   asm volatile(
       "pxor        %%xmm5,%%xmm5                 \n"
       "pcmpeqd     %%xmm4,%%xmm4                 \n"
@@ -2716,12 +2721,12 @@ void ScaleUVRowUp2_Linear_16_SSE2(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEUVROWUP2BILINEAR_16_SSE2
-void ScaleUVRowUp2_Bilinear_16_SSE2(const uint16_t* src_ptr,
-                                    ptrdiff_t src_stride,
-                                    uint16_t* dst_ptr,
-                                    ptrdiff_t dst_stride,
-                                    int dst_width) {
+#ifdef HAS_SCALEUVROWUP2_BILINEAR_16_SSE41
+void ScaleUVRowUp2_Bilinear_16_SSE41(const uint16_t* src_ptr,
+                                     ptrdiff_t src_stride,
+                                     uint16_t* dst_ptr,
+                                     ptrdiff_t dst_stride,
+                                     int dst_width) {
   asm volatile(
       "pxor        %%xmm7,%%xmm7                 \n"
       "pcmpeqd     %%xmm6,%%xmm6                 \n"
@@ -2809,7 +2814,7 @@ void ScaleUVRowUp2_Bilinear_16_SSE2(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEUVROWUP2LINEAR_16_AVX2
+#ifdef HAS_SCALEUVROWUP2_LINEAR_16_AVX2
 void ScaleUVRowUp2_Linear_16_AVX2(const uint16_t* src_ptr,
                                   uint16_t* dst_ptr,
                                   int dst_width) {
@@ -2856,7 +2861,7 @@ void ScaleUVRowUp2_Linear_16_AVX2(const uint16_t* src_ptr,
 }
 #endif
 
-#ifdef HAS_SCALEUVROWUP2BILINEAR_16_AVX2
+#ifdef HAS_SCALEUVROWUP2_BILINEAR_16_AVX2
 void ScaleUVRowUp2_Bilinear_16_AVX2(const uint16_t* src_ptr,
                                     ptrdiff_t src_stride,
                                     uint16_t* dst_ptr,

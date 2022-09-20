@@ -354,7 +354,7 @@ int DspHelper::DownsampleTo4kHz(const int16_t* input,
       break;
     }
     default: {
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       return -1;
     }
   }

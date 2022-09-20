@@ -33,9 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-PhiChildren::PhiChildren()
-{
-}
+PhiChildren::PhiChildren() = default;
 
 PhiChildren::PhiChildren(Graph& graph)
 {
@@ -49,9 +47,7 @@ PhiChildren::PhiChildren(Graph& graph)
     }
 }
 
-PhiChildren::~PhiChildren()
-{
-}
+PhiChildren::~PhiChildren() = default;
 
 const PhiChildren::List& PhiChildren::upsilonsOf(Node* node) const
 {

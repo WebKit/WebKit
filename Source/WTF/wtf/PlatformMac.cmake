@@ -15,6 +15,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     cf/CFURLExtras.h
     cf/SpanCF.h
     cf/TypeCastsCF.h
+    cf/VectorCF.h
 
     cocoa/CrashReporter.h
     cocoa/Entitlements.h

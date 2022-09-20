@@ -29,6 +29,7 @@
 #if USE(LIBWEBRTC)
 
 #include <wtf/Expected.h>
+#include <wtf/cf/VectorCF.h>
 
 namespace WebKit {
 
@@ -46,18 +47,12 @@ static void resolvedName(CFHostRef hostRef, CFHostInfoType typeInfo, const CFStr
     }
 
     Boolean result;
-    CFArrayRef resolvedAddresses = (CFArrayRef)CFHostGetAddressing(hostRef, &result);
+    CFArrayRef resolvedAddresses = CFHostGetAddressing(hostRef, &result);
     ASSERT_UNUSED(result, result);
 
-    size_t count = CFArrayGetCount(resolvedAddresses);
-    Vector<WebCore::IPAddress> addresses;
-    addresses.reserveInitialCapacity(count);
-
-    for (size_t index = 0; index < count; ++index) {
-        CFDataRef data = (CFDataRef)CFArrayGetValueAtIndex(resolvedAddresses, index);
-        if (auto address = WebCore::IPAddress::fromSockAddrIn6(*reinterpret_cast<const struct sockaddr_in6*>(CFDataGetBytePtr(data))))
-            addresses.uncheckedAppend(*address);
-    }
+    auto addresses = makeVector(resolvedAddresses, [] (CFDataRef data) -> std::optional<WebCore::IPAddress> {
+        return WebCore::IPAddress::fromSockAddrIn6(*reinterpret_cast<const struct sockaddr_in6*>(CFDataGetBytePtr(data)));
+    });
     if (addresses.isEmpty()) {
         resolver->completed(makeUnexpected(WebCore::DNSError::CannotResolve));
         return;

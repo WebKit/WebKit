@@ -12,7 +12,6 @@
 #define MODULES_AUDIO_CODING_NETEQ_TOOLS_AUDIO_SINK_H_
 
 #include "api/audio/audio_frame.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 namespace test {
@@ -24,6 +23,9 @@ class AudioSink {
   AudioSink() {}
   virtual ~AudioSink() {}
 
+  AudioSink(const AudioSink&) = delete;
+  AudioSink& operator=(const AudioSink&) = delete;
+
   // Writes `num_samples` from `audio` to the AudioSink. Returns true if
   // successful, otherwise false.
   virtual bool WriteArray(const int16_t* audio, size_t num_samples) = 0;
@@ -34,9 +36,6 @@ class AudioSink {
     return WriteArray(audio_frame.data(), audio_frame.samples_per_channel_ *
                                               audio_frame.num_channels_);
   }
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(AudioSink);
 };
 
 // Forks the output audio to two AudioSink objects.
@@ -45,23 +44,25 @@ class AudioSinkFork : public AudioSink {
   AudioSinkFork(AudioSink* left, AudioSink* right)
       : left_sink_(left), right_sink_(right) {}
 
+  AudioSinkFork(const AudioSinkFork&) = delete;
+  AudioSinkFork& operator=(const AudioSinkFork&) = delete;
+
   bool WriteArray(const int16_t* audio, size_t num_samples) override;
 
  private:
   AudioSink* left_sink_;
   AudioSink* right_sink_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(AudioSinkFork);
 };
 
 // An AudioSink implementation that does nothing.
 class VoidAudioSink : public AudioSink {
  public:
   VoidAudioSink() = default;
-  bool WriteArray(const int16_t* audio, size_t num_samples) override;
 
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(VoidAudioSink);
+  VoidAudioSink(const VoidAudioSink&) = delete;
+  VoidAudioSink& operator=(const VoidAudioSink&) = delete;
+
+  bool WriteArray(const int16_t* audio, size_t num_samples) override;
 };
 
 }  // namespace test

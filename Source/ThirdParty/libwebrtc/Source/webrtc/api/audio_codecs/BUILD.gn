@@ -31,9 +31,13 @@ rtc_library("audio_codecs_api") {
   deps = [
     "..:array_view",
     "..:bitrate_allocation",
+    "..:make_ref_counted",
     "..:scoped_refptr",
+    "../../api:field_trials_view",
+    "../../rtc_base:buffer",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:event_tracer",
+    "../../rtc_base:refcount",
     "../../rtc_base:sanitizer",
     "../../rtc_base/system:rtc_export",
     "../units:time_delta",
@@ -54,7 +58,6 @@ rtc_library("builtin_audio_decoder_factory") {
   deps = [
     ":audio_codecs_api",
     "..:scoped_refptr",
-    "../../rtc_base:rtc_base_approved",
     "L16:audio_decoder_L16",
     "g711:audio_decoder_g711",
     "g722:audio_decoder_g722",
@@ -88,7 +91,6 @@ rtc_library("builtin_audio_encoder_factory") {
   deps = [
     ":audio_codecs_api",
     "..:scoped_refptr",
-    "../../rtc_base:rtc_base_approved",
     "L16:audio_encoder_L16",
     "g711:audio_encoder_g711",
     "g722:audio_encoder_g722",
@@ -122,7 +124,6 @@ rtc_library("opus_audio_decoder_factory") {
   deps = [
     ":audio_codecs_api",
     "..:scoped_refptr",
-    "../../rtc_base:rtc_base_approved",
     "opus:audio_decoder_multiopus",
     "opus:audio_decoder_opus",
   ]
@@ -138,7 +139,6 @@ rtc_library("opus_audio_encoder_factory") {
   deps = [
     ":audio_codecs_api",
     "..:scoped_refptr",
-    "../../rtc_base:rtc_base_approved",
     "opus:audio_encoder_multiopus",
     "opus:audio_encoder_opus",
   ]

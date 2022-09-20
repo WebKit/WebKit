@@ -33,4 +33,8 @@ message Chart {
 
 message ChartCollection {
   repeated Chart charts = 1;
+  // `calltime_to_utc_ms` is the UTC time (in ms) for the x-axis in the charts.
+  // In other words, time t ms in the charts corresponds to
+  // t+calltime_to_utc_ms ms in UTC time.
+  int64 calltime_to_utc_ms = 2;
 }

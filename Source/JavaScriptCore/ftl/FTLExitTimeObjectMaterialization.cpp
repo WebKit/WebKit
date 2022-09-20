@@ -40,9 +40,7 @@ ExitTimeObjectMaterialization::ExitTimeObjectMaterialization(NodeType type, Code
 {
 }
 
-ExitTimeObjectMaterialization::~ExitTimeObjectMaterialization()
-{
-}
+ExitTimeObjectMaterialization::~ExitTimeObjectMaterialization() = default;
 
 void ExitTimeObjectMaterialization::add(
     PromotedLocationDescriptor location, const ExitValue& value)

@@ -41,11 +41,11 @@ rtc_library("remote_bitrate_estimator") {
   }
 
   deps = [
+    "../../api:field_trials_view",
     "../../api:network_state_predictor_api",
     "../../api:rtp_headers",
     "../../api/transport:field_trial_based_config",
     "../../api/transport:network_control",
-    "../../api/transport:webrtc_key_value_config",
     "../../api/units:data_rate",
     "../../api/units:data_size",
     "../../api/units:time_delta",
@@ -55,9 +55,14 @@ rtc_library("remote_bitrate_estimator") {
     "../../modules/congestion_controller/goog_cc:link_capacity_estimator",
     "../../modules/rtp_rtcp:rtp_rtcp_format",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:platform_thread",
+    "../../rtc_base:race_checker",
+    "../../rtc_base:rate_statistics",
     "../../rtc_base:rtc_numerics",
     "../../rtc_base:safe_minmax",
+    "../../rtc_base:stringutils",
     "../../rtc_base/experiments:field_trial_parser",
     "../../rtc_base/synchronization:mutex",
     "../../system_wrappers",
@@ -78,7 +83,6 @@ if (!build_with_chromium) {
       "tools/bwe_rtp.h",
     ]
     deps = [
-      "../../rtc_base:rtc_base_approved",
       "../../test:rtp_test_utils",
       "../rtp_rtcp:rtp_rtcp_format",
     ]
@@ -122,9 +126,13 @@ if (rtc_include_tests) {
       "../../api/transport:field_trial_based_config",
       "../../api/transport:mock_network_control",
       "../../api/transport:network_control",
+      "../../api/units:data_rate",
+      "../../api/units:data_size",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
       "../../rtc_base",
       "../../rtc_base:checks",
-      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:random",
       "../../system_wrappers",
       "../../test:field_trial",
       "../../test:fileutils",

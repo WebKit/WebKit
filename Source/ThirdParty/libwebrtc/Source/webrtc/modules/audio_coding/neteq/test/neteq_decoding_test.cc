@@ -10,6 +10,7 @@
 
 #include "modules/audio_coding/neteq/test/neteq_decoding_test.h"
 
+#include "absl/strings/string_view.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/rtp_headers.h"
 #include "modules/audio_coding/neteq/default_neteq_factory.h"
@@ -93,7 +94,7 @@ void NetEqDecodingTest::SetUp() {
 
 void NetEqDecodingTest::TearDown() {}
 
-void NetEqDecodingTest::OpenInputFile(const std::string& rtp_file) {
+void NetEqDecodingTest::OpenInputFile(absl::string_view rtp_file) {
   rtp_source_.reset(test::RtpFileSource::Create(rtp_file));
 }
 
@@ -131,9 +132,9 @@ void NetEqDecodingTest::Process() {
 }
 
 void NetEqDecodingTest::DecodeAndCompare(
-    const std::string& rtp_file,
-    const std::string& output_checksum,
-    const std::string& network_stats_checksum,
+    absl::string_view rtp_file,
+    absl::string_view output_checksum,
+    absl::string_view network_stats_checksum,
     bool gen_ref) {
   OpenInputFile(rtp_file);
 
@@ -193,7 +194,7 @@ void NetEqDecodingTest::PopulateRtpInfo(int frame_index,
   rtp_info->timestamp = timestamp;
   rtp_info->ssrc = 0x1234;     // Just an arbitrary SSRC.
   rtp_info->payloadType = 94;  // PCM16b WB codec.
-  rtp_info->markerBit = 0;
+  rtp_info->markerBit = false;
 }
 
 void NetEqDecodingTest::PopulateCng(int frame_index,
@@ -205,7 +206,7 @@ void NetEqDecodingTest::PopulateCng(int frame_index,
   rtp_info->timestamp = timestamp;
   rtp_info->ssrc = 0x1234;     // Just an arbitrary SSRC.
   rtp_info->payloadType = 98;  // WB CNG.
-  rtp_info->markerBit = 0;
+  rtp_info->markerBit = false;
   payload[0] = 64;   // Noise level -64 dBov, quite arbitrarily chosen.
   *payload_len = 1;  // Only noise level, no spectral parameters.
 }
@@ -225,7 +226,6 @@ void NetEqDecodingTest::WrapTest(uint16_t start_seq_no,
 
   // Insert speech for 2 seconds.
   const int kSpeechDurationMs = 2000;
-  int packets_inserted = 0;
   uint16_t last_seq_no;
   uint32_t last_timestamp;
   bool timestamp_wrapped = false;
@@ -240,20 +240,13 @@ void NetEqDecodingTest::WrapTest(uint16_t start_seq_no,
       if (drop_seq_numbers.find(seq_no) == drop_seq_numbers.end()) {
         // This sequence number was not in the set to drop. Insert it.
         ASSERT_EQ(0, neteq_->InsertPacket(rtp_info, payload));
-        ++packets_inserted;
       }
       NetEqNetworkStatistics network_stats;
       ASSERT_EQ(0, neteq_->NetworkStatistics(&network_stats));
 
-      // Due to internal NetEq logic, preferred buffer-size is about 4 times the
-      // packet size for first few packets. Therefore we refrain from checking
-      // the criteria.
-      if (packets_inserted > 4) {
-        // Expect preferred and actual buffer size to be no more than 2 frames.
-        EXPECT_LE(network_stats.preferred_buffer_size_ms, kFrameSizeMs * 2);
-        EXPECT_LE(network_stats.current_buffer_size_ms,
-                  kFrameSizeMs * 2 + algorithmic_delay_ms_);
-      }
+      EXPECT_LE(network_stats.preferred_buffer_size_ms, 80);
+      EXPECT_LE(network_stats.current_buffer_size_ms,
+                80 + algorithmic_delay_ms_);
       last_seq_no = seq_no;
       last_timestamp = timestamp;
 

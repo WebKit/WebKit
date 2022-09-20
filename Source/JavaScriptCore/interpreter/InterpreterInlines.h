@@ -98,7 +98,6 @@ ALWAYS_INLINE JSValue Interpreter::execute(CallFrameClosure& closure)
     StackStats::CheckPoint stackCheckPoint;
 
     if (UNLIKELY(vm.traps().needHandling(VMTraps::NonDebuggerAsyncEvents))) {
-        ASSERT(vm.topCallFrame == closure.oldCallFrame);
         if (vm.hasExceptionsAfterHandlingTraps())
             return throwScope.exception();
     }

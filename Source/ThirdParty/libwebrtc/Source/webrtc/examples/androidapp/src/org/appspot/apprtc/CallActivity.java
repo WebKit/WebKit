@@ -384,7 +384,6 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     }
   }
 
-  @TargetApi(17)
   private DisplayMetrics getDisplayMetrics() {
     DisplayMetrics displayMetrics = new DisplayMetrics();
     WindowManager windowManager =
@@ -393,16 +392,11 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     return displayMetrics;
   }
 
-  @TargetApi(19)
   private static int getSystemUiVisibility() {
-    int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      flags |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-    }
-    return flags;
+    return View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
+        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
   }
 
-  @TargetApi(21)
   private void startScreenCapture() {
     MediaProjectionManager mediaProjectionManager =
         (MediaProjectionManager) getApplication().getSystemService(
@@ -460,7 +454,6 @@ public class CallActivity extends Activity implements AppRTCClient.SignalingEven
     return null;
   }
 
-  @TargetApi(21)
   private @Nullable VideoCapturer createScreenCapturer() {
     if (mediaProjectionPermissionResultCode != Activity.RESULT_OK) {
       reportError("User didn't give permission to capture the screen.");

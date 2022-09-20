@@ -31,7 +31,7 @@ typedef void (*DATAFROMEDATECHANNELREADY_CALLBACK)(const char* msg);
 typedef void (*FAILURE_CALLBACK)(const char* msg);
 typedef void (*LOCALSDPREADYTOSEND_CALLBACK)(const char* type, const char* sdp);
 typedef void (*ICECANDIDATEREADYTOSEND_CALLBACK)(const char* candidate,
-                                                 const int sdp_mline_index,
+                                                 int sdp_mline_index,
                                                  const char* sdp_mid);
 typedef void (*AUDIOBUSREADY_CALLBACK)(const void* audio_data,
                                        int bits_per_sample,
@@ -47,7 +47,7 @@ typedef void (*AUDIOBUSREADY_CALLBACK)(const void* audio_data,
 extern "C" {
 // Create a peerconnection and return a unique peer connection id.
 WEBRTC_PLUGIN_API int CreatePeerConnection(const char** turn_urls,
-                                           const int no_of_urls,
+                                           int no_of_urls,
                                            const char* username,
                                            const char* credential,
                                            bool mandatory_receive_video);
@@ -75,9 +75,9 @@ WEBRTC_PLUGIN_API bool SetRemoteDescription(int peer_connection_id,
                                             const char* type,
                                             const char* sdp);
 // Add ice candidate.
-WEBRTC_PLUGIN_API bool AddIceCandidate(const int peer_connection_id,
+WEBRTC_PLUGIN_API bool AddIceCandidate(int peer_connection_id,
                                        const char* candidate,
-                                       const int sdp_mlineindex,
+                                       int sdp_mlineindex,
                                        const char* sdp_mid);
 
 // Register callback functions.
@@ -100,7 +100,7 @@ WEBRTC_PLUGIN_API bool RegisterOnAudioBusReady(int peer_connection_id,
 WEBRTC_PLUGIN_API bool RegisterOnLocalSdpReadytoSend(
     int peer_connection_id,
     LOCALSDPREADYTOSEND_CALLBACK callback);
-WEBRTC_PLUGIN_API bool RegisterOnIceCandiateReadytoSend(
+WEBRTC_PLUGIN_API bool RegisterOnIceCandidateReadytoSend(
     int peer_connection_id,
     ICECANDIDATEREADYTOSEND_CALLBACK callback);
 }

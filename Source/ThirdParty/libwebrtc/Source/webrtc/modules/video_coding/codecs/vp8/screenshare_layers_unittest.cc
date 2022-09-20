@@ -218,18 +218,20 @@ TEST_F(ScreenshareLayerTest, 1Layer) {
   // belong to the base layer.
   const int kSingleLayerFlags = 0;
   auto info = std::make_unique<CodecSpecificInfo>();
-  int flags = EncodeFrame(false, info.get());
+  int flags = EncodeFrame(/*base_sync=*/false, info.get());
   timestamp_ += kTimestampDelta5Fps;
   EXPECT_EQ(static_cast<uint8_t>(kNoTemporalIdx),
             info->codecSpecific.VP8.temporalIdx);
   EXPECT_FALSE(info->codecSpecific.VP8.layerSync);
+  EXPECT_EQ(info->generic_frame_info->temporal_id, 0);
 
   info = std::make_unique<CodecSpecificInfo>();
-  flags = EncodeFrame(false, info.get());
+  flags = EncodeFrame(/*base_sync=*/false, info.get());
   EXPECT_EQ(kSingleLayerFlags, flags);
   EXPECT_EQ(static_cast<uint8_t>(kNoTemporalIdx),
             info->codecSpecific.VP8.temporalIdx);
   EXPECT_FALSE(info->codecSpecific.VP8.layerSync);
+  EXPECT_EQ(info->generic_frame_info->temporal_id, 0);
 }
 
 TEST_F(ScreenshareLayerTest, 2LayersPeriodicSync) {
@@ -337,7 +339,9 @@ TEST_F(ScreenshareLayerTest, 2LayersToggling) {
   int tl1_frames = 0;
   for (int i = 0; i < 50; ++i) {
     CodecSpecificInfo info;
-    EncodeFrame(false, &info);
+    EncodeFrame(/*base_sync=*/false, &info);
+    EXPECT_EQ(info.codecSpecific.VP8.temporalIdx,
+              info.generic_frame_info->temporal_id);
     timestamp_ += kTimestampDelta5Fps;
     switch (info.codecSpecific.VP8.temporalIdx) {
       case 0:
@@ -561,7 +565,7 @@ TEST_F(ScreenshareLayerTest, UpdatesHistograms) {
     } else if (flags == -1) {
       dropped_frame = true;
     } else {
-      RTC_NOTREACHED() << "Unexpected flags";
+      RTC_DCHECK_NOTREACHED() << "Unexpected flags";
     }
     clock_.AdvanceTime(TimeDelta::Millis(1000 / 5));
   }

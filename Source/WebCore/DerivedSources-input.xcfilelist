@@ -608,6 +608,7 @@ $(PROJECT_DIR)/Modules/push-api/ServiceWorkerRegistration+PushAPI.idl
 $(PROJECT_DIR)/Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlayback.idl
 $(PROJECT_DIR)/Modules/remoteplayback/RemotePlaybackAvailabilityCallback.idl
+$(PROJECT_DIR)/Modules/reporting/DeprecationReportBody.idl
 $(PROJECT_DIR)/Modules/reporting/Report.idl
 $(PROJECT_DIR)/Modules/reporting/ReportBody.idl
 $(PROJECT_DIR)/Modules/reporting/ReportingObserver.idl

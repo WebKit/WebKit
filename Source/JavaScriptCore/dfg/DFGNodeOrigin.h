@@ -36,7 +36,7 @@ class Graph;
 struct Node;
 
 struct NodeOrigin {
-    NodeOrigin() { }
+    NodeOrigin() = default;
     
     NodeOrigin(CodeOrigin semantic, CodeOrigin forExit, bool exitOK)
         : semantic(semantic)

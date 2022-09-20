@@ -118,7 +118,7 @@ rtc::CopyOnWriteBuffer FixVideoPayload(rtc::ArrayView<const uint8_t> payload,
     }
   }
 
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return result;
 }
 

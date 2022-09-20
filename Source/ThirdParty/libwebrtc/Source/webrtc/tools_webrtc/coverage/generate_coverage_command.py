@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env vpython3
+
 # Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
 #
 # Use of this source code is governed by a BSD-style license
@@ -17,7 +18,7 @@ import sys
 
 TESTS = [
     'video_capture_tests', 'webrtc_nonparallel_tests', 'video_engine_tests',
-    'tools_unittests', 'test_support_unittests', 'slow_tests',
+    'tools_unittests', 'test_support_unittests',
     'system_wrappers_unittests', 'rtc_unittests', 'rtc_stats_unittests',
     'rtc_pc_unittests', 'rtc_media_unittests', 'peerconnection_unittests',
     'modules_unittests', 'modules_tests', 'low_bandwidth_audio_test',
@@ -27,21 +28,20 @@ TESTS = [
 
 
 def main():
-    cmd = ([sys.executable, 'tools/code_coverage/coverage.py'] + TESTS +
-           ['-b out/coverage', '-o out/report'] +
-           ['-i=\'.*/out/.*|.*/third_party/.*|.*test.*\''] +
-           ['-c \'out/coverage/%s\'' % t for t in TESTS])
+  cmd = ([sys.executable, 'tools/code_coverage/coverage.py'] + TESTS +
+         ['-b out/coverage', '-o out/report'] +
+         ['-i=\'.*/out/.*|.*/third_party/.*|.*test.*\''] +
+         ['-c \'out/coverage/%s\'' % t for t in TESTS])
 
-    def WithXvfb(binary):
-        return '-c \'%s testing/xvfb.py %s\'' % (sys.executable, binary)
+  def WithXvfb(binary):
+    return '-c \'%s testing/xvfb.py %s\'' % (sys.executable, binary)
 
-    modules_unittests = 'out/coverage/modules_unittests'
-    cmd[cmd.index('-c \'%s\'' %
-                  modules_unittests)] = WithXvfb(modules_unittests)
+  modules_unittests = 'out/coverage/modules_unittests'
+  cmd[cmd.index('-c \'%s\'' % modules_unittests)] = WithXvfb(modules_unittests)
 
-    print ' '.join(cmd)
-    return 0
+  print(' '.join(cmd))
+  return 0
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+  sys.exit(main())

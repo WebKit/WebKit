@@ -42,21 +42,27 @@ if (rtc_enable_protobuf) {
       "../../api:sequence_checker",
       "../../api/task_queue",
       "../../api/task_queue:default_task_queue_factory",
-      "../../p2p",
+      "../../api/task_queue:pending_task_safety_flag",
+      "../../p2p:rtc_p2p",
       "../../rtc_base",
       "../../rtc_base:checks",
       "../../rtc_base:ignore_wundef",
       "../../rtc_base:ip_address",
+      "../../rtc_base:logging",
+      "../../rtc_base:macromagic",
       "../../rtc_base:protobuf_utils",
-      "../../rtc_base:rtc_base_approved",
       "../../rtc_base:rtc_task_queue",
       "../../rtc_base:socket_address",
       "../../rtc_base:threading",
+      "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
       "../../rtc_base/system:no_unique_address",
       "../../rtc_base/third_party/sigslot",
     ]
-    absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+    absl_deps = [
+      "//third_party/abseil-cpp/absl/functional:any_invocable",
+      "//third_party/abseil-cpp/absl/types:optional",
+    ]
   }
 
   network_tester_unittests_resources = [
@@ -80,6 +86,7 @@ if (rtc_enable_protobuf) {
     deps = [
       ":network_tester",
       "../../rtc_base:gunit_helpers",
+      "../../rtc_base:threading",
       "../../test:fileutils",
       "../../test:test_support",
       "//testing/gtest",
@@ -97,7 +104,11 @@ if (rtc_enable_protobuf) {
   rtc_executable("network_tester_server") {
     sources = [ "server.cc" ]
 
-    deps = [ ":network_tester" ]
+    deps = [
+      ":network_tester",
+      "../../rtc_base:null_socket_server",
+      "../../rtc_base:threading",
+    ]
   }
 }
 
@@ -157,9 +168,13 @@ if (is_android) {
   }
 
   rtc_shared_library("network_tester_so") {
-    sources = [ "jni.cpp" ]
+    sources = [ "jni.cc" ]
 
-    deps = [ ":network_tester" ]
+    deps = [
+      ":network_tester",
+      "../../rtc_base:logging",
+      "../../rtc_base:threading",
+    ]
 
     suppressed_configs += [ "//build/config/android:hide_all_but_jni_onload" ]
     configs += [ "//build/config/android:hide_all_but_jni" ]

@@ -13,6 +13,7 @@
 #include <string>
 
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_decoder_factory_template.h"
 #include "api/audio_codecs/audio_encoder_factory_template.h"
 #include "api/audio_codecs/ilbc/audio_decoder_ilbc.h"
@@ -114,10 +115,10 @@ bool TestVadDtx::RegisterCodec(const SdpAudioFormat& codec_format,
 
 // Encoding a file and see if the numbers that various packets occur follow
 // the expectation.
-void TestVadDtx::Run(std::string in_filename,
+void TestVadDtx::Run(absl::string_view in_filename,
                      int frequency,
                      int channels,
-                     std::string out_filename,
+                     absl::string_view out_filename,
                      bool append,
                      const int* expects) {
   packetization_callback_->ResetStatistics();

@@ -31,7 +31,7 @@ namespace JSC {
 
 class ScriptFetcher : public RefCounted<ScriptFetcher> {
 public:
-    virtual ~ScriptFetcher() { }
+    virtual ~ScriptFetcher() = default;
 };
 
 } // namespace JSC

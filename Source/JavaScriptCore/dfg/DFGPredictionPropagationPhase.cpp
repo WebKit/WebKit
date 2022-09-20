@@ -873,6 +873,7 @@ private:
         case RegExpMatchFastGlobal:
         case StringReplace:
         case StringReplaceRegExp:
+        case StringReplaceString:
         case GetById:
         case GetByIdFlush:
         case GetByIdWithThis:

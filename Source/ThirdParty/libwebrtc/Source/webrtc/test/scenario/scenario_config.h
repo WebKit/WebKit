@@ -23,6 +23,7 @@
 #include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 #include "api/video/video_codec_type.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "test/scenario/performance_stats.h"
 
 namespace webrtc {
@@ -52,7 +53,7 @@ struct TransportControllerConfig {
 
 struct CallClientConfig {
   TransportControllerConfig transport;
-  const WebRtcKeyValueConfig* field_trials = nullptr;
+  const FieldTrialsView* field_trials = nullptr;
 };
 
 struct PacketStreamConfig {
@@ -138,15 +139,8 @@ struct VideoStreamConfig {
       bool denoising = true;
       bool automatic_scaling = true;
     } single;
-    struct Layers {
-      int temporal = 1;
-      int spatial = 1;
-      enum class Prediction {
-        kTemporalOnly,
-        kSpatialOnKey,
-        kFull,
-      } prediction = Prediction::kFull;
-    } layers;
+    std::vector<webrtc::ScalabilityMode> simulcast_streams = {
+        webrtc::ScalabilityMode::kL1T1};
 
     DegradationPreference degradation_preference =
         DegradationPreference::MAINTAIN_FRAMERATE;

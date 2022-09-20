@@ -20,6 +20,7 @@
 #import "sdk/objc/api/video_codec/RTCWrappedNativeVideoDecoder.h"
 #import "sdk/objc/helpers/NSString+StdString.h"
 
+#include "api/make_ref_counted.h"
 #include "api/video_codecs/sdp_video_format.h"
 #include "api/video_codecs/video_decoder.h"
 #include "modules/video_coding/include/video_codec_interface.h"
@@ -55,7 +56,7 @@ class ObjCVideoDecoder : public VideoDecoder {
   int32_t RegisterDecodeCompleteCallback(DecodedImageCallback *callback) override {
     [decoder_ setCallback:^(RTCVideoFrame *frame) {
       const rtc::scoped_refptr<VideoFrameBuffer> buffer =
-          new rtc::RefCountedObject<ObjCFrameBuffer>(frame.buffer);
+          rtc::make_ref_counted<ObjCFrameBuffer>(frame.buffer);
       VideoFrame videoFrame =
           VideoFrame::Builder()
               .set_video_frame_buffer(buffer)

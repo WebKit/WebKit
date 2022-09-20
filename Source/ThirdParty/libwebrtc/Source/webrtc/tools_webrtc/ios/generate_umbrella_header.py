@@ -1,3 +1,5 @@
+#!/usr/bin/env vpython3
+
 # Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
 #
 # Use of this source code is governed by a BSD-style license
@@ -14,20 +16,20 @@ import textwrap
 
 
 def GenerateUmbrellaHeader():
-    parser = argparse.ArgumentParser(description='Generate umbrella header')
-    parser.add_argument("-o", "--out", type=str, help="Output file.")
-    parser.add_argument("-s",
-                        "--sources",
-                        default=[],
-                        type=str,
-                        nargs='+',
-                        help="Headers to include.")
+  parser = argparse.ArgumentParser(description='Generate umbrella header')
+  parser.add_argument("-o", "--out", type=str, help="Output file.")
+  parser.add_argument("-s",
+                      "--sources",
+                      default=[],
+                      type=str,
+                      nargs='+',
+                      help="Headers to include.")
 
-    args = parser.parse_args()
+  args = parser.parse_args()
 
-    with open(args.out, "w") as outfile:
-        outfile.write(
-            textwrap.dedent("""\
+  with open(args.out, "w") as outfile:
+    outfile.write(
+        textwrap.dedent("""\
     /*
      *  Copyright %d The WebRTC project authors. All Rights Reserved.
      *
@@ -38,11 +40,11 @@ def GenerateUmbrellaHeader():
      *  be found in the AUTHORS file in the root of the source tree.
      */\n\n""" % datetime.datetime.now().year))
 
-        for s in args.sources:
-            outfile.write("#import <WebRTC/{}>\n".format(os.path.basename(s)))
+    for s in args.sources:
+      outfile.write("#import <WebRTC/{}>\n".format(os.path.basename(s)))
 
-    return 0
+  return 0
 
 
 if __name__ == '__main__':
-    sys.exit(GenerateUmbrellaHeader())
+  sys.exit(GenerateUmbrellaHeader())

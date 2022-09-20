@@ -52,7 +52,7 @@ private:
     unsigned m_id;
     ExitKind m_exitKind;
     bool m_isWatchpoint;
-    uint64_t m_counter;
+    uint64_t m_counter { 0 };
 };
 
 } } // namespace JSC::Profiler

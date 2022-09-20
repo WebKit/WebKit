@@ -103,7 +103,7 @@ LineBoxIterator Box::lineBox() const
 FloatRect Box::visualRect() const
 {
     auto rect = visualRectIgnoringBlockDirection();
-    containingBlock().flipForWritingMode(rect);
+    formattingContextRoot().flipForWritingMode(rect);
     return rect;
 }
 

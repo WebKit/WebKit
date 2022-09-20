@@ -44,7 +44,7 @@ class Variable {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    ~Variable();
+    ~Variable() = default;
 
     Type type() const { return m_type; }
     Width width() const { return widthForType(type()); }

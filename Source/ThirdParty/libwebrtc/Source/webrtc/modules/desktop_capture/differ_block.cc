@@ -30,11 +30,7 @@ bool VectorDifference(const uint8_t* image1, const uint8_t* image2) {
   static bool (*diff_proc)(const uint8_t*, const uint8_t*) = nullptr;
 
   if (!diff_proc) {
-#if defined(WEBRTC_ARCH_ARM_FAMILY) || defined(WEBRTC_ARCH_MIPS_FAMILY)
-    // For ARM and MIPS processors, always use C version.
-    // TODO(hclam): Implement a NEON version.
-    diff_proc = &VectorDifference_C;
-#else
+#if defined(WEBRTC_ARCH_X86_FAMILY)
     bool have_sse2 = GetCPUInfo(kSSE2) != 0;
     // For x86 processors, check if SSE2 is supported.
     if (have_sse2 && kBlockSize == 32) {
@@ -44,6 +40,10 @@ bool VectorDifference(const uint8_t* image1, const uint8_t* image2) {
     } else {
       diff_proc = &VectorDifference_C;
     }
+#else
+    // For other processors, always use C version.
+    // TODO(hclam): Implement a NEON version.
+    diff_proc = &VectorDifference_C;
 #endif
   }
 

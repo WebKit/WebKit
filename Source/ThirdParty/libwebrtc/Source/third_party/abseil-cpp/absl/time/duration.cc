@@ -645,7 +645,7 @@ timeval ToTimeval(Duration d) {
       ts.tv_nsec -= 1000 * 1000 * 1000;
     }
   }
-  tv.tv_sec = ts.tv_sec;
+  tv.tv_sec = static_cast<decltype(tv.tv_sec)>(ts.tv_sec);
   if (tv.tv_sec != ts.tv_sec) {  // narrowing
     if (ts.tv_sec < 0) {
       tv.tv_sec = std::numeric_limits<decltype(tv.tv_sec)>::min();
@@ -728,7 +728,7 @@ void AppendNumberUnit(std::string* out, int64_t n, DisplayUnit unit) {
   char* const ep = buf + sizeof(buf);
   char* bp = Format64(ep, 0, n);
   if (*bp != '0' || bp + 1 != ep) {
-    out->append(bp, ep - bp);
+    out->append(bp, static_cast<size_t>(ep - bp));
     out->append(unit.abbr.data(), unit.abbr.size());
   }
 }
@@ -745,12 +745,12 @@ void AppendNumberUnit(std::string* out, double n, DisplayUnit unit) {
   int64_t int_part = d;
   if (int_part != 0 || frac_part != 0) {
     char* bp = Format64(ep, 0, int_part);  // always < 1000
-    out->append(bp, ep - bp);
+    out->append(bp, static_cast<size_t>(ep - bp));
     if (frac_part != 0) {
       out->push_back('.');
       bp = Format64(ep, prec, frac_part);
       while (ep[-1] == '0') --ep;
-      out->append(bp, ep - bp);
+      out->append(bp, static_cast<size_t>(ep - bp));
     }
     out->append(unit.abbr.data(), unit.abbr.size());
   }
@@ -766,13 +766,14 @@ void AppendNumberUnit(std::string* out, double n, DisplayUnit unit) {
 //   is non-zero.
 // Unlike Go, we format the zero duration as 0, with no unit.
 std::string FormatDuration(Duration d) {
-  const Duration min_duration = Seconds(kint64min);
-  if (d == min_duration) {
+  constexpr Duration kMinDuration = Seconds(kint64min);
+  std::string s;
+  if (d == kMinDuration) {
     // Avoid needing to negate kint64min by directly returning what the
     // following code should produce in that case.
-    return "-2562047788015215h30m8s";
+    s = "-2562047788015215h30m8s";
+    return s;
   }
-  std::string s;
   if (d < ZeroDuration()) {
     s.append("-");
     d = -d;
@@ -840,7 +841,7 @@ bool ConsumeDurationNumber(const char** dpp, const char* ep, int64_t* int_part,
 // in "*unit".  The given string pointer is modified to point to the first
 // unconsumed char.
 bool ConsumeDurationUnit(const char** start, const char* end, Duration* unit) {
-  size_t size = end - *start;
+  size_t size = static_cast<size_t>(end - *start);
   switch (size) {
     case 0:
       return false;

@@ -149,16 +149,10 @@ public class AppRTCProximitySensor implements SensorEventListener {
     info.append(", resolution: ").append(proximitySensor.getResolution());
     info.append(", max range: ").append(proximitySensor.getMaximumRange());
     info.append(", min delay: ").append(proximitySensor.getMinDelay());
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-      // Added in API level 20.
-      info.append(", type: ").append(proximitySensor.getStringType());
-    }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      // Added in API level 21.
-      info.append(", max delay: ").append(proximitySensor.getMaxDelay());
-      info.append(", reporting mode: ").append(proximitySensor.getReportingMode());
-      info.append(", isWakeUpSensor: ").append(proximitySensor.isWakeUpSensor());
-    }
+    info.append(", type: ").append(proximitySensor.getStringType());
+    info.append(", max delay: ").append(proximitySensor.getMaxDelay());
+    info.append(", reporting mode: ").append(proximitySensor.getReportingMode());
+    info.append(", isWakeUpSensor: ").append(proximitySensor.isWakeUpSensor());
     Log.d(TAG, info.toString());
   }
 }

@@ -1,0 +1,35 @@
+#
+# Mappings file for IWYU in webrtc
+#
+# Documentation of syntax:
+# https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUMappings.md
+#
+# Remember that it needs include strings INCLUDING <> or "" inside the quotes.
+#
+[
+# Redirect to have gmock and gtest includes under our control
+{ include: ['"gmock/gmock.h"', "private", '"test/gmock.h"', "public"] },
+{ include: ['"gtest/gtest.h"', "private", '"test/gtest.h"', "public"] },
+
+# rtc_base/containers internal defs
+{ include: ['"rtc_base/containers/flat_tree.h"', "private", '"rtc_base/containers/flat_set.h"', "public"] },
+
+# Revectoring of JSON
+{ include: ['"json/reader.h"', "private", '"rtc_base/strings/json.h"', "public"] },
+{ include: ['"json/value.h"', "private", '"rtc_base/strings/json.h"', "public"] },
+
+# LIBSRTP overrides
+{ include: ['"rdbx.h"', "private", '"third_party/libsrtp/include/srtp_priv.h"', "public"] },
+{ include: ['"auth.h"', "private", '"third_party/libsrtp/include/srtp_priv.h"', "public"] },
+
+# pthread internals
+{ include: ['<bits/pthread_types.h>', "private", '<pthread.h>', "public"] },
+
+# Needed to agree with presubmit tests for includes (and not include <iosfwd>)
+{ symbol: ["std::string", "public", "<string>", "public"] },
+{ symbol: ["std::move", "public", "<utility>", "public"] },
+{ symbol: ["std::make_unique", "public", "<memory>", "public"] },
+{ symbol: ["std::unique_ptr", "public", "<memory>", "public"] },
+# Needed to avoid <iosfwd>
+{ symbol: ["std::ostringstream", "public", "<sstream>", "public"] },
+]

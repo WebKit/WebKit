@@ -13,11 +13,10 @@
 #include <memory>
 
 #include "media/base/fake_frame_source.h"
-#include "media/base/video_common.h"
 #include "pc/test/fake_video_track_renderer.h"
 #include "pc/test/fake_video_track_source.h"
 #include "pc/video_track_source.h"
-#include "rtc_base/ref_counted_object.h"
+#include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
 using webrtc::FakeVideoTrackRenderer;
@@ -39,10 +38,20 @@ class VideoTrackTest : public ::testing::Test {
   }
 
  protected:
+  rtc::AutoThread main_thread_;
   rtc::scoped_refptr<FakeVideoTrackSource> video_track_source_;
-  rtc::scoped_refptr<VideoTrackInterface> video_track_;
+  rtc::scoped_refptr<VideoTrack> video_track_;
   cricket::FakeFrameSource frame_source_;
 };
+
+// VideoTrack::Create will create an API proxy around the source object.
+// The `GetSource` method provides access to the proxy object intented for API
+// use while the GetSourceInternal() provides direct access to the source object
+// as provided to the `VideoTrack::Create` factory function.
+TEST_F(VideoTrackTest, CheckApiProxyAndInternalSource) {
+  EXPECT_NE(video_track_->GetSource(), video_track_source_.get());
+  EXPECT_EQ(video_track_->GetSourceInternal(), video_track_source_.get());
+}
 
 // Test changing the source state also changes the track state.
 TEST_F(VideoTrackTest, SourceStateChangeTrackState) {

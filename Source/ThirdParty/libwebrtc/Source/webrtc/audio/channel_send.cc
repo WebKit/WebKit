@@ -31,11 +31,8 @@
 #include "modules/audio_processing/rms_level.h"
 #include "modules/pacing/packet_router.h"
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
-#include "modules/utility/include/process_thread.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/format_macros.h"
-#include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/race_checker.h"
@@ -44,7 +41,6 @@
 #include "rtc_base/task_queue.h"
 #include "rtc_base/time_utils.h"
 #include "system_wrappers/include/clock.h"
-#include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {
@@ -64,10 +60,6 @@ class ChannelSend : public ChannelSendInterface,
                                                         // packets from the ACM
                     public RtcpPacketTypeCounterObserver {
  public:
-  // TODO(nisse): Make OnUplinkPacketLossRate public, and delete friend
-  // declaration.
-  friend class VoERtcpObserver;
-
   ChannelSend(Clock* clock,
               TaskQueueFactory* task_queue_factory,
               Transport* rtp_transport,
@@ -79,7 +71,8 @@ class ChannelSend : public ChannelSendInterface,
               int rtcp_report_interval_ms,
               uint32_t ssrc,
               rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-              TransportFeedbackObserver* feedback_observer);
+              TransportFeedbackObserver* feedback_observer,
+              const FieldTrialsView& field_trials);
 
   ~ChannelSend() override;
 
@@ -96,7 +89,7 @@ class ChannelSend : public ChannelSendInterface,
 
   // Codecs
   void OnBitrateAllocation(BitrateAllocationUpdate update) override;
-  int GetBitrate() const override;
+  int GetTargetBitrate() const override;
 
   // Network
   void ReceivedRTCPPacket(const uint8_t* data, size_t length) override;
@@ -156,6 +149,8 @@ class ChannelSend : public ChannelSendInterface,
       uint32_t ssrc,
       const RtcpPacketTypeCounter& packet_counter) override;
 
+  void OnUplinkPacketLossRate(float packet_loss_rate);
+
  private:
   // From AudioPacketizationCallback in the ACM
   int32_t SendData(AudioFrameType frameType,
@@ -165,7 +160,6 @@ class ChannelSend : public ChannelSendInterface,
                    size_t payloadSize,
                    int64_t absolute_capture_timestamp_ms) override;
 
-  void OnUplinkPacketLossRate(float packet_loss_rate);
   bool InputMute() const;
 
   int32_t SendRtpAudio(AudioFrameType frameType,
@@ -238,18 +232,15 @@ class ChannelSend : public ChannelSendInterface,
   rtc::scoped_refptr<ChannelSendFrameTransformerDelegate>
       frame_transformer_delegate_ RTC_GUARDED_BY(encoder_queue_);
 
-  mutable Mutex bitrate_mutex_;
-  int configured_bitrate_bps_ RTC_GUARDED_BY(bitrate_mutex_) = 0;
-
-  // Defined last to ensure that there are no running tasks when the other
-  // members are destroyed.
-  rtc::TaskQueue encoder_queue_;
-
   const bool fixing_timestamp_stall_;
 
   mutable Mutex rtcp_counter_mutex_;
   RtcpPacketTypeCounter rtcp_packet_type_counter_
       RTC_GUARDED_BY(rtcp_counter_mutex_);
+
+  // Defined last to ensure that there are no running tasks when the other
+  // members are destroyed.
+  rtc::TaskQueue encoder_queue_;
 };
 
 const int kTelephoneEventAttenuationdB = 10;
@@ -462,7 +453,8 @@ ChannelSend::ChannelSend(
     int rtcp_report_interval_ms,
     uint32_t ssrc,
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-    TransportFeedbackObserver* feedback_observer)
+    TransportFeedbackObserver* feedback_observer,
+    const FieldTrialsView& field_trials)
     : ssrc_(ssrc),
       event_log_(rtc_event_log),
       _timeStamp(0),  // This is just an offset, RTP module will add it's own
@@ -477,11 +469,11 @@ ChannelSend::ChannelSend(
           new RateLimiter(clock, kMaxRetransmissionWindowMs)),
       frame_encryptor_(frame_encryptor),
       crypto_options_(crypto_options),
+      fixing_timestamp_stall_(
+          field_trials.IsDisabled("WebRTC-Audio-FixTimestampStall")),
       encoder_queue_(task_queue_factory->CreateTaskQueue(
           "AudioEncoder",
-          TaskQueueFactory::Priority::NORMAL)),
-      fixing_timestamp_stall_(
-          !field_trial::IsDisabled("WebRTC-Audio-FixTimestampStall")) {
+          TaskQueueFactory::Priority::NORMAL)) {
   audio_coding_.reset(AudioCodingModule::Create(AudioCodingModule::Config()));
 
   RtpRtcpInterface::Configuration configuration;
@@ -616,18 +608,14 @@ void ChannelSend::OnBitrateAllocation(BitrateAllocationUpdate update) {
   // rules.
   // RTC_DCHECK(worker_thread_checker_.IsCurrent() ||
   //            module_process_thread_checker_.IsCurrent());
-  MutexLock lock(&bitrate_mutex_);
-
   CallEncoder([&](AudioEncoder* encoder) {
     encoder->OnReceivedUplinkAllocation(update);
   });
   retransmission_rate_limiter_->SetMaxRate(update.target_bitrate.bps());
-  configured_bitrate_bps_ = update.target_bitrate.bps();
 }
 
-int ChannelSend::GetBitrate() const {
-  MutexLock lock(&bitrate_mutex_);
-  return configured_bitrate_bps_;
+int ChannelSend::GetTargetBitrate() const {
+  return audio_coding_->GetTargetBitrate();
 }
 
 void ChannelSend::OnUplinkPacketLossRate(float packet_loss_rate) {
@@ -956,12 +944,13 @@ std::unique_ptr<ChannelSendInterface> CreateChannelSend(
     int rtcp_report_interval_ms,
     uint32_t ssrc,
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
-    TransportFeedbackObserver* feedback_observer) {
+    TransportFeedbackObserver* feedback_observer,
+    const FieldTrialsView& field_trials) {
   return std::make_unique<ChannelSend>(
       clock, task_queue_factory, rtp_transport, rtcp_rtt_stats, rtc_event_log,
       frame_encryptor, crypto_options, extmap_allow_mixed,
       rtcp_report_interval_ms, ssrc, std::move(frame_transformer),
-      feedback_observer);
+      feedback_observer, field_trials);
 }
 
 }  // namespace voe

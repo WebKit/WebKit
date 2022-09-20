@@ -69,9 +69,9 @@ enum VariableEventKind : uint8_t {
 };
 
 union VariableRepresentation {
-    VariableRepresentation() 
-        : operand() 
-    { }
+    VariableRepresentation()
+    {
+    }
 
     MacroAssembler::RegisterID gpr;
     MacroAssembler::FPRegisterID fpr;
@@ -86,10 +86,7 @@ union VariableRepresentation {
 
 class VariableEvent {
 public:
-    VariableEvent()
-        : m_kind(InvalidEventKind)
-    {
-    }
+    VariableEvent() = default;
     
     static VariableEvent reset()
     {
@@ -309,7 +306,7 @@ private:
     //   - Unused.
     Packed<VariableRepresentation> m_representation;
     
-    VariableEventKind m_kind;
+    VariableEventKind m_kind { InvalidEventKind };
     DataFormat m_dataFormat { DataFormatNone };
 };
 

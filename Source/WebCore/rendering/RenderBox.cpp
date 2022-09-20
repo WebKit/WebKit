@@ -2395,11 +2395,13 @@ LayoutSize RenderBox::offsetFromContainer(RenderElement& container, const Layout
     if (!isInline() || isReplacedOrInlineBlock())
         offset += topLeftLocationOffset();
 
-    if (is<RenderBox>(container))
-        offset -= toLayoutSize(downcast<RenderBox>(container).scrollPosition());
+    if (auto* boxContainer = dynamicDowncast<RenderBox>(container))
+        offset -= toLayoutSize(boxContainer->scrollPosition());
 
-    if (isAbsolutelyPositioned() && container.isInFlowPositioned() && is<RenderInline>(container))
-        offset += downcast<RenderInline>(container).offsetForInFlowPositionedInline(this);
+    if (isAbsolutelyPositioned() && container.isInFlowPositioned()) {
+        if (auto* inlineContainer = dynamicDowncast<RenderInline>(container))
+            offset += inlineContainer->offsetForInFlowPositionedInline(this);
+    }
 
     if (offsetDependsOnPoint)
         *offsetDependsOnPoint |= is<RenderFragmentedFlow>(container);

@@ -11,16 +11,28 @@
 #include "pc/jsep_transport_controller.h"
 
 #include <map>
-#include <memory>
+#include <string>
+#include <utility>
 
 #include "api/dtls_transport_interface.h"
+#include "api/transport/enums.h"
+#include "p2p/base/candidate_pair_interface.h"
 #include "p2p/base/dtls_transport_factory.h"
 #include "p2p/base/fake_dtls_transport.h"
 #include "p2p/base/fake_ice_transport.h"
+#include "p2p/base/p2p_constants.h"
 #include "p2p/base/transport_info.h"
+#include "rtc_base/fake_ssl_identity.h"
 #include "rtc_base/gunit.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/net_helper.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/ssl_fingerprint.h"
+#include "rtc_base/ssl_identity.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 using cricket::Candidate;
 using cricket::Candidates;
@@ -82,15 +94,17 @@ class JsepTransportControllerTest : public JsepTransportController::Observer,
       cricket::PortAllocator* port_allocator = nullptr) {
     config.transport_observer = this;
     config.rtcp_handler = [](const rtc::CopyOnWriteBuffer& packet,
-                             int64_t packet_time_us) { RTC_NOTREACHED(); };
+                             int64_t packet_time_us) {
+      RTC_DCHECK_NOTREACHED();
+    };
     config.ice_transport_factory = fake_ice_transport_factory_.get();
     config.dtls_transport_factory = fake_dtls_transport_factory_.get();
     config.on_dtls_handshake_error_ = [](rtc::SSLHandshakeError s) {};
+    config.field_trials = &field_trials_;
     transport_controller_ = std::make_unique<JsepTransportController>(
         network_thread, port_allocator, nullptr /* async_resolver_factory */,
         config);
-    network_thread->Invoke<void>(RTC_FROM_HERE,
-                                 [&] { ConnectTransportControllerSignals(); });
+    SendTask(network_thread, [&] { ConnectTransportControllerSignals(); });
   }
 
   void ConnectTransportControllerSignals() {
@@ -244,7 +258,7 @@ class JsepTransportControllerTest : public JsepTransportController::Observer,
 
   void CreateLocalDescriptionAndCompleteConnectionOnNetworkThread() {
     if (!network_thread_->IsCurrent()) {
-      network_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+      SendTask(network_thread_.get(), [&] {
         CreateLocalDescriptionAndCompleteConnectionOnNetworkThread();
       });
       return;
@@ -330,6 +344,7 @@ class JsepTransportControllerTest : public JsepTransportController::Observer,
     return true;
   }
 
+  rtc::AutoThread main_thread_;
   // Information received from signals from transport controller.
   cricket::IceConnectionState connection_state_ =
       cricket::kIceConnectionConnecting;
@@ -364,6 +379,7 @@ class JsepTransportControllerTest : public JsepTransportController::Observer,
   // Transport controller needs to be destroyed first, because it may issue
   // callbacks that modify the changed_*_by_mid in the destructor.
   std::unique_ptr<JsepTransportController> transport_controller_;
+  webrtc::test::ScopedKeyValueConfig field_trials_;
 };
 
 TEST_F(JsepTransportControllerTest, GetRtpTransport) {
@@ -961,8 +977,7 @@ TEST_F(JsepTransportControllerTest, IceSignalingOccursOnNetworkThread) {
 
   EXPECT_EQ(ice_signaled_on_thread_, network_thread_.get());
 
-  network_thread_->Invoke<void>(RTC_FROM_HERE,
-                                [&] { transport_controller_.reset(); });
+  SendTask(network_thread_.get(), [&] { transport_controller_.reset(); });
 }
 
 // Test that if the TransportController was created with the

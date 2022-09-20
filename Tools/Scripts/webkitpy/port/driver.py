@@ -351,7 +351,8 @@ class Driver(object):
         return test_name.startswith(self.web_platform_test_server_doc_root)
 
     def wpt_test_path_to_uri(self, path):
-        return self.web_platform_test_server_base_https_url + path if ".https." in path else self.web_platform_test_server_base_http_url + path
+        should_use_https = ".https." in path or ".serviceworker." in path or ".serviceworker-module." in path
+        return self.web_platform_test_server_base_https_url + path if should_use_https else self.web_platform_test_server_base_http_url + path
 
     def wpt_webkit_test_path_to_uri(self, path):
         # Our custom test cases currently hardcode localhost/127.0.0.1 for all tests.

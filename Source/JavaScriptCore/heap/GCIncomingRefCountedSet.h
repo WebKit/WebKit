@@ -47,7 +47,7 @@ public:
     
 private:
     Vector<T*> m_vector;
-    size_t m_bytes;
+    size_t m_bytes { 0 };
 };
 
 } // namespace JSC

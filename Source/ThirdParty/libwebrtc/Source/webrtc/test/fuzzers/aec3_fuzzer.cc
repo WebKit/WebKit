@@ -8,6 +8,7 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "absl/types/optional.h"
 #include "modules/audio_processing/aec3/echo_canceller3.h"
 #include "modules/audio_processing/audio_buffer.h"
 #include "modules/audio_processing/include/audio_processing.h"
@@ -51,7 +52,8 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   const size_t num_capture_channels =
       1 + fuzz_data.ReadOrDefaultValue<uint8_t>(0) % (kMaxNumChannels - 1);
 
-  EchoCanceller3 aec3(EchoCanceller3Config(), sample_rate_hz,
+  EchoCanceller3 aec3(EchoCanceller3Config(),
+                      /*multichannel_config=*/absl::nullopt, sample_rate_hz,
                       num_render_channels, num_capture_channels);
 
   AudioBuffer capture_audio(sample_rate_hz, num_capture_channels,

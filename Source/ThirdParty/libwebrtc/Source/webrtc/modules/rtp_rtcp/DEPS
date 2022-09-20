@@ -3,6 +3,6 @@ include_rules = [
   "+common_video",
   "+logging/rtc_event_log",
   "+system_wrappers",
-  # Avoid directly using field_trial. Instead use WebRtcKeyValueConfig.
+  # Avoid directly using field_trial. Instead use FieldTrialsView.
   "-system_wrappers/include/field_trial.h",
 ]

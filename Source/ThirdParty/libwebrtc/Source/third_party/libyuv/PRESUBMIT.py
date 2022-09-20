@@ -6,6 +6,8 @@
 # in the file PATENTS. All contributing project authors may
 # be found in the AUTHORS file in the root of the source tree.
 
+# Runs PRESUBMIT.py in py3 mode by git cl presubmit.
+USE_PYTHON3 = True
 
 def _CommonChecks(input_api, output_api):
   """Checks common to both upload and commit."""
@@ -26,7 +28,8 @@ def _CommonChecks(input_api, output_api):
                          'E0611',  # No package y in x
                          'W0232',  # Class has no __init__ method
                         ],
-      pylintrc='pylintrc'))
+      pylintrc='pylintrc',
+      version='2.7'))
   return results
 
 

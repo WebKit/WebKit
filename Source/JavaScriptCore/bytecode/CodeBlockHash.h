@@ -42,11 +42,8 @@ class SourceCode;
 
 class CodeBlockHash {
 public:
-    CodeBlockHash()
-        : m_hash(0)
-    {
-    }
-    
+    CodeBlockHash() = default;
+
     explicit CodeBlockHash(unsigned hash)
         : m_hash(hash)
     {
@@ -72,7 +69,7 @@ public:
     bool operator>=(const CodeBlockHash& other) const { return hash() >= other.hash(); }
     
 private:
-    unsigned m_hash;
+    unsigned m_hash { 0 };
 };
 
 } // namespace JSC

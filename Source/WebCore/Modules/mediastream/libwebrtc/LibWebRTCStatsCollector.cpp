@@ -99,24 +99,6 @@ static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamSta
     // remoteId
     if (rtcStats.packets_received.is_defined())
         stats.packetsReceived = *rtcStats.packets_received;
-    if (rtcStats.packets_repaired.is_defined())
-        stats.packetsRepaired = *rtcStats.packets_repaired;
-    if (rtcStats.burst_packets_lost.is_defined())
-        stats.burstPacketsLost = *rtcStats.burst_packets_lost;
-    if (rtcStats.burst_packets_discarded.is_defined())
-        stats.burstPacketsDiscarded = *rtcStats.burst_packets_discarded;
-    if (rtcStats.burst_loss_count.is_defined())
-        stats.burstLossCount = *rtcStats.burst_loss_count;
-    if (rtcStats.burst_discard_count.is_defined())
-        stats.burstDiscardCount = *rtcStats.burst_discard_count;
-    if (rtcStats.burst_loss_rate.is_defined())
-        stats.burstLossRate = *rtcStats.burst_loss_rate;
-    if (rtcStats.burst_discard_rate.is_defined())
-        stats.burstDiscardRate = *rtcStats.burst_discard_rate;
-    if (rtcStats.gap_loss_rate.is_defined())
-        stats.gapLossRate = *rtcStats.gap_loss_rate;
-    if (rtcStats.gap_discard_rate.is_defined())
-        stats.gapDiscardRate = *rtcStats.gap_discard_rate;
     if (rtcStats.frames_dropped.is_defined())
         stats.framesDropped = *rtcStats.frames_dropped;
     // full_frames_lost.
@@ -129,8 +111,6 @@ static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamSta
         stats.frameWidth = *rtcStats.frame_width;
     if (rtcStats.frame_height.is_defined())
         stats.frameHeight = *rtcStats.frame_height;
-    if (rtcStats.frame_bit_depth.is_defined())
-        stats.frameBitDepth = *rtcStats.frame_bit_depth;
     if (rtcStats.frames_per_second.is_defined())
         stats.framesPerSecond = *rtcStats.frames_per_second;
     if (rtcStats.qp_sum.is_defined())
@@ -290,6 +270,8 @@ static inline void fillRTCMediaStreamTrackStats(RTCStatsReport::MediaStreamTrack
 
     if (rtcStats.track_identifier.is_defined())
         stats.trackIdentifier = fromStdString(*rtcStats.track_identifier);
+    if (rtcStats.kind.is_defined())
+        stats.kind = fromStdString(*rtcStats.kind);
     if (rtcStats.remote_source.is_defined())
         stats.remoteSource = *rtcStats.remote_source;
     if (rtcStats.ended.is_defined())
@@ -300,8 +282,6 @@ static inline void fillRTCMediaStreamTrackStats(RTCStatsReport::MediaStreamTrack
         stats.frameWidth = *rtcStats.frame_width;
     if (rtcStats.frame_height.is_defined())
         stats.frameHeight = *rtcStats.frame_height;
-    if (rtcStats.frames_per_second.is_defined())
-        stats.framesPerSecond = *rtcStats.frames_per_second;
     if (rtcStats.frames_sent.is_defined())
         stats.framesSent = *rtcStats.frames_sent;
     if (rtcStats.frames_received.is_defined())
@@ -310,10 +290,6 @@ static inline void fillRTCMediaStreamTrackStats(RTCStatsReport::MediaStreamTrack
         stats.framesDecoded = *rtcStats.frames_decoded;
     if (rtcStats.frames_dropped.is_defined())
         stats.framesDropped = *rtcStats.frames_dropped;
-    if (rtcStats.partial_frames_lost.is_defined())
-        stats.partialFramesLost = *rtcStats.partial_frames_lost;
-    if (rtcStats.full_frames_lost.is_defined())
-        stats.fullFramesLost = *rtcStats.full_frames_lost;
     if (rtcStats.audio_level.is_defined())
         stats.audioLevel = *rtcStats.audio_level;
     if (rtcStats.echo_return_loss.is_defined())
@@ -397,8 +373,6 @@ static inline void fillRTCIceCandidatePairStats(RTCStatsReport::IceCandidatePair
         stats.nominated = *rtcStats.nominated;
     if (rtcStats.writable.is_defined())
         stats.writable = *rtcStats.writable;
-    if (rtcStats.readable.is_defined())
-        stats.readable = *rtcStats.readable;
 
     if (rtcStats.bytes_sent.is_defined())
         stats.bytesSent = *rtcStats.bytes_sent;

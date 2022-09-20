@@ -31,30 +31,12 @@
 namespace JSC { namespace DFG {
 
 VariableAccessData::VariableAccessData()
-    : m_prediction(SpecNone)
-    , m_argumentAwarePrediction(SpecNone)
-    , m_flags(0)
-    , m_shouldNeverUnbox(false)
-    , m_structureCheckHoistingFailed(false)
-    , m_checkArrayHoistingFailed(false)
-    , m_isProfitableToUnbox(false)
-    , m_isLoadedFrom(false)
-    , m_doubleFormatState(EmptyDoubleFormatState)
 {
     clearVotes();
 }
 
 VariableAccessData::VariableAccessData(Operand operand)
-    : m_prediction(SpecNone)
-    , m_argumentAwarePrediction(SpecNone)
-    , m_operand(operand)
-    , m_flags(0)
-    , m_shouldNeverUnbox(false)
-    , m_structureCheckHoistingFailed(false)
-    , m_checkArrayHoistingFailed(false)
-    , m_isProfitableToUnbox(false)
-    , m_isLoadedFrom(false)
-    , m_doubleFormatState(EmptyDoubleFormatState)
+    : m_operand(operand)
 {
     clearVotes();
 }

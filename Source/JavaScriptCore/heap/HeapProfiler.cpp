@@ -36,9 +36,7 @@ HeapProfiler::HeapProfiler(VM& vm)
 {
 }
 
-HeapProfiler::~HeapProfiler()
-{
-}
+HeapProfiler::~HeapProfiler() = default;
 
 HeapSnapshot* HeapProfiler::mostRecentSnapshot()
 {

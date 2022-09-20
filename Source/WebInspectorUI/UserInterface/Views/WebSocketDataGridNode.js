@@ -53,9 +53,7 @@ WI.WebSocketDataGridNode = class WebSocketDataGridNode extends WI.DataGridNode
             console.assert(!wasThrown);
 
             const title = WI.UIString("Selected Frame");
-            const addSpecialUserLogClass = true;
-            const shouldRevealConsole = true;
-            WI.consoleLogViewController.appendImmediateExecutionWithResult(title, result, addSpecialUserLogClass, shouldRevealConsole);
+            WI.consoleLogViewController.appendImmediateExecutionWithResult(title, result, {addSpecialUserLogClass: true, shouldRevealConsole: true});
         };
 
         if (this._data.isText) {

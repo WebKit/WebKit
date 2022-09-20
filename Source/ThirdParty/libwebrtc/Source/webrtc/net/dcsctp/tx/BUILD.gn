@@ -14,6 +14,7 @@ rtc_source_set("send_queue") {
     "../common:internal_types",
     "../packet:chunk",
     "../packet:data",
+    "../public:socket",
     "../public:types",
   ]
   sources = [ "send_queue.h" ]
@@ -23,9 +24,12 @@ rtc_source_set("send_queue") {
 rtc_library("rr_send_queue") {
   deps = [
     ":send_queue",
+    ":stream_scheduler",
     "../../../api:array_view",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../../../rtc_base/containers:flat_map",
+    "../common:str_join",
     "../packet:data",
     "../public:socket",
     "../public:types",
@@ -42,10 +46,36 @@ rtc_library("rr_send_queue") {
   ]
 }
 
+rtc_library("stream_scheduler") {
+  deps = [
+    ":send_queue",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:strong_alias",
+    "../../../rtc_base/containers:flat_set",
+    "../common:str_join",
+    "../packet:chunk",
+    "../packet:data",
+    "../packet:sctp_packet",
+    "../public:socket",
+    "../public:types",
+  ]
+  sources = [
+    "stream_scheduler.cc",
+    "stream_scheduler.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
 rtc_library("retransmission_error_counter") {
   deps = [
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
     "../public:types",
   ]
   sources = [
@@ -58,7 +88,6 @@ rtc_library("retransmission_error_counter") {
 rtc_library("retransmission_timeout") {
   deps = [
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
     "../public:types",
   ]
   sources = [
@@ -67,13 +96,42 @@ rtc_library("retransmission_timeout") {
   ]
 }
 
-rtc_library("retransmission_queue") {
+rtc_library("outstanding_data") {
   deps = [
     ":retransmission_timeout",
     ":send_queue",
     "../../../api:array_view",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../common:math",
+    "../common:sequence_numbers",
+    "../common:str_join",
+    "../packet:chunk",
+    "../packet:data",
+    "../public:socket",
+    "../public:types",
+    "../timer",
+  ]
+  sources = [
+    "outstanding_data.cc",
+    "outstanding_data.h",
+  ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
+}
+
+rtc_library("retransmission_queue") {
+  deps = [
+    ":outstanding_data",
+    ":retransmission_timeout",
+    ":send_queue",
+    "../../../api:array_view",
+    "../../../rtc_base:checks",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:stringutils",
     "../common:math",
     "../common:sequence_numbers",
     "../common:str_join",
@@ -111,32 +169,40 @@ if (rtc_include_tests) {
 
     deps = [
       ":mock_send_queue",
+      ":outstanding_data",
       ":retransmission_error_counter",
       ":retransmission_queue",
       ":retransmission_timeout",
       ":rr_send_queue",
       ":send_queue",
+      ":stream_scheduler",
       "../../../api:array_view",
+      "../../../api/task_queue:task_queue",
       "../../../rtc_base:checks",
       "../../../rtc_base:gunit_helpers",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "../common:handover_testing",
       "../common:math",
+      "../common:sequence_numbers",
       "../packet:chunk",
       "../packet:data",
+      "../packet:sctp_packet",
       "../public:socket",
       "../public:types",
+      "../socket:mock_callbacks",
+      "../socket:mock_callbacks",
       "../testing:data_generator",
       "../testing:testing_macros",
       "../timer",
     ]
     absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
     sources = [
+      "outstanding_data_test.cc",
       "retransmission_error_counter_test.cc",
       "retransmission_queue_test.cc",
       "retransmission_timeout_test.cc",
       "rr_send_queue_test.cc",
+      "stream_scheduler_test.cc",
     ]
   }
 }

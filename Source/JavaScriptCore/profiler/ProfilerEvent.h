@@ -37,9 +37,7 @@ class Compilation;
 
 class Event {
 public:
-    Event()
-    {
-    }
+    Event() = default;
     
     Event(WallTime time, Bytecodes* bytecodes, Compilation* compilation, const char* summary, const CString& detail)
         : m_time(time)

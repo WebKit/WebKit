@@ -18,6 +18,7 @@
 #include <set>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "logging/rtc_event_log/rtc_event_processor.h"
 #include "modules/audio_coding/neteq/tools/packet.h"
 #include "rtc_base/checks.h"
@@ -38,7 +39,7 @@ bool ShouldSkipStream(ParsedRtcEventLog::MediaType media_type,
 }  // namespace
 
 std::unique_ptr<RtcEventLogSource> RtcEventLogSource::CreateFromFile(
-    const std::string& file_name,
+    absl::string_view file_name,
     absl::optional<uint32_t> ssrc_filter) {
   auto source = std::unique_ptr<RtcEventLogSource>(new RtcEventLogSource());
   ParsedRtcEventLog parsed_log;
@@ -57,7 +58,7 @@ std::unique_ptr<RtcEventLogSource> RtcEventLogSource::CreateFromFile(
 }
 
 std::unique_ptr<RtcEventLogSource> RtcEventLogSource::CreateFromString(
-    const std::string& file_contents,
+    absl::string_view file_contents,
     absl::optional<uint32_t> ssrc_filter) {
   auto source = std::unique_ptr<RtcEventLogSource>(new RtcEventLogSource());
   ParsedRtcEventLog parsed_log;

@@ -17,16 +17,21 @@ group("agc2") {
 
 rtc_library("adaptive_digital") {
   sources = [
-    "adaptive_agc.cc",
-    "adaptive_agc.h",
     "adaptive_digital_gain_applier.cc",
     "adaptive_digital_gain_applier.h",
+    "adaptive_digital_gain_controller.cc",
+    "adaptive_digital_gain_controller.h",
     "adaptive_mode_level_estimator.cc",
     "adaptive_mode_level_estimator.h",
     "saturation_protector.cc",
     "saturation_protector.h",
     "saturation_protector_buffer.cc",
     "saturation_protector_buffer.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
   ]
 
   configs += [ "..:apm_debug_dump" ]
@@ -36,7 +41,7 @@ rtc_library("adaptive_digital") {
     ":cpu_features",
     ":gain_applier",
     ":noise_level_estimator",
-    ":rnn_vad_with_level",
+    ":vad_wrapper",
     "..:api",
     "..:apm_logging",
     "..:audio_frame_view",
@@ -44,10 +49,8 @@ rtc_library("adaptive_digital") {
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:logging",
-    "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_compare",
     "../../../rtc_base:safe_minmax",
-    "../../../system_wrappers:field_trial",
     "../../../system_wrappers:metrics",
   ]
 
@@ -62,7 +65,7 @@ rtc_library("biquad_filter") {
   ]
   deps = [
     "../../../api:array_view",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:macromagic",
   ]
 }
 
@@ -80,6 +83,12 @@ rtc_library("fixed_digital") {
     "limiter.h",
   ]
 
+  visibility = [
+    "..:gain_controller2",
+    "../../audio_mixer:audio_mixer_impl",
+    "./*",
+  ]
+
   configs += [ "..:apm_debug_dump" ]
 
   deps = [
@@ -90,11 +99,12 @@ rtc_library("fixed_digital") {
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:gtest_prod",
-    "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base:safe_conversions",
     "../../../rtc_base:safe_minmax",
+    "../../../rtc_base:stringutils",
     "../../../system_wrappers:metrics",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_library("gain_applier") {
@@ -102,6 +112,12 @@ rtc_library("gain_applier") {
     "gain_applier.cc",
     "gain_applier.h",
   ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
   deps = [
     ":common",
     "..:audio_frame_view",
@@ -115,6 +131,7 @@ rtc_library("noise_level_estimator") {
     "noise_level_estimator.cc",
     "noise_level_estimator.h",
   ]
+  visibility = [ "./*" ]
   deps = [
     ":biquad_filter",
     "..:apm_logging",
@@ -127,10 +144,15 @@ rtc_library("noise_level_estimator") {
   configs += [ "..:apm_debug_dump" ]
 }
 
-rtc_library("rnn_vad_with_level") {
+rtc_library("vad_wrapper") {
   sources = [
-    "vad_with_level.cc",
-    "vad_with_level.h",
+    "vad_wrapper.cc",
+    "vad_wrapper.h",
+  ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
   ]
 
   defines = []
@@ -156,7 +178,12 @@ rtc_library("cpu_features") {
     "cpu_features.cc",
     "cpu_features.h",
   ]
-  visibility = [ "./*" ]
+
+  visibility = [
+    "..:gain_controller2",
+    "./*",
+  ]
+
   deps = [
     "../../../rtc_base:stringutils",
     "../../../rtc_base/system:arch",
@@ -187,7 +214,6 @@ rtc_library("adaptive_digital_unittests") {
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
-    "../../../rtc_base:rtc_base_approved",
     "../../../test:test_support",
   ]
 }
@@ -226,7 +252,6 @@ rtc_library("fixed_digital_unittests") {
     "../../../common_audio",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
-    "../../../rtc_base:rtc_base_approved",
     "../../../system_wrappers:metrics",
   ]
 }
@@ -245,17 +270,17 @@ rtc_library("noise_estimator_unittests") {
     "../../../api:function_view",
     "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
-    "../../../rtc_base:rtc_base_approved",
   ]
 }
 
-rtc_library("rnn_vad_with_level_unittests") {
+rtc_library("vad_wrapper_unittests") {
   testonly = true
-  sources = [ "vad_with_level_unittest.cc" ]
+  sources = [ "vad_wrapper_unittest.cc" ]
   deps = [
     ":common",
-    ":rnn_vad_with_level",
+    ":vad_wrapper",
     "..:audio_frame_view",
+    "../../../rtc_base:checks",
     "../../../rtc_base:gunit_helpers",
     "../../../rtc_base:safe_compare",
     "../../../test:test_support",
@@ -277,6 +302,6 @@ rtc_library("test_utils") {
   deps = [
     "..:audio_frame_view",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:random",
   ]
 }

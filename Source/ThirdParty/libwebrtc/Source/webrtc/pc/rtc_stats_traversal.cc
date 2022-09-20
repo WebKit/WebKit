@@ -140,7 +140,7 @@ std::vector<const std::string*> GetStatsReferencedIds(const RTCStats& stats) {
     AddIdIfDefined(transport.local_certificate_id, &neighbor_ids);
     AddIdIfDefined(transport.remote_certificate_id, &neighbor_ids);
   } else {
-    RTC_NOTREACHED() << "Unrecognized type: " << type;
+    RTC_DCHECK_NOTREACHED() << "Unrecognized type: " << type;
   }
   return neighbor_ids;
 }

@@ -18,7 +18,6 @@
 #include "common_audio/channel_buffer.h"
 #include "common_audio/resampler/push_sinc_resampler.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/format_macros.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -79,7 +78,7 @@ float ComputeSNR(const ChannelBuffer<float>& ref,
       best_delay = delay;
     }
   }
-  printf("SNR=%.1f dB at delay=%" RTC_PRIuS "\n", best_snr, best_delay);
+  printf("SNR=%.1f dB at delay=%zu\n", best_snr, best_delay);
   return best_snr;
 }
 
@@ -131,8 +130,8 @@ void RunAudioConverterTest(size_t src_channels,
                 PushSincResampler::AlgorithmicDelaySeconds(src_sample_rate_hz) *
                 dst_sample_rate_hz);
   // SNR reported on the same line later.
-  printf("(%" RTC_PRIuS ", %d Hz) -> (%" RTC_PRIuS ", %d Hz) ", src_channels,
-         src_sample_rate_hz, dst_channels, dst_sample_rate_hz);
+  printf("(%zu, %d Hz) -> (%zu, %d Hz) ", src_channels, src_sample_rate_hz,
+         dst_channels, dst_sample_rate_hz);
 
   std::unique_ptr<AudioConverter> converter = AudioConverter::Create(
       src_channels, src_frames, dst_channels, dst_frames);
@@ -144,16 +143,13 @@ void RunAudioConverterTest(size_t src_channels,
 }
 
 TEST(AudioConverterTest, ConversionsPassSNRThreshold) {
-  const int kSampleRates[] = {8000, 16000, 32000, 44100, 48000};
-  const size_t kChannels[] = {1, 2};
-  for (size_t src_rate = 0; src_rate < arraysize(kSampleRates); ++src_rate) {
-    for (size_t dst_rate = 0; dst_rate < arraysize(kSampleRates); ++dst_rate) {
-      for (size_t src_channel = 0; src_channel < arraysize(kChannels);
-           ++src_channel) {
-        for (size_t dst_channel = 0; dst_channel < arraysize(kChannels);
-             ++dst_channel) {
-          RunAudioConverterTest(kChannels[src_channel], kSampleRates[src_rate],
-                                kChannels[dst_channel], kSampleRates[dst_rate]);
+  const int kSampleRates[] = {8000, 11025, 16000, 22050, 32000, 44100, 48000};
+  const int kChannels[] = {1, 2};
+  for (int src_rate : kSampleRates) {
+    for (int dst_rate : kSampleRates) {
+      for (size_t src_channels : kChannels) {
+        for (size_t dst_channels : kChannels) {
+          RunAudioConverterTest(src_channels, src_rate, dst_channels, dst_rate);
         }
       }
     }

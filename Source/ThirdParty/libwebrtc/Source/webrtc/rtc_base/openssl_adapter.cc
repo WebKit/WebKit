@@ -13,6 +13,8 @@
 #include <errno.h>
 #include <openssl/bio.h>
 #include <openssl/err.h>
+
+#include "absl/strings/string_view.h"
 #ifdef OPENSSL_IS_BORINGSSL
 #include <openssl/pool.h>
 #endif
@@ -31,8 +33,8 @@
 #endif
 
 #include "absl/memory/memory.h"
+#include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/openssl.h"
@@ -42,7 +44,7 @@
 #include "rtc_base/openssl_identity.h"
 #endif
 #include "rtc_base/openssl_utility.h"
-#include "rtc_base/string_encode.h"
+#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
 
 //////////////////////////////////////////////////////////////////////
@@ -164,6 +166,25 @@ static void LogSslError() {
 
 namespace rtc {
 
+using ::webrtc::TimeDelta;
+
+namespace webrtc_openssl_adapter_internal {
+
+// Simple O(n^2) implementation is sufficient for current use case.
+std::string StrJoin(const std::vector<std::string>& list, char delimiter) {
+  RTC_CHECK(!list.empty());
+  StringBuilder sb;
+  sb << list[0];
+  for (size_t i = 1; i < list.size(); i++) {
+    sb.AppendFormat("%c", delimiter);
+    sb << list[i];
+  }
+  return sb.Release();
+}
+}  // namespace webrtc_openssl_adapter_internal
+
+using webrtc_openssl_adapter_internal::StrJoin;
+
 bool OpenSSLAdapter::InitializeSSL() {
   if (!SSL_library_init())
     return false;
@@ -250,26 +271,11 @@ void OpenSSLAdapter::SetRole(SSLRole role) {
   role_ = role;
 }
 
-Socket* OpenSSLAdapter::Accept(SocketAddress* paddr) {
-  RTC_DCHECK(role_ == SSL_SERVER);
-  Socket* socket = SSLAdapter::Accept(paddr);
-  if (!socket) {
-    return nullptr;
-  }
-
-  SSLAdapter* adapter = SSLAdapter::Create(socket);
-  adapter->SetIdentity(identity_->Clone());
-  adapter->SetRole(rtc::SSL_SERVER);
-  adapter->SetIgnoreBadCert(ignore_bad_cert_);
-  adapter->StartSSL("");
-  return adapter;
-}
-
-int OpenSSLAdapter::StartSSL(const char* hostname) {
+int OpenSSLAdapter::StartSSL(absl::string_view hostname) {
   if (state_ != SSL_NONE)
     return -1;
 
-  ssl_host_name_ = hostname;
+  ssl_host_name_.assign(hostname.data(), hostname.size());
 
   if (GetSocket()->GetState() != Socket::CS_CONNECTED) {
     state_ = SSL_WAIT;
@@ -367,7 +373,7 @@ int OpenSSLAdapter::BeginSSL() {
   }
 
   if (!elliptic_curves_.empty()) {
-    SSL_set1_curves_list(ssl_, rtc::join(elliptic_curves_, ':').c_str());
+    SSL_set1_curves_list(ssl_, StrJoin(elliptic_curves_, ':').c_str());
   }
 
   // Now that the initial config is done, transfer ownership of `bio` to the
@@ -388,7 +394,7 @@ int OpenSSLAdapter::ContinueSSL() {
   RTC_DCHECK(state_ == SSL_CONNECTING);
 
   // Clear the DTLS timer
-  Thread::Current()->Clear(this, MSG_TIMEOUT);
+  timer_.reset();
 
   int code = (role_ == SSL_CLIENT) ? SSL_connect(ssl_) : SSL_accept(ssl_);
   switch (SSL_get_error(ssl_, code)) {
@@ -416,10 +422,10 @@ int OpenSSLAdapter::ContinueSSL() {
       RTC_LOG(LS_VERBOSE) << " -- error want read";
       struct timeval timeout;
       if (DTLSv1_get_timeout(ssl_, &timeout)) {
-        int delay = timeout.tv_sec * 1000 + timeout.tv_usec / 1000;
-
-        Thread::Current()->PostDelayed(RTC_FROM_HERE, delay, this, MSG_TIMEOUT,
-                                       0);
+        TimeDelta delay = TimeDelta::Seconds(timeout.tv_sec) +
+                          TimeDelta::Micros(timeout.tv_usec);
+        Thread::Current()->PostDelayedTask(
+            SafeTask(timer_.flag(), [this] { OnTimeout(); }), delay);
       }
       break;
 
@@ -435,7 +441,7 @@ int OpenSSLAdapter::ContinueSSL() {
   return 0;
 }
 
-void OpenSSLAdapter::Error(const char* context, int err, bool signal) {
+void OpenSSLAdapter::Error(absl::string_view context, int err, bool signal) {
   RTC_LOG(LS_WARNING) << "OpenSSLAdapter::Error(" << context << ", " << err
                       << ")";
   state_ = SSL_ERROR;
@@ -466,7 +472,7 @@ void OpenSSLAdapter::Cleanup() {
   identity_.reset();
 
   // Clear the DTLS timer
-  Thread::Current()->Clear(this, MSG_TIMEOUT);
+  timer_.reset();
 }
 
 int OpenSSLAdapter::DoSslWrite(const void* pv, size_t cb, int* error) {
@@ -669,12 +675,10 @@ bool OpenSSLAdapter::IsResumedSession() {
   return (ssl_ && SSL_session_reused(ssl_) == 1);
 }
 
-void OpenSSLAdapter::OnMessage(Message* msg) {
-  if (MSG_TIMEOUT == msg->message_id) {
-    RTC_LOG(LS_INFO) << "DTLS timeout expired";
-    DTLSv1_handle_timeout(ssl_);
-    ContinueSSL();
-  }
+void OpenSSLAdapter::OnTimeout() {
+  RTC_LOG(LS_INFO) << "DTLS timeout expired";
+  DTLSv1_handle_timeout(ssl_);
+  ContinueSSL();
 }
 
 void OpenSSLAdapter::OnConnectEvent(Socket* socket) {
@@ -759,7 +763,7 @@ void OpenSSLAdapter::OnCloseEvent(Socket* socket, int err) {
   AsyncSocketAdapter::OnCloseEvent(socket, err);
 }
 
-bool OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, const std::string& host) {
+bool OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, absl::string_view host) {
   bool is_valid_cert_name =
       openssl::VerifyPeerCertMatchesHost(ssl, host) &&
       (SSL_get_verify_result(ssl) == X509_V_OK || custom_cert_verifier_status_);
@@ -1038,6 +1042,21 @@ void OpenSSLAdapterFactory::SetCertVerifier(
   ssl_cert_verifier_ = ssl_cert_verifier;
 }
 
+void OpenSSLAdapterFactory::SetIdentity(std::unique_ptr<SSLIdentity> identity) {
+  RTC_DCHECK(!ssl_session_cache_);
+  identity_ = std::move(identity);
+}
+
+void OpenSSLAdapterFactory::SetRole(SSLRole role) {
+  RTC_DCHECK(!ssl_session_cache_);
+  ssl_role_ = role;
+}
+
+void OpenSSLAdapterFactory::SetIgnoreBadCert(bool ignore) {
+  RTC_DCHECK(!ssl_session_cache_);
+  ignore_bad_cert_ = ignore;
+}
+
 OpenSSLAdapter* OpenSSLAdapterFactory::CreateAdapter(Socket* socket) {
   if (ssl_session_cache_ == nullptr) {
     SSL_CTX* ssl_ctx = OpenSSLAdapter::CreateContext(ssl_mode_, true);
@@ -1049,8 +1068,14 @@ OpenSSLAdapter* OpenSSLAdapterFactory::CreateAdapter(Socket* socket) {
         std::make_unique<OpenSSLSessionCache>(ssl_mode_, ssl_ctx);
     SSL_CTX_free(ssl_ctx);
   }
-  return new OpenSSLAdapter(socket, ssl_session_cache_.get(),
-                            ssl_cert_verifier_);
+  OpenSSLAdapter* ssl_adapter =
+      new OpenSSLAdapter(socket, ssl_session_cache_.get(), ssl_cert_verifier_);
+  ssl_adapter->SetRole(ssl_role_);
+  ssl_adapter->SetIgnoreBadCert(ignore_bad_cert_);
+  if (identity_) {
+    ssl_adapter->SetIdentity(identity_->Clone());
+  }
+  return ssl_adapter;
 }
 
 OpenSSLAdapter::EarlyExitCatcher::EarlyExitCatcher(OpenSSLAdapter& adapter_ptr)

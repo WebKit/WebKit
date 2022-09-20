@@ -63,7 +63,7 @@ class RtcpXrObserver : public test::EndToEndTest {
                  bool expect_target_bitrate,
                  bool enable_zero_target_bitrate,
                  VideoEncoderConfig::ContentType content_type)
-      : EndToEndTest(test::CallTest::kDefaultTimeoutMs),
+      : EndToEndTest(test::CallTest::kDefaultTimeout),
         enable_rrtr_(enable_rrtr),
         expect_target_bitrate_(expect_target_bitrate),
         enable_zero_target_bitrate_(enable_zero_target_bitrate),
@@ -173,7 +173,7 @@ class RtcpXrObserver : public test::EndToEndTest {
 
   void ModifyVideoConfigs(
       VideoSendStream::Config* send_config,
-      std::vector<VideoReceiveStream::Config>* receive_configs,
+      std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
       VideoEncoderConfig* encoder_config) override {
     if (enable_zero_target_bitrate_) {
       // Configure VP8 to be able to use simulcast.
@@ -247,7 +247,8 @@ TEST_F(ExtendedReportsEndToEndTest,
 
 TEST_F(ExtendedReportsEndToEndTest,
        TestExtendedReportsWithoutRrtrWithTargetBitrateExplicitlySet) {
-  test::ScopedFieldTrials field_trials("WebRTC-Target-Bitrate-Rtcp/Enabled/");
+  test::ScopedKeyValueConfig field_trials(
+      field_trials_, "WebRTC-Target-Bitrate-Rtcp/Enabled/");
   RtcpXrObserver test(/*enable_rrtr=*/false, /*expect_target_bitrate=*/true,
                       /*enable_zero_target_bitrate=*/false,
                       VideoEncoderConfig::ContentType::kRealtimeVideo);

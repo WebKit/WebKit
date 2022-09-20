@@ -30,7 +30,7 @@ int ACMResampler::Resample10Msec(const int16_t* in_audio,
   size_t in_length = in_freq_hz * num_audio_channels / 100;
   if (in_freq_hz == out_freq_hz) {
     if (out_capacity_samples < in_length) {
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       return -1;
     }
     memcpy(out_audio, in_audio, in_length * sizeof(int16_t));

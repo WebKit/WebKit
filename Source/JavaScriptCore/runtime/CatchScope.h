@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,14 +44,8 @@ public:
 
     JS_EXPORT_PRIVATE ~CatchScope();
 
-    void clearException() { m_vm.clearException(); }
-    bool clearExceptionExceptTermination()
-    {
-        if (UNLIKELY(m_vm.hasPendingTerminationException()))
-            return false;
-        m_vm.clearException();
-        return true;
-    }
+    void clearException();
+    bool clearExceptionExceptTermination();
 };
 
 #define DECLARE_CATCH_SCOPE(vm__) \
@@ -67,20 +61,31 @@ public:
     CatchScope(const CatchScope&) = delete;
     CatchScope(CatchScope&&) = default;
 
-    ALWAYS_INLINE void clearException() { m_vm.clearException(); }
-    ALWAYS_INLINE bool clearExceptionExceptTermination()
-    {
-        if (UNLIKELY(m_vm.hasPendingTerminationException()))
-            return false;
-        m_vm.clearException();
-        return true;
-    }
+    ALWAYS_INLINE void clearException();
+    ALWAYS_INLINE bool clearExceptionExceptTermination();
 };
 
 #define DECLARE_CATCH_SCOPE(vm__) \
     JSC::CatchScope((vm__))
 
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+
+ALWAYS_INLINE void CatchScope::clearException()
+{
+    m_vm.clearException();
+}
+
+ALWAYS_INLINE bool CatchScope::clearExceptionExceptTermination()
+{
+    if (UNLIKELY(m_vm.hasPendingTerminationException())) {
+#if ENABLE(EXCEPTION_SCOPE_VERIFICATION)
+        m_vm.exception();
+#endif
+        return false;
+    }
+    m_vm.clearException();
+    return true;
+}
 
 #define CLEAR_AND_RETURN_IF_EXCEPTION(scope__, value__) do { \
         if (UNLIKELY((scope__).exception())) { \

@@ -10,34 +10,23 @@
 
 #include "examples/peerconnection/client/peer_connection_client.h"
 
+#include "api/units/time_delta.h"
 #include "examples/peerconnection/client/defaults.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
 
-#ifdef WIN32
-#include "rtc_base/win32_socket_server.h"
-#endif
-
 namespace {
 
 // This is our magical hangup signal.
-const char kByeMessage[] = "BYE";
+constexpr char kByeMessage[] = "BYE";
 // Delay between server connection retries, in milliseconds
-const int kReconnectDelay = 2000;
+constexpr webrtc::TimeDelta kReconnectDelay = webrtc::TimeDelta::Seconds(2);
 
 rtc::Socket* CreateClientSocket(int family) {
-#ifdef WIN32
-  rtc::Win32Socket* sock = new rtc::Win32Socket();
-  sock->CreateT(family, SOCK_STREAM);
-  return sock;
-#elif defined(WEBRTC_POSIX)
   rtc::Thread* thread = rtc::Thread::Current();
   RTC_DCHECK(thread != NULL);
   return thread->socketserver()->CreateSocket(family, SOCK_STREAM);
-#else
-#error Platform not supported.
-#endif
 }
 
 }  // namespace
@@ -45,9 +34,7 @@ rtc::Socket* CreateClientSocket(int family) {
 PeerConnectionClient::PeerConnectionClient()
     : callback_(NULL), resolver_(NULL), state_(NOT_CONNECTED), my_id_(-1) {}
 
-PeerConnectionClient::~PeerConnectionClient() {
-  rtc::Thread::Current()->Clear(this);
-}
+PeerConnectionClient::~PeerConnectionClient() = default;
 
 void PeerConnectionClient::InitSocketSignals() {
   RTC_DCHECK(control_socket_.get() != NULL);
@@ -89,7 +76,7 @@ void PeerConnectionClient::Connect(const std::string& server,
   RTC_DCHECK(!client_name.empty());
 
   if (state_ != NOT_CONNECTED) {
-    RTC_LOG(WARNING)
+    RTC_LOG(LS_WARNING)
         << "The client must not be connected before you can call Connect()";
     callback_->OnServerConnectionFailure();
     return;
@@ -297,7 +284,7 @@ bool PeerConnectionClient::ReadIntoBuffer(rtc::Socket* socket,
   bool ret = false;
   size_t i = data->find("\r\n\r\n");
   if (i != std::string::npos) {
-    RTC_LOG(INFO) << "Headers received";
+    RTC_LOG(LS_INFO) << "Headers received";
     if (GetHeaderValue(*data, i, "\r\nContent-Length: ", content_length)) {
       size_t total_response_size = (i + 4) + *content_length;
       if (data->length() >= total_response_size) {
@@ -374,7 +361,7 @@ void PeerConnectionClient::OnRead(rtc::Socket* socket) {
 }
 
 void PeerConnectionClient::OnHangingGetRead(rtc::Socket* socket) {
-  RTC_LOG(INFO) << __FUNCTION__;
+  RTC_LOG(LS_INFO) << __FUNCTION__;
   size_t content_length = 0;
   if (ReadIntoBuffer(socket, &notification_data_, &content_length)) {
     size_t peer_id = 0, eoh = 0;
@@ -472,7 +459,7 @@ bool PeerConnectionClient::ParseServerResponse(const std::string& response,
 }
 
 void PeerConnectionClient::OnClose(rtc::Socket* socket, int err) {
-  RTC_LOG(INFO) << __FUNCTION__;
+  RTC_LOG(LS_INFO) << __FUNCTION__;
 
   socket->Close();
 
@@ -491,17 +478,12 @@ void PeerConnectionClient::OnClose(rtc::Socket* socket, int err) {
     }
   } else {
     if (socket == control_socket_.get()) {
-      RTC_LOG(WARNING) << "Connection refused; retrying in 2 seconds";
-      rtc::Thread::Current()->PostDelayed(RTC_FROM_HERE, kReconnectDelay, this,
-                                          0);
+      RTC_LOG(LS_WARNING) << "Connection refused; retrying in 2 seconds";
+      rtc::Thread::Current()->PostDelayedTask(
+          SafeTask(safety_.flag(), [this] { DoConnect(); }), kReconnectDelay);
     } else {
       Close();
       callback_->OnDisconnected();
     }
   }
-}
-
-void PeerConnectionClient::OnMessage(rtc::Message* msg) {
-  // ignore msg; there is currently only one supported message ("retry")
-  DoConnect();
 }

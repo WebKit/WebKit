@@ -37,7 +37,6 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BytecodeBasicBlock);
 template<typename OpcodeTraits>
 BytecodeBasicBlock<OpcodeTraits>::BytecodeBasicBlock(const typename InstructionStreamType::Ref& instruction, unsigned blockIndex)
     : m_leaderOffset(instruction.offset())
-    , m_totalLength(0)
     , m_index(blockIndex)
 {
     addLength(instruction->size());

@@ -115,6 +115,8 @@ TEST(RemoteEstimateEndToEnd, AudioUsesAbsSendTimeExtension) {
         }
       });
   RTC_CHECK(s.WaitAndProcess(&received_abs_send_time));
+  caller->pc()->Close();
+  callee->pc()->Close();
 }
 }  // namespace test
 }  // namespace webrtc

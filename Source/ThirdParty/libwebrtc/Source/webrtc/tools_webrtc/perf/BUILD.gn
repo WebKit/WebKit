@@ -10,7 +10,7 @@ import("../../webrtc.gni")
 
 if (rtc_enable_protobuf) {
   group("webrtc_dashboard_upload") {
-    data = [ "webrtc_dashboard_upload.py" ]
+    data = [ "process_perf_results.py" ]
     data_deps =
         [ "//third_party/catapult/tracing/tracing/proto:histogram_proto" ]
   }

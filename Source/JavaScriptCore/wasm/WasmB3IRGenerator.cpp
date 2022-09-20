@@ -119,7 +119,6 @@ public:
             , m_signature(signature)
             , m_stackSize(stackSize)
             , continuation(continuation)
-            , special(nullptr)
             , m_tryStart(tryStart)
             , m_tryCatchDepth(tryDepth)
         {
@@ -127,9 +126,7 @@ public:
                 phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->returnType(i)), origin));
         }
 
-        ControlData()
-        {
-        }
+        ControlData() = default;
 
         static bool isIf(const ControlData& control) { return control.blockType() == BlockType::If; }
         static bool isTry(const ControlData& control) { return control.blockType() == BlockType::Try; }
@@ -266,7 +263,7 @@ public:
         BlockSignature m_signature;
         unsigned m_stackSize;
         BasicBlock* continuation;
-        BasicBlock* special;
+        BasicBlock* special { nullptr };
         Vector<Value*> phis;
         unsigned m_tryStart;
         unsigned m_tryEnd;

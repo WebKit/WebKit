@@ -15,7 +15,6 @@
 
 #include <string>
 
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -23,6 +22,9 @@ namespace webrtc {
 class RTC_EXPORT Desktop {
  public:
   ~Desktop();
+
+  Desktop(const Desktop&) = delete;
+  Desktop& operator=(const Desktop&) = delete;
 
   // Returns the name of the desktop represented by the object. Return false if
   // quering the name failed for any reason.
@@ -56,8 +58,6 @@ class RTC_EXPORT Desktop {
 
   // True if `desktop_` must be closed on teardown.
   bool own_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(Desktop);
 };
 
 }  // namespace webrtc

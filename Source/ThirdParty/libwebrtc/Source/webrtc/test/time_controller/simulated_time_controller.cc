@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "test/time_controller/simulated_process_thread.h"
 #include "test/time_controller/simulated_task_queue.h"
 #include "test/time_controller/simulated_thread.h"
 
@@ -50,17 +49,8 @@ SimulatedTimeControllerImpl::CreateTaskQueue(
   auto mutable_this = const_cast<SimulatedTimeControllerImpl*>(this);
   auto task_queue = std::unique_ptr<SimulatedTaskQueue, TaskQueueDeleter>(
       new SimulatedTaskQueue(mutable_this, name));
-  ;
   mutable_this->Register(task_queue.get());
   return task_queue;
-}
-
-std::unique_ptr<ProcessThread> SimulatedTimeControllerImpl::CreateProcessThread(
-    const char* thread_name) {
-  auto process_thread =
-      std::make_unique<SimulatedProcessThread>(this, thread_name);
-  Register(process_thread.get());
-  return process_thread;
 }
 
 std::unique_ptr<rtc::Thread> SimulatedTimeControllerImpl::CreateThread(
@@ -190,11 +180,6 @@ Clock* GlobalSimulatedTimeController::GetClock() {
 
 TaskQueueFactory* GlobalSimulatedTimeController::GetTaskQueueFactory() {
   return &impl_;
-}
-
-std::unique_ptr<ProcessThread>
-GlobalSimulatedTimeController::CreateProcessThread(const char* thread_name) {
-  return impl_.CreateProcessThread(thread_name);
 }
 
 std::unique_ptr<rtc::Thread> GlobalSimulatedTimeController::CreateThread(

@@ -21,8 +21,8 @@
 #include "test/gtest.h"
 
 #if defined(WEBRTC_USE_X11)
-#include "modules/desktop_capture/linux/shared_x_display.h"
-#include "modules/desktop_capture/linux/x_atom_cache.h"
+#include "modules/desktop_capture/linux/x11/shared_x_display.h"
+#include "modules/desktop_capture/linux/x11/x_atom_cache.h"
 #endif
 
 #if defined(WEBRTC_WIN)

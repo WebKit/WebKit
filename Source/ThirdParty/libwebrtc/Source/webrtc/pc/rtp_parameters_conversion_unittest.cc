@@ -10,10 +10,13 @@
 
 #include "pc/rtp_parameters_conversion.h"
 
-#include <algorithm>
+#include <cstdint>
+#include <map>
+#include <string>
 
-#include "rtc_base/gunit.h"
+#include "api/media_types.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::UnorderedElementsAre;
 

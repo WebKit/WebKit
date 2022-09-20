@@ -399,6 +399,43 @@ TEST_F(PacketRouterTest, SendPacketAssignsTransportSequenceNumbers) {
   packet_router_.RemoveSendRtpModule(&rtp_2);
 }
 
+TEST_F(PacketRouterTest, DoesNotIncrementTransportSequenceNumberOnSendFailure) {
+  NiceMock<MockRtpRtcpInterface> rtp;
+  constexpr uint32_t kSsrc = 1234;
+  ON_CALL(rtp, SSRC).WillByDefault(Return(kSsrc));
+  packet_router_.AddSendRtpModule(&rtp, false);
+
+  // Transport sequence numbers start at 1, for historical reasons.
+  const uint16_t kStartTransportSequenceNumber = 1;
+
+  // Build and send a packet - it should be assigned the start sequence number.
+  // Return failure status code to make sure sequence number is not incremented.
+  auto packet = BuildRtpPacket(kSsrc);
+  EXPECT_TRUE(packet->ReserveExtension<TransportSequenceNumber>());
+  EXPECT_CALL(
+      rtp, TrySendPacket(
+               Property(&RtpPacketToSend::GetExtension<TransportSequenceNumber>,
+                        kStartTransportSequenceNumber),
+               _))
+      .WillOnce(Return(false));
+  packet_router_.SendPacket(std::move(packet), PacedPacketInfo());
+
+  // Send another packet, verify transport sequence number is still at the
+  // start state.
+  packet = BuildRtpPacket(kSsrc);
+  EXPECT_TRUE(packet->ReserveExtension<TransportSequenceNumber>());
+
+  EXPECT_CALL(
+      rtp, TrySendPacket(
+               Property(&RtpPacketToSend::GetExtension<TransportSequenceNumber>,
+                        kStartTransportSequenceNumber),
+               _))
+      .WillOnce(Return(true));
+  packet_router_.SendPacket(std::move(packet), PacedPacketInfo());
+
+  packet_router_.RemoveSendRtpModule(&rtp);
+}
+
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
 using PacketRouterDeathTest = PacketRouterTest;
 TEST_F(PacketRouterDeathTest, DoubleRegistrationOfSendModuleDisallowed) {

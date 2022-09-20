@@ -15,13 +15,15 @@
 
 #include <utility>
 
+#include "absl/strings/string_view.h"
+
 namespace webrtc {
 namespace test {
 
 NetEqStatsPlotter::NetEqStatsPlotter(bool make_matlab_plot,
                                      bool make_python_plot,
                                      bool show_concealment_events,
-                                     std::string base_file_name)
+                                     absl::string_view base_file_name)
     : make_matlab_plot_(make_matlab_plot),
       make_python_plot_(make_python_plot),
       show_concealment_events_(show_concealment_events),
@@ -33,8 +35,7 @@ NetEqStatsPlotter::NetEqStatsPlotter(bool make_matlab_plot,
   stats_getter_.reset(new NetEqStatsGetter(std::move(delay_analyzer)));
 }
 
-void NetEqStatsPlotter::SimulationEnded(int64_t simulation_time_ms,
-                                        NetEq* /*neteq*/) {
+void NetEqStatsPlotter::SimulationEnded(int64_t simulation_time_ms) {
   if (make_matlab_plot_) {
     auto matlab_script_name = base_file_name_;
     std::replace(matlab_script_name.begin(), matlab_script_name.end(), '.',
@@ -95,6 +96,14 @@ void NetEqStatsPlotter::SimulationEnded(int64_t simulation_time_ms,
     printf("  interruption_ratio: %f\n",
            static_cast<double>(lifetime_stats.total_interruption_duration_ms) /
                simulation_time_ms);
+    printf("  removed_samples_for_acceleration: %" PRIu64 "\n",
+           lifetime_stats.removed_samples_for_acceleration);
+    printf("  inserted_samples_for_deceleration: %" PRIu64 "\n",
+           lifetime_stats.inserted_samples_for_deceleration);
+    printf("  generated_noise_samples: %" PRIu64 "\n",
+           lifetime_stats.generated_noise_samples);
+    printf("  packets_discarded: %" PRIu64 "\n",
+           lifetime_stats.packets_discarded);
   }
 }
 

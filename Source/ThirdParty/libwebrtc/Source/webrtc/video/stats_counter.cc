@@ -354,7 +354,7 @@ bool MaxCounter::GetMetric(int* metric) const {
 }
 
 int MaxCounter::GetValueForEmptyInterval() const {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return 0;
 }
 
@@ -378,7 +378,7 @@ bool PercentCounter::GetMetric(int* metric) const {
 }
 
 int PercentCounter::GetValueForEmptyInterval() const {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return 0;
 }
 
@@ -402,7 +402,7 @@ bool PermilleCounter::GetMetric(int* metric) const {
 }
 
 int PermilleCounter::GetValueForEmptyInterval() const {
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return 0;
 }
 

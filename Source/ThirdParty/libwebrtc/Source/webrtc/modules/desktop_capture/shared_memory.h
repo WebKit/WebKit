@@ -21,7 +21,6 @@ typedef void* HANDLE;
 
 #include <memory>
 
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -54,6 +53,9 @@ class RTC_EXPORT SharedMemory {
 
   virtual ~SharedMemory() {}
 
+  SharedMemory(const SharedMemory&) = delete;
+  SharedMemory& operator=(const SharedMemory&) = delete;
+
  protected:
   SharedMemory(void* data, size_t size, Handle handle, int id);
 
@@ -61,9 +63,6 @@ class RTC_EXPORT SharedMemory {
   const size_t size_;
   const Handle handle_;
   const int id_;
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(SharedMemory);
 };
 
 // Interface used to create SharedMemory instances.
@@ -72,10 +71,10 @@ class SharedMemoryFactory {
   SharedMemoryFactory() {}
   virtual ~SharedMemoryFactory() {}
 
-  virtual std::unique_ptr<SharedMemory> CreateSharedMemory(size_t size) = 0;
+  SharedMemoryFactory(const SharedMemoryFactory&) = delete;
+  SharedMemoryFactory& operator=(const SharedMemoryFactory&) = delete;
 
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(SharedMemoryFactory);
+  virtual std::unique_ptr<SharedMemory> CreateSharedMemory(size_t size) = 0;
 };
 
 }  // namespace webrtc

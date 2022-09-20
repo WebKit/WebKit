@@ -216,10 +216,6 @@ class StreamResetHandler {
   RetransmissionQueue* retransmission_queue_;
   const std::unique_ptr<Timer> reconfig_timer_;
 
-  // Outgoing streams that have been requested to be reset, but hasn't yet
-  // been included in an outgoing request.
-  webrtc::flat_set<StreamID> streams_to_reset_;
-
   // The next sequence number for outgoing stream requests.
   ReconfigRequestSN next_outgoing_req_seq_nbr_;
 

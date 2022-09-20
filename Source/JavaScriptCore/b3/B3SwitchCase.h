@@ -35,9 +35,7 @@ namespace JSC { namespace B3 {
 
 class SwitchCase {
 public:
-    SwitchCase()
-    {
-    }
+    SwitchCase() = default;
 
     SwitchCase(int64_t caseValue, const FrequentedBlock& target)
         : m_caseValue(caseValue)

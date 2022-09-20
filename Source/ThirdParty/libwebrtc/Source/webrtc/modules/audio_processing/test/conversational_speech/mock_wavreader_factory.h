@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_abstract_factory.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
 #include "test/gmock.h"
@@ -38,14 +39,14 @@ class MockWavReaderFactory : public WavReaderAbstractFactory {
 
   MOCK_METHOD(std::unique_ptr<WavReaderInterface>,
               Create,
-              (const std::string&),
+              (absl::string_view),
               (const, override));
 
  private:
   // Creates a MockWavReader instance using the parameters in
   // audiotrack_names_params_ if the entry corresponding to filepath exists,
   // otherwise creates a MockWavReader instance using the default parameters.
-  std::unique_ptr<WavReaderInterface> CreateMock(const std::string& filepath);
+  std::unique_ptr<WavReaderInterface> CreateMock(absl::string_view filepath);
 
   const Params& default_params_;
   std::map<std::string, const Params> audiotrack_names_params_;

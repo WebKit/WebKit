@@ -20,7 +20,7 @@ rtc_source_set("neteq_api") {
     "..:rtp_headers",
     "..:rtp_packet_info",
     "..:scoped_refptr",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:stringutils",
     "../../system_wrappers:system_wrappers",
     "../audio_codecs:audio_codecs_api",
   ]
@@ -54,7 +54,6 @@ rtc_source_set("neteq_controller_api") {
   deps = [
     ":neteq_api",
     ":tick_timer",
-    "../../rtc_base:rtc_base_approved",
     "../../system_wrappers:system_wrappers",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
@@ -81,7 +80,6 @@ rtc_source_set("tick_timer") {
   ]
   deps = [
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
   ]
 }
 

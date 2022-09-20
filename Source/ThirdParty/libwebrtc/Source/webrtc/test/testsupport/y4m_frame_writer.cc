@@ -8,11 +8,11 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <stdint.h>
 #include <stdio.h>
 
 #include <string>
 
+#include "rtc_base/logging.h"
 #include "test/testsupport/frame_writer.h"
 
 namespace webrtc {
@@ -34,8 +34,8 @@ bool Y4mFrameWriterImpl::Init() {
   int bytes_written = fprintf(output_file_, "YUV4MPEG2 W%d H%d F%d:1 C420\n",
                               width_, height_, frame_rate_);
   if (bytes_written < 0) {
-    fprintf(stderr, "Failed to write Y4M file header to file %s\n",
-            output_filename_.c_str());
+    RTC_LOG(LS_ERROR) << "Failed to write Y4M file header to file: "
+                      << output_filename_.c_str();
     return false;
   }
   return true;
@@ -43,14 +43,13 @@ bool Y4mFrameWriterImpl::Init() {
 
 bool Y4mFrameWriterImpl::WriteFrame(const uint8_t* frame_buffer) {
   if (output_file_ == nullptr) {
-    fprintf(stderr,
-            "Y4mFrameWriterImpl is not initialized (output file is NULL)\n");
+    RTC_LOG(LS_ERROR) << "Y4mFrameWriterImpl is not initialized.";
     return false;
   }
   int bytes_written = fprintf(output_file_, "FRAME\n");
   if (bytes_written < 0) {
-    fprintf(stderr, "Failed to write Y4M frame header to file %s\n",
-            output_filename_.c_str());
+    RTC_LOG(LS_ERROR) << "Couldn't write Y4M frame header to file: "
+                      << output_filename_.c_str();
     return false;
   }
   return YuvFrameWriterImpl::WriteFrame(frame_buffer);

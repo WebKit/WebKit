@@ -37,13 +37,9 @@ class SignedPtr {
 public:
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    constexpr SignedPtr()
-        : m_value(nullptr)
-    {
-    }
+    constexpr SignedPtr() = default;
 
     constexpr SignedPtr(std::nullptr_t)
-        : m_value(nullptr)
     {
     }
 
@@ -116,7 +112,7 @@ public:
     }
 
 private:
-    T* m_value;
+    T* m_value { nullptr };
 };
 
 template <typename T, uintptr_t Tag>

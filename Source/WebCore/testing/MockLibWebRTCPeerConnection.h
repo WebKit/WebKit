@@ -31,12 +31,15 @@
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_COMMA_BEGIN
 
 #include <webrtc/api/media_stream_interface.h>
+#include <webrtc/api/make_ref_counted.h>
 #include <webrtc/api/peer_connection_interface.h>
 
 ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_UNUSED_PARAMETERS_END
+ALLOW_COMMA_END
 
 #include <wtf/text/WTFString.h>
 
@@ -92,7 +95,7 @@ public:
         , m_source(source) { }
 
 private:
-    webrtc::AudioSourceInterface* GetSource() const final { return m_source; }
+    webrtc::AudioSourceInterface* GetSource() const final { return m_source.get(); }
     void AddSink(webrtc::AudioTrackSinkInterface* sink) final {
         if (m_source)
             m_source->AddSink(sink);
@@ -122,7 +125,7 @@ public:
         , m_source(source) { }
 
 private:
-    webrtc::VideoTrackSourceInterface* GetSource() const final { return m_source; }
+    webrtc::VideoTrackSourceInterface* GetSource() const final { return m_source.get(); }
     void RegisterObserver(webrtc::ObserverInterface*) final { }
     void UnregisterObserver(webrtc::ObserverInterface*) final { }
 
@@ -201,7 +204,7 @@ private:
     rtc::scoped_refptr<webrtc::DtmfSenderInterface> GetDtmfSender() const final
     {
         if (!m_dtmfSender)
-            m_dtmfSender = new rtc::RefCountedObject<MockDtmfSender>();
+            m_dtmfSender = rtc::make_ref_counted<MockDtmfSender>();
         return m_dtmfSender;
     }
 
@@ -221,7 +224,7 @@ private:
     rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track() const final
     {
         if (!m_track)
-            const_cast<MockRtpReceiver*>(this)->m_track = new rtc::RefCountedObject<MockLibWebRTCVideoTrack>("", nullptr);
+            const_cast<MockRtpReceiver*>(this)->m_track = rtc::make_ref_counted<MockLibWebRTCVideoTrack>("", nullptr);
         return m_track;
     }
 
@@ -248,6 +251,12 @@ private:
     absl::optional<webrtc::RtpTransceiverDirection> current_direction() const final { return { }; }
     void StopInternal() final { }
     webrtc::RTCError StopStandard() final { return { }; }
+    bool stopping() const final { return true; }
+    webrtc::RTCError SetCodecPreferences(rtc::ArrayView<webrtc::RtpCodecCapability>) final { return { }; };
+    std::vector<webrtc::RtpCodecCapability> codec_preferences() const final { return { }; }
+    std::vector<webrtc::RtpHeaderExtensionCapability> HeaderExtensionsToOffer() const final { return { }; }
+    std::vector<webrtc::RtpHeaderExtensionCapability> HeaderExtensionsNegotiated() const final { return { }; }
+    webrtc::RTCError SetOfferedRtpHeaderExtensions(rtc::ArrayView<const webrtc::RtpHeaderExtensionCapability>) final { return { }; }
 
 private:
     rtc::scoped_refptr<webrtc::RtpSenderInterface> m_sender;
@@ -311,13 +320,16 @@ protected:
     void CreateAnswer(webrtc::CreateSessionDescriptionObserver*, const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions&) final;
     webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::DataChannelInterface>> CreateDataChannelOrError(const std::string&, const webrtc::DataChannelInit*) final;
     webrtc::RTCErrorOr<rtc::scoped_refptr<webrtc::RtpSenderInterface>> AddTrack(rtc::scoped_refptr<webrtc::MediaStreamTrackInterface>, const std::vector<std::string>& streams) final;
-    bool RemoveTrack(webrtc::RtpSenderInterface*) final;
+    webrtc::RTCError RemoveTrackOrError(rtc::scoped_refptr<webrtc::RtpSenderInterface>) final;
+
     webrtc::RTCError SetBitrate(const webrtc::BitrateSettings&) final { return { }; }
 
     void SetLocalDescription(webrtc::SetSessionDescriptionObserver*, webrtc::SessionDescriptionInterface*) final { ASSERT_NOT_REACHED(); };
     void SetLocalDescription(std::unique_ptr<webrtc::SessionDescriptionInterface>, rtc::scoped_refptr<webrtc::SetLocalDescriptionObserverInterface>) override;
     bool GetStats(webrtc::StatsObserver*, webrtc::MediaStreamTrackInterface*, StatsOutputLevel) override { return false; }
     void CreateOffer(webrtc::CreateSessionDescriptionObserver*, const webrtc::PeerConnectionInterface::RTCOfferAnswerOptions&) override;
+
+    webrtc::RTCError SetConfiguration(const webrtc::PeerConnectionInterface::RTCConfiguration&) final { return { }; };
 
     virtual void gotLocalDescription() { }
 
@@ -333,7 +345,7 @@ protected:
 
 class MockLibWebRTCPeerConnectionFactory : public webrtc::PeerConnectionFactoryInterface {
 public:
-    static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(const String& testCase) { return new rtc::RefCountedObject<MockLibWebRTCPeerConnectionFactory>(testCase); }
+    static rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> create(const String& testCase) { return rtc::make_ref_counted<MockLibWebRTCPeerConnectionFactory>(testCase); }
 
 protected:
     explicit MockLibWebRTCPeerConnectionFactory(const String&);

@@ -10,7 +10,11 @@
 
 #include "rtc_base/strings/string_format.h"
 
+#include <vector>
+
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/string_encode.h"
 #include "test/gtest.h"
 
 namespace rtc {
@@ -30,6 +34,19 @@ TEST(StringFormatTest, MaxSizeShouldWork) {
   std::fill_n(str, kSrcLen, 'A');
   str[kSrcLen - 1] = 0;
   EXPECT_EQ(str, StringFormat("%s", str));
+}
+
+// Test that formating a string using `absl::string_view` works as expected
+// whe using `%.*s`.
+TEST(StringFormatTest, FormatStringView) {
+  const std::string main_string("This is a substring test.");
+  std::vector<absl::string_view> string_views = rtc::split(main_string, ' ');
+  ASSERT_EQ(string_views.size(), 5u);
+
+  const absl::string_view& sv = string_views[3];
+  std::string formatted =
+      StringFormat("We have a %.*s.", static_cast<int>(sv.size()), sv.data());
+  EXPECT_EQ(formatted.compare("We have a substring."), 0);
 }
 
 }  // namespace rtc

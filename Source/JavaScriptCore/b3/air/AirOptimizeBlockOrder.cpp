@@ -39,9 +39,7 @@ namespace {
 
 class SortedSuccessors {
 public:
-    SortedSuccessors()
-    {
-    }
+    SortedSuccessors() = default;
 
     void append(BasicBlock* block)
     {

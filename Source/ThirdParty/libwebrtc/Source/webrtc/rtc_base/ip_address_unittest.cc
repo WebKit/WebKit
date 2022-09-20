@@ -10,6 +10,7 @@
 
 #include "rtc_base/ip_address.h"
 
+#include "absl/strings/string_view.h"
 #include "test/gtest.h"
 
 namespace rtc {
@@ -118,7 +119,7 @@ bool AreEqual(const IPAddress& addr, const IPAddress& addr2) {
   return true;
 }
 
-bool BrokenIPStringFails(const std::string& broken) {
+bool BrokenIPStringFails(absl::string_view broken) {
   IPAddress addr(0);  // Intentionally make it v4.
   if (IPFromString(kIPv4BrokenString1, &addr)) {
     return false;
@@ -126,13 +127,13 @@ bool BrokenIPStringFails(const std::string& broken) {
   return addr.family() == AF_UNSPEC;
 }
 
-bool CheckMaskCount(const std::string& mask, int expected_length) {
+bool CheckMaskCount(absl::string_view mask, int expected_length) {
   IPAddress addr;
   return IPFromString(mask, &addr) &&
          (expected_length == CountIPMaskBits(addr));
 }
 
-bool TryInvalidMaskCount(const std::string& mask) {
+bool TryInvalidMaskCount(absl::string_view mask) {
   // We don't care about the result at all, but we do want to know if
   // CountIPMaskBits is going to crash or infinite loop or something.
   IPAddress addr;
@@ -143,9 +144,9 @@ bool TryInvalidMaskCount(const std::string& mask) {
   return true;
 }
 
-bool CheckTruncateIP(const std::string& initial,
+bool CheckTruncateIP(absl::string_view initial,
                      int truncate_length,
-                     const std::string& expected_result) {
+                     absl::string_view expected_result) {
   IPAddress addr, expected;
   IPFromString(initial, &addr);
   IPFromString(expected_result, &expected);

@@ -41,10 +41,10 @@ class PacketSequencerTest : public ::testing::Test {
     packet.set_packet_type(type);
     packet.SetSsrc(ssrc);
     packet.SetSequenceNumber(kDefaultSequenceNumber);
-    packet.set_capture_time_ms(clock_.TimeInMilliseconds());
+    packet.set_capture_time(clock_.CurrentTime());
     packet.SetTimestamp(
         kStartRtpTimestamp +
-        static_cast<uint32_t>(packet.capture_time_ms() - kStartTime.ms()));
+        static_cast<uint32_t>(packet.capture_time().ms() - kStartTime.ms()));
     return packet;
   }
 
@@ -152,7 +152,7 @@ TEST_F(PacketSequencerTest, UpdatesPaddingBasedOnLastMediaPacket) {
   EXPECT_EQ(padding_packet.SequenceNumber(), kMediaStartSequenceNumber + 1);
   EXPECT_EQ(padding_packet.PayloadType(), kMediaPayloadType);
   EXPECT_EQ(padding_packet.Timestamp(), media_packet.Timestamp());
-  EXPECT_EQ(padding_packet.capture_time_ms(), media_packet.capture_time_ms());
+  EXPECT_EQ(padding_packet.capture_time(), media_packet.capture_time());
 }
 
 TEST_F(PacketSequencerTest, UpdatesPaddingBasedOnLastRedPacket) {
@@ -181,7 +181,7 @@ TEST_F(PacketSequencerTest, UpdatesPaddingBasedOnLastRedPacket) {
   EXPECT_EQ(padding_packet.SequenceNumber(), kMediaStartSequenceNumber + 1);
   EXPECT_EQ(padding_packet.PayloadType(), kMediaPayloadType + 1);
   EXPECT_EQ(padding_packet.Timestamp(), media_packet.Timestamp());
-  EXPECT_EQ(padding_packet.capture_time_ms(), media_packet.capture_time_ms());
+  EXPECT_EQ(padding_packet.capture_time(), media_packet.capture_time());
 }
 
 TEST_F(PacketSequencerTest, DoesNotUpdateFieldsOnPayloadPadding) {
@@ -201,7 +201,7 @@ TEST_F(PacketSequencerTest, DoesNotUpdateFieldsOnPayloadPadding) {
   padding_packet.SetPayloadSize(100);
   padding_packet.SetPayloadType(kMediaPayloadType + 1);
   padding_packet.SetTimestamp(kStartRtpTimestamp + 1);
-  padding_packet.set_capture_time_ms(kStartTime.ms() + 1);
+  padding_packet.set_capture_time(kStartTime + TimeDelta::Millis(1));
   sequencer_.set_rtx_sequence_number(kRtxStartSequenceNumber);
   sequencer_.Sequence(padding_packet);
 
@@ -209,7 +209,7 @@ TEST_F(PacketSequencerTest, DoesNotUpdateFieldsOnPayloadPadding) {
   EXPECT_EQ(padding_packet.SequenceNumber(), kRtxStartSequenceNumber);
   EXPECT_EQ(padding_packet.PayloadType(), kMediaPayloadType + 1);
   EXPECT_EQ(padding_packet.Timestamp(), kStartRtpTimestamp + 1);
-  EXPECT_EQ(padding_packet.capture_time_ms(), kStartTime.ms() + 1);
+  EXPECT_EQ(padding_packet.capture_time(), kStartTime + TimeDelta::Millis(1));
 }
 
 TEST_F(PacketSequencerTest, UpdatesRtxPaddingBasedOnLastMediaPacket) {
@@ -242,8 +242,8 @@ TEST_F(PacketSequencerTest, UpdatesRtxPaddingBasedOnLastMediaPacket) {
   EXPECT_EQ(
       padding_packet.Timestamp(),
       media_packet.Timestamp() + (kTimeDelta.ms() * kTimestampTicksPerMs));
-  EXPECT_EQ(padding_packet.capture_time_ms(),
-            media_packet.capture_time_ms() + kTimeDelta.ms());
+  EXPECT_EQ(padding_packet.capture_time(),
+            media_packet.capture_time() + kTimeDelta);
 }
 
 }  // namespace

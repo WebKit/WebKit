@@ -53,7 +53,7 @@ void ArrayAllocationProfile::updateProfile()
     // So for now, we update the allocation profile only from the main thread.
     
     ASSERT(!isCompilationThread());
-    JSArray* lastArray = m_lastArray;
+    JSArray* lastArray = std::exchange(m_lastArray, nullptr);
     if (!lastArray)
         return;
     if (LIKELY(Options::useArrayAllocationProfiling())) {
@@ -67,7 +67,6 @@ void ArrayAllocationProfile::updateProfile()
         m_currentIndexingType = indexingType;
         m_largestSeenVectorLength = std::min(std::max(m_largestSeenVectorLength, lastArray->getVectorLength()), BASE_CONTIGUOUS_VECTOR_LEN_MAX);
     }
-    m_lastArray = nullptr;
 }
 
 } // namespace JSC

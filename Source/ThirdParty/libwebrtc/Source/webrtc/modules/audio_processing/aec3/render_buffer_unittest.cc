@@ -22,7 +22,7 @@ namespace webrtc {
 
 // Verifies the check for non-null fft buffer.
 TEST(RenderBufferDeathTest, NullExternalFftBuffer) {
-  BlockBuffer block_buffer(10, 3, 1, kBlockSize);
+  BlockBuffer block_buffer(10, 3, 1);
   SpectrumBuffer spectrum_buffer(10, 1);
   EXPECT_DEATH(RenderBuffer(&block_buffer, &spectrum_buffer, nullptr), "");
 }
@@ -30,7 +30,7 @@ TEST(RenderBufferDeathTest, NullExternalFftBuffer) {
 // Verifies the check for non-null spectrum buffer.
 TEST(RenderBufferDeathTest, NullExternalSpectrumBuffer) {
   FftBuffer fft_buffer(10, 1);
-  BlockBuffer block_buffer(10, 3, 1, kBlockSize);
+  BlockBuffer block_buffer(10, 3, 1);
   EXPECT_DEATH(RenderBuffer(&block_buffer, nullptr, &fft_buffer), "");
 }
 

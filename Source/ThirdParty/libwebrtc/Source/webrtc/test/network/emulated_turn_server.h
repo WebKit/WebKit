@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/transport/stun.h"
 #include "p2p/base/turn_server.h"
@@ -57,10 +58,11 @@ class EmulatedTURNServer : public EmulatedTURNServerInterface,
   EmulatedEndpoint* GetPeerEndpoint() const override { return peer_; }
 
   // cricket::TurnAuthInterface
-  bool GetKey(const std::string& username,
-              const std::string& realm,
+  bool GetKey(absl::string_view username,
+              absl::string_view realm,
               std::string* key) override {
-    return cricket::ComputeStunCredentialHash(username, realm, username, key);
+    return cricket::ComputeStunCredentialHash(
+        std::string(username), std::string(realm), std::string(username), key);
   }
 
   rtc::AsyncPacketSocket* CreatePeerSocket() { return Wrap(peer_); }

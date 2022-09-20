@@ -11,7 +11,6 @@
 #include "modules/audio_device/mac/audio_device_mac.h"
 
 #include <ApplicationServices/ApplicationServices.h>
-#include <libkern/OSAtomic.h>  // OSAtomicCompareAndSwap()
 #include <mach/mach.h>         // mach_task_self()
 #include <sys/sysctl.h>        // sysctlbyname()
 
@@ -52,24 +51,6 @@ namespace webrtc {
   } while (0)
 
 enum { MaxNumberDevices = 64 };
-
-void AudioDeviceMac::AtomicSet32(int32_t* theValue, int32_t newValue) {
-  while (1) {
-    int32_t oldValue = *theValue;
-    if (OSAtomicCompareAndSwap32Barrier(oldValue, newValue, theValue) == true) {
-      return;
-    }
-  }
-}
-
-int32_t AudioDeviceMac::AtomicGet32(int32_t* theValue) {
-  while (1) {
-    int32_t value = *theValue;
-    if (OSAtomicCompareAndSwap32Barrier(value, value, theValue) == true) {
-      return value;
-    }
-  }
-}
 
 // CoreAudio errors are best interpreted as four character strings.
 void AudioDeviceMac::logCAMsg(const rtc::LoggingSeverity sev,
@@ -246,7 +227,7 @@ AudioDeviceGeneric::InitStatus AudioDeviceMac::Init() {
 
   if (_paRenderBuffer == NULL) {
     _paRenderBuffer = new PaUtilRingBuffer;
-    PaRingBufferSize bufSize = -1;
+    ring_buffer_size_t bufSize = -1;
     bufSize = PaUtil_InitializeRingBuffer(
         _paRenderBuffer, sizeof(SInt16), _renderBufSizeSamples, _renderBufData);
     if (bufSize == -1) {
@@ -266,7 +247,7 @@ AudioDeviceGeneric::InitStatus AudioDeviceMac::Init() {
 
   if (_paCaptureBuffer == NULL) {
     _paCaptureBuffer = new PaUtilRingBuffer;
-    PaRingBufferSize bufSize = -1;
+    ring_buffer_size_t bufSize = -1;
     bufSize =
         PaUtil_InitializeRingBuffer(_paCaptureBuffer, sizeof(Float32),
                                     _captureBufSizeSamples, _captureBufData);
@@ -854,7 +835,8 @@ int32_t AudioDeviceMac::PlayoutDeviceName(uint16_t index,
     memset(guid, 0, kAdmMaxGuidSize);
   }
 
-  return GetDeviceName(kAudioDevicePropertyScopeOutput, index, name);
+  return GetDeviceName(kAudioDevicePropertyScopeOutput, index,
+                       rtc::ArrayView<char>(name, kAdmMaxDeviceNameSize));
 }
 
 int32_t AudioDeviceMac::RecordingDeviceName(uint16_t index,
@@ -872,7 +854,8 @@ int32_t AudioDeviceMac::RecordingDeviceName(uint16_t index,
     memset(guid, 0, kAdmMaxGuidSize);
   }
 
-  return GetDeviceName(kAudioDevicePropertyScopeInput, index, name);
+  return GetDeviceName(kAudioDevicePropertyScopeInput, index,
+                       rtc::ArrayView<char>(name, kAdmMaxDeviceNameSize));
 }
 
 int16_t AudioDeviceMac::RecordingDevices() {
@@ -1339,7 +1322,7 @@ int32_t AudioDeviceMac::StopRecording() {
   }
 
   OSStatus err = noErr;
-  int32_t captureDeviceIsAlive = AtomicGet32(&_captureDeviceIsAlive);
+  int32_t captureDeviceIsAlive = _captureDeviceIsAlive;
   if (_twoDevices && captureDeviceIsAlive == 1) {
     // Recording side uses its own dedicated device and IOProc.
     if (_recording) {
@@ -1395,7 +1378,7 @@ int32_t AudioDeviceMac::StopRecording() {
   }
 
   // Setting this signal will allow the worker thread to be stopped.
-  AtomicSet32(&_captureDeviceIsAlive, 0);
+  _captureDeviceIsAlive = 0;
 
   if (!capture_worker_thread_.empty()) {
     mutex_.Unlock();
@@ -1472,7 +1455,7 @@ int32_t AudioDeviceMac::StopPlayout() {
   }
 
   OSStatus err = noErr;
-  int32_t renderDeviceIsAlive = AtomicGet32(&_renderDeviceIsAlive);
+  int32_t renderDeviceIsAlive = _renderDeviceIsAlive;
   if (_playing && renderDeviceIsAlive == 1) {
     // We signal a stop for a shared device even when capturing has not
     // yet ended. This is to ensure the IOProc will return early as
@@ -1509,7 +1492,7 @@ int32_t AudioDeviceMac::StopPlayout() {
   }
 
   // Setting this signal will allow the worker thread to be stopped.
-  AtomicSet32(&_renderDeviceIsAlive, 0);
+  _renderDeviceIsAlive = 0;
   if (!render_worker_thread_.empty()) {
     mutex_.Unlock();
     render_worker_thread_.Finalize();
@@ -1545,7 +1528,7 @@ int32_t AudioDeviceMac::StopPlayout() {
 }
 
 int32_t AudioDeviceMac::PlayoutDelay(uint16_t& delayMS) const {
-  int32_t renderDelayUs = AtomicGet32(&_renderDelayUs);
+  int32_t renderDelayUs = _renderDelayUs;
   delayMS =
       static_cast<uint16_t>(1e-3 * (renderDelayUs + _renderLatencyUs) + 0.5);
   return 0;
@@ -1665,9 +1648,8 @@ int32_t AudioDeviceMac::GetNumberDevices(const AudioObjectPropertyScope scope,
 
 int32_t AudioDeviceMac::GetDeviceName(const AudioObjectPropertyScope scope,
                                       const uint16_t index,
-                                      char* name) {
+                                      rtc::ArrayView<char> name) {
   OSStatus err = noErr;
-  UInt32 len = kAdmMaxDeviceNameSize;
   AudioDeviceID deviceIds[MaxNumberDevices];
 
   int numberDevices = GetNumberDevices(scope, deviceIds, MaxNumberDevices);
@@ -1708,21 +1690,24 @@ int32_t AudioDeviceMac::GetDeviceName(const AudioObjectPropertyScope scope,
                                                 scope, 0};
 
   if (isDefaultDevice) {
-    char devName[len];
+    std::array<char, kAdmMaxDeviceNameSize> devName;
+    UInt32 len = devName.size();
 
-    WEBRTC_CA_RETURN_ON_ERR(AudioObjectGetPropertyData(usedID, &propertyAddress,
-                                                       0, NULL, &len, devName));
+    WEBRTC_CA_RETURN_ON_ERR(AudioObjectGetPropertyData(
+        usedID, &propertyAddress, 0, NULL, &len, devName.data()));
 
-    sprintf(name, "default (%s)", devName);
+    rtc::SimpleStringBuilder ss(name);
+    ss.AppendFormat("default (%s)", devName.data());
   } else {
     if (index < numberDevices) {
       usedID = deviceIds[index];
     } else {
       usedID = index;
     }
+    UInt32 len = name.size();
 
-    WEBRTC_CA_RETURN_ON_ERR(AudioObjectGetPropertyData(usedID, &propertyAddress,
-                                                       0, NULL, &len, name));
+    WEBRTC_CA_RETURN_ON_ERR(AudioObjectGetPropertyData(
+        usedID, &propertyAddress, 0, NULL, &len, name.data()));
   }
 
   return 0;
@@ -1954,7 +1939,7 @@ int32_t AudioDeviceMac::HandleDeviceChange() {
 
     if (err == kAudioHardwareBadDeviceError || deviceIsAlive == 0) {
       RTC_LOG(LS_WARNING) << "Capture device is not alive (probably removed)";
-      AtomicSet32(&_captureDeviceIsAlive, 0);
+      _captureDeviceIsAlive = 0;
       _mixerManager.CloseMicrophone();
     } else if (err != noErr) {
       logCAMsg(rtc::LS_ERROR, "Error in AudioDeviceGetProperty()",
@@ -1973,7 +1958,7 @@ int32_t AudioDeviceMac::HandleDeviceChange() {
 
     if (err == kAudioHardwareBadDeviceError || deviceIsAlive == 0) {
       RTC_LOG(LS_WARNING) << "Render device is not alive (probably removed)";
-      AtomicSet32(&_renderDeviceIsAlive, 0);
+      _renderDeviceIsAlive = 0;
       _mixerManager.CloseSpeaker();
     } else if (err != noErr) {
       logCAMsg(rtc::LS_ERROR, "Error in AudioDeviceGetProperty()",
@@ -2238,7 +2223,7 @@ OSStatus AudioDeviceMac::implDeviceIOProc(const AudioBufferList* inputData,
     }
   }
 
-  PaRingBufferSize bufSizeSamples =
+  ring_buffer_size_t bufSizeSamples =
       PaUtil_GetRingBufferReadAvailable(_paRenderBuffer);
 
   int32_t renderDelayUs =
@@ -2248,7 +2233,7 @@ OSStatus AudioDeviceMac::implDeviceIOProc(const AudioBufferList* inputData,
           _outDesiredFormat.mSampleRate +
       0.5);
 
-  AtomicSet32(&_renderDelayUs, renderDelayUs);
+  _renderDelayUs = renderDelayUs;
 
   return 0;
 }
@@ -2256,7 +2241,7 @@ OSStatus AudioDeviceMac::implDeviceIOProc(const AudioBufferList* inputData,
 OSStatus AudioDeviceMac::implOutConverterProc(UInt32* numberDataPackets,
                                               AudioBufferList* data) {
   RTC_DCHECK(data->mNumberBuffers == 1);
-  PaRingBufferSize numSamples =
+  ring_buffer_size_t numSamples =
       *numberDataPackets * _outDesiredFormat.mChannelsPerFrame;
 
   data->mBuffers->mNumberChannels = _outDesiredFormat.mChannelsPerFrame;
@@ -2307,7 +2292,7 @@ OSStatus AudioDeviceMac::implInDeviceIOProc(const AudioBufferList* inputData,
     return 0;
   }
 
-  PaRingBufferSize bufSizeSamples =
+  ring_buffer_size_t bufSizeSamples =
       PaUtil_GetRingBufferReadAvailable(_paCaptureBuffer);
 
   int32_t captureDelayUs =
@@ -2317,12 +2302,12 @@ OSStatus AudioDeviceMac::implInDeviceIOProc(const AudioBufferList* inputData,
                                              _inStreamFormat.mSampleRate +
                                          0.5);
 
-  AtomicSet32(&_captureDelayUs, captureDelayUs);
+  _captureDelayUs = captureDelayUs;
 
   RTC_DCHECK(inputData->mNumberBuffers == 1);
-  PaRingBufferSize numSamples = inputData->mBuffers->mDataByteSize *
-                                _inStreamFormat.mChannelsPerFrame /
-                                _inStreamFormat.mBytesPerPacket;
+  ring_buffer_size_t numSamples = inputData->mBuffers->mDataByteSize *
+                                  _inStreamFormat.mChannelsPerFrame /
+                                  _inStreamFormat.mBytesPerPacket;
   PaUtil_WriteRingBuffer(_paCaptureBuffer, inputData->mBuffers->mData,
                          numSamples);
 
@@ -2337,7 +2322,7 @@ OSStatus AudioDeviceMac::implInDeviceIOProc(const AudioBufferList* inputData,
 OSStatus AudioDeviceMac::implInConverterProc(UInt32* numberDataPackets,
                                              AudioBufferList* data) {
   RTC_DCHECK(data->mNumberBuffers == 1);
-  PaRingBufferSize numSamples =
+  ring_buffer_size_t numSamples =
       *numberDataPackets * _inStreamFormat.mChannelsPerFrame;
 
   while (PaUtil_GetRingBufferReadAvailable(_paCaptureBuffer) < numSamples) {
@@ -2347,7 +2332,7 @@ OSStatus AudioDeviceMac::implInConverterProc(UInt32* numberDataPackets,
 
     kern_return_t kernErr = semaphore_timedwait(_captureSemaphore, timeout);
     if (kernErr == KERN_OPERATION_TIMED_OUT) {
-      int32_t signal = AtomicGet32(&_captureDeviceIsAlive);
+      int32_t signal = _captureDeviceIsAlive;
       if (signal == 0) {
         // The capture device is no longer alive; stop the worker thread.
         *numberDataPackets = 0;
@@ -2360,7 +2345,7 @@ OSStatus AudioDeviceMac::implInConverterProc(UInt32* numberDataPackets,
 
   // Pass the read pointer directly to the converter to avoid a memcpy.
   void* dummyPtr;
-  PaRingBufferSize dummySize;
+  ring_buffer_size_t dummySize;
   PaUtil_GetRingBufferReadRegions(_paCaptureBuffer, numSamples,
                                   &data->mBuffers->mData, &numSamples,
                                   &dummyPtr, &dummySize);
@@ -2375,7 +2360,7 @@ OSStatus AudioDeviceMac::implInConverterProc(UInt32* numberDataPackets,
 }
 
 bool AudioDeviceMac::RenderWorkerThread() {
-  PaRingBufferSize numSamples =
+  ring_buffer_size_t numSamples =
       ENGINE_PLAY_BUF_SIZE_IN_SAMPLES * _outDesiredFormat.mChannelsPerFrame;
   while (PaUtil_GetRingBufferWriteAvailable(_paRenderBuffer) -
              _renderDelayOffsetSamples <
@@ -2386,7 +2371,7 @@ bool AudioDeviceMac::RenderWorkerThread() {
 
     kern_return_t kernErr = semaphore_timedwait(_renderSemaphore, timeout);
     if (kernErr == KERN_OPERATION_TIMED_OUT) {
-      int32_t signal = AtomicGet32(&_renderDeviceIsAlive);
+      int32_t signal = _renderDeviceIsAlive;
       if (signal == 0) {
         // The render device is no longer alive; stop the worker thread.
         return false;
@@ -2471,8 +2456,8 @@ bool AudioDeviceMac::CaptureWorkerThread() {
     int32_t msecOnPlaySide;
     int32_t msecOnRecordSide;
 
-    int32_t captureDelayUs = AtomicGet32(&_captureDelayUs);
-    int32_t renderDelayUs = AtomicGet32(&_renderDelayUs);
+    int32_t captureDelayUs = _captureDelayUs;
+    int32_t renderDelayUs = _renderDelayUs;
 
     msecOnPlaySide =
         static_cast<int32_t>(1e-3 * (renderDelayUs + _renderLatencyUs) + 0.5);

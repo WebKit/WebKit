@@ -61,10 +61,12 @@ TEST(TransportFeedbackDemuxerTest, ObserverSanity) {
       kSsrc, kRtpStartSeq + 2, kTransportStartSeq + 2, /*is_retransmit=*/true));
 
   rtcp::TransportFeedback feedback;
-  feedback.SetBase(kTransportStartSeq, 1000);
-  ASSERT_TRUE(feedback.AddReceivedPacket(kTransportStartSeq, 1000));
+  feedback.SetBase(kTransportStartSeq, Timestamp::Millis(1));
+  ASSERT_TRUE(
+      feedback.AddReceivedPacket(kTransportStartSeq, Timestamp::Millis(1)));
   // Drop middle packet.
-  ASSERT_TRUE(feedback.AddReceivedPacket(kTransportStartSeq + 2, 3000));
+  ASSERT_TRUE(
+      feedback.AddReceivedPacket(kTransportStartSeq + 2, Timestamp::Millis(3)));
 
   EXPECT_CALL(
       mock, OnPacketFeedbackVector(ElementsAre(
@@ -87,8 +89,9 @@ TEST(TransportFeedbackDemuxerTest, ObserverSanity) {
   demuxer.AddPacket(
       CreatePacket(kSsrc, kRtpStartSeq + 3, kTransportStartSeq + 3, false));
   rtcp::TransportFeedback second_feedback;
-  second_feedback.SetBase(kTransportStartSeq + 3, 4000);
-  ASSERT_TRUE(second_feedback.AddReceivedPacket(kTransportStartSeq + 3, 4000));
+  second_feedback.SetBase(kTransportStartSeq + 3, Timestamp::Millis(4));
+  ASSERT_TRUE(second_feedback.AddReceivedPacket(kTransportStartSeq + 3,
+                                                Timestamp::Millis(4)));
 
   EXPECT_CALL(mock, OnPacketFeedbackVector).Times(0);
   demuxer.OnTransportFeedback(second_feedback);

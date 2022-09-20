@@ -159,6 +159,7 @@ namespace WebCore {
     macro(DecompressionStreamDecoder) \
     macro(DecompressionStreamTransform) \
     macro(DelayNode) \
+    macro(DeprecationReportBody) \
     macro(DocumentTimeline) \
     macro(DynamicsCompressorNode) \
     macro(ExtendableEvent) \

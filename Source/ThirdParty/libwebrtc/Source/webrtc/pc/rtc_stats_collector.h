@@ -12,6 +12,8 @@
 #define PC_RTC_STATS_COLLECTOR_H_
 
 #include <stdint.h>
+
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <set>
@@ -160,7 +162,7 @@ class RTCStatsCollector : public rtc::RefCountInterface,
     cricket::MediaType media_type;
     absl::optional<std::string> mid;
     absl::optional<std::string> transport_name;
-    std::unique_ptr<TrackMediaInfoMap> track_media_info_map;
+    TrackMediaInfoMap track_media_info_map;
   };
 
   void DeliverCachedReport(

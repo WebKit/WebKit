@@ -16,14 +16,26 @@
 
 #include <algorithm>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/time_utils.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace rtc {
+
+namespace {
+
+#if defined(WEBRTC_WIN)
+constexpr char kFakeFilePath[] = "some\\path\\myfile.cc";
+#else
+constexpr char kFakeFilePath[] = "some/path/myfile.cc";
+#endif
+
+}  // namespace
 
 class LogSinkImpl : public LogSink {
  public:
@@ -34,7 +46,10 @@ class LogSinkImpl : public LogSink {
 
  private:
   void OnLogMessage(const std::string& message) override {
-    log_data_->append(message);
+    OnLogMessage(absl::string_view(message));
+  }
+  void OnLogMessage(absl::string_view message) override {
+    log_data_->append(message.begin(), message.end());
   }
   std::string* const log_data_;
 };
@@ -50,7 +65,7 @@ class LogMessageForTesting : public LogMessage {
 
   const std::string& get_extra() const { return extra_; }
 #if defined(WEBRTC_ANDROID)
-  const char* get_tag() const { return tag_; }
+  const char* get_tag() const { return log_line_.tag().data(); }
 #endif
 
   // Returns the contents of the internal log stream.
@@ -200,8 +215,8 @@ TEST(LogTest, WallClockStartTime) {
 }
 
 TEST(LogTest, CheckExtraErrorField) {
-  LogMessageForTesting log_msg("some/path/myfile.cc", 100, LS_WARNING,
-                               ERRCTX_ERRNO, 0xD);
+  LogMessageForTesting log_msg(kFakeFilePath, 100, LS_WARNING, ERRCTX_ERRNO,
+                               0xD);
   log_msg.stream() << "This gets added at dtor time";
 
   const std::string& extra = log_msg.get_extra();
@@ -211,17 +226,28 @@ TEST(LogTest, CheckExtraErrorField) {
 }
 
 TEST(LogTest, CheckFilePathParsed) {
-  LogMessageForTesting log_msg("some/path/myfile.cc", 100, LS_INFO);
-  log_msg.stream() << "<- Does this look right?";
-
-  const std::string stream = log_msg.GetPrintStream();
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+  EXPECT_EQ(LS_INFO, LogMessage::GetLogToStream(&stream));
 #if defined(WEBRTC_ANDROID)
-  const char* tag = log_msg.get_tag();
-  EXPECT_NE(nullptr, strstr(tag, "myfile.cc"));
-  EXPECT_NE(std::string::npos, stream.find("100"));
-#else
-  EXPECT_NE(std::string::npos, stream.find("(myfile.cc:100)"));
+  const char* tag = nullptr;
 #endif
+  {
+    LogMessageForTesting log_msg(kFakeFilePath, 100, LS_INFO);
+    log_msg.stream() << "<- Does this look right?";
+#if defined(WEBRTC_ANDROID)
+    tag = log_msg.get_tag();
+#endif
+  }
+
+#if defined(WEBRTC_ANDROID)
+  EXPECT_NE(nullptr, strstr(tag, "myfile.cc"));
+  EXPECT_NE(std::string::npos, str.find("100"));
+#else
+  EXPECT_NE(std::string::npos, str.find("(myfile.cc:100)"));
+#endif
+  LogMessage::RemoveLogToStream(&stream);
 }
 
 #if defined(WEBRTC_ANDROID)
@@ -293,6 +319,21 @@ TEST(LogTest, NoopSeverityDoesNotRunStringFormatting) {
   };
   RTC_LOG(LS_VERBOSE) << "This should not be logged: " << cb();
   EXPECT_FALSE(was_called);
+}
+
+struct TestStruct {};
+std::string ToLogString(TestStruct foo) {
+  return "bar";
+}
+
+TEST(LogTest, ToLogStringUsedForUnknownTypes) {
+  std::string str;
+  LogSinkImpl stream(&str);
+  LogMessage::AddLogToStream(&stream, LS_INFO);
+  TestStruct t;
+  RTC_LOG(LS_INFO) << t;
+  EXPECT_THAT(str, ::testing::HasSubstr("bar"));
+  LogMessage::RemoveLogToStream(&stream);
 }
 
 }  // namespace rtc

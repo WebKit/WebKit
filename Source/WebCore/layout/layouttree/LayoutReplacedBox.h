@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CachedImage.h"
-#include "LayoutBox.h"
+#include "LayoutContainerBox.h"
 #include "LayoutSize.h"
 #include "LayoutUnit.h"
 #include <wtf/IsoMalloc.h>
@@ -34,7 +34,7 @@
 namespace WebCore {
 namespace Layout {
 
-class ReplacedBox : public Box {
+class ReplacedBox : public ContainerBox {
     WTF_MAKE_ISO_ALLOCATED(ReplacedBox);
 public:
     ReplacedBox(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, OptionSet<BaseTypeFlag> = { ReplacedBoxFlag });
@@ -54,15 +54,11 @@ public:
     LayoutUnit intrinsicHeight() const;
     LayoutUnit intrinsicRatio() const;
 
-    void setBaseline(LayoutUnit baseline) { m_baseline = baseline; }
-    std::optional<LayoutUnit> baseline() const { return m_baseline; }
-
 private:
     bool hasAspectRatio() const;
 
     std::optional<LayoutSize> m_intrinsicSize;
     std::optional<LayoutUnit> m_intrinsicRatio;
-    std::optional<LayoutUnit> m_baseline;
     CachedImage* m_cachedImage { nullptr };
 };
 

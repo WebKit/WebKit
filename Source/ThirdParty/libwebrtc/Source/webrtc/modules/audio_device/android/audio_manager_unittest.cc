@@ -15,7 +15,6 @@
 #include "modules/audio_device/android/build_info.h"
 #include "modules/audio_device/android/ensure_initialized.h"
 #include "rtc_base/arraysize.h"
-#include "rtc_base/format_macros.h"
 #include "test/gtest.h"
 
 #define PRINT(...) fprintf(stderr, __VA_ARGS__);
@@ -153,16 +152,16 @@ TEST_F(AudioManagerTest, ShowAudioParameterInfo) {
   PRINT("%saudio layer: %s\n", kTag,
         low_latency_out ? "Low latency OpenSL" : "Java/JNI based AudioTrack");
   PRINT("%ssample rate: %d Hz\n", kTag, playout_parameters_.sample_rate());
-  PRINT("%schannels: %" RTC_PRIuS "\n", kTag, playout_parameters_.channels());
-  PRINT("%sframes per buffer: %" RTC_PRIuS " <=> %.2f ms\n", kTag,
+  PRINT("%schannels: %zu\n", kTag, playout_parameters_.channels());
+  PRINT("%sframes per buffer: %zu <=> %.2f ms\n", kTag,
         playout_parameters_.frames_per_buffer(),
         playout_parameters_.GetBufferSizeInMilliseconds());
   PRINT("RECORD: \n");
   PRINT("%saudio layer: %s\n", kTag,
         low_latency_in ? "Low latency OpenSL" : "Java/JNI based AudioRecord");
   PRINT("%ssample rate: %d Hz\n", kTag, record_parameters_.sample_rate());
-  PRINT("%schannels: %" RTC_PRIuS "\n", kTag, record_parameters_.channels());
-  PRINT("%sframes per buffer: %" RTC_PRIuS " <=> %.2f ms\n", kTag,
+  PRINT("%schannels: %zu\n", kTag, record_parameters_.channels());
+  PRINT("%sframes per buffer: %zu <=> %.2f ms\n", kTag,
         record_parameters_.frames_per_buffer(),
         record_parameters_.GetBufferSizeInMilliseconds());
 }

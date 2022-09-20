@@ -11,8 +11,8 @@
 #include "pc/webrtc_session_description_factory.h"
 
 #include <stddef.h>
-#include <algorithm>
-#include <memory>
+
+#include <list>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -23,15 +23,17 @@
 #include "api/jsep.h"
 #include "api/jsep_session_description.h"
 #include "api/rtc_error.h"
+#include "api/sequence_checker.h"
+#include "pc/connection_context.h"
 #include "pc/sdp_state_provider.h"
 #include "pc/session_description.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/location.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/string_encode.h"
+#include "rtc_base/unique_id_generator.h"
 
 using cricket::MediaSessionOptions;
 using rtc::UniqueRandomIdGenerator;
@@ -125,20 +127,21 @@ void WebRtcSessionDescriptionFactory::CopyCandidatesFromSessionDescription(
 }
 
 WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
-    rtc::Thread* signaling_thread,
-    cricket::ChannelManager* channel_manager,
+    ConnectionContext* context,
     const SdpStateProvider* sdp_info,
     const std::string& session_id,
     bool dtls_enabled,
     std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator,
     const rtc::scoped_refptr<rtc::RTCCertificate>& certificate,
-    UniqueRandomIdGenerator* ssrc_generator,
     std::function<void(const rtc::scoped_refptr<rtc::RTCCertificate>&)>
-        on_certificate_ready)
-    : signaling_thread_(signaling_thread),
-      session_desc_factory_(channel_manager,
-                            &transport_desc_factory_,
-                            ssrc_generator),
+        on_certificate_ready,
+    const FieldTrialsView& field_trials)
+    : signaling_thread_(context->signaling_thread()),
+      transport_desc_factory_(field_trials),
+      session_desc_factory_(context->media_engine(),
+                            context->use_rtx(),
+                            context->ssrc_generator(),
+                            &transport_desc_factory_),
       // RFC 4566 suggested a Network Time Protocol (NTP) format timestamp
       // as the session id and session version. To simplify, it should be fine
       // to just use a random number as session id and start version from
@@ -169,7 +172,7 @@ WebRtcSessionDescriptionFactory::WebRtcSessionDescriptionFactory(
     // `SignalCertificateReady`.
     signaling_thread_->Post(
         RTC_FROM_HERE, this, MSG_USE_CONSTRUCTOR_CERTIFICATE,
-        new rtc::ScopedRefMessageData<rtc::RTCCertificate>(certificate));
+        new rtc::ScopedRefMessageData<rtc::RTCCertificate>(certificate.get()));
   } else {
     // Generate certificate.
     certificate_request_state_ = CERTIFICATE_WAITING;
@@ -324,7 +327,7 @@ void WebRtcSessionDescriptionFactory::OnMessage(rtc::Message* msg) {
       break;
     }
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       break;
   }
 }
@@ -348,7 +351,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
                                ? sdp_info_->local_description()->description()
                                : nullptr);
   if (!desc) {
-    PostCreateSessionDescriptionFailed(request.observer,
+    PostCreateSessionDescriptionFailed(request.observer.get(),
                                        "Failed to initialize the offer.");
     return;
   }
@@ -375,7 +378,8 @@ void WebRtcSessionDescriptionFactory::InternalCreateOffer(
       }
     }
   }
-  PostCreateSessionDescriptionSucceeded(request.observer, std::move(offer));
+  PostCreateSessionDescriptionSucceeded(request.observer.get(),
+                                        std::move(offer));
 }
 
 void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
@@ -409,7 +413,7 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
               ? sdp_info_->local_description()->description()
               : nullptr);
   if (!desc) {
-    PostCreateSessionDescriptionFailed(request.observer,
+    PostCreateSessionDescriptionFailed(request.observer.get(),
                                        "Failed to initialize the answer.");
     return;
   }
@@ -436,7 +440,8 @@ void WebRtcSessionDescriptionFactory::InternalCreateAnswer(
       }
     }
   }
-  PostCreateSessionDescriptionSucceeded(request.observer, std::move(answer));
+  PostCreateSessionDescriptionSucceeded(request.observer.get(),
+                                        std::move(answer));
 }
 
 void WebRtcSessionDescriptionFactory::FailPendingRequests(
@@ -446,7 +451,7 @@ void WebRtcSessionDescriptionFactory::FailPendingRequests(
     const CreateSessionDescriptionRequest& request =
         create_session_description_requests_.front();
     PostCreateSessionDescriptionFailed(
-        request.observer,
+        request.observer.get(),
         ((request.type == CreateSessionDescriptionRequest::kOffer)
              ? "CreateOffer"
              : "CreateAnswer") +

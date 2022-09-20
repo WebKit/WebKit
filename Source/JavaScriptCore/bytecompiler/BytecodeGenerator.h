@@ -89,7 +89,7 @@ namespace JSC {
     private:
         ArgumentsNode* m_argumentsNode;
         Vector<RefPtr<RegisterID>, 8, UnsafeVectorOverflow> m_argv;
-        unsigned m_padding;
+        unsigned m_padding { 0 };
     };
 
     class Variable {
@@ -100,11 +100,6 @@ namespace JSC {
         
         Variable(const Identifier& ident)
             : m_ident(ident)
-            , m_local(nullptr)
-            , m_attributes(0)
-            , m_kind(NormalVariable) // This is somewhat meaningless here for this kind of Variable.
-            , m_symbolTableConstantIndex(0) // This is meaningless here for this kind of Variable.
-            , m_isLexicallyScoped(false)
         {
         }
 
@@ -196,7 +191,7 @@ namespace JSC {
 
     class FinallyContext {
     public:
-        FinallyContext() { }
+        FinallyContext() = default;
         FinallyContext(BytecodeGenerator&, Label& finallyLabel);
 
         FinallyContext* outerContext() const { return m_outerContext; }

@@ -73,7 +73,7 @@ class VideoEncoderDecoderInstantiationTest
     encoder_factory_ = CreateObjCEncoderFactory();
     decoder_factory_ = CreateObjCDecoderFactory();
 #else
-    RTC_NOTREACHED() << "Only support Android and iOS.";
+    RTC_DCHECK_NOTREACHED() << "Only support Android and iOS.";
 #endif
   }
 

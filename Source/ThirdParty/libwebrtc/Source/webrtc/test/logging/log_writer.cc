@@ -9,16 +9,18 @@
  */
 #include "test/logging/log_writer.h"
 
+#include "absl/strings/string_view.h"
+
 namespace webrtc {
 
 LogWriterFactoryAddPrefix::LogWriterFactoryAddPrefix(
     LogWriterFactoryInterface* base,
-    std::string prefix)
+    absl::string_view prefix)
     : base_factory_(base), prefix_(prefix) {}
 
 std::unique_ptr<RtcEventLogOutput> LogWriterFactoryAddPrefix::Create(
-    std::string filename) {
-  return base_factory_->Create(prefix_ + filename);
+    absl::string_view filename) {
+  return base_factory_->Create(prefix_ + std::string(filename));
 }
 
 }  // namespace webrtc

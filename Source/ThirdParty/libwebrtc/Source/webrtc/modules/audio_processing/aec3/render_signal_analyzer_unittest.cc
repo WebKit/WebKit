@@ -36,18 +36,18 @@ void ProduceSinusoidInNoise(int sample_rate_hz,
                             float sinusoidal_frequency_hz,
                             Random* random_generator,
                             size_t* sample_counter,
-                            std::vector<std::vector<std::vector<float>>>* x) {
+                            Block* x) {
   // Fill x with low-amplitude noise.
-  for (auto& band : *x) {
-    for (auto& channel : band) {
-      RandomizeSampleVector(random_generator, channel,
+  for (int band = 0; band < x->NumBands(); ++band) {
+    for (int channel = 0; channel < x->NumChannels(); ++channel) {
+      RandomizeSampleVector(random_generator, x->View(band, channel),
                             /*amplitude=*/500.f);
     }
   }
   // Produce a sinusoid of the specified frequency in the specified channel.
   for (size_t k = *sample_counter, j = 0; k < (*sample_counter + kBlockSize);
        ++k, ++j) {
-    (*x)[0][sinusoid_channel][j] +=
+    x->View(/*band=*/0, sinusoid_channel)[j] +=
         32000.f *
         std::sin(2.f * kPi * sinusoidal_frequency_hz * k / sample_rate_hz);
   }
@@ -59,9 +59,7 @@ void RunNarrowBandDetectionTest(size_t num_channels) {
   Random random_generator(42U);
   constexpr int kSampleRateHz = 48000;
   constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
-  std::vector<std::vector<std::vector<float>>> x(
-      kNumBands, std::vector<std::vector<float>>(
-                     num_channels, std::vector<float>(kBlockSize, 0.f)));
+  Block x(kNumBands, num_channels);
   std::array<float, kBlockSize> x_old;
   Aec3Fft fft;
   EchoCanceller3Config config;
@@ -130,19 +128,17 @@ TEST(RenderSignalAnalyzer, NoFalseDetectionOfNarrowBands) {
     SCOPED_TRACE(ProduceDebugText(num_channels));
     RenderSignalAnalyzer analyzer(EchoCanceller3Config{});
     Random random_generator(42U);
-    std::vector<std::vector<std::vector<float>>> x(
-        3, std::vector<std::vector<float>>(
-               num_channels, std::vector<float>(kBlockSize, 0.f)));
+    Block x(3, num_channels);
     std::array<float, kBlockSize> x_old;
     std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
         RenderDelayBuffer::Create(EchoCanceller3Config(), 48000, num_channels));
     std::array<float, kFftLengthBy2Plus1> mask;
     x_old.fill(0.f);
 
-    for (size_t k = 0; k < 100; ++k) {
-      for (auto& band : x) {
-        for (auto& channel : band) {
-          RandomizeSampleVector(&random_generator, channel);
+    for (int k = 0; k < 100; ++k) {
+      for (int band = 0; band < x.NumBands(); ++band) {
+        for (int channel = 0; channel < x.NumChannels(); ++channel) {
+          RandomizeSampleVector(&random_generator, x.View(band, channel));
         }
       }
 

@@ -35,7 +35,7 @@ class JSGlobalObjectDebugger final : public JSC::Debugger {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     JSGlobalObjectDebugger(JSC::JSGlobalObject&);
-    ~JSGlobalObjectDebugger() final { }
+    ~JSGlobalObjectDebugger() final = default;
 
     JSC::JSGlobalObject& globalObject() const { return m_globalObject; }
 

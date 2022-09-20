@@ -59,10 +59,7 @@ void RunFilterUpdateTest(int num_blocks_to_process,
   CoarseFilterUpdateGain coarse_gain(
       config.filter.coarse, config.filter.config_change_duration_blocks);
   Random random_generator(42U);
-  std::vector<std::vector<std::vector<float>>> x(
-      NumBandsForRate(kSampleRateHz),
-      std::vector<std::vector<float>>(num_render_channels,
-                                      std::vector<float>(kBlockSize, 0.f)));
+  Block x(NumBandsForRate(kSampleRateHz), num_render_channels);
   std::array<float, kBlockSize> y;
   RenderSignalAnalyzer render_signal_analyzer(config);
   std::array<float, kFftLength> s;
@@ -81,12 +78,12 @@ void RunFilterUpdateTest(int num_blocks_to_process,
                   k) != blocks_with_saturation.end();
 
     // Create the render signal.
-    for (size_t band = 0; band < x.size(); ++band) {
-      for (size_t channel = 0; channel < x[band].size(); ++channel) {
-        RandomizeSampleVector(&random_generator, x[band][channel]);
+    for (int band = 0; band < x.NumBands(); ++band) {
+      for (int channel = 0; channel < x.NumChannels(); ++channel) {
+        RandomizeSampleVector(&random_generator, x.View(band, channel));
       }
     }
-    delay_buffer.Delay(x[0][0], y);
+    delay_buffer.Delay(x.View(/*band=*/0, /*channel*/ 0), y);
 
     render_delay_buffer->Insert(x);
     if (k == 0) {

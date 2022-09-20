@@ -94,7 +94,7 @@
 
 @end
 
-NSInteger ARDGetCpuUsagePercentage() {
+NSInteger ARDGetCpuUsagePercentage(void) {
   // Create an array of thread ports for the current task.
   const task_t task = mach_task_self();
   thread_act_array_t thread_array;

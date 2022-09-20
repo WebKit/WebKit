@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
@@ -45,12 +46,12 @@ class NetEqDelayAnalyzer : public test::NetEqPostInsertPacket,
   // Creates a matlab script with file name script_name. When executed in
   // Matlab, the script will generate graphs with the same timing information
   // as provided by CreateGraphs.
-  void CreateMatlabScript(const std::string& script_name) const;
+  void CreateMatlabScript(absl::string_view script_name) const;
 
   // Creates a python script with file name `script_name`. When executed in
   // Python, the script will generate graphs with the same timing information
   // as provided by CreateGraphs.
-  void CreatePythonScript(const std::string& script_name) const;
+  void CreatePythonScript(absl::string_view script_name) const;
 
  private:
   struct TimingData {

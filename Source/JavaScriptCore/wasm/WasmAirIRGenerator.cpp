@@ -86,8 +86,7 @@ struct ConstrainedTmp {
 class TypedTmp {
 public:
     constexpr TypedTmp()
-        : m_tmp()
-        , m_type(Types::Void)
+        : m_type(Types::Void)
     {
     }
 
@@ -146,7 +145,6 @@ public:
         ControlData(B3::Origin, BlockSignature result, ResultList resultTmps, BlockType type, BasicBlock* continuation, unsigned tryStart, unsigned tryDepth)
             : controlBlockType(type)
             , continuation(continuation)
-            , special(nullptr)
             , results(resultTmps)
             , returnType(result)
             , m_tryStart(tryStart)
@@ -154,9 +152,7 @@ public:
         {
         }
 
-        ControlData()
-        {
-        }
+        ControlData() = default;
 
         static bool isIf(const ControlData& control) { return control.blockType() == BlockType::If; }
         static bool isTry(const ControlData& control) { return control.blockType() == BlockType::Try; }
@@ -285,7 +281,7 @@ public:
         friend class AirIRGenerator;
         BlockType controlBlockType;
         BasicBlock* continuation;
-        BasicBlock* special;
+        BasicBlock* special { nullptr };
         ResultList results;
         BlockSignature returnType;
         unsigned m_tryStart;

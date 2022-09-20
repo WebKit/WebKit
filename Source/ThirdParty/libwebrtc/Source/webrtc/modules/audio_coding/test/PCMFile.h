@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/audio/audio_frame.h"
 
@@ -27,9 +28,9 @@ class PCMFile {
   PCMFile(uint32_t timestamp);
   ~PCMFile();
 
-  void Open(const std::string& filename,
+  void Open(absl::string_view filename,
             uint16_t frequency,
-            const char* mode,
+            absl::string_view mode,
             bool auto_rewind = false);
 
   int32_t Read10MsData(AudioFrame& audio_frame);

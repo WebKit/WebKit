@@ -48,7 +48,7 @@ public:
     static_assert(maxAllocationFromShared <= bmalloc::alignment);
     static_assert(isPowerOfTwo(maxAllocationFromShared));
 
-    virtual ~IsoHeapImplBase();
+    virtual ~IsoHeapImplBase() = default;
     
     virtual void scavenge(Vector<DeferredDecommit>&) = 0;
     

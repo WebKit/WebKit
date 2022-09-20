@@ -23,6 +23,7 @@
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 
@@ -90,10 +91,10 @@ class ResourceAdaptationProcessorTest : public ::testing::Test {
         other_resource_(FakeResource::Create("OtherFakeResource")),
         video_stream_adapter_(
             std::make_unique<VideoStreamAdapter>(&input_state_provider_,
-                                                 &frame_rate_provider_)),
+                                                 &frame_rate_provider_,
+                                                 field_trials_)),
         processor_(std::make_unique<ResourceAdaptationProcessor>(
             video_stream_adapter_.get())) {
-    processor_->SetTaskQueue(TaskQueueBase::Current());
     video_stream_adapter_->AddRestrictionsListener(&restrictions_listener_);
     processor_->AddResource(resource_);
     processor_->AddResource(other_resource_);
@@ -134,6 +135,8 @@ class ResourceAdaptationProcessorTest : public ::testing::Test {
   }
 
  protected:
+  rtc::AutoThread main_thread_;
+  webrtc::test::ScopedKeyValueConfig field_trials_;
   FakeFrameRateProvider frame_rate_provider_;
   VideoStreamInputStateProvider input_state_provider_;
   rtc::scoped_refptr<FakeResource> resource_;
@@ -427,8 +430,8 @@ TEST_F(ResourceAdaptationProcessorTest,
   SetInputStates(true, kDefaultFrameRate, kDefaultFrameSize);
 
   TaskQueueForTest resource_task_queue("ResourceTaskQueue");
-  resource_task_queue.PostTask(ToQueuedTask(
-      [&]() { resource_->SetUsageState(ResourceUsageState::kOveruse); }));
+  resource_task_queue.PostTask(
+      [&]() { resource_->SetUsageState(ResourceUsageState::kOveruse); });
 
   EXPECT_EQ_WAIT(1u, restrictions_listener_.restrictions_updated_count(),
                  kDefaultTimeoutMs);
@@ -444,10 +447,10 @@ TEST_F(ResourceAdaptationProcessorTest,
   // has passed it on to the processor's task queue.
   rtc::Event resource_event;
   TaskQueueForTest resource_task_queue("ResourceTaskQueue");
-  resource_task_queue.PostTask(ToQueuedTask([&]() {
+  resource_task_queue.PostTask([&]() {
     resource_->SetUsageState(ResourceUsageState::kOveruse);
     resource_event.Set();
-  }));
+  });
 
   EXPECT_TRUE(resource_event.Wait(kDefaultTimeoutMs));
   // Now destroy the processor while handling the overuse is in flight.
@@ -467,10 +470,10 @@ TEST_F(ResourceAdaptationProcessorTest,
   rtc::Event overuse_event;
   TaskQueueForTest resource_task_queue("ResourceTaskQueue");
   // Queues task for `resource_` overuse while `processor_` is still listening.
-  resource_task_queue.PostTask(ToQueuedTask([&]() {
+  resource_task_queue.PostTask([&]() {
     resource_->SetUsageState(ResourceUsageState::kOveruse);
     overuse_event.Set();
-  }));
+  });
   EXPECT_TRUE(overuse_event.Wait(kDefaultTimeoutMs));
   // Once we know the overuse task is queued, remove `resource_` so that
   // `processor_` is not listening to it.

@@ -124,13 +124,13 @@ namespace SimplePeerConnectionM {
         LocalSdpReadytoSendInternalDelegate callback);
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    private delegate void IceCandiateReadytoSendInternalDelegate(
+    private delegate void IceCandidateReadytoSendInternalDelegate(
         string candidate, int sdpMlineIndex, string sdpMid);
-    public delegate void IceCandiateReadytoSendDelegate(
+    public delegate void IceCandidateReadytoSendDelegate(
         int id, string candidate, int sdpMlineIndex, string sdpMid);
     [DllImport(dllPath, CallingConvention = CallingConvention.Cdecl)]
-    private static extern bool RegisterOnIceCandiateReadytoSend(
-        int peerConnectionId, IceCandiateReadytoSendInternalDelegate callback);
+    private static extern bool RegisterOnIceCandidateReadytoSend(
+        int peerConnectionId, IceCandidateReadytoSendInternalDelegate callback);
 
     [DllImport(dllPath, CallingConvention = CallingConvention.Cdecl)]
     private static extern bool SetRemoteDescription(int peerConnectionId, string type, string sdp);
@@ -215,10 +215,10 @@ namespace SimplePeerConnectionM {
         RaiseLocalSdpReadytoSend);
       RegisterOnLocalSdpReadytoSend(mPeerConnectionId, localSdpReadytoSendDelegate);
 
-      iceCandiateReadytoSendDelegate =
-          new IceCandiateReadytoSendInternalDelegate(RaiseIceCandiateReadytoSend);
-      RegisterOnIceCandiateReadytoSend(
-          mPeerConnectionId, iceCandiateReadytoSendDelegate);
+      iceCandidateReadytoSendDelegate =
+          new IceCandidateReadytoSendInternalDelegate(RaiseIceCandidateReadytoSend);
+      RegisterOnIceCandidateReadytoSend(
+          mPeerConnectionId, iceCandidateReadytoSendDelegate);
     }
 
     private void RaiseLocalDataChannelReady() {
@@ -267,9 +267,9 @@ namespace SimplePeerConnectionM {
         OnLocalSdpReadytoSend(mPeerConnectionId, type, sdp);
     }
 
-    private void RaiseIceCandiateReadytoSend(string candidate, int sdpMlineIndex, string sdpMid) {
-      if (OnIceCandiateReadytoSend != null)
-        OnIceCandiateReadytoSend(mPeerConnectionId, candidate, sdpMlineIndex, sdpMid);
+    private void RaiseIceCandidateReadytoSend(string candidate, int sdpMlineIndex, string sdpMid) {
+      if (OnIceCandidateReadytoSend != null)
+        OnIceCandidateReadytoSend(mPeerConnectionId, candidate, sdpMlineIndex, sdpMid);
     }
 
     public void AddQueuedIceCandidate(List<IceCandidate> iceCandidateQueue) {
@@ -301,8 +301,8 @@ namespace SimplePeerConnectionM {
     private LocalSdpReadytoSendInternalDelegate localSdpReadytoSendDelegate = null;
     public event LocalSdpReadytoSendDelegate OnLocalSdpReadytoSend;
 
-    private IceCandiateReadytoSendInternalDelegate iceCandiateReadytoSendDelegate = null;
-    public event IceCandiateReadytoSendDelegate OnIceCandiateReadytoSend;
+    private IceCandidateReadytoSendInternalDelegate iceCandidateReadytoSendDelegate = null;
+    public event IceCandidateReadytoSendDelegate OnIceCandidateReadytoSend;
 
     private int mPeerConnectionId = -1;
   }

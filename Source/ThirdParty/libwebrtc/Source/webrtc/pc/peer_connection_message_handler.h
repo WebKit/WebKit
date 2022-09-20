@@ -18,7 +18,7 @@
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
 #include "api/stats_types.h"
-#include "pc/stats_collector_interface.h"
+#include "pc/legacy_stats_collector_interface.h"
 #include "rtc_base/message_handler.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_message.h"
@@ -47,7 +47,7 @@ class PeerConnectionMessageHandler : public rtc::MessageHandler {
       CreateSessionDescriptionObserver* observer,
       RTCError error);
   void PostGetStats(StatsObserver* observer,
-                    StatsCollectorInterface* stats,
+                    LegacyStatsCollectorInterface* legacy_stats,
                     MediaStreamTrackInterface* track);
   void RequestUsagePatternReport(std::function<void()>, int delay_ms);
 

@@ -36,7 +36,7 @@ class Graph;
 
 class BlockSet {
 public:
-    BlockSet() { }
+    BlockSet() = default;
     
     // Return true if the block was added, false if it was already present.
     bool add(BasicBlock* block)
@@ -59,12 +59,7 @@ public:
     
     class iterator {
     public:
-        iterator()
-            : m_graph(nullptr)
-            , m_set(nullptr)
-            , m_index(0)
-        {
-        }
+        iterator() = default;
         
         iterator& operator++()
         {
@@ -87,9 +82,9 @@ public:
     private:
         friend class BlockSet;
         
-        Graph* m_graph;
-        const BlockSet* m_set;
-        size_t m_index;
+        Graph* m_graph { nullptr };
+        const BlockSet* m_set { nullptr };
+        size_t m_index { 0 };
     };
     
     class Iterable {

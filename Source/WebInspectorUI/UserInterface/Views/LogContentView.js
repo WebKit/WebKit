@@ -116,6 +116,12 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             this._messageSourceBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._messageSourceBarSelectionDidChange, this);
         }
 
+        const consoleSnippetsImage = ""; // This is set in CSS to have dark mode support.
+        this._consoleSnippetsNavigationItem = new WI.ButtonNavigationItem("console-snippets", WI.UIString("Run Console Snippet\u2026"), consoleSnippetsImage);
+        this._consoleSnippetsNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.Image;
+        this._consoleSnippetsNavigationItem.imageType = WI.ButtonNavigationItem.ImageType.IMG;
+        WI.addMouseDownContextMenuHandlers(this._consoleSnippetsNavigationItem.element, this._handleSnippetsNavigationItemContextMenu.bind(this));
+
         this._garbageCollectNavigationItem = new WI.ButtonNavigationItem("garbage-collect", WI.UIString("Collect garbage"), "Images/NavigationItemGarbageCollect.svg", 16, 16);
         this._garbageCollectNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._garbageCollect, this);
 
@@ -155,6 +161,8 @@ WI.LogContentView = class LogContentView extends WI.ContentView
 
         if (this._emulateUserGestureNavigationItemGroup)
             navigationItems.push(this._emulateUserGestureNavigationItemGroup);
+
+        navigationItems.push(this._consoleSnippetsNavigationItem);
 
         if (InspectorBackend.hasCommand("Heap.gc"))
             navigationItems.push(this._garbageCollectNavigationItem);
@@ -375,6 +383,37 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             this.messagesElement.focus();
         else
             this.prompt.focus();
+    }
+
+    // Popover delegate
+
+    willDismissPopover(popover)
+    {
+        if (popover instanceof WI.InputPopover) {
+            let title = popover.value?.trim();
+            if (!title) {
+                InspectorFrontendHost.beep();
+                return;
+            }
+
+            // Do not conflict with an existing console snippet.
+            if (WI.consoleManager.snippets.some((consoleSnippet) => consoleSnippet.title === title)) {
+                InspectorFrontendHost.beep();
+                return;
+            }
+
+            let consoleSnippet = WI.ConsoleSnippet.createDefaultWithTitle(title);
+            WI.consoleManager.addSnippet(consoleSnippet);
+
+            const cookie = null;
+            WI.showRepresentedObject(consoleSnippet, cookie, {
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            });
+            return;
+        }
+
+        console.assert(false, "not reached", popover);
     }
 
     // Private
@@ -668,8 +707,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
             WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup)
             .then((remoteObject) => {
                 let text = domNode.nodeType() === Node.ELEMENT_NODE ? WI.UIString("Dropped Element") : WI.UIString("Dropped Node");
-                const addSpecialUserLogClass = true;
-                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+                WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true});
 
                 this.prompt.focus();
             });
@@ -924,6 +962,22 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         contextMenu.appendCheckboxItem(WI.UIString("Preserve Log"), () => {
             WI.settings.clearLogOnNavigate.value = !WI.settings.clearLogOnNavigate.value;
         }, !WI.settings.clearLogOnNavigate.value);
+    }
+
+    _handleSnippetsNavigationItemContextMenu(contextMenu)
+    {
+        for (let consoleSnippet of WI.consoleManager.snippets) {
+            contextMenu.appendItem(consoleSnippet.displayName, () => {
+                consoleSnippet.run();
+            });
+        }
+
+        contextMenu.appendSeparator();
+
+        contextMenu.appendItem(WI.UIString("Create Console Snippet\u2026"), () => {
+            let popover = new WI.InputPopover("create-snippet-popover", WI.UIString("Name"), this);
+            popover.show(this._consoleSnippetsNavigationItem.element, [WI.RectEdge.MAX_Y, WI.RectEdge.MIN_Y, WI.RectEdge.MAX_X]);
+        });
     }
 
     _handleClearLogOnNavigateSettingChanged()

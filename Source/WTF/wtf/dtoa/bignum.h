@@ -133,9 +133,9 @@ class Bignum {
   // A BufferReference backed by bigits_buffer_. This way accesses to the array are
   // checked for out-of-bounds errors.
   BufferReference<Chunk> bigits_;
-  int used_digits_;
+  int used_digits_ { 0 };
   // The Bignum's value equals value(bigits_) * 2^(exponent_ * kBigitSize).
-  int exponent_;
+  int exponent_ { 0 };
 
   DC_DISALLOW_COPY_AND_ASSIGN(Bignum);
 };

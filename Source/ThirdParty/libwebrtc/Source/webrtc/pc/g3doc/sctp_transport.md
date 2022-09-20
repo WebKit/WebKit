@@ -28,10 +28,9 @@ closes, but the object itself may survive longer than the PeerConnection.
 
 ## cricket::SctpTransportInternal
 
-[`cricket::SctpTransportInternal`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/sctp/sctp_transport_internal.h?q=cricket::SctpTransportInternal) owns two objects: The SCTP association object (currently
-implemented by wrapping the usrsctp library) and the DTLS transport, which is
-the object used to send and receive messages as emitted from or consumed by the
-usrsctp library.
+[`cricket::SctpTransportInternal`](https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/sctp/sctp_transport_internal.h?q=cricket::SctpTransportInternal) owns two objects: The SCTP association object
+and the DTLS transport, which is the object used to send and receive messages
+as emitted from or consumed by the sctp library.
 
 It communicates state changes and events using sigslot.
 

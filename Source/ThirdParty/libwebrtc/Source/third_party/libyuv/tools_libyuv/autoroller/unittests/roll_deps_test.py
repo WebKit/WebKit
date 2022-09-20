@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env vpython3
+
 # Copyright 2017 The LibYuv Project Authors. All rights reserved.
 #
 # Use of this source code is governed by a BSD-style license
@@ -14,15 +15,13 @@ import sys
 import tempfile
 import unittest
 
+import roll_deps
+from roll_deps import CalculateChangedDeps, GetMatchingDepsEntries, \
+  ParseDepsDict, ParseLocalDepsFile, UpdateDepsFile
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.join(SCRIPT_DIR, os.pardir)
 sys.path.append(PARENT_DIR)
-import roll_deps  # pylint: disable=wrong-import-position
-from roll_deps import CalculateChangedDeps, GetMatchingDepsEntries, \
-  ParseDepsDict, ParseLocalDepsFile, \
-  UpdateDepsFile  # pylint: disable=wrong-import-position
-
 
 TEST_DATA_VARS = {
   'chromium_git': 'https://chromium.googlesource.com',
@@ -46,7 +45,7 @@ class TestError(Exception):
   pass
 
 
-class FakeCmd(object):
+class FakeCmd():
   def __init__(self):
     self.expectations = []
 
@@ -86,43 +85,43 @@ class TestRollChromiumRevision(unittest.TestCase):
   def testVarLookup(self):
     local_scope = {'foo': 'wrong', 'vars': {'foo': 'bar'}}
     lookup = roll_deps.VarLookup(local_scope)
-    self.assertEquals(lookup('foo'), 'bar')
+    self.assertEqual(lookup('foo'), 'bar')
 
   def testUpdateDepsFile(self):
     new_rev = 'aaaaabbbbbcccccdddddeeeeefffff0000011111'
 
     current_rev = TEST_DATA_VARS['chromium_revision']
     UpdateDepsFile(self._libyuv_depsfile, current_rev, new_rev, [])
-    with open(self._libyuv_depsfile) as deps_file:
+    with open(self._libyuv_depsfile, 'r') as deps_file:
       deps_contents = deps_file.read()
       self.assertTrue(new_rev in deps_contents,
                       'Failed to find %s in\n%s' % (new_rev, deps_contents))
 
   def testParseDepsDict(self):
-    with open(self._libyuv_depsfile) as deps_file:
+    with open(self._libyuv_depsfile, 'r') as deps_file:
       deps_contents = deps_file.read()
     local_scope = ParseDepsDict(deps_contents)
     vars_dict = local_scope['vars']
 
     def assertVar(variable_name):
-      self.assertEquals(vars_dict[variable_name], TEST_DATA_VARS[variable_name])
+      self.assertEqual(vars_dict[variable_name], TEST_DATA_VARS[variable_name])
     assertVar('chromium_git')
     assertVar('chromium_revision')
-    self.assertEquals(len(local_scope['deps']), 3)
+    self.assertEqual(len(local_scope['deps']), 3)
 
   def testGetMatchingDepsEntriesReturnsPathInSimpleCase(self):
     entries = GetMatchingDepsEntries(DEPS_ENTRIES, 'src/testing/gtest')
-    self.assertEquals(len(entries), 1)
-    self.assertEquals(entries[0], DEPS_ENTRIES['src/testing/gtest'])
+    self.assertEqual(len(entries), 1)
+    self.assertEqual(entries[0], DEPS_ENTRIES['src/testing/gtest'])
 
   def testGetMatchingDepsEntriesHandlesSimilarStartingPaths(self):
     entries = GetMatchingDepsEntries(DEPS_ENTRIES, 'src/testing')
-    self.assertEquals(len(entries), 2)
+    self.assertEqual(len(entries), 2)
 
   def testGetMatchingDepsEntriesHandlesTwoPathsWithIdenticalFirstParts(self):
     entries = GetMatchingDepsEntries(DEPS_ENTRIES, 'src/build')
-    self.assertEquals(len(entries), 1)
-    self.assertEquals(entries[0], DEPS_ENTRIES['src/build'])
+    self.assertEqual(len(entries), 1)
+    self.assertEqual(entries[0], DEPS_ENTRIES['src/build'])
 
   def testCalculateChangedDeps(self):
     _SetupGitLsRemoteCall(self.fake,
@@ -130,14 +129,14 @@ class TestRollChromiumRevision(unittest.TestCase):
     libyuv_deps = ParseLocalDepsFile(self._libyuv_depsfile)
     new_cr_deps = ParseLocalDepsFile(self._new_cr_depsfile)
     changed_deps = CalculateChangedDeps(libyuv_deps, new_cr_deps)
-    self.assertEquals(len(changed_deps), 2)
-    self.assertEquals(changed_deps[0].path, 'src/build')
-    self.assertEquals(changed_deps[0].current_rev, BUILD_OLD_REV)
-    self.assertEquals(changed_deps[0].new_rev, BUILD_NEW_REV)
+    self.assertEqual(len(changed_deps), 2)
+    self.assertEqual(changed_deps[0].path, 'src/build')
+    self.assertEqual(changed_deps[0].current_rev, BUILD_OLD_REV)
+    self.assertEqual(changed_deps[0].new_rev, BUILD_NEW_REV)
 
-    self.assertEquals(changed_deps[1].path, 'src/buildtools')
-    self.assertEquals(changed_deps[1].current_rev, BUILDTOOLS_OLD_REV)
-    self.assertEquals(changed_deps[1].new_rev, BUILDTOOLS_NEW_REV)
+    self.assertEqual(changed_deps[1].path, 'src/buildtools')
+    self.assertEqual(changed_deps[1].current_rev, BUILDTOOLS_OLD_REV)
+    self.assertEqual(changed_deps[1].new_rev, BUILDTOOLS_NEW_REV)
 
 
 def _SetupGitLsRemoteCall(cmd_fake, url, revision):

@@ -8,62 +8,29 @@
 
 import("../../webrtc.gni")
 
-rtc_library("utility") {
-  visibility = [ "*" ]
-  sources = [
-    "include/process_thread.h",
-    "source/process_thread_impl.cc",
-    "source/process_thread_impl.h",
-  ]
+if (is_android) {
+  rtc_library("utility") {
+    visibility = [ "*" ]
 
-  if (is_android) {
-    sources += [
+    sources = [
       "include/helpers_android.h",
       "include/jvm_android.h",
       "source/helpers_android.cc",
       "source/jvm_android.cc",
     ]
-  }
 
-  if (is_ios) {
-    frameworks = [ "AVFoundation.framework" ]
-  }
-
-  deps = [
-    "..:module_api",
-    "../../api:sequence_checker",
-    "../../api/task_queue",
-    "../../common_audio",
-    "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
-    "../../rtc_base/system:arch",
-    "../../system_wrappers",
-  ]
-}
-
-rtc_library("mock_process_thread") {
-  testonly = true
-  visibility = [ "*" ]
-  sources = [ "include/mock/mock_process_thread.h" ]
-  deps = [
-    ":utility",
-    "../../rtc_base:rtc_base_approved",
-    "../../test:test_support",
-  ]
-}
-
-if (rtc_include_tests) {
-  rtc_library("utility_unittests") {
-    testonly = true
-
-    sources = [ "source/process_thread_impl_unittest.cc" ]
     deps = [
-      ":utility",
-      "..:module_api",
-      "../../api/task_queue",
-      "../../api/task_queue:task_queue_test",
-      "../../rtc_base:rtc_base_approved",
-      "../../test:test_support",
+      "../../api:sequence_checker",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:platform_thread",
+      "../../rtc_base/system:arch",
     ]
+  }
+} else {
+  # Add an empty source set so that dependent targets may include utility
+  # unconditionally.
+  rtc_source_set("utility") {
+    visibility = [ "*" ]
   }
 }

@@ -99,7 +99,7 @@ void WritePps(const PpsParser::PpsState& pps,
         break;
       }
       default:
-        RTC_NOTREACHED();
+        RTC_DCHECK_NOTREACHED();
     }
   }
 

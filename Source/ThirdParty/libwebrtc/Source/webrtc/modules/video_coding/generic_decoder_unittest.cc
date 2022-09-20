@@ -10,66 +10,65 @@
 
 #include "modules/video_coding/generic_decoder.h"
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 
 #include "absl/types/optional.h"
-#include "api/task_queue/default_task_queue_factory.h"
+#include "api/array_view.h"
+#include "api/rtp_packet_infos.h"
 #include "api/video_codecs/video_decoder.h"
 #include "common_video/test/utilities.h"
-#include "modules/video_coding/timing.h"
-#include "rtc_base/event.h"
-#include "rtc_base/synchronization/mutex.h"
+#include "modules/video_coding/timing/timing.h"
 #include "system_wrappers/include/clock.h"
 #include "test/fake_decoder.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
+#include "test/time_controller/simulated_time_controller.h"
 
 namespace webrtc {
 namespace video_coding {
 
 class ReceiveCallback : public VCMReceiveCallback {
  public:
-  int32_t FrameToRender(VideoFrame& videoFrame,  // NOLINT
+  int32_t FrameToRender(VideoFrame& frame,
                         absl::optional<uint8_t> qp,
-                        int32_t decode_time_ms,
+                        TimeDelta decode_time,
                         VideoContentType content_type) override {
-    {
-      MutexLock lock(&lock_);
-      last_frame_ = videoFrame;
-    }
-    received_frame_event_.Set();
+    frames_.push_back(frame);
     return 0;
   }
 
-  absl::optional<VideoFrame> GetLastFrame() {
-    MutexLock lock(&lock_);
-    return last_frame_;
+  absl::optional<VideoFrame> PopLastFrame() {
+    if (frames_.empty())
+      return absl::nullopt;
+    auto ret = frames_.front();
+    frames_.pop_back();
+    return ret;
   }
 
-  absl::optional<VideoFrame> WaitForFrame(int64_t wait_ms) {
-    if (received_frame_event_.Wait(wait_ms)) {
-      MutexLock lock(&lock_);
-      return last_frame_;
-    } else {
-      return absl::nullopt;
-    }
+  rtc::ArrayView<const VideoFrame> GetAllFrames() const { return frames_; }
+
+  void OnDroppedFrames(uint32_t frames_dropped) {
+    frames_dropped_ += frames_dropped;
   }
+
+  uint32_t frames_dropped() const { return frames_dropped_; }
 
  private:
-  Mutex lock_;
-  rtc::Event received_frame_event_;
-  absl::optional<VideoFrame> last_frame_ RTC_GUARDED_BY(lock_);
+  std::vector<VideoFrame> frames_;
+  uint32_t frames_dropped_ = 0;
 };
 
 class GenericDecoderTest : public ::testing::Test {
  protected:
   GenericDecoderTest()
-      : clock_(0),
-        timing_(&clock_),
-        task_queue_factory_(CreateDefaultTaskQueueFactory()),
-        decoder_(task_queue_factory_.get()),
-        vcm_callback_(&timing_, &clock_),
+      : time_controller_(Timestamp::Zero()),
+        clock_(time_controller_.GetClock()),
+        timing_(time_controller_.GetClock(), field_trials_),
+        decoder_(time_controller_.GetTaskQueueFactory()),
+        vcm_callback_(&timing_, time_controller_.GetClock(), field_trials_),
         generic_decoder_(&decoder_) {}
 
   void SetUp() override {
@@ -82,9 +81,10 @@ class GenericDecoderTest : public ::testing::Test {
     generic_decoder_.Configure(settings);
   }
 
-  SimulatedClock clock_;
+  GlobalSimulatedTimeController time_controller_;
+  Clock* const clock_;
+  test::ScopedKeyValueConfig field_trials_;
   VCMTiming timing_;
-  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
   webrtc::test::FakeDecoder decoder_;
   VCMDecodedFrameCallback vcm_callback_;
   VCMGenericDecoder generic_decoder_;
@@ -95,10 +95,30 @@ TEST_F(GenericDecoderTest, PassesPacketInfos) {
   RtpPacketInfos packet_infos = CreatePacketInfos(3);
   VCMEncodedFrame encoded_frame;
   encoded_frame.SetPacketInfos(packet_infos);
-  generic_decoder_.Decode(encoded_frame, clock_.CurrentTime());
-  absl::optional<VideoFrame> decoded_frame = user_callback_.WaitForFrame(10);
+  generic_decoder_.Decode(encoded_frame, clock_->CurrentTime());
+  time_controller_.AdvanceTime(TimeDelta::Millis(10));
+  absl::optional<VideoFrame> decoded_frame = user_callback_.PopLastFrame();
   ASSERT_TRUE(decoded_frame.has_value());
   EXPECT_EQ(decoded_frame->packet_infos().size(), 3U);
+}
+
+TEST_F(GenericDecoderTest, FrameDroppedIfTooManyFramesInFlight) {
+  constexpr int kMaxFramesInFlight = 10;
+  decoder_.SetDelayedDecoding(10);
+  for (int i = 0; i < kMaxFramesInFlight + 1; ++i) {
+    VCMEncodedFrame encoded_frame;
+    encoded_frame.SetTimestamp(90000 * i);
+    generic_decoder_.Decode(encoded_frame, clock_->CurrentTime());
+  }
+
+  time_controller_.AdvanceTime(TimeDelta::Millis(10));
+
+  auto frames = user_callback_.GetAllFrames();
+  ASSERT_EQ(10U, frames.size());
+  // Expect that the first frame was dropped since all decodes released at the
+  // same time and the oldest frame info is the first one dropped.
+  EXPECT_EQ(frames[0].timestamp(), 90000u);
+  EXPECT_EQ(1u, user_callback_.frames_dropped());
 }
 
 TEST_F(GenericDecoderTest, PassesPacketInfosForDelayedDecoders) {
@@ -109,36 +129,61 @@ TEST_F(GenericDecoderTest, PassesPacketInfosForDelayedDecoders) {
     // Ensure the original frame is destroyed before the decoding is completed.
     VCMEncodedFrame encoded_frame;
     encoded_frame.SetPacketInfos(packet_infos);
-    generic_decoder_.Decode(encoded_frame, clock_.CurrentTime());
+    generic_decoder_.Decode(encoded_frame, clock_->CurrentTime());
   }
 
-  absl::optional<VideoFrame> decoded_frame = user_callback_.WaitForFrame(200);
+  time_controller_.AdvanceTime(TimeDelta::Millis(200));
+  absl::optional<VideoFrame> decoded_frame = user_callback_.PopLastFrame();
   ASSERT_TRUE(decoded_frame.has_value());
   EXPECT_EQ(decoded_frame->packet_infos().size(), 3U);
 }
 
 TEST_F(GenericDecoderTest, MaxCompositionDelayNotSetByDefault) {
   VCMEncodedFrame encoded_frame;
-  generic_decoder_.Decode(encoded_frame, clock_.CurrentTime());
-  absl::optional<VideoFrame> decoded_frame = user_callback_.WaitForFrame(10);
+  generic_decoder_.Decode(encoded_frame, clock_->CurrentTime());
+  time_controller_.AdvanceTime(TimeDelta::Millis(10));
+  absl::optional<VideoFrame> decoded_frame = user_callback_.PopLastFrame();
   ASSERT_TRUE(decoded_frame.has_value());
-  EXPECT_FALSE(decoded_frame->max_composition_delay_in_frames());
+  EXPECT_THAT(
+      decoded_frame->render_parameters().max_composition_delay_in_frames,
+      testing::Eq(absl::nullopt));
 }
 
 TEST_F(GenericDecoderTest, MaxCompositionDelayActivatedByPlayoutDelay) {
   VCMEncodedFrame encoded_frame;
   // VideoReceiveStream2 would set MaxCompositionDelayInFrames if playout delay
   // is specified as X,Y, where X=0, Y>0.
-  const VideoPlayoutDelay kPlayoutDelay = {0, 50};
   constexpr int kMaxCompositionDelayInFrames = 3;  // ~50 ms at 60 fps.
-  encoded_frame.SetPlayoutDelay(kPlayoutDelay);
   timing_.SetMaxCompositionDelayInFrames(
       absl::make_optional(kMaxCompositionDelayInFrames));
-  generic_decoder_.Decode(encoded_frame, clock_.CurrentTime());
-  absl::optional<VideoFrame> decoded_frame = user_callback_.WaitForFrame(10);
+  generic_decoder_.Decode(encoded_frame, clock_->CurrentTime());
+  time_controller_.AdvanceTime(TimeDelta::Millis(10));
+  absl::optional<VideoFrame> decoded_frame = user_callback_.PopLastFrame();
   ASSERT_TRUE(decoded_frame.has_value());
-  EXPECT_EQ(kMaxCompositionDelayInFrames,
-            decoded_frame->max_composition_delay_in_frames());
+  EXPECT_THAT(
+      decoded_frame->render_parameters().max_composition_delay_in_frames,
+      testing::Optional(kMaxCompositionDelayInFrames));
+}
+
+TEST_F(GenericDecoderTest, IsLowLatencyStreamFalseByDefault) {
+  VCMEncodedFrame encoded_frame;
+  generic_decoder_.Decode(encoded_frame, clock_->CurrentTime());
+  time_controller_.AdvanceTime(TimeDelta::Millis(10));
+  absl::optional<VideoFrame> decoded_frame = user_callback_.PopLastFrame();
+  ASSERT_TRUE(decoded_frame.has_value());
+  EXPECT_FALSE(decoded_frame->render_parameters().use_low_latency_rendering);
+}
+
+TEST_F(GenericDecoderTest, IsLowLatencyStreamActivatedByPlayoutDelay) {
+  VCMEncodedFrame encoded_frame;
+  const VideoPlayoutDelay kPlayoutDelay = {0, 50};
+  timing_.set_min_playout_delay(TimeDelta::Millis(kPlayoutDelay.min_ms));
+  timing_.set_max_playout_delay(TimeDelta::Millis(kPlayoutDelay.max_ms));
+  generic_decoder_.Decode(encoded_frame, clock_->CurrentTime());
+  time_controller_.AdvanceTime(TimeDelta::Millis(10));
+  absl::optional<VideoFrame> decoded_frame = user_callback_.PopLastFrame();
+  ASSERT_TRUE(decoded_frame.has_value());
+  EXPECT_TRUE(decoded_frame->render_parameters().use_low_latency_rendering);
 }
 
 }  // namespace video_coding

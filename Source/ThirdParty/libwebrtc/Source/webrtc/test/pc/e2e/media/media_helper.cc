@@ -33,14 +33,15 @@ using CapturingDeviceIndex = ::webrtc::webrtc_pc_e2e::
 }  // namespace
 
 void MediaHelper::MaybeAddAudio(TestPeer* peer) {
-  if (!peer->params()->audio_config) {
+  if (!peer->params().audio_config) {
     return;
   }
-  const AudioConfig& audio_config = peer->params()->audio_config.value();
+  const AudioConfig& audio_config = peer->params().audio_config.value();
   rtc::scoped_refptr<webrtc::AudioSourceInterface> source =
       peer->pc_factory()->CreateAudioSource(audio_config.audio_options);
   rtc::scoped_refptr<AudioTrackInterface> track =
-      peer->pc_factory()->CreateAudioTrack(*audio_config.stream_label, source);
+      peer->pc_factory()->CreateAudioTrack(*audio_config.stream_label,
+                                           source.get());
   std::string sync_group = audio_config.sync_group
                                ? audio_config.sync_group.value()
                                : audio_config.stream_label.value();
@@ -50,15 +51,16 @@ void MediaHelper::MaybeAddAudio(TestPeer* peer) {
 std::vector<rtc::scoped_refptr<TestVideoCapturerVideoTrackSource>>
 MediaHelper::MaybeAddVideo(TestPeer* peer) {
   // Params here valid because of pre-run validation.
-  Params* params = peer->params();
+  const Params& params = peer->params();
+  const ConfigurableParams& configurable_params = peer->configurable_params();
   std::vector<rtc::scoped_refptr<TestVideoCapturerVideoTrackSource>> out;
-  for (size_t i = 0; i < params->video_configs.size(); ++i) {
-    auto video_config = params->video_configs[i];
+  for (size_t i = 0; i < configurable_params.video_configs.size(); ++i) {
+    const VideoConfig& video_config = configurable_params.video_configs[i];
     // Setup input video source into peer connection.
     std::unique_ptr<test::TestVideoCapturer> capturer = CreateVideoCapturer(
         video_config, peer->ReleaseVideoSource(i),
         video_quality_analyzer_injection_helper_->CreateFramePreprocessor(
-            params->name.value(), video_config));
+            params.name.value(), video_config));
     bool is_screencast =
         video_config.content_hint == VideoTrackInterface::ContentHint::kText ||
         video_config.content_hint ==
@@ -67,11 +69,11 @@ MediaHelper::MaybeAddVideo(TestPeer* peer) {
         rtc::make_ref_counted<TestVideoCapturerVideoTrackSource>(
             std::move(capturer), is_screencast);
     out.push_back(source);
-    RTC_LOG(INFO) << "Adding video with video_config.stream_label="
-                  << video_config.stream_label.value();
+    RTC_LOG(LS_INFO) << "Adding video with video_config.stream_label="
+                     << video_config.stream_label.value();
     rtc::scoped_refptr<VideoTrackInterface> track =
         peer->pc_factory()->CreateVideoTrack(video_config.stream_label.value(),
-                                             source);
+                                             source.get());
     if (video_config.content_hint.has_value()) {
       track->set_content_hint(video_config.content_hint.value());
     }

@@ -20,6 +20,7 @@
 #include "api/packet_socket_factory.h"
 #include "api/test/network_emulation/cross_traffic.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
+#include "api/test/peer_network_dependencies.h"
 #include "api/test/simulated_network.h"
 #include "api/test/time_controller.h"
 #include "api/units/timestamp.h"
@@ -130,6 +131,9 @@ class EmulatedNetworkManagerInterface {
   // into WebRTC to properly setup network emulation. Returned factory is owned
   // by EmulatedNetworkManagerInterface implementation.
   virtual rtc::PacketSocketFactory* packet_socket_factory() = 0;
+  webrtc::webrtc_pc_e2e::PeerNetworkDependencies network_dependencies() {
+    return {network_thread(), network_manager(), packet_socket_factory()};
+  }
   // Returns list of endpoints that are associated with this instance. Pointers
   // are guaranteed to be non-null and are owned by NetworkEmulationManager.
   virtual std::vector<EmulatedEndpoint*> endpoints() const = 0;
@@ -143,6 +147,16 @@ class EmulatedNetworkManagerInterface {
 };
 
 enum class TimeMode { kRealTime, kSimulated };
+
+// Called implicitly when parsing an ABSL_FLAG of type TimeMode.
+// from the command line flag value `text`.
+// Returns `true` and sets `*mode` on success;
+// returns `false` and sets `*error` on failure.
+bool AbslParseFlag(absl::string_view text, TimeMode* mode, std::string* error);
+
+// AbslUnparseFlag returns a textual flag value corresponding to the TimeMode
+// `mode`.
+std::string AbslUnparseFlag(TimeMode mode);
 
 // Provides an API for creating and configuring emulated network layer.
 // All objects returned by this API are owned by NetworkEmulationManager itself
@@ -183,6 +197,11 @@ class NetworkEmulationManager {
   // Returns a mode in which underlying time controller operates.
   virtual TimeMode time_mode() const = 0;
 
+  // Creates an emulated network node, which represents ideal network with
+  // unlimited capacity, no delay and no packet loss.
+  EmulatedNetworkNode* CreateUnconstrainedEmulatedNode() {
+    return CreateEmulatedNode(BuiltInNetworkBehaviorConfig());
+  }
   // Creates an emulated network node, which represents single network in
   // the emulated network layer. Uses default implementation on network behavior
   // which can be configured with `config`. `random_seed` can be provided to

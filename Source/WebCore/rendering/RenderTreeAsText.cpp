@@ -364,58 +364,34 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (borderTop || borderRight || borderBottom || borderLeft) {
             ts << " [border:";
 
+            auto printBorder = [&ts, &o] (LayoutUnit const& width, BorderStyle const& style, Color color) {
+                if (!width)
+                    ts << " none";
+                else {
+                    ts << " (" << width << "px ";
+                    printBorderStyle(ts, style);
+                    if (!color.isValid())
+                        color = o.style().color();
+                    ts << serializationForRenderTreeAsText(color) << ")";
+                }
+            };
+            
             BorderValue prevBorder = o.style().borderTop();
-            if (!borderTop)
-                ts << " none";
-            else {
-                ts << " (" << borderTop << "px ";
-                printBorderStyle(ts, o.style().borderTopStyle());
-                auto color = o.style().borderTopColor();
-                if (!color.isValid())
-                    color = o.style().color();
-                ts << serializationForRenderTreeAsText(color) << ")";
-            }
+            printBorder(borderTop, o.style().borderTopStyle(), o.style().borderTopColor());
 
             if (o.style().borderRight() != prevBorder || (overridden && borderRight != borderTop)) {
                 prevBorder = o.style().borderRight();
-                if (!borderRight)
-                    ts << " none";
-                else {
-                    ts << " (" << borderRight << "px ";
-                    printBorderStyle(ts, o.style().borderRightStyle());
-                    auto color = o.style().borderRightColor();
-                    if (!color.isValid())
-                        color = o.style().color();
-                    ts << serializationForRenderTreeAsText(color) << ")";
-                }
+                printBorder(borderRight, o.style().borderRightStyle(), o.style().borderRightColor());
             }
 
             if (o.style().borderBottom() != prevBorder || (overridden && borderBottom != borderRight)) {
-                prevBorder = box.style().borderBottom();
-                if (!borderBottom)
-                    ts << " none";
-                else {
-                    ts << " (" << borderBottom << "px ";
-                    printBorderStyle(ts, o.style().borderBottomStyle());
-                    auto color = o.style().borderBottomColor();
-                    if (!color.isValid())
-                        color = o.style().color();
-                    ts << serializationForRenderTreeAsText(color) << ")";
-                }
+                prevBorder = o.style().borderBottom();
+                printBorder(borderBottom, o.style().borderBottomStyle(), o.style().borderBottomColor());
             }
 
             if (o.style().borderLeft() != prevBorder || (overridden && borderLeft != borderBottom)) {
                 prevBorder = o.style().borderLeft();
-                if (!borderLeft)
-                    ts << " none";
-                else {
-                    ts << " (" << borderLeft << "px ";
-                    printBorderStyle(ts, o.style().borderLeftStyle());
-                    auto color = o.style().borderLeftColor();
-                    if (!color.isValid())
-                        color = o.style().color();
-                    ts << serializationForRenderTreeAsText(color) << ")";
-                }
+                printBorder(borderLeft, o.style().borderLeftStyle(), o.style().borderLeftColor());
             }
 
             ts << "]";

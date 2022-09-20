@@ -19,11 +19,10 @@
 #include "rtc_base/gunit.h"
 
 namespace webrtc {
-namespace test {
 namespace {
 
-constexpr size_t kFrameSize = 8;
-constexpr size_t kNumFrames = 4;
+constexpr int kFrameSize = 8;
+constexpr int kNumFrames = 4;
 using FloatArraySequence =
     std::array<std::array<float, kFrameSize>, kNumFrames>;
 
@@ -37,8 +36,8 @@ constexpr FloatArraySequence kBiQuadInputSeq = {
      {{22.645832f, -64.597153f, 55.462521f, -109.393188f, 10.117825f,
        -40.019642f, -98.612228f, -8.330326f}}}};
 
-// Generated via "B, A = scipy.signal.butter(2, 30/12000, btype='highpass')"
-const BiQuadFilter::BiQuadCoefficients kBiQuadConfig = {
+// Computed as `scipy.signal.butter(N=2, Wn=60/24000, btype='highpass')`.
+constexpr BiQuadFilter::Config kBiQuadConfig{
     {0.99446179f, -1.98892358f, 0.99446179f},
     {-1.98889291f, 0.98895425f}};
 
@@ -57,22 +56,23 @@ constexpr FloatArraySequence kBiQuadOutputSeq = {
      {{24.84286614f, -62.18094158f, 57.91488056f, -106.65685933f, 13.38760103f,
        -36.60367134f, -94.44880104f, -3.59920354f}}}};
 
-// Fail for every pair from two equally sized rtc::ArrayView<float> views such
+// Fails for every pair from two equally sized rtc::ArrayView<float> views such
 // that their relative error is above a given threshold. If the expected value
-// of a pair is 0, the tolerance is used to check the absolute error.
+// of a pair is 0, `tolerance` is used to check the absolute error.
 void ExpectNearRelative(rtc::ArrayView<const float> expected,
                         rtc::ArrayView<const float> computed,
                         const float tolerance) {
   // The relative error is undefined when the expected value is 0.
   // When that happens, check the absolute error instead. `safe_den` is used
   // below to implement such logic.
-  auto safe_den = [](float x) { return (x == 0.f) ? 1.f : std::fabs(x); };
+  auto safe_den = [](float x) { return (x == 0.0f) ? 1.0f : std::fabs(x); };
   ASSERT_EQ(expected.size(), computed.size());
   for (size_t i = 0; i < expected.size(); ++i) {
     const float abs_diff = std::fabs(expected[i] - computed[i]);
     // No failure when the values are equal.
-    if (abs_diff == 0.f)
+    if (abs_diff == 0.0f) {
       continue;
+    }
     SCOPED_TRACE(i);
     SCOPED_TRACE(expected[i]);
     SCOPED_TRACE(computed[i]);
@@ -80,32 +80,32 @@ void ExpectNearRelative(rtc::ArrayView<const float> expected,
   }
 }
 
-}  // namespace
-
+// Checks that filtering works when different containers are used both as input
+// and as output.
 TEST(BiQuadFilterTest, FilterNotInPlace) {
-  BiQuadFilter filter;
-  filter.Initialize(kBiQuadConfig);
+  BiQuadFilter filter(kBiQuadConfig);
   std::array<float, kFrameSize> samples;
 
   // TODO(https://bugs.webrtc.org/8948): Add when the issue is fixed.
   // FloatingPointExceptionObserver fpe_observer;
 
-  for (size_t i = 0; i < kNumFrames; ++i) {
+  for (int i = 0; i < kNumFrames; ++i) {
     SCOPED_TRACE(i);
     filter.Process(kBiQuadInputSeq[i], samples);
     ExpectNearRelative(kBiQuadOutputSeq[i], samples, 2e-4f);
   }
 }
 
+// Checks that filtering works when the same container is used both as input and
+// as output.
 TEST(BiQuadFilterTest, FilterInPlace) {
-  BiQuadFilter filter;
-  filter.Initialize(kBiQuadConfig);
+  BiQuadFilter filter(kBiQuadConfig);
   std::array<float, kFrameSize> samples;
 
   // TODO(https://bugs.webrtc.org/8948): Add when the issue is fixed.
   // FloatingPointExceptionObserver fpe_observer;
 
-  for (size_t i = 0; i < kNumFrames; ++i) {
+  for (int i = 0; i < kNumFrames; ++i) {
     SCOPED_TRACE(i);
     std::copy(kBiQuadInputSeq[i].begin(), kBiQuadInputSeq[i].end(),
               samples.begin());
@@ -114,23 +114,62 @@ TEST(BiQuadFilterTest, FilterInPlace) {
   }
 }
 
-TEST(BiQuadFilterTest, Reset) {
-  BiQuadFilter filter;
-  filter.Initialize(kBiQuadConfig);
+// Checks that different configurations produce different outputs.
+TEST(BiQuadFilterTest, SetConfigDifferentOutput) {
+  BiQuadFilter filter(/*config=*/{{0.97803048f, -1.95606096f, 0.97803048f},
+                                  {-1.95557824f, 0.95654368f}});
 
   std::array<float, kFrameSize> samples1;
-  for (size_t i = 0; i < kNumFrames; ++i) {
+  for (int i = 0; i < kNumFrames; ++i) {
     filter.Process(kBiQuadInputSeq[i], samples1);
   }
 
-  filter.Reset();
+  filter.SetConfig(
+      {{0.09763107f, 0.19526215f, 0.09763107f}, {-0.94280904f, 0.33333333f}});
   std::array<float, kFrameSize> samples2;
-  for (size_t i = 0; i < kNumFrames; ++i) {
+  for (int i = 0; i < kNumFrames; ++i) {
+    filter.Process(kBiQuadInputSeq[i], samples2);
+  }
+
+  EXPECT_NE(samples1, samples2);
+}
+
+// Checks that when `SetConfig()` is called but the filter coefficients are the
+// same the filter state is reset.
+TEST(BiQuadFilterTest, SetConfigResetsState) {
+  BiQuadFilter filter(kBiQuadConfig);
+
+  std::array<float, kFrameSize> samples1;
+  for (int i = 0; i < kNumFrames; ++i) {
+    filter.Process(kBiQuadInputSeq[i], samples1);
+  }
+
+  filter.SetConfig(kBiQuadConfig);
+  std::array<float, kFrameSize> samples2;
+  for (int i = 0; i < kNumFrames; ++i) {
     filter.Process(kBiQuadInputSeq[i], samples2);
   }
 
   EXPECT_EQ(samples1, samples2);
 }
 
-}  // namespace test
+// Checks that when `Reset()` is called the filter state is reset.
+TEST(BiQuadFilterTest, Reset) {
+  BiQuadFilter filter(kBiQuadConfig);
+
+  std::array<float, kFrameSize> samples1;
+  for (int i = 0; i < kNumFrames; ++i) {
+    filter.Process(kBiQuadInputSeq[i], samples1);
+  }
+
+  filter.Reset();
+  std::array<float, kFrameSize> samples2;
+  for (int i = 0; i < kNumFrames; ++i) {
+    filter.Process(kBiQuadInputSeq[i], samples2);
+  }
+
+  EXPECT_EQ(samples1, samples2);
+}
+
+}  // namespace
 }  // namespace webrtc

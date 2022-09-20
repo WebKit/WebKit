@@ -108,7 +108,7 @@ static void addIntrinsicMargins(RenderStyle& style)
 }
 #endif
 
-static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Document& document)
+static DisplayType equivalentBlockDisplay(const RenderStyle& style)
 {
     switch (auto display = style.display()) {
     case DisplayType::Block:
@@ -117,12 +117,7 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style, const Docume
     case DisplayType::Flex:
     case DisplayType::Grid:
     case DisplayType::FlowRoot:
-        return display;
-
     case DisplayType::ListItem:
-        // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk, but only in quirks mode.
-        if (document.inQuirksMode() && style.isFloating())
-            return DisplayType::Block;
         return display;
     case DisplayType::InlineTable:
         return DisplayType::Table;
@@ -312,7 +307,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
         if (style.hasOutOfFlowPosition() || style.isFloating() || (m_element && m_document.documentElement() == m_element))
-            style.setEffectiveDisplay(equivalentBlockDisplay(style, m_document));
+            style.setEffectiveDisplay(equivalentBlockDisplay(style));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
@@ -344,7 +339,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         // "A parent with a grid or flex display value blockifies the box’s display type."
         if (m_parentBoxStyle.isDisplayFlexibleOrGridBox()) {
             style.setFloating(Float::None);
-            style.setEffectiveDisplay(equivalentBlockDisplay(style, m_document));
+            style.setEffectiveDisplay(equivalentBlockDisplay(style));
         }
     }
 

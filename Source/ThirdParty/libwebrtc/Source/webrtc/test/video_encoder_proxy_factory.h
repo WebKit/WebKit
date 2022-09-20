@@ -27,7 +27,7 @@ const VideoEncoder::Capabilities kCapabilities(false);
 // An encoder factory with a single underlying VideoEncoder object,
 // intended for test purposes. Each call to CreateVideoEncoder returns
 // a proxy for the same encoder, typically an instance of FakeEncoder.
-class VideoEncoderProxyFactory final : public VideoEncoderFactory {
+class VideoEncoderProxyFactory : public VideoEncoderFactory {
  public:
   explicit VideoEncoderProxyFactory(VideoEncoder* encoder)
       : VideoEncoderProxyFactory(encoder, nullptr) {}
@@ -38,17 +38,12 @@ class VideoEncoderProxyFactory final : public VideoEncoderFactory {
         encoder_selector_(encoder_selector),
         num_simultaneous_encoder_instances_(0),
         max_num_simultaneous_encoder_instances_(0) {
-    codec_info_.has_internal_source = false;
   }
 
   // Unused by tests.
   std::vector<SdpVideoFormat> GetSupportedFormats() const override {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return {};
-  }
-
-  CodecInfo QueryVideoEncoder(const SdpVideoFormat& format) const override {
-    return codec_info_;
   }
 
   std::unique_ptr<VideoEncoder> CreateVideoEncoder(
@@ -69,15 +64,11 @@ class VideoEncoderProxyFactory final : public VideoEncoderFactory {
     return nullptr;
   }
 
-  void SetHasInternalSource(bool has_internal_source) {
-    codec_info_.has_internal_source = has_internal_source;
-  }
-
   int GetMaxNumberOfSimultaneousEncoderInstances() {
     return max_num_simultaneous_encoder_instances_;
   }
 
- private:
+ protected:
   void OnDestroyVideoEncoder() {
     RTC_CHECK_GT(num_simultaneous_encoder_instances_, 0);
     --num_simultaneous_encoder_instances_;
@@ -141,6 +132,11 @@ class VideoEncoderProxyFactory final : public VideoEncoderFactory {
       return encoder_selector_->OnAvailableBitrate(rate);
     }
 
+    absl::optional<SdpVideoFormat> OnResolutionChange(
+        const RenderResolution& resolution) override {
+      return encoder_selector_->OnResolutionChange(resolution);
+    }
+
     absl::optional<SdpVideoFormat> OnEncoderBroken() override {
       return encoder_selector_->OnEncoderBroken();
     }
@@ -151,7 +147,6 @@ class VideoEncoderProxyFactory final : public VideoEncoderFactory {
 
   VideoEncoder* const encoder_;
   EncoderSelectorInterface* const encoder_selector_;
-  CodecInfo codec_info_;
 
   int num_simultaneous_encoder_instances_;
   int max_num_simultaneous_encoder_instances_;

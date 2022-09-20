@@ -8,12 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/video_receiver2.h"
+
 #include <stddef.h>
 
 #include <cstdint>
 #include <vector>
-
-#include "modules/video_coding/video_receiver2.h"
 
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_decoder.h"
@@ -21,17 +21,19 @@
 #include "modules/video_coding/encoded_frame.h"
 #include "modules/video_coding/generic_decoder.h"
 #include "modules/video_coding/include/video_coding_defines.h"
-#include "modules/video_coding/timing.h"
+#include "modules/video_coding/timing/timing.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/trace_event.h"
 #include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
-VideoReceiver2::VideoReceiver2(Clock* clock, VCMTiming* timing)
+VideoReceiver2::VideoReceiver2(Clock* clock,
+                               VCMTiming* timing,
+                               const FieldTrialsView& field_trials)
     : clock_(clock),
       timing_(timing),
-      decodedFrameCallback_(timing_, clock_),
+      decodedFrameCallback_(timing_, clock_, field_trials),
       codecDataBase_() {
   decoder_sequence_checker_.Detach();
 }

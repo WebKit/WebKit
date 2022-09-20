@@ -39,9 +39,29 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         this._isNewPageOrReload = false;
         this._remoteObjectsToRelease = null;
 
+        this._customLoggingChannels = [];
+
+        this._snippets = new Set;
+        this._restoringSnippets = false;
+
+        WI.ConsoleSnippet.addEventListener(WI.SourceCode.Event.ContentDidChange, this._handleSnippetContentChanged, this);
+
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-        this._customLoggingChannels = [];
+        WI.Target.registerInitializationPromise((async () => {
+            let serializedSnippets = await WI.objectStores.consoleSnippets.getAll();
+
+            this._restoringSnippets = true;
+            for (let serializedSnippet of serializedSnippets) {
+                let snippet = WI.ConsoleSnippet.fromJSON(serializedSnippet);
+
+                const key = null;
+                WI.objectStores.consoleSnippets.associateObject(snippet, key, serializedSnippet);
+
+                this.addSnippet(snippet);
+            }
+            this._restoringSnippets = false;
+        })());
     }
 
     // Static
@@ -66,6 +86,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     get warningCount() { return this._warningCount; }
     get errorCount() { return this._errorCount; }
+    get snippets() { return this._snippets; }
     get customLoggingChannels() { return this._customLoggingChannels; }
 
     issuesForSourceCode(sourceCode)
@@ -86,6 +107,33 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         if (!this._remoteObjectsToRelease)
             this._remoteObjectsToRelease = new Set;
         this._remoteObjectsToRelease.add(remoteObject);
+    }
+
+    addSnippet(snippet)
+    {
+        console.assert(snippet instanceof WI.ConsoleSnippet, snippet);
+        console.assert(!this._snippets.has(snippet), snippet);
+        console.assert(!this._snippets.some((existingSnippet) => snippet.contentIdentifier === existingSnippet.contentIdentifier), snippet);
+
+        this._snippets.add(snippet);
+
+        if (!this._restoringSnippets)
+            WI.objectStores.consoleSnippets.putObject(snippet);
+
+        this.dispatchEventToListeners(WI.ConsoleManager.Event.SnippetAdded, {snippet});
+    }
+
+    removeSnippet(snippet)
+    {
+        console.assert(snippet instanceof WI.ConsoleSnippet, snippet);
+        console.assert(this._snippets.has(snippet), snippet);
+
+        this._snippets.delete(snippet);
+
+        if (!this._restoringSnippets)
+            WI.objectStores.consoleSnippets.deleteObject(snippet);
+
+        this.dispatchEventToListeners(WI.ConsoleManager.Event.SnippetRemoved, {snippet});
     }
 
     // ConsoleObserver
@@ -216,6 +264,15 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         this.dispatchEventToListeners(WI.ConsoleManager.Event.Cleared);
     }
 
+    _handleSnippetContentChanged(event)
+    {
+        let snippet = event.target;
+
+        console.assert(this._snippets.has(snippet), snippet);
+
+        WI.objectStores.consoleSnippets.putObject(snippet);
+    }
+
     _mainResourceDidChange(event)
     {
         console.assert(event.target instanceof WI.Frame);
@@ -239,4 +296,6 @@ WI.ConsoleManager.Event = {
     MessageAdded: "console-manager-message-added",
     IssueAdded: "console-manager-issue-added",
     PreviousMessageRepeatCountUpdated: "console-manager-previous-message-repeat-count-updated",
+    SnippetAdded: "console-manager-snippet-added",
+    SnippetRemoved: "console-manager-snippet-removed",
 };

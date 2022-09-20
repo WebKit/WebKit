@@ -258,7 +258,7 @@ TEST_P(SincResamplerTest, Resample) {
   SincResampler resampler(io_ratio, SincResampler::kDefaultRequestSize,
                           &resampler_source);
 
-  // Force an update to the sample rate ratio to ensure dyanmic sample rate
+  // Force an update to the sample rate ratio to ensure dynamic sample rate
   // changes are working correctly.
   std::unique_ptr<float[]> kernel(new float[SincResampler::kKernelStorageSize]);
   memcpy(kernel.get(), resampler.get_kernel_for_testing(),
@@ -335,6 +335,17 @@ INSTANTIATE_TEST_SUITE_P(
     SincResamplerTest,
     SincResamplerTest,
     ::testing::Values(
+        // To 22.05kHz
+        std::make_tuple(8000, 22050, kResamplingRMSError, -62.73),
+        std::make_tuple(11025, 22050, kResamplingRMSError, -72.19),
+        std::make_tuple(16000, 22050, kResamplingRMSError, -62.54),
+        std::make_tuple(22050, 22050, kResamplingRMSError, -73.53),
+        std::make_tuple(32000, 22050, kResamplingRMSError, -46.45),
+        std::make_tuple(44100, 22050, kResamplingRMSError, -28.49),
+        std::make_tuple(48000, 22050, -15.01, -25.56),
+        std::make_tuple(96000, 22050, -18.49, -13.42),
+        std::make_tuple(192000, 22050, -20.50, -9.23),
+
         // To 44.1kHz
         std::make_tuple(8000, 44100, kResamplingRMSError, -62.73),
         std::make_tuple(11025, 44100, kResamplingRMSError, -72.19),

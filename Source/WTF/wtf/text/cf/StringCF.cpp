@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2012 Apple Inc.
+ * Copyright (C) 2006-2022 Apple Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,6 +61,18 @@ RetainPtr<CFStringRef> String::createCFString() const
         return CFSTR("");
 
     return m_impl->createCFString();
+}
+
+RetainPtr<CFStringRef> makeCFArrayElement(const String& vectorElement)
+{
+    return vectorElement.createCFString();
+}
+
+std::optional<String> makeVectorElement(const String*, CFStringRef cfString)
+{
+    if (cfString)
+        return { { cfString } };
+    return std::nullopt;
 }
 
 }

@@ -37,7 +37,6 @@ const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, nullptr, nullptr, null
 
 OpaqueJSClass::OpaqueJSClass(const JSClassDefinition* definition, OpaqueJSClass* protoClass) 
     : parentClass(definition->parentClass)
-    , prototypeClass(nullptr)
     , initialize(definition->initialize)
     , finalize(definition->finalize)
     , hasProperty(definition->hasProperty)

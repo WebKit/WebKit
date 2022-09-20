@@ -2432,6 +2432,58 @@ bool AccessibilityNodeObject::hasAttributesRequiredForInclusion() const
     return false;
 }
 
+bool AccessibilityNodeObject::isFocused() const
+{
+    if (!m_node)
+        return false;
+
+    auto& document = m_node->document();
+    auto* focusedElement = document.focusedElement();
+    if (!focusedElement)
+        return false;
+
+    // A web area is represented by the Document node in the DOM tree, which isn't focusable.
+    // Check instead if the frame's selection controller is focused
+    if (focusedElement == m_node
+        || (roleValue() == AccessibilityRole::WebArea && document.frame()->selection().isFocusedAndActive()))
+        return true;
+
+    return false;
+}
+
+void AccessibilityNodeObject::setFocused(bool on)
+{
+    // Call the base class setFocused to ensure the view is focused and active.
+    AccessibilityObject::setFocused(on);
+
+    if (!canSetFocusAttribute())
+        return;
+
+    auto* document = this->document();
+    if (!on || !is<Element>(m_node)) {
+        document->setFocusedElement(nullptr);
+        return;
+    }
+
+    // When a node is told to set focus, that can cause it to be deallocated, which means that doing
+    // anything else inside this object will crash. To fix this, we added a RefPtr to protect this object
+    // long enough for duration.
+    RefPtr<AccessibilityObject> protectedThis(this);
+
+    // If this node is already the currently focused node, then calling focus() won't do anything.
+    // That is a problem when focus is removed from the webpage to chrome, and then returns.
+    // In these cases, we need to do what keyboard and mouse focus do, which is reset focus first.
+    if (document->focusedElement() == m_node)
+        document->setFocusedElement(nullptr);
+
+    // If we return from setFocusedElement and our element has been removed from a tree, axObjectCache() may be null.
+    if (auto* cache = axObjectCache()) {
+        cache->setIsSynchronizingSelection(true);
+        downcast<Element>(*m_node).focus();
+        cache->setIsSynchronizingSelection(false);
+    }
+}
+
 bool AccessibilityNodeObject::canSetFocusAttribute() const
 {
     Node* node = this->node();

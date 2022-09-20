@@ -46,15 +46,10 @@ namespace JSC {
         using Label = GenericLabel<Traits>;
 
     public:
-        GenericBoundLabel()
-            : m_type(Offset)
-            , m_generator(nullptr)
-            , m_target(0)
-        { }
+        GenericBoundLabel() = default;
 
         explicit GenericBoundLabel(int offset)
             : m_type(Offset)
-            , m_generator(nullptr)
             , m_target(offset)
         { }
 
@@ -114,12 +109,12 @@ namespace JSC {
             GeneratorBackward,
         };
 
-        Type m_type;
+        Type m_type { Offset };
         int m_savedTarget { 0 };
-        BytecodeGenerator* m_generator;
+        BytecodeGenerator* m_generator { nullptr };
         union {
             Label* m_label;
-            int m_target;
+            int m_target { 0 };
         };
     };
 

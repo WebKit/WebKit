@@ -57,7 +57,8 @@ Lock AtomStringTableLocker::s_stringTableLock;
 class AtomStringTableLocker {
     WTF_MAKE_NONCOPYABLE(AtomStringTableLocker);
 public:
-    AtomStringTableLocker() { }
+    // Left an empty body on purpose, or we get several unused variable warnings
+    AtomStringTableLocker() { } // NOLINT
 };
 
 #endif // USE(WEB_THREAD)

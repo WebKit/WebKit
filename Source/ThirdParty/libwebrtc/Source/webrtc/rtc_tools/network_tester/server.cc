@@ -8,13 +8,16 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/null_socket_server.h"
 #include "rtc_tools/network_tester/test_controller.h"
 
 int main(int /*argn*/, char* /*argv*/[]) {
+  rtc::Thread main_thread(std::make_unique<rtc::NullSocketServer>());
   webrtc::TestController server(9090, 9090, "server_config.dat",
                                 "server_packet_log.dat");
   while (!server.IsTestDone()) {
-    server.Run();
+    // 100 ms is arbitrary chosen.
+    main_thread.ProcessMessages(/*cms=*/100);
   }
   return 0;
 }

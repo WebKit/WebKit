@@ -127,17 +127,7 @@ void MetaAllocatorHandle::dump(PrintStream& out) const
 MetaAllocator::MetaAllocator(Lock& lock, size_t allocationGranule, size_t pageSize)
     : m_allocationGranule(allocationGranule)
     , m_pageSize(pageSize)
-    , m_bytesAllocated(0)
-    , m_bytesReserved(0)
-    , m_bytesCommitted(0)
     , m_lock(lock)
-#ifndef NDEBUG
-    , m_mallocBalance(0)
-#endif
-#if ENABLE(META_ALLOCATOR_PROFILE)
-    , m_numAllocations(0)
-    , m_numFrees(0)
-#endif
 {
     for (m_logPageSize = 0; m_logPageSize < 32; ++m_logPageSize) {
         if (static_cast<size_t>(1) << m_logPageSize == m_pageSize)

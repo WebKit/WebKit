@@ -41,20 +41,17 @@ class TypeLocation {
 public:
     TypeLocation()
         : m_instructionTypeSet(TypeSet::create())
-        , m_globalTypeSet(nullptr)
-        , m_divotForFunctionOffsetIfReturnStatement(UINT_MAX)
-        , m_lastSeenType(TypeNothing)
     {
     }
 
     GlobalVariableID m_globalVariableID;
     RefPtr<TypeSet> m_instructionTypeSet;
-    RefPtr<TypeSet> m_globalTypeSet;
+    RefPtr<TypeSet> m_globalTypeSet { nullptr };
     SourceID m_sourceID;
     unsigned m_divotStart;
     unsigned m_divotEnd;
-    unsigned m_divotForFunctionOffsetIfReturnStatement;
-    RuntimeType m_lastSeenType;
+    unsigned m_divotForFunctionOffsetIfReturnStatement { UINT_MAX };
+    RuntimeType m_lastSeenType { TypeNothing };
 };
 
 } // namespace JSC

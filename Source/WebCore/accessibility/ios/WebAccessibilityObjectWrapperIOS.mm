@@ -2145,6 +2145,13 @@ static RenderObject* rendererForView(WAKView* view)
         backingObject->setFocused(focus);
 }
 
+- (BOOL)_accessibilityIsFocusedForTesting
+{
+    if (auto* backingObject = self.axBackingObject)
+        return backingObject->isFocused();
+    return false;
+}
+
 - (void)accessibilityDecreaseSelection:(TextGranularity)granularity
 {
     [self accessibilityModifySelection:granularity increase:NO];

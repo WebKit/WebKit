@@ -8,16 +8,18 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "rtc_base/ssl_adapter.h"
+
 #include <memory>
 #include <string>
 #include <utility>
 
 #include "absl/memory/memory.h"
+#include "absl/strings/string_view.h"
 #include "rtc_base/gunit.h"
 #include "rtc_base/ip_address.h"
 #include "rtc_base/message_digest.h"
 #include "rtc_base/socket_stream.h"
-#include "rtc_base/ssl_adapter.h"
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/stream.h"
@@ -99,7 +101,7 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
 
   const std::string& GetReceivedData() const { return data_; }
 
-  int Connect(const std::string& hostname, const rtc::SocketAddress& address) {
+  int Connect(absl::string_view hostname, const rtc::SocketAddress& address) {
     RTC_LOG(LS_INFO) << "Initiating connection with " << address.ToString();
 
     int rv = ssl_adapter_->Connect(address);
@@ -108,7 +110,7 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
       RTC_LOG(LS_INFO) << "Starting " << GetSSLProtocolName(ssl_mode_)
                        << " handshake with " << hostname;
 
-      if (ssl_adapter_->StartSSL(hostname.c_str()) != 0) {
+      if (ssl_adapter_->StartSSL(hostname) != 0) {
         return -1;
       }
     }
@@ -118,7 +120,7 @@ class SSLAdapterTestDummyClient : public sigslot::has_slots<> {
 
   int Close() { return ssl_adapter_->Close(); }
 
-  int Send(const std::string& message) {
+  int Send(absl::string_view message) {
     RTC_LOG(LS_INFO) << "Client sending '" << message << "'";
 
     return ssl_adapter_->Send(message.data(), message.length());
@@ -189,7 +191,7 @@ class SSLAdapterTestDummyServer : public sigslot::has_slots<> {
 
   const std::string& GetReceivedData() const { return data_; }
 
-  int Send(const std::string& message) {
+  int Send(absl::string_view message) {
     if (ssl_stream_adapter_ == nullptr ||
         ssl_stream_adapter_->GetState() != rtc::SS_OPEN) {
       // No connection yet.
@@ -363,7 +365,7 @@ class SSLAdapterTestBase : public ::testing::Test, public sigslot::has_slots<> {
     }
   }
 
-  void TestTransfer(const std::string& message) {
+  void TestTransfer(absl::string_view message) {
     int rv;
 
     rv = client_->Send(message);

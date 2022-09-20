@@ -157,9 +157,7 @@ void State::dumpDisassembly(PrintStream& out, const ScopedLambda<void(DFG::Node*
     linkBuffer.didAlreadyDisassemble();
 }
 
-State::~State()
-{
-}
+State::~State() = default;
 
 StructureStubInfo* State::addStructureStubInfo()
 {

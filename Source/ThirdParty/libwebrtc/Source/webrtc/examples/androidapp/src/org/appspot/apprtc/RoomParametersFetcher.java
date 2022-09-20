@@ -159,6 +159,7 @@ public class RoomParametersFetcher {
 
   // Requests & returns a TURN ICE Server based on a request URL.  Must be run
   // off the main thread!
+  @SuppressWarnings("UseNetworkAnnotations")
   private List<PeerConnection.IceServer> requestTurnServers(String url)
       throws IOException, JSONException {
     List<PeerConnection.IceServer> turnServers = new ArrayList<>();

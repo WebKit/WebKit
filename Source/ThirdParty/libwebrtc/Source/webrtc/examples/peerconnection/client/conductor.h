@@ -54,7 +54,7 @@ class Conductor : public webrtc::PeerConnectionObserver,
   ~Conductor();
   bool InitializePeerConnection();
   bool ReinitializePeerConnectionForLoopback();
-  bool CreatePeerConnection(bool dtls);
+  bool CreatePeerConnection();
   void DeletePeerConnection();
   void EnsureStreamingUI();
   void AddTracks();

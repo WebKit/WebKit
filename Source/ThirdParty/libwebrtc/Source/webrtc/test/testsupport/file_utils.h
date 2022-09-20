@@ -16,17 +16,15 @@
 #include <string>
 #include <vector>
 
+#include "absl/base/attributes.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 
 namespace webrtc {
 namespace test {
 
-// This is the "directory" returned if the ProjectPath() function fails
-// to find the project root.
-extern const char* kCannotFindProjectRootDir;
-
-// Slash or backslash, depending on platform. NUL-terminated string.
-extern const char* kPathDelimiter;
+// Slash or backslash, depending on platform.
+ABSL_CONST_INIT extern const absl::string_view kPathDelimiter;
 
 // Returns the absolute path to the output directory where log files and other
 // test artifacts should be put. The output directory is generally a directory
@@ -47,12 +45,12 @@ std::string OutputPath();
 // Generates an empty file with a unique name in the specified directory and
 // returns the file name and path.
 // TODO(titovartem) rename to TempFile and next method to TempFilename
-std::string TempFilename(const std::string& dir, const std::string& prefix);
+std::string TempFilename(absl::string_view dir, absl::string_view prefix);
 
 // Generates a unique file name that can be used for file creation. Doesn't
 // create any files.
-std::string GenerateTempFilename(const std::string& dir,
-                                 const std::string& prefix);
+std::string GenerateTempFilename(absl::string_view dir,
+                                 absl::string_view prefix);
 
 // Returns a path to a resource file in [project-root]/resources/ dir.
 // Returns an absolute path
@@ -63,10 +61,10 @@ std::string GenerateTempFilename(const std::string& dir,
 //           If a directory path is prepended to the filename, a subdirectory
 //           hierarchy reflecting that path is assumed to be present.
 //    extension - File extension, without the dot, i.e. "bmp" or "yuv".
-std::string ResourcePath(const std::string& name, const std::string& extension);
+std::string ResourcePath(absl::string_view name, absl::string_view extension);
 
 // Joins directory name and file name, separated by the path delimiter.
-std::string JoinFilename(const std::string& dir, const std::string& name);
+std::string JoinFilename(absl::string_view dir, absl::string_view name);
 
 // Gets the current working directory for the executing program.
 // Returns "./" if for some reason it is not possible to find the working
@@ -77,31 +75,33 @@ std::string WorkingDir();
 // of strings with one element for each found file or directory. Each element is
 // a path created by prepending |dir| to the file/directory name. "." and ".."
 // are never added in the returned vector.
-absl::optional<std::vector<std::string>> ReadDirectory(std::string path);
+absl::optional<std::vector<std::string>> ReadDirectory(absl::string_view path);
 
 // Creates a directory if it not already exists.
 // Returns true if successful. Will print an error message to stderr and return
 // false if a file with the same name already exists.
-bool CreateDir(const std::string& directory_name);
+bool CreateDir(absl::string_view directory_name);
 
 // Removes a directory, which must already be empty.
-bool RemoveDir(const std::string& directory_name);
+bool RemoveDir(absl::string_view directory_name);
 
 // Removes a file.
-bool RemoveFile(const std::string& file_name);
+bool RemoveFile(absl::string_view file_name);
 
 // Checks if a file exists.
-bool FileExists(const std::string& file_name);
+// TOOD(alito): Merge these once absl::string_view adoption is complete for this
+// file.
+bool FileExists(absl::string_view file_name);
 
 // Checks if a directory exists.
-bool DirExists(const std::string& directory_name);
+bool DirExists(absl::string_view directory_name);
 
 // Strips the rightmost path segment from a path.
-std::string DirName(const std::string& path);
+std::string DirName(absl::string_view path);
 
 // File size of the supplied file in bytes. Will return 0 if the file is
 // empty or if the file does not exist/is readable.
-size_t GetFileSize(const std::string& filename);
+size_t GetFileSize(absl::string_view filename);
 
 }  // namespace test
 }  // namespace webrtc

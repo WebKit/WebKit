@@ -10,7 +10,6 @@
 
 #include "examples/peerconnection/server/data_socket.h"
 
-#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

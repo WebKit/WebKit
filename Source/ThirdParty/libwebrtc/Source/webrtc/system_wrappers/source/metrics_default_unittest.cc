@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "rtc_base/checks.h"
+#include "rtc_base/string_utils.h"
 #include "system_wrappers/include/metrics.h"
 #include "test/gtest.h"
 
@@ -24,10 +25,10 @@ namespace {
 const int kSample = 22;
 const char kName[] = "Name";
 
-int NumSamples(
-    const std::string& name,
-    const std::map<std::string, std::unique_ptr<metrics::SampleInfo>>&
-        histograms) {
+int NumSamples(absl::string_view name,
+               const std::map<std::string,
+                              std::unique_ptr<metrics::SampleInfo>,
+                              rtc::AbslStringViewCmp>& histograms) {
   const auto it = histograms.find(name);
   if (it == histograms.end())
     return 0;
@@ -39,10 +40,11 @@ int NumSamples(
   return num_samples;
 }
 
-int NumEvents(const std::string& name,
+int NumEvents(absl::string_view name,
               int sample,
-              const std::map<std::string, std::unique_ptr<metrics::SampleInfo>>&
-                  histograms) {
+              const std::map<std::string,
+                             std::unique_ptr<metrics::SampleInfo>,
+                             rtc::AbslStringViewCmp>& histograms) {
   const auto it = histograms.find(name);
   if (it == histograms.end())
     return 0;
@@ -118,7 +120,9 @@ TEST_F(MetricsDefaultTest, Underflow) {
 }
 
 TEST_F(MetricsDefaultTest, GetAndReset) {
-  std::map<std::string, std::unique_ptr<metrics::SampleInfo>> histograms;
+  std::map<std::string, std::unique_ptr<metrics::SampleInfo>,
+           rtc::AbslStringViewCmp>
+      histograms;
   metrics::GetAndReset(&histograms);
   EXPECT_EQ(0u, histograms.size());
   RTC_HISTOGRAM_PERCENTAGE("Histogram1", 4);
@@ -154,7 +158,9 @@ TEST_F(MetricsDefaultTest, TestMinMaxBucket) {
   const std::string kName = "MinMaxCounts100";
   RTC_HISTOGRAM_COUNTS_100(kName, 4);
 
-  std::map<std::string, std::unique_ptr<metrics::SampleInfo>> histograms;
+  std::map<std::string, std::unique_ptr<metrics::SampleInfo>,
+           rtc::AbslStringViewCmp>
+      histograms;
   metrics::GetAndReset(&histograms);
   EXPECT_EQ(1u, histograms.size());
   EXPECT_EQ(kName, histograms.begin()->second->name);

@@ -57,7 +57,7 @@ rtc_source_set("rnn_vad_common") {
   # TODO(alessiob): Make this target visibility private.
   visibility = [
     ":*",
-    "..:rnn_vad_with_level",
+    "..:vad_wrapper",
   ]
   sources = [ "common.h" ]
   deps = [
@@ -230,6 +230,7 @@ if (rtc_include_tests) {
       "../../../../test:fileutils",
       "../../../../test:test_support",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
   }
 
   unittest_resources = [
@@ -322,7 +323,7 @@ if (rtc_include_tests) {
         "..:cpu_features",
         "../../../../api:array_view",
         "../../../../common_audio",
-        "../../../../rtc_base:rtc_base_approved",
+        "../../../../rtc_base:logging",
         "../../../../rtc_base:safe_compare",
         "../../../../test:test_support",
         "//third_party/abseil-cpp/absl/flags:flag",

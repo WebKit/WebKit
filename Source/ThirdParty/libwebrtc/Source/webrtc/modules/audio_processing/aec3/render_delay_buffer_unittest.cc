@@ -40,10 +40,7 @@ TEST(RenderDelayBuffer, BufferOverflow) {
       SCOPED_TRACE(ProduceDebugText(rate));
       std::unique_ptr<RenderDelayBuffer> delay_buffer(
           RenderDelayBuffer::Create(config, rate, num_channels));
-      std::vector<std::vector<std::vector<float>>> block_to_insert(
-          NumBandsForRate(rate),
-          std::vector<std::vector<float>>(num_channels,
-                                          std::vector<float>(kBlockSize, 0.f)));
+      Block block_to_insert(NumBandsForRate(rate), num_channels);
       for (size_t k = 0; k < 10; ++k) {
         EXPECT_EQ(RenderDelayBuffer::BufferingEvent::kNone,
                   delay_buffer->Insert(block_to_insert));
@@ -69,9 +66,7 @@ TEST(RenderDelayBuffer, AvailableBlock) {
   constexpr size_t kNumBands = NumBandsForRate(kSampleRateHz);
   std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
       EchoCanceller3Config(), kSampleRateHz, kNumChannels));
-  std::vector<std::vector<std::vector<float>>> input_block(
-      kNumBands, std::vector<std::vector<float>>(
-                     kNumChannels, std::vector<float>(kBlockSize, 1.f)));
+  Block input_block(kNumBands, kNumChannels, 1.0f);
   EXPECT_EQ(RenderDelayBuffer::BufferingEvent::kNone,
             delay_buffer->Insert(input_block));
   delay_buffer->PrepareCaptureProcessing();
@@ -110,10 +105,8 @@ TEST(RenderDelayBufferDeathTest, WrongNumberOfBands) {
       SCOPED_TRACE(ProduceDebugText(rate));
       std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
           EchoCanceller3Config(), rate, num_channels));
-      std::vector<std::vector<std::vector<float>>> block_to_insert(
-          NumBandsForRate(rate < 48000 ? rate + 16000 : 16000),
-          std::vector<std::vector<float>>(num_channels,
-                                          std::vector<float>(kBlockSize, 0.f)));
+      Block block_to_insert(
+          NumBandsForRate(rate < 48000 ? rate + 16000 : 16000), num_channels);
       EXPECT_DEATH(delay_buffer->Insert(block_to_insert), "");
     }
   }
@@ -126,26 +119,7 @@ TEST(RenderDelayBufferDeathTest, WrongNumberOfChannels) {
       SCOPED_TRACE(ProduceDebugText(rate));
       std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
           EchoCanceller3Config(), rate, num_channels));
-      std::vector<std::vector<std::vector<float>>> block_to_insert(
-          NumBandsForRate(rate),
-          std::vector<std::vector<float>>(num_channels + 1,
-                                          std::vector<float>(kBlockSize, 0.f)));
-      EXPECT_DEATH(delay_buffer->Insert(block_to_insert), "");
-    }
-  }
-}
-
-// Verifies the check of the length of the inserted blocks.
-TEST(RenderDelayBufferDeathTest, WrongBlockLength) {
-  for (auto rate : {16000, 32000, 48000}) {
-    for (size_t num_channels : {1, 2, 8}) {
-      SCOPED_TRACE(ProduceDebugText(rate));
-      std::unique_ptr<RenderDelayBuffer> delay_buffer(RenderDelayBuffer::Create(
-          EchoCanceller3Config(), rate, num_channels));
-      std::vector<std::vector<std::vector<float>>> block_to_insert(
-          NumBandsForRate(rate),
-          std::vector<std::vector<float>>(
-              num_channels, std::vector<float>(kBlockSize - 1, 0.f)));
+      Block block_to_insert(NumBandsForRate(rate), num_channels + 1);
       EXPECT_DEATH(delay_buffer->Insert(block_to_insert), "");
     }
   }

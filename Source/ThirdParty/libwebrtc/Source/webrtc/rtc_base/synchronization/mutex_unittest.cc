@@ -103,7 +103,7 @@ class LockRunner : public rtc::MessageHandlerAutoCleanup {
     locker_.Lock();
     shared_value = shared_value_;
     locker_.Unlock();
-    return shared_value_;
+    return shared_value;
   }
 
   void OnMessage(Message* msg) override {
@@ -175,31 +175,6 @@ TEST(MutexTest, ProtectsSharedResourceWithMutexAndMutexLocker) {
   runner.SetExpectedThreadCount(kNumThreads);
   EXPECT_TRUE(runner.Run());
   EXPECT_EQ(0, runner.shared_value());
-}
-
-TEST(MutexTest, ProtectsSharedResourceWithGlobalMutexAndRawMutexLocker) {
-  std::vector<std::unique_ptr<Thread>> threads;
-  LockRunner<GlobalMutex, RawMutexLocker<GlobalMutex>> runner(absl::kConstInit);
-  StartThreads(threads, &runner);
-  runner.SetExpectedThreadCount(kNumThreads);
-  EXPECT_TRUE(runner.Run());
-  EXPECT_EQ(0, runner.shared_value());
-}
-
-TEST(MutexTest, ProtectsSharedResourceWithGlobalMutexAndMutexLocker) {
-  std::vector<std::unique_ptr<Thread>> threads;
-  LockRunner<GlobalMutex, MutexLockLocker<GlobalMutex, GlobalMutexLock>> runner(
-      absl::kConstInit);
-  StartThreads(threads, &runner);
-  runner.SetExpectedThreadCount(kNumThreads);
-  EXPECT_TRUE(runner.Run());
-  EXPECT_EQ(0, runner.shared_value());
-}
-
-TEST(MutexTest, GlobalMutexCanHaveStaticStorageDuration) {
-  ABSL_CONST_INIT static GlobalMutex global_lock(absl::kConstInit);
-  global_lock.Lock();
-  global_lock.Unlock();
 }
 
 }  // namespace

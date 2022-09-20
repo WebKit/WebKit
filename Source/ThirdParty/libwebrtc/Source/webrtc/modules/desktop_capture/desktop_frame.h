@@ -19,7 +19,6 @@
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/shared_memory.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
@@ -33,6 +32,9 @@ class RTC_EXPORT DesktopFrame {
   static const int kBytesPerPixel = 4;
 
   virtual ~DesktopFrame();
+
+  DesktopFrame(const DesktopFrame&) = delete;
+  DesktopFrame& operator=(const DesktopFrame&) = delete;
 
   // Returns the rectangle in full desktop coordinates to indicate it covers
   // the area of top_left() to top_letf() + size() / scale_factor().
@@ -163,8 +165,6 @@ class RTC_EXPORT DesktopFrame {
   int64_t capture_time_ms_;
   uint32_t capturer_id_;
   std::vector<uint8_t> icc_profile_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(DesktopFrame);
 };
 
 // A DesktopFrame that stores data in the heap.
@@ -175,12 +175,12 @@ class RTC_EXPORT BasicDesktopFrame : public DesktopFrame {
 
   ~BasicDesktopFrame() override;
 
+  BasicDesktopFrame(const BasicDesktopFrame&) = delete;
+  BasicDesktopFrame& operator=(const BasicDesktopFrame&) = delete;
+
   // Creates a BasicDesktopFrame that contains copy of `frame`.
   // TODO(zijiehe): Return std::unique_ptr<DesktopFrame>
   static DesktopFrame* CopyOf(const DesktopFrame& frame);
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(BasicDesktopFrame);
 };
 
 // A DesktopFrame that stores data in shared memory.
@@ -206,6 +206,9 @@ class RTC_EXPORT SharedMemoryDesktopFrame : public DesktopFrame {
 
   ~SharedMemoryDesktopFrame() override;
 
+  SharedMemoryDesktopFrame(const SharedMemoryDesktopFrame&) = delete;
+  SharedMemoryDesktopFrame& operator=(const SharedMemoryDesktopFrame&) = delete;
+
  private:
   // Avoid unexpected order of parameter evaluation.
   // Executing both std::unique_ptr<T>::operator->() and
@@ -217,8 +220,6 @@ class RTC_EXPORT SharedMemoryDesktopFrame : public DesktopFrame {
   SharedMemoryDesktopFrame(DesktopRect rect,
                            int stride,
                            SharedMemory* shared_memory);
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(SharedMemoryDesktopFrame);
 };
 
 }  // namespace webrtc

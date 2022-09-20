@@ -11,6 +11,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "absl/strings/string_view.h"
 #include "pc/test/integration_test_helpers.h"
 
 namespace webrtc {
@@ -20,6 +21,35 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
   FuzzerTest()
       : PeerConnectionIntegrationBaseTest(SdpSemantics::kUnifiedPlan) {}
 
+  void RunNegotiateCycle(absl::string_view message) {
+    CreatePeerConnectionWrappers();
+    // Note - we do not do test.ConnectFakeSignaling(); all signals
+    // generated are discarded.
+
+    auto srd_observer =
+        rtc::make_ref_counted<FakeSetRemoteDescriptionObserver>();
+
+    SdpParseError error;
+    std::unique_ptr<SessionDescriptionInterface> sdp(
+        CreateSessionDescription("offer", std::string(message), &error));
+    caller()->pc()->SetRemoteDescription(std::move(sdp), srd_observer);
+    // Wait a short time for observer to be called. Timeout is short
+    // because the fuzzer should be trying many branches.
+    EXPECT_TRUE_WAIT(srd_observer->called(), 100);
+
+    // If set-remote-description was successful, try to answer.
+    auto sld_observer =
+        rtc::make_ref_counted<FakeSetLocalDescriptionObserver>();
+    if (srd_observer->error().ok()) {
+      caller()->pc()->SetLocalDescription(sld_observer);
+      EXPECT_TRUE_WAIT(sld_observer->called(), 100);
+    }
+    // If there is an EXPECT failure, die here.
+    RTC_CHECK(!HasFailure());
+  }
+
+  // This test isn't using the test definition macros, so we have to
+  // define the TestBody() function, even though we don't need it.
   void TestBody() override {}
 };
 
@@ -27,32 +57,10 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   if (size > 16384) {
     return;
   }
-  std::string message(reinterpret_cast<const char*>(data), size);
 
   FuzzerTest test;
-  test.CreatePeerConnectionWrappers();
-  // Note - we do not do test.ConnectFakeSignaling(); all signals
-  // generated are discarded.
-
-  auto srd_observer =
-      rtc::make_ref_counted<MockSetSessionDescriptionObserver>();
-
-  webrtc::SdpParseError error;
-  std::unique_ptr<webrtc::SessionDescriptionInterface> sdp(
-      CreateSessionDescription("offer", message, &error));
-  // Note: This form of SRD takes ownership of the description.
-  test.caller()->pc()->SetRemoteDescription(srd_observer, sdp.release());
-  // Wait a short time for observer to be called. Timeout is short
-  // because the fuzzer should be trying many branches.
-  EXPECT_TRUE_WAIT(srd_observer->called(), 100);
-
-  // If set-remote-description was successful, try to answer.
-  auto sld_observer =
-      rtc::make_ref_counted<MockSetSessionDescriptionObserver>();
-  if (srd_observer->result()) {
-    test.caller()->pc()->SetLocalDescription(sld_observer.get());
-    EXPECT_TRUE_WAIT(sld_observer->called(), 100);
-  }
+  test.RunNegotiateCycle(
+      absl::string_view(reinterpret_cast<const char*>(data), size));
 }
 
 }  // namespace webrtc

@@ -31,10 +31,13 @@ class Demuxer {
  public:
   explicit Demuxer(const std::map<uint8_t, MediaType>& payload_type_map);
   ~Demuxer() = default;
+
+  Demuxer(const Demuxer&) = delete;
+  Demuxer& operator=(const Demuxer&) = delete;
+
   MediaType GetMediaType(const uint8_t* packet_data,
-                         const size_t packet_length) const;
+                         size_t packet_length) const;
   const std::map<uint8_t, MediaType> payload_type_map_;
-  RTC_DISALLOW_COPY_AND_ASSIGN(Demuxer);
 };
 
 // Objects of this class are expected to be allocated and destroyed  on the

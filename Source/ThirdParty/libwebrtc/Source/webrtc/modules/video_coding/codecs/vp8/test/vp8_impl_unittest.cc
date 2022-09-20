@@ -76,10 +76,8 @@ class TestVp8Impl : public VideoCodecUnitTest {
     webrtc::test::CodecSettings(kVideoCodecVP8, codec_settings);
     codec_settings->width = kWidth;
     codec_settings->height = kHeight;
-    codec_settings->VP8()->denoisingOn = true;
-    codec_settings->VP8()->frameDroppingOn = false;
-    codec_settings->VP8()->automaticResizeOn = false;
-    codec_settings->VP8()->complexity = VideoCodecComplexity::kComplexityNormal;
+    codec_settings->SetVideoEncoderComplexity(
+        VideoCodecComplexity::kComplexityNormal);
   }
 
   void EncodeAndWaitForFrame(const VideoFrame& input_frame,
@@ -167,6 +165,7 @@ TEST_F(TestVp8Impl,
 }
 
 TEST_F(TestVp8Impl, SetRates) {
+  codec_settings_.SetFrameDropEnabled(true);
   auto* const vpx = new NiceMock<MockLibvpxInterface>();
   LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
                            VP8Encoder::Settings());
@@ -295,67 +294,187 @@ TEST_F(TestVp8Impl, DecodedQpEqualsEncodedQp) {
 TEST_F(TestVp8Impl, ChecksSimulcastSettings) {
   codec_settings_.numberOfSimulcastStreams = 2;
   // Resolutions are not in ascending order, temporal layers do not match.
-  codec_settings_.simulcastStream[0] = {kWidth, kHeight, kFramerateFps, 2,
-                                        4000,   3000,    2000,          80};
-  codec_settings_.simulcastStream[1] = {kWidth / 2, kHeight / 2, 30,   3,
-                                        4000,       3000,        2000, 80};
+  codec_settings_.simulcastStream[0] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 2,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[1] = {.width = kWidth / 2,
+                                        .height = kHeight / 2,
+                                        .maxFramerate = 30,
+                                        .numberOfTemporalLayers = 3,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
             encoder_->InitEncode(&codec_settings_, kSettings));
   codec_settings_.numberOfSimulcastStreams = 3;
   // Resolutions are not in ascending order.
-  codec_settings_.simulcastStream[0] = {
-      kWidth / 2, kHeight / 2, kFramerateFps, 1, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[1] = {
-      kWidth / 2 - 1, kHeight / 2 - 1, kFramerateFps, 1, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[2] = {kWidth, kHeight, 30,   1,
-                                        4000,   3000,    2000, 80};
+  codec_settings_.simulcastStream[0] = {.width = kWidth / 2,
+                                        .height = kHeight / 2,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[1] = {.width = kWidth / 2 - 1,
+                                        .height = kHeight / 2 - 1,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[2] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = 30,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
             encoder_->InitEncode(&codec_settings_, kSettings));
   // Resolutions are not in ascending order.
-  codec_settings_.simulcastStream[0] = {kWidth, kHeight, kFramerateFps, 1,
-                                        4000,   3000,    2000,          80};
-  codec_settings_.simulcastStream[1] = {kWidth, kHeight, kFramerateFps, 1,
-                                        4000,   3000,    2000,          80};
-  codec_settings_.simulcastStream[2] = {
-      kWidth - 1, kHeight - 1, kFramerateFps, 1, 4000, 3000, 2000, 80};
+  codec_settings_.simulcastStream[0] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[1] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[2] = {.width = kWidth - 1,
+                                        .height = kHeight - 1,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
             encoder_->InitEncode(&codec_settings_, kSettings));
   // Temporal layers do not match.
-  codec_settings_.simulcastStream[0] = {
-      kWidth / 4, kHeight / 4, kFramerateFps, 1, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[1] = {
-      kWidth / 2, kHeight / 2, kFramerateFps, 2, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[2] = {kWidth, kHeight, kFramerateFps, 3,
-                                        4000,   3000,    2000,          80};
+  codec_settings_.simulcastStream[0] = {.width = kWidth / 4,
+                                        .height = kHeight / 4,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[1] = {.width = kWidth / 2,
+                                        .height = kHeight / 2,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 2,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[2] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 3,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
             encoder_->InitEncode(&codec_settings_, kSettings));
   // Resolutions do not match codec config.
-  codec_settings_.simulcastStream[0] = {
-      kWidth / 4 + 1, kHeight / 4 + 1, kFramerateFps, 1, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[1] = {
-      kWidth / 2 + 2, kHeight / 2 + 2, kFramerateFps, 1, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[2] = {
-      kWidth + 4, kHeight + 4, kFramerateFps, 1, 4000, 3000, 2000, 80};
+  codec_settings_.simulcastStream[0] = {.width = kWidth / 4 + 1,
+                                        .height = kHeight / 4 + 1,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[1] = {.width = kWidth / 2 + 2,
+                                        .height = kHeight / 2 + 2,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[2] = {.width = kWidth + 4,
+                                        .height = kHeight + 4,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_ERR_SIMULCAST_PARAMETERS_NOT_SUPPORTED,
             encoder_->InitEncode(&codec_settings_, kSettings));
   // Everything fine: scaling by 2, top resolution matches video, temporal
   // settings are the same for all layers.
-  codec_settings_.simulcastStream[0] = {
-      kWidth / 4, kHeight / 4, kFramerateFps, 1, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[1] = {
-      kWidth / 2, kHeight / 2, kFramerateFps, 1, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[2] = {kWidth, kHeight, kFramerateFps, 1,
-                                        4000,   3000,    2000,          80};
+  codec_settings_.simulcastStream[0] = {.width = kWidth / 4,
+                                        .height = kHeight / 4,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[1] = {.width = kWidth / 2,
+                                        .height = kHeight / 2,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[2] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, kSettings));
   // Everything fine: custom scaling, top resolution matches video, temporal
   // settings are the same for all layers.
-  codec_settings_.simulcastStream[0] = {
-      kWidth / 4, kHeight / 4, kFramerateFps, 1, 4000, 3000, 2000, 80};
-  codec_settings_.simulcastStream[1] = {kWidth, kHeight, kFramerateFps, 1,
-                                        4000,   3000,    2000,          80};
-  codec_settings_.simulcastStream[2] = {kWidth, kHeight, kFramerateFps, 1,
-                                        4000,   3000,    2000,          80};
+  codec_settings_.simulcastStream[0] = {.width = kWidth / 4,
+                                        .height = kHeight / 4,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[1] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
+  codec_settings_.simulcastStream[2] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80};
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, kSettings));
 }
@@ -408,7 +527,6 @@ TEST_F(TestVp8Impl, EncoderWith2TemporalLayers) {
 }
 
 TEST_F(TestVp8Impl, ScalingDisabledIfAutomaticResizeOff) {
-  codec_settings_.VP8()->frameDroppingOn = true;
   codec_settings_.VP8()->automaticResizeOn = false;
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, kSettings));
@@ -419,7 +537,7 @@ TEST_F(TestVp8Impl, ScalingDisabledIfAutomaticResizeOff) {
 }
 
 TEST_F(TestVp8Impl, ScalingEnabledIfAutomaticResizeOn) {
-  codec_settings_.VP8()->frameDroppingOn = true;
+  codec_settings_.SetFrameDropEnabled(true);
   codec_settings_.VP8()->automaticResizeOn = true;
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, kSettings));
@@ -440,7 +558,7 @@ TEST_F(TestVp8Impl, DontDropKeyframes) {
 
   // Screensharing has the internal frame dropper off, and instead per frame
   // asks ScreenshareLayers to decide if it should be dropped or not.
-  codec_settings_.VP8()->frameDroppingOn = false;
+  codec_settings_.SetFrameDropEnabled(false);
   codec_settings_.mode = VideoCodecMode::kScreensharing;
   // ScreenshareLayers triggers on 2 temporal layers and 1000kbps max bitrate.
   codec_settings_.VP8()->numberOfTemporalLayers = 2;
@@ -520,7 +638,6 @@ TEST(LibvpxVp8EncoderTest, GetEncoderInfoReturnsStaticInformation) {
 
   EXPECT_FALSE(info.supports_native_handle);
   EXPECT_FALSE(info.is_hardware_accelerated);
-  EXPECT_FALSE(info.has_internal_source);
   EXPECT_TRUE(info.supports_simulcast);
   EXPECT_EQ(info.implementation_name, "libvpx");
   EXPECT_EQ(info.requested_resolution_alignment, 1);
@@ -730,12 +847,33 @@ TEST_P(TestVp8ImplForPixelFormat, EncodeNativeFrameSimulcast) {
 
   // Configure simulcast.
   codec_settings_.numberOfSimulcastStreams = 3;
-  codec_settings_.simulcastStream[0] = {
-      kWidth / 4, kHeight / 4, kFramerateFps, 1, 4000, 3000, 2000, 80, true};
-  codec_settings_.simulcastStream[1] = {
-      kWidth / 2, kHeight / 2, kFramerateFps, 1, 4000, 3000, 2000, 80, true};
-  codec_settings_.simulcastStream[2] = {
-      kWidth, kHeight, kFramerateFps, 1, 4000, 3000, 2000, 80, true};
+  codec_settings_.simulcastStream[0] = {.width = kWidth / 4,
+                                        .height = kHeight / 4,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80,
+                                        .active = true};
+  codec_settings_.simulcastStream[1] = {.width = kWidth / 2,
+                                        .height = kHeight / 2,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80,
+                                        .active = true};
+  codec_settings_.simulcastStream[2] = {.width = kWidth,
+                                        .height = kHeight,
+                                        .maxFramerate = kFramerateFps,
+                                        .numberOfTemporalLayers = 1,
+                                        .maxBitrate = 4000,
+                                        .targetBitrate = 3000,
+                                        .minBitrate = 2000,
+                                        .qpMax = 80,
+                                        .active = true};
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             encoder_->InitEncode(&codec_settings_, kSettings));
 

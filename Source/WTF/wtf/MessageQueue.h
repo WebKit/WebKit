@@ -53,7 +53,7 @@ namespace WTF {
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(MessageQueue);
     public:
-        MessageQueue() : m_killed(false) { }
+        MessageQueue() = default;
         ~MessageQueue();
 
         void append(std::unique_ptr<DataType>);
@@ -81,13 +81,11 @@ namespace WTF {
         mutable Lock m_lock;
         Condition m_condition;
         Deque<std::unique_ptr<DataType>> m_queue WTF_GUARDED_BY_LOCK(m_lock);
-        bool m_killed WTF_GUARDED_BY_LOCK(m_lock);
+        bool m_killed WTF_GUARDED_BY_LOCK(m_lock) { false };
     };
 
     template<typename DataType>
-    MessageQueue<DataType>::~MessageQueue()
-    {
-    }
+    MessageQueue<DataType>::~MessageQueue() = default;
 
     template<typename DataType>
     inline void MessageQueue<DataType>::append(std::unique_ptr<DataType> message)

@@ -11,8 +11,9 @@
 #ifndef MODULES_AUDIO_PROCESSING_TEST_API_CALL_STATISTICS_H_
 #define MODULES_AUDIO_PROCESSING_TEST_API_CALL_STATISTICS_H_
 
-#include <string>
 #include <vector>
+
+#include "absl/strings/string_view.h"
 
 namespace webrtc {
 namespace test {
@@ -29,7 +30,7 @@ class ApiCallStatistics {
   void PrintReport() const;
 
   // Writes the call information to a file.
-  void WriteReportToFile(const std::string& filename) const;
+  void WriteReportToFile(absl::string_view filename) const;
 
  private:
   struct CallData {

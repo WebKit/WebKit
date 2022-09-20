@@ -26,7 +26,6 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       &clock,
       absl::bind_front(&PacketRouter::SendCombinedRtcpPacket, &packet_router),
       absl::bind_front(&PacketRouter::SendRemb, &packet_router), nullptr);
-  RemoteBitrateEstimator* rbe = cc.GetRemoteBitrateEstimator(true);
   RTPHeader header;
   header.ssrc = ByteReader<uint32_t>::ReadBigEndian(&data[i]);
   i += sizeof(uint32_t);
@@ -43,11 +42,11 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     header.extension.transportSequenceNumber =
         ByteReader<uint16_t>::ReadBigEndian(&data[i]);
     i += sizeof(uint16_t);
-    rbe->IncomingPacket(arrival_time_ms, payload_size, header);
+    cc.OnReceivedPacket(arrival_time_ms, payload_size, header);
     clock.AdvanceTimeMilliseconds(5);
     arrival_time_ms += ByteReader<uint8_t>::ReadBigEndian(&data[i]);
     i += sizeof(uint8_t);
+    cc.MaybeProcess();
   }
-  rbe->Process();
 }
 }  // namespace webrtc

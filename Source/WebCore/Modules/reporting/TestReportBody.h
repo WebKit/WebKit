@@ -34,9 +34,6 @@ namespace WebCore {
 
 class FormData;
 
-struct CSPInfo;
-struct SecurityPolicyViolationEventInit;
-
 class WEBCORE_EXPORT TestReportBody final : public ReportBody {
     WTF_MAKE_ISO_ALLOCATED(TestReportBody);
 public:

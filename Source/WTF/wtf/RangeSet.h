@@ -57,14 +57,9 @@ public:
     typedef typename Range::Type Type;
 
     typedef Vector<Range, 8> VectorType;
-    
-    RangeSet()
-    {
-    }
 
-    ~RangeSet()
-    {
-    }
+    RangeSet() = default;
+    ~RangeSet() = default;
 
     void add(const Range& range)
     {

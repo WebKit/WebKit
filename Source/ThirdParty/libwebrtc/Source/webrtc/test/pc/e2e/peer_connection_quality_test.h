@@ -69,9 +69,15 @@ class PeerConnectionE2EQualityTest
   void AddQualityMetricsReporter(std::unique_ptr<QualityMetricsReporter>
                                      quality_metrics_reporter) override;
 
+<<<<<<< HEAD
+  PeerHandle* AddPeer(
+      const PeerNetworkDependencies& network_dependencies,
+      rtc::FunctionView<void(PeerConfigurer*)> configurer) override;
+=======
   void AddPeer(rtc::Thread* network_thread,
                rtc::NetworkManager* network_manager,
                rtc::FunctionView<void(PeerConfigurer*)> configurer) override;
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
   void Run(RunParams run_params) override;
 
   TimeDelta GetRealTestDuration() const override {
@@ -90,7 +96,7 @@ class PeerConnectionE2EQualityTest
   // Have to be run on the signaling thread.
   void SetupCallOnSignalingThread(const RunParams& run_params);
   void TearDownCallOnSignalingThread();
-  void SetPeerCodecPreferences(TestPeer* peer, const RunParams& run_params);
+  void SetPeerCodecPreferences(TestPeer* peer);
   std::unique_ptr<SignalingInterceptor> CreateSignalingInterceptor(
       const RunParams& run_params);
   void WaitUntilIceCandidatesGathered(rtc::Thread* signaling_thread);

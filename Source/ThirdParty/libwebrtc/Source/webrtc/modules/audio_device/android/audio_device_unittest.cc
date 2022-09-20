@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/scoped_refptr.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_factory.h"
@@ -29,7 +30,6 @@
 #include "modules/audio_device/include/mock_audio_transport.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/event.h"
-#include "rtc_base/format_macros.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 #include "test/gmock.h"
@@ -105,7 +105,7 @@ class AudioStreamInterface {
 class FileAudioStream : public AudioStreamInterface {
  public:
   FileAudioStream(size_t num_callbacks,
-                  const std::string& file_name,
+                  absl::string_view file_name,
                   int sample_rate)
       : file_size_in_bytes_(0), sample_rate_(sample_rate), file_pos_(0) {
     file_size_in_bytes_ = test::GetFileSize(file_name);
@@ -115,7 +115,7 @@ class FileAudioStream : public AudioStreamInterface {
     const size_t num_16bit_samples =
         test::GetFileSize(file_name) / kBytesPerSample;
     file_.reset(new int16_t[num_16bit_samples]);
-    FILE* audio_file = fopen(file_name.c_str(), "rb");
+    FILE* audio_file = fopen(std::string(file_name).c_str(), "rb");
     EXPECT_NE(audio_file, nullptr);
     size_t num_samples_read =
         fread(file_.get(), sizeof(int16_t), num_16bit_samples, audio_file);
@@ -187,7 +187,7 @@ class FifoAudioStream : public AudioStreamInterface {
     const size_t size = fifo_->size();
     if (size > largest_size_) {
       largest_size_ = size;
-      PRINTD("(%" RTC_PRIuS ")", largest_size_);
+      PRINTD("(%zu)", largest_size_);
     }
     total_written_elements_ += size;
   }
@@ -532,13 +532,12 @@ class AudioDeviceTest : public ::testing::Test {
 #ifdef ENABLE_PRINTF
     PRINT("file name: %s\n", file_name.c_str());
     const size_t bytes = test::GetFileSize(file_name);
-    PRINT("file size: %" RTC_PRIuS " [bytes]\n", bytes);
-    PRINT("file size: %" RTC_PRIuS " [samples]\n", bytes / kBytesPerSample);
+    PRINT("file size: %zu [bytes]\n", bytes);
+    PRINT("file size: %zu [samples]\n", bytes / kBytesPerSample);
     const int seconds =
         static_cast<int>(bytes / (sample_rate * kBytesPerSample));
     PRINT("file size: %d [secs]\n", seconds);
-    PRINT("file size: %" RTC_PRIuS " [callbacks]\n",
-          seconds * kNumCallbacksPerSecond);
+    PRINT("file size: %zu [callbacks]\n", seconds * kNumCallbacksPerSecond);
 #endif
     return file_name;
   }
@@ -569,7 +568,7 @@ class AudioDeviceTest : public ::testing::Test {
     return active;
   }
 
-  bool DisableTestForThisDevice(const std::string& model) {
+  bool DisableTestForThisDevice(absl::string_view model) {
     return (build_info_->GetDeviceModel() == model);
   }
 
@@ -892,7 +891,7 @@ TEST_F(AudioDeviceTest, StartRecordingVerifyCallbacks) {
   EXPECT_CALL(
       mock, RecordedDataIsAvailable(NotNull(), record_frames_per_10ms_buffer(),
                                     kBytesPerSample, record_channels(),
-                                    record_sample_rate(), _, 0, 0, false, _))
+                                    record_sample_rate(), _, 0, 0, false, _, _))
       .Times(AtLeast(kNumCallbacks));
 
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
@@ -913,7 +912,7 @@ TEST_F(AudioDeviceTest, StartPlayoutAndRecordingVerifyCallbacks) {
   EXPECT_CALL(
       mock, RecordedDataIsAvailable(NotNull(), record_frames_per_10ms_buffer(),
                                     kBytesPerSample, record_channels(),
-                                    record_sample_rate(), _, 0, 0, false, _))
+                                    record_sample_rate(), _, 0, 0, false, _, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();

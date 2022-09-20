@@ -36,14 +36,7 @@ namespace JSC { namespace FTL {
 
 class AvailableRecovery {
 public:
-    AvailableRecovery()
-        : m_node(nullptr)
-        , m_format(DataFormatNone)
-        , m_opcode(AddRecovery)
-        , m_left(nullptr)
-        , m_right(nullptr)
-    {
-    }
+    AvailableRecovery() = default;
     
     AvailableRecovery(DFG::Node* node, RecoveryOpcode opcode, LValue left, LValue right, DataFormat format)
         : m_node(node)
@@ -63,11 +56,11 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    DFG::Node* m_node;
-    DataFormat m_format;
-    RecoveryOpcode m_opcode;
-    LValue m_left;
-    LValue m_right;
+    DFG::Node* m_node { nullptr };
+    DataFormat m_format { DataFormatNone };
+    RecoveryOpcode m_opcode { AddRecovery };
+    LValue m_left { nullptr };
+    LValue m_right { nullptr };
 };
 
 } } // namespace JSC::FTL

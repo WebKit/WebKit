@@ -10,6 +10,7 @@
 
 #include "pc/peer_connection_message_handler.h"
 
+#include <list>
 #include <utility>
 
 #include "api/jsep.h"
@@ -18,7 +19,7 @@
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
 #include "api/stats_types.h"
-#include "pc/stats_collector_interface.h"
+#include "pc/legacy_stats_collector_interface.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/location.h"
 
@@ -52,13 +53,13 @@ struct CreateSessionDescriptionMsg : public rtc::MessageData {
   RTCError error;
 };
 
-struct GetStatsMsg : public rtc::MessageData {
-  GetStatsMsg(webrtc::StatsObserver* observer,
-              StatsCollectorInterface* stats,
-              webrtc::MediaStreamTrackInterface* track)
+struct LegacyGetStatsMsg : public rtc::MessageData {
+  LegacyGetStatsMsg(webrtc::StatsObserver* observer,
+                    LegacyStatsCollectorInterface* stats,
+                    webrtc::MediaStreamTrackInterface* track)
       : observer(observer), stats(stats), track(track) {}
   rtc::scoped_refptr<webrtc::StatsObserver> observer;
-  StatsCollectorInterface* stats;
+  LegacyStatsCollectorInterface* stats;
   rtc::scoped_refptr<webrtc::MediaStreamTrackInterface> track;
 };
 
@@ -114,9 +115,9 @@ void PeerConnectionMessageHandler::OnMessage(rtc::Message* msg) {
       break;
     }
     case MSG_GETSTATS: {
-      GetStatsMsg* param = static_cast<GetStatsMsg*>(msg->pdata);
+      LegacyGetStatsMsg* param = static_cast<LegacyGetStatsMsg*>(msg->pdata);
       StatsReports reports;
-      param->stats->GetStats(param->track, &reports);
+      param->stats->GetStats(param->track.get(), &reports);
       param->observer->OnComplete(reports);
       delete param;
       break;
@@ -129,7 +130,7 @@ void PeerConnectionMessageHandler::OnMessage(rtc::Message* msg) {
       break;
     }
     default:
-      RTC_NOTREACHED() << "Not implemented";
+      RTC_DCHECK_NOTREACHED() << "Not implemented";
       break;
   }
 }
@@ -163,10 +164,11 @@ void PeerConnectionMessageHandler::PostCreateSessionDescriptionFailure(
 
 void PeerConnectionMessageHandler::PostGetStats(
     StatsObserver* observer,
-    StatsCollectorInterface* stats,
+    LegacyStatsCollectorInterface* legacy_stats,
     MediaStreamTrackInterface* track) {
-  signaling_thread()->Post(RTC_FROM_HERE, this, MSG_GETSTATS,
-                           new GetStatsMsg(observer, stats, track));
+  signaling_thread()->Post(
+      RTC_FROM_HERE, this, MSG_GETSTATS,
+      new LegacyGetStatsMsg(observer, legacy_stats, track));
 }
 
 void PeerConnectionMessageHandler::RequestUsagePatternReport(

@@ -57,8 +57,8 @@ public:
     const Layout::Box& layoutBoxForRenderer(const RenderObject&) const;
     Layout::Box& layoutBoxForRenderer(const RenderObject&);
 
-    const Layout::ContainerBox& layoutBoxForRenderer(const RenderInline&) const;
-    Layout::ContainerBox& layoutBoxForRenderer(const RenderInline&);
+    const Layout::ContainerBox& layoutBoxForRenderer(const RenderElement&) const;
+    Layout::ContainerBox& layoutBoxForRenderer(const RenderElement&);
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     RenderObject& rendererForLayoutBox(const Layout::Box&);

@@ -66,7 +66,7 @@ typedef Vector<MemoryValue*, 1> MemoryMatches;
 
 class MemoryValueMap {
 public:
-    MemoryValueMap() { }
+    MemoryValueMap() = default;
 
     void add(MemoryValue* memory)
     {

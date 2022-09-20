@@ -24,6 +24,7 @@
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video.h"
 #include "rtc_base/rate_limiter.h"
+#include "rtc_base/thread.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -150,8 +151,6 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
     rtp_rtcp_module_->SetStartTimestamp(111111);
 
     // Used for NACK processing.
-    // TODO(nisse): Unclear on which side? It's confusing to use a
-    // single rtp_rtcp module for both send and receive side.
     rtp_rtcp_module_->SetRemoteSSRC(kTestSsrc);
 
     rtp_rtcp_module_->SetRtxSendPayloadType(kRtxPayloadType, kPayloadType);
@@ -224,6 +223,7 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
     media_stream_.sequence_numbers_.sort();
   }
 
+  rtc::AutoThread main_thread_;
   std::unique_ptr<ReceiveStatistics> receive_statistics_;
   std::unique_ptr<ModuleRtpRtcpImpl2> rtp_rtcp_module_;
   std::unique_ptr<RTPSenderVideo> rtp_sender_video_;

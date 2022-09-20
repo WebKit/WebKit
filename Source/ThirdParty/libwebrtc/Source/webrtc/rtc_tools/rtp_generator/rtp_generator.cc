@@ -202,9 +202,7 @@ RtpGenerator::RtpGenerator(const RtpGeneratorOptions& options)
           rtc::make_ref_counted<VideoEncoderConfig::Vp9EncoderSpecificSettings>(
               settings);
     } else if (video_config.rtp.payload_name == cricket::kH264CodecName) {
-      VideoCodecH264 settings = VideoEncoder::GetDefaultH264Settings();
-      encoder_config.encoder_specific_settings = rtc::make_ref_counted<
-          VideoEncoderConfig::H264EncoderSpecificSettings>(settings);
+      encoder_config.encoder_specific_settings = nullptr;
     }
     encoder_config.video_format.name = video_config.rtp.payload_name;
     encoder_config.min_transmit_bitrate_bps = 0;

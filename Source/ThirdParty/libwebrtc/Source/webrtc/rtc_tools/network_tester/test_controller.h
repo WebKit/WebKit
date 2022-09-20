@@ -22,10 +22,10 @@
 #include "api/sequence_checker.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "rtc_base/async_packet_socket.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_tools/network_tester/packet_logger.h"
@@ -50,8 +50,10 @@ class TestController : public sigslot::has_slots<> {
                  int max_port,
                  const std::string& config_file_path,
                  const std::string& log_file_path);
+  ~TestController() override;
 
-  void Run();
+  TestController(const TestController&) = delete;
+  TestController& operator=(const TestController&) = delete;
 
   void SendConnectTo(const std::string& hostname, int port);
 
@@ -68,20 +70,24 @@ class TestController : public sigslot::has_slots<> {
                     size_t len,
                     const rtc::SocketAddress& remote_addr,
                     const int64_t& packet_time_us);
-  SequenceChecker test_controller_thread_checker_;
-  SequenceChecker packet_sender_checker_;
-  rtc::BasicPacketSocketFactory socket_factory_;
+  RTC_NO_UNIQUE_ADDRESS SequenceChecker test_controller_thread_checker_;
+  std::unique_ptr<rtc::SocketServer> socket_server_;
+  std::unique_ptr<rtc::Thread> packet_sender_thread_;
+  rtc::BasicPacketSocketFactory socket_factory_
+      RTC_GUARDED_BY(packet_sender_thread_);
   const std::string config_file_path_;
-  PacketLogger packet_logger_;
-  Mutex local_test_done_lock_;
-  bool local_test_done_ RTC_GUARDED_BY(local_test_done_lock_);
-  bool remote_test_done_;
-  std::array<char, kEthernetMtu> send_data_;
-  std::unique_ptr<rtc::AsyncPacketSocket> udp_socket_;
+  PacketLogger packet_logger_ RTC_GUARDED_BY(packet_sender_thread_);
+  Mutex test_done_lock_ RTC_GUARDED_BY(test_controller_thread_checker_);
+  bool local_test_done_ RTC_GUARDED_BY(test_done_lock_);
+  bool remote_test_done_ RTC_GUARDED_BY(test_done_lock_);
+  std::array<char, kEthernetMtu> send_data_
+      RTC_GUARDED_BY(packet_sender_thread_);
+  std::unique_ptr<rtc::AsyncPacketSocket> udp_socket_
+      RTC_GUARDED_BY(packet_sender_thread_);
   rtc::SocketAddress remote_address_;
-  std::unique_ptr<PacketSender> packet_sender_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(TestController);
+  std::unique_ptr<PacketSender> packet_sender_
+      RTC_GUARDED_BY(packet_sender_thread_);
+  rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> task_safety_flag_;
 };
 
 }  // namespace webrtc

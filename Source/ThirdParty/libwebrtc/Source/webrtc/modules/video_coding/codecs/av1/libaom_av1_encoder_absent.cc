@@ -15,8 +15,6 @@
 
 namespace webrtc {
 
-const bool kIsLibaomAv1EncoderSupported = false;
-
 std::unique_ptr<VideoEncoder> CreateLibaomAv1Encoder() {
   return nullptr;
 }

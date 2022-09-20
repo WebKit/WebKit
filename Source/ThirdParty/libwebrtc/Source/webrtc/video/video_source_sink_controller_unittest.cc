@@ -48,6 +48,7 @@ class MockVideoSourceWithVideoFrame
               RemoveSink,
               (rtc::VideoSinkInterface<VideoFrame>*),
               (override));
+  MOCK_METHOD(void, RequestRefreshFrame, (), (override));
 };
 
 }  // namespace
@@ -147,4 +148,18 @@ TEST(VideoSourceSinkControllerTest,
   controller.PushSourceSinkSettings();
 }
 
+TEST(VideoSourceSinkControllerTest, RequestsRefreshFrameWithSource) {
+  MockVideoSinkWithVideoFrame sink;
+  MockVideoSourceWithVideoFrame source;
+  VideoSourceSinkController controller(&sink, &source);
+  EXPECT_CALL(source, RequestRefreshFrame);
+  controller.RequestRefreshFrame();
+}
+
+TEST(VideoSourceSinkControllerTest,
+     RequestsRefreshFrameWithoutSourceDoesNotCrash) {
+  MockVideoSinkWithVideoFrame sink;
+  VideoSourceSinkController controller(&sink, nullptr);
+  controller.RequestRefreshFrame();
+}
 }  // namespace webrtc

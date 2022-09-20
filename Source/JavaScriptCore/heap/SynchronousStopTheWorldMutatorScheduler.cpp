@@ -28,13 +28,9 @@
 
 namespace JSC {
 
-SynchronousStopTheWorldMutatorScheduler::SynchronousStopTheWorldMutatorScheduler()
-{
-}
+SynchronousStopTheWorldMutatorScheduler::SynchronousStopTheWorldMutatorScheduler() = default;
 
-SynchronousStopTheWorldMutatorScheduler::~SynchronousStopTheWorldMutatorScheduler()
-{
-}
+SynchronousStopTheWorldMutatorScheduler::~SynchronousStopTheWorldMutatorScheduler() = default;
 
 MutatorScheduler::State SynchronousStopTheWorldMutatorScheduler::state() const
 {

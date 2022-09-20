@@ -8,21 +8,59 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <memory>
+#include <stddef.h>
 
+#include <cstdint>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+#include "api/audio/audio_mixer.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
+#include "api/candidate.h"
 #include "api/create_peerconnection_factory.h"
+#include "api/jsep.h"
+#include "api/media_types.h"
+#include "api/peer_connection_interface.h"
+#include "api/rtp_receiver_interface.h"
+#include "api/rtp_sender_interface.h"
+#include "api/rtp_transceiver_interface.h"
+#include "api/scoped_refptr.h"
+#include "api/stats/rtc_stats.h"
+#include "api/stats/rtc_stats_report.h"
+#include "api/stats/rtcstats_objects.h"
 #include "api/video_codecs/builtin_video_decoder_factory.h"
 #include "api/video_codecs/builtin_video_encoder_factory.h"
-#include "p2p/base/fake_port_allocator.h"
-#include "p2p/base/test_stun_server.h"
+#include "media/base/stream_params.h"
+#include "modules/audio_device/include/audio_device.h"
+#include "modules/audio_processing/include/audio_processing.h"
+#include "p2p/base/p2p_constants.h"
+#include "p2p/base/port.h"
+#include "p2p/base/port_allocator.h"
+#include "p2p/base/transport_info.h"
 #include "p2p/client/basic_port_allocator.h"
-#include "pc/media_session.h"
+#include "pc/channel.h"
 #include "pc/peer_connection.h"
 #include "pc/peer_connection_proxy.h"
 #include "pc/peer_connection_wrapper.h"
+#include "pc/rtp_transceiver.h"
+#include "pc/rtp_transport_internal.h"
 #include "pc/sdp_utils.h"
+#include "pc/session_description.h"
+#include "pc/test/mock_peer_connection_observers.h"
+#include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
+#include "rtc_base/net_helper.h"
+#include "rtc_base/network.h"
+#include "rtc_base/rtc_certificate_generator.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/thread.h"
+#include "test/gtest.h"
 #ifdef WEBRTC_ANDROID
 #include "pc/test/android_test_initializer.h"
 #endif
@@ -54,13 +92,14 @@ constexpr int kDefaultTimeout = 10000;
 
 class FakeNetworkManagerWithNoAnyNetwork : public rtc::FakeNetworkManager {
  public:
-  void GetAnyAddressNetworks(NetworkList* networks) override {
+  std::vector<const rtc::Network*> GetAnyAddressNetworks() override {
     // This function allocates networks that are owned by the
     // NetworkManager. But some tests assume that they can release
     // all networks independent of the network manager.
     // In order to prevent use-after-free issues, don't allow this
     // function to have any effect when run in tests.
     RTC_LOG(LS_INFO) << "FakeNetworkManager::GetAnyAddressNetworks ignored";
+    return {};
   }
 };
 
@@ -80,7 +119,7 @@ class PeerConnectionWrapperForBundleTest : public PeerConnectionWrapper {
         return pc()->AddIceCandidate(jsep_candidate.get());
       }
     }
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return false;
   }
 
@@ -185,22 +224,25 @@ class PeerConnectionBundleBaseTest : public ::testing::Test {
 
   WrapperPtr CreatePeerConnection(const RTCConfiguration& config) {
     auto* fake_network = NewFakeNetwork();
-    auto port_allocator =
-        std::make_unique<cricket::BasicPortAllocator>(fake_network);
+    auto port_allocator = std::make_unique<cricket::BasicPortAllocator>(
+        fake_network,
+        std::make_unique<rtc::BasicPacketSocketFactory>(vss_.get()));
     port_allocator->set_flags(cricket::PORTALLOCATOR_DISABLE_TCP |
                               cricket::PORTALLOCATOR_DISABLE_RELAY);
     port_allocator->set_step_delay(cricket::kMinimumStepDelay);
     auto observer = std::make_unique<MockPeerConnectionObserver>();
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
-    auto pc = pc_factory_->CreatePeerConnection(
-        modified_config, std::move(port_allocator), nullptr, observer.get());
-    if (!pc) {
+    PeerConnectionDependencies pc_dependencies(observer.get());
+    pc_dependencies.allocator = std::move(port_allocator);
+    auto result = pc_factory_->CreatePeerConnectionOrError(
+        modified_config, std::move(pc_dependencies));
+    if (!result.ok()) {
       return nullptr;
     }
 
     auto wrapper = std::make_unique<PeerConnectionWrapperForBundleTest>(
-        pc_factory_, pc, std::move(observer));
+        pc_factory_, result.MoveValue(), std::move(observer));
     wrapper->set_network(fake_network);
     return wrapper;
   }
@@ -450,7 +492,7 @@ TEST_P(PeerConnectionBundleMatrixTest,
 INSTANTIATE_TEST_SUITE_P(
     PeerConnectionBundleTest,
     PeerConnectionBundleMatrixTest,
-    Combine(Values(SdpSemantics::kPlanB, SdpSemantics::kUnifiedPlan),
+    Combine(Values(SdpSemantics::kPlanB_DEPRECATED, SdpSemantics::kUnifiedPlan),
             Values(std::make_tuple(BundlePolicy::kBundlePolicyBalanced,
                                    BundleIncluded::kBundleInAnswer,
                                    false,
@@ -853,7 +895,7 @@ TEST_P(PeerConnectionBundleTest, RemoveContentFromBundleGroup) {
 
 INSTANTIATE_TEST_SUITE_P(PeerConnectionBundleTest,
                          PeerConnectionBundleTest,
-                         Values(SdpSemantics::kPlanB,
+                         Values(SdpSemantics::kPlanB_DEPRECATED,
                                 SdpSemantics::kUnifiedPlan));
 
 // According to RFC5888, if an endpoint understands the semantics of an

@@ -40,9 +40,7 @@ class SparseCollection {
     typedef Vector<std::unique_ptr<T>> VectorType;
     
 public:
-    SparseCollection()
-    {
-    }
+    SparseCollection() = default;
 
     T* add(std::unique_ptr<T> value)
     {
@@ -125,11 +123,7 @@ public:
 
     class iterator {
     public:
-        iterator()
-            : m_collection(nullptr)
-            , m_index(0)
-        {
-        }
+        iterator() = default;
 
         iterator(const SparseCollection& collection, unsigned index)
             : m_collection(&collection)
@@ -169,8 +163,8 @@ public:
             return index;
         }
 
-        const SparseCollection* m_collection;
-        unsigned m_index;
+        const SparseCollection* m_collection { nullptr };
+        unsigned m_index { 0 };
     };
 
     iterator begin() const { return iterator(*this, 0); }

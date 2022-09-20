@@ -48,13 +48,13 @@ class FakeNetworkManager : public NetworkManagerBase,
     AddInterface(iface, "test" + rtc::ToString(next_index_++));
   }
 
-  void AddInterface(const SocketAddress& iface, const std::string& if_name) {
+  void AddInterface(const SocketAddress& iface, absl::string_view if_name) {
     AddInterface(iface, if_name, ADAPTER_TYPE_UNKNOWN);
   }
 
   void AddInterface(
       const SocketAddress& iface,
-      const std::string& if_name,
+      absl::string_view if_name,
       AdapterType type,
       absl::optional<AdapterType> underlying_vpn_adapter_type = absl::nullopt) {
     SocketAddress address(if_name, 0);
@@ -116,7 +116,7 @@ class FakeNetworkManager : public NetworkManagerBase,
   void DoUpdateNetworks() {
     if (start_count_ == 0)
       return;
-    std::vector<Network*> networks;
+    std::vector<std::unique_ptr<Network>> networks;
     for (IfaceList::iterator it = ifaces_.begin(); it != ifaces_.end(); ++it) {
       int prefix_length = 0;
       if (it->socket_address.ipaddr().family() == AF_INET) {
@@ -125,18 +125,18 @@ class FakeNetworkManager : public NetworkManagerBase,
         prefix_length = kFakeIPv6NetworkPrefixLength;
       }
       IPAddress prefix = TruncateIP(it->socket_address.ipaddr(), prefix_length);
-      std::unique_ptr<Network> net(new Network(
+      auto net = std::make_unique<Network>(
           it->socket_address.hostname(), it->socket_address.hostname(), prefix,
-          prefix_length, it->adapter_type));
+          prefix_length, it->adapter_type, /*field_trials=*/nullptr);
       if (it->underlying_vpn_adapter_type.has_value()) {
         net->set_underlying_type_for_vpn(*it->underlying_vpn_adapter_type);
       }
       net->set_default_local_address_provider(this);
       net->AddIP(it->socket_address.ipaddr());
-      networks.push_back(net.release());
+      networks.push_back(std::move(net));
     }
     bool changed;
-    MergeNetworkList(networks, &changed);
+    MergeNetworkList(std::move(networks), &changed);
     if (changed || !sent_first_update_) {
       SignalNetworksChanged();
       sent_first_update_ = true;

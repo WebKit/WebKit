@@ -208,6 +208,18 @@ Object.defineProperty(Set.prototype, "filter",
     },
 });
 
+Object.defineProperty(Set.prototype, "some",
+{
+    value(predicate, thisArg)
+    {
+        for (let item of this) {
+            if (predicate.call(thisArg, item, item, this))
+                return true;
+        }
+        return false;
+    },
+});
+
 Object.defineProperty(Set.prototype, "addAll",
 {
     value(iterable)

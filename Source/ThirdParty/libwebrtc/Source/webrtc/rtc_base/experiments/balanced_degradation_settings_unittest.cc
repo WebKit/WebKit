@@ -13,8 +13,8 @@
 #include <limits>
 
 #include "rtc_base/gunit.h"
-#include "test/field_trial.h"
 #include "test/gmock.h"
+#include "test/scoped_key_value_config.h"
 
 namespace webrtc {
 namespace {
@@ -59,8 +59,8 @@ void VerifyIsDefault(
 }  // namespace
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfNoList) {
-  webrtc::test::ScopedFieldTrials field_trials("");
-  BalancedDegradationSettings settings;
+  webrtc::test::ScopedKeyValueConfig field_trials("");
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
   EXPECT_TRUE(settings.CanAdaptUp(kVideoCodecVP8, 1, /*bitrate_bps*/ 1));
   EXPECT_TRUE(
@@ -75,10 +75,10 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfNoList) {
 }
 
 TEST(BalancedDegradationSettings, GetsConfig) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:11|22|33,fps:5|15|25,other:4|5|6/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_THAT(settings.GetConfigs(),
               ::testing::ElementsAre(
                   BalancedDegradationSettings::Config{
@@ -117,35 +117,35 @@ TEST(BalancedDegradationSettings, GetsConfig) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroFpsValue) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:0|15|25/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfPixelsDecreases) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|999|3000,fps:5|15|25/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfFramerateDecreases) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|4|25/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsConfigWithSpecificFps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_fps:7|8|9,vp9_fps:9|10|11,"
       "h264_fps:11|12|13,av1_fps:1|2|3,generic_fps:13|14|15/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_THAT(settings.GetConfigs(),
               ::testing::ElementsAre(
                   BalancedDegradationSettings::Config{
@@ -184,34 +184,34 @@ TEST(BalancedDegradationSettings, GetsConfigWithSpecificFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroVp8FpsValue) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:7|15|25,vp8_fps:0|15|25/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigForInvalidFpsValue) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:7|15|25,vp8_fps:10|15|2000/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfVp8FramerateDecreases) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:4|5|25,vp8_fps:5|4|25/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsMinFps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(5, settings.MinFps(kVideoCodecVP8, 1));
   EXPECT_EQ(5, settings.MinFps(kVideoCodecVP8, 1000));
   EXPECT_EQ(15, settings.MinFps(kVideoCodecVP8, 1001));
@@ -223,10 +223,10 @@ TEST(BalancedDegradationSettings, GetsMinFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp8MinFps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_fps:7|10|12/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(7, settings.MinFps(kVideoCodecVP8, 1));
   EXPECT_EQ(7, settings.MinFps(kVideoCodecVP8, 1000));
   EXPECT_EQ(10, settings.MinFps(kVideoCodecVP8, 1001));
@@ -238,10 +238,10 @@ TEST(BalancedDegradationSettings, GetsVp8MinFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsMaxFps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(15, settings.MaxFps(kVideoCodecVP8, 1));
   EXPECT_EQ(15, settings.MaxFps(kVideoCodecVP8, 1000));
   EXPECT_EQ(25, settings.MaxFps(kVideoCodecVP8, 1001));
@@ -251,10 +251,10 @@ TEST(BalancedDegradationSettings, GetsMaxFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp8MaxFps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_fps:7|10|12/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(10, settings.MaxFps(kVideoCodecVP8, 1));
   EXPECT_EQ(10, settings.MaxFps(kVideoCodecVP8, 1000));
   EXPECT_EQ(12, settings.MaxFps(kVideoCodecVP8, 1001));
@@ -264,39 +264,39 @@ TEST(BalancedDegradationSettings, GetsVp8MaxFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp9Fps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp9_fps:7|10|12/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(7, settings.MinFps(kVideoCodecVP9, 1000));
   EXPECT_EQ(10, settings.MaxFps(kVideoCodecVP9, 1000));
 }
 
 TEST(BalancedDegradationSettings, GetsH264Fps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,h264_fps:8|11|13/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(11, settings.MinFps(kVideoCodecH264, 2000));
   EXPECT_EQ(13, settings.MaxFps(kVideoCodecH264, 2000));
 }
 
 TEST(BalancedDegradationSettings, GetsGenericFps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,generic_fps:9|12|14/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(14, settings.MinFps(kVideoCodecGeneric, 3000));
   EXPECT_EQ(std::numeric_limits<int>::max(),
             settings.MaxFps(kVideoCodecGeneric, 3000));
 }
 
 TEST(BalancedDegradationSettings, GetsUnlimitedForMaxValidFps) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|100,vp8_fps:30|100|100/");
   const int kUnlimitedFps = std::numeric_limits<int>::max();
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(15, settings.MinFps(kVideoCodecH264, 2000));
   EXPECT_EQ(kUnlimitedFps, settings.MinFps(kVideoCodecH264, 2001));
   EXPECT_EQ(30, settings.MinFps(kVideoCodecVP8, 1000));
@@ -304,7 +304,7 @@ TEST(BalancedDegradationSettings, GetsUnlimitedForMaxValidFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsConfigWithBitrate) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:11|22|33,fps:5|15|25,kbps:44|88|99,kbps_res:55|111|222,"
       "vp8_kbps:11|12|13,vp8_kbps_res:14|15|16,"
@@ -312,7 +312,7 @@ TEST(BalancedDegradationSettings, GetsConfigWithBitrate) {
       "h264_kbps:31|32|33,h264_kbps_res:34|35|36,"
       "av1_kbps:41|42|43,av1_kbps_res:44|45|46,"
       "generic_kbps:51|52|53,generic_kbps_res:54|55|56/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_THAT(settings.GetConfigs(),
               ::testing::ElementsAre(
                   BalancedDegradationSettings::Config{
@@ -351,29 +351,29 @@ TEST(BalancedDegradationSettings, GetsConfigWithBitrate) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfBitrateDecreases) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:11|22|33,fps:5|15|25,kbps:44|43|99/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings,
      GetsDefaultConfigIfBitrateDecreasesWithUnsetValue) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:11|22|33,fps:5|15|25,kbps:44|0|43/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, CanAdaptUp) {
   VideoCodecType vp8 = kVideoCodecVP8;
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000|4000,fps:5|15|25|30,kbps:0|80|0|90,"
       "vp9_kbps:40|50|60|70/");
-  BalancedDegradationSettings s;
+  BalancedDegradationSettings s(field_trials);
   EXPECT_TRUE(s.CanAdaptUp(vp8, 1000, 0));  // No bitrate provided.
   EXPECT_FALSE(s.CanAdaptUp(vp8, 1000, 79000));
   EXPECT_TRUE(s.CanAdaptUp(vp8, 1000, 80000));
@@ -384,12 +384,12 @@ TEST(BalancedDegradationSettings, CanAdaptUp) {
 }
 
 TEST(BalancedDegradationSettings, CanAdaptUpWithCodecType) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000|4000,fps:5|15|25|30,vp8_kbps:0|30|40|50,"
       "vp9_kbps:0|60|70|80,h264_kbps:0|55|65|75,av1_kbps:0|77|88|99,"
       "generic_kbps:0|25|35|45/");
-  BalancedDegradationSettings s;
+  BalancedDegradationSettings s(field_trials);
   EXPECT_FALSE(s.CanAdaptUp(kVideoCodecVP8, 1000, 29000));
   EXPECT_TRUE(s.CanAdaptUp(kVideoCodecVP8, 1000, 30000));
   EXPECT_FALSE(s.CanAdaptUp(kVideoCodecVP9, 1000, 59000));
@@ -405,11 +405,11 @@ TEST(BalancedDegradationSettings, CanAdaptUpWithCodecType) {
 
 TEST(BalancedDegradationSettings, CanAdaptUpResolution) {
   VideoCodecType vp8 = kVideoCodecVP8;
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000|4000,fps:5|15|25|30,kbps_res:0|80|0|90,"
       "vp9_kbps_res:40|50|60|70/");
-  BalancedDegradationSettings s;
+  BalancedDegradationSettings s(field_trials);
   EXPECT_TRUE(s.CanAdaptUpResolution(vp8, 1000, 0));  // No bitrate provided.
   EXPECT_FALSE(s.CanAdaptUpResolution(vp8, 1000, 79000));
   EXPECT_TRUE(s.CanAdaptUpResolution(vp8, 1000, 80000));
@@ -420,12 +420,12 @@ TEST(BalancedDegradationSettings, CanAdaptUpResolution) {
 }
 
 TEST(BalancedDegradationSettings, CanAdaptUpResolutionWithCodecType) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000|4000,fps:5|15|25|30,vp8_kbps_res:0|30|40|50,"
       "vp9_kbps_res:0|60|70|80,h264_kbps_res:0|55|65|75,"
       "av1_kbps_res:0|77|88|99,generic_kbps_res:0|25|35|45/");
-  BalancedDegradationSettings s;
+  BalancedDegradationSettings s(field_trials);
   EXPECT_FALSE(s.CanAdaptUpResolution(kVideoCodecVP8, 1000, 29000));
   EXPECT_TRUE(s.CanAdaptUpResolution(kVideoCodecVP8, 1000, 30000));
   EXPECT_FALSE(s.CanAdaptUpResolution(kVideoCodecVP9, 1000, 59000));
@@ -441,10 +441,10 @@ TEST(BalancedDegradationSettings, CanAdaptUpResolutionWithCodecType) {
 }
 
 TEST(BalancedDegradationSettings, GetsFpsDiff) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,fps_diff:0|-2|3/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(0, settings.MinFpsDiff(1));
   EXPECT_EQ(0, settings.MinFpsDiff(1000));
   EXPECT_EQ(-2, settings.MinFpsDiff(1001));
@@ -455,21 +455,21 @@ TEST(BalancedDegradationSettings, GetsFpsDiff) {
 }
 
 TEST(BalancedDegradationSettings, GetsNoFpsDiffIfValueBelowMinSetting) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,fps_diff:-100|-99|-101/");
   // Min valid fps_diff setting: -99.
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_FALSE(settings.MinFpsDiff(1000));
   EXPECT_EQ(-99, settings.MinFpsDiff(2000));
   EXPECT_FALSE(settings.MinFpsDiff(3000));
 }
 
 TEST(BalancedDegradationSettings, QpThresholdsNotSetByDefault) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_FALSE(settings.GetQpThresholds(kVideoCodecVP8, 1));
   EXPECT_FALSE(settings.GetQpThresholds(kVideoCodecVP9, 1));
   EXPECT_FALSE(settings.GetQpThresholds(kVideoCodecH264, 1));
@@ -478,13 +478,13 @@ TEST(BalancedDegradationSettings, QpThresholdsNotSetByDefault) {
 }
 
 TEST(BalancedDegradationSettings, GetsConfigWithQpThresholds) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_qp_low:89|90|88,"
       "vp8_qp_high:90|91|92,vp9_qp_low:27|28|29,vp9_qp_high:120|130|140,"
       "h264_qp_low:12|13|14,h264_qp_high:20|30|40,av1_qp_low:2|3|4,"
       "av1_qp_high:11|33|44,generic_qp_low:7|6|5,generic_qp_high:22|23|24/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_THAT(settings.GetConfigs(),
               ::testing::ElementsAre(
                   BalancedDegradationSettings::Config{
@@ -523,54 +523,54 @@ TEST(BalancedDegradationSettings, GetsConfigWithQpThresholds) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfOnlyHasLowThreshold) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_qp_low:89|90|88/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfOnlyHasHighThreshold) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_qp_high:90|91|92/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfLowEqualsHigh) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp8_qp_low:89|90|88,vp8_qp_high:90|91|88/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfLowGreaterThanHigh) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp8_qp_low:89|90|88,vp8_qp_high:90|91|87/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroQpValue) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp8_qp_low:89|0|88,vp8_qp_high:90|91|92/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
 }
 
 TEST(BalancedDegradationSettings, GetsVp8QpThresholds) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp8_qp_low:89|90|88,vp8_qp_high:90|91|92/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   EXPECT_EQ(89, settings.GetQpThresholds(kVideoCodecVP8, 1)->low);
   EXPECT_EQ(90, settings.GetQpThresholds(kVideoCodecVP8, 1)->high);
   EXPECT_EQ(90, settings.GetQpThresholds(kVideoCodecVP8, 1000)->high);
@@ -582,11 +582,11 @@ TEST(BalancedDegradationSettings, GetsVp8QpThresholds) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp9QpThresholds) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp9_qp_low:55|56|57,vp9_qp_high:155|156|157/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   const auto thresholds = settings.GetQpThresholds(kVideoCodecVP9, 1000);
   EXPECT_TRUE(thresholds);
   EXPECT_EQ(55, thresholds->low);
@@ -594,11 +594,11 @@ TEST(BalancedDegradationSettings, GetsVp9QpThresholds) {
 }
 
 TEST(BalancedDegradationSettings, GetsH264QpThresholds) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "h264_qp_low:21|22|23,h264_qp_high:41|43|42/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   const auto thresholds = settings.GetQpThresholds(kVideoCodecH264, 2000);
   EXPECT_TRUE(thresholds);
   EXPECT_EQ(22, thresholds->low);
@@ -606,11 +606,11 @@ TEST(BalancedDegradationSettings, GetsH264QpThresholds) {
 }
 
 TEST(BalancedDegradationSettings, GetsGenericQpThresholds) {
-  webrtc::test::ScopedFieldTrials field_trials(
+  webrtc::test::ScopedKeyValueConfig field_trials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "generic_qp_low:2|3|4,generic_qp_high:22|23|24/");
-  BalancedDegradationSettings settings;
+  BalancedDegradationSettings settings(field_trials);
   const auto thresholds = settings.GetQpThresholds(kVideoCodecGeneric, 3000);
   EXPECT_TRUE(thresholds);
   EXPECT_EQ(4, thresholds->low);

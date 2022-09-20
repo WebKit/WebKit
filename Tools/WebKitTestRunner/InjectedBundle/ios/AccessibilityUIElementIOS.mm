@@ -75,6 +75,7 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (CGFloat)_accessibilityMaxValue;
 - (void)_accessibilitySetValue:(NSString *)value;
 - (void)_accessibilitySetFocus:(BOOL)focus;
+- (BOOL)_accessibilityIsFocusedForTesting;
 - (void)_accessibilityActivate;
 - (UIAccessibilityTraits)_axSelectedTrait;
 - (UIAccessibilityTraits)_axTextAreaTrait;
@@ -697,7 +698,7 @@ RefPtr<AccessibilityUIElement> AccessibilityUIElement::focusedElement() const
 
 bool AccessibilityUIElement::isFocused() const
 {
-    return false;
+    return [m_element _accessibilityIsFocusedForTesting];
 }
 
 bool AccessibilityUIElement::isSelected() const

@@ -189,6 +189,7 @@ imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtas
 imported/w3c/web-platform-tests/html/webappapis/microtask-queuing/queue-microtask.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/requires-success.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.sharedworker.html [ Skip ]
+imported/w3c/web-platform-tests/notifications/idlharness.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/acquire.tentative.https.any.sharedworker.html [ Skip ]
 imported/w3c/web-platform-tests/web-locks/held.tentative.https.any.sharedworker.html [ Skip ]
@@ -622,7 +623,7 @@ imported/w3c/web-platform-tests/fetch/metadata/serviceworker-accessors.https.sub
 imported/w3c/web-platform-tests/fetch/metadata/serviceworker.https.sub.html
 imported/w3c/web-platform-tests/fetch/metadata/sharedworker.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/range/sw.https.window.html [ Skip ]
-imported/w3c/web-platform-tests/server-timing/service_worker_idl.html [ Skip ]
+imported/w3c/web-platform-tests/server-timing/service_worker_idl.https.html [ Skip ]
 imported/w3c/web-platform-tests/push-api [ Skip ]
 imported/w3c/web-platform-tests/service-workers [ Skip ]
 imported/w3c/web-platform-tests/html/anonymous-iframe/cache-storage.tentative.https.window.html [ Skip ]
@@ -2102,6 +2103,8 @@ webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/brow
 
 # www.localhost domain is not supported and "Blocked access to external URL" message causes flakiness.
 imported/w3c/web-platform-tests/html/browsers/windows/clear-window-name.https.html [ Failure Pass ]
+
+imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/redirect-to-unparseable-url.html [ Failure Pass ]
 
 # These tests have been flaky on WK1 since their import.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/initial-empty-document/iframe-nosrc.html [ Failure Pass ]

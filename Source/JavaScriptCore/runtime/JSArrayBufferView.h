@@ -161,12 +161,12 @@ protected:
         Butterfly* butterfly() const { return m_butterfly; }
         
     private:
-        Structure* m_structure;
+        Structure* m_structure { nullptr };
         using VectorType = CagedPtr<Gigacage::Primitive, void, tagCagedPtr>;
         VectorType m_vector;
         size_t m_length;
         TypedArrayMode m_mode;
-        Butterfly* m_butterfly;
+        Butterfly* m_butterfly { nullptr };
     };
     
     JS_EXPORT_PRIVATE JSArrayBufferView(VM&, ConstructionContext&);

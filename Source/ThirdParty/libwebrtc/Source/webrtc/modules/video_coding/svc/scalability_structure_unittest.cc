@@ -19,8 +19,10 @@
 #include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "modules/video_coding/svc/create_scalability_structure.h"
+#include "modules/video_coding/svc/scalability_mode_util.h"
 #include "modules/video_coding/svc/scalability_structure_test_helpers.h"
 #include "modules/video_coding/svc/scalable_video_controller.h"
+#include "rtc_base/strings/string_builder.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -42,9 +44,51 @@ using ::testing::SizeIs;
 using ::testing::TestWithParam;
 using ::testing::Values;
 
+std::string FrameDependencyTemplateToString(const FrameDependencyTemplate& t) {
+  rtc::StringBuilder sb;
+  sb << "S" << t.spatial_id << "T" << t.temporal_id;
+  sb << ": dtis = ";
+  for (const auto dtis : t.decode_target_indications) {
+    switch (dtis) {
+      case DecodeTargetIndication::kNotPresent:
+        sb << "-";
+        break;
+      case DecodeTargetIndication::kDiscardable:
+        sb << "D";
+        break;
+      case DecodeTargetIndication::kSwitch:
+        sb << "S";
+        break;
+      case DecodeTargetIndication::kRequired:
+        sb << "R";
+        break;
+      default:
+        sb << "?";
+        break;
+    }
+  }
+  sb << ", frame diffs = { ";
+  for (int d : t.frame_diffs) {
+    sb << d << ", ";
+  }
+  sb << "}, chain diffs = { ";
+  for (int d : t.chain_diffs) {
+    sb << d << ", ";
+  }
+  sb << "}";
+  return sb.Release();
+}
+
 struct SvcTestParam {
   friend std::ostream& operator<<(std::ostream& os, const SvcTestParam& param) {
     return os << param.name;
+  }
+
+  ScalabilityMode GetScalabilityMode() const {
+    absl::optional<ScalabilityMode> scalability_mode =
+        ScalabilityModeFromString(name);
+    RTC_CHECK(scalability_mode.has_value());
+    return *scalability_mode;
   }
 
   std::string name;
@@ -56,9 +100,9 @@ class ScalabilityStructureTest : public TestWithParam<SvcTestParam> {};
 TEST_P(ScalabilityStructureTest,
        StaticConfigMatchesConfigReturnedByController) {
   std::unique_ptr<ScalableVideoController> controller =
-      CreateScalabilityStructure(GetParam().name);
+      CreateScalabilityStructure(GetParam().GetScalabilityMode());
   absl::optional<ScalableVideoController::StreamLayersConfig> static_config =
-      ScalabilityStructureConfig(GetParam().name);
+      ScalabilityStructureConfig(GetParam().GetScalabilityMode());
   ASSERT_THAT(controller, NotNull());
   ASSERT_NE(static_config, absl::nullopt);
   ScalableVideoController::StreamLayersConfig config =
@@ -78,7 +122,8 @@ TEST_P(ScalabilityStructureTest,
 TEST_P(ScalabilityStructureTest,
        NumberOfDecodeTargetsAndChainsAreInRangeAndConsistent) {
   FrameDependencyStructure structure =
-      CreateScalabilityStructure(GetParam().name)->DependencyStructure();
+      CreateScalabilityStructure(GetParam().GetScalabilityMode())
+          ->DependencyStructure();
   EXPECT_GT(structure.num_decode_targets, 0);
   EXPECT_LE(structure.num_decode_targets,
             DependencyDescriptor::kMaxDecodeTargets);
@@ -97,7 +142,8 @@ TEST_P(ScalabilityStructureTest,
 
 TEST_P(ScalabilityStructureTest, TemplatesAreSortedByLayerId) {
   FrameDependencyStructure structure =
-      CreateScalabilityStructure(GetParam().name)->DependencyStructure();
+      CreateScalabilityStructure(GetParam().GetScalabilityMode())
+          ->DependencyStructure();
   ASSERT_THAT(structure.templates, Not(IsEmpty()));
   const auto& first_templates = structure.templates.front();
   EXPECT_EQ(first_templates.spatial_id, 0);
@@ -128,7 +174,8 @@ TEST_P(ScalabilityStructureTest, TemplatesAreSortedByLayerId) {
 
 TEST_P(ScalabilityStructureTest, TemplatesMatchNumberOfDecodeTargetsAndChains) {
   FrameDependencyStructure structure =
-      CreateScalabilityStructure(GetParam().name)->DependencyStructure();
+      CreateScalabilityStructure(GetParam().GetScalabilityMode())
+          ->DependencyStructure();
   EXPECT_THAT(
       structure.templates,
       Each(AllOf(Field(&FrameDependencyTemplate::decode_target_indications,
@@ -139,7 +186,7 @@ TEST_P(ScalabilityStructureTest, TemplatesMatchNumberOfDecodeTargetsAndChains) {
 
 TEST_P(ScalabilityStructureTest, FrameInfoMatchesFrameDependencyStructure) {
   std::unique_ptr<ScalableVideoController> svc_controller =
-      CreateScalabilityStructure(GetParam().name);
+      CreateScalabilityStructure(GetParam().GetScalabilityMode());
   FrameDependencyStructure structure = svc_controller->DependencyStructure();
   std::vector<GenericFrameInfo> frame_infos =
       ScalabilityStructureWrapper(*svc_controller)
@@ -158,20 +205,21 @@ TEST_P(ScalabilityStructureTest, FrameInfoMatchesFrameDependencyStructure) {
 
 TEST_P(ScalabilityStructureTest, ThereIsAPerfectTemplateForEachFrame) {
   std::unique_ptr<ScalableVideoController> svc_controller =
-      CreateScalabilityStructure(GetParam().name);
+      CreateScalabilityStructure(GetParam().GetScalabilityMode());
   FrameDependencyStructure structure = svc_controller->DependencyStructure();
   std::vector<GenericFrameInfo> frame_infos =
       ScalabilityStructureWrapper(*svc_controller)
           .GenerateFrames(GetParam().num_temporal_units);
   for (size_t frame_id = 0; frame_id < frame_infos.size(); ++frame_id) {
     EXPECT_THAT(structure.templates, Contains(frame_infos[frame_id]))
-        << " for frame " << frame_id;
+        << " for frame " << frame_id << ", Expected "
+        << FrameDependencyTemplateToString(frame_infos[frame_id]);
   }
 }
 
 TEST_P(ScalabilityStructureTest, FrameDependsOnSameOrLowerLayer) {
   std::unique_ptr<ScalableVideoController> svc_controller =
-      CreateScalabilityStructure(GetParam().name);
+      CreateScalabilityStructure(GetParam().GetScalabilityMode());
   std::vector<GenericFrameInfo> frame_infos =
       ScalabilityStructureWrapper(*svc_controller)
           .GenerateFrames(GetParam().num_temporal_units);
@@ -192,7 +240,7 @@ TEST_P(ScalabilityStructureTest, FrameDependsOnSameOrLowerLayer) {
 
 TEST_P(ScalabilityStructureTest, NoFrameDependsOnDiscardableOrNotPresent) {
   std::unique_ptr<ScalableVideoController> svc_controller =
-      CreateScalabilityStructure(GetParam().name);
+      CreateScalabilityStructure(GetParam().GetScalabilityMode());
   std::vector<GenericFrameInfo> frame_infos =
       ScalabilityStructureWrapper(*svc_controller)
           .GenerateFrames(GetParam().num_temporal_units);
@@ -224,7 +272,7 @@ TEST_P(ScalabilityStructureTest, NoFrameDependsOnDiscardableOrNotPresent) {
 
 TEST_P(ScalabilityStructureTest, NoFrameDependsThroughSwitchIndication) {
   std::unique_ptr<ScalableVideoController> svc_controller =
-      CreateScalabilityStructure(GetParam().name);
+      CreateScalabilityStructure(GetParam().GetScalabilityMode());
   FrameDependencyStructure structure = svc_controller->DependencyStructure();
   std::vector<GenericFrameInfo> frame_infos =
       ScalabilityStructureWrapper(*svc_controller)
@@ -277,7 +325,7 @@ TEST_P(ScalabilityStructureTest, NoFrameDependsThroughSwitchIndication) {
 
 TEST_P(ScalabilityStructureTest, ProduceNoFrameForDisabledLayers) {
   std::unique_ptr<ScalableVideoController> svc_controller =
-      CreateScalabilityStructure(GetParam().name);
+      CreateScalabilityStructure(GetParam().GetScalabilityMode());
   ScalableVideoController::StreamLayersConfig structure =
       svc_controller->StreamConfig();
 
@@ -317,7 +365,7 @@ TEST_P(ScalabilityStructureTest, ProduceNoFrameForDisabledLayers) {
 INSTANTIATE_TEST_SUITE_P(
     Svc,
     ScalabilityStructureTest,
-    Values(SvcTestParam{"NONE", /*num_temporal_units=*/3},
+    Values(SvcTestParam{"L1T1", /*num_temporal_units=*/3},
            SvcTestParam{"L1T2", /*num_temporal_units=*/4},
            SvcTestParam{"L1T3", /*num_temporal_units=*/8},
            SvcTestParam{"L2T1", /*num_temporal_units=*/3},
@@ -325,10 +373,12 @@ INSTANTIATE_TEST_SUITE_P(
            SvcTestParam{"L3T1", /*num_temporal_units=*/3},
            SvcTestParam{"L3T3", /*num_temporal_units=*/8},
            SvcTestParam{"S2T1", /*num_temporal_units=*/3},
+           SvcTestParam{"S2T3", /*num_temporal_units=*/8},
            SvcTestParam{"S3T3", /*num_temporal_units=*/8},
            SvcTestParam{"L2T2", /*num_temporal_units=*/4},
            SvcTestParam{"L2T2_KEY", /*num_temporal_units=*/4},
            SvcTestParam{"L2T2_KEY_SHIFT", /*num_temporal_units=*/4},
+           SvcTestParam{"L2T3", /*num_temporal_units=*/8},
            SvcTestParam{"L2T3_KEY", /*num_temporal_units=*/8},
            SvcTestParam{"L3T3_KEY", /*num_temporal_units=*/8}),
     [](const testing::TestParamInfo<SvcTestParam>& info) {

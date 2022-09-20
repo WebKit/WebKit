@@ -38,13 +38,14 @@ namespace WebKit {
 
 class WebCacheStorageProvider;
 
-class WebCacheStorageConnection final : public WebCore::CacheStorageConnection {
+class WebCacheStorageConnection final : public CanMakeWeakPtr<WebCacheStorageConnection>, public WebCore::CacheStorageConnection {
 public:
     static Ref<WebCacheStorageConnection> create(WebCacheStorageProvider& provider) { return adoptRef(*new WebCacheStorageConnection(provider)); }
 
     ~WebCacheStorageConnection();
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+    void networkProcessConnectionClosed();
 
 private:
     WebCacheStorageConnection(WebCacheStorageProvider&);
@@ -68,6 +69,7 @@ private:
     void updateQuotaBasedOnSpaceUsage(const WebCore::ClientOrigin&) final;
 
     WebCacheStorageProvider& m_provider;
+    HashSet<uint64_t> m_connectedIdentifiers;
 };
 
 }

@@ -1,6 +1,5 @@
 include_rules = [
-  # Allow include of Chrome base/android to allow inclusion of headers needed
-  # for accessing the JVM and Application context in gtest.
-  "+base/android",
+  # Allow include of sdk/android to allow accessing the JVM and Env in tests.
+  "+sdk/android",
   "+modules/utility/include/jvm_android.h",
 ]

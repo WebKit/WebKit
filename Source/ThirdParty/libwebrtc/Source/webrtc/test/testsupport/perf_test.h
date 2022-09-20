@@ -49,7 +49,7 @@ enum class ImproveDirection {
 void PrintResult(absl::string_view measurement,
                  absl::string_view modifier,
                  absl::string_view user_story,
-                 const double value,
+                 double value,
                  absl::string_view units,
                  bool important,
                  ImproveDirection improve_direction = ImproveDirection::kNone);
@@ -62,8 +62,8 @@ void PrintResultMeanAndError(
     absl::string_view measurement,
     absl::string_view modifier,
     absl::string_view user_story,
-    const double mean,
-    const double error,
+    double mean,
+    double error,
     absl::string_view units,
     bool important,
     ImproveDirection improve_direction = ImproveDirection::kNone);
@@ -88,7 +88,7 @@ void PrintResult(absl::string_view measurement,
                  absl::string_view user_story,
                  const SamplesStatsCounter& counter,
                  absl::string_view units,
-                 const bool important,
+                 bool important,
                  ImproveDirection improve_direction = ImproveDirection::kNone);
 
 // Returns a string-encoded proto as described in

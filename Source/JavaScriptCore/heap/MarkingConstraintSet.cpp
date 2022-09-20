@@ -39,9 +39,7 @@ MarkingConstraintSet::MarkingConstraintSet(Heap& heap)
 {
 }
 
-MarkingConstraintSet::~MarkingConstraintSet()
-{
-}
+MarkingConstraintSet::~MarkingConstraintSet() = default;
 
 void MarkingConstraintSet::didStartMarking()
 {

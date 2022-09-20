@@ -53,6 +53,7 @@ public class AsyncHttpURLConnection {
     new Thread(this ::sendHttpMessage).start();
   }
 
+  @SuppressWarnings("UseNetworkAnnotations")
   private void sendHttpMessage() {
     try {
       HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();

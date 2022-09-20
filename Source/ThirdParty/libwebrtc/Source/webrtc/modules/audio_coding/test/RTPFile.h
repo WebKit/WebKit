@@ -15,6 +15,7 @@
 
 #include <queue>
 
+#include "absl/strings/string_view.h"
 #include "api/rtp_headers.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
@@ -25,11 +26,11 @@ class RTPStream {
  public:
   virtual ~RTPStream() {}
 
-  virtual void Write(const uint8_t payloadType,
-                     const uint32_t timeStamp,
-                     const int16_t seqNo,
+  virtual void Write(uint8_t payloadType,
+                     uint32_t timeStamp,
+                     int16_t seqNo,
                      const uint8_t* payloadData,
-                     const size_t payloadSize,
+                     size_t payloadSize,
                      uint32_t frequency) = 0;
 
   // Returns the packet's payload size. Zero should be treated as an
@@ -75,11 +76,11 @@ class RTPBuffer : public RTPStream {
 
   ~RTPBuffer() = default;
 
-  void Write(const uint8_t payloadType,
-             const uint32_t timeStamp,
-             const int16_t seqNo,
+  void Write(uint8_t payloadType,
+             uint32_t timeStamp,
+             int16_t seqNo,
              const uint8_t* payloadData,
-             const size_t payloadSize,
+             size_t payloadSize,
              uint32_t frequency) override;
 
   size_t Read(RTPHeader* rtp_header,
@@ -100,7 +101,7 @@ class RTPFile : public RTPStream {
 
   RTPFile() : _rtpFile(NULL), _rtpEOF(false) {}
 
-  void Open(const char* outFilename, const char* mode);
+  void Open(absl::string_view outFilename, absl::string_view mode);
 
   void Close();
 
@@ -108,11 +109,11 @@ class RTPFile : public RTPStream {
 
   void ReadHeader();
 
-  void Write(const uint8_t payloadType,
-             const uint32_t timeStamp,
-             const int16_t seqNo,
+  void Write(uint8_t payloadType,
+             uint32_t timeStamp,
+             int16_t seqNo,
              const uint8_t* payloadData,
-             const size_t payloadSize,
+             size_t payloadSize,
              uint32_t frequency) override;
 
   size_t Read(RTPHeader* rtp_header,

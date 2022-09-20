@@ -10,8 +10,8 @@
 
 #include "test/run_loop.h"
 
+#include "api/units/time_delta.h"
 #include "rtc_base/task_queue.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -34,12 +34,12 @@ TEST(RunLoopTest, Flush) {
 TEST(RunLoopTest, Delayed) {
   test::RunLoop loop;
   bool ran = false;
-  loop.PostDelayedTask(
+  loop.task_queue()->PostDelayedTask(
       [&ran, &loop]() {
         ran = true;
         loop.Quit();
       },
-      100);
+      TimeDelta::Millis(100));
   loop.Flush();
   EXPECT_FALSE(ran);
   loop.Run();

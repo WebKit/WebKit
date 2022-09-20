@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: ReferenceError: Can't find variable: Worker
 
-FAIL creating 3 nested dedicated workers assert_unreached: error Reached unreachable code
+PASS creating 3 nested dedicated workers
 

@@ -38,14 +38,14 @@ void CreateAnalyzedStream(Scenario* s,
     caller->SendTask([&]() { send_stats = video->send()->GetStats(); });
     collectors->video_send.AddStats(send_stats, s->Now());
 
-    AudioReceiveStream::Stats receive_stats;
+    AudioReceiveStreamInterface::Stats receive_stats;
     caller->SendTask([&]() { receive_stats = audio->receive()->GetStats(); });
     collectors->audio_receive.AddStats(receive_stats);
 
     // Querying the video stats from within the expected runtime environment
     // (i.e. the TQ that belongs to the CallClient, not the Scenario TQ that
     // we're currently on).
-    VideoReceiveStream::Stats video_receive_stats;
+    VideoReceiveStreamInterface::Stats video_receive_stats;
     auto* video_stream = video->receive();
     callee->SendTask([&video_stream, &video_receive_stats]() {
       video_receive_stats = video_stream->GetStats();

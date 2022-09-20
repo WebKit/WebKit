@@ -34,11 +34,8 @@ namespace JSC { namespace FTL {
 
 class WeightedTarget {
 public:
-    WeightedTarget()
-        : m_target(nullptr)
-    {
-    }
-    
+    WeightedTarget() = default;
+
     WeightedTarget(LBasicBlock target, Weight weight)
         : m_target(target)
         , m_weight(weight)
@@ -60,7 +57,7 @@ public:
     }
     
 private:
-    LBasicBlock m_target;
+    LBasicBlock m_target { nullptr };
     Weight m_weight;
 };
 

@@ -63,14 +63,8 @@ public:
     }
 
 protected:
-    DeferrableRefCountedBase()
-        : m_refCount(normalIncrement)
-    {
-    }
-
-    ~DeferrableRefCountedBase()
-    {
-    }
+    DeferrableRefCountedBase() = default;
+    ~DeferrableRefCountedBase() = default;
 
     bool derefBase() const
     {
@@ -89,7 +83,7 @@ protected:
     }
 
 private:
-    mutable unsigned m_refCount;
+    mutable unsigned m_refCount { normalIncrement };
 };
 
 template<typename T>
@@ -111,8 +105,8 @@ public:
     }
 
 protected:
-    DeferrableRefCounted() { }
-    ~DeferrableRefCounted() { }
+    DeferrableRefCounted() = default;
+    ~DeferrableRefCounted() = default;
 };
 
 } // namespace WTF

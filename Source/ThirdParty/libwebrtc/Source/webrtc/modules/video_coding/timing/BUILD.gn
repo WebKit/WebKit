@@ -1,0 +1,130 @@
+# Copyright (c) 2022 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../webrtc.gni")
+
+rtc_library("codec_timer") {
+  sources = [
+    "codec_timer.cc",
+    "codec_timer.h",
+  ]
+  deps = [ "../../../rtc_base:rtc_numerics" ]
+}
+
+rtc_library("inter_frame_delay") {
+  sources = [
+    "inter_frame_delay.cc",
+    "inter_frame_delay.h",
+  ]
+  deps = [
+    "../..:module_api_public",
+    "../../../api/units:frequency",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("frame_delay_delta_kalman_filter") {
+  sources = [
+    "frame_delay_delta_kalman_filter.cc",
+    "frame_delay_delta_kalman_filter.h",
+  ]
+  deps = [
+    "../../../api/units:data_size",
+    "../../../api/units:time_delta",
+  ]
+  visibility = [
+    ":jitter_estimator",
+    ":timing_unittests",
+  ]
+}
+
+rtc_library("jitter_estimator") {
+  sources = [
+    "jitter_estimator.cc",
+    "jitter_estimator.h",
+  ]
+  deps = [
+    ":frame_delay_delta_kalman_filter",
+    ":rtt_filter",
+    "../../../api:field_trials_view",
+    "../../../api/units:data_size",
+    "../../../api/units:frequency",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base",
+    "../../../rtc_base:safe_conversions",
+    "../../../system_wrappers",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("rtt_filter") {
+  sources = [
+    "rtt_filter.cc",
+    "rtt_filter.h",
+  ]
+  deps = [ "../../../api/units:time_delta" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/algorithm:container",
+    "//third_party/abseil-cpp/absl/container:inlined_vector",
+  ]
+}
+
+rtc_library("timing_module") {
+  sources = [
+    "timing.cc",
+    "timing.h",
+  ]
+  deps = [
+    ":codec_timer",
+    "../../../api:field_trials_view",
+    "../../../api/units:time_delta",
+    "../../../api/video:video_frame",
+    "../../../api/video:video_rtp_headers",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:macromagic",
+    "../../../rtc_base:rtc_numerics",
+    "../../../rtc_base/experiments:field_trial_parser",
+    "../../../rtc_base/synchronization:mutex",
+    "../../../rtc_base/time:timestamp_extrapolator",
+    "../../../system_wrappers",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+rtc_library("timing_unittests") {
+  testonly = true
+  sources = [
+    "frame_delay_delta_kalman_filter_unittest.cc",
+    "inter_frame_delay_unittest.cc",
+    "jitter_estimator_unittest.cc",
+    "rtt_filter_unittest.cc",
+    "timing_unittest.cc",
+  ]
+  deps = [
+    ":frame_delay_delta_kalman_filter",
+    ":inter_frame_delay",
+    ":jitter_estimator",
+    ":rtt_filter",
+    ":timing_module",
+    "../../../api:array_view",
+    "../../../api/units:data_size",
+    "../../../api/units:frequency",
+    "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
+    "../../../rtc_base:histogram_percentile_counter",
+    "../../../rtc_base:stringutils",
+    "../../../rtc_base:timeutils",
+    "../../../system_wrappers:system_wrappers",
+    "../../../test:scoped_key_value_config",
+    "../../../test:test_support",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}

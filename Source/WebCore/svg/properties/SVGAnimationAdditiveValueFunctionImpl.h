@@ -85,33 +85,16 @@ public:
         auto simpleFrom = m_animationMode == AnimationMode::To ? simpleAnimated : m_from.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         auto simpleTo = m_to.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
         auto simpleToAtEndOfDuration = toAtEndOfDuration().toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-        
+
         float red = Base::animate(progress, repeatCount, simpleFrom.red, simpleTo.red, simpleToAtEndOfDuration.red, simpleAnimated.red);
         float green = Base::animate(progress, repeatCount, simpleFrom.green, simpleTo.green, simpleToAtEndOfDuration.green, simpleAnimated.green);
         float blue = Base::animate(progress, repeatCount, simpleFrom.blue, simpleTo.blue, simpleToAtEndOfDuration.blue, simpleAnimated.blue);
         float alpha = Base::animate(progress, repeatCount, simpleFrom.alpha, simpleTo.alpha, simpleToAtEndOfDuration.alpha, simpleAnimated.alpha);
-        
+
         animated = makeFromComponentsClamping<SRGBA<uint8_t>>(std::lround(red), std::lround(green), std::lround(blue), std::lround(alpha));
     }
 
-    std::optional<float> calculateDistance(SVGElement&, const String& from, const String& to) const override
-    {
-        Color fromColor = CSSParser::parseColorWithoutContext(from.stripWhiteSpace());
-        if (!fromColor.isValid())
-            return { };
-        Color toColor = CSSParser::parseColorWithoutContext(to.stripWhiteSpace());
-        if (!toColor.isValid())
-            return { };
-            
-        auto simpleFrom = fromColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-        auto simpleTo = toColor.toColorTypeLossy<SRGBA<uint8_t>>().resolved();
-
-        float red = simpleFrom.red - simpleTo.red;
-        float green = simpleFrom.green - simpleTo.green;
-        float blue = simpleFrom.blue - simpleTo.blue;
-
-        return std::hypot(red, green, blue);
-    }
+    std::optional<float> calculateDistance(SVGElement&, const String& from, const String& to) const override;
 
 private:
     void addFromAndToValues(SVGElement&) override

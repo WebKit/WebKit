@@ -77,8 +77,6 @@ class FakeDtmfProvider : public DtmfProviderInterface {
 
   FakeDtmfProvider() : last_insert_dtmf_call_(0) {}
 
-  ~FakeDtmfProvider() { SignalDestroyed(); }
-
   // Implements DtmfProviderInterface.
   bool CanInsertDtmf() override { return can_insert_; }
 
@@ -95,10 +93,6 @@ class FakeDtmfProvider : public DtmfProviderInterface {
     return true;
   }
 
-  sigslot::signal0<>* GetOnDestroyedSignal() override {
-    return &SignalDestroyed;
-  }
-
   // getter and setter
   const std::vector<DtmfInfo>& dtmf_info_queue() const {
     return dtmf_info_queue_;
@@ -111,7 +105,6 @@ class FakeDtmfProvider : public DtmfProviderInterface {
   bool can_insert_ = false;
   std::vector<DtmfInfo> dtmf_info_queue_;
   int64_t last_insert_dtmf_call_;
-  sigslot::signal0<> SignalDestroyed;
 };
 
 class DtmfSenderTest : public ::testing::Test {
@@ -214,6 +207,7 @@ class DtmfSenderTest : public ::testing::Test {
     }
   }
 
+  rtc::AutoThread main_thread_;
   std::unique_ptr<FakeDtmfObserver> observer_;
   std::unique_ptr<FakeDtmfProvider> provider_;
   rtc::scoped_refptr<DtmfSender> dtmf_;
@@ -272,6 +266,7 @@ TEST_F(DtmfSenderTest, InsertDtmfWhileProviderIsDeleted) {
   EXPECT_TRUE_SIMULATED_WAIT(observer_->tones().size() == 1, kMaxWaitMs,
                              fake_clock_);
   // Delete provider.
+  dtmf_->OnDtmfProviderDestroyed();
   provider_.reset();
   // The queue should be discontinued so no more tone callbacks.
   SIMULATED_WAIT(false, 200, fake_clock_);

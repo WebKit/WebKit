@@ -58,9 +58,14 @@ public:
     void appendChild(UniqueRef<Box>);
     void destroyChildren();
 
+    void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }
+    std::optional<LayoutUnit> baselineForIntegration() const { return m_baselineForIntegration; }
+
 private:
     CheckedPtr<Box> m_firstChild;
     CheckedPtr<Box> m_lastChild;
+
+    std::optional<LayoutUnit> m_baselineForIntegration;
 };
 
 }

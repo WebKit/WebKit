@@ -17,7 +17,6 @@ rtc_library("pcc") {
     ":pcc_controller",
     "../../../api/transport:network_control",
     "../../../api/units:time_delta",
-    "../../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -36,7 +35,7 @@ rtc_library("pcc_controller") {
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:random",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
@@ -52,7 +51,7 @@ rtc_library("monitor_interval") {
     "../../../api/units:data_size",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
   ]
 }
 
@@ -65,7 +64,6 @@ rtc_library("rtt_tracker") {
     "../../../api/transport:network_control",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
-    "../../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -79,7 +77,6 @@ rtc_library("utility_function") {
     "../../../api/transport:network_control",
     "../../../api/units:data_rate",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -93,7 +90,6 @@ rtc_library("bitrate_controller") {
     ":utility_function",
     "../../../api/transport:network_control",
     "../../../api/units:data_rate",
-    "../../../rtc_base:rtc_base_approved",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
@@ -120,7 +116,6 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../../api/units:data_size",
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",
-      "../../../rtc_base:rtc_base_approved",
       "../../../test:test_support",
       "../../../test/scenario",
     ]

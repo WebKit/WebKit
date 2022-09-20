@@ -255,9 +255,9 @@ void MessagePort::close()
 {
     m_mightBeEligibleForGC = true;
 
-    if (m_closed)
+    if (m_isDetached)
         return;
-    m_closed = true;
+    m_isDetached = true;
 
     ensureOnMainThread([identifier = m_identifier] {
         MessagePortChannelProvider::singleton().messagePortClosed(identifier);
@@ -317,7 +317,7 @@ void MessagePort::dispatchMessages()
 
 void MessagePort::dispatchEvent(Event& event)
 {
-    if (m_closed)
+    if (m_isDetached)
         return;
 
     auto* context = scriptExecutionContext();
@@ -347,7 +347,7 @@ bool MessagePort::virtualHasPendingActivity() const
 
     // If the ScriptExecutionContext has been shut down on this object close()'ed, we can GC.
     auto* context = scriptExecutionContext();
-    if (!context || m_closed)
+    if (!context || m_isDetached)
         return false;
 
     // If this object has been idle since the remote port declared itself elgibile for GC, we can GC.

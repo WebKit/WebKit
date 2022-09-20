@@ -14,11 +14,11 @@
 #include <utility>
 #include <vector>
 
+#include "api/task_queue/test/mock_task_queue_base.h"
 #include "call/test/mock_audio_send_stream.h"
 #include "modules/audio_device/include/mock_audio_device.h"
 #include "modules/audio_mixer/audio_mixer_impl.h"
 #include "modules/audio_processing/include/mock_audio_processing.h"
-#include "rtc_base/ref_counted_object.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -35,18 +35,14 @@ constexpr int kSampleRate = 16000;
 constexpr int kNumberOfChannels = 1;
 
 struct FakeAsyncAudioProcessingHelper {
-  class FakeTaskQueue : public StrictMock<TaskQueueBase> {
+  class FakeTaskQueue : public StrictMock<MockTaskQueueBase> {
    public:
     FakeTaskQueue() = default;
 
     void Delete() override { delete this; }
-    void PostTask(std::unique_ptr<QueuedTask> task) override {
-      std::move(task)->Run();
+    void PostTask(absl::AnyInvocable<void() &&> task) override {
+      std::move(task)();
     }
-    MOCK_METHOD(void,
-                PostDelayedTask,
-                (std::unique_ptr<QueuedTask> task, uint32_t milliseconds),
-                (override));
   };
 
   class FakeTaskQueueFactory : public TaskQueueFactory {

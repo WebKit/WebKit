@@ -63,7 +63,7 @@ void UnderrunOptimizer::Update(int relative_delay_ms) {
 
 void UnderrunOptimizer::Reset() {
   histogram_.Reset();
-  resample_stopwatch_ = tick_timer_->GetNewStopwatch();
+  resample_stopwatch_.reset();
   max_delay_in_interval_ms_ = 0;
   optimal_delay_ms_.reset();
 }

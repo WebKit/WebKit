@@ -13,7 +13,6 @@
 #include <utility>
 
 #include "rtc_base/buffer.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 
 namespace webrtc {
 namespace {
@@ -79,11 +78,11 @@ void ChannelReceiveFrameTransformerDelegate::Transform(
 
 void ChannelReceiveFrameTransformerDelegate::OnTransformedFrame(
     std::unique_ptr<TransformableFrameInterface> frame) {
-  rtc::scoped_refptr<ChannelReceiveFrameTransformerDelegate> delegate = this;
-  channel_receive_thread_->PostTask(ToQueuedTask(
+  rtc::scoped_refptr<ChannelReceiveFrameTransformerDelegate> delegate(this);
+  channel_receive_thread_->PostTask(
       [delegate = std::move(delegate), frame = std::move(frame)]() mutable {
         delegate->ReceiveFrame(std::move(frame));
-      }));
+      });
 }
 
 void ChannelReceiveFrameTransformerDelegate::ReceiveFrame(

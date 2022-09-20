@@ -216,7 +216,7 @@ std::optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoi
 
     auto logicalTopInFormattingContextRootCoordinate = [&] (auto& floatAvoider) {
         auto top = BoxGeometry::borderBoxTop(geometryForBox(floatAvoider));
-        for (auto& ancestor : containingBlockChainWithinFormattingContext(floatAvoider))
+        for (auto& ancestor : containingBlockChainWithinFormattingContext(floatAvoider, root()))
             top += BoxGeometry::borderBoxTop(geometryForBox(ancestor));
         return top;
     };
@@ -225,7 +225,7 @@ std::optional<LayoutUnit> BlockFormattingContext::usedAvailableWidthForFloatAvoi
         if (!floatConstraints.left && !floatConstraints.right)
             return FloatingContext::Constraints { };
         auto offset = LayoutSize { };
-        for (auto& ancestor : containingBlockChainWithinFormattingContext(layoutBox))
+        for (auto& ancestor : containingBlockChainWithinFormattingContext(layoutBox, root()))
             offset += toLayoutSize(BoxGeometry::borderBoxTopLeft(geometryForBox(ancestor)));
         if (floatConstraints.left)
             floatConstraints.left = PointInContextRoot { *floatConstraints.left - offset };

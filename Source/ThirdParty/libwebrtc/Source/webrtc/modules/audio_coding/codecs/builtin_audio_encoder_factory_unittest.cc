@@ -144,4 +144,35 @@ TEST(BuiltinAudioEncoderFactoryTest, SupportsTheExpectedFormats) {
 
   ASSERT_THAT(supported_formats, ElementsAreArray(expected_formats));
 }
+
+// Tests that using more channels than the maximum does not work.
+TEST(BuiltinAudioEncoderFactoryTest, MaxNrOfChannels) {
+  rtc::scoped_refptr<AudioEncoderFactory> aef =
+      CreateBuiltinAudioEncoderFactory();
+  std::vector<std::string> codecs = {
+#ifdef WEBRTC_CODEC_OPUS
+    "opus",
+#endif
+#if defined(WEBRTC_CODEC_ISAC) || defined(WEBRTC_CODEC_ISACFX)
+    "isac",
+#endif
+#ifdef WEBRTC_CODEC_ILBC
+    "ilbc",
+#endif
+    "pcmu",
+    "pcma",
+    "l16",
+    "G722",
+    "G711",
+  };
+
+  for (auto codec : codecs) {
+    EXPECT_FALSE(aef->MakeAudioEncoder(
+        /*payload_type=*/111,
+        /*format=*/
+        SdpAudioFormat(codec, 32000, AudioEncoder::kMaxNumberOfChannels + 1),
+        /*codec_pair_id=*/absl::nullopt));
+  }
+}
+
 }  // namespace webrtc

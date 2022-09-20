@@ -115,6 +115,8 @@ class FakeAdmTest : public ::testing::Test, public webrtc::AudioTransport {
     return min_buffer_size;
   }
 
+  rtc::AutoThread main_thread_;
+
   mutable webrtc::Mutex mutex_;
 
   int push_iterations_;

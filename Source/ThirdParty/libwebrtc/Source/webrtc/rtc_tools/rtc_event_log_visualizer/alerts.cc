@@ -19,7 +19,6 @@
 
 #include "logging/rtc_event_log/rtc_event_processor.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/format_macros.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/numerics/sequence_number_util.h"
 #include "rtc_base/strings/string_builder.h"
@@ -79,7 +78,7 @@ void TriageHelper::AnalyzeStreamGaps(const ParsedRtcEventLog& parsed_log,
 
       int64_t seq_num = seq_num_unwrapper.Unwrap(packet.header.sequenceNumber);
       if (std::abs(seq_num - last_seq_num) > kMaxSeqNumJump) {
-        Alert(seq_num_alert, config_.GetCallTimeSec(packet.log_time_us()),
+        Alert(seq_num_alert, config_.GetCallTimeSec(packet.log_time()),
               seq_num_explanation);
       }
       last_seq_num = seq_num;
@@ -89,7 +88,7 @@ void TriageHelper::AnalyzeStreamGaps(const ParsedRtcEventLog& parsed_log,
       if (std::abs(capture_time - last_capture_time) >
           kTicksPerMillisec *
               (kCaptureTimeGraceMs + packet.log_time_ms() - last_log_time_ms)) {
-        Alert(capture_time_alert, config_.GetCallTimeSec(packet.log_time_us()),
+        Alert(capture_time_alert, config_.GetCallTimeSec(packet.log_time()),
               capture_time_explanation);
       }
       last_capture_time = capture_time;
@@ -140,7 +139,8 @@ void TriageHelper::AnalyzeTransmissionGaps(const ParsedRtcEventLog& parsed_log,
     int64_t duration = timestamp - last_rtp_time.value_or(0);
     if (last_rtp_time.has_value() && duration > kMaxRtpTransmissionGap) {
       // No packet sent/received for more than 500 ms.
-      Alert(rtp_alert, config_.GetCallTimeSec(timestamp), rtp_explanation);
+      Alert(rtp_alert, config_.GetCallTimeSec(Timestamp::Micros(timestamp)),
+            rtp_explanation);
     }
     last_rtp_time.emplace(timestamp);
   }
@@ -155,7 +155,7 @@ void TriageHelper::AnalyzeTransmissionGaps(const ParsedRtcEventLog& parsed_log,
       int64_t duration = rtcp.log_time_us() - last_rtcp_time.value_or(0);
       if (last_rtcp_time.has_value() && duration > kMaxRtcpTransmissionGap) {
         // No feedback sent/received for more than 2000 ms.
-        Alert(rtcp_alert, config_.GetCallTimeSec(rtcp.log_time_us()),
+        Alert(rtcp_alert, config_.GetCallTimeSec(rtcp.log_time()),
               rtcp_explanation);
       }
       last_rtcp_time.emplace(rtcp.log_time_us());
@@ -169,7 +169,7 @@ void TriageHelper::AnalyzeTransmissionGaps(const ParsedRtcEventLog& parsed_log,
       int64_t duration = rtcp.log_time_us() - last_rtcp_time.value_or(0);
       if (last_rtcp_time.has_value() && duration > kMaxRtcpTransmissionGap) {
         // No feedback sent/received for more than 2000 ms.
-        Alert(rtcp_alert, config_.GetCallTimeSec(rtcp.log_time_us()),
+        Alert(rtcp_alert, config_.GetCallTimeSec(rtcp.log_time()),
               rtcp_explanation);
       }
       last_rtcp_time.emplace(rtcp.log_time_us());
@@ -189,7 +189,7 @@ void TriageHelper::AnalyzeLog(const ParsedRtcEventLog& parsed_log) {
 
   const int64_t segment_end_us = parsed_log.first_log_segment().stop_time_us();
 
-  int64_t first_occurrence = parsed_log.last_timestamp();
+  Timestamp first_occurrence = parsed_log.last_timestamp();
   constexpr double kMaxLossFraction = 0.05;
   // Loss feedback
   int64_t total_lost_packets = 0;
@@ -204,13 +204,14 @@ void TriageHelper::AnalyzeLog(const ParsedRtcEventLog& parsed_log) {
     total_lost_packets += lost_packets;
     total_expected_packets += bwe_update.expected_packets;
     if (bwe_update.fraction_lost >= 255 * kMaxLossFraction) {
-      first_occurrence = std::min(first_occurrence, bwe_update.log_time_us());
+      first_occurrence = std::min(first_occurrence, bwe_update.log_time());
     }
   }
   double avg_outgoing_loss =
       static_cast<double>(total_lost_packets) / total_expected_packets;
   if (avg_outgoing_loss > kMaxLossFraction) {
-    Alert(TriageAlertType::kOutgoingHighLoss, first_occurrence,
+    Alert(TriageAlertType::kOutgoingHighLoss,
+          config_.GetCallTimeSec(first_occurrence),
           "More than 5% of outgoing packets lost.");
   }
 }

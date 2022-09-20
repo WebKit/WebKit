@@ -63,13 +63,9 @@ public:
     JSC_RUNTIME_FLAG(JSC_DECLARE_RUNTIME_FLAG_ACCESSOR)
 #undef JSC_DECLARE_RUNTIME_FLAG_ACCESSOR
 
-    RuntimeFlags()
-        : RuntimeFlags(0u)
-    {
-    }
+    RuntimeFlags() = default;
 
     RuntimeFlags(std::initializer_list<RuntimeFlag> initializerList)
-        : RuntimeFlags()
     {
         for (RuntimeFlag flag : initializerList)
             m_flags |= flag;
@@ -93,7 +89,7 @@ public:
     RuntimeFlags isolatedCopy() const { return RuntimeFlags(m_flags); }
 
 private:
-    unsigned m_flags;
+    unsigned m_flags { 0u };
 };
 
 } // namespace JSC

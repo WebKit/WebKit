@@ -10,7 +10,6 @@
 
 #include "rtc_base/third_party/sigslot/sigslot.h"
 
-#include "rtc_base/sigslot_repeater.h"
 #include "test/gtest.h"
 
 // This function, when passed a has_slots or signalx, will break the build if
@@ -348,37 +347,4 @@ TEST(SigslotTest, CallDisconnectAllWhileSignalFiring) {
 
   EXPECT_EQ(1, receiver1.signal_count());
   EXPECT_EQ(0, receiver2.signal_count());
-}
-
-// Basic test that a sigslot repeater works.
-TEST(SigslotRepeaterTest, RepeatsSignalsAfterRepeatCalled) {
-  sigslot::signal<> signal;
-  sigslot::repeater<> repeater;
-  repeater.repeat(signal);
-  // Note that receiver is connected to the repeater, not directly to the
-  // source signal.
-  SigslotReceiver<> receiver;
-  receiver.Connect(&repeater);
-  // The repeater should repeat the signal, causing the receiver to see it.
-  signal();
-  EXPECT_EQ(1, receiver.signal_count());
-  // Repeat another signal for good measure.
-  signal();
-  EXPECT_EQ(2, receiver.signal_count());
-}
-
-// After calling "stop", a repeater should stop repeating signals.
-TEST(SigslotRepeaterTest, StopsRepeatingSignalsAfterStopCalled) {
-  // Same setup as above test.
-  sigslot::signal<> signal;
-  sigslot::repeater<> repeater;
-  repeater.repeat(signal);
-  SigslotReceiver<> receiver;
-  receiver.Connect(&repeater);
-  signal();
-  ASSERT_EQ(1, receiver.signal_count());
-  // Now call stop. The next signal should NOT propagate to the receiver.
-  repeater.stop(signal);
-  signal();
-  EXPECT_EQ(1, receiver.signal_count());
 }

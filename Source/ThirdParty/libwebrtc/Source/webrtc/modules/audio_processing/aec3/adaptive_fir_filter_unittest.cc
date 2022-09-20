@@ -73,10 +73,7 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
         RenderDelayBuffer::Create(EchoCanceller3Config(), kSampleRateHz,
                                   num_render_channels));
     Random random_generator(42U);
-    std::vector<std::vector<std::vector<float>>> x(
-        kNumBands,
-        std::vector<std::vector<float>>(num_render_channels,
-                                        std::vector<float>(kBlockSize, 0.f)));
+    Block x(kNumBands, num_render_channels);
     FftData S_C;
     FftData S_Neon;
     FftData G;
@@ -92,10 +89,10 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
       }
     }
 
-    for (size_t k = 0; k < 30; ++k) {
-      for (size_t band = 0; band < x.size(); ++band) {
-        for (size_t ch = 0; ch < x[band].size(); ++ch) {
-          RandomizeSampleVector(&random_generator, x[band][ch]);
+    for (int k = 0; k < 30; ++k) {
+      for (int band = 0; band < x.NumBands(); ++band) {
+        for (int ch = 0; ch < x.NumChannels(); ++ch) {
+          RandomizeSampleVector(&random_generator, x.View(band, ch));
         }
       }
       render_delay_buffer->Insert(x);
@@ -186,10 +183,7 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
           RenderDelayBuffer::Create(EchoCanceller3Config(), kSampleRateHz,
                                     num_render_channels));
       Random random_generator(42U);
-      std::vector<std::vector<std::vector<float>>> x(
-          kNumBands,
-          std::vector<std::vector<float>>(num_render_channels,
-                                          std::vector<float>(kBlockSize, 0.f)));
+      Block x(kNumBands, num_render_channels);
       FftData S_C;
       FftData S_Sse2;
       FftData G;
@@ -206,9 +200,9 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
       }
 
       for (size_t k = 0; k < 500; ++k) {
-        for (size_t band = 0; band < x.size(); ++band) {
-          for (size_t ch = 0; ch < x[band].size(); ++ch) {
-            RandomizeSampleVector(&random_generator, x[band][ch]);
+        for (int band = 0; band < x.NumBands(); ++band) {
+          for (int ch = 0; ch < x.NumChannels(); ++ch) {
+            RandomizeSampleVector(&random_generator, x.View(band, ch));
           }
         }
         render_delay_buffer->Insert(x);
@@ -261,10 +255,7 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
           RenderDelayBuffer::Create(EchoCanceller3Config(), kSampleRateHz,
                                     num_render_channels));
       Random random_generator(42U);
-      std::vector<std::vector<std::vector<float>>> x(
-          kNumBands,
-          std::vector<std::vector<float>>(num_render_channels,
-                                          std::vector<float>(kBlockSize, 0.f)));
+      Block x(kNumBands, num_render_channels);
       FftData S_C;
       FftData S_Avx2;
       FftData G;
@@ -281,9 +272,9 @@ TEST_P(AdaptiveFirFilterOneTwoFourEightRenderChannels,
       }
 
       for (size_t k = 0; k < 500; ++k) {
-        for (size_t band = 0; band < x.size(); ++band) {
-          for (size_t ch = 0; ch < x[band].size(); ++ch) {
-            RandomizeSampleVector(&random_generator, x[band][ch]);
+        for (int band = 0; band < x.NumBands(); ++band) {
+          for (int ch = 0; ch < x.NumChannels(); ++ch) {
+            RandomizeSampleVector(&random_generator, x.View(band, ch));
           }
         }
         render_delay_buffer->Insert(x);
@@ -488,9 +479,7 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
   CoarseFilterUpdateGain gain(config.filter.coarse,
                               config.filter.config_change_duration_blocks);
   Random random_generator(42U);
-  std::vector<std::vector<std::vector<float>>> x(
-      kNumBands, std::vector<std::vector<float>>(
-                     num_render_channels, std::vector<float>(kBlockSize, 0.f)));
+  Block x(kNumBands, num_render_channels);
   std::vector<float> n(kBlockSize, 0.f);
   std::vector<float> y(kBlockSize, 0.f);
   AecState aec_state(EchoCanceller3Config{}, num_capture_channels);
@@ -540,9 +529,9 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
     for (size_t j = 0; j < num_blocks_to_process; ++j) {
       std::fill(y.begin(), y.end(), 0.f);
       for (size_t ch = 0; ch < num_render_channels; ++ch) {
-        RandomizeSampleVector(&random_generator, x[0][ch]);
+        RandomizeSampleVector(&random_generator, x.View(/*band=*/0, ch));
         std::array<float, kBlockSize> y_channel;
-        delay_buffer[ch].Delay(x[0][ch], y_channel);
+        delay_buffer[ch].Delay(x.View(/*band=*/0, ch), y_channel);
         for (size_t k = 0; k < y.size(); ++k) {
           y[k] += y_channel[k] / num_render_channels;
         }
@@ -555,7 +544,7 @@ TEST_P(AdaptiveFirFilterMultiChannel, FilterAndAdapt) {
       }
 
       for (size_t ch = 0; ch < num_render_channels; ++ch) {
-        x_hp_filter[ch]->Process(x[0][ch]);
+        x_hp_filter[ch]->Process(x.View(/*band=*/0, ch));
       }
       y_hp_filter.Process(y);
 

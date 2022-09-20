@@ -109,6 +109,38 @@ TEST(RtpExtensionTest, DeduplicateHeaderExtensions) {
   EXPECT_EQ((std::vector<RtpExtension>{kExtension1Encrypted}), filtered);
 }
 
+// Test that the filtered vector is sorted so that for a given unsorted array of
+// extensions, the filtered vector will always be laied out the same (for easy
+// comparison).
+TEST(RtpExtensionTest, DeduplicateHeaderExtensionsSorted) {
+  const std::vector<RtpExtension> extensions = {
+      RtpExtension("cde1", 11, false), RtpExtension("cde2", 12, true),
+      RtpExtension("abc1", 3, false),  RtpExtension("abc2", 4, true),
+      RtpExtension("cde3", 9, true),   RtpExtension("cde4", 10, false),
+      RtpExtension("abc3", 1, true),   RtpExtension("abc4", 2, false),
+      RtpExtension("bcd3", 7, false),  RtpExtension("bcd1", 8, true),
+      RtpExtension("bcd2", 5, true),   RtpExtension("bcd4", 6, false),
+  };
+
+  auto encrypted = RtpExtension::DeduplicateHeaderExtensions(
+      extensions, RtpExtension::Filter::kRequireEncryptedExtension);
+
+  const std::vector<RtpExtension> expected_sorted_encrypted = {
+      RtpExtension("abc2", 4, true),  RtpExtension("abc3", 1, true),
+      RtpExtension("bcd1", 8, true),  RtpExtension("bcd2", 5, true),
+      RtpExtension("cde2", 12, true), RtpExtension("cde3", 9, true)};
+  EXPECT_EQ(expected_sorted_encrypted, encrypted);
+
+  auto unencypted = RtpExtension::DeduplicateHeaderExtensions(
+      extensions, RtpExtension::Filter::kDiscardEncryptedExtension);
+
+  const std::vector<RtpExtension> expected_sorted_unencrypted = {
+      RtpExtension("abc1", 3, false),  RtpExtension("abc4", 2, false),
+      RtpExtension("bcd3", 7, false),  RtpExtension("bcd4", 6, false),
+      RtpExtension("cde1", 11, false), RtpExtension("cde4", 10, false)};
+  EXPECT_EQ(expected_sorted_unencrypted, unencypted);
+}
+
 TEST(RtpExtensionTest, FindHeaderExtensionByUriAndEncryption) {
   std::vector<RtpExtension> extensions;
 

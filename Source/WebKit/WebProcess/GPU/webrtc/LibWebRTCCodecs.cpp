@@ -41,8 +41,10 @@
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/VP9UtilitiesCocoa.h>
+ALLOW_COMMA_BEGIN
 #include <webrtc/sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/sdk/WebKit/WebKitEncoder.h>
+ALLOW_COMMA_END
 #include <wtf/MainThread.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>

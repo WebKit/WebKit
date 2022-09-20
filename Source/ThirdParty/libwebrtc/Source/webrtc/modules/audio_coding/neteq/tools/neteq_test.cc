@@ -91,8 +91,7 @@ int64_t NetEqTest::Run() {
     simulation_time += step_result.simulation_step_ms;
   } while (!step_result.is_simulation_finished);
   if (callbacks_.simulation_ended_callback) {
-    callbacks_.simulation_ended_callback->SimulationEnded(simulation_time,
-                                                          neteq_.get());
+    callbacks_.simulation_ended_callback->SimulationEnded(simulation_time);
   }
   return simulation_time;
 }
@@ -249,11 +248,11 @@ NetEqTest::SimulationStepResult NetEqTest::RunToNextGetAudio() {
                    << ", voice concealed: " << voice_concealed
                    << ", buffer size: " << std::setw(4)
                    << current_state_.current_delay_ms << std::endl;
-        if (operations_state.discarded_primary_packets >
-            prev_ops_state_.discarded_primary_packets) {
+        if (lifetime_stats.packets_discarded >
+            prev_lifetime_stats_.packets_discarded) {
           *text_log_ << "Discarded "
-                     << (operations_state.discarded_primary_packets -
-                         prev_ops_state_.discarded_primary_packets)
+                     << (lifetime_stats.packets_discarded -
+                         prev_lifetime_stats_.packets_discarded)
                      << " primary packets." << std::endl;
         }
         if (operations_state.packet_buffer_flushes >

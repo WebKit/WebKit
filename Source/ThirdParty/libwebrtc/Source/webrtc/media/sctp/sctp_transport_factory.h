@@ -15,7 +15,6 @@
 
 #include "api/transport/sctp_transport_factory_interface.h"
 #include "media/sctp/sctp_transport_internal.h"
-#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/thread.h"
 
 namespace cricket {
@@ -29,9 +28,6 @@ class SctpTransportFactory : public webrtc::SctpTransportFactoryInterface {
 
  private:
   rtc::Thread* network_thread_;
-#if defined(WEBRTC_HAVE_DCSCTP) && defined(WEBRTC_WEBKIT_BUILD)
-  webrtc::FieldTrialFlag use_dcsctp_;
-#endif
 };
 
 }  // namespace cricket

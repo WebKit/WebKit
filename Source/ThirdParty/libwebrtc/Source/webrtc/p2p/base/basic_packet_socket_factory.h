@@ -11,10 +11,18 @@
 #ifndef P2P_BASE_BASIC_PACKET_SOCKET_FACTORY_H_
 #define P2P_BASE_BASIC_PACKET_SOCKET_FACTORY_H_
 
+#include <stdint.h>
+
+#include <memory>
 #include <string>
 
+#include "api/async_dns_resolver.h"
 #include "api/packet_socket_factory.h"
+#include "rtc_base/async_packet_socket.h"
+#include "rtc_base/proxy_info.h"
 #include "rtc_base/socket.h"
+#include "rtc_base/socket_address.h"
+#include "rtc_base/socket_factory.h"
 
 namespace rtc {
 
@@ -39,7 +47,12 @@ class BasicPacketSocketFactory : public PacketSocketFactory {
       const std::string& user_agent,
       const PacketSocketTcpOptions& tcp_options) override;
 
+  // TODO(bugs.webrtc.org/12598) Remove when downstream stops using it.
+  ABSL_DEPRECATED("Use CreateAsyncDnsResolver")
   AsyncResolverInterface* CreateAsyncResolver() override;
+
+  std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver()
+      override;
 
  private:
   int BindSocket(Socket* socket,

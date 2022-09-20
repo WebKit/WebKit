@@ -2134,6 +2134,7 @@ accessibility/aria-required-updates-after-dynamic-change.html [ Pass ]
 accessibility/aria-roles-unignored.html [ Pass ]
 accessibility/aria-slider-value.html [ Pass ]
 accessibility/ax-object-destroyed-on-reload.html [ Pass ]
+accessibility/basic-focusability.html [ Pass ]
 accessibility/display-contents-dynamically-added-children.html [ Pass ]
 accessibility/display-contents-element-roles.html [ Pass ]
 accessibility/display-contents-object-ordering.html [ Pass ]
@@ -3429,8 +3430,6 @@ webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-r
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-006.xht [ ImageOnlyFailure ]
 webkit.org/b/229397 imported/w3c/web-platform-tests/css/css-writing-modes/clip-rect-vrl-008.xht [ ImageOnlyFailure ]
 
-webkit.org/b/233267 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_window_open_download_block_downloads.tentative.html [ Pass Failure ]
-
 webkit.org/b/232181 imported/w3c/web-platform-tests/file-system-access/sandboxed_FileSystemSyncAccessHandle-close.https.tentative.worker.html [ Pass Failure ]
 
 # These three tests will be fixed by rdar://80384564.
@@ -3705,11 +3704,7 @@ webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/javascript-url.https.html [ Pass Failure ]
 webkit.org/b/243690 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup-to-so.https.html [ Pass Failure ]
 
-webkit.org/b/243828 fast/text-autosizing/ios/idempotentmode/idempotent-autosizing-after-changing-initial-scale.html [ Pass Failure ]
-
 webkit.org/b/243836 imported/w3c/web-platform-tests/css/css-flexbox/negative-overflow-002.html [ Pass Failure ]
-
-webkit.org/b/243946 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/implicit-submission.optional.html [ Pass Failure ]
 
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/target-text-008.html [ Pass ImageOnlyFailure ]
 webkit.org/b/243962 imported/w3c/web-platform-tests/css/css-pseudo/highlight-paired-cascade-005.html [ Pass ImageOnlyFailure ]

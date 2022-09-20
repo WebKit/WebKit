@@ -16,10 +16,10 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/packet_source.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -32,14 +32,17 @@ class RtpFileSource : public PacketSource {
   // Creates an RtpFileSource reading from `file_name`. If the file cannot be
   // opened, or has the wrong format, NULL will be returned.
   static RtpFileSource* Create(
-      const std::string& file_name,
+      absl::string_view file_name,
       absl::optional<uint32_t> ssrc_filter = absl::nullopt);
 
   // Checks whether a files is a valid RTP dump or PCAP (Wireshark) file.
-  static bool ValidRtpDump(const std::string& file_name);
-  static bool ValidPcap(const std::string& file_name);
+  static bool ValidRtpDump(absl::string_view file_name);
+  static bool ValidPcap(absl::string_view file_name);
 
   ~RtpFileSource() override;
+
+  RtpFileSource(const RtpFileSource&) = delete;
+  RtpFileSource& operator=(const RtpFileSource&) = delete;
 
   // Registers an RTP header extension and binds it to `id`.
   virtual bool RegisterRtpHeaderExtension(RTPExtensionType type, uint8_t id);
@@ -53,13 +56,11 @@ class RtpFileSource : public PacketSource {
 
   explicit RtpFileSource(absl::optional<uint32_t> ssrc_filter);
 
-  bool OpenFile(const std::string& file_name);
+  bool OpenFile(absl::string_view file_name);
 
   std::unique_ptr<RtpFileReader> rtp_reader_;
   const absl::optional<uint32_t> ssrc_filter_;
   RtpHeaderExtensionMap rtp_header_extension_map_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(RtpFileSource);
 };
 
 }  // namespace test

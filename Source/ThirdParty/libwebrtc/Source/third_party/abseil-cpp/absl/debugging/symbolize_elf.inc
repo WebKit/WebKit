@@ -77,6 +77,10 @@
 #include "absl/debugging/internal/vdso_support.h"
 #include "absl/strings/string_view.h"
 
+#if defined(__FreeBSD__) && !defined(ElfW)
+#define ElfW(x) __ElfN(x)
+#endif
+
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 
@@ -319,6 +323,7 @@ class Symbolizer {
                                            const ptrdiff_t relocation,
                                            char *out, int out_size,
                                            char *tmp_buf, int tmp_buf_size);
+  const char *GetUncachedSymbol(const void *pc);
 
   enum {
     SYMBOL_BUF_SIZE = 3072,
@@ -437,8 +442,8 @@ static ssize_t ReadFromOffset(const int fd, void *buf, const size_t count,
                               const off_t offset) {
   off_t off = lseek(fd, offset, SEEK_SET);
   if (off == (off_t)-1) {
-    ABSL_RAW_LOG(WARNING, "lseek(%d, %ju, SEEK_SET) failed: errno=%d", fd,
-                 static_cast<uintmax_t>(offset), errno);
+    ABSL_RAW_LOG(WARNING, "lseek(%d, %jd, SEEK_SET) failed: errno=%d", fd,
+                 static_cast<intmax_t>(offset), errno);
     return -1;
   }
   return ReadPersistent(fd, buf, count);
@@ -484,12 +489,19 @@ static ABSL_ATTRIBUTE_NOINLINE bool GetSectionHeaderByType(
         (buf_bytes > num_bytes_left) ? num_bytes_left : buf_bytes;
     const off_t offset = sh_offset + i * sizeof(buf[0]);
     const ssize_t len = ReadFromOffset(fd, buf, num_bytes_to_read, offset);
+    if (len < 0) {
+      ABSL_RAW_LOG(
+          WARNING,
+          "Reading %zd bytes from offset %ju returned %zd which is negative.",
+          num_bytes_to_read, static_cast<intmax_t>(offset), len);
+      return false;
+    }
     if (len % sizeof(buf[0]) != 0) {
       ABSL_RAW_LOG(
           WARNING,
-          "Reading %zd bytes from offset %ju returned %zd which is not a "
+          "Reading %zd bytes from offset %jd returned %zd which is not a "
           "multiple of %zu.",
-          num_bytes_to_read, static_cast<uintmax_t>(offset), len,
+          num_bytes_to_read, static_cast<intmax_t>(offset), len,
           sizeof(buf[0]));
       return false;
     }
@@ -688,6 +700,7 @@ static ABSL_ATTRIBUTE_NOINLINE FindSymbolResult FindSymbol(
     const int entries_in_chunk = std::min(num_remaining_symbols, buf_entries);
     const int bytes_in_chunk = entries_in_chunk * sizeof(buf[0]);
     const ssize_t len = ReadFromOffset(fd, buf, bytes_in_chunk, offset);
+    SAFE_ASSERT(len >= 0);
     SAFE_ASSERT(len % sizeof(buf[0]) == 0);
     const ssize_t num_symbols_in_buf = len / sizeof(buf[0]);
     SAFE_ASSERT(num_symbols_in_buf <= entries_in_chunk);
@@ -828,7 +841,7 @@ class FileDescriptor {
 
   ~FileDescriptor() {
     if (fd_ >= 0) {
-      NO_INTR(close(fd_));
+      close(fd_);
     }
   }
 
@@ -1105,7 +1118,7 @@ void Symbolizer::ClearAddrMap() {
     ObjFile *o = addr_map_.At(i);
     base_internal::LowLevelAlloc::Free(o->filename);
     if (o->fd >= 0) {
-      NO_INTR(close(o->fd));
+      close(o->fd);
     }
   }
   addr_map_.Clear();
@@ -1140,6 +1153,14 @@ bool Symbolizer::RegisterObjFile(const char *filename,
                      reinterpret_cast<uintptr_t>(end_addr), filename,
                      reinterpret_cast<uintptr_t>(old->end_addr), old->filename);
       }
+      return true;
+    } else if (old->end_addr == start_addr &&
+               reinterpret_cast<uintptr_t>(old->start_addr) - old->offset ==
+                   reinterpret_cast<uintptr_t>(start_addr) - offset &&
+               strcmp(old->filename, filename) == 0) {
+      // Two contiguous map entries that span a contiguous region of the file,
+      // perhaps because some part of the file was mlock()ed. Combine them.
+      old->end_addr = end_addr;
       return true;
     }
   }
@@ -1329,13 +1350,7 @@ static bool MaybeInitializeObjFile(ObjFile *obj) {
 // they are called here as well.
 // To keep stack consumption low, we would like this function to not
 // get inlined.
-const char *Symbolizer::GetSymbol(const void *const pc) {
-  const char *entry = FindSymbolInCache(pc);
-  if (entry != nullptr) {
-    return entry;
-  }
-  symbol_buf_[0] = '\0';
-
+const char *Symbolizer::GetUncachedSymbol(const void *pc) {
   ObjFile *const obj = FindObjFile(pc, 1);
   ptrdiff_t relocation = 0;
   int fd = -1;
@@ -1421,6 +1436,42 @@ const char *Symbolizer::GetSymbol(const void *const pc) {
   }
   symbol_buf_[sizeof(symbol_buf_) - 1] = '\0';  // Paranoia.
   return InsertSymbolInCache(pc, symbol_buf_);
+}
+
+const char *Symbolizer::GetSymbol(const void *pc) {
+  const char *entry = FindSymbolInCache(pc);
+  if (entry != nullptr) {
+    return entry;
+  }
+  symbol_buf_[0] = '\0';
+
+#ifdef __hppa__
+  {
+    // In some contexts (e.g., return addresses), PA-RISC uses the lowest two
+    // bits of the address to indicate the privilege level. Clear those bits
+    // before trying to symbolize.
+    const auto pc_bits = reinterpret_cast<uintptr_t>(pc);
+    const auto address = pc_bits & ~0x3;
+    entry = GetUncachedSymbol(reinterpret_cast<const void *>(address));
+    if (entry != nullptr) {
+      return entry;
+    }
+
+    // In some contexts, PA-RISC also uses bit 1 of the address to indicate that
+    // this is a cross-DSO function pointer. Such function pointers actually
+    // point to a procedure label, a struct whose first 32-bit (pointer) element
+    // actually points to the function text. With no symbol found for this
+    // address so far, try interpreting it as a cross-DSO function pointer and
+    // see how that goes.
+    if (pc_bits & 0x2) {
+      return GetUncachedSymbol(*reinterpret_cast<const void *const *>(address));
+    }
+
+    return nullptr;
+  }
+#else
+  return GetUncachedSymbol(pc);
+#endif
 }
 
 bool RemoveAllSymbolDecorators(void) {

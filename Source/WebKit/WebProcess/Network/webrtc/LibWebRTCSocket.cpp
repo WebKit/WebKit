@@ -108,12 +108,6 @@ void LibWebRTCSocket::signalClose(int error)
     SignalClose(this, error);
 }
 
-void LibWebRTCSocket::signalNewConnection(rtc::AsyncPacketSocket* newConnectionSocket)
-{
-    ASSERT(m_type == Type::ServerTCP);
-    SignalNewConnection(this, newConnectionSocket);
-}
-
 bool LibWebRTCSocket::willSend(size_t size)
 {
     if (size > m_availableSendingBytes) {

@@ -65,7 +65,7 @@
     height: 1em;
 }
 
-.content-view.tab.settings > .settings-view > .container {
+.content-view.tab.settings > .settings-view > :is(.settings-group, .container) {
     display: flex;
     margin-top: 1em;
     font-size: 13px;
@@ -75,7 +75,7 @@
     display: none;
 }
 
-.content-view.tab.settings > .settings-view > .container-centered {
+.content-view.tab.settings > .settings-view > .container.centered {
     display: block;
     text-align: center;
 }
@@ -85,32 +85,32 @@
     font-size: inherit;
 }
 
-.content-view.tab.settings > .settings-view > .container > .title {
+.content-view.tab.settings > .settings-view > .settings-group > .title {
     width: 50%;
     margin-inline-end: 6px;
     text-align: end;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group {
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group {
     display: flex;
     flex-direction: column;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor {
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor {
     --settings-editor-child-margin-top: 0;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor:first-child > * {
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor:first-child > * {
     margin-top: var(--settings-editor-child-margin-top);
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="checkbox"] {
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor input[type="checkbox"] {
     width: 15px;
     height: 15px;
     vertical-align: -1px;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor select {
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor select {
     /*
     To set the font-size of <select> to be exactly 13px, it needs to be set to 16px.
     Setting the font-size to 13px actually sets it to 11px.
@@ -121,7 +121,7 @@
     --settings-editor-child-margin-top: -2px;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="number"] {
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor input[type="number"] {
     max-width: 48px;
     margin-inline: 2px 5px;
     padding-top: 0;
@@ -133,7 +133,7 @@
     --settings-editor-child-margin-top: -2px;
 }
 
-.content-view.tab.settings > .settings-view > .container > .editor-group > .setting-editor input[type="text"] {
+.content-view.tab.settings > .settings-view > .settings-group > .editor-group > .setting-editor input[type="text"] {
     padding-top: 0;
     padding-bottom: 0;
     vertical-align: 1px;

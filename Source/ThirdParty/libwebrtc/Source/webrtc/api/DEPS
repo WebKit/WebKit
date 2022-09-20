@@ -112,14 +112,6 @@ specific_include_rules = {
     "+rtc_base/ref_count.h",
   ],
 
-  "jsep_ice_candidate\.h": [
-    "+rtc_base/constructor_magic.h",
-  ],
-
-  "jsep_session_description\.h": [
-    "+rtc_base/constructor_magic.h",
-  ],
-
   "media_stream_interface\.h": [
     "+modules/audio_processing/include/audio_processing_statistics.h",
     "+rtc_base/ref_count.h",
@@ -151,12 +143,10 @@ specific_include_rules = {
   "proxy\.h": [
     "+rtc_base/event.h",
     "+rtc_base/message_handler.h",  # Inherits from it.
-    "+rtc_base/ref_counted_object.h",
     "+rtc_base/thread.h",
   ],
 
   "ref_counted_base\.h": [
-    "+rtc_base/constructor_magic.h",
     "+rtc_base/ref_count.h",
     "+rtc_base/ref_counter.h",
   ],
@@ -192,7 +182,6 @@ specific_include_rules = {
   ],
 
   "stats_types\.h": [
-    "+rtc_base/constructor_magic.h",
     "+rtc_base/ref_count.h",
     "+rtc_base/thread_checker.h",
   ],
@@ -201,25 +190,16 @@ specific_include_rules = {
     "+rtc_base/ref_count.h",
   ],
 
-  "audio_frame\.h": [
-    "+rtc_base/constructor_magic.h",
-  ],
-
   "audio_mixer\.h": [
     "+rtc_base/ref_count.h",
   ],
 
   "audio_decoder\.h": [
     "+rtc_base/buffer.h",
-    "+rtc_base/constructor_magic.h",
   ],
 
   "audio_decoder_factory\.h": [
     "+rtc_base/ref_count.h",
-  ],
-
-  "audio_decoder_factory_template\.h": [
-    "+rtc_base/ref_counted_object.h",
   ],
 
   "audio_encoder\.h": [
@@ -228,10 +208,6 @@ specific_include_rules = {
 
   "audio_encoder_factory\.h": [
     "+rtc_base/ref_count.h",
-  ],
-
-  "audio_encoder_factory_template\.h": [
-    "+rtc_base/ref_counted_object.h",
   ],
 
   "frame_decryptor_interface\.h": [
@@ -248,7 +224,6 @@ specific_include_rules = {
 
   "rtc_stats_report\.h": [
     "+rtc_base/ref_count.h",
-    "+rtc_base/ref_counted_object.h",
   ],
 
   "audioproc_float\.h": [
@@ -259,11 +234,14 @@ specific_include_rules = {
     "+modules/audio_processing/include/audio_processing.h",
   ],
 
-  "fake_frame_decryptor\.h": [
-    "+rtc_base/ref_counted_object.h",
+  "fake_metronome\.h": [
+    "+rtc_base/synchronization/mutex.h",
+    "+rtc_base/task_queue.h",
+    "+rtc_base/task_utils/repeating_task.h",
+    "+rtc_base/thread_annotations.h",
   ],
 
-  "fake_frame_encryptor\.h": [
+  "make_ref_counted\.h": [
     "+rtc_base/ref_counted_object.h",
   ],
 
@@ -277,6 +255,10 @@ specific_include_rules = {
 
   "mock_video_track\.h": [
     "+rtc_base/ref_counted_object.h",
+  ],
+
+  "notifier\.h": [
+    "+rtc_base/system/no_unique_address.h",
   ],
 
   "simulated_network\.h": [
@@ -311,6 +293,18 @@ specific_include_rules = {
     "+rtc_base/socket_address.h",
     "+rtc_base/third_party/sigslot/sigslot.h",
     "+rtc_base/thread_annotations.h",
+  ],
+
+  "video_encoder_factory_template.*\.h": [
+    "+modules/video_coding",
+  ],
+
+  "video_decoder_factory_template.*\.h": [
+    "+modules/video_coding",
+  ],
+
+  "field_trials\.h": [
+    "+rtc_base/containers/flat_map.h",
   ],
 
   # .cc files in api/ should not be restricted in what they can #include,

@@ -181,6 +181,8 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "StringPrototypeReplaceIntrinsic";
     case StringPrototypeReplaceRegExpIntrinsic:
         return "StringPrototypeReplaceRegExpIntrinsic";
+    case StringPrototypeReplaceStringIntrinsic:
+        return "StringPrototypeReplaceStringIntrinsic";
     case StringPrototypeSliceIntrinsic:
         return "StringPrototypeSliceIntrinsic";
     case StringPrototypeToLowerCaseIntrinsic:

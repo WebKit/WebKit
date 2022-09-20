@@ -46,19 +46,16 @@ class TinyPtrSet {
     static_assert(sizeof(T) == sizeof(void*), "It's in the title of the class.");
 public:
     TinyPtrSet()
-        : m_pointer(0)
     {
         setEmpty();
     }
     
     TinyPtrSet(T element)
-        : m_pointer(0)
     {
         set(element);
     }
     
     ALWAYS_INLINE TinyPtrSet(const TinyPtrSet& other)
-        : m_pointer(0)
     {
         copyFrom(other);
     }
@@ -315,11 +312,7 @@ public:
     
     class iterator {
     public:
-        iterator()
-            : m_set(nullptr)
-            , m_index(0)
-        {
-        }
+        iterator() = default;
         
         iterator(const TinyPtrSet* set, size_t index)
             : m_set(set)
@@ -337,8 +330,8 @@ public:
         bool operator!=(const iterator& other) const { return !(*this == other); }
         
     private:
-        const TinyPtrSet* m_set;
-        size_t m_index;
+        const TinyPtrSet* m_set { nullptr };
+        size_t m_index { 0 };
     };
     
     iterator begin() const { return iterator(this, 0); }
@@ -520,7 +513,7 @@ private:
             m_pointer &= ~reservedFlag;
     }
     
-    uintptr_t m_pointer;
+    uintptr_t m_pointer { 0 };
 };
 
 } // namespace WTF

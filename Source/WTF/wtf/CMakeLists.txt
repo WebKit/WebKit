@@ -436,7 +436,6 @@ set(WTF_SOURCES
     FastMalloc.cpp
     FilePrintStream.cpp
     FileSystem.cpp
-    FunctionDispatcher.cpp
     Gigacage.cpp
     GlobalVersion.cpp
     GregorianDateTime.cpp

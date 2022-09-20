@@ -154,7 +154,7 @@ void HeartbeatHandler::HandleHeartbeatAck(HeartbeatAckChunk chunk) {
   }
 
   TimeMs now = ctx_->callbacks().TimeMillis();
-  if (info->created_at() <= now) {
+  if (info->created_at() > TimeMs(0) && info->created_at() <= now) {
     ctx_->ObserveRTT(now - info->created_at());
   }
 

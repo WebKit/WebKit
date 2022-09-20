@@ -30,6 +30,8 @@ test_invalid_value("color", "hsl(none, none, none)");
 test_invalid_value("color", "hsla(none, none, none, none)");
 test_invalid_value("color", "hsl(none, 100%, 50%)");
 test_invalid_value("color", "hsla(120, 100%, 50%, none)");
+test_invalid_value("color", "hwba(120 30% 50%)");
+test_invalid_value("color", "hwba(120 30% 50% / 0.5)");
 
 for (const colorSpace of [ "srgb", "srgb-linear", "a98-rgb", "rec2020", "prophoto-rgb" ]) {
     test_invalid_value("color", `color(${colorSpace} 0 0 0 0)`);
@@ -44,7 +46,6 @@ for (const colorSpace of [ "srgb", "srgb-linear", "a98-rgb", "rec2020", "prophot
 for (const colorSpace of [ "xyz", "xyz-d50", "xyz-d65" ]) {
     test_invalid_value("color", `color(${colorSpace} 0 0 0 0)`);
     test_invalid_value("color", `color(${colorSpace} 0deg 0% 0)`);
-    test_invalid_value("color", `color(${colorSpace} 0% 0 0)`);
     test_invalid_value("color", `color(${colorSpace} 0% 0 0 1)`);
     test_invalid_value("color", `color(${colorSpace} 0% 0 0 10%)`);
     test_invalid_value("color", `color(${colorSpace} 0% 0 0deg)`);
@@ -53,8 +54,6 @@ for (const colorSpace of [ "xyz", "xyz-d50", "xyz-d65" ]) {
 }
 
 for (const colorSpace of [ "lab", "oklab" ]) {
-    test_invalid_value("color", `${colorSpace}(0 0 0)`);
-    test_invalid_value("color", `${colorSpace}(0% 0% 0)`);
     test_invalid_value("color", `${colorSpace}(0% 0 0 1)`);
     test_invalid_value("color", `${colorSpace}(0% 0 0 10%)`);
     test_invalid_value("color", `${colorSpace}(0% 0 0deg)`);
@@ -64,7 +63,6 @@ for (const colorSpace of [ "lab", "oklab" ]) {
 }
 
 for (const colorSpace of [ "lch", "oklch" ]) {
-    test_invalid_value("color", `${colorSpace}(0 0 0 / 0.5)`);
     test_invalid_value("color", `${colorSpace}(20% 10 10deg 10)`);
     test_invalid_value("color", `${colorSpace}(20% 10 10deg 10 / 0.5)`);
     test_invalid_value("color", `color(${colorSpace} 20% 0 10 / 50%)`);

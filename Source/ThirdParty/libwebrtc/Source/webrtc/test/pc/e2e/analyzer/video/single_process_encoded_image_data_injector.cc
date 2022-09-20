@@ -59,6 +59,25 @@ void SingleProcessEncodedImageDataInjector::AddParticipantInCall() {
   expected_receivers_count_++;
 }
 
+void SingleProcessEncodedImageDataInjector::RemoveParticipantInCall() {
+  MutexLock crit(&lock_);
+  expected_receivers_count_--;
+  // Now we need go over `extraction_cache_` and removed frames which have been
+  // received by `expected_receivers_count_`.
+  for (auto& [frame_id, extraction_infos] : extraction_cache_) {
+    for (auto it = extraction_infos.infos.begin();
+         it != extraction_infos.infos.end();) {
+      // Frame is received if `received_count` equals to
+      // `expected_receivers_count_`.
+      if (it->second.received_count == expected_receivers_count_) {
+        it = extraction_infos.infos.erase(it);
+      } else {
+        ++it;
+      }
+    }
+  }
+}
+
 EncodedImageExtractionResult SingleProcessEncodedImageDataInjector::ExtractData(
     const EncodedImage& source) {
   size_t size = source.size();

@@ -36,14 +36,10 @@ const ClassInfo ScopedArgumentsTable::s_info = { "ScopedArgumentsTable"_s, nullp
 
 ScopedArgumentsTable::ScopedArgumentsTable(VM& vm)
     : Base(vm, vm.scopedArgumentsTableStructure.get())
-    , m_length(0)
-    , m_locked(false)
 {
 }
 
-ScopedArgumentsTable::~ScopedArgumentsTable()
-{
-}
+ScopedArgumentsTable::~ScopedArgumentsTable() = default;
 
 void ScopedArgumentsTable::destroy(JSCell* cell)
 {

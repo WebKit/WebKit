@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -48,7 +49,7 @@ class NetEqPacketSourceInput : public NetEqInput {
 // Implementation of NetEqPacketSourceInput to be used with an RtpFileSource.
 class NetEqRtpDumpInput final : public NetEqPacketSourceInput {
  public:
-  NetEqRtpDumpInput(const std::string& file_name,
+  NetEqRtpDumpInput(absl::string_view file_name,
                     const RtpHeaderExtensionMap& hdr_ext_map,
                     absl::optional<uint32_t> ssrc_filter);
 

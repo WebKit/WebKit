@@ -29,8 +29,6 @@ See also
 [here](https://source.chromium.org/chromium/chromium/src/+/main:docs/clang.md)
 for some clang related documentation from Chromium.
 
-MSVC is also supported at version VS 2019 16.61.
-
 Other compilers are not officially supported (which means there is no CI
 coverage for them) but patches to keep WebRTC working with them are welcomed by
 the WebRTC Team.

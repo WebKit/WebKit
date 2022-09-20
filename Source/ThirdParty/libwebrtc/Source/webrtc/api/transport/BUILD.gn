@@ -32,7 +32,7 @@ rtc_library("network_control") {
   ]
 
   deps = [
-    ":webrtc_key_value_config",
+    "../../api:field_trials_view",
     "../rtc_event_log",
     "../units:data_rate",
     "../units:data_size",
@@ -45,13 +45,6 @@ rtc_library("network_control") {
   ]
 }
 
-rtc_source_set("webrtc_key_value_config") {
-  visibility = [ "*" ]
-  sources = [ "webrtc_key_value_config.h" ]
-  deps = [ "../../rtc_base/system:rtc_export" ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
-}
-
 rtc_library("field_trial_based_config") {
   visibility = [ "*" ]
   sources = [
@@ -59,20 +52,19 @@ rtc_library("field_trial_based_config") {
     "field_trial_based_config.h",
   ]
   deps = [
-    ":webrtc_key_value_config",
+    "../../api:field_trials_view",
     "../../system_wrappers:field_trial",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
-# TODO(nisse): Rename?
 rtc_source_set("datagram_transport_interface") {
   visibility = [ "*" ]
   sources = [ "data_channel_transport_interface.h" ]
   deps = [
     "..:array_view",
     "..:rtc_error",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:copy_on_write_buffer",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
@@ -85,8 +77,8 @@ rtc_library("goog_cc") {
   ]
   deps = [
     ":network_control",
-    ":webrtc_key_value_config",
     "..:network_state_predictor_api",
+    "../../api:field_trials_view",
     "../../modules/congestion_controller/goog_cc",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/base:core_headers" ]
@@ -106,10 +98,12 @@ rtc_source_set("stun_types") {
 
   deps = [
     "../../api:array_view",
+    "../../rtc_base:byte_buffer",
+    "../../rtc_base:byte_order",
     "../../rtc_base:checks",
     "../../rtc_base:ip_address",
+    "../../rtc_base:logging",
     "../../rtc_base:rtc_base",
-    "../../rtc_base:rtc_base_approved",
     "../../rtc_base:socket_address",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
@@ -147,7 +141,9 @@ if (rtc_include_tests) {
     deps = [
       ":stun_types",
       "../../rtc_base",
-      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:byte_buffer",
+      "../../rtc_base:byte_order",
+      "../../rtc_base:macromagic",
       "../../rtc_base:socket_address",
       "../../test:test_support",
       "//testing/gtest",

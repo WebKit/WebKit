@@ -17,15 +17,16 @@
 namespace webrtc {
 namespace test {
 
-// Deserializes a JSON representation of the VideoReceiveStream::Config back
-// into a valid object. This will not initialize the decoders or the renderer.
-VideoReceiveStream::Config ParseVideoReceiveStreamJsonConfig(
+// Deserializes a JSON representation of the VideoReceiveStreamInterface::Config
+// back into a valid object. This will not initialize the decoders or the
+// renderer.
+VideoReceiveStreamInterface::Config ParseVideoReceiveStreamJsonConfig(
     webrtc::Transport* transport,
     const Json::Value& json);
 
-// Serialize a VideoReceiveStream::Config into a Json object.
+// Serialize a VideoReceiveStreamInterface::Config into a Json object.
 Json::Value GenerateVideoReceiveStreamJsonConfig(
-    const VideoReceiveStream::Config& config);
+    const VideoReceiveStreamInterface::Config& config);
 
 }  // namespace test
 }  // namespace webrtc

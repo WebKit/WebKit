@@ -484,7 +484,7 @@ class Tracker(GenericTracker):
         user_to_cc = self.radar_importer.name if self.radar_importer not in issue.watchers else None
         if radar and isinstance(radar.tracker, RadarTracker):
             if radar not in issue.references:
-                comment_to_make = '<rdar://problem/{}>'.format(issue.id)
+                comment_to_make = '<rdar://problem/{}>'.format(radar.id)
             if user_to_cc:
                 keyword_to_add = 'InRadar'
             elif comment_to_make:

@@ -201,8 +201,8 @@ namespace JSC {
         void allocateFreeablePool();
         void deallocateObjects();
 
-        char* m_freeableMemory;
-        char* m_freeablePoolEnd;
+        char* m_freeableMemory { nullptr };
+        char* m_freeablePoolEnd { nullptr };
 
         std::unique_ptr<IdentifierArena> m_identifierArena;
         Vector<void*> m_freeablePools;

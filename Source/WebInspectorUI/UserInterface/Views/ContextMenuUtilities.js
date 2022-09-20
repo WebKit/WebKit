@@ -363,8 +363,7 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
             contextMenu.appendItem(label, () => {
                 WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
                     let text = isElement ? WI.UIString("Selected Element", "Selected DOM element") : WI.UIString("Selected Node", "Selected DOM node");
-                    const addSpecialUserLogClass = true;
-                    WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
+                    WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass: true});
                 });
             });
         }

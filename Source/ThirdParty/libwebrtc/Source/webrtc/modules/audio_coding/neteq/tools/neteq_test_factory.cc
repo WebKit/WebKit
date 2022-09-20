@@ -22,6 +22,7 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/neteq/neteq.h"
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
@@ -39,7 +40,6 @@
 #include "modules/audio_coding/neteq/tools/output_wav_file.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
 #include "rtc_base/checks.h"
-#include "rtc_base/ref_counted_object.h"
 #include "test/function_audio_decoder_factory.h"
 #include "test/testsupport/file_utils.h"
 
@@ -109,7 +109,7 @@ NetEqTestFactory::Config::Config(const Config& other) = default;
 NetEqTestFactory::Config::~Config() = default;
 
 std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTestFromString(
-    const std::string& input_string,
+    absl::string_view input_string,
     NetEqFactory* factory,
     const Config& config) {
   std::unique_ptr<NetEqInput> input(
@@ -122,7 +122,7 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTestFromString(
 }
 
 std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTestFromFile(
-    const std::string& input_file_name,
+    absl::string_view input_file_name,
     NetEqFactory* factory,
     const Config& config) {
   // Gather RTP header extensions in a map.

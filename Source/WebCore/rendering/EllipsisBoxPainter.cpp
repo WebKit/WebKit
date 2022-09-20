@@ -101,7 +101,7 @@ void EllipsisBoxPainter::paintSelection()
 
     auto ellipsisText = m_lineBox.ellipsisText();
     style.fontCascade().adjustSelectionRectForText(ellipsisText, visualRect);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.containingBlock().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(visualRect, m_lineBox.formattingContextRoot().document().deviceScaleFactor(), ellipsisText.ltr()), backgroundColor);
 }
 
 }

@@ -31,7 +31,7 @@
 
 namespace bmalloc {
 
-#if !BPLATFORM(WATCHOS)
+#if BPLATFORM(COCOA) && !BPLATFORM(WATCHOS)
 bool gigacageEnabledForProcess()
 {
     // Note that this function is only called once.
@@ -52,7 +52,7 @@ bool gigacageEnabledForProcess()
 
     return isOptInBinary;
 }
-#endif // !BPLATFORM(WATCHOS)
+#endif // BPLATFORM(COCOA) && !BPLATFORM(WATCHOS)
 
 bool shouldAllowMiniMode()
 {

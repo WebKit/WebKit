@@ -14,6 +14,7 @@
 #include <string>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "examples/turnserver/read_auth_file.h"
 #include "p2p/base/basic_packet_socket_factory.h"
 #include "p2p/base/port_interface.h"
@@ -32,12 +33,12 @@ class TurnFileAuth : public cricket::TurnAuthInterface {
   explicit TurnFileAuth(std::map<std::string, std::string> name_to_key)
       : name_to_key_(std::move(name_to_key)) {}
 
-  virtual bool GetKey(const std::string& username,
-                      const std::string& realm,
+  virtual bool GetKey(absl::string_view username,
+                      absl::string_view realm,
                       std::string* key) {
     // File is stored as lines of <username>=<HA1>.
     // Generate HA1 via "echo -n "<username>:<realm>:<password>" | md5sum"
-    auto it = name_to_key_.find(username);
+    auto it = name_to_key_.find(std::string(username));
     if (it == name_to_key_.end())
       return false;
     *key = it->second;

@@ -67,7 +67,7 @@ public:
     bool isHorizontal() const { return line().isHorizontal(); }
     FontBaseline baselineType() const { return line().baselineType(); }
 
-    const RenderBlockFlow& containingBlock() const { return m_inlineContent->containingBlock(); }
+    const RenderBlockFlow& formattingContextRoot() const { return m_inlineContent->formattingContextRoot(); }
 
     RenderFragmentContainer* containingFragment() const { return nullptr; }
     bool isFirstAfterPageBreak() const { return line().isFirstAfterPageBreak(); }

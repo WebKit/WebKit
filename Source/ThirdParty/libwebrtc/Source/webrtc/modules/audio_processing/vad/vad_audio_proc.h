@@ -35,7 +35,7 @@ class VadAudioProc {
                       size_t length,
                       AudioFeatures* audio_features);
 
-  static const size_t kDftSize = 512;
+  static constexpr size_t kDftSize = 512;
 
  private:
   void PitchAnalysis(double* pitch_gains, double* pitch_lags_hz, size_t length);
@@ -47,25 +47,28 @@ class VadAudioProc {
   void Rms(double* rms, size_t length_rms);
   void ResetBuffer();
 
-    // TODO(turajs): maybe defining this at a higher level (maybe enum) so that
-    // all the code recognize it as "no-error."
-    enum : int { kNoError = 0 };
-
   // To compute spectral peak we perform LPC analysis to get spectral envelope.
   // For every 30 ms we compute 3 spectral peak there for 3 LPC analysis.
   // LPC is computed over 15 ms of windowed audio. For every 10 ms sub-frame
   // we need 5 ms of past signal to create the input of LPC analysis.
-  enum : size_t {
-    kNumPastSignalSamples = static_cast<size_t>(kSampleRateHz / 200),
-    kNum10msSubframes = 3,
-    kNumSubframeSamples = static_cast<size_t>(kSampleRateHz / 100),
-    // Samples in 30 ms @ given sampling rate.
-    kNumSamplesToProcess = kNum10msSubframes * kNumSubframeSamples,
-    kBufferLength = kNumPastSignalSamples + kNumSamplesToProcess
-  };
-  enum : size_t { kIpLength = kDftSize >> 1 };
-  enum : size_t { kWLength = kDftSize >> 1 };
-  enum : size_t { kLpcOrder = 16 };
+  static constexpr size_t kNumPastSignalSamples =
+      static_cast<size_t>(kSampleRateHz / 200);
+
+  // TODO(turajs): maybe defining this at a higher level (maybe enum) so that
+  // all the code recognize it as "no-error."
+  static constexpr int kNoError = 0;
+
+  static constexpr size_t kNum10msSubframes = 3;
+  static constexpr size_t kNumSubframeSamples =
+      static_cast<size_t>(kSampleRateHz / 100);
+  // Samples in 30 ms @ given sampling rate.
+  static constexpr size_t kNumSamplesToProcess =
+      size_t{kNum10msSubframes} * kNumSubframeSamples;
+  static constexpr size_t kBufferLength =
+      size_t{kNumPastSignalSamples} + kNumSamplesToProcess;
+  static constexpr size_t kIpLength = kDftSize >> 1;
+  static constexpr size_t kWLength = kDftSize >> 1;
+  static constexpr size_t kLpcOrder = 16;
 
   size_t ip_[kIpLength];
   float w_fft_[kWLength];

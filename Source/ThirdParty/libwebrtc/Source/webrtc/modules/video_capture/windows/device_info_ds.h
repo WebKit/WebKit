@@ -69,7 +69,7 @@ class DeviceInfoDS : public DeviceInfoImpl {
                                uint32_t productUniqueIdUTF8Length = 0);
 
   int32_t GetWindowsCapability(
-      const int32_t capabilityIndex,
+      int32_t capabilityIndex,
       VideoCaptureCapabilityWindows& windowsCapability);
 
   static void GetProductId(const char* devicePath,

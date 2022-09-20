@@ -1287,9 +1287,17 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 
     [_scrollView _stopScrollingAndZoomingAnimations];
 
-    if (!CGPointEqualToPoint(contentOffsetInScrollViewCoordinates, [_scrollView contentOffset]))
+    CGPoint scrollViewContentOffset = [_scrollView contentOffset];
+
+    if (!CGPointEqualToPoint(contentOffsetInScrollViewCoordinates, scrollViewContentOffset)) {
+        if (WTF::areEssentiallyEqual<float>(scrollPosition.x(), 0) && scrollViewContentOffset.x < 0)
+            contentOffsetInScrollViewCoordinates.x = scrollViewContentOffset.x;
+
+        if (WTF::areEssentiallyEqual<float>(scrollPosition.y(), 0) && scrollViewContentOffset.y < 0)
+            contentOffsetInScrollViewCoordinates.y = scrollViewContentOffset.y;
+
         [_scrollView setContentOffset:contentOffsetInScrollViewCoordinates animated:animated];
-    else {
+    } else {
         // If we haven't changed anything, there would not be any VisibleContentRect update sent to the content.
         // The WebProcess would keep the invalid contentOffset as its scroll position.
         // To synchronize the WebProcess with what is on screen, we send the VisibleContentRect again.
@@ -2480,8 +2488,8 @@ static bool scrollViewCanScroll(UIScrollView *scrollView)
 
     CGFloat scaleFactor = contentZoomScale(self);
     CGRect unobscuredRect = UIEdgeInsetsInsetRect(self.bounds, computedContentInsetUnadjustedForKeyboard);
-    CGRect unobscuredRectInContentCoordinates = _perProcessState.frozenUnobscuredContentRect ? _perProcessState.frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()];
-    unobscuredRectInContentCoordinates = CGRectIntersection(unobscuredRectInContentCoordinates, [self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
+    WebCore::FloatRect unobscuredRectInContentCoordinates = WebCore::FloatRect(_perProcessState.frozenUnobscuredContentRect ? _perProcessState.frozenUnobscuredContentRect.value() : [self convertRect:unobscuredRect toView:_contentView.get()]);
+    unobscuredRectInContentCoordinates.intersect([self _contentBoundsExtendedForRubberbandingWithScale:scaleFactor]);
 
     auto contentInsets = [self currentlyVisibleContentInsetsWithScale:scaleFactor obscuredInsets:computedContentInsetUnadjustedForKeyboard];
 

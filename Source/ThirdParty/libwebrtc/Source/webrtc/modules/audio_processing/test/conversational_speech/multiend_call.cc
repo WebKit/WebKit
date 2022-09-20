@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <iterator>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/logging.h"
 #include "test/testsupport/file_utils.h"
 
@@ -22,7 +23,7 @@ namespace conversational_speech {
 
 MultiEndCall::MultiEndCall(
     rtc::ArrayView<const Turn> timing,
-    const std::string& audiotracks_path,
+    absl::string_view audiotracks_path,
     std::unique_ptr<WavReaderAbstractFactory> wavreader_abstract_factory)
     : timing_(timing),
       audiotracks_path_(audiotracks_path),

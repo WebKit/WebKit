@@ -14,6 +14,7 @@
 
 #include <sstream>  // no-presubmit-check TODO(webrtc:8982)
 
+#include "api/array_view.h"
 #include "test/gtest.h"
 
 namespace rtc {
@@ -28,109 +29,106 @@ class HexEncodeTest : public ::testing::Test {
   }
 
   char data_[10];
+  absl::string_view data_view_{data_, sizeof(data_)};
   char decoded_[11];
   size_t dec_res_;
 };
 
 // Test that we can convert to/from hex with no delimiter.
 TEST_F(HexEncodeTest, TestWithNoDelimiter) {
-  std::string encoded = hex_encode(data_, sizeof(data_));
+  std::string encoded = hex_encode(data_view_);
   EXPECT_EQ("80818283848586878889", encoded);
-  dec_res_ =
-      hex_decode(decoded_, sizeof(decoded_), encoded.data(), encoded.size());
+  dec_res_ = hex_decode(ArrayView<char>(decoded_), encoded);
   ASSERT_EQ(sizeof(data_), dec_res_);
   ASSERT_EQ(0, memcmp(data_, decoded_, dec_res_));
 }
 
 // Test that we can convert to/from hex with a colon delimiter.
 TEST_F(HexEncodeTest, TestWithDelimiter) {
-  std::string encoded = hex_encode_with_delimiter(data_, sizeof(data_), ':');
+  std::string encoded = hex_encode_with_delimiter(data_view_, ':');
   EXPECT_EQ("80:81:82:83:84:85:86:87:88:89", encoded);
-  dec_res_ = hex_decode_with_delimiter(decoded_, sizeof(decoded_),
-                                       encoded.data(), encoded.size(), ':');
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_), encoded, ':');
   ASSERT_EQ(sizeof(data_), dec_res_);
   ASSERT_EQ(0, memcmp(data_, decoded_, dec_res_));
 }
 
 // Test that encoding with one delimiter and decoding with another fails.
 TEST_F(HexEncodeTest, TestWithWrongDelimiter) {
-  std::string encoded = hex_encode_with_delimiter(data_, sizeof(data_), ':');
-  dec_res_ = hex_decode_with_delimiter(decoded_, sizeof(decoded_),
-                                       encoded.data(), encoded.size(), '/');
+  std::string encoded = hex_encode_with_delimiter(data_view_, ':');
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_), encoded, '/');
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that encoding without a delimiter and decoding with one fails.
 TEST_F(HexEncodeTest, TestExpectedDelimiter) {
-  std::string encoded = hex_encode(data_, sizeof(data_));
+  std::string encoded = hex_encode(data_view_);
   EXPECT_EQ(sizeof(data_) * 2, encoded.size());
-  dec_res_ = hex_decode_with_delimiter(decoded_, sizeof(decoded_),
-                                       encoded.data(), encoded.size(), ':');
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_), encoded, ':');
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that encoding with a delimiter and decoding without one fails.
 TEST_F(HexEncodeTest, TestExpectedNoDelimiter) {
-  std::string encoded = hex_encode_with_delimiter(data_, sizeof(data_), ':');
+  std::string encoded = hex_encode_with_delimiter(data_view_, ':');
   EXPECT_EQ(sizeof(data_) * 3 - 1, encoded.size());
-  dec_res_ =
-      hex_decode(decoded_, sizeof(decoded_), encoded.data(), encoded.size());
+  dec_res_ = hex_decode(ArrayView<char>(decoded_), encoded);
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that we handle a zero-length buffer with no delimiter.
 TEST_F(HexEncodeTest, TestZeroLengthNoDelimiter) {
-  std::string encoded = hex_encode("", 0);
+  std::string encoded = hex_encode("");
   EXPECT_TRUE(encoded.empty());
-  dec_res_ =
-      hex_decode(decoded_, sizeof(decoded_), encoded.data(), encoded.size());
+  dec_res_ = hex_decode(ArrayView<char>(decoded_), encoded);
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that we handle a zero-length buffer with a delimiter.
 TEST_F(HexEncodeTest, TestZeroLengthWithDelimiter) {
-  std::string encoded = hex_encode_with_delimiter("", 0, ':');
+  std::string encoded = hex_encode_with_delimiter("", ':');
   EXPECT_TRUE(encoded.empty());
-  dec_res_ = hex_decode_with_delimiter(decoded_, sizeof(decoded_),
-                                       encoded.data(), encoded.size(), ':');
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_), encoded, ':');
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that decoding into a too-small output buffer fails.
 TEST_F(HexEncodeTest, TestDecodeTooShort) {
-  dec_res_ = hex_decode_with_delimiter(decoded_, 4, "0123456789", 10, 0);
+  dec_res_ =
+      hex_decode_with_delimiter(ArrayView<char>(decoded_, 4), "0123456789", 0);
   ASSERT_EQ(0U, dec_res_);
   ASSERT_EQ(0x7f, decoded_[4]);
 }
 
 // Test that decoding non-hex data fails.
 TEST_F(HexEncodeTest, TestDecodeBogusData) {
-  dec_res_ =
-      hex_decode_with_delimiter(decoded_, sizeof(decoded_), "axyz", 4, 0);
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_), "axyz", 0);
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that decoding an odd number of hex characters fails.
 TEST_F(HexEncodeTest, TestDecodeOddHexDigits) {
-  dec_res_ = hex_decode_with_delimiter(decoded_, sizeof(decoded_), "012", 3, 0);
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_), "012", 0);
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that decoding a string with too many delimiters fails.
 TEST_F(HexEncodeTest, TestDecodeWithDelimiterTooManyDelimiters) {
-  dec_res_ = hex_decode_with_delimiter(decoded_, 4, "01::23::45::67", 14, ':');
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_, 4),
+                                       "01::23::45::67", ':');
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that decoding a string with a leading delimiter fails.
 TEST_F(HexEncodeTest, TestDecodeWithDelimiterLeadingDelimiter) {
-  dec_res_ = hex_decode_with_delimiter(decoded_, 4, ":01:23:45:67", 12, ':');
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_, 4),
+                                       ":01:23:45:67", ':');
   ASSERT_EQ(0U, dec_res_);
 }
 
 // Test that decoding a string with a trailing delimiter fails.
 TEST_F(HexEncodeTest, TestDecodeWithDelimiterTrailingDelimiter) {
-  dec_res_ = hex_decode_with_delimiter(decoded_, 4, "01:23:45:67:", 12, ':');
+  dec_res_ = hex_decode_with_delimiter(ArrayView<char>(decoded_, 4),
+                                       "01:23:45:67:", ':');
   ASSERT_EQ(0U, dec_res_);
 }
 
@@ -217,53 +215,45 @@ TEST(TokenizeFirstTest, SingleToken) {
 
 // Tests counting substrings.
 TEST(SplitTest, CountSubstrings) {
-  std::vector<std::string> fields;
-
-  EXPECT_EQ(5ul, split("one,two,three,four,five", ',', &fields));
-  fields.clear();
-  EXPECT_EQ(1ul, split("one", ',', &fields));
+  EXPECT_EQ(5ul, split("one,two,three,four,five", ',').size());
+  EXPECT_EQ(1ul, split("one", ',').size());
 
   // Empty fields between commas count.
-  fields.clear();
-  EXPECT_EQ(5ul, split("one,,three,four,five", ',', &fields));
-  fields.clear();
-  EXPECT_EQ(3ul, split(",three,", ',', &fields));
-  fields.clear();
-  EXPECT_EQ(1ul, split("", ',', &fields));
+  EXPECT_EQ(5ul, split("one,,three,four,five", ',').size());
+  EXPECT_EQ(3ul, split(",three,", ',').size());
+  EXPECT_EQ(1ul, split("", ',').size());
 }
 
 // Tests comparing substrings.
 TEST(SplitTest, CompareSubstrings) {
-  std::vector<std::string> fields;
-
-  split("find,middle,one", ',', &fields);
+  std::vector<absl::string_view> fields = split("find,middle,one", ',');
   ASSERT_EQ(3ul, fields.size());
-  ASSERT_STREQ("middle", fields.at(1).c_str());
-  fields.clear();
+  ASSERT_EQ("middle", fields.at(1));
 
   // Empty fields between commas count.
-  split("find,,middle,one", ',', &fields);
+  fields = split("find,,middle,one", ',');
   ASSERT_EQ(4ul, fields.size());
-  ASSERT_STREQ("middle", fields.at(2).c_str());
-  fields.clear();
-  split("", ',', &fields);
+  ASSERT_EQ("middle", fields.at(2));
+  fields = split("", ',');
   ASSERT_EQ(1ul, fields.size());
-  ASSERT_STREQ("", fields.at(0).c_str());
+  ASSERT_EQ("", fields.at(0));
 }
 
 TEST(SplitTest, EmptyTokens) {
-  std::vector<std::string> fields;
-  EXPECT_EQ(3ul, split("a.b.c", '.', &fields));
+  std::vector<absl::string_view> fields = split("a.b.c", '.');
+  ASSERT_EQ(3ul, fields.size());
   EXPECT_EQ("a", fields[0]);
   EXPECT_EQ("b", fields[1]);
   EXPECT_EQ("c", fields[2]);
 
-  EXPECT_EQ(3ul, split("..c", '.', &fields));
+  fields = split("..c", '.');
+  ASSERT_EQ(3ul, fields.size());
   EXPECT_TRUE(fields[0].empty());
   EXPECT_TRUE(fields[1].empty());
   EXPECT_EQ("c", fields[2]);
 
-  EXPECT_EQ(1ul, split("", '.', &fields));
+  fields = split("", '.');
+  ASSERT_EQ(1ul, fields.size());
   EXPECT_TRUE(fields[0].empty());
 }
 

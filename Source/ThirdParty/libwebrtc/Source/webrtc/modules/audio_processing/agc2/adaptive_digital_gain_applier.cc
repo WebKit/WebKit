@@ -118,7 +118,9 @@ void CopyAudio(AudioFrameView<const float> src,
 
 AdaptiveDigitalGainApplier::AdaptiveDigitalGainApplier(
     ApmDataDumper* apm_data_dumper,
-    const AudioProcessing::Config::GainController2::AdaptiveDigital& config)
+    const AudioProcessing::Config::GainController2::AdaptiveDigital& config,
+    int sample_rate_hz,
+    int num_channels)
     : apm_data_dumper_(apm_data_dumper),
       gain_applier_(
           /*hard_clip_samples=*/false,
@@ -134,7 +136,7 @@ AdaptiveDigitalGainApplier::AdaptiveDigitalGainApplier(
   RTC_DCHECK_GE(frames_to_gain_increase_allowed_, 1);
   RTC_DCHECK_GE(config_.max_output_noise_level_dbfs, -90.0f);
   RTC_DCHECK_LE(config_.max_output_noise_level_dbfs, 0.0f);
-  Initialize(/*sample_rate_hz=*/48000, /*num_channels=*/1);
+  Initialize(sample_rate_hz, num_channels);
 }
 
 void AdaptiveDigitalGainApplier::Initialize(int sample_rate_hz,

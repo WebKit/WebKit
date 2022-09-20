@@ -34,7 +34,7 @@ TEST(NullWebRtcVideoEngineTest, CheckInterface) {
       webrtc::test::MockAudioDeviceModule::CreateNice();
   webrtc::FieldTrialBasedConfig trials;
   auto audio_engine = std::make_unique<WebRtcVoiceEngine>(
-      task_queue_factory.get(), adm,
+      task_queue_factory.get(), adm.get(),
       webrtc::MockAudioEncoderFactory::CreateUnusedFactory(),
       webrtc::MockAudioDecoderFactory::CreateUnusedFactory(), nullptr,
       webrtc::AudioProcessingBuilder().Create(), nullptr, trials);

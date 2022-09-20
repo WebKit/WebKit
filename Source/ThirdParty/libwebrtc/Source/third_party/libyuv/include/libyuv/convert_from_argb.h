@@ -209,10 +209,10 @@ int ARGBToJ420(const uint8_t* src_argb,
                int src_stride_argb,
                uint8_t* dst_yj,
                int dst_stride_yj,
-               uint8_t* dst_u,
-               int dst_stride_u,
-               uint8_t* dst_v,
-               int dst_stride_v,
+               uint8_t* dst_uj,
+               int dst_stride_uj,
+               uint8_t* dst_vj,
+               int dst_stride_vj,
                int width,
                int height);
 
@@ -222,10 +222,10 @@ int ARGBToJ422(const uint8_t* src_argb,
                int src_stride_argb,
                uint8_t* dst_yj,
                int dst_stride_yj,
-               uint8_t* dst_u,
-               int dst_stride_u,
-               uint8_t* dst_v,
-               int dst_stride_v,
+               uint8_t* dst_uj,
+               int dst_stride_uj,
+               uint8_t* dst_vj,
+               int dst_stride_vj,
                int width,
                int height);
 
@@ -233,6 +233,41 @@ int ARGBToJ422(const uint8_t* src_argb,
 LIBYUV_API
 int ARGBToJ400(const uint8_t* src_argb,
                int src_stride_argb,
+               uint8_t* dst_yj,
+               int dst_stride_yj,
+               int width,
+               int height);
+
+// Convert ABGR to J420. (JPeg full range I420).
+LIBYUV_API
+int ABGRToJ420(const uint8_t* src_abgr,
+               int src_stride_abgr,
+               uint8_t* dst_yj,
+               int dst_stride_yj,
+               uint8_t* dst_uj,
+               int dst_stride_uj,
+               uint8_t* dst_vj,
+               int dst_stride_vj,
+               int width,
+               int height);
+
+// Convert ABGR to J422.
+LIBYUV_API
+int ABGRToJ422(const uint8_t* src_abgr,
+               int src_stride_abgr,
+               uint8_t* dst_yj,
+               int dst_stride_yj,
+               uint8_t* dst_uj,
+               int dst_stride_uj,
+               uint8_t* dst_vj,
+               int dst_stride_vj,
+               int width,
+               int height);
+
+// Convert ABGR to J400. (JPeg full range).
+LIBYUV_API
+int ABGRToJ400(const uint8_t* src_abgr,
+               int src_stride_abgr,
                uint8_t* dst_yj,
                int dst_stride_yj,
                int width,
@@ -324,6 +359,17 @@ int ARGBToUYVY(const uint8_t* src_argb,
                int src_stride_argb,
                uint8_t* dst_uyvy,
                int dst_stride_uyvy,
+               int width,
+               int height);
+
+// RAW to JNV21 full range NV21
+LIBYUV_API
+int RAWToJNV21(const uint8_t* src_raw,
+               int src_stride_raw,
+               uint8_t* dst_y,
+               int dst_stride_y,
+               uint8_t* dst_vu,
+               int dst_stride_vu,
                int width,
                int height);
 

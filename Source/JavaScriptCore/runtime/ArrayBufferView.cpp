@@ -31,7 +31,6 @@ namespace JSC {
 ArrayBufferView::ArrayBufferView(
     RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, size_t byteLength)
         : m_byteOffset(byteOffset)
-        , m_isDetachable(true)
         , m_byteLength(byteLength)
         , m_buffer(WTFMove(buffer))
 {

@@ -47,10 +47,7 @@ TEST(SuppressionGainDeathTest, NullOutputGains) {
       SuppressionGain(EchoCanceller3Config{}, DetectOptimization(), 16000, 1)
           .GetGain(E2, S2, R2, R2_unbounded, N2,
                    RenderSignalAnalyzer((EchoCanceller3Config{})), aec_state,
-                   std::vector<std::vector<std::vector<float>>>(
-                       3, std::vector<std::vector<float>>(
-                              1, std::vector<float>(kBlockSize, 0.0f))),
-                   false, &high_bands_gain, nullptr),
+                   Block(3, 1), false, &high_bands_gain, nullptr),
       "");
 }
 
@@ -76,9 +73,7 @@ TEST(SuppressionGain, BasicGainComputation) {
   std::vector<std::array<float, kFftLengthBy2Plus1>> N2(kNumCaptureChannels);
   std::array<float, kFftLengthBy2Plus1> g;
   std::vector<SubtractorOutput> output(kNumCaptureChannels);
-  std::vector<std::vector<std::vector<float>>> x(
-      kNumBands, std::vector<std::vector<float>>(
-                     kNumRenderChannels, std::vector<float>(kBlockSize, 0.0f)));
+  Block x(kNumBands, kNumRenderChannels);
   EchoCanceller3Config config;
   AecState aec_state(config, kNumCaptureChannels);
   ApmDataDumper data_dumper(42);

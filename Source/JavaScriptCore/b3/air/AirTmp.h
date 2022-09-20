@@ -44,10 +44,7 @@ class Code;
 
 class Tmp {
 public:
-    constexpr Tmp()
-        : m_value(0)
-    {
-    }
+    constexpr Tmp() = default;
 
     explicit Tmp(Reg reg)
     {
@@ -316,7 +313,7 @@ private:
     // 0: empty Tmp
     // positive: GPRs and then GP temps.
     // negative: FPRs and then FP temps.
-    int m_value;
+    int m_value { 0 };
 };
 
 struct TmpHash {

@@ -54,11 +54,11 @@ class VideoCodecUnitTest : public ::testing::Test {
         : test_(test) {}
 
     int32_t Decoded(VideoFrame& frame) override {
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       return -1;
     }
     int32_t Decoded(VideoFrame& frame, int64_t decode_time_ms) override {
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       return -1;
     }
     void Decoded(VideoFrame& frame,

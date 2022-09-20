@@ -35,12 +35,7 @@ namespace WTF {
 class SimpleStats {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SimpleStats()
-        : m_count(0)
-        , m_sum(0)
-        , m_sumOfSquares(0)
-    {
-    }
+    SimpleStats() = default;
     
     void add(double value)
     {
@@ -103,9 +98,9 @@ public:
     }
     
 private:
-    double m_count;
-    double m_sum;
-    double m_sumOfSquares;
+    double m_count { 0 };
+    double m_sum { 0 };
+    double m_sumOfSquares { 0 };
 };
 
 } // namespace WTF

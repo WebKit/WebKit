@@ -78,10 +78,10 @@ std::vector<unsigned int> GetTemporalIds(size_t num_layers) {
       // 0               0               ...
       return {0, 3, 2, 3, 1, 3, 2, 3};
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       break;
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return {0};
 }
 
@@ -236,10 +236,10 @@ DefaultTemporalLayers::GetDependencyInfo(size_t num_layers) {
               {"----", {kReference, kReference, kReferenceAndUpdate}},
               {"----", {kReference, kReference, kReference, kFreezeEntropy}}};
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       break;
   }
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return {{"", {kNone, kNone, kNone}}};
 }
 
@@ -694,7 +694,7 @@ FrameDependencyStructure DefaultTemporalLayers::GetTemplateStructure(
       return template_structure;
     }
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       // To make the compiler happy!
       return template_structure;
   }
@@ -725,7 +725,7 @@ std::vector<std::set<uint8_t>> GetTemporalDependencies(
               {0},    {4, 6, 8},   {4, 6, 8},   {4, 8, 10},
               {4, 8}, {8, 10, 12}, {8, 10, 12}, {8, 12, 14}};
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
       return {};
   }
 }

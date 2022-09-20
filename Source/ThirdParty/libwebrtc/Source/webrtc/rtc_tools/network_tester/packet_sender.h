@@ -15,11 +15,10 @@
 #include <string>
 
 #include "api/sequence_checker.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_factory.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/ignore_wundef.h"
 #include "rtc_base/system/no_unique_address.h"
-#include "rtc_base/task_queue.h"
 
 #ifdef WEBRTC_NETWORK_TESTER_PROTO
 RTC_PUSH_IGNORING_WUNDEF()
@@ -36,9 +35,15 @@ class TestController;
 
 class PacketSender {
  public:
-  PacketSender(TestController* test_controller,
-               const std::string& config_file_path);
+  PacketSender(
+      TestController* test_controller,
+      webrtc::TaskQueueBase* worker_queue,
+      rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> task_safety_flag,
+      const std::string& config_file_path);
   ~PacketSender();
+
+  PacketSender(const PacketSender&) = delete;
+  PacketSender& operator=(const PacketSender&) = delete;
 
   void StartSending();
   void StopSending();
@@ -57,10 +62,8 @@ class PacketSender {
   bool sending_ RTC_GUARDED_BY(worker_queue_checker_);
   const std::string config_file_path_;
   TestController* const test_controller_;
-  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
-  rtc::TaskQueue worker_queue_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(PacketSender);
+  webrtc::TaskQueueBase* worker_queue_;
+  rtc::scoped_refptr<webrtc::PendingTaskSafetyFlag> task_safety_flag_;
 };
 
 }  // namespace webrtc

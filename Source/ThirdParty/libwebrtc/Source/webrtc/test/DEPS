@@ -59,6 +59,9 @@ specific_include_rules = {
     "+pc",
     "+p2p",
   ],
+  ".*peer_connection_quality_test_params\.h": [
+    "+p2p/base/port_allocator.h",
+  ],
   ".*network_emulation_pc_unittest\.cc": [
     "+pc/peer_connection_wrapper.h",
     "+pc/test/mock_peer_connection_observers.h",

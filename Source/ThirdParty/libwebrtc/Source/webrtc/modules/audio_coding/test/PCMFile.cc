@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "test/gtest.h"
 
@@ -62,7 +63,9 @@ int16_t PCMFile::ChooseFile(std::string* file_name,
   int16_t n = 0;
 
   // Removing trailing spaces.
-  while ((isspace(tmp_name[n]) || iscntrl(tmp_name[n])) && (tmp_name[n] != 0) &&
+  while ((isspace(static_cast<unsigned char>(tmp_name[n])) ||
+          iscntrl(static_cast<unsigned char>(tmp_name[n]))) &&
+         (static_cast<unsigned char>(tmp_name[n]) != 0) &&
          (n < MAX_FILE_NAME_LENGTH_BYTE)) {
     n++;
   }
@@ -73,7 +76,9 @@ int16_t PCMFile::ChooseFile(std::string* file_name,
   // Removing trailing spaces.
   n = (int16_t)(strlen(tmp_name) - 1);
   if (n >= 0) {
-    while ((isspace(tmp_name[n]) || iscntrl(tmp_name[n])) && (n >= 0)) {
+    while ((isspace(static_cast<unsigned char>(tmp_name[n])) ||
+            iscntrl(static_cast<unsigned char>(tmp_name[n]))) &&
+           (n >= 0)) {
       n--;
     }
   }
@@ -99,12 +104,13 @@ int16_t PCMFile::ChooseFile(std::string* file_name,
   return 0;
 }
 
-void PCMFile::Open(const std::string& file_name,
+void PCMFile::Open(absl::string_view file_name,
                    uint16_t frequency,
-                   const char* mode,
+                   absl::string_view mode,
                    bool auto_rewind) {
-  if ((pcm_file_ = fopen(file_name.c_str(), mode)) == NULL) {
-    printf("Cannot open file %s.\n", file_name.c_str());
+  if ((pcm_file_ = fopen(std::string(file_name).c_str(),
+                         std::string(mode).c_str())) == NULL) {
+    printf("Cannot open file %s.\n", std::string(file_name).c_str());
     ADD_FAILURE() << "Unable to read file";
   }
   frequency_ = frequency;

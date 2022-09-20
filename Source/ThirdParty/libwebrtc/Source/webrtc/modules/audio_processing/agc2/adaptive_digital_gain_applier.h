@@ -38,7 +38,9 @@ class AdaptiveDigitalGainApplier {
 
   AdaptiveDigitalGainApplier(
       ApmDataDumper* apm_data_dumper,
-      const AudioProcessing::Config::GainController2::AdaptiveDigital& config);
+      const AudioProcessing::Config::GainController2::AdaptiveDigital& config,
+      int sample_rate_hz,
+      int num_channels);
   AdaptiveDigitalGainApplier(const AdaptiveDigitalGainApplier&) = delete;
   AdaptiveDigitalGainApplier& operator=(const AdaptiveDigitalGainApplier&) =
       delete;

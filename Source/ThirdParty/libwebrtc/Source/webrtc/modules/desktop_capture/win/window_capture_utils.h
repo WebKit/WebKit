@@ -17,7 +17,6 @@
 
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_geometry.h"
-#include "rtc_base/constructor_magic.h"
 
 namespace webrtc {
 
@@ -104,6 +103,9 @@ class WindowCaptureHelperWin {
   WindowCaptureHelperWin();
   ~WindowCaptureHelperWin();
 
+  WindowCaptureHelperWin(const WindowCaptureHelperWin&) = delete;
+  WindowCaptureHelperWin& operator=(const WindowCaptureHelperWin&) = delete;
+
   bool IsAeroEnabled();
   bool IsWindowChromeNotification(HWND hwnd);
   bool AreWindowsOverlapping(HWND hwnd,
@@ -127,8 +129,6 @@ class WindowCaptureHelperWin {
 
   // Only used on Win10+.
   Microsoft::WRL::ComPtr<IVirtualDesktopManager> virtual_desktop_manager_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(WindowCaptureHelperWin);
 };
 
 }  // namespace webrtc

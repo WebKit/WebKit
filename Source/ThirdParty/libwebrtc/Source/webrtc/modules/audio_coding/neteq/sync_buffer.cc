@@ -28,7 +28,7 @@ void SyncBuffer::PushBack(const AudioMultiVector& append_this) {
     next_index_ -= samples_added;
   } else {
     // This means that we are pushing out future data that was never used.
-    //    RTC_NOTREACHED();
+    //    RTC_DCHECK_NOTREACHED();
     // TODO(hlundin): This assert must be disabled to support 60 ms frames.
     // This should not happen even for 60 ms frames, but it does. Investigate
     // why.

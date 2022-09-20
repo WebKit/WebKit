@@ -55,8 +55,7 @@ TEST(AecDumpIntegration,
   constexpr int kNumSamplesPerChannel = kNumSampleRateHz / 100;
   std::array<int16_t, kNumSamplesPerChannel * kNumChannels> frame;
   frame.fill(0.f);
-  webrtc::StreamConfig stream_config(kNumSampleRateHz, kNumChannels,
-                                     /*has_keyboard=*/false);
+  webrtc::StreamConfig stream_config(kNumSampleRateHz, kNumChannels);
 
   EXPECT_CALL(*mock_aec_dump.get(), WriteRenderStreamMessage(_, _, _))
       .Times(Exactly(1));
@@ -75,8 +74,7 @@ TEST(AecDumpIntegration, CaptureStreamShouldBeLoggedOnceEveryProcessStream) {
   std::array<int16_t, kNumSamplesPerChannel * kNumChannels> frame;
   frame.fill(0.f);
 
-  webrtc::StreamConfig stream_config(kNumSampleRateHz, kNumChannels,
-                                     /*has_keyboard=*/false);
+  webrtc::StreamConfig stream_config(kNumSampleRateHz, kNumChannels);
 
   EXPECT_CALL(*mock_aec_dump.get(), AddCaptureStreamInput(_, _, _))
       .Times(AtLeast(1));

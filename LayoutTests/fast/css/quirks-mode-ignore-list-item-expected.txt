@@ -1,0 +1,3 @@
+
+PASS Ensure that elements with display:list-item retain their display value and are not set to 'display:block' when float is set in quirks mode.
+

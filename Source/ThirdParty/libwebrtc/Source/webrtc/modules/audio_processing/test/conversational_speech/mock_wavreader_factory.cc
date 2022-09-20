@@ -10,6 +10,7 @@
 
 #include "modules/audio_processing/test/conversational_speech/mock_wavreader_factory.h"
 
+#include "absl/strings/string_view.h"
 #include "modules/audio_processing/test/conversational_speech/mock_wavreader.h"
 #include "rtc_base/logging.h"
 #include "test/gmock.h"
@@ -36,11 +37,11 @@ MockWavReaderFactory::MockWavReaderFactory(const Params& default_params)
 MockWavReaderFactory::~MockWavReaderFactory() = default;
 
 std::unique_ptr<WavReaderInterface> MockWavReaderFactory::CreateMock(
-    const std::string& filepath) {
+    absl::string_view filepath) {
   // Search the parameters corresponding to filepath.
   size_t delimiter = filepath.find_last_of("/\\");  // Either windows or posix
-  std::string filename =
-      filepath.substr(delimiter == std::string::npos ? 0 : delimiter + 1);
+  std::string filename(filepath.substr(
+      delimiter == absl::string_view::npos ? 0 : delimiter + 1));
   const auto it = audiotrack_names_params_.find(filename);
 
   // If not found, use default parameters.

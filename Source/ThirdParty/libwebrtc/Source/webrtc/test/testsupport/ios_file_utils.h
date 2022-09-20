@@ -13,12 +13,15 @@
 
 #include <string>
 
+#include "absl/strings/string_view.h"
+
 namespace webrtc {
 namespace test {
 
 std::string IOSOutputPath();
 std::string IOSRootPath();
-std::string IOSResourcePath(std::string name, std::string extension);
+std::string IOSResourcePath(absl::string_view name,
+                            absl::string_view extension);
 
 }  // namespace test
 }  // namespace webrtc

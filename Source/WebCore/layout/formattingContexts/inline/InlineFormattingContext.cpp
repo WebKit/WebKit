@@ -292,13 +292,13 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
 
 IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstraints()
 {
-    auto& layoutState = this->layoutState();
-    if (formattingState().intrinsicWidthConstraints())
-        return *formattingState().intrinsicWidthConstraints();
+    auto& formattingState = this->formattingState();
+    if (formattingState.intrinsicWidthConstraints())
+        return *formattingState.intrinsicWidthConstraints();
 
     if (!root().hasInFlowOrFloatingChild()) {
         auto constraints = formattingGeometry().constrainByMinMaxWidth(root(), { });
-        formattingState().setIntrinsicWidthConstraints(constraints);
+        formattingState.setIntrinsicWidthConstraints(constraints);
         return constraints;
     }
 
@@ -334,8 +334,8 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
     auto maximumLineWidth = [&](auto intrinsicWidthMode) {
         // Switch to the min/max formatting root width values before formatting the lines.
         for (auto* formattingRoot : formattingContextRootList) {
-            auto intrinsicWidths = layoutState.formattingStateForBox(*formattingRoot).intrinsicWidthConstraintsForBox(*formattingRoot);
-            auto& boxGeometry = formattingState().boxGeometry(*formattingRoot);
+            auto intrinsicWidths = formattingState.intrinsicWidthConstraintsForBox(*formattingRoot);
+            auto& boxGeometry = formattingState.boxGeometry(*formattingRoot);
             auto contentWidth = (intrinsicWidthMode == IntrinsicWidthMode::Maximum ? intrinsicWidths->maximum : intrinsicWidths->minimum) - boxGeometry.horizontalMarginBorderAndPadding();
             boxGeometry.setContentBoxWidth(contentWidth);
         }
@@ -345,7 +345,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
     auto minimumContentWidth = ceiledLayoutUnit(maximumLineWidth(IntrinsicWidthMode::Minimum));
     auto maximumContentWidth = ceiledLayoutUnit(maximumLineWidth(IntrinsicWidthMode::Maximum));
     auto constraints = formattingGeometry().constrainByMinMaxWidth(root(), { minimumContentWidth, maximumContentWidth });
-    formattingState().setIntrinsicWidthConstraints(constraints);
+    formattingState.setIntrinsicWidthConstraints(constraints);
     return constraints;
 }
 

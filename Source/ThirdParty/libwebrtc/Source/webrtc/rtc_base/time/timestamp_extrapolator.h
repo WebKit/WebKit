@@ -13,38 +13,34 @@
 
 #include <stdint.h>
 
+#include "absl/types/optional.h"
+#include "api/units/timestamp.h"
+#include "modules/include/module_common_types_public.h"
+
 namespace webrtc {
 
 // Not thread safe.
 class TimestampExtrapolator {
  public:
-  explicit TimestampExtrapolator(int64_t start_ms);
-  void Update(int64_t tMs, uint32_t ts90khz);
-  int64_t ExtrapolateLocalTime(uint32_t timestamp90khz);
-  void Reset(int64_t start_ms);
+  explicit TimestampExtrapolator(Timestamp start);
+  void Update(Timestamp now, uint32_t ts90khz);
+  absl::optional<Timestamp> ExtrapolateLocalTime(uint32_t timestamp90khz) const;
+  void Reset(Timestamp start);
 
  private:
   void CheckForWrapArounds(uint32_t ts90khz);
   bool DelayChangeDetection(double error);
-  double _w[2];
-  double _pP[2][2];
-  int64_t _startMs;
-  int64_t _prevMs;
-  uint32_t _firstTimestamp;
-  int32_t _wrapArounds;
-  int64_t _prevUnwrappedTimestamp;
-  int64_t _prevWrapTimestamp;
-  const double _lambda;
-  bool _firstAfterReset;
-  uint32_t _packetCount;
-  const uint32_t _startUpFilterDelayInPackets;
 
-  double _detectorAccumulatorPos;
-  double _detectorAccumulatorNeg;
-  const double _alarmThreshold;
-  const double _accDrift;
-  const double _accMaxError;
-  const double _pP11;
+  double w_[2];
+  double p_[2][2];
+  Timestamp start_;
+  Timestamp prev_;
+  absl::optional<int64_t> first_unwrapped_timestamp_;
+  TimestampUnwrapper unwrapper_;
+  absl::optional<int64_t> prev_unwrapped_timestamp_;
+  uint32_t packet_count_;
+  double detector_accumulator_pos_;
+  double detector_accumulator_neg_;
 };
 
 }  // namespace webrtc

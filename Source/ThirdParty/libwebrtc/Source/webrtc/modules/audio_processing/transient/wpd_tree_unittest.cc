@@ -88,7 +88,7 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
     rtc::StringBuilder matlab_stream;
     matlab_stream << "audio_processing/transient/wpd" << i;
     std::string matlab_string = test::ResourcePath(matlab_stream.str(), "dat");
-    matlab_files_data[i] = FileWrapper::OpenReadOnly(matlab_string.c_str());
+    matlab_files_data[i] = FileWrapper::OpenReadOnly(matlab_string);
 
     bool file_opened = matlab_files_data[i].is_open();
     ASSERT_TRUE(file_opened) << "File could not be opened.\n" << matlab_string;
@@ -98,7 +98,7 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
     out_stream << test::OutputPath() << "wpd_" << i << ".out";
     std::string out_string = out_stream.str();
 
-    out_files_data[i] = FileWrapper::OpenWriteOnly(out_string.c_str());
+    out_files_data[i] = FileWrapper::OpenWriteOnly(out_string);
 
     file_opened = out_files_data[i].is_open();
     ASSERT_TRUE(file_opened) << "File could not be opened.\n" << out_string;
@@ -108,7 +108,7 @@ TEST(WPDTreeTest, CorrectnessBasedOnMatlabFiles) {
   std::string test_file_name = test::ResourcePath(
       "audio_processing/transient/ajm-macbook-1-spke16m", "pcm");
 
-  FileWrapper test_file = FileWrapper::OpenReadOnly(test_file_name.c_str());
+  FileWrapper test_file = FileWrapper::OpenReadOnly(test_file_name);
 
   bool file_opened = test_file.is_open();
   ASSERT_TRUE(file_opened) << "File could not be opened.\n" << test_file_name;

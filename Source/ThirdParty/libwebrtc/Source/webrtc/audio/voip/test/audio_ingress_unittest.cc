@@ -9,6 +9,7 @@
  */
 
 #include "audio/voip/audio_ingress.h"
+
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/call/transport.h"
@@ -21,6 +22,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 namespace {
@@ -91,6 +93,7 @@ class AudioIngressTest : public ::testing::Test {
     return frame;
   }
 
+  test::RunLoop run_loop_;
   SimulatedClock fake_clock_;
   SineWaveGenerator wave_generator_;
   NiceMock<MockTransport> transport_;

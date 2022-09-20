@@ -9,6 +9,8 @@
  */
 
 #include "audio/voip/audio_channel.h"
+
+#include "absl/functional/any_invocable.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/call/transport.h"
@@ -49,7 +51,7 @@ class AudioChannelTest : public ::testing::Test {
     // By default, run the queued task immediately.
     ON_CALL(task_queue_, PostTask)
         .WillByDefault(
-            Invoke([&](std::unique_ptr<QueuedTask> task) { task->Run(); }));
+            [](absl::AnyInvocable<void() &&> task) { std::move(task)(); });
   }
 
   void SetUp() override { audio_channel_ = CreateAudioChannel(kLocalSsrc); }

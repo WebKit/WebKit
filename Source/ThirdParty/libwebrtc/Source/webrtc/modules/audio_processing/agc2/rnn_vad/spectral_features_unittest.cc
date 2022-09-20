@@ -118,12 +118,11 @@ TEST(RnnVadTest, CepstralFeaturesConstantAverageZeroDerivative) {
   std::array<float, kFrameSize20ms24kHz> samples;
   rtc::ArrayView<float, kFrameSize20ms24kHz> samples_view(samples);
   WriteTestData(samples);
-  bool is_silence;
 
   // Fill the spectral features with test data.
   std::array<float, kTestFeatureVectorSize> feature_vector;
   for (int i = 0; i < kCepstralCoeffsHistorySize; ++i) {
-    is_silence = sfe.CheckSilenceComputeFeatures(
+    sfe.CheckSilenceComputeFeatures(
         samples_view, samples_view, GetHigherBandsSpectrum(&feature_vector),
         GetAverage(&feature_vector), GetFirstDerivative(&feature_vector),
         GetSecondDerivative(&feature_vector),
@@ -133,7 +132,7 @@ TEST(RnnVadTest, CepstralFeaturesConstantAverageZeroDerivative) {
 
   // Feed the test data one last time but using a different output vector.
   std::array<float, kTestFeatureVectorSize> feature_vector_last;
-  is_silence = sfe.CheckSilenceComputeFeatures(
+  sfe.CheckSilenceComputeFeatures(
       samples_view, samples_view, GetHigherBandsSpectrum(&feature_vector_last),
       GetAverage(&feature_vector_last),
       GetFirstDerivative(&feature_vector_last),

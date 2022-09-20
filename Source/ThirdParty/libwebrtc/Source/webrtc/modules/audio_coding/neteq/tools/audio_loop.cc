@@ -13,13 +13,15 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "absl/strings/string_view.h"
+
 namespace webrtc {
 namespace test {
 
-bool AudioLoop::Init(const std::string file_name,
+bool AudioLoop::Init(absl::string_view file_name,
                      size_t max_loop_length_samples,
                      size_t block_length_samples) {
-  FILE* fp = fopen(file_name.c_str(), "rb");
+  FILE* fp = fopen(std::string(file_name).c_str(), "rb");
   if (!fp)
     return false;
 

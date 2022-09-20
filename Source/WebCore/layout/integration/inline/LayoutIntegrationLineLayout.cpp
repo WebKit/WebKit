@@ -273,10 +273,8 @@ static inline LayoutSize scrollbarLogicalSize(const RenderBox& renderer)
 void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBlock)
 {
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(replacedOrInlineBlock);
-    // Internally both replaced and inline-box content use replaced boxes.
-    auto& replacedBox = downcast<Layout::ReplacedBox>(layoutBox);
 
-    auto& replacedBoxGeometry = m_layoutState.ensureGeometryForBox(replacedBox);
+    auto& replacedBoxGeometry = m_layoutState.ensureGeometryForBox(layoutBox);
     auto scrollbarSize = scrollbarLogicalSize(replacedOrInlineBlock);
     replacedBoxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
     replacedBoxGeometry.setVerticalSpaceForScrollbar(scrollbarSize.height());
@@ -317,7 +315,7 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
             ASSERT(!downcast<RenderListMarker>(replacedOrInlineBlock).isImage());
             baseline = replacedOrInlineBlock.style().metricsOfPrimaryFont().ascent();
         }
-        replacedBox.setBaseline(roundToInt(baseline));
+        layoutBox.setBaselineForIntegration(roundToInt(baseline));
     }
 }
 
@@ -410,7 +408,9 @@ void LineLayout::constructContent()
     auto& boxAndRendererList = m_boxTree.boxAndRendererList();
     for (auto& boxAndRenderer : boxAndRendererList) {
         auto& layoutBox = boxAndRenderer.box.get();
-        if (!layoutBox.isReplacedBox() && !layoutBox.isFloatingPositioned())
+        
+        bool needsRenderTreePositioning = layoutBox.isAtomicInlineLevelBox() || layoutBox.isFloatingPositioned() || layoutBox.isOutOfFlowPositioned();
+        if (!needsRenderTreePositioning)
             continue;
 
         auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);

@@ -1,0 +1,263 @@
+# Copyright (c) 2022 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+{
+  'android-devices': {
+    'swarming': {
+      'dimensions': {
+        'android_devices': '1',
+      },
+    },
+  },
+  'baremetal-pool': {
+    'swarming': {
+      'dimensions': {
+        'pool': 'WebRTC-baremetal',
+      },
+    },
+  },
+  'baremetal-try-pool': {
+    'swarming': {
+      'dimensions': {
+        'pool': 'WebRTC-baremetal-try',
+      },
+    },
+  },
+  'cores-12': {
+    'swarming': {
+      'dimensions': {
+        'cores': '12',
+      }
+    }
+  },
+  'ios-device-15.3': {
+    'swarming': {
+      'dimensions': {
+        'os': 'iOS-15.3',
+        'pool': 'chrome.tests',
+      },
+    },
+  },
+  'ios-device-perf': {
+    'swarming': {
+      'idempotent': False,
+      'dimensions': {
+        'os': 'iOS-12.4.1',
+        'pool': 'WebRTC',
+        'id': 'build15-a7',
+      },
+    },
+  },
+  'ios-simulator-12.4': {
+    '$mixin_append': {
+      'args': [
+        '--platform',
+        'iPhone X',
+        '--version',
+        '12.4',
+      ],
+      'swarming': {
+        'named_caches': [
+          {
+            'name': 'runtime_ios_12_4',
+            'path': 'Runtime-ios-12.4',
+          },
+        ],
+      },
+    }
+  },
+  'ios-simulator-13.6': {
+    '$mixin_append': {
+      'args': [
+        '--platform',
+        'iPhone X',
+        '--version',
+        '13.6',
+      ],
+      'swarming': {
+        'named_caches': [
+          {
+            'name': 'runtime_ios_13_6',
+            'path': 'Runtime-ios-13.6',
+          },
+        ],
+      },
+    }
+  },
+  'ios-simulator-14.5': {
+    '$mixin_append': {
+      'args': [
+        '--platform',
+        'iPhone X',
+        '--version',
+        '14.5',
+      ],
+      'swarming': {
+        'named_caches': [
+          {
+            'name': 'runtime_ios_14_5',
+            'path': 'Runtime-ios-14.5',
+          },
+        ],
+      },
+    }
+  },
+  'quick-perf-tests': {
+    '$mixin_append': {
+      'args': [
+        '--force_fieldtrials=WebRTC-QuickPerfTest/Enabled/',
+        '--nologs',
+      ],
+    }
+  },
+  'linux': {
+    'swarming': {
+      'dimensions': {
+        'os': 'Ubuntu'
+      }
+    }
+  },
+  'logdog-butler': {
+    'swarming': {
+      'cipd_packages': [
+        {
+          "cipd_package": 'infra/tools/luci/logdog/butler/${platform}',
+          'location': 'bin',
+          'revision': 'git_revision:ff387eadf445b24c935f1cf7d6ddd279f8a6b04c',
+        },
+      ],
+    },
+  },
+  'mac': {
+    'swarming': {
+      'dimensions': {
+        'os': 'Mac',
+      }
+    }
+  },
+  'mac-m1-cpu': {
+    'swarming': {
+      'dimensions': {
+        'cpu': 'arm64-64-Apple_M1',
+      }
+    }
+  },
+  'mac11': {
+    'swarming': {
+      'dimensions': {
+        'os': 'Mac-11'
+      }
+    }
+  },
+  'mac11_or_mac12': {
+    'swarming': {
+      'dimensions': {
+        'os': 'Mac-11|Mac-12'
+      }
+    }
+  },
+  'perf-low-bandwidth-audio-perf-test': {
+    'merge': {
+      'script': '//tools_webrtc/perf/process_perf_results_py2.py',
+      'args': ['--test-suite', 'low_bandwidth_audio_perf_test'],
+    },
+  },
+  'perf-output': {
+    '$mixin_append': {
+      'args': [
+        '--isolated-script-test-perf-output=${ISOLATED_OUTDIR}/perftest-output.pb',
+      ],
+    },
+  },
+  'perf-pool': {
+    'swarming': {
+      # Perf tests are marked as not idempotent, which means they're re-run even
+      # if they did not change this build. This will give the dashboard some
+      # more variance data to work with.
+      'idempotent': False,
+      'dimensions': {
+        'pool': 'WebRTC-perf',
+      },
+    },
+  },
+  'perf-webrtc-perf-tests': {
+    'merge': {
+      'script': '//tools_webrtc/perf/process_perf_results_py2.py',
+      'args': ['--test-suite', 'webrtc_perf_tests'],
+    },
+    '$mixin_append': {
+      'args': ['--nologs']
+    }
+  },
+  'resultdb-gtest-json-format': {
+    '$mixin_append': {
+      'args': [
+        '--gtest_output=json:${ISOLATED_OUTDIR}/gtest_output.json',
+      ],
+    },
+    'resultdb': {
+      'result_format': 'gtest_json',
+      'result_file': '${ISOLATED_OUTDIR}/gtest_output.json',
+    },
+  },
+  'resultdb-json-format': {
+    'resultdb': {
+      'result_format': 'json'
+    }
+  },
+  'shards-2': {
+    'swarming': {
+      'shards': 2,
+    },
+  },
+  'shards-4': {
+    'swarming': {
+      'shards': 4,
+    },
+  },
+  'shards-6': {
+    'swarming': {
+      'shards': 6,
+    },
+  },
+  'shamu': {
+    'swarming': {
+      'dimensions': {
+        'device_type': 'shamu',
+        'os': 'Android',
+      },
+    },
+  },
+  'timeout-2h': {
+    'swarming': {
+      'hard_timeout': 7200,
+      'io_timeout': 7200,
+    },
+  },
+  'timeout-3h': {
+    'swarming': {
+      'hard_timeout': 10800,
+      'io_timeout': 10800,
+    },
+  },
+  'webrtc-xctest': {
+    '$mixin_append': {
+      'args': [
+        '--xctest',
+        '--undefok=enable-run-ios-unittests-with-xctest',
+      ],
+    },
+  },
+  'win': {
+    'swarming': {
+      'dimensions': {
+        'os': 'Windows'
+      }
+    }
+  }
+}

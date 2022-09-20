@@ -30,12 +30,12 @@ std::unique_ptr<MediaEngineInterface> CreateMediaEngine(
     MediaEngineDependencies dependencies) {
   // TODO(sprang): Make populating `dependencies.trials` mandatory and remove
   // these fallbacks.
-  std::unique_ptr<webrtc::WebRtcKeyValueConfig> fallback_trials(
+  std::unique_ptr<webrtc::FieldTrialsView> fallback_trials(
       dependencies.trials ? nullptr : new webrtc::FieldTrialBasedConfig());
-  const webrtc::WebRtcKeyValueConfig& trials =
+  const webrtc::FieldTrialsView& trials =
       dependencies.trials ? *dependencies.trials : *fallback_trials;
   auto audio_engine = std::make_unique<WebRtcVoiceEngine>(
-      dependencies.task_queue_factory, std::move(dependencies.adm),
+      dependencies.task_queue_factory, dependencies.adm.get(),
       std::move(dependencies.audio_encoder_factory),
       std::move(dependencies.audio_decoder_factory),
       std::move(dependencies.audio_mixer),
@@ -137,7 +137,7 @@ std::vector<webrtc::RtpExtension> FilterRtpExtensions(
     const std::vector<webrtc::RtpExtension>& extensions,
     bool (*supported)(absl::string_view),
     bool filter_redundant_extensions,
-    const webrtc::WebRtcKeyValueConfig& trials) {
+    const webrtc::FieldTrialsView& trials) {
   // Don't check against old parameters; this should have been done earlier.
   RTC_DCHECK(ValidateRtpExtensions(extensions, {}));
   RTC_DCHECK(supported);

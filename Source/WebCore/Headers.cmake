@@ -325,6 +325,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/push-api/PushSubscriptionData.h
     Modules/push-api/PushSubscriptionIdentifier.h
 
+    Modules/reporting/DeprecationReportBody.h
     Modules/reporting/Report.h
     Modules/reporting/ReportBody.h
     Modules/reporting/ReportingClient.h

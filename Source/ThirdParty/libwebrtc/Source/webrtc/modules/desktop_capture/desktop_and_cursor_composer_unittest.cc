@@ -15,17 +15,21 @@
 
 #include <memory>
 #include <utility>
+#include <vector>
 
 #include "modules/desktop_capture/desktop_capturer.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/mouse_cursor.h"
 #include "modules/desktop_capture/shared_desktop_frame.h"
 #include "rtc_base/arraysize.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 namespace {
+
+using testing::ElementsAre;
 
 const int kFrameXCoord = 100;
 const int kFrameYCoord = 200;
@@ -75,12 +79,12 @@ uint32_t BlendPixels(uint32_t dest, uint32_t src) {
   return b + (g << 8) + (r << 16) + 0xff000000;
 }
 
-DesktopFrame* CreateTestFrame() {
-  DesktopFrame* frame =
-      new BasicDesktopFrame(DesktopSize(kScreenWidth, kScreenHeight));
+DesktopFrame* CreateTestFrame(int width = kScreenWidth,
+                              int height = kScreenHeight) {
+  DesktopFrame* frame = new BasicDesktopFrame(DesktopSize(width, height));
   uint32_t* data = reinterpret_cast<uint32_t*>(frame->data());
-  for (int y = 0; y < kScreenHeight; ++y) {
-    for (int x = 0; x < kScreenWidth; ++x) {
+  for (int y = 0; y < height; ++y) {
+    for (int x = 0; x < width; ++x) {
       *(data++) = GetFakeFramePixelValue(DesktopVector(x, y));
     }
   }
@@ -184,10 +188,20 @@ void VerifyFrame(const DesktopFrame& frame,
 
 }  // namespace
 
+bool operator==(const DesktopRect& left, const DesktopRect& right) {
+  return left.equals(right);
+}
+
+std::ostream& operator<<(std::ostream& out, const DesktopRect& rect) {
+  out << "{" << rect.left() << "+" << rect.top() << "-" << rect.width() << "x"
+      << rect.height() << "}";
+  return out;
+}
+
 class DesktopAndCursorComposerTest : public ::testing::Test,
                                      public DesktopCapturer::Callback {
  public:
-  DesktopAndCursorComposerTest(bool include_cursor = true)
+  explicit DesktopAndCursorComposerTest(bool include_cursor = true)
       : fake_screen_(new FakeScreenCapturer()),
         fake_cursor_(include_cursor ? new FakeMouseMonitor() : nullptr),
         blender_(fake_screen_, fake_cursor_) {

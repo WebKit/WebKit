@@ -10,10 +10,12 @@
 #ifndef TEST_NETWORK_FEEDBACK_GENERATOR_H_
 #define TEST_NETWORK_FEEDBACK_GENERATOR_H_
 
-#include <map>
+#include <cstdint>
+#include <queue>
 #include <utility>
 #include <vector>
 
+#include "api/transport/network_types.h"
 #include "api/transport/test/feedback_generator_interface.h"
 #include "call/simulated_network.h"
 #include "test/network/network_emulation.h"
@@ -24,7 +26,7 @@ namespace webrtc {
 
 class FeedbackGeneratorImpl
     : public FeedbackGenerator,
-      public TwoWayFakeTrafficRoute<SentPacket, TransportPacketsFeedback>::
+      public TwoWayFakeTrafficRoute<SentPacket, std::vector<PacketResult>>::
           TrafficHandlerInterface {
  public:
   explicit FeedbackGeneratorImpl(Config config);
@@ -39,7 +41,7 @@ class FeedbackGeneratorImpl
   void SetSendLinkCapacity(DataRate capacity) override;
 
   void OnRequest(SentPacket packet, Timestamp arrival_time) override;
-  void OnResponse(TransportPacketsFeedback packet,
+  void OnResponse(std::vector<PacketResult> packet_results,
                   Timestamp arrival_time) override;
 
  private:
@@ -47,9 +49,10 @@ class FeedbackGeneratorImpl
   ::webrtc::test::NetworkEmulationManagerImpl net_;
   SimulatedNetwork* const send_link_;
   SimulatedNetwork* const ret_link_;
-  TwoWayFakeTrafficRoute<SentPacket, TransportPacketsFeedback> route_;
+  TwoWayFakeTrafficRoute<SentPacket, std::vector<PacketResult>> route_;
 
-  TransportPacketsFeedback builder_;
+  std::queue<SentPacket> sent_packets_;
+  std::vector<PacketResult> received_packets_;
   std::vector<TransportPacketsFeedback> feedback_;
   int64_t sequence_number_ = 1;
 };

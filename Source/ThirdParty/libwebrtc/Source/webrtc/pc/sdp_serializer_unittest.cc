@@ -10,12 +10,14 @@
 
 #include "pc/sdp_serializer.h"
 
+#include <stddef.h>
+
 #include <map>
 #include <string>
 #include <utility>
 #include <vector>
 
-#include "rtc_base/gunit.h"
+#include "test/gtest.h"
 
 using cricket::RidDescription;
 using cricket::RidDirection;

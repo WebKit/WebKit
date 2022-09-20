@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -403,10 +403,13 @@ template<> struct IntegerToStringConversionTrait<String> {
 };
 
 #ifdef __OBJC__
-
 WTF_EXPORT_PRIVATE RetainPtr<id> makeNSArrayElement(const String&);
 WTF_EXPORT_PRIVATE std::optional<String> makeVectorElement(const String*, id);
+#endif
 
+#if USE(CF)
+WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> makeCFArrayElement(const String&);
+WTF_EXPORT_PRIVATE std::optional<String> makeVectorElement(const String*, CFStringRef);
 #endif
 
 // Definitions of string operations

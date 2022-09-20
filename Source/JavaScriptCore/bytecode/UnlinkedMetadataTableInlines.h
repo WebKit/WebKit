@@ -33,29 +33,18 @@ namespace JSC {
 
 
 ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable()
-    : m_hasMetadata(false)
-    , m_isFinalized(false)
-    , m_isLinked(false)
-    , m_is32Bit(false)
-    , m_rawBuffer(static_cast<uint8_t*>(MetadataTableMalloc::zeroedMalloc(sizeof(LinkingData) + s_offset32TableSize)))
+    : m_rawBuffer(static_cast<uint8_t*>(MetadataTableMalloc::zeroedMalloc(sizeof(LinkingData) + s_offset32TableSize)))
 {
 }
 
 ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(bool is32Bit)
-    : m_hasMetadata(false)
-    , m_isFinalized(false)
-    , m_isLinked(false)
-    , m_is32Bit(is32Bit)
+    : m_is32Bit(is32Bit)
     , m_rawBuffer(static_cast<uint8_t*>(MetadataTableMalloc::zeroedMalloc(sizeof(LinkingData) + (is32Bit ? s_offset16TableSize + s_offset32TableSize : s_offset16TableSize))))
 {
 }
 
 ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable(EmptyTag)
-    : m_hasMetadata(false)
-    , m_isFinalized(true)
-    , m_isLinked(false)
-    , m_is32Bit(false)
-    , m_rawBuffer(nullptr)
+    : m_isFinalized(true)
 {
 }
 

@@ -31,6 +31,10 @@
 
 namespace WGSL {
 
+namespace AST {
+class ArrayType;
+}
+
 template<typename Lexer>
 class Parser {
 public:
@@ -50,6 +54,7 @@ public:
     Expected<AST::StructMember, Error> parseStructMember();
     Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDecl();
     Expected<UniqueRef<AST::TypeDecl>, Error> parseTypeDeclAfterIdentifier(StringView&&, SourcePosition start);
+    Expected<UniqueRef<AST::TypeDecl>, Error> parseArrayType();
     Expected<AST::VariableDecl, Error> parseVariableDecl();
     Expected<AST::VariableDecl, Error> parseVariableDeclWithAttributes(AST::Attributes&&);
     Expected<AST::VariableQualifier, Error> parseVariableQualifier();

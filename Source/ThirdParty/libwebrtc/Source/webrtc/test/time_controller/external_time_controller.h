@@ -19,7 +19,6 @@
 #include "api/test/time_controller.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "modules/utility/include/process_thread.h"
 #include "system_wrappers/include/clock.h"
 #include "test/time_controller/simulated_time_controller.h"
 
@@ -35,8 +34,6 @@ class ExternalTimeController : public TimeController, public TaskQueueFactory {
   // Implementation of TimeController.
   Clock* GetClock() override;
   TaskQueueFactory* GetTaskQueueFactory() override;
-  std::unique_ptr<ProcessThread> CreateProcessThread(
-      const char* thread_name) override;
   void AdvanceTime(TimeDelta duration) override;
   std::unique_ptr<rtc::Thread> CreateThread(
       const std::string& name,
@@ -49,7 +46,6 @@ class ExternalTimeController : public TimeController, public TaskQueueFactory {
       TaskQueueFactory::Priority priority) const override;
 
  private:
-  class ProcessThreadWrapper;
   class TaskQueueWrapper;
 
   // Executes any tasks scheduled at or before the current time.  May call

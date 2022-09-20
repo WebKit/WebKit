@@ -37,8 +37,7 @@ struct MathICGenerationState;
 
 class JITMulGenerator {
 public:
-    JITMulGenerator()
-    { }
+    JITMulGenerator() = default;
 
     JITMulGenerator(SnippetOperand leftOperand, SnippetOperand rightOperand,
         JSValueRegs result, JSValueRegs left, JSValueRegs right,

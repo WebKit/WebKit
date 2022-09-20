@@ -54,7 +54,7 @@ class AudioMixerManagerMac {
  private:
   int32_t CloseSpeakerLocked() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
   int32_t CloseMicrophoneLocked() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
-  static void logCAMsg(const rtc::LoggingSeverity sev,
+  static void logCAMsg(rtc::LoggingSeverity sev,
                        const char* msg,
                        const char* err);
 

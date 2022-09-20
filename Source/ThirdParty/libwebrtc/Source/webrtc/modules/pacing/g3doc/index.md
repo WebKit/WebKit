@@ -52,7 +52,7 @@ like this:
     now out of scope.
 
 Asynchronously to this, the estimated available send bandwidth is determined -
-and the target send rate is set on the `RtpPacketPacker` via the `void
+and the target send rate is set on the `RtpPacketPacer` via the `void
 SetPacingRates(DataRate pacing_rate, DataRate padding_rate)` method.
 
 ## Packet Prioritization
@@ -72,14 +72,11 @@ no stream needlessly blocks others.
 
 ## Implementations
 
-There are currently two implementations of the paced sender (although they share
-a large amount of logic via the `PacingController` class). The legacy
-[PacedSender] uses a dedicated thread to poll the pacing controller at 5ms
-intervals, and has a lock to protect internal state. The newer
-[TaskQueuePacedSender] as the name implies uses a TaskQueue to both protect
-state and schedule packet processing, the latter is dynamic based on actual send
-rates and constraints. Avoid using the legacy PacedSender in new applications as
-we are planning to remove it.
+The main class to use is called [TaskQueuePacedSender]. It uses a task queue to
+manage thread safety and schedule delayed tasks, but delegates most of the actual
+work to the `PacingController` class.
+This way, it's possible to develop a custom pacer with different scheduling
+mechanism - but ratain the same pacing logic.
 
 ## The Packet Router
 
@@ -136,10 +133,9 @@ than cause severe delays.
 
 If the bandwidth estimator supports bandwidth probing, it may request a cluster
 of packets to be sent at a specified rate in order to gauge if this causes
-increased delay/loss on the network. Use the `void CreateProbeCluster(DataRate
-bitrate, int cluster_id)` method - packets sent via this `PacketRouter` will be
-marked with the corresponding cluster_id in the attached `PacedPacketInfo`
-struct.
+increased delay/loss on the network. Use the `void CreateProbeCluster(...)`
+method - packets sent via this `PacketRouter` will be marked with the
+corresponding cluster_id in the attached `PacedPacketInfo` struct.
 
 If congestion window pushback is used, the state can be updated using
 `SetCongestionWindow()` and `UpdateOutstandingData()`.
@@ -164,6 +160,5 @@ Several methods are used to gather statistics in pacer state:
 [RtpPacketSender]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/rtp_rtcp/include/rtp_packet_sender.h;drc=ea55b0872f14faab23a4e5dbcb6956369c8ed5dc
 [RtpPacketPacer]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/pacing/rtp_packet_pacer.h;drc=e7bc3a347760023dd4840cf6ebdd1e6c8592f4d7
 [PacketRouter]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/pacing/packet_router.h;drc=3d2210876e31d0bb5c7de88b27fd02ceb1f4e03e
-[PacedSender]: https://source.chromium.org/chromium/chromium/src/+/main:media/cast/net/pacing/paced_sender.h;drc=df00acf8f3cea9a947e11dc687aa1147971a1883
 [TaskQueuePacedSender]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/pacing/task_queue_paced_sender.h;drc=5051693ada61bc7b78855c6fb3fa87a0394fa813
 [RoundRobinPacketQueue]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/modules/pacing/round_robin_packet_queue.h;drc=b571ff48f8fe07678da5a854cd6c3f5dde02855f

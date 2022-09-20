@@ -121,7 +121,7 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
             lineInkOverflowRect.unite(box.inkOverflow());
 
             auto& layoutBox = box.layoutBox();
-            if (layoutBox.isReplacedBox()) {
+            if (layoutBox.isAtomicInlineLevelBox()) {
                 // Similar to LegacyInlineFlowBox::addReplacedChildOverflow.
                 auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
                 if (!renderer.hasSelfPaintingLayer()) {

@@ -15,7 +15,6 @@ include_rules = [
   "+p2p",
   "+sound",
   "+system_wrappers",
-  "+usrsctplib",
   "+third_party/libyuv",
 ]
 

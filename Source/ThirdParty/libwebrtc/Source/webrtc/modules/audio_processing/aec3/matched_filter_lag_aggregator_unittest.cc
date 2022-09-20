@@ -27,69 +27,31 @@ constexpr size_t kNumLagsBeforeDetection = 26;
 
 }  // namespace
 
-// Verifies that the most accurate lag estimate is chosen.
-TEST(MatchedFilterLagAggregator, MostAccurateLagChosen) {
-  constexpr size_t kLag1 = 5;
-  constexpr size_t kLag2 = 10;
-  ApmDataDumper data_dumper(0);
-  EchoCanceller3Config config;
-  std::vector<MatchedFilter::LagEstimate> lag_estimates(2);
-  MatchedFilterLagAggregator aggregator(
-      &data_dumper, std::max(kLag1, kLag2),
-      config.delay.delay_selection_thresholds);
-  lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, kLag1, true);
-  lag_estimates[1] = MatchedFilter::LagEstimate(0.5f, true, kLag2, true);
-
-  for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
-    aggregator.Aggregate(lag_estimates);
-  }
-
-  absl::optional<DelayEstimate> aggregated_lag =
-      aggregator.Aggregate(lag_estimates);
-  EXPECT_TRUE(aggregated_lag);
-  EXPECT_EQ(kLag1, aggregated_lag->delay);
-
-  lag_estimates[0] = MatchedFilter::LagEstimate(0.5f, true, kLag1, true);
-  lag_estimates[1] = MatchedFilter::LagEstimate(1.f, true, kLag2, true);
-
-  for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
-    aggregated_lag = aggregator.Aggregate(lag_estimates);
-    EXPECT_TRUE(aggregated_lag);
-    EXPECT_EQ(kLag1, aggregated_lag->delay);
-  }
-
-  aggregated_lag = aggregator.Aggregate(lag_estimates);
-  aggregated_lag = aggregator.Aggregate(lag_estimates);
-  EXPECT_TRUE(aggregated_lag);
-  EXPECT_EQ(kLag2, aggregated_lag->delay);
-}
-
 // Verifies that varying lag estimates causes lag estimates to not be deemed
 // reliable.
 TEST(MatchedFilterLagAggregator,
      LagEstimateInvarianceRequiredForAggregatedLag) {
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
-  std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
-  MatchedFilterLagAggregator aggregator(
-      &data_dumper, 100, config.delay.delay_selection_thresholds);
+  MatchedFilterLagAggregator aggregator(&data_dumper, /*max_filter_lag=*/100,
+                                        config.delay);
 
   absl::optional<DelayEstimate> aggregated_lag;
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
-    lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, 10, true);
-    aggregated_lag = aggregator.Aggregate(lag_estimates);
+    aggregated_lag = aggregator.Aggregate(
+        MatchedFilter::LagEstimate(/*lag=*/10, /*pre_echo_lag=*/10));
   }
   EXPECT_TRUE(aggregated_lag);
 
   for (size_t k = 0; k < kNumLagsBeforeDetection * 100; ++k) {
-    lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, k % 100, true);
-    aggregated_lag = aggregator.Aggregate(lag_estimates);
+    aggregated_lag = aggregator.Aggregate(
+        MatchedFilter::LagEstimate(/*lag=*/k % 100, /*pre_echo_lag=*/k % 100));
   }
   EXPECT_FALSE(aggregated_lag);
 
   for (size_t k = 0; k < kNumLagsBeforeDetection * 100; ++k) {
-    lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, k % 100, true);
-    aggregated_lag = aggregator.Aggregate(lag_estimates);
+    aggregated_lag = aggregator.Aggregate(
+        MatchedFilter::LagEstimate(/*lag=*/k % 100, /*pre_echo_lag=*/k % 100));
     EXPECT_FALSE(aggregated_lag);
   }
 }
@@ -101,13 +63,11 @@ TEST(MatchedFilterLagAggregator,
   constexpr size_t kLag = 5;
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
-  std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
-  MatchedFilterLagAggregator aggregator(
-      &data_dumper, kLag, config.delay.delay_selection_thresholds);
+  MatchedFilterLagAggregator aggregator(&data_dumper, /*max_filter_lag=*/kLag,
+                                        config.delay);
   for (size_t k = 0; k < kNumLagsBeforeDetection * 10; ++k) {
-    lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, kLag, false);
-    absl::optional<DelayEstimate> aggregated_lag =
-        aggregator.Aggregate(lag_estimates);
+    absl::optional<DelayEstimate> aggregated_lag = aggregator.Aggregate(
+        MatchedFilter::LagEstimate(/*lag=*/kLag, /*pre_echo_lag=*/kLag));
     EXPECT_FALSE(aggregated_lag);
     EXPECT_EQ(kLag, aggregated_lag->delay);
   }
@@ -122,20 +82,19 @@ TEST(MatchedFilterLagAggregator, DISABLED_PersistentAggregatedLag) {
   ApmDataDumper data_dumper(0);
   EchoCanceller3Config config;
   std::vector<MatchedFilter::LagEstimate> lag_estimates(1);
-  MatchedFilterLagAggregator aggregator(
-      &data_dumper, std::max(kLag1, kLag2),
-      config.delay.delay_selection_thresholds);
+  MatchedFilterLagAggregator aggregator(&data_dumper, std::max(kLag1, kLag2),
+                                        config.delay);
   absl::optional<DelayEstimate> aggregated_lag;
   for (size_t k = 0; k < kNumLagsBeforeDetection; ++k) {
-    lag_estimates[0] = MatchedFilter::LagEstimate(1.f, true, kLag1, true);
-    aggregated_lag = aggregator.Aggregate(lag_estimates);
+    aggregated_lag = aggregator.Aggregate(
+        MatchedFilter::LagEstimate(/*lag=*/kLag1, /*pre_echo_lag=*/kLag1));
   }
   EXPECT_TRUE(aggregated_lag);
   EXPECT_EQ(kLag1, aggregated_lag->delay);
 
   for (size_t k = 0; k < kNumLagsBeforeDetection * 40; ++k) {
-    lag_estimates[0] = MatchedFilter::LagEstimate(1.f, false, kLag2, true);
-    aggregated_lag = aggregator.Aggregate(lag_estimates);
+    aggregated_lag = aggregator.Aggregate(
+        MatchedFilter::LagEstimate(/*lag=*/kLag2, /*pre_echo_lag=*/kLag2));
     EXPECT_TRUE(aggregated_lag);
     EXPECT_EQ(kLag1, aggregated_lag->delay);
   }
@@ -146,9 +105,7 @@ TEST(MatchedFilterLagAggregator, DISABLED_PersistentAggregatedLag) {
 // Verifies the check for non-null data dumper.
 TEST(MatchedFilterLagAggregatorDeathTest, NullDataDumper) {
   EchoCanceller3Config config;
-  EXPECT_DEATH(MatchedFilterLagAggregator(
-                   nullptr, 10, config.delay.delay_selection_thresholds),
-               "");
+  EXPECT_DEATH(MatchedFilterLagAggregator(nullptr, 10, config.delay), "");
 }
 
 #endif

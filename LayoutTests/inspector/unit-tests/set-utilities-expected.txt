@@ -12,6 +12,13 @@ PASS: Set can filter based on the set object.
 PASS: Set can filter with a different this.
 PASS: Set can filter based on the set object with a different this.
 
+-- Running test case: Set.prototype.some
+PASS: Set can 'some' based on the value.
+PASS: Set can 'some' based on the key.
+PASS: Set can 'some' based on the set object.
+PASS: Set can 'some' with a different this.
+PASS: Set can 'some' based on the set object with a different this.
+
 -- Running test case: Set.prototype.pushAll
 Array:
 [1,2] => [1,2,"a1","a2"]

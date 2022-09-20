@@ -17,9 +17,7 @@ rtc_library("data_generator") {
   testonly = true
   deps = [
     "../../../api:array_view",
-    "../../../rtc_base",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
     "../common:internal_types",
     "../packet:data",
     "../public:types",

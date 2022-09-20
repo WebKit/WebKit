@@ -351,10 +351,6 @@ Interpreter::Interpreter()
 #endif // ASSERT_ENABLED
 }
 
-Interpreter::~Interpreter()
-{
-}
-
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 HashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
@@ -491,10 +487,7 @@ ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, Co
 
 class GetCatchHandlerFunctor {
 public:
-    GetCatchHandlerFunctor()
-        : m_handler(nullptr)
-    {
-    }
+    GetCatchHandlerFunctor() = default;
 
     HandlerInfo* handler() { return m_handler; }
 
@@ -514,7 +507,7 @@ public:
     }
 
 private:
-    mutable HandlerInfo* m_handler;
+    mutable HandlerInfo* m_handler { nullptr };
 };
 
 CatchInfo::CatchInfo(const HandlerInfo* handler, CodeBlock* codeBlock)
@@ -1161,7 +1154,7 @@ JSObject* Interpreter::executeConstruct(JSGlobalObject* lexicalGlobalObject, JSO
     return checkedReturn(asObject(result));
 }
 
-CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionExecutable, CallFrame* callFrame, ProtoCallFrame* protoCallFrame, JSFunction* function, int argumentCountIncludingThis, JSScope* scope, const ArgList& args)
+CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionExecutable, ProtoCallFrame* protoCallFrame, JSFunction* function, int argumentCountIncludingThis, JSScope* scope, const ArgList& args)
 {
     VM& vm = scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
@@ -1182,7 +1175,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
 
     protoCallFrame->init(newCodeBlock, function->globalObject(), function, jsUndefined(), argsCount, args.data());
     // Return the successful closure:
-    CallFrameClosure result = { callFrame, protoCallFrame, function, functionExecutable, &vm, scope, newCodeBlock->numParameters(), argumentCountIncludingThis };
+    CallFrameClosure result = { protoCallFrame, function, functionExecutable, &vm, scope, newCodeBlock->numParameters(), argumentCountIncludingThis };
     return result;
 }
 

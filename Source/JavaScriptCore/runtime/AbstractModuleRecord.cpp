@@ -200,8 +200,7 @@ struct AbstractModuleRecord::ResolveQuery {
 
     enum DeletedValueTag { DeletedValue };
     ResolveQuery(DeletedValueTag)
-        : moduleRecord(nullptr)
-        , exportName(WTF::HashTableDeletedValue)
+        : exportName(WTF::HashTableDeletedValue)
     {
     }
 
@@ -226,7 +225,7 @@ struct AbstractModuleRecord::ResolveQuery {
 
     // The module record is not marked from the GC. But these records are reachable from the JSGlobalObject.
     // So we don't care the reachability to this record.
-    AbstractModuleRecord* moduleRecord;
+    AbstractModuleRecord* moduleRecord { nullptr };
     RefPtr<UniquedStringImpl> exportName;
 };
 

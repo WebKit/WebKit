@@ -21,6 +21,17 @@ namespace webrtc {
 namespace test {
 TestVideoCapturer::~TestVideoCapturer() = default;
 
+void TestVideoCapturer::OnOutputFormatRequest(
+    int width,
+    int height,
+    const absl::optional<int>& max_fps) {
+  absl::optional<std::pair<int, int>> target_aspect_ratio =
+      std::make_pair(width, height);
+  absl::optional<int> max_pixel_count = width * height;
+  video_adapter_.OnOutputFormatRequest(target_aspect_ratio, max_pixel_count,
+                                       max_fps);
+}
+
 void TestVideoCapturer::OnFrame(const VideoFrame& original_frame) {
   int cropped_width = 0;
   int cropped_height = 0;

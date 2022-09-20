@@ -48,9 +48,7 @@ public:
     }
     
 protected:
-    AbstractLocker()
-    {
-    }
+    AbstractLocker() = default;
 };
 
 template<typename T> class DropLockForScope;
@@ -70,8 +68,10 @@ public:
     // but it's not necessary to engage in that protocol yet. For example,
     // this often happens when an object is newly allocated and it can not
     // be accessed concurrently.
-    Locker(NoLockingNecessaryTag) : m_lockable(nullptr) { }
-    
+    Locker(NoLockingNecessaryTag)
+    {
+    }
+
     Locker(std::underlying_type_t<NoLockingNecessaryTag>) = delete;
 
     ~Locker()
@@ -138,7 +138,7 @@ private:
         compilerFence();
     }
     
-    T* m_lockable;
+    T* m_lockable { nullptr };
 };
 
 template<typename LockType>

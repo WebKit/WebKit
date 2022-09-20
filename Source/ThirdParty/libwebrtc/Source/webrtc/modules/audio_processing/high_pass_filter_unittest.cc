@@ -75,7 +75,7 @@ void RunBitexactnessTest(int num_channels,
                          bool use_audio_buffer_interface,
                          const std::vector<float>& input,
                          const std::vector<float>& reference) {
-  const StreamConfig stream_config(16000, num_channels, false);
+  const StreamConfig stream_config(16000, num_channels);
   HighPassFilter high_pass_filter(16000, num_channels);
 
   std::vector<float> output;
@@ -131,8 +131,8 @@ std::vector<float> CreateVector(const rtc::ArrayView<const float>& array_view) {
 }  // namespace
 
 TEST(HighPassFilterAccuracyTest, ResetWithAudioBufferInterface) {
-  const StreamConfig stream_config_stereo(16000, 2, false);
-  const StreamConfig stream_config_mono(16000, 1, false);
+  const StreamConfig stream_config_stereo(16000, 2);
+  const StreamConfig stream_config_mono(16000, 1);
   std::vector<float> x_mono(160, 1.f);
   std::vector<float> x_stereo(320, 1.f);
   HighPassFilter hpf(16000, 1);
@@ -147,8 +147,8 @@ TEST(HighPassFilterAccuracyTest, ResetWithAudioBufferInterface) {
 }
 
 TEST(HighPassFilterAccuracyTest, ResetWithVectorInterface) {
-  const StreamConfig stream_config_stereo(16000, 2, false);
-  const StreamConfig stream_config_mono(16000, 1, false);
+  const StreamConfig stream_config_stereo(16000, 2);
+  const StreamConfig stream_config_mono(16000, 1);
   std::vector<float> x_mono(160, 1.f);
   std::vector<float> x_stereo(320, 1.f);
   HighPassFilter hpf(16000, 1);

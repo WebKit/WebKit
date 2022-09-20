@@ -35,6 +35,9 @@ class DesktopFrameCGImage final : public DesktopFrame {
 
   ~DesktopFrameCGImage() override;
 
+  DesktopFrameCGImage(const DesktopFrameCGImage&) = delete;
+  DesktopFrameCGImage& operator=(const DesktopFrameCGImage&) = delete;
+
  private:
   static std::unique_ptr<DesktopFrameCGImage> CreateFromCGImage(
       rtc::ScopedCFTypeRef<CGImageRef> cg_image);
@@ -48,8 +51,6 @@ class DesktopFrameCGImage final : public DesktopFrame {
 
   const rtc::ScopedCFTypeRef<CGImageRef> cg_image_;
   const rtc::ScopedCFTypeRef<CFDataRef> cg_data_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(DesktopFrameCGImage);
 };
 
 }  // namespace webrtc

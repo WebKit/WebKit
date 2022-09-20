@@ -84,12 +84,8 @@ public:
     class iterator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        iterator()
-            : m_bitmap(nullptr)
-            , m_index(0)
-        {
-        }
-        
+        iterator() = default;
+
         iterator(const Bitmap& bitmap, size_t index)
             : m_bitmap(&bitmap)
             , m_index(index)
@@ -115,8 +111,8 @@ public:
         }
 
     private:
-        const Bitmap* m_bitmap;
-        size_t m_index;
+        const Bitmap* m_bitmap { nullptr };
+        size_t m_index { 0 };
     };
     
     // Use this to iterate over set bits.

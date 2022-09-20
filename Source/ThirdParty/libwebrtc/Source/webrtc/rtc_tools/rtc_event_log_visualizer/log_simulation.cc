@@ -152,7 +152,7 @@ void LogBasedNetworkControllerSimulation::OnReceiverReport(
           CompactNtp(clock->ConvertTimestampToNtpTime(report_log_time));
       uint32_t rtt_ntp =
           receive_time_ntp - rb.delay_since_last_sr() - rb.last_sr();
-      rtt = std::min(rtt, TimeDelta::Millis(CompactNtpRttToMs(rtt_ntp)));
+      rtt = std::min(rtt, CompactNtpRttToTimeDelta(rtt_ntp));
     }
   }
   if (rtt.IsFinite()) {

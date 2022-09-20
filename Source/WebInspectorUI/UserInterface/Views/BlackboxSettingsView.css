@@ -57,6 +57,12 @@
     margin-inline: 0.5px 4px;
 }
 
+.settings-view.blackbox > p > label > input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin-top: 1px;
+}
+
 .settings-view.blackbox > p > label > span {
     margin-top: 1.5px;
 }

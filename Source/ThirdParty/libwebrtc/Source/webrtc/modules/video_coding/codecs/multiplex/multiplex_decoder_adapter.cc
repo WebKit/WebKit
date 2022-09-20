@@ -36,11 +36,11 @@ class MultiplexDecoderAdapter::AdapterDecodedImageCallback
     adapter_->Decoded(stream_idx_, &decoded_image, decode_time_ms, qp);
   }
   int32_t Decoded(VideoFrame& decoded_image) override {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return WEBRTC_VIDEO_CODEC_OK;
   }
   int32_t Decoded(VideoFrame& decoded_image, int64_t decode_time_ms) override {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return WEBRTC_VIDEO_CODEC_OK;
   }
 

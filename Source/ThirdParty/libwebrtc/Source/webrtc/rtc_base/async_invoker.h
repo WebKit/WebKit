@@ -18,14 +18,14 @@
 #include "absl/base/attributes.h"
 #include "api/scoped_refptr.h"
 #include "rtc_base/async_invoker_inl.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/event.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 
 namespace rtc {
 
+// DEPRECATED - do not use.
+//
 // Invokes function objects (aka functors) asynchronously on a Thread, and
 // owns the lifetime of calls (ie, when this object is destroyed, calls in
 // flight are cancelled). AsyncInvoker can optionally execute a user-specified
@@ -92,6 +92,9 @@ class DEPRECATED_AsyncInvoker : public MessageHandlerAutoCleanup {
   DEPRECATED_AsyncInvoker();
   ~DEPRECATED_AsyncInvoker() override;
 
+  DEPRECATED_AsyncInvoker(const DEPRECATED_AsyncInvoker&) = delete;
+  DEPRECATED_AsyncInvoker& operator=(const DEPRECATED_AsyncInvoker&) = delete;
+
   // Call `functor` asynchronously on `thread`, with no callback upon
   // completion. Returns immediately.
   template <class ReturnT, class FunctorT>
@@ -118,13 +121,6 @@ class DEPRECATED_AsyncInvoker : public MessageHandlerAutoCleanup {
             this, std::forward<FunctorT>(functor)));
     DoInvokeDelayed(posted_from, thread, std::move(closure), delay_ms, id);
   }
-
-  // Synchronously execute on `thread` all outstanding calls we own
-  // that are pending on `thread`, and wait for calls to complete
-  // before returning. Optionally filter by message id.
-  // The destructor will not wait for outstanding calls, so if that
-  // behavior is desired, call Flush() before destroying this object.
-  void Flush(Thread* thread, uint32_t id = MQID_ANY);
 
   // Cancels any outstanding calls we own that are pending on any thread, and
   // which have not yet started to execute. This does not wait for any calls
@@ -153,11 +149,10 @@ class DEPRECATED_AsyncInvoker : public MessageHandlerAutoCleanup {
   // future.
   std::atomic<int> pending_invocations_;
 
-  // Reference counted so that if the AsyncInvoker destructor finishes before
-  // an AsyncClosure's destructor that's about to call
-  // "invocation_complete_->Set()", it's not dereferenced after being
-  // destroyed.
-  rtc::Ref<Event>::Ptr invocation_complete_;
+  // Reference counted so that if the destructor finishes before an
+  // AsyncClosure's destructor that's about to call
+  // "invocation_complete_->Set()", it's not dereferenced after being destroyed.
+  rtc::scoped_refptr<FinalRefCountedObject<Event>> invocation_complete_;
 
   // This flag is used to ensure that if an application AsyncInvokes tasks that
   // recursively AsyncInvoke other tasks ad infinitum, the cycle eventually
@@ -165,12 +160,7 @@ class DEPRECATED_AsyncInvoker : public MessageHandlerAutoCleanup {
   std::atomic<bool> destroying_;
 
   friend class AsyncClosure;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(DEPRECATED_AsyncInvoker);
 };
-
-using AsyncInvoker ABSL_DEPRECATED("bugs.webrtc.org/12339") =
-    DEPRECATED_AsyncInvoker;
 
 }  // namespace rtc
 

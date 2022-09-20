@@ -16,20 +16,19 @@
 
 #include "absl/types/optional.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/units/time_delta.h"
 #include "call/rtp_video_sender.h"
 #include "call/test/mock_bitrate_allocator.h"
 #include "call/test/mock_rtp_transport_controller_send.h"
 #include "modules/rtp_rtcp/source/rtp_sequence_number_map.h"
-#include "modules/utility/include/process_thread.h"
 #include "modules/video_coding/fec_controller_default.h"
 #include "rtc_base/experiments/alr_experiment.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/task_queue_for_test.h"
-#include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
-#include "video/call_stats.h"
+#include "test/scoped_key_value_config.h"
 #include "video/test/mock_video_stream_encoder.h"
 #include "video/video_send_stream.h"
 
@@ -119,11 +118,10 @@ class VideoSendStreamImplTest : public ::testing::Test {
         config_(&transport_),
         send_delay_stats_(&clock_),
         test_queue_("test_queue"),
-        process_thread_(ProcessThread::Create("test_thread")),
-        call_stats_(&clock_, process_thread_.get()),
         stats_proxy_(&clock_,
                      config_,
-                     VideoEncoderConfig::ContentType::kRealtimeVideo) {
+                     VideoEncoderConfig::ContentType::kRealtimeVideo,
+                     field_trials_) {
     config_.rtp.ssrcs.push_back(8080);
     config_.rtp.payload_type = 1;
 
@@ -152,10 +150,10 @@ class VideoSendStreamImplTest : public ::testing::Test {
     std::map<uint32_t, RtpState> suspended_ssrcs;
     std::map<uint32_t, RtpPayloadState> suspended_payload_states;
     auto ret = std::make_unique<VideoSendStreamImpl>(
-        &clock_, &stats_proxy_, &test_queue_, &transport_controller_,
+        &clock_, &stats_proxy_, test_queue_.Get(), &transport_controller_,
         &bitrate_allocator_, &video_stream_encoder_, &config_,
         initial_encoder_max_bitrate, initial_encoder_bitrate_priority,
-        content_type, &rtp_video_sender_);
+        content_type, &rtp_video_sender_, field_trials_);
 
     // The call to GetStartBitrate() executes asynchronously on the tq.
     test_queue_.WaitForPreviouslyPostedTasks();
@@ -165,6 +163,7 @@ class VideoSendStreamImplTest : public ::testing::Test {
   }
 
  protected:
+  webrtc::test::ScopedKeyValueConfig field_trials_;
   NiceMock<MockTransport> transport_;
   NiceMock<MockRtpTransportControllerSend> transport_controller_;
   NiceMock<MockBitrateAllocator> bitrate_allocator_;
@@ -177,9 +176,6 @@ class VideoSendStreamImplTest : public ::testing::Test {
   VideoSendStream::Config config_;
   SendDelayStats send_delay_stats_;
   TaskQueueForTest test_queue_;
-  std::unique_ptr<ProcessThread> process_thread_;
-  // TODO(tommi): Use internal::CallStats
-  CallStats call_stats_;
   SendStatisticsProxy stats_proxy_;
   PacketRouter packet_router_;
 };
@@ -199,14 +195,11 @@ TEST_F(VideoSendStreamImplTest, RegistersAsBitrateObserverOnStart) {
             EXPECT_EQ(config.enforce_min_bitrate, !kSuspend);
             EXPECT_EQ(config.bitrate_priority, kDefaultBitratePriority);
           }));
-  test_queue_.SendTask(
-      [&] {
-        vss_impl->Start();
-        EXPECT_CALL(bitrate_allocator_, RemoveObserver(vss_impl.get()))
-            .Times(1);
-        vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+  test_queue_.SendTask([&] {
+    vss_impl->Start();
+    EXPECT_CALL(bitrate_allocator_, RemoveObserver(vss_impl.get())).Times(1);
+    vss_impl->Stop();
+  });
 }
 
 TEST_F(VideoSendStreamImplTest, UpdatesObserverOnConfigurationChange) {
@@ -271,8 +264,7 @@ TEST_F(VideoSendStreamImplTest, UpdatesObserverOnConfigurationChange) {
                 VideoEncoderConfig::ContentType::kRealtimeVideo,
                 min_transmit_bitrate_bps);
         vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+      });
 }
 
 TEST_F(VideoSendStreamImplTest, UpdatesObserverOnConfigurationChangeWithAlr) {
@@ -339,14 +331,13 @@ TEST_F(VideoSendStreamImplTest, UpdatesObserverOnConfigurationChangeWithAlr) {
                 VideoEncoderConfig::ContentType::kScreen,
                 min_transmit_bitrate_bps);
         vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+      });
 }
 
 TEST_F(VideoSendStreamImplTest,
        UpdatesObserverOnConfigurationChangeWithSimulcastVideoHysteresis) {
-  test::ScopedFieldTrials hysteresis_experiment(
-      "WebRTC-VideoRateControl/video_hysteresis:1.25/");
+  test::ScopedKeyValueConfig hysteresis_experiment(
+      field_trials_, "WebRTC-VideoRateControl/video_hysteresis:1.25/");
 
   auto vss_impl = CreateVideoSendStreamImpl(
       kDefaultInitialBitrateBps, kDefaultBitratePriority,
@@ -402,8 +393,7 @@ TEST_F(VideoSendStreamImplTest,
                 VideoEncoderConfig::ContentType::kRealtimeVideo,
                 /*min_transmit_bitrate_bps=*/0);
         vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+      });
 }
 
 TEST_F(VideoSendStreamImplTest, SetsScreensharePacingFactorWithFeedback) {
@@ -418,12 +408,10 @@ TEST_F(VideoSendStreamImplTest, SetsScreensharePacingFactorWithFeedback) {
   auto vss_impl = CreateVideoSendStreamImpl(
       kDefaultInitialBitrateBps, kDefaultBitratePriority,
       VideoEncoderConfig::ContentType::kScreen);
-  test_queue_.SendTask(
-      [&] {
-        vss_impl->Start();
-        vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+  test_queue_.SendTask([&] {
+    vss_impl->Start();
+    vss_impl->Stop();
+  });
 }
 
 TEST_F(VideoSendStreamImplTest, DoesNotSetPacingFactorWithoutFeedback) {
@@ -431,13 +419,11 @@ TEST_F(VideoSendStreamImplTest, DoesNotSetPacingFactorWithoutFeedback) {
   auto vss_impl = CreateVideoSendStreamImpl(
       kDefaultInitialBitrateBps, kDefaultBitratePriority,
       VideoEncoderConfig::ContentType::kScreen);
-  test_queue_.SendTask(
-      [&] {
-        EXPECT_CALL(transport_controller_, SetPacingFactor(_)).Times(0);
-        vss_impl->Start();
-        vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+  test_queue_.SendTask([&] {
+    EXPECT_CALL(transport_controller_, SetPacingFactor(_)).Times(0);
+    vss_impl->Start();
+    vss_impl->Stop();
+  });
 }
 
 TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationWhenEnabled) {
@@ -486,8 +472,7 @@ TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationWhenEnabled) {
         sink->OnBitrateAllocationUpdated(alloc);
 
         vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+      });
 }
 
 TEST_F(VideoSendStreamImplTest, ThrottlesVideoBitrateAllocationWhenTooSimilar) {
@@ -546,8 +531,7 @@ TEST_F(VideoSendStreamImplTest, ThrottlesVideoBitrateAllocationWhenTooSimilar) {
         sink->OnBitrateAllocationUpdated(updated_alloc);
 
         vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+      });
 }
 
 TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationOnLayerChange) {
@@ -592,8 +576,7 @@ TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationOnLayerChange) {
         sink->OnBitrateAllocationUpdated(updated_alloc);
 
         vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+      });
 }
 
 TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationAfterTimeout) {
@@ -690,8 +673,7 @@ TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationAfterTimeout) {
         }
 
         vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+      });
 }
 
 TEST_F(VideoSendStreamImplTest, CallsVideoStreamEncoderOnBitrateUpdate) {
@@ -794,8 +776,7 @@ TEST_F(VideoSendStreamImplTest, CallsVideoStreamEncoderOnBitrateUpdate) {
                     OnBitrateUpdated(DataRate::Zero(), DataRate::Zero(),
                                      DataRate::Zero(), 0, 0, 0));
         vss_impl->Stop();
-      },
-      RTC_FROM_HERE);
+      });
 }
 
 TEST_F(VideoSendStreamImplTest, DisablesPaddingOnPausedEncoder) {
@@ -867,11 +848,10 @@ TEST_F(VideoSendStreamImplTest, DisablesPaddingOnPausedEncoder) {
             ->OnEncodedImage(encoded_image, &codec_specific);
         // Only after actual frame is encoded are we enabling the padding.
         EXPECT_GT(padding_bitrate, 0);
-      },
-      RTC_FROM_HERE);
+      });
 
   rtc::Event done;
-  test_queue_.PostDelayedTask(
+  test_queue_.Get()->PostDelayedTask(
       [&] {
         // No padding supposed to be sent for paused observer
         EXPECT_EQ(0, padding_bitrate);
@@ -879,7 +859,7 @@ TEST_F(VideoSendStreamImplTest, DisablesPaddingOnPausedEncoder) {
         vss_impl->Stop();
         done.Set();
       },
-      5000);
+      TimeDelta::Seconds(5));
 
   // Pause the test suite so that the last delayed task executes.
   ASSERT_TRUE(done.Wait(10000));
@@ -905,17 +885,16 @@ TEST_F(VideoSendStreamImplTest, KeepAliveOnDroppedFrame) {
                 EncodedImageCallback::DropReason::kDroppedByEncoder);
         EXPECT_CALL(bitrate_allocator_, RemoveObserver(vss_impl.get()))
             .Times(0);
-      },
-      RTC_FROM_HERE);
+      });
 
   rtc::Event done;
-  test_queue_.PostDelayedTask(
+  test_queue_.Get()->PostDelayedTask(
       [&] {
         testing::Mock::VerifyAndClearExpectations(&bitrate_allocator_);
         vss_impl->Stop();
         done.Set();
       },
-      2000);
+      TimeDelta::Seconds(2));
   ASSERT_TRUE(done.Wait(5000));
 }
 
@@ -1006,10 +985,7 @@ TEST_F(VideoSendStreamImplTest, ConfiguresBitratesForSvc) {
               using_alr
                   ? stream.min_bitrate_bps
                   : static_cast<int>(stream.target_bitrate_bps *
-                                     trials.GetSimulcastHysteresisFactor(
-                                         test_config.screenshare
-                                             ? VideoCodecMode::kScreensharing
-                                             : VideoCodecMode::kRealtimeVideo));
+                                     (test_config.screenshare ? 1.35 : 1.2));
           // Min padding bitrate may override padding target.
           expected_padding =
               std::max(expected_padding, test_config.min_padding_bitrate_bps);
@@ -1032,8 +1008,7 @@ TEST_F(VideoSendStreamImplTest, ConfiguresBitratesForSvc) {
           ::testing::Mock::VerifyAndClearExpectations(&bitrate_allocator_);
 
           vss_impl->Stop();
-        },
-        RTC_FROM_HERE);
+        });
   }
 }
 }  // namespace internal

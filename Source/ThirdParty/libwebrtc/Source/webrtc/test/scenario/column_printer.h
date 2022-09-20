@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/strings/string_builder.h"
 #include "test/logging/log_writer.h"
 
@@ -46,8 +45,12 @@ class StatesPrinter {
  public:
   StatesPrinter(std::unique_ptr<RtcEventLogOutput> writer,
                 std::vector<ColumnPrinter> printers);
-  RTC_DISALLOW_COPY_AND_ASSIGN(StatesPrinter);
+
   ~StatesPrinter();
+
+  StatesPrinter(const StatesPrinter&) = delete;
+  StatesPrinter& operator=(const StatesPrinter&) = delete;
+
   void PrintHeaders();
   void PrintRow();
 

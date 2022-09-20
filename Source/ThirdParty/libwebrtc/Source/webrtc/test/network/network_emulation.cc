@@ -477,8 +477,8 @@ EmulatedEndpointImpl::EmulatedEndpointImpl(const Options& options,
   network_->AddIP(options_.ip);
 
   enabled_state_checker_.Detach();
-  RTC_LOG(INFO) << "Created emulated endpoint " << options_.log_name
-                << "; id=" << options_.id;
+  RTC_LOG(LS_INFO) << "Created emulated endpoint " << options_.log_name
+                   << "; id=" << options_.id;
 }
 EmulatedEndpointImpl::~EmulatedEndpointImpl() = default;
 
@@ -546,13 +546,13 @@ absl::optional<uint16_t> EmulatedEndpointImpl::BindReceiverInternal(
   bool result =
       port_to_receiver_.insert({port, {receiver, is_one_shot}}).second;
   if (!result) {
-    RTC_LOG(INFO) << "Can't bind receiver to used port " << desired_port
-                  << " in endpoint " << options_.log_name
-                  << "; id=" << options_.id;
+    RTC_LOG(LS_INFO) << "Can't bind receiver to used port " << desired_port
+                     << " in endpoint " << options_.log_name
+                     << "; id=" << options_.id;
     return absl::nullopt;
   }
-  RTC_LOG(INFO) << "New receiver is binded to endpoint " << options_.log_name
-                << "; id=" << options_.id << " on port " << port;
+  RTC_LOG(LS_INFO) << "New receiver is binded to endpoint " << options_.log_name
+                   << "; id=" << options_.id << " on port " << port;
   return port;
 }
 
@@ -568,8 +568,9 @@ uint16_t EmulatedEndpointImpl::NextPort() {
 
 void EmulatedEndpointImpl::UnbindReceiver(uint16_t port) {
   MutexLock lock(&receiver_lock_);
-  RTC_LOG(INFO) << "Receiver is removed on port " << port << " from endpoint "
-                << options_.log_name << "; id=" << options_.id;
+  RTC_LOG(LS_INFO) << "Receiver is removed on port " << port
+                   << " from endpoint " << options_.log_name
+                   << "; id=" << options_.id;
   port_to_receiver_.erase(port);
 }
 
@@ -579,15 +580,15 @@ void EmulatedEndpointImpl::BindDefaultReceiver(
   RTC_CHECK(!default_receiver_.has_value())
       << "Endpoint " << options_.log_name << "; id=" << options_.id
       << " already has default receiver";
-  RTC_LOG(INFO) << "Default receiver is binded to endpoint "
-                << options_.log_name << "; id=" << options_.id;
+  RTC_LOG(LS_INFO) << "Default receiver is binded to endpoint "
+                   << options_.log_name << "; id=" << options_.id;
   default_receiver_ = receiver;
 }
 
 void EmulatedEndpointImpl::UnbindDefaultReceiver() {
   MutexLock lock(&receiver_lock_);
-  RTC_LOG(INFO) << "Default receiver is removed from endpoint "
-                << options_.log_name << "; id=" << options_.id;
+  RTC_LOG(LS_INFO) << "Default receiver is removed from endpoint "
+                   << options_.log_name << "; id=" << options_.id;
   default_receiver_ = absl::nullopt;
 }
 
@@ -616,9 +617,9 @@ void EmulatedEndpointImpl::OnPacketReceived(EmulatedIpPacket packet) {
     // It can happen, that remote peer closed connection, but there still some
     // packets, that are going to it. It can happen during peer connection close
     // process: one peer closed connection, second still sending data.
-    RTC_LOG(INFO) << "Drop packet: no receiver registered in "
-                  << options_.log_name << "; id=" << options_.id << " on port "
-                  << packet.to.port();
+    RTC_LOG(LS_INFO) << "Drop packet: no receiver registered in "
+                     << options_.log_name << "; id=" << options_.id
+                     << " on port " << packet.to.port();
     stats_builder_.OnPacketDropped(packet.from.ipaddr(),
                                    DataSize::Bytes(packet.ip_packet_size()),
                                    options_.stats_gathering_mode);

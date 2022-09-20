@@ -46,7 +46,10 @@ rtc_library("audio_mixer_impl") {
     "../../audio/utility:audio_frame_operations",
     "../../common_audio",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:logging",
+    "../../rtc_base:macromagic",
+    "../../rtc_base:race_checker",
+    "../../rtc_base:refcount",
     "../../rtc_base:safe_conversions",
     "../../rtc_base/synchronization:mutex",
     "../../system_wrappers",
@@ -73,7 +76,6 @@ rtc_library("audio_frame_manipulator") {
     "../../api/audio:audio_frame_api",
     "../../audio/utility:audio_frame_operations",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
   ]
 }
 
@@ -94,7 +96,7 @@ if (rtc_include_tests) {
       "../../api:array_view",
       "../../api/audio:audio_frame_api",
       "../../rtc_base:checks",
-      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:safe_conversions",
     ]
   }
 
@@ -117,7 +119,7 @@ if (rtc_include_tests) {
       "../../api/units:timestamp",
       "../../audio/utility:audio_frame_operations",
       "../../rtc_base:checks",
-      "../../rtc_base:rtc_base_approved",
+      "../../rtc_base:stringutils",
       "../../rtc_base:task_queue_for_test",
       "../../test:test_support",
     ]

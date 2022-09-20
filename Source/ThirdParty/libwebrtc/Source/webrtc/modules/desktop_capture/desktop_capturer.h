@@ -19,6 +19,9 @@
 #include <type_traits>
 #include <vector>
 
+#if defined(WEBRTC_USE_GIO)
+#include "modules/desktop_capture/desktop_capture_metadata.h"
+#endif  // defined(WEBRTC_USE_GIO)
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_frame.h"
 #include "modules/desktop_capture/shared_memory.h"
@@ -59,7 +62,11 @@ class RTC_EXPORT DesktopCapturer {
     virtual ~Callback() {}
   };
 
+#if defined(CHROMEOS)
+  typedef int64_t SourceId;
+#else
   typedef intptr_t SourceId;
+#endif
 
   static_assert(std::is_same<SourceId, ScreenId>::value,
                 "SourceId should be a same type as ScreenId.");
@@ -137,7 +144,15 @@ class RTC_EXPORT DesktopCapturer {
 
 #if defined(WEBRTC_USE_PIPEWIRE) || defined(WEBRTC_USE_X11)
   static bool IsRunningUnderWayland();
+
+  virtual void UpdateResolution(uint32_t width, uint32_t height) {}
 #endif  // defined(WEBRTC_USE_PIPEWIRE) || defined(WEBRTC_USE_X11)
+
+#if defined(WEBRTC_USE_GIO)
+  // Populates implementation specific metadata into the passed in pointer.
+  // Classes can choose to override it or use the default no-op implementation.
+  virtual DesktopCaptureMetadata GetMetadata() { return {}; }
+#endif  // defined(WEBRTC_USE_GIO)
 
  protected:
   // CroppingWindowCapturer needs to create raw capturers without wrappers, so

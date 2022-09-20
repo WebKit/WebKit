@@ -186,30 +186,6 @@ bool Box::isFloatingPositioned() const
     return m_style.floating() != Float::None;
 }
 
-bool Box::isLeftFloatingPositioned() const
-{
-    ASSERT(isBlockLevelBox());
-    if (!isFloatingPositioned())
-        return false;
-    auto inlineDirection = containingBlock().style().direction();
-    auto floatingValue = m_style.floating();
-    return floatingValue == Float::InlineStart
-        || (inlineDirection == TextDirection::LTR && floatingValue == Float::Left)
-        || (inlineDirection == TextDirection::RTL && floatingValue == Float::Right);
-}
-
-bool Box::isRightFloatingPositioned() const
-{
-    ASSERT(isBlockLevelBox());
-    if (!isFloatingPositioned())
-        return false;
-    auto inlineDirection = containingBlock().style().direction();
-    auto floatingValue = m_style.floating();
-    return floatingValue == Float::InlineEnd
-        || (inlineDirection == TextDirection::LTR && floatingValue == Float::Right)
-        || (inlineDirection == TextDirection::RTL && floatingValue == Float::Left);
-}
-
 bool Box::hasFloatClear() const
 {
     return m_style.clear() != Clear::None && (isBlockLevelBox() || isLineBreakBox());
@@ -264,25 +240,6 @@ const ContainerBox& Box::containingBlock() const
 
     ASSERT_NOT_REACHED();
     return initialContainingBlock();
-}
-
-const ContainerBox& Box::formattingContextRoot() const
-{
-    // Finding the context root by traversing the tree during tree construction could provide incorrect result.
-    ASSERT(!Phase::isInTreeBuilding());
-    // We should never need to ask this question on the ICB.
-    ASSERT(!is<InitialContainingBlock>(*this));
-    // A box lives in the same formatting context as its containing block unless the containing block establishes a formatting context.
-    // However relatively positioned (inflow) inline container lives in the formatting context where its parent lives unless
-    // the parent establishes a formatting context.
-    //
-    // <div id=outer style="position: absolute"><div id=inner><span style="position: relative">content</span></div></div>
-    // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
-    // formatting context established by "inner".
-    auto& ancestor = isInlineLevelBox() && isInFlowPositioned() ? parent() : containingBlock();
-    if (ancestor.establishesFormattingContext())
-        return ancestor;
-    return ancestor.formattingContextRoot();
 }
 
 const InitialContainingBlock& Box::initialContainingBlock() const

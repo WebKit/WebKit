@@ -175,7 +175,7 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
             return true;
         }
 
-        if (!is<InitialContainingBlock>(layoutBox) && !layoutBox.isIntegrationRoot() && &layoutBox.formattingContextRoot() == &root()) {
+        if (!is<InitialContainingBlock>(layoutBox) && !layoutBox.isIntegrationRoot() && &formattingContextRoot(layoutBox) == &root()) {
             // This is the non-escape case of accessing a box's geometry information within the same formatting context.
             return true;
         }
@@ -200,7 +200,7 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
             // This is the case when the table formatting root collects geometry information from the cell's
             // formatting context to be able to determine width/height. see shouldIgnoreChildContentVerticalMargin
             ASSERT(root().establishesTableFormattingContext());
-            return &layoutBox.formattingContextRoot().formattingContextRoot() == &root();
+            return &formattingContextRoot(formattingContextRoot(layoutBox)) == &root();
         }
 
         if (*escapeReason == EscapeReason::OutOfFlowBoxNeedsInFlowGeometry) {
@@ -217,8 +217,8 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
             if (layoutBox.isIntegrationRoot())
                 return true;
 
-            auto& formattingContextRoot = layoutBox.formattingContextRoot();
-            return &formattingContextRoot == &root() || &formattingContextRoot == &root().formattingContextRoot();
+            auto& formattingContextRootForBox = formattingContextRoot(layoutBox);
+            return &formattingContextRootForBox == &root() || &formattingContextRootForBox == &formattingContextRoot(root());
         }
 
         if (*escapeReason == EscapeReason::FindFixedHeightAncestorQuirk) {
@@ -227,12 +227,12 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
             // This is only to check if the targetFormattingRoot is an ancestor formatting root.
             if (is<InitialContainingBlock>(layoutBox))
                 return true;
-            auto& targetFormattingRoot = layoutBox.formattingContextRoot();
-            auto* ancestorFormattingContextRoot = &root().formattingContextRoot();
+            auto& targetFormattingRoot = formattingContextRoot(layoutBox);
+            auto* ancestorFormattingContextRoot = &formattingContextRoot(root());
             while (true) {
                 if (&targetFormattingRoot == ancestorFormattingContextRoot)
                     return true;
-                ancestorFormattingContextRoot = &ancestorFormattingContextRoot->formattingContextRoot();
+                ancestorFormattingContextRoot = &FormattingContext::formattingContextRoot(*ancestorFormattingContextRoot);
                 if (is<InitialContainingBlock>(*ancestorFormattingContextRoot))
                     return true;
             }
@@ -243,7 +243,7 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
             // Tables are wrapped in a 2 level formatting context structure. A <table> element initiates a block formatting context for its principal table box
             // where the caption and the table content live. It also initiates a table wrapper box which establishes the table formatting context.
             // In many cases the TFC needs access to the parent (generated) BFC.
-            return &layoutBox == &root().formattingContextRoot();
+            return &layoutBox == &formattingContextRoot(root());
         }
 
         ASSERT_NOT_REACHED();
@@ -269,19 +269,41 @@ void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
     for (auto& descendant : descendantsOfType<Box>(root)) {
         if (!descendant.isOutOfFlowPositioned())
             continue;
-        if (&descendant.formattingContextRoot() != &root)
+        auto nearestFormattingContextRoot = [&] {
+            auto* ancestor = &descendant.containingBlock();
+            for (; !ancestor->establishesBlockFormattingContext(); ancestor = &ancestor->containingBlock()) { }
+            return ancestor;
+        };
+        if (nearestFormattingContextRoot() != &root)
             continue;
         formattingState().addOutOfFlowBox(descendant);
     }
 }
 
 #ifndef NDEBUG
+const ContainerBox& FormattingContext::formattingContextRoot(const Box& layoutBox)
+{
+    // We should never need to ask this question on the ICB.
+    ASSERT(!is<InitialContainingBlock>(layoutBox));
+    // A box lives in the same formatting context as its containing block unless the containing block establishes a formatting context.
+    // However relatively positioned (inflow) inline container lives in the formatting context where its parent lives unless
+    // the parent establishes a formatting context.
+    //
+    // <div id=outer style="position: absolute"><div id=inner><span style="position: relative">content</span></div></div>
+    // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
+    // formatting context established by "inner".
+    auto& ancestor = layoutBox.isInlineLevelBox() && layoutBox.isInFlowPositioned() ? layoutBox.parent() : layoutBox.containingBlock();
+    if (ancestor.establishesFormattingContext())
+        return ancestor;
+    return formattingContextRoot(ancestor);
+}
+
 void FormattingContext::validateGeometryConstraintsAfterLayout() const
 {
-    auto& formattingContextRoot = root();
+    auto& root = this->root();
     // FIXME: add a descendantsOfType<> flavor that stops at nested formatting contexts
-    for (auto& layoutBox : descendantsOfType<Box>(formattingContextRoot)) {
-        if (&layoutBox.formattingContextRoot() != &formattingContextRoot)
+    for (auto& layoutBox : descendantsOfType<Box>(root)) {
+        if (&formattingContextRoot(layoutBox) != &root)
             continue;
         auto& containingBlockGeometry = geometryForBox(layoutBox.containingBlock());
         auto& boxGeometry = geometryForBox(layoutBox);

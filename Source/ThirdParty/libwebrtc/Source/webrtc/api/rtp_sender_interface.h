@@ -14,6 +14,7 @@
 #ifndef API_RTP_SENDER_INTERFACE_H_
 #define API_RTP_SENDER_INTERFACE_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -26,6 +27,7 @@
 #include "api/rtc_error.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
+#include "api/video_codecs/video_encoder_factory.h"
 #include "rtc_base/ref_count.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -98,6 +100,12 @@ class RTC_EXPORT RtpSenderInterface : public rtc::RefCountInterface {
 #if defined(WEBRTC_WEBKIT_BUILD)
   virtual void GenerateKeyFrame() { }
 #endif
+
+  // Sets a user defined encoder selector.
+  // Overrides selector that is (optionally) provided by VideoEncoderFactory.
+  virtual void SetEncoderSelector(
+      std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>
+          encoder_selector) {}
 
  protected:
   ~RtpSenderInterface() override = default;

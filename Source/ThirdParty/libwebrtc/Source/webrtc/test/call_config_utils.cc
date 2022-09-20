@@ -16,14 +16,15 @@
 namespace webrtc {
 namespace test {
 
-// Deserializes a JSON representation of the VideoReceiveStream::Config back
-// into a valid object. This will not initialize the decoders or the renderer.
-VideoReceiveStream::Config ParseVideoReceiveStreamJsonConfig(
+// Deserializes a JSON representation of the VideoReceiveStreamInterface::Config
+// back into a valid object. This will not initialize the decoders or the
+// renderer.
+VideoReceiveStreamInterface::Config ParseVideoReceiveStreamJsonConfig(
     webrtc::Transport* transport,
     const Json::Value& json) {
-  auto receive_config = VideoReceiveStream::Config(transport);
+  auto receive_config = VideoReceiveStreamInterface::Config(transport);
   for (const auto& decoder_json : json["decoders"]) {
-    VideoReceiveStream::Decoder decoder;
+    VideoReceiveStreamInterface::Decoder decoder;
     decoder.video_format =
         SdpVideoFormat(decoder_json["payload_name"].asString());
     decoder.payload_type = decoder_json["payload_type"].asInt64();
@@ -36,7 +37,6 @@ VideoReceiveStream::Config ParseVideoReceiveStreamJsonConfig(
     receive_config.decoders.push_back(decoder);
   }
   receive_config.render_delay_ms = json["render_delay_ms"].asInt64();
-  receive_config.target_delay_ms = json["target_delay_ms"].asInt64();
   receive_config.rtp.remote_ssrc = json["rtp"]["remote_ssrc"].asInt64();
   receive_config.rtp.local_ssrc = json["rtp"]["local_ssrc"].asInt64();
   receive_config.rtp.rtcp_mode =
@@ -69,7 +69,7 @@ VideoReceiveStream::Config ParseVideoReceiveStreamJsonConfig(
 }
 
 Json::Value GenerateVideoReceiveStreamJsonConfig(
-    const VideoReceiveStream::Config& config) {
+    const VideoReceiveStreamInterface::Config& config) {
   Json::Value root_json;
 
   root_json["decoders"] = Json::Value(Json::arrayValue);
@@ -117,7 +117,6 @@ Json::Value GenerateVideoReceiveStreamJsonConfig(
   root_json["rtp"] = rtp_json;
 
   root_json["render_delay_ms"] = config.render_delay_ms;
-  root_json["target_delay_ms"] = config.target_delay_ms;
 
   return root_json;
 }

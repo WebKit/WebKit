@@ -13,6 +13,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/task_queue/task_queue_base.h"
 #include "net/dcsctp/packet/chunk/heartbeat_ack_chunk.h"
 #include "net/dcsctp/packet/chunk/heartbeat_request_chunk.h"
 #include "net/dcsctp/packet/parameter/heartbeat_info_parameter.h"
@@ -44,7 +45,9 @@ class HeartbeatHandlerTestBase : public testing::Test {
   explicit HeartbeatHandlerTestBase(DurationMs heartbeat_interval)
       : options_(MakeOptions(heartbeat_interval)),
         context_(&callbacks_),
-        timer_manager_([this]() { return callbacks_.CreateTimeout(); }),
+        timer_manager_([this](webrtc::TaskQueueBase::DelayPrecision precision) {
+          return callbacks_.CreateTimeout(precision);
+        }),
         handler_("log: ", options_, &context_, &timer_manager_) {}
 
   void AdvanceTime(DurationMs duration) {

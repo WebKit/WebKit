@@ -34,12 +34,12 @@ namespace WTF {
 
 class FunctionDispatcher {
 public:
-    WTF_EXPORT_PRIVATE virtual ~FunctionDispatcher();
+    WTF_EXPORT_PRIVATE virtual ~FunctionDispatcher() = default;
 
     virtual void dispatch(Function<void ()>&&) = 0;
 
 protected:
-    WTF_EXPORT_PRIVATE FunctionDispatcher();
+    WTF_EXPORT_PRIVATE FunctionDispatcher() = default;
 };
 
 } // namespace WTF

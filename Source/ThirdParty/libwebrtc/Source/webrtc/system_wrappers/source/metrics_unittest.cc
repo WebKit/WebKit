@@ -10,6 +10,7 @@
 
 #include "system_wrappers/include/metrics.h"
 
+#include "absl/strings/string_view.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -22,10 +23,10 @@ namespace webrtc {
 namespace {
 const int kSample = 22;
 
-void AddSparseSample(const std::string& name, int sample) {
+void AddSparseSample(absl::string_view name, int sample) {
   RTC_HISTOGRAM_COUNTS_SPARSE_100(name, sample);
 }
-void AddSampleWithVaryingName(int index, const std::string& name, int sample) {
+void AddSampleWithVaryingName(int index, absl::string_view name, int sample) {
   RTC_HISTOGRAMS_COUNTS_100(index, name, sample);
 }
 }  // namespace

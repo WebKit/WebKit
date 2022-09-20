@@ -35,9 +35,8 @@ rtc_library("fifo_buffer") {
   deps = [
     "..:rtc_base",
     "..:threading",
+    "../../api/task_queue:pending_task_safety_flag",
     "../synchronization:mutex",
-    "../task_utils:pending_task_safety_flag",
-    "../task_utils:to_queued_task",
   ]
 }
 
@@ -45,11 +44,18 @@ rtc_library("unittests") {
   testonly = true
   sources = [
     "aligned_malloc_unittest.cc",
+    "always_valid_pointer_unittest.cc",
     "fifo_buffer_unittest.cc",
   ]
   deps = [
     ":aligned_malloc",
+    ":always_valid_pointer",
     ":fifo_buffer",
     "../../test:test_support",
   ]
+}
+
+rtc_source_set("always_valid_pointer") {
+  sources = [ "always_valid_pointer.h" ]
+  deps = [ "..:checks" ]
 }

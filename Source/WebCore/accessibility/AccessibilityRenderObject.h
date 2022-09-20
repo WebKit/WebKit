@@ -58,7 +58,6 @@ public:
     
     bool isAttachment() const override;
     bool isSelected() const override;
-    bool isFocused() const override;
     bool isLoaded() const override;
     bool isOffScreen() const override;
     bool isUnvisited() const override;
@@ -133,7 +132,6 @@ public:
     AccessibilityChildrenVector documentLinks() override;
     FrameView* documentFrameView() const override;
 
-    void setFocused(bool) override;
     void setSelectedTextRange(const PlainTextRange&) override;
     bool setValue(const String&) override;
     void setSelectedRows(AccessibilityChildrenVector&) override;

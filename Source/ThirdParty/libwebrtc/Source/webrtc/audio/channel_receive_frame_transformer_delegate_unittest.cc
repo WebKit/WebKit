@@ -13,7 +13,6 @@
 #include <memory>
 #include <utility>
 
-#include "rtc_base/ref_counted_object.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_frame_transformer.h"
@@ -68,6 +67,7 @@ TEST(ChannelReceiveFrameTransformerDelegateTest,
 // transformer, it passes it to the channel using the ReceiveFrameCallback.
 TEST(ChannelReceiveFrameTransformerDelegateTest,
      TransformRunsChannelReceiveCallback) {
+  rtc::AutoThread main_thread;
   rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
       rtc::make_ref_counted<NiceMock<MockFrameTransformer>>();
   MockChannelReceive mock_channel;
@@ -99,6 +99,7 @@ TEST(ChannelReceiveFrameTransformerDelegateTest,
 // after resetting the delegate.
 TEST(ChannelReceiveFrameTransformerDelegateTest,
      OnTransformedDoesNotRunChannelReceiveCallbackAfterReset) {
+  rtc::AutoThread main_thread;
   rtc::scoped_refptr<MockFrameTransformer> mock_frame_transformer =
       rtc::make_ref_counted<testing::NiceMock<MockFrameTransformer>>();
   MockChannelReceive mock_channel;

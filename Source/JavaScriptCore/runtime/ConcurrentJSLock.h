@@ -53,9 +53,7 @@ public:
     {
     }
 
-    ~ConcurrentJSLockerBase()
-    {
-    }
+    ~ConcurrentJSLockerBase() = default;
     
     void unlockEarly() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {

@@ -31,9 +31,7 @@
 
 namespace JSC { namespace B3 {
 
-AtomicValue::~AtomicValue()
-{
-}
+AtomicValue::~AtomicValue() = default;
 
 void AtomicValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {

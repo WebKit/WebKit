@@ -13,12 +13,12 @@
 #include <atomic>
 #include <memory>
 
+#include "rtc_base/event.h"
 #include "rtc_base/task_queue.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
-
-#include "rtc_base/event.h"
 
 // NOTE: Since these tests rely on real time behavior, they will be flaky
 // if run on heavily loaded systems.
@@ -107,35 +107,32 @@ TEST(SimulatedTimeControllerTest, Example) {
   task_queue.PostTask(
       [handle = std::move(handle)]() mutable { handle.Stop(); });
 
-  struct Destructor {
-    void operator()() { object.reset(); }
-    std::unique_ptr<ObjectOnTaskQueue> object;
-  };
-  task_queue.PostTask(Destructor{std::move(object)});
+  task_queue.PostTask([object = std::move(object)] {});
 }
 
 TEST(SimulatedTimeControllerTest, DelayTaskRunOnTime) {
   GlobalSimulatedTimeController time_simulation(kStartTime);
-  rtc::TaskQueue task_queue(
+  std::unique_ptr<TaskQueueBase, TaskQueueDeleter> task_queue =
       time_simulation.GetTaskQueueFactory()->CreateTaskQueue(
-          "TestQueue", TaskQueueFactory::Priority::NORMAL));
+          "TestQueue", TaskQueueFactory::Priority::NORMAL);
 
   bool delay_task_executed = false;
-  task_queue.PostDelayedTask([&] { delay_task_executed = true; }, 10);
+  task_queue->PostDelayedTask([&] { delay_task_executed = true; },
+                              TimeDelta::Millis(10));
 
   time_simulation.AdvanceTime(TimeDelta::Millis(10));
   EXPECT_TRUE(delay_task_executed);
 }
 
-TEST(SimulatedTimeControllerTest, ThreadYeildsOnInvoke) {
+TEST(SimulatedTimeControllerTest, ThreadYeildsOnSynchronousCall) {
   GlobalSimulatedTimeController sim(kStartTime);
   auto main_thread = sim.GetMainThread();
   auto t2 = sim.CreateThread("thread", nullptr);
   bool task_has_run = false;
   // Posting a task to the main thread, this should not run until AdvanceTime is
   // called.
-  main_thread->PostTask(RTC_FROM_HERE, [&] { task_has_run = true; });
-  t2->Invoke<void>(RTC_FROM_HERE, [] {
+  main_thread->PostTask([&] { task_has_run = true; });
+  SendTask(t2.get(), [] {
     rtc::Event yield_event;
     // Wait() triggers YieldExecution() which will runs message processing on
     // all threads that are not in the yielded set.

@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "rtc_base/logging.h"
+#include "rtc_base/string_utils.h"
 
 namespace webrtc {
 
@@ -77,8 +78,8 @@ Desktop* Desktop::GetDesktop(const WCHAR* desktop_name) {
                                DESKTOP_SWITCHDESKTOP | GENERIC_WRITE;
   HDESK desktop = OpenDesktopW(desktop_name, 0, FALSE, desired_access);
   if (desktop == NULL) {
-    RTC_LOG(LS_ERROR) << "Failed to open the desktop '" << desktop_name
-                      << "': " << GetLastError();
+    RTC_LOG(LS_ERROR) << "Failed to open the desktop '"
+                      << rtc::ToUtf8(desktop_name) << "': " << GetLastError();
     return NULL;
   }
 

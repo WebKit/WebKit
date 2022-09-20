@@ -17,9 +17,8 @@
 
 #include "absl/algorithm/container.h"
 #include "api/scoped_refptr.h"
+#include "api/task_queue/pending_task_safety_flag.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/task_utils/pending_task_safety_flag.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "rtc_base/thread.h"
 
 namespace webrtc {
@@ -109,7 +108,7 @@ void FakeNetworkSocket::OnPacketReceived(EmulatedIpPacket packet) {
     SignalReadEvent(this);
     RTC_DCHECK(!pending_);
   };
-  thread_->PostTask(ToQueuedTask(alive_, std::move(task)));
+  thread_->PostTask(SafeTask(alive_, std::move(task)));
   socket_server_->WakeUp();
 }
 
@@ -132,7 +131,7 @@ int FakeNetworkSocket::Bind(const rtc::SocketAddress& addr) {
   endpoint_ = socket_server_->GetEndpointNode(local_addr_.ipaddr());
   if (!endpoint_) {
     local_addr_.Clear();
-    RTC_LOG(INFO) << "No endpoint for address: " << ToString(addr);
+    RTC_LOG(LS_INFO) << "No endpoint for address: " << ToString(addr);
     error_ = EADDRNOTAVAIL;
     return 2;
   }
@@ -140,7 +139,7 @@ int FakeNetworkSocket::Bind(const rtc::SocketAddress& addr) {
       endpoint_->BindReceiver(local_addr_.port(), this);
   if (!port) {
     local_addr_.Clear();
-    RTC_LOG(INFO) << "Cannot bind to in-use address: " << ToString(addr);
+    RTC_LOG(LS_INFO) << "Cannot bind to in-use address: " << ToString(addr);
     error_ = EADDRINUSE;
     return 1;
   }

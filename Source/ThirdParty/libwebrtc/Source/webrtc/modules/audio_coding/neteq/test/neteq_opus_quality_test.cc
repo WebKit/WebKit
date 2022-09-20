@@ -106,8 +106,8 @@ NetEqOpusQualityTest::NetEqOpusQualityTest()
 
   // Redefine decoder type if input is stereo.
   if (channels_ > 1) {
-    audio_format_ = SdpAudioFormat(
-        "opus", 48000, 2, std::map<std::string, std::string>{{"stereo", "1"}});
+    audio_format_ = SdpAudioFormat("opus", 48000, 2,
+                                   SdpAudioFormat::Parameters{{"stereo", "1"}});
   }
   application_ = absl::GetFlag(FLAGS_application);
 }

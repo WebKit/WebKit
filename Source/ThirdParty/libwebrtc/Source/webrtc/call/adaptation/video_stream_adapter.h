@@ -18,6 +18,7 @@
 #include "absl/types/optional.h"
 #include "absl/types/variant.h"
 #include "api/adaptation/resource.h"
+#include "api/field_trials_view.h"
 #include "api/rtp_parameters.h"
 #include "api/video/video_adaptation_counters.h"
 #include "api/video/video_stream_encoder_observer.h"
@@ -123,7 +124,8 @@ class Adaptation final {
 class VideoStreamAdapter {
  public:
   VideoStreamAdapter(VideoStreamInputStateProvider* input_state_provider,
-                     VideoStreamEncoderObserver* encoder_stats_observer);
+                     VideoStreamEncoderObserver* encoder_stats_observer,
+                     const FieldTrialsView& field_trials);
   ~VideoStreamAdapter();
 
   VideoSourceRestrictions source_restrictions() const;

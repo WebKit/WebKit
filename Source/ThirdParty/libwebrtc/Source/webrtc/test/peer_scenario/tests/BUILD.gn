@@ -24,7 +24,12 @@ if (rtc_include_tests) {
       "../../../media:rtc_media_base",
       "../../../modules/rtp_rtcp:rtp_rtcp",
       "../../../modules/rtp_rtcp:rtp_rtcp_format",
+<<<<<<< HEAD
+      "../../../pc:media_session",
+      "../../../pc:session_description",
+=======
       "../../../pc:rtc_pc_base",
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
     ]
   }
 }

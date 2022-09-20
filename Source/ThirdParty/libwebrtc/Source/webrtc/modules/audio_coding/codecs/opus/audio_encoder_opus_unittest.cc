@@ -14,6 +14,7 @@
 #include <memory>
 #include <utility>
 
+#include "absl/strings/string_view.h"
 #include "common_audio/mocks/mock_smoothing_filter.h"
 #include "modules/audio_coding/audio_network_adaptor/mock/mock_audio_network_adaptor.h"
 #include "modules/audio_coding/codecs/opus/audio_encoder_opus.h"
@@ -61,7 +62,7 @@ std::unique_ptr<AudioEncoderOpusStates> CreateCodec(int sample_rate_hz,
 
   MockAudioNetworkAdaptor** mock_ptr = &states->mock_audio_network_adaptor;
   AudioEncoderOpusImpl::AudioNetworkAdaptorCreator creator =
-      [mock_ptr](const std::string&, RtcEventLog* event_log) {
+      [mock_ptr](absl::string_view, RtcEventLog* event_log) {
         std::unique_ptr<MockAudioNetworkAdaptor> adaptor(
             new NiceMock<MockAudioNetworkAdaptor>());
         EXPECT_CALL(*adaptor, Die());

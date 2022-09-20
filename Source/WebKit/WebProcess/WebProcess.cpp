@@ -1281,6 +1281,8 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
         m_fileSystemStorageConnection->connectionClosed();
         m_fileSystemStorageConnection = nullptr;
     }
+
+    m_cacheStorageProvider->networkProcessConnectionClosed();
 }
 
 WebFileSystemStorageConnection& WebProcess::fileSystemStorageConnection()

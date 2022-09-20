@@ -15,6 +15,7 @@
 
 #include "api/packet_socket_factory.h"
 #include "rtc_base/strings/string_builder.h"
+#include "rtc_base/task_queue_for_test.h"
 
 namespace {
 
@@ -101,7 +102,8 @@ class PacketSocketFactoryWrapper : public rtc::PacketSocketFactory {
       const rtc::PacketSocketTcpOptions& tcp_options) override {
     return nullptr;
   }
-  rtc::AsyncResolverInterface* CreateAsyncResolver() override {
+  std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver()
+      override {
     return nullptr;
   }
 
@@ -120,7 +122,7 @@ EmulatedTURNServer::EmulatedTURNServer(std::unique_ptr<rtc::Thread> thread,
     : thread_(std::move(thread)), client_(client), peer_(peer) {
   ice_config_.username = "keso";
   ice_config_.password = "keso";
-  thread_->Invoke<void>(RTC_FROM_HERE, [=]() {
+  SendTask(thread_.get(), [=]() {
     RTC_DCHECK_RUN_ON(thread_.get());
     turn_server_ = std::make_unique<cricket::TurnServer>(thread_.get());
     turn_server_->set_realm(kTestRealm);
@@ -141,14 +143,14 @@ EmulatedTURNServer::EmulatedTURNServer(std::unique_ptr<rtc::Thread> thread,
 }
 
 void EmulatedTURNServer::Stop() {
-  thread_->Invoke<void>(RTC_FROM_HERE, [=]() {
+  SendTask(thread_.get(), [=]() {
     RTC_DCHECK_RUN_ON(thread_.get());
     sockets_.clear();
   });
 }
 
 EmulatedTURNServer::~EmulatedTURNServer() {
-  thread_->Invoke<void>(RTC_FROM_HERE, [=]() {
+  SendTask(thread_.get(), [=]() {
     RTC_DCHECK_RUN_ON(thread_.get());
     turn_server_.reset(nullptr);
   });
@@ -164,7 +166,7 @@ rtc::AsyncPacketSocket* EmulatedTURNServer::Wrap(EmulatedEndpoint* endpoint) {
 
 void EmulatedTURNServer::OnPacketReceived(webrtc::EmulatedIpPacket packet) {
   // Copy from EmulatedEndpoint to rtc::AsyncPacketSocket.
-  thread_->PostTask(RTC_FROM_HERE, [this, packet(std::move(packet))]() {
+  thread_->PostTask([this, packet(std::move(packet))]() {
     RTC_DCHECK_RUN_ON(thread_.get());
     auto it = sockets_.find(packet.to);
     if (it != sockets_.end()) {

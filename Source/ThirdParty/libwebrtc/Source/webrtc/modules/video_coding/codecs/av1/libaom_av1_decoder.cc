@@ -191,7 +191,7 @@ const char* LibaomAv1Decoder::ImplementationName() const {
 
 }  // namespace
 
-const bool kIsLibaomAv1DecoderSupported = true;
+ABSL_CONST_INIT const bool kIsLibaomAv1DecoderSupported = true;
 
 std::unique_ptr<VideoDecoder> CreateLibaomAv1Decoder() {
   return std::make_unique<LibaomAv1Decoder>();

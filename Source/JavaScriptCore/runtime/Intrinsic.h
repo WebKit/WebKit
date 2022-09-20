@@ -106,6 +106,7 @@ enum Intrinsic : uint8_t {
     StringPrototypeValueOfIntrinsic,
     StringPrototypeReplaceIntrinsic,
     StringPrototypeReplaceRegExpIntrinsic,
+    StringPrototypeReplaceStringIntrinsic,
     StringPrototypeSliceIntrinsic,
     StringPrototypeToLowerCaseIntrinsic,
     NumberPrototypeToStringIntrinsic,

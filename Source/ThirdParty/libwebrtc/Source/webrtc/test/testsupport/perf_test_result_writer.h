@@ -29,24 +29,24 @@ class PerfTestResultWriter {
   virtual void ClearResults() = 0;
   virtual void LogResult(absl::string_view graph_name,
                          absl::string_view trace_name,
-                         const double value,
+                         double value,
                          absl::string_view units,
-                         const bool important,
+                         bool important,
                          webrtc::test::ImproveDirection improve_direction) = 0;
   virtual void LogResultMeanAndError(
       absl::string_view graph_name,
       absl::string_view trace_name,
-      const double mean,
-      const double error,
+      double mean,
+      double error,
       absl::string_view units,
-      const bool important,
+      bool important,
       webrtc::test::ImproveDirection improve_direction) = 0;
   virtual void LogResultList(
       absl::string_view graph_name,
       absl::string_view trace_name,
-      const rtc::ArrayView<const double> values,
+      rtc::ArrayView<const double> values,
       absl::string_view units,
-      const bool important,
+      bool important,
       webrtc::test::ImproveDirection improve_direction) = 0;
 
   virtual std::string Serialize() const = 0;

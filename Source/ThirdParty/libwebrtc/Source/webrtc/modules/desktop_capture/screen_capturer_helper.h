@@ -15,7 +15,6 @@
 
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -29,6 +28,9 @@ class ScreenCapturerHelper {
  public:
   ScreenCapturerHelper() = default;
   ~ScreenCapturerHelper() = default;
+
+  ScreenCapturerHelper(const ScreenCapturerHelper&) = delete;
+  ScreenCapturerHelper& operator=(const ScreenCapturerHelper&) = delete;
 
   // Clear out the invalid region.
   void ClearInvalidRegion();
@@ -82,8 +84,6 @@ class ScreenCapturerHelper {
   // expanded.
   // If the value is <= 0, then the invalid region is not expanded to a grid.
   int log_grid_size_ = 0;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(ScreenCapturerHelper);
 };
 
 }  // namespace webrtc

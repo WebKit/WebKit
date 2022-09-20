@@ -181,7 +181,7 @@ class PerfTestHistogramWriter : public PerfTestResultWriter {
       case ImproveDirection::kBiggerIsBetter:
         return proto::BIGGER_IS_BETTER;
       default:
-        RTC_NOTREACHED() << "Invalid enum value " << improve_direction;
+        RTC_DCHECK_NOTREACHED() << "Invalid enum value " << improve_direction;
     }
   }
 

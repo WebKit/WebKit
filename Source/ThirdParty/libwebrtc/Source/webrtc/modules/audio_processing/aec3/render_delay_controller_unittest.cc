@@ -53,8 +53,7 @@ constexpr size_t kDownSamplingFactors[] = {2, 4, 8};
 // TODO(bugs.webrtc.org/11161): Re-enable tests.
 TEST(RenderDelayController, DISABLED_NoRenderSignal) {
   for (size_t num_render_channels : {1, 2, 8}) {
-    std::vector<std::vector<float>> block(1,
-                                          std::vector<float>(kBlockSize, 0.f));
+    Block block(/*num_bands=1*/ 1, /*num_channels=*/1);
     EchoCanceller3Config config;
     for (size_t num_matched_filters = 4; num_matched_filters <= 10;
          num_matched_filters++) {
@@ -85,8 +84,7 @@ TEST(RenderDelayController, DISABLED_NoRenderSignal) {
 TEST(RenderDelayController, DISABLED_BasicApiCalls) {
   for (size_t num_capture_channels : {1, 2, 4}) {
     for (size_t num_render_channels : {1, 2, 8}) {
-      std::vector<std::vector<float>> capture_block(
-          num_capture_channels, std::vector<float>(kBlockSize, 0.f));
+      Block capture_block(/*num_bands=*/1, num_capture_channels);
       absl::optional<DelayEstimate> delay_blocks;
       for (size_t num_matched_filters = 4; num_matched_filters <= 10;
            num_matched_filters++) {
@@ -98,10 +96,7 @@ TEST(RenderDelayController, DISABLED_BasicApiCalls) {
           config.delay.capture_alignment_mixing.adaptive_selection = false;
 
           for (auto rate : {16000, 32000, 48000}) {
-            std::vector<std::vector<std::vector<float>>> render_block(
-                NumBandsForRate(rate),
-                std::vector<std::vector<float>>(
-                    num_render_channels, std::vector<float>(kBlockSize, 0.f)));
+            Block render_block(NumBandsForRate(rate), num_render_channels);
             std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
                 RenderDelayBuffer::Create(config, rate, num_render_channels));
             std::unique_ptr<RenderDelayController> delay_controller(
@@ -130,8 +125,7 @@ TEST(RenderDelayController, DISABLED_BasicApiCalls) {
 TEST(RenderDelayController, DISABLED_Alignment) {
   Random random_generator(42U);
   for (size_t num_capture_channels : {1, 2, 4}) {
-    std::vector<std::vector<float>> capture_block(
-        num_capture_channels, std::vector<float>(kBlockSize, 0.f));
+    Block capture_block(/*num_bands=*/1, num_capture_channels);
     for (size_t num_matched_filters = 4; num_matched_filters <= 10;
          num_matched_filters++) {
       for (auto down_sampling_factor : kDownSamplingFactors) {
@@ -143,10 +137,7 @@ TEST(RenderDelayController, DISABLED_Alignment) {
 
         for (size_t num_render_channels : {1, 2, 8}) {
           for (auto rate : {16000, 32000, 48000}) {
-            std::vector<std::vector<std::vector<float>>> render_block(
-                NumBandsForRate(rate),
-                std::vector<std::vector<float>>(
-                    num_render_channels, std::vector<float>(kBlockSize, 0.f)));
+            Block render_block(NumBandsForRate(rate), num_render_channels);
 
             for (size_t delay_samples : {15, 50, 150, 200, 800, 4000}) {
               absl::optional<DelayEstimate> delay_blocks;
@@ -160,14 +151,16 @@ TEST(RenderDelayController, DISABLED_Alignment) {
                                                 num_capture_channels));
               DelayBuffer<float> signal_delay_buffer(delay_samples);
               for (size_t k = 0; k < (400 + delay_samples / kBlockSize); ++k) {
-                for (size_t band = 0; band < render_block.size(); ++band) {
-                  for (size_t channel = 0; channel < render_block[band].size();
+                for (int band = 0; band < render_block.NumBands(); ++band) {
+                  for (int channel = 0; channel < render_block.NumChannels();
                        ++channel) {
                     RandomizeSampleVector(&random_generator,
-                                          render_block[band][channel]);
+                                          render_block.View(band, channel));
                   }
                 }
-                signal_delay_buffer.Delay(render_block[0][0], capture_block[0]);
+                signal_delay_buffer.Delay(
+                    render_block.View(/*band=*/0, /*channel=*/0),
+                    capture_block.View(/*band=*/0, /*channel=*/0));
                 render_delay_buffer->Insert(render_block);
                 render_delay_buffer->PrepareCaptureProcessing();
                 delay_blocks = delay_controller->GetDelay(
@@ -206,14 +199,8 @@ TEST(RenderDelayController, DISABLED_NonCausalAlignment) {
           config.delay.capture_alignment_mixing.downmix = false;
           config.delay.capture_alignment_mixing.adaptive_selection = false;
           for (auto rate : {16000, 32000, 48000}) {
-            std::vector<std::vector<std::vector<float>>> render_block(
-                NumBandsForRate(rate),
-                std::vector<std::vector<float>>(
-                    num_render_channels, std::vector<float>(kBlockSize, 0.f)));
-            std::vector<std::vector<std::vector<float>>> capture_block(
-                NumBandsForRate(rate),
-                std::vector<std::vector<float>>(
-                    num_capture_channels, std::vector<float>(kBlockSize, 0.f)));
+            Block render_block(NumBandsForRate(rate), num_render_channels);
+            Block capture_block(NumBandsForRate(rate), num_capture_channels);
 
             for (int delay_samples : {-15, -50, -150, -200}) {
               absl::optional<DelayEstimate> delay_blocks;
@@ -229,14 +216,17 @@ TEST(RenderDelayController, DISABLED_NonCausalAlignment) {
               for (int k = 0;
                    k < (400 - delay_samples / static_cast<int>(kBlockSize));
                    ++k) {
-                RandomizeSampleVector(&random_generator, capture_block[0][0]);
-                signal_delay_buffer.Delay(capture_block[0][0],
-                                          render_block[0][0]);
+                RandomizeSampleVector(
+                    &random_generator,
+                    capture_block.View(/*band=*/0, /*channel=*/0));
+                signal_delay_buffer.Delay(
+                    capture_block.View(/*band=*/0, /*channel=*/0),
+                    render_block.View(/*band=*/0, /*channel=*/0));
                 render_delay_buffer->Insert(render_block);
                 render_delay_buffer->PrepareCaptureProcessing();
                 delay_blocks = delay_controller->GetDelay(
                     render_delay_buffer->GetDownsampledRenderBuffer(),
-                    render_delay_buffer->Delay(), capture_block[0]);
+                    render_delay_buffer->Delay(), capture_block);
               }
 
               ASSERT_FALSE(delay_blocks);
@@ -255,8 +245,8 @@ TEST(RenderDelayController, DISABLED_AlignmentWithJitter) {
   Random random_generator(42U);
   for (size_t num_capture_channels : {1, 2, 4}) {
     for (size_t num_render_channels : {1, 2, 8}) {
-      std::vector<std::vector<float>> capture_block(
-          num_capture_channels, std::vector<float>(kBlockSize, 0.f));
+      Block capture_block(
+          /*num_bands=*/1, num_capture_channels);
       for (size_t num_matched_filters = 4; num_matched_filters <= 10;
            num_matched_filters++) {
         for (auto down_sampling_factor : kDownSamplingFactors) {
@@ -267,10 +257,7 @@ TEST(RenderDelayController, DISABLED_AlignmentWithJitter) {
           config.delay.capture_alignment_mixing.adaptive_selection = false;
 
           for (auto rate : {16000, 32000, 48000}) {
-            std::vector<std::vector<std::vector<float>>> render_block(
-                NumBandsForRate(rate),
-                std::vector<std::vector<float>>(
-                    num_render_channels, std::vector<float>(kBlockSize, 0.f)));
+            Block render_block(NumBandsForRate(rate), num_render_channels);
             for (size_t delay_samples : {15, 50, 300, 800}) {
               absl::optional<DelayEstimate> delay_blocks;
               SCOPED_TRACE(ProduceDebugText(rate, delay_samples,
@@ -287,12 +274,14 @@ TEST(RenderDelayController, DISABLED_AlignmentWithJitter) {
                                              kMaxTestJitterBlocks +
                                          1;
                    ++j) {
-                std::vector<std::vector<std::vector<float>>>
-                    capture_block_buffer;
+                std::vector<Block> capture_block_buffer;
                 for (size_t k = 0; k < (kMaxTestJitterBlocks - 1); ++k) {
-                  RandomizeSampleVector(&random_generator, render_block[0][0]);
-                  signal_delay_buffer.Delay(render_block[0][0],
-                                            capture_block[0]);
+                  RandomizeSampleVector(
+                      &random_generator,
+                      render_block.View(/*band=*/0, /*channel=*/0));
+                  signal_delay_buffer.Delay(
+                      render_block.View(/*band=*/0, /*channel=*/0),
+                      capture_block.View(/*band=*/0, /*channel=*/0));
                   capture_block_buffer.push_back(capture_block);
                   render_delay_buffer->Insert(render_block);
                 }
@@ -323,24 +312,6 @@ TEST(RenderDelayController, DISABLED_AlignmentWithJitter) {
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
-
-// Verifies the check for the capture signal block size.
-TEST(RenderDelayControllerDeathTest, WrongCaptureSize) {
-  std::vector<std::vector<float>> block(
-      1, std::vector<float>(kBlockSize - 1, 0.f));
-  EchoCanceller3Config config;
-  for (auto rate : {16000, 32000, 48000}) {
-    SCOPED_TRACE(ProduceDebugText(rate));
-    std::unique_ptr<RenderDelayBuffer> render_delay_buffer(
-        RenderDelayBuffer::Create(config, rate, 1));
-    EXPECT_DEATH(
-        std::unique_ptr<RenderDelayController>(
-            RenderDelayController::Create(EchoCanceller3Config(), rate, 1))
-            ->GetDelay(render_delay_buffer->GetDownsampledRenderBuffer(),
-                       render_delay_buffer->Delay(), block),
-        "");
-  }
-}
 
 // Verifies the check for correct sample rate.
 // TODO(peah): Re-enable the test once the issue with memory leaks during DEATH

@@ -30,8 +30,8 @@
 
 namespace JSC {
 
-CompressedLazyOperandValueProfileHolder::CompressedLazyOperandValueProfileHolder() { }
-CompressedLazyOperandValueProfileHolder::~CompressedLazyOperandValueProfileHolder() { }
+CompressedLazyOperandValueProfileHolder::CompressedLazyOperandValueProfileHolder() = default;
+CompressedLazyOperandValueProfileHolder::~CompressedLazyOperandValueProfileHolder() = default;
 
 void CompressedLazyOperandValueProfileHolder::computeUpdatedPredictions(const ConcurrentJSLocker& locker)
 {
@@ -58,8 +58,8 @@ LazyOperandValueProfile* CompressedLazyOperandValueProfileHolder::add(
     return &m_data->last();
 }
 
-LazyOperandValueProfileParser::LazyOperandValueProfileParser() { }
-LazyOperandValueProfileParser::~LazyOperandValueProfileParser() { }
+LazyOperandValueProfileParser::LazyOperandValueProfileParser() = default;
+LazyOperandValueProfileParser::~LazyOperandValueProfileParser() = default;
 
 void LazyOperandValueProfileParser::initialize(
     const ConcurrentJSLocker&, CompressedLazyOperandValueProfileHolder& holder)

@@ -15,7 +15,6 @@
 
 #include "api/scoped_refptr.h"
 #include "modules/desktop_capture/desktop_frame.h"
-#include "rtc_base/constructor_magic.h"
 #include "rtc_base/ref_counted_object.h"
 #include "rtc_base/system/rtc_export.h"
 
@@ -26,6 +25,9 @@ namespace webrtc {
 class RTC_EXPORT SharedDesktopFrame final : public DesktopFrame {
  public:
   ~SharedDesktopFrame() override;
+
+  SharedDesktopFrame(const SharedDesktopFrame&) = delete;
+  SharedDesktopFrame& operator=(const SharedDesktopFrame&) = delete;
 
   static std::unique_ptr<SharedDesktopFrame> Wrap(
       std::unique_ptr<DesktopFrame> desktop_frame);
@@ -56,8 +58,6 @@ class RTC_EXPORT SharedDesktopFrame final : public DesktopFrame {
   SharedDesktopFrame(rtc::scoped_refptr<Core> core);
 
   const rtc::scoped_refptr<Core> core_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(SharedDesktopFrame);
 };
 
 }  // namespace webrtc

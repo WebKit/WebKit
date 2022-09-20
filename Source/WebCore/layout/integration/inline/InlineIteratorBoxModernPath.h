@@ -94,9 +94,9 @@ public:
         return m_inlineContent->rendererForLayoutBox(box().layoutBox());
     }
 
-    const RenderBlockFlow& containingBlock() const
+    const RenderBlockFlow& formattingContextRoot() const
     {
-        return m_inlineContent->containingBlock();
+        return m_inlineContent->formattingContextRoot();
     }
 
     const RenderStyle& style() const

@@ -4350,7 +4350,8 @@ ExceptionOr<Ref<SerializedScriptValue>> SerializedScriptValue::create(JSGlobalOb
             continue;
         }
         if (auto port = JSMessagePort::toWrapped(vm, transferable.get())) {
-            // FIXME: This should check if the port is detached as per https://html.spec.whatwg.org/multipage/infrastructure.html#istransferable.
+            if (port->isDetached())
+                return Exception { DataCloneError, "MessagePort is detached"_s };
             messagePorts.append(WTFMove(port));
             continue;
         }

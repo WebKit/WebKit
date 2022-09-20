@@ -10,6 +10,8 @@
 
 #include "modules/desktop_capture/mac/desktop_frame_cgimage.h"
 
+#include <AvailabilityMacros.h>
+
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 
@@ -73,7 +75,11 @@ std::unique_ptr<DesktopFrameCGImage> DesktopFrameCGImage::CreateFromCGImage(
 
   CGColorSpaceRef cg_color_space = CGImageGetColorSpace(cg_image.get());
   if (cg_color_space) {
+#if !defined(MAC_OS_X_VERSION_10_13) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_13
     rtc::ScopedCFTypeRef<CFDataRef> cf_icc_profile(CGColorSpaceCopyICCProfile(cg_color_space));
+#else
+    rtc::ScopedCFTypeRef<CFDataRef> cf_icc_profile(CGColorSpaceCopyICCData(cg_color_space));
+#endif
     if (cf_icc_profile) {
       const uint8_t* data_as_byte =
           reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(cf_icc_profile.get()));

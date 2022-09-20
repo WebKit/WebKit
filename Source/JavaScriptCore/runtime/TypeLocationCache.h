@@ -43,7 +43,7 @@ public:
             static constexpr bool safeToCompareToEmptyOrDeleted = false;
         };
 
-        LocationKey() {}
+        LocationKey() = default;
         bool operator==(const LocationKey& other) const 
         {
             return m_globalVariableID == other.m_globalVariableID

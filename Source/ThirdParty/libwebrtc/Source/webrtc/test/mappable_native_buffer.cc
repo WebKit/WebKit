@@ -59,7 +59,8 @@ VideoFrame CreateMappableNativeFrame(int64_t ntp_time_ms,
 
 rtc::scoped_refptr<MappableNativeBuffer> GetMappableNativeBufferFromVideoFrame(
     const VideoFrame& frame) {
-  return static_cast<MappableNativeBuffer*>(frame.video_frame_buffer().get());
+  return rtc::scoped_refptr<MappableNativeBuffer>(
+      static_cast<MappableNativeBuffer*>(frame.video_frame_buffer().get()));
 }
 
 MappableNativeBuffer::ScaledBuffer::ScaledBuffer(
@@ -145,7 +146,8 @@ bool MappableNativeBuffer::DidConvertToI420() const {
 
 rtc::scoped_refptr<MappableNativeBuffer::ScaledBuffer>
 MappableNativeBuffer::FullSizeBuffer() {
-  return rtc::make_ref_counted<ScaledBuffer>(this, width_, height_);
+  return rtc::make_ref_counted<ScaledBuffer>(
+      rtc::scoped_refptr<MappableNativeBuffer>(this), width_, height_);
 }
 
 rtc::scoped_refptr<VideoFrameBuffer>
@@ -161,7 +163,7 @@ MappableNativeBuffer::GetOrCreateMappedBuffer(int width, int height) {
     case VideoFrameBuffer::Type::kI420: {
       rtc::scoped_refptr<I420Buffer> i420_buffer =
           I420Buffer::Create(width, height);
-      I420Buffer::SetBlack(i420_buffer);
+      I420Buffer::SetBlack(i420_buffer.get());
       mapped_buffer = i420_buffer;
       break;
     }
@@ -173,7 +175,7 @@ MappableNativeBuffer::GetOrCreateMappedBuffer(int width, int height) {
       break;
     }
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
   }
   mapped_buffers_.push_back(mapped_buffer);
   return mapped_buffer;

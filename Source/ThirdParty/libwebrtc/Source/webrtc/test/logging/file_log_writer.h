@@ -15,16 +15,17 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "test/logging/log_writer.h"
 
 namespace webrtc {
 namespace webrtc_impl {
 class FileLogWriter final : public RtcEventLogOutput {
  public:
-  explicit FileLogWriter(std::string file_path);
+  explicit FileLogWriter(absl::string_view file_path);
   ~FileLogWriter() final;
   bool IsActive() const override;
-  bool Write(const std::string& value) override;
+  bool Write(absl::string_view value) override;
   void Flush() override;
 
  private:
@@ -33,10 +34,11 @@ class FileLogWriter final : public RtcEventLogOutput {
 }  // namespace webrtc_impl
 class FileLogWriterFactory final : public LogWriterFactoryInterface {
  public:
-  explicit FileLogWriterFactory(std::string base_path);
+  explicit FileLogWriterFactory(absl::string_view base_path);
   ~FileLogWriterFactory() final;
 
-  std::unique_ptr<RtcEventLogOutput> Create(std::string filename) override;
+  std::unique_ptr<RtcEventLogOutput> Create(
+      absl::string_view filename) override;
 
  private:
   const std::string base_path_;

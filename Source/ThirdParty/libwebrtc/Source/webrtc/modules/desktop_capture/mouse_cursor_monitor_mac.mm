@@ -75,9 +75,9 @@ class MouseCursorMonitorMac : public MouseCursorMonitor {
   rtc::scoped_refptr<DesktopConfigurationMonitor> configuration_monitor_;
   CGWindowID window_id_;
   ScreenId screen_id_;
-  Callback* callback_;
+  Callback* callback_ = NULL;
   Mode mode_;
-  __strong NSImage* last_cursor_;
+  __strong NSImage* last_cursor_ = NULL;
 };
 
 MouseCursorMonitorMac::MouseCursorMonitorMac(const DesktopCaptureOptions& options,
@@ -86,7 +86,6 @@ MouseCursorMonitorMac::MouseCursorMonitorMac(const DesktopCaptureOptions& option
     : configuration_monitor_(options.configuration_monitor()),
       window_id_(window_id),
       screen_id_(screen_id),
-      callback_(NULL),
       mode_(SHAPE_AND_POSITION) {
   RTC_DCHECK(window_id == kCGNullWindowID || screen_id == kInvalidScreenId);
 }

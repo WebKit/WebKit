@@ -143,7 +143,6 @@ public:
 private:
     PageReservation(void* base, size_t size, bool writable, bool executable, bool, bool hasGuardPages)
         : PageBlock(base, size, hasGuardPages)
-        , m_committed(0)
         , m_writable(writable)
         , m_executable(executable)
     {

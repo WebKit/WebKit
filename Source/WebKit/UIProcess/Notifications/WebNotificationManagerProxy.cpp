@@ -340,14 +340,18 @@ void WebNotificationManagerProxy::providerDidUpdateNotificationPolicy(const API:
 {
     RELEASE_LOG(Notifications, "Provider did update notification policy for origin %" PRIVATE_LOG_STRING " to %d", origin->securityOrigin().toString().utf8().data(), enabled);
 
+    auto originString = origin->securityOrigin().toString();
+    if (originString.isEmpty())
+        return;
+
     if (this == &sharedServiceWorkerManager()) {
         setPushesAndNotificationsEnabledForOrigin(origin->securityOrigin(), enabled);
-        WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), enabled));
+        WebProcessPool::sendToAllRemoteWorkerProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(originString, enabled));
         return;
     }
 
     if (processPool())
-        processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(origin->securityOrigin().toString(), enabled));
+        processPool()->sendToAllProcesses(Messages::WebNotificationManager::DidUpdateNotificationDecision(originString, enabled));
 }
 
 void WebNotificationManagerProxy::providerDidRemoveNotificationPolicies(API::Array* origins)

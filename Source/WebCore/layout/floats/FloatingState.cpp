@@ -37,9 +37,9 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FloatingState);
 
-FloatingState::FloatItem::FloatItem(const Box& layoutBox, BoxGeometry absoluteBoxGeometry)
+FloatingState::FloatItem::FloatItem(const Box& layoutBox, Position position, BoxGeometry absoluteBoxGeometry)
     : m_layoutBox(layoutBox)
-    , m_position(layoutBox.isLeftFloatingPositioned() ? Position::Left : Position::Right)
+    , m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
 {
 }

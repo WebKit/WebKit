@@ -12,8 +12,8 @@
 #define MODULES_AUDIO_PROCESSING_TEST_CONVERSATIONAL_SPEECH_WAVREADER_ABSTRACT_FACTORY_H_
 
 #include <memory>
-#include <string>
 
+#include "absl/strings/string_view.h"
 #include "modules/audio_processing/test/conversational_speech/wavreader_interface.h"
 
 namespace webrtc {
@@ -24,7 +24,7 @@ class WavReaderAbstractFactory {
  public:
   virtual ~WavReaderAbstractFactory() = default;
   virtual std::unique_ptr<WavReaderInterface> Create(
-      const std::string& filepath) const = 0;
+      absl::string_view filepath) const = 0;
 };
 
 }  // namespace conversational_speech

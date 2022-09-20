@@ -18,7 +18,7 @@
 
 namespace webrtc {
 
-class MockSctpDataChannel : public rtc::RefCountedObject<SctpDataChannel> {
+class MockSctpDataChannel : public SctpDataChannel {
  public:
   MockSctpDataChannel(int id, DataState state)
       : MockSctpDataChannel(id,
@@ -41,11 +41,11 @@ class MockSctpDataChannel : public rtc::RefCountedObject<SctpDataChannel> {
       const InternalDataChannelInit& config = InternalDataChannelInit(),
       rtc::Thread* signaling_thread = rtc::Thread::Current(),
       rtc::Thread* network_thread = rtc::Thread::Current())
-      : rtc::RefCountedObject<SctpDataChannel>(config,
-                                               nullptr,
-                                               label,
-                                               signaling_thread,
-                                               network_thread) {
+      : SctpDataChannel(config,
+                        nullptr,
+                        label,
+                        signaling_thread,
+                        network_thread) {
     EXPECT_CALL(*this, id()).WillRepeatedly(::testing::Return(id));
     EXPECT_CALL(*this, state()).WillRepeatedly(::testing::Return(state));
     EXPECT_CALL(*this, protocol()).WillRepeatedly(::testing::Return(protocol));

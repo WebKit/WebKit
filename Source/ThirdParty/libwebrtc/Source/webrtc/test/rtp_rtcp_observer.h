@@ -67,9 +67,9 @@ class RtpRtcpObserver {
   }
 
  protected:
-  RtpRtcpObserver() : RtpRtcpObserver(0) {}
-  explicit RtpRtcpObserver(int event_timeout_ms)
-      : timeout_ms_(event_timeout_ms) {}
+  RtpRtcpObserver() : RtpRtcpObserver(TimeDelta::Zero()) {}
+  explicit RtpRtcpObserver(TimeDelta event_timeout)
+      : timeout_ms_(event_timeout.ms()) {}
 
   rtc::Event observation_complete_;
 

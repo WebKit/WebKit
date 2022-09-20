@@ -86,7 +86,7 @@ void ScreenCapturerWinGdi::CaptureFrame() {
   PrepareCaptureResources();
 
   if (!CaptureImage()) {
-    RTC_LOG(WARNING) << "Failed to capture screen by GDI.";
+    RTC_LOG(LS_WARNING) << "Failed to capture screen by GDI.";
     callback_->OnCaptureResult(Result::ERROR_TEMPORARY, nullptr);
     return;
   }

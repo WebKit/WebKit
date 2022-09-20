@@ -34,23 +34,13 @@ namespace bmalloc {
 
 class LargeRange : public Range {
 public:
-    LargeRange()
-        : Range()
-        , m_startPhysicalSize(0)
-        , m_totalPhysicalSize(0)
-        , m_physicalEnd(begin())
-        , m_isEligible(true)
-        , m_usedSinceLastScavenge(false)
-    {
-    }
+    LargeRange() = default;
 
     LargeRange(const Range& other, size_t startPhysicalSize, size_t totalPhysicalSize, void* physicalEnd)
         : Range(other)
         , m_startPhysicalSize(startPhysicalSize)
         , m_totalPhysicalSize(totalPhysicalSize)
         , m_physicalEnd(static_cast<char*>(physicalEnd))
-        , m_isEligible(true)
-        , m_usedSinceLastScavenge(false)
     {
         BASSERT(this->size() >= this->totalPhysicalSize());
         BASSERT(this->totalPhysicalSize() >= this->startPhysicalSize());
@@ -61,7 +51,6 @@ public:
         , m_startPhysicalSize(startPhysicalSize)
         , m_totalPhysicalSize(totalPhysicalSize)
         , m_physicalEnd(static_cast<char*>(physicalEnd))
-        , m_isEligible(true)
         , m_usedSinceLastScavenge(usedSinceLastScavenge)
     {
         BASSERT(this->size() >= this->totalPhysicalSize());
@@ -108,11 +97,11 @@ public:
     bool operator<(const LargeRange& other) const { return begin() < other.begin(); }
 
 private:
-    size_t m_startPhysicalSize;
-    size_t m_totalPhysicalSize;
-    char* m_physicalEnd;
-    unsigned m_isEligible: 1;
-    unsigned m_usedSinceLastScavenge: 1;
+    size_t m_startPhysicalSize { 0 };
+    size_t m_totalPhysicalSize { 0 };
+    char* m_physicalEnd { begin() };
+    unsigned m_isEligible: 1 { true };
+    unsigned m_usedSinceLastScavenge: 1 { false };
 };
 
 inline bool canMerge(const LargeRange& a, const LargeRange& b)

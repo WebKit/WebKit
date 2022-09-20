@@ -9,7 +9,7 @@ PASS Got a stream.
 PASS statsHandler2 was called
 PASS result.size is >= 1
 PASS timestamp is >= startTime
-FAIL local.type should be video. Was certificate.
+PASS local.kind is "video"
 PASS successfullyParsed is true
 
 TEST COMPLETE

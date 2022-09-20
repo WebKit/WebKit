@@ -47,11 +47,7 @@ public:
 
     class iterator {
     public:
-        iterator()
-            : m_collection(nullptr)
-            , m_index(0)
-        {
-        }
+        iterator() = default;
 
         iterator(SuccessorCollection& collection, size_t index)
             : m_collection(&collection)
@@ -82,8 +78,8 @@ public:
         }
 
     private:
-        SuccessorCollection* m_collection;
-        size_t m_index;
+        SuccessorCollection* m_collection { nullptr };
+        size_t m_index { 0 };
     };
 
     iterator begin() { return iterator(*this, 0); }
@@ -91,11 +87,7 @@ public:
 
     class const_iterator {
     public:
-        const_iterator()
-            : m_collection(nullptr)
-            , m_index(0)
-        {
-        }
+        const_iterator() = default;
 
         const_iterator(const SuccessorCollection& collection, size_t index)
             : m_collection(&collection)
@@ -126,8 +118,8 @@ public:
         }
 
     private:
-        const SuccessorCollection* m_collection;
-        size_t m_index;
+        const SuccessorCollection* m_collection { nullptr };
+        size_t m_index { 0 };
     };
 
     const_iterator begin() const { return const_iterator(*this, 0); }

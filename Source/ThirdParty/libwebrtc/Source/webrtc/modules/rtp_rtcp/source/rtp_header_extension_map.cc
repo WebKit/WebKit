@@ -93,7 +93,7 @@ bool RtpHeaderExtensionMap::RegisterByType(int id, RTPExtensionType type) {
   for (const ExtensionInfo& extension : kExtensions)
     if (type == extension.type)
       return Register(id, extension.type, extension.uri);
-  RTC_NOTREACHED();
+  RTC_DCHECK_NOTREACHED();
   return false;
 }
 
@@ -116,13 +116,6 @@ RTPExtensionType RtpHeaderExtensionMap::GetType(int id) const {
     }
   }
   return kInvalidType;
-}
-
-int32_t RtpHeaderExtensionMap::Deregister(RTPExtensionType type) {
-  if (IsRegistered(type)) {
-    ids_[type] = kInvalidId;
-  }
-  return 0;
 }
 
 void RtpHeaderExtensionMap::Deregister(absl::string_view uri) {

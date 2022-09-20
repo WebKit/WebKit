@@ -41,7 +41,7 @@ class Encoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE Encoder();
-    WTF_EXPORT_PRIVATE ~Encoder();
+    WTF_EXPORT_PRIVATE ~Encoder() = default;
 
     WTF_EXPORT_PRIVATE void encodeChecksum();
     WTF_EXPORT_PRIVATE void encodeFixedLengthData(Span<const uint8_t>);

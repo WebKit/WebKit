@@ -132,12 +132,15 @@ int FakeDecodeFromFile::PacketDuration(const uint8_t* encoded,
       encoded_len < 4 + sizeof(uint32_t)
           ? 0
           : ByteReader<uint32_t>::ReadLittleEndian(&encoded[4]);
-  if (  // Decoder is asked to produce codec-internal comfort noise
-      encoded_len == 0 ||
-      // Comfort noise payload
-      original_payload_size_bytes <= 2 || samples_to_decode == 0 ||
-      // Erroneous duration since it is not a multiple of 10ms
-      samples_to_decode % rtc::CheckedDivExact(SampleRateHz(), 100) != 0) {
+  if (encoded_len == 0) {
+    // Decoder is asked to produce codec-internal comfort noise.
+    return rtc::CheckedDivExact(SampleRateHz(), 100);
+  }
+  bool is_dtx_payload =
+      original_payload_size_bytes <= 2 || samples_to_decode == 0;
+  bool has_error_duration =
+      samples_to_decode % rtc::CheckedDivExact(SampleRateHz(), 100) != 0;
+  if (is_dtx_payload || has_error_duration) {
     if (last_decoded_length_ > 0) {
       // Use length of last decoded packet.
       return rtc::dchecked_cast<int>(last_decoded_length_);

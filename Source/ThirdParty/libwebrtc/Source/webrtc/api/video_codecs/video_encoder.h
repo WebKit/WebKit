@@ -66,6 +66,10 @@ class RTC_EXPORT EncodedImageCallback {
   // kDroppedByMediaOptimizations - dropped by MediaOptimizations (for rate
   // limiting purposes).
   // kDroppedByEncoder - dropped by encoder's internal rate limiter.
+  // TODO(bugs.webrtc.org/10164): Delete this enum? It duplicates the more
+  // general VideoStreamEncoderObserver::DropReason. Also,
+  // kDroppedByMediaOptimizations is not produced by any encoder, but by
+  // VideoStreamEncoder.
   enum class DropReason : uint8_t {
     kDroppedByMediaOptimizations,
     kDroppedByEncoder
@@ -96,11 +100,9 @@ class RTC_EXPORT VideoEncoder {
     struct KOff {};
 
    public:
-    // TODO(nisse): Would be nicer if kOff were a constant ScalingSettings
-    // rather than a magic value. However, absl::optional is not trivially copy
-    // constructible, and hence a constant ScalingSettings needs a static
-    // initializer, which is strongly discouraged in Chrome. We can hopefully
-    // fix this when we switch to absl::optional or std::optional.
+    // TODO(bugs.webrtc.org/9078): Since absl::optional should be trivially copy
+    // constructible, this magic value can likely be replaced by a constexpr
+    // ScalingSettings value.
     static constexpr KOff kOff = {};
 
     ScalingSettings(int low, int high);
@@ -206,13 +208,6 @@ class RTC_EXPORT VideoEncoder {
     // If this field is true, the encoder uses hardware support and different
     // thresholds will be used in CPU adaptation.
     bool is_hardware_accelerated;
-
-    // If this field is true, the encoder uses internal camera sources, meaning
-    // that it does not require/expect frames to be delivered via
-    // webrtc::VideoEncoder::Encode.
-    // Internal source encoders are deprecated and support for them will be
-    // phased out.
-    bool has_internal_source;
 
     // For each spatial layer (simulcast stream or SVC layer), represented as an
     // element in `fps_allocation` a vector indicates how many temporal layers

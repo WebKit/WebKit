@@ -61,6 +61,12 @@
     color: var(--glyph-color-active-pressed);
 }
 
+.navigation-bar > .item.console-snippets > img {
+    width: 16px;
+    height: 16px;
+    content: url(../Images/ClippingIcons.svg#js-light);
+}
+
 .content-view.log {
     display: flex;
     flex-direction: column;
@@ -267,7 +273,24 @@ body[dir=rtl] .console-group-title::before {
         alt: attr(data-labelprefix);
 }
 
+.console-user-command:not(:hover) > .console-snippet-options {
+    display: none;
+}
+
+.create-snippet-popover > .label {
+    display: inline-block;
+    margin-inline-end: 6px;
+    font-weight: bold;
+    line-height: 23px;
+    white-space: nowrap;
+    color: hsl(0, 0%, 34%);
+}
+
 @media (prefers-color-scheme: dark) {
+    .navigation-bar > .item.console-snippets > img {
+        content: url(../Images/ClippingIcons.svg#js-dark);
+    }
+
     .console-messages {
         background-color: var(--background-color-content);
     }

@@ -73,7 +73,7 @@ TEST_F(ConfigEndToEndTest, VerifyDefaultSendConfigParameters) {
 }
 
 TEST_F(ConfigEndToEndTest, VerifyDefaultVideoReceiveConfigParameters) {
-  VideoReceiveStream::Config default_receive_config(nullptr);
+  VideoReceiveStreamInterface::Config default_receive_config(nullptr);
   EXPECT_EQ(RtcpMode::kCompound, default_receive_config.rtp.rtcp_mode)
       << "Reduced-size RTCP require rtcp-rsize to be negotiated.";
   EXPECT_FALSE(default_receive_config.rtp.lntf.enabled)

@@ -296,7 +296,7 @@ void ReverbDecayEstimator::LateReverbLinearRegressor::Accumulate(float z) {
 float ReverbDecayEstimator::LateReverbLinearRegressor::Estimate() {
   RTC_DCHECK(EstimateAvailable());
   if (nn_ == 0.f) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     return 0.f;
   }
   return nz_ / nn_;

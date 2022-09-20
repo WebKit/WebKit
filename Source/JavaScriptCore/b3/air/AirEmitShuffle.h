@@ -54,10 +54,8 @@ inline Opcode moveFor(Bank bank, Width width)
 
 class ShufflePair {
 public:
-    ShufflePair()
-    {
-    }
-    
+    ShufflePair() = default;
+
     ShufflePair(const Arg& src, const Arg& dst, Width width)
         : m_src(src)
         , m_dst(dst)

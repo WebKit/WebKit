@@ -89,7 +89,7 @@ VideoFrameType ConvertToVideoFrameType(EVideoFrameType type) {
     case videoFrameTypeInvalid:
       break;
   }
-  RTC_NOTREACHED() << "Unexpected/invalid frame type: " << type;
+  RTC_DCHECK_NOTREACHED() << "Unexpected/invalid frame type: " << type;
   return VideoFrameType::kEmptyFrame;
 }
 
@@ -118,7 +118,6 @@ static void RtpFragmentize(EncodedImage* encoded_image, SFrameBSInfo* info) {
       required_capacity += layerInfo.pNalLengthInByte[nal];
     }
   }
-  // TODO(nisse): Use a cache or buffer pool to avoid allocation?
   auto buffer = EncodedImageBuffer::Create(required_capacity);
   encoded_image->SetEncodedData(buffer);
 
@@ -247,7 +246,7 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* inst,
     configurations_[i].width = codec_.simulcastStream[idx].width;
     configurations_[i].height = codec_.simulcastStream[idx].height;
     configurations_[i].max_frame_rate = static_cast<float>(codec_.maxFramerate);
-    configurations_[i].frame_dropping_on = codec_.H264()->frameDroppingOn;
+    configurations_[i].frame_dropping_on = codec_.GetFrameDropEnabled();
     configurations_[i].key_frame_interval = codec_.H264()->keyFrameInterval;
     configurations_[i].num_temporal_layers =
         std::max(codec_.H264()->numberOfTemporalLayers,
@@ -489,6 +488,7 @@ int32_t H264EncoderImpl::Encode(
     encoded_images_[i]._encodedWidth = configurations_[i].width;
     encoded_images_[i]._encodedHeight = configurations_[i].height;
     encoded_images_[i].SetTimestamp(input_frame.timestamp());
+    encoded_images_[i].SetColorSpace(input_frame.color_space());
     encoded_images_[i]._frameType = ConvertToVideoFrameType(info.eFrameType);
     encoded_images_[i].SetSpatialIndex(configurations_[i].simulcast_idx);
 
@@ -545,7 +545,7 @@ SEncParamExt H264EncoderImpl::CreateEncoderParams(size_t i) const {
   } else if (codec_.mode == VideoCodecMode::kScreensharing) {
     encoder_params.iUsageType = SCREEN_CONTENT_REAL_TIME;
   } else {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
   }
   encoder_params.iPicWidth = configurations_[i].width;
   encoder_params.iPicHeight = configurations_[i].height;
@@ -594,8 +594,8 @@ SEncParamExt H264EncoderImpl::CreateEncoderParams(size_t i) const {
     // theoretically use all available reference buffers.
     encoder_params.iNumRefFrame = encoder_params.iTemporalLayerNum - 1;
   }
-  RTC_LOG(INFO) << "OpenH264 version is " << OPENH264_MAJOR << "."
-                << OPENH264_MINOR;
+  RTC_LOG(LS_INFO) << "OpenH264 version is " << OPENH264_MAJOR << "."
+                   << OPENH264_MINOR;
   switch (packetization_mode_) {
     case H264PacketizationMode::SingleNalUnit:
       // Limit the size of the packets produced.
@@ -604,8 +604,8 @@ SEncParamExt H264EncoderImpl::CreateEncoderParams(size_t i) const {
           SM_SIZELIMITED_SLICE;
       encoder_params.sSpatialLayers[0].sSliceArgument.uiSliceSizeConstraint =
           static_cast<unsigned int>(max_payload_size_);
-      RTC_LOG(INFO) << "Encoder is configured with NALU constraint: "
-                    << max_payload_size_ << " bytes";
+      RTC_LOG(LS_INFO) << "Encoder is configured with NALU constraint: "
+                       << max_payload_size_ << " bytes";
       break;
     case H264PacketizationMode::NonInterleaved:
       // When uiSliceMode = SM_FIXEDSLCNUM_SLICE, uiSliceNum = 0 means auto
@@ -643,7 +643,6 @@ VideoEncoder::EncoderInfo H264EncoderImpl::GetEncoderInfo() const {
   info.scaling_settings =
       VideoEncoder::ScalingSettings(kLowH264QpThreshold, kHighH264QpThreshold);
   info.is_hardware_accelerated = false;
-  info.has_internal_source = false;
   info.supports_simulcast = true;
   info.preferred_pixel_formats = {VideoFrameBuffer::Type::kI420};
   return info;

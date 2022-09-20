@@ -1,0 +1,63 @@
+# Copyright 2021 The Chromium Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//third_party/grpc/grpc_library.gni")
+import("../../webrtc.gni")
+
+grpc_library("signaling_grpc_proto") {
+  testonly = true
+  sources = [ "peer_connection_signaling.proto" ]
+}
+
+rtc_library("signaling_interface") {
+  sources = [ "signaling_interface.h" ]
+  deps = [ "../../api:libjingle_peerconnection_api" ]
+}
+
+rtc_library("grpc_signaling") {
+  testonly = true
+  sources = [
+    "grpc_signaling.cc",
+    "grpc_signaling.h",
+  ]
+  deps = [
+    ":signaling_grpc_proto",
+    ":signaling_interface",
+    "../../api:libjingle_peerconnection_api",
+    "../../rtc_base:threading",
+    "//third_party/grpc:grpc++",
+  ]
+
+  defines = [ "GPR_FORBID_UNREACHABLE_CODE=0" ]
+}
+
+rtc_executable("data_channel_benchmark") {
+  testonly = true
+  sources = [
+    "data_channel_benchmark.cc",
+    "peer_connection_client.cc",
+    "peer_connection_client.h",
+  ]
+  deps = [
+    ":grpc_signaling",
+    ":signaling_interface",
+    "../../api:create_peerconnection_factory",
+    "../../api:libjingle_peerconnection_api",
+    "../../api:rtc_error",
+    "../../api:scoped_refptr",
+    "../../api/audio_codecs:builtin_audio_decoder_factory",
+    "../../api/audio_codecs:builtin_audio_encoder_factory",
+    "../../api/video_codecs:builtin_video_decoder_factory",
+    "../../api/video_codecs:builtin_video_encoder_factory",
+    "../../rtc_base",
+    "../../rtc_base:logging",
+    "../../rtc_base:refcount",
+    "../../rtc_base:rtc_event",
+    "../../rtc_base:threading",
+    "../../system_wrappers:field_trial",
+    "//third_party/abseil-cpp/absl/cleanup:cleanup",
+    "//third_party/abseil-cpp/absl/flags:flag",
+    "//third_party/abseil-cpp/absl/flags:parse",
+  ]
+}

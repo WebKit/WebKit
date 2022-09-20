@@ -44,7 +44,7 @@
     pointer-events: none;
 }
 
-.console-drawer > .navigation-bar > .item > .glyph,
+.console-drawer > .navigation-bar > .item > :is(.glyph, img),
 .console-drawer > .navigation-bar > .log-scope-bar > li {
     pointer-events: all;
 }

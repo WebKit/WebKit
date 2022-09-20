@@ -73,9 +73,9 @@ class AudioQualityTest : public AudioEndToEndTest {
 };
 
 class Mobile2GNetworkTest : public AudioQualityTest {
-  void ModifyAudioConfigs(
-      AudioSendStream::Config* send_config,
-      std::vector<AudioReceiveStream::Config>* receive_configs) override {
+  void ModifyAudioConfigs(AudioSendStream::Config* send_config,
+                          std::vector<AudioReceiveStreamInterface::Config>*
+                              receive_configs) override {
     send_config->send_codec_spec = AudioSendStream::Config::SendCodecSpec(
         test::CallTest::kAudioSendPayloadType,
         {"OPUS",

@@ -6,7 +6,7 @@ if (is_android) {
     apk_name = "androidnativeapi"
     android_manifest = "AndroidManifest.xml"
     min_sdk_version = 21
-    target_sdk_version = 27
+    target_sdk_version = 31
 
     sources = [
       "java/org/webrtc/examples/androidnativeapi/CallClient.java",
@@ -48,6 +48,7 @@ if (is_android) {
     deps = [
       ":generated_jni",
       "../../api:scoped_refptr",
+      "../../api:sequence_checker",
       "../../rtc_base/synchronization:mutex",
       "//api:libjingle_peerconnection_api",
       "//api/rtc_event_log:rtc_event_log_factory",
@@ -58,7 +59,6 @@ if (is_android) {
       "//modules/utility",
       "//pc:libjingle_peerconnection",
       "//rtc_base",
-      "//rtc_base:rtc_base_approved",
       "//sdk/android:native_api_base",
       "//sdk/android:native_api_jni",
       "//sdk/android:native_api_video",

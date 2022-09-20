@@ -15,6 +15,7 @@
 
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "api/task_queue/task_queue_base.h"
 #include "net/dcsctp/common/handover_testing.h"
 #include "net/dcsctp/packet/chunk/sack_chunk.h"
 #include "net/dcsctp/timer/fake_timeout.h"
@@ -36,7 +37,9 @@ class DataTrackerTest : public testing::Test {
  protected:
   DataTrackerTest()
       : timeout_manager_([this]() { return now_; }),
-        timer_manager_([this]() { return timeout_manager_.CreateTimeout(); }),
+        timer_manager_([this](webrtc::TaskQueueBase::DelayPrecision precision) {
+          return timeout_manager_.CreateTimeout(precision);
+        }),
         timer_(timer_manager_.CreateTimer(
             "test/delayed_ack",
             []() { return absl::nullopt; },
@@ -45,9 +48,16 @@ class DataTrackerTest : public testing::Test {
             std::make_unique<DataTracker>("log: ", timer_.get(), kInitialTSN)) {
   }
 
-  void Observer(std::initializer_list<uint32_t> tsns) {
+  void Observer(std::initializer_list<uint32_t> tsns,
+                bool expect_as_duplicate = false) {
     for (const uint32_t tsn : tsns) {
-      tracker_->Observe(TSN(tsn), AnyDataChunk::ImmediateAckFlag(false));
+      if (expect_as_duplicate) {
+        EXPECT_FALSE(
+            tracker_->Observe(TSN(tsn), AnyDataChunk::ImmediateAckFlag(false)));
+      } else {
+        EXPECT_TRUE(
+            tracker_->Observe(TSN(tsn), AnyDataChunk::ImmediateAckFlag(false)));
+      }
     }
   }
 
@@ -56,8 +66,9 @@ class DataTrackerTest : public testing::Test {
     DcSctpSocketHandoverState state;
     tracker_->AddHandoverState(state);
     g_handover_state_transformer_for_test(&state);
-    tracker_ = std::make_unique<DataTracker>("log: ", timer_.get(), kInitialTSN,
-                                             &state);
+    tracker_ =
+        std::make_unique<DataTracker>("log: ", timer_.get(), kInitialTSN);
+    tracker_->RestoreFromState(state);
   }
 
   TimeMs now_ = TimeMs(0);
@@ -122,7 +133,7 @@ TEST_F(DataTrackerTest, AckAlreadyReceivedChunk) {
   EXPECT_THAT(sack1.gap_ack_blocks(), IsEmpty());
 
   // Receive old chunk
-  Observer({8});
+  Observer({8}, /*expect_as_duplicate=*/true);
   SackChunk sack2 = tracker_->CreateSelectiveAck(kArwnd);
   EXPECT_EQ(sack2.cumulative_tsn_ack(), TSN(11));
   EXPECT_THAT(sack2.gap_ack_blocks(), IsEmpty());
@@ -142,7 +153,8 @@ TEST_F(DataTrackerTest, DoubleSendRetransmittedChunk) {
   EXPECT_THAT(sack2.gap_ack_blocks(), IsEmpty());
 
   // Receive chunk 12 again.
-  Observer({12, 19, 20, 21});
+  Observer({12}, /*expect_as_duplicate=*/true);
+  Observer({19, 20, 21});
   SackChunk sack3 = tracker_->CreateSelectiveAck(kArwnd);
   EXPECT_EQ(sack3.cumulative_tsn_ack(), TSN(21));
   EXPECT_THAT(sack3.gap_ack_blocks(), IsEmpty());
@@ -173,7 +185,8 @@ TEST_F(DataTrackerTest, ForwardTsnSkipsFromGapBlock) {
 TEST_F(DataTrackerTest, ExampleFromRFC3758) {
   tracker_->HandleForwardTsn(TSN(102));
 
-  Observer({102, 104, 105, 107});
+  Observer({102}, /*expect_as_duplicate=*/true);
+  Observer({104, 105, 107});
 
   tracker_->HandleForwardTsn(TSN(103));
 
@@ -243,7 +256,8 @@ TEST_F(DataTrackerTest, WillNotAcceptInvalidTSNs) {
 }
 
 TEST_F(DataTrackerTest, ReportSingleDuplicateTsns) {
-  Observer({11, 12, 11});
+  Observer({11, 12});
+  Observer({11}, /*expect_as_duplicate=*/true);
   SackChunk sack = tracker_->CreateSelectiveAck(kArwnd);
   EXPECT_EQ(sack.cumulative_tsn_ack(), TSN(12));
   EXPECT_THAT(sack.gap_ack_blocks(), IsEmpty());
@@ -251,7 +265,9 @@ TEST_F(DataTrackerTest, ReportSingleDuplicateTsns) {
 }
 
 TEST_F(DataTrackerTest, ReportMultipleDuplicateTsns) {
-  Observer({11, 12, 13, 14, 12, 13, 12, 13, 15, 16});
+  Observer({11, 12, 13, 14});
+  Observer({12, 13, 12, 13}, /*expect_as_duplicate=*/true);
+  Observer({15, 16});
   SackChunk sack = tracker_->CreateSelectiveAck(kArwnd);
   EXPECT_EQ(sack.cumulative_tsn_ack(), TSN(16));
   EXPECT_THAT(sack.gap_ack_blocks(), IsEmpty());
@@ -259,7 +275,9 @@ TEST_F(DataTrackerTest, ReportMultipleDuplicateTsns) {
 }
 
 TEST_F(DataTrackerTest, ReportDuplicateTsnsInGapAckBlocks) {
-  Observer({11, /*12,*/ 13, 14, 13, 14, 15, 16});
+  Observer({11, /*12,*/ 13, 14});
+  Observer({13, 14}, /*expect_as_duplicate=*/true);
+  Observer({15, 16});
   SackChunk sack = tracker_->CreateSelectiveAck(kArwnd);
   EXPECT_EQ(sack.cumulative_tsn_ack(), TSN(11));
   EXPECT_THAT(sack.gap_ack_blocks(), ElementsAre(SackChunk::GapAckBlock(2, 5)));
@@ -267,7 +285,9 @@ TEST_F(DataTrackerTest, ReportDuplicateTsnsInGapAckBlocks) {
 }
 
 TEST_F(DataTrackerTest, ClearsDuplicateTsnsAfterCreatingSack) {
-  Observer({11, 12, 13, 14, 12, 13, 12, 13, 15, 16});
+  Observer({11, 12, 13, 14});
+  Observer({12, 13, 12, 13}, /*expect_as_duplicate=*/true);
+  Observer({15, 16});
   SackChunk sack1 = tracker_->CreateSelectiveAck(kArwnd);
   EXPECT_EQ(sack1.cumulative_tsn_ack(), TSN(16));
   EXPECT_THAT(sack1.gap_ack_blocks(), IsEmpty());
@@ -377,7 +397,7 @@ TEST_F(DataTrackerTest, SendsSackOnDuplicateDataChunks) {
   tracker_->ObservePacketEnd();
   EXPECT_TRUE(tracker_->ShouldSendAck());
   EXPECT_FALSE(timer_->is_running());
-  Observer({11});
+  Observer({11}, /*expect_as_duplicate=*/true);
   tracker_->ObservePacketEnd();
   EXPECT_TRUE(tracker_->ShouldSendAck());
   EXPECT_FALSE(timer_->is_running());
@@ -391,7 +411,7 @@ TEST_F(DataTrackerTest, SendsSackOnDuplicateDataChunks) {
   EXPECT_TRUE(tracker_->ShouldSendAck());
   EXPECT_FALSE(timer_->is_running());
   // Duplicate again
-  Observer({12});
+  Observer({12}, /*expect_as_duplicate=*/true);
   tracker_->ObservePacketEnd();
   EXPECT_TRUE(tracker_->ShouldSendAck());
   EXPECT_FALSE(timer_->is_running());
@@ -415,7 +435,7 @@ TEST_F(DataTrackerTest, GapAckBlockAddsAnother) {
 
 TEST_F(DataTrackerTest, GapAckBlockAddsDuplicate) {
   Observer({12});
-  Observer({12});
+  Observer({12}, /*expect_as_duplicate=*/true);
   SackChunk sack = tracker_->CreateSelectiveAck(kArwnd);
   EXPECT_EQ(sack.cumulative_tsn_ack(), TSN(10));
   EXPECT_THAT(sack.gap_ack_blocks(), ElementsAre(SackChunk::GapAckBlock(2, 2)));

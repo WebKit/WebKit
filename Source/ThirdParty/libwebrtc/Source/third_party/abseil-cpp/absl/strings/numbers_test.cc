@@ -47,6 +47,7 @@
 namespace {
 
 using absl::SimpleAtoi;
+using absl::SimpleHexAtoi;
 using absl::numbers_internal::kSixDigitsToBufferSize;
 using absl::numbers_internal::safe_strto32_base;
 using absl::numbers_internal::safe_strto64_base;
@@ -388,8 +389,63 @@ TEST(NumbersTest, Atoi) {
 
 TEST(NumbersTest, Atod) {
   double d;
-  EXPECT_TRUE(absl::SimpleAtod("nan", &d));
+
+  // NaN can be spelled in multiple ways.
+  EXPECT_TRUE(absl::SimpleAtod("NaN", &d));
   EXPECT_TRUE(std::isnan(d));
+  EXPECT_TRUE(absl::SimpleAtod("nAN", &d));
+  EXPECT_TRUE(std::isnan(d));
+  EXPECT_TRUE(absl::SimpleAtod("-nan", &d));
+  EXPECT_TRUE(std::isnan(d));
+
+  // Likewise for Infinity.
+  EXPECT_TRUE(absl::SimpleAtod("inf", &d));
+  EXPECT_TRUE(std::isinf(d) && (d > 0));
+  EXPECT_TRUE(absl::SimpleAtod("+Infinity", &d));
+  EXPECT_TRUE(std::isinf(d) && (d > 0));
+  EXPECT_TRUE(absl::SimpleAtod("-INF", &d));
+  EXPECT_TRUE(std::isinf(d) && (d < 0));
+
+  // Leading and/or trailing whitespace is OK.
+  EXPECT_TRUE(absl::SimpleAtod("  \t\r\n  2.718", &d));
+  EXPECT_EQ(d, 2.718);
+  EXPECT_TRUE(absl::SimpleAtod("  3.141  ", &d));
+  EXPECT_EQ(d, 3.141);
+
+  // Leading or trailing not-whitespace is not OK.
+  EXPECT_FALSE(absl::SimpleAtod("n 0", &d));
+  EXPECT_FALSE(absl::SimpleAtod("0n ", &d));
+
+  // Multiple leading 0s are OK.
+  EXPECT_TRUE(absl::SimpleAtod("000123", &d));
+  EXPECT_EQ(d, 123);
+  EXPECT_TRUE(absl::SimpleAtod("000.456", &d));
+  EXPECT_EQ(d, 0.456);
+
+  // An absent leading 0 (for a fraction < 1) is OK.
+  EXPECT_TRUE(absl::SimpleAtod(".5", &d));
+  EXPECT_EQ(d, 0.5);
+  EXPECT_TRUE(absl::SimpleAtod("-.707", &d));
+  EXPECT_EQ(d, -0.707);
+
+  // Unary + is OK.
+  EXPECT_TRUE(absl::SimpleAtod("+6.0221408e+23", &d));
+  EXPECT_EQ(d, 6.0221408e+23);
+
+  // Underscores are not OK.
+  EXPECT_FALSE(absl::SimpleAtod("123_456", &d));
+
+  // The decimal separator must be '.' and is never ','.
+  EXPECT_TRUE(absl::SimpleAtod("8.9", &d));
+  EXPECT_FALSE(absl::SimpleAtod("8,9", &d));
+
+  // Some parsing algorithms don't always round correctly (but absl::SimpleAtod
+  // should). This test case comes from
+  // https://github.com/serde-rs/json/issues/707
+  //
+  // See also atod_manual_test.cc for running many more test cases.
+  EXPECT_TRUE(absl::SimpleAtod("122.416294033786585", &d));
+  EXPECT_EQ(d, 122.416294033786585);
 }
 
 TEST(NumbersTest, Prefixes) {
@@ -466,6 +522,148 @@ TEST(NumbersTest, Atoenum) {
   VerifySimpleAtoiGood<E_biguint>(E_biguint_one, E_biguint_one);
   VerifySimpleAtoiGood<E_biguint>(E_biguint_max31, E_biguint_max31);
   VerifySimpleAtoiGood<E_biguint>(E_biguint_max32, E_biguint_max32);
+}
+
+template <typename int_type, typename in_val_type>
+void VerifySimpleHexAtoiGood(in_val_type in_value, int_type exp_value) {
+  std::string s;
+  // uint128 can be streamed but not StrCat'd
+  absl::strings_internal::OStringStream strm(&s);
+  if (in_value >= 0) {
+    strm << std::hex << in_value;
+  } else {
+    // Inefficient for small integers, but works with all integral types.
+    strm << "-" << std::hex << -absl::uint128(in_value);
+  }
+  int_type x = static_cast<int_type>(~exp_value);
+  EXPECT_TRUE(SimpleHexAtoi(s, &x))
+      << "in_value=" << std::hex << in_value << " s=" << s << " x=" << x;
+  EXPECT_EQ(exp_value, x);
+  x = static_cast<int_type>(~exp_value);
+  EXPECT_TRUE(SimpleHexAtoi(
+      s.c_str(), &x));  // NOLINT: readability-redundant-string-conversions
+  EXPECT_EQ(exp_value, x);
+}
+
+template <typename int_type, typename in_val_type>
+void VerifySimpleHexAtoiBad(in_val_type in_value) {
+  std::string s;
+  // uint128 can be streamed but not StrCat'd
+  absl::strings_internal::OStringStream strm(&s);
+  if (in_value >= 0) {
+    strm << std::hex << in_value;
+  } else {
+    // Inefficient for small integers, but works with all integral types.
+    strm << "-" << std::hex << -absl::uint128(in_value);
+  }
+  int_type x;
+  EXPECT_FALSE(SimpleHexAtoi(s, &x));
+  EXPECT_FALSE(SimpleHexAtoi(
+      s.c_str(), &x));  // NOLINT: readability-redundant-string-conversions
+}
+
+TEST(NumbersTest, HexAtoi) {
+  // SimpleHexAtoi(absl::string_view, int32_t)
+  VerifySimpleHexAtoiGood<int32_t>(0, 0);
+  VerifySimpleHexAtoiGood<int32_t>(0x42, 0x42);
+  VerifySimpleHexAtoiGood<int32_t>(-0x42, -0x42);
+
+  VerifySimpleHexAtoiGood<int32_t>(std::numeric_limits<int32_t>::min(),
+                                   std::numeric_limits<int32_t>::min());
+  VerifySimpleHexAtoiGood<int32_t>(std::numeric_limits<int32_t>::max(),
+                                   std::numeric_limits<int32_t>::max());
+
+  // SimpleHexAtoi(absl::string_view, uint32_t)
+  VerifySimpleHexAtoiGood<uint32_t>(0, 0);
+  VerifySimpleHexAtoiGood<uint32_t>(0x42, 0x42);
+  VerifySimpleHexAtoiBad<uint32_t>(-0x42);
+
+  VerifySimpleHexAtoiBad<uint32_t>(std::numeric_limits<int32_t>::min());
+  VerifySimpleHexAtoiGood<uint32_t>(std::numeric_limits<int32_t>::max(),
+                                    std::numeric_limits<int32_t>::max());
+  VerifySimpleHexAtoiGood<uint32_t>(std::numeric_limits<uint32_t>::max(),
+                                    std::numeric_limits<uint32_t>::max());
+  VerifySimpleHexAtoiBad<uint32_t>(std::numeric_limits<int64_t>::min());
+  VerifySimpleHexAtoiBad<uint32_t>(std::numeric_limits<int64_t>::max());
+  VerifySimpleHexAtoiBad<uint32_t>(std::numeric_limits<uint64_t>::max());
+
+  // SimpleHexAtoi(absl::string_view, int64_t)
+  VerifySimpleHexAtoiGood<int64_t>(0, 0);
+  VerifySimpleHexAtoiGood<int64_t>(0x42, 0x42);
+  VerifySimpleHexAtoiGood<int64_t>(-0x42, -0x42);
+
+  VerifySimpleHexAtoiGood<int64_t>(std::numeric_limits<int32_t>::min(),
+                                   std::numeric_limits<int32_t>::min());
+  VerifySimpleHexAtoiGood<int64_t>(std::numeric_limits<int32_t>::max(),
+                                   std::numeric_limits<int32_t>::max());
+  VerifySimpleHexAtoiGood<int64_t>(std::numeric_limits<uint32_t>::max(),
+                                   std::numeric_limits<uint32_t>::max());
+  VerifySimpleHexAtoiGood<int64_t>(std::numeric_limits<int64_t>::min(),
+                                   std::numeric_limits<int64_t>::min());
+  VerifySimpleHexAtoiGood<int64_t>(std::numeric_limits<int64_t>::max(),
+                                   std::numeric_limits<int64_t>::max());
+  VerifySimpleHexAtoiBad<int64_t>(std::numeric_limits<uint64_t>::max());
+
+  // SimpleHexAtoi(absl::string_view, uint64_t)
+  VerifySimpleHexAtoiGood<uint64_t>(0, 0);
+  VerifySimpleHexAtoiGood<uint64_t>(0x42, 0x42);
+  VerifySimpleHexAtoiBad<uint64_t>(-0x42);
+
+  VerifySimpleHexAtoiBad<uint64_t>(std::numeric_limits<int32_t>::min());
+  VerifySimpleHexAtoiGood<uint64_t>(std::numeric_limits<int32_t>::max(),
+                                    std::numeric_limits<int32_t>::max());
+  VerifySimpleHexAtoiGood<uint64_t>(std::numeric_limits<uint32_t>::max(),
+                                    std::numeric_limits<uint32_t>::max());
+  VerifySimpleHexAtoiBad<uint64_t>(std::numeric_limits<int64_t>::min());
+  VerifySimpleHexAtoiGood<uint64_t>(std::numeric_limits<int64_t>::max(),
+                                    std::numeric_limits<int64_t>::max());
+  VerifySimpleHexAtoiGood<uint64_t>(std::numeric_limits<uint64_t>::max(),
+                                    std::numeric_limits<uint64_t>::max());
+
+  // SimpleHexAtoi(absl::string_view, absl::uint128)
+  VerifySimpleHexAtoiGood<absl::uint128>(0, 0);
+  VerifySimpleHexAtoiGood<absl::uint128>(0x42, 0x42);
+  VerifySimpleHexAtoiBad<absl::uint128>(-0x42);
+
+  VerifySimpleHexAtoiBad<absl::uint128>(std::numeric_limits<int32_t>::min());
+  VerifySimpleHexAtoiGood<absl::uint128>(std::numeric_limits<int32_t>::max(),
+                                         std::numeric_limits<int32_t>::max());
+  VerifySimpleHexAtoiGood<absl::uint128>(std::numeric_limits<uint32_t>::max(),
+                                         std::numeric_limits<uint32_t>::max());
+  VerifySimpleHexAtoiBad<absl::uint128>(std::numeric_limits<int64_t>::min());
+  VerifySimpleHexAtoiGood<absl::uint128>(std::numeric_limits<int64_t>::max(),
+                                         std::numeric_limits<int64_t>::max());
+  VerifySimpleHexAtoiGood<absl::uint128>(std::numeric_limits<uint64_t>::max(),
+                                         std::numeric_limits<uint64_t>::max());
+  VerifySimpleHexAtoiGood<absl::uint128>(
+      std::numeric_limits<absl::uint128>::max(),
+      std::numeric_limits<absl::uint128>::max());
+
+  // Some other types
+  VerifySimpleHexAtoiGood<int>(-0x42, -0x42);
+  VerifySimpleHexAtoiGood<int32_t>(-0x42, -0x42);
+  VerifySimpleHexAtoiGood<uint32_t>(0x42, 0x42);
+  VerifySimpleHexAtoiGood<unsigned int>(0x42, 0x42);
+  VerifySimpleHexAtoiGood<int64_t>(-0x42, -0x42);
+  VerifySimpleHexAtoiGood<long>(-0x42, -0x42);  // NOLINT: runtime-int
+  VerifySimpleHexAtoiGood<uint64_t>(0x42, 0x42);
+  VerifySimpleHexAtoiGood<size_t>(0x42, 0x42);
+  VerifySimpleHexAtoiGood<std::string::size_type>(0x42, 0x42);
+
+  // Number prefix
+  int32_t value;
+  EXPECT_TRUE(safe_strto32_base("0x34234324", &value, 16));
+  EXPECT_EQ(0x34234324, value);
+
+  EXPECT_TRUE(safe_strto32_base("0X34234324", &value, 16));
+  EXPECT_EQ(0x34234324, value);
+
+  // ASCII whitespace
+  EXPECT_TRUE(safe_strto32_base(" \t\n 34234324", &value, 16));
+  EXPECT_EQ(0x34234324, value);
+
+  EXPECT_TRUE(safe_strto32_base("34234324 \t\n ", &value, 16));
+  EXPECT_EQ(0x34234324, value);
 }
 
 TEST(stringtest, safe_strto32_base) {

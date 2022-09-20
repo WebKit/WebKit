@@ -246,6 +246,9 @@ class AudioEncoder {
   virtual absl::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
       const = 0;
 
+  // The maximum number of audio channels supported by WebRTC encoders.
+  static constexpr int kMaxNumberOfChannels = 24;
+
  protected:
   // Subclasses implement this to perform the actual encoding. Called by
   // Encode().

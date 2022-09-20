@@ -111,10 +111,13 @@ inline int fastrand() {
   return static_cast<int>((fastrand_seed >> 16) & 0xffff);
 }
 
+// ubsan fails if dst is unaligned unless we use uint8
 static inline void MemRandomize(uint8_t* dst, int64_t len) {
   int64_t i;
   for (i = 0; i < len - 1; i += 2) {
-    *reinterpret_cast<uint16_t*>(dst) = fastrand();
+    int r = fastrand();
+    dst[0] = static_cast<uint8_t>(r);
+    dst[1] = static_cast<uint8_t>(r >> 8);
     dst += 2;
   }
   for (; i < len; ++i) {

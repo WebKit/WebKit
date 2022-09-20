@@ -93,7 +93,8 @@ int32_t QualityAnalyzingVideoEncoder::InitEncode(
           mode_ = SimulcastMode::kSimulcast;
           break;
         default:
-          RTC_NOTREACHED() << "Unknown codec_settings->VP9().interLayerPred";
+          RTC_DCHECK_NOTREACHED()
+              << "Unknown codec_settings->VP9().interLayerPred";
           break;
       }
     }
@@ -339,7 +340,7 @@ bool QualityAnalyzingVideoEncoder::ShouldDiscard(
         return *cur_spatial_index != *required_spatial_index;
       }
     } else {
-      RTC_NOTREACHED() << "Unsupported encoder mode";
+      RTC_DCHECK_NOTREACHED() << "Unsupported encoder mode";
     }
   }
   return false;
@@ -364,12 +365,6 @@ QualityAnalyzingVideoEncoderFactory::~QualityAnalyzingVideoEncoderFactory() =
 std::vector<SdpVideoFormat>
 QualityAnalyzingVideoEncoderFactory::GetSupportedFormats() const {
   return delegate_->GetSupportedFormats();
-}
-
-VideoEncoderFactory::CodecInfo
-QualityAnalyzingVideoEncoderFactory::QueryVideoEncoder(
-    const SdpVideoFormat& format) const {
-  return delegate_->QueryVideoEncoder(format);
 }
 
 std::unique_ptr<VideoEncoder>

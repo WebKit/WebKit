@@ -14,6 +14,7 @@
 #include <cstdint>
 
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "api/array_view.h"
 #include "modules/audio_coding/acm2/acm_receiver.h"
 #include "modules/audio_coding/acm2/acm_remixing.h"
@@ -92,6 +93,8 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
 
   ANAStats GetANAStats() const override;
 
+  int GetTargetBitrate() const override;
+
  private:
   struct InputData {
     InputData() : buffer(kInitialInputDataBufferSize) {}
@@ -110,7 +113,7 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
   // the value has changed since the last time (and always for the first call).
   class ChangeLogger {
    public:
-    explicit ChangeLogger(const std::string& histogram_name)
+    explicit ChangeLogger(absl::string_view histogram_name)
         : histogram_name_(histogram_name) {}
     // Logs the new value if it is different from the last logged value, or if
     // this is the first call.
@@ -133,7 +136,7 @@ class AudioCodingModuleImpl final : public AudioCodingModule {
 
   int InitializeReceiverSafe() RTC_EXCLUSIVE_LOCKS_REQUIRED(acm_mutex_);
 
-  bool HaveValidEncoder(const char* caller_name) const
+  bool HaveValidEncoder(absl::string_view caller_name) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(acm_mutex_);
 
   // Preprocessing of input audio, including resampling and down-mixing if
@@ -342,13 +345,13 @@ int AudioCodingModuleImpl::Add10MsData(const AudioFrame& audio_frame) {
 int AudioCodingModuleImpl::Add10MsDataInternal(const AudioFrame& audio_frame,
                                                InputData* input_data) {
   if (audio_frame.samples_per_channel_ == 0) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     RTC_LOG(LS_ERROR) << "Cannot Add 10 ms audio, payload length is zero";
     return -1;
   }
 
   if (audio_frame.sample_rate_hz_ > kMaxInputSampleRateHz) {
-    RTC_NOTREACHED();
+    RTC_DCHECK_NOTREACHED();
     RTC_LOG(LS_ERROR) << "Cannot Add 10 ms audio, input frequency not valid";
     return -1;
   }
@@ -587,7 +590,8 @@ int AudioCodingModuleImpl::GetNetworkStatistics(NetworkStatistics* statistics) {
   return 0;
 }
 
-bool AudioCodingModuleImpl::HaveValidEncoder(const char* caller_name) const {
+bool AudioCodingModuleImpl::HaveValidEncoder(
+    absl::string_view caller_name) const {
   if (!encoder_stack_) {
     RTC_LOG(LS_ERROR) << caller_name << " failed: No send codec is registered.";
     return false;
@@ -601,6 +605,14 @@ ANAStats AudioCodingModuleImpl::GetANAStats() const {
     return encoder_stack_->GetANAStats();
   // If no encoder is set, return default stats.
   return ANAStats();
+}
+
+int AudioCodingModuleImpl::GetTargetBitrate() const {
+  MutexLock lock(&acm_mutex_);
+  if (!encoder_stack_) {
+    return -1;
+  }
+  return encoder_stack_->GetTargetBitrate();
 }
 
 }  // namespace

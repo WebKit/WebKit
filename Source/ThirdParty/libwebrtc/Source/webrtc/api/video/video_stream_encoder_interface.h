@@ -39,7 +39,7 @@ namespace webrtc {
 //
 // 2. Moving responsibility for simulcast and for software fallback into this
 //    class.
-class VideoStreamEncoderInterface : public rtc::VideoSinkInterface<VideoFrame> {
+class VideoStreamEncoderInterface {
  public:
   // Interface for receiving encoded video frames and notifications about
   // configuration changes.
@@ -58,6 +58,8 @@ class VideoStreamEncoderInterface : public rtc::VideoSinkInterface<VideoFrame> {
         VideoLayersAllocation allocation) = 0;
   };
 
+  virtual ~VideoStreamEncoderInterface() = default;
+
   // If the resource is overusing, the VideoStreamEncoder will try to reduce
   // resolution or frame rate until no resource is overusing.
   // TODO(https://crbug.com/webrtc/11565): When the ResourceAdaptationProcessor
@@ -72,8 +74,8 @@ class VideoStreamEncoderInterface : public rtc::VideoSinkInterface<VideoFrame> {
   // or frame rate may be reduced. The VideoStreamEncoder registers itself with
   // `source`, and signals adaptation decisions to the source in the form of
   // VideoSinkWants.
-  // TODO(nisse): When adaptation logic is extracted from this class,
-  // it no longer needs to know the source.
+  // TODO(bugs.webrtc.org/14246): When adaptation logic is extracted from this
+  // class, it no longer needs to know the source.
   virtual void SetSource(
       rtc::VideoSourceInterface<VideoFrame>* source,
       const DegradationPreference& degradation_preference) = 0;

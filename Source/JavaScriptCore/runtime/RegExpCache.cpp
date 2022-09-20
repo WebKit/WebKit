@@ -49,8 +49,7 @@ RegExp* RegExpCache::lookupOrCreate(const String& patternString, OptionSet<Yarr:
 }
 
 RegExpCache::RegExpCache(VM* vm)
-    : m_nextEntryInStrongCache(0)
-    , m_vm(vm)
+    : m_vm(vm)
 {
 }
 

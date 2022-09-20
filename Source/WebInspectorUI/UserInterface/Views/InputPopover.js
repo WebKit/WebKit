@@ -25,13 +25,12 @@
 
 WI.InputPopover = class InputPopover extends WI.Popover
 {
-    constructor(message, delegate)
+    constructor(identifier, message, delegate)
     {
         super(delegate);
 
+        this._identifier = identifier;
         this._message = message;
-        this._value = null;
-        this._result = WI.InputPopover.Result.None;
 
         this._targetElement = null;
         this._preferredEdges = null;
@@ -39,8 +38,11 @@ WI.InputPopover = class InputPopover extends WI.Popover
         this.windowResizeHandler = this._presentOverTargetElement.bind(this);
     }
 
-    get value() { return this._value; }
-    get result() { return this._result; }
+    get identifier() { return this._identifier; }
+    get value()
+    {
+        return this._inputElement?.value ?? "";
+    }
 
     show(targetElement, preferredEdges)
     {
@@ -48,7 +50,7 @@ WI.InputPopover = class InputPopover extends WI.Popover
         this._preferredEdges = preferredEdges;
 
         let contentElement = document.createElement("div");
-        contentElement.classList.add("input-popover-content");
+        contentElement.classList.add("input-popover-content", this._identifier);
 
         if (this._message) {
             let label = document.createElement("div");
@@ -61,13 +63,8 @@ WI.InputPopover = class InputPopover extends WI.Popover
         this._inputElement.spellcheck = false;
 
         this._inputElement.addEventListener("keydown", (event) => {
-            if (!isEnterKey(event))
-                return;
-
-            this._result = WI.InputPopover.Result.Committed;
-            this._value = event.target.value;
-
-            this.dismiss();
+            if (isEnterKey(event))
+                this.dismiss();
         });
 
         contentElement.appendChild(this._inputElement);
@@ -88,10 +85,4 @@ WI.InputPopover = class InputPopover extends WI.Popover
 
         this._inputElement.select();
     }
-};
-
-WI.InputPopover.Result = {
-    None: Symbol("result-none"),
-    Cancelled: Symbol("result-cancelled"),
-    Committed: Symbol("result-committed"),
 };

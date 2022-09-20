@@ -38,10 +38,6 @@ IsoHeapImplBase::IsoHeapImplBase(Mutex& lock)
 {
 }
 
-IsoHeapImplBase::~IsoHeapImplBase()
-{
-}
-
 void IsoHeapImplBase::addToAllIsoHeaps()
 {
     AllIsoHeaps::get()->add(this);

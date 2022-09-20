@@ -41,9 +41,7 @@ JITFinalizer::JITFinalizer(DFG::Plan& plan)
 {
 }
 
-JITFinalizer::~JITFinalizer()
-{
-}
+JITFinalizer::~JITFinalizer() = default;
 
 size_t JITFinalizer::codeSize()
 {

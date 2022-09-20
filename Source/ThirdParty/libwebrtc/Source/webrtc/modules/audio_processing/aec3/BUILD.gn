@@ -22,6 +22,7 @@ rtc_library("aec3") {
     "alignment_mixer.h",
     "api_call_jitter_metrics.cc",
     "api_call_jitter_metrics.h",
+    "block.h",
     "block_buffer.cc",
     "block_delay_buffer.cc",
     "block_delay_buffer.h",
@@ -37,6 +38,8 @@ rtc_library("aec3") {
     "coarse_filter_update_gain.h",
     "comfort_noise_generator.cc",
     "comfort_noise_generator.h",
+    "config_selector.cc",
+    "config_selector.h",
     "decimator.cc",
     "decimator.h",
     "delay_estimate.h",
@@ -72,6 +75,8 @@ rtc_library("aec3") {
     "matched_filter_lag_aggregator.h",
     "moving_average.cc",
     "moving_average.h",
+    "multi_channel_content_detector.cc",
+    "multi_channel_content_detector.h",
     "nearend_detector.h",
     "refined_filter_update_gain.cc",
     "refined_filter_update_gain.h",
@@ -140,8 +145,11 @@ rtc_library("aec3") {
     "../../../api/audio:echo_control",
     "../../../common_audio:common_audio_c",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
+    "../../../rtc_base:logging",
+    "../../../rtc_base:macromagic",
+    "../../../rtc_base:race_checker",
     "../../../rtc_base:safe_minmax",
+    "../../../rtc_base:swap_queue",
     "../../../rtc_base/experiments:field_trial_parser",
     "../../../rtc_base/system:arch",
     "../../../system_wrappers",
@@ -149,7 +157,10 @@ rtc_library("aec3") {
     "../../../system_wrappers:metrics",
     "../utility:cascaded_biquad_filter",
   ]
-  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+  absl_deps = [
+    "//third_party/abseil-cpp/absl/strings",
+    "//third_party/abseil-cpp/absl/types:optional",
+  ]
 
   if (current_cpu == "x86" || current_cpu == "x64") {
     deps += [ ":aec3_avx2" ]
@@ -168,13 +179,13 @@ rtc_source_set("aec3_fft") {
     "../../../api:array_view",
     "../../../common_audio/third_party/ooura:fft_size_128",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:arch",
   ]
 }
 
 rtc_source_set("render_buffer") {
   sources = [
+    "block.h",
     "block_buffer.h",
     "fft_buffer.h",
     "render_buffer.h",
@@ -185,7 +196,6 @@ rtc_source_set("render_buffer") {
     ":fft_data",
     "../../../api:array_view",
     "../../../rtc_base:checks",
-    "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:arch",
   ]
 }
@@ -201,6 +211,7 @@ rtc_source_set("adaptive_fir_filter") {
     "../../../api:array_view",
     "../../../rtc_base/system:arch",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }
 
 rtc_source_set("adaptive_fir_filter_erl") {
@@ -217,9 +228,9 @@ rtc_source_set("matched_filter") {
   deps = [
     ":aec3_common",
     "../../../api:array_view",
-    "../../../rtc_base:rtc_base_approved",
     "../../../rtc_base/system:arch",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_source_set("vector_math") {
@@ -306,10 +317,13 @@ if (rtc_include_tests) {
       "../../../api:array_view",
       "../../../api/audio:aec3_config",
       "../../../rtc_base:checks",
-      "../../../rtc_base:rtc_base_approved",
+      "../../../rtc_base:macromagic",
+      "../../../rtc_base:random",
       "../../../rtc_base:safe_minmax",
+      "../../../rtc_base:stringutils",
       "../../../rtc_base/system:arch",
       "../../../system_wrappers",
+      "../../../system_wrappers:metrics",
       "../../../test:field_trial",
       "../../../test:test_support",
       "../utility:cascaded_biquad_filter",
@@ -333,6 +347,7 @@ if (rtc_include_tests) {
         "clockdrift_detector_unittest.cc",
         "coarse_filter_update_gain_unittest.cc",
         "comfort_noise_generator_unittest.cc",
+        "config_selector_unittest.cc",
         "decimator_unittest.cc",
         "echo_canceller3_unittest.cc",
         "echo_path_delay_estimator_unittest.cc",
@@ -347,6 +362,7 @@ if (rtc_include_tests) {
         "matched_filter_lag_aggregator_unittest.cc",
         "matched_filter_unittest.cc",
         "moving_average_unittest.cc",
+        "multi_channel_content_detector_unittest.cc",
         "refined_filter_update_gain_unittest.cc",
         "render_buffer_unittest.cc",
         "render_delay_buffer_unittest.cc",

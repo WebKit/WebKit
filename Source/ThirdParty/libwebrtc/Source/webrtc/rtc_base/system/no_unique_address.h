@@ -24,7 +24,10 @@
 // should add support for it starting from C++20. Among clang compilers,
 // clang-cl doesn't support it yet and support is unclear also when the target
 // platform is iOS.
-#if defined(__has_cpp_attribute) && __has_cpp_attribute(no_unique_address)
+#ifndef __has_cpp_attribute
+#define __has_cpp_attribute(__x) 0
+#endif
+#if __has_cpp_attribute(no_unique_address)
 // NOLINTNEXTLINE(whitespace/braces)
 #define RTC_NO_UNIQUE_ADDRESS [[no_unique_address]]
 #else

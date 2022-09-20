@@ -32,15 +32,17 @@ NackTracker::Config::Config() {
   auto parser = StructParametersParser::Create(
       "packet_loss_forget_factor", &packet_loss_forget_factor,
       "ms_per_loss_percent", &ms_per_loss_percent, "never_nack_multiple_times",
-      &never_nack_multiple_times);
+      &never_nack_multiple_times, "require_valid_rtt", &require_valid_rtt,
+      "max_loss_rate", &max_loss_rate);
   parser->Parse(
       webrtc::field_trial::FindFullName(kNackTrackerConfigFieldTrial));
   RTC_LOG(LS_INFO) << "Nack tracker config:"
                       " packet_loss_forget_factor="
                    << packet_loss_forget_factor
                    << " ms_per_loss_percent=" << ms_per_loss_percent
-                   << " never_nack_multiple_times="
-                   << never_nack_multiple_times;
+                   << " never_nack_multiple_times=" << never_nack_multiple_times
+                   << " require_valid_rtt=" << require_valid_rtt
+                   << " max_loss_rate=" << max_loss_rate;
 }
 
 NackTracker::NackTracker()
@@ -223,6 +225,17 @@ int64_t NackTracker::TimeToPlay(uint32_t timestamp) const {
 std::vector<uint16_t> NackTracker::GetNackList(int64_t round_trip_time_ms) {
   RTC_DCHECK_GE(round_trip_time_ms, 0);
   std::vector<uint16_t> sequence_numbers;
+  if (round_trip_time_ms == 0) {
+    if (config_.require_valid_rtt) {
+      return sequence_numbers;
+    } else {
+      round_trip_time_ms = config_.default_rtt_ms;
+    }
+  }
+  if (packet_loss_rate_ >
+      static_cast<uint32_t>(config_.max_loss_rate * (1 << 30))) {
+    return sequence_numbers;
+  }
   // The estimated packet loss is between 0 and 1, so we need to multiply by 100
   // here.
   int max_wait_ms =

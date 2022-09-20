@@ -40,9 +40,7 @@ public:
     //
     // But I can't because Windows.
     
-    StructureSet()
-    {
-    }
+    StructureSet() = default;
     
     StructureSet(Structure* structure)
         : TinyPtrSet(structure)

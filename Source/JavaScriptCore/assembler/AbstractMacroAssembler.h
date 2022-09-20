@@ -281,7 +281,7 @@ public:
     // in a class requiring explicit construction in order to differentiate
     // from pointers used as absolute addresses to memory operations
     struct TrustedImmPtr : public TrustedImm {
-        constexpr TrustedImmPtr() { }
+        constexpr TrustedImmPtr() = default;
         
         explicit constexpr TrustedImmPtr(const void* value)
             : m_value(value)
@@ -373,7 +373,7 @@ public:
     // (which are implemented as an enum) from accidentally being passed as
     // immediate values.
     struct TrustedImm64 : TrustedImm {
-        constexpr TrustedImm64() { }
+        constexpr TrustedImm64() = default;
         
         explicit constexpr TrustedImm64(int64_t value)
             : m_value(value)
@@ -426,9 +426,7 @@ public:
         friend class Watchpoint;
 
     public:
-        Label()
-        {
-        }
+        Label() = default;
 
         Label(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
@@ -458,9 +456,7 @@ public:
         friend class LinkBuffer;
         
     public:
-        ConvertibleLoadLabel()
-        {
-        }
+        ConvertibleLoadLabel() = default;
         
         ConvertibleLoadLabel(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.labelIgnoringWatchpoints())
@@ -480,9 +476,7 @@ public:
         friend class AbstractMacroAssembler<AssemblerType>;
         friend class LinkBuffer;
     public:
-        DataLabelPtr()
-        {
-        }
+        DataLabelPtr() = default;
 
         DataLabelPtr(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
@@ -503,9 +497,7 @@ public:
         friend class AbstractMacroAssembler<AssemblerType>;
         friend class LinkBuffer;
     public:
-        DataLabel32()
-        {
-        }
+        DataLabel32() = default;
 
         DataLabel32(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
@@ -526,9 +518,7 @@ public:
         friend class AbstractMacroAssembler<AssemblerType>;
         friend class LinkBuffer;
     public:
-        DataLabelCompact()
-        {
-        }
+        DataLabelCompact() = default;
         
         DataLabelCompact(AbstractMacroAssemblerType* masm)
             : m_label(masm->m_assembler.label())
@@ -713,9 +703,7 @@ public:
     };
 
     struct PatchableJump {
-        PatchableJump()
-        {
-        }
+        PatchableJump() = default;
 
         explicit PatchableJump(Jump jump)
             : m_jump(jump)
@@ -735,7 +723,7 @@ public:
     public:
         typedef Vector<Jump, 2> JumpVector;
         
-        JumpList() { }
+        JumpList() = default;
         
         JumpList(Jump jump)
         {
@@ -1071,7 +1059,6 @@ protected:
         CachedTempRegister(AbstractMacroAssemblerType* masm, RegisterID registerID)
             : m_masm(masm)
             , m_registerID(registerID)
-            , m_value(0)
             , m_validBit(1 << static_cast<unsigned>(registerID))
         {
             ASSERT(static_cast<unsigned>(registerID) < (sizeof(unsigned) * 8));
@@ -1098,7 +1085,7 @@ protected:
     private:
         AbstractMacroAssemblerType* m_masm;
         RegisterID m_registerID;
-        intptr_t m_value;
+        intptr_t m_value { 0 };
         unsigned m_validBit;
     };
 

@@ -46,8 +46,6 @@ public:
 
     explicit IsoPageBase(bool isShared)
         : m_isShared(isShared)
-        , m_eligibilityHasBeenNoted(true)
-        , m_isInUseForAllocation(false)
     {
     }
 
@@ -59,8 +57,8 @@ protected:
     BEXPORT static void* allocatePageMemory();
 
     bool m_isShared : 1;
-    bool m_eligibilityHasBeenNoted : 1;
-    bool m_isInUseForAllocation : 1;
+    bool m_eligibilityHasBeenNoted : 1 { true };
+    bool m_isInUseForAllocation : 1 { false };
 };
 
 template<typename Config>

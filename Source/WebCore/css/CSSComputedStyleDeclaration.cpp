@@ -1509,6 +1509,7 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
     case TimingFunction::TimingFunctionType::LinearFunction:
         return CSSValuePool::singleton().createIdentifierValue(CSSValueLinear);
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void ComputedStyleExtractor::addValueForAnimationPropertyToList(CSSValueList& list, CSSPropertyID property, const Animation* animation)

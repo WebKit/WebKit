@@ -57,7 +57,7 @@ void EchoEmulatingCapturer::OnAudioRendered(
   }
   queue_input_.assign(data.begin(), data.end());
   if (!renderer_queue_.Insert(&queue_input_)) {
-    RTC_LOG(WARNING) << "Echo queue is full";
+    RTC_LOG(LS_WARNING) << "Echo queue is full";
   }
 }
 

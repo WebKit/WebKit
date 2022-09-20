@@ -79,7 +79,7 @@ class FakeEncoder : public VideoEncoder {
                       bool keyframe,
                       uint8_t num_simulcast_streams,
                       const VideoBitrateAllocation& target_bitrate,
-                      SpatialLayer simulcast_streams[kMaxSimulcastStreams],
+                      SimulcastStream simulcast_streams[kMaxSimulcastStreams],
                       int framerate) RTC_LOCKS_EXCLUDED(mutex_);
 
   // Called before the frame is passed to callback_->OnEncodedImage, to let
@@ -160,8 +160,6 @@ class MultithreadedFakeH264Encoder : public test::FakeH264Encoder {
   int32_t Release() override;
 
  protected:
-  class EncodeTask;
-
   TaskQueueFactory* const task_queue_factory_;
   int current_queue_ RTC_GUARDED_BY(sequence_checker_);
   std::unique_ptr<TaskQueueBase, TaskQueueDeleter> queue1_

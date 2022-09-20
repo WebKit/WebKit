@@ -51,9 +51,7 @@ IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellT
     m_firstDirectory = &m_directory;
 }
 
-IsoSubspace::~IsoSubspace()
-{
-}
+IsoSubspace::~IsoSubspace() = default;
 
 void IsoSubspace::didResizeBits(unsigned blockIndex)
 {

@@ -81,8 +81,8 @@ class PerfResultReporter {
   // |mean_and_error| should be a comma-separated string of mean then
   // error/stddev, e.g. "2.4,0.5".
   void AddResultMeanAndError(absl::string_view metric_suffix,
-                             const double mean,
-                             const double error);
+                             double mean,
+                             double error);
 
   // Returns the metric info if it has been registered.
   absl::optional<MetricInfo> GetMetricInfo(

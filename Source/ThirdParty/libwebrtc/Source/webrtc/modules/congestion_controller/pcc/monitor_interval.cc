@@ -70,13 +70,10 @@ double PccMonitorInterval::ComputeDelayGradient(
     return 0;
   }
   double sum_times = 0;
-  double sum_delays = 0;
   for (const ReceivedPacket& packet : received_packets_) {
     double time_delta_us =
         (packet.sent_time - received_packets_[0].sent_time).us();
-    double delay = packet.delay.us();
     sum_times += time_delta_us;
-    sum_delays += delay;
   }
   double sum_squared_scaled_time_deltas = 0;
   double sum_scaled_time_delta_dot_delay = 0;

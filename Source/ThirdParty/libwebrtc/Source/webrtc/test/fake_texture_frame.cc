@@ -11,7 +11,6 @@
 #include "test/fake_texture_frame.h"
 
 #include "api/video/i420_buffer.h"
-#include "rtc_base/ref_counted_object.h"
 
 namespace webrtc {
 namespace test {
@@ -44,7 +43,7 @@ int FakeNativeBuffer::height() const {
 
 rtc::scoped_refptr<I420BufferInterface> FakeNativeBuffer::ToI420() {
   rtc::scoped_refptr<I420Buffer> buffer = I420Buffer::Create(width_, height_);
-  I420Buffer::SetBlack(buffer);
+  I420Buffer::SetBlack(buffer.get());
   return buffer;
 }
 

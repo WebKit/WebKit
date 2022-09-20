@@ -38,31 +38,6 @@ class ISACTest {
   void Perform();
 
  private:
-  class ACMTestTimer {
-   public:
-    ACMTestTimer();
-    ~ACMTestTimer();
-
-    void Reset();
-    void Tick10ms();
-    void Tick1ms();
-    void Tick100ms();
-    void Tick1sec();
-    void CurrentTimeHMS(char* currTime);
-    void CurrentTime(unsigned long& h,
-                     unsigned char& m,
-                     unsigned char& s,
-                     unsigned short& ms);
-
-   private:
-    void Adjust();
-
-    unsigned short _msec;
-    unsigned char _sec;
-    unsigned char _min;
-    unsigned long _hour;
-  };
-
   void Setup();
 
   void Run10ms();
@@ -86,8 +61,6 @@ class ISACTest {
   PCMFile _outFileB;
 
   std::string file_name_swb_;
-
-  ACMTestTimer _myTimer;
 };
 
 }  // namespace webrtc

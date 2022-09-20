@@ -49,7 +49,7 @@ class QpFrameChecker : public VideoCodecTestFixture::EncodedFrameChecker {
     } else if (codec == kVideoCodecVP9) {
       EXPECT_TRUE(vp9::GetQp(encoded_frame.data(), encoded_frame.size(), &qp));
     } else {
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
     }
     EXPECT_EQ(encoded_frame.qp_, qp) << "Encoder QP != parsed bitstream QP.";
   }

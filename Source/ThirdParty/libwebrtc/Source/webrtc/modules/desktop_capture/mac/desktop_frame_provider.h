@@ -28,6 +28,9 @@ class DesktopFrameProvider {
   explicit DesktopFrameProvider(bool allow_iosurface);
   ~DesktopFrameProvider();
 
+  DesktopFrameProvider(const DesktopFrameProvider&) = delete;
+  DesktopFrameProvider& operator=(const DesktopFrameProvider&) = delete;
+
   // The caller takes ownership of the returned desktop frame. Otherwise
   // returns null if `display_id` is invalid or not ready. Note that this
   // function does not remove the frame from the internal container. Caller
@@ -49,8 +52,6 @@ class DesktopFrameProvider {
 
   // Most recent IOSurface that contains a capture of matching display.
   std::map<CGDirectDisplayID, std::unique_ptr<SharedDesktopFrame>> io_surfaces_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(DesktopFrameProvider);
 };
 
 }  // namespace webrtc

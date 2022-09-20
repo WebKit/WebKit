@@ -389,6 +389,9 @@ int32_t DeviceInfoDS::CreateCapabilityMap(const char* deviceUniqueIdUTF8)
         RTC_LOG(LS_INFO) << "Device support FORMAT_VideoInfo2";
         supportFORMAT_VideoInfo = true;
       }
+
+      FreeMediaType(pmt);
+      pmt = NULL;
     }
   }
   if (supportFORMAT_VideoInfo2) {

@@ -79,13 +79,54 @@ TEST(TestVideoFrameBufferPool, ProducesNv12) {
   EXPECT_NE(nullptr, buffer.get());
 }
 
+TEST(TestVideoFrameBufferPool, ProducesI422) {
+  VideoFrameBufferPool pool(false, 1);
+  auto buffer = pool.CreateI422Buffer(16, 16);
+  EXPECT_NE(nullptr, buffer.get());
+}
+
+TEST(TestVideoFrameBufferPool, ProducesI444) {
+  VideoFrameBufferPool pool(false, 1);
+  auto buffer = pool.CreateI444Buffer(16, 16);
+  EXPECT_NE(nullptr, buffer.get());
+}
+
+TEST(TestVideoFrameBufferPool, ProducesI010) {
+  VideoFrameBufferPool pool(false, 1);
+  auto buffer = pool.CreateI010Buffer(16, 16);
+  EXPECT_NE(nullptr, buffer.get());
+}
+
+TEST(TestVideoFrameBufferPool, ProducesI210) {
+  VideoFrameBufferPool pool(false, 1);
+  auto buffer = pool.CreateI210Buffer(16, 16);
+  EXPECT_NE(nullptr, buffer.get());
+}
+
 TEST(TestVideoFrameBufferPool, SwitchingPixelFormat) {
   VideoFrameBufferPool pool(false, 1);
-  auto buffer = pool.CreateNV12Buffer(16, 16);
+  auto buffeNV12 = pool.CreateNV12Buffer(16, 16);
   EXPECT_EQ(nullptr, pool.CreateNV12Buffer(16, 16).get());
-  auto buffer2 = pool.CreateI420Buffer(16, 16);
-  EXPECT_NE(nullptr, buffer2.get());
+
+  auto bufferI420 = pool.CreateI420Buffer(16, 16);
+  EXPECT_NE(nullptr, bufferI420.get());
   EXPECT_EQ(nullptr, pool.CreateI420Buffer(16, 16).get());
+
+  auto bufferI444 = pool.CreateI444Buffer(16, 16);
+  EXPECT_NE(nullptr, bufferI444.get());
+  EXPECT_EQ(nullptr, pool.CreateI444Buffer(16, 16).get());
+
+  auto bufferI422 = pool.CreateI422Buffer(16, 16);
+  EXPECT_NE(nullptr, bufferI422.get());
+  EXPECT_EQ(nullptr, pool.CreateI422Buffer(16, 16).get());
+
+  auto bufferI010 = pool.CreateI010Buffer(16, 16);
+  EXPECT_NE(nullptr, bufferI010.get());
+  EXPECT_EQ(nullptr, pool.CreateI010Buffer(16, 16).get());
+
+  auto bufferI210 = pool.CreateI210Buffer(16, 16);
+  EXPECT_NE(nullptr, bufferI210.get());
+  EXPECT_EQ(nullptr, pool.CreateI210Buffer(16, 16).get());
 }
 
 }  // namespace webrtc

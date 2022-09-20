@@ -115,10 +115,7 @@ public:
 
 class RecordOverflow {
 protected:
-    RecordOverflow()
-        : m_overflowed(false)
-    {
-    }
+    RecordOverflow() = default;
 
     void clearOverflow()
     {
@@ -135,7 +132,7 @@ public:
     void overflowed() { m_overflowed = true; }
 
 private:
-    unsigned char m_overflowed;
+    unsigned char m_overflowed { false };
 };
 
 template <typename T, class OverflowHandler = CrashOnOverflow> class Checked;
@@ -660,13 +657,9 @@ enum ResultOverflowedTag { ResultOverflowed };
 template <typename T, class OverflowHandler> class Checked : public OverflowHandler {
 public:
     template <typename _T, class _OverflowHandler> friend class Checked;
-    Checked()
-        : m_value(0)
-    {
-    }
+    Checked() = default;
 
     Checked(ResultOverflowedTag)
-        : m_value(0)
     {
         this->overflowed();
     }
@@ -895,7 +888,7 @@ private:
     void operator+=(double);
     void operator-=(float);
     void operator-=(double);
-    T m_value;
+    T m_value { 0 };
 };
 
 template <typename U, typename V, typename OverflowHandler> static inline Checked<typename Result<U, V>::ResultType, OverflowHandler> operator+(Checked<U, OverflowHandler> lhs, Checked<V, OverflowHandler> rhs)

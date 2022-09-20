@@ -44,16 +44,7 @@ namespace JSC { namespace DFG {
 // may be released.
 class GenerationInfo {
 public:
-    GenerationInfo()
-        : m_node(nullptr)
-        , m_useCount(0)
-        , m_registerFormat(DataFormatNone)
-        , m_spillFormat(DataFormatNone)
-        , m_canFill(false)
-        , m_bornForOSR(false)
-        , m_isConstant(false)
-    {
-    }
+    GenerationInfo() = default;
 
     void initConstant(Node* node, uint32_t useCount)
     {
@@ -427,13 +418,13 @@ private:
     }
     
     // The node whose result is stored in this virtual register.
-    Node* m_node;
-    uint32_t m_useCount;
-    DataFormat m_registerFormat;
-    DataFormat m_spillFormat;
-    bool m_canFill;
-    bool m_bornForOSR;
-    bool m_isConstant;
+    Node* m_node { nullptr };
+    uint32_t m_useCount { 0 };
+    DataFormat m_registerFormat { DataFormatNone };
+    DataFormat m_spillFormat { DataFormatNone };
+    bool m_canFill { false };
+    bool m_bornForOSR { false };
+    bool m_isConstant { false };
     union {
         GPRReg gpr;
         FPRReg fpr;

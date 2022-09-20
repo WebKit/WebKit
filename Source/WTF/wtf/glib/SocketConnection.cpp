@@ -57,10 +57,6 @@ SocketConnection::SocketConnection(GRefPtr<GSocketConnection>&& connection, cons
     });
 }
 
-SocketConnection::~SocketConnection()
-{
-}
-
 bool SocketConnection::read()
 {
     while (true) {

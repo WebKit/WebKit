@@ -14,16 +14,16 @@
 
 #include <string>
 
+#include "absl/memory/memory.h"
+#include "api/async_dns_resolver.h"
+#include "api/wrapping_async_dns_resolver.h"
 #include "p2p/base/async_stun_tcp_socket.h"
-#include "rtc_base/async_resolver.h"
 #include "rtc_base/async_tcp_socket.h"
 #include "rtc_base/async_udp_socket.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/net_helpers.h"
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_adapters.h"
-#include "rtc_base/socket_server.h"
 #include "rtc_base/ssl_adapter.h"
 
 namespace rtc {
@@ -62,6 +62,10 @@ AsyncListenSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
     return NULL;
   }
 
+  if (opts & PacketSocketFactory::OPT_TLS_FAKE) {
+    RTC_LOG(LS_ERROR) << "Fake TLS not supported.";
+    return NULL;
+  }
   Socket* socket =
       socket_factory_->CreateSocket(local_address.family(), SOCK_STREAM);
   if (!socket) {
@@ -74,23 +78,9 @@ AsyncListenSocket* BasicPacketSocketFactory::CreateServerTcpSocket(
     return NULL;
   }
 
-  // Set TCP_NODELAY (via OPT_NODELAY) for improved performance; this causes
-  // small media packets to be sent immediately rather than being buffered up,
-  // reducing latency.
-  if (socket->SetOption(Socket::OPT_NODELAY, 1) != 0) {
-    RTC_LOG(LS_ERROR) << "Setting TCP_NODELAY option failed with error "
-                      << socket->GetError();
-  }
-
-  // If using fake TLS, wrap the TCP socket in a pseudo-SSL socket.
-  if (opts & PacketSocketFactory::OPT_TLS_FAKE) {
-    RTC_DCHECK(!(opts & PacketSocketFactory::OPT_TLS));
-    socket = new AsyncSSLSocket(socket);
-  }
-
   RTC_CHECK(!(opts & PacketSocketFactory::OPT_STUN));
 
-  return new AsyncTCPSocket(socket, true);
+  return new AsyncTcpListenSocket(absl::WrapUnique(socket));
 }
 
 AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
@@ -184,7 +174,7 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
   if (tcp_options.opts & PacketSocketFactory::OPT_STUN) {
     tcp_socket = new cricket::AsyncStunTCPSocket(socket);
   } else {
-    tcp_socket = new AsyncTCPSocket(socket, false);
+    tcp_socket = new AsyncTCPSocket(socket);
   }
 
   return tcp_socket;
@@ -192,6 +182,12 @@ AsyncPacketSocket* BasicPacketSocketFactory::CreateClientTcpSocket(
 
 AsyncResolverInterface* BasicPacketSocketFactory::CreateAsyncResolver() {
   return new AsyncResolver();
+}
+
+std::unique_ptr<webrtc::AsyncDnsResolverInterface>
+BasicPacketSocketFactory::CreateAsyncDnsResolver() {
+  return std::make_unique<webrtc::WrappingAsyncDnsResolver>(
+      new AsyncResolver());
 }
 
 int BasicPacketSocketFactory::BindSocket(Socket* socket,

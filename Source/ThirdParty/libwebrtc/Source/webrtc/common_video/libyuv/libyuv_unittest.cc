@@ -114,10 +114,6 @@ void TestLibYuv::TearDown() {
   source_file_ = NULL;
 }
 
-TEST_F(TestLibYuv, ConvertSanityTest) {
-  // TODO(mikhal)
-}
-
 TEST_F(TestLibYuv, ConvertTest) {
   // Reading YUV frame - testing on the first frame of the foreman sequence
   int j = 0;
@@ -366,6 +362,25 @@ TEST_F(TestLibYuv, NV12Scale4x4to2x2) {
                          Average(8, 9, 12, 13), Average(10, 11, 14, 15)));
   EXPECT_THAT(dst_uv,
               ::testing::ElementsAre(Average(0, 2, 4, 6), Average(1, 3, 5, 7)));
+}
+
+TEST(I420WeightedPSNRTest, SmokeTest) {
+  uint8_t ref_y[] = {0, 0, 0, 0};
+  uint8_t ref_uv[] = {0};
+  rtc::scoped_refptr<I420Buffer> ref_buffer =
+      I420Buffer::Copy(/*width=*/2, /*height=*/2, ref_y, /*stride_y=*/2, ref_uv,
+                       /*stride_u=*/1, ref_uv, /*stride_v=*/1);
+
+  uint8_t test_y[] = {1, 1, 1, 1};
+  uint8_t test_uv[] = {2};
+  rtc::scoped_refptr<I420Buffer> test_buffer = I420Buffer::Copy(
+      /*width=*/2, /*height=*/2, test_y, /*stride_y=*/2, test_uv,
+      /*stride_u=*/1, test_uv, /*stride_v=*/1);
+
+  auto psnr = [](double mse) { return 10.0 * log10(255.0 * 255.0 / mse); };
+  EXPECT_NEAR(I420WeightedPSNR(*ref_buffer, *test_buffer),
+              (6.0 * psnr(1.0) + psnr(4.0) + psnr(4.0)) / 8.0,
+              /*abs_error=*/0.001);
 }
 
 }  // namespace webrtc

@@ -16,11 +16,14 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/notifications/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/notifications/common.js
-/LayoutTests/imported/w3c/web-platform-tests/notifications/constructor-basic.html
-/LayoutTests/imported/w3c/web-platform-tests/notifications/constructor-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/notifications/event-onclose.html
-/LayoutTests/imported/w3c/web-platform-tests/notifications/event-onshow.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/constructor-basic.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/constructor-invalid.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/constructor-non-secure.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/event-onclose.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/event-onshow.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/notifications/idlharness.https.any.js
-/LayoutTests/imported/w3c/web-platform-tests/notifications/instance.html
-/LayoutTests/imported/w3c/web-platform-tests/notifications/lang.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/instance.https.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/lang.https.html
 /LayoutTests/imported/w3c/web-platform-tests/notifications/permission.html
+/LayoutTests/imported/w3c/web-platform-tests/notifications/permissions-non-secure.html

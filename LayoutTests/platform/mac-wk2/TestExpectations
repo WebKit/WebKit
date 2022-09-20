@@ -1171,9 +1171,6 @@ media/modern-media-controls/scrubber-support/scrubber-support-media-api.html [ P
 # <rdar://problem/61071209> [ macOS wk2 debug ] media/modern-media-controls/volume-support/volume-support-drag.html is flaky failing
 [ Debug ] media/modern-media-controls/volume-support/volume-support-drag.html [ Pass Failure ]
 
-# <rdar://problem/63626512> REGRESSION(20A279-20A291a): webrtc/simulcast-h264.html is a constant timeout
-webrtc/simulcast-h264.html [ Pass Timeout ]
-
 # <rdar://problem/63554249> [20A279] DQ bots are seeing http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html and http/tests/cache/disk-cache/disk-cache-validation-no-body.html are timing out
 webkit.org/b/179796 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Failure Timeout ]
 [ BigSur+ Release ] http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Pass Timeout ]
@@ -1742,8 +1739,6 @@ webkit.org/b/241283 fast/animation/request-animation-frame-throttling-detached-i
 webkit.org/b/242164 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Failure ]
 
 webkit.org/b/242138 imported/w3c/web-platform-tests/css/css-transforms/huge-length-tiny-scale.html [ Pass Crash ImageOnlyFailure ]
-
-webkit.org/b/242212 [ Monterey+ ] media/media-source/media-webm-vorbis-partial.html [ Failure ]
 
 webkit.org/b/227555 http/tests/privateClickMeasurement/attribution-conversion-through-fetch-keepalive.html [ Pass Failure ]
 

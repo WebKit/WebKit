@@ -53,7 +53,7 @@ class CodecObserver : public test::EndToEndTest,
                 const std::string& payload_name,
                 VideoEncoderFactory* encoder_factory,
                 VideoDecoderFactory* decoder_factory)
-      : EndToEndTest(4 * CodecEndToEndTest::kDefaultTimeoutMs),
+      : EndToEndTest(4 * CodecEndToEndTest::kDefaultTimeout),
         // TODO(hta): This timeout (120 seconds) is excessive.
         // https://bugs.webrtc.org/6830
         no_frames_to_wait_for_(no_frames_to_wait_for),
@@ -71,7 +71,7 @@ class CodecObserver : public test::EndToEndTest,
 
   void ModifyVideoConfigs(
       VideoSendStream::Config* send_config,
-      std::vector<VideoReceiveStream::Config>* receive_configs,
+      std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
       VideoEncoderConfig* encoder_config) override {
     encoder_config->codec_type = PayloadStringToCodecType(payload_name_);
     send_config->encoder_settings.encoder_factory = encoder_factory_;

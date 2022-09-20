@@ -14,6 +14,7 @@
 #include <string.h>
 
 #include "absl/strings/match.h"
+#include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
@@ -57,7 +58,7 @@ AcmSendTestOldApi::AcmSendTestOldApi(InputAudioFile* audio_source,
 
 AcmSendTestOldApi::~AcmSendTestOldApi() = default;
 
-bool AcmSendTestOldApi::RegisterCodec(const char* payload_name,
+bool AcmSendTestOldApi::RegisterCodec(absl::string_view payload_name,
                                       int clockrate_hz,
                                       int num_channels,
                                       int payload_type,

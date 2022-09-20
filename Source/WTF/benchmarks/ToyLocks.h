@@ -149,10 +149,7 @@ private:
 
 class SynchronicLock {
 public:
-    SynchronicLock()
-        : m_locked(0)
-    {
-    }
+    SynchronicLock() = default;
     
     void lock()
     {
@@ -175,7 +172,7 @@ public:
     }
 
 private:
-    std::atomic<int> m_locked;
+    std::atomic<int> m_locked { 0 };
     std::experimental::synchronic<int> m_sync;
 };
 #endif

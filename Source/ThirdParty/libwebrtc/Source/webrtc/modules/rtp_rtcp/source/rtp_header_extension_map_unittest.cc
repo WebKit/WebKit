@@ -77,8 +77,8 @@ TEST(RtpHeaderExtensionTest, Idempotent) {
   EXPECT_TRUE(map.Register<TransmissionOffset>(3));
   EXPECT_TRUE(map.Register<TransmissionOffset>(3));
 
-  map.Deregister(TransmissionOffset::kId);
-  map.Deregister(TransmissionOffset::kId);
+  map.Deregister(TransmissionOffset::Uri());
+  map.Deregister(TransmissionOffset::Uri());
 }
 
 TEST(RtpHeaderExtensionTest, NonUniqueId) {

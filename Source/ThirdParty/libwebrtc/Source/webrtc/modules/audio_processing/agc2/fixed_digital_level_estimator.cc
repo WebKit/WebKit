@@ -20,15 +20,16 @@
 namespace webrtc {
 namespace {
 
-constexpr float kInitialFilterStateLevel = 0.f;
+constexpr float kInitialFilterStateLevel = 0.0f;
 
 // Instant attack.
-constexpr float kAttackFilterConstant = 0.f;
-// This is computed from kDecayMs by
-// 10 ** (-1/20 * subframe_duration / kDecayMs).
-// `subframe_duration` is |kFrameDurationMs / kSubFramesInFrame|.
-// kDecayMs is defined in agc2_testing_common.h
-constexpr float kDecayFilterConstant = 0.9998848773724686f;
+constexpr float kAttackFilterConstant = 0.0f;
+
+// Limiter decay constant.
+// Computed as `10 ** (-1/20 * subframe_duration / kDecayMs)` where:
+// - `subframe_duration` is `kFrameDurationMs / kSubFramesInFrame`;
+// - `kDecayMs` is defined in agc2_testing_common.h.
+constexpr float kDecayFilterConstant = 0.9971259f;
 
 }  // namespace
 

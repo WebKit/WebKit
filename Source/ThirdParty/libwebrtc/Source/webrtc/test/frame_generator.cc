@@ -82,7 +82,7 @@ FrameGeneratorInterface::VideoFrameData SquareGenerator::NextFrame() {
       break;
     }
     default:
-      RTC_NOTREACHED() << "The given output format is not supported.";
+      RTC_DCHECK_NOTREACHED() << "The given output format is not supported.";
   }
 
   for (const auto& square : squares_)

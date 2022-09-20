@@ -10,11 +10,16 @@
 
 #include "pc/video_rtp_receiver.h"
 
+#include <functional>
 #include <memory>
 
+#include "api/task_queue/task_queue_base.h"
+#include "api/video/recordable_encoded_frame.h"
 #include "api/video/test/mock_recordable_encoded_frame.h"
 #include "media/base/fake_media_engine.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::_;
 using ::testing::AnyNumber;
@@ -60,19 +65,27 @@ class VideoRtpReceiverTest : public testing::Test {
             std::string("receiver"),
             std::vector<std::string>({"stream"}))) {
     worker_thread_->Start();
-    receiver_->SetMediaChannel(&channel_);
+    SetMediaChannel(&channel_);
   }
 
   ~VideoRtpReceiverTest() override {
-    // Clear expectations that tests may have set up before calling Stop().
+    // Clear expectations that tests may have set up before calling
+    // SetMediaChannel(nullptr).
     Mock::VerifyAndClearExpectations(&channel_);
     receiver_->Stop();
+    SetMediaChannel(nullptr);
+  }
+
+  void SetMediaChannel(cricket::MediaChannel* media_channel) {
+    SendTask(worker_thread_.get(),
+             [&]() { receiver_->SetMediaChannel(media_channel); });
   }
 
   webrtc::VideoTrackSourceInterface* Source() {
     return receiver_->streams()[0]->FindVideoTrack("receiver")->GetSource();
   }
 
+  rtc::AutoThread main_thread_;
   std::unique_ptr<rtc::Thread> worker_thread_;
   NiceMock<MockVideoMediaChannel> channel_;
   rtc::scoped_refptr<VideoRtpReceiver> receiver_;
@@ -94,23 +107,24 @@ TEST_F(VideoRtpReceiverTest,
   MockVideoMediaChannel channel2(nullptr, cricket::VideoOptions());
   EXPECT_CALL(channel_, GenerateKeyFrame).Times(0);
   EXPECT_CALL(channel2, GenerateKeyFrame).Times(0);
-  receiver_->SetMediaChannel(&channel2);
+  SetMediaChannel(&channel2);
   Mock::VerifyAndClearExpectations(&channel2);
 
   // Generate a key frame. When we switch channel next time, we will have to
   // re-generate it as we don't know if it was eventually received
+  EXPECT_CALL(channel2, GenerateKeyFrame).Times(1);
   Source()->GenerateKeyFrame();
   MockVideoMediaChannel channel3(nullptr, cricket::VideoOptions());
   EXPECT_CALL(channel3, GenerateKeyFrame);
-  receiver_->SetMediaChannel(&channel3);
+  SetMediaChannel(&channel3);
 
   // Switching to a new channel should now not cause calls to GenerateKeyFrame.
   StrictMock<MockVideoMediaChannel> channel4(nullptr, cricket::VideoOptions());
-  receiver_->SetMediaChannel(&channel4);
+  SetMediaChannel(&channel4);
 
-  // We must call Stop() here since the mock media channels live on the stack
-  // and `receiver_` still has a pointer to those objects.
-  receiver_->Stop();
+  // We must call SetMediaChannel(nullptr) here since the mock media channels
+  // live on the stack and `receiver_` still has a pointer to those objects.
+  SetMediaChannel(nullptr);
 }
 
 TEST_F(VideoRtpReceiverTest, EnablesEncodedOutput) {
@@ -135,7 +149,7 @@ TEST_F(VideoRtpReceiverTest, DisablesEnablesEncodedOutputOnChannelSwitch) {
   Source()->AddEncodedSink(&sink);
   MockVideoMediaChannel channel2(nullptr, cricket::VideoOptions());
   EXPECT_CALL(channel2, SetRecordableEncodedFrameCallback);
-  receiver_->SetMediaChannel(&channel2);
+  SetMediaChannel(&channel2);
   Mock::VerifyAndClearExpectations(&channel2);
 
   // When clearing encoded frame buffer function, we need channel switches
@@ -143,11 +157,11 @@ TEST_F(VideoRtpReceiverTest, DisablesEnablesEncodedOutputOnChannelSwitch) {
   EXPECT_CALL(channel2, ClearRecordableEncodedFrameCallback);
   Source()->RemoveEncodedSink(&sink);
   StrictMock<MockVideoMediaChannel> channel3(nullptr, cricket::VideoOptions());
-  receiver_->SetMediaChannel(&channel3);
+  SetMediaChannel(&channel3);
 
-  // We must call Stop() here since the mock media channels live on the stack
-  // and `receiver_` still has a pointer to those objects.
-  receiver_->Stop();
+  // We must call SetMediaChannel(nullptr) here since the mock media channels
+  // live on the stack and `receiver_` still has a pointer to those objects.
+  SetMediaChannel(nullptr);
 }
 
 TEST_F(VideoRtpReceiverTest, BroadcastsEncodedFramesWhenEnabled) {
@@ -164,12 +178,11 @@ TEST_F(VideoRtpReceiverTest, BroadcastsEncodedFramesWhenEnabled) {
   EXPECT_CALL(sink, OnFrame).Times(2);
   MockRecordableEncodedFrame frame;
   broadcast(frame);
-  worker_thread_->Invoke<void>(RTC_FROM_HERE, [&] { broadcast(frame); });
+  SendTask(worker_thread_.get(), [&] { broadcast(frame); });
 }
 
 TEST_F(VideoRtpReceiverTest, EnablesEncodedOutputOnChannelRestart) {
   InSequence s;
-  EXPECT_CALL(channel_, ClearRecordableEncodedFrameCallback(0));
   MockVideoSink sink;
   Source()->AddEncodedSink(&sink);
   EXPECT_CALL(channel_, SetRecordableEncodedFrameCallback(4711, _));

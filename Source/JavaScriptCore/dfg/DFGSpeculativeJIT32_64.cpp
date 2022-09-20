@@ -2717,6 +2717,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringReplaceString: {
+        compileStringReplaceString(node);
+        break;
+    }
+
     case GetRegExpObjectLastIndex: {
         compileGetRegExpObjectLastIndex(node);
         break;

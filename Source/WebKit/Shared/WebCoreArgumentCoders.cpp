@@ -49,6 +49,7 @@
 #include <WebCore/DOMCacheEngine.h>
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/DecomposedGlyphs.h>
+#include <WebCore/DeprecationReportBody.h>
 #include <WebCore/DictationAlternative.h>
 #include <WebCore/DictionaryPopupInfo.h>
 #include <WebCore/DisplayListItems.h>
@@ -2657,6 +2658,9 @@ void ArgumentCoder<RefPtr<WebCore::ReportBody>>::encode(Encoder& encoder, const 
     case ViolationReportType::CORPViolation:
         downcast<CORPViolationReportBody>(reportBody.get())->encode(encoder);
         return;
+    case ViolationReportType::Deprecation:
+        downcast<DeprecationReportBody>(reportBody.get())->encode(encoder);
+        return;
     case ViolationReportType::Test:
         downcast<TestReportBody>(reportBody.get())->encode(encoder);
         return;
@@ -2691,6 +2695,8 @@ std::optional<RefPtr<WebCore::ReportBody>> ArgumentCoder<RefPtr<WebCore::ReportB
         return COEPInheritenceViolationReportBody::decode(decoder);
     case ViolationReportType::CORPViolation:
         return CORPViolationReportBody::decode(decoder);
+    case ViolationReportType::Deprecation:
+        return DeprecationReportBody::decode(decoder);
     case ViolationReportType::Test:
         return TestReportBody::decode(decoder);
     case ViolationReportType::CrossOriginOpenerPolicy:

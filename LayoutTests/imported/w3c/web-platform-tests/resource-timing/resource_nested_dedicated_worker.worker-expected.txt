@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Resource timing for nested dedicated workers Test timed out
+PASS Resource timing for nested dedicated workers
 

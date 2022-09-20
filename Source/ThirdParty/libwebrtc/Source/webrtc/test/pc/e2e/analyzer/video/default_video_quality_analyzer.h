@@ -12,6 +12,7 @@
 #define TEST_PC_E2E_ANALYZER_VIDEO_DEFAULT_VIDEO_QUALITY_ANALYZER_H_
 
 #include <atomic>
+#include <cstdint>
 #include <deque>
 #include <map>
 #include <memory>
@@ -22,14 +23,27 @@
 #include "api/array_view.h"
 #include "api/numerics/samples_stats_counter.h"
 #include "api/test/video_quality_analyzer_interface.h"
+#include "api/units/data_size.h"
 #include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_frame.h"
+#include "api/video/video_frame_type.h"
 #include "rtc_base/event.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/mutex.h"
+#include "rtc_base/thread_annotations.h"
 #include "system_wrappers/include/clock.h"
+<<<<<<< HEAD
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_cpu_measurer.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_frame_in_flight.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_frames_comparator.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_internal_shared_objects.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_shared_objects.h"
+#include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_stream_state.h"
+#include "test/pc/e2e/analyzer/video/names_collection.h"
+=======
 #include "test/pc/e2e/analyzer/video/multi_head_queue.h"
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 #include "test/testsupport/perf_test.h"
 
 namespace webrtc {
@@ -221,7 +235,10 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   void OnDecoderError(absl::string_view peer_name,
                       uint16_t frame_id,
                       int32_t error_code) override;
+
   void RegisterParticipantInCall(absl::string_view peer_name) override;
+  void UnregisterParticipantInCall(absl::string_view peer_name) override;
+
   void Stop() override;
   std::string GetStreamLabel(uint16_t frame_id) override;
   void OnStatsReports(
@@ -230,7 +247,10 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
 
   // Returns set of stream labels, that were met during test call.
   std::set<StatsKey> GetKnownVideoStreams() const;
-  const FrameCounters& GetGlobalCounters() const;
+  VideoStreamsInfo GetKnownStreams() const;
+  FrameCounters GetGlobalCounters() const;
+  // Returns frame counter for frames received without frame id set.
+  std::map<std::string, FrameCounters> GetUnknownSenderFrameCounters() const;
   // Returns frame counter per stream label. Valid stream labels can be obtained
   // by calling GetKnownVideoStreams()
   std::map<StatsKey, FrameCounters> GetPerStreamCounters() const;
@@ -240,6 +260,11 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   AnalyzerStats GetAnalyzerStats() const;
   double GetCpuUsagePercent();
 
+<<<<<<< HEAD
+  // Returns mapping from the stream label to the history of frames that were
+  // met in this stream in the order as they were captured.
+  std::map<std::string, std::vector<uint16_t>> GetStreamFrames() const;
+=======
  private:
   struct FrameStats {
     FrameStats(Timestamp captured_time) : captured_time(captured_time) {}
@@ -350,9 +375,16 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
     MultiHeadQueue<uint16_t> frame_ids_;
     std::map<size_t, Timestamp> last_rendered_frame_time_;
   };
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 
+ private:
   enum State { kNew, kActive, kStopped };
 
+<<<<<<< HEAD
+  // Returns next frame id to use. Frame ID can't be `VideoFrame::kNotSetId`,
+  // because this value is reserved by `VideoFrame` as "ID not set".
+  uint16_t GetNextFrameId() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+=======
   struct ReceiverFrameStats {
     // Time when last packet of a frame was received.
     Timestamp received_time = Timestamp::MinusInfinity();
@@ -474,6 +506,7 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
     std::vector<std::string> names_;
     std::map<absl::string_view, size_t> index_;
   };
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 
   void AddComparison(InternalStatsKey stats_key,
                      absl::optional<VideoFrame> captured,
@@ -504,6 +537,14 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
       RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
   // Returns string representation of stats key for metrics naming. Used for
   // backward compatibility by metrics naming for 2 peers cases.
+<<<<<<< HEAD
+  std::string ToMetricName(const InternalStatsKey& key) const
+      RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+
+  static const uint16_t kStartingFrameId = 1;
+
+  const DefaultVideoQualityAnalyzerOptions options_;
+=======
   std::string StatsKeyToMetricName(const StatsKey& key) const
       RTC_EXCLUSIVE_LOCKS_REQUIRED(lock_);
 
@@ -514,15 +555,23 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
 
   // TODO(titovartem) restore const when old constructor will be removed.
   DefaultVideoQualityAnalyzerOptions options_;
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
   webrtc::Clock* const clock_;
-  std::atomic<uint16_t> next_frame_id_{0};
 
   std::string test_label_;
 
+<<<<<<< HEAD
+  mutable Mutex mutex_;
+  uint16_t next_frame_id_ RTC_GUARDED_BY(mutex_) = kStartingFrameId;
+  std::unique_ptr<NamesCollection> peers_ RTC_GUARDED_BY(mutex_);
+  State state_ RTC_GUARDED_BY(mutex_) = State::kNew;
+  Timestamp start_time_ RTC_GUARDED_BY(mutex_) = Timestamp::MinusInfinity();
+=======
   mutable Mutex lock_;
   std::unique_ptr<NamesCollection> peers_ RTC_GUARDED_BY(lock_);
   State state_ RTC_GUARDED_BY(lock_) = State::kNew;
   Timestamp start_time_ RTC_GUARDED_BY(lock_) = Timestamp::MinusInfinity();
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
   // Mapping from stream label to unique size_t value to use in stats and avoid
   // extra string copying.
   NamesCollection streams_ RTC_GUARDED_BY(lock_);
@@ -536,7 +585,15 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   std::map<uint16_t, FrameInFlight> captured_frames_in_flight_
       RTC_GUARDED_BY(lock_);
   // Global frames count for all video streams.
+<<<<<<< HEAD
+  FrameCounters frame_counters_ RTC_GUARDED_BY(mutex_);
+  // Frame counters for received frames without video frame id set.
+  // Map from peer name to the frame counters.
+  std::map<std::string, FrameCounters> unknown_sender_frame_counters_
+      RTC_GUARDED_BY(mutex_);
+=======
   FrameCounters frame_counters_ RTC_GUARDED_BY(lock_);
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
   // Frame counters per each stream per each receiver.
   std::map<InternalStatsKey, FrameCounters> stream_frame_counters_
       RTC_GUARDED_BY(lock_);
@@ -550,6 +607,16 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   // after 1st frame from simulcast streams was already rendered and last is
   // still encoding.
   std::map<size_t, std::set<uint16_t>> stream_to_frame_id_history_
+<<<<<<< HEAD
+      RTC_GUARDED_BY(mutex_);
+  // Map from stream index to the list of frames as they were met in the stream.
+  std::map<size_t, std::vector<uint16_t>> stream_to_frame_id_full_history_
+      RTC_GUARDED_BY(mutex_);
+  AnalyzerStats analyzer_stats_ RTC_GUARDED_BY(mutex_);
+
+  DefaultVideoQualityAnalyzerCpuMeasurer cpu_measurer_;
+  DefaultVideoQualityAnalyzerFramesComparator frames_comparator_;
+=======
       RTC_GUARDED_BY(lock_);
 
   mutable Mutex comparison_lock_;
@@ -566,6 +633,7 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   Mutex cpu_measurement_lock_;
   int64_t cpu_time_ RTC_GUARDED_BY(cpu_measurement_lock_) = 0;
   int64_t wallclock_time_ RTC_GUARDED_BY(cpu_measurement_lock_) = 0;
+>>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 };
 
 }  // namespace webrtc_pc_e2e

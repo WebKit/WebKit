@@ -170,6 +170,7 @@
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaStreamRequest.h>
 #include <WebCore/ModalContainerTypes.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/PermissionState.h>
 #include <WebCore/PlatformEvent.h>
@@ -7090,7 +7091,7 @@ void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint
 #if PLATFORM(COCOA)
     pageClient().setTextIndicator(TextIndicator::create(indicatorData), static_cast<WebCore::TextIndicatorLifetime>(lifetime));
 #else
-    ASSERT_NOT_REACHED();
+    notImplemented();
 #endif
 }
 
@@ -7099,7 +7100,7 @@ void WebPageProxy::clearTextIndicator()
 #if PLATFORM(COCOA)
     pageClient().clearTextIndicator(WebCore::TextIndicatorDismissalAnimation::FadeOut);
 #else
-    ASSERT_NOT_REACHED();
+    notImplemented();
 #endif
 }
 
@@ -7108,7 +7109,7 @@ void WebPageProxy::setTextIndicatorAnimationProgress(float progress)
 #if PLATFORM(COCOA)
     pageClient().setTextIndicatorAnimationProgress(progress);
 #else
-    ASSERT_NOT_REACHED();
+    notImplemented();
 #endif
 }
 

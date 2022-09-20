@@ -76,7 +76,7 @@ private:
     };
 
     Vector<CodeRange> m_codeRanges;
-    bool m_shouldBuildMapping;
+    bool m_shouldBuildMapping { true };
 };
 
 // FIXME: <rdar://problem/39436658>

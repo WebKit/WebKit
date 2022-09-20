@@ -37,6 +37,7 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/virtual_socket_server.h"
 #include "test/gtest.h"
+#include "test/scoped_key_value_config.h"
 
 namespace rtc {
 namespace {
@@ -56,7 +57,7 @@ TestClient* CreateTestClient(SocketFactory* factory,
 }
 
 TestClient* CreateTCPTestClient(Socket* socket) {
-  return new TestClient(std::make_unique<AsyncTCPSocket>(socket, false));
+  return new TestClient(std::make_unique<AsyncTCPSocket>(socket));
 }
 
 // Tests that when sending from internal_addr to external_addrs through the
@@ -219,16 +220,17 @@ bool TestConnectivity(const SocketAddress& src, const IPAddress& dst) {
 }
 
 void TestPhysicalInternal(const SocketAddress& int_addr) {
+  webrtc::test::ScopedKeyValueConfig field_trials;
+  rtc::AutoThread main_thread;
   PhysicalSocketServer socket_server;
-  BasicNetworkManager network_manager(nullptr, &socket_server);
+  BasicNetworkManager network_manager(nullptr, &socket_server, &field_trials);
   network_manager.StartUpdating();
   // Process pending messages so the network list is updated.
   Thread::Current()->ProcessMessages(0);
 
-  std::vector<Network*> networks;
-  network_manager.GetNetworks(&networks);
+  std::vector<const Network*> networks = network_manager.GetNetworks();
   networks.erase(std::remove_if(networks.begin(), networks.end(),
-                                [](rtc::Network* network) {
+                                [](const rtc::Network* network) {
                                   return rtc::kDefaultNetworkIgnoreMask &
                                          network->type();
                                 }),
@@ -242,9 +244,8 @@ void TestPhysicalInternal(const SocketAddress& int_addr) {
   SocketAddress ext_addr2;
   // Find an available IP with matching family. The test breaks if int_addr
   // can't talk to ip, so check for connectivity as well.
-  for (std::vector<Network*>::iterator it = networks.begin();
-       it != networks.end(); ++it) {
-    const IPAddress& ip = (*it)->GetBestIP();
+  for (const Network* const network : networks) {
+    const IPAddress& ip = network->GetBestIP();
     if (ip.family() == int_addr.family() && TestConnectivity(int_addr, ip)) {
       ext_addr2.SetIP(ip);
       break;
@@ -292,6 +293,7 @@ class TestVirtualSocketServer : public VirtualSocketServer {
 }  // namespace
 
 void TestVirtualInternal(int family) {
+  rtc::AutoThread main_thread;
   std::unique_ptr<TestVirtualSocketServer> int_vss(
       new TestVirtualSocketServer());
   std::unique_ptr<TestVirtualSocketServer> ext_vss(

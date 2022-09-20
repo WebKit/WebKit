@@ -15,6 +15,7 @@
 
 #include <functional>
 #include <memory>
+#include <string>
 #include <utility>
 
 #include "api/array_view.h"
@@ -25,7 +26,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/ref_counted_object.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/trace_event.h"
 
@@ -201,23 +201,21 @@ webrtc::RTCError JsepTransport::SetLocalJsepTransportDescription(
   if (!local_fp) {
     local_certificate_ = nullptr;
   } else {
-    error = VerifyCertificateFingerprint(local_certificate_, local_fp);
+    error = VerifyCertificateFingerprint(local_certificate_.get(), local_fp);
     if (!error.ok()) {
       local_description_.reset();
       return error;
     }
   }
-    RTC_DCHECK(rtp_dtls_transport_->internal());
-    rtp_dtls_transport_->internal()->ice_transport()->SetIceParameters(
-        ice_parameters);
+  RTC_DCHECK(rtp_dtls_transport_->internal());
+  rtp_dtls_transport_->internal()->ice_transport()->SetIceParameters(
+      ice_parameters);
 
-    {
-      if (rtcp_dtls_transport_) {
-        RTC_DCHECK(rtcp_dtls_transport_->internal());
-        rtcp_dtls_transport_->internal()->ice_transport()->SetIceParameters(
-            ice_parameters);
-      }
-    }
+  if (rtcp_dtls_transport_) {
+    RTC_DCHECK(rtcp_dtls_transport_->internal());
+    rtcp_dtls_transport_->internal()->ice_transport()->SetIceParameters(
+        ice_parameters);
+  }
   // If PRANSWER/ANSWER is set, we should decide transport protocol type.
   if (type == SdpType::kPrAnswer || type == SdpType::kAnswer) {
     error = NegotiateAndSetDtlsParameters(type);
@@ -399,7 +397,7 @@ webrtc::RTCError JsepTransport::VerifyCertificateFingerprint(
 void JsepTransport::SetActiveResetSrtpParams(bool active_reset_srtp_params) {
   RTC_DCHECK_RUN_ON(network_thread_);
   if (dtls_srtp_transport_) {
-    RTC_LOG(INFO)
+    RTC_LOG(LS_INFO)
         << "Setting active_reset_srtp_params of DtlsSrtpTransport to: "
         << active_reset_srtp_params;
     dtls_srtp_transport_->SetActiveResetSrtpParams(active_reset_srtp_params);
@@ -460,7 +458,7 @@ bool JsepTransport::SetRtcpMux(bool enable,
       }
       break;
     default:
-      RTC_NOTREACHED();
+      RTC_DCHECK_NOTREACHED();
   }
 
   if (!ret) {
@@ -670,7 +668,7 @@ webrtc::RTCError JsepTransport::NegotiateDtlsRole(
             }
             break;
           default:
-            RTC_NOTREACHED();
+            RTC_DCHECK_NOTREACHED();
             break;
         }
       } else {
@@ -715,6 +713,10 @@ bool JsepTransport::GetTransportStats(DtlsTransportInternal* dtls_transport,
   dtls_transport->GetSrtpCryptoSuite(&substats.srtp_crypto_suite);
   dtls_transport->GetSslCipherSuite(&substats.ssl_cipher_suite);
   substats.dtls_state = dtls_transport->dtls_state();
+  rtc::SSLRole dtls_role;
+  if (dtls_transport->GetDtlsRole(&dtls_role)) {
+    substats.dtls_role = dtls_role;
+  }
   if (!dtls_transport->ice_transport()->GetStats(
           &substats.ice_transport_stats)) {
     return false;

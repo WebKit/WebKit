@@ -16,6 +16,8 @@
 
 namespace libyuv {
 
+#define SUBSAMPLE(v, a) ((((v) + (a)-1)) / (a))
+
 static void I420TestRotate(int src_width,
                            int src_height,
                            int dst_width,
@@ -133,6 +135,94 @@ TEST_F(LibYUVRotateTest, DISABLED_I420Rotate270_Odd) {
                  benchmark_height_ + 1, benchmark_width_ + 1, kRotate270,
                  benchmark_iterations_, disable_cpu_flags_,
                  benchmark_cpu_info_);
+}
+
+static void I422TestRotate(int src_width,
+                           int src_height,
+                           int dst_width,
+                           int dst_height,
+                           libyuv::RotationMode mode,
+                           int benchmark_iterations,
+                           int disable_cpu_flags,
+                           int benchmark_cpu_info) {
+  if (src_width < 1) {
+    src_width = 1;
+  }
+  if (src_height == 0) {
+    src_height = 1;
+  }
+  if (dst_width < 1) {
+    dst_width = 1;
+  }
+  if (dst_height < 1) {
+    dst_height = 1;
+  }
+  int src_i422_y_size = src_width * Abs(src_height);
+  int src_i422_uv_size = ((src_width + 1) / 2) * Abs(src_height);
+  int src_i422_size = src_i422_y_size + src_i422_uv_size * 2;
+  align_buffer_page_end(src_i422, src_i422_size);
+  for (int i = 0; i < src_i422_size; ++i) {
+    src_i422[i] = fastrand() & 0xff;
+  }
+
+  int dst_i422_y_size = dst_width * dst_height;
+  int dst_i422_uv_size = ((dst_width + 1) / 2) * dst_height;
+  int dst_i422_size = dst_i422_y_size + dst_i422_uv_size * 2;
+  align_buffer_page_end(dst_i422_c, dst_i422_size);
+  align_buffer_page_end(dst_i422_opt, dst_i422_size);
+  memset(dst_i422_c, 2, dst_i422_size);
+  memset(dst_i422_opt, 3, dst_i422_size);
+
+  MaskCpuFlags(disable_cpu_flags);  // Disable all CPU optimization.
+  I422Rotate(src_i422, src_width, src_i422 + src_i422_y_size,
+             (src_width + 1) / 2, src_i422 + src_i422_y_size + src_i422_uv_size,
+             (src_width + 1) / 2, dst_i422_c, dst_width,
+             dst_i422_c + dst_i422_y_size, (dst_width + 1) / 2,
+             dst_i422_c + dst_i422_y_size + dst_i422_uv_size,
+             (dst_width + 1) / 2, src_width, src_height, mode);
+
+  MaskCpuFlags(benchmark_cpu_info);  // Enable all CPU optimization.
+  for (int i = 0; i < benchmark_iterations; ++i) {
+    I422Rotate(
+        src_i422, src_width, src_i422 + src_i422_y_size, (src_width + 1) / 2,
+        src_i422 + src_i422_y_size + src_i422_uv_size, (src_width + 1) / 2,
+        dst_i422_opt, dst_width, dst_i422_opt + dst_i422_y_size,
+        (dst_width + 1) / 2, dst_i422_opt + dst_i422_y_size + dst_i422_uv_size,
+        (dst_width + 1) / 2, src_width, src_height, mode);
+  }
+
+  // Rotation should be exact.
+  for (int i = 0; i < dst_i422_size; ++i) {
+    EXPECT_EQ(dst_i422_c[i], dst_i422_opt[i]);
+  }
+
+  free_aligned_buffer_page_end(dst_i422_c);
+  free_aligned_buffer_page_end(dst_i422_opt);
+  free_aligned_buffer_page_end(src_i422);
+}
+
+TEST_F(LibYUVRotateTest, I422Rotate0_Opt) {
+  I422TestRotate(benchmark_width_, benchmark_height_, benchmark_width_,
+                 benchmark_height_, kRotate0, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I422Rotate90_Opt) {
+  I422TestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
+                 benchmark_width_, kRotate90, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I422Rotate180_Opt) {
+  I422TestRotate(benchmark_width_, benchmark_height_, benchmark_width_,
+                 benchmark_height_, kRotate180, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
+}
+
+TEST_F(LibYUVRotateTest, I422Rotate270_Opt) {
+  I422TestRotate(benchmark_width_, benchmark_height_, benchmark_height_,
+                 benchmark_width_, kRotate270, benchmark_iterations_,
+                 disable_cpu_flags_, benchmark_cpu_info_);
 }
 
 static void I444TestRotate(int src_width,
@@ -390,5 +480,120 @@ TEST_F(LibYUVRotateTest, NV12Rotate270_Invert) {
                  benchmark_width_, kRotate270, benchmark_iterations_,
                  disable_cpu_flags_, benchmark_cpu_info_);
 }
+
+// Test Android 420 to I420 Rotate
+#define TESTAPLANARTOPI(SRC_FMT_PLANAR, PIXEL_STRIDE, SRC_SUBSAMP_X,          \
+                        SRC_SUBSAMP_Y, FMT_PLANAR, SUBSAMP_X, SUBSAMP_Y,      \
+                        W1280, N, NEG, OFF, PN, OFF_U, OFF_V, ROT)            \
+  TEST_F(LibYUVRotateTest,                                                    \
+         SRC_FMT_PLANAR##To##FMT_PLANAR##Rotate##ROT##To##PN##N) {            \
+    const int kWidth = W1280;                                                 \
+    const int kHeight = benchmark_height_;                                    \
+    const int kSizeUV =                                                       \
+        SUBSAMPLE(kWidth, SRC_SUBSAMP_X) * SUBSAMPLE(kHeight, SRC_SUBSAMP_Y); \
+    align_buffer_page_end(src_y, kWidth* kHeight + OFF);                      \
+    align_buffer_page_end(src_uv,                                             \
+                          kSizeUV*((PIXEL_STRIDE == 3) ? 3 : 2) + OFF);       \
+    align_buffer_page_end(dst_y_c, kWidth* kHeight);                          \
+    align_buffer_page_end(dst_u_c, SUBSAMPLE(kWidth, SUBSAMP_X) *             \
+                                       SUBSAMPLE(kHeight, SUBSAMP_Y));        \
+    align_buffer_page_end(dst_v_c, SUBSAMPLE(kWidth, SUBSAMP_X) *             \
+                                       SUBSAMPLE(kHeight, SUBSAMP_Y));        \
+    align_buffer_page_end(dst_y_opt, kWidth* kHeight);                        \
+    align_buffer_page_end(dst_u_opt, SUBSAMPLE(kWidth, SUBSAMP_X) *           \
+                                         SUBSAMPLE(kHeight, SUBSAMP_Y));      \
+    align_buffer_page_end(dst_v_opt, SUBSAMPLE(kWidth, SUBSAMP_X) *           \
+                                         SUBSAMPLE(kHeight, SUBSAMP_Y));      \
+    uint8_t* src_u = src_uv + OFF_U;                                          \
+    uint8_t* src_v = src_uv + (PIXEL_STRIDE == 1 ? kSizeUV : OFF_V);          \
+    int src_stride_uv = SUBSAMPLE(kWidth, SUBSAMP_X) * PIXEL_STRIDE;          \
+    for (int i = 0; i < kHeight; ++i)                                         \
+      for (int j = 0; j < kWidth; ++j)                                        \
+        src_y[i * kWidth + j + OFF] = (fastrand() & 0xff);                    \
+    for (int i = 0; i < SUBSAMPLE(kHeight, SRC_SUBSAMP_Y); ++i) {             \
+      for (int j = 0; j < SUBSAMPLE(kWidth, SRC_SUBSAMP_X); ++j) {            \
+        src_u[(i * src_stride_uv) + j * PIXEL_STRIDE + OFF] =                 \
+            (fastrand() & 0xff);                                              \
+        src_v[(i * src_stride_uv) + j * PIXEL_STRIDE + OFF] =                 \
+            (fastrand() & 0xff);                                              \
+      }                                                                       \
+    }                                                                         \
+    memset(dst_y_c, 1, kWidth* kHeight);                                      \
+    memset(dst_u_c, 2,                                                        \
+           SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
+    memset(dst_v_c, 3,                                                        \
+           SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
+    memset(dst_y_opt, 101, kWidth* kHeight);                                  \
+    memset(dst_u_opt, 102,                                                    \
+           SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
+    memset(dst_v_opt, 103,                                                    \
+           SUBSAMPLE(kWidth, SUBSAMP_X) * SUBSAMPLE(kHeight, SUBSAMP_Y));     \
+    MaskCpuFlags(disable_cpu_flags_);                                         \
+    SRC_FMT_PLANAR##To##FMT_PLANAR##Rotate(                                   \
+        src_y + OFF, kWidth, src_u + OFF, SUBSAMPLE(kWidth, SRC_SUBSAMP_X),   \
+        src_v + OFF, SUBSAMPLE(kWidth, SRC_SUBSAMP_X), PIXEL_STRIDE, dst_y_c, \
+        kWidth, dst_u_c, SUBSAMPLE(kWidth, SUBSAMP_X), dst_v_c,               \
+        SUBSAMPLE(kWidth, SUBSAMP_X), kWidth, NEG kHeight,                    \
+        (libyuv::RotationMode)ROT);                                           \
+    MaskCpuFlags(benchmark_cpu_info_);                                        \
+    for (int i = 0; i < benchmark_iterations_; ++i) {                         \
+      SRC_FMT_PLANAR##To##FMT_PLANAR##Rotate(                                 \
+          src_y + OFF, kWidth, src_u + OFF, SUBSAMPLE(kWidth, SRC_SUBSAMP_X), \
+          src_v + OFF, SUBSAMPLE(kWidth, SRC_SUBSAMP_X), PIXEL_STRIDE,        \
+          dst_y_opt, kWidth, dst_u_opt, SUBSAMPLE(kWidth, SUBSAMP_X),         \
+          dst_v_opt, SUBSAMPLE(kWidth, SUBSAMP_X), kWidth, NEG kHeight,       \
+          (libyuv::RotationMode)ROT);                                         \
+    }                                                                         \
+    for (int i = 0; i < kHeight; ++i) {                                       \
+      for (int j = 0; j < kWidth; ++j) {                                      \
+        EXPECT_EQ(dst_y_c[i * kWidth + j], dst_y_opt[i * kWidth + j]);        \
+      }                                                                       \
+    }                                                                         \
+    for (int i = 0; i < SUBSAMPLE(kHeight, SUBSAMP_Y); ++i) {                 \
+      for (int j = 0; j < SUBSAMPLE(kWidth, SUBSAMP_X); ++j) {                \
+        EXPECT_EQ(dst_u_c[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j],              \
+                  dst_u_opt[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j]);           \
+      }                                                                       \
+    }                                                                         \
+    for (int i = 0; i < SUBSAMPLE(kHeight, SUBSAMP_Y); ++i) {                 \
+      for (int j = 0; j < SUBSAMPLE(kWidth, SUBSAMP_X); ++j) {                \
+        EXPECT_EQ(dst_v_c[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j],              \
+                  dst_v_opt[i * SUBSAMPLE(kWidth, SUBSAMP_X) + j]);           \
+      }                                                                       \
+    }                                                                         \
+    free_aligned_buffer_page_end(dst_y_c);                                    \
+    free_aligned_buffer_page_end(dst_u_c);                                    \
+    free_aligned_buffer_page_end(dst_v_c);                                    \
+    free_aligned_buffer_page_end(dst_y_opt);                                  \
+    free_aligned_buffer_page_end(dst_u_opt);                                  \
+    free_aligned_buffer_page_end(dst_v_opt);                                  \
+    free_aligned_buffer_page_end(src_y);                                      \
+    free_aligned_buffer_page_end(src_uv);                                     \
+  }
+
+#define TESTAPLANARTOP(SRC_FMT_PLANAR, PN, PIXEL_STRIDE, OFF_U, OFF_V,         \
+                       SRC_SUBSAMP_X, SRC_SUBSAMP_Y, FMT_PLANAR, SUBSAMP_X,    \
+                       SUBSAMP_Y)                                              \
+  TESTAPLANARTOPI(SRC_FMT_PLANAR, PIXEL_STRIDE, SRC_SUBSAMP_X, SRC_SUBSAMP_Y,  \
+                  FMT_PLANAR, SUBSAMP_X, SUBSAMP_Y, benchmark_width_ + 1,      \
+                  _Any, +, 0, PN, OFF_U, OFF_V, 0)                             \
+  TESTAPLANARTOPI(SRC_FMT_PLANAR, PIXEL_STRIDE, SRC_SUBSAMP_X, SRC_SUBSAMP_Y,  \
+                  FMT_PLANAR, SUBSAMP_X, SUBSAMP_Y, benchmark_width_,          \
+                  _Unaligned, +, 2, PN, OFF_U, OFF_V, 0)                       \
+  TESTAPLANARTOPI(SRC_FMT_PLANAR, PIXEL_STRIDE, SRC_SUBSAMP_X, SRC_SUBSAMP_Y,  \
+                  FMT_PLANAR, SUBSAMP_X, SUBSAMP_Y, benchmark_width_, _Invert, \
+                  -, 0, PN, OFF_U, OFF_V, 0)                                   \
+  TESTAPLANARTOPI(SRC_FMT_PLANAR, PIXEL_STRIDE, SRC_SUBSAMP_X, SRC_SUBSAMP_Y,  \
+                  FMT_PLANAR, SUBSAMP_X, SUBSAMP_Y, benchmark_width_, _Opt, +, \
+                  0, PN, OFF_U, OFF_V, 0)                                      \
+  TESTAPLANARTOPI(SRC_FMT_PLANAR, PIXEL_STRIDE, SRC_SUBSAMP_X, SRC_SUBSAMP_Y,  \
+                  FMT_PLANAR, SUBSAMP_X, SUBSAMP_Y, benchmark_width_, _Opt, +, \
+                  0, PN, OFF_U, OFF_V, 180)
+
+TESTAPLANARTOP(Android420, I420, 1, 0, 0, 2, 2, I420, 2, 2)
+TESTAPLANARTOP(Android420, NV12, 2, 0, 1, 2, 2, I420, 2, 2)
+TESTAPLANARTOP(Android420, NV21, 2, 1, 0, 2, 2, I420, 2, 2)
+#undef TESTAPLANARTOP
+#undef TESTAPLANARTOPI
 
 }  // namespace libyuv

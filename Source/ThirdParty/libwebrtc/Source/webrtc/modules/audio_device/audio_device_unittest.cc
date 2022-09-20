@@ -176,7 +176,7 @@ class FifoAudioStream : public AudioStream {
               (static_cast<int32_t>(buffer[2 * i]) + buffer[2 * i + 1]) / 2;
         }
       } else {
-        RTC_NOTREACHED() << "Required conversion is not support";
+        RTC_DCHECK_NOTREACHED() << "Required conversion is not support";
       }
       fifo_.pop_front();
     }

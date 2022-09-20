@@ -12,7 +12,7 @@
 
 #include <vector>
 
-#include "rtc_base/ref_counted_object.h"
+#include "api/make_ref_counted.h"
 #include "test/gtest.h"
 
 namespace webrtc {

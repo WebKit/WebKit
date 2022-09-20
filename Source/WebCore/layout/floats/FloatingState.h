@@ -51,11 +51,10 @@ public:
 
     class FloatItem {
     public:
-        FloatItem(const Box&, BoxGeometry absoluteBoxGeometry);
-
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
         FloatItem(Position, BoxGeometry absoluteBoxGeometry);
+        FloatItem(const Box&, Position, BoxGeometry absoluteBoxGeometry);
 
         bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isRightPositioned() const { return m_position == Position::Right; }

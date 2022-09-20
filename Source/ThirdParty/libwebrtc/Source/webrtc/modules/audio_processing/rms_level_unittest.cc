@@ -151,6 +151,18 @@ TEST(RmsLevelTest, ProcessMuted) {
   EXPECT_EQ(6, level->Average());  // Average RMS halved due to the silence.
 }
 
+// Digital silence must yield 127 and anything else should yield 126 or lower.
+TEST(RmsLevelTest, OnlyDigitalSilenceIs127) {
+  std::vector<int16_t> test_buffer(kSampleRateHz, 0);
+  auto level = RunTest(test_buffer);
+  EXPECT_EQ(127, level->Average());
+  // Change one sample to something other than 0 to make the buffer not strictly
+  // represent digital silence.
+  test_buffer[0] = 1;
+  level = RunTest(test_buffer);
+  EXPECT_LT(level->Average(), 127);
+}
+
 // Inserts 1 second of half-scale sinusoid, follwed by 10 ms of full-scale, and
 // finally 1 second of half-scale again. Expect the average to be -9 dBFS due
 // to the vast majority of the signal being half-scale, and the peak to be

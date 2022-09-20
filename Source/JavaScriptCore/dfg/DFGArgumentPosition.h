@@ -34,13 +34,7 @@ namespace JSC { namespace DFG {
 
 class ArgumentPosition {
 public:
-    ArgumentPosition()
-        : m_prediction(SpecNone)
-        , m_doubleFormatState(EmptyDoubleFormatState)
-        , m_isProfitableToUnbox(false)
-        , m_shouldNeverUnbox(false)
-    {
-    }
+    ArgumentPosition() = default;
     
     void addVariable(VariableAccessData* variable)
     {
@@ -131,10 +125,10 @@ public:
     }
     
 private:
-    SpeculatedType m_prediction;
-    DoubleFormatState m_doubleFormatState;
-    bool m_isProfitableToUnbox;
-    bool m_shouldNeverUnbox;
+    SpeculatedType m_prediction { SpecNone };
+    DoubleFormatState m_doubleFormatState { EmptyDoubleFormatState };
+    bool m_isProfitableToUnbox { false };
+    bool m_shouldNeverUnbox { false };
     
     Vector<VariableAccessData*, 2> m_variables;
 };

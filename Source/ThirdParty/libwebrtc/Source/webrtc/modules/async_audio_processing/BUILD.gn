@@ -23,7 +23,7 @@ rtc_library("async_audio_processing") {
     "../../api/audio:audio_frame_processor",
     "../../api/task_queue:task_queue",
     "../../rtc_base:checks",
-    "../../rtc_base:rtc_base_approved",
+    "../../rtc_base:refcount",
     "../../rtc_base:rtc_task_queue",
   ]
 }
@@ -38,7 +38,6 @@ if (rtc_include_tests) {
       ":async_audio_processing",
       "../../api/audio:audio_frame_api",
       "../../rtc_base:checks",
-      "../../rtc_base:rtc_base_approved",
     ]
   }
 }

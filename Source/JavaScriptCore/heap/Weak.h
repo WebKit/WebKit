@@ -46,7 +46,6 @@ public:
     Weak() = default;
 
     constexpr Weak(std::nullptr_t)
-        : Weak()
     {
     }
 

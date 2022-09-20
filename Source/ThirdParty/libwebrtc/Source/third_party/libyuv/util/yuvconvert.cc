@@ -165,23 +165,23 @@ static int TileARGBScale(const uint8_t* src_argb,
                          int src_height,
                          uint8_t* dst_argb,
                          int dst_stride_argb,
-                         int dst_width,
-                         int dst_height,
+                         int destination_width,
+                         int destination_height,
                          libyuv::FilterMode filtering) {
-  for (int y = 0; y < dst_height; y += kTileY) {
-    for (int x = 0; x < dst_width; x += kTileX) {
+  for (int y = 0; y < destination_height; y += kTileY) {
+    for (int x = 0; x < destination_width; x += kTileX) {
       int clip_width = kTileX;
-      if (x + clip_width > dst_width) {
-        clip_width = dst_width - x;
+      if (x + clip_width > destination_width) {
+        clip_width = destination_width - x;
       }
       int clip_height = kTileY;
-      if (y + clip_height > dst_height) {
-        clip_height = dst_height - y;
+      if (y + clip_height > destination_height) {
+        clip_height = destination_height - y;
       }
       int r = libyuv::ARGBScaleClip(src_argb, src_stride_argb, src_width,
                                     src_height, dst_argb, dst_stride_argb,
-                                    dst_width, dst_height, x, y, clip_width,
-                                    clip_height, filtering);
+                                    destination_width, destination_height, x, y,
+                                    clip_width, clip_height, filtering);
       if (r) {
         return r;
       }

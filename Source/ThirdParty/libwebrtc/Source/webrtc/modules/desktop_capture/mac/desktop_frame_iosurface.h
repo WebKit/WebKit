@@ -30,13 +30,14 @@ class DesktopFrameIOSurface final : public DesktopFrame {
 
   ~DesktopFrameIOSurface() override;
 
+  DesktopFrameIOSurface(const DesktopFrameIOSurface&) = delete;
+  DesktopFrameIOSurface& operator=(const DesktopFrameIOSurface&) = delete;
+
  private:
   // This constructor expects `io_surface` to hold a non-null IOSurfaceRef.
   explicit DesktopFrameIOSurface(rtc::ScopedCFTypeRef<IOSurfaceRef> io_surface);
 
   const rtc::ScopedCFTypeRef<IOSurfaceRef> io_surface_;
-
-  RTC_DISALLOW_COPY_AND_ASSIGN(DesktopFrameIOSurface);
 };
 
 }  // namespace webrtc
