@@ -242,25 +242,6 @@ const ContainerBox& Box::containingBlock() const
     return initialContainingBlock();
 }
 
-const ContainerBox& Box::formattingContextRoot() const
-{
-    // Finding the context root by traversing the tree during tree construction could provide incorrect result.
-    ASSERT(!Phase::isInTreeBuilding());
-    // We should never need to ask this question on the ICB.
-    ASSERT(!is<InitialContainingBlock>(*this));
-    // A box lives in the same formatting context as its containing block unless the containing block establishes a formatting context.
-    // However relatively positioned (inflow) inline container lives in the formatting context where its parent lives unless
-    // the parent establishes a formatting context.
-    //
-    // <div id=outer style="position: absolute"><div id=inner><span style="position: relative">content</span></div></div>
-    // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
-    // formatting context established by "inner".
-    auto& ancestor = isInlineLevelBox() && isInFlowPositioned() ? parent() : containingBlock();
-    if (ancestor.establishesFormattingContext())
-        return ancestor;
-    return ancestor.formattingContextRoot();
-}
-
 const InitialContainingBlock& Box::initialContainingBlock() const
 {
     if (is<InitialContainingBlock>(*this))

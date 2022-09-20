@@ -58,7 +58,7 @@ private:
 
 LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box&);
 LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box&, const ContainerBox& stayWithin);
-LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box&);
+LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box&, const ContainerBox& root);
 
 inline LayoutContainingBlockChainIterator::LayoutContainingBlockChainIterator(const ContainerBox* current)
     : m_current(current)
@@ -89,9 +89,9 @@ inline LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box&
     return LayoutContainingBlockChainIteratorAdapter(layoutBox.containingBlock(), &stayWithin);
 }
 
-inline LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box& layoutBox)
+inline LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box& layoutBox, const ContainerBox& root)
 {
-    return containingBlockChain(layoutBox, layoutBox.formattingContextRoot());
+    return containingBlockChain(layoutBox, root);
 }
 
 }

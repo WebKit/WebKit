@@ -50,7 +50,7 @@ BoxGeometry& FormattingState::boxGeometry(const Box& layoutBox)
 {
     // Should never need to mutate a display box outside of the formatting context, unless we are trying
     // to compute the static position of an out-of-flow box.
-    ASSERT((layoutBox.isOutOfFlowPositioned() && isInlineFormattingState()) || &layoutState().formattingStateForFormattingContext(layoutBox.formattingContextRoot()) == this);
+    ASSERT((layoutBox.isOutOfFlowPositioned() && isInlineFormattingState()) || &layoutState().formattingStateForFormattingContext(FormattingContext::formattingContextRoot(layoutBox)) == this);
     // Anonymous text wrappers do not need to compute box geometry. They initiate inline runs.
     ASSERT(!layoutBox.isInlineTextBox());
     return layoutState().ensureGeometryForBox(layoutBox);

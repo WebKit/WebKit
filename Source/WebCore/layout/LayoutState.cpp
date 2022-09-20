@@ -168,10 +168,12 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerB
 
         // Otherwise, the formatting context inherits the floats from the parent formatting context.
         // Find the formatting state in which this formatting root lives, not the one it creates and use its floating state.
-        ASSERT(formattingContextRoot.formattingContextRoot().establishesBlockFormattingContext());
-        auto& parentFormattingState = formattingStateForBlockFormattingContext(formattingContextRoot.formattingContextRoot());
-        auto& parentFloatingState = parentFormattingState.floatingState();
-        return makeUnique<InlineFormattingState>(parentFloatingState, *this);
+        auto parentFormattingState = [&] () -> FormattingState& {
+            auto* ancestor = &formattingContextRoot.containingBlock();
+            for (; !ancestor->establishesBlockFormattingContext(); ancestor = &ancestor->containingBlock()) { }
+            return formattingStateForFormattingContext(*ancestor);
+        };
+        return makeUnique<InlineFormattingState>(parentFormattingState().floatingState(), *this);
     };
 
     if (isInlineFormattingContextIntegration()) {
