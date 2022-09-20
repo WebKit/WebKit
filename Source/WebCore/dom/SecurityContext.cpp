@@ -188,7 +188,7 @@ PolicyContainer SecurityContext::policyContainer() const
 void SecurityContext::inheritPolicyContainerFrom(const PolicyContainer& policyContainer)
 {
     if (!contentSecurityPolicy())
-        setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { }, nullptr, nullptr));
+        setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { }, nullptr));
 
     contentSecurityPolicy()->inheritHeadersFrom(policyContainer.contentSecurityPolicyResponseHeaders);
     setCrossOriginOpenerPolicy(policyContainer.crossOriginOpenerPolicy);
