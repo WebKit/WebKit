@@ -25,7 +25,11 @@
 
 #pragma once
 
+#include "CachedCall.h"
+#include "ExceptionHelpers.h"
 #include "StringPrototype.h"
+#include <wtf/Range.h>
+#include <wtf/text/StringSearch.h>
 
 namespace JSC {
 
@@ -42,6 +46,245 @@ ALWAYS_INLINE JSString* stringSlice(JSGlobalObject* globalObject, VM& vm, JSStri
         return jsSubstring(vm, globalObject, string, static_cast<unsigned>(from), static_cast<unsigned>(to) - static_cast<unsigned>(from));
     }
     return jsEmptyString(vm);
+}
+
+ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const Range<int32_t>* substringRanges, int rangeCount, const String* separators, int separatorCount)
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (rangeCount == 1 && separatorCount == 0) {
+        int sourceSize = source.length();
+        int position = substringRanges[0].begin();
+        int length = substringRanges[0].distance();
+        if (position <= 0 && length >= sourceSize)
+            return sourceVal;
+        // We could call String::substringSharingImpl(), but this would result in redundant checks.
+        RELEASE_AND_RETURN(scope, jsString(vm, StringImpl::createSubstringSharingImpl(*source.impl(), std::max(0, position), std::min(sourceSize, length))));
+    }
+
+    if (rangeCount == 2 && separatorCount == 1) {
+        String leftPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[0].begin(), substringRanges[0].distance()));
+        String rightPart(StringImpl::createSubstringSharingImpl(*source.impl(), substringRanges[1].begin(), substringRanges[1].distance()));
+        RELEASE_AND_RETURN(scope, jsString(globalObject, leftPart, separators[0], rightPart));
+    }
+
+    CheckedInt32 totalLength = 0;
+    bool allSeparators8Bit = true;
+    for (int i = 0; i < rangeCount; i++)
+        totalLength += substringRanges[i].distance();
+    for (int i = 0; i < separatorCount; i++) {
+        totalLength += separators[i].length();
+        if (separators[i].length() && !separators[i].is8Bit())
+            allSeparators8Bit = false;
+    }
+    if (totalLength.hasOverflowed()) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    if (!totalLength)
+        return jsEmptyString(vm);
+
+    if (source.is8Bit() && allSeparators8Bit) {
+        LChar* buffer;
+        const LChar* sourceData = source.characters8();
+
+        auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+        if (!impl) {
+            throwOutOfMemoryError(globalObject, scope);
+            return nullptr;
+        }
+
+        int maxCount = std::max(rangeCount, separatorCount);
+        Checked<int, AssertNoOverflow> bufferPos = 0;
+        for (int i = 0; i < maxCount; i++) {
+            if (i < rangeCount) {
+                if (int srcLen = substringRanges[i].distance()) {
+                    StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData + substringRanges[i].begin(), srcLen);
+                    bufferPos += srcLen;
+                }
+            }
+            if (i < separatorCount) {
+                if (int sepLen = separators[i].length()) {
+                    StringImpl::copyCharacters(buffer + bufferPos.value(), separators[i].characters8(), sepLen);
+                    bufferPos += sepLen;
+                }
+            }
+        }
+
+        RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
+    }
+
+    UChar* buffer;
+    auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+    if (!impl) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    int maxCount = std::max(rangeCount, separatorCount);
+    Checked<int, AssertNoOverflow> bufferPos = 0;
+    for (int i = 0; i < maxCount; i++) {
+        if (i < rangeCount) {
+            if (int srcLen = substringRanges[i].distance()) {
+                if (source.is8Bit())
+                    StringImpl::copyCharacters(buffer + bufferPos.value(), source.characters8() + substringRanges[i].begin(), srcLen);
+                else
+                    StringImpl::copyCharacters(buffer + bufferPos.value(), source.characters16() + substringRanges[i].begin(), srcLen);
+                bufferPos += srcLen;
+            }
+        }
+        if (i < separatorCount) {
+            if (int sepLen = separators[i].length()) {
+                if (separators[i].is8Bit())
+                    StringImpl::copyCharacters(buffer + bufferPos.value(), separators[i].characters8(), sepLen);
+                else
+                    StringImpl::copyCharacters(buffer + bufferPos.value(), separators[i].characters16(), sepLen);
+                bufferPos += sepLen;
+            }
+        }
+    }
+
+    RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
+}
+
+enum class StringReplaceSubstitutions : bool { Yes, No };
+enum class StringReplaceUseTable : bool { Yes, No };
+template<StringReplaceSubstitutions substitutions, StringReplaceUseTable useTable, typename TableType>
+ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalObject, JSString* stringCell, String string, String search, String replacement, const TableType* table)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    size_t matchStart;
+    if constexpr (useTable == StringReplaceUseTable::Yes)
+        matchStart = table->find(string, search);
+    else {
+        UNUSED_PARAM(table);
+        matchStart = string.find(search);
+    }
+    if (matchStart == notFound)
+        return stringCell;
+
+    size_t searchLength = search.length();
+    size_t matchEnd = matchStart + searchLength;
+    if constexpr (substitutions == StringReplaceSubstitutions::Yes) {
+        size_t dollarSignPosition = replacement.find('$');
+        if (dollarSignPosition != WTF::notFound) {
+            StringBuilder builder(StringBuilder::OverflowHandler::RecordOverflow);
+            int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
+            substituteBackreferencesSlow(builder, replacement, string, ovector, nullptr, dollarSignPosition);
+            if (UNLIKELY(builder.hasOverflowed())) {
+                throwOutOfMemoryError(globalObject, scope);
+                return nullptr;
+            }
+            replacement = builder.toString();
+        }
+    }
+
+    auto result = tryMakeString(StringView(string).substring(0, matchStart), replacement, StringView(string).substring(matchEnd, string.length() - matchEnd));
+    if (UNLIKELY(!result)) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    return jsString(vm, WTFMove(result));
+}
+
+enum class StringReplaceMode : bool { Single, Global };
+inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, JSString* jsString, String string, String searchString, JSValue replaceValue, StringReplaceMode mode)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    CallData callData;
+    std::optional<CachedCall> cachedCall;
+    String replaceString;
+    if (replaceValue.isString()) {
+        replaceString = asString(replaceValue)->value(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+    } else {
+        callData = JSC::getCallData(replaceValue);
+        if (callData.type == CallData::Type::None) {
+            replaceString = replaceValue.toWTFString(globalObject);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        } else if (callData.type == CallData::Type::JS) {
+            cachedCall.emplace(globalObject, jsCast<JSFunction*>(replaceValue), 3);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            cachedCall->setThis(jsUndefined());
+        }
+    }
+
+    if (mode == StringReplaceMode::Single) {
+        if (!replaceString.isNull())
+            RELEASE_AND_RETURN(scope, (stringReplaceStringString<StringReplaceSubstitutions::Yes, StringReplaceUseTable::No, BoyerMooreHorspoolTable<uint8_t>>(globalObject, jsString, WTFMove(string), WTFMove(searchString), WTFMove(replaceString), nullptr)));
+    }
+
+    size_t matchStart = string.find(searchString);
+    if (matchStart == notFound)
+        return jsString;
+
+    size_t endOfLastMatch = 0;
+    size_t searchStringLength = searchString.length();
+    Vector<Range<int32_t>, 16> sourceRanges;
+    Vector<String, 16> replacements;
+    do {
+        if (callData.type != CallData::Type::None) {
+            JSValue replacement;
+            if (cachedCall) {
+                auto* substring = jsSubstring(vm, string, matchStart, searchStringLength);
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                cachedCall->clearArguments();
+                cachedCall->appendArgument(substring);
+                cachedCall->appendArgument(jsNumber(matchStart));
+                cachedCall->appendArgument(jsString);
+                ASSERT(!cachedCall->hasOverflowedArguments());
+                replacement = cachedCall->call();
+            } else {
+                MarkedArgumentBuffer args;
+                auto* substring = jsSubstring(vm, string, matchStart, searchString.impl()->length());
+                RETURN_IF_EXCEPTION(scope, nullptr);
+                args.append(substring);
+                args.append(jsNumber(matchStart));
+                args.append(jsString);
+                ASSERT(!args.hasOverflowed());
+                replacement = call(globalObject, replaceValue, callData, jsUndefined(), args);
+            }
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            replaceString = replacement.toWTFString(globalObject);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+        }
+
+        if (UNLIKELY(!sourceRanges.tryConstructAndAppend(endOfLastMatch, matchStart))) {
+            throwOutOfMemoryError(globalObject, scope);
+            return nullptr;
+        }
+
+        size_t matchEnd = matchStart + searchStringLength;
+        if (callData.type != CallData::Type::None)
+            replacements.append(replaceString);
+        else {
+            StringBuilder replacement(StringBuilder::OverflowHandler::RecordOverflow);
+            int ovector[2] = { static_cast<int>(matchStart),  static_cast<int>(matchEnd) };
+            substituteBackreferences(replacement, replaceString, string, ovector, nullptr);
+            if (UNLIKELY(replacement.hasOverflowed())) {
+                throwOutOfMemoryError(globalObject, scope);
+                return nullptr;
+            }
+            replacements.append(replacement.toString());
+        }
+
+        endOfLastMatch = matchEnd;
+        if (mode == StringReplaceMode::Single)
+            break;
+        matchStart = string.find(searchString, !searchStringLength ? endOfLastMatch + 1 : endOfLastMatch);
+    } while (matchStart != notFound);
+
+    if (UNLIKELY(!sourceRanges.tryConstructAndAppend(endOfLastMatch, string.length()))) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparators(globalObject, jsString, string, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
 }
 
 } // namespace JSC

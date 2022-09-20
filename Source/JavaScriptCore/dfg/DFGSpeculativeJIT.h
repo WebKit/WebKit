@@ -1482,6 +1482,7 @@ public:
     void compileRegExpTest(Node*);
     void compileRegExpTestInline(Node*);
     void compileStringReplace(Node*);
+    void compileStringReplaceString(Node*);
     void compileIsObject(Node*);
     void compileTypeOfIsObject(Node*);
     void compileIsCallable(Node*, S_JITOperation_GC);

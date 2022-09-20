@@ -169,7 +169,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
             return returnValue;
         }
 
-        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, CallFrame*, ProtoCallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*, const ArgList&);
+        CallFrameClosure prepareForRepeatCall(FunctionExecutable*, ProtoCallFrame*, JSFunction*, int argumentCountIncludingThis, JSScope*, const ArgList&);
 
         JSValue execute(CallFrameClosure&);
 

@@ -3055,6 +3055,16 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, Intrinsic
             setResult(resultNode);
             return true;
         }
+
+        case StringPrototypeReplaceStringIntrinsic: {
+            if (argumentCountIncludingThis < 3)
+                return false;
+
+            insertChecks();
+            Node* resultNode = addToGraph(StringReplaceString, OpInfo(0), OpInfo(prediction), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)), get(virtualRegisterForArgumentIncludingThis(1, registerOffset)), get(virtualRegisterForArgumentIncludingThis(2, registerOffset)));
+            setResult(resultNode);
+            return true;
+        }
             
         case RoundIntrinsic:
         case FloorIntrinsic:

@@ -1511,11 +1511,12 @@ private:
             if (op == StringReplace
                 && node->child1()->shouldSpeculateString()
                 && node->child2()->shouldSpeculateString()
-                && node->child3()->shouldSpeculateString()
                 && m_graph.isWatchingStringSymbolReplaceWatchpoint(node)) {
+                node->setOp(StringReplaceString);
                 fixEdge<StringUse>(node->child1());
                 fixEdge<StringUse>(node->child2());
-                fixEdge<StringUse>(node->child3());
+                if (node->child3()->shouldSpeculateString())
+                    fixEdge<StringUse>(node->child3());
                 break;
             }
 
@@ -1541,6 +1542,14 @@ private:
                 fixEdge<StringUse>(node->child3());
                 break;
             }
+            break;
+        }
+
+        case StringReplaceString: {
+            fixEdge<StringUse>(node->child1());
+            fixEdge<StringUse>(node->child2());
+            if (node->child3()->shouldSpeculateString())
+                fixEdge<StringUse>(node->child3());
             break;
         }
             

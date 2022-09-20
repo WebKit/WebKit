@@ -2651,11 +2651,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case StringReplace:
     case StringReplaceRegExp:
         if (node->child1().useKind() == StringUse
-            && (node->child2().useKind() == RegExpObjectUse || node->child2().useKind() == StringUse)
+            && node->child2().useKind() == RegExpObjectUse
             && node->child3().useKind() == StringUse) {
             // This doesn't clobber the world. It just reads and writes regexp state.
         } else
             clobberWorld();
+        setForNode(node, m_vm.stringStructure.get());
+        break;
+
+    case StringReplaceString:
+        if (node->child3().useKind() != StringUse) {
+            // child3 could be non String (e.g. function). In this case, any side effect can happen.
+            clobberWorld();
+        }
         setForNode(node, m_vm.stringStructure.get());
         break;
 

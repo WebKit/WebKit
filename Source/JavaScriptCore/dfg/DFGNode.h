@@ -1758,6 +1758,7 @@ public:
         case GetGlobalLexicalVariable:
         case StringReplace:
         case StringReplaceRegExp:
+        case StringReplaceString:
         case ToNumber:
         case ToNumeric:
         case ToObject:

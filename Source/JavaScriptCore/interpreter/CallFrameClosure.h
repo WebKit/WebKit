@@ -30,7 +30,6 @@
 namespace JSC {
 
 struct CallFrameClosure {
-    CallFrame* oldCallFrame;
     ProtoCallFrame* protoCallFrame;
     JSFunction* function;
     FunctionExecutable* functionExecutable;
