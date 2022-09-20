@@ -45,6 +45,11 @@ inline const char* boolForPrinting(bool value)
     return value ? "true" : "false";
 }
 
+inline const char* boolForPrinting(const std::optional<bool>& value)
+{
+    return value ? boolForPrinting(value.value()) : "<nullopt>";
+}
+
 class PrintStream {
     WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(PrintStream);
 public:

@@ -347,7 +347,7 @@ protected:
     bool m_didDownloadFinish { false };
     bool m_didErrorOccur { false };
     mutable bool m_isEndReached { false };
-    mutable bool m_isLiveStream { false };
+    mutable std::optional<bool> m_isLiveStream;
     bool m_isPaused { true };
     float m_playbackRate { 1 };
     GstState m_currentState { GST_STATE_NULL };
