@@ -153,15 +153,15 @@ WI.EngineeringSetting = class EngineeringSetting extends WI.Setting
 {
     get value()
     {
-        if (WI.isEngineeringBuild)
+        if (WI.engineeringSettingsAllowed())
             return super.value;
         return this.defaultValue;
     }
 
     set value(value)
     {
-        console.assert(WI.isEngineeringBuild);
-        if (WI.isEngineeringBuild)
+        console.assert(WI.engineeringSettingsAllowed());
+        if (WI.engineeringSettingsAllowed())
             super.value = value;
     }
 };
@@ -248,7 +248,6 @@ WI.settings = {
     engineeringShowInternalObjectsInHeapSnapshot: new WI.EngineeringSetting("engineering-show-internal-objects-in-heap-snapshot", false),
     engineeringShowPrivateSymbolsInHeapSnapshot: new WI.EngineeringSetting("engineering-show-private-symbols-in-heap-snapshot", false),
     engineeringAllowEditingUserAgentShadowTrees: new WI.EngineeringSetting("engineering-allow-editing-user-agent-shadow-trees", false),
-    engineeringShowMockWebExtensionTab: new WI.EngineeringSetting("engineering-show-mock-web-extension-tab", false),
 
     // Debug
     debugShowConsoleEvaluations: new WI.DebugSetting("debug-show-console-evaluations", false),
@@ -259,4 +258,5 @@ WI.settings = {
     debugEnableDiagnosticLogging: new WI.DebugSetting("debug-enable-diagnostic-logging", true),
     debugAutoLogDiagnosticEvents: new WI.DebugSetting("debug-auto-log-diagnostic-events", false),
     debugLayoutDirection: new WI.DebugSetting("debug-layout-direction-override", "system"),
+    debugShowMockWebExtensionTab: new WI.DebugSetting("debug-show-mock-web-extension-tab", false),
 };

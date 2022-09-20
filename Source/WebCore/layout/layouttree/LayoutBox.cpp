@@ -239,33 +239,7 @@ const ContainerBox& Box::containingBlock() const
     }
 
     ASSERT_NOT_REACHED();
-    return initialContainingBlock();
-}
-
-const InitialContainingBlock& Box::initialContainingBlock() const
-{
-    if (is<InitialContainingBlock>(*this))
-        return downcast<InitialContainingBlock>(*this);
-
-    auto* ancestor = &parent();
-    for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) { }
-    return downcast<InitialContainingBlock>(*ancestor);
-}
-
-bool Box::isInFormattingContextOf(const ContainerBox& formattingContextRoot) const
-{ 
-    ASSERT(formattingContextRoot.establishesFormattingContext());
-    ASSERT(!is<InitialContainingBlock>(*this));
-    auto* ancestor = &containingBlock();
-    while (ancestor) {
-        if (ancestor == &formattingContextRoot)
-            return true;
-        if (is<InitialContainingBlock>(*ancestor))
-            return false;
-        ancestor = &ancestor->containingBlock();
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    return parent();
 }
 
 bool Box::isInlineBlockBox() const

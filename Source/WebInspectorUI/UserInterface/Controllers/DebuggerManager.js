@@ -51,7 +51,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         WI.settings.blackboxBreakpointEvaluations.addEventListener(WI.Setting.Event.Changed, this._handleBlackboxBreakpointEvaluationsChange, this);
 
-        if (WI.isEngineeringBuild) {
+        if (WI.engineeringSettingsAllowed()) {
             WI.settings.engineeringShowInternalScripts.addEventListener(WI.Setting.Event.Changed, this._handleEngineeringShowInternalScriptsSettingChanged, this);
             WI.settings.engineeringPauseForInternalScripts.addEventListener(WI.Setting.Event.Changed, this._handleEngineeringPauseForInternalScriptsSettingChanged, this);
         }
@@ -259,7 +259,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._setBlackboxBreakpointEvaluations(target);
 
-        if (WI.isEngineeringBuild) {
+        if (WI.engineeringSettingsAllowed()) {
             // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
             if (target.hasCommand("Debugger.setPauseForInternalScripts"))
                 target.DebuggerAgent.setPauseForInternalScripts(WI.settings.engineeringPauseForInternalScripts.value);

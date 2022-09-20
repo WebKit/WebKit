@@ -469,18 +469,8 @@ static RotatedRect fitElementToQuad(HTMLElement& container, const FloatQuad& qua
 
 void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognitionResult& result, CacheTextRecognitionResults cacheTextRecognitionResults)
 {
-    auto elements = updateSubtree(element, result);
-    if (!elements.root)
-        return;
-
     Ref document = element.document();
     document->updateLayoutIgnorePendingStylesheets();
-
-    auto* renderer = element.renderer();
-    if (!is<RenderImage>(renderer))
-        return;
-
-    downcast<RenderImage>(*renderer).setHasImageOverlay();
 
     auto containerRect = ImageOverlay::containerRect(element);
     auto convertToContainerCoordinates = [&](const FloatQuad& normalizedQuad) {
@@ -490,7 +480,35 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         return quad;
     };
 
-    bool applyUserSelectAll = document->isImageDocument() || renderer->style().userSelect() != UserSelect::None;
+    bool smallImageWithSingleWord = [&] {
+        constexpr auto smallImageDimensionThreshold = 64;
+        if (containerRect.width() > smallImageDimensionThreshold || containerRect.height() > smallImageDimensionThreshold)
+            return false;
+
+        return result.blocks.isEmpty() && result.lines.size() == 1 && result.lines[0].children.size() == 1;
+    }();
+
+    if (smallImageWithSingleWord)
+        return;
+
+    auto elements = updateSubtree(element, result);
+    if (!elements.root)
+        return;
+
+    {
+        document->updateLayoutIgnorePendingStylesheets();
+        auto* renderer = dynamicDowncast<RenderImage>(element.renderer());
+        if (!renderer)
+            return;
+
+        renderer->setHasImageOverlay();
+    }
+
+    bool applyUserSelectAll = [&] {
+        auto* renderer = dynamicDowncast<RenderImage>(element.renderer());
+        return document->isImageDocument() || (renderer && renderer->style().userSelect() != UserSelect::None);
+    }();
+
     for (size_t lineIndex = 0; lineIndex < result.lines.size(); ++lineIndex) {
         auto& lineElements = elements.lines[lineIndex];
         auto& lineContainer = lineElements.line;

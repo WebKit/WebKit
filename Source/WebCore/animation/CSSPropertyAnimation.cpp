@@ -1590,12 +1590,12 @@ protected:
         Color fromColor = value(a);
         Color toColor = value(b);
 
-        if (!fromColor.isValid() && !toColor.isValid())
+        if (RenderStyle::isCurrentColor(fromColor) && RenderStyle::isCurrentColor(toColor))
             return true;
 
-        if (!fromColor.isValid())
+        if (RenderStyle::isCurrentColor(fromColor))
             fromColor = a.color();
-        if (!toColor.isValid())
+        if (RenderStyle::isCurrentColor(toColor))
             toColor = b.color();
 
         return fromColor == toColor;
@@ -1606,13 +1606,14 @@ protected:
         Color fromColor = value(from);
         Color toColor = value(to);
 
-        if (!fromColor.isValid() && !toColor.isValid())
+        if (RenderStyle::isCurrentColor(fromColor) && RenderStyle::isCurrentColor(toColor))
             return;
 
-        if (!fromColor.isValid())
+        if (RenderStyle::isCurrentColor(fromColor))
             fromColor = from.color();
-        if (!toColor.isValid())
+        if (RenderStyle::isCurrentColor(toColor))
             toColor = to.color();
+
         (destination.*m_setter)(blendFunc(fromColor, toColor, context));
     }
 
@@ -2250,12 +2251,12 @@ private:
             Color fromColor = (a.*m_getter)();
             Color toColor = (b.*m_getter)();
 
-            if (!fromColor.isValid() && !toColor.isValid())
+            if (RenderStyle::isCurrentColor(fromColor) && RenderStyle::isCurrentColor(toColor))
                 return true;
 
-            if (!fromColor.isValid())
+            if (RenderStyle::isCurrentColor(fromColor))
                 fromColor = a.color();
-            if (!toColor.isValid())
+            if (RenderStyle::isCurrentColor(toColor))
                 toColor = b.color();
 
             return fromColor == toColor;
@@ -2275,13 +2276,14 @@ private:
         Color fromColor = (from.*m_getter)();
         Color toColor = (to.*m_getter)();
 
-        if (!fromColor.isValid() && !toColor.isValid())
+        if (RenderStyle::isCurrentColor(fromColor) && RenderStyle::isCurrentColor(toColor))
             return;
 
-        if (!fromColor.isValid())
+        if (RenderStyle::isCurrentColor(fromColor))
             fromColor = from.color();
-        if (!toColor.isValid())
+        if (RenderStyle::isCurrentColor(toColor))
             toColor = to.color();
+
         (destination.*m_setter)(blendFunc(fromColor, toColor, context));
     }
 

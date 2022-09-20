@@ -33,12 +33,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(COEPInheritenceViolationReportBody);
 
-Ref<COEPInheritenceViolationReportBody> COEPInheritenceViolationReportBody::create(COEPDisposition disposition, const URL& blockedURL, const AtomString& type)
+Ref<COEPInheritenceViolationReportBody> COEPInheritenceViolationReportBody::create(COEPDisposition disposition, const URL& blockedURL, const String& type)
 {
     return adoptRef(*new COEPInheritenceViolationReportBody(disposition, blockedURL, type));
 }
 
-COEPInheritenceViolationReportBody::COEPInheritenceViolationReportBody(COEPDisposition disposition, const URL& blockedURL, const AtomString& type)
+COEPInheritenceViolationReportBody::COEPInheritenceViolationReportBody(COEPDisposition disposition, const URL& blockedURL, const String& type)
     : ReportBody(ViolationReportType::COEPInheritenceViolation)
     , m_disposition(disposition)
     , m_blockedURL(blockedURL)

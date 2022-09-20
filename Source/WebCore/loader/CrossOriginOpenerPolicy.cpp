@@ -149,7 +149,7 @@ static std::tuple<Ref<SecurityOrigin>, CrossOriginOpenerPolicy> computeResponseO
     // if the initiator and its top level document are same-origin, or default (unsafe-none) otherwise.
     // https://github.com/whatwg/html/issues/6913
     if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(response.url()) && requester)
-        return std::make_tuple(requester->securityOrigin, requester->securityOrigin->isSameOriginAs(requester->topOrigin) ? requester->crossOriginOpenerPolicy : CrossOriginOpenerPolicy { });
+        return std::make_tuple(requester->securityOrigin, requester->securityOrigin->isSameOriginAs(requester->topOrigin) ? requester->policyContainer.crossOriginOpenerPolicy : CrossOriginOpenerPolicy { });
 
     // If the HTTP response contains a CSP header, it may set sandbox flags, which would cause the origin to become opaque.
     auto responseOrigin = responseCSP && responseCSP->sandboxFlags() != SandboxNone ? SecurityOrigin::createOpaque() : SecurityOrigin::create(response.url());

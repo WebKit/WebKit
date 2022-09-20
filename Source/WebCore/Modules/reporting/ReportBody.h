@@ -37,7 +37,7 @@ class WEBCORE_EXPORT ReportBody : public RefCounted<ReportBody> {
 public:
     virtual ~ReportBody();
 
-    virtual const AtomString& type() const = 0;
+    virtual const String& type() const = 0;
     ViolationReportType reportBodyType() const;
 
 protected:

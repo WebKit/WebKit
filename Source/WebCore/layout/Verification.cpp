@@ -33,6 +33,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutContext.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutTreeBuilder.h"
 #include "LegacyInlineTextBox.h"
 #include "RenderBox.h"
@@ -339,7 +340,7 @@ void LayoutContext::verifyAndOutputMismatchingLayoutTree(const LayoutState& layo
         return;
 #if ENABLE(TREE_DEBUGGING)
     showRenderTree(&rootRenderer);
-    showLayoutTree(layoutRoot, &layoutState);
+    showLayoutTree(downcast<InitialContainingBlock>(layoutRoot), &layoutState);
 #endif
     WTFLogAlways("%s", stream.release().utf8().data());
     ASSERT_NOT_REACHED();

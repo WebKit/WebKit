@@ -39,6 +39,7 @@ class RenderView;
 
 namespace Layout {
 
+class InitialContainingBlock;
 class LayoutState;
 
 class LayoutTree {
@@ -71,9 +72,9 @@ private:
 };
 
 #if ENABLE(TREE_DEBUGGING)
-String layoutTreeAsText(const Box&, const LayoutState*);
-void showLayoutTree(const Box&, const LayoutState*);
-void showLayoutTree(const Box&);
+String layoutTreeAsText(const InitialContainingBlock&, const LayoutState*);
+void showLayoutTree(const InitialContainingBlock&, const LayoutState*);
+void showLayoutTree(const InitialContainingBlock&);
 void showInlineTreeAndRuns(TextStream&, const LayoutState&, const ContainerBox& inlineFormattingRoot, size_t depth);
 void printLayoutTreeForLiveDocuments();
 #endif

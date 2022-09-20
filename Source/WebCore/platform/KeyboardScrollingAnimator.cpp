@@ -343,6 +343,7 @@ void KeyboardScrollingAnimator::handleKeyUpEvent()
         return;
 
     stopKeyboardScrollAnimation();
+    m_scrollTriggeringKeyIsPressed = false;
 }
 
 void KeyboardScrollingAnimator::stopScrollingImmediately()

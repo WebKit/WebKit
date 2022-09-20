@@ -1,0 +1,36 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true EventHandlerDrivenSmoothKeyboardScrollingEnabled=true ] -->
+
+<html>
+
+<head>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <meta name="viewport" content="initial-scale=1.5, user-scalable=no">
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+        
+        async function runTest()
+        {
+            if (window.eventSender) {
+                eventSender.monitorWheelEvents();
+                eventSender.keyDown("downArrow");
+
+                setTimeout(function() {
+                    eventSender.callAfterScrollingCompletes(() => {
+                        testRunner.notifyDone();
+                    });
+                }, 0);
+            }
+        }
+    </script>
+</head>
+
+<body onload="runTest()">
+    <div style="height: 5000px;">
+    </div>
+</body>
+
+</html>

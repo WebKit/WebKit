@@ -871,6 +871,83 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_github_bugzilla_and_radar(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), bmocks.Radar(issues=bmocks.ISSUES), patch(
+            'webkitbugspy.Tracker._trackers', [
+                bugzilla.Tracker(self.BUGZILLA, radar_importer=bmocks.USERS['Radar WebKit Bug Importer']),
+                radar.Tracker(),
+            ],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+
+            repo.commits['eng/pr-branch'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/pr-branch',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/pr-branch",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1\n<rdar://problem/1>\n'
+                )
+            ]
+            repo.head = repo.commits['eng/pr-branch'][-1]
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-2].content,
+                '<rdar://problem/1>',
+            )
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
+            )
+            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
+            self.assertEqual(gh_issue.project, 'WebKit')
+            self.assertEqual(gh_issue.component, 'Text')
+            self.assertEqual(gh_issue.version, 'Other')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created 'PR 1 | [Testing] Existing commit'!\n"
+            'Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n'
+            'https://github.example.com/WebKit/WebKit/pull/1\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                '    Found 1 commit...',
+                "Using committed changes...",
+                "Rebasing 'eng/pr-branch' on 'main'...",
+                "Rebased 'eng/pr-branch' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'CCing Radar WebKit Bug Importer',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Pushing 'eng/pr-branch' to 'fork'...",
+                "Syncing 'main' to remote 'fork'",
+                "Creating pull-request for 'eng/pr-branch'...",
+                'Checking issue assignee...',
+                'Checking for pull request link in associated issue...',
+                'Syncing PR labels with issue component...',
+                'Synced PR labels with issue component!',
+            ],
+        )
+
     def test_bitbucket(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.BitBucket() as remote, mocks.local.Git(self.path, remote='ssh://git@{}/{}/{}.git'.format(
             remote.hosts[0], remote.project.split('/')[1], remote.project.split('/')[3],

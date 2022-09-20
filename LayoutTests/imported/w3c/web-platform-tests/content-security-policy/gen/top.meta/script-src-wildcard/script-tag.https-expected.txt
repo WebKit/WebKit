@@ -1,7 +1,7 @@
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=keep-origin&action=purge&key=c3ed5c7f-fb03-4a7e-bf90-823e26c7df4a&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=no-redirect&action=purge&key=8df4e46a-63a1-4840-9ad5-a055430c58f2&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=swap-origin&action=purge&key=89eec310-9aa3-4360-9dff-7770cab3c0b2&path=%2Fmixed-content
-Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?action=purge&key=d96d9e12-1a42-4b03-a3e2-64012df03723&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=keep-origin&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=no-redirect&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?redirection=swap-origin&action=purge&key=GENERATED_KEY&path=%2Fmixed-content
+Blocked access to external URL https://www1.localhost:9443/common/security-features/subresource/script.py?action=purge&key=GENERATED_KEY&path=%2Fmixed-content
 
 FAIL Content Security Policy: Expects allowed for script-tag to cross-https origin and keep-origin redirection from https context. promise_test: Unhandled rejection with value: object "[object Event]"
 PASS Content Security Policy: Expects allowed for script-tag to cross-https origin and keep-origin redirection from https context.: securitypolicyviolation

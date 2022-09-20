@@ -40,14 +40,13 @@ class DeprecationReportBody final : public ReportBody {
 public:
     WEBCORE_EXPORT static Ref<DeprecationReportBody> create(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
 
+    const String& type() const final;
     const String& id() const { return m_id; };
     WallTime anticipatedRemoval() const { return m_anticipatedRemoval; }
     const String& message() const { return m_message; }
     const String& sourceFile() const { return m_sourceFile; }
     std::optional<unsigned> lineNumber() const { return m_lineNumber; }
     std::optional<unsigned> columnNumber() const { return m_columnNumber; }
-
-    static const AtomString& deprecationReportType();
 
     WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation() const;
 
@@ -56,8 +55,6 @@ public:
 
 private:
     DeprecationReportBody(String&& id, WallTime anticipatedRemoval, String&& message, String&& sourceFile, std::optional<unsigned> lineNumber, std::optional<unsigned> columnNumber);
-
-    const AtomString& type() const final;
 
     const String m_id;
     const WallTime m_anticipatedRemoval;

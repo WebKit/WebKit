@@ -37,11 +37,11 @@ class FormData;
 class WEBCORE_EXPORT Report : public RefCounted<Report> {
     WTF_MAKE_ISO_ALLOCATED(Report);
 public:
-    static Ref<Report> create(const AtomString& type, const String& url, RefPtr<ReportBody>&&);
+    static Ref<Report> create(const String& type, const String& url, RefPtr<ReportBody>&&);
 
     ~Report();
 
-    const AtomString& type() const;
+    const String& type() const;
     const String& url() const;
     const RefPtr<ReportBody>& body();
 
@@ -51,9 +51,9 @@ public:
     template<typename Decoder> static WEBCORE_EXPORT std::optional<Ref<WebCore::Report>> decode(Decoder&);
 
 private:
-    explicit Report(const AtomString& type, const String& url, RefPtr<ReportBody>&&);
+    explicit Report(const String& type, const String& url, RefPtr<ReportBody>&&);
 
-    AtomString m_type;
+    String m_type;
     String m_url;
     RefPtr<ReportBody> m_body;
 };
@@ -61,15 +61,13 @@ private:
 template<typename Encoder>
 void Report::encode(Encoder& encoder) const
 {
-    encoder << m_type;
-    encoder << m_url;
-    encoder << m_body;
+    encoder << m_type << m_url << m_body;
 }
 
 template<typename Decoder>
 std::optional<Ref<WebCore::Report>> Report::decode(Decoder& decoder)
 {
-    std::optional<AtomString> type;
+    std::optional<String> type;
     decoder >> type;
     if (!type)
         return std::nullopt;

@@ -2,4 +2,5 @@ CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Ple
 CONSOLE MESSAGE: Refused to execute a script because its hash or 'unsafe-inline' does not appear in the script-src directive of the Content Security Policy.
 CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.
 CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.
+CONSOLE MESSAGE: The 'allow' directive has been replaced with 'default-src'. Please use that directive instead, as 'allow' has no effect.
 

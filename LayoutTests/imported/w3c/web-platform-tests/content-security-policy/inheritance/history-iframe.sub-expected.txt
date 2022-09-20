@@ -4,10 +4,10 @@ Harness Error (TIMEOUT), message = null
 
 PASS History navigation in iframe: "about:blank" document is navigated back from history same-origin.
 PASS History navigation in iframe: "about:blank" document is navigated back from history cross-origin.
-FAIL History navigation in iframe: blob URL document is navigated back from history same-origin. assert_equals: Image should be blocked by CSP inherited from navigation initiator. expected "img blocked" but got "img loaded"
-FAIL History navigation in iframe: blob URL document is navigated back from history cross-origin. assert_equals: Image should be blocked by CSP inherited from navigation initiator. expected "img blocked" but got "img loaded"
-FAIL History navigation in iframe: data URL document is navigated back from history same-origin. assert_equals: Image should be blocked by CSP inherited from navigation initiator. expected "img blocked" but got "img loaded"
-FAIL History navigation in iframe: data URL document is navigated back from history cross-origin. assert_equals: Image should be blocked by CSP inherited from navigation initiator. expected "img blocked" but got "img loaded"
+FAIL History navigation in iframe: blob URL document is navigated back from history same-origin. assert_equals: Image should be blocked by CSP reloaded from history. expected "img blocked" but got "img loaded"
+FAIL History navigation in iframe: blob URL document is navigated back from history cross-origin. assert_equals: Image should be blocked by CSP reloaded from history. expected "img blocked" but got "img loaded"
+PASS History navigation in iframe: data URL document is navigated back from history same-origin.
+PASS History navigation in iframe: data URL document is navigated back from history cross-origin.
 TIMEOUT History navigation in iframe: srcdoc iframe is navigated back from history same-origin. Test timed out
 NOTRUN History navigation in iframe: srcdoc iframe is navigated back from history cross-origin.
 

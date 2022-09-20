@@ -159,6 +159,8 @@ WI.isDebugUIEnabled = () => false;
 
 WI.isEngineeringBuild = false;
 
+WI.engineeringSettingsAllowed = () => WI.isEngineeringBuild;
+
 WI.unlocalizedString = (string) => string;
 WI.UIString = (string, key, comment) => string;
 

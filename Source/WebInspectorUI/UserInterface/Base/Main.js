@@ -3579,6 +3579,11 @@ WI.reset = async function()
 };
 
 WI.isEngineeringBuild = false;
+WI.inspectorFrontendHostAllowsEngineeringSettings = InspectorFrontendHost.engineeringSettingsAllowed();
+
+WI.engineeringSettingsAllowed = function() {
+    return WI.isEngineeringBuild || WI.inspectorFrontendHostAllowsEngineeringSettings;
+}
 
 // OpenResourceDialog delegate
 

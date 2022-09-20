@@ -91,6 +91,22 @@ void FloatingState::append(FloatItem floatItem)
     m_floats.insert(0, floatItem);
 }
 
+bool FloatingState::FloatItem::isInFormattingContextOf(const ContainerBox& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesFormattingContext());
+    ASSERT(!is<InitialContainingBlock>(m_layoutBox));
+    auto* ancestor = &m_layoutBox->containingBlock();
+    while (ancestor) {
+        if (ancestor == &formattingContextRoot)
+            return true;
+        if (is<InitialContainingBlock>(*ancestor))
+            return false;
+        ancestor = &ancestor->containingBlock();
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 void FloatingState::clear()
 {
     m_floats.clear();

@@ -165,7 +165,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
     auto inkOverflow = [&] {
         auto initialContaingBlockSize = formattingState().layoutState().isInlineFormattingContextIntegration()
             ? formattingState().layoutState().viewportSize()
-            : formattingState().layoutState().geometryForBox(layoutBox.initialContainingBlock()).contentBox().size();
+            : formattingState().layoutState().geometryForBox(FormattingContext::initialContainingBlock(layoutBox)).contentBox().size();
         auto strokeOverflow = ceilf(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
         auto inkOverflow = textRunRect;
 

@@ -81,7 +81,7 @@ void appendInteractionRegionLayersForLayer(NSMutableArray *sublayers, CALayer *l
     }
 }
 
-void updateLayersForInteractionRegions(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties)
+void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host, const RemoteLayerTreeTransaction::LayerProperties& properties)
 {
     ASSERT(properties.changedProperties & RemoteLayerTreeTransaction::EventRegionChanged);
 
@@ -97,6 +97,7 @@ void updateLayersForInteractionRegions(CALayer *layer, const RemoteLayerTreeTran
     }
 
     bool applyBackgroundColorForDebugging = [[NSUserDefaults standardUserDefaults] boolForKey:@"WKInteractionRegionDebugFill"];
+    float minimumBorderRadius = host.drawingArea().page().preferences().interactionRegionMinimumCornerRadius();
 
     HashSet<IntRect> liveLayerBounds;
     for (const WebCore::InteractionRegion& region : properties.eventRegion.interactionRegions()) {
@@ -124,7 +125,6 @@ void updateLayersForInteractionRegions(CALayer *layer, const RemoteLayerTreeTran
                 [layer addSublayer:interactionRegionLayer.get()];
             }
 
-            static constexpr float minimumBorderRadius = 4;
             [interactionRegionLayer setCornerRadius:std::max(region.borderRadius, minimumBorderRadius)];
         }
     }

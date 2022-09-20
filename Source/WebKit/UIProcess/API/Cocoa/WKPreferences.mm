@@ -1568,6 +1568,26 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->modelDocumentEnabled();
 }
 
+- (void)_setInteractionRegionMinimumCornerRadius:(double)radius
+{
+    _preferences->setInteractionRegionMinimumCornerRadius(radius);
+}
+
+- (double)_interactionRegionMinimumCornerRadius
+{
+    return _preferences->interactionRegionMinimumCornerRadius();
+}
+
+- (void)_setInteractionRegionInlinePadding:(double)padding
+{
+    _preferences->setInteractionRegionInlinePadding(padding);
+}
+
+- (double)_interactionRegionInlinePadding
+{
+    return _preferences->interactionRegionInlinePadding();
+}
+
 @end
 
 @implementation WKPreferences (WKDeprecated)

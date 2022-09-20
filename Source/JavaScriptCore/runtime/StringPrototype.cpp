@@ -694,7 +694,7 @@ ALWAYS_INLINE JSString* replace(VM& vm, JSGlobalObject* globalObject, JSValue th
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (searchValue.inherits<RegExpObject>())
-        return replaceUsingRegExpSearch(vm, globalObject, string, searchValue, replaceValue);
+        RELEASE_AND_RETURN(scope, replaceUsingRegExpSearch(vm, globalObject, string, searchValue, replaceValue));
 
     String thisString = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);

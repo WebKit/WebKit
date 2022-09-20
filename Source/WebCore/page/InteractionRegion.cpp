@@ -100,10 +100,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
 
-    if (isInlineNonBlock) {
-        static constexpr float inlinePadding = 3;
-        bounds.inflate(inlinePadding);
-    }
+    if (isInlineNonBlock)
+        bounds.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
 
     float borderRadius = 0;
     if (const auto& renderBox = dynamicDowncast<RenderBox>(renderer))

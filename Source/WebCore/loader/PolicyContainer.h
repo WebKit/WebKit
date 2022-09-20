@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
 #include "CrossOriginOpenerPolicy.h"
 
@@ -32,31 +33,40 @@ namespace WebCore {
 
 // https://html.spec.whatwg.org/multipage/origin.html#policy-container
 struct PolicyContainer {
+    // This acts as the CSP List. It will need to be parsed by a ContentSecurityPolicy object.
+    ContentSecurityPolicyResponseHeaders contentSecurityPolicyResponseHeaders;
     CrossOriginEmbedderPolicy crossOriginEmbedderPolicy;
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
     ReferrerPolicy referrerPolicy = ReferrerPolicy::Default;
-    // FIXME: CSP list should be part of the PolicyContainer.
 
-    PolicyContainer isolatedCopy() const & { return { crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy(), referrerPolicy }; }
-    PolicyContainer isolatedCopy() && { return { WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), WTFMove(crossOriginOpenerPolicy).isolatedCopy(), referrerPolicy }; }
+    PolicyContainer isolatedCopy() const & { return { contentSecurityPolicyResponseHeaders.isolatedCopy(), crossOriginEmbedderPolicy.isolatedCopy(), crossOriginOpenerPolicy.isolatedCopy(), referrerPolicy }; }
+    PolicyContainer isolatedCopy() && { return { WTFMove(contentSecurityPolicyResponseHeaders).isolatedCopy(), WTFMove(crossOriginEmbedderPolicy).isolatedCopy(), WTFMove(crossOriginOpenerPolicy).isolatedCopy(), referrerPolicy }; }
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<PolicyContainer> decode(Decoder&);
 };
 
 inline bool operator==(const PolicyContainer& a, const PolicyContainer& b)
 {
-    return a.crossOriginEmbedderPolicy == b.crossOriginEmbedderPolicy && a.crossOriginOpenerPolicy == b.crossOriginOpenerPolicy && a.referrerPolicy == b.referrerPolicy;
+    return a.contentSecurityPolicyResponseHeaders == b.contentSecurityPolicyResponseHeaders
+        && a.crossOriginEmbedderPolicy == b.crossOriginEmbedderPolicy
+        && a.crossOriginOpenerPolicy == b.crossOriginOpenerPolicy
+        && a.referrerPolicy == b.referrerPolicy;
 }
 
 template<class Encoder>
 void PolicyContainer::encode(Encoder& encoder) const
 {
-    encoder << crossOriginEmbedderPolicy << crossOriginOpenerPolicy << referrerPolicy;
+    encoder << contentSecurityPolicyResponseHeaders << crossOriginEmbedderPolicy << crossOriginOpenerPolicy << referrerPolicy;
 }
 
 template<class Decoder>
 std::optional<PolicyContainer> PolicyContainer::decode(Decoder& decoder)
 {
+    std::optional<ContentSecurityPolicyResponseHeaders> contentSecurityPolicyResponseHeaders;
+    decoder >> contentSecurityPolicyResponseHeaders;
+    if (!contentSecurityPolicyResponseHeaders)
+        return std::nullopt;
+
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
     decoder >> crossOriginEmbedderPolicy;
     if (!crossOriginEmbedderPolicy)
@@ -73,6 +83,7 @@ std::optional<PolicyContainer> PolicyContainer::decode(Decoder& decoder)
         return std::nullopt;
 
     return {{
+        WTFMove(*contentSecurityPolicyResponseHeaders),
         WTFMove(*crossOriginEmbedderPolicy),
         WTFMove(*crossOriginOpenerPolicy),
         *referrerPolicy

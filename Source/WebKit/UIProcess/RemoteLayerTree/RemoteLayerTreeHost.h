@@ -51,6 +51,8 @@ public:
     CALayer *layerForID(WebCore::GraphicsLayer::PlatformLayerID) const;
     CALayer *rootLayer() const;
 
+    RemoteLayerTreeDrawingAreaProxy& drawingArea() const { return *m_drawingArea; }
+
     // Returns true if the root layer changed.
     bool updateLayerTree(const RemoteLayerTreeTransaction&, float indicatorScaleFactor  = 1);
 

@@ -528,26 +528,25 @@ static void outputLayoutTree(const LayoutState* layoutState, TextStream& stream,
     }
 }
 
-String layoutTreeAsText(const Box& layoutBox, const LayoutState* layoutState)
+String layoutTreeAsText(const InitialContainingBlock& initialContainingBlock, const LayoutState* layoutState)
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
 
-    auto& initialContainingBlock = layoutBox.initialContainingBlock();
     outputLayoutBox(stream, initialContainingBlock, layoutState ? &layoutState->geometryForBox(initialContainingBlock) : nullptr, 0);
     outputLayoutTree(layoutState, stream, initialContainingBlock, 1);
     
     return stream.release();
 }
 
-void showLayoutTree(const Box& layoutBox, const LayoutState* layoutState)
+void showLayoutTree(const InitialContainingBlock& initialContainingBlock, const LayoutState* layoutState)
 {
-    auto treeAsText = layoutTreeAsText(layoutBox, layoutState);
+    auto treeAsText = layoutTreeAsText(initialContainingBlock, layoutState);
     WTFLogAlways("%s", treeAsText.utf8().data());
 }
 
-void showLayoutTree(const Box& layoutBox)
+void showLayoutTree(const InitialContainingBlock& initialContainingBlock)
 {
-    showLayoutTree(layoutBox, nullptr);
+    showLayoutTree(initialContainingBlock, nullptr);
 }
 
 void printLayoutTreeForLiveDocuments()
@@ -563,9 +562,8 @@ void printLayoutTreeForLiveDocuments()
         auto layoutTree = TreeBuilder::buildLayoutTree(renderView);
         auto layoutState = LayoutState { *document, layoutTree->root() };
 
-        auto& layoutRoot = layoutState.root();
         LayoutContext(layoutState).layout(renderView.size());
-        showLayoutTree(layoutRoot, &layoutState);
+        showLayoutTree(downcast<InitialContainingBlock>(layoutState.root()), &layoutState);
     }
 }
 #endif

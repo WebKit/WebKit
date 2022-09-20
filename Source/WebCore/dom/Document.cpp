@@ -885,16 +885,6 @@ void Document::clearSelectorQueryCache()
     m_selectorQueryCache = nullptr;
 }
 
-void Document::setReferrerPolicy(ReferrerPolicy referrerPolicy)
-{
-    // Do not override existing referrer policy with the "empty string" one as the "empty string" means we should use
-    // the policy defined elsewhere.
-    if (m_referrerPolicy && referrerPolicy == ReferrerPolicy::EmptyString)
-        return;
-
-    m_referrerPolicy = referrerPolicy;
-}
-
 MediaQueryMatcher& Document::mediaQueryMatcher()
 {
     if (!m_mediaQueryMatcher)
@@ -6510,6 +6500,12 @@ void Document::initContentSecurityPolicy()
         contentSecurityPolicy()->copyStateFrom(parentFrame->document()->contentSecurityPolicy());
 }
 
+void Document::inheritPolicyContainerFrom(const PolicyContainer& policyContainer)
+{
+    setContentSecurityPolicy(makeUnique<ContentSecurityPolicy>(URL { m_url }, *this));
+    SecurityContext::inheritPolicyContainerFrom(policyContainer);
+}
+
 // https://html.spec.whatwg.org/#the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name (Step 8.2)
 bool Document::shouldForceNoOpenerBasedOnCOOP() const
 {
@@ -9116,12 +9112,7 @@ const CrossOriginOpenerPolicy& Document::crossOriginOpenerPolicy() const
 {
     if (this != &topDocument())
         return topDocument().crossOriginOpenerPolicy();
-    return m_crossOriginOpenerPolicy;
-}
-
-void Document::setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy& policy)
-{
-    m_crossOriginOpenerPolicy = policy;
+    return SecurityContext::crossOriginOpenerPolicy();
 }
 
 void Document::prepareCanvasesForDisplayIfNeeded()

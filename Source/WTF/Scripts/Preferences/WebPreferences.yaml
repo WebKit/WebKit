@@ -987,6 +987,26 @@ InspectorWindowFrame:
     WebKit:
       default: '""'
 
+InteractionRegionInlinePadding:
+  type: double
+  defaultValue:
+    WebKitLegacy:
+      default: 3
+    WebKit:
+      default: 3
+    WebCore:
+      default: 3
+
+InteractionRegionMinimumCornerRadius:
+  type: double
+  defaultValue:
+    WebKitLegacy:
+      default: 4
+    WebKit:
+      default: 4
+    WebCore:
+      default: 4
+
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 InteractiveFormValidationEnabled:
   type: bool

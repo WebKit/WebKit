@@ -133,6 +133,15 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other, Sh
     m_httpStatusCode = other->m_httpStatusCode;
 }
 
+void ContentSecurityPolicy::inheritHeadersFrom(const ContentSecurityPolicyResponseHeaders& headers)
+{
+    if (m_hasAPIPolicy)
+        return;
+    ASSERT(m_policies.isEmpty());
+    for (auto& [header, headerType] : headers.m_headers)
+        didReceiveHeader(header, headerType, PolicyFrom::Inherited, String { });
+}
+
 void ContentSecurityPolicy::createPolicyForPluginDocumentFrom(const ContentSecurityPolicy& other)
 {
     if (m_hasAPIPolicy)
@@ -854,8 +863,11 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     Vector<String> endpointURIs;
     Vector<String> endpointTokens;
+
+    auto reportBody = CSPViolationReportBody::create(SecurityPolicyViolationEventInit { violationEventInit });
+
     if (usesReportTo && m_reportingClient) {
-        m_reportingClient->notifyReportObservers(Report::create(CSPViolationReportBody::cspReportType(), info.documentURI, CSPViolationReportBody::create(SecurityPolicyViolationEventInit { violationEventInit })));
+        m_reportingClient->notifyReportObservers(Report::create(reportBody->type(), info.documentURI, reportBody.copyRef()));
         endpointTokens = violatedDirectiveList.reportToTokens();
     } else
         endpointURIs = violatedDirectiveList.reportURIs();
@@ -880,9 +892,8 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
 
     auto reportURL = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer() : blockedURI;
 
-    auto report = CSPViolationReportBody::createReportFormDataForViolation(info, usesReportTo, violatedDirectiveList.isReportOnly(), effectiveViolatedDirective, m_referrer, violatedDirectiveList.header(), blockedURI, httpStatusCode);
-
-    m_reportingClient->sendReportToEndpoints(m_protectedURL, endpointURIs, endpointTokens, WTFMove(report), ViolationReportType::ContentSecurityPolicy);
+    auto reportFormData = reportBody->createReportFormDataForViolation(usesReportTo, violatedDirectiveList.isReportOnly());
+    m_reportingClient->sendReportToEndpoints(m_protectedURL, endpointURIs, endpointTokens, WTFMove(reportFormData), ViolationReportType::ContentSecurityPolicy);
 }
 
 void ContentSecurityPolicy::reportUnsupportedDirective(const String& name) const

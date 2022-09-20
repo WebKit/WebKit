@@ -35,12 +35,12 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Report);
 
-Ref<Report> Report::create(const AtomString& type, const String& url, RefPtr<ReportBody>&& body)
+Ref<Report> Report::create(const String& type, const String& url, RefPtr<ReportBody>&& body)
 {
     return adoptRef(*new Report(type, url, WTFMove(body)));
 }
 
-Report::Report(const AtomString& type, const String& url, RefPtr<ReportBody>&& body)
+Report::Report(const String& type, const String& url, RefPtr<ReportBody>&& body)
     : m_type(type)
     , m_url(url)
     , m_body(WTFMove(body))
@@ -49,7 +49,7 @@ Report::Report(const AtomString& type, const String& url, RefPtr<ReportBody>&& b
 
 Report::~Report() = default;
 
-const AtomString& Report::type() const
+const String& Report::type() const
 {
     return m_type;
 }

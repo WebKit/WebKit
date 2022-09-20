@@ -82,6 +82,7 @@ public:
     bool isTableWrapperBlockFormattingContext() const { return isBlockFormattingContext() && root().isTableWrapperBox(); }
     bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }
 
+    static const InitialContainingBlock& initialContainingBlock(const Box&);
 #ifndef NDEBUG
     static const ContainerBox& formattingContextRoot(const Box&);
 #endif

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NavigationRequester.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
@@ -52,7 +53,7 @@ NavigationRequester NavigationRequester::from(Document& document)
         document.url(),
         document.securityOrigin(),
         document.topOrigin(),
-        document.crossOriginOpenerPolicy(),
+        document.policyContainer(),
         createGlobalFrameIdentifier(document)
     };
 }
