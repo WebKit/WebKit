@@ -162,7 +162,7 @@ class MasterParser : public ElementParser {
 
     // Returns the hash of the given id.
     result_type operator()(argument_type id) const {
-      return StdHashId::operator()(static_cast<StdHashId::argument_type>(id));
+      return StdHashId::operator()(static_cast<std::uint32_t>(id));
     }
   };
 
