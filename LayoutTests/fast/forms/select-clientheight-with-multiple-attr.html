@@ -1,6 +1,6 @@
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 <p>HTMLSelectElement multiple attribute test when no size is specified</p>
@@ -47,11 +47,11 @@
     shouldBe("clientHeight('sel2')", "clientHeight('sel1')");
     shouldBeTrue("getElemById('sel2').setAttribute('size', '5'); clientHeight('sel2') > clientHeight('sel1')");
     shouldBe("clientHeight('sel3')", "clientHeight('sel1')");
-    shouldBe("getElemById('sel3').setAttribute('size', '2'); clientHeight('sel3')", "clientHeight('sel1')");
+    shouldBeTrue("getElemById('sel3').setAttribute('size', '2'); clientHeight('sel3') < clientHeight('sel1')");
     shouldBe("getElemById('sel3').setAttribute('size', '0'); clientHeight('sel3')", "clientHeight('sel1')");
     shouldBe("getElemById('sel3').setAttribute('size', ''); clientHeight('sel3')", "clientHeight('sel1')");
-    shouldBe("getElemById('sel3').setAttribute('size', '1+ef'); clientHeight('sel3')", "clientHeight('sel1')");
+    // '1+ef' is recognized as 1.  This is compatible with IE and Firefox.
+    shouldBeTrue("getElemById('sel3').setAttribute('size', '1+ef'); clientHeight('sel3') < clientHeight('sel1')");
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
