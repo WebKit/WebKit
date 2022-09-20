@@ -63,6 +63,7 @@ public:
     };
 
 private:
+    friend bool operator==(const ContentSecurityPolicyResponseHeaders&, const ContentSecurityPolicyResponseHeaders&);
     friend class ContentSecurityPolicy;
     ContentSecurityPolicyResponseHeaders(EmptyTag)
         : m_emptyForMarkable(true)
@@ -72,6 +73,11 @@ private:
     int m_httpStatusCode { 0 };
     bool m_emptyForMarkable { false };
 };
+
+inline bool operator==(const ContentSecurityPolicyResponseHeaders&a, const ContentSecurityPolicyResponseHeaders&b)
+{
+    return a.m_headers == b.m_headers;
+}
 
 template <class Encoder>
 void ContentSecurityPolicyResponseHeaders::encode(Encoder& encoder) const

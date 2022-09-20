@@ -86,6 +86,7 @@ public:
 
     enum class ShouldMakeIsolatedCopy : bool { No, Yes };
     void copyStateFrom(const ContentSecurityPolicy*, ShouldMakeIsolatedCopy = ShouldMakeIsolatedCopy::No);
+    void inheritHeadersFrom(const ContentSecurityPolicyResponseHeaders&);
     void copyUpgradeInsecureRequestStateFrom(const ContentSecurityPolicy&, ShouldMakeIsolatedCopy = ShouldMakeIsolatedCopy::No);
     void createPolicyForPluginDocumentFrom(const ContentSecurityPolicy&);
 

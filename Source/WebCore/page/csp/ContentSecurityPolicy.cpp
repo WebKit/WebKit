@@ -133,6 +133,15 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other, Sh
     m_httpStatusCode = other->m_httpStatusCode;
 }
 
+void ContentSecurityPolicy::inheritHeadersFrom(const ContentSecurityPolicyResponseHeaders& headers)
+{
+    if (m_hasAPIPolicy)
+        return;
+    ASSERT(m_policies.isEmpty());
+    for (auto& [header, headerType] : headers.m_headers)
+        didReceiveHeader(header, headerType, PolicyFrom::Inherited, String { });
+}
+
 void ContentSecurityPolicy::createPolicyForPluginDocumentFrom(const ContentSecurityPolicy& other)
 {
     if (m_hasAPIPolicy)

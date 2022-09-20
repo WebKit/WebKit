@@ -1,0 +1,17 @@
+Blocked access to external URL http://www.localhost:8800/content-security-policy/support/pass.png
+Blocked access to external URL http://www.localhost:8800/content-security-policy/support/pass.png
+Blocked access to external URL http://www.localhost:8800/content-security-policy/support/pass.png
+Blocked access to external URL http://www.localhost:8800/content-security-policy/support/pass.png
+Blocked access to external URL http://www2.localhost:8800/content-security-policy/support/pass.png
+Blocked access to external URL http://www.localhost:8800/content-security-policy/support/pass.png
+Blocked access to external URL http://www.localhost:8800/content-security-policy/support/pass.png
+
+
+FAIL Setting src inherits from parent. assert_equals: expected "p" but got "Exactly one CSP should be inherited"
+FAIL Changing contentWindow.location inherits from who changed it. assert_equals: expected "a" but got "Exactly one CSP should be inherited"
+FAIL Changing contentWindow.location indirectly inherits from who changed it directly. assert_equals: expected "p" but got "Exactly one CSP should be inherited"
+FAIL window.open() inherits from caller. assert_equals: expected "a" but got "Exactly one CSP should be inherited"
+FAIL Click on anchor inherits from owner of the anchor. assert_equals: expected "b" but got "Exactly one CSP should be inherited"
+FAIL Form submission through submit() inherits from owner of form. assert_equals: expected "b" but got "Exactly one CSP should be inherited"
+FAIL Form submission through button click inherits from owner of form. assert_equals: expected "b" but got "Exactly one CSP should be inherited"
+

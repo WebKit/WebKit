@@ -28,6 +28,7 @@
 #pragma once
 
 #include "CrossOriginEmbedderPolicy.h"
+#include "CrossOriginOpenerPolicy.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
@@ -95,11 +96,14 @@ public:
     const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy() const { return m_crossOriginEmbedderPolicy; }
     void setCrossOriginEmbedderPolicy(const CrossOriginEmbedderPolicy& crossOriginEmbedderPolicy) { m_crossOriginEmbedderPolicy = crossOriginEmbedderPolicy; }
 
-    virtual const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const;
+    virtual const CrossOriginOpenerPolicy& crossOriginOpenerPolicy() const { return m_crossOriginOpenerPolicy; }
+    void setCrossOriginOpenerPolicy(const CrossOriginOpenerPolicy& crossOriginOpenerPolicy) { m_crossOriginOpenerPolicy = crossOriginOpenerPolicy; }
 
-    virtual ReferrerPolicy referrerPolicy() const = 0;
+    virtual ReferrerPolicy referrerPolicy() const { return m_referrerPolicy; }
+    void setReferrerPolicy(ReferrerPolicy);
 
-    PolicyContainer policyContainer() const;
+    WEBCORE_EXPORT PolicyContainer policyContainer() const;
+    virtual void inheritPolicyContainerFrom(const PolicyContainer&);
 
     WEBCORE_EXPORT SecurityOrigin* securityOrigin() const;
 
@@ -145,6 +149,8 @@ private:
     RefPtr<SecurityOriginPolicy> m_securityOriginPolicy;
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
     CrossOriginEmbedderPolicy m_crossOriginEmbedderPolicy;
+    CrossOriginOpenerPolicy m_crossOriginOpenerPolicy;
+    ReferrerPolicy m_referrerPolicy { ReferrerPolicy::Default };
     SandboxFlags m_creationSandboxFlags { SandboxNone };
     SandboxFlags m_sandboxFlags { SandboxNone };
     OptionSet<MixedContentType> m_mixedContentTypes;

@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CrossOriginOpenerPolicy.h"
 #include "GlobalFrameIdentifier.h"
+#include "PolicyContainer.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -39,7 +39,7 @@ struct NavigationRequester {
     URL url;
     Ref<SecurityOrigin> securityOrigin;
     Ref<SecurityOrigin> topOrigin;
-    CrossOriginOpenerPolicy crossOriginOpenerPolicy;
+    PolicyContainer policyContainer;
     std::optional<GlobalFrameIdentifier> globalFrameIdentifier;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -49,7 +49,7 @@ struct NavigationRequester {
 template<class Encoder>
 void NavigationRequester::encode(Encoder& encoder) const
 {
-    encoder << url << securityOrigin.get() << topOrigin.get() << crossOriginOpenerPolicy << globalFrameIdentifier;
+    encoder << url << securityOrigin.get() << topOrigin.get() << policyContainer << globalFrameIdentifier;
 }
 
 template<class Decoder>
@@ -68,9 +68,9 @@ std::optional<NavigationRequester> NavigationRequester::decode(Decoder& decoder)
     if (!topOrigin)
         return std::nullopt;
 
-    std::optional<CrossOriginOpenerPolicy> crossOriginOpenerPolicy;
-    decoder >> crossOriginOpenerPolicy;
-    if (!crossOriginOpenerPolicy)
+    std::optional<PolicyContainer> policyContainer;
+    decoder >> policyContainer;
+    if (!policyContainer)
         return std::nullopt;
 
     std::optional<std::optional<GlobalFrameIdentifier>> globalFrameIdentifier;
@@ -78,7 +78,7 @@ std::optional<NavigationRequester> NavigationRequester::decode(Decoder& decoder)
     if (!globalFrameIdentifier)
         return std::nullopt;
 
-    return NavigationRequester { WTFMove(*url), securityOrigin.releaseNonNull(), topOrigin.releaseNonNull(), WTFMove(*crossOriginOpenerPolicy), *globalFrameIdentifier };
+    return NavigationRequester { WTFMove(*url), securityOrigin.releaseNonNull(), topOrigin.releaseNonNull(), WTFMove(*policyContainer), *globalFrameIdentifier };
 }
 
 } // namespace WebCore

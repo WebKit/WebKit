@@ -1232,7 +1232,7 @@ void DocumentLoader::commitData(const SharedBuffer& data)
 {
     if (!m_gotFirstByte) {
         m_gotFirstByte = true;
-        bool hasBegun = m_writer.begin(documentURL(), false, nullptr, m_resultingClientId);
+        bool hasBegun = m_writer.begin(documentURL(), false, nullptr, m_resultingClientId, &triggeringAction());
         if (!hasBegun)
             return;
 
