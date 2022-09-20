@@ -151,8 +151,8 @@ class TestBranch(testing.PathTestCase):
 
             issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
             self.assertEqual(len(issue.references), 2)
-            self.assertEqual(issue.references[0].link, '<rdar://2>')
-            self.assertEqual(issue.comments[-1].content, '<rdar://problem/2>')
+            self.assertEqual(issue.references[0].link, '<rdar://4>')
+            self.assertEqual(issue.comments[-1].content, '<rdar://problem/4>')
 
         self.assertEqual(
             captured.root.log.getvalue(),
@@ -185,8 +185,8 @@ class TestBranch(testing.PathTestCase):
 
             issue = Tracker.from_string('{}/show_bug.cgi?id=2'.format(self.BUGZILLA))
             self.assertEqual(len(issue.references), 2)
-            self.assertEqual(issue.references[0].link, '<rdar://2>')
-            self.assertEqual(issue.comments[-1].content, '<rdar://problem/2>')
+            self.assertEqual(issue.references[0].link, '<rdar://4>')
+            self.assertEqual(issue.comments[-1].content, '<rdar://problem/4>')
 
         self.assertEqual(
             captured.root.log.getvalue(),

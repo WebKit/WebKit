@@ -64,6 +64,7 @@ class GitHub(Scm):
                 opened=dict(
                     open=True,
                     closed=False,
+                    merged=False,
                 ).get(data.get('state').lower(), None),
                 generator=self,
                 metadata=dict(
