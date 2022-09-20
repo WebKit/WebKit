@@ -95,28 +95,10 @@ function testDoublyClonedPort()
                 log("SUCCESS: Cloned both endpoints of a channel.");
             else
                 log("FAIL: Invalid message arrived: " + evt.data);
-            testPostClosePort();
+            done();
         }
     }
 
-}
-
-// *Should* be able to post a closed port.
-function testPostClosePort()
-{
-    var channel = new MessageChannel;
-    var channel2 = new MessageChannel;
-    channel2.port2.close();
-    channel.port1.postMessage("closed", [channel2.port2]);
-    channel.port2.onmessage = function(evt) {
-        if (!evt.ports || evt.ports.length != 1)
-            log("FAIL: Closed port not sent.");
-        else if (evt.data != "closed")
-            log("FAIL: Unexpected message: " + evt.data);
-        else
-            log("SUCCESS: Got closed port with event message " + evt.data);
-        done();
-    }
 }
 
 function done()

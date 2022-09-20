@@ -7,6 +7,5 @@ SUCCESS: Posting entangled port: DataCloneError: The object can not be cloned.
 SUCCESS: Posting cloned port.
 SUCCESS: Posted messages to cloned port.
 SUCCESS: Cloned both endpoints of a channel.
-SUCCESS: Got closed port with event message closed
 DONE
 

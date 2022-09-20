@@ -69,7 +69,7 @@ public:
 
     WEBCORE_EXPORT void messageAvailable();
     bool started() const { return m_started; }
-    bool closed() const { return m_closed; }
+    bool isDetached() const { return m_isDetached; }
 
     void dispatchMessages();
 
@@ -111,13 +111,13 @@ private:
 
     void registerLocalActivity();
 
-    // A port starts out its life entangled, and remains entangled until it is closed or is cloned.
-    bool isEntangled() const { return !m_closed && m_entangled; }
+    // A port starts out its life entangled, and remains entangled until it is detached or is cloned.
+    bool isEntangled() const { return !m_isDetached && m_entangled; }
 
     void updateActivity(MessagePortChannelProvider::HasActivity);
 
     bool m_started { false };
-    bool m_closed { false };
+    bool m_isDetached { false };
     bool m_entangled { true };
 
     // Flags to manage querying the remote port for GC purposes
