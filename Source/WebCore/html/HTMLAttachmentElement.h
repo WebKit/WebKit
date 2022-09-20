@@ -52,7 +52,7 @@ public:
     void setFile(RefPtr<File>&&, UpdateDisplayAttributes = UpdateDisplayAttributes::No);
 
     const String& uniqueIdentifier() const { return m_uniqueIdentifier; }
-    void setUniqueIdentifier(const String& uniqueIdentifier) { m_uniqueIdentifier = uniqueIdentifier; }
+    void setUniqueIdentifier(const String&);
 
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
