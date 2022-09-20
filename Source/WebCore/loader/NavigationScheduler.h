@@ -66,6 +66,8 @@ public:
     void cancel(NewLoadInProgress = NewLoadInProgress::No);
     void clear();
 
+    bool hasQueuedNavigation() const;
+
 private:
     bool shouldScheduleNavigation() const;
     bool shouldScheduleNavigation(const URL&) const;
