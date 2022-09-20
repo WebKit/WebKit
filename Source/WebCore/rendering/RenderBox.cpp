@@ -4220,6 +4220,9 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
         }
     }
 
+    if (containerBlock.isBox() && downcast<RenderBox>(containerBlock).scrollsOverflowY() && containerBlock.style().shouldPlaceVerticalScrollbarOnLeft())
+        logicalLeftValue = logicalLeftValue + downcast<RenderBox>(containerBlock).verticalScrollbarWidth();
+
     computedValues.m_position = logicalLeftValue + marginLogicalLeftValue;
     computeLogicalLeftPositionedOffset(computedValues.m_position, this, computedValues.m_extent + bordersPlusPadding, containerBlock, containerLogicalWidth, style().logicalLeft().isAuto(), style().logicalRight().isAuto());
 }
