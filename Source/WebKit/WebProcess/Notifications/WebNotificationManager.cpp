@@ -82,7 +82,8 @@ void WebNotificationManager::initialize(const WebProcessCreationParameters& para
 void WebNotificationManager::didUpdateNotificationDecision(const String& originString, bool allowed)
 {
 #if ENABLE(NOTIFICATIONS)
-    m_permissionsMap.set(originString, allowed);
+    if (!originString.isEmpty())
+        m_permissionsMap.set(originString, allowed);
 #else
     UNUSED_PARAM(originString);
     UNUSED_PARAM(allowed);
@@ -92,8 +93,10 @@ void WebNotificationManager::didUpdateNotificationDecision(const String& originS
 void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>& originStrings)
 {
 #if ENABLE(NOTIFICATIONS)
-    for (auto& originString : originStrings)
-        m_permissionsMap.remove(originString);
+    for (auto& originString : originStrings) {
+        if (!originString.isEmpty())
+            m_permissionsMap.remove(originString);
+    }
 #else
     UNUSED_PARAM(originStrings);
 #endif
@@ -102,7 +105,7 @@ void WebNotificationManager::didRemoveNotificationDecisions(const Vector<String>
 NotificationClient::Permission WebNotificationManager::policyForOrigin(const String& originString) const
 {
 #if ENABLE(NOTIFICATIONS)
-    if (!originString)
+    if (originString.isEmpty())
         return NotificationClient::Permission::Default;
 
     auto it = m_permissionsMap.find(originString);
