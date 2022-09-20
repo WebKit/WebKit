@@ -35,6 +35,7 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutChildIterator.h"
 #include "LayoutContainerBox.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutReplacedBox.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h" // Just for showLayoutTree.
@@ -120,7 +121,7 @@ std::unique_ptr<Tree> TreeBuilder::build(const Layout::LayoutState& layoutState)
     auto& rootLayoutBox = layoutState.root();
 
 #if ENABLE(TREE_DEBUGGING)
-    LOG_WITH_STREAM(FormattingContextLayout, stream << "Building display tree for:\n" << layoutTreeAsText(rootLayoutBox, &layoutState));
+    LOG_WITH_STREAM(FormattingContextLayout, stream << "Building display tree for:\n" << layoutTreeAsText(downcast<Layout::InitialContainingBlock>(rootLayoutBox), &layoutState));
 #endif
 
     ASSERT(!m_tree);

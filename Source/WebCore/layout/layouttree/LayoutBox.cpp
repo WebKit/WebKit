@@ -239,17 +239,7 @@ const ContainerBox& Box::containingBlock() const
     }
 
     ASSERT_NOT_REACHED();
-    return initialContainingBlock();
-}
-
-const InitialContainingBlock& Box::initialContainingBlock() const
-{
-    if (is<InitialContainingBlock>(*this))
-        return downcast<InitialContainingBlock>(*this);
-
-    auto* ancestor = &parent();
-    for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) { }
-    return downcast<InitialContainingBlock>(*ancestor);
+    return parent();
 }
 
 bool Box::isInFormattingContextOf(const ContainerBox& formattingContextRoot) const

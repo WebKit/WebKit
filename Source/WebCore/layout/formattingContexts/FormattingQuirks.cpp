@@ -71,7 +71,7 @@ LayoutUnit FormattingQuirks::heightValueOfNearestContainingBlockWithFixedHeight(
         containingBlock = &containingBlock->containingBlock();
     }
     // Initial containing block has to have a height.
-    return formattingContext.geometryForBox(layoutBox.initialContainingBlock(), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).contentBox().height() - bodyAndDocumentVerticalMarginPaddingAndBorder;
+    return formattingContext.geometryForBox(FormattingContext::initialContainingBlock(layoutBox), FormattingContext::EscapeReason::FindFixedHeightAncestorQuirk).contentBox().height() - bodyAndDocumentVerticalMarginPaddingAndBorder;
 }
 
 }

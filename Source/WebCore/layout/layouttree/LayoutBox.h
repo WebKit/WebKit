@@ -91,7 +91,6 @@ public:
     bool isFloatingOrOutOfFlowPositioned() const { return isFloatingPositioned() || isOutOfFlowPositioned(); }
 
     const ContainerBox& containingBlock() const;
-    const InitialContainingBlock& initialContainingBlock() const;
 
     bool isContainingBlockForInFlow() const;
     bool isContainingBlockForFixedPosition() const;

@@ -280,6 +280,16 @@ void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
     }
 }
 
+const InitialContainingBlock& FormattingContext::initialContainingBlock(const Box& layoutBox)
+{
+    if (is<InitialContainingBlock>(layoutBox))
+        return downcast<InitialContainingBlock>(layoutBox);
+
+    auto* ancestor = &layoutBox.parent();
+    for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) { }
+    return downcast<InitialContainingBlock>(*ancestor);
+}
+
 #ifndef NDEBUG
 const ContainerBox& FormattingContext::formattingContextRoot(const Box& layoutBox)
 {
