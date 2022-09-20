@@ -1849,8 +1849,7 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
 #else
     RefPtr parentElement = node ? node->parentElement() : nullptr;
     auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
-    // CSS value "auto" is treated as an invalid color.
-    if (!elementStyle.caretColor().isValid() && parentStyle) {
+    if (elementStyle.hasAutoCaretColor() && parentStyle) {
         auto parentBackgroundColor = parentStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
         auto elementBackgroundColor = elementStyle.visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
         auto disappearsIntoBackground = blendSourceOver(parentBackgroundColor, elementBackgroundColor) == parentBackgroundColor;
