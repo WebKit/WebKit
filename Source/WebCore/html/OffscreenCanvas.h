@@ -55,6 +55,7 @@ class CSSValuePool;
 class DeferredPromise;
 class HTMLCanvasElement;
 class ImageBitmap;
+class ImageBitmapRenderingContext;
 class ImageData;
 class OffscreenCanvasRenderingContext2D;
 class WebGL2RenderingContext;
@@ -68,6 +69,7 @@ using OffscreenRenderingContext = std::variant<
 #if ENABLE(WEBGL2)
     RefPtr<WebGL2RenderingContext>,
 #endif
+    RefPtr<ImageBitmapRenderingContext>,
     RefPtr<OffscreenCanvasRenderingContext2D>
 >;
 
@@ -110,7 +112,8 @@ public:
     enum class RenderingContextType {
         _2d,
         Webgl,
-        Webgl2
+        Webgl2,
+        Bitmaprenderer
     };
 
     static bool enabledForContext(ScriptExecutionContext&);
@@ -124,6 +127,8 @@ public:
     unsigned height() const final;
     void setWidth(unsigned);
     void setHeight(unsigned);
+
+    void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) final;
 
     CanvasRenderingContext* renderingContext() const final { return m_context.get(); }
 

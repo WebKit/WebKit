@@ -30,6 +30,7 @@ typedef (
 #if defined(ENABLE_WEBGL2) && ENABLE_WEBGL2
     WebGL2RenderingContext or
 #endif
+    ImageBitmapRenderingContext or
     OffscreenCanvasRenderingContext2D) OffscreenRenderingContext;
 
 dictionary ImageEncodeOptions
@@ -42,7 +43,8 @@ enum OffscreenRenderingContextType
 {
    "2d",
    "webgl",
-   "webgl2"
+   "webgl2",
+   "bitmaprenderer"
 };
 
 [

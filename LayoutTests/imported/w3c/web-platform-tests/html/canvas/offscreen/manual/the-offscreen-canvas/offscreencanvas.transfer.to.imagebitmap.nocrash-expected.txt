@@ -1,5 +1,5 @@
 Tests that an ImageBitmap in Offscreen without content does not crash.
 
 
-FAIL offscreencanvas Argument 1 ('contextType') to OffscreenCanvas.getContext must be one of: "2d", "webgl", "webgl2"
+PASS offscreencanvas
 
