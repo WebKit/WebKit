@@ -490,7 +490,7 @@ void MediaPlayerPrivateGStreamer::seek(const MediaTime& mediaTime)
         return;
     }
 
-    if (m_isLiveStream) {
+    if (m_isLiveStream.value_or(false)) {
         GST_DEBUG_OBJECT(pipeline(), "[Seek] Live stream seek unhandled");
         return;
     }
@@ -616,7 +616,7 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
         return;
     }
 
-    if (m_isLiveStream) {
+    if (m_isLiveStream.value_or(false)) {
         // Notify upper layers that we cannot handle passed rate.
         m_isChangingRate = false;
         m_player->rateChanged();
@@ -664,7 +664,7 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
 #endif
 
     GST_DEBUG_OBJECT(pipeline(), "Setting preload to %s", convertEnumerationToString(preload).utf8().data());
-    if (preload == MediaPlayer::Preload::Auto && m_isLiveStream)
+    if (preload == MediaPlayer::Preload::Auto && m_isLiveStream.value_or(false))
         return;
 
     m_preload = preload;
@@ -679,7 +679,7 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
 std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateGStreamer::buffered() const
 {
     auto timeRanges = makeUnique<PlatformTimeRanges>();
-    if (m_didErrorOccur || m_isLiveStream)
+    if (m_didErrorOccur || m_isLiveStream.value_or(false))
         return timeRanges;
 
     MediaTime mediaDuration = durationMediaTime();
@@ -717,7 +717,7 @@ MediaTime MediaPlayerPrivateGStreamer::maxMediaTimeSeekable() const
     if (m_didErrorOccur)
         return MediaTime::zeroTime();
 
-    if (m_isLiveStream)
+    if (m_isLiveStream.value_or(false))
         return MediaTime::zeroTime();
 
 #if ENABLE(MEDIA_STREAM)
@@ -771,7 +771,7 @@ bool MediaPlayerPrivateGStreamer::didLoadingProgress() const
 
 unsigned long long MediaPlayerPrivateGStreamer::totalBytes() const
 {
-    if (m_didErrorOccur || !m_source || m_isLiveStream)
+    if (m_didErrorOccur || !m_source || m_isLiveStream.value_or(false))
         return 0;
 
     if (m_totalBytes)
@@ -1158,7 +1158,11 @@ MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
     int64_t duration = 0;
     if (!gst_element_query_duration(m_pipeline.get(), GST_FORMAT_TIME, &duration) || !GST_CLOCK_TIME_IS_VALID(duration)) {
         GST_DEBUG_OBJECT(pipeline(), "Time duration query failed for %s", m_url.string().utf8().data());
-        return MediaTime::positiveInfiniteTime();
+        // https://www.w3.org/TR/2011/WD-html5-20110113/video.html#getting-media-metadata
+        // In order to be strict with the spec, consider that not "enough of the media data has been fetched to determine
+        // the duration of the media resource" and therefore return invalidTime only when we know for sure that the
+        // stream isn't live (treating empty value as unsure).
+        return m_isLiveStream.value_or(true) ? MediaTime::positiveInfiniteTime() : MediaTime::invalidTime();
     }
 
     GST_LOG_OBJECT(pipeline(), "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(duration));
@@ -1941,7 +1945,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
                 }
                 if (!isRangeRequest) {
                     m_isLiveStream = !contentLength;
-                    GST_INFO_OBJECT(pipeline(), "%s stream detected", m_isLiveStream ? "Live" : "Non-live");
+                    GST_INFO_OBJECT(pipeline(), "%s stream detected", m_isLiveStream.value_or(false) ? "Live" : "Non-live");
                     updateDownloadBufferingFlag();
                 }
             }
@@ -2349,7 +2353,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
         } else if (m_currentState == GST_STATE_PLAYING) {
             m_isPaused = false;
 
-            if ((m_isBuffering && !m_isLiveStream) || !m_playbackRate) {
+            if ((m_isBuffering && !m_isLiveStream.value_or(false)) || !m_playbackRate) {
                 GST_INFO_OBJECT(pipeline(), "[Buffering] Pausing stream for buffering.");
                 changePipelineState(GST_STATE_PAUSED);
             }
@@ -2656,7 +2660,7 @@ void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
     bool diskCacheDisabled = isMediaDiskCacheDisabled();
     GST_DEBUG_OBJECT(pipeline(), "Media on-disk cache is %s", (diskCacheDisabled) ? "disabled" : "enabled");
 
-    bool shouldDownload = !m_isLiveStream && m_preload == MediaPlayer::Preload::Auto && !diskCacheDisabled;
+    bool shouldDownload = !m_isLiveStream.value_or(false) && m_preload == MediaPlayer::Preload::Auto && !diskCacheDisabled;
     if (shouldDownload) {
         GST_INFO_OBJECT(pipeline(), "Enabling on-disk buffering");
         g_object_set(m_pipeline.get(), "flags", flags | flagDownload, nullptr);
@@ -2900,7 +2904,7 @@ bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
 
 bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
 {
-    if (m_isLiveStream)
+    if (m_isLiveStream.value_or(false))
         return false;
 
     if (m_url.isLocalFile())
@@ -3490,7 +3494,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GstSample* sample)
             // still haven't received a sample to render. So we need to notify the media element in
             // such cases only after pre-rolling has completed. Otherwise the media element might
             // emit a play event too early, before pre-rolling has been completed.
-            if (m_isLiveStream && m_readyState < MediaPlayer::ReadyState::HaveEnoughData) {
+            if (m_isLiveStream.value_or(false) && m_readyState < MediaPlayer::ReadyState::HaveEnoughData) {
                 m_readyState = MediaPlayer::ReadyState::HaveEnoughData;
                 m_player->readyStateChanged();
             }
@@ -3771,7 +3775,7 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamer::movieLoadType() const
     if (m_readyState == MediaPlayer::ReadyState::HaveNothing)
         return MediaPlayer::MovieLoadType::Unknown;
 
-    if (m_isLiveStream)
+    if (m_isLiveStream.value_or(false))
         return MediaPlayer::MovieLoadType::LiveStream;
 
     return MediaPlayer::MovieLoadType::Download;
