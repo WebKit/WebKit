@@ -1,0 +1,2842 @@
+# WebKitGTK Georgian translation.
+# Copyright (C) 2022 webkitgtk authors
+# This file is distributed under the same license as the webkitgtk package.
+# Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: WebKitGTK\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
+"product=WebKit&component=WebKitGTK\n"
+"POT-Creation-Date: 2022-09-19 15:31+0000\n"
+"PO-Revision-Date: 2022-09-20 06:52+0200\n"
+"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
+"Language-Team: Georgian <(nothing)>\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.1.1\n"
+
+#: ../LocalizedStringsGtk.cpp:43
+msgid "Copy Link Loc_ation"
+msgstr "ბმულის _მდებარეობის კოპირება"
+
+#: ../LocalizedStringsGtk.cpp:48
+msgid "Sa_ve Image As"
+msgstr "სურათის შენახვა, როგორც"
+
+#: ../LocalizedStringsGtk.cpp:53
+msgid "Copy Image _Address"
+msgstr "გამოსახულების მისამართის კოპირება"
+
+#: ../LocalizedStringsGtk.cpp:58
+msgid "Cop_y Video Link Location"
+msgstr "ვიდეოს ბმულის კოპირება"
+
+#: ../LocalizedStringsGtk.cpp:63
+msgid "Cop_y Audio Link Location"
+msgstr "აუდიოს ბმულის კოპირება"
+
+#: ../LocalizedStringsGtk.cpp:68
+msgid "_Toggle Media Controls"
+msgstr "მედიის კონტროლის ზოლის გადართვა"
+
+#: ../LocalizedStringsGtk.cpp:73
+msgid "_Show Media Controls"
+msgstr "მედიის კონტროლის ზოლის ჩვენება"
+
+#: ../LocalizedStringsGtk.cpp:78
+msgid "_Hide Media Controls"
+msgstr "მედიის კონტროლის ზოლის დამალვა"
+
+#: ../LocalizedStringsGtk.cpp:83
+msgid "Toggle Media _Loop Playback"
+msgstr "მედიის _მარყუჟად დაკვრის გადართვა"
+
+#: ../LocalizedStringsGtk.cpp:88
+msgid "Switch Video to _Fullscreen"
+msgstr "ვიდეოს _მთელ ეკრანზე გატანა"
+
+#: ../LocalizedStringsGtk.cpp:93
+msgid "Paste As Plain _Text"
+msgstr "უბრალო _ტექსტად ჩასმა"
+
+#: ../LocalizedStringsGtk.cpp:98
+msgid "_Delete"
+msgstr "_წაშლა"
+
+#: ../LocalizedStringsGtk.cpp:103
+msgid "Select _All"
+msgstr "ყველაფრის _მონიშვნა"
+
+#: ../LocalizedStringsGtk.cpp:108
+msgid "Insert _Emoji"
+msgstr "ემოჯის _ჩასმა"
+
+#: ../LocalizedStringsGtk.cpp:113
+msgid "_Insert Unicode Control Character"
+msgstr "უნიკოდის საკონტროლო სიმბოლოს_ჩასმა"
+
+#: ../LocalizedStringsGtk.cpp:118
+msgid "Input _Methods"
+msgstr "შეტანის _მეთოდები"
+
+#: ../LocalizedStringsGtk.cpp:123
+msgid "LRM _Left-to-right mark"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:128
+msgid "RLM _Right-to-left mark"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:133
+msgid "LRE Left-to-right _embedding"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:138
+msgid "RLE Right-to-left e_mbedding"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:143
+msgid "LRO Left-to-right _override"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:148
+msgid "RLO Right-to-left o_verride"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:153
+msgid "PDF _Pop directional formatting"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:158
+msgid "ZWS _Zero width space"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:163
+msgid "ZWJ Zero width _joiner"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:168
+msgid "ZWNJ Zero width _non-joiner"
+msgstr ""
+
+#: ../LocalizedStringsGtk.cpp:174
+#, c-format
+msgid "Use at least one character"
+msgid_plural "Use at least %d characters"
+msgstr[0] "გამოიყენეთ მინიმუმ 1 სიმბოლო"
+msgstr[1] "გამოიყენეთ მინიმუმ %d სიმბოლო"
+
+#: ../LocalizedStringsGtk.cpp:180
+#, c-format
+msgid "Use no more than one character"
+msgid_plural "Use no more than %d characters"
+msgstr[0] "გამოიყენეთ არაუმეტეს 1 სიმბოლოსი"
+msgstr[1] "გამოიყენეთ არაუმეტეს %d სიმბოლო"
+
+#: ../../LocalizedStrings.cpp:162
+msgctxt "alt text for <input> elements with no alt, title, or value"
+msgid "Submit"
+msgstr "გადაცემა"
+
+#: ../../LocalizedStrings.cpp:167
+msgid "Reset"
+msgstr "დაბრუნება"
+
+#: ../../LocalizedStrings.cpp:172
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "ეს საძიებო ინდექსია. მიუთითეთ ძიების საკვანძო სიტყვები: "
+
+#: ../../LocalizedStrings.cpp:178
+msgid "Submit"
+msgstr "გადაცემა"
+
+#: ../../LocalizedStrings.cpp:183
+msgid "Choose File"
+msgstr "ფაილის არჩევა"
+
+#: ../../LocalizedStrings.cpp:188
+msgid "Choose Files"
+msgstr "აირჩიეთ ფაილები"
+
+#: ../../LocalizedStrings.cpp:193
+msgid "no file selected"
+msgstr "ფაილი არჩეული არაა"
+
+#: ../../LocalizedStrings.cpp:198
+msgid "no files selected"
+msgstr "ფაილები მონიშნული არაა"
+
+#: ../../LocalizedStrings.cpp:203
+msgid "Details"
+msgstr "დეტალები"
+
+#: ../../LocalizedStrings.cpp:210
+msgid "Open Link in New _Window"
+msgstr "ბმულის ახალ _ფანჯარაში გახსნა"
+
+#: ../../LocalizedStrings.cpp:215
+msgid "_Download Linked File"
+msgstr "_ბმული ფაილის გადმოწერა"
+
+#: ../../LocalizedStrings.cpp:221
+msgid "Copy Link"
+msgstr "ბმულის კოპირება"
+
+#: ../../LocalizedStrings.cpp:227
+msgid "Open _Image in New Window"
+msgstr "_გამოსახულების ახალ ფანჯარაში გახსნა"
+
+#: ../../LocalizedStrings.cpp:233
+msgid "Download Image"
+msgstr "გამოსახულების გადმოწერა"
+
+#: ../../LocalizedStrings.cpp:239
+msgid "Cop_y Image"
+msgstr "გამოსახულების _კოპირება"
+
+#: ../../LocalizedStrings.cpp:244
+msgid "Open _Frame in New Window"
+msgstr "_ჩარჩოს ახალ ფანჯარაში გახნა"
+
+#: ../../LocalizedStrings.cpp:249
+msgid "_Copy"
+msgstr "_კოპირება"
+
+#: ../../LocalizedStrings.cpp:254
+msgid "_Back"
+msgstr "უკან"
+
+#: ../../LocalizedStrings.cpp:259
+msgid "_Forward"
+msgstr "_წინ"
+
+#: ../../LocalizedStrings.cpp:264
+msgid "_Stop"
+msgstr "გაჩერე_ბა"
+
+#: ../../LocalizedStrings.cpp:269
+msgid "_Reload"
+msgstr "თავიდან ჩატვირთვა"
+
+#: ../../LocalizedStrings.cpp:274
+msgid "Cu_t"
+msgstr "ამო_ჭრა"
+
+#: ../../LocalizedStrings.cpp:279
+msgid "_Paste"
+msgstr "_ჩასმა"
+
+#: ../../LocalizedStrings.cpp:284
+msgid "No Guesses Found"
+msgstr "ვარიანტების გარეშე"
+
+#: ../../LocalizedStrings.cpp:289
+msgid "_Ignore Spelling"
+msgstr "მართლწერის _უგულებელყოფა"
+
+#: ../../LocalizedStrings.cpp:294
+msgid "_Learn Spelling"
+msgstr "მართლწერის _სწავლა"
+
+#: ../../LocalizedStrings.cpp:305
+msgid "Look Up “<selection>”"
+msgstr "“<selection>”-ის მოძებნა"
+
+#: ../../LocalizedStrings.cpp:321
+msgid "_Open Link"
+msgstr "_ბმულის გახსნა"
+
+#: ../../LocalizedStrings.cpp:326
+msgid "Ignore _Grammar"
+msgstr "_გრამატიკის უგულებელყოფა"
+
+#: ../../LocalizedStrings.cpp:331
+msgid "Spelling and _Grammar"
+msgstr "მართლწერა და _გრამატიკა"
+
+#: ../../LocalizedStrings.cpp:337
+msgid "_Show Spelling and Grammar"
+msgstr "მართლწერისა და გრამატიკის _ჩვენება"
+
+#: ../../LocalizedStrings.cpp:338
+msgid "_Hide Spelling and Grammar"
+msgstr "მართლწერისა და გრამატიკის _დამალვა"
+
+#: ../../LocalizedStrings.cpp:343
+msgid "_Check Document Now"
+msgstr "_შეამოწმე დოკუმენტი ახლა"
+
+#: ../../LocalizedStrings.cpp:348
+msgid "Check Spelling While _Typing"
+msgstr "მართლწერის შემოწმება _კრეფის დროს"
+
+#: ../../LocalizedStrings.cpp:353
+msgid "Check _Grammar With Spelling"
+msgstr "მართლწერასთან ერთად _გრამატიკის შემოწმება"
+
+#: ../../LocalizedStrings.cpp:358
+msgid "_Font"
+msgstr "_ფონტი"
+
+#: ../../LocalizedStrings.cpp:363
+msgid "_Bold"
+msgstr "_სქელი"
+
+#: ../../LocalizedStrings.cpp:368
+msgid "_Italic"
+msgstr "_დახრილი"
+
+#: ../../LocalizedStrings.cpp:373
+msgid "_Underline"
+msgstr "_ხაზგასმული"
+
+#: ../../LocalizedStrings.cpp:378
+msgid "_Outline"
+msgstr "_კონტური"
+
+#: ../../LocalizedStrings.cpp:384
+msgid "Paragraph Direction"
+msgstr "აბზაცის მიმართულება"
+
+#: ../../LocalizedStrings.cpp:389
+msgid "Selection Direction"
+msgstr "მონიშნულის მიმართულება"
+
+#: ../../LocalizedStrings.cpp:394
+msgid "Default"
+msgstr "ნაგულისხმები"
+
+#: ../../LocalizedStrings.cpp:399
+msgid "Left to Right"
+msgstr "მარცხნიდან მარჯვნივ"
+
+#: ../../LocalizedStrings.cpp:404
+msgid "Right to Left"
+msgstr "მარჯვნიდან მარცხნივ"
+
+#: ../../LocalizedStrings.cpp:410
+msgid "Open _Video in New Window"
+msgstr "ვიდეოს ახალ ფანჯარაში გახსნა"
+
+#: ../../LocalizedStrings.cpp:415
+msgid "Open _Audio in New Window"
+msgstr "აუდიოს ახალ ფანჯარაში გახსნა"
+
+#: ../../LocalizedStrings.cpp:420
+msgid "Download _Video"
+msgstr "ვიდეოს გადმოწერა"
+
+#: ../../LocalizedStrings.cpp:425
+msgid "Download _Audio"
+msgstr "აუდიოს გადმოწერა"
+
+#: ../../LocalizedStrings.cpp:431
+msgid "Copy Video Address"
+msgstr "ვიდეოს მისამართის კოპირება"
+
+#: ../../LocalizedStrings.cpp:436
+msgid "Copy Audio Address"
+msgstr "აუდიოს მისამართის კოპირება"
+
+#: ../../LocalizedStrings.cpp:441
+msgid "Controls"
+msgstr "მმართველები"
+
+#: ../../LocalizedStrings.cpp:446
+msgid "Show Controls"
+msgstr "კონტროლების ჩვენება"
+
+#: ../../LocalizedStrings.cpp:451
+msgid "Hide Controls"
+msgstr "კონტროლების დამალვა"
+
+#: ../../LocalizedStrings.cpp:456
+msgid "Loop"
+msgstr "მარყუჟი"
+
+#: ../../LocalizedStrings.cpp:461
+msgid "Enter Full Screen"
+msgstr "სრული ეკრანი"
+
+#: ../../LocalizedStrings.cpp:466
+msgctxt "Video Exit Full Screen context menu item"
+msgid "Exit Full Screen"
+msgstr "სრული ეკრანიდან გამოსვლა"
+
+#: ../../LocalizedStrings.cpp:472
+msgid "_Play"
+msgstr "_დაკვრა"
+
+#: ../../LocalizedStrings.cpp:477
+msgid "_Pause"
+msgstr "_შეჩერება"
+
+#: ../../LocalizedStrings.cpp:482
+msgid "_Mute"
+msgstr "დადუმება"
+
+#: ../../LocalizedStrings.cpp:487
+msgid "Inspect _Element"
+msgstr "ელემენტის ინსპექტირება"
+
+#: ../../LocalizedStrings.cpp:493
+msgid "_Automatically Resize"
+msgstr "ზომის _ავტომატური შეცვლა"
+
+#: ../../LocalizedStrings.cpp:498
+msgid "_Zoom In"
+msgstr "_გადიდება"
+
+#: ../../LocalizedStrings.cpp:503
+msgid "_Zoom Out"
+msgstr "_დაპატარავება"
+
+#: ../../LocalizedStrings.cpp:508
+msgid "_Actual Size"
+msgstr "_რეალური ზომა"
+
+#: ../../LocalizedStrings.cpp:513
+msgid "_Single Page"
+msgstr "_ერთი გვერდი"
+
+#: ../../LocalizedStrings.cpp:518
+msgid "_Single Page Continuous"
+msgstr "_ერთი გვერდი, უწყვეტი"
+
+#: ../../LocalizedStrings.cpp:523
+msgid "_Two Pages"
+msgstr "_ორი გვერდი"
+
+#: ../../LocalizedStrings.cpp:528
+msgid "_Two Pages Continuous"
+msgstr "_ორი გვერდი, უწყვეტი"
+
+#: ../../LocalizedStrings.cpp:533
+msgid "_Next Page"
+msgstr "_შემდეგი გვერდი"
+
+#: ../../LocalizedStrings.cpp:538
+msgid "_Previous Page"
+msgstr "_წინა გვერდი"
+
+#: ../../LocalizedStrings.cpp:545
+msgid "_Search the Web"
+msgstr "ვებში ძებნა"
+
+#: ../../LocalizedStrings.cpp:555
+msgid "No recent searches"
+msgstr "ბოლო ძებნების გარეშე"
+
+#: ../../LocalizedStrings.cpp:560
+msgid "Recent Searches"
+msgstr "ბოლო ძებნები"
+
+#: ../../LocalizedStrings.cpp:565
+msgid "Clear Recent Searches"
+msgstr "უახლესი ძებნების გასუფთავება"
+
+#: ../../LocalizedStrings.cpp:572
+msgid "HTML content"
+msgstr "HTML შემცველობა"
+
+#: ../../LocalizedStrings.cpp:577
+msgid "link"
+msgstr "ბმული"
+
+#: ../../LocalizedStrings.cpp:582
+msgid "list marker"
+msgstr "სიის მარკერი"
+
+#: ../../LocalizedStrings.cpp:587
+msgid "image map"
+msgstr "გამოსახულების რუკა"
+
+#: ../../LocalizedStrings.cpp:592
+msgid "heading"
+msgstr "სათაური"
+
+#: ../../LocalizedStrings.cpp:597
+msgid "color well"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:602
+msgid "definition"
+msgstr "აღწერა"
+
+#: ../../LocalizedStrings.cpp:607
+msgid "description list"
+msgstr "აღწერის სია"
+
+#: ../../LocalizedStrings.cpp:612
+msgid "term"
+msgstr "პირობები"
+
+#: ../../LocalizedStrings.cpp:617
+msgid "description"
+msgstr "აღწერა"
+
+#: ../../LocalizedStrings.cpp:622
+msgid "details"
+msgstr "დეტალები"
+
+#: ../../LocalizedStrings.cpp:627
+msgid "summary"
+msgstr "შეჯამება"
+
+#: ../../LocalizedStrings.cpp:632
+msgid "footer"
+msgstr "ძირი"
+
+#: ../../LocalizedStrings.cpp:637
+msgid "suggestion"
+msgstr "მინიშნება"
+
+#: ../../LocalizedStrings.cpp:642
+msgid "file upload button"
+msgstr "ფაილის ატვირთვის ღილაკი"
+
+#: ../../LocalizedStrings.cpp:647
+msgid "output"
+msgstr "გამოტანა"
+
+#: ../../LocalizedStrings.cpp:652
+msgid "attachment"
+msgstr "მიმაგრება"
+
+#: ../../LocalizedStrings.cpp:657
+msgid "cancel"
+msgstr "გაუქმება"
+
+#: ../../LocalizedStrings.cpp:662
+msgid "feed"
+msgstr "ლენტა"
+
+#: ../../LocalizedStrings.cpp:667
+msgid "figure"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:672
+msgid "email field"
+msgstr "ელფოსტის ველი"
+
+#: ../../LocalizedStrings.cpp:677
+msgid "telephone number field"
+msgstr "ტელეფონის ნომრის ველი"
+
+#: ../../LocalizedStrings.cpp:682
+msgid "URL field"
+msgstr "URL ველი"
+
+#: ../../LocalizedStrings.cpp:687
+msgid "date field"
+msgstr "თარიღის ველი"
+
+#: ../../LocalizedStrings.cpp:692
+msgid "time field"
+msgstr "დროის ველი"
+
+#: ../../LocalizedStrings.cpp:697
+msgid "date and time field"
+msgstr "თარიღისა და დროის ველი"
+
+#: ../../LocalizedStrings.cpp:702
+msgid "month and year field"
+msgstr "თვისა და წლის ველი"
+
+#: ../../LocalizedStrings.cpp:707
+msgid "number field"
+msgstr "რიცხვის ველი"
+
+#: ../../LocalizedStrings.cpp:712
+msgid "week and year field"
+msgstr "კვირის და წლის ველი"
+
+#: ../../LocalizedStrings.cpp:718
+msgid "alert"
+msgstr "გაფრთხილება"
+
+#: ../../LocalizedStrings.cpp:720
+msgid "web alert dialog"
+msgstr "ვების გაფრთხილების ფანჯარა"
+
+#: ../../LocalizedStrings.cpp:722
+msgid "web dialog"
+msgstr "ვების ფანჯარა"
+
+#: ../../LocalizedStrings.cpp:724
+msgid "log"
+msgstr "ჟურნალი"
+
+#: ../../LocalizedStrings.cpp:726
+msgid "marquee"
+msgstr "სეფა"
+
+#: ../../LocalizedStrings.cpp:728
+msgid "application status"
+msgstr "აპლიკაციის სტატუსი"
+
+#: ../../LocalizedStrings.cpp:730
+msgid "timer"
+msgstr "წამმზომი"
+
+#: ../../LocalizedStrings.cpp:732
+msgid "document"
+msgstr "დოკუმენტი"
+
+#: ../../LocalizedStrings.cpp:734
+msgid "article"
+msgstr "სტატია"
+
+#: ../../LocalizedStrings.cpp:736
+msgid "note"
+msgstr "შენიშვნა"
+
+#: ../../LocalizedStrings.cpp:738
+msgid "web application"
+msgstr "ვებ აპლიკაცია"
+
+#: ../../LocalizedStrings.cpp:740
+msgid "banner"
+msgstr "ბანერი"
+
+#: ../../LocalizedStrings.cpp:742
+msgid "complementary"
+msgstr "შემცვლელი"
+
+#: ../../LocalizedStrings.cpp:744
+msgid "content information"
+msgstr "ინფორმაცია შემცველობის შესახებ"
+
+#: ../../LocalizedStrings.cpp:746
+msgid "main"
+msgstr "მთავარი"
+
+#: ../../LocalizedStrings.cpp:748
+msgid "navigation"
+msgstr "ნავიგაცია"
+
+#: ../../LocalizedStrings.cpp:750
+msgid "region"
+msgstr "რეგიონი"
+
+#: ../../LocalizedStrings.cpp:752
+msgid "search"
+msgstr "ძებნა"
+
+#: ../../LocalizedStrings.cpp:754
+msgid "tooltip"
+msgstr "მინიშნება"
+
+#: ../../LocalizedStrings.cpp:756
+msgid "tab panel"
+msgstr "ჩანართების პანელი"
+
+#: ../../LocalizedStrings.cpp:758
+msgid "math"
+msgstr "მათემატიკა"
+
+#: ../../LocalizedStrings.cpp:764
+msgid "separator"
+msgstr "გამყოფი"
+
+#: ../../LocalizedStrings.cpp:769
+msgid "highlighted"
+msgstr "გამოკვეთილია"
+
+#: ../../LocalizedStrings.cpp:774
+msgid "press"
+msgstr "დაწოლა"
+
+#: ../../LocalizedStrings.cpp:779
+msgid "select"
+msgstr "select"
+
+#: ../../LocalizedStrings.cpp:784
+msgid "activate"
+msgstr "აქტივაცია"
+
+#: ../../LocalizedStrings.cpp:789
+msgid "uncheck"
+msgstr "ჩართვის მოხსნა"
+
+#: ../../LocalizedStrings.cpp:794
+msgid "check"
+msgstr "ჩართვა"
+
+#: ../../LocalizedStrings.cpp:799
+msgid "jump"
+msgstr "გადახტომა"
+
+#: ../../LocalizedStrings.cpp:823
+msgid "Apple Pay"
+msgstr "Apple Pay"
+
+#: ../../LocalizedStrings.cpp:828
+msgid "Buy with Apple Pay"
+msgstr "Apple Pay-ით გადახდა"
+
+#: ../../LocalizedStrings.cpp:833
+msgid "Set up with Apple Pay"
+msgstr "Apple Pay-ზე მორგება"
+
+#: ../../LocalizedStrings.cpp:838
+msgid "Donate with Apple Pay"
+msgstr "Apple Pay-ით შეწირვა"
+
+#: ../../LocalizedStrings.cpp:843
+msgid "Check out with Apple Pay"
+msgstr "გადაიხადეთ Apple Pay-თ"
+
+#: ../../LocalizedStrings.cpp:848
+msgid "Book with Apple Pay"
+msgstr "Apple Pay-ით დაჯავშნა"
+
+#: ../../LocalizedStrings.cpp:853
+msgid "Subscribe with Apple Pay"
+msgstr "Apple Pay-ით გამოწერა"
+
+#: ../../LocalizedStrings.cpp:859
+msgid "Reload with Apple Pay"
+msgstr "Apple Pay-ით თავიდან ჩატვირთვა"
+
+#: ../../LocalizedStrings.cpp:863
+msgid "Add money with Apple Pay"
+msgstr "ფულის დამატება Apple Pay-ით"
+
+#: ../../LocalizedStrings.cpp:867
+msgid "Top up with Apple Pay"
+msgstr "Apple Pay-ით შევსება"
+
+#: ../../LocalizedStrings.cpp:871
+msgid "Order with Apple Pay"
+msgstr "Apple Pay-ით შეკვეთა"
+
+#: ../../LocalizedStrings.cpp:875
+msgid "Rent with Apple Pay"
+msgstr "Apple Pay-ით დაქირავება"
+
+#: ../../LocalizedStrings.cpp:879
+msgid "Support with Apple Pay"
+msgstr "Apple Pay-ით მხარდაჭერა"
+
+#: ../../LocalizedStrings.cpp:883
+msgid "Contribute with Apple Pay"
+msgstr "Apple Pay-ით შეწირვა"
+
+#: ../../LocalizedStrings.cpp:887
+msgid "Tip with Apple Pay"
+msgstr "Apple Pay-ით ჩაის მიცემა"
+
+#: ../../LocalizedStrings.cpp:894
+msgid "password AutoFill"
+msgstr "პაროლის ავტომატური შევსება"
+
+#: ../../LocalizedStrings.cpp:899
+msgid "contact info AutoFill"
+msgstr "საკონტაქტი ინფორმაციის ავტომატური შევსება"
+
+#: ../../LocalizedStrings.cpp:904
+msgid "strong password AutoFill"
+msgstr "ავტომატური შევსებისას ძლიერი პაროლის გამოყენება"
+
+#: ../../LocalizedStrings.cpp:909
+msgid "credit card AutoFill"
+msgstr "საკრედიტო ბარათის მონაცემების ავტომატური შევსება"
+
+#: ../../LocalizedStrings.cpp:914
+msgid "loading AutoFill"
+msgstr "ავტომატური შევსების ჩატვირთვა"
+
+#: ../../LocalizedStrings.cpp:919
+msgid "Strong Password"
+msgstr "ძლიერი პაროლი"
+
+#: ../../LocalizedStrings.cpp:924
+msgid "Missing Plug-in"
+msgstr "აკლია დამატება"
+
+#: ../../LocalizedStrings.cpp:929
+msgid "Plug-in Failure"
+msgstr "დამატების შეცდომა"
+
+#: ../../LocalizedStrings.cpp:934
+msgctxt ""
+"Label text to be used if plugin is blocked by a page's Content Security "
+"Policy"
+msgid "Blocked Plug-in"
+msgstr "დაბლოკილი დამატება"
+
+#: ../../LocalizedStrings.cpp:939
+msgctxt ""
+"Label text to be used when an insecure plug-in version was blocked from "
+"loading"
+msgid "Blocked Plug-in"
+msgstr "დაბლოკილი დამატება"
+
+#: ../../LocalizedStrings.cpp:944
+msgctxt ""
+"Label text to be used when an unsupported plug-in was blocked from loading"
+msgid "Unsupported Plug-in"
+msgstr "მხარდაუჭერელი დამატება"
+
+#: ../../LocalizedStrings.cpp:949
+msgctxt ""
+"Label text to be used when a plug-in was blocked from loading because it was "
+"too small"
+msgid "Plug-In too small"
+msgstr "დამატება ძალიან პატარაა"
+
+#: ../../LocalizedStrings.cpp:959
+msgctxt "Unknown filesize FTP directory listing item"
+msgid "Unknown"
+msgstr "უცნობი"
+
+#: ../../LocalizedStrings.cpp:986
+msgid "Loading…"
+msgstr "ჩატვირთვა…"
+
+#: ../../LocalizedStrings.cpp:991
+msgid "Live Broadcast"
+msgstr "ცოცხალი მაუწყებლობა"
+
+#: ../../LocalizedStrings.cpp:997
+msgid "audio playback"
+msgstr "აუდიოს დაკვრა"
+
+#: ../../LocalizedStrings.cpp:999
+msgid "video playback"
+msgstr "ვიდეოს დაკვრა"
+
+#: ../../LocalizedStrings.cpp:1001
+msgid "mute"
+msgstr "დადუმება"
+
+#: ../../LocalizedStrings.cpp:1003
+msgid "unmute"
+msgstr "დადუმების გამორთვა"
+
+#: ../../LocalizedStrings.cpp:1005
+msgid "play"
+msgstr "დაკვრა"
+
+#: ../../LocalizedStrings.cpp:1007
+msgid "pause"
+msgstr "შეჩერება"
+
+#: ../../LocalizedStrings.cpp:1009
+msgid "movie time"
+msgstr "ფილმის დრო"
+
+#: ../../LocalizedStrings.cpp:1011
+msgid "timeline slider thumb"
+msgstr "ქრონოლოგიის ჩოჩიის მინიატურა"
+
+#: ../../LocalizedStrings.cpp:1013
+msgid "back 30 seconds"
+msgstr "30 წამით უკან"
+
+#: ../../LocalizedStrings.cpp:1015
+msgid "return to real time"
+msgstr "რეალურ დროში დაბრუნება"
+
+#: ../../LocalizedStrings.cpp:1017
+msgid "elapsed time"
+msgstr "გასული დრო"
+
+#: ../../LocalizedStrings.cpp:1019
+msgid "remaining time"
+msgstr "დარჩენილი დრო"
+
+#: ../../LocalizedStrings.cpp:1021
+msgid "status"
+msgstr "სტატუსი"
+
+#: ../../LocalizedStrings.cpp:1023
+msgid "enter full screen"
+msgstr "მთელ ეკრანზე გასვლა"
+
+#: ../../LocalizedStrings.cpp:1025
+msgid "exit full screen"
+msgstr "სრული ეკრანიდან გამოსვლა"
+
+#: ../../LocalizedStrings.cpp:1027
+msgid "fast forward"
+msgstr "წინ წრაფი გადახვევა"
+
+#: ../../LocalizedStrings.cpp:1029
+msgid "fast reverse"
+msgstr "სწრაფი უკან გადახვევა"
+
+#: ../../LocalizedStrings.cpp:1031
+msgid "show closed captions"
+msgstr "დახურული წარწერების ჩვენება"
+
+#: ../../LocalizedStrings.cpp:1033
+msgid "hide closed captions"
+msgstr "დახურული წარწერების დამალვა"
+
+#: ../../LocalizedStrings.cpp:1046
+msgid "audio element playback controls and status display"
+msgstr "აუდიო ელემენტის დაკვრისას მისი კონტროლისა და მდგომარეობის ჩვენება"
+
+#: ../../LocalizedStrings.cpp:1048
+msgid "video element playback controls and status display"
+msgstr "ვიდეო ელემენტის დაკვრისას მისი კონტროლისა და მდგომარეობის ჩვენება"
+
+#: ../../LocalizedStrings.cpp:1050
+msgid "mute audio tracks"
+msgstr "აუდიობილიკების ჩაჩუმება"
+
+#: ../../LocalizedStrings.cpp:1052
+msgid "unmute audio tracks"
+msgstr "აუდიობილიკების ხმის ჩართვა"
+
+#: ../../LocalizedStrings.cpp:1054
+msgid "begin playback"
+msgstr "დაკვრის დაწყება"
+
+#: ../../LocalizedStrings.cpp:1056
+msgid "pause playback"
+msgstr "დაკვრის შეჩერება"
+
+#: ../../LocalizedStrings.cpp:1058
+msgid "movie time scrubber"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1060
+msgid "movie time scrubber thumb"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1062
+msgid "seek movie back 30 seconds"
+msgstr "ფილმის უკან გადახვევა 30 წამით"
+
+#: ../../LocalizedStrings.cpp:1064
+msgid "resume real time streaming"
+msgstr "სტრიმინგის რეალურ დროში გაგრძელება"
+
+#: ../../LocalizedStrings.cpp:1066
+msgid "current movie time in seconds"
+msgstr "მიმდინარე ფილმის დრო, წამებში"
+
+#: ../../LocalizedStrings.cpp:1068
+msgid "number of seconds of movie remaining"
+msgstr "მიმდინარე ფილმის დარჩენილი დრო, წამებში"
+
+#: ../../LocalizedStrings.cpp:1070
+msgid "current movie status"
+msgstr "მიდინარე ფილმის სტატუსი"
+
+#: ../../LocalizedStrings.cpp:1072
+msgid "seek quickly back"
+msgstr "უკან სწრაფი გადახვევა"
+
+#: ../../LocalizedStrings.cpp:1074
+msgid "seek quickly forward"
+msgstr "წინ სწრაფი გადახვევა"
+
+#: ../../LocalizedStrings.cpp:1076
+msgid "Play movie in full screen mode"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1078
+msgid "start displaying closed captions"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1080
+msgid "stop displaying closed captions"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1093
+msgid "indefinite time"
+msgstr "განუსაზღვრელი დრო"
+
+#: ../../LocalizedStrings.cpp:1112
+msgid "Fill out this field"
+msgstr "შეავსეთ ეს ველი"
+
+#: ../../LocalizedStrings.cpp:1117
+msgid "Select this checkbox"
+msgstr "ჩართეთ ეს ჩასართავი"
+
+#: ../../LocalizedStrings.cpp:1122
+msgid "Select a file"
+msgstr "აირჩიეთ ფაილი"
+
+#: ../../LocalizedStrings.cpp:1132
+msgid "Select one of these options"
+msgstr "აირჩიეთ ერთ-ერთი პარამეტრი"
+
+#: ../../LocalizedStrings.cpp:1137
+msgid "Select an item in the list"
+msgstr "აირჩიეთ ჩანაწერი სიიდან"
+
+#: ../../LocalizedStrings.cpp:1142
+msgid "Invalid value"
+msgstr "არასწორი მნიშვნელობა"
+
+#: ../../LocalizedStrings.cpp:1147
+msgid "Enter an email address"
+msgstr "შეიყვანეთ ელფოსტის მისამართი"
+
+#: ../../LocalizedStrings.cpp:1157
+msgid "Enter a URL"
+msgstr "შეიყვანეთ URL"
+
+#: ../../LocalizedStrings.cpp:1162
+msgid "Match the requested format"
+msgstr "ემთხევა მოთხოვნილ ფორმატს"
+
+#: ../../LocalizedStrings.cpp:1187
+msgid "range underflow"
+msgstr "დიაპაზონის არშევსება"
+
+#: ../../LocalizedStrings.cpp:1199
+msgid "range overflow"
+msgstr "დიაპაზონის გადავსება"
+
+#: ../../LocalizedStrings.cpp:1205
+msgid "Enter a valid value"
+msgstr "შეიყვანეთ სწორი მნიშვნელობა"
+
+#: ../../LocalizedStrings.cpp:1210
+msgid "Enter a number"
+msgstr "შეიყვანეთ ნომერი"
+
+#: ../../LocalizedStrings.cpp:1215
+msgid "Click to Exit Full Screen"
+msgstr "მთელი ეკრანიდან გასასვლელად დააწკაპუნეთ"
+
+#: ../../LocalizedStrings.cpp:1222
+msgctxt "Menu item label for a audio/text track that has no other name."
+msgid "Unknown"
+msgstr "უცნობი"
+
+#: ../../LocalizedStrings.cpp:1227
+msgctxt ""
+"Menu item label for the track that represents disabling closed captions."
+msgid "Off"
+msgstr "გამორთული"
+
+#: ../../LocalizedStrings.cpp:1232
+msgctxt "Menu item label for automatic track selection behavior."
+msgid "Auto (Recommended)"
+msgstr "ავტო (რეკომენდებულია)"
+
+#: ../../LocalizedStrings.cpp:1366
+msgid "Show Media Stats"
+msgstr "მედიის სტატისტიკის ჩვენება"
+
+#: ../../LocalizedStrings.cpp:1373
+msgid "Snapshotted Plug-In"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1378
+msgid "Click to restart"
+msgstr "გადასატვირთად დააწკაპუნეთ"
+
+#: ../../LocalizedStrings.cpp:1383
+msgid "Show in blocked plug-in"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1395
+msgid "<application> WebCrypto Master Key"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1401
+msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
+msgstr ""
+
+#: ../../LocalizedStrings.cpp:1410
+msgctxt "Title of the OK button for the number pad in zoomed form controls."
+msgid "OK"
+msgstr "დიახ"
+
+#: ../../LocalizedStrings.cpp:1415
+msgid "Cancel"
+msgstr "_გაუქმება"
+
+#: ../../LocalizedStrings.cpp:1420
+msgid "Hide"
+msgstr "დამალვა"
+
+#: ../../LocalizedStrings.cpp:1425
+msgid "Go"
+msgstr "Go"
+
+#: ../../LocalizedStrings.cpp:1430
+msgid "Search"
+msgstr "ძებნა"
+
+#: ../../LocalizedStrings.cpp:1435
+msgctxt "Set button below date picker"
+msgid "Set"
+msgstr "დაყენება"
+
+#: ../../LocalizedStrings.cpp:1440
+msgctxt "Day label in date picker"
+msgid "DAY"
+msgstr "დღე"
+
+#: ../../LocalizedStrings.cpp:1445
+msgctxt "Month label in date picker"
+msgid "MONTH"
+msgstr "თვე"
+
+#: ../../LocalizedStrings.cpp:1450
+msgctxt "Year label in date picker"
+msgid "YEAR"
+msgstr "წელი"
+
+#: ../../LocalizedStrings.cpp:1458
+msgid "Unacceptable TLS certificate"
+msgstr "მიუღებელი TLS სერთიფიკატი"
+
+#: ../../LocalizedStrings.cpp:1477
+msgid "Continue with Touch ID."
+msgstr "Touch ID-ით გაგრძელება."
+
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:239
+msgid "WebKitGTK password"
+msgstr "WebKitGTK -ის პაროლი"
+
+#: ../../../editing/EditAction.cpp:43
+msgctxt "Undo action name"
+msgid "Set Color"
+msgstr "ფერის დაყენება"
+
+#: ../../../editing/EditAction.cpp:45
+msgctxt "Undo action name"
+msgid "Set Background Color"
+msgstr "ფონის ფერის დაყენება"
+
+#: ../../../editing/EditAction.cpp:47
+msgctxt "Undo action name"
+msgid "Turn Off Kerning"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:49
+msgctxt "Undo action name"
+msgid "Tighten Kerning"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:51
+msgctxt "Undo action name"
+msgid "Loosen Kerning"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:53
+msgctxt "Undo action name"
+msgid "Use Standard Kerning"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:55
+msgctxt "Undo action name"
+msgid "Turn Off Ligatures"
+msgstr "ლიგატურების გამორთვა"
+
+#: ../../../editing/EditAction.cpp:57
+msgctxt "Undo action name"
+msgid "Use Standard Ligatures"
+msgstr "სტანდარტული ლიგატების გამოყენება"
+
+#: ../../../editing/EditAction.cpp:59
+msgctxt "Undo action name"
+msgid "Use All Ligatures"
+msgstr "ყველა ლიგატურის გამოყენება"
+
+#: ../../../editing/EditAction.cpp:61
+msgctxt "Undo action name"
+msgid "Raise Baseline"
+msgstr "საბაზისო ხაზის ამაღლება"
+
+#: ../../../editing/EditAction.cpp:63
+msgctxt "Undo action name"
+msgid "Lower Baseline"
+msgstr "ქვედა საბაზისო"
+
+#: ../../../editing/EditAction.cpp:65
+msgctxt "Undo action name"
+msgid "Set Traditional Character Shape"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:67
+msgctxt "Undo action name"
+msgid "Set Font"
+msgstr "ფონტის დაყენება"
+
+#: ../../../editing/EditAction.cpp:69
+msgctxt "Undo action name"
+msgid "Change Attributes"
+msgstr "ატრიბუტების შეცვლა"
+
+#: ../../../editing/EditAction.cpp:71
+msgctxt "Undo action name"
+msgid "Align Left"
+msgstr "მარცხნივ სწორება"
+
+#: ../../../editing/EditAction.cpp:73
+msgctxt "Undo action name"
+msgid "Align Right"
+msgstr "მარჯვნივ სწორება"
+
+#: ../../../editing/EditAction.cpp:75
+msgctxt "Undo action name"
+msgid "Center"
+msgstr "ცენტრში"
+
+#: ../../../editing/EditAction.cpp:77
+msgctxt "Undo action name"
+msgid "Justify"
+msgstr "გადამრთეველი"
+
+#: ../../../editing/EditAction.cpp:80
+msgctxt "Undo action name"
+msgid "Set Writing Direction"
+msgstr "წერის მიმართულების დაყენება"
+
+#: ../../../editing/EditAction.cpp:82
+msgctxt "Undo action name"
+msgid "Subscript"
+msgstr "ქვედა ხაზზე"
+
+#: ../../../editing/EditAction.cpp:84
+msgctxt "Undo action name"
+msgid "Superscript"
+msgstr "ზედა ხაზზე"
+
+#: ../../../editing/EditAction.cpp:86
+msgctxt "Undo action name"
+msgid "Underline"
+msgstr "ქვედა ტირე"
+
+#: ../../../editing/EditAction.cpp:88
+msgctxt "Undo action name"
+msgid "StrikeThrough"
+msgstr "ხაზგადასმული"
+
+#: ../../../editing/EditAction.cpp:90
+msgctxt "Undo action name"
+msgid "Outline"
+msgstr "კონტური"
+
+#: ../../../editing/EditAction.cpp:92
+msgctxt "Undo action name"
+msgid "Unscript"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:94
+msgctxt "Undo action name"
+msgid "Drag"
+msgstr "გადათრევა"
+
+#: ../../../editing/EditAction.cpp:96
+msgctxt "Undo action name"
+msgid "Cut"
+msgstr "ამოჭრა"
+
+#: ../../../editing/EditAction.cpp:98
+msgctxt "Undo action name"
+msgid "Bold"
+msgstr "გასქელება"
+
+#: ../../../editing/EditAction.cpp:100
+msgctxt "Undo action name"
+msgid "Italics"
+msgstr "დახრილები"
+
+#: ../../../editing/EditAction.cpp:102
+msgctxt "Undo action name"
+msgid "Delete"
+msgstr "წაშლა"
+
+#: ../../../editing/EditAction.cpp:104
+msgctxt "Undo action name"
+msgid "Dictation"
+msgstr "კარნახი"
+
+#: ../../../editing/EditAction.cpp:106
+msgctxt "Undo action name"
+msgid "Paste"
+msgstr "ჩასმა"
+
+#: ../../../editing/EditAction.cpp:108
+msgctxt "Undo action name"
+msgid "Paste Font"
+msgstr "ფონტის ჩასმა"
+
+#: ../../../editing/EditAction.cpp:110
+msgctxt "Undo action name"
+msgid "Paste Ruler"
+msgstr "სახაზავის ჩასმა"
+
+#: ../../../editing/EditAction.cpp:125
+msgctxt "Undo action name"
+msgid "Typing"
+msgstr "აკრეფა"
+
+#: ../../../editing/EditAction.cpp:127
+msgctxt "Undo action name"
+msgid "Create Link"
+msgstr "ბმულის შექმნა"
+
+#: ../../../editing/EditAction.cpp:129
+msgctxt "Undo action name"
+msgid "Unlink"
+msgstr "მოხსნა"
+
+#: ../../../editing/EditAction.cpp:132
+msgctxt "Undo action name"
+msgid "Insert List"
+msgstr "სიის ჩასმა"
+
+#: ../../../editing/EditAction.cpp:134
+msgctxt "Undo action name"
+msgid "Formatting"
+msgstr "ფორმატირება"
+
+#: ../../../editing/EditAction.cpp:136
+msgctxt "Undo action name"
+msgid "Indent"
+msgstr "შეწევა"
+
+#: ../../../editing/EditAction.cpp:138
+msgctxt "Undo action name"
+msgid "Outdent"
+msgstr ""
+
+#: ../../../editing/EditAction.cpp:142
+msgctxt "Undo action name"
+msgid "Convert to Ordered List"
+msgstr "დალაგებულ სიად გარდაქმნა"
+
+#: ../../../editing/EditAction.cpp:144
+msgctxt "Undo action name"
+msgid "Convert to Unordered List"
+msgstr "დაულაგებელ სიად გარდაქმნა"
+
+#: ../../../editing/EditAction.cpp:146
+msgctxt "Undo action name"
+msgid "Remove Background"
+msgstr "ფონის წაშლა"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:680
+msgid "JSC Options"
+msgstr "JSC -ის მორგება"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:680
+msgid "Show JSC Options"
+msgstr "JSC -ის პარამეტრების ჩვენება"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:61
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:139
+msgid "Name"
+msgstr "სახელი"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:62
+msgid "Size"
+msgstr "ზომა"
+
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:63
+msgid "Date Modified"
+msgstr "შეცვლის თარიღი"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:152
+msgid "Context"
+msgstr "კონტექსტი"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:153
+msgid "Flags with the context of the WebKitHitTestResult"
+msgstr "WebKitHitTestResult-ის კონტექსტის ალმები"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:166
+msgid "Link URI"
+msgstr "ბმულის URI"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:167
+msgid "The link URI"
+msgstr "ბმულის URI"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:179
+msgid "Link Title"
+msgstr "ბმულის სათაური"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:180
+msgid "The link title"
+msgstr "ბმულის სათაური"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:192
+msgid "Link Label"
+msgstr "ბმულის ჭდე"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:193
+msgid "The link label"
+msgstr "ბმულის ჭდე"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:205
+msgid "Image URI"
+msgstr "გამოსახულების URI"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:206
+msgid "The image URI"
+msgstr "გამოსახულების URI"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:218
+msgid "Media URI"
+msgstr "მედიის URI"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:219
+msgid "The media URI"
+msgstr "მედიის URI"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:98
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:103
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:111
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1209
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:456
+msgid "URI"
+msgstr "URI"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:99
+msgid "The URI to which the request will be made."
+msgstr ""
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
+msgid "The URI for which the response was made."
+msgstr ""
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:115
+msgid "Status Code"
+msgstr "სტატუსის კოდი"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:116
+msgid "The status code of the response as returned by the server."
+msgstr ""
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:128
+msgid "Content Length"
+msgstr "შემცველობის სიგრძე"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:129
+msgid "The expected content length of the response."
+msgstr ""
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:141
+msgid "MIME Type"
+msgstr "MIME ტიპი"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:142
+msgid "The MIME type of the response"
+msgstr ""
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:154
+msgid "Suggested Filename"
+msgstr "შემოთავაზებული ფაილის სახელი"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:155
+msgid "The suggested filename for the URI response"
+msgstr ""
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:171
+msgid "HTTP Headers"
+msgstr "HTTP თავსართები"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:172
+msgid "The HTTP headers of the response"
+msgstr ""
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:140
+msgid "The user message name"
+msgstr "მომხმარებლის შეტყობინების სახელი"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:158
+msgid "Parameters"
+msgstr "პარამეტრები"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:159
+msgid "The user message parameters"
+msgstr "მომხმარებლის შეტყობინების მორგება"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:176
+msgid "File Descriptor List"
+msgstr "ფაილების დესკრიპტორების სია"
+
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:177
+msgid "The user message list of file descriptors"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:42
+msgid "Not allowed to use restricted network port"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:47
+msgid "The URL was blocked by a content blocker"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:52
+msgid "The URL can’t be shown"
+msgstr "URL-ის ჩვენება შეუძლებელია"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:57
+msgid "The URL was blocked by device restrictions"
+msgstr "URL დაბლოკილია მოწყობილობის შეზღუდვების მიერ"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:62
+msgid "Frame load interrupted"
+msgstr "ჩარჩოს ჩატვირთვა შეწყვეტილია"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:72
+msgid "Error handling synchronous load with custom protocol"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:78
+msgid "The URL was blocked by a content filter"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:84
+msgid "Content with specified MIME type can’t be shown"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:89
+msgid "Plug-in handled load"
+msgstr ""
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:95
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2452
+msgid "Load request cancelled"
+msgstr "ჩატვირთვის მოთხოვნა გაუქმდა"
+
+#: ../../../../WebKit/Shared/WebErrors.cpp:100
+msgid "File does not exist"
+msgstr "ფაილი არ არსებობს"
+
+#: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:38
+msgid "Invalid page range"
+msgstr "გვერდის არასწორი დიაპაზონი"
+
+#: ../../../../WebKit/Shared/soup/WebErrorsSoup.cpp:44
+msgid "User cancelled the download"
+msgstr "გადმოწერა შეწყვეტილია მომხმარებლის მიერ"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:283
+msgid "Identifier"
+msgstr "იდენტიფიკატორი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:284
+msgid "The automation session identifier"
+msgstr "ავტომატიზაციის სესიის იდენტიფიკატორი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:167
+msgid "Destination"
+msgstr "დანიშნულება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:168
+msgid "The local URI to where the download will be saved"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:180
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:124
+msgid "Response"
+msgstr "პასუხი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:181
+msgid "The response of the download"
+msgstr "გადმოწერის პასუხი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:198
+msgid "Estimated Progress"
+msgstr "დაახლოებითი მიმდინარეობა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:199
+msgid "Determines the current progress of the download"
+msgstr "გადმოწერის მიმდინარე სტატუსის განსაზღვრა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:215
+msgid "Allow Overwrite"
+msgstr "გადაწერის უფლების მიცემა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:216
+msgid "Whether the destination may be overwritten"
+msgstr "შეიძლება თუ არა სამიზნის გადაწერა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:93
+msgid "Typing Attributes"
+msgstr "აკრეფის ატრიბუტები"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:94
+msgid "Flags with the typing attributes"
+msgstr "ალმები აკრეფის ატრიბუტებით"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:175
+msgid "Favicons database not initialized yet"
+msgstr "ხატულების (favicon) ბაზის ინიციალიზაცია ჯერ არ მომხდარა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:181
+#, c-format
+msgid "Page %s does not have a favicon"
+msgstr "გვერდს %s ხატულა არ გააჩნია (favicon)"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:191
+#, c-format
+msgid "Unknown favicon for page %s"
+msgstr "უცნობი ხატულა გვერდისთვის %s"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:139
+msgid "MIME types filter"
+msgstr "MIME ტიპების ფილტრი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:140
+msgid "The filter currently associated with the request"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:155
+msgid "MIME types"
+msgstr "MIME ტიპები"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:156
+msgid "The list of MIME types associated with the request"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:170
+msgid "Select multiple files"
+msgstr "აირჩიეთ ბევრი ფაილი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:171
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:184
+msgid "Selected files"
+msgstr "მონიშნული ფაილები"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:185
+msgid "The list of selected files associated with the request"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:199
+msgid "Search text"
+msgstr "მოძებნე ტექსტი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:200
+msgid "Text to search for in the view"
+msgstr "ხედში მოსაძებნი ტექსტი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:212
+msgid "Search Options"
+msgstr "ძებნის მორგება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:213
+msgid "Search options to be used in the search operation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:226
+msgid "Maximum matches count"
+msgstr "დამთხვევების მაქსიმალური რაოდენობა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:227
+msgid "The maximum number of matches in a given text to report"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:239
+msgid "WebView"
+msgstr "WebView"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:240
+msgid "The WebView associated with this find controller"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp:365
+msgid "Enable high accuracy"
+msgstr "მაღალი სიზუსტის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp:366
+msgid "Whether high accuracy is enabled"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:118
+msgid "Navigation action"
+msgstr "ნავიგაციის ქმედება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:119
+msgid "The WebKitNavigationAction triggering this decision"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:136
+msgid "Navigation type"
+msgstr "ნავიგაციის ტიპი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:137
+msgid "The type of navigation triggering this decision"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:156
+msgid "Mouse button"
+msgstr "თაგუნას ღილაკი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:157
+msgid "The mouse button used if this decision was triggered by a mouse event"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:175
+msgid "Mouse event modifiers"
+msgstr "თაგუნას მოვლენის მოდიფიკაორები"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:176
+msgid "The modifiers active if this decision was triggered by a mouse event"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:191
+msgid "Navigation URI request"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:192
+msgid "The URI request that is associated with this navigation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:208
+msgid "Frame name"
+msgstr "ჩარჩოს სახელი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:209
+msgid "The name of the new frame this navigation action targets"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:102
+msgid "ID"
+msgstr "აიდი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:103
+msgid "The unique id for the notification"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:117
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1161
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
+msgid "Title"
+msgstr "სათაური"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
+msgid "The title for the notification"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:132
+msgid "Body"
+msgstr "სხეული"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:133
+msgid "The body for the notification"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:147
+msgid "Tag"
+msgstr "ჭდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:148
+msgid "The tag identifier for the notification"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:92
+msgid "Response URI request"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:93
+msgid "The URI request that is associated with this policy decision"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:106
+msgid "URI response"
+msgstr "URI პასუხი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:107
+msgid "The URI response that is associated with this policy decision"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:627
+msgid "Enable JavaScript"
+msgstr "JavaScript-ის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:628
+msgid "Enable JavaScript."
+msgstr "JavaScript-ის ჩართვა."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:642
+msgid "Auto load images"
+msgstr "გამოსახულებების ავტომატური ჩატვირთვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:643
+msgid "Load images automatically."
+msgstr "გამოსახულებების ავტომატური ჩატვირთვა."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:656
+msgid "Load icons ignoring image load setting"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:657
+msgid "Whether to load site icons ignoring image load setting."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:674
+msgid "Enable offline web application cache"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:675
+msgid "Whether to enable offline web application cache."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:691
+msgid "Enable HTML5 local storage"
+msgstr "HTML5 ლოკალური საცავის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:692
+msgid "Whether to enable HTML5 Local Storage support."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:704
+msgid "Enable HTML5 database"
+msgstr "HTML5 ბაზის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:705
+msgid "Whether to enable HTML5 database support."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:720
+msgid "Enable XSS auditor"
+msgstr "XSS აუდიტორის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:721
+msgid "Whether to enable the XSS auditor."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:735
+msgid "Enable frame flattening"
+msgstr "კონფიდენციალური რეჟიმის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:736
+msgid "Whether to enable frame flattening."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:750
+msgid "Enable plugins"
+msgstr "დამატებების ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:751
+msgid "Enable embedded plugin objects."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:765
+msgid "Enable Java"
+msgstr "Java-ს ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:766
+msgid "Whether Java support should be enabled."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:779
+msgid "JavaScript can open windows automatically"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:780
+msgid "Whether JavaScript can open windows automatically."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:795
+msgid "Enable hyperlink auditing"
+msgstr "ჰიპერბმულის აუდიტის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:796
+msgid "Whether <a ping> should be able to send pings."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:808
+msgid "Default font family"
+msgstr "ფონტის ნაგულისხმები ოჯახი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:809
+msgid ""
+"The font family to use as the default for content that does not specify a "
+"font."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:822
+msgid "Monospace font family"
+msgstr "ერთსიგანიანი ფონტების ოჯახი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:823
+msgid "The font family used as the default for content using monospace font."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:835
+msgid "Serif font family"
+msgstr "Serif ფონტის ოჯახი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:836
+msgid "The font family used as the default for content using serif font."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:848
+msgid "Sans-serif font family"
+msgstr "Sans-serif ფონტის ოჯახი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:849
+msgid "The font family used as the default for content using sans-serif font."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:861
+msgid "Cursive font family"
+msgstr "კურსივი ფონტის ოჯახი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:862
+msgid "The font family used as the default for content using cursive font."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:874
+msgid "Fantasy font family"
+msgstr "Fantasy ფონტის ოჯახი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:875
+msgid "The font family used as the default for content using fantasy font."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:887
+msgid "Pictograph font family"
+msgstr "Pictograph ფონტის ოჯახი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:888
+msgid "The font family used as the default for content using pictograph font."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:901
+msgid "Default font size"
+msgstr "ფონტის ნაგულისხმები ზომა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:902
+msgid "The default font size used to display text."
+msgstr "ტექსტის საჩვენებლად გამოყენებული ფონტის ნაგულისხმები ზომა."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:915
+msgid "Default monospace font size"
+msgstr "ერთსიგანიანი ფონტის ნაგულისხმები ზომა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:916
+msgid "The default font size used to display monospace text."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:930
+msgid "Minimum font size"
+msgstr "ფონტის მინიმალური ზომა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:931
+msgid "The minimum font size used to display text."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:943
+msgid "Default charset"
+msgstr "ნაგულისხმები კოდირება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:944
+msgid ""
+"The default text charset used when interpreting content with unspecified "
+"charset."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:960
+msgid "Enable private browsing"
+msgstr "ანონიმური ბრაუზერის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:961
+msgid "Whether to enable private browsing"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:974
+msgid "Enable developer extras"
+msgstr "დეველოპერის დამატებების ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:975
+msgid "Whether to enable developer extras"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:987
+msgid "Enable resizable text areas"
+msgstr "ტექსტის ასაკრეფი ადგილების ზომის შეცვლის დაშვება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:988
+msgid "Whether to enable resizable text areas"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1003
+msgid "Enable tabs to links"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1004
+msgid "Whether to enable tabs to links"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1017
+msgid "Enable DNS prefetching"
+msgstr "DNS-ის წინასწარი გამოთხოვის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1018
+msgid "Whether to enable DNS prefetching"
+msgstr "ჩართულია თუ არა DNS-ის წინასწარი გამოთხოვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1030
+msgid "Enable Caret Browsing"
+msgstr "კარეტის ნავიგაციის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1031
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1046
+msgid "Enable Fullscreen"
+msgstr "სრული ეკრანის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1047
+msgid "Whether to enable the Javascript Fullscreen API"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1059
+msgid "Print Backgrounds"
+msgstr "ფონური გამოსახულებების დაბეჭდვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1060
+msgid "Whether background images should be drawn during printing"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1076
+msgid "Enable WebAudio"
+msgstr "WebAudio-ის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1077
+msgid "Whether WebAudio content should be handled"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1090
+msgid "Enable WebGL"
+msgstr "WebGL-ის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1091
+msgid "Whether WebGL content should be rendered"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1108
+msgid "Allow modal dialogs"
+msgstr "მოდალური ფანჯრების დაშვება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1109
+msgid "Whether it is possible to create modal dialogs"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1124
+msgid "Zoom Text Only"
+msgstr "მხოლოდ ტექსტის გადიდება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1125
+msgid "Whether zoom level of web view changes only the text size"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1139
+msgid "JavaScript can access clipboard"
+msgstr "JavaScript -ს აქვს ბუფერზე წვდომა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1140
+msgid "Whether JavaScript can access Clipboard"
+msgstr "JavaScript -ს აქვს ბუფერზე წვდომა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1156
+msgid "Media playback requires user gesture"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1157
+msgid "Whether media playback requires user gesture"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1171
+msgid "Media playback allows inline"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1172
+msgid "Whether media playback allows inline"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1186
+msgid "Draw compositing indicators"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1187
+msgid "Whether to draw compositing borders and repaint counters"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1204
+msgid "Enable Site Specific Quirks"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1205
+msgid "Enables the site-specific compatibility workarounds"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1225
+msgid "Enable page cache"
+msgstr "გვერდის ქეშის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1226
+msgid "Whether the page cache should be used"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1245
+msgid "User agent string"
+msgstr "მომხმარებლის აგენტის სტრიქონი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1246
+msgid "The user agent string"
+msgstr "მომხმარებლის აგენტის სტრიქონი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1258
+msgid "Enable smooth scrolling"
+msgstr "დარბილებული ჩაწევა/ამოწევის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1259
+msgid "Whether to enable smooth scrolling"
+msgstr "ჩართულია თუ არა რბილი ჩაწევა/ამოწევა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1278
+msgid "Enable accelerated 2D canvas"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1279
+msgid "Whether to enable accelerated 2D canvas"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1294
+msgid "Write console messages on stdout"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1295
+msgid "Whether to write console messages on stdout"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1313
+msgid "Enable MediaStream"
+msgstr "MediaStream-ის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1314
+msgid "Whether MediaStream content should be handled"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1329
+msgid "Enable mock capture devices"
+msgstr "იმიტირებული ჩამწერი მოწყობილოების ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1330
+msgid "Whether we expose mock capture devices or not"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1349
+msgid "Enable Spatial Navigation"
+msgstr "სივრცითი ნავიგაციის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1350
+msgid "Whether to enable Spatial Navigation support."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1368
+msgid "Enable MediaSource"
+msgstr "MediaSource-ის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1369
+msgid "Whether MediaSource should be enabled."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1388
+msgid "Enable EncryptedMedia"
+msgstr "EncryptedMedia-ის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1389
+msgid "Whether EncryptedMedia should be enabled."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1410
+msgid "Enable MediaCapabilities"
+msgstr "MediaCapabilities-ის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1411
+msgid "Whether MediaCapabilities should be enabled."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1429
+msgid "Allow file access from file URLs"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1430
+msgid "Whether file access is allowed from file URLs."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1449
+msgid "Allow universal access from the context of file scheme URLs"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1450
+msgid ""
+"Whether or not universal access is allowed from the context of file scheme "
+"URLs"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1467
+msgid "Allow top frame navigation to data URLs"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1468
+msgid "Whether or not top frame navigation is allowed to data URLs"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1493
+msgid "Hardware Acceleration Policy"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1494
+msgid "The policy to decide how to enable and disable hardware acceleration"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1509
+msgid "Enable back-forward navigation gestures"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1510
+msgid "Whether horizontal swipe gesture will trigger back-forward navigation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1527
+msgid "Enable JavaScript Markup"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1528
+msgid "Enable JavaScript in document markup."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1544
+msgid "Enable media"
+msgstr "მედიის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1545
+msgid "Whether media content should be handled"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1560
+msgid "Media content types requiring hardware support"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1561
+msgid "List of media content types requiring hardware support."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1579
+msgid "Enable WebRTC"
+msgstr "WebRTC-ის ჩართვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1580
+msgid "Whether WebRTC content should be handled"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp:149
+msgid "Storage directory path"
+msgstr "საცავის საქაღალდის ბილიკი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp:150
+msgid "The directory where user content filters are stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:189
+msgid "Is for audio device"
+msgstr "აუდიომოწყობილობისთვისაა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:190
+msgid ""
+"Whether the media device to which the permission was requested has a "
+"microphone or not."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:202
+msgid "Is for video device"
+msgstr "ვიდეომოწყობილობისთვისაა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:203
+msgid ""
+"Whether the media device to which the permission was requested has a video "
+"capture capability or not."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:514
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:300
+msgid "Local Storage Directory"
+msgstr "ლოკალური საცავის საქაღლდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:515
+msgid "The directory where local storage data will be saved"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:530
+msgid "Website Data Manager"
+msgstr "ვებხედის მონაცემების მმართველი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:531
+msgid "The WebKitWebsiteDataManager associated with this context"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:552
+msgid "Swap Processes on Cross-Site Navigation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:553
+msgid "Whether swap Web processes on cross-site navigations is enabled"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:572
+msgid "Use system appearance for scrollbars"
+msgstr "ჩოჩიებისთვის სისტემის გარეგნობის გამოყენება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:573
+msgid "Whether to use system appearance for rendering scrollbars"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:589
+msgid "Memory Pressure Settings"
+msgstr "მეხსიერებაზე დაწოლის მორგება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:590
+msgid ""
+"The WebKitMemoryPressureSettings applied to the web processes created by "
+"this context"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:611
+msgid "Time Zone Override"
+msgstr "დროის სარტყლის გადაფარვა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:612
+msgid "The time zone to use instead of the system one"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
+msgid "The current active URI of the resource"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:125
+msgid "The response of the resource"
+msgstr "რესურსის პასუხი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:353
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4921
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:907
+msgid "Operation was cancelled"
+msgstr "ოპერაცია გაუქმდა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:199
+msgid "Local files"
+msgstr "ლოკალური ფაილები"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:264
+msgid "Base Data Directory"
+msgstr "საბაზისო მონაცემების საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:265
+msgid "The base directory for website data"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:281
+msgid "Base Cache Directory"
+msgstr "საბაზისო საქაღალდე ქეშისთვის"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:282
+msgid "The base directory for caches"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:301
+msgid "The directory where local storage data will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:319
+msgid "Disk Cache Directory"
+msgstr "დისკის ქეშის საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:320
+msgid "The directory where HTTP disk cache will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:338
+msgid "Offline Web Application Cache Directory"
+msgstr "ოფლაინ ვებ აპლიკაციის ქეშის საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:339
+msgid "The directory where offline web application cache will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:357
+msgid "IndexedDB Directory"
+msgstr "IndexedDB -ის საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:358
+msgid "The directory where IndexedDB databases will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:376
+msgid "WebSQL Directory"
+msgstr "WebSQL -ის საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:377
+msgid "The directory where WebSQL databases will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:395
+msgid "HSTS Cache Directory"
+msgstr "HSTS -ის ქეშის საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:396
+msgid ""
+"The directory where the HTTP Strict-Transport-Security cache will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:414
+msgid "ITP Directory"
+msgstr "ITP -ის საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:415
+msgid "The directory where Intelligent Tracking Prevention data will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:433
+msgid "Service Worker Registrations Directory"
+msgstr "სერვისული დამხმარე პროცესის რეგისტრაციის საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:434
+msgid "The directory where service workers registrations will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:452
+msgid "DOM Cache directory"
+msgstr "DOM -ის ქეშის საქაღალდე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:453
+msgid "The directory where DOM cache will be stored"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:473
+msgid "Whether the WebKitWebsiteDataManager is ephemeral"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1087
+msgid "Backend"
+msgstr "უკანბოლო"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1088
+msgid "The backend for the web view"
+msgstr "უკანაბოლო ვებხედისთვის"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1101
+msgid "Web Context"
+msgstr "ვების კონტექსტი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1102
+msgid "The web context for the view"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1117
+msgid "Related WebView"
+msgstr "შესაბამისი ვებხედი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1118
+msgid ""
+"The related WebKitWebView used when creating the view to share the same web "
+"process"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1132
+msgid "WebView settings"
+msgstr "WebView -ის მორგება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1133
+msgid "The WebKitSettings of the view"
+msgstr "ხედის WebKitSetting-ები"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1147
+msgid "WebView user content manager"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1148
+msgid "The WebKitUserContentManager of the view"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1162
+msgid "Main frame document title"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1180
+msgid "Estimated Load Progress"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1181
+msgid "An estimate of the percent completion for a document load"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1195
+msgid "Favicon"
+msgstr "საიტის ხატულა"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1196
+msgid "The favicon associated to the view, if any"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1210
+msgid "The current active URI of the view"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1223
+msgid "Zoom level"
+msgstr "გადიდების დონე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1224
+msgid "The zoom level of the view content"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1241
+msgid "Is Loading"
+msgstr "იტვირთება"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1242
+msgid "Whether the view is loading a page"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1260
+msgid "Whether the view is playing audio"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1286
+msgid "Whether the web view is ephemeral"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1303
+msgid "Whether the web view is controlled by automation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1321
+msgid "The browsing context presentation type for automation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1337
+msgid "Editable"
+msgstr "ჩასწორებადი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1338
+msgid "Whether the content can be modified by the user."
+msgstr "მომხმარებელს შემცველობის შეცვლა შეუძლია, თუ არა."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1352
+msgid "Page Identifier"
+msgstr "გვერდის იდენტიფიკატორი"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1353
+msgid "The page identifier."
+msgstr "გვერდის იდენტიფიკატორი."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1369
+msgid "Whether the view audio is muted"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1383
+msgid "Default Website Policies"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1384
+msgid "The default policy object for sites loaded in this view"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1399
+msgid ""
+"Whether the web process currently associated to the web view is responsive"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1423
+msgid "The capture state of the camera device"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1448
+msgid "The capture state of the microphone device"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1473
+msgid "The capture state of the display device"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1494
+msgid "Enables WebExtension mode"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1518
+msgid "The default Content-Security-Policy"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4628
+msgid "There was an error creating the snapshot"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4927
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:293
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:913
+#, c-format
+msgid "Message %s was not handled"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:218
+msgid "Geometry"
+msgstr "გეომეტრია"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:219
+msgid "The size and position of the window on the screen."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:232
+msgid "Toolbar Visible"
+msgstr "ხელსაწყოთა პანელი ხილულია"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:233
+msgid "Whether the toolbar should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:245
+msgid "Statusbar Visible"
+msgstr "სტატუსის ზოლი ხილულია"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:246
+msgid "Whether the statusbar should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:258
+msgid "Scrollbars Visible"
+msgstr "ჩოჩიები ხილულია"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:259
+msgid "Whether the scrollbars should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:271
+msgid "Menubar Visible"
+msgstr "მენიუს ზოლი ხილულია"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:272
+msgid "Whether the menubar should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:284
+msgid "Locationbar Visible"
+msgstr "მდებარეობის ზოლი ხილულია"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:285
+msgid "Whether the locationbar should be visible for the window."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:296
+msgid "Resizable"
+msgstr "შეცვლადი ზომით"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:297
+msgid "Whether the window can be resized."
+msgstr "შესაძლებელია თუ არა ფანჯრის ზომის შეცვლა."
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:309
+msgid "Fullscreen"
+msgstr "მთელ ეკრანზე"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:310
+msgid "Whether window will be displayed fullscreen."
+msgstr "იქნება თუ არა ფანჯარა მთელ ეკრანზე."
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:103
+msgid "Authentication Required"
+msgstr "საჭროა ავთენტიკაცია"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:129
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:322
+msgid "_Cancel"
+msgstr "_გაუქმება"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:139
+msgid "_Authenticate"
+msgstr "_ავთენტიკაცია"
+
+#. Prompt on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:156
+#, c-format
+msgid "Authentication required by %s:%i"
+msgstr "%s-ის მიერ ავტორიზაცია მოთხოვნილია: %i"
+
+#. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:169
+#, c-format
+msgid "The site says: “%s”"
+msgstr "საიტი ამბობს: \"%s\""
+
+#. Check button on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:180
+msgid "_Remember password"
+msgstr "პაროლის დამახსოვრება"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:193
+msgid "_Username"
+msgstr "_მომხმარებელი"
+
+#. Entry on the HTTP authentication dialog.
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:205
+msgid "_Password"
+msgstr "პაროლი"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:133
+msgid "Current RGBA color"
+msgstr "მიმდინარე RGBA ფერი"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:134
+msgid "The current RGBA color for the request"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:118
+msgid "Widget"
+msgstr "ვიჯეტი"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:119
+msgid "Widget that will be added to the print dialog."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:136
+msgid "Title of the widget that will be added to the print dialog."
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:167
+msgid "Web View"
+msgstr "WebView"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:168
+msgid "The web view that will be printed"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:180
+msgid "Print Settings"
+msgstr "ბეჭდვის მორგება"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:181
+msgid "The initial print settings for the print operation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:192
+msgid "Page Setup"
+msgstr "გვერდის მორგება"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:193
+msgid "The initial page setup for the print operation"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:343
+msgid "Printer not found"
+msgstr "პრინტერი ვერ მოიძებნა"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:300
+msgid "_Close"
+msgstr "_დახურვა"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:324
+msgid "_OK"
+msgstr "_დიახ"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:331
+msgid "Are you sure you want to leave this page?"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:333
+msgid "Stay on Page"
+msgstr "გვერდზე დარჩენა"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:335
+msgid "Leave Page"
+msgstr "გვერდიდან გასვლა"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:129
+msgid "Inspected URI"
+msgstr "შემოწმებული URI"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:130
+msgid "The URI that is currently being inspected"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:141
+msgid "Attached Height"
+msgstr "მიმაგრებული სიმაღლე"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:142
+msgid "The height that the inspector view should have when it is attached"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:157
+msgid "Can Attach"
+msgstr "შეიძლება მიმაგრება"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+msgid ""
+"Whether the inspector can be attached to the same window that contains the "
+"inspected view"
+msgstr ""
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2381
+msgid "Website running in fullscreen mode"
+msgstr "ვებგვერდი სრულეკრანიან რეჟიმშია გაშვებული"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
+msgid "Select Files"
+msgstr "მონიშნეთ ფაილები"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
+msgid "Select File"
+msgstr "აირჩიეთ ფაილი"
+
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:63
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:81
+msgid "Web Inspector"
+msgstr "ვების ინსპექტორი"
+
+#. TRANSLATORS: the default action for a desktop notification created by a website.
+#: ../../../../WebKit/UIProcess/Notifications/glib/NotificationService.cpp:386
+msgid "Acknowledge"
+msgstr "დადასტურება"
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:73
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:140
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:166
+msgid "Failed to connect to geolocation service"
+msgstr "გეოლოკაციის სერვისთან მიერთების შეცდომა"
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:215
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:273
+msgid "Failed to determine position from geolocation service"
+msgstr "გეოლოკაცის სერვისიდან მდებარეობის მიღების შეცდომა"
+
+#: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
+msgid "Select Color"
+msgstr "ფერი"
+
+#: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
+msgid "Local documents on your computer"
+msgstr "ლოკალური დოკუმენტები თქვენს კომპიუტერში"
+
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:103
+msgid "Node"
+msgstr "კვანძი"
+
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:104
+msgid "The WebKitDOMNode"
+msgstr "WebKitDOMNode"
+
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:457
+msgid "The current active URI of the web page"
+msgstr "ვებგვერდის მიმდინარე აქტიური URI"
