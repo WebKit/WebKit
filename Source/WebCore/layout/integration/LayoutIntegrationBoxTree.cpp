@@ -91,7 +91,7 @@ static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlock& roo
 
 BoxTree::BoxTree(RenderBlock& rootRenderer)
     : m_rootRenderer(rootRenderer)
-    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, rootBoxStyle(rootRenderer), rootBoxFirstLineStyle(rootRenderer))
+    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, rootBoxStyle(rootRenderer), rootBoxFirstLineStyle(rootRenderer))
 {
     if (rootRenderer.isAnonymous())
         m_root.setIsAnonymous();
@@ -154,14 +154,22 @@ void BoxTree::buildTreeForInlineContent()
                 , WTFMove(firstLineStyle));
         }
 
-        if (is<RenderReplaced>(childRenderer))
-            return makeUnique<Layout::ReplacedBox>(Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement }, WTFMove(style), WTFMove(firstLineStyle));
+        if (is<RenderReplaced>(childRenderer)) {
+            auto attributes = Layout::Box::ElementAttributes { is<RenderImage>(childRenderer) ? Layout::Box::ElementType::Image : Layout::Box::ElementType::GenericElement };
+            return makeUnique<Layout::ReplacedBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
+        }
 
         if (is<RenderBlock>(childRenderer)) {
-            auto attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationInlineBlock };
-            if (is<RenderTable>(childRenderer) || is<RenderDetailsMarker>(childRenderer) || is<RenderListItem>(childRenderer))
-                attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement };
-            return makeUnique<Layout::ReplacedBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
+            auto adjustStyle = [&] (auto& styleToAdjust) {
+                if (styleToAdjust.display() == DisplayType::Inline)
+                    styleToAdjust.setDisplay(DisplayType::InlineBlock);
+            };
+            adjustStyle(style);
+            if (firstLineStyle)
+                adjustStyle(*firstLineStyle);
+
+            auto attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement };
+            return makeUnique<Layout::ContainerBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderInline>(childRenderer)) {
@@ -202,14 +210,14 @@ void BoxTree::buildTreeForFlexContent()
 {
     for (auto& flexItemRenderer : childrenOfType<RenderObject>(m_rootRenderer)) {
         auto style = RenderStyle::clone(flexItemRenderer.style());
-        auto flexItem = makeUnique<Layout::ContainerBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::IntegrationBlockContainer }, WTFMove(style));
+        auto flexItem = makeUnique<Layout::ContainerBox>(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, WTFMove(style));
         appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(flexItem)), flexItemRenderer);
     }
 }
 
 void BoxTree::appendChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer)
 {
-    auto& parentBox = downcast<Layout::ContainerBox>(layoutBoxForRenderer(*childRenderer.parent()));
+    auto& parentBox = layoutBoxForRenderer(*childRenderer.parent());
 
     m_boxes.append({ childBox.get(), &childRenderer });
 
@@ -243,11 +251,9 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     else
         layoutBox.updateStyle(style, firstLineStyle());
 
-    if (is<Layout::ContainerBox>(layoutBox)) {
-        for (auto* child = downcast<Layout::ContainerBox>(layoutBox).firstChild(); child; child = child->nextSibling()) {
-            if (child->isInlineTextBox())
-                child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Inline), firstLineStyle());
-        }
+    for (auto* child = layoutBox.firstChild(); child; child = child->nextSibling()) {
+        if (child->isInlineTextBox())
+            child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Inline), firstLineStyle());
     }
 }
 
@@ -272,12 +278,12 @@ const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) c
     return const_cast<BoxTree&>(*this).layoutBoxForRenderer(renderer);
 }
 
-const Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderInline& renderer) const
+const Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer) const
 {
     return downcast<Layout::ContainerBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
 }
 
-Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderInline& renderer)
+Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer)
 {
     return downcast<Layout::ContainerBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
 }

@@ -25,14 +25,14 @@
 
 #pragma once
 
-#include "LayoutBox.h"
+#include "LayoutContainerBox.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
 
 namespace Layout {
 
-class LineBreakBox : public Box {
+class LineBreakBox : public ContainerBox {
     WTF_MAKE_ISO_ALLOCATED(LineBreakBox);
 public:
     LineBreakBox(bool isOptional, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);

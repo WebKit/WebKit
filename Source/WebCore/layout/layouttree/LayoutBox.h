@@ -50,8 +50,6 @@ public:
         TableBox, // The table box is a block-level box that contains the table's internal table boxes.
         Image,
         IFrame,
-        IntegrationBlockContainer,
-        IntegrationInlineBlock, // Integration sets up inline-block boxes as replaced boxes.
         GenericElement
     };
 
@@ -136,9 +134,7 @@ public:
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
     bool isInternalRubyBox() const { return false; }
-    bool isIntegrationBlockContainer() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IntegrationBlockContainer; }
-    bool isIntegrationRoot() const { return isIntegrationBlockContainer() && !m_parent; }
-    bool isIntegrationInlineBlock() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IntegrationInlineBlock; }
+    bool isIntegrationRoot() const { return !m_parent && !isInitialContainingBlock(); }
 
     const ContainerBox& parent() const { return *m_parent; }
     const Box* nextSibling() const { return m_nextSibling.get(); }
