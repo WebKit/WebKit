@@ -41,19 +41,6 @@ LayerTreeContext::~LayerTreeContext()
 {
 }
 
-void LayerTreeContext::encode(IPC::Encoder& encoder) const
-{
-    encoder << contextID;
-}
-
-bool LayerTreeContext::decode(IPC::Decoder& decoder, LayerTreeContext& result)
-{
-    if (!decoder.decode(result.contextID))
-        return false;
-
-    return true;
-}
-
 bool LayerTreeContext::isEmpty() const
 {
     return !contextID;

@@ -28,11 +28,6 @@
 #include <stdint.h>
 #include <wtf/Forward.h>
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 namespace WebKit {
 
 enum class LayerHostingMode : uint8_t {
@@ -45,10 +40,8 @@ enum class LayerHostingMode : uint8_t {
 class LayerTreeContext {
 public:
     LayerTreeContext();
+    LayerTreeContext(uint64_t id) : contextID(id) { };
     ~LayerTreeContext();
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, LayerTreeContext&);
 
     bool isEmpty() const;
 
