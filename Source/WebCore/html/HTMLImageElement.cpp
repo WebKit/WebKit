@@ -768,6 +768,11 @@ bool HTMLImageElement::allowsOrientationOverride() const
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+void HTMLImageElement::didUpdateAttachmentIdentifier()
+{
+    m_pendingClonedAttachmentID = { };
+}
+
 void HTMLImageElement::setAttachmentElement(Ref<HTMLAttachmentElement>&& attachment)
 {
     if (auto existingAttachment = attachmentElement())

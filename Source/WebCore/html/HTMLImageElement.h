@@ -111,6 +111,7 @@ public:
     void setAttachmentElement(Ref<HTMLAttachmentElement>&&);
     RefPtr<HTMLAttachmentElement> attachmentElement() const;
     const String& attachmentIdentifier() const;
+    void didUpdateAttachmentIdentifier();
 #endif
 
     WEBCORE_EXPORT size_t pendingDecodePromisesCountForTesting() const;
