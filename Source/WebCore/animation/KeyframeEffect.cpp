@@ -28,7 +28,6 @@
 
 #include "Animation.h"
 #include "CSSAnimation.h"
-#include "CSSComputedStyleDeclaration.h"
 #include "CSSKeyframeRule.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
@@ -37,6 +36,7 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransition.h"
+#include "ComputedStyleExtractor.h"
 #include "Element.h"
 #include "FontCascade.h"
 #include "FrameView.h"

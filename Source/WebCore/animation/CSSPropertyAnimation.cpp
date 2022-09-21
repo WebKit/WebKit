@@ -31,7 +31,6 @@
 #include "CSSPropertyAnimation.h"
 
 #include "AnimationUtilities.h"
-#include "CSSComputedStyleDeclaration.h"
 #include "CSSCrossfadeValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSImageGeneratorValue.h"
@@ -42,6 +41,7 @@
 #include "CachedImage.h"
 #include "CalculationValue.h"
 #include "ColorBlending.h"
+#include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CounterDirectives.h"
 #include "FloatConversion.h"
@@ -386,7 +386,7 @@ static inline RefPtr<StyleImage> blendFilter(CachedImage* image, const FilterOpe
     FilterOperations filterResult = blendFilterOperations(from, to, context);
 
     auto imageValue = CSSImageValue::create(*image);
-    auto filterValue = ComputedStyleExtractor::valueForFilter(context.client->currentStyle(), filterResult, DoNotAdjustPixelValues);
+    auto filterValue = ComputedStyleExtractor::valueForFilter(context.client->currentStyle(), filterResult, ComputedStyleExtractor::AdjustPixelValuesForComputedStyle::No);
 
     auto result = CSSFilterImageValue::create(WTFMove(imageValue), WTFMove(filterValue));
     result.get().setFilterOperations(filterResult);

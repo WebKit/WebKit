@@ -73,7 +73,7 @@ static RefPtr<CSSStyleValue> extractComputedProperty(const AtomString& name, Ele
     if (!propertyID)
         return nullptr;
 
-    auto value = extractor.propertyValue(propertyID, DoNotUpdateLayout);
+    auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
     return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
 }
 
@@ -97,7 +97,7 @@ public:
         if (!propertyID)
             return nullptr;
 
-        auto value = extractor.propertyValue(propertyID, DoNotUpdateLayout);
+        auto value = extractor.propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No);
         return StylePropertyMapReadOnly::reifyValue(value.get(), element.document(), &element);
     }
 

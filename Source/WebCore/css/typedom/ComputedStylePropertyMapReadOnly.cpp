@@ -60,11 +60,11 @@ ExceptionOr<RefPtr<CSSStyleValue>> ComputedStylePropertyMapReadOnly::get(const A
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthandCSSProperty(propertyID)) {
-        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, EUpdateLayout::UpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed);
+        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::Yes, ComputedStyleExtractor::PropertyValueType::Computed);
         return CSSStyleValue::create(WTFMove(value), String(property)).ptr();
     }
 
-    return StylePropertyMapReadOnly::reifyValue(ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, EUpdateLayout::UpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed).get(), m_element->document(), m_element.ptr());
+    return StylePropertyMapReadOnly::reifyValue(ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::Yes, ComputedStyleExtractor::PropertyValueType::Computed).get(), m_element->document(), m_element.ptr());
 }
 
 ExceptionOr<Vector<RefPtr<CSSStyleValue>>> ComputedStylePropertyMapReadOnly::getAll(const AtomString& property) const
@@ -78,11 +78,11 @@ ExceptionOr<Vector<RefPtr<CSSStyleValue>>> ComputedStylePropertyMapReadOnly::get
         return Exception { TypeError, makeString("Invalid property ", property) };
 
     if (isShorthandCSSProperty(propertyID)) {
-        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, EUpdateLayout::UpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed);
+        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::Yes, ComputedStyleExtractor::PropertyValueType::Computed);
         return Vector<RefPtr<CSSStyleValue>> { CSSStyleValue::create(WTFMove(value), String(property)) };
     }
 
-    return StylePropertyMapReadOnly::reifyValueToVector(ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, EUpdateLayout::UpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed).get(), m_element->document(), m_element.ptr());
+    return StylePropertyMapReadOnly::reifyValueToVector(ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::Yes, ComputedStyleExtractor::PropertyValueType::Computed).get(), m_element->document(), m_element.ptr());
 }
 
 ExceptionOr<bool> ComputedStylePropertyMapReadOnly::has(const AtomString& property) const
@@ -119,7 +119,7 @@ Vector<StylePropertyMapReadOnly::StylePropertyMapEntry> ComputedStylePropertyMap
     values.reserveInitialCapacity(exposedComputedCSSPropertyIDs.size() + inheritedCustomProperties.size() + nonInheritedCustomProperties.size());
     for (auto propertyID : exposedComputedCSSPropertyIDs) {
         auto key = getPropertyNameString(propertyID);
-        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, EUpdateLayout::DoNotUpdateLayout, ComputedStyleExtractor::PropertyValueType::Computed);
+        auto value = ComputedStyleExtractor(m_element.ptr()).propertyValue(propertyID, ComputedStyleExtractor::UpdateLayout::No, ComputedStyleExtractor::PropertyValueType::Computed);
         values.uncheckedAppend(makeKeyValuePair(WTFMove(key), StylePropertyMapReadOnly::reifyValueToVector(value.get(), m_element->document(), m_element.ptr())));
     }
 

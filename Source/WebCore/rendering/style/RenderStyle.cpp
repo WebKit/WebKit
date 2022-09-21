@@ -23,11 +23,11 @@
 #include "config.h"
 #include "RenderStyle.h"
 
-#include "CSSComputedStyleDeclaration.h"
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParser.h"
+#include "ComputedStyleExtractor.h"
 #include "ContentData.h"
 #include "CursorList.h"
 #include "FloatRoundedRect.h"
