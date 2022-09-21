@@ -240,6 +240,58 @@ for my $i (0..scalar(@dsymNoObjectFileLines) - 1) {
     }
 }
 
+my @buildDescriptionLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+Create build description
+Build description signature: 6df54043eda5ce9a5bc62735755fc500
+Build description path: /Users/u/Build/XCBuildData/6df54043eda5ce9a5bc62735755fc500-desc.xcbuild
+note: Building targets in dependency order
+Create build description
+END
+for my $i (0..scalar(@buildDescriptionLines) - 1) {
+    my $previousLine = $i ? $dsymNoObjectFileLines[$i - 1] : "";
+    my $line = $buildDescriptionLines[$i];
+    if ($line =~ /Create build description/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+my @libtoolEmptyTOC = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+Libtool libWebKitAdditions
+warning: /Volumes/Somevolume/Xcode.app/Contents/Developer/Toolchains/OSX13.0.xctoolchain/usr/bin/libtool: archive library: /Users/u/Build/Debug/libWebKitAdditions.a the table of contents is empty (no object file members in the library define global symbols)
+Libtool endtest
+END
+for my $i (0..scalar(@libtoolEmptyTOC) - 1) {
+    my $previousLine = $i ? $libtoolEmptyTOC[$i - 1] : "";
+    my $line = $libtoolEmptyTOC[$i];
+    if ($line =~ /Libtool/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+
+my @generatePrefsLines = split(/$INPUT_RECORD_SEPARATOR/, <<'END');
+PhaseScriptExecution Run\ Script /Users/u/Build/DumpRenderTree.build/Debug/Derived\ Sources.build/Script-0F18E7011D6B9CC60027E547.sh (in target 'Derived Sources' from project 'DumpRenderTree')
+    cd /Users/u/WebKit/OpenSource/Tools/DumpRenderTree
+    export ACTION\=build
+    /bin/sh -c /Users/u/Build/DumpRenderTree.build/Debug/Derived\\\ Sources.build/Script-0F18E7011D6B9CC60027E547.sh
+Generating bindings for UIScriptController...
+ruby /Users/u/Build/Debug/usr/local/include/wtf/Scripts/GeneratePreferences.rb --frontend WebKitLegacy --base /Users/u/Build/Debug/usr/local/include/wtf/Scripts/Preferences/WebPreferences.yaml --debug /Users/u/Build/Debug/usr/local/include/wtf/Scripts/Preferences/WebPreferencesDebug.yaml --experimental /Users/u/Build/Debug/usr/local/include/wtf/Scripts/Preferences/WebPreferencesExperimental.yaml --internal /Users/u/Build/Debug/usr/local/include/wtf/Scripts/Preferences/WebPreferencesInternal.yaml --template /Users/u/WebKit/OpenSource/Tools/DumpRenderTree/Scripts/PreferencesTemplates/TestOptionsGeneratedWebKitLegacyKeyMapping.cpp.erb
+perl -I /Users/u/Build/Debug/WebCore.framework/Versions/A/PrivateHeaders -I /Users/u/WebKit/OpenSource/Tools/DumpRenderTree/../TestRunnerShared/UIScriptContext/Bindings -I /Users/u/WebKit/OpenSource/Tools/DumpRenderTree/Bindings /Users/u/Build/Debug/WebCore.framework/Versions/A/PrivateHeaders/generate-bindings.pl --defines "ENABLE_3D_TRANSFORMS WTF_PLATFORM_COCOA WTF_PLATFORM_MAC" --include /Users/u/WebKit/OpenSource/Tools/DumpRenderTree/../TestRunnerShared/UIScriptContext/Bindings --outputDir . --generator DumpRenderTree --idlAttributesFile /Users/u/Build/Debug/WebCore.framework/Versions/A/PrivateHeaders/IDLAttributes.json /Users/u/WebKit/OpenSource/Tools/DumpRenderTree/../TestRunnerShared/UIScriptContext/Bindings/UIScriptController.idl
+ruby /Users/u/Build/Debug/usr/local/include/wtf/Scripts/GeneratePreferences.rb --frontend WebKitLegacy --base /Users/u/Build/Debug/usr/local/include/wtf/Scripts/Preferences/WebPreferences.yaml --debug /Users/u/Build/Debug/usr/local/include/wtf/Scripts/Preferences/WebPreferencesDebug.yaml --experimental /Users/u/Build/Debug/usr/local/include/wtf/Scripts/Preferences/WebPreferencesExperimental.yaml --internal /Users/u/Build/Debug/usr/local/include/wtf/Scripts/Preferences/WebPreferencesInternal.yaml --template /Users/u/WebKit/OpenSource/Tools/DumpRenderTree/Scripts/PreferencesTemplates/TestOptionsGeneratedKeys.h.erb
+PhaseScriptExecution endtest
+END
+for my $i (0..scalar(@generatePrefsLines) - 1) {
+    my $previousLine = $i ? $generatePrefsLines[$i - 1] : "";
+    my $line = $generatePrefsLines[$i];
+    if ($line =~ /GeneratePreferences.rb|PhaseScriptExecution|Generating bindings/) {
+        is(shouldIgnoreLine($previousLine, $line), 0, description("Printed: " . $line));
+    } else {
+        is(shouldIgnoreLine($previousLine, $line), 1, description("Ignored: " . $line));
+    }
+}
+
 done_testing();
 
 sub description($)

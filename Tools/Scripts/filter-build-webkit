@@ -23,6 +23,19 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Filters the output of build-webkit into a more human-readable format.
+
+# To develop:
+#   make debug VERBOSITY=noisy >build-output.txt 
+#   cat build-output.txt | Tools/Scripts/filter-build-webkit --format=debug > formatted.txt
+# Remove an spurious alert (red line):
+# Inspect formatted.txt, locate ALERT: lines that are not real alerts
+#  A) If it is a real build task, add a matcher and printer in main function.
+#  B) If it is a spurious line
+#    - Locate the original sequence from build-output.txt
+#    - Add the sequence as a test in shouldIgnoreLine_unittests.pl
+#    - Add a ignore in the shouldIgnoreLine()
+#    - perl -I Tools/Scripts/ Tools/Scripts/webkitperl/filter-build-webkit_unittest/shouldIgnoreLine_unittests.pl
+
 package FilterBuildWebKit;
 
 BEGIN {
@@ -108,6 +121,7 @@ Output Options:
                   text: Plain text
                   color: Plain text with colors
                   oneline: Plain text with colors on one line
+                  debug: Prefix lines with message class 
 Unfiltered Logging Options:
   -l|--log      Save unfiltered output to file (see --log-file)
   --logfile     Path to save unfiltered output (implies --log, default: $unfilteredOutputPath)
@@ -154,7 +168,7 @@ sub main() {
             printLine($line, STYLE_HEADER);
         } elsif ($line =~ /^note: [Uu]sing/) {
             printLine($line, STYLE_HEADER);
-        } elsif ($line =~ /Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files|LinkStoryboards/) {
+        } elsif ($line =~ /Prepare packages|Computing target dependency graph and provisioning inputs|Create build description|Checking Dependencies|Check dependencies|Create product structure|Write auxiliary files|LinkStoryboards/) {
             printLine($line, STYLE_PLAIN);
         } elsif ($line =~ /\*\* BUILD SUCCEEDED \*\*/) {
             printLine("Build Succeeded", STYLE_SUCCESS);
@@ -209,16 +223,21 @@ sub main() {
             printLine("Generating bytecode list", STYLE_PLAIN);
         } elsif ($line =~ /^ruby JavaScriptCore\/b3\/air\/opcode_generator.rb JavaScriptCore\/b3\/air\/AirOpcode.opcodes$/) {
             printLine("Generating opcodes", STYLE_PLAIN);
-        } elsif ($line =~ /^ruby WebCore\/Scripts\/GenerateSettings.rb --input .*/) {
-            printLine("Generating settings", STYLE_PLAIN);
+        } elsif ($line =~ /^.*ruby WebCore\/Scripts\/GenerateSettings.rb\s+.*\s+--template\s+.*(\/\S+).erb/) {
+            my $path = basename($1);
+            printLine("Generating settings $path", STYLE_PLAIN);
         } elsif ($line =~ /^ruby "?WebCore\/domjit\/generate-abstract-heap.rb"? (\S+) (\S+)/) {
             printLine("Generating abstract heap", STYLE_PLAIN);
+        } elsif ($line =~ /^.*\/generate-inspector-protocol-bindings.py\s+--framework\s+(\S+).*(\/\S+).json/) {
+            my $path = basename($2);
+            printLine("Generating inspector protocol bindings $1 $path", STYLE_PLAIN);
         } elsif ($line =~ /^bash -c "perl JavaScriptCorePrivateHeaders\/xxd.pl .* \<\(gzip -cn .*\) .*"/) {
             printLine("Converting WHLSLStandardLibrary", STYLE_PLAIN);
         } elsif ($line =~ /^sh .*\/generate-https-upgrade-database\.sh .*\/HTTPSUpgradeList.txt HTTPSUpgradeList.db/) {
             printLine("Converting HTTPSUpgradeList", STYLE_PLAIN);
-        } elsif ($line =~ /^.*\/GeneratePreferences.rb --input .*\.yaml/) {
-            printLine("Generating preferences", STYLE_PLAIN);
+        } elsif ($line =~ /^ruby .*\/GeneratePreferences\.rb\s+--frontend\s+(\S+)\s+.*\s+--template\s+.*(\/\S+).erb/) {
+            my $path = basename($2);
+            printLine("Generating preferences $1 $path", STYLE_PLAIN);
         } elsif ($line =~ /^### (Generating \.xcfilelists for .*)$/) {
             printLine("$1", STYLE_PLAIN);
         } elsif ($line =~ /^(Pre-processing InspectorBackendCommands\.\.\.)$/) {
@@ -281,6 +300,10 @@ sub printLine($$)
                 $endl = "\r";
             }
         }
+    } elsif ($outputFormat eq "debug") {
+        if ($style == STYLE_HEADER)    { $color = "HEADER:"; }
+        elsif ($style == STYLE_SUCCESS) { $color = "SUCCESS:"; }
+        elsif ($style == STYLE_ALERT)   { $color = "ALERT:"; }
     }
     print OUTPUT_HANDLE $erase, $color, $line, $reset, $endl;
     if ($outputFormat eq "oneline") {
@@ -299,8 +322,8 @@ sub setOutputFormatOption($$)
 {
     my ($opt, $value) = @_;
     $value = lc($value);
-    if ($value ne "html" && $value ne "text" && $value ne "color" && $value ne "oneline") {
-        die "The $opt option must be either \"html\", \"text\", \”color\" or \”oneline\"";
+    if ($value ne "html" && $value ne "text" && $value ne "color" && $value ne "oneline" && $value ne "debug") {
+        die "The $opt option must be either \"html\", \"text\", \”color\", \”oneline\" or \"debug\"";
     }
     $outputFormat = $value;
 }
@@ -412,6 +435,10 @@ sub shouldIgnoreLine($$)
     return 1 if $line =~ /^.* Run script build phase '/;
     return 1 if $line =~ /^.* Traditional headermap style is no longer supported;/;
     return 1 if $line =~ /^.* Skipping duplicate build file in/;
+    return 1 if $line =~ /^Build description signature:/;
+    return 1 if $line =~ /^Build description path:/;
+    return 1 if $line =~ /^note: Building targets in dependency order/;
+    return 1 if $line =~ /^warning: .*libtool: archive library: .* the table of contents is empty \(no object file members in the library define global symbols\)/;
     # Investigate these in https://bugs.webkit.org/show_bug.cgi?id=245263.
     return 1 if $line =~ /warning: Could not read serialized diagnostics file: error\(\"Failed to open diagnostics file\"\)/;
     # Remove two below once https://bugs.webkit.org/show_bug.cgi?id=175997 is fixed.
