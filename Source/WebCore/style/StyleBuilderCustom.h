@@ -1443,6 +1443,26 @@ inline void BuilderCustom::applyValueCursor(BuilderState& builderState, CSSValue
     }
 }
 
+inline std::pair<Color, SVGPaintType> colorAndSVGPaintType(BuilderState& builderState, const CSSPrimitiveValue& localValue, String& url)
+{
+    Color color;
+    auto paintType = SVGPaintType::RGBColor;
+    if (localValue.isURI()) {
+        paintType = SVGPaintType::URI;
+        url = localValue.stringValue();
+    } else if (localValue.isValueID() && localValue.valueID() == CSSValueNone)
+        paintType = url.isEmpty() ? SVGPaintType::None : SVGPaintType::URINone;
+    else if (StyleColor::isCurrentColor(localValue)) {
+        color = builderState.style().color();
+        paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
+        builderState.style().setDisallowsFastPathInheritance();
+    } else {
+        color = builderState.colorFromPrimitiveValue(localValue);
+        paintType = url.isEmpty() ? SVGPaintType::RGBColor : SVGPaintType::URIRGBColor;
+    }
+    return { color, paintType };
+}
+
 inline void BuilderCustom::applyInitialFill(BuilderState& builderState)
 {
     auto& svgStyle = builderState.style().accessSVGStyle();
@@ -1471,21 +1491,7 @@ inline void BuilderCustom::applyValueFill(BuilderState& builderState, CSSValue& 
     if (!localValue)
         return;
 
-    Color color;
-    auto paintType = SVGPaintType::RGBColor;
-    if (localValue->isURI()) {
-        paintType = SVGPaintType::URI;
-        url = localValue->stringValue();
-    } else if (localValue->isValueID() && localValue->valueID() == CSSValueNone)
-        paintType = url.isEmpty() ? SVGPaintType::None : SVGPaintType::URINone;
-    else if (localValue->isValueID() && localValue->valueID() == CSSValueCurrentcolor) {
-        color = builderState.style().color();
-        paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
-        builderState.style().setDisallowsFastPathInheritance();
-    } else {
-        color = builderState.colorFromPrimitiveValue(*localValue);
-        paintType = url.isEmpty() ? SVGPaintType::RGBColor : SVGPaintType::URIRGBColor;
-    }
+    auto [color, paintType] = colorAndSVGPaintType(builderState, *localValue, url);
     svgStyle.setFillPaint(paintType, color, url, builderState.applyPropertyToRegularStyle(), builderState.applyPropertyToVisitedLinkStyle());
 }
 
@@ -1516,21 +1522,7 @@ inline void BuilderCustom::applyValueStroke(BuilderState& builderState, CSSValue
     if (!localValue)
         return;
 
-    Color color;
-    auto paintType = SVGPaintType::RGBColor;
-    if (localValue->isURI()) {
-        paintType = SVGPaintType::URI;
-        url = downcast<CSSPrimitiveValue>(localValue)->stringValue();
-    } else if (localValue->isValueID() && localValue->valueID() == CSSValueNone)
-        paintType = url.isEmpty() ? SVGPaintType::None : SVGPaintType::URINone;
-    else if (localValue->isValueID() && localValue->valueID() == CSSValueCurrentcolor) {
-        color = builderState.style().color();
-        paintType = url.isEmpty() ? SVGPaintType::CurrentColor : SVGPaintType::URICurrentColor;
-        builderState.style().setDisallowsFastPathInheritance();
-    } else {
-        color = builderState.colorFromPrimitiveValue(*localValue);
-        paintType = url.isEmpty() ? SVGPaintType::RGBColor : SVGPaintType::URIRGBColor;
-    }
+    auto [color, paintType] = colorAndSVGPaintType(builderState, *localValue, url);
     svgStyle.setStrokePaint(paintType, color, url, builderState.applyPropertyToRegularStyle(), builderState.applyPropertyToVisitedLinkStyle());
 }
 
