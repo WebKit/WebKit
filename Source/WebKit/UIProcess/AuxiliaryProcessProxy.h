@@ -28,6 +28,7 @@
 #include "AuxiliaryProcessCreationParameters.h"
 #include "Connection.h"
 #include "MessageReceiverMap.h"
+#include "ProcessAssertion.h"
 #include "ProcessLauncher.h"
 #include "ResponsivenessTimer.h"
 #include "SandboxExtension.h"
