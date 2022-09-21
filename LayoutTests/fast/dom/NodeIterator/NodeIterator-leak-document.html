@@ -1,0 +1,16 @@
+<html>
+<body>
+    <script id='targetJS' type='text/html'>
+        keepNodeIterator = document.createNodeIterator(document, NodeFilter.SHOW_ELEMENT, function(node) { return NodeFilter.SHOW_ELEMENT; }, false);
+    </script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/gc.js"></script>
+    <script src="../resources/leak-check.js"></script>
+    <script>
+        description("This test asserts that document doesn't leak when a NodeFilter callback referencing the document is created.");
+        var target = '<script>'+grabScriptText('targetJS')+'<'+'/script>';
+        doLeakTest(htmlToUrl(target));
+    </script>
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>
