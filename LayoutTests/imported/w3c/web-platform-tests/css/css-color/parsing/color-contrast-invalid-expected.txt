@@ -7,6 +7,6 @@ PASS e.style['color'] = "color-contrast(white vs red green)" should not set the 
 PASS e.style['color'] = "color-contrast(white vs red, green to)" should not set the property value
 PASS e.style['color'] = "color-contrast(white vs red, green to invalid)" should not set the property value
 PASS e.style['color'] = "color-contrast(white vs red to AA)" should not set the property value
-FAIL e.style['color'] = "color-contrast(white vs red, green white)" should not set the property value assert_equals: expected "" but got "rgb(0, 128, 0)"
-FAIL e.style['color'] = "color-contrast(white vs red, green to AA white)" should not set the property value assert_equals: expected "" but got "rgb(0, 128, 0)"
+PASS e.style['color'] = "color-contrast(white vs red, green white)" should not set the property value
+PASS e.style['color'] = "color-contrast(white vs red, green to AA white)" should not set the property value
 
