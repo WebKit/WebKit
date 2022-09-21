@@ -111,6 +111,7 @@ private:
     bool shouldEmitSignal(const char* interface, const char* name, const char* detail = "");
 
 #if ENABLE(DEVELOPER_MODE)
+    void notify(AccessibilityObjectAtspi&, const char*, NotificationObserverParameter) const;
     void notifyStateChanged(AccessibilityObjectAtspi&, const char*, bool) const;
     void notifySelectionChanged(AccessibilityObjectAtspi&) const;
     void notifyMenuSelectionChanged(AccessibilityObjectAtspi&) const;

@@ -414,8 +414,7 @@ webkit.org/b/139352 accessibility/inline-block-assertion.html [ Failure ]
 webkit.org/b/153292 accessibility/text-marker [ Skip ]
 webkit.org/b/141072 accessibility/frame-disconnect-textmarker-cache-crash.html [ Skip ]
 
-# Crashing in Debug too, see webkit.org/b/245214
-webkit.org/b/163383 accessibility/meter-element.html [ Failure Crash ]
+webkit.org/b/163383 accessibility/meter-element.html [ Failure ]
 
 webkit.org/b/182107 accessibility/aria-combobox-control-owns-elements.html [ Timeout ]
 
@@ -469,12 +468,6 @@ webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]
 webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Failure ]
 
 webkit.org/b/232256 accessibility/auto-fill-crash.html [ Timeout ]
-
-webkit.org/b/245214 [ Debug ] accessibility/aria-checkbox-text.html [ Crash ]
-webkit.org/b/245214 [ Debug ] accessibility/aria-invalid.html [ Crash ]
-webkit.org/b/245214 [ Debug ] accessibility/aria-switch-text.html [ Crash ]
-webkit.org/b/245214 [ Debug ] accessibility/aria-visible-element-roles.html [ Crash ]
-webkit.org/b/245214 [ Debug ] accessibility/content-editable-as-textarea.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Accessibility-related bugs
