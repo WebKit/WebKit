@@ -37,7 +37,7 @@
 #else
 // Force ENABLE_EXTRA_INTEGRITY_CHECKS to 1 for your local build if you want
 // more prolific audits to be enabled.
-#define ENABLE_EXTRA_INTEGRITY_CHECKS 0
+#define ENABLE_EXTRA_INTEGRITY_CHECKS 1
 #endif
 
 // From API/JSBase.h
