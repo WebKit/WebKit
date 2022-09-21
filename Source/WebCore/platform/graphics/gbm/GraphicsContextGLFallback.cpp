@@ -42,6 +42,17 @@
 
 #include "NicosiaGCGLANGLELayer.h"
 
+#if PLATFORM(GTK) && PLATFORM(X11)
+#if USE(GTK4)
+#include <gdk/x11/gdkx.h>
+#else
+#include <gdk/gdkx.h>
+#endif
+#if defined(None)
+#undef None
+#endif
+#endif
+
 namespace WebCore {
 
 RefPtr<GraphicsContextGLFallback> GraphicsContextGLFallback::create(GraphicsContextGLAttributes&& attributes)
@@ -89,12 +100,35 @@ bool GraphicsContextGLFallback::platformInitializeContext()
     m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 #endif
 
+#if PLATFORM(GTK) && PLATFORM(X11)
+    Vector<EGLint> displayAttributes {
+        EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,
+    };
+
+    if (gdk_init_check(nullptr, nullptr)
+        && (GDK_IS_X11_DISPLAY(gdk_display_manager_get_default_display(gdk_display_manager_get())))) {
+        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE);
+        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_TYPE_HARDWARE_ANGLE);
+
+        displayAttributes.append(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
+        displayAttributes.append(EGL_PLATFORM_X11_EXT);
+    } else {
+        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE);
+        displayAttributes.append(EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE);
+
+        displayAttributes.append(EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE);
+        displayAttributes.append(EGL_PLATFORM_SURFACELESS_MESA);
+    }
+
+    displayAttributes.append(EGL_NONE);
+#else
     Vector<EGLint> displayAttributes {
         EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,
         EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE,
         EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, EGL_PLATFORM_SURFACELESS_MESA,
         EGL_NONE,
     };
+#endif // PLATFORM(GTK) && PLATFORM(X11)
 
     m_displayObj = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes.data());
     if (m_displayObj == EGL_NO_DISPLAY)
