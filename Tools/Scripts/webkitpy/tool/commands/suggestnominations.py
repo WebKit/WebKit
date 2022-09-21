@@ -51,9 +51,9 @@ class AbstractCommitLogCommand(Command):
     _leading_indent_regexp = re.compile(r"^[ ]{4}", re.MULTILINE)
     _reviewed_by_regexp = re.compile(ChangeLogEntry.reviewed_by_regexp, re.MULTILINE)
     _patch_by_regexp = re.compile(r'^Patch by (?P<name>.+?)\s+<(?P<email>[^<>]+)> on (?P<date>\d{4}-\d{2}-\d{2})$', re.MULTILINE)
-    _committer_regexp = re.compile(r'^Author: (?P<email>\S+)\s+<[^>]+>$', re.MULTILINE)
+    _committer_regexp = re.compile(r'^Author: (?P<name>.*?) <(?P<email>[^>]+)>$', re.MULTILINE)
     _date_regexp = re.compile(r'^Date:   (?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2}:\d{2}) [\+\-]\d{4}$', re.MULTILINE)
-    _revision_regexp = re.compile(r'^git-svn-id: https?://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) (?P<gitid>[0-9a-f\-]{36})$', re.MULTILINE)
+    _canonical_regexp = re.compile(r'^Canonical link: https://commits.webkit.org/(?P<canonicalid>\d+)@main$', re.MULTILINE)
 
     def __init__(self, options=None):
         options = options or []
@@ -96,18 +96,16 @@ class AbstractCommitLogCommand(Command):
             raise CommitLogError
 
         committer = self._contributor_from_email(committer_email)
-        if not committer:
-            raise CommitLogError
 
         commit_date_match = self._date_regexp.search(commit_message)
         if not commit_date_match:
             raise CommitLogError
         commit_date = commit_date_match.group('date')
 
-        revision_match = self._revision_regexp.search(commit_message)
-        if not revision_match:
+        canonical_match = self._canonical_regexp.search(commit_message)
+        if not canonical_match:
             raise CommitLogError
-        revision = revision_match.group('svnid')
+        canonical = canonical_match.group('canonicalid')
 
         # Look for "Patch by" line first, which is used for non-committer contributors;
         # otherwise, use committer info determined above.
@@ -137,7 +135,7 @@ class AbstractCommitLogCommand(Command):
         return {
             'committer': committer,
             'commit_date': commit_date,
-            'revision': revision,
+            'canonical': canonical,
             'author_email': author_email,
             'author_name': author_name,
             'contributor': contributor,
@@ -166,7 +164,7 @@ class SuggestNominations(AbstractCommitLogCommand):
     def _count_commit(self, commit, analysis):
         author_name = commit['author_name']
         author_email = commit['author_email']
-        revision = commit['revision']
+        canonical = commit['canonical']
         commit_date = commit['commit_date']
 
         # See if we already have a contributor with this author_name or email
@@ -202,9 +200,9 @@ class SuggestNominations(AbstractCommitLogCommand):
         counter = analysis['counters_by_name'][author_name]
         counter['count'] = counter.get('count', 0) + 1
 
-        if revision.isdigit():
-            revision = "https://trac.webkit.org/changeset/" + revision
-        counter['commits'] += "  commit: %s on %s by %s (%s)\n" % (revision, commit_date, author_name, author_email)
+        if canonical.isdigit():
+            canonical = "https://commits.webkit.org/%s@main" % canonical
+        counter['commits'] += "  commit: %s on %s by %s (%s)\n" % (canonical, commit_date, author_name, author_email)
 
     def _count_recent_patches(self):
         analysis = {
