@@ -985,4 +985,19 @@ TEST(WTF, StringViewIsAllASCII)
     EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"), 0)).isAllASCII());
 }
 
+TEST(WTF, StringViewUpconvert)
+{
+    constexpr ASCIILiteral data[] = {
+        "Hello"_s,
+        "This is a relatively long string to use SIMD optimized path. We invoke our optimized copying only when the string length gets longer than 64."_s,
+    };
+    for (auto literal : data) {
+        StringView string(literal);
+        auto upconverted = string.upconvertedCharacters();
+        const UChar* characters = upconverted.get();
+        for (unsigned index = 1; index < string.length(); ++index)
+            EXPECT_EQ(characters[index], string[index]) << index << " " << literal.characters();
+    }
+}
+
 } // namespace TestWebKitAPI

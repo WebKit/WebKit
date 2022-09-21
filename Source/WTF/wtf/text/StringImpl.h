@@ -43,6 +43,10 @@
 #include <wtf/text/UTF8ConversionError.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
+#if CPU(ARM64)
+#include <arm_neon.h>
+#endif
+
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
 #endif
@@ -1152,6 +1156,36 @@ inline void StringImpl::copyCharacters(DestinationCharacterType* destination, co
         }
         memcpy(destination, source, numCharacters * sizeof(DestinationCharacterType));
     } else {
+#if CPU(ARM64)
+        // SIMD Upconvert.
+        if constexpr (std::is_same_v<SourceCharacterType, LChar> && std::is_same_v<DestinationCharacterType, UChar>) {
+            const auto* end = destination + numCharacters;
+            constexpr uintptr_t memoryAccessSize = 64;
+
+            if (numCharacters >= memoryAccessSize) {
+                constexpr uintptr_t memoryAccessMask = memoryAccessSize - 1;
+                const auto* simdEnd = destination + (numCharacters & ~memoryAccessMask);
+                uint8x16_t zeros = vdupq_n_u8(0);
+                do {
+                    uint8x16x4_t bytes = vld1q_u8_x4(bitwise_cast<const uint8_t*>(source));
+                    source += memoryAccessSize;
+
+                    vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[0], zeros }));
+                    destination += memoryAccessSize / 4;
+                    vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[1], zeros }));
+                    destination += memoryAccessSize / 4;
+                    vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[2], zeros }));
+                    destination += memoryAccessSize / 4;
+                    vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[3], zeros }));
+                    destination += memoryAccessSize / 4;
+                } while (destination != simdEnd);
+            }
+
+            while (destination != end)
+                *destination++ = *source++;
+            return;
+        }
+#endif
         // FIXME: We should ensure that UChar -> LChar copying happens when UChar only contains Latin-1.
         // https://bugs.webkit.org/show_bug.cgi?id=205355
         for (unsigned i = 0; i < numCharacters; ++i)
