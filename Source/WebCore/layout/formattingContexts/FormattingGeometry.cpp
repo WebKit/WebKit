@@ -58,7 +58,7 @@ static inline bool isHeightAuto(const Box& layoutBox)
         if (layoutBox.isOutOfFlowPositioned())
             return false;
 
-        return !layoutBox.containingBlock().style().logicalHeight().isFixed();
+        return !FormattingContext::containingBlock(layoutBox).style().logicalHeight().isFixed();
     }
 
     return false;
@@ -254,9 +254,9 @@ LayoutUnit FormattingGeometry::staticVerticalPositionForOutOfFlowPositioned(cons
         top = formattingContext.geometryForBox(layoutBox.parent(), FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxTop();
 
     // Resolve top all the way up to the containing block.
-    auto& containingBlock = layoutBox.containingBlock();
+    auto& containingBlock = FormattingContext::containingBlock(layoutBox);
     // Start with the parent since we pretend that this box is normal flow.
-    for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
+    for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &FormattingContext::containingBlock(*ancestor)) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // BoxGeometry::top is the border box top position in its containing block's coordinate system.
         top += BoxGeometry::borderBoxTop(boxGeometry);
@@ -276,9 +276,9 @@ LayoutUnit FormattingGeometry::staticHorizontalPositionForOutOfFlowPositioned(co
     auto left = formattingContext.geometryForBox(layoutBox.parent(), FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry).contentBoxLeft();
 
     // Resolve left all the way up to the containing block.
-    auto& containingBlock = layoutBox.containingBlock();
+    auto& containingBlock = FormattingContext::containingBlock(layoutBox);
     // Start with the parent since we pretend that this box is normal flow.
-    for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &ancestor->containingBlock()) {
+    for (auto* ancestor = &layoutBox.parent(); ancestor != &containingBlock; ancestor = &FormattingContext::containingBlock(*ancestor)) {
         auto& boxGeometry = formattingContext.geometryForBox(*ancestor, FormattingContext::EscapeReason::OutOfFlowBoxNeedsInFlowGeometry);
         // BoxGeometry::left is the border box left position in its containing block's coordinate system.
         left += BoxGeometry::borderBoxLeft(boxGeometry);
@@ -470,7 +470,7 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
     auto& style = layoutBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(layoutBox);
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
-    auto isLeftToRightDirection = layoutBox.containingBlock().style().isLeftToRightDirection();
+    auto isLeftToRightDirection = FormattingContext::containingBlock(layoutBox).style().isLeftToRightDirection();
     
     auto left = computedValue(style.logicalLeft(), containingBlockWidth);
     auto right = computedValue(style.logicalRight(), containingBlockWidth);
@@ -682,7 +682,7 @@ HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const
     auto& style = replacedBox.style();
     auto& boxGeometry = formattingContext.geometryForBox(replacedBox);
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
-    auto isLeftToRightDirection = replacedBox.containingBlock().style().isLeftToRightDirection();
+    auto isLeftToRightDirection = FormattingContext::containingBlock(replacedBox).style().isLeftToRightDirection();
 
     auto left = computedValue(style.logicalLeft(), containingBlockWidth);
     auto right = computedValue(style.logicalRight(), containingBlockWidth);
@@ -1063,7 +1063,7 @@ LayoutSize FormattingGeometry::inFlowPositionedPositionOffset(const Box& layoutB
         right = -*left;
     } else {
         // #4
-        auto isLeftToRightDirection = layoutBox.containingBlock().style().isLeftToRightDirection();
+        auto isLeftToRightDirection = FormattingContext::containingBlock(layoutBox).style().isLeftToRightDirection();
         if (isLeftToRightDirection)
             right = -*left;
         else
@@ -1085,7 +1085,7 @@ inline static WritingMode usedWritingMode(const Box& layoutBox)
     // https://www.w3.org/TR/css-writing-modes-4/#logical-direction-layout
     // Flow-relative directions are calculated with respect to the writing mode of the containing block of the box.
     // For inline-level boxes, the writing mode of the parent box is used instead.
-    return layoutBox.isInlineLevelBox() ? layoutBox.parent().style().writingMode() : layoutBox.containingBlock().style().writingMode();
+    return layoutBox.isInlineLevelBox() ? layoutBox.parent().style().writingMode() : FormattingContext::containingBlock(layoutBox).style().writingMode();
 }
 
 Edges FormattingGeometry::computedBorder(const Box& layoutBox) const

@@ -68,7 +68,7 @@ inline LayoutContainingBlockChainIterator::LayoutContainingBlockChainIterator(co
 inline LayoutContainingBlockChainIterator& LayoutContainingBlockChainIterator::operator++()
 {
     ASSERT(m_current);
-    m_current = m_current->isInitialContainingBlock() ? nullptr : &m_current->containingBlock();
+    m_current = m_current->isInitialContainingBlock() ? nullptr : &FormattingContext::containingBlock(*m_current);
     return *this;
 }
 
@@ -80,13 +80,13 @@ inline LayoutContainingBlockChainIteratorAdapter::LayoutContainingBlockChainIter
 
 inline LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box& layoutBox)
 {
-    return LayoutContainingBlockChainIteratorAdapter(layoutBox.containingBlock());
+    return LayoutContainingBlockChainIteratorAdapter(FormattingContext::containingBlock(layoutBox));
 }
 
 inline LayoutContainingBlockChainIteratorAdapter containingBlockChain(const Box& layoutBox, const ContainerBox& stayWithin)
 {
     ASSERT(layoutBox.isDescendantOf(stayWithin));
-    return LayoutContainingBlockChainIteratorAdapter(layoutBox.containingBlock(), &stayWithin);
+    return LayoutContainingBlockChainIteratorAdapter(FormattingContext::containingBlock(layoutBox), &stayWithin);
 }
 
 inline LayoutContainingBlockChainIteratorAdapter containingBlockChainWithinFormattingContext(const Box& layoutBox, const ContainerBox& root)

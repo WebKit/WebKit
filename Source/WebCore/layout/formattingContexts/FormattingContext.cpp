@@ -139,7 +139,7 @@ void FormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlowCont
     collectOutOfFlowDescendantsIfNeeded();
 
     auto constraintsForLayoutBox = [&] (const auto& outOfFlowBox) {
-        auto& containingBlock = outOfFlowBox->containingBlock();
+        auto& containingBlock = this->containingBlock(outOfFlowBox);
         return &containingBlock == &root() ? constraints : formattingGeometry().constraintsForOutOfFlowContent(containingBlock);
     };
 
@@ -269,10 +269,13 @@ void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
     for (auto& descendant : descendantsOfType<Box>(root)) {
         if (!descendant.isOutOfFlowPositioned())
             continue;
-        auto nearestFormattingContextRoot = [&] {
-            auto* ancestor = &descendant.containingBlock();
-            for (; !ancestor->establishesBlockFormattingContext(); ancestor = &ancestor->containingBlock()) { }
-            return ancestor;
+        auto nearestFormattingContextRoot = [&] () -> const ContainerBox* {
+            for (auto& containingBlock : containingBlockChain(descendant)) {
+                if (containingBlock.establishesBlockFormattingContext())
+                    return &containingBlock;
+            }
+            ASSERT_NOT_REACHED();
+            return nullptr;
         };
         if (nearestFormattingContextRoot() != &root)
             continue;
@@ -290,6 +293,47 @@ const InitialContainingBlock& FormattingContext::initialContainingBlock(const Bo
     return downcast<InitialContainingBlock>(*ancestor);
 }
 
+const ContainerBox& FormattingContext::containingBlock(const Box& layoutBox)
+{
+    // If we ever end up here with the ICB, we must be doing something not-so-great.
+    RELEASE_ASSERT(!is<InitialContainingBlock>(layoutBox));
+    // The containing block in which the root element lives is a rectangle called the initial containing block.
+    // For other elements, if the element's position is 'relative' or 'static', the containing block is formed by the
+    // content edge of the nearest block container ancestor box or which establishes a formatting context.
+    // If the element has 'position: fixed', the containing block is established by the viewport
+    // If the element has 'position: absolute', the containing block is established by the nearest ancestor with a
+    // 'position' of 'absolute', 'relative' or 'fixed'.
+    if (!layoutBox.isPositioned() || layoutBox.isInFlowPositioned()) {
+        auto* ancestor = &layoutBox.parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
+            if (ancestor->isContainingBlockForInFlow())
+                return *ancestor;
+        }
+        return *ancestor;
+    }
+
+    if (layoutBox.isFixedPositioned()) {
+        auto* ancestor = &layoutBox.parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
+            if (ancestor->isContainingBlockForFixedPosition())
+                return *ancestor;
+        }
+        return *ancestor;
+    }
+
+    if (layoutBox.isOutOfFlowPositioned()) {
+        auto* ancestor = &layoutBox.parent();
+        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
+            if (ancestor->isContainingBlockForOutOfFlowPosition())
+                return *ancestor;
+        }
+        return *ancestor;
+    }
+
+    ASSERT_NOT_REACHED();
+    return layoutBox.parent();    
+}
+
 #ifndef NDEBUG
 const ContainerBox& FormattingContext::formattingContextRoot(const Box& layoutBox)
 {
@@ -302,7 +346,7 @@ const ContainerBox& FormattingContext::formattingContextRoot(const Box& layoutBo
     // <div id=outer style="position: absolute"><div id=inner><span style="position: relative">content</span></div></div>
     // While the relatively positioned inline container (span) is placed relative to its containing block "outer", it lives in the inline
     // formatting context established by "inner".
-    auto& ancestor = layoutBox.isInlineLevelBox() && layoutBox.isInFlowPositioned() ? layoutBox.parent() : layoutBox.containingBlock();
+    auto& ancestor = layoutBox.isInlineLevelBox() && layoutBox.isInFlowPositioned() ? layoutBox.parent() : containingBlock(layoutBox);
     if (ancestor.establishesFormattingContext())
         return ancestor;
     return formattingContextRoot(ancestor);
@@ -315,7 +359,7 @@ void FormattingContext::validateGeometryConstraintsAfterLayout() const
     for (auto& layoutBox : descendantsOfType<Box>(root)) {
         if (&formattingContextRoot(layoutBox) != &root)
             continue;
-        auto& containingBlockGeometry = geometryForBox(layoutBox.containingBlock());
+        auto& containingBlockGeometry = geometryForBox(containingBlock(layoutBox));
         auto& boxGeometry = geometryForBox(layoutBox);
 
         // 10.3.3 Block-level, non-replaced elements in normal flow
