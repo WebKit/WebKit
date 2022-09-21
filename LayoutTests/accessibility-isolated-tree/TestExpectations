@@ -1,5 +1,4 @@
 # Timeouts
-accessibility/aria-roledescription.html [ Timeout ]
 accessibility/frame-disconnect-textmarker-cache-crash.html [ Timeout ]
 accessibility/slider-with-lost-renderer.html [ Timeout ]
 accessibility/svg-remote-element.html [ Timeout ]
@@ -8,7 +7,6 @@ accessibility/svg-remote-element.html [ Timeout ]
 accessibility/aria-controls-with-tabs.html [ Failure ]
 accessibility/aria-current.html [ Failure ]
 accessibility/aria-liveregions-attributes.html [ Failure ]
-accessibility/aria-roledescription.html [ Failure ]
 accessibility/aria-roles.html [ Failure ]
 accessibility/aria-scrollbar-role.html [ Failure ]
 accessibility/aria-selected-menu-items.html [ Failure ]

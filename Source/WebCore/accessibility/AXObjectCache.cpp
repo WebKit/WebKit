@@ -1936,7 +1936,18 @@ void AXObjectCache::handleRoleChanged(AccessibilityObject* axObject)
     axObject->recomputeIsIgnored();
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(axObject, AXNotification::AXAriaRoleChanged);
+    updateIsolatedTree(axObject, AXNotification::AXRoleChanged);
+#endif
+}
+
+void AXObjectCache::handleRoleDescriptionChanged(Element* element)
+{
+    auto* object = get(element);
+    if (!object)
+        return;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(object, AXNotification::AXRoleDescriptionChanged);
 #endif
 }
 
@@ -2115,6 +2126,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXObjectCache::AXReadOnlyStatusChanged);
     else if (attrName == aria_requiredAttr)
         postNotification(element, AXObjectCache::AXRequiredStatusChanged);
+    else if (attrName == aria_roledescriptionAttr)
+        handleRoleDescriptionChanged(element);
     else if (attrName == aria_rowcountAttr)
         handleRowCountChanged(get(element), element ? &element->document() : nullptr);
     else if (attrName == aria_rowspanAttr) {
@@ -3689,6 +3702,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXRequiredStatusChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsRequired);
             break;
+        case AXRoleDescriptionChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::RoleDescription);
+            break;
         case AXRowIndexChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::AXRowIndex);
             break;
@@ -3706,7 +3722,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::URL);
             break;
         case AXActiveDescendantChanged:
-        case AXAriaRoleChanged:
+        case AXRoleChanged:
         case AXColumnSpanChanged:
         case AXDescribedByChanged:
         case AXDropEffectChanged:
