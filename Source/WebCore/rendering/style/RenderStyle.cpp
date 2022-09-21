@@ -2249,21 +2249,6 @@ Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool 
 
 Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const
 {
-    auto computeBorderStyle = [&] {
-        switch (colorProperty) {
-        case CSSPropertyBorderLeftColor:
-            return borderLeftStyle();
-        case CSSPropertyBorderRightColor:
-            return borderRightStyle();
-        case CSSPropertyBorderTopColor:
-            return borderTopStyle();
-        case CSSPropertyBorderBottomColor:
-            return borderBottomStyle();
-        default:
-            return BorderStyle::None;
-        }
-    };
-
     auto result = unresolvedColorForProperty(colorProperty, visitedLink);
 
     if (isCurrentColor(result)) {
@@ -2278,7 +2263,21 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
             return colorResolvingCurrentColor(CSSPropertyWebkitTextFillColor, visitedLink);
         }
 
-        auto borderStyle = computeBorderStyle();
+        auto borderStyle = [&] {
+            switch (colorProperty) {
+            case CSSPropertyBorderLeftColor:
+                return borderLeftStyle();
+            case CSSPropertyBorderRightColor:
+                return borderRightStyle();
+            case CSSPropertyBorderTopColor:
+                return borderTopStyle();
+            case CSSPropertyBorderBottomColor:
+                return borderBottomStyle();
+            default:
+                return BorderStyle::None;
+            }
+        }();
+
         if (!visitedLink && (borderStyle == BorderStyle::Inset || borderStyle == BorderStyle::Outset || borderStyle == BorderStyle::Ridge || borderStyle == BorderStyle::Groove))
             return SRGBA<uint8_t> { 238, 238, 238 };
 
