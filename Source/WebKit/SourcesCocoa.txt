@@ -400,6 +400,7 @@ UIProcess/Cocoa/NavigationState.mm
 UIProcess/Cocoa/PageClientImplCocoa.mm
 UIProcess/Cocoa/PlatformXRCoordinator.mm
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm
+UIProcess/Cocoa/ProcessAssertionCocoa.mm
 UIProcess/Cocoa/ResourceLoadDelegate.mm
 UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm
 UIProcess/Cocoa/SessionStateCoding.mm
@@ -471,7 +472,6 @@ UIProcess/ios/DragDropInteractionState.mm
 UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm
 UIProcess/ios/InputViewUpdateDeferrer.mm
 UIProcess/ios/PageClientImplIOS.mm
-UIProcess/ios/ProcessAssertionIOS.mm
 UIProcess/ios/ProcessStateMonitor.mm
 UIProcess/ios/SmartMagnificationController.mm
 UIProcess/ios/TextCheckerIOS.mm
