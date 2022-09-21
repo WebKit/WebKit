@@ -58,6 +58,15 @@ WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnection()
     return WebProcess::singleton().ensureNetworkProcessConnection().serviceWorkerConnection();
 }
 
+WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnection()
+{
+    auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return nullptr;
+
+    return &networkProcessConnection->serviceWorkerConnection();
+}
+
 void WebServiceWorkerProvider::updateThrottleState(bool isThrottleable)
 {
     auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();

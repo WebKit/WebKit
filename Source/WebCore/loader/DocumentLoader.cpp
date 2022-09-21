@@ -2145,8 +2145,8 @@ void DocumentLoader::unregisterReservedServiceWorkerClient()
     if (!m_resultingClientId)
         return;
 
-    auto& serviceWorkerConnection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
-    serviceWorkerConnection.unregisterServiceWorkerClient(m_resultingClientId);
+    if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
+        serviceWorkerConnection->unregisterServiceWorkerClient(m_resultingClientId);
 #endif
 }
 

@@ -195,7 +195,8 @@ void WorkerSWClientConnection::registerServiceWorkerClient(const ClientOrigin& c
 void WorkerSWClientConnection::unregisterServiceWorkerClient(ScriptExecutionContextIdentifier identifier)
 {
     callOnMainThread([identifier] {
-        ServiceWorkerProvider::singleton().serviceWorkerConnection().unregisterServiceWorkerClient(identifier);
+        if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
+            serviceWorkerConnection->unregisterServiceWorkerClient(identifier);
     });
 }
 
