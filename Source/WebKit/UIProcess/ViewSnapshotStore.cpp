@@ -93,6 +93,9 @@ void ViewSnapshotStore::recordSnapshot(WebPageProxy& webPageProxy, WebBackForwar
     if (!snapshot)
         return;
 
+#if PLATFORM(MAC)
+    snapshot->setVolatile(true);
+#endif
     snapshot->setRenderTreeSize(webPageProxy.renderTreeSize());
     snapshot->setDeviceScaleFactor(webPageProxy.deviceScaleFactor());
     snapshot->setBackgroundColor(webPageProxy.pageExtendedBackgroundColor());
