@@ -46,6 +46,7 @@ ServiceWorkerProvider::~ServiceWorkerProvider()
 
 ServiceWorkerProvider& ServiceWorkerProvider::singleton()
 {
+    ASSERT(isMainThread());
     RELEASE_ASSERT(sharedProvider);
     return *sharedProvider;
 }
