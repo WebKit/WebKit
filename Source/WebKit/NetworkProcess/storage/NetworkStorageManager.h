@@ -34,6 +34,7 @@
 #include "StorageNamespaceIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebsiteData.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
@@ -70,7 +71,7 @@ class IDBStorageRegistry;
 class StorageAreaBase;
 class StorageAreaRegistry;
 
-class NetworkStorageManager final : public IPC::Connection::WorkQueueMessageReceiver {
+class NetworkStorageManager final : public IPC::WorkQueueMessageReceiver {
 public:
     static void forEach(const Function<void(NetworkStorageManager&)>&);
     static Ref<NetworkStorageManager> create(PAL::SessionID, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, uint64_t defaultOriginQuota, uint64_t defaultThirdPartyOriginQuota, bool shouldUseCustomPaths);

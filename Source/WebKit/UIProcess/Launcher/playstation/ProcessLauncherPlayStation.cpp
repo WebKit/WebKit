@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ProcessLauncher.h"
 
+#include "IPCUtilities.h"
 #include <process-launcher.h>
 #include <stdint.h>
 #include <sys/socket.h>
@@ -53,7 +54,7 @@ static const char* defaultProcessPath(ProcessLauncher::ProcessType processType)
 
 void ProcessLauncher::launchProcess()
 {
-    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection(IPC::Connection::ConnectionOptions::SetCloexecOnServer);
+    IPC::SocketPair socketPair = IPC::createPlatformConnection(IPC::PlatformConnectionOptions::SetCloexecOnServer);
 
     int sendBufSize = 32 * 1024;
     setsockopt(socketPair.server, SOL_SOCKET, SO_SNDBUF, &sendBufSize, 4);

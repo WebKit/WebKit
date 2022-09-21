@@ -28,13 +28,14 @@
 #if ENABLE(SEC_ITEM_SHIM)
 
 #include "Connection.h"
+#include "WorkQueueMessageReceiver.h"
 
 namespace WebKit {
 
 class SecItemRequestData;
 class SecItemResponseData;
 
-class SecItemShimProxy : public IPC::Connection::WorkQueueMessageReceiver {
+class SecItemShimProxy : public IPC::WorkQueueMessageReceiver {
 WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
 public:
     static SecItemShimProxy& singleton();
@@ -45,7 +46,7 @@ private:
     SecItemShimProxy();
     ~SecItemShimProxy();
 
-    // IPC::Connection::WorkQueueMessageReceiver
+    // IPC::WorkQueueMessageReceiver 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 

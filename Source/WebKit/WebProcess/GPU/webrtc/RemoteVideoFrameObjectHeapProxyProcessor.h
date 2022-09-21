@@ -32,7 +32,7 @@
 #include "MessageReceiver.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedVideoFrame.h"
-
+#include "WorkQueueMessageReceiver.h"
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -55,7 +55,7 @@ namespace WebKit {
 
 class RemoteVideoFrameProxy;
 
-class RemoteVideoFrameObjectHeapProxyProcessor : public IPC::Connection::WorkQueueMessageReceiver, public GPUProcessConnection::Client {
+class RemoteVideoFrameObjectHeapProxyProcessor : public IPC::WorkQueueMessageReceiver, public GPUProcessConnection::Client {
 public:
     static Ref<RemoteVideoFrameObjectHeapProxyProcessor> create(GPUProcessConnection&);
     ~RemoteVideoFrameObjectHeapProxyProcessor();

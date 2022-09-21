@@ -37,6 +37,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SharedVideoFrame.h"
+#include "WorkQueueMessageReceiver.h"
 #include <map>
 #include <webrtc/api/video/video_codec_type.h>
 #include <wtf/HashMap.h>
@@ -59,7 +60,7 @@ namespace WebKit {
 
 class RemoteVideoFrameObjectHeapProxy;
 
-class LibWebRTCCodecs : public IPC::Connection::WorkQueueMessageReceiver, public GPUProcessConnection::Client {
+class LibWebRTCCodecs : public IPC::WorkQueueMessageReceiver, public GPUProcessConnection::Client {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<LibWebRTCCodecs> create();

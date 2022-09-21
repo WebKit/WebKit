@@ -26,10 +26,11 @@
 #pragma once
 
 #include "Connection.h"
+#include "WorkQueueMessageReceiver.h"
 
 namespace WebKit {
 
-class WebInspectorInterruptDispatcher : public IPC::Connection::WorkQueueMessageReceiver {
+class WebInspectorInterruptDispatcher : public IPC::WorkQueueMessageReceiver {
 public:
     static Ref<WebInspectorInterruptDispatcher> create();
     ~WebInspectorInterruptDispatcher();
@@ -38,7 +39,7 @@ public:
     
 private:
     WebInspectorInterruptDispatcher();
-    // IPC::Connection::WorkQueueMessageReceiver.
+    // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     
     void notifyNeedDebuggerBreak();

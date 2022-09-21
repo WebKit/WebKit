@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "DataReference.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/ProcessQualified.h>
 #include <WebCore/RTCDataChannelRemoteHandler.h>
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
@@ -37,7 +38,7 @@
 
 namespace WebKit {
 
-class RTCDataChannelRemoteManager final : public IPC::Connection::WorkQueueMessageReceiver {
+class RTCDataChannelRemoteManager final : public IPC::WorkQueueMessageReceiver {
 public:
     static RTCDataChannelRemoteManager& sharedManager();
 
@@ -48,7 +49,7 @@ public:
 private:
     RTCDataChannelRemoteManager();
 
-    // IPC::Connection::WorkQueueMessageReceiver
+    // IPC::WorkQueueMessageReceiver 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages

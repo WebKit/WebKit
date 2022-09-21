@@ -30,6 +30,7 @@
 #include "Connection.h"
 
 #include "VisibleContentRectUpdateInfo.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -37,7 +38,7 @@
 
 namespace WebKit {
 
-class ViewUpdateDispatcher : public IPC::Connection::WorkQueueMessageReceiver {
+class ViewUpdateDispatcher : public IPC::WorkQueueMessageReceiver {
 public:
     static Ref<ViewUpdateDispatcher> create();
     ~ViewUpdateDispatcher();
@@ -46,7 +47,7 @@ public:
 
 private:
     ViewUpdateDispatcher();
-    // IPC::Connection::WorkQueueMessageReceiver.
+    // IPC::WorkQueueMessageReceiver .
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void visibleContentRectUpdate(WebCore::PageIdentifier, const VisibleContentRectUpdateInfo&);

@@ -34,6 +34,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "SharedMemory.h"
 #include "SharedVideoFrame.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/ProcessIdentity.h>
 #include <atomic>
 #include <wtf/ThreadAssertions.h>
@@ -60,7 +61,7 @@ class RemoteVideoFrameObjectHeap;
 struct SharedVideoFrame;
 class SharedVideoFrameReader;
 
-class LibWebRTCCodecsProxy final : public IPC::Connection::WorkQueueMessageReceiver {
+class LibWebRTCCodecsProxy final : public IPC::WorkQueueMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<LibWebRTCCodecsProxy> create(GPUConnectionToWebProcess&);
@@ -74,7 +75,7 @@ private:
     auto createDecoderCallback(RTCDecoderIdentifier, bool useRemoteFrames);
     WorkQueue& workQueue() const { return m_queue; }
 
-    // IPC::Connection::WorkQueueMessageReceiver overrides.
+    // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     void createH264Decoder(RTCDecoderIdentifier, bool useRemoteFrames);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,40 +25,25 @@
 
 #pragma once
 
-#define ASSERT_IS_TESTING_IPC() ASSERT(IPC::isTestingIPC(), "Untrusted connection sent invalid data. Should only happen when testing IPC.")
+#if ENABLE(IPC_TESTING_API)
+
+#include <wtf/OptionSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace IPC {
 
-// Function to check when asserting IPC-related failures, so that IPC testing skips the assertions
-// and exposes bugs underneath.
-bool isTestingIPC();
+class Decoder;
+class Encoder;
 
-#if ENABLE(IPC_TESTING_API)
-void startTestingIPC();
-void stopTestingIPC();
-#else
-inline bool isTestingIPC()
-{
-    return false;
-}
-#endif
+enum class SendOption : uint8_t;
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-struct SocketPair {
-    int client;
-    int server;
+class MessageObserver : public CanMakeWeakPtr<MessageObserver> {
+public:
+    virtual ~MessageObserver() = default;
+    virtual void willSendMessage(const Encoder&, OptionSet<SendOption>) = 0;
+    virtual void didReceiveMessage(const Decoder&) = 0;
 };
 
-enum PlatformConnectionOptions {
-    SetCloexecOnClient = 1 << 0,
-    SetCloexecOnServer = 1 << 1,
-};
-
-SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
-#endif
-
-#if OS(WINDOWS)
-bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier);
-#endif
-
 }
+
+#endif

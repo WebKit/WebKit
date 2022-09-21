@@ -29,6 +29,7 @@
 #include "Connection.h"
 
 #include "DataReference.h"
+#include "IPCUtilities.h"
 #include "SharedMemory.h"
 #include "UnixMessage.h"
 #include <sys/socket.h>
@@ -588,7 +589,7 @@ bool Connection::sendOutputMessage(UnixMessage& outputMessage)
     return true;
 }
 
-Connection::SocketPair Connection::createPlatformConnection(unsigned options)
+SocketPair createPlatformConnection(unsigned options)
 {
     int sockets[2];
     RELEASE_ASSERT(socketpair(AF_UNIX, SOCKET_TYPE, 0, sockets) != -1);
@@ -619,7 +620,7 @@ void Connection::didReceiveSyncReply(OptionSet<SendSyncOption>)
 
 std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
 {
-    Connection::SocketPair socketPair = Connection::createPlatformConnection();
+    SocketPair socketPair = createPlatformConnection();
     return ConnectionIdentifierPair { Identifier { UnixFileDescriptor { socketPair.server,  UnixFileDescriptor::Adopt } }, UnixFileDescriptor { socketPair.client, UnixFileDescriptor::Adopt } };
 }
 } // namespace IPC

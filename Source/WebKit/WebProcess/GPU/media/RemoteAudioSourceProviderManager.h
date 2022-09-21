@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "SharedMemory.h"
 #include "WebProcess.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -39,7 +40,7 @@ namespace WebKit {
 
 class RemoteAudioSourceProvider;
 
-class RemoteAudioSourceProviderManager : public IPC::Connection::WorkQueueMessageReceiver {
+class RemoteAudioSourceProviderManager : public IPC::WorkQueueMessageReceiver {
 public:
     static Ref<RemoteAudioSourceProviderManager> create() { return adoptRef(*new RemoteAudioSourceProviderManager()); }
     ~RemoteAudioSourceProviderManager();

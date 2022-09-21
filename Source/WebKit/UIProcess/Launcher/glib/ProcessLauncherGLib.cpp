@@ -30,6 +30,7 @@
 #include "BubblewrapLauncher.h"
 #include "Connection.h"
 #include "FlatpakLauncher.h"
+#include "IPCUtilities.h"
 #include "ProcessExecutablePath.h"
 #include <errno.h>
 #include <fcntl.h>
@@ -70,7 +71,7 @@ static bool isFlatpakSpawnUsable()
 
 void ProcessLauncher::launchProcess()
 {
-    IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection(IPC::Connection::ConnectionOptions::SetCloexecOnServer);
+    IPC::SocketPair socketPair = IPC::createPlatformConnection(IPC::PlatformConnectionOptions::SetCloexecOnServer);
 
     String executablePath;
     CString realExecutablePath;

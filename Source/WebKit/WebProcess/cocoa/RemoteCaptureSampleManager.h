@@ -35,6 +35,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SharedMemory.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
 #include <WebCore/WebAudioBufferList.h>
@@ -49,7 +50,7 @@ class ImageTransferSessionVT;
 namespace WebKit {
 class RemoteVideoFrameObjectHeapProxy;
 
-class RemoteCaptureSampleManager : public IPC::Connection::WorkQueueMessageReceiver {
+class RemoteCaptureSampleManager : public IPC::WorkQueueMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteCaptureSampleManager();
@@ -63,7 +64,7 @@ public:
     void didUpdateSourceConnection(IPC::Connection&);
     void setVideoFrameObjectHeapProxy(RemoteVideoFrameObjectHeapProxy*);
 
-    // IPC::Connection::WorkQueueMessageReceiver overrides.
+    // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:

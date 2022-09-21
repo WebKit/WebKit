@@ -66,10 +66,13 @@
 #include <wtf/glib/GSocketMonitor.h>
 #endif
 
+#if ENABLE(IPC_TESTING_API)
+#include "MessageObserver.h"
+#endif
 
 namespace IPC {
 
-enum class SendOption {
+enum class SendOption : uint8_t {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.
     DispatchMessageEvenWhenWaitingForSyncReply = 1 << 0,
@@ -114,6 +117,7 @@ template<typename AsyncReplyResult> struct AsyncReplyError {
 
 class MachMessage;
 class UnixMessage;
+class WorkQueueMessageReceiver;
 
 class Connection : public ThreadSafeRefCounted<Connection, WTF::DestructionThread::MainRunLoop>, public CanMakeWeakPtr<Connection> {
 public:
@@ -128,18 +132,6 @@ public:
     protected:
         virtual ~Client() { }
     };
-
-    class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
-    };
-
-#if ENABLE(IPC_TESTING_API)
-    class MessageObserver : public CanMakeWeakPtr<MessageObserver> {
-    public:
-        virtual ~MessageObserver() = default;
-        virtual void willSendMessage(const Encoder&, OptionSet<SendOption>) = 0;
-        virtual void didReceiveMessage(const Decoder&) = 0;
-    };
-#endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
     using Handle = UnixFileDescriptor;
@@ -193,24 +185,10 @@ public:
 #endif
     };
 
-#if USE(UNIX_DOMAIN_SOCKETS)
-    struct SocketPair {
-        int client;
-        int server;
-    };
-
-    enum ConnectionOptions {
-        SetCloexecOnClient = 1 << 0,
-        SetCloexecOnServer = 1 << 1,
-    };
-
-    static Connection::SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
-#elif OS(DARWIN)
+#if OS(DARWIN)
     xpc_connection_t xpcConnection() const { return m_xpcConnection.get(); }
     std::optional<audit_token_t> getAuditToken();
     pid_t remoteProcessID() const;
-#elif OS(WINDOWS)
-    static bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier);
 #endif
 
     static Ref<Connection> createServerConnection(Identifier);
