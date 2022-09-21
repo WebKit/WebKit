@@ -121,6 +121,9 @@ class GitHub(object):
         api_url = GitHub.api_url(repository_url)
         if not api_url:
             return False
+        if not ews_comment:
+            _log.error('Unable to comment on GitHub for PR {} since comment is None.'.format(pr_number))
+            return False
 
         if comment_id != -1:
             comment_url = '{api_url}/issues/comments/{comment_id}'.format(api_url=api_url, comment_id=comment_id)
@@ -216,7 +219,8 @@ class GitHubEWS(GitHub):
 
         if change.comment_id == -1:
             pr_url = GitHub.pr_url(change.pr_id)
-            return (u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url), None)
+            comment = u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
+            return (comment, comment)
         comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
