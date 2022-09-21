@@ -110,6 +110,13 @@ public:
         return clamp(value - epsilon() / 2.0f);
     }
 
+    static LayoutUnit fromRawValue(int value)
+    {
+        LayoutUnit v;
+        v.m_value = value;
+        return v;
+    }
+
     int toInt() const { return m_value / kFixedPointDenominator; }
     float toFloat() const { return static_cast<float>(m_value) / kFixedPointDenominator; }
     double toDouble() const { return static_cast<double>(m_value) / kFixedPointDenominator; }

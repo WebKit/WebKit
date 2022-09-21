@@ -36,6 +36,7 @@ class SerializedType(object):
         self.encoders = ['Encoder']
         self.serialize_with_function_calls = False
         self.return_ref = False
+        self.create_using = False
         self.populate_from_empty_constructor = False
         if attributes is not None:
             for attribute in attributes.split(', '):
@@ -44,6 +45,8 @@ class SerializedType(object):
                     self.encoders.append(value)
                 if key == 'Return' and value == 'Ref':
                     self.return_ref = True
+                if key == 'CreateUsing':
+                    self.create_using = value
                 if key == 'LegacyPopulateFrom' and value == 'EmptyConstructor':
                     self.populate_from_empty_constructor = True
 
@@ -285,6 +288,8 @@ def generate_cpp(serialized_types, serialized_enums, headers):
         else:
             if type.return_ref:
                 result.append('    return { ' + type.namespace_and_name() + '::create(')
+            elif type.create_using:
+                result.append('    return { ' + type.namespace_and_name() + '::' + type.create_using + '(')
             else:
                 result.append('    return { ' + type.namespace_and_name() + ' {')
             for i in range(len(type.members)):
@@ -293,7 +298,7 @@ def generate_cpp(serialized_types, serialized_enums, headers):
                 result.append('        WTFMove(*' + sanitize_string_for_variable_name(type.members[i].name) + ')' + ('' if i == len(type.members) - 1 else ','))
                 if type.members[i].condition is not None:
                     result.append('#endif')
-            if type.return_ref:
+            if type.return_ref or type.create_using:
                 result.append('    ) };')
             else:
                 result.append('    } };')
