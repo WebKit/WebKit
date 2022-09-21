@@ -29,6 +29,8 @@
 #ifndef FloatConversion_h
 #define FloatConversion_h
 
+#include <wtf/MathExtras.h>
+
 #if USE(CG)
 #include <CoreGraphics/CGBase.h>
 #endif
@@ -41,7 +43,7 @@ namespace WebCore {
     template<>
     inline float narrowPrecisionToFloat(double number)
     {
-        return static_cast<float>(number);
+        return clampTo<float>(number);
     }
 
 #if USE(CG)
