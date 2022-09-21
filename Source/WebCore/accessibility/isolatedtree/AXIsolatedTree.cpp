@@ -767,6 +767,14 @@ void AXIsolatedTree::applyPendingChanges()
         for (const auto& object : m_readerThreadNodeMap.values())
             object->detach(AccessibilityDetachmentType::CacheDestroyed);
 
+        // Because each AXIsolatedObject holds a RefPtr to this tree, clear out any member variable
+        // that holds an AXIsolatedObject so the ref-cycle is broken and this tree can be destroyed.
+        m_readerThreadNodeMap.clear();
+        m_rootNode = nullptr;
+        m_pendingAppends.clear();
+        // We don't need to bother clearing out any other non-cycle-causing member variables as they
+        // will be cleaned up automatically when the tree is destroyed.
+
         Locker locker { s_cacheLock };
 #ifndef NDEBUG
         ASSERT(treeIDCache().contains(treeID()));
