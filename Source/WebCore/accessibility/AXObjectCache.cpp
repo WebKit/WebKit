@@ -265,7 +265,7 @@ bool AXObjectCache::isModalElement(Element& element) const
     AtomString modalValue = element.attributeWithoutSynchronization(aria_modalAttr);
     if (modalValue.isNull()) {
         if (auto* defaultARIA = element.customElementDefaultARIAIfExists())
-            modalValue = defaultARIA->valueForAttribute(aria_modalAttr);
+            modalValue = defaultARIA->valueForAttribute(element, aria_modalAttr);
     }
     bool isAriaModal = equalLettersIgnoringASCIICase(modalValue, "true"_s);
     return (hasDialogRole && isAriaModal) || (is<HTMLDialogElement>(element) && downcast<HTMLDialogElement>(element).isModal());
@@ -541,10 +541,11 @@ bool nodeHasRole(Node* node, StringView role)
     if (!node || !is<Element>(node))
         return false;
 
-    AtomString roleValue = downcast<Element>(*node).attributeWithoutSynchronization(roleAttr);
+    auto& element = downcast<Element>(*node);
+    AtomString roleValue = element.attributeWithoutSynchronization(roleAttr);
     if (roleValue.isNull()) {
-        if (auto* defaultARIA = downcast<Element>(*node).customElementDefaultARIAIfExists())
-            roleValue = defaultARIA->valueForAttribute(roleAttr);
+        if (auto* defaultARIA = element.customElementDefaultARIAIfExists())
+            roleValue = defaultARIA->valueForAttribute(element, roleAttr);
     }
     if (role.isNull())
         return roleValue.isEmpty();
@@ -4042,22 +4043,30 @@ void AXObjectCache::updateRelationsIfNeeded()
     m_relationTargets.clear();
 
     struct RelationOrigin {
-        Element* originElement { nullptr };
+        RefPtr<Element> originElement;
         AtomString targetID;
         AXRelationType relationType;
     };
 
     struct RelationTarget {
-        Element* targetElement { nullptr };
+        RefPtr<Element> targetElement;
         AtomString targetID;
     };
 
     Vector<RelationOrigin> origins;
     Vector<RelationTarget> targets;
+    // FIXME: Make this code work with shadow DOM.
     for (auto& element : descendantsOfType<Element>(m_document.rootNode())) {
         // Collect all possible origins, i.e., elements with non-empty relation attributes.
         for (const auto& attribute : relationAttributes()) {
             auto& idsString = element.attributeWithoutSynchronization(attribute);
+            if (idsString.isNull()) {
+                if (auto* defaultARIA = element.customElementDefaultARIAIfExists()) {
+                    for (auto& targetElement : defaultARIA->elementsForAttribute(element, attribute))
+                        addRelation(&element, targetElement.get(), attributeToRelationType(attribute));
+                }
+                continue;
+            }
             SpaceSplitString ids(idsString, SpaceSplitString::ShouldFoldCase::No);
             for (size_t i = 0; i < ids.size(); ++i)
                 origins.append({ &element, ids[i], attributeToRelationType(attribute) });
@@ -4077,7 +4086,7 @@ void AXObjectCache::updateRelationsIfNeeded()
             }
 
             if (origin.targetID == target.targetID)
-                addRelation(origin.originElement, target.targetElement, origin.relationType);
+                addRelation(origin.originElement.get(), target.targetElement.get(), origin.relationType);
         }
     }
 }

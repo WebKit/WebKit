@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-element id="custom-1"></custom-element>
+<custom-element id="custom-2" aria-flowto="flowto2" aria-labelledby="label2"></custom-element>
+<div role="button" class="flowto">FlowTo1</div>
+<div id="flowto2" role="button" class="flowto">FlowTo2</div>
+<div class="label">label 1</div>
+<div id="label2" class="label">label 2</div>
+<script>
+
+customElements.define('custom-element', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'checkbox';
+        internals.ariaFlowToElements = Array.from(document.querySelectorAll('.flowto'));
+        internals.ariaLabelledByElements = Array.from(document.querySelectorAll('.label'));
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").role', 'AXRole: AXCheckBox');
+    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("custom-1"))', 'label 1 label 2');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(0).role', 'AXRole: AXButton');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(0).title', 'AXTitle: FlowTo1');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(1).role', 'AXRole: AXButton');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(1).title', 'AXTitle: FlowTo2');
+    shouldBe('accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(2)', 'null');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").role', 'AXRole: AXCheckBox');
+    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("custom-2"))', 'label 2');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").ariaFlowToElementAtIndex(0).role', 'AXRole: AXButton');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").ariaFlowToElementAtIndex(0).title', 'AXTitle: FlowTo2');
+    shouldBe('accessibilityController.accessibleElementById("custom-2").ariaFlowToElementAtIndex(1)', 'null');
+}
+
+</script>
+</body>
+</html>

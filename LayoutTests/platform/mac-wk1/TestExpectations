@@ -314,7 +314,7 @@ fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
 # Default ARIA for custom elements are not yet enabled
-accessibility/custom-elements/role.html [ Skip ]
+accessibility/custom-elements/ [ Skip ]
 
 # Missing necessary testing logic (AccessibilityController::{get,set}RetainedElement)
 accessibility/ax-object-destroyed-on-reload.html [ Skip ]

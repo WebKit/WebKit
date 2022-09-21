@@ -1,0 +1,28 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS accessibilityController.accessibleElementById("custom-1").role is "AXRole: AXCheckBox"
+PASS accessibilityController.accessibleElementById("custom-1").helpText is "AXHelp: some description other description"
+PASS accessibilityController.accessibleElementById("custom-1").detailsElements().length is 2
+PASS accessibilityController.accessibleElementById("custom-1").detailsElements()[0].domIdentifier is "details1"
+PASS accessibilityController.accessibleElementById("custom-1").detailsElements()[1].domIdentifier is "details2"
+PASS accessibilityController.accessibleElementById("custom-1").errorMessageElements().length is 2
+PASS accessibilityController.accessibleElementById("custom-1").errorMessageElements()[0].domIdentifier is "error1"
+PASS accessibilityController.accessibleElementById("custom-1").errorMessageElements()[1].domIdentifier is "error2"
+PASS accessibilityController.accessibleElementById("custom-2").role is "AXRole: AXCheckBox"
+PASS accessibilityController.accessibleElementById("custom-2").helpText is "AXHelp: some description"
+PASS accessibilityController.accessibleElementById("custom-2").detailsElements().length is 1
+PASS accessibilityController.accessibleElementById("custom-2").detailsElements()[0].domIdentifier is "details2"
+PASS accessibilityController.accessibleElementById("custom-2").errorMessageElements().length is 1
+PASS accessibilityController.accessibleElementById("custom-2").errorMessageElements()[0].domIdentifier is "error2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+some description
+other description
+some details
+other details
+some error
+other error
