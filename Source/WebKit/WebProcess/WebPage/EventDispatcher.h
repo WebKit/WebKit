@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "WebEvent.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/RectEdges.h>
@@ -59,7 +60,7 @@ class WebWheelEvent;
 class WebTouchEvent;
 #endif
 
-class EventDispatcher : public IPC::Connection::WorkQueueMessageReceiver {
+class EventDispatcher : public IPC::WorkQueueMessageReceiver {
 public:
     static Ref<EventDispatcher> create();
     ~EventDispatcher();
@@ -86,7 +87,7 @@ public:
 private:
     EventDispatcher();
 
-    // IPC::Connection::WorkQueueMessageReceiver.
+    // IPC::WorkQueueMessageReceiver .
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers

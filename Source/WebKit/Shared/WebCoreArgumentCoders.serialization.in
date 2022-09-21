@@ -430,3 +430,53 @@ struct WebCore::RawFile {
     String fileName;
     RefPtr<WebCore::SharedBuffer> fileData;
 };
+
+header: <WebCore/FloatRoundedRect.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatRoundedRect {
+    WebCore::FloatRect rect();
+    WebCore::FloatSize radii().topLeft();
+    WebCore::FloatSize radii().topRight();
+    WebCore::FloatSize radii().bottomLeft();
+    WebCore::FloatSize radii().bottomRight();
+}
+
+header: <WebCore/IntRect.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntRect {
+    WebCore::IntPoint location();
+    WebCore::IntSize size();
+}
+
+header: <WebCore/IntPoint.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntPoint {
+    int x();
+    int y();
+}
+
+header: <WebCore/IntSize.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntSize {
+    int width();
+    int height();
+}
+
+header: <WebCore/FloatSize.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatSize {
+    float width();
+    float height();
+}
+
+header: <WebCore/LayoutUnit.h>
+[AdditionalEncoder=StreamConnectionEncoder, CreateUsing=fromRawValue] class WebCore::LayoutUnit {
+    int rawValue()
+}
+
+header: <WebCore/LayoutPoint.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::LayoutPoint {
+    WebCore::LayoutUnit x();
+    WebCore::LayoutUnit y();
+}
+
+header: <WebCore/LayoutSize.h>
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::LayoutSize {
+    WebCore::LayoutUnit width();
+    WebCore::LayoutUnit height();
+}

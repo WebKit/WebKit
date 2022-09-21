@@ -103,9 +103,8 @@ static inline Color getSystemAccentColor()
 
 static inline Color getAccentColor(const RenderObject& renderObject)
 {
-    auto accentColor = renderObject.style().effectiveAccentColor();
-    if (accentColor.isValid())
-        return accentColor;
+    if (!renderObject.style().hasAutoAccentColor())
+        return renderObject.style().effectiveAccentColor();
 
     return getSystemAccentColor();
 }

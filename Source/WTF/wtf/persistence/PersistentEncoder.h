@@ -29,13 +29,11 @@
 #include <wtf/SHA1.h>
 #include <wtf/Span.h>
 #include <wtf/Vector.h>
-#include <wtf/persistence/PersistentCoder.h>
+#include <wtf/persistence/PersistentCoders.h>
 
-namespace WTF {
-namespace Persistence {
+namespace WTF::Persistence {
 
-class Encoder;
-class DataReference;
+template<typename> struct Coder;
 
 class Encoder {
     WTF_MAKE_FAST_ALLOCATED;
@@ -111,5 +109,4 @@ void Encoder::updateChecksumForNumber(SHA1& sha1, Type value)
     sha1.addBytes(reinterpret_cast<uint8_t*>(&value), sizeof(value));
 }
 
-}
 }

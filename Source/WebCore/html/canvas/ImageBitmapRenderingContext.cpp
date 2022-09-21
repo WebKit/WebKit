@@ -30,6 +30,7 @@
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "OffscreenCanvas.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -54,11 +55,13 @@ ImageBitmapRenderingContext::ImageBitmapRenderingContext(CanvasBase& canvas, Ima
 
 ImageBitmapRenderingContext::~ImageBitmapRenderingContext() = default;
 
-HTMLCanvasElement* ImageBitmapRenderingContext::canvas() const
+ImageBitmapCanvas ImageBitmapRenderingContext::canvas()
 {
     auto& base = canvasBase();
-    if (!is<HTMLCanvasElement>(base))
-        return nullptr;
+#if ENABLE(OFFSCREEN_CANVAS)
+    if (is<OffscreenCanvas>(base))
+        return &downcast<OffscreenCanvas>(base);
+#endif
     return &downcast<HTMLCanvasElement>(base);
 }
 
@@ -89,12 +92,12 @@ void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitma
         // only reason I can think of is toDataURL(), but that doesn't seem like
         // a good enough argument to waste memory.
 
-        auto buffer = ImageBuffer::create(FloatSize(canvas()->width(), canvas()->height()), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(RenderingMode::Unaccelerated));
-        canvas()->setImageBufferAndMarkDirty(WTFMove(buffer));
+        auto buffer = ImageBuffer::create(FloatSize(canvasBase().width(), canvasBase().height()), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8, bufferOptionsForRendingMode(RenderingMode::Unaccelerated));
+        canvasBase().setImageBufferAndMarkDirty(WTFMove(buffer));
 
         // 1.4. Set the output bitmap's origin-clean flag to true.
 
-        canvas()->setOriginClean();
+        canvasBase().setOriginClean();
         return;
     }
 
@@ -110,10 +113,10 @@ void ImageBitmapRenderingContext::setOutputBitmap(RefPtr<ImageBitmap> imageBitma
     //      bitmap data to be referenced by context's output bitmap.
 
     if (imageBitmap->originClean())
-        canvas()->setOriginClean();
+        canvasBase().setOriginClean();
     else
-        canvas()->setOriginTainted();
-    canvas()->setImageBufferAndMarkDirty(imageBitmap->takeImageBuffer());
+        canvasBase().setOriginTainted();
+    canvasBase().setImageBufferAndMarkDirty(imageBitmap->takeImageBuffer());
 }
 
 ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<ImageBitmap> imageBitmap)

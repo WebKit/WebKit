@@ -145,7 +145,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
         //    edges of the containing block.
 
         auto containingBlockWidth = horizontalConstraints.logicalWidth;
-        auto& containingBlockStyle = layoutBox.containingBlock().style();
+        auto& containingBlockStyle = FormattingContext::containingBlock(layoutBox).style();
         auto& boxGeometry = formattingContext().geometryForBox(layoutBox);
 
         auto width = overriddenHorizontalValues.width ? overriddenHorizontalValues.width : computedWidth(layoutBox, containingBlockWidth);

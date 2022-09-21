@@ -1218,8 +1218,8 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
     if (element.isDisabledFormControl())
         return;
 
-    auto tintColor = style.effectiveAccentColor();
-    if (tintColor.isValid()) {
+    if (!style.hasAutoAccentColor()) {
+        auto tintColor = style.effectiveAccentColor();
         if (isSubmitStyleButton(element))
             style.setBackgroundColor(tintColor);
         else
@@ -1572,9 +1572,8 @@ Color RenderThemeIOS::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
 
 Color RenderThemeIOS::controlTintColor(const RenderStyle& style, OptionSet<StyleColorOptions> options) const
 {
-    Color tintColor = style.effectiveAccentColor();
-    if (tintColor.isValid())
-        return tintColor;
+    if (!style.hasAutoAccentColor())
+        return style.effectiveAccentColor();
 
     return systemColor(CSSValueAppleSystemBlue, options);
 }

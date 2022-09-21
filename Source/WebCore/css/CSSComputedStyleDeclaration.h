@@ -20,11 +20,9 @@
 
 #pragma once
 
-#include "Animation.h"
 #include "CSSStyleDeclaration.h"
+#include "ComputedStyleExtractor.h"
 #include "RenderStyleConstants.h"
-#include "SVGRenderStyleDefs.h"
-#include "TextFlags.h"
 #include <wtf/FixedVector.h>
 #include <wtf/IsoMalloc.h>
 #include <wtf/RefPtr.h>
@@ -32,80 +30,8 @@
 
 namespace WebCore {
 
-class CSSFontStyleValue;
-class CSSPrimitiveValue;
-class CSSValueList;
-class Color;
 class Element;
-class FilterOperations;
-class FontSelectionValue;
 class MutableStyleProperties;
-class Node;
-class RenderElement;
-class RenderStyle;
-class SVGPaint;
-class ShadowData;
-class StyleProperties;
-class StylePropertyShorthand;
-
-enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
-
-enum AdjustPixelValuesForComputedStyle { AdjustPixelValues, DoNotAdjustPixelValues };
-
-class ComputedStyleExtractor {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    ComputedStyleExtractor(Node*, bool allowVisitedStyle = false, PseudoId = PseudoId::None);
-    ComputedStyleExtractor(Element*, bool allowVisitedStyle = false, PseudoId = PseudoId::None);
-
-    enum class PropertyValueType : bool { Resolved, Computed };
-    RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout, PropertyValueType = PropertyValueType::Resolved);
-    RefPtr<CSSValue> valueForPropertyInStyle(const RenderStyle&, CSSPropertyID, RenderElement* = nullptr);
-    String customPropertyText(const AtomString& propertyName);
-    RefPtr<CSSValue> customPropertyValue(const AtomString& propertyName);
-
-    // Helper methods for HTML editing.
-    Ref<MutableStyleProperties> copyPropertiesInSet(const CSSPropertyID* set, unsigned length);
-    Ref<MutableStyleProperties> copyProperties();
-    RefPtr<CSSPrimitiveValue> getFontSizeCSSValuePreferringKeyword();
-    bool useFixedFontDefaultSize();
-    bool propertyMatches(CSSPropertyID, const CSSValue*);
-
-    static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
-
-    static Ref<CSSPrimitiveValue> fontNonKeywordWeightFromStyleValue(FontSelectionValue);
-    static Ref<CSSPrimitiveValue> fontWeightFromStyleValue(FontSelectionValue);
-    static Ref<CSSPrimitiveValue> fontNonKeywordStretchFromStyleValue(FontSelectionValue);
-    static Ref<CSSPrimitiveValue> fontStretchFromStyleValue(FontSelectionValue);
-    static Ref<CSSFontStyleValue> fontNonKeywordStyleFromStyleValue(FontSelectionValue);
-    static Ref<CSSFontStyleValue> fontStyleFromStyleValue(std::optional<FontSelectionValue>, FontStyleAxis);
-
-    static void addValueForAnimationPropertyToList(CSSValueList&, CSSPropertyID, const Animation*);
-
-private:
-    // The renderer we should use for resolving layout-dependent properties.
-    RenderElement* styledRenderer() const;
-
-    RefPtr<CSSValue> svgPropertyValue(CSSPropertyID);
-    Ref<CSSValue> adjustSVGPaintForCurrentColor(SVGPaintType, const String& url, const Color&, const Color& currentColor) const;
-    static Ref<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle&, AdjustPixelValuesForComputedStyle = AdjustPixelValues);
-    Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle*, const Color&) const;
-
-    Ref<CSSValueList> getCSSPropertyValuesForShorthandProperties(const StylePropertyShorthand&);
-    RefPtr<CSSValueList> getCSSPropertyValuesFor2SidesShorthand(const StylePropertyShorthand&);
-    RefPtr<CSSValueList> getCSSPropertyValuesFor4SidesShorthand(const StylePropertyShorthand&);
-
-    size_t getLayerCount(CSSPropertyID);
-    Ref<CSSValue> getFillLayerPropertyShorthandValue(CSSPropertyID, const StylePropertyShorthand& propertiesBeforeSlashSeparator, const StylePropertyShorthand& propertiesAfterSlashSeparator, CSSPropertyID lastLayerProperty);
-    Ref<CSSValue> getBackgroundShorthandValue();
-    Ref<CSSValue> getMaskShorthandValue();
-    Ref<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&);
-    Ref<CSSValue> fontVariantShorthandValue();
-
-    RefPtr<Element> m_element;
-    PseudoId m_pseudoElementSpecifier;
-    bool m_allowVisitedStyle;
-};
 
 class CSSComputedStyleDeclaration final : public CSSStyleDeclaration {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(CSSComputedStyleDeclaration, WEBCORE_EXPORT);
@@ -139,7 +65,7 @@ private:
     ExceptionOr<void> setPropertyInternal(CSSPropertyID, const String& value, bool important) final;
     Ref<MutableStyleProperties> copyProperties() const final;
 
-    RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, EUpdateLayout = UpdateLayout) const;
+    RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID, ComputedStyleExtractor::UpdateLayout = ComputedStyleExtractor::UpdateLayout::Yes) const;
 
     const Settings* settings() const final;
     const FixedVector<CSSPropertyID>& exposedComputedCSSPropertyIDs() const;

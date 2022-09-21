@@ -28,9 +28,13 @@
 #include "QualifiedName.h"
 #include <wtf/HashMap.h>
 #include <wtf/IsoMalloc.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
+
+class WeakPtrImplWithEventTargetData;
 
 class CustomElementDefaultARIA {
     WTF_MAKE_ISO_ALLOCATED(CustomElementDefaultARIA);
@@ -39,11 +43,16 @@ public:
     ~CustomElementDefaultARIA();
 
     bool hasAttribute(const QualifiedName&) const;
-    const AtomString& valueForAttribute(const QualifiedName&) const;
+    const AtomString& valueForAttribute(const Element& thisElement, const QualifiedName&) const;
     void setValueForAttribute(const QualifiedName&, const AtomString&);
+    Element* elementForAttribute(const Element& thisElement, const QualifiedName&) const;
+    void setElementForAttribute(const QualifiedName&, Element*);
+    Vector<RefPtr<Element>> elementsForAttribute(const Element& thisElement, const QualifiedName&) const;
+    void setElementsForAttribute(const QualifiedName&, std::optional<Vector<RefPtr<Element>>>&&);
 
 private:
-    HashMap<QualifiedName, AtomString> m_map;
+    using WeakElementPtr = WeakPtr<Element, WeakPtrImplWithEventTargetData>;
+    HashMap<QualifiedName, std::variant<AtomString, WeakElementPtr, Vector<WeakElementPtr>>> m_map;
 };
 
 }; // namespace WebCore

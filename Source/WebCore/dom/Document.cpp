@@ -3019,9 +3019,10 @@ ExceptionOr<void> Document::open(Document* entryDocument)
             }
         }
 
+        bool isNavigating = m_frame->loader().policyChecker().delegateIsDecidingNavigationPolicy() || m_frame->loader().state() == FrameState::Provisional || m_frame->navigationScheduler().hasQueuedNavigation();
         if (m_frame->loader().policyChecker().delegateIsDecidingNavigationPolicy())
             m_frame->loader().policyChecker().stopCheck();
-        if (m_frame && m_frame->loader().state() == FrameState::Provisional)
+        if (isNavigating)
             m_frame->loader().stopAllLoaders();
     }
 

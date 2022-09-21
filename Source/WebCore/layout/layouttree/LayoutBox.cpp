@@ -199,49 +199,6 @@ bool Box::isFloatAvoider() const
     return establishesTableFormattingContext() || establishesIndependentFormattingContext() || establishesBlockFormattingContext();
 }
 
-const ContainerBox& Box::containingBlock() const
-{
-    // Finding the containing block by traversing the tree during tree construction could provide incorrect result.
-    ASSERT(!Phase::isInTreeBuilding());
-    // If we ever end up here with the ICB, we must be doing something not-so-great.
-    RELEASE_ASSERT(!is<InitialContainingBlock>(*this));
-    // The containing block in which the root element lives is a rectangle called the initial containing block.
-    // For other elements, if the element's position is 'relative' or 'static', the containing block is formed by the
-    // content edge of the nearest block container ancestor box or which establishes a formatting context.
-    // If the element has 'position: fixed', the containing block is established by the viewport
-    // If the element has 'position: absolute', the containing block is established by the nearest ancestor with a
-    // 'position' of 'absolute', 'relative' or 'fixed'.
-    if (!isPositioned() || isInFlowPositioned()) {
-        auto* ancestor = &parent();
-        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
-            if (ancestor->isContainingBlockForInFlow())
-                return *ancestor;
-        }
-        return *ancestor;
-    }
-
-    if (isFixedPositioned()) {
-        auto* ancestor = &parent();
-        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
-            if (ancestor->isContainingBlockForFixedPosition())
-                return *ancestor;
-        }
-        return *ancestor;
-    }
-
-    if (isOutOfFlowPositioned()) {
-        auto* ancestor = &parent();
-        for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) {
-            if (ancestor->isContainingBlockForOutOfFlowPosition())
-                return *ancestor;
-        }
-        return *ancestor;
-    }
-
-    ASSERT_NOT_REACHED();
-    return parent();
-}
-
 bool Box::isInlineBlockBox() const
 {
     return m_style.display() == DisplayType::InlineBlock;
@@ -406,7 +363,7 @@ bool Box::isOverflowVisible() const
     // if the value on the root element is 'visible'. The 'visible' value when used for the viewport must be interpreted as 'auto'.
     // The element from which the value is propagated must have a used value for 'overflow' of 'visible'.
     if (isBodyBox()) {
-        auto& documentBox = containingBlock();
+        auto& documentBox = parent();
         if (!documentBox.isDocumentBox())
             return isOverflowVisible;
         if (!documentBox.isOverflowVisible())

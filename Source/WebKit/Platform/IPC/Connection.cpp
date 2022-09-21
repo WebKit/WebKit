@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "MessageFlags.h"
 #include "MessageReceiveQueues.h"
+#include "WorkQueueMessageReceiver.h"
 #include <memory>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/HashSet.h>

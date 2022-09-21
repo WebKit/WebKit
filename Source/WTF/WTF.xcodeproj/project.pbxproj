@@ -521,7 +521,6 @@
 		DDF306F527C086CC006A526F /* utils.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47296151A825A004123FF /* utils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF306FB27C086CC006A526F /* fixed-dtoa.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47291151A825A004123FF /* fixed-dtoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF306FD27C086CC006A526F /* TypeCastsCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 44CDE4D226EE6CDA009F6ACB /* TypeCastsCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDF3070327C086CC006A526F /* PersistentCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F175241F3D486000C74950 /* PersistentCoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3070627C086CC006A526F /* WeakLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 37C7CC291EA40A73007BD956 /* WeakLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3070C27C086CC006A526F /* TypeCastsCF.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AFDE647195201C300C48FFA /* TypeCastsCF.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3070E27C086CC006A526F /* NSURLExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CC0EE872162BC2200A1A842 /* NSURLExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1108,7 +1107,6 @@
 		517F82D51FD22F2F00DA3DEA /* CrossThreadTaskHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadTaskHandler.cpp; sourceTree = "<group>"; };
 		517F82D61FD22F2F00DA3DEA /* CrossThreadTaskHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadTaskHandler.h; sourceTree = "<group>"; };
 		5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InstanceCounted.h; sourceTree = "<group>"; };
-		51F175241F3D486000C74950 /* PersistentCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentCoder.h; sourceTree = "<group>"; };
 		51F175251F3D486000C74950 /* PersistentCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersistentCoders.h; sourceTree = "<group>"; };
 		51F175261F3D486000C74950 /* PersistentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistentCoders.cpp; sourceTree = "<group>"; };
 		51F175271F3D486000C74950 /* PersistentDecoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PersistentDecoder.cpp; sourceTree = "<group>"; };
@@ -2792,7 +2790,6 @@
 		E43A46851E228B5700276B05 /* persistence */ = {
 			isa = PBXGroup;
 			children = (
-				51F175241F3D486000C74950 /* PersistentCoder.h */,
 				51F175261F3D486000C74950 /* PersistentCoders.cpp */,
 				51F175251F3D486000C74950 /* PersistentCoders.h */,
 				51F175271F3D486000C74950 /* PersistentDecoder.cpp */,
@@ -3094,7 +3091,6 @@
 				DD4901EB27B4748A00D7E50D /* ParallelJobsOpenMP.h in Headers */,
 				DD3DC95C27A4BF8E007E5B61 /* ParallelVectorIterator.h in Headers */,
 				DD3DC99827A4BF8E007E5B61 /* ParkingLot.h in Headers */,
-				DDF3070327C086CC006A526F /* PersistentCoder.h in Headers */,
 				DDF3077A27C086CD006A526F /* PersistentCoders.h in Headers */,
 				DDF3074E27C086CD006A526F /* PersistentDecoder.h in Headers */,
 				DDF3078B27C086CD006A526F /* PersistentEncoder.h in Headers */,

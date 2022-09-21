@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FontFamilySpecificationCoreTextCache.h"
 
+#include "FontCache.h"
+
 namespace WebCore {
 
 FontFamilySpecificationCoreTextCache& FontFamilySpecificationCoreTextCache::forCurrentThread()

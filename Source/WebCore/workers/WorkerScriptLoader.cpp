@@ -65,8 +65,10 @@ WorkerScriptLoader::~WorkerScriptLoader()
 
     scriptExecutionContextIdentifierToWorkerScriptLoaderMap().remove(m_clientIdentifier);
 #if ENABLE(SERVICE_WORKER)
-    if (m_activeServiceWorkerData)
-        ServiceWorkerProvider::singleton().serviceWorkerConnection().unregisterServiceWorkerClient(m_clientIdentifier);
+    if (m_activeServiceWorkerData) {
+        if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
+            serviceWorkerConnection->unregisterServiceWorkerClient(m_clientIdentifier);
+    }
 #endif
 }
 

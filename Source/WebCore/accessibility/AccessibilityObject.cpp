@@ -2279,7 +2279,7 @@ const AtomString& AccessibilityObject::getAttribute(const QualifiedName& attribu
         if (!value.isNull())
             return value;
         if (auto* defaultARIA = element->customElementDefaultARIAIfExists())
-            return defaultARIA->valueForAttribute(attribute);
+            return defaultARIA->valueForAttribute(*element, attribute);
     }
     return nullAtom();
 }
@@ -3740,8 +3740,16 @@ Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName&
         return { };
 
     auto& idsString = getAttribute(attribute);
-    if (idsString.isEmpty())
+    if (idsString.isEmpty()) {
+        auto& element = downcast<Element>(*node);
+        if (auto* defaultARIA = element.customElementDefaultARIAIfExists()) {
+            Vector<Element*> elements;
+            for (auto& element : defaultARIA->elementsForAttribute(element, attribute))
+                elements.append(element.get());
+            return elements;
+        }
         return { };
+    }
 
     Vector<Element*> elements;
     auto& treeScope = node->treeScope();

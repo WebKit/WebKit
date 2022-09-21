@@ -2761,6 +2761,7 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
         }
     } while (consumeCommaIncludingWhitespace(args));
 
+    // Handle the invalid case where there is only one color in the "compare against" color list.
     if (colorsToCompareAgainst.size() == 1)
         return { };
 
@@ -2782,10 +2783,18 @@ static Color parseColorContrastFunctionParameters(CSSParserTokenRange& range, co
 
         if (!targetContrast)
             return { };
-        
+
+        // Handle the invalid case where there are additional tokens after the target contrast.
+        if (!args.atEnd())
+            return { };
+
         // When a target constast is specified, we select "the first color color to meet or exceed the target contrast."
         return selectFirstColorThatMeetsOrExceedsTargetContrast(originBackgroundColor, WTFMove(colorsToCompareAgainst), targetContrast->value);
     }
+
+    // Handle the invalid case where there are additional tokens after the "compare against" color list that are not the 'to' identifier.
+    if (!args.atEnd())
+        return { };
 
     // When a target constast is NOT specified, we select "the first color with the highest contrast to the single color."
     return selectFirstColorWithHighestContrast(originBackgroundColor, WTFMove(colorsToCompareAgainst));

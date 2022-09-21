@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "RemoteSampleBufferDisplayLayerManagerMessagesReplies.h"
 #include "SampleBufferDisplayLayerIdentifier.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/IntSize.h>
 #include <wtf/HashMap.h>
 
@@ -46,7 +47,7 @@ namespace WebKit {
 class GPUConnectionToWebProcess;
 class RemoteSampleBufferDisplayLayer;
 
-class RemoteSampleBufferDisplayLayerManager final : public IPC::Connection::WorkQueueMessageReceiver {
+class RemoteSampleBufferDisplayLayerManager final : public IPC::WorkQueueMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteSampleBufferDisplayLayerManager> create(GPUConnectionToWebProcess& connection)
@@ -65,7 +66,7 @@ private:
     explicit RemoteSampleBufferDisplayLayerManager(GPUConnectionToWebProcess&);
     void startListeningForIPC();
 
-    // IPC::Connection::WorkQueueMessageReceiver overrides.
+    // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     bool dispatchMessage(IPC::Connection&, IPC::Decoder&);

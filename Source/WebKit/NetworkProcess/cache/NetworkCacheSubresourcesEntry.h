@@ -31,16 +31,25 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/URL.h>
 
-namespace WebKit {
-namespace NetworkCache {
+namespace WebKit::NetworkCache {
 
 class SubresourceInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    void encode(WTF::Persistence::Encoder&) const;
-    static std::optional<SubresourceInfo> decode(WTF::Persistence::Decoder&);
-
-    SubresourceInfo() = default;
+    SubresourceInfo(Key&& key, WallTime lastSeen, WallTime firstSeen)
+        : m_key(WTFMove(key))
+        , m_lastSeen(lastSeen)
+        , m_firstSeen(firstSeen)
+        , m_isTransient(true) { }
+    SubresourceInfo(Key&& key, WallTime lastSeen, WallTime firstSeen, bool sameSite, bool isAppInitiated, URL&& firstPartyForCookies, WebCore::HTTPHeaderMap&& requestHeaders, WebCore::ResourceLoadPriority priority)
+        : m_key(WTFMove(key))
+        , m_lastSeen(lastSeen)
+        , m_firstSeen(firstSeen)
+        , m_isTransient(false)
+        , m_isAppInitiated(isAppInitiated)
+        , m_firstPartyForCookies(WTFMove(firstPartyForCookies))
+        , m_requestHeaders(WTFMove(requestHeaders))
+        , m_priority(priority) { }
     SubresourceInfo(const Key&, const WebCore::ResourceRequest&, const SubresourceInfo* previousInfo);
 
     const Key& key() const { return m_key; }
@@ -107,7 +116,6 @@ private:
     Vector<SubresourceInfo> m_subresources;
 };
 
-} // namespace WebKit
-} // namespace NetworkCache
+} // namespace WebKit::NetworkCache
 
 #endif // ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)

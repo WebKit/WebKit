@@ -83,6 +83,7 @@ public:
     bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }
 
     static const InitialContainingBlock& initialContainingBlock(const Box&);
+    static const ContainerBox& containingBlock(const Box&);
 #ifndef NDEBUG
     static const ContainerBox& formattingContextRoot(const Box&);
 #endif

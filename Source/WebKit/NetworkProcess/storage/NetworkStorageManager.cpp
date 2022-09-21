@@ -46,6 +46,7 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
+#include <WebCore/WebCorePersistentCoders.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/Scope.h>
 #include <wtf/SuspendableWorkQueue.h>

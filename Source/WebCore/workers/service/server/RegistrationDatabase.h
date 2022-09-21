@@ -92,6 +92,11 @@ private:
     uint64_t m_pushCounter { 0 };
 };
 
+struct ImportedScriptAttributes {
+    URL responseURL;
+    String mimeType;
+};
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

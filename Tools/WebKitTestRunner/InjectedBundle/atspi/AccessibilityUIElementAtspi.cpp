@@ -500,6 +500,27 @@ JSValueRef AccessibilityUIElement::columnHeaders() const
     return makeJSArray({ });
 }
 
+static JSValueRef elementsForRelation(WebCore::AccessibilityObjectAtspi* element, WebCore::Atspi::Relation relation)
+{
+    element->updateBackingStore();
+    auto relationMap = element->relationMap();
+    auto targets = relationMap.get(relation);
+    if (targets.isEmpty())
+        return { };
+
+    return makeJSArray(elementsVector(targets));
+}
+
+JSValueRef AccessibilityUIElement::detailsElements() const
+{
+    return elementsForRelation(m_element.get(), WebCore::Atspi::Relation::Details);
+}
+
+JSValueRef AccessibilityUIElement::errorMessageElements() const
+{
+    return elementsForRelation(m_element.get(), WebCore::Atspi::Relation::ErrorMessage);
+}
+
 RefPtr<AccessibilityUIElement> AccessibilityUIElement::uiElementAttributeValue(JSStringRef attribute) const
 {
     return nullptr;

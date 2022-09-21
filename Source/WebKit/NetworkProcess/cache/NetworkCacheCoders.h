@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,18 +26,28 @@
 
 #pragma once
 
-#include <WebCore/HTTPHeaderMap.h>
-#include <wtf/persistence/PersistentCoders.h>
-#include <wtf/persistence/PersistentDecoder.h>
-#include <wtf/persistence/PersistentEncoder.h>
+#include <WebCore/WebCorePersistentCoders.h>
 
-namespace WTF {
-namespace Persistence {
-
-template<> struct Coder<WebCore::HTTPHeaderMap> {
-    static void encode(Encoder&, const WebCore::HTTPHeaderMap&);
-    static std::optional<WebCore::HTTPHeaderMap> decode(Decoder&);
-};
-
+namespace WebKit::NetworkCache {
+class Key;
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+class SubresourceInfo;
+#endif
 }
+
+namespace WTF::Persistence {
+
+#define DECLARE_CODER(class) \
+template<> struct Coder<class> { \
+    static void encode(Encoder&, const class&); \
+    static std::optional<class> decode(Decoder&); \
+}
+
+DECLARE_CODER(WebKit::NetworkCache::Key);
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+DECLARE_CODER(WebKit::NetworkCache::SubresourceInfo);
+#endif
+
+#undef DECLARE_CODER
+
 }

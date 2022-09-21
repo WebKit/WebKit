@@ -108,6 +108,10 @@ hr {
     border-width: 1px;
 }
 
+abbr[title], acronym[title] {
+    text-decoration: dotted underline;
+}
+
 /* media elements */
 
 body:-webkit-full-page-media {

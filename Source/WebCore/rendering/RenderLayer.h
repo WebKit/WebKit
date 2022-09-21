@@ -47,6 +47,7 @@
 #include "ClipRect.h"
 #include "GraphicsLayer.h"
 #include "LayerFragment.h"
+#include "LayoutRect.h"
 #include "PaintFrequencyTracker.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
@@ -142,6 +143,7 @@ struct ScrollRectToVisibleOptions {
     const ScrollAlignment& alignY { ScrollAlignment::alignCenterIfNeeded };
     ShouldAllowCrossOriginScrolling shouldAllowCrossOriginScrolling { ShouldAllowCrossOriginScrolling::No };
     ScrollBehavior behavior { ScrollBehavior::Auto };
+    std::optional<LayoutRect> visibilityCheckRect { std::nullopt };
 };
 
 using ScrollingScope = uint64_t;

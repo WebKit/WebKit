@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include "MessageReceiveQueue.h"
+#include "WorkQueueMessageReceiver.h"
 
 namespace IPC {
 
@@ -54,7 +55,7 @@ private:
 class WorkQueueMessageReceiverQueue final : public MessageReceiveQueue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WorkQueueMessageReceiverQueue(WorkQueue& queue, Connection::WorkQueueMessageReceiver& receiver)
+    WorkQueueMessageReceiverQueue(WorkQueue& queue, WorkQueueMessageReceiver& receiver)
         : m_queue(queue)
         , m_receiver(receiver)
     {
@@ -69,7 +70,7 @@ public:
     }
 private:
     Ref<WorkQueue> m_queue;
-    Ref<Connection::WorkQueueMessageReceiver> m_receiver;
+    Ref<WorkQueueMessageReceiver> m_receiver;
 };
 
 } // namespace IPC

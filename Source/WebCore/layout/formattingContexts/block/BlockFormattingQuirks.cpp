@@ -119,12 +119,12 @@ static inline bool hasQuirkMarginToCollapse(const Box& layoutBox, VerticalMargin
 
 bool BlockFormattingQuirks::shouldCollapseMarginBeforeWithParentMarginBefore(const Box& layoutBox)
 {
-    return hasQuirkMarginToCollapse(layoutBox, VerticalMargin::Before) && isQuirkContainer(layoutBox.containingBlock());
+    return hasQuirkMarginToCollapse(layoutBox, VerticalMargin::Before) && isQuirkContainer(FormattingContext::containingBlock(layoutBox));
 }
 
 bool BlockFormattingQuirks::shouldCollapseMarginAfterWithParentMarginAfter(const Box& layoutBox)
 {
-    return hasQuirkMarginToCollapse(layoutBox, VerticalMargin::After) && isQuirkContainer(layoutBox.containingBlock());
+    return hasQuirkMarginToCollapse(layoutBox, VerticalMargin::After) && isQuirkContainer(FormattingContext::containingBlock(layoutBox));
 }
 
 }

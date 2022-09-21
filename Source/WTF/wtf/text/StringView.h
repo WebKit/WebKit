@@ -588,9 +588,8 @@ inline StringView::UpconvertedCharacters::UpconvertedCharacters(StringView strin
     }
     const LChar* characters8 = string.characters8();
     unsigned length = string.m_length;
-    m_upconvertedCharacters.reserveInitialCapacity(length);
-    for (unsigned i = 0; i < length; ++i)
-        m_upconvertedCharacters.uncheckedAppend(characters8[i]);
+    m_upconvertedCharacters.resize(length);
+    StringImpl::copyCharacters(m_upconvertedCharacters.data(), characters8, length);
     m_characters = m_upconvertedCharacters.data();
 }
 

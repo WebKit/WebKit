@@ -42,6 +42,9 @@ enum {
     SnapshotOptionsForceWhiteText = 1 << 7,
     SnapshotOptionsPrinting = 1 << 8,
     SnapshotOptionsUseScreenColorSpace = 1 << 9,
+    SnapshotOptionsVisibleContentRect = 1 << 10,
+    SnapshotOptionsFullContentRect = 1 << 11,
+    SnapshotOptionsTransparentBackground = 1 << 12
 };
 typedef uint32_t SnapshotOptions;
 

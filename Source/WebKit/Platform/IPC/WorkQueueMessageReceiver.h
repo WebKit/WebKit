@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,13 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include "MessageReceiver.h"
+#include <wtf/ThreadSafeRefCounted.h>
 
-namespace WTF {
+namespace IPC {
 
-namespace Persistence {
+class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
 
-class Decoder;
-class Encoder;
-
-template<typename T> struct Coder {
-    static void encode(Encoder& encoder, const T& t)
-    {
-        t.encode(encoder);
-    }
-
-    static std::optional<T> decode(Decoder& decoder)
-    {
-        return T::decode(decoder);
-    }
 };
 
-}
 }

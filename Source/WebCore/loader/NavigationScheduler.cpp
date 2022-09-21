@@ -653,4 +653,9 @@ void NavigationScheduler::cancel(NewLoadInProgress newLoadInProgress)
         redirect->didStopTimer(m_frame, newLoadInProgress);
 }
 
+bool NavigationScheduler::hasQueuedNavigation() const
+{
+    return m_redirect && !m_redirect->delay();
+}
+
 } // namespace WebCore

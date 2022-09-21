@@ -26,11 +26,11 @@
 #include "config.h"
 #include <wtf/persistence/PersistentCoders.h>
 
+#include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-namespace WTF {
-namespace Persistence {
+namespace WTF::Persistence {
 
 void Coder<AtomString>::encode(Encoder& encoder, const AtomString& atomString)
 {
@@ -142,6 +142,20 @@ std::optional<String> Coder<String>::decode(Decoder& decoder)
     return decodeStringText<UChar>(decoder, *length);
 }
 
+void Coder<URL>::encode(Encoder& encoder, const URL& url)
+{
+    encoder << url.string();
+}
+
+std::optional<URL> Coder<URL>::decode(Decoder& decoder)
+{
+    std::optional<String> string;
+    decoder >> string;
+    if (!string)
+        return std::nullopt;
+    return URL(WTFMove(*string));
+}
+
 void Coder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
 {
     encoder.encodeFixedLengthData({ digest.data(), sizeof(digest) });
@@ -155,5 +169,33 @@ std::optional<SHA1::Digest> Coder<SHA1::Digest>::decode(Decoder& decoder)
     return tmp;
 }
 
+void Coder<WallTime>::encode(Encoder& encoder, const WallTime& time)
+{
+    encoder << time.secondsSinceEpoch().value();
 }
+
+std::optional<WallTime> Coder<WallTime>::decode(Decoder& decoder)
+{
+    std::optional<double> value;
+    decoder >> value;
+    if (!value)
+        return std::nullopt;
+
+    return WallTime::fromRawSeconds(*value);
+}
+
+void Coder<Seconds>::encode(Encoder& encoder, const Seconds& seconds)
+{
+    encoder << seconds.value();
+}
+
+std::optional<Seconds> Coder<Seconds>::decode(Decoder& decoder)
+{
+    std::optional<double> value;
+    decoder >> value;
+    if (!value)
+        return std::nullopt;
+    return Seconds(*value);
+}
+
 }

@@ -77,7 +77,7 @@ bool StyleColor::isSystemColorKeyword(CSSValueID id)
 bool StyleColor::isColorKeyword(CSSValueID id, OptionSet<CSSColorType> allowedColorTypes)
 {
     return (allowedColorTypes.contains(CSSColorType::Absolute) && isAbsoluteColorKeyword(id))
-        || (allowedColorTypes.contains(CSSColorType::Current) && id == CSSValueCurrentcolor)
+        || (allowedColorTypes.contains(CSSColorType::Current) && isCurrentColorKeyword(id))
         || (allowedColorTypes.contains(CSSColorType::System) && isSystemColorKeyword(id));
 }
 

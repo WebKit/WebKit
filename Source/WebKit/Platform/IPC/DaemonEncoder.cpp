@@ -26,15 +26,11 @@
 #include "config.h"
 #include "DaemonEncoder.h"
 
-namespace WebKit {
+namespace WebKit::Daemon {
 
-namespace Daemon {
-
-void Encoder::encodeFixedLengthData(const uint8_t* data, size_t size, size_t)
+void Encoder::encodeFixedLengthData(Span<const uint8_t> span)
 {
-    m_buffer.append(data, size);
+    m_buffer.append(span);
 }
-
-} // namespace Daemon
 
 } // namespace WebKit

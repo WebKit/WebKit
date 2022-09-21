@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body id="body">
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<custom-element id="custom-1"></custom-element>
+<custom-element id="custom-2" aria-describedby="some" aria-details="details2" aria-errormessage="error2"></custom-element>
+<div id="some" class="note">some description</div>
+<div class="note">other description</div>
+<div id="details1" class="details">some details</div>
+<div id="details2" class="details">other details</div>
+<div id="error1" class="error">some error</div>
+<div id="error2" class="error">other error</div>
+<script>
+
+customElements.define('custom-element', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'checkbox';
+        internals.ariaDescribedByElements = Array.from(document.querySelectorAll('.note'));
+        internals.ariaDetailsElements = Array.from(document.querySelectorAll('.details'));
+        internals.ariaErrorMessageElements = Array.from(document.querySelectorAll('.error'));
+    }
+});
+
+description("This tests that aria fallback roles work correctly.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").role', 'AXRole: AXCheckBox');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").helpText', 'AXHelp: some description other description');
+    shouldBe('accessibilityController.accessibleElementById("custom-1").detailsElements().length', '2');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").detailsElements()[0].domIdentifier', 'details1');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").detailsElements()[1].domIdentifier', 'details2');
+    shouldBe('accessibilityController.accessibleElementById("custom-1").errorMessageElements().length', '2');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").errorMessageElements()[0].domIdentifier', 'error1');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-1").errorMessageElements()[1].domIdentifier', 'error2');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").role', 'AXRole: AXCheckBox');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").helpText', 'AXHelp: some description');
+    shouldBe('accessibilityController.accessibleElementById("custom-2").detailsElements().length', '1');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").detailsElements()[0].domIdentifier', 'details2');
+    shouldBe('accessibilityController.accessibleElementById("custom-2").errorMessageElements().length', '1');
+    shouldBeEqualToString('accessibilityController.accessibleElementById("custom-2").errorMessageElements()[0].domIdentifier', 'error2');
+}
+
+</script>
+</body>
+</html>

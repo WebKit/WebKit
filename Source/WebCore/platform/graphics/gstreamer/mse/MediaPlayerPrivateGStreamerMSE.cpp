@@ -54,6 +54,22 @@
 #include <wtf/URL.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/AtomStringHash.h>
+#include <wtf/text/StringToIntegerConversion.h>
+
+// We shouldn't accept media that the player can't actually play.
+// AAC supports up to 96 channels.
+#define MEDIA_MAX_AAC_CHANNELS 96
+#if USE(FULLHD_VIDEO_DECODING_LIMIT)
+// Raspberry Pi only supports up to 1080p@30fps hardware video decoding.
+#define MEDIA_MAX_WIDTH 1920.0f
+#define MEDIA_MAX_HEIGHT 1080.0f
+#define MEDIA_MAX_FRAMERATE 30.0f
+#else
+// Assume hardware video decoding acceleration up to 8K@60fps for the rest of the cases.
+#define MEDIA_MAX_WIDTH 7680.0f
+#define MEDIA_MAX_HEIGHT 4320.0f
+#define MEDIA_MAX_FRAMERATE 60.0f
+#endif
 
 static const char* dumpReadyState(WebCore::MediaPlayer::ReadyState readyState)
 {
@@ -372,6 +388,25 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
         GST_DEBUG("mime-type \"%s\" supported: %s", parameters.type.raw().utf8().data(), convertEnumerationToString(result).utf8().data());
         return result;
     }
+
+    unsigned channels = parseIntegerAllowingTrailingJunk<unsigned>(parameters.type.parameter("channels"_s)).value_or(0);
+    if (channels > MEDIA_MAX_AAC_CHANNELS)
+        return result;
+
+    bool ok;
+    float width = parameters.type.parameter("width"_s).toFloat(&ok);
+    if (!ok)
+        width = 0;
+    float height = parameters.type.parameter("height"_s).toFloat(&ok);
+    if (!ok)
+        height = 0;
+
+    if (width > MEDIA_MAX_WIDTH || height > MEDIA_MAX_HEIGHT)
+        return result;
+
+    float framerate = parameters.type.parameter("framerate"_s).toFloat(&ok);
+    if (ok && framerate > MEDIA_MAX_FRAMERATE)
+        return result;
 
     GST_DEBUG("Checking mime-type \"%s\"", parameters.type.raw().utf8().data());
     auto& gstRegistryScanner = GStreamerRegistryScannerMSE::singleton();

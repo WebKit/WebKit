@@ -80,6 +80,8 @@ public:
 
     ImageBuffer* buffer() const;
 
+    virtual void setImageBufferAndMarkDirty(RefPtr<ImageBuffer>&&) { }
+
     virtual AffineTransform baseTransform() const;
 
     void makeRenderingResultsAvailable();

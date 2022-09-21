@@ -37,6 +37,7 @@
 #include "SWScriptStorage.h"
 #include "SWServer.h"
 #include "SecurityOrigin.h"
+#include "WebCorePersistentCoders.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FileSystem.h>
@@ -100,34 +101,6 @@ static inline void cleanOldDatabases(const String& databaseDirectory)
     for (uint64_t version = 1; version < RegistrationDatabase::schemaVersion; ++version)
         SQLiteFileSystem::deleteDatabaseFile(FileSystem::pathByAppendingComponent(databaseDirectory, databaseFilenameFromVersion(version)));
 }
-
-struct ImportedScriptAttributes {
-    URL responseURL;
-    String mimeType;
-
-    template<class Encoder> void encode(Encoder& encoder) const
-    {
-        encoder << responseURL << mimeType;
-    }
-
-    template<class Decoder> static std::optional<ImportedScriptAttributes> decode(Decoder& decoder)
-    {
-        std::optional<URL> responseURL;
-        decoder >> responseURL;
-        if (!responseURL)
-            return std::nullopt;
-
-        std::optional<String> mimeType;
-        decoder >> mimeType;
-        if (!mimeType)
-            return std::nullopt;
-
-        return {{
-            WTFMove(*responseURL),
-            WTFMove(*mimeType)
-        }};
-    }
-};
 
 static HashMap<URL, ImportedScriptAttributes> stripScriptSources(const MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>& map)
 {
@@ -441,10 +414,10 @@ bool RegistrationDatabase::doPushChanges(const Vector<ServiceWorkerContextData>&
 
     for (auto& data : updatedRegistrations) {
         WTF::Persistence::Encoder cspEncoder;
-        data.contentSecurityPolicy.encode(cspEncoder);
+        cspEncoder << data.contentSecurityPolicy;
 
         WTF::Persistence::Encoder coepEncoder;
-        data.crossOriginEmbedderPolicy.encode(coepEncoder);
+        coepEncoder << data.crossOriginEmbedderPolicy;
 
         // We don't actually encode the script sources to the database. They will be stored separately in the ScriptStorage.
         // As a result, we need to strip the script sources here before encoding the scriptResourceMap.

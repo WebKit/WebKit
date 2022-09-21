@@ -25,7 +25,6 @@
 #include "WebPage.h"
 
 WebKitWebPage* webkitWebPageCreate(WebKit::WebPage*);
-void webkitWebPageDidReceiveMessage(WebKitWebPage*, const String& messageName, API::Dictionary& message);
 void webkitWebPageDidReceiveUserMessage(WebKitWebPage*, WebKit::UserMessage&&, CompletionHandler<void(WebKit::UserMessage&&)>&&);
 WebKit::WebPage* webkitWebPageGetPage(WebKitWebPage*);
 

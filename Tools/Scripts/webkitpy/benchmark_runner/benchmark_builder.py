@@ -112,8 +112,11 @@ class BenchmarkBuilder(object):
             return False
         if not self.LOCAL_GIT_ARCHIVE_SCHEMA.match(self._plan['local_git_archive']):
             return False
-        is_git_checkout = subprocess.check_output(['git', '-C', os.path.dirname(__file__), 'rev-parse',
-                                                   '--is-inside-work-tree'], encoding='utf-8').strip() == 'true'
+        try:
+            is_git_checkout = subprocess.check_output(['git', '-C', os.path.dirname(__file__), 'rev-parse',
+                                                       '--is-inside-work-tree'], encoding='utf-8').strip() == 'true'
+        except subprocess.CalledProcessError:
+            return False
         return is_git_checkout
 
     def _prepare_content_from_local_git_archive(self, local_git_archive):

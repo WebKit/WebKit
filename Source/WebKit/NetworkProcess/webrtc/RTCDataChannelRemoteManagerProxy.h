@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "DataReference.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/RTCDataChannelRemoteHandlerConnection.h>
 #include <WebCore/RTCDataChannelRemoteSourceConnection.h>
 #include <wtf/WorkQueue.h>
@@ -36,7 +37,7 @@ namespace WebKit {
 
 class NetworkConnectionToWebProcess;
 
-class RTCDataChannelRemoteManagerProxy final : public IPC::Connection::WorkQueueMessageReceiver {
+class RTCDataChannelRemoteManagerProxy final : public IPC::WorkQueueMessageReceiver {
 public:
     static Ref<RTCDataChannelRemoteManagerProxy> create() { return adoptRef(*new RTCDataChannelRemoteManagerProxy); }
 
@@ -46,7 +47,7 @@ public:
 private:
     RTCDataChannelRemoteManagerProxy();
 
-    // IPC::Connection::WorkQueueMessageReceiver
+    // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // To source

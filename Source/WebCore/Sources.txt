@@ -558,6 +558,7 @@ bindings/js/JSDeprecatedCSSOMValueCustom.cpp
 bindings/js/JSDocumentCustom.cpp
 bindings/js/JSDocumentFragmentCustom.cpp
 bindings/js/JSElementCustom.cpp
+bindings/js/JSElementInternalsCustom.cpp
 bindings/js/JSErrorEventCustom.cpp
 bindings/js/JSErrorHandler.cpp
 bindings/js/JSEventCustom.cpp
@@ -719,6 +720,7 @@ crypto/keys/CryptoKeyRSA.cpp
 crypto/keys/CryptoKeyRSAComponents.cpp
 crypto/keys/CryptoKeyRaw.cpp
 css/BasicShapeFunctions.cpp
+css/ComputedStyleExtractor.cpp
 css/ContainerQuery.cpp
 css/ContainerQueryParser.cpp
 css/CSSAspectRatioValue.cpp
@@ -1982,6 +1984,7 @@ platform/Timer.cpp
 platform/UserActivity.cpp
 platform/VideoFrame.cpp
 platform/WebCoreCrossThreadCopier.cpp
+platform/WebCorePersistentCoders.cpp
 platform/WebGLStateTracker.cpp
 platform/Widget.cpp
 platform/animation/Animation.cpp

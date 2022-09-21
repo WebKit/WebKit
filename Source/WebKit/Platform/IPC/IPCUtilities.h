@@ -43,4 +43,22 @@ inline bool isTestingIPC()
 }
 #endif
 
+#if USE(UNIX_DOMAIN_SOCKETS)
+struct SocketPair {
+    int client;
+    int server;
+};
+
+enum PlatformConnectionOptions {
+    SetCloexecOnClient = 1 << 0,
+    SetCloexecOnServer = 1 << 1,
+};
+
+SocketPair createPlatformConnection(unsigned options = SetCloexecOnClient | SetCloexecOnServer);
+#endif
+
+#if OS(WINDOWS)
+bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier);
+#endif
+
 }

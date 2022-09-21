@@ -1,6 +1,6 @@
 
 PASS role is defined in ElementInternals
-FAIL ariaActiveDescendantElement is defined in ElementInternals assert_inherits: property "ariaActiveDescendantElement" not found in prototype chain
+PASS ariaActiveDescendantElement is defined in ElementInternals
 PASS ariaAtomic is defined in ElementInternals
 PASS ariaAutoComplete is defined in ElementInternals
 PASS ariaBusy is defined in ElementInternals
@@ -8,27 +8,27 @@ PASS ariaChecked is defined in ElementInternals
 PASS ariaColCount is defined in ElementInternals
 PASS ariaColIndex is defined in ElementInternals
 PASS ariaColSpan is defined in ElementInternals
-FAIL ariaControlsElements is defined in ElementInternals assert_inherits: property "ariaControlsElements" not found in prototype chain
+PASS ariaControlsElements is defined in ElementInternals
 PASS ariaCurrent is defined in ElementInternals
-FAIL ariaDescribedByElements is defined in ElementInternals assert_inherits: property "ariaDescribedByElements" not found in prototype chain
-FAIL ariaDetailsElements is defined in ElementInternals assert_inherits: property "ariaDetailsElements" not found in prototype chain
+PASS ariaDescribedByElements is defined in ElementInternals
+PASS ariaDetailsElements is defined in ElementInternals
 PASS ariaDisabled is defined in ElementInternals
 FAIL ariaErrorMessageElement is defined in ElementInternals assert_inherits: property "ariaErrorMessageElement" not found in prototype chain
 PASS ariaExpanded is defined in ElementInternals
-FAIL ariaFlowToElements is defined in ElementInternals assert_inherits: property "ariaFlowToElements" not found in prototype chain
+PASS ariaFlowToElements is defined in ElementInternals
 PASS ariaHasPopup is defined in ElementInternals
 PASS ariaHidden is defined in ElementInternals
 PASS ariaInvalid is defined in ElementInternals
 PASS ariaKeyShortcuts is defined in ElementInternals
 PASS ariaLabel is defined in ElementInternals
-FAIL ariaLabelledByElements is defined in ElementInternals assert_inherits: property "ariaLabelledByElements" not found in prototype chain
+PASS ariaLabelledByElements is defined in ElementInternals
 PASS ariaLevel is defined in ElementInternals
 PASS ariaLive is defined in ElementInternals
 PASS ariaModal is defined in ElementInternals
 PASS ariaMultiLine is defined in ElementInternals
 PASS ariaMultiSelectable is defined in ElementInternals
 PASS ariaOrientation is defined in ElementInternals
-FAIL ariaOwnsElements is defined in ElementInternals assert_inherits: property "ariaOwnsElements" not found in prototype chain
+PASS ariaOwnsElements is defined in ElementInternals
 PASS ariaPlaceholder is defined in ElementInternals
 PASS ariaPosInSet is defined in ElementInternals
 PASS ariaPressed is defined in ElementInternals

@@ -34,7 +34,7 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 
 class SuggestNominationsTest(CommandsTest):
 
-    mock_git_output = """commit 60831dde5beb22f35aef305a87fca7b5f284c698
+    mock_git_output = """commit a7df8145fd61987ec39092defb94dbab072fa541
 Author: fpizlo@apple.com <fpizlo@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
 Date:   2011-09-15 19:56:21 +0000
 
@@ -43,6 +43,7 @@ Date:   2011-09-15 19:56:21 +0000
 
     Reviewed by Geoffrey Garen.
 
+    Canonical link: https://commits.webkit.org/84094@main
     git-svn-id: https://svn.webkit.org/repository/webkit/trunk@95219 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 """
     mock_same_author_commit_message = """Author: fpizlo@apple.com <fpizlo@apple.com@268f45cc-cd09-0410-ab3c-d52691b4dbfc>
@@ -53,6 +54,7 @@ https://bugs.webkit.org/show_bug.cgi?id=68143
 
 Reviewed by Geoffrey Garen.
 
+Canonical link: https://commits.webkit.org/84094@main
 git-svn-id: https://svn.webkit.org/repository/webkit/trunk@95219 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 """
 
@@ -91,6 +93,7 @@ Source/WebKit/chromium:
 
 * WebKit.gyp:
 
+Canonical link: https://commits.webkit.org/84070@main
 git-svn-id: https://svn.webkit.org/repository/webkit/trunk@95188 268f45cc-cd09-0410-ab3c-d52691b4dbfc
 """
 

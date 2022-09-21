@@ -277,7 +277,6 @@ public:
 
     enum AXNotification {
         AXActiveDescendantChanged,
-        AXAriaRoleChanged,
         AXAutocorrectionOccured,
         AXAutofillTypeChanged,
         AXCheckedStateChanged,
@@ -305,6 +304,8 @@ public:
         AXPageScrolled,
         AXPlaceholderChanged,
         AXPositionInSetChanged,
+        AXRoleChanged,
+        AXRoleDescriptionChanged,
         AXRowIndexChanged,
         AXRowSpanChanged,
         AXSelectedChildrenChanged,
@@ -488,6 +489,7 @@ private:
     void processDeferredChildrenChangedList();
     void handleChildrenChanged(AccessibilityObject&);
     void handleRoleChanged(Element*, const AtomString&, const AtomString&);
+    void handleRoleDescriptionChanged(Element*);
     void handleMenuOpened(Node*);
     void handleLiveRegionCreated(Node*);
     void handleMenuItemSelected(Node*);

@@ -3,9 +3,26 @@
 <body>
 <script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
-<custom-menuitem id="item-1"></custom-menuitem>
-<custom-menuitem id="item-2" aria-disabled="false" aria-expanded="false" aria-haspopup="false"></custom-menuitem>
+<custom-menu id="menu-1">
+<custom-menuitem id="item-1" aria-label="item 1"></custom-menuitem>
+<custom-menuitem id="item-2" aria-label="item 2" aria-disabled="false" aria-expanded="false" aria-haspopup="false"></custom-menuitem>
+</custom-menu>
+<custom-menu id="menu-2" aria-activedescendant="item-3">
+<custom-menuitem id="item-3" aria-label="item 3"></custom-menuitem>
+<custom-menuitem id="item-4" aria-label="item 4"></custom-menuitem>
+</custom-menu>
 <script>
+
+customElements.define('custom-menu', class CustomElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        const internals = this.attachInternals();
+        internals.role = 'menubar';
+        internals.ariaActiveDescendantElement = document.getElementById('item-2');
+        window.customMenuInternals = internals;
+    }
+});
 
 customElements.define('custom-menuitem', class CustomElement extends HTMLElement {
     constructor()
@@ -23,6 +40,12 @@ description("This tests that aria fallback roles work correctly.");
 if (!window.accessibilityController)
     debug('This test requires accessibilityController');
 else {
+    shouldBe('accessibilityController.accessibleElementById("menu-1").selectedChildrenCount', '1');
+    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("menu-1").selectedChildAtIndex(0))', 'item 2');
+    shouldBeTrue('accessibilityController.accessibleElementById("menu-1").selectedChildAtIndex(0).isSelected');
+    shouldBe('accessibilityController.accessibleElementById("menu-2").selectedChildrenCount', '1');
+    shouldBeEqualToString('platformValueForW3CName(accessibilityController.accessibleElementById("menu-2").selectedChildAtIndex(0))', 'item 3');
+    shouldBeTrue('accessibilityController.accessibleElementById("menu-2").selectedChildAtIndex(0).isSelected');
     shouldBe('accessibilityController.accessibleElementById("item-1").isEnabled', 'false');
     shouldBe('accessibilityController.accessibleElementById("item-1").isExpanded', 'true');
     shouldBe('accessibilityController.accessibleElementById("item-1").hasPopup', 'true');

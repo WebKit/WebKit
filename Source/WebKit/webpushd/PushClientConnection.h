@@ -72,8 +72,8 @@ public:
 
     void connectionClosed();
 
-    void broadcastDebugMessage(StringView);
-    void sendDebugMessage(StringView);
+    void broadcastDebugMessage(const String&);
+    void sendDebugMessage(const String&);
 
 private:
     ClientConnection(xpc_connection_t);

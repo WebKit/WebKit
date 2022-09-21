@@ -29,7 +29,6 @@
 #include "HTTPHeaderMap.h"
 #include <wtf/Box.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/persistence/PersistentCoder.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)

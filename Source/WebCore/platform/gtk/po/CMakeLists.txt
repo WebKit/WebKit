@@ -1,5 +1,11 @@
 include(FindGettext)
 
+set(linguas
+    ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id
+    it ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv
+    ta te tr uk vi zh_CN
+)
+
 # GETTEXT_CREATE_TRANSLATIONS automatically runs msgmerge, which is something we
 # didn't do in the old autotools build. This overwrites all the po files in the
 # Source directory. Perhaps we want this, but for now disable it to maintain compatibility.
@@ -34,5 +40,8 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
-file(GLOB po_files *.po)
+foreach (lingua ${linguas})
+    list(APPEND po_files ${CMAKE_CURRENT_SOURCE_DIR}/${lingua}.po)
+endforeach ()
+
 GETTEXT_CREATE_TRANSLATIONS(${pot_file} ALL ${po_files})

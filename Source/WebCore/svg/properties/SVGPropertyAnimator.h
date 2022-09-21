@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyParser.h"
+#include "ComputedStyleExtractor.h"
 #include "SVGAttributeAnimator.h"
 #include "SVGElement.h"
 

@@ -29,6 +29,7 @@
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "IPCUtilities.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/HexNumber.h>
 #include <wtf/RandomNumber.h>
@@ -38,7 +39,7 @@ namespace IPC {
 // FIXME: Rename this or use a different constant on windows.
 static const size_t inlineMessageMaxSize = 4096;
 
-bool Connection::createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier)
+bool createServerAndClientIdentifiers(HANDLE& serverIdentifier, HANDLE& clientIdentifier)
 {
     String pipeName;
 
@@ -370,7 +371,7 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
 {
     HANDLE serverIdentifier;
     HANDLE clientIdentifier;
-    if (!Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
+    if (!createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
         LOG_ERROR("Failed to create server and client identifiers");
         return std::nullopt;
     }

@@ -92,7 +92,7 @@ void BlockFormattingContext::layoutInFlowContent(const ConstraintsForInFlowConte
     };
 
     auto constraintsForLayoutBox = [&] (const auto& layoutBox) {
-        auto& containingBlock = layoutBox.containingBlock();
+        auto& containingBlock = this->containingBlock(layoutBox);
         return &containingBlock == &formattingRoot ? constraints : formattingGeometry().constraintsForInFlowContent(containingBlock);
     };
 
@@ -283,9 +283,9 @@ void BlockFormattingContext::precomputeVerticalPositionForBoxAndAncestors(const 
     // The idea here is that as long as we don't cross the block formatting context boundary, we should be able to pre-compute the final top position.
     // FIXME: we currently don't account for the "clear" property when computing the final position for an ancestor.
     auto& formattingGeometry = this->formattingGeometry();
-    for (auto* ancestor = &layoutBox; ancestor && ancestor != &root(); ancestor = &ancestor->containingBlock()) {
+    for (auto* ancestor = &layoutBox; ancestor && ancestor != &root(); ancestor = &containingBlock(*ancestor)) {
         auto constraintsForAncestor = [&] {
-            auto& containingBlock = ancestor->containingBlock();
+            auto& containingBlock = this->containingBlock(*ancestor);
             return &containingBlock == &root() ? constraintsPair.formattingContextRoot : formattingGeometry.constraintsForInFlowContent(containingBlock);
         }();
 
@@ -546,7 +546,7 @@ LayoutUnit BlockFormattingContext::verticalPositionWithMargin(const Box& layoutB
         return containingBlockContentBoxTop + marginBefore(verticalMargin);
     }
     // At this point this box indirectly (via collapsed through previous in-flow siblings) adjoins the parent. Let's check if it margin collapses with the parent.
-    auto& containingBlock = layoutBox.containingBlock();
+    auto& containingBlock = this->containingBlock(layoutBox);
     ASSERT(containingBlock.firstInFlowChild());
     ASSERT(containingBlock.firstInFlowChild() != &layoutBox);
     if (marginCollapse().marginBeforeCollapsesWithParentMarginBefore(*containingBlock.firstInFlowChild()))

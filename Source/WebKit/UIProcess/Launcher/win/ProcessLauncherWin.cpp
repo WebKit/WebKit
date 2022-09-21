@@ -28,6 +28,7 @@
 #include "ProcessLauncher.h"
 
 #include "Connection.h"
+#include "IPCUtilities.h"
 #include <WTF/RunLoop.h>
 #include <shlwapi.h>
 #include <wtf/text/StringBuilder.h>
@@ -53,7 +54,7 @@ void ProcessLauncher::launchProcess()
 {
     // First, create the server and client identifiers.
     HANDLE serverIdentifier, clientIdentifier;
-    if (!IPC::Connection::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
+    if (!IPC::createServerAndClientIdentifiers(serverIdentifier, clientIdentifier)) {
         // FIXME: What should we do here?
         ASSERT_NOT_REACHED();
     }

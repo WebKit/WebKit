@@ -35,6 +35,7 @@
 #include "IPCStreamTesterMessages.h"
 #include "JSIPCBinding.h"
 #include "MessageArgumentDescriptions.h"
+#include "MessageObserver.h"
 #include "NetworkProcessConnection.h"
 #include "RemoteRenderingBackendCreationParameters.h"
 #include "SerializedTypeInfo.h"
@@ -291,7 +292,7 @@ private:
     Ref<SharedMemory> m_sharedMemory;
 };
 
-class JSMessageListener final : public IPC::Connection::MessageObserver {
+class JSMessageListener final : public IPC::MessageObserver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     enum class Type { Incoming, Outgoing };

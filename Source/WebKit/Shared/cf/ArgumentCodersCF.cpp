@@ -29,8 +29,6 @@
 #include "ArgumentCodersCF.h"
 
 #include "ArgumentCoders.h"
-#include "DaemonDecoder.h"
-#include "DaemonEncoder.h"
 #include "DataReference.h"
 #include "Decoder.h"
 #include "Encoder.h"
@@ -479,7 +477,6 @@ std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode(
 }
 
 template std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode<Decoder>(Decoder&);
-template std::optional<RetainPtr<CFDataRef>> ArgumentCoder<RetainPtr<CFDataRef>>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 template<typename Encoder>
 void ArgumentCoder<CFDateRef>::encode(Encoder& encoder, CFDateRef date)
@@ -918,7 +915,6 @@ void ArgumentCoder<SecTrustRef>::encode(Encoder& encoder, SecTrustRef trust)
 }
 
 template void ArgumentCoder<SecTrustRef>::encode<Encoder>(Encoder&, SecTrustRef);
-template void ArgumentCoder<SecTrustRef>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, SecTrustRef);
 template void ArgumentCoder<SecTrustRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, SecTrustRef);
 
 template<typename Decoder>
@@ -945,7 +941,6 @@ std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::dec
 }
 
 template std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::decode<Decoder>(Decoder&);
-template std::optional<RetainPtr<SecTrustRef>> ArgumentCoder<RetainPtr<SecTrustRef>>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 } // namespace IPC
 
