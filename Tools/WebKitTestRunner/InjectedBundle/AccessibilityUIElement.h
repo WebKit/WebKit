@@ -244,17 +244,19 @@ public:
     RefPtr<AccessibilityUIElement> disclosedRowAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> rowAtIndex(unsigned);
 
-    JSValueRef detailsElements() const;
-    JSValueRef errorMessageElements() const;
     // ARIA specific
     RefPtr<AccessibilityUIElement> ariaOwnsElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaFlowToElementAtIndex(unsigned);
     RefPtr<AccessibilityUIElement> ariaControlsElementAtIndex(unsigned);
 #if PLATFORM(COCOA) || USE(ATSPI)
+    JSValueRef detailsElements() const;
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned);
+    JSValueRef errorMessageElements() const;
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned);
 #else
+    JSValueRef detailsElements() const { return { }; }
     RefPtr<AccessibilityUIElement> ariaDetailsElementAtIndex(unsigned) { return nullptr; }
+    JSValueRef errorMessageElements() const { return { }; }
     RefPtr<AccessibilityUIElement> ariaErrorMessageElementAtIndex(unsigned) { return nullptr; }
 #endif
 

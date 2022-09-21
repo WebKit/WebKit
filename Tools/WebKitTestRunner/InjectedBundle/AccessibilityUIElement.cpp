@@ -141,8 +141,6 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousSentenceStartTex
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMarkerRange(AccessibilityTextMarkerRange*, bool) { return nullptr; }
 void AccessibilityUIElement::dismiss() { }
 JSValueRef AccessibilityUIElement::children() const { return { }; }
-JSValueRef AccessibilityUIElement::detailsElements() const { return { }; }
-JSValueRef AccessibilityUIElement::errorMessageElements() const { return { }; }
 JSValueRef AccessibilityUIElement::imageOverlayElements() const { return { }; }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::embeddedImageDescription() const { return nullptr; }
 #endif // !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)
