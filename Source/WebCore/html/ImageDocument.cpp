@@ -132,7 +132,10 @@ LayoutSize ImageDocument::imageSize()
 {
     ASSERT(m_imageElement);
     updateStyleIfNeeded();
-    return m_imageElement->cachedImage()->imageSizeForRenderer(m_imageElement->renderer(), frame() ? frame()->pageZoomFactor() : 1);
+    auto* cachedImage = m_imageElement->cachedImage();
+    if (!cachedImage)
+        return { };
+    return cachedImage->imageSizeForRenderer(m_imageElement->renderer(), frame() ? frame()->pageZoomFactor() : 1);
 }
 
 void ImageDocument::updateDuringParsing()
@@ -143,15 +146,17 @@ void ImageDocument::updateDuringParsing()
     if (!m_imageElement)
         createDocumentStructure();
 
-    if (RefPtr<FragmentedSharedBuffer> buffer = loader()->mainResourceData())
-        m_imageElement->cachedImage()->updateBuffer(*buffer);
+    if (RefPtr<FragmentedSharedBuffer> buffer = loader()->mainResourceData()) {
+        if (auto* cachedImage = m_imageElement->cachedImage())
+            cachedImage->updateBuffer(*buffer);
+    }
 
     imageUpdated();
 }
 
 void ImageDocument::finishedParsing()
 {
-    if (!parser()->isStopped() && m_imageElement) {
+    if (!parser()->isStopped() && m_imageElement && m_imageElement->cachedImage()) {
         CachedImage& cachedImage = *m_imageElement->cachedImage();
         RefPtr<FragmentedSharedBuffer> data = loader()->mainResourceData();
 
@@ -242,7 +247,8 @@ void ImageDocument::createDocumentStructure()
         imageElement->setAttribute(styleAttr, "-webkit-user-select:none; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);"_s);
     imageElement->setLoadManually(true);
     imageElement->setSrc(AtomString { url().string() });
-    imageElement->cachedImage()->setResponse(loader()->response());
+    if (auto* cachedImage = imageElement->cachedImage())
+        cachedImage->setResponse(loader()->response());
     body->appendChild(imageElement);
     imageElement->setLoadManually(false);
     
