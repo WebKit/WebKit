@@ -412,6 +412,11 @@ nothing to commit, working tree clean
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(returncode=0) if self.checkout(args[2], create=False) else mocks.ProcessCompletion(returncode=1)
             ), mocks.Subprocess.Route(
+                self.executable, 'rebase', 'HEAD', re.compile(r'.+'), '--autostash',
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    mocks.ProcessCompletion(returncode=0) if self.checkout(args[3], create=False) else mocks.ProcessCompletion(returncode=1)
+            ), mocks.Subprocess.Route(
                 self.executable, 'filter-branch', '-f', '--env-filter', re.compile(r'.*'), '--msg-filter',
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.filter_branch(
