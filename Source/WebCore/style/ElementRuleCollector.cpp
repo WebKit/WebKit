@@ -673,7 +673,7 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
 
             // The value currentColor has implicitely the same side effect. It depends on the value of color,
             // which is an inherited value, making the non-inherited property implicitly inherited.
-            if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).valueID() == CSSValueCurrentcolor)
+            if (is<CSSPrimitiveValue>(value) && StyleColor::isCurrentColor(downcast<CSSPrimitiveValue>(value)))
                 return false;
 
             if (value.hasVariableReferences())

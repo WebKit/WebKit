@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include <wtf/OptionSet.h>
@@ -47,6 +48,10 @@ enum class StyleColorOptions : uint8_t {
 struct StyleColor {
     static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
     static bool isAbsoluteColorKeyword(CSSValueID);
+
+    static bool isCurrentColorKeyword(CSSValueID id) { return id == CSSValueCurrentcolor; }
+    static bool isCurrentColor(const CSSPrimitiveValue& value) { return isCurrentColorKeyword(value.valueID()); }
+
     WEBCORE_EXPORT static bool isSystemColorKeyword(CSSValueID);
 
     enum class CSSColorType : uint8_t {
