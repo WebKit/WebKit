@@ -94,7 +94,7 @@ public:
     void removePushSubscriptionsForOrigin(ClientConnection*, const WebCore::SecurityOriginData&, CompletionHandler<void(unsigned)>&&);
     void setPublicTokenForTesting(ClientConnection*, const String& publicToken, CompletionHandler<void()>&&);
 
-    void broadcastDebugMessage(StringView);
+    void broadcastDebugMessage(const String&);
     void broadcastAllConnectionIdentities();
 
 private:

@@ -26,41 +26,136 @@
 #include "config.h"
 #include "NetworkCacheCoders.h"
 
-namespace WTF {
-namespace Persistence {
+#include "NetworkCacheKey.h"
+#include "NetworkCacheSubresourcesEntry.h"
+#include <wtf/persistence/PersistentCoders.h>
 
-// Store common HTTP headers as strings instead of using their value in the HTTPHeaderName enumeration
-// so that the headers stored in the cache stays valid even after HTTPHeaderName.in gets updated.
-void Coder<WebCore::HTTPHeaderMap>::encode(Encoder& encoder, const WebCore::HTTPHeaderMap& headers)
+namespace WTF::Persistence {
+
+void Coder<WebKit::NetworkCache::Key>::encode(WTF::Persistence::Encoder& encoder, const WebKit::NetworkCache::Key& instance)
 {
-    encoder << static_cast<uint64_t>(headers.size());
-    for (auto& keyValue : headers) {
-        encoder << keyValue.key;
-        encoder << keyValue.value;
-    }
+    encoder << instance.partition();
+    encoder << instance.type();
+    encoder << instance.identifier();
+    encoder << instance.range();
+    encoder << instance.hash();
+    encoder << instance.partitionHash();
 }
 
-std::optional<WebCore::HTTPHeaderMap> Coder<WebCore::HTTPHeaderMap>::decode(Decoder& decoder)
+std::optional<WebKit::NetworkCache::Key> Coder<WebKit::NetworkCache::Key>::decode(WTF::Persistence::Decoder& decoder)
 {
-    std::optional<uint64_t> headersSize;
-    decoder >> headersSize;
-    if (!headersSize)
+    WebKit::Key key;
+
+    std::optional<String> partition;
+    decoder >> partition;
+    if (!partition)
+        return std::nullopt;
+    key.m_partition = WTFMove(*partition);
+
+    std::optional<String> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+    key.m_type = WTFMove(*type);
+
+    std::optional<String> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+    key.m_identifier = WTFMove(*identifier);
+
+    std::optional<String> range;
+    decoder >> range;
+    if (!range)
+        return std::nullopt;
+    key.m_range = WTFMove(*range);
+
+    std::optional<WebKit::Key::HashType> hash;
+    decoder >> hash;
+    if (!hash)
+        return std::nullopt;
+    key.m_hash = WTFMove(*hash);
+
+    std::optional<WebKit::Key::HashType> partitionHash;
+    decoder >> partitionHash;
+    if (!partitionHash)
+        return std::nullopt;
+    key.m_partitionHash = WTFMove(*partitionHash);
+
+    return { WTFMove(key) };
+}
+
+#if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+void Coder<WebKit::NetworkCache::SubresourceInfo>::encode(WTF::Persistence::Encoder& encoder, const WebKit::NetworkCache::SubresourceInfo& instance)
+{
+    encoder << instance.key();
+    encoder << instance.lastSeen();
+    encoder << instance.firstSeen();
+    encoder << instance.isTransient();
+
+    // Do not bother serializing other data members of transient resources as they are empty.
+    if (instance.isTransient())
+        return;
+
+    encoder << instance.isSameSite();
+    encoder << instance.isAppInitiated();
+    encoder << instance.firstPartyForCookies();
+    encoder << instance.requestHeaders();
+    encoder << instance.priority();
+}
+
+std::optional<WebKit::NetworkCache::SubresourceInfo> Coder<WebKit::NetworkCache::SubresourceInfo>::decode(WTF::Persistence::Decoder& decoder)
+{
+    std::optional<WebKit::NetworkCache::Key> key;
+    decoder >> key;
+    if (!key)
         return std::nullopt;
 
-    WebCore::HTTPHeaderMap headers;
-    for (uint64_t i = 0; i < *headersSize; ++i) {
-        std::optional<String> name;
-        decoder >> name;
-        if (!name)
-            return std::nullopt;
-        std::optional<String> value;
-        decoder >> value;
-        if (!value)
-            return std::nullopt;
-        headers.append(WTFMove(*name), WTFMove(*value));
-    }
-    return headers;
-}
+    std::optional<WallTime> lastSeen;
+    decoder >> lastSeen;
+    if (!lastSeen)
+        return std::nullopt;
 
+    std::optional<WallTime> firstSeen;
+    decoder >> firstSeen;
+    if (!firstSeen)
+        return std::nullopt;
+
+    std::optional<bool> isTransient;
+    decoder >> isTransient;
+    if (!isTransient)
+        return std::nullopt;
+
+    if (*isTransient)
+        return WebKit::SubresourceInfo(WTFMove(*key), *lastSeen, *firstSeen);
+
+    std::optional<bool> isSameSite;
+    decoder >> isSameSite;
+    if (!isSameSite)
+        return std::nullopt;
+
+    std::optional<bool> isAppInitiated;
+    decoder >> isAppInitiated;
+    if (!isAppInitiated)
+        return std::nullopt;
+
+    std::optional<URL> firstPartyForCookies;
+    decoder >> firstPartyForCookies;
+    if (!firstPartyForCookies)
+        return std::nullopt;
+
+    std::optional<WebCore::HTTPHeaderMap> requestHeaders;
+    decoder >> requestHeaders;
+    if (!requestHeaders)
+        return std::nullopt;
+
+    std::optional<WebCore::ResourceLoadPriority> priority;
+    decoder >> priority;
+    if (!priority)
+        return std::nullopt;
+
+    return WebKit::SubresourceInfo(WTFMove(*key), *lastSeen, *firstSeen, *isSameSite, *isAppInitiated, WTFMove(*firstPartyForCookies), WTFMove(*requestHeaders), *priority);
 }
+#endif // ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
+
 }

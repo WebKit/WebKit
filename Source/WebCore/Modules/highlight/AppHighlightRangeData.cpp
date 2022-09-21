@@ -38,11 +38,10 @@
 #include "SimpleRange.h"
 #include "StaticRange.h"
 #include "TextIterator.h"
+#include "WebCorePersistentCoders.h"
 #include <wtf/persistence/PersistentCoders.h>
 
 namespace WebCore {
-
-constexpr uint64_t highlightFileSignature = 0x4141504832303231; // File Signature  (A)pple(AP)plication(H)ighlights(2021)
 
 std::optional<AppHighlightRangeData> AppHighlightRangeData::create(const FragmentedSharedBuffer& buffer)
 {
@@ -58,112 +57,6 @@ Ref<FragmentedSharedBuffer> AppHighlightRangeData::toSharedBuffer() const
     WTF::Persistence::Encoder encoder;
     encoder << *this;
     return SharedBuffer::create(encoder.buffer(), encoder.bufferSize());
-}
-
-template<class Encoder> void AppHighlightRangeData::NodePathComponent::encode(Encoder& encoder) const
-{
-    encoder << identifier;
-    encoder << nodeName;
-    encoder << textData;
-    encoder << pathIndex;
-}
-
-template<class Decoder> std::optional<AppHighlightRangeData::NodePathComponent> AppHighlightRangeData::NodePathComponent::decode(Decoder& decoder)
-{
-    std::optional<String> identifier;
-    decoder >> identifier;
-    if (!identifier)
-        return std::nullopt;
-
-    std::optional<String> nodeName;
-    decoder >> nodeName;
-    if (!nodeName)
-        return std::nullopt;
-
-    std::optional<String> textData;
-    decoder >> textData;
-    if (!textData)
-        return std::nullopt;
-
-    std::optional<uint32_t> pathIndex;
-    decoder >> pathIndex;
-    if (!pathIndex)
-        return std::nullopt;
-
-    return {{ WTFMove(*identifier), WTFMove(*nodeName), WTFMove(*textData), *pathIndex }};
-}
-
-template<class Encoder> void AppHighlightRangeData::encode(Encoder& encoder) const
-{
-    static_assert(!Encoder::isIPCEncoder, "AppHighlightRangeData should not be used by IPC::Encoder");
-    constexpr uint64_t currentAppHighlightVersion = 1;
-    
-    encoder << highlightFileSignature;
-    encoder << currentAppHighlightVersion;
-    encoder << m_identifier;
-    encoder << m_text;
-    encoder << m_startContainer;
-    encoder << m_startOffset;
-    encoder << m_endContainer;
-    encoder << m_endOffset;
-}
-
-template<class Decoder> std::optional<AppHighlightRangeData> AppHighlightRangeData::decode(Decoder& decoder)
-{
-    static_assert(!Decoder::isIPCDecoder, "AppHighlightRangeData should not be used by IPC::Decoder");
-    
-    std::optional<uint64_t> version;
-    
-    std::optional<uint64_t> decodedHighlightFileSignature;
-    decoder >> decodedHighlightFileSignature;
-    if (!decodedHighlightFileSignature)
-        return std::nullopt;
-    if (decodedHighlightFileSignature != highlightFileSignature) {
-        if (!decoder.rewind(sizeof(highlightFileSignature)))
-            return std::nullopt;
-        version = 0;
-        RELEASE_LOG(AppHighlights, "Decoded legacy (v0) highlight.");
-    }
-    
-    std::optional<String> identifier;
-    if (version)
-        identifier = nullString();
-    else {
-        decoder >> version;
-        if (!version)
-            return std::nullopt;
-        
-        decoder >> identifier;
-        if (!identifier)
-            return std::nullopt;
-    }
-
-    std::optional<String> text;
-    decoder >> text;
-    if (!text)
-        return std::nullopt;
-
-    std::optional<NodePath> startContainer;
-    decoder >> startContainer;
-    if (!startContainer)
-        return std::nullopt;
-
-    std::optional<uint32_t> startOffset;
-    decoder >> startOffset;
-    if (!startOffset)
-        return std::nullopt;
-
-    std::optional<NodePath> endContainer;
-    decoder >> endContainer;
-    if (!endContainer)
-        return std::nullopt;
-
-    std::optional<uint32_t> endOffset;
-    decoder >> endOffset;
-    if (!endOffset)
-        return std::nullopt;
-
-    return {{ WTFMove(*identifier), WTFMove(*text), WTFMove(*startContainer), *startOffset, WTFMove(*endContainer), *endOffset }};
 }
 
 } // namespace WebCore

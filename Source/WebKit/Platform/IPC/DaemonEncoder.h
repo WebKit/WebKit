@@ -25,18 +25,17 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
+#include "DaemonCoders.h"
+#include <wtf/Vector.h>
 
-namespace WebKit {
-
-namespace Daemon {
+namespace WebKit::Daemon {
 
 class Encoder {
 public:
     template<typename T>
     Encoder& operator<<(T&& t)
     {
-        IPC::ArgumentCoder<std::remove_const_t<std::remove_reference_t<T>>>::encode(*this, std::forward<T>(t));
+        Coder<std::remove_const_t<std::remove_reference_t<T>>>::encode(*this, std::forward<T>(t));
         return *this;
     }
 
@@ -50,12 +49,10 @@ public:
 
     Vector<uint8_t> takeBuffer() { return std::exchange(m_buffer, { }); }
 
-    void encodeFixedLengthData(const uint8_t*, size_t, size_t alignment);
+    void encodeFixedLengthData(Span<const uint8_t>);
 
 private:
     Vector<uint8_t> m_buffer;
 };
 
-} // namespace Daemon
-
-} // namespace WebKit
+} // namespace WebKit::Daemon

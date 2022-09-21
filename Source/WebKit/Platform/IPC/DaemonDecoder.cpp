@@ -40,7 +40,7 @@ bool Decoder::bufferIsLargeEnoughToContainBytes(size_t bytes) const
     return bytes <= m_buffer.size() - m_bufferPosition;
 }
 
-bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t)
+bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size)
 {
     if (!bufferIsLargeEnoughToContainBytes(size))
         return false;
@@ -49,7 +49,7 @@ bool Decoder::decodeFixedLengthData(uint8_t* data, size_t size, size_t)
     return true;
 }
 
-const uint8_t* Decoder::decodeFixedLengthReference(size_t size, size_t)
+const uint8_t* Decoder::decodeFixedLengthReference(size_t size)
 {
     if (!bufferIsLargeEnoughToContainBytes(size))
         return nullptr;

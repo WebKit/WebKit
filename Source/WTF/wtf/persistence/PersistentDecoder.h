@@ -28,10 +28,11 @@
 #include <wtf/EnumTraits.h>
 #include <wtf/SHA1.h>
 #include <wtf/Span.h>
-#include <wtf/persistence/PersistentCoder.h>
+#include <wtf/persistence/PersistentCoders.h>
 
-namespace WTF {
-namespace Persistence {
+namespace WTF::Persistence {
+
+template<typename> struct Coder;
 
 class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
@@ -102,4 +103,3 @@ private:
 };
 
 } 
-}

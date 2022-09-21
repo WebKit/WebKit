@@ -29,8 +29,6 @@
 
 #import "ArgumentCodersCF.h"
 #import "ArgumentCodersCocoa.h"
-#import "DaemonDecoder.h"
-#import "DaemonEncoder.h"
 #import "DataReference.h"
 #import <WebCore/CertificateInfo.h>
 #import <WebCore/ContentFilterUnblockHandler.h>
@@ -53,12 +51,6 @@ void ArgumentCoder<WebCore::CertificateInfo>::encode(Encoder& encoder, const Web
 }
 
 template<>
-void ArgumentCoder<WebCore::CertificateInfo>::encode(WebKit::Daemon::Encoder& encoder, const WebCore::CertificateInfo& certificateInfo)
-{
-    encoder << certificateInfo.trust();
-}
-
-template<>
 std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode(Decoder& decoder)
 {
     std::optional<RetainPtr<SecTrustRef>> trust;
@@ -66,16 +58,6 @@ std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>:
     if (!trust)
         return std::nullopt;
 
-    return WebCore::CertificateInfo(WTFMove(*trust));
-}
-
-template<>
-std::optional<WebCore::CertificateInfo> ArgumentCoder<WebCore::CertificateInfo>::decode(WebKit::Daemon::Decoder& decoder)
-{
-    std::optional<RetainPtr<SecTrustRef>> trust;
-    decoder >> trust;
-    if (!trust)
-        return std::nullopt;
     return WebCore::CertificateInfo(WTFMove(*trust));
 }
 

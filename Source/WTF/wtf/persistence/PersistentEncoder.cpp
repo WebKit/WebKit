@@ -28,8 +28,7 @@
 
 #include <wtf/SHA1.h>
 
-namespace WTF {
-namespace Persistence {
+namespace WTF::Persistence {
 
 Encoder::Encoder() = default;
 
@@ -122,5 +121,4 @@ void Encoder::encodeChecksum()
     encodeFixedLengthData({ hash.data(), hash.size() });
 }
 
-}
 }

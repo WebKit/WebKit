@@ -70,7 +70,7 @@
 #include "TextResourceDecoder.h"
 #include "ThreadableLoaderClient.h"
 #include "WebConsoleAgent.h"
-#include <wtf/URL.h>
+#include "WebCorePersistentCoders.h"
 #include "WebSocket.h"
 #include "WebSocketChannel.h"
 #include "WebSocketFrame.h"
@@ -86,6 +86,7 @@
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/URL.h>
 #include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>

@@ -67,6 +67,7 @@
 #include "Settings.h"
 #include "SystemSoundManager.h"
 #include "UserGestureIndicator.h"
+#include "WebCorePersistentCoders.h"
 #include <JavaScriptCore/ScriptFunctionCall.h>
 #include <pal/system/Sound.h>
 #include <wtf/CompletionHandler.h>

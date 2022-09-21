@@ -29,8 +29,6 @@
 #include "WebCoreArgumentCoders.h"
 
 #include "ArgumentCodersGLib.h"
-#include "DaemonDecoder.h"
-#include "DaemonEncoder.h"
 #include "DataReference.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/Credential.h>
@@ -66,7 +64,6 @@ void ArgumentCoder<CertificateInfo>::encode(Encoder& encoder, const CertificateI
     encoder << static_cast<uint32_t>(certificateInfo.tlsErrors());
 }
 template void ArgumentCoder<CertificateInfo>::encode<Encoder>(Encoder&, const CertificateInfo&);
-template void ArgumentCoder<CertificateInfo>::encode<WebKit::Daemon::Encoder>(WebKit::Daemon::Encoder&, const CertificateInfo&);
 
 template<typename Decoder>
 std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& decoder)
@@ -90,7 +87,6 @@ std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode(Decoder& d
     return certificateInfo;
 }
 template std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode<Decoder>(Decoder&);
-template std::optional<CertificateInfo> ArgumentCoder<CertificateInfo>::decode<WebKit::Daemon::Decoder>(WebKit::Daemon::Decoder&);
 
 void ArgumentCoder<ResourceError>::encodePlatformData(Encoder& encoder, const ResourceError& resourceError)
 {

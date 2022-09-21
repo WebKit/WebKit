@@ -1984,6 +1984,7 @@ platform/Timer.cpp
 platform/UserActivity.cpp
 platform/VideoFrame.cpp
 platform/WebCoreCrossThreadCopier.cpp
+platform/WebCorePersistentCoders.cpp
 platform/WebGLStateTracker.cpp
 platform/Widget.cpp
 platform/animation/Animation.cpp

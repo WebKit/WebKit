@@ -28,8 +28,7 @@
 
 #include <wtf/persistence/PersistentEncoder.h>
 
-namespace WTF {
-namespace Persistence {
+namespace WTF::Persistence {
 
 Decoder::Decoder(Span<const uint8_t> span)
     : m_buffer(span)
@@ -149,5 +148,4 @@ bool Decoder::verifyChecksum()
     return computedHash == savedHash;
 }
 
-} // namespace Persistence
-} // namespace WTF
+} // namespace WTF::Persistence
