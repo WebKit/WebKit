@@ -729,51 +729,6 @@ WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
     return page;
 }
 
-void webkitWebPageDidReceiveMessage(WebKitWebPage* page, const String& messageName, API::Dictionary& message)
-{
-#if PLATFORM(GTK)
-    if (messageName == "GetSnapshot"_s) {
-        SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(static_cast<API::UInt64*>(message.get("SnapshotOptions"_s))->value());
-        uint64_t callbackID = static_cast<API::UInt64*>(message.get("CallbackID"_s))->value();
-        SnapshotRegion region = static_cast<SnapshotRegion>(static_cast<API::UInt64*>(message.get("SnapshotRegion"_s))->value());
-        bool transparentBackground = static_cast<API::Boolean*>(message.get("TransparentBackground"_s))->value();
-
-        RefPtr<WebImage> snapshotImage;
-        WebPage* webPage = page->priv->webPage;
-        if (WebCore::FrameView* frameView = webPage->mainFrameView()) {
-            WebCore::IntRect snapshotRect;
-            switch (region) {
-            case SnapshotRegionVisible:
-                snapshotRect = frameView->visibleContentRect();
-                break;
-            case SnapshotRegionFullDocument:
-                snapshotRect = WebCore::IntRect(WebCore::IntPoint(0, 0), frameView->contentsSize());
-                break;
-            default:
-                ASSERT_NOT_REACHED();
-            }
-            if (!snapshotRect.isEmpty()) {
-                Color savedBackgroundColor;
-                if (transparentBackground) {
-                    savedBackgroundColor = frameView->baseBackgroundColor();
-                    frameView->setBaseBackgroundColor(Color::transparentBlack);
-                }
-                snapshotImage = webPage->scaledSnapshotWithOptions(snapshotRect, 1, snapshotOptions | SnapshotOptionsShareable);
-                if (transparentBackground)
-                    frameView->setBaseBackgroundColor(savedBackgroundColor);
-            }
-        }
-
-        API::Dictionary::MapType messageReply;
-        messageReply.set("Page"_s, webPage);
-        messageReply.set("CallbackID"_s, API::UInt64::create(callbackID));
-        messageReply.set("Snapshot"_s, snapshotImage);
-        WebProcess::singleton().injectedBundle()->postMessage("WebPage.DidGetSnapshot"_s, API::Dictionary::create(WTFMove(messageReply)).ptr());
-    } else
-#endif
-        ASSERT_NOT_REACHED();
-}
-
 void webkitWebPageDidReceiveUserMessage(WebKitWebPage* webPage, UserMessage&& message, CompletionHandler<void(UserMessage&&)>&& completionHandler)
 {
     // Sink the floating ref.

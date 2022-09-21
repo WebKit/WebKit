@@ -2666,13 +2666,34 @@ void WebPage::setFooterBannerHeightForTesting(int height)
 
 void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
 {
+    ShareableBitmap::Handle handle;
+    Frame* coreFrame = m_mainFrame->coreFrame();
+    if (!coreFrame) {
+        completionHandler(handle);
+        return;
+    }
+
+    FrameView* frameView = coreFrame->view();
+    if (!frameView) {
+        completionHandler(handle);
+        return;
+    }
+
     SnapshotOptions snapshotOptions = static_cast<SnapshotOptions>(options);
     snapshotOptions |= SnapshotOptionsShareable;
 
-    RefPtr<WebImage> image = snapshotAtSize(snapshotRect, bitmapSize, snapshotOptions);
+    if (options & SnapshotOptionsVisibleContentRect)
+        snapshotRect = frameView->visibleContentRect();
+    else if (options & SnapshotOptionsFullContentRect)
+        snapshotRect = IntRect({ 0, 0 }, frameView->contentsSize());
 
-    ShareableBitmap::Handle handle;
-    if (image)
+    if (bitmapSize.isEmpty()) {
+        bitmapSize = snapshotRect.size();
+        if (!(options & SnapshotOptionsExcludeDeviceScaleFactor))
+            bitmapSize.scale(corePage()->deviceScaleFactor());
+    }
+
+    if (auto image = snapshotAtSize(snapshotRect, bitmapSize, snapshotOptions, *coreFrame, *frameView))
         handle = image->createHandle(SharedMemory::Protection::ReadOnly);
 
     completionHandler(handle);
@@ -2680,13 +2701,18 @@ void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t op
 
 RefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double additionalScaleFactor, SnapshotOptions options)
 {
+    Frame* coreFrame = m_mainFrame->coreFrame();
+    if (!coreFrame)
+        return nullptr;
+
+    FrameView* frameView = coreFrame->view();
+    if (!frameView)
+        return nullptr;
+
     IntRect snapshotRect = rect;
     IntSize bitmapSize = snapshotRect.size();
     if (options & SnapshotOptionsPrinting) {
         ASSERT(additionalScaleFactor == 1);
-        Frame* coreFrame = m_mainFrame->coreFrame();
-        if (!coreFrame)
-            return nullptr;
         bitmapSize.setHeight(PrintContext::numberOfPages(*coreFrame, bitmapSize) * (bitmapSize.height() + 1) - 1);
     } else {
         double scaleFactor = additionalScaleFactor;
@@ -2695,7 +2721,7 @@ RefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double 
         bitmapSize.scale(scaleFactor);
     }
 
-    return snapshotAtSize(rect, bitmapSize, options);
+    return snapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView);
 }
 
 void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, Frame& frame, FrameView& frameView, GraphicsContext& graphicsContext)
@@ -2712,8 +2738,16 @@ void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize
         return;
     }
 
-    Color documentBackgroundColor = frameView.documentBackgroundColor();
-    Color backgroundColor = (frame.settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView.baseBackgroundColor();
+    Color backgroundColor;
+    Color savedBackgroundColor;
+    if (options & SnapshotOptionsTransparentBackground) {
+        backgroundColor = Color::transparentBlack;
+        savedBackgroundColor = frameView.baseBackgroundColor();
+        frameView.setBaseBackgroundColor(backgroundColor);
+    } else {
+        Color documentBackgroundColor = frameView.documentBackgroundColor();
+        backgroundColor = (frame.settings().backgroundShouldExtendBeyondPage() && documentBackgroundColor.isValid()) ? documentBackgroundColor : frameView.baseBackgroundColor();
+    }
     graphicsContext.fillRect(IntRect(IntPoint(), bitmapSize), backgroundColor);
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
@@ -2740,6 +2774,9 @@ void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize
         graphicsContext.setStrokeColor(Color::red);
         graphicsContext.strokeRect(selectionRectangle, 1);
     }
+
+    if (options & SnapshotOptionsTransparentBackground)
+        frameView.setBaseBackgroundColor(savedBackgroundColor);
 }
 
 static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage& page)
@@ -2751,22 +2788,14 @@ static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage
     return DestinationColorSpace::SRGB();
 }
 
-RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options)
+RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, Frame& frame, FrameView& frameView)
 {
-    Frame* coreFrame = m_mainFrame->coreFrame();
-    if (!coreFrame)
-        return nullptr;
-
-    FrameView* frameView = coreFrame->view();
-    if (!frameView)
-        return nullptr;
-
     auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options), snapshotColorSpace(options, *this), &m_page->chrome().client());
     if (!snapshot)
         return nullptr;
 
     auto& graphicsContext = snapshot->context();
-    paintSnapshotAtSize(rect, bitmapSize, options, *coreFrame, *frameView, graphicsContext);
+    paintSnapshotAtSize(rect, bitmapSize, options, frame, frameView, graphicsContext);
 
     return snapshot;
 }

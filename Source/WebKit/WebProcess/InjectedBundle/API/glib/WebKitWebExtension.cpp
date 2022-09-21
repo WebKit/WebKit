@@ -198,13 +198,6 @@ private:
 #endif
     }
 
-    void didReceiveMessageToPage(InjectedBundle&, WebPage& page, const String& messageName, API::Object* messageBody) override
-    {
-        ASSERT(messageBody->type() == API::Object::Type::Dictionary);
-        if (auto* webPage = m_extension->priv->pages.get(&page))
-            webkitWebPageDidReceiveMessage(webPage, messageName, *static_cast<API::Dictionary*>(messageBody));
-    }
-
     WebKitWebExtension* m_extension;
 };
 

@@ -137,15 +137,6 @@ private:
                 webkitWebResourceFailed(resource.get(), resourceError.get());
 
             webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
-#if PLATFORM(GTK)
-        } else if (g_str_equal(messageName, "DidGetSnapshot")) {
-            API::UInt64* callbackID = static_cast<API::UInt64*>(message.get("CallbackID"_s));
-            if (!callbackID)
-                return;
-
-            WebImage* image = static_cast<WebImage*>(message.get("Snapshot"_s));
-            webKitWebViewDidReceiveSnapshot(webView, callbackID->value(), image);
-#endif
         }
     }
 
