@@ -49,6 +49,7 @@
 #include "NumberConstructor.h"
 #include "PutByStatus.h"
 #include "RegExpObject.h"
+#include "RegExpPrototype.h"
 #include "SetPrivateBrandStatus.h"
 #include "StringObject.h"
 #include "StructureCache.h"
@@ -3424,12 +3425,56 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         makeHeapTopForNode(node);
         break;
 
-    case TryGetById:
+    case TryGetById: {
+        // This is very adhoc, but @tryGetById is not used in user code, and it is used adhocly in very limited places.
+        // So adhoc one is fine.
+        AbstractValue& value = forNode(node->child1());
+        if (value.m_structure.isFinite()
+            && (node->child1().useKind() == CellUse || !(value.m_type & ~SpecCell))) {
+            if (RegisteredStructure structure = value.m_structure.onlyStructure()) {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                if (structure->typeInfo().type() == RegExpObjectType
+                    && !structure->hasPolyProto()
+                    && structure->storedPrototype() == globalObject->regExpPrototype()
+                    && !structure->isDictionary()
+                    && structure->propertyAccessesAreCacheable()
+                    && structure->propertyAccessesAreCacheableForAbsence()
+                    && m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node)) {
+                    UniquedStringImpl* uid = node->cacheableIdentifier().uid();
+
+                    auto attemptToFold = [&](UniquedStringImpl* name, JSValue constant) -> bool {
+                        if (uid != name)
+                            return false;
+                        unsigned attributes;
+                        PropertyOffset offset = structure->getConcurrently(uid, attributes);
+                        if (isValidOffset(offset))
+                            return false;
+                        didFoldClobberWorld();
+                        setConstant(node, *m_graph.freeze(constant));
+                        return true;
+                    };
+
+                    if (attemptToFold(m_vm.propertyNames->exec.impl(), globalObject->regExpProtoExecFunction()))
+                        break;
+
+                    if (attemptToFold(m_vm.propertyNames->global.impl(), globalObject->regExpProtoGlobalGetter()))
+                        break;
+
+                    if (attemptToFold(m_vm.propertyNames->unicode.impl(), globalObject->regExpProtoUnicodeGetter()))
+                        break;
+
+                    if (attemptToFold(m_vm.propertyNames->replaceSymbol.impl(), globalObject->regExpProtoSymbolReplaceFunction()))
+                        break;
+                }
+            }
+        }
+
         // FIXME: This should constant fold at least as well as the normal GetById case.
         // https://bugs.webkit.org/show_bug.cgi?id=156422
         clobberWorld();
         makeHeapTopForNode(node);
         break;
+    }
 
     case GetPrivateNameById:
     case GetByIdDirect:
