@@ -212,7 +212,7 @@ wasmOp(i32_rem_s, WasmI32RemS, macro (ctx)
         muli t1, t2
         subi t0, t2, t2
     elsif RISCV64
-        remis t1, t0
+        remis t0, t1, t2
     else
         error
     end
@@ -238,7 +238,7 @@ wasmOp(i32_rem_u, WasmI32RemU, macro (ctx)
         muli t1, t2
         subi t0, t2, t2
     elsif RISCV64
-        remi t1, t0
+        remi t0, t1, t2
     else
         error
     end
@@ -343,7 +343,7 @@ wasmOp(i64_rem_s, WasmI64RemS, macro (ctx)
         mulq t1, t2
         subq t0, t2, t2
     elsif RISCV64
-        remqs t1, t0
+        remqs t0, t1, t2
     else
         error
     end
@@ -369,7 +369,7 @@ wasmOp(i64_rem_u, WasmI64RemU, macro (ctx)
         mulq t1, t2
         subq t0, t2, t2
     elsif RISCV64
-        remq t1, t0
+        remq t0, t1, t2
     else
         error
     end
