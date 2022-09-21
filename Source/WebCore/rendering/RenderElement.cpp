@@ -1724,12 +1724,12 @@ LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
     return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }
 
-LayoutRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
+MarginRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
 {
     LayoutRect anchorRect = absoluteAnchorRect(insideFixed);
     const LengthBox& scrollMargin = style().scrollMargin();
     if (scrollMargin.isZero())
-        return anchorRect;
+        return { anchorRect, anchorRect };
 
     // The scroll snap specification says that the scroll-margin should be applied in the
     // coordinate system of the scroll container and applied to the rectangular bounding
@@ -1740,8 +1740,9 @@ LayoutRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) 
         valueForLength(scrollMargin.right(), anchorRect.width()),
         valueForLength(scrollMargin.bottom(), anchorRect.height()),
         valueForLength(scrollMargin.left(), anchorRect.width()));
-    anchorRect.expand(margin);
-    return anchorRect;
+    auto marginRect = anchorRect;
+    marginRect.expand(margin);
+    return { marginRect, anchorRect };
 }
 
 static bool usePlatformFocusRingColorForOutlineStyleAuto()

@@ -2458,8 +2458,10 @@ void FrameView::scrollToFocusedElementInternal()
         return;
 
     bool insideFixed;
-    LayoutRect absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
-    FrameView::scrollRectToVisible(absoluteBounds, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No });
+    auto absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
+    auto anchorRectWithScrollMargin = absoluteBounds.marginRect;
+    auto anchorRect = absoluteBounds.anchorRect;
+    FrameView::scrollRectToVisible(anchorRectWithScrollMargin, *renderer, insideFixed, { m_selectionRevealModeForFocusedElement, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded, ShouldAllowCrossOriginScrolling::No, ScrollBehavior::Auto, anchorRect });
 }
 
 void FrameView::textFragmentIndicatorTimerFired()
@@ -3526,7 +3528,7 @@ void FrameView::scrollToAnchor()
     LayoutRect rect;
     bool insideFixed = false;
     if (anchorNode != frame().document() && anchorNode->renderer())
-        rect = anchorNode->renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
+        rect = anchorNode->renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
 
     LOG_WITH_STREAM(Scrolling, stream << " anchor node rect " << rect);
 

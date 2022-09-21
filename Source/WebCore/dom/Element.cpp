@@ -1012,14 +1012,14 @@ void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOpti
         renderer = listBoxScrollResult->first;
         absoluteBounds = listBoxScrollResult->second;
 
-        auto listBoxAbsoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
+        auto listBoxAbsoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
         absoluteBounds.moveBy(listBoxAbsoluteBounds.location());
     } else {
         renderer = this->renderer();
         if (!renderer)
             return;
 
-        absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed);
+        absoluteBounds = renderer->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
     }
 
     ScrollIntoViewOptions options;
@@ -1055,7 +1055,7 @@ void Element::scrollIntoView(bool alignToTop)
         return;
 
     bool insideFixed;
-    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
+    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
 
     // Align to the top / bottom and to the closest edge.
     auto alignY = alignToTop ? ScrollAlignment::alignTopAlways : ScrollAlignment::alignBottomAlways;
@@ -1073,7 +1073,7 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
         return;
 
     bool insideFixed;
-    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
+    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
 
     auto alignY = centerIfNeeded ? ScrollAlignment::alignCenterIfNeeded : ScrollAlignment::alignToEdgeIfNeeded;
     auto alignX = centerIfNeeded ? ScrollAlignment::alignCenterIfNeeded : ScrollAlignment::alignToEdgeIfNeeded;
@@ -1090,7 +1090,7 @@ void Element::scrollIntoViewIfNotVisible(bool centerIfNotVisible)
         return;
     
     bool insideFixed;
-    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed);
+    LayoutRect absoluteBounds = renderer()->absoluteAnchorRectWithScrollMargin(&insideFixed).marginRect;
     auto align = centerIfNotVisible ? ScrollAlignment::alignCenterIfNotVisible : ScrollAlignment::alignToEdgeIfNotVisible;
     FrameView::scrollRectToVisible(absoluteBounds, *renderer(), insideFixed, { SelectionRevealMode::Reveal, align, align, ShouldAllowCrossOriginScrolling::No });
 }

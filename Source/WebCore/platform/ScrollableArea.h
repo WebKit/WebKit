@@ -406,7 +406,7 @@ protected:
 
     bool hasLayerForScrollCorner() const;
 
-    LayoutRect getRectToExposeForScrollIntoView(const LayoutRect& visibleRect, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const;
+    LayoutRect getRectToExposeForScrollIntoView(const LayoutRect& visibleBounds, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY, const std::optional<LayoutRect> = std::nullopt) const;
 
 private:
     WEBCORE_EXPORT virtual IntRect visibleContentRectInternal(VisibleContentRectIncludesScrollbars, VisibleContentRectBehavior) const;

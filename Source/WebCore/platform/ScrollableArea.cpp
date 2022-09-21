@@ -808,23 +808,28 @@ std::optional<BoxSide> ScrollableArea::targetSideForScrollDelta(FloatSize delta,
     return { };
 }
 
-LayoutRect ScrollableArea::getRectToExposeForScrollIntoView(const LayoutRect& visibleRect, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY) const
+LayoutRect ScrollableArea::getRectToExposeForScrollIntoView(const LayoutRect& visibleBounds, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY, const std::optional<LayoutRect> visibilityCheckRect) const
 {
     static const int minIntersectForReveal = 32;
 
     ScrollAlignment::Behavior scrollX = alignX.getHiddenBehavior();
-    bool intersectsInX = exposeRect.maxX() >= visibleRect.x() && exposeRect.x() <= visibleRect.maxX();
-
+    
+    bool intersectsInX = false;
+    if (visibilityCheckRect)
+        intersectsInX = visibilityCheckRect->maxX() >= visibleBounds.x() && visibilityCheckRect->x() <= visibleBounds.maxX();
+    else
+        intersectsInX = exposeRect.maxX() >= visibleBounds.x() && exposeRect.x() <= visibleBounds.maxX();
+    
     // Determine the appropriate X behavior.
     if (intersectsInX) {
-        LayoutUnit intersectWidth = std::max(LayoutUnit(), std::min(visibleRect.maxX(), exposeRect.maxX()) - std::max(visibleRect.x(), exposeRect.x()));
+        LayoutUnit intersectWidth = std::max(LayoutUnit(), std::min(visibleBounds.maxX(), exposeRect.maxX()) - std::max(visibleBounds.x(), exposeRect.x()));
 
         if (intersectWidth == exposeRect.width() || (alignX.legacyHorizontalVisibilityThresholdEnabled() && intersectWidth >= minIntersectForReveal)) {
             // If the rectangle is fully visible, use the specified visible behavior.
             // If the rectangle is partially visible, but over a certain threshold,
             // then treat it as fully visible to avoid unnecessary horizontal scrolling
             scrollX = alignX.getVisibleBehavior();
-        } else if (intersectWidth == visibleRect.width()) {
+        } else if (intersectWidth == visibleBounds.width()) {
             // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
             scrollX = alignX.getVisibleBehavior();
             if (scrollX == ScrollAlignment::Behavior::AlignCenter)
@@ -837,31 +842,36 @@ LayoutRect ScrollableArea::getRectToExposeForScrollIntoView(const LayoutRect& vi
     }
 
     // If we're trying to align to the closest edge, and the exposeRect is further right
-    // than the visibleRect, and not bigger than the visible area, then align with the right.
-    if (scrollX == ScrollAlignment::Behavior::AlignToClosestEdge && exposeRect.maxX() > visibleRect.maxX() && exposeRect.width() < visibleRect.width())
+    // than the visibleBounds, and not bigger than the visible area, then align with the right.
+    if (scrollX == ScrollAlignment::Behavior::AlignToClosestEdge && exposeRect.maxX() > visibleBounds.maxX() && exposeRect.width() < visibleBounds.width())
         scrollX = ScrollAlignment::Behavior::AlignRight;
 
     // Given the X behavior, compute the X coordinate.
     LayoutUnit x;
     if (scrollX == ScrollAlignment::Behavior::NoScroll)
-        x = visibleRect.x();
+        x = visibleBounds.x();
     else if (scrollX == ScrollAlignment::Behavior::AlignRight)
-        x = exposeRect.maxX() - visibleRect.width();
+        x = exposeRect.maxX() - visibleBounds.width();
     else if (scrollX == ScrollAlignment::Behavior::AlignCenter)
-        x = exposeRect.x() + (exposeRect.width() - visibleRect.width()) / 2;
+        x = exposeRect.x() + (exposeRect.width() - visibleBounds.width()) / 2;
     else
         x = exposeRect.x();
 
     ScrollAlignment::Behavior scrollY = alignY.getHiddenBehavior();
-    bool intersectsInY = exposeRect.maxY() >= visibleRect.y() && exposeRect.y() <= visibleRect.maxY();
+    
+    bool intersectsInY = false;
+    if (visibilityCheckRect)
+        intersectsInY = visibilityCheckRect->maxY() >= visibleBounds.y() && visibilityCheckRect->y() <= visibleBounds.maxY();
+    else
+        intersectsInY = exposeRect.maxY() >= visibleBounds.y() && exposeRect.y() <= visibleBounds.maxY();
 
     // Determine the appropriate Y behavior.
     if (intersectsInY) {
-        LayoutUnit intersectHeight = std::max(LayoutUnit(), std::min(visibleRect.maxY(), exposeRect.maxY()) - std::max(visibleRect.y(), exposeRect.y()));
+        LayoutUnit intersectHeight = std::max(LayoutUnit(), std::min(visibleBounds.maxY(), exposeRect.maxY()) - std::max(visibleBounds.y(), exposeRect.y()));
         if (intersectHeight == exposeRect.height()) {
             // If the rectangle is fully visible, use the specified visible behavior.
             scrollY = alignY.getVisibleBehavior();
-        } else if (intersectHeight == visibleRect.height()) {
+        } else if (intersectHeight == visibleBounds.height()) {
             // If the rect is bigger than the visible area, don't bother trying to center. Other alignments will work.
             scrollY = alignY.getVisibleBehavior();
             if (scrollY == ScrollAlignment::Behavior::AlignCenter)
@@ -874,22 +884,22 @@ LayoutRect ScrollableArea::getRectToExposeForScrollIntoView(const LayoutRect& vi
     }
 
     // If we're trying to align to the closest edge, and the exposeRect is further down
-    // than the visibleRect, and not bigger than the visible area, then align with the bottom.
-    if (scrollY == ScrollAlignment::Behavior::AlignToClosestEdge && exposeRect.maxY() > visibleRect.maxY() && exposeRect.height() < visibleRect.height())
+    // than the visibleBounds, and not bigger than the visible area, then align with the bottom.
+    if (scrollY == ScrollAlignment::Behavior::AlignToClosestEdge && exposeRect.maxY() > visibleBounds.maxY() && exposeRect.height() < visibleBounds.height())
         scrollY = ScrollAlignment::Behavior::AlignBottom;
 
     // Given the Y behavior, compute the Y coordinate.
     LayoutUnit y;
     if (scrollY == ScrollAlignment::Behavior::NoScroll)
-        y = visibleRect.y();
+        y = visibleBounds.y();
     else if (scrollY == ScrollAlignment::Behavior::AlignBottom)
-        y = exposeRect.maxY() - visibleRect.height();
+        y = exposeRect.maxY() - visibleBounds.height();
     else if (scrollY == ScrollAlignment::Behavior::AlignCenter)
-        y = exposeRect.y() + (exposeRect.height() - visibleRect.height()) / 2;
+        y = exposeRect.y() + (exposeRect.height() - visibleBounds.height()) / 2;
     else
         y = exposeRect.y();
 
-    return LayoutRect(LayoutPoint(x, y), visibleRect.size());
+    return LayoutRect(LayoutPoint(x, y), visibleBounds.size());
 }
 
 TextStream& operator<<(TextStream& ts, const ScrollableArea& scrollableArea)
