@@ -81,10 +81,10 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 
 static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
 {
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
     UNUSED_PARAM(launchOptions);
-    // On iOS, we don't need to leak a boost message because RunningBoard process assertions give us the
-    // right priorities.
+    // When using RunningBoard, we don't need to leak a boost message because
+    // RunningBoard process assertions give us the right priorities.
     return false;
 #else
     // On Mac, leak a boost onto the NetworkProcess and GPUProcess.

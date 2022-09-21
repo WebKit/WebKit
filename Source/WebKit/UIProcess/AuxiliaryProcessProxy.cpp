@@ -288,6 +288,10 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     if (!connectionIdentifier)
         return;
 
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    m_lifetimeAssertion = ProcessAssertion::create(xpc_connection_get_pid(connectionIdentifier.xpcConnection.get()), "Lifetime assertion"_s, ProcessAssertionType::Foreground);
+#endif
+
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier);
 
     connectionWillOpen(*m_connection);
