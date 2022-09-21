@@ -29,6 +29,8 @@ class SVGTextElement final : public SVGTextPositioningElement {
 public:
     static Ref<SVGTextElement> create(const QualifiedName&, Document&);
 
+    AffineTransform animatedLocalTransform() const override;
+
 private:
     SVGTextElement(const QualifiedName&, Document&);
 
