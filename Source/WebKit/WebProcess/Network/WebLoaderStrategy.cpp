@@ -547,7 +547,8 @@ void WebLoaderStrategy::remove(ResourceLoader* resourceLoader)
     if (!loader)
         return;
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
+    if (auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
+        networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
 
     // It's possible that this WebResourceLoader might be just about to message back to the NetworkProcess (e.g. ContinueWillSendRequest)
     // but there's no point in doing so anymore.
@@ -736,14 +737,19 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
 
 void WebLoaderStrategy::pageLoadCompleted(Page& page)
 {
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(WebPage::fromCorePage(page).identifier()), 0);
+    if (auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
+        networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::PageLoadCompleted(WebPage::fromCorePage(page).identifier()), 0);
 }
 
 void WebLoaderStrategy::browsingContextRemoved(Frame& frame)
 {
     ASSERT(frame.page());
+    auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection)
+        return;
+
     auto& page = WebPage::fromCorePage(*frame.page());
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page.webPageProxyIdentifier(), page.identifier(), WebFrame::fromCoreFrame(frame)->frameID()), 0);
+    networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::BrowsingContextRemoved(page.webPageProxyIdentifier(), page.identifier(), WebFrame::fromCoreFrame(frame)->frameID()), 0);
 }
 
 bool WebLoaderStrategy::usePingLoad() const
@@ -910,6 +916,13 @@ void WebLoaderStrategy::isResourceLoadFinished(CachedResource& resource, Complet
         callback(true);
         return;
     }
+
+    auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    if (!networkProcessConnection) {
+        callback(true);
+        return;
+    }
+
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::IsResourceLoadFinished(resource.loader()->identifier()), WTFMove(callback), 0);
 }
 
