@@ -216,7 +216,7 @@ class GitHubEWS(GitHub):
 
         if change.comment_id == -1:
             pr_url = GitHub.pr_url(change.pr_id)
-            return u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
+            return (u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url), None)
         comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
@@ -230,9 +230,12 @@ class GitHubEWS(GitHub):
             comment += comment_for_row
 
         if change.obsolete:
-            return u'EWS run on previous version of this PR (hash {})<details>{}</details>'.format(hash_url, comment)
+            return (u'EWS run on previous version of this PR (hash {})<details>{}</details>'.format(hash_url, comment), None)
 
-        return u'{}{}'.format(hash_url, comment)
+        regular_comment = u'{}{}'.format(hash_url, comment)
+        folded_comment = u'EWS run on current version of this PR (hash {})<details>{}</details>'.format(hash_url, comment)
+
+        return (regular_comment, folded_comment)
 
     def github_status_for_queue(self, change, queue):
         name = queue
@@ -338,23 +341,23 @@ class GitHubEWS(GitHub):
             _log.error('Change not found for hash: {}. Unable to generate github comment.'.format(sha))
             return -1
         gh = GitHubEWS()
-        comment_text = gh.generate_comment_text_for_change(change)
+        comment_text, folded_comment = gh.generate_comment_text_for_change(change)
         comment_id = change.comment_id
         if comment_id == -1:
             if not allow_new_comment:
                 # FIXME: improve this logic to use locking instead
                 return -1
             _log.info('Adding comment for hash: {}, PR: {}'.format(sha, pr_id))
-            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text, change=change)
+            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, folded_comment, change=change)
             obsolete_changes = Change.mark_old_changes_as_obsolete(pr_id, sha)
             for obsolete_change in obsolete_changes:
-                obsolete_comment_text = gh.generate_comment_text_for_change(obsolete_change)
+                obsolete_comment_text, _ = gh.generate_comment_text_for_change(obsolete_change)
                 gh.update_or_leave_comment_on_pr(pr_id, obsolete_comment_text, comment_id=obsolete_change.comment_id, change=obsolete_change)
                 _log.info('Updated obsolete status-bubble on pr {} for hash: {}'.format(pr_id, obsolete_change.change_id))
 
         else:
             _log.info('Updating comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
-            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, comment_text, comment_id=comment_id)
+            new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, folded_comment, comment_id=comment_id)
 
         if not change.obsolete:
             gh.update_pr_description_with_status_bubble(pr_id, comment_text)
