@@ -211,6 +211,7 @@ class GitHub(Scm):
             pull_request._opened = dict(
                 open=True,
                 closed=False,
+                merged=False,
             ).get(data.get('state'), None)
             pull_request.generator = self
             issue_ref = data.get('_links', {}).get('issue', {}).get('href')
