@@ -573,7 +573,7 @@ class Git(Scm):
         if remote is True:
             return sorted(set.union(*result.values()))
         if isinstance(remote, string_utils.basestring):
-            return sorted(result[remote])
+            return sorted(result.get(remote, []))
         return result
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):

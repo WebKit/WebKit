@@ -202,7 +202,9 @@ class PullRequest(Command):
             if Branch.main(
                 args, repository,
                 why="'{}' is not a pull request branch".format(repository.branch),
-                redact=source_remote != repository.default_remote, **kwargs
+                redact=source_remote != repository.default_remote,
+                target_remote='fork' if source_remote == repository.default_remote else '{}-fork'.format(source_remote),
+                **kwargs
             ):
                 sys.stderr.write("Abandoning pushing pull-request because '{}' could not be created\n".format(args.issue))
                 return None
