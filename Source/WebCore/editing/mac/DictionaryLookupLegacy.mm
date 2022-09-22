@@ -207,7 +207,7 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
         return nil;
 
     RetainPtr<NSMutableDictionary> mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
-    if (NSDictionary *options = dictionaryPopupInfo.options.get())
+    if (NSDictionary *options = dictionaryPopupInfo.platformData.options.get())
         [mutableOptions addEntriesFromDictionary:options];
 
     auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
@@ -222,9 +222,9 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
             textBoundingRectInViewCoordinates = rootViewToViewConversionCallback(textBoundingRectInViewCoordinates);
         firstTextRectInViewCoordinates.moveBy(textBoundingRectInViewCoordinates.location());
         if (createAnimationController)
-            return [PAL::getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
+            return [PAL::getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.platformData.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
 
-        [PAL::getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
+        [PAL::getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.platformData.attributedString.get() relativeToRect:firstTextRectInViewCoordinates ofView:view options:mutableOptions.get()];
         return nil;
     }
 
@@ -235,9 +235,9 @@ static id <NSImmediateActionAnimationController> showPopupOrCreateAnimationContr
     textBaselineOrigin = [view.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
 
     if (createAnimationController)
-        return [PAL::getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+        return [PAL::getLULookupDefinitionModuleClass() lookupAnimationControllerForTerm:dictionaryPopupInfo.platformData.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
 
-    [PAL::getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
+    [PAL::getLULookupDefinitionModuleClass() showDefinitionForTerm:dictionaryPopupInfo.platformData.attributedString.get() atLocation:textBaselineOrigin options:mutableOptions.get()];
     return nil;
 
     END_BLOCK_OBJC_EXCEPTIONS

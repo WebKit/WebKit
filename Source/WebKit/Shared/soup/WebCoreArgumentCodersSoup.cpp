@@ -215,17 +215,6 @@ bool ArgumentCoder<Credential>::decodePlatformData(Decoder& decoder, Credential&
     return true;
 }
 
-void ArgumentCoder<DictionaryPopupInfo>::encodePlatformData(Encoder&, const DictionaryPopupInfo&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool ArgumentCoder<DictionaryPopupInfo>::decodePlatformData(Decoder&, DictionaryPopupInfo&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void ArgumentCoder<Font>::encodePlatformData(Encoder&, const Font&)
 {
     ASSERT_NOT_REACHED();

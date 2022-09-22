@@ -191,7 +191,7 @@ def generate_header(serialized_types, serialized_enums):
     return '\n'.join(result)
 
 
-def generate_cpp(serialized_types, serialized_enums, headers):
+def generate_impl(serialized_types, serialized_enums, headers):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -333,7 +333,6 @@ def generate_cpp(serialized_types, serialized_enums, headers):
     result.append('')
     return '\n'.join(result)
 
-
 def generate_serialized_type_info(serialized_types, serialized_enums, headers):
     result = []
     result.append(_license_header)
@@ -393,6 +392,7 @@ def parse_serialized_types(file, file_name):
     member_condition = None
     struct_or_class = None
     underlying_type = None
+    file_extension = "cpp"
 
     for line in file:
         line = line.strip()
@@ -433,6 +433,10 @@ def parse_serialized_types(file, file_name):
             for header in match.group(1).split():
                 headers.append(ConditionalHeader(header, None))
             continue
+        match = re.search(r'file_extension?: (.*)', line)
+        if match:
+            file_extension = match.groups()
+            continue
 
         match = re.search(r'(.*)enum class (.*)::(.*) : (.*) {', line)
         if match:
@@ -471,30 +475,33 @@ def parse_serialized_types(file, file_name):
                 members.append(MemberVariable(member_type, member_name, member_condition, []))
     if len(headers) == 0 and len(serialized_types) <= 1:
         headers = [ConditionalHeader('"' + file_name[0:len(file_name) - len('.serialization.in')] + '.h"', None)]
-    return [serialized_types, serialized_enums, headers]
+    return [serialized_types, serialized_enums, headers, file_extension]
 
 
 def main(argv):
-    serialized_types = []
-    serialized_enums = []
-    headers = []
+    serialized_types = {}
+    serialized_enums = {}
+    headers = {}
+    file_extensions = set()
     for i in range(2, len(argv)):
         with open(argv[1] + argv[i]) as file:
-            new_types, new_enums, new_headers = parse_serialized_types(file, argv[i])
+            new_types, new_enums, new_headers, file_extension = parse_serialized_types(file, argv[i])
+            file_extensions.add(file_extension)
             for type in new_types:
-                serialized_types.append(type)
+                serialized_types.setdefault(file_extension, []).append(type)
             for enum in new_enums:
-                serialized_enums.append(enum)
+                serialized_enums.setdefault(file_extension, []).append(enum)
             for header in new_headers:
-                headers.append(header)
-    headers.sort()
+                headers.setdefault(file_extension, []).append(header)
+    [v.sort() for v in headers.values()]
 
     with open('GeneratedSerializers.h', "w+") as header_output:
-        header_output.write(generate_header(serialized_types, serialized_enums))
-    with open('GeneratedSerializers.cpp', "w+") as cpp_output:
-        cpp_output.write(generate_cpp(serialized_types, serialized_enums, headers))
+        header_output.write(generate_header(sum(serialized_types.values(), []), sum(serialized_enums.values(), [])))
+    for file_extension in file_extensions:
+        with open('GeneratedSerializers.%s' % file_extension, "w+") as output:
+            output.write(generate_impl(serialized_types.get(file_extension, []), serialized_enums.get(file_extension, []), headers.get(file_extension, [])))
     with open('SerializedTypeInfo.cpp', "w+") as cpp_output:
-        cpp_output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers))
+        cpp_output.write(generate_serialized_type_info(sum(serialized_types.values(), []), serialized_enums.get("cpp", []), headers.get("cpp", [])))
     return 0
 
 

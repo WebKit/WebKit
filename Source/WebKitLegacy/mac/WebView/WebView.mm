@@ -9089,7 +9089,7 @@ bool LayerFlushController::flushLayers()
 
 - (id)_animationControllerForDictionaryLookupPopupInfo:(const WebCore::DictionaryPopupInfo&)dictionaryPopupInfo
 {
-    if (!dictionaryPopupInfo.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString)
         return nil;
 
     [self _prepareForDictionaryLookup];
@@ -9157,7 +9157,7 @@ bool LayerFlushController::flushLayers()
 
 - (void)_showDictionaryLookupPopup:(const WebCore::DictionaryPopupInfo&)dictionaryPopupInfo
 {
-    if (!dictionaryPopupInfo.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString)
         return;
 
     [self _prepareForDictionaryLookup];

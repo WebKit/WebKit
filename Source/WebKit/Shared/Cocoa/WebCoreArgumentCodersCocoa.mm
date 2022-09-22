@@ -432,20 +432,6 @@ std::optional<WebCore::PaymentSessionError> ArgumentCoder<WebCore::PaymentSessio
 
 #endif // ENABLE(APPLEPAY)
 
-void ArgumentCoder<WebCore::DictionaryPopupInfo>::encodePlatformData(Encoder& encoder, const WebCore::DictionaryPopupInfo& info)
-{
-    encoder << info.options << info.attributedString;
-}
-
-bool ArgumentCoder<WebCore::DictionaryPopupInfo>::decodePlatformData(Decoder& decoder, WebCore::DictionaryPopupInfo& result)
-{
-    if (!IPC::decode(decoder, result.options))
-        return false;
-    if (!IPC::decode(decoder, result.attributedString))
-        return false;
-    return true;
-}
-
 void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder& encoder, const WebCore::Font& font)
 {
     const auto& platformData = font.platformData();

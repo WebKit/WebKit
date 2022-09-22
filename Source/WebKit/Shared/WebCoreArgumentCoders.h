@@ -502,13 +502,6 @@ template<> struct ArgumentCoder<WebCore::TextIndicatorData> {
     static std::optional<WebCore::TextIndicatorData> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::DictionaryPopupInfo> {
-    static void encode(Encoder&, const WebCore::DictionaryPopupInfo&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::DictionaryPopupInfo&);
-    static void encodePlatformData(Encoder&, const WebCore::DictionaryPopupInfo&);
-    static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::DictionaryPopupInfo&);
-};
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 template<> struct ArgumentCoder<WebCore::MediaPlaybackTargetContext> {
     static void encode(Encoder&, const WebCore::MediaPlaybackTargetContext&);

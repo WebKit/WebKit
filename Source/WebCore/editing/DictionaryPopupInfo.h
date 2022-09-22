@@ -34,16 +34,18 @@ OBJC_CLASS NSDictionary;
 
 namespace WebCore {
 
+#if PLATFORM(COCOA)
+struct DictionaryPopupInfoCocoa {
+    RetainPtr<NSDictionary> options;
+    RetainPtr<NSAttributedString> attributedString;
+};
+#endif
+
 struct DictionaryPopupInfo {
     FloatPoint origin;
     TextIndicatorData textIndicator;
 #if PLATFORM(COCOA)
-    RetainPtr<NSDictionary> options;
-    RetainPtr<NSAttributedString> attributedString;
-
-    bool encodingRequiresPlatformData() const { return true; }
-#else
-    bool encodingRequiresPlatformData() const { return false; }
+    DictionaryPopupInfoCocoa platformData;
 #endif
 };
 

@@ -1990,39 +1990,6 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPl
 }
 #endif
 
-void ArgumentCoder<DictionaryPopupInfo>::encode(IPC::Encoder& encoder, const DictionaryPopupInfo& info)
-{
-    encoder << info.origin;
-    encoder << info.textIndicator;
-
-    if (info.encodingRequiresPlatformData()) {
-        encoder << true;
-        encodePlatformData(encoder, info);
-        return;
-    }
-
-    encoder << false;
-}
-
-bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::Decoder& decoder, DictionaryPopupInfo& result)
-{
-    if (!decoder.decode(result.origin))
-        return false;
-
-    std::optional<TextIndicatorData> textIndicator;
-    decoder >> textIndicator;
-    if (!textIndicator)
-        return false;
-    result.textIndicator = WTFMove(*textIndicator);
-
-    bool hasPlatformData;
-    if (!decoder.decode(hasPlatformData))
-        return false;
-    if (hasPlatformData)
-        return decodePlatformData(decoder, result);
-    return true;
-}
-
 void ArgumentCoder<ExceptionDetails>::encode(IPC::Encoder& encoder, const ExceptionDetails& info)
 {
     encoder << info.message;
