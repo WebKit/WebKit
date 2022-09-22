@@ -35,6 +35,6 @@ FAIL margin should not be applied to first-line pseudo elements. assert_equals: 
 FAIL padding should not be applied to first-line pseudo elements. assert_equals: expected "0px" but got "10px 20px 30px 40px"
 FAIL position should not be applied to first-line pseudo elements. assert_equals: expected "static" but got "absolute"
 FAIL transition should not be applied to first-line pseudo elements. assert_equals: expected "all 0s ease 0s" but got "transform 1s ease 0s"
-PASS transform should not be applied to first-line pseudo elements.
+FAIL transform should not be applied to first-line pseudo elements. assert_equals: expected "none" but got "rotate(0deg)"
 FAIL wordBreak should not be applied to first-line pseudo elements. assert_equals: expected "normal" but got "break-all"
 

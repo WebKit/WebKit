@@ -10,39 +10,25 @@ features: [Temporal]
 
 const instance = new Temporal.PlainYearMonth(2000, 5);
 const expected = [
-  "get calendar",
-  "get timeZone",
-  "get month",
-  "get month.valueOf",
-  "call month.valueOf",
-  "get monthCode",
-  "get monthCode.toString",
-  "call monthCode.toString",
-  "get year",
-  "get year.valueOf",
-  "call year.valueOf",
+  "get fields.calendar",
+  "get fields.timeZone",
+  "get fields.month",
+  "get fields.month.valueOf",
+  "call fields.month.valueOf",
+  "get fields.monthCode",
+  "get fields.monthCode.toString",
+  "call fields.monthCode.toString",
+  "get fields.year",
+  "get fields.year.valueOf",
+  "call fields.year.valueOf",
 ];
 const actual = [];
-const fields = {
+const fields = TemporalHelpers.propertyBagObserver(actual, {
   year: 1.7,
   month: 1.7,
   monthCode: "M01",
-};
-const argument = new Proxy(fields, {
-  get(target, key) {
-    actual.push(`get ${key}`);
-    const result = target[key];
-    if (result === undefined) {
-      return undefined;
-    }
-    return TemporalHelpers.toPrimitiveObserver(actual, result, key);
-  },
-  has(target, key) {
-    actual.push(`has ${key}`);
-    return key in target;
-  },
-});
-const result = instance.with(argument);
+}, "fields");
+const result = instance.with(fields);
 TemporalHelpers.assertPlainYearMonth(result, 1, 1, "M01");
 assert.sameValue(result.calendar.id, "iso8601", "calendar result");
 assert.compareArray(actual, expected, "order of operations");

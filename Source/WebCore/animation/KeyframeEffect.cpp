@@ -631,7 +631,6 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
     }
 
     auto* target = m_target.get();
-    auto* renderer = this->renderer();
     auto* lastStyleChangeEventStyle = targetStyleable()->lastStyleChangeEventStyle();
     auto& elementStyle = lastStyleChangeEventStyle ? *lastStyleChangeEventStyle : currentStyle();
 
@@ -704,7 +703,7 @@ auto KeyframeEffect::getKeyframes(Document& document) -> Vector<ComputedKeyframe
                 }
             }
             if (styleString.isEmpty()) {
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, renderer))
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(style, cssPropertyId, nullptr))
                     styleString = cssValue->cssText();
             }
             computedKeyframe.styleStrings.set(cssPropertyId, styleString);

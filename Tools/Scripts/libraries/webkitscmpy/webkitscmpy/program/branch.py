@@ -27,7 +27,7 @@ from .command import Command
 from .commit import Commit
 
 from webkitbugspy import Tracker, radar
-from webkitcorepy import run, string_utils, Terminal
+from webkitcorepy import arguments, run, string_utils, Terminal
 from webkitscmpy import local, log, remote
 
 
@@ -43,6 +43,14 @@ class Branch(Command):
             '-i', '--issue', '-b', '--bug', '-r',
             dest='issue', type=str,
             help='Number (or name) of the issue or bug to create branch for',
+        )
+        parser.add_argument(
+            '-d', '--delete-existing', '--no-delete-existing',
+            dest='delete_existing', default=None,
+            help='Delete (or do not delete) an existing local branch which collides with the proposed name. '
+                 'If pushing to a remote, note that the remote branch of the same name may be overwritten even '
+                 'if a local one does not exist.',
+            action=arguments.NoAction,
         )
 
     @classmethod
@@ -96,7 +104,7 @@ class Branch(Command):
         return string_utils.encode(result, target_type=str)
 
     @classmethod
-    def main(cls, args, repository, why=None, redact=False, **kwargs):
+    def main(cls, args, repository, why=None, redact=False, target_remote='fork', **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'branch' on a native Git repository\n")
             return 1
@@ -169,10 +177,25 @@ class Branch(Command):
             sys.stderr.write("'{}' is an invalid branch name, cannot create it\n".format(args.issue))
             return 1
 
-        remote_re = re.compile('remotes/.+/{}'.format(re.escape(args.issue)))
-        for branch in repository.branches:
-            if branch == args.issue or remote_re.match(branch):
-                sys.stderr.write("'{}' already exists\n".format(args.issue))
+        if args.issue in repository.branches_for(remote=target_remote):
+            if not args.delete_existing:
+                sys.stderr.write("'{}' exists on the remote '{}' and will be overwritten by a push\n".format(args.issue, target_remote))
+                if args.delete_existing is False:
+                    return 1
+
+        if args.issue in repository.branches_for(remote=False):
+            if args.delete_existing:
+                log.info("Locally deleting existing branch '{}'".format(args.issue))
+                if run([repository.executable(), 'branch', '-D', args.issue], cwd=repository.root_path).returncode:
+                    sys.stderr.write("Failed to locally delete '{}'\n".format(args.issue))
+            elif args.delete_existing is None:
+                log.warning("Rebasing existing branch '{}' instead of creating a new one".format(args.issue))
+                if run([repository.executable(), 'rebase', 'HEAD', args.issue, '--autostash'], cwd=repository.root_path).returncode:
+                    return 1
+                print("Rebased the local development branch '{}'".format(args.issue))
+                return 0
+            else:
+                sys.stderr.write("'{}' already exists in this checkout\n".format(args.issue))
                 return 1
 
         log.info("Creating the local development branch '{}'...".format(args.issue))

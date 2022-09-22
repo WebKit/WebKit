@@ -4,32 +4,28 @@
 /*---
 esid: sec-temporal.plaintime.prototype.round
 description: Tests calculations with roundingMode "trunc".
-features: [Temporal]
 includes: [temporalHelpers.js]
+features: [Temporal]
 ---*/
 
-const plainTime = Temporal.PlainTime.from("13:46:23.123456789");
+const instance = new Temporal.PlainTime(13, 46, 23, 123, 987, 500);
 
-TemporalHelpers.assertPlainTime(
-  plainTime.round({ smallestUnit: "hour", roundingMode: "trunc" }),
-  13, 0, 0, 0, 0, 0, "hour");
+const expected = [
+  ["hour", [13]],
+  ["minute", [13, 46]],
+  ["second", [13, 46, 23]],
+  ["millisecond", [13, 46, 23, 123]],
+  ["microsecond", [13, 46, 23, 123, 987]],
+  ["nanosecond", [13, 46, 23, 123, 987, 500]],
+];
 
-TemporalHelpers.assertPlainTime(
-  plainTime.round({ smallestUnit: "minute", roundingMode: "trunc" }),
-  13, 46, 0, 0, 0, 0, "minute");
+const roundingMode = "trunc";
 
-TemporalHelpers.assertPlainTime(
-  plainTime.round({ smallestUnit: "second", roundingMode: "trunc" }),
-  13, 46, 23, 0, 0, 0, "second");
-
-TemporalHelpers.assertPlainTime(
-  plainTime.round({ smallestUnit: "millisecond", roundingMode: "trunc" }),
-  13, 46, 23, 123, 0, 0, "millisecond");
-
-TemporalHelpers.assertPlainTime(
-  plainTime.round({ smallestUnit: "microsecond", roundingMode: "trunc" }),
-  13, 46, 23, 123, 456, 0, "microsecond");
-
-TemporalHelpers.assertPlainTime(
-  plainTime.round({ smallestUnit: "nanosecond", roundingMode: "trunc" }),
-  13, 46, 23, 123, 456, 789, "nanosecond");
+expected.forEach(([smallestUnit, expected]) => {
+  const [h, min = 0, s = 0, ms = 0, µs = 0, ns = 0] = expected;
+  TemporalHelpers.assertPlainTime(
+    instance.round({ smallestUnit, roundingMode }),
+    h, min, s, ms, µs, ns,
+    `rounds to ${smallestUnit} (roundingMode = ${roundingMode})`
+  );
+});

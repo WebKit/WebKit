@@ -16,24 +16,17 @@ const expected = [
   "call inner.toString",
 ];
 const actual = [];
-const calendar = new Proxy({}, {
-  has(t, p) {
-    actual.push(`has outer.${p}`);
-    return true;
-  },
-  get(t, p) {
-    actual.push(`get outer.${p}`);
-    return new Proxy(TemporalHelpers.toPrimitiveObserver(actual, "iso8601", "inner"), {
-      has(t, p) {
-        actual.push(`has inner.${p}`);
-        return true;
-      },
-      get(t, p) {
-        return t[p];
-      },
-    });
-  },
-});
+const calendar = TemporalHelpers.propertyBagObserver(actual, {
+  calendar: new Proxy(TemporalHelpers.toPrimitiveObserver(actual, "iso8601", "inner"), {
+    has(t, p) {
+      actual.push(`has inner.${p}`);
+      return true;
+    },
+    get(t, p) {
+      return t[p];
+    },
+  }),
+}, "outer");
 const result = Temporal.Calendar.from(calendar);
 assert.sameValue(result.id, "iso8601");
 assert.compareArray(actual, expected);

@@ -1,0 +1,13 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Populate backends.
+PASS storage
+PASS Baseline: Service worker responds to request
+PASS Clear backend when 'storage' is deleted: local storage
+PASS Clear backend when 'storage' is deleted: Indexed DB
+PASS Clear backend when 'storage' is deleted: service workers
+PASS Service worker no longer responds to requests
+TIMEOUT controllerchange event fires and client no longer has controller Test timed out
+

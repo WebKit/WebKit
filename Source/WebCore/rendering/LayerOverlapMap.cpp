@@ -84,6 +84,8 @@ public:
     void add(const RenderLayer&, const LayoutRect& bounds, const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers);
     bool overlapsLayers(const RenderLayer&, const LayoutRect& bounds, const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers) const;
     void append(std::unique_ptr<OverlapMapContainer>&&);
+
+    bool isEmpty() const;
     
     String dump(unsigned) const;
     
@@ -166,6 +168,11 @@ private:
     ClippingScope m_rootScope;
     const RenderLayer& m_scopeLayer;
 };
+
+bool OverlapMapContainer::isEmpty() const
+{
+    return m_rootScope.rectList.rects.isEmpty() && m_rootScope.children.isEmpty();
+}
 
 void OverlapMapContainer::add(const RenderLayer&, const LayoutRect& bounds, const Vector<LayerOverlapMap::LayerAndBounds>& enclosingClippingLayers)
 {
@@ -291,6 +298,10 @@ void LayerOverlapMap::add(const RenderLayer& layer, const LayoutRect& bounds, co
     ASSERT(m_overlapStack.size() >= 2);
     auto& container = m_overlapStack[m_overlapStack.size() - 2];
     container->add(layer, bounds, enclosingClippingLayers);
+    if (m_speculativeOverlapStack.size()) {
+        ASSERT(m_speculativeOverlapStack.size() >= 2);
+        m_speculativeOverlapStack[m_speculativeOverlapStack.size() - 2]->add(layer, bounds, enclosingClippingLayers);
+    }
 
     LOG_WITH_STREAM(CompositingOverlap, stream << "layer " << &layer << " contributes to overlap in the scope of layer " << &container->scopeLayer() << ", added to map " << *this);
 
@@ -299,11 +310,15 @@ void LayerOverlapMap::add(const RenderLayer& layer, const LayoutRect& bounds, co
 
 bool LayerOverlapMap::overlapsLayers(const RenderLayer& layer, const LayoutRect& bounds, const Vector<LayerAndBounds>& enclosingClippingLayers) const
 {
-    return m_overlapStack.last()->overlapsLayers(layer, bounds, enclosingClippingLayers);
+    if (m_speculativeOverlapStack.isEmpty())
+        return m_overlapStack.last()->overlapsLayers(layer, bounds, enclosingClippingLayers);
+    ASSERT(m_speculativeOverlapStack.last()->isEmpty());
+    return false;
 }
 
 void LayerOverlapMap::pushCompositingContainer(const RenderLayer& layer)
 {
+    confirmSpeculativeCompositingContainer();
     m_overlapStack.append(makeUnique<OverlapMapContainer>(m_rootLayer, layer));
 }
 
@@ -312,6 +327,38 @@ void LayerOverlapMap::popCompositingContainer(const RenderLayer& layer)
     ASSERT_UNUSED(layer, &m_overlapStack.last()->scopeLayer() == &layer);
     m_overlapStack[m_overlapStack.size() - 2]->append(WTFMove(m_overlapStack.last()));
     m_overlapStack.removeLast();
+}
+
+void LayerOverlapMap::pushSpeculativeCompositingContainer(const RenderLayer& layer)
+{
+    // Create a duplicate copy of the overlap stack, push the container to one,
+    // and make all future add calls apply to both stacks.  
+    // If we end up needing the compositing container, then we copy across the speculative
+    // stack to replace the main, otherwise we throw the speculative stack away.
+    // If we already have a speculative stack (and we've recursed into this), then just force
+    // a real compositing container on the outer, since otherwise we'd have to start
+    // tracking four possible outcomes.
+    confirmSpeculativeCompositingContainer();
+    for (auto& container : m_overlapStack)
+        m_speculativeOverlapStack.append(makeUnique<OverlapMapContainer>(*container));
+    m_speculativeOverlapStack.append(makeUnique<OverlapMapContainer>(m_rootLayer, layer));
+}
+
+void LayerOverlapMap::confirmSpeculativeCompositingContainer()
+{
+    if (m_speculativeOverlapStack.size()) {
+        m_overlapStack.clear();
+        m_overlapStack.swap(m_speculativeOverlapStack);
+    }
+}
+
+bool LayerOverlapMap::maybePopSpeculativeCompositingContainer()
+{
+    if (m_speculativeOverlapStack.size()) {
+        m_speculativeOverlapStack.clear();
+        return true;
+    }
+    return false;
 }
 
 static TextStream& operator<<(TextStream& ts, const OverlapMapContainer& container)

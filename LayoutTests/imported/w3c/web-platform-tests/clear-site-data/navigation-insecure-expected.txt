@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_false: cookies should NOT have been cleared. expected false got true
+
+
+Harness Error (FAIL), message = Unhandled rejection: assert_false: cookies should NOT have been cleared. expected false got true
+
+PASS Do not clear datatypes on insecure navigation (header: )
+TIMEOUT Do not clear datatypes on insecure navigation (header: cookies) Test timed out
+NOTRUN Do not clear datatypes on insecure navigation (header: storage)
+NOTRUN Do not clear datatypes on insecure navigation (header: cookies, storage)
+

@@ -807,9 +807,240 @@ test/built-ins/Proxy/construct/return-not-object-throws-undefined-realm.js:
 test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
+test/built-ins/RegExp/named-groups/duplicate-names-group-property-enumeration-order.js:
+  default: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
+  strict mode: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
+test/built-ins/RegExp/named-groups/duplicate-names-match-indices.js:
+  default: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
+  strict mode: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
+test/built-ins/RegExp/named-groups/duplicate-names-replace.js:
+  default: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
+  strict mode: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
+test/built-ins/RegExp/named-groups/duplicate-names.js:
+  default: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
+  strict mode: 'SyntaxError: Invalid regular expression: duplicate group specifier name'
+test/built-ins/RegExp/property-escapes/generated/Alphabetic.js:
+  default: 'Test262Error: `\p{Alphabetic}` should match U+U+01B132 (`𛄲`)'
+  strict mode: 'Test262Error: `\p{Alphabetic}` should match U+U+01B132 (`𛄲`)'
+test/built-ins/RegExp/property-escapes/generated/Assigned.js:
+  default: 'Test262Error: `\p{Assigned}` should match U+U+01B132 (`𛄲`)'
+  strict mode: 'Test262Error: `\p{Assigned}` should match U+U+01B132 (`𛄲`)'
+test/built-ins/RegExp/property-escapes/generated/Case_Ignorable.js:
+  default: 'Test262Error: `\p{Case_Ignorable}` should match U+U+011241 (`𑉁`)'
+  strict mode: 'Test262Error: `\p{Case_Ignorable}` should match U+U+011241 (`𑉁`)'
+test/built-ins/RegExp/property-escapes/generated/Cased.js:
+  default: 'Test262Error: `\p{Cased}` should match U+U+0010FC (`ჼ`)'
+  strict mode: 'Test262Error: `\p{Cased}` should match U+U+0010FC (`ჼ`)'
+test/built-ins/RegExp/property-escapes/generated/Changes_When_NFKC_Casefolded.js:
+  default: 'Test262Error: `\p{Changes_When_NFKC_Casefolded}` should match U+U+01E030 (`𞀰`)'
+  strict mode: 'Test262Error: `\p{Changes_When_NFKC_Casefolded}` should match U+U+01E030 (`𞀰`)'
+test/built-ins/RegExp/property-escapes/generated/Diacritic.js:
+  default: 'Test262Error: `\p{Diacritic}` should match U+U+010EFD (`𐻽`)'
+  strict mode: 'Test262Error: `\p{Diacritic}` should match U+U+010EFD (`𐻽`)'
+test/built-ins/RegExp/property-escapes/generated/Emoji.js:
+  default: 'Test262Error: `\p{Emoji}` should match U+U+01F6DC (`🛜`)'
+  strict mode: 'Test262Error: `\p{Emoji}` should match U+U+01F6DC (`🛜`)'
+test/built-ins/RegExp/property-escapes/generated/Emoji_Modifier_Base.js:
+  default: 'Test262Error: `\p{Emoji_Modifier_Base}` should match U+U+01FAF7 (`🫷`)'
+  strict mode: 'Test262Error: `\p{Emoji_Modifier_Base}` should match U+U+01FAF7 (`🫷`)'
+test/built-ins/RegExp/property-escapes/generated/Emoji_Presentation.js:
+  default: 'Test262Error: `\p{Emoji_Presentation}` should match U+U+01F6DC (`🛜`)'
+  strict mode: 'Test262Error: `\p{Emoji_Presentation}` should match U+U+01F6DC (`🛜`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Cased_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Cased_Letter}` should match U+U+01DF25 (`𝼥`)'
+  strict mode: 'Test262Error: `\p{General_Category=Cased_Letter}` should match U+U+01DF25 (`𝼥`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Decimal_Number.js:
+  default: 'Test262Error: `\p{General_Category=Decimal_Number}` should match U+U+011F50 (`𑽐`)'
+  strict mode: 'Test262Error: `\p{General_Category=Decimal_Number}` should match U+U+011F50 (`𑽐`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Format.js:
+  default: 'Test262Error: `\p{General_Category=Format}` should match U+U+013439 (`𓐹`)'
+  strict mode: 'Test262Error: `\p{General_Category=Format}` should match U+U+013439 (`𓐹`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Letter}` should match U+U+011F02 (`𑼂`)'
+  strict mode: 'Test262Error: `\p{General_Category=Letter}` should match U+U+011F02 (`𑼂`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Lowercase_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Lowercase_Letter}` should match U+U+01DF25 (`𝼥`)'
+  strict mode: 'Test262Error: `\p{General_Category=Lowercase_Letter}` should match U+U+01DF25 (`𝼥`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Mark.js:
+  default: 'Test262Error: `\p{General_Category=Mark}` should match U+U+000CF3 (`ೳ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Mark}` should match U+U+000CF3 (`ೳ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Modifier_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Modifier_Letter}` should match U+U+01E4EB (`𞓫`)'
+  strict mode: 'Test262Error: `\p{General_Category=Modifier_Letter}` should match U+U+01E4EB (`𞓫`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Nonspacing_Mark.js:
+  default: 'Test262Error: `\p{General_Category=Nonspacing_Mark}` should match U+U+011241 (`𑉁`)'
+  strict mode: 'Test262Error: `\p{General_Category=Nonspacing_Mark}` should match U+U+011241 (`𑉁`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Number.js:
+  default: 'Test262Error: `\p{General_Category=Number}` should match U+U+011F50 (`𑽐`)'
+  strict mode: 'Test262Error: `\p{General_Category=Number}` should match U+U+011F50 (`𑽐`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other.js:
+  default: 'Test262Error: `\P{General_Category=Other}` should match U+U+01B132 (`𛄲`)'
+  strict mode: 'Test262Error: `\P{General_Category=Other}` should match U+U+01B132 (`𛄲`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Letter.js:
+  default: 'Test262Error: `\p{General_Category=Other_Letter}` should match U+U+011F02 (`𑼂`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Letter}` should match U+U+011F02 (`𑼂`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Number.js:
+  default: 'Test262Error: `\p{General_Category=Other_Number}` should match U+U+01D2C0 (`𝋀`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Number}` should match U+U+01D2C0 (`𝋀`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Punctuation.js:
+  default: 'Test262Error: `\p{General_Category=Other_Punctuation}` should match U+U+011B00 (`𑬀`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Punctuation}` should match U+U+011B00 (`𑬀`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Other_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Other_Symbol}` should match U+U+01F6DC (`🛜`)'
+  strict mode: 'Test262Error: `\p{General_Category=Other_Symbol}` should match U+U+01F6DC (`🛜`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Punctuation.js:
+  default: 'Test262Error: `\p{General_Category=Punctuation}` should match U+U+011B00 (`𑬀`)'
+  strict mode: 'Test262Error: `\p{General_Category=Punctuation}` should match U+U+011B00 (`𑬀`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Spacing_Mark.js:
+  default: 'Test262Error: `\p{General_Category=Spacing_Mark}` should match U+U+000CF3 (`ೳ`)'
+  strict mode: 'Test262Error: `\p{General_Category=Spacing_Mark}` should match U+U+000CF3 (`ೳ`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Symbol.js:
+  default: 'Test262Error: `\p{General_Category=Symbol}` should match U+U+01F6DC (`🛜`)'
+  strict mode: 'Test262Error: `\p{General_Category=Symbol}` should match U+U+01F6DC (`🛜`)'
+test/built-ins/RegExp/property-escapes/generated/General_Category_-_Unassigned.js:
+  default: 'Test262Error: `\P{General_Category=Unassigned}` should match U+U+01B132 (`𛄲`)'
+  strict mode: 'Test262Error: `\P{General_Category=Unassigned}` should match U+U+01B132 (`𛄲`)'
+test/built-ins/RegExp/property-escapes/generated/Grapheme_Base.js:
+  default: 'Test262Error: `\p{Grapheme_Base}` should match U+U+011F41 (`𑽁`)'
+  strict mode: 'Test262Error: `\p{Grapheme_Base}` should match U+U+011F41 (`𑽁`)'
+test/built-ins/RegExp/property-escapes/generated/Grapheme_Extend.js:
+  default: 'Test262Error: `\p{Grapheme_Extend}` should match U+U+011241 (`𑉁`)'
+  strict mode: 'Test262Error: `\p{Grapheme_Extend}` should match U+U+011241 (`𑉁`)'
+test/built-ins/RegExp/property-escapes/generated/ID_Continue.js:
+  default: 'Test262Error: `\p{ID_Continue}` should match U+U+01B132 (`𛄲`)'
+  strict mode: 'Test262Error: `\p{ID_Continue}` should match U+U+01B132 (`𛄲`)'
+test/built-ins/RegExp/property-escapes/generated/ID_Start.js:
+  default: 'Test262Error: `\p{ID_Start}` should match U+U+011F02 (`𑼂`)'
+  strict mode: 'Test262Error: `\p{ID_Start}` should match U+U+011F02 (`𑼂`)'
+test/built-ins/RegExp/property-escapes/generated/Ideographic.js:
+  default: 'Test262Error: `\p{Ideographic}` should match U+U+02B739 (`𫜹`)'
+  strict mode: 'Test262Error: `\p{Ideographic}` should match U+U+02B739 (`𫜹`)'
+test/built-ins/RegExp/property-escapes/generated/Lowercase.js:
+  default: 'Test262Error: `\p{Lowercase}` should match U+U+0010FC (`ჼ`)'
+  strict mode: 'Test262Error: `\p{Lowercase}` should match U+U+0010FC (`ჼ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Arabic.js:
+  default: 'Test262Error: `\p{Script=Arabic}` should match U+U+010EFD (`𐻽`)'
+  strict mode: 'Test262Error: `\p{Script=Arabic}` should match U+U+010EFD (`𐻽`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Common.js:
+  default: 'Test262Error: `\p{Script=Common}` should match U+U+01D2C0 (`𝋀`)'
+  strict mode: 'Test262Error: `\p{Script=Common}` should match U+U+01D2C0 (`𝋀`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Cyrillic.js:
+  default: 'Test262Error: `\p{Script=Cyrillic}` should match U+U+01E08F (`𞂏`)'
+  strict mode: 'Test262Error: `\p{Script=Cyrillic}` should match U+U+01E08F (`𞂏`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Devanagari.js:
+  default: 'Test262Error: `\p{Script=Devanagari}` should match U+U+011B00 (`𑬀`)'
+  strict mode: 'Test262Error: `\p{Script=Devanagari}` should match U+U+011B00 (`𑬀`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Egyptian_Hieroglyphs.js:
+  default: 'Test262Error: `\p{Script=Egyptian_Hieroglyphs}` should match U+U+01342F (`𓐯`)'
+  strict mode: 'Test262Error: `\p{Script=Egyptian_Hieroglyphs}` should match U+U+01342F (`𓐯`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Han.js:
+  default: 'Test262Error: `\p{Script=Han}` should match U+U+02B739 (`𫜹`)'
+  strict mode: 'Test262Error: `\p{Script=Han}` should match U+U+02B739 (`𫜹`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Hiragana.js:
+  default: 'Test262Error: `\p{Script=Hiragana}` should match U+U+01B132 (`𛄲`)'
+  strict mode: 'Test262Error: `\p{Script=Hiragana}` should match U+U+01B132 (`𛄲`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Kannada.js:
+  default: 'Test262Error: `\p{Script=Kannada}` should match U+U+000CF3 (`ೳ`)'
+  strict mode: 'Test262Error: `\p{Script=Kannada}` should match U+U+000CF3 (`ೳ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Katakana.js:
+  default: 'Test262Error: `\p{Script=Katakana}` should match U+U+01B155 (`𛅕`)'
+  strict mode: 'Test262Error: `\p{Script=Katakana}` should match U+U+01B155 (`𛅕`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Kawi.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Khojki.js:
+  default: 'Test262Error: `\p{Script=Khojki}` should match U+U+01123F (`𑈿`)'
+  strict mode: 'Test262Error: `\p{Script=Khojki}` should match U+U+01123F (`𑈿`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Lao.js:
+  default: 'Test262Error: `\p{Script=Lao}` should match U+U+000ECE (`໎`)'
+  strict mode: 'Test262Error: `\p{Script=Lao}` should match U+U+000ECE (`໎`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Latin.js:
+  default: 'Test262Error: `\p{Script=Latin}` should match U+U+01DF25 (`𝼥`)'
+  strict mode: 'Test262Error: `\p{Script=Latin}` should match U+U+01DF25 (`𝼥`)'
+test/built-ins/RegExp/property-escapes/generated/Script_-_Nag_Mundari.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Arabic.js:
+  default: 'Test262Error: `\p{Script_Extensions=Arabic}` should match U+U+010EFD (`𐻽`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Arabic}` should match U+U+010EFD (`𐻽`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Common.js:
+  default: 'Test262Error: `\p{Script_Extensions=Common}` should match U+U+01D2C0 (`𝋀`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Common}` should match U+U+01D2C0 (`𝋀`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Cyrillic.js:
+  default: 'Test262Error: `\p{Script_Extensions=Cyrillic}` should match U+U+01E08F (`𞂏`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Cyrillic}` should match U+U+01E08F (`𞂏`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Devanagari.js:
+  default: 'Test262Error: `\p{Script_Extensions=Devanagari}` should match U+U+011B00 (`𑬀`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Devanagari}` should match U+U+011B00 (`𑬀`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Egyptian_Hieroglyphs.js:
+  default: 'Test262Error: `\p{Script_Extensions=Egyptian_Hieroglyphs}` should match U+U+01342F (`𓐯`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Egyptian_Hieroglyphs}` should match U+U+01342F (`𓐯`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Han.js:
+  default: 'Test262Error: `\p{Script_Extensions=Han}` should match U+U+02B739 (`𫜹`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Han}` should match U+U+02B739 (`𫜹`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Hiragana.js:
+  default: 'Test262Error: `\p{Script_Extensions=Hiragana}` should match U+U+01B132 (`𛄲`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Hiragana}` should match U+U+01B132 (`𛄲`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Kannada.js:
+  default: 'Test262Error: `\p{Script_Extensions=Kannada}` should match U+U+000CF3 (`ೳ`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Kannada}` should match U+U+000CF3 (`ೳ`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Katakana.js:
+  default: 'Test262Error: `\p{Script_Extensions=Katakana}` should match U+U+01B155 (`𛅕`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Katakana}` should match U+U+01B155 (`𛅕`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Kawi.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Khojki.js:
+  default: 'Test262Error: `\p{Script_Extensions=Khojki}` should match U+U+01123F (`𑈿`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Khojki}` should match U+U+01123F (`𑈿`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Lao.js:
+  default: 'Test262Error: `\p{Script_Extensions=Lao}` should match U+U+000ECE (`໎`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Lao}` should match U+U+000ECE (`໎`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Latin.js:
+  default: 'Test262Error: `\p{Script_Extensions=Latin}` should match U+U+01DF25 (`𝼥`)'
+  strict mode: 'Test262Error: `\p{Script_Extensions=Latin}` should match U+U+01DF25 (`𝼥`)'
+test/built-ins/RegExp/property-escapes/generated/Script_Extensions_-_Nag_Mundari.js:
+  default: 'SyntaxError: Invalid regular expression: invalid property expression'
+  strict mode: 'SyntaxError: Invalid regular expression: invalid property expression'
+test/built-ins/RegExp/property-escapes/generated/Sentence_Terminal.js:
+  default: 'Test262Error: `\p{Sentence_Terminal}` should match U+U+011F43 (`𑽃`)'
+  strict mode: 'Test262Error: `\p{Sentence_Terminal}` should match U+U+011F43 (`𑽃`)'
+test/built-ins/RegExp/property-escapes/generated/Soft_Dotted.js:
+  default: 'Test262Error: `\p{Soft_Dotted}` should match U+U+01E068 (`𞁨`)'
+  strict mode: 'Test262Error: `\p{Soft_Dotted}` should match U+U+01E068 (`𞁨`)'
+test/built-ins/RegExp/property-escapes/generated/Terminal_Punctuation.js:
+  default: 'Test262Error: `\p{Terminal_Punctuation}` should match U+U+011F43 (`𑽃`)'
+  strict mode: 'Test262Error: `\p{Terminal_Punctuation}` should match U+U+011F43 (`𑽃`)'
+test/built-ins/RegExp/property-escapes/generated/Unified_Ideograph.js:
+  default: 'Test262Error: `\p{Unified_Ideograph}` should match U+U+02B739 (`𫜹`)'
+  strict mode: 'Test262Error: `\p{Unified_Ideograph}` should match U+U+02B739 (`𫜹`)'
+test/built-ins/RegExp/property-escapes/generated/XID_Continue.js:
+  default: 'Test262Error: `\p{XID_Continue}` should match U+U+01B132 (`𛄲`)'
+  strict mode: 'Test262Error: `\p{XID_Continue}` should match U+U+01B132 (`𛄲`)'
+test/built-ins/RegExp/property-escapes/generated/XID_Start.js:
+  default: 'Test262Error: `\p{XID_Start}` should match U+U+011F02 (`𑼂`)'
+  strict mode: 'Test262Error: `\p{XID_Start}` should match U+U+011F02 (`𑼂`)'
 test/built-ins/RegExp/prototype/Symbol.match/builtin-infer-unicode.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
+test/built-ins/RegExp/prototype/Symbol.match/flags-tostring-error.js:
+  default: 'Test262Error: Expected a CustomError but got a Test262Error'
+  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
+test/built-ins/RegExp/prototype/Symbol.match/get-flags-err.js:
+  default: 'Test262Error: Expected a CustomError but got a Test262Error'
+  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
+test/built-ins/RegExp/prototype/Symbol.match/get-unicode-error.js:
+  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
+test/built-ins/RegExp/prototype/Symbol.replace/flags-tostring-error.js:
+  default: 'Test262Error: Expected a CustomError but got a Test262Error'
+  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
+test/built-ins/RegExp/prototype/Symbol.replace/get-flags-err.js:
+  default: 'Test262Error: Expected a CustomError but got a Test262Error'
+  strict mode: 'Test262Error: Expected a CustomError but got a Test262Error'
+test/built-ins/RegExp/prototype/Symbol.replace/get-unicode-error.js:
+  default: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a Test262Error to be thrown but no exception was thrown at all'
 test/built-ins/RegExp/prototype/Symbol.search/u-lastindex-advance.js:
   default: 'Test262Error: Expected SameValue(«1», «-1») to be true'
   strict mode: 'Test262Error: Expected SameValue(«1», «-1») to be true'
@@ -822,21 +1053,303 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
+test/built-ins/Temporal/Duration/prototype/add/timezone-string.js:
+  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/round/february-leap-year.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-invalid-offset-string.js:
+  default: 'Test262Error: "00:00 is not a valid offset string Expected a RangeError but got a Error'
+  strict mode: 'Test262Error: "00:00 is not a valid offset string Expected a RangeError but got a Error'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-ceil.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-floor.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfExpand.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Duration/prototype/round/roundingmode-trunc.js:
+  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
+test/built-ins/Temporal/Duration/prototype/round/timezone-string.js:
+  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/subtract/timezone-string.js:
+  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-non-integer.js:
+  default: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
+  strict mode: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
+test/built-ins/Temporal/Duration/prototype/total/timezone-string.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+test/built-ins/Temporal/Duration/prototype/total/total-value-infinity.js:
+  default: 'Test262Error: Expected SameValue(«NaN», «Infinity») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«NaN», «Infinity») to be true'
+test/built-ins/Temporal/Instant/prototype/round/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/round/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/round/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/round/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/round/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
 test/built-ins/Temporal/Instant/prototype/since/largestunit.js:
   default: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
   strict mode: 'Test262Error: does not include higher units than necessary (largest unit unspecified) nanoseconds result Expected SameValue(«40», «101») to be true'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-ceil.js:
+  default: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
+  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-floor.js:
+  default: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case) nanoseconds result Expected SameValue(«-936», «0») to be true'
+  strict mode: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case) nanoseconds result Expected SameValue(«-936», «0») to be true'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfExpand.js:
+  default: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
+  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/since/roundingmode-trunc.js:
+  default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
+  strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
+test/built-ins/Temporal/Instant/prototype/toString/fractionalseconddigits-non-integer.js:
+  default: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
+  strict mode: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
+test/built-ins/Temporal/Instant/prototype/toString/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/toString/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/toString/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/toString/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/toString/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/toString/timezone-string.js:
+  default: "Test262Error: Time zone created from string 'UTC' Expected SameValue(«00:00Z», «+00:00») to be true"
+  strict mode: "Test262Error: Time zone created from string 'UTC' Expected SameValue(«00:00Z», «+00:00») to be true"
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-ceil.js:
+  default: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
+  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-floor.js:
+  default: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case) nanoseconds result Expected SameValue(«-936», «0») to be true'
+  strict mode: 'Test262Error: rounds to milliseconds (rounding mode = floor, negative case) nanoseconds result Expected SameValue(«-936», «0») to be true'
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfExpand.js:
+  default: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
+  strict mode: 'Test262Error: rounds to milliseconds (roundingMode = halfExpand, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/Instant/prototype/until/roundingmode-trunc.js:
+  default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
+  strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
+test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-case-insensitive.js:
+  default: 'RangeError: invalid calendar ID'
+  strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-case-insensitive.js:
+  default: 'RangeError: invalid calendar ID'
+  strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-designator-required-for-disambiguation.js:
+  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
 test/built-ins/Temporal/PlainDateTime/datetime-math.js:
   default: "TypeError: later.since is not a function. (In 'later.since(earlier, { largestUnit })', 'later.since' is undefined)"
   strict mode: "TypeError: later.since is not a function. (In 'later.since(earlier, { largestUnit })', 'later.since' is undefined)"
+test/built-ins/Temporal/PlainDateTime/from/argument-plaindatetime.js:
+  default: 'Test262Error: Calendar is copied Expected SameValue(«iso8601», «iso8601») to be true'
+  strict mode: 'Test262Error: Calendar is copied Expected SameValue(«iso8601», «iso8601») to be true'
+test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-case-insensitive.js:
+  default: 'RangeError: invalid calendar ID'
+  strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
-  default: 'Test262Error: Expected [get calendar, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf, get day, get day.valueOf, call day.valueOf, get month, get month.valueOf, call month.valueOf, get monthCode, get monthCode.toString, call monthCode.toString, get year, get year.valueOf, call year.valueOf] and [get calendar, get day, get day.valueOf, call day.valueOf, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get month, get month.valueOf, call month.valueOf, get monthCode, get monthCode.toString, call monthCode.toString, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf, get year, get year.valueOf, call year.valueOf] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get calendar, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf, get day, get day.valueOf, call day.valueOf, get month, get month.valueOf, call month.valueOf, get monthCode, get monthCode.toString, call monthCode.toString, get year, get year.valueOf, call year.valueOf] and [get calendar, get day, get day.valueOf, call day.valueOf, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get month, get month.valueOf, call month.valueOf, get monthCode, get monthCode.toString, call monthCode.toString, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf, get year, get year.valueOf, call year.valueOf] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-case-insensitive.js:
+  default: 'RangeError: invalid calendar ID'
+  strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/toString/calendar-tostring.js:
+  default: 'Test262Error: calendarName = always: expected 2000-05-02T12:34:56.987654321[u-ca=custom] Expected SameValue(«2000-05-02T12:34:56.987654321», «2000-05-02T12:34:56.987654321[u-ca=custom]») to be true'
+  strict mode: 'Test262Error: calendarName = always: expected 2000-05-02T12:34:56.987654321[u-ca=custom] Expected SameValue(«2000-05-02T12:34:56.987654321», «2000-05-02T12:34:56.987654321[u-ca=custom]») to be true'
+test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-non-integer.js:
+  default: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
+  strict mode: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
+test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDateTime/prototype/toString/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
 test/built-ins/Temporal/PlainDateTime/prototype/with/order-of-operations.js:
-  default: 'Test262Error: Expected [get calendar, get timeZone, get day, get day.valueOf, call day.valueOf, get month, get month.valueOf, call month.valueOf, get monthCode, get monthCode.toString, call monthCode.toString, get year, get year.valueOf, call year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf] and [get calendar, get timeZone, get day, get day.valueOf, call day.valueOf, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get month, get month.valueOf, call month.valueOf, get monthCode, get monthCode.toString, call monthCode.toString, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf, get year, get year.valueOf, call year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
-  strict mode: 'Test262Error: Expected [get calendar, get timeZone, get day, get day.valueOf, call day.valueOf, get month, get month.valueOf, call month.valueOf, get monthCode, get monthCode.toString, call monthCode.toString, get year, get year.valueOf, call year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf] and [get calendar, get timeZone, get day, get day.valueOf, call day.valueOf, get hour, get hour.valueOf, call hour.valueOf, get microsecond, get microsecond.valueOf, call microsecond.valueOf, get millisecond, get millisecond.valueOf, call millisecond.valueOf, get minute, get minute.valueOf, call minute.valueOf, get month, get month.valueOf, call month.valueOf, get monthCode, get monthCode.toString, call monthCode.toString, get nanosecond, get nanosecond.valueOf, call nanosecond.valueOf, get second, get second.valueOf, call second.valueOf, get year, get year.valueOf, call year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get options.overflow, get options.overflow.toString, call options.overflow.toString] to have the same contents. order of operations'
+  default: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
+  strict mode: 'Test262Error: Expected [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and [get fields.calendar, get fields.timeZone, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
 test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-wrong-type.js:
   default: 'Test262Error: Expected [get overflow.toString, call overflow.toString] and [get overflow.toString, call overflow.toString, get overflow.toString, call overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get overflow.toString, call overflow.toString] and [get overflow.toString, call overflow.toString, get overflow.toString, call overflow.toString] to have the same contents. order of operations'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-case-insensitive.js:
+  default: 'RangeError: invalid calendar ID'
+  strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-designator-required-for-disambiguation.js:
+  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+test/built-ins/Temporal/PlainTime/compare/argument-string-time-designator-required-for-disambiguation.js:
+  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix (first argument) Expected a RangeError to be thrown but no exception was thrown at all"
+  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix (first argument) Expected a RangeError to be thrown but no exception was thrown at all"
+test/built-ins/Temporal/PlainTime/from/argument-string-time-designator-required-for-disambiguation.js:
+  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-designator-required-for-disambiguation.js:
+  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-designator-required-for-disambiguation.js:
+  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-propertybag-calendar-case-insensitive.js:
+  default: 'RangeError: invalid calendar ID'
+  strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-non-integer.js:
+  default: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
+  strict mode: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
+test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-designator-required-for-disambiguation.js:
+  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
@@ -948,6 +1461,9 @@ test/intl402/NumberFormat/prototype/formatRangeToParts/x-greater-than-y-not-thro
 test/intl402/NumberFormat/test-option-roundingPriority-mixed-options.js:
   default: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"minimumSignificantDigits":2,"minimumFractionDigits":2,"roundingPriority":"morePrecision","userGrouping":false} is ١٫٠٠; expected ١٫٠.'
   strict mode: 'Test262Error: Formatted value for 1, en-US-u-nu-arab and options {"minimumSignificantDigits":2,"minimumFractionDigits":2,"roundingPriority":"morePrecision","userGrouping":false} is ١٫٠٠; expected ١٫٠.'
+test/intl402/NumberFormat/test-option-useGrouping.js:
+  default: 'Test262Error: Throws RangeError when useGrouping value is not supported Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Throws RangeError when useGrouping value is not supported Expected a RangeError to be thrown but no exception was thrown at all'
 test/intl402/PluralRules/prototype/selectRange/default-en-us.js:
   default: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
   strict mode: "TypeError: pr.selectRange is not a function. (In 'pr.selectRange(102, 201)', 'pr.selectRange' is undefined)"
@@ -1669,6 +2185,63 @@ test/language/global-code/script-decl-var-err.js:
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: Expected uncaught exception with name 'ReferenceError' but none was thrown
+test/language/identifiers/part-unicode-15.0.0-class-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0CF3'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#_\\u0CF3'"
+test/language/identifiers/part-unicode-15.0.0-class.js:
+  default: "SyntaxError: Invalid character '\\u0cf3'"
+  strict mode: "SyntaxError: Invalid character '\\u0cf3'"
+test/language/identifiers/part-unicode-15.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '_\\u0CF3'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '_\\u0CF3'"
+test/language/identifiers/part-unicode-15.0.0.js:
+  default: "SyntaxError: Invalid character '\\u0cf3'"
+  strict mode: "SyntaxError: Invalid character '\\u0cf3'"
+test/language/identifiers/start-unicode-10.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-11.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-12.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-13.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-14.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-15.0.0-class-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '#\\u{1123F}'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '#\\u{1123F}'"
+test/language/identifiers/start-unicode-15.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-15.0.0-escaped.js:
+  default: "SyntaxError: Invalid unicode escape in identifier: '\\u{1123F}'"
+  strict mode: "SyntaxError: Invalid unicode escape in identifier: '\\u{1123F}'"
+test/language/identifiers/start-unicode-15.0.0.js:
+  default: "SyntaxError: Invalid character '\\ud804'"
+  strict mode: "SyntaxError: Invalid character '\\ud804'"
+test/language/identifiers/start-unicode-5.2.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-6.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-6.1.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-7.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-8.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
+test/language/identifiers/start-unicode-9.0.0-class.js:
+  default: "SyntaxError: Invalid character: '#'"
+  strict mode: "SyntaxError: Invalid character: '#'"
 test/language/literals/regexp/u-astral-char-class-invert.js:
   default: 'Test262Error: Expected SameValue(«�», «null») to be true'
   strict mode: 'Test262Error: Expected SameValue(«�», «null») to be true'
@@ -1694,6 +2267,12 @@ test/language/statements/async-generator/generator-created-after-decl-inst.js:
 test/language/statements/async-generator/return-undefined-implicit-and-explicit.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [tick 1, g1 ret, tick 2, g2 ret, g3 ret, g4 ret] and [tick 1, g1 ret, g2 ret, tick 2, g3 ret, g4 ret] to have the same contents. Ticks for implicit and explicit return undefined'
+test/language/statements/async-generator/yield-star-promise-not-unwrapped.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: yield* should not unwrap promises from manually-implemented async iterators Expected SameValue(«unwrapped value», «[object Promise]») to be true'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: yield* should not unwrap promises from manually-implemented async iterators Expected SameValue(«unwrapped value», «[object Promise]») to be true'
+test/language/statements/async-generator/yield-star-return-then-getter-ticks.js:
+  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2, get then, tick 3, get return, get then] and [start, tick 1, get then, tick 2, get return, get then, tick 3] to have the same contents. Ticks for return with thenable getter'
+  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected [start, tick 1, tick 2, get then, tick 3, get return, get then] and [start, tick 1, get then, tick 2, get return, get then, tick 3] to have the same contents. Ticks for return with thenable getter'
 test/language/statements/class/cpn-class-decl-fields-computed-property-name-from-yield-expression.js:
   default: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."
   strict mode: "SyntaxError: Unexpected keyword 'yield'. Cannot use yield expression out of generator."

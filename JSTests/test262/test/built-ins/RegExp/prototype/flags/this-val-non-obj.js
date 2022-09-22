@@ -35,3 +35,7 @@ assert.throws(TypeError, function() {
 assert.throws(TypeError, function() {
   get.call(Symbol());
 }, 'symbol');
+
+assert.throws(TypeError, function() {
+  get.call(4n);
+}, 'bigint');

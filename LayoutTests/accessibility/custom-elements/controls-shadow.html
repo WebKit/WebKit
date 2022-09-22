@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<div class="control">Panel 1</div>
+<div class="control">Panel 2</div>
+<div id="host"></div>
+<script>
+
+class CustomTabElement extends HTMLElement {
+    constructor()
+    {
+        super();
+        window.internals = this.attachInternals();
+        internals.role = 'tab';
+        internals.ariaControlsElements = Array.from(document.querySelectorAll('.control'));
+        shouldBe('internals.ariaControlsElements.length', '2');
+        shouldBe('internals.ariaControlsElements[0]', 'document.querySelectorAll(".control")[0]');
+        shouldBe('internals.ariaControlsElements[1]', 'document.querySelectorAll(".control")[1]');
+    }
+};
+customElements.define('custom-tab', CustomTabElement);
+
+const customElement = new CustomTabElement;
+customElement.id = 'custom-tab';
+const shadowRoot = host.attachShadow({'mode': 'closed'});
+shadowRoot.appendChild(customElement);
+
+description("This tests that ElementInternals.ariaControlsElements can reference nodes outside the shadow tree.");
+if (!window.accessibilityController)
+    debug('This test requires accessibilityController');
+else {
+    function labelForControl(control) {
+        if (accessibilityController.platformName == "mac")
+            return control.childAtIndex(0).stringValue;
+        return control.stringValue;
+    }
+    window.customTab = accessibilityController.accessibleElementById('custom-tab');
+    shouldBeEqualToString('labelForControl(customTab.ariaControlsElementAtIndex(0))', 'AXValue: Panel 1');
+    shouldBeEqualToString('labelForControl(customTab.ariaControlsElementAtIndex(1))', 'AXValue: Panel 2');
+}
+
+</script>
+</body>
+</html>

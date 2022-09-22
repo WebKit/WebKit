@@ -64,8 +64,7 @@ static inline bool hasLeadingTextContent(const InlineContentBreaker::ContinuousC
 static inline bool hasTextRun(const InlineContentBreaker::ContinuousContent& continuousContent)
 {
     // <span>text</span> is considered a text run even with the [inline box start][inline box end] inline items.
-    // Based on standards commit boundary rules it would be enough to check the first inline item, but due to the table quirk, we can have
-    // image and text next to each other inside a continuous set of runs (see InlineFormattingContext::Quirks::hasSoftWrapOpportunityAtImage).
+    // Based on standards commit boundary rules it would be enough to check the first inline item.
     for (auto& run : continuousContent.runs()) {
         if (run.inlineItem.isText())
             return true;

@@ -8,7 +8,7 @@ features: [Temporal]
 includes: [temporalHelpers.js]
 ---*/
 
-[-86400_000_000_001, 86400_000_000_001].forEach((wrongOffset) => {
+[-86400_000_000_000, 86400_000_000_000].forEach((wrongOffset) => {
   const timeZone = TemporalHelpers.specificOffsetTimeZone(wrongOffset);
   const calendar = new Temporal.Calendar("iso8601");
   const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, timeZone);

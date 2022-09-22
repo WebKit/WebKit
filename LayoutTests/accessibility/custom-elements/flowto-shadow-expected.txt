@@ -1,0 +1,26 @@
+This tests that aria fallback roles work correctly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.ariaFlowToElements.length is 2
+PASS internals.ariaFlowToElements[0] is document.querySelectorAll(".flowto")[0]
+PASS internals.ariaFlowToElements[1] is document.querySelectorAll(".flowto")[1]
+PASS internals.ariaLabelledByElements.length is 2
+PASS internals.ariaLabelledByElements[0] is document.querySelectorAll(".label")[0]
+PASS internals.ariaLabelledByElements[1] is document.querySelectorAll(".label")[1]
+PASS accessibilityController.accessibleElementById("custom-1").role is "AXRole: AXCheckBox"
+PASS platformValueForW3CName(accessibilityController.accessibleElementById("custom-1")) is "label 1 label 2"
+PASS accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(0).role is "AXRole: AXButton"
+PASS accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(0).title is "AXTitle: FlowTo1"
+PASS accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(1).role is "AXRole: AXButton"
+PASS accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(1).title is "AXTitle: FlowTo2"
+PASS accessibilityController.accessibleElementById("custom-1").ariaFlowToElementAtIndex(2) is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+FlowTo1
+FlowTo2
+label 1
+label 2
+

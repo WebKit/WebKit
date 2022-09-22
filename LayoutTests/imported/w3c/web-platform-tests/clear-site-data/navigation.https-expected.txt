@@ -1,0 +1,7 @@
+
+
+PASS Clear datatypes on navigation:
+PASS Clear datatypes on navigation: cookies
+PASS Clear datatypes on navigation: storage
+PASS Clear datatypes on navigation: cookies, storage
+

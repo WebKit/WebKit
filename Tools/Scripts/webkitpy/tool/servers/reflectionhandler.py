@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import cgi
 import codecs
 import datetime
 import json
@@ -40,9 +39,10 @@ import wsgiref.handlers
 
 if sys.version_info > (3, 0):
     from http.server import BaseHTTPRequestHandler
-
+    from urllib.parse import parse_qs
 else:
     from BaseHTTPServer import BaseHTTPRequestHandler
+    from cgi import parse_qs
 
 
 class ReflectionHandler(BaseHTTPRequestHandler):
@@ -74,7 +74,7 @@ class ReflectionHandler(BaseHTTPRequestHandler):
     def _handle_request(self):
         if "?" in self.path:
             path, query_string = self.path.split("?", 1)
-            self.query = cgi.parse_qs(query_string)
+            self.query = parse_qs(query_string)
         else:
             path = self.path
             self.query = {}
@@ -113,14 +113,14 @@ class ReflectionHandler(BaseHTTPRequestHandler):
         self._send_access_control_header()
         self.send_header("Content-type", "text/plain")
         self.end_headers()
-        self.wfile.write(text)
+        self.wfile.write(text.encode())
 
     def _serve_json(self, json_object):
         self.send_response(200)
         self._send_access_control_header()
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        json.dump(json_object, self.wfile)
+        self.wfile.write(json.dumps(json_object).encode())
 
     def _serve_file(self, file_path, cacheable_seconds=0, headers_only=False):
         if not os.path.exists(file_path):

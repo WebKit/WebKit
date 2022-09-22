@@ -8,47 +8,31 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const earlier = Temporal.PlainTime.from("08:22:36.123456789");
-const later = Temporal.PlainTime.from("12:39:40.987654321");
+const earlier = new Temporal.PlainTime(8, 22, 36, 123, 456, 789);
+const later = new Temporal.PlainTime(12, 39, 40, 987, 654, 289);
 
-TemporalHelpers.assertDuration(
-  earlier.until(later, { smallestUnit: "hours", roundingMode: "ceil" }),
-  0, 0, 0, 0, 5, 0, 0, 0, 0, 0, "hours");
-TemporalHelpers.assertDuration(
-  later.until(earlier, { smallestUnit: "hours", roundingMode: "ceil" }),
-  0, 0, 0, 0, -4, 0, 0, 0, 0, 0, "hours");
+const expected = [
+  ["hours", [0, 0, 0, 0, 5], [0, 0, 0, 0, -4]],
+  ["minutes", [0, 0, 0, 0, 4, 18], [0, 0, 0, 0, -4, -17]],
+  ["seconds", [0, 0, 0, 0, 4, 17, 5], [0, 0, 0, 0, -4, -17, -4]],
+  ["milliseconds", [0, 0, 0, 0, 4, 17, 4, 865], [0, 0, 0, 0, -4, -17, -4, -864]],
+  ["microseconds", [0, 0, 0, 0, 4, 17, 4, 864, 198], [0, 0, 0, 0, -4, -17, -4, -864, -197]],
+  ["nanoseconds", [0, 0, 0, 0, 4, 17, 4, 864, 197, 500], [0, 0, 0, 0, -4, -17, -4, -864, -197, -500]],
+];
 
-TemporalHelpers.assertDuration(
-  earlier.until(later, { smallestUnit: "minutes", roundingMode: "ceil" }),
-  0, 0, 0, 0, 4, 18, 0, 0, 0, 0, "minutes");
-TemporalHelpers.assertDuration(
-  later.until(earlier, { smallestUnit: "minutes", roundingMode: "ceil" }),
-  0, 0, 0, 0, -4, -17, 0, 0, 0, 0, "minutes");
+const roundingMode = "ceil";
 
-TemporalHelpers.assertDuration(
-  earlier.until(later, { smallestUnit: "seconds", roundingMode: "ceil" }),
-  0, 0, 0, 0, 4, 17, 5, 0, 0, 0, "seconds");
-TemporalHelpers.assertDuration(
-  later.until(earlier, { smallestUnit: "seconds", roundingMode: "ceil" }),
-  0, 0, 0, 0, -4, -17, -4, 0, 0, 0, "seconds");
-
-TemporalHelpers.assertDuration(
-  earlier.until(later, { smallestUnit: "milliseconds", roundingMode: "ceil" }),
-  0, 0, 0, 0, 4, 17, 4, 865, 0, 0, "milliseconds");
-TemporalHelpers.assertDuration(
-  later.until(earlier, { smallestUnit: "milliseconds", roundingMode: "ceil" }),
-  0, 0, 0, 0, -4, -17, -4, -864, 0, 0, "milliseconds");
-
-TemporalHelpers.assertDuration(
-  earlier.until(later, { smallestUnit: "microseconds", roundingMode: "ceil" }),
-  0, 0, 0, 0, 4, 17, 4, 864, 198, 0, "microseconds");
-TemporalHelpers.assertDuration(
-  later.until(earlier, { smallestUnit: "microseconds", roundingMode: "ceil" }),
-  0, 0, 0, 0, -4, -17, -4, -864, -197, 0, "microseconds");
-
-TemporalHelpers.assertDuration(
-  earlier.until(later, { smallestUnit: "nanoseconds", roundingMode: "ceil" }),
-  0, 0, 0, 0, 4, 17, 4, 864, 197, 532, "nanoseconds");
-TemporalHelpers.assertDuration(
-  later.until(earlier, { smallestUnit: "nanoseconds", roundingMode: "ceil" }),
-  0, 0, 0, 0, -4, -17, -4, -864, -197, -532, "nanoseconds");
+expected.forEach(([smallestUnit, expectedPositive, expectedNegative]) => {
+  const [py, pm = 0, pw = 0, pd = 0, ph = 0, pmin = 0, ps = 0, pms = 0, pµs = 0, pns = 0] = expectedPositive;
+  const [ny, nm = 0, nw = 0, nd = 0, nh = 0, nmin = 0, ns = 0, nms = 0, nµs = 0, nns = 0] = expectedNegative;
+  TemporalHelpers.assertDuration(
+    earlier.until(later, { smallestUnit, roundingMode }),
+    py, pm, pw, pd, ph, pmin, ps, pms, pµs, pns,
+    `rounds to ${smallestUnit} (roundingMode = ${roundingMode}, positive case)`
+  );
+  TemporalHelpers.assertDuration(
+    later.until(earlier, { smallestUnit, roundingMode }),
+    ny, nm, nw, nd, nh, nmin, ns, nms, nµs, nns,
+    `rounds to ${smallestUnit} (rounding mode = ${roundingMode}, negative case)`
+  );
+});

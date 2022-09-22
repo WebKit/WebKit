@@ -9,6 +9,6 @@ features: [Temporal]
 
 const earlier = new Temporal.PlainYearMonth(2000, 5);
 const later = new Temporal.PlainYearMonth(2001, 6);
-for (const roundingMode of ["other string", "cile", "CEIL", "ce\u0131l", "auto", "expand", "halfCeil", "halfFloor", "halfTrunc", "halfEven", "halfexpand", "floor\0"]) {
+for (const roundingMode of ["other string", "cile", "CEIL", "ce\u0131l", "auto", "halfexpand", "floor\0"]) {
   assert.throws(RangeError, () => earlier.until(later, { smallestUnit: "microsecond", roundingMode }));
 }

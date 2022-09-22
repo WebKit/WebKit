@@ -28,6 +28,7 @@
 #include "AccessibilityPreferences.h"
 #include "AuxiliaryProcess.h"
 #include "CacheModel.h"
+#include "EventDispatcher.h"
 #include "IdentifierTypes.h"
 #include "StorageAreaMapIdentifier.h"
 #include "TextCheckerState.h"
@@ -110,7 +111,6 @@ struct ServiceWorkerContextData;
 namespace WebKit {
 
 class AudioMediaStreamTrackRendererInternalUnitManager;
-class EventDispatcher;
 class GamepadData;
 class GPUProcessConnection;
 class InjectedBundle;
@@ -227,7 +227,7 @@ public:
     const TextCheckerState& textCheckerState() const { return m_textCheckerState; }
     void setTextCheckerState(const TextCheckerState&);
 
-    EventDispatcher& eventDispatcher() { return m_eventDispatcher.get(); }
+    EventDispatcher& eventDispatcher() { return m_eventDispatcher; }
 
     NetworkProcessConnection& ensureNetworkProcessConnection();
     void networkProcessConnectionClosed(NetworkProcessConnection*);
@@ -388,6 +388,8 @@ public:
     void setHadMainFrameMainResourcePrivateRelayed() { m_hadMainFrameMainResourcePrivateRelayed = true; }
     bool hadMainFrameMainResourcePrivateRelayed() const { return m_hadMainFrameMainResourcePrivateRelayed; }
 
+    void deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&&);
+
 private:
     WebProcess();
     ~WebProcess();
@@ -462,7 +464,6 @@ private:
 
     void fetchWebsiteData(OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData&&)>&&);
     void deleteWebsiteData(OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);
-    void deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&&);
 
     void setMemoryCacheDisabled(bool);
 
@@ -597,11 +598,11 @@ private:
     HashMap<PageGroupIdentifier, RefPtr<WebPageGroupProxy>> m_pageGroupMap;
     RefPtr<InjectedBundle> m_injectedBundle;
 
-    Ref<EventDispatcher> m_eventDispatcher;
+    EventDispatcher m_eventDispatcher;
 #if PLATFORM(IOS_FAMILY)
-    RefPtr<ViewUpdateDispatcher> m_viewUpdateDispatcher;
+    ViewUpdateDispatcher m_viewUpdateDispatcher;
 #endif
-    RefPtr<WebInspectorInterruptDispatcher> m_webInspectorInterruptDispatcher;
+    WebInspectorInterruptDispatcher m_webInspectorInterruptDispatcher;
 
     bool m_hasSetCacheModel { false };
     CacheModel m_cacheModel { CacheModel::DocumentViewer };

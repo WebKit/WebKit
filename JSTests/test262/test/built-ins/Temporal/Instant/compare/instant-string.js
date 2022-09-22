@@ -32,3 +32,15 @@ assert.sameValue(Temporal.Instant.compare(epoch, str), 0, "date-time + Z + IANA 
 str = "1970-01-01T00:00+01:00[Etc/Ignored]";
 assert.sameValue(Temporal.Instant.compare(str, hourBefore), 0, "date-time + offset + IANA annotation ignores the IANA annotation (first argument)");
 assert.sameValue(Temporal.Instant.compare(hourBefore, str), 0, "date-time + offset + IANA annotation ignores the IANA annotation (second argument)");
+
+str = "1970-01-01T00:00Z[u-ca=hebrew]";
+assert.sameValue(Temporal.Instant.compare(str, epoch), 0, "date-time + Z + Calendar ignores the Calendar (first argument)");
+assert.sameValue(Temporal.Instant.compare(epoch, str), 0, "date-time + Z + Calendar ignores the Calendar (second argument)");
+
+str = "1970-01-01T00:00+01:00[u-ca=hebrew]";
+assert.sameValue(Temporal.Instant.compare(str, hourBefore), 0, "date-time + offset + Calendar ignores the Calendar (first argument)");
+assert.sameValue(Temporal.Instant.compare(hourBefore, str), 0, "date-time + offset + Calendar ignores the Calendar (second argument)");
+
+str = "1970-01-01T00:00+01:00[Etc/Ignored][u-ca=hebrew]";
+assert.sameValue(Temporal.Instant.compare(str, hourBefore), 0, "date-time + offset + IANA annotation + Calendar ignores the IANA annotation and the Calendar (first argument)");
+assert.sameValue(Temporal.Instant.compare(hourBefore, str), 0, "date-time + offset + IANA annotation + Calendar ignores the IANA annotation and the Calendar (second argument)");

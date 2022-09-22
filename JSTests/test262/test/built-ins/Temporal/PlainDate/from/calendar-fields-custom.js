@@ -24,16 +24,7 @@ class CustomCalendar extends Temporal.Calendar {
 
 const calendar = new CustomCalendar();
 const actual = [];
-const item = new Proxy({ calendar }, {
-  has(target, property) {
-    actual.push(`has item.${property}`);
-    return property in target;
-  },
-  get(target, property) {
-    actual.push(`get item.${property}`);
-    return target[property];
-  },
-});
+const item = TemporalHelpers.propertyBagObserver(actual, { calendar }, "item");
 
 const plainDate = Temporal.PlainDate.from(item);
 TemporalHelpers.assertPlainDate(plainDate, 2020, 7, "M07", 4);

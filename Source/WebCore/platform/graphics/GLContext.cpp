@@ -84,6 +84,19 @@ std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType 
         return nullptr;
 
     PlatformDisplay& display = platformDisplay ? *platformDisplay : PlatformDisplay::sharedDisplay();
+    if (auto* sharingContext = display.sharingGLContext()) {
+        // Context for window should match the type of sharing context.
+#if USE(EGL)
+        if (sharingContext->isEGLContext())
+            return GLContextEGL::createContext(windowHandle, display);
+#endif
+#if USE(GLX)
+        if (display.type() == PlatformDisplay::Type::X11)
+            return GLContextGLX::createContext(windowHandle, display);
+#endif
+        return nullptr;
+    }
+
 #if PLATFORM(WAYLAND)
     if (display.type() == PlatformDisplay::Type::Wayland) {
         if (auto eglContext = GLContextEGL::createContext(windowHandle, display))
@@ -92,16 +105,18 @@ std::unique_ptr<GLContext> GLContext::createContextForWindow(GLNativeWindowType 
     }
 #endif
 
+#if USE(EGL)
+    if (auto eglContext = GLContextEGL::createContext(windowHandle, display))
+        return eglContext;
+#endif
+
 #if USE(GLX)
     if (display.type() == PlatformDisplay::Type::X11) {
         if (auto glxContext = GLContextGLX::createContext(windowHandle, display))
             return glxContext;
     }
 #endif
-#if USE(EGL)
-    if (auto eglContext = GLContextEGL::createContext(windowHandle, display))
-        return eglContext;
-#endif
+
     return nullptr;
 }
 
@@ -119,15 +134,23 @@ std::unique_ptr<GLContext> GLContext::createSharingContext(PlatformDisplay& disp
         return nullptr;
 
 #if USE(GLX)
+    bool forceGLX = display.type() == PlatformDisplay::Type::X11 && getenv("WEBKIT_FORCE_GLX");
+#else
+    bool forceGLX = false;
+#endif
+
+#if USE(EGL)
+    if (!forceGLX) {
+        if (auto eglContext = GLContextEGL::createSharingContext(display))
+            return eglContext;
+    }
+#endif
+
+#if USE(GLX)
     if (display.type() == PlatformDisplay::Type::X11) {
         if (auto glxContext = GLContextGLX::createSharingContext(display))
             return glxContext;
     }
-#endif
-
-#if USE(EGL) || PLATFORM(WAYLAND) || PLATFORM(WPE)
-    if (auto eglContext = GLContextEGL::createSharingContext(display))
-        return eglContext;
 #endif
 
     return nullptr;

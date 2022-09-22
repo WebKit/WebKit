@@ -23,4 +23,4 @@ const duration = {
 
 const df = new Intl.DurationFormat('en');
 
-assert.sameValue(df.format(duration), "1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, and 9 nanoseconds");
+assert.sameValue(df.format(duration), "1 yr, 2 mths, 3 wks, 3 days, 4 hr, 5 min, 6 sec, 7 ms, 8 μs, 9 ns");

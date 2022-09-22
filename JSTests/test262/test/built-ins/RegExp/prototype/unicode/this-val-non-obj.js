@@ -38,3 +38,7 @@ assert.throws(TypeError, function() {
 assert.throws(TypeError, function() {
   unicode.call(4);
 });
+
+assert.throws(TypeError, function() {
+  unicode.call(4n);
+}, 'bigint');

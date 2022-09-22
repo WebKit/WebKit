@@ -338,6 +338,11 @@ void NetworkProcessConnection::checkProcessLocalPortForActivity(const WebCore::M
     callback(WebCore::MessagePort::isExistingMessagePortLocallyReachable(messagePortIdentifier) ? MessagePortChannelProvider::HasActivity::Yes : MessagePortChannelProvider::HasActivity::No);
 }
 
+void NetworkProcessConnection::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> dataTypes, const Vector<WebCore::SecurityOriginData>& origins, CompletionHandler<void()>&& completionHandler)
+{
+    WebProcess::singleton().deleteWebsiteDataForOrigins(dataTypes, origins, WTFMove(completionHandler));
+}
+
 void NetworkProcessConnection::broadcastConsoleMessage(MessageSource source, MessageLevel level, const String& message)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());

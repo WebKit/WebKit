@@ -39,6 +39,7 @@ Access-Control-Request-Method
 Age
 Authorization
 Cache-Control
+Clear-Site-Data
 Connection
 Content-Disposition
 Content-Encoding

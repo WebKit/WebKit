@@ -38,3 +38,7 @@ assert.throws(TypeError, function() {
 assert.throws(TypeError, function() {
   hasIndices.call(4);
 }, "number");
+
+assert.throws(TypeError, function() {
+  hasIndices.call(4n);
+}, "bigint");

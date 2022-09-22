@@ -16,5 +16,11 @@ features: [Temporal]
 
 const time = new Temporal.PlainTime(12, 34, 56, 987, 650, 0);
 
-const string = time.toString({ fractionalSecondDigits: 2.5 });
-assert.sameValue(string, "12:34:56.98", "fractionalSecondDigits 2.5 floors to 2");
+let string = time.toString({ fractionalSecondDigits: 2.5 });
+assert.sameValue(string, "12:34:56.98", "fractionalSecondDigits 2.5 truncates to 2");
+
+string = time.toString({ fractionalSecondDigits: 9.7 });
+assert.sameValue(string, "12:34:56.987650000", "fractionalSecondDigits 9.7 truncates to 9 and is not out of range");
+
+string = time.toString({ fractionalSecondDigits: -0.6 });
+assert.sameValue(string, "12:34:56", "fractionalSecondDigits -0.6 truncates to 0 and is not out of range");

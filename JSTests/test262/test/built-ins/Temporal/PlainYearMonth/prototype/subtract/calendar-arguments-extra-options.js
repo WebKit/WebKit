@@ -14,23 +14,11 @@ features: [Temporal]
 
 const actual = [];
 const expected = [
-  "get extra",
-  "get overflow",
+  "ownKeys options",
+  "get options.extra",
+  "get options.overflow",
 ];
-const options = new Proxy({ extra: 5 }, {
-  get(target, key) {
-    actual.push(`get ${key}`);
-    const result = target[key];
-    if (result === undefined) {
-      return undefined;
-    }
-    return TemporalHelpers.toPrimitiveObserver(actual, result, key);
-  },
-  has(target, key) {
-    actual.push(`has ${key}`);
-    return key in target;
-  },
-});
+const options = TemporalHelpers.propertyBagObserver(actual, { extra: 5 }, "options");
 
 class CustomCalendar extends Temporal.Calendar {
   constructor() {

@@ -12,5 +12,8 @@ includes: [temporalHelpers.js]
   const timeZone = TemporalHelpers.specificOffsetTimeZone(wrongOffset);
   const time = new Temporal.PlainTime(12, 34, 56, 987, 654, 321);
   const plainDate = new Temporal.PlainDate(2000, 5, 2);
+  timeZone.getPossibleInstantsFor = function () {
+    return [];
+  };
   assert.throws(RangeError, () => time.toZonedDateTime({ plainDate, timeZone }));
 });

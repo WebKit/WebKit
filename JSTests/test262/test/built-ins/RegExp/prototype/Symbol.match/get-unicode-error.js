@@ -3,15 +3,16 @@
 
 /*---
 description: >
-    Errors thrown by `unicode` accessor are forwarded to the runtime for global patterns
-es6id: 21.2.5.6
+    Errors thrown by `unicode` accessor are forwarded to the runtime
+esid: sec-regexp.prototype-@@match
 info: |
-    21.2.5.6 RegExp.prototype [ @@match ] ( string )
+    1. Let _rx_ be the *this* value.
+    2. If Type(_rx_) is not Object, throw a *TypeError* exception.
+    3. Let _S_ be ? ToString(_string_).
+    4. Let _flags_ be ? ToString(? Get(_rx_, *"flags"*)).
 
-    [...]
-    8. Else global is true,
-       a. Let fullUnicode be ToBoolean(Get(rx, "unicode")).
-       b. ReturnIfAbrupt(fullUnicode).
+    sec-get-regexp.prototype.flags get RegExp.prototype.flags
+    14. Let _unicode_ be ToBoolean(? Get(_R_, *"unicode"*)).
 features: [Symbol.match]
 ---*/
 
@@ -27,7 +28,9 @@ Object.defineProperty(globalRe, 'unicode', {
   get: accessor
 });
 
-nonGlobalRe[Symbol.match]('');
+assert.throws(Test262Error, function() {
+  nonGlobalRe[Symbol.match]('');
+});
 
 assert.throws(Test262Error, function() {
   globalRe[Symbol.match]('');

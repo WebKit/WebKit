@@ -24,12 +24,10 @@
 
 #if USE(GLX)
 #include "GLContextGLX.h"
-#include <gst/gl/x11/gstgldisplay_x11.h>
 #endif
 
 #if USE(EGL)
 #include "GLContextEGL.h"
-#include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 
 #if PLATFORM(X11)
@@ -46,6 +44,12 @@
 
 #define GST_USE_UNSTABLE_API
 #include <gst/gl/gl.h>
+#if USE(GLX) && GST_GL_HAVE_PLATFORM_GLX
+#include <gst/gl/x11/gstgldisplay_x11.h>
+#endif
+#if USE(EGL) && GST_GL_HAVE_PLATFORM_EGL
+#include <gst/gl/egl/gstgldisplay_egl.h>
+#endif
 #undef GST_USE_UNSTABLE_API
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
@@ -53,26 +57,15 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
 
 using namespace WebCore;
 
-static GstGLDisplay* createGstGLDisplay(const PlatformDisplay& sharedDisplay)
+static GstGLDisplay* createGstGLDisplay(const PlatformDisplay& sharedDisplay, GstGLPlatform glPlatform)
 {
-#if USE(WPE_RENDERER)
-    if (is<PlatformDisplayLibWPE>(sharedDisplay))
-        return GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayLibWPE>(sharedDisplay).eglDisplay()));
+#if USE(EGL)
+    if (glPlatform == GST_GL_PLATFORM_EGL)
+        return GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(sharedDisplay.eglDisplay()));
 #endif
-
-#if PLATFORM(X11)
 #if USE(GLX)
-    if (is<PlatformDisplayX11>(sharedDisplay))
+    if (is<PlatformDisplayX11>(sharedDisplay) && glPlatform == GST_GL_PLATFORM_GLX)
         return GST_GL_DISPLAY(gst_gl_display_x11_new_with_display(downcast<PlatformDisplayX11>(sharedDisplay).native()));
-#elif USE(EGL)
-    if (is<PlatformDisplayX11>(sharedDisplay))
-        return GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayX11>(sharedDisplay).eglDisplay()));
-#endif
-#endif
-
-#if PLATFORM(WAYLAND)
-    if (is<PlatformDisplayWayland>(sharedDisplay))
-        return GST_GL_DISPLAY(gst_gl_display_egl_new_with_egl_display(downcast<PlatformDisplayWayland>(sharedDisplay).eglDisplay()));
 #endif
 
     return nullptr;
@@ -94,15 +87,15 @@ bool PlatformDisplay::tryEnsureGstGLContext() const
     auto* sharedContext = const_cast<PlatformDisplay*>(this)->sharingGLContext();
     if (!sharedContext)
         return false;
+
     GCGLContext contextHandle = sharedContext->platformContext();
     if (!contextHandle)
         return false;
 
-    m_gstGLDisplay = adoptGRef(createGstGLDisplay(*this));
+    GstGLPlatform glPlatform = sharedContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
+    m_gstGLDisplay = adoptGRef(createGstGLDisplay(*this, glPlatform));
     if (!m_gstGLDisplay)
         return false;
-
-    GstGLPlatform glPlatform = sharedContext->isEGLContext() ? GST_GL_PLATFORM_EGL : GST_GL_PLATFORM_GLX;
 
     m_gstGLContext = adoptGRef(gst_gl_context_new_wrapped(m_gstGLDisplay.get(), reinterpret_cast<guintptr>(contextHandle), glPlatform, glAPI));
 

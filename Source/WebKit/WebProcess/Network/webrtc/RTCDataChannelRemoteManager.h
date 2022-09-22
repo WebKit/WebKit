@@ -26,7 +26,6 @@
 
 #if ENABLE(WEB_RTC)
 
-#include "Connection.h"
 #include "DataReference.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/ProcessQualified.h>
@@ -38,18 +37,18 @@
 
 namespace WebKit {
 
-class RTCDataChannelRemoteManager final : public IPC::WorkQueueMessageReceiver {
+class RTCDataChannelRemoteManager final : private IPC::MessageReceiver {
 public:
     static RTCDataChannelRemoteManager& sharedManager();
 
     WebCore::RTCDataChannelRemoteHandlerConnection& remoteHandlerConnection();
-    void setConnection(IPC::Connection*);
     bool connectToRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler);
 
 private:
     RTCDataChannelRemoteManager();
+    void initialize();
 
-    // IPC::WorkQueueMessageReceiver 
+    // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // Messages

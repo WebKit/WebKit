@@ -41,7 +41,7 @@ SecItemShimProxy& SecItemShimProxy::singleton()
     static SecItemShimProxy* proxy;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
-        proxy = adoptRef(new SecItemShimProxy).leakRef();
+        proxy = new SecItemShimProxy;
     });
     return *proxy;
 }
@@ -58,7 +58,7 @@ SecItemShimProxy::~SecItemShimProxy()
 
 void SecItemShimProxy::initializeConnection(IPC::Connection& connection)
 {
-    connection.addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), m_queue.get(), *this);
+    connection.addMessageReceiver(m_queue.get(), *this, Messages::SecItemShimProxy::messageReceiverName());
 }
 
 void SecItemShimProxy::secItemRequest(const SecItemRequestData& request, CompletionHandler<void(std::optional<SecItemResponseData>&&)>&& response)

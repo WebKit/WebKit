@@ -184,7 +184,7 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerB
     if (isInlineFormattingContextIntegration()) {
         if (!m_rootInlineFormattingStateForIntegration) {
             ASSERT(&formattingContextRoot == m_rootContainer.ptr());
-            m_rootInlineFormattingStateForIntegration = create();
+            m_rootInlineFormattingStateForIntegration = makeUnique<InlineFormattingState>(FloatingState::create(*this, formattingContextRoot), *this);
         }
         return *m_rootInlineFormattingStateForIntegration;
     }

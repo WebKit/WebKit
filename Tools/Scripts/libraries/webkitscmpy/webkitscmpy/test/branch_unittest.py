@@ -22,12 +22,13 @@
 
 import logging
 import os
+import time
 
 from mock import patch
 from webkitbugspy import bugzilla, mocks as bmocks, radar, Tracker
 from webkitcorepy import OutputCapture, testing, mocks as wkmocks
 from webkitcorepy.mocks import Time as MockTime, Terminal as MockTerminal, Environment
-from webkitscmpy import local, program, mocks, log
+from webkitscmpy import local, program, mocks, log, Commit
 
 
 class TestBranch(testing.PathTestCase):
@@ -326,3 +327,78 @@ Created the local development branch 'eng/Area-New-Issue'
         self.assertEqual(program.Branch.to_branch_name('[EWS] bug description'), 'EWS-bug-description')
         self.assertEqual(program.Branch.to_branch_name('[git-webkit] change'), 'git-webkit-change')
         self.assertEqual(program.Branch.to_branch_name('Add Terminal.open_url'), 'Add-Terminal-open_url')
+
+    def test_existing_branch_failure(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            repo.commits['eng/1234'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/1234',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/1234",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\n'
+                )
+            ]
+            self.assertEqual(1, program.main(
+                args=('branch', '-i', '1234', '-v', '--no-delete-existing'),
+                path=self.path,
+            ))
+            self.assertEqual(local.Git(self.path).branch, 'main')
+
+        self.assertEqual(captured.root.log.getvalue(), "")
+        self.assertEqual(captured.stdout.getvalue(), "")
+        self.assertEqual(captured.stderr.getvalue(), "'eng/1234' already exists in this checkout\n")
+
+    def test_existing_branch_rebase(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(
+                self.path) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            repo.commits['eng/1234'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/1234',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/1234",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\n'
+                )
+            ]
+            self.assertEqual(0, program.main(
+                args=('branch', '-i', '1234', '-v'),
+                path=self.path,
+            ))
+            self.assertEqual(local.Git(self.path).branch, 'eng/1234')
+
+        self.assertEqual(captured.root.log.getvalue(), "Rebasing existing branch 'eng/1234' instead of creating a new one\n")
+        self.assertEqual(captured.stdout.getvalue(), "Rebased the local development branch 'eng/1234'\n")
+        self.assertEqual(captured.stderr.getvalue(), "")
+
+    def test_existing_branch_delete(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(
+                self.path) as repo, mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            repo.commits['eng/1234'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/1234',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/1234",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\n'
+                )
+            ]
+            self.assertEqual(0, program.main(
+                args=('branch', '-i', '1234', '-v', '--delete-existing'),
+                path=self.path,
+            ))
+            self.assertEqual(local.Git(self.path).branch, 'eng/1234')
+
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Locally deleting existing branch 'eng/1234'\n"
+            "Creating the local development branch 'eng/1234'...\n",
+        )
+        self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/1234'\n")
+        self.assertEqual(captured.stderr.getvalue(), "")

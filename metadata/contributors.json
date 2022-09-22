@@ -6032,6 +6032,17 @@
    },
    {
       "emails" : [
+         "rreno@apple.com"
+      ],
+      "github" : "rreno",
+      "name" : "Ryan Reno",
+      "nicks" : [
+         "rreno"
+      ],
+      "status" : "committer"
+   },
+   {
+      "emails" : [
          "rniwa@webkit.org"
       ],
       "expertise" : "HTML Editing, Core DOM, HTML DOM, Event Handling",

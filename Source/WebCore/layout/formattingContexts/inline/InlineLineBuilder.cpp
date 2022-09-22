@@ -135,7 +135,7 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
     return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, style);
 }
 
-static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inlineFormattingContext, const InlineItem& current, const InlineItem& next)
+static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const InlineItem& next)
 {
     // FIXME: Transition no-wrapping logic from InlineContentBreaker to here where we compute the soft wrap opportunity indexes.
     // "is at" simple means that there's a soft wrap opportunity right after the [current].
@@ -178,9 +178,6 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
     if (current.layoutBox().isListMarkerBox() || next.layoutBox().isListMarkerBox())
         return false;
     if (current.isBox() || next.isBox()) {
-        auto isImageContent = current.layoutBox().isImage() || next.layoutBox().isImage();
-        if (isImageContent && inlineFormattingContext.layoutState().inQuirksMode())
-            return inlineFormattingContext.formattingQuirks().hasSoftWrapOpportunityAtImage();
         // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
@@ -548,18 +545,10 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
     auto isInIntrinsicWidthMode = this->isInIntrinsicWidthMode();
-    auto shouldApplyTrailingWhiteSpaceFollowedByBRQuirk = [&] {
-        // Legacy line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
-        // This quirk however should not be applied when running intrinsic width computation.
-        // FIXME: webkit.org/b/233261
-        if (isInIntrinsicWidthMode || !layoutState().isInlineFormattingContextIntegration())
-            return false;
-        if (m_line.contentNeedsBidiReordering())
-            return false;
-        return horizontalAvailableSpace >= m_line.contentLogicalWidth();
-    };
-    m_line.removeTrailingTrimmableContent(shouldApplyTrailingWhiteSpaceFollowedByBRQuirk() ? Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::Yes : Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::No);
+    auto lineEndsWithLineBreak = !m_line.runs().isEmpty() && m_line.runs().last().isLineBreak();
+    auto shouldApplyPreserveTrailingWhitespaceQuirk = m_inlineFormattingContext.formattingQuirks().shouldPreserveTrailingWhitespace(isInIntrinsicWidthMode, m_line.contentNeedsBidiReordering(), horizontalAvailableSpace < m_line.contentLogicalWidth(), lineEndsWithLineBreak);
 
+    m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk ? Line::TrailingTrimmableContentAction::Preserve : Line::TrailingTrimmableContentAction::Remove);
     if (isInIntrinsicWidthMode) {
         // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
         // https://drafts.csswg.org/css-text/#hanging
@@ -567,7 +556,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
             m_line.removeHangingGlyphs();
         else {
             // Glyphs that conditionally hang are not taken into account when computing min-content sizes and any sizes derived thereof, but they are taken into account for max-content sizes and any sizes derived thereof.
-            auto isConditionalHanging = isLastLine || (!m_line.runs().isEmpty() && m_line.runs().last().isLineBreak());
+            auto isConditionalHanging = isLastLine || lineEndsWithLineBreak;
             if (!isConditionalHanging)
                 m_line.removeHangingGlyphs();
         }
@@ -771,7 +760,7 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
         // At this point previous and current items are not necessarily adjacent items e.g "previous<span>current</span>"
         auto& previousItem = m_inlineItems[*previousInlineItemIndex];
         auto& currentItem = m_inlineItems[index];
-        if (isAtSoftWrapOpportunity(m_inlineFormattingContext, previousItem, currentItem)) {
+        if (isAtSoftWrapOpportunity(previousItem, currentItem)) {
             if (*previousInlineItemIndex + 1 == index && (!previousItem.isText() || !currentItem.isText())) {
                 // We only know the exact soft wrap opportunity index when the previous and current items are next to each other.
                 return index;

@@ -29,3 +29,15 @@ assert.sameValue(result3, true, "date-time + Z + IANA annotation ignores the IAN
 str = "1970-01-01T00:00+01:00[Etc/Ignored]";
 const result4 = instance.equals(str);
 assert.sameValue(result4, false, "date-time + offset + IANA annotation ignores the IANA annotation");
+
+str = "1970-01-01T00:00Z[u-ca=hebrew]";
+const result6 = instance.equals(str);
+assert.sameValue(result6, true, "date-time + Z + Calendar ignores the Calendar");
+
+str = "1970-01-01T00:00+01:00[u-ca=hebrew]";
+const result5 = instance.equals(str);
+assert.sameValue(result5, false, "date-time + offset + Calendar ignores the Calendar");
+
+str = "1970-01-01T00:00+01:00[Etc/Ignored][u-ca=hebrew]";
+const result7 = instance.equals(str);
+assert.sameValue(result7, false, "date-time + offset + IANA annotation + Calendar ignores the Calendar and IANA annotation");

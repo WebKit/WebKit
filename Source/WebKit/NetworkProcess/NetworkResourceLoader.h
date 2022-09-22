@@ -192,6 +192,8 @@ private:
     void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, WebCore::SubstituteData&) final;
 #endif
 
+    void processClearSiteDataHeader(const WebCore::ResourceResponse&, CompletionHandler<void()>&&);
+
     bool canUseCache(const WebCore::ResourceRequest&) const;
     bool canUseCachedRedirect(const WebCore::ResourceRequest&) const;
 

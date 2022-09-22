@@ -7,13 +7,13 @@ description: Checks handling of valid values for the style option to the Duratio
 info: |
     InitializeDurationFormat (DurationFormat, locales, options)
     (...)
-    13. Let style be ? GetOption(options, "style", "string", « "long", "short", "narrow", "digital" », "long").
+    13. Let style be ? GetOption(options, "style", "string", « "long", "short", "narrow", "digital" », "short").
     14. Set durationFormat.[[Style]] to style.
 features: [Intl.DurationFormat]
 ---*/
 
 const validOptions = [
-  [undefined, "long"],
+  [undefined, "short"],
   ["long", "long"],
   ["short", "short"],
   ["narrow", "narrow"],

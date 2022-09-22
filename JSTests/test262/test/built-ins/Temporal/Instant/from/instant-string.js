@@ -27,3 +27,15 @@ assert.sameValue(result3.epochNanoseconds, 0n, "date-time + Z + IANA annotation 
 str = "1970-01-01T00:00+01:00[Etc/Ignored]";
 const result4 = Temporal.Instant.from(str);
 assert.sameValue(result4.epochNanoseconds, -3600_000_000_000n, "date-time + offset + IANA annotation ignores the IANA annotation");
+
+str = "1970-01-01T00:00Z[u-ca=hebrew]";
+const result6 = Temporal.Instant.from(str);
+assert.sameValue(result6.epochNanoseconds, 0n, "date-time + Z + Calendar ignores the Calendar");
+
+str = "1970-01-01T00:00+01:00[u-ca=hebrew]";
+const result7 = Temporal.Instant.from(str);
+assert.sameValue(result7.epochNanoseconds, -3600_000_000_000n, "date-time + offset + Calendar ignores the Calendar");
+
+str = "1970-01-01T00:00+01:00[Etc/Ignored][u-ca=hebrew]";
+const result8 = Temporal.Instant.from(str);
+assert.sameValue(result8.epochNanoseconds, -3600_000_000_000n, "date-time + offset + IANA annotation + Calendar ignores the Calendar and IANA annotation");

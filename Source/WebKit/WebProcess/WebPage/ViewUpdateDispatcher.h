@@ -27,27 +27,28 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
-#include "Connection.h"
-
+#include "MessageReceiver.h"
 #include "VisibleContentRectUpdateInfo.h"
-#include "WorkQueueMessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Ref.h>
 
+namespace WTF {
+class WorkQueue;
+}
+
 namespace WebKit {
 
-class ViewUpdateDispatcher : public IPC::WorkQueueMessageReceiver {
+class ViewUpdateDispatcher final: private IPC::MessageReceiver {
 public:
-    static Ref<ViewUpdateDispatcher> create();
+    ViewUpdateDispatcher();
     ~ViewUpdateDispatcher();
 
-    void initializeConnection(IPC::Connection*);
+    void initializeConnection(IPC::Connection&);
 
 private:
-    ViewUpdateDispatcher();
-    // IPC::WorkQueueMessageReceiver .
+    // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void visibleContentRectUpdate(WebCore::PageIdentifier, const VisibleContentRectUpdateInfo&);
@@ -64,7 +65,7 @@ private:
         MonotonicTime oldestTimestamp;
     };
 
-    Ref<WorkQueue> m_queue;
+    Ref<WTF::WorkQueue> m_queue;
     Lock m_latestUpdateLock;
     HashMap<WebCore::PageIdentifier, UniqueRef<UpdateData>> m_latestUpdate WTF_GUARDED_BY_LOCK(m_latestUpdateLock);
 };

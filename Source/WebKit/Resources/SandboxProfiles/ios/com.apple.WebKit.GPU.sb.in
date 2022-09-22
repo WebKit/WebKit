@@ -166,6 +166,7 @@
             )
         )
         (allow mach-lookup
+            (global-name "com.apple.audio.PhaseXPCServer")
             (global-name "com.apple.springboard.statusbarservices"))
     )
 

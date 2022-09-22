@@ -71,6 +71,7 @@
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
+#include "ElementRareData.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "HTMLAreaElement.h"
@@ -112,6 +113,7 @@
 #include "SVGElement.h"
 #include "ScriptDisallowedScope.h"
 #include "ScrollView.h"
+#include "ShadowRoot.h"
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -4041,7 +4043,12 @@ void AXObjectCache::updateRelationsIfNeeded()
     AXLOG("Updating relations.");
     m_relations.clear();
     m_relationTargets.clear();
+    updateRelationsForTree(m_document.rootNode());
+}
 
+void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
+{
+    ASSERT(!rootNode.parentNode());
     struct RelationOrigin {
         RefPtr<Element> originElement;
         AtomString targetID;
@@ -4055,8 +4062,9 @@ void AXObjectCache::updateRelationsIfNeeded()
 
     Vector<RelationOrigin> origins;
     Vector<RelationTarget> targets;
-    // FIXME: Make this code work with shadow DOM.
-    for (auto& element : descendantsOfType<Element>(m_document.rootNode())) {
+    for (auto& element : descendantsOfType<Element>(rootNode)) {
+        if (RefPtr shadowRoot = element.shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
+            updateRelationsForTree(*shadowRoot);
         // Collect all possible origins, i.e., elements with non-empty relation attributes.
         for (const auto& attribute : relationAttributes()) {
             auto& idsString = element.attributeWithoutSynchronization(attribute);

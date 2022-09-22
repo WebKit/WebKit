@@ -78,7 +78,7 @@
     "web-platform-tests/beacon": "import", 
     "web-platform-tests/bluetooth": "skip", 
     "web-platform-tests/browser-payment-api": "skip", 
-    "web-platform-tests/clear-site-data": "skip", 
+    "web-platform-tests/clear-site-data": "import", 
     "web-platform-tests/clipboard": "skip", 
     "web-platform-tests/clipboard-apis": "import", 
     "web-platform-tests/common": "import", 

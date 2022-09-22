@@ -28,3 +28,7 @@ assert.throws(TypeError, function() {
 assert.throws(TypeError, function() {
   dotAll.call(arguments);
 }, 'arguments object');
+
+assert.throws(TypeError, function() {
+  dotAll.call(() => {});
+}, 'function object');

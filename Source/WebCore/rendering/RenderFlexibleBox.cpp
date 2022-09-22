@@ -1020,9 +1020,8 @@ bool RenderFlexibleBox::childCrossSizeShouldUseContainerCrossSize(const RenderBo
         if (crossAxisIsPhysicalWidth())
             return true;
         // This must be kept in sync with computeMainSizeFromAspectRatioUsing().
-        // FIXME: so far we're only considered fixed sizes but we should extend it to other definite sizes.
         auto& crossSize = isHorizontalFlow() ? style().height() : style().width();
-        return crossSize.isFixed();
+        return crossSize.isFixed() || (crossSize.isPercent() && availableLogicalHeightForPercentageComputation());  
     }
     return false;
 }
@@ -1794,8 +1793,10 @@ LayoutUnit RenderFlexibleBox::computeCrossSizeForChildUsingContainerCrossSize(co
         // Let's compute the definite size value for the flex item (value that we can resolve without running layout).
         auto isHorizontal = isHorizontalFlow();
         auto size = isHorizontal ? style().height() : style().width();
-        ASSERT(size.isFixed());
+        ASSERT(size.isFixed() || (size.isPercent() && availableLogicalHeightForPercentageComputation()));
         auto definiteValue = LayoutUnit { size.value() };
+        if (size.isPercent())
+            definiteValue = availableLogicalHeightForPercentageComputation().value_or(0_lu);
 
         auto maximumSize = isHorizontal ? style().maxHeight() : style().maxWidth();
         if (maximumSize.isFixed())

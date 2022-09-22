@@ -7,6 +7,23 @@ defines: [TemporalHelpers]
 features: [Symbol.species, Symbol.iterator, Temporal]
 ---*/
 
+function formatPropertyName(propertyKey, objectName = "") {
+  switch (typeof propertyKey) {
+    case "symbol":
+      if (Symbol.keyFor(propertyKey) !== undefined) {
+        return `${objectName}[Symbol.for('${Symbol.keyFor(propertyKey)}')]`;
+      } else if (propertyKey.description.startsWith('Symbol.')) {
+        return `${objectName}[${propertyKey.description}]`;
+      } else {
+        return `${objectName}[Symbol('${propertyKey.description}')]`
+      }
+    case "number":
+      return `${objectName}[${propertyKey}]`;
+    default:
+      return objectName ? `${objectName}.${propertyKey}` : propertyKey;
+  }
+}
+
 var TemporalHelpers = {
   /*
    * assertDuration(duration, years, ...,  nanoseconds[, description]):
@@ -262,15 +279,15 @@ var TemporalHelpers = {
     ["year", "month", "monthCode", "day", "hour", "minute", "second", "millisecond", "microsecond", "nanosecond"].forEach((property) => {
       Object.defineProperty(datetime, property, {
         get() {
-          actual.push(`get ${property}`);
+          actual.push(`get ${formatPropertyName(property)}`);
           const value = prototypeDescrs[property].get.call(this);
           return {
             toString() {
-              actual.push(`toString ${property}`);
+              actual.push(`toString ${formatPropertyName(property)}`);
               return value.toString();
             },
             valueOf() {
-              actual.push(`valueOf ${property}`);
+              actual.push(`valueOf ${formatPropertyName(property)}`);
               return value;
             },
           };
@@ -870,7 +887,7 @@ var TemporalHelpers = {
     ["year", "month", "monthCode", "day"].forEach((property) => {
       Object.defineProperty(date, property, {
         get() {
-          actual.push(`get ${property}`);
+          actual.push(`get ${formatPropertyName(property)}`);
           const value = prototypeDescrs[property].get.call(this);
           return TemporalHelpers.toPrimitiveObserver(actual, value, property);
         },
@@ -879,7 +896,7 @@ var TemporalHelpers = {
     ["hour", "minute", "second", "millisecond", "microsecond", "nanosecond"].forEach((property) => {
       Object.defineProperty(date, property, {
         get() {
-          actual.push(`get ${property}`);
+          actual.push(`get ${formatPropertyName(property)}`);
           return undefined;
         },
       });
@@ -1292,24 +1309,14 @@ var TemporalHelpers = {
    * Defines an own property @object.@propertyName with value @value, that
    * will log any calls to its accessors to the array @calls.
    */
-  observeProperty(calls, object, propertyName, value) {
-    let displayName = propertyName;
-    if (typeof propertyName === 'symbol') {
-      if (Symbol.keyFor(propertyName) !== undefined) {
-        displayName = `[Symbol.for('${Symbol.keyFor(propertyName)}')]`;
-      } else if (propertyName.description.startsWith('Symbol.')) {
-        displayName = `[${propertyName.description}]`;
-      } else {
-        displayName = `[Symbol('${propertyName.description}')]`
-      }
-    }
+  observeProperty(calls, object, propertyName, value, objectName = "") {
     Object.defineProperty(object, propertyName, {
       get() {
-        calls.push(`get ${displayName}`);
+        calls.push(`get ${formatPropertyName(propertyName, objectName)}`);
         return value;
       },
       set(v) {
-        calls.push(`set ${displayName}`);
+        calls.push(`set ${formatPropertyName(propertyName, objectName)}`);
       }
     });
   },
@@ -1438,6 +1445,41 @@ var TemporalHelpers = {
   },
 
   /*
+   * propertyBagObserver():
+   * Returns an object that behaves like the given propertyBag but tracks Get
+   * and Has operations on any of its properties, by appending messages to an
+   * array. If the value of a property in propertyBag is a primitive, the value
+   * of the returned object's property will additionally be a
+   * TemporalHelpers.toPrimitiveObserver that will track calls to its toString
+   * and valueOf methods in the same array. This is for the purpose of testing
+   * order of operations that are observable from user code. objectName is used
+   * in the log.
+   */
+  propertyBagObserver(calls, propertyBag, objectName) {
+    return new Proxy(propertyBag, {
+      ownKeys(target) {
+        calls.push(`ownKeys ${objectName}`);
+        return Reflect.ownKeys(target);
+      },
+      get(target, key, receiver) {
+        calls.push(`get ${formatPropertyName(key, objectName)}`);
+        const result = Reflect.get(target, key, receiver);
+        if (result === undefined) {
+          return undefined;
+        }
+        if (typeof result === "object") {
+          return result;
+        }
+        return TemporalHelpers.toPrimitiveObserver(calls, result, `${formatPropertyName(key, objectName)}`);
+      },
+      has(target, key) {
+        calls.push(`has ${formatPropertyName(key, objectName)}`);
+        return Reflect.has(target, key);
+      },
+    });
+  },
+
+  /*
    * specificOffsetTimeZone():
    *
    * This returns an instance of a custom time zone class, which returns a
@@ -1557,4 +1599,56 @@ var TemporalHelpers = {
       },
     };
   },
+
+  /*
+   * An object containing further methods that return arrays of ISO strings, for
+   * testing parsers.
+   */
+  ISO: {
+    /*
+     * PlainTime strings that may be mistaken for PlainMonthDay or
+     * PlainYearMonth strings, and so require a time designator.
+     */
+    plainTimeStringsAmbiguous() {
+      const ambiguousStrings = [
+        "2021-12",  // ambiguity between YYYY-MM and HHMM-UU
+        "1214",     // ambiguity between MMDD and HHMM
+        "0229",     //   ditto, including MMDD that doesn't occur every year
+        "1130",     //   ditto, including DD that doesn't occur in every month
+        "12-14",    // ambiguity between MM-DD and HH-UU
+        "202112",   // ambiguity between YYYYMM and HHMMSS
+      ];
+      // Adding a calendar annotation to one of these strings must not cause
+      // disambiguation in favour of time.
+      const stringsWithCalendar = ambiguousStrings.map((s) => s + '[u-ca=iso8601]');
+      return ambiguousStrings.concat(stringsWithCalendar);
+    },
+
+    /*
+     * PlainTime strings that are of similar form to PlainMonthDay and
+     * PlainYearMonth strings, but are not ambiguous due to components that
+     * aren't valid as months or days.
+     */
+    plainTimeStringsUnambiguous() {
+      return [
+        "2021-13",          // 13 is not a month
+        "202113",           //   ditto
+        "2021-13[-13:00]",  //   ditto
+        "202113[-13:00]",   //   ditto
+        "0000-00",          // 0 is not a month
+        "000000",           //   ditto
+        "0000-00[UTC]",     //   ditto
+        "000000[UTC]",      //   ditto
+        "1314",             // 13 is not a month
+        "13-14",            //   ditto
+        "1232",             // 32 is not a day
+        "0230",             // 30 is not a day in February
+        "0631",             // 31 is not a day in June
+        "0000",             // 0 is neither a month nor a day
+        "00-00",            //   ditto
+        "2021-12[-12:00]",  // HHMM-UU is ambiguous with YYYY-MM, but TZ disambiguates
+        "202112[UTC]",      // HHMMSS is ambiguous with YYYYMM, but TZ disambiguates
+      ];
+    }
+  }
 };
