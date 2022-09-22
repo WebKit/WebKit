@@ -489,20 +489,39 @@ void LineLayout::prepareFloatingState()
     if (!flow().containsFloats())
         return;
 
-    if (flow().containingBlock())
-        floatingState.setIsLeftToRightDirection(flow().containingBlock()->style().isLeftToRightDirection());
+    auto& rootGeometry = m_layoutState.geometryForRootBox();
+    auto isHorizontalWritingMode = flow().containingBlock() ? flow().containingBlock()->style().isHorizontalWritingMode() : true;
+    auto isLeftToRightInlineDirection = flow().containingBlock() ? flow().containingBlock()->style().isLeftToRightDirection() : true;
+    floatingState.setIsLeftToRightDirection(isLeftToRightInlineDirection);
     for (auto& floatingObject : *flow().floatingObjectSet()) {
         auto& visualRect = floatingObject->frameRect();
-        auto position = floatingObject->type() == FloatingObject::FloatRight
-            ? Layout::FloatingState::FloatItem::Position::Right
-            : Layout::FloatingState::FloatItem::Position::Left;
+        auto logicalPosition = [&] {
+            switch (floatingObject->renderer().style().floating()) {
+            case Float::Left:
+                return isLeftToRightInlineDirection ? Layout::FloatingState::FloatItem::Position::Left : Layout::FloatingState::FloatItem::Position::Right;
+            case Float::Right:
+                return isLeftToRightInlineDirection ? Layout::FloatingState::FloatItem::Position::Right : Layout::FloatingState::FloatItem::Position::Left;
+            case Float::InlineStart:
+                return Layout::FloatingState::FloatItem::Position::Left;
+            case Float::InlineEnd:
+                return Layout::FloatingState::FloatItem::Position::Right;
+            default:
+                ASSERT_NOT_REACHED();
+                return Layout::FloatingState::FloatItem::Position::Left;
+            }
+        };
+
         auto boxGeometry = Layout::BoxGeometry { };
-        // FIXME: We are flooring here for legacy compatibility.
-        //        See FloatingObjects::intervalForFloatingObject and RenderBlockFlow::clearFloats.
-        auto logicalTop = visualRect.y().floor();
-        auto logicalHeight = visualRect.maxY().floor() - logicalTop;
-        auto logicalRect = flow().style().isHorizontalWritingMode() ? LayoutRect(visualRect.x(), logicalTop, visualRect.width(), logicalHeight)
-            : LayoutRect(logicalTop, visualRect.x(), logicalHeight, visualRect.width());
+        auto logicalRect = [&] {
+            // FIXME: We are flooring here for legacy compatibility. See FloatingObjects::intervalForFloatingObject and RenderBlockFlow::clearFloats.
+            auto logicalTop = isHorizontalWritingMode ? LayoutUnit(visualRect.y().floor()) : visualRect.x();
+            auto logicalLeft = isHorizontalWritingMode ? visualRect.x() : LayoutUnit(visualRect.y().floor());
+            auto logicalHeight = (isHorizontalWritingMode ? LayoutUnit(visualRect.maxY().floor()) : visualRect.maxX()) - logicalTop;
+            auto logicalWidth = (isHorizontalWritingMode ? visualRect.maxX() : LayoutUnit(visualRect.maxY().floor())) - logicalLeft;
+            if (!isLeftToRightInlineDirection)
+                logicalLeft = rootGeometry.borderBoxWidth() - (logicalLeft + logicalWidth);
+            return LayoutRect { logicalLeft, logicalTop, logicalWidth, logicalHeight };
+        }();
 
         boxGeometry.setLogicalTopLeft(logicalRect.location());
         boxGeometry.setContentBoxWidth(logicalRect.width());
@@ -511,7 +530,7 @@ void LineLayout::prepareFloatingState()
         boxGeometry.setPadding({ });
         boxGeometry.setHorizontalMargin({ });
         boxGeometry.setVerticalMargin({ });
-        floatingState.append({ position, boxGeometry });
+        floatingState.append({ logicalPosition(), boxGeometry });
     }
 }
 
