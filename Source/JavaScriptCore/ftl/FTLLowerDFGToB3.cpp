@@ -10528,7 +10528,7 @@ IGNORE_CLANG_WARNINGS_END
                         shuffleData.args.append(recovery);
                         recovery.forEachReg(
                             [&] (Reg reg) {
-                                toSave.includeRegister(reg);
+                                toSave.includeRegister(reg, Width64);
                             });
                     }
                     for (unsigned i = numPassedArgs; i < numAllocatedArgs; ++i)

@@ -512,12 +512,12 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
                 CCallHelpers::LoadRegSpooler spooler(jit, GPRInfo::regT3);
                 iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex == UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), });
+                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), Width64 });
                 });
                 spooler.finalizeGPR();
                 iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex == UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), });
+                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfReg(reg)), Width64 });
                 });
                 spooler.finalizeFPR();
             }
@@ -552,12 +552,12 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
                 CCallHelpers::LoadRegSpooler spooler(jit, GPRInfo::regT3);
                 iterateGPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex != UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), });
+                        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), Width64 });
                 });
                 spooler.finalizeGPR();
                 iterateFPRCalleeSaves([&](Reg reg, unsigned unwindIndex, const RegisterAtOffset* baselineRegisterOffset) {
                     if (unwindIndex != UINT_MAX && !baselineRegisterOffset)
-                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), });
+                        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(unwindIndex * sizeof(uint64_t)), Width64 });
                 });
                 spooler.finalizeFPR();
             }

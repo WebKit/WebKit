@@ -741,7 +741,7 @@ private:
                 break;
             case B3::ValueRep::Register:
                 patch->earlyClobbered().excludeRegister(tmp.rep.reg());
-                append(basicBlock, tmp.tmp.isGP() ? Move : MoveDouble, tmp.tmp, tmp.rep.reg());
+                append(basicBlock, relaxedMoveForType(toB3Type(tmp.tmp.type())), tmp.tmp.tmp(), tmp.rep.reg());
                 inst.args.append(Tmp(tmp.rep.reg()));
                 break;
             case B3::ValueRep::StackArgument: {
@@ -785,7 +785,7 @@ private:
 
         // FIXME: Remove the need for dummy values
         // https://bugs.webkit.org/show_bug.cgi?id=194040
-        B3::Value* dummyPredicate = m_proc.addConstant(B3::Origin(), B3::Int64, 42);
+        B3::Value* dummyPredicate = m_proc.addConstant(B3::Origin(), B3::Int32, 42);
         B3::CheckValue* checkValue = m_proc.add<B3::CheckValue>(B3::Check, B3::Origin(), dummyPredicate);
         checkValue->setGenerator(generator);
 
@@ -3866,7 +3866,7 @@ auto AirIRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& a
 auto AirIRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
     B3::PatchpointValue* patch = addPatchpoint(B3::Void);
-    patch->clobber(RegisterSet::volatileRegistersForJSCall());
+    patch->clobber(RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()));
     patch->effects.terminal = true;
 
     Vector<ConstrainedTmp, 3> patchArgs;
@@ -4078,7 +4078,7 @@ std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitC
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
     patchpoint->clobberEarly(RegisterSet::macroClobberedRegisters());
-    patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
+    patchpoint->clobberLate(RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()));
 
     CallInformation locations = wasmCallingConvention().callInformationFor(signature);
     m_code.requestCallArgAreaSizeInBytes(WTF::roundUpToMultipleOf(stackAlignmentBytes(), locations.headerAndArgumentStackSizeInBytes));

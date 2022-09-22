@@ -96,7 +96,6 @@ public:
 
 private:
     WholeRegisterSet m_usedRegisters { };
-    WholeRegisterSet m_lockedRegisters { };
     WholeRegisterSet m_scratchRegisters { };
     SmallRegisterSet m_lockedRegisters { };
     unsigned m_numberOfReusedRegisters { 0 };

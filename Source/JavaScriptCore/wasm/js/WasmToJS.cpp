@@ -102,9 +102,11 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
         return handleBadGCTypeIndexUse(vm, jit, importIndex);
 
     // Here we assume that the JS calling convention saves at least all the wasm callee saved. We therefore don't need to save and restore more registers since the wasm callee already took care of this.
-    RegisterSet missingCalleeSaves = wasmCC.calleeSaveRegisters;
-    missingCalleeSaves.exclude(jsCC.calleeSaveRegisters);
-    ASSERT(missingCalleeSaves.isEmpty());
+#if ASSERT_ENABLED
+    wasmCC.calleeSaveRegisters.forEachWithWidth([&] (Reg reg, Width width) {
+        ASSERT(jsCC.calleeSaveRegisters.includesRegister(reg, width));
+    });
+#endif
 
     // Note: We don't need to perform a stack check here since WasmB3IRGenerator
     // will do the stack check for us. Whenever it detects that it might make

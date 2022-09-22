@@ -45,7 +45,7 @@ void LazySlowPath::initialize(
     m_patchableJump = patchableJump;
     m_done = done;
     m_exceptionTarget = exceptionTarget;
-    m_usedRegisters = usedRegisters;
+    m_usedRegisters = usedRegisters.whole();
     m_callSiteIndex = callSiteIndex;
     m_generator = generator;
 }

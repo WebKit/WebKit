@@ -53,7 +53,10 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
         m_lockedRegisters.excludeRegister(FPRInfo::toRegister(i));
 
     // ... as well as the callee saved registers
-    m_lockedRegisters.exclude(RegisterSet::vmCalleeSaveRegisters());
+    for (Reg r : RegisterSet::vmCalleeSaveRegisters()) {
+        if (RegisterSet::vmCalleeSaveRegisters().includesRegister(r, conservativeWidthForC(r)))
+            m_lockedRegisters.excludeRegister(r);
+    }
 
     ASSERT(!data.callee.isInJSStack() || data.callee.virtualRegister().isLocal());
     addNew(CallFrameSlot::callee, data.callee);

@@ -75,8 +75,10 @@ struct CallInformation {
 #if USE(JSVALUE32_64)
                 usedResultRegisters.includeRegister(loc.location.jsr().tagGPR());
 #endif
-            } else if (loc.location.isFPR())
+            } else if (loc.location.isFPR()) {
+                ASSERT(loc.width <= Width64 || Options::useWebAssemblySIMD());
                 usedResultRegisters.includeRegister(loc.location.fpr(), loc.width);
+            }
         }
 
         RegisterAtOffsetList savedRegs(usedResultRegisters, RegisterAtOffsetList::ZeroBased);
@@ -97,12 +99,11 @@ class WasmCallingConvention {
 public:
     static constexpr unsigned headerSizeInBytes = CallFrame::headerSizeInRegisters * sizeof(Register);
 
-    WasmCallingConvention(Vector<JSValueRegs>&& jsrs, Vector<FPRReg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves, RegisterSet&& callerSaves)
+    WasmCallingConvention(Vector<JSValueRegs>&& jsrs, Vector<FPRReg>&& fprs, Vector<GPRReg>&& scratches, RegisterSet&& calleeSaves)
         : jsrArgs(WTFMove(jsrs))
         , fprArgs(WTFMove(fprs))
         , prologueScratchGPRs(WTFMove(scratches))
         , calleeSaveRegisters(WTFMove(calleeSaves))
-        , callerSaveRegisters(WTFMove(callerSaves))
     { }
 
     WTF_MAKE_NONCOPYABLE(WasmCallingConvention);
@@ -186,8 +187,7 @@ public:
     const Vector<JSValueRegs> jsrArgs;
     const Vector<FPRReg> fprArgs;
     const Vector<GPRReg> prologueScratchGPRs;
-    const RegisterSet calleeSaveRegisters;
-    const RegisterSet callerSaveRegisters;
+    const WholeRegisterSet calleeSaveRegisters;
 };
 
 class JSCallingConvention {
@@ -199,11 +199,10 @@ public:
     // Wasm::Context*'s instance.
     static constexpr ptrdiff_t instanceStackOffset = CallFrameSlot::thisArgument * sizeof(EncodedJSValue);
 
-    JSCallingConvention(Vector<JSValueRegs>&& gprs, Vector<FPRReg>&& fprs, RegisterSet&& calleeSaves, RegisterSet&& callerSaves)
+    JSCallingConvention(Vector<JSValueRegs>&& gprs, Vector<FPRReg>&& fprs, RegisterSet&& calleeSaves)
         : jsrArgs(WTFMove(gprs))
         , fprArgs(WTFMove(fprs))
         , calleeSaveRegisters(WTFMove(calleeSaves))
-        , callerSaveRegisters(WTFMove(callerSaves))
     { }
 
     WTF_MAKE_NONCOPYABLE(JSCallingConvention);
@@ -253,14 +252,13 @@ public:
         for (size_t i = 0; i < signature.as<FunctionSignature>()->argumentCount(); ++i)
             params.append(marshallLocation(role, signature.as<FunctionSignature>()->argumentType(i), gpArgumentCount, fpArgumentCount, stackOffset));
 
-        Vector<ArgumentLocation, 1> results { ArgumentLocation { JSRInfo::returnValueJSR } };
+        Vector<ArgumentLocation, 1> results { ArgumentLocation { ValueLocation { JSRInfo::returnValueJSR }, Width64 } };
         return CallInformation(WTFMove(params), WTFMove(results), stackOffset);
     }
 
     const Vector<JSValueRegs> jsrArgs;
     const Vector<FPRReg> fprArgs;
-    const RegisterSet calleeSaveRegisters;
-    const RegisterSet callerSaveRegisters;
+    const WholeRegisterSet calleeSaveRegisters;
 };
 
 const JSCallingConvention& jsCallingConvention();

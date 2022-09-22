@@ -65,6 +65,7 @@ RegLiveness::RegLiveness(Code& code)
             
         block->last().forEach<Reg>(
             [&] (Reg& reg, Arg::Role role, Bank, Width width) {
+                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
                 if (Arg::isLateUse(role))
                     liveAtTail.includeRegister(reg, width);
             });
@@ -127,7 +128,7 @@ RegLiveness::LocalCalcForUnifiedTmpLiveness::LocalCalcForUnifiedTmpLiveness(Unif
 {
     for (Tmp tmp : liveness.liveAtTail(block)) {
         if (tmp.isReg())
-            m_workset.includeRegister(tmp.reg());
+            m_workset.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
     }
 }
 
@@ -141,7 +142,7 @@ void RegLiveness::LocalCalcForUnifiedTmpLiveness::execute(unsigned instIndex)
     for (unsigned index : m_actions[instIndex].use) {
         Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
         if (tmp.isReg())
-            m_workset.includeRegister(tmp.reg());
+            m_workset.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
     }
 }
 

@@ -77,7 +77,6 @@ private:
         numSpecialArgs + numCalleeArgs + numReturnGPArgs + numReturnFPArgs;
     
     RegisterSet m_clobberedRegs;
-    RegisterSet m_emptyRegs;
 };
 
 } } } // namespace JSC::B3::Air

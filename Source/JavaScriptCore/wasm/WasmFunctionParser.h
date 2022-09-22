@@ -1916,9 +1916,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
         ExtSimdOpType op = static_cast<ExtSimdOpType>(simdOp);
         switch (op) {
-#define CREATE_SIMD_CASE(name, _, laneOp, lane, signMode) case ExtSimdOpType::name: return simd<Context::tierSupportsSimd>(laneOp, lane, signMode);
+        #define CREATE_SIMD_CASE(name, _, laneOp, lane, signMode) case ExtSimdOpType::name: return simd<Context::tierSupportsSimd>(laneOp, lane, signMode);
         FOR_EACH_WASM_EXT_SIMD_OP(CREATE_SIMD_CASE)
-#undef CREATE_SIMD_CASE
+        #undef CREATE_SIMD_CASE
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended simd op ", simdOp);
             break;
@@ -2326,9 +2326,9 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
         ExtSimdOpType op = static_cast<ExtSimdOpType>(simdOp);
         switch (op) {
-#define CREATE_SIMD_CASE(name, id, laneOp, lane, signMode) case ExtSimdOpType::name: return simd<false>(laneOp, lane, signMode);
+        #define CREATE_SIMD_CASE(name, id, laneOp, lane, signMode) case ExtSimdOpType::name: return simd<false>(laneOp, lane, signMode);
         FOR_EACH_WASM_EXT_SIMD_OP(CREATE_SIMD_CASE)
-#undef CREATE_SIMD_CASE
+        #undef CREATE_SIMD_CASE
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended simd op ", simdOp);
             break;

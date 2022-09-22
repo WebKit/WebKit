@@ -97,7 +97,7 @@ private:
         if (ASSERT_ENABLED) {
             RegisterSet set;
             for (RegType dest : destinations)
-                set.includeRegister(dest);
+                set.includeRegister(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
             ASSERT_WITH_MESSAGE(set.numberOfSetRegisters() == NumberOfRegisters, "Destinations should not be aliased.");
         }
 
@@ -121,7 +121,7 @@ private:
             RegisterSet set;
             for (auto& pair : pairs) {
                 RegType source = pair.first;
-                set.includeRegister(source);
+                set.includeRegister(source, Options::useWebAssemblySIMD() ? Width128 : Width64);
             }
             return set.numberOfSetRegisters();
         };
@@ -130,7 +130,7 @@ private:
             RegisterSet set;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
-                set.includeRegister(dest);
+                set.includeRegister(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
             }
             return set.numberOfSetRegisters();
         };
@@ -140,7 +140,7 @@ private:
             WholeRegisterSet freeDestinations;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
-                freeDestinations.includeRegister(dest);
+                freeDestinations.includeRegister(dest, Options::useWebAssemblySIMD() ? Width128 : Width64);
             }
             for (auto& pair : pairs) {
                 RegType source = pair.first;

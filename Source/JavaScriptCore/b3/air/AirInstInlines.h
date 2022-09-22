@@ -86,7 +86,7 @@ inline void Inst::forEachDefWithExtraClobberedRegs(
     
     auto reportReg = [&] (Reg reg) {
         Bank bank = reg.isFPR() ? FP : GP;
-        functor(Thing(reg), regDefRole, bank, conservativeWidth(bank));
+        functor(Thing(reg), regDefRole, bank, Options::useWebAssemblySIMD() ? conservativeWidth(bank) : conservativeWidthForC(bank));
     };
 
     if (prevInst && prevInst->kind.opcode == Patch) {

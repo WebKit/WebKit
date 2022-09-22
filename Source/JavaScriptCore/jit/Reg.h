@@ -92,7 +92,7 @@ public:
         return result;
     }
     
-    Reg next() const
+    constexpr Reg next() const
     {
         ASSERT(!!*this);
         if (*this == last())
@@ -109,10 +109,10 @@ public:
         return last().index();
     }
     
-    bool isSet() const { return m_index != invalid(); }
-    explicit operator bool() const { return isSet(); }
+    constexpr bool isSet() const { return m_index != invalid(); }
+    constexpr explicit operator bool() const { return isSet(); }
 
-    bool isHashTableDeletedValue() const { return m_index == deleted(); }
+    constexpr bool isHashTableDeletedValue() const { return m_index == deleted(); }
     
     constexpr bool isGPR() const
     {
@@ -137,37 +137,37 @@ public:
             MacroAssembler::firstFPRegister() + (m_index - MacroAssembler::numberOfRegisters()));
     }
     
-    bool operator==(const Reg& other) const
+    constexpr bool operator==(const Reg& other) const
     {
         return m_index == other.m_index;
     }
     
-    bool operator!=(const Reg& other) const
+    constexpr bool operator!=(const Reg& other) const
     {
         return m_index != other.m_index;
     }
     
-    bool operator<(const Reg& other) const
+    constexpr bool operator<(const Reg& other) const
     {
         return m_index < other.m_index;
     }
     
-    bool operator>(const Reg& other) const
+    constexpr bool operator>(const Reg& other) const
     {
         return m_index > other.m_index;
     }
     
-    bool operator<=(const Reg& other) const
+    constexpr bool operator<=(const Reg& other) const
     {
         return m_index <= other.m_index;
     }
     
-    bool operator>=(const Reg& other) const
+    constexpr bool operator>=(const Reg& other) const
     {
         return m_index >= other.m_index;
     }
     
-    unsigned hash() const
+    constexpr unsigned hash() const
     {
         return m_index;
     }
@@ -217,11 +217,11 @@ public:
     static constexpr AllRegsIterable all() { return AllRegsIterable(); }
 
 private:
-    static constexpr uint8_t invalid() { return 0xff; }
+    static constexpr uint8_t invalid() { return (1 << 7) - 1; }
 
-    static constexpr uint8_t deleted() { return 0xfe; }
+    static constexpr uint8_t deleted() { return invalid() - 1; }
     
-    uint8_t m_index;
+    unsigned m_index : 7;
 };
 
 struct RegHash {
@@ -230,22 +230,22 @@ struct RegHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-inline constexpr Width conservativeWidth(const Reg reg)
+ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
 {
     return reg.isFPR() ? Width128 : pointerWidth();
 }
 
-inline constexpr Width conservativeWidthForC(const Reg reg)
+ALWAYS_INLINE constexpr Width conservativeWidthForC(const Reg reg)
 {
     return reg.isFPR() ? Width64 : pointerWidth();
 }
 
-inline constexpr unsigned conservativeRegisterBytes(const Reg reg)
+ALWAYS_INLINE constexpr unsigned conservativeRegisterBytes(const Reg reg)
 {
     return bytesForWidth(conservativeWidth(reg));
 }
 
-inline constexpr unsigned conservativeRegisterBytesForC(const Reg reg)
+ALWAYS_INLINE constexpr unsigned conservativeRegisterBytesForC(const Reg reg)
 {
     return bytesForWidth(conservativeWidthForC(reg));
 }

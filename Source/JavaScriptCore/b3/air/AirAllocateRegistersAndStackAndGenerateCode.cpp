@@ -163,7 +163,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::release(Tmp tmp, Reg reg)
     ASSERT(m_currentAllocation->at(reg) == tmp);
     m_currentAllocation->at(reg) = Tmp();
     ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg));
-    m_availableRegs[tmp.bank()].includeRegister(reg);
+    m_availableRegs[tmp.bank()].includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
     ASSERT(m_map[tmp].reg == reg);
     m_map[tmp].reg = Reg();
 }
@@ -267,7 +267,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
             m_clobberedToClear.excludeRegister(reg);
         // At this point, it doesn't matter if we add it to the m_namedUsedRegs or m_namedDefdRegs. 
         // We just need to mark that we can't use it again for another tmp.
-        m_namedUsedRegs.includeRegister(reg);
+        m_namedUsedRegs.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
     };
 
     bool mightInterfere = WholeRegisterSet(m_earlyClobber).numberOfSetRegisters() || (m_lateClobber).numberOfSetRegisters();
@@ -425,7 +425,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         m_registers[bank] = m_code.regsInPriorityOrder(bank);
 
         for (Reg reg : m_registers[bank]) {
-            m_allowedRegisters.includeRegister(reg);
+            m_allowedRegisters.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
             TmpData& data = m_map[Tmp(reg)];
             unsigned slotSize = conservativeRegisterBytes(bank);
             if (!Options::useWebAssemblySIMD())
@@ -584,7 +584,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
             WholeRegisterSet availableRegisters;
             for (Reg reg : m_registers[bank])
-                availableRegisters.includeRegister(reg);
+                availableRegisters.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
             m_availableRegs[bank] = WTFMove(availableRegisters);
         });
 
@@ -662,19 +662,21 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             })();
             checkConsistency();
 
-            inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width) {
+            inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width width) {
+                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
                 if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                     return;
 
                 if (tmp.isReg()) {
                     if (Arg::isAnyUse(role))
-                        m_namedUsedRegs.includeRegister(tmp.reg());
+                        m_namedUsedRegs.includeRegister(tmp.reg(), width);
                     if (Arg::isAnyDef(role))
-                        m_namedDefdRegs.includeRegister(tmp.reg());
+                        m_namedDefdRegs.includeRegister(tmp.reg(), width);
                 }
             });
 
-            inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
+            inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width width) {
+                ASSERT_UNUSED(width, width <= Width64 || Options::useWebAssemblySIMD());
                 if (!arg.isTmp())
                     return;
 
@@ -691,6 +693,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 auto& entry = m_map[tmp];
                 if (!entry.reg) {
                     // We're a cold use, and our current location is already on the stack. Just use that.
+                    ASSERT(entry.spillSlot->byteSize() <= bytesForWidth(Width64) || Options::useWebAssemblySIMD());
                     arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
                 }
             });
@@ -802,7 +805,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 RegisterSet registerSet;
                 for (size_t i = 0; i < currentAllocation.size(); ++i) {
                     if (currentAllocation[i])
-                        registerSet.includeRegister(Reg::fromIndex(i));
+                        registerSet.includeRegister(Reg::fromIndex(i), Options::useWebAssemblySIMD() ? Width128 : Width64);
                 }
                 inst.reportUsedRegisters(registerSet);
             }

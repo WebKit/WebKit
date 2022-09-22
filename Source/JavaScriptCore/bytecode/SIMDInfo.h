@@ -171,7 +171,7 @@ constexpr SimdLane promotedLane(SimdLane lane)
     }
 }
 
-inline constexpr Width widthForBytes(unsigned bytes)
+ALWAYS_INLINE constexpr Width widthForBytes(unsigned bytes)
 {
     switch (bytes) {
     case 0:
@@ -192,7 +192,7 @@ inline constexpr Width widthForBytes(unsigned bytes)
     }
 }
 
-inline constexpr unsigned bytesForWidth(Width width)
+ALWAYS_INLINE constexpr unsigned bytesForWidth(Width width)
 {
     switch (width) {
     case Width8:

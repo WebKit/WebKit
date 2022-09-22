@@ -94,7 +94,7 @@ public:
         } else {
             stubInfo.codeOrigin = codeOrigin;
             stubInfo.callSiteIndex = callSiteIndex;
-            stubInfo.usedRegisters = FrozenRegisterSet(usedRegisters.whole());
+            stubInfo.usedRegisters = usedRegisters.whole();
             stubInfo.hasConstantIdentifier = true;
         }
     }
@@ -241,7 +241,7 @@ public:
     {
         JITByIdGenerator::setUpStubInfoImpl(stubInfo, accessType, codeOrigin, callSiteIndex, usedRegisters, baseRegs, valueRegs, stubInfoGPR);
         if constexpr (!std::is_same_v<std::decay_t<StubInfo>, BaselineUnlinkedStructureStubInfo>)
-            stubInfo.usedRegisters = stubInfo.usedRegisters.set().excludeRegister(scratchGPR);
+            stubInfo.usedRegisters.excludeRegister(scratchGPR);
         else
             UNUSED_PARAM(scratchGPR);
         if constexpr (!std::is_same_v<std::decay_t<StubInfo>, StructureStubInfo>) {
@@ -525,7 +525,7 @@ public:
             stubInfo.m_valueTagGPR = InvalidGPRReg;
             stubInfo.m_extraTagGPR = InvalidGPRReg;
 #endif
-            stubInfo.usedRegisters = stubInfo.usedRegisters.set().excludeRegister(resultGPR);
+            stubInfo.usedRegisters.excludeRegister(resultGPR);
             stubInfo.hasConstantIdentifier = false;
         } else {
             UNUSED_PARAM(valueGPR);

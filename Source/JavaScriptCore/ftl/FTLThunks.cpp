@@ -182,7 +182,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     for (MacroAssembler::RegisterID reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = static_cast<MacroAssembler::RegisterID>(reg + 1)) {
         if (!key.usedRegisters().includesRegister(reg))
             continue;
-        storeSpooler.storeGPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
+        storeSpooler.storeGPR({ reg, static_cast<ptrdiff_t>(currentOffset), Width64 });
         currentOffset += sizeof(void*);
     }
     storeSpooler.finalizeGPR();
@@ -190,7 +190,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = static_cast<MacroAssembler::FPRegisterID>(reg + 1)) {
         if (!key.usedRegisters().includesRegister(reg))
             continue;
-        storeSpooler.storeFPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
+        storeSpooler.storeFPR({ reg, static_cast<ptrdiff_t>(currentOffset), Width64 });
         currentOffset += sizeof(double);
     }
     storeSpooler.finalizeFPR();
@@ -220,7 +220,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::lastFPRegister(); ; reg = static_cast<MacroAssembler::FPRegisterID>(reg - 1)) {
         if (key.usedRegisters().includesRegister(reg)) {
             currentOffset -= sizeof(double);
-            loadSpooler.loadFPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
+            loadSpooler.loadFPR({ reg, static_cast<ptrdiff_t>(currentOffset), Width64 });
         }
         if (reg == MacroAssembler::firstFPRegister())
             break;
@@ -230,7 +230,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     for (MacroAssembler::RegisterID reg = MacroAssembler::lastRegister(); ; reg = static_cast<MacroAssembler::RegisterID>(reg - 1)) {
         if (key.usedRegisters().includesRegister(reg)) {
             currentOffset -= sizeof(void*);
-            loadSpooler.loadGPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
+            loadSpooler.loadGPR({ reg, static_cast<ptrdiff_t>(currentOffset), Width64 });
         }
         if (reg == MacroAssembler::firstRegister())
             break;
