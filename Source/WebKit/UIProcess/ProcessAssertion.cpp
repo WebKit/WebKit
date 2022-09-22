@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ProcessAssertion.h"
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(COCOA) || !USE(RUNNINGBOARD)
 
 #include "WKBase.h"
 #include <wtf/RunLoop.h>
@@ -71,4 +71,4 @@ ProcessAndUIAssertion::~ProcessAndUIAssertion() = default;
 
 } // namespace WebKit
 
-#endif // !PLATFORM(IOS_FAMILY)
+#endif // !USE(RUNNINGBOARD)

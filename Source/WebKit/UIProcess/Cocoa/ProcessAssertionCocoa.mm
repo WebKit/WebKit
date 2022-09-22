@@ -26,13 +26,12 @@
 #import "config.h"
 #import "ProcessAssertion.h"
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(RUNNINGBOARD)
 
 #import "Logging.h"
 #import "ProcessStateMonitor.h"
 #import "RunningBoardServicesSPI.h"
 #import "WebProcessPool.h"
-#import <UIKit/UIApplication.h>
 #import <wtf/HashMap.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
@@ -40,7 +39,11 @@
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WorkQueue.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIApplication.h>
+
 using WebKit::ProcessAndUIAssertion;
+#endif
 
 static WorkQueue& assertionsWorkQueue()
 {
@@ -51,6 +54,7 @@ static WorkQueue& assertionsWorkQueue()
 // This gives some time to our child processes to process the ProcessWillSuspendImminently IPC but makes sure we release
 // the background task before the UIKit timeout (We get killed if we do not release the background task within 5 seconds
 // on the expiration handler getting called).
+#if PLATFORM(IOS_FAMILY)
 static const Seconds releaseBackgroundTaskAfterExpirationDelay { 2_s };
 
 static bool processHasActiveRunTimeLimitation()
@@ -246,7 +250,9 @@ static bool processHasActiveRunTimeLimitation()
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: endBackgroundTask", self);
     if (processHasActiveRunTimeLimitation()) {
+#if PLATFORM(IOS_FAMILY)
         WebKit::WebProcessPool::notifyProcessPoolsApplicationIsAboutToSuspend();
+#endif
         if (m_processStateMonitor)
             m_processStateMonitor->processWillBeSuspendedImmediately();
     }
@@ -272,6 +278,7 @@ static bool processHasActiveRunTimeLimitation()
 }
 
 @end
+#endif // PLATFORM(IOS_FAMILY)
 
 typedef void(^RBSAssertionInvalidationCallbackType)();
 
@@ -455,6 +462,23 @@ bool ProcessAssertion::isValid() const
     return !m_wasInvalidated;
 }
 
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType)
+    : ProcessAssertion(pid, reason, assertionType)
+{
+#if PLATFORM(IOS_FAMILY)
+    updateRunInBackgroundCount();
+#endif
+}
+
+ProcessAndUIAssertion::~ProcessAndUIAssertion()
+{
+#if PLATFORM(IOS_FAMILY)
+    if (m_isHoldingBackgroundTask)
+        [[WKProcessAssertionBackgroundTaskManager shared] removeAssertionNeedingBackgroundTask:*this];
+#endif
+}
+
+#if PLATFORM(IOS_FAMILY)
 void ProcessAndUIAssertion::updateRunInBackgroundCount()
 {
     bool shouldHoldBackgroundTask = isValid() && type() != ProcessAssertionType::Suspended;
@@ -469,21 +493,9 @@ void ProcessAndUIAssertion::updateRunInBackgroundCount()
     m_isHoldingBackgroundTask = shouldHoldBackgroundTask;
 }
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType)
-    : ProcessAssertion(pid, reason, assertionType)
-{
-    updateRunInBackgroundCount();
-}
-
 void ProcessAndUIAssertion::setProcessStateMonitorEnabled(bool enabled)
 {
     [[WKProcessAssertionBackgroundTaskManager shared] setProcessStateMonitorEnabled:enabled];
-}
-
-ProcessAndUIAssertion::~ProcessAndUIAssertion()
-{
-    if (m_isHoldingBackgroundTask)
-        [[WKProcessAssertionBackgroundTaskManager shared] removeAssertionNeedingBackgroundTask:*this];
 }
 
 void ProcessAndUIAssertion::uiAssertionWillExpireImminently()
@@ -504,6 +516,8 @@ void ProcessAndUIAssertion::processAssertionWasInvalidated()
         updateRunInBackgroundCount();
 }
 
+#endif // PLATFORM(IOS_FAMILY)
+
 } // namespace WebKit
 
-#endif // PLATFORM(IOS_FAMILY)
+#endif // USE(RUNNINGBOARD)

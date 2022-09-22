@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class ProcessThrottler;
+class ProcessAssertion;
 
 class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, public ResponsivenessTimer::Client, private ProcessLauncher::Client, public IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
@@ -199,6 +200,9 @@ private:
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    RefPtr<ProcessAssertion> m_lifetimeAssertion;
+#endif
 };
 
 template<typename T>
