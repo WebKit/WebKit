@@ -2366,8 +2366,6 @@ void FrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
 
 void FrameView::maintainScrollPositionAtScrollToTextFragmentRange(SimpleRange& range)
 {
-    LOG(Scrolling, "FrameView::maintainScrollPositionAtScrollToTextFragmentRange at %p", range);
-
     m_pendingTextFragmentIndicatorRange = range;
     m_pendingTextFragmentIndicatorText = plainText(range);
     if (!m_pendingTextFragmentIndicatorRange)
