@@ -548,18 +548,10 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
     auto isInIntrinsicWidthMode = this->isInIntrinsicWidthMode();
-    auto shouldApplyTrailingWhiteSpaceFollowedByBRQuirk = [&] {
-        // Legacy line layout quirk: keep the trailing whitespace around when it is followed by a line break, unless the content overflows the line.
-        // This quirk however should not be applied when running intrinsic width computation.
-        // FIXME: webkit.org/b/233261
-        if (isInIntrinsicWidthMode || !layoutState().isInlineFormattingContextIntegration())
-            return false;
-        if (m_line.contentNeedsBidiReordering())
-            return false;
-        return horizontalAvailableSpace >= m_line.contentLogicalWidth();
-    };
-    m_line.removeTrailingTrimmableContent(shouldApplyTrailingWhiteSpaceFollowedByBRQuirk() ? Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::Yes : Line::ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::No);
+    auto lineEndsWithLineBreak = !m_line.runs().isEmpty() && m_line.runs().last().isLineBreak();
+    auto shouldApplyPreserveTrailingWhitespaceQuirk = m_inlineFormattingContext.formattingQuirks().shouldPreserveTrailingWhitespace(isInIntrinsicWidthMode, m_line.contentNeedsBidiReordering(), horizontalAvailableSpace < m_line.contentLogicalWidth(), lineEndsWithLineBreak);
 
+    m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk ? Line::TrailingTrimmableContentAction::Preserve : Line::TrailingTrimmableContentAction::Remove);
     if (isInIntrinsicWidthMode) {
         // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
         // https://drafts.csswg.org/css-text/#hanging
@@ -567,7 +559,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
             m_line.removeHangingGlyphs();
         else {
             // Glyphs that conditionally hang are not taken into account when computing min-content sizes and any sizes derived thereof, but they are taken into account for max-content sizes and any sizes derived thereof.
-            auto isConditionalHanging = isLastLine || (!m_line.runs().isEmpty() && m_line.runs().last().isLineBreak());
+            auto isConditionalHanging = isLastLine || lineEndsWithLineBreak;
             if (!isConditionalHanging)
                 m_line.removeHangingGlyphs();
         }

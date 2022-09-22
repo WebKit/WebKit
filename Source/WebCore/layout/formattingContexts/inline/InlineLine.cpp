@@ -192,24 +192,14 @@ void Line::truncate(InlineLayoutUnit logicalRight)
     }
 }
 
-void Line::removeTrailingTrimmableContent(ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk shouldApplyTrailingWhiteSpaceFollowedByBRQuirk)
+void Line::handleTrailingTrimmableContent(TrailingTrimmableContentAction trailingTrimmableContentAction)
 {
     if (m_trimmableTrailingContent.isEmpty() || m_runs.isEmpty())
         return;
 
-    if (shouldApplyTrailingWhiteSpaceFollowedByBRQuirk == ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk::Yes) {
-        auto isTextAlignRight = [&] {
-            auto textAlign = formattingContext().root().style().textAlign();
-            return textAlign == TextAlignMode::Right
-                || textAlign == TextAlignMode::WebKitRight
-                || textAlign == TextAlignMode::End;
-            }();
+    if (trailingTrimmableContentAction == TrailingTrimmableContentAction::Preserve)
+        return m_trimmableTrailingContent.reset();
 
-        if (m_runs.last().isLineBreak() && !isTextAlignRight) {
-            m_trimmableTrailingContent.reset();
-            return;
-        }
-    }
     m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
 }
 

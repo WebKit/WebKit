@@ -62,8 +62,8 @@ public:
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
-    enum class ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk { No, Yes };
-    void removeTrailingTrimmableContent(ShouldApplyTrailingWhiteSpaceFollowedByBRQuirk);
+    enum class TrailingTrimmableContentAction : uint8_t { Remove, Preserve };
+    void handleTrailingTrimmableContent(TrailingTrimmableContentAction);
     void removeHangingGlyphs();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
