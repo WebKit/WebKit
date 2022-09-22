@@ -122,7 +122,7 @@ private:
     static EGLSurface createWindowSurfaceWPE(EGLDisplay, EGLConfig, GLNativeWindowType);
 #endif
 
-    static bool getEGLConfig(EGLDisplay, EGLConfig*, EGLSurfaceType);
+    static bool getEGLConfig(EGLDisplay, EGLConfig*, EGLSurfaceType, Function<bool(int)>&& = nullptr);
 
     EGLContext m_context { nullptr };
     EGLSurface m_surface { nullptr };

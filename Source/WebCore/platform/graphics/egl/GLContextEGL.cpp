@@ -45,6 +45,13 @@
 #include "OpenGLShims.h"
 #endif
 
+#if PLATFORM(X11)
+#include "PlatformDisplayX11.h"
+#include "XUniquePtr.h"
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#endif
+
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -88,8 +95,11 @@ const char* GLContextEGL::lastErrorString()
     return errorString(eglGetError());
 }
 
-bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceType surfaceType)
+bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfaceType surfaceType, Function<bool(int)>&& checkCompatibleVisuals)
 {
+#if !PLATFORM(X11)
+    UNUSED_PARAM(checkCompatibleVisuals);
+#endif
     std::array<EGLint, 4> rgbaSize = { 8, 8, 8, 8 };
     if (const char* environmentVariable = getenv("WEBKIT_EGL_PIXEL_LAYOUT")) {
         if (!strcmp(environmentVariable, "RGB565"))
@@ -146,6 +156,16 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
         eglGetConfigAttrib(display, value, EGL_GREEN_SIZE, &greenSize);
         eglGetConfigAttrib(display, value, EGL_BLUE_SIZE, &blueSize);
         eglGetConfigAttrib(display, value, EGL_ALPHA_SIZE, &alphaSize);
+#if PLATFORM(X11)
+        if (checkCompatibleVisuals) {
+            EGLint visualid;
+            if (!eglGetConfigAttrib(display, value, EGL_NATIVE_VISUAL_ID, &visualid))
+                return false;
+
+            if (!checkCompatibleVisuals(visualid))
+                return false;
+        }
+#endif
         return redSize == rgbaSize[0] && greenSize == rgbaSize[1]
             && blueSize == rgbaSize[2] && alphaSize == rgbaSize[3];
     });
@@ -161,9 +181,42 @@ bool GLContextEGL::getEGLConfig(EGLDisplay display, EGLConfig* config, EGLSurfac
 
 std::unique_ptr<GLContextEGL> GLContextEGL::createWindowContext(GLNativeWindowType window, PlatformDisplay& platformDisplay, EGLContext sharingContext)
 {
+    Function<bool(int)> checkCompatibleVisuals = nullptr;
+#if PLATFORM(X11)
+    if (platformDisplay.type() == PlatformDisplay::Type::X11) {
+        Display* x11Display = downcast<PlatformDisplayX11>(platformDisplay).native();
+        XWindowAttributes attributes;
+        if (!XGetWindowAttributes(x11Display, static_cast<Window>(window), &attributes))
+            return nullptr;
+
+        auto visualInfoForID = [x11Display](VisualID visualID) -> XUniquePtr<XVisualInfo> {
+            XVisualInfo templateVisualInfo;
+            templateVisualInfo.visualid = visualID;
+            int visualInfoCount;
+            return XUniquePtr<XVisualInfo>(XGetVisualInfo(x11Display, VisualIDMask, &templateVisualInfo, &visualInfoCount));
+        };
+
+        XUniquePtr<XVisualInfo> visualInfo(visualInfoForID(XVisualIDFromVisual(attributes.visual)));
+        if (!visualInfo)
+            return nullptr;
+
+        checkCompatibleVisuals = [visualInfo = WTFMove(visualInfo), visualInfoForID = WTFMove(visualInfoForID)](unsigned long configVisualID) {
+            auto configVisualInfo = visualInfoForID(configVisualID);
+            return configVisualInfo
+                && visualInfo->c_class == configVisualInfo->c_class
+                && visualInfo->depth >= configVisualInfo->depth
+                && visualInfo->red_mask == configVisualInfo->red_mask
+                && visualInfo->green_mask == configVisualInfo->green_mask
+                && visualInfo->blue_mask == configVisualInfo->blue_mask
+                && visualInfo->colormap_size == configVisualInfo->colormap_size
+                && visualInfo->bits_per_rgb == configVisualInfo->bits_per_rgb;
+        };
+    }
+#endif
+
     EGLDisplay display = platformDisplay.eglDisplay();
     EGLConfig config;
-    if (!getEGLConfig(display, &config, WindowSurface)) {
+    if (!getEGLConfig(display, &config, WindowSurface, WTFMove(checkCompatibleVisuals))) {
         RELEASE_LOG_INFO(Compositing, "Cannot obtain EGL window context configuration: %s\n", lastErrorString());
         return nullptr;
     }
