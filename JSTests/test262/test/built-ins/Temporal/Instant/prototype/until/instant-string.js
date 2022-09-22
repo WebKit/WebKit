@@ -30,3 +30,15 @@ TemporalHelpers.assertDuration(result3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "date-time
 str = "1970-01-01T00:00+01:00[Etc/Ignored]";
 const result4 = instance.until(str);
 TemporalHelpers.assertDuration(result4, 0, 0, 0, 0, 0, 0, -3600, 0, 0, 0, "date-time + offset + IANA annotation ignores the IANA annotation");
+
+str = "1970-01-01T00:00Z[u-ca=hebrew]";
+const result6 = instance.until(str);
+TemporalHelpers.assertDuration(result6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "date-time + Z + Calendar ignores the Calendar");
+
+str = "1970-01-01T00:00+01:00[u-ca=hebrew]";
+const result5 = instance.until(str);
+TemporalHelpers.assertDuration(result5, 0, 0, 0, 0, 0, 0, -3600, 0, 0, 0, "date-time + offset + Calendar ignores the Calendar");
+
+str = "1970-01-01T00:00+01:00[Etc/Ignored][u-ca=hebrew]";
+const result7 = instance.until(str);
+TemporalHelpers.assertDuration(result7, 0, 0, 0, 0, 0, 0, -3600, 0, 0, 0, "date-time + offset + IANA annotation + Calendar ignores the Calendar and IANA annotation");

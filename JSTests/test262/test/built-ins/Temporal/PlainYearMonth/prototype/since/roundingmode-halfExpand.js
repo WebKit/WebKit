@@ -8,19 +8,27 @@ includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
-const earlier = Temporal.PlainYearMonth.from("2019-01");
-const later = Temporal.PlainYearMonth.from("2021-09");
+const earlier = new Temporal.PlainYearMonth(2019, 1);
+const later = new Temporal.PlainYearMonth(2021, 9);
 
-TemporalHelpers.assertDuration(
-  later.since(earlier, { smallestUnit: "years", roundingMode: "halfExpand" }),
-  /* years = */ 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, "years");
-TemporalHelpers.assertDuration(
-  earlier.since(later, { smallestUnit: "years", roundingMode: "halfExpand" }),
-  /* years = */ -3, 0, 0, 0, 0, 0, 0, 0, 0, 0, "years");
+const expected = [
+  ["years", [3], [-3]],
+  ["months", [2, 8], [-2, -8]],
+];
 
-TemporalHelpers.assertDuration(
-  later.since(earlier, { smallestUnit: "months", roundingMode: "halfExpand" }),
-  /* years = */ 2, /* months = */ 8, 0, 0, 0, 0, 0, 0, 0, 0, "months");
-TemporalHelpers.assertDuration(
-  earlier.since(later, { smallestUnit: "months", roundingMode: "halfExpand" }),
-  /* years = */ -2, /* months = */ -8, 0, 0, 0, 0, 0, 0, 0, 0, "months");
+const roundingMode = "halfExpand";
+
+expected.forEach(([smallestUnit, expectedPositive, expectedNegative]) => {
+  const [py, pm = 0, pw = 0, pd = 0, ph = 0, pmin = 0, ps = 0, pms = 0, pµs = 0, pns = 0] = expectedPositive;
+  const [ny, nm = 0, nw = 0, nd = 0, nh = 0, nmin = 0, ns = 0, nms = 0, nµs = 0, nns = 0] = expectedNegative;
+  TemporalHelpers.assertDuration(
+    later.since(earlier, { smallestUnit, roundingMode }),
+    py, pm, pw, pd, ph, pmin, ps, pms, pµs, pns,
+    `rounds to ${smallestUnit} (roundingMode = ${roundingMode}, positive case)`
+  );
+  TemporalHelpers.assertDuration(
+    earlier.since(later, { smallestUnit, roundingMode }),
+    ny, nm, nw, nd, nh, nmin, ns, nms, nµs, nns,
+    `rounds to ${smallestUnit} (rounding mode = ${roundingMode}, negative case)`
+  );
+});

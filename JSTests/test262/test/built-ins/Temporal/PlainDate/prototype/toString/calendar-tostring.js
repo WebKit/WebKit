@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-temporal.plaindate.protoype.tostring
-description: Should always call 'toString' on the calendar once.
+description: Should call 'toString' on the calendar once unless calendarName == 'never'.
 features: [Temporal]
 ---*/
 
@@ -16,13 +16,13 @@ const customCalendar = {
 };
 const date = new Temporal.PlainDate(2000, 5, 2, customCalendar);
 [
-  ["always", "2000-05-02[u-ca=custom]"],
-  ["auto", "2000-05-02[u-ca=custom]"],
-  ["never", "2000-05-02"],
-  [undefined, "2000-05-02[u-ca=custom]"],
-].forEach(([calendarName, expected]) => {
+  ["always", "2000-05-02[u-ca=custom]", 1],
+  ["auto", "2000-05-02[u-ca=custom]", 1],
+  ["never", "2000-05-02", 0],
+  [undefined, "2000-05-02[u-ca=custom]", 1],
+].forEach(([calendarName, expectedResult, expectedCalls]) => {
   calls = 0;
   const result = date.toString({ calendarName });
-  assert.sameValue(result, expected, `calendarName = ${calendarName}: expected ${expected}`);
-  assert.sameValue(calls, 1, `calendarName = ${calendarName}: expected one call to 'toString'`);
+  assert.sameValue(result, expectedResult, `calendarName = ${calendarName}: expected ${expectedResult}`);
+  assert.sameValue(calls, expectedCalls, `calendarName = ${calendarName}: expected ${expectedCalls} call(s) to 'toString'`);
 });

@@ -21,6 +21,9 @@ const valids = [
   "1970-01-01T00:00+01:00",
   "1970-01-01T00:00Z[UTC]",
   "1970-01-01T00:00+01:00[UTC]",
+  "1970-01-01T00:00Z[u-ca=hebrew]",
+  "1970-01-01T00:00+01:00[u-ca=hebrew]",
+  "1970-01-01T00:00+01:00[Etc/Ignored][u-ca=hebrew]",
 ];
 for (const str of valids) {
   const result = instance.getPreviousTransition(str);

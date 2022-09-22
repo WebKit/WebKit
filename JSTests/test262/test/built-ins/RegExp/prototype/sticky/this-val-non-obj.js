@@ -38,3 +38,7 @@ assert.throws(TypeError, function() {
 assert.throws(TypeError, function() {
   sticky.call(4);
 });
+
+assert.throws(TypeError, function() {
+  sticky.call(4n);
+}, 'bigint');

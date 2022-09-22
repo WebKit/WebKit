@@ -2,21 +2,21 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-temporal.plaindate.prototype.tozoneddatetime
-description: Empty object may be used as options
+esid: sec-temporal.plaindatetime.prototype.tozoneddatetime
+description: Empty or a function object may be used as options
 features: [Temporal]
 ---*/
 
-const dt = new Temporal.PlainDateTime(2019, 10, 29, 10, 46, 38, 271, 986, 102);
+const instance = new Temporal.PlainDateTime(2000, 5, 2);
 
+const result1 = instance.toZonedDateTime("UTC", {});
 assert.sameValue(
-  dt.toZonedDateTime("UTC", {}).epochNanoseconds,
-  1572345998271986102n,
+  result1.epochNanoseconds, 957225600000000000n,
   "options may be an empty plain object"
 );
 
+const result2 = instance.toZonedDateTime("UTC", () => {});
 assert.sameValue(
-  dt.toZonedDateTime("UTC", () => {}).epochNanoseconds,
-  1572345998271986102n,
+  result2.epochNanoseconds, 957225600000000000n,
   "options may be a function object"
 );

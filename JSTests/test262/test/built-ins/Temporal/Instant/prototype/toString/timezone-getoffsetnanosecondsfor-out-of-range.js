@@ -8,7 +8,7 @@ features: [Temporal]
 includes: [temporalHelpers.js]
 ---*/
 
-[-86400_000_000_001, 86400_000_000_001].forEach((wrongOffset) => {
+[-86400_000_000_000, 86400_000_000_000].forEach((wrongOffset) => {
   const timeZone = TemporalHelpers.specificOffsetTimeZone(wrongOffset);
   const instant = new Temporal.Instant(1_000_000_000_987_654_321n);
   assert.throws(RangeError, () => instant.toString({ timeZone }));

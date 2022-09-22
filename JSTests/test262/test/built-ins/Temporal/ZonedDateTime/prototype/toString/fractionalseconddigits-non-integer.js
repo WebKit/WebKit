@@ -16,5 +16,11 @@ features: [Temporal]
 
 const datetime = new Temporal.ZonedDateTime(1_000_000_000_987_650_000n, "UTC");
 
-const string = datetime.toString({ fractionalSecondDigits: 2.5 });
-assert.sameValue(string, "2001-09-09T01:46:40.98+00:00[UTC]", "fractionalSecondDigits 2.5 floors to 2");
+let string = datetime.toString({ fractionalSecondDigits: 2.5 });
+assert.sameValue(string, "2001-09-09T01:46:40.98+00:00[UTC]", "fractionalSecondDigits 2.5 truncates to 2");
+
+string = datetime.toString({ fractionalSecondDigits: 9.7 });
+assert.sameValue(string, "2001-09-09T01:46:40.987650000+00:00[UTC]", "fractionalSecondDigits 9.7 truncates to 9 and is not out of range");
+
+string = datetime.toString({ fractionalSecondDigits: -0.6 });
+assert.sameValue(string, "2001-09-09T01:46:40+00:00[UTC]", "fractionalSecondDigits -0.6 truncates to 0 and is not out of range");

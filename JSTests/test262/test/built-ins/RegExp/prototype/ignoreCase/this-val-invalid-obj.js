@@ -24,3 +24,7 @@ assert.throws(TypeError, function() {
 assert.throws(TypeError, function() {
   get.call(arguments);
 }, 'arguments object');
+
+assert.throws(TypeError, function() {
+  get.call(() => {});
+}, 'function object');
