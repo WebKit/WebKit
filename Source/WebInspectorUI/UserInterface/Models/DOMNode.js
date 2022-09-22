@@ -162,7 +162,7 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (!InspectorBackend.Enum.CSS.LayoutFlag) {
             let layoutFlags = [WI.DOMNode.LayoutFlag.Rendered];
             if (payload.layoutContextType)
-                layoutFlags.append(payload.layoutContextType);
+                layoutFlags.push(payload.layoutContextType);
             this.layoutFlags = layoutFlags;
         } else
             this.layoutFlags = payload.layoutFlags;
