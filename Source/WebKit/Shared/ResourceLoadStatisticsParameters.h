@@ -37,8 +37,6 @@ struct ResourceLoadStatisticsParameters {
 
     String directory;
     SandboxExtension::Handle directoryExtensionHandle;
-    String privateClickMeasurementStorageDirectory;
-    SandboxExtension::Handle privateClickMeasurementStorageDirectoryExtensionHandle;
     bool enabled { false };
     bool isItpStateExplicitlySet { false };
     bool enableLogTestingEvent { false };
@@ -57,8 +55,6 @@ struct ResourceLoadStatisticsParameters {
     {
         encoder << directory;
         encoder << directoryExtensionHandle;
-        encoder << privateClickMeasurementStorageDirectory;
-        encoder << privateClickMeasurementStorageDirectoryExtensionHandle;
         encoder << enabled;
         encoder << isItpStateExplicitlySet;
         encoder << enableLogTestingEvent;
@@ -84,16 +80,6 @@ struct ResourceLoadStatisticsParameters {
         std::optional<SandboxExtension::Handle> directoryExtensionHandle;
         decoder >> directoryExtensionHandle;
         if (!directoryExtensionHandle)
-            return std::nullopt;
-
-        std::optional<String> privateClickMeasurementStorageDirectory;
-        decoder >> privateClickMeasurementStorageDirectory;
-        if (!privateClickMeasurementStorageDirectory)
-            return std::nullopt;
-        
-        std::optional<SandboxExtension::Handle> privateClickMeasurementStorageDirectoryExtensionHandle;
-        decoder >> privateClickMeasurementStorageDirectoryExtensionHandle;
-        if (!privateClickMeasurementStorageDirectoryExtensionHandle)
             return std::nullopt;
 
         std::optional<bool> enabled;
@@ -156,8 +142,6 @@ struct ResourceLoadStatisticsParameters {
         return {{
             WTFMove(*directory),
             WTFMove(*directoryExtensionHandle),
-            WTFMove(*privateClickMeasurementStorageDirectory),
-            WTFMove(*privateClickMeasurementStorageDirectoryExtensionHandle),
             WTFMove(*enabled),
             WTFMove(*isItpStateExplicitlySet),
             WTFMove(*enableLogTestingEvent),

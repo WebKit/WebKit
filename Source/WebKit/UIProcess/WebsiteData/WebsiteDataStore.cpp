@@ -318,8 +318,6 @@ void WebsiteDataStore::resolveDirectoriesIfNecessary()
         m_resolvedConfiguration->setNetworkCacheDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->networkCacheDirectory()));
     if (!m_configuration->resourceLoadStatisticsDirectory().isEmpty())
         m_resolvedConfiguration->setResourceLoadStatisticsDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->resourceLoadStatisticsDirectory()));
-    if (!m_configuration->privateClickMeasurementStorageDirectory().isEmpty())
-        m_resolvedConfiguration->setPrivateClickMeasurementStorageDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->privateClickMeasurementStorageDirectory()));
     if (!m_configuration->serviceWorkerRegistrationDirectory().isEmpty())
         m_resolvedConfiguration->setServiceWorkerRegistrationDirectory(resolveAndCreateReadWriteDirectoryForSandboxExtension(m_configuration->serviceWorkerRegistrationDirectory()));
     if (!m_configuration->javaScriptConfigurationDirectory().isEmpty())
@@ -1769,10 +1767,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     SandboxExtension::Handle resourceLoadStatisticsDirectoryHandle;
     createHandleFromResolvedPathIfPossible(resourceLoadStatisticsDirectory, resourceLoadStatisticsDirectoryHandle);
 
-    auto privateClickMeasurementStorageDirectory = resolvedPrivateClickMeasurementStorageDirectory();
-    SandboxExtension::Handle privateClickMeasurementStorageDirectoryHandle;
-    createHandleFromResolvedPathIfPossible(privateClickMeasurementStorageDirectory, privateClickMeasurementStorageDirectoryHandle);
-
     auto networkCacheDirectory = resolvedNetworkCacheDirectory();
     SandboxExtension::Handle networkCacheDirectoryExtensionHandle;
     createHandleFromResolvedPathIfPossible(networkCacheDirectory, networkCacheDirectoryExtensionHandle);
@@ -1793,8 +1787,6 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     ResourceLoadStatisticsParameters resourceLoadStatisticsParameters = {
         WTFMove(resourceLoadStatisticsDirectory),
         WTFMove(resourceLoadStatisticsDirectoryHandle),
-        WTFMove(privateClickMeasurementStorageDirectory),
-        WTFMove(privateClickMeasurementStorageDirectoryHandle),
         resourceLoadStatisticsEnabled(),
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
         isItpStateExplicitlySet(),

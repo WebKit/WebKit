@@ -407,7 +407,7 @@ TEST(PrivateClickMeasurement, DatabaseLocation)
     pid_t originalNetworkProcessPid = 0;
     @autoreleasepool {
         auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
-        dataStoreConfiguration.get().privateClickMeasurementStorageDirectory = tempDir;
+        dataStoreConfiguration.get()._resourceLoadStatisticsDirectory = tempDir;
         dataStoreConfiguration.get().pcmMachServiceName = nil;
         auto viewConfiguration = configurationWithoutUsingDaemon();
         auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
