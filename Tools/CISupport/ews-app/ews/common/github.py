@@ -217,10 +217,6 @@ class GitHubEWS(GitHub):
     def generate_comment_text_for_change(self, change):
         hash_url = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
 
-        if change.comment_id == -1:
-            pr_url = GitHub.pr_url(change.pr_id)
-            comment = u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
-            return (comment, comment)
         comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
 
@@ -234,10 +230,14 @@ class GitHubEWS(GitHub):
             comment += comment_for_row
 
         if change.obsolete:
-            return (u'EWS run on previous version of this PR (hash {})<details>{}</details>'.format(hash_url, comment), None)
+            comment = u'EWS run on previous version of this PR (hash {})<details>{}</details>'.format(hash_url, comment)
+            return (comment, comment)
 
         regular_comment = u'{}{}'.format(hash_url, comment)
         folded_comment = u'EWS run on current version of this PR (hash {})<details>{}</details>'.format(hash_url, comment)
+        if change.comment_id == -1:
+            pr_url = GitHub.pr_url(change.pr_id)
+            folded_comment = u'Starting EWS tests for {}. Live statuses available at the PR page, {}'.format(hash_url, pr_url)
 
         return (regular_comment, folded_comment)
 
@@ -346,6 +346,9 @@ class GitHubEWS(GitHub):
             return -1
         gh = GitHubEWS()
         comment_text, folded_comment = gh.generate_comment_text_for_change(change)
+        if not change.obsolete:
+            gh.update_pr_description_with_status_bubble(pr_id, comment_text)
+
         comment_id = change.comment_id
         if comment_id == -1:
             if not allow_new_comment:
@@ -363,8 +366,6 @@ class GitHubEWS(GitHub):
             _log.info('Updating comment for hash: {}, pr_id: {}, pr_id from db: {}.'.format(sha, pr_id, change.pr_id))
             new_comment_id = gh.update_or_leave_comment_on_pr(pr_id, folded_comment, comment_id=comment_id)
 
-        if not change.obsolete:
-            gh.update_pr_description_with_status_bubble(pr_id, comment_text)
         return comment_id
 
     def _steps_messages(self, build):
