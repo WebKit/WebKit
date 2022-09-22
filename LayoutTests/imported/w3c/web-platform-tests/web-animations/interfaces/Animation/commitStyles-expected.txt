@@ -7,7 +7,7 @@ PASS Commits logical properties as physical properties
 PASS Commits values calculated mid-interval
 PASS Commits variable references as their computed values
 PASS Commits custom variables
-FAIL Commits em units as pixel values assert_approx_equals: expected 100 +/- 0.0001 but got 0
+PASS Commits em units as pixel values
 FAIL Commits relative line-height assert_equals: line-height is committed as a relative value expected "1.5" but got "15px"
 PASS Commits transforms
 FAIL Commits transforms as a transform list assert_equals: expected "translate(20px, 20px)" but got "matrix(1, 0, 0, 1, 20, 20)"
