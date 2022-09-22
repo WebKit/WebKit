@@ -186,9 +186,12 @@ public:
     // Note these functions are not equivalent of childrenOfType<RenderBox>
     RenderBox* parentBox() const;
     RenderBox* firstChildBox() const;
+    RenderBox* firstInFlowChildBox() const;
     RenderBox* lastChildBox() const;
+    RenderBox* lastInFlowChildBox() const;
     RenderBox* previousSiblingBox() const;
     RenderBox* nextSiblingBox() const;
+    RenderBox* nextInFlowSiblingBox() const;
 
     // Visual and layout overflow are in the coordinate space of the box.  This means that they aren't purely physical directions.
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
@@ -562,6 +565,7 @@ override;
     RenderLayer* enclosingFloatPaintingLayer() const;
     
     virtual std::optional<LayoutUnit> firstLineBaseline() const { return std::optional<LayoutUnit>(); }
+    virtual std::optional<LayoutUnit> lastLineBaseline() const { return std::optional<LayoutUnit> (); }
     virtual std::optional<LayoutUnit> inlineBlockBaseline(LineDirectionMode) const { return std::optional<LayoutUnit>(); } // Returns empty if we should skip this box when computing the baseline of an inline-block.
 
     bool shrinkToAvoidFloats() const;
@@ -822,6 +826,11 @@ inline RenderBox* RenderBox::firstChildBox() const
     return nullptr;
 }
 
+inline RenderBox* RenderBox::firstInFlowChildBox() const
+{
+    return downcast<RenderBox>(firstInFlowChild());
+}
+
 inline RenderBox* RenderBox::lastChildBox() const
 {
     if (is<RenderBox>(lastChild()))
@@ -829,6 +838,11 @@ inline RenderBox* RenderBox::lastChildBox() const
 
     ASSERT(!lastChild());
     return nullptr;
+}
+
+inline RenderBox* RenderBox::lastInFlowChildBox() const 
+{
+    return downcast<RenderBox>(lastInFlowChild());
 }
 
 inline RenderBox* RenderBox::previousSiblingBox() const
@@ -846,6 +860,15 @@ inline RenderBox* RenderBox::nextSiblingBox() const
         return downcast<RenderBox>(nextSibling());
 
     ASSERT(!nextSibling());
+    return nullptr;
+}
+
+inline RenderBox* RenderBox::nextInFlowSiblingBox() const
+{
+    for (RenderBox* curr = nextSiblingBox(); curr; curr = curr->nextSiblingBox()) {
+        if (!curr->isFloatingOrOutOfFlowPositioned())
+            return curr;
+    }
     return nullptr;
 }
 

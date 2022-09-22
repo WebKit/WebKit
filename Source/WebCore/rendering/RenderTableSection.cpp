@@ -873,9 +873,13 @@ std::optional<LayoutUnit> RenderTableSection::firstLineBaseline() const
     if (!m_grid.size())
         return std::optional<LayoutUnit>();
 
+    LayoutUnit tableMarginBefore;
+    if (RenderTable* parentTable = table())
+        tableMarginBefore = parentTable->style().marginBefore().value();
+
     LayoutUnit firstLineBaseline = m_grid[0].baseline;
     if (firstLineBaseline)
-        return firstLineBaseline + m_rowPos[0];
+        return firstLineBaseline + m_rowPos[0] + tableMarginBefore;
 
     std::optional<LayoutUnit> result;
     const Row& firstRow = m_grid[0].row;
