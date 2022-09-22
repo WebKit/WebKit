@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "Connection.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "RTCDataChannelRemoteManagerMessages.h"
@@ -40,28 +41,25 @@ namespace WebKit {
 
 RTCDataChannelRemoteManager& RTCDataChannelRemoteManager::sharedManager()
 {
-    static RTCDataChannelRemoteManager* sharedManager = new RTCDataChannelRemoteManager;
+    static RTCDataChannelRemoteManager* sharedManager = [] {
+        auto instance = new RTCDataChannelRemoteManager;
+        instance->initialize();
+        return instance;
+    }();
     return *sharedManager;
 }
 
 RTCDataChannelRemoteManager::RTCDataChannelRemoteManager()
     : m_queue(WorkQueue::create("RTCDataChannelRemoteManager"))
+    , m_connection(&WebProcess::singleton().ensureNetworkProcessConnection().connection())
 {
-    setConnection(&WebProcess::singleton().ensureNetworkProcessConnection().connection());
 }
 
-void RTCDataChannelRemoteManager::setConnection(IPC::Connection* connection)
+void RTCDataChannelRemoteManager::initialize()
 {
-    if (m_connection == connection)
-        return;
-
-    if (m_connection)
-        m_connection->removeWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManager::messageReceiverName());
-
-    m_connection = connection;
-
-    if (m_connection)
-        m_connection->addWorkQueueMessageReceiver(Messages::RTCDataChannelRemoteManager::messageReceiverName(), m_queue, *this);
+    // FIXME: If the network process crashes, all RTC data will be misdelivered for the web process.
+    // https://bugs.webkit.org/show_bug.cgi?id=245062
+    m_connection->addMessageReceiver(m_queue, *this, Messages::RTCDataChannelRemoteManager::messageReceiverName());
 }
 
 bool RTCDataChannelRemoteManager::connectToRemoteSource(WebCore::RTCDataChannelIdentifier localIdentifier, WebCore::RTCDataChannelIdentifier remoteIdentifier)
