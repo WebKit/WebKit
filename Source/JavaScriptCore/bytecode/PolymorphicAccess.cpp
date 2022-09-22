@@ -78,14 +78,14 @@ void AccessGenerationState::succeed()
         success.append(jit->jump());
 }
 
-const RegisterSet& AccessGenerationState::liveRegistersForCall()
+const SmallRegisterSet& AccessGenerationState::liveRegistersForCall()
 {
     if (!m_calculatedRegistersForCallAndExceptionHandling)
         calculateLiveRegistersForCallAndExceptionHandling();
     return m_liveRegistersForCall;
 }
 
-const RegisterSet& AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite()
+const SmallRegisterSet& AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite()
 {
     if (!m_calculatedRegistersForCallAndExceptionHandling)
         calculateLiveRegistersForCallAndExceptionHandling();
@@ -99,7 +99,7 @@ static RegisterSet calleeSaveRegisters()
     return result;
 }
 
-const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling()
+const SmallRegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling()
 {
     if (!m_calculatedRegistersForCallAndExceptionHandling) {
         m_calculatedRegistersForCallAndExceptionHandling = true;
@@ -111,21 +111,22 @@ const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExcept
 
         m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
         if (jit->codeBlock()->useDataIC())
-            m_liveRegistersForCall.add(stubInfo->m_stubInfoGPR);
-        m_liveRegistersForCall.exclude(calleeSaveRegisters());
+            m_liveRegistersForCall.includeRegister(stubInfo->m_stubInfoGPR);
+        m_liveRegistersForCall.exclude(calleeSaveRegisters().whole().includeWholeRegisterWidth());
     }
     return m_liveRegistersForCall;
 }
 
-auto AccessGenerationState::preserveLiveRegistersToStackForCall(const RegisterSet& extra) -> SpillState
+auto AccessGenerationState::preserveLiveRegistersToStackForCall(const WholeRegisterSet& extra) -> SpillState
 {
     RegisterSet liveRegisters = liveRegistersForCall();
     liveRegisters.merge(extra);
+    liveRegisters.filter(RegisterSet::allScalarRegisters());
 
     unsigned extraStackPadding = 0;
-    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
+    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters.whole(), extraStackPadding);
     return SpillState {
-        WTFMove(liveRegisters),
+        liveRegisters.whole(),
         numberOfStackBytesUsedForRegisterPreservation
     };
 }
@@ -134,13 +135,14 @@ auto AccessGenerationState::preserveLiveRegistersToStackForCallWithoutExceptions
 {
     RegisterSet liveRegisters = allocator->usedRegisters();
     if (jit->codeBlock()->useDataIC())
-        liveRegisters.add(stubInfo->m_stubInfoGPR);
-    liveRegisters.exclude(calleeSaveRegisters());
+        liveRegisters.includeRegister(stubInfo->m_stubInfoGPR);
+    liveRegisters.exclude(calleeSaveRegisters().whole().includeWholeRegisterWidth());
+    liveRegisters.filter(RegisterSet::allScalarRegisters());
 
     constexpr unsigned extraStackPadding = 0;
-    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters, extraStackPadding);
+    unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*jit, liveRegisters.whole(), extraStackPadding);
     return SpillState {
-        WTFMove(liveRegisters),
+        liveRegisters.whole(),
         numberOfStackBytesUsedForRegisterPreservation
     };
 }
@@ -153,20 +155,20 @@ void AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownExcept
     // inline cache. The subtlety here is if the base and the result are the same register,
     // and the getter threw, we want OSR exit to see the original base value, not the result
     // of the getter call.
-    RegisterSet dontRestore = spillState.spilledRegisters;
+    RegisterSet dontRestore = spillState.spilledRegisters.set().includeWholeRegisterWidth();
     // As an optimization here, we only need to restore what is live for exception handling.
     // We can construct the dontRestore set to accomplish this goal by having it contain only
     // what is live for call but not live for exception handling. By ignoring things that are
     // only live at the call but not the exception handler, we will only restore things live
     // at the exception handler.
-    dontRestore.exclude(liveRegistersToPreserveAtExceptionHandlingCallSite());
-    restoreLiveRegistersFromStackForCall(spillState, dontRestore);
+    dontRestore.exclude(liveRegistersToPreserveAtExceptionHandlingCallSite().whole().includeWholeRegisterWidth());
+    restoreLiveRegistersFromStackForCall(spillState, dontRestore.whole());
 }
 
-void AccessGenerationState::restoreLiveRegistersFromStackForCall(const SpillState& spillState, const RegisterSet& dontRestore)
+void AccessGenerationState::restoreLiveRegistersFromStackForCall(const SpillState& spillState, const WholeRegisterSet& dontRestore)
 {
     unsigned extraStackPadding = 0;
-    ScratchRegisterAllocator::restoreRegistersFromStackForCall(*jit, spillState.spilledRegisters, dontRestore, spillState.numberOfStackBytesUsedForRegisterPreservation, extraStackPadding);
+    ScratchRegisterAllocator::restoreRegistersFromStackForCall(*jit, spillState.spilledRegisters.set(), dontRestore, spillState.numberOfStackBytesUsedForRegisterPreservation, extraStackPadding);
 }
 
 CallSiteIndex AccessGenerationState::callSiteIndexForExceptionHandlingOrOriginal()
@@ -244,7 +246,7 @@ void AccessGenerationState::emitExplicitExceptionHandler()
 
 ScratchRegisterAllocator AccessGenerationState::makeDefaultScratchAllocator(GPRReg extraToLock)
 {
-    ScratchRegisterAllocator allocator(stubInfo->usedRegisters);
+    ScratchRegisterAllocator allocator(stubInfo->usedRegisters.set());
     allocator.lock(stubInfo->baseRegs());
     allocator.lock(stubInfo->valueRegs());
     allocator.lock(stubInfo->m_extraGPR);

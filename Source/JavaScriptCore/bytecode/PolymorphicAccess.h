@@ -222,27 +222,27 @@ struct AccessGenerationState {
 
     struct SpillState {
         SpillState() = default;
-        SpillState(RegisterSet&& regs, unsigned usedStackBytes)
+        SpillState(WholeRegisterSet&& regs, unsigned usedStackBytes)
             : spilledRegisters(WTFMove(regs))
             , numberOfStackBytesUsedForRegisterPreservation(usedStackBytes)
         {
         }
 
-        RegisterSet spilledRegisters { };
+        SmallRegisterSet spilledRegisters { };
         unsigned numberOfStackBytesUsedForRegisterPreservation { std::numeric_limits<unsigned>::max() };
 
         bool isEmpty() const { return numberOfStackBytesUsedForRegisterPreservation == std::numeric_limits<unsigned>::max(); }
     };
 
-    const RegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
+    const SmallRegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
 
-    SpillState preserveLiveRegistersToStackForCall(const RegisterSet& extra = { });
+    SpillState preserveLiveRegistersToStackForCall(const WholeRegisterSet& extra = { });
     SpillState preserveLiveRegistersToStackForCallWithoutExceptions();
 
     void restoreLiveRegistersFromStackForCallWithThrownException(const SpillState&);
-    void restoreLiveRegistersFromStackForCall(const SpillState&, const RegisterSet& dontRestore = { });
+    void restoreLiveRegistersFromStackForCall(const SpillState&, const WholeRegisterSet& dontRestore = { });
 
-    const RegisterSet& liveRegistersForCall();
+    const SmallRegisterSet& liveRegistersForCall();
 
     CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     DisposableCallSiteIndex callSiteIndexForExceptionHandling();
@@ -267,10 +267,10 @@ struct AccessGenerationState {
     ScratchRegisterAllocator makeDefaultScratchAllocator(GPRReg extraToLock = InvalidGPRReg);
 
 private:
-    const RegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
+    const SmallRegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
     
-    RegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
-    RegisterSet m_liveRegistersForCall;
+    SmallRegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
+    SmallRegisterSet m_liveRegistersForCall;
     CallSiteIndex m_callSiteIndex;
     SpillState m_spillStateForJSCall;
     bool m_calculatedRegistersForCallAndExceptionHandling : 1 { false };

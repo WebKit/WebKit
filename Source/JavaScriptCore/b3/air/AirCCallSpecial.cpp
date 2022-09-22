@@ -34,13 +34,10 @@ namespace JSC { namespace B3 { namespace Air {
 
 CCallSpecial::CCallSpecial()
 {
-    m_clobberedRegs = RegisterSet::allRegisters();
-    m_clobberedRegs.exclude(RegisterSet::stackRegisters());
-    m_clobberedRegs.exclude(RegisterSet::reservedHardwareRegisters());
-    m_clobberedRegs.exclude(RegisterSet::calleeSaveRegisters());
-    m_clobberedRegs.clear(GPRInfo::returnValueGPR);
-    m_clobberedRegs.clear(GPRInfo::returnValueGPR2);
-    m_clobberedRegs.clear(FPRInfo::returnValueFPR);
+    m_clobberedRegs = RegisterSet::registersToSaveForCCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters());
+    m_clobberedRegs.excludeRegister(GPRInfo::returnValueGPR);
+    m_clobberedRegs.excludeRegister(GPRInfo::returnValueGPR2);
+    m_clobberedRegs.excludeRegister(FPRInfo::returnValueFPR);
 }
 
 CCallSpecial::~CCallSpecial()

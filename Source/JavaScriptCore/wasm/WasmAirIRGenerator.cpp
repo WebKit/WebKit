@@ -676,7 +676,7 @@ private:
                 inst.args.append(tmp.tmp);
                 break;
             case B3::ValueRep::Register:
-                patch->earlyClobbered().clear(tmp.rep.reg());
+                patch->earlyClobbered().excludeRegister(tmp.rep.reg());
                 append(basicBlock, tmp.tmp.isGP() ? Move : MoveDouble, tmp.tmp, tmp.rep.reg());
                 inst.args.append(Tmp(tmp.rep.reg()));
                 break;
@@ -694,7 +694,7 @@ private:
 
         for (auto valueRep : patch->resultConstraints) {
             if (valueRep.isReg())
-                patch->lateClobbered().clear(valueRep.reg());
+                patch->lateClobbered().excludeRegister(valueRep.reg());
         }
         for (unsigned i = patch->numGPScratchRegisters; i--;)
             inst.args.append(g64().tmp());
@@ -957,7 +957,7 @@ void AirIRGenerator::restoreWasmContextInstance(BasicBlock* block, TypedTmp inst
     if (Context::useFastTLS()) {
         auto* patchpoint = addPatchpoint(B3::Void);
         if (CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister())
-            patchpoint->clobber(RegisterSet::macroScratchRegisters());
+            patchpoint->clobber(RegisterSet::macroClobberedRegisters());
         patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
             AllowMacroScratchRegisterUsageIf allowScratch(jit, CCallHelpers::storeWasmContextInstanceNeedsMacroScratchRegister());
             jit.storeWasmContextInstance(params[0].gpr());
@@ -1100,7 +1100,7 @@ AirIRGenerator::AirIRGenerator(const ModuleInformation& info, B3::Procedure& pro
     CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(signature, CallRole::Callee);
 
     for (unsigned i = 0; i < wasmCallInfo.params.size(); ++i) {
-        B3::ValueRep location = wasmCallInfo.params[i];
+        B3::ValueRep location = wasmCallInfo.params[i].location;
         Arg arg = location.isReg() ? Arg(Tmp(location.reg())) : Arg::addr(Tmp(GPRInfo::callFrameRegister), location.offsetFromFP());
         switch (signature.as<FunctionSignature>()->argumentType(i).kind) {
         case TypeKind::I32:
@@ -1213,9 +1213,9 @@ void AirIRGenerator::restoreWebAssemblyGlobalState(RestoreCachedStackLimit resto
     if (!!memory) {
         const PinnedRegisterInfo* pinnedRegs = &PinnedRegisterInfo::get();
         RegisterSet clobbers;
-        clobbers.set(pinnedRegs->baseMemoryPointer);
-        clobbers.set(pinnedRegs->boundsCheckingSizeRegister);
-        clobbers.set(RegisterSet::macroScratchRegisters());
+        clobbers.includeRegister(pinnedRegs->baseMemoryPointer);
+        clobbers.includeRegister(pinnedRegs->boundsCheckingSizeRegister);
+        clobbers.merge(RegisterSet::macroClobberedRegisters());
 
         auto* patchpoint = addPatchpoint(B3::Void);
         B3::Effects effects = B3::Effects::none();
@@ -2963,7 +2963,7 @@ auto AirIRGenerator::addUncheckedFloatingPointTruncation(FloatingPointTruncation
         switch (kind) {
         case FloatingPointTruncationKind::F32ToU64: {
             auto signBitConstant = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-            patchpoint->clobber(RegisterSet::macroScratchRegisters());
+            patchpoint->clobber(RegisterSet::macroClobberedRegisters());
             patchpoint->numFPScratchRegisters = 1;
             emitPatchpoint(
                 m_currentBlock, patchpoint,
@@ -2974,7 +2974,7 @@ auto AirIRGenerator::addUncheckedFloatingPointTruncation(FloatingPointTruncation
         }
         case FloatingPointTruncationKind::F64ToU64: {
             auto signBitConstant = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-            patchpoint->clobber(RegisterSet::macroScratchRegisters());
+            patchpoint->clobber(RegisterSet::macroClobberedRegisters());
             patchpoint->numFPScratchRegisters = 1;
             emitPatchpoint(
                 m_currentBlock, patchpoint,
@@ -3424,7 +3424,7 @@ void AirIRGenerator::emitEntryTierUpCheck()
     effects.reads = B3::HeapRange::top();
     effects.writes = B3::HeapRange::top();
     patch->effects = effects;
-    patch->clobber(RegisterSet::macroScratchRegisters());
+    patch->clobber(RegisterSet::macroClobberedRegisters());
 
     patch->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -3436,14 +3436,15 @@ void AirIRGenerator::emitEntryTierUpCheck()
             tierUp.link(&jit);
 
             const unsigned extraPaddingBytes = 0;
-            RegisterSet registersToSpill = { };
-            registersToSpill.add(GPRInfo::argumentGPR1);
+            WholeRegisterSet registersToSpill = { };
+            registersToSpill.includeRegister(GPRInfo::argumentGPR1);
             unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
             jit.move(MacroAssembler::TrustedImm32(m_functionIndex), GPRInfo::argumentGPR1);
             MacroAssembler::Call call = jit.nearCall();
 
-            ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, RegisterSet(), numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
+            ASSERT(!registersToSpill.numberOfSetFPRs());
+            ScratchRegisterAllocator::restoreRegistersFromStackForCall(jit, registersToSpill, { }, numberOfStackBytesUsedForRegisterPreservation, extraPaddingBytes);
             jit.jump(tierUpResume);
 
             jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
@@ -3477,15 +3478,15 @@ void AirIRGenerator::emitLoopTierUpCheck(uint32_t loopIndex, const Vector<TypedT
     effects.exitsSideways = true;
     patch->effects = effects;
 
-    patch->clobber(RegisterSet::macroScratchRegisters());
+    patch->clobber(RegisterSet::macroClobberedRegisters());
     RegisterSet clobberLate;
-    clobberLate.add(GPRInfo::argumentGPR0);
+    clobberLate.includeRegister(GPRInfo::argumentGPR0);
     patch->clobberLate(clobberLate);
 
     Vector<ConstrainedTmp> patchArgs;
     patchArgs.append(countdownPtr);
     for (const TypedTmp& tmp : liveValues)
-        patchArgs.append(ConstrainedTmp(tmp.tmp(), B3::ValueRep::ColdAny));
+        patchArgs.append(ConstrainedTmp(tmp, B3::ValueRep::ColdAny));
 
     TierUpCount::TriggerReason* forceEntryTrigger = &(m_tierUp->osrEntryTriggers().last());
     static_assert(!static_cast<uint8_t>(TierUpCount::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
@@ -3699,9 +3700,9 @@ Tmp AirIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned ex
 
     B3::PatchpointValue* patch = addPatchpoint(m_proc.addTuple({ B3::pointerType(), B3::pointerType() }));
     patch->effects.exitsSideways = true;
-    patch->clobber(RegisterSet::macroScratchRegisters());
-    RegisterSet clobberLate = RegisterSet::volatileRegistersForJSCall();
-    clobberLate.add(GPRInfo::argumentGPR0);
+    patch->clobber(RegisterSet::macroClobberedRegisters());
+    auto clobberLate = RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters());
+    clobberLate.includeRegister(GPRInfo::argumentGPR0);
     patch->clobberLate(clobberLate);
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR));
     patch->resultConstraints.append(B3::ValueRep::reg(GPRInfo::returnValueGPR2));
@@ -3806,7 +3807,7 @@ auto AirIRGenerator::addReturn(const ControlData& data, const Stack& returnValue
     unsigned offset = returnValues.size() - wasmCallInfo.results.size();
     Vector<ConstrainedTmp, 8> returnConstraints;
     for (unsigned i = 0; i < wasmCallInfo.results.size(); ++i) {
-        B3::ValueRep rep = wasmCallInfo.results[i];
+        B3::ValueRep rep = wasmCallInfo.results[i].location;
         TypedTmp tmp = returnValues[offset + i];
 
         if (rep.isStack()) {
@@ -3884,7 +3885,7 @@ auto AirIRGenerator::addSwitch(ExpressionType condition, const Vector<ControlDat
     auto* patchpoint = addPatchpoint(B3::Void);
     patchpoint->effects = B3::Effects::none();
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
 
     patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -3976,7 +3977,7 @@ std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitC
     auto* patchpoint = addPatchpoint(toB3ResultType(&signature));
     patchpoint->effects.writesPinned = true;
     patchpoint->effects.readsPinned = true;
-    patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
+    patchpoint->clobberEarly(RegisterSet::macroClobberedRegisters());
     patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
 
     CallInformation locations = wasmCallingConvention().callInformationFor(signature);
@@ -3993,7 +3994,7 @@ std::pair<B3::PatchpointValue*, PatchpointExceptionHandle> AirIRGenerator::emitC
     if (patchpoint->type() != B3::Void) {
         Vector<B3::ValueRep, 1> resultConstraints;
         for (auto valueLocation : locations.results)
-            resultConstraints.append(B3::ValueRep(valueLocation));
+            resultConstraints.append(B3::ValueRep(valueLocation.location));
         patchpoint->resultConstraints = WTFMove(resultConstraints);
     }
     PatchpointExceptionHandle exceptionHandle = preparePatchpointForExceptions(patchpoint, patchArgs);
@@ -4238,7 +4239,7 @@ auto AirIRGenerator::emitIndirectCall(TypedTmp calleeInstance, ExpressionType ca
         // We pessimistically assume we're calling something with BoundsChecking memory.
         // FIXME: We shouldn't have to do this: https://bugs.webkit.org/show_bug.cgi?id=172181
         patchpoint->clobber(PinnedRegisterInfo::get().toSave(MemoryMode::BoundsChecking));
-        patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        patchpoint->clobber(RegisterSet::macroClobberedRegisters());
         patchpoint->numGPScratchRegisters = 1;
 
         patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -4687,7 +4688,7 @@ auto AirIRGenerator::addOp<F64ConvertUI64>(ExpressionType arg, ExpressionType& r
     patchpoint->effects = B3::Effects::none();
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
     patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)
@@ -4708,7 +4709,7 @@ auto AirIRGenerator::addOp<OpType::F32ConvertUI64>(ExpressionType arg, Expressio
     patchpoint->effects = B3::Effects::none();
     if (isX86())
         patchpoint->numGPScratchRegisters = 1;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
     patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
 #if CPU(X86_64)

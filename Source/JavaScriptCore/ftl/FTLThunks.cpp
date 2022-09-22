@@ -141,15 +141,13 @@ MacroAssemblerCodeRef<JITThunkPtrTag> lazySlowPathGenerationThunkGenerator(VM& v
 static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
 {
     ASSERT(Options::clobberAllRegsInFTLICSlowPath());
-    RegisterSet clobber = RegisterSet::allRegisters();
-    clobber.exclude(RegisterSet::reservedHardwareRegisters());
-    clobber.exclude(RegisterSet::stackRegisters());
-    clobber.exclude(RegisterSet::calleeSaveRegisters());
+    RegisterSet clobber = RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters());
     clobber.exclude(dontClobber);
+    auto wholeClobberedRegisters = WholeRegisterSet(clobber);
     
     GPRReg someGPR = InvalidGPRReg;
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!clobber.get(reg) || !reg.isGPR())
+        if (!wholeClobberedRegisters.includesRegister(reg) || !reg.isGPR())
             continue;
         
         jit.move(AssemblyHelpers::TrustedImm32(0x1337beef), reg.gpr());
@@ -157,7 +155,7 @@ static void registerClobberCheck(AssemblyHelpers& jit, RegisterSet dontClobber)
     }
     
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (!clobber.get(reg) || !reg.isFPR())
+        if (!wholeClobberedRegisters.includesRegister(reg) || !reg.isFPR())
             continue;
         
         jit.move64ToDouble(someGPR, reg.fpr());
@@ -182,7 +180,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     AssemblyHelpers::StoreRegSpooler storeSpooler(jit, MacroAssembler::stackPointerRegister);
 
     for (MacroAssembler::RegisterID reg = MacroAssembler::firstRegister(); reg <= MacroAssembler::lastRegister(); reg = static_cast<MacroAssembler::RegisterID>(reg + 1)) {
-        if (!key.usedRegisters().get(reg))
+        if (!key.usedRegisters().includesRegister(reg))
             continue;
         storeSpooler.storeGPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
         currentOffset += sizeof(void*);
@@ -190,7 +188,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     storeSpooler.finalizeGPR();
 
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = static_cast<MacroAssembler::FPRegisterID>(reg + 1)) {
-        if (!key.usedRegisters().get(reg))
+        if (!key.usedRegisters().includesRegister(reg))
             continue;
         storeSpooler.storeFPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
         currentOffset += sizeof(double);
@@ -202,9 +200,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     jit.prepareCallOperation(vm);
     
     if (UNLIKELY(Options::clobberAllRegsInFTLICSlowPath())) {
-        RegisterSet dontClobber = key.argumentRegistersIfClobberingCheckIsEnabled();
+        auto dontClobber = key.argumentRegistersIfClobberingCheckIsEnabled();
         if (!key.callTarget())
-            dontClobber.set(GPRInfo::nonArgGPR0);
+            dontClobber.includeRegister(GPRInfo::nonArgGPR0);
         registerClobberCheck(jit, WTFMove(dontClobber));
     }
 
@@ -220,7 +218,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     AssemblyHelpers::LoadRegSpooler loadSpooler(jit, MacroAssembler::stackPointerRegister);
 
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::lastFPRegister(); ; reg = static_cast<MacroAssembler::FPRegisterID>(reg - 1)) {
-        if (key.usedRegisters().get(reg)) {
+        if (key.usedRegisters().includesRegister(reg)) {
             currentOffset -= sizeof(double);
             loadSpooler.loadFPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
         }
@@ -230,7 +228,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> slowPathCallThunkGenerator(VM& vm, const S
     loadSpooler.finalizeFPR();
 
     for (MacroAssembler::RegisterID reg = MacroAssembler::lastRegister(); ; reg = static_cast<MacroAssembler::RegisterID>(reg - 1)) {
-        if (key.usedRegisters().get(reg)) {
+        if (key.usedRegisters().includesRegister(reg)) {
             currentOffset -= sizeof(void*);
             loadSpooler.loadGPR({ reg, static_cast<ptrdiff_t>(currentOffset) });
         }

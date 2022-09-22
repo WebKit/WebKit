@@ -1188,7 +1188,7 @@ void testWasmAddressDoesNotCSE()
 
     PatchpointValue* patchpoint = b->appendNew<PatchpointValue>(proc, Void, Origin());
     patchpoint->effects = Effects::forCall();
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
     patchpoint->clobber(RegisterSet(pinnedGPR));
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1286,7 +1286,7 @@ void testStoreAfterClobberExitsSideways()
     RegisterSet csrs;
     csrs.merge(RegisterSet::calleeSaveRegisters());
     csrs.exclude(RegisterSet::stackRegisters());
-    csrs.forEach(
+    csrs.whole().forEach(
         [&] (Reg reg) {
             CHECK(reg != pinnedBaseGPR);
             CHECK(reg != pinnedSizeGPR);
@@ -1466,7 +1466,7 @@ void testStoreAfterClobberExitsSidewaysSuccessor()
     RegisterSet csrs;
     csrs.merge(RegisterSet::calleeSaveRegisters());
     csrs.exclude(RegisterSet::stackRegisters());
-    csrs.forEach(
+    csrs.whole().forEach(
         [&] (Reg reg) {
             CHECK(reg != pinnedBaseGPR);
             CHECK(reg != pinnedSizeGPR);

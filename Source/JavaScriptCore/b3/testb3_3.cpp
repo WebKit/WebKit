@@ -3525,9 +3525,9 @@ void testStorePartial8BitRegisterOnX86()
     RegisterSet clobberSet = RegisterSet::allGPRs();
     clobberSet.exclude(RegisterSet::stackRegisters());
     clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberSet.clear(GPRInfo::regT3);
-    clobberSet.clear(GPRInfo::regT2);
-    clobberSet.clear(GPRInfo::regT6);
+    clobberSet.excludeRegister(GPRInfo::regT3);
+    clobberSet.excludeRegister(GPRInfo::regT2);
+    clobberSet.excludeRegister(GPRInfo::regT6);
     patchpoint->clobberLate(clobberSet);
 
     // Set EDI.

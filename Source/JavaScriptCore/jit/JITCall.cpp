@@ -549,8 +549,8 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     {
         emitJumpSlowCaseIfNotJSCell(returnValueJSR);
 
-        RegisterSet preservedRegs = RegisterSet::stubUnavailableRegisters();
-        preservedRegs.set(iterCallResultJSR);
+        auto preservedRegs = RegisterSet::stubUnavailableRegisters();
+        preservedRegs.includeRegister(iterCallResultJSR);
         auto [ stubInfo, stubInfoIndex ] = addUnlinkedStructureStubInfo();
         JITGetByIdGenerator gen(
             nullptr, stubInfo, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(BytecodeIndex(m_bytecodeIndex.offset())), preservedRegs,
@@ -568,7 +568,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     }
 
     {
-        RegisterSet usedRegisters(doneJSR, iterCallResultJSR);
+        auto usedRegisters = RegisterSet(doneJSR, iterCallResultJSR).whole();
         ScratchRegisterAllocator scratchAllocator(usedRegisters);
         GPRReg scratch1 = scratchAllocator.allocateScratchGPR();
         GPRReg scratch2 = scratchAllocator.allocateScratchGPR();

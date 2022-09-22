@@ -86,7 +86,7 @@ private:
     ptrdiff_t previousInstanceOffset() const;
     bool usesTagRegisters() const;
 
-    RegisterSet calleeSaves() const;
+    WholeRegisterSet calleeSaves() const;
 
     // It's safe to just hold the raw jsEntrypoint because we have a reference
     // to our Instance, which points to the Module that exported us, which

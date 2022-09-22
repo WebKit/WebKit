@@ -405,9 +405,9 @@ public:
 
     void restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*&);
     void restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg vmGPR, GPRReg scratchGPR);
-    void restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrame, const RegisterSet& skipList);
+    void restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrame, const WholeRegisterSet& skipList);
 
-    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const RegisterSet& usedRegisters = RegisterSet::stubUnavailableRegisters());
+    void copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*&, const WholeRegisterSet& usedRegisters = RegisterSet::stubUnavailableRegisters());
 
     void emitMaterializeTagCheckRegisters()
     {
@@ -1295,7 +1295,7 @@ public:
         return calleeFrameSlot(CallFrameSlot::codeBlock).withOffset(sizeof(CallerFrameAndPC) - prologueStackPointerDelta());
     }
 
-    static GPRReg selectScratchGPR(RegisterSet preserved)
+    static GPRReg selectScratchGPR(WholeRegisterSet preserved)
     {
         GPRReg registers[] = {
             GPRInfo::regT0,
@@ -1307,7 +1307,7 @@ public:
         };
 
         for (GPRReg reg : registers) {
-            if (!preserved.contains(reg))
+            if (!preserved.includesRegister(reg))
                 return reg;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -1317,30 +1317,30 @@ public:
     template<typename... Regs>
     static GPRReg selectScratchGPR(Regs... args)
     {
-        RegisterSet set;
+        WholeRegisterSet set;
         constructRegisterSet(set, args...);
         return selectScratchGPR(set);
     }
 
-    static void constructRegisterSet(RegisterSet&)
+    static void constructRegisterSet(WholeRegisterSet&)
     {
     }
 
     template<typename... Regs>
-    static void constructRegisterSet(RegisterSet& set, JSValueRegs regs, Regs... args)
+    static void constructRegisterSet(WholeRegisterSet& set, JSValueRegs regs, Regs... args)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            set.set(regs.tagGPR());
+            set.includeRegister(regs.tagGPR());
         if (regs.payloadGPR() != InvalidGPRReg)
-            set.set(regs.payloadGPR());
+            set.includeRegister(regs.payloadGPR());
         constructRegisterSet(set, args...);
     }
 
     template<typename... Regs>
-    static void constructRegisterSet(RegisterSet& set, GPRReg reg, Regs... args)
+    static void constructRegisterSet(WholeRegisterSet& set, GPRReg reg, Regs... args)
     {
         if (reg != InvalidGPRReg)
-            set.set(reg);
+            set.includeRegister(reg);
         constructRegisterSet(set, args...);
     }
 

@@ -70,19 +70,19 @@ const WasmCallingConvention& wasmCallingConvention()
             fprArgumentRegisters[i] = FPRInfo::toArgumentRegister(i);
 
         RegisterSet scratch = RegisterSet::allGPRs();
-        scratch.exclude(RegisterSet::vmCalleeSaveRegisters());
-        scratch.exclude(RegisterSet::macroScratchRegisters());
+        scratch.exclude(RegisterSet::vmCalleeSaveRegisters().includeWholeRegisterWidth());
+        scratch.exclude(RegisterSet::macroClobberedRegisters());
         scratch.exclude(RegisterSet::reservedHardwareRegisters());
         scratch.exclude(RegisterSet::stackRegisters());
         for (JSValueRegs jsr : jsrArgumentRegisters) {
-            scratch.clear(jsr.payloadGPR());
+            scratch.excludeRegister(jsr.payloadGPR());
 #if USE(JSVALUE32_64)
-            scratch.clear(jsr.tagGPR());
+            scratch.excludeRegister(jsr.tagGPR());
 #endif
         }
 
         Vector<GPRReg> scratchGPRs;
-        for (Reg reg : scratch)
+        for (Reg reg : WholeRegisterSet(scratch))
             scratchGPRs.append(reg.gpr());
 
         // Need at least one JSValue and an additional GPR

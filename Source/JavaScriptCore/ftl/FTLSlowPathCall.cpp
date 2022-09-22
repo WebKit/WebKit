@@ -39,7 +39,7 @@ namespace JSC { namespace FTL {
 static constexpr size_t wordSize = 8;
 
 SlowPathCallContext::SlowPathCallContext(
-    RegisterSet usedRegisters, CCallHelpers& jit, unsigned numArgs, GPRReg returnRegister, GPRReg indirectCallTargetRegister)
+    SmallRegisterSet originalUsedRegisters, CCallHelpers& jit, unsigned numArgs, GPRReg returnRegister, GPRReg indirectCallTargetRegister)
     : m_jit(jit)
     , m_numArgs(numArgs)
     , m_returnRegister(returnRegister)
@@ -47,28 +47,30 @@ SlowPathCallContext::SlowPathCallContext(
     // We don't care that you're using callee-save, stack, or hardware registers.
     usedRegisters.exclude(RegisterSet::stackRegisters());
     usedRegisters.exclude(RegisterSet::reservedHardwareRegisters());
-    usedRegisters.exclude(RegisterSet::calleeSaveRegisters());
+    usedRegisters.exclude(RegisterSet::calleeSaveRegisters().includeWholeRegisterWidth());
         
     // The return register doesn't need to be saved.
     if (m_returnRegister != InvalidGPRReg)
-        usedRegisters.clear(m_returnRegister);
+        usedRegisters.excludeRegister(m_returnRegister);
         
     size_t stackBytesNeededForReturnAddress = wordSize;
         
     m_offsetToSavingArea =
         (std::max(m_numArgs, NUMBER_OF_ARGUMENT_REGISTERS) - NUMBER_OF_ARGUMENT_REGISTERS) * wordSize;
-        
+    
+    RegisterSet callingConventionRegisters = m_callingConventionRegisters.set();
     for (unsigned i = std::min(NUMBER_OF_ARGUMENT_REGISTERS, numArgs); i--;)
-        m_argumentRegisters.set(GPRInfo::toArgumentRegister(i));
-    m_callingConventionRegisters.merge(m_argumentRegisters);
+        callingConventionRegisters.includeRegister(GPRInfo::toArgumentRegister(i));
+    callingConventionRegisters.merge(m_argumentRegisters.set());
     if (returnRegister != InvalidGPRReg)
-        m_callingConventionRegisters.set(GPRInfo::returnValueGPR);
+        callingConventionRegisters.includeRegister(GPRInfo::returnValueGPR);
     if (indirectCallTargetRegister != InvalidGPRReg)
-        m_callingConventionRegisters.set(indirectCallTargetRegister);
-    m_callingConventionRegisters.filter(usedRegisters);
+        callingConventionRegisters.includeRegister(indirectCallTargetRegister);
+    callingConventionRegisters.filter(usedRegisters);
+    m_callingConventionRegisters = callingConventionRegisters.whole();
         
     unsigned numberOfCallingConventionRegisters =
-        m_callingConventionRegisters.numberOfSetRegisters();
+        callingConventionRegisters.numberOfSetRegisters();
         
     size_t offsetToThunkSavingArea =
         m_offsetToSavingArea +
@@ -83,18 +85,19 @@ SlowPathCallContext::SlowPathCallContext(
         
     m_jit.subPtr(CCallHelpers::TrustedImm32(m_stackBytesNeeded), CCallHelpers::stackPointerRegister);
 
-    m_thunkSaveSet = usedRegisters;
+    auto thunkSaveSet = usedRegisters;
         
     // This relies on all calling convention registers also being temp registers.
     unsigned stackIndex = 0;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (!m_callingConventionRegisters.get(reg))
+        if (!m_callingConventionRegisters.set().includesRegister(reg))
             continue;
         m_jit.storePtr(reg, CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize));
-        m_thunkSaveSet.clear(reg);
+        thunkSaveSet.excludeRegister(reg);
     }
-        
+    
+    m_thunkSaveSet = FrozenRegisterSet(thunkSaveSet.whole());
     m_offset = offsetToThunkSavingArea;
 }
     
@@ -106,7 +109,7 @@ SlowPathCallContext::~SlowPathCallContext()
     unsigned stackIndex = 0;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (!m_callingConventionRegisters.get(reg))
+        if (!m_callingConventionRegisters.set().includesRegister(reg))
             continue;
         m_jit.loadPtr(CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize), reg);
     }

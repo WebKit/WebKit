@@ -51,7 +51,7 @@ public:
     {
         CCallHelpers::JumpList exceptions;
         // We spill (1) the used registers by IC and (2) the used registers by Snippet.
-        AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(usedRegistersBySnippet);
+        AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(usedRegistersBySnippet.whole());
 
         jit.store32(
             CCallHelpers::TrustedImm32(state.callSiteIndexForExceptionHandlingOrOriginal().bits()),
@@ -77,8 +77,8 @@ public:
         exceptions.append(jit.jump());
 
         noException.link(&jit);
-        RegisterSet dontRestore;
-        dontRestore.set(m_result);
+        WholeRegisterSet dontRestore;
+        dontRestore.includeRegister(m_result);
         state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
 
         return exceptions;

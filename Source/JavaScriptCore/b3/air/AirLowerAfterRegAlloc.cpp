@@ -111,10 +111,15 @@ void lowerAfterRegAlloc(Code& code)
     // If we run after stack allocation then we cannot use those callee saves that aren't in
     // the callee save list. Note that we are only run after stack allocation in -O1, so this
     // kind of slop is OK.
-    RegisterSet disallowedCalleeSaves;
-    if (code.stackIsAllocated()) {
-        disallowedCalleeSaves = RegisterSet::calleeSaveRegisters();
-        disallowedCalleeSaves.exclude(code.calleeSaveRegisters());
+    WholeRegisterSet disallowedCalleeSaves;
+    {
+        RegisterSet disallowed;
+        if (code.stackIsAllocated()) {
+            disallowed = RegisterSet::calleeSaveRegisters();
+            ASSERT(!disallowed.hasAnyWideRegisters());
+            disallowed.exclude(code.calleeSaveRegisters());
+        }
+        disallowedCalleeSaves = disallowed.whole();
     }
     
     auto getScratches = [&] (RegisterSet set, Bank bank) -> std::array<Arg, 2> {
@@ -122,9 +127,9 @@ void lowerAfterRegAlloc(Code& code)
         for (unsigned i = 0; i < 2; ++i) {
             bool found = false;
             for (Reg reg : code.regsInPriorityOrder(bank)) {
-                if (!set.get(reg) && !disallowedCalleeSaves.get(reg)) {
+                if (!WholeRegisterSet(set).includesRegister(reg) && !disallowedCalleeSaves.includesRegister(reg)) {
                     result[i] = Tmp(reg);
-                    set.set(reg);
+                    set.includeRegister(reg);
                     found = true;
                     break;
                 }
@@ -159,7 +164,7 @@ void lowerAfterRegAlloc(Code& code)
                     // interfere with either sources or destinations.
                     auto excludeRegisters = [&] (Tmp tmp) {
                         if (tmp.isReg())
-                            set.set(tmp.reg());
+                            set.includeRegister(tmp.reg());
                     };
                     src.forEachTmpFast(excludeRegisters);
                     dst.forEachTmpFast(excludeRegisters);
@@ -179,10 +184,11 @@ void lowerAfterRegAlloc(Code& code)
                 Kind oldKind = inst.kind;
 
                 RegisterSet liveRegs = usedRegisters.get(&inst);
-                RegisterSet regsToSave = liveRegs;
-                regsToSave.exclude(RegisterSet::calleeSaveRegisters());
-                regsToSave.exclude(RegisterSet::stackRegisters());
-                regsToSave.exclude(RegisterSet::reservedHardwareRegisters());
+                RegisterSet unsavedRegs = liveRegs;
+                unsavedRegs.exclude(RegisterSet::calleeSaveRegisters());
+                unsavedRegs.exclude(RegisterSet::stackRegisters());
+                unsavedRegs.exclude(RegisterSet::reservedHardwareRegisters());
+                auto regsToSave = WholeRegisterSet(unsavedRegs);
 
                 RegisterSet preUsed = liveRegs;
                 Vector<Arg> destinations = computeCCallingConvention(code, value);
@@ -199,7 +205,7 @@ void lowerAfterRegAlloc(Code& code)
 
                     auto excludeRegisters = [&] (Tmp tmp) {
                         if (tmp.isReg())
-                            preUsed.set(tmp.reg());
+                            preUsed.includeRegister(tmp.reg());
                     };
                     src.forEachTmpFast(excludeRegisters);
                     dst.forEachTmpFast(excludeRegisters);
@@ -211,7 +217,7 @@ void lowerAfterRegAlloc(Code& code)
                 // Also need to save all live registers. Don't need to worry about the result
                 // register.
                 if (originalResult.isReg())
-                    regsToSave.clear(originalResult.reg());
+                    regsToSave.excludeRegister(originalResult.reg());
                 Vector<StackSlot*> stackSlots;
                 regsToSave.forEach(
                     [&] (Reg reg) {
@@ -253,7 +259,7 @@ void lowerAfterRegAlloc(Code& code)
                 // For finding scratch registers, we need to account for the possibility that
                 // the result is dead.
                 if (originalResult.isReg())
-                    liveRegs.set(originalResult.reg());
+                    liveRegs.includeRegister(originalResult.reg());
 
                 gpScratch = getScratches(liveRegs, GP);
                 fpScratch = getScratches(liveRegs, FP);

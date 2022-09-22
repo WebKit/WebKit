@@ -670,7 +670,7 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
-    RegisterSet dontRestoreRegisters = RegisterSet::stackRegisters();
+    auto dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->registerCount();
     JIT_COMMENT(*this, "restoreCalleeSavesFromEntryFrameCalleeSavesBuffer ", *allCalleeSaves, " skip: ", dontRestoreRegisters);
 
@@ -686,13 +686,13 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
     // Use the first GPR entry's register as our baseGPR.
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
-        if (dontRestoreRegisters.contains(entry.reg()))
+        if (dontRestoreRegisters.includesRegister(entry.reg()))
             continue;
         if (entry.reg().isGPR()) {
 #if CPU(ARM64)
             if (i + 1 < registerCount) {
                 RegisterAtOffset entry2 = allCalleeSaves->at(i + 1);
-                if (!dontRestoreRegisters.contains(entry2.reg())
+                if (!dontRestoreRegisters.includesRegister(entry2.reg())
                     && entry2.reg().isGPR()
                     && entry2.offset() == entry.offset() + static_cast<ptrdiff_t>(sizeof(CPURegister))) {
                     scratchGPREntryIndex = i;
@@ -710,14 +710,14 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
     }
     ASSERT(scratch != InvalidGPRReg);
     
-    RegisterSet skipList;
-    skipList.set(dontRestoreRegisters);
+    WholeRegisterSet skipList;
+    skipList.merge(dontRestoreRegisters);
 
     // Skip the scratch register(s). We'll restore them later.
-    skipList.add(scratch);
+    skipList.includeRegister(scratch);
 #if CPU(ARM64)
     RELEASE_ASSERT(unusedNextSlotGPR != InvalidGPRReg);
-    skipList.add(unusedNextSlotGPR);
+    skipList.includeRegister(unusedNextSlotGPR);
 #endif
 
     loadPtr(&topEntryFrame, scratch);
@@ -725,12 +725,12 @@ void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFra
 
     // Restore the callee save value of the scratch.
     RegisterAtOffset entry = allCalleeSaves->at(scratchGPREntryIndex);
-    ASSERT(!dontRestoreRegisters.get(entry.reg()));
+    ASSERT(!dontRestoreRegisters.includesRegister(entry.reg()));
     ASSERT(entry.reg().isGPR());
     ASSERT(scratch == entry.reg().gpr());
 #if CPU(ARM64)
     RegisterAtOffset entry2 = allCalleeSaves->at(scratchGPREntryIndex + 1);
-    ASSERT_UNUSED(entry2, !dontRestoreRegisters.get(entry2.reg()));
+    ASSERT_UNUSED(entry2, !dontRestoreRegisters.includesRegister(entry2.reg()));
     ASSERT(entry2.reg().isGPR());
     ASSERT(unusedNextSlotGPR == entry2.reg().gpr());
     loadPair64(scratch, TrustedImm32(entry.offset()), scratch, unusedNextSlotGPR);
@@ -753,7 +753,7 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(GPRReg
 #endif // NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
 }
 
-void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrameGPR, const RegisterSet& skipList)
+void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GPRReg entryFrameGPR, const WholeRegisterSet& skipList)
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), entryFrameGPR);
@@ -768,7 +768,7 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
     unsigned i = 0;
     for (; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
-        if (skipList.contains(entry.reg()))
+        if (skipList.includesRegister(entry.reg()))
             continue;
         if (!entry.reg().isGPR())
             break;
@@ -777,7 +777,7 @@ void AssemblyHelpers::restoreCalleeSavesFromVMEntryFrameCalleeSavesBufferImpl(GP
     spooler.finalizeGPR();
     for (; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
-        if (skipList.contains(entry.reg()))
+        if (skipList.includesRegister(entry.reg()))
             continue;
         ASSERT(!entry.reg().isGPR());
         spooler.loadFPR(entry);
@@ -1154,7 +1154,7 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
     addPtr(TrustedImm32(EntryFrame::calleeSaveRegistersBufferOffset()), calleeSavesBuffer);
 
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
-    RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
+    auto dontCopyRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->registerCount();
 
     StoreRegSpooler spooler(*this, calleeSavesBuffer);
@@ -1162,7 +1162,7 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
     unsigned i = 0;
     for (; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
-        if (dontCopyRegisters.contains(entry.reg()))
+        if (dontCopyRegisters.includesRegister(entry.reg()))
             continue;
         if (!entry.reg().isGPR())
             break;
@@ -1171,7 +1171,7 @@ void AssemblyHelpers::copyCalleeSavesToEntryFrameCalleeSavesBufferImpl(GPRReg ca
     spooler.finalizeGPR();
     for (; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
-        if (dontCopyRegisters.contains(entry.reg()))
+        if (dontCopyRegisters.includesRegister(entry.reg()))
             continue;
         spooler.storeFPR(entry);
     }
@@ -1303,7 +1303,7 @@ void AssemblyHelpers::emitRestore(const RegisterAtOffsetList& list)
 
 void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
 {
-    RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
+    auto dontSaveRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = calleeSaves->registerCount();
     JIT_COMMENT(*this, "emitSaveCalleeSavesFor ", *calleeSaves, " dontRestore: ", dontSaveRegisters);
 
@@ -1314,14 +1314,14 @@ void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeS
         RegisterAtOffset entry = calleeSaves->at(i);
         if (entry.reg().isFPR())
             break;
-        if (dontSaveRegisters.contains(entry.reg()))
+        if (dontSaveRegisters.includesRegister(entry.reg()))
             continue;
         spooler.storeGPR(entry);
     }
     spooler.finalizeGPR();
     for (; i < registerCount; i++) {
         RegisterAtOffset entry = calleeSaves->at(i);
-        if (dontSaveRegisters.contains(entry.reg()))
+        if (dontSaveRegisters.includesRegister(entry.reg()))
             continue;
         spooler.storeFPR(entry);
     }
@@ -1330,7 +1330,7 @@ void AssemblyHelpers::emitSaveCalleeSavesFor(const RegisterAtOffsetList* calleeS
 
 void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* calleeSaves)
 {
-    RegisterSet dontRestoreRegisters = RegisterSet(RegisterSet::stackRegisters());
+    auto dontRestoreRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = calleeSaves->registerCount();
     JIT_COMMENT(*this, "emitRestoreCalleeSavesFor ", *calleeSaves, " dontSave: ", dontRestoreRegisters);
     
@@ -1341,21 +1341,21 @@ void AssemblyHelpers::emitRestoreCalleeSavesFor(const RegisterAtOffsetList* call
         RegisterAtOffset entry = calleeSaves->at(i);
         if (entry.reg().isFPR())
             break;
-        if (dontRestoreRegisters.get(entry.reg()))
+        if (dontRestoreRegisters.includesRegister(entry.reg()))
             continue;
         spooler.loadGPR(entry);
     }
     spooler.finalizeGPR();
     for (; i < registerCount; i++) {
         RegisterAtOffset entry = calleeSaves->at(i);
-        if (dontRestoreRegisters.get(entry.reg()))
+        if (dontRestoreRegisters.includesRegister(entry.reg()))
             continue;
         spooler.loadFPR(entry);
     }
     spooler.finalizeFPR();
 }
 
-void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const RegisterSet& usedRegisters)
+void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame, const WholeRegisterSet& usedRegisters)
 {
 #if NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     // Copy saved calleeSaves on stack or unsaved calleeSaves in register to vm calleeSave buffer
@@ -1374,13 +1374,13 @@ void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFram
 
     RegisterAtOffsetList* allCalleeSaves = RegisterSet::vmCalleeSaveRegisterOffsets();
     const RegisterAtOffsetList* currentCalleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
-    RegisterSet dontCopyRegisters = RegisterSet::stackRegisters();
+    auto dontCopyRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = allCalleeSaves->registerCount();
 
     unsigned i = 0;
     for (; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
-        if (dontCopyRegisters.contains(entry.reg()))
+        if (dontCopyRegisters.includesRegister(entry.reg()))
             continue;
         RegisterAtOffset* currentFrameEntry = currentCalleeSaves->find(entry.reg());
 
@@ -1396,7 +1396,7 @@ void AssemblyHelpers::copyLLIntBaselineCalleeSavesFromFrameOrRegisterToEntryFram
 
     for (; i < registerCount; i++) {
         RegisterAtOffset entry = allCalleeSaves->at(i);
-        if (dontCopyRegisters.get(entry.reg()))
+        if (dontCopyRegisters.includesRegister(entry.reg()))
             continue;
         RegisterAtOffset* currentFrameEntry = currentCalleeSaves->find(entry.reg());
 
@@ -1422,7 +1422,7 @@ void AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock* codeB
     ASSERT(codeBlock->jitCode()->calleeSaveRegisters() == &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
 
     const RegisterAtOffsetList* calleeSaves = &RegisterAtOffsetList::llintBaselineCalleeSaveRegisters();
-    RegisterSet dontSaveRegisters = RegisterSet(RegisterSet::stackRegisters());
+    auto dontSaveRegisters = RegisterSet::stackRegisters();
     unsigned registerCount = calleeSaves->registerCount();
 
     GPRReg dstBufferGPR = temp1;
@@ -1432,7 +1432,7 @@ void AssemblyHelpers::emitSaveOrCopyLLIntBaselineCalleeSavesFor(CodeBlock* codeB
 
     for (unsigned i = 0; i < registerCount; i++) {
         RegisterAtOffset entry = calleeSaves->at(i);
-        if (dontSaveRegisters.get(entry.reg()))
+        if (dontSaveRegisters.includesRegister(entry.reg()))
             continue;
         RELEASE_ASSERT(entry.reg().isGPR());
 

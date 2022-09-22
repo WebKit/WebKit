@@ -159,10 +159,10 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     int stackPointerOffset = (codeBlock->stackPointerOffset() * sizeof(Register)) - state.preservedReusedRegisterState.numberOfBytesPreserved - spillState.numberOfStackBytesUsedForRegisterPreservation;
     jit.addPtr(CCallHelpers::TrustedImm32(stackPointerOffset), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
 
-    RegisterSet dontRestore;
+    WholeRegisterSet dontRestore;
     // This is the result value. We don't want to overwrite the result with what we stored to the stack.
     // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
-    dontRestore.set(valueRegs);
+    dontRestore.includeRegister(valueRegs);
     state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
 
     jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {

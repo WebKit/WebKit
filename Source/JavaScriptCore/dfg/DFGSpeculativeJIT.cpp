@@ -389,12 +389,12 @@ RegisterSet SpeculativeJIT::usedRegisters()
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg gpr = GPRInfo::toRegister(i);
         if (m_gprs.isInUse(gpr))
-            result.set(gpr);
+            result.includeRegister(gpr);
     }
     for (unsigned i = FPRInfo::numberOfRegisters; i--;) {
         FPRReg fpr = FPRInfo::toRegister(i);
         if (m_fprs.isInUse(fpr))
-            result.set(fpr);
+            result.includeRegister(fpr, Width64);
     }
     
     // FIXME: This is overly conservative. We could subtract out those callee-saves that we
@@ -15996,14 +15996,14 @@ void SpeculativeJIT::cachedPutById(CodeOrigin codeOrigin, GPRReg baseGPR, JSValu
     RegisterSet usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
         // We've already flushed registers to the stack, we don't need to spill these.
-        usedRegisters.set(baseGPR, false);
-        usedRegisters.set(valueRegs, false);
+        usedRegisters.excludeRegister(baseGPR);
+        usedRegisters.excludeRegister(valueRegs);
         if (stubInfoGPR != InvalidGPRReg)
-            usedRegisters.set(stubInfoGPR, false);
+            usedRegisters.excludeRegister(stubInfoGPR);
         if (scratchGPR != InvalidGPRReg)
-            usedRegisters.set(scratchGPR, false);
+            usedRegisters.excludeRegister(scratchGPR);
         if (scratch2GPR != InvalidGPRReg)
-            usedRegisters.set(scratch2GPR, false);
+            usedRegisters.excludeRegister(scratch2GPR);
     }
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     auto [ stubInfo, stubInfoConstant ] = m_jit.addStructureStubInfo();

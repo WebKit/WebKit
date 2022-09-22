@@ -48,9 +48,9 @@ CallFrameShuffler::CallFrameShuffler(CCallHelpers& jit, const CallFrameShuffleDa
 {
     // We are allowed all the usual registers...
     for (unsigned i = GPRInfo::numberOfRegisters; i--; )
-        m_lockedRegisters.clear(GPRInfo::toRegister(i));
+        m_lockedRegisters.excludeRegister(GPRInfo::toRegister(i));
     for (unsigned i = FPRInfo::numberOfRegisters; i--; )
-        m_lockedRegisters.clear(FPRInfo::toRegister(i));
+        m_lockedRegisters.excludeRegister(FPRInfo::toRegister(i));
 
     // ... as well as the callee saved registers
     m_lockedRegisters.exclude(RegisterSet::vmCalleeSaveRegisters());
@@ -199,7 +199,7 @@ void CallFrameShuffler::dump(PrintStream& out) const
     out.print("  Locked registers: ");
     bool firstLocked { true };
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (m_lockedRegisters.get(reg)) {
+        if (m_lockedRegisters.includesRegister(reg)) {
             out.print(firstLocked ? "" : ", ", reg);
             firstLocked = false;
         }

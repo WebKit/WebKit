@@ -1346,7 +1346,7 @@ private:
             }
             case ValueRep::LateRegister:
             case ValueRep::Register:
-                stackmap->earlyClobbered().clear(value.rep().reg());
+                stackmap->earlyClobbered().excludeRegister(value.rep().reg());
                 arg = Tmp(value.rep().reg());
                 append(relaxedMoveForType(value.value()->type()), immOrTmp(value.value()), arg);
                 break;
@@ -3840,7 +3840,7 @@ private:
             fillStackmap(inst, patchpointValue, 0);
             for (auto& constraint : patchpointValue->resultConstraints) {
                 if (constraint.isReg())
-                    patchpointValue->lateClobbered().clear(constraint.reg());
+                    patchpointValue->lateClobbered().excludeRegister(constraint.reg());
             }
 
             for (unsigned i = patchpointValue->numGPScratchRegisters; i--;)

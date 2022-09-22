@@ -1454,7 +1454,7 @@ void testSpillDefSmallerThanUse()
     RegisterSet clobberSet = RegisterSet::allGPRs();
     clobberSet.exclude(RegisterSet::stackRegisters());
     clobberSet.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberSet.clear(GPRInfo::returnValueGPR); // Force the return value for aliasing below.
+    clobberSet.excludeRegister(GPRInfo::returnValueGPR); // Force the return value for aliasing below.
     forceSpill->clobberLate(clobberSet);
     forceSpill->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams& params) {
@@ -1510,7 +1510,7 @@ void testSpillUseLargerThanDef()
     forceSpill->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
-            clobberSet.forEach([&] (Reg reg) {
+            clobberSet.whole().forEach([&] (Reg reg) {
                 jit.move(CCallHelpers::TrustedImm64(0xffffffffffffffff), reg.gpr());
             });
         });
@@ -1556,7 +1556,7 @@ void testLateRegister()
     Vector<Value*> lateUseArgs;
     unsigned result = 0;
     for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-        if (!regs.get(reg))
+        if (!regs.whole().includesRegister(reg))
             continue;
         result++;
         if (reg == GPRInfo::regT0)
@@ -1569,7 +1569,7 @@ void testLateRegister()
     {
         unsigned i = 0;
         for (GPRReg reg = CCallHelpers::firstRegister(); reg <= CCallHelpers::lastRegister(); reg = CCallHelpers::nextRegister(reg)) {
-            if (!regs.get(reg))
+            if (!regs.whole().includesRegister(reg))
                 continue;
             if (reg == GPRInfo::regT0)
                 continue;
@@ -1657,7 +1657,7 @@ void testInterpreter()
     polyJump->effects = Effects();
     polyJump->effects.terminal = true;
     polyJump->appendSomeRegister(opcode);
-    polyJump->clobber(RegisterSet::macroScratchRegisters());
+    polyJump->clobber(RegisterSet::macroClobberedRegisters());
     polyJump->numGPScratchRegisters = 2;
     dispatch->appendSuccessor(FrequentedBlock(addToDataPointer));
     dispatch->appendSuccessor(FrequentedBlock(addToCodePointer));
@@ -2366,7 +2366,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled()
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
 
     root->appendSuccessor(success);
     root->appendSuccessor(FrequentedBlock(slowPath, FrequencyClass::Rare));
@@ -2447,7 +2447,7 @@ void testTerminalPatchpointThatNeedsToBeSpilled2()
 
     PatchpointValue* patchpoint = one->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
     patchpoint->append(arg, ValueRep::SomeRegister);
 
     one->appendSuccessor(success);
@@ -2532,7 +2532,7 @@ void testPatchpointTerminalReturnValue(bool successIsRare)
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
     patchpoint->effects.terminal = true;
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
 
     if (successIsRare) {
         root->appendSuccessor(FrequentedBlock(success, FrequencyClass::Rare));

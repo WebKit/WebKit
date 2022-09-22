@@ -78,17 +78,17 @@ private:
 #endif
 
     Vector<Reg> m_registers[numBanks];
-    RegisterSet m_availableRegs[numBanks];
+    WholeRegisterSet m_availableRegs[numBanks];
     size_t m_globalInstIndex;
     IndexMap<Reg, Tmp>* m_currentAllocation { nullptr };
     TmpMap<size_t> m_liveRangeEnd;
     HashMap<size_t, Vector<Tmp, 2>> m_tmpsToRelease;
-    RegisterSet m_namedUsedRegs;
-    RegisterSet m_namedDefdRegs;
+    WholeRegisterSet m_namedUsedRegs;
+    WholeRegisterSet m_namedDefdRegs;
     RegisterSet m_earlyClobber;
     RegisterSet m_lateClobber;
     RegisterSet m_clobberedToClear;
-    RegisterSet m_allowedRegisters;
+    WholeRegisterSet m_allowedRegisters;
     std::unique_ptr<UnifiedTmpLiveness> m_liveness;
 
     struct PatchSpillData {
