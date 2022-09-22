@@ -524,6 +524,7 @@ private:
     void addRelation(Element*, Element*, AXRelationType);
     void addRelation(AccessibilityObject*, AccessibilityObject*, AXRelationType, AddingSymmetricRelation = AddingSymmetricRelation::No);
     void updateRelationsIfNeeded();
+    void updateRelationsForTree(ContainerNode&);
     void relationsNeedUpdate(bool);
     HashMap<AXID, AXRelations> relations();
     const HashSet<AXID>& relationTargetIDs();
