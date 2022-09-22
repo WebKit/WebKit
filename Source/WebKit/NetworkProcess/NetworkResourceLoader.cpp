@@ -38,6 +38,7 @@
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkSession.h"
+#include "NetworkStorageManager.h"
 #include "PrivateRelayed.h"
 #include "ResourceLoadInfo.h"
 #include "ServiceWorkerFetchTask.h"
@@ -47,6 +48,7 @@
 #include "WebPageMessages.h"
 #include "WebResourceLoaderMessages.h"
 #include "WebSWServerConnection.h"
+#include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/COEPInheritenceViolationReportBody.h>
@@ -742,6 +744,46 @@ std::optional<ResourceError> NetworkResourceLoader::doCrossOriginOpenerHandlingO
     return std::nullopt;
 }
 
+void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
+{
+    auto headerValue = response.httpHeaderField(HTTPHeaderName::ClearSiteData);
+    if (headerValue.isEmpty())
+        return completionHandler();
+
+    if (!WebCore::shouldTreatAsPotentiallyTrustworthy(response.url()))
+        return completionHandler();
+
+    OptionSet<WebsiteDataType> typesToRemove;
+    for (auto value : StringView(headerValue).split(',')) {
+        auto trimmedValue = value.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
+        if (trimmedValue == "\"cookies\""_s)
+            typesToRemove.add(WebsiteDataType::Cookies);
+        else if (trimmedValue == "\"cache\""_s)
+            typesToRemove.add({ WebsiteDataType::DiskCache, WebsiteDataType::MemoryCache });
+        else if (trimmedValue == "\"storage\""_s) {
+            typesToRemove.add({ WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage, WebsiteDataType::IndexedDBDatabases, WebsiteDataType::DOMCache, WebsiteDataType::OfflineWebApplicationCache, WebsiteDataType::FileSystem, WebsiteDataType::WebSQLDatabases });
+#if ENABLE(SERVICE_WORKER)
+            typesToRemove.add(WebsiteDataType::ServiceWorkerRegistrations);
+#endif
+        } else if (trimmedValue == "\"*\""_s) {
+            typesToRemove.add({ WebsiteDataType::Cookies, WebsiteDataType::DiskCache, WebsiteDataType::MemoryCache, WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage, WebsiteDataType::IndexedDBDatabases, WebsiteDataType::DOMCache, WebsiteDataType::OfflineWebApplicationCache, WebsiteDataType::FileSystem, WebsiteDataType::WebSQLDatabases });
+#if ENABLE(SERVICE_WORKER)
+            typesToRemove.add(WebsiteDataType::ServiceWorkerRegistrations);
+#endif
+        }
+    }
+
+    if (!typesToRemove)
+        return completionHandler();
+
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    Vector<SecurityOriginData> origins = { SecurityOrigin::create(response.url())->data() };
+    m_connection->networkProcess().deleteWebsiteDataForOrigins(sessionID(), typesToRemove, origins, { response.url().host().toString() }, { }, { }, [callbackAggregator] { });
+
+    if (WebsiteDataStore::computeWebProcessAccessTypeForDataRemoval(typesToRemove, sessionID().isEphemeral()) != WebsiteDataStore::ProcessAccessType::None)
+        m_connection->deleteWebsiteDataForOrigins(typesToRemove, origins, [callbackAggregator] { });
+}
+
 static BrowsingContextGroupSwitchDecision toBrowsingContextGroupSwitchDecision(const std::optional<CrossOriginOpenerPolicyEnforcementResult>& currentCoopEnforcementResult)
 {
     if (!currentCoopEnforcementResult || !currentCoopEnforcementResult->needsBrowsingContextGroupSwitch)
@@ -861,44 +903,46 @@ void NetworkResourceLoader::didReceiveResponse(ResourceResponse&& receivedRespon
         return completionHandler(PolicyAction::Ignore);
     }
 
-    auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
-    if (isSynchronous()) {
-        LOADER_RELEASE_LOG("didReceiveResponse: Using response for synchronous load");
-        m_synchronousLoadData->response = WTFMove(response);
-        return completionHandler(PolicyAction::Use);
-    }
+    processClearSiteDataHeader(m_response, [this, protectedThis = Ref { *this }, privateRelayed, resourceLoadInfo = WTFMove(resourceLoadInfo), completionHandler = WTFMove(completionHandler)] () mutable {
+        auto response = sanitizeResponseIfPossible(ResourceResponse { m_response }, ResourceResponse::SanitizationType::CrossOriginSafe);
+        if (isSynchronous()) {
+            LOADER_RELEASE_LOG("didReceiveResponse: Using response for synchronous load");
+            m_synchronousLoadData->response = WTFMove(response);
+            return completionHandler(PolicyAction::Use);
+        }
 
-    if (isCrossOriginPrefetch()) {
-        LOADER_RELEASE_LOG("didReceiveResponse: Using response for cross-origin prefetch");
-        if (response.httpHeaderField(HTTPHeaderName::Vary).contains("Cookie"_s)) {
-            LOADER_RELEASE_LOG("didReceiveResponse: Canceling cross-origin prefetch for Vary: Cookie");
-            abort();
+        if (isCrossOriginPrefetch()) {
+            LOADER_RELEASE_LOG("didReceiveResponse: Using response for cross-origin prefetch");
+            if (response.httpHeaderField(HTTPHeaderName::Vary).contains("Cookie"_s)) {
+                LOADER_RELEASE_LOG("didReceiveResponse: Canceling cross-origin prefetch for Vary: Cookie");
+                abort();
+                return completionHandler(PolicyAction::Ignore);
+            }
+            return completionHandler(PolicyAction::Use);
+        }
+
+        // We wait to receive message NetworkResourceLoader::ContinueDidReceiveResponse before continuing a load for
+        // a main resource because the embedding client must decide whether to allow the load.
+        bool willWaitForContinueDidReceiveResponse = isMainResource();
+        LOADER_RELEASE_LOG("didReceiveResponse: Sending WebResourceLoader::DidReceiveResponse IPC (willWaitForContinueDidReceiveResponse=%d)", willWaitForContinueDidReceiveResponse);
+        sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, privateRelayed, willWaitForContinueDidReceiveResponse);
+
+        if (m_parameters.pageHasResourceLoadClient)
+            m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidReceiveResponse(m_parameters.webPageProxyID, resourceLoadInfo, response), 0);
+
+        if (willWaitForContinueDidReceiveResponse) {
+            m_responseCompletionHandler = WTFMove(completionHandler);
+            return;
+        }
+
+        if (m_isKeptAlive) {
+            LOADER_RELEASE_LOG("didReceiveResponse: Ignoring response because of keepalive option");
             return completionHandler(PolicyAction::Ignore);
         }
-        return completionHandler(PolicyAction::Use);
-    }
 
-    // We wait to receive message NetworkResourceLoader::ContinueDidReceiveResponse before continuing a load for
-    // a main resource because the embedding client must decide whether to allow the load.
-    bool willWaitForContinueDidReceiveResponse = isMainResource();
-    LOADER_RELEASE_LOG("didReceiveResponse: Sending WebResourceLoader::DidReceiveResponse IPC (willWaitForContinueDidReceiveResponse=%d)", willWaitForContinueDidReceiveResponse);
-    sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(response, privateRelayed, willWaitForContinueDidReceiveResponse);
-
-    if (m_parameters.pageHasResourceLoadClient)
-        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidReceiveResponse(m_parameters.webPageProxyID, resourceLoadInfo, response), 0);
-
-    if (willWaitForContinueDidReceiveResponse) {
-        m_responseCompletionHandler = WTFMove(completionHandler);
-        return;
-    }
-
-    if (m_isKeptAlive) {
-        LOADER_RELEASE_LOG("didReceiveResponse: Ignoring response because of keepalive option");
-        return completionHandler(PolicyAction::Ignore);
-    }
-
-    LOADER_RELEASE_LOG("didReceiveResponse: Using response");
-    completionHandler(PolicyAction::Use);
+        LOADER_RELEASE_LOG("didReceiveResponse: Using response");
+        completionHandler(PolicyAction::Use);
+    });
 }
 
 void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContextGroup(const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, bool needsContinueDidReceiveResponseMessage)

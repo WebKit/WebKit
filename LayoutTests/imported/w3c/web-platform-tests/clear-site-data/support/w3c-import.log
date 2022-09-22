@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/clear-site-data/support/controlled-endpoint.py
+/LayoutTests/imported/w3c/web-platform-tests/clear-site-data/support/echo-clear-site-data.py
+/LayoutTests/imported/w3c/web-platform-tests/clear-site-data/support/iframe_executionContexts.html
+/LayoutTests/imported/w3c/web-platform-tests/clear-site-data/support/page_using_service_worker.html
+/LayoutTests/imported/w3c/web-platform-tests/clear-site-data/support/page_with_resource.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/clear-site-data/support/send_report.html
+/LayoutTests/imported/w3c/web-platform-tests/clear-site-data/support/service_worker.js
+/LayoutTests/imported/w3c/web-platform-tests/clear-site-data/support/test_utils.sub.js

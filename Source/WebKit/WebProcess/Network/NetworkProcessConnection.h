@@ -42,6 +42,7 @@ class ResourceResponse;
 struct Cookie;
 struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
+struct SecurityOriginData;
 enum class HTTPCookieAcceptPolicy : uint8_t;
 }
 
@@ -51,6 +52,8 @@ class WebIDBConnectionToServer;
 class WebSharedWorkerObjectConnection;
 class WebSWClientConnection;
 class WebSharedWorkerObjectConnection;
+
+enum class WebsiteDataType : uint32_t;
 
 class NetworkProcessConnection : public RefCounted<NetworkProcessConnection>, IPC::Connection::Client {
 public:
@@ -112,6 +115,8 @@ private:
 #if ENABLE(WEB_RTC)
     void connectToRTCDataChannelRemoteSource(WebCore::RTCDataChannelIdentifier source, WebCore::RTCDataChannelIdentifier handler, CompletionHandler<void(std::optional<bool>)>&&);
 #endif
+
+    void deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType>, const Vector<WebCore::SecurityOriginData>&, CompletionHandler<void()>&&);
 
     void broadcastConsoleMessage(MessageSource, MessageLevel, const String& message);
 

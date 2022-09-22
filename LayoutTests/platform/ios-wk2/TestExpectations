@@ -2337,6 +2337,10 @@ webkit.org/b/244228 [ Release arm64 ] imported/w3c/web-platform-tests/css/css-tr
 
 webkit.org/b/244297 [ Release arm64 ] svg/transforms/transformed-text-fill-gradient.html [ Pass ImageOnlyFailure ]
 
+# Cocoa ports run WPT tests over localhost so the URL is treated as secure even though not HTTPs.
+imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip ]
+imported/w3c/web-platform-tests/clear-site-data/resource.html [ Skip ]
+
 webkit.org/b/244639 [ Release arm64 ] imported/w3c/web-platform-tests/mimesniff/mime-types/charset-parameter.window.html [ Pass Failure ]
 
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin.html [ Pass Failure ]

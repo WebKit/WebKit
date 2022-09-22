@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_false: Storage should NOT have been cleared. expected false got true
+
+
+Harness Error (FAIL), message = Unhandled rejection: assert_false: Storage should NOT have been cleared. expected false got true
+
+PASS https resource on a https page
+PASS https resource on a http page
+TIMEOUT http resource on a https page Test timed out
+NOTRUN http resource on a http page
+
