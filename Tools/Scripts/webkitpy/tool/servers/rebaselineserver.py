@@ -257,7 +257,7 @@ class RebaselineHTTPRequestHandler(ReflectionHandler):
 
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        self.wfile.write('\n'.join(log))
+        self.wfile.write('\n'.join(log).encode())
 
     def test_result(self):
         test_name, _ = os.path.splitext(self.query['test'][0])
