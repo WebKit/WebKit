@@ -1107,13 +1107,11 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         // Speculatively push this layer onto the overlap map.
         bool didSpeculativelyPushOverlapContainer = false;
         if (!didPushOverlapContainer) {
-            overlapMap.pushCompositingContainer(layer);
+            overlapMap.pushSpeculativeCompositingContainer(layer);
             didPushOverlapContainer = true;
             didSpeculativelyPushOverlapContainer = true;
         }
 
-        bool compositeForNegativeZOrderDescendant = false;
-        
         for (auto* childLayer : layer.negativeZOrderLayers()) {
             computeCompositingRequirements(&layer, *childLayer, overlapMap, currentState, backingSharingState, anyDescendantHas3DTransform);
 
@@ -1122,13 +1120,17 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             if (!willBeComposited && currentState.subtreeIsCompositing) {
                 layer.setIndirectCompositingReason(IndirectCompositingReason::BackgroundLayer);
                 layerWillComposite();
-                compositeForNegativeZOrderDescendant = true;
+                overlapMap.confirmSpeculativeCompositingContainer();
             }
         }
 
-        if (!compositeForNegativeZOrderDescendant && didSpeculativelyPushOverlapContainer) {
-            overlapMap.popCompositingContainer(layer);
-            didPushOverlapContainer = false;
+        if (didSpeculativelyPushOverlapContainer) {
+            if (overlapMap.maybePopSpeculativeCompositingContainer())
+                didPushOverlapContainer = false;
+            else if (!willBeComposited) {
+                layer.setIndirectCompositingReason(IndirectCompositingReason::BackgroundLayer);
+                layerWillComposite();
+            }
         }
     }
 
