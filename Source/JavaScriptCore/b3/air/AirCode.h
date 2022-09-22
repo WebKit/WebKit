@@ -97,9 +97,9 @@ public:
     
     // This is the set of registers that Air is allowed to emit code to mutate. It's derived from
     // regsInPriorityOrder. Any registers not in this set are said to be "pinned".
-    const RegisterSet& mutableRegs() const { return m_mutableRegs; }
+    const WholeRegisterSet& mutableRegs() const { return m_mutableRegs; }
     
-    bool isPinned(Reg reg) const { return !mutableRegs().get(reg); }
+    bool isPinned(Reg reg) const { return !mutableRegs().includesRegister(reg); }
     void pinRegister(Reg);
     
     void setOptLevel(unsigned optLevel) { m_optLevel = optLevel; }
@@ -347,9 +347,9 @@ public:
     }
     Disassembler* disassembler() { return m_disassembler.get(); }
 
-    RegisterSet mutableGPRs();
-    RegisterSet mutableFPRs();
-    RegisterSet pinnedRegisters() const { return m_pinnedRegs; }
+    WholeRegisterSet mutableGPRs();
+    WholeRegisterSet mutableFPRs();
+    WholeRegisterSet pinnedRegisters() const { return m_pinnedRegs; }
     
     void emitDefaultPrologue(CCallHelpers&);
     void emitEpilogue(CCallHelpers&);
@@ -381,8 +381,8 @@ private:
     Procedure& m_proc; // Some meta-data, like byproducts, is stored in the Procedure.
     Vector<Reg> m_gpRegsInPriorityOrder;
     Vector<Reg> m_fpRegsInPriorityOrder;
-    RegisterSet m_mutableRegs;
-    RegisterSet m_pinnedRegs;
+    WholeRegisterSet m_mutableRegs;
+    WholeRegisterSet m_pinnedRegs;
     SparseCollection<StackSlot> m_stackSlots;
     Vector<std::unique_ptr<BasicBlock>> m_blocks;
     SparseCollection<Special> m_specials;

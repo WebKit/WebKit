@@ -70,15 +70,15 @@ Code::Code(Procedure& proc)
             RegisterSet all = bank == GP ? RegisterSet::allGPRs() : RegisterSet::allFPRs();
             all.exclude(RegisterSet::stackRegisters());
             all.exclude(RegisterSet::reservedHardwareRegisters());
-            RegisterSet calleeSave = RegisterSet::calleeSaveRegisters();
-            all.forEach(
+            auto calleeSave = RegisterSet::calleeSaveRegisters();
+            all.whole().forEach(
                 [&] (Reg reg) {
-                    if (!calleeSave.get(reg))
+                    if (!calleeSave.includesRegister(reg, Width64))
                         volatileRegs.append(reg);
                 });
-            all.forEach(
+            all.whole().forEach(
                 [&] (Reg reg) {
-                    if (calleeSave.get(reg))
+                    if (calleeSave.includesRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64))
                         calleeSaveRegs.append(reg);
                 });
             if (Options::airRandomizeRegs()) {
@@ -92,7 +92,7 @@ Code::Code(Procedure& proc)
             setRegsInPriorityOrder(bank, result);
         });
 
-    m_pinnedRegs.set(MacroAssembler::framePointerRegister);
+    m_pinnedRegs.includeRegister(MacroAssembler::framePointerRegister);
 }
 
 Code::~Code() = default;
@@ -119,7 +119,7 @@ void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
     forEachBank(
         [&] (Bank bank) {
             for (Reg reg : regsInPriorityOrder(bank))
-                m_mutableRegs.set(reg);
+                m_mutableRegs.includeRegister(reg);
         });
 }
 
@@ -128,23 +128,23 @@ void Code::pinRegister(Reg reg)
     Vector<Reg>& regs = regsInPriorityOrderImpl(Arg(Tmp(reg)).bank());
     ASSERT(regs.contains(reg));
     regs.removeFirst(reg);
-    m_mutableRegs.clear(reg);
+    m_mutableRegs.excludeRegister(reg);
     ASSERT(!regs.contains(reg));
-    m_pinnedRegs.set(reg);
+    m_pinnedRegs.includeRegister(reg);
 }
 
-RegisterSet Code::mutableGPRs()
+WholeRegisterSet Code::mutableGPRs()
 {
     RegisterSet result = m_mutableRegs;
     result.filter(RegisterSet::allGPRs());
-    return result;
+    return result.whole();
 }
 
-RegisterSet Code::mutableFPRs()
+WholeRegisterSet Code::mutableFPRs()
 {
     RegisterSet result = m_mutableRegs;
     result.filter(RegisterSet::allFPRs());
-    return result;
+    return result.whole();
 }
 
 bool Code::needsUsedRegisters() const
@@ -216,7 +216,7 @@ void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOf
 {
     m_uncorrectedCalleeSaveRegisterAtOffsetList = WTFMove(registerAtOffsetList);
     for (const RegisterAtOffset& registerAtOffset : m_uncorrectedCalleeSaveRegisterAtOffsetList)
-        m_calleeSaveRegisters.set(registerAtOffset.reg());
+        m_calleeSaveRegisters.includeRegister(registerAtOffset.reg());
     m_calleeSaveStackSlot = slot;
 }
 

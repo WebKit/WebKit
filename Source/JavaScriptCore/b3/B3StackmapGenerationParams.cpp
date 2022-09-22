@@ -47,14 +47,15 @@ RegisterSet StackmapGenerationParams::unavailableRegisters() const
     RegisterSet result = usedRegisters();
     
     RegisterSet unsavedCalleeSaves = RegisterSet::vmCalleeSaveRegisters();
+    ASSERT(!unsavedCalleeSaves.hasAnyWideRegisters());
     unsavedCalleeSaves.exclude(m_context.code->calleeSaveRegisters());
 
     result.merge(unsavedCalleeSaves);
 
     for (GPRReg gpr : m_gpScratch)
-        result.clear(gpr);
+        result.excludeRegister(gpr);
     for (FPRReg fpr : m_fpScratch)
-        result.clear(fpr);
+        result.excludeRegister(fpr);
     
     return result;
 }

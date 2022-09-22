@@ -40,7 +40,7 @@ struct ScratchBuffer;
 class ScratchRegisterAllocator {
 public:
     ScratchRegisterAllocator() = default;
-    ScratchRegisterAllocator(const RegisterSet& usedRegisters);
+    ScratchRegisterAllocator(const WholeRegisterSet& usedRegisters);
     ~ScratchRegisterAllocator() = default;
 
     void lock(GPRReg);
@@ -63,7 +63,7 @@ public:
         return m_numberOfReusedRegisters;
     }
 
-    RegisterSet usedRegisters() const { return m_usedRegisters; }
+    WholeRegisterSet usedRegisters() const { return m_usedRegisters; }
     
     enum class ExtraStackSpace { SpaceForCCall, NoExtraSpace };
 
@@ -87,17 +87,17 @@ public:
     PreservedState preserveReusedRegistersByPushing(AssemblyHelpers& jit, ExtraStackSpace);
     void restoreReusedRegistersByPopping(AssemblyHelpers& jit, const PreservedState&);
     
-    RegisterSet usedRegistersForCall() const;
+    WholeRegisterSet usedRegistersForCall() const;
     
     unsigned desiredScratchBufferSizeForCall() const;
 
-    static unsigned preserveRegistersToStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, unsigned extraPaddingInBytes);
-    static void restoreRegistersFromStackForCall(AssemblyHelpers& jit, const RegisterSet& usedRegisters, const RegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraPaddingInBytes);
+    static unsigned preserveRegistersToStackForCall(AssemblyHelpers& jit, const WholeRegisterSet& usedRegisters, unsigned extraPaddingInBytes);
+    static void restoreRegistersFromStackForCall(AssemblyHelpers& jit, const WholeRegisterSet& usedRegisters, const WholeRegisterSet& ignore, unsigned numberOfStackBytesUsedForRegisterPreservation, unsigned extraPaddingInBytes);
 
 private:
-    RegisterSet m_usedRegisters;
-    RegisterSet m_lockedRegisters;
-    RegisterSet m_scratchRegisters;
+    WholeRegisterSet m_usedRegisters { };
+    WholeRegisterSet m_lockedRegisters { };
+    WholeRegisterSet m_scratchRegisters { };
     unsigned m_numberOfReusedRegisters { 0 };
 };
 

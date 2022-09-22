@@ -66,14 +66,14 @@ private:
     SlowPathCallKey keyWithTarget(CodePtr<CFunctionPtrTag> callTarget) const;
     SlowPathCallKey keyWithTarget(CCallHelpers::Address) const;
     
-    RegisterSet m_argumentRegisters;
-    RegisterSet m_callingConventionRegisters;
+    FrozenRegisterSet m_argumentRegisters;
+    FrozenRegisterSet m_callingConventionRegisters;
     CCallHelpers& m_jit;
     unsigned m_numArgs;
     GPRReg m_returnRegister;
     size_t m_offsetToSavingArea;
     size_t m_stackBytesNeeded;
-    RegisterSet m_thunkSaveSet;
+    FrozenRegisterSet m_thunkSaveSet;
     size_t m_offset;
 };
 

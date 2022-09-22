@@ -143,7 +143,7 @@ void testStoreRelAddFenceLoadAcq8(int amount, B3::Opcode loadOpcode)
     Value* loadedValue = root->appendNew<MemoryValue>(
         proc, loadOpcode, Origin(), slotPtr, 0, HeapRange(42), HeapRange(42));
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Void, Origin());
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
     patchpoint->setGenerator(
         [&] (CCallHelpers& jit, const StackmapGenerationParams&) {
             AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2561,7 +2561,7 @@ void testSimplePatchpointWithOuputClobbersGPArgs()
     RegisterSet clobberAll = RegisterSet::allGPRs();
     clobberAll.exclude(RegisterSet::stackRegisters());
     clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberAll.clear(GPRInfo::argumentGPR2);
+    clobberAll.excludeRegister(GPRInfo::argumentGPR2);
     patchpoint->clobberLate(clobberAll);
 
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
@@ -2577,7 +2577,7 @@ void testSimplePatchpointWithOuputClobbersGPArgs()
             jit.move(params[1].gpr(), params[0].gpr());
             jit.add64(params[2].gpr(), params[0].gpr());
 
-            clobberAll.forEach([&] (Reg reg) {
+            clobberAll.whole().forEach([&] (Reg reg) {
                 jit.move(CCallHelpers::TrustedImm32(0x00ff00ff), reg.gpr());
             });
         });
@@ -2641,7 +2641,7 @@ void testSimplePatchpointWithOuputClobbersFPArgs()
     RegisterSet clobberAll = RegisterSet::allFPRs();
     clobberAll.exclude(RegisterSet::stackRegisters());
     clobberAll.exclude(RegisterSet::reservedHardwareRegisters());
-    clobberAll.clear(FPRInfo::argumentFPR2);
+    clobberAll.excludeRegister(FPRInfo::argumentFPR2);
     patchpoint->clobberLate(clobberAll);
 
     patchpoint->append(ConstrainedValue(const1, ValueRep::SomeRegister));
@@ -2656,7 +2656,7 @@ void testSimplePatchpointWithOuputClobbersFPArgs()
             CHECK(params[2].isFPR());
             jit.addDouble(params[1].fpr(), params[2].fpr(), params[0].fpr());
 
-            clobberAll.forEach([&] (Reg reg) {
+            clobberAll.whole().forEach([&] (Reg reg) {
                 jit.moveZeroToDouble(reg.fpr());
             });
         });
@@ -2803,8 +2803,8 @@ void testPatchpointGPScratch()
             CHECK(params.gpScratch(1) != params[0].gpr());
             CHECK(params.gpScratch(1) != params[1].gpr());
             CHECK(params.gpScratch(1) != params[2].gpr());
-            CHECK(!params.unavailableRegisters().get(params.gpScratch(0)));
-            CHECK(!params.unavailableRegisters().get(params.gpScratch(1)));
+            CHECK(!params.unavailableRegisters().whole().includesRegister(params.gpScratch(0)));
+            CHECK(!params.unavailableRegisters().whole().includesRegister(params.gpScratch(1)));
             add32(jit, params[1].gpr(), params[2].gpr(), params[0].gpr());
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
@@ -2833,8 +2833,8 @@ void testPatchpointFPScratch()
             CHECK(params.fpScratch(0) != InvalidFPRReg);
             CHECK(params.fpScratch(1) != InvalidFPRReg);
             CHECK(params.fpScratch(1) != params.fpScratch(0));
-            CHECK(!params.unavailableRegisters().get(params.fpScratch(0)));
-            CHECK(!params.unavailableRegisters().get(params.fpScratch(1)));
+            CHECK(!params.unavailableRegisters().whole().includesRegister(params.fpScratch(0)));
+            CHECK(!params.unavailableRegisters().whole().includesRegister(params.fpScratch(1)));
             add32(jit, params[1].gpr(), params[2].gpr(), params[0].gpr());
         });
     root->appendNewControlValue(proc, Return, Origin(), patchpoint);
@@ -2859,7 +2859,7 @@ void testPatchpointLotsOfLateAnys()
     }
 
     PatchpointValue* patchpoint = root->appendNew<PatchpointValue>(proc, Int32, Origin());
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
+    patchpoint->clobber(RegisterSet::macroClobberedRegisters());
     for (Value* value : values)
         patchpoint->append(ConstrainedValue(value, ValueRep::LateColdAny));
     patchpoint->setGenerator(

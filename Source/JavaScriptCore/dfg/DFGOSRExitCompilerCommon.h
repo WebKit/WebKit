@@ -47,12 +47,12 @@ void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM& vm, JITT
     ASSERT(jitType == JITType::DFGJIT || jitType == JITType::FTLJIT);
 
     bool isFTLOSRExit = jitType == JITType::FTLJIT;
-    RegisterSet registersToPreserve;
-    registersToPreserve.set(GPRInfo::regT0);
+    WholeRegisterSet registersToPreserve;
+    registersToPreserve.includeRegister(GPRInfo::regT0);
     if (isFTLOSRExit) {
         // FTL can use the scratch registers for values. The code below uses
         // the scratch registers. We need to preserve them before doing anything.
-        registersToPreserve.merge(RegisterSet::macroScratchRegisters());
+        registersToPreserve.merge(RegisterSet::macroClobberedRegisters());
     }
 
     size_t scratchSize = sizeof(void*) * registersToPreserve.numberOfSetGPRs();

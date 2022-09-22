@@ -376,7 +376,7 @@ protected:
             ASSERT(!m_coloredTmp[tmpIndex]);
             ASSERT(getAlias(tmpIndex) == tmpIndex);
 
-            RegisterSet coloredRegisters;
+            WholeRegisterSet coloredRegisters;
             for (IndexType adjacentTmpIndex : m_adjacencyList[tmpIndex]) {
                 IndexType aliasTmpIndex = getAlias(adjacentTmpIndex);
                 Reg reg = m_coloredTmp[aliasTmpIndex];
@@ -384,7 +384,7 @@ protected:
                 ASSERT(!isPrecolored(aliasTmpIndex) || (isPrecolored(aliasTmpIndex) && reg));
 
                 if (reg)
-                    coloredRegisters.set(reg);
+                    coloredRegisters.includeRegister(reg);
             }
 
             bool colorAssigned = false;
@@ -392,7 +392,7 @@ protected:
             if (iter != m_biases.end()) {
                 for (IndexType desiredBias : iter->value) {
                     if (Reg desiredColor = m_coloredTmp[getAlias(desiredBias)]) {
-                        if (!coloredRegisters.get(desiredColor)) {
+                        if (!coloredRegisters.includesRegister(desiredColor)) {
                             m_coloredTmp[tmpIndex] = desiredColor;
                             colorAssigned = true;
                             break;
@@ -402,7 +402,7 @@ protected:
             }
             if (!colorAssigned) {
                 for (Reg reg : m_regsInPriorityOrder) {
-                    if (!coloredRegisters.get(reg)) {
+                    if (!coloredRegisters.includesRegister(reg)) {
                         m_coloredTmp[tmpIndex] = reg;
                         colorAssigned = true;
                         break;

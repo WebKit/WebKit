@@ -2002,11 +2002,11 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall();
 
         auto restoreLiveRegistersFromStackForCall = [&](AccessGenerationState::SpillState& spillState, bool callHasReturnValue) {
-            RegisterSet dontRestore;
+            WholeRegisterSet dontRestore;
             if (callHasReturnValue) {
                 // This is the result value. We don't want to overwrite the result with what we stored to the stack.
                 // We sometimes have to store it to the stack just in case we throw an exception and need the original value.
-                dontRestore.set(valueRegs);
+                dontRestore.includeRegister(valueRegs);
             }
             state.restoreLiveRegistersFromStackForCall(spillState, dontRestore);
         };
@@ -2354,9 +2354,9 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                     jit.storePtr(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::Address(scratchGPR, -static_cast<ptrdiff_t>(offset + sizeof(JSValue) + sizeof(void*))));
             } else {
                 // Handle the case where we are allocating out-of-line using an operation.
-                RegisterSet extraRegistersToPreserve;
-                extraRegistersToPreserve.set(baseGPR);
-                extraRegistersToPreserve.set(valueRegs);
+                WholeRegisterSet extraRegistersToPreserve;
+                extraRegistersToPreserve.includeRegister(baseGPR);
+                extraRegistersToPreserve.includeRegister(valueRegs);
                 AccessGenerationState::SpillState spillState = state.preserveLiveRegistersToStackForCall(extraRegistersToPreserve);
                 
                 jit.store32(
@@ -2399,8 +2399,8 @@ void AccessCase::generateImpl(AccessGenerationState& state)
                 state.emitExplicitExceptionHandler();
                 
                 noException.link(&jit);
-                RegisterSet resultRegisterToExclude;
-                resultRegisterToExclude.set(scratchGPR);
+                WholeRegisterSet resultRegisterToExclude;
+                resultRegisterToExclude.includeRegister(scratchGPR);
                 state.restoreLiveRegistersFromStackForCall(spillState, resultRegisterToExclude);
             }
         }

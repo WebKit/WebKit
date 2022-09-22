@@ -90,17 +90,17 @@ void CallFrameShuffler::emitLoad(CachedRecovery& location)
     if (wantedJSValueRegs) {
         if (wantedJSValueRegs.payloadGPR() != InvalidGPRReg
             && !m_registers[wantedJSValueRegs.payloadGPR()]
-            && !m_lockedRegisters.get(wantedJSValueRegs.payloadGPR()))
+            && !m_lockedRegisters.includesRegister(wantedJSValueRegs.payloadGPR()))
             tryFPR = false;
         if (wantedJSValueRegs.tagGPR() != InvalidGPRReg
             && !m_registers[wantedJSValueRegs.tagGPR()]
-            && !m_lockedRegisters.get(wantedJSValueRegs.tagGPR()))
+            && !m_lockedRegisters.includesRegister(wantedJSValueRegs.tagGPR()))
             tryFPR = false;
     }
 
     if (tryFPR && location.loadsIntoFPR()) {
         FPRReg resultFPR = location.wantedFPR();
-        if (resultFPR == InvalidFPRReg || m_registers[resultFPR] || m_lockedRegisters.get(resultFPR))
+        if (resultFPR == InvalidFPRReg || m_registers[resultFPR] || m_lockedRegisters.includesRegister(resultFPR))
             resultFPR = getFreeFPR();
         if (resultFPR != InvalidFPRReg) {
             m_jit.loadDouble(address, resultFPR);
@@ -119,7 +119,7 @@ void CallFrameShuffler::emitLoad(CachedRecovery& location)
 
     if (location.loadsIntoGPR()) {
         GPRReg resultGPR { wantedJSValueRegs.payloadGPR() };
-        if (resultGPR == InvalidGPRReg || m_registers[resultGPR] || m_lockedRegisters.get(resultGPR))
+        if (resultGPR == InvalidGPRReg || m_registers[resultGPR] || m_lockedRegisters.includesRegister(resultGPR))
             resultGPR = getFreeGPR();
         ASSERT(resultGPR != InvalidGPRReg);
         if (location.recovery().technique() == Int32TagDisplacedInJSStack)
@@ -138,12 +138,12 @@ void CallFrameShuffler::emitLoad(CachedRecovery& location)
     ASSERT(location.recovery().technique() == DisplacedInJSStack);
     GPRReg payloadGPR { wantedJSValueRegs.payloadGPR() };
     GPRReg tagGPR { wantedJSValueRegs.tagGPR() };
-    if (payloadGPR == InvalidGPRReg || m_registers[payloadGPR] || m_lockedRegisters.get(payloadGPR))
+    if (payloadGPR == InvalidGPRReg || m_registers[payloadGPR] || m_lockedRegisters.includesRegister(payloadGPR))
         payloadGPR = getFreeGPR();
-    m_lockedRegisters.set(payloadGPR);
-    if (tagGPR == InvalidGPRReg || m_registers[tagGPR] || m_lockedRegisters.get(tagGPR))
+    m_lockedRegisters.includeRegister(payloadGPR);
+    if (tagGPR == InvalidGPRReg || m_registers[tagGPR] || m_lockedRegisters.includesRegister(tagGPR))
         tagGPR = getFreeGPR();
-    m_lockedRegisters.clear(payloadGPR);
+    m_lockedRegisters.excludeRegister(payloadGPR);
     ASSERT(payloadGPR != InvalidGPRReg && tagGPR != InvalidGPRReg && tagGPR != payloadGPR);
     m_jit.loadPtr(address.withOffset(PayloadOffset), payloadGPR);
     m_jit.loadPtr(address.withOffset(TagOffset), tagGPR);
@@ -170,9 +170,9 @@ bool CallFrameShuffler::canLoad(CachedRecovery& location)
         GPRReg payloadGPR { getFreeGPR() };
         if (payloadGPR == InvalidGPRReg)
             return false;
-        m_lockedRegisters.set(payloadGPR);
+        m_lockedRegisters.includeRegister(payloadGPR);
         GPRReg tagGPR { getFreeGPR() };
-        m_lockedRegisters.clear(payloadGPR);
+        m_lockedRegisters.excludeRegister(payloadGPR);
         return tagGPR != InvalidGPRReg;
     }
 
@@ -188,7 +188,7 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& location)
     FPRReg wantedFPR { location.wantedFPR() };
 
     if (wantedTagGPR != InvalidGPRReg) {
-        ASSERT(!m_lockedRegisters.get(wantedTagGPR));
+        ASSERT(!m_lockedRegisters.includesRegister(wantedTagGPR));
         if (CachedRecovery* currentTag { m_registers[wantedTagGPR] }) {
             RELEASE_ASSERT(currentTag == &location);
             if (verbose)
@@ -197,7 +197,7 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& location)
     }
 
     if (wantedPayloadGPR != InvalidGPRReg) {
-        ASSERT(!m_lockedRegisters.get(wantedPayloadGPR));
+        ASSERT(!m_lockedRegisters.includesRegister(wantedPayloadGPR));
         if (CachedRecovery* currentPayload { m_registers[wantedPayloadGPR] }) {
             RELEASE_ASSERT(currentPayload == &location);
             if (verbose)
@@ -282,14 +282,14 @@ void CallFrameShuffler::emitDisplace(CachedRecovery& location)
         } else {
             if (wantedTagGPR == InvalidGPRReg) {
                 ASSERT(wantedPayloadGPR != InvalidGPRReg);
-                m_lockedRegisters.set(wantedPayloadGPR);
+                m_lockedRegisters.includeRegister(wantedPayloadGPR);
                 wantedTagGPR = getFreeGPR();
-                m_lockedRegisters.clear(wantedPayloadGPR);
+                m_lockedRegisters.excludeRegister(wantedPayloadGPR);
             }
             if (wantedPayloadGPR == InvalidGPRReg) {
-                m_lockedRegisters.set(wantedTagGPR);
+                m_lockedRegisters.includeRegister(wantedTagGPR);
                 wantedPayloadGPR = getFreeGPR();
-                m_lockedRegisters.clear(wantedTagGPR);
+                m_lockedRegisters.excludeRegister(wantedTagGPR);
             }
             m_jit.moveDoubleToInts(location.recovery().fpr(), wantedPayloadGPR, wantedTagGPR);
             updateRecovery(location, ValueRecovery::inPair(wantedTagGPR, wantedPayloadGPR));

@@ -414,7 +414,7 @@ public:
 
     CodePtr<JITStubRoutinePtrTag> m_codePtr;
 
-    RegisterSet usedRegisters;
+    FrozenRegisterSet usedRegisters;
 
     CallSiteIndex callSiteIndex;
 

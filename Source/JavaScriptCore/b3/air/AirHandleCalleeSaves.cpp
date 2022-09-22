@@ -43,7 +43,7 @@ void handleCalleeSaves(Code& code)
             inst.forEachTmpFast(
                 [&] (Tmp& tmp) {
                     // At first we just record all used regs.
-                    usedCalleeSaves.set(tmp.reg());
+                    usedCalleeSaves.includeRegister(tmp.reg());
                 });
 
             if (inst.kind.opcode == Patch) {
@@ -63,10 +63,12 @@ void handleCalleeSaves(Code& code, RegisterSet usedCalleeSaves)
     usedCalleeSaves.filter(code.mutableRegs());
     usedCalleeSaves.exclude(RegisterSet::stackRegisters()); // We don't need to save FP here.
 
-    if (!usedCalleeSaves.numberOfSetRegisters())
+    auto calleSavesToSave = WholeRegisterSet(usedCalleeSaves);
+
+    if (!calleSavesToSave.numberOfSetRegisters())
         return;
 
-    RegisterAtOffsetList calleeSaveRegisters = RegisterAtOffsetList(usedCalleeSaves);
+    RegisterAtOffsetList calleeSaveRegisters = RegisterAtOffsetList(calleSavesToSave);
 
     size_t byteSize = 0;
     for (const RegisterAtOffset& entry : calleeSaveRegisters)

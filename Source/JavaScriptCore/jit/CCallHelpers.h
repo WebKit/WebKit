@@ -97,7 +97,7 @@ private:
         if (ASSERT_ENABLED) {
             RegisterSet set;
             for (RegType dest : destinations)
-                set.set(dest);
+                set.includeRegister(dest);
             ASSERT_WITH_MESSAGE(set.numberOfSetRegisters() == NumberOfRegisters, "Destinations should not be aliased.");
         }
 
@@ -121,7 +121,7 @@ private:
             RegisterSet set;
             for (auto& pair : pairs) {
                 RegType source = pair.first;
-                set.set(source);
+                set.includeRegister(source);
             }
             return set.numberOfSetRegisters();
         };
@@ -130,21 +130,21 @@ private:
             RegisterSet set;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
-                set.set(dest);
+                set.includeRegister(dest);
             }
             return set.numberOfSetRegisters();
         };
 #endif
 
         while (pairs.size()) {
-            RegisterSet freeDestinations;
+            WholeRegisterSet freeDestinations;
             for (auto& pair : pairs) {
                 RegType dest = pair.second;
-                freeDestinations.set(dest);
+                freeDestinations.includeRegister(dest);
             }
             for (auto& pair : pairs) {
                 RegType source = pair.first;
-                freeDestinations.clear(source);
+                freeDestinations.excludeRegister(source);
             }
 
             if (freeDestinations.numberOfSetRegisters()) {
@@ -153,7 +153,7 @@ private:
                     auto& pair = pairs[i];
                     RegType source = pair.first;
                     RegType dest = pair.second;
-                    if (freeDestinations.get(dest)) {
+                    if (freeDestinations.includesRegister(dest)) {
                         move(source, dest);
                         pairs.remove(i);
                         madeMove = true;
@@ -826,16 +826,16 @@ public:
 
     void prepareForTailCallSlow(GPRReg preservedGPR1 = InvalidGPRReg, GPRReg preservedGPR2 = InvalidGPRReg)
     {
-        RegisterSet preserved;
+        WholeRegisterSet preserved;
         if (preservedGPR1 != InvalidGPRReg)
-            preserved.add(preservedGPR1);
+            preserved.includeRegister(preservedGPR1);
         if (preservedGPR2 != InvalidGPRReg)
-            preserved.add(preservedGPR2);
+            preserved.includeRegister(preservedGPR2);
 
         GPRReg temp1 = selectScratchGPR(preserved);
-        preserved.add(temp1);
+        preserved.includeRegister(temp1);
         GPRReg temp2 = selectScratchGPR(preserved);
-        preserved.add(temp2);
+        preserved.includeRegister(temp2);
         GPRReg temp3 = selectScratchGPR(preserved);
 
         GPRReg newFramePointer = temp1;

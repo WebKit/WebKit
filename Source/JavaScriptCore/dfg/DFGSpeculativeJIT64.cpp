@@ -159,12 +159,12 @@ void SpeculativeJIT::cachedGetById(CodeOrigin codeOrigin, GPRReg baseGPR, GPRReg
     RegisterSet usedRegisters = this->usedRegisters();
     if (spillMode == DontSpill) {
         // We've already flushed registers to the stack, we don't need to spill these.
-        usedRegisters.set(baseGPR, false);
-        usedRegisters.set(resultGPR, false);
+        usedRegisters.excludeRegister(baseGPR);
+        usedRegisters.excludeRegister(resultGPR);
         if (stubInfoGPR != InvalidGPRReg)
-            usedRegisters.set(stubInfoGPR, false);
+            usedRegisters.excludeRegister(stubInfoGPR);
         if (scratchGPR != InvalidGPRReg)
-            usedRegisters.set(scratchGPR, false);
+            usedRegisters.excludeRegister(scratchGPR);
     }
     JSValueRegs baseRegs { baseGPR };
     JSValueRegs resultRegs { resultGPR };
@@ -203,13 +203,16 @@ void SpeculativeJIT::cachedGetByIdWithThis(CodeOrigin codeOrigin, GPRReg baseGPR
     CallSiteIndex callSite = m_jit.recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(codeOrigin, m_stream.size());
     RegisterSet usedRegisters = this->usedRegisters();
     // We've already flushed registers to the stack, we don't need to spill these.
-    usedRegisters.set(baseGPR, false);
-    usedRegisters.set(thisGPR, false);
-    usedRegisters.set(resultGPR, false);
+    if (baseGPR != InvalidGPRReg)
+        usedRegisters.excludeRegister(baseGPR);
+    if (thisGPR != InvalidGPRReg)
+        usedRegisters.excludeRegister(thisGPR);
+    if (resultGPR != InvalidGPRReg)
+        usedRegisters.excludeRegister(resultGPR);
     if (stubInfoGPR != InvalidGPRReg)
-        usedRegisters.set(stubInfoGPR, false);
+        usedRegisters.excludeRegister(stubInfoGPR);
     if (scratchGPR != InvalidGPRReg)
-        usedRegisters.set(scratchGPR, false);
+        usedRegisters.excludeRegister(scratchGPR);
     
     JSValueRegs baseRegs { baseGPR };
     JSValueRegs resultRegs { resultGPR };

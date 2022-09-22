@@ -56,15 +56,15 @@ struct CallInformation {
 
     RegisterAtOffsetList computeResultsOffsetList()
     {
-        RegisterSet usedResultRegisters;
-        for (ValueLocation loc : results) {
-            if (loc.isGPR()) {
-                usedResultRegisters.set(loc.jsr().payloadGPR());
+        WholeRegisterSet usedResultRegisters;
+        for (auto loc : results) {
+            if (loc.location.isGPR()) {
+                usedResultRegisters.includeRegister(loc.location.jsr().payloadGPR());
 #if USE(JSVALUE32_64)
-                usedResultRegisters.set(loc.jsr().tagGPR());
+                usedResultRegisters.includeRegister(loc.location.jsr().tagGPR());
 #endif
-            } else if (loc.isFPR())
-                usedResultRegisters.set(loc.fpr());
+            } else if (loc.location.isFPR())
+                usedResultRegisters.includeRegister(loc.location.fpr(), loc.width);
         }
 
         RegisterAtOffsetList savedRegs(usedResultRegisters, RegisterAtOffsetList::ZeroBased);

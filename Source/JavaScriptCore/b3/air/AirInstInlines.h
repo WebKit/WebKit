@@ -91,12 +91,12 @@ inline void Inst::forEachDefWithExtraClobberedRegs(
 
     if (prevInst && prevInst->kind.opcode == Patch) {
         regDefRole = Arg::Def;
-        prevInst->extraClobberedRegs().forEach(reportReg);
+        WholeRegisterSet(prevInst->extraClobberedRegs()).forEach(reportReg);
     }
 
     if (nextInst && nextInst->kind.opcode == Patch) {
         regDefRole = Arg::EarlyDef;
-        nextInst->extraEarlyClobberedRegs().forEach(reportReg);
+        WholeRegisterSet(nextInst->extraEarlyClobberedRegs()).forEach(reportReg);
     }
 }
 

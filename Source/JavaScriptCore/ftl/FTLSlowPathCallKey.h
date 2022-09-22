@@ -56,7 +56,7 @@ public:
 
     SlowPathCallKey() = default;
     
-    SlowPathCallKey(const RegisterSet& set, CodePtr<CFunctionPtrTag> callTarget, uint8_t numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled, size_t offset, int32_t indirectOffset)
+    SlowPathCallKey(const FrozenRegisterSet& set, CodePtr<CFunctionPtrTag> callTarget, uint8_t numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled, size_t offset, int32_t indirectOffset)
         : m_numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled(numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled)
         , m_offset(offset)
         , m_usedRegisters(set)
@@ -81,13 +81,13 @@ public:
         return nullptr;
     }
     size_t offset() const { return m_offset; }
-    const RegisterSet& usedRegisters() const { return m_usedRegisters; }
-    RegisterSet argumentRegistersIfClobberingCheckIsEnabled() const
+    WholeRegisterSet usedRegisters() const { return m_usedRegisters.set(); }
+    WholeRegisterSet argumentRegistersIfClobberingCheckIsEnabled() const
     {
         RELEASE_ASSERT(Options::clobberAllRegsInFTLICSlowPath());
-        RegisterSet argumentRegisters;
+        WholeRegisterSet argumentRegisters;
         for (uint8_t i = 0; i < numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled(); ++i)
-            argumentRegisters.set(GPRInfo::toArgumentRegister(i));
+            argumentRegisters.includeRegister(GPRInfo::toArgumentRegister(i));
         return argumentRegisters;
     }
     int32_t indirectOffset() const
@@ -135,7 +135,7 @@ public:
     {
         // m_numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled is intentionally not included because it will always be 0
         // unless Options::clobberAllRegsInFTLICSlowPath() is set, and Options::clobberAllRegsInFTLICSlowPath() is only set in debugging use cases.
-        return PtrHash<void*>::hash(callTarget().taggedPtr()) + m_offset + m_usedRegisters.hash() + indirectOffset() + static_cast<unsigned>(type());
+        return PtrHash<void*>::hash(callTarget().taggedPtr()) + m_offset + m_usedRegisters.set().hash() + indirectOffset() + static_cast<unsigned>(type());
     }
 
 private:
@@ -151,7 +151,7 @@ private:
     size_t m_numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled : 8 { 0 };
     size_t m_type : 2 { static_cast<size_t>(Type::Empty) };
     size_t m_offset : 54 { 0 };
-    RegisterSet m_usedRegisters;
+    FrozenRegisterSet m_usedRegisters;
 };
 
 

@@ -46,27 +46,27 @@ RegLiveness::RegLiveness(Code& code)
         for (size_t instIndex = block->size(); instIndex--;) {
             Inst& inst = block->at(instIndex);
             inst.forEach<Reg>(
-                [&] (Reg& reg, Arg::Role role, Bank, Width) {
+                [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                     if (Arg::isEarlyUse(role))
-                        actionsForBoundary[instIndex].use.add(reg);
+                        actionsForBoundary[instIndex].use.includeRegister(reg, width);
                     if (Arg::isEarlyDef(role))
-                        actionsForBoundary[instIndex].def.add(reg);
+                        actionsForBoundary[instIndex].def.includeRegister(reg, width);
                     if (Arg::isLateUse(role))
-                        actionsForBoundary[instIndex + 1].use.add(reg);
+                        actionsForBoundary[instIndex + 1].use.includeRegister(reg, width);
                     if (Arg::isLateDef(role))
-                        actionsForBoundary[instIndex + 1].def.add(reg);
+                        actionsForBoundary[instIndex + 1].def.includeRegister(reg, width);
                 });
         }
     }
     
     // The liveAtTail of each block automatically contains the LateUse's of the terminal.
     for (BasicBlock* block : code) {
-        RegisterSet& liveAtTail = m_liveAtTail[block];
+        auto& liveAtTail = m_liveAtTail[block];
             
         block->last().forEach<Reg>(
-            [&] (Reg& reg, Arg::Role role, Bank, Width) {
+            [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                 if (Arg::isLateUse(role))
-                    liveAtTail.add(reg);
+                    liveAtTail.includeRegister(reg, width);
             });
     }
         
@@ -94,17 +94,17 @@ RegLiveness::RegLiveness(Code& code)
             block->at(0).forEach<Reg>(
                 [&] (Reg& reg, Arg::Role role, Bank, Width) {
                     if (Arg::isEarlyDef(role))
-                        localCalc.m_workset.remove(reg);
+                        localCalc.m_workset.excludeRegister(reg);
                 });
                 
-            RegisterSet& liveAtHead = m_liveAtHead[block];
+            auto& liveAtHead = m_liveAtHead[block];
             if (liveAtHead.subsumes(localCalc.m_workset))
                 continue;
                 
             liveAtHead.merge(localCalc.m_workset);
                 
             for (BasicBlock* predecessor : block->predecessors()) {
-                RegisterSet& liveAtTail = m_liveAtTail[predecessor];
+                auto& liveAtTail = m_liveAtTail[predecessor];
                 if (liveAtTail.subsumes(localCalc.m_workset))
                     continue;
                     
@@ -125,7 +125,7 @@ RegLiveness::LocalCalcForUnifiedTmpLiveness::LocalCalcForUnifiedTmpLiveness(Unif
 {
     for (Tmp tmp : liveness.liveAtTail(block)) {
         if (tmp.isReg())
-            m_workset.add(tmp.reg());
+            m_workset.includeRegister(tmp.reg());
     }
 }
 
@@ -134,12 +134,12 @@ void RegLiveness::LocalCalcForUnifiedTmpLiveness::execute(unsigned instIndex)
     for (unsigned index : m_actions[instIndex + 1].def) {
         Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
         if (tmp.isReg())
-            m_workset.remove(tmp.reg());
+            m_workset.excludeRegister(tmp.reg());
     }
     for (unsigned index : m_actions[instIndex].use) {
         Tmp tmp = Tmp::tmpForLinearIndex(m_code, index);
         if (tmp.isReg())
-            m_workset.add(tmp.reg());
+            m_workset.includeRegister(tmp.reg());
     }
 }
 

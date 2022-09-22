@@ -54,7 +54,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::checkConsistency()
             if (!reg)
                 return;
 
-            ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
+            ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg));
             ASSERT(m_currentAllocation->at(reg) == tmp);
         });
 
@@ -64,11 +64,11 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::checkConsistency()
 
             Tmp tmp = m_currentAllocation->at(reg);
             if (!tmp) {
-                ASSERT(m_availableRegs[bankForReg(reg)].contains(reg));
+                ASSERT(m_availableRegs[bankForReg(reg)].includesRegister(reg));
                 continue;
             }
 
-            ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
+            ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg));
             ASSERT(m_map[tmp].reg == reg);
         }
     }
@@ -158,8 +158,8 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::release(Tmp tmp, Reg reg)
     ASSERT(reg);
     ASSERT(m_currentAllocation->at(reg) == tmp);
     m_currentAllocation->at(reg) = Tmp();
-    ASSERT(!m_availableRegs[tmp.bank()].contains(reg));
-    m_availableRegs[tmp.bank()].set(reg);
+    ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg));
+    m_availableRegs[tmp.bank()].includeRegister(reg);
     ASSERT(m_map[tmp].reg == reg);
     m_map[tmp].reg = Reg();
 }
@@ -190,11 +190,11 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::alloc(Tmp tmp, Reg reg, Arg::Ro
         spill(occupyingTmp, reg);
     else {
         ASSERT(!m_currentAllocation->at(reg));
-        ASSERT(m_availableRegs[tmp.bank()].get(reg));
+        ASSERT(m_availableRegs[tmp.bank()].includesRegister(reg));
     }
 
     m_map[tmp].reg = reg;
-    m_availableRegs[tmp.bank()].clear(reg);
+    m_availableRegs[tmp.bank()].excludeRegister(reg);
     m_currentAllocation->at(reg) = tmp;
 
     if (Arg::isAnyUse(role)) {
@@ -248,34 +248,34 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
 
     auto markRegisterAsUsed = [&] (Reg reg) {
         if (Arg::isAnyDef(role))
-            m_clobberedToClear.clear(reg);
+            m_clobberedToClear.excludeRegister(reg);
         // At this point, it doesn't matter if we add it to the m_namedUsedRegs or m_namedDefdRegs. 
         // We just need to mark that we can't use it again for another tmp.
-        m_namedUsedRegs.set(reg);
+        m_namedUsedRegs.includeRegister(reg);
     };
 
-    bool mightInterfere = m_earlyClobber.numberOfSetRegisters() || m_lateClobber.numberOfSetRegisters();
+    bool mightInterfere = WholeRegisterSet(m_earlyClobber).numberOfSetRegisters() || (m_lateClobber).numberOfSetRegisters();
 
     auto interferesWithClobber = [&] (Reg reg) {
         if (!mightInterfere)
             return false;
-        if (Arg::isAnyUse(role) && m_earlyClobber.get(reg))
+        if (Arg::isAnyUse(role) && WholeRegisterSet(m_earlyClobber).includesRegister(reg))
             return true;
-        if (Arg::isAnyDef(role) && m_lateClobber.get(reg))
+        if (Arg::isAnyDef(role) && WholeRegisterSet(m_lateClobber).includesRegister(reg))
             return true;
-        if (Arg::activeAt(role, Arg::Phase::Early) && m_earlyClobber.get(reg))
+        if (Arg::activeAt(role, Arg::Phase::Early) && WholeRegisterSet(m_earlyClobber).includesRegister(reg))
             return true;
-        if (Arg::activeAt(role, Arg::Phase::Late) && m_lateClobber.get(reg))
+        if (Arg::activeAt(role, Arg::Phase::Late) && WholeRegisterSet(m_lateClobber).includesRegister(reg))
             return true;
         return false;
     };
 
     if (Reg reg = m_map[tmp].reg) {
         if (!interferesWithClobber(reg)) {
-            ASSERT(!m_namedDefdRegs.contains(reg));
+            ASSERT(!m_namedDefdRegs.includesRegister(reg));
             tmp = Tmp(reg);
             markRegisterAsUsed(reg);
-            ASSERT(!m_availableRegs[bank].get(reg));
+            ASSERT(!m_availableRegs[bank].includesRegister(reg));
             return true;
         }
         // This is a rare case when we've already allocated a Tmp in some way, but another 
@@ -290,9 +290,9 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
     if (m_availableRegs[bank].numberOfSetRegisters()) {
         // We first take an available register.
         for (Reg reg : m_registers[bank]) {
-            if (interferesWithClobber(reg) || m_namedUsedRegs.contains(reg) || m_namedDefdRegs.contains(reg))
+            if (interferesWithClobber(reg) || m_namedUsedRegs.includesRegister(reg) || m_namedDefdRegs.includesRegister(reg))
                 continue;
-            if (!m_availableRegs[bank].contains(reg))
+            if (!m_availableRegs[bank].includesRegister(reg))
                 continue;
 
             markRegisterAsUsed(reg);
@@ -304,7 +304,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
 
     // Nothing was available, let's make some room.
     for (Reg reg : m_registers[bank]) {
-        if (interferesWithClobber(reg) || m_namedUsedRegs.contains(reg) || m_namedDefdRegs.contains(reg))
+        if (interferesWithClobber(reg) || m_namedUsedRegs.includesRegister(reg) || m_namedDefdRegs.includesRegister(reg))
             continue;
 
         markRegisterAsUsed(reg);
@@ -319,7 +319,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
 
 ALWAYS_INLINE bool GenerateAndAllocateRegisters::isDisallowedRegister(Reg reg)
 {
-    return !m_allowedRegisters.get(reg);
+    return !m_allowedRegisters.includesRegister(reg);
 }
 
 void GenerateAndAllocateRegisters::prepareForGeneration()
@@ -403,7 +403,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         m_registers[bank] = m_code.regsInPriorityOrder(bank);
 
         for (Reg reg : m_registers[bank]) {
-            m_allowedRegisters.set(reg);
+            m_allowedRegisters.includeRegister(reg);
             TmpData& data = m_map[Tmp(reg)];
             data.spillSlot = m_code.addStackSlot(8, StackSlotKind::Spill);
             data.reg = Reg();
@@ -557,9 +557,9 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 ASSERT(m_map[tmp].reg == Reg()); 
 #endif
 
-            RegisterSet availableRegisters;
+            WholeRegisterSet availableRegisters;
             for (Reg reg : m_registers[bank])
-                availableRegisters.set(reg);
+                availableRegisters.includeRegister(reg);
             m_availableRegs[bank] = WTFMove(availableRegisters);
         });
 
@@ -572,7 +572,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 continue;
             Reg reg = Reg::fromIndex(i);
             m_map[tmp].reg = reg;
-            m_availableRegs[tmp.bank()].clear(reg);
+            m_availableRegs[tmp.bank()].excludeRegister(reg);
         }
 
         ++m_globalInstIndex;
@@ -591,11 +591,11 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             Inst& inst = block->at(instIndex);
             Inst instCopy = inst;
 
-            m_namedUsedRegs = RegisterSet();
-            m_namedDefdRegs = RegisterSet();
-            m_earlyClobber = RegisterSet();
-            m_lateClobber = RegisterSet();
-            m_clobberedToClear = RegisterSet();
+            m_namedUsedRegs = { };
+            m_namedDefdRegs = { };
+            m_earlyClobber = { };
+            m_lateClobber = { };
+            m_clobberedToClear = { };
 
             bool needsToGenerate = ([&] () -> bool {
                 // FIXME: We should consider trying to figure out if we can also elide Mov32s
@@ -643,9 +643,9 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
                 if (tmp.isReg()) {
                     if (Arg::isAnyUse(role))
-                        m_namedUsedRegs.set(tmp.reg());
+                        m_namedUsedRegs.includeRegister(tmp.reg());
                     if (Arg::isAnyDef(role))
-                        m_namedDefdRegs.set(tmp.reg());
+                        m_namedDefdRegs.includeRegister(tmp.reg());
                 }
             });
 
@@ -682,28 +682,28 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 m_clobberedToClear.exclude(m_namedDefdRegs);
             }
 
-            auto allocNamed = [&] (const RegisterSet& named, Arg::Role role) {
-                for (Reg reg : named) {
+            auto allocNamed = [&] (const WholeRegisterSet& named, Arg::Role role) {
+                named.forEachWithWidth([&] (Reg reg, Width) {
                     if (Tmp occupyingTmp = currentAllocation[reg]) {
                         if (occupyingTmp == Tmp(reg))
-                            continue;
+                            return;
                     }
 
                     alloc(Tmp(reg), reg, role);
-                }
+                });
             };
 
-            auto spillIfNeeded = [&] (const RegisterSet& set) {
-                for (Reg reg : set) {
+            auto spillIfNeeded = [&] (const WholeRegisterSet& set) {
+                set.forEachWithWidth([&] (Reg reg, Width) {
                     if (Tmp tmp = m_currentAllocation->at(reg))
                         spill(tmp, reg);
-                }
+                });
             };
 
             freeDeadTmpsAtCurrentInst();
 
-            spillIfNeeded(m_earlyClobber);
-            spillIfNeeded(m_lateClobber);
+            spillIfNeeded(WholeRegisterSet(m_earlyClobber));
+            spillIfNeeded(WholeRegisterSet(m_lateClobber));
 
             allocNamed(m_namedUsedRegs, Arg::Role::Use); // Must come before the defd registers since we may use and def the same register.
             allocNamed(m_namedDefdRegs, Arg::Role::Def);
@@ -777,13 +777,13 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 RegisterSet registerSet;
                 for (size_t i = 0; i < currentAllocation.size(); ++i) {
                     if (currentAllocation[i])
-                        registerSet.set(Reg::fromIndex(i));
+                        registerSet.includeRegister(Reg::fromIndex(i));
                 }
                 inst.reportUsedRegisters(registerSet);
             }
 
             auto handleClobber = [&] {
-                for (Reg reg : m_clobberedToClear) {
+                for (Reg reg : WholeRegisterSet(m_clobberedToClear)) {
                     if (Tmp tmp = m_currentAllocation->at(reg))
                         release(tmp, reg);
                 }

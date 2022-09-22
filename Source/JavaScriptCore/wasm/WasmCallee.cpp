@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "WasmCallee.h"
-#include "runtime/VM.h"
 
 #if ENABLE(WEBASSEMBLY)
 
@@ -186,14 +185,14 @@ RegisterAtOffsetList* LLIntCallee::calleeSaveRegistersImpl()
     static LazyNeverDestroyed<RegisterAtOffsetList> calleeSaveRegisters;
     static std::once_flag initializeFlag;
     std::call_once(initializeFlag, [] {
-        RegisterSet registers;
-        registers.set(GPRInfo::regCS0); // Wasm::Instance
+        WholeRegisterSet registers;
+        registers.includeRegister(GPRInfo::regCS0); // Wasm::Instance
 #if CPU(X86_64)
-        registers.set(GPRInfo::regCS2); // PB
+        registers.includeRegister(GPRInfo::regCS2); // PB
 #elif CPU(ARM64) || CPU(RISCV64)
-        registers.set(GPRInfo::regCS7); // PB
+        registers.includeRegister(GPRInfo::regCS7); // PB
 #elif CPU(ARM)
-        registers.set(GPRInfo::regCS1); // PB
+        registers.includeRegister(GPRInfo::regCS1); // PB
 #else
 #error Unsupported architecture.
 #endif
