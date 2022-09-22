@@ -94,9 +94,10 @@ const RegisterSet& AccessGenerationState::liveRegistersToPreserveAtExceptionHand
 
 static RegisterSet calleeSaveRegisters()
 {
-    RegisterSet result = RegisterSet::registersToNotSaveForJSCall();
-    result.filter(RegisterSet::registersToNotSaveForCCall());
-    return result;
+    return RegisterSet(RegisterSet::vmCalleeSaveRegisters())
+        .filter(RegisterSet::calleeSaveRegisters())
+        .merge(RegisterSet::reservedHardwareRegisters())
+        .merge(RegisterSet::stackRegisters());
 }
 
 const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling()

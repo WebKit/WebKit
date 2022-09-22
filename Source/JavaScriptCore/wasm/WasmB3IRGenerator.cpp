@@ -2704,9 +2704,9 @@ Value* B3IRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned 
 
     PatchpointValue* result = m_currentBlock->appendNew<PatchpointValue>(m_proc, m_proc.addTuple({ pointerType(), pointerType() }), origin());
     result->effects.exitsSideways = true;
-    result->clobber(RegisterSet::macroScratchRegisters());
-    RegisterSet clobberLate = RegisterSet::volatileRegistersForJSCall();
-    clobberLate.add(GPRInfo::argumentGPR0);
+    result->clobber(RegisterSet::macroClobberedRegisters());
+    auto clobberLate = RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters());
+    clobberLate.includeRegister(GPRInfo::argumentGPR0);
     result->clobberLate(clobberLate);
     result->append(instanceValue(), ValueRep::SomeRegister);
     result->resultConstraints.append(ValueRep::reg(GPRInfo::returnValueGPR));
@@ -2749,7 +2749,7 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
     patch->append(framePointer(), ValueRep::reg(GPRInfo::argumentGPR1));
     for (unsigned i = 0; i < args.size(); ++i)
         patch->append(get(args[i]), ValueRep::stackArgument(i * sizeof(EncodedJSValue)));
-    patch->clobber(RegisterSet::volatileRegistersForJSCall());
+    patch->clobber(RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()));
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
     patch->setGenerator([this, exceptionIndex, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -2764,7 +2764,7 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
 auto B3IRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
     PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
-    patch->clobber(RegisterSet::volatileRegistersForJSCall());
+    patch->clobber(RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     patch->append(framePointer(), ValueRep::reg(GPRInfo::argumentGPR1));
@@ -2930,8 +2930,8 @@ B3::Value* B3IRGenerator::createCallPatchpoint(BasicBlock* block, Origin origin,
 
     B3::Type returnType = toB3ResultType(&signature);
     PatchpointValue* patchpoint = m_proc.add<PatchpointValue>(returnType, origin);
-    patchpoint->clobberEarly(RegisterSet::macroScratchRegisters());
-    patchpoint->clobberLate(RegisterSet::volatileRegistersForJSCall());
+    patchpoint->clobberEarly(RegisterSet::macroClobberedRegisters());
+    patchpoint->clobberLate(RegisterSet::registersToSaveForJSCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()));
     patchpointFunctor(patchpoint, exceptionHandle);
     patchpoint->appendVector(constrainedArguments);
 

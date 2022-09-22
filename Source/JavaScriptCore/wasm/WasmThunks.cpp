@@ -87,8 +87,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> triggerOMGEntryTierUpThunkGenerator(const 
     jit.emitFunctionPrologue();
 
     const unsigned extraPaddingBytes = 0;
-    RegisterSet registersToSpill = RegisterSet::allRegisters();
-    registersToSpill.exclude(RegisterSet::registersToNotSaveForCCall());
+    auto registersToSpill = WholeRegisterSet(RegisterSet::registersToSaveForCCall(Options::useWebAssemblySIMD() ? RegisterSet::allRegisters() : RegisterSet::allScalarRegisters()));
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(jit, registersToSpill, extraPaddingBytes);
 
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);

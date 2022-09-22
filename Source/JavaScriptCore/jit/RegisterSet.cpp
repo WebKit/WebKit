@@ -52,6 +52,8 @@ WholeRegisterSet RegisterSet::reservedHardwareRegisters()
     FOR_EACH_FP_REGISTER(SET_IF_RESERVED)
 #undef SET_IF_RESERVED
 
+    ASSERT(!result.numberOfSetFPRs());
+
     return result;
 }
 
@@ -67,16 +69,9 @@ WholeRegisterSet RegisterSet::runtimeTagRegisters()
 WholeRegisterSet RegisterSet::specialRegisters()
 {
     return RegisterSet(
-        stackRegisters(), reservedHardwareRegisters(), runtimeTagRegisters());
-}
-
-RegisterSet RegisterSet::volatileRegistersForJSCall()
-{
-    RegisterSet volatileRegisters = allRegisters();
-    volatileRegisters.exclude(RegisterSet::stackRegisters());
-    volatileRegisters.exclude(RegisterSet::reservedHardwareRegisters());
-    volatileRegisters.exclude(RegisterSet::vmCalleeSaveRegisters());
-    return volatileRegisters;
+        RegisterSet::stackRegisters(), 
+        RegisterSet::reservedHardwareRegisters(), 
+        runtimeTagRegisters()).whole();
 }
 
 WholeRegisterSet RegisterSet::stubUnavailableRegisters()
@@ -119,6 +114,10 @@ WholeRegisterSet RegisterSet::calleeSaveRegisters()
     if (isCalleeSaved)                                                 \
         result.includeRegister(RegisterNames::id);
     FOR_EACH_GP_REGISTER(SET_IF_CALLEESAVED)
+#undef SET_IF_CALLEESAVED
+#define SET_IF_CALLEESAVED(id, name, isReserved, isCalleeSaved)        \
+    if (isCalleeSaved)                                                 \
+        result.includeRegister(RegisterNames::id, Width64);
     FOR_EACH_FP_REGISTER(SET_IF_CALLEESAVED)
 #undef SET_IF_CALLEESAVED
         
@@ -139,24 +138,24 @@ WholeRegisterSet RegisterSet::vmCalleeSaveRegisters()
     result.includeRegister(GPRInfo::regCS6);
 #endif
 #elif CPU(ARM64)
-    result.set(GPRInfo::regCS0);
-    result.set(GPRInfo::regCS1);
-    result.set(GPRInfo::regCS2);
-    result.set(GPRInfo::regCS3);
-    result.set(GPRInfo::regCS4);
-    result.set(GPRInfo::regCS5);
-    result.set(GPRInfo::regCS6);
-    result.set(GPRInfo::regCS7);
-    result.set(GPRInfo::regCS8);
-    result.set(GPRInfo::regCS9);
-    result.set(FPRInfo::fpRegCS0);
-    result.set(FPRInfo::fpRegCS1);
-    result.set(FPRInfo::fpRegCS2);
-    result.set(FPRInfo::fpRegCS3);
-    result.set(FPRInfo::fpRegCS4);
-    result.set(FPRInfo::fpRegCS5);
-    result.set(FPRInfo::fpRegCS6);
-    result.set(FPRInfo::fpRegCS7);
+    result.includeRegister(GPRInfo::regCS0);
+    result.includeRegister(GPRInfo::regCS1);
+    result.includeRegister(GPRInfo::regCS2);
+    result.includeRegister(GPRInfo::regCS3);
+    result.includeRegister(GPRInfo::regCS4);
+    result.includeRegister(GPRInfo::regCS5);
+    result.includeRegister(GPRInfo::regCS6);
+    result.includeRegister(GPRInfo::regCS7);
+    result.includeRegister(GPRInfo::regCS8);
+    result.includeRegister(GPRInfo::regCS9);
+    result.includeRegister(FPRInfo::fpRegCS0, Width64);
+    result.includeRegister(FPRInfo::fpRegCS1, Width64);
+    result.includeRegister(FPRInfo::fpRegCS2, Width64);
+    result.includeRegister(FPRInfo::fpRegCS3, Width64);
+    result.includeRegister(FPRInfo::fpRegCS4, Width64);
+    result.includeRegister(FPRInfo::fpRegCS5, Width64);
+    result.includeRegister(FPRInfo::fpRegCS6, Width64);
+    result.includeRegister(FPRInfo::fpRegCS7, Width64);
 #elif CPU(ARM_THUMB2)
     result.includeRegister(GPRInfo::regCS0);
     result.includeRegister(GPRInfo::regCS1);
@@ -370,12 +369,20 @@ WholeRegisterSet RegisterSet::argumentGPRS()
 
 RegisterSet RegisterSet::registersToSaveForJSCall(RegisterSet liveRegisters)
 {
-    return RegisterSet(RegisterSet::vmCalleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());
+    RegisterSet result = liveRegisters;
+    result.exclude(RegisterSet::vmCalleeSaveRegisters());
+    result.exclude(RegisterSet::stackRegisters());
+    result.exclude(RegisterSet::reservedHardwareRegisters());
+    return WholeRegisterSet(result);
 }
 
 RegisterSet RegisterSet::registersToSaveForCCall(RegisterSet liveRegisters)
 {
-    return RegisterSet(RegisterSet::calleeSaveRegisters(), RegisterSet::stackRegisters(), RegisterSet::reservedHardwareRegisters());
+    RegisterSet result = liveRegisters;
+    result.exclude(RegisterSet::calleeSaveRegisters());
+    result.exclude(RegisterSet::stackRegisters());
+    result.exclude(RegisterSet::reservedHardwareRegisters());
+    return WholeRegisterSet(result);
 }
 
 WholeRegisterSet RegisterSet::allGPRs()
@@ -402,29 +409,13 @@ WholeRegisterSet RegisterSet::allRegisters()
     return result;
 }
 
-size_t RegisterSet::numberOfSetGPRs() const
+WholeRegisterSet RegisterSet::allScalarRegisters()
 {
-    RegisterSet temp = *this;
-    temp.filter(allGPRs());
-    return temp.numberOfSetRegisters();
-}
-
-size_t RegisterSet::numberOfSetFPRs() const
-{
-    RegisterSet temp = *this;
-    temp.filter(allFPRs());
-    return temp.numberOfSetRegisters();
-}
-
-void RegisterSet::dump(PrintStream& out) const
-{
-    CommaPrinter comma;
-    out.print("[");
-    for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
-        if (get(reg))
-            out.print(comma, reg);
-    }
-    out.print("]");
+    WholeRegisterSet result;
+    result.merge(allGPRs());
+    result.merge(allFPRs());
+    result.m_set.m_upperBits.clearAll();
+    return result;
 }
 
 } // namespace JSC

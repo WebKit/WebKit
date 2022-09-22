@@ -217,11 +217,11 @@ public:
     static constexpr AllRegsIterable all() { return AllRegsIterable(); }
 
 private:
-    static constexpr uint8_t invalid() { return 0xff; }
+    static constexpr uint8_t invalid() { return (1 << 7) - 1; }
 
-    static constexpr uint8_t deleted() { return 0xfe; }
+    static constexpr uint8_t deleted() { return invalid() - 1; }
     
-    uint8_t m_index;
+    unsigned m_index : 7;
 };
 
 struct RegHash {

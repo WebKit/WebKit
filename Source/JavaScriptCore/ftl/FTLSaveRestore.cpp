@@ -123,7 +123,7 @@ void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     for (MacroAssembler::RegisterID reg = firstToSaveGPR; reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (regs.special.includesRegister(reg))
             continue;
-        spooler.storeGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)) });
+        spooler.storeGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)), Width64 });
     }
     spooler.finalizeGPR();
     
@@ -139,7 +139,7 @@ void saveAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
         if (regs.special.includesRegister(reg))
             continue;
-        spooler.storeFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)) });
+        spooler.storeFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)), Width64 });
     }
     spooler.finalizeFPR();
 }
@@ -158,7 +158,7 @@ void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     for (MacroAssembler::FPRegisterID reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
         if (regs.special.includesRegister(reg))
             continue;
-        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)) });
+        spooler.loadFPR({ reg, static_cast<ptrdiff_t>(offsetOfFPR(reg)), Width64 });
     }
     spooler.finalizeFPR();
     
@@ -173,7 +173,7 @@ void restoreAllRegisters(AssemblyHelpers& jit, char* scratchMemory)
     for (MacroAssembler::RegisterID reg = firstToRestoreGPR; reg <= MacroAssembler::lastRegister(); reg = MacroAssembler::nextRegister(reg)) {
         if (regs.special.includesRegister(reg))
             continue;
-        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)) });
+        spooler.loadGPR({ reg, static_cast<ptrdiff_t>(offsetOfGPR(reg)), Width64 });
     }
     spooler.finalizeGPR();
 

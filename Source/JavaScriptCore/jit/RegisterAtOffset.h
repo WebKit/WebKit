@@ -35,22 +35,31 @@ namespace JSC {
 class RegisterAtOffset {
 public:
     RegisterAtOffset() = default;
-
-    RegisterAtOffset(Reg reg, ptrdiff_t offset)
-        : m_reg(reg)
-        , m_offset(offset)
+    
+    RegisterAtOffset(Reg reg, ptrdiff_t offset, Width width)
+        : m_offset(offset)
+        , m_regIndex(reg.index())
+        , m_width(width == Width128 ? true : false)
     {
+        ASSERT(width == Width64 || (width == Width128 && Options::useWebAssemblySIMD()));
+        ASSERT(reg.index() < (1 << 6));
+        ASSERT(Reg::last().index() < (1 << 6));
+        ASSERT(this->reg() == reg);
+        RELEASE_ASSERT(m_offset == offset);
+        ASSERT(this->width() == width);
     }
     
-    bool operator!() const { return !m_reg; }
+    bool operator!() const { return !reg(); }
     
-    Reg reg() const { return m_reg; }
+    Reg reg() const { return Reg::fromIndex(m_regIndex); }
     ptrdiff_t offset() const { return m_offset; }
+    size_t byteSize() const { return bytesForWidth(width()); }
+    Width width() const { return m_width ? Width128 : Width64; }
     int offsetAsIndex() const { ASSERT(!(offset() % sizeof(CPURegister))); return offset() / static_cast<int>(sizeof(CPURegister)); }
     
     bool operator==(const RegisterAtOffset& other) const
     {
-        return reg() == other.reg() && offset() == other.offset();
+        return reg() == other.reg() && offset() == other.offset() && width() == other.width();
     }
     
     bool operator<(const RegisterAtOffset& other) const
@@ -65,8 +74,9 @@ public:
     void dump(PrintStream& out) const;
 
 private:
-    Reg m_reg;
-    ptrdiff_t m_offset : (sizeof(ptrdiff_t) - sizeof(Reg)) * CHAR_BIT { 0 };
+    ptrdiff_t m_offset : 48 { 0 };
+    unsigned m_regIndex : 7 = Reg().index();
+    bool m_width : 1 = false;
 };
 
 } // namespace JSC
