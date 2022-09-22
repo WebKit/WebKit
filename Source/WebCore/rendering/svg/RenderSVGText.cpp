@@ -73,7 +73,7 @@ SVGTextElement& RenderSVGText::textElement() const
 
 bool RenderSVGText::isChildAllowed(const RenderObject& child, const RenderStyle&) const
 {
-    return child.isInline();
+    return child.isInline() && !SVGRenderSupport::isEmptySVGInlineText(child);
 }
 
 RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(RenderObject& start)

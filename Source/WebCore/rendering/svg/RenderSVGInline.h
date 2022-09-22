@@ -40,6 +40,8 @@ private:
     bool requiresLayer() const final { return false; }
     bool isSVGInline() const final { return true; }
 
+    bool isChildAllowed(RenderObject*, const RenderStyle&) const;
+
     void updateFromStyle() final;
 
     // Chapter 10.4 of the SVG Specification say that we should use the

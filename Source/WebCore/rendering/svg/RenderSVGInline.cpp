@@ -34,6 +34,14 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGInline);
+
+bool RenderSVGInline::isChildAllowed(RenderObject* child, RenderStyle* style) const
+{
+    if (SVGRenderSupport::isEmptySVGInlineText(child))
+    return false;
+
+    return RenderInline::isChildAllowed(child, style);
+}
     
 RenderSVGInline::RenderSVGInline(SVGGraphicsElement& element, RenderStyle&& style)
     : RenderInline(element, WTFMove(style))

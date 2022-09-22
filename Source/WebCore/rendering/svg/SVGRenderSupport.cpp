@@ -38,6 +38,7 @@
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
+#include "RenderSVGInlineText.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceMarker.h"
@@ -480,6 +481,14 @@ void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const
         else
             context.setStrokeStyle(SolidStroke);
     }
+}
+
+bool SVGRenderSupport::isEmptySVGInlineText(const RenderObject* object)
+{
+    // RenderSVGInlineText performs whitespace filtering in order to support xml:space
+    // (http://www.w3.org/TR/SVG/struct.html#LangSpaceAttrs), and can end up with an empty string
+    // even when its original constructor argument is non-empty.
+    return object.isSVGInlineText() && toRenderSVGInlineText(object).hasEmptyText();
 }
 
 void SVGRenderSupport::styleChanged(RenderElement& renderer, const RenderStyle* oldStyle)

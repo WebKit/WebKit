@@ -90,6 +90,9 @@ public:
     static LegacyRenderSVGRoot* findTreeRootObject(RenderElement&);
     static const LegacyRenderSVGRoot* findTreeRootObject(const RenderElement&);
 
+    // Helper method for determing whether an RenderSVGInlineText object has zero text length.
+    static bool isEmptySVGInlineText(const RenderObject*);
+
 private:
     // This class is not constructable.
     SVGRenderSupport();
