@@ -111,7 +111,7 @@ bool WindowEventLoop::isContextThread() const
 MicrotaskQueue& WindowEventLoop::microtaskQueue()
 {
     if (!m_microtaskQueue)
-        m_microtaskQueue = makeUnique<MicrotaskQueue>(commonVM());
+        m_microtaskQueue = makeUnique<MicrotaskQueue>(commonVM(), *this);
     return *m_microtaskQueue;
 }
 

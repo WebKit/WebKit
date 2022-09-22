@@ -378,7 +378,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-
 # Skip html/webappapis that are timing out.
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-xml.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_active_document.window.html [ Skip ]
 
 # Skip WPT webaudio tests that are timing out.
@@ -423,6 +422,7 @@ http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdE
 http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/WebIDL/current-realm.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/anonymous-iframe/embedding.tentative.https.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/failure-check-sequence.https.html [ DumpJSConsoleLogInStdErr ]
@@ -459,6 +459,7 @@ imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.any.w
 imported/w3c/web-platform-tests/html/webappapis/user-prompts/print-during-beforeunload.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/xhr.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/notifications/instance.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-resources.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/writable-streams/write.any.html [ DumpJSConsoleLogInStdErr ]

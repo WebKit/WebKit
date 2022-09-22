@@ -39,6 +39,7 @@ Ref<WorkerEventLoop> WorkerEventLoop::create(WorkerOrWorkletGlobalScope& context
 WorkerEventLoop::WorkerEventLoop(WorkerOrWorkletGlobalScope& context)
     : ContextDestructionObserver(&context)
 {
+    addAssociatedContext(context);
 }
 
 WorkerEventLoop::~WorkerEventLoop()
@@ -65,7 +66,7 @@ MicrotaskQueue& WorkerEventLoop::microtaskQueue()
 {
     ASSERT(scriptExecutionContext());
     if (!m_microtaskQueue)
-        m_microtaskQueue = makeUnique<MicrotaskQueue>(scriptExecutionContext()->vm());
+        m_microtaskQueue = makeUnique<MicrotaskQueue>(scriptExecutionContext()->vm(), *this);
     return *m_microtaskQueue;
 }
 

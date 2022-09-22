@@ -82,6 +82,10 @@ public:
     void unregisterGroup(EventLoopTaskGroup&);
     void stopAssociatedGroupsIfNecessary();
 
+    void forEachAssociatedContext(const Function<void(ScriptExecutionContext&)>&);
+    void addAssociatedContext(ScriptExecutionContext&);
+    void removeAssociatedContext(ScriptExecutionContext&);
+
 protected:
     EventLoop() = default;
     void run();
@@ -96,6 +100,7 @@ private:
     Vector<std::unique_ptr<EventLoopTask>> m_tasks;
     WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
+    WeakHashSet<ScriptExecutionContext> m_associatedContexts;
     bool m_isScheduledToRun { false };
 };
 

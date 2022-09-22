@@ -188,4 +188,19 @@ void EventLoopTaskGroup::runAtEndOfMicrotaskCheckpoint(EventLoop::TaskFunction&&
     microtaskQueue().addCheckpointTask(makeUnique<EventLoopFunctionDispatchTask>(TaskSource::IndexedDB, *this, WTFMove(function)));
 }
 
+void EventLoop::forEachAssociatedContext(const Function<void(ScriptExecutionContext&)>& apply)
+{
+    m_associatedContexts.forEach(apply);
+}
+
+void EventLoop::addAssociatedContext(ScriptExecutionContext& context)
+{
+    m_associatedContexts.add(context);
+}
+
+void EventLoop::removeAssociatedContext(ScriptExecutionContext& context)
+{
+    m_associatedContexts.remove(context);
+}
+
 } // namespace WebCore

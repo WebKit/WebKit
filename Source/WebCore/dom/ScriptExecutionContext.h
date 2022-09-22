@@ -261,6 +261,11 @@ public:
     int timerNestingLevel() const { return m_timerNestingLevel; }
     void setTimerNestingLevel(int timerNestingLevel) { m_timerNestingLevel = timerNestingLevel; }
 
+    RejectedPromiseTracker* rejectedPromiseTracker()
+    {
+        return m_rejectedPromiseTracker.get();
+    }
+
     RejectedPromiseTracker* ensureRejectedPromiseTracker()
     {
         if (m_rejectedPromiseTracker)

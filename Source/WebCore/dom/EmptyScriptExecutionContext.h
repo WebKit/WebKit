@@ -42,6 +42,11 @@ public:
         return adoptRef(*new EmptyScriptExecutionContext(vm));
     }
 
+    ~EmptyScriptExecutionContext()
+    {
+        m_eventLoop->removeAssociatedContext(*this);
+    }
+
     bool isSecureContext() const final { return false; }
     bool isJSExecutionForbidden() const final { return false; }
     EventLoopTaskGroup& eventLoop() final
@@ -85,6 +90,7 @@ private:
         , m_eventLoop(EmptyEventLoop::create(vm))
         , m_eventLoopTaskGroup(makeUnique<EventLoopTaskGroup>(m_eventLoop))
     {
+        m_eventLoop->addAssociatedContext(*this);
     }
 
     void addMessage(MessageSource, MessageLevel, const String&, const String&, unsigned, unsigned, RefPtr<Inspector::ScriptCallStack>&&, JSC::JSGlobalObject* = nullptr, unsigned long = 0) final { }
@@ -109,7 +115,7 @@ private:
 
     private:
         explicit EmptyEventLoop(JSC::VM& vm)
-            : m_queue(MicrotaskQueue(vm))
+            : m_queue(MicrotaskQueue(vm, *this))
         {
         }
 
