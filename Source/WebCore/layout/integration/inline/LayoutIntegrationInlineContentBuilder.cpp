@@ -117,6 +117,8 @@ void InlineContentBuilder::createDisplayLines(Layout::InlineFormattingState& inl
         // Collect overflow from boxes.
         for (; boxIndex < boxes.size() && boxes[boxIndex].lineIndex() == lineIndex; ++boxIndex) {
             auto& box = boxes[boxIndex];
+            if (box.isRootInlineBox())
+                continue;
 
             lineInkOverflowRect.unite(box.inkOverflow());
 

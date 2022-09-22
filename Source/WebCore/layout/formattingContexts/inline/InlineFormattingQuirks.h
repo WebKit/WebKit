@@ -39,7 +39,6 @@ public:
 
     bool shouldPreserveTrailingWhitespace(bool isInIntrinsicWidthMode, bool lineHasBidiContent, bool lineHasOverflow, bool lineEndWithLineBreak) const;
     InlineLayoutUnit initialLineHeight() const;
-    bool hasSoftWrapOpportunityAtImage() const;
     bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&, const LineBox&) const;
 };
 

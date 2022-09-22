@@ -135,7 +135,7 @@ static inline bool endsWithSoftWrapOpportunity(const InlineTextItem& currentText
     return !TextUtil::findNextBreakablePosition(lineBreakIterator, 0, style);
 }
 
-static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inlineFormattingContext, const InlineItem& current, const InlineItem& next)
+static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const InlineItem& next)
 {
     // FIXME: Transition no-wrapping logic from InlineContentBreaker to here where we compute the soft wrap opportunity indexes.
     // "is at" simple means that there's a soft wrap opportunity right after the [current].
@@ -178,9 +178,6 @@ static inline bool isAtSoftWrapOpportunity(const InlineFormattingContext& inline
     if (current.layoutBox().isListMarkerBox() || next.layoutBox().isListMarkerBox())
         return false;
     if (current.isBox() || next.isBox()) {
-        auto isImageContent = current.layoutBox().isImage() || next.layoutBox().isImage();
-        if (isImageContent && inlineFormattingContext.layoutState().inQuirksMode())
-            return inlineFormattingContext.formattingQuirks().hasSoftWrapOpportunityAtImage();
         // [text][inline box start][inline box end][inline box] (text<span></span><img>) : there's a soft wrap opportunity between the [text] and [img].
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
@@ -763,7 +760,7 @@ size_t LineBuilder::nextWrapOpportunity(size_t startIndex, const LineBuilder::In
         // At this point previous and current items are not necessarily adjacent items e.g "previous<span>current</span>"
         auto& previousItem = m_inlineItems[*previousInlineItemIndex];
         auto& currentItem = m_inlineItems[index];
-        if (isAtSoftWrapOpportunity(m_inlineFormattingContext, previousItem, currentItem)) {
+        if (isAtSoftWrapOpportunity(previousItem, currentItem)) {
             if (*previousInlineItemIndex + 1 == index && (!previousItem.isText() || !currentItem.isText())) {
                 // We only know the exact soft wrap opportunity index when the previous and current items are next to each other.
                 return index;

@@ -115,12 +115,6 @@ bool InlineFormattingQuirks::inlineLevelBoxAffectsLineBox(const InlineLevelBox& 
     return false;
 }
 
-bool InlineFormattingQuirks::hasSoftWrapOpportunityAtImage() const
-{
-    ASSERT(layoutState().inQuirksMode());
-    return !formattingContext().root().isTableCell();
-}
-
 }
 }
 

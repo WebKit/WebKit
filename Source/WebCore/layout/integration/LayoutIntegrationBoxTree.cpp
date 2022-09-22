@@ -54,14 +54,9 @@ namespace LayoutIntegration {
 
 static constexpr size_t smallTreeThreshold = 8;
 
-// FIXME: see webkit.org/b/230964
-#define CAN_USE_FIRST_LINE_STYLE_RESOLVE 1
-
 static RenderStyle rootBoxStyle(const RenderBlock& rootRenderer)
 {
     auto clonedStyle = RenderStyle::clone(rootRenderer.style());
-    if (is<RenderBlockFlow>(rootRenderer))
-        clonedStyle.setEffectiveDisplay(DisplayType::Block);
     if (rootRenderer.isAnonymousBlock()) {
         auto& anonBlockParentStyle = rootRenderer.parent()->style();
         // overflow and text-overflow property values don't get forwarded to anonymous block boxes.
@@ -73,25 +68,17 @@ static RenderStyle rootBoxStyle(const RenderBlock& rootRenderer)
     return clonedStyle;
 }
 
-static std::unique_ptr<RenderStyle> rootBoxFirstLineStyle(const RenderBlock& rootRenderer)
+static std::unique_ptr<RenderStyle> firstLineStyleFor(const RenderObject& renderer)
 {
-#if CAN_USE_FIRST_LINE_STYLE_RESOLVE
-    auto& firstLineStyle = rootRenderer.firstLineStyle();
-    if (rootRenderer.style() == firstLineStyle)
+    auto& firstLineStyle = renderer.firstLineStyle();
+    if (&renderer.style() == &firstLineStyle)
         return { };
-    auto clonedStyle = RenderStyle::clonePtr(firstLineStyle);
-    if (is<RenderBlockFlow>(rootRenderer))
-        clonedStyle->setEffectiveDisplay(DisplayType::Block);
-    return clonedStyle;
-#else
-    UNUSED_PARAM(rootRenderer);
-    return { };
-#endif
+    return RenderStyle::clonePtr(firstLineStyle);
 }
 
 BoxTree::BoxTree(RenderBlock& rootRenderer)
     : m_rootRenderer(rootRenderer)
-    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, rootBoxStyle(rootRenderer), rootBoxFirstLineStyle(rootRenderer))
+    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, rootBoxStyle(rootRenderer), firstLineStyleFor(rootRenderer))
 {
     if (rootRenderer.isAnonymous())
         m_root.setIsAnonymous();
@@ -107,11 +94,8 @@ BoxTree::BoxTree(RenderBlock& rootRenderer)
 void BoxTree::buildTreeForInlineContent()
 {
     auto createChildBox = [&](RenderObject& childRenderer) -> std::unique_ptr<Layout::Box> {
-        std::unique_ptr<RenderStyle> firstLineStyle;
-#if CAN_USE_FIRST_LINE_STYLE_RESOLVE
-        if (&childRenderer.style() != &childRenderer.firstLineStyle())
-            firstLineStyle = RenderStyle::clonePtr(childRenderer.firstLineStyle());
-#endif
+        std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleFor(childRenderer);
+
         if (is<RenderCounter>(childRenderer)) {
             // This ensures that InlineTextBox (see below) always has uptodate counter text (note that RenderCounter is a type of RenderText).
             if (childRenderer.preferredLogicalWidthsDirty()) {
@@ -236,24 +220,15 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
 {
     auto& layoutBox = layoutBoxForRenderer(renderer);
     auto& style = renderer.style();
-    auto firstLineStyle = [&] () -> std::unique_ptr<RenderStyle> {
-#if CAN_USE_FIRST_LINE_STYLE_RESOLVE
-        if (&renderer.style() != &renderer.firstLineStyle())
-            return RenderStyle::clonePtr(renderer.firstLineStyle());
-        return nullptr;
-#else
-        return nullptr;
-#endif
-    };
 
     if (&layoutBox == &rootLayoutBox())
-        layoutBox.updateStyle(rootBoxStyle(downcast<RenderBlock>(renderer)), rootBoxFirstLineStyle(downcast<RenderBlock>(renderer)));
+        layoutBox.updateStyle(rootBoxStyle(downcast<RenderBlock>(renderer)), firstLineStyleFor(renderer));
     else
-        layoutBox.updateStyle(style, firstLineStyle());
+        layoutBox.updateStyle(style, firstLineStyleFor(renderer));
 
     for (auto* child = layoutBox.firstChild(); child; child = child->nextSibling()) {
         if (child->isInlineTextBox())
-            child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Inline), firstLineStyle());
+            child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Inline), firstLineStyleFor(renderer));
     }
 }
 

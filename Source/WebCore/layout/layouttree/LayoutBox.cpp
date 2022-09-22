@@ -83,8 +83,8 @@ bool Box::establishesFormattingContext() const
 {
     // We need the final tree structure to tell whether a box establishes a certain formatting context. 
     ASSERT(!Phase::isInTreeBuilding());
-    return establishesBlockFormattingContext()
-        || establishesInlineFormattingContext()
+    return establishesInlineFormattingContext()
+        || establishesBlockFormattingContext()
         || establishesTableFormattingContext()
         || establishesFlexFormattingContext()
         || establishesIndependentFormattingContext();
@@ -92,9 +92,6 @@ bool Box::establishesFormattingContext() const
 
 bool Box::establishesBlockFormattingContext() const
 {
-    if (isIntegrationRoot())
-        return true;
-
     // ICB always creates a new (inital) block formatting context.
     if (is<InitialContainingBlock>(*this))
         return true;
@@ -127,6 +124,9 @@ bool Box::establishesBlockFormattingContext() const
 
 bool Box::establishesInlineFormattingContext() const
 {
+    if (isIntegrationRoot())
+        return true;
+
     // 9.4.2 Inline formatting contexts
     // An inline formatting context is established by a block container box that contains no block-level boxes.
     if (!isBlockContainer())
