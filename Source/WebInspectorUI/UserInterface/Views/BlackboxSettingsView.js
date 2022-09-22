@@ -118,7 +118,7 @@ WI.BlackboxSettingsView = class BlackboxSettingsView extends WI.SettingsView
                 WI.settings.blackboxBreakpointEvaluations.value = blackboxBreakpointEvaluationsExplanationCheckbox.checked;
             });
 
-            blackboxBreakpointEvaluationsExplanationLabel.append(WI.UIString("Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location."));
+            blackboxBreakpointEvaluationsExplanationLabel.append(WI.UIString("Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint\u2019s location."));
         }
     }
 

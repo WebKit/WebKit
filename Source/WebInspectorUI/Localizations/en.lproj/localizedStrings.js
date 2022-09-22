@@ -169,7 +169,7 @@ localizedStrings["Allow Inspecting Web Inspector @ Experimental Settings"] = "Al
 localizedStrings["Allow Media Capture on Insecure Sites"] = "Allow Media Capture on Insecure Sites";
 /* Label for checkbox that controls whether network throttling functionality is enabled. */
 localizedStrings["Allow throttling"] = "Allow throttling";
-localizedStrings["Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location."] = "Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint's location.";
+localizedStrings["Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint\u2019s location."] = "Also defer evaluating breakpoint conditions, ignore counts, and actions until execution has continued outside of the related script instead of at the breakpoint\u2019s location.";
 /* Property title for `font-variant-alternates`. */
 localizedStrings["Alternate Glyphs @ Font Details Sidebar Property"] = "Alternate Glyphs";
 localizedStrings["An error occurred trying to load the resource."] = "An error occurred trying to load the resource.";
@@ -643,17 +643,17 @@ localizedStrings["Encoded"] = "Encoded";
 localizedStrings["Encoding"] = "Encoding";
 localizedStrings["Energy Impact"] = "Energy Impact";
 localizedStrings["Ensure aria-hidden=\u0022%s\u0022 is not used."] = "Ensure aria-hidden=\u0022%s\u0022 is not used.";
-localizedStrings["Ensure that \u0022%s\u0022 is spelled correctly."] = "Ensure that \u0022%s\u0022 is spelled correctly.";
+localizedStrings["Ensure that \u201C%s\u201D is spelled correctly."] = "Ensure that \u201C%s\u201D is spelled correctly.";
 localizedStrings["Ensure that buttons have accessible labels for assistive technology."] = "Ensure that buttons have accessible labels for assistive technology.";
 localizedStrings["Ensure that dialogs have accessible labels for assistive technology."] = "Ensure that dialogs have accessible labels for assistive technology.";
-localizedStrings["Ensure that elements of role \u0022%s\u0022 and \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA."] = "Ensure that elements of role \u0022%s\u0022 and \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.";
-localizedStrings["Ensure that elements of role \u0022%s\u0022 have accessible labels for assistive technology."] = "Ensure that elements of role \u0022%s\u0022 have accessible labels for assistive technology.";
-localizedStrings["Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA."] = "Ensure that elements of role \u0022%s\u0022 have required owned elements in accordance with WAI-ARIA.";
+localizedStrings["Ensure that elements of role \u201C%s\u201D and \u201C%s\u201D have required owned elements in accordance with WAI-ARIA."] = "Ensure that elements of role \u201C%s\u201D and \u201C%s\u201D have required owned elements in accordance with WAI-ARIA.";
+localizedStrings["Ensure that elements of role \u201C%s\u201D have accessible labels for assistive technology."] = "Ensure that elements of role \u201C%s\u201D have accessible labels for assistive technology.";
+localizedStrings["Ensure that elements of role \u201C%s\u201D have required owned elements in accordance with WAI-ARIA."] = "Ensure that elements of role \u201C%s\u201D have required owned elements in accordance with WAI-ARIA.";
 localizedStrings["Ensure that links have accessible labels for assistive technology."] = "Ensure that links have accessible labels for assistive technology.";
 localizedStrings["Ensure that only one banner is used on the page."] = "Ensure that only one banner is used on the page.";
 localizedStrings["Ensure that only one live region is used on the page."] = "Ensure that only one live region is used on the page.";
 localizedStrings["Ensure that only one main content section is used on the page."] = "Ensure that only one main content section is used on the page.";
-localizedStrings["Ensure that values for \u0022%s\u0022 are valid."] = "Ensure that values for \u0022%s\u0022 are valid.";
+localizedStrings["Ensure that values for \u201C%s\u201D are valid."] = "Ensure that values for \u201C%s\u201D are valid.";
 localizedStrings["Entire Recording"] = "Entire Recording";
 localizedStrings["Error"] = "Error";
 /* Title of icon indicating that the selected audit threw an error. */
@@ -1592,7 +1592,7 @@ localizedStrings["The \u201C%s\u201D audit threw an error"] = "The \u201C%s\u201
 localizedStrings["The \u201C%s\u201D\ntable is empty."] = "The \u201C%s\u201D\ntable is empty.";
 localizedStrings["The contents and enabled state will be preserved across Web Inspector sessions."] = "The contents and enabled state will be preserved across Web Inspector sessions.";
 localizedStrings["The contents will be preserved across Web Inspector sessions."] = "The contents will be preserved across Web Inspector sessions.";
-localizedStrings["The page's content has changed"] = "The page's content has changed";
+localizedStrings["The page\u2019s content has changed"] = "The page\u2019s content has changed";
 localizedStrings["The resource was requested insecurely."] = "The resource was requested insecurely.";
 /* Message displayed in a banner when one or more snapshots that the user has not yet seen are being filtered. */
 localizedStrings["There are new snapshots that have been filtered @ Heap Allocations Timeline View"] = "There are new snapshots that have been filtered";
@@ -1616,16 +1616,16 @@ localizedStrings["This is an example of how errors are shown. The error was thro
 localizedStrings["This is an example of how result DOM attributes are highlighted on any returned DOM nodes. It will pass with all elements with an id attribute."] = "This is an example of how result DOM attributes are highlighted on any returned DOM nodes. It will pass with all elements with an id attribute.";
 localizedStrings["This is an example of how result DOM nodes are shown. It will pass with the <body> element."] = "This is an example of how result DOM nodes are shown. It will pass with the <body> element.";
 localizedStrings["This is an example test that uses %s to find a variety of accessibility information about the <body> element."] = "This is an example test that uses %s to find a variety of accessibility information about the <body> element.";
-localizedStrings["This is an example test that uses %s to find all child nodes that are selected (\u0022%s\u0022) of the <body> element in the accessibility tree."] = "This is an example test that uses %s to find all child nodes that are selected (\u0022%s\u0022) of the <body> element in the accessibility tree.";
-localizedStrings["This is an example test that uses %s to find all nodes controlled (\u0022%s\u0022) by the <body> element, if any exist."] = "This is an example test that uses %s to find all nodes controlled (\u0022%s\u0022) by the <body> element, if any exist.";
-localizedStrings["This is an example test that uses %s to find all nodes flowed to (\u0022%s\u0022) from the <body> element, if any exist."] = "This is an example test that uses %s to find all nodes flowed to (\u0022%s\u0022) from the <body> element, if any exist.";
-localizedStrings["This is an example test that uses %s to find all nodes owned (\u0022%s\u0022) by the <body> element, if any exist."] = "This is an example test that uses %s to find all nodes owned (\u0022%s\u0022) by the <body> element, if any exist.";
-localizedStrings["This is an example test that uses %s to find any element that meets criteria for active descendant (\u0022%s\u0022) of the <body> element, if it exists."] = "This is an example test that uses %s to find any element that meets criteria for active descendant (\u0022%s\u0022) of the <body> element, if it exists.";
+localizedStrings["This is an example test that uses %s to find all child nodes that are selected (\u201C%s\u201D) of the <body> element in the accessibility tree."] = "This is an example test that uses %s to find all child nodes that are selected (\u201C%s\u201D) of the <body> element in the accessibility tree.";
+localizedStrings["This is an example test that uses %s to find all nodes controlled (\u201C%s\u201D) by the <body> element, if any exist."] = "This is an example test that uses %s to find all nodes controlled (\u201C%s\u201D) by the <body> element, if any exist.";
+localizedStrings["This is an example test that uses %s to find all nodes flowed to (\u201C%s\u201D) from the <body> element, if any exist."] = "This is an example test that uses %s to find all nodes flowed to (\u201C%s\u201D) from the <body> element, if any exist.";
+localizedStrings["This is an example test that uses %s to find all nodes owned (\u201C%s\u201D) by the <body> element, if any exist."] = "This is an example test that uses %s to find all nodes owned (\u201C%s\u201D) by the <body> element, if any exist.";
+localizedStrings["This is an example test that uses %s to find any element that meets criteria for active descendant (\u201C%s\u201D) of the <body> element, if it exists."] = "This is an example test that uses %s to find any element that meets criteria for active descendant (\u201C%s\u201D) of the <body> element, if it exists.";
 localizedStrings["This is an example test that uses %s to find basic information about each resource."] = "This is an example test that uses %s to find basic information about each resource.";
 localizedStrings["This is an example test that uses %s to find child nodes of the <body> element in the accessibility tree."] = "This is an example test that uses %s to find child nodes of the <body> element in the accessibility tree.";
 localizedStrings["This is an example test that uses %s to find data indicating whether the <body> element has any click event listeners."] = "This is an example test that uses %s to find data indicating whether the <body> element has any click event listeners.";
 localizedStrings["This is an example test that uses %s to find data indicating whether the <body> element has any event listeners."] = "This is an example test that uses %s to find data indicating whether the <body> element has any event listeners.";
-localizedStrings["This is an example test that uses %s to find elements with a computed role of \u0022link\u0022."] = "This is an example test that uses %s to find elements with a computed role of \u0022link\u0022.";
+localizedStrings["This is an example test that uses %s to find elements with a computed role of \u201Clink\u201D."] = "This is an example test that uses %s to find elements with a computed role of \u201Clink\u201D.";
 localizedStrings["This is an example test that uses %s to find the contents of the main resource."] = "This is an example test that uses %s to find the contents of the main resource.";
 localizedStrings["This is an example test that uses %s to find the node that would handle mouse events for the <body> element, if applicable."] = "This is an example test that uses %s to find the node that would handle mouse events for the <body> element, if applicable.";
 localizedStrings["This is an example test that uses %s to find the parent node of the <body> element in the accessibility tree."] = "This is an example test that uses %s to find the parent node of the <body> element in the accessibility tree.";
