@@ -25,26 +25,29 @@
 
 #pragma once
 
-#include "Connection.h"
-#include "WorkQueueMessageReceiver.h"
+#include "MessageReceiver.h"
+#include <wtf/Ref.h>
+
+namespace WTF {
+class WorkQueue;
+}
 
 namespace WebKit {
 
-class WebInspectorInterruptDispatcher : public IPC::WorkQueueMessageReceiver {
+class WebInspectorInterruptDispatcher final : private IPC::MessageReceiver {
 public:
-    static Ref<WebInspectorInterruptDispatcher> create();
+    WebInspectorInterruptDispatcher();
     ~WebInspectorInterruptDispatcher();
     
-    void initializeConnection(IPC::Connection*);
+    void initializeConnection(IPC::Connection&);
     
 private:
-    WebInspectorInterruptDispatcher();
-    // IPC::WorkQueueMessageReceiver overrides.
+    // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     
     void notifyNeedDebuggerBreak();
     
-    Ref<WorkQueue> m_queue;
+    Ref<WTF::WorkQueue> m_queue;
 };
 
 } // namespace WebKit

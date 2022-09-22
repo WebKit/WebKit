@@ -28,18 +28,15 @@
 
 #if ENABLE(UI_SIDE_COMPOSITING)
 
+#include "Connection.h"
 #include "ViewUpdateDispatcherMessages.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
-
-Ref<ViewUpdateDispatcher> ViewUpdateDispatcher::create()
-{
-    return adoptRef(*new ViewUpdateDispatcher);
-}
 
 ViewUpdateDispatcher::ViewUpdateDispatcher()
     : m_queue(WorkQueue::create("com.apple.WebKit.ViewUpdateDispatcher"))
@@ -51,9 +48,9 @@ ViewUpdateDispatcher::~ViewUpdateDispatcher()
     ASSERT_NOT_REACHED();
 }
 
-void ViewUpdateDispatcher::initializeConnection(IPC::Connection* connection)
+void ViewUpdateDispatcher::initializeConnection(IPC::Connection& connection)
 {
-    connection->addWorkQueueMessageReceiver(Messages::ViewUpdateDispatcher::messageReceiverName(), m_queue.get(), *this);
+    connection.addMessageReceiver(m_queue.get(), *this, Messages::ViewUpdateDispatcher::messageReceiverName());
 }
 
 void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier pageID, const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo)
@@ -69,8 +66,8 @@ void ViewUpdateDispatcher::visibleContentRectUpdate(WebCore::PageIdentifier page
             iterator->value.get().visibleContentRectUpdateInfo = visibleContentRectUpdateInfo;
     }
     if (updateListWasEmpty) {
-        RunLoop::main().dispatch([protectedThis = Ref { *this }]() mutable {
-            protectedThis->dispatchVisibleContentRectUpdate();
+        RunLoop::main().dispatch([this] {
+            dispatchVisibleContentRectUpdate();
         });
     }
 }

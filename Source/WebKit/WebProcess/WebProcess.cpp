@@ -285,12 +285,7 @@ WebProcess& WebProcess::singleton()
 }
 
 WebProcess::WebProcess()
-    : m_eventDispatcher(EventDispatcher::create())
-#if PLATFORM(IOS_FAMILY)
-    , m_viewUpdateDispatcher(ViewUpdateDispatcher::create())
-#endif
-    , m_webInspectorInterruptDispatcher(WebInspectorInterruptDispatcher::create())
-    , m_webLoaderStrategy(*new WebLoaderStrategy)
+    : m_webLoaderStrategy(*new WebLoaderStrategy)
     , m_cacheStorageProvider(WebCacheStorageProvider::create())
     , m_broadcastChannelRegistry(WebBroadcastChannelRegistry::create())
     , m_cookieJar(WebCookieJar::create())
@@ -388,12 +383,12 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
     connection->setShouldExitOnSyncMessageSendFailure(true);
 #endif
 
-    m_eventDispatcher->initializeConnection(connection);
+    m_eventDispatcher.initializeConnection(*connection);
 #if PLATFORM(IOS_FAMILY)
-    m_viewUpdateDispatcher->initializeConnection(connection);
+    m_viewUpdateDispatcher.initializeConnection(*connection);
 #endif // PLATFORM(IOS_FAMILY)
 
-    m_webInspectorInterruptDispatcher->initializeConnection(connection);
+    m_webInspectorInterruptDispatcher.initializeConnection(*connection);
 
     for (auto& supplement : m_supplements.values())
         supplement->initializeConnection(connection);
@@ -1992,7 +1987,7 @@ bool WebProcess::areAllPagesThrottleable() const
 void WebProcess::displayWasRefreshed(uint32_t displayID, const DisplayUpdate& displayUpdate)
 {
     ASSERT(RunLoop::isMain());
-    m_eventDispatcher->notifyScrollingTreesDisplayWasRefreshed(displayID);
+    m_eventDispatcher.notifyScrollingTreesDisplayWasRefreshed(displayID);
     DisplayRefreshMonitorManager::sharedManager().displayWasUpdated(displayID, displayUpdate);
 }
 #endif
