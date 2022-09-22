@@ -4333,6 +4333,14 @@ bool FrameLoader::shouldSuppressTextInputFromEditing() const
     return m_frame.settings().shouldSuppressTextInputFromEditingDuringProvisionalNavigation() && m_state == FrameState::Provisional;
 }
 
+void FrameLoader::advanceStatePastInitialEmptyDocument()
+{
+    if (stateMachine().committingFirstRealLoad())
+        stateMachine().advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
+    if (stateMachine().isDisplayingInitialEmptyDocument() && stateMachine().committedFirstRealDocumentLoad())
+        stateMachine().advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
+}
+
 } // namespace WebCore
 
 #undef PAGE_ID

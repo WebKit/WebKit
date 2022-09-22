@@ -271,6 +271,8 @@ public:
     FrameLoaderStateMachine& stateMachine() { return m_stateMachine; }
     const FrameLoaderStateMachine& stateMachine() const { return m_stateMachine; }
 
+    void advanceStatePastInitialEmptyDocument();
+
     // FIXME: should return RefPtr.
     WEBCORE_EXPORT Frame* findFrameForNavigation(const AtomString& name, Document* activeDocument = nullptr);
 

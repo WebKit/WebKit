@@ -1,4 +1,4 @@
 
-FAIL document.open() removes the initial about:blank-ness of the document assert_equals: expected (undefined) undefined but got (string) "Hello world!"
+PASS document.open() removes the initial about:blank-ness of the document
 PASS Double-check: without document.open(), Window reuse indeed happens
 

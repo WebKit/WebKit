@@ -3044,8 +3044,13 @@ ExceptionOr<void> Document::open(Document* entryDocument)
     if (ScriptableDocumentParser* parser = scriptableDocumentParser())
         parser->setWasCreatedByScript(true);
 
-    if (m_frame)
+    if (m_frame) {
+        // Set document's is initial about:blank to false.
+        // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#document-open-steps (step 13)
+        m_frame->loader().advanceStatePastInitialEmptyDocument();
+
         m_frame->loader().didExplicitOpen();
+    }
 
     return { };
 }
