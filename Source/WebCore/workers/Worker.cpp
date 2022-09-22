@@ -209,6 +209,9 @@ void Worker::notifyFinished()
         return;
 
     if (m_scriptLoader->failed()) {
+        auto& error = m_scriptLoader->error();
+        if ((error.isAccessControl() || error.isGeneral()) && is<Document>(context))
+            downcast<Document>(context)->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Worker failed to load. ", error.localizedDescription()));
         queueTaskToDispatchEvent(*this, TaskSource::DOMManipulation, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::Yes));
         return;
     }

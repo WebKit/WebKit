@@ -1,4 +1,5 @@
 CONSOLE MESSAGE: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: Worker failed to load. The requested URL was not found on this server.
 Test Worker constructor functionality. Should print a series of PASS messages, followed with DONE.
 
 PASS: toString exception propagated correctly.

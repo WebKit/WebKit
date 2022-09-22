@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: Worker failed to load. Cancelled load from 'http://127.0.0.1:8000/security/http-0.9/resources/nph-worker-fail.pl' because it is using HTTP/0.9.
 ALERT: PASS
 

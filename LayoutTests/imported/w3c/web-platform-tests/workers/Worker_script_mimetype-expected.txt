@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Worker failed to load. Refused to execute http://localhost:8800/workers/support/WorkerText.txt as script because text/plain is not a script MIME type.
 
 PASS HTTP(S) URLs which respond with text/plain MIME type must not work
 PASS blob: URLs should load, despite no MIME type for the backing Blob
