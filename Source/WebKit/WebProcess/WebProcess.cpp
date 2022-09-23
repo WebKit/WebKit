@@ -1119,7 +1119,7 @@ void WebProcess::setInjectedBundleParameters(const IPC::DataReference& value)
     injectedBundle->setBundleParameters(value);
 }
 
-NO_RETURN inline void failedToSendSyncMessage()
+NO_RETURN inline void failedToGetNetworkProcessConnection()
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
     // GTK and WPE ports don't exit on send sync message failure.
@@ -1137,13 +1137,9 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
 {
     NetworkProcessConnectionInfo connectionInfo;
     auto requestConnection = [&]() -> bool {
-        if (!connection.isValid()) {
-            // Connection to UIProcess has been severed, exit cleanly.
-            exit(0);
-        }
         if (!connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), Messages::WebProcessProxy::GetNetworkProcessConnection::Reply(connectionInfo), 0)) {
-            RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to send or receive message");
-            return false;
+            RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to send message or receive invalid message");
+            failedToGetNetworkProcessConnection();
         }
         return !!connectionInfo.connection;
     };
@@ -1152,7 +1148,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
     unsigned failedAttempts = 0;
     while (!requestConnection()) {
         if (++failedAttempts >= maxFailedAttempts)
-            failedToSendSyncMessage();
+            failedToGetNetworkProcessConnection();
 
         RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to get connection to network process, will retry...");
 
