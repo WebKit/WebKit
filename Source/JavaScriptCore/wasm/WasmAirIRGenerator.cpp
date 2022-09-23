@@ -775,7 +775,7 @@ private:
 
         // FIXME: Remove the need for dummy values
         // https://bugs.webkit.org/show_bug.cgi?id=194040
-        B3::Value* dummyPredicate = m_proc.addConstant(B3::Origin(), B3::Int64, 42);
+        B3::Value* dummyPredicate = m_proc.addConstant(B3::Origin(), B3::Int32, 42);
         B3::CheckValue* checkValue = m_proc.add<B3::CheckValue>(B3::Check, B3::Origin(), dummyPredicate);
         checkValue->setGenerator(generator);
 
