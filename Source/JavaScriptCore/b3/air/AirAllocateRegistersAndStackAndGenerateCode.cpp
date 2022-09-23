@@ -802,7 +802,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 RegisterSet registerSet;
                 for (size_t i = 0; i < currentAllocation.size(); ++i) {
                     if (currentAllocation[i])
-                        registerSet.includeRegister(Reg::fromIndex(i));
+                        registerSet.includeRegister(Reg::fromIndex(i), Options::useWebAssemblySIMD() ? Width128 : Width64);
                 }
                 inst.reportUsedRegisters(registerSet);
             }
