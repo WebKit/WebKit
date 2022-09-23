@@ -392,8 +392,8 @@ class string_view {
   // Use absl::ClippedSubstr if you need a truncating substr operation.
   constexpr string_view substr(size_type pos = 0, size_type n = npos) const {
     return ABSL_PREDICT_FALSE(pos > length_)
-               ? (base_internal::ThrowStdOutOfRange(
-                      "absl::string_view::substr"),
+               ? (static_cast<void>(base_internal::ThrowStdOutOfRange(
+                      "absl::string_view::substr")),
                   string_view())
                : string_view(ptr_ + pos, Min(n, length_ - pos));
   }

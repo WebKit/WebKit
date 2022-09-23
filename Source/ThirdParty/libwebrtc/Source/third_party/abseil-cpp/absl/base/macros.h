@@ -95,8 +95,8 @@ ABSL_NAMESPACE_END
   (false ? static_cast<void>(expr) : static_cast<void>(0))
 #else
 #define ABSL_ASSERT(expr)                           \
-  (ABSL_PREDICT_TRUE((expr)) ? static_cast<void>(0) \
-                             : [] { assert(false && #expr); }())  // NOLINT
+  static_cast<void>(ABSL_PREDICT_TRUE((expr)) ? static_cast<void>(0) \
+                                              : [] { assert(false && #expr); }())  // NOLINT
 #endif
 
 // `ABSL_INTERNAL_HARDENING_ABORT()` controls how `ABSL_HARDENING_ASSERT()`
