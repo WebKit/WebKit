@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FormattingContext.h"
 #include "LayoutContainerBox.h"
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)

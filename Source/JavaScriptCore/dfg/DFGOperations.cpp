@@ -44,6 +44,8 @@
 #include "FrameTracers.h"
 #include "HasOwnPropertyCache.h"
 #include "Interpreter.h"
+#include "InterpreterInlines.h"
+#include "JITCodeInlines.h"
 #include "JITWorklist.h"
 #include "JSArrayInlines.h"
 #include "JSArrayIterator.h"

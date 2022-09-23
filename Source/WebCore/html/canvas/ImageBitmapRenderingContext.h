@@ -36,6 +36,7 @@ namespace WebCore {
 
 class ImageBitmap;
 class ImageBuffer;
+class OffscreenCanvas;
 
 class ImageBitmapRenderingContext final : public CanvasRenderingContext {
     WTF_MAKE_ISO_ALLOCATED(ImageBitmapRenderingContext);

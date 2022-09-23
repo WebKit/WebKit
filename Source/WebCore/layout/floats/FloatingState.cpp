@@ -28,9 +28,8 @@
 
 #if ENABLE(LAYOUT_FORMATTING_CONTEXT)
 
-#include "FormattingContext.h"
-#include "LayoutBox.h"
-#include "LayoutContainerBox.h"
+#include "LayoutContainingBlockChainIterator.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include <wtf/IsoMallocInlines.h>
 

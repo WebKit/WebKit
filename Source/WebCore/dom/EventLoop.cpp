@@ -27,6 +27,7 @@
 #include "EventLoop.h"
 
 #include "Microtasks.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
