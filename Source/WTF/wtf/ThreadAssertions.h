@@ -25,12 +25,14 @@
 
 #pragma once
 
-#include <wtf/Compiler.h>
+#include <wtf/CapabilityIsCurrent.h>
 #include <wtf/MainThread.h>
-#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Threading.h>
 
 namespace WTF {
+
+class ThreadAssertion;
+template<> bool isCurrent<ThreadAssertion>(const ThreadAssertion&);
 
 // A type to use for asserting that private member functions or private member variables
 // of a class are accessed from correct threads.
@@ -55,18 +57,25 @@ public:
 #endif
     {
     }
-    ~ThreadAssertion() { assertIsCurrent(*this); }
+    ~ThreadAssertion() { ASSERT(isCurrent(*this)); }
     void reset() { *this = ThreadAssertion { }; }
 private:
 #if ASSERT_ENABLED
     uint32_t m_uid { Thread::current().uid() };
+    friend bool isCurrent<ThreadAssertion>(const ThreadAssertion&);
 #endif
-    friend void assertIsCurrent(const ThreadAssertion&);
 };
 
-inline void assertIsCurrent(const ThreadAssertion& threadAssertion) WTF_ASSERTS_ACQUIRED_CAPABILITY(threadAssertion)
+template<>
+inline bool isCurrent<ThreadAssertion>(const ThreadAssertion& threadAssertion)
 {
-    ASSERT_UNUSED(threadAssertion, Thread::current().uid() == threadAssertion.m_uid);
+#if ASSERT_ENABLED
+    return Thread::current().uid() == threadAssertion.m_uid;
+#else
+    UNUSED_PARAM(threadAssertion);
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+#endif
 }
 
 // Type for globally named assertions for describing access requirements.
@@ -96,7 +105,6 @@ inline void assertIsMainRunLoop() WTF_ASSERTS_ACQUIRED_CAPABILITY(mainRunLoop) {
 }
 
 using WTF::ThreadAssertion;
-using WTF::assertIsCurrent;
 using WTF::NamedAssertion;
 using WTF::assertIsMainThread;
 using WTF::assertIsMainRunLoop;

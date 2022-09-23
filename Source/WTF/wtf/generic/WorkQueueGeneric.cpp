@@ -88,11 +88,15 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
     return adoptRef(*new WorkQueue(RunLoop::main()));
 }
 
-#if ASSERT_ENABLED
-void WorkQueue::assertIsCurrent() const
+template<> bool isCurrent<WorkQueue>(const WorkQueue& workQueue)
 {
-    ASSERT(m_threadID == Thread::current().uid());
-}
+#if ASSERT_ENABLED
+    return workQueue.m_threadID == Thread::current().uid();
+#else
+    UNUSED_PARAM(workQueue);
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
 #endif
+}
 
 }

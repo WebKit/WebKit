@@ -33,6 +33,7 @@
 #include <mutex>
 #include <stdint.h>
 #include <wtf/Atomics.h>
+#include <wtf/CapabilityIsCurrent.h>
 #include <wtf/Expected.h>
 #include <wtf/FastTLS.h>
 #include <wtf/Function.h>
@@ -45,7 +46,6 @@
 #include <wtf/StackBounds.h>
 #include <wtf/StackStats.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Vector.h>
 #include <wtf/WordLock.h>
 #include <wtf/text/AtomStringTable.h>
@@ -433,13 +433,10 @@ inline Thread& Thread::current()
     return initializeCurrentTLS();
 }
 
-inline void assertIsCurrent(const Thread& thread) WTF_ASSERTS_ACQUIRED_CAPABILITY(thread)
+template<>
+inline bool isCurrent<Thread>(const Thread& thread)
 {
-#if ASSERT_ENABLED
-    ASSERT(&thread == &Thread::current());
-#else
-    UNUSED_PARAM(thread);
-#endif
+    return &thread == &Thread::current();
 }
 
 } // namespace WTF
@@ -448,4 +445,3 @@ using WTF::ThreadSuspendLocker;
 using WTF::Thread;
 using WTF::ThreadType;
 using WTF::GCThreadType;
-using WTF::assertIsCurrent;
