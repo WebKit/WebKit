@@ -39,6 +39,43 @@ function runTest(canvas, antialias) {
   gl = wtu.create3DContext(canvas, {antialias: antialias});
   var contextVersion = wtu.getDefault3DContextVersion();
 
+  debug("");
+  debug("Test null pixels");
+  gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, "null pixels");
+
+  debug("");
+  debug("Test pixels size");
+  gl.readPixels(0, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(0));
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "empty pixels array with 0x0 read data");
+  gl.readPixels(0, 0, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(0));
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "empty pixels array with 1x0 read data");
+  gl.readPixels(0, 0, 0, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(0));
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "empty pixels array with 0x1 read data");
+  gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(3));
+  wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "small pixels array for 1x1 read data");
+  if (contextVersion >= 2) {
+    gl.readPixels(0, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(0), 1);
+    wtu.glErrorShouldBe(gl, gl.INVALID_VALUE, "offset is greater than array size");
+    gl.readPixels(0, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(1), 1);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no space left in pixels array with 0x0 read data");
+    gl.readPixels(0, 0, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(1), 1);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no space left in pixels array with 1x0 read data");
+    gl.readPixels(0, 0, 0, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(1), 1);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no space left in pixels array with 0x1 read data");
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4), 1);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "no space left in pixels array with 1x1 read data");
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(5), 1);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "read 1x1 data fits into pixels with offset");
+  }
+
+  debug("");
+  debug("Test combined depth-stencil type");
+  // The combined type is undefined in WebGL 1.0 and never allowed as a read type in WebGL 2.0
+  gl.readPixels(0, 0, 1, 1, gl.RGBA, 0x8DAD /* FLOAT_32_UNSIGNED_INT_24_8_REV */, new Uint8Array(32));
+  wtu.glErrorShouldBe(gl, gl.INVALID_ENUM, "FLOAT_32_UNSIGNED_INT_24_8_REV is rejected");
+  wtu.glErrorShouldBe(gl, gl.NO_ERROR, "no extra error generated");
+
   var width = 2;
   var height = 2;
   var continueTestFunc = continueTestPart1;
