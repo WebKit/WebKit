@@ -468,6 +468,9 @@
 (allow file-read* file-write*
     (home-subpath "/Library/HTTPStorages"))
 
+(deny file-read* file-write* (with no-report)
+    (home-literal "/Library/Caches/com.apple.WebKit.Networking/HSTS.plist"))
+
 (allow file-read*
     (prefix "/private/var/db/com.apple.networkextension."))
 
