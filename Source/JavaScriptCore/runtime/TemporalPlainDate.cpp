@@ -30,6 +30,7 @@
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "LazyPropertyInlines.h"
+#include "TemporalDuration.h"
 #include "TemporalPlainDateTime.h"
 #include "VMTrapsInlines.h"
 
