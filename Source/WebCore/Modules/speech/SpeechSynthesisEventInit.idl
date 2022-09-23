@@ -25,6 +25,7 @@
 
 // https://wicg.github.io/speech-api/#speechsynthesiseventinit
 [
+    EnabledBySetting=SpeechSynthesisAPIEnabled,
     Conditional=SPEECH_SYNTHESIS
 ] dictionary SpeechSynthesisEventInit : EventInit {
     required SpeechSynthesisUtterance utterance;

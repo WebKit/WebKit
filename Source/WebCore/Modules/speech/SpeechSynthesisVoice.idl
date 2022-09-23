@@ -25,6 +25,7 @@
 
 // https://wicg.github.io/speech-api/#speechsynthesisvoice
 [
+    EnabledBySetting=SpeechSynthesisAPIEnabled,
     Conditional=SPEECH_SYNTHESIS,
     Exposed=Window
 ] interface SpeechSynthesisVoice {

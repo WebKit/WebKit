@@ -29,6 +29,7 @@
  */
 
 [
+    EnabledBySetting=FileReaderAPIEnabled,
     Exposed=(DedicatedWorker,SharedWorker),
 ] interface FileReaderSync {
     constructor();

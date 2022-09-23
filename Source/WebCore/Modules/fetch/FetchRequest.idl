@@ -29,6 +29,7 @@
 typedef (FetchRequest or USVString) RequestInfo;
 
 [
+    EnabledBySetting=FetchAPIEnabled,
     ActiveDOMObject,
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),

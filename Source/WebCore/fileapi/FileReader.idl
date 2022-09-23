@@ -30,6 +30,7 @@
  */
 
 [
+    EnabledBySetting=FileReaderAPIEnabled,
     Exposed=(Window,Worker),
     ActiveDOMObject,
 ] interface FileReader : EventTarget {

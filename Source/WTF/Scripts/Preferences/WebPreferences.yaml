@@ -372,16 +372,6 @@ CSSTransformStyleOptimized3DEnabled:
     WebCore:
       default: false
 
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
-CacheAPIEnabled:
-  type: bool
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-
 CanvasUsesAcceleratedDrawing:
   type: bool
   defaultValue:
