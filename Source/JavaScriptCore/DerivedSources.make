@@ -172,6 +172,8 @@ OBJECT_LUT_HEADERS = \
     IntlDateTimeFormatPrototype.lut.h \
     IntlDisplayNamesConstructor.lut.h \
     IntlDisplayNamesPrototype.lut.h \
+    IntlDurationFormatConstructor.lut.h \
+    IntlDurationFormatPrototype.lut.h \
     IntlListFormatConstructor.lut.h \
     IntlListFormatPrototype.lut.h \
     IntlLocalePrototype.lut.h \

@@ -548,6 +548,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useHasOwn, true, Normal, "Expose the Object.hasOwn method") \
     v(Bool, useImportAssertion, true, Normal, "Enable import assertion.") \
     v(Bool, useIntlEnumeration, true, Normal, "Expose the Intl enumeration APIs.") \
+    v(Bool, useIntlDurationFormat, true, Normal, "Expose the Intl DurationFormat.") \
     v(Bool, useSharedArrayBuffer, false, Normal, nullptr) \
     v(Bool, useShadowRealm, false, Normal, "Expose the ShadowRealm object.") \
     v(Bool, useTemporal, false, Normal, "Expose the Temporal object.") \

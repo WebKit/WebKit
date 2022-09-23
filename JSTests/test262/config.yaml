@@ -13,6 +13,7 @@ flags:
   ShadowRealm: useShadowRealm
   import-assertions: useImportAssertion
   json-modules: useImportAssertion
+  Intl.DurationFormat: useIntlDurationFormat
 skip:
   features:
     - Atomics.waitAsync
@@ -23,7 +24,6 @@ skip:
     - class-static-block
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
-    - Intl.DurationFormat
     - decorators
   paths:
     - test/built-ins/Temporal/Calendar

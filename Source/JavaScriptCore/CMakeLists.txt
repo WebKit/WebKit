@@ -73,6 +73,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/IntlDateTimeFormatPrototype.cpp
     runtime/IntlDisplayNamesConstructor.cpp
     runtime/IntlDisplayNamesPrototype.cpp
+    runtime/IntlDurationFormatConstructor.cpp
+    runtime/IntlDurationFormatPrototype.cpp
     runtime/IntlListFormatConstructor.cpp
     runtime/IntlListFormatPrototype.cpp
     runtime/IntlLocalePrototype.cpp

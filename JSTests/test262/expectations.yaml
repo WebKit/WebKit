@@ -1314,6 +1314,9 @@ test/intl402/DateTimeFormat/prototype/formatRange/fractionalSecondDigits.js:
 test/intl402/DateTimeFormat/prototype/resolvedOptions/hourCycle-default.js:
   default: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
   strict mode: 'Test262Error: Expected SameValue(«h24», «h23») to be true'
+test/intl402/DurationFormat/prototype/format/style-options-en.js:
+  default: 'Test262Error: Assert DurationFormat format output using long style option Expected SameValue(«1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, 9 nanoseconds», «1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, and 9 nanoseconds») to be true'
+  strict mode: 'Test262Error: Assert DurationFormat format output using long style option Expected SameValue(«1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, 9 nanoseconds», «1 year, 2 months, 3 weeks, 3 days, 4 hours, 5 minutes, 6 seconds, 7 milliseconds, 8 microseconds, and 9 nanoseconds») to be true'
 test/intl402/Intl/getCanonicalLocales/non-iana-canon.js:
   default: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'
   strict mode: 'Test262Error: The value of Intl.getCanonicalLocales(tag)[0] equals the value of `canonical` Expected SameValue(«en-US-u-va-posix», «posix») to be true'

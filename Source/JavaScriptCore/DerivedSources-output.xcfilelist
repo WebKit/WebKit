@@ -27,6 +27,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDateTimeFormatConstructo
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDateTimeFormatPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDisplayNamesConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDisplayNamesPrototype.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDurationFormatConstructor.lut.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlDurationFormatPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlListFormatConstructor.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlListFormatPrototype.lut.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/IntlLocalePrototype.lut.h

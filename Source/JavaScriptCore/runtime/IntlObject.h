@@ -65,7 +65,7 @@ struct MeasureUnit {
     ASCIILiteral subType;
 };
 
-extern JS_EXPORT_PRIVATE const MeasureUnit simpleUnits[43];
+extern JS_EXPORT_PRIVATE const MeasureUnit simpleUnits[45];
 
 class IntlObject final : public JSNonFinalObject {
 public:
@@ -100,6 +100,7 @@ inline const LocaleSet& intlNumberFormatAvailableLocales() { return intlAvailabl
 inline const LocaleSet& intlPluralRulesAvailableLocales() { return intlAvailableLocales(); }
 inline const LocaleSet& intlRelativeTimeFormatAvailableLocales() { return intlAvailableLocales(); }
 inline const LocaleSet& intlListFormatAvailableLocales() { return intlAvailableLocales(); }
+inline const LocaleSet& intlDurationFormatAvailableLocales() { return intlAvailableLocales(); }
 
 using CalendarID = unsigned;
 const Vector<String>& intlAvailableCalendars();

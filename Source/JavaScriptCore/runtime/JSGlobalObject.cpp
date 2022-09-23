@@ -81,6 +81,8 @@
 #include "IntlDateTimeFormatPrototype.h"
 #include "IntlDisplayNames.h"
 #include "IntlDisplayNamesPrototype.h"
+#include "IntlDurationFormat.h"
+#include "IntlDurationFormatPrototype.h"
 #include "IntlListFormat.h"
 #include "IntlListFormatPrototype.h"
 #include "IntlLocale.h"
@@ -1228,6 +1230,12 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
             JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
             IntlDisplayNamesPrototype* displayNamesPrototype = IntlDisplayNamesPrototype::create(init.vm, IntlDisplayNamesPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
             init.set(IntlDisplayNames::createStructure(init.vm, globalObject, displayNamesPrototype));
+        });
+    m_durationFormatStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            JSGlobalObject* globalObject = jsCast<JSGlobalObject*>(init.owner);
+            IntlDurationFormatPrototype* durationFormatPrototype = IntlDurationFormatPrototype::create(init.vm, IntlDurationFormatPrototype::createStructure(init.vm, globalObject, globalObject->objectPrototype()));
+            init.set(IntlDurationFormat::createStructure(init.vm, globalObject, durationFormatPrototype));
         });
     m_listFormatStructure.initLater(
         [] (const Initializer<Structure>& init) {
