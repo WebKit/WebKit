@@ -39,6 +39,7 @@ namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateFromFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateAdd);
+static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateUntil);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncMergeFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalCalendarPrototypeFuncToString);
@@ -57,6 +58,7 @@ const ClassInfo TemporalCalendarPrototype::s_info = { "Temporal.Calendar"_s, &Ba
 @begin temporalCalendarPrototypeTable
     dateFromFields      temporalCalendarPrototypeFuncDateFromFields      DontEnum|Function 1
     dateAdd             temporalCalendarPrototypeFuncDateAdd             DontEnum|Function 2
+    dateUntil           temporalCalendarPrototypeFuncDateUntil           DontEnum|Function 2
     fields              temporalCalendarPrototypeFuncFields              DontEnum|Function 1
     mergeFields         temporalCalendarPrototypeFuncMergeFields         DontEnum|Function 2
     toString            temporalCalendarPrototypeFuncToString            DontEnum|Function 0
@@ -155,6 +157,39 @@ JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateAdd, (JSGlobalObject* 
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(plainDate))));
+}
+
+// https://tc39.es/proposal-temporal/#sup-temporal.calendar.prototype.dateuntil
+JSC_DEFINE_HOST_FUNCTION(temporalCalendarPrototypeFuncDateUntil, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* calendar = jsDynamicCast<TemporalCalendar*>(callFrame->thisValue());
+    if (!calendar)
+        return throwVMTypeError(globalObject, scope, "Temporal.Calendar.prototype.dateUntil called on value that's not a Calendar"_s);
+
+    // FIXME: Implement after fleshing out the rest of Temporal.Calendar.
+    if (!calendar->isISO8601())
+        return throwVMRangeError(globalObject, scope, "unimplemented: non-ISO8601 calendar"_s);
+
+    auto* date1 = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto* date2 = TemporalPlainDate::from(globalObject, callFrame->argument(1), std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    JSObject* options = intlGetOptionsObject(globalObject, callFrame->argument(2));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto largest = temporalLargestUnit(globalObject, options, { TemporalUnit::Hour, TemporalUnit::Minute, TemporalUnit::Second, TemporalUnit::Millisecond, TemporalUnit::Microsecond, TemporalUnit::Nanosecond }, TemporalUnit::Day);
+    RETURN_IF_EXCEPTION(scope, { });
+    TemporalUnit largestUnit = largest.value_or(TemporalUnit::Day);
+
+    auto result = TemporalCalendar::isoDateDifference(globalObject, date1->plainDate(), date2->plainDate(), largestUnit);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTFMove(result), globalObject->durationStructure())));
 }
 
 // https://tc39.es/proposal-temporal/#sup-temporal.calendar.prototype.fields

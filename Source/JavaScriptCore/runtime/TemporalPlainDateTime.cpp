@@ -165,7 +165,7 @@ TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject,
 // https://tc39.es/proposal-temporal/#sec-temporal-compareisodatetime
 int32_t TemporalPlainDateTime::compare(TemporalPlainDateTime* plainDateTime1, TemporalPlainDateTime* plainDateTime2)
 {
-    if (auto dateResult = TemporalPlainDate::compare(plainDateTime1->plainDate(), plainDateTime2->plainDate()))
+    if (auto dateResult = TemporalCalendar::isoDateCompare(plainDateTime1->plainDate(), plainDateTime2->plainDate()))
         return dateResult;
 
     return TemporalPlainTime::compare(plainDateTime1->plainTime(), plainDateTime2->plainTime());

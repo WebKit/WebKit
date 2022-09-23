@@ -385,3 +385,34 @@ shouldBe(Temporal.PlainDate.prototype.with.length, 1);
     shouldBe(date.with({ month: 2 }).toString(), '2020-02-29');
     shouldThrow(() => { date.with({ month: 2 }, { overflow: 'reject' }); }, RangeError);
 }
+
+shouldBe(Temporal.PlainDate.prototype.since.length, 1);
+shouldBe(Temporal.PlainDate.prototype.until.length, 1);
+{
+    const date = Temporal.PlainDate.from('2020-02-28');
+
+    shouldBe(date.since('2019-02-28').toString(), 'P365D');
+    shouldBe(date.until('2019-02-28').toString(), '-P365D');
+    shouldBe(date.since('2019-02-28', { largestUnit: 'year' }).toString(), 'P1Y');
+    shouldBe(date.until('2019-02-28', { largestUnit: 'year' }).toString(), '-P1Y');
+    shouldBe(date.since('2021-02-28').toString(), '-P366D');
+    shouldBe(date.until('2021-02-28').toString(), 'P366D');
+    shouldBe(date.since('2021-02-28', { largestUnit: 'year' }).toString(), '-P1Y');
+    shouldBe(date.until('2021-02-28', { largestUnit: 'year' }).toString(), 'P1Y');
+
+    shouldBe(date.since('2020-04-28', { largestUnit: 'month' }).toString(), '-P2M');
+    shouldBe(date.until('2020-04-28', { largestUnit: 'month' }).toString(), 'P2M');
+    shouldBe(date.since('2019-12-28', { largestUnit: 'month' }).toString(), 'P2M');
+    shouldBe(date.until('2019-12-28', { largestUnit: 'month' }).toString(), '-P2M');
+
+    shouldBe(date.since('2020-03-15', { largestUnit: 'week' }).toString(), '-P2W2D');
+    shouldBe(date.until('2020-03-15', { largestUnit: 'week' }).toString(), 'P2W2D');
+    shouldBe(date.since('2020-03-15', { roundingMode: 'halfExpand', roundingIncrement: 3 }).toString(), '-P15D');
+    shouldBe(date.until('2020-03-15', { roundingMode: 'halfExpand', roundingIncrement: 3 }).toString(), 'P15D');
+    shouldBe(date.since('2020-02-12', { largestUnit: 'week' }).toString(), 'P2W2D');
+    shouldBe(date.until('2020-02-12', { largestUnit: 'week' }).toString(), '-P2W2D');
+
+    shouldThrow(() => { date.until('2019-02-28', { smallestUnit: 'hour' }); }, RangeError);
+    shouldThrow(() => { date.until('2019-02-28', { largestUnit: 'hour' }); }, RangeError);
+    shouldThrow(() => { date.until('2019-02-28', { largestUnit: 'day', smallestUnit: 'month' }); }, RangeError);
+}

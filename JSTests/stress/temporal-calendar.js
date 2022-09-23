@@ -137,3 +137,14 @@ shouldBe(isoCalendar.dateAdd('2020-02-28', new Temporal.Duration(1, 1, 0, 1)).to
 shouldBe(isoCalendar.dateAdd('2020-03-30', { months: -1 }).toString(), '2020-02-29');
 shouldThrow(() => { isoCalendar.dateAdd('2020-03-30', { months: -1 }, { overflow: 'reject' }); }, RangeError);
 shouldThrow(() => { isoCalendar.dateAdd('2020-02-28', { years: -300000 }); }, RangeError);
+
+shouldBe(Temporal.Calendar.prototype.dateUntil.length, 2);
+shouldBe(isoCalendar.dateUntil('2020-02-28', '2019-02-28').toString(), '-P365D');
+shouldBe(isoCalendar.dateUntil('2020-02-28', '2019-02-28', { largestUnit: 'year' }).toString(), '-P1Y');
+shouldBe(isoCalendar.dateUntil('2020-02-28', '2021-02-28').toString(), 'P366D');
+shouldBe(isoCalendar.dateUntil('2020-02-28', '2021-02-28', { largestUnit: 'year' }).toString(), 'P1Y');
+shouldBe(isoCalendar.dateUntil('2020-02-28', '2020-04-28', { largestUnit: 'month' }).toString(), 'P2M');
+shouldBe(isoCalendar.dateUntil('2020-02-28', '2019-12-28', { largestUnit: 'month' }).toString(), '-P2M');
+shouldBe(isoCalendar.dateUntil('2020-02-28', '2020-03-15', { largestUnit: 'week' }).toString(), 'P2W2D');
+shouldBe(isoCalendar.dateUntil('2020-02-28', '2020-02-12', { largestUnit: 'week' }).toString(), '-P2W2D');
+shouldThrow(() => { isoCalendar.dateUntil('2020-02-28', '2019-02-28', { largestUnit: 'hour' }); }, RangeError);

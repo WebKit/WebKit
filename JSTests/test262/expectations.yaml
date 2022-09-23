@@ -1053,54 +1053,24 @@ test/built-ins/RegExp/prototype/exec/u-lastindex-adv.js:
 test/built-ins/RegExp/quantifier-integer-limit.js:
   default: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
   strict mode: 'SyntaxError: Invalid regular expression: number too large in {} quantifier'
-test/built-ins/Temporal/Duration/prototype/add/timezone-string.js:
-  default: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
-  strict mode: 'RangeError: Cannot add a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/round/february-leap-year.js:
-  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/built-ins/Temporal/Duration/prototype/round/relativeto-propertybag-invalid-offset-string.js:
-  default: 'Test262Error: "00:00 is not a valid offset string Expected a RangeError but got a Error'
-  strict mode: 'Test262Error: "00:00 is not a valid offset string Expected a RangeError but got a Error'
-test/built-ins/Temporal/Duration/prototype/round/roundingmode-ceil.js:
-  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
 test/built-ins/Temporal/Duration/prototype/round/roundingmode-expand.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
-test/built-ins/Temporal/Duration/prototype/round/roundingmode-floor.js:
-  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
 test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfCeil.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
 test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfEven.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
-test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfExpand.js:
-  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
 test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfFloor.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
 test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfTrunc.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
-test/built-ins/Temporal/Duration/prototype/round/roundingmode-trunc.js:
-  default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-  strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/built-ins/Temporal/Duration/prototype/round/timezone-string.js:
-  default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
-  strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/subtract/timezone-string.js:
-  default: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
-  strict mode: 'RangeError: Cannot subtract a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/toString/fractionalseconddigits-non-integer.js:
   default: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
   strict mode: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
-test/built-ins/Temporal/Duration/prototype/total/timezone-string.js:
-  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
-  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/total/total-value-infinity.js:
   default: 'Test262Error: Expected SameValue(«NaN», «Infinity») to be true'
   strict mode: 'Test262Error: Expected SameValue(«NaN», «Infinity») to be true'
@@ -1167,9 +1137,6 @@ test/built-ins/Temporal/Instant/prototype/toString/roundingmode-halfFloor.js:
 test/built-ins/Temporal/Instant/prototype/toString/roundingmode-halfTrunc.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
-test/built-ins/Temporal/Instant/prototype/toString/timezone-string.js:
-  default: "Test262Error: Time zone created from string 'UTC' Expected SameValue(«00:00Z», «+00:00») to be true"
-  strict mode: "Test262Error: Time zone created from string 'UTC' Expected SameValue(«00:00Z», «+00:00») to be true"
 test/built-ins/Temporal/Instant/prototype/until/roundingmode-ceil.js:
   default: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
   strict mode: 'Test262Error: rounds to milliseconds (roundingMode = ceil, positive case) nanoseconds result Expected SameValue(«936», «0») to be true'
@@ -1197,30 +1164,39 @@ test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfTrunc.js:
 test/built-ins/Temporal/Instant/prototype/until/roundingmode-trunc.js:
   default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
   strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
-test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-designator-required-for-disambiguation.js:
-  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-test/built-ins/Temporal/PlainDateTime/datetime-math.js:
-  default: "TypeError: later.since is not a function. (In 'later.since(earlier, { largestUnit })', 'later.since' is undefined)"
-  strict mode: "TypeError: later.since is not a function. (In 'later.since(earlier, { largestUnit })', 'later.since' is undefined)"
-test/built-ins/Temporal/PlainDateTime/from/argument-plaindatetime.js:
-  default: 'Test262Error: Calendar is copied Expected SameValue(«iso8601», «iso8601») to be true'
-  strict mode: 'Test262Error: Calendar is copied Expected SameValue(«iso8601», «iso8601») to be true'
-test/built-ins/Temporal/PlainDateTime/from/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
+test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-expand.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfCeil.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfEven.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfFloor.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfTrunc.js:
+  default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
+  strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
 test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
   default: 'Test262Error: Expected [get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get fields.calendar, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf] to have the same contents. order of operations'
-test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-expand.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
@@ -1236,9 +1212,6 @@ test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfFloor.js:
 test/built-ins/Temporal/PlainDateTime/prototype/round/roundingmode-halfTrunc.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
-test/built-ins/Temporal/PlainDateTime/prototype/toString/calendar-tostring.js:
-  default: 'Test262Error: calendarName = always: expected 2000-05-02T12:34:56.987654321[u-ca=custom] Expected SameValue(«2000-05-02T12:34:56.987654321», «2000-05-02T12:34:56.987654321[u-ca=custom]») to be true'
-  strict mode: 'Test262Error: calendarName = always: expected 2000-05-02T12:34:56.987654321[u-ca=custom] Expected SameValue(«2000-05-02T12:34:56.987654321», «2000-05-02T12:34:56.987654321[u-ca=custom]») to be true'
 test/built-ins/Temporal/PlainDateTime/prototype/toString/fractionalseconddigits-non-integer.js:
   default: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
   strict mode: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
@@ -1263,21 +1236,6 @@ test/built-ins/Temporal/PlainDateTime/prototype/with/order-of-operations.js:
 test/built-ins/Temporal/PlainDateTime/prototype/with/overflow-wrong-type.js:
   default: 'Test262Error: Expected [get overflow.toString, call overflow.toString] and [get overflow.toString, call overflow.toString, get overflow.toString, call overflow.toString] to have the same contents. order of operations'
   strict mode: 'Test262Error: Expected [get overflow.toString, call overflow.toString] and [get overflow.toString, call overflow.toString, get overflow.toString, call overflow.toString] to have the same contents. order of operations'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainDate/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-designator-required-for-disambiguation.js:
-  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-test/built-ins/Temporal/PlainTime/compare/argument-string-time-designator-required-for-disambiguation.js:
-  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix (first argument) Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix (first argument) Expected a RangeError to be thrown but no exception was thrown at all"
-test/built-ins/Temporal/PlainTime/from/argument-string-time-designator-required-for-disambiguation.js:
-  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-designator-required-for-disambiguation.js:
-  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
 test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-expand.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
@@ -1293,9 +1251,6 @@ test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-halfFloor.js:
 test/built-ins/Temporal/PlainTime/prototype/round/roundingmode-halfTrunc.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
-test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-designator-required-for-disambiguation.js:
-  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
 test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-expand.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
@@ -1311,9 +1266,6 @@ test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfFloor.js:
 test/built-ins/Temporal/PlainTime/prototype/since/roundingmode-halfTrunc.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
-test/built-ins/Temporal/PlainTime/prototype/toPlainDateTime/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
 test/built-ins/Temporal/PlainTime/prototype/toString/fractionalseconddigits-non-integer.js:
   default: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
   strict mode: "RangeError: fractionalSecondDigits must be 'auto' or 0 through 9, not 9.7"
@@ -1332,9 +1284,6 @@ test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-halfFloor.js:
 test/built-ins/Temporal/PlainTime/prototype/toString/roundingmode-halfTrunc.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
-test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-designator-required-for-disambiguation.js:
-  default: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
-  strict mode: "Test262Error: '2021-12[u-ca=iso8601]' is ambiguous and requires T prefix Expected a RangeError to be thrown but no exception was thrown at all"
 test/built-ins/Temporal/PlainTime/prototype/until/roundingmode-expand.js:
   default: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'
   strict mode: 'RangeError: roundingMode must be either "ceil", "floor", "trunc", or "halfExpand"'

@@ -529,42 +529,12 @@ static ISO8601::Duration differenceTime(ISO8601::PlainTime time1, ISO8601::Plain
     return duration;
 }
 
-static std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject* globalObject, JSValue optionsValue)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto smallest = temporalSmallestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day });
-    RETURN_IF_EXCEPTION(scope, { });
-    TemporalUnit smallestUnit = smallest.value_or(TemporalUnit::Nanosecond);
-
-    auto largest = temporalLargestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day }, TemporalUnit::Hour);
-    RETURN_IF_EXCEPTION(scope, { });
-    TemporalUnit largestUnit = largest.value_or(TemporalUnit::Hour);
-
-    if (smallestUnit < largestUnit) {
-        throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
-        return { };
-    }
-
-    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto increment = temporalRoundingIncrement(globalObject, options, maximumRoundingIncrement(smallestUnit), false);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    return { smallestUnit, largestUnit, roundingMode, increment };
-}
-
 ISO8601::Duration TemporalPlainTime::until(JSGlobalObject* globalObject, TemporalPlainTime* other, JSValue optionsValue) const
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue);
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Time, TemporalUnit::Nanosecond, TemporalUnit::Hour);
     RETURN_IF_EXCEPTION(scope, { });
 
     auto result = differenceTime(plainTime(), other->plainTime());
@@ -582,14 +552,9 @@ ISO8601::Duration TemporalPlainTime::since(JSGlobalObject* globalObject, Tempora
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue);
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Time, TemporalUnit::Nanosecond, TemporalUnit::Hour);
     RETURN_IF_EXCEPTION(scope, { });
-
-    // https://tc39.es/proposal-temporal/#sec-temporal-negatetemporalroundingmode
-    if (roundingMode == RoundingMode::Ceil)
-        roundingMode = RoundingMode::Floor;
-    else if (roundingMode == RoundingMode::Floor)
-        roundingMode = RoundingMode::Ceil;
+    roundingMode = negateTemporalRoundingMode(roundingMode);
 
     auto result = differenceTime(other->plainTime(), plainTime());
     result = -result;

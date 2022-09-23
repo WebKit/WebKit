@@ -204,24 +204,6 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
     return { };
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-compareisodate
-int32_t TemporalPlainDate::compare(const ISO8601::PlainDate& d1, const ISO8601::PlainDate& d2)
-{
-    if (d1.year() > d2.year())
-        return 1;
-    if (d1.year() < d2.year())
-        return -1;
-    if (d1.month() > d2.month())
-        return 1;
-    if (d1.month() < d2.month())
-        return -1;
-    if (d1.day() > d2.day())
-        return 1;
-    if (d1.day() < d2.day())
-        return -1;
-    return 0;
-}
-
 std::array<std::optional<double>, numberOfTemporalPlainDateUnits> TemporalPlainDate::toPartialDate(JSGlobalObject* globalObject, JSObject* temporalDateLike)
 {
     VM& vm = globalObject->vm();
@@ -319,6 +301,87 @@ ISO8601::PlainDate TemporalPlainDate::with(JSGlobalObject* globalObject, JSObjec
     double m = optionalMonth.value_or(month());
     double d = optionalDay.value_or(day());
     RELEASE_AND_RETURN(scope, TemporalCalendar::isoDateFromFields(globalObject, y, m, d, overflow));
+}
+
+ISO8601::Duration TemporalPlainDate::until(JSGlobalObject* globalObject, TemporalPlainDate* other, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool calendarsMatch = calendar()->equals(globalObject, other->calendar());
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!calendarsMatch) {
+        throwRangeError(globalObject, scope, "calendars must match"_s);
+        return { };
+    }
+
+    if (!calendar()->isISO8601()) {
+        throwRangeError(globalObject, scope, "unimplemented: with non-ISO8601 calendar"_s);
+        return { };
+    }
+
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Day, TemporalUnit::Day);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto result = TemporalCalendar::isoDateDifference(globalObject, plainDate(), other->plainDate(), largestUnit);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (smallestUnit != TemporalUnit::Day || increment != 1) {
+        if (smallestUnit != TemporalUnit::Day) {
+            throwRangeError(globalObject, scope, "unimplemented: depends on Duration relativeTo"_s);
+            return { };
+        }
+        result.setHours(0);
+        result.setMinutes(0);
+        result.setSeconds(0);
+        result.setMilliseconds(0);
+        result.setMicroseconds(0);
+        result.setNanoseconds(0);
+        TemporalDuration::round(result, increment, smallestUnit, roundingMode);
+    }
+
+    return result;
+}
+
+ISO8601::Duration TemporalPlainDate::since(JSGlobalObject* globalObject, TemporalPlainDate* other, JSValue optionsValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    bool calendarsMatch = calendar()->equals(globalObject, other->calendar());
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!calendarsMatch) {
+        throwRangeError(globalObject, scope, "calendars must match"_s);
+        return { };
+    }
+
+    if (!calendar()->isISO8601()) {
+        throwRangeError(globalObject, scope, "unimplemented: with non-ISO8601 calendar"_s);
+        return { };
+    }
+
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Day, TemporalUnit::Day);
+    RETURN_IF_EXCEPTION(scope, { });
+    roundingMode = negateTemporalRoundingMode(roundingMode);
+
+    auto result = TemporalCalendar::isoDateDifference(globalObject, plainDate(), other->plainDate(), largestUnit);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (smallestUnit != TemporalUnit::Day || increment != 1) {
+        if (smallestUnit != TemporalUnit::Day) {
+            throwRangeError(globalObject, scope, "unimplemented: depends on Duration relativeTo"_s);
+            return { };
+        }
+        result.setHours(0);
+        result.setMinutes(0);
+        result.setSeconds(0);
+        result.setMilliseconds(0);
+        result.setMicroseconds(0);
+        result.setNanoseconds(0);
+        TemporalDuration::round(result, increment, smallestUnit, roundingMode);
+    }
+
+    return -result;
 }
 
 String TemporalPlainDate::monthCode() const
