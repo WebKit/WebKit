@@ -384,7 +384,7 @@ protected:
                 ASSERT(!isPrecolored(aliasTmpIndex) || (isPrecolored(aliasTmpIndex) && reg));
 
                 if (reg)
-                    coloredRegisters.includeRegister(reg);
+                    coloredRegisters.includeRegister(reg, Width64);
             }
 
             bool colorAssigned = false;

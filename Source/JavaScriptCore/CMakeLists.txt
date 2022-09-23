@@ -533,7 +533,6 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/Bytecodes.h
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/JSCBuiltins.h
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmOps.h
-    ${JavaScriptCore_DERIVED_SOURCES_DIR}/WasmSimdOpcodes.h
 
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorBackendDispatchers.h
     ${JavaScriptCore_DERIVED_SOURCES_DIR}/inspector/InspectorFrontendDispatchers.h
@@ -1264,6 +1263,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmOSREntryData.h
     wasm/WasmPageCount.h
     wasm/WasmSections.h
+    wasm/WasmSimdOpcodes.h
     wasm/WasmTypeDefinition.h
     wasm/WasmStreamingCompiler.h
     wasm/WasmStreamingParser.h

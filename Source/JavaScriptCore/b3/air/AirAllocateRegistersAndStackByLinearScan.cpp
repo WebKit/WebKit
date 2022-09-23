@@ -153,7 +153,7 @@ private:
             [&] (Bank bank) {
                 m_registers[bank] = m_code.regsInPriorityOrder(bank);
                 for (Reg r : m_registers[bank])
-                    m_registerSet[bank].includeRegister(r);
+                    m_registerSet[bank].includeRegister(r, Width64);
                 m_unifiedRegisterSet.merge(m_registerSet[bank]);
             });
     }
@@ -273,9 +273,9 @@ private:
                 if (Inst* prev = block->get(instIndex - 1)) {
                     RegisterSet prevRegs = regs;
                     prev->forEach<Reg>(
-                        [&] (Reg& reg, Arg::Role role, Bank, Width) {
+                        [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                             if (Arg::isLateDef(role))
-                                prevRegs.includeRegister(reg);
+                                prevRegs.includeRegister(reg, width);
                         });
                     if (prev->kind.opcode == Patch)
                         prevRegs.merge(prev->extraClobberedRegs());
@@ -286,9 +286,9 @@ private:
                 if (Inst* next = block->get(instIndex)) {
                     auto nextRegs = regs;
                     next->forEach<Reg>(
-                        [&] (Reg& reg, Arg::Role role, Bank, Width) {
+                        [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                             if (Arg::isEarlyDef(role))
-                                nextRegs.includeRegister(reg);
+                                nextRegs.includeRegister(reg, width);
                         });
                     if (next->kind.opcode == Patch)
                         nextRegs.merge(next->extraEarlyClobberedRegs());
@@ -532,7 +532,7 @@ private:
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.spilled);
         entry.assigned = reg;
-        m_activeRegs.includeRegister(reg);
+        m_activeRegs.includeRegister(reg, Width64);
         addToActive(tmp);
     }
     
