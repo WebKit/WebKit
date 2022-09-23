@@ -55,7 +55,7 @@ class NotificationResourcesLoader;
 
 struct NotificationData;
 
-class Notification final : public ThreadSafeRefCounted<Notification>, public ActiveDOMObject, public EventTarget {
+class Notification final : public RefCounted<Notification>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED_EXPORT(Notification, WEBCORE_EXPORT);
 public:
     using Permission = NotificationPermission;
@@ -105,8 +105,8 @@ public:
     WEBCORE_EXPORT NotificationData data() const;
     RefPtr<NotificationResources> resources() const { return m_resources; }
 
-    using ThreadSafeRefCounted::ref;
-    using ThreadSafeRefCounted::deref;
+    using RefCounted::ref;
+    using RefCounted::deref;
 
     void markAsShown();
     void showSoon();
@@ -114,6 +114,9 @@ public:
     UUID identifier() const { return m_identifier; }
 
     bool isPersistent() const { return !m_serviceWorkerRegistrationURL.isNull(); }
+
+    WEBCORE_EXPORT static void ensureOnNotificationThread(ScriptExecutionContextIdentifier, UUID notificationIdentifier, Function<void(Notification*)>&&);
+    WEBCORE_EXPORT static void ensureOnNotificationThread(const NotificationData&, Function<void(Notification*)>&&);
 
 private:
     Notification(ScriptExecutionContext&, UUID, String&& title, Options&&, Ref<SerializedScriptValue>&&);
@@ -148,12 +151,12 @@ private:
     State m_state { Idle };
     bool m_hasRelevantEventListener { false };
 
-    enum class NotificationSource : bool {
+    enum class NotificationSource : uint8_t {
+        DedicatedWorker,
         Document,
         ServiceWorker,
     };
     NotificationSource m_notificationSource;
-    ScriptExecutionContextIdentifier m_contextIdentifier;
     URL m_serviceWorkerRegistrationURL;
     std::unique_ptr<NotificationResourcesLoader> m_resourcesLoader;
     RefPtr<NotificationResources> m_resources;

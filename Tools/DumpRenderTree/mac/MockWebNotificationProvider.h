@@ -31,9 +31,10 @@
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/WTFString.h>
 
-using NotificationIDMap = HashMap<uint64_t, RetainPtr<WebNotification>>;
-using NotificationViewMap = HashMap<uint64_t, CFTypeRef>;
+using NotificationIDMap = HashMap<String, RetainPtr<WebNotification>>;
+using NotificationViewMap = HashMap<String, CFTypeRef>;
 
 @interface MockWebNotificationProvider : NSObject <WebNotificationProvider> {
     HashSet<CFTypeRef> _registeredWebViews;
@@ -44,7 +45,7 @@ using NotificationViewMap = HashMap<uint64_t, CFTypeRef>;
 
 + (MockWebNotificationProvider *)shared;
 
-- (void)simulateWebNotificationClick:(uint64_t)notificationID;
+- (void)simulateWebNotificationClick:(NSString *)notificationID;
 - (void)setWebNotificationOrigin:(NSString *)origin permission:(BOOL)allowed;
 - (WebNotificationPermission)policyForOrigin:(WebSecurityOrigin *)origin;
 - (void)removeAllWebNotificationPermissions;

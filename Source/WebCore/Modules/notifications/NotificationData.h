@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ScriptExecutionContextIdentifier.h"
 #include <optional>
 #include <pal/SessionID.h>
 #include <wtf/MonotonicTime.h>
@@ -42,13 +43,15 @@ struct NotificationData {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<NotificationData> decode(Decoder&);
 
-    NotificationData isolatedCopy() const &;
-    NotificationData isolatedCopy() &&;
+    WEBCORE_EXPORT NotificationData isolatedCopy() const &;
+    WEBCORE_EXPORT NotificationData isolatedCopy() &&;
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static std::optional<NotificationData> fromDictionary(NSDictionary *dictionaryRepresentation);
     WEBCORE_EXPORT NSDictionary *dictionaryRepresentation() const;
 #endif
+
+    bool isPersistent() const { return !serviceWorkerRegistrationURL.isNull(); }
 
     String title;
     String body;
@@ -59,6 +62,7 @@ struct NotificationData {
     String originString;
     URL serviceWorkerRegistrationURL;
     UUID notificationID;
+    ScriptExecutionContextIdentifier contextIdentifier;
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;
     Vector<uint8_t> data;
@@ -67,7 +71,7 @@ struct NotificationData {
 template<class Encoder>
 void NotificationData::encode(Encoder& encoder) const
 {
-    encoder << title << body << iconURL << tag << language << direction << originString << serviceWorkerRegistrationURL << notificationID << sourceSession << creationTime << data;
+    encoder << title << body << iconURL << tag << language << direction << originString << serviceWorkerRegistrationURL << notificationID << contextIdentifier << sourceSession << creationTime << data;
 }
 
 template<class Decoder>
@@ -118,6 +122,11 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
     if (!notificationID)
         return std::nullopt;
 
+    std::optional<ScriptExecutionContextIdentifier> scriptExecutionContextIdentifier;
+    decoder >> scriptExecutionContextIdentifier;
+    if (!scriptExecutionContextIdentifier)
+        return std::nullopt;
+
     std::optional<PAL::SessionID> sourceSession;
     decoder >> sourceSession;
     if (!sourceSession)
@@ -143,6 +152,7 @@ std::optional<NotificationData> NotificationData::decode(Decoder& decoder)
         WTFMove(*originString),
         WTFMove(*serviceWorkerRegistrationURL),
         WTFMove(*notificationID),
+        *scriptExecutionContextIdentifier,
         WTFMove(*sourceSession),
         WTFMove(*creationTime),
         WTFMove(*data)

@@ -37,6 +37,7 @@ typedef WebCore::SecurityOrigin WebCoreSecurityOrigin;
 @interface WebSecurityOrigin (WebInternal)
 
 - (id)_initWithWebCoreSecurityOrigin:(WebCoreSecurityOrigin *)origin;
+- (id)_initWithString:(NSString *)originString;
 - (WebCoreSecurityOrigin *)_core;
 
 @end

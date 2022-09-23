@@ -2826,6 +2826,7 @@ workers/WorkerGlobalScope.cpp
 workers/WorkerInspectorProxy.cpp
 workers/WorkerLocation.cpp
 workers/WorkerMessagingProxy.cpp
+workers/WorkerNotificationClient.cpp
 workers/WorkerOrWorkletGlobalScope.cpp
 workers/WorkerOrWorkletScriptController.cpp
 workers/WorkerOrWorkletThread.cpp

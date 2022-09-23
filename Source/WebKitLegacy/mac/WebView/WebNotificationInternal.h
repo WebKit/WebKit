@@ -33,12 +33,11 @@
 
 namespace WebCore {
 class Notification;
+struct NotificationData;
 }
 
-WebCore::Notification* core(WebNotification *);
-
 @interface WebNotification (WebNotificationInternal)
-- (id)initWithCoreNotification:(NakedPtr<WebCore::Notification>)coreNotification notificationID:(uint64_t)notificationID;
+- (id)initWithCoreNotification:(WebCore::NotificationData&&)coreNotification;
 @end
 
 #endif

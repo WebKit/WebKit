@@ -33,6 +33,7 @@
 #if ENABLE(NOTIFICATIONS)
 #import "WebSecurityOriginInternal.h"
 #import <WebCore/Notification.h>
+#import <WebCore/NotificationData.h>
 #import <WebCore/ScriptExecutionContext.h>
 #import <wtf/RefPtr.h>
 
@@ -43,8 +44,7 @@ using namespace WebCore;
 {
 @public
 #if ENABLE(NOTIFICATIONS)
-    RefPtr<Notification> _internal;
-    uint64_t _notificationID;
+    std::optional<NotificationData> _internal;
 #endif
 }
 @end
@@ -55,20 +55,12 @@ using namespace WebCore;
 #if ENABLE(NOTIFICATIONS)
 @implementation WebNotification (WebNotificationInternal)
 
-Notification* core(WebNotification *notification)
-{
-    if (!notification->_private)
-        return 0;
-    return notification->_private->_internal.get();
-}
-
-- (id)initWithCoreNotification:(NakedPtr<Notification>)coreNotification notificationID:(uint64_t)notificationID
+- (id)initWithCoreNotification:(NotificationData&&)coreNotification
 {
     if (!(self = [super init]))
         return nil;
     _private = [[WebNotificationPrivate alloc] init];
-    _private->_internal = coreNotification;
-    _private->_notificationID = notificationID;
+    _private->_internal = WTFMove(coreNotification);
     return self;
 }
 @end
@@ -89,7 +81,7 @@ Notification* core(WebNotification *notification)
 - (NSString *)title
 {
 #if ENABLE(NOTIFICATIONS)
-    return core(self)->title();
+    return _private->_internal->title;
 #else
     return nil;
 #endif
@@ -98,7 +90,7 @@ Notification* core(WebNotification *notification)
 - (NSString *)body
 {
 #if ENABLE(NOTIFICATIONS)
-    return core(self)->body();
+    return _private->_internal->body;
 #else
     return nil;
 #endif
@@ -107,7 +99,7 @@ Notification* core(WebNotification *notification)
 - (NSString *)tag
 {
 #if ENABLE(NOTIFICATIONS)
-    return core(self)->tag();
+    return _private->_internal->tag;
 #else
     return nil;
 #endif
@@ -116,7 +108,7 @@ Notification* core(WebNotification *notification)
 - (NSString *)iconURL
 {
 #if ENABLE(NOTIFICATIONS)
-    return core(self)->icon().string();
+    return _private->_internal->iconURL;
 #else
     return nil;
 #endif
@@ -125,7 +117,7 @@ Notification* core(WebNotification *notification)
 - (NSString *)lang
 {
 #if ENABLE(NOTIFICATIONS)
-    return core(self)->lang();
+    return _private->_internal->language;
 #else
     return nil;
 #endif
@@ -134,7 +126,7 @@ Notification* core(WebNotification *notification)
 - (NSString *)dir
 {
 #if ENABLE(NOTIFICATIONS)
-    switch (core(self)->dir()) {
+    switch (_private->_internal->direction) {
         case Notification::Direction::Auto:
             return @"auto";
         case Notification::Direction::Ltr:
@@ -150,16 +142,16 @@ Notification* core(WebNotification *notification)
 - (WebSecurityOrigin *)origin
 {
 #if ENABLE(NOTIFICATIONS)
-    return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:core(self)->scriptExecutionContext()->securityOrigin()]).autorelease();
+    return adoptNS([[WebSecurityOrigin alloc] _initWithString:_private->_internal->originString]).autorelease();
 #else
     return nil;
 #endif
 }
 
-- (uint64_t)notificationID
+- (NSString *)notificationID
 {
 #if ENABLE(NOTIFICATIONS)
-    return _private->_notificationID;
+    return _private->_internal->notificationID.toString();
 #else
     return 0;
 #endif
@@ -168,35 +160,50 @@ Notification* core(WebNotification *notification)
 - (void)dispatchShowEvent
 {
 #if ENABLE(NOTIFICATIONS)
-    core(self)->dispatchShowEvent();
+    Notification::ensureOnNotificationThread(*_private->_internal, [](auto* notification) {
+        if (notification)
+            notification->dispatchShowEvent();
+    });
 #endif
 }
 
 - (void)dispatchCloseEvent
 {
 #if ENABLE(NOTIFICATIONS)
-    core(self)->dispatchCloseEvent();
+    Notification::ensureOnNotificationThread(*_private->_internal, [](auto* notification) {
+        if (notification)
+            notification->dispatchCloseEvent();
+    });
 #endif
 }
 
 - (void)dispatchClickEvent
 {
 #if ENABLE(NOTIFICATIONS)
-    core(self)->dispatchClickEvent();
+    Notification::ensureOnNotificationThread(*_private->_internal, [](auto* notification) {
+        if (notification)
+            notification->dispatchClickEvent();
+    });
 #endif
 }
 
 - (void)dispatchErrorEvent
 {
 #if ENABLE(NOTIFICATIONS)
-    core(self)->dispatchErrorEvent();
+    Notification::ensureOnNotificationThread(*_private->_internal, [](auto* notification) {
+        if (notification)
+            notification->dispatchErrorEvent();
+    });
 #endif
 }
 
 - (void)finalize
 {
 #if ENABLE(NOTIFICATIONS)
-    core(self)->finalize();
+    Notification::ensureOnNotificationThread(*_private->_internal, [](auto* notification) {
+        if (notification)
+            notification->finalize();
+    });
 #endif
 }
 

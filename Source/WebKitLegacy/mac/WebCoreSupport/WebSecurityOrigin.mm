@@ -133,6 +133,12 @@ using namespace WebCore;
     return self;
 }
 
+- (id)_initWithString:(NSString *)originString
+{
+    auto origin = SecurityOrigin::createFromString(originString);
+    return adoptNS([[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin.ptr()]).autorelease();
+}
+
 - (SecurityOrigin *)_core
 {
     return reinterpret_cast<SecurityOrigin*>(_private);
