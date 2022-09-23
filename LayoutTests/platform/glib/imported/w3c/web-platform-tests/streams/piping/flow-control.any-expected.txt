@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
 
 Harness Error (FAIL), message = Unhandled rejection: releasing lock of reader whose stream is still in readable state
 

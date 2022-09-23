@@ -189,6 +189,12 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     LOG(Network, "Handle %p delegate connection:%p didReceiveAuthenticationChallenge:%p", m_handle, connection, challenge);
 
     auto work = [self, protectedSelf = retainPtr(self), challenge = retainPtr(challenge)] () mutable {
+        // FIXME: Temporary hack to try and address EWS failures.
+        if ([challenge.get().protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+            [[challenge sender] useCredential:[NSURLCredential credentialForTrust:challenge.get().protectionSpace.serverTrust] forAuthenticationChallenge:challenge.get()];
+            return;
+        }
+
         if (!m_handle) {
             [[challenge sender] cancelAuthenticationChallenge:challenge.get()];
             return;

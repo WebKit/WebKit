@@ -1,16 +1,20 @@
-Blocked access to external URL http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=zero
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=zero due to access control checks.
-CONSOLE MESSAGE: NetworkError:  A network error occurred.
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'entry.redirectStart')
 Description
 
 This test validates that for a cross origin resource, the timing allow check algorithm will fail when the HTTP response includes zero Timing-Allow-Origin header value.
 
 
-Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'entry.redirectStart')
-
 PASS window.performance is defined
 PASS window.performance.getEntriesByType is defined
-FAIL There should be one resource timing entry. assert_equals: There should be one resource timing entry. expected 1 but got 0
+PASS There should be one resource timing entry.
+PASS redirectStart should be 0 in cross-origin request.
+PASS redirectEnd should be 0 in cross-origin request.
+PASS domainLookupStart should be 0 in cross-origin request.
+PASS domainLookupEnd should be 0 in cross-origin request.
+PASS connectStart should be 0 in cross-origin request.
+PASS connectEnd should be 0 in cross-origin request.
+PASS requestStart should be 0 in cross-origin request.
+PASS responseStart should be 0 in cross-origin request.
+PASS secureConnectionStart should be 0 in cross-origin request.
+PASS fetchStart should be greater than 0 in cross-origin request.
+PASS responseEnd should be greater than 0 in cross-origin request.
 

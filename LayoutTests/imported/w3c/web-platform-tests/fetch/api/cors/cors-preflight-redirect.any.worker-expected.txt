@@ -1,3 +1,8 @@
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 301
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 302
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 303
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 307
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 308
 
 PASS Redirection 301 on preflight failed
 FAIL Redirection 301 after preflight failed assert_unreached: Should have rejected: undefined Reached unreachable code

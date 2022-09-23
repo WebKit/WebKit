@@ -1,0 +1,6 @@
+Bug test main frame
+
+
+
+FAIL Reports should be sent to the correct endpoints assert_equals: First endpoint should receive two reports expected 2 but got 1
+

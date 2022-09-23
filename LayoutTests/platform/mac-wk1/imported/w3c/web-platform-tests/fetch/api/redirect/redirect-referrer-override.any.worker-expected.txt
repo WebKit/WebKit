@@ -50,7 +50,7 @@ PASS Cross origin redirection, origin init, unsafe-url redirect header
 PASS Same origin redirection, origin-when-cross-origin init, no-referrer redirect header
 PASS Cross origin redirection, origin-when-cross-origin init, no-referrer redirect header
 PASS Same origin redirection, origin-when-cross-origin init, no-referrer-when-downgrade redirect header
-FAIL Cross origin redirection, origin-when-cross-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got "http://localhost:8800/"
+FAIL Cross origin redirection, origin-when-cross-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected "http://web-platform.test:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got "http://web-platform.test:8800/"
 PASS Same origin redirection, origin-when-cross-origin init, origin redirect header
 PASS Cross origin redirection, origin-when-cross-origin init, origin redirect header
 PASS Same origin redirection, origin-when-cross-origin init, origin-when-cross-origin redirect header
@@ -62,23 +62,23 @@ PASS Cross origin redirection, origin-when-cross-origin init, strict-origin redi
 PASS Same origin redirection, origin-when-cross-origin init, strict-origin-when-cross-origin redirect header
 PASS Cross origin redirection, origin-when-cross-origin init, strict-origin-when-cross-origin redirect header
 PASS Same origin redirection, origin-when-cross-origin init, unsafe-url redirect header
-FAIL Cross origin redirection, origin-when-cross-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got "http://localhost:8800/"
+FAIL Cross origin redirection, origin-when-cross-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected "http://web-platform.test:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got "http://web-platform.test:8800/"
 PASS Same origin redirection, same-origin init, no-referrer redirect header
 PASS Cross origin redirection, same-origin init, no-referrer redirect header
 PASS Same origin redirection, same-origin init, no-referrer-when-downgrade redirect header
-FAIL Cross origin redirection, same-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got (object) null
+FAIL Cross origin redirection, same-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected (string) "http://web-platform.test:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got (object) null
 PASS Same origin redirection, same-origin init, origin redirect header
-FAIL Cross origin redirection, same-origin init, origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+FAIL Cross origin redirection, same-origin init, origin redirect header  assert_equals: Check referrer header expected (string) "http://web-platform.test:8800/" but got (object) null
 PASS Same origin redirection, same-origin init, origin-when-cross-origin redirect header
-FAIL Cross origin redirection, same-origin init, origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+FAIL Cross origin redirection, same-origin init, origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://web-platform.test:8800/" but got (object) null
 PASS Same origin redirection, same-origin init, same-origin redirect header
 PASS Cross origin redirection, same-origin init, same-origin redirect header
 PASS Same origin redirection, same-origin init, strict-origin redirect header
-FAIL Cross origin redirection, same-origin init, strict-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+FAIL Cross origin redirection, same-origin init, strict-origin redirect header  assert_equals: Check referrer header expected (string) "http://web-platform.test:8800/" but got (object) null
 PASS Same origin redirection, same-origin init, strict-origin-when-cross-origin redirect header
-FAIL Cross origin redirection, same-origin init, strict-origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/" but got (object) null
+FAIL Cross origin redirection, same-origin init, strict-origin-when-cross-origin redirect header  assert_equals: Check referrer header expected (string) "http://web-platform.test:8800/" but got (object) null
 PASS Same origin redirection, same-origin init, unsafe-url redirect header
-FAIL Cross origin redirection, same-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected (string) "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got (object) null
+FAIL Cross origin redirection, same-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected (string) "http://web-platform.test:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got (object) null
 PASS Same origin redirection, strict-origin init, no-referrer redirect header
 PASS Cross origin redirection, strict-origin init, no-referrer redirect header
 PASS Same origin redirection, strict-origin init, no-referrer-when-downgrade redirect header
@@ -98,7 +98,7 @@ PASS Cross origin redirection, strict-origin init, unsafe-url redirect header
 PASS Same origin redirection, strict-origin-when-cross-origin init, no-referrer redirect header
 PASS Cross origin redirection, strict-origin-when-cross-origin init, no-referrer redirect header
 PASS Same origin redirection, strict-origin-when-cross-origin init, no-referrer-when-downgrade redirect header
-FAIL Cross origin redirection, strict-origin-when-cross-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got "http://localhost:8800/"
+FAIL Cross origin redirection, strict-origin-when-cross-origin init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected "http://web-platform.test:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got "http://web-platform.test:8800/"
 PASS Same origin redirection, strict-origin-when-cross-origin init, origin redirect header
 PASS Cross origin redirection, strict-origin-when-cross-origin init, origin redirect header
 PASS Same origin redirection, strict-origin-when-cross-origin init, origin-when-cross-origin redirect header
@@ -110,7 +110,7 @@ PASS Cross origin redirection, strict-origin-when-cross-origin init, strict-orig
 PASS Same origin redirection, strict-origin-when-cross-origin init, strict-origin-when-cross-origin redirect header
 PASS Cross origin redirection, strict-origin-when-cross-origin init, strict-origin-when-cross-origin redirect header
 PASS Same origin redirection, strict-origin-when-cross-origin init, unsafe-url redirect header
-FAIL Cross origin redirection, strict-origin-when-cross-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got "http://localhost:8800/"
+FAIL Cross origin redirection, strict-origin-when-cross-origin init, unsafe-url redirect header  assert_equals: Check referrer header expected "http://web-platform.test:8800/fetch/api/redirect/redirect-referrer-override.any.worker.js" but got "http://web-platform.test:8800/"
 PASS Same origin redirection, unsafe-url init, no-referrer redirect header
 PASS Cross origin redirection, unsafe-url init, no-referrer redirect header
 PASS Same origin redirection, unsafe-url init, no-referrer-when-downgrade redirect header

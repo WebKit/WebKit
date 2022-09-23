@@ -15,8 +15,8 @@ PASS Same origin redirection, empty redirect header, origin-when-cross-origin in
 PASS Same origin redirection, empty redirect header, no-referrer init
 PASS Same origin redirection, empty redirect header, strict-origin init
 PASS Same origin redirection, empty redirect header, strict-origin-when-cross-origin init
-FAIL Cross origin redirection, empty init, unsafe-url redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer.any.html" but got "http://localhost:8800/"
-FAIL Cross origin redirection, empty init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected "http://localhost:8800/fetch/api/redirect/redirect-referrer.any.html" but got "http://localhost:8800/"
+FAIL Cross origin redirection, empty init, unsafe-url redirect header  assert_equals: Check referrer header expected "http://web-platform.test:8800/fetch/api/redirect/redirect-referrer.any.html" but got "http://web-platform.test:8800/"
+FAIL Cross origin redirection, empty init, no-referrer-when-downgrade redirect header  assert_equals: Check referrer header expected "http://web-platform.test:8800/fetch/api/redirect/redirect-referrer.any.html" but got "http://web-platform.test:8800/"
 PASS Cross origin redirection, empty init, same-origin redirect header
 PASS Cross origin redirection, empty init, origin redirect header
 PASS Cross origin redirection, empty init, origin-when-cross-origin redirect header

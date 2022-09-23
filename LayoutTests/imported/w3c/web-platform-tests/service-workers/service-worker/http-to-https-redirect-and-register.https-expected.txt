@@ -1,4 +1,6 @@
 
-PASS register on a secure page after redirect from an non-secure url
-FAIL register on a non-secure page after redirect from an non-secure url assert_equals: expected "FAIL: navigator.serviceWorker is undefined" but got "OK"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT register on a secure page after redirect from an non-secure url Test timed out
+NOTRUN register on a non-secure page after redirect from an non-secure url
 

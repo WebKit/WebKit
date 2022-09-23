@@ -1,0 +1,3 @@
+
+FAIL Preflight request must not contain any cookie header assert_equals: expected "COOKIE" but got ""
+

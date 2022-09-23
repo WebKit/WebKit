@@ -1,9 +1,9 @@
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/imports-a.js
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/imports-a.js?x
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/imports-a.js?x
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/imports-b.js
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/imports-b.js
-Blocked access to external URL http://www2.localhost:8800/html/semantics/scripting-1/the-script-element/module/imports-b.js
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
+CONSOLE MESSAGE: Origin http://web-platform.test:8800 is not allowed by Access-Control-Allow-Origin. Status code: 200
 
 PASS import() must reject when there is a wrong MIME type
 PASS import() must reject with a different error object for each import when there is a wrong MIME type

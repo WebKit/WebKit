@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: Error: Intentional error.
+CONSOLE MESSAGE: Error: Intentional error.
+CONSOLE MESSAGE: Error: Intentional error.
+CONSOLE MESSAGE: Error: Intentional error.
 
 PASS Verify small same-origin cache_storage scripts are not opaque.
 PASS Verify large same-origin cache_storage scripts are not opaque.

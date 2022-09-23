@@ -1,3 +1,3 @@
 
-PASS Uint8Array as input to SFrameTransform
+FAIL Uint8Array as input to SFrameTransform promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'crypto.subtle.importKey')"
 

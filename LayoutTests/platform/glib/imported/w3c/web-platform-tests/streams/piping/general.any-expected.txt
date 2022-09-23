@@ -1,8 +1,3 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
-CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: releasing lock of reader whose stream is still in readable state
-CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
 
 PASS Piping must lock both the ReadableStream and WritableStream
 PASS Piping finishing must unlock both the ReadableStream and WritableStream

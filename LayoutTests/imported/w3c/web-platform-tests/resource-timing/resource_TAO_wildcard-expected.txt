@@ -1,15 +1,9 @@
-Blocked access to external URL http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=wildcard
-CONSOLE MESSAGE: Not allowed to use restricted network port
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www.localhost:8800/resource-timing/resources/TAOResponse.py?tao=wildcard due to access control checks.
-CONSOLE MESSAGE: NetworkError:  A network error occurred.
-CONSOLE MESSAGE: Error: assert_greater_than: The iframe should have at least one resource timing entry. expected a number greater than 0 but got 0
 Description
 
 This test validates that for a cross origin resource, the timing allow check algorithm will pass when the Timing-Allow-Origin header value is a wildcard ("*").
 
 
-Harness Error (FAIL), message = Error: assert_greater_than: The iframe should have at least one resource timing entry. expected a number greater than 0 but got 0
-
 PASS window.performance is defined
 PASS window.performance.getEntriesByType is defined
+PASS redirectStart, redirectEnd, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, and responseStart -- should NOT be all returned as 0 when the Timing-Allow-Origin header value is a wildcard ('*') and TAO algorithm pass
 

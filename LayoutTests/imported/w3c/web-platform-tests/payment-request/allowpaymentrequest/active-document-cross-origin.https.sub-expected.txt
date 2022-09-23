@@ -1,4 +1,3 @@
-Blocked access to external URL https://www1.localhost:9443/common/blank.html
 
 
 FAIL PaymentRequest <iframe allowpaymentrequest> in non-active document (cross-origin) assert_throws_dom: function "() => {

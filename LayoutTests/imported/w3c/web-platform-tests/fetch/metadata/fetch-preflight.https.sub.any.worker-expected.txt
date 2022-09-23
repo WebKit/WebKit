@@ -1,5 +1,6 @@
-Blocked access to external URL https://www.localhost:9443/fetch/metadata/resources/echo-as-json.py
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 403
+CONSOLE MESSAGE: Preflight response is not successful. Status code: 403
 
 FAIL Same-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Load failed"
-FAIL Cross-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: URL is not valid or contains user credentials."
+FAIL Cross-site fetch with preflight promise_test: Unhandled rejection with value: object "TypeError: Load failed"
 
