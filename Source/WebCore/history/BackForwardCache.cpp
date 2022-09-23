@@ -47,6 +47,7 @@
 #include "Page.h"
 #include "Quirks.h"
 #include "ScriptDisallowedScope.h"
+#include "SecurityOriginHash.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
 #include <pal/Logging.h>
@@ -573,6 +574,21 @@ void BackForwardCache::prune(PruningReason pruningReason)
         oldestItem->setCachedPage(nullptr);
         oldestItem->m_pruningReason = pruningReason;
         RELEASE_LOG(BackForwardCache, "BackForwardCache::prune removing item: %s, size: %u / %u", oldestItem->identifier().string().utf8().data(), pageCount(), maxSize());
+    }
+}
+
+void BackForwardCache::clearEntriesForOrigins(const HashSet<RefPtr<SecurityOrigin>>& origins)
+{
+    for (auto it = m_items.begin(); it != m_items.end();) {
+        // Increment iterator first so it stays valid after the removal.
+        auto current = it;
+        ++it;
+        auto itemOrigin = SecurityOrigin::create((*current)->url());
+        if (origins.contains(itemOrigin.ptr())) {
+            RELEASE_LOG(BackForwardCache, "BackForwardCache::clearEntriesForOrigins removing item: %s, size: %u / %u", (*current)->identifier().string().utf8().data(), pageCount() - 1, maxSize());
+            (*current)->setCachedPage(nullptr);
+            m_items.remove(current);
+        }
     }
 }
 

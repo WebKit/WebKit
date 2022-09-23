@@ -71,6 +71,7 @@ media/audio-session-category-at-most-recent-playback.html [ Skip ]
 
 # No support for the Clear-Site-Data header in WebKit1.
 imported/w3c/web-platform-tests/clear-site-data [ Skip ]
+http/tests/clear-site-data [ Skip ]
 
 # Shared workers are only implemented for WebKit2.
 http/tests/navigation/page-cache-shared-worker.html [ Skip ]

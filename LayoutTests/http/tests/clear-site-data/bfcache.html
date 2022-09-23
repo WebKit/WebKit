@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that the Clear-Site-Data can be used to clear the back/forward cache.");
+jsTestIsAsync = true;
+
+addEventListener("pageshow", function(event) {
+    debug("pageshow - " + (event.persisted ? "" : "not ") + "from cache");
+
+    if (!window.sessionStorage.page_cache_clear_site_data_test_started)
+        return;
+
+    wasRestoredFromPageCache = event.persisted;
+    shouldBeFalse("wasRestoredFromPageCache");
+    finishJSTest();
+});
+
+onload = () => {
+    if (sessionStorage.page_cache_clear_site_data_test_started)
+        return;
+    setTimeout(() => {
+        sessionStorage.page_cache_clear_site_data_test_started = true;
+        location.href = "resources/clear-site-data-and-navigate-back.html";
+    }, 0);
+};
+</script>
+</html>

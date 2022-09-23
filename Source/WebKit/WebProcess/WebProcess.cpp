@@ -1415,6 +1415,7 @@ void WebProcess::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> websiteD
             origins.add(originData.securityOrigin());
 
         MemoryCache::singleton().removeResourcesWithOrigins(sessionID(), origins);
+        BackForwardCache::singleton().clearEntriesForOrigins(origins);
     }
     completionHandler();
 }
