@@ -19,6 +19,7 @@
 #pragma once
 
 #include <wtf/Vector.h>
+#include <wtf/glib/GRefPtr.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct _GtkWidget GtkWidget;

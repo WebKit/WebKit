@@ -44,7 +44,7 @@ void Coder<WebKit::NetworkCache::Key>::encode(WTF::Persistence::Encoder& encoder
 
 std::optional<WebKit::NetworkCache::Key> Coder<WebKit::NetworkCache::Key>::decode(WTF::Persistence::Decoder& decoder)
 {
-    WebKit::Key key;
+    WebKit::NetworkCache::Key key;
 
     std::optional<String> partition;
     decoder >> partition;
@@ -70,13 +70,13 @@ std::optional<WebKit::NetworkCache::Key> Coder<WebKit::NetworkCache::Key>::decod
         return std::nullopt;
     key.m_range = WTFMove(*range);
 
-    std::optional<WebKit::Key::HashType> hash;
+    std::optional<WebKit::NetworkCache::Key::HashType> hash;
     decoder >> hash;
     if (!hash)
         return std::nullopt;
     key.m_hash = WTFMove(*hash);
 
-    std::optional<WebKit::Key::HashType> partitionHash;
+    std::optional<WebKit::NetworkCache::Key::HashType> partitionHash;
     decoder >> partitionHash;
     if (!partitionHash)
         return std::nullopt;
@@ -127,7 +127,7 @@ std::optional<WebKit::NetworkCache::SubresourceInfo> Coder<WebKit::NetworkCache:
         return std::nullopt;
 
     if (*isTransient)
-        return WebKit::SubresourceInfo(WTFMove(*key), *lastSeen, *firstSeen);
+        return WebKit::NetworkCache::SubresourceInfo(WTFMove(*key), *lastSeen, *firstSeen);
 
     std::optional<bool> isSameSite;
     decoder >> isSameSite;
@@ -154,7 +154,7 @@ std::optional<WebKit::NetworkCache::SubresourceInfo> Coder<WebKit::NetworkCache:
     if (!priority)
         return std::nullopt;
 
-    return WebKit::SubresourceInfo(WTFMove(*key), *lastSeen, *firstSeen, *isSameSite, *isAppInitiated, WTFMove(*firstPartyForCookies), WTFMove(*requestHeaders), *priority);
+    return WebKit::NetworkCache::SubresourceInfo(WTFMove(*key), *lastSeen, *firstSeen, *isSameSite, *isAppInitiated, WTFMove(*firstPartyForCookies), WTFMove(*requestHeaders), *priority);
 }
 #endif // ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
 

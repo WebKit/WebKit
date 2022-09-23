@@ -29,6 +29,7 @@
 #include "FormattingGeometry.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutContainingBlockChainIterator.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 

@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
 #include <WebCore/RegistrableDomain.h>
+#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebKit {
 namespace NetworkCache {

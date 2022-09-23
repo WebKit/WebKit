@@ -26,10 +26,8 @@
 #include "config.h"
 #include "FloatingState.h"
 
-#include "FormattingContext.h"
-#include "LayoutBox.h"
-#include "LayoutContainerBox.h"
 #include "LayoutContainingBlockChainIterator.h"
+#include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include <wtf/IsoMallocInlines.h>
 

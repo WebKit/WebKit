@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FormattingContext.h"
 #include "LayoutContainerBox.h"
 
 namespace WebCore {
