@@ -2376,3 +2376,5 @@ webkit.org/b/245588 mathml/presentation/mathvariant-inheritance.html [ ImageOnly
 webkit.org/b/245588 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
 
 webkit.org/b/245590 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
+
+webkit.org/b/245592 imported/w3c/web-platform-tests/css/css-counter-styles/mongolian/css3-counter-styles-138.html [ ImageOnlyFailure ]
