@@ -179,8 +179,8 @@ void WebEditorClient::didRemoveAttachmentWithIdentifier(const String& identifier
 
 Vector<SerializedAttachmentData> WebEditorClient::serializedAttachmentDataForIdentifiers(const Vector<String>& identifiers)
 {
-    Vector<WebCore::SerializedAttachmentData> serializedData;
-    m_page->sendSync(Messages::WebPageProxy::SerializedAttachmentDataForIdentifiers(identifiers), Messages::WebPageProxy::SerializedAttachmentDataForIdentifiers::Reply(serializedData));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::SerializedAttachmentDataForIdentifiers(identifiers));
+    auto [serializedData] = sendResult.takeReplyOr(Vector<WebCore::SerializedAttachmentData> { });
     return serializedData;
 }
 
@@ -310,26 +310,26 @@ bool WebEditorClient::canPaste(Frame*, bool defaultValue) const
 
 bool WebEditorClient::canUndo() const
 {
-    bool result = false;
-    m_page->sendSync(Messages::WebPageProxy::CanUndoRedo(UndoOrRedo::Undo), Messages::WebPageProxy::CanUndoRedo::Reply(result));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::CanUndoRedo(UndoOrRedo::Undo));
+    auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
 
 bool WebEditorClient::canRedo() const
 {
-    bool result = false;
-    m_page->sendSync(Messages::WebPageProxy::CanUndoRedo(UndoOrRedo::Redo), Messages::WebPageProxy::CanUndoRedo::Reply(result));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::CanUndoRedo(UndoOrRedo::Redo));
+    auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
 
 void WebEditorClient::undo()
 {
-    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Undo), Messages::WebPageProxy::ExecuteUndoRedo::Reply());
+    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Undo));
 }
 
 void WebEditorClient::redo()
 {
-    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo), Messages::WebPageProxy::ExecuteUndoRedo::Reply());
+    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(UndoOrRedo::Redo));
 }
 
 WebCore::DOMPasteAccessResponse WebEditorClient::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const String& originIdentifier)
@@ -510,20 +510,19 @@ void WebEditorClient::learnWord(const String& word)
 
 void WebEditorClient::checkSpellingOfString(StringView text, int* misspellingLocation, int* misspellingLength)
 {
-    int32_t resultLocation = -1;
-    int32_t resultLength = 0;
-    m_page->sendSync(Messages::WebPageProxy::CheckSpellingOfString(text.toStringWithoutCopying()),
-        Messages::WebPageProxy::CheckSpellingOfString::Reply(resultLocation, resultLength));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::CheckSpellingOfString(text.toStringWithoutCopying()));
+    auto [resultLocation, resultLength] = sendResult.takeReplyOr(-1, 0);
     *misspellingLocation = resultLocation;
     *misspellingLength = resultLength;
 }
 
 void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::GrammarDetail>& grammarDetails, int* badGrammarLocation, int* badGrammarLength)
 {
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::CheckGrammarOfString(text.toStringWithoutCopying()));
     int32_t resultLocation = -1;
     int32_t resultLength = 0;
-    m_page->sendSync(Messages::WebPageProxy::CheckGrammarOfString(text.toStringWithoutCopying()),
-        Messages::WebPageProxy::CheckGrammarOfString::Reply(grammarDetails, resultLocation, resultLength));
+    if (sendResult)
+        std::tie(grammarDetails, resultLocation, resultLength) = sendResult.takeReply();
     *badGrammarLocation = resultLocation;
     *badGrammarLength = resultLength;
 }
@@ -539,8 +538,8 @@ static uint64_t insertionPointFromCurrentSelection(const VisibleSelection& curre
 
 Vector<TextCheckingResult> WebEditorClient::checkTextOfParagraph(StringView stringView, OptionSet<WebCore::TextCheckingType> checkingTypes, const VisibleSelection& currentSelection)
 {
-    Vector<TextCheckingResult> results;
-    m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(stringView.toStringWithoutCopying(), checkingTypes, insertionPointFromCurrentSelection(currentSelection)), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(stringView.toStringWithoutCopying(), checkingTypes, insertionPointFromCurrentSelection(currentSelection)));
+    auto [results] = sendResult.takeReplyOr(Vector<TextCheckingResult> { });
     return results;
 }
 
@@ -563,14 +562,16 @@ void WebEditorClient::showSpellingUI(bool)
 
 bool WebEditorClient::spellingUIIsShowing()
 {
-    bool isShowing = false;
-    m_page->sendSync(Messages::WebPageProxy::SpellingUIIsShowing(), Messages::WebPageProxy::SpellingUIIsShowing::Reply(isShowing));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::SpellingUIIsShowing());
+    auto [isShowing] = sendResult.takeReplyOr(false);
     return isShowing;
 }
 
 void WebEditorClient::getGuessesForWord(const String& word, const String& context, const VisibleSelection& currentSelection, Vector<String>& guesses)
 {
-    m_page->sendSync(Messages::WebPageProxy::GetGuessesForWord(word, context, insertionPointFromCurrentSelection(currentSelection)), Messages::WebPageProxy::GetGuessesForWord::Reply(guesses));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::GetGuessesForWord(word, context, insertionPointFromCurrentSelection(currentSelection)));
+    if (sendResult)
+        std::tie(guesses) = sendResult.takeReply();
 }
 
 void WebEditorClient::requestCheckingOfString(TextCheckingRequest& request, const WebCore::VisibleSelection& currentSelection)

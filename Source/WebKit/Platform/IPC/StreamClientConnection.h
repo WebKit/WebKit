@@ -96,9 +96,9 @@ public:
 
     template<typename T, typename U> bool send(T&& message, ObjectIdentifier<U> destinationID, Timeout);
 
-    using SendSyncResult = Connection::SendSyncResult;
+    template<typename T> using SendSyncResult = Connection::SendSyncResult<T>;
     template<typename T, typename U>
-    SendSyncResult sendSync(T&& message, typename T::Reply&&, ObjectIdentifier<U> destinationID, Timeout);
+    SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout);
 
     template<typename T, typename U>
     bool waitForAndDispatchImmediately(ObjectIdentifier<U> destinationID, Timeout, OptionSet<WaitForOption> = { });
@@ -119,7 +119,7 @@ private:
     template<typename T>
     bool trySendStream(T& message, Span&);
     template<typename T>
-    std::optional<SendSyncResult> trySendSyncStream(T& message, typename T::Reply&, Timeout, Span&);
+    std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, Span&);
     bool trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
     void sendProcessOutOfStreamMessage(Span&&);
 
@@ -198,7 +198,7 @@ bool StreamClientConnection::trySendStream(T& message, Span& span)
 }
 
 template<typename T, typename U>
-StreamClientConnection::SendSyncResult StreamClientConnection::sendSync(T&& message, typename T::Reply&& reply, ObjectIdentifier<U> destinationID, Timeout timeout)
+StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifier<U> destinationID, Timeout timeout)
 {
     static_assert(T::isSync, "Message is not sync!");
     if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
@@ -207,12 +207,12 @@ StreamClientConnection::SendSyncResult StreamClientConnection::sendSync(T&& mess
     if (!span)
         return { };
     if constexpr(T::isStreamEncodable) {
-        auto maybeSendResult = trySendSyncStream(message, reply, timeout, *span);
+        auto maybeSendResult = trySendSyncStream(message, timeout, *span);
         if (maybeSendResult)
             return WTFMove(*maybeSendResult);
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    return m_connection->sendSync(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout);
+    return m_connection->sendSync(WTFMove(message), destinationID.toUInt64(), timeout);
 }
 
 template<typename T, typename U>
@@ -222,15 +222,15 @@ bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifier<U> d
 }
 
 template<typename T>
-std::optional<StreamClientConnection::SendSyncResult> StreamClientConnection::trySendSyncStream(T& message, typename T::Reply& reply, Timeout timeout, Span& span)
+std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection::trySendSyncStream(T& message, Timeout timeout, Span& span)
 {
-    // In this function, SendSyncResult { } means error happened and caller should stop processing.
+    // In this function, SendSyncResult<T> { } means error happened and caller should stop processing.
     // std::nullopt means we couldn't send through the stream, so try sending out of stream.
     auto syncRequestID = m_connection->makeSyncRequestID();
     if (!m_connection->pushPendingSyncRequestID(syncRequestID))
-        return SendSyncResult { };
+        return SendSyncResult<T> { };
 
-    auto result = [&]() -> std::optional<SendSyncResult> {
+    auto decoderResult = [&]() -> std::optional<std::unique_ptr<Decoder>> {
         StreamConnectionEncoder messageEncoder { T::name(), span.data, span.size };
         if (!(messageEncoder << syncRequestID << message.arguments()))
             return std::nullopt;
@@ -239,7 +239,7 @@ std::optional<StreamClientConnection::SendSyncResult> StreamClientConnection::tr
         if constexpr(T::isReplyStreamEncodable) {
             auto replySpan = tryAcquireAll(timeout);
             if (!replySpan)
-                return SendSyncResult { };
+                return std::unique_ptr<Decoder> { };
             auto decoder = std::unique_ptr<Decoder> { new Decoder(replySpan->data, replySpan->size, m_currentDestinationID) };
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
                 ASSERT(decoder->messageName() == MessageName::SyncMessageReply);
@@ -250,13 +250,16 @@ std::optional<StreamClientConnection::SendSyncResult> StreamClientConnection::tr
         return m_connection->waitForSyncReply(syncRequestID, T::name(), timeout, { });
     }();
     m_connection->popPendingSyncRequestID(syncRequestID);
-    if (result && *result) {
-        auto& decoder = **result;
-        std::optional<typename T::ReplyArguments> replyArguments;
-        decoder >> replyArguments;
-        if (!replyArguments)
-            return SendSyncResult { };
-        moveTuple(WTFMove(*replyArguments), reply);
+
+    if (!decoderResult)
+        return std::nullopt;
+
+    SendSyncResult<T> result;
+    if (*decoderResult) {
+        auto& decoder = *decoderResult;
+        *decoder >> result.replyArguments;
+        if (result.replyArguments)
+            result.decoder = WTFMove(decoder);
     }
     return result;
 }

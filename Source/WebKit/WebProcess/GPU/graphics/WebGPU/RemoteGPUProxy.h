@@ -89,9 +89,9 @@ private:
         return root().streamClientConnection().send(WTFMove(message), backing(), defaultSendTimeout);
     }
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return root().streamClientConnection().sendSync(WTFMove(message), WTFMove(reply), backing(), defaultSendTimeout);
+        return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
     IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
 

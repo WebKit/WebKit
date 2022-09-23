@@ -46,9 +46,8 @@ RemoteBufferProxy::~RemoteBufferProxy()
 
 void RemoteBufferProxy::mapAsync(PAL::WebGPU::MapModeFlags mapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> size, CompletionHandler<void()>&& callback)
 {
-    std::optional<Vector<uint8_t>> data;
-    auto sendResult = sendSync(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size), { data });
-    UNUSED_VARIABLE(sendResult);
+    auto sendResult = sendSync(Messages::RemoteBuffer::MapAsync(mapModeFlags, offset, size));
+    auto [data] = sendResult.takeReplyOr(std::nullopt);
     if (!data) {
         // FIXME: Implement error handling.
         return;

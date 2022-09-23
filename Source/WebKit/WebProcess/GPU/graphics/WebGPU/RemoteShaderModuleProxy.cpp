@@ -48,9 +48,8 @@ RemoteShaderModuleProxy::~RemoteShaderModuleProxy()
 
 void RemoteShaderModuleProxy::compilationInfo(CompletionHandler<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&& callback)
 {
-    Vector<CompilationMessage> messages;
-    auto sendResult = sendSync(Messages::RemoteShaderModule::CompilationInfo(), { messages });
-    UNUSED_VARIABLE(sendResult);
+    auto sendResult = sendSync(Messages::RemoteShaderModule::CompilationInfo());
+    auto [messages] = sendResult.takeReplyOr(Vector<CompilationMessage> { });
 
     auto backingMessages = messages.map([] (CompilationMessage compilationMessage) {
         return PAL::WebGPU::CompilationMessage::create(WTFMove(compilationMessage.message), compilationMessage.type, compilationMessage.lineNum, compilationMessage.linePos, compilationMessage.offset, compilationMessage.length);

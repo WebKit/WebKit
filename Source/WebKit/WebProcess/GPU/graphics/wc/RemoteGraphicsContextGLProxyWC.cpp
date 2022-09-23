@@ -84,12 +84,12 @@ void RemoteGraphicsContextGLProxyWC::prepareForDisplay()
 {
     if (isContextLost())
         return;
-    std::optional<WCContentBufferIdentifier> contentBuffer;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply(contentBuffer));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay());
     if (!sendResult) {
         markContextLost();
         return;
     }
+    auto& [contentBuffer] = sendResult.reply();
     if (contentBuffer)
         static_cast<WCPlatformLayerGCGL*>(m_layerContentsDisplayDelegate->platformLayer())->addContentBufferIdentifier(*contentBuffer);
     markLayerComposited();

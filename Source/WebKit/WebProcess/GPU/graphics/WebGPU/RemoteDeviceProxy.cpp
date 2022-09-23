@@ -228,7 +228,7 @@ void RemoteDeviceProxy::createComputePipelineAsync(const PAL::WebGPU::ComputePip
         return;
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendSync(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier), { });
+    auto sendResult = sendSync(Messages::RemoteDevice::CreateComputePipelineAsync(*convertedDescriptor, identifier));
     if (!sendResult)
         return;
 
@@ -243,7 +243,7 @@ void RemoteDeviceProxy::createRenderPipelineAsync(const PAL::WebGPU::RenderPipel
         return;
 
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = sendSync(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier), { });
+    auto sendResult = sendSync(Messages::RemoteDevice::CreateRenderPipelineAsync(*convertedDescriptor, identifier));
     if (!sendResult)
         return;
 
@@ -306,9 +306,8 @@ void RemoteDeviceProxy::pushErrorScope(PAL::WebGPU::ErrorFilter errorFilter)
 
 void RemoteDeviceProxy::popErrorScope(CompletionHandler<void(std::optional<PAL::WebGPU::Error>&&)>&& callback)
 {
-    std::optional<Error> error;
-    auto sendResult = sendSync(Messages::RemoteDevice::PopErrorScope(), { error });
-    UNUSED_VARIABLE(sendResult);
+    auto sendResult = sendSync(Messages::RemoteDevice::PopErrorScope());
+    auto [error] = sendResult.takeReplyOr(std::nullopt);
 
     if (!error) {
         callback(std::nullopt);

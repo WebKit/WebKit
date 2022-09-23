@@ -46,8 +46,8 @@ bool InjectedBundlePageFullScreenClient::supportsFullScreen(WebPage *page, bool 
     if (m_client.supportsFullScreen) 
         return m_client.supportsFullScreen(toAPI(page), withKeyboard);
 
-    bool supports = true;
-    page->sendSync(Messages::WebFullScreenManagerProxy::SupportsFullScreen(withKeyboard), Messages::WebFullScreenManagerProxy::SupportsFullScreen::Reply(supports));
+    auto sendResult = page->sendSync(Messages::WebFullScreenManagerProxy::SupportsFullScreen(withKeyboard));
+    auto [supports] = sendResult.takeReplyOr(true);
     return supports;
 }
 

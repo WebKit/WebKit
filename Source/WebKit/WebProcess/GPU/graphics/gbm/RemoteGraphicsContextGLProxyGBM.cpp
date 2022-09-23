@@ -125,13 +125,13 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
     if (isContextLost())
         return;
 
-    WebCore::DMABufObject dmabufObject(0);
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply(dmabufObject));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay());
     if (!sendResult) {
         markContextLost();
         return;
     }
 
+    auto& [dmabufObject] = sendResult.reply();
     m_layerContentsDisplayDelegate->present(WTFMove(dmabufObject));
     markLayerComposited();
 }

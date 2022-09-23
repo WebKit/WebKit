@@ -350,9 +350,9 @@ protected:
         return m_streamConnection.send(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }
     template<typename T>
-    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult sendSync(T&& message, typename T::Reply&& reply)
+    WARN_UNUSED_RETURN IPC::Connection::SendSyncResult<T> sendSync(T&& message)
     {
-        return m_streamConnection.sendSync(WTFMove(message), WTFMove(reply), m_graphicsContextGLIdentifier, defaultSendTimeout);
+        return m_streamConnection.sendSync(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }
 
     GraphicsContextGLIdentifier m_graphicsContextGLIdentifier { GraphicsContextGLIdentifier::generate() };

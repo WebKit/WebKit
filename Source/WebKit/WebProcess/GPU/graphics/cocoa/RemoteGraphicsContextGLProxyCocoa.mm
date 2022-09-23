@@ -114,12 +114,12 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 {
     if (isContextLost())
         return;
-    MachSendRight displayBufferSendRight;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(), Messages::RemoteGraphicsContextGL::PrepareForDisplay::Reply(displayBufferSendRight));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay());
     if (!sendResult) {
         markContextLost();
         return;
     }
+    auto [displayBufferSendRight] = sendResult.takeReply();
     if (!displayBufferSendRight)
         return;
     m_displayBuffer = WTFMove(displayBufferSendRight);

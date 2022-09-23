@@ -107,13 +107,13 @@ void RemoteGPUProxy::requestAdapter(const PAL::WebGPU::RequestAdapterOptions& op
     }
 
     auto identifier = WebGPUIdentifier::generate();
-    std::optional<RemoteGPU::RequestAdapterResponse> response;
-    auto sendResult = sendSync(Messages::RemoteGPU::RequestAdapter(*convertedOptions, identifier), { response });
+    auto sendResult = sendSync(Messages::RemoteGPU::RequestAdapter(*convertedOptions, identifier));
     if (!sendResult) {
         m_lost = true;
         callback(nullptr);
         return;
     }
+    auto [response] = sendResult.takeReply();
     if (!response) {
         callback(nullptr);
         return;

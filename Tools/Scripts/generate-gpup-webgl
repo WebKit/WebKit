@@ -610,24 +610,33 @@ class webkit_ipc_cpp_proxy_impl(object):
         in_exprs = ", ".join([str(i) for i in self.in_exprs])
         out_exprs = ", ".join(str(o) for o in self.out_exprs)
         is_async = self.return_type.is_void() and len(out_exprs) == 0
-        self.call_stmts += [ "if (!isContextLost()) {" ]
+        self.call_stmts += [ "if (isContextLost())" ]
+        if self.return_type.is_void():
+            self.call_stmts += [ "    return;" ]
+        else:
+            self.call_stmts += [ "    return { };"]
         if is_async:
             self.call_stmts += [
-                f"    auto sendResult = send(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));",
+                f"auto sendResult = send(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));",
             ]
         else:
             self.call_stmts += [
-                f"    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}), Messages::RemoteGraphicsContextGL::{self.msg_name}::Reply({out_exprs}));"
+                f"auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));"
             ]
-        self.call_stmts += [
-            "    if (!sendResult)",
-            "        markContextLost();",
-        ]
-        if self.post_call_stmts:
-            self.call_stmts += ["    else {"] if len(self.post_call_stmts) > 1 else [ "    else"]
-            self.post_call_stmts = [ "    " + l for l in self.post_call_stmts ]
-            self.post_call_stmts += [ "    }" ] if len(self.post_call_stmts) > 1 else []
-        self.post_call_stmts += [ "}" ]
+        if self.return_type.is_void():
+            self.call_stmts += [
+                "if (!sendResult) {",
+                "    markContextLost();",
+                "    return;",
+                "}",
+            ]
+        else:
+            self.call_stmts += [
+                "if (!sendResult) {",
+                "    markContextLost();",
+                "    return { };",
+                "}",
+            ]
 
 
     def process_in_args(self, in_args: List[cpp_arg]):
@@ -643,34 +652,40 @@ class webkit_ipc_cpp_proxy_impl(object):
                 value_type = o.type.get_value_type()
                 webkit_ipc_value_type = webkit_ipc_types[value_type]
                 v = cpp_arg(webkit_ipc_value_type, o.name + "Reply")
-                self.pre_call_stmts += [f"{str(v.type)} {str(v.name)} = {{ }};"]
                 e = cpp_expr(v.type, v.name)
                 self.out_exprs += [e]
                 self.post_call_stmts += [
                     #fmt: off
-                    f"    if ({o.name})",
-                    f"        *{o.name} = {webkit_ipc_convert_expr(e, value_type)};"
+                    f"if ({o.name})",
+                    f"    *{o.name} = {webkit_ipc_convert_expr(e, value_type)};"
                     #fmt: on
+                ]
+            elif o.type.is_reference():
+                value_type = o.type.get_value_type()
+                v = cpp_arg(value_type, o.name + "Reply")
+                e = cpp_expr(v.type, v.name)
+                self.out_exprs += [e]
+                self.post_call_stmts += [
+                    f"{o.name} = WTFMove({v.name});",
                 ]
             elif o.type.is_span():
                 webkit_ipc_type = webkit_ipc_types[o.type]
                 assert(isinstance(webkit_ipc_type, cpp_type_container))
                 v = cpp_arg(webkit_ipc_type, o.name + "Reply")
-                if o.type.is_dynamic_span():
-                    self.pre_call_stmts += [f"{str(v.type)} {str(v.name)};"]
-                else:
-                    self.pre_call_stmts += [
-                        f"constexpr std::array<{str(v.type.get_contained_type())}, {str(v.type.get_arity())}> {str(v.name)}Empty {{ }};",
-                        f"{str(v.type)} {str(v.name)} {{ {str(v.name)}Empty }};"
-                    ]
                 self.out_exprs += [cpp_expr(v.type, v.name)]
                 if o.type.is_dynamic_span():
                     self.in_exprs += [cpp_expr(get_cpp_type("size_t"), f"{o.name}.size()")]
                 self.post_call_stmts += [
-                    f"    memcpy({o.name}.data(), {v.name}.data(), {o.name}.size() * sizeof({str(webkit_ipc_type.get_contained_type())}));"
+                    f"memcpy({o.name}.data(), {v.name}.data(), {o.name}.size() * sizeof({str(webkit_ipc_type.get_contained_type())}));"
                 ]
             else:
                 self.out_exprs += [cpp_expr(o.type, o.name)]
+
+        if self.out_exprs:
+            out_exprs = ", ".join(str(o) for o in self.out_exprs)
+            self.post_call_stmts = [
+                    f"auto& [{out_exprs}] = sendResult.reply();",
+                ] + self.post_call_stmts
 
     def process_return_value(self, return_type: cpp_type):
         if return_type.is_void():
@@ -678,7 +693,6 @@ class webkit_ipc_cpp_proxy_impl(object):
         self.return_type = return_type
         ipc_return_type = webkit_ipc_types[return_type]
         return_value_expr = cpp_expr(ipc_return_type, "returnValue")
-        self.pre_call_stmts += [f"{return_value_expr.type} {return_value_expr.expr} = {{ }};"]
         self.out_exprs = [return_value_expr] + self.out_exprs
         self.return_stmts = [f"return {str(webkit_ipc_convert_expr(return_value_expr, return_type))};"]
 

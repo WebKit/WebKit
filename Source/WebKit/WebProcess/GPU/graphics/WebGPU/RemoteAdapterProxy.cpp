@@ -55,12 +55,11 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
 
     auto identifier = WebGPUIdentifier::generate();
     auto queueIdentifier = WebGPUIdentifier::generate();
-    SupportedFeatures supportedFeatures;
-    SupportedLimits supportedLimits;
-    auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier, queueIdentifier), { supportedFeatures, supportedLimits });
+    auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier, queueIdentifier));
     if (!sendResult)
         return;
 
+    auto [supportedFeatures, supportedLimits] = sendResult.takeReply();
     auto resultSupportedFeatures = PAL::WebGPU::SupportedFeatures::create(WTFMove(supportedFeatures.features));
     auto resultSupportedLimits = PAL::WebGPU::SupportedLimits::create(
         supportedLimits.maxTextureDimension1D,
