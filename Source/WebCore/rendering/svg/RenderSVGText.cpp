@@ -324,12 +324,13 @@ void RenderSVGText::layout()
     // textElement().updateLengthContext();
 
     bool updateCachedBoundariesInParents = false;
-    if (!isLayerBasedSVGEngineEnabled()) {
-        if (m_needsTransformUpdate) {
-            m_localTransform = textElement().animatedLocalTransform();
-            m_needsTransformUpdate = false;
-            updateCachedBoundariesInParents = true;
-        }
+    auto previousReferenceBoxRect = transformReferenceBoxRect();
+
+    // We update the transform now because updateScaledFont() needs it, but we do it a second time at the end of the layout,
+    // since the transform reference box may change because of the font change.
+    if (!isLayerBasedSVGEngineEnabled() && m_needsTransformUpdate) {
+        m_localTransform = textElement().animatedLocalTransform();
+        updateCachedBoundariesInParents = true;
     }
 
     if (!everHadLayout()) {
@@ -415,8 +416,15 @@ void RenderSVGText::layout()
     if (isLayerBasedSVGEngineEnabled()) {
         updateLayerTransform();
         updateCachedBoundariesInParents = false; // No longer needed for LBSE.
-    } else if (!updateCachedBoundariesInParents)
-        updateCachedBoundariesInParents = oldBoundaries != objectBoundingBox();
+    } else {
+        if (m_needsTransformUpdate) {
+            if (previousReferenceBoxRect != transformReferenceBoxRect())
+                m_localTransform = textElement().animatedLocalTransform();
+            m_needsTransformUpdate = false;
+        }
+        if (!updateCachedBoundariesInParents)
+            updateCachedBoundariesInParents = oldBoundaries != objectBoundingBox();
+    }
 
     // Invalidate all resources of this client if our layout changed.
     if (layoutChanged)
