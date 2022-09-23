@@ -113,7 +113,7 @@ layer at (10,247) size 41x33
           RenderSVGInlineText {#text} at (27,10) size 14x23
             chunk 1 text run 1 at (37.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
 layer at (10,7) size 47x273
-  RenderSVGTransformableContainer {g} at (10,7) size 47x273
+  RenderSVGTransformableContainer {g} at (10,7) size 46.13x273
 layer at (10,7) size 46x33
   RenderSVGText {text} at (0,0) size 47x33 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 47x33
@@ -223,7 +223,7 @@ layer at (10,247) size 46x33
           RenderSVGInlineText {#text} at (32,10) size 14x23
             chunk 1 text run 1 at (42.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
 layer at (10,7) size 47x273
-  RenderSVGTransformableContainer {g} at (10,7) size 47x273
+  RenderSVGTransformableContainer {g} at (10,7) size 46.13x273
 layer at (10,7) size 46x33
   RenderSVGText {text} at (0,0) size 47x33 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 47x33
@@ -342,7 +342,7 @@ layer at (10,247) size 46x33
           RenderSVGInlineText {#text} at (32,10) size 14x23
             chunk 1 text run 1 at (42.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
 layer at (10,7) size 52x273
-  RenderSVGTransformableContainer {g} at (10,7) size 52x273
+  RenderSVGTransformableContainer {g} at (10,7) size 51.13x273
 layer at (10,7) size 51x33
   RenderSVGText {text} at (0,0) size 52x33 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 52x33
@@ -470,7 +470,7 @@ layer at (10,247) size 51x33
           RenderSVGInlineText {#text} at (37,10) size 14x23
             chunk 1 text run 1 at (47.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
 layer at (10,7) size 52x273
-  RenderSVGTransformableContainer {g} at (10,7) size 52x273
+  RenderSVGTransformableContainer {g} at (10,7) size 51.13x273
 layer at (10,7) size 51x33
   RenderSVGText {text} at (0,0) size 52x33 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 52x33
@@ -598,7 +598,7 @@ layer at (10,247) size 51x33
           RenderSVGInlineText {#text} at (37,10) size 14x23
             chunk 1 text run 1 at (47.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
 layer at (10,7) size 52x273
-  RenderSVGTransformableContainer {g} at (10,7) size 52x273
+  RenderSVGTransformableContainer {g} at (10,7) size 51.13x273
 layer at (10,7) size 51x33
   RenderSVGText {text} at (0,0) size 52x33 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 52x33
@@ -735,7 +735,7 @@ layer at (10,247) size 51x33
           RenderSVGInlineText {#text} at (37,10) size 14x23
             chunk 1 text run 1 at (47.78,275.00) startOffset 0 endOffset 1 width 13.34: "C"
 layer at (10,7) size 52x273
-  RenderSVGTransformableContainer {g} at (10,7) size 52x273
+  RenderSVGTransformableContainer {g} at (10,7) size 51.13x273
 layer at (10,7) size 51x33
   RenderSVGText {text} at (0,0) size 52x33 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 52x33
@@ -879,7 +879,7 @@ layer at (75,5) size 125x280
   RenderSVGRect {rect} at (75,5) size 125x280 [stroke={[type=SOLID] [color=#FF0000]}] [x=75.00] [y=5.00] [width=125.00] [height=280.00]
 layer at (210,5) size 280x280
   RenderSVGRect {rect} at (210,5) size 280x280 [stroke={[type=SOLID] [color=#FF0000]}] [x=210.00] [y=5.00] [width=280.00] [height=280.00]
-layer at (25,302) size 450x23
+layer at (24.52,302) size 450x23
   RenderSVGText {text} at (24,302) size 452x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 451x23
       chunk 1 (middle anchor) text run 1 at (24.52,320.00) startOffset 0 endOffset 57 width 450.97: "All text fragments in each red box need to look identical"

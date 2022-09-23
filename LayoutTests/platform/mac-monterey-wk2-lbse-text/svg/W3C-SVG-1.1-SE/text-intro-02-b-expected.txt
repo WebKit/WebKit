@@ -4,43 +4,43 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,25) size 423x261
-  RenderSVGTransformableContainer {g} at (10,24) size 423x261
-layer at (10,25) size 317x19
+layer at (10,24.61) size 423x261
+  RenderSVGTransformableContainer {g} at (10,24.61) size 422.64x260.28
+layer at (10,24.61) size 317x19
   RenderSVGText {text} at (0,0) size 318x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 318x19
       chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 45 width 317.07: "unicode-bidi=\"bidi-override\" direction=\"ltr\"."
-layer at (10,61) size 423x25
-  RenderSVGTransformableContainer {g} at (0,36) size 423x25
-layer at (10,61) size 423x24
+layer at (10,60.75) size 423x25
+  RenderSVGTransformableContainer {g} at (0,36.14) size 422.64x24.14
+layer at (10,60.75) size 423x24
   RenderSVGText {text} at (0,0) size 423x25 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 423x25
       chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 56 width 422.63: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (10,125) size 317x19
+layer at (10,124.61) size 317x19
   RenderSVGText {text} at (0,100) size 318x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 318x19
       chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 45 width 317.07: "unicode-bidi=\"bidi-override\" direction=\"rtl\"."
-layer at (10,161) size 423x25
-  RenderSVGTransformableContainer {g} at (0,136) size 423x25
-layer at (10,161) size 423x24
+layer at (10,160.75) size 423x25
+  RenderSVGTransformableContainer {g} at (0,136.14) size 422.64x24.14
+layer at (10,160.75) size 423x24
   RenderSVGText {text} at (0,0) size 423x25 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 423x25
       chunk 1 (end anchor) text run 1 at (10.00,180.00) startOffset 0 endOffset 56 width 422.63 RTL: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (10,225) size 276x19
+layer at (10,224.61) size 276x19
   RenderSVGText {text} at (0,200) size 276x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 276x19
       chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 38 width 275.49: "unicode-bidi=\"normal\" direction=\"rtl\"."
-layer at (10,261) size 423x25
-  RenderSVGTransformableContainer {g} at (0,236) size 423x25
-layer at (10,261) size 423x24
+layer at (10,260.75) size 423x25
+  RenderSVGTransformableContainer {g} at (0,236.14) size 422.64x24.14
+layer at (10,260.75) size 423x24
   RenderSVGText {text} at (0,0) size 423x25 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 423x25
       chunk 1 (end anchor) text run 1 at (10.00,280.00) startOffset 0 endOffset 12 width 99.04: "is in Hebrew"
       chunk 1 (end anchor) text run 1 at (109.04,280.00) startOffset 0 endOffset 40 width 288.59 RTL: " \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" "
       chunk 1 (end anchor) text run 1 at (397.62,280.00) startOffset 0 endOffset 4 width 35.01: "Text"
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.9 $"

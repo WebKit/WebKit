@@ -4,21 +4,21 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (20,27) size 414x140
-  RenderSVGTransformableContainer {g} at (20,27) size 414x140
-layer at (30,27) size 404x16
+layer at (20,27.31) size 414x140
+  RenderSVGTransformableContainer {g} at (20,27.31) size 413.89x139.66
+layer at (30,27.31) size 404x16
   RenderSVGText {text} at (10,0) size 404x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 404x16
       chunk 1 text run 1 at (30.00,40.00) startOffset 0 endOffset 68 width 403.88: "Test animation options for specifying the target attribute/property."
 layer at (20,80) size 405x88
-  RenderSVGTransformableContainer {g} at (0,52) size 405x88
-layer at (20,151) size 50x16
+  RenderSVGTransformableContainer {g} at (0,52.69) size 405x86.97
+layer at (20,151.31) size 50x16
   RenderSVGText {text} at (0,71) size 50x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 50x16
       chunk 1 text run 1 at (20.00,164.00) startOffset 0 endOffset 8 width 49.80: "0-3 sec."
 layer at (80,160) size 120x0
   RenderSVGPath {line} at (60,80) size 120x0 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [x1=80.00] [y1=160.00] [x2=200.00] [y2=160.00]
-layer at (20,111) size 53x16
+layer at (20,111.31) size 53x16
   RenderSVGText {text} at (0,31) size 53x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 53x16
       chunk 1 text run 1 at (20.00,124.00) startOffset 0 endOffset 9 width 52.92: "at 6 sec."
@@ -26,13 +26,13 @@ layer at (80,120) size 120x0
   RenderSVGPath {line} at (60,40) size 120x0 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [x1=80.00] [y1=120.00] [x2=200.00] [y2=120.00]
 layer at (100,80) size 100x80
   RenderSVGRect {rect} at (80,0) size 100x80 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [x=100.00] [y=80.00] [width=100.00] [height=80.00]
-layer at (240,151) size 50x16
+layer at (240,151.31) size 50x16
   RenderSVGText {text} at (220,71) size 50x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 50x16
       chunk 1 text run 1 at (240.00,164.00) startOffset 0 endOffset 8 width 49.80: "0-6 sec."
 layer at (305,160) size 120x0
   RenderSVGPath {line} at (285,80) size 120x0 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [x1=305.00] [y1=160.00] [x2=425.00] [y2=160.00]
-layer at (240,111) size 53x16
+layer at (240,111.31) size 53x16
   RenderSVGText {text} at (220,31) size 53x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 53x16
       chunk 1 text run 1 at (240.00,124.00) startOffset 0 endOffset 9 width 52.92: "at 9 sec."

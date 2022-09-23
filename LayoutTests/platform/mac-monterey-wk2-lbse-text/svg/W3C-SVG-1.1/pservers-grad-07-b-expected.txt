@@ -5,16 +5,16 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (10,10) size 430x166
-  RenderSVGTransformableContainer {g} at (10,10) size 430x166
+  RenderSVGTransformableContainer {g} at (10,10) size 430x165.16
 layer at (10,10) size 430x60
   RenderSVGRect {rect} at (0,0) size 430x60 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=430.00] [height=60.00]
-layer at (10,68) size 326x27
+layer at (10,67.98) size 326x27
   RenderSVGText {text} at (0,57) size 326x29 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 326x28
       chunk 1 text run 1 at (10.00,90.00) startOffset 0 endOffset 32 width 325.80: "Linear gradient filled rectangle"
 layer at (25,110) size 400x30
   RenderSVGRect {rect} at (15,100) size 400x30 [stroke={[type=SOLID] [color=#00000000] [stroke width=20.00]}] [x=25.00] [y=110.00] [width=400.00] [height=30.00]
-layer at (10,148) size 403x27
+layer at (10,147.98) size 403x27
   RenderSVGText {text} at (0,137) size 403x29 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 403x28
       chunk 1 text run 1 at (10.00,170.00) startOffset 0 endOffset 38 width 402.86: "Linear gradient on stroke of rectangle"

@@ -4,9 +4,9 @@ layer at (0,0) size 100x100
   RenderSVGRoot {svg} at (0,0) size 100x100
 layer at (0,0) size 100x100
   RenderSVGViewportContainer at (0,0) size 100x100
-layer at (20,4) size 80x92
-  RenderSVGTransformableContainer {g} at (20,3) size 80x92
-layer at (20,4) size 60x20
+layer at (20,3.98) size 80x92
+  RenderSVGTransformableContainer {g} at (20,3.98) size 80x91.02
+layer at (20,3.98) size 60x20
   RenderSVGText {text} at (0,0) size 60x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 60x21
       chunk 1 text run 1 at (20.00,20.00) startOffset 0 endOffset 7 width 59.99: "[hello]"
@@ -14,11 +14,11 @@ layer at (20,22) size 53x23
   RenderSVGText {text} at (0,18) size 54x24 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 54x23
       chunk 1 text run 1 at (20.00,40.00) startOffset 0 endOffset 7 width 53.31: "[hello]"
-layer at (35,54) size 65x20
+layer at (34.59,53.98) size 65x20
   RenderSVGText {text} at (14,50) size 66x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 66x21
       chunk 1 text run 1 at (34.60,70.00) startOffset 0 endOffset 6 width 65.40 RTL: "[\x{5E9}\x{5DC}\x{5D5}\x{5DD}]"
-layer at (41,72) size 59x23
+layer at (41.27,72) size 59x23 backgroundClip at (0,0) size 100x100 clip at (0,0) size 100x100
   RenderSVGText {text} at (21,68) size 59x24 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 59x23
       chunk 1 text run 1 at (41.28,90.00) startOffset 0 endOffset 6 width 58.72 RTL: "[\x{5E9}\x{5DC}\x{5D5}\x{5DD}]"

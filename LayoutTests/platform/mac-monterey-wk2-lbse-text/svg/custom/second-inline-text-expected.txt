@@ -14,8 +14,8 @@ layer at (8,50) size 100x100
   RenderSVGRoot {svg} at (0,0) size 100x100
 layer at (8,50) size 100x100
   RenderSVGViewportContainer at (0,0) size 100x100
-layer at (36,69) size 45x63
-  RenderSVGPath {path} at (28,18) size 45x63 [fill={[type=SOLID] [color=#337711]}] [data="M 38 38 C 38 26 62 23 61 36 C 61 45 45 49 45 59 L 45 66 L 56 66 L 56 62 C 56 53 73 50 73 35 C 71 13 28 13 28 38 Z M 45 70 L 56 70 L 56 81 L 45 81 Z"]
+layer at (36,68.84) size 45x63
+  RenderSVGPath {path} at (28,18.84) size 45x62.16 [fill={[type=SOLID] [color=#337711]}] [data="M 38 38 C 38 26 62 23 61 36 C 61 45 45 49 45 59 L 45 66 L 56 66 L 56 62 C 56 53 73 50 73 35 C 71 13 28 13 28 38 Z M 45 70 L 56 70 L 56 81 L 45 81 Z"]
 layer at (18,86) size 38x18
   RenderSVGText {text} at (10,36) size 39x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 39x18
@@ -24,8 +24,8 @@ layer at (112,50) size 100x100
   RenderSVGRoot {svg} at (104,0) size 100x100
 layer at (112,50) size 100x100
   RenderSVGViewportContainer at (0,0) size 100x100
-layer at (140,69) size 45x63
-  RenderSVGPath {path} at (28,18) size 45x63 [fill={[type=SOLID] [color=#337711]}] [data="M 38 38 C 38 26 62 23 61 36 C 61 45 45 49 45 59 L 45 66 L 56 66 L 56 62 C 56 53 73 50 73 35 C 71 13 28 13 28 38 Z M 45 70 L 56 70 L 56 81 L 45 81 Z"]
+layer at (140,68.84) size 45x63
+  RenderSVGPath {path} at (28,18.84) size 45x62.16 [fill={[type=SOLID] [color=#337711]}] [data="M 38 38 C 38 26 62 23 61 36 C 61 45 45 49 45 59 L 45 66 L 56 66 L 56 62 C 56 53 73 50 73 35 C 71 13 28 13 28 38 Z M 45 70 L 56 70 L 56 81 L 45 81 Z"]
 layer at (122,86) size 38x18
   RenderSVGText {text} at (10,36) size 39x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 39x18

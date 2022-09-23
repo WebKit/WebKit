@@ -24,37 +24,37 @@ layer at (30,75) size 120x10
   RenderSVGRect {rect} at (25,70) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=75.00] [width=120.00] [height=10.00]
 layer at (30,88) size 120x10
   RenderSVGRect {rect} at (25,83) size 120x10 [opacity=0.50] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=88.00] [width=120.00] [height=10.00]
-layer at (5,11) size 25x87
-  RenderSVGTransformableContainer {g} at (0,5) size 25x87
-layer at (5,11) size 21x8
+layer at (5,10.75) size 25x87
+  RenderSVGTransformableContainer {g} at (0,5.75) size 24.52x86
+layer at (5,10.75) size 21x8
   RenderSVGText {text} at (0,0) size 22x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 22x8
       chunk 1 text run 1 at (5.00,17.00) startOffset 0 endOffset 6 width 21.38: "Normal"
-layer at (5,24) size 25x8
+layer at (5,23.75) size 25x8
   RenderSVGText {text} at (0,13) size 25x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 25x8
       chunk 1 text run 1 at (5.00,30.00) startOffset 0 endOffset 8 width 24.50: "Multiply"
-layer at (5,37) size 25x8
+layer at (5,36.75) size 25x8
   RenderSVGText {text} at (0,26) size 25x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 25x8
       chunk 1 text run 1 at (5.00,43.00) startOffset 0 endOffset 8 width 24.50: "Multiply"
-layer at (5,50) size 25x8
+layer at (5,49.75) size 25x8
   RenderSVGText {text} at (0,39) size 25x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 25x8
       chunk 1 text run 1 at (5.00,56.00) startOffset 0 endOffset 8 width 24.50: "Multiply"
-layer at (5,63) size 19x8
+layer at (5,62.75) size 19x8
   RenderSVGText {text} at (0,52) size 20x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 20x8
       chunk 1 text run 1 at (5.00,69.00) startOffset 0 endOffset 6 width 19.04: "Screen"
-layer at (5,76) size 21x8
+layer at (5,75.75) size 21x8
   RenderSVGText {text} at (0,65) size 21x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 21x8
       chunk 1 text run 1 at (5.00,82.00) startOffset 0 endOffset 6 width 20.60: "Darken"
-layer at (5,89) size 22x8
+layer at (5,88.75) size 22x8
   RenderSVGText {text} at (0,78) size 22x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 22x8
       chunk 1 text run 1 at (5.00,95.00) startOffset 0 endOffset 7 width 21.77: "Lighten"
-layer at (3,101) size 79x14
+layer at (3,101.33) size 79x14
   RenderSVGText {text} at (3,101) size 80x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 80x14
       chunk 1 text run 1 at (3.00,112.00) startOffset 0 endOffset 16 width 79.00: "$Revision: 1.8 $"

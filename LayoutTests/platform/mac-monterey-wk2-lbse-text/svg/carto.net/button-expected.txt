@@ -5,13 +5,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (-3,-7) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGHiddenContainer {symbol} at (-3,-7) size 8x14
+  RenderSVGHiddenContainer {symbol} at (-3,-7) size 7.25x14
 layer at (-3,-7) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,0) size 8x14
+  RenderSVGTransformableContainer {g} at (0,0) size 7.25x14
 layer at (0,0) size 3x7
   RenderSVGPath {line} at (3,7) size 3x7 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
 layer at (-3,-7) size 8x10 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGPath {path} at (0,0) size 8x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
+  RenderSVGPath {path} at (0,0) size 7.25x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
 layer at (-1000,-1000) size 3000x3000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (-1000,-1000) size 3000x3000 [fill={[type=SOLID] [color=#DEB887]}] [x=-1000.00] [y=-1000.00] [width=3000.00] [height=3000.00]
 layer at (99,99) size 812x262 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
@@ -24,7 +24,7 @@ layer at (101,101) size 100x30
   RenderSVGRect {rect} at (2,2) size 100x30 [fill={[type=SOLID] [color=#000080]}] [x=101.00] [y=101.00] [width=100.00] [height=30.00]
 layer at (100,100) size 100x30
   RenderSVGRect {rect} at (1,1) size 100x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=100.00] [y=100.00] [width=100.00] [height=30.00]
-layer at (128,110) size 44x13
+layer at (127.91,109.97) size 44x13
   RenderSVGText {text} at (28,10) size 46x14 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 45x13
       RenderSVGInlineText {#text} at (0,0) size 45x13
@@ -37,7 +37,7 @@ layer at (221,101) size 100x30
   RenderSVGRect {rect} at (2,2) size 100x30 [fill={[type=SOLID] [color=#000080]}] [x=221.00] [y=101.00] [width=100.00] [height=30.00]
 layer at (220,100) size 100x30
   RenderSVGRect {rect} at (1,1) size 100x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=220.00] [y=100.00] [width=100.00] [height=30.00]
-layer at (243,110) size 54x13
+layer at (243.11,109.97) size 54x13
   RenderSVGText {text} at (24,10) size 54x14 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 54x13
       RenderSVGInlineText {#text} at (0,0) size 54x13
@@ -50,7 +50,7 @@ layer at (341,101) size 130x30
   RenderSVGRect {rect} at (2,2) size 130x30 [fill={[type=SOLID] [color=#000080]}] [x=341.00] [y=101.00] [width=130.00] [height=30.00]
 layer at (340,100) size 130x30
   RenderSVGRect {rect} at (1,1) size 130x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=340.00] [y=100.00] [width=130.00] [height=30.00]
-layer at (355,110) size 100x13
+layer at (354.72,109.97) size 100x13
   RenderSVGText {text} at (15,10) size 102x14 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 101x13
       RenderSVGInlineText {#text} at (0,0) size 101x13
@@ -63,7 +63,7 @@ layer at (491,101) size 120x30
   RenderSVGRect {rect} at (2,2) size 120x30 [fill={[type=SOLID] [color=#000080]}] [x=491.00] [y=101.00] [width=120.00] [height=30.00]
 layer at (490,100) size 120x30
   RenderSVGRect {rect} at (1,1) size 120x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=490.00] [y=100.00] [width=120.00] [height=30.00]
-layer at (507,110) size 86x13
+layer at (506.77,109.97) size 86x13
   RenderSVGText {text} at (17,10) size 88x14 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 87x13
       RenderSVGInlineText {#text} at (0,0) size 87x13
@@ -76,7 +76,7 @@ layer at (631,101) size 130x30
   RenderSVGRect {rect} at (2,2) size 130x30 [fill={[type=SOLID] [color=#000080]}] [x=631.00] [y=101.00] [width=130.00] [height=30.00]
 layer at (630,100) size 130x30
   RenderSVGRect {rect} at (1,1) size 130x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=630.00] [y=100.00] [width=130.00] [height=30.00]
-layer at (650,110) size 90x13
+layer at (650.48,109.97) size 90x13
   RenderSVGText {text} at (21,10) size 90x14 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 90x13
       RenderSVGInlineText {#text} at (0,0) size 90x13
@@ -89,7 +89,7 @@ layer at (781,101) size 130x30 backgroundClip at (0,0) size 800x600 clip at (0,0
   RenderSVGRect {rect} at (2,2) size 130x30 [fill={[type=SOLID] [color=#000080]}] [x=781.00] [y=101.00] [width=130.00] [height=30.00]
 layer at (780,100) size 130x30 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (1,1) size 130x30 [fill={[type=SOLID] [color=#B0C4DE]}] [x=780.00] [y=100.00] [width=130.00] [height=30.00]
-layer at (797,110) size 96x13 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (796.97,109.97) size 96x13 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (17,10) size 98x14 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 97x13
       RenderSVGInlineText {#text} at (0,0) size 97x13
@@ -102,7 +102,7 @@ layer at (201,301) size 150x60
   RenderSVGRect {rect} at (2,2) size 150x60 [fill={[type=SOLID] [color=#000080]}] [x=201.00] [y=301.00] [width=150.00] [height=60.00]
 layer at (200,300) size 150x60
   RenderSVGRect {rect} at (1,1) size 150x60 [fill={[type=SOLID] [color=#B0C4DE]}] [x=200.00] [y=300.00] [width=150.00] [height=60.00]
-layer at (231,312) size 88x39
+layer at (230.81,311.77) size 88x39
   RenderSVGText {text} at (31,12) size 90x41 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 89x13
       RenderSVGInlineText {#text} at (0,0) size 89x13
@@ -124,15 +124,15 @@ layer at (301,151) size 20x20
 layer at (300,150) size 20x20
   RenderSVGRect {rect} at (303,157) size 20x20 [fill={[type=SOLID] [color=#B0C4DE]}] [x=300.00] [y=150.00] [width=20.00] [height=20.00]
 layer at (-3,-7) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {use} at (0,0) size 8x14
+  RenderSVGTransformableContainer {use} at (0,0) size 7.25x14
 layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGViewportContainer {svg} at (3,7) size 1024x768
 layer at (-3,-7) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (-3,-7) size 8x14
+  RenderSVGTransformableContainer {g} at (-3,-7) size 7.25x14
 layer at (0,0) size 3x7
   RenderSVGPath {line} at (3,7) size 3x7 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
 layer at (-3,-7) size 8x10 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGPath {path} at (0,0) size 8x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
+  RenderSVGPath {path} at (0,0) size 7.25x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
 layer at (-3,-7) size 379x178 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGTransformableContainer {g} at (0,0) size 379x178
 layer at (349,144) size 25x25
@@ -142,24 +142,24 @@ layer at (351,146) size 25x25
 layer at (350,145) size 25x25
   RenderSVGEllipse {ellipse} at (353,152) size 25x25 [fill={[type=SOLID] [color=#B0C4DE]}] [cx=362.50] [cy=157.50] [rx=12.50] [ry=12.50]
 layer at (-3,-7) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {use} at (0,0) size 8x14
+  RenderSVGTransformableContainer {use} at (0,0) size 7.25x14
 layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGViewportContainer {svg} at (3,7) size 1024x768
 layer at (-3,-7) size 8x14 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (-3,-7) size 8x14
+  RenderSVGTransformableContainer {g} at (-3,-7) size 7.25x14
 layer at (0,0) size 3x7
   RenderSVGPath {line} at (3,7) size 3x7 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=3.00] [y2=7.00]
 layer at (-3,-7) size 8x10 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGPath {path} at (0,0) size 8x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
-layer at (100,195) size 71x19
+  RenderSVGPath {path} at (0,0) size 7.25x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M -3 -7 L -3 3 L 0 0 L 4.25 -0.5 Z"]
+layer at (100,194.95) size 71x19
   RenderSVGText {text} at (100,194) size 72x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 72x20
       chunk 1 text run 1 at (100.00,210.00) startOffset 0 endOffset 10 width 71.18: "StatusText"
-layer at (430,305) size 473x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (430,304.95) size 473x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (430,304) size 473x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 473x20
       chunk 1 text run 1 at (430.00,320.00) startOffset 0 endOffset 73 width 472.77: "Click this text to randomly resize the multiline textbutton (textbutton7)"
-layer at (430,325) size 501x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (430,324.95) size 501x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (430,324) size 501x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 501x20
       chunk 1 text run 1 at (430.00,340.00) startOffset 0 endOffset 77 width 500.52: "Click this text to randomly reposition the multiline textbutton (textbutton7)"

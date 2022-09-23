@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (133,12) size 214x23
+layer at (133.08,12) size 214x23
   RenderSVGText {text} at (133,12) size 214x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 214x23
       chunk 1 (middle anchor) text run 1 at (133.09,30.00) startOffset 0 endOffset 27 width 213.82: "Radial gradient focal point"
@@ -384,7 +384,7 @@ layer at (90,0) size 10x60
   RenderSVGRect {rect} at (90,0) size 10x60 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#FFD700]}] [x=90.00] [y=0.00] [width=10.00] [height=60.00]
 layer at (0,0) size 100x60
   RenderSVGRect {rect} at (0,0) size 100x60 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#00000000]}] [x=0.00] [y=0.00] [width=100.00] [height=60.00]
-layer at (10,313) size 198x35
+layer at (10,312.50) size 198x35
   RenderSVGText {text} at (10,312) size 198x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 198x35
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 197.50: "$Revision: 1.7 $"

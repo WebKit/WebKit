@@ -4,50 +4,50 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (8,169) size 223x114
-  RenderSVGTransformableContainer {g} at (8,168) size 223x114
-layer at (8,169) size 223x114
-  RenderSVGTransformableContainer {g} at (0,0) size 223x114
-layer at (96,169) size 55x14
+layer at (8.03,168.92) size 223x114
+  RenderSVGTransformableContainer {g} at (8.03,168.92) size 222.94x113.08
+layer at (8.03,168.92) size 223x114
+  RenderSVGTransformableContainer {g} at (0,0) size 222.94x113.08
+layer at (96,168.92) size 55x14
   RenderSVGText {text} at (87,0) size 56x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 55x14
       chunk 1 text run 1 at (96.00,180.00) startOffset 0 endOffset 14 width 55.00: "m, l, l, l, z,"
-layer at (100,183) size 43x14
+layer at (100,182.92) size 43x14
   RenderSVGText {text} at (91,14) size 45x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 44x14
       chunk 1 text run 1 at (100.00,194.00) startOffset 0 endOffset 7 width 43.49: "subpath"
-layer at (97,197) size 52x14
+layer at (97,196.92) size 52x14
   RenderSVGText {text} at (88,28) size 53x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 52x14
       chunk 1 text run 1 at (97.00,208.00) startOffset 0 endOffset 13 width 51.60: "m, l, l, l, z"
-layer at (10,190) size 104x91
-  RenderSVGPath {path} at (2,21) size 104x91 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 190 L 113.962 280 L 10.0385 280 L 62 190 Z M 62 205 L 100.971 272.5 L 23.0589 272.5 L 62.03 205 Z"]
+layer at (10.03,190) size 104x91
+  RenderSVGPath {path} at (2,21.08) size 103.94x90 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 190 L 113.962 280 L 10.0385 280 L 62 190 Z M 62 205 L 100.971 272.5 L 23.0589 272.5 L 62.03 205 Z"]
 layer at (60,188) size 5x5
-  RenderSVGRect {rect} at (51,19) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=60.00] [y=188.00] [width=4.00] [height=4.00]
-layer at (112,278) size 5x5
-  RenderSVGRect {rect} at (103,109) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=111.96] [y=278.00] [width=4.00] [height=4.00]
-layer at (8,278) size 5x5
-  RenderSVGRect {rect} at (0,109) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=8.04] [y=278.00] [width=4.00] [height=4.00]
+  RenderSVGRect {rect} at (51.97,19.08) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [x=60.00] [y=188.00] [width=4.00] [height=4.00]
+layer at (111.95,278) size 5x5
+  RenderSVGRect {rect} at (103.92,109.08) size 4.02x4 [fill={[type=SOLID] [color=#FF0000]}] [x=111.96] [y=278.00] [width=4.00] [height=4.00]
+layer at (8.03,278) size 5x5
+  RenderSVGRect {rect} at (0,109.08) size 4.02x4 [fill={[type=SOLID] [color=#FF0000]}] [x=8.04] [y=278.00] [width=4.00] [height=4.00]
 layer at (60,203) size 5x5
-  RenderSVGRect {rect} at (51,34) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=60.00] [y=203.00] [width=4.00] [height=4.00]
-layer at (99,271) size 5x5
-  RenderSVGRect {rect} at (90,101) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=98.97] [y=270.50] [width=4.00] [height=4.00]
-layer at (21,271) size 5x5
-  RenderSVGRect {rect} at (12,101) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=21.03] [y=270.50] [width=4.00] [height=4.00]
-layer at (125,190) size 104x91
-  RenderSVGPath {path} at (117,21) size 104x91 [fill={[type=SOLID] [color=#00C000] [fill rule=EVEN-ODD]}] [data="M 177 190 L 228.962 280 L 125.038 280 L 177 190 Z M 177 205 L 215.971 272.5 L 138.059 272.5 L 177.03 205 Z"]
+  RenderSVGRect {rect} at (51.97,34.08) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [x=60.00] [y=203.00] [width=4.00] [height=4.00]
+layer at (98.97,270.50) size 5x5
+  RenderSVGRect {rect} at (90.94,101.58) size 4.02x4 [fill={[type=SOLID] [color=#FF0000]}] [x=98.97] [y=270.50] [width=4.00] [height=4.00]
+layer at (21.02,270.50) size 5x5
+  RenderSVGRect {rect} at (12.98,101.58) size 4.02x4 [fill={[type=SOLID] [color=#FF0000]}] [x=21.03] [y=270.50] [width=4.00] [height=4.00]
+layer at (125.03,190) size 104x91
+  RenderSVGPath {path} at (117,21.08) size 103.94x90 [fill={[type=SOLID] [color=#00C000] [fill rule=EVEN-ODD]}] [data="M 177 190 L 228.962 280 L 125.038 280 L 177 190 Z M 177 205 L 215.971 272.5 L 138.059 272.5 L 177.03 205 Z"]
 layer at (175,188) size 5x5
-  RenderSVGRect {rect} at (166,19) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=175.00] [y=188.00] [width=4.00] [height=4.00]
-layer at (227,278) size 5x5
-  RenderSVGRect {rect} at (218,109) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=226.96] [y=278.00] [width=4.00] [height=4.00]
-layer at (123,278) size 5x5
-  RenderSVGRect {rect} at (115,109) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=123.04] [y=278.00] [width=4.00] [height=4.00]
+  RenderSVGRect {rect} at (166.97,19.08) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [x=175.00] [y=188.00] [width=4.00] [height=4.00]
+layer at (226.95,278) size 5x5
+  RenderSVGRect {rect} at (218.92,109.08) size 4.02x4 [fill={[type=SOLID] [color=#FF0000]}] [x=226.96] [y=278.00] [width=4.00] [height=4.00]
+layer at (123.03,278) size 5x5
+  RenderSVGRect {rect} at (115,109.08) size 4.02x4 [fill={[type=SOLID] [color=#FF0000]}] [x=123.04] [y=278.00] [width=4.00] [height=4.00]
 layer at (175,203) size 5x5
-  RenderSVGRect {rect} at (166,34) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=175.00] [y=203.00] [width=4.00] [height=4.00]
-layer at (214,271) size 5x5
-  RenderSVGRect {rect} at (205,101) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=213.97] [y=270.50] [width=4.00] [height=4.00]
-layer at (136,271) size 5x5
-  RenderSVGRect {rect} at (127,101) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=136.03] [y=270.50] [width=4.00] [height=4.00]
+  RenderSVGRect {rect} at (166.97,34.08) size 4x4 [fill={[type=SOLID] [color=#FF0000]}] [x=175.00] [y=203.00] [width=4.00] [height=4.00]
+layer at (213.97,270.50) size 5x5
+  RenderSVGRect {rect} at (205.94,101.58) size 4.02x4 [fill={[type=SOLID] [color=#FF0000]}] [x=213.97] [y=270.50] [width=4.00] [height=4.00]
+layer at (136.02,270.50) size 5x5
+  RenderSVGRect {rect} at (127.98,101.58) size 4.02x4 [fill={[type=SOLID] [color=#FF0000]}] [x=136.03] [y=270.50] [width=4.00] [height=4.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 76x76
-  RenderSVGRoot {svg} at (0,0) size 76x76
-layer at (0,0) size 76x76
-  RenderSVGViewportContainer at (0,0) size 76x76
-layer at (0,0) size 76x76
-  RenderSVGTransformableContainer {g} at (0,0) size 76x76
-layer at (0,0) size 76x76
-  RenderSVGRect {rect} at (0,0) size 76x76 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=75.59] [height=75.59]
+layer at (0,0) size 76x76 backgroundClip at (0,0) size 75.58x75.58 clip at (0,0) size 75.58x75.58
+  RenderSVGRoot {svg} at (0,0) size 75.58x75.58
+layer at (0,0) size 76x76 backgroundClip at (0,0) size 75.58x75.58 clip at (0,0) size 75.58x75.58
+  RenderSVGViewportContainer at (0,0) size 75.58x75.58
+layer at (0,0) size 76x76 backgroundClip at (0,0) size 75.58x75.58 clip at (0,0) size 75.58x75.58
+  RenderSVGTransformableContainer {g} at (0,0) size 75.59x75.59
+layer at (0,0) size 76x76 backgroundClip at (0,0) size 75.58x75.58 clip at (0,0) size 75.58x75.58
+  RenderSVGRect {rect} at (0,0) size 75.59x75.59 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000080]}] [x=0.00] [y=0.00] [width=75.59] [height=75.59]

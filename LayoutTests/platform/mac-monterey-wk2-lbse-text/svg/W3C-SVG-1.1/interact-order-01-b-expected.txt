@@ -4,39 +4,39 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,9) size 460x292
-  RenderSVGTransformableContainer {g} at (10,8) size 460x292
-layer at (60,9) size 322x45
+layer at (10,8.78) size 460x292
+  RenderSVGTransformableContainer {g} at (10,8.78) size 460x291.22
+layer at (60,8.78) size 322x45
   RenderSVGText {text} at (50,0) size 323x45 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 323x45
       chunk 1 text run 1 at (60.00,45.00) startOffset 0 endOffset 18 width 322.44: "Event bubbling - a"
 layer at (10,60) size 460x241
-  RenderSVGTransformableContainer {g} at (0,51) size 460x241
+  RenderSVGTransformableContainer {g} at (0,51.22) size 460x240
 layer at (10,60) size 460x120
   RenderSVGRect {rect} at (0,0) size 460x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=10.00] [y=60.00] [width=460.00] [height=120.00]
 layer at (10,180) size 460x120
   RenderSVGRect {rect} at (0,120) size 460x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=180.00] [width=460.00] [height=120.00]
 layer at (20,70) size 415x221
-  RenderSVGTransformableContainer {g} at (10,61) size 415x221
+  RenderSVGTransformableContainer {g} at (10,61.22) size 414.56x220
 layer at (20,70) size 100x220
   RenderSVGTransformableContainer {g} at (0,0) size 100x220
 layer at (20,70) size 100x100
   RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=120.00] [r=50.00]
 layer at (20,190) size 100x100
   RenderSVGEllipse {circle} at (0,120) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=240.00] [r=50.00]
-layer at (150,74) size 285x44
+layer at (150,73.78) size 285x44
   RenderSVGText {text} at (130,3) size 285x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 285x45
       chunk 1 text run 1 at (150.00,110.00) startOffset 0 endOffset 18 width 284.55: "Pointer in circle,"
-layer at (150,114) size 262x44
+layer at (150,113.78) size 262x44
   RenderSVGText {text} at (130,43) size 263x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 263x45
       chunk 1 text run 1 at (150.00,150.00) startOffset 0 endOffset 16 width 262.30: "circle turns red"
-layer at (150,194) size 285x44
+layer at (150,193.78) size 285x44
   RenderSVGText {text} at (130,123) size 285x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 285x45
       chunk 1 text run 1 at (150.00,230.00) startOffset 0 endOffset 18 width 284.55: "Pointer in circle,"
-layer at (150,234) size 280x44
+layer at (150,233.78) size 280x44
   RenderSVGText {text} at (130,163) size 281x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 281x45
       chunk 1 text run 1 at (150.00,270.00) startOffset 0 endOffset 17 width 280.12: "circle turns blue"

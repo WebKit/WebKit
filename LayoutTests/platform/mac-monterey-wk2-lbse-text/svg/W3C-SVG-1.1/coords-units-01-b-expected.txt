@@ -11,7 +11,7 @@ layer at (30,16) size 386x18
     RenderSVGInlineText {#text} at (0,0) size 386x18
       chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 59 width 385.63: "Bounding box relative coordinates (percentage and fraction)"
 layer at (0,0) size 133x59
-  RenderSVGTransformableContainer {g} at (0,0) size 133x59
+  RenderSVGTransformableContainer {g} at (0,0) size 132.42x59
 layer at (0,0) size 50x20
   RenderSVGRect {rect} at (0,0) size 50x20 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=20.00]
 layer at (0,0) size 50x20
@@ -39,7 +39,7 @@ layer at (30,116) size 352x18
     RenderSVGInlineText {#text} at (0,0) size 352x18
       chunk 1 text run 1 at (30.00,130.00) startOffset 0 endOffset 54 width 351.87: "Bounding box relative length (percentage and fraction)"
 layer at (0,0) size 195x74
-  RenderSVGTransformableContainer {g} at (0,0) size 195x74
+  RenderSVGTransformableContainer {g} at (0,0) size 194.42x74
 layer at (0,0) size 60x60
   RenderSVGRect {rect} at (0,0) size 60x60 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=60.00] [height=60.00]
 layer at (0,0) size 60x60
@@ -63,7 +63,7 @@ layer at (30,226) size 393x18
     RenderSVGInlineText {#text} at (0,0) size 393x18
       chunk 1 text run 1 at (30.00,240.00) startOffset 0 endOffset 60 width 392.76: "Bounding box relative width/height (percentage and fraction)"
 layer at (0,0) size 433x30
-  RenderSVGTransformableContainer {g} at (0,0) size 433x30
+  RenderSVGTransformableContainer {g} at (0,0) size 432.42x30
 layer at (0,0) size 50x30
   RenderSVGRect {rect} at (0,0) size 50x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=30.00]
 layer at (0,0) size 50x30

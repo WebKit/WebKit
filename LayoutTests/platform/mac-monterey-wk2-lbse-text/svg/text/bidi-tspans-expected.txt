@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (92,134) size 276x51
-  RenderSVGTransformableContainer {g} at (92,133) size 276x51
-layer at (92,134) size 276x20
+layer at (92.20,133.70) size 276x51
+  RenderSVGTransformableContainer {g} at (92.20,133.70) size 275.59x50.13
+layer at (92.20,133.70) size 276x20
   RenderSVGText {text} at (0,0) size 276x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 276x21
       chunk 1 (middle anchor) text run 1 at (92.21,150.00) startOffset 0 endOffset 10 width 56.37 RTL: ", \x{627}\x{62E}\x{62A}\x{628}\x{627}\x{631}\"!"
       chunk 1 (middle anchor) text run 1 at (148.58,150.00) startOffset 0 endOffset 14 width 135.07: "dirRTL ubEmbed"
       chunk 1 (middle anchor) text run 1 at (283.65,150.00) startOffset 0 endOffset 14 width 84.15 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""
-layer at (92,164) size 276x20
+layer at (92.20,163.70) size 276x20
   RenderSVGText {text} at (0,30) size 276x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (191,0) size 85x21
       chunk 1 (middle anchor) text run 1 at (283.65,180.00) startOffset 0 endOffset 14 width 84.15 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644} \""

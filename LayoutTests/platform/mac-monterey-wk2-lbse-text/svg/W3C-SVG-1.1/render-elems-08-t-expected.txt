@@ -6,17 +6,17 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (1,1) size 478x358
   RenderSVGTransformableContainer {g} at (1,1) size 478x358
-layer at (120,13) size 229x35
+layer at (120,12.50) size 229x35
   RenderSVGText {text} at (119,11) size 230x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x35
       chunk 1 text run 1 at (120.00,40.00) startOffset 0 endOffset 20 width 229.10: "Text fill and stroke"
-layer at (60,70) size 365x250
-  RenderSVGTransformableContainer {g} at (59,68) size 365x250
-layer at (60,70) size 152x248
+layer at (60,69.98) size 365x250
+  RenderSVGTransformableContainer {g} at (59,68.98) size 365x248.13
+layer at (60,69.98) size 152x248
   RenderSVGText {text} at (0,0) size 152x249 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 152x249
       chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 1 width 151.50: "A"
-layer at (260,70) size 165x248
+layer at (260,69.98) size 165x248
   RenderSVGText {text} at (200,0) size 165x249 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 165x249
       chunk 1 text run 1 at (260.00,280.00) startOffset 0 endOffset 1 width 165.00: "B"

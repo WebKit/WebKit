@@ -4,25 +4,25 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (30,9) size 411x279
-  RenderSVGTransformableContainer {g} at (30,9) size 411x279
-layer at (30,9) size 410x40
+layer at (30,9.41) size 411x279
+  RenderSVGTransformableContainer {g} at (30,9.41) size 410.19x278.23
+layer at (30,9.41) size 410x40
   RenderSVGText {text} at (0,0) size 411x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 411x41
       chunk 1 text run 1 at (30.00,42.00) startOffset 0 endOffset 29 width 410.19: "Basic paint: fill properties."
-layer at (100,47) size 279x40
+layer at (100,47.41) size 279x40
   RenderSVGText {text} at (70,38) size 279x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 279x41
       chunk 1 text run 1 at (100.00,80.00) startOffset 0 endOffset 19 width 278.65: "fill=\"currentColor\""
 layer at (75,110) size 100x141
-  RenderSVGRect {rect} at (45,100) size 100x141 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [x=75.00] [y=110.00] [width=100.00] [height=140.00]
+  RenderSVGRect {rect} at (45,100.59) size 100x140 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [x=75.00] [y=110.00] [width=100.00] [height=140.00]
 layer at (275,110) size 100x141
-  RenderSVGRect {rect} at (245,100) size 100x141 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=275.00] [y=110.00] [width=100.00] [height=140.00]
-layer at (80,247) size 92x40
+  RenderSVGRect {rect} at (245,100.59) size 100x140 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=275.00] [y=110.00] [width=100.00] [height=140.00]
+layer at (80,247.41) size 92x40
   RenderSVGText {text} at (50,238) size 93x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 93x41
       chunk 1 text run 1 at (80.00,280.00) startOffset 0 endOffset 5 width 92.07: "green"
-layer at (290,247) size 68x40
+layer at (290,247.41) size 68x40
   RenderSVGText {text} at (260,238) size 69x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 69x41
       chunk 1 text run 1 at (290.00,280.00) startOffset 0 endOffset 4 width 68.06: "blue"

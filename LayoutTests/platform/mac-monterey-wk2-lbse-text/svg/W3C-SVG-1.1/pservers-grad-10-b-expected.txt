@@ -4,27 +4,27 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,11) size 460x267
-  RenderSVGTransformableContainer {g} at (10,11) size 460x267
-layer at (10,11) size 208x17
+layer at (10,11.41) size 460x267
+  RenderSVGTransformableContainer {g} at (10,11.41) size 460x266.14
+layer at (10,11.41) size 208x17
   RenderSVGText {text} at (0,0) size 208x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 208x17
       chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 30 width 207.62: "Testing spreadMethod attribute"
 layer at (10,35) size 460x56
-  RenderSVGRect {rect} at (0,23) size 460x56 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=35.00] [width=460.00] [height=55.00]
-layer at (10,94) size 104x13
+  RenderSVGRect {rect} at (0,23.59) size 460x55 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=35.00] [width=460.00] [height=55.00]
+layer at (10,94.13) size 104x13
   RenderSVGText {text} at (0,82) size 104x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 104x14
       chunk 1 text run 1 at (10.00,105.00) startOffset 0 endOffset 16 width 103.75: "spreadMethod=pad"
 layer at (10,120) size 460x56
-  RenderSVGRect {rect} at (0,108) size 460x56 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=120.00] [width=460.00] [height=55.00]
-layer at (10,179) size 116x13
+  RenderSVGRect {rect} at (0,108.59) size 460x55 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=120.00] [width=460.00] [height=55.00]
+layer at (10,179.13) size 116x13
   RenderSVGText {text} at (0,167) size 117x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 117x14
       chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 20 width 116.40: "spreadMethod=reflect"
 layer at (10,205) size 460x56
-  RenderSVGRect {rect} at (0,193) size 460x56 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=205.00] [width=460.00] [height=55.00]
-layer at (10,264) size 118x13
+  RenderSVGRect {rect} at (0,193.59) size 460x55 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=205.00] [width=460.00] [height=55.00]
+layer at (10,264.13) size 118x13
   RenderSVGText {text} at (0,252) size 118x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 118x14
       chunk 1 text run 1 at (10.00,275.00) startOffset 0 endOffset 19 width 117.75: "spreadMethod=repeat"

@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (0,0) size 380x154
-  RenderSVGTransformableContainer {g} at (0,0) size 380x154
+  RenderSVGTransformableContainer {g} at (0,0) size 379.36x154
 layer at (0,0) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
 layer at (0,116) size 291x18

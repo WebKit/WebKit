@@ -14,8 +14,8 @@ layer at (200,100) size 4x4
   RenderSVGRect {rect} at (100,60) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [x=200.00] [y=100.00] [width=4.00] [height=4.00]
 layer at (300,100) size 4x4
   RenderSVGRect {rect} at (200,60) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [x=300.00] [y=100.00] [width=4.00] [height=4.00]
-layer at (100,228) size 200x61
-  RenderSVGPath {path} at (0,187) size 200x61 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 100 250 C 100 250 200 200 200 250 C 200 300 300 300 300 250"]
+layer at (100,227.77) size 200x61
+  RenderSVGPath {path} at (0,187.77) size 200x59.73 [stroke={[type=SOLID] [color=#FF0000] [stroke width=3.00]}] [data="M 100 250 C 100 250 200 200 200 250 C 200 300 300 300 300 250"]
 layer at (100,250) size 4x4
   RenderSVGRect {rect} at (0,210) size 4x4 [fill={[type=SOLID] [color=#0000FF]}] [x=100.00] [y=250.00] [width=4.00] [height=4.00]
 layer at (200,200) size 4x4

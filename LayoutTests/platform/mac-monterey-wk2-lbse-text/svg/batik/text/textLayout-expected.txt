@@ -5,23 +5,23 @@ layer at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
 layer at (0,-14) size 46x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGHiddenContainer {defs} at (0,-14) size 46x18
+  RenderSVGHiddenContainer {defs} at (0,-14) size 45.33x18
 layer at (0,-14) size 45x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,0) size 46x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 46x18
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 45.32: "sample"
-layer at (40,36) size 370x421
-  RenderSVGTransformableContainer {g} at (40,36) size 370x421
-layer at (150,36) size 150x17
+layer at (40,36.41) size 370x421
+  RenderSVGTransformableContainer {g} at (40,36.41) size 370x420.59
+layer at (149.53,36.41) size 150x17
   RenderSVGText {text} at (109,0) size 152x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 151x17
       chunk 1 (middle anchor) text run 1 at (149.55,50.00) startOffset 0 endOffset 22 width 150.91: "Text Layout Properties"
-layer at (171,66) size 108x12
+layer at (171.38,65.50) size 108x12
   RenderSVGText {text} at (131,29) size 108x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 108x12
       chunk 1 (middle anchor) text run 1 at (171.39,75.00) startOffset 0 endOffset 26 width 107.23: "Explicit Glyph Positioning"
 layer at (40,88) size 111x40
-  RenderSVGTransformableContainer {g} at (0,51) size 111x40
+  RenderSVGTransformableContainer {g} at (0,51.59) size 110.66x39
 layer at (40,88) size 111x28
   RenderSVGText {text} at (0,0) size 111x28 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 111x28
@@ -37,7 +37,7 @@ layer at (40,118) size 104x9
     RenderSVGInlineText {#text} at (0,0) size 104x9
       chunk 1 text run 1 at (40.00,125.00) startOffset 0 endOffset 30 width 103.93: "tspan x=\"40,60,80,105,125,140\""
 layer at (185,88) size 69x40
-  RenderSVGTransformableContainer {g} at (145,51) size 69x40
+  RenderSVGTransformableContainer {g} at (145,51.59) size 68.20x39
 layer at (185,88) size 68x28
   RenderSVGText {text} at (0,0) size 68x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 68x28
@@ -47,7 +47,7 @@ layer at (185,118) size 68x9
     RenderSVGInlineText {#text} at (0,0) size 69x9
       chunk 1 text run 1 at (185.00,125.00) startOffset 0 endOffset 22 width 68.20: "Serif, default spacing"
 layer at (290,88) size 118x40
-  RenderSVGTransformableContainer {g} at (250,51) size 118x40
+  RenderSVGTransformableContainer {g} at (250,51.59) size 117.98x39
 layer at (290,88) size 118x28
   RenderSVGText {text} at (0,0) size 118x28 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 118x28
@@ -62,12 +62,12 @@ layer at (290,118) size 102x9
   RenderSVGText {text} at (0,30) size 103x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 103x9
       chunk 1 text run 1 at (290.00,125.00) startOffset 0 endOffset 29 width 102.09: "x=\"175\" dx=\"0,10,10,10,10,10\""
-layer at (103,141) size 244x12
+layer at (102.53,140.50) size 244x12
   RenderSVGText {text} at (62,104) size 246x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 245x12
       chunk 1 (middle anchor) text run 1 at (102.53,150.00) startOffset 0 endOffset 59 width 244.94: "Letter Spacing Adjustment and Explicit Length Specification"
 layer at (40,158) size 112x40
-  RenderSVGTransformableContainer {g} at (0,121) size 112x40
+  RenderSVGTransformableContainer {g} at (0,121.59) size 111.34x39
 layer at (40,158) size 111x28
   RenderSVGText {text} at (0,0) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 112x28
@@ -82,7 +82,7 @@ layer at (40,188) size 58x9
     RenderSVGInlineText {#text} at (0,0) size 58x9
       chunk 1 text run 1 at (40.00,195.00) startOffset 0 endOffset 16 width 57.70: "textLength=\"120\""
 layer at (185,158) size 70x40
-  RenderSVGTransformableContainer {g} at (145,121) size 70x40
+  RenderSVGTransformableContainer {g} at (145,121.59) size 69.67x39
 layer at (185,158) size 70x28
   RenderSVGText {text} at (0,0) size 70x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 70x28
@@ -97,7 +97,7 @@ layer at (185,188) size 54x9
     RenderSVGInlineText {#text} at (0,0) size 54x9
       chunk 1 text run 1 at (185.00,195.00) startOffset 0 endOffset 15 width 53.70: "textLength=\"70\""
 layer at (290,158) size 118x40
-  RenderSVGTransformableContainer {g} at (250,121) size 118x40
+  RenderSVGTransformableContainer {g} at (250,121.59) size 117.98x39
 layer at (290,158) size 118x28
   RenderSVGText {text} at (0,0) size 118x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 118x28
@@ -112,7 +112,7 @@ layer at (290,188) size 43x9
     RenderSVGInlineText {#text} at (0,0) size 44x9
       chunk 1 text run 1 at (290.00,195.00) startOffset 0 endOffset 12 width 43.48: "kerning=\"10\""
 layer at (40,203) size 120x50
-  RenderSVGTransformableContainer {g} at (0,166) size 120x50
+  RenderSVGTransformableContainer {g} at (0,166.59) size 120x49
 layer at (40,203) size 120x28
   RenderSVGText {text} at (0,0) size 120x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 120x28
@@ -125,7 +125,7 @@ layer at (40,233) size 114x19
       RenderSVGInlineText {#text} at (0,10) size 114x9
         chunk 1 text run 1 at (40.00,250.00) startOffset 0 endOffset 31 width 113.70: "lengthAdjust=\"spacingAndGlyphs\""
 layer at (185,203) size 114x50
-  RenderSVGTransformableContainer {g} at (145,166) size 114x50
+  RenderSVGTransformableContainer {g} at (145,166.59) size 113.70x49
 layer at (185,203) size 70x28
   RenderSVGText {text} at (0,0) size 70x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 70x28
@@ -138,7 +138,7 @@ layer at (185,233) size 114x19
       RenderSVGInlineText {#text} at (0,10) size 114x9
         chunk 1 text run 1 at (185.00,250.00) startOffset 0 endOffset 31 width 113.70: "lengthAdjust=\"spacingAndGlyphs\""
 layer at (290,203) size 120x40
-  RenderSVGTransformableContainer {g} at (250,166) size 120x40
+  RenderSVGTransformableContainer {g} at (250,166.59) size 120x39
 layer at (290,203) size 120x28
   RenderSVGText {text} at (0,0) size 120x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 120x28
@@ -153,7 +153,7 @@ layer at (290,233) size 103x9
     RenderSVGInlineText {#text} at (0,0) size 104x9
       chunk 1 text run 1 at (290.00,240.00) startOffset 0 endOffset 29 width 103.18: "textLength=\"120\",kerning=\"10\""
 layer at (40,253) size 104x40
-  RenderSVGTransformableContainer {g} at (0,216) size 104x40
+  RenderSVGTransformableContainer {g} at (0,216.59) size 103.98x39
 layer at (40,253) size 104x28
   RenderSVGText {text} at (0,0) size 104x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 104x28
@@ -168,7 +168,7 @@ layer at (40,283) size 74x9
     RenderSVGInlineText {#text} at (0,0) size 75x9
       chunk 1 text run 1 at (40.00,290.00) startOffset 0 endOffset 22 width 74.35: "letter-spacing=\"0.3em\""
 layer at (185,253) size 62x40
-  RenderSVGTransformableContainer {g} at (145,216) size 62x40
+  RenderSVGTransformableContainer {g} at (145,216.59) size 61.25x39
 layer at (185,253) size 53x28
   RenderSVGText {text} at (0,0) size 53x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 53x28
@@ -183,7 +183,7 @@ layer at (185,283) size 61x9
     RenderSVGInlineText {#text} at (0,0) size 62x9
       chunk 1 text run 1 at (185.00,290.00) startOffset 0 endOffset 19 width 61.24: "letter-spacing=\"-3\""
 layer at (290,253) size 118x40
-  RenderSVGTransformableContainer {g} at (250,216) size 118x40
+  RenderSVGTransformableContainer {g} at (250,216.59) size 117.98x39
 layer at (290,253) size 118x28
   RenderSVGText {text} at (0,0) size 118x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 118x28
@@ -197,13 +197,13 @@ layer at (290,283) size 63x9
   RenderSVGText {text} at (0,30) size 63x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 63x9
       chunk 1 text run 1 at (290.00,290.00) startOffset 0 endOffset 19 width 62.58: "letter-spacing=\"10\""
-layer at (172,311) size 106x12
+layer at (171.67,310.50) size 106x12
   RenderSVGText {text} at (131,274) size 108x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 107x12
       chunk 1 (middle anchor) text run 1 at (171.67,320.00) startOffset 0 endOffset 23 width 106.65: "Word Spacing Adjustment"
-layer at (40,337) size 350x31
-  RenderSVGTransformableContainer {g} at (0,300) size 350x31
-layer at (40,337) size 349x17
+layer at (40,336.75) size 350x31
+  RenderSVGTransformableContainer {g} at (0,300.34) size 349.22x30.25
+layer at (40,336.75) size 349x17
   RenderSVGText {text} at (0,0) size 350x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 350x17
       chunk 1 text run 1 at (40.00,350.00) startOffset 0 endOffset 1 width 14.16: "W"
@@ -239,9 +239,9 @@ layer at (40,358) size 128x9
   RenderSVGText {text} at (0,21) size 129x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 129x9
       chunk 1 text run 1 at (40.00,365.00) startOffset 0 endOffset 35 width 128.06: "textLength=\"350\" word-spacing=\"3em\""
-layer at (40,382) size 345x31
-  RenderSVGTransformableContainer {g} at (0,345) size 345x31
-layer at (40,382) size 345x17
+layer at (40,381.75) size 345x31
+  RenderSVGTransformableContainer {g} at (0,345.34) size 344.86x30.25
+layer at (40,381.75) size 345x17
   RenderSVGText {text} at (0,0) size 345x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 345x17
       chunk 1 text run 1 at (40.00,395.00) startOffset 0 endOffset 1 width 10.83: "N"
@@ -279,9 +279,9 @@ layer at (40,403) size 121x9
   RenderSVGText {text} at (0,21) size 121x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 121x9
       chunk 1 text run 1 at (40.00,410.00) startOffset 0 endOffset 34 width 120.95: "textLength=\"350\" word-spacing=\"-5\""
-layer at (40,427) size 350x31
-  RenderSVGTransformableContainer {g} at (0,390) size 350x31
-layer at (40,427) size 350x17
+layer at (40,426.75) size 350x31
+  RenderSVGTransformableContainer {g} at (0,390.34) size 350x30.25
+layer at (40,426.75) size 350x17
   RenderSVGText {text} at (0,0) size 350x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 350x17
       chunk 1 text run 1 at (40.00,440.00) startOffset 0 endOffset 7 width 49.56: "Narrow "
@@ -292,15 +292,15 @@ layer at (40,448) size 237x9
   RenderSVGText {text} at (0,21) size 237x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 237x9
       chunk 1 text run 1 at (40.00,455.00) startOffset 0 endOffset 66 width 236.65: "textLength=\"350\" lengthAdjust=\"spacingAndGlyphs\" word-spacing=\"-5\""
-layer at (0,0) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (-1,-1) size 540x565
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+layer at (-0.05,-0.36) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (-0.05,-0.36) size 539x563.77
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
 layer at (1,1) size 447x497
-  RenderSVGRect {rect} at (1,1) size 447x497 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
-layer at (0,0) size 28x29
-  RenderSVGViewportContainer {svg} at (0,0) size 28x29
-layer at (158,352) size 287x212 backgroundClip at (413,467) size 37x33 clip at (413,467) size 37x33
-  RenderSVGPath {path} at (158,352) size 287x212 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]
+  RenderSVGRect {rect} at (1.05,1.36) size 446x496 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
+layer at (0,0) size 28x29 backgroundClip at (0,0.36) size 450x499.64
+  RenderSVGViewportContainer {svg} at (0.05,0.36) size 27x28
+layer at (158.31,352.16) size 287x212 backgroundClip at (413.41,467) size 36.59x33 clip at (413.41,467) size 36.59x33
+  RenderSVGPath {path} at (158.31,352.16) size 286.69x211.25 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

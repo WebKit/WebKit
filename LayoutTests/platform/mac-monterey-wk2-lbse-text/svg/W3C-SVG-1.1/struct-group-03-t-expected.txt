@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-5,-14) size 116x370 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-5,-14) size 116x370
+  RenderSVGTransformableContainer {g} at (-5,-14) size 115.19x370
 layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 110x22
 layer at (-5,-14) size 110x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -223,7 +223,7 @@ layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) 
 layer at (-5,-14) size 50x22 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 50x22 [stroke={[type=SOLID] [color=#000000]}] [x=-5.00] [y=-14.00] [width=50.00] [height=22.00]
 layer at (0,-14) size 111x370 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (5,0) size 111x370
+  RenderSVGTransformableContainer {g} at (5,0) size 110.19x370
 layer at (0,-14) size 33x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 33x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 33x18
@@ -338,33 +338,33 @@ layer at (0,0) size 0x0
   RenderSVGTransformableContainer {g} at (0,0) size 0x0
 layer at (11,10) size 0x30
   RenderSVGPath {line} at (11,10) size 0x30 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#000000]}] [x1=11.00] [y1=10.00] [x2=11.00] [y2=40.00]
-layer at (4,12) size 16x23
-  RenderSVGTransformableContainer {g} at (3,12) size 16x23
-layer at (4,12) size 14x23
+layer at (3.77,12) size 16x23
+  RenderSVGTransformableContainer {g} at (3.77,12) size 14.47x23
+layer at (3.77,12) size 14x23
   RenderSVGText {text} at (0,0) size 15x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 15x23
       chunk 1 (middle anchor) text run 1 at (3.78,30.00) startOffset 0 endOffset 1 width 14.44: "A"
-layer at (7,21) size 8x13
-  RenderSVGTransformableContainer {g} at (7,20) size 8x13
-layer at (7,21) size 7x12
+layer at (7.38,20.50) size 8x13
+  RenderSVGTransformableContainer {g} at (7.38,20.50) size 7.25x12
+layer at (7.38,20.50) size 7x12
   RenderSVGText {text} at (0,0) size 8x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 8x12
       chunk 1 (middle anchor) text run 1 at (7.39,30.00) startOffset 0 endOffset 1 width 7.22: "A"
-layer at (5,12) size 14x23
-  RenderSVGTransformableContainer {g} at (4,12) size 14x23
-layer at (5,12) size 12x23
+layer at (4.89,12) size 14x23
+  RenderSVGTransformableContainer {g} at (4.89,12) size 12.22x23
+layer at (4.89,12) size 12x23
   RenderSVGText {text} at (0,0) size 13x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 13x23
       chunk 1 (middle anchor) text run 1 at (4.89,30.00) startOffset 0 endOffset 1 width 12.22: "A"
-layer at (4,12) size 16x23
-  RenderSVGTransformableContainer {g} at (3,12) size 16x23
-layer at (4,12) size 14x23
+layer at (3.77,12) size 16x23
+  RenderSVGTransformableContainer {g} at (3.77,12) size 14.47x23
+layer at (3.77,12) size 14x23
   RenderSVGText {text} at (0,0) size 15x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 15x23
       chunk 1 (middle anchor) text run 1 at (3.78,30.00) startOffset 0 endOffset 1 width 14.44: "A"
-layer at (4,12) size 16x23
-  RenderSVGTransformableContainer {g} at (3,12) size 16x23
-layer at (4,12) size 14x23
+layer at (3.77,12) size 16x23
+  RenderSVGTransformableContainer {g} at (3.77,12) size 14.47x23
+layer at (3.77,12) size 14x23
   RenderSVGText {text} at (0,0) size 15x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 15x23
       chunk 1 (middle anchor) text run 1 at (3.78,30.00) startOffset 0 endOffset 1 width 14.44: "A"
@@ -414,33 +414,33 @@ layer at (0,0) size 0x0
   RenderSVGTransformableContainer {g} at (0,0) size 0x0
 layer at (11,10) size 0x30
   RenderSVGPath {line} at (11,10) size 0x30 [stroke={[type=SOLID] [color=#00FF00]}] [fill={[type=SOLID] [color=#000000]}] [x1=11.00] [y1=10.00] [x2=11.00] [y2=40.00]
-layer at (4,12) size 16x23
-  RenderSVGTransformableContainer {g} at (3,12) size 16x23
-layer at (4,12) size 14x23
+layer at (3.77,12) size 16x23
+  RenderSVGTransformableContainer {g} at (3.77,12) size 14.47x23
+layer at (3.77,12) size 14x23
   RenderSVGText {text} at (0,0) size 15x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 15x23
       chunk 1 (middle anchor) text run 1 at (3.78,30.00) startOffset 0 endOffset 1 width 14.44: "A"
-layer at (7,21) size 8x13
-  RenderSVGTransformableContainer {g} at (7,20) size 8x13
-layer at (7,21) size 7x12
+layer at (7.38,20.50) size 8x13
+  RenderSVGTransformableContainer {g} at (7.38,20.50) size 7.25x12
+layer at (7.38,20.50) size 7x12
   RenderSVGText {text} at (0,0) size 8x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 8x12
       chunk 1 (middle anchor) text run 1 at (7.39,30.00) startOffset 0 endOffset 1 width 7.22: "A"
-layer at (5,12) size 14x23
-  RenderSVGTransformableContainer {g} at (4,12) size 14x23
-layer at (5,12) size 12x23
+layer at (4.89,12) size 14x23
+  RenderSVGTransformableContainer {g} at (4.89,12) size 12.22x23
+layer at (4.89,12) size 12x23
   RenderSVGText {text} at (0,0) size 13x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 13x23
       chunk 1 (middle anchor) text run 1 at (4.89,30.00) startOffset 0 endOffset 1 width 12.22: "A"
-layer at (4,12) size 16x23
-  RenderSVGTransformableContainer {g} at (3,12) size 16x23
-layer at (4,12) size 14x23
+layer at (3.77,12) size 16x23
+  RenderSVGTransformableContainer {g} at (3.77,12) size 14.47x23
+layer at (3.77,12) size 14x23
   RenderSVGText {text} at (0,0) size 15x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 15x23
       chunk 1 (middle anchor) text run 1 at (3.78,30.00) startOffset 0 endOffset 1 width 14.44: "A"
-layer at (4,12) size 16x23
-  RenderSVGTransformableContainer {g} at (3,12) size 16x23
-layer at (4,12) size 14x23
+layer at (3.77,12) size 16x23
+  RenderSVGTransformableContainer {g} at (3.77,12) size 14.47x23
+layer at (3.77,12) size 14x23
   RenderSVGText {text} at (0,0) size 15x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 15x23
       chunk 1 (middle anchor) text run 1 at (3.78,30.00) startOffset 0 endOffset 1 width 14.44: "A"

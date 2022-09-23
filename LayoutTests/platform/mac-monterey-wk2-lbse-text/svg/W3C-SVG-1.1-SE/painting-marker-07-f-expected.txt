@@ -10,9 +10,9 @@ layer at (0,0) size 25x25
   RenderSVGPath {path} at (0,0) size 25x25 [fill={[type=SOLID] [color=#000000]}] [end marker=testMarker] [data="M 0 0 L 25 25"]
 layer at (100,0) size 25x25
   RenderSVGPath {path} at (100,0) size 25x25 [fill={[type=SOLID] [color=#000000]}] [end marker=testMarker2] [data="M 100 0 L 125 25"]
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.3 $"

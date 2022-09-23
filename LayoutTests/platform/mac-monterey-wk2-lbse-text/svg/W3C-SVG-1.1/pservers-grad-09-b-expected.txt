@@ -6,37 +6,37 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 440x430 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 440x430
-layer at (10,11) size 200x17
+layer at (10,11.41) size 200x17
   RenderSVGText {text} at (10,11) size 201x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 201x17
       chunk 1 text run 1 at (10.00,25.00) startOffset 0 endOffset 31 width 200.10: "Testing gradientUnits attribute"
 layer at (125,35) size 200x50
   RenderSVGRect {rect} at (125,35) size 200x50 [fill={[type=SOLID] [color=#000000]}] [x=125.00] [y=35.00] [width=200.00] [height=50.00]
-layer at (10,89) size 390x14
+layer at (10,89.13) size 390x14
   RenderSVGText {text} at (10,89) size 390x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 390x14
       chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 73 width 389.56: "Linear gradient with default attributes (thus, same as objectBoundingBox)"
-layer at (10,104) size 358x14
+layer at (10,104.13) size 358x14
   RenderSVGText {text} at (10,104) size 359x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 359x14
       chunk 1 text run 1 at (10.00,115.00) startOffset 0 endOffset 71 width 358.19: "Gradient is from the object left edge (red) to object right edge (blue)"
 layer at (10,125) size 430x50
   RenderSVGRect {rect} at (10,125) size 430x50 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=125.00] [width=430.00] [height=50.00]
-layer at (10,179) size 181x14
+layer at (10,179.13) size 181x14
   RenderSVGText {text} at (10,179) size 182x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 182x14
       chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 31 width 181.13: "gradientUnits=objectBoundingBox"
-layer at (10,194) size 372x14
+layer at (10,194.13) size 372x14
   RenderSVGText {text} at (10,194) size 373x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 373x14
       chunk 1 text run 1 at (10.00,205.00) startOffset 0 endOffset 71 width 372.21: "Gradient is from the object top edge (blue) to object bottom edge (red)"
 layer at (0,0) size 50x430 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 50x430 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=430.00]
-layer at (10,264) size 172x14
+layer at (10,264.13) size 172x14
   RenderSVGText {text} at (10,264) size 173x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 173x14
       chunk 1 text run 1 at (10.00,275.00) startOffset 0 endOffset 28 width 172.43: "gradientUnits=userSpaceOnUse"
-layer at (10,279) size 358x14
+layer at (10,279.13) size 358x14
   RenderSVGText {text} at (10,279) size 359x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 359x14
       chunk 1 text run 1 at (10.00,290.00) startOffset 0 endOffset 71 width 358.19: "Gradient is from the object left edge (red) to object right edge (blue)"

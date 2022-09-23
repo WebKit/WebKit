@@ -4,14 +4,14 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,56) size 219x90
-  RenderSVGTransformableContainer {g} at (10,56) size 219x90
-layer at (10,56) size 219x90
-  RenderSVGTransformableContainer {g} at (0,0) size 219x90
-layer at (10,56) size 104x90
-  RenderSVGPath {path} at (0,0) size 104x90 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 56 L 113.962 146 L 10.0385 146 L 62 56 Z M 62 71 L 100.971 138.5 L 23.0589 138.5 L 62.03 71 Z"]
-layer at (125,56) size 104x90
-  RenderSVGPath {path} at (115,0) size 104x90 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
+layer at (10.03,56) size 219x90
+  RenderSVGTransformableContainer {g} at (10.03,56) size 218.94x90
+layer at (10.03,56) size 219x90
+  RenderSVGTransformableContainer {g} at (0,0) size 218.94x90
+layer at (10.03,56) size 104x90
+  RenderSVGPath {path} at (0,0) size 103.94x90 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 56 L 113.962 146 L 10.0385 146 L 62 56 Z M 62 71 L 100.971 138.5 L 23.0589 138.5 L 62.03 71 Z"]
+layer at (125.03,56) size 104x90
+  RenderSVGPath {path} at (115,0) size 103.94x90 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

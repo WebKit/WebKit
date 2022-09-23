@@ -106,7 +106,7 @@ layer at (318,78) size 80x120
   RenderSVGRect {rect} at (310,10) size 80x120 [fill={[type=SOLID] [color=#FF0000]}] [x=310.00] [y=10.00] [width=80.00] [height=120.00]
 layer at (398,78) size 60x110
   RenderSVGRect {rect} at (390,10) size 60x110 [fill={[type=SOLID] [color=#008000]}] [x=390.00] [y=10.00] [width=60.00] [height=110.00]
-layer at (8,-22) size 780x600 backgroundClip at (8,68) size 800x200 clip at (8,68) size 800x200
+layer at (8,-22.02) size 780x600 backgroundClip at (8,68) size 800x200 clip at (8,68) size 800x200
   RenderSVGText {text} at (0,-91) size 780x601 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 780x601
       chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 780.00: "GGDGGBBBFB"

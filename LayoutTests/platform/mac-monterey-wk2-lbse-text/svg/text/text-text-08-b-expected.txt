@@ -4,25 +4,25 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (19,-5) size 467x259 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (19,-5) size 467x259
-layer at (19,-5) size 397x78 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (19,-4.55) size 467x259 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (19,-4.55) size 466.23x258.03
+layer at (19,-4.55) size 397x78 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 397x79 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 397x79
       chunk 1 text run 1 at (19.00,60.00) startOffset 0 endOffset 11 width 396.67: "Normal Text"
-layer at (19,55) size 344x78
+layer at (19,55.45) size 344x78
   RenderSVGText {text} at (0,60) size 345x79 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 345x79
       chunk 1 text run 1 at (19.00,120.00) startOffset 0 endOffset 12 width 344.20: "Fill opacity"
-layer at (19,115) size 466x78
+layer at (19,115.45) size 466x78
   RenderSVGText {text} at (0,120) size 467x79 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 467x79
       chunk 1 text run 1 at (19.00,180.00) startOffset 0 endOffset 14 width 466.23: "Stroke opacity"
-layer at (19,175) size 243x78
+layer at (19,175.45) size 243x78
   RenderSVGText {text} at (0,180) size 244x79 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 244x79
       chunk 1 text run 1 at (19.00,240.00) startOffset 0 endOffset 7 width 243.45: "Opacity"
-layer at (10,304) size 265x46
+layer at (10,303.84) size 265x46
   RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 265x47
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.3 $"

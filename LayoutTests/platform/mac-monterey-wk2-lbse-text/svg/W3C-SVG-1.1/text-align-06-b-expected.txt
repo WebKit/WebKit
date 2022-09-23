@@ -4,17 +4,17 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (-8,0) size 494x302 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-9,0) size 494x302
-layer at (0,4) size 485x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-8.34,0) size 494x302 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (-8.34,0) size 492.64x301.64
+layer at (0,3.78) size 485x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (8,3) size 485x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 485x45
       chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 31 width 484.30: "Test 'baseline-shift' (vertic.)"
-layer at (-8,0) size 294x302 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 294x302
-layer at (-8,0) size 294x302 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 294x302
-layer at (-8,0) size 24x168 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-8.34,0) size 294x302 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 293.45x301.64
+layer at (-8.34,0) size 294x302 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 293.45x301.64
+layer at (-8.34,0) size 24x168 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 24x168 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 17x68
       chunk 1 (vertical) text run 1 at (-10.40,0.00) startOffset 0 endOffset 1 height 33.52: "t"
@@ -25,7 +25,7 @@ layer at (-8,0) size 24x168 backgroundClip at (0,0) size 480x360 clip at (0,0) s
     RenderSVGInlineText {#text} at (0,100) size 15x68
       chunk 1 (vertical) text run 1 at (-10.40,100.55) startOffset 0 endOffset 1 height 33.52: "x"
       chunk 1 (vertical) text run 2 at (-10.40,134.06) startOffset 1 endOffset 2 height 33.52: "t"
-layer at (46,0) size 43x268
+layer at (45.66,0) size 43x268
   RenderSVGText {text} at (54,0) size 43x269 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (25,0) size 17x68
       chunk 1 (vertical) text run 1 at (69.60,0.00) startOffset 0 endOffset 1 height 33.52: "t"
@@ -39,7 +39,7 @@ layer at (46,0) size 43x268
     RenderSVGInlineText {#text} at (26,201) size 15x68
       chunk 1 (vertical) text run 1 at (69.60,201.09) startOffset 0 endOffset 1 height 33.52: "x"
       chunk 1 (vertical) text run 2 at (69.60,234.61) startOffset 1 endOffset 2 height 33.52: "t"
-layer at (155,0) size 34x235
+layer at (154.89,0) size 34x235
   RenderSVGText {text} at (163,0) size 34x235 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (16,0) size 17x68
       chunk 1 (vertical) text run 1 at (169.60,0.00) startOffset 0 endOffset 1 height 33.52: "t"
@@ -54,7 +54,7 @@ layer at (155,0) size 34x235
         chunk 1 (vertical) text run 1 at (169.60,167.58) startOffset 0 endOffset 1 height 33.52: "x"
     RenderSVGInlineText {#text} at (20,201) size 9x34
       chunk 1 (vertical) text run 1 at (169.60,201.09) startOffset 0 endOffset 1 height 33.52: "t"
-layer at (252,0) size 33x302
+layer at (251.66,0) size 33x302
   RenderSVGText {text} at (260,0) size 34x302 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 17x68
       chunk 1 (vertical) text run 1 at (249.60,0.00) startOffset 0 endOffset 1 height 33.52: "t"

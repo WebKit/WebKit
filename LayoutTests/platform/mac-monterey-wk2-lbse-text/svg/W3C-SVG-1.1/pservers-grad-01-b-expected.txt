@@ -5,16 +5,16 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (20,20) size 440x247
-  RenderSVGTransformableContainer {g} at (20,20) size 440x247
+  RenderSVGTransformableContainer {g} at (20,20) size 440x246.36
 layer at (20,20) size 440x80
   RenderSVGRect {rect} at (0,0) size 440x80 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=20.00] [width=440.00] [height=80.00]
-layer at (20,103) size 208x33
+layer at (20,102.83) size 208x33
   RenderSVGText {text} at (0,82) size 209x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 209x34
       chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 16 width 208.48: "Linear gradient."
 layer at (20,150) size 440x80
   RenderSVGRect {rect} at (0,130) size 440x80 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=150.00] [width=440.00] [height=80.00]
-layer at (20,233) size 374x33
+layer at (20,232.83) size 374x33
   RenderSVGText {text} at (0,212) size 374x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 374x34
       chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 27 width 373.56: "Referencing gradient below."

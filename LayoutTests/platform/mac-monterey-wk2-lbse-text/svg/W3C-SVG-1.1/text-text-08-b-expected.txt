@@ -4,21 +4,21 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (19,-4) size 465x259 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (19,-5) size 465x259
-layer at (19,-4) size 395x78 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (19,-4.34) size 465x259 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (19,-4.34) size 464.78x257.78
+layer at (19,-4.34) size 395x78 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 396x78 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 396x78
       chunk 1 text run 1 at (19.00,60.00) startOffset 0 endOffset 11 width 395.44: "Normal Text"
-layer at (19,56) size 343x78
+layer at (19,55.66) size 343x78
   RenderSVGText {text} at (0,60) size 344x78 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 344x78
       chunk 1 text run 1 at (19.00,120.00) startOffset 0 endOffset 12 width 343.13: "Fill opacity"
-layer at (19,116) size 465x78 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (19,115.66) size 465x78 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,120) size 465x78 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 465x78
       chunk 1 text run 1 at (19.00,180.00) startOffset 0 endOffset 14 width 464.78: "Stroke opacity"
-layer at (19,176) size 243x78
+layer at (19,175.66) size 243x78
   RenderSVGText {text} at (0,180) size 243x78 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 243x78
       chunk 1 text run 1 at (19.00,240.00) startOffset 0 endOffset 7 width 242.69: "Opacity"

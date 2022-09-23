@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (75,14) size 174x196
-  RenderSVGTransformableContainer {g} at (75,13) size 174x196
-layer at (75,14) size 174x14
+layer at (75,13.95) size 174x196
+  RenderSVGTransformableContainer {g} at (75,13.95) size 173.70x194.33
+layer at (75,13.95) size 174x14
   RenderSVGText {text} at (0,0) size 174x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 174x14
       chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 34 width 173.70: "Test removing tref's text content."
-layer at (0,-92) size 171x117 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGHiddenContainer {defs} at (-75,-107) size 171x117
-layer at (0,-92) size 171x115 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (0,-92.16) size 171x117 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (-75,-106.11) size 170.77x115.20
+layer at (0,-92.16) size 171x115 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 171x116 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,75) size 11x21
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 11.00: "F"
@@ -39,15 +39,15 @@ layer at (0,-92) size 171x115 backgroundClip at (0,0) size 800x600 clip at (0,0)
         chunk 1 text run 1 at (150.74,0.00) startOffset 0 endOffset 1 width 10.01: "e"
     RenderSVGInlineText {#text} at (160,75) size 11x21
       chunk 1 text run 1 at (160.75,0.00) startOffset 0 endOffset 1 width 10.01: "d"
-layer at (75,167) size 150x41
+layer at (75,166.88) size 150x41
   RenderSVGText {text} at (0,152) size 151x43 contains 1 chunk(s)
     RenderSVGInline {tref} at (0,0) size 151x42
       RenderSVGInlineText {#text} at (0,0) size 151x42
         chunk 1 text run 1 at (75.00,200.00) startOffset 0 endOffset 9 width 150.10: "Flattened"
     RenderSVGInlineText {#text} at (0,0) size 0x0
-layer at (10,311) size 229x38
-  RenderSVGTransformableContainer {g} at (10,310) size 229x38
-layer at (10,311) size 228x37
+layer at (10,310.70) size 229x38
+  RenderSVGTransformableContainer {g} at (10,310.70) size 228.05x36.63
+layer at (10,310.70) size 228x37
   RenderSVGText {text} at (0,0) size 229x37 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 229x37
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.4 $"

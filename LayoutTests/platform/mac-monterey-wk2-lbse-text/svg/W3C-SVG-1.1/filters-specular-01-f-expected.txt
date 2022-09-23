@@ -4,14 +4,14 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (90,9) size 348x51
-  RenderSVGTransformableContainer {g} at (90,9) size 348x51
-layer at (171,9) size 138x13
+layer at (90,9.13) size 348x51
+  RenderSVGTransformableContainer {g} at (90,9.13) size 347.92x50.88
+layer at (170.63,9.13) size 138x13
   RenderSVGText {text} at (80,0) size 140x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 139x14
       chunk 1 (middle anchor) text run 1 at (170.63,20.00) startOffset 0 endOffset 27 width 138.74: "Filters: feSpecularLighting"
 layer at (90,11) size 296x50
-  RenderSVGTransformableContainer {g} at (0,1) size 296x50
+  RenderSVGTransformableContainer {g} at (0,1.88) size 295.91x49
 layer at (90,11) size 296x18
   RenderSVGText {text} at (0,0) size 296x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 296x18
@@ -31,7 +31,7 @@ layer at (205,30) size 50x30
 layer at (320,30) size 50x30
   RenderSVGImage {image} at (230,19) size 50x30
 layer at (90,11) size 311x50
-  RenderSVGTransformableContainer {g} at (0,1) size 311x50
+  RenderSVGTransformableContainer {g} at (0,1.88) size 310.16x49
 layer at (90,11) size 310x18
   RenderSVGText {text} at (0,0) size 311x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 311x18
@@ -51,7 +51,7 @@ layer at (205,30) size 50x30
 layer at (320,30) size 50x30
   RenderSVGImage {image} at (230,19) size 50x30
 layer at (90,11) size 315x50
-  RenderSVGTransformableContainer {g} at (0,1) size 315x50
+  RenderSVGTransformableContainer {g} at (0,1.88) size 314.59x49
 layer at (90,11) size 315x18
   RenderSVGText {text} at (0,0) size 315x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 315x18
@@ -71,7 +71,7 @@ layer at (205,30) size 50x30
 layer at (320,30) size 50x30
   RenderSVGImage {image} at (230,19) size 50x30
 layer at (90,11) size 348x50
-  RenderSVGTransformableContainer {g} at (0,1) size 348x50
+  RenderSVGTransformableContainer {g} at (0,1.88) size 347.92x49
 layer at (90,11) size 348x18
   RenderSVGText {text} at (0,0) size 348x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 348x18

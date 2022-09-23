@@ -5,9 +5,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 416x73
-  RenderSVGTransformableContainer {g} at (0,0) size 416x73
+  RenderSVGTransformableContainer {g} at (0,0) size 415.55x73
 layer at (0,0) size 416x73
-  RenderSVGTransformableContainer {g} at (0,0) size 416x73
+  RenderSVGTransformableContainer {g} at (0,0) size 415.55x73
 layer at (0,0) size 20x20
   RenderSVGTransformableContainer {g} at (0,0) size 20x20
 layer at (0,0) size 20x20
@@ -22,28 +22,28 @@ layer at (0,0) size 20x2
   RenderSVGRect {rect} at (0,0) size 20x2 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=2.00]
 layer at (0,0) size 2x20
   RenderSVGRect {rect} at (0,0) size 2x20 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=2.00] [height=20.00]
-layer at (240,26) size 176x48
-  RenderSVGTransformableContainer {g} at (240,25) size 176x48
-layer at (240,26) size 76x18
+layer at (240,25.59) size 176x48
+  RenderSVGTransformableContainer {g} at (240,25.59) size 175.55x47.41
+layer at (240,25.59) size 76x18
   RenderSVGText {text} at (0,0) size 76x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 76x19
       chunk 1 text run 1 at (240.00,40.00) startOffset 0 endOffset 11 width 75.54: "skew x (45)"
 layer at (248,48) size 5x6
-  RenderSVGRect {rect} at (8,22) size 5x6 [fill={[type=SOLID] [color=#000000]}] [x=248.00] [y=48.00] [width=5.00] [height=5.00]
+  RenderSVGRect {rect} at (8,22.41) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=248.00] [y=48.00] [width=5.00] [height=5.00]
 layer at (268,48) size 5x6
-  RenderSVGRect {rect} at (28,22) size 5x6 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=48.00] [width=5.00] [height=5.00]
+  RenderSVGRect {rect} at (28,22.41) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [x=268.00] [y=48.00] [width=5.00] [height=5.00]
 layer at (268,68) size 5x6
-  RenderSVGRect {rect} at (28,42) size 5x6 [fill={[type=SOLID] [color=#FF0000]}] [x=268.00] [y=68.00] [width=5.00] [height=5.00]
-layer at (340,26) size 76x18
+  RenderSVGRect {rect} at (28,42.41) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=268.00] [y=68.00] [width=5.00] [height=5.00]
+layer at (340,25.59) size 76x18
   RenderSVGText {text} at (100,0) size 76x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 76x19
       chunk 1 text run 1 at (340.00,40.00) startOffset 0 endOffset 11 width 75.54: "skew y (45)"
 layer at (348,48) size 5x6
-  RenderSVGRect {rect} at (108,22) size 5x6 [fill={[type=SOLID] [color=#000000]}] [x=348.00] [y=48.00] [width=5.00] [height=5.00]
+  RenderSVGRect {rect} at (108,22.41) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=348.00] [y=48.00] [width=5.00] [height=5.00]
 layer at (368,68) size 5x6
-  RenderSVGRect {rect} at (128,42) size 5x6 [fill={[type=SOLID] [color=#0000FF]}] [x=368.00] [y=68.00] [width=5.00] [height=5.00]
+  RenderSVGRect {rect} at (128,42.41) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [x=368.00] [y=68.00] [width=5.00] [height=5.00]
 layer at (348,68) size 5x6
-  RenderSVGRect {rect} at (108,42) size 5x6 [fill={[type=SOLID] [color=#FF0000]}] [x=348.00] [y=68.00] [width=5.00] [height=5.00]
+  RenderSVGRect {rect} at (108,42.41) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=348.00] [y=68.00] [width=5.00] [height=5.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

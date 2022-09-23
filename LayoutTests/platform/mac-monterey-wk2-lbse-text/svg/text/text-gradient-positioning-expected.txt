@@ -5,13 +5,13 @@ layer at (0,0) size 800x200
 layer at (0,0) size 800x200
   RenderSVGViewportContainer at (0,0) size 800x200
 layer at (0,64) size 659x46
-  RenderSVGTransformableContainer {g} at (0,64) size 659x46
+  RenderSVGTransformableContainer {g} at (0,64) size 658.72x46
 layer at (0,64) size 659x46
   RenderSVGText {text} at (0,0) size 659x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 659x46
       chunk 1 text run 1 at (0.00,100.00) startOffset 0 endOffset 37 width 658.71: "This should be GREEN and appear once."
 layer at (0,64) size 659x46
-  RenderSVGTransformableContainer {use} at (0,64) size 659x46
+  RenderSVGTransformableContainer {use} at (0,64) size 658.72x46
 layer at (0,64) size 659x46
   RenderSVGText {text} at (0,0) size 659x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 659x46

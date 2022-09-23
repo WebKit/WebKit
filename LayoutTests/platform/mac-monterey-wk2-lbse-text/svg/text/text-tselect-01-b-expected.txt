@@ -6,29 +6,29 @@ layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (1,1) size 478x358
   RenderSVGTransformableContainer {g} at (1,1) size 478x358
-layer at (10,5) size 307x18
+layer at (10,5.33) size 307x18
   RenderSVGText {text} at (9,4) size 308x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 308x19
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 46 width 307.06: "Test single line and multiline text selection."
-layer at (25,50) size 366x219
-  RenderSVGTransformableContainer {g} at (24,49) size 366x219
-layer at (25,50) size 257x18
+layer at (25,50.33) size 366x219
+  RenderSVGTransformableContainer {g} at (24,49.33) size 365.61x218.11
+layer at (25,50.33) size 257x18
   RenderSVGText {text} at (0,0) size 258x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 258x19
       chunk 1 text run 1 at (25.00,65.00) startOffset 0 endOffset 37 width 257.42: "Here is a stand-alone 'text' element."
-layer at (25,75) size 302x18
+layer at (25,75.33) size 302x18
   RenderSVGText {text} at (0,25) size 302x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 302x19
       chunk 1 text run 1 at (25.00,90.00) startOffset 0 endOffset 43 width 301.54: "Here is a second 'text' element just below."
-layer at (25,100) size 347x18
+layer at (25,100.33) size 347x18
   RenderSVGText {text} at (0,50) size 347x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 347x19
       chunk 1 text run 1 at (25.00,115.00) startOffset 0 endOffset 48 width 346.58: "Because these are four separate 'text' elements,"
-layer at (25,125) size 328x18
+layer at (25,125.33) size 328x18
   RenderSVGText {text} at (0,75) size 328x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 328x19
       chunk 1 text run 1 at (25.00,140.00) startOffset 0 endOffset 47 width 327.79: "text selection should not go across lines here."
-layer at (25,175) size 366x93
+layer at (25,175.33) size 366x93
   RenderSVGText {text} at (0,125) size 366x94 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 362x19
       RenderSVGInlineText {#text} at (0,0) size 362x19
@@ -49,7 +49,7 @@ layer at (25,175) size 366x93
       RenderSVGInlineText {#text} at (0,75) size 195x19
         chunk 1 text run 1 at (25.00,265.00) startOffset 0 endOffset 28 width 194.49: "four lines at the same time."
     RenderSVGInlineText {#text} at (0,0) size 0x0
-layer at (10,304) size 265x46
+layer at (10,303.84) size 265x46
   RenderSVGText {text} at (9,302) size 265x48 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 265x47
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.8 $"

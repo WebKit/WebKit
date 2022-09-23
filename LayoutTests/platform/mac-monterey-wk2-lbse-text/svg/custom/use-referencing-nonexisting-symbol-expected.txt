@@ -21,6 +21,6 @@ layer at (17,2) size 40x69
     RenderSVGInlineText {#text} at (0,0) size 41x69
       chunk 1 text run 1 at (17.00,56.00) startOffset 0 endOffset 1 width 40.02: "B"
 layer at (5,2) size 59x70
-  RenderSVGTransformableContainer {use} at (5,2) size 59x70
-layer at (0,0) size 800x600 clip at (0,0) size 75x64
+  RenderSVGTransformableContainer {use} at (5,2) size 59x69.02
+layer at (0,0) size 800x600 clip at (0,0) size 74.67x64
   RenderSVGViewportContainer {svg} at (-5,-2) size 800x600

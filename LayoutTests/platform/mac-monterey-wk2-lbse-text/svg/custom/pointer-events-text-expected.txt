@@ -13,7 +13,7 @@ layer at (340,6) size 112x18
     RenderSVGInlineText {#text} at (0,0) size 113x18
       chunk 1 text run 1 at (340.00,20.00) startOffset 0 endOffset 18 width 112.45: "Visibility: hidden"
 layer at (0,24) size 534x616 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,24) size 534x616
+  RenderSVGTransformableContainer {g} at (0,24) size 533.34x616
 layer at (0,46) size 28x18
   RenderSVGText {text} at (0,22) size 28x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 28x18

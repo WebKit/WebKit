@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 151x151
-  RenderSVGRoot {svg} at (0,0) size 152x152
-layer at (0,0) size 152x152 backgroundClip at (0,0) size 151x151 clip at (0,0) size 151x151
-  RenderSVGViewportContainer at (0,0) size 152x152
-layer at (100,100) size 200x200 backgroundClip at (0,0) size 151x151 clip at (0,0) size 151x151
+  RenderSVGRoot {svg} at (0,0) size 151.17x151.17
+layer at (0,0) size 152x152 backgroundClip at (0,0) size 151.17x151.17 clip at (0,0) size 151.17x151.17
+  RenderSVGViewportContainer at (0,0) size 151.17x151.17
+layer at (100,100) size 200x200 backgroundClip at (0,0) size 151.17x151.17 clip at (0,0) size 151.17x151.17
   RenderSVGPath {path} at (100,100) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M 100 100 L 300 100 L 200 300"]

@@ -5,14 +5,14 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 416x273
-  RenderSVGTransformableContainer {g} at (0,0) size 416x273
-layer at (125,17) size 180x16
+  RenderSVGTransformableContainer {g} at (0,0) size 415.03x272.13
+layer at (125,17.31) size 180x16
   RenderSVGText {text} at (125,17) size 180x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 180x16
       chunk 1 text run 1 at (125.00,30.00) startOffset 0 endOffset 27 width 179.74: "Marker Rendering Properties"
 layer at (0,0) size 154x143
-  RenderSVGTransformableContainer {g} at (0,0) size 154x143
-layer at (100,131) size 53x11
+  RenderSVGTransformableContainer {g} at (0,0) size 153.36x142.13
+layer at (100,130.94) size 53x11
   RenderSVGText {text} at (100,130) size 54x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 54x12
       chunk 1 text run 1 at (100.00,140.00) startOffset 0 endOffset 13 width 53.34: "Fill Property"
@@ -47,8 +47,8 @@ layer at (0,0) size 10x10
 layer at (0,0) size 10x10
   RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
 layer at (0,0) size 410x143
-  RenderSVGTransformableContainer {g} at (0,0) size 410x143
-layer at (340,131) size 69x11
+  RenderSVGTransformableContainer {g} at (0,0) size 409.48x142.13
+layer at (340,130.94) size 69x11
   RenderSVGText {text} at (340,130) size 70x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 70x12
       chunk 1 text run 1 at (340.00,140.00) startOffset 0 endOffset 15 width 69.47: "Stroke Property"
@@ -83,8 +83,8 @@ layer at (0,0) size 20x20
 layer at (0,0) size 20x20
   RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
 layer at (0,0) size 166x273
-  RenderSVGTransformableContainer {g} at (0,0) size 166x273
-layer at (90,261) size 75x11
+  RenderSVGTransformableContainer {g} at (0,0) size 165.03x272.13
+layer at (90,260.94) size 75x11
   RenderSVGText {text} at (90,260) size 76x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 76x12
       chunk 1 text run 1 at (90.00,270.00) startOffset 0 endOffset 16 width 75.03: "Mixed Properties"
@@ -121,8 +121,8 @@ layer at (0,0) size 20x20
 layer at (0,0) size 20x20
   RenderSVGRect {rect} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#000000] [stroke width=8.00]}] [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
 layer at (0,0) size 416x273
-  RenderSVGTransformableContainer {g} at (0,0) size 416x273
-layer at (340,261) size 75x11
+  RenderSVGTransformableContainer {g} at (0,0) size 415.03x272.13
+layer at (340,260.94) size 75x11
   RenderSVGText {text} at (340,260) size 76x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 76x12
       chunk 1 text run 1 at (340.00,270.00) startOffset 0 endOffset 16 width 75.03: "Mixed Properties"

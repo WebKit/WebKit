@@ -13,7 +13,7 @@ layer at (140,6) size 187x18
 layer at (60,136) size 295x44
   RenderSVGTransformableContainer {g} at (0,130) size 295x44
 layer at (60,136) size 106x44
-  RenderSVGTransformableContainer {g} at (0,0) size 106x44
+  RenderSVGTransformableContainer {g} at (0,0) size 105.09x44
 layer at (70,136) size 95x18
   RenderSVGText {text} at (10,0) size 96x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 96x18
@@ -24,9 +24,9 @@ layer at (60,170) size 20x0
   RenderSVGPath {line} at (0,34) size 20x0 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=60.00] [y1=170.00] [x2=80.00] [y2=170.00]
 layer at (70,160) size 0x20
   RenderSVGPath {line} at (10,24) size 0x20 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [x1=70.00] [y1=160.00] [x2=70.00] [y2=180.00]
-layer at (70,143) size 285x36
-  RenderSVGTransformableContainer {g} at (10,6) size 285x36
-layer at (70,143) size 285x35
+layer at (70,142.50) size 285x36
+  RenderSVGTransformableContainer {g} at (10,6.50) size 285x35
+layer at (70,142.50) size 285x35
   RenderSVGText {text} at (0,0) size 285x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 285x35
       chunk 1 text run 1 at (70.00,170.00) startOffset 0 endOffset 22 width 285.00: "Scripting Test Passed!"

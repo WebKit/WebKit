@@ -5,16 +5,16 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 380x100
-  RenderSVGTransformableContainer {g} at (0,0) size 380x100
+  RenderSVGTransformableContainer {g} at (0,0) size 379.69x100
 layer at (0,0) size 100x100
   RenderSVGHiddenContainer {defs} at (0,0) size 100x100
 layer at (0,0) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#C82828] [stroke width=20.00]}] [fill={[type=SOLID] [color=#FADC00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-layer at (88,46) size 64x18
+layer at (87.58,46) size 64x18
   RenderSVGText {text} at (87,46) size 66x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 65x18
       chunk 1 (middle anchor) text run 1 at (87.58,60.00) startOffset 0 endOffset 9 width 64.84: "Reference"
-layer at (340,46) size 40x18
+layer at (340.31,46) size 40x18
   RenderSVGText {text} at (340,46) size 40x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 40x18
       chunk 1 (middle anchor) text run 1 at (340.31,60.00) startOffset 0 endOffset 5 width 39.38: "<use>"

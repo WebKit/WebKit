@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (0,76) size 645x64
-  RenderSVGTransformableContainer {g} at (0,75) size 645x64
-layer at (0,76) size 131x63
+layer at (0,75.75) size 645x64
+  RenderSVGTransformableContainer {g} at (0,75.75) size 644.63x63
+layer at (0,75.75) size 131x63
   RenderSVGText {text} at (0,0) size 132x63 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 132x63
       chunk 1 text run 1 at (0.00,125.00) startOffset 0 endOffset 4 width 131.48: "PASS"
-layer at (0,76) size 645x63
+layer at (0,75.75) size 645x63
   RenderSVGText {text} at (0,0) size 645x63 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 645x63
       chunk 1 text run 1 at (0.00,125.00) startOffset 0 endOffset 28 width 644.61: "FAIL (should be clipped out)"

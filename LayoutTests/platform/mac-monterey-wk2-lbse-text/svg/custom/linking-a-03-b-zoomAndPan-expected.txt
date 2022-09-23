@@ -5,20 +5,20 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (64,9) size 326x326
-  RenderSVGTransformableContainer {g} at (64,9) size 326x326
+  RenderSVGTransformableContainer {g} at (64,9) size 326x325.77
 layer at (100,9) size 187x14
   RenderSVGText {text} at (36,0) size 188x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 188x14
       chunk 1 text run 1 at (100.00,20.00) startOffset 0 endOffset 41 width 187.31: "Some circles with ids, for linking tests."
 layer at (185,105) size 70x70
   RenderSVGEllipse {circle} at (121,96) size 70x70 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=220.00] [cy=140.00] [r=35.00]
-layer at (203,88) size 39x14
+layer at (203,87.75) size 39x14
   RenderSVGText {text} at (139,78) size 39x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 39x14
       chunk 1 text run 1 at (203.00,99.00) startOffset 0 endOffset 8 width 38.67: "circle-1"
 layer at (80,240) size 40x40
   RenderSVGEllipse {circle} at (16,231) size 40x40 [stroke={[type=SOLID] [color=#00FF00] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=100.00] [cy=260.00] [r=20.00]
-layer at (80,284) size 39x14
+layer at (80,283.75) size 39x14
   RenderSVGText {text} at (16,274) size 39x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 39x14
       chunk 1 text run 1 at (80.00,295.00) startOffset 0 endOffset 8 width 38.67: "circle-2"
@@ -26,7 +26,7 @@ layer at (64,227) size 72x72
   RenderSVGRect {rect} at (0,218) size 72x72 [stroke={[type=SOLID] [color=#000000]}] [x=64.00] [y=227.00] [width=72.00] [height=72.00]
 layer at (290,210) size 100x100
   RenderSVGEllipse {circle} at (226,201) size 100x100 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [cx=340.00] [cy=260.00] [r=50.00]
-layer at (320,321) size 39x14
+layer at (320,320.75) size 39x14
   RenderSVGText {text} at (256,311) size 39x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 39x14
       chunk 1 text run 1 at (320.00,332.00) startOffset 0 endOffset 8 width 38.67: "circle-3"

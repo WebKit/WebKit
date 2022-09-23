@@ -4,16 +4,16 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (115,11) size 250x279
-  RenderSVGTransformableContainer {g} at (115,11) size 250x279
-layer at (142,11) size 196x17
+layer at (115,11.41) size 250x279
+  RenderSVGTransformableContainer {g} at (115,11.41) size 250x278.59
+layer at (141.61,11.41) size 196x17
   RenderSVGText {text} at (26,0) size 198x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 197x17
       chunk 1 (middle anchor) text run 1 at (141.62,25.00) startOffset 0 endOffset 35 width 196.76: "feTile filter test: a tiled pattern"
 layer at (115,40) size 250x251
-  RenderSVGRect {rect} at (0,28) size 250x251 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [x=115.00] [y=40.00] [width=250.00] [height=250.00]
+  RenderSVGRect {rect} at (0,28.59) size 250x250 [stroke={[type=SOLID] [color=#0000FF] [stroke width=2.00]}] [x=115.00] [y=40.00] [width=250.00] [height=250.00]
 layer at (215,115) size 50x26
-  RenderSVGRect {rect} at (100,103) size 50x26 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [x=215.00] [y=115.00] [width=50.00] [height=25.00]
+  RenderSVGRect {rect} at (100,103.59) size 50x25 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [x=215.00] [y=115.00] [width=50.00] [height=25.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

@@ -4,9 +4,9 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,29) size 410x281
-  RenderSVGTransformableContainer {g} at (10,28) size 410x281
-layer at (240,29) size 179x180
+layer at (10,28.75) size 410x281
+  RenderSVGTransformableContainer {g} at (10,28.75) size 409.31x280
+layer at (240,28.75) size 179x180
   RenderSVGText {text} at (230,0) size 180x180 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 180x180
       chunk 1 text run 1 at (240.00,60.00) startOffset 0 endOffset 1 width 31.12: "M"
@@ -17,7 +17,7 @@ layer at (240,29) size 179x180
       chunk 1 text run 1 at (340.00,160.00) startOffset 0 endOffset 1 width 8.75: " "
       chunk 1 text run 1 at (360.00,180.00) startOffset 0 endOffset 1 width 25.28: "X"
       chunk 1 text run 1 at (385.28,200.00) startOffset 0 endOffset 2 width 34.03: " Y"
-layer at (10,29) size 154x53
+layer at (10,28.75) size 154x53
   RenderSVGText {text} at (0,0) size 155x54 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 155x54
       chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 23.34: "R"
@@ -26,7 +26,7 @@ layer at (10,29) size 154x53
       chunk 1 text run 4 at (80.00,60.00) startOffset 3 endOffset 4 width 25.28: "A"
       chunk 1 text run 5 at (105.28,60.00) startOffset 4 endOffset 5 width 21.38: "T"
       chunk 1 text run 6 at (126.66,60.00) startOffset 5 endOffset 6 width 21.38: "E"
-layer at (10,166) size 248x143
+layer at (10,165.52) size 248x143
   RenderSVGText {text} at (0,136) size 248x144 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,103) size 248x144
       chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 1 width 23.34: "B"

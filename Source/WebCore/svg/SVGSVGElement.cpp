@@ -432,8 +432,10 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
 {
     if (isOutermostSVGSVGElement()) {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (document().settings().layerBasedSVGEngineEnabled())
+        if (document().settings().layerBasedSVGEngineEnabled()) {
+            document().setMayHaveRenderedSVGRootElements();
             return createRenderer<RenderSVGRoot>(*this, WTFMove(style));
+        }
 #endif
         return createRenderer<LegacyRenderSVGRoot>(*this, WTFMove(style));
     }

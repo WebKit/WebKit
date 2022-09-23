@@ -4,45 +4,45 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,7) size 387x307
-  RenderSVGTransformableContainer {g} at (10,7) size 387x307
-layer at (10,7) size 135x16
+layer at (10,7.31) size 387x307
+  RenderSVGTransformableContainer {g} at (10,7.31) size 386.78x305.70
+layer at (10,7.31) size 135x16
   RenderSVGText {text} at (0,0) size 136x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 136x16
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 135.38: "Test for mask support"
 layer at (10,30) size 100x261
-  RenderSVGRect {rect} at (0,22) size 100x261 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=30.00] [width=100.00] [height=260.00]
+  RenderSVGRect {rect} at (0,22.69) size 100x260 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=30.00] [width=100.00] [height=260.00]
 layer at (60,50) size 100x61
-  RenderSVGRect {rect} at (50,42) size 100x61 [fill={[type=SOLID] [color=#00FF00]}] [x=60.00] [y=50.00] [width=100.00] [height=60.00]
-layer at (200,54) size 160x13
+  RenderSVGRect {rect} at (50,42.69) size 100x60 [fill={[type=SOLID] [color=#00FF00]}] [x=60.00] [y=50.00] [width=100.00] [height=60.00]
+layer at (200,54.13) size 160x13
   RenderSVGText {text} at (190,46) size 161x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 161x14
       chunk 1 text run 1 at (200.00,65.00) startOffset 0 endOffset 30 width 160.06: "Mask with linear gradient from"
-layer at (200,69) size 133x13
+layer at (200,69.13) size 133x13
   RenderSVGText {text} at (190,61) size 134x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 134x14
       chunk 1 text run 1 at (200.00,80.00) startOffset 0 endOffset 25 width 133.42: "opacity=1 to opactity=0.5"
 layer at (60,120) size 100x31
-  RenderSVGRect {rect} at (50,112) size 100x31 [fill={[type=SOLID] [color=#00FF00]}] [x=60.00] [y=120.00] [width=100.00] [height=30.00]
-layer at (200,124) size 171x13
+  RenderSVGRect {rect} at (50,112.69) size 100x30 [fill={[type=SOLID] [color=#00FF00]}] [x=60.00] [y=120.00] [width=100.00] [height=30.00]
+layer at (200,124.13) size 171x13
   RenderSVGText {text} at (190,116) size 172x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 172x14
       chunk 1 text run 1 at (200.00,135.00) startOffset 0 endOffset 32 width 171.40: "Mask with uniform opacity of 0.5"
 layer at (60,160) size 100x31
-  RenderSVGRect {rect} at (50,152) size 100x31 [fill={[type=SOLID] [color=#00FF00] [opacity=0.50]}] [x=60.00] [y=160.00] [width=100.00] [height=30.00]
-layer at (200,164) size 197x13
+  RenderSVGRect {rect} at (50,152.69) size 100x30 [fill={[type=SOLID] [color=#00FF00] [opacity=0.50]}] [x=60.00] [y=160.00] [width=100.00] [height=30.00]
+layer at (200,164.13) size 197x13
   RenderSVGText {text} at (190,156) size 197x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 197x14
       chunk 1 text run 1 at (200.00,175.00) startOffset 0 endOffset 37 width 196.77: "Rectangle with uniform opacity of 0.5"
-layer at (60,203) size 121x111
+layer at (60,202.66) size 121x111
   RenderSVGText {text} at (50,195) size 122x111 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 122x111
       chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 3 width 121.33: "SVG"
-layer at (200,214) size 197x13
+layer at (200,214.13) size 197x13
   RenderSVGText {text} at (190,206) size 197x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 197x14
       chunk 1 text run 1 at (200.00,225.00) startOffset 0 endOffset 36 width 196.76: "Text with mask containing rectangles"
-layer at (200,229) size 103x13
+layer at (200,229.13) size 103x13
   RenderSVGText {text} at (190,221) size 103x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 103x14
       chunk 1 text run 1 at (200.00,240.00) startOffset 0 endOffset 20 width 102.72: "of various opacities"

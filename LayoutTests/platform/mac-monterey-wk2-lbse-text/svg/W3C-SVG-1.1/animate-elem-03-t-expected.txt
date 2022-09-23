@@ -4,21 +4,21 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (20,48) size 322x212
-  RenderSVGTransformableContainer {g} at (20,47) size 322x212
-layer at (20,48) size 322x211
-  RenderSVGTransformableContainer {g} at (0,0) size 322x211
-layer at (20,48) size 322x211
-  RenderSVGTransformableContainer {g} at (0,0) size 322x211
-layer at (20,48) size 214x40
+layer at (20,47.98) size 322x212
+  RenderSVGTransformableContainer {g} at (20,47.98) size 321.67x210.03
+layer at (20,47.98) size 322x211
+  RenderSVGTransformableContainer {g} at (0,0) size 321.67x210.03
+layer at (20,47.98) size 322x211
+  RenderSVGTransformableContainer {g} at (0,0) size 321.67x210.03
+layer at (20,47.98) size 214x40
   RenderSVGText {text} at (0,0) size 215x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 215x41
       chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 10 width 214.44: "Sample 123"
-layer at (20,107) size 322x60
+layer at (20,106.98) size 322x60
   RenderSVGText {text} at (0,59) size 322x61 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 322x61
       chunk 1 text run 1 at (20.00,155.00) startOffset 0 endOffset 10 width 321.66: "Sample 123"
-layer at (20,218) size 214x40
+layer at (20,217.98) size 214x40
   RenderSVGText {text} at (0,170) size 215x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 215x41
       chunk 1 text run 1 at (20.00,250.00) startOffset 0 endOffset 10 width 214.44: "Sample 123"

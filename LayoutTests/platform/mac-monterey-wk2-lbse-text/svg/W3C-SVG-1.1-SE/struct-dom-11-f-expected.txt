@@ -4,27 +4,27 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,28) size 383x153
-  RenderSVGTransformableContainer {g} at (10,27) size 383x153
-layer at (10,28) size 382x15
+layer at (10,27.98) size 383x153
+  RenderSVGTransformableContainer {g} at (10,27.98) size 382.27x152.02
+layer at (10,27.98) size 382x15
   RenderSVGText {text} at (0,0) size 383x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 383x15
       chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 67 width 382.26: "Test getIntersectionList and getEnclosureList return value liveness"
 layer at (10,70) size 50x51
-  RenderSVGRect {rect} at (0,42) size 50x51 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=70.00] [width=50.00] [height=50.00]
-layer at (70,83) size 146x21
+  RenderSVGRect {rect} at (0,42.02) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=70.00] [width=50.00] [height=50.00]
+layer at (70,83.13) size 146x21
   RenderSVGText {text} at (60,55) size 147x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 147x21
       chunk 1 text run 1 at (70.00,100.00) startOffset 0 endOffset 19 width 146.08: "getIntersectionList"
 layer at (10,130) size 50x51
-  RenderSVGRect {rect} at (0,102) size 50x51 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=130.00] [width=50.00] [height=50.00]
-layer at (70,143) size 133x21
+  RenderSVGRect {rect} at (0,102.02) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=10.00] [y=130.00] [width=50.00] [height=50.00]
+layer at (70,143.13) size 133x21
   RenderSVGText {text} at (60,115) size 134x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 134x21
       chunk 1 text run 1 at (70.00,160.00) startOffset 0 endOffset 16 width 133.08: "getEnclosureList"
-layer at (10,310) size 230x38
-  RenderSVGTransformableContainer {g} at (10,310) size 230x38
-layer at (10,310) size 229x37
+layer at (10,310.36) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.36) size 229.47x37
+layer at (10,310.36) size 229x37
   RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x37
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.5 $"

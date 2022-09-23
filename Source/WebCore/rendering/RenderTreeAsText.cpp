@@ -211,6 +211,19 @@ static inline bool hasNonEmptySibling(const RenderInline& inlineRenderer)
     return false;
 }
 
+inline bool shouldEnableSubpixelPrecisionForTextDump(const Document& document)
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // If LBSE is activated and the document contains outermost <svg> elements, generate the text
+    // representation with subpixel precision. It would be awkward to only see the SVG part of a
+    // compound document with subpixel precision in the render tree dumps, and not the surrounding content.
+    return document.settings().layerBasedSVGEngineEnabled() && document.mayHaveRenderedSVGRootElements();
+#else
+    UNUSED_PARAM(document);
+    return false;
+#endif
+}
+
 void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, OptionSet<RenderAsTextFlag> behavior)
 {
     ts << o.renderName().characters();
@@ -238,6 +251,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     RenderBlock* cb = o.containingBlock();
     bool adjustForTableCells = cb ? cb->isTableCell() : false;
 
+    bool enableSubpixelPrecisionForTextDump = shouldEnableSubpixelPrecisionForTextDump(o.document());
     LayoutRect r;
     if (is<RenderText>(o)) {
         // FIXME: Would be better to dump the bounding box x and y rather than the first run's x and y, but that would involve updating
@@ -296,8 +310,10 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
 
     // FIXME: Convert layout test results to report sub-pixel values, in the meantime using enclosingIntRect
     // for consistency with old results.
-    // FIXME: [LBSE] Enable sub-pixel dumps for SVG
-    ts << " " << enclosingIntRect(r);
+    if (enableSubpixelPrecisionForTextDump)
+        ts << " " << r;
+    else
+        ts << " " << enclosingIntRect(r);
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (is<RenderSVGModelObject>(o)) {
@@ -647,13 +663,10 @@ enum LayerPaintPhase {
     LayerPaintPhaseForeground = 1
 };
 
-static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect,
-    LayerPaintPhase paintPhase = LayerPaintPhaseAll, OptionSet<RenderAsTextFlag> behavior = { })
+template<typename DumpRectType>
+inline void writeLayerUsingGeometryType(TextStream& ts, const RenderLayer& layer, const DumpRectType& layerBounds, const DumpRectType& backgroundClipRect, const DumpRectType& clipRect,
+    LayerPaintPhase paintPhase, OptionSet<RenderAsTextFlag> behavior)
 {
-    IntRect adjustedLayoutBounds = snappedIntRect(layerBounds);
-    IntRect adjustedBackgroundClipRect = snappedIntRect(backgroundClipRect);
-    IntRect adjustedClipRect = snappedIntRect(clipRect);
-
     ts << indent << "layer ";
     
     if (behavior.contains(RenderAsTextFlag::ShowAddresses)) {
@@ -662,13 +675,13 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
             ts << "scrollableArea " << scrollableArea << " ";
     }
 
-    ts << adjustedLayoutBounds;
+    ts << layerBounds;
 
-    if (!adjustedLayoutBounds.isEmpty()) {
-        if (!adjustedBackgroundClipRect.contains(adjustedLayoutBounds))
-            ts << " backgroundClip " << adjustedBackgroundClipRect;
-        if (!adjustedClipRect.contains(adjustedLayoutBounds))
-            ts << " clip " << adjustedClipRect;
+    if (!layerBounds.isEmpty()) {
+        if (!backgroundClipRect.contains(layerBounds))
+            ts << " backgroundClip " << backgroundClipRect;
+        if (!clipRect.contains(layerBounds))
+            ts << " clip " << clipRect;
     }
 
     if (layer.renderer().hasNonVisibleOverflow()) {
@@ -715,6 +728,17 @@ static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRec
 #endif
     
     ts << "\n";
+}
+
+static void writeLayer(TextStream& ts, const RenderLayer& layer, const LayoutRect& layerBounds, const LayoutRect& backgroundClipRect, const LayoutRect& clipRect,
+    LayerPaintPhase paintPhase = LayerPaintPhaseAll, OptionSet<RenderAsTextFlag> behavior = { })
+{
+    if (shouldEnableSubpixelPrecisionForTextDump(layer.renderer().document())) {
+        writeLayerUsingGeometryType<LayoutRect>(ts, layer, layerBounds, backgroundClipRect, clipRect, paintPhase, behavior);
+        return;
+    }
+
+    writeLayerUsingGeometryType<IntRect>(ts, layer, snappedIntRect(layerBounds), snappedIntRect(backgroundClipRect), snappedIntRect(clipRect), paintPhase, behavior);
 }
 
 static void writeLayerRenderers(TextStream& ts, const RenderLayer& layer, LayerPaintPhase paintPhase, OptionSet<RenderAsTextFlag> behavior)
@@ -872,9 +896,20 @@ static void writeSelection(TextStream& ts, const RenderBox& renderer)
            << "selection end:   position " << selection.end().deprecatedEditingOffset() << " of " << nodePosition(selection.end().deprecatedNode()) << "\n";
 }
 
+static TextStream createTextStream(const Document& document)
+{
+    auto formattingFlags = [&document]() -> OptionSet<TextStream::Formatting> {
+        if (shouldEnableSubpixelPrecisionForTextDump(document))
+            return { TextStream::Formatting::SVGStyleRect };
+        return { TextStream::Formatting::SVGStyleRect, TextStream::Formatting::LayoutUnitsAsIntegers };
+    };
+
+    return { TextStream::LineMode::MultipleLine, formattingFlags() };
+}
+
 static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsTextFlag> behavior)
 {
-    TextStream ts(TextStream::LineMode::MultipleLine, { TextStream::Formatting::SVGStyleRect, TextStream::Formatting::LayoutUnitsAsIntegers });
+    auto ts = createTextStream(renderer.document());
     if (!renderer.hasLayer())
         return ts.release();
 
@@ -950,7 +985,7 @@ String counterValueForElement(Element* element)
     // Make sure the element is not freed during the layout.
     RefPtr<Element> elementRef(element);
     element->document().updateLayout();
-    TextStream stream(TextStream::LineMode::MultipleLine, { TextStream::Formatting::SVGStyleRect, TextStream::Formatting::LayoutUnitsAsIntegers });
+    auto stream = createTextStream(element->document());
     bool isFirstCounter = true;
     // The counter renderers should be children of :before or :after pseudo-elements.
     if (PseudoElement* before = element->beforePseudoElement())

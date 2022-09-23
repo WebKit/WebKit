@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (1,1) size 198x118
   RenderSVGTransformableContainer {g} at (1,1) size 198x118
-layer at (0,0) size 300x180 backgroundClip at (0,1) size 199x118 clip at (0,0) size 200x120
+layer at (0,0) size 300x180 backgroundClip at (0,0.50) size 199x118.50 clip at (0,0) size 200x120
   RenderSVGViewportContainer {svg} at (-1,-1) size 300x180
 layer at (1,1) size 198x118 backgroundClip at (80,110) size 200x120 clip at (80,110) size 200x120
   RenderSVGRect {rect} at (1,1) size 198x118 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [x=1.00] [y=1.00] [width=198.00] [height=118.00]

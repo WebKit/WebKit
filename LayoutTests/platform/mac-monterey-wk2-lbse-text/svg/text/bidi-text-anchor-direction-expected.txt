@@ -4,29 +4,29 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (1,39) size 480x184
-  RenderSVGTransformableContainer {g} at (0,39) size 480x184
-layer at (240,39) size 239x14
+layer at (0.50,39.09) size 480x184
+  RenderSVGTransformableContainer {g} at (0.50,39.09) size 479x183.67
+layer at (240,39.09) size 239x14
   RenderSVGText {text} at (239,0) size 240x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 240x14
       chunk 1 text run 1 at (240.00,50.00) startOffset 0 endOffset 56 width 239.49: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (120,69) size 239x14
+layer at (120.25,69.09) size 239x14
   RenderSVGText {text} at (119,30) size 241x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 240x14
       chunk 1 (middle anchor) text run 1 at (120.25,80.00) startOffset 0 endOffset 56 width 239.49: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (1,99) size 240x14
+layer at (0.50,99.09) size 240x14
   RenderSVGText {text} at (0,60) size 240x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 240x14
       chunk 1 (end anchor) text run 1 at (0.51,110.00) startOffset 0 endOffset 56 width 239.49: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (1,139) size 240x14
+layer at (0.50,139.09) size 240x14
   RenderSVGText {text} at (0,100) size 240x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 240x14
       chunk 1 text run 1 at (0.51,150.00) startOffset 0 endOffset 56 width 239.49 RTL: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (120,169) size 239x14
+layer at (120.25,169.09) size 239x14
   RenderSVGText {text} at (119,130) size 241x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 240x14
       chunk 1 (middle anchor) text run 1 at (120.25,180.00) startOffset 0 endOffset 56 width 239.49 RTL: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (240,209) size 239x14
+layer at (240,209.09) size 239x14
   RenderSVGText {text} at (239,170) size 240x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 240x14
       chunk 1 (end anchor) text run 1 at (240.00,220.00) startOffset 0 endOffset 56 width 239.49 RTL: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"

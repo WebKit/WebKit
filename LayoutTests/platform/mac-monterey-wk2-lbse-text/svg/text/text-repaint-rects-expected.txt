@@ -16,60 +16,60 @@ layer at (0,0) size 800x155
           text run at (0,87) width 742: "incorrectly calculating the PaintInfo::rect (damage rect) when passing it through RenderBlock and render block was"
           text run at (0,105) width 379: "(correctly) clipping out some of the lineboxes during paint."
 layer at (232,16) size 500x47
-  RenderSVGRoot {svg} at (224,0) size 501x47
-layer at (232,16) size 500x47
+  RenderSVGRoot {svg} at (224.39,0) size 500x47
+layer at (232.39,16) size 500x47
   RenderSVGViewportContainer at (0,0) size 500x47
-layer at (232,-29) size 45x59 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
-  RenderSVGTransformableContainer {g} at (0,-46) size 45x59
-layer at (232,-29) size 36x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 45x59 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
+  RenderSVGTransformableContainer {g} at (0,-45.50) size 44.47x58
+layer at (232.39,-29.50) size 36x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 37x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 37x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.11: "A"
-layer at (232,-29) size 33x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 33x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 34x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 34x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 33.35: "B"
-layer at (232,-29) size 33x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 33x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 34x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 34x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 33.35: "C"
-layer at (232,-29) size 36x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 36x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 37x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 37x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.11: "D"
-layer at (232,-29) size 31x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 31x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 31x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 31x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 30.54: "E"
-layer at (232,-29) size 28x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 28x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 28x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 28x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 27.81: "F"
-layer at (232,-29) size 36x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 36x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 37x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 37x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.11: "G"
-layer at (232,-29) size 36x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 36x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 37x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 37x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.11: "H"
-layer at (232,-29) size 17x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 17x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 17x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 17x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 16.65: "I"
-layer at (232,-29) size 19x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 19x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 20x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 20x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 19.46: "J"
-layer at (232,-29) size 36x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 36x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 37x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 37x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 36.11: "K"
-layer at (232,-29) size 31x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 31x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 31x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 31x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 30.54: "L"
-layer at (232,-29) size 44x58 backgroundClip at (232,16) size 500x47 clip at (232,16) size 500x47
+layer at (232.39,-29.50) size 44x58 backgroundClip at (232.39,16) size 500x47 clip at (232.39,16) size 500x47
   RenderSVGText {text} at (0,0) size 45x58 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 45x58
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 44.46: "M"

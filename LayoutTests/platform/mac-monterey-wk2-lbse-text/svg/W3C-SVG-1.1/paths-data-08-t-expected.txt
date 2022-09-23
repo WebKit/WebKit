@@ -4,51 +4,51 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (8,12) size 377x153
-  RenderSVGTransformableContainer {g} at (8,12) size 377x153
-layer at (75,12) size 309x27
+layer at (8.03,12.27) size 377x153
+  RenderSVGTransformableContainer {g} at (8.03,12.27) size 376.44x152.33
+layer at (75,12.27) size 309x27
   RenderSVGText {text} at (66,0) size 311x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 310x27
       chunk 1 text run 1 at (75.00,34.00) startOffset 0 endOffset 26 width 309.47: "Lines drawn with commands:"
-layer at (180,42) size 88x27
+layer at (180,42.27) size 88x27
   RenderSVGText {text} at (171,30) size 89x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x27
       chunk 1 text run 1 at (180.00,64.00) startOffset 0 endOffset 7 width 88.03: "M and Z"
-layer at (8,54) size 223x112
-  RenderSVGTransformableContainer {g} at (0,41) size 223x112
-layer at (10,56) size 104x90
-  RenderSVGPath {path} at (2,2) size 104x90 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 56 L 113.962 146 L 10.0385 146 L 62 56 Z M 62 71 L 100.971 138.5 L 23.0289 138.5 L 62 71 Z"]
+layer at (8.03,54) size 223x112
+  RenderSVGTransformableContainer {g} at (0,41.73) size 222.94x110.59
+layer at (10.03,56) size 104x90
+  RenderSVGPath {path} at (2,2) size 103.94x90 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 56 L 113.962 146 L 10.0385 146 L 62 56 Z M 62 71 L 100.971 138.5 L 23.0289 138.5 L 62 71 Z"]
 layer at (60,54) size 5x4
-  RenderSVGRect {rect} at (51,0) size 5x4 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=54.00] [width=4.00] [height=4.00]
-layer at (112,144) size 5x4
-  RenderSVGRect {rect} at (103,90) size 5x4 [fill={[type=SOLID] [color=#00C000]}] [x=111.96] [y=144.00] [width=4.00] [height=4.00]
-layer at (8,144) size 5x4
-  RenderSVGRect {rect} at (0,90) size 5x4 [fill={[type=SOLID] [color=#00C000]}] [x=8.04] [y=144.00] [width=4.00] [height=4.00]
+  RenderSVGRect {rect} at (51.97,0) size 4x4 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=54.00] [width=4.00] [height=4.00]
+layer at (111.95,144) size 5x4
+  RenderSVGRect {rect} at (103.92,90) size 4.02x4 [fill={[type=SOLID] [color=#00C000]}] [x=111.96] [y=144.00] [width=4.00] [height=4.00]
+layer at (8.03,144) size 5x4
+  RenderSVGRect {rect} at (0,90) size 4.02x4 [fill={[type=SOLID] [color=#00C000]}] [x=8.04] [y=144.00] [width=4.00] [height=4.00]
 layer at (60,69) size 5x4
-  RenderSVGRect {rect} at (51,15) size 5x4 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=69.00] [width=4.00] [height=4.00]
-layer at (99,137) size 5x5
-  RenderSVGRect {rect} at (90,82) size 5x5 [fill={[type=SOLID] [color=#00C000]}] [x=98.97] [y=136.50] [width=4.00] [height=4.00]
-layer at (21,137) size 5x5
-  RenderSVGRect {rect} at (12,82) size 5x5 [fill={[type=SOLID] [color=#00C000]}] [x=21.03] [y=136.50] [width=4.00] [height=4.00]
-layer at (42,151) size 40x14
+  RenderSVGRect {rect} at (51.97,15) size 4x4 [fill={[type=SOLID] [color=#00C000]}] [x=60.00] [y=69.00] [width=4.00] [height=4.00]
+layer at (98.97,136.50) size 5x5
+  RenderSVGRect {rect} at (90.94,82.50) size 4.02x4 [fill={[type=SOLID] [color=#00C000]}] [x=98.97] [y=136.50] [width=4.00] [height=4.00]
+layer at (21.02,136.50) size 5x5
+  RenderSVGRect {rect} at (12.98,82.50) size 4.02x4 [fill={[type=SOLID] [color=#00C000]}] [x=21.03] [y=136.50] [width=4.00] [height=4.00]
+layer at (42,150.92) size 40x14
   RenderSVGText {text} at (33,96) size 42x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 41x14
       chunk 1 text run 1 at (42.00,162.00) startOffset 0 endOffset 7 width 40.08: "stroked"
-layer at (125,56) size 104x90
-  RenderSVGPath {path} at (117,2) size 104x90 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
+layer at (125.03,56) size 104x90
+  RenderSVGPath {path} at (117,2) size 103.94x90 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
 layer at (175,54) size 5x4
-  RenderSVGRect {rect} at (166,0) size 5x4 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=54.00] [width=4.00] [height=4.00]
-layer at (227,144) size 5x4
-  RenderSVGRect {rect} at (218,90) size 5x4 [fill={[type=SOLID] [color=#00C000]}] [x=226.96] [y=144.00] [width=4.00] [height=4.00]
-layer at (123,144) size 5x4
-  RenderSVGRect {rect} at (115,90) size 5x4 [fill={[type=SOLID] [color=#00C000]}] [x=123.04] [y=144.00] [width=4.00] [height=4.00]
+  RenderSVGRect {rect} at (166.97,0) size 4x4 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=54.00] [width=4.00] [height=4.00]
+layer at (226.95,144) size 5x4
+  RenderSVGRect {rect} at (218.92,90) size 4.02x4 [fill={[type=SOLID] [color=#00C000]}] [x=226.96] [y=144.00] [width=4.00] [height=4.00]
+layer at (123.03,144) size 5x4
+  RenderSVGRect {rect} at (115,90) size 4.02x4 [fill={[type=SOLID] [color=#00C000]}] [x=123.04] [y=144.00] [width=4.00] [height=4.00]
 layer at (175,69) size 5x4
-  RenderSVGRect {rect} at (166,15) size 5x4 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=69.00] [width=4.00] [height=4.00]
-layer at (214,137) size 5x5
-  RenderSVGRect {rect} at (205,82) size 5x5 [fill={[type=SOLID] [color=#00C000]}] [x=213.97] [y=136.50] [width=4.00] [height=4.00]
-layer at (136,137) size 5x5
-  RenderSVGRect {rect} at (127,82) size 5x5 [fill={[type=SOLID] [color=#00C000]}] [x=136.03] [y=136.50] [width=4.00] [height=4.00]
-layer at (162,151) size 25x14
+  RenderSVGRect {rect} at (166.97,15) size 4x4 [fill={[type=SOLID] [color=#00C000]}] [x=175.00] [y=69.00] [width=4.00] [height=4.00]
+layer at (213.97,136.50) size 5x5
+  RenderSVGRect {rect} at (205.94,82.50) size 4.02x4 [fill={[type=SOLID] [color=#00C000]}] [x=213.97] [y=136.50] [width=4.00] [height=4.00]
+layer at (136.02,136.50) size 5x5
+  RenderSVGRect {rect} at (127.98,82.50) size 4.02x4 [fill={[type=SOLID] [color=#00C000]}] [x=136.03] [y=136.50] [width=4.00] [height=4.00]
+layer at (162,150.92) size 25x14
   RenderSVGText {text} at (153,96) size 27x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 26x14
       chunk 1 text run 1 at (162.00,162.00) startOffset 0 endOffset 6 width 25.14: "filled"

@@ -5,50 +5,50 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-15,-30) size 460x293 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-15,-30) size 460x293
-layer at (92,12) size 266x16
+  RenderSVGTransformableContainer {g} at (-15,-30) size 459.52x292.97
+layer at (91.63,12.31) size 266x16
   RenderSVGText {text} at (106,42) size 268x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 267x16
       chunk 1 (middle anchor) text run 1 at (91.63,25.00) startOffset 0 endOffset 44 width 266.74: "Test rotate='auto' and rotate='auto-reverse'"
 layer at (-15,-30) size 460x293 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 460x293
-layer at (25,173) size 150x53
-  RenderSVGPath {path} at (40,202) size 150x53 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M 25 225 C 25 175 125 150 175 200"]
+  RenderSVGTransformableContainer {g} at (0,0) size 459.52x292.97
+layer at (25,172.73) size 150x53
+  RenderSVGPath {path} at (40,202.73) size 150x52.27 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M 25 225 C 25 175 125 150 175 200"]
 layer at (10,195) size 30x30
   RenderSVGRect {rect} at (25,225) size 30x30 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=195.00] [width=30.00] [height=30.00]
-layer at (9,229) size 32x14
+layer at (8.98,229.13) size 32x14
   RenderSVGText {text} at (23,259) size 33x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 33x14
       chunk 1 (middle anchor) text run 1 at (8.99,240.00) startOffset 0 endOffset 6 width 32.02: "0 sec."
 layer at (160,170) size 30x30
   RenderSVGRect {rect} at (175,200) size 30x30 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=160.00] [y=170.00] [width=30.00] [height=30.00]
-layer at (155,204) size 40x14
+layer at (155.48,204.13) size 40x14
   RenderSVGText {text} at (170,234) size 40x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 40x14
       chunk 1 (middle anchor) text run 1 at (155.49,215.00) startOffset 0 endOffset 7 width 39.02: "6+ sec."
 layer at (-15,-30) size 30x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGPath {path} at (0,0) size 30x30 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -15 0 L 0 -30 L 15 0 Z"]
-layer at (62,247) size 76x16
+layer at (61.70,247.31) size 76x16
   RenderSVGText {text} at (76,277) size 78x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 77x16
       chunk 1 (middle anchor) text run 1 at (61.72,260.00) startOffset 0 endOffset 13 width 76.57: "rotate='auto'"
-layer at (275,173) size 150x53
-  RenderSVGPath {path} at (290,202) size 150x53 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M 275 225 C 275 175 375 150 425 200"]
+layer at (275,172.73) size 150x53
+  RenderSVGPath {path} at (290,202.73) size 150x52.27 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M 275 225 C 275 175 375 150 425 200"]
 layer at (260,195) size 30x30
   RenderSVGRect {rect} at (275,225) size 30x30 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=260.00] [y=195.00] [width=30.00] [height=30.00]
-layer at (259,229) size 32x14
+layer at (258.98,229.13) size 32x14
   RenderSVGText {text} at (273,259) size 33x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 33x14
       chunk 1 (middle anchor) text run 1 at (258.99,240.00) startOffset 0 endOffset 6 width 32.02: "0 sec."
 layer at (410,170) size 30x30
   RenderSVGRect {rect} at (425,200) size 30x30 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=410.00] [y=170.00] [width=30.00] [height=30.00]
-layer at (405,204) size 40x14
+layer at (405.48,204.13) size 40x14
   RenderSVGText {text} at (420,234) size 40x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 40x14
       chunk 1 (middle anchor) text run 1 at (405.49,215.00) startOffset 0 endOffset 7 width 39.02: "6+ sec."
 layer at (-15,-30) size 30x30 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGPath {path} at (0,0) size 30x30 [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -15 0 L 0 -30 L 15 0 Z"]
-layer at (286,247) size 128x16
+layer at (286.03,247.31) size 128x16
   RenderSVGText {text} at (301,277) size 128x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 128x16
       chunk 1 (middle anchor) text run 1 at (286.04,260.00) startOffset 0 endOffset 21 width 127.91: "rotate='auto-reverse'"

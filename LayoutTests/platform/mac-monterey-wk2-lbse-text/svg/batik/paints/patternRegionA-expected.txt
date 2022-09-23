@@ -4,14 +4,14 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
-layer at (108,36) size 234x17
+layer at (108.48,35.52) size 234x17
   RenderSVGText {text} at (108,35) size 234x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 234x18
       chunk 1 (middle anchor) text run 1 at (108.49,50.00) startOffset 0 endOffset 34 width 233.02: "patternRegion, x, y, width, height"
-layer at (-5,-19) size 247x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (-5,-20) size 247x70
+layer at (-5,-19.48) size 247x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (-5,-19.48) size 246.95x69.48
 layer at (0,0) size 20x21
-  RenderSVGHiddenContainer {defs} at (5,19) size 20x21
+  RenderSVGHiddenContainer {defs} at (5,19.48) size 20x20
 layer at (0,0) size 20x20
   RenderSVGTransformableContainer {g} at (0,0) size 20x20
 layer at (0,0) size 20x20
@@ -40,10 +40,10 @@ layer at (0,0) size 5x5
   RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
 layer at (5,5) size 5x5
   RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
-layer at (0,-19) size 199x40 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (5,0) size 199x40
+layer at (0,-19.48) size 199x40 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (5,0) size 198.30x39.48
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,19) size 20x21
+  RenderSVGTransformableContainer {use} at (0,19.48) size 20x20
 layer at (0,0) size 20x20
   RenderSVGTransformableContainer {g} at (0,0) size 20x20
 layer at (0,0) size 20x20
@@ -72,61 +72,61 @@ layer at (0,0) size 5x5
   RenderSVGRect {rect} at (0,0) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=0.00] [y=0.00] [width=5.00] [height=5.00]
 layer at (5,5) size 5x5
   RenderSVGRect {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#6464FF]}] [x=5.00] [y=5.00] [width=5.00] [height=5.00]
-layer at (-5,-19) size 247x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 247x70
-layer at (0,-19) size 185x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (5,0) size 185x70
+layer at (-5,-19.48) size 247x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 246.05x69.48
+layer at (0,-19.48) size 185x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (5,0) size 184.09x69.48
 layer at (0,0) size 100x51
-  RenderSVGRect {rect} at (0,19) size 100x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+  RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
 layer at (0,0) size 20x21
-  RenderSVGRect {rect} at (0,19) size 20x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
-layer at (-5,-19) size 220x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 220x70
+  RenderSVGRect {rect} at (0,19.48) size 20x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (-5,-19.48) size 220x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 219.36x69.48
 layer at (0,0) size 100x51
-  RenderSVGRect {rect} at (5,19) size 100x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+  RenderSVGRect {rect} at (5,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
 layer at (-5,0) size 20x21 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (0,19) size 20x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=-5.00] [y=0.00] [width=20.00] [height=20.00]
-layer at (0,-19) size 216x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (5,0) size 216x70
+  RenderSVGRect {rect} at (0,19.48) size 20x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=-5.00] [y=0.00] [width=20.00] [height=20.00]
+layer at (0,-19.48) size 216x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (5,0) size 215.27x69.48
 layer at (0,0) size 100x51
-  RenderSVGRect {rect} at (0,19) size 100x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+  RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
 layer at (0,-5) size 20x21 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (0,14) size 20x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=-5.00] [width=20.00] [height=20.00]
-layer at (0,-19) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (5,0) size 242x70
+  RenderSVGRect {rect} at (0,14.48) size 20x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=-5.00] [width=20.00] [height=20.00]
+layer at (0,-19.48) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (5,0) size 241.05x69.48
 layer at (0,0) size 100x51
-  RenderSVGRect {rect} at (0,19) size 100x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+  RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
 layer at (10,10) size 20x21
-  RenderSVGRect {rect} at (10,29) size 20x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=10.00] [y=10.00] [width=20.00] [height=20.00]
-layer at (0,-19) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (5,0) size 242x70
-layer at (0,-19) size 236x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 236x70
+  RenderSVGRect {rect} at (10,29.48) size 20x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=10.00] [y=10.00] [width=20.00] [height=20.00]
+layer at (0,-19.48) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (5,0) size 241.95x69.48
+layer at (0,-19.48) size 236x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 235.72x69.48
 layer at (0,0) size 100x51
-  RenderSVGRect {rect} at (0,19) size 100x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+  RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
 layer at (0,0) size 40x21
-  RenderSVGRect {rect} at (0,19) size 40x21 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=40.00] [height=20.00]
-layer at (0,-19) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 242x70
+  RenderSVGRect {rect} at (0,19.48) size 40x20 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=40.00] [height=20.00]
+layer at (0,-19.48) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 241.95x69.48
 layer at (0,0) size 100x51
-  RenderSVGRect {rect} at (0,19) size 100x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+  RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
 layer at (0,0) size 20x41
-  RenderSVGRect {rect} at (0,19) size 20x41 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=40.00]
-layer at (0,-19) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 242x70
+  RenderSVGRect {rect} at (0,19.48) size 20x40 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=20.00] [height=40.00]
+layer at (0,-19.48) size 242x70 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 241.95x69.48
 layer at (0,0) size 100x51
-  RenderSVGRect {rect} at (0,19) size 100x51 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+  RenderSVGRect {rect} at (0,19.48) size 100x50 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
 layer at (0,0) size 40x41
-  RenderSVGRect {rect} at (0,19) size 40x41 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]
-layer at (0,0) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (-1,-1) size 540x565
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+  RenderSVGRect {rect} at (0,19.48) size 40x40 [stroke={[type=SOLID] [color=#FFFFFF]}] [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [x=0.00] [y=0.00] [width=40.00] [height=40.00]
+layer at (-0.05,-0.36) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (-0.05,-0.36) size 539x563.77
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
 layer at (1,1) size 447x497
-  RenderSVGRect {rect} at (1,1) size 447x497 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
-layer at (0,0) size 28x29
-  RenderSVGViewportContainer {svg} at (0,0) size 28x29
-layer at (158,352) size 287x212 backgroundClip at (413,467) size 37x33 clip at (413,467) size 37x33
-  RenderSVGPath {path} at (158,352) size 287x212 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]
+  RenderSVGRect {rect} at (1.05,1.36) size 446x496 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
+layer at (0,0) size 28x29 backgroundClip at (0,0.36) size 450x499.64
+  RenderSVGViewportContainer {svg} at (0.05,0.36) size 27x28
+layer at (158.31,352.16) size 287x212 backgroundClip at (413.41,467) size 36.59x33 clip at (413.41,467) size 36.59x33
+  RenderSVGPath {path} at (158.31,352.16) size 286.69x211.25 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

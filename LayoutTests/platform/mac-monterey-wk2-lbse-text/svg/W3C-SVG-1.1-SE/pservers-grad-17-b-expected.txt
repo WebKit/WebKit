@@ -18,7 +18,7 @@ layer at (70,10) size 340x340
   RenderSVGPath {line} at (70,70) size 340x340 [stroke={[type=SOLID] [color=#00FF00] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=410.00] [y1=10.00] [x2=70.00] [y2=350.00]
 layer at (0,-60) size 480x480 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 480x480 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
-layer at (69,236) size 102x18
+layer at (68.98,235.59) size 102x18
   RenderSVGText {text} at (68,295) size 104x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 103x19
       chunk 1 (middle anchor) text run 1 at (68.99,250.00) startOffset 0 endOffset 13 width 102.02: "With fallback"
@@ -34,13 +34,13 @@ layer at (70,10) size 340x340
   RenderSVGPath {line} at (70,70) size 340x340 [stroke={[type=SOLID] [color=#00000000] [stroke width=20.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=410.00] [y1=10.00] [x2=70.00] [y2=350.00]
 layer at (0,-60) size 480x480 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 480x480 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=-60.00] [width=480.00] [height=480.00]
-layer at (286,236) size 128x18
+layer at (286.47,235.59) size 128x18
   RenderSVGText {text} at (286,295) size 128x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 128x19
       chunk 1 (middle anchor) text run 1 at (286.48,250.00) startOffset 0 endOffset 16 width 127.04: "Without fallback"
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.4 $"

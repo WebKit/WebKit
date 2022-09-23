@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (10,5) size 418x187
-  RenderSVGTransformableContainer {g} at (10,5) size 418x187
+  RenderSVGTransformableContainer {g} at (10,5) size 417.66x186.50
 layer at (90,5) size 215x14
   RenderSVGText {text} at (80,0) size 216x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 216x14
@@ -16,7 +16,7 @@ layer at (165,28) size 145x72
   RenderSVGTransformableContainer {a} at (155,23) size 145x72
 layer at (165,28) size 145x72
   RenderSVGPath {path} at (0,0) size 145x72 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M 165 40 L 265 40 L 265 28 L 310 64 L 265 100 L 265 88 L 165 88 Z"]
-layer at (10,36) size 118x12
+layer at (10,35.50) size 118x12
   RenderSVGText {text} at (0,30) size 119x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 119x12
       chunk 1 text run 1 at (10.00,45.00) startOffset 0 endOffset 28 width 118.02: "transform=\"rotate(20,225,65)"
@@ -28,7 +28,7 @@ layer at (165,28) size 145x72
   RenderSVGTransformableContainer {a} at (155,0) size 145x72
 layer at (165,28) size 145x72
   RenderSVGPath {path} at (0,0) size 145x72 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M 165 40 L 265 40 L 265 28 L 310 64 L 265 100 L 265 88 L 165 88 Z"]
-layer at (10,36) size 96x12
+layer at (10,35.50) size 96x12
   RenderSVGText {text} at (0,7) size 97x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 97x12
       chunk 1 text run 1 at (10.00,45.00) startOffset 0 endOffset 21 width 96.36: "transform=\"skewX(-30)"
@@ -40,13 +40,13 @@ layer at (165,28) size 145x72
   RenderSVGTransformableContainer {a} at (155,0) size 145x72
 layer at (165,28) size 145x72
   RenderSVGPath {path} at (0,0) size 145x72 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FFFF]}] [data="M 165 40 L 265 40 L 265 28 L 310 64 L 265 100 L 265 88 L 165 88 Z"]
-layer at (10,36) size 118x12
+layer at (10,35.50) size 118x12
   RenderSVGText {text} at (0,7) size 119x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 119x12
       chunk 1 text run 1 at (10.00,45.00) startOffset 0 endOffset 29 width 118.29: "transform=\"translate(-10,-20)"
 layer at (370,133) size 40x40
   RenderSVGEllipse {circle} at (360,128) size 40x40 [stroke={[type=SOLID] [color=#00FF00] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [cx=390.00] [cy=153.00] [r=20.00]
-layer at (350,180) size 78x12
+layer at (350,179.50) size 78x12
   RenderSVGText {text} at (340,174) size 78x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 78x12
       chunk 1 text run 1 at (350.00,189.00) startOffset 0 endOffset 20 width 77.66: "id=\"internal-circle\""

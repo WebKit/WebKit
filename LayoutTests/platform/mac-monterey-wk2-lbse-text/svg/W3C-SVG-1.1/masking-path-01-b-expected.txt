@@ -5,24 +5,24 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (20,20) size 440x267
-  RenderSVGTransformableContainer {g} at (20,20) size 440x267
+  RenderSVGTransformableContainer {g} at (20,20) size 440x266.36
 layer at (20,20) size 440x60
   RenderSVGRect {rect} at (0,0) size 440x60 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=20.00] [y=20.00] [width=440.00] [height=60.00]
-layer at (20,103) size 320x33
+layer at (20,102.83) size 320x33
   RenderSVGText {text} at (0,82) size 321x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 321x34
       chunk 1 text run 1 at (20.00,130.00) startOffset 0 endOffset 23 width 320.23: "Rectangle being clipped"
-layer at (115,153) size 326x128
-  RenderSVGTransformableContainer {g} at (95,132) size 326x128
+layer at (115,152.83) size 326x128
+  RenderSVGTransformableContainer {g} at (95,132.83) size 325.23x127.17
 layer at (115,190) size 225x41
-  RenderSVGRect {rect} at (0,37) size 225x41 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [x=115.00] [y=190.00] [width=225.00] [height=40.00]
+  RenderSVGRect {rect} at (0,37.17) size 225x40 [stroke={[type=SOLID] [color=#0000FF] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FFFF]}] [x=115.00] [y=190.00] [width=225.00] [height=40.00]
 layer at (115,240) size 225x41
-  RenderSVGRect {rect} at (0,87) size 225x41 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=115.00] [y=240.00] [width=225.00] [height=40.00]
-layer at (115,153) size 325x34
+  RenderSVGRect {rect} at (0,87.17) size 225x40 [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=115.00] [y=240.00] [width=225.00] [height=40.00]
+layer at (115,152.83) size 325x34
   RenderSVGText {text} at (0,0) size 326x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 326x34
       chunk 1 text run 1 at (115.00,180.00) startOffset 0 endOffset 26 width 325.22: "Line of text to be clipped"
-layer at (20,253) size 269x33
+layer at (20,252.83) size 269x33
   RenderSVGText {text} at (0,232) size 269x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 269x34
       chunk 1 text run 1 at (20.00,280.00) startOffset 0 endOffset 19 width 268.52: "Group being clipped"

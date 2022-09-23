@@ -4,31 +4,31 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
-layer at (100,26) size 250x17
+layer at (99.66,25.52) size 250x17
   RenderSVGText {text} at (99,25) size 252x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 251x18
       chunk 1 (middle anchor) text run 1 at (99.67,40.00) startOffset 0 endOffset 38 width 250.66: "Text on Path with for text with an 'x'"
-layer at (100,-94) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGHiddenContainer {defs} at (100,-94) size 140x94
-layer at (100,-94) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGPath {path} at (0,0) size 140x94 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+layer at (100,-93.75) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGHiddenContainer {defs} at (100,-93.75) size 140x93.75
+layer at (100,-93.75) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGPath {path} at (0,0) size 140x93.75 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
 layer at (-10,-135) size 390x140 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (-10,-135) size 390x140
 layer at (-10,-115) size 390x120 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGRect {rect} at (0,20) size 390x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
-layer at (100,-94) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (110,41) size 140x94
-layer at (100,-94) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGPath {path} at (0,0) size 140x94 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+layer at (100,-93.75) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (110,41.25) size 140x93.75
+layer at (100,-93.75) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGPath {path} at (0,0) size 140x93.75 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
 layer at (-10,-135) size 390x140 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGTransformableContainer {g} at (-10,-135) size 390x140
 layer at (-10,-115) size 390x120 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGRect {rect} at (0,20) size 390x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
-layer at (100,-94) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (110,41) size 140x94
-layer at (100,-94) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGPath {path} at (0,0) size 140x94 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-layer at (177,-107) size 77x108 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+layer at (100,-93.75) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (110,41.25) size 140x93.75
+layer at (100,-93.75) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGPath {path} at (0,0) size 140x93.75 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+layer at (176.97,-107.11) size 77x108 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (186,27) size 79x109 contains 1 chunk(s)
     RenderSVGTextPath {textPath} at (0,0) size 78x108
       RenderSVGInlineText {#text} at (0,0) size 78x108
@@ -56,11 +56,11 @@ layer at (-10,-135) size 390x140 backgroundClip at (0,0) size 450x500 clip at (0
   RenderSVGTransformableContainer {g} at (-10,-135) size 390x140
 layer at (-10,-115) size 390x120 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGRect {rect} at (0,20) size 390x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
-layer at (100,-94) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (110,41) size 140x94
-layer at (100,-94) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGPath {path} at (0,0) size 140x94 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
-layer at (86,-108) size 157x109 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+layer at (100,-93.75) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (110,41.25) size 140x93.75
+layer at (100,-93.75) size 140x94 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGPath {path} at (0,0) size 140x93.75 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
+layer at (85.98,-107.84) size 157x109 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (95,27) size 158x110 contains 1 chunk(s)
     RenderSVGTextPath {textPath} at (0,0) size 157x110
       RenderSVGInlineText {#text} at (0,105) size 19x5

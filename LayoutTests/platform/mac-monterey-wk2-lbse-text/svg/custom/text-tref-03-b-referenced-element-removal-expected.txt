@@ -4,15 +4,15 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (75,14) size 295x15
-  RenderSVGTransformableContainer {g} at (75,13) size 295x15
-layer at (75,14) size 295x14
+layer at (75,13.95) size 295x15
+  RenderSVGTransformableContainer {g} at (75,13.95) size 294.83x13.81
+layer at (75,13.95) size 295x14
   RenderSVGText {text} at (0,0) size 295x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 295x14
       chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 55 width 294.83: "Test that removal of referenced content does not crash."
-layer at (10,311) size 229x38
-  RenderSVGTransformableContainer {g} at (10,310) size 229x38
-layer at (10,311) size 228x37
+layer at (10,310.70) size 229x38
+  RenderSVGTransformableContainer {g} at (10,310.70) size 228.05x36.63
+layer at (10,310.70) size 228x37
   RenderSVGText {text} at (0,0) size 229x37 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 229x37
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.4 $"

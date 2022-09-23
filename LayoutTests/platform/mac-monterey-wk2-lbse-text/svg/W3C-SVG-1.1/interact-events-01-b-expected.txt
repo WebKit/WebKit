@@ -5,64 +5,64 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-30,0) size 472x129 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-30,0) size 472x129
-layer at (30,4) size 411x44
+  RenderSVGTransformableContainer {g} at (-30,0) size 471.13x128.48
+layer at (30,3.78) size 411x44
   RenderSVGText {text} at (60,3) size 412x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 412x45
       chunk 1 text run 1 at (30.00,40.00) startOffset 0 endOffset 25 width 411.11: "'onload' event attribute."
 layer at (-30,0) size 114x129 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 114x129
+  RenderSVGTransformableContainer {g} at (0,0) size 113.41x128.48
 layer at (-30,0) size 110x129 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 110x129
+  RenderSVGTransformableContainer {g} at (0,0) size 110x128.48
 layer at (0,0) size 80x80
   RenderSVGRect {rect} at (30,0) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
-layer at (-30,84) size 96x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-30,83.78) size 96x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,83) size 96x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 96x45
       chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 5 width 95.61: "1: No"
 layer at (-30,0) size 114x129 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 114x129
+  RenderSVGTransformableContainer {g} at (0,0) size 113.41x128.48
 layer at (0,0) size 80x80
   RenderSVGRect {rect} at (30,0) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
-layer at (-30,84) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-30,83.78) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,83) size 114x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 114x45
       chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.40: "2: Yes"
 layer at (-30,0) size 114x129 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 114x129
+  RenderSVGTransformableContainer {g} at (0,0) size 113.41x128.48
 layer at (0,0) size 80x80
   RenderSVGTransformableContainer {g} at (30,0) size 80x80
 layer at (0,0) size 80x80
   RenderSVGRect {rect} at (0,0) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
-layer at (-30,84) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-30,83.78) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,83) size 114x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 114x45
       chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.40: "3: Yes"
 layer at (-30,0) size 114x129 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 114x129
+  RenderSVGTransformableContainer {g} at (0,0) size 113.41x128.48
 layer at (0,0) size 200x200
   RenderSVGViewportContainer {svg} at (30,0) size 200x200
 layer at (0,0) size 80x80
   RenderSVGRect {rect} at (0,0) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
-layer at (-30,84) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-30,83.78) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,83) size 114x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 114x45
       chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.40: "4: Yes"
 layer at (-30,0) size 110x129 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 110x129
+  RenderSVGTransformableContainer {g} at (0,0) size 110x128.48
 layer at (0,0) size 80x80
   RenderSVGTransformableContainer {g} at (30,0) size 80x80
 layer at (0,0) size 80x80
   RenderSVGRect {rect} at (0,0) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
-layer at (-30,84) size 96x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-30,83.78) size 96x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,83) size 96x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 96x45
       chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 5 width 95.61: "5: No"
 layer at (-30,0) size 114x129 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 114x129
+  RenderSVGTransformableContainer {g} at (0,0) size 113.41x128.48
 layer at (0,0) size 80x80
   RenderSVGRect {rect} at (30,0) size 80x80 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=80.00] [height=80.00]
-layer at (-30,84) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-30,83.78) size 113x44 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,83) size 114x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 114x45
       chunk 1 text run 1 at (-30.00,120.00) startOffset 0 endOffset 6 width 113.40: "6: Yes"

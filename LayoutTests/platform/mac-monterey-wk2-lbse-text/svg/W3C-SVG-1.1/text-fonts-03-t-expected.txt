@@ -4,37 +4,37 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (15,32) size 403x188
-  RenderSVGTransformableContainer {g} at (15,31) size 403x188
-layer at (15,44) size 241x21
+layer at (15,31.98) size 403x188
+  RenderSVGTransformableContainer {g} at (15,31.98) size 402.14x186.77
+layer at (15,43.50) size 241x21
   RenderSVGText {text} at (0,11) size 241x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 241x21
       chunk 1 text run 1 at (15.00,60.00) startOffset 0 endOffset 32 width 240.76: "font-family = \"Haettenschweiler\""
-layer at (340,32) size 42x35
+layer at (340,31.98) size 42x35
   RenderSVGText {text} at (325,0) size 42x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 42x36
       chunk 1 text run 1 at (340.00,60.00) startOffset 0 endOffset 3 width 41.58: "ABC"
-layer at (15,94) size 213x21
+layer at (15,93.50) size 213x21
   RenderSVGText {text} at (0,61) size 213x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 213x21
       chunk 1 text run 1 at (15.00,110.00) startOffset 0 endOffset 28 width 212.80: "font-family = \"Charlesworth\""
-layer at (340,82) size 77x35
+layer at (340,81.98) size 77x35
   RenderSVGText {text} at (325,50) size 78x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 78x36
       chunk 1 text run 1 at (340.00,110.00) startOffset 0 endOffset 3 width 77.14: "ABC"
-layer at (15,144) size 214x21
+layer at (15,143.50) size 214x21
   RenderSVGText {text} at (0,111) size 215x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 215x21
       chunk 1 text run 1 at (15.00,160.00) startOffset 0 endOffset 28 width 214.29: "font-family = \"Invalid Name\""
-layer at (340,129) size 72x40
+layer at (340,128.75) size 72x40
   RenderSVGText {text} at (325,96) size 72x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 72x40
       chunk 1 text run 1 at (340.00,160.00) startOffset 0 endOffset 3 width 71.97: "ABC"
-layer at (15,194) size 194x21
+layer at (15,193.50) size 194x21
   RenderSVGText {text} at (0,161) size 194x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 194x21
       chunk 1 text run 1 at (15.00,210.00) startOffset 0 endOffset 27 width 193.60: "font-family = not specified"
-layer at (340,179) size 72x40
+layer at (340,178.75) size 72x40
   RenderSVGText {text} at (325,146) size 72x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 72x40
       chunk 1 text run 1 at (340.00,210.00) startOffset 0 endOffset 3 width 71.97: "ABC"

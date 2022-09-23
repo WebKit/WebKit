@@ -5,6 +5,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (50,36) size 150x81
-  RenderSVGPath {path} at (50,36) size 150x81 [stroke={[type=SOLID] [color=#FF0000]}] [data="M 50 50 C 66.6667 116.667 100 133.333 150 100 C 150 100 175 0 200 50"]
-layer at (50,140) size 150x111
-  RenderSVGPath {path} at (50,139) size 150x111 [stroke={[type=SOLID] [color=#008000]}] [data="M 50 150 C 75 100 75 250 150 200 C 150 200 166.667 216.667 200 250"]
+  RenderSVGPath {path} at (50,36) size 150x80.67 [stroke={[type=SOLID] [color=#FF0000]}] [data="M 50 50 C 66.6667 116.667 100 133.333 150 100 C 150 100 175 0 200 50"]
+layer at (50,139.64) size 150x111
+  RenderSVGPath {path} at (50,139.64) size 150x110.36 [stroke={[type=SOLID] [color=#008000]}] [data="M 50 150 C 75 100 75 250 150 200 C 150 200 166.667 216.667 200 250"]

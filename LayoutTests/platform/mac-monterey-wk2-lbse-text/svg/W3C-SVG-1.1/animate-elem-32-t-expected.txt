@@ -5,38 +5,38 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (5,50) size 461x242
-  RenderSVGTransformableContainer {g} at (5,50) size 461x242
-layer at (5,83) size 461x210
-  RenderSVGTransformableContainer {g} at (0,32) size 461x210
-layer at (5,83) size 28x9
+  RenderSVGTransformableContainer {g} at (5,50) size 460.59x241.70
+layer at (5,82.75) size 461x210
+  RenderSVGTransformableContainer {g} at (0,32.75) size 460.59x208.95
+layer at (5,82.75) size 28x9
   RenderSVGText {text} at (0,0) size 28x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 28x9
       chunk 1 text run 1 at (5.00,90.00) startOffset 0 endOffset 7 width 27.57: "Stroked"
-layer at (5,188) size 36x9
+layer at (5,187.75) size 36x9
   RenderSVGText {text} at (0,105) size 37x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 37x9
       chunk 1 text run 1 at (5.00,195.00) startOffset 0 endOffset 9 width 36.46: "Unstroked"
-layer at (50,128) size 53x9
+layer at (50,127.75) size 53x9
   RenderSVGText {text} at (45,45) size 53x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 53x9
       chunk 1 text run 1 at (50.00,135.00) startOffset 0 endOffset 15 width 52.91: "Zero width rect"
-layer at (130,128) size 56x9
+layer at (130,127.75) size 56x9
   RenderSVGText {text} at (125,45) size 57x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 57x9
       chunk 1 text run 1 at (130.00,135.00) startOffset 0 endOffset 16 width 56.03: "Zero height rect"
-layer at (210,128) size 61x9
+layer at (210,127.75) size 61x9
   RenderSVGText {text} at (205,45) size 62x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 62x9
       chunk 1 text run 1 at (210.00,135.00) startOffset 0 endOffset 18 width 61.35: "Zero radius circle"
-layer at (315,128) size 72x9
+layer at (315,127.75) size 72x9
   RenderSVGText {text} at (310,45) size 72x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 72x9
       chunk 1 text run 1 at (315.00,135.00) startOffset 0 endOffset 21 width 71.59: "Zero x radius ellipse"
-layer at (394,128) size 72x9
+layer at (394,127.75) size 72x9
   RenderSVGText {text} at (389,45) size 72x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 72x9
       chunk 1 text run 1 at (394.00,135.00) startOffset 0 endOffset 21 width 71.59: "Zero y radius ellipse"
-layer at (210,283) size 55x9
+layer at (210,282.75) size 55x9
   RenderSVGText {text} at (205,200) size 56x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 56x9
       chunk 1 text run 1 at (210.00,290.00) startOffset 0 endOffset 16 width 55.14: "Zero length line"

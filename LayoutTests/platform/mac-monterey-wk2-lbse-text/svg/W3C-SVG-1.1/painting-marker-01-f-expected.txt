@@ -5,8 +5,8 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 280x280
-  RenderSVGTransformableContainer {g} at (0,0) size 280x280
-layer at (170,17) size 89x16
+  RenderSVGTransformableContainer {g} at (0,0) size 279.64x280
+layer at (170,17.31) size 89x16
   RenderSVGText {text} at (170,17) size 89x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x16
       chunk 1 text run 1 at (170.00,30.00) startOffset 0 endOffset 13 width 88.68: "Basic Markers"
@@ -28,7 +28,7 @@ layer at (0,0) size 10x10
   RenderSVGTransformableContainer {g} at (0,0) size 10x10
 layer at (0,0) size 10x10
   RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
-layer at (145,112) size 135x16
+layer at (145,112.31) size 135x16
   RenderSVGText {text} at (145,112) size 135x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 135x16
       chunk 1 text run 1 at (145.00,125.00) startOffset 0 endOffset 21 width 134.63: "Start, Middle and End"
@@ -50,7 +50,7 @@ layer at (0,0) size 10x10
   RenderSVGTransformableContainer {g} at (0,0) size 10x10
 layer at (0,0) size 10x10
   RenderSVGPath {path} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M 5 0 L 10 10 L 0 10 Z"]
-layer at (145,207) size 135x16
+layer at (145,207.31) size 135x16
   RenderSVGText {text} at (145,207) size 135x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 135x16
       chunk 1 text run 1 at (145.00,220.00) startOffset 0 endOffset 21 width 134.62: "Automatic Orientation"

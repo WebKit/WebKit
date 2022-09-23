@@ -4,7 +4,7 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (64,19) size 352x21
+layer at (63.55,18.50) size 352x21
   RenderSVGText {text} at (63,18) size 354x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 353x21
       chunk 1 (middle anchor) text run 1 at (63.55,35.00) startOffset 0 endOffset 51 width 352.90: "Testing stroke inclusion for 'clip-path' and 'mask'"

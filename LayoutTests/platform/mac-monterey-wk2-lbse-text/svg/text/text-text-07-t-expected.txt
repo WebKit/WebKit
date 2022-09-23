@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (10,29) size 409x281
-  RenderSVGTransformableContainer {g} at (10,28) size 409x281
-layer at (240,29) size 179x180
+layer at (10,28.50) size 409x281
+  RenderSVGTransformableContainer {g} at (10,28.50) size 408.97x280.20
+layer at (240,28.50) size 179x180
   RenderSVGText {text} at (230,0) size 179x181 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 179x181
       chunk 1 text run 1 at (240.00,60.00) startOffset 0 endOffset 1 width 30.94: "M"
@@ -17,7 +17,7 @@ layer at (240,29) size 179x180
       chunk 1 text run 1 at (340.00,160.00) startOffset 0 endOffset 1 width 8.70: " "
       chunk 1 text run 1 at (360.00,180.00) startOffset 0 endOffset 1 width 25.13: "X"
       chunk 1 text run 1 at (385.13,200.00) startOffset 0 endOffset 2 width 33.83: " Y"
-layer at (10,29) size 154x53
+layer at (10,28.50) size 154x53
   RenderSVGText {text} at (0,0) size 154x54 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 154x54
       chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 23.21: "R"
@@ -26,7 +26,7 @@ layer at (10,29) size 154x53
       chunk 1 text run 4 at (79.60,60.00) startOffset 3 endOffset 4 width 25.13: "A"
       chunk 1 text run 5 at (104.73,60.00) startOffset 4 endOffset 5 width 21.26: "T"
       chunk 1 text run 6 at (125.99,60.00) startOffset 5 endOffset 6 width 21.26: "E"
-layer at (10,166) size 248x143
+layer at (10,165.61) size 248x143
   RenderSVGText {text} at (0,137) size 248x144 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,102) size 248x144
       chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 1 width 23.21: "B"
@@ -42,7 +42,7 @@ layer at (10,166) size 248x143
       chunk 1 text run 1 at (210.00,200.00) startOffset 0 endOffset 1 width 17.40: "h"
       chunk 1 text run 1 at (230.00,190.00) startOffset 0 endOffset 1 width 15.45: "e"
       chunk 1 text run 1 at (250.00,180.00) startOffset 0 endOffset 1 width 11.59: "r"
-layer at (10,304) size 265x46
+layer at (10,303.84) size 265x46
   RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 265x47
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.8 $"

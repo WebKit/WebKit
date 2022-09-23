@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (40,86) size 284x124
-  RenderSVGTransformableContainer {g} at (40,86) size 284x124
+  RenderSVGTransformableContainer {g} at (40,86) size 283.52x124
 layer at (50,160) size 50x50
   RenderSVGRect {rect} at (10,74) size 50x50 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=160.00] [width=50.00] [height=50.00]
 layer at (40,150) size 50x50
@@ -14,7 +14,7 @@ layer at (50,86) size 274x18
   RenderSVGText {text} at (10,0) size 274x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 274x18
       chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 44 width 273.51: "This document's root identifier is: svg-root"
-layer at (10,313) size 198x35
+layer at (10,312.50) size 198x35
   RenderSVGText {text} at (10,312) size 198x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 198x35
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 197.50: "$Revision: 1.1 $"

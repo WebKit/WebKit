@@ -5,217 +5,217 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (0,0) size 415x10
-  RenderSVGTransformableContainer {g} at (0,-1) size 415x10
-layer at (0,-14) size 74x19 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGHiddenContainer {defs} at (0,-15) size 74x19
+layer at (0,-0.20) size 415x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,-0.20) size 414.14x9.02
+layer at (0,-14.41) size 74x19 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGHiddenContainer {defs} at (0,-14.20) size 73.03x18.02
 layer at (0,0) size 1x2
-  RenderSVGRect {rect} at (0,14) size 1x2 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
+  RenderSVGRect {rect} at (0,14.41) size 1x1 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=1.00] [height=1.00]
 layer at (0,0) size 1x2
-  RenderSVGImage {image} at (0,14) size 1x2
-layer at (0,-14) size 73x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGImage {image} at (0,14.41) size 1x1
+layer at (0,-14.41) size 73x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 74x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 74x19
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 8 width 73.03: "sometext"
 layer at (0,0) size 480x361 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGViewportContainer {svg} at (0,14) size 480x361
-layer at (0,0) size 142x10
-  RenderSVGTransformableContainer {g} at (0,0) size 142x10
+  RenderSVGViewportContainer {svg} at (0,14.41) size 480x360
+layer at (0,-0.20) size 142x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 141.08x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 131x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 131x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 132x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 132x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 30 width 131.07: "r.x.baseVal.value == 0: PASSED"
-layer at (0,0) size 291x10
-  RenderSVGTransformableContainer {g} at (0,0) size 291x10
+layer at (0,-0.20) size 291x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 290.59x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 281x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 281x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 281x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 281x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 57 width 280.59: "r.x.baseVal.unitType == 1 (SVG_LENGTHTYPE_NUMBER): PASSED"
-layer at (0,0) size 235x10
-  RenderSVGTransformableContainer {g} at (0,0) size 235x10
+layer at (0,-0.20) size 235x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 234.11x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 224x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 224x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 225x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 225x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 52 width 224.11: "v.width.baseVal.valueInSpecifiedUnits == 100: PASSED"
-layer at (0,0) size 332x10
-  RenderSVGTransformableContainer {g} at (0,0) size 332x10
+layer at (0,-0.20) size 332x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 331.63x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 322x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 322x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 322x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 322x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 65 width 321.61: "v.width.baseVal.unitType == 2 (SVG_LENGTHTYPE_PERCENTAGE): PASSED"
-layer at (0,0) size 289x10
-  RenderSVGTransformableContainer {g} at (0,0) size 289x10
+layer at (0,-0.20) size 289x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 288.16x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 278x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 278x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 279x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 279x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 65 width 278.15: "tt.textLength.baseVal.value == tt.getComputedTextLength(): PASSED"
-layer at (0,0) size 137x10
-  RenderSVGTransformableContainer {g} at (0,0) size 137x10
+layer at (0,-0.20) size 137x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 136.08x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 126x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 126x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 127x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 127x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 29 width 126.07: "s.offset.baseVal == 0: PASSED"
-layer at (0,0) size 187x10
-  RenderSVGTransformableContainer {g} at (0,0) size 187x10
+layer at (0,-0.20) size 187x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 186.09x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 176x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 176x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 177x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 177x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 40 width 176.09: "c.preserveAlpha.baseVal == false: PASSED"
-layer at (0,0) size 160x10
-  RenderSVGTransformableContainer {g} at (0,0) size 160x10
+layer at (0,-0.20) size 160x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 159.95x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 150x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 150x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 150x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 150x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 33 width 149.95: "c.className.baseVal == \"\": PASSED"
-layer at (0,0) size 129x10
-  RenderSVGTransformableContainer {g} at (0,0) size 129x10
+layer at (0,-0.20) size 129x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 128.45x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 118x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 118x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 119x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 119x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 28 width 118.45: "i.href.baseVal == \"\": PASSED"
-layer at (0,0) size 210x10
-  RenderSVGTransformableContainer {g} at (0,0) size 210x10
+layer at (0,-0.20) size 210x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 209.59x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 200x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 200x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 200x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 200x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 45 width 199.58: "i.requiredFeatures.numberOfItems == 0: PASSED"
-layer at (0,0) size 228x10
-  RenderSVGTransformableContainer {g} at (0,0) size 228x10
+layer at (0,-0.20) size 228x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 227.59x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 218x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 218x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 218x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 218x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 49 width 217.58: "c.kernelMatrix.baseVal.numberOfItems == 0: PASSED"
-layer at (0,0) size 182x10
-  RenderSVGTransformableContainer {g} at (0,0) size 182x10
+layer at (0,-0.20) size 182x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 181.09x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 171x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 171x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 172x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 172x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 38 width 171.08: "t.x.baseVal.numberOfItems == 0: PASSED"
-layer at (0,0) size 169x10
-  RenderSVGTransformableContainer {g} at (0,0) size 169x10
+layer at (0,-0.20) size 169x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 168.08x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 158x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 158x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 159x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 159x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 35 width 158.08: "p.points.numberOfItems == 0: PASSED"
-layer at (0,0) size 358x10
-  RenderSVGTransformableContainer {g} at (0,0) size 358x10
+layer at (0,-0.20) size 358x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 357.63x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 348x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 348x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 348x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 348x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 70 width 347.62: "g.gradientUnits.baseVal == 2 (SVG_UNIT_TYPE_OBJECTBOUNDINGBOX): PASSED"
-layer at (0,0) size 142x10
-  RenderSVGTransformableContainer {g} at (0,0) size 142x10
+layer at (0,-0.20) size 142x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 141.08x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 131x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 131x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 132x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 132x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 29 width 131.07: "c.orderX.baseVal == 0: PASSED"
-layer at (0,0) size 187x10
-  RenderSVGTransformableContainer {g} at (0,0) size 187x10
+layer at (0,-0.20) size 187x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 186.59x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 177x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 177x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 177x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 177x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 40 width 176.59: "m.orientAngle.baseVal.value == 0: PASSED"
-layer at (0,0) size 352x10
-  RenderSVGTransformableContainer {g} at (0,0) size 352x10
+layer at (0,-0.20) size 352x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 351.64x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 342x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 342x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 342x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 342x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 71 width 341.63: "m.orientAngle.baseVal.unitType == 1 (SVG_ANGLETYPE_UNSPECIFIED): PASSED"
-layer at (0,0) size 218x10
-  RenderSVGTransformableContainer {g} at (0,0) size 218x10
+layer at (0,-0.20) size 218x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 217.11x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 207x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 207x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 208x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 208x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 49 width 207.10: "v.viewBox.baseVal.[x,y,width,height] == 0: PASSED"
-layer at (0,0) size 215x10
-  RenderSVGTransformableContainer {g} at (0,0) size 215x10
+layer at (0,-0.20) size 215x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 214.59x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 205x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 205x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 205x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 205x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 46 width 204.59: "t.transform.baseVal.numberOfItems == 0: PASSED"
-layer at (0,0) size 415x10
-  RenderSVGTransformableContainer {g} at (0,0) size 415x10
+layer at (0,-0.20) size 415x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 414.14x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 404x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 404x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 405x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 405x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 83 width 404.14: "v.preserveAspectRatio.baseVal.align == 6 (SVG_PRESERVEASPECTRATIO_XMIDYMID): PASSED"
-layer at (0,0) size 377x10
-  RenderSVGTransformableContainer {g} at (0,0) size 377x10
+layer at (0,-0.20) size 377x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 376.63x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 367x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 367x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 367x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 367x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 77 width 366.62: "v.preserveAspectRatio.baseVal.meetOrSlice == 1 (SVG_MEETORSLICE_MEET): PASSED"
-layer at (0,0) size 277x10
-  RenderSVGTransformableContainer {g} at (0,0) size 277x10
+layer at (0,-0.20) size 277x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 276.09x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 266x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 266x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 267x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 267x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 50 width 266.08: "v.zoomAndPan == 2 (SVG_ZOOMANDPAN_MAGNIFY): PASSED"
-layer at (0,0) size 96x10
-  RenderSVGTransformableContainer {g} at (0,0) size 96x10
+layer at (0,-0.20) size 96x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 95.55x9.02
 layer at (0,1) size 5x6
-  RenderSVGRect {rect} at (0,1) size 5x6 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
-layer at (10,0) size 86x9
+  RenderSVGRect {rect} at (0,1.20) size 5x5 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=1.00] [width=5.00] [height=5.00]
+layer at (10,-0.20) size 86x9 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 86x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 86x10
       chunk 1 text run 1 at (10.00,7.00) startOffset 0 endOffset 19 width 85.54: "Test status: PASSED"
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.9 $"
 layer at (1,1) size 478x358
   RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
 layer at (1,1) size 478x22
-  RenderSVGTransformableContainer {g} at (1,1) size 478x22
+  RenderSVGTransformableContainer {g} at (1,1) size 478x21.02
 layer at (1,1) size 478x20
   RenderSVGRect {rect} at (0,0) size 478x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
-layer at (204,2) size 72x20
+layer at (204.16,1.98) size 72x20
   RenderSVGText {text} at (203,0) size 72x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 72x21
       chunk 1 (middle anchor) text run 1 at (204.17,18.00) startOffset 0 endOffset 5 width 71.66: "DRAFT"

@@ -4,61 +4,61 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (60,22) size 363x315
-  RenderSVGTransformableContainer {g} at (60,22) size 363x315
-layer at (360,22) size 50x34
+layer at (60,22.48) size 363x315
+  RenderSVGTransformableContainer {g} at (60,22.48) size 362.36x314.09
+layer at (360,22.48) size 50x34
   RenderSVGText {text} at (300,0) size 50x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 50x35
       chunk 1 text run 1 at (360.00,50.00) startOffset 0 endOffset 3 width 49.72: "100"
-layer at (360,57) size 54x34
+layer at (360,57.48) size 54x34
   RenderSVGText {text} at (300,35) size 54x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 54x35
       chunk 1 text run 1 at (360.00,85.00) startOffset 0 endOffset 3 width 53.58: "200"
-layer at (360,92) size 53x34
+layer at (360,92.48) size 53x34
   RenderSVGText {text} at (300,70) size 54x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 54x35
       chunk 1 text run 1 at (360.00,120.00) startOffset 0 endOffset 3 width 53.38: "300"
-layer at (360,127) size 54x34
+layer at (360,127.48) size 54x34
   RenderSVGText {text} at (300,105) size 54x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 54x35
       chunk 1 text run 1 at (360.00,155.00) startOffset 0 endOffset 3 width 53.77: "400"
-layer at (360,162) size 53x34
+layer at (360,162.48) size 53x34
   RenderSVGText {text} at (300,140) size 53x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 53x35
       chunk 1 text run 1 at (360.00,190.00) startOffset 0 endOffset 3 width 52.68: "500"
-layer at (360,197) size 62x34
+layer at (360,197.48) size 62x34
   RenderSVGText {text} at (300,175) size 62x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 62x35
       chunk 1 text run 1 at (360.00,225.00) startOffset 0 endOffset 3 width 61.51: "600"
-layer at (360,232) size 59x34
+layer at (360,232.48) size 59x34
   RenderSVGText {text} at (300,210) size 59x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 59x35
       chunk 1 text run 1 at (360.00,260.00) startOffset 0 endOffset 3 width 58.70: "700"
-layer at (360,267) size 62x34
+layer at (360,267.48) size 62x34
   RenderSVGText {text} at (300,245) size 63x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 63x35
       chunk 1 text run 1 at (360.00,295.00) startOffset 0 endOffset 3 width 62.36: "800"
-layer at (360,302) size 62x34
+layer at (360,302.48) size 62x34
   RenderSVGText {text} at (300,280) size 62x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 62x35
       chunk 1 text run 1 at (360.00,330.00) startOffset 0 endOffset 3 width 61.51: "900"
-layer at (60,52) size 177x34
+layer at (60,52.48) size 177x34
   RenderSVGText {text} at (0,30) size 177x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 177x35
       chunk 1 text run 1 at (60.00,80.00) startOffset 0 endOffset 12 width 176.78: "This is bold"
-layer at (60,102) size 190x34
+layer at (60,102.48) size 190x34
   RenderSVGText {text} at (0,80) size 191x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 191x35
       chunk 1 text run 1 at (60.00,130.00) startOffset 0 endOffset 14 width 190.31: "This is normal"
-layer at (60,152) size 214x35
-  RenderSVGTransformableContainer {g} at (0,130) size 214x35
-layer at (60,152) size 213x34
+layer at (60,152.48) size 214x35
+  RenderSVGTransformableContainer {g} at (0,130) size 213.14x34.09
+layer at (60,152.48) size 213x34
   RenderSVGText {text} at (0,0) size 214x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 214x35
       chunk 1 text run 1 at (60.00,180.00) startOffset 0 endOffset 14 width 213.13: "Blue is bolder"
-layer at (60,202) size 184x35
-  RenderSVGTransformableContainer {g} at (0,180) size 184x35
-layer at (60,202) size 183x34
+layer at (60,202.48) size 184x35
+  RenderSVGTransformableContainer {g} at (0,180) size 183.45x34.09
+layer at (60,202.48) size 183x34
   RenderSVGText {text} at (0,0) size 184x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 184x35
       chunk 1 text run 1 at (60.00,230.00) startOffset 0 endOffset 15 width 183.44: "Blue is lighter"

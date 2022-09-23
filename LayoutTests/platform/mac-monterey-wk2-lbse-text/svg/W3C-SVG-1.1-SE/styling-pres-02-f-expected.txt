@@ -4,25 +4,25 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (-10,-14) size 450x240 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-10,-15) size 450x240
-layer at (10,6) size 342x18
+layer at (-10,-14.41) size 450x240 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (-10,-14.41) size 449.50x239.41
+layer at (10,5.59) size 342x18
   RenderSVGText {text} at (20,20) size 343x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 343x19
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 44 width 342.16: "Testing inapplicable presentation attributes"
-layer at (-10,-14) size 50x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 50x25
+layer at (-10,-14.41) size 50x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 49.03x24.41
 layer at (0,0) size 10x11
-  RenderSVGImage {image} at (10,14) size 10x11
+  RenderSVGImage {image} at (10,14.41) size 10x10
 layer at (0,0) size 10x11
-  RenderSVGRect {rect} at (10,14) size 10x11 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
+  RenderSVGRect {rect} at (10,14.41) size 10x10 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
 layer at (-10,-10) size 20x21 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {circle} at (0,4) size 20x21 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=10.00]
+  RenderSVGEllipse {circle} at (0,4.41) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=10.00]
 layer at (-10,-5) size 20x11 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGEllipse {ellipse} at (0,9) size 20x11 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=10.00] [ry=5.00]
+  RenderSVGEllipse {ellipse} at (0,9.41) size 20x10 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [rx=10.00] [ry=5.00]
 layer at (0,0) size 10x11
-  RenderSVGPath {polyline} at (10,14) size 10x11 [fill={[type=SOLID] [color=#000000]}] [points="0 0 10 10"]
-layer at (0,-14) size 39x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGPath {polyline} at (10,14.41) size 10x10 [fill={[type=SOLID] [color=#000000]}] [points="0 0 10 10"]
+layer at (0,-14.41) size 39x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (10,0) size 40x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 11x19
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 10.01: "a"
@@ -37,94 +37,94 @@ layer at (0,-14) size 39x18 backgroundClip at (0,0) size 480x360 clip at (0,0) s
       RenderSVGInlineText {#text} at (30,0) size 9x19
         chunk 1 text run 1 at (30.02,0.00) startOffset 0 endOffset 1 width 9.00: "c"
 layer at (10,25) size 430x201
-  RenderSVGTransformableContainer {g} at (20,39) size 430x201
+  RenderSVGTransformableContainer {g} at (20,39.41) size 429.50x200
 layer at (10,25) size 20x20
   RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=25.00] [width=20.00] [height=20.00]
-layer at (40,29) size 75x14
+layer at (40,28.80) size 75x14
   RenderSVGText {text} at (30,3) size 75x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 75x15
       chunk 1 text run 1 at (40.00,40.00) startOffset 0 endOffset 13 width 74.69: "fill on image"
 layer at (10,55) size 20x20
   RenderSVGRect {rect} at (0,30) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=55.00] [width=20.00] [height=20.00]
-layer at (40,59) size 133x14
+layer at (40,58.80) size 133x14
   RenderSVGText {text} at (30,33) size 134x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 134x15
       chunk 1 text run 1 at (40.00,70.00) startOffset 0 endOffset 21 width 133.07: "stop-opacity on tspan"
 layer at (10,85) size 20x20
   RenderSVGRect {rect} at (0,60) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=85.00] [width=20.00] [height=20.00]
-layer at (40,89) size 100x14
+layer at (40,88.80) size 100x14
   RenderSVGText {text} at (30,63) size 100x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 100x15
       chunk 1 text run 1 at (40.00,100.00) startOffset 0 endOffset 17 width 99.60: "font-size on rect"
 layer at (10,115) size 20x20
   RenderSVGRect {rect} at (0,90) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=115.00] [width=20.00] [height=20.00]
-layer at (40,119) size 113x14
+layer at (40,118.80) size 113x14
   RenderSVGText {text} at (30,93) size 113x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 113x15
       chunk 1 text run 1 at (40.00,130.00) startOffset 0 endOffset 20 width 112.81: "font-style on circle"
 layer at (10,145) size 20x20
   RenderSVGRect {rect} at (0,120) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=145.00] [width=20.00] [height=20.00]
-layer at (40,149) size 107x14
+layer at (40,148.80) size 107x14
   RenderSVGText {text} at (30,123) size 108x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 108x15
       chunk 1 text run 1 at (40.00,160.00) startOffset 0 endOffset 18 width 107.38: "stop-color on text"
 layer at (10,175) size 20x20
   RenderSVGRect {rect} at (0,150) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=175.00] [width=20.00] [height=20.00]
-layer at (40,179) size 133x14
+layer at (40,178.80) size 133x14
   RenderSVGText {text} at (30,153) size 134x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 134x15
       chunk 1 text run 1 at (40.00,190.00) startOffset 0 endOffset 23 width 133.06: "font-variant on ellipse"
 layer at (10,205) size 20x20
   RenderSVGRect {rect} at (0,180) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=205.00] [width=20.00] [height=20.00]
-layer at (40,209) size 155x14
+layer at (40,208.80) size 155x14
   RenderSVGText {text} at (30,183) size 155x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 155x15
       chunk 1 text run 1 at (40.00,220.00) startOffset 0 endOffset 26 width 154.84: "letter-spacing on polyline"
 layer at (250,25) size 20x20
   RenderSVGRect {rect} at (240,0) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=25.00] [width=20.00] [height=20.00]
-layer at (280,29) size 109x14
+layer at (280,28.80) size 109x14
   RenderSVGText {text} at (270,3) size 109x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 109x15
       chunk 1 text run 1 at (280.00,40.00) startOffset 0 endOffset 19 width 108.93: "flood-color on tref"
 layer at (250,55) size 20x20
   RenderSVGRect {rect} at (240,30) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=55.00] [width=20.00] [height=20.00]
-layer at (280,59) size 154x14
+layer at (280,58.80) size 154x14
   RenderSVGText {text} at (270,33) size 155x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 155x15
       chunk 1 text run 1 at (280.00,70.00) startOffset 0 endOffset 25 width 154.08: "flood-opacity on textPath"
 layer at (250,85) size 20x20
   RenderSVGRect {rect} at (240,60) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=85.00] [width=20.00] [height=20.00]
-layer at (280,89) size 155x14
+layer at (280,88.80) size 155x14
   RenderSVGText {text} at (270,63) size 155x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 155x15
       chunk 1 text run 1 at (280.00,100.00) startOffset 0 endOffset 28 width 154.81: "clr-intp-filters on altGlyph"
 layer at (250,115) size 20x20
   RenderSVGRect {rect} at (240,90) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=115.00] [width=20.00] [height=20.00]
-layer at (280,119) size 155x14
+layer at (280,118.80) size 155x14
   RenderSVGText {text} at (270,93) size 155x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 155x15
       chunk 1 text run 1 at (280.00,130.00) startOffset 0 endOffset 25 width 154.84: "display on linearGradient"
 layer at (250,145) size 20x20
   RenderSVGRect {rect} at (240,120) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=145.00] [width=20.00] [height=20.00]
-layer at (280,149) size 91x14
+layer at (280,148.80) size 91x14
   RenderSVGText {text} at (270,123) size 92x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 92x15
       chunk 1 text run 1 at (280.00,160.00) startOffset 0 endOffset 17 width 91.03: "fill-rule on stop"
 layer at (250,175) size 20x20
   RenderSVGRect {rect} at (240,150) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=175.00] [width=20.00] [height=20.00]
-layer at (280,179) size 160x14
+layer at (280,178.80) size 160x14
   RenderSVGText {text} at (270,153) size 160x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 160x15
       chunk 1 text run 1 at (280.00,190.00) startOffset 0 endOffset 28 width 159.49: "visibility on radialGradient"
 layer at (250,205) size 20x20
   RenderSVGRect {rect} at (240,180) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=205.00] [width=20.00] [height=20.00]
-layer at (280,209) size 153x14
+layer at (280,208.80) size 153x14
   RenderSVGText {text} at (270,183) size 153x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 153x15
       chunk 1 text run 1 at (280.00,220.00) startOffset 0 endOffset 26 width 152.50: "lighting-color on clipPath"
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.9 $"

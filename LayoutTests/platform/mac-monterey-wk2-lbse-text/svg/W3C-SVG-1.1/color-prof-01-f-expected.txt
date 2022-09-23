@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (30,0) size 427x280
-  RenderSVGTransformableContainer {g} at (30,0) size 427x280
+  RenderSVGTransformableContainer {g} at (30,0) size 426.09x280
 layer at (30,0) size 190x190
   RenderSVGTransformableContainer {g} at (0,0) size 190x190
 layer at (30,0) size 190x190
@@ -14,7 +14,7 @@ layer at (260,90) size 190x190
   RenderSVGTransformableContainer {g} at (230,90) size 190x190
 layer at (260,90) size 190x190
   RenderSVGImage {image} at (0,0) size 190x190
-layer at (250,9) size 206x14
+layer at (250,9.13) size 206x14
   RenderSVGText {text} at (220,9) size 207x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 207x14
       chunk 1 text run 1 at (250.00,20.00) startOffset 0 endOffset 40 width 206.09: "Basic test of ICC profile with an image."

@@ -17,7 +17,7 @@ layer at (0,0) size 100x100 scrollHeight 126
 layer at (0,0) size 100x100
   RenderSVGViewportContainer {svg} at (0,0) size 100x100
 layer at (0,0) size 202x110
-  RenderSVGTransformableContainer {g} at (0,0) size 202x110
+  RenderSVGTransformableContainer {g} at (0,0) size 201.25x110
 layer at (0,64) size 201x46
   RenderSVGText {text} at (0,64) size 202x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 106x46
@@ -34,7 +34,7 @@ layer at (0,0) size 100x100 scrollHeight 126
 layer at (0,0) size 100x100
   RenderSVGViewportContainer {svg} at (0,0) size 100x100
 layer at (0,0) size 168x159
-  RenderSVGTransformableContainer {g} at (0,0) size 168x159
+  RenderSVGTransformableContainer {g} at (0,0) size 167.72x158.34
 layer at (0,125) size 168x33
   RenderSVGText {text} at (0,125) size 168x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x34

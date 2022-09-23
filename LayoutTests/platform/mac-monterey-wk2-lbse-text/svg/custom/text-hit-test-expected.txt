@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (10,56) size 124x79
-  RenderSVGTransformableContainer {g} at (10,55) size 124x79
-layer at (70,56) size 58x19
+layer at (10,55.50) size 124x79
+  RenderSVGTransformableContainer {g} at (10,55.50) size 123.56x78.50
+layer at (70,55.50) size 58x19
   RenderSVGText {text} at (60,0) size 59x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 59x19
       chunk 1 text run 1 at (70.00,70.00) startOffset 0 endOffset 8 width 58.21: "Click me"
-layer at (10,116) size 44x19
+layer at (10,115.50) size 44x19
   RenderSVGText {text} at (0,60) size 44x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 44x19
       chunk 1 text run 1 at (10.00,130.00) startOffset 0 endOffset 7 width 43.56: "Status:"
-layer at (90,116) size 44x19
+layer at (90,115.50) size 44x19
   RenderSVGText {text} at (80,60) size 44x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 44x19
       chunk 1 text run 1 at (90.00,130.00) startOffset 0 endOffset 6 width 43.55: "Passed"

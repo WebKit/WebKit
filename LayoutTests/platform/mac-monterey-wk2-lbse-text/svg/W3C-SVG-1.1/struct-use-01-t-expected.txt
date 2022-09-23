@@ -4,12 +4,12 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (-88,-23) size 135x268 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-89,-23) size 135x268
+layer at (-88.13,-22.75) size 135x268 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (-88.13,-22.75) size 133.95x267.75
 layer at (0,-14) size 30x35 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGHiddenContainer {defs} at (88,8) size 30x35
+  RenderSVGHiddenContainer {defs} at (88.13,8.75) size 29.33x34
 layer at (0,-14) size 30x34 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 30x34
+  RenderSVGTransformableContainer {g} at (0,0) size 29.33x34
 layer at (0,0) size 20x20
   RenderSVGRect {rect} at (0,14) size 20x20 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
 layer at (0,0) size 20x20
@@ -40,62 +40,62 @@ layer at (0,-14) size 29x18 backgroundClip at (0,0) size 480x360 clip at (0,0) s
   RenderSVGText {text} at (0,0) size 30x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 30x18
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 29.32: "Text"
-layer at (-88,-18) size 89x264 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,4) size 89x264
-layer at (-88,-18) size 89x263 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 89x263
-layer at (-67,12) size 67x23 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-88.13,-18) size 89x264 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,4.75) size 88.13x263
+layer at (-88.13,-18) size 89x263 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 88.13x263
+layer at (-66.97,12) size 67x23 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (21,30) size 68x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 67x23
       chunk 1 (end anchor) text run 1 at (-66.96,30.00) startOffset 0 endOffset 8 width 66.96: "<circle>"
-layer at (-75,42) size 75x23 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-74.77,42) size 75x23 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (13,60) size 76x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 75x23
       chunk 1 (end anchor) text run 1 at (-74.77,60.00) startOffset 0 endOffset 9 width 74.77: "<ellipse>"
-layer at (-49,-18) size 51x53 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (38,0) size 51x53
-layer at (0,-23) size 46x43 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (88,0) size 46x43
+layer at (-49.22,-18) size 51x53 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (38.91,0) size 49.22x53
+layer at (0,-22.75) size 46x43 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (88.13,0) size 45.83x42.75
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGRect {rect} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=20.00] [height=20.00]
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGEllipse {circle} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [cx=10.00] [cy=10.00] [r=10.00]
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGEllipse {ellipse} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [cx=10.00] [cy=10.00] [rx=10.00] [ry=10.00]
 layer at (0,0) size 0x0
-  RenderSVGTransformableContainer {use} at (0,22) size 0x0
+  RenderSVGTransformableContainer {use} at (0,22.75) size 0x0
 layer at (0,10) size 20x0
   RenderSVGPath {line} at (0,10) size 20x0 [stroke={[type=SOLID] [color=#00FF00] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=10.00] [x2=20.00] [y2=10.00]
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGPath {polyline} at (0,0) size 20x20 [stroke={[type=SOLID] [color=#00FF00] [stroke width=2.00]}] [points="0 0 20 0 20 20"]
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGPath {polygon} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [points="0 0 20 0 20 20 0 20 0 0"]
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGPath {path} at (0,0) size 20x20 [fill={[type=SOLID] [color=#00FF00]}] [data="M 0 0 L 20 0 L 20 20 L 0 20 Z"]
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGImage {image} at (0,0) size 20x20
-layer at (0,-23) size 46x29 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (0,0) size 46x29
-layer at (0,-23) size 46x29 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (0,-22.75) size 46x29 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {use} at (0,0) size 45.83x29
+layer at (0,-22.75) size 46x29 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 46x29 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 46x29
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 45.81: "Text"
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGTransformableContainer {g} at (0,0) size 20x20
 layer at (0,0) size 10x20
@@ -103,7 +103,7 @@ layer at (0,0) size 10x20
 layer at (10,0) size 10x20
   RenderSVGRect {rect} at (10,0) size 10x20 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=0.00] [width=10.00] [height=20.00]
 layer at (0,0) size 20x21
-  RenderSVGTransformableContainer {use} at (0,22) size 20x21
+  RenderSVGTransformableContainer {use} at (0,22.75) size 20x20
 layer at (0,0) size 20x20
   RenderSVGTransformableContainer {g} at (0,0) size 20x20
 layer at (0,0) size 20x20

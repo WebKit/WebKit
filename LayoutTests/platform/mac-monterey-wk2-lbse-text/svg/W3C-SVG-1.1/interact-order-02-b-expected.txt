@@ -4,39 +4,39 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,9) size 460x292
-  RenderSVGTransformableContainer {g} at (10,8) size 460x292
-layer at (60,9) size 322x45
+layer at (10,8.78) size 460x292
+  RenderSVGTransformableContainer {g} at (10,8.78) size 460x291.22
+layer at (60,8.78) size 322x45
   RenderSVGText {text} at (50,0) size 323x45 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 323x45
       chunk 1 text run 1 at (60.00,45.00) startOffset 0 endOffset 18 width 322.44: "Event bubbling - b"
 layer at (10,60) size 460x241
-  RenderSVGTransformableContainer {g} at (0,51) size 460x241
+  RenderSVGTransformableContainer {g} at (0,51.22) size 460x240
 layer at (10,60) size 460x120
   RenderSVGRect {rect} at (0,0) size 460x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=10.00] [y=60.00] [width=460.00] [height=120.00]
 layer at (10,180) size 460x120
   RenderSVGRect {rect} at (0,120) size 460x120 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=10.00] [y=180.00] [width=460.00] [height=120.00]
 layer at (20,70) size 378x221
-  RenderSVGTransformableContainer {g} at (10,61) size 378x221
+  RenderSVGTransformableContainer {g} at (10,61.22) size 377.31x220
 layer at (20,70) size 100x220
   RenderSVGTransformableContainer {a} at (0,0) size 100x220
 layer at (20,70) size 100x100
   RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=120.00] [r=50.00]
 layer at (20,190) size 100x100
   RenderSVGEllipse {circle} at (0,120) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=70.00] [cy=240.00] [r=50.00]
-layer at (135,74) size 258x44
+layer at (135,73.78) size 258x44
   RenderSVGText {text} at (115,3) size 258x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 258x45
       chunk 1 text run 1 at (135.00,110.00) startOffset 0 endOffset 16 width 257.83: "Click on circle,"
-layer at (135,114) size 262x44
+layer at (135,113.78) size 262x44
   RenderSVGText {text} at (115,43) size 263x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 263x45
       chunk 1 text run 1 at (135.00,150.00) startOffset 0 endOffset 16 width 262.30: "circle turns red"
-layer at (135,194) size 258x44
+layer at (135,193.78) size 258x44
   RenderSVGText {text} at (115,123) size 258x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 258x45
       chunk 1 text run 1 at (135.00,230.00) startOffset 0 endOffset 16 width 257.83: "Click on circle,"
-layer at (135,234) size 160x44
+layer at (135,233.78) size 160x44
   RenderSVGText {text} at (115,163) size 161x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 161x45
       chunk 1 text run 1 at (135.00,270.00) startOffset 0 endOffset 9 width 160.08: "hyperlink"

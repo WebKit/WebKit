@@ -88,9 +88,9 @@ layer at (2,2) size 96x96
   RenderSVGTransformableContainer {use} at (0,0) size 96x96
 layer at (2,2) size 96x96
   RenderSVGEllipse {circle} at (0,0) size 96x96 [fill={[type=SOLID] [color=#0000FF]}] [cx=50.00] [cy=50.00] [r=48.00]
-layer at (10,310) size 230x38
-  RenderSVGTransformableContainer {g} at (10,310) size 230x38
-layer at (10,310) size 229x37
+layer at (10,310.36) size 230x38
+  RenderSVGTransformableContainer {g} at (10,310.36) size 229.47x37
+layer at (10,310.36) size 229x37
   RenderSVGText {text} at (0,0) size 230x37 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x37
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.2 $"

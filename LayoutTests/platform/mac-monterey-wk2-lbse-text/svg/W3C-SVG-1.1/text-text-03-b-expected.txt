@@ -4,47 +4,47 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (1,28) size 472x264
-  RenderSVGTransformableContainer {g} at (1,27) size 472x264
-layer at (19,29) size 76x39
+layer at (1,27.83) size 472x264
+  RenderSVGTransformableContainer {g} at (1,27.83) size 471.56x262.27
+layer at (19,28.83) size 76x39
   RenderSVGText {text} at (18,1) size 77x39 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 77x39
       chunk 1 text run 1 at (19.00,61.00) startOffset 0 endOffset 5 width 76.33: "Plain"
-layer at (142,29) size 80x39
+layer at (142,28.83) size 80x39
   RenderSVGText {text} at (141,1) size 80x39 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 80x39
       chunk 1 text run 1 at (142.00,61.00) startOffset 0 endOffset 6 width 79.53: "Italic"
-layer at (257,28) size 80x39
+layer at (257,27.83) size 80x39
   RenderSVGText {text} at (256,0) size 80x39 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 80x39
       chunk 1 text run 1 at (257.00,60.00) startOffset 0 endOffset 4 width 79.66: "Bold"
-layer at (224,78) size 153x39
+layer at (224,77.83) size 153x39
   RenderSVGText {text} at (223,50) size 154x39 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 154x39
       chunk 1 text run 1 at (224.00,110.00) startOffset 0 endOffset 9 width 153.20: "Underline"
-layer at (39,115) size 204x39
+layer at (39,114.83) size 204x39
   RenderSVGText {text} at (38,87) size 204x39 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 204x39
       chunk 1 text run 1 at (39.00,147.00) startOffset 0 endOffset 12 width 203.53: "Line through"
-layer at (1,168) size 472x39
+layer at (1,167.83) size 472x39
   RenderSVGText {text} at (0,140) size 472x39 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 472x39
       chunk 1 text run 1 at (1.00,200.00) startOffset 0 endOffset 27 width 471.56: "Bold, italic and underlined"
-layer at (50,223) size 380x68
-  RenderSVGTransformableContainer {g} at (49,195) size 380x68
+layer at (50,223.27) size 380x68
+  RenderSVGTransformableContainer {g} at (49,195.44) size 380x66.83
 layer at (50,225) size 380x65
-  RenderSVGRect {rect} at (0,1) size 380x65 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [x=50.00] [y=225.00] [width=380.00] [height=64.00]
-layer at (55,223) size 351x67
-  RenderSVGTransformableContainer {g} at (5,0) size 351x67
-layer at (55,223) size 346x27
+  RenderSVGRect {rect} at (0,1.73) size 380x64 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [x=50.00] [y=225.00] [width=380.00] [height=64.00]
+layer at (55,223.27) size 351x67
+  RenderSVGTransformableContainer {g} at (5,0) size 350.91x66.83
+layer at (55,223.27) size 346x27
   RenderSVGText {text} at (0,0) size 346x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 346x27
       chunk 1 text run 1 at (55.00,245.00) startOffset 0 endOffset 34 width 345.50: "Each line of text which flows in a"
-layer at (55,243) size 351x27
+layer at (55,243.27) size 351x27
   RenderSVGText {text} at (0,20) size 351x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 351x27
       chunk 1 text run 1 at (55.00,265.00) startOffset 0 endOffset 32 width 350.89: "rectangular box has to be broken"
-layer at (55,263) size 215x27
+layer at (55,263.27) size 215x27
   RenderSVGText {text} at (0,40) size 215x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 215x27
       chunk 1 text run 1 at (55.00,285.00) startOffset 0 endOffset 21 width 214.80: "into separated lines."

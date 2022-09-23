@@ -4,21 +4,21 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,7) size 475x282 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (10,7) size 475x282
-layer at (10,7) size 474x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (10,7.41) size 475x282 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (10,7.41) size 474.23x281.08
+layer at (10,7.41) size 474x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 475x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 475x41
       chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 31 width 474.22: "Basic paint: stroke properties."
 layer at (90,70) size 300x51
-  RenderSVGRect {rect} at (80,62) size 300x51 [fill={[type=SOLID] [color=#0000FF]}] [x=90.00] [y=70.00] [width=300.00] [height=50.00]
+  RenderSVGRect {rect} at (80,62.59) size 300x50 [fill={[type=SOLID] [color=#0000FF]}] [x=90.00] [y=70.00] [width=300.00] [height=50.00]
 layer at (90,190) size 300x51
-  RenderSVGRect {rect} at (80,182) size 300x51 [stroke={[type=SOLID] [color=#FF0000] [stroke width=20.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=90.00] [y=190.00] [width=300.00] [height=50.00]
-layer at (140,114) size 250x45
+  RenderSVGRect {rect} at (80,182.59) size 300x50 [stroke={[type=SOLID] [color=#FF0000] [stroke width=20.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=90.00] [y=190.00] [width=300.00] [height=50.00]
+layer at (140,113.78) size 250x45
   RenderSVGText {text} at (130,106) size 250x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 250x45
       chunk 1 text run 1 at (140.00,150.00) startOffset 0 endOffset 13 width 249.67: "stroke=\"none\""
-layer at (148,244) size 219x45
+layer at (148,243.78) size 219x45
   RenderSVGText {text} at (138,236) size 219x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 219x45
       chunk 1 text run 1 at (148.00,280.00) startOffset 0 endOffset 12 width 218.50: "stroke=\"red\""

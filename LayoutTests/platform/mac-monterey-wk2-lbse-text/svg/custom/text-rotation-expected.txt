@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (2,44) size 345x79
+layer at (2.25,43.91) size 345x79
   RenderSVGText {text} at (2,43) size 345x81 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 345x80
       RenderSVGInlineText {#text} at (0,0) size 345x80
@@ -22,7 +22,7 @@ layer at (2,44) size 345x79
         chunk 1 text run 12 at (256.91,100.00) startOffset 11 endOffset 12 width 25.00: "p"
         chunk 1 text run 13 at (281.91,100.00) startOffset 12 endOffset 13 width 25.00: "h"
         chunk 1 text run 14 at (306.91,100.00) startOffset 13 endOffset 14 width 19.46: "s"
-layer at (25,155) size 405x72
+layer at (25,154.50) size 405x72
   RenderSVGText {text} at (25,154) size 406x73 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 406x73
       RenderSVGInlineText {#text} at (0,0) size 121x58
@@ -38,7 +38,7 @@ layer at (25,155) size 405x72
           chunk 1 text run 7 at (259.62,200.00) startOffset 6 endOffset 7 width 25.00: "d"
       RenderSVGInlineText {#text} at (259,0) size 146x58
         chunk 1 text run 1 at (284.62,200.00) startOffset 0 endOffset 7 width 145.85: " glyphs"
-layer at (22,256) size 420x68
+layer at (21.75,256.05) size 420x68
   RenderSVGText {text} at (21,256) size 421x68 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 420x68
       chunk 1 text run 1 at (25.00,300.00) startOffset 0 endOffset 1 width 44.46: "M"

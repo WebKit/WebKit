@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 480x360
-layer at (160,56) size 160x18
+layer at (159.97,55.59) size 160x18
   RenderSVGText {text} at (159,55) size 162x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 161x19
       chunk 1 (middle anchor) text run 1 at (159.98,70.00) startOffset 0 endOffset 17 width 160.04: "SVGStringList DOM"
@@ -22,9 +22,9 @@ layer at (0,0) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
 layer at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 480x360 [x=0.00] [y=0.00] [width=480.00] [height=360.00]
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.5 $"

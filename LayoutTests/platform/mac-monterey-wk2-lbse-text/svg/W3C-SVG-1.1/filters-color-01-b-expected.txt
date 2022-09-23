@@ -5,34 +5,34 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (1,1) size 798x503 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (1,1) size 798x503
-layer at (0,0) size 500x290 backgroundClip at (1,1) size 479x359 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (1,1) size 798x502.33
+layer at (0,0) size 500x290 backgroundClip at (0.50,0.50) size 479.50x359.50 clip at (0,0) size 480x360
   RenderSVGViewportContainer {svg} at (-1,-1) size 500x290
 layer at (1,1) size 798x503 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
-  RenderSVGTransformableContainer {g} at (1,1) size 798x503
+  RenderSVGTransformableContainer {g} at (1,1) size 798x502.33
 layer at (1,1) size 798x498 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
   RenderSVGRect {rect} at (0,0) size 798x498 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=798.00] [height=498.00]
 layer at (20,20) size 760x40 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
   RenderSVGRect {rect} at (19,19) size 760x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=20.00] [width=760.00] [height=40.00]
-layer at (20,55) size 194x48
+layer at (20,55.13) size 194x48
   RenderSVGText {text} at (19,54) size 195x49 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 195x49
       chunk 1 text run 1 at (20.00,95.00) startOffset 0 endOffset 10 width 194.33: "Unfiltered"
 layer at (20,120) size 760x40 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
   RenderSVGRect {rect} at (19,119) size 760x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=120.00] [width=760.00] [height=40.00]
-layer at (20,155) size 667x48 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
+layer at (20,155.13) size 667x48 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
   RenderSVGText {text} at (19,154) size 668x49 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 668x49
       chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 667.30: "type=\"matrix\" (grayscale matrix)"
 layer at (20,220) size 760x40 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
   RenderSVGRect {rect} at (19,219) size 760x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=220.00] [width=760.00] [height=40.00]
-layer at (20,255) size 571x48 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
+layer at (20,255.13) size 571x48 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
   RenderSVGText {text} at (19,254) size 572x49 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 572x49
       chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 571.44: "type=\"saturate\" values=\".4\""
 layer at (20,320) size 760x40 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
   RenderSVGRect {rect} at (19,319) size 760x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=320.00] [width=760.00] [height=40.00]
-layer at (20,355) size 621x48 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
+layer at (20,355.13) size 621x48 backgroundClip at (0,5) size 480x355 clip at (0,5) size 480x355
   RenderSVGText {text} at (19,354) size 622x49 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 622x49
       chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 621.18: "type=\"hueRotate\" values=\"90\""

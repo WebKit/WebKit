@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (50,54) size 574x86
-  RenderSVGTransformableContainer {g} at (50,54) size 574x86
+  RenderSVGTransformableContainer {g} at (50,54) size 573.27x86
 layer at (50,54) size 573x86
   RenderSVGText {text} at (0,0) size 574x86 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 564x46

@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (-1,4) size 471x214 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (-2,3) size 471x214
-layer at (5,4) size 351x45
+layer at (-1.44,3.59) size 471x214 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-1.44,3.59) size 469.53x212.77
+layer at (5,3.59) size 351x45
   RenderSVGText {text} at (6,0) size 351x45 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 351x45
       chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 350.49: "Test of 'text-anchor'"
 layer at (225,75) size 0x151
-  RenderSVGPath {line} at (226,71) size 0x151 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=75.00] [x2=225.00] [y2=225.00]
-layer at (-1,83) size 470x134 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,79) size 470x134
-layer at (-1,83) size 470x134 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {line} at (226.44,71.41) size 0x150 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=75.00] [x2=225.00] [y2=225.00]
+layer at (-1.44,82.83) size 470x134 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,79.23) size 469.53x133.53
+layer at (-1.44,82.83) size 470x134 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 470x134 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 227x34
       chunk 1 (end anchor) text run 1 at (-1.44,110.00) startOffset 0 endOffset 17 width 226.44: "Begin with \"end\","
@@ -24,7 +24,7 @@ layer at (-1,83) size 470x134 backgroundClip at (0,0) size 800x600 clip at (0,0)
     RenderSVGTSpan {tspan} at (0,0) size 244x34
       RenderSVGInlineText {#text} at (226,100) size 244x34
         chunk 1 text run 1 at (225.00,210.00) startOffset 0 endOffset 20 width 243.09: "and \"start\" ends it."
-layer at (10,304) size 265x46
+layer at (10,303.84) size 265x46
   RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 265x47
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.5 $"

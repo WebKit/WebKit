@@ -11,7 +11,7 @@ layer at (0,0) size 100x100
 layer at (0,0) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
 layer at (10,116) size 702x98
-  RenderSVGTransformableContainer {g} at (10,116) size 702x98
+  RenderSVGTransformableContainer {g} at (10,116) size 701.77x98
 layer at (10,116) size 271x18
   RenderSVGText {text} at (0,0) size 272x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 272x18
