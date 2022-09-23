@@ -20,16 +20,16 @@ layer at (0,0) size 800x600
               RenderSVGPath {polyline} at (208,171) size 94x93 [stroke={[type=SOLID] [color=#FF0000] [line cap=ROUND] [line join=ROUND] [dash array={90.00, 20.00, 5.00, 15.00}]}] [points="140 115 200 115 140 175 200 175"]
             RenderSVGContainer {use} at (209,314) size 92x92
               RenderSVGPath {polyline} at (209,314) size 92x92 [stroke={[type=SOLID] [color=#FF0000] [line cap=SQUARE] [line join=BEVEL] [dash array={90.00, 20.00, 5.00, 15.00}]}] [points="140 210 200 210 140 270 200 270"]
-          RenderSVGContainer {g} at (3,11) size 84x413
-            RenderSVGPath {polyline} at (3,11) size 72x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=-50.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 10 50 10 10 40 50 40"]
+          RenderSVGContainer {g} at (3,11) size 75x413
+            RenderSVGPath {polyline} at (12,11) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=-50.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 10 50 10 10 40 50 40"]
             RenderSVGPath {polyline} at (15,71) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=-30.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 50 50 50 10 80 50 80"]
             RenderSVGPath {polyline} at (15,131) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=-10.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 90 50 90 10 120 50 120"]
-            RenderSVGPath {polyline} at (3,191) size 84x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 130 50 130 10 160 50 160"]
-            RenderSVGPath {polyline} at (3,251) size 72x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=10.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 170 50 170 10 200 50 200"]
+            RenderSVGPath {polyline} at (12,191) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 130 50 130 10 160 50 160"]
+            RenderSVGPath {polyline} at (12,251) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=10.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 170 50 170 10 200 50 200"]
             RenderSVGPath {polyline} at (15,311) size 63x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=30.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 210 50 210 10 240 50 240"]
-            RenderSVGPath {polyline} at (3,371) size 84x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=50.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 250 50 250 10 280 50 280"]
-          RenderSVGContainer {g} at (78,11) size 72x53
-            RenderSVGPath {polyline} at (78,11) size 72x53 [stroke={[type=SOLID] [color=#FF0000] [stroke width=5.00] [dash offset=-50.00] [dash array={5.00, 5.00, 20.00}]}] [points="60 10 100 10 60 40 100 40"]
+            RenderSVGPath {polyline} at (3,371) size 72x53 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00] [dash offset=50.00] [dash array={5.00, 5.00, 20.00}]}] [points="10 250 50 250 10 280 50 280"]
+          RenderSVGContainer {g} at (87,11) size 63x53
+            RenderSVGPath {polyline} at (87,11) size 63x53 [stroke={[type=SOLID] [color=#FF0000] [stroke width=5.00] [dash offset=-50.00] [dash array={5.00, 5.00, 20.00}]}] [points="60 10 100 10 60 40 100 40"]
         RenderSVGContainer {g} at (487,7) size 187x423 [transform={m=((2.50,0.00)(0.00,2.50)) t=(325.00,5.00)}]
           RenderSVGContainer {g} at (487,7) size 187x198
             RenderSVGContainer {g} at (490,7) size 181x198
