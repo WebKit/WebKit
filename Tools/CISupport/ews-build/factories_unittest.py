@@ -91,7 +91,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'layout-tests',
             'set-build-summary'
         ],
-        'iOS-15-Build-EWS': [
+        'iOS-16-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -105,7 +105,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'iOS-15-Simulator-Build-EWS': [
+        'iOS-16-Simulator-Build-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
@@ -119,7 +119,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'kill-old-processes',
             'compile-webkit'
         ],
-        'iOS-15-Simulator-WK2-Tests-EWS': [
+        'iOS-16-Simulator-WK2-Tests-EWS': [
             'configure-build',
             'validate-change',
             'configuration',
