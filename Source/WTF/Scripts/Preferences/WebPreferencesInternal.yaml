@@ -379,6 +379,18 @@ ImageAnalysisDuringFindInPageEnabled:
     WebCore:
       default: false
 
+IndexedDBAPIEnabled:
+  type: bool
+  humanReadableName: "IndexedDB API"
+  humanReadableDescription: "IndexedDB API"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 InlineFormattingContextIntegrationEnabled:
   type: bool
   humanReadableName: "Next-generation inline layout integration (IFC)"

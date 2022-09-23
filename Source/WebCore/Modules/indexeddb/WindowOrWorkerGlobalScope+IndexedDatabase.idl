@@ -26,6 +26,7 @@
 
 // https://w3c.github.io/IndexedDB/#factory-interface
 [
+    EnabledBySetting=IndexedDBAPIEnabled,
     ImplementedBy=WindowOrWorkerGlobalScopeIndexedDatabase
 ] partial interface mixin WindowOrWorkerGlobalScope {
     [SameObject] readonly attribute IDBFactory indexedDB;

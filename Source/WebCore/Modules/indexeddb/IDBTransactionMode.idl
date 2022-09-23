@@ -24,6 +24,7 @@
  */
 
 [
+    EnabledBySetting=IndexedDBAPIEnabled
 ] enum IDBTransactionMode {
     "readonly",
     "readwrite",
