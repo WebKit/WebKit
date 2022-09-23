@@ -14,6 +14,7 @@
         
         async function runTest()
         {
+            eventSender.monitorWheelEvents();
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 
@@ -21,13 +22,15 @@
             
             setTimeout(async () => {
                 await UIHelper.rawKeyUp("downArrow");
-                await UIHelper.mouseWheelScrollAt(10, 10, 0, 1, 0, 10);
+                const startingPosition = window.scrollY;
+
+                await UIHelper.mouseWheelScrollAt(0, 0, 0, 0, 0, 0);
 
                 const position = window.scrollY;
-                if (position <= 1) 
+                if (Math.abs(startingPosition - position) < 20)
                     debug("Successful.");
                 else
-                    debug("Unsuccessful. window.scrollY == " + position);
+                    debug("Unsuccessful. window.scrollY after wheel event == " + position + "; window.scrollY before wheel event == " + startingPosition);
 
                 testRunner.notifyDone();
             }, 100);
