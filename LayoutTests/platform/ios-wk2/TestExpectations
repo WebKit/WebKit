@@ -2374,3 +2374,5 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createIma
 
 webkit.org/b/245588 mathml/presentation/mathvariant-inheritance.html [ ImageOnlyFailure ]
 webkit.org/b/245588 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
+
+webkit.org/b/245590 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
