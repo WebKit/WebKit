@@ -1942,13 +1942,6 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-20.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/extend-00.html [ Slow ]
 
-<<<<<<< HEAD
-[ BigSur ] http/tests/media/hls/hls-hdr-switch.html [ Pass ]
-# rdar://96780622
-[ Monterey+ ] http/tests/media/hls/hls-hdr-switch.html [ Timeout ]
-
-=======
->>>>>>> acb70b8a1be8 (Migrate macOS Ventura test expectations to OpenSource (244551))
 # rdar://69347249
 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
 [ arm64 ] webaudio/Analyser/realtimeanalyser-byte-data.html [ Failure ]

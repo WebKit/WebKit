@@ -1911,37 +1911,7 @@ webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-c
 webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-svg-unshared.html [ Pass Failure ]
 webkit.org/b/242692 [ Debug ] fast/text/glyph-display-lists/glyph-display-list-color.html [ Pass Failure ]
 
-=======
-
 webkit.org/b/243494 [ Debug ] compositing/layer-creation/scale-rotation-animation-overlap.html [ Pass Timeout ]
-
-# Skip Compression Stream Tests on WK1
-imported/w3c/web-platform-tests/compression [ Skip ]
-
-# webkit.org/b/243733 [ Mac wk1 ] Many recently imported mixed-content WPT tests are failing on Mac wk1
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/audio-tag.https.html [ Failure ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/video-tag.https.html [ Failure ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/audio-tag.https.html [ Failure ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/video-tag.https.html [ Failure ]
-
-# WebKitLegacy does not support Shared Workers, so skip related tests.
-imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.http-rp [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic-data.meta [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-classic.http-rp [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.http-rp [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module-data.meta [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/sharedworker-module.http-rp [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-classic.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-import-data.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/sharedworker-module.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-classic.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import-data.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-import.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/sharedworker-module.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-classic.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import-data.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-import.https.html [ Skip ]
-imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/sharedworker-module.https.html [ Skip ]
 
 # webkit.org/b/243738 [ macOS wk1 ] Multiple imported/w3c/web-platform-tests/wasm tests are a constant failure on Mac wk1
 imported/w3c/web-platform-tests/wasm [ Skip ]
@@ -1982,10 +1952,6 @@ webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/p
 webkit.org/b/244637 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Pass Failure ]
 
 webkit.org/b/244649 [ Debug ] imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-flexbox-001.html [ Pass Crash ]
-
-webkit.org/b/244652 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/bfcache/embedded-mp4.html [ Pass Crash ]
-
-webkit.org/b/244677 [ Debug ] media/media-source/media-source-istypesupported-vp8-without-vp9.html [ Pass Failure ]
 
 webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Skip ]
 
