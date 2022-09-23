@@ -182,6 +182,11 @@ protected:
     static RefPtr<WebCore::SharedBuffer> fetchAudioComponentServerRegistrations();
 #endif
 
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    void takeForegroundAssertion();
+    void dropForegroundAssertion();
+#endif
+
 private:
     virtual void connectionWillOpen(IPC::Connection&);
     virtual void processWillShutDown(IPC::Connection&) = 0;
