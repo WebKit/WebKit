@@ -1,0 +1,9 @@
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-screen-wakelock.html
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Feature-Policy header screen-wake-lock "self" allows the top-level document. promise_test: Unhandled rejection with value: object "Error: unimplemented"
+TIMEOUT Feature-Policy header screen-wake-lock "self" allows same-origin iframes. Test timed out
+TIMEOUT Feature-Policy header screen-wake-lock "self" disallows cross-origin iframes. Test timed out
+

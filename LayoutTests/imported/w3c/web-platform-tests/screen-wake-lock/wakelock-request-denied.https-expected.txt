@@ -1,0 +1,3 @@
+
+FAIL Denied requests should abort with NotAllowedError promise_test: Unhandled rejection with value: object "Error: unimplemented"
+

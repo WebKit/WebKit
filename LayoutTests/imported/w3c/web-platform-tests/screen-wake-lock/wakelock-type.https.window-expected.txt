@@ -1,0 +1,4 @@
+
+FAIL 'type' parameter in WakeLock.request() defaults to 'screen' promise_test: Unhandled rejection with value: object "Error: unimplemented"
+FAIL 'TypeError' is thrown when set an invalid wake lock type undefined is not an object (evaluating 'navigator.wakeLock.request')
+

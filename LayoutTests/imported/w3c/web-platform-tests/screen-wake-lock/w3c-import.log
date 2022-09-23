@@ -1,0 +1,35 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/idlharness.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-active-document.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-disabled-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-disabled-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-insecure-context.any.js
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-onrelease.https.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-released.https.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-request-denied.https.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-screen-type-on-worker.https.worker.js
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-supported-by-feature-policy.html
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelock-type.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/screen-wake-lock/wakelockpermissiondescriptor.https.html
