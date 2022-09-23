@@ -24,7 +24,7 @@ FAIL Interpolation between scaleY(1) and scaleY(2) gives the correct computed va
 FAIL Interpolation between scaleZ(1) and scaleZ(2) gives the correct computed value halfway according to commitStyles. assert_equals: The value at 50% progress is as expected expected "scaleZ(1.5)" but got "scale3d(1, 1, 1.5)"
 FAIL Interpolation between scaleX(2) and scaleY(2) gives the correct computed value halfway according to commitStyles. assert_equals: The value at 50% progress is as expected expected "scale(1.5)" but got "scale(1.5, 1.5)"
 PASS Interpolation between scaleX(2) and scaleY(3) gives the correct computed value halfway according to commitStyles.
-FAIL Interpolation between scaleZ(1) and scale(2) gives the correct computed value halfway according to commitStyles. assert_equals: The value at 50% progress is as expected expected "scale3d(1.5, 1.5, 1)" but got "scale(1.5, 1.5)"
+PASS Interpolation between scaleZ(1) and scale(2) gives the correct computed value halfway according to commitStyles.
 PASS Interpolation between scale(1, 2) and scale(3, 4) gives the correct computed value halfway according to commitStyles.
 PASS Interpolation between scale3d(1, 2, 3) and scale3d(4, 5, 6) gives the correct computed value halfway according to commitStyles.
 PASS Interpolation between scale3d(1, 2, 3) and scale(4, 5) gives the correct computed value halfway according to commitStyles.

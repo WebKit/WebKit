@@ -795,14 +795,12 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
         case TransformOperation::SCALE:
         case TransformOperation::SCALE_3D: {
             auto& scale = downcast<ScaleTransformOperation>(*operation);
-            functionValue = CSSFunctionValue::create(scale.is3DOperation() ? CSSValueScale3d : CSSValueScale);
+            auto is3D = operation->type() == TransformOperation::SCALE_3D;
+            functionValue = CSSFunctionValue::create(is3D ? CSSValueScale3d : CSSValueScale);
             functionValue->append(cssValuePool.createValue(scale.x(), CSSUnitType::CSS_NUMBER));
-            if (scale.z() == 1)
-                functionValue->append(cssValuePool.createValue(scale.y(), CSSUnitType::CSS_NUMBER));
-            else {
-                functionValue->append(cssValuePool.createValue(scale.y(), CSSUnitType::CSS_NUMBER));
+            functionValue->append(cssValuePool.createValue(scale.y(), CSSUnitType::CSS_NUMBER));
+            if (is3D)
                 functionValue->append(cssValuePool.createValue(scale.z(), CSSUnitType::CSS_NUMBER));
-            }
             break;
         }
         // rotate
