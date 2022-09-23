@@ -288,14 +288,14 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher*, IPC::Connection
     if (!connectionIdentifier)
         return;
 
-#if PLATFORM(MAC) && USE(RUNNINGBOARD)
-    m_lifetimeAssertion = ProcessAssertion::create(xpc_connection_get_pid(connectionIdentifier.xpcConnection.get()), "Lifetime assertion"_s, ProcessAssertionType::Foreground);
-#endif
-
     m_connection = IPC::Connection::createServerConnection(connectionIdentifier);
 
     connectionWillOpen(*m_connection);
     m_connection->open(*this);
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    takeForegroundAssertion();
+#endif
 
     for (auto&& pendingMessage : std::exchange(m_pendingMessages, { })) {
         if (!shouldSendPendingMessage(pendingMessage))
@@ -444,6 +444,18 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
 #endif
     return parameters;
 }
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+void AuxiliaryProcessProxy::takeForegroundAssertion()
+{
+    m_lifetimeAssertion = ProcessAssertion::create(m_connection->remoteProcessID(), "Lifetime assertion"_s, ProcessAssertionType::Foreground);
+}
+
+void AuxiliaryProcessProxy::dropForegroundAssertion()
+{
+    m_lifetimeAssertion = nullptr;
+}
+#endif
 
 std::optional<SandboxExtension::Handle> AuxiliaryProcessProxy::createMobileGestaltSandboxExtensionIfNeeded() const
 {
