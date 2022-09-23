@@ -536,6 +536,7 @@ void ArgumentCoder<SnapOffset<float>>::encode(Encoder& encoder, const SnapOffset
     encoder << offset.offset;
     encoder << offset.stop;
     encoder << offset.hasSnapAreaLargerThanViewport;
+    encoder << offset.snapTargetID;
     encoder << offset.snapAreaIndices;
 }
 
@@ -546,6 +547,8 @@ bool ArgumentCoder<SnapOffset<float>>::decode(Decoder& decoder, SnapOffset<float
     if (!decoder.decode(offset.stop))
         return false;
     if (!decoder.decode(offset.hasSnapAreaLargerThanViewport))
+        return false;
+    if (!decoder.decode(offset.snapTargetID))
         return false;
     if (!decoder.decode(offset.snapAreaIndices))
         return false;
