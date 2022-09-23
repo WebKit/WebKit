@@ -27,10 +27,10 @@ PASS Interpolation between translate(50px, -50px) and translate(100px, 50px) giv
 PASS Interpolation between translate(50px, -50px) and translate(100px, 50px) gives the correct computed value halfway according to computedStyleMap with zoom active.
 PASS Interpolation between rotate(30deg) and rotate(90deg) gives the correct computed value halfway according to computedStyleMap.
 PASS Interpolation between rotate(30deg) and rotate(90deg) gives the correct computed value halfway according to computedStyleMap with zoom active.
-FAIL Interpolation between rotateZ(30deg) and rotateZ(90deg) gives the correct computed value halfway according to computedStyleMap. assert_equals: The value at 50% progress is as expected expected "rotate3d(0, 0, 1, 60deg)" but got "rotate(60deg)"
-FAIL Interpolation between rotateZ(30deg) and rotateZ(90deg) gives the correct computed value halfway according to computedStyleMap with zoom active. assert_equals: The value at 50% progress is as expected expected "rotate3d(0, 0, 1, 60deg)" but got "rotate(60deg)"
-FAIL Interpolation between rotate(0deg) and rotateZ(90deg) gives the correct computed value halfway according to computedStyleMap. assert_equals: The value at 50% progress is as expected expected "rotate3d(0, 0, 1, 45deg)" but got "rotate(45deg)"
-FAIL Interpolation between rotate(0deg) and rotateZ(90deg) gives the correct computed value halfway according to computedStyleMap with zoom active. assert_equals: The value at 50% progress is as expected expected "rotate3d(0, 0, 1, 45deg)" but got "rotate(45deg)"
+PASS Interpolation between rotateZ(30deg) and rotateZ(90deg) gives the correct computed value halfway according to computedStyleMap.
+PASS Interpolation between rotateZ(30deg) and rotateZ(90deg) gives the correct computed value halfway according to computedStyleMap with zoom active.
+PASS Interpolation between rotate(0deg) and rotateZ(90deg) gives the correct computed value halfway according to computedStyleMap.
+PASS Interpolation between rotate(0deg) and rotateZ(90deg) gives the correct computed value halfway according to computedStyleMap with zoom active.
 PASS Interpolation between rotateX(0deg) and rotateX(90deg) gives the correct computed value halfway according to computedStyleMap.
 PASS Interpolation between rotateX(0deg) and rotateX(90deg) gives the correct computed value halfway according to computedStyleMap with zoom active.
 PASS Interpolation between rotate(0deg) and rotateX(90deg) gives the correct computed value halfway according to computedStyleMap.

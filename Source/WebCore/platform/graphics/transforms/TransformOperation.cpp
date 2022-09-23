@@ -56,6 +56,7 @@ TextStream& operator<<(TextStream& ts, TransformOperation::OperationType type)
     case TransformOperation::TRANSLATE_3D: ts << "translate3d"; break;
     case TransformOperation::ROTATE_X: ts << "rotateX"; break;
     case TransformOperation::ROTATE_Y: ts << "rotateY"; break;
+    case TransformOperation::ROTATE_Z: ts << "rotateZ"; break;
     case TransformOperation::ROTATE_3D: ts << "rotate3d"; break;
     case TransformOperation::MATRIX_3D: ts << "matrix3d"; break;
     case TransformOperation::PERSPECTIVE: ts << "perspective"; break;

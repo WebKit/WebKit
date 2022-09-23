@@ -806,11 +806,15 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
         // rotate
         case TransformOperation::ROTATE_X:
             functionValue = CSSFunctionValue::create(CSSValueRotateX);
-            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).x(), CSSUnitType::CSS_NUMBER));
+            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
             break;
         case TransformOperation::ROTATE_Y:
             functionValue = CSSFunctionValue::create(CSSValueRotateX);
-            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).y(), CSSUnitType::CSS_NUMBER));
+            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
+            break;
+        case TransformOperation::ROTATE_Z:
+            functionValue = CSSFunctionValue::create(CSSValueRotateZ);
+            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
             break;
         case TransformOperation::ROTATE: {
             auto& rotate = downcast<RotateTransformOperation>(*operation);
