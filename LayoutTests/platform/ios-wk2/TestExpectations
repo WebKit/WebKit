@@ -2371,3 +2371,6 @@ css3/filters/effect-sepia-hw.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/canvas-createImageBitmap-video-resize.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-drawImage.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/createImageBitmap-flipY.html [ Failure ]
+
+webkit.org/b/245588 mathml/presentation/mathvariant-inheritance.html [ ImageOnlyFailure ]
+webkit.org/b/245588 mathml/presentation/fenced-mi.html [ ImageOnlyFailure ]
