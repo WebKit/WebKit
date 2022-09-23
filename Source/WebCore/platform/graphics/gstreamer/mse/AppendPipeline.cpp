@@ -793,6 +793,7 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
         if (peer.get() != demuxerSrcPad) {
             GST_DEBUG_OBJECT(peer.get(), "Unlinking from track %s", matchingTrack->trackId.string().ascii().data());
             gst_pad_unlink(peer.get(), matchingTrack->entryPad.get());
+            matchingTrack->emplaceOptionalParserForFormat(this, GST_BIN(m_pipeline.get()), parsedCaps);
             linkPadWithTrack(demuxerSrcPad, *matchingTrack);
             matchingTrack->caps = WTFMove(parsedCaps);
             matchingTrack->presentationSize = presentationSize;
@@ -851,6 +852,37 @@ Ref<WebCore::TrackPrivateBase> AppendPipeline::makeWebKitTrack(int trackIndex)
     return track.releaseNonNull();
 }
 
+
+void AppendPipeline::Track::emplaceOptionalParserForFormat(AppendPipeline* appendPipeline, GstBin* bin, const GRefPtr<GstCaps>& newCaps)
+{
+    // Some audio files unhelpfully omit the duration of frames in the container. We need to parse
+    // the contained audio streams in order to know the duration of the frames.
+    // This is known to be an issue with YouTube WebM files containing Opus audio as of YTTV2018.
+    // If no parser is needed, a GstIdentity element will be created instead.
+
+    if (parser) {
+        ASSERT(caps);
+        // When switching from encrypted to unencrypted content the caps can change and we need to replace the parser.
+        if (g_str_equal(gst_structure_get_name(gst_caps_get_structure(caps.get(), 0)), gst_structure_get_name(gst_caps_get_structure(newCaps.get(), 0)))) {
+            GST_TRACE_OBJECT(bin, "caps are compatible, bailing out");
+            return;
+        }
+
+        GST_TRACE_OBJECT(bin, "caps are not compatible, replacing parser");
+        auto locker = GstStateLocker(bin);
+        gst_element_unlink(parser.get(), appsink.get());
+        gst_element_set_state(parser.get(), GST_STATE_NULL);
+        gst_bin_remove(bin, parser.get());
+    }
+
+    parser = createOptionalParserForFormat(trackId, newCaps.get());
+    gst_bin_add(bin, parser.get());
+    gst_element_sync_state_with_parent(parser.get());
+    gst_element_link(parser.get(), appsink.get());
+    ASSERT(GST_PAD_IS_LINKED(appsinkPad.get()));
+    entryPad = adoptGRef(gst_element_get_static_pad(parser.get(), "sink"));
+}
+
 void AppendPipeline::Track::initializeElements(AppendPipeline* appendPipeline, GstBin* bin)
 {
     appsink = makeGStreamerElement("appsink", nullptr);
@@ -876,16 +908,7 @@ void AppendPipeline::Track::initializeElements(AppendPipeline* appendPipeline, G
     appsinkPadEventProbeInformation.probeId = gst_pad_add_probe(appsinkPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(appendPipelineAppsinkPadEventProbe), &appsinkPadEventProbeInformation, nullptr);
 #endif
 
-    // Some audio files unhelpfully omit the duration of frames in the container. We need to parse
-    // the contained audio streams in order to know the duration of the frames.
-    // This is known to be an issue with YouTube WebM files containing Opus audio as of YTTV2018.
-    // If no parser is needed, a GstIdentity element will be created instead.
-    parser = createOptionalParserForFormat(trackId, caps.get());
-    gst_bin_add(bin, parser.get());
-    gst_element_sync_state_with_parent(parser.get());
-    gst_element_link(parser.get(), appsink.get());
-    ASSERT(GST_PAD_IS_LINKED(appsinkPad.get()));
-    entryPad = adoptGRef(gst_element_get_static_pad(parser.get(), "sink"));
+    emplaceOptionalParserForFormat(appendPipeline, bin, caps);
 }
 
 void AppendPipeline::hookTrackEvents(Track& track)
