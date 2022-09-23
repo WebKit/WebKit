@@ -80,16 +80,12 @@ void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserver
 
 void WebProcessProxy::platformSuspendProcess()
 {
-#if USE(RUNNINGBOARD)
-    dropForegroundAssertion();
-#endif
+    // FIXME: Adopt RunningBoard on macOS to support process suspension.
 }
 
 void WebProcessProxy::platformResumeProcess()
 {
-#if USE(RUNNINGBOARD)
-    takeForegroundAssertion();
-#endif
+    // FIXME: Adopt RunningBoard on macOS to support process suspension.
 }
 
 } // namespace WebKit
