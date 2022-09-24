@@ -117,6 +117,8 @@ def parse_args(args):
                              help='Only check and run TestWebCore.exe (Windows only)'),
         optparse.make_option('--webkit-legacy-only', action='store_const', const='TestWebKitLegacy', dest='api_binary',
                              help='Only check and run TestWebKitLegacy.exe (Windows only)'),
+        optparse.make_option('--wgsl-only', action='store_const', const='TestWGSL', dest='api_binary',
+                             help='Only check and run TestWGSL (Darwin ports only)'),
         optparse.make_option('-d', '--dump', action='store_true', default=False,
                              help='Dump all test names without running them'),
         optparse.make_option('--build', dest='build', action='store_true', default=True,
