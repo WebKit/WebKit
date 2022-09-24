@@ -22,8 +22,7 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,96) size 191x56 [bgcolor=#FFFF00]
         RenderText {#text} at (-4,0) size 196x56
-          text run at (-4,0) width 8 RTL: " "
-          text run at (3,0) width 188 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
+          text run at (-4,0) width 195 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} "
           text run at (147,28) width 44 RTL: "\x{5DE}\x{5D9}\x{5E5}!"
       RenderBlock (anonymous) at (0,152) size 784x80
         RenderBR {BR} at (0,0) size 0x18
@@ -37,6 +36,5 @@ layer at (8,178) size 199x62 clip at (9,179) size 197x60
   RenderTextControl {TEXTAREA} at (0,18) size 199x62 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 193x56
       RenderText {#text} at (-2,0) size 196x56
-        text run at (-2,0) width 8 RTL: " "
-        text run at (5,0) width 188 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4}"
+        text run at (-2,0) width 195 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC}? \x{5E9}\x{5EA}\x{5D4} "
         text run at (149,28) width 44 RTL: "\x{5DE}\x{5D9}\x{5E5}!"

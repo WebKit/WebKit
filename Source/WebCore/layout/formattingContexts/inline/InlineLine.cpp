@@ -227,16 +227,27 @@ void Line::resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel)
             continue;
         }
 
-        if (run.isWhitespaceOnly())
-            run.setBidiLevel(rootBidiLevel);
-        else {
+        auto adjustBidiLevelIfNeeded = [&] {
+            // No need to adjust the bidi level unless the directionality is different.
+            // e.g. rtl root dir with trailing whitespace attached to an rtl run.
+            auto sameInlineDirection = run.bidiLevel() % 2 == rootBidiLevel % 2;
+            if (sameInlineDirection)
+                return;
+            if (run.isWhitespaceOnly()) {
+                run.setBidiLevel(rootBidiLevel);
+                return;
+            }
             auto detachedTrailingRun = *run.detachTrailingWhitespace();
             detachedTrailingRun.setBidiLevel(rootBidiLevel);
-            if (index == m_runs.size() - 1)
+            if (index == m_runs.size() - 1) {
                 m_runs.append(detachedTrailingRun);
-            else
-                m_runs.insert(index + 1, detachedTrailingRun);
-            // There can't be any trailing whitespace in front of this partially whitespace content.
+                return;
+            }
+            m_runs.insert(index + 1, detachedTrailingRun);
+        };
+        adjustBidiLevelIfNeeded();
+        if (!run.isWhitespaceOnly()) {
+            // There can't be any trailing whitespace in front of this non-whitespace/whitespace content.
             break;
         }
     }
