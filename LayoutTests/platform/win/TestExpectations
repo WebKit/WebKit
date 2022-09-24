@@ -559,6 +559,8 @@ accessibility/ignored-textfield-still-accessible.html [ Skip ]
 # Default ARIA for custom elements are not yet enabled
 accessibility/custom-elements/ [ Skip ]
 
+webkit.org/b/245301 fast/custom-elements/reactions-for-aria-element-attributes.html [ Failure ]
+
 # TODO Conic gradients
 http/wpt/css/css-images-4/conic-gradient-parsing.html [ Skip ]
 fast/gradients/conic-repeating.html [ Skip ]
