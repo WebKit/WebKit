@@ -35,6 +35,7 @@ navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
+navigator.wakeLock is OK
 navigator.webdriver is OK
 navigator.xr is OK
 navigator.appCodeName is OK
@@ -72,6 +73,7 @@ navigator.storage is OK
 navigator.userAgent is OK
 navigator.vendor is OK
 navigator.vendorSub is OK
+navigator.wakeLock is OK
 navigator.webdriver is OK
 navigator.xr is OK
 

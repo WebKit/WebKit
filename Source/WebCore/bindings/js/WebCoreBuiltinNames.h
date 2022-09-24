@@ -396,6 +396,8 @@ namespace WebCore {
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VisualViewport) \
+    macro(WakeLock) \
+    macro(WakeLockSentinel) \
     macro(WaveShaperNode) \
     macro(WebGL2RenderingContext) \
     macro(WebGLActiveInfo) \

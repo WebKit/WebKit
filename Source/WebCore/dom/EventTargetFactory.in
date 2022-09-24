@@ -64,6 +64,7 @@ TextTrackCueGeneric conditional=VIDEO
 TextTrackList conditional=VIDEO
 VideoTrackList conditional=VIDEO
 VisualViewport
+WakeLockSentinel
 WebAnimation
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebSocket

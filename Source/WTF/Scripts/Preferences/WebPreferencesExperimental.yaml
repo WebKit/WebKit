@@ -1458,6 +1458,18 @@ ScreenCaptureEnabled:
       default: false
     WebCore:
       default: false
+
+ScreenWakeLockAPIEnabled:
+  type: bool
+  humanReadableName: "Screen Wake Lock API"
+  humanReadableDescription: "Enable Screen Wake Lock API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
       
 ScrollToTextFragmentEnabled:
   type: bool

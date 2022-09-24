@@ -285,6 +285,9 @@ Modules/reporting/ReportBody.cpp
 Modules/reporting/ReportingObserver.cpp
 Modules/reporting/ReportingScope.cpp
 Modules/reporting/TestReportBody.cpp
+Modules/screen-wake-lock/NavigatorScreenWakeLock.cpp
+Modules/screen-wake-lock/WakeLock.cpp
+Modules/screen-wake-lock/WakeLockSentinel.cpp
 Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp
 Modules/speech/SpeechRecognitionErrorEvent.cpp
@@ -4104,6 +4107,9 @@ JSVideoTransferCharacteristics.cpp
 JSVisibilityState.cpp
 JSVisualViewport.cpp
 JSVoidCallback.cpp
+JSWakeLock.cpp
+JSWakeLockSentinel.cpp
+JSWakeLockType.cpp
 JSWaveShaperNode.cpp
 JSWaveShaperOptions.cpp
 JSWebAnimation.cpp
