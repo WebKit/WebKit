@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSS-namespace-object-class-string.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSContainerRule.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSCounterStyleRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSFontFaceRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSGroupingRule-cssRules.html
@@ -27,6 +28,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleRule-set-selectorText.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleRule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-baseURL.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-concat-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-concat-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-concat.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-cssRules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-disabled-regular-sheet-insertion.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-disallow-import.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-duplicate.html
@@ -43,13 +48,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/HTMLLinkElement-disabled-alternate.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/MediaList2.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/MutationObserver-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/StyleSheetList.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-observablearray.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/at-namespace.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/base-uri.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/border-shorthand-serialization.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/caretPositionFromPoint-with-transformation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/computed-style-003.html
@@ -70,6 +80,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-pagerule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-ruleTypeAndOrder.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssom-setProperty-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-cssfontrule.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-final-delimiter.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext-important.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/cssstyledeclaration-csstext.html
@@ -95,7 +106,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-detached-subtree.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-display-none-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-display-none-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-display-none-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-dynamic-subdoc.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-getter-v-properties.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-absolute.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-fixed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/getComputedStyle-insets-nobox.html
@@ -119,12 +132,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-across-context.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-charset-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-from-script-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-from-script-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-from-script.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-import-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-namespace-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/insertRule-syntax-error-01.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-interfaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/medialist-interfaces-002.html
@@ -134,13 +149,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/page-descriptors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/preferred-stylesheet-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/preferred-stylesheet-reversed-order.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/property-accessors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/removerule-invalidation-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/rule-restrictions.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorSerialize.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/selectorText-modification-restyle-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialization-CSSDeclaration-with-important.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-all-longhands.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-custom-props.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-media-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/serialize-namespaced-type-selectors.html
@@ -153,6 +171,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/style-sheet-interfaces-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-replacedata-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.css
 /LayoutTests/imported/w3c/web-platform-tests/css/cssom/stylesheet-same-origin.sub.html

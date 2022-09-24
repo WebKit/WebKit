@@ -1,0 +1,6 @@
+Test Span
+
+FAIL document.adoptedStyleSheets should allow mutation in-place Illegal constructor
+FAIL shadowRoot.adoptedStyleSheets should allow mutation in-place Illegal constructor
+FAIL adoptedStyleSheets should return true for isArray() assert_true: expected true got false
+

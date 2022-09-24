@@ -1,5 +1,6 @@
 
 PASS sheet_property
+PASS disabled attribute getter/setter
 PASS sheet_property_updates
 PASS CSSStyleSheet_properties
 PASS CSSStyleSheet_property_values
