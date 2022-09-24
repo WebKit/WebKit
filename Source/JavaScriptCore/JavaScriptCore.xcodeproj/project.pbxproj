@@ -1250,6 +1250,8 @@
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79FC8A081E32E9F000D88F0E /* DFGRegisteredStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 79FC8A071E32E9F000D88F0E /* DFGRegisteredStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A9774A8206B82E4008D03D0 /* JSWeakValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A9774A7206B82C9008D03D0 /* JSWeakValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B6F856C28DDA088004365EA /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
+		7B6F856D28DDA096004365EA /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
 		7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC547D21B69599B00959B58 /* WasmFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CE7187631B600955C24 /* Microtask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CE5187631B600955C24 /* Microtask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C184E1B17BEDBD3007CB63A /* JSPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E1917BEDBD3007CB63A /* JSPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5849,6 +5851,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B6F856D28DDA096004365EA /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5874,6 +5877,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B6F856C28DDA088004365EA /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
