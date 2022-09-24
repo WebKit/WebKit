@@ -3048,6 +3048,8 @@ accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ ImageOnlyFailure ]
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ ImageOnlyFailure ]
 
+webkit.org/b/245613 scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position.html [ Pass Failure ]
+
 # Test fails, but has flaky output.
 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
