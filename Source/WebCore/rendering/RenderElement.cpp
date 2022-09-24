@@ -43,6 +43,7 @@
 #include "HTMLNames.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
+#include "LayoutContainerBox.h"
 #include "LengthFunctions.h"
 #include "Logging.h"
 #include "Page.h"
@@ -149,6 +150,16 @@ RenderElement::~RenderElement()
 {
     // Do not add any code here. Add it to willBeDestroyed() instead.
     ASSERT(!m_firstChild);
+}
+
+Layout::ContainerBox* RenderElement::layoutBox()
+{
+    return downcast<Layout::ContainerBox>(RenderObject::layoutBox());
+}
+
+const Layout::ContainerBox* RenderElement::layoutBox() const
+{
+    return downcast<Layout::ContainerBox>(RenderObject::layoutBox());
 }
 
 bool RenderElement::isContentDataSupported(const ContentData& contentData)

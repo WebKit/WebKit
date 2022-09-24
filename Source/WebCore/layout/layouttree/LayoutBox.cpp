@@ -44,8 +44,6 @@ Box::Box(std::optional<ElementAttributes> attributes, RenderStyle&& style, std::
     : m_style(WTFMove(style))
     , m_elementAttributes(attributes)
     , m_baseTypeFlags(baseTypeFlags.toRaw())
-    , m_hasRareData(false)
-    , m_isAnonymous(false)
 {
     if (firstLineStyle)
         ensureRareData().firstLineStyle = WTFMove(firstLineStyle);
@@ -70,6 +68,23 @@ void Box::setNextSibling(Box* nextSibling)
 void Box::setPreviousSibling(Box* previousSibling)
 {
     m_previousSibling = previousSibling;
+}
+
+UniqueRef<Box> Box::removeFromParent()
+{
+    if (m_previousSibling)
+        m_previousSibling->m_nextSibling = m_nextSibling;
+    if (m_nextSibling)
+        m_nextSibling->m_previousSibling = m_previousSibling;
+    if (m_parent->m_firstChild == this)
+        m_parent->m_firstChild = m_nextSibling;
+    if (m_parent->m_lastChild == this)
+        m_parent->m_lastChild = m_previousSibling;
+    m_parent = nullptr;
+    m_previousSibling = nullptr;
+    m_nextSibling = nullptr;
+
+    return UniqueRef<Box>(*this);
 }
 
 void Box::updateStyle(const RenderStyle& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)
@@ -124,7 +139,7 @@ bool Box::establishesBlockFormattingContext() const
 
 bool Box::establishesInlineFormattingContext() const
 {
-    if (isIntegrationRoot())
+    if (isInlineIntegrationRoot())
         return true;
 
     // 9.4.2 Inline formatting contexts

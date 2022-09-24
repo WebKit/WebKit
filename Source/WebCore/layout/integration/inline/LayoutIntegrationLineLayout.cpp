@@ -405,15 +405,14 @@ void LineLayout::constructContent()
     auto isLeftToRightInlineDirection = rootStyle.isLeftToRightDirection();
     auto isHorizontalWritingMode = rootStyle.isHorizontalWritingMode();
     auto isFlippedBlocksWritingMode = rootStyle.isFlippedBlocksWritingMode();
-    auto& boxAndRendererList = m_boxTree.boxAndRendererList();
-    for (auto& boxAndRenderer : boxAndRendererList) {
-        auto& layoutBox = boxAndRenderer.box.get();
+    for (auto& renderObject : m_boxTree.renderers()) {
+        auto& layoutBox = *renderObject->layoutBox();
         
         bool needsRenderTreePositioning = layoutBox.isAtomicInlineLevelBox() || layoutBox.isFloatingPositioned() || layoutBox.isOutOfFlowPositioned();
         if (!needsRenderTreePositioning)
             continue;
 
-        auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
+        auto& renderer = downcast<RenderBox>(*renderObject);
         auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
 
         if (layoutBox.isOutOfFlowPositioned()) {

@@ -38,6 +38,10 @@ class RenderLayerCompositor;
 class RenderLayoutState;
 class RenderQuote;
 
+namespace Layout {
+class InitialContainingBlock;
+}
+
 class RenderView final : public RenderBlockFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderView);
 public:
@@ -68,6 +72,9 @@ public:
     float zoomFactor() const;
 
     FrameView& frameView() const { return m_frameView; }
+
+    Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
+    const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }
 
     bool needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly() const { return m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly; };
     void setNeedsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly(bool value = true) { m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly = value; }
@@ -223,6 +230,8 @@ private:
 
     // Include this RenderView.
     uint64_t m_rendererCount { 1 };
+
+    UniqueRef<Layout::InitialContainingBlock> m_initialContainingBlock;
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
     SelectionRangeData m_selection;

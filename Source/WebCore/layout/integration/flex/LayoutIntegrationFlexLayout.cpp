@@ -153,9 +153,10 @@ void FlexLayout::layout()
     auto relayoutFlexItems = [&] {
         // Flex items need to be laid out now with their final size (and through setOverridingLogicalWidth/Height)
         // Note that they may re-size themselves.
-        for (auto& boxAndRenderer : m_boxTree.boxAndRendererList()) {
-            auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
-            auto borderBox = Layout::BoxGeometry::borderBoxRect(m_flexFormattingState.boxGeometry(boxAndRenderer.box.get()));
+        for (auto& renderObject : m_boxTree.renderers()) {
+            auto& renderer = downcast<RenderBox>(*renderObject);
+            auto& layoutBox = *renderer.layoutBox();
+            auto borderBox = Layout::BoxGeometry::borderBoxRect(m_flexFormattingState.boxGeometry(layoutBox));
 
             renderer.setWidth(LayoutUnit { });
             renderer.setHeight(LayoutUnit { });
@@ -176,11 +177,9 @@ void FlexLayout::layout()
 
 void FlexLayout::updateRenderers() const
 {
-    auto& boxAndRendererList = m_boxTree.boxAndRendererList();
-    for (auto& boxAndRenderer : boxAndRendererList) {
-        auto& layoutBox = boxAndRenderer.box.get();
-
-        auto& renderer = downcast<RenderBox>(*boxAndRenderer.renderer);
+    for (auto& renderObject : m_boxTree.renderers()) {
+        auto& renderer = downcast<RenderBox>(*renderObject);
+        auto& layoutBox = *renderer.layoutBox();
         auto& flexItemGeometry = m_flexFormattingState.boxGeometry(layoutBox);
         auto borderBox = Layout::BoxGeometry::borderBoxRect(flexItemGeometry);
         renderer.setLocation(borderBox.topLeft());

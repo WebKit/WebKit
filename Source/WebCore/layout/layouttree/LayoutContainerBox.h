@@ -62,6 +62,8 @@ public:
     std::optional<LayoutUnit> baselineForIntegration() const { return m_baselineForIntegration; }
 
 private:
+    friend class Box;
+    
     CheckedPtr<Box> m_firstChild;
     CheckedPtr<Box> m_lastChild;
 

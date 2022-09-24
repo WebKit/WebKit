@@ -176,7 +176,7 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
             return true;
         }
 
-        if (!is<InitialContainingBlock>(layoutBox) && !layoutBox.isIntegrationRoot() && &formattingContextRoot(layoutBox) == &root()) {
+        if (!is<InitialContainingBlock>(layoutBox) && &formattingContextRoot(layoutBox) == &root()) {
             // This is the non-escape case of accessing a box's geometry information within the same formatting context.
             return true;
         }
@@ -215,7 +215,7 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
         if (*escapeReason == EscapeReason::FloatBoxIsAlwaysRelativeToFloatStateRoot) {
             // Float box top/left values are mapped relative to the FloatState's root. Inline formatting contexts(A) inherit floats from parent
             // block formatting contexts(B). Floats in these inline formatting contexts(A) need to be mapped to the parent, block formatting context(B).
-            if (layoutBox.isIntegrationRoot())
+            if (layoutBox.isInlineIntegrationRoot())
                 return true;
 
             auto& formattingContextRootForBox = formattingContextRoot(layoutBox);

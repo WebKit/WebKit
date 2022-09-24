@@ -39,8 +39,8 @@
 #include "ScrollAlignment.h"
 #include "StyleImage.h"
 #include "TextAffinity.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/IsoMalloc.h>
-#include <wtf/WeakPtr.h>
 
 namespace WTF {
 class TextStream;
@@ -92,6 +92,10 @@ const int caretWidth = 1;
 
 struct ScrollRectToVisibleOptions;
 
+namespace Layout {
+class Box;
+}
+
 namespace Style {
 class PseudoElementRequest;
 }
@@ -109,6 +113,11 @@ public:
     // marked as anonymous in the constructor.
     explicit RenderObject(Node&);
     virtual ~RenderObject();
+
+    Layout::Box* layoutBox() { return m_layoutBox.get(); }
+    const Layout::Box* layoutBox() const { return m_layoutBox.get(); }
+    void setLayoutBox(Layout::Box&);
+    void clearLayoutBox();
 
     RenderTheme& theme() const;
 
@@ -846,6 +855,8 @@ private:
     RenderElement* m_parent;
     RenderObject* m_previous;
     RenderObject* m_next;
+
+    CheckedPtr<Layout::Box> m_layoutBox;
 
 #if ASSERT_ENABLED
     bool m_hasAXObject : 1;
