@@ -29,6 +29,7 @@
 
 #include "ApplyStyleCommand.h"
 #include "Element.h"
+#include "ElementName.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLNames.h"
@@ -47,33 +48,38 @@ RemoveFormatCommand::RemoveFormatCommand(Document& document)
 
 static bool isElementForRemoveFormatCommand(const Element* element)
 {
-    static NeverDestroyed elements = MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
-        acronymTag,
-        bTag,
-        bdoTag,
-        bigTag,
-        citeTag,
-        codeTag,
-        dfnTag,
-        emTag,
-        fontTag,
-        iTag,
-        insTag,
-        kbdTag,
-        nobrTag,
-        qTag,
-        sTag,
-        sampTag,
-        smallTag,
-        strikeTag,
-        strongTag,
-        subTag,
-        supTag,
-        ttTag,
-        uTag,
-        varTag,
-    };
-    return elements.get().contains(element->tagQName());
+    using namespace ElementNames;
+
+    switch (element->tagQName().elementName()) {
+    case HTML::acronym:
+    case HTML::b:
+    case HTML::bdo:
+    case HTML::big:
+    case HTML::cite:
+    case HTML::code:
+    case HTML::dfn:
+    case HTML::em:
+    case HTML::font:
+    case HTML::i:
+    case HTML::ins:
+    case HTML::kbd:
+    case HTML::nobr:
+    case HTML::q:
+    case HTML::s:
+    case HTML::samp:
+    case HTML::small_:
+    case HTML::strike:
+    case HTML::strong:
+    case HTML::sub:
+    case HTML::sup:
+    case HTML::tt:
+    case HTML::u:
+    case HTML::var:
+        return true;
+    default:
+        break;
+    }
+    return false;
 }
 
 void RemoveFormatCommand::doApply()

@@ -29,6 +29,7 @@
 #include "CachedResourceLoader.h"
 #include "CachedSVGDocument.h"
 #include "ElementIterator.h"
+#include "ElementName.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "LegacyRenderSVGTransformableContainer.h"
@@ -179,23 +180,41 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
     SVGGraphicsElement::svgAttributeChanged(attrName);
 }
 
-static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createAllowedElementSet()
+static inline bool isDisallowedElement(const SVGElement& element)
 {
+    using namespace ElementNames;
+
     // Spec: "Any 'svg', 'symbol', 'g', graphics element or other 'use' is potentially a template object that can be re-used
     // (i.e., "instanced") in the SVG document via a 'use' element."
     // "Graphics Element" is defined as 'circle', 'ellipse', 'image', 'line', 'path', 'polygon', 'polyline', 'rect', 'text'
     // Excluded are anything that is used by reference or that only make sense to appear once in a document.
-    using namespace SVGNames;
-    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
-    for (auto& tag : { aTag.get(), circleTag.get(), descTag.get(), ellipseTag.get(), gTag.get(), imageTag.get(), lineTag.get(), metadataTag.get(), pathTag.get(), polygonTag.get(), polylineTag.get(), rectTag.get(), svgTag.get(), switchTag.get(), symbolTag.get(), textTag.get(), textPathTag.get(), titleTag.get(), trefTag.get(), tspanTag.get(), useTag.get() })
-        set.add(tag.localName());
-    return set;
-}
-
-static inline bool isDisallowedElement(const SVGElement& element)
-{
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> set = createAllowedElementSet();
-    return !set.get().contains(element.localName());
+    switch (element.tagQName().elementName()) {
+    case SVG::a:
+    case SVG::circle:
+    case SVG::desc:
+    case SVG::ellipse:
+    case SVG::g:
+    case SVG::image:
+    case SVG::line:
+    case SVG::metadata:
+    case SVG::path:
+    case SVG::polygon:
+    case SVG::polyline:
+    case SVG::rect:
+    case SVG::svg:
+    case SVG::switch_:
+    case SVG::symbol:
+    case SVG::text:
+    case SVG::textPath:
+    case SVG::title:
+    case SVG::tref:
+    case SVG::tspan:
+    case SVG::use:
+        return false;
+    default:
+        break;
+    }
+    return true;
 }
 
 static inline bool isDisallowedElement(const Element& element)

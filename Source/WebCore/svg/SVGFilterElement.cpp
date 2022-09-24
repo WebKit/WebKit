@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SVGFilterElement.h"
 
+#include "ElementName.h"
 #include "RenderSVGResourceFilter.h"
 #include "SVGElementInlines.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
@@ -122,41 +123,43 @@ RenderPtr<RenderElement> SVGFilterElement::createElementRenderer(RenderStyle&& s
 
 bool SVGFilterElement::childShouldCreateRenderer(const Node& child) const
 {
+    using namespace ElementNames;
+
     if (!child.isSVGElement())
         return false;
 
-    const SVGElement& svgElement = downcast<SVGElement>(child);
-
-    static NeverDestroyed<HashSet<QualifiedName>> allowedChildElementTags;
-    if (allowedChildElementTags.get().isEmpty()) {
-        allowedChildElementTags.get().add(SVGNames::feBlendTag);
-        allowedChildElementTags.get().add(SVGNames::feColorMatrixTag);
-        allowedChildElementTags.get().add(SVGNames::feComponentTransferTag);
-        allowedChildElementTags.get().add(SVGNames::feCompositeTag);
-        allowedChildElementTags.get().add(SVGNames::feConvolveMatrixTag);
-        allowedChildElementTags.get().add(SVGNames::feDiffuseLightingTag);
-        allowedChildElementTags.get().add(SVGNames::feDisplacementMapTag);
-        allowedChildElementTags.get().add(SVGNames::feDistantLightTag);
-        allowedChildElementTags.get().add(SVGNames::feDropShadowTag);
-        allowedChildElementTags.get().add(SVGNames::feFloodTag);
-        allowedChildElementTags.get().add(SVGNames::feFuncATag);
-        allowedChildElementTags.get().add(SVGNames::feFuncBTag);
-        allowedChildElementTags.get().add(SVGNames::feFuncGTag);
-        allowedChildElementTags.get().add(SVGNames::feFuncRTag);
-        allowedChildElementTags.get().add(SVGNames::feGaussianBlurTag);
-        allowedChildElementTags.get().add(SVGNames::feImageTag);
-        allowedChildElementTags.get().add(SVGNames::feMergeTag);
-        allowedChildElementTags.get().add(SVGNames::feMergeNodeTag);
-        allowedChildElementTags.get().add(SVGNames::feMorphologyTag);
-        allowedChildElementTags.get().add(SVGNames::feOffsetTag);
-        allowedChildElementTags.get().add(SVGNames::fePointLightTag);
-        allowedChildElementTags.get().add(SVGNames::feSpecularLightingTag);
-        allowedChildElementTags.get().add(SVGNames::feSpotLightTag);
-        allowedChildElementTags.get().add(SVGNames::feTileTag);
-        allowedChildElementTags.get().add(SVGNames::feTurbulenceTag);
+    switch (downcast<SVGElement>(child).tagQName().elementName()) {
+    case SVG::feBlend:
+    case SVG::feColorMatrix:
+    case SVG::feComponentTransfer:
+    case SVG::feComposite:
+    case SVG::feConvolveMatrix:
+    case SVG::feDiffuseLighting:
+    case SVG::feDisplacementMap:
+    case SVG::feDistantLight:
+    case SVG::feDropShadow:
+    case SVG::feFlood:
+    case SVG::feFuncA:
+    case SVG::feFuncB:
+    case SVG::feFuncG:
+    case SVG::feFuncR:
+    case SVG::feGaussianBlur:
+    case SVG::feImage:
+    case SVG::feMerge:
+    case SVG::feMergeNode:
+    case SVG::feMorphology:
+    case SVG::feOffset:
+    case SVG::fePointLight:
+    case SVG::feSpecularLighting:
+    case SVG::feSpotLight:
+    case SVG::feTile:
+    case SVG::feTurbulence:
+        return true;
+    default:
+        break;
     }
 
-    return allowedChildElementTags.get().contains<SVGAttributeHashTranslator>(svgElement.tagQName());
+    return false;
 }
 
 }

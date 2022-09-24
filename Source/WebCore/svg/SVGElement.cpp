@@ -31,6 +31,7 @@
 #include "ComputedStyleExtractor.h"
 #include "Document.h"
 #include "ElementChildIterator.h"
+#include "ElementName.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLElement.h"
@@ -549,44 +550,37 @@ void SVGElement::finishParsingChildren()
 }
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-static MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> createSVGLayerAwareElementSet()
-{
-    // List of all SVG elements whose renderers support the layer aware layout / painting / hit-testing mode ('LBSE-mode').
-    using namespace SVGNames;
-    MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
-
-    const Vector<SVGQualifiedName> allowedTags = {
-        aTag.get(),
-        altGlyphTag.get(),
-        circleTag.get(),
-        defsTag.get(),
-        ellipseTag.get(),
-        foreignObjectTag.get(),
-        gTag.get(),
-        imageTag.get(),
-        lineTag.get(),
-        pathTag.get(),
-        polygonTag.get(),
-        polylineTag.get(),
-        rectTag.get(),
-        svgTag.get(),
-        switchTag.get(),
-        symbolTag.get(),
-        textPathTag.get(),
-        textTag.get(),
-        trefTag.get(),
-        tspanTag.get(),
-        useTag.get()
-    };
-    for (auto& tag : allowedTags)
-        set.add(tag.localName());
-    return set;
-}
-
 static inline bool isSVGLayerAwareElement(const SVGElement& element)
 {
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> set = createSVGLayerAwareElementSet();
-    return set.get().contains(element.localName());
+    using namespace ElementNames;
+
+    switch (element.tagQName().elementName()) {
+    case SVG::a:
+    case SVG::altGlyph:
+    case SVG::circle:
+    case SVG::defs:
+    case SVG::ellipse:
+    case SVG::foreignObject:
+    case SVG::g:
+    case SVG::image:
+    case SVG::line:
+    case SVG::path:
+    case SVG::polygon:
+    case SVG::polyline:
+    case SVG::rect:
+    case SVG::svg:
+    case SVG::switch_:
+    case SVG::symbol:
+    case SVG::textPath:
+    case SVG::text:
+    case SVG::tref:
+    case SVG::tspan:
+    case SVG::use:
+        return true;
+    default:
+        break;
+    }
+    return false;
 }
 #endif
 
@@ -604,18 +598,15 @@ bool SVGElement::childShouldCreateRenderer(const Node& child) const
         return false;
 #endif
 
-    static const QualifiedName* const invalidTextContent[] {
-        &SVGNames::altGlyphTag.get(),
-        &SVGNames::textPathTag.get(),
-        &SVGNames::trefTag.get(),
-        &SVGNames::tspanTag.get(),
-    };
-    auto& name = svgChild.localName();
-    for (auto* tag : invalidTextContent) {
-        if (name == tag->localName())
-            return false;
+    switch (svgChild.tagQName().elementName()) {
+    case ElementNames::SVG::altGlyph:
+    case ElementNames::SVG::textPath:
+    case ElementNames::SVG::tref:
+    case ElementNames::SVG::tspan:
+        return false;
+    default:
+        break;        
     }
-
     return svgChild.isValid();
 }
 

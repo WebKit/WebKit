@@ -51,6 +51,7 @@
 #include "ElementAnimationRareData.h"
 #include "ElementInlines.h"
 #include "ElementIterator.h"
+#include "ElementName.h"
 #include "ElementRareData.h"
 #include "EventDispatcher.h"
 #include "EventHandler.h"
@@ -2643,42 +2644,36 @@ void Element::removeShadowRoot()
 
 static bool canAttachAuthorShadowRoot(const Element& element)
 {
-    static NeverDestroyed tagNames = [] {
-        static constexpr std::array tagList {
-            &articleTag,
-            &asideTag,
-            &blockquoteTag,
-            &bodyTag,
-            &divTag,
-            &footerTag,
-            &h1Tag,
-            &h2Tag,
-            &h3Tag,
-            &h4Tag,
-            &h5Tag,
-            &h6Tag,
-            &headerTag,
-            &mainTag,
-            &navTag,
-            &pTag,
-            &sectionTag,
-            &spanTag
-        };
-        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
-        set.reserveInitialCapacity(sizeof(tagList));
-        for (auto& name : tagList)
-            set.add(name->get().localName());
-        return set;
-    }();
+    using namespace ElementNames;
 
     if (!is<HTMLElement>(element))
         return false;
 
-    const auto& localName = element.localName();
-    if (tagNames.get().contains(localName))
+    switch (element.tagQName().elementName()) {
+    case HTML::article:
+    case HTML::aside:
+    case HTML::blockquote:
+    case HTML::body:
+    case HTML::div:
+    case HTML::footer:
+    case HTML::h1:
+    case HTML::h2:
+    case HTML::h3:
+    case HTML::h4:
+    case HTML::h5:
+    case HTML::h6:
+    case HTML::header:
+    case HTML::main:
+    case HTML::nav:
+    case HTML::p:
+    case HTML::section:
+    case HTML::span:
         return true;
+    default:
+        break;
+    }
 
-    if (Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
+    if (auto localName = element.localName(); Document::validateCustomElementName(localName) == CustomElementNameValidationStatus::Valid) {
         if (auto* window = element.document().domWindow()) {
             auto* registry = window->customElementRegistry();
             if (registry && registry->isShadowDisabled(localName))
