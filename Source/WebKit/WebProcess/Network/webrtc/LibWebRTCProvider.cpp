@@ -41,10 +41,9 @@
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/Settings.h>
 
-#include <webrtc/api/async_resolver_factory.h>
-
 ALLOW_COMMA_BEGIN
 
+#include <webrtc/api/async_resolver_factory.h>
 #include <webrtc/pc/peer_connection_factory.h>
 
 ALLOW_COMMA_END

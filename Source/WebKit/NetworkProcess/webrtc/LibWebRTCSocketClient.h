@@ -28,7 +28,12 @@
 #if USE(LIBWEBRTC)
 
 #include "NetworkRTCProvider.h"
+
+ALLOW_COMMA_BEGIN
+
 #include <webrtc/rtc_base/async_packet_socket.h>
+
+ALLOW_COMMA_END
 
 namespace rtc {
 class AsyncPacketSocket;

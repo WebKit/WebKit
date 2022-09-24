@@ -35,14 +35,19 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
-#include <webrtc/p2p/base/basic_packet_socket_factory.h>
-#include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/HashMap.h>
 #include <wtf/StdMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/p2p/base/basic_packet_socket_factory.h>
+#include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
+
+ALLOW_COMMA_END
 
 namespace IPC {
 class Connection;

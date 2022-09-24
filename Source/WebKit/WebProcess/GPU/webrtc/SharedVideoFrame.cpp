@@ -39,7 +39,13 @@
 #include <wtf/Scope.h>
 
 #if USE(LIBWEBRTC)
+
+ALLOW_COMMA_BEGIN
+
 #include <webrtc/sdk/WebKit/WebKitUtilities.h>
+
+ALLOW_COMMA_END
+
 #endif
 
 #include <pal/cf/CoreMediaSoftLink.h>

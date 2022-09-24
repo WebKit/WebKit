@@ -39,10 +39,15 @@
 #include "SharedVideoFrame.h"
 #include "WorkQueueMessageReceiver.h"
 #include <map>
-#include <webrtc/api/video/video_codec_type.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/api/video/video_codec_type.h>
+
+ALLOW_COMMA_END
 
 using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 

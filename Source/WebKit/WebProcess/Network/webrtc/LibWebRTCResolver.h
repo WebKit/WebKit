@@ -29,9 +29,14 @@
 
 #include "LibWebRTCResolverIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
+#include <wtf/Vector.h>
+
+ALLOW_COMMA_BEGIN
+
 #include <webrtc/api/packet_socket_factory.h>
 #include <webrtc/rtc_base/async_resolver_interface.h>
-#include <wtf/Vector.h>
+
+ALLOW_COMMA_END
 
 namespace IPC {
 class Connection;

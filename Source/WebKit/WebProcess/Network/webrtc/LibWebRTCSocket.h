@@ -29,9 +29,14 @@
 
 #include <WebCore/LibWebRTCProvider.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
-#include <webrtc/rtc_base/async_packet_socket.h>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/rtc_base/async_packet_socket.h>
+
+ALLOW_COMMA_END
 
 namespace IPC {
 class Connection;
