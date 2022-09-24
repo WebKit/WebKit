@@ -1247,14 +1247,16 @@ static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
     if (position.isNamedGridArea())
         return cssValuePool.createCustomIdent(position.namedGridLine());
 
+    bool hasNamedGridLine = !position.namedGridLine().isNull();
     auto list = CSSValueList::createSpaceSeparated();
     if (position.isSpan()) {
         list->append(cssValuePool.createIdentifierValue(CSSValueSpan));
-        list->append(cssValuePool.createValue(position.spanPosition(), CSSUnitType::CSS_INTEGER));
+        if (!hasNamedGridLine || position.spanPosition() != 1)
+            list->append(cssValuePool.createValue(position.spanPosition(), CSSUnitType::CSS_INTEGER));
     } else
         list->append(cssValuePool.createValue(position.integerPosition(), CSSUnitType::CSS_INTEGER));
 
-    if (!position.namedGridLine().isNull())
+    if (hasNamedGridLine)
         list->append(cssValuePool.createCustomIdent(position.namedGridLine()));
     return list;
 }
