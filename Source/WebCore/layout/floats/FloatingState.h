@@ -41,7 +41,9 @@ class FloatingContext;
 class LayoutState;
 class Rect;
 
-// FloatingState holds the floating boxes per formatting context.
+// FloatingState holds the floating boxes for BFC using the BFC's inline direction.
+// FloatingState may be inherited by nested IFCs with mismataching inline direction. In such cases floating boxes
+// are added to the FloatingState as if they had matching inline direction.
 class FloatingState : public RefCounted<FloatingState> {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:

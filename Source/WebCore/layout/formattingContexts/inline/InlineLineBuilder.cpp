@@ -918,7 +918,9 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     auto floatingContext = FloatingContext { formattingContext(), *floatingState() };
     auto floatingPosition = floatingContext.positionForFloat(floatBox, *m_rootHorizontalConstraints);
     boxGeometry.setLogicalTopLeft(floatingPosition);
-    floatingState()->append(floatingContext.toFloatItem(floatBox));
+    auto floatBoxItem = floatingContext.toFloatItem(floatBox);
+    auto isLogicalLeftPositionedInFloatingState = floatBoxItem.isLeftPositioned();
+    floatingState()->append(WTFMove(floatBoxItem));
     m_placedFloats.append(&floatItem);
 
     auto intersects = [&] {
@@ -939,7 +941,14 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
     // Shrink the line box with the intrusive float box's margin box.
     m_contentIsConstrainedByFloat = true;
     auto floatBoxWidth = inlineItemWidth(floatItem, { });
-    if (floatingContext.isLeftFloatingPositioned(floatBox))
+
+    auto shouldAdjustLineLogicalLeft = [&] {
+        auto matchingInlineDirection = floatingState()->isLeftToRightDirection() == formattingContext().root().style().isLeftToRightDirection();
+        // Floating state inherited from the parent BFC with mismatching inline direction (ltr vs. rtl) puts
+        // a right float (float: right in direction: ltr but parent direction: rtl) to logical left.
+        return (matchingInlineDirection && isLogicalLeftPositionedInFloatingState) || (!matchingInlineDirection && !isLogicalLeftPositionedInFloatingState);
+    };
+    if (shouldAdjustLineLogicalLeft())
         m_lineLogicalRect.setLeft(m_lineLogicalRect.left() + floatBoxWidth);
     m_lineLogicalRect.expandHorizontally(-floatBoxWidth);
     return true;
