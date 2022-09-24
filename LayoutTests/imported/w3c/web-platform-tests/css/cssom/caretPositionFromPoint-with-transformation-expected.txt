@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: TypeError: frameDoc.caretPositionFromPoint is not a function. (In 'frameDoc.caretPositionFromPoint(
+          ...elementCenter(frameDoc.querySelector("h1"))
+        )', 'frameDoc.caretPositionFromPoint' is undefined)
+CONSOLE MESSAGE: TypeError: frameDoc.caretPositionFromPoint is not a function. (In 'frameDoc.caretPositionFromPoint(
+          ...elementCenter(frameDoc.querySelector("h1"))
+        )', 'frameDoc.caretPositionFromPoint' is undefined)
+
+
+
+Harness Error (FAIL), message = TypeError: frameDoc.caretPositionFromPoint is not a function. (In 'frameDoc.caretPositionFromPoint(
+          ...elementCenter(frameDoc.querySelector("h1"))
+        )', 'frameDoc.caretPositionFromPoint' is undefined)
+
+TIMEOUT iframe's with equal content should report the same caret offset Test timed out
+
+Harness Error (FAIL), message = TypeError: frameDoc.caretPositionFromPoint is not a function. (In 'frameDoc.caretPositionFromPoint(
+          ...elementCenter(frameDoc.querySelector("h1"))
+        )', 'frameDoc.caretPositionFromPoint' is undefined)
+
+TIMEOUT iframe's with equal content should report the same caret offset Test timed out
+

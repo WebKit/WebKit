@@ -32,11 +32,16 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LibWebRTCMacros.h>
 #include <WebCore/LibWebRTCSocketIdentifier.h>
-#include <webrtc/rtc_base/net_helpers.h>
-#include <webrtc/api/packet_socket_factory.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/rtc_base/net_helpers.h>
+#include <webrtc/api/packet_socket_factory.h>
+
+ALLOW_COMMA_END
 
 namespace WebKit {
 

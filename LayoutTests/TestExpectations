@@ -6030,6 +6030,9 @@ imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-pol
 imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html [ Skip ]
 
+# Missing support for constructable CSSStyleSheet.
+imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-concat.html [ ImageOnlyFailure ]
+
 # Disable ShadowRealm (while running to ensure we do not crash)
 http/tests/misc/iframe-shadow-realm.html [ Pass Failure ]
 inspector/shadow-realm-console.html [ Pass Failure ]

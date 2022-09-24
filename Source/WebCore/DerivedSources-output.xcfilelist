@@ -1748,6 +1748,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaSession.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+MediaSession.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Permissions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+Permissions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+ScreenWakeLock.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+ScreenWakeLock.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebDriver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSNavigator+WebXR.cpp
@@ -2756,6 +2758,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLock.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLock.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLockSentinel.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLockSentinel.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLockType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWakeLockType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperOptions.cpp

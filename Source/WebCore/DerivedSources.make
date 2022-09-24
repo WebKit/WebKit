@@ -536,6 +536,10 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/reporting/ReportingObserver.idl \
     $(WebCore)/Modules/reporting/ReportingObserverCallback.idl \
     $(WebCore)/Modules/reporting/TestReportBody.idl \
+    $(WebCore)/Modules/screen-wake-lock/Navigator+ScreenWakeLock.idl \
+    $(WebCore)/Modules/screen-wake-lock/WakeLock.idl \
+    $(WebCore)/Modules/screen-wake-lock/WakeLockSentinel.idl \
+    $(WebCore)/Modules/screen-wake-lock/WakeLockType.idl \
     $(WebCore)/Modules/speech/DOMWindow+SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisErrorCode.idl \

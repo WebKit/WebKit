@@ -32,9 +32,14 @@
 #include "Logging.h"
 #include "NetworkRTCProvider.h"
 #include "WebRTCMonitorMessages.h"
-#include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
 #include <wtf/Function.h>
 #include <wtf/WeakHashSet.h>
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/rtc_base/third_party/sigslot/sigslot.h>
+
+ALLOW_COMMA_END
 
 namespace WebKit {
 

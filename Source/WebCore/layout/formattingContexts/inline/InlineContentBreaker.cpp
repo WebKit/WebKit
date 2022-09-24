@@ -634,7 +634,7 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
     // Check where the overflow occurs and use the corresponding style to figure out the breaking behavior.
     // <span style="word-break: normal">first</span><span style="word-break: break-all">second</span><span style="word-break: normal">third</span>
 
-    // First find the overflowing run. 
+    // First find the overflowing run.
     auto nonOverflowingContentWidth = InlineLayoutUnit { };
     auto overflowingRunIndex = runs.size(); 
     for (size_t index = 0; index < runs.size(); ++index) {
@@ -652,10 +652,21 @@ InlineContentBreaker::OverflowingTextContent InlineContentBreaker::processOverfl
     if (auto breakingPosition = tryBreakingOverflowingRun(lineStatus, runs, overflowingRunIndex, nonOverflowingContentWidth))
         return { overflowingRunIndex, breakingPosition };
 
-    // We did not manage to break the run that overflows the line.
-    // Let's try to find a previous breaking position starting from the overflowing run. It surely fits.
-    if (auto breakingPosition = tryBreakingPreviousNonOverflowingRuns(lineStatus, runs, overflowingRunIndex, nonOverflowingContentWidth))
-        return { overflowingRunIndex, breakingPosition };
+    auto& overflowingInlineItem = runs[overflowingRunIndex].inlineItem;
+    // In some cases we just can't break before certain overflowing runs due to content specific CSS rules, e.g. line-break: after-white-space.
+    // This is in addition to having soft wrap opportunties only after the whitespace. This is about not breaking at all
+    // before the whitespace content e.g.
+    // <div style="line-break: after-white-space; word-wrap: break-word">before<span style="white-space: pre">   </span>after</div>
+    // "before" content is not breakable sine it is _before_ the overflowing whitespace content.
+    auto isBreakingAllowedBeforeOverflowingRun = !is<InlineTextItem>(overflowingInlineItem)
+        || !downcast<InlineTextItem>(overflowingInlineItem).isWhitespace()
+        || overflowingInlineItem.style().lineBreak() != LineBreak::AfterWhiteSpace;
+    if (isBreakingAllowedBeforeOverflowingRun) {
+        // We did not manage to break the run that overflows the line.
+        // Let's try to find a previous breaking position starting from the overflowing run. It surely fits.
+        if (auto breakingPosition = tryBreakingPreviousNonOverflowingRuns(lineStatus, runs, overflowingRunIndex, nonOverflowingContentWidth))
+            return { overflowingRunIndex, breakingPosition };
+    }
 
     // At this point we know that there's no breakable run all the way to the overflowing run.
     // Now we need to check if any run after the overflowing content can break.

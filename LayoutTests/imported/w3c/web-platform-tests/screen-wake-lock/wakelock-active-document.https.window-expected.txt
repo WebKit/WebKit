@@ -1,4 +1,4 @@
 
-FAIL navigator.wakeLock.request() aborts if the document is not active. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'wakeLock1.request')"
-FAIL navigator.wakeLock.request() aborts if the document is active, but not fully active. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'wakeLock.request')"
+FAIL navigator.wakeLock.request() aborts if the document is not active. promise_rejects_dom: Inactive document, so must throw NotAllowedError function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException NotAllowedError: property "code" is equal to 9, expected 0
+FAIL navigator.wakeLock.request() aborts if the document is active, but not fully active. promise_rejects_dom: Active, but not fully active, so must throw NotAllowedError function "function () { throw e }" threw object "NotSupportedError: The operation is not supported." that is not a DOMException NotAllowedError: property "code" is equal to 9, expected 0
 

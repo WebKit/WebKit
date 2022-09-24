@@ -40,10 +40,15 @@
 #include "RTCPacketOptions.h"
 #include "WebRTCResolverMessages.h"
 #include <WebCore/LibWebRTCMacros.h>
-#include <webrtc/rtc_base/async_packet_socket.h>
-#include <webrtc/rtc_base/logging.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
+
+ALLOW_COMMA_BEGIN
+
+#include <webrtc/rtc_base/async_packet_socket.h>
+#include <webrtc/rtc_base/logging.h>
+
+ALLOW_COMMA_END
 
 #if PLATFORM(COCOA)
 #include "NetworkRTCResolverCocoa.h"

@@ -1,0 +1,3 @@
+
+PASS getComputedStyle gets invalidated in display: none subtrees due to attribute mutations
+
