@@ -70,6 +70,7 @@ enum class SDKAlignedBehavior {
     NoMoviStarPlusCORSPreflightQuirk,
     NoPokerBrosBuiltInTagQuirk,
     NoShowModalDialog,
+    NoTextValueForCSSColor,
     NoTheSecretSocietyHiddenMysteryWindowOpenQuirk,
     NoTypedArrayAPIQuirk,
     NoUnconditionalUniversalSandboxExtension,
