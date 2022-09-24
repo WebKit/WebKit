@@ -43,11 +43,16 @@
 #include "SecurityOrigin.h"
 #include "StructuredSerializeOptions.h"
 #include "Worker.h"
+#include "WorkerObjectProxy.h"
+#include <wtf/IsoMallocInlines.h>
+
+#if ENABLE(NOTIFICATIONS)
+#include "WorkerNotificationClient.h"
+#endif
+
 #if ENABLE(OFFSCREEN_CANVAS)
 #include "WorkerAnimationController.h"
 #endif
-#include "WorkerObjectProxy.h"
-#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
@@ -136,6 +141,15 @@ RefPtr<RTCRtpScriptTransformer> DedicatedWorkerGlobalScope::createRTCRtpScriptTr
     auto transformer = transformerOrException.releaseReturnValue();
     dispatchEvent(RTCTransformEvent::create(eventNames().rtctransformEvent, transformer.copyRef(), Event::IsTrusted::Yes));
     return transformer;
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+NotificationClient* DedicatedWorkerGlobalScope::notificationClient()
+{
+    if (!m_notificationClient)
+        m_notificationClient = WorkerNotificationClient::create(*this);
+    return m_notificationClient.get();
 }
 #endif
 

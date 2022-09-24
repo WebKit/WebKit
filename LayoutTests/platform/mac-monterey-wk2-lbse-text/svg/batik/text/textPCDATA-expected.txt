@@ -4,29 +4,29 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
-layer at (-254,-14) size 570x48 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (-255,-14) size 570x48
-layer at (135,16) size 180x17
+layer at (-254.02,-14) size 570x48 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (-254.02,-14) size 568.84x47.39
+layer at (135.17,15.52) size 180x17
   RenderSVGText {text} at (389,29) size 180x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 180x18
       chunk 1 (middle anchor) text run 1 at (135.17,30.00) startOffset 0 endOffset 24 width 179.66: "Character Data on <text>"
-layer at (-97,-14) size 195x38 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (157,0) size 195x38
-layer at (-44,-14) size 88x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+layer at (-97.02,-14) size 195x38 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (157,0) size 194.03x38
+layer at (-43.78,-14) size 88x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (53,0) size 88x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 88x18
       chunk 1 (middle anchor) text run 1 at (-43.78,0.00) startOffset 0 endOffset 10 width 87.55: "CDATA only"
-layer at (-97,6) size 194x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+layer at (-97.02,6) size 194x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,20) size 195x18 contains 1 chunk(s)
     RenderSVGInlineText {#cdata-section} at (0,0) size 195x18
       chunk 1 (middle anchor) text run 1 at (-97.01,20.00) startOffset 0 endOffset 27 width 194.02: "<text> with a CDATA section"
-layer at (-168,-14) size 338x38 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (85,0) size 338x38
-layer at (-60,-14) size 119x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+layer at (-168.11,-14) size 338x38 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (85.91,0) size 336.22x38
+layer at (-59.55,-14) size 119x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (108,0) size 120x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 120x18
       chunk 1 (middle anchor) text run 1 at (-59.55,0.00) startOffset 0 endOffset 17 width 119.09: "text, CDATA, text"
-layer at (-168,6) size 336x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+layer at (-168.11,6) size 336x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,20) size 337x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 99x18
       chunk 1 (middle anchor) text run 1 at (-168.10,20.00) startOffset 0 endOffset 17 width 98.64: "Text first, then "
@@ -34,13 +34,13 @@ layer at (-168,6) size 336x18 backgroundClip at (0,0) size 450x500 clip at (0,0)
       chunk 1 (middle anchor) text run 1 at (-69.46,20.00) startOffset 0 endOffset 23 width 166.91: "CDATA section in <text>"
     RenderSVGInlineText {#text} at (265,0) size 71x18
       chunk 1 (middle anchor) text run 1 at (97.46,20.00) startOffset 0 endOffset 12 width 70.64: ", text again"
-layer at (-254,-14) size 509x38 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 509x38
+layer at (-254.02,-14) size 509x38 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 508.03x38
 layer at (-112,-14) size 224x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (142,0) size 224x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 224x18
       chunk 1 (middle anchor) text run 1 at (-111.99,0.00) startOffset 0 endOffset 31 width 223.98: "text, CDATA, tspan, CDATA, text"
-layer at (-254,6) size 508x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+layer at (-254.02,6) size 508x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,20) size 509x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 32x18
       chunk 1 (middle anchor) text run 1 at (-254.01,20.00) startOffset 0 endOffset 6 width 31.99: "text, "

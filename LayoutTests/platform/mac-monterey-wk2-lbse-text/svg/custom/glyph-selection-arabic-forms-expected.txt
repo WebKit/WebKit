@@ -4,9 +4,9 @@ layer at (0,0) size 400x50
   RenderSVGRoot {svg} at (0,0) size 400x50
 layer at (0,0) size 400x50
   RenderSVGViewportContainer at (0,0) size 400x50
-layer at (10,8) size 348x18
-  RenderSVGTransformableContainer {g} at (10,7) size 348x18
-layer at (10,8) size 348x17
+layer at (10,7.69) size 348x18
+  RenderSVGTransformableContainer {g} at (10,7.69) size 347.67x17.11
+layer at (10,7.69) size 348x17
   RenderSVGText {text} at (0,0) size 348x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 348x18
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 56 width 340.79 RTL: "\x{62E}] [\x{62E}][\x{62E}][\x{62E}] | [\x{62E}] [\x{62E}\x{62E}][\x{62E}] | [\x{62E}] [\x{62E}\x{62E}\x{62E}] | [\x{62E} \x{62E}\x{62E}\x{62E}] | \x{62E} \x{62E}\x{62E}\x{62E}"

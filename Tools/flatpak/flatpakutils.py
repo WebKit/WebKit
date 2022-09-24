@@ -1088,6 +1088,9 @@ class WebkitFlatpak:
                     Console.message("New SDK version available, removing local UserFlatpak directory before switching to new version")
                     shutil.rmtree(self.flatpak_build_path)
 
+                    Console.message("Removing webkitpy auto-installed dependencies, new Python runtime might be incompatible with them.")
+                    shutil.rmtree(os.path.join(WEBKIT_SOURCE_DIR, 'Tools', 'Scripts', 'libraries', 'autoinstalled'))
+
                     Console.message("Forcing next WebKit build to re-run CMake")
                     for platform in ('GTK', 'WPE'):
                         for build_type in ('Release', 'Debug'):

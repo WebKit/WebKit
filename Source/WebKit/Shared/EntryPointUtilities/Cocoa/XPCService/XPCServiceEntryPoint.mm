@@ -154,7 +154,7 @@ bool XPCServiceInitializerDelegate::isClientSandboxed()
     return connectedProcessIsSandboxed(m_connection.get());
 }
 
-#if !USE(RUNNINGBOARD)
+#if PLATFORM(MAC)
 void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 {
     static NeverDestroyed<OSObjectPtr<os_transaction_t>> globalTransaction;
@@ -184,7 +184,7 @@ void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage)
     // Make sure to destroy the priority boost message to avoid leaking a transaction.
     priorityBoostMessage = nullptr;
 
-#if !USE(RUNNINGBOARD)
+#if PLATFORM(MAC)
     setOSTransaction(nullptr);
 #endif
 

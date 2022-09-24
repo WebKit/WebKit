@@ -60,6 +60,8 @@ public:
 
     void removeAllItemsForPage(Page&);
 
+    WEBCORE_EXPORT void clearEntriesForOrigins(const HashSet<RefPtr<SecurityOrigin>>&);
+
     unsigned pageCount() const { return m_items.size(); }
     WEBCORE_EXPORT unsigned frameCount() const;
 

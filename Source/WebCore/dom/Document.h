@@ -1305,6 +1305,9 @@ public:
     void setMayHaveEditableElements() { m_mayHaveEditableElements = true; }
 #endif
 
+    bool mayHaveRenderedSVGRootElements() const { return m_mayHaveRenderedSVGRootElements; }
+    void setMayHaveRenderedSVGRootElements() { m_mayHaveRenderedSVGRootElements = true; }
+
     bool mayHaveRenderedSVGForeignObjects() const { return m_mayHaveRenderedSVGForeignObjects; }
     void setMayHaveRenderedSVGForeignObjects() { m_mayHaveRenderedSVGForeignObjects = true; }
 
@@ -2029,6 +2032,7 @@ private:
 #endif
 
     bool m_mayHaveRenderedSVGForeignObjects { false };
+    bool m_mayHaveRenderedSVGRootElements { false };
 
     std::unique_ptr<EventTargetSet> m_wheelEventTargets;
 

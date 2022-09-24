@@ -498,6 +498,8 @@ namespace WebCore {
     macro(fatal) \
     macro(fetch) \
     macro(fetchRequest) \
+    macro(FileReader) \
+    macro(FileReaderSync) \
     macro(fillFromJS) \
     macro(finishConsumingStream) \
     macro(flush) \
@@ -587,6 +589,11 @@ namespace WebCore {
     macro(setBodyFromInputRequest) \
     macro(setStatus) \
     macro(showModalDialog) \
+    macro(SpeechSynthesis) \
+    macro(SpeechSynthesisErrorEvent) \
+    macro(SpeechSynthesisEvent) \
+    macro(SpeechSynthesisUtterance) \
+    macro(SpeechSynthesisVoice) \
     macro(start) \
     macro(startConsumingStream) \
     macro(started) \

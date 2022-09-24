@@ -14,7 +14,7 @@ layer at (0,0) size 800x408
       RenderBlock (anonymous) at (0,238) size 800x154
         RenderText {#text} at (0,0) size 0x0
 layer at (20,50) size 717x58
-  RenderBlock (positioned) {div} at (20,50) size 717x58
+  RenderBlock (positioned) {div} at (20,50) size 716.95x58
     RenderInline {span} at (0,0) size 95x56 [textStrokeWidth=1.00]
       RenderText {#text} at (0,1) size 95x56
         text run at (0,1) width 95: "This"
@@ -35,7 +35,7 @@ layer at (0,100) size 800x100
   RenderSVGRoot {svg} at (0,50) size 800x100
 layer at (0,100) size 800x100
   RenderSVGViewportContainer at (0,0) size 800x100
-layer at (20,121) size 717x56
+layer at (20,120.94) size 717x56
   RenderSVGText {text} at (20,20) size 717x57 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 95x56
       RenderSVGInlineText {#text} at (0,0) size 95x56
@@ -54,7 +54,7 @@ layer at (20,121) size 717x56
       chunk 1 text run 1 at (525.71,66.21) startOffset 0 endOffset 1 width 13.89: " "
       chunk 1 text run 1 at (539.60,66.21) startOffset 0 endOffset 7 width 197.34: "shadows"
 layer at (20,254) size 717x58
-  RenderBlock (positioned) {div} at (20,254) size 717x58
+  RenderBlock (positioned) {div} at (20,254) size 716.95x58
     RenderInline {span} at (0,0) size 95x56 [textStrokeWidth=1.00]
       RenderText {#text} at (0,1) size 95x56
         text run at (0,1) width 95: "This"
@@ -75,7 +75,7 @@ layer at (0,304) size 800x100
   RenderSVGRoot {svg} at (0,50) size 800x100
 layer at (0,304) size 800x100
   RenderSVGViewportContainer at (0,0) size 800x100
-layer at (20,325) size 717x56
+layer at (20,324.94) size 717x56
   RenderSVGText {text} at (20,20) size 717x57 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 95x56
       RenderSVGInlineText {#text} at (0,0) size 95x56

@@ -4,21 +4,21 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,7) size 475x282 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (10,7) size 475x282
-layer at (10,7) size 474x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (10,7.41) size 475x282 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (10,7.41) size 474.23x281.08
+layer at (10,7.41) size 474x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 475x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 475x41
       chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 31 width 474.22: "Basic paint: stroke properties."
 layer at (160,70) size 200x41
-  RenderSVGPath {path} at (150,62) size 200x41 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [line cap=ROUND]}] [data="M 160 70 L 360 90 L 160 110"]
+  RenderSVGPath {path} at (150,62.59) size 200x40 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [line cap=ROUND]}] [data="M 160 70 L 360 90 L 160 110"]
 layer at (160,190) size 200x41
-  RenderSVGPath {path} at (150,182) size 200x41 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [miter limit=1.00]}] [data="M 160 190 L 360 210 L 160 230"]
-layer at (60,124) size 403x45
+  RenderSVGPath {path} at (150,182.59) size 200x40 [stroke={[type=SOLID] [color=#FF0000] [stroke width=30.00] [miter limit=1.00]}] [data="M 160 190 L 360 210 L 160 230"]
+layer at (60,123.78) size 403x45
   RenderSVGText {text} at (50,116) size 404x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 404x45
       chunk 1 text run 1 at (60.00,160.00) startOffset 0 endOffset 22 width 403.07: "stroke-linecap=\"round\""
-layer at (130,244) size 285x45
+layer at (130,243.78) size 285x45
   RenderSVGText {text} at (120,236) size 286x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 286x45
       chunk 1 text run 1 at (130.00,280.00) startOffset 0 endOffset 16 width 285.14: "stroke-miter=\"1\""

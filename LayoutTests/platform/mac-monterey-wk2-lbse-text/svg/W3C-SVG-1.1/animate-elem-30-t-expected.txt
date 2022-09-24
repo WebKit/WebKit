@@ -46,8 +46,8 @@ layer at (310,30) size 0x140
   RenderSVGPath {line} at (300,25) size 0x140 [stroke={[type=SOLID] [color=#B4B4B4]}] [fill={[type=SOLID] [color=#000000]}] [x1=310.00] [y1=30.00] [x2=310.00] [y2=170.00]
 layer at (307,160) size 6x10
   RenderSVGPath {path} at (297,155) size 6x10 [fill={[type=SOLID] [color=#B4B4B4]}] [data="M 310 170 L 307 160 L 313 160 Z"]
-layer at (230,8) size 40x8
-  RenderSVGRect {rect} at (220,2) size 40x8 [fill={[type=SOLID] [color=#B4B4B4]}] [x=230.00] [y=7.50] [width=40.00] [height=7.50]
+layer at (230,7.50) size 40x8
+  RenderSVGRect {rect} at (220,2.50) size 40x7.50 [fill={[type=SOLID] [color=#B4B4B4]}] [x=230.00] [y=7.50] [width=40.00] [height=7.50]
 layer at (230,170) size 40x30
   RenderSVGRect {rect} at (220,165) size 40x30 [fill={[type=SOLID] [color=#B4B4B4]}] [x=230.00] [y=170.00] [width=40.00] [height=30.00]
 layer at (250,10) size 0x160

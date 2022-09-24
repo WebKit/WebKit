@@ -4,211 +4,211 @@ layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
 layer at (0,0) size 400x400
   RenderSVGViewportContainer at (0,0) size 400x400
-layer at (10,11) size 49x5
+layer at (10,10.50) size 49x5
   RenderSVGText {text} at (10,10) size 50x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 50x6
       chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 21 width 49.29: "SVG Performance test."
-layer at (-1,23) size 20x40 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-1,22) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=-0.90] [y=22.50] [width=19.80] [height=39.00]
-layer at (49,48) size 34x66
-  RenderSVGRect {rect} at (48,47) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=48.50] [y=47.50] [width=33.00] [height=65.00]
-layer at (43,-4) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (42,-5) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=42.50] [y=-4.50] [width=99.00] [height=195.00]
-layer at (14,-2) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (13,-3) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=13.50] [y=-2.50] [width=33.00] [height=65.00]
-layer at (43,-43) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (42,-44) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=42.50] [y=-43.50] [width=99.00] [height=195.00]
-layer at (34,21) size 14x26
-  RenderSVGRect {rect} at (33,20) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=33.81] [y=20.81] [width=12.38] [height=24.38]
-layer at (59,64) size 14x26
-  RenderSVGRect {rect} at (58,63) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=58.81] [y=63.81] [width=12.38] [height=24.38]
-layer at (40,42) size 16x28
-  RenderSVGRect {rect} at (39,42) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=39.93] [y=42.07] [width=14.14] [height=27.86]
-layer at (73,-10) size 14x26 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (72,-11) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=72.81] [y=-10.19] [width=12.38] [height=24.38]
-layer at (0,60) size 20x40
-  RenderSVGRect {rect} at (0,59) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=0.10] [y=59.50] [width=19.80] [height=39.00]
-layer at (28,-60) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (27,-61) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=27.50] [y=-60.50] [width=99.00] [height=195.00]
-layer at (33,56) size 26x50
-  RenderSVGRect {rect} at (32,55) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=32.63] [y=55.63] [width=24.75] [height=48.75]
-layer at (15,56) size 26x50
-  RenderSVGRect {rect} at (14,55) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=14.63] [y=55.63] [width=24.75] [height=48.75]
-layer at (-12,-30) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-12,-30) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=-11.75] [y=-29.75] [width=49.50] [height=97.50]
-layer at (-6,2) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-7,1) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=-6.50] [y=1.50] [width=99.00] [height=195.00]
-layer at (27,-18) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (27,-18) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=27.25] [y=-17.75] [width=49.50] [height=97.50]
-layer at (30,40) size 50x98
-  RenderSVGRect {rect} at (30,40) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=30.25] [y=40.25] [width=49.50] [height=97.50]
-layer at (38,6) size 18x34
-  RenderSVGRect {rect} at (37,5) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=37.75] [y=5.75] [width=16.50] [height=32.50]
-layer at (-11,-1) size 26x50 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-12,-2) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=-11.38] [y=-1.38] [width=24.75] [height=48.75]
-layer at (8,10) size 34x66
-  RenderSVGRect {rect} at (7,9) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=7.50] [y=9.50] [width=33.00] [height=65.00]
-layer at (-7,-70) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-8,-71) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=-7.50] [y=-70.50] [width=99.00] [height=195.00]
-layer at (1,62) size 20x40
-  RenderSVGRect {rect} at (1,61) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=1.10] [y=61.50] [width=19.80] [height=39.00]
-layer at (-34,-71) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-35,-72) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=-34.50] [y=-71.50] [width=99.00] [height=195.00]
-layer at (-7,-30) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-7,-30) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=-6.75] [y=-29.75] [width=49.50] [height=97.50]
-layer at (34,64) size 18x34
-  RenderSVGRect {rect} at (33,63) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=33.75] [y=63.75] [width=16.50] [height=32.50]
-layer at (0,-91) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-1,-92) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=-0.50] [y=-91.50] [width=99.00] [height=195.00]
-layer at (40,43) size 20x40
-  RenderSVGRect {rect} at (40,42) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=40.10] [y=42.50] [width=19.80] [height=39.00]
-layer at (23,53) size 16x28
-  RenderSVGRect {rect} at (22,53) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=22.93] [y=53.07] [width=14.14] [height=27.86]
-layer at (53,41) size 34x66
-  RenderSVGRect {rect} at (52,40) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=52.50] [y=40.50] [width=33.00] [height=65.00]
-layer at (87,2) size 18x34
-  RenderSVGRect {rect} at (86,1) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=86.75] [y=1.75] [width=16.50] [height=32.50]
-layer at (28,53) size 18x34
-  RenderSVGRect {rect} at (27,52) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=27.75] [y=52.75] [width=16.50] [height=32.50]
-layer at (37,-14) size 26x50 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (36,-15) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=36.63] [y=-14.38] [width=24.75] [height=48.75]
-layer at (39,28) size 16x28
-  RenderSVGRect {rect} at (38,28) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=38.93] [y=28.07] [width=14.14] [height=27.86]
-layer at (60,39) size 50x98
-  RenderSVGRect {rect} at (60,39) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=60.25] [y=39.25] [width=49.50] [height=97.50]
-layer at (44,81) size 20x40
-  RenderSVGRect {rect} at (44,80) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=44.10] [y=80.50] [width=19.80] [height=39.00]
-layer at (10,67) size 34x66
-  RenderSVGRect {rect} at (9,66) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=9.50] [y=66.50] [width=33.00] [height=65.00]
-layer at (5,28) size 20x40
-  RenderSVGRect {rect} at (5,27) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=5.10] [y=27.50] [width=19.80] [height=39.00]
-layer at (40,56) size 34x66
-  RenderSVGRect {rect} at (39,55) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=39.50] [y=55.50] [width=33.00] [height=65.00]
-layer at (8,7) size 20x40
-  RenderSVGRect {rect} at (8,6) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=8.10] [y=6.50] [width=19.80] [height=39.00]
-layer at (67,-3) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (67,-3) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=67.25] [y=-2.75] [width=49.50] [height=97.50]
-layer at (34,37) size 14x26
-  RenderSVGRect {rect} at (33,36) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=33.81] [y=36.81] [width=12.38] [height=24.38]
-layer at (-8,-37) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-9,-38) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=-8.50] [y=-37.50] [width=99.00] [height=195.00]
-layer at (41,-42) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (41,-42) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=41.25] [y=-41.75] [width=49.50] [height=97.50]
-layer at (36,-87) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (35,-88) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=35.50] [y=-87.50] [width=99.00] [height=195.00]
-layer at (-1,32) size 18x34 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-2,31) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=-1.25] [y=31.75] [width=16.50] [height=32.50]
-layer at (35,5) size 26x50
-  RenderSVGRect {rect} at (34,4) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=34.63] [y=4.63] [width=24.75] [height=48.75]
-layer at (50,-7) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (49,-8) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=49.50] [y=-7.50] [width=33.00] [height=65.00]
-layer at (-12,-23) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-12,-23) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=-11.75] [y=-22.75] [width=49.50] [height=97.50]
-layer at (60,9) size 26x50
-  RenderSVGRect {rect} at (59,8) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=59.63] [y=8.63] [width=24.75] [height=48.75]
-layer at (23,61) size 14x26
-  RenderSVGRect {rect} at (22,60) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=22.81] [y=60.81] [width=12.38] [height=24.38]
-layer at (32,52) size 34x66
-  RenderSVGRect {rect} at (31,51) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=31.50] [y=51.50] [width=33.00] [height=65.00]
-layer at (47,5) size 20x40
-  RenderSVGRect {rect} at (47,4) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=47.10] [y=4.50] [width=19.80] [height=39.00]
-layer at (55,30) size 14x26
-  RenderSVGRect {rect} at (54,29) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=54.81] [y=29.81] [width=12.38] [height=24.38]
-layer at (40,62) size 14x26
-  RenderSVGRect {rect} at (39,61) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=39.81] [y=61.81] [width=12.38] [height=24.38]
-layer at (45,-44) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (45,-44) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=45.25] [y=-43.75] [width=49.50] [height=97.50]
-layer at (-22,0) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-22,0) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=-21.75] [y=0.25] [width=49.50] [height=97.50]
-layer at (37,20) size 50x98
-  RenderSVGRect {rect} at (37,20) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=37.25] [y=20.25] [width=49.50] [height=97.50]
-layer at (28,69) size 14x26
-  RenderSVGRect {rect} at (27,68) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=27.81] [y=68.81] [width=12.38] [height=24.38]
-layer at (64,0) size 20x39
-  RenderSVGRect {rect} at (64,0) size 20x39 [fill={[type=SOLID] [color=#000000]}] [x=64.10] [y=0.00] [width=19.80] [height=39.00]
-layer at (5,51) size 18x34
-  RenderSVGRect {rect} at (4,50) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=4.75] [y=50.75] [width=16.50] [height=32.50]
-layer at (20,-14) size 26x50 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (19,-15) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=19.63] [y=-14.38] [width=24.75] [height=48.75]
-layer at (14,41) size 14x26
-  RenderSVGRect {rect} at (13,40) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=13.81] [y=40.81] [width=12.38] [height=24.38]
-layer at (-2,60) size 20x40 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-2,59) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=-1.90] [y=59.50] [width=19.80] [height=39.00]
-layer at (-14,24) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-15,23) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=-14.50] [y=23.50] [width=33.00] [height=65.00]
-layer at (52,16) size 18x34
-  RenderSVGRect {rect} at (51,15) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=51.75] [y=15.75] [width=16.50] [height=32.50]
-layer at (72,49) size 50x98
-  RenderSVGRect {rect} at (72,49) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=72.25] [y=49.25] [width=49.50] [height=97.50]
-layer at (42,46) size 34x66
-  RenderSVGRect {rect} at (41,45) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=41.50] [y=45.50] [width=33.00] [height=65.00]
-layer at (-24,-42) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-24,-42) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=-23.75] [y=-41.75] [width=49.50] [height=97.50]
-layer at (-16,-29) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-17,-30) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=-16.50] [y=-29.50] [width=33.00] [height=65.00]
-layer at (81,52) size 18x34
-  RenderSVGRect {rect} at (80,51) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=80.75] [y=51.75] [width=16.50] [height=32.50]
-layer at (69,-20) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (68,-21) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=68.50] [y=-20.50] [width=33.00] [height=65.00]
-layer at (38,61) size 20x40
-  RenderSVGRect {rect} at (38,60) size 20x40 [fill={[type=SOLID] [color=#000000]}] [x=38.10] [y=60.50] [width=19.80] [height=39.00]
-layer at (46,30) size 14x26
-  RenderSVGRect {rect} at (45,29) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=45.81] [y=29.81] [width=12.38] [height=24.38]
-layer at (91,10) size 16x28
-  RenderSVGRect {rect} at (90,10) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=90.93] [y=10.07] [width=14.14] [height=27.86]
-layer at (-13,33) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-13,33) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=-12.75] [y=33.25] [width=49.50] [height=97.50]
-layer at (14,45) size 26x50
-  RenderSVGRect {rect} at (13,44) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=13.63] [y=44.63] [width=24.75] [height=48.75]
-layer at (-1,-3) size 14x26 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-2,-4) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=-1.19] [y=-3.19] [width=12.38] [height=24.38]
-layer at (-1,31) size 14x26 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-2,30) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=-1.19] [y=30.81] [width=12.38] [height=24.38]
-layer at (40,31) size 18x34
-  RenderSVGRect {rect} at (39,30) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=39.75] [y=30.75] [width=16.50] [height=32.50]
-layer at (7,-5) size 26x50 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (6,-6) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=6.63] [y=-5.38] [width=24.75] [height=48.75]
-layer at (14,53) size 18x34
-  RenderSVGRect {rect} at (13,52) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=13.75] [y=52.75] [width=16.50] [height=32.50]
-layer at (-15,-52) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-16,-53) size 100x196 [fill={[type=SOLID] [color=#000000]}] [x=-15.50] [y=-52.50] [width=99.00] [height=195.00]
-layer at (77,29) size 14x26
-  RenderSVGRect {rect} at (76,28) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=76.81] [y=28.81] [width=12.38] [height=24.38]
-layer at (5,48) size 18x34
-  RenderSVGRect {rect} at (4,47) size 18x34 [fill={[type=SOLID] [color=#000000]}] [x=4.75] [y=47.75] [width=16.50] [height=32.50]
-layer at (58,-13) size 16x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (57,-13) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=57.93] [y=-12.93] [width=14.14] [height=27.86]
-layer at (65,15) size 26x50
-  RenderSVGRect {rect} at (64,14) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=64.63] [y=14.63] [width=24.75] [height=48.75]
-layer at (16,11) size 16x28
-  RenderSVGRect {rect} at (15,11) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=15.93] [y=11.07] [width=14.14] [height=27.86]
-layer at (34,72) size 14x26
-  RenderSVGRect {rect} at (33,71) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=33.81] [y=71.81] [width=12.38] [height=24.38]
-layer at (40,3) size 34x66
-  RenderSVGRect {rect} at (39,2) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=39.50] [y=2.50] [width=33.00] [height=65.00]
-layer at (58,63) size 16x28
-  RenderSVGRect {rect} at (57,63) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=57.93] [y=63.07] [width=14.14] [height=27.86]
-layer at (6,12) size 16x28
-  RenderSVGRect {rect} at (5,12) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=5.93] [y=12.07] [width=14.14] [height=27.86]
-layer at (48,31) size 14x26
-  RenderSVGRect {rect} at (47,30) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=47.81] [y=30.81] [width=12.38] [height=24.38]
-layer at (69,8) size 26x50
-  RenderSVGRect {rect} at (68,7) size 26x50 [fill={[type=SOLID] [color=#000000]}] [x=68.63] [y=7.63] [width=24.75] [height=48.75]
-layer at (-15,26) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-15,26) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=-14.75] [y=26.25] [width=49.50] [height=97.50]
-layer at (28,40) size 50x98
-  RenderSVGRect {rect} at (28,40) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=28.25] [y=40.25] [width=49.50] [height=97.50]
-layer at (19,54) size 14x26
-  RenderSVGRect {rect} at (18,53) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=18.81] [y=53.81] [width=12.38] [height=24.38]
-layer at (68,-1) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (68,-1) size 50x98 [fill={[type=SOLID] [color=#000000]}] [x=68.25] [y=-0.75] [width=49.50] [height=97.50]
-layer at (55,68) size 14x26
-  RenderSVGRect {rect} at (54,67) size 14x26 [fill={[type=SOLID] [color=#000000]}] [x=54.81] [y=67.81] [width=12.38] [height=24.38]
-layer at (7,-13) size 16x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (6,-13) size 16x28 [fill={[type=SOLID] [color=#000000]}] [x=6.93] [y=-12.93] [width=14.14] [height=27.86]
-layer at (-9,38) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGRect {rect} at (-10,37) size 34x66 [fill={[type=SOLID] [color=#000000]}] [x=-9.50] [y=37.50] [width=33.00] [height=65.00]
-layer at (10,91) size 32x5
+layer at (-0.91,22.50) size 20x40 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-0.91,22.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=-0.90] [y=22.50] [width=19.80] [height=39.00]
+layer at (48.50,47.50) size 34x66
+  RenderSVGRect {rect} at (48.50,47.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=48.50] [y=47.50] [width=33.00] [height=65.00]
+layer at (42.50,-4.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (42.50,-4.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=42.50] [y=-4.50] [width=99.00] [height=195.00]
+layer at (13.50,-2.50) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (13.50,-2.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=13.50] [y=-2.50] [width=33.00] [height=65.00]
+layer at (42.50,-43.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (42.50,-43.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=42.50] [y=-43.50] [width=99.00] [height=195.00]
+layer at (33.81,20.81) size 14x26
+  RenderSVGRect {rect} at (33.81,20.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=33.81] [y=20.81] [width=12.38] [height=24.38]
+layer at (58.81,63.81) size 14x26
+  RenderSVGRect {rect} at (58.81,63.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=58.81] [y=63.81] [width=12.38] [height=24.38]
+layer at (39.92,42.06) size 16x28
+  RenderSVGRect {rect} at (39.92,42.06) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=39.93] [y=42.07] [width=14.14] [height=27.86]
+layer at (72.81,-10.19) size 14x26 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (72.81,-10.19) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=72.81] [y=-10.19] [width=12.38] [height=24.38]
+layer at (0.09,59.50) size 20x40
+  RenderSVGRect {rect} at (0.09,59.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=0.10] [y=59.50] [width=19.80] [height=39.00]
+layer at (27.50,-60.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (27.50,-60.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=27.50] [y=-60.50] [width=99.00] [height=195.00]
+layer at (32.63,55.63) size 26x50
+  RenderSVGRect {rect} at (32.63,55.63) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=32.63] [y=55.63] [width=24.75] [height=48.75]
+layer at (14.63,55.63) size 26x50
+  RenderSVGRect {rect} at (14.63,55.63) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=14.63] [y=55.63] [width=24.75] [height=48.75]
+layer at (-11.75,-29.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-11.75,-29.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=-11.75] [y=-29.75] [width=49.50] [height=97.50]
+layer at (-6.50,1.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-6.50,1.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=-6.50] [y=1.50] [width=99.00] [height=195.00]
+layer at (27.25,-17.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (27.25,-17.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=27.25] [y=-17.75] [width=49.50] [height=97.50]
+layer at (30.25,40.25) size 50x98
+  RenderSVGRect {rect} at (30.25,40.25) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=30.25] [y=40.25] [width=49.50] [height=97.50]
+layer at (37.75,5.75) size 18x34
+  RenderSVGRect {rect} at (37.75,5.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=37.75] [y=5.75] [width=16.50] [height=32.50]
+layer at (-11.38,-1.38) size 26x50 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-11.38,-1.38) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=-11.38] [y=-1.38] [width=24.75] [height=48.75]
+layer at (7.50,9.50) size 34x66
+  RenderSVGRect {rect} at (7.50,9.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=7.50] [y=9.50] [width=33.00] [height=65.00]
+layer at (-7.50,-70.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-7.50,-70.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=-7.50] [y=-70.50] [width=99.00] [height=195.00]
+layer at (1.09,61.50) size 20x40
+  RenderSVGRect {rect} at (1.09,61.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=1.10] [y=61.50] [width=19.80] [height=39.00]
+layer at (-34.50,-71.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-34.50,-71.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=-34.50] [y=-71.50] [width=99.00] [height=195.00]
+layer at (-6.75,-29.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-6.75,-29.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=-6.75] [y=-29.75] [width=49.50] [height=97.50]
+layer at (33.75,63.75) size 18x34
+  RenderSVGRect {rect} at (33.75,63.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=33.75] [y=63.75] [width=16.50] [height=32.50]
+layer at (-0.50,-91.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-0.50,-91.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=-0.50] [y=-91.50] [width=99.00] [height=195.00]
+layer at (40.09,42.50) size 20x40
+  RenderSVGRect {rect} at (40.09,42.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=40.10] [y=42.50] [width=19.80] [height=39.00]
+layer at (22.92,53.06) size 16x28
+  RenderSVGRect {rect} at (22.92,53.06) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=22.93] [y=53.07] [width=14.14] [height=27.86]
+layer at (52.50,40.50) size 34x66
+  RenderSVGRect {rect} at (52.50,40.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=52.50] [y=40.50] [width=33.00] [height=65.00]
+layer at (86.75,1.75) size 18x34
+  RenderSVGRect {rect} at (86.75,1.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=86.75] [y=1.75] [width=16.50] [height=32.50]
+layer at (27.75,52.75) size 18x34
+  RenderSVGRect {rect} at (27.75,52.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=27.75] [y=52.75] [width=16.50] [height=32.50]
+layer at (36.63,-14.38) size 26x50 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (36.63,-14.38) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=36.63] [y=-14.38] [width=24.75] [height=48.75]
+layer at (38.92,28.06) size 16x28
+  RenderSVGRect {rect} at (38.92,28.06) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=38.93] [y=28.07] [width=14.14] [height=27.86]
+layer at (60.25,39.25) size 50x98
+  RenderSVGRect {rect} at (60.25,39.25) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=60.25] [y=39.25] [width=49.50] [height=97.50]
+layer at (44.09,80.50) size 20x40
+  RenderSVGRect {rect} at (44.09,80.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=44.10] [y=80.50] [width=19.80] [height=39.00]
+layer at (9.50,66.50) size 34x66
+  RenderSVGRect {rect} at (9.50,66.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=9.50] [y=66.50] [width=33.00] [height=65.00]
+layer at (5.09,27.50) size 20x40
+  RenderSVGRect {rect} at (5.09,27.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=5.10] [y=27.50] [width=19.80] [height=39.00]
+layer at (39.50,55.50) size 34x66
+  RenderSVGRect {rect} at (39.50,55.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=39.50] [y=55.50] [width=33.00] [height=65.00]
+layer at (8.09,6.50) size 20x40
+  RenderSVGRect {rect} at (8.09,6.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=8.10] [y=6.50] [width=19.80] [height=39.00]
+layer at (67.25,-2.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (67.25,-2.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=67.25] [y=-2.75] [width=49.50] [height=97.50]
+layer at (33.81,36.81) size 14x26
+  RenderSVGRect {rect} at (33.81,36.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=33.81] [y=36.81] [width=12.38] [height=24.38]
+layer at (-8.50,-37.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-8.50,-37.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=-8.50] [y=-37.50] [width=99.00] [height=195.00]
+layer at (41.25,-41.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (41.25,-41.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=41.25] [y=-41.75] [width=49.50] [height=97.50]
+layer at (35.50,-87.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (35.50,-87.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=35.50] [y=-87.50] [width=99.00] [height=195.00]
+layer at (-1.25,31.75) size 18x34 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-1.25,31.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=-1.25] [y=31.75] [width=16.50] [height=32.50]
+layer at (34.63,4.63) size 26x50
+  RenderSVGRect {rect} at (34.63,4.63) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=34.63] [y=4.63] [width=24.75] [height=48.75]
+layer at (49.50,-7.50) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (49.50,-7.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=49.50] [y=-7.50] [width=33.00] [height=65.00]
+layer at (-11.75,-22.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-11.75,-22.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=-11.75] [y=-22.75] [width=49.50] [height=97.50]
+layer at (59.63,8.63) size 26x50
+  RenderSVGRect {rect} at (59.63,8.63) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=59.63] [y=8.63] [width=24.75] [height=48.75]
+layer at (22.81,60.81) size 14x26
+  RenderSVGRect {rect} at (22.81,60.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=22.81] [y=60.81] [width=12.38] [height=24.38]
+layer at (31.50,51.50) size 34x66
+  RenderSVGRect {rect} at (31.50,51.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=31.50] [y=51.50] [width=33.00] [height=65.00]
+layer at (47.09,4.50) size 20x40
+  RenderSVGRect {rect} at (47.09,4.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=47.10] [y=4.50] [width=19.80] [height=39.00]
+layer at (54.81,29.81) size 14x26
+  RenderSVGRect {rect} at (54.81,29.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=54.81] [y=29.81] [width=12.38] [height=24.38]
+layer at (39.81,61.81) size 14x26
+  RenderSVGRect {rect} at (39.81,61.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=39.81] [y=61.81] [width=12.38] [height=24.38]
+layer at (45.25,-43.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (45.25,-43.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=45.25] [y=-43.75] [width=49.50] [height=97.50]
+layer at (-21.75,0.25) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-21.75,0.25) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=-21.75] [y=0.25] [width=49.50] [height=97.50]
+layer at (37.25,20.25) size 50x98
+  RenderSVGRect {rect} at (37.25,20.25) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=37.25] [y=20.25] [width=49.50] [height=97.50]
+layer at (27.81,68.81) size 14x26
+  RenderSVGRect {rect} at (27.81,68.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=27.81] [y=68.81] [width=12.38] [height=24.38]
+layer at (64.09,0) size 20x39
+  RenderSVGRect {rect} at (64.09,0) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=64.10] [y=0.00] [width=19.80] [height=39.00]
+layer at (4.75,50.75) size 18x34
+  RenderSVGRect {rect} at (4.75,50.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=4.75] [y=50.75] [width=16.50] [height=32.50]
+layer at (19.63,-14.38) size 26x50 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (19.63,-14.38) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=19.63] [y=-14.38] [width=24.75] [height=48.75]
+layer at (13.81,40.81) size 14x26
+  RenderSVGRect {rect} at (13.81,40.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=13.81] [y=40.81] [width=12.38] [height=24.38]
+layer at (-1.91,59.50) size 20x40 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-1.91,59.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=-1.90] [y=59.50] [width=19.80] [height=39.00]
+layer at (-14.50,23.50) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-14.50,23.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=-14.50] [y=23.50] [width=33.00] [height=65.00]
+layer at (51.75,15.75) size 18x34
+  RenderSVGRect {rect} at (51.75,15.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=51.75] [y=15.75] [width=16.50] [height=32.50]
+layer at (72.25,49.25) size 50x98
+  RenderSVGRect {rect} at (72.25,49.25) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=72.25] [y=49.25] [width=49.50] [height=97.50]
+layer at (41.50,45.50) size 34x66
+  RenderSVGRect {rect} at (41.50,45.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=41.50] [y=45.50] [width=33.00] [height=65.00]
+layer at (-23.75,-41.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-23.75,-41.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=-23.75] [y=-41.75] [width=49.50] [height=97.50]
+layer at (-16.50,-29.50) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-16.50,-29.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=-16.50] [y=-29.50] [width=33.00] [height=65.00]
+layer at (80.75,51.75) size 18x34
+  RenderSVGRect {rect} at (80.75,51.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=80.75] [y=51.75] [width=16.50] [height=32.50]
+layer at (68.50,-20.50) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (68.50,-20.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=68.50] [y=-20.50] [width=33.00] [height=65.00]
+layer at (38.09,60.50) size 20x40
+  RenderSVGRect {rect} at (38.09,60.50) size 19.81x39 [fill={[type=SOLID] [color=#000000]}] [x=38.10] [y=60.50] [width=19.80] [height=39.00]
+layer at (45.81,29.81) size 14x26
+  RenderSVGRect {rect} at (45.81,29.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=45.81] [y=29.81] [width=12.38] [height=24.38]
+layer at (90.92,10.06) size 16x28
+  RenderSVGRect {rect} at (90.92,10.06) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=90.93] [y=10.07] [width=14.14] [height=27.86]
+layer at (-12.75,33.25) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-12.75,33.25) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=-12.75] [y=33.25] [width=49.50] [height=97.50]
+layer at (13.63,44.63) size 26x50
+  RenderSVGRect {rect} at (13.63,44.63) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=13.63] [y=44.63] [width=24.75] [height=48.75]
+layer at (-1.19,-3.19) size 14x26 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-1.19,-3.19) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=-1.19] [y=-3.19] [width=12.38] [height=24.38]
+layer at (-1.19,30.81) size 14x26 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-1.19,30.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=-1.19] [y=30.81] [width=12.38] [height=24.38]
+layer at (39.75,30.75) size 18x34
+  RenderSVGRect {rect} at (39.75,30.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=39.75] [y=30.75] [width=16.50] [height=32.50]
+layer at (6.63,-5.38) size 26x50 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (6.63,-5.38) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=6.63] [y=-5.38] [width=24.75] [height=48.75]
+layer at (13.75,52.75) size 18x34
+  RenderSVGRect {rect} at (13.75,52.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=13.75] [y=52.75] [width=16.50] [height=32.50]
+layer at (-15.50,-52.50) size 100x196 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-15.50,-52.50) size 99x195 [fill={[type=SOLID] [color=#000000]}] [x=-15.50] [y=-52.50] [width=99.00] [height=195.00]
+layer at (76.81,28.81) size 14x26
+  RenderSVGRect {rect} at (76.81,28.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=76.81] [y=28.81] [width=12.38] [height=24.38]
+layer at (4.75,47.75) size 18x34
+  RenderSVGRect {rect} at (4.75,47.75) size 16.50x32.50 [fill={[type=SOLID] [color=#000000]}] [x=4.75] [y=47.75] [width=16.50] [height=32.50]
+layer at (57.92,-12.94) size 16x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (57.92,-12.94) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=57.93] [y=-12.93] [width=14.14] [height=27.86]
+layer at (64.63,14.63) size 26x50
+  RenderSVGRect {rect} at (64.63,14.63) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=64.63] [y=14.63] [width=24.75] [height=48.75]
+layer at (15.92,11.06) size 16x28
+  RenderSVGRect {rect} at (15.92,11.06) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=15.93] [y=11.07] [width=14.14] [height=27.86]
+layer at (33.81,71.81) size 14x26
+  RenderSVGRect {rect} at (33.81,71.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=33.81] [y=71.81] [width=12.38] [height=24.38]
+layer at (39.50,2.50) size 34x66
+  RenderSVGRect {rect} at (39.50,2.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=39.50] [y=2.50] [width=33.00] [height=65.00]
+layer at (57.92,63.06) size 16x28
+  RenderSVGRect {rect} at (57.92,63.06) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=57.93] [y=63.07] [width=14.14] [height=27.86]
+layer at (5.92,12.06) size 16x28
+  RenderSVGRect {rect} at (5.92,12.06) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=5.93] [y=12.07] [width=14.14] [height=27.86]
+layer at (47.81,30.81) size 14x26
+  RenderSVGRect {rect} at (47.81,30.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=47.81] [y=30.81] [width=12.38] [height=24.38]
+layer at (68.63,7.63) size 26x50
+  RenderSVGRect {rect} at (68.63,7.63) size 24.75x48.75 [fill={[type=SOLID] [color=#000000]}] [x=68.63] [y=7.63] [width=24.75] [height=48.75]
+layer at (-14.75,26.25) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-14.75,26.25) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=-14.75] [y=26.25] [width=49.50] [height=97.50]
+layer at (28.25,40.25) size 50x98
+  RenderSVGRect {rect} at (28.25,40.25) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=28.25] [y=40.25] [width=49.50] [height=97.50]
+layer at (18.81,53.81) size 14x26
+  RenderSVGRect {rect} at (18.81,53.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=18.81] [y=53.81] [width=12.38] [height=24.38]
+layer at (68.25,-0.75) size 50x98 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (68.25,-0.75) size 49.50x97.50 [fill={[type=SOLID] [color=#000000]}] [x=68.25] [y=-0.75] [width=49.50] [height=97.50]
+layer at (54.81,67.81) size 14x26
+  RenderSVGRect {rect} at (54.81,67.81) size 12.38x24.38 [fill={[type=SOLID] [color=#000000]}] [x=54.81] [y=67.81] [width=12.38] [height=24.38]
+layer at (6.92,-12.94) size 16x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (6.92,-12.94) size 14.16x27.88 [fill={[type=SOLID] [color=#000000]}] [x=6.93] [y=-12.93] [width=14.14] [height=27.86]
+layer at (-9.50,37.50) size 34x66 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
+  RenderSVGRect {rect} at (-9.50,37.50) size 33x65 [fill={[type=SOLID] [color=#000000]}] [x=-9.50] [y=37.50] [width=33.00] [height=65.00]
+layer at (10,90.50) size 32x5
   RenderSVGText {text} at (10,90) size 33x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 33x6
       chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 32.35: "Test completed"

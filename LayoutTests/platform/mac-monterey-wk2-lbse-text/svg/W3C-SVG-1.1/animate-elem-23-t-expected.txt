@@ -4,36 +4,36 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (15,43) size 375x248
-  RenderSVGTransformableContainer {g} at (15,42) size 375x248
-layer at (15,43) size 66x228
-  RenderSVGTransformableContainer {g} at (0,0) size 66x228
-layer at (15,43) size 66x15
+layer at (15,42.92) size 375x248
+  RenderSVGTransformableContainer {g} at (15,42.92) size 375x247.08
+layer at (15,42.92) size 66x228
+  RenderSVGTransformableContainer {g} at (0,0) size 65.63x227.08
+layer at (15,42.92) size 66x15
   RenderSVGText {text} at (0,0) size 66x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 66x15
       chunk 1 text run 1 at (15.00,55.00) startOffset 0 endOffset 11 width 65.61: "Color at 3s"
 layer at (15,60) size 30x31
-  RenderSVGRect {rect} at (0,17) size 30x31 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=60.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (0,17.08) size 30x30 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=60.00] [width=30.00] [height=30.00]
 layer at (20,65) size 20x21
-  RenderSVGEllipse {circle} at (5,22) size 20x21 [fill={[type=SOLID] [color=#0000FF]}] [cx=30.00] [cy=75.00] [r=10.00]
-layer at (15,133) size 66x15
+  RenderSVGEllipse {circle} at (5,22.08) size 20x20 [fill={[type=SOLID] [color=#0000FF]}] [cx=30.00] [cy=75.00] [r=10.00]
+layer at (15,132.92) size 66x15
   RenderSVGText {text} at (0,90) size 66x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 66x15
       chunk 1 text run 1 at (15.00,145.00) startOffset 0 endOffset 11 width 65.61: "Color at 6s"
 layer at (15,150) size 30x31
-  RenderSVGRect {rect} at (0,107) size 30x31 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=150.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (0,107.08) size 30x30 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=150.00] [width=30.00] [height=30.00]
 layer at (20,155) size 20x21
-  RenderSVGEllipse {circle} at (5,112) size 20x21 [fill={[type=SOLID] [color=#40007F]}] [cx=30.00] [cy=165.00] [r=10.00]
-layer at (15,223) size 66x15
+  RenderSVGEllipse {circle} at (5,112.08) size 20x20 [fill={[type=SOLID] [color=#40007F]}] [cx=30.00] [cy=165.00] [r=10.00]
+layer at (15,222.92) size 66x15
   RenderSVGText {text} at (0,180) size 66x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 66x15
       chunk 1 text run 1 at (15.00,235.00) startOffset 0 endOffset 11 width 65.61: "Color at 9s"
 layer at (15,240) size 30x31
-  RenderSVGRect {rect} at (0,197) size 30x31 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=240.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (0,197.08) size 30x30 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=240.00] [width=30.00] [height=30.00]
 layer at (20,245) size 20x21
-  RenderSVGEllipse {circle} at (5,202) size 20x21 [fill={[type=SOLID] [color=#800000]}] [cx=30.00] [cy=255.00] [r=10.00]
+  RenderSVGEllipse {circle} at (5,202.08) size 20x20 [fill={[type=SOLID] [color=#800000]}] [cx=30.00] [cy=255.00] [r=10.00]
 layer at (150,50) size 240x241
-  RenderSVGTransformableContainer {g} at (135,7) size 240x241
+  RenderSVGTransformableContainer {g} at (135,7.08) size 240x240
 layer at (150,50) size 240x240
   RenderSVGRect {rect} at (0,0) size 240x240 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=150.00] [y=50.00] [width=240.00] [height=240.00]
 layer at (160,60) size 220x220

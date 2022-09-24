@@ -129,7 +129,7 @@ public:
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
     bool isInternalRubyBox() const { return false; }
-    bool isIntegrationRoot() const { return !m_parent && !isInitialContainingBlock(); }
+    bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
 
     const ContainerBox& parent() const { return *m_parent; }
     const Box* nextSibling() const { return m_nextSibling.get(); }
@@ -167,10 +167,16 @@ public:
     std::optional<LayoutUnit> columnWidth() const;
 
     void setIsAnonymous() { m_isAnonymous = true; }
+    void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
 
     bool canCacheForLayoutState(const LayoutState&) const;
     BoxGeometry* cachedGeometryForLayoutState(const LayoutState&) const;
     void setCachedGeometryForLayoutState(LayoutState&, std::unique_ptr<BoxGeometry>) const;
+
+    UniqueRef<Box> removeFromParent();
+
+    void incrementPtrCount() const { CanMakeCheckedPtr::incrementPtrCount(); }
+    void decrementPtrCount() const { CanMakeCheckedPtr::decrementPtrCount(); }
 
 protected:
     Box(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);
@@ -216,8 +222,9 @@ private:
     mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForLayoutState;
 
     unsigned m_baseTypeFlags : 7; // OptionSet<BaseTypeFlag>
-    bool m_hasRareData : 1;
-    bool m_isAnonymous : 1;
+    bool m_hasRareData : 1 { false };
+    bool m_isAnonymous : 1 { false };
+    bool m_isInlineIntegrationRoot : 1 { false };
 };
 
 inline bool Box::isContainingBlockForInFlow() const

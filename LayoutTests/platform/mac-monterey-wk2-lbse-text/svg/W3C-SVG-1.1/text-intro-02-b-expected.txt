@@ -4,35 +4,35 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (-412,25) size 846x261 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-413,24) size 846x261
-layer at (10,25) size 317x19
+layer at (-412.03,24.61) size 846x261 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (-412.03,24.61) size 844.06x260.27
+layer at (10,24.61) size 317x19
   RenderSVGText {text} at (422,0) size 318x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 318x19
       chunk 1 text run 1 at (10.00,40.00) startOffset 0 endOffset 45 width 317.07: "unicode-bidi=\"bidi-override\" direction=\"ltr\"."
-layer at (10,61) size 423x25
-  RenderSVGTransformableContainer {g} at (422,36) size 423x25
-layer at (10,61) size 422x24
+layer at (10,60.77) size 423x25
+  RenderSVGTransformableContainer {g} at (422.03,36.16) size 422.03x24.11
+layer at (10,60.77) size 422x24
   RenderSVGText {text} at (0,0) size 423x25 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 423x25
       chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 56 width 422.03: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (10,125) size 317x19
+layer at (10,124.61) size 317x19
   RenderSVGText {text} at (422,100) size 318x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 318x19
       chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 45 width 317.07: "unicode-bidi=\"bidi-override\" direction=\"rtl\"."
-layer at (-412,161) size 423x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,136) size 423x25
-layer at (-412,161) size 422x24 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-412.03,160.77) size 423x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,136.16) size 422.03x24.11
+layer at (-412.03,160.77) size 422x24 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 423x25 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 423x25
       chunk 1 text run 1 at (-412.03,180.00) startOffset 0 endOffset 56 width 422.03 RTL: "Text \"\x{5D0}\x{5E0}\x{5D9} \x{5D9}\x{5DB}\x{5D5}\x{5DC} \x{5DC}\x{5D0}\x{5DB}\x{5D5}\x{5DC} \x{5D6}\x{5DB}\x{5D5}\x{5DB}\x{5D9}\x{5EA} \x{5D5}\x{5D6}\x{5D4} \x{5DC}\x{5D0} \x{5DE}\x{5D6}\x{5D9}\x{5E7} \x{5DC}\x{5D9}\" is in Hebrew"
-layer at (10,225) size 276x19
+layer at (10,224.61) size 276x19
   RenderSVGText {text} at (422,200) size 276x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 276x19
       chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 38 width 275.49: "unicode-bidi=\"normal\" direction=\"ltr\"."
-layer at (-412,261) size 423x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,236) size 423x25
-layer at (-412,261) size 422x24 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-412.03,260.77) size 423x25 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,236.16) size 422.03x24.11
+layer at (-412.03,260.77) size 422x24 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 423x25 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 423x25
       chunk 1 text run 1 at (-412.03,280.00) startOffset 0 endOffset 12 width 98.98: "is in Hebrew"

@@ -1,0 +1,12 @@
+Tests checking notification permission and constructing a notification from a dedicated worker.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS initialPermissionState is "default"
+PASS updatedPermissionState is "granted"
+PASS showResult is "shown"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

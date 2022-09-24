@@ -5,13 +5,13 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (90,11) size 348x49
-  RenderSVGTransformableContainer {g} at (90,11) size 348x49
-layer at (145,19) size 142x14
+  RenderSVGTransformableContainer {g} at (90,11) size 347.92x49
+layer at (145,19.13) size 142x14
   RenderSVGText {text} at (55,8) size 142x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 142x14
       chunk 1 text run 1 at (145.00,30.00) startOffset 0 endOffset 26 width 142.00: "Filters: feDiffuseLighting"
 layer at (90,11) size 296x49
-  RenderSVGTransformableContainer {g} at (0,0) size 296x49
+  RenderSVGTransformableContainer {g} at (0,0) size 295.91x49
 layer at (90,11) size 296x18
   RenderSVGText {text} at (0,0) size 296x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 296x18
@@ -23,7 +23,7 @@ layer at (160,30) size 50x30
 layer at (230,30) size 50x30
   RenderSVGImage {image} at (140,19) size 50x30
 layer at (90,11) size 302x49
-  RenderSVGTransformableContainer {g} at (0,0) size 302x49
+  RenderSVGTransformableContainer {g} at (0,0) size 301.28x49
 layer at (90,11) size 301x18
   RenderSVGText {text} at (0,0) size 302x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 302x18
@@ -35,7 +35,7 @@ layer at (160,30) size 50x30
 layer at (230,30) size 50x30
   RenderSVGImage {image} at (140,19) size 50x30
 layer at (90,11) size 348x49
-  RenderSVGTransformableContainer {g} at (0,0) size 348x49
+  RenderSVGTransformableContainer {g} at (0,0) size 347.92x49
 layer at (90,11) size 348x18
   RenderSVGText {text} at (0,0) size 348x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 348x18

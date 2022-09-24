@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 227x189
-  RenderSVGRoot {svg} at (0,0) size 227x189
-layer at (0,0) size 227x189
-  RenderSVGViewportContainer at (0,0) size 227x189
-layer at (200,125) size 200x200 backgroundClip at (0,0) size 227x189 clip at (0,0) size 227x189
+layer at (0,0) size 227x189 backgroundClip at (0,0) size 226.77x188.97 clip at (0,0) size 226.77x188.97
+  RenderSVGRoot {svg} at (0,0) size 226.77x188.97
+layer at (0,0) size 227x189 backgroundClip at (0,0) size 226.77x188.97 clip at (0,0) size 226.77x188.97
+  RenderSVGViewportContainer at (0,0) size 226.77x188.97
+layer at (200,125) size 200x200 backgroundClip at (0,0) size 226.77x188.97 clip at (0,0) size 226.77x188.97
   RenderSVGEllipse {circle} at (200,125) size 200x200 [fill={[type=SOLID] [color=#008000]}] [cx=300.00] [cy=225.00] [r=100.00]

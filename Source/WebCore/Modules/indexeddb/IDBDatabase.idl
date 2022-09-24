@@ -25,6 +25,7 @@
  */
 
 [
+    EnabledBySetting=IndexedDBAPIEnabled,
     ActiveDOMObject,
     SkipVTableValidation,
     Exposed=(Window,Worker)

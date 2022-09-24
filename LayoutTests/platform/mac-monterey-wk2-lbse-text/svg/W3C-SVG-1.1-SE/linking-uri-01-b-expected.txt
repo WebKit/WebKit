@@ -4,109 +4,109 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (34,6) size 412x292
-  RenderSVGTransformableContainer {g} at (33,6) size 412x292
-layer at (65,6) size 334x12
+layer at (33.59,6.39) size 412x292
+  RenderSVGTransformableContainer {g} at (33.59,6.39) size 411.41x291.61
+layer at (65,6.39) size 334x12
   RenderSVGText {text} at (31,0) size 334x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 334x13
       chunk 1 text run 1 at (65.00,16.00) startOffset 0 endOffset 69 width 333.42: "Link test of the 'view' element and its attributes, 1 of 2, internal."
-layer at (34,29) size 412x270
-  RenderSVGTransformableContainer {g} at (0,22) size 412x270
+layer at (33.59,29) size 412x270
+  RenderSVGTransformableContainer {g} at (0,22.61) size 411.41x269
 layer at (300,55) size 126x112
-  RenderSVGTransformableContainer {g} at (266,26) size 126x112
+  RenderSVGTransformableContainer {g} at (266.41,26) size 125x111.41
 layer at (300,55) size 125x85
   RenderSVGRect {rect} at (0,0) size 125x85 [fill={[type=SOLID] [color=#AAAAAA]}] [x=300.00] [y=55.00] [width=125.00] [height=85.00]
-layer at (310,59) size 102x15
-  RenderSVGTransformableContainer {a} at (10,3) size 102x15
-layer at (310,59) size 101x14
+layer at (310,58.80) size 102x15
+  RenderSVGTransformableContainer {a} at (10,3.80) size 101.17x14.02
+layer at (310,58.80) size 101x14
   RenderSVGText {text} at (0,0) size 102x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 102x15
       chunk 1 text run 1 at (310.00,70.00) startOffset 0 endOffset 15 width 101.16: "Go to Rectangle"
-layer at (310,79) size 80x15
-  RenderSVGTransformableContainer {a} at (10,23) size 80x15
-layer at (310,79) size 79x14
+layer at (310,78.80) size 80x15
+  RenderSVGTransformableContainer {a} at (10,23.80) size 79.38x14.02
+layer at (310,78.80) size 79x14
   RenderSVGText {text} at (0,0) size 80x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 80x15
       chunk 1 text run 1 at (310.00,90.00) startOffset 0 endOffset 13 width 79.37: "Go to Ellipse"
-layer at (310,99) size 74x15
-  RenderSVGTransformableContainer {a} at (10,43) size 74x15
-layer at (310,99) size 74x14
+layer at (310,98.80) size 74x15
+  RenderSVGTransformableContainer {a} at (10,43.80) size 73.91x14.02
+layer at (310,98.80) size 74x14
   RenderSVGText {text} at (0,0) size 74x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 74x15
       chunk 1 text run 1 at (310.00,110.00) startOffset 0 endOffset 12 width 73.91: "Go to Circle"
-layer at (310,119) size 89x15
-  RenderSVGTransformableContainer {a} at (10,63) size 89x15
-layer at (310,119) size 89x14
+layer at (310,118.80) size 89x15
+  RenderSVGTransformableContainer {a} at (10,63.80) size 88.72x14.02
+layer at (310,118.80) size 89x14
   RenderSVGText {text} at (0,0) size 89x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x15
       chunk 1 text run 1 at (310.00,130.00) startOffset 0 endOffset 13 width 88.72: "Go to Polygon"
-layer at (315,142) size 102x12
+layer at (315,142.39) size 102x12
   RenderSVGText {text} at (15,87) size 103x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 103x13
       chunk 1 text run 1 at (315.00,152.00) startOffset 0 endOffset 20 width 102.31: "Click element's line"
-layer at (315,154) size 87x12
+layer at (315,154.39) size 87x12
   RenderSVGText {text} at (15,99) size 88x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 88x13
       chunk 1 text run 1 at (315.00,164.00) startOffset 0 endOffset 19 width 87.36: "to link to its view"
 layer at (295,36) size 136x68
-  RenderSVGRect {rect} at (261,7) size 136x68 [fill={[type=SOLID] [color=#800080]}] [x=295.00] [y=36.00] [width=135.00] [height=68.00]
-layer at (331,105) size 63x14
+  RenderSVGRect {rect} at (261.41,7) size 135x68 [fill={[type=SOLID] [color=#800080]}] [x=295.00] [y=36.00] [width=135.00] [height=68.00]
+layer at (330.98,104.80) size 63x14
   RenderSVGText {text} at (297,75) size 64x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 64x15
       chunk 1 (middle anchor) text run 1 at (330.99,116.00) startOffset 0 endOffset 9 width 63.03: "Rectangle"
 layer at (292,29) size 142x91
-  RenderSVGRect {rect} at (258,0) size 142x91 [stroke={[type=SOLID] [color=#000000]}] [x=292.00] [y=29.00] [width=141.00] [height=91.00]
-layer at (300,124) size 125x10
+  RenderSVGRect {rect} at (258.41,0) size 141x91 [stroke={[type=SOLID] [color=#000000]}] [x=292.00] [y=29.00] [width=141.00] [height=91.00]
+layer at (299.97,123.98) size 125x10
   RenderSVGText {text} at (266,94) size 126x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 126x11
       chunk 1 (middle anchor) text run 1 at (299.98,132.00) startOffset 0 endOffset 29 width 125.05: "No view attributes except id."
 layer at (298,219) size 145x64
-  RenderSVGEllipse {ellipse} at (264,190) size 145x64 [fill={[type=SOLID] [color=#0000FF]}] [cx=370.00] [cy=251.00] [rx=72.00] [ry=32.00]
-layer at (349,284) size 41x14
+  RenderSVGEllipse {ellipse} at (264.41,190) size 144x64 [fill={[type=SOLID] [color=#0000FF]}] [cx=370.00] [cy=251.00] [rx=72.00] [ry=32.00]
+layer at (349.38,283.80) size 41x14
   RenderSVGText {text} at (315,254) size 43x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 42x15
       chunk 1 (middle anchor) text run 1 at (349.39,295.00) startOffset 0 endOffset 7 width 41.23: "Ellipse"
 layer at (295,216) size 151x82
-  RenderSVGRect {rect} at (261,187) size 151x82 [stroke={[type=SOLID] [color=#000000]}] [x=295.00] [y=216.00] [width=150.00] [height=82.00]
-layer at (315,204) size 116x10
+  RenderSVGRect {rect} at (261.41,187) size 150x82 [stroke={[type=SOLID] [color=#000000]}] [x=295.00] [y=216.00] [width=150.00] [height=82.00]
+layer at (315,203.98) size 116x10
   RenderSVGText {text} at (281,174) size 116x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 116x11
       chunk 1 text run 1 at (315.00,212.00) startOffset 0 endOffset 27 width 115.59: "viewBox, should fill frame."
 layer at (49,32) size 73x72
-  RenderSVGEllipse {circle} at (15,3) size 73x72 [fill={[type=SOLID] [color=#FFFF00]}] [cx=85.00] [cy=68.00] [r=36.00]
-layer at (67,105) size 35x14
+  RenderSVGEllipse {circle} at (15.41,3) size 72x72 [fill={[type=SOLID] [color=#FFFF00]}] [cx=85.00] [cy=68.00] [r=36.00]
+layer at (67.11,104.80) size 35x14
   RenderSVGText {text} at (33,75) size 37x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 36x15
       chunk 1 (middle anchor) text run 1 at (67.11,116.00) startOffset 0 endOffset 6 width 35.77: "Circle"
 layer at (36,29) size 99x91
-  RenderSVGRect {rect} at (2,0) size 99x91 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=29.00] [width=98.00] [height=91.00]
-layer at (34,122) size 103x10
+  RenderSVGRect {rect} at (2.41,0) size 98x91 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=29.00] [width=98.00] [height=91.00]
+layer at (33.59,121.98) size 103x10
   RenderSVGText {text} at (0,92) size 103x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 103x11
       chunk 1 (middle anchor) text run 1 at (33.60,130.00) startOffset 0 endOffset 21 width 102.81: "viewBox & non-uniform"
-layer at (39,131) size 93x10
+layer at (38.59,130.98) size 93x10
   RenderSVGText {text} at (5,101) size 93x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 93x11
       chunk 1 (middle anchor) text run 1 at (38.60,139.00) startOffset 0 endOffset 19 width 92.81: "preserveAspectRatio"
 layer at (39,211) size 96x72
-  RenderSVGPath {polygon} at (5,182) size 96x72 [fill={[type=SOLID] [color=#008000]}] [points="87 211 134 238 116 283 57 283 39 238 87 211"]
-layer at (60,284) size 51x14
+  RenderSVGPath {polygon} at (5.41,182) size 95x72 [fill={[type=SOLID] [color=#008000]}] [points="87 211 134 238 116 283 57 283 39 238 87 211"]
+layer at (59.70,283.80) size 51x14
   RenderSVGText {text} at (26,254) size 51x15 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 51x15
       chunk 1 (middle anchor) text run 1 at (59.71,295.00) startOffset 0 endOffset 7 width 50.58: "Polygon"
 layer at (36,208) size 101x89
-  RenderSVGRect {rect} at (2,179) size 101x89 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=208.00] [width=100.00] [height=89.00]
-layer at (52,187) size 65x10
+  RenderSVGRect {rect} at (2.41,179) size 100x89 [stroke={[type=SOLID] [color=#000000]}] [x=36.00] [y=208.00] [width=100.00] [height=89.00]
+layer at (52.20,186.98) size 65x10
   RenderSVGText {text} at (18,157) size 67x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 66x11
       chunk 1 (middle anchor) text run 1 at (52.21,195.00) startOffset 0 endOffset 14 width 65.58: "viewTarget, no"
-layer at (41,196) size 89x10
+layer at (40.53,195.98) size 89x10
   RenderSVGText {text} at (6,166) size 90x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x11
       chunk 1 (middle anchor) text run 1 at (40.54,204.00) startOffset 0 endOffset 19 width 88.93: "changes to viewport"
-layer at (10,314) size 248x33
-  RenderSVGTransformableContainer {g} at (10,314) size 248x33
-layer at (10,314) size 247x32
+layer at (10,314.39) size 248x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 247.23x32.02
+layer at (10,314.39) size 247x32
   RenderSVGText {text} at (0,0) size 248x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 248x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 247.23: "$Revision: 1.12 $"

@@ -1,27 +1,27 @@
-layer at (0,0) size 785x773
+layer at (0,0) size 785x773 backgroundClip at (0,0) size 785x772.88 clip at (0,0) size 785x772.88
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x600
   RenderBlock {html} at (0,0) size 785x600
     RenderBody {body} at (8,16) size 769x600
-      RenderBlock {parsererror} at (16,0) size 737x137 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
-        RenderBlock {h3} at (18,20) size 701x23
+      RenderBlock {parsererror} at (16,0) size 737x136.88 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
+        RenderBlock {h3} at (18,20.72) size 701x22
           RenderText {#text} at (0,0) size 323x22
             text run at (0,0) width 323: "This page contains the following errors:"
-        RenderBlock {div} at (18,61) size 701x15
+        RenderBlock {div} at (18,61.44) size 701x14
           RenderText {#text} at (0,0) size 584x14
             text run at (0,0) width 584: "error on line 6 at column 24: Namespace prefix xlink for href on a is not defined"
             text run at (583,0) width 1: " "
-        RenderBlock {h3} at (18,94) size 701x23
+        RenderBlock {h3} at (18,94.16) size 701x22
           RenderText {#text} at (0,0) size 424x22
             text run at (0,0) width 424: "Below is a rendering of the page up to the first error."
-      RenderBlock (anonymous) at (0,152) size 769x605
+      RenderBlock (anonymous) at (0,152.88) size 769x604
 layer at (8,169) size 769x600
   RenderSVGRoot {svg} at (0,0) size 769x600
-layer at (8,169) size 769x600
+layer at (8,168.88) size 769x600
   RenderSVGViewportContainer at (0,0) size 769x600
-layer at (8,275) size 195x18
+layer at (8,274.88) size 195x18
   RenderSVGText {text} at (0,106) size 196x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 196x18
       chunk 1 text run 1 at (0.00,120.00) startOffset 0 endOffset 29 width 195.05: "You should see an error above"
-layer at (8,169) size 100x100
+layer at (8,168.88) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

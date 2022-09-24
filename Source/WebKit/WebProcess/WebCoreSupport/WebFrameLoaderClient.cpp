@@ -1009,14 +1009,14 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     Ref protector { *coreFrame };
 
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
-        PolicyDecision policyDecision;
-
-        if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationActionSync::Reply(policyDecision))) {
+        auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(m_frame->frameID(), m_frame->isMainFrame(), m_frame->info(), requestIdentifier, documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingPageID, navigationAction.resourceRequest(), request, IPC::FormDataReference { request.httpBody() }, redirectResponse, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        if (!sendResult) {
             WEBFRAMELOADERCLIENT_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC");
             m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { requestIdentifier, std::nullopt, PolicyAction::Ignore, 0, { }, { } });
             return;
         }
 
+        auto [policyDecision] = sendResult.takeReply();
         WEBFRAMELOADERCLIENT_RELEASE_LOG(Network, "dispatchDecidePolicyForNavigationAction: Got policyAction %u from sync IPC", (unsigned)policyDecision.policyAction);
         m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { policyDecision.identifier, policyDecision.isNavigatingToAppBoundDomain, policyDecision.policyAction, 0, policyDecision.downloadID, { }});
         return;

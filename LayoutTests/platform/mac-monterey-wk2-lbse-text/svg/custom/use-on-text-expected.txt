@@ -5,23 +5,23 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (0,-26) size 69x46 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGHiddenContainer {defs} at (0,-26) size 69x46
+  RenderSVGHiddenContainer {defs} at (0,-26) size 68.88x46
 layer at (0,-26) size 69x46 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 69x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 69x46
       chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 4 width 68.87: "Test"
 layer at (0,-26) size 69x46 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,-26) size 69x46
+  RenderSVGTransformableContainer {g} at (0,-26) size 68.88x46
 layer at (0,-26) size 69x46 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 69x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 69x46
       chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 4 width 68.87: "Test"
-layer at (10,46) size 244x18
+layer at (10,45.50) size 244x18
   RenderSVGText {text} at (10,45) size 245x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 245x19
       chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 38 width 244.40: "The two objects should look identical."
 layer at (0,-26) size 69x46 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {use} at (0,-26) size 69x46
+  RenderSVGTransformableContainer {use} at (0,-26) size 68.88x46
 layer at (0,-26) size 69x46 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 69x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 69x46

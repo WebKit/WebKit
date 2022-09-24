@@ -151,6 +151,8 @@ $(PROJECT_DIR)/runtime/IntlDateTimeFormatConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlDateTimeFormatPrototype.cpp
 $(PROJECT_DIR)/runtime/IntlDisplayNamesConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlDisplayNamesPrototype.cpp
+$(PROJECT_DIR)/runtime/IntlDurationFormatConstructor.cpp
+$(PROJECT_DIR)/runtime/IntlDurationFormatPrototype.cpp
 $(PROJECT_DIR)/runtime/IntlListFormatConstructor.cpp
 $(PROJECT_DIR)/runtime/IntlListFormatPrototype.cpp
 $(PROJECT_DIR)/runtime/IntlLocalePrototype.cpp

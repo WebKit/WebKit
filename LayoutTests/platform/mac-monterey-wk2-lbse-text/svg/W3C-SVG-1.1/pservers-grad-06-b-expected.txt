@@ -5,22 +5,22 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (20,20) size 440x277
-  RenderSVGTransformableContainer {g} at (20,20) size 440x277
+  RenderSVGTransformableContainer {g} at (20,20) size 440x276.36
 layer at (20,20) size 440x50
   RenderSVGRect {rect} at (0,0) size 440x50 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=20.00] [width=440.00] [height=50.00]
-layer at (20,73) size 290x33
+layer at (20,72.83) size 290x33
   RenderSVGText {text} at (0,52) size 291x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 291x34
       chunk 1 text run 1 at (20.00,100.00) startOffset 0 endOffset 22 width 290.17: "scale(0.5) on gradient"
 layer at (20,110) size 440x50
   RenderSVGRect {rect} at (0,90) size 440x50 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=110.00] [width=440.00] [height=50.00]
-layer at (20,163) size 300x33
+layer at (20,162.83) size 300x33
   RenderSVGText {text} at (0,142) size 301x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 301x34
       chunk 1 text run 1 at (20.00,190.00) startOffset 0 endOffset 21 width 300.16: "skewX(45) on gradient"
 layer at (20,210) size 440x50
   RenderSVGRect {rect} at (0,190) size 440x50 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=210.00] [width=440.00] [height=50.00]
-layer at (20,263) size 409x33
+layer at (20,262.83) size 409x33
   RenderSVGText {text} at (0,242) size 409x35 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 409x34
       chunk 1 text run 1 at (20.00,290.00) startOffset 0 endOffset 30 width 408.52: "scale(2), skewX(45) on pattern"

@@ -4,21 +4,21 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
-layer at (172,16) size 106x17
+layer at (172.08,15.52) size 106x17
   RenderSVGText {text} at (172,15) size 106x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 106x18
       chunk 1 (middle anchor) text run 1 at (172.09,30.00) startOffset 0 endOffset 15 width 105.83: "Text Position 2"
-layer at (50,58) size 388x296
-  RenderSVGTransformableContainer {g} at (50,58) size 388x296
-layer at (50,58) size 53x27
+layer at (50,58.27) size 388x296
+  RenderSVGTransformableContainer {g} at (50,58.27) size 387.83x294.86
+layer at (50,58.27) size 53x27
   RenderSVGText {text} at (0,0) size 54x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 54x27
       chunk 1 text run 1 at (50.00,80.00) startOffset 0 endOffset 5 width 53.30: "Batik"
-layer at (50,91) size 97x11
+layer at (50,90.94) size 97x11
   RenderSVGText {text} at (0,32) size 98x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 98x12
       chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 21 width 97.04: "<text x=\"100\" y=\"80\">"
-layer at (240,58) size 133x27
+layer at (240,58.27) size 133x27
   RenderSVGText {text} at (190,0) size 134x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 134x27
       chunk 1 text run 1 at (240.00,80.00) startOffset 0 endOffset 1 width 15.98: "B"
@@ -26,11 +26,11 @@ layer at (240,58) size 133x27
       chunk 1 text run 3 at (309.33,80.00) startOffset 2 endOffset 3 width 6.65: "t"
       chunk 1 text run 4 at (335.98,80.00) startOffset 3 endOffset 4 width 5.33: "i"
       chunk 1 text run 5 at (361.30,80.00) startOffset 4 endOffset 5 width 12.00: "k"
-layer at (240,91) size 184x11
+layer at (240,90.94) size 184x11
   RenderSVGText {text} at (190,32) size 184x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 184x12
       chunk 1 text run 1 at (240.00,100.00) startOffset 0 endOffset 41 width 183.91: "<text x=\"240\" y=\"80\" letter-spacing=\"20\">"
-layer at (50,118) size 92x27
+layer at (50,118.27) size 92x27
   RenderSVGText {text} at (0,60) size 92x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 92x27
       chunk 1 text run 1 at (50.00,140.00) startOffset 0 endOffset 1 width 15.98: "B"
@@ -38,11 +38,11 @@ layer at (50,118) size 92x27
       chunk 1 text run 1 at (90.00,140.00) startOffset 0 endOffset 1 width 6.65: "t"
       chunk 1 text run 1 at (110.00,140.00) startOffset 0 endOffset 1 width 5.33: "i"
       chunk 1 text run 1 at (130.00,140.00) startOffset 0 endOffset 1 width 12.00: "k"
-layer at (50,151) size 164x11
+layer at (50,150.94) size 164x11
   RenderSVGText {text} at (0,92) size 164x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 164x12
       chunk 1 text run 1 at (50.00,160.00) startOffset 0 endOffset 35 width 163.77: "<text x=\"50 70 90 110 130\" y=\"140\">"
-layer at (240,118) size 133x27
+layer at (240,118.27) size 133x27
   RenderSVGText {text} at (190,60) size 134x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 134x27
       chunk 1 text run 1 at (240.00,140.00) startOffset 0 endOffset 1 width 15.98: "B"
@@ -50,20 +50,20 @@ layer at (240,118) size 133x27
       chunk 1 text run 3 at (309.33,140.00) startOffset 2 endOffset 3 width 6.65: "t"
       chunk 1 text run 4 at (335.98,140.00) startOffset 3 endOffset 4 width 5.33: "i"
       chunk 1 text run 5 at (361.30,140.00) startOffset 4 endOffset 5 width 12.00: "k"
-layer at (240,151) size 164x11
+layer at (240,150.94) size 164x11
   RenderSVGText {text} at (190,92) size 164x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 164x12
       chunk 1 text run 1 at (240.00,160.00) startOffset 0 endOffset 35 width 163.77: "<text dx=\"240 20 20 20 20\" y=\"140\">"
-layer at (50,178) size 53x27
+layer at (50,178.27) size 53x27
   RenderSVGText {text} at (0,120) size 54x27 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 54x27
       RenderSVGInlineText {#text} at (0,0) size 54x27
         chunk 1 text run 1 at (50.00,200.00) startOffset 0 endOffset 5 width 53.30: "Batik"
-layer at (50,211) size 105x11
+layer at (50,210.94) size 105x11
   RenderSVGText {text} at (0,152) size 106x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 106x12
       chunk 1 text run 1 at (50.00,220.00) startOffset 0 endOffset 22 width 105.39: "<tspan x=\"50\" y=\"200\">"
-layer at (240,178) size 133x27
+layer at (240,178.27) size 133x27
   RenderSVGText {text} at (190,120) size 134x27 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 134x27
       RenderSVGInlineText {#text} at (0,0) size 134x27
@@ -72,12 +72,12 @@ layer at (240,178) size 133x27
         chunk 1 text run 3 at (309.33,200.00) startOffset 2 endOffset 3 width 6.65: "t"
         chunk 1 text run 4 at (335.98,200.00) startOffset 3 endOffset 4 width 5.33: "i"
         chunk 1 text run 5 at (361.30,200.00) startOffset 4 endOffset 5 width 12.00: "k"
-layer at (240,211) size 198x11
+layer at (240,210.94) size 198x11
   RenderSVGText {text} at (190,152) size 198x12 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 198x12
       RenderSVGInlineText {#text} at (0,0) size 198x12
         chunk 1 text run 1 at (240.00,220.00) startOffset 0 endOffset 43 width 197.82: "<tspan x=\"240\" y=\"200\" letter-spacing=\"20\">"
-layer at (50,238) size 92x27
+layer at (50,238.27) size 92x27
   RenderSVGText {text} at (0,180) size 92x27 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 92x27
       RenderSVGInlineText {#text} at (0,0) size 92x27
@@ -86,11 +86,11 @@ layer at (50,238) size 92x27
         chunk 1 text run 1 at (90.00,260.00) startOffset 0 endOffset 1 width 6.65: "t"
         chunk 1 text run 1 at (110.00,260.00) startOffset 0 endOffset 1 width 5.33: "i"
         chunk 1 text run 1 at (130.00,260.00) startOffset 0 endOffset 1 width 12.00: "k"
-layer at (50,271) size 172x11
+layer at (50,270.94) size 172x11
   RenderSVGText {text} at (0,212) size 173x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 173x12
       chunk 1 text run 1 at (50.00,280.00) startOffset 0 endOffset 36 width 172.11: "<tspan x=\"50 70 90 110 130\" y=\"260\">"
-layer at (240,238) size 133x27
+layer at (240,238.27) size 133x27
   RenderSVGText {text} at (190,180) size 134x27 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 134x27
       RenderSVGInlineText {#text} at (0,0) size 134x27
@@ -99,11 +99,11 @@ layer at (240,238) size 133x27
         chunk 1 text run 3 at (309.33,260.00) startOffset 2 endOffset 3 width 6.65: "t"
         chunk 1 text run 4 at (335.98,260.00) startOffset 3 endOffset 4 width 5.33: "i"
         chunk 1 text run 5 at (361.30,260.00) startOffset 4 endOffset 5 width 12.00: "k"
-layer at (240,271) size 172x11
+layer at (240,270.94) size 172x11
   RenderSVGText {text} at (190,212) size 173x12 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 173x12
       chunk 1 text run 1 at (240.00,280.00) startOffset 0 endOffset 36 width 172.11: "<tspan dx=\"240 20 20 20 20\" y=\"260\">"
-layer at (50,298) size 92x27
+layer at (50,298.27) size 92x27
   RenderSVGText {text} at (0,240) size 92x27 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 92x27
       RenderSVGInlineText {#text} at (0,0) size 92x27
@@ -112,14 +112,14 @@ layer at (50,298) size 92x27
         chunk 1 text run 1 at (90.00,320.00) startOffset 0 endOffset 1 width 6.65: "t"
         chunk 1 text run 1 at (110.00,320.00) startOffset 0 endOffset 1 width 5.33: "i"
         chunk 1 text run 1 at (130.00,320.00) startOffset 0 endOffset 1 width 12.00: "k"
-layer at (50,331) size 161x22
+layer at (50,330.94) size 161x22
   RenderSVGText {text} at (0,272) size 161x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 121x12
       chunk 1 text run 1 at (50.00,340.00) startOffset 0 endOffset 26 width 120.53: "<tspan x=\"50 60 70 80 90\" "
     RenderSVGTSpan {tspan} at (0,0) size 128x12
       RenderSVGInlineText {#text} at (33,11) size 128x12
         chunk 1 text run 1 at (83.00,351.00) startOffset 0 endOffset 27 width 127.91: "dx=\"0 10 20 30 40\" y=\"320\">"
-layer at (240,298) size 133x27
+layer at (240,298.27) size 133x27
   RenderSVGText {text} at (190,240) size 134x27 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 134x27
       RenderSVGInlineText {#text} at (0,0) size 134x27
@@ -128,22 +128,22 @@ layer at (240,298) size 133x27
         chunk 1 text run 3 at (309.33,320.00) startOffset 2 endOffset 3 width 6.65: "t"
         chunk 1 text run 4 at (335.98,320.00) startOffset 3 endOffset 4 width 5.33: "i"
         chunk 1 text run 5 at (361.30,320.00) startOffset 4 endOffset 5 width 12.00: "k"
-layer at (240,331) size 184x22
+layer at (240,330.94) size 184x22
   RenderSVGText {text} at (190,272) size 184x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 158x12
       chunk 1 text run 1 at (240.00,340.00) startOffset 0 endOffset 34 width 157.93: "<tspan x=\"240\" dx=\"0 10 10 10 10\" "
     RenderSVGTSpan {tspan} at (0,0) size 151x12
       RenderSVGInlineText {#text} at (33,11) size 151x12
         chunk 1 text run 1 at (273.00,351.00) startOffset 0 endOffset 34 width 150.67: "y=\"320\" style=\"letter-spacing:10\">"
-layer at (0,0) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (-1,-1) size 540x565
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+layer at (-0.05,-0.36) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (-0.05,-0.36) size 539x563.77
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
 layer at (1,1) size 447x497
-  RenderSVGRect {rect} at (1,1) size 447x497 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
-layer at (0,0) size 28x29
-  RenderSVGViewportContainer {svg} at (0,0) size 28x29
-layer at (158,352) size 287x212 backgroundClip at (413,467) size 37x33 clip at (413,467) size 37x33
-  RenderSVGPath {path} at (158,352) size 287x212 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]
+  RenderSVGRect {rect} at (1.05,1.36) size 446x496 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
+layer at (0,0) size 28x29 backgroundClip at (0,0.36) size 450x499.64
+  RenderSVGViewportContainer {svg} at (0.05,0.36) size 27x28
+layer at (158.31,352.16) size 287x212 backgroundClip at (413.41,467) size 36.59x33 clip at (413.41,467) size 36.59x33
+  RenderSVGPath {path} at (158.31,352.16) size 286.69x211.25 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

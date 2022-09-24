@@ -4,9 +4,9 @@ layer at (0,0) size 400x400
   RenderSVGRoot {svg} at (0,0) size 400x400
 layer at (0,0) size 400x400
   RenderSVGViewportContainer at (0,0) size 400x400
-layer at (10,6) size 90x79
-  RenderSVGTransformableContainer {g} at (10,5) size 90x79
-layer at (10,6) size 90x18
+layer at (10,5.66) size 90x79
+  RenderSVGTransformableContainer {g} at (10,5.66) size 89.58x78.34
+layer at (10,5.66) size 90x18
   RenderSVGText {text} at (0,0) size 90x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 90x19
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 1 width 9.77: "T"
@@ -15,7 +15,7 @@ layer at (10,6) size 90x18
       chunk 1 text run 1 at (40.00,20.00) startOffset 0 endOffset 1 width 4.45: "t"
       chunk 1 text run 1 at (50.00,20.00) startOffset 0 endOffset 1 width 4.00: " "
       chunk 1 text run 1 at (54.00,20.00) startOffset 0 endOffset 5 width 45.57 RTL: "\x{5D0}\x{5D1}\x{5D2}\x{5D3}\x{5D4}"
-layer at (10,26) size 88x18
+layer at (10,25.66) size 88x18
   RenderSVGText {text} at (0,20) size 89x19 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 89x19
       RenderSVGInlineText {#text} at (0,0) size 89x19
@@ -29,7 +29,7 @@ layer at (10,26) size 88x18
         chunk 1 text run 1 at (72.00,40.00) startOffset 0 endOffset 1 width 6.84 RTL: "\x{5D2}"
         chunk 1 text run 1 at (79.00,40.00) startOffset 0 endOffset 1 width 9.01 RTL: "\x{5D1}"
         chunk 1 text run 1 at (88.00,40.00) startOffset 0 endOffset 1 width 10.32 RTL: "\x{5D0}"
-layer at (10,46) size 88x18
+layer at (10,45.66) size 88x18
   RenderSVGText {text} at (0,40) size 89x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 44x19
       chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 9.77: "T"
@@ -44,7 +44,7 @@ layer at (10,46) size 88x18
         chunk 1 text run 1 at (72.00,60.00) startOffset 0 endOffset 1 width 6.84 RTL: "\x{5D2}"
         chunk 1 text run 1 at (79.00,60.00) startOffset 0 endOffset 1 width 9.01 RTL: "\x{5D1}"
         chunk 1 text run 1 at (88.00,60.00) startOffset 0 endOffset 1 width 10.32 RTL: "\x{5D0}"
-layer at (10,66) size 88x18
+layer at (10,65.66) size 88x18
   RenderSVGText {text} at (0,60) size 89x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x19
       chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 1 width 9.77: "T"

@@ -24,6 +24,7 @@
  */
 
 [
+    EnabledBySetting=SpeechSynthesisAPIEnabled,
     Conditional=SPEECH_SYNTHESIS
 ] dictionary SpeechSynthesisErrorEventInit : SpeechSynthesisEventInit {
     required SpeechSynthesisErrorCode error;

@@ -29,14 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Notification should be exposed to all Worker contexts, not just ServiceWorker.
+// FIXME: Notification should be exposed to all Worker contexts, not just ServiceWorker and DedicatedWorker.
 // https://notifications.spec.whatwg.org/#notification
 [
     Conditional=NOTIFICATIONS,
     ActiveDOMObject,
     EnabledBySetting=NotificationsEnabled,
     ExportMacro=WEBCORE_EXPORT,
-    Exposed=(Window,ServiceWorker)
+    Exposed=(Window,DedicatedWorker,ServiceWorker)
 ] interface Notification : EventTarget {
     [CallWith=CurrentScriptExecutionContext] constructor(DOMString title, optional NotificationOptions options);
 

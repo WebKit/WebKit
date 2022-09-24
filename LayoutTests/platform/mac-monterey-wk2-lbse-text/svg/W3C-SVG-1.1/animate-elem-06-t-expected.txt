@@ -5,34 +5,34 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-5,-10) size 84x62 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-5,-10) size 84x62
-layer at (7,1) size 66x9
+  RenderSVGTransformableContainer {g} at (-5,-10) size 83.02x61.70
+layer at (7,0.75) size 66x9
   RenderSVGText {text} at (12,10) size 67x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 67x9
       chunk 1 text run 1 at (7.00,8.00) startOffset 0 endOffset 18 width 66.26: "Test a motion path"
-layer at (11,11) size 52x9
+layer at (11,10.75) size 52x9
   RenderSVGText {text} at (16,20) size 52x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 52x9
       chunk 1 text run 1 at (11.00,18.00) startOffset 0 endOffset 17 width 51.98: "'path' attribute."
 layer at (-5,-10) size 84x62 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 84x62
-layer at (15,29) size 50x14
-  RenderSVGPath {path} at (20,39) size 50x14 [stroke={[type=SOLID] [color=#000000]}] [data="M 15 43 C 15 43 36 20 65 33"]
+  RenderSVGTransformableContainer {g} at (0,0) size 83.02x61.70
+layer at (15,29.02) size 50x14
+  RenderSVGPath {path} at (20,39.02) size 50x13.98 [stroke={[type=SOLID] [color=#000000]}] [data="M 15 43 C 15 43 36 20 65 33"]
 layer at (10,33) size 10x10
   RenderSVGRect {rect} at (15,43) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=10.00] [y=33.00] [width=10.00] [height=10.00]
-layer at (7,43) size 21x9
+layer at (7,42.75) size 21x9
   RenderSVGText {text} at (12,52) size 22x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 22x9
       chunk 1 text run 1 at (7.00,50.00) startOffset 0 endOffset 6 width 21.34: "0 sec."
 layer at (60,23) size 10x10
   RenderSVGRect {rect} at (65,33) size 10x10 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFCCCC]}] [x=60.00] [y=23.00] [width=10.00] [height=10.00]
-layer at (52,33) size 26x9
+layer at (52,32.75) size 26x9
   RenderSVGText {text} at (57,42) size 27x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 27x9
       chunk 1 text run 1 at (52.00,40.00) startOffset 0 endOffset 7 width 26.02: "6+ sec."
 layer at (-5,-10) size 10x10 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGPath {path} at (0,0) size 10x10 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -5 0 L 0 -10 L 5 0 Z"]
-layer at (5,52) size 40x7
+layer at (5,51.66) size 40x7
   RenderSVGText {text} at (5,51) size 40x8 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 40x7
       chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 39.50: "$Revision: 1.9 $"

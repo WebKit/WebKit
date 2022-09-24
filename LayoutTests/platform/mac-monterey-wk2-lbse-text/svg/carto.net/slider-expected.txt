@@ -10,7 +10,7 @@ layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
 layer at (-2000,-2000) size 6000x6000 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGRect {rect} at (-2000,-2000) size 6000x6000 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-2000.00] [y=-2000.00] [width=6000.00] [height=6000.00]
-layer at (254,21) size 516x23
+layer at (254.25,21.45) size 516x23
   RenderSVGText {text} at (254,21) size 516x24 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 516x23
       chunk 1 (middle anchor) text run 1 at (254.25,40.00) startOffset 0 endOffset 52 width 515.49: "Demonstration of the carto.net SVG GUI slider object"
@@ -62,7 +62,7 @@ layer at (0,0) size 1024x768 backgroundClip at (0,0) size 800x600 clip at (0,0) 
   RenderSVGViewportContainer {svg} at (0,0) size 1024x768
 layer at (0,-10) size 0x20
   RenderSVGPath {line} at (0,-10) size 0x20 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-10.00] [x2=0.00] [y2=10.00]
-layer at (500,585) size 324x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (500,584.95) size 324x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (500,584) size 324x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 324x20
       chunk 1 text run 1 at (500.00,600.00) startOffset 0 endOffset 50 width 323.52: "Click on this text to randomly reposition slider 4"

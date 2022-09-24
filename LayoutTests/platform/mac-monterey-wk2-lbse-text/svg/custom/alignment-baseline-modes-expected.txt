@@ -5,7 +5,7 @@ layer at (0,0) size 400x400
 layer at (0,0) size 400x400
   RenderSVGViewportContainer at (0,0) size 400x400
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x23
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x23
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 41x23
@@ -18,7 +18,7 @@ layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x23
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x23
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 41x23
@@ -31,7 +31,7 @@ layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x23
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x23
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 41x23
@@ -44,7 +44,7 @@ layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x23
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x23
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 41x23
@@ -57,7 +57,7 @@ layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x28
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x28
 layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 41x23
@@ -70,7 +70,7 @@ layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x23
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x23
 layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 41x23
@@ -83,7 +83,7 @@ layer at (10,-3) size 101x23 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x38 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x38
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x37.41
 layer at (10,-3) size 101x37 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x38 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,14) size 41x23
@@ -96,7 +96,7 @@ layer at (10,-3) size 101x37 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x32 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x32
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x32
 layer at (10,-3) size 101x32 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x32 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,9) size 41x23
@@ -109,7 +109,7 @@ layer at (10,-3) size 101x32 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x30 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x30
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x29.50
 layer at (10,-3) size 101x30 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x30 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,6) size 41x23
@@ -122,7 +122,7 @@ layer at (10,-3) size 101x30 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x28
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x27.50
 layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,4) size 41x23
@@ -135,7 +135,7 @@ layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x28
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x28
 layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 41x23
@@ -148,7 +148,7 @@ layer at (10,-3) size 101x28 backgroundClip at (0,0) size 400x400 clip at (0,0) 
 layer at (10,15) size 100x0
   RenderSVGPath {line} at (0,18) size 100x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=15.00] [x2=110.00] [y2=15.00]
 layer at (10,-3) size 101x41 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
-  RenderSVGTransformableContainer {g} at (10,-3) size 101x41
+  RenderSVGTransformableContainer {g} at (10,-3) size 100.55x41
 layer at (10,-3) size 101x41 backgroundClip at (0,0) size 400x400 clip at (0,0) size 400x400
   RenderSVGText {text} at (0,0) size 101x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,18) size 41x23

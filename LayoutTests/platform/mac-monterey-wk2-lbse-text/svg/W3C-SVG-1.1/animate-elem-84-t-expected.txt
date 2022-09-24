@@ -22,17 +22,17 @@ layer at (240,150) size 100x100
   RenderSVGTransformableContainer {g} at (240,150) size 100x100
 layer at (240,150) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=240.00] [y=150.00] [width=100.00] [height=100.00]
-layer at (15,43) size 293x92
-  RenderSVGTransformableContainer {g} at (15,42) size 293x92
-layer at (15,118) size 70x15
+layer at (15.16,42.95) size 293x92
+  RenderSVGTransformableContainer {g} at (15.16,42.95) size 292.66x90.47
+layer at (15.16,117.95) size 70x15
   RenderSVGText {text} at (0,75) size 70x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 70x16
       chunk 1 (middle anchor) text run 1 at (15.16,130.00) startOffset 0 endOffset 12 width 69.67: "currentColor"
-layer at (155,43) size 30x15
+layer at (154.84,42.95) size 30x15
   RenderSVGText {text} at (139,0) size 31x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 31x16
       chunk 1 (middle anchor) text run 1 at (154.86,55.00) startOffset 0 endOffset 5 width 30.28: "green"
-layer at (272,118) size 36x15
+layer at (272.19,117.95) size 36x15
   RenderSVGText {text} at (257,75) size 36x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 36x16
       chunk 1 (middle anchor) text run 1 at (272.20,130.00) startOffset 0 endOffset 7 width 35.60: "inherit"

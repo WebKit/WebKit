@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests checking notification permission and constructing a notification from a dedicated worker.");
+jsTestIsAsync = true;
+
+let state = "check-initial-permission";
+let worker = new Worker("show-notification-worker.js");
+worker.onmessage = (event) => {
+    if (state == "check-initial-permission") {
+        // Permission should initially be default.
+        initialPermissionState = event.data;
+        shouldBeEqualToString("initialPermissionState", "default");
+
+        if (window.testRunner)
+            testRunner.grantWebNotificationPermission(self.origin);
+
+        state = "check-permission-granted";
+        worker.postMessage(state);
+        return;
+    }
+    if (state == "check-permission-granted") {
+        // Permission should now be granted.
+        updatedPermissionState = event.data;
+        shouldBeEqualToString("updatedPermissionState", "granted");
+
+        state = "show-notification"
+        worker.postMessage(state);
+        return;
+    }
+    if (state == "show-notification") {
+        showResult = event.data;
+        shouldBeEqualToString("showResult", "shown");
+        finishJSTest();
+        return;
+    }
+};
+worker.postMessage(state);
+</script>
+</body>
+</html>

@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <optional>
+
 namespace WebCore {
 
 #if ENABLE(APP_HIGHLIGHTS)

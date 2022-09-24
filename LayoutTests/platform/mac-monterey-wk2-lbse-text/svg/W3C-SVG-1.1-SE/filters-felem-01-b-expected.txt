@@ -5,14 +5,14 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (90,20) size 357x264
-  RenderSVGTransformableContainer {g} at (90,20) size 357x264
+  RenderSVGTransformableContainer {g} at (90,20) size 356.14x264
 layer at (90,20) size 80x115
-  RenderSVGTransformableContainer {g} at (0,0) size 80x115
+  RenderSVGTransformableContainer {g} at (0,0) size 80x114.02
 layer at (100,30) size 60x60
   RenderSVGEllipse {circle} at (10,10) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=60.00] [r=30.00]
 layer at (90,20) size 80x80
   RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#00FF00]}] [cx=130.00] [cy=60.00] [r=40.00]
-layer at (96,114) size 68x20
+layer at (95.55,113.98) size 68x20
   RenderSVGText {text} at (5,93) size 70x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 69x21
       chunk 1 (middle anchor) text run 1 at (95.55,130.00) startOffset 0 endOffset 9 width 68.90: "No filter"
@@ -22,33 +22,33 @@ layer at (100,180) size 60x60
   RenderSVGEllipse {circle} at (10,10) size 60x60 [fill={[type=SOLID] [color=#00FF00]}] [cx=130.00] [cy=210.00] [r=30.00]
 layer at (90,170) size 80x80
   RenderSVGEllipse {circle} at (0,0) size 80x80 [fill={[type=SOLID] [color=#FF0000]}] [cx=130.00] [cy=210.00] [r=40.00]
-layer at (91,264) size 78x20
+layer at (91.11,263.98) size 78x20
   RenderSVGText {text} at (1,93) size 78x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 78x21
       chunk 1 (middle anchor) text run 1 at (91.11,280.00) startOffset 0 endOffset 11 width 77.78: "Null filter"
-layer at (252,20) size 156x115
-  RenderSVGTransformableContainer {g} at (162,0) size 156x115
+layer at (252.19,20) size 156x115
+  RenderSVGTransformableContainer {g} at (162.19,0) size 155.63x114.02
 layer at (300,30) size 61x60
-  RenderSVGEllipse {circle} at (47,10) size 61x60 [fill={[type=SOLID] [color=#00FF00]}] [cx=330.00] [cy=60.00] [r=30.00]
+  RenderSVGEllipse {circle} at (47.81,10) size 60x60 [fill={[type=SOLID] [color=#00FF00]}] [cx=330.00] [cy=60.00] [r=30.00]
 layer at (290,20) size 81x80
-  RenderSVGEllipse {circle} at (37,0) size 81x80 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=60.00] [r=40.00]
-layer at (252,114) size 156x20
+  RenderSVGEllipse {circle} at (37.81,0) size 80x80 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=60.00] [r=40.00]
+layer at (252.19,113.98) size 156x20
   RenderSVGText {text} at (0,93) size 156x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 156x21
       chunk 1 (middle anchor) text run 1 at (252.20,130.00) startOffset 0 endOffset 19 width 155.60: "Non-existent filter"
-layer at (214,170) size 234x114
-  RenderSVGTransformableContainer {g} at (123,150) size 234x114
+layer at (213.86,170) size 234x114
+  RenderSVGTransformableContainer {g} at (123.86,150) size 232.28x114
 layer at (300,180) size 61x60
-  RenderSVGEllipse {circle} at (86,10) size 61x60 [fill={[type=SOLID] [color=#00FF00]}] [cx=330.00] [cy=210.00] [r=30.00]
+  RenderSVGEllipse {circle} at (86.14,10) size 60x60 [fill={[type=SOLID] [color=#00FF00]}] [cx=330.00] [cy=210.00] [r=30.00]
 layer at (290,170) size 81x80
-  RenderSVGEllipse {circle} at (76,0) size 81x80 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=210.00] [r=40.00]
-layer at (214,264) size 232x20
+  RenderSVGEllipse {circle} at (76.14,0) size 80x80 [fill={[type=SOLID] [color=#FF0000]}] [cx=330.00] [cy=210.00] [r=40.00]
+layer at (213.86,263.98) size 232x20
   RenderSVGText {text} at (0,93) size 233x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 233x21
       chunk 1 (middle anchor) text run 1 at (213.87,280.00) startOffset 0 endOffset 29 width 232.26: "Null with small region filter"
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.7 $"

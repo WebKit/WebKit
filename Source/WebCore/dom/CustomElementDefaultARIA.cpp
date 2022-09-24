@@ -26,6 +26,9 @@
 #include "config.h"
 #include "CustomElementDefaultARIA.h"
 
+#include "Element.h"
+#include "HTMLNames.h"
+#include "SpaceSplitString.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 

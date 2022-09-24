@@ -9,7 +9,7 @@ layer at (0,0) size 800x500
 layer at (0,0) size 800x500
   RenderSVGViewportContainer at (0,0) size 800x500
 layer at (0,12) size 580x383
-  RenderSVGTransformableContainer {g} at (0,12) size 580x383
+  RenderSVGTransformableContainer {g} at (0,12) size 579.31x383
 layer at (0,12) size 361x23
   RenderSVGText {text} at (0,0) size 362x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 362x23

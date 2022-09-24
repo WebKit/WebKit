@@ -43,6 +43,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderTable.h"
+#include "RenderView.h"
 #include "TextUtil.h"
 
 #if ENABLE(TREE_DEBUGGING)
@@ -78,17 +79,51 @@ static std::unique_ptr<RenderStyle> firstLineStyleFor(const RenderObject& render
 
 BoxTree::BoxTree(RenderBlock& rootRenderer)
     : m_rootRenderer(rootRenderer)
-    , m_root(Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement }, rootBoxStyle(rootRenderer), firstLineStyleFor(rootRenderer))
 {
-    if (rootRenderer.isAnonymous())
-        m_root.setIsAnonymous();
+    auto* rootBox = m_rootRenderer.layoutBox();
+    if (!rootBox) {
+        auto attributes = Layout::Box::ElementAttributes { Layout::Box::ElementType::GenericElement };
+        auto newRootBox = makeUniqueRef<Layout::ContainerBox>(attributes, rootBoxStyle(rootRenderer), firstLineStyleFor(rootRenderer));
+        rootBox = newRootBox.ptr();
+        m_rootRenderer.setLayoutBox(*rootBox);
+        initialContainingBlock().appendChild(WTFMove(newRootBox));
+    }
 
-    if (is<RenderBlockFlow>(rootRenderer))
+    if (rootRenderer.isAnonymous())
+        rootBox->setIsAnonymous();
+
+    if (is<RenderBlockFlow>(rootRenderer)) {
+        rootBox->setIsInlineIntegrationRoot();
         buildTreeForInlineContent();
-    else if (is<RenderFlexibleBox>(rootRenderer))
+    } else if (is<RenderFlexibleBox>(rootRenderer))
         buildTreeForFlexContent();
     else
         ASSERT_NOT_IMPLEMENTED_YET();
+}
+
+BoxTree::~BoxTree()
+{
+    for (auto& renderer : m_renderers) {
+        if (!renderer)
+            continue;
+
+        bool isLFCInlineBlock = is<RenderBlockFlow>(*renderer) && downcast<RenderBlockFlow>(*renderer).modernLineLayout();
+        if (isLFCInlineBlock) {
+            auto detachedBox = renderer->layoutBox()->removeFromParent();
+            initialContainingBlock().appendChild(WTFMove(detachedBox));
+            continue;
+        }
+
+        renderer->clearLayoutBox();
+    }
+
+    m_boxToRendererMap = { };
+
+    if (&rootLayoutBox().parent() == &initialContainingBlock()) {
+        auto toDelete = rootLayoutBox().removeFromParent();
+        m_rootRenderer.clearLayoutBox();
+    } else
+        rootLayoutBox().destroyChildren();
 }
 
 void BoxTree::buildTreeForInlineContent()
@@ -185,8 +220,12 @@ void BoxTree::buildTreeForInlineContent()
 
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(m_rootRenderer)); !walker.atEnd(); walker.advance()) {
         auto& childRenderer = *walker.current();
-        auto childBox = createChildBox(childRenderer);
-        appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(childBox)), childRenderer);
+        auto childLayoutBox = [&] {
+            if (auto existingChildBox = childRenderer.layoutBox())
+                return existingChildBox->removeFromParent();
+            return makeUniqueRefFromNonNullUniquePtr(createChildBox(childRenderer));
+        };
+        appendChild(childLayoutBox(), childRenderer);
     }
 }
 
@@ -203,17 +242,10 @@ void BoxTree::appendChild(UniqueRef<Layout::Box> childBox, RenderObject& childRe
 {
     auto& parentBox = layoutBoxForRenderer(*childRenderer.parent());
 
-    m_boxes.append({ childBox.get(), &childRenderer });
+    m_renderers.append(&childRenderer);
 
+    childRenderer.setLayoutBox(childBox);
     parentBox.appendChild(WTFMove(childBox));
-
-    if (m_boxes.size() > smallTreeThreshold) {
-        if (m_rendererToBoxMap.isEmpty()) {
-            for (auto& entry : m_boxes)
-                m_rendererToBoxMap.add(entry.renderer, entry.box.get());
-        } else
-            m_rendererToBoxMap.add(&childRenderer, m_boxes.last().box.get());
-    }
 }
 
 void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
@@ -232,20 +264,19 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     }
 }
 
+const Layout::ContainerBox& BoxTree::rootLayoutBox() const
+{
+    return *m_rootRenderer.layoutBox();
+}
+
+Layout::ContainerBox& BoxTree::rootLayoutBox()
+{
+    return *m_rootRenderer.layoutBox();
+}
+
 Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer)
 {
-    if (&renderer == &m_rootRenderer)
-        return m_root;
-
-    if (m_boxes.size() <= smallTreeThreshold) {
-        auto index = m_boxes.findIf([&](auto& entry) {
-            return entry.renderer == &renderer;
-        });
-        RELEASE_ASSERT(index != notFound);
-        return m_boxes[index].box;
-    }
-
-    return *m_rendererToBoxMap.get(&renderer);
+    return *const_cast<RenderObject&>(renderer).layoutBox();
 }
 
 const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) const
@@ -265,20 +296,20 @@ Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderElement& rendere
 
 RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
 {
-    if (&box == &m_root)
+    if (&box == &rootLayoutBox())
         return m_rootRenderer;
 
-    if (m_boxes.size() <= smallTreeThreshold) {
-        auto index = m_boxes.findIf([&](auto& entry) {
-            return entry.box.ptr() == &box;
+    if (m_renderers.size() <= smallTreeThreshold) {
+        auto index = m_renderers.findIf([&](auto& renderer) {
+            return renderer->layoutBox() == &box;
         });
         RELEASE_ASSERT(index != notFound);
-        return *m_boxes[index].renderer;
+        return *m_renderers[index];
     }
 
     if (m_boxToRendererMap.isEmpty()) {
-        for (auto& entry : m_boxes)
-            m_boxToRendererMap.add(entry.box.get(), entry.renderer);
+        for (auto& renderer : m_renderers)
+            m_boxToRendererMap.add(*renderer->layoutBox(), renderer);
     }
     return *m_boxToRendererMap.get(&box);
 }
@@ -286,6 +317,11 @@ RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)
 const RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box) const
 {
     return const_cast<BoxTree&>(*this).rendererForLayoutBox(box);
+}
+
+Layout::InitialContainingBlock& BoxTree::initialContainingBlock()
+{
+    return m_rootRenderer.view().initialContainingBlock();
 }
 
 #if ENABLE(TREE_DEBUGGING)

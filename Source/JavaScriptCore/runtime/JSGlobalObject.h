@@ -324,6 +324,7 @@ public:
     LazyProperty<JSGlobalObject, IntlCollator> m_defaultCollator;
     LazyProperty<JSGlobalObject, Structure> m_collatorStructure;
     LazyProperty<JSGlobalObject, Structure> m_displayNamesStructure;
+    LazyProperty<JSGlobalObject, Structure> m_durationFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_listFormatStructure;
     LazyProperty<JSGlobalObject, Structure> m_localeStructure;
     LazyProperty<JSGlobalObject, Structure> m_pluralRulesStructure;
@@ -995,6 +996,7 @@ public:
     Structure* collatorStructure() { return m_collatorStructure.get(this); }
     Structure* dateTimeFormatStructure() { return m_dateTimeFormatStructure.get(this); }
     Structure* displayNamesStructure() { return m_displayNamesStructure.get(this); }
+    Structure* durationFormatStructure() { return m_durationFormatStructure.get(this); }
     Structure* listFormatStructure() { return m_listFormatStructure.get(this); }
     Structure* numberFormatStructure() { return m_numberFormatStructure.get(this); }
     Structure* localeStructure() { return m_localeStructure.get(this); }

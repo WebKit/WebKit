@@ -5,11 +5,11 @@ layer at (0,0) size 300x300
 layer at (0,0) size 300x300
   RenderSVGViewportContainer at (0,0) size 300x300
 layer at (50,40) size 110x21
-  RenderSVGPath {path} at (50,40) size 110x21 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 50 C 50 50 120 80 160 40"]
+  RenderSVGPath {path} at (50,40) size 110x20.81 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 50 C 50 50 120 80 160 40"]
 layer at (50,40) size 110x21
-  RenderSVGTransformableContainer {g} at (50,40) size 110x21
+  RenderSVGTransformableContainer {g} at (50,40) size 110x20.81
 layer at (50,40) size 110x21
-  RenderSVGPath {path} at (0,0) size 110x21 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 50 C 50 50 120 80 160 40"]
+  RenderSVGPath {path} at (0,0) size 110x20.81 [stroke={[type=SOLID] [color=#000000] [stroke width=3.00]}] [data="M 50 50 C 50 50 120 80 160 40"]
 layer at (10,6) size 216x18
   RenderSVGText {text} at (10,6) size 216x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 216x18

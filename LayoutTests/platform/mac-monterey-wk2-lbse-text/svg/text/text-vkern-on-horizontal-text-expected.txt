@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (0,-8) size 25x10 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (0,-8.02) size 25x10 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,-9) size 25x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 25x11
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 4 width 25.00: "1234"

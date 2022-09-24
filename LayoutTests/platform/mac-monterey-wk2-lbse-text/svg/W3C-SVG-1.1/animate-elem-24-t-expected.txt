@@ -4,10 +4,10 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (0,-28) size 331x307 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,-29) size 331x307
+layer at (0,-28.02) size 331x307 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,-28.02) size 330.53x305.64
 layer at (70,92) size 147x134
-  RenderSVGTransformableContainer {g} at (70,120) size 147x134
+  RenderSVGTransformableContainer {g} at (70,120.02) size 146.66x133
 layer at (70,92) size 147x23
   RenderSVGText {text} at (0,0) size 147x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 147x23
@@ -20,23 +20,23 @@ layer at (100,202) size 79x23
   RenderSVGText {text} at (30,110) size 79x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 79x23
       chunk 1 text run 1 at (100.00,220.00) startOffset 0 endOffset 10 width 78.87: "Text at 9s"
-layer at (0,-28) size 331x306 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 331x306
-layer at (0,-14) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (0,-28.02) size 331x306 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 330.53x305.64
+layer at (0,-14.02) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,14) size 77x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 77x17
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 76.84: "It's alive!"
-layer at (0,-28) size 154x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (0,-28.02) size 154x33 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 154x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 154x34
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 153.68: "It's alive!"
-layer at (100,228) size 231x50
+layer at (100,227.98) size 231x50
   RenderSVGText {text} at (100,256) size 231x50 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 231x50
       chunk 1 text run 1 at (100.00,270.00) startOffset 0 endOffset 11 width 230.52: "It's alive!"
-layer at (0,-14) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,14) size 77x17
-layer at (0,-14) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (0,-14.02) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,14) size 76.84x16.56
+layer at (0,-14.02) size 77x17 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 77x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 77x17
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 11 width 76.84: "It's alive!"

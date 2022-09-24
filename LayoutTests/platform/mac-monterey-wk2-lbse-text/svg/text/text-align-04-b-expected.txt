@@ -4,47 +4,47 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (-4,4) size 481x264 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (-4,3) size 481x264
-layer at (5,4) size 350x45
+layer at (-3.52,3.59) size 481x264 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-3.52,3.59) size 480.31x262.77
+layer at (5,3.59) size 350x45
   RenderSVGText {text} at (8,0) size 352x45 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 351x45
       chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 350.49: "Test of 'text-anchor'"
-layer at (0,-15) size 79x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGHiddenContainer {defs} at (3,-19) size 79x20
-layer at (0,-15) size 78x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (0,-14.56) size 79x20 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (3.52,-18.16) size 78.27x18.63
+layer at (0,-14.56) size 78x19 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 79x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 79x19
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 13 width 78.26: "end text tref"
-layer at (20,53) size 218x34
+layer at (20,52.83) size 218x34
   RenderSVGText {text} at (23,49) size 219x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 219x34
       chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 218.45: "Tspan, tref, toap"
 layer at (220,120) size 0x141
-  RenderSVGPath {line} at (223,116) size 0x141 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=220.00] [y1=120.00] [x2=220.00] [y2=260.00]
-layer at (-4,113) size 481x154 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,109) size 481x154
-layer at (220,113) size 256x34
+  RenderSVGPath {line} at (223.52,116.41) size 0x140 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=220.00] [y1=120.00] [x2=220.00] [y2=260.00]
+layer at (-3.52,112.83) size 481x154 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,109.23) size 480.31x153.53
+layer at (220,112.83) size 256x34
   RenderSVGText {text} at (223,0) size 258x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 124x34
       chunk 1 text run 1 at (220.00,140.00) startOffset 0 endOffset 11 width 123.37: "start text "
     RenderSVGTSpan {tspan} at (0,0) size 134x34
       RenderSVGInlineText {#text} at (123,0) size 134x34
         chunk 1 text run 1 at (343.37,140.00) startOffset 0 endOffset 10 width 133.42: " red tspan"
-layer at (63,153) size 313x34
+layer at (63.30,152.83) size 313x34
   RenderSVGText {text} at (66,40) size 315x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 154x34
       chunk 1 (middle anchor) text run 1 at (63.31,180.00) startOffset 0 endOffset 12 width 153.40: "middle text "
     RenderSVGTSpan {tspan} at (0,0) size 161x34
       RenderSVGInlineText {#text} at (153,0) size 160x34
         chunk 1 (middle anchor) text run 1 at (216.70,180.00) startOffset 0 endOffset 11 width 159.99: " bold tspan"
-layer at (62,193) size 159x34
+layer at (61.56,192.83) size 159x34
   RenderSVGText {text} at (65,80) size 159x34 contains 1 chunk(s)
     RenderSVGInline {tref} at (0,0) size 159x34
       RenderSVGInlineText {#text} at (0,0) size 159x34
         chunk 1 (end anchor) text run 1 at (61.58,220.00) startOffset 0 endOffset 13 width 158.42: "end text tref"
     RenderSVGInlineText {#text} at (0,0) size 0x0
-layer at (-4,233) size 224x34 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+layer at (-3.52,232.83) size 224x34 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,120) size 224x34 contains 1 chunk(s)
     RenderSVGTextPath {textPath} at (0,0) size 224x34
       RenderSVGInlineText {#text} at (0,0) size 224x34
@@ -66,7 +66,7 @@ layer at (-4,233) size 224x34 backgroundClip at (0,0) size 800x600 clip at (0,0)
         chunk 1 (end anchor) text run 16 at (199.15,260.00) startOffset 27 endOffset 28 width 8.33: "t"
         chunk 1 (end anchor) text run 17 at (211.66,260.00) startOffset 28 endOffset 29 width 16.68: "h"
     RenderSVGInlineText {#text} at (0,0) size 0x0
-layer at (10,304) size 265x46
+layer at (10,303.84) size 265x46
   RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 265x47
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.5 $"

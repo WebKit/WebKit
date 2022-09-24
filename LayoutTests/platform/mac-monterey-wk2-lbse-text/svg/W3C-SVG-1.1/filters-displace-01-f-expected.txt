@@ -5,14 +5,14 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-1,-1) size 430x349 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-1,-1) size 430x349
+  RenderSVGTransformableContainer {g} at (-1,-1) size 430x348.55
 layer at (-1,-1) size 430x349 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 430x349
+  RenderSVGTransformableContainer {g} at (0,0) size 430x348.55
 layer at (15,15) size 128x128
   RenderSVGRect {rect} at (16,16) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=15.00] [width=128.00] [height=128.00]
 layer at (20,115) size 118x20
   RenderSVGRect {rect} at (21,116) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [x=20.00] [y=115.00] [width=118.00] [height=20.00]
-layer at (23,119) size 112x14
+layer at (22.97,119.13) size 112x14
   RenderSVGText {text} at (23,120) size 114x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 113x14
       chunk 1 (middle anchor) text run 1 at (22.97,130.00) startOffset 0 endOffset 18 width 112.06: "Checkerboard Image"
@@ -20,7 +20,7 @@ layer at (158,15) size 128x128
   RenderSVGRect {rect} at (159,16) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=15.00] [width=128.00] [height=128.00]
 layer at (163,112) size 118x30
   RenderSVGRect {rect} at (164,113) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=112.00] [width=118.00] [height=30.00]
-layer at (171,114) size 102x27
+layer at (170.64,114.13) size 102x27
   RenderSVGText {text} at (171,115) size 104x27 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 100x14
       RenderSVGInlineText {#text} at (0,0) size 100x14
@@ -34,7 +34,7 @@ layer at (301,15) size 128x128
   RenderSVGRect {rect} at (302,16) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=301.00] [y=15.00] [width=128.00] [height=128.00]
 layer at (-1,-1) size 2x2 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 2x2 [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [x=-1.00] [y=-1.00] [width=2.00] [height=2.00]
-layer at (301,149) size 128x38
+layer at (301.30,149.13) size 128x38
   RenderSVGText {text} at (302,150) size 128x38 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 35x14
       RenderSVGInlineText {#text} at (45,0) size 35x14
@@ -53,7 +53,7 @@ layer at (15,158) size 128x128
   RenderSVGRect {rect} at (16,159) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=15.00] [y=158.00] [width=128.00] [height=128.00]
 layer at (20,258) size 118x20
   RenderSVGRect {rect} at (21,259) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [x=20.00] [y=258.00] [width=118.00] [height=20.00]
-layer at (23,262) size 112x14
+layer at (22.97,262.13) size 112x14
   RenderSVGText {text} at (23,263) size 114x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 113x14
       chunk 1 (middle anchor) text run 1 at (22.97,273.00) startOffset 0 endOffset 18 width 112.06: "Checkerboard Image"
@@ -61,7 +61,7 @@ layer at (158,158) size 128x128
   RenderSVGRect {rect} at (159,159) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=158.00] [y=158.00] [width=128.00] [height=128.00]
 layer at (163,255) size 118x30
   RenderSVGRect {rect} at (164,256) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [x=163.00] [y=255.00] [width=118.00] [height=30.00]
-layer at (168,257) size 108x29
+layer at (167.97,257.13) size 108x29
   RenderSVGText {text} at (168,258) size 110x29 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 101x14
       RenderSVGInlineText {#text} at (2,0) size 100x14
@@ -73,7 +73,7 @@ layer at (168,257) size 108x29
         chunk 1 (middle anchor) text run 1 at (167.98,283.00) startOffset 0 endOffset 22 width 108.04: "(spherical distortion)"
 layer at (301,200) size 128x128
   RenderSVGRect {rect} at (302,201) size 128x128 [fill={[type=SOLID] [color=#000000]}] [x=301.00] [y=200.00] [width=128.00] [height=128.00]
-layer at (348,334) size 34x14
+layer at (347.98,334.13) size 34x14
   RenderSVGText {text} at (348,335) size 35x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 35x14
       chunk 1 (middle anchor) text run 1 at (347.99,345.00) startOffset 0 endOffset 6 width 34.01: "Result"

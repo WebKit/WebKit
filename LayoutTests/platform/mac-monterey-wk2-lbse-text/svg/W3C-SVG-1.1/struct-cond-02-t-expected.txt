@@ -4,19 +4,19 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (20,128) size 377x98
-  RenderSVGTransformableContainer {g} at (20,128) size 377x98
-layer at (20,128) size 377x97
-  RenderSVGTransformableContainer {g} at (0,0) size 377x97
-layer at (20,128) size 377x97
-  RenderSVGTransformableContainer {switch} at (0,0) size 377x97
-layer at (20,128) size 377x97
-  RenderSVGTransformableContainer {g} at (0,0) size 377x97
-layer at (20,198) size 377x27
+layer at (20,128.27) size 377x98
+  RenderSVGTransformableContainer {g} at (20,128.27) size 376.78x96.83
+layer at (20,128.27) size 377x97
+  RenderSVGTransformableContainer {g} at (0,0) size 376.78x96.83
+layer at (20,128.27) size 377x97
+  RenderSVGTransformableContainer {switch} at (0,0) size 376.78x96.83
+layer at (20,128.27) size 377x97
+  RenderSVGTransformableContainer {g} at (0,0) size 376.78x96.83
+layer at (20,198.27) size 377x27
   RenderSVGText {text} at (0,70) size 377x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 377x27
       chunk 1 text run 1 at (20.00,220.00) startOffset 0 endOffset 35 width 376.77: "Why can't they just speak English ?"
-layer at (230,128) size 135x27
+layer at (230,128.27) size 135x27
   RenderSVGText {text} at (210,0) size 135x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 135x27
       chunk 1 text run 1 at (230.00,150.00) startOffset 0 endOffset 12 width 134.71: "English (US)"

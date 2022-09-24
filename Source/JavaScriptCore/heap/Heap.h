@@ -220,6 +220,7 @@ class Heap;
     v(intlCollatorSpace, intlCollatorHeapCellType, IntlCollator) \
     v(intlDateTimeFormatSpace, intlDateTimeFormatHeapCellType, IntlDateTimeFormat) \
     v(intlDisplayNamesSpace, intlDisplayNamesHeapCellType, IntlDisplayNames) \
+    v(intlDurationFormatSpace, intlDurationFormatHeapCellType, IntlDurationFormat) \
     v(intlListFormatSpace, intlListFormatHeapCellType, IntlListFormat) \
     v(intlLocaleSpace, intlLocaleHeapCellType, IntlLocale) \
     v(intlNumberFormatSpace, intlNumberFormatHeapCellType, IntlNumberFormat) \
@@ -956,6 +957,7 @@ public:
     IsoHeapCellType intlCollatorHeapCellType;
     IsoHeapCellType intlDateTimeFormatHeapCellType;
     IsoHeapCellType intlDisplayNamesHeapCellType;
+    IsoHeapCellType intlDurationFormatHeapCellType;
     IsoHeapCellType intlListFormatHeapCellType;
     IsoHeapCellType intlLocaleHeapCellType;
     IsoHeapCellType intlNumberFormatHeapCellType;

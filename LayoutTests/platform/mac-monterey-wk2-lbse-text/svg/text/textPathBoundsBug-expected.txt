@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (100,100) size 100x0
   RenderSVGPath {path} at (100,100) size 100x0 [stroke={[type=SOLID] [color=#800080]}] [fill={[type=SOLID] [color=#000000]}] [data="M 100 100 L 200 100"]
-layer at (100,89) size 27x14
+layer at (100,89.13) size 27x14
   RenderSVGText {text} at (100,89) size 27x14 contains 1 chunk(s)
     RenderSVGTextPath {textPath} at (0,0) size 27x14
       RenderSVGInlineText {#text} at (0,0) size 27x14

@@ -36,10 +36,12 @@
 
 namespace WebCore {
 
-class Notification;
 class NotificationPermissionCallback;
+class NotificationResources;
 class Page;
 class ScriptExecutionContext;
+
+struct NotificationData;
 
 class NotificationClient {
 public:
@@ -47,15 +49,15 @@ public:
     using PermissionHandler = CompletionHandler<void(Permission)>;
 
     // Requests that a notification be shown.
-    virtual bool show(Notification&, CompletionHandler<void()>&&) = 0;
+    virtual bool show(ScriptExecutionContext&, NotificationData&&, RefPtr<NotificationResources>&&, CompletionHandler<void()>&&) = 0;
 
     // Requests that a notification that has already been shown be canceled.
-    virtual void cancel(Notification&) = 0;
+    virtual void cancel(NotificationData&&) = 0;
 
     // Informs the presenter that a Notification object has been destroyed
     // (such as by a page transition). The presenter may continue showing
     // the notification, but must not attempt to call the event handlers.
-    virtual void notificationObjectDestroyed(Notification&) = 0;
+    virtual void notificationObjectDestroyed(NotificationData&&) = 0;
 
     // Informs the presenter the controller attached to the page has been destroyed.
     virtual void notificationControllerDestroyed() = 0;

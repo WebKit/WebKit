@@ -19,8 +19,8 @@ PASS Property grid-row value 'span 2 / auto'
 PASS Property grid-column-start value 'span 1 i'
 PASS Property grid-row-end value 'span 2 i'
 PASS Property grid-column-end value 'span 2'
-FAIL Property grid-row-start value 'span i' assert_equals: expected "span i" but got "span 1 i"
-FAIL Property grid-row value 'span i / auto' assert_in_array: value "span 1 i / auto" not in array ["span i", "span i / auto"]
+PASS Property grid-row-start value 'span i'
+PASS Property grid-row value 'span i / auto'
 PASS Property grid-area value 'auto / i / auto / i'
 PASS Property grid-area value 'auto / i / 2 j'
 PASS Property grid-area value 'auto / i / 2 j / span 3 k'

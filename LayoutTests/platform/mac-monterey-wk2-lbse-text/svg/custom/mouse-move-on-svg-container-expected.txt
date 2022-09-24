@@ -13,7 +13,7 @@ layer at (303,303) size 100x100
   RenderSVGTransformableContainer {g} at (300,300) size 100x100
 layer at (303,303) size 100x100
   RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=350.00] [cy=350.00] [r=50.00]
-layer at (48,39) size 310x18
+layer at (47.70,39) size 310x18
   RenderSVGText {text} at (44,36) size 312x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 311x18
       chunk 1 (middle anchor) text run 1 at (44.71,50.00) startOffset 0 endOffset 49 width 310.58: "The circle should stay in the bottom-right corner"

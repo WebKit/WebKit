@@ -37,6 +37,7 @@ static NSString * const WebNotificationDirectionKey = @"WebNotificationDirection
 static NSString * const WebNotificationOriginKey = @"WebNotificationOriginKey";
 static NSString * const WebNotificationServiceWorkerRegistrationURLKey = @"WebNotificationServiceWorkerRegistrationURLKey";
 static NSString * const WebNotificationUUIDStringKey = @"WebNotificationUUIDStringKey";
+static NSString * const WebNotificationContextUUIDStringKey = @"WebNotificationContextUUIDStringKey";
 static NSString * const WebNotificationSessionIDKey = @"WebNotificationSessionIDKey";
 static NSString * const WebNotificationDataKey = @"WebNotificationDataKey";
 
@@ -54,10 +55,16 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
     NSNumber *sessionID = dictionary[WebNotificationSessionIDKey];
     NSData *notificationData = dictionary[WebNotificationDataKey];
 
-    NSString *uuidString = dictionary[WebNotificationUUIDStringKey];
-    auto uuid = UUID::parseVersion4(String(uuidString));
+    String uuidString = dictionary[WebNotificationUUIDStringKey];
+    auto uuid = UUID::parseVersion4(uuidString);
     if (!uuid)
         return std::nullopt;
+
+    String contextUUIDString = dictionary[WebNotificationContextUUIDStringKey];
+    auto contextUUID = UUID::parseVersion4(contextUUIDString);
+    if (!contextUUID)
+        return std::nullopt;
+    ScriptExecutionContextIdentifier contextIdentifier(*contextUUID, Process::identifier());
 
     NotificationDirection direction;
     NSNumber *directionNumber = dictionary[WebNotificationDirectionKey];
@@ -71,7 +78,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
         return std::nullopt;
     }
 
-    NotificationData data { title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, { static_cast<const uint8_t*>(notificationData.bytes), notificationData.length } };
+    NotificationData data { title, body, iconURL, tag, language, direction, originString, URL { String { serviceWorkerRegistrationURL } }, *uuid, contextIdentifier, PAL::SessionID { sessionID.unsignedLongLongValue }, { }, { static_cast<const uint8_t*>(notificationData.bytes), notificationData.length } };
     return WTFMove(data);
 }
 
@@ -87,6 +94,7 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
         WebNotificationDirectionKey : @((unsigned long)direction),
         WebNotificationServiceWorkerRegistrationURLKey : (NSString *)serviceWorkerRegistrationURL.string(),
         WebNotificationUUIDStringKey : (NSString *)notificationID.toString(),
+        WebNotificationContextUUIDStringKey : (NSString *)contextIdentifier.toString(),
         WebNotificationSessionIDKey : @(sourceSession.toUInt64()),
         WebNotificationDataKey: [NSData dataWithBytes:data.data() length:data.size()]
     };

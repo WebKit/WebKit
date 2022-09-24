@@ -6,13 +6,13 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (20,20) size 440x210
   RenderSVGTransformableContainer {g} at (20,20) size 440x210
-layer at (70,26) size 320x67
+layer at (70,25.67) size 320x67
   RenderSVGText {text} at (50,5) size 321x68 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 321x68
       chunk 1 text run 1 at (70.00,80.00) startOffset 0 endOffset 10 width 320.21: "Background"
 layer at (20,20) size 440x80
   RenderSVGRect {rect} at (0,0) size 440x80 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=20.00] [width=440.00] [height=80.00]
-layer at (70,156) size 320x67
+layer at (70,155.67) size 320x67
   RenderSVGText {text} at (50,135) size 321x68 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 321x68
       chunk 1 text run 1 at (70.00,210.00) startOffset 0 endOffset 10 width 320.21: "Background"

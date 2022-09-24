@@ -5,24 +5,24 @@ layer at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
 layer at (0,-14) size 46x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGHiddenContainer {defs} at (0,-14) size 46x18
+  RenderSVGHiddenContainer {defs} at (0,-14) size 45.33x18
 layer at (0,-14) size 45x18 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGText {text} at (0,0) size 46x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 46x18
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 45.32: "sample"
 layer at (0,-68) size 332x541 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,-68) size 332x541
-layer at (138,36) size 174x17
+  RenderSVGTransformableContainer {g} at (0,-68) size 331.02x540.08
+layer at (138.28,36.41) size 174x17
   RenderSVGText {text} at (138,104) size 174x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 174x17
       chunk 1 (middle anchor) text run 1 at (138.30,50.00) startOffset 0 endOffset 26 width 173.41: "Text Layout Properties (2)"
-layer at (186,66) size 78x12
+layer at (186.25,65.50) size 78x12
   RenderSVGText {text} at (186,133) size 78x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 78x12
       chunk 1 (middle anchor) text run 1 at (186.26,75.00) startOffset 0 endOffset 19 width 77.48: "Baseline Properties"
-layer at (156,88) size 140x49
-  RenderSVGTransformableContainer {g} at (155,156) size 140x49
-layer at (164,88) size 121x34
+layer at (155.52,88.25) size 140x49
+  RenderSVGTransformableContainer {g} at (155.52,156.25) size 138.97x48.75
+layer at (164.17,88.25) size 121x34
   RenderSVGText {text} at (8,0) size 123x34 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 33x17
       RenderSVGInlineText {#text} at (0,0) size 33x17
@@ -34,13 +34,13 @@ layer at (164,88) size 121x34
         chunk 1 (middle anchor) text run 1 at (225.82,118.50) startOffset 0 endOffset 3 width 20.84: "sub"
     RenderSVGInlineText {#text} at (82,8) size 40x17
       chunk 1 (middle anchor) text run 1 at (246.66,110.00) startOffset 0 endOffset 7 width 39.16: "scripts"
-layer at (156,128) size 139x9
+layer at (155.52,128) size 139x9
   RenderSVGText {text} at (0,39) size 139x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 139x9
       chunk 1 (middle anchor) text run 1 at (155.53,135.00) startOffset 0 endOffset 43 width 138.95: "baseline-shift=\"super\"/baseline-shift=\"sub\""
-layer at (119,149) size 214x34
-  RenderSVGTransformableContainer {g} at (118,216) size 214x34
-layer at (119,149) size 212x23
+layer at (118.98,148.75) size 214x34
+  RenderSVGTransformableContainer {g} at (118.98,216.75) size 212.03x33.25
+layer at (118.98,148.75) size 212x23
   RenderSVGText {text} at (0,0) size 213x23 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 48x17
       RenderSVGInlineText {#text} at (0,0) size 48x17
@@ -52,19 +52,19 @@ layer at (119,149) size 212x23
         chunk 1 (middle anchor) text run 1 at (195.64,168.00) startOffset 0 endOffset 9 width 54.56: "negative "
     RenderSVGInlineText {#text} at (131,3) size 81x17
       chunk 1 (middle anchor) text run 1 at (250.20,165.00) startOffset 0 endOffset 14 width 80.81: "baseline-shift"
-layer at (186,173) size 78x9
+layer at (185.89,173) size 78x9
   RenderSVGText {text} at (66,24) size 80x10 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 79x9
       chunk 1 (middle anchor) text run 1 at (185.90,180.00) startOffset 0 endOffset 23 width 78.20: "baseline-shift=\"+/-20%\""
-layer at (174,201) size 102x12
+layer at (174.45,200.50) size 102x12
   RenderSVGText {text} at (174,268) size 102x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 102x12
       chunk 1 (middle anchor) text run 1 at (174.46,210.00) startOffset 0 endOffset 25 width 101.09: "Multi-line Text Selection"
-layer at (160,218) size 130x9
+layer at (159.78,218) size 130x9
   RenderSVGText {text} at (159,286) size 132x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 131x9
       chunk 1 (middle anchor) text run 1 at (159.79,225.00) startOffset 0 endOffset 42 width 130.42: "(Try selecting the following text regions)"
-layer at (120,237) size 204x32
+layer at (120,236.75) size 204x32
   RenderSVGText {text} at (120,304) size 204x33 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 200x17
       RenderSVGInlineText {#text} at (0,0) size 200x17
@@ -111,7 +111,7 @@ layer at (0,-18) size 90x103 backgroundClip at (0,0) size 450x500 clip at (0,0) 
       chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 1 width 8.88: "a"
       chunk 1 text run 1 at (0.00,40.00) startOffset 0 endOffset 1 width 6.66: "r"
       chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 8.88: "e"
-layer at (151,436) size 148x19
+layer at (151.47,435.64) size 148x19
   RenderSVGText {text} at (151,503) size 148x20 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,1) size 62x17
       chunk 1 (middle anchor) text run 1 at (151.47,450.00) startOffset 0 endOffset 10 width 61.66: "Text with "
@@ -126,7 +126,7 @@ layer at (151,436) size 148x19
         chunk 1 (middle anchor) text run 7 at (247.27,450.00) startOffset 6 endOffset 7 width 7.50: "d"
     RenderSVGInlineText {#text} at (103,1) size 44x17
       chunk 1 (middle anchor) text run 1 at (254.77,450.00) startOffset 0 endOffset 7 width 43.75: " glyphs"
-layer at (163,452) size 126x20
+layer at (163.20,452.19) size 126x20
   RenderSVGText {text} at (163,520) size 127x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 126x20
       chunk 1 (middle anchor) text run 1 at (164.18,465.00) startOffset 0 endOffset 1 width 13.34: "M"
@@ -148,15 +148,15 @@ layer at (163,452) size 126x20
       chunk 1 (middle anchor) text run 17 at (264.98,465.00) startOffset 16 endOffset 17 width 7.50: "p"
       chunk 1 (middle anchor) text run 18 at (272.48,465.00) startOffset 17 endOffset 18 width 7.50: "h"
       chunk 1 (middle anchor) text run 19 at (279.98,465.00) startOffset 18 endOffset 19 width 5.84: "s"
-layer at (0,0) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (-1,-1) size 540x565
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+layer at (-0.05,-0.36) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (-0.05,-0.36) size 539x563.77
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
 layer at (1,1) size 447x497
-  RenderSVGRect {rect} at (1,1) size 447x497 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
-layer at (0,0) size 28x29
-  RenderSVGViewportContainer {svg} at (0,0) size 28x29
-layer at (158,352) size 287x212 backgroundClip at (413,467) size 37x33 clip at (413,467) size 37x33
-  RenderSVGPath {path} at (158,352) size 287x212 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]
+  RenderSVGRect {rect} at (1.05,1.36) size 446x496 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
+layer at (0,0) size 28x29 backgroundClip at (0,0.36) size 450x499.64
+  RenderSVGViewportContainer {svg} at (0.05,0.36) size 27x28
+layer at (158.31,352.16) size 287x212 backgroundClip at (413.41,467) size 36.59x33 clip at (413.41,467) size 36.59x33
+  RenderSVGPath {path} at (158.31,352.16) size 286.69x211.25 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

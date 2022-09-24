@@ -9,7 +9,7 @@ layer at (0,0) size 100x100
 layer at (0,0) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
 layer at (0,166) size 757x38
-  RenderSVGTransformableContainer {g} at (0,166) size 757x38
+  RenderSVGTransformableContainer {g} at (0,166) size 756.55x38
 layer at (0,166) size 304x18
   RenderSVGText {text} at (0,0) size 304x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 304x18

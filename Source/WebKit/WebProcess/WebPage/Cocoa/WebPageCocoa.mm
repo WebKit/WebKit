@@ -185,7 +185,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
     const RenderStyle* style = range.startContainer().renderStyle();
     float scaledAscent = style ? style->metricsOfPrimaryFont().ascent() * pageScaleFactor() : 0;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + scaledAscent);
-    dictionaryPopupInfo.options = options;
+    dictionaryPopupInfo.platformData.options = options;
 
 #if PLATFORM(MAC)
     auto attributedString = editingAttributedString(range, IncludeImages::No).string;
@@ -217,9 +217,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(Frame& frame, const Sim
 
     dictionaryPopupInfo.textIndicator = textIndicator->data();
 #if PLATFORM(MAC)
-    dictionaryPopupInfo.attributedString = scaledAttributedString;
+    dictionaryPopupInfo.platformData.attributedString = scaledAttributedString;
 #elif PLATFORM(MACCATALYST)
-    dictionaryPopupInfo.attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:plainText(range)]);
+    dictionaryPopupInfo.platformData.attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:plainText(range)]);
 #endif
 
     editor.setIsGettingDictionaryPopupInfo(false);

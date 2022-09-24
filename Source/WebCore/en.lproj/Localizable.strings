@@ -398,7 +398,7 @@
 "Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
 
 /* Button title in Storage Access API prompt */
-"Don't Allow (cross-site cookie and website data access)" = "Don't Allow";
+"Don’t Allow (cross-site cookie and website data access)" = "Don’t Allow";
 
 /* Label for the donate with Apple Pay button. */
 "Donate with Apple Pay" = "Donate with Apple Pay";

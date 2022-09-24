@@ -42,6 +42,7 @@
 #include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "HitTestResult.h"
+#include "LayoutBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGModelObject.h"
 #include "LegacyRenderSVGRoot.h"
@@ -114,7 +115,7 @@ struct SameSizeAsRenderObject {
     bool weakPtrFactorWasConstructedOnMainThread;
     HashSet<void*> cachedResourceClientAssociatedResources;
 #endif
-    void* pointers[5];
+    void* pointers[6];
 #if ASSERT_ENABLED
     unsigned m_debugBitfields : 2;
 #endif
@@ -159,6 +160,16 @@ RenderObject::~RenderObject()
     renderObjectCounter.decrement();
 #endif
     ASSERT(!hasRareData());
+}
+
+void RenderObject::setLayoutBox(Layout::Box& box)
+{
+    m_layoutBox = &box;
+}
+
+void RenderObject::clearLayoutBox()
+{
+    m_layoutBox = nullptr;
 }
 
 RenderTheme& RenderObject::theme() const

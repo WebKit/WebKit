@@ -3838,29 +3838,29 @@ void WebPage::resume(CompletionHandler<void(bool)>&& completionHandler)
 
 IntPoint WebPage::screenToRootView(const IntPoint& point)
 {
-    IntPoint windowPoint;
-    sendSync(Messages::WebPageProxy::ScreenToRootView(point), Messages::WebPageProxy::ScreenToRootView::Reply(windowPoint));
+    auto sendResult = sendSync(Messages::WebPageProxy::ScreenToRootView(point));
+    auto [windowPoint] = sendResult.takeReplyOr(IntPoint { });
     return windowPoint;
 }
     
 IntRect WebPage::rootViewToScreen(const IntRect& rect)
 {
-    IntRect screenRect;
-    sendSync(Messages::WebPageProxy::RootViewToScreen(rect), Messages::WebPageProxy::RootViewToScreen::Reply(screenRect));
+    auto sendResult = sendSync(Messages::WebPageProxy::RootViewToScreen(rect));
+    auto [screenRect] = sendResult.takeReplyOr(IntRect { });
     return screenRect;
 }
     
 IntPoint WebPage::accessibilityScreenToRootView(const IntPoint& point)
 {
-    IntPoint windowPoint;
-    sendSync(Messages::WebPageProxy::AccessibilityScreenToRootView(point), Messages::WebPageProxy::AccessibilityScreenToRootView::Reply(windowPoint));
+    auto sendResult = sendSync(Messages::WebPageProxy::AccessibilityScreenToRootView(point));
+    auto [windowPoint] = sendResult.takeReplyOr(IntPoint { });
     return windowPoint;
 }
 
 IntRect WebPage::rootViewToAccessibilityScreen(const IntRect& rect)
 {
-    IntRect screenRect;
-    sendSync(Messages::WebPageProxy::RootViewToAccessibilityScreen(rect), Messages::WebPageProxy::RootViewToAccessibilityScreen::Reply(screenRect));
+    auto sendResult = sendSync(Messages::WebPageProxy::RootViewToAccessibilityScreen(rect));
+    auto [screenRect] = sendResult.takeReplyOr(IntRect { });
     return screenRect;
 }
 
@@ -5584,8 +5584,9 @@ void WebPage::didRemoveBackForwardItem(const BackForwardItemIdentifier& itemID)
 
 bool WebPage::isSpeaking()
 {
-    bool result;
-    return sendSync(Messages::WebPageProxy::GetIsSpeaking(), Messages::WebPageProxy::GetIsSpeaking::Reply(result)) && result;
+    auto sendResult = sendSync(Messages::WebPageProxy::GetIsSpeaking());
+    auto [result] = sendResult.takeReplyOr(false);
+    return result;
 }
 
 void WebPage::speak(const String& string)
@@ -7169,13 +7170,14 @@ void WebPage::postMessageIgnoringFullySynchronousMode(const String& messageName,
 
 void WebPage::postSynchronousMessageForTesting(const String& messageName, API::Object* messageBody, RefPtr<API::Object>& returnData)
 {
-    UserData returnUserData;
-
     auto& webProcess = WebProcess::singleton();
-    if (!sendSync(Messages::WebPageProxy::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), Messages::WebPageProxy::HandleSynchronousMessage::Reply(returnUserData), Seconds::infinity(), IPC::SendSyncOption::UseFullySynchronousModeForTesting))
-        returnData = nullptr;
-    else
+
+    auto sendResult = sendSync(Messages::WebPageProxy::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), Seconds::infinity(), IPC::SendSyncOption::UseFullySynchronousModeForTesting);
+    if (sendResult) {
+        auto& [returnUserData] = sendResult.reply();
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());
+    } else
+        returnData = nullptr;
 }
 
 void WebPage::clearWheelEventTestMonitor()
@@ -7505,7 +7507,6 @@ void WebPage::showContactPicker(const WebCore::ContactsRequestData& requestData,
 
 WebCore::DOMPasteAccessResponse WebPage::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory pasteAccessCategory, const String& originIdentifier)
 {
-    auto response = WebCore::DOMPasteAccessResponse::DeniedForGesture;
 #if PLATFORM(IOS_FAMILY)
     // FIXME: Computing and sending an autocorrection context is a workaround for the fact that autocorrection context
     // requests on iOS are currently synchronous in the web process. This allows us to immediately fulfill pending
@@ -7513,7 +7514,8 @@ WebCore::DOMPasteAccessResponse WebPage::requestDOMPasteAccess(WebCore::DOMPaste
     // should be removed once <rdar://problem/16207002> is resolved.
     preemptivelySendAutocorrectionContext();
 #endif
-    sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(pasteAccessCategory, rectForElementAtInteractionLocation(), originIdentifier), Messages::WebPageProxy::RequestDOMPasteAccess::Reply(response));
+    auto sendResult = sendSyncWithDelayedReply(Messages::WebPageProxy::RequestDOMPasteAccess(pasteAccessCategory, rectForElementAtInteractionLocation(), originIdentifier));
+    auto [response] = sendResult.takeReplyOr(WebCore::DOMPasteAccessResponse::DeniedForGesture);
     return response;
 }
 

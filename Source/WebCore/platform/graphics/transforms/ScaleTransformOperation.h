@@ -52,7 +52,7 @@ public:
     double y() const { return m_y; }
     double z() const { return m_z; }
 
-    OperationType primitiveType() const final { return isRepresentableIn2D() ? SCALE : SCALE_3D; }
+    OperationType primitiveType() const final { return (type() == SCALE_Z || type() == SCALE_3D) ? SCALE_3D : SCALE; }
 
     bool operator==(const ScaleTransformOperation& other) const { return operator==(static_cast<const TransformOperation&>(other)); }
     bool operator==(const TransformOperation&) const final;

@@ -6,7 +6,7 @@ layer at (0,0) size 800x328
       RenderBlock {p} at (50,0) size 750x44
         RenderText {#text} at (0,26) size 240x18
           text run at (0,26) width 240: "SVG in a \"transparent\" EMBED tag: "
-        RenderEmbeddedObject {embed} at (239,0) size 41x40
+        RenderEmbeddedObject {embed} at (239.69,0) size 40x40
           layer at (0,0) size 40x40
             RenderView at (0,0) size 40x40
           layer at (0,0) size 40x40
@@ -90,14 +90,14 @@ layer at (0,0) size 800x328
       RenderBlock {p} at (50,60) size 750x34
         RenderText {#text} at (0,16) size 135x18
           text run at (0,16) width 135: "SVG in an IMG tag: "
-        RenderImage {img} at (134,0) size 31x30
+        RenderImage {img} at (134.66,0) size 30x30
       RenderBlock {p} at (50,110) size 750x18
         RenderText {#text} at (0,0) size 188x18
           text run at (0,0) width 188: "SVG in a background-image:"
       RenderBlock {p} at (50,202) size 750x44
         RenderText {#text} at (0,26) size 202x18
           text run at (0,26) width 202: "SVG in a \"transparent\" iframe: "
-        RenderIFrame {iframe} at (201,0) size 41x40
+        RenderIFrame {iframe} at (201.89,0) size 40x40
           layer at (0,0) size 40x40
             RenderView at (0,0) size 40x40
           layer at (0,0) size 40x40
@@ -185,32 +185,32 @@ layer at (0,0) size 800x328
 layer at (250,112) size 42x42
   RenderBlock (relative positioned) {div} at (0,144) size 42x42 [border: (1px solid #AAAAAA)]
 layer at (91,278) size 30x30
-  RenderSVGRoot {svg:svg} at (41,0) size 31x30
-layer at (91,278) size 30x30
+  RenderSVGRoot {svg:svg} at (41.31,0) size 30x30
+layer at (91.31,278) size 30x30
   RenderSVGViewportContainer at (0,0) size 30x30
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGTransformableContainer {svg:g} at (22,0) size 6x12
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.04]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.08]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.12]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.16]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.20]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.24]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.29]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.33]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.37]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.41]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.45]}] [points="22 0 28 0 27 12 23 12"]
-layer at (113,278) size 6x12
+layer at (113.31,278) size 6x12
   RenderSVGPath {svg:polygon} at (0,0) size 6x12 [fill={[type=SOLID] [color=#000000] [opacity=0.50]}] [points="22 0 28 0 27 12 23 12"]

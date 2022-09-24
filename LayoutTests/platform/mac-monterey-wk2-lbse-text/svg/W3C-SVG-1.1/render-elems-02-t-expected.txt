@@ -5,9 +5,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,-55) size 254x235 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,-55) size 254x235
+  RenderSVGTransformableContainer {g} at (0,-55) size 253.86x235
 layer at (0,-55) size 254x235 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 254x235
+  RenderSVGTransformableContainer {g} at (0,0) size 253.86x235
 layer at (0,0) size 180x180
   RenderSVGTransformableContainer {g} at (0,55) size 180x180
 layer at (0,0) size 180x180

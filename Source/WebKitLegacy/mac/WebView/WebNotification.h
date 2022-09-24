@@ -44,7 +44,7 @@
 - (NSString *)lang;
 - (NSString *)dir;
 - (WebSecurityOrigin *)origin;
-- (uint64_t)notificationID;
+- (NSString *)notificationID;
 
 - (void)dispatchShowEvent;
 - (void)dispatchCloseEvent;

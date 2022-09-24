@@ -15,8 +15,8 @@ layer at (0,0) size 800x104
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
 layer at (80,0) size 600x100
-  RenderSVGRoot {svg} at (79,0) size 601x100
-layer at (80,0) size 600x100
+  RenderSVGRoot {svg} at (79.98,0) size 600x100
+layer at (79.98,0) size 600x100
   RenderSVGViewportContainer at (0,0) size 600x100
-layer at (90,10) size 100x60
+layer at (89.98,10) size 100x60
   RenderSVGImage {image} at (10,10) size 100x60

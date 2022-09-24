@@ -410,7 +410,7 @@
                       "name": "GTK-Linux-64-bit-Release-Build", "factory": "BuildAndGenerateJSCBundleFactory",
                       "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                       "triggers": ["gtk-linux-64-release-tests", "gtk-linux-64-release-tests-js", "gtk-linux-64-release-tests-webdriver",
-                                   "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests", "gtk-linux-64-release-gtk4-tests",
+                                   "gtk-linux-64-release-wayland-tests", "gtk-linux-64-release-perf-tests",
                                    "gtk-linux-64-release-skip-failing-tests"],
                       "workernames": ["gtk-linux-bot-2"]
                     },
@@ -640,6 +640,7 @@
                                        "GTK-Linux-64-bit-Release-Debian-Stable-Build",
                                        "GTK-Linux-64-bit-Release-Ubuntu-2004-Build",
                                        "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                       "GTK-Linux-64-bit-Release-GTK4-Tests",
                                        "WPE-Linux-64-bit-Release-Ubuntu-2004-Build",
                                        "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",
                                        "JSCOnly-Linux-AArch64-Release",
@@ -791,9 +792,6 @@
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests-webdriver",
                       "builderNames": ["GTK-Linux-64-bit-Release-WebDriver-Tests"]
-                    },
-                    { "type": "Triggerable", "name": "gtk-linux-64-release-gtk4-tests",
-                      "builderNames": ["GTK-Linux-64-bit-Release-GTK4-Tests"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-debug-tests",
                       "builderNames": ["GTK-Linux-64-bit-Debug-Tests"]

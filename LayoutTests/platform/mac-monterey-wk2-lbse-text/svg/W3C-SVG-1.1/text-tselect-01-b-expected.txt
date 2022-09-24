@@ -6,29 +6,29 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (1,1) size 478x358
   RenderSVGTransformableContainer {g} at (1,1) size 478x358
-layer at (10,6) size 303x17
+layer at (10,5.52) size 303x17
   RenderSVGText {text} at (9,4) size 304x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 304x18
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 46 width 303.27: "Test single line and multiline text selection."
-layer at (25,51) size 362x219
-  RenderSVGTransformableContainer {g} at (24,49) size 362x219
-layer at (25,51) size 254x18
+layer at (25,50.52) size 362x219
+  RenderSVGTransformableContainer {g} at (24,49.52) size 361.09x217.88
+layer at (25,50.52) size 254x18
   RenderSVGText {text} at (0,0) size 255x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 255x18
       chunk 1 text run 1 at (25.00,65.00) startOffset 0 endOffset 37 width 254.24: "Here is a stand-alone 'text' element."
-layer at (25,76) size 298x18
+layer at (25,75.52) size 298x18
   RenderSVGText {text} at (0,25) size 298x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 298x18
       chunk 1 text run 1 at (25.00,90.00) startOffset 0 endOffset 43 width 297.81: "Here is a second 'text' element just below."
-layer at (25,101) size 342x18
+layer at (25,100.52) size 342x18
   RenderSVGText {text} at (0,50) size 343x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 343x18
       chunk 1 text run 1 at (25.00,115.00) startOffset 0 endOffset 48 width 342.30: "Because these are four separate 'text' elements,"
-layer at (25,126) size 324x18
+layer at (25,125.52) size 324x18
   RenderSVGText {text} at (0,75) size 324x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 324x18
       chunk 1 text run 1 at (25.00,140.00) startOffset 0 endOffset 47 width 323.74: "text selection should not go across lines here."
-layer at (25,176) size 361x93
+layer at (25,175.52) size 361x93
   RenderSVGText {text} at (0,125) size 362x93 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 357x18
       RenderSVGInlineText {#text} at (0,0) size 357x18

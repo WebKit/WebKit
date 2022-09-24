@@ -4,27 +4,27 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (10,5) size 382x276
-  RenderSVGTransformableContainer {g} at (10,5) size 382x276
-layer at (10,5) size 154x18
+layer at (10,5.33) size 382x276
+  RenderSVGTransformableContainer {g} at (10,5.33) size 381.89x274.77
+layer at (10,5.33) size 154x18
   RenderSVGText {text} at (0,0) size 154x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 154x19
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 23 width 153.85: "Test 'text-decoration'."
-layer at (25,43) size 367x238
-  RenderSVGTransformableContainer {g} at (15,37) size 367x238
-layer at (25,43) size 123x27
+layer at (25,43.27) size 367x238
+  RenderSVGTransformableContainer {g} at (15,37.94) size 366.89x236.83
+layer at (25,43.27) size 123x27
   RenderSVGText {text} at (0,0) size 123x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 123x27
       chunk 1 text run 1 at (25.00,65.00) startOffset 0 endOffset 11 width 122.70: "Normal text"
-layer at (25,113) size 229x27
+layer at (25,113.27) size 229x27
   RenderSVGText {text} at (0,70) size 230x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x27
       chunk 1 text run 1 at (25.00,135.00) startOffset 0 endOffset 22 width 229.44: "Text with line-through"
-layer at (25,183) size 161x27
+layer at (25,183.27) size 161x27
   RenderSVGText {text} at (0,140) size 162x27 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 162x27
       chunk 1 text run 1 at (25.00,205.00) startOffset 0 endOffset 15 width 161.43: "Underlined text"
-layer at (25,253) size 367x27
+layer at (25,253.27) size 367x27
   RenderSVGText {text} at (0,210) size 367x27 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 46x27
       RenderSVGInlineText {#text} at (0,0) size 46x27
@@ -50,7 +50,7 @@ layer at (25,253) size 367x27
       RenderSVGInlineText {#text} at (249,0) size 118x27
         chunk 1 text run 1 at (274.47,275.00) startOffset 0 endOffset 11 width 117.42: "underlining"
     RenderSVGInlineText {#text} at (0,0) size 0x0
-layer at (10,304) size 265x46
+layer at (10,303.84) size 265x46
   RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 265x47
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.9 $"

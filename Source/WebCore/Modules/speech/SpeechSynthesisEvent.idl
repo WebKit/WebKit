@@ -25,6 +25,7 @@
 
 // https://wicg.github.io/speech-api/#speechsynthesisevent
 [
+    EnabledBySetting=SpeechSynthesisAPIEnabled,
     Conditional=SPEECH_SYNTHESIS,
     Exposed=Window
 ] interface SpeechSynthesisEvent : Event {

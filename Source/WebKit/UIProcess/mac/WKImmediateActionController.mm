@@ -480,7 +480,7 @@
         return nil;
 
     WebCore::DictionaryPopupInfo dictionaryPopupInfo = _hitTestResultData.dictionaryPopupInfo;
-    if (!dictionaryPopupInfo.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString)
         return nil;
 
     _viewImpl->prepareForDictionaryLookup();

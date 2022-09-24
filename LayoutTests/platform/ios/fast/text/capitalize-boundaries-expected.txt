@@ -1,8 +1,8 @@
-layer at (0,0) size 800x1301
+layer at (0,0) size 800x1290
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x1301
-  RenderBlock {HTML} at (0,0) size 800x1301
-    RenderBody {BODY} at (8,8) size 784x1285
+layer at (0,0) size 800x1290
+  RenderBlock {HTML} at (0,0) size 800x1290
+    RenderBody {BODY} at (8,8) size 784x1274
       RenderBlock (anonymous) at (0,0) size 784x100
         RenderText {#text} at (0,0) size 352x19
           text run at (0,0) width 352: "This test was provided by open-source contributors on "
@@ -14,317 +14,317 @@ layer at (0,0) size 800x1301
           text run at (0,20) width 757: "expected to match the \"Correct output sample\" results. In fact, I do not entirely agree with all of the given test cases in"
           text run at (0,40) width 744: "terms of their expected results, nor do I think that the browser should yet be expected to match all of the cases in the"
           text run at (0,60) width 189: "different languages, but I am "
-          text run at (188,60) width 293: "(at least temporarily) adding the test anyway. "
-        RenderBR {BR} at (480,75) size 1x0
+          text run at (188,60) width 289: "(at least temporarily) adding the test anyway."
+        RenderBR {BR} at (476,60) size 1x19
         RenderBR {BR} at (0,80) size 0x19
-      RenderTable {TABLE} at (0,100) size 784x395
+      RenderTable {TABLE} at (0,100) size 784x392
         RenderBlock {CAPTION} at (0,0) size 784x20
           RenderText {#text} at (352,0) size 80x19
             text run at (352,0) width 80: "Input source"
-        RenderTableSection {TBODY} at (0,20) size 784x375
+        RenderTableSection {TBODY} at (0,20) size 784x372
           RenderTableRow {TR} at (0,2) size 784x64
             RenderTableCell {TH} at (2,22) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 50x19
                 text run at (2,2) width 50: "generic"
-            RenderTableCell {TD} at (58,2) size 724x64 [border: (1px solid #EEEEEE)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,2) size 725x64 [border: (1px solid #EEEEEE)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 689x59
-                text run at (2,2) width 689: "lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
-                text run at (2,22) width 672: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
+                text run at (2,2) width 689: "lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "\x{2010}"
+                text run at (2,22) width 672: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "\x{2010}"
                 text run at (2,42) width 650: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin"
           RenderTableRow {TR} at (0,68) size 784x24
             RenderTableCell {TH} at (2,68) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (19,2) size 16x19
                 text run at (19,2) width 16: "cy"
-            RenderTableCell {TD} at (58,68) size 724x24 [border: (1px solid #EEEEEE)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,68) size 725x24 [border: (1px solid #EEEEEE)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 24x19
                 text run at (2,2) width 24: "\x{175}yl"
-          RenderTableRow {TR} at (0,94) size 784x25
+          RenderTableRow {TR} at (0,94) size 784x24
             RenderTableCell {TH} at (2,94) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (21,2) size 12x19
                 text run at (21,2) width 12: "el"
-            RenderTableCell {TD} at (58,94) size 724x25 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 204x19
-                text run at (2,3) width 204: "\x{3B3}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3C3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{3AE}\x{3C4}\x{3B1}"
-          RenderTableRow {TR} at (0,121) size 784x66
-            RenderTableCell {TH} at (2,142) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (19,2) size 16x19
-                text run at (19,2) width 16: "en"
-            RenderTableCell {TD} at (58,121) size 724x66 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 436x19
-                text run at (2,3) width 436: "'cept nut'in safari\x{2019}s \x{2018}sure\x{2019} nai\x{308}ve r\x{E9}sum\x{E9}\x{2014}h\x{E1}c\x{30C}ek full\x{2010}time one-to-one"
-              RenderBR {BR} at (437,18) size 1x0
-              RenderText {#text} at (2,24) size 318x19
-                text run at (2,24) width 318: "\"newcastle\x{2011}upon\x{2011}tyne\" washington\x{2011}on\x{2011}the\x{2011}brazos"
-              RenderBR {BR} at (319,39) size 1x0
+            RenderTableCell {TD} at (57,94) size 725x24 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 205x19
+                text run at (2,2) width 205: "\x{3B3}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3C3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{3AE}\x{3C4}\x{3B1}"
+          RenderTableRow {TR} at (0,120) size 784x64
+            RenderTableCell {TH} at (2,140) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,2) size 17x19
+                text run at (18,2) width 17: "en"
+            RenderTableCell {TD} at (57,120) size 725x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 436x19
+                text run at (2,2) width 436: "'cept nut'in safari\x{2019}s \x{2018}sure\x{2019} nai\x{308}ve r\x{E9}sum\x{E9}\x{2014}h\x{E1}c\x{30C}ek full\x{2010}time one-to-one"
+              RenderBR {BR} at (437,2) size 1x19
+              RenderText {#text} at (2,22) size 318x19
+                text run at (2,22) width 318: "\"newcastle\x{2011}upon\x{2011}tyne\" washington\x{2011}on\x{2011}the\x{2011}brazos"
+              RenderBR {BR} at (319,22) size 1x19
               RenderInline {SPAN} at (0,0) size 32x19
-                RenderText {#text} at (2,44) size 32x19
-                  text run at (2,44) width 32: "earth"
-              RenderText {#text} at (33,44) size 76x19
-                text run at (33,44) width 76: "quake earth"
+                RenderText {#text} at (2,42) size 32x19
+                  text run at (2,42) width 32: "earth"
+              RenderText {#text} at (33,42) size 76x19
+                text run at (33,42) width 76: "quake earth"
               RenderInline {SPAN} at (0,0) size 38x19
-                RenderText {#text} at (108,44) size 38x19
-                  text run at (108,44) width 38: "worm"
-              RenderText {#text} at (145,44) size 5x19
-                text run at (145,44) width 5: " "
+                RenderText {#text} at (108,42) size 38x19
+                  text run at (108,42) width 38: "worm"
+              RenderText {#text} at (145,42) size 5x19
+                text run at (145,42) width 5: " "
               RenderInline {SPAN} at (0,0) size 44x19
-                RenderText {#text} at (149,44) size 44x19
-                  text run at (149,44) width 44: "cheese"
+                RenderText {#text} at (149,42) size 44x19
+                  text run at (149,42) width 44: "cheese"
               RenderInline {SPAN} at (0,0) size 42x19
-                RenderText {#text} at (192,44) size 42x19
-                  text run at (192,44) width 42: "burger"
-              RenderText {#text} at (233,44) size 119x19
-                text run at (233,44) width 119: " [house] ~six -big-"
-          RenderTableRow {TR} at (0,189) size 784x24
-            RenderTableCell {TH} at (2,189) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=4 c=0 rs=1 cs=1]
+                RenderText {#text} at (192,42) size 42x19
+                  text run at (192,42) width 42: "burger"
+              RenderText {#text} at (233,42) size 119x19
+                text run at (233,42) width 119: " [house] ~six -big-"
+          RenderTableRow {TR} at (0,186) size 784x24
+            RenderTableCell {TH} at (2,186) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "es"
-            RenderTableCell {TD} at (58,189) size 724x24 [border: (1px solid #EEEEEE)] [r=4 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,186) size 725x24 [border: (1px solid #EEEEEE)] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 65x19
                 text run at (2,2) width 65: "\x{A1}jalape\x{F1}o!"
-          RenderTableRow {TR} at (0,215) size 784x27
-            RenderTableCell {TH} at (2,216) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 14x19
+          RenderTableRow {TR} at (0,212) size 784x28
+            RenderTableCell {TH} at (2,213) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (20,1) size 14x21
                 text run at (20,2) width 14: "fr"
-            RenderTableCell {TD} at (58,215) size 724x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,212) size 725x28 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,5) size 211x19
                 text run at (2,5) width 211: "quelqu'un l\x{2019}amour t'appelles\x{2011}tu 3"
               RenderInline {SUP} at (0,0) size 23x15
                 RenderText {#text} at (212,2) size 23x15
                   text run at (212,2) width 23: "eme"
-          RenderTableRow {TR} at (0,244) size 784x25
-            RenderTableCell {TH} at (2,244) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
-              RenderText {#text} at (18,2) size 18x19
-                text run at (18,2) width 18: "hu"
-            RenderTableCell {TD} at (58,244) size 724x25 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 110x19
-                text run at (2,3) width 110: "11-ei london\x{2011}ban"
-          RenderTableRow {TR} at (0,271) size 784x24
-            RenderTableCell {TH} at (2,271) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=7 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,241) size 784x25
+            RenderTableCell {TH} at (2,241) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
+              RenderText {#text} at (17,2) size 19x19
+                text run at (17,2) width 19: "hu"
+            RenderTableCell {TD} at (57,241) size 725x25 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 110x19
+                text run at (2,2) width 110: "11-ei london\x{2011}ban"
+          RenderTableRow {TR} at (0,267) size 784x25
+            RenderTableCell {TH} at (2,267) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=7 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "nl"
-            RenderTableCell {TD} at (58,271) size 724x24 [border: (1px solid #EEEEEE)] [r=7 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,267) size 725x25 [border: (1px solid #EEEEEE)] [r=7 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 70x19
                 text run at (2,2) width 70: "'s ochtends"
-          RenderTableRow {TR} at (0,297) size 784x24
-            RenderTableCell {TH} at (2,297) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,293) size 784x25
+            RenderTableCell {TH} at (2,293) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=8 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "pl"
-            RenderTableCell {TD} at (58,297) size 724x24 [border: (1px solid #EEEEEE)] [r=8 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,293) size 725x25 [border: (1px solid #EEEEEE)] [r=8 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 94x19
                 text run at (2,2) width 94: "wzi\x{119}\x{142}a bie\x{17C}\x{105}ce"
-          RenderTableRow {TR} at (0,323) size 784x24
-            RenderTableCell {TH} at (2,323) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=9 c=0 rs=1 cs=1]
-              RenderText {#text} at (19,2) size 16x19
-                text run at (19,2) width 16: "ru"
-            RenderTableCell {TD} at (58,323) size 724x24 [border: (1px solid #EEEEEE)] [r=9 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,319) size 784x25
+            RenderTableCell {TH} at (2,319) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=9 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,2) size 17x19
+                text run at (18,2) width 17: "ru"
+            RenderTableCell {TD} at (57,319) size 725x25 [border: (1px solid #EEEEEE)] [r=9 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 195x19
                 text run at (2,2) width 195: "\x{43D}\x{44C}\x{44E}-\x{439}\x{43E}\x{440}\x{43A} 1990-\x{445} 14-vii-1789"
-          RenderTableRow {TR} at (0,349) size 784x24
-            RenderTableCell {TH} at (2,349) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,345) size 784x25
+            RenderTableCell {TH} at (2,345) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=10 c=0 rs=1 cs=1]
               RenderText {#text} at (17,2) size 20x19
                 text run at (17,2) width 20: "tlh"
-            RenderTableCell {TD} at (58,349) size 724x24 [border: (1px solid #EEEEEE)] [r=10 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,345) size 725x25 [border: (1px solid #EEEEEE)] [r=10 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 189x19
                 text run at (2,2) width 189: "tlhIngan Hol wa''uy' loghqam"
-      RenderTable {TABLE} at (0,495) size 784x395
+      RenderTable {TABLE} at (0,491) size 784x392
         RenderBlock {CAPTION} at (0,0) size 784x20
           RenderText {#text} at (320,0) size 144x19
             text run at (320,0) width 144: "Correct output sample"
-        RenderTableSection {TBODY} at (0,20) size 784x375
+        RenderTableSection {TBODY} at (0,20) size 784x372
           RenderTableRow {TR} at (0,2) size 784x64
             RenderTableCell {TH} at (2,22) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 50x19
                 text run at (2,2) width 50: "generic"
-            RenderTableCell {TD} at (58,2) size 724x64 [border: (1px solid #EEEEEE)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,2) size 725x64 [border: (1px solid #EEEEEE)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 695x59
-                text run at (2,2) width 695: "Lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
-                text run at (2,22) width 672: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
+                text run at (2,2) width 695: "Lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "\x{2010}"
+                text run at (2,22) width 672: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "\x{2010}"
                 text run at (2,42) width 650: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin"
           RenderTableRow {TR} at (0,68) size 784x24
             RenderTableCell {TH} at (2,68) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (19,2) size 16x19
                 text run at (19,2) width 16: "cy"
-            RenderTableCell {TD} at (58,68) size 724x24 [border: (1px solid #EEEEEE)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,68) size 725x24 [border: (1px solid #EEEEEE)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "\x{174}yl"
-          RenderTableRow {TR} at (0,94) size 784x25
+          RenderTableRow {TR} at (0,94) size 784x24
             RenderTableCell {TH} at (2,94) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (21,2) size 12x19
                 text run at (21,2) width 12: "el"
-            RenderTableCell {TD} at (58,94) size 724x25 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 212x19
-                text run at (2,3) width 212: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
-          RenderTableRow {TR} at (0,121) size 784x66
-            RenderTableCell {TH} at (2,142) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (19,2) size 16x19
-                text run at (19,2) width 16: "en"
-            RenderTableCell {TD} at (58,121) size 724x66 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 471x19
-                text run at (2,3) width 471: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Na\x{EF}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}\x{10D}ek Full\x{2010}time One-to-One"
-              RenderBR {BR} at (472,18) size 1x0
-              RenderText {#text} at (2,24) size 331x19
-                text run at (2,24) width 331: "\"Newcastle-upon-Tyne\" Washington\x{2011}on\x{2011}the\x{2011}Brazos"
-              RenderBR {BR} at (332,39) size 1x0
-              RenderText {#text} at (2,44) size 368x19
-                text run at (2,44) width 368: "Earthquake Earthworm Cheeseburger [House] ~Six -Big-"
-          RenderTableRow {TR} at (0,189) size 784x24
-            RenderTableCell {TH} at (2,189) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=4 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (57,94) size 725x24 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 212x19
+                text run at (2,2) width 212: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
+          RenderTableRow {TR} at (0,120) size 784x64
+            RenderTableCell {TH} at (2,140) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,2) size 17x19
+                text run at (18,2) width 17: "en"
+            RenderTableCell {TD} at (57,120) size 725x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 471x19
+                text run at (2,2) width 471: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Na\x{EF}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}\x{10D}ek Full\x{2010}time One-to-One"
+              RenderBR {BR} at (472,2) size 1x19
+              RenderText {#text} at (2,22) size 331x19
+                text run at (2,22) width 331: "\"Newcastle-upon-Tyne\" Washington\x{2011}on\x{2011}the\x{2011}Brazos"
+              RenderBR {BR} at (332,22) size 1x19
+              RenderText {#text} at (2,42) size 368x19
+                text run at (2,42) width 368: "Earthquake Earthworm Cheeseburger [House] ~Six -Big-"
+          RenderTableRow {TR} at (0,186) size 784x24
+            RenderTableCell {TH} at (2,186) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "es"
-            RenderTableCell {TD} at (58,189) size 724x24 [border: (1px solid #EEEEEE)] [r=4 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,186) size 725x24 [border: (1px solid #EEEEEE)] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 67x19
                 text run at (2,2) width 67: "\x{A1}Jalape\x{F1}o!"
-          RenderTableRow {TR} at (0,215) size 784x27
-            RenderTableCell {TH} at (2,216) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 14x19
+          RenderTableRow {TR} at (0,212) size 784x28
+            RenderTableCell {TH} at (2,213) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (20,1) size 14x21
                 text run at (20,2) width 14: "fr"
-            RenderTableCell {TD} at (58,215) size 724x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,212) size 725x28 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,5) size 228x19
                 text run at (2,5) width 228: "Quelqu'un l\x{2019}Amour t'Appelles\x{2011}Tu 3"
               RenderInline {SUP} at (0,0) size 23x15
                 RenderText {#text} at (229,2) size 23x15
                   text run at (229,2) width 23: "eme"
-          RenderTableRow {TR} at (0,244) size 784x25
-            RenderTableCell {TH} at (2,244) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
-              RenderText {#text} at (18,2) size 18x19
-                text run at (18,2) width 18: "hu"
-            RenderTableCell {TD} at (58,244) size 724x25 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 115x19
-                text run at (2,3) width 115: "11-ei London\x{2011}ban"
-          RenderTableRow {TR} at (0,271) size 784x24
-            RenderTableCell {TH} at (2,271) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=7 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,241) size 784x25
+            RenderTableCell {TH} at (2,241) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
+              RenderText {#text} at (17,2) size 19x19
+                text run at (17,2) width 19: "hu"
+            RenderTableCell {TD} at (57,241) size 725x25 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 115x19
+                text run at (2,2) width 115: "11-ei London\x{2011}ban"
+          RenderTableRow {TR} at (0,267) size 784x25
+            RenderTableCell {TH} at (2,267) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=7 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "nl"
-            RenderTableCell {TD} at (58,271) size 724x24 [border: (1px solid #EEEEEE)] [r=7 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,267) size 725x25 [border: (1px solid #EEEEEE)] [r=7 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 74x19
                 text run at (2,2) width 74: "'s Ochtends"
-          RenderTableRow {TR} at (0,297) size 784x24
-            RenderTableCell {TH} at (2,297) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,293) size 784x25
+            RenderTableCell {TH} at (2,293) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=8 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "pl"
-            RenderTableCell {TD} at (58,297) size 724x24 [border: (1px solid #EEEEEE)] [r=8 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,293) size 725x25 [border: (1px solid #EEEEEE)] [r=8 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 100x19
                 text run at (2,2) width 100: "Wzi\x{119}\x{142}a Bie\x{17C}\x{105}ce"
-          RenderTableRow {TR} at (0,323) size 784x24
-            RenderTableCell {TH} at (2,323) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=9 c=0 rs=1 cs=1]
-              RenderText {#text} at (19,2) size 16x19
-                text run at (19,2) width 16: "ru"
-            RenderTableCell {TD} at (58,323) size 724x24 [border: (1px solid #EEEEEE)] [r=9 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,319) size 784x25
+            RenderTableCell {TH} at (2,319) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=9 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,2) size 17x19
+                text run at (18,2) width 17: "ru"
+            RenderTableCell {TD} at (57,319) size 725x25 [border: (1px solid #EEEEEE)] [r=9 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 201x19
                 text run at (2,2) width 201: "\x{41D}\x{44C}\x{44E}-\x{419}\x{43E}\x{440}\x{43A} 1990-\x{445} 14-vii-1789"
-          RenderTableRow {TR} at (0,349) size 784x24
-            RenderTableCell {TH} at (2,349) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,345) size 784x25
+            RenderTableCell {TH} at (2,345) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=10 c=0 rs=1 cs=1]
               RenderText {#text} at (17,2) size 20x19
                 text run at (17,2) width 20: "tlh"
-            RenderTableCell {TD} at (58,349) size 724x24 [border: (1px solid #EEEEEE)] [r=10 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,345) size 725x25 [border: (1px solid #EEEEEE)] [r=10 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 189x19
                 text run at (2,2) width 189: "tlhIngan Hol wa''uy' loghqam"
-      RenderTable {TABLE} at (0,890) size 784x395
+      RenderTable {TABLE} at (0,882) size 784x392
         RenderBlock {CAPTION} at (0,0) size 784x20
           RenderText {#text} at (332,0) size 120x19
             text run at (332,0) width 120: "Browser rendering"
-        RenderTableSection {TBODY} at (0,20) size 784x375
+        RenderTableSection {TBODY} at (0,20) size 784x372
           RenderTableRow {TR} at (0,2) size 784x64
             RenderTableCell {TH} at (2,22) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 50x19
                 text run at (2,2) width 50: "generic"
-            RenderTableCell {TD} at (58,2) size 724x64 [border: (1px solid #EEEEEE)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,2) size 725x64 [border: (1px solid #EEEEEE)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 695x59
-                text run at (2,2) width 695: "Lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
-                text run at (2,22) width 672: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "-"
+                text run at (2,2) width 695: "Lip\x{AD}smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "\x{2010}"
+                text run at (2,22) width 672: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin\x{AD}lip\x{AD}" + hyphen string "\x{2010}"
                 text run at (2,42) width 650: "smackin\x{AD}thirst\x{AD}quenchin\x{AD}acetastin\x{AD}motivatin\x{AD}good\x{AD}buzzin\x{AD}cool\x{AD}talkin\x{AD}high\x{AD}walkin\x{AD}fast\x{AD}livin\x{AD}ever\x{AD}givin\x{AD}cool\x{AD}fizzin"
           RenderTableRow {TR} at (0,68) size 784x24
             RenderTableCell {TH} at (2,68) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (19,2) size 16x19
                 text run at (19,2) width 16: "cy"
-            RenderTableCell {TD} at (58,68) size 724x24 [border: (1px solid #EEEEEE)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,68) size 725x24 [border: (1px solid #EEEEEE)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 28x19
                 text run at (2,2) width 28: "\x{174}yl"
-          RenderTableRow {TR} at (0,94) size 784x25
+          RenderTableRow {TR} at (0,94) size 784x24
             RenderTableCell {TH} at (2,94) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=2 c=0 rs=1 cs=1]
               RenderText {#text} at (21,2) size 12x19
                 text run at (21,2) width 12: "el"
-            RenderTableCell {TD} at (58,94) size 724x25 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 212x19
-                text run at (2,3) width 212: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
-          RenderTableRow {TR} at (0,121) size 784x66
-            RenderTableCell {TH} at (2,142) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (19,2) size 16x19
-                text run at (19,2) width 16: "en"
-            RenderTableCell {TD} at (58,121) size 724x66 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 480x19
-                text run at (2,3) width 480: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Nai\x{308}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}c\x{30C}ek Full\x{2010}Time One-To-One"
-              RenderBR {BR} at (481,18) size 1x0
-              RenderText {#text} at (2,24) size 343x19
-                text run at (2,24) width 343: "\"Newcastle\x{2011}Upon\x{2011}Tyne\" Washington\x{2011}On\x{2011}The\x{2011}Brazos"
-              RenderBR {BR} at (344,39) size 1x0
+            RenderTableCell {TD} at (57,94) size 725x24 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 212x19
+                text run at (2,2) width 212: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
+          RenderTableRow {TR} at (0,120) size 784x64
+            RenderTableCell {TH} at (2,140) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,2) size 17x19
+                text run at (18,2) width 17: "en"
+            RenderTableCell {TD} at (57,120) size 725x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 480x19
+                text run at (2,2) width 480: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Nai\x{308}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}c\x{30C}ek Full\x{2010}Time One-To-One"
+              RenderBR {BR} at (481,2) size 1x19
+              RenderText {#text} at (2,22) size 343x19
+                text run at (2,22) width 343: "\"Newcastle\x{2011}Upon\x{2011}Tyne\" Washington\x{2011}On\x{2011}The\x{2011}Brazos"
+              RenderBR {BR} at (344,22) size 1x19
               RenderInline {SPAN} at (0,0) size 35x19
-                RenderText {#text} at (2,44) size 35x19
-                  text run at (2,44) width 35: "Earth"
-              RenderText {#text} at (36,44) size 78x19
-                text run at (36,44) width 78: "quake Earth"
+                RenderText {#text} at (2,42) size 35x19
+                  text run at (2,42) width 35: "Earth"
+              RenderText {#text} at (36,42) size 78x19
+                text run at (36,42) width 78: "quake Earth"
               RenderInline {SPAN} at (0,0) size 38x19
-                RenderText {#text} at (113,44) size 38x19
-                  text run at (113,44) width 38: "worm"
-              RenderText {#text} at (150,44) size 5x19
-                text run at (150,44) width 5: " "
+                RenderText {#text} at (113,42) size 38x19
+                  text run at (113,42) width 38: "worm"
+              RenderText {#text} at (150,42) size 5x19
+                text run at (150,42) width 5: " "
               RenderInline {SPAN} at (0,0) size 48x19
-                RenderText {#text} at (154,44) size 48x19
-                  text run at (154,44) width 48: "Cheese"
+                RenderText {#text} at (154,42) size 48x19
+                  text run at (154,42) width 48: "Cheese"
               RenderInline {SPAN} at (0,0) size 42x19
-                RenderText {#text} at (201,44) size 42x19
-                  text run at (201,44) width 42: "burger"
-              RenderText {#text} at (242,44) size 128x19
-                text run at (242,44) width 128: " [House] ~Six -Big-"
-          RenderTableRow {TR} at (0,189) size 784x24
-            RenderTableCell {TH} at (2,189) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=4 c=0 rs=1 cs=1]
+                RenderText {#text} at (201,42) size 42x19
+                  text run at (201,42) width 42: "burger"
+              RenderText {#text} at (242,42) size 128x19
+                text run at (242,42) width 128: " [House] ~Six -Big-"
+          RenderTableRow {TR} at (0,186) size 784x24
+            RenderTableCell {TH} at (2,186) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=4 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "es"
-            RenderTableCell {TD} at (58,189) size 724x24 [border: (1px solid #EEEEEE)] [r=4 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,186) size 725x24 [border: (1px solid #EEEEEE)] [r=4 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 67x19
                 text run at (2,2) width 67: "\x{A1}Jalape\x{F1}o!"
-          RenderTableRow {TR} at (0,215) size 784x27
-            RenderTableCell {TH} at (2,216) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
-              RenderText {#text} at (20,2) size 14x19
+          RenderTableRow {TR} at (0,212) size 784x28
+            RenderTableCell {TH} at (2,213) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=5 c=0 rs=1 cs=1]
+              RenderText {#text} at (20,1) size 14x21
                 text run at (20,2) width 14: "fr"
-            RenderTableCell {TD} at (58,215) size 724x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,212) size 725x28 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,5) size 229x19
                 text run at (2,5) width 229: "Quelqu'un L\x{2019}amour T'appelles\x{2011}Tu 3"
               RenderInline {SUP} at (0,0) size 22x15
                 RenderText {#text} at (230,2) size 22x15
                   text run at (230,2) width 22: "eme"
-          RenderTableRow {TR} at (0,244) size 784x25
-            RenderTableCell {TH} at (2,244) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
-              RenderText {#text} at (18,2) size 18x19
-                text run at (18,2) width 18: "hu"
-            RenderTableCell {TD} at (58,244) size 724x25 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,3) size 120x19
-                text run at (2,3) width 120: "11-Ei London\x{2011}Ban"
-          RenderTableRow {TR} at (0,271) size 784x24
-            RenderTableCell {TH} at (2,271) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=7 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,241) size 784x25
+            RenderTableCell {TH} at (2,241) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
+              RenderText {#text} at (17,2) size 19x19
+                text run at (17,2) width 19: "hu"
+            RenderTableCell {TD} at (57,241) size 725x25 [border: (1px solid #EEEEEE)] [r=6 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 120x19
+                text run at (2,2) width 120: "11-Ei London\x{2011}Ban"
+          RenderTableRow {TR} at (0,267) size 784x25
+            RenderTableCell {TH} at (2,267) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=7 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "nl"
-            RenderTableCell {TD} at (58,271) size 724x24 [border: (1px solid #EEEEEE)] [r=7 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,267) size 725x25 [border: (1px solid #EEEEEE)] [r=7 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 77x19
                 text run at (2,2) width 77: "'S Ochtends"
-          RenderTableRow {TR} at (0,297) size 784x24
-            RenderTableCell {TH} at (2,297) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=8 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,293) size 784x25
+            RenderTableCell {TH} at (2,293) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=8 c=0 rs=1 cs=1]
               RenderText {#text} at (20,2) size 14x19
                 text run at (20,2) width 14: "pl"
-            RenderTableCell {TD} at (58,297) size 724x24 [border: (1px solid #EEEEEE)] [r=8 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,293) size 725x25 [border: (1px solid #EEEEEE)] [r=8 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 100x19
                 text run at (2,2) width 100: "Wzi\x{119}\x{142}a Bie\x{17C}\x{105}ce"
-          RenderTableRow {TR} at (0,323) size 784x24
-            RenderTableCell {TH} at (2,323) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=9 c=0 rs=1 cs=1]
-              RenderText {#text} at (19,2) size 16x19
-                text run at (19,2) width 16: "ru"
-            RenderTableCell {TD} at (58,323) size 724x24 [border: (1px solid #EEEEEE)] [r=9 c=1 rs=1 cs=1]
+          RenderTableRow {TR} at (0,319) size 784x25
+            RenderTableCell {TH} at (2,319) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=9 c=0 rs=1 cs=1]
+              RenderText {#text} at (18,2) size 17x19
+                text run at (18,2) width 17: "ru"
+            RenderTableCell {TD} at (57,319) size 725x25 [border: (1px solid #EEEEEE)] [r=9 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 207x19
                 text run at (2,2) width 207: "\x{41D}\x{44C}\x{44E}-\x{419}\x{43E}\x{440}\x{43A} 1990-\x{425} 14-Vii-1789"
-          RenderTableRow {TR} at (0,349) size 784x24
-            RenderTableCell {TH} at (2,349) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=10 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,345) size 784x25
+            RenderTableCell {TH} at (2,345) size 54x25 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=10 c=0 rs=1 cs=1]
               RenderText {#text} at (17,2) size 20x19
                 text run at (17,2) width 20: "tlh"
-            RenderTableCell {TD} at (58,349) size 724x24 [border: (1px solid #EEEEEE)] [r=10 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (57,345) size 725x25 [border: (1px solid #EEEEEE)] [r=10 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 206x19
                 text run at (2,2) width 206: "TlhIngan Hol Wa''Uy' Loghqam"

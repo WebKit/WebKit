@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (10,6) size 181x79
-  RenderSVGTransformableContainer {g} at (10,5) size 181x79
-layer at (10,6) size 181x19
+layer at (10,5.50) size 181x79
+  RenderSVGTransformableContainer {g} at (10,5.50) size 180.52x78.50
+layer at (10,5.50) size 181x19
   RenderSVGText {text} at (0,0) size 181x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 181x19
       chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 1 width 11.55: "A"
@@ -16,7 +16,7 @@ layer at (10,6) size 181x19
       chunk 1 text run 5 at (122.49,20.00) startOffset 4 endOffset 5 width 11.55: "D"
       chunk 1 text run 6 at (152.94,20.00) startOffset 5 endOffset 6 width 9.77: "E"
       chunk 1 text run 7 at (181.61,20.00) startOffset 6 endOffset 7 width 8.90: "F"
-layer at (10,26) size 181x19
+layer at (10,25.50) size 181x19
   RenderSVGText {text} at (0,20) size 181x19 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 71x19
       RenderSVGInlineText {#text} at (0,0) size 71x19
@@ -30,7 +30,7 @@ layer at (10,26) size 181x19
         chunk 1 text run 1 at (122.49,40.00) startOffset 0 endOffset 1 width 11.55: "D"
         chunk 1 text run 2 at (152.94,40.00) startOffset 1 endOffset 2 width 9.77: "E"
         chunk 1 text run 3 at (181.61,40.00) startOffset 2 endOffset 3 width 8.90: "F"
-layer at (10,46) size 129x19
+layer at (10,45.50) size 129x19
   RenderSVGText {text} at (0,40) size 129x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 129x19
       chunk 1 text run 1 at (10.00,60.00) startOffset 0 endOffset 1 width 11.55: "A"
@@ -40,7 +40,7 @@ layer at (10,46) size 129x19
       chunk 1 text run 1 at (90.00,60.00) startOffset 0 endOffset 1 width 11.55: "D"
       chunk 1 text run 1 at (110.00,60.00) startOffset 0 endOffset 1 width 9.77: "E"
       chunk 1 text run 1 at (130.00,60.00) startOffset 0 endOffset 1 width 8.90: "F"
-layer at (10,66) size 129x19
+layer at (10,65.50) size 129x19
   RenderSVGText {text} at (0,60) size 129x19 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 51x19
       RenderSVGInlineText {#text} at (0,0) size 51x19

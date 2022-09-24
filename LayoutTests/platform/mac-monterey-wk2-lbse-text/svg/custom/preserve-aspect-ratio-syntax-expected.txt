@@ -4,55 +4,55 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (0,1) size 440x193
-  RenderSVGTransformableContainer {g} at (0,0) size 440x193
-layer at (0,1) size 440x192
-  RenderSVGTransformableContainer {g} at (0,0) size 440x192
-layer at (0,22) size 439x10
+layer at (0,0.50) size 440x193
+  RenderSVGTransformableContainer {g} at (0,0.50) size 439.41x191.75
+layer at (0,0.50) size 440x192
+  RenderSVGTransformableContainer {g} at (0,0) size 439.41x191.75
+layer at (0,22.05) size 439x10
   RenderSVGText {text} at (0,21) size 440x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 440x11
       chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 120 width 439.40: "All svgs below should look the same, since all have preserveAspectRatio with syntax errors and default should be chosen."
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (0,182) size 265x10
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0,182.05) size 265x10
   RenderSVGText {text} at (0,181) size 265x11 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 265x11
       chunk 1 text run 1 at (0.00,190.00) startOffset 0 endOffset 72 width 264.94: "All svgs below should look the same, all have valid preserveAspectRatio."
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
-layer at (1,1) size 30x39
-  RenderSVGTransformableContainer {g} at (0,0) size 30x39
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60
+layer at (0.50,0.50) size 30x39
+  RenderSVGTransformableContainer {g} at (0.50,0) size 29x39
 layer at (0,0) size 31x61 backgroundClip at (0,0) size 30x60 clip at (0,0) size 30x50
-  RenderSVGViewportContainer {svg} at (-1,-1) size 31x61
+  RenderSVGViewportContainer {svg} at (-0.50,-0.50) size 30x60

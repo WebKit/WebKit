@@ -14,27 +14,27 @@ layer at (0,0) size 100x100
   RenderSVGPath {line} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=100.00] [y2=100.00]
 layer at (0,0) size 100x100
   RenderSVGPath {line} at (0,0) size 100x100 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [x1=100.00] [y1=0.00] [x2=0.00] [y2=100.00]
-layer at (11,24) size 78x8
+layer at (11.20,23.75) size 78x8
   RenderSVGText {text} at (11,23) size 78x9 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 78x8
       chunk 1 (middle anchor) text run 1 at (11.21,30.00) startOffset 0 endOffset 24 width 77.58: "This should be a SQUARE."
-layer at (18,36) size 64x5
+layer at (17.64,35.50) size 64x5
   RenderSVGText {text} at (17,35) size 66x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 65x6
       chunk 1 (middle anchor) text run 1 at (17.64,40.00) startOffset 0 endOffset 34 width 64.71: "It should be 400 pixels to a side."
-layer at (14,44) size 72x5
+layer at (13.61,43.50) size 72x5
   RenderSVGText {text} at (13,43) size 74x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 73x6
       chunk 1 (middle anchor) text run 1 at (13.62,48.00) startOffset 0 endOffset 36 width 72.76: "There should be no red on this page."
-layer at (7,86) size 86x5
+layer at (7.30,85.50) size 86x5
   RenderSVGText {text} at (7,85) size 86x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 86x6
       chunk 1 (middle anchor) text run 1 at (7.30,90.00) startOffset 0 endOffset 42 width 85.40: "The orange line should be 600 pixels long:"
 layer at (-25,92) size 150x0
   RenderSVGPath {line} at (-25,92) size 150x0 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=-25.00] [y1=92.00] [x2=125.00] [y2=92.00]
-layer at (121,87) size 4x4
+layer at (120.50,87.25) size 4x4
   RenderSVGText {text} at (120,87) size 5x4 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 5x4
       chunk 1 (end anchor) text run 1 at (120.50,90.00) startOffset 0 endOffset 3 width 4.50: "600"
-layer at (125,91) size 0x2
-  RenderSVGPath {line} at (125,90) size 0x2 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=125.00] [y1=92.00] [x2=125.00] [y2=90.50]
+layer at (125,90.50) size 0x2
+  RenderSVGPath {line} at (125,90.50) size 0x1.50 [stroke={[type=SOLID] [color=#FFA500]}] [fill={[type=SOLID] [color=#000000]}] [x1=125.00] [y1=92.00] [x2=125.00] [y2=90.50]

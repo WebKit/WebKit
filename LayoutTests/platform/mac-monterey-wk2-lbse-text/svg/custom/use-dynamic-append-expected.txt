@@ -16,11 +16,11 @@ layer at (0,0) size 100x100
   RenderSVGTransformableContainer {g} at (0,0) size 100x100
 layer at (0,0) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-layer at (10,107) size 353x17
+layer at (10,106.75) size 353x17
   RenderSVGText {text} at (10,106) size 354x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 354x17
       chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 60 width 353.02: "This test tries to change a container referenced by a <use>."
-layer at (10,127) size 391x17
+layer at (10,126.75) size 391x17
   RenderSVGText {text} at (10,126) size 392x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 392x17
       chunk 1 text run 1 at (10.00,140.00) startOffset 0 endOffset 67 width 391.14: "If it is successful, there should be a green rect above. Bug 15080."

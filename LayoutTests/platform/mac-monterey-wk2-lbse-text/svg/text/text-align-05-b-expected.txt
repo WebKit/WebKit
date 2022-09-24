@@ -4,21 +4,21 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (-12,-101) size 490x269 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (-13,-101) size 490x269
-layer at (5,4) size 471x45
+layer at (-12.50,-100.55) size 490x269 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (-12.50,-100.55) size 488.58x268.13
+layer at (5,3.59) size 471x45
   RenderSVGText {text} at (17,104) size 472x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 472x45
       chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 471.07: "Test 'text-anchor' (vertical)"
-layer at (-12,-101) size 25x269 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,0) size 25x269
-layer at (-12,-101) size 25x269 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,0) size 25x269
-layer at (-8,-3) size 17x172 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (4,97) size 17x172
+layer at (-12.50,-100.55) size 25x269 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 25x268.13
+layer at (-12.50,-100.55) size 25x269 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 25x268.13
+layer at (-8.34,-3) size 17x172 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (4.16,97.55) size 16.69x170.58
 layer at (-3,-3) size 7x6 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGEllipse {circle} at (5,0) size 7x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-layer at (-8,0) size 17x168 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (5.34,0) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+layer at (-8.34,0) size 17x168 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,3) size 17x168 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 17x168
       chunk 1 (vertical) text run 1 at (-10.40,0.00) startOffset 0 endOffset 1 height 33.52: "s"
@@ -26,11 +26,11 @@ layer at (-8,0) size 17x168 backgroundClip at (0,0) size 800x600 clip at (0,0) s
       chunk 1 (vertical) text run 3 at (-10.40,67.03) startOffset 2 endOffset 3 height 33.52: "a"
       chunk 1 (vertical) text run 4 at (-10.40,100.55) startOffset 3 endOffset 4 height 33.52: "r"
       chunk 1 (vertical) text run 5 at (-10.40,134.06) startOffset 4 endOffset 5 height 33.52: "t"
-layer at (-12,-101) size 25x202 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,0) size 25x202
+layer at (-12.50,-100.55) size 25x202 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,0) size 25x201.09
 layer at (-3,-3) size 7x7 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGEllipse {circle} at (9,97) size 7x7 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-layer at (-12,-101) size 25x201 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (9.50,97.55) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+layer at (-12.50,-100.55) size 25x201 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 25x202 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 25x202
       chunk 1 (middle anchor, vertical) text run 1 at (-10.40,-100.55) startOffset 0 endOffset 1 height 33.52: "m"
@@ -39,17 +39,17 @@ layer at (-12,-101) size 25x201 backgroundClip at (0,0) size 800x600 clip at (0,
       chunk 1 (middle anchor, vertical) text run 4 at (-10.40,0.00) startOffset 3 endOffset 4 height 33.52: "d"
       chunk 1 (middle anchor, vertical) text run 5 at (-10.40,33.52) startOffset 4 endOffset 5 height 33.52: "l"
       chunk 1 (middle anchor, vertical) text run 6 at (-10.40,67.03) startOffset 5 endOffset 6 height 33.52: "e"
-layer at (-8,-101) size 17x104 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (4,0) size 17x104
+layer at (-8.34,-100.55) size 17x104 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (4.16,0) size 16.69x103.55
 layer at (-3,-3) size 7x7 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGEllipse {circle} at (5,97) size 7x7 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
-layer at (-8,-101) size 17x101 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (5.34,97.55) size 6x6 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=3.00]
+layer at (-8.34,-100.55) size 17x101 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 17x101 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 17x101
       chunk 1 (end anchor, vertical) text run 1 at (-10.40,-100.55) startOffset 0 endOffset 1 height 33.52: "e"
       chunk 1 (end anchor, vertical) text run 2 at (-10.40,-67.03) startOffset 1 endOffset 2 height 33.52: "n"
       chunk 1 (end anchor, vertical) text run 3 at (-10.40,-33.52) startOffset 2 endOffset 3 height 33.52: "d"
-layer at (10,304) size 265x46
+layer at (10,303.84) size 265x46
   RenderSVGText {text} at (10,303) size 265x48 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 265x47
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.66: "$Revision: 1.5 $"

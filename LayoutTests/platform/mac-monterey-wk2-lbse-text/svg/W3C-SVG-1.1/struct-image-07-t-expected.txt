@@ -8,7 +8,7 @@ layer at (0,-52) size 100x172 backgroundClip at (0,0) size 480x360 clip at (0,0)
   RenderSVGTransformableContainer {g} at (0,-52) size 100x172
 layer at (0,-52) size 100x172 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 100x172
-layer at (7,-22) size 86x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (6.67,-22) size 86x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (6,30) size 88x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 87x28
       chunk 1 (middle anchor) text run 1 at (6.68,0.00) startOffset 0 endOffset 8 width 86.65: "xml:base"
@@ -16,7 +16,7 @@ layer at (0,20) size 100x100
   RenderSVGImage {image} at (0,72) size 100x100
 layer at (0,-52) size 100x172 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 100x172
-layer at (6,-22) size 88x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (5.67,-22) size 88x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (5,30) size 90x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 89x28
       chunk 1 (middle anchor) text run 1 at (5.68,0.00) startOffset 0 endOffset 8 width 88.64: "on image"
@@ -24,7 +24,7 @@ layer at (0,20) size 100x100
   RenderSVGImage {image} at (0,72) size 100x100
 layer at (0,-52) size 100x172 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 100x172
-layer at (5,-22) size 90x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (5.02,-22) size 90x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (5,30) size 90x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 90x28
       chunk 1 (middle anchor) text run 1 at (5.02,0.00) startOffset 0 endOffset 9 width 89.96: "on parent"

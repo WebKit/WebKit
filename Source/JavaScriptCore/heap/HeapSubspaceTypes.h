@@ -40,6 +40,7 @@
 #include "IntlCollator.h"
 #include "IntlDateTimeFormat.h"
 #include "IntlDisplayNames.h"
+#include "IntlDurationFormat.h"
 #include "IntlListFormat.h"
 #include "IntlLocale.h"
 #include "IntlNumberFormat.h"

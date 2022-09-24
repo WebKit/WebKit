@@ -6,23 +6,23 @@ layer at (0,0) size 400x200
   RenderSVGViewportContainer at (0,0) size 400x200
 layer at (5,5) size 3990x1990 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
   RenderSVGRect {rect} at (5,5) size 3990x1990 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [x=5.00] [y=5.00] [width=3990.00] [height=1990.00]
-layer at (-50,149) size 985x801 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGTransformableContainer {g} at (-50,149) size 985x801
-layer at (-50,149) size 818x793 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGTransformableContainer {g} at (0,0) size 818x793
-layer at (-50,149) size 818x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+layer at (-50,149.19) size 985x801 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (-50,149.19) size 984.53x800.81
+layer at (-50,149.19) size 818x793 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (0,0) size 817.83x792.81
+layer at (-50,149.19) size 818x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
   RenderSVGText {text} at (0,0) size 818x183 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 818x183
       chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 11 width 817.82: "Abs. units:"
-layer at (-50,149) size 779x789 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGTransformableContainer {g} at (0,0) size 779x789
-layer at (-50,149) size 779x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+layer at (-50,149.19) size 779x789 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (0,0) size 778.50x788.31
+layer at (-50,149.19) size 779x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
   RenderSVGText {text} at (0,0) size 779x183 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 779x183
       chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 11 width 778.49: "Rel. units:"
-layer at (-50,149) size 985x801 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
-  RenderSVGTransformableContainer {g} at (0,0) size 985x801
-layer at (-50,149) size 985x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+layer at (-50,149.19) size 985x801 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
+  RenderSVGTransformableContainer {g} at (0,0) size 984.53x800.81
+layer at (-50,149.19) size 985x182 backgroundClip at (0,0) size 400x200 clip at (0,0) size 400x200
   RenderSVGText {text} at (0,0) size 985x183 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 985x183
       chunk 1 text run 1 at (-50.00,300.00) startOffset 0 endOffset 12 width 984.52: "Percentages:"

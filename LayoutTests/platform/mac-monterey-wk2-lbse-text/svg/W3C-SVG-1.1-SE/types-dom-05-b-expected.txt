@@ -4,41 +4,41 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,16) size 369x175
-  RenderSVGTransformableContainer {g} at (10,15) size 369x175
-layer at (10,16) size 368x18
+layer at (10,15.59) size 369x175
+  RenderSVGTransformableContainer {g} at (10,15.59) size 368.19x174.41
+layer at (10,15.59) size 368x18
   RenderSVGText {text} at (0,0) size 369x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 369x19
       chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 47 width 368.17: "Test side effects of assigning to valueAsString"
 layer at (10,40) size 30x31
-  RenderSVGRect {rect} at (0,24) size 30x31 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (0,24.41) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=30.00] [height=30.00]
 layer at (10,80) size 30x31
-  RenderSVGRect {rect} at (0,64) size 30x31 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=80.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (0,64.41) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=80.00] [width=30.00] [height=30.00]
 layer at (10,120) size 30x31
-  RenderSVGRect {rect} at (0,104) size 30x31 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=120.00] [width=30.00] [height=30.00]
+  RenderSVGRect {rect} at (0,104.41) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=120.00] [width=30.00] [height=30.00]
 layer at (10,160) size 30x31
-  RenderSVGRect {rect} at (0,144) size 30x31 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=160.00] [width=30.00] [height=30.00]
-layer at (50,48) size 187x136
-  RenderSVGTransformableContainer {g} at (40,32) size 187x136
-layer at (50,48) size 177x15
+  RenderSVGRect {rect} at (0,144.41) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=160.00] [width=30.00] [height=30.00]
+layer at (50,47.98) size 187x136
+  RenderSVGTransformableContainer {g} at (40,32.39) size 186.77x135.02
+layer at (50,47.98) size 177x15
   RenderSVGText {text} at (0,0) size 177x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 177x16
       chunk 1 text run 1 at (50.00,60.00) startOffset 0 endOffset 25 width 176.76: "Valid string on SVGLength"
-layer at (50,88) size 187x15
+layer at (50,87.98) size 187x15
   RenderSVGText {text} at (0,40) size 187x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 187x16
       chunk 1 text run 1 at (50.00,100.00) startOffset 0 endOffset 27 width 186.76: "Invalid string on SVGLength"
-layer at (50,128) size 169x15
+layer at (50,127.98) size 169x15
   RenderSVGText {text} at (0,80) size 170x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 170x16
       chunk 1 text run 1 at (50.00,140.00) startOffset 0 endOffset 24 width 169.24: "Valid string on SVGAngle"
-layer at (50,168) size 179x15
+layer at (50,167.98) size 179x15
   RenderSVGText {text} at (0,120) size 180x16 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 180x16
       chunk 1 text run 1 at (50.00,180.00) startOffset 0 endOffset 26 width 179.25: "Invalid string on SVGAngle"
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.6 $"

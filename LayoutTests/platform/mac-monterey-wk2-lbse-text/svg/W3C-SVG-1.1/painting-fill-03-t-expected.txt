@@ -4,21 +4,21 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,9) size 486x280 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (10,9) size 486x280
-layer at (30,9) size 410x40
+layer at (10,9.41) size 486x280 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (10,9.41) size 485.58x278.95
+layer at (30,9.41) size 410x40
   RenderSVGText {text} at (20,0) size 411x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 411x41
       chunk 1 text run 1 at (30.00,42.00) startOffset 0 endOffset 29 width 410.19: "Basic paint: fill properties."
 layer at (30,75) size 160x161
-  RenderSVGPath {path} at (20,65) size 160x161 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 110 75 L 160 235 L 30 135 L 190 135 L 60 235 Z"]
+  RenderSVGPath {path} at (20,65.59) size 160x160 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 110 75 L 160 235 L 30 135 L 190 135 L 60 235 Z"]
 layer at (285,75) size 160x161
-  RenderSVGPath {path} at (275,65) size 160x161 [fill={[type=SOLID] [color=#FF0000]}] [data="M 365 75 L 415 235 L 285 135 L 445 135 L 315 235 Z"]
-layer at (10,255) size 242x34
+  RenderSVGPath {path} at (275,65.59) size 160x160 [fill={[type=SOLID] [color=#FF0000]}] [data="M 365 75 L 415 235 L 285 135 L 445 135 L 315 235 Z"]
+layer at (10,254.83) size 242x34
   RenderSVGText {text} at (0,245) size 243x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 243x34
       chunk 1 text run 1 at (10.00,282.00) startOffset 0 endOffset 19 width 242.27: "fill-rule=\"evenodd\""
-layer at (260,255) size 236x34 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (260,254.83) size 236x34 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (250,245) size 236x34 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 236x34
       chunk 1 text run 1 at (260.00,282.00) startOffset 0 endOffset 19 width 235.58: "fill-rule=\"nonzero\""

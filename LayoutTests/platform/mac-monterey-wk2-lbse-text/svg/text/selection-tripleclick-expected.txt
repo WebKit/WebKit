@@ -4,11 +4,11 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (14,1) size 50x11
+layer at (14,0.94) size 50x11
   RenderSVGText {text} at (14,0) size 51x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 51x12
       chunk 1 text run 1 at (14.00,10.00) startOffset 0 endOffset 11 width 50.03: "foo bar baz"
-layer at (14,11) size 37x11
+layer at (14,10.94) size 37x11
   RenderSVGText {text} at (14,10) size 38x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 38x12
       chunk 1 text run 1 at (14.00,20.00) startOffset 0 endOffset 9 width 37.25: "next line"

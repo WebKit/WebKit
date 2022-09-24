@@ -156,14 +156,13 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, Span<uint8_t> result)
 {
     if (auto handle = updateSharedMemoryForGetPixelBuffer(result.size())) {
-        auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory(imageBuffer, WTFMove(*handle), destinationFormat, srcRect),
-            Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory::Reply());
+        auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory(imageBuffer, WTFMove(*handle), destinationFormat, srcRect));
         if (!sendResult)
             return false;
     } else {
         if (!m_getPixelBufferSharedMemory)
             return false;
-        auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetPixelBufferForImageBuffer(imageBuffer, destinationFormat, srcRect), Messages::RemoteRenderingBackend::GetPixelBufferForImageBuffer::Reply());
+        auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetPixelBufferForImageBuffer(imageBuffer, destinationFormat, srcRect));
         if (!sendResult)
             return false;
     }
@@ -211,21 +210,18 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
 
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
-    ShareableBitmap::Handle handle;
-    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution), Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer::Reply(handle));
+    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution));
+    auto [handle] = sendResult.takeReplyOr(ShareableBitmap::Handle { });
     if (handle.isNull())
         return { };
     handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
-    ASSERT_UNUSED(sendResult, sendResult);
     return ShareableBitmap::create(handle);
 }
 
 RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
 {
-    ShareableBitmap::Handle handle;
-    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, IPC::FilterReference { filter }), Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer::Reply(handle));
-    ASSERT_UNUSED(sendResult, sendResult);
-
+    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, IPC::FilterReference { filter }));
+    auto [handle] = sendResult.takeReplyOr(ShareableBitmap::Handle { });
     if (handle.isNull())
         return { };
 
@@ -306,13 +302,14 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
     }
 
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
-    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData), Messages::RemoteRenderingBackend::PrepareBuffersForDisplay::Reply(outputData));
+    auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData));
     if (!sendResult) {
         // GPU Process crashed. Set the output data to all null buffers, requiring a full display.
         outputData.resize(inputData.size());
         for (auto& perLayerOutputData : outputData)
             perLayerOutputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
-    }
+    } else
+        std::tie(outputData) = sendResult.takeReply();
 
     RELEASE_ASSERT_WITH_MESSAGE(inputData.size() == outputData.size(), "PrepareBuffersForDisplay: mismatched buffer vector sizes");
 

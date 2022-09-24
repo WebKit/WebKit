@@ -300,6 +300,44 @@ std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject* globalObject, J
     return unitType;
 }
 
+static constexpr std::initializer_list<TemporalUnit> disallowedUnits[] = {
+    { },
+    { TemporalUnit::Hour, TemporalUnit::Minute, TemporalUnit::Second, TemporalUnit::Millisecond, TemporalUnit::Microsecond, TemporalUnit::Nanosecond },
+    { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day }
+};
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getdifferencesettings
+std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject* globalObject, JSValue optionsValue, UnitGroup unitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto smallest = temporalSmallestUnit(globalObject, options, disallowedUnits[static_cast<uint8_t>(unitGroup)]);
+    RETURN_IF_EXCEPTION(scope, { });
+    TemporalUnit smallestUnit = smallest.value_or(defaultSmallestUnit);
+    defaultLargestUnit = std::min(defaultLargestUnit, smallestUnit);
+
+    auto largest = temporalLargestUnit(globalObject, options, disallowedUnits[static_cast<uint8_t>(unitGroup)], defaultLargestUnit);
+    RETURN_IF_EXCEPTION(scope, { });
+    TemporalUnit largestUnit = largest.value_or(defaultLargestUnit);
+
+    if (smallestUnit < largestUnit) {
+        throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
+        return { };
+    }
+
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto increment = temporalRoundingIncrement(globalObject, options, maximumRoundingIncrement(smallestUnit), false);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    return { smallestUnit, largestUnit, roundingMode, increment };
+}
+
 // GetStringOrNumberOption(normalizedOptions, "fractionalSecondDigits", « "auto" », 0, 9, "auto")
 // https://tc39.es/proposal-temporal/#sec-getstringornumberoption
 std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject* globalObject, JSObject* options)
@@ -397,6 +435,19 @@ RoundingMode temporalRoundingMode(JSGlobalObject* globalObject, JSObject* option
     return intlOption<RoundingMode>(globalObject, options, globalObject->vm().propertyNames->roundingMode,
         { { "ceil"_s, RoundingMode::Ceil }, { "floor"_s, RoundingMode::Floor }, { "trunc"_s, RoundingMode::Trunc }, { "halfExpand"_s, RoundingMode::HalfExpand } },
         "roundingMode must be either \"ceil\", \"floor\", \"trunc\", or \"halfExpand\""_s, fallback);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-negatetemporalroundingmode
+RoundingMode negateTemporalRoundingMode(RoundingMode roundingMode)
+{
+    switch (roundingMode) {
+    case RoundingMode::Ceil:
+        return RoundingMode::Floor;
+    case RoundingMode::Floor:
+        return RoundingMode::Ceil;
+    default:
+        return roundingMode;
+    }
 }
 
 void formatSecondsStringFraction(StringBuilder& builder, unsigned fraction, std::tuple<Precision, unsigned> precision)

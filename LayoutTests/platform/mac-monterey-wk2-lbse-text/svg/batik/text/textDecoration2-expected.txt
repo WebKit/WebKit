@@ -4,13 +4,13 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
-layer at (109,26) size 232x17
+layer at (109.39,25.52) size 232x17
   RenderSVGText {text} at (109,25) size 232x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 232x18
       chunk 1 (middle anchor) text run 1 at (109.40,40.00) startOffset 0 endOffset 33 width 231.20: "Text Decoration with dx, dy tests"
-layer at (31,9) size 345x370
-  RenderSVGTransformableContainer {g} at (31,9) size 345x370
-layer at (31,9) size 145x54
+layer at (31,9.48) size 345x370
+  RenderSVGTransformableContainer {g} at (31,9.48) size 344.84x368.69
+layer at (31,9.48) size 145x54
   RenderSVGText {text} at (0,0) size 145x54 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 95x18
       chunk 1 text run 1 at (31.00,24.00) startOffset 0 endOffset 14 width 94.06: "This is a text"
@@ -20,7 +20,7 @@ layer at (31,9) size 145x54
     RenderSVGTSpan {tspan} at (0,0) size 34x18
       RenderSVGInlineText {#text} at (0,36) size 34x18
         chunk 1 text run 1 at (31.00,60.00) startOffset 0 endOffset 5 width 33.98: "lines"
-layer at (231,9) size 145x54
+layer at (231,9.48) size 145x54
   RenderSVGText {text} at (200,0) size 145x54 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 95x18
       chunk 1 text run 1 at (231.00,24.00) startOffset 0 endOffset 14 width 94.06: "This is a text"
@@ -30,7 +30,7 @@ layer at (231,9) size 145x54
     RenderSVGTSpan {tspan} at (0,0) size 34x18
       RenderSVGInlineText {#text} at (0,36) size 34x18
         chunk 1 text run 1 at (231.00,60.00) startOffset 0 endOffset 5 width 33.98: "lines"
-layer at (31,80) size 111x28
+layer at (31,80.48) size 111x28
   RenderSVGText {text} at (0,71) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (31.00,100.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -42,7 +42,7 @@ layer at (31,80) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (101.96,105.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (31,110) size 111x28
+layer at (31,110.48) size 111x28
   RenderSVGText {text} at (0,101) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (31.00,130.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -54,7 +54,7 @@ layer at (31,110) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (101.96,135.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (31,140) size 111x28
+layer at (31,140.48) size 111x28
   RenderSVGText {text} at (0,131) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (31.00,160.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -66,7 +66,7 @@ layer at (31,140) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (101.96,165.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (31,175) size 111x28
+layer at (31,175.48) size 111x28
   RenderSVGText {text} at (0,166) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,10) size 38x18
       chunk 1 text run 1 at (31.00,200.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -78,7 +78,7 @@ layer at (31,175) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,0) size 41x18
         chunk 1 text run 1 at (101.96,190.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (231,80) size 111x28
+layer at (231,80.48) size 111x28
   RenderSVGText {text} at (200,71) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (231.00,100.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -90,7 +90,7 @@ layer at (231,80) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (301.96,105.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (231,110) size 111x28
+layer at (231,110.48) size 111x28
   RenderSVGText {text} at (200,101) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (231.00,130.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -102,7 +102,7 @@ layer at (231,110) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (301.96,135.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (231,140) size 111x28
+layer at (231,140.48) size 111x28
   RenderSVGText {text} at (200,131) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (231.00,160.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -114,7 +114,7 @@ layer at (231,140) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (301.96,165.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (231,175) size 111x28
+layer at (231,175.48) size 111x28
   RenderSVGText {text} at (200,166) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,10) size 38x18
       chunk 1 text run 1 at (231.00,200.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -126,7 +126,7 @@ layer at (231,175) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,0) size 41x18
         chunk 1 text run 1 at (301.96,190.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (31,220) size 111x28
+layer at (31,220.48) size 111x28
   RenderSVGText {text} at (0,211) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (31.00,240.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -138,7 +138,7 @@ layer at (31,220) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (101.96,245.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (31,250) size 111x28
+layer at (31,250.48) size 111x28
   RenderSVGText {text} at (0,241) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (31.00,270.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -150,7 +150,7 @@ layer at (31,250) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (101.96,275.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (31,280) size 111x28
+layer at (31,280.48) size 111x28
   RenderSVGText {text} at (0,271) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,5) size 38x18
       chunk 1 text run 1 at (31.00,300.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -162,7 +162,7 @@ layer at (31,280) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,10) size 41x18
         chunk 1 text run 1 at (101.96,305.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (31,305) size 111x28
+layer at (31,305.48) size 111x28
   RenderSVGText {text} at (0,296) size 112x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,10) size 38x18
       chunk 1 text run 1 at (31.00,330.00) startOffset 0 endOffset 5 width 37.40: "Text "
@@ -174,7 +174,7 @@ layer at (31,305) size 111x28
     RenderSVGTSpan {tspan} at (0,0) size 42x18
       RenderSVGInlineText {#text} at (70,0) size 41x18
         chunk 1 text run 1 at (101.96,320.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (231,220) size 111x28
+layer at (231,220.48) size 111x28
   RenderSVGText {text} at (200,211) size 112x28 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 112x28
       RenderSVGInlineText {#text} at (0,5) size 38x18
@@ -187,7 +187,7 @@ layer at (231,220) size 111x28
       RenderSVGTSpan {tspan} at (0,0) size 42x18
         RenderSVGInlineText {#text} at (70,10) size 41x18
           chunk 1 text run 1 at (301.96,245.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (231,250) size 111x28
+layer at (231,250.48) size 111x28
   RenderSVGText {text} at (200,241) size 112x28 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 112x28
       RenderSVGInlineText {#text} at (0,5) size 38x18
@@ -201,7 +201,7 @@ layer at (231,250) size 111x28
       RenderSVGTSpan {tspan} at (0,0) size 42x18
         RenderSVGInlineText {#text} at (70,10) size 41x18
           chunk 1 text run 1 at (301.96,275.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (231,280) size 111x28
+layer at (231,280.48) size 111x28
   RenderSVGText {text} at (200,271) size 112x28 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 112x28
       RenderSVGInlineText {#text} at (0,5) size 38x18
@@ -216,7 +216,7 @@ layer at (231,280) size 111x28
         RenderSVGTSpan {tspan} at (0,0) size 42x18
           RenderSVGInlineText {#text} at (70,10) size 41x18
             chunk 1 text run 1 at (301.96,305.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (231,310) size 111x28
+layer at (231,310.48) size 111x28
   RenderSVGText {text} at (200,301) size 112x28 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 112x28
       RenderSVGInlineText {#text} at (0,5) size 38x18
@@ -229,7 +229,7 @@ layer at (231,310) size 111x28
             RenderSVGTSpan {tspan} at (0,0) size 42x18
               RenderSVGInlineText {#text} at (70,10) size 41x18
                 chunk 1 text run 1 at (301.96,335.00) startOffset 0 endOffset 6 width 40.06: "shifts"
-layer at (131,345) size 111x33
+layer at (131,345.48) size 111x33
   RenderSVGText {text} at (100,336) size 112x33 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 112x33
       RenderSVGInlineText {#text} at (0,10) size 38x18

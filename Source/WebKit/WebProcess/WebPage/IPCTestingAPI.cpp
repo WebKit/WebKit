@@ -1076,16 +1076,16 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
     }
 
     auto& streamConnection = jsStreamConnection->connection();
-    int32_t resultValue = 0;
     enum JSIPCStreamTesterIdentifierType { };
     auto destination = makeObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
 
-    auto result = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), Messages::IPCStreamTester::SyncCrashOnZero::Reply(resultValue), destination, timeoutDuration);
+    auto result = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination, timeoutDuration);
     if (!result) {
         *exception = createTypeError(context, "sync send failed"_s);
         return JSValueMakeUndefined(context);
     }
 
+    auto [resultValue] = result.takeReply();
     return JSValueMakeNumber(context, resultValue);
 }
 

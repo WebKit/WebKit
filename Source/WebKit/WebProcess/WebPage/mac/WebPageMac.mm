@@ -412,9 +412,9 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForSelectionInPDFPlugin(PDFSelec
     dataForSelection.presentationTransition = presentationTransition;
     
     dictionaryPopupInfo.origin = rangeRect.origin;
-    dictionaryPopupInfo.options = options;
+    dictionaryPopupInfo.platformData.options = options;
     dictionaryPopupInfo.textIndicator = dataForSelection;
-    dictionaryPopupInfo.attributedString = scaledNSAttributedString;
+    dictionaryPopupInfo.platformData.attributedString = scaledNSAttributedString;
     
     return dictionaryPopupInfo;
 }

@@ -41,6 +41,8 @@ static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncGetISOFields);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncAdd);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncSubtract);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncWith);
+static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncUntil);
+static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncSince);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncEquals);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainDateTime);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToString);
@@ -75,6 +77,8 @@ const ClassInfo TemporalPlainDatePrototype::s_info = { "Temporal.PlainDate"_s, &
   add              temporalPlainDatePrototypeFuncAdd                DontEnum|Function 1
   subtract         temporalPlainDatePrototypeFuncSubtract           DontEnum|Function 1
   with             temporalPlainDatePrototypeFuncWith               DontEnum|Function 1
+  until            temporalPlainDatePrototypeFuncUntil              DontEnum|Function 1
+  since            temporalPlainDatePrototypeFuncSince              DontEnum|Function 1
   equals           temporalPlainDatePrototypeFuncEquals             DontEnum|Function 1
   toPlainDateTime  temporalPlainDatePrototypeFuncToPlainDateTime    DontEnum|Function 0
   toString         temporalPlainDatePrototypeFuncToString           DontEnum|Function 0
@@ -207,6 +211,44 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncWith, (JSGlobalObject* gl
     RETURN_IF_EXCEPTION(scope, { });
 
     return JSValue::encode(TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(result)));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.until
+JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncUntil, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* plainDate = jsDynamicCast<TemporalPlainDate*>(callFrame->thisValue());
+    if (!plainDate)
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.until called on value that's not a PlainDate"_s);
+
+    auto* other = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto result = plainDate->until(globalObject, other, callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTFMove(result), globalObject->durationStructure())));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.since
+JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncSince, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* plainDate = jsDynamicCast<TemporalPlainDate*>(callFrame->thisValue());
+    if (!plainDate)
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.since called on value that's not a PlainDate"_s);
+
+    auto* other = TemporalPlainDate::from(globalObject, callFrame->argument(0), std::nullopt);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    auto result = plainDate->since(globalObject, other, callFrame->argument(1));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalDuration::tryCreateIfValid(globalObject, WTFMove(result), globalObject->durationStructure())));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.equals

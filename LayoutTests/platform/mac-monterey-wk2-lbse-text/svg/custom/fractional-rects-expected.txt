@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 501x501
-  RenderSVGRoot {svg} at (0,0) size 501x501
-layer at (0,0) size 501x501
-  RenderSVGViewportContainer at (0,0) size 501x501
-layer at (50,50) size 401x401
-  RenderSVGRect {rect} at (50,50) size 401x401 [fill={[type=SOLID] [color=#00FF00]}] [x=50.25] [y=50.33] [width=400.40] [height=400.40]
-layer at (151,100) size 202x301
-  RenderSVGRect {rect} at (150,100) size 202x301 [fill={[type=SOLID] [color=#0000FF]}] [x=150.90] [y=100.33] [width=200.35] [height=300.35]
+layer at (0,0) size 501x501 backgroundClip at (0,0) size 500.50x500.50 clip at (0,0) size 500.50x500.50
+  RenderSVGRoot {svg} at (0,0) size 500.50x500.50
+layer at (0,0) size 501x501 backgroundClip at (0,0) size 500.50x500.50 clip at (0,0) size 500.50x500.50
+  RenderSVGViewportContainer at (0,0) size 500.50x500.50
+layer at (50.25,50.33) size 401x401
+  RenderSVGRect {rect} at (50.25,50.33) size 400.41x400.41 [fill={[type=SOLID] [color=#00FF00]}] [x=50.25] [y=50.33] [width=400.40] [height=400.40]
+layer at (150.89,100.33) size 202x301
+  RenderSVGRect {rect} at (150.89,100.33) size 200.36x300.36 [fill={[type=SOLID] [color=#0000FF]}] [x=150.90] [y=100.33] [width=200.35] [height=300.35]

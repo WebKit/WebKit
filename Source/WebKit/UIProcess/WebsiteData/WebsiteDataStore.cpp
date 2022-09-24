@@ -790,12 +790,12 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 
 void WebsiteDataStore::setServiceWorkerTimeoutForTesting(Seconds seconds)
 {
-    networkProcess().sendSync(Messages::NetworkProcess::SetServiceWorkerFetchTimeoutForTesting(seconds), Messages::NetworkProcess::SetServiceWorkerFetchTimeoutForTesting::Reply(), 0);
+    networkProcess().sendSync(Messages::NetworkProcess::SetServiceWorkerFetchTimeoutForTesting(seconds), 0);
 }
 
 void WebsiteDataStore::resetServiceWorkerTimeoutForTesting()
 {
-    networkProcess().sendSync(Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting(), Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting::Reply(), 0);
+    networkProcess().sendSync(Messages::NetworkProcess::ResetServiceWorkerFetchTimeoutForTesting(), 0);
 }
 
 bool WebsiteDataStore::hasServiceWorkerBackgroundActivityForTesting() const
@@ -1717,7 +1717,7 @@ void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandl
 
 void WebsiteDataStore::setAllowsAnySSLCertificateForWebSocket(bool allows)
 {
-    networkProcess().sendSync(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket::Reply(), 0);
+    networkProcess().sendSync(Messages::NetworkProcess::SetAllowsAnySSLCertificateForWebSocket(allows), 0);
 }
 
 void WebsiteDataStore::clearCachedCredentials()

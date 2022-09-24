@@ -3,21 +3,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (50,33) size 684x454
-      RenderSVGContainer {g} at (50,33) size 684x454
+    RenderSVGContainer {g} at (50,33) size 684x453
+      RenderSVGContainer {g} at (50,33) size 684x453
         RenderSVGHiddenContainer {defs} at (0,0) size 0x0
           RenderSVGResourceClipper {clipPath} [id="sample"] [clipPathUnits=userSpaceOnUse]
-            RenderSVGText {text} at (45,180) size 370x112 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 370x111
-                chunk 1 text run 1 at (45.00,270.00) startOffset 0 endOffset 9 width 369.06: "Clip Test"
+            RenderSVGText {text} at (45,169) size 355x123 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 355x123
+                chunk 1 text run 1 at (45.00,270.00) startOffset 0 endOffset 9 width 354.09: "Clip Test"
         RenderSVGContainer {g} at (50,33) size 684x234
           RenderSVGImage {image} at (50,33) size 684x234
-          RenderSVGText {text} at (55,40) size 370x112 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 370x111
-              chunk 1 text run 1 at (55.00,130.00) startOffset 0 endOffset 9 width 369.06: "Clip Test"
-        RenderSVGContainer {g} at (75,301) size 616x186
-          RenderSVGImage {image} at (75,301) size 616x186
-            [clipPath="sample"] RenderSVGResourceClipper {clipPath} at (45,180.89) size 369.08x111.02
+          RenderSVGText {text} at (55,29) size 355x123 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 355x123
+              chunk 1 text run 1 at (55.00,130.00) startOffset 0 endOffset 9 width 354.09: "Clip Test"
+        RenderSVGContainer {g} at (75,283) size 591x203
+          RenderSVGImage {image} at (75,283) size 591x203
+            [clipPath="sample"] RenderSVGResourceClipper {clipPath} at (45,169.19) size 354.09x122.13
     RenderSVGContainer {g} at (16,516) size 385x64
       RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x38

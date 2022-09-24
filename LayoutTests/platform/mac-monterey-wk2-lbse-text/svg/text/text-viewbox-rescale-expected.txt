@@ -9,7 +9,7 @@ layer at (0,0) size 200x200
   RenderSVGViewportContainer at (0,0) size 200x200
 layer at (0,0) size 200x200 clip at (0,0) size 1x1
   RenderSVGViewportContainer {svg} at (0,0) size 200x200
-layer at (0,0) size 1x0
+layer at (0.30,0.20) size 1x0
   RenderSVGText {text} at (0,0) size 1x1 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 1x1
       chunk 1 text run 1 at (0.30,0.30) startOffset 0 endOffset 5 width 0.26: "PASS "

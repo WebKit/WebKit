@@ -17,12 +17,12 @@ layer at (0,0) size 800x104
       RenderText {#text} at (0,0) size 0x0
     RenderText {#text} at (0,0) size 0x0
 layer at (58,0) size 100x100
-  RenderSVGRoot {svg} at (58,0) size 101x100
-layer at (58,0) size 100x100
+  RenderSVGRoot {svg} at (58.42,0) size 100x100
+layer at (58.42,0) size 100x100
   RenderSVGViewportContainer at (0,0) size 100x100
-layer at (58,-14) size 195x18 backgroundClip at (58,0) size 100x100 clip at (58,0) size 100x100
+layer at (58.42,-14) size 195x18 backgroundClip at (58.42,0) size 100x100 clip at (58.42,0) size 100x100
   RenderSVGText {text} at (0,-14) size 196x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 196x18
       chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 29 width 195.05: "You should see an error above"
-layer at (58,0) size 100x100
+layer at (58.42,0) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

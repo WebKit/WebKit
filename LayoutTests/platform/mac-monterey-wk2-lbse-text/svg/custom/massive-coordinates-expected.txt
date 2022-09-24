@@ -4,5 +4,5 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (-1000,200) size 1200x33554231 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGPath {path} at (-1000,200) size 1200x33554231 [stroke={[type=SOLID] [color=#0000FF]}] [data="M -1000 1.23457e+19 L 200 200"]
+layer at (-1000,200) size 1200x33554232 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGPath {path} at (-1000,200) size 1200x33554232 [stroke={[type=SOLID] [color=#0000FF]}] [data="M -1000 1.23457e+19 L 200 200"]

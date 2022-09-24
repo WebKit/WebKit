@@ -4,13 +4,13 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (75,15) size 341x193
-  RenderSVGTransformableContainer {g} at (75,15) size 341x193
-layer at (75,15) size 341x12
+layer at (75,15.39) size 341x193
+  RenderSVGTransformableContainer {g} at (75,15.39) size 340.77x191.81
+layer at (75,15.39) size 341x12
   RenderSVGText {text} at (0,0) size 341x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 341x13
       chunk 1 text run 1 at (75.00,25.00) startOffset 0 endOffset 63 width 340.75: "Test 'tref' element pointing outside the SVG document fragment."
-layer at (75,171) size 82x36
+layer at (75,171.19) size 82x36
   RenderSVGText {text} at (0,155) size 83x37 contains 1 chunk(s)
     RenderSVGInline {tref} at (0,0) size 83x37
       RenderSVGInlineText {#text} at (0,0) size 83x37
@@ -18,9 +18,9 @@ layer at (75,171) size 82x36
     RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGInline {tref} at (0,0) size 0x0
     RenderSVGInlineText {#text} at (0,0) size 0x0
-layer at (10,315) size 229x33
-  RenderSVGTransformableContainer {g} at (10,314) size 229x33
-layer at (10,315) size 228x32
+layer at (10,314.55) size 229x33
+  RenderSVGTransformableContainer {g} at (10,314.55) size 228.02x31.83
+layer at (10,314.55) size 228x32
   RenderSVGText {text} at (0,0) size 229x32 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 229x32
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.01: "$Revision: 1.5 $"

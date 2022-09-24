@@ -24,7 +24,7 @@
  */
 
 @linkTimeConstant
-function performProxyObjectGet(receiver, handler, propertyName)
+function performProxyObjectGet(target, receiver, handler, propertyName)
 {
     "use strict";
 
@@ -33,13 +33,13 @@ function performProxyObjectGet(receiver, handler, propertyName)
 
     var trap = handler.get;
     if (!@isCallable(trap))
-        return @getByValWithThis(this, receiver, propertyName);
+        return @getByValWithThis(target, receiver, propertyName);
 
-    var trapResult = trap.@call(handler, this, propertyName, receiver);
+    var trapResult = trap.@call(handler, target, propertyName, receiver);
 
     // FIXME: Add op_get_own_property bytecode and IC, which returns two values, value and attributes.
     // Then we can implement it fully in JS.
-    @handleProxyGetTrapResult(trapResult, this, propertyName);
+    @handleProxyGetTrapResult(trapResult, target, propertyName);
 
     return trapResult;
 }

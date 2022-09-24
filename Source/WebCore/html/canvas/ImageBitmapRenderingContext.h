@@ -36,6 +36,7 @@ namespace WebCore {
 
 class ImageBitmap;
 class ImageBuffer;
+class OffscreenCanvas;
 
 #if ENABLE(OFFSCREEN_CANVAS)
 using ImageBitmapCanvas = std::variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;

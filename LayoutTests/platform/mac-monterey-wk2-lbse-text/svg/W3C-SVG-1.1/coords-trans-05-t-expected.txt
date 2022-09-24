@@ -5,9 +5,9 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 225x253
-  RenderSVGTransformableContainer {g} at (0,0) size 225x253
+  RenderSVGTransformableContainer {g} at (0,0) size 224.81x253
 layer at (0,0) size 225x253
-  RenderSVGTransformableContainer {g} at (0,0) size 225x253
+  RenderSVGTransformableContainer {g} at (0,0) size 224.81x253
 layer at (0,0) size 20x20
   RenderSVGTransformableContainer {g} at (0,0) size 20x20
 layer at (0,0) size 20x20
@@ -15,19 +15,19 @@ layer at (0,0) size 20x20
 layer at (0,0) size 20x1
   RenderSVGRect {rect} at (0,0) size 20x1 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=20.00] [height=1.00]
 layer at (0,0) size 1x20
-  RenderSVGRect {rect} at (0,0) size 1x20 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
-layer at (40,186) size 185x68
-  RenderSVGTransformableContainer {g} at (40,185) size 185x68
-layer at (40,186) size 185x18
+  RenderSVGRect {rect} at (0,0) size 0.67x20 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=0.67] [height=20.00]
+layer at (40,185.59) size 185x68
+  RenderSVGTransformableContainer {g} at (40,185.59) size 184.81x67.41
+layer at (40,185.59) size 185x18
   RenderSVGText {text} at (0,0) size 185x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 185x19
       chunk 1 text run 1 at (40.00,200.00) startOffset 0 endOffset 31 width 184.81: "scale(25, 95) - translate(2, 2)"
 layer at (48,208) size 5x6
-  RenderSVGRect {rect} at (8,22) size 5x6 [fill={[type=SOLID] [color=#000000]}] [x=48.00] [y=208.00] [width=5.00] [height=5.00]
+  RenderSVGRect {rect} at (8,22.41) size 5x5 [fill={[type=SOLID] [color=#000000]}] [x=48.00] [y=208.00] [width=5.00] [height=5.00]
 layer at (108,208) size 5x6
-  RenderSVGRect {rect} at (68,22) size 5x6 [fill={[type=SOLID] [color=#0000FF]}] [x=108.00] [y=208.00] [width=5.00] [height=5.00]
+  RenderSVGRect {rect} at (68,22.41) size 5x5 [fill={[type=SOLID] [color=#0000FF]}] [x=108.00] [y=208.00] [width=5.00] [height=5.00]
 layer at (48,248) size 5x6
-  RenderSVGRect {rect} at (8,62) size 5x6 [fill={[type=SOLID] [color=#FF0000]}] [x=48.00] [y=248.00] [width=5.00] [height=5.00]
+  RenderSVGRect {rect} at (8,62.41) size 5x5 [fill={[type=SOLID] [color=#FF0000]}] [x=48.00] [y=248.00] [width=5.00] [height=5.00]
 layer at (10,304) size 263x46
   RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 264x46

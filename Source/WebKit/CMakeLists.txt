@@ -522,6 +522,8 @@ set(WebKit_SERIALIZATION_IN_FILES
 
     Shared/API/APIGeometry.serialization.in
 
+    Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
+
     Shared/WebGPU/WebGPUBindGroupEntry.serialization.in
     Shared/WebGPU/WebGPUBlendComponent.serialization.in
     Shared/WebGPU/WebGPUBlendState.serialization.in
@@ -532,6 +534,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebGPU/WebGPUColorTargetState.serialization.in
     Shared/WebGPU/WebGPUComputePassTimestampWrites.serialization.in
     Shared/WebGPU/WebGPUObjectDescriptorBase.serialization.in
+
     Shared/WebGPU/WebGPUOrigin3D.serialization.in
     Shared/WebGPU/WebGPUPrimitiveState.serialization.in
     Shared/WebGPU/WebGPUProgrammableStage.serialization.in

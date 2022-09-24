@@ -109,7 +109,7 @@ RefPtr<Frame> SVGSVGElement::frameForCurrentScale() const
 {
     // The behavior of currentScale() is undefined when we're dealing with non-standalone SVG documents.
     // If the document is embedded, the scaling is handled by the host renderer.
-    if (!isConnected() || !isOutermostSVGSVGElement())
+    if (!isConnected() || !isOutermostSVGSVGElement() || parentNode())
         return nullptr;
     RefPtr frame = document().frame();
     return frame && frame->isMainFrame() ? frame : nullptr;
@@ -432,8 +432,10 @@ RenderPtr<RenderElement> SVGSVGElement::createElementRenderer(RenderStyle&& styl
 {
     if (isOutermostSVGSVGElement()) {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (document().settings().layerBasedSVGEngineEnabled())
+        if (document().settings().layerBasedSVGEngineEnabled()) {
+            document().setMayHaveRenderedSVGRootElements();
             return createRenderer<RenderSVGRoot>(*this, WTFMove(style));
+        }
 #endif
         return createRenderer<LegacyRenderSVGRoot>(*this, WTFMove(style));
     }

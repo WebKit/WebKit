@@ -1,0 +1,9 @@
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-screen-wakelock.html
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Feature-Policy header {"screen-wake-lock" : []} disallows the top-level document. undefined is not an object (evaluating 'navigator.wakeLock.request')
+TIMEOUT Feature-Policy header {"screen-wake-lock" : []} disallows same-origin iframes. Test timed out
+TIMEOUT Feature-Policy header {"screen-wake-lock" : []} disallows cross-origin iframes. Test timed out
+

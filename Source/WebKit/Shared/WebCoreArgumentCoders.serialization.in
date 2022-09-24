@@ -480,3 +480,12 @@ header: <WebCore/LayoutSize.h>
     WebCore::LayoutUnit width();
     WebCore::LayoutUnit height();
 }
+
+header: <WebCore/DictionaryPopupInfo.h>
+struct WebCore::DictionaryPopupInfo {
+    WebCore::FloatPoint origin;
+    WebCore::TextIndicatorData textIndicator;
+#if PLATFORM(COCOA)
+    WebCore::DictionaryPopupInfoCocoa platformData;
+#endif
+};

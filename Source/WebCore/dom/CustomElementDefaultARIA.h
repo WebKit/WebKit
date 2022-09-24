@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class Element;
 class WeakPtrImplWithEventTargetData;
 
 class CustomElementDefaultARIA {

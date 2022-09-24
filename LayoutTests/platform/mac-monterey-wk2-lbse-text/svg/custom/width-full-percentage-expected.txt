@@ -6,8 +6,8 @@ layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRect {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=800.00] [height=600.00]
-layer at (46,-54) size 708x708 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGEllipse {circle} at (46,-54) size 708x708 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=400.00] [cy=300.00] [r=353.55]
+layer at (46.44,-53.56) size 708x708 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (46.44,-53.56) size 707.13x707.13 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=400.00] [cy=300.00] [r=353.55]
 layer at (0,0) size 800x600
   RenderSVGEllipse {ellipse} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FF0000]}] [cx=400.00] [cy=300.00] [rx=400.00] [ry=300.00]
 layer at (0,0) size 800x600

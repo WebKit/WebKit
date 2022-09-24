@@ -506,7 +506,7 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
 
     if (flow.containsFloats()) {
-        auto intrusiveFloatsWithMismatchingInlineDirection = flow.containingBlock() && (flow.containingBlock()->style().isLeftToRightDirection() != flow.style().isLeftToRightDirection() || !flow.style().isLeftToRightDirection());
+        auto intrusiveFloatsWithMismatchingInlineDirection = flow.containingBlock() && flow.containingBlock()->style().isLeftToRightDirection() != flow.style().isLeftToRightDirection();
         if (intrusiveFloatsWithMismatchingInlineDirection)
             SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
 

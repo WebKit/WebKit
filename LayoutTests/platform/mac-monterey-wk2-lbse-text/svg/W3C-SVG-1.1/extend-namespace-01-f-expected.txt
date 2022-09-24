@@ -4,43 +4,43 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (63,16) size 354x256
-  RenderSVGTransformableContainer {g} at (63,15) size 354x256
-layer at (63,16) size 354x18
-  RenderSVGTransformableContainer {g} at (0,0) size 354x18
-layer at (63,16) size 353x18
+layer at (63.45,15.52) size 354x256
+  RenderSVGTransformableContainer {g} at (63.45,15.52) size 353.09x254.72
+layer at (63.45,15.52) size 354x18
+  RenderSVGTransformableContainer {g} at (0,0) size 353.09x17.88
+layer at (63.45,15.52) size 353x18
   RenderSVGText {text} at (0,0) size 354x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 354x18
       chunk 1 (middle anchor) text run 1 at (63.46,30.00) startOffset 0 endOffset 51 width 353.08: "Pie chart built from data in a different namespace."
-layer at (140,70) size 201x201
-  RenderSVGTransformableContainer {g} at (76,54) size 201x201
+layer at (139.59,69.69) size 201x201
+  RenderSVGTransformableContainer {g} at (76.14,54.17) size 200.42x200.55
 layer at (240,92) size 101x79
-  RenderSVGPath {path} at (100,22) size 101x79 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF8888]}] [data="M 240 170 L 340 170 C 340.103 139.741 326.499 111.063 303 92 Z"]
-layer at (285,129) size 28x15
+  RenderSVGPath {path} at (100.41,22.31) size 100.02x78 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [fill={[type=SOLID] [color=#FF8888]}] [data="M 240 170 L 340 170 C 340.103 139.741 326.499 111.063 303 92 Z"]
+layer at (284.98,129.31) size 28x15
   RenderSVGText {text} at (145,59) size 29x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 29x16
       chunk 1 (middle anchor) text run 1 at (284.99,142.00) startOffset 0 endOffset 4 width 28.01: "East"
-layer at (192,70) size 112x101
-  RenderSVGPath {path} at (52,0) size 112x101 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#6D6D6D]}] [data="M 240 170 L 303 92 C 271.459 66.4464 227.6 62.4951 192 82 Z"]
-layer at (229,92) size 35x15
+layer at (192,69.69) size 112x101
+  RenderSVGPath {path} at (52.41,0) size 111x100.31 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#6D6D6D]}] [data="M 240 170 L 303 92 C 271.459 66.4464 227.6 62.4951 192 82 Z"]
+layer at (228.88,92.31) size 35x15
   RenderSVGText {text} at (89,22) size 35x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 35x16
       chunk 1 (middle anchor) text run 1 at (228.88,105.00) startOffset 0 endOffset 5 width 34.23: "North"
-layer at (140,82) size 101x129
-  RenderSVGPath {path} at (0,12) size 101x129 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#929292]}] [data="M 240 170 L 192 82 C 146.3 106.75 127.176 162.382 148 210 Z"]
-layer at (162,136) size 32x15
+layer at (139.59,82) size 101x129
+  RenderSVGPath {path} at (0,12.31) size 100.41x128.02 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#929292]}] [data="M 240 170 L 192 82 C 146.3 106.75 127.176 162.382 148 210 Z"]
+layer at (162.05,136.31) size 32x15
   RenderSVGText {text} at (22,66) size 33x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 32x16
       chunk 1 (middle anchor) text run 1 at (162.06,149.00) startOffset 0 endOffset 4 width 31.89: "West"
 layer at (148,170) size 93x99
-  RenderSVGPath {path} at (8,100) size 93x99 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B6B6B6]}] [data="M 240 170 L 148 210 C 160.888 239.682 187.343 261.293 219 268 Z"]
-layer at (176,207) size 45x15
+  RenderSVGPath {path} at (8.41,100.31) size 92x98 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#B6B6B6]}] [data="M 240 170 L 148 210 C 160.888 239.682 187.343 261.293 219 268 Z"]
+layer at (176.42,207.31) size 45x15
   RenderSVGText {text} at (36,137) size 46x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 46x16
       chunk 1 (middle anchor) text run 1 at (176.43,220.00) startOffset 0 endOffset 7 width 45.13: "Central"
 layer at (219,170) size 122x101
-  RenderSVGPath {path} at (79,100) size 122x101 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#DBDBDB]}] [data="M 240 170 L 219 268 C 248.573 274.352 279.433 266.977 302.939 247.939 C 326.444 228.902 340.07 200.248 340 170 Z"]
-layer at (263,207) size 37x15
+  RenderSVGPath {path} at (79.41,100.31) size 121.02x100.23 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#DBDBDB]}] [data="M 240 170 L 219 268 C 248.573 274.352 279.433 266.977 302.939 247.939 C 326.444 228.902 340.07 200.248 340 170 Z"]
+layer at (262.70,207.31) size 37x15
   RenderSVGText {text} at (123,137) size 37x17 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 37x16
       chunk 1 (middle anchor) text run 1 at (262.71,220.00) startOffset 0 endOffset 5 width 36.59: "South"

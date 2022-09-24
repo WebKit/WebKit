@@ -36,6 +36,7 @@
 #include "Notification.h"
 
 #include "DOMWindow.h"
+#include "DedicatedWorkerGlobalScope.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -56,6 +57,23 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(Notification);
+
+static Lock nonPersistentNotificationMapLock;
+static HashMap<UUID, Notification*>& nonPersistentNotificationMap() WTF_REQUIRES_LOCK(nonPersistentNotificationMapLock)
+{
+    static NeverDestroyed<HashMap<UUID, Notification*>> map;
+    return map;
+}
+
+static void addNotificationToMapIfNecessary(Notification& notification)
+{
+    if (notification.isPersistent())
+        return;
+
+    Locker locker { nonPersistentNotificationMapLock };
+    ASSERT(!nonPersistentNotificationMap().contains(notification.identifier()));
+    nonPersistentNotificationMap().add(notification.identifier(), &notification);
+}
 
 static ExceptionOr<Ref<SerializedScriptValue>> createSerializedScriptValue(ScriptExecutionContext& context, JSC::JSValue value)
 {
@@ -78,6 +96,7 @@ ExceptionOr<Ref<Notification>> Notification::create(ScriptExecutionContext& cont
 
     auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options), dataResult.releaseReturnValue()));
     notification->suspendIfNeeded();
+    addNotificationToMapIfNecessary(notification);
     notification->showSoon();
     return notification;
 }
@@ -91,6 +110,7 @@ ExceptionOr<Ref<Notification>> Notification::createForServiceWorker(ScriptExecut
     auto notification = adoptRef(*new Notification(context, UUID::createVersion4(), WTFMove(title), WTFMove(options), dataResult.releaseReturnValue()));
     notification->m_serviceWorkerRegistrationURL = serviceWorkerRegistrationURL;
     notification->suspendIfNeeded();
+    addNotificationToMapIfNecessary(notification);
     return notification;
 }
 
@@ -101,6 +121,7 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, Notifica
     auto notification = adoptRef(*new Notification(context, data.notificationID, WTFMove(data.title), WTFMove(options), SerializedScriptValue::createFromWireBytes(WTFMove(data.data))));
     notification->suspendIfNeeded();
     notification->m_serviceWorkerRegistrationURL = WTFMove(data.serviceWorkerRegistrationURL);
+    addNotificationToMapIfNecessary(notification);
     return notification;
 }
 
@@ -114,12 +135,13 @@ Notification::Notification(ScriptExecutionContext& context, UUID identifier, Str
     , m_tag(WTFMove(options.tag).isolatedCopy())
     , m_dataForBindings(WTFMove(dataForBindings))
     , m_state(Idle)
-    , m_contextIdentifier(context.identifier())
 {
     if (context.isDocument())
         m_notificationSource = NotificationSource::Document;
     else if (context.isServiceWorkerGlobalScope())
         m_notificationSource = NotificationSource::ServiceWorker;
+    else if (is<DedicatedWorkerGlobalScope>(context))
+        m_notificationSource = NotificationSource::DedicatedWorker;
     else
         RELEASE_ASSERT_NOT_REACHED();
 
@@ -132,6 +154,12 @@ Notification::Notification(ScriptExecutionContext& context, UUID identifier, Str
 
 Notification::~Notification()
 {
+    if (!isPersistent()) {
+        Locker locker { nonPersistentNotificationMapLock };
+        ASSERT(nonPersistentNotificationMap().contains(identifier()));
+        nonPersistentNotificationMap().remove(identifier());
+    }
+
     stopResourcesLoader();
 }
 
@@ -174,6 +202,7 @@ void Notification::show(CompletionHandler<void()>&& callback)
 
     if (client->checkPermission(context) != Permission::Granted) {
         switch (m_notificationSource) {
+        case NotificationSource::DedicatedWorker:
         case NotificationSource::Document:
             dispatchErrorEvent();
             break;
@@ -191,8 +220,10 @@ void Notification::show(CompletionHandler<void()>&& callback)
     m_resourcesLoader->start([this, client, callback = scope.release()](RefPtr<NotificationResources>&& resources) mutable {
         CompletionHandlerCallingScope scope { WTFMove(callback) };
 
+        auto* context = scriptExecutionContext();
+
         m_resources = WTFMove(resources);
-        if (m_state == Idle && client->show(*this, scope.release()))
+        if (m_state == Idle && context && client->show(*context, data(), this->resources(), scope.release()))
             m_state = Showing;
         m_resourcesLoader = nullptr;
     });
@@ -206,7 +237,7 @@ void Notification::close()
         break;
     case Showing:
         if (auto* client = clientFromContext())
-            client->cancel(*this);
+            client->cancel(data());
         break;
     case Closed:
         break;
@@ -235,7 +266,7 @@ void Notification::stop()
         return;
 
     if (auto* client = clientFromContext())
-        client->notificationObjectDestroyed(*this);
+        client->notificationObjectDestroyed(data());
 }
 
 void Notification::suspend(ReasonForSuspension)
@@ -252,10 +283,14 @@ void Notification::finalize()
 
 void Notification::dispatchShowEvent()
 {
-    ASSERT(isMainThread());
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    ASSERT(context->isContextThread());
     ASSERT(!isPersistent());
 
-    if (m_notificationSource != NotificationSource::Document)
+    if (m_notificationSource == NotificationSource::ServiceWorker)
         return;
 
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().showEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -263,8 +298,12 @@ void Notification::dispatchShowEvent()
 
 void Notification::dispatchClickEvent()
 {
-    ASSERT(isMainThread());
-    ASSERT(m_notificationSource == NotificationSource::Document);
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    ASSERT(context->isContextThread());
+    ASSERT(m_notificationSource != NotificationSource::ServiceWorker);
     ASSERT(!isPersistent());
 
     queueTaskKeepingObjectAlive(*this, TaskSource::UserInteraction, [this] {
@@ -275,8 +314,12 @@ void Notification::dispatchClickEvent()
 
 void Notification::dispatchCloseEvent()
 {
-    ASSERT(isMainThread());
-    ASSERT(m_notificationSource == NotificationSource::Document);
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    ASSERT(context->isContextThread());
+    ASSERT(m_notificationSource != NotificationSource::ServiceWorker);
     ASSERT(!isPersistent());
 
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -285,8 +328,12 @@ void Notification::dispatchCloseEvent()
 
 void Notification::dispatchErrorEvent()
 {
-    ASSERT(isMainThread());
-    ASSERT(m_notificationSource == NotificationSource::Document);
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return;
+
+    ASSERT(context->isContextThread());
+    ASSERT(m_notificationSource != NotificationSource::ServiceWorker);
     ASSERT(!isPersistent());
 
     queueTaskToDispatchEvent(*this, TaskSource::UserInteraction, Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -360,19 +407,37 @@ NotificationData Notification::data() const
     RELEASE_ASSERT(sessionID);
 
     return {
-        m_title.isolatedCopy(),
-        m_body.isolatedCopy(),
-        m_icon.string().isolatedCopy(),
+        m_title,
+        m_body,
+        m_icon.string(),
         m_tag,
         m_lang,
         m_direction,
-        scriptExecutionContext()->securityOrigin()->toString().isolatedCopy(),
-        m_serviceWorkerRegistrationURL.isolatedCopy(),
+        scriptExecutionContext()->securityOrigin()->toString(),
+        m_serviceWorkerRegistrationURL,
         identifier(),
+        context.identifier(),
         *sessionID,
         MonotonicTime::now(),
         m_dataForBindings->wireBytes()
     };
+}
+
+void Notification::ensureOnNotificationThread(ScriptExecutionContextIdentifier contextIdentifier, UUID notificationIdentifier, Function<void(Notification*)>&& task)
+{
+    ScriptExecutionContext::ensureOnContextThread(contextIdentifier, [notificationIdentifier = notificationIdentifier, task = WTFMove(task)](auto&) mutable {
+        RefPtr<Notification> notification;
+        {
+            Locker locker { nonPersistentNotificationMapLock };
+            notification = nonPersistentNotificationMap().get(notificationIdentifier);
+        }
+        task(notification.get());
+    });
+}
+
+void Notification::ensureOnNotificationThread(const NotificationData& notification, Function<void(Notification*)>&& task)
+{
+    ensureOnNotificationThread(notification.contextIdentifier, notification.notificationID, WTFMove(task));
 }
 
 } // namespace WebCore

@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,42) size 89x19
             text run at (0,42) width 89: "  Select File:  "
           RenderFileUploadControl {INPUT} at (88,43) size 267x20 "no file selected" [color=#3C3C434D]
-            RenderButton {INPUT} at (0,0) size 86x20 [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
+            RenderButton {INPUT} at (0,0) size 86x20 [color=#3C3C434C] [bgcolor=#EEEEEF] [border: (1px solid #FFFFFF)]
               RenderBlock (anonymous) at (12,3) size 62x14
                 RenderText at (0,0) size 62x14
                   text run at (0,0) width 62: "Choose File"

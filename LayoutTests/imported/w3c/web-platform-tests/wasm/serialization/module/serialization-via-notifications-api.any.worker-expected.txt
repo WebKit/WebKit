@@ -1,12 +1,4 @@
 
-FAIL WebAssembly.Module cloning via the Notifications API's data member: basic case assert_throws_dom: function "() => {
-    new Notification("Bob: Hi", { data: createEmptyWasmModule() });
-  }" threw object "ReferenceError: Can't find variable: Notification" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
-FAIL WebAssembly.Module cloning via the Notifications API's data member: is interleaved correctly assert_throws_dom: function "() => {
-    new Notification("Bob: Hi", { data: [
-      { get x() { getter1Called = true; return 5; } },
-      createEmptyWasmModule(),
-      { get x() { getter2Called = true; return 5; } }
-    ]});
-  }" threw object "ReferenceError: Can't find variable: Notification" that is not a DOMException DataCloneError: property "code" is equal to undefined, expected 25
+PASS WebAssembly.Module cloning via the Notifications API's data member: basic case
+PASS WebAssembly.Module cloning via the Notifications API's data member: is interleaved correctly
 

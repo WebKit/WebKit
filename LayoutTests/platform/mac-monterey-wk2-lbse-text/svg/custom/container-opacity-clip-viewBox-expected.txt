@@ -10,10 +10,10 @@ layer at (-83,-84) size 166x148 backgroundClip at (0,0) size 800x600 clip at (0,
   RenderSVGTransformableContainer {g} at (-83,-84) size 166x148
 layer at (0,0) size 200x200 clip at (0,0) size 117x116
   RenderSVGViewportContainer {svg} at (83,84) size 200x200
-layer at (-83,-84) size 166x148 backgroundClip at (60,38) size 200x200 clip at (60,38) size 200x200
+layer at (-83,-84) size 166x148 backgroundClip at (59.52,38.19) size 200x200 clip at (59.52,38.19) size 200x200
   RenderSVGRect {rect} at (-83,-84) size 166x148 [fill={[type=SOLID] [color=#008000]}] [x=-83.00] [y=-84.00] [width=166.00] [height=148.00]
 layer at (0,-14) size 368x48 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,-14) size 368x48
+  RenderSVGTransformableContainer {g} at (0,-14) size 367.91x48
 layer at (0,-14) size 368x48 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 368x48 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 268x18

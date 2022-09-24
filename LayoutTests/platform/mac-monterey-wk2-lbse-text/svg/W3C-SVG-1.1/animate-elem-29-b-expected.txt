@@ -18,7 +18,7 @@ layer at (320,0) size 160x180
   RenderSVGTransformableContainer {a} at (0,0) size 160x180
 layer at (320,0) size 160x180
   RenderSVGRect {rect} at (0,0) size 160x180 [fill={[type=SOLID] [color=#008000]}] [x=320.00] [y=0.00] [width=160.00] [height=180.00]
-layer at (330,63) size 96x35
+layer at (330,62.50) size 96x35
   RenderSVGText {text} at (10,62) size 96x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 96x35
       chunk 1 text run 1 at (330.00,90.00) startOffset 0 endOffset 7 width 95.84: "Fade in"
@@ -26,7 +26,7 @@ layer at (320,180) size 160x180
   RenderSVGTransformableContainer {a} at (0,180) size 160x180
 layer at (320,180) size 160x180
   RenderSVGRect {rect} at (0,0) size 160x180 [fill={[type=SOLID] [color=#800000]}] [x=320.00] [y=180.00] [width=160.00] [height=180.00]
-layer at (330,253) size 113x35
+layer at (330,252.50) size 113x35
   RenderSVGText {text} at (10,72) size 113x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 113x35
       chunk 1 text run 1 at (330.00,280.00) startOffset 0 endOffset 8 width 112.50: "Fade out"

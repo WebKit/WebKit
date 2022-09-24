@@ -339,6 +339,99 @@ ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, co
     return result;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-differenceisodate
+ISO8601::Duration TemporalCalendar::isoDateDifference(JSGlobalObject* globalObject, const ISO8601::PlainDate& date1, const ISO8601::PlainDate& date2, TemporalUnit largestUnit)
+{
+    ASSERT(largestUnit <= TemporalUnit::Day);
+
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (largestUnit <= TemporalUnit::Month) {
+        auto sign = isoDateCompare(date2, date1);
+        if (!sign)
+            return { };
+
+        double years = date2.year() - date1.year();
+        ISO8601::PlainDate mid = isoDateAdd(globalObject, date1, { years, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, TemporalOverflow::Constrain);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto midSign = isoDateCompare(date2, mid);
+        if (!midSign) {
+            if (largestUnit == TemporalUnit::Month)
+                return { 0, 12 * years, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            return { years, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        }
+
+        double months = date2.month() - date1.month();
+        if (midSign != sign) {
+            years -= sign;
+            months += 12 * sign;
+        }
+        mid = isoDateAdd(globalObject, date1, { years, months, 0, 0, 0, 0, 0, 0, 0, 0 }, TemporalOverflow::Constrain);
+        RETURN_IF_EXCEPTION(scope, { });
+        midSign = isoDateCompare(date2, mid);
+        if (!midSign) {
+            if (largestUnit == TemporalUnit::Month)
+                return { 0, months + 12 * years, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            return { years, months, 0, 0, 0, 0, 0, 0, 0, 0 };
+        }
+
+        if (midSign != sign) {
+            months -= sign;
+            if (months == -sign) {
+                years -= sign;
+                months = 11 * sign;
+            }
+            mid = isoDateAdd(globalObject, date1, { years, months, 0, 0, 0, 0, 0, 0, 0, 0 }, TemporalOverflow::Constrain);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        double days;
+        if (mid.month() == date2.month())
+            days = date2.day() - mid.day();
+        else if (sign < 0)
+            days = -mid.day() - (ISO8601::daysInMonth(date2.year(), date2.month()) - date2.day());
+        else
+            days = date2.day() + (ISO8601::daysInMonth(mid.year(), mid.month()) - mid.day());
+
+        if (largestUnit == TemporalUnit::Month)
+            return { 0, months + 12 * years, 0, days, 0, 0, 0, 0, 0, 0 };
+
+        return { years, months, 0, days, 0, 0, 0, 0, 0, 0 };
+    }
+
+    double days = dateToDaysFrom1970(static_cast<int>(date2.year()), static_cast<int>(date2.month() - 1), static_cast<int>(date2.day()))
+        - dateToDaysFrom1970(static_cast<int>(date1.year()), static_cast<int>(date1.month() - 1), static_cast<int>(date1.day()));
+
+    double weeks = 0;
+    if (largestUnit == TemporalUnit::Week) {
+        weeks = std::trunc(days / 7);
+        days = std::fmod(days, 7) + 0.0;
+    }
+
+    return { 0, 0, weeks, days, 0, 0, 0, 0, 0, 0 };
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-compareisodate
+int32_t TemporalCalendar::isoDateCompare(const ISO8601::PlainDate& d1, const ISO8601::PlainDate& d2)
+{
+    if (d1.year() > d2.year())
+        return 1;
+    if (d1.year() < d2.year())
+        return -1;
+    if (d1.month() > d2.month())
+        return 1;
+    if (d1.month() < d2.month())
+        return -1;
+    if (d1.day() > d2.day())
+        return 1;
+    if (d1.day() < d2.day())
+        return -1;
+    return 0;
+}
+
 bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* other)
 {
     VM& vm = globalObject->vm();

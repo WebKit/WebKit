@@ -4,17 +4,17 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,16) size 1022x989 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (10,15) size 1022x989
-layer at (10,16) size 346x18
+layer at (10,15.59) size 1022x989 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (10,15.59) size 1021.02x988.02
+layer at (10,15.59) size 346x18
   RenderSVGText {text} at (0,0) size 347x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 347x19
       chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 40 width 346.16: "Test that getBBox() works before SVGLoad"
 layer at (10,40) size 50x51
-  RenderSVGRect {rect} at (0,24) size 50x51 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+  RenderSVGRect {rect} at (0,24.41) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.7 $"

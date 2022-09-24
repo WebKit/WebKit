@@ -24,6 +24,7 @@
  */
 
 [
+    EnabledBySetting=IndexedDBAPIEnabled,
     SkipVTableValidation,
     Exposed=(Window,Worker)
 ] interface IDBFactory {

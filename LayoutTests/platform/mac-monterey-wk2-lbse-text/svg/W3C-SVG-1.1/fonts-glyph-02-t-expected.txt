@@ -4,17 +4,17 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (100,36) size 224x197
-  RenderSVGTransformableContainer {g} at (100,35) size 224x197
-layer at (100,36) size 184x81
-  RenderSVGTransformableContainer {g} at (0,0) size 184x81
-layer at (100,36) size 184x80
+layer at (100,35.98) size 224x197
+  RenderSVGTransformableContainer {g} at (100,35.98) size 223.92x195.94
+layer at (100,35.98) size 184x81
+  RenderSVGTransformableContainer {g} at (0,0) size 184x80.03
+layer at (100,35.98) size 184x80
   RenderSVGText {text} at (0,0) size 184x81 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 184x81
       chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 5 width 184.00 RTL: "\x{69A} \x{69A}\x{69A}\x{69A}"
-layer at (100,118) size 224x114
-  RenderSVGTransformableContainer {g} at (0,82) size 224x114
-layer at (100,118) size 224x114
+layer at (100,117.98) size 224x114
+  RenderSVGTransformableContainer {g} at (0,82) size 223.92x113.94
+layer at (100,117.98) size 224x114
   RenderSVGText {text} at (0,0) size 224x114 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 224x114
       chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 5 width 223.92 RTL: "\x{62E} \x{62E}\x{62E}\x{62E}"

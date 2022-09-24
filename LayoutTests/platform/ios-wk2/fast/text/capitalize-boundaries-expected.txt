@@ -43,8 +43,8 @@ layer at (0,0) size 800x1290
               RenderText {#text} at (21,2) size 12x19
                 text run at (21,2) width 12: "el"
             RenderTableCell {TD} at (57,94) size 725x24 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 204x19
-                text run at (2,2) width 204: "\x{3B3}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3C3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{3AE}\x{3C4}\x{3B1}"
+              RenderText {#text} at (2,2) size 205x19
+                text run at (2,2) width 205: "\x{3B3}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3C3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{3AE}\x{3C4}\x{3B1}"
           RenderTableRow {TR} at (0,120) size 784x64
             RenderTableCell {TH} at (2,140) size 54x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (18,2) size 17x19

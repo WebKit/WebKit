@@ -24,6 +24,7 @@
  */
 
 [
+    EnabledBySetting=IndexedDBAPIEnabled,
     Exposed=(Window,Worker)
 ] interface IDBKeyRange {
     readonly attribute [OverrideIDLType=IDLIDBKey] any lower;

@@ -36,12 +36,12 @@
 #include <unistd.h>
 #endif
 
-#if PLATFORM(COCOA) && USE(RUNNINGBOARD)
+#if PLATFORM(IOS_FAMILY)
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS RBSAssertion;
 OBJC_CLASS WKRBSAssertionDelegate;
-#endif // PLATFORM(COCOA) && USE(RUNNINGBOARD)
+#endif // PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -87,7 +87,7 @@ protected:
     void acquireAsync(CompletionHandler<void()>&&);
     void acquireSync();
 
-#if PLATFORM(COCOA) && USE(RUNNINGBOARD)
+#if PLATFORM(IOS_FAMILY)
     void processAssertionWillBeInvalidated();
     virtual void processAssertionWasInvalidated();
 #endif
@@ -96,7 +96,7 @@ private:
     const ProcessAssertionType m_assertionType;
     const ProcessID m_pid;
     const String m_reason;
-#if PLATFORM(COCOA) && USE(RUNNINGBOARD)
+#if PLATFORM(IOS_FAMILY)
     RetainPtr<RBSAssertion> m_rbsAssertion;
     RetainPtr<WKRBSAssertionDelegate> m_delegate;
     bool m_wasInvalidated { false };

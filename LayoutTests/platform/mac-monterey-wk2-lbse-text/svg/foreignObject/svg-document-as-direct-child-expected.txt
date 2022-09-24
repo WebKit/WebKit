@@ -12,7 +12,7 @@ layer at (0,0) size 300x150 backgroundClip at (0,0) size 300x100 clip at (0,0) s
 layer at (0,0) size 300x150 backgroundClip at (0,0) size 300x100 clip at (0,0) size 300x100
   RenderSVGViewportContainer at (0,0) size 300x150
 layer at (0,6) size 34x18
-  RenderSVGTransformableContainer {g} at (0,6) size 34x18
+  RenderSVGTransformableContainer {g} at (0,6) size 33.77x18
 layer at (0,6) size 34x18
   RenderSVGText {text} at (0,0) size 34x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 34x18

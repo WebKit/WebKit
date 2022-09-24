@@ -193,7 +193,7 @@ void RemoteGraphicsContextGLProxy::paintRenderingResultsToCanvas(ImageBuffer& bu
     // fulfilled. For below, we cannot create a new flush id since we go through different sequence (RemoteGraphicsContextGL sequence)
 
     // FIXME: Maybe implement IPC::Fence or something similar.
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintRenderingResultsToCanvas(buffer.renderingResourceIdentifier()), Messages::RemoteGraphicsContextGL::PaintRenderingResultsToCanvas::Reply());
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintRenderingResultsToCanvas(buffer.renderingResourceIdentifier()));
     if (!sendResult) {
         markContextLost();
         return;
@@ -205,7 +205,7 @@ void RemoteGraphicsContextGLProxy::paintCompositedResultsToCanvas(ImageBuffer& b
     if (isContextLost())
         return;
     buffer.flushDrawingContext();
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToCanvas(buffer.renderingResourceIdentifier()), Messages::RemoteGraphicsContextGL::PaintCompositedResultsToCanvas::Reply());
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToCanvas(buffer.renderingResourceIdentifier()));
     if (!sendResult) {
         markContextLost();
         return;
@@ -217,12 +217,12 @@ RefPtr<WebCore::VideoFrame> RemoteGraphicsContextGLProxy::paintCompositedResults
 {
     if (isContextLost())
         return nullptr;
-    std::optional<RemoteVideoFrameProxy::Properties> result;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToVideoFrame(), Messages::RemoteGraphicsContextGL::PaintCompositedResultsToVideoFrame::Reply(result));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PaintCompositedResultsToVideoFrame());
     if (!sendResult) {
         markContextLost();
         return nullptr;
     }
+    auto [result] = sendResult.takeReply();
     if (!result)
         return nullptr;
     return RemoteVideoFrameProxy::create(m_gpuProcessConnection->connection(), m_gpuProcessConnection->videoFrameObjectHeapProxy(), WTFMove(*result));
@@ -238,13 +238,13 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromMedia(MediaPlayer& mediaPlayer
     // Video in WP while WebGL in GPUP is not supported.
     if (!videoFrame || !is<RemoteVideoFrameProxy>(*videoFrame))
         return false;
-    bool result = false;
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(downcast<RemoteVideoFrameProxy>(*videoFrame).newReadReference(), texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY), Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame::Reply(result));
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CopyTextureFromVideoFrame(downcast<RemoteVideoFrameProxy>(*videoFrame).newReadReference(), texture, target, level, internalFormat, format, type, premultiplyAlpha, flipY));
     if (!sendResult) {
         markContextLost();
         return false;
     }
 
+    auto [result] = sendResult.takeReply();
     return result;
 }
 #endif
@@ -262,10 +262,10 @@ void RemoteGraphicsContextGLProxy::synthesizeGLError(GCGLenum error)
 GCGLenum RemoteGraphicsContextGLProxy::getError()
 {
     if (!isContextLost()) {
-        uint32_t returnValue = 0;
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetError(), Messages::RemoteGraphicsContextGL::GetError::Reply(returnValue));
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::GetError());
         if (!sendResult)
             markContextLost();
+        auto [returnValue] = sendResult.takeReplyOr(0);
         return static_cast<GCGLenum>(returnValue);
     }
     return NO_ERROR;
@@ -282,13 +282,13 @@ void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTest
 
 void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLSpan<GCGLvoid> data)
 {
-    IPC::ArrayReference<uint8_t> dataReply;
     if (!isContextLost()) {
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels0(x, y, width, height, format, type, IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data()), data.size())), Messages::RemoteGraphicsContextGL::ReadnPixels0::Reply(dataReply));
-        if (!sendResult)
-            markContextLost();
-        else
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels0(x, y, width, height, format, type, IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data()), data.size())));
+        if (sendResult) {
+            auto [dataReply] = sendResult.takeReply();
             memcpy(data.data(), dataReply.data(), data.size());
+        } else
+            markContextLost();
     }
 }
 

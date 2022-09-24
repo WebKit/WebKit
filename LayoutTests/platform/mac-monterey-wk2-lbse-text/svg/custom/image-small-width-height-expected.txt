@@ -11,14 +11,14 @@ layer at (0,0) size 100x100
 layer at (0,0) size 100x100
   RenderSVGImage {image} at (0,0) size 100x100
 layer at (0,0) size 1x1
-  RenderSVGTransformableContainer {g} at (0,0) size 1x1
+  RenderSVGTransformableContainer {g} at (0,0) size 0.50x0.50
 layer at (0,0) size 1x1
-  RenderSVGRect {rect} at (0,0) size 1x1 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=0.50] [height=0.50]
+  RenderSVGRect {rect} at (0,0) size 0.50x0.50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=0.50] [height=0.50]
 layer at (0,0) size 1x1
-  RenderSVGImage {image} at (0,0) size 1x1
-layer at (0,-8) size 249x102 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (0,-9) size 249x102
-layer at (0,-8) size 248x101 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGImage {image} at (0,0) size 0.50x0.50
+layer at (0,-8.30) size 249x102 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGTransformableContainer {g} at (0,-8.30) size 248.45x100.52
+layer at (0,-8.30) size 248x101 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 249x101 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 222x11
       RenderSVGInlineText {#text} at (0,0) size 222x11

@@ -376,6 +376,36 @@ TEST(WKWebViewEditActions, ModifyTextWritingDirection)
     EXPECT_WK_STREQ("normal", [webView stringByEvaluatingJavaScript:@"getComputedStyle(text).unicodeBidi"]);
 }
 
+TEST(WKWebViewEditActions, CopyFontAtCaretSelection)
+{
+    auto webView = webViewForEditActionTesting(@"<p id='source' style='color: rgb(255, 0, 0);'>Source</p><p id='target'>Target</p>");
+    [webView objectByEvaluatingJavaScript:@"getSelection().setPosition(source.childNodes[0], 3)"];
+
+    auto validateAndPerformAction = [](TestWKWebView *webView, SEL action) {
+        auto menu = adoptNS([NSMenu new]);
+        auto item = adoptNS([NSMenuItem new]);
+        [item setTarget:webView];
+        [item setAction:action];
+        [menu addItem:item.get()];
+        [webView validateUserInterfaceItem:item.get()];
+        [webView waitForNextPresentationUpdate];
+        EXPECT_TRUE([item isEnabled]);
+
+        [menu performActionForItemAtIndex:0];
+        [webView waitForNextPresentationUpdate];
+    };
+
+    validateAndPerformAction(webView.get(), @selector(copyFont:));
+    [webView objectByEvaluatingJavaScript:@"getSelection().selectAllChildren(target)"];
+    validateAndPerformAction(webView.get(), @selector(pasteFont:));
+
+    auto getComputedColor = @"let deepestChild = target;"
+        "while (deepestChild.children[0])"
+        "  deepestChild = deepestChild.children[0];"
+        "getComputedStyle(deepestChild).color";
+    EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:getComputedColor]);
+}
+
 #endif
 
 } // namespace TestWebKitAPI

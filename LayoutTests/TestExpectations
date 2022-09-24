@@ -70,6 +70,7 @@ fast/text/mac [ Skip ]
 scrollingcoordinator [ Skip ]
 media/media-vp8-hiddenframes.html [ Skip ] # Requires MediaFormatReader and VP8 decoder
 media/ios [ Skip ]
+media/encrypted-media/encrypted-media-append-encrypted-unencrypted.html [ Skip ]
 media/media-source/media-source-append-play-corrupt-aac.html [ Skip ]
 media/modern-media-controls/ios-inline-media-controls/touch [ Skip ]
 media/modern-media-controls/overflow-support [ Skip ]
@@ -378,7 +379,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-
 # Skip html/webappapis that are timing out.
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/bailout-exception-vs-return-xml.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/ignore-opens-during-unload.window.html [ Skip ]
-imported/w3c/web-platform-tests/html/webappapis/dynamic-markup-insertion/opening-the-input-stream/tasks.window.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/event-loops/fully_active_document.window.html [ Skip ]
 
 # Skip WPT webaudio tests that are timing out.
@@ -423,6 +423,7 @@ http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdE
 http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/WebIDL/current-realm.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/anonymous-iframe/embedding.tentative.https.window.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/failure-check-sequence.https.html [ DumpJSConsoleLogInStdErr ]
@@ -459,6 +460,7 @@ imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.any.w
 imported/w3c/web-platform-tests/html/webappapis/user-prompts/print-during-beforeunload.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/xhr.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/notifications/instance.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-resources.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/writable-streams/write.any.html [ DumpJSConsoleLogInStdErr ]
@@ -4173,7 +4175,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/scale-tra
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-007.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-008.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-box/fill-box-002.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-box/view-box-mutation-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-004.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-005.html [ ImageOnlyFailure ]
@@ -6021,6 +6022,13 @@ imported/w3c/web-platform-tests/permissions/permissions-cg.https.html [ Failure 
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/cors-crossorigin-requests.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/cors-crossorigin-requests.html [ Pass Failure ]
+
+# Screen Wake Lock tests that are timing out since their import.
+imported/w3c/web-platform-tests/screen-wake-lock/wakelock-disabled-by-feature-policy.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy-attribute.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy.https.sub.html [ Skip ]
+imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html [ Skip ]
 
 # Disable ShadowRealm (while running to ensure we do not crash)
 http/tests/misc/iframe-shadow-realm.html [ Pass Failure ]

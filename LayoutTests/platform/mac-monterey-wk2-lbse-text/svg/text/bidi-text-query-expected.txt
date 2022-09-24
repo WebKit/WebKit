@@ -4,26 +4,26 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
-layer at (10,34) size 127x51
-  RenderSVGTransformableContainer {g} at (10,33) size 127x51
-layer at (10,34) size 127x20
+layer at (10,33.70) size 127x51
+  RenderSVGTransformableContainer {g} at (10,33.70) size 126.55x50.13
+layer at (10,33.70) size 127x20
   RenderSVGText {text} at (0,0) size 127x21 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 127x21
       RenderSVGInlineText {#text} at (0,0) size 127x21
         chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 17 width 126.54: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}\x{60C} W3C"
-layer at (10,64) size 124x20
+layer at (10,63.70) size 124x20
   RenderSVGText {text} at (0,30) size 124x21 contains 1 chunk(s)
     RenderSVGTSpan {tspan} at (0,0) size 124x21
       RenderSVGInlineText {#text} at (0,0) size 124x21
         chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 12 width 72.76 RTL: "\x{646}\x{634}\x{627}\x{637} \x{627}\x{644}\x{62A}\x{62F}\x{648}\x{64A}\x{644}"
         chunk 1 text run 1 at (82.76,80.00) startOffset 0 endOffset 5 width 50.74: "\x{60C} W3C"
-layer at (10,34) size 127x51
-  RenderSVGTransformableContainer {g} at (0,0) size 127x51
-layer at (10,34) size 82x21
-  RenderSVGRect {svg:rect} at (0,0) size 82x21 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=33.71] [width=81.54] [height=20.11]
-layer at (97,34) size 41x21
-  RenderSVGRect {svg:rect} at (86,0) size 41x21 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=96.54] [y=33.71] [width=40.00] [height=20.11]
-layer at (10,64) size 79x21
-  RenderSVGRect {svg:rect} at (0,30) size 79x21 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=63.71] [width=78.50] [height=20.11]
-layer at (93,64) size 41x21
-  RenderSVGRect {svg:rect} at (83,30) size 41x21 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=93.50] [y=63.71] [width=40.00] [height=20.11]
+layer at (10,33.70) size 127x51
+  RenderSVGTransformableContainer {g} at (0,0) size 126.55x50.13
+layer at (10,33.70) size 82x21
+  RenderSVGRect {svg:rect} at (0,0) size 81.55x20.13 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=33.71] [width=81.54] [height=20.11]
+layer at (96.53,33.70) size 41x21
+  RenderSVGRect {svg:rect} at (86.53,0) size 40.02x20.13 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=96.54] [y=33.71] [width=40.00] [height=20.11]
+layer at (10,63.70) size 79x21
+  RenderSVGRect {svg:rect} at (0,30) size 78.50x20.13 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=63.71] [width=78.50] [height=20.11]
+layer at (93.48,63.70) size 41x21
+  RenderSVGRect {svg:rect} at (83.48,30) size 40.02x20.13 [fill={[type=SOLID] [color=#008000] [opacity=0.40]}] [x=93.50] [y=63.71] [width=40.00] [height=20.11]

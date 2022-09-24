@@ -4,11 +4,11 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (61,10) size 376x499 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (60,10) size 376x499
-layer at (61,10) size 376x499 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 376x499
-layer at (61,10) size 19x336
+layer at (60.63,10) size 376x499 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (60.63,10) size 375.38x498.42
+layer at (60.63,10) size 376x499 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 375.38x498.42
+layer at (60.63,10) size 19x336
   RenderSVGText {text} at (0,0) size 19x336 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 19x336
       chunk 1 (vertical) text run 1 at (64.41,10.00) startOffset 0 endOffset 1 height 18.73: "T"
@@ -41,7 +41,7 @@ layer at (61,10) size 19x336
       chunk 1 (vertical) text run 28 at (64.41,323.21) startOffset 27 endOffset 28 height 18.73: "e"
       chunk 1 (vertical) text run 29 at (64.41,330.99) startOffset 28 endOffset 29 height 18.73: "s"
       chunk 1 (vertical) text run 30 at (64.41,337.99) startOffset 29 endOffset 30 height 18.73: "e"
-layer at (221,10) size 17x498 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (221.30,10) size 17x498 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (160,0) size 19x499 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 18x499
       chunk 1 (vertical) text run 1 at (224.81,10.00) startOffset 0 endOffset 1 height 17.39: "J"
@@ -117,7 +117,7 @@ layer at (365,13) size 10x468 backgroundClip at (0,0) size 480x360 clip at (0,0)
       chunk 1 (vertical) text run 33 at (366.01,441.16) startOffset 32 endOffset 33 height 13.38: "\x{305B}"
       chunk 1 (vertical) text run 34 at (366.01,454.54) startOffset 33 endOffset 34 height 13.38: "\x{3093}"
       chunk 1 (vertical) text run 35 at (366.01,467.92) startOffset 34 endOffset 35 height 13.38: "\x{3002}"
-layer at (99,80) size 43x174
+layer at (98.58,80) size 43x174
   RenderSVGText {text} at (37,70) size 44x174 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 43x174
       chunk 1 (vertical) text run 1 at (107.23,80.00) startOffset 0 endOffset 1 height 42.82: "x"
@@ -127,7 +127,7 @@ layer at (99,80) size 43x174
       chunk 1 (vertical) text run 5 at (107.23,125.06) startOffset 4 endOffset 5 height 42.82: "\x{6211}"
       chunk 1 (vertical) text run 6 at (107.23,167.87) startOffset 5 endOffset 6 height 42.82: "\x{80FD}"
       chunk 1 (vertical) text run 7 at (107.23,210.69) startOffset 6 endOffset 7 height 42.82: "\x{541E}"
-layer at (256,80) size 48x154
+layer at (255.91,80) size 48x154
   RenderSVGText {text} at (195,70) size 49x155 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 49x155
       chunk 1 (vertical) text run 1 at (265.64,80.00) startOffset 0 endOffset 1 height 48.17: "s"

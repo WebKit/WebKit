@@ -4,11 +4,11 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (155,10) size 170x23
+layer at (155.31,10) size 170x23
   RenderSVGText {text} at (155,10) size 170x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 170x23
       chunk 1 (middle anchor) text run 1 at (155.32,28.00) startOffset 0 endOffset 22 width 169.37: "'marker' property test"
-layer at (172,52) size 136x23
+layer at (171.70,52) size 136x23
   RenderSVGText {text} at (171,52) size 138x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 137x23
       chunk 1 (middle anchor) text run 1 at (171.70,70.00) startOffset 0 endOffset 17 width 136.59: "'marker' property"
@@ -24,7 +24,7 @@ layer at (280,60) size 90x80
   RenderSVGPath {line} at (270,0) size 90x80 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [x1=280.00] [y1=60.00] [x2=370.00] [y2=140.00]
 layer at (280,60) size 90x80
   RenderSVGPath {line} at (270,0) size 90x80 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700] [fill rule=EVEN-ODD]}] [start marker=marker1] [middle marker=marker1] [end marker=marker1] [x1=370.00] [y1=60.00] [x2=280.00] [y2=140.00]
-layer at (33,182) size 414x23
+layer at (33.44,182) size 414x23
   RenderSVGText {text} at (33,182) size 414x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 414x23
       chunk 1 (middle anchor) text run 1 at (33.44,200.00) startOffset 0 endOffset 53 width 413.12: "'marker-start', 'marker-mid' & 'marker-end' attribute"

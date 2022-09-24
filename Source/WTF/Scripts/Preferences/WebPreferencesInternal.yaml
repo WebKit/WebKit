@@ -142,6 +142,18 @@ CSSOMViewScrollingAPIEnabled:
     WebCore:
       default: false
 
+# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
+CacheAPIEnabled:
+  type: bool
+  humanReadableName: "Cache API"
+  humanReadableDescription: "Cache API"
+  webcoreBinding: DeprecatedGlobalSettings
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+
 CaptureAudioInGPUProcessEnabled:
   type: bool
   humanReadableName: "GPU Process: Audio Capture"
@@ -278,6 +290,30 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
+FetchAPIEnabled:
+  type: bool
+  humanReadableName: "Fetch API"
+  humanReadableDescription: "Fetch API"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+FileReaderAPIEnabled:
+  type: bool
+  humanReadableName: "FileReader API"
+  humanReadableDescription: "FileReader API"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 FlexFormattingContextIntegrationEnabled:
   type: bool
   humanReadableName: "Next-generation flex layout integration (FFC)"
@@ -378,6 +414,18 @@ ImageAnalysisDuringFindInPageEnabled:
       default: false
     WebCore:
       default: false
+
+IndexedDBAPIEnabled:
+  type: bool
+  humanReadableName: "IndexedDB API"
+  humanReadableDescription: "IndexedDB API"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
 
 InlineFormattingContextIntegrationEnabled:
   type: bool
@@ -882,6 +930,18 @@ SpeakerSelectionRequiresUserGesture:
   humanReadableName: "Require a user gesture for speaker selection"
   humanReadableDescription: "Require a user gesture for speaker selection"
   condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+SpeechSynthesisAPIEnabled:
+  type: bool
+  humanReadableName: "SpeechSynthesis API"
+  humanReadableDescription: "SpeechSynthesis API"
   defaultValue:
     WebKitLegacy:
       default: true

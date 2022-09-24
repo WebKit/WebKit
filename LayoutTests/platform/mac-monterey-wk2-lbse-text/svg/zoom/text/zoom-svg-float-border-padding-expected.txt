@@ -1,31 +1,31 @@
 layer at (0,0) size 785x624
   RenderView at (0,0) size 785x600
 layer at (0,0) size 785x624
-  RenderBlock {html} at (0,0) size 785x625
-    RenderBody {body} at (8,8) size 769x594
+  RenderBlock {html} at (0,0) size 785x624.19
+    RenderBody {body} at (8,8) size 769x593.16
       RenderBlock (anonymous) at (0,0) size 769x52
         RenderText {#text} at (0,0) size 747x52
           text run at (0,0) width 352: "The two blocks should look identical. "
           text run at (351,0) width 396: "One uses an SVG, and the other just uses a"
           text run at (0,26) width 175: "normal HTML div."
-      RenderBlock {p} at (0,75) size 769x27
+      RenderBlock {p} at (0,75.03) size 769x26
         RenderText {#text} at (0,0) size 517x26
           text run at (0,0) width 517: "There should be a red, white and blue pattern below this"
-      RenderBlock {p} at (0,284) size 769x27
+      RenderBlock {p} at (0,284.06) size 769x26
         RenderText {#text} at (0,0) size 516x26
           text run at (0,0) width 516: "There should be a red, white and blue pattern above this"
-      RenderBlock {hr} at (0,333) size 769x3 [border: (1px inset #000000)]
-      RenderBlock {p} at (0,358) size 769x27
+      RenderBlock {hr} at (0,333.09) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {p} at (0,358.13) size 769x26
         RenderText {#text} at (0,0) size 517x26
           text run at (0,0) width 517: "There should be a red, white and blue pattern below this"
-      RenderBlock (floating) {div} at (10,417) size 140x141 [border: (10px solid #FF0000)]
+      RenderBlock (floating) {div} at (10,417.16) size 140x140 [border: (10px solid #FF0000)]
         RenderBlock {div} at (20,20) size 100x100 [bgcolor=#0000FF]
-      RenderBlock {p} at (0,567) size 769x27
+      RenderBlock {p} at (0,567.16) size 769x26
         RenderText {#text} at (0,0) size 516x26
           text run at (0,0) width 516: "There should be a red, white and blue pattern above this"
 layer at (18,142) size 140x140 clip at (38,162) size 100x100
-  RenderSVGRoot {svg} at (10,134) size 140x141 [border: (10px solid #FF0000)]
-layer at (38,162) size 100x100
+  RenderSVGRoot {svg} at (10,134.06) size 140x140 [border: (10px solid #FF0000)]
+layer at (38,162.06) size 100x100
   RenderSVGViewportContainer at (20,20) size 100x100
-layer at (38,162) size 100x100
+layer at (38,162.06) size 100x100
   RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

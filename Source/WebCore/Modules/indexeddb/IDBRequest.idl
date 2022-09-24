@@ -28,6 +28,7 @@
  */
 
 [
+    EnabledBySetting=IndexedDBAPIEnabled,
     ActiveDOMObject,
     GenerateIsReachable=Impl,
     JSCustomMarkFunction,

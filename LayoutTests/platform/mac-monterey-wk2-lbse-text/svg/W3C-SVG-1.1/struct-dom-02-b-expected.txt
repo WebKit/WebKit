@@ -4,49 +4,49 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (10,313) size 198x35
+layer at (10,312.50) size 198x35
   RenderSVGText {text} at (10,312) size 198x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 198x35
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 197.50: "$Revision: 1.1 $"
 layer at (1,1) size 478x358
   RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-layer at (10,28) size 47x35
+layer at (10,27.50) size 47x35
   RenderSVGText {text} at (10,27) size 47x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 47x35
       chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 3 width 46.67: "xml"
-layer at (340,28) size 47x35
+layer at (340,27.50) size 47x35
   RenderSVGText {text} at (340,27) size 47x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 47x35
       chunk 1 text run 1 at (340.00,55.00) startOffset 0 endOffset 4 width 46.64: "true"
-layer at (10,83) size 130x35
+layer at (10,82.50) size 130x35
   RenderSVGText {text} at (10,82) size 130x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 130x35
       chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 11 width 129.98: "stylesheets"
-layer at (340,83) size 47x35
+layer at (340,82.50) size 47x35
   RenderSVGText {text} at (340,82) size 47x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 47x35
       chunk 1 text run 1 at (340.00,110.00) startOffset 0 endOffset 4 width 46.64: "true"
-layer at (10,138) size 70x35
+layer at (10,137.50) size 70x35
   RenderSVGText {text} at (10,137) size 70x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 70x35
       chunk 1 text run 1 at (10.00,165.00) startOffset 0 endOffset 5 width 69.99: "views"
-layer at (340,138) size 47x35
+layer at (340,137.50) size 47x35
   RenderSVGText {text} at (340,137) size 47x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 47x35
       chunk 1 text run 1 at (340.00,165.00) startOffset 0 endOffset 4 width 46.64: "true"
-layer at (10,193) size 52x35
+layer at (10,192.50) size 52x35
   RenderSVGText {text} at (10,192) size 52x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 52x35
       chunk 1 text run 1 at (10.00,220.00) startOffset 0 endOffset 4 width 51.67: "css2"
-layer at (340,193) size 47x35
+layer at (340,192.50) size 47x35
   RenderSVGText {text} at (340,192) size 47x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 47x35
       chunk 1 text run 1 at (340.00,220.00) startOffset 0 endOffset 4 width 46.64: "true"
-layer at (10,248) size 77x35
+layer at (10,247.50) size 77x35
   RenderSVGText {text} at (10,247) size 77x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 77x35
       chunk 1 text run 1 at (10.00,275.00) startOffset 0 endOffset 6 width 76.64: "events"
-layer at (340,248) size 47x35
+layer at (340,247.50) size 47x35
   RenderSVGText {text} at (340,247) size 47x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 47x35
       chunk 1 text run 1 at (340.00,275.00) startOffset 0 endOffset 4 width 46.64: "true"

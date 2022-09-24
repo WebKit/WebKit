@@ -216,17 +216,6 @@ std::optional<CurlProxySettings> ArgumentCoder<CurlProxySettings>::decode(Decode
     return CurlProxySettings { WTFMove(url), WTFMove(ignoreHosts) };
 }
 
-void ArgumentCoder<DictionaryPopupInfo>::encodePlatformData(Encoder&, const DictionaryPopupInfo&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool ArgumentCoder<DictionaryPopupInfo>::decodePlatformData(Decoder&, DictionaryPopupInfo&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 #if ENABLE(VIDEO)
 void ArgumentCoder<SerializedPlatformDataCueValue>::encodePlatformData(Encoder& encoder, const SerializedPlatformDataCueValue& value)
 {

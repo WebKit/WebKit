@@ -27,6 +27,13 @@
 #include "JSElementInternals.h"
 
 #include "HTMLNames.h"
+#include "IDLTypes.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNullable.h"
+#include "JSDOMConvertSequences.h"
+#include "JSElement.h"
+#include "WebCoreJSClientData.h"
+#include <JavaScriptCore/ObjectConstructor.h>
 
 namespace WebCore {
 using namespace JSC;

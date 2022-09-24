@@ -5,32 +5,32 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (10,10) size 456x278
-  RenderSVGTransformableContainer {g} at (10,10) size 456x278
+  RenderSVGTransformableContainer {g} at (10,10) size 455.23x277.55
 layer at (10,10) size 210x140
   RenderSVGRect {rect} at (0,0) size 210x140 [fill={[type=SOLID] [color=#000000]}] [x=10.00] [y=10.00] [width=210.00] [height=140.00]
-layer at (10,154) size 178x14
+layer at (10,154.13) size 178x14
   RenderSVGText {text} at (0,144) size 179x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 179x14
       chunk 1 text run 1 at (10.00,165.00) startOffset 0 endOffset 36 width 178.11: "Radial gradient on fill of rectangle"
 layer at (250,30) size 170x100
   RenderSVGRect {rect} at (240,20) size 170x100 [stroke={[type=SOLID] [color=#00000000] [stroke width=40.00]}] [x=250.00] [y=30.00] [width=170.00] [height=100.00]
-layer at (230,154) size 199x14
+layer at (230,154.13) size 199x14
   RenderSVGText {text} at (220,144) size 200x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 200x14
       chunk 1 text run 1 at (230.00,165.00) startOffset 0 endOffset 38 width 199.45: "Radial gradient on stroke of rectangle"
-layer at (10,165) size 417x56
+layer at (10,164.73) size 417x56
   RenderSVGText {text} at (0,154) size 417x57 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 417x56
       chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 21 width 416.87: "Gradient on text fill"
-layer at (10,214) size 205x14
+layer at (10,214.13) size 205x14
   RenderSVGText {text} at (0,204) size 205x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 205x14
       chunk 1 text run 1 at (10.00,225.00) startOffset 0 endOffset 40 width 204.78: "Radial gradient on text, black to yellow"
-layer at (10,229) size 455x51
+layer at (10,229.25) size 455x51
   RenderSVGText {text} at (0,219) size 456x51 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 456x51
       chunk 1 text run 1 at (10.00,270.00) startOffset 0 endOffset 23 width 455.23: "Gradient on text stroke"
-layer at (10,274) size 238x14
+layer at (10,274.13) size 238x14
   RenderSVGText {text} at (0,264) size 239x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 239x14
       chunk 1 text run 1 at (10.00,285.00) startOffset 0 endOffset 47 width 238.13: "Radial gradient on stroke of text, black to red"

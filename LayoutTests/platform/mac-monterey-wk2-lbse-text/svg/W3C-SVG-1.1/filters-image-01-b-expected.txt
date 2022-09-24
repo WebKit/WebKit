@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 480x360
-layer at (148,9) size 184x14
+layer at (147.61,9.13) size 184x14
   RenderSVGText {text} at (147,9) size 186x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 185x14
       chunk 1 (middle anchor) text run 1 at (147.62,20.00) startOffset 0 endOffset 37 width 184.75: "Basic test of feImage filter support."

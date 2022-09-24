@@ -38,6 +38,7 @@
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSPrimitiveValueMappings.h"
+#include "CSSProperty.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSRayValue.h"
 #include "CSSReflectValue.h"
@@ -65,6 +66,7 @@
 #include "SkewTransformOperation.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
+#include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
 #include "TranslateTransformOperation.h"
@@ -793,24 +795,26 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
         case TransformOperation::SCALE:
         case TransformOperation::SCALE_3D: {
             auto& scale = downcast<ScaleTransformOperation>(*operation);
-            functionValue = CSSFunctionValue::create(scale.is3DOperation() ? CSSValueScale3d : CSSValueScale);
+            auto is3D = operation->type() == TransformOperation::SCALE_3D;
+            functionValue = CSSFunctionValue::create(is3D ? CSSValueScale3d : CSSValueScale);
             functionValue->append(cssValuePool.createValue(scale.x(), CSSUnitType::CSS_NUMBER));
-            if (scale.z() == 1)
-                functionValue->append(cssValuePool.createValue(scale.y(), CSSUnitType::CSS_NUMBER));
-            else {
-                functionValue->append(cssValuePool.createValue(scale.y(), CSSUnitType::CSS_NUMBER));
+            functionValue->append(cssValuePool.createValue(scale.y(), CSSUnitType::CSS_NUMBER));
+            if (is3D)
                 functionValue->append(cssValuePool.createValue(scale.z(), CSSUnitType::CSS_NUMBER));
-            }
             break;
         }
         // rotate
         case TransformOperation::ROTATE_X:
             functionValue = CSSFunctionValue::create(CSSValueRotateX);
-            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).x(), CSSUnitType::CSS_NUMBER));
+            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
             break;
         case TransformOperation::ROTATE_Y:
             functionValue = CSSFunctionValue::create(CSSValueRotateX);
-            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).y(), CSSUnitType::CSS_NUMBER));
+            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
+            break;
+        case TransformOperation::ROTATE_Z:
+            functionValue = CSSFunctionValue::create(CSSValueRotateZ);
+            functionValue->append(cssValuePool.createValue(downcast<RotateTransformOperation>(*operation).angle(), CSSUnitType::CSS_DEG));
             break;
         case TransformOperation::ROTATE: {
             auto& rotate = downcast<RotateTransformOperation>(*operation);
@@ -1243,14 +1247,16 @@ static Ref<CSSValue> valueForGridPosition(const GridPosition& position)
     if (position.isNamedGridArea())
         return cssValuePool.createCustomIdent(position.namedGridLine());
 
+    bool hasNamedGridLine = !position.namedGridLine().isNull();
     auto list = CSSValueList::createSpaceSeparated();
     if (position.isSpan()) {
         list->append(cssValuePool.createIdentifierValue(CSSValueSpan));
-        list->append(cssValuePool.createValue(position.spanPosition(), CSSUnitType::CSS_INTEGER));
+        if (!hasNamedGridLine || position.spanPosition() != 1)
+            list->append(cssValuePool.createValue(position.spanPosition(), CSSUnitType::CSS_INTEGER));
     } else
         list->append(cssValuePool.createValue(position.integerPosition(), CSSUnitType::CSS_INTEGER));
 
-    if (!position.namedGridLine().isNull())
+    if (hasNamedGridLine)
         list->append(cssValuePool.createCustomIdent(position.namedGridLine()));
     return list;
 }

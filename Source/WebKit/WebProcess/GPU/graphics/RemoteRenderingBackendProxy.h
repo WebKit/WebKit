@@ -156,9 +156,9 @@ private:
     IPC::StreamClientConnection& streamConnection();
 
     template<typename T>
-    auto sendSyncToStream(T&& message, typename T::Reply&& reply, IPC::Timeout timeout = { Seconds::infinity() })
+    auto sendSyncToStream(T&& message, IPC::Timeout timeout = { Seconds::infinity() })
     {
-        return streamConnection().sendSync(WTFMove(message), WTFMove(reply), renderingBackendIdentifier(), timeout);
+        return streamConnection().sendSync(WTFMove(message), renderingBackendIdentifier(), timeout);
     }
 
     // GPUProcessConnection::Client

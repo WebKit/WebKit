@@ -4,5 +4,5 @@ layer at (0,0) size 300x200
   RenderSVGRoot {svg} at (0,0) size 300x200
 layer at (0,0) size 300x200
   RenderSVGViewportContainer at (0,0) size 300x200
-layer at (1,1) size 2x2
-  RenderSVGRect {rect} at (0,0) size 2x2 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.50] [y=0.50] [width=1.00] [height=1.00]
+layer at (0.50,0.50) size 2x2
+  RenderSVGRect {rect} at (0.50,0.50) size 1x1 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=0.50] [y=0.50] [width=1.00] [height=1.00]

@@ -4,16 +4,16 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (142,11) size 196x18
+layer at (142.09,11) size 196x18
   RenderSVGText {text} at (142,11) size 196x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 196x18
       chunk 1 (middle anchor) text run 1 at (142.11,25.00) startOffset 0 endOffset 29 width 195.79: "<animate> of x/y/width/height"
-layer at (-53,-47) size 106x127 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-53,-48) size 106x127
-layer at (-42,-20) size 85x85 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (10,27) size 85x85
+layer at (-52.58,-47.02) size 106x127 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (-52.58,-47.02) size 105.16x126.02
+layer at (-41.92,-20) size 85x85 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (10.66,27.02) size 83.84x84
 layer at (-20,-20) size 41x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGHiddenContainer {defs} at (21,0) size 41x40
+  RenderSVGHiddenContainer {defs} at (21.92,0) size 40x40
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (17,17) size 6x6 [fill={[type=SOLID] [color=#000000]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -37,11 +37,11 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
 layer at (-20,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGPath {path} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M 0 0 C 13.3333 0 20 -6.66667 20 -20 C 6.66667 -20 0 -13.3333 0 0 C 0 -13.3333 -6.66667 -20 -20 -20 C -20 -6.66667 -13.3333 0 0 0 C -13.3333 0 -20 6.66667 -20 20 C -6.66667 20 0 13.3333 0 0 C 0 13.3333 6.66667 20 20 20 C 20 6.66667 13.3333 0 0 0 Z"]
 layer at (-20,-20) size 41x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (21,0) size 41x40
+  RenderSVGTransformableContainer {use} at (21.92,0) size 40x40
 layer at (-20,-20) size 40x40 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGPath {path} at (0,0) size 40x40 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [data="M 0 0 C 13.3333 0 20 -6.66667 20 -20 C 6.66667 -20 0 -13.3333 0 0 C 0 -13.3333 -6.66667 -20 -20 -20 C -20 -6.66667 -13.3333 0 0 0 C -13.3333 0 -20 6.66667 -20 20 C -6.66667 20 0 13.3333 0 0 C 0 13.3333 6.66667 20 20 20 C 20 6.66667 13.3333 0 0 0 Z"]
 layer at (-3,-3) size 7x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (38,17) size 7x6
+  RenderSVGTransformableContainer {use} at (38.92,17) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -60,16 +60,16 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 6x6 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
-layer at (-42,46) size 84x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-41.92,46) size 84x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,66) size 84x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 84x18
       chunk 1 (middle anchor) text run 1 at (-41.91,60.00) startOffset 0 endOffset 12 width 83.82: "x/y on <use>"
-layer at (-51,-15) size 103x80 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (1,32) size 103x80
+layer at (-50.80,-15) size 103x80 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (1.78,32.02) size 101.59x79
 layer at (-15,-15) size 51x50 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGImage {image} at (35,0) size 51x50
+  RenderSVGImage {image} at (35.80,0) size 50x50
 layer at (-3,-3) size 7x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (47,12) size 7x6
+  RenderSVGTransformableContainer {use} at (47.80,12) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -88,16 +88,16 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 6x6 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
-layer at (-51,46) size 102x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-50.80,46) size 102x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,61) size 102x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 102x18
       chunk 1 (middle anchor) text run 1 at (-50.79,60.00) startOffset 0 endOffset 14 width 101.59: "x/y on <image>"
-layer at (-43,-15) size 87x80 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (9,32) size 87x80
+layer at (-43.23,-15) size 87x80 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (9.34,32.02) size 86.47x79
 layer at (-15,-15) size 51x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (28,0) size 51x20 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#000000]}] [x=-15.00] [y=-15.00] [width=50.00] [height=20.00]
+  RenderSVGRect {rect} at (28.23,0) size 50x20 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#000000]}] [x=-15.00] [y=-15.00] [width=50.00] [height=20.00]
 layer at (-3,-3) size 7x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (40,12) size 7x6
+  RenderSVGTransformableContainer {use} at (40.23,12) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -116,16 +116,16 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 6x6 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
-layer at (-43,46) size 86x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-43.23,46) size 86x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,61) size 87x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 87x18
       chunk 1 (middle anchor) text run 1 at (-43.23,60.00) startOffset 0 endOffset 13 width 86.47: "x/y on <rect>"
-layer at (-43,-15) size 87x80 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (9,32) size 87x80
+layer at (-43.23,-15) size 87x80 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (9.34,32.02) size 86.47x79
 layer at (-15,-15) size 51x20 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (28,0) size 51x20 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#000000]}] [x=-15.00] [y=-15.00] [width=50.00] [height=20.00]
+  RenderSVGRect {rect} at (28.23,0) size 50x20 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#000000]}] [x=-15.00] [y=-15.00] [width=50.00] [height=20.00]
 layer at (-3,-3) size 7x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (40,12) size 7x6
+  RenderSVGTransformableContainer {use} at (40.23,12) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -144,14 +144,14 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 6x6 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
-layer at (-43,46) size 86x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-43.23,46) size 86x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,61) size 87x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 87x18
       chunk 1 (middle anchor) text run 1 at (-43.23,60.00) startOffset 0 endOffset 13 width 86.47: "x/y on <rect>"
-layer at (-43,-47) size 96x112 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (9,0) size 96x112
+layer at (-43.23,-47.02) size 96x112 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (9.34,0) size 95.64x111.02
 layer at (-3,-3) size 7x7 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (40,44) size 7x7
+  RenderSVGTransformableContainer {use} at (40.23,44.02) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -170,14 +170,14 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 6x6 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
-layer at (-43,46) size 86x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-43.23,46) size 86x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,93) size 87x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 87x18
       chunk 1 (middle anchor) text run 1 at (-43.23,60.00) startOffset 0 endOffset 13 width 86.47: "x/y on <rect>"
-layer at (-53,-47) size 106x112 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 106x112
+layer at (-52.58,-47.02) size 106x112 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (0,0) size 105.16x111.02
 layer at (-3,-3) size 7x7 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGHiddenContainer {defs} at (49,44) size 7x7
+  RenderSVGHiddenContainer {defs} at (49.58,44.02) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -197,7 +197,7 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 6x6 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
 layer at (-3,-3) size 7x7 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (49,44) size 7x7
+  RenderSVGTransformableContainer {use} at (49.58,44.02) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -217,7 +217,7 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 6x6 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
 layer at (-3,-3) size 7x7 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {use} at (49,44) size 7x7
+  RenderSVGTransformableContainer {use} at (49.58,44.02) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
@@ -236,35 +236,35 @@ layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) siz
   RenderSVGTransformableContainer {g} at (0,0) size 6x6
 layer at (-3,-3) size 6x6 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGRect {rect} at (0,0) size 6x6 [stroke={[type=SOLID] [color=#FFB400]}] [fill={[type=SOLID] [color=#E6E6E6]}] [x=-3.00] [y=-3.00] [width=6.00] [height=6.00]
-layer at (-53,46) size 105x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-52.58,46) size 105x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,93) size 106x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 106x18
       chunk 1 (middle anchor) text run 1 at (-52.57,60.00) startOffset 0 endOffset 16 width 105.14: "x/y on <text>(2)"
-layer at (-40,-40) size 82x120 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (12,7) size 82x120
+layer at (-40.45,-40) size 82x120 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (12.13,7.02) size 80.91x119
 layer at (-40,-40) size 51x50 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGImage {image} at (0,0) size 51x50
+  RenderSVGImage {image} at (0.45,0) size 50x50
 layer at (-40,-40) size 51x50 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (0,0) size 51x50 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-40.00] [y=-40.00] [width=50.00] [height=50.00]
-layer at (-40,46) size 81x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0.45,0) size 50x50 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-40.00] [y=-40.00] [width=50.00] [height=50.00]
+layer at (-40.45,46) size 81x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,86) size 81x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 81x18
       chunk 1 (middle anchor) text run 1 at (-40.44,60.00) startOffset 0 endOffset 12 width 80.88: "width/height"
-layer at (-39,61) size 77x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-38.58,61) size 77x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (1,101) size 79x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 78x18
       chunk 1 (middle anchor) text run 1 at (-38.57,75.00) startOffset 0 endOffset 10 width 77.14: "on <image>"
-layer at (-40,-40) size 82x120 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (12,7) size 82x120
+layer at (-40.45,-40) size 82x120 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (12.13,7.02) size 80.91x119
 layer at (-40,-40) size 51x50 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (0,0) size 51x50 [fill={[type=SOLID] [color=#808080]}] [x=-40.00] [y=-40.00] [width=50.00] [height=50.00]
+  RenderSVGRect {rect} at (0.45,0) size 50x50 [fill={[type=SOLID] [color=#808080]}] [x=-40.00] [y=-40.00] [width=50.00] [height=50.00]
 layer at (-40,-40) size 51x50 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGRect {rect} at (0,0) size 51x50 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-40.00] [y=-40.00] [width=50.00] [height=50.00]
-layer at (-40,46) size 81x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGRect {rect} at (0.45,0) size 50x50 [stroke={[type=SOLID] [color=#FFB400] [stroke width=4.00]}] [x=-40.00] [y=-40.00] [width=50.00] [height=50.00]
+layer at (-40.45,46) size 81x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,86) size 81x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 81x18
       chunk 1 (middle anchor) text run 1 at (-40.44,60.00) startOffset 0 endOffset 12 width 80.88: "width/height"
-layer at (-31,61) size 62x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-31.02,61) size 62x18 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (9,101) size 63x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 63x18
       chunk 1 (middle anchor) text run 1 at (-31.01,75.00) startOffset 0 endOffset 9 width 62.02: "on <rect>"

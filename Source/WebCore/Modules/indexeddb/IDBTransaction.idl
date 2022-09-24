@@ -25,6 +25,7 @@
  */
 
 [
+    EnabledBySetting=IndexedDBAPIEnabled,
     ActiveDOMObject,
     JSCustomMarkFunction,
     SkipVTableValidation,

@@ -430,7 +430,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
         return nil;
 
     auto mutableOptions = adoptNS([[NSMutableDictionary alloc] init]);
-    if (NSDictionary *options = dictionaryPopupInfo.options.get())
+    if (NSDictionary *options = dictionaryPopupInfo.platformData.options.get())
         [mutableOptions addEntriesFromDictionary:options];
 
     auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
@@ -461,9 +461,9 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
         pointerLocation = [view convertPoint:textBaselineOrigin toView:nil];
     }
 
-    auto webHighlight =  adoptNS([[WebRevealHighlight alloc] initWithHighlightRect: highlightRect useDefaultHighlight:!textIndicator.get().contentImage() attributedString:dictionaryPopupInfo.attributedString.get()]);
+    auto webHighlight =  adoptNS([[WebRevealHighlight alloc] initWithHighlightRect: highlightRect useDefaultHighlight:!textIndicator.get().contentImage() attributedString:dictionaryPopupInfo.platformData.attributedString.get()]);
     auto context = adoptNS([PAL::allocRVPresentingContextInstance() initWithPointerLocationInView:pointerLocation inView:view highlightDelegate:webHighlight.get()]);
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:dictionaryPopupInfo.attributedString.get().string selectedRange:NSMakeRange(0, dictionaryPopupInfo.attributedString.get().string.length)]);
+    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:dictionaryPopupInfo.platformData.attributedString.get().string selectedRange:NSMakeRange(0, dictionaryPopupInfo.platformData.attributedString.get().string.length)]);
 
     if (clearTextIndicator) {
         [webHighlight setClearTextIndicator:[clearTextIndicator = WTFMove(clearTextIndicator)] {
@@ -483,7 +483,7 @@ static WKRevealController showPopupOrCreateAnimationController(bool createAnimat
     ASSERT_UNUSED(createAnimationController, !createAnimationController);
     auto textIndicator = TextIndicator::create(dictionaryPopupInfo.textIndicator);
     auto webHighlight = adoptNS([[WebRevealHighlight alloc] initWithHighlightRect:[view convertRect:textIndicator->selectionRectInRootViewCoordinates() toView:nil] view:view image:textIndicator->contentImage()]);
-    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:dictionaryPopupInfo.attributedString.get().string selectedRange:NSMakeRange(0, dictionaryPopupInfo.attributedString.get().string.length)]);
+    auto item = adoptNS([PAL::allocRVItemInstance() initWithText:dictionaryPopupInfo.platformData.attributedString.get().string selectedRange:NSMakeRange(0, dictionaryPopupInfo.platformData.attributedString.get().string.length)]);
 
     [UINSSharedRevealController() revealItem:item.get() locationInWindow:dictionaryPopupInfo.origin window:view.window highlighter:webHighlight.get()];
     return nil;

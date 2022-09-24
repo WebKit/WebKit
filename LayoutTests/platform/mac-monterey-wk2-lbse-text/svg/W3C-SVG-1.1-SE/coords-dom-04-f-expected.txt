@@ -5,92 +5,92 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (0,5) size 179x259
-  RenderSVGTransformableContainer {g} at (0,5) size 179x259
+  RenderSVGTransformableContainer {g} at (0,5) size 178.11x258.61
 layer at (0,5) size 179x259
-  RenderSVGTransformableContainer {g} at (0,0) size 179x259
+  RenderSVGTransformableContainer {g} at (0,0) size 178.11x258.61
 layer at (0,5) size 179x259
-  RenderSVGTransformableContainer {g} at (0,0) size 179x259
+  RenderSVGTransformableContainer {g} at (0,0) size 178.11x258.61
 layer at (0,5) size 15x15
   RenderSVGRect {rect} at (0,0) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=5.00] [width=15.00] [height=15.00]
-layer at (20,6) size 139x18
+layer at (20,5.59) size 139x18
   RenderSVGText {text} at (20,0) size 140x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 140x19
       chunk 1 text run 1 at (20.00,20.00) startOffset 0 endOffset 17 width 139.07: "Scripting enabled"
 layer at (0,25) size 15x15
   RenderSVGRect {rect} at (0,20) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=25.00] [width=15.00] [height=15.00]
-layer at (20,26) size 148x18
+layer at (20,25.59) size 148x18
   RenderSVGText {text} at (20,20) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,40.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #1"
 layer at (0,45) size 15x15
   RenderSVGRect {rect} at (0,40) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=45.00] [width=15.00] [height=15.00]
-layer at (20,46) size 148x18
+layer at (20,45.59) size 148x18
   RenderSVGText {text} at (20,40) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,60.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #2"
 layer at (0,65) size 15x15
   RenderSVGRect {rect} at (0,60) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=65.00] [width=15.00] [height=15.00]
-layer at (20,66) size 148x18
+layer at (20,65.59) size 148x18
   RenderSVGText {text} at (20,60) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,80.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #3"
 layer at (0,85) size 15x15
   RenderSVGRect {rect} at (0,80) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=85.00] [width=15.00] [height=15.00]
-layer at (20,86) size 148x18
+layer at (20,85.59) size 148x18
   RenderSVGText {text} at (20,80) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,100.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #4"
 layer at (0,105) size 15x15
   RenderSVGRect {rect} at (0,100) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=105.00] [width=15.00] [height=15.00]
-layer at (20,106) size 148x18
+layer at (20,105.59) size 148x18
   RenderSVGText {text} at (20,100) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,120.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #5"
 layer at (0,125) size 15x15
   RenderSVGRect {rect} at (0,120) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=125.00] [width=15.00] [height=15.00]
-layer at (20,126) size 148x18
+layer at (20,125.59) size 148x18
   RenderSVGText {text} at (20,120) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,140.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #6"
 layer at (0,145) size 15x15
   RenderSVGRect {rect} at (0,140) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=145.00] [width=15.00] [height=15.00]
-layer at (20,146) size 148x18
+layer at (20,145.59) size 148x18
   RenderSVGText {text} at (20,140) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #7"
 layer at (0,165) size 15x15
   RenderSVGRect {rect} at (0,160) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=165.00] [width=15.00] [height=15.00]
-layer at (20,166) size 148x18
+layer at (20,165.59) size 148x18
   RenderSVGText {text} at (20,160) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,180.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #8"
 layer at (0,185) size 15x15
   RenderSVGRect {rect} at (0,180) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=185.00] [width=15.00] [height=15.00]
-layer at (20,186) size 148x18
+layer at (20,185.59) size 148x18
   RenderSVGText {text} at (20,180) size 149x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 149x19
       chunk 1 text run 1 at (20.00,200.00) startOffset 0 endOffset 17 width 148.09: "Passed subtest #9"
 layer at (0,205) size 15x15
   RenderSVGRect {rect} at (0,200) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=205.00] [width=15.00] [height=15.00]
-layer at (20,206) size 158x18
+layer at (20,205.59) size 158x18
   RenderSVGText {text} at (20,200) size 159x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 159x19
       chunk 1 text run 1 at (20.00,220.00) startOffset 0 endOffset 18 width 158.09: "Passed subtest #10"
 layer at (0,225) size 15x15
   RenderSVGRect {rect} at (0,220) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=225.00] [width=15.00] [height=15.00]
-layer at (20,226) size 158x18
+layer at (20,225.59) size 158x18
   RenderSVGText {text} at (20,220) size 159x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 159x19
       chunk 1 text run 1 at (20.00,240.00) startOffset 0 endOffset 18 width 158.09: "Passed subtest #11"
 layer at (0,245) size 15x15
   RenderSVGRect {rect} at (0,240) size 15x15 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=245.00] [width=15.00] [height=15.00]
-layer at (20,246) size 158x18
+layer at (20,245.59) size 158x18
   RenderSVGText {text} at (20,240) size 159x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 159x19
       chunk 1 text run 1 at (20.00,260.00) startOffset 0 endOffset 18 width 158.09: "Passed subtest #12"
-layer at (10,314) size 230x33
-  RenderSVGTransformableContainer {g} at (10,314) size 230x33
-layer at (10,314) size 229x32
+layer at (10,314.39) size 230x33
+  RenderSVGTransformableContainer {g} at (10,314.39) size 229.45x32.02
+layer at (10,314.39) size 229x32
   RenderSVGText {text} at (0,0) size 230x33 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 230x33
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.44: "$Revision: 1.5 $"

@@ -689,6 +689,9 @@ Document::~Document()
 
     removeAllEventListeners();
 
+    if (m_eventLoop)
+        m_eventLoop->removeAssociatedContext(*this);
+
     // Currently we believe that Document can never outlive the parser.
     // Although the Document may be replaced synchronously, DocumentParsers
     // generally keep at least one reference to an Element which would in turn
@@ -6770,8 +6773,10 @@ EventLoopTaskGroup& Document::eventLoop()
 WindowEventLoop& Document::windowEventLoop()
 {
     ASSERT(isMainThread());
-    if (UNLIKELY(!m_eventLoop))
+    if (UNLIKELY(!m_eventLoop)) {
         m_eventLoop = WindowEventLoop::eventLoopForSecurityOrigin(securityOrigin());
+        m_eventLoop->addAssociatedContext(*this);
+    }
     return *m_eventLoop;
 }
 

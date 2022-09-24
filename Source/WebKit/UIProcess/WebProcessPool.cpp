@@ -1413,7 +1413,7 @@ void WebProcessPool::setCacheModelSynchronouslyForTesting(CacheModel cacheModel)
     updateBackForwardCacheCapacity();
 
     WebsiteDataStore::forEachWebsiteDataStore([cacheModel] (WebsiteDataStore& dataStore) {
-        dataStore.networkProcess().sendSync(Messages::NetworkProcess::SetCacheModelSynchronouslyForTesting(cacheModel), { }, 0);
+        dataStore.networkProcess().sendSync(Messages::NetworkProcess::SetCacheModelSynchronouslyForTesting(cacheModel), 0);
     });
 }
 

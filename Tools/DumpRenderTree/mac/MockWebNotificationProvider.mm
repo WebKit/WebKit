@@ -30,6 +30,8 @@
 #import "MockWebNotificationProvider.h"
 
 #import <WebKit/WebSecurityOriginPrivate.h>
+#import <wtf/UUID.h>
+#import <wtf/text/StringHash.h>
 
 @implementation MockWebNotificationProvider
 
@@ -63,62 +65,63 @@
 {
     ASSERT(_registeredWebViews.contains((__bridge CFTypeRef)webView));
 
-    uint64_t notificationID = [notification notificationID];
+    String notificationID([notification notificationID]);
     _notifications.add(notificationID, notification);
     _notificationViewMap.add(notificationID, (__bridge CFTypeRef)webView);
 
-    [webView _notificationDidShow:notificationID];
+    [webView _notificationDidShow:[notification notificationID]];
 }
 
 - (void)cancelNotification:(WebNotification *)notification
 {
-    uint64_t notificationID = [notification notificationID];
+    String notificationID([notification notificationID]);
     ASSERT(_notifications.contains(notificationID));
 
-    [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationsDidClose:@[[NSNumber numberWithUnsignedLongLong:notificationID]]];
+    [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationsDidClose:@[[notification notificationID]]];
 }
 
 - (void)notificationDestroyed:(WebNotification *)notification
 {
-    _notifications.remove([notification notificationID]);
-    _notificationViewMap.remove([notification notificationID]);
+    _notifications.remove(String([notification notificationID]));
+    _notificationViewMap.remove(String([notification notificationID]));
 }
 
 - (void)clearNotifications:(NSArray *)notificationIDs
 {
-    for (NSNumber *notificationID in notificationIDs) {
-        uint64_t id = [notificationID unsignedLongLongValue];
-        RetainPtr<WebNotification> notification = _notifications.take(id);
-        _notificationViewMap.remove(id);
+    for (NSString *nsNotificationID in notificationIDs) {
+        String notificationID(nsNotificationID);
+        RetainPtr<WebNotification> notification = _notifications.take(notificationID);
+        _notificationViewMap.remove(notificationID);
     }
 }
 
-- (void)webView:(WebView *)webView didShowNotification:(uint64_t)notificationID
+- (void)webView:(WebView *)webView didShowNotification:(NSString *)notificationID
 {
-    [_notifications.get(notificationID).get() dispatchShowEvent];
+    [_notifications.get(String(notificationID)).get() dispatchShowEvent];
 }
 
-- (void)webView:(WebView *)webView didClickNotification:(uint64_t)notificationID
+- (void)webView:(WebView *)webView didClickNotification:(NSString *)notificationID
 {
-    [_notifications.get(notificationID).get() dispatchClickEvent];
+    [_notifications.get(String(notificationID)).get() dispatchClickEvent];
 }
 
 - (void)webView:(WebView *)webView didCloseNotifications:(NSArray *)notificationIDs
 {
-    for (NSNumber *notificationID in notificationIDs) {
-        uint64_t id = [notificationID unsignedLongLongValue];
-        NotificationIDMap::iterator it = _notifications.find(id);
+    for (NSString *nsNotificationID in notificationIDs) {
+        String notificationID(nsNotificationID);
+        NotificationIDMap::iterator it = _notifications.find(notificationID);
         ASSERT(it != _notifications.end());
         [it->value.get() dispatchCloseEvent];
         _notifications.remove(it);
-        _notificationViewMap.remove(id);
+        _notificationViewMap.remove(notificationID);
     }
 }
 
-- (void)simulateWebNotificationClick:(uint64_t)notificationID
+- (void)simulateWebNotificationClick:(NSString *)nsNotificationID
 {
+    String notificationID(nsNotificationID);
     ASSERT(_notifications.contains(notificationID));
-    [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationDidClick:notificationID];
+    [(__bridge WebView *)_notificationViewMap.get(notificationID) _notificationDidClick:nsNotificationID];
 }
 
 - (WebNotificationPermission)policyForOrigin:(WebSecurityOrigin *)origin

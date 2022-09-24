@@ -109,6 +109,12 @@ struct PrecisionData {
     unsigned increment;
 };
 
+enum class UnitGroup : uint8_t {
+    DateTime,
+    Date,
+    Time,
+};
+
 double nonNegativeModulo(double x, double y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
@@ -116,9 +122,11 @@ PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);
 std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, TemporalUnit autoValue);
 std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits);
+std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject*, JSValue, UnitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit);
 std::optional<unsigned> temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
 PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
 RoundingMode temporalRoundingMode(JSGlobalObject*, JSObject*, RoundingMode);
+RoundingMode negateTemporalRoundingMode(RoundingMode);
 void formatSecondsStringFraction(StringBuilder&, unsigned fraction, std::tuple<Precision, unsigned>);
 void formatSecondsStringPart(StringBuilder&, unsigned second, unsigned fraction, PrecisionData);
 std::optional<double> maximumRoundingIncrement(TemporalUnit);

@@ -131,6 +131,7 @@ $(PROJECT_DIR)/Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 $(PROJECT_DIR)/Shared/ApplePay/WebPaymentCoordinatorProxy.messages.in
 $(PROJECT_DIR)/Shared/Authentication/AuthenticationManager.messages.in
 $(PROJECT_DIR)/Shared/AuxiliaryProcess.messages.in
+$(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/FrameInfoData.serialization.in
 $(PROJECT_DIR)/Shared/FrameTreeNodeData.serialization.in
 $(PROJECT_DIR)/Shared/HTTPSUpgrade/HTTPSUpgradeList.txt

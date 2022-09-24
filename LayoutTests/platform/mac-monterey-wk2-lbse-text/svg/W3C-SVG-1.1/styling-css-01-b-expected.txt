@@ -4,42 +4,42 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (40,3) size 350x127
-  RenderSVGTransformableContainer {g} at (40,3) size 350x127
-layer at (40,3) size 184x13
+layer at (40,3.13) size 350x127
+  RenderSVGTransformableContainer {g} at (40,3.13) size 350x126.88
+layer at (40,3.13) size 184x13
   RenderSVGText {text} at (0,0) size 185x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 185x14
       chunk 1 text run 1 at (40.00,14.00) startOffset 0 endOffset 33 width 184.13: "Rectangle should be red not green"
-layer at (40,25) size 332x13
+layer at (40,25.13) size 332x13
   RenderSVGText {text} at (0,22) size 333x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 333x14
       chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 11 width 54.68: "This tests "
       chunk 1 text run 1 at (94.68,36.00) startOffset 0 endOffset 54 width 277.45: "element (GI) selectors: <rect /> and the selector rect"
 layer at (130,70) size 260x61
-  RenderSVGTransformableContainer {g} at (90,66) size 260x61
+  RenderSVGTransformableContainer {g} at (90,66.88) size 260x60
 layer at (130,70) size 60x60
   RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=SOLID] [color=#008000]}] [cx=160.00] [cy=100.00] [r=30.00]
 layer at (220,80) size 60x40
   RenderSVGRect {rect} at (90,10) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [x=220.00] [y=80.00] [width=60.00] [height=40.00]
 layer at (300,70) size 90x50
   RenderSVGPath {polygon} at (170,0) size 90x50 [fill={[type=SOLID] [color=#008000]}] [points="300 100 320 120 340 110 360 120 390 90 340 70"]
-layer at (40,3) size 350x127
-  RenderSVGTransformableContainer {g} at (0,0) size 350x127
-layer at (40,3) size 258x13
+layer at (40,3.13) size 350x127
+  RenderSVGTransformableContainer {g} at (0,0) size 350x126.88
+layer at (40,3.13) size 258x13
   RenderSVGText {text} at (0,0) size 259x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 259x14
       chunk 1 text run 1 at (40.00,14.00) startOffset 0 endOffset 51 width 258.14: "Circle should be red not green; rectangle still red"
-layer at (40,25) size 277x13
+layer at (40,25.13) size 277x13
   RenderSVGText {text} at (0,22) size 277x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 277x14
       chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 11 width 54.68: "This tests "
       chunk 1 text run 1 at (94.68,36.00) startOffset 0 endOffset 43 width 222.27: "class selectors: <circle class=\"warning\" />"
-layer at (40,47) size 134x13
+layer at (40,47.13) size 134x13
   RenderSVGText {text} at (0,44) size 135x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 135x14
       chunk 1 text run 1 at (40.00,58.00) startOffset 0 endOffset 25 width 134.08: "and the selector .warning"
 layer at (130,70) size 260x61
-  RenderSVGTransformableContainer {g} at (90,66) size 260x61
+  RenderSVGTransformableContainer {g} at (90,66.88) size 260x60
 layer at (130,70) size 60x60
   RenderSVGEllipse {circle} at (0,0) size 60x60 [fill={[type=SOLID] [color=#FF0000]}] [cx=160.00] [cy=100.00] [r=30.00]
 layer at (220,80) size 60x40

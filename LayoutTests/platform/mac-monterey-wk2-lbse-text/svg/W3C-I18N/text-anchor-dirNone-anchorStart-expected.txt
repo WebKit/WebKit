@@ -5,34 +5,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (168,110) size 258x128
-  RenderSVGTransformableContainer {g} at (168,110) size 258x128
-layer at (230,151) size 196x11
+  RenderSVGTransformableContainer {g} at (168,110) size 257.59x127.17
+layer at (230,150.77) size 196x11
   RenderSVGText {text} at (62,40) size 196x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 196x12
       chunk 1 text run 1 at (230.00,160.00) startOffset 0 endOffset 42 width 195.58: "Making the world wide web truly world wide"
-layer at (230,186) size 150x11
+layer at (230,185.77) size 150x11
   RenderSVGText {text} at (62,75) size 150x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 150x12
       chunk 1 text run 1 at (230.00,195.00) startOffset 0 endOffset 31 width 149.87 RTL: "\x{5DC}\x{5D9}\x{5E6}\x{5D5}\x{5E8} \x{5DE}\x{5D4}\x{5E8}\x{5E9}\x{5EA} \x{5E8}\x{5E9}\x{5EA} \x{5DB}\x{5DC}\x{5DC} \x{5E2}\x{5D5}\x{5DC}\x{5DE}\x{5D9}\x{5EA} \x{5D1}\x{5D0}\x{5DE}\x{5EA}"
-layer at (230,226) size 117x11
+layer at (230,225.77) size 117x11
   RenderSVGText {text} at (62,115) size 117x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 117x12
       chunk 1 text run 1 at (230.00,235.00) startOffset 0 endOffset 38 width 116.51 RTL: "\x{62C}\x{639}\x{644} \x{634}\x{628}\x{643}\x{629} \x{627}\x{644}\x{648}\x{64A}\x{628} \x{627}\x{644}\x{639}\x{627}\x{644}\x{645}\x{64A}\x{651}\x{629} \x{639}\x{627}\x{644}\x{645}\x{64A}\x{651}\x{629} \x{62D}\x{642}\x{64B}\x{651}\x{627}"
 layer at (168,110) size 128x26
   RenderSVGImage {image} at (0,0) size 128x26
-layer at (10,335) size 44x8
-  RenderSVGTransformableContainer {g} at (10,334) size 44x8
-layer at (10,335) size 43x7
+layer at (10,334.56) size 44x8
+  RenderSVGTransformableContainer {g} at (10,334.56) size 43.03x6.72
+layer at (10,334.56) size 43x7
   RenderSVGText {text} at (0,0) size 44x7 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 44x7
       chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 43.03: "$Revision: 1.4 $"
 layer at (1,1) size 478x358
   RenderSVGRect {rect} at (1,1) size 478x358 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
-layer at (1,0) size 478x23
-  RenderSVGTransformableContainer {g} at (1,0) size 478x23
+layer at (1,0.06) size 478x23
+  RenderSVGTransformableContainer {g} at (1,0.06) size 478x22.14
 layer at (1,1) size 478x21
-  RenderSVGRect {rect} at (0,0) size 478x21 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
-layer at (206,0) size 68x22
+  RenderSVGRect {rect} at (0,0.94) size 478x20 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
+layer at (206.45,0.06) size 68x22
   RenderSVGText {text} at (205,0) size 68x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 68x23
       chunk 1 (middle anchor) text run 1 at (206.46,18.00) startOffset 0 endOffset 5 width 67.09: "DRAFT"

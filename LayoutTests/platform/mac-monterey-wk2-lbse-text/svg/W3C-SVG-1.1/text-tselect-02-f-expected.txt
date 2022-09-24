@@ -24,25 +24,25 @@ layer at (10,160) size 430x20
   RenderSVGTransformableContainer {g} at (0,104) size 430x20
 layer at (10,160) size 100x20
   RenderSVGRect {rect} at (0,0) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [x=10.00] [y=160.00] [width=100.00] [height=20.00]
-layer at (19,161) size 82x18
+layer at (18.98,161) size 82x18
   RenderSVGText {text} at (8,1) size 84x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x18
       chunk 1 (middle anchor) text run 1 at (18.99,175.00) startOffset 0 endOffset 12 width 82.02: "startIndex++"
 layer at (120,160) size 100x20
   RenderSVGRect {rect} at (110,0) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [x=120.00] [y=160.00] [width=100.00] [height=20.00]
-layer at (133,161) size 74x18
+layer at (132.67,161) size 74x18
   RenderSVGText {text} at (122,1) size 76x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 75x18
       chunk 1 (middle anchor) text run 1 at (132.68,175.00) startOffset 0 endOffset 12 width 74.63: "startIndex--"
 layer at (230,160) size 100x20
   RenderSVGRect {rect} at (220,0) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [x=230.00] [y=160.00] [width=100.00] [height=20.00]
-layer at (238,161) size 84x18
+layer at (238.08,161) size 84x18
   RenderSVGText {text} at (228,1) size 84x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 84x18
       chunk 1 (middle anchor) text run 1 at (238.09,175.00) startOffset 0 endOffset 10 width 83.82: "numChars++"
 layer at (340,160) size 100x20
   RenderSVGRect {rect} at (330,0) size 100x20 [fill={[type=SOLID] [color=#0000FF]}] [x=340.00] [y=160.00] [width=100.00] [height=20.00]
-layer at (352,161) size 76x18
+layer at (351.78,161) size 76x18
   RenderSVGText {text} at (341,1) size 78x18 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 77x18
       chunk 1 (middle anchor) text run 1 at (351.79,175.00) startOffset 0 endOffset 10 width 76.43: "numChars--"

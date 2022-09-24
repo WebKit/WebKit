@@ -4,14 +4,14 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (-3,-13) size 458x53 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-4,-13) size 458x53
-layer at (-3,8) size 457x27 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+layer at (-3.27,-13) size 458x53 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
+  RenderSVGTransformableContainer {g} at (-3.27,-13) size 456.53x53
+layer at (-3.27,7.88) size 457x27 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,20) size 457x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 457x27
       chunk 1 (middle anchor) text run 1 at (-3.26,30.00) startOffset 0 endOffset 43 width 456.52: "Basic test of color-interpolation property."
 layer at (-3,-13) size 432x53 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 432x53
+  RenderSVGTransformableContainer {g} at (0.27,0) size 431.55x53
 layer at (0,0) size 300x40
   RenderSVGRect {rect} at (3,13) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=300.00] [height=40.00]
 layer at (0,-7) size 0x47
@@ -34,12 +34,12 @@ layer at (250,15) size 0x10
   RenderSVGPath {line} at (253,28) size 0x10 [stroke={[type=SOLID] [color=#FF8000]}] [fill={[type=SOLID] [color=#000000]}] [x1=250.00] [y1=15.00] [x2=250.00] [y2=25.00]
 layer at (0,-7) size 0x47
   RenderSVGPath {line} at (3,6) size 0x47 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-7.00] [x2=0.00] [y2=40.00]
-layer at (310,4) size 119x19
+layer at (310,3.91) size 119x19
   RenderSVGText {text} at (313,16) size 119x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 119x20
       chunk 1 text run 1 at (310.00,20.00) startOffset 0 endOffset 14 width 118.55: "default (sRGB)"
 layer at (-3,-13) size 357x53 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 357x53
+  RenderSVGTransformableContainer {g} at (0.27,0) size 355.84x53
 layer at (0,0) size 300x40
   RenderSVGRect {rect} at (3,13) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=300.00] [height=40.00]
 layer at (0,-7) size 0x47
@@ -62,12 +62,12 @@ layer at (250,15) size 0x10
   RenderSVGPath {line} at (253,28) size 0x10 [stroke={[type=SOLID] [color=#FF8000]}] [fill={[type=SOLID] [color=#000000]}] [x1=250.00] [y1=15.00] [x2=250.00] [y2=25.00]
 layer at (0,-7) size 0x47
   RenderSVGPath {line} at (3,6) size 0x47 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-7.00] [x2=0.00] [y2=40.00]
-layer at (310,4) size 43x19
+layer at (310,3.91) size 43x19
   RenderSVGText {text} at (313,16) size 43x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 43x20
       chunk 1 text run 1 at (310.00,20.00) startOffset 0 endOffset 4 width 42.84: "sRGB"
 layer at (-3,-13) size 393x53 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 393x53
+  RenderSVGTransformableContainer {g} at (0.27,0) size 392.38x53
 layer at (0,0) size 300x40
   RenderSVGRect {rect} at (3,13) size 300x40 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=300.00] [height=40.00]
 layer at (0,-7) size 0x47
@@ -90,7 +90,7 @@ layer at (250,15) size 0x10
   RenderSVGPath {line} at (253,28) size 0x10 [stroke={[type=SOLID] [color=#FF8000]}] [fill={[type=SOLID] [color=#000000]}] [x1=250.00] [y1=15.00] [x2=250.00] [y2=25.00]
 layer at (0,-7) size 0x47
   RenderSVGPath {line} at (3,6) size 0x47 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=-7.00] [x2=0.00] [y2=40.00]
-layer at (310,4) size 79x19
+layer at (310,3.91) size 79x19
   RenderSVGText {text} at (313,16) size 80x21 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 80x20
       chunk 1 text run 1 at (310.00,20.00) startOffset 0 endOffset 9 width 79.38: "linearRGB"

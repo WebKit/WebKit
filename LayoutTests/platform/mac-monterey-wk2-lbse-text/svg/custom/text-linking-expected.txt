@@ -24,7 +24,7 @@ layer at (100,86) size 166x18
       RenderSVGInline {tref} at (0,0) size 167x18
         RenderSVGInlineText {#text} at (0,0) size 167x18
           chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 25 width 166.09: "Referenced character data"
-layer at (97,126) size 102x28
+layer at (97.25,125.98) size 102x28
   RenderSVGText {text} at (97,125) size 102x29 contains 1 chunk(s)
     RenderSVGInline {a} at (0,0) size 102x28
       RenderSVGTextPath {textPath} at (0,0) size 102x28

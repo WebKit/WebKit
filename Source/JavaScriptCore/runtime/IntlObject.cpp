@@ -39,6 +39,9 @@
 #include "IntlDisplayNames.h"
 #include "IntlDisplayNamesConstructor.h"
 #include "IntlDisplayNamesPrototype.h"
+#include "IntlDurationFormat.h"
+#include "IntlDurationFormatConstructor.h"
+#include "IntlDurationFormatPrototype.h"
 #include "IntlListFormat.h"
 #include "IntlListFormatConstructor.h"
 #include "IntlListFormatPrototype.h"
@@ -98,6 +101,13 @@ static JSValue createDisplayNamesConstructor(VM& vm, JSObject* object)
     IntlObject* intlObject = jsCast<IntlObject*>(object);
     JSGlobalObject* globalObject = intlObject->globalObject();
     return IntlDisplayNamesConstructor::create(vm, IntlDisplayNamesConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlDisplayNamesPrototype*>(globalObject->displayNamesStructure()->storedPrototypeObject()));
+}
+
+static JSValue createDurationFormatConstructor(VM& vm, JSObject* object)
+{
+    IntlObject* intlObject = jsCast<IntlObject*>(object);
+    JSGlobalObject* globalObject = intlObject->globalObject();
+    return IntlDurationFormatConstructor::create(vm, IntlDurationFormatConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<IntlDurationFormatPrototype*>(globalObject->durationFormatStructure()->storedPrototypeObject()));
 }
 
 static JSValue createListFormatConstructor(VM& vm, JSObject* object)
@@ -176,7 +186,7 @@ void UFieldPositionIteratorDeleter::operator()(UFieldPositionIterator* iterator)
         ufieldpositer_close(iterator);
 }
 
-const MeasureUnit simpleUnits[43] = {
+const MeasureUnit simpleUnits[45] = {
     { "area"_s, "acre"_s },
     { "digital"_s, "bit"_s },
     { "digital"_s, "byte"_s },
@@ -202,6 +212,7 @@ const MeasureUnit simpleUnits[43] = {
     { "digital"_s, "megabit"_s },
     { "digital"_s, "megabyte"_s },
     { "length"_s, "meter"_s },
+    { "duration"_s, "microsecond"_s },
     { "length"_s, "mile"_s },
     { "length"_s, "mile-scandinavian"_s },
     { "volume"_s, "milliliter"_s },
@@ -209,6 +220,7 @@ const MeasureUnit simpleUnits[43] = {
     { "duration"_s, "millisecond"_s },
     { "duration"_s, "minute"_s },
     { "duration"_s, "month"_s },
+    { "duration"_s, "nanosecond"_s },
     { "mass"_s, "ounce"_s },
     { "concentr"_s, "percent"_s },
     { "digital"_s, "petabyte"_s },
@@ -240,8 +252,11 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(info()));
     JSC_TO_STRING_TAG_WITHOUT_TRANSITION();
 #if HAVE(ICU_U_LIST_FORMATTER)
+    if (Options::useIntlDurationFormat())
+        putDirectWithoutTransition(vm, vm.propertyNames->DurationFormat, createDurationFormatConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
     putDirectWithoutTransition(vm, vm.propertyNames->ListFormat, createListFormatConstructor(vm, this), static_cast<unsigned>(PropertyAttribute::DontEnum));
 #else
+    UNUSED_PARAM(&createDurationFormatConstructor);
     UNUSED_PARAM(&createListFormatConstructor);
 #endif
     if (Options::useIntlEnumeration())

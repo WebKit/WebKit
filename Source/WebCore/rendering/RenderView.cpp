@@ -34,6 +34,7 @@
 #include "HTMLIFrameElement.h"
 #include "HitTestResult.h"
 #include "ImageQualityController.h"
+#include "LayoutInitialContainingBlock.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderDescendantIterator.h"
@@ -64,6 +65,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderView);
 RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_frameView(*document.view())
+    , m_initialContainingBlock(WTF::makeUniqueRef<Layout::InitialContainingBlock>(RenderStyle::clone(this->style())))
     , m_selection(*this)
     , m_lazyRepaintTimer(*this, &RenderView::lazyRepaintTimerFired)
 {

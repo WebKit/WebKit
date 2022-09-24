@@ -1250,6 +1250,8 @@
 		79EE0C001B4AFB85000385C9 /* VariableEnvironment.h in Headers */ = {isa = PBXBuildFile; fileRef = 79EE0BFE1B4AFB85000385C9 /* VariableEnvironment.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		79FC8A081E32E9F000D88F0E /* DFGRegisteredStructure.h in Headers */ = {isa = PBXBuildFile; fileRef = 79FC8A071E32E9F000D88F0E /* DFGRegisteredStructure.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7A9774A8206B82E4008D03D0 /* JSWeakValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A9774A7206B82C9008D03D0 /* JSWeakValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B6F856C28DDA088004365EA /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
+		7B6F856D28DDA096004365EA /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1498CAD3214656C400710879 /* libWTF.a */; };
 		7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC547D21B69599B00959B58 /* WasmFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C008CE7187631B600955C24 /* Microtask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C008CE5187631B600955C24 /* Microtask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C184E1B17BEDBD3007CB63A /* JSPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C184E1917BEDBD3007CB63A /* JSPromise.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1868,6 +1870,9 @@
 		E318CA6C254406B6004DC129 /* IntlListFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CA66254406B4004DC129 /* IntlListFormat.h */; };
 		E318CA6D254406B6004DC129 /* IntlListFormatPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CA67254406B5004DC129 /* IntlListFormatPrototype.h */; };
 		E318CBC11B8AEF5100A2929D /* JSModuleNamespaceObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E319A3ED28DA84EB00DF18C7 /* IntlDurationFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E319A3E728DA84EA00DF18C7 /* IntlDurationFormatConstructor.h */; };
+		E319A3EF28DA84EB00DF18C7 /* IntlDurationFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = E319A3E928DA84EB00DF18C7 /* IntlDurationFormat.h */; };
+		E319A3F128DA84EB00DF18C7 /* IntlDurationFormatPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E319A3EB28DA84EB00DF18C7 /* IntlDurationFormatPrototype.h */; };
 		E31C31322511AFD700E7A3A0 /* IntlCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E31C31302511AFD600E7A3A0 /* IntlCache.h */; };
 		E3201C1D1F8E82360076A032 /* JSScriptFetchParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D060B1F8E814100649CF2 /* JSScriptFetchParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3201C1E1F8E824C0076A032 /* ScriptFetchParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E38D060C1F8E814100649CF2 /* ScriptFetchParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1888,6 +1893,7 @@
 		E32D4DE726DAFD4300D4533A /* TemporalCalendarPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE126DAFD4200D4533A /* TemporalCalendarPrototype.h */; };
 		E32D4DE926DAFD4300D4533A /* TemporalCalendar.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE326DAFD4300D4533A /* TemporalCalendar.h */; };
 		E32D4DEA26DAFD4300D4533A /* TemporalCalendarConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = E32D4DE426DAFD4300D4533A /* TemporalCalendarConstructor.h */; };
+		E32E1B3128DA8C7A00FCB571 /* IntlDurationFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E319A3E628DA84E900DF18C7 /* IntlDurationFormat.cpp */; };
 		E32F713D281B3C6600AFD21D /* UnifiedSource5-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F7138281B3C6600AFD21D /* UnifiedSource5-c.c */; };
 		E32F713E281B3C6600AFD21D /* UnifiedSource4-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F7139281B3C6600AFD21D /* UnifiedSource4-c.c */; };
 		E32F713F281B3C6600AFD21D /* UnifiedSource1-c.c in Sources */ = {isa = PBXBuildFile; fileRef = E32F713A281B3C6600AFD21D /* UnifiedSource1-c.c */; };
@@ -5304,6 +5310,12 @@
 		E318CA6A254406B5004DC129 /* IntlListFormatConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlListFormatConstructor.cpp; sourceTree = "<group>"; };
 		E318CBBE1B8AEF5100A2929D /* JSModuleNamespaceObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSModuleNamespaceObject.cpp; sourceTree = "<group>"; };
 		E318CBBF1B8AEF5100A2929D /* JSModuleNamespaceObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSModuleNamespaceObject.h; sourceTree = "<group>"; };
+		E319A3E628DA84E900DF18C7 /* IntlDurationFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlDurationFormat.cpp; sourceTree = "<group>"; };
+		E319A3E728DA84EA00DF18C7 /* IntlDurationFormatConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDurationFormatConstructor.h; sourceTree = "<group>"; };
+		E319A3E828DA84EB00DF18C7 /* IntlDurationFormatPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlDurationFormatPrototype.cpp; sourceTree = "<group>"; };
+		E319A3E928DA84EB00DF18C7 /* IntlDurationFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDurationFormat.h; sourceTree = "<group>"; };
+		E319A3EA28DA84EB00DF18C7 /* IntlDurationFormatConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlDurationFormatConstructor.cpp; sourceTree = "<group>"; };
+		E319A3EB28DA84EB00DF18C7 /* IntlDurationFormatPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlDurationFormatPrototype.h; sourceTree = "<group>"; };
 		E31C31302511AFD600E7A3A0 /* IntlCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntlCache.h; sourceTree = "<group>"; };
 		E31C31312511AFD600E7A3A0 /* IntlCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntlCache.cpp; sourceTree = "<group>"; };
 		E322E5A01DA64435006E7709 /* DFGSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGSnippetParams.cpp; path = dfg/DFGSnippetParams.cpp; sourceTree = "<group>"; };
@@ -5839,6 +5851,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B6F856D28DDA096004365EA /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5864,6 +5877,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B6F856C28DDA088004365EA /* libWTF.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7847,6 +7861,12 @@
 				E353C11824AA4CB6003FBDF3 /* IntlDisplayNamesConstructor.h */,
 				E353C11924AA4CB6003FBDF3 /* IntlDisplayNamesPrototype.cpp */,
 				E353C11B24AA4CB7003FBDF3 /* IntlDisplayNamesPrototype.h */,
+				E319A3E628DA84E900DF18C7 /* IntlDurationFormat.cpp */,
+				E319A3E928DA84EB00DF18C7 /* IntlDurationFormat.h */,
+				E319A3EA28DA84EB00DF18C7 /* IntlDurationFormatConstructor.cpp */,
+				E319A3E728DA84EA00DF18C7 /* IntlDurationFormatConstructor.h */,
+				E319A3E828DA84EB00DF18C7 /* IntlDurationFormatPrototype.cpp */,
+				E319A3EB28DA84EB00DF18C7 /* IntlDurationFormatPrototype.h */,
 				E318CA69254406B5004DC129 /* IntlListFormat.cpp */,
 				E318CA66254406B4004DC129 /* IntlListFormat.h */,
 				E318CA6A254406B5004DC129 /* IntlListFormatConstructor.cpp */,
@@ -10545,6 +10565,9 @@
 				E365F33A24AA623900C991B2 /* IntlDisplayNamesConstructor.lut.h in Headers */,
 				E353C12124AA4CB7003FBDF3 /* IntlDisplayNamesPrototype.h in Headers */,
 				E365F33B24AA623B00C991B2 /* IntlDisplayNamesPrototype.lut.h in Headers */,
+				E319A3EF28DA84EB00DF18C7 /* IntlDurationFormat.h in Headers */,
+				E319A3ED28DA84EB00DF18C7 /* IntlDurationFormatConstructor.h in Headers */,
+				E319A3F128DA84EB00DF18C7 /* IntlDurationFormatPrototype.h in Headers */,
 				E318CA6C254406B6004DC129 /* IntlListFormat.h in Headers */,
 				E318CA6B254406B6004DC129 /* IntlListFormatConstructor.h in Headers */,
 				E318CA6D254406B6004DC129 /* IntlListFormatPrototype.h in Headers */,
@@ -12292,6 +12315,7 @@
 				5333BBDD2110F7E1007618EC /* DFGSpeculativeJIT64.cpp in Sources */,
 				33B2A548226543BF005A0F79 /* FTLLowerDFGToB3.cpp in Sources */,
 				E399AEC32559457F00B78485 /* IntlDateTimeFormat.cpp in Sources */,
+				E32E1B3128DA8C7A00FCB571 /* IntlDurationFormat.cpp in Sources */,
 				E366441E254409B30001876F /* IntlListFormat.cpp in Sources */,
 				E378DC8D2727629400427B0B /* IntlNumberFormat.cpp in Sources */,
 				E30873E7272559410053B601 /* IntlPluralRules.cpp in Sources */,

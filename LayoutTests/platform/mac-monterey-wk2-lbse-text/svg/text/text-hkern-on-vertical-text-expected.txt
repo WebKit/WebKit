@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (-5,0) size 10x41 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGTransformableContainer {g} at (-5,0) size 10x41
+  RenderSVGTransformableContainer {g} at (-5,0) size 10x40.02
 layer at (-5,0) size 10x40 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGText {text} at (0,0) size 10x41 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 10x41

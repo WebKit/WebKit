@@ -9089,7 +9089,7 @@ bool LayerFlushController::flushLayers()
 
 - (id)_animationControllerForDictionaryLookupPopupInfo:(const WebCore::DictionaryPopupInfo&)dictionaryPopupInfo
 {
-    if (!dictionaryPopupInfo.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString)
         return nil;
 
     [self _prepareForDictionaryLookup];
@@ -9157,7 +9157,7 @@ bool LayerFlushController::flushLayers()
 
 - (void)_showDictionaryLookupPopup:(const WebCore::DictionaryPopupInfo&)dictionaryPopupInfo
 {
-    if (!dictionaryPopupInfo.attributedString)
+    if (!dictionaryPopupInfo.platformData.attributedString)
         return;
 
     [self _prepareForDictionaryLookup];
@@ -9759,12 +9759,12 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     return nil;
 }
 
-- (void)_notificationDidShow:(uint64_t)notificationID
+- (void)_notificationDidShow:(NSString *)notificationID
 {
     [[self _notificationProvider] webView:self didShowNotification:notificationID];
 }
 
-- (void)_notificationDidClick:(uint64_t)notificationID
+- (void)_notificationDidClick:(NSString *)notificationID
 {
     [[self _notificationProvider] webView:self didClickNotification:notificationID];
 }
@@ -9774,7 +9774,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
     [[self _notificationProvider] webView:self didCloseNotifications:notificationIDs];
 }
 
-- (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification
+- (NSString *)_notificationIDForTesting:(JSValueRef)jsNotification
 {
 #if ENABLE(NOTIFICATIONS)
     auto* page = _private->page;
@@ -9782,9 +9782,9 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
         return 0;
     JSContextRef context = [[self mainFrame] globalContext];
     auto* notification = WebCore::JSNotification::toWrapped(toJS(context)->vm(), toJS(toJS(context), jsNotification));
-    return static_cast<WebNotificationClient*>(WebCore::NotificationController::clientFrom(*page))->notificationIDForTesting(notification);
+    return notification->identifier().toString();
 #else
-    return 0;
+    return nil;
 #endif
 }
 

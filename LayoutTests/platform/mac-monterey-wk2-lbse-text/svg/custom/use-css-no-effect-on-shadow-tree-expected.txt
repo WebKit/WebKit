@@ -1,18 +1,18 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 454x113
-  RenderSVGRoot {svg} at (0,0) size 454x114
-layer at (0,0) size 454x114 backgroundClip at (0,0) size 454x113 clip at (0,0) size 454x113
-  RenderSVGViewportContainer at (0,0) size 454x114
-layer at (300,50) size 600x200 backgroundClip at (0,0) size 454x113 clip at (0,0) size 454x113
+layer at (0,0) size 454x113 backgroundClip at (0,0) size 453.53x113.38 clip at (0,0) size 453.53x113.38
+  RenderSVGRoot {svg} at (0,0) size 453.53x113.38
+layer at (0,0) size 454x114 backgroundClip at (0,0) size 453.53x113.38 clip at (0,0) size 453.53x113.38
+  RenderSVGViewportContainer at (0,0) size 453.53x113.38
+layer at (300,50) size 600x200 backgroundClip at (0,0) size 453.53x113.38 clip at (0,0) size 453.53x113.38
   RenderSVGHiddenContainer {defs} at (300,50) size 600x200
-layer at (300,50) size 600x200 backgroundClip at (0,0) size 454x113 clip at (0,0) size 454x113
+layer at (300,50) size 600x200 backgroundClip at (0,0) size 453.53x113.38 clip at (0,0) size 453.53x113.38
   RenderSVGPath {path} at (0,0) size 600x200 [stroke={[type=SOLID] [color=#FF0000] [opacity=0.50] [miter limit=10.00] [line join=BEVEL] [dash array={300.00, 100.00}]}] [fill={[type=SOLID] [color=#000000]}] [data="M 300 50 L 900 50 L 900 250 L 300 250"]
-layer at (0,0) size 1200x300 backgroundClip at (0,0) size 454x113 clip at (0,0) size 454x113
+layer at (0,0) size 1200x300 backgroundClip at (0,0) size 453.53x113.38 clip at (0,0) size 453.53x113.38
   RenderSVGRect {rect} at (0,0) size 1200x300 [stroke={[type=SOLID] [color=#0000FF] [stroke width=3.00]}] [x=0.00] [y=0.00] [width=1200.00] [height=300.00]
-layer at (300,50) size 600x200 backgroundClip at (0,0) size 454x113 clip at (0,0) size 454x113
+layer at (300,50) size 600x200 backgroundClip at (0,0) size 453.53x113.38 clip at (0,0) size 453.53x113.38
   RenderSVGTransformableContainer {g} at (300,50) size 600x200
-layer at (300,50) size 600x200 backgroundClip at (0,0) size 454x113 clip at (0,0) size 454x113
+layer at (300,50) size 600x200 backgroundClip at (0,0) size 453.53x113.38 clip at (0,0) size 453.53x113.38
   RenderSVGTransformableContainer {use} at (0,0) size 600x200
-layer at (300,50) size 600x200 backgroundClip at (0,0) size 454x113 clip at (0,0) size 454x113
+layer at (300,50) size 600x200 backgroundClip at (0,0) size 453.53x113.38 clip at (0,0) size 453.53x113.38
   RenderSVGPath {path} at (0,0) size 600x200 [stroke={[type=SOLID] [color=#FF0000] [opacity=0.50] [stroke width=40.00] [line cap=ROUND] [line join=BEVEL] [dash offset=50.00] [dash array={300.00, 100.00}]}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [data="M 300 50 L 900 50 L 900 250 L 300 250"]

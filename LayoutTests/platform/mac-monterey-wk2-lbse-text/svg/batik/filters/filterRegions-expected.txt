@@ -4,187 +4,187 @@ layer at (0,0) size 450x500
   RenderSVGRoot {svg} at (0,0) size 450x500
 layer at (0,0) size 450x500
   RenderSVGViewportContainer at (0,0) size 450x500
-layer at (176,26) size 98x17
+layer at (175.64,25.52) size 98x17
   RenderSVGText {text} at (175,25) size 100x19 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 99x18
       chunk 1 (middle anchor) text run 1 at (175.65,40.00) startOffset 0 endOffset 14 width 98.70: "Filter Regions"
-layer at (-16,-30) size 20000017x3056 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (-17,-31) size 20000017x3056
-layer at (-10,-20) size 121x76 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (6,10) size 121x76
+layer at (-16.45,-30.06) size 20000016x3056 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (-16.45,-30.06) size 20000016x3055.06
+layer at (-10,-20.06) size 121x76 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (6.45,10) size 120x75.06
 layer at (0,0) size 100x51
-  RenderSVGRect {rect} at (10,20) size 100x51 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
+  RenderSVGRect {rect} at (10,20.06) size 100x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=50.00]
 layer at (-10,-5) size 120x61 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (0,15) size 120x61 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=-10.00] [y=-5.00] [width=120.00] [height=60.00]
+  RenderSVGRect {rect} at (0,15.06) size 120x60 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=-10.00] [y=-5.00] [width=120.00] [height=60.00]
 layer at (20,30) size 51x41
-  RenderSVGRect {rect} at (36,60) size 51x41 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-layer at (10,15) size 71x12
+  RenderSVGRect {rect} at (36.45,60.06) size 50x40 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
+layer at (9.91,14.94) size 71x12
   RenderSVGText {text} at (26,45) size 71x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 71x13
       chunk 1 (middle anchor) text run 1 at (9.92,25.00) startOffset 0 endOffset 14 width 70.17: "filterRegion_1"
-layer at (0,15) size 20000001x3011 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (16,45) size 20000001x3011
+layer at (0,14.94) size 20000000x3011 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (16.45,45) size 20000000x3010.06
 layer at (25,35) size 45x36
-  RenderSVGRect {rect} at (25,20) size 45x36 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=25.00] [y=35.00] [width=45.00] [height=35.00]
-layer at (10,15) size 70x12
+  RenderSVGRect {rect} at (25,20.06) size 45x35 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=25.00] [y=35.00] [width=45.00] [height=35.00]
+layer at (9.91,14.94) size 70x12
   RenderSVGText {text} at (9,0) size 72x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 71x13
       chunk 1 (middle anchor) text run 1 at (9.92,25.00) startOffset 0 endOffset 14 width 70.17: "filterRegion_2"
-layer at (0,15) size 20000001x3011 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (16,45) size 20000001x3011
+layer at (0,14.94) size 20000000x3011 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (16.45,45) size 20000000x3010.06
 layer at (20,30) size 50x21
-  RenderSVGRect {rect} at (20,15) size 50x21 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=20.00]
-layer at (10,15) size 70x12
+  RenderSVGRect {rect} at (20,15.06) size 50x20 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=20.00]
+layer at (9.91,14.94) size 70x12
   RenderSVGText {text} at (9,0) size 72x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 71x13
       chunk 1 (middle anchor) text run 1 at (9.92,25.00) startOffset 0 endOffset 14 width 70.17: "filterRegion_3"
-layer at (0,15) size 20000001x3011 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (16,45) size 20000001x3011
+layer at (0,14.94) size 20000000x3011 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (16.45,45) size 20000000x3010.06
 layer at (20,30) size 25x41
-  RenderSVGRect {rect} at (20,15) size 25x41 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=25.00] [height=40.00]
-layer at (10,15) size 70x12
+  RenderSVGRect {rect} at (20,15.06) size 25x40 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=25.00] [height=40.00]
+layer at (9.91,14.94) size 70x12
   RenderSVGText {text} at (9,0) size 72x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 71x13
       chunk 1 (middle anchor) text run 1 at (9.92,25.00) startOffset 0 endOffset 14 width 70.17: "filterRegion_4"
-layer at (0,15) size 20000001x3011 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (16,45) size 20000001x3011
+layer at (0,14.94) size 20000000x3011 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (16.45,45) size 20000000x3010.06
 layer at (20,30) size 50x21
-  RenderSVGRect {rect} at (20,15) size 50x21 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=20.00]
-layer at (10,15) size 70x12
+  RenderSVGRect {rect} at (20,15.06) size 50x20 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=20.00]
+layer at (9.91,14.94) size 70x12
   RenderSVGText {text} at (9,0) size 72x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 71x13
       chunk 1 (middle anchor) text run 1 at (9.92,25.00) startOffset 0 endOffset 14 width 70.17: "filterRegion_5"
-layer at (10,15) size 71x56
-  RenderSVGTransformableContainer {g} at (26,45) size 71x56
+layer at (9.91,14.94) size 71x56
+  RenderSVGTransformableContainer {g} at (26.36,45) size 70.19x55.06
 layer at (20,30) size 41x41
-  RenderSVGRect {rect} at (10,15) size 41x41 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=40.00] [height=40.00]
-layer at (10,15) size 70x12
+  RenderSVGRect {rect} at (10.09,15.06) size 40x40 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=40.00] [height=40.00]
+layer at (9.91,14.94) size 70x12
   RenderSVGText {text} at (0,0) size 71x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 71x13
       chunk 1 (middle anchor) text run 1 at (9.92,25.00) startOffset 0 endOffset 14 width 70.17: "filterRegion_6"
-layer at (-16,-30) size 83x58 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 83x58
+layer at (-16.45,-30.06) size 83x58 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 82.91x57.56
 layer at (0,0) size 51x26
-  RenderSVGRect {rect} at (16,30) size 51x26 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
-layer at (-5,-2) size 61x31 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGRect {rect} at (11,27) size 61x31 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=-5.00] [y=-2.50] [width=60.00] [height=30.00]
+  RenderSVGRect {rect} at (16.45,30.06) size 50x25 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=50.00] [height=25.00]
+layer at (-5,-2.50) size 61x31 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGRect {rect} at (11.45,27.56) size 60x30 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=-5.00] [y=-2.50] [width=60.00] [height=30.00]
 layer at (20,30) size 51x41
-  RenderSVGTransformableContainer {g} at (36,60) size 51x41
+  RenderSVGTransformableContainer {g} at (36.45,60.06) size 50x40
 layer at (20,30) size 50x40
   RenderSVGRect {rect} at (0,0) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-layer at (4,15) size 83x56
-  RenderSVGTransformableContainer {g} at (20,45) size 83x56
+layer at (3.55,14.94) size 83x56
+  RenderSVGTransformableContainer {g} at (20,45) size 82.91x55.06
 layer at (20,30) size 51x41
-  RenderSVGRect {rect} at (16,15) size 51x41 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-layer at (4,15) size 83x12
+  RenderSVGRect {rect} at (16.45,15.06) size 50x40 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
+layer at (3.55,14.94) size 83x12
   RenderSVGText {text} at (0,0) size 83x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_2_1"
 layer at (20,30) size 51x41
-  RenderSVGTransformableContainer {g} at (36,60) size 51x41
+  RenderSVGTransformableContainer {g} at (36.45,60.06) size 50x40
 layer at (20,30) size 50x40
   RenderSVGRect {rect} at (0,0) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-layer at (4,15) size 83x56
-  RenderSVGTransformableContainer {g} at (20,45) size 83x56
+layer at (3.55,14.94) size 83x56
+  RenderSVGTransformableContainer {g} at (20,45) size 82.91x55.06
 layer at (20,30) size 51x41
-  RenderSVGRect {rect} at (16,15) size 51x41 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-layer at (4,15) size 83x12
+  RenderSVGRect {rect} at (16.45,15.06) size 50x40 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
+layer at (3.55,14.94) size 83x12
   RenderSVGText {text} at (0,0) size 83x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_2_2"
 layer at (20,30) size 51x41
-  RenderSVGTransformableContainer {g} at (36,60) size 51x41
+  RenderSVGTransformableContainer {g} at (36.45,60.06) size 50x40
 layer at (20,30) size 50x40
   RenderSVGRect {rect} at (0,0) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-layer at (4,15) size 83x46
-  RenderSVGTransformableContainer {g} at (20,45) size 83x46
-layer at (33,50) size 26x11
-  RenderSVGRect {rect} at (28,35) size 26x11 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=32.50] [y=50.00] [width=25.00] [height=10.00]
-layer at (4,15) size 83x12
+layer at (3.55,14.94) size 83x46
+  RenderSVGTransformableContainer {g} at (20,45) size 82.91x45.06
+layer at (32.50,50) size 26x11
+  RenderSVGRect {rect} at (28.95,35.06) size 25x10 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=32.50] [y=50.00] [width=25.00] [height=10.00]
+layer at (3.55,14.94) size 83x12
   RenderSVGText {text} at (0,0) size 83x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_2_3"
 layer at (20,30) size 51x41
-  RenderSVGTransformableContainer {g} at (36,60) size 51x41
+  RenderSVGTransformableContainer {g} at (36.45,60.06) size 50x40
 layer at (20,30) size 50x40
   RenderSVGRect {rect} at (0,0) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-layer at (4,15) size 83x46
-  RenderSVGTransformableContainer {g} at (20,45) size 83x46
-layer at (33,50) size 26x11
-  RenderSVGRect {rect} at (28,35) size 26x11 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=32.50] [y=50.00] [width=25.00] [height=10.00]
-layer at (4,15) size 83x12
+layer at (3.55,14.94) size 83x46
+  RenderSVGTransformableContainer {g} at (20,45) size 82.91x45.06
+layer at (32.50,50) size 26x11
+  RenderSVGRect {rect} at (28.95,35.06) size 25x10 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=32.50] [y=50.00] [width=25.00] [height=10.00]
+layer at (3.55,14.94) size 83x12
   RenderSVGText {text} at (0,0) size 83x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_2_4"
 layer at (20,30) size 51x41
-  RenderSVGTransformableContainer {g} at (36,60) size 51x41
+  RenderSVGTransformableContainer {g} at (36.45,60.06) size 50x40
 layer at (20,30) size 50x40
   RenderSVGRect {rect} at (0,0) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=20.00] [y=30.00] [width=50.00] [height=40.00]
-layer at (4,15) size 83x46
-  RenderSVGTransformableContainer {g} at (20,45) size 83x46
+layer at (3.55,14.94) size 83x46
+  RenderSVGTransformableContainer {g} at (20,45) size 82.91x45.06
 layer at (20,50) size 51x11
-  RenderSVGRect {rect} at (16,35) size 51x11 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=50.00] [width=50.00] [height=10.00]
-layer at (4,15) size 83x12
+  RenderSVGRect {rect} at (16.45,35.06) size 50x10 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=50.00] [width=50.00] [height=10.00]
+layer at (3.55,14.94) size 83x12
   RenderSVGText {text} at (0,0) size 83x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_2_5"
 layer at (0,0) size 451x451 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (16,30) size 451x451
+  RenderSVGTransformableContainer {g} at (16.45,30.06) size 450x450
 layer at (0,0) size 450x450
   RenderSVGRect {rect} at (0,0) size 450x450 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=450.00] [height=450.00]
-layer at (4,15) size 83x41
-  RenderSVGTransformableContainer {g} at (20,45) size 83x41
+layer at (3.55,14.94) size 83x41
+  RenderSVGTransformableContainer {g} at (20,45) size 82.91x40.06
 layer at (20,30) size 21x26
-  RenderSVGRect {rect} at (16,15) size 21x26 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=20.00] [height=25.00]
-layer at (4,15) size 83x12
+  RenderSVGRect {rect} at (16.45,15.06) size 20x25 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=20.00] [y=30.00] [width=20.00] [height=25.00]
+layer at (3.55,14.94) size 83x12
   RenderSVGText {text} at (0,0) size 83x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_3_1"
 layer at (0,0) size 41x51
-  RenderSVGTransformableContainer {g} at (16,30) size 41x51
+  RenderSVGTransformableContainer {g} at (16.45,30.06) size 40x50
 layer at (0,0) size 40x50
   RenderSVGRect {rect} at (0,0) size 40x50 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=40.00] [height=50.00]
 layer at (-4,-5) size 91x61 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (12,25) size 91x61
+  RenderSVGTransformableContainer {g} at (12.45,25.06) size 90.45x60
 layer at (-4,-5) size 48x60 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
   RenderSVGRect {rect} at (0,0) size 48x60 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=-4.00] [y=-5.00] [width=48.00] [height=60.00]
-layer at (4,15) size 82x12
+layer at (3.55,14.94) size 82x12
   RenderSVGText {text} at (7,19) size 84x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_3_0"
 layer at (50,40) size 51x41
-  RenderSVGTransformableContainer {g} at (66,70) size 51x41
+  RenderSVGTransformableContainer {g} at (66.45,70.06) size 50x40
 layer at (50,40) size 50x40
   RenderSVGRect {rect} at (0,0) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=40.00] [width=50.00] [height=40.00]
 layer at (0,0) size 101x81
-  RenderSVGTransformableContainer {g} at (16,30) size 101x81
+  RenderSVGTransformableContainer {g} at (16.45,30.06) size 100x80
 layer at (0,0) size 100x80
   RenderSVGRect {rect} at (0,0) size 100x80 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=0.00] [y=0.00] [width=100.00] [height=80.00]
-layer at (4,15) size 82x12
+layer at (3.55,14.94) size 82x12
   RenderSVGText {text} at (3,14) size 84x14 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_3_2"
 layer at (50,40) size 51x41
-  RenderSVGTransformableContainer {g} at (66,70) size 51x41
+  RenderSVGTransformableContainer {g} at (66.45,70.06) size 50x40
 layer at (50,40) size 50x40
   RenderSVGRect {rect} at (0,0) size 50x40 [fill={[type=SOLID] [color=#000000]}] [x=50.00] [y=40.00] [width=50.00] [height=40.00]
-layer at (4,15) size 83x36
-  RenderSVGTransformableContainer {g} at (20,45) size 83x36
+layer at (3.55,14.94) size 83x36
+  RenderSVGTransformableContainer {g} at (20,45) size 82.91x35.06
 layer at (25,20) size 38x31
-  RenderSVGRect {rect} at (21,5) size 38x31 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=25.00] [y=20.00] [width=37.50] [height=30.00]
-layer at (4,15) size 83x12
+  RenderSVGRect {rect} at (21.45,5.06) size 37.50x30 [stroke={[type=SOLID] [color=#000000] [opacity=0.50]}] [x=25.00] [y=20.00] [width=37.50] [height=30.00]
+layer at (3.55,14.94) size 83x12
   RenderSVGText {text} at (0,0) size 83x13 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 83x13
       chunk 1 (middle anchor) text run 1 at (3.56,25.00) startOffset 0 endOffset 16 width 82.88: "filterRegion_3_3"
-layer at (0,0) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {use} at (-1,-1) size 540x565
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
+layer at (-0.05,-0.36) size 540x565 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {use} at (-0.05,-0.36) size 539x563.77
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
 layer at (1,1) size 447x497
-  RenderSVGRect {rect} at (1,1) size 447x497 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
-layer at (0,0) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
-  RenderSVGTransformableContainer {g} at (0,0) size 539x564
-layer at (0,0) size 28x29
-  RenderSVGViewportContainer {svg} at (0,0) size 28x29
-layer at (158,352) size 287x212 backgroundClip at (413,467) size 37x33 clip at (413,467) size 37x33
-  RenderSVGPath {path} at (158,352) size 287x212 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]
+  RenderSVGRect {rect} at (1.05,1.36) size 446x496 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=446.00] [height=496.00]
+layer at (-0.05,-0.36) size 539x564 backgroundClip at (0,0) size 450x500 clip at (0,0) size 450x500
+  RenderSVGTransformableContainer {g} at (0,0) size 539x563.77
+layer at (0,0) size 28x29 backgroundClip at (0,0.36) size 450x499.64
+  RenderSVGViewportContainer {svg} at (0.05,0.36) size 27x28
+layer at (158.31,352.16) size 287x212 backgroundClip at (413.41,467) size 36.59x33 clip at (413.41,467) size 36.59x33
+  RenderSVGPath {path} at (158.31,352.16) size 286.69x211.25 [fill={[type=SOLID] [color=#33CC33]}] [data="M 275 353 C 229 365 187 396 161 444 C 152 460 167 481 186 477 C 172 501 146 544 171 558 C 199 574 223 550 231 543 C 249 564 281 553 312 526 C 353 540 380 524 415 473 C 423 461 445 430 445 408 C 445 392 430 378 410 387 C 409 375 401 349 357 368 C 347 362 326 363 303 385 C 308 375 300 347 275 353 Z"]

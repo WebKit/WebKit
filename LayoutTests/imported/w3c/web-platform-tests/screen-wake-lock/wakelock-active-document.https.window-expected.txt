@@ -1,0 +1,4 @@
+
+FAIL navigator.wakeLock.request() aborts if the document is not active. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'wakeLock1.request')"
+FAIL navigator.wakeLock.request() aborts if the document is active, but not fully active. promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'wakeLock.request')"
+

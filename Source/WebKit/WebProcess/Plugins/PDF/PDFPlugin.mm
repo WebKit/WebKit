@@ -2582,7 +2582,7 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
 {
     DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.origin = convertFromPDFViewToRootView(IntPoint(point));
-    dictionaryPopupInfo.attributedString = string;
+    dictionaryPopupInfo.platformData.attributedString = string;
     
     
     NSRect rangeRect;

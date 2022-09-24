@@ -5,13 +5,13 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
 layer at (-40,-79) size 396x167 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (-40,-79) size 396x167
+  RenderSVGTransformableContainer {g} at (-40,-79) size 395.94x167
 layer at (100,18) size 256x28
   RenderSVGText {text} at (140,97) size 256x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 256x28
       chunk 1 text run 1 at (100.00,40.00) startOffset 0 endOffset 26 width 255.94: "Mouse event handlers test."
 layer at (-40,-79) size 396x109 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 396x109
+  RenderSVGTransformableContainer {g} at (0,0) size 395.23x109
 layer at (60,-15) size 295x28 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (100,64) size 296x28 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 296x28
@@ -21,11 +21,11 @@ layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 480x360 clip at (0,0)
 layer at (-30,-30) size 60x60 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGEllipse {circle} at (0,0) size 60x60 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [cx=0.00] [cy=0.00] [r=30.00]
 layer at (-15,-9) size 212x97 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (25,70) size 212x97
+  RenderSVGTransformableContainer {g} at (25,70) size 211.66x97
 layer at (-15,-9) size 212x97 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (0,0) size 212x97
+  RenderSVGTransformableContainer {g} at (0,0) size 211.66x97
 layer at (10,-9) size 187x97 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
-  RenderSVGTransformableContainer {g} at (25,0) size 187x97
+  RenderSVGTransformableContainer {g} at (25,0) size 186.66x97
 layer at (10,-9) size 187x37 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGText {text} at (0,0) size 187x37 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 187x37

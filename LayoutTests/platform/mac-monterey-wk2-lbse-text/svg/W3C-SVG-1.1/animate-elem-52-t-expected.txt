@@ -4,19 +4,19 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGViewportContainer at (0,0) size 480x360
-layer at (65,23) size 22x35
+layer at (65,22.50) size 22x35
   RenderSVGText {text} at (65,22) size 22x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 22x35
       chunk 1 text run 1 at (65.00,50.00) startOffset 0 endOffset 1 width 21.67: "A"
-layer at (165,23) size 20x35
+layer at (165,22.50) size 20x35
   RenderSVGText {text} at (165,22) size 21x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 21x35
       chunk 1 text run 1 at (165.00,50.00) startOffset 0 endOffset 1 width 20.01: "B"
-layer at (265,23) size 20x35
+layer at (265,22.50) size 20x35
   RenderSVGText {text} at (265,22) size 21x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 21x35
       chunk 1 text run 1 at (265.00,50.00) startOffset 0 endOffset 1 width 20.01: "C"
-layer at (365,23) size 22x35
+layer at (365,22.50) size 22x35
   RenderSVGText {text} at (365,22) size 22x36 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 22x35
       chunk 1 text run 1 at (365.00,50.00) startOffset 0 endOffset 1 width 21.67: "D"
@@ -58,15 +58,15 @@ layer at (15,150) size 289x32
   RenderSVGText {text} at (15,150) size 290x32 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 290x32
       chunk 1 text run 1 at (15.00,175.00) startOffset 0 endOffset 26 width 289.23: "Test of Eventbase targets."
-layer at (15,229) size 337x21
+layer at (15,228.50) size 337x21
   RenderSVGText {text} at (15,228) size 338x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 338x21
       chunk 1 text run 1 at (15.00,245.00) startOffset 0 endOffset 48 width 337.42: "Note that clicking rect D should give no result."
-layer at (15,189) size 360x21
+layer at (15,188.50) size 360x21
   RenderSVGText {text} at (15,188) size 360x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 360x21
       chunk 1 text run 1 at (15.00,205.00) startOffset 0 endOffset 51 width 359.89: "Clicking a rectangle should change its color at the"
-layer at (15,209) size 364x21
+layer at (15,208.50) size 364x21
   RenderSVGText {text} at (15,208) size 364x22 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 364x21
       chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 53 width 363.49: "time for the click + delay as indicated in each rect."

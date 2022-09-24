@@ -20,8 +20,8 @@ layer at (25,25) size 50x50
   RenderSVGRect {rect} at (25,25) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (0,0) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
-layer at (13,13) size 26x38
-  RenderSVGRect {rect} at (12,12) size 26x38 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=12.50] [y=12.50] [width=25.00] [height=37.50]
+layer at (12.50,12.50) size 26x38
+  RenderSVGRect {rect} at (12.50,12.50) size 25x37.50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=12.50] [y=12.50] [width=25.00] [height=37.50]
 layer at (25,125) size 50x50
   RenderSVGRect {rect} at (25,125) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
 layer at (0,0) size 75x175
@@ -40,8 +40,8 @@ layer at (25,25) size 50x50
   RenderSVGRect {rect} at (25,25) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (0,0) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
-layer at (50,38) size 25x13
-  RenderSVGRect {rect} at (50,37) size 25x13 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=50.00] [y=37.50] [width=25.00] [height=12.50]
+layer at (50,37.50) size 25x13
+  RenderSVGRect {rect} at (50,37.50) size 25x12.50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=50.00] [y=37.50] [width=25.00] [height=12.50]
 layer at (25,125) size 50x50
   RenderSVGRect {rect} at (25,125) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
 layer at (0,0) size 75x175
@@ -50,8 +50,8 @@ layer at (25,25) size 50x50
   RenderSVGRect {rect} at (25,25) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (0,0) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
-layer at (38,38) size 26x26
-  RenderSVGRect {rect} at (37,37) size 26x26 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=37.50] [y=37.50] [width=25.00] [height=25.00]
+layer at (37.50,37.50) size 26x26
+  RenderSVGRect {rect} at (37.50,37.50) size 25x25 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=37.50] [y=37.50] [width=25.00] [height=25.00]
 layer at (25,125) size 50x50
   RenderSVGRect {rect} at (25,125) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
 layer at (0,0) size 75x175
@@ -60,8 +60,8 @@ layer at (25,25) size 50x50
   RenderSVGRect {rect} at (25,25) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (0,0) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
-layer at (13,13) size 51x51
-  RenderSVGRect {rect} at (12,12) size 51x51 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=12.50] [y=12.50] [width=50.00] [height=50.00]
+layer at (12.50,12.50) size 51x51
+  RenderSVGRect {rect} at (12.50,12.50) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=12.50] [y=12.50] [width=50.00] [height=50.00]
 layer at (25,125) size 50x50
   RenderSVGRect {rect} at (25,125) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
 layer at (0,0) size 75x175
@@ -70,8 +70,8 @@ layer at (25,25) size 50x50
   RenderSVGRect {rect} at (25,25) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (0,0) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
-layer at (31,31) size 13x13
-  RenderSVGRect {rect} at (31,31) size 13x13 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=31.25] [y=31.25] [width=12.50] [height=12.50]
+layer at (31.25,31.25) size 13x13
+  RenderSVGRect {rect} at (31.25,31.25) size 12.50x12.50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=31.25] [y=31.25] [width=12.50] [height=12.50]
 layer at (25,125) size 50x50
   RenderSVGRect {rect} at (25,125) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
 layer at (20,20) size 60x155
@@ -84,16 +84,16 @@ layer at (25,25) size 50x50
   RenderSVGRect {rect} at (5,5) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (25,125) size 50x50
   RenderSVGRect {rect} at (5,105) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
-layer at (13,13) size 68x163
-  RenderSVGTransformableContainer {g} at (12,12) size 68x163
+layer at (12.50,12.50) size 68x163
+  RenderSVGTransformableContainer {g} at (12.50,12.50) size 67.50x162.50
 layer at (25,25) size 51x51
-  RenderSVGRect {rect} at (12,12) size 51x51 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+  RenderSVGRect {rect} at (12.50,12.50) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (20,20) size 61x61
-  RenderSVGRect {rect} at (7,7) size 61x61 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=20.00] [y=20.00] [width=60.00] [height=60.00]
-layer at (13,13) size 25x38
-  RenderSVGRect {rect} at (0,0) size 25x38 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=12.50] [y=12.50] [width=25.00] [height=37.50]
+  RenderSVGRect {rect} at (7.50,7.50) size 60x60 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=20.00] [y=20.00] [width=60.00] [height=60.00]
+layer at (12.50,12.50) size 25x38
+  RenderSVGRect {rect} at (0,0) size 25x37.50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=12.50] [y=12.50] [width=25.00] [height=37.50]
 layer at (25,125) size 51x51
-  RenderSVGRect {rect} at (12,112) size 51x51 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
+  RenderSVGRect {rect} at (12.50,112.50) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
 layer at (20,20) size 60x155
   RenderSVGTransformableContainer {g} at (20,20) size 60x155
 layer at (25,25) size 50x50
@@ -120,27 +120,27 @@ layer at (25,25) size 50x50
   RenderSVGRect {rect} at (5,5) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (20,20) size 60x60
   RenderSVGRect {rect} at (0,0) size 60x60 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=20.00] [y=20.00] [width=60.00] [height=60.00]
-layer at (38,38) size 26x26
-  RenderSVGRect {rect} at (17,17) size 26x26 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=37.50] [y=37.50] [width=25.00] [height=25.00]
+layer at (37.50,37.50) size 26x26
+  RenderSVGRect {rect} at (17.50,17.50) size 25x25 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=37.50] [y=37.50] [width=25.00] [height=25.00]
 layer at (25,125) size 50x50
   RenderSVGRect {rect} at (5,105) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
-layer at (13,13) size 68x163
-  RenderSVGTransformableContainer {g} at (12,12) size 68x163
+layer at (12.50,12.50) size 68x163
+  RenderSVGTransformableContainer {g} at (12.50,12.50) size 67.50x162.50
 layer at (25,25) size 51x51
-  RenderSVGRect {rect} at (12,12) size 51x51 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+  RenderSVGRect {rect} at (12.50,12.50) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (20,20) size 61x61
-  RenderSVGRect {rect} at (7,7) size 61x61 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=20.00] [y=20.00] [width=60.00] [height=60.00]
-layer at (13,13) size 50x50
+  RenderSVGRect {rect} at (7.50,7.50) size 60x60 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=20.00] [y=20.00] [width=60.00] [height=60.00]
+layer at (12.50,12.50) size 50x50
   RenderSVGRect {rect} at (0,0) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=12.50] [y=12.50] [width=50.00] [height=50.00]
 layer at (25,125) size 51x51
-  RenderSVGRect {rect} at (12,112) size 51x51 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
-layer at (13,13) size 76x163
-  RenderSVGTransformableContainer {g} at (12,12) size 76x163
+  RenderSVGRect {rect} at (12.50,112.50) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
+layer at (12.50,12.50) size 76x163
+  RenderSVGTransformableContainer {g} at (12.50,12.50) size 75x162.50
 layer at (25,25) size 51x51
-  RenderSVGRect {rect} at (12,12) size 51x51 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
+  RenderSVGRect {rect} at (12.50,12.50) size 50x50 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={5.00}]}] [fill={[type=SOLID] [color=#96FF96]}] [x=25.00] [y=25.00] [width=50.00] [height=50.00]
 layer at (20,20) size 61x61
-  RenderSVGRect {rect} at (7,7) size 61x61 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=20.00] [y=20.00] [width=60.00] [height=60.00]
-layer at (13,13) size 75x75
+  RenderSVGRect {rect} at (7.50,7.50) size 60x60 [stroke={[type=SOLID] [color=#000000] [stroke width=0.20] [dash array={3.00}]}] [fill={[type=SOLID] [color=#C8C8C8] [opacity=0.40]}] [x=20.00] [y=20.00] [width=60.00] [height=60.00]
+layer at (12.50,12.50) size 75x75
   RenderSVGRect {rect} at (0,0) size 75x75 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000096] [opacity=0.40]}] [x=12.50] [y=12.50] [width=75.00] [height=75.00]
 layer at (25,125) size 51x51
-  RenderSVGRect {rect} at (12,112) size 51x51 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
+  RenderSVGRect {rect} at (12.50,112.50) size 50x50 [fill={[type=SOLID] [color=#00FF00]}] [x=25.00] [y=125.00] [width=50.00] [height=50.00]
