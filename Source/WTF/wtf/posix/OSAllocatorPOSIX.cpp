@@ -48,6 +48,32 @@
 #include <wtf/spi/cocoa/MachVMSPI.h>
 #endif
 
+#if OS(DARWIN)
+
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
+#include <mach/task.h>
+
+#define BUN_MACOSX 1
+
+#endif
+
+#ifdef MADV_DONTFORK
+#define BUN_MADV_DONTFORK MADV_DONTFORK
+#else
+#define BUN_MADV_DONTFORK 0
+#endif
+
+#ifdef BUN_MACOSX
+#define BUN_VM_CHILD_PROCESS_INHERIT VM_INHERIT_NONE
+#else
+#ifdef VM_INHERIT_DEFAULT
+#define BUN_VM_CHILD_PROCESS_INHERIT VM_INHERIT_DEFAULT
+#else 
+#define BUN_VM_CHILD_PROCESS_INHERIT 0
+#endif
+#endif
+
 namespace WTF {
 
 void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
@@ -129,7 +155,7 @@ void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, bool writabl
     if (result == MAP_FAILED)
         result = nullptr;
     if (result)
-        while (madvise(result, bytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
+        while (madvise(result, bytes, MADV_DONTNEED | BUN_MADV_DONTFORK ) == -1 && errno == EAGAIN) { }
 #else
     void* result = tryReserveAndCommit(bytes, usage, writable, executable, jitCageEnabled, includesGuardPages);
 #if HAVE(MADV_FREE_REUSE)
@@ -198,7 +224,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
     if (result == MAP_FAILED)
         return nullptr;
     if (result)
-        while (madvise(result, bytes, MADV_DONTNEED) == -1 && errno == EAGAIN) { }
+        while (madvise(result, bytes, MADV_DONTNEED | BUN_MADV_DONTFORK) == -1 && errno == EAGAIN) { }
     return result;
 #else
 
@@ -235,7 +261,7 @@ void OSAllocator::commit(void* address, size_t bytes, bool writable, bool execut
 #if OS(LINUX)
     UNUSED_PARAM(writable);
     UNUSED_PARAM(executable);
-    while (madvise(address, bytes, MADV_WILLNEED) == -1 && errno == EAGAIN) { }
+    while (madvise(address, bytes, MADV_WILLNEED | BUN_MADV_DONTFORK) == -1 && errno == EAGAIN) { }
 #elif HAVE(MADV_FREE_REUSE)
     UNUSED_PARAM(writable);
     UNUSED_PARAM(executable);
