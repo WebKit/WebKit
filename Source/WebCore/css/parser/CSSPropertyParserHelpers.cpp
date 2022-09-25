@@ -1975,8 +1975,8 @@ template<RGBFunctionMode Mode> static Color parseRGBParameters(CSSParserTokenRan
 static Color colorByNormalizingHSLComponents(AngleOrNumberOrNoneRaw hue, PercentOrNoneRaw saturation, PercentOrNoneRaw lightness, double alpha, RGBOrHSLSeparatorSyntax syntax)
 {
     auto normalizedHue = WTF::switchOn(hue,
-        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
-        [] (NumberRaw number) { return normalizeHue(number.value); },
+        [] (AngleRaw angle) { return CSSPrimitiveValue::computeDegrees(angle.type, angle.value); },
+        [] (NumberRaw number) { return number.value; },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto normalizedSaturation = WTF::switchOn(saturation,
@@ -1997,8 +1997,16 @@ static Color colorByNormalizingHSLComponents(AngleOrNumberOrNoneRaw hue, Percent
         return HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(alpha) };
     }
 
-    // NOTE: The explicit conversion to SRGBA<uint8_t> is intentional for performance (no extra allocation for
-    // the extended color) and compatability, forcing serialiazation to use the rgb()/rgba() form.
+    if (normalizedHue < 0.0 || normalizedHue > 360.0) {
+        // If hue is not in the [0, 360] range, we store the value as a HSLA<float> to allow for correct interpolation
+        // using the "specified" hue interpolation method.
+        return HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(alpha) };
+    }
+
+    // NOTE: The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
+    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
+    // that HSLA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
+    // internal representation in engines.
     return convertColor<SRGBA<uint8_t>>(HSLA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedSaturation), static_cast<float>(normalizedLightness), static_cast<float>(alpha) });
 }
 
@@ -2109,8 +2117,8 @@ static Color parseHWBParameters(CSSParserTokenRange& args, ConsumerForHue&& hueC
         return { };
 
     auto normalizedHue = WTF::switchOn(*hue,
-        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
-        [] (NumberRaw number) { return normalizeHue(number.value); },
+        [] (AngleRaw angle) { return CSSPrimitiveValue::computeDegrees(angle.type, angle.value); },
+        [] (NumberRaw number) { return number.value; },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto clampedWhiteness = WTF::switchOn(*whiteness,
@@ -2125,14 +2133,22 @@ static Color parseHWBParameters(CSSParserTokenRange& args, ConsumerForHue&& hueC
     if (std::isnan(normalizedHue) || std::isnan(clampedWhiteness) || std::isnan(clampedBlackness) || std::isnan(*alpha)) {
         auto [normalizedWhitness, normalizedBlackness] = normalizeClampedWhitenessBlacknessAllowingNone(clampedWhiteness, clampedBlackness);
 
-        // If any component uses "none", we store the value as a HSLA<float> to allow for storage of the special value as NaN.
+        // If any component uses "none", we store the value as a HWBA<float> to allow for storage of the special value as NaN.
         return HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) };
     }
 
     auto [normalizedWhitness, normalizedBlackness] = normalizeClampedWhitenessBlacknessDisallowingNone(clampedWhiteness, clampedBlackness);
 
-    // NOTE: The explicit conversion to SRGBA<uint8_t> is intentional for performance (no extra allocation for
-    // the extended color) and compatability, forcing serialiazation to use the rgb()/rgba() form.
+    if (normalizedHue < 0.0 || normalizedHue > 360.0) {
+        // If 'hue' is not in the [0, 360] range, we store the value as a HWBA<float> to allow for correct interpolation
+        // using the "specified" hue interpolation method.
+        return HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) };
+    }
+
+    // NOTE: The explicit conversion to SRGBA<uint8_t> is an intentional performance optimization that allows storing the
+    // color with no extra allocation for an extended color object. This is permissible due to the historical requirement
+    // that HWBA colors serialize using the legacy color syntax (rgb()/rgba()) and historically have used the 8-bit rgba
+    // internal representation in engines.
     return convertColor<SRGBA<uint8_t>>(HWBA<float> { static_cast<float>(normalizedHue), static_cast<float>(normalizedWhitness), static_cast<float>(normalizedBlackness), static_cast<float>(*alpha) });
 }
 
@@ -2426,8 +2442,8 @@ static Color parseLCHParameters(CSSParserTokenRange& args, ConsumerForLightness&
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
     auto normalizedHue = WTF::switchOn(*hue,
-        [] (AngleRaw angle) { return normalizeHue(CSSPrimitiveValue::computeDegrees(angle.type, angle.value)); },
-        [] (NumberRaw number) { return normalizeHue(number.value); },
+        [] (AngleRaw angle) { return CSSPrimitiveValue::computeDegrees(angle.type, angle.value); },
+        [] (NumberRaw number) { return number.value; },
         [] (NoneRaw) { return std::numeric_limits<double>::quiet_NaN(); }
     );
 

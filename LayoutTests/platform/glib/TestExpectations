@@ -574,6 +574,10 @@ webkit.org/b/234606 fast/gradients/conic-gradient-alpha-unpremultiplied.html [ I
 webkit.org/b/234606 fast/gradients/conic-gradient-alpha.html [ ImageOnlyFailure ]
 webkit.org/b/234606 fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
 webkit.org/b/234606 fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
+webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-hsl.html [ ImageOnlyFailure ]
+webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-hwb.html [ ImageOnlyFailure ]
+webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-lch.html [ ImageOnlyFailure ]
+webkit.org/b/245622 fast/gradients/gradient-using-specified-hue-interpolation-method-oklch.html [ ImageOnlyFailure ]
 
 webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 webkit.org/b/169988 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
