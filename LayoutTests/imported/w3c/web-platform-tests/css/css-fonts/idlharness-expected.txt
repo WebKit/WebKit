@@ -33,6 +33,7 @@ FAIL CSSFontFeatureValuesMap interface object name assert_own_property: self doe
 FAIL CSSFontFeatureValuesMap interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
 FAIL CSSFontFeatureValuesMap interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
 FAIL CSSFontFeatureValuesMap interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
+FAIL CSSFontFeatureValuesMap interface: maplike<CSSOMString, [object Object]> undefined is not an object (evaluating 'this.get_interface_object().prototype')
 FAIL CSSFontFeatureValuesMap interface: operation set(CSSOMString, (unsigned long or sequence<unsigned long>)) assert_own_property: self does not have own property "CSSFontFeatureValuesMap" expected property "CSSFontFeatureValuesMap" missing
 PASS CSSFontPaletteValuesRule interface: existence and properties of interface object
 PASS CSSFontPaletteValuesRule interface object length
