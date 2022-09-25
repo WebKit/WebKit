@@ -52,7 +52,7 @@ static bool isVGAPaletteColor(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#named-colors
     // "16 of CSS’s named colors come from the VGA palette originally, and were then adopted into HTML"
-    return (id >= CSSValueAqua && id <= CSSValueYellow) || id == CSSValueGrey;
+    return (id >= CSSValueAqua && id <= CSSValueGrey);
 }
 
 static bool isNonVGANamedColor(CSSValueID id)
@@ -70,8 +70,13 @@ bool StyleColor::isAbsoluteColorKeyword(CSSValueID id)
 bool StyleColor::isSystemColorKeyword(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#css-system-colors
+    return (id >= CSSValueCanvas && id <= CSSValueWebkitText) || id == CSSValueText || isDeprecatedSystemColorKeyword(id);
+}
+
+bool StyleColor::isDeprecatedSystemColorKeyword(CSSValueID id)
+{
     // https://drafts.csswg.org/css-color-4/#deprecated-system-colors
-    return (id >= CSSValueWebkitLink && id <= CSSValueWebkitFocusRingColor) || id == CSSValueWebkitText || id == CSSValueMenu || id == CSSValueText;
+    return (id >= CSSValueActiveborder && id <= CSSValueWindowtext) || id == CSSValueMenu;
 }
 
 bool StyleColor::isColorKeyword(CSSValueID id, OptionSet<CSSColorType> allowedColorTypes)

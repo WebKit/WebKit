@@ -174,7 +174,18 @@ system-ui
 //
 // CSS_PROP_*_COLOR
 //
+
+// https://drafts.csswg.org/css-color-4/#currentcolor-color
+currentcolor
+
+// https://drafts.csswg.org/css-color-4/#transparent-color
+transparent
+
+// Non-standard
 alpha
+
+// https://drafts.csswg.org/css-color-4/#named-colors
+// "16 of CSS’s named colors come from the VGA palette originally, and were then adopted into HTML"
 aqua
 black
 blue
@@ -192,34 +203,22 @@ silver
 teal
 white
 yellow
-transparent
--webkit-link
--webkit-activelink
+grey
+
+// https://drafts.csswg.org/css-color-4/#deprecated-system-colors
 activeborder
 activecaption
-activetext
 appworkspace
 background
-buttonface
 buttonhighlight
 buttonshadow
-buttontext
-activebuttontext
-canvas
-canvastext
 captiontext
-field
-fieldtext
-graytext
-highlight
-highlighttext
 inactiveborder
 inactivecaption
 inactivecaptiontext
 infobackground
 infotext
-linktext
-luminance
+// menu
 menutext
 scrollbar
 threeddarkshadow
@@ -227,10 +226,32 @@ threedface
 threedhighlight
 threedlightshadow
 threedshadow
-visitedtext
 window
 windowframe
 windowtext
+
+// https://drafts.csswg.org/css-color-4/#typedef-system-color
+canvas
+canvastext
+linktext
+visitedtext
+activetext
+buttonface
+buttontext
+buttonborder
+field
+fieldtext
+highlight
+highlighttext
+selecteditem
+selecteditemtext
+mark
+marktext
+graytext
+accentcolor
+accentcolortext
+
+// Non-standard system colors
 #if (defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC) || (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
 -apple-system-header-text
 -apple-system-text-background
@@ -286,12 +307,12 @@ windowtext
 #if (defined(WTF_PLATFORM_MAC) && WTF_PLATFORM_MAC) || (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY) || (defined(HAVE_OS_DARK_MODE_SUPPORT) && HAVE_OS_DARK_MODE_SUPPORT)
 -webkit-control-background
 #endif
+activebuttontext
+-webkit-activelink
+-webkit-link
 -webkit-focus-ring-color
-currentcolor
-//
-// colors in non strict mode
-grey
 -webkit-text
+
 //
 // CSS_PROP_BACKGROUND_REPEAT:
 //
@@ -1572,7 +1593,7 @@ compact
 
 // mask-type, mask-mode
 // alpha
-// luminance
+luminance
 match-source
 
 // rotate
