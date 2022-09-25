@@ -162,8 +162,9 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const Inli
         }
         if (nextInlineTextItem.isWhitespace()) {
             // "<span>text</span> "
-            // white-space: break-spaces: line breaking opportunity exists after every preserved white space character, but not before.
-            return TextUtil::isWrappingAllowed(nextInlineTextItem.style()) && nextInlineTextItem.style().whiteSpace() != WhiteSpace::BreakSpaces;
+            // 'white-space: break-spaces' and '-webkit-line-break: after-white-space': line breaking opportunity exists after every preserved white space character, but not before.
+            auto& style = nextInlineTextItem.style();
+            return TextUtil::isWrappingAllowed(style) && style.whiteSpace() != WhiteSpace::BreakSpaces && style.lineBreak() != LineBreak::AfterWhiteSpace;
         }
         if (current.style().lineBreak() == LineBreak::Anywhere || next.style().lineBreak() == LineBreak::Anywhere) {
             // There is a soft wrap opportunity around every typographic character unit, including around any punctuation character
@@ -534,6 +535,7 @@ LineBuilder::CommittedContent LineBuilder::placeInlineContent(const InlineItemRa
 LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayoutRange, const CommittedContent& committedContent)
 {
     ASSERT(committedContent.itemCount || !m_placedFloats.isEmpty() || m_contentIsConstrainedByFloat);
+    auto& rootStyle = root().style();
     auto numberOfCommittedItems = committedContent.itemCount;
     auto trailingInlineItemIndex = needsLayoutRange.start + numberOfCommittedItems - 1;
     auto lineRange = InlineItemRange { needsLayoutRange.start, trailingInlineItemIndex + 1 };
@@ -544,11 +546,13 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     }
     auto isLastLine = isLastLineWithInlineContent(lineRange, needsLayoutRange.end, committedContent.partialTrailingContentLength);
     auto horizontalAvailableSpace = m_lineLogicalRect.width();
+    auto lineHasOverflow = horizontalAvailableSpace < m_line.contentLogicalWidth();
     auto isInIntrinsicWidthMode = this->isInIntrinsicWidthMode();
     auto lineEndsWithLineBreak = !m_line.runs().isEmpty() && m_line.runs().last().isLineBreak();
+    auto isLineBreakAfterWhitespace = (!isLastLine || lineHasOverflow) && rootStyle.lineBreak() == LineBreak::AfterWhiteSpace;
     auto shouldApplyPreserveTrailingWhitespaceQuirk = m_inlineFormattingContext.formattingQuirks().shouldPreserveTrailingWhitespace(isInIntrinsicWidthMode, m_line.contentNeedsBidiReordering(), horizontalAvailableSpace < m_line.contentLogicalWidth(), lineEndsWithLineBreak);
 
-    m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk ? Line::TrailingTrimmableContentAction::Preserve : Line::TrailingTrimmableContentAction::Remove);
+    m_line.handleTrailingTrimmableContent(shouldApplyPreserveTrailingWhitespaceQuirk || isLineBreakAfterWhitespace ? Line::TrailingTrimmableContentAction::Preserve : Line::TrailingTrimmableContentAction::Remove);
     if (isInIntrinsicWidthMode) {
         // When a glyph at the start or end edge of a line hangs, it is not considered when measuring the line’s contents for fit.
         // https://drafts.csswg.org/css-text/#hanging
@@ -562,7 +566,6 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
         }
     }
 
-    auto& rootStyle = root().style();
     // On each line, reset the embedding level of any sequence of whitespace characters at the end of the line
     // to the paragraph embedding level
     m_line.resetBidiLevelForTrailingWhitespace(rootStyle.isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL);
@@ -577,7 +580,7 @@ LineBuilder::InlineItemRange LineBuilder::close(const InlineItemRange& needsLayo
     m_successiveHyphenatedLineCount = lineEndsWithHyphen ? m_successiveHyphenatedLineCount + 1 : 0;
 
     auto needsTextOverflowAdjustment = [&] {
-        if (horizontalAvailableSpace >= m_line.contentLogicalWidth() || isInIntrinsicWidthMode)
+        if (!lineHasOverflow || isInIntrinsicWidthMode)
             return false;
         // text-overflow is in effect when the block container has overflow other than visible.
         return !rootStyle.isOverflowVisible() && rootStyle.textOverflow() == TextOverflow::Ellipsis;
