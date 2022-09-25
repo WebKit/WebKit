@@ -155,7 +155,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
 {
     ASSERT(hasOneBitSet(alignment) && alignment >= pageSize());
 
-#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK) || BUN_MACOSX
     UNUSED_PARAM(usage); // Not supported for mach API.
     ASSERT_UNUSED(includesGuardPages, !includesGuardPages);
     ASSERT_UNUSED(jitCageEnabled, !jitCageEnabled); // Not supported for mach API.
@@ -165,7 +165,7 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
     if (executable)
         protections |= VM_PROT_EXECUTE;
 
-    const vm_inherit_t childProcessInheritance = VM_INHERIT_DEFAULT;
+    const vm_inherit_t childProcessInheritance = BUN_VM_CHILD_PROCESS_INHERIT;
     const bool copy = false;
     const int flags = VM_FLAGS_ANYWHERE;
 
