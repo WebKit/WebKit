@@ -167,8 +167,14 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 return InlineContentBreaker::Result { Result::Action::Keep };
         }
 
-        if (continuousContent.isHangingContent())
-            return InlineContentBreaker::Result { Result::Action::Keep };
+        if (continuousContent.hasHangingContent()) {
+            if (continuousContent.isHangingContent())
+                return InlineContentBreaker::Result { Result::Action::Keep };
+            auto hangingTrailingContentWidth = *continuousContent.hangingContentWidth();
+            auto spaceRequired = continuousContent.logicalWidth() - hangingTrailingContentWidth;
+            if (spaceRequired <= lineStatus.availableWidth)
+                return InlineContentBreaker::Result { Result::Action::Keep };
+        }
 
         auto canIgnoreNonContentTrailingRuns = lineStatus.collapsibleOrHangingWidth && isNonContentRunsOnly(continuousContent);
         if (canIgnoreNonContentTrailingRuns) {

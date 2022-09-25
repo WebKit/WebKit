@@ -81,9 +81,11 @@ public:
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
         std::optional<InlineLayoutUnit> leadingCollapsibleWidth() const { return m_leadingCollapsibleWidth; }
         std::optional<InlineLayoutUnit> trailingCollapsibleWidth() const { return m_trailingCollapsibleWidth; }
+        std::optional<InlineLayoutUnit> hangingContentWidth() const { return m_trailingHangingContentWidth; }
         bool hasCollapsibleContent() const { return trailingCollapsibleWidth() || leadingCollapsibleWidth(); }
+        bool hasHangingContent() const { return hangingContentWidth().has_value(); }
         bool isFullyCollapsible() const;
-        bool isHangingContent() const { return m_trailingHangingContentWidth && logicalWidth() == *m_trailingHangingContentWidth; }
+        bool isHangingContent() const { return hasHangingContent() && hangingContentWidth() == logicalWidth(); }
 
         void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void append(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth);
