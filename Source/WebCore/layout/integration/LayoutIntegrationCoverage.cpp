@@ -506,10 +506,6 @@ OptionSet<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& 
         ADD_REASONS_AND_RETURN_IF_NEEDED(styleReasons, reasons, includeReasons);
 
     if (flow.containsFloats()) {
-        auto intrusiveFloatsWithMismatchingInlineDirection = flow.containingBlock() && flow.containingBlock()->style().isLeftToRightDirection() != flow.style().isLeftToRightDirection();
-        if (intrusiveFloatsWithMismatchingInlineDirection)
-            SET_REASON_AND_RETURN_IF_NEEDED(FlowHasUnsupportedFloat, reasons, includeReasons);
-
         for (auto& floatingObject : *flow.floatingObjectSet()) {
             ASSERT(floatingObject);
             // if a float has a shape, we cannot tell if content will need to be shifted until after we lay it out,
