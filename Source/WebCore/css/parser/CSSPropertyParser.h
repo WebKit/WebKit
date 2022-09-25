@@ -30,11 +30,9 @@
 
 namespace WebCore {
 
+class CSSCustomPropertyValue;
 class CSSProperty;
-class CSSValue;
-class CSSValueList;
 class StylePropertyShorthand;
-class StyleSheetContents;
 
 namespace Style {
 class BuilderState;

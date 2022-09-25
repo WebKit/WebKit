@@ -31,19 +31,13 @@
 #include "config.h"
 #include "CSSGridAutoRepeatValue.h"
 
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
 String CSSGridAutoRepeatValue::customCSSText() const
 {
-    StringBuilder result;
-    result.append("repeat(");
-    result.append(getValueName(autoRepeatID()));
-    result.append(", ");
-    result.append(CSSValueList::customCSSText());
-    result.append(')');
-    return result.toString();
+    return makeString("repeat("_s, getValueName(autoRepeatID()), ", "_s, CSSValueList::customCSSText(), ')');
 }
 
 bool CSSGridAutoRepeatValue::equals(const CSSGridAutoRepeatValue& other) const
