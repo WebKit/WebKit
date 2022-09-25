@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div { 
+        width: 400px;
+        height: 100px;
+        display: inline-block;
+    }
+
+    /* Ensures that when using the "specified" hue interpolation method that values < 0 and greater than 360 are respected and not normalized to the [0, 360] range. */
+
+    #gradient {
+        background-image: linear-gradient(in hwb specified hue to right, hwb(-240deg 0% 0%), hwb(660deg 0% 50%));
+    }
+</style>
+</head>
+<body>
+<div id="gradient"></div>
+</body>
+</html>

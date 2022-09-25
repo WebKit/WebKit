@@ -150,7 +150,7 @@ template<typename T> struct ColorComponentInfo {
 
 template<> struct HSLModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
-        { 0, 360, ColorComponentType::Angle },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Angle },
         { 0, 100, ColorComponentType::Percentage },
         { 0, 100, ColorComponentType::Percentage }
     } };
@@ -176,7 +176,7 @@ template<typename ColorType> inline constexpr bool UsesHSLModel = std::is_same_v
 
 template<> struct HWBModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
-        { 0, 360, ColorComponentType::Angle },
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Angle },
         { 0, 100, ColorComponentType::Percentage },
         { 0, 100, ColorComponentType::Percentage }
     } };
@@ -230,7 +230,7 @@ template<> struct LCHModel<float> {
     static constexpr std::array<ColorComponentInfo<float>, 3> componentInfo { {
         { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
         { 0, std::numeric_limits<float>::infinity(), ColorComponentType::Number },
-        { 0, 360, ColorComponentType::Angle }
+        { -std::numeric_limits<float>::infinity(), std::numeric_limits<float>::infinity(), ColorComponentType::Angle }
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::CylindricalPolar;

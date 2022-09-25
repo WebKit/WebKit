@@ -2337,6 +2337,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     thisObject->m_defaultCollator.visit(visitor);
     thisObject->m_collatorStructure.visit(visitor);
     thisObject->m_displayNamesStructure.visit(visitor);
+    thisObject->m_durationFormatStructure.visit(visitor);
     thisObject->m_listFormatStructure.visit(visitor);
     thisObject->m_localeStructure.visit(visitor);
     thisObject->m_pluralRulesStructure.visit(visitor);

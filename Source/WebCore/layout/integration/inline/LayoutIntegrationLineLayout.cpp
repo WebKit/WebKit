@@ -402,7 +402,7 @@ void LineLayout::constructContent()
 
     auto& rootGeometry = m_layoutState.geometryForRootBox();
     auto& rootStyle = rootLayoutBox().style();
-    auto isLeftToRightInlineDirection = rootStyle.isLeftToRightDirection();
+    auto isLeftToRightFloatingStateInlineDirection = m_inlineFormattingState.floatingState().isLeftToRightDirection();
     auto isHorizontalWritingMode = rootStyle.isHorizontalWritingMode();
     auto isFlippedBlocksWritingMode = rootStyle.isFlippedBlocksWritingMode();
     for (auto& renderObject : m_boxTree.renderers()) {
@@ -427,7 +427,7 @@ void LineLayout::constructContent()
         if (layoutBox.isFloatingPositioned()) {
             auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
 
-            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(isHorizontalWritingMode, isLeftToRightInlineDirection, rootGeometry.borderBoxWidth());
+            auto visualGeometry = logicalGeometry.geometryForWritingModeAndDirection(isHorizontalWritingMode, isLeftToRightFloatingStateInlineDirection, rootGeometry.borderBoxWidth());
             auto visualMarginBoxRect = LayoutRect { Layout::BoxGeometry::marginBoxRect(visualGeometry) };
             floatingObject.setFrameRect(visualMarginBoxRect);
 
@@ -490,20 +490,28 @@ void LineLayout::prepareFloatingState()
 
     auto& rootGeometry = m_layoutState.geometryForRootBox();
     auto isHorizontalWritingMode = flow().containingBlock() ? flow().containingBlock()->style().isHorizontalWritingMode() : true;
-    auto isLeftToRightInlineDirection = flow().containingBlock() ? flow().containingBlock()->style().isLeftToRightDirection() : true;
-    floatingState.setIsLeftToRightDirection(isLeftToRightInlineDirection);
+    auto floatingStateIsLeftToRightInlineDirection = flow().containingBlock() ? flow().containingBlock()->style().isLeftToRightDirection() : true;
+    floatingState.setIsLeftToRightDirection(floatingStateIsLeftToRightInlineDirection);
     for (auto& floatingObject : *flow().floatingObjectSet()) {
         auto& visualRect = floatingObject->frameRect();
         auto logicalPosition = [&] {
             switch (floatingObject->renderer().style().floating()) {
             case Float::Left:
-                return isLeftToRightInlineDirection ? Layout::FloatingState::FloatItem::Position::Left : Layout::FloatingState::FloatItem::Position::Right;
+                return floatingStateIsLeftToRightInlineDirection ? Layout::FloatingState::FloatItem::Position::Left : Layout::FloatingState::FloatItem::Position::Right;
             case Float::Right:
-                return isLeftToRightInlineDirection ? Layout::FloatingState::FloatItem::Position::Right : Layout::FloatingState::FloatItem::Position::Left;
-            case Float::InlineStart:
+                return floatingStateIsLeftToRightInlineDirection ? Layout::FloatingState::FloatItem::Position::Right : Layout::FloatingState::FloatItem::Position::Left;
+            case Float::InlineStart: {
+                auto* floatBoxContainingBlock = floatingObject->renderer().containingBlock();
+                if (floatBoxContainingBlock)
+                    return floatBoxContainingBlock->style().isLeftToRightDirection() == floatingStateIsLeftToRightInlineDirection ? Layout::FloatingState::FloatItem::Position::Left : Layout::FloatingState::FloatItem::Position::Right;
                 return Layout::FloatingState::FloatItem::Position::Left;
-            case Float::InlineEnd:
+            }
+            case Float::InlineEnd: {
+                auto* floatBoxContainingBlock = floatingObject->renderer().containingBlock();
+                if (floatBoxContainingBlock)
+                    return floatBoxContainingBlock->style().isLeftToRightDirection() == floatingStateIsLeftToRightInlineDirection ? Layout::FloatingState::FloatItem::Position::Right : Layout::FloatingState::FloatItem::Position::Left;
                 return Layout::FloatingState::FloatItem::Position::Right;
+            }
             default:
                 ASSERT_NOT_REACHED();
                 return Layout::FloatingState::FloatItem::Position::Left;
@@ -517,7 +525,7 @@ void LineLayout::prepareFloatingState()
             auto logicalLeft = isHorizontalWritingMode ? visualRect.x() : LayoutUnit(visualRect.y().floor());
             auto logicalHeight = (isHorizontalWritingMode ? LayoutUnit(visualRect.maxY().floor()) : visualRect.maxX()) - logicalTop;
             auto logicalWidth = (isHorizontalWritingMode ? visualRect.maxX() : LayoutUnit(visualRect.maxY().floor())) - logicalLeft;
-            if (!isLeftToRightInlineDirection)
+            if (!floatingStateIsLeftToRightInlineDirection)
                 logicalLeft = rootGeometry.borderBoxWidth() - (logicalLeft + logicalWidth);
             return LayoutRect { logicalLeft, logicalTop, logicalWidth, logicalHeight };
         }();

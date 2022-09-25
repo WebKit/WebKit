@@ -237,7 +237,7 @@ std::optional<HorizontalConstraints> InlineFormattingGeometry::floatConstraintsF
     // Check for intruding floats and adjust logical left/available width for this line accordingly.
     auto toLogicalFloatPosition = [&] (const auto& constraints) {
         // FIXME: Move inline direction flip to FloatingContext.
-        if (floatingContext.isLeftToRightDirection() == formattingContext().root().style().isLeftToRightDirection())
+        if (floatingContext.floatingState().isLeftToRightDirection() == formattingContext().root().style().isLeftToRightDirection())
             return constraints;
         auto logicalConstraints = FloatingContext::Constraints { };
         auto borderBoxWidth = layoutState().geometryForBox(formattingContext().root()).borderBoxWidth();

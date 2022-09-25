@@ -29,6 +29,7 @@
 #include "Document.h"
 #include "Editing.h"
 #include "Element.h"
+#include "ElementName.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "VisibleUnits.h"
@@ -123,31 +124,36 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(const std::optional<Si
 
 bool isElementForFormatBlock(const QualifiedName& tagName)
 {
-    static NeverDestroyed blockTags = MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
-        addressTag,
-        articleTag,
-        asideTag,
-        blockquoteTag,
-        ddTag,
-        divTag,
-        dlTag,
-        dtTag,
-        footerTag,
-        h1Tag,
-        h2Tag,
-        h3Tag,
-        h4Tag,
-        h5Tag,
-        h6Tag,
-        headerTag,
-        hgroupTag,
-        mainTag,
-        navTag,
-        pTag,
-        preTag,
-        sectionTag,
-    };
-    return blockTags.get().contains(tagName);
+    using namespace ElementNames;
+
+    switch (tagName.elementName()) {
+    case HTML::address:
+    case HTML::article:
+    case HTML::aside:
+    case HTML::blockquote:
+    case HTML::dd:
+    case HTML::div:
+    case HTML::dl:
+    case HTML::dt:
+    case HTML::footer:
+    case HTML::h1:
+    case HTML::h2:
+    case HTML::h3:
+    case HTML::h4:
+    case HTML::h5:
+    case HTML::h6:
+    case HTML::header:
+    case HTML::hgroup:
+    case HTML::main:
+    case HTML::nav:
+    case HTML::p:
+    case HTML::pre:
+    case HTML::section:
+        return true;
+    default:
+        break;
+    }
+    return false;
 }
 
 Node* enclosingBlockToSplitTreeTo(Node* startNode)

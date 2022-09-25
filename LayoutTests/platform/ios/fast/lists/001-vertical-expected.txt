@@ -1,4 +1,4 @@
-layer at (0,0) size 800x622
+layer at (0,0) size 800x610
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
                 text run at (11,132) width 90: "List item text."
       RenderBlock {UL} at (124,0) size 144x584
         RenderListItem {LI} at (0,40) size 144x544 [border: (2px solid #FF0000)]
-          RenderListMarker at (52,555) size 19x7: bullet
-          RenderText {#text} at (52,52) size 39x428
-            text run at (52,52) width 428: "Foo fofodfosjlkdf dslkdjlk asdlksjald djklsd klasjdkas sdajd lsadjkl"
-            text run at (72,52) width 72: "asjdlksajdk"
+          RenderListMarker at (53,555) size 19x7: bullet
+          RenderText {#text} at (53,52) size 39x428
+            text run at (53,52) width 428: "Foo fofodfosjlkdf dslkdjlk asdlksjald djklsd klasjdkas sdajd lsadjkl"
+            text run at (73,52) width 72: "asjdlksajdk"

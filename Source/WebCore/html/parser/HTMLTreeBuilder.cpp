@@ -259,7 +259,7 @@ inline bool HTMLTreeBuilder::isParsingFragmentOrTemplateContents() const
     return isParsingFragment() || isParsingTemplateContents();
 }
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& document, ParserContentPolicy parserContentPolicy, const HTMLParserOptions& options)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& document, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options)
     : m_parser(parser)
     , m_options(options)
     , m_tree(document, parserContentPolicy, options.maximumDOMTreeDepth)
@@ -270,7 +270,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& docum
 #endif
 }
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& fragment, Element& contextElement, ParserContentPolicy parserContentPolicy, const HTMLParserOptions& options)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options)
     : m_parser(parser)
     , m_options(options)
     , m_fragmentContext(fragment, contextElement)

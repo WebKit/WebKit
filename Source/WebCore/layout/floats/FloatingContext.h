@@ -39,6 +39,8 @@ class LayoutState;
 
 // FloatingContext is responsible for adjusting the position of a box in the current formatting context
 // by taking the floating boxes into account.
+// Note that a FloatingContext's inline direction always matches the root's inline direction but it may
+// not match the FloatingState's inline direction (i.e. FloatingState may be constructed by a parent BFC with mismatching inline direction).
 class FloatingContext {
     WTF_MAKE_ISO_ALLOCATED(FloatingContext);
 public:
@@ -71,12 +73,11 @@ public:
 
     FloatingState::FloatItem toFloatItem(const Box& floatBox) const;
 
-    bool isLeftToRightDirection() const { return floatingState().isLeftToRightDirection(); }
-
-    bool isLeftFloatingPositioned(const Box&) const;
-
 private:
     std::optional<LayoutUnit> bottom(Clear) const;
+
+    bool isFloaingCandidateLogicallyLeftPositioned(const Box&) const;
+    Clear logicalClear(const Box&) const;
 
     const LayoutState& layoutState() const { return m_floatingState.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
@@ -92,16 +93,6 @@ private:
     const FormattingContext& m_formattingContext;
     const FloatingState& m_floatingState;
 };
-
-inline bool FloatingContext::isLeftFloatingPositioned(const Box& floatBox) const
-{
-    ASSERT(floatBox.isFloatingPositioned());
-    auto inlineDirection = root().style().direction();
-    auto floatingValue = floatBox.style().floating();
-    return floatingValue == Float::InlineStart
-        || (inlineDirection == TextDirection::LTR && floatingValue == Float::Left)
-        || (inlineDirection == TextDirection::RTL && floatingValue == Float::Right);
-}
 
 }
 }

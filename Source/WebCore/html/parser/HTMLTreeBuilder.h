@@ -53,8 +53,8 @@ struct CustomElementConstructionData {
 class HTMLTreeBuilder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, ParserContentPolicy, const HTMLParserOptions&);
-    HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element& contextElement, ParserContentPolicy, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser&, HTMLDocument&, OptionSet<ParserContentPolicy>, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>, const HTMLParserOptions&);
     void setShouldSkipLeadingNewline(bool);
 
     ~HTMLTreeBuilder();

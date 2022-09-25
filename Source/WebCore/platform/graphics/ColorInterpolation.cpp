@@ -47,7 +47,7 @@ std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationM
         auto difference = theta2 - theta1;
         if (difference > 0.0 && difference < 180.0)
             return { theta1 + 360.0, theta2 };
-        if (difference > -180.0 && difference < 0)
+        if (difference > -180.0 && difference <= 0)
             return { theta1, theta2 + 360.0 };
         return { theta1, theta2 };
     };
@@ -71,15 +71,20 @@ std::pair<float, float> fixupHueComponentsPriorToInterpolation(HueInterpolationM
         return { theta1, theta2 };
     };
 
+    // https://www.w3.org/TR/css-color-4/#hue-interpolation
+    //    "Unless the type of hue interpolation is specified, both angles need to
+    //     be constrained to [0, 360) prior to interpolation. One way to do this
+    //     is θ = ((θ % 360) + 360) % 360."
+
     switch (method) {
     case HueInterpolationMethod::Shorter:
-        return normalizeAnglesUsingShorterAlgorithm(component1, component2);
+        return normalizeAnglesUsingShorterAlgorithm(normalizeHue(component1), normalizeHue(component2));
     case HueInterpolationMethod::Longer:
-        return normalizeAnglesUsingLongerAlgorithm(component1, component2);
+        return normalizeAnglesUsingLongerAlgorithm(normalizeHue(component1), normalizeHue(component2));
     case HueInterpolationMethod::Increasing:
-        return normalizeAnglesUsingIncreasingAlgorithm(component1, component2);
+        return normalizeAnglesUsingIncreasingAlgorithm(normalizeHue(component1), normalizeHue(component2));
     case HueInterpolationMethod::Decreasing:
-        return normalizeAnglesUsingDecreasingAlgorithm(component1, component2);
+        return normalizeAnglesUsingDecreasingAlgorithm(normalizeHue(component1), normalizeHue(component2));
     case HueInterpolationMethod::Specified:
         return normalizeAnglesUsingSpecifiedAlgorithm(component1, component2);
     }

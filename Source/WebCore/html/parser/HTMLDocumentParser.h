@@ -51,7 +51,7 @@ public:
     static Ref<HTMLDocumentParser> create(HTMLDocument&);
     virtual ~HTMLDocumentParser();
 
-    static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, ParserContentPolicy = AllowScriptingContent);
+    static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
 
     // For HTMLParserScheduler.
     void resumeParsingAfterYield();
@@ -71,8 +71,8 @@ protected:
     HTMLTreeBuilder& treeBuilder();
 
 private:
-    HTMLDocumentParser(DocumentFragment&, Element& contextElement, ParserContentPolicy);
-    static Ref<HTMLDocumentParser> create(DocumentFragment&, Element& contextElement, ParserContentPolicy);
+    HTMLDocumentParser(DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>);
+    static Ref<HTMLDocumentParser> create(DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy>);
 
     // DocumentParser
     void detach() final;

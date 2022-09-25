@@ -29,6 +29,7 @@
 #include "CachedImage.h"
 #include "DOMFormData.h"
 #include "ElementIterator.h"
+#include "ElementName.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"

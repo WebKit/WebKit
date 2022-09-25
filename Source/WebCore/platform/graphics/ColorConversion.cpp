@@ -27,6 +27,7 @@
 #include "ColorConversion.h"
 
 #include "Color.h"
+#include "ColorNormalization.h"
 #include "ColorSpace.h"
 #include "DestinationColorSpace.h"
 #include <wtf/MathExtras.h>
@@ -119,20 +120,20 @@ SRGBA<float> ColorConversion<SRGBA<float>, HSLA<float>>::convert(const HSLA<floa
     }
 
     // hueToRGB() wants hue in the 0-6 range.
-    auto normalizedHue = (hue / 360.0f) * 6.0f;
-    auto normalizedLightness = lightness / 100.0f;
-    auto normalizedSaturation = saturation / 100.0f;
+    auto scaledHue = (normalizeHue(hue) / 360.0f) * 6.0f;
+    auto scaledLightness = lightness / 100.0f;
+    auto scaledSaturation = saturation / 100.0f;
 
-    auto hueForRed = normalizedHue + 2.0f;
-    auto hueForGreen = normalizedHue;
-    auto hueForBlue = normalizedHue - 2.0f;
+    auto hueForRed = scaledHue + 2.0f;
+    auto hueForGreen = scaledHue;
+    auto hueForBlue = scaledHue - 2.0f;
     if (hueForRed > 6.0f)
         hueForRed -= 6.0f;
     else if (hueForBlue < 0.0f)
         hueForBlue += 6.0f;
 
-    float temp2 = normalizedLightness <= 0.5f ? normalizedLightness * (1.0f + normalizedSaturation) : normalizedLightness + normalizedSaturation - normalizedLightness * normalizedSaturation;
-    float temp1 = 2.0f * normalizedLightness - temp2;
+    float temp2 = scaledLightness <= 0.5f ? scaledLightness * (1.0f + scaledSaturation) : scaledLightness + scaledSaturation - scaledLightness * scaledSaturation;
+    float temp1 = 2.0f * scaledLightness - temp2;
     
     // Hue is in the range 0-6, other args in 0-1.
     auto hueToRGB = [](float temp1, float temp2, float hue) {
@@ -177,18 +178,18 @@ SRGBA<float> ColorConversion<SRGBA<float>, HWBA<float>>::convert(const HWBA<floa
     }
 
     // hueToRGB() wants hue in the 0-6 range.
-    auto normalizedHue = (hue / 360.0f) * 6.0f;
+    auto scaledHue = (normalizeHue(hue) / 360.0f) * 6.0f;
 
-    auto hueForRed = normalizedHue + 2.0f;
-    auto hueForGreen = normalizedHue;
-    auto hueForBlue = normalizedHue - 2.0f;
+    auto hueForRed = scaledHue + 2.0f;
+    auto hueForGreen = scaledHue;
+    auto hueForBlue = scaledHue - 2.0f;
     if (hueForRed > 6.0f)
         hueForRed -= 6.0f;
     else if (hueForBlue < 0.0f)
         hueForBlue += 6.0f;
 
-    auto normalizedWhiteness = whiteness / 100.0f;
-    auto normalizedBlackness = blackness / 100.0f;
+    auto scaledWhiteness = whiteness / 100.0f;
+    auto scaledBlackness = blackness / 100.0f;
 
     // This is the hueToRGB function in convertColor<SRGBA<float>>(const HSLA&) with temp1 == 0
     // and temp2 == 1 strength reduced through it.
@@ -207,9 +208,9 @@ SRGBA<float> ColorConversion<SRGBA<float>, HWBA<float>>::convert(const HWBA<floa
     };
 
     return {
-        applyWhitenessBlackness(hueToRGB(hueForRed), normalizedWhiteness, normalizedBlackness),
-        applyWhitenessBlackness(hueToRGB(hueForGreen), normalizedWhiteness, normalizedBlackness),
-        applyWhitenessBlackness(hueToRGB(hueForBlue), normalizedWhiteness, normalizedBlackness),
+        applyWhitenessBlackness(hueToRGB(hueForRed), scaledWhiteness, scaledBlackness),
+        applyWhitenessBlackness(hueToRGB(hueForGreen), scaledWhiteness, scaledBlackness),
+        applyWhitenessBlackness(hueToRGB(hueForBlue), scaledWhiteness, scaledBlackness),
         alpha
     };
 }

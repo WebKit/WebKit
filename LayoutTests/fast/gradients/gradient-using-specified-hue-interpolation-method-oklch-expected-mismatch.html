@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    div { 
+        width: 400px;
+        height: 100px;
+        display: inline-block;
+    }
+
+    /* Ensures that when using the "specified" hue interpolation method that values < 0 and greater than 360 are respected and not normalized to the [0, 360] range. */
+
+    #gradient {
+        background-image: linear-gradient(in oklch specified hue to right, oklch(45.2% 0.313 264.1deg), oklch(72.26% 0.242 142.6deg));
+    }
+</style>
+</head>
+<body>
+<div id="gradient"></div>
+</body>
+</html>

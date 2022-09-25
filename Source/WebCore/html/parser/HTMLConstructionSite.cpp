@@ -60,7 +60,7 @@ using namespace ElementNames;
 using namespace HTMLNames;
 
 enum class HasDuplicateAttribute : bool { No, Yes };
-static inline void setAttributes(Element& element, Vector<Attribute>& attributes, HasDuplicateAttribute hasDuplicateAttribute, ParserContentPolicy parserContentPolicy)
+static inline void setAttributes(Element& element, Vector<Attribute>& attributes, HasDuplicateAttribute hasDuplicateAttribute, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
         element.stripScriptingAttributes(attributes);
@@ -68,7 +68,7 @@ static inline void setAttributes(Element& element, Vector<Attribute>& attributes
     element.setHasDuplicateAttribute(hasDuplicateAttribute == HasDuplicateAttribute::Yes);
 }
 
-static inline void setAttributes(Element& element, AtomHTMLToken& token, ParserContentPolicy parserContentPolicy)
+static inline void setAttributes(Element& element, AtomHTMLToken& token, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     setAttributes(element, token.attributes(), token.hasDuplicateAttribute() ? HasDuplicateAttribute::Yes : HasDuplicateAttribute::No, parserContentPolicy);
 }
@@ -252,7 +252,7 @@ void HTMLConstructionSite::executeQueuedTasks()
     // We might be detached now.
 }
 
-HTMLConstructionSite::HTMLConstructionSite(Document& document, ParserContentPolicy parserContentPolicy, unsigned maximumDOMTreeDepth)
+HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth)
     : m_document(document)
     , m_attachmentRoot(document)
     , m_parserContentPolicy(parserContentPolicy)
@@ -265,7 +265,7 @@ HTMLConstructionSite::HTMLConstructionSite(Document& document, ParserContentPoli
     ASSERT(m_document.isHTMLDocument() || m_document.isXHTMLDocument());
 }
 
-HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, ParserContentPolicy parserContentPolicy, unsigned maximumDOMTreeDepth)
+HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth)
     : m_document(fragment.document())
     , m_attachmentRoot(fragment)
     , m_parserContentPolicy(parserContentPolicy)
@@ -577,7 +577,7 @@ void HTMLConstructionSite::insertScriptElement(AtomHTMLToken&& token)
     // For createContextualFragment, the specifications say to mark it parser-inserted and already-started and later unmark them.
     // However, we short circuit that logic to avoid the subtree traversal to find script elements since scripts can never see
     // those flags or effects thereof.
-    const bool parserInserted = m_parserContentPolicy != AllowScriptingContentAndDoNotMarkAlreadyStarted;
+    const bool parserInserted = !m_parserContentPolicy.contains(ParserContentPolicy::DoNotMarkAlreadyStarted);
     const bool alreadyStarted = m_isParsingFragment && parserInserted;
     auto element = HTMLScriptElement::create(scriptTag, ownerDocumentForCurrentNode(), parserInserted, alreadyStarted);
     setAttributes(element, token, m_parserContentPolicy);

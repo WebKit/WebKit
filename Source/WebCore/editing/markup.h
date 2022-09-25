@@ -60,11 +60,11 @@ String sanitizeMarkup(const String&, MSOListQuirks = MSOListQuirks::Disabled, st
 String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&&, Document&, MSOListQuirks, const String& originalMarkup);
 
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromText(const SimpleRange& context, const String& text);
-WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
-ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element&, const String& markup, ParserContentPolicy);
+WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element&, const String& markup, OptionSet<ParserContentPolicy>);
 RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document&, String&& sourceString, const String& sourceMIMEType);
 Ref<DocumentFragment> createFragmentForImageAndURL(Document&, const String&, PresentationSize preferredSize);
-ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element&, const String& markup, ParserContentPolicy);
+ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element&, const String& markup, OptionSet<ParserContentPolicy>);
 
 bool isPlainTextMarkup(Node*);
 

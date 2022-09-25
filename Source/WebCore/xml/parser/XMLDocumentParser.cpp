@@ -282,7 +282,7 @@ static XMLParsingNamespaces findXMLParsingNamespaces(Element* contextElement)
     return result;
 }
 
-bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment& fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
+bool XMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment& fragment, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     if (!chunk.length())
         return true;

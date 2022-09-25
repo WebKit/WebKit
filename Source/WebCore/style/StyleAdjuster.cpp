@@ -34,6 +34,7 @@
 #include "DOMTokenList.h"
 #include "DOMWindow.h"
 #include "ElementInlines.h"
+#include "ElementName.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLDialogElement.h"
@@ -595,33 +596,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
 static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 {
-    // https://drafts.csswg.org/css-display-3/#unbox-html
-    static NeverDestroyed<MemoryCompactLookupOnlyRobinHoodHashSet<AtomString>> tagNames = [] {
-        static const HTMLQualifiedName* const tagList[] = {
-            &brTag.get(),
-            &wbrTag.get(),
-            &meterTag.get(),
-            &appletTag.get(),
-            &progressTag.get(),
-            &canvasTag.get(),
-            &embedTag.get(),
-            &objectTag.get(),
-            &audioTag.get(),
-            &iframeTag.get(),
-            &imgTag.get(),
-            &videoTag.get(),
-            &frameTag.get(),
-            &framesetTag.get(),
-            &inputTag.get(),
-            &textareaTag.get(),
-            &selectTag.get(),
-        };
-        MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> set;
-        set.reserveInitialCapacity(sizeof(tagList));
-        for (auto& name : tagList)
-            set.add(name->localName());
-        return set;
-    }();
+    using namespace ElementNames;
 
     // https://drafts.csswg.org/css-display-3/#unbox-svg
     // FIXME: <g>, <use> and <tspan> have special (?) behavior for display:contents in the current draft spec.
@@ -634,7 +609,32 @@ static bool hasEffectiveDisplayNoneForDisplayContents(const Element& element)
 #endif // ENABLE(MATHML)
     if (!is<HTMLElement>(element))
         return false;
-    return tagNames.get().contains(element.localName());
+
+    // https://drafts.csswg.org/css-display-3/#unbox-html
+    switch (element.tagQName().elementName()) {
+    case HTML::br:
+    case HTML::wbr:
+    case HTML::meter:
+    case HTML::applet:
+    case HTML::progress:
+    case HTML::canvas:
+    case HTML::embed:
+    case HTML::object:
+    case HTML::audio:
+    case HTML::iframe:
+    case HTML::img:
+    case HTML::video:
+    case HTML::frame:
+    case HTML::frameset:
+    case HTML::input:
+    case HTML::textarea:
+    case HTML::select:
+        return true;
+    default:
+        break;
+    }
+
+    return false;
 }
 
 void Adjuster::adjustDisplayContentsStyle(RenderStyle& style) const

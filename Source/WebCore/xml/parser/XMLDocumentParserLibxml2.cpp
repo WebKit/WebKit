@@ -402,7 +402,7 @@ static bool externalEntityMimeTypeAllowed(const ResourceResponse& response)
     return MIMETypeRegistry::isXMLMIMEType(mimeType) || MIMETypeRegistry::isXMLEntityMIMEType(mimeType);
 }
 
-static inline void setAttributes(Element* element, Vector<Attribute>& attributeVector, ParserContentPolicy parserContentPolicy)
+static inline void setAttributes(Element* element, Vector<Attribute>& attributeVector, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
         element->stripScriptingAttributes(attributeVector);
@@ -607,7 +607,7 @@ XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
 {
 }
 
-XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, ParserContentPolicy parserContentPolicy)
+XMLDocumentParser::XMLDocumentParser(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
     : ScriptableDocumentParser(fragment.document(), parserContentPolicy)
     , m_pendingCallbacks(makeUnique<PendingCallbacks>())
     , m_currentNode(&fragment)
