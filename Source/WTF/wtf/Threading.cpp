@@ -45,7 +45,7 @@
 #include <wtf/linux/RealTimeThreads.h>
 #endif
 
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
 #include <wtf/darwin/LibraryPathDiagnostics.h>
 #endif
 
@@ -485,7 +485,7 @@ void initialize()
 #if USE(PTHREADS) && HAVE(MACHINE_CONTEXT)
         SignalHandlers::initialize();
 #endif
-#if OS(DARWIN)
+#if PLATFORM(COCOA)
         initializeLibraryPathDiagnostics();
 #endif
     });

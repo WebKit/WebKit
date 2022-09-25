@@ -83,6 +83,8 @@ list(APPEND WTF_SOURCES
     cocoa/URLCocoa.mm
     cocoa/WorkQueueCocoa.cpp
 
+    darwin/LibraryPathDiagnostics.mm
+
     mac/FileSystemMac.mm
     mac/SchedulePairMac.mm
 
