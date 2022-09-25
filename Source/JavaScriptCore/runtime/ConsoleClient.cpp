@@ -258,7 +258,7 @@ void ConsoleClient::internalMessageWithTypeAndLevel(MessageType type, MessageLev
 
 void ConsoleClient::logWithLevel(JSGlobalObject* globalObject, Ref<ScriptArguments>&& arguments, MessageLevel level)
 {
-    internalMessageWithTypeAndLevel(MessageType::Log, level, globalObject, WTFMove(arguments), ArgumentRequired);
+    internalMessageWithTypeAndLevel(MessageType::Log, level, globalObject, WTFMove(arguments), ArgumentNotRequired);
 }
 
 void ConsoleClient::clear(JSGlobalObject* globalObject)
