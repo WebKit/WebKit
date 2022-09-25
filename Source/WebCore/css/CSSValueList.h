@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,10 +25,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-class CSSCustomPropertyValue;
-struct CSSParserValue;
-class CSSParserValueList;
 
 class CSSValueList : public CSSValue {
 public:
@@ -66,13 +62,14 @@ public:
     bool hasValue(CSSValue*) const;
     Ref<CSSValueList> copy();
 
-    String customCSSText(Document* = nullptr) const;
+    String customCSSText() const;
     bool equals(const CSSValueList&) const;
     bool equals(const CSSValue&) const;
 
-    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
+    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
 
-    unsigned separator() const { return m_valueSeparator; }
+    using CSSValue::separator;
+    using CSSValue::separatorCSSText;
 
 protected:
     CSSValueList(ClassType, ValueSeparator);

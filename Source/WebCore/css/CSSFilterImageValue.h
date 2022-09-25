@@ -64,7 +64,7 @@ public:
 
     void loadSubimages(CachedResourceLoader&, const ResourceLoaderOptions&);
 
-    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
+    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
 
     bool equals(const CSSFilterImageValue&) const;
 
