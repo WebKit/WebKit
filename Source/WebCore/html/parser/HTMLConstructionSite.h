@@ -105,8 +105,8 @@ class WhitespaceCache;
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
 public:
-    HTMLConstructionSite(Document&, ParserContentPolicy, unsigned maximumDOMTreeDepth);
-    HTMLConstructionSite(DocumentFragment&, ParserContentPolicy, unsigned maximumDOMTreeDepth);
+    HTMLConstructionSite(Document&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth);
+    HTMLConstructionSite(DocumentFragment&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth);
     ~HTMLConstructionSite();
 
     void executeQueuedTasks();
@@ -173,7 +173,7 @@ public:
     HTMLFormElement* form() const { return m_form.get(); }
     RefPtr<HTMLFormElement> takeForm();
 
-    ParserContentPolicy parserContentPolicy() { return m_parserContentPolicy; }
+    OptionSet<ParserContentPolicy> parserContentPolicy() { return m_parserContentPolicy; }
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool isTelephoneNumberParsingEnabled() { return m_document.isTelephoneNumberParsingEnabled(); }
@@ -225,7 +225,7 @@ private:
 
     TaskQueue m_taskQueue;
 
-    ParserContentPolicy m_parserContentPolicy;
+    OptionSet<ParserContentPolicy> m_parserContentPolicy;
     bool m_isParsingFragment;
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-intable

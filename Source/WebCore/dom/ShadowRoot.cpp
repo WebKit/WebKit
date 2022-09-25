@@ -193,7 +193,7 @@ ExceptionOr<void> ShadowRoot::setInnerHTML(const String& markup)
         return { };
     }
 
-    auto fragment = createFragmentForInnerOuterHTML(*host(), markup, AllowScriptingContent);
+    auto fragment = createFragmentForInnerOuterHTML(*host(), markup, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
     if (fragment.hasException())
         return fragment.releaseException();
     return replaceChildrenWithFragment(*this, fragment.releaseReturnValue());

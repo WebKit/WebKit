@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-ScriptableDocumentParser::ScriptableDocumentParser(Document& document, ParserContentPolicy parserContentPolicy)
+ScriptableDocumentParser::ScriptableDocumentParser(Document& document, OptionSet<ParserContentPolicy> parserContentPolicy)
     : DecodedDataDocumentParser(document)
     , m_wasCreatedByScript(false)
     , m_parserContentPolicy(parserContentPolicy)

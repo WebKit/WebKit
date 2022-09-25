@@ -75,7 +75,7 @@ Ref<HTMLDocumentParser> HTMLDocumentParser::create(HTMLDocument& document)
     return adoptRef(*new HTMLDocumentParser(document));
 }
 
-inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, ParserContentPolicy rawPolicy)
+inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> rawPolicy)
     : ScriptableDocumentParser(fragment.document(), rawPolicy)
     , m_options(fragment.document())
     , m_tokenizer(m_options)
@@ -87,7 +87,7 @@ inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Elemen
         m_tokenizer.updateStateFor(contextElement.tagQName().localName());
 }
 
-inline Ref<HTMLDocumentParser> HTMLDocumentParser::create(DocumentFragment& fragment, Element& contextElement, ParserContentPolicy parserContentPolicy)
+inline Ref<HTMLDocumentParser> HTMLDocumentParser::create(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     return adoptRef(*new HTMLDocumentParser(fragment, contextElement, parserContentPolicy));
 }
@@ -613,7 +613,7 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
         resumeParsingAfterScriptExecution();
 }
 
-void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment& fragment, Element& contextElement, ParserContentPolicy parserContentPolicy)
+void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     auto parser = create(fragment, contextElement, parserContentPolicy);
     parser->insert(source); // Use insert() so that the parser will not yield.

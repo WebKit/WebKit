@@ -147,7 +147,7 @@ static FragmentAndResources createFragment(Frame& frame, NSAttributedString *str
     NSString *fragmentString = [string _htmlDocumentFragmentString:NSMakeRange(0, [string length]) documentAttributes:attributesForAttributedStringConversion() subresources:&subresources];
     auto fragment = DocumentFragment::create(document);
     auto dummyBodyToForceInBodyInsertionMode = HTMLBodyElement::create(document);
-    fragment->parseHTML(fragmentString, dummyBodyToForceInBodyInsertionMode.ptr(), DisallowScriptingAndPluginContent);
+    fragment->parseHTML(fragmentString, dummyBodyToForceInBodyInsertionMode.ptr(), { });
 
     result.fragment = WTFMove(fragment);
     for (WebArchiveResourceFromNSAttributedString *resource in subresources)
@@ -449,7 +449,7 @@ static String sanitizeMarkupWithArchive(Frame& frame, Document& destinationDocum
     auto page = createPageForSanitizingWebContent();
     Document* stagingDocument = page->mainFrame().document();
     ASSERT(stagingDocument);
-    auto fragment = createFragmentFromMarkup(*stagingDocument, markupAndArchive.markup, markupAndArchive.mainResource->url().string(), DisallowScriptingAndPluginContent);
+    auto fragment = createFragmentFromMarkup(*stagingDocument, markupAndArchive.markup, markupAndArchive.mainResource->url().string(), { });
 
     if (shouldReplaceRichContentWithAttachments()) {
         replaceRichContentWithAttachments(frame, fragment, markupAndArchive.archive->subresources());
@@ -509,21 +509,21 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
         return false;
     
     if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
-        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), DisallowScriptingAndPluginContent);
+        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), { });
         if (DocumentLoader* loader = frame.loader().documentLoader())
             loader->addAllArchiveResources(result->archive.get());
         return true;
     }
 
     if (!shouldSanitize()) {
-        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), DisallowScriptingAndPluginContent);
+        fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url().string(), { });
         return true;
     }
 
     String sanitizedMarkup = sanitizeMarkupWithArchive(frame, *frame.document(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
     });
-    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, aboutBlankURL().string(), DisallowScriptingAndPluginContent);
+    fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, aboutBlankURL().string(), { });
 
     if (!fragment)
         return false;
@@ -589,7 +589,7 @@ bool WebContentReader::readHTML(const String& string)
     } else
         markup = stringOmittingMicrosoftPrefix;
 
-    addFragment(createFragmentFromMarkup(document, markup, emptyString(), DisallowScriptingAndPluginContent));
+    addFragment(createFragmentFromMarkup(document, markup, emptyString(), { }));
     return true;
 }
 

@@ -51,10 +51,10 @@ public:
     void setWasCreatedByScript(bool wasCreatedByScript) { m_wasCreatedByScript = wasCreatedByScript; }
     bool wasCreatedByScript() const { return m_wasCreatedByScript; }
 
-    ParserContentPolicy parserContentPolicy() { return m_parserContentPolicy; }
+    OptionSet<ParserContentPolicy> parserContentPolicy() { return m_parserContentPolicy; }
 
 protected:
-    explicit ScriptableDocumentParser(Document&, ParserContentPolicy = AllowScriptingContent);
+    explicit ScriptableDocumentParser(Document&, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
 
     virtual void executeScriptsWaitingForStylesheets() { }
 
@@ -67,7 +67,7 @@ private:
 
     // http://www.whatwg.org/specs/web-apps/current-work/#script-created-parser
     bool m_wasCreatedByScript;
-    ParserContentPolicy m_parserContentPolicy;
+    OptionSet<ParserContentPolicy> m_parserContentPolicy;
     Timer m_scriptsWaitingForStylesheetsExecutionTimer;
 };
 

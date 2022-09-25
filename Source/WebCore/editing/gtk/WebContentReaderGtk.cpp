@@ -46,7 +46,7 @@ bool WebContentReader::readFilePath(const String& path, PresentationSize, const 
         return false;
 
     auto markup = urlToMarkup(URL({ }, path), path);
-    addFragment(createFragmentFromMarkup(*frame.document(), markup, "file://"_s, DisallowScriptingAndPluginContent));
+    addFragment(createFragmentFromMarkup(*frame.document(), markup, "file://"_s, { }));
 
     return true;
 }
@@ -56,7 +56,7 @@ bool WebContentReader::readHTML(const String& string)
     if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
 
-    addFragment(createFragmentFromMarkup(*frame.document(), string, emptyString(), DisallowScriptingAndPluginContent));
+    addFragment(createFragmentFromMarkup(*frame.document(), string, emptyString(), { }));
     return true;
 }
 

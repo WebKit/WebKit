@@ -860,7 +860,7 @@ static NSURL *createUniqueWebDataURL();
     if (!document)
         return nil;
 
-    return kit(createFragmentFromMarkup(*document, markupString, baseURLString, WebCore::DisallowScriptingContent).ptr());
+    return kit(createFragmentFromMarkup(*document, markupString, baseURLString, { WebCore::ParserContentPolicy::AllowPluginContent }).ptr());
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes

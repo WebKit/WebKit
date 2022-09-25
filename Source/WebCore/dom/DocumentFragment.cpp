@@ -82,13 +82,13 @@ Ref<Node> DocumentFragment::cloneNodeInternal(Document& targetDocument, CloningO
     return clone;
 }
 
-void DocumentFragment::parseHTML(const String& source, Element* contextElement, ParserContentPolicy parserContentPolicy)
+void DocumentFragment::parseHTML(const String& source, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     ASSERT(contextElement);
     HTMLDocumentParser::parseDocumentFragment(source, *this, *contextElement, parserContentPolicy);
 }
 
-bool DocumentFragment::parseXML(const String& source, Element* contextElement, ParserContentPolicy parserContentPolicy)
+bool DocumentFragment::parseXML(const String& source, Element* contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     return XMLDocumentParser::parseDocumentFragment(source, *this, contextElement, parserContentPolicy);
 }
