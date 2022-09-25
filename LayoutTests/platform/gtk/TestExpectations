@@ -909,13 +909,6 @@ webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-
 webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ ImageOnlyFailure ]
 webkit.org/b/236298 imported/w3c/web-platform-tests/css/css-ui/text-overflow-022.html [ ImageOnlyFailure ]
 
-# Requires support for xHE-HAAC audio codec
-webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
-
-# Requires unsupported captive portal codec and container restrictions
-webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Skip ]
-webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Skip ]
-
 # Changes to logical height/width computations (https://bugs.webkit.org/show_bug.cgi?id=241601)
 webkit.org/b/241601 svg/wicd/rightsizing-grid.xhtml [ Failure ]
 webkit.org/b/241601 svg/wicd/test-rightsizing-b.xhtml [ Failure ]
@@ -1920,11 +1913,6 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 
 webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-001.html [ ImageOnlyFailure ]
 webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-002.html [ ImageOnlyFailure ]
-
-# These tests require platform support.
-media/media-allowed-codecs.html
-media/media-allowed-containers.html
-media/media-source/media-source-allowed-codecs.html
 
 # These failures occur on GTK only (moved from LayoutTests/TestExpectations)
 webkit.org/b/200208 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]

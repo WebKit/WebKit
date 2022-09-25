@@ -914,6 +914,13 @@ webkit.org/b/237901 media/media-source/media-source-interruption-with-resume-all
 webkit.org/b/244776 media/media-source/media-source-seek-detach-crash.html [ Crash ]
 webkit.org/b/244776 media/media-source/media-source-unnecessary-seek-seeked.html [ Crash ]
 
+webkit.org/b/245639 media/video-as-img-with-alpha.html [ ImageOnlyFailure ]
+
+# Requires support for xHE-AAC audio codec, which we do have, but the FDK AAC
+# decoder emits errors on this file. File plays find in upstream GStreamer 1.21.
+# Pending investigation.
+webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -936,6 +943,8 @@ media/modern-media-controls/time-label/time-label.html [ Failure ]
 media/modern-media-controls/volume-support/volume-support-drag.html [ Failure ]
 media/modern-media-controls/media-documents/background-color-and-centering.html [ ImageOnlyFailure ]
 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Failure ]
+
+media/modern-media-controls/scrubber-support/scrubber-support-drag.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Media-controls-related bugs
@@ -2059,6 +2068,15 @@ webkit.org/b/211569 media/video-presentation-mode.html [ Skip ]
 webkit.org/b/206584 media/video-set-presentation-mode-to-inline.html [ Skip ]
 # Also crashing with others in webkit.org/b/198830
 webkit.org/b/201274 media/presentationmodechanged-fired-once.html [ Skip ]
+
+# Requires unsupported captive portal codec and container restrictions
+webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-codecs.html [ Skip ]
+webkit.org/b/242145 media/mediacapabilities/mediacapabilities-allowed-containers.html [ Skip ]
+
+# These tests require platform support.
+media/media-allowed-codecs.html [ Skip ]
+media/media-allowed-containers.html [ Skip ]
+media/media-source/media-source-allowed-codecs.html [ Skip ]
 
 webkit.org/b/214166 imported/w3c/web-platform-tests/media-source/idlharness.window.html [ Skip ]
 
