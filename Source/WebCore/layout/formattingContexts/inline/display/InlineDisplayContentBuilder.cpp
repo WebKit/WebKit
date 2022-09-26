@@ -31,7 +31,6 @@
 #include "InlineTextBoxStyle.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LayoutListMarkerBox.h"
 #include "TextUtil.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Range.h>
@@ -423,9 +422,9 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
             continue;
         }
         if (lineRun.isListMarker()) {
-            auto& listMarker = downcast<ListMarkerBox>(layoutBox);
+            auto& listMarker = downcast<ReplacedBox>(layoutBox);
             auto visualRect = visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)));
-            if (listMarker.isOutside())
+            if (listMarker.isListMarkerOutside())
                 WebCore::isHorizontalWritingMode(writingMode) ? visualRect.setLeft(outsideListMarkerVisualPosition(listMarker, displayLine)) : visualRect.setTop(outsideListMarkerVisualPosition(listMarker, displayLine));
             appendAtomicInlineLevelDisplayBox(lineRun, visualRect, boxes);
             continue;
@@ -688,8 +687,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 auto visualRect = visualRectRelativeToRoot(logicalRect);
                 auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
 
-                if (is<ListMarkerBox>(layoutBox) && downcast<ListMarkerBox>(layoutBox).isOutside()) {
-                    auto& listMarker = downcast<ListMarkerBox>(layoutBox);
+                if (layoutBox.isListMarkerBox() && downcast<ReplacedBox>(layoutBox).isListMarkerOutside()) {
+                    auto& listMarker = downcast<ReplacedBox>(layoutBox);
                     isHorizontalWritingMode ? visualRect.setLeft(outsideListMarkerVisualPosition(listMarker, displayLine)) : visualRect.setTop(outsideListMarkerVisualPosition(listMarker, displayLine));
                 } else
                     isHorizontalWritingMode ? visualRect.moveHorizontally(boxMarginLeft) : visualRect.moveVertically(boxMarginLeft);
@@ -1013,9 +1012,9 @@ InlineLayoutPoint InlineDisplayContentBuilder::movePointHorizontallyForWritingMo
     return visualPoint;
 }
 
-InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(const ListMarkerBox& listMarker, const InlineDisplay::Line& displayLine) const
+InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(const ReplacedBox& listMarker, const InlineDisplay::Line& displayLine) const
 {
-    ASSERT(listMarker.isOutside());
+    ASSERT(listMarker.isListMarkerOutside());
     auto& boxGeometry = formattingState().boxGeometry(listMarker);
     auto isLeftToRightDirection = listMarker.parent().style().isLeftToRightDirection();
     auto isHorizontalWritingMode = WebCore::isHorizontalWritingMode(root().style().writingMode());

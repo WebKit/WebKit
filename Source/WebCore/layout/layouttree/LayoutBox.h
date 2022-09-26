@@ -43,7 +43,7 @@ class TreeBuilder;
 class Box : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
-    enum class ElementType {
+    enum class ElementType : uint8_t {
         GenericElement,
         Document,
         Body,
@@ -53,19 +53,18 @@ public:
         IFrame,
         LineBreak,
         WordBreakOpportunity,
+        ListMarker,
     };
 
     struct ElementAttributes {
         ElementType elementType;
     };
 
-    enum BaseTypeFlag {
-        BoxFlag                    = 1 << 0,
-        InlineTextBoxFlag          = 1 << 1,
-        ListMarkerBoxFlag          = 1 << 2,
-        ReplacedBoxFlag            = 1 << 3,
-        InitialContainingBlockFlag = 1 << 4,
-        ContainerBoxFlag           = 1 << 5
+    enum BaseTypeFlag : uint8_t {
+        InlineTextBoxFlag          = 1 << 0,
+        ReplacedBoxFlag            = 1 << 1,
+        InitialContainingBlockFlag = 1 << 2,
+        ContainerBoxFlag           = 1 << 3
     };
 
     virtual ~Box();
@@ -132,6 +131,7 @@ public:
     bool isInternalRubyBox() const { return false; }
     bool isLineBreakBox() const { return m_elementAttributes && (m_elementAttributes.value().elementType == ElementType::LineBreak || m_elementAttributes.value().elementType == ElementType::WordBreakOpportunity); }
     bool isWordBreakOpportunity() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::WordBreakOpportunity; }
+    bool isListMarkerBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::ListMarker; }
 
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
 
@@ -150,7 +150,6 @@ public:
     bool isContainerBox() const { return baseTypeFlags().contains(ContainerBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
     bool isReplacedBox() const { return baseTypeFlags().contains(ReplacedBoxFlag); }
-    bool isListMarkerBox() const { return baseTypeFlags().contains(ListMarkerBoxFlag); }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;
@@ -221,7 +220,7 @@ private:
     mutable WeakPtr<LayoutState> m_cachedLayoutState;
     mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForLayoutState;
 
-    unsigned m_baseTypeFlags : 7; // OptionSet<BaseTypeFlag>
+    unsigned m_baseTypeFlags : 4; // OptionSet<BaseTypeFlag>
     bool m_hasRareData : 1 { false };
     bool m_isAnonymous : 1 { false };
     bool m_isInlineIntegrationRoot : 1 { false };

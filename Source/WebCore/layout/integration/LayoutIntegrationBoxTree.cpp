@@ -29,7 +29,6 @@
 #include "InlineWalker.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInlineTextBox.h"
-#include "LayoutListMarkerBox.h"
 #include "LayoutReplacedBox.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
@@ -169,10 +168,8 @@ void BoxTree::buildTreeForInlineContent()
 
         if (is<RenderListMarker>(childRenderer)) {
             auto& listMarkerRenderer = downcast<RenderListMarker>(childRenderer);
-            return makeUnique<Layout::ListMarkerBox>(listMarkerRenderer.isImage() ? Layout::ListMarkerBox::IsImage::Yes : Layout::ListMarkerBox::IsImage::No
-                , listMarkerRenderer.isInside() ? Layout::ListMarkerBox::IsOutside::No : Layout::ListMarkerBox::IsOutside::Yes
-                , WTFMove(style)
-                , WTFMove(firstLineStyle));
+            auto attributes = Layout::ReplacedBox::ListMarkerAttributes { listMarkerRenderer.isImage(), !listMarkerRenderer.isInside() };
+            return makeUnique<Layout::ReplacedBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderReplaced>(childRenderer)) {
