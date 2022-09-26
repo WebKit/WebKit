@@ -8589,6 +8589,10 @@ void HTMLMediaElement::updateMediaPlayer(IntSize elementSize, bool shouldMaintai
     m_player->setSize(elementSize);
     visibilityStateChanged();
     m_player->setVisibleInViewport(isVisibleInViewport());
+
+    if (document().quirks().needsVideoShouldMaintainAspectRatioQuirk())
+        shouldMaintainAspectRatio = true;
+
     m_player->setShouldMaintainAspectRatio(shouldMaintainAspectRatio);
 }
 

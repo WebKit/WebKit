@@ -162,6 +162,7 @@ public:
 #endif
     bool hasBrokenPermissionsAPISupportQuirk() const;
     bool shouldEnableApplicationCacheQuirk() const;
+    bool needsVideoShouldMaintainAspectRatioQuirk() const;
     
 private:
     bool needsQuirks() const;
@@ -215,6 +216,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     mutable std::optional<bool> m_shouldEnableApplicationCacheQuirk;
 #endif
+    mutable std::optional<bool> m_needsVideoShouldMaintainAspectRatioQuirk;
 };
 
 } // namespace WebCore
