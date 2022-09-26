@@ -141,7 +141,7 @@ class GitHub(object):
                 _log.error('Failed to post comment to PR {}. Unexpected response code from GitHub: {}, url: {}\n'.format(pr_number, response.status_code, comment_url))
                 return -1
             new_comment_id = response.json().get('id')
-            comment_url = 'https://github.com/WebKit/WebKit/pull/{}#issuecomment-{}'.format(pr_number, new_comment_id)
+            comment_url = 'https://github.com/{}/pull/{}#issuecomment-{}'.format(change.pr_project, pr_number, new_comment_id)
             _log.info('Commented on PR {}, link: {}'.format(pr_number, comment_url))
 
             if comment_id == -1 and new_comment_id != -1 and change:
@@ -215,7 +215,7 @@ class GitHubEWS(GitHub):
         return u'{}{}\n{}\n{}'.format(description, self.STATUS_BUBBLE_START, ews_comment, self.STATUS_BUBBLE_END)
 
     def generate_comment_text_for_change(self, change):
-        hash_url = 'https://github.com/WebKit/WebKit/commit/{}'.format(change.change_id)
+        hash_url = 'https://github.com/{}/commit/{}'.format(change.pr_project, change.change_id)
 
         comment = '\n\n| Misc | iOS, tvOS & watchOS  | macOS  | Linux |  Windows |'
         comment += '\n| ----- | ---------------------- | ------- |  ----- |  --------- |'
