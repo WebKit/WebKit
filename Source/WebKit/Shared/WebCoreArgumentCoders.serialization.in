@@ -22,7 +22,7 @@
 
 header: <WebCore/DOMCacheEngine.h>
 struct WebCore::DOMCacheEngine::CacheInfo {
-    uint64_t identifier
+    WebCore::DOMCacheIdentifier identifier
     String name
 }
 

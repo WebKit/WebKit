@@ -51,7 +51,7 @@ public:
 
     void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
     void open(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void remove(uint64_t identifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void remove(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&);
     void dispose(Cache&);
 
     void detach();
@@ -59,7 +59,7 @@ public:
     bool isInitialized() const { return m_isInitialized; }
     void cacheInfos(uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
-    Cache* find(uint64_t identifier);
+    Cache* find(WebCore::DOMCacheIdentifier);
     void appendRepresentation(StringBuilder&) const;
 
     void readRecordsList(Cache&, NetworkCache::Storage::TraverseHandler&&);

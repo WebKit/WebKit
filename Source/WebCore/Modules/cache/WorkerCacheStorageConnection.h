@@ -47,15 +47,15 @@ private:
 
     // WebCore::CacheStorageConnection.
     void open(const ClientOrigin&, const String& cacheName, DOMCacheEngine::CacheIdentifierCallback&&) final;
-    void remove(uint64_t cacheIdentifier, DOMCacheEngine::CacheIdentifierCallback&&) final;
+    void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&&) final;
     void retrieveCaches(const ClientOrigin&, uint64_t updateCounter, DOMCacheEngine::CacheInfosCallback&&) final;
 
-    void retrieveRecords(uint64_t cacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::RecordsCallback&&) final;
-    void batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) final;
-    void batchPutOperation(uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&) final;
+    void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::RecordsCallback&&) final;
+    void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) final;
+    void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&) final;
 
-    void reference(uint64_t cacheIdentifier) final;
-    void dereference(uint64_t cacheIdentifier) final;
+    void reference(DOMCacheIdentifier) final;
+    void dereference(DOMCacheIdentifier) final;
 
     void doOpen(uint64_t requestIdentifier, const ClientOrigin&, const String& cacheName);
     void doRemove(uint64_t requestIdentifier, uint64_t cacheIdentifier);
@@ -64,7 +64,8 @@ private:
     void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&);
     void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&);
 
-    void openOrRemoveCompleted(uint64_t requestIdentifier, const DOMCacheEngine::CacheIdentifierOrError&);
+    void openCompleted(uint64_t requestIdentifier, const DOMCacheEngine::CacheIdentifierOrError&);
+    void removeCompleted(uint64_t requestIdentifier, const DOMCacheEngine::RemoveCacheIdentifierOrError&);
     void retrieveCachesCompleted(uint64_t requestIdentifier, DOMCacheEngine::CacheInfosOrError&&);
     void retrieveRecordsCompleted(uint64_t requestIdentifier, DOMCacheEngine::RecordsOrError&&);
     void deleteRecordsCompleted(uint64_t requestIdentifier, DOMCacheEngine::RecordIdentifiersOrError&&);
@@ -74,7 +75,8 @@ private:
 
     Ref<CacheStorageConnection> m_mainThreadConnection;
 
-    HashMap<uint64_t, DOMCacheEngine::CacheIdentifierCallback> m_openAndRemoveCachePendingRequests;
+    HashMap<uint64_t, DOMCacheEngine::CacheIdentifierCallback> m_openCachePendingRequests;
+    HashMap<uint64_t, DOMCacheEngine::RemoveCacheIdentifierCallback> m_removeCachePendingRequests;
     HashMap<uint64_t, DOMCacheEngine::CacheInfosCallback> m_retrieveCachesPendingRequests;
     HashMap<uint64_t, DOMCacheEngine::RecordsCallback> m_retrieveRecordsPendingRequests;
     HashMap<uint64_t, DOMCacheEngine::RecordIdentifiersCallback> m_batchDeleteAndPutPendingRequests;

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "DOMCacheIdentifier.h"
 #include "FetchHeaders.h"
 #include "FetchOptions.h"
 #include "ResourceRequest.h"
@@ -80,7 +81,7 @@ struct Record {
 };
 
 struct CacheInfo {
-    uint64_t identifier;
+    DOMCacheIdentifier identifier;
     String name;
 
     CacheInfo isolatedCopy() const & { return { identifier, name.isolatedCopy() }; }
@@ -102,13 +103,16 @@ struct CacheIdentifierOperationResult {
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<CacheIdentifierOperationResult> decode(Decoder&);
 
-    uint64_t identifier { 0 };
+    DOMCacheIdentifier identifier;
     // True in case storing cache list on the filesystem failed.
     bool hadStorageError { false };
 };
 
 using CacheIdentifierOrError = Expected<CacheIdentifierOperationResult, Error>;
 using CacheIdentifierCallback = CompletionHandler<void(const CacheIdentifierOrError&)>;
+
+using RemoveCacheIdentifierOrError = Expected<bool, Error>;
+using RemoveCacheIdentifierCallback = CompletionHandler<void(const RemoveCacheIdentifierOrError&)>;
 
 using RecordIdentifiersOrError = Expected<Vector<uint64_t>, Error>;
 using RecordIdentifiersCallback = CompletionHandler<void(RecordIdentifiersOrError&&)>;
@@ -151,7 +155,7 @@ template<class Encoder> inline void CacheIdentifierOperationResult::encode(Encod
 
 template<class Decoder> inline std::optional<CacheIdentifierOperationResult> CacheIdentifierOperationResult::decode(Decoder& decoder)
 {
-    std::optional<uint64_t> identifier;
+    std::optional<DOMCacheIdentifier> identifier;
     decoder >> identifier;
     if (!identifier)
         return std::nullopt;

@@ -238,14 +238,11 @@ void DOMCacheStorage::doRemove(const String& name, DOMPromiseDeferred<IDLBoolean
         return;
     }
 
-    m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](const DOMCacheEngine::CacheIdentifierOrError& result) mutable {
+    m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise), pendingActivity = makePendingActivity(*this)](const auto& result) mutable {
         if (!result.has_value())
             promise.reject(DOMCacheEngine::convertToExceptionAndLog(scriptExecutionContext(), result.error()));
-        else {
-            if (result.value().hadStorageError)
-                logConsolePersistencyError(scriptExecutionContext(), name);
-            promise.resolve(!!result.value().identifier);
-        }
+        else
+            promise.resolve(result.value());
     });
 }
 

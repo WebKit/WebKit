@@ -107,7 +107,7 @@ RecordInformation Cache::toRecordInformation(const Record& record)
     return recordInformation;
 }
 
-Cache::Cache(Caches& caches, uint64_t identifier, State state, String&& name, String&& uniqueName)
+Cache::Cache(Caches& caches, DOMCacheIdentifier identifier, State state, String&& name, String&& uniqueName)
     : m_caches(caches)
     , m_state(state)
     , m_identifier(identifier)
@@ -134,7 +134,7 @@ RecordInformation RecordInformation::isolatedCopy() &&
 }
 
 struct TraversalResult {
-    uint64_t cacheIdentifier;
+    WebCore::DOMCacheIdentifier cacheIdentifier;
     HashMap<String, Vector<RecordInformation>> records;
     Vector<Key> failedRecords;
 
