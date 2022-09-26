@@ -457,8 +457,8 @@ void WebPageProxy::applyAutocorrection(const String& correction, const String& o
 
 bool WebPageProxy::applyAutocorrection(const String& correction, const String& originalText)
 {
-    bool autocorrectionApplied = false;
-    m_process->sendSync(Messages::WebPage::SyncApplyAutocorrection(correction, originalText), Messages::WebPage::SyncApplyAutocorrection::Reply(autocorrectionApplied), m_webPageID);
+    auto sendSync = m_process->sendSync(Messages::WebPage::SyncApplyAutocorrection(correction, originalText), m_webPageID);
+    auto [autocorrectionApplied] = sendSync.takeReplyOr(false);
     return autocorrectionApplied;
 }
 
