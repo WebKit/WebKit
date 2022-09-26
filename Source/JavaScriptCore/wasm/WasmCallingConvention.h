@@ -75,8 +75,10 @@ struct CallInformation {
 #if USE(JSVALUE32_64)
                 usedResultRegisters.includeRegister(loc.location.jsr().tagGPR());
 #endif
-            } else if (loc.location.isFPR())
+            } else if (loc.location.isFPR()) {
+                ASSERT(loc.width <= Width64 || Options::useWebAssemblySIMD());
                 usedResultRegisters.includeRegister(loc.location.fpr(), loc.width);
+            }
         }
 
         RegisterAtOffsetList savedRegs(usedResultRegisters, RegisterAtOffsetList::ZeroBased);

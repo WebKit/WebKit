@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "AirAllocateRegistersAndStackAndGenerateCode.h"
+#include "bytecode/SimdInfo.h"
 
 #if ENABLE(B3_JIT)
 
@@ -662,19 +663,21 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             })();
             checkConsistency();
 
-            inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width) {
+            inst.forEachTmp([&] (const Tmp& tmp, Arg::Role role, Bank, Width width) {
+                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
                 if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                     return;
 
                 if (tmp.isReg()) {
                     if (Arg::isAnyUse(role))
-                        m_namedUsedRegs.includeRegister(tmp.reg(), Width64);
+                        m_namedUsedRegs.includeRegister(tmp.reg(), width);
                     if (Arg::isAnyDef(role))
-                        m_namedDefdRegs.includeRegister(tmp.reg(), Width64);
+                        m_namedDefdRegs.includeRegister(tmp.reg(), width);
                 }
             });
 
-            inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
+            inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width width) {
+                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
                 if (!arg.isTmp())
                     return;
 
@@ -691,6 +694,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                 auto& entry = m_map[tmp];
                 if (!entry.reg) {
                     // We're a cold use, and our current location is already on the stack. Just use that.
+                    ASSERT(entry.spillSlot->byteSize() <= bytesForWidth(Width64) || Options::useWebAssemblySIMD());
                     arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
                 }
             });

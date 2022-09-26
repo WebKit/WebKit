@@ -119,7 +119,7 @@ void Code::setRegsInPriorityOrder(Bank bank, const Vector<Reg>& regs)
     forEachBank(
         [&] (Bank bank) {
             for (Reg reg : regsInPriorityOrder(bank))
-                m_mutableRegs.includeRegister(reg);
+                m_mutableRegs.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
         });
 }
 
@@ -130,7 +130,7 @@ void Code::pinRegister(Reg reg)
     regs.removeFirst(reg);
     m_mutableRegs.excludeRegister(reg);
     ASSERT(!regs.contains(reg));
-    m_pinnedRegs.includeRegister(reg);
+    m_pinnedRegs.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
 }
 
 WholeRegisterSet Code::mutableGPRs()
@@ -215,8 +215,10 @@ std::optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
 void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOffsetList, StackSlot* slot)
 {
     m_uncorrectedCalleeSaveRegisterAtOffsetList = WTFMove(registerAtOffsetList);
-    for (const RegisterAtOffset& registerAtOffset : m_uncorrectedCalleeSaveRegisterAtOffsetList)
+    for (const RegisterAtOffset& registerAtOffset : m_uncorrectedCalleeSaveRegisterAtOffsetList) {
+        ASSERT(registerAtOffset.width() <= Width64 || Options::useWebAssemblySIMD());
         m_calleeSaveRegisters.includeRegister(registerAtOffset.reg(), registerAtOffset.width());
+    }
     m_calleeSaveStackSlot = slot;
 }
 

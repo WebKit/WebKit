@@ -1340,7 +1340,7 @@ public:
     static void constructRegisterSet(WholeRegisterSet& set, GPRReg reg, Regs... args)
     {
         if (reg != InvalidGPRReg)
-            set.includeRegister(reg);
+            set.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
         constructRegisterSet(set, args...);
     }
 

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "AirAllocateRegistersAndStackByLinearScan.h"
+#include "b3/B3Width.h"
 
 #if ENABLE(B3_JIT)
 
@@ -274,6 +275,7 @@ private:
                     RegisterSet prevRegs = regs;
                     prev->forEach<Reg>(
                         [&] (Reg& reg, Arg::Role role, Bank, Width width) {
+                            ASSERT(width <= Width64);
                             if (Arg::isLateDef(role))
                                 prevRegs.includeRegister(reg, width);
                         });
@@ -287,6 +289,7 @@ private:
                     auto nextRegs = regs;
                     next->forEach<Reg>(
                         [&] (Reg& reg, Arg::Role role, Bank, Width width) {
+                            ASSERT(width <= Width64);
                             if (Arg::isEarlyDef(role))
                                 nextRegs.includeRegister(reg, width);
                         });
@@ -540,7 +543,7 @@ private:
     {
         TmpData& entry = m_map[tmp];
         RELEASE_ASSERT(!entry.isUnspillable);
-        entry.spilled = m_code.addStackSlot(8, StackSlotKind::Spill);
+        entry.spilled = m_code.addStackSlot(conservativeRegisterBytesForC(tmp.bank()), StackSlotKind::Spill);
         entry.assigned = Reg();
         m_didSpill = true;
     }
