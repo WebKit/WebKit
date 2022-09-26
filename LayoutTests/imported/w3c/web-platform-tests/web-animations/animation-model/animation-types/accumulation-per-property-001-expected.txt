@@ -16,7 +16,7 @@ PASS background-attachment (type: discrete) has testAccumulation function
 PASS background-attachment: "local" onto "fixed"
 PASS background-attachment: "fixed" onto "local"
 PASS background-color (type: color) has testAccumulation function
-FAIL background-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS background-color supports animating as color of rgb() with overflowed  from and to values
 PASS background-color supports animating as color of #RGB
 PASS background-color supports animating as color of hsl()
 PASS background-color supports animating as color of #RGBa
@@ -38,7 +38,7 @@ PASS background-repeat (type: discrete) has testAccumulation function
 PASS background-repeat: "round" onto "space"
 PASS background-repeat: "space" onto "round"
 PASS border-bottom-color (type: color) has testAccumulation function
-FAIL border-bottom-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS border-bottom-color supports animating as color of rgb() with overflowed  from and to values
 PASS border-bottom-color supports animating as color of #RGB
 PASS border-bottom-color supports animating as color of hsl()
 PASS border-bottom-color supports animating as color of #RGBa
@@ -60,7 +60,7 @@ PASS border-image-source (type: discrete) has testAccumulation function
 PASS border-image-source: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS border-image-source: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
 PASS border-left-color (type: color) has testAccumulation function
-FAIL border-left-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS border-left-color supports animating as color of rgb() with overflowed  from and to values
 PASS border-left-color supports animating as color of #RGB
 PASS border-left-color supports animating as color of hsl()
 PASS border-left-color supports animating as color of #RGBa
@@ -73,7 +73,7 @@ PASS border-left-width (type: length) has testAccumulation function
 PASS border-left-width: length
 PASS border-left-width: length of rem
 PASS border-right-color (type: color) has testAccumulation function
-FAIL border-right-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS border-right-color supports animating as color of rgb() with overflowed  from and to values
 PASS border-right-color supports animating as color of #RGB
 PASS border-right-color supports animating as color of hsl()
 PASS border-right-color supports animating as color of #RGBa
@@ -89,7 +89,7 @@ PASS border-spacing (type: lengthPair) has testAccumulation function
 PASS border-spacing: length pair
 PASS border-spacing: length pair of rem
 PASS border-top-color (type: color) has testAccumulation function
-FAIL border-top-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS border-top-color supports animating as color of rgb() with overflowed  from and to values
 PASS border-top-color supports animating as color of #RGB
 PASS border-top-color supports animating as color of hsl()
 PASS border-top-color supports animating as color of #RGBa
@@ -110,7 +110,7 @@ PASS caption-side (type: discrete) has testAccumulation function
 PASS caption-side: "bottom" onto "top"
 PASS caption-side: "top" onto "bottom"
 PASS caret-color (type: color) has testAccumulation function
-FAIL caret-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS caret-color supports animating as color of rgb() with overflowed  from and to values
 PASS caret-color supports animating as color of #RGB
 PASS caret-color supports animating as color of hsl()
 PASS caret-color supports animating as color of #RGBa
@@ -130,7 +130,7 @@ PASS clip-rule (type: discrete) has testAccumulation function
 PASS clip-rule: "nonzero" onto "evenodd"
 PASS clip-rule: "evenodd" onto "nonzero"
 PASS color (type: color) has testAccumulation function
-FAIL color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS color supports animating as color of rgb() with overflowed  from and to values
 PASS color supports animating as color of #RGB
 PASS color supports animating as color of hsl()
 PASS color supports animating as color of #RGBa
@@ -154,7 +154,7 @@ PASS column-gap (type: discrete) has testAccumulation function
 PASS column-gap: "200px" onto "normal"
 PASS column-gap: "normal" onto "200px"
 PASS column-rule-color (type: color) has testAccumulation function
-FAIL column-rule-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS column-rule-color supports animating as color of rgb() with overflowed  from and to values
 PASS column-rule-color supports animating as color of #RGB
 PASS column-rule-color supports animating as color of hsl()
 PASS column-rule-color supports animating as color of #RGBa
@@ -225,7 +225,7 @@ PASS flex-wrap (type: discrete) has testAccumulation function
 PASS flex-wrap: "wrap" onto "nowrap"
 PASS flex-wrap: "nowrap" onto "wrap"
 PASS flood-color (type: color) has testAccumulation function
-FAIL flood-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS flood-color supports animating as color of rgb() with overflowed  from and to values
 PASS flood-color supports animating as color of #RGB
 PASS flood-color supports animating as color of hsl()
 PASS flood-color supports animating as color of #RGBa
