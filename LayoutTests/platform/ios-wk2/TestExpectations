@@ -2388,3 +2388,5 @@ webkit.org/b/245600 fast/attachment/attachment-wrapping-action.html [ ImageOnlyF
 webkit.org/b/245608 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Failure ]
 
 webkit.org/b/245613 scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position.html [ Pass Failure ]
+
+webkit.org/b/245686 fast/text/system-font-fallback.html [ ImageOnlyFailure ]
