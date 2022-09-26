@@ -574,7 +574,7 @@ InlineLayoutUnit Line::TrimmableTrailingContent::remove()
     // e.g. <div>text is followed by trimmable content    <span> </span></div>
     // When the [text...] run is trimmed (trailing whitespace is removed), both "<span>" and "</span>" runs
     // need to be moved horizontally to catch up with the [text...] run. Note that the whitespace inside the <span> does
-    // not produce a run since in ::appendText() we see it as a fully collapsible run.
+    // not produce a run since in ::appendText() we see it as a fully trimmable run.
     for (auto index = *m_firstTrimmableRunIndex + 1; index < m_runs.size(); ++index) {
         auto& run = m_runs[index];
         ASSERT(run.isWordBreakOpportunity() || run.isLineSpanningInlineBoxStart() || run.isInlineBoxStart() || run.isInlineBoxEnd() || run.isLineBreak());

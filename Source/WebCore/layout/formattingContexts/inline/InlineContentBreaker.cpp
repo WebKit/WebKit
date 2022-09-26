@@ -153,16 +153,16 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
 
     ASSERT(continuousContent.logicalWidth() > lineStatus.availableWidth);
     auto checkForTrailingContentFit = [&]() -> std::optional<InlineContentBreaker::Result> {
-        if (continuousContent.hasCollapsibleContent()) {
-            // Check if the content fits if we collapsed it.
-            if (continuousContent.isFullyCollapsible() || isWhitespaceOnlyContent(continuousContent)) {
-                // If this new content is fully collapsible (including when it is enclosed by an inline box with overflowing decoration)
-                // it should not be wrapped to the next line (as it either fits/or gets fully collapsed).
+        if (continuousContent.hasTrimmableContent()) {
+            // Check if the content fits if we trimmed it.
+            if (continuousContent.isFullyTrimmable() || isWhitespaceOnlyContent(continuousContent)) {
+                // If this new content is fully trimmable (including when it is enclosed by an inline box with overflowing decoration)
+                // it should not be wrapped to the next line (as it either fits/or gets fully trimmed).
                 return InlineContentBreaker::Result { Result::Action::Keep };
             }
-            auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingCollapsibleWidth().value_or(0.f);
-            if (lineStatus.hasFullyCollapsibleTrailingContent)
-                spaceRequired -= continuousContent.leadingCollapsibleWidth().value_or(0.f);
+            auto spaceRequired = continuousContent.logicalWidth() - continuousContent.trailingTrimmableWidth().value_or(0.f);
+            if (lineStatus.hasFullyTrimmableTrailingContent)
+                spaceRequired -= continuousContent.leadingTrimmableWidth().value_or(0.f);
             if (spaceRequired <= lineStatus.availableWidth)
                 return InlineContentBreaker::Result { Result::Action::Keep };
         }
@@ -176,11 +176,11 @@ InlineContentBreaker::Result InlineContentBreaker::processOverflowingContent(con
                 return InlineContentBreaker::Result { Result::Action::Keep };
         }
 
-        auto canIgnoreNonContentTrailingRuns = lineStatus.collapsibleOrHangingWidth && isNonContentRunsOnly(continuousContent);
+        auto canIgnoreNonContentTrailingRuns = lineStatus.trimmableOrHangingWidth && isNonContentRunsOnly(continuousContent);
         if (canIgnoreNonContentTrailingRuns) {
-            // Let's see if the non-content runs fit when the line has trailing collapsible/hanging content.
-            // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after collapsing the trailing whitespace.
-            if (continuousContent.logicalWidth() <= lineStatus.availableWidth + lineStatus.collapsibleOrHangingWidth)
+            // Let's see if the non-content runs fit when the line has trailing trimmable/hanging content.
+            // "text content <span style="padding: 1px"></span>" <- the <span></span> runs could fit after trimming the trailing whitespace.
+            if (continuousContent.logicalWidth() <= lineStatus.availableWidth + lineStatus.trimmableOrHangingWidth)
                 return InlineContentBreaker::Result { Result::Action::Keep };
         }
 
@@ -732,9 +732,9 @@ void InlineContentBreaker::ContinuousContent::appendToRunList(const InlineItem& 
 
 void InlineContentBreaker::ContinuousContent::resetTrailingWhitespace()
 {
-    if (!m_leadingCollapsibleWidth)
-        m_leadingCollapsibleWidth = m_trailingCollapsibleWidth;
-    m_trailingCollapsibleWidth = { };
+    if (!m_leadingTrimmableWidth)
+        m_leadingTrimmableWidth = m_trailingTrimmableWidth;
+    m_trailingTrimmableWidth = { };
 }
 
 void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
@@ -742,29 +742,29 @@ void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineIte
     ASSERT(inlineItem.isBox() || inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd());
     appendToRunList(inlineItem, style, logicalWidth);
     if (inlineItem.isBox()) {
-        // Inline boxes (whitespace-> <span></span>) do not prevent the trailing content from getting collapsed/hung
+        // Inline boxes (whitespace-> <span></span>) do not prevent the trailing content from getting trimmed/hung
         // but atomic inline level boxes do.
         resetTrailingWhitespace();
     }
 }
 
-void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> collapsibleWidth)
+void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalWidth, std::optional<InlineLayoutUnit> trimmableWidth)
 {
-    if (!collapsibleWidth) {
+    if (!trimmableWidth) {
         appendToRunList(inlineTextItem, style, logicalWidth);
         resetTrailingWhitespace();
         return;
     }
 
-    ASSERT(*collapsibleWidth <= logicalWidth);
-    auto isLeadingCollapsible = collapsibleWidth && (!this->logicalWidth() || isFullyCollapsible());
+    ASSERT(*trimmableWidth <= logicalWidth);
+    auto isLeadingTrimmable = trimmableWidth && (!this->logicalWidth() || isFullyTrimmable());
     appendToRunList(inlineTextItem, style, logicalWidth);
-    if (isLeadingCollapsible) {
-        ASSERT(!m_trailingCollapsibleWidth);
-        m_leadingCollapsibleWidth = m_leadingCollapsibleWidth.value_or(0.f) + *collapsibleWidth;
+    if (isLeadingTrimmable) {
+        ASSERT(!m_trailingTrimmableWidth);
+        m_leadingTrimmableWidth = m_leadingTrimmableWidth.value_or(0.f) + *trimmableWidth;
         return;
     }
-    m_trailingCollapsibleWidth = *collapsibleWidth == logicalWidth ? m_trailingCollapsibleWidth.value_or(0.f) + logicalWidth : *collapsibleWidth;
+    m_trailingTrimmableWidth = *trimmableWidth == logicalWidth ? m_trailingTrimmableWidth.value_or(0.f) + logicalWidth : *trimmableWidth;
 }
 
 void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit hangingWidth)
@@ -777,8 +777,8 @@ void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlin
 void InlineContentBreaker::ContinuousContent::reset()
 {
     m_logicalWidth = { };
-    m_leadingCollapsibleWidth = { };
-    m_trailingCollapsibleWidth = { };
+    m_leadingTrimmableWidth = { };
+    m_trailingTrimmableWidth = { };
     m_trailingHangingContentWidth = { };
     m_runs.clear();
 }
