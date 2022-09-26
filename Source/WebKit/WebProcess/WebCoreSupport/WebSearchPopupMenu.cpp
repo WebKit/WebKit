@@ -68,7 +68,9 @@ void WebSearchPopupMenu::loadRecentSearches(const AtomString& name, Vector<Recen
     if (!page)
         return;
 
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), Messages::WebPageProxy::LoadRecentSearches::Reply(resultItems), page->identifier());
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::LoadRecentSearches(name), page->identifier());
+    if (sendResult)
+        std::tie(resultItems) = sendResult.takeReply();
 }
 
 bool WebSearchPopupMenu::enabled()
