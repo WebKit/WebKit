@@ -94,6 +94,11 @@ bool InlineTextItem::isCollapsibleNonBreakingSpace() const
     return m_length && inlineTextBox().content()[start()] == noBreakSpace;
 }
 
+bool InlineTextItem::isFullyTrimmable() const
+{
+    return isWhitespace() && !TextUtil::shouldPreserveSpacesAndTabs(layoutBox());
+}
+
 bool InlineTextItem::shouldPreserveSpacesAndTabs(const InlineTextItem& inlineTextItem)
 {
     ASSERT(inlineTextItem.isWhitespace());

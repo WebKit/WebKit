@@ -402,27 +402,39 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         m_contentLogicalWidth = std::max(contentWidthWithoutLastTextRun, lastRunLogicalRight + logicalWidth);
     }
 
-    // Handle trailing content, specifically whitespace and letter spacing.
     auto lastRunIndex = m_runs.size() - 1;
-    if (inlineTextItem.isWhitespace()) {
-        if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
-            m_trimmableTrailingContent.reset();
-            if (m_runs[lastRunIndex].shouldTrailingWhitespaceHang())
-                m_hangingTrailingContent.add(inlineTextItem, logicalWidth);
-        } else  {
-            m_hangingTrailingContent.reset();
+    m_trailingSoftHyphenWidth = { };
+    // Handle trailing content, specifically whitespace and letter spacing.
+    auto updateTrimmableStatus = [&] {
+        if (inlineTextItem.isFullyTrimmable()) {
             auto trimmableWidth = logicalWidth;
             auto trimmableContentOffset = (contentLogicalWidth() - oldContentLogicalWidth) - trimmableWidth;
             m_trimmableTrailingContent.addFullyTrimmableContent(lastRunIndex, trimmableContentOffset, trimmableWidth);
+            return true;
         }
-        m_trailingSoftHyphenWidth = { };
-    } else {
-        resetTrailingContent();
-        if (style.letterSpacing() > 0 && !formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing())
+        // FIXME: Move it to InlineTextItem after removing the integration codepath check.
+        auto isPartiallyTrimmable = !inlineTextItem.isWhitespace() && style.letterSpacing() > 0 && !formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing();
+        if (isPartiallyTrimmable) {
             m_trimmableTrailingContent.addPartiallyTrimmableContent(lastRunIndex, style.letterSpacing());
-        if (inlineTextItem.hasTrailingSoftHyphen())
-            m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
-    }
+            return true;
+        }
+        m_trimmableTrailingContent.reset();
+        return false;
+    };
+    auto isTrimmable = updateTrimmableStatus();
+
+    auto updateHangingStatus = [&] {
+        if (isTrimmable || !inlineTextItem.isWhitespace() || !m_runs[lastRunIndex].shouldTrailingWhitespaceHang()) {
+            m_hangingTrailingContent.reset();
+            return;
+        }
+        m_hangingTrailingContent.add(inlineTextItem, logicalWidth);
+    };
+    updateHangingStatus();
+
+    if (inlineTextItem.hasTrailingSoftHyphen())
+        m_trailingSoftHyphenWidth = style.fontCascade().width(TextRun { StringView { style.hyphenString() } });
+
 }
 
 void Line::appendNonReplacedInlineLevelBox(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit marginBoxLogicalWidth)
