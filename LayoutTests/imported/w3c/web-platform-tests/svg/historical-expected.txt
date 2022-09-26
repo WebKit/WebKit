@@ -12,7 +12,7 @@ PASS SVGPaint interface must be removed
 FAIL SVGPathSeg interface must be removed assert_false: expected false got true
 PASS SVGStylable interface must be removed
 FAIL SVGViewSpec interface must be removed assert_false: expected false got true
-FAIL SVGZoomEvent interface must be removed assert_false: expected false got true
+PASS SVGZoomEvent interface must be removed
 PASS GetSVGDocument mixin interface must not be exposed
 PASS SVGAnimatedPoints mixin interface must not be exposed
 PASS SVGElementInstance mixin interface must not be exposed

@@ -1480,7 +1480,6 @@ set(WebCore_SVG_IDL_FILES
     svg/SVGViewElement.idl
     svg/SVGViewSpec.idl
     svg/SVGZoomAndPan.idl
-    svg/SVGZoomEvent.idl
 )
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES

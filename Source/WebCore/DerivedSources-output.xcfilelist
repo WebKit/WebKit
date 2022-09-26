@@ -2524,8 +2524,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGViewSpec.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGViewSpec.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomAndPan.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomAndPan.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomEvent.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScriptProcessorNode.cpp

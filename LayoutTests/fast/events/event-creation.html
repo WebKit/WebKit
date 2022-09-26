@@ -104,11 +104,6 @@
     shouldBeTrue("document.createEvent('StorageEvent') instanceof window.Event");
     shouldBeTrue("document.createEvent('StorageEvent').constructor === window.StorageEvent");
 
-    // SVGZoomEvents
-    shouldBeTrue("document.createEvent('SVGZoomEvents') instanceof window.SVGZoomEvent");
-    shouldBeTrue("document.createEvent('SVGZoomEvents') instanceof window.Event");
-    shouldBeTrue("document.createEvent('SVGZoomEvents').constructor === window.SVGZoomEvent");
-
     // The following are here for completeness, but we won't run these tests until they are supported in more ports.
 
     // #if ENABLE(TOUCH_EVENTS)

@@ -1648,7 +1648,6 @@ $(PROJECT_DIR)/svg/SVGVKernElement.idl
 $(PROJECT_DIR)/svg/SVGViewElement.idl
 $(PROJECT_DIR)/svg/SVGViewSpec.idl
 $(PROJECT_DIR)/svg/SVGZoomAndPan.idl
-$(PROJECT_DIR)/svg/SVGZoomEvent.idl
 $(PROJECT_DIR)/svg/svgattrs.in
 $(PROJECT_DIR)/svg/svgtags.in
 $(PROJECT_DIR)/svg/xlinkattrs.in

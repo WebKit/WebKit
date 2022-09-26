@@ -251,9 +251,7 @@ PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ResourceProg
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "ResourceProgressEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SVGEvent"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SVGZoomEvent"
-FAIL Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "SVGZoomEvents" assert_throws_dom: function "function () {
-        var evt = document.createEvent(eventInterface + "s");
-      }" did not throw
+PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "SVGZoomEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "ScrollAreaEvent"
 PASS Should throw NOT_SUPPORTED_ERR for pluralized non-legacy event interface "ScrollAreaEvents"
 PASS Should throw NOT_SUPPORTED_ERR for non-legacy event interface "SecurityPolicyViolationEvent"

@@ -2804,7 +2804,6 @@ svg/SVGVKernElement.cpp
 svg/SVGViewElement.cpp
 svg/SVGViewSpec.cpp
 svg/SVGZoomAndPan.cpp
-svg/SVGZoomEvent.cpp
 svg/animation/SMILTime.cpp
 svg/animation/SMILTimeContainer.cpp
 svg/animation/SVGSMILElement.cpp
@@ -3963,7 +3962,6 @@ JSSVGVKernElement.cpp
 JSSVGViewElement.cpp
 JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp
-JSSVGZoomEvent.cpp
 JSScreen.cpp
 JSScriptProcessorNode.cpp
 JSScrollBehavior.cpp
