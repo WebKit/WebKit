@@ -55,7 +55,7 @@ void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallba
         // For the type, we can just query the arg's bank. The arg will have a bank, because we
         // require these args to be argument registers.
         Bank bank = inst.args[i].bank();
-        callback(inst.args[i], Arg::Use, bank, conservativeWidthForC(bank));
+        callback(inst.args[i], Arg::Use, bank, Options::useWebAssemblySIMD() ? conservativeWidth(bank) : conservativeWidthForC(bank));
     }
 }
 

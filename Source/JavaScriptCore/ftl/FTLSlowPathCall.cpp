@@ -60,7 +60,7 @@ SlowPathCallContext::SlowPathCallContext(
     
     RegisterSet callingConventionRegisters = m_callingConventionRegisters.set();
     for (unsigned i = std::min(NUMBER_OF_ARGUMENT_REGISTERS, numArgs); i--;)
-        callingConventionRegisters.includeRegister(GPRInfo::toArgumentRegister(i));
+        callingConventionRegisters.includeRegister(GPRInfo::toArgumentRegister(i), Width64);
     callingConventionRegisters.merge(m_argumentRegisters.set());
     if (returnRegister != InvalidGPRReg)
         callingConventionRegisters.includeRegister(GPRInfo::returnValueGPR);

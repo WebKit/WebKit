@@ -58,8 +58,8 @@ void logRegisterPressure(Code& code)
             set.merge(localCalc.live());
             Inst::forEachDefWithExtraClobberedRegs<Reg>(
                 prevInst, &inst,
-                [&] (Reg reg, Arg::Role, Bank, Width) {
-                    set.includeRegister(reg);
+                [&] (Reg reg, Arg::Role, Bank, Width width) {
+                    set.includeRegister(reg, width);
                 });
 
             StringPrintStream instOut;

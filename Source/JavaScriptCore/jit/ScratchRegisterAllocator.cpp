@@ -52,7 +52,7 @@ void ScratchRegisterAllocator::lock(FPRReg reg)
     if (reg == InvalidFPRReg)
         return;
     ASSERT(Reg::fromIndex(reg).isFPR());
-    m_lockedRegisters.includeRegister(reg);
+    m_lockedRegisters.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
 }
 
 void ScratchRegisterAllocator::lock(JSValueRegs regs)
@@ -70,7 +70,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
         if (!m_lockedRegisters.includesRegister(reg)
             && !m_usedRegisters.includesRegister(reg)
             && !m_scratchRegisters.includesRegister(reg)) {
-            m_scratchRegisters.includeRegister(reg);
+            m_scratchRegisters.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
             return reg;
         }
     }
@@ -80,7 +80,7 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
         auto reg = BankInfo::toRegister(i);
         if (!m_lockedRegisters.includesRegister(reg) && !m_scratchRegisters.includesRegister(reg)) {
-            m_scratchRegisters.includeRegister(reg);
+            m_scratchRegisters.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
             m_numberOfReusedRegisters++;
             return reg;
         }
@@ -107,7 +107,7 @@ ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReuse
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
         if (m_scratchRegisters.includesRegister(reg) && m_usedRegisters.includesRegister(reg))
-            registersToSpill.includeRegister(reg);
+            registersToSpill.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
     }
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg reg = GPRInfo::toRegister(i);
@@ -141,7 +141,7 @@ void ScratchRegisterAllocator::restoreReusedRegistersByPopping(AssemblyHelpers& 
         FPRReg reg = FPRInfo::toRegister(i);
         ASSERT(reg != InvalidFPRReg);
         if (m_scratchRegisters.includesRegister(reg) && m_usedRegisters.includesRegister(reg))
-            registersToFill.includeRegister(reg);
+            registersToFill.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
     }
 
     unsigned extraStackBytesAtTopOfStack =

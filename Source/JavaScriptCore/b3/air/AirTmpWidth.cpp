@@ -64,7 +64,7 @@ void TmpWidth::recompute(Code& code)
     
     auto assumeTheWorst = [&] (Tmp tmp) {
         if (bank == Arg(tmp).bank()) {
-            Width conservative = conservativeWidth(bank);
+            Width conservative = Options::useWebAssemblySIMD() ? conservativeWidth(bank) : conservativeWidthForC(bank);
             addWidths(tmp, { conservative, conservative });
         }
     };
@@ -125,7 +125,7 @@ void TmpWidth::recompute(Code& code)
                     if (Arg::isZDef(role))
                         tmpWidths.def = std::max(tmpWidths.def, width);
                     else if (Arg::isAnyDef(role))
-                        tmpWidths.def = conservativeWidth(tmpBank);
+                        tmpWidths.def = Options::useWebAssemblySIMD() ? conservativeWidth(tmpBank) : conservativeWidthForC(tmpBank);
                 });
         }
     }

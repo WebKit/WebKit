@@ -43,7 +43,7 @@ void handleCalleeSaves(Code& code)
             inst.forEachTmpFast(
                 [&] (Tmp& tmp) {
                     // At first we just record all used regs.
-                    usedCalleeSaves.includeRegister(tmp.reg());
+                    usedCalleeSaves.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
                 });
 
             if (inst.kind.opcode == Patch) {

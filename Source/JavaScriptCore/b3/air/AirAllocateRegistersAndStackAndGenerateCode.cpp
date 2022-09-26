@@ -163,7 +163,7 @@ ALWAYS_INLINE void GenerateAndAllocateRegisters::release(Tmp tmp, Reg reg)
     ASSERT(m_currentAllocation->at(reg) == tmp);
     m_currentAllocation->at(reg) = Tmp();
     ASSERT(!m_availableRegs[tmp.bank()].includesRegister(reg));
-    m_availableRegs[tmp.bank()].includeRegister(reg);
+    m_availableRegs[tmp.bank()].includeRegister(reg, Width64);
     ASSERT(m_map[tmp].reg == reg);
     m_map[tmp].reg = Reg();
 }
@@ -267,7 +267,7 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::assignTmp(Tmp& tmp, Bank bank, 
             m_clobberedToClear.excludeRegister(reg);
         // At this point, it doesn't matter if we add it to the m_namedUsedRegs or m_namedDefdRegs. 
         // We just need to mark that we can't use it again for another tmp.
-        m_namedUsedRegs.includeRegister(reg);
+        m_namedUsedRegs.includeRegister(reg, Width64);
     };
 
     bool mightInterfere = WholeRegisterSet(m_earlyClobber).numberOfSetRegisters() || (m_lateClobber).numberOfSetRegisters();
@@ -425,7 +425,7 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         m_registers[bank] = m_code.regsInPriorityOrder(bank);
 
         for (Reg reg : m_registers[bank]) {
-            m_allowedRegisters.includeRegister(reg);
+            m_allowedRegisters.includeRegister(reg, Width64);
             TmpData& data = m_map[Tmp(reg)];
             unsigned slotSize = conservativeRegisterBytes(bank);
             if (!Options::useWebAssemblySIMD())
@@ -584,7 +584,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
             WholeRegisterSet availableRegisters;
             for (Reg reg : m_registers[bank])
-                availableRegisters.includeRegister(reg);
+                availableRegisters.includeRegister(reg, Width64);
             m_availableRegs[bank] = WTFMove(availableRegisters);
         });
 
@@ -668,9 +668,9 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
                 if (tmp.isReg()) {
                     if (Arg::isAnyUse(role))
-                        m_namedUsedRegs.includeRegister(tmp.reg());
+                        m_namedUsedRegs.includeRegister(tmp.reg(), Width64);
                     if (Arg::isAnyDef(role))
-                        m_namedDefdRegs.includeRegister(tmp.reg());
+                        m_namedDefdRegs.includeRegister(tmp.reg(), Width64);
                 }
             });
 

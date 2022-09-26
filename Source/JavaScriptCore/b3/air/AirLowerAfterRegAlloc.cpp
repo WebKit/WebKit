@@ -127,7 +127,7 @@ void lowerAfterRegAlloc(Code& code)
             for (Reg reg : code.regsInPriorityOrder(bank)) {
                 if (!WholeRegisterSet(set).includesRegister(reg) && !disallowedCalleeSaves.includesRegister(reg)) {
                     result[i] = Tmp(reg);
-                    set.includeRegister(reg);
+                    set.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
                     found = true;
                     break;
                 }
@@ -135,7 +135,7 @@ void lowerAfterRegAlloc(Code& code)
             if (!found) {
                 StackSlot*& slot = slots[bank][i];
                 if (!slot)
-                    slot = code.addStackSlot(conservativeRegisterBytes(bank), StackSlotKind::Spill);
+                    slot = code.addStackSlot(Options::useWebAssemblySIMD() ? conservativeRegisterBytes(bank) : conservativeRegisterBytesForC(bank), StackSlotKind::Spill);
                 result[i] = Arg::stack(slots[bank][i]);
             }
         }
@@ -162,7 +162,7 @@ void lowerAfterRegAlloc(Code& code)
                     // interfere with either sources or destinations.
                     auto excludeRegisters = [&] (Tmp tmp) {
                         if (tmp.isReg())
-                            set.includeRegister(tmp.reg());
+                            set.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
                     };
                     src.forEachTmpFast(excludeRegisters);
                     dst.forEachTmpFast(excludeRegisters);
@@ -203,7 +203,7 @@ void lowerAfterRegAlloc(Code& code)
 
                     auto excludeRegisters = [&] (Tmp tmp) {
                         if (tmp.isReg())
-                            preUsed.includeRegister(tmp.reg());
+                            preUsed.includeRegister(tmp.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
                     };
                     src.forEachTmpFast(excludeRegisters);
                     dst.forEachTmpFast(excludeRegisters);
@@ -255,7 +255,7 @@ void lowerAfterRegAlloc(Code& code)
                 // For finding scratch registers, we need to account for the possibility that
                 // the result is dead.
                 if (originalResult.isReg())
-                    liveRegs.includeRegister(originalResult.reg());
+                    liveRegs.includeRegister(originalResult.reg(), Options::useWebAssemblySIMD() ? Width128 : Width64);
 
                 gpScratch = getScratches(liveRegs, GP);
                 fpScratch = getScratches(liveRegs, FP);
