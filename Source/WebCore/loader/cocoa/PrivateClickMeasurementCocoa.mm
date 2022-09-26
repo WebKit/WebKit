@@ -35,16 +35,16 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateSourceUnlinkabl
     return calculateAndUpdateUnlinkableToken(serverPublicKeyBase64URL, m_sourceUnlinkableToken, "source"_s);
 }
 
-Expected<PrivateClickMeasurement::DestinationUnlinkableToken, String> PrivateClickMeasurement::calculateAndUpdateDestinationUnlinkableToken(const String& serverPublicKeyBase64URL)
+Expected<PCM::DestinationUnlinkableToken, String> PrivateClickMeasurement::calculateAndUpdateDestinationUnlinkableToken(const String& serverPublicKeyBase64URL)
 {
-    DestinationUnlinkableToken destinationToken;
+    PCM::DestinationUnlinkableToken destinationToken;
     auto errorMessage = calculateAndUpdateUnlinkableToken(serverPublicKeyBase64URL, destinationToken, "destination"_s);
     if (errorMessage)
         return makeUnexpected(*errorMessage);
     return destinationToken;
 }
 
-std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken(const String& serverPublicKeyBase64URL, UnlinkableToken& unlinkableToken, const String& contextForLogMessage)
+std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken(const String& serverPublicKeyBase64URL, PCM::UnlinkableToken& unlinkableToken, const String& contextForLogMessage)
 {
 #if HAVE(RSA_BSSA)
     {
@@ -80,7 +80,7 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateUnlinkableToken
 
 std::optional<String> PrivateClickMeasurement::calculateAndUpdateSourceSecretToken(const String& serverResponseBase64URL)
 {
-    SourceSecretToken secretToken;
+    PCM::SourceSecretToken secretToken;
     if (auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, m_sourceUnlinkableToken, secretToken, "source"_s))
         return errorMessage;
     
@@ -88,16 +88,16 @@ std::optional<String> PrivateClickMeasurement::calculateAndUpdateSourceSecretTok
     return std::nullopt;
 }
 
-Expected<PrivateClickMeasurement::DestinationSecretToken, String> PrivateClickMeasurement::calculateAndUpdateDestinationSecretToken(const String& serverResponseBase64URL, DestinationUnlinkableToken& unlinkableToken)
+Expected<PCM::DestinationSecretToken, String> PrivateClickMeasurement::calculateAndUpdateDestinationSecretToken(const String& serverResponseBase64URL, PCM::DestinationUnlinkableToken& unlinkableToken)
 {
-    DestinationSecretToken secretToken;
+    PCM::DestinationSecretToken secretToken;
     auto errorMessage = calculateAndUpdateSecretToken(serverResponseBase64URL, unlinkableToken, secretToken, "source"_s);
     if (errorMessage)
         return makeUnexpected(*errorMessage);
     return secretToken;
 }
 
-std::optional<String> PrivateClickMeasurement::calculateAndUpdateSecretToken(const String& serverResponseBase64URL, UnlinkableToken& unlinkableToken, SecretToken& secretToken, const String& contextForLogMessage)
+std::optional<String> PrivateClickMeasurement::calculateAndUpdateSecretToken(const String& serverResponseBase64URL, PCM::UnlinkableToken& unlinkableToken, PCM::SecretToken& secretToken, const String& contextForLogMessage)
 {
 #if HAVE(RSA_BSSA)
     if (!unlinkableToken.waitingToken)

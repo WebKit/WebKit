@@ -1646,6 +1646,7 @@ layout/formattingContexts/table/TableFormattingState.cpp
 layout/formattingContexts/table/TableGrid.cpp
 layout/formattingContexts/table/TableLayout.cpp
 loader/ApplicationManifestLoader.cpp
+loader/AttributionTriggerData.cpp
 loader/COEPInheritenceViolationReportBody.cpp
 loader/CORPViolationReportBody.cpp
 loader/CanvasActivityRecord.cpp

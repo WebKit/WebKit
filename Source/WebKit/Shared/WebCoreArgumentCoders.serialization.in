@@ -489,3 +489,47 @@ struct WebCore::DictionaryPopupInfo {
     WebCore::DictionaryPopupInfoCocoa platformData;
 #endif
 };
+
+enum class WebCore::PCM::AttributionEphemeral : bool
+enum class WebCore::PCM::WasSent : bool
+
+header: <WebCore/PrivateClickMeasurement.h>
+class WebCore::PrivateClickMeasurement {
+    uint8_t sourceID()
+    WebCore::PCM::SourceSite sourceSite()
+    WebCore::PCM::AttributionDestinationSite destinationSite()
+    WallTime timeOfAdClick()
+    WebCore::PCM::AttributionEphemeral isEphemeral()
+    std::optional<uint64_t> adamID()
+    std::optional<WebCore::PCM::AttributionTriggerData> attributionTriggerData()
+    WebCore::PCM::AttributionTimeToSendData timesToSend()
+    std::optional<WebCore::PCM::EphemeralNonce> ephemeralSourceNonce()
+    String sourceApplicationBundleID()
+}
+
+struct WebCore::PCM::SourceSite {
+    WebCore::RegistrableDomain registrableDomain
+}
+
+struct WebCore::PCM::AttributionDestinationSite {
+    WebCore::RegistrableDomain registrableDomain
+}
+
+struct WebCore::PCM::EphemeralNonce {
+    String nonce
+}
+
+struct WebCore::PCM::AttributionTriggerData {
+    uint8_t data
+    uint8_t priority;
+    WebCore::PCM::WasSent wasSent;
+    std::optional<WebCore::RegistrableDomain> sourceRegistrableDomain;
+    std::optional<WebCore::PCM::EphemeralNonce> ephemeralDestinationNonce;
+    std::optional<WebCore::RegistrableDomain> destinationSite;
+# destinationUnlinkableToken and destinationSecretToken are not serialized.
+}
+
+struct WebCore::PCM::AttributionTimeToSendData {
+    std::optional<WallTime> sourceEarliestTimeToSend;
+    std::optional<WallTime> destinationEarliestTimeToSend;
+}

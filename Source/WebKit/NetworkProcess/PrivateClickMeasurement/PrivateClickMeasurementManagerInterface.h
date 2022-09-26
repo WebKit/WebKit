@@ -49,11 +49,11 @@ class ManagerInterface {
 public:
     virtual ~ManagerInterface() { };
 
-    using AttributionDestinationSite = WebCore::PrivateClickMeasurement::AttributionDestinationSite;
-    using AttributionTriggerData = WebCore::PrivateClickMeasurement::AttributionTriggerData;
+    using AttributionDestinationSite = WebCore::PCM::AttributionDestinationSite;
+    using AttributionTriggerData = WebCore::PCM::AttributionTriggerData;
     using PrivateClickMeasurement = WebCore::PrivateClickMeasurement;
     using RegistrableDomain = WebCore::RegistrableDomain;
-    using SourceSite = WebCore::PrivateClickMeasurement::SourceSite;
+    using SourceSite = WebCore::PCM::SourceSite;
     using ApplicationBundleIdentifier = String;
 
     virtual void storeUnattributed(PrivateClickMeasurement&&, CompletionHandler<void()>&&) = 0;

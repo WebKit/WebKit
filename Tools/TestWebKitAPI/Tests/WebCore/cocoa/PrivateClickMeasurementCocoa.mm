@@ -38,16 +38,16 @@ using namespace WebCore;
 
 TEST(PrivateClickMeasurement, ValidBlindedSecret)
 {
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
+    auto ephemeralNonce = PCM::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
     EXPECT_TRUE(ephemeralNonce.isValid());
 
     WebCore::PrivateClickMeasurement pcm(
-        WebCore::PrivateClickMeasurement::SourceID({ }),
-        WebCore::PrivateClickMeasurement::SourceSite(URL()),
-        WebCore::PrivateClickMeasurement::AttributionDestinationSite(URL()),
+        WebCore::PrivateClickMeasurement::SourceID(0),
+        PCM::SourceSite(URL()),
+        PCM::AttributionDestinationSite(URL()),
         { },
         WallTime::now(),
-        WebCore::PrivateClickMeasurement::AttributionEphemeral::No
+        WebCore::PCM::AttributionEphemeral::No
     );
     pcm.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
 

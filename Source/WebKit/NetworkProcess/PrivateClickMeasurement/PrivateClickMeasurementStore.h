@@ -53,7 +53,7 @@ public:
     static void processDidResume();
 
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, WebKit::PrivateClickMeasurementAttributionType, CompletionHandler<void()>&&);
-    void attributePrivateClickMeasurement(WebCore::PrivateClickMeasurement::SourceSite&&, WebCore::PrivateClickMeasurement::AttributionDestinationSite&&, const ApplicationBundleIdentifier&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest, CompletionHandler<void(std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&);
+    void attributePrivateClickMeasurement(WebCore::PCM::SourceSite&&, WebCore::PCM::AttributionDestinationSite&&, const ApplicationBundleIdentifier&, WebCore::PCM::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest, CompletionHandler<void(std::optional<WebCore::PCM::AttributionSecondsUntilSendData>&&, DebugInfo&&)>&&);
 
     void privateClickMeasurementToStringForTesting(CompletionHandler<void(String)>&&) const;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
@@ -63,7 +63,7 @@ public:
     void clearExpiredPrivateClickMeasurement();
     void clearPrivateClickMeasurement(CompletionHandler<void()>&&);
     void clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
-    void clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, WebCore::PrivateClickMeasurement::AttributionReportEndpoint);
+    void clearSentAttribution(WebCore::PrivateClickMeasurement&& attributionToClear, WebCore::PCM::AttributionReportEndpoint);
 
     void close(CompletionHandler<void()>&&);
 

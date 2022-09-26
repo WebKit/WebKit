@@ -104,7 +104,7 @@ private:
 
     std::optional<URL> attributionDestinationURLForPCM() const;
     std::optional<RegistrableDomain> mainDocumentRegistrableDomainForPCM() const;
-    std::optional<PrivateClickMeasurement::EphemeralNonce> attributionSourceNonceForPCM() const;
+    std::optional<PCM::EphemeralNonce> attributionSourceNonceForPCM() const;
     std::optional<PrivateClickMeasurement> parsePrivateClickMeasurementForSKAdNetwork(const URL&) const;
     std::optional<PrivateClickMeasurement> parsePrivateClickMeasurement(const URL&) const;
 

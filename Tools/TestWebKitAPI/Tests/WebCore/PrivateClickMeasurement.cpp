@@ -44,8 +44,8 @@ const URL emptyURL { };
 
 TEST(PrivateClickMeasurement, WellKnownURLs)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(min6BitValue, PrivateClickMeasurement::Priority(min6BitValue)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { min6BitValue, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(min6BitValue), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     auto attributionSourceURL = attribution.attributionReportClickSourceURL();
     ASSERT_EQ(attributionSourceURL.string(), "https://webkit.org/.well-known/private-click-measurement/report-attribution/"_s);
@@ -55,33 +55,33 @@ TEST(PrivateClickMeasurement, WellKnownURLs)
 
 TEST(PrivateClickMeasurement, ValidMinValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(min6BitValue, PrivateClickMeasurement::Priority(min6BitValue)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(min6BitValue), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { min6BitValue, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(min6BitValue), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":0,\"attributed_on_site\":\"example.com\",\"trigger_data\":0,\"version\":3}"_s);
 }
 
 TEST(PrivateClickMeasurement, ValidMidValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID((uint32_t)192), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData((uint32_t)9, PrivateClickMeasurement::Priority((uint32_t)22)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID((uint32_t)192), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { (uint32_t)9, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue((uint32_t)22), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":192,\"attributed_on_site\":\"example.com\",\"trigger_data\":9,\"version\":3}"_s);
 }
 
 TEST(PrivateClickMeasurement, ValidMaxValues)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_EQ(attribution.attributionReportJSON()->toJSONString(), "{\"source_engagement_type\":\"click\",\"source_site\":\"webkit.org\",\"source_id\":255,\"attributed_on_site\":\"example.com\",\"trigger_data\":15,\"version\":3}"_s);
 }
 
 TEST(PrivateClickMeasurement, EarliestTimeToSendAttributionMinimumDelay)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
     auto now = WallTime::now();
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
     auto earliestTimeToSend = attribution.timesToSend();
     ASSERT_TRUE(earliestTimeToSend.sourceEarliestTimeToSend && earliestTimeToSend.destinationEarliestTimeToSend);
     ASSERT_TRUE(earliestTimeToSend.sourceEarliestTimeToSend.value().secondsSinceEpoch() - 24_h >= now.secondsSinceEpoch());
@@ -126,7 +126,7 @@ TEST(PrivateClickMeasurement, ValidConversionURLs)
 
 TEST(PrivateClickMeasurement, ValidSourceNonce)
 {
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
+    auto ephemeralNonce = PCM::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
     ASSERT_TRUE(ephemeralNonce.isValid());
 }
 
@@ -134,8 +134,8 @@ TEST(PrivateClickMeasurement, ValidSourceNonce)
 
 TEST(PrivateClickMeasurement, InvalidSourceHost)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { emptyURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { emptyURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
     ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
@@ -143,8 +143,8 @@ TEST(PrivateClickMeasurement, InvalidSourceHost)
 
 TEST(PrivateClickMeasurement, InvalidDestinationHost)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { emptyURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { emptyURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
     ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
@@ -152,8 +152,8 @@ TEST(PrivateClickMeasurement, InvalidDestinationHost)
 
 TEST(PrivateClickMeasurement, AttributionTriggerData)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData((PrivateClickMeasurement::AttributionTriggerData::MaxEntropy + 1), PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { (WebCore::PCM::AttributionTriggerData::MaxEntropy + 1), WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
     ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
@@ -161,8 +161,8 @@ TEST(PrivateClickMeasurement, AttributionTriggerData)
 
 TEST(PrivateClickMeasurement, InvalidPriority)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
-    attribution.attributeAndGetEarliestTimeToSend(PrivateClickMeasurement::AttributionTriggerData(PrivateClickMeasurement::AttributionTriggerData::MaxEntropy, PrivateClickMeasurement::Priority(PrivateClickMeasurement::Priority::MaxEntropy + 1)), WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
+    attribution.attributeAndGetEarliestTimeToSend(WebCore::PCM::AttributionTriggerData { WebCore::PCM::AttributionTriggerData::MaxEntropy, WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(WebCore::PCM::AttributionTriggerData::Priority::MaxEntropy + 1), { }, { }, { }, { }, { }, { } }, WebCore::PrivateClickMeasurement::IsRunningLayoutTest::No);
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
     ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
@@ -170,7 +170,7 @@ TEST(PrivateClickMeasurement, InvalidPriority)
 
 TEST(PrivateClickMeasurement, InvalidMissingConversion)
 {
-    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(PrivateClickMeasurement::SourceID::MaxEntropy), PrivateClickMeasurement::SourceSite { webKitURL }, PrivateClickMeasurement::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), WebCore::PrivateClickMeasurement::AttributionEphemeral::No };
+    PrivateClickMeasurement attribution { PrivateClickMeasurement::SourceID(std::numeric_limits<uint8_t>::max()), PCM::SourceSite { webKitURL }, PCM::AttributionDestinationSite { exampleURL }, "test.bundle.identifier"_s, WallTime::now(), PCM::AttributionEphemeral::No };
 
     ASSERT_TRUE(attribution.attributionReportClickSourceURL().isEmpty());
     ASSERT_TRUE(attribution.attributionReportClickDestinationURL().isEmpty());
@@ -282,19 +282,19 @@ TEST(PrivateClickMeasurement, InvalidConversionWithDisallowedURLComponents)
 TEST(PrivateClickMeasurement, InvalidSourceNonce)
 {
     // Fewer than the requried number of bytes.
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDabcd0123456789"_s };
+    auto ephemeralNonce = PCM::EphemeralNonce { "ABCDabcd0123456789"_s };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // More than the requried number of bytes.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFGHIabcdefghi0123456789"_s };
+    ephemeralNonce = PCM::EphemeralNonce { "ABCDEFGHIabcdefghi0123456789"_s };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Illegal, ASCII character '/'.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcde/0123456789"_s };
+    ephemeralNonce = PCM::EphemeralNonce { "ABCDEFabcde/0123456789"_s };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Illegal, non-ASCII character 'å'.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { String::fromLatin1("ABCDEFabcdeå0123456789") };
+    ephemeralNonce = PCM::EphemeralNonce { String::fromLatin1("ABCDEFabcdeå0123456789") };
     ASSERT_FALSE(ephemeralNonce.isValid());
     // Empty string.
-    ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { StringImpl::empty() };
+    ephemeralNonce = PCM::EphemeralNonce { StringImpl::empty() };
     ASSERT_FALSE(ephemeralNonce.isValid());
 }
 
@@ -308,17 +308,17 @@ TEST(PrivateClickMeasurement, InvalidBlindedSecret)
 #endif
 
     WebCore::PrivateClickMeasurement pcm(
-        WebCore::PrivateClickMeasurement::SourceID({ }),
-        WebCore::PrivateClickMeasurement::SourceSite(URL()),
-        WebCore::PrivateClickMeasurement::AttributionDestinationSite(URL()),
+        WebCore::PrivateClickMeasurement::SourceID(0),
+        PCM::SourceSite(URL()),
+        PCM::AttributionDestinationSite(URL()),
         { },
         WallTime::now(),
-        WebCore::PrivateClickMeasurement::AttributionEphemeral::No
+        PCM::AttributionEphemeral::No
     );
     auto sourceUnlinkableToken = pcm.tokenSignatureJSON();
     EXPECT_EQ(sourceUnlinkableToken->asObject()->size(), 0ul);
 
-    auto ephemeralNonce = PrivateClickMeasurement::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
+    auto ephemeralNonce = PCM::EphemeralNonce { "ABCDEFabcdef0123456789"_s };
     EXPECT_TRUE(ephemeralNonce.isValid());
     pcm.setEphemeralSourceNonce(WTFMove(ephemeralNonce));
 

@@ -45,11 +45,11 @@ public:
     static void interruptAllDatabases();
 
     void insertPrivateClickMeasurement(WebCore::PrivateClickMeasurement&&, PrivateClickMeasurementAttributionType);
-    std::pair<std::optional<WebCore::PrivateClickMeasurement::AttributionSecondsUntilSendData>, DebugInfo> attributePrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, const ApplicationBundleIdentifier&, WebCore::PrivateClickMeasurement::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest);
+    std::pair<std::optional<WebCore::PCM::AttributionSecondsUntilSendData>, DebugInfo> attributePrivateClickMeasurement(const WebCore::PCM::SourceSite&, const WebCore::PCM::AttributionDestinationSite&, const ApplicationBundleIdentifier&, WebCore::PCM::AttributionTriggerData&&, WebCore::PrivateClickMeasurement::IsRunningLayoutTest);
     Vector<WebCore::PrivateClickMeasurement> allAttributedPrivateClickMeasurement();
     void clearPrivateClickMeasurement(std::optional<WebCore::RegistrableDomain>);
     void clearExpiredPrivateClickMeasurement();
-    void clearSentAttribution(WebCore::PrivateClickMeasurement&&, WebCore::PrivateClickMeasurement::AttributionReportEndpoint);
+    void clearSentAttribution(WebCore::PrivateClickMeasurement&&, WebCore::PCM::AttributionReportEndpoint);
 
     String privateClickMeasurementToStringForTesting() const;
     void markAllUnattributedPrivateClickMeasurementAsExpiredForTesting();
@@ -66,7 +66,7 @@ private:
 
     bool createSchema() final;
     void destroyStatements() final;
-    std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PrivateClickMeasurement::SourceSite&, const WebCore::PrivateClickMeasurement::AttributionDestinationSite&, const ApplicationBundleIdentifier&);
+    std::pair<std::optional<UnattributedPrivateClickMeasurement>, std::optional<AttributedPrivateClickMeasurement>> findPrivateClickMeasurement(const WebCore::PCM::SourceSite&, const WebCore::PCM::AttributionDestinationSite&, const ApplicationBundleIdentifier&);
     void removeUnattributed(WebCore::PrivateClickMeasurement&);
     String attributionToStringForTesting(const WebCore::PrivateClickMeasurement&) const;
     void markReportAsSentToDestination(SourceDomainID, DestinationDomainID, const ApplicationBundleIdentifier&);

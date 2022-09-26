@@ -3139,11 +3139,11 @@ static bool isLockdownModeWarningNeeded()
     if (attribution) {
         WebCore::PrivateClickMeasurement measurement(
             WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
-            WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
-            WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
+            WebCore::PCM::SourceSite(attribution.reportEndpoint),
+            WebCore::PCM::AttributionDestinationSite(attribution.destinationURL),
             WebCore::applicationBundleIdentifier(),
             WallTime::now(),
-            WebCore::PrivateClickMeasurement::AttributionEphemeral::No
+            WebCore::PCM::AttributionEphemeral::No
         );
         _page->setPrivateClickMeasurement({{ WTFMove(measurement), attribution.sourceDescription, attribution.purchaser }});
     } else
@@ -3159,7 +3159,7 @@ static bool isLockdownModeWarningNeeded()
         return nil;
 
     URL destinationURL { makeString("https://", measurement->pcm.destinationSite().registrableDomain.string()) };
-    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->pcm.sourceID().id destinationURL:destinationURL sourceDescription:measurement->sourceDescription purchaser:measurement->purchaser]).autorelease();
+    return adoptNS([[UIEventAttribution alloc] initWithSourceIdentifier:measurement->pcm.sourceID() destinationURL:destinationURL sourceDescription:measurement->sourceDescription purchaser:measurement->purchaser]).autorelease();
 #else
     return nil;
 #endif
@@ -3177,11 +3177,11 @@ static bool isLockdownModeWarningNeeded()
     if (attribution) {
         WebCore::PrivateClickMeasurement measurement(
             WebCore::PrivateClickMeasurement::SourceID(attribution.sourceIdentifier),
-            WebCore::PrivateClickMeasurement::SourceSite(attribution.reportEndpoint),
-            WebCore::PrivateClickMeasurement::AttributionDestinationSite(attribution.destinationURL),
+            WebCore::PCM::SourceSite(attribution.reportEndpoint),
+            WebCore::PCM::AttributionDestinationSite(attribution.destinationURL),
             bundleID,
             WallTime::now(),
-            WebCore::PrivateClickMeasurement::AttributionEphemeral::Yes
+            WebCore::PCM::AttributionEphemeral::Yes
         );
         _page->setPrivateClickMeasurement({{ WTFMove(measurement), attribution.sourceDescription, attribution.purchaser }});
     } else

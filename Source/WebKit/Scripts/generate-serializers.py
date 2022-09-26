@@ -184,6 +184,8 @@ def generate_header(serialized_types, serialized_enums):
     result.append('namespace WTF {')
     result.append('')
     for enum in serialized_enums:
+        if enum.underlying_type == 'bool':
+            continue
         result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + enum.additional_template_parameter() + '>(' + enum.parameter() + ');')
     result.append('')
     result.append('} // namespace WTF')
@@ -311,6 +313,8 @@ def generate_impl(serialized_types, serialized_enums, headers):
     result.append('')
     result.append('namespace WTF {')
     for enum in serialized_enums:
+        if enum.underlying_type == 'bool':
+            continue
         result.append('')
         result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + enum.additional_template_parameter() + '>(' + enum.parameter() + ' value)')
         result.append('{')
@@ -366,8 +370,11 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers):
     result.append('    return {')
     for enum in serialized_enums:
         result.append('        { "' + enum.namespace_and_name() + '"_s, sizeof(' + enum.namespace_and_name() + '), ' + ('true' if enum.is_option_set() else 'false') + ', {')
-        for valid_value in enum.valid_values:
-            result.append('            static_cast<uint64_t>(' + enum.namespace_and_name() + '::' + valid_value + '),')
+        if enum.underlying_type == 'bool':
+            result.append('            0, 1')
+        else:
+            for valid_value in enum.valid_values:
+                result.append('            static_cast<uint64_t>(' + enum.namespace_and_name() + '::' + valid_value + '),')
         result.append('        } },')
     result.append('    };')
     result.append('}')
@@ -441,6 +448,12 @@ def parse_serialized_types(file, file_name):
         match = re.search(r'(.*)enum class (.*)::(.*) : (.*) {', line)
         if match:
             attributes, namespace, name, underlying_type = match.groups()
+            assert underlying_type != 'bool'
+            continue
+
+        match = re.search(r'(.*)enum class (.*)::(.*) : bool', line)
+        if match:
+            serialized_enums.append(SerializedEnum(match.groups()[1], match.groups()[2], 'bool', [], match.groups()[0]))
             continue
 
         match = re.search(r'\[(.*)\] (struct|class) (.*)::(.*) {', line)

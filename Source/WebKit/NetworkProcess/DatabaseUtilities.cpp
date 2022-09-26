@@ -158,7 +158,7 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
     if (bundleID.isEmpty())
         bundleID = safariBundleID;
 
-    WebCore::PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PrivateClickMeasurement::SourceSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PrivateClickMeasurement::AttributionDestinationSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), bundleID, WallTime::fromRawSeconds(timeOfAdClick), WebCore::PrivateClickMeasurement::AttributionEphemeral::No);
+    WebCore::PrivateClickMeasurement attribution(WebCore::PrivateClickMeasurement::SourceID(sourceID), WebCore::PCM::SourceSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(sourceSiteDomain)), WebCore::PCM::AttributionDestinationSite(WebCore::RegistrableDomain::uncheckedCreateFromRegistrableDomainString(destinationSiteDomain)), bundleID, WallTime::fromRawSeconds(timeOfAdClick), WebCore::PCM::AttributionEphemeral::No);
 
     // These indices are zero-based: https://www.sqlite.org/c3ref/column_blob.html "The leftmost column of the result set has the index 0".
     if (attributionType == PrivateClickMeasurementAttributionType::Attributed) {
@@ -171,9 +171,9 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
         auto destinationKeyID = statement.columnText(14);
 
         if (attributionTriggerData != -1)
-            attribution.setAttribution(WebCore::PrivateClickMeasurement::AttributionTriggerData { static_cast<uint8_t>(attributionTriggerData), WebCore::PrivateClickMeasurement::Priority(priority) });
+            attribution.setAttribution(WebCore::PCM::AttributionTriggerData { static_cast<uint8_t>(attributionTriggerData), WebCore::PCM::AttributionTriggerData::Priority::PriorityValue(priority), { }, { }, { }, { }, { }, { } });
 
-        WebCore::PrivateClickMeasurement::DestinationSecretToken destinationSecretToken;
+        WebCore::PCM::DestinationSecretToken destinationSecretToken;
         destinationSecretToken.tokenBase64URL = destinationToken;
         destinationSecretToken.signatureBase64URL = destinationSignature;
         destinationSecretToken.keyIDBase64URL = destinationKeyID;
@@ -193,7 +193,7 @@ WebCore::PrivateClickMeasurement DatabaseUtilities::buildPrivateClickMeasurement
         attribution.setTimesToSend({ sourceEarliestTimeToSend, destinationEarliestTimeToSend });
     }
 
-    WebCore::PrivateClickMeasurement::SourceSecretToken sourceSecretToken;
+    WebCore::PCM::SourceSecretToken sourceSecretToken;
     sourceSecretToken.tokenBase64URL = token;
     sourceSecretToken.signatureBase64URL = signature;
     sourceSecretToken.keyIDBase64URL = keyID;
