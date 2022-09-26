@@ -97,7 +97,7 @@ private:
         struct PadProbeInformation appsinkPadEventProbeInformation;
 #endif
 
-        void emplaceOptionalParserForFormat(AppendPipeline*, GstBin*, const GRefPtr<GstCaps>&);
+        void emplaceOptionalParserForFormat(GstBin*, const GRefPtr<GstCaps>&);
         void initializeElements(AppendPipeline*, GstBin*);
         bool isLinked() const { return gst_pad_is_linked(entryPad.get()); }
     };
