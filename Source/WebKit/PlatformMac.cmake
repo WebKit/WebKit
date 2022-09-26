@@ -463,10 +463,6 @@ list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/Cocoa/_WKTextManipulationItem.h
     UIProcess/API/Cocoa/_WKTextManipulationToken.h
     UIProcess/API/Cocoa/_WKThumbnailView.h
-    UIProcess/API/Cocoa/_WKUserContentExtensionStore.h
-    UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h
-    UIProcess/API/Cocoa/_WKUserContentFilter.h
-    UIProcess/API/Cocoa/_WKUserContentFilterPrivate.h
     UIProcess/API/Cocoa/_WKUserContentWorld.h
     UIProcess/API/Cocoa/_WKUserInitiatedAction.h
     UIProcess/API/Cocoa/_WKUserStyleSheet.h

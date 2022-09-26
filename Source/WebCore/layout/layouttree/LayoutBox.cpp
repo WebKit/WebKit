@@ -55,36 +55,20 @@ Box::~Box()
         removeRareData();
 }
 
-void Box::setParent(ContainerBox* parent)
-{
-    m_parent = parent;
-}
-
-void Box::setNextSibling(Box* nextSibling)
-{
-    m_nextSibling = nextSibling;
-}
-
-void Box::setPreviousSibling(Box* previousSibling)
-{
-    m_previousSibling = previousSibling;
-}
-
 UniqueRef<Box> Box::removeFromParent()
 {
-    if (m_previousSibling)
-        m_previousSibling->m_nextSibling = m_nextSibling;
-    if (m_nextSibling)
-        m_nextSibling->m_previousSibling = m_previousSibling;
-    if (m_parent->m_firstChild == this)
-        m_parent->m_firstChild = m_nextSibling;
-    if (m_parent->m_lastChild == this)
-        m_parent->m_lastChild = m_previousSibling;
-    m_parent = nullptr;
-    m_previousSibling = nullptr;
-    m_nextSibling = nullptr;
+    auto& nextOrFirst = m_previousSibling ? m_previousSibling->m_nextSibling : m_parent->m_firstChild;
+    auto& previousOrLast = m_nextSibling ? m_nextSibling->m_previousSibling : m_parent->m_lastChild;
 
-    return UniqueRef<Box>(*this);
+    ASSERT(nextOrFirst.get() == this);
+    ASSERT(previousOrLast.get() == this);
+
+    auto ownedSelf = std::exchange(nextOrFirst, std::exchange(m_nextSibling, nullptr));
+
+    previousOrLast = std::exchange(m_previousSibling, nullptr);
+    m_parent = nullptr;
+
+    return makeUniqueRefFromNonNullUniquePtr(WTFMove(ownedSelf));
 }
 
 void Box::updateStyle(const RenderStyle& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)

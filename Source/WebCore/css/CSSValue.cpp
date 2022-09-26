@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,6 +49,10 @@
 #include "CSSFontVariationValue.h"
 #include "CSSFunctionValue.h"
 #include "CSSGradientValue.h"
+#include "CSSGridAutoRepeatValue.h"
+#include "CSSGridIntegerRepeatValue.h"
+#include "CSSGridLineNamesValue.h"
+#include "CSSGridTemplateAreasValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSLineBoxContainValue.h"
@@ -61,18 +65,12 @@
 #include "CSSRayValue.h"
 #include "CSSReflectValue.h"
 #include "CSSShadowValue.h"
+#include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
-
-#include "CSSGridAutoRepeatValue.h"
-#include "CSSGridIntegerRepeatValue.h"
-#include "CSSGridLineNamesValue.h"
-#include "CSSGridTemplateAreasValue.h"
-#include "CSSSubgridValue.h"
-
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
 
@@ -87,38 +85,122 @@ static_assert(sizeof(CSSValue) == sizeof(SameSizeAsCSSValue), "CSS value should 
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValue);
 
-CSSValue::Type CSSValue::cssValueType() const
+template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visitor&& visitor)
 {
-    if (isInheritValue())
-        return CSS_INHERIT;
-    if (isPrimitiveValue())
-        return CSS_PRIMITIVE_VALUE;
-    if (isValueList())
-        return CSS_VALUE_LIST;
-    if (isInitialValue())
-        return CSS_INITIAL;
-    if (isUnsetValue())
-        return CSS_UNSET;
-    if (isRevertValue())
-        return CSS_REVERT;
-    return CSS_CUSTOM;
+    switch (classType()) {
+    case AspectRatioClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSAspectRatioValue>(*this));
+    case BackgroundRepeatClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSBackgroundRepeatValue>(*this));
+    case BorderImageSliceClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSBorderImageSliceValue>(*this));
+    case BorderImageWidthClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSBorderImageWidthValue>(*this));
+    case CSSContentDistributionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSContentDistributionValue>(*this));
+    case CalculationClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCalcValue>(*this));
+    case CanvasClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCanvasValue>(*this));
+    case ConicGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSConicGradientValue>(*this));
+    case CrossfadeClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCrossfadeValue>(*this));
+    case CubicBezierTimingFunctionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCubicBezierTimingFunctionValue>(*this));
+    case CursorImageClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCursorImageValue>(*this));
+    case CustomPropertyClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSCustomPropertyValue>(*this));
+    case FilterImageClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFilterImageValue>(*this));
+    case FontClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontValue>(*this));
+    case FontFaceSrcClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFaceSrcValue>(*this));
+    case FontFeatureClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontFeatureValue>(*this));
+    case FontPaletteValuesOverrideColorsClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontPaletteValuesOverrideColorsValue>(*this));
+    case FontStyleClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleValue>(*this));
+    case FontStyleRangeClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontStyleRangeValue>(*this));
+    case FontVariationClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFontVariationValue>(*this));
+    case FunctionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSFunctionValue>(*this));
+    case GridAutoRepeatClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSGridAutoRepeatValue>(*this));
+    case GridIntegerRepeatClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSGridIntegerRepeatValue>(*this));
+    case GridLineNamesClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSGridLineNamesValue>(*this));
+    case GridTemplateAreasClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSGridTemplateAreasValue>(*this));
+    case ImageClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSImageValue>(*this));
+    case ImageSetClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSImageSetValue>(*this));
+    case LineBoxContainClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLineBoxContainValue>(*this));
+    case LinearGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLinearGradientValue>(*this));
+    case NamedImageClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSNamedImageValue>(*this));
+    case RadialGradientClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRadialGradientValue>(*this));
+    case OffsetRotateClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSOffsetRotateValue>(*this));
+    case PendingSubstitutionValueClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPendingSubstitutionValue>(*this));
+    case PrimitiveClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPrimitiveValue>(*this));
+    case RayClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRayValue>(*this));
+    case ReflectClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSReflectValue>(*this));
+    case ShadowClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSShadowValue>(*this));
+    case SubgridClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSSubgridValue>(*this));
+    case StepsTimingFunctionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSStepsTimingFunctionValue>(*this));
+    case SpringTimingFunctionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSSpringTimingFunctionValue>(*this));
+    case UnicodeRangeClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSUnicodeRangeValue>(*this));
+    case ValueListClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSValueList>(*this));
+    case ValuePairClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSValuePair>(*this));
+    case VariableReferenceClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSVariableReferenceValue>(*this));
+#if ENABLE(CSS_PAINTING_API)
+    case PaintImageClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPaintImageValue>(*this));
+#endif
+    }
+    ASSERT_NOT_REACHED();
+}
+
+template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visitor&& visitor) const
+{
+    return const_cast<CSSValue&>(*this).visitDerived([&](auto& value) {
+        return std::invoke(std::forward<Visitor>(visitor), std::as_const(value));
+    });
+}
+
+inline bool CSSValue::customTraverseSubresources(const Function<bool(const CachedResource&)>&)
+{
+    return false;
 }
 
 bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
-    if (is<CSSValueList>(*this))
-        return downcast<CSSValueList>(*this).traverseSubresources(handler);
-    if (is<CSSFontFaceSrcValue>(*this))
-        return downcast<CSSFontFaceSrcValue>(*this).traverseSubresources(handler);
-    if (is<CSSImageValue>(*this))
-        return downcast<CSSImageValue>(*this).traverseSubresources(handler);
-    if (is<CSSCrossfadeValue>(*this))
-        return downcast<CSSCrossfadeValue>(*this).traverseSubresources(handler);
-    if (is<CSSFilterImageValue>(*this))
-        return downcast<CSSFilterImageValue>(*this).traverseSubresources(handler);
-    if (is<CSSImageSetValue>(*this))
-        return downcast<CSSImageSetValue>(*this).traverseSubresources(handler);
-    return false;
+    return visitDerived([&](auto& value) {
+        return value.customTraverseSubresources(handler);
+    });
 }
 
 void CSSValue::collectDirectComputationalDependencies(HashSet<CSSPropertyID>& values) const
@@ -133,114 +215,17 @@ void CSSValue::collectDirectRootComputationalDependencies(HashSet<CSSPropertyID>
         downcast<CSSPrimitiveValue>(*this).collectDirectRootComputationalDependencies(values);
 }
 
-template<class ChildClassType>
-inline static bool compareCSSValues(const CSSValue& first, const CSSValue& second)
-{
-    return static_cast<const ChildClassType&>(first).equals(static_cast<const ChildClassType&>(second));
-}
-
 bool CSSValue::equals(const CSSValue& other) const
 {
-    if (m_classType == other.m_classType) {
-        switch (m_classType) {
-        case AspectRatioClass:
-            return compareCSSValues<CSSAspectRatioValue>(*this, other);
-        case BackgroundRepeatClass:
-            return compareCSSValues<CSSBackgroundRepeatValue>(*this, other);
-        case BorderImageSliceClass:
-            return compareCSSValues<CSSBorderImageSliceValue>(*this, other);
-        case BorderImageWidthClass:
-            return compareCSSValues<CSSBorderImageWidthValue>(*this, other);
-        case CanvasClass:
-            return compareCSSValues<CSSCanvasValue>(*this, other);
-        case NamedImageClass:
-            return compareCSSValues<CSSNamedImageValue>(*this, other);
-        case CursorImageClass:
-            return compareCSSValues<CSSCursorImageValue>(*this, other);
-        case FilterImageClass:
-            return compareCSSValues<CSSFilterImageValue>(*this, other);
-#if ENABLE(CSS_PAINTING_API)
-        case PaintImageClass:
-            return compareCSSValues<CSSPaintImageValue>(*this, other);
-#endif
-        case FontClass:
-            return compareCSSValues<CSSFontValue>(*this, other);
-        case FontFaceSrcClass:
-            return compareCSSValues<CSSFontFaceSrcValue>(*this, other);
-        case FontPaletteValuesOverrideColorsClass:
-            return compareCSSValues<CSSFontPaletteValuesOverrideColorsValue>(*this, other);
-        case FontFeatureClass:
-            return compareCSSValues<CSSFontFeatureValue>(*this, other);
-        case FontVariationClass:
-            return compareCSSValues<CSSFontVariationValue>(*this, other);
-        case FunctionClass:
-            return compareCSSValues<CSSFunctionValue>(*this, other);
-        case LinearGradientClass:
-            return compareCSSValues<CSSLinearGradientValue>(*this, other);
-        case RadialGradientClass:
-            return compareCSSValues<CSSRadialGradientValue>(*this, other);
-        case ConicGradientClass:
-            return compareCSSValues<CSSConicGradientValue>(*this, other);
-        case CrossfadeClass:
-            return compareCSSValues<CSSCrossfadeValue>(*this, other);
-        case ImageClass:
-            return compareCSSValues<CSSImageValue>(*this, other);
-        case GridAutoRepeatClass:
-            return compareCSSValues<CSSGridAutoRepeatValue>(*this, other);
-        case GridIntegerRepeatClass:
-            return compareCSSValues<CSSGridIntegerRepeatValue>(*this, other);
-        case GridLineNamesClass:
-            return compareCSSValues<CSSGridLineNamesValue>(*this, other);
-        case SubgridClass:
-            return compareCSSValues<CSSSubgridValue>(*this, other);
-        case GridTemplateAreasClass:
-            return compareCSSValues<CSSGridTemplateAreasValue>(*this, other);
-        case PrimitiveClass:
-            return compareCSSValues<CSSPrimitiveValue>(*this, other);
-        case ReflectClass:
-            return compareCSSValues<CSSReflectValue>(*this, other);
-        case ShadowClass:
-            return compareCSSValues<CSSShadowValue>(*this, other);
-        case CubicBezierTimingFunctionClass:
-            return compareCSSValues<CSSCubicBezierTimingFunctionValue>(*this, other);
-        case StepsTimingFunctionClass:
-            return compareCSSValues<CSSStepsTimingFunctionValue>(*this, other);
-        case SpringTimingFunctionClass:
-            return compareCSSValues<CSSSpringTimingFunctionValue>(*this, other);
-        case UnicodeRangeClass:
-            return compareCSSValues<CSSUnicodeRangeValue>(*this, other);
-        case ValueListClass:
-            return compareCSSValues<CSSValueList>(*this, other);
-        case LineBoxContainClass:
-            return compareCSSValues<CSSLineBoxContainValue>(*this, other);
-        case CalculationClass:
-            return compareCSSValues<CSSCalcValue>(*this, other);
-        case ImageSetClass:
-            return compareCSSValues<CSSImageSetValue>(*this, other);
-        case CSSContentDistributionClass:
-            return compareCSSValues<CSSContentDistributionValue>(*this, other);
-        case CustomPropertyClass:
-            return compareCSSValues<CSSCustomPropertyValue>(*this, other);
-        case VariableReferenceClass:
-            return compareCSSValues<CSSVariableReferenceValue>(*this, other);
-        case PendingSubstitutionValueClass:
-            return compareCSSValues<CSSPendingSubstitutionValue>(*this, other);
-        case OffsetRotateClass:
-            return compareCSSValues<CSSOffsetRotateValue>(*this, other);
-        case RayClass:
-            return compareCSSValues<CSSRayValue>(*this, other);
-        case FontStyleClass:
-            return compareCSSValues<CSSFontStyleValue>(*this, other);
-        case FontStyleRangeClass:
-            return compareCSSValues<CSSFontStyleRangeValue>(*this, other);
-        default:
-            ASSERT_NOT_REACHED();
-            return false;
-        }
-    } else if (is<CSSValueList>(*this) && !is<CSSValueList>(other))
+    if (classType() == other.classType()) {
+        return visitDerived([&](auto& typedThis) {
+            return typedThis.equals(downcast<std::remove_reference_t<decltype(typedThis)>>(other));
+        });
+    }
+    if (is<CSSValueList>(*this) && !is<CSSValueList>(other))
         return downcast<CSSValueList>(*this).equals(other);
-    else if (!is<CSSValueList>(*this) && is<CSSValueList>(other))
-        return static_cast<const CSSValueList&>(other).equals(*this);
+    if (!is<CSSValueList>(*this) && is<CSSValueList>(other))
+        return downcast<CSSValueList>(other).equals(*this);
     return false;
 }
 
@@ -249,264 +234,33 @@ bool CSSValue::isCSSLocalURL(StringView relativeURL)
     return relativeURL.isEmpty() || relativeURL.startsWith('#');
 }
 
-String CSSValue::cssText(Document* document) const
+String CSSValue::cssText() const
 {
-    switch (classType()) {
-    case AspectRatioClass:
-        return downcast<CSSAspectRatioValue>(*this).customCSSText();
-    case BackgroundRepeatClass:
-        return downcast<CSSBackgroundRepeatValue>(*this).customCSSText();
-    case BorderImageSliceClass:
-        return downcast<CSSBorderImageSliceValue>(*this).customCSSText();
-    case BorderImageWidthClass:
-        return downcast<CSSBorderImageWidthValue>(*this).customCSSText();
-    case CanvasClass:
-        return downcast<CSSCanvasValue>(*this).customCSSText();
-    case NamedImageClass:
-        return downcast<CSSNamedImageValue>(*this).customCSSText();
-    case CursorImageClass:
-        return downcast<CSSCursorImageValue>(*this).customCSSText();
-    case FilterImageClass:
-        return downcast<CSSFilterImageValue>(*this).customCSSText();
-#if ENABLE(CSS_PAINTING_API)
-    case PaintImageClass:
-        return downcast<CSSPaintImageValue>(*this).customCSSText();
-#endif
-    case FontClass:
-        return downcast<CSSFontValue>(*this).customCSSText();
-    case FontFaceSrcClass:
-        return downcast<CSSFontFaceSrcValue>(*this).customCSSText();
-    case FontPaletteValuesOverrideColorsClass:
-        return downcast<CSSFontPaletteValuesOverrideColorsValue>(*this).customCSSText();
-    case FontFeatureClass:
-        return downcast<CSSFontFeatureValue>(*this).customCSSText();
-    case FontVariationClass:
-        return downcast<CSSFontVariationValue>(*this).customCSSText();
-    case FunctionClass:
-        return downcast<CSSFunctionValue>(*this).customCSSText(document);
-    case LinearGradientClass:
-        return downcast<CSSLinearGradientValue>(*this).customCSSText();
-    case RadialGradientClass:
-        return downcast<CSSRadialGradientValue>(*this).customCSSText();
-    case ConicGradientClass:
-        return downcast<CSSConicGradientValue>(*this).customCSSText();
-    case CrossfadeClass:
-        return downcast<CSSCrossfadeValue>(*this).customCSSText();
-    case ImageClass:
-        return downcast<CSSImageValue>(*this).customCSSText();
-    case GridAutoRepeatClass:
-        return downcast<CSSGridAutoRepeatValue>(*this).customCSSText();
-    case GridIntegerRepeatClass:
-        return downcast<CSSGridIntegerRepeatValue>(*this).customCSSText();
-    case GridLineNamesClass:
-        return downcast<CSSGridLineNamesValue>(*this).customCSSText();
-    case SubgridClass:
-        return downcast<CSSSubgridValue>(*this).customCSSText();
-    case GridTemplateAreasClass:
-        return downcast<CSSGridTemplateAreasValue>(*this).customCSSText();
-    case PrimitiveClass:
-        return downcast<CSSPrimitiveValue>(*this).customCSSText(document);
-    case ReflectClass:
-        return downcast<CSSReflectValue>(*this).customCSSText();
-    case ShadowClass:
-        return downcast<CSSShadowValue>(*this).customCSSText();
-    case CubicBezierTimingFunctionClass:
-        return downcast<CSSCubicBezierTimingFunctionValue>(*this).customCSSText();
-    case StepsTimingFunctionClass:
-        return downcast<CSSStepsTimingFunctionValue>(*this).customCSSText();
-    case SpringTimingFunctionClass:
-        return downcast<CSSSpringTimingFunctionValue>(*this).customCSSText();
-    case UnicodeRangeClass:
-        return downcast<CSSUnicodeRangeValue>(*this).customCSSText();
-    case ValueListClass:
-        return downcast<CSSValueList>(*this).customCSSText(document);
-    case ValuePairClass:
-        return downcast<CSSValuePair>(*this).customCSSText();
-    case LineBoxContainClass:
-        return downcast<CSSLineBoxContainValue>(*this).customCSSText();
-    case CalculationClass:
-        return downcast<CSSCalcValue>(*this).customCSSText();
-    case ImageSetClass:
-        return downcast<CSSImageSetValue>(*this).customCSSText();
-    case CSSContentDistributionClass:
-        return downcast<CSSContentDistributionValue>(*this).customCSSText();
-    case CustomPropertyClass:
-        return downcast<CSSCustomPropertyValue>(*this).customCSSText();
-    case VariableReferenceClass:
-        return downcast<CSSVariableReferenceValue>(*this).customCSSText();
-    case PendingSubstitutionValueClass:
-        return downcast<CSSPendingSubstitutionValue>(*this).customCSSText();
-    case OffsetRotateClass:
-        return downcast<CSSOffsetRotateValue>(*this).customCSSText();
-    case RayClass:
-        return downcast<CSSRayValue>(*this).customCSSText();
-    case FontStyleClass:
-        return downcast<CSSFontStyleValue>(*this).customCSSText();
-    case FontStyleRangeClass:
-        return downcast<CSSFontStyleRangeValue>(*this).customCSSText();
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
+    return visitDerived([](auto& value) {
+        return value.customCSSText();
+    });
 }
 
-ASCIILiteral CSSValue::separatorCSSText() const
+ASCIILiteral CSSValue::separatorCSSText(ValueSeparator separator)
 {
-    switch (m_valueSeparator) {
+    switch (separator) {
     case SpaceSeparator:
         return " "_s;
     case CommaSeparator:
         return ", "_s;
     case SlashSeparator:
         return " / "_s;
-    default:
-        ASSERT_NOT_REACHED();
     }
+    ASSERT_NOT_REACHED();
     return " "_s;
 }
 
-void CSSValue::destroy()
+void CSSValue::operator delete(CSSValue* value, std::destroying_delete_t)
 {
-    switch (classType()) {
-    case AspectRatioClass:
-        delete downcast<CSSAspectRatioValue>(this);
-        return;
-    case BackgroundRepeatClass:
-        delete downcast<CSSBackgroundRepeatValue>(this);
-        return;
-    case BorderImageSliceClass:
-        delete downcast<CSSBorderImageSliceValue>(this);
-        return;
-    case BorderImageWidthClass:
-        delete downcast<CSSBorderImageWidthValue>(this);
-        return;
-    case CanvasClass:
-        delete downcast<CSSCanvasValue>(this);
-        return;
-    case NamedImageClass:
-        delete downcast<CSSNamedImageValue>(this);
-        return;
-    case CursorImageClass:
-        delete downcast<CSSCursorImageValue>(this);
-        return;
-    case FontClass:
-        delete downcast<CSSFontValue>(this);
-        return;
-    case FontFaceSrcClass:
-        delete downcast<CSSFontFaceSrcValue>(this);
-        return;
-    case FontPaletteValuesOverrideColorsClass:
-        delete downcast<CSSFontPaletteValuesOverrideColorsValue>(this);
-        return;
-    case FontFeatureClass:
-        delete downcast<CSSFontFeatureValue>(this);
-        return;
-    case FontVariationClass:
-        delete downcast<CSSFontVariationValue>(this);
-        return;
-    case FunctionClass:
-        delete downcast<CSSFunctionValue>(this);
-        return;
-    case LinearGradientClass:
-        delete downcast<CSSLinearGradientValue>(this);
-        return;
-    case RadialGradientClass:
-        delete downcast<CSSRadialGradientValue>(this);
-        return;
-    case ConicGradientClass:
-        delete downcast<CSSConicGradientValue>(this);
-        return;
-    case CrossfadeClass:
-        delete downcast<CSSCrossfadeValue>(this);
-        return;
-    case ImageClass:
-        delete downcast<CSSImageValue>(this);
-        return;
-    case GridAutoRepeatClass:
-        delete downcast<CSSGridAutoRepeatValue>(this);
-        return;
-    case GridIntegerRepeatClass:
-        delete downcast<CSSGridIntegerRepeatValue>(this);
-        return;
-    case GridLineNamesClass:
-        delete downcast<CSSGridLineNamesValue>(this);
-        return;
-    case SubgridClass:
-        delete downcast<CSSSubgridValue>(this);
-        return;
-    case GridTemplateAreasClass:
-        delete downcast<CSSGridTemplateAreasValue>(this);
-        return;
-    case PrimitiveClass:
-        delete downcast<CSSPrimitiveValue>(this);
-        return;
-    case ReflectClass:
-        delete downcast<CSSReflectValue>(this);
-        return;
-    case ShadowClass:
-        delete downcast<CSSShadowValue>(this);
-        return;
-    case CubicBezierTimingFunctionClass:
-        delete downcast<CSSCubicBezierTimingFunctionValue>(this);
-        return;
-    case StepsTimingFunctionClass:
-        delete downcast<CSSStepsTimingFunctionValue>(this);
-        return;
-    case SpringTimingFunctionClass:
-        delete downcast<CSSSpringTimingFunctionValue>(this);
-        return;
-    case UnicodeRangeClass:
-        delete downcast<CSSUnicodeRangeValue>(this);
-        return;
-    case ValueListClass:
-        delete downcast<CSSValueList>(this);
-        return;
-    case ValuePairClass:
-        delete downcast<CSSValuePair>(this);
-        return;
-    case LineBoxContainClass:
-        delete downcast<CSSLineBoxContainValue>(this);
-        return;
-    case CalculationClass:
-        delete downcast<CSSCalcValue>(this);
-        return;
-    case ImageSetClass:
-        delete downcast<CSSImageSetValue>(this);
-        return;
-    case FilterImageClass:
-        delete downcast<CSSFilterImageValue>(this);
-        return;
-#if ENABLE(CSS_PAINTING_API)
-    case PaintImageClass:
-        delete downcast<CSSPaintImageValue>(this);
-        return;
-#endif
-    case CSSContentDistributionClass:
-        delete downcast<CSSContentDistributionValue>(this);
-        return;
-    case CustomPropertyClass:
-        delete downcast<CSSCustomPropertyValue>(this);
-        return;
-    case VariableReferenceClass:
-        delete downcast<CSSVariableReferenceValue>(this);
-        return;
-    case PendingSubstitutionValueClass:
-        delete downcast<CSSPendingSubstitutionValue>(this);
-        return;
-    case OffsetRotateClass:
-        delete downcast<CSSOffsetRotateValue>(this);
-        return;
-    case RayClass:
-        delete downcast<CSSRayValue>(this);
-        return;
-    case FontStyleClass:
-        delete downcast<CSSFontStyleValue>(this);
-        return;
-    case FontStyleRangeClass:
-        delete downcast<CSSFontStyleRangeValue>(this);
-        return;
-    }
-    ASSERT_NOT_REACHED();
+    value->visitDerived([](auto& value) {
+        std::destroy_at(&value);
+    });
+    freeAfterDestruction(value);
 }
 
 Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& styleDeclaration) const

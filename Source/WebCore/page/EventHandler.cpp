@@ -1790,7 +1790,6 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& platformMouse
         layer->setInResizeMode(true);
         m_resizeLayer = WeakPtr { layer };
         m_offsetFromResizeCorner = layer->offsetFromResizeCorner(localPoint);
-        invalidateClick();
         return true;
     }
 

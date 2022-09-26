@@ -53,6 +53,7 @@ struct StyleColor {
     static bool isCurrentColor(const CSSPrimitiveValue& value) { return isCurrentColorKeyword(value.valueID()); }
 
     WEBCORE_EXPORT static bool isSystemColorKeyword(CSSValueID);
+    static bool isDeprecatedSystemColorKeyword(CSSValueID);
 
     enum class CSSColorType : uint8_t {
         Absolute = 1 << 0,

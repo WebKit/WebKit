@@ -25,30 +25,17 @@
 
 #pragma once
 
-#include "LayoutReplacedBox.h"
-#include <wtf/IsoMalloc.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WebCore::PCM {
 
-namespace Layout {
+struct EphemeralNonce {
+    String nonce;
 
-class ListMarkerBox : public ReplacedBox {
-    WTF_MAKE_ISO_ALLOCATED(ListMarkerBox);
-public:
-    enum class IsImage : uint8_t { No, Yes };
-    enum class IsOutside : uint8_t { No, Yes };
-    ListMarkerBox(IsImage, IsOutside, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    EphemeralNonce isolatedCopy() const & { return { nonce.isolatedCopy() }; }
+    EphemeralNonce isolatedCopy() &&  { return { WTFMove(nonce).isolatedCopy() }; }
 
-    bool isImage() const { return m_isImage; }
-    bool isOutside() const { return m_isOutside; }
-
-private:
-    bool m_isImage { false };
-    bool m_isOutside { false };
+    WEBCORE_EXPORT bool isValid() const;
 };
 
 }
-}
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ListMarkerBox, isListMarkerBox())
-

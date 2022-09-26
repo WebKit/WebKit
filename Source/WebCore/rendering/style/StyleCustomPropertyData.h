@@ -22,13 +22,14 @@
 #pragma once
 
 #include "CSSCustomPropertyValue.h"
-#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
+
+using CustomPropertyValueMap = HashMap<AtomString, RefPtr<CSSCustomPropertyValue>>;
 
 class StyleCustomPropertyData : public RefCounted<StyleCustomPropertyData> {
 public:

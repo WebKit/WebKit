@@ -43,28 +43,28 @@ class TreeBuilder;
 class Box : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
-    enum class ElementType {
+    enum class ElementType : uint8_t {
+        GenericElement,
         Document,
         Body,
         TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes.
         TableBox, // The table box is a block-level box that contains the table's internal table boxes.
         Image,
         IFrame,
-        GenericElement
+        LineBreak,
+        WordBreakOpportunity,
+        ListMarker,
     };
 
     struct ElementAttributes {
         ElementType elementType;
     };
 
-    enum BaseTypeFlag {
-        BoxFlag                    = 1 << 0,
-        InlineTextBoxFlag          = 1 << 1,
-        LineBreakBoxFlag           = 1 << 2,
-        ListMarkerBoxFlag          = 1 << 3,
-        ReplacedBoxFlag            = 1 << 4,
-        InitialContainingBlockFlag = 1 << 5,
-        ContainerBoxFlag           = 1 << 6
+    enum BaseTypeFlag : uint8_t {
+        InlineTextBoxFlag          = 1 << 0,
+        ReplacedBoxFlag            = 1 << 1,
+        InitialContainingBlockFlag = 1 << 2,
+        ContainerBoxFlag           = 1 << 3
     };
 
     virtual ~Box();
@@ -129,6 +129,10 @@ public:
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
     bool isInternalRubyBox() const { return false; }
+    bool isLineBreakBox() const { return m_elementAttributes && (m_elementAttributes.value().elementType == ElementType::LineBreak || m_elementAttributes.value().elementType == ElementType::WordBreakOpportunity); }
+    bool isWordBreakOpportunity() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::WordBreakOpportunity; }
+    bool isListMarkerBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::ListMarker; }
+
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
 
     const ContainerBox& parent() const { return *m_parent; }
@@ -145,9 +149,7 @@ public:
 
     bool isContainerBox() const { return baseTypeFlags().contains(ContainerBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
-    bool isLineBreakBox() const { return baseTypeFlags().contains(LineBreakBoxFlag); }
     bool isReplacedBox() const { return baseTypeFlags().contains(ReplacedBoxFlag); }
-    bool isListMarkerBox() const { return baseTypeFlags().contains(ListMarkerBoxFlag); }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;
@@ -184,10 +186,6 @@ protected:
 private:
     friend class ContainerBox;
 
-    void setParent(ContainerBox*);
-    void setNextSibling(Box*);
-    void setPreviousSibling(Box*);
-
     class BoxRareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -214,14 +212,15 @@ private:
     std::optional<ElementAttributes> m_elementAttributes;
 
     CheckedPtr<ContainerBox> m_parent;
-    CheckedPtr<Box> m_previousSibling;
-    CheckedPtr<Box> m_nextSibling;
     
+    std::unique_ptr<Box> m_nextSibling;
+    CheckedPtr<Box> m_previousSibling;
+
     // First LayoutState gets a direct cache.
     mutable WeakPtr<LayoutState> m_cachedLayoutState;
     mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForLayoutState;
 
-    unsigned m_baseTypeFlags : 7; // OptionSet<BaseTypeFlag>
+    unsigned m_baseTypeFlags : 4; // OptionSet<BaseTypeFlag>
     bool m_hasRareData : 1 { false };
     bool m_isAnonymous : 1 { false };
     bool m_isInlineIntegrationRoot : 1 { false };

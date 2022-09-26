@@ -18,7 +18,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/resources/SVGAnimationTestCase-testharness.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/accesskey.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/blank.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/channel.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/check-layout-th.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/check-layout.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/idlharness-shadowrealm.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/idlharness.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/idlharness.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/resources/readme.md
@@ -34,5 +38,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/testdriver.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/testharness.js.headers
-/LayoutTests/imported/w3c/web-platform-tests/resources/testharnessreport.js
 /LayoutTests/imported/w3c/web-platform-tests/resources/testharnessreport.js.headers

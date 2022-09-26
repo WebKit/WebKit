@@ -37,7 +37,7 @@ class ScriptExecutionContext;
 
 class DOMCache final : public RefCounted<DOMCache>, public ActiveDOMObject {
 public:
-    static Ref<DOMCache> create(ScriptExecutionContext&, String&&, uint64_t, Ref<CacheStorageConnection>&&);
+    static Ref<DOMCache> create(ScriptExecutionContext&, String&&, DOMCacheIdentifier, Ref<CacheStorageConnection>&&);
     ~DOMCache();
 
     using RequestInfo = FetchRequest::Info;
@@ -56,7 +56,7 @@ public:
     void keys(std::optional<RequestInfo>&&, CacheQueryOptions&&, KeysPromise&&);
 
     const String& name() const { return m_name; }
-    uint64_t identifier() const { return m_identifier; }
+    DOMCacheIdentifier identifier() const { return m_identifier; }
 
     using MatchCallback = CompletionHandler<void(ExceptionOr<RefPtr<FetchResponse>>)>;
     void doMatch(RequestInfo&&, CacheQueryOptions&&, MatchCallback&&);
@@ -64,7 +64,7 @@ public:
     CacheStorageConnection& connection() { return m_connection.get(); }
 
 private:
-    DOMCache(ScriptExecutionContext&, String&& name, uint64_t identifier, Ref<CacheStorageConnection>&&);
+    DOMCache(ScriptExecutionContext&, String&& name, DOMCacheIdentifier, Ref<CacheStorageConnection>&&);
 
     ExceptionOr<Ref<FetchRequest>> requestFromInfo(RequestInfo&&, bool ignoreMethod);
 
@@ -86,7 +86,7 @@ private:
     DOMCacheEngine::Record toConnectionRecord(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&);
 
     String m_name;
-    uint64_t m_identifier;
+    DOMCacheIdentifier m_identifier;
     Ref<CacheStorageConnection> m_connection;
 
     bool m_isStopped { false };

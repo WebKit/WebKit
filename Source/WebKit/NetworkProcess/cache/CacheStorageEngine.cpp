@@ -98,7 +98,7 @@ void Engine::open(NetworkSession& networkSession, WebCore::ClientOrigin&& origin
     networkSession.ensureCacheEngine().open(origin, cacheName, WTFMove(callback));
 }
 
-void Engine::remove(NetworkSession& networkSession, uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&& callback)
+void Engine::remove(NetworkSession& networkSession, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)
 {
     networkSession.ensureCacheEngine().remove(cacheIdentifier, WTFMove(callback));
 }
@@ -108,27 +108,27 @@ void Engine::retrieveCaches(NetworkSession& networkSession, WebCore::ClientOrigi
     networkSession.ensureCacheEngine().retrieveCaches(origin, updateCounter, WTFMove(callback));
 }
 
-void Engine::retrieveRecords(NetworkSession& networkSession, uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
+void Engine::retrieveRecords(NetworkSession& networkSession, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::RecordsCallback&& callback)
 {
     networkSession.ensureCacheEngine().retrieveRecords(cacheIdentifier, WTFMove(options), WTFMove(callback));
 }
 
-void Engine::putRecords(NetworkSession& networkSession, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void Engine::putRecords(NetworkSession& networkSession, WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     networkSession.ensureCacheEngine().putRecords(cacheIdentifier, WTFMove(records), WTFMove(callback));
 }
 
-void Engine::deleteMatchingRecords(NetworkSession& networkSession, uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void Engine::deleteMatchingRecords(NetworkSession& networkSession, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     networkSession.ensureCacheEngine().deleteMatchingRecords(cacheIdentifier, WTFMove(request), WTFMove(options), WTFMove(callback));
 }
 
-void Engine::lock(NetworkSession& networkSession, uint64_t cacheIdentifier)
+void Engine::lock(NetworkSession& networkSession, WebCore::DOMCacheIdentifier cacheIdentifier)
 {
     networkSession.ensureCacheEngine().lock(cacheIdentifier);
 }
 
-void Engine::unlock(NetworkSession& networkSession, uint64_t cacheIdentifier)
+void Engine::unlock(NetworkSession& networkSession, WebCore::DOMCacheIdentifier cacheIdentifier)
 {
     networkSession.ensureCacheEngine().unlock(cacheIdentifier);
 }
@@ -242,7 +242,7 @@ void Engine::open(const WebCore::ClientOrigin& origin, const String& cacheName, 
     });
 }
 
-void Engine::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback)
+void Engine::remove(WebCore::DOMCacheIdentifier cacheIdentifier, RemoveCacheIdentifierCallback&& callback)
 {
     Caches* cachesToModify = nullptr;
     for (auto& caches : m_caches.values()) {
@@ -272,7 +272,7 @@ void Engine::retrieveCaches(const WebCore::ClientOrigin& origin, uint64_t update
     });
 }
 
-void Engine::retrieveRecords(uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, RecordsCallback&& callback)
+void Engine::retrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, RecordsCallback&& callback)
 {
     readCache(cacheIdentifier, [options = WTFMove(options), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.has_value()) {
@@ -283,7 +283,7 @@ void Engine::retrieveRecords(uint64_t cacheIdentifier, WebCore::RetrieveRecordsO
     });
 }
 
-void Engine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)
+void Engine::putRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 {
     readCache(cacheIdentifier, [records = WTFMove(records), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.has_value()) {
@@ -295,7 +295,7 @@ void Engine::putRecords(uint64_t cacheIdentifier, Vector<Record>&& records, Reco
     });
 }
 
-void Engine::deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
+void Engine::deleteMatchingRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
     readCache(cacheIdentifier, [request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.has_value()) {
@@ -376,7 +376,7 @@ void Engine::readCachesFromDisk(const WebCore::ClientOrigin& origin, CachesCallb
     });
 }
 
-void Engine::readCache(uint64_t cacheIdentifier, CacheCallback&& callback)
+void Engine::readCache(WebCore::DOMCacheIdentifier cacheIdentifier, CacheCallback&& callback)
 {
     auto* cache = this->cache(cacheIdentifier);
     if (!cache) {
@@ -403,7 +403,7 @@ void Engine::readCache(uint64_t cacheIdentifier, CacheCallback&& callback)
     callback(std::reference_wrapper<Cache> { *cache });
 }
 
-Cache* Engine::cache(uint64_t cacheIdentifier)
+Cache* Engine::cache(WebCore::DOMCacheIdentifier cacheIdentifier)
 {
     Cache* result = nullptr;
     for (auto& caches : m_caches.values()) {
@@ -723,7 +723,7 @@ void Engine::clearMemoryRepresentation(const WebCore::ClientOrigin& origin, WebC
     });
 }
 
-void Engine::lock(uint64_t cacheIdentifier)
+void Engine::lock(CacheIdentifier cacheIdentifier)
 {
     auto& counter = m_cacheLocks.ensure(cacheIdentifier, []() {
         return 0;
@@ -732,7 +732,7 @@ void Engine::lock(uint64_t cacheIdentifier)
     ++counter;
 }
 
-void Engine::unlock(uint64_t cacheIdentifier)
+void Engine::unlock(CacheIdentifier cacheIdentifier)
 {
     auto lockCount = m_cacheLocks.find(cacheIdentifier);
     if (lockCount == m_cacheLocks.end())

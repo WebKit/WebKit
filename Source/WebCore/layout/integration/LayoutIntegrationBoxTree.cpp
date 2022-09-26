@@ -29,8 +29,6 @@
 #include "InlineWalker.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInlineTextBox.h"
-#include "LayoutLineBreakBox.h"
-#include "LayoutListMarkerBox.h"
 #include "LayoutReplacedBox.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
@@ -147,6 +145,7 @@ void BoxTree::buildTreeForInlineContent()
 
         auto style = RenderStyle::clone(childRenderer.style());
         if (childRenderer.isLineBreak()) {
+            bool isWBR = downcast<RenderLineBreak>(childRenderer).isWBR();
             auto adjustStyle = [&] (auto& styleToAdjust) {
                 styleToAdjust.setDisplay(DisplayType::Inline);
                 styleToAdjust.setFloating(Float::None);
@@ -155,22 +154,22 @@ void BoxTree::buildTreeForInlineContent()
                 // Clear property should only apply on block elements, however,
                 // it appears that browsers seem to ignore it on <br> inline elements.
                 // https://drafts.csswg.org/css2/#propdef-clear
-                if (downcast<RenderLineBreak>(childRenderer).isWBR())
+                if (isWBR)
                     styleToAdjust.setClear(Clear::None);
             };
             adjustStyle(style);
             if (firstLineStyle)
                 adjustStyle(*firstLineStyle);
 
-            return makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(style), WTFMove(firstLineStyle));
+
+            auto attributes = Layout::Box::ElementAttributes { isWBR ? Layout::Box::ElementType::WordBreakOpportunity : Layout::Box::ElementType::LineBreak };
+            return makeUnique<Layout::ContainerBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderListMarker>(childRenderer)) {
             auto& listMarkerRenderer = downcast<RenderListMarker>(childRenderer);
-            return makeUnique<Layout::ListMarkerBox>(listMarkerRenderer.isImage() ? Layout::ListMarkerBox::IsImage::Yes : Layout::ListMarkerBox::IsImage::No
-                , listMarkerRenderer.isInside() ? Layout::ListMarkerBox::IsOutside::No : Layout::ListMarkerBox::IsOutside::Yes
-                , WTFMove(style)
-                , WTFMove(firstLineStyle));
+            auto attributes = Layout::ReplacedBox::ListMarkerAttributes { listMarkerRenderer.isImage(), !listMarkerRenderer.isInside() };
+            return makeUnique<Layout::ReplacedBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderReplaced>(childRenderer)) {

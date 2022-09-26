@@ -70,7 +70,7 @@ TEST(WTF_RunLoop, NestedInOrder)
 
         Util::run(&done);
     });
-    RunLoop::main().dispatch([&didExecuteOuter] { 
+    RunLoop::main().dispatch([&didExecuteOuter] {
         didExecuteOuter = true;
     });
 
@@ -230,6 +230,33 @@ TEST(WTF_RunLoop, ThreadTerminationSelfReferenceCleanup)
     })->waitForCompletion();
 
     EXPECT_TRUE(runLoop->hasOneRef());
+}
+
+TEST(WTF_RunLoop, CapabilityIsCurrentIsSupported)
+{
+    WTF::initializeMainThread();
+    struct {
+        int i WTF_GUARDED_BY_CAPABILITY(RunLoop::main()) { 77 };
+    } z;
+    assertIsCurrent(RunLoop::main());
+    bool result = z.i == 77;
+    EXPECT_TRUE(result);
+}
+
+#if ASSERT_ENABLED
+#define MAYBE_CapabilityIsCurrentNegativeDeathTest CapabilityIsCurrentNegativeDeathTest
+#else
+#define MAYBE_CapabilityIsCurrentNegativeDeathTest DISABLED_CapabilityIsCurrentNegativeDeathTest
+#endif
+TEST(WTF_RunLoop, MAYBE_CapabilityIsCurrentNegativeDeathTest)
+{
+    ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+    ASSERT_DEATH_IF_SUPPORTED({
+        WTF::initializeMainThread();
+        Thread::create("CapabilityIsCurrentNegative thread", [&] {
+            assertIsCurrent(RunLoop::main()); // This should assert.
+        })->waitForCompletion();
+    }, "ASSERTION FAILED: &RunLoop::current\\(\\) == &runLoop");
 }
 
 } // namespace TestWebKitAPI

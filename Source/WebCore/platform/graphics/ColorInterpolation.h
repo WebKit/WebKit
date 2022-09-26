@@ -32,6 +32,9 @@
 
 namespace WebCore {
 
+// Provides support for premulitplied and unpremultiplied operations on two color
+// operands. https://www.w3.org/TR/css-values-4/#combine-colors
+
 class Color;
 
 template<AlphaPremultiplication, typename InterpolationMethodColorSpace>
@@ -39,6 +42,8 @@ typename InterpolationMethodColorSpace::ColorType interpolateColorComponents(Int
 
 Color interpolateColors(ColorInterpolationMethod, Color color1, double color1Multiplier, Color color2, double color2Multiplier);
 
+template<AlphaPremultiplication, typename InterpolationMethodColorSpace>
+typename InterpolationMethodColorSpace::ColorType addColorComponents(InterpolationMethodColorSpace, typename InterpolationMethodColorSpace::ColorType color1, typename InterpolationMethodColorSpace::ColorType color2);
 
 // MARK: - Pre-interpolation normalization/fixup.
 
@@ -95,7 +100,7 @@ inline PremultipliedAlphaState interpolateAlphaPremulitplied(float alphaForColor
     if (std::isnan(alphaForColor2))
         return { alphaForColor1, alphaForColor1, alphaForColor1, alphaForColor1 };
 
-    auto interpolatedAlpha = interpolateComponentWithoutAccountingForNaN(alphaForColor1, color1Multiplier, alphaForColor2, color2Multiplier);
+    auto interpolatedAlpha = std::clamp(interpolateComponentWithoutAccountingForNaN(alphaForColor1, color1Multiplier, alphaForColor2, color2Multiplier), 0.0f, 1.0f);
     return { alphaForColor1, alphaForColor2, interpolatedAlpha, interpolatedAlpha };
 }
 
@@ -166,6 +171,16 @@ typename InterpolationMethodColorSpace::ColorType interpolateColorComponents(Int
 
         return makeColorTypeByNormalizingComponents<typename InterpolationMethodColorSpace::ColorType>({ interpolatedComponent1, interpolatedComponent2, interpolatedComponent3, interpolatedAlpha });
     }
+}
+
+// MARK: - Addition.
+
+template<AlphaPremultiplication alphaPremultiplication, typename InterpolationMethodColorSpace>
+typename InterpolationMethodColorSpace::ColorType addColorComponents(InterpolationMethodColorSpace interpolationMethodColorSpace, typename InterpolationMethodColorSpace::ColorType color1, typename InterpolationMethodColorSpace::ColorType color2)
+{
+    // Color addition can utilize the existing interpolation infrastructure by
+    // combining two colors at 100% strength each.
+    return interpolateColorComponents<alphaPremultiplication>(interpolationMethodColorSpace, color1, 1.0, color2, 1.0);
 }
 
 }

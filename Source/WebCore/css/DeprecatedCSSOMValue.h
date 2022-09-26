@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,9 +28,6 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSValue.h"
 #include "ExceptionOr.h"
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/TypeCasts.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -39,54 +36,39 @@ namespace WebCore {
 class DeprecatedCSSOMValue : public RefCounted<DeprecatedCSSOMValue>, public CanMakeWeakPtr<DeprecatedCSSOMValue> {
 public:
     // Exactly match the IDL. No reason to add anything if it's not in the IDL.
-    enum Type {
+    enum Type : unsigned short {
         CSS_INHERIT = 0,
         CSS_PRIMITIVE_VALUE = 1,
         CSS_VALUE_LIST = 2,
         CSS_CUSTOM = 3
     };
 
-    // Override RefCounted's deref() to ensure operator delete is called on
-    // the appropriate subclass type.
-    void deref()
-    {
-        if (derefBase())
-            destroy();
-    }
-
-    WEBCORE_EXPORT unsigned cssValueType() const;
+    WEBCORE_EXPORT unsigned short cssValueType() const;
 
     WEBCORE_EXPORT String cssText() const;
     ExceptionOr<void> setCssText(const String&) { return { }; } // Will never implement.
 
-    bool isComplexValue() const { return m_classType == DeprecatedComplexValueClass; }
-    bool isPrimitiveValue() const { return m_classType == DeprecatedPrimitiveValueClass; }
-    bool isValueList() const { return m_classType == DeprecatedValueListClass; }
+    bool isComplexValue() const { return classType() == ClassType::Complex; }
+    bool isPrimitiveValue() const { return classType() == ClassType::Primitive; }
+    bool isValueList() const { return classType() == ClassType::List; }
 
     CSSStyleDeclaration& owner() const { return m_owner; }
 
+    // NOTE: This destructor is non-virtual for memory and performance reasons.
+    // Don't go making it virtual again unless you know exactly what you're doing!
+    ~DeprecatedCSSOMValue() = default;
+    WEBCORE_EXPORT void operator delete(DeprecatedCSSOMValue*, std::destroying_delete_t);
+
 protected:
     static const size_t ClassTypeBits = 2;
-    enum DeprecatedClassType {
-        DeprecatedComplexValueClass,
-        DeprecatedPrimitiveValueClass,
-        DeprecatedValueListClass
-    };
+    enum class ClassType : uint8_t { Complex, Primitive, List };
+    ClassType classType() const { return static_cast<ClassType>(m_classType); }
 
-    DeprecatedClassType classType() const { return static_cast<DeprecatedClassType>(m_classType); }
-
-    DeprecatedCSSOMValue(DeprecatedClassType classType, CSSStyleDeclaration& owner)
-        : m_classType(classType)
+    DeprecatedCSSOMValue(ClassType classType, CSSStyleDeclaration& owner)
+        : m_classType(static_cast<unsigned>(classType))
         , m_owner(owner)
     {
     }
-
-    // NOTE: This class is non-virtual for memory and performance reasons.
-    // Don't go making it virtual again unless you know exactly what you're doing!
-    ~DeprecatedCSSOMValue() = default;
-
-private:
-    WEBCORE_EXPORT void destroy();
 
 protected:
     unsigned m_valueSeparator : CSSValue::ValueSeparatorBits;
@@ -104,17 +86,17 @@ public:
 
     String cssText() const { return m_value->cssText(); }
 
-    unsigned cssValueType() const { return m_value->cssValueType(); }
+    unsigned short cssValueType() const;
 
 protected:
     DeprecatedCSSOMComplexValue(const CSSValue& value, CSSStyleDeclaration& owner)
-        : DeprecatedCSSOMValue(DeprecatedComplexValueClass, owner)
-        , m_value(const_cast<CSSValue&>(value))
+        : DeprecatedCSSOMValue(ClassType::Complex, owner)
+        , m_value(value)
     {
     }
 
 private:
-    Ref<CSSValue> m_value;
+    Ref<const CSSValue> m_value;
 };
     
 } // namespace WebCore
@@ -125,5 +107,3 @@ static bool isType(const WebCore::DeprecatedCSSOMValue& value) { return value.pr
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_CSSOM_VALUE(DeprecatedCSSOMComplexValue, isComplexValue())
-
-

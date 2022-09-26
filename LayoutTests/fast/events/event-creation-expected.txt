@@ -64,9 +64,6 @@ PASS document.createEvent('WheelEvent').constructor === window.WheelEvent is tru
 PASS document.createEvent('StorageEvent') instanceof window.StorageEvent is true
 PASS document.createEvent('StorageEvent') instanceof window.Event is true
 PASS document.createEvent('StorageEvent').constructor === window.StorageEvent is true
-PASS document.createEvent('SVGZoomEvents') instanceof window.SVGZoomEvent is true
-PASS document.createEvent('SVGZoomEvents') instanceof window.Event is true
-PASS document.createEvent('SVGZoomEvents').constructor === window.SVGZoomEvent is true
 PASS allEventInterfacesCreateEvents is true
 PASS successfullyParsed is true
 

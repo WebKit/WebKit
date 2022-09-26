@@ -207,7 +207,6 @@
 #include "SVGSVGElement.h"
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
-#include "SVGZoomEvent.h"
 #include "SWClientConnection.h"
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
@@ -5268,15 +5267,6 @@ ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
 #endif
 
     // FIXME: Add support for "dragevent", which the DOM specification calls for.
-
-    // The following string comes from the SVG specification
-    // <http://www.w3.org/TR/SVG/script.html#InterfaceSVGZoomEvent>
-    // However, since there is no provision for initializing the event once it is created,
-    // there is no practical value in this feature.
-    // FIXME: Confirm there is no content depending on this and remove it.
-
-    if (equalLettersIgnoringASCIICase(type, "svgzoomevents"_s))
-        return Ref<Event> { SVGZoomEvent::createForBindings() };
 
     // The following strings are not part of the DOM specification and we would like to eliminate them.
     // However, we currently include them until we resolve any issues with backward compatibility.

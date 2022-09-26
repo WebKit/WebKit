@@ -85,11 +85,9 @@ String CSSFontFaceSrcValue::customCSSText() const
     return makeString(prefix, serializeString(m_resource), ")", " format(", serializeString(m_format), ")");
 }
 
-bool CSSFontFaceSrcValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSFontFaceSrcValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
 {
-    if (!m_cachedFont)
-        return false;
-    return handler(*m_cachedFont);
+    return m_cachedFont && handler(*m_cachedFont);
 }
 
 std::unique_ptr<FontLoadRequest> CSSFontFaceSrcValue::fontLoadRequest(ScriptExecutionContext* context, bool isSVG, bool isInitiatingElementInUserAgentShadowTree)

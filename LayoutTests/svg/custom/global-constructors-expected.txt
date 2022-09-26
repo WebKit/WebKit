@@ -158,7 +158,6 @@ PASS SVGScriptElement.toString() is "function SVGScriptElement() {\n    [native 
 FAIL SVGEvent.toString() should be function SVGEvent() {
     [native code]
 }. Threw exception ReferenceError: Can't find variable: SVGEvent
-PASS SVGZoomEvent.toString() is "function SVGZoomEvent() {\n    [native code]\n}"
 PASS SVGAnimationElement.toString() is "function SVGAnimationElement() {\n    [native code]\n}"
 PASS SVGAnimateElement.toString() is "function SVGAnimateElement() {\n    [native code]\n}"
 PASS SVGSetElement.toString() is "function SVGSetElement() {\n    [native code]\n}"

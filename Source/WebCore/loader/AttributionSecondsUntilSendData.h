@@ -23,24 +23,54 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LayoutListMarkerBox.h"
+#pragma once
 
-#include "RenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/Seconds.h>
 
-namespace WebCore {
-namespace Layout {
+namespace WebCore::PCM {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ListMarkerBox);
+struct AttributionSecondsUntilSendData {
+    std::optional<Seconds> sourceSeconds;
+    std::optional<Seconds> destinationSeconds;
 
-ListMarkerBox::ListMarkerBox(IsImage isImage, IsOutside isOutside, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
-    : ReplacedBox({ }, WTFMove(style), WTFMove(firstLineStyle), Box::ListMarkerBoxFlag)
-    , m_isImage(isImage == IsImage::Yes)
-    , m_isOutside(isOutside == IsOutside::Yes)
-{
+    bool hasValidSecondsUntilSendValues()
+    {
+        return sourceSeconds && destinationSeconds;
+    }
+
+    std::optional<Seconds> minSecondsUntilSend()
+    {
+        if (!sourceSeconds && !destinationSeconds)
+            return std::nullopt;
+
+        if (sourceSeconds && destinationSeconds)
+            return std::min(sourceSeconds, destinationSeconds);
+
+        return sourceSeconds ? sourceSeconds : destinationSeconds;
+    }
+
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << sourceSeconds << destinationSeconds;
+    }
+
+    template<class Decoder>
+    static std::optional<AttributionSecondsUntilSendData> decode(Decoder& decoder)
+    {
+        std::optional<std::optional<Seconds>> sourceSeconds;
+        decoder >> sourceSeconds;
+        if (!sourceSeconds)
+            return std::nullopt;
+
+        std::optional<std::optional<Seconds>> destinationSeconds;
+        decoder >> destinationSeconds;
+        if (!destinationSeconds)
+            return std::nullopt;
+
+        return AttributionSecondsUntilSendData { WTFMove(*sourceSeconds), WTFMove(*destinationSeconds) };
+    }
+};
+
+
 }
-
-}
-}
-

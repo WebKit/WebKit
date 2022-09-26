@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  * Copyright (C) 2022 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 #include "VMTrapsInlines.h"
 
 namespace JSC {
+
 namespace TemporalPlainDateInternal {
 static constexpr bool verbose = false;
 }

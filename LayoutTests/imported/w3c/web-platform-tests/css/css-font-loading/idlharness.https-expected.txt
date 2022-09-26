@@ -65,6 +65,7 @@ PASS FontFaceSet interface object name
 PASS FontFaceSet interface: existence and properties of interface prototype object
 PASS FontFaceSet interface: existence and properties of interface prototype object's "constructor" property
 PASS FontFaceSet interface: existence and properties of interface prototype object's @@unscopables property
+FAIL FontFaceSet interface: setlike<FontFace> assert_equals: entries enumerable expected false but got true
 PASS FontFaceSet interface: operation add(FontFace)
 PASS FontFaceSet interface: operation delete(FontFace)
 PASS FontFaceSet interface: operation clear()

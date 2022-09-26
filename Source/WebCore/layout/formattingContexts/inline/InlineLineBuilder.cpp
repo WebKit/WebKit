@@ -250,12 +250,12 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
         if (isHangingContent)
             return m_continuousContent.append(inlineTextItem, style, logicalWidth);
 
-        auto collapsibleWidth = [&]() -> std::optional<InlineLayoutUnit> {
+        auto trimmableWidth = [&]() -> std::optional<InlineLayoutUnit> {
             if (isWhitespace && !InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem)) {
-                // Fully collapsible trailing content.
+                // Fully trimmable trailing content.
                 return logicalWidth;
             }
-            // Check for partially collapsible content.
+            // Check for partially trimmable content.
             if (m_ignoreTrailingLetterSpacing)
                 return { };
             auto letterSpacing = style.letterSpacing();
@@ -264,7 +264,7 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
             ASSERT(logicalWidth > letterSpacing);
             return letterSpacing;
         };
-        m_continuousContent.append(inlineTextItem, style, logicalWidth, collapsibleWidth());
+        m_continuousContent.append(inlineTextItem, style, logicalWidth, trimmableWidth());
         return;
     }
     ASSERT_NOT_REACHED();

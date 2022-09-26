@@ -120,13 +120,13 @@ public:
 
 private:
     void open(const ClientOrigin&, const String&, DOMCacheEngine::CacheIdentifierCallback&& callback) final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
-    void remove(uint64_t, DOMCacheEngine::CacheIdentifierCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
     void retrieveCaches(const ClientOrigin&, uint64_t, DOMCacheEngine::CacheInfosCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
-    void retrieveRecords(uint64_t, RetrieveRecordsOptions&&, DOMCacheEngine::RecordsCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
-    void batchDeleteOperation(uint64_t, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
-    void batchPutOperation(uint64_t, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
-    void reference(uint64_t)  final { }
-    void dereference(uint64_t)  final { }
+    void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::RecordsCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&& callback)  final { callback(makeUnexpected(DOMCacheEngine::Error::Stopped)); }
+    void reference(DOMCacheIdentifier)  final { }
+    void dereference(DOMCacheIdentifier)  final { }
 };
 
 static Ref<CacheStorageConnection> createMainThreadConnection(WorkerGlobalScope& scope)
@@ -157,36 +157,41 @@ WorkerCacheStorageConnection::~WorkerCacheStorageConnection()
 void WorkerCacheStorageConnection::open(const ClientOrigin& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
-    m_openAndRemoveCachePendingRequests.add(requestIdentifier, WTFMove(callback));
+    m_openCachePendingRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, origin = origin.isolatedCopy(), cacheName = cacheName.isolatedCopy()] () mutable {
         mainThreadConnection->open(origin, cacheName, [workerThread = WTFMove(workerThread), requestIdentifier] (const CacheIdentifierOrError& result) mutable {
             workerThread->runLoop().postTaskForMode([requestIdentifier, result] (auto& scope) mutable {
-                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().openOrRemoveCompleted(requestIdentifier, result);
+                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().openCompleted(requestIdentifier, result);
             }, WorkerRunLoop::defaultMode());
         });
     });
 }
 
-void WorkerCacheStorageConnection::openOrRemoveCompleted(uint64_t requestIdentifier, const CacheIdentifierOrError& result)
+void WorkerCacheStorageConnection::openCompleted(uint64_t requestIdentifier, const CacheIdentifierOrError& result)
 {
-    if (auto callback = m_openAndRemoveCachePendingRequests.take(requestIdentifier))
+    if (auto callback = m_openCachePendingRequests.take(requestIdentifier))
         callback(result);
 }
 
-void WorkerCacheStorageConnection::remove(uint64_t cacheIdentifier, CacheIdentifierCallback&& callback)
+void WorkerCacheStorageConnection::remove(DOMCacheIdentifier cacheIdentifier, RemoveCacheIdentifierCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
-    m_openAndRemoveCachePendingRequests.add(requestIdentifier, WTFMove(callback));
+    m_removeCachePendingRequests.add(requestIdentifier, WTFMove(callback));
 
     callOnMainThread([workerThread = Ref { m_scope.thread() }, mainThreadConnection = m_mainThreadConnection, requestIdentifier, cacheIdentifier] () mutable {
-        mainThreadConnection->remove(cacheIdentifier, [workerThread = WTFMove(workerThread), requestIdentifier, cacheIdentifier] (const CacheIdentifierOrError& result) mutable {
-            ASSERT_UNUSED(cacheIdentifier, !result.has_value() || !result.value().identifier || result.value().identifier == cacheIdentifier);
+        mainThreadConnection->remove(cacheIdentifier, [workerThread = WTFMove(workerThread), requestIdentifier] (const auto& result) mutable {
             workerThread->runLoop().postTaskForMode([requestIdentifier, result] (auto& scope) mutable {
-                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().openOrRemoveCompleted(requestIdentifier, result);
+                downcast<WorkerGlobalScope>(scope).cacheStorageConnection().removeCompleted(requestIdentifier, result);
             }, WorkerRunLoop::defaultMode());
         });
     });
+}
+
+void WorkerCacheStorageConnection::removeCompleted(uint64_t requestIdentifier, const RemoveCacheIdentifierOrError& result)
+{
+    if (auto callback = m_removeCachePendingRequests.take(requestIdentifier))
+        callback(result);
 }
 
 void WorkerCacheStorageConnection::retrieveCaches(const ClientOrigin& origin, uint64_t updateCounter, CacheInfosCallback&& callback)
@@ -215,7 +220,7 @@ void WorkerCacheStorageConnection::retrieveCachesCompleted(uint64_t requestIdent
         callback(WTFMove(result));
 }
 
-void WorkerCacheStorageConnection::retrieveRecords(uint64_t cacheIdentifier, RetrieveRecordsOptions&& options, RecordsCallback&& callback)
+void WorkerCacheStorageConnection::retrieveRecords(DOMCacheIdentifier cacheIdentifier, RetrieveRecordsOptions&& options, RecordsCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_retrieveRecordsPendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -235,7 +240,7 @@ void WorkerCacheStorageConnection::retrieveRecordsCompleted(uint64_t requestIden
         callback(WTFMove(result));
 }
 
-void WorkerCacheStorageConnection::batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest& request, CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
+void WorkerCacheStorageConnection::batchDeleteOperation(DOMCacheIdentifier cacheIdentifier, const ResourceRequest& request, CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -255,7 +260,7 @@ void WorkerCacheStorageConnection::deleteRecordsCompleted(uint64_t requestIdenti
         callback(WTFMove(result));
 }
 
-void WorkerCacheStorageConnection::batchPutOperation(uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&& records, DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void WorkerCacheStorageConnection::batchPutOperation(DOMCacheIdentifier cacheIdentifier, Vector<DOMCacheEngine::Record>&& records, DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_batchDeleteAndPutPendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -275,14 +280,14 @@ void WorkerCacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifie
         callback(WTFMove(result));
 }
 
-void WorkerCacheStorageConnection::reference(uint64_t cacheIdentifier)
+void WorkerCacheStorageConnection::reference(DOMCacheIdentifier cacheIdentifier)
 {
     callOnMainThread([mainThreadConnection = m_mainThreadConnection, cacheIdentifier]() {
         mainThreadConnection->reference(cacheIdentifier);
     });
 }
 
-void WorkerCacheStorageConnection::dereference(uint64_t cacheIdentifier)
+void WorkerCacheStorageConnection::dereference(DOMCacheIdentifier cacheIdentifier)
 {
     callOnMainThread([mainThreadConnection = m_mainThreadConnection, cacheIdentifier]() {
         mainThreadConnection->dereference(cacheIdentifier);
@@ -291,8 +296,12 @@ void WorkerCacheStorageConnection::dereference(uint64_t cacheIdentifier)
 
 void WorkerCacheStorageConnection::clearPendingRequests()
 {
-    auto openAndRemoveCachePendingRequests = WTFMove(m_openAndRemoveCachePendingRequests);
-    for (auto& callback : openAndRemoveCachePendingRequests.values())
+    auto openCachePendingRequests = WTFMove(m_openCachePendingRequests);
+    for (auto& callback : openCachePendingRequests.values())
+        callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
+
+    auto removeCachePendingRequests = WTFMove(m_removeCachePendingRequests);
+    for (auto& callback : removeCachePendingRequests.values())
         callback(makeUnexpected(DOMCacheEngine::Error::Stopped));
 
     auto retrieveCachesPendingRequests = WTFMove(m_retrieveCachesPendingRequests);

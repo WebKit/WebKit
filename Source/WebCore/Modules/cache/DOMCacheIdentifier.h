@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LayoutLineBreakBox.h"
+#pragma once
 
-#include "RenderStyle.h"
-#include <wtf/IsoMallocInlines.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebCore {
-namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(LineBreakBox);
-
-LineBreakBox::LineBreakBox(bool isOptional, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
-    : ContainerBox({ }, WTFMove(style), WTFMove(firstLineStyle), Box::LineBreakBoxFlag)
-    , m_isOptional(isOptional)
-{
-}
+enum DOMCacheIdentifierType { };
+using DOMCacheIdentifier = ObjectIdentifier<DOMCacheIdentifierType>;
 
 }
-}
-

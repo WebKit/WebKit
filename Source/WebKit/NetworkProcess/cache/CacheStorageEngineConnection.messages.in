@@ -21,16 +21,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> CacheStorageEngineConnection {
-    Reference(uint64_t cacheIdentifier)
-    Dereference(uint64_t cacheIdentifier)
+    Reference(WebCore::DOMCacheIdentifier cacheIdentifier)
+    Dereference(WebCore::DOMCacheIdentifier cacheIdentifier)
 
     Open(struct WebCore::ClientOrigin origin, String cacheName) -> (WebCore::DOMCacheEngine::CacheIdentifierOrError result)
-    Remove(uint64_t cacheIdentifier) -> (WebCore::DOMCacheEngine::CacheIdentifierOrError result)
+    Remove(WebCore::DOMCacheIdentifier cacheIdentifier) -> (WebCore::DOMCacheEngine::RemoveCacheIdentifierOrError result)
     Caches(struct WebCore::ClientOrigin origin, uint64_t updateCounter) -> (WebCore::DOMCacheEngine::CacheInfosOrError result)
 
-    RetrieveRecords(uint64_t cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::RecordsOrError result)
-    DeleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
-    PutRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record> record) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
+    RetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, struct WebCore::RetrieveRecordsOptions options) -> (WebCore::DOMCacheEngine::RecordsOrError result)
+    DeleteMatchingRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
+    PutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record> record) -> (WebCore::DOMCacheEngine::RecordIdentifiersOrError result)
 
     ClearMemoryRepresentation(struct WebCore::ClientOrigin origin) -> (std::optional<WebCore::DOMCacheEngine::Error> error)
     EngineRepresentation() -> (String representation)

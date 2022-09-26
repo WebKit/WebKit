@@ -46,6 +46,8 @@ class WithoutNamespace {
     int a;
 }
 
+enum class EnumNamespace::BoolEnumType : bool
+
 enum class EnumNamespace::EnumType : uint16_t {
     FirstValue,
     SecondValue

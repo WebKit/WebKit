@@ -41,15 +41,15 @@ public:
     virtual ~CacheStorageConnection() = default;
 
     virtual void open(const ClientOrigin&, const String& cacheName, DOMCacheEngine::CacheIdentifierCallback&&) = 0;
-    virtual void remove(uint64_t cacheIdentifier, DOMCacheEngine::CacheIdentifierCallback&&) = 0;
+    virtual void remove(DOMCacheIdentifier, DOMCacheEngine::RemoveCacheIdentifierCallback&&) = 0;
     virtual void retrieveCaches(const ClientOrigin&, uint64_t updateCounter, DOMCacheEngine::CacheInfosCallback&&) = 0;
 
-    virtual void retrieveRecords(uint64_t cacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::RecordsCallback&&) = 0;
-    virtual void batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) = 0;
-    virtual void batchPutOperation(uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&) = 0;
+    virtual void retrieveRecords(DOMCacheIdentifier, RetrieveRecordsOptions&&, DOMCacheEngine::RecordsCallback&&) = 0;
+    virtual void batchDeleteOperation(DOMCacheIdentifier, const ResourceRequest&, CacheQueryOptions&&, DOMCacheEngine::RecordIdentifiersCallback&&) = 0;
+    virtual void batchPutOperation(DOMCacheIdentifier, Vector<DOMCacheEngine::Record>&&, DOMCacheEngine::RecordIdentifiersCallback&&) = 0;
 
-    virtual void reference(uint64_t /* cacheIdentifier */) = 0;
-    virtual void dereference(uint64_t /* cacheIdentifier */) = 0;
+    virtual void reference(DOMCacheIdentifier /* cacheIdentifier */) = 0;
+    virtual void dereference(DOMCacheIdentifier /* cacheIdentifier */) = 0;
 
     uint64_t computeRecordBodySize(const FetchResponse&, const DOMCacheEngine::ResponseBody&);
 

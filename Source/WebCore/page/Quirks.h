@@ -163,6 +163,7 @@ public:
 #endif
     bool shouldEnableApplicationCacheQuirk() const;
     bool shouldEnableFontLoadingAPIQuirk() const;
+    bool needsVideoShouldMaintainAspectRatioQuirk() const;
     
 private:
     bool needsQuirks() const;
@@ -216,6 +217,7 @@ private:
     mutable std::optional<bool> m_shouldEnableApplicationCacheQuirk;
 #endif
     mutable std::optional<bool> m_shouldEnableFontLoadingAPIQuirk;
+    mutable std::optional<bool> m_needsVideoShouldMaintainAspectRatioQuirk;
 };
 
 } // namespace WebCore

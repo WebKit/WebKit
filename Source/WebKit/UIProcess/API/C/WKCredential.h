@@ -28,6 +28,7 @@
 
 #include <WebKit/WKBase.h>
 #include <WebKit/WKCredentialTypes.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,7 +37,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKCredentialGetTypeID();
 
 WK_EXPORT WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, WKCredentialPersistence);
-WK_EXPORT WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certificateInfo);
+WK_EXPORT WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certificateInfo) WK_C_API_DEPRECATED;
 
 WK_EXPORT WKStringRef WKCredentialCopyUser(WKCredentialRef);
 

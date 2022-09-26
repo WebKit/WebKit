@@ -27,8 +27,6 @@
 
 #include "ArgumentCoders.h"
 #include "PushMessageForTesting.h"
-#include "WKDeclarationSpecifiers.h"
-#include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/PushSubscriptionIdentifier.h>
 #include <optional>
 #include <wtf/Forward.h>
@@ -39,8 +37,14 @@ namespace WebCore {
 struct ExceptionData;
 class CertificateInfo;
 struct PushSubscriptionData;
+class PrivateClickMeasurement;
 struct SecurityOriginData;
 class RegistrableDomain;
+namespace PCM {
+struct AttributionTimeToSendData;
+struct AttributionTriggerData;
+struct EphemeralNonce;
+}
 }
 
 namespace WebKit {
@@ -113,9 +117,7 @@ template<> struct Coder<class> { \
 DECLARE_CODER(WebCore::CertificateInfo);
 DECLARE_CODER(WebCore::ExceptionData);
 DECLARE_CODER(WebCore::PrivateClickMeasurement);
-DECLARE_CODER(WebCore::PrivateClickMeasurement::AttributionTimeToSendData);
-DECLARE_CODER(WebCore::PrivateClickMeasurement::AttributionTriggerData);
-DECLARE_CODER(WebCore::PrivateClickMeasurement::EphemeralNonce);
+DECLARE_CODER(WebCore::PCM::AttributionTriggerData);
 DECLARE_CODER(WebCore::PushSubscriptionData);
 DECLARE_CODER(WebCore::PushSubscriptionIdentifier);
 DECLARE_CODER(WebCore::RegistrableDomain);

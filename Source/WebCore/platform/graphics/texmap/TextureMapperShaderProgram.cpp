@@ -141,7 +141,7 @@ static const char* vertexTemplateCommon =
     );
 
 #define ANTIALIASING_TEX_COORD_DIRECTIVE \
-    GLSL_DIRECTIVE(if defined(ENABLE_Antialiasing) && defined(ENABLE_Texture)) \
+    GLSL_DIRECTIVE(if defined(ENABLE_Antialiasing)) \
         GLSL_DIRECTIVE(define transformTexCoord fragmentTransformTexCoord) \
     GLSL_DIRECTIVE(else) \
         GLSL_DIRECTIVE(define transformTexCoord vertexTransformTexCoord) \

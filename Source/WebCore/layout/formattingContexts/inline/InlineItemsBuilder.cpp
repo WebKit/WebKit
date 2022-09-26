@@ -27,7 +27,6 @@
 #include "InlineItemsBuilder.h"
 
 #include "InlineSoftLineBreakItem.h"
-#include "LayoutLineBreakBox.h"
 #include "StyleResolver.h"
 #include "TextUtil.h"
 #include <wtf/Scope.h>
@@ -606,7 +605,7 @@ void InlineItemsBuilder::handleInlineLevelBox(const Box& layoutBox, InlineItems&
         return inlineItems.append({ layoutBox, InlineItem::Type::Box });
 
     if (layoutBox.isLineBreakBox())
-        return inlineItems.append({ layoutBox, downcast<LineBreakBox>(layoutBox).isOptional() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
+        return inlineItems.append({ layoutBox, layoutBox.isWordBreakOpportunity() ? InlineItem::Type::WordBreakOpportunity : InlineItem::Type::HardLineBreak });
 
     ASSERT_NOT_REACHED();
 }

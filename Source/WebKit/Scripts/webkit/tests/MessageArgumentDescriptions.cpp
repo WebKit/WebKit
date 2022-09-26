@@ -69,6 +69,7 @@
 #include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include <WebCore/BroadcastChannelIdentifier.h>
+#include <WebCore/DOMCacheIdentifier.h>
 #include <WebCore/DisplayList.h>
 #include <WebCore/FetchIdentifier.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
@@ -370,6 +371,7 @@ std::optional<JSC::JSValue> jsValueForReplyArguments(JSC::JSGlobalObject* global
 Vector<ASCIILiteral> serializedIdentifiers()
 {
     static_assert(sizeof(uint64_t) == sizeof(WebCore::BroadcastChannelIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebCore::DOMCacheIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::DisplayList::ItemBufferIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FetchIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebCore::FileSystemHandleIdentifier));
@@ -442,6 +444,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
     return {
         "WebCore::BroadcastChannelIdentifier"_s,
+        "WebCore::DOMCacheIdentifier"_s,
         "WebCore::DisplayList::ItemBufferIdentifier"_s,
         "WebCore::FetchIdentifier"_s,
         "WebCore::FileSystemHandleIdentifier"_s,

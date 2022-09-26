@@ -62,12 +62,12 @@ class ReadRecordTaskCounter;
 class Cache {
 public:
     enum class State { Uninitialized, Opening, Open };
-    Cache(Caches&, uint64_t identifier, State, String&& name, String&& uniqueName);
+    Cache(Caches&, WebCore::DOMCacheIdentifier, State, String&& name, String&& uniqueName);
 
     bool isOpened() const { return m_state == State::Open; }
     void open(WebCore::DOMCacheEngine::CompletionCallback&&);
 
-    uint64_t identifier() const { return m_identifier; }
+    WebCore::DOMCacheIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
     const String& uniqueName() const { return m_uniqueName; }
     bool isActive() const { return m_state != State::Uninitialized; }
@@ -122,7 +122,7 @@ private:
 
     Caches& m_caches;
     State m_state;
-    uint64_t m_identifier { 0 };
+    WebCore::DOMCacheIdentifier m_identifier;
     String m_name;
     String m_uniqueName;
     HashMap<String, Vector<RecordInformation>> m_records;

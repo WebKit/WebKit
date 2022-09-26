@@ -1,0 +1,61 @@
+<!DOCTYPE html><!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<!-- Based on svg/in-html/inline-svg-non-integer-position-display-inline.html + compositing enabled either for <svg> or <rect> -->
+<html>
+  <head>
+    <style>
+    .rect1 {
+      fill: blue;
+    }
+
+    .rect2 {
+      fill: green;
+    }
+
+    svg {
+      display: inline-block;
+      overflow: hidden;
+    }
+
+    .move-svg {
+      left: 25px;
+      position: relative;
+    }
+
+    .show-overflow {
+      overflow: visible;
+    }
+
+    .composited {
+      transform: translateZ(0);
+    }
+
+    .scaled {
+      transform: scale(2);
+      transform-origin: 0 0;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Enforce non-integer SVG location</h1>
+    <svg width="50" height="50" class="show-overflow composited">
+      <rect x="0" y="0" width="50" height="50" class="rect1"/>
+    </svg>
+    <svg width="50" height="50" class="show-overflow">
+      <rect x="0" y="0" width="50" height="50" class="rect2 composited"/>
+    </svg>
+    <h1>Effect of overflow: hidden</h1>
+    <svg width="50" height="50" class="composited">
+      <rect x="0" y="0" width="50" height="50" class="rect1"/>
+    </svg>
+    <svg width="50" height="50">
+      <rect x="0" y="0" width="50" height="50" class="rect2 composited"/>
+    </svg>
+    <h1>With transformation</h1>
+    <svg width="25" height="25" class="show-overflow composited scaled">
+      <rect x="0" y="0" width="25" height="25" class="rect1"/>
+    </svg>
+    <svg width="25" height="25" class="show-overflow move-svg scaled">
+      <rect x="0" y="0" width="25" height="25" class="rect2 composited"/>
+    </svg>
+  </body>
+</html>

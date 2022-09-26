@@ -50,6 +50,7 @@ public:
     bool isWordSeparator() const { return m_isWordSeparator; }
     bool isZeroWidthSpaceSeparator() const;
     bool isCollapsibleNonBreakingSpace() const;
+    bool isFullyTrimmable() const;
     bool hasTrailingSoftHyphen() const { return m_hasTrailingSoftHyphen; }
     std::optional<InlineLayoutUnit> width() const { return m_hasWidth ? std::make_optional(m_width) : std::optional<InlineLayoutUnit> { }; }
 

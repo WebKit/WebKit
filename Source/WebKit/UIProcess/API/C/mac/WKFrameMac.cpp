@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "WKFrameMac.h"
 
-#include "LayoutContainerBox.h"
-#include <wtf/IsoMalloc.h>
+#include "WKAPICast.h"
+#include "WebFrameProxy.h"
 
-namespace WebCore {
-
-namespace Layout {
-
-class LineBreakBox : public ContainerBox {
-    WTF_MAKE_ISO_ALLOCATED(LineBreakBox);
-public:
-    LineBreakBox(bool isOptional, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
-
-    bool isOptional() const { return m_isOptional; }
-
-private:
-    bool m_isOptional { false };
-};
-
+SecTrustRef WKFrameGetServerTrust(WKFrameRef frame)
+{
+    auto* certificateInfo = WebKit::toImpl(frame)->certificateInfo();
+    if (!certificateInfo)
+        return nullptr;
+    return certificateInfo->certificateInfo().trust();
 }
-}
-
-SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(LineBreakBox, isLineBreakBox())
-

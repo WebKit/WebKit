@@ -50,10 +50,6 @@ void Coder<class>::encode(Encoder& encoder, const class& instance) { instance.en
 std::optional<class> Coder<class>::decode(Decoder& decoder) { return class::decode(decoder); }
 
 IMPLEMENT_CODER(WebCore::ExceptionData);
-IMPLEMENT_CODER(WebCore::PrivateClickMeasurement);
-IMPLEMENT_CODER(WebCore::PrivateClickMeasurement::AttributionTimeToSendData);
-IMPLEMENT_CODER(WebCore::PrivateClickMeasurement::AttributionTriggerData);
-IMPLEMENT_CODER(WebCore::PrivateClickMeasurement::EphemeralNonce);
 IMPLEMENT_CODER(WebCore::PushSubscriptionData);
 IMPLEMENT_CODER(WebCore::PushSubscriptionIdentifier);
 IMPLEMENT_CODER(WebCore::RegistrableDomain);
@@ -115,6 +111,206 @@ std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decode(
 #else
     return WebCore::CertificateInfo();
 #endif
+}
+
+template<> struct Coder<WebCore::PCM::SourceSite> {
+    static void encode(Encoder& encoder, const WebCore::PCM::SourceSite& instance)
+    {
+        encoder << instance.registrableDomain;
+    }
+    static std::optional<WebCore::PCM::SourceSite> decode(Decoder& decoder)
+    {
+        std::optional<WebCore::RegistrableDomain> registrableDomain;
+        decoder >> registrableDomain;
+        if (!registrableDomain)
+            return std::nullopt;
+        return { WebCore::PCM::SourceSite { WTFMove(*registrableDomain) } };
+    }
+};
+
+template<> struct Coder<WebCore::PCM::AttributionDestinationSite> {
+    static void encode(Encoder& encoder, const WebCore::PCM::AttributionDestinationSite& instance)
+    {
+        encoder << instance.registrableDomain;
+    }
+    static std::optional<WebCore::PCM::AttributionDestinationSite> decode(Decoder& decoder)
+    {
+        std::optional<WebCore::RegistrableDomain> registrableDomain;
+        decoder >> registrableDomain;
+        if (!registrableDomain)
+            return std::nullopt;
+        return { WebCore::PCM::AttributionDestinationSite { WTFMove(*registrableDomain) } };
+    }
+};
+
+template<> struct Coder<WebCore::PCM::EphemeralNonce> {
+    static void encode(Encoder& encoder, const WebCore::PCM::EphemeralNonce& instance)
+    {
+        encoder << instance.nonce;
+    }
+    static std::optional<WebCore::PCM::EphemeralNonce> decode(Decoder& decoder)
+    {
+        std::optional<String> nonce;
+        decoder >> nonce;
+        if (!nonce)
+            return std::nullopt;
+        return { WebCore::PCM::EphemeralNonce { WTFMove(*nonce) } };
+    }
+};
+
+template<> struct Coder<WebCore::PCM::AttributionTimeToSendData> {
+    static void encode(Encoder& encoder, const WebCore::PCM::AttributionTimeToSendData& instance)
+    {
+        encoder << instance.sourceEarliestTimeToSend;
+        encoder << instance.destinationEarliestTimeToSend;
+    }
+    static std::optional<WebCore::PCM::AttributionTimeToSendData> decode(Decoder& decoder)
+    {
+        std::optional<std::optional<WallTime>> sourceEarliestTimeToSend;
+        decoder >> sourceEarliestTimeToSend;
+        if (!sourceEarliestTimeToSend)
+            return std::nullopt;
+
+        std::optional<std::optional<WallTime>> destinationEarliestTimeToSend;
+        decoder >> destinationEarliestTimeToSend;
+        if (!destinationEarliestTimeToSend)
+            return std::nullopt;
+
+        return { { WTFMove(*sourceEarliestTimeToSend), WTFMove(*destinationEarliestTimeToSend) } };
+    }
+};
+
+void Coder<WebCore::PrivateClickMeasurement, void>::encode(Encoder& encoder, const WebCore::PrivateClickMeasurement& instance)
+{
+    encoder << instance.sourceID();
+    encoder << instance.sourceSite();
+    encoder << instance.destinationSite();
+    encoder << instance.timeOfAdClick();
+    encoder << instance.isEphemeral();
+    encoder << instance.adamID();
+    encoder << instance.attributionTriggerData();
+    encoder << instance.timesToSend();
+    encoder << instance.ephemeralSourceNonce();
+    encoder << instance.sourceApplicationBundleID();
+}
+
+std::optional<WebCore::PrivateClickMeasurement> Coder<WebCore::PrivateClickMeasurement, void>::decode(Decoder& decoder)
+{
+    std::optional<uint8_t> sourceID;
+    decoder >> sourceID;
+    if (!sourceID)
+        return std::nullopt;
+
+    std::optional<WebCore::PCM::SourceSite> sourceSite;
+    decoder >> sourceSite;
+    if (!sourceSite)
+        return std::nullopt;
+
+    std::optional<WebCore::PCM::AttributionDestinationSite> destinationSite;
+    decoder >> destinationSite;
+    if (!destinationSite)
+        return std::nullopt;
+
+    std::optional<WallTime> timeOfAdClick;
+    decoder >> timeOfAdClick;
+    if (!timeOfAdClick)
+        return std::nullopt;
+
+    std::optional<WebCore::PCM::AttributionEphemeral> isEphemeral;
+    decoder >> isEphemeral;
+    if (!isEphemeral)
+        return std::nullopt;
+
+    std::optional<std::optional<uint64_t>> adamID;
+    decoder >> adamID;
+    if (!adamID)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::PCM::AttributionTriggerData>> attributionTriggerData;
+    decoder >> attributionTriggerData;
+    if (!attributionTriggerData)
+        return std::nullopt;
+
+    std::optional<WebCore::PCM::AttributionTimeToSendData> timesToSend;
+    decoder >> timesToSend;
+    if (!timesToSend)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::PCM::EphemeralNonce>> ephemeralSourceNonce;
+    decoder >> ephemeralSourceNonce;
+    if (!ephemeralSourceNonce)
+        return std::nullopt;
+
+    std::optional<String> sourceApplicationBundleID;
+    decoder >> sourceApplicationBundleID;
+    if (!sourceApplicationBundleID)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*sourceID),
+        WTFMove(*sourceSite),
+        WTFMove(*destinationSite),
+        WTFMove(*timeOfAdClick),
+        WTFMove(*isEphemeral),
+        WTFMove(*adamID),
+        WTFMove(*attributionTriggerData),
+        WTFMove(*timesToSend),
+        WTFMove(*ephemeralSourceNonce),
+        WTFMove(*sourceApplicationBundleID),
+    } };
+}
+
+void Coder<WebCore::PCM::AttributionTriggerData, void>::encode(Encoder& encoder, const WebCore::PCM::AttributionTriggerData& instance)
+{
+    encoder << instance.data;
+    encoder << instance.priority;
+    encoder << instance.wasSent;
+    encoder << instance.sourceRegistrableDomain;
+    encoder << instance.ephemeralDestinationNonce;
+    encoder << instance.destinationSite;
+}
+
+std::optional<WebCore::PCM::AttributionTriggerData> Coder<WebCore::PCM::AttributionTriggerData, void>::decode(Decoder& decoder)
+{
+    std::optional<uint8_t> data;
+    decoder >> data;
+    if (!data)
+        return std::nullopt;
+
+    std::optional<WebCore::PCM::AttributionTriggerData::Priority::PriorityValue> priority;
+    decoder >> priority;
+    if (!priority)
+        return std::nullopt;
+
+    std::optional<WebCore::PCM::WasSent> wasSent;
+    decoder >> wasSent;
+    if (!wasSent)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::RegistrableDomain>> sourceRegistrableDomain;
+    decoder >> sourceRegistrableDomain;
+    if (!sourceRegistrableDomain)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::PCM::EphemeralNonce>> ephemeralDestinationNonce;
+    decoder >> ephemeralDestinationNonce;
+    if (!ephemeralDestinationNonce)
+        return std::nullopt;
+
+    std::optional<std::optional<WebCore::RegistrableDomain>> destinationSite;
+    decoder >> destinationSite;
+    if (!destinationSite)
+        return std::nullopt;
+
+    return { {
+        WTFMove(*data),
+        WTFMove(*priority),
+        WTFMove(*wasSent),
+        WTFMove(*sourceRegistrableDomain),
+        WTFMove(*ephemeralDestinationNonce),
+        WTFMove(*destinationSite),
+        // destinationUnlinkableToken and destinationSecretToken are not serialized.
+    } };
 }
 
 }

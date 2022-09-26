@@ -64,15 +64,15 @@ private:
     explicit CacheStorageEngineConnection(NetworkConnectionToWebProcess&);
 
     void open(WebCore::ClientOrigin&&, String&& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void remove(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void remove(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&);
     void caches(WebCore::ClientOrigin&&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
-    void retrieveRecords(uint64_t cacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RecordsCallback&&);
-    void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
-    void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void retrieveRecords(WebCore::DOMCacheIdentifier, WebCore::RetrieveRecordsOptions&&, WebCore::DOMCacheEngine::RecordsCallback&&);
+    void deleteMatchingRecords(WebCore::DOMCacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void putRecords(WebCore::DOMCacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
-    void reference(uint64_t cacheIdentifier);
-    void dereference(uint64_t cacheIdentifier);
+    void reference(WebCore::DOMCacheIdentifier);
+    void dereference(WebCore::DOMCacheIdentifier);
 
     void clearMemoryRepresentation(WebCore::ClientOrigin&&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
     void engineRepresentation( CompletionHandler<void(String&&)>&&);

@@ -72,11 +72,11 @@
 {
     WebCore::PrivateClickMeasurement measurement(
         WebCore::PrivateClickMeasurement::SourceID(sourceID),
-        WebCore::PrivateClickMeasurement::SourceSite(reportEndpoint),
-        WebCore::PrivateClickMeasurement::AttributionDestinationSite(destination),
+        WebCore::PCM::SourceSite(reportEndpoint),
+        WebCore::PCM::AttributionDestinationSite(destination),
         bundleID,
         WallTime::now(),
-        ephemeral ? WebCore::PrivateClickMeasurement::AttributionEphemeral::Yes : WebCore::PrivateClickMeasurement::AttributionEphemeral::No
+        ephemeral ? WebCore::PCM::AttributionEphemeral::Yes : WebCore::PCM::AttributionEphemeral::No
     );
     if (nonce)
         measurement.setEphemeralSourceNonce({ nonce });

@@ -79,6 +79,9 @@ Vector<SerializedTypeInfo> allSerializedTypes()
 Vector<SerializedEnumInfo> allSerializedEnums()
 {
     return {
+        { "EnumNamespace::BoolEnumType"_s, sizeof(EnumNamespace::BoolEnumType), false, {
+            0, 1
+        } },
         { "EnumNamespace::EnumType"_s, sizeof(EnumNamespace::EnumType), false, {
             static_cast<uint64_t>(EnumNamespace::EnumType::FirstValue),
             static_cast<uint64_t>(EnumNamespace::EnumType::SecondValue),

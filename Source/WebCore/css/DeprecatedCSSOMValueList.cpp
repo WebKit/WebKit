@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,25 +32,11 @@ namespace WebCore {
 
 String DeprecatedCSSOMValueList::cssText() const
 {
-    const char* separator;
-    switch (m_valueSeparator) {
-    case CSSValue::SpaceSeparator:
-        separator = " ";
-        break;
-    case CSSValue::CommaSeparator:
-        separator = ", ";
-        break;
-    case CSSValue::SlashSeparator:
-        separator = " / ";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        separator = "";
-    }
-    
+    auto prefix = ""_s;
+    auto separator = CSSValueList::separatorCSSText(static_cast<CSSValueList::ValueSeparator>(m_valueSeparator));
     StringBuilder result;
     for (auto& value : m_values)
-        result.append(result.isEmpty() ? "" : separator, value.get().cssText());
+        result.append(std::exchange(prefix, separator), value.get().cssText());
     return result.toString();
 }
 

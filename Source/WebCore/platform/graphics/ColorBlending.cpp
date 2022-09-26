@@ -28,6 +28,7 @@
 
 #include "AnimationUtilities.h"
 #include "Color.h"
+#include "ColorInterpolation.h"
 
 namespace WebCore {
 
@@ -97,17 +98,35 @@ Color blend(const Color& from, const Color& to, const BlendingContext& context)
     if (context.progress == 1 && !to.isValid())
         return { };
 
-    auto premultipliedFrom = premultiplied(from.toColorTypeLossy<SRGBA<float>>()).resolved();
-    auto premultipliedTo = premultiplied(to.toColorTypeLossy<SRGBA<float>>()).resolved();
+    using InterpolationColorSpace = ColorInterpolationMethod::SRGB;
 
-    auto premultipliedBlended = makeFromComponentsClamping<SRGBA<float>>(
-        WebCore::blend(premultipliedFrom.red, premultipliedTo.red, context),
-        WebCore::blend(premultipliedFrom.green, premultipliedTo.green, context),
-        WebCore::blend(premultipliedFrom.blue, premultipliedTo.blue, context),
-        WebCore::blend(premultipliedFrom.alpha, premultipliedTo.alpha, context)
-    );
+    auto fromComponents = from.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
+    auto toComponents = to.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
 
-    return convertColor<SRGBA<uint8_t>>(unpremultiplied(premultipliedBlended));
+    switch (context.compositeOperation) {
+    case CompositeOperation::Replace: {
+        auto interpolatedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(
+            InterpolationColorSpace { },
+            fromComponents, 1.0 - context.progress,
+            toComponents, context.progress
+        );
+
+        return convertColor<SRGBA<uint8_t>>(clipToGamut<SRGBA<float>>(interpolatedColor));
+    }
+
+    case CompositeOperation::Add:
+    case CompositeOperation::Accumulate: {
+        ASSERT(context.progress == 1.0);
+
+        auto summedColor = addColorComponents<AlphaPremultiplication::Premultiplied>(
+            InterpolationColorSpace { },
+            fromComponents,
+            toComponents
+        );
+
+        return summedColor;
+    }
+    }
 }
 
 Color blendWithoutPremultiply(const Color& from, const Color& to, const BlendingContext& context)

@@ -1113,6 +1113,7 @@ fast/css/resize-below-min-size.html [ Skip ]
 fast/css/resize-corner-tracking.html [ Skip ]
 fast/css/resize-orthogonal-containing-block.html [ Skip ]
 fast/css/resize-single-axis.html [ Skip ]
+fast/events/mouse-events-on-textarea-resize.html [ Skip ]
 
 # The file-wrapper part of <attachment> is not yet working on iOS
 fast/attachment/attachment-type-attribute.html [ Skip ]
@@ -3048,8 +3049,6 @@ accessibility/smart-invert-reference.html [ ImageOnlyFailure ]
 scrollingcoordinator/ios/fixed-frame-overflow-swipe.html [ ImageOnlyFailure ]
 imported/blink/compositing/video/video-controls-layer-creation-squashing.html [ ImageOnlyFailure ]
 
-webkit.org/b/245613 scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-layer-position.html [ Pass Failure ]
-
 # Test fails, but has flaky output.
 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
@@ -3751,6 +3750,3 @@ webkit.org/b/244740 http/wpt/cross-origin-opener-policy/non-secure-to-secure-con
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-3.html [ Pass Timeout Failure ]
-
-webkit.org/b/245593 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-lower-greek.html [ ImageOnlyFailure ]
-

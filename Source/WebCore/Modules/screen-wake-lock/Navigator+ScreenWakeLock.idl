@@ -25,7 +25,7 @@
 
 [
     EnabledBySetting=ScreenWakeLockAPIEnabled,
-    ImplementedBy=NavigatorScreenWakeLock
+    ImplementedBy=NavigatorScreenWakeLock,
     SecureContext
 ] partial interface Navigator {
     [SameObject] readonly attribute WakeLock wakeLock;

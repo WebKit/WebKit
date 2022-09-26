@@ -258,6 +258,7 @@ def forward_declarations_for_namespace(namespace, kind_and_types):
 def serialized_identifiers():
     return [
         'WebCore::BroadcastChannelIdentifier',
+        'WebCore::DOMCacheIdentifier',
         'WebCore::DisplayList::ItemBufferIdentifier',
         'WebCore::FetchIdentifier',
         'WebCore::FileSystemHandleIdentifier',

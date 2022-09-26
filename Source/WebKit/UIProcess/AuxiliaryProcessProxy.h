@@ -40,6 +40,7 @@
 namespace WebKit {
 
 class ProcessThrottler;
+class ProcessAssertion;
 
 class AuxiliaryProcessProxy : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>, public ResponsivenessTimer::Client, private ProcessLauncher::Client, public IPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcessProxy);
@@ -58,8 +59,6 @@ public:
     virtual ProcessThrottler& throttler() = 0;
 
     template<typename T> bool send(T&& message, uint64_t destinationID, OptionSet<IPC::SendOption> sendOptions = { });
-    using SendSyncLegacyResult = IPC::Connection::SendSyncLegacyResult;
-    template<typename T> SendSyncLegacyResult sendSync(T&& message, typename T::Reply&&, uint64_t destinationID, IPC::Timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
 
     template<typename T> using SendSyncResult = IPC::Connection::SendSyncResult<T>;
     template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, IPC::Timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { });
@@ -73,12 +72,6 @@ public:
         return send<T>(WTFMove(message), destinationID.toUInt64(), sendOptions);
     }
     
-    template<typename T, typename U>
-    SendSyncLegacyResult sendSync(T&& message, typename T::Reply&& reply, ObjectIdentifier<U> destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
-    {
-        return sendSync<T>(WTFMove(message), WTFMove(reply), destinationID.toUInt64(), timeout, sendSyncOptions);
-    }
-
     template<typename T, typename U>
     SendSyncResult<T> sendSync(T&& message, ObjectIdentifier<U> destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
@@ -208,6 +201,9 @@ private:
     WebCore::ProcessIdentifier m_processIdentifier { WebCore::ProcessIdentifier::generate() };
     std::optional<UseLazyStop> m_delayedResponsivenessCheck;
     MonotonicTime m_processStart;
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    RefPtr<ProcessAssertion> m_lifetimeAssertion;
+#endif
 };
 
 template<typename T>
@@ -219,19 +215,6 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
     encoder.get() << message.arguments();
 
     return sendMessage(WTFMove(encoder), sendOptions);
-}
-
-template<typename U> 
-AuxiliaryProcessProxy::SendSyncLegacyResult AuxiliaryProcessProxy::sendSync(U&& message, typename U::Reply&& reply, uint64_t destinationID, IPC::Timeout timeout, OptionSet<IPC::SendSyncOption> sendSyncOptions)
-{
-    static_assert(U::isSync, "Sync message expected");
-
-    if (!m_connection)
-        return { };
-
-    TraceScope scope(SyncMessageStart, SyncMessageEnd);
-
-    return connection()->sendSync(std::forward<U>(message), WTFMove(reply), destinationID, timeout, sendSyncOptions);
 }
 
 template<typename T>

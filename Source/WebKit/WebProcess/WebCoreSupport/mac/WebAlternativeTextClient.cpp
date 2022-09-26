@@ -58,8 +58,8 @@ void WebAlternativeTextClient::dismissAlternative(ReasonForDismissingAlternative
 
 String WebAlternativeTextClient::dismissAlternativeSoon(ReasonForDismissingAlternativeText reason)
 {
-    String result;
-    m_page->sendSync(Messages::WebPageProxy::DismissCorrectionPanelSoon(reason), Messages::WebPageProxy::DismissCorrectionPanelSoon::Reply(result));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::DismissCorrectionPanelSoon(reason));
+    auto [result] = sendResult.takeReplyOr(String { });
     return result;
 }
 
@@ -81,8 +81,8 @@ void WebAlternativeTextClient::showDictationAlternativeUI(const WebCore::FloatRe
 
 Vector<String> WebAlternativeTextClient::dictationAlternatives(WebCore::DictationContext dictationContext)
 {
-    Vector<String> result;
-    m_page->sendSync(Messages::WebPageProxy::DictationAlternatives(dictationContext), Messages::WebPageProxy::DictationAlternatives::Reply(result));
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::DictationAlternatives(dictationContext));
+    auto [result] = sendResult.takeReplyOr(Vector<String> { });
     return result;
 }
 

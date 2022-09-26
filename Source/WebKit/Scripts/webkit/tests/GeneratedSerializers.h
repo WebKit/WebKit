@@ -28,6 +28,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 
+namespace EnumNamespace { enum class BoolEnumType : bool; }
 namespace EnumNamespace { enum class EnumType : uint16_t; }
 namespace EnumNamespace2 { enum class OptionSetEnumType : uint8_t; }
 #if ENABLE(TEST_FEATURE)

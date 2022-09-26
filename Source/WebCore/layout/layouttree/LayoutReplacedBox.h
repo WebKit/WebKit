@@ -37,7 +37,14 @@ namespace Layout {
 class ReplacedBox : public ContainerBox {
     WTF_MAKE_ISO_ALLOCATED(ReplacedBox);
 public:
-    ReplacedBox(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, OptionSet<BaseTypeFlag> = { ReplacedBoxFlag });
+    ReplacedBox(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+
+    struct ListMarkerAttributes {
+        bool isImage { false };
+        bool isOutside { false };
+    };
+    ReplacedBox(ListMarkerAttributes, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+
     virtual ~ReplacedBox() = default;
 
     void setCachedImage(CachedImage& cachedImage) { m_cachedImage = &cachedImage; }
@@ -54,11 +61,16 @@ public:
     LayoutUnit intrinsicHeight() const;
     LayoutUnit intrinsicRatio() const;
 
+    bool isListMarkerImage() const { return m_isListMarkerImage; }
+    bool isListMarkerOutside() const { return m_isListMarkerOutside; }
+
 private:
     bool hasAspectRatio() const;
 
     std::optional<LayoutSize> m_intrinsicSize;
     std::optional<LayoutUnit> m_intrinsicRatio;
+    bool m_isListMarkerImage : 1 { false };
+    bool m_isListMarkerOutside : 1 { false };
     CachedImage* m_cachedImage { nullptr };
 };
 

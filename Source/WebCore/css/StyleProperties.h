@@ -90,7 +90,7 @@ public:
     PropertyReference propertyAt(unsigned) const;
 
     WEBCORE_EXPORT RefPtr<CSSValue> getPropertyCSSValue(CSSPropertyID) const;
-    WEBCORE_EXPORT String getPropertyValue(CSSPropertyID, Document* = nullptr) const;
+    WEBCORE_EXPORT String getPropertyValue(CSSPropertyID) const;
 
     WEBCORE_EXPORT std::optional<Color> propertyAsColor(CSSPropertyID) const;
     WEBCORE_EXPORT CSSValueID propertyAsValueID(CSSPropertyID) const;

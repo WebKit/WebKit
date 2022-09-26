@@ -29,7 +29,6 @@
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutListMarkerBox.h"
 #include "LayoutReplacedBox.h"
 
 namespace WebCore {
@@ -427,7 +426,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         if (!initiatesLayoutBoundsChange)
             return;
 
-        auto behavesAsText = inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ListMarkerBox>(inlineLevelBox.layoutBox()).isImage());
+        auto behavesAsText = inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ReplacedBox>(inlineLevelBox.layoutBox()).isListMarkerImage());
         auto layoutBoundsPrimaryMetrics = LayoutBoundsMetrics { };
         if (behavesAsText) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());

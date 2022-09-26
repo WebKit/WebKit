@@ -34,8 +34,15 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ReplacedBox);
 
-ReplacedBox::ReplacedBox(std::optional<ElementAttributes> elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
-    : ContainerBox(elementAttributes, WTFMove(style), WTFMove(firstLineStyle), baseTypeFlags | ReplacedBoxFlag)
+ReplacedBox::ReplacedBox(std::optional<ElementAttributes> elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : ContainerBox(elementAttributes, WTFMove(style), WTFMove(firstLineStyle), ReplacedBoxFlag)
+{
+}
+
+ReplacedBox::ReplacedBox(ListMarkerAttributes listMarkerAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : ContainerBox(ElementAttributes { ElementType::ListMarker }, WTFMove(style), WTFMove(firstLineStyle), ReplacedBoxFlag)
+    , m_isListMarkerImage(listMarkerAttributes.isImage)
+    , m_isListMarkerOutside(listMarkerAttributes.isOutside)
 {
 }
 
