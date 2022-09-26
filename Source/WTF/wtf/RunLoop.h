@@ -37,6 +37,7 @@
 #include <wtf/Observer.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
+#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakHashSet.h>
@@ -70,7 +71,7 @@ using RunLoopMode = unsigned;
 #define DefaultRunLoopMode 0
 #endif
 
-class RunLoop final : public FunctionDispatcher, public ThreadSafeRefCounted<RunLoop> {
+class WTF_CAPABILITY("is current") RunLoop final : public FunctionDispatcher, public ThreadSafeRefCounted<RunLoop> {
     WTF_MAKE_NONCOPYABLE(RunLoop);
 public:
     // Must be called from the main thread.
@@ -276,7 +277,13 @@ private:
 #endif
 };
 
+inline void assertIsCurrent(const RunLoop& runLoop) WTF_ASSERTS_ACQUIRED_CAPABILITY(runLoop)
+{
+    ASSERT_UNUSED(runLoop, &RunLoop::current() == &runLoop);
+}
+
 } // namespace WTF
 
 using WTF::RunLoop;
 using WTF::RunLoopMode;
+using WTF::assertIsCurrent;
