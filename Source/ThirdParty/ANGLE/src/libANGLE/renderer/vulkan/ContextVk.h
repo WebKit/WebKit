@@ -329,6 +329,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     const gl::TextureCapsMap &getNativeTextureCaps() const override;
     const gl::Extensions &getNativeExtensions() const override;
     const gl::Limitations &getNativeLimitations() const override;
+    ShPixelLocalStorageType getNativePixelLocalStorageType() const override;
 
     // Shader creation
     CompilerImpl *createCompiler() override;
@@ -838,6 +839,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         // - In VK_EXT_extended_dynamic_state2
         DIRTY_BIT_DYNAMIC_RASTERIZER_DISCARD_ENABLE,
         DIRTY_BIT_DYNAMIC_DEPTH_BIAS_ENABLE,
+        DIRTY_BIT_DYNAMIC_LOGIC_OP,
         DIRTY_BIT_DYNAMIC_PRIMITIVE_RESTART_ENABLE,
         // - In VK_KHR_fragment_shading_rate
         DIRTY_BIT_DYNAMIC_FRAGMENT_SHADING_RATE,
@@ -925,6 +927,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     static_assert(DIRTY_BIT_DYNAMIC_RASTERIZER_DISCARD_ENABLE > DIRTY_BIT_RENDER_PASS,
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
     static_assert(DIRTY_BIT_DYNAMIC_DEPTH_BIAS_ENABLE > DIRTY_BIT_RENDER_PASS,
+                  "Render pass using dirty bit must be handled after the render pass dirty bit");
+    static_assert(DIRTY_BIT_DYNAMIC_LOGIC_OP > DIRTY_BIT_RENDER_PASS,
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
     static_assert(DIRTY_BIT_DYNAMIC_PRIMITIVE_RESTART_ENABLE > DIRTY_BIT_RENDER_PASS,
                   "Render pass using dirty bit must be handled after the render pass dirty bit");
@@ -1141,6 +1145,8 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
         DirtyBits dirtyBitMask);
     angle::Result handleDirtyGraphicsDynamicDepthBiasEnable(DirtyBits::Iterator *dirtyBitsIterator,
                                                             DirtyBits dirtyBitMask);
+    angle::Result handleDirtyGraphicsDynamicLogicOp(DirtyBits::Iterator *dirtyBitsIterator,
+                                                    DirtyBits dirtyBitMask);
     angle::Result handleDirtyGraphicsDynamicPrimitiveRestartEnable(
         DirtyBits::Iterator *dirtyBitsIterator,
         DirtyBits dirtyBitMask);

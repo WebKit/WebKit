@@ -958,4 +958,17 @@ EGLBoolean QueryDmaBufModifiersEXT(Thread *thread,
     return EGL_TRUE;
 }
 
+void *CopyMetalSharedEventANGLE(Thread *thread, Display *display, Sync *syncObject)
+{
+    ANGLE_EGL_TRY_RETURN(thread, display->prepareForCall(), "eglCopyMetalSharedEventANGLE",
+                         GetDisplayIfValid(display), nullptr);
+    void *result = nullptr;
+    ANGLE_EGL_TRY_RETURN(thread, syncObject->copyMetalSharedEventANGLE(display, &result),
+                         "eglCopyMetalSharedEventANGLE", GetSyncIfValid(display, syncObject),
+                         nullptr);
+
+    thread->setSuccess();
+    return result;
+}
+
 }  // namespace egl

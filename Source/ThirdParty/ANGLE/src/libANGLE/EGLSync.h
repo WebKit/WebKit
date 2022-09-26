@@ -50,6 +50,7 @@ class Sync final : public angle::RefCountObject<Display, angle::Result>, public 
     Error signal(const Display *display, const gl::Context *context, EGLint mode);
     Error getStatus(const Display *display, EGLint *outStatus) const;
 
+    Error copyMetalSharedEventANGLE(const Display *display, void **result) const;
     Error dupNativeFenceFD(const Display *display, EGLint *result) const;
 
     EGLenum getType() const { return mType; }

@@ -232,6 +232,11 @@ struct FeaturesMtl : FeatureSetBase
         "unpackLastRowSeparatelyForPaddingInclusion", FeatureCategory::MetalWorkarounds,
         "When uploading textures, some drivers count an extra row padding", &members,
         "http://anglebug.com/7573"};
+
+    FeatureInfo uploadDataToIosurfacesWithStagingBuffers = {
+        "uploadDataToIosurfacesWithStagingBuffers", FeatureCategory::MetalWorkarounds,
+        "When uploading data to IOSurface-backed textures, use a staging buffer.", &members,
+        "http://anglebug.com/7573"};
 };
 
 inline FeaturesMtl::FeaturesMtl()  = default;

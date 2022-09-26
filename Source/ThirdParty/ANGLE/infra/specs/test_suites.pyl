@@ -686,12 +686,30 @@
     'angle_gles1_conformance_gtests': {
       'angle_gles1_conformance_tests': {
         'android_args': [
-          '--shard-timeout=180',
+          '--shard-timeout=600',
           '-v',
         ],
         'args': [
           'angle_gles1_conformance_tests',
           '--test-timeout=300',
+        ],
+        'desktop_args': [
+          '--bot-mode',
+        ],
+        'use_isolated_scripts_api': True,
+      },
+    },
+
+    'angle_gles1_conformance_vulkan_gtests': {
+      'angle_gles1_conformance_tests': {
+        'android_args': [
+          '--shard-timeout=600',
+          '-v',
+        ],
+        'args': [
+          'angle_gles1_conformance_tests',
+          '--test-timeout=300',
+          '--gtest_filter=*Vulkan*',
         ],
         'desktop_args': [
           '--bot-mode',
@@ -1124,6 +1142,7 @@
       'angle_deqp_khr_gles32_vulkan_gtests',
       'angle_deqp_khr_gles3_vulkan_gtests',
       'angle_end2end_gtests',
+      'angle_gles1_conformance_vulkan_gtests',
       'angle_unit_gtests',
     ],
 
@@ -1148,6 +1167,7 @@
     'linux_intel_gtests': [
       'angle_deqp_gles2_gl_gtests',
       'angle_end2end_gtests',
+      'angle_gles1_conformance_gtests',
       'angle_unit_gtests',
       'angle_white_box_gtests',
     ],
@@ -1172,6 +1192,7 @@
       'angle_deqp_khr_gles32_vulkan_gtests',
       'angle_deqp_khr_gles3_vulkan_gtests',
       'angle_end2end_gtests',
+      'angle_gles1_conformance_gtests',
       'angle_unit_gtests',
       'angle_white_box_gtests',
     ],

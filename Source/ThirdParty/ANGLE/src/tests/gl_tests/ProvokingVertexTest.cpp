@@ -9,12 +9,33 @@
 //   in the ES 3 specs.
 //
 
+#include "GLES2/gl2.h"
 #include "test_utils/ANGLETest.h"
+#include "test_utils/gl_raii.h"
+#include "util/gles_loader_autogen.h"
 
 using namespace angle;
 
 namespace
 {
+
+template <typename T>
+size_t sizeOfVectorContents(const T &vector)
+{
+    return vector.size() * sizeof(typename T::value_type);
+}
+
+void checkFlatQuadColors(size_t width,
+                         size_t height,
+                         const GLColor &bottomLeftColor,
+                         const GLColor &topRightColor)
+{
+    for (size_t x = 0; x < width; x += 2)
+    {
+        EXPECT_PIXEL_COLOR_EQ(x, 0, bottomLeftColor);
+        EXPECT_PIXEL_COLOR_EQ(x + 1, height - 1, topRightColor);
+    }
+}
 
 class ProvokingVertexTest : public ANGLETest<>
 {
@@ -135,9 +156,6 @@ TEST_P(ProvokingVertexTest, FlatTriangle)
 // Ensure that any provoking vertex shenanigans still gives correct vertex streams.
 TEST_P(ProvokingVertexTest, FlatTriWithTransformFeedback)
 {
-    // TODO(cwallez) figure out why it is broken on AMD on Mac
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsAMD());
-
     glGenTransformFeedbacks(1, &mTransformFeedback);
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, mTransformFeedback);
 
@@ -392,7 +410,345 @@ TEST_P(ProvokingVertexTest, ANGLEProvokingVertex)
     }
 }
 
+// Tests that alternating between drawing with flat and interpolated varyings works.
+TEST_P(ProvokingVertexTest, DrawWithBothFlatAndInterpolatedVarying)
+{
+    constexpr char kFlatVS[] = R"(#version 300 es
+      layout(location = 0) in vec4 position;
+      layout(location = 1) in vec4 color;
+      flat out highp vec4 v_color;
+      void main() {
+        gl_Position = position;
+        v_color = color;
+      }
+    )";
+
+    constexpr char kFlatFS[] = R"(#version 300 es
+        precision highp float;
+        flat in highp vec4 v_color;
+        out vec4 fragColor;
+        void main() {
+          fragColor = v_color;
+        }
+    )";
+
+    constexpr char kVS[] = R"(#version 300 es
+      layout(location = 0) in vec4 position;
+      layout(location = 1) in vec4 color;
+      out vec4 v_color;
+      void main() {
+        gl_Position = position;
+        v_color = color;
+      }
+    )";
+
+    constexpr char kFS[] = R"(#version 300 es
+        precision highp float;
+        in vec4 v_color;
+        out vec4 fragColor;
+        void main() {
+          fragColor = v_color;
+        }
+    )";
+
+    GLProgram varyingProgram;
+    varyingProgram.makeRaster(kVS, kFS);
+    GLProgram mProgram;
+    mProgram.makeRaster(kFlatVS, kFlatFS);
+
+    constexpr GLuint posNdx   = 0;
+    constexpr GLuint colorNdx = 1;
+
+    static float positions[] = {
+        -1, -1, 1, -1, -1, 1,
+    };
+
+    static GLColor colors[] = {
+        GLColor::red,
+        GLColor::green,
+        GLColor::blue,
+    };
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    GLBuffer mPositionBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(posNdx);
+    glVertexAttribPointer(posNdx, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    GLBuffer mColorBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, mColorBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(colorNdx);
+    glVertexAttribPointer(colorNdx, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+
+    glUseProgram(varyingProgram);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glUseProgram(mProgram);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glUseProgram(varyingProgram);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glUseProgram(mProgram);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+    ASSERT_GL_NO_ERROR();
+}
+
+class ProvokingVertexBufferUpdateTest : public ANGLETest<>
+{
+  protected:
+    static constexpr size_t kWidth  = 64;
+    static constexpr size_t kHeight = 64;
+    ProvokingVertexBufferUpdateTest()
+    {
+        setWindowWidth(64);
+        setWindowHeight(64);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+        setConfigDepthBits(24);
+    }
+
+    void testSetUp() override
+    {
+        constexpr char kFlatVS[] = R"(#version 300 es
+          layout(location = 0) in vec4 position;
+          layout(location = 1) in vec4 color;
+          flat out highp vec4 v_color;
+          void main() {
+            gl_Position = position;
+            v_color = color;
+          }
+        )";
+
+        constexpr char kFlatFS[] = R"(#version 300 es
+            precision highp float;
+            flat in highp vec4 v_color;
+            out vec4 fragColor;
+            void main() {
+              fragColor = v_color;
+            }
+        )";
+
+        mProgram.makeRaster(kFlatVS, kFlatFS);
+        glUseProgram(mProgram);
+
+        ASSERT(kWidth % 2 == 0);
+        ASSERT(kHeight > 1);
+
+        constexpr GLuint posNdx   = 0;
+        constexpr GLuint colorNdx = 1;
+
+        const size_t numQuads        = kWidth / 2;
+        const size_t numVertsPerQuad = 4;
+        std::vector<Vector2> positions;
+        std::vector<GLColor> colors;
+
+        const size_t mNumVertsToDrawPerQuad = 6;
+        mNumVertsToDraw                     = mNumVertsToDrawPerQuad * numQuads;
+
+        for (size_t i = 0; i < numQuads; ++i)
+        {
+            float x0 = float(i + 0) / float(numQuads) * 2.0f - 1.0f;
+            float x1 = float(i + 1) / float(numQuads) * 2.0f - 1.0f;
+
+            positions.push_back(Vector2(x0, -1));  // 2--3
+            positions.push_back(Vector2(x1, -1));  // |  |
+            positions.push_back(Vector2(x0, 1));   // 0--1
+            positions.push_back(Vector2(x1, 1));
+
+            colors.push_back(GLColor::red);
+            colors.push_back(GLColor::green);
+            colors.push_back(GLColor::blue);
+            colors.push_back(GLColor::yellow);
+
+            size_t offset = i * numVertsPerQuad;
+
+            mIndicesBlueYellow.push_back(offset + 0);
+            mIndicesBlueYellow.push_back(offset + 1);
+            mIndicesBlueYellow.push_back(offset + 2);  // blue
+            mIndicesBlueYellow.push_back(offset + 2);
+            mIndicesBlueYellow.push_back(offset + 1);
+            mIndicesBlueYellow.push_back(offset + 3);  // yellow
+
+            mIndicesRedGreen.push_back(offset + 1);
+            mIndicesRedGreen.push_back(offset + 2);
+            mIndicesRedGreen.push_back(offset + 0);  // red
+            mIndicesRedGreen.push_back(offset + 3);
+            mIndicesRedGreen.push_back(offset + 2);
+            mIndicesRedGreen.push_back(offset + 1);  // green
+
+            mIndicesGreenBlue.push_back(offset + 2);
+            mIndicesGreenBlue.push_back(offset + 0);
+            mIndicesGreenBlue.push_back(offset + 1);  // green
+            mIndicesGreenBlue.push_back(offset + 1);
+            mIndicesGreenBlue.push_back(offset + 3);
+            mIndicesGreenBlue.push_back(offset + 2);  // blue
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClearColor(0, 0, 0, 0);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeOfVectorContents(positions), positions.data(),
+                     GL_STATIC_DRAW);
+        glEnableVertexAttribArray(posNdx);
+        glVertexAttribPointer(posNdx, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        glBindBuffer(GL_ARRAY_BUFFER, mColorBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeOfVectorContents(colors), colors.data(), GL_STATIC_DRAW);
+        glEnableVertexAttribArray(colorNdx);
+        glVertexAttribPointer(colorNdx, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
+        ASSERT_GL_NO_ERROR();
+    }
+
+    void testTearDown() override {}
+
+    size_t mNumVertsToDraw;
+    GLProgram mProgram;
+    GLBuffer mPositionBuffer;
+    GLBuffer mColorBuffer;
+    GLBuffer mIndexBuffer;
+    std::vector<GLushort> mIndicesBlueYellow;
+    std::vector<GLushort> mIndicesRedGreen;
+    std::vector<GLushort> mIndicesGreenBlue;
+};
+
+// Tests that updating the index buffer via BufferData more than once works with flat interpolation
+// The backend may queue the updates so the test tests that we draw after the buffer has been
+// updated.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWith2BufferUpdates)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesRedGreen),
+                 mIndicesRedGreen.data(), GL_STREAM_DRAW);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+}
+
+// Tests that updating the index buffer more than once with a draw in between updates works with
+// flat interpolation The backend may queue the updates so the test tests that we draw after the
+// buffer has been updated.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithBufferUpdateBetweenDraws)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STREAM_DRAW);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesRedGreen),
+                 mIndicesRedGreen.data(), GL_STREAM_DRAW);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+}
+
+// Tests that updating the index buffer with BufferSubData works with flat interpolation
+// The backend may queue the updates so the test tests that we draw after the buffer has been
+// updated.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithBufferSubUpdate)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STREAM_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeOfVectorContents(mIndicesRedGreen),
+                    mIndicesRedGreen.data());
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+}
+
+// Tests that updating the index buffer with BufferSubData after drawing works with flat
+// interpolation The backend may queue the updates so the test tests that we draw after the buffer
+// has been updated.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithBufferSubUpdateBetweenDraws)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STREAM_DRAW);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeOfVectorContents(mIndicesRedGreen),
+                    mIndicesRedGreen.data());
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+}
+
+// Tests that updating the index buffer twice with BufferSubData works with flat interpolation
+// The backend may queue the updates so the test tests that we draw after the buffer has been
+// updated.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWith2BufferSubUpdates)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STREAM_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeOfVectorContents(mIndicesRedGreen),
+                    mIndicesRedGreen.data());
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeOfVectorContents(mIndicesGreenBlue),
+                    mIndicesGreenBlue.data());
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::green, GLColor::blue);
+}
+
+// Tests that updating the index buffer with BufferSubData works after drawing with flat
+// interpolation The backend may queue the updates so the test tests that we draw after the buffer
+// has been updated.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWith2BufferSubUpdatesBetweenDraws)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STREAM_DRAW);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeOfVectorContents(mIndicesRedGreen),
+                    mIndicesRedGreen.data());
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeOfVectorContents(mIndicesGreenBlue),
+                    mIndicesGreenBlue.data());
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::green, GLColor::blue);
+}
+
+// Tests that updating the index buffer via multiple calls to BufferSubData works with flat
+// interpolation The backend may queue the updates so the test tests that we draw after the buffer
+// has been updated.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithPartialBufferSubUpdates)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STREAM_DRAW);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeOfVectorContents(mIndicesRedGreen) / 2,
+                    mIndicesRedGreen.data());
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesRedGreen) / 2,
+                    sizeOfVectorContents(mIndicesRedGreen) / 2,
+                    &mIndicesRedGreen[mIndicesRedGreen.size() / 2]);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+}
+
+// Tests that updating the index buffer via multiple calls to BufferSubData and drawing before the
+// update works with flat interpolation The backend may queue the updates so the test tests that we
+// draw after the buffer has been updated.
+TEST_P(ProvokingVertexBufferUpdateTest, DrawFlatWithPartialBufferSubUpdatesBetweenDraws)
+{
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesBlueYellow),
+                 mIndicesBlueYellow.data(), GL_STREAM_DRAW);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeOfVectorContents(mIndicesRedGreen) / 2,
+                    mIndicesRedGreen.data());
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, sizeOfVectorContents(mIndicesRedGreen) / 2,
+                    sizeOfVectorContents(mIndicesRedGreen) / 2,
+                    &mIndicesRedGreen[mIndicesRedGreen.size() / 2]);
+    glDrawElements(GL_TRIANGLES, mNumVertsToDraw, GL_UNSIGNED_SHORT, nullptr);
+    checkFlatQuadColors(kWidth, kHeight, GLColor::red, GLColor::green);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexTest);
 ANGLE_INSTANTIATE_TEST(ProvokingVertexTest, ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_METAL());
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ProvokingVertexBufferUpdateTest);
+ANGLE_INSTANTIATE_TEST(ProvokingVertexBufferUpdateTest,
+                       ES3_D3D11(),
+                       ES3_OPENGL(),
+                       ES3_OPENGLES(),
+                       ES3_METAL());
 
 }  // anonymous namespace

@@ -4242,4 +4242,41 @@ void CaptureSelectPerfMonitorCountersAMD_counterList(const State &glState,
 {
     UNIMPLEMENTED();
 }
+
+// ANGLE_shader_pixel_local_storage
+void CaptureBeginPixelLocalStorageANGLE_loadops(const State &glState,
+                                                bool isCallValid,
+                                                GLsizei planes,
+                                                const GLenum loadops[],
+                                                const void *cleardata,
+                                                angle::ParamCapture *paramCapture)
+{
+    if (!isCallValid)
+    {
+        return;
+    }
+    CaptureArray(loadops, planes, paramCapture);
+}
+
+void CaptureBeginPixelLocalStorageANGLE_cleardata(const State &glState,
+                                                  bool isCallValid,
+                                                  GLsizei planes,
+                                                  const GLenum loadops[],
+                                                  const void *cleardata,
+                                                  angle::ParamCapture *paramCapture)
+{
+    if (!isCallValid)
+    {
+        return;
+    }
+    GLsizei minLengthWithAllClears = planes;
+    while (minLengthWithAllClears > 0 && loadops[minLengthWithAllClears - 1] != GL_CLEAR_ANGLE)
+    {
+        --minLengthWithAllClears;
+    }
+    if (minLengthWithAllClears > 0)
+    {
+        CaptureMemory(cleardata, minLengthWithAllClears * 4 * 4, paramCapture);
+    }
+}
 }  // namespace gl

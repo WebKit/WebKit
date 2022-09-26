@@ -424,6 +424,7 @@ class RendererD3D : public BufferFactoryD3D
     const gl::TextureCapsMap &getNativeTextureCaps() const;
     const gl::Extensions &getNativeExtensions() const;
     const gl::Limitations &getNativeLimitations() const;
+    ShPixelLocalStorageType getNativePixelLocalStorageType() const;
     virtual void initializeFrontendFeatures(angle::FrontendFeatures *features) const = 0;
 
     // Necessary hack for default framebuffers in D3D.

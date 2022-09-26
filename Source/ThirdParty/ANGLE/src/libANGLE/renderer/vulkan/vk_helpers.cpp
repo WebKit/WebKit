@@ -1212,9 +1212,9 @@ void RenderPassAttachment::finalizeLoadStore(Context *context,
         {
             // If we are loading or clearing the attachment, but the attachment has not been used,
             // and the data has also not been stored back into attachment, then just skip the
-            // load/clear op.  If loadOp/storeOp=None is supported, prefer that to reduce the amount
+            // load/clear op. If loadOp/storeOp=None is supported, prefer that to reduce the amount
             // of synchronization; DontCare is a write operation, while None is not.
-            if (supportsLoadStoreOpNone)
+            if (supportsLoadStoreOpNone && !isInvalidated(currentCmdCount))
             {
                 *loadOp  = RenderPassLoadOp::None;
                 *storeOp = RenderPassStoreOp::None;
@@ -1813,7 +1813,8 @@ void RenderPassCommandBufferHelper::finalizeColorImageLayout(
         mAttachmentOps.setLayouts(packedAttachmentIndex, imageLayout, imageLayout);
     }
 
-    if (mImageOptimizeForPresent == image)
+    if (mImageOptimizeForPresent == image &&
+        context->getRenderer()->getFeatures().supportsPresentation.enabled)
     {
         ASSERT(packedAttachmentIndex == kAttachmentIndexZero);
         // Use finalLayout instead of extra barrier for layout change to present
@@ -8373,8 +8374,14 @@ void ImageHelper::pruneSupersededUpdatesForLevel(ContextVk *contextVk,
         }
         else
         {
-            // Reset boundingBox to current update's value
-            boundingBox[aspectIndex] = currentUpdateBox;
+            // Extend boundingBox to best accommodate current update's box.
+            boundingBox[aspectIndex].extend(currentUpdateBox);
+            // If the volume of the current update box is larger than the extended boundingBox
+            // use that as the new boundingBox instead.
+            if (currentUpdateBox.volume() > boundingBox[aspectIndex].volume())
+            {
+                boundingBox[aspectIndex] = currentUpdateBox;
+            }
             return false;
         }
     };

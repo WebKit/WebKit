@@ -229,6 +229,11 @@ angle::CallCapture CaptureVertexAttribDivisorANGLE(const State &glState,
                                                    GLuint index,
                                                    GLuint divisor);
 
+// GL_ANGLE_logic_op
+angle::CallCapture CaptureLogicOpANGLE(const State &glState,
+                                       bool isCallValid,
+                                       LogicalOperation opcodePacked);
+
 // GL_ANGLE_memory_object_flags
 angle::CallCapture CaptureTexStorageMemFlags2DANGLE(const State &glState,
                                                     bool isCallValid,
@@ -846,6 +851,25 @@ angle::CallCapture CaptureImportSemaphoreZirconHandleANGLE(const State &glState,
                                                            SemaphoreID semaphorePacked,
                                                            HandleType handleTypePacked,
                                                            GLuint handle);
+
+// GL_ANGLE_shader_pixel_local_storage
+angle::CallCapture CaptureFramebufferMemorylessPixelLocalStorageANGLE(const State &glState,
+                                                                      bool isCallValid,
+                                                                      GLint plane,
+                                                                      GLenum internalformat);
+angle::CallCapture CaptureFramebufferTexturePixelLocalStorageANGLE(const State &glState,
+                                                                   bool isCallValid,
+                                                                   GLint plane,
+                                                                   TextureID backingtexturePacked,
+                                                                   GLint level,
+                                                                   GLint layer);
+angle::CallCapture CaptureBeginPixelLocalStorageANGLE(const State &glState,
+                                                      bool isCallValid,
+                                                      GLsizei planes,
+                                                      const GLenum *loadops,
+                                                      const void *cleardata);
+angle::CallCapture CaptureEndPixelLocalStorageANGLE(const State &glState, bool isCallValid);
+angle::CallCapture CapturePixelLocalStorageBarrierANGLE(const State &glState, bool isCallValid);
 
 // GL_ANGLE_texture_compression_dxt3
 
@@ -2090,6 +2114,8 @@ angle::CallCapture CaptureEGLImageTargetTexture2DOES(const State &glState,
 // GL_OES_EGL_image_external_essl3
 
 // GL_OES_compressed_ETC1_RGB8_texture
+
+// GL_OES_compressed_paletted_texture
 
 // GL_OES_copy_image
 angle::CallCapture CaptureCopyImageSubDataOES(const State &glState,
@@ -4065,6 +4091,18 @@ void CaptureGetQueryObjectui64vRobustANGLE_params(const State &glState,
                                                   GLsizei bufSize,
                                                   GLsizei *length,
                                                   GLuint64 *params,
+                                                  angle::ParamCapture *paramCapture);
+void CaptureBeginPixelLocalStorageANGLE_loadops(const State &glState,
+                                                bool isCallValid,
+                                                GLsizei planes,
+                                                const GLenum *loadops,
+                                                const void *cleardata,
+                                                angle::ParamCapture *paramCapture);
+void CaptureBeginPixelLocalStorageANGLE_cleardata(const State &glState,
+                                                  bool isCallValid,
+                                                  GLsizei planes,
+                                                  const GLenum *loadops,
+                                                  const void *cleardata,
                                                   angle::ParamCapture *paramCapture);
 void CaptureGetMultisamplefvANGLE_val(const State &glState,
                                       bool isCallValid,

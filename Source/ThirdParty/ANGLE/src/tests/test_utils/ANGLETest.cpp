@@ -673,8 +673,8 @@ void ANGLETestBase::ANGLETestSetUp()
     int osWindowWidth  = mFixture->osWindow->getWidth();
     int osWindowHeight = mFixture->osWindow->getHeight();
 
-    const bool isRotated = mCurrentParams->isEnabled(Feature::EmulatedPrerotation90) ||
-                           mCurrentParams->isEnabled(Feature::EmulatedPrerotation270);
+    const bool isRotated = mCurrentParams->isEnableRequested(Feature::EmulatedPrerotation90) ||
+                           mCurrentParams->isEnableRequested(Feature::EmulatedPrerotation270);
     if (isRotated)
     {
         std::swap(osWindowWidth, osWindowHeight);

@@ -312,6 +312,25 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribANGLE(EGLDisplay dpy,
     return QueryDisplayAttribANGLE(thread, dpyPacked, attribute, value);
 }
 
+// EGL_ANGLE_metal_shared_event_sync
+void *EGLAPIENTRY EGL_CopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
+{
+
+    ANGLE_SCOPED_GLOBAL_LOCK();
+    EGL_EVENT(CopyMetalSharedEventANGLE, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
+              (uintptr_t)dpy, (uintptr_t)sync);
+
+    Thread *thread = egl::GetCurrentThread();
+
+    egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
+    Sync *syncPacked        = PackParam<Sync *>(sync);
+
+    ANGLE_EGL_VALIDATE(thread, CopyMetalSharedEventANGLE, GetDisplayIfValid(dpyPacked), void *,
+                       dpyPacked, syncPacked);
+
+    return CopyMetalSharedEventANGLE(thread, dpyPacked, syncPacked);
+}
+
 // EGL_ANGLE_power_preference
 void EGLAPIENTRY EGL_ReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
 {

@@ -120,6 +120,7 @@ class DisplayMtl : public DisplayImpl
     const gl::TextureCapsMap &getNativeTextureCaps() const;
     const gl::Extensions &getNativeExtensions() const;
     const gl::Limitations &getNativeLimitations() const;
+    ShPixelLocalStorageType getNativePixelLocalStorageType() const;
     const angle::FeaturesMtl &getFeatures() const { return mFeatures; }
 
     // Check whether either of the specified iOS or Mac GPU family is supported

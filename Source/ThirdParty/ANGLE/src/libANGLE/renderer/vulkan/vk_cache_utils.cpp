@@ -2278,7 +2278,7 @@ void OutputAllPipelineState(ContextVk *contextVk,
         {PipelineState::AlphaToCoverageEnable, 0},
         {PipelineState::AlphaToOneEnable, 0},
         {PipelineState::LogicOpEnable, 0},
-        {PipelineState::LogicOp, VK_LOGIC_OP_CLEAR},
+        {PipelineState::LogicOp, VK_LOGIC_OP_COPY},
         {PipelineState::RasterizerDiscardEnable, 0},
         {PipelineState::ColorWriteMask, 0},
         {PipelineState::BlendEnableMask, 0},
@@ -2660,7 +2660,7 @@ void GraphicsPipelineDesc::initDefaults(const ContextVk *contextVk)
     mInputAssemblyAndRasterizationStateInfo.bits.alphaToCoverageEnable = 0;
     mInputAssemblyAndRasterizationStateInfo.bits.alphaToOneEnable      = 0;
     mInputAssemblyAndRasterizationStateInfo.bits.logicOpEnable         = 0;
-    SetBitField(mInputAssemblyAndRasterizationStateInfo.bits.logicOp, VK_LOGIC_OP_CLEAR);
+    SetBitField(mInputAssemblyAndRasterizationStateInfo.bits.logicOp, VK_LOGIC_OP_COPY);
 
     mInputAssemblyAndRasterizationStateInfo.sampleMask = std::numeric_limits<uint16_t>::max();
 
@@ -3128,7 +3128,7 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
     }
 
     // Dynamic state
-    angle::FixedVector<VkDynamicState, 21> dynamicStateList;
+    angle::FixedVector<VkDynamicState, 22> dynamicStateList;
     dynamicStateList.push_back(VK_DYNAMIC_STATE_VIEWPORT);
     dynamicStateList.push_back(VK_DYNAMIC_STATE_SCISSOR);
     dynamicStateList.push_back(VK_DYNAMIC_STATE_LINE_WIDTH);
@@ -3157,6 +3157,10 @@ angle::Result GraphicsPipelineDesc::initializePipeline(
         dynamicStateList.push_back(VK_DYNAMIC_STATE_RASTERIZER_DISCARD_ENABLE);
         dynamicStateList.push_back(VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE);
         dynamicStateList.push_back(VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE);
+    }
+    if (contextVk->getFeatures().supportsLogicOpDynamicState.enabled)
+    {
+        dynamicStateList.push_back(VK_DYNAMIC_STATE_LOGIC_OP_EXT);
     }
     if (contextVk->getFeatures().supportsFragmentShadingRate.enabled)
     {
@@ -3554,6 +3558,20 @@ void GraphicsPipelineDesc::updateColorWriteMasks(
         transition->set(ANGLE_GET_INDEXED_TRANSITION_BIT(mColorBlendStateInfo, colorWriteMaskBits,
                                                          colorIndexGL, 4));
     }
+}
+
+void GraphicsPipelineDesc::updateLogicOpEnabled(GraphicsPipelineTransitionBits *transition,
+                                                bool enable)
+{
+    mInputAssemblyAndRasterizationStateInfo.bits.logicOpEnable = enable;
+    transition->set(ANGLE_GET_TRANSITION_BIT(mInputAssemblyAndRasterizationStateInfo, bits));
+}
+
+void GraphicsPipelineDesc::updateLogicOp(GraphicsPipelineTransitionBits *transition,
+                                         VkLogicOp logicOp)
+{
+    SetBitField(mInputAssemblyAndRasterizationStateInfo.bits.logicOp, logicOp);
+    transition->set(ANGLE_GET_TRANSITION_BIT(mInputAssemblyAndRasterizationStateInfo, bits));
 }
 
 void GraphicsPipelineDesc::setDepthTestEnabled(bool enabled)

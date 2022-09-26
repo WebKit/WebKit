@@ -485,6 +485,7 @@ void ShaderConstants11::setMultiviewWriteToViewportIndex(GLfloat index)
 
 void ShaderConstants11::onViewportChange(const gl::Rectangle &glViewport,
                                          const D3D11_VIEWPORT &dxViewport,
+                                         const gl::Offset &glFragCoordOffset,
                                          bool is9_3,
                                          bool presentPathFast)
 {
@@ -538,6 +539,9 @@ void ShaderConstants11::onViewportChange(const gl::Rectangle &glViewport,
 
     mVertex.viewScale[0] = mPixel.viewScale[0];
     mVertex.viewScale[1] = mPixel.viewScale[1];
+
+    mPixel.fragCoordOffset[0] = static_cast<float>(glFragCoordOffset.x);
+    mPixel.fragCoordOffset[1] = static_cast<float>(glFragCoordOffset.y);
 }
 
 // Update the ShaderConstants with a new first vertex and return whether the update dirties them.
@@ -1526,7 +1530,8 @@ void StateManager11::syncViewport(const gl::Context *context)
                                            static_cast<FLOAT>(dxViewportHeight),
                                            actualZNear,
                                            actualZFar};
-    mShaderConstants.onViewportChange(viewport, adjustViewport, is9_3, mCurPresentPathFastEnabled);
+    mShaderConstants.onViewportChange(viewport, adjustViewport, mCurViewportOffset, is9_3,
+                                      mCurPresentPathFastEnabled);
 }
 
 void StateManager11::invalidateRenderTarget()

@@ -32,6 +32,8 @@ class LightsTest : public ANGLETest<>
         setConfigAlphaBits(8);
         setConfigDepthBits(24);
     }
+
+    void drawTestQuad();
 };
 
 // Check that the initial lighting parameters state is correct,
@@ -312,6 +314,174 @@ TEST_P(LightsTest, Set)
             EXPECT_EQ(attenuationQuadratic, actualFloatValue);
         }
     }
+}
+
+// Check a case that approximates the one caught in the wild
+TEST_P(LightsTest, DiffuseGradient)
+{
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    std::vector<GLColor> colors;
+    for (uint32_t x = 0; x < 1024; x++)
+    {
+        for (uint32_t y = 0; y < 1024; y++)
+        {
+            float x_ratio = (float)x / 1024.0f;
+            GLubyte v     = (GLubyte)(255u * x_ratio);
+
+            GLColor color = {v, v, v, 255u};
+            colors.push_back(color);
+        }
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1024, 1024, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 colors.data());
+
+    glMatrixMode(GL_PROJECTION);
+
+    const GLfloat projectionMatrix[16] = {
+        0.615385, 0, 0, 0, 0, 1.333333, 0, 0, 0, 0, 1, 1, 0, 0, -2, 0,
+    };
+    glLoadMatrixf(projectionMatrix);
+
+    glEnable(GL_LIGHT0);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glClearColor(1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glViewport(0.0f, 0.0f, 32.0f, 32.0f);
+
+    const GLfloat ambient[4]  = {2.0f, 2.0f, 2.0f, 1.0f};
+    const GLfloat diffuse[4]  = {1.0f, 1.0f, 1.0f, 1.0f};
+    const GLfloat position[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+    glMatrixMode(GL_MODELVIEW);
+
+    const GLfloat modelMatrix[16] = {
+        0.976656, 0.000000, -0.214807, 0.000000, 0.000000,   1.000000, 0.000000,   0.000000,
+        0.214807, 0.000000, 0.976656,  0.000000, -96.007507, 0.000000, 200.000000, 1.000000,
+    };
+    glLoadMatrixf(modelMatrix);
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    std::vector<float> positions = {
+        -64.0f, -89.0f, 1.0f, -64.0f, 89.0f, 1.0f, 64.0f, -89.0f, 1.0f, 64.0f, 89.0f, 1.0f,
+    };
+
+    std::vector<float> uvs = {
+        0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+    };
+
+    std::vector<float> normals = {
+        1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+    };
+
+    glVertexPointer(3, GL_FLOAT, 0, positions.data());
+    glTexCoordPointer(2, GL_FLOAT, 0, uvs.data());
+    glNormalPointer(GL_FLOAT, 0, normals.data());
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_PIXEL_COLOR_NEAR(11, 11, GLColor(29, 29, 29, 255), 1);
+}
+
+void LightsTest::drawTestQuad()
+{
+    struct Vertex
+    {
+        GLfloat position[3];
+        GLfloat normal[3];
+    };
+
+    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustumf(-1, 1, -1, 1, 5.0, 60.0);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(0.0f, 0.0f, -8.0f);
+    glRotatef(150, 0, 1, 0);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    {
+        GLfloat ambientAndDiffuse[4] = {1.0f, 0.0f, 0.0f, 1.0f};
+        GLfloat specular[4]          = {0.0f, 0.0f, 10.0f, 1.0f};
+        GLfloat shininess            = 2.0f;
+
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, ambientAndDiffuse);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    }
+
+    std::vector<Vertex> vertices = {
+        {{-1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        {{-1.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        {{1.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+        {{1.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+    };
+    glVertexPointer(3, GL_FLOAT, sizeof vertices[0], &vertices[0].position);
+    glNormalPointer(GL_FLOAT, sizeof vertices[0], &vertices[0].normal);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.size());
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Check smooth lighting
+TEST_P(LightsTest, SmoothLitMesh)
+{
+    {
+        GLfloat position[4] = {0.0f, 0.0f, -20.0f, 1.0f};
+        GLfloat diffuse[4]  = {0.7f, 0.7f, 0.7f, 1.0f};
+        GLfloat specular[4] = {0.1f, 0.1f, 1.0f, 1.0f};
+
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        glLightfv(GL_LIGHT0, GL_POSITION, position);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    }
+
+    drawTestQuad();
+    EXPECT_PIXEL_COLOR_NEAR(16, 16, GLColor(205, 0, 92, 255), 1);
+}
+
+// Check flat lighting
+TEST_P(LightsTest, FlatLitMesh)
+{
+    {
+        GLfloat position[4] = {0.0f, 0.0f, -20.0f, 1.0f};
+        GLfloat diffuse[4]  = {0.7f, 0.7f, 0.7f, 1.0f};
+        GLfloat specular[4] = {0.1f, 0.1f, 1.0f, 1.0f};
+
+        glEnable(GL_LIGHTING);
+        glShadeModel(GL_FLAT);
+        glEnable(GL_LIGHT0);
+        glLightfv(GL_LIGHT0, GL_POSITION, position);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+    }
+
+    drawTestQuad();
+    EXPECT_PIXEL_COLOR_NEAR(16, 16, GLColor(211, 0, 196, 255), 1);
 }
 
 ANGLE_INSTANTIATE_TEST_ES1(LightsTest);

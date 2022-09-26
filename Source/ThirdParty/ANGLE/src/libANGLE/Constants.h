@@ -91,6 +91,10 @@ enum
 
     // Implementation upper limit for layered framebuffer layer count
     IMPLEMENTATION_MAX_FRAMEBUFFER_LAYERS = 256,
+
+    // ANGLE_shader_pixel_local_storage: keep the maximum number of supported planes reasonably
+    // similar on all platforms.
+    IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES = 8,
 };
 
 namespace limits

@@ -70,6 +70,7 @@
 6180 : TransformFeedbackTest.TransformFeedbackQueryPausedDrawThenResume/* = FLAKY
 6513 : TransformFeedbackTest.MultiContext/* = FLAKY
 6180 WIN : TransformFeedbackTest.BufferOutOfMemory/* = FLAKY
+6180 WIN : TransformFeedbackTest.EndThenBindNewBufferAndRestart/* = FLAKY
 6180 : VertexAttributeTestES3.DrawWithUnalignedData/* = FLAKY
 
 # Skip because crashes

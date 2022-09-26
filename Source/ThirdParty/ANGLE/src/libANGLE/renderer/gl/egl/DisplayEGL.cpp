@@ -1046,4 +1046,53 @@ const FunctionsEGL *DisplayEGL::getFunctionsEGL() const
     return mEGL;
 }
 
+bool DisplayEGL::supportsDmaBufFormat(EGLint format) const
+{
+    return std::find(std::begin(mDrmFormats), std::end(mDrmFormats), format) !=
+           std::end(mDrmFormats);
+}
+
+egl::Error DisplayEGL::queryDmaBufFormats(EGLint maxFormats, EGLint *formats, EGLint *numFormats)
+
+{
+    if (!mDrmFormatsInitialized)
+    {
+        EGLint numFormatsInit = 0;
+        if (mEGL->queryDmaBufFormatsEXT(0, nullptr, &numFormatsInit) && numFormatsInit > 0)
+        {
+            mDrmFormats.resize(numFormatsInit);
+            if (!mEGL->queryDmaBufFormatsEXT(numFormatsInit, mDrmFormats.data(), &numFormatsInit))
+            {
+                mDrmFormats.resize(0);
+            }
+        }
+        mDrmFormatsInitialized = true;
+    }
+
+    EGLint formatsSize = static_cast<EGLint>(mDrmFormats.size());
+    *numFormats        = formatsSize;
+    if (maxFormats > 0)
+    {
+        // Do not copy data beyond the limits of the vector
+        maxFormats = std::min(maxFormats, formatsSize);
+        std::memcpy(formats, mDrmFormats.data(), maxFormats * sizeof(EGLint));
+    }
+
+    return egl::NoError();
+}
+
+egl::Error DisplayEGL::queryDmaBufModifiers(EGLint drmFormat,
+                                            EGLint maxModifiers,
+                                            EGLuint64KHR *modifiers,
+                                            EGLBoolean *externalOnly,
+                                            EGLint *numModifiers)
+
+{
+    if (!mEGL->queryDmaBufModifiersEXT(drmFormat, maxModifiers, modifiers, externalOnly,
+                                       numModifiers))
+        return egl::Error(mEGL->getError(), "eglQueryDmaBufModifiersEXT failed");
+
+    return egl::NoError();
+}
+
 }  // namespace rx

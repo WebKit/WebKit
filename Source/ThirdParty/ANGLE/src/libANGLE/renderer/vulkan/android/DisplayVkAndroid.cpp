@@ -74,43 +74,12 @@ egl::ConfigSet DisplayVkAndroid::generateConfigs()
     }
     else
     {
-        // Use the VK_GOOGLE_surfaceless_query extension to query the available formats and
-        // colorspaces by using a VK_NULL_HANDLE for the VkSurfaceKHR handle.
-        VkPhysicalDevice physicalDevice              = mRenderer->getPhysicalDevice();
-        VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo2 = {};
-        surfaceInfo2.sType          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
-        surfaceInfo2.surface        = VK_NULL_HANDLE;
-        uint32_t surfaceFormatCount = 0;
-
-        VkResult result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo2,
-                                                                &surfaceFormatCount, nullptr);
-        if (result != VK_SUCCESS)
+        // DisplayVk should have already queried and cached supported surface formats.
+        for (GLenum glFormat : kDesiredColorFormats)
         {
-            return egl::ConfigSet();
-        }
-        std::vector<VkSurfaceFormat2KHR> surfaceFormats2(surfaceFormatCount);
-        for (VkSurfaceFormat2KHR &surfaceFormat2 : surfaceFormats2)
-        {
-            surfaceFormat2.sType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
-        }
-        result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo2,
-                                                       &surfaceFormatCount, surfaceFormats2.data());
-        if (result != VK_SUCCESS)
-        {
-            return egl::ConfigSet();
-        }
-
-        for (const VkSurfaceFormat2KHR &surfaceFormat2 : surfaceFormats2)
-        {
-            // Need to convert each Vulkan VkFormat into its GLES equivalent and
-            // add formats in kDesiredColorFormats.
-            angle::FormatID angleFormatID =
-                vk::GetFormatIDFromVkFormat(surfaceFormat2.surfaceFormat.format);
-            const angle::Format &angleFormat = angle::Format::Get(angleFormatID);
-            GLenum glFormat                  = angleFormat.glInternalFormat;
-
-            if (std::find(kDesiredColorFormats.begin(), kDesiredColorFormats.end(), glFormat) !=
-                kDesiredColorFormats.end())
+            VkFormat vkFormat = mRenderer->getFormat(glFormat).getActualRenderableImageVkFormat();
+            ASSERT(vkFormat != VK_FORMAT_UNDEFINED);
+            if (isConfigFormatSupported(vkFormat))
             {
                 kColorFormats.push_back(glFormat);
             }

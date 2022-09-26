@@ -431,12 +431,17 @@ class TestBatch():
         test_exe_path = os.path.join(args.out_dir, 'Capture', args.test_suite)
 
         extra_env = {
-            'ANGLE_CAPTURE_FRAME_END': '{}'.format(self.CAPTURE_FRAME_END),
             'ANGLE_CAPTURE_SERIALIZE_STATE': '1',
             'ANGLE_FEATURE_OVERRIDES_ENABLED': 'forceRobustResourceInit:forceInitShaderVariables',
             'ANGLE_CAPTURE_ENABLED': '1',
             'ANGLE_CAPTURE_OUT_DIR': self.trace_folder_path,
         }
+
+        if args.mec > 0:
+            extra_env['ANGLE_CAPTURE_FRAME_START'] = '{}'.format(args.mec)
+            extra_env['ANGLE_CAPTURE_FRAME_END'] = '{}'.format(args.mec + 1)
+        else:
+            extra_env['ANGLE_CAPTURE_FRAME_END'] = '{}'.format(self.CAPTURE_FRAME_END)
 
         if args.expose_nonconformant_features:
             extra_env[
@@ -1139,6 +1144,12 @@ if __name__ == '__main__':
         default=DEFAULT_MAX_JOBS,
         type=int,
         help='Maximum number of test processes. Default is %d.' % DEFAULT_MAX_JOBS)
+    parser.add_argument(
+        '-M',
+        '--mec',
+        default=0,
+        type=int,
+        help='Enable mid execution capture starting at frame %d, (default: 0 = normal capture)')
     parser.add_argument(
         '-a',
         '--also-run-skipped-for-capture-tests',

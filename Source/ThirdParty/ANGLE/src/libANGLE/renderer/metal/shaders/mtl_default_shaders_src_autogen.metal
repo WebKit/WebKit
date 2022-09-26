@@ -11,7 +11,7 @@
 # 1 "temp_master_source.metal"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
-# 453 "<built-in>" 3
+# 417 "<built-in>" 3
 # 1 "<command line>" 1
 # 1 "<built-in>" 2
 # 1 "temp_master_source.metal" 2
@@ -1601,6 +1601,16 @@ enum
     L32_FLOAT,
     L8A8_UNORM,
     L8_UNORM,
+    PALETTE4_R4G4B4A4_UNORM,
+    PALETTE4_R5G5B5A1_UNORM,
+    PALETTE4_R5G6B5_UNORM,
+    PALETTE4_R8G8B8A8_UNORM,
+    PALETTE4_R8G8B8_UNORM,
+    PALETTE8_R4G4B4A4_UNORM,
+    PALETTE8_R5G5B5A1_UNORM,
+    PALETTE8_R5G6B5_UNORM,
+    PALETTE8_R8G8B8A8_UNORM,
+    PALETTE8_R8G8B8_UNORM,
     PVRTC1_RGBA_2BPP_UNORM_BLOCK,
     PVRTC1_RGBA_2BPP_UNORM_SRGB_BLOCK,
     PVRTC1_RGBA_4BPP_UNORM_BLOCK,

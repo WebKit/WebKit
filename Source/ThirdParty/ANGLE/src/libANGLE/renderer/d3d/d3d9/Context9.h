@@ -231,6 +231,7 @@ class Context9 : public ContextD3D
     const gl::TextureCapsMap &getNativeTextureCaps() const override;
     const gl::Extensions &getNativeExtensions() const override;
     const gl::Limitations &getNativeLimitations() const override;
+    ShPixelLocalStorageType getNativePixelLocalStorageType() const override;
 
     angle::Result dispatchCompute(const gl::Context *context,
                                   GLuint numGroupsX,

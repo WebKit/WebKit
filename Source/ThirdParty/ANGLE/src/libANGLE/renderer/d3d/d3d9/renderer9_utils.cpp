@@ -398,7 +398,7 @@ unsigned int GetReservedVertexUniformVectors()
 
 unsigned int GetReservedFragmentUniformVectors()
 {
-    return 3;  // dx_ViewCoords, dx_DepthFront and dx_DepthRange.
+    return 4;  // dx_ViewCoords, dx_DepthFront, dx_DepthRange, dx_FragCoordoffset.
 }
 
 GLsizei GetSamplesCount(D3DMULTISAMPLE_TYPE type)

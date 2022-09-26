@@ -23,8 +23,14 @@ DmaBufImageSiblingEGL::DmaBufImageSiblingEGL(const egl::AttributeMap &attribs)
     mSize.depth          = 1;
     mHasProtectedContent = false;
 
-    int fourCCFormat = mAttribs.getAsInt(EGL_LINUX_DRM_FOURCC_EXT);
-    mFormat          = gl::Format(angle::DrmFourCCFormatToGLInternalFormat(fourCCFormat, &mYUV));
+    int fourCCFormat      = mAttribs.getAsInt(EGL_LINUX_DRM_FOURCC_EXT);
+    GLenum internalFormat = angle::DrmFourCCFormatToGLInternalFormat(fourCCFormat, &mYUV);
+    // These ANGLE formats are used exclusively with the Vulkan backend.
+    if (internalFormat == GL_RGBX8_ANGLE || internalFormat == GL_BGRX8_ANGLEX)
+    {
+        internalFormat = GL_RGB8;
+    }
+    mFormat = gl::Format(internalFormat);
 }
 
 DmaBufImageSiblingEGL::~DmaBufImageSiblingEGL() {}

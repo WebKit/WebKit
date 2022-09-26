@@ -136,6 +136,7 @@ class DisplayImpl : public EGLImplFactory, public angle::Subject
 
     virtual bool isX11() const;
     virtual bool isWayland() const;
+    virtual bool isGBM() const;
 
     virtual bool supportsDmaBufFormat(EGLint format) const;
     virtual egl::Error queryDmaBufFormats(EGLint max_formats, EGLint *formats, EGLint *num_formats);

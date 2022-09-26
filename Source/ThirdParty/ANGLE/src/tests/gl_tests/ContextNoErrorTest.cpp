@@ -43,10 +43,10 @@ class ContextNoErrorTest : public ANGLETest<>
     GLuint mNaughtyTexture;
 };
 
-class ContextNoErrorTest31 : public ContextNoErrorTest
+class ContextNoErrorPPOTest31 : public ContextNoErrorTest
 {
   protected:
-    ~ContextNoErrorTest31()
+    ~ContextNoErrorPPOTest31()
     {
         glDeleteProgram(mVertProg);
         glDeleteProgram(mFragProg);
@@ -63,7 +63,8 @@ class ContextNoErrorTest31 : public ContextNoErrorTest
     GLuint mPipeline;
 };
 
-void ContextNoErrorTest31::bindProgramPipeline(const GLchar *vertString, const GLchar *fragString)
+void ContextNoErrorPPOTest31::bindProgramPipeline(const GLchar *vertString,
+                                                  const GLchar *fragString)
 {
     mVertProg = glCreateShaderProgramv(GL_VERTEX_SHADER, 1, &vertString);
     ASSERT_NE(mVertProg, 0u);
@@ -81,9 +82,9 @@ void ContextNoErrorTest31::bindProgramPipeline(const GLchar *vertString, const G
     EXPECT_GL_NO_ERROR();
 }
 
-void ContextNoErrorTest31::drawQuadWithPPO(const std::string &positionAttribName,
-                                           const GLfloat positionAttribZ,
-                                           const GLfloat positionAttribXYScale)
+void ContextNoErrorPPOTest31::drawQuadWithPPO(const std::string &positionAttribName,
+                                              const GLfloat positionAttribZ,
+                                              const GLfloat positionAttribXYScale)
 {
     glUseProgram(0);
 
@@ -139,16 +140,12 @@ TEST_P(ContextNoErrorTest, DetachAfterLink)
 }
 
 // Tests that we can draw with a program pipeline when GL_KHR_no_error is enabled.
-TEST_P(ContextNoErrorTest31, DrawWithPPO)
+TEST_P(ContextNoErrorPPOTest31, DrawWithPPO)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_no_error"));
 
     // Only the Vulkan backend supports PPOs
     ANGLE_SKIP_TEST_IF(!IsVulkan());
-
-    // TODO(http://anglebug.com/5102): Linking PPOs is currently done during draw call validation,
-    // so drawing with a PPO fails without validation enabled.
-    ANGLE_SKIP_TEST_IF(IsGLExtensionEnabled("GL_KHR_no_error"));
 
     // Create two separable program objects from a
     // single source string respectively (vertSrc and fragSrc)
@@ -160,6 +157,173 @@ TEST_P(ContextNoErrorTest31, DrawWithPPO)
     drawQuadWithPPO("a_position", 0.5f, 1.0f);
     ASSERT_GL_NO_ERROR();
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+}
+
+// Test drawing with program and then with PPO to make sure it resolves linking of both the program
+// and the PPO with a no error context.
+TEST_P(ContextNoErrorPPOTest31, DrawWithProgramThenPPO)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_no_error"));
+
+    // Only the Vulkan backend supports PPOs
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    ANGLE_GL_PROGRAM(simpleProgram, essl31_shaders::vs::Simple(), essl31_shaders::fs::Red());
+    ASSERT_NE(simpleProgram.get(), 0u);
+    EXPECT_GL_NO_ERROR();
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString = essl31_shaders::vs::Simple();
+    const GLchar *fragString = essl31_shaders::fs::Green();
+
+    // Bind the PPO
+    bindProgramPipeline(vertString, fragString);
+
+    // Bind the program
+    glUseProgram(simpleProgram);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw and expect red since program overrides PPO
+    drawQuad(simpleProgram.get(), essl31_shaders::PositionAttrib(), 0.5f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Unbind the program
+    glUseProgram(0);
+    EXPECT_GL_NO_ERROR();
+
+    // Draw and expect green
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
+    EXPECT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test glUseProgramStages with different programs
+TEST_P(ContextNoErrorPPOTest31, UseProgramStagesWithDifferentPrograms)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_no_error"));
+
+    // Only the Vulkan backend supports PPOs
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString  = essl31_shaders::vs::Simple();
+    const GLchar *fragString1 = R"(#version 310 es
+precision highp float;
+uniform float redColorIn;
+uniform float greenColorIn;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(redColorIn, greenColorIn, 0.0, 1.0);
+})";
+    const GLchar *fragString2 = R"(#version 310 es
+precision highp float;
+uniform float greenColorIn;
+uniform float blueColorIn;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(0.0, greenColorIn, blueColorIn, 1.0);
+})";
+
+    bindProgramPipeline(vertString, fragString1);
+
+    // Set the output color to red
+    GLint location = glGetUniformLocation(mFragProg, "redColorIn");
+    glActiveShaderProgram(mPipeline, mFragProg);
+    glUniform1f(location, 1.0);
+    location = glGetUniformLocation(mFragProg, "greenColorIn");
+    glActiveShaderProgram(mPipeline, mFragProg);
+    glUniform1f(location, 0.0);
+
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    GLuint fragProg;
+    fragProg = glCreateShaderProgramv(GL_FRAGMENT_SHADER, 1, &fragString2);
+    ASSERT_NE(fragProg, 0u);
+    EXPECT_GL_NO_ERROR();
+
+    glUseProgramStages(mPipeline, GL_FRAGMENT_SHADER_BIT, fragProg);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Set the output color to blue
+    location = glGetUniformLocation(fragProg, "greenColorIn");
+    glActiveShaderProgram(mPipeline, fragProg);
+    glUniform1f(location, 0.0);
+    location = glGetUniformLocation(fragProg, "blueColorIn");
+    glActiveShaderProgram(mPipeline, fragProg);
+    glUniform1f(location, 1.0);
+
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::blue);
+
+    glUseProgramStages(mPipeline, GL_FRAGMENT_SHADER_BIT, mFragProg);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glDeleteProgram(mVertProg);
+    glDeleteProgram(mFragProg);
+    glDeleteProgram(fragProg);
+}
+
+// Test glUseProgramStages with repeated calls to glUseProgramStages with the same programs.
+TEST_P(ContextNoErrorPPOTest31, RepeatedCallToUseProgramStagesWithSamePrograms)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_KHR_no_error"));
+
+    // Only the Vulkan backend supports PPOs
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString = essl31_shaders::vs::Simple();
+    const GLchar *fragString = R"(#version 310 es
+precision highp float;
+uniform float redColorIn;
+uniform float greenColorIn;
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(redColorIn, greenColorIn, 0.0, 1.0);
+})";
+
+    bindProgramPipeline(vertString, fragString);
+
+    // Set the output color to red
+    GLint location = glGetUniformLocation(mFragProg, "redColorIn");
+    glActiveShaderProgram(mPipeline, mFragProg);
+    glUniform1f(location, 1.0);
+    location = glGetUniformLocation(mFragProg, "greenColorIn");
+    glActiveShaderProgram(mPipeline, mFragProg);
+    glUniform1f(location, 0.0);
+
+    // These following calls to glUseProgramStages should not cause a re-link.
+    glUseProgramStages(mPipeline, GL_VERTEX_SHADER_BIT, mVertProg);
+    EXPECT_GL_NO_ERROR();
+    glUseProgramStages(mPipeline, GL_FRAGMENT_SHADER_BIT, mFragProg);
+    EXPECT_GL_NO_ERROR();
+
+    drawQuadWithPPO("a_position", 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    glDeleteProgram(mVertProg);
+    glDeleteProgram(mFragProg);
 }
 
 // Tests that an incorrect enum to GetInteger does not cause an application crash.
@@ -190,5 +354,5 @@ TEST_P(ContextNoErrorTest, InvalidTextureType)
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(ContextNoErrorTest);
 
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ContextNoErrorTest31);
-ANGLE_INSTANTIATE_TEST_ES31(ContextNoErrorTest31);
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ContextNoErrorPPOTest31);
+ANGLE_INSTANTIATE_TEST_ES31(ContextNoErrorPPOTest31);

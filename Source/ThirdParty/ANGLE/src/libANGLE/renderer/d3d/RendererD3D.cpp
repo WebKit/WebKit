@@ -152,6 +152,16 @@ const gl::Limitations &RendererD3D::getNativeLimitations() const
     return mNativeLimitations;
 }
 
+ShPixelLocalStorageType RendererD3D::getNativePixelLocalStorageType() const
+{
+    if (!getNativeExtensions().shaderPixelLocalStorageANGLE)
+    {
+        return ShPixelLocalStorageType::NotSupported;
+    }
+    // Read/write UAVs only support "r32*" images.
+    return ShPixelLocalStorageType::ImageStoreR32PackedFormats;
+}
+
 Serial RendererD3D::generateSerial()
 {
     return mSerialFactory.generate();

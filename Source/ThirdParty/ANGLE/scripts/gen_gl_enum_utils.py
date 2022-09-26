@@ -119,7 +119,7 @@ def dump_value_to_string_mapping(enum_groups, api_enum):
             continue
 
         # sort according values
-        string_value_pairs.sort(key=lambda x: (x[1], x[0]))
+        string_value_pairs.sort(key=lambda x: (x[1], len(x[0]), x[0]))
 
         # remove all duplicate values from the pairs list
         # some value may have more than one GLenum mapped to them, such as:

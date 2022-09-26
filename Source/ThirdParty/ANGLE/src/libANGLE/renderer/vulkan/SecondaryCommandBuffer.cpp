@@ -136,6 +136,8 @@ const char *GetCommandString(CommandID id)
             return "SetFrontFace";
         case CommandID::SetLineWidth:
             return "SetLineWidth";
+        case CommandID::SetLogicOp:
+            return "SetLogicOp";
         case CommandID::SetPrimitiveRestartEnable:
             return "SetPrimitiveRestartEnable";
         case CommandID::SetRasterizerDiscardEnable:
@@ -658,6 +660,12 @@ void SecondaryCommandBuffer::executeCommands(PrimaryCommandBuffer *primary)
                     const SetLineWidthParams *params =
                         getParamPtr<SetLineWidthParams>(currentCommand);
                     vkCmdSetLineWidth(cmdBuffer, params->lineWidth);
+                    break;
+                }
+                case CommandID::SetLogicOp:
+                {
+                    const SetLogicOpParams *params = getParamPtr<SetLogicOpParams>(currentCommand);
+                    vkCmdSetLogicOpEXT(cmdBuffer, params->logicOp);
                     break;
                 }
                 case CommandID::SetPrimitiveRestartEnable:

@@ -65,8 +65,8 @@ struct PlatformParameters
         eglParameters.disable(feature);
         return *this;
     }
-    bool isEnabled(Feature feature) const;
-    bool isDisabled(Feature feature) const;
+    bool isEnableRequested(Feature feature) const;
+    bool isDisableRequested(Feature feature) const;
 
     GLESDriverType driver;
     bool noFixture;

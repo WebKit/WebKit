@@ -1464,6 +1464,12 @@ VkStencilOp GetStencilOp(GLenum compareOp)
     }
 }
 
+VkLogicOp GetLogicOp(const GLenum logicOp)
+{
+    // GL's logic op values are 0x1500 + op, where op is the same value as Vulkan's VkLogicOp.
+    return static_cast<VkLogicOp>(logicOp - GL_CLEAR);
+}
+
 void GetOffset(const gl::Offset &glOffset, VkOffset3D *vkOffset)
 {
     vkOffset->x = glOffset.x;

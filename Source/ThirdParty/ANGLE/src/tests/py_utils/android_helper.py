@@ -22,6 +22,10 @@ import time
 import angle_path_util
 
 
+# Currently we only support a single test package name.
+TEST_PACKAGE_NAME = 'com.android.angle.test'
+
+
 class _Global(object):
     initialized = False
     is_android = False
@@ -32,13 +36,42 @@ def _ApkPath(suite_name):
     return os.path.join('%s_apk' % suite_name, '%s-debug.apk' % suite_name)
 
 
+@functools.lru_cache()
+def _FindAapt():
+    build_tools = (
+        pathlib.Path(angle_path_util.ANGLE_ROOT_DIR) / 'third_party' / 'android_sdk' / 'public' /
+        'build-tools' / '33.0.0')
+    aapt = str(build_tools / 'aapt') if build_tools.exists() else 'aapt'
+    aapt_info = subprocess.check_output([aapt, 'version']).decode()
+    logging.info('aapt version: %s', aapt_info.strip())
+    return aapt
+
+
+def _RemovePrefix(str, prefix):
+    assert str.startswith(prefix)
+    return str[len(prefix):]
+
+
+def _FindPackageName(apk_path):
+    aapt = _FindAapt()
+    badging = subprocess.check_output([aapt, 'dump', 'badging', apk_path]).decode()
+    package_name = next(
+        _RemovePrefix(item, 'name=').strip('\'')
+        for item in badging.split()
+        if item.startswith('name='))
+    logging.debug('Package name: %s' % package_name)
+    return package_name
+
+
 def Initialize(suite_name):
     if _Global.initialized:
         return
 
-    if os.path.exists(_ApkPath(suite_name)):
+    apk_path = _ApkPath(suite_name)
+    if os.path.exists(apk_path):
         _Global.is_android = True
         _GetAdbRoot()
+        assert _FindPackageName(apk_path) == TEST_PACKAGE_NAME
 
     _Global.initialized = True
 
@@ -73,15 +106,9 @@ def _FindAdb():
     platform_tools = (
         pathlib.Path(angle_path_util.ANGLE_ROOT_DIR) / 'third_party' / 'android_sdk' / 'public' /
         'platform-tools')
-
-    if platform_tools.exists():
-        adb = str(platform_tools / 'adb')
-    else:
-        adb = 'adb'
-
-    adb_info = subprocess.check_output([adb, '--version']).decode()
+    adb = str(platform_tools / 'adb') if platform_tools.exists() else 'adb'
+    adb_info = ', '.join(subprocess.check_output([adb, '--version']).decode().strip().split('\n'))
     logging.info('adb --version: %s', adb_info)
-
     return adb
 
 
@@ -133,32 +160,14 @@ def _AddRestrictedTracesJson():
     _AdbShell('r=/sdcard/chromium_tests_root; tar -xf $r/t.tar -C $r/ && rm $r/t.tar')
 
 
-def _PrepareTestSuite(suite_name):
-    apk_path = _ApkPath(suite_name)
-    logging.info('Installing apk path=%s size=%s' % (apk_path, os.path.getsize(apk_path)))
-
-    _AdbRun(['install', '-r', '-d', apk_path])
-
-    permissions = [
-        'android.permission.CAMERA', 'android.permission.CHANGE_CONFIGURATION',
-        'android.permission.READ_EXTERNAL_STORAGE', 'android.permission.RECORD_AUDIO',
-        'android.permission.WRITE_EXTERNAL_STORAGE'
-    ]
-    _AdbShell('p=com.android.angle.test;'
-              'for q in %s;do pm grant "$p" "$q";done;' % ' '.join(permissions))
-
-    _AdbShell('appops set com.android.angle.test MANAGE_EXTERNAL_STORAGE allow || true')
-
-    _AdbShell('mkdir -p /sdcard/chromium_tests_root/')
-
-    if suite_name == 'angle_perftests':
-        _AddRestrictedTracesJson()
-
-    if suite_name == 'angle_end2end_tests':
-        _AdbRun([
-            'push', '../../src/tests/angle_end2end_tests_expectations.txt',
-            '/sdcard/chromium_tests_root/src/tests/angle_end2end_tests_expectations.txt'
-        ])
+def _GetDeviceApkPath():
+    pm_path = _AdbShell('pm path %s || true' % TEST_PACKAGE_NAME).decode().strip()
+    if not pm_path:
+        logging.debug('No installed path found for %s' % TEST_PACKAGE_NAME)
+        return None
+    device_apk_path = _RemovePrefix(pm_path, 'package:')
+    logging.debug('Device APK path is %s' % device_apk_path)
+    return device_apk_path
 
 
 def _CompareHashes(local_path, device_path):
@@ -172,6 +181,39 @@ def _CompareHashes(local_path, device_path):
         for data in iter(lambda: f.read(65536), b''):
             h.update(data)
     return h.hexdigest() == device_hash
+
+
+def _PrepareTestSuite(suite_name):
+    apk_path = _ApkPath(suite_name)
+    device_apk_path = _GetDeviceApkPath()
+
+    if device_apk_path and _CompareHashes(apk_path, device_apk_path):
+        logging.info('Skipping APK install because host and device hashes match')
+    else:
+        logging.info('Installing apk path=%s size=%s' % (apk_path, os.path.getsize(apk_path)))
+        _AdbRun(['install', '-r', '-d', apk_path])
+
+    permissions = [
+        'android.permission.CAMERA', 'android.permission.CHANGE_CONFIGURATION',
+        'android.permission.READ_EXTERNAL_STORAGE', 'android.permission.RECORD_AUDIO',
+        'android.permission.WRITE_EXTERNAL_STORAGE'
+    ]
+    _AdbShell('p=%s;'
+              'for q in %s;do pm grant "$p" "$q";done;' %
+              (TEST_PACKAGE_NAME, ' '.join(permissions)))
+
+    _AdbShell('appops set %s MANAGE_EXTERNAL_STORAGE allow || true' % TEST_PACKAGE_NAME)
+
+    _AdbShell('mkdir -p /sdcard/chromium_tests_root/')
+
+    if suite_name == 'angle_perftests':
+        _AddRestrictedTracesJson()
+
+    if suite_name == 'angle_end2end_tests':
+        _AdbRun([
+            'push', '../../src/tests/angle_end2end_tests_expectations.txt',
+            '/sdcard/chromium_tests_root/src/tests/angle_end2end_tests_expectations.txt'
+        ])
 
 
 def PrepareRestrictedTraces(traces, check_hash=False):
@@ -229,7 +271,7 @@ def _TempLocalFile():
 def _RunInstrumentation(flags):
     with _TempDeviceFile() as temp_device_file:
         cmd = ' '.join([
-            'p=com.android.angle.test;',
+            'p=%s;' % TEST_PACKAGE_NAME,
             'ntr=org.chromium.native_test.NativeTestInstrumentationTestRunner;',
             'am instrument -w',
             '-e $ntr.NativeTestActivity "$p".AngleUnitTestActivity',

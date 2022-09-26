@@ -261,6 +261,9 @@ class StateManagerGL final : angle::NonCopyable
 
     void setClipDistancesEnable(const gl::State::ClipDistanceEnableBits &enables);
 
+    void setLogicOpEnabled(bool enabled);
+    void setLogicOp(gl::LogicalOperation opcode);
+
     void pauseTransformFeedback();
     angle::Result pauseAllQueries(const gl::Context *context);
     angle::Result pauseQuery(const gl::Context *context, gl::QueryType type);
@@ -513,7 +516,11 @@ class StateManagerGL final : angle::NonCopyable
     gl::State::ClipDistanceEnableBits mEnabledClipDistances;
     const size_t mMaxClipDistances;
 
+    bool mLogicOpEnabled;
+    gl::LogicalOperation mLogicOp;
+
     gl::State::DirtyBits mLocalDirtyBits;
+    gl::State::ExtendedDirtyBits mLocalExtendedDirtyBits;
     gl::AttributesMask mLocalDirtyCurrentValues;
 };
 

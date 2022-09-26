@@ -948,6 +948,32 @@ void GL_APIENTRY GL_VertexAttribDivisorANGLE(GLuint index, GLuint divisor)
     }
 }
 
+// GL_ANGLE_logic_op
+void GL_APIENTRY GL_LogicOpANGLE(GLenum opcode)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLLogicOpANGLE, "context = %d, opcode = %s", CID(context),
+          GLenumToString(GLESEnum::LogicOp, opcode));
+
+    if (context)
+    {
+        LogicalOperation opcodePacked = PackParam<LogicalOperation>(opcode);
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateLogicOpANGLE(context, angle::EntryPoint::GLLogicOpANGLE, opcodePacked));
+        if (isCallValid)
+        {
+            context->logicOpANGLE(opcodePacked);
+        }
+        ANGLE_CAPTURE_GL(LogicOpANGLE, isCallValid, context, opcodePacked);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
 // GL_ANGLE_memory_object_flags
 void GL_APIENTRY GL_TexStorageMemFlags2DANGLE(GLenum target,
                                               GLsizei levels,
@@ -3672,6 +3698,142 @@ void GL_APIENTRY GL_ImportSemaphoreZirconHandleANGLE(GLuint semaphore,
         }
         ANGLE_CAPTURE_GL(ImportSemaphoreZirconHandleANGLE, isCallValid, context, semaphorePacked,
                          handleTypePacked, handle);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+// GL_ANGLE_shader_pixel_local_storage
+void GL_APIENTRY GL_FramebufferMemorylessPixelLocalStorageANGLE(GLint plane, GLenum internalformat)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLFramebufferMemorylessPixelLocalStorageANGLE,
+          "context = %d, plane = %d, internalformat = %s", CID(context), plane,
+          GLenumToString(GLESEnum::AllEnums, internalformat));
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateFramebufferMemorylessPixelLocalStorageANGLE(
+                 context, angle::EntryPoint::GLFramebufferMemorylessPixelLocalStorageANGLE, plane,
+                 internalformat));
+        if (isCallValid)
+        {
+            context->framebufferMemorylessPixelLocalStorage(plane, internalformat);
+        }
+        ANGLE_CAPTURE_GL(FramebufferMemorylessPixelLocalStorageANGLE, isCallValid, context, plane,
+                         internalformat);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_FramebufferTexturePixelLocalStorageANGLE(GLint plane,
+                                                             GLuint backingtexture,
+                                                             GLint level,
+                                                             GLint layer)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLFramebufferTexturePixelLocalStorageANGLE,
+          "context = %d, plane = %d, backingtexture = %u, level = %d, layer = %d", CID(context),
+          plane, backingtexture, level, layer);
+
+    if (context)
+    {
+        TextureID backingtexturePacked = PackParam<TextureID>(backingtexture);
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             ValidateFramebufferTexturePixelLocalStorageANGLE(
+                 context, angle::EntryPoint::GLFramebufferTexturePixelLocalStorageANGLE, plane,
+                 backingtexturePacked, level, layer));
+        if (isCallValid)
+        {
+            context->framebufferTexturePixelLocalStorage(plane, backingtexturePacked, level, layer);
+        }
+        ANGLE_CAPTURE_GL(FramebufferTexturePixelLocalStorageANGLE, isCallValid, context, plane,
+                         backingtexturePacked, level, layer);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_BeginPixelLocalStorageANGLE(GLsizei planes,
+                                                const GLenum *loadops,
+                                                const void *cleardata)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLBeginPixelLocalStorageANGLE,
+          "context = %d, planes = %d, loadops = 0x%016" PRIxPTR ", cleardata = 0x%016" PRIxPTR "",
+          CID(context), planes, (uintptr_t)loadops, (uintptr_t)cleardata);
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateBeginPixelLocalStorageANGLE(
+                                context, angle::EntryPoint::GLBeginPixelLocalStorageANGLE, planes,
+                                loadops, cleardata));
+        if (isCallValid)
+        {
+            context->beginPixelLocalStorage(planes, loadops, cleardata);
+        }
+        ANGLE_CAPTURE_GL(BeginPixelLocalStorageANGLE, isCallValid, context, planes, loadops,
+                         cleardata);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_EndPixelLocalStorageANGLE()
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLEndPixelLocalStorageANGLE, "context = %d", CID(context));
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateEndPixelLocalStorageANGLE(
+                                context, angle::EntryPoint::GLEndPixelLocalStorageANGLE));
+        if (isCallValid)
+        {
+            context->endPixelLocalStorage();
+        }
+        ANGLE_CAPTURE_GL(EndPixelLocalStorageANGLE, isCallValid, context);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+}
+
+void GL_APIENTRY GL_PixelLocalStorageBarrierANGLE()
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLPixelLocalStorageBarrierANGLE, "context = %d", CID(context));
+
+    if (context)
+    {
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid = (context->skipValidation() ||
+                            ValidatePixelLocalStorageBarrierANGLE(
+                                context, angle::EntryPoint::GLPixelLocalStorageBarrierANGLE));
+        if (isCallValid)
+        {
+            context->pixelLocalStorageBarrier();
+        }
+        ANGLE_CAPTURE_GL(PixelLocalStorageBarrierANGLE, isCallValid, context);
     }
     else
     {
@@ -9357,6 +9519,8 @@ void GL_APIENTRY GL_EGLImageTargetTexture2DOES(GLenum target, GLeglImageOES imag
 // GL_OES_EGL_image_external_essl3
 
 // GL_OES_compressed_ETC1_RGB8_texture
+
+// GL_OES_compressed_paletted_texture
 
 // GL_OES_copy_image
 void GL_APIENTRY GL_CopyImageSubDataOES(GLuint srcName,

@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 305
+#define ANGLE_SH_VERSION 306
 
 enum ShShaderSpec
 {
@@ -79,11 +79,20 @@ enum ShShaderOutput
     SH_MSL_METAL_OUTPUT = 0x8B4D,
 };
 
+// For ANGLE_shader_pixel_local_storage.
+// Instructs the compiler which pixel local storage configuration to generate code for.
+enum class ShPixelLocalStorageType
+{
+    NotSupported,
+    ImageStoreR32PackedFormats,
+    ImageStoreNativeFormats,
+};
+
 // For ANGLE_shader_pixel_local_storage_coherent.
 // Instructs the compiler which fragment synchronization method to use, if any.
 enum class ShFragmentSynchronizationType
 {
-    NoSynchronization,
+    NotSupported,
 
     FragmentShaderInterlock_NV_GL,
     FragmentShaderOrdering_INTEL_GL,
@@ -110,8 +119,10 @@ struct ShCompileOptionsMetal
 
 struct ShCompileOptionsPLS
 {
+    ShPixelLocalStorageType type = ShPixelLocalStorageType::NotSupported;
     // For ANGLE_shader_pixel_local_storage_coherent.
-    ShFragmentSynchronizationType fragmentSynchronizationType;
+    ShFragmentSynchronizationType fragmentSynchronizationType =
+        ShFragmentSynchronizationType::NotSupported;
 };
 
 struct ShCompileOptions
