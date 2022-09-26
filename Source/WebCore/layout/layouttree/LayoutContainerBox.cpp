@@ -87,37 +87,31 @@ const Box* ContainerBox::lastInFlowOrFloatingChild() const
 void ContainerBox::appendChild(UniqueRef<Box> childRef)
 {
     auto childBox = childRef.moveToUniquePtr();
+    ASSERT(!childBox->m_parent);
+    ASSERT(!childBox->m_previousSibling);
+    ASSERT(!childBox->m_nextSibling);
 
-    childBox->setParent(this);
+    childBox->m_parent = this;
+    childBox->m_previousSibling = m_lastChild;
 
-    if (m_lastChild) {
-        m_lastChild->setNextSibling(childBox.get());
-        childBox->setPreviousSibling(m_lastChild.get());
-    } else
-        m_firstChild = childBox.get();
+    auto& nextOrFirst = m_lastChild ? m_lastChild->m_nextSibling : m_firstChild;
+    ASSERT(!nextOrFirst);
 
-    // Ownership has been transferred.
-    m_lastChild = childBox.release();
+    m_lastChild = childBox.get();
+    nextOrFirst = WTFMove(childBox);
 }
 
 void ContainerBox::destroyChildren()
 {
-    std::unique_ptr<Box> childToDestroy { m_firstChild.get() };
-    
-    m_firstChild = nullptr;
     m_lastChild = nullptr;
 
+    auto childToDestroy = std::exchange(m_firstChild, nullptr);
     while (childToDestroy) {
-        childToDestroy->setParent(nullptr);
-
-        std::unique_ptr<Box> nextSibling { childToDestroy->nextSibling() };
-
-        if (nextSibling) {
-            childToDestroy->setNextSibling(nullptr);
-            nextSibling->setPreviousSibling(nullptr);
-        }
-
-        childToDestroy = WTFMove(nextSibling);
+        childToDestroy->m_parent = nullptr;
+        childToDestroy->m_previousSibling = nullptr;
+        if (childToDestroy->m_nextSibling)
+            childToDestroy->m_nextSibling->m_previousSibling = nullptr;
+        childToDestroy = std::exchange(childToDestroy->m_nextSibling, nullptr);
     }
 }
 

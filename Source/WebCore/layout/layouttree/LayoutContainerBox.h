@@ -64,7 +64,7 @@ public:
 private:
     friend class Box;
     
-    CheckedPtr<Box> m_firstChild;
+    std::unique_ptr<Box> m_firstChild;
     CheckedPtr<Box> m_lastChild;
 
     std::optional<LayoutUnit> m_baselineForIntegration;

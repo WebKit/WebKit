@@ -187,10 +187,6 @@ protected:
 private:
     friend class ContainerBox;
 
-    void setParent(ContainerBox*);
-    void setNextSibling(Box*);
-    void setPreviousSibling(Box*);
-
     class BoxRareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -217,9 +213,10 @@ private:
     std::optional<ElementAttributes> m_elementAttributes;
 
     CheckedPtr<ContainerBox> m_parent;
-    CheckedPtr<Box> m_previousSibling;
-    CheckedPtr<Box> m_nextSibling;
     
+    std::unique_ptr<Box> m_nextSibling;
+    CheckedPtr<Box> m_previousSibling;
+
     // First LayoutState gets a direct cache.
     mutable WeakPtr<LayoutState> m_cachedLayoutState;
     mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForLayoutState;
