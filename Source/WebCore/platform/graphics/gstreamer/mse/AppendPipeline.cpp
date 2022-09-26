@@ -793,7 +793,7 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
         if (peer.get() != demuxerSrcPad) {
             GST_DEBUG_OBJECT(peer.get(), "Unlinking from track %s", matchingTrack->trackId.string().ascii().data());
             gst_pad_unlink(peer.get(), matchingTrack->entryPad.get());
-            matchingTrack->emplaceOptionalParserForFormat(this, GST_BIN(m_pipeline.get()), parsedCaps);
+            matchingTrack->emplaceOptionalParserForFormat(GST_BIN_CAST(m_pipeline.get()), parsedCaps);
             linkPadWithTrack(demuxerSrcPad, *matchingTrack);
             matchingTrack->caps = WTFMove(parsedCaps);
             matchingTrack->presentationSize = presentationSize;
@@ -852,8 +852,7 @@ Ref<WebCore::TrackPrivateBase> AppendPipeline::makeWebKitTrack(int trackIndex)
     return track.releaseNonNull();
 }
 
-
-void AppendPipeline::Track::emplaceOptionalParserForFormat(AppendPipeline* appendPipeline, GstBin* bin, const GRefPtr<GstCaps>& newCaps)
+void AppendPipeline::Track::emplaceOptionalParserForFormat(GstBin* bin, const GRefPtr<GstCaps>& newCaps)
 {
     // Some audio files unhelpfully omit the duration of frames in the container. We need to parse
     // the contained audio streams in order to know the duration of the frames.
@@ -908,7 +907,7 @@ void AppendPipeline::Track::initializeElements(AppendPipeline* appendPipeline, G
     appsinkPadEventProbeInformation.probeId = gst_pad_add_probe(appsinkPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(appendPipelineAppsinkPadEventProbe), &appsinkPadEventProbeInformation, nullptr);
 #endif
 
-    emplaceOptionalParserForFormat(appendPipeline, bin, caps);
+    emplaceOptionalParserForFormat(bin, caps);
 }
 
 void AppendPipeline::hookTrackEvents(Track& track)
