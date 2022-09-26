@@ -251,6 +251,7 @@ UIProcess/API/C/WKUserScriptRef.cpp
 UIProcess/API/C/cg/WKIconDatabaseCG.cpp
 
 UIProcess/API/C/mac/WKContextPrivateMac.mm
+UIProcess/API/C/mac/WKFrameMac.cpp
 UIProcess/API/C/mac/WKNotificationPrivateMac.mm
 UIProcess/API/C/mac/WKPagePrivateMac.mm
 UIProcess/API/C/mac/WKProtectionSpaceNS.mm

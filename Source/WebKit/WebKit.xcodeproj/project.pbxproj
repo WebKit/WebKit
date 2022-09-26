@@ -1272,6 +1272,7 @@
 		5CD286551E7235B80094FDC8 /* WKContentRuleListInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD2864C1E722F440094FDC8 /* WKContentRuleListInternal.h */; };
 		5CD286571E7235C90094FDC8 /* WKContentRuleListStoreInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD2864F1E722F440094FDC8 /* WKContentRuleListStoreInternal.h */; };
 		5CD286581E7235D10094FDC8 /* WKContentRuleListStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CD286501E722F440094FDC8 /* WKContentRuleListStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5CE3491228E2396900196304 /* WKFrameMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE3491028E238E400196304 /* WKFrameMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CE85B201C88E64B0070BFCE /* PingLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CE85B1F1C88E6430070BFCE /* PingLoad.h */; };
 		5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120C2293C1E0005BEC78 /* WKMain.mm */; };
 		5CE912102293C277005BEC78 /* AuxiliaryProcessMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9120F2293C25F005BEC78 /* AuxiliaryProcessMain.cpp */; };
@@ -5414,6 +5415,8 @@
 		5CE0C369229F2D4A003695F0 /* WKContextMenuElementInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfo.h; sourceTree = "<group>"; };
 		5CE0C36A229F2D4A003695F0 /* WKContextMenuElementInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfoPrivate.h; sourceTree = "<group>"; };
 		5CE0C36B229F2D4B003695F0 /* WKContextMenuElementInfoInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKContextMenuElementInfoInternal.h; sourceTree = "<group>"; };
+		5CE3491028E238E400196304 /* WKFrameMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFrameMac.h; path = mac/WKFrameMac.h; sourceTree = "<group>"; };
+		5CE3491128E2390200196304 /* WKFrameMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WKFrameMac.cpp; path = mac/WKFrameMac.cpp; sourceTree = "<group>"; };
 		5CE85B1F1C88E6430070BFCE /* PingLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PingLoad.h; sourceTree = "<group>"; };
 		5CE9120B2293C1E0005BEC78 /* WKMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMain.h; sourceTree = "<group>"; };
 		5CE9120C2293C1E0005BEC78 /* WKMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKMain.mm; sourceTree = "<group>"; };
@@ -11030,6 +11033,8 @@
 			children = (
 				9FB5F393169E6A80002C25BF /* WKContextPrivateMac.h */,
 				9FB5F392169E6A80002C25BF /* WKContextPrivateMac.mm */,
+				5CE3491128E2390200196304 /* WKFrameMac.cpp */,
+				5CE3491028E238E400196304 /* WKFrameMac.h */,
 				6EE849C61368D92D0038D481 /* WKInspectorPrivateMac.h */,
 				519DFBE528138756003FF6AD /* WKNotificationPrivateMac.h */,
 				519DFBE628138756003FF6AD /* WKNotificationPrivateMac.mm */,
@@ -15303,6 +15308,7 @@
 				2DF9EEE81A78245500B6CFBE /* WKFrameInfoInternal.h in Headers */,
 				1A6FA21E1BD0435B00AAA650 /* WKFrameInfoPrivate.h in Headers */,
 				2D3A65E71A7C3AA700CAC637 /* WKFrameInfoRef.h in Headers */,
+				5CE3491228E2396900196304 /* WKFrameMac.h in Headers */,
 				BCB9F6A51123DD0D00A137E0 /* WKFramePolicyListener.h in Headers */,
 				E1AEA22F14687BDB00804569 /* WKFullKeyboardAccessWatcher.h in Headers */,
 				CDC2831D201BD79D00E6E745 /* WKFullscreenStackView.h in Headers */,

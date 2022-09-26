@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,26 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKCredential_h
-#define WKCredential_h
+#ifndef WKFrameMac_h
+#define WKFrameMac_h
 
+#include <Security/SecTrust.h>
 #include <WebKit/WKBase.h>
-#include <WebKit/WKCredentialTypes.h>
-#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKCredentialGetTypeID();
-
-WK_EXPORT WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, WKCredentialPersistence);
-WK_EXPORT WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certificateInfo) WK_C_API_DEPRECATED;
-
-WK_EXPORT WKStringRef WKCredentialCopyUser(WKCredentialRef);
+WK_EXPORT SecTrustRef WKFrameGetServerTrust(WKFrameRef frame);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // WKCredential_h
+#endif /* WKFrameMac_h */
