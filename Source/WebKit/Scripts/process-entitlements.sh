@@ -113,6 +113,7 @@ function mac_process_gpu_entitlements()
             plistbuddy Add :com.apple.private.screencapturekit.sharingsession bool YES
             plistbuddy Add :com.apple.private.tcc.allow array
             plistbuddy Add :com.apple.private.tcc.allow:0 string kTCCServiceScreenCapture
+            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
         plistbuddy Add :com.apple.private.memory.ownership_transfer bool YES
@@ -141,6 +142,11 @@ function mac_process_network_entitlements()
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
             plistbuddy Add :com.apple.security.cs.jit-write-allowlist bool YES
+        fi
+
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 130000 ))
+        then
+            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
         plistbuddy Add :com.apple.private.launchservices.allowedtochangethesekeysinotherapplications array
@@ -180,6 +186,7 @@ function mac_process_webcontent_shared_entitlements()
         then
             plistbuddy Add :com.apple.private.security.mutable-state-flags array
             plistbuddy Add :com.apple.private.security.mutable-state-flags:0 string EnableMachBootstrap
+            plistbuddy Add :com.apple.runningboard.assertions.webkit bool YES
         fi
 
         if [[ "${WK_WEBCONTENT_SERVICE_NEEDS_XPC_DOMAIN_EXTENSION_ENTITLEMENT}" == YES ]]
