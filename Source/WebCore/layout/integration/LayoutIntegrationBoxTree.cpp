@@ -29,7 +29,6 @@
 #include "InlineWalker.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInlineTextBox.h"
-#include "LayoutLineBreakBox.h"
 #include "LayoutListMarkerBox.h"
 #include "LayoutReplacedBox.h"
 #include "RenderBlock.h"
@@ -147,6 +146,7 @@ void BoxTree::buildTreeForInlineContent()
 
         auto style = RenderStyle::clone(childRenderer.style());
         if (childRenderer.isLineBreak()) {
+            bool isWBR = downcast<RenderLineBreak>(childRenderer).isWBR();
             auto adjustStyle = [&] (auto& styleToAdjust) {
                 styleToAdjust.setDisplay(DisplayType::Inline);
                 styleToAdjust.setFloating(Float::None);
@@ -155,14 +155,16 @@ void BoxTree::buildTreeForInlineContent()
                 // Clear property should only apply on block elements, however,
                 // it appears that browsers seem to ignore it on <br> inline elements.
                 // https://drafts.csswg.org/css2/#propdef-clear
-                if (downcast<RenderLineBreak>(childRenderer).isWBR())
+                if (isWBR)
                     styleToAdjust.setClear(Clear::None);
             };
             adjustStyle(style);
             if (firstLineStyle)
                 adjustStyle(*firstLineStyle);
 
-            return makeUnique<Layout::LineBreakBox>(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(style), WTFMove(firstLineStyle));
+
+            auto attributes = Layout::Box::ElementAttributes { isWBR ? Layout::Box::ElementType::WordBreakOpportunity : Layout::Box::ElementType::LineBreak };
+            return makeUnique<Layout::ContainerBox>(attributes, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderListMarker>(childRenderer)) {

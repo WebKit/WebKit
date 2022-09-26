@@ -40,7 +40,6 @@
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
-#include "LayoutLineBreakBox.h"
 #include "LayoutPhase.h"
 #include "LayoutReplacedBox.h"
 #include "LayoutSize.h"
@@ -135,11 +134,6 @@ std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifi
     return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style));
 }
 
-std::unique_ptr<Box> TreeBuilder::createLineBreakBox(bool isOptional, RenderStyle&& style)
-{
-    return makeUnique<Layout::LineBreakBox>(isOptional, WTFMove(style));
-}
-
 std::unique_ptr<ContainerBox> TreeBuilder::createContainer(std::optional<Box::ElementAttributes> elementAttributes, RenderStyle&& style)
 {
     return makeUnique<ContainerBox>(elementAttributes, WTFMove(style));
@@ -182,7 +176,8 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ContainerBox& parentCont
             clonedStyle.setDisplay(DisplayType::Inline);
             clonedStyle.setFloating(Float::None);
             clonedStyle.setPosition(PositionType::Static);
-            childLayoutBox = createLineBreakBox(downcast<RenderLineBreak>(childRenderer).isWBR(), WTFMove(clonedStyle));
+            auto attributes = Layout::Box::ElementAttributes { downcast<RenderLineBreak>(childRenderer).isWBR() ? Box::ElementType::WordBreakOpportunity : Box::ElementType::LineBreak };
+            childLayoutBox = createContainer(attributes, WTFMove(clonedStyle));
         } else if (is<RenderTable>(renderer)) {
             // Construct the principal table wrapper box (and not the table box itself).
             // The computed values of properties 'position', 'float', 'margin-*', 'top', 'right', 'bottom', and 'left' on the table element
@@ -473,7 +468,7 @@ static void outputLayoutBox(TextStream& stream, const Box& layoutBox, const BoxG
         else if (layoutBox.isInlineBlockBox())
             stream << "inline-block box";
         else if (layoutBox.isLineBreakBox())
-            stream << (downcast<LineBreakBox>(layoutBox).isOptional() ? "word break opportunity" : "line break");
+            stream << (layoutBox.isWordBreakOpportunity() ? "word break opportunity" : "line break");
         else if (layoutBox.isAtomicInlineLevelBox())
             stream << "atomic inline level box";
         else if (layoutBox.isReplacedBox())

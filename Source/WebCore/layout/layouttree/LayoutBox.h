@@ -44,13 +44,15 @@ class Box : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
     enum class ElementType {
+        GenericElement,
         Document,
         Body,
         TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes.
         TableBox, // The table box is a block-level box that contains the table's internal table boxes.
         Image,
         IFrame,
-        GenericElement
+        LineBreak,
+        WordBreakOpportunity,
     };
 
     struct ElementAttributes {
@@ -60,11 +62,10 @@ public:
     enum BaseTypeFlag {
         BoxFlag                    = 1 << 0,
         InlineTextBoxFlag          = 1 << 1,
-        LineBreakBoxFlag           = 1 << 2,
-        ListMarkerBoxFlag          = 1 << 3,
-        ReplacedBoxFlag            = 1 << 4,
-        InitialContainingBlockFlag = 1 << 5,
-        ContainerBoxFlag           = 1 << 6
+        ListMarkerBoxFlag          = 1 << 2,
+        ReplacedBoxFlag            = 1 << 3,
+        InitialContainingBlockFlag = 1 << 4,
+        ContainerBoxFlag           = 1 << 5
     };
 
     virtual ~Box();
@@ -129,6 +130,9 @@ public:
     bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
     bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
     bool isInternalRubyBox() const { return false; }
+    bool isLineBreakBox() const { return m_elementAttributes && (m_elementAttributes.value().elementType == ElementType::LineBreak || m_elementAttributes.value().elementType == ElementType::WordBreakOpportunity); }
+    bool isWordBreakOpportunity() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::WordBreakOpportunity; }
+
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
 
     const ContainerBox& parent() const { return *m_parent; }
@@ -145,7 +149,6 @@ public:
 
     bool isContainerBox() const { return baseTypeFlags().contains(ContainerBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
-    bool isLineBreakBox() const { return baseTypeFlags().contains(LineBreakBoxFlag); }
     bool isReplacedBox() const { return baseTypeFlags().contains(ReplacedBoxFlag); }
     bool isListMarkerBox() const { return baseTypeFlags().contains(ListMarkerBoxFlag); }
 

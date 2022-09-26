@@ -42,7 +42,6 @@
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
-#include "LayoutLineBreakBox.h"
 #include "LayoutReplacedBox.h"
 #include "LayoutState.h"
 #include "Logging.h"
