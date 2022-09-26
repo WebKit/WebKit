@@ -158,7 +158,8 @@ StateManagerGL::StateManagerGL(const FunctionsGL *functions,
       mIsMultiviewEnabled(extensions.multiviewOVR || extensions.multiview2OVR),
       mProvokingVertex(GL_LAST_VERTEX_CONVENTION),
       mMaxClipDistances(rendererCaps.maxClipDistances),
-      mLocalDirtyBits()
+      mLogicOpEnabled(false),
+      mLogicOp(gl::LogicalOperation::Copy)
 {
     ASSERT(mFunctions);
     ASSERT(rendererCaps.maxViews >= 1u);
@@ -2175,12 +2176,40 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                 setProvokingVertex(ToGLenum(state.getProvokingVertex()));
                 break;
             case gl::State::DIRTY_BIT_EXTENDED:
-                // Handling clip distance enabled flags:
-                setClipDistancesEnable(state.getEnabledClipDistances());
-                // TODO(jmadill): handle mipmap generation hint
-                // TODO(jmadill): handle shader derivative hint
-                // Nothing to do until EXT_clip_contorl is implemented.
+            {
+                const gl::State::ExtendedDirtyBits extendedDirtyBits =
+                    state.getAndResetExtendedDirtyBits();
+                const gl::State::ExtendedDirtyBits glAndLocalExtendedDirtyBits =
+                    extendedDirtyBits | mLocalExtendedDirtyBits;
+                for (size_t extendedDirtyBit : glAndLocalExtendedDirtyBits)
+                {
+                    switch (extendedDirtyBit)
+                    {
+                        case gl::State::EXTENDED_DIRTY_BIT_CLIP_DISTANCES:
+                            setClipDistancesEnable(state.getEnabledClipDistances());
+                            break;
+                        case gl::State::EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED:
+                            setLogicOpEnabled(state.isLogicOpEnabled());
+                            break;
+                        case gl::State::EXTENDED_DIRTY_BIT_LOGIC_OP:
+                            setLogicOp(state.getLogicOp());
+                            break;
+                        case gl::State::EXTENDED_DIRTY_BIT_MIPMAP_GENERATION_HINT:
+                        case gl::State::EXTENDED_DIRTY_BIT_SHADER_DERIVATIVE_HINT:
+                            // These hints aren't forwarded to GL yet.
+                            break;
+                        case gl::State::EXTENDED_DIRTY_BIT_CLIP_CONTROL:
+                        case gl::State::EXTENDED_DIRTY_BIT_SHADING_RATE:
+                            // Unimplemented extensions.
+                            break;
+                        default:
+                            UNREACHABLE();
+                            break;
+                    }
+                    mLocalExtendedDirtyBits &= ~extendedDirtyBits;
+                }
                 break;
+            }
             case gl::State::DIRTY_BIT_SAMPLE_SHADING:
                 // Nothing to do until OES_sample_shading is implemented.
                 break;
@@ -2193,7 +2222,7 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
         }
     }
 
-    mLocalDirtyBits &= ~(bitMask);
+    mLocalDirtyBits &= ~bitMask;
 
     return angle::Result::Continue;
 }
@@ -2405,6 +2434,42 @@ void StateManagerGL::setClipDistancesEnable(const gl::State::ClipDistanceEnableB
 
     mEnabledClipDistances = enables;
     mLocalDirtyBits.set(gl::State::DIRTY_BIT_EXTENDED);
+    mLocalExtendedDirtyBits.set(gl::State::EXTENDED_DIRTY_BIT_CLIP_DISTANCES);
+}
+
+void StateManagerGL::setLogicOpEnabled(bool enabled)
+{
+    if (enabled == mLogicOpEnabled)
+    {
+        return;
+    }
+    mLogicOpEnabled = enabled;
+
+    if (enabled)
+    {
+        mFunctions->enable(GL_COLOR_LOGIC_OP);
+    }
+    else
+    {
+        mFunctions->disable(GL_COLOR_LOGIC_OP);
+    }
+
+    mLocalDirtyBits.set(gl::State::DIRTY_BIT_EXTENDED);
+    mLocalExtendedDirtyBits.set(gl::State::EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED);
+}
+
+void StateManagerGL::setLogicOp(gl::LogicalOperation opcode)
+{
+    if (opcode == mLogicOp)
+    {
+        return;
+    }
+    mLogicOp = opcode;
+
+    mFunctions->logicOp(ToGLenum(opcode));
+
+    mLocalDirtyBits.set(gl::State::DIRTY_BIT_EXTENDED);
+    mLocalExtendedDirtyBits.set(gl::State::EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED);
 }
 
 void StateManagerGL::setTextureCubemapSeamlessEnabled(bool enabled)

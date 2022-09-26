@@ -232,6 +232,7 @@ class Context11 : public ContextD3D, public MultisampleTextureInitializer
     const gl::TextureCapsMap &getNativeTextureCaps() const override;
     const gl::Extensions &getNativeExtensions() const override;
     const gl::Limitations &getNativeLimitations() const override;
+    ShPixelLocalStorageType getNativePixelLocalStorageType() const override;
 
     Renderer11 *getRenderer() const { return mRenderer; }
 

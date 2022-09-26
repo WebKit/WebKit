@@ -217,6 +217,14 @@ constexpr const char *kSkippedMessages[] = {
     "UNASSIGNED-BestPractices-vkCmdBeginRenderPass-ClearValueWithoutLoadOpClear",
     // http://anglebug.com/7513
     "VUID-VkGraphicsPipelineCreateInfo-pStages-06896",
+    // http://anglebug.com/7685
+    "UNASSIGNED-input-attachment-descriptor-not-in-subpass",
+    "VUID-vkCmdDraw-None-02686",
+    "VUID-vkCmdDrawIndexed-None-02686",
+    "VUID-vkCmdDrawIndirect-None-02686",
+    "VUID-vkCmdDrawIndirectCount-None-02686",
+    "VUID-vkCmdDrawIndexedIndirect-None-02686",
+    "VUID-vkCmdDrawIndexedIndirectCount-None-02686",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -329,11 +337,13 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
         "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_READ|SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_"
         "ATTACHMENT_WRITE, command: vkCmdEndRenderPass",
     },
-    // From: TracePerfTest.Run/vulkan_swiftshader_manhattan_31 http://anglebug.com/6701
+    // From: TracePerfTest.Run/vulkan_swiftshader_manhattan_31 and
+    // VulkanPerformanceCounterTest.NewTextureDoesNotBreakRenderPass for both depth and stencil
+    // aspect. http://anglebug.com/6701
     {
         "SYNC-HAZARD-WRITE-AFTER-WRITE",
-        "Hazard WRITE_AFTER_WRITE in subpass 0 for attachment 1 aspect stencil during load with "
-        "loadOp VK_ATTACHMENT_LOAD_OP_DONT_CARE. Access info (usage: "
+        "Hazard WRITE_AFTER_WRITE in subpass 0 for attachment 1 aspect ",
+        "during load with loadOp VK_ATTACHMENT_LOAD_OP_DONT_CARE. Access info (usage: "
         "SYNC_EARLY_FRAGMENT_TESTS_DEPTH_STENCIL_ATTACHMENT_WRITE, prior_usage: "
         "SYNC_IMAGE_LAYOUT_TRANSITION",
     },
@@ -1548,8 +1558,10 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
 
     if (ExtensionFound(VK_GOOGLE_SURFACELESS_QUERY_EXTENSION_NAME, instanceExtensionNames))
     {
+        // TODO: Validation layer has a bug when vkGetPhysicalDeviceSurfaceFormats2KHR is called
+        // on Mock ICD with surface handle set as VK_NULL_HANDLE. http://anglebug.com/7631
         mEnabledInstanceExtensions.push_back(VK_GOOGLE_SURFACELESS_QUERY_EXTENSION_NAME);
-        ANGLE_FEATURE_CONDITION(&mFeatures, supportsSurfacelessQueryExtension, true);
+        ANGLE_FEATURE_CONDITION(&mFeatures, supportsSurfacelessQueryExtension, !isMockICDEnabled());
     }
 
     // Verify the required extensions are in the extension names set. Fail if not.
@@ -2542,6 +2554,10 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     mEnabledFeatures.features.tessellationShader = mPhysicalDeviceFeatures.tessellationShader;
     // Used to support EXT_blend_func_extended
     mEnabledFeatures.features.dualSrcBlend = mPhysicalDeviceFeatures.dualSrcBlend;
+    // Used to support ANGLE_logic_op and GLES1
+    mEnabledFeatures.features.logicOp = mPhysicalDeviceFeatures.logicOp;
+    // Used to support EXT_multisample_compatibility
+    mEnabledFeatures.features.alphaToOne = mPhysicalDeviceFeatures.alphaToOne;
 
     if (!vk::OutsideRenderPassCommandBuffer::ExecutesInline() ||
         !vk::RenderPassCommandBuffer::ExecutesInline())
@@ -3820,6 +3836,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsExtendedDynamicState2,
                             mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE);
 
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsLogicOpDynamicState,
+                            mExtendedDynamicState2Features.extendedDynamicState2LogicOp == VK_TRUE);
+
     // Avoid dynamic state for vertex input binding stride on buggy drivers.
     ANGLE_FEATURE_CONDITION(&mFeatures, forceStaticVertexStrideState,
                             mFeatures.supportsExtendedDynamicState.enabled && isARM);
@@ -3889,6 +3908,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // are known to support wide color gamut.
     ANGLE_FEATURE_CONDITION(&mFeatures, eglColorspaceAttributePassthrough,
                             IsAndroid() && isSamsung);
+
+    // GBM does not have a VkSurface hence it does not support presentation through a Vulkan queue.
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsPresentation, !displayVk->isGBM());
 
     ApplyFeatureOverrides(&mFeatures, displayVk->getState());
 
@@ -3996,6 +4018,15 @@ const gl::Limitations &RendererVk::getNativeLimitations() const
 {
     ensureCapsInitialized();
     return mNativeLimitations;
+}
+
+ShPixelLocalStorageType RendererVk::getNativePixelLocalStorageType() const
+{
+    if (!getNativeExtensions().shaderPixelLocalStorageANGLE)
+    {
+        return ShPixelLocalStorageType::NotSupported;
+    }
+    return ShPixelLocalStorageType::ImageStoreNativeFormats;
 }
 
 void RendererVk::initializeFrontendFeatures(angle::FrontendFeatures *features) const

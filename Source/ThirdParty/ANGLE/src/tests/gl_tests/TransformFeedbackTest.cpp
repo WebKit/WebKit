@@ -1829,7 +1829,8 @@ TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryings)
 {
     // When transform feedback extension is used, capturing array elements is not supported.
     // http://anglebug.com/4140
-    ANGLE_SKIP_TEST_IF(IsVulkan() && !GetParam().isEnabled(Feature::EmulateTransformFeedback));
+    ANGLE_SKIP_TEST_IF(IsVulkan() &&
+                       !getEGLWindow()->isFeatureEnabled(Feature::EmulateTransformFeedback));
 
     constexpr char kVS[] =
         "#version 310 es\n"
@@ -1895,7 +1896,8 @@ TEST_P(TransformFeedbackTestES31, DifferentArrayElementVaryingsNonZeroIndex)
 {
     // When transform feedback extension is used, capturing array elements is not supported.
     // http://anglebug.com/4140
-    ANGLE_SKIP_TEST_IF(IsVulkan() && !GetParam().isEnabled(Feature::EmulateTransformFeedback));
+    ANGLE_SKIP_TEST_IF(IsVulkan() &&
+                       !getEGLWindow()->isFeatureEnabled(Feature::EmulateTransformFeedback));
 
     constexpr char kVS[] =
         "#version 310 es\n"

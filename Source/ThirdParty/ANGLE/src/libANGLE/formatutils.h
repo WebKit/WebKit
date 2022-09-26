@@ -304,6 +304,10 @@ ANGLE_INLINE int GetNativeVisualID(const InternalFormat &internalFormat)
     nativeVisualId =
         angle::android::GLInternalFormatToNativePixelFormat(internalFormat.internalFormat);
 #endif
+#if defined(ANGLE_PLATFORM_LINUX) && defined(ANGLE_USES_GBM)
+    nativeVisualId = angle::GLInternalFormatToGbmFourCCFormat(internalFormat.internalFormat);
+#endif
+
     return nativeVisualId;
 }
 

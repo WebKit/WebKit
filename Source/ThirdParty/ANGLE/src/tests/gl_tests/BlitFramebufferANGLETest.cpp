@@ -3568,8 +3568,11 @@ ANGLE_INSTANTIATE_TEST(BlitFramebufferANGLETest,
                        ES3_VULKAN().enable(Feature::EmulatedPrerotation270),
                        ES3_VULKAN()
                            .disable(Feature::SupportsExtendedDynamicState)
-                           .disable(Feature::SupportsExtendedDynamicState2),
-                       ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+                           .disable(Feature::SupportsExtendedDynamicState2)
+                           .disable(Feature::SupportsLogicOpDynamicState),
+                       ES3_VULKAN()
+                           .disable(Feature::SupportsExtendedDynamicState2)
+                           .disable(Feature::SupportsLogicOpDynamicState),
                        ES2_METAL(),
                        ES2_METAL().disable(Feature::HasShaderStencilOutput));
 
@@ -3580,8 +3583,11 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(BlitFramebufferTest,
                                ES3_VULKAN().enable(Feature::EmulatedPrerotation270),
                                ES3_VULKAN()
                                    .disable(Feature::SupportsExtendedDynamicState)
-                                   .disable(Feature::SupportsExtendedDynamicState2),
-                               ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2),
+                                   .disable(Feature::SupportsExtendedDynamicState2)
+                                   .disable(Feature::SupportsLogicOpDynamicState),
+                               ES3_VULKAN()
+                                   .disable(Feature::SupportsExtendedDynamicState2)
+                                   .disable(Feature::SupportsLogicOpDynamicState),
                                ES3_METAL().disable(Feature::HasShaderStencilOutput));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BlitFramebufferTestES31);

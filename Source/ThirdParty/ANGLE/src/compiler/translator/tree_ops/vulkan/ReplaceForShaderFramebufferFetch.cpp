@@ -360,7 +360,8 @@ bool ReplaceSubpassInputUtils::declareSubpassInputVariableImpl(
         return false;
     }
 
-    TType *inputAttachmentType = new TType(subpassInputType, EbpUndefined, EvqUniform, 1);
+    TType *inputAttachmentType =
+        new TType(subpassInputType, declaredVarSym->getPrecision(), EvqUniform, 1);
     TLayoutQualifier inputAttachmentQualifier     = inputAttachmentType->getLayoutQualifier();
     inputAttachmentQualifier.inputAttachmentIndex = inputAttachmentIndex;
     inputAttachmentType->setLayoutQualifier(inputAttachmentQualifier);

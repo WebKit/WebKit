@@ -242,6 +242,11 @@ bool ValidateQueryDisplayAttribANGLE(const ValidationContext *val,
                                      EGLint attribute,
                                      const EGLAttrib *value);
 
+// EGL_ANGLE_metal_shared_event_sync
+bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
+                                       const egl::Display *dpyPacked,
+                                       const Sync *syncPacked);
+
 // EGL_ANGLE_power_preference
 bool ValidateReleaseHighPowerGPUANGLE(const ValidationContext *val,
                                       const egl::Display *dpyPacked,

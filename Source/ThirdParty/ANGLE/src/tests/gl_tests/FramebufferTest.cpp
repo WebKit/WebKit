@@ -1184,7 +1184,8 @@ class FramebufferTest_ES3Metal : public FramebufferTest_ES3
 // to color attachments. Test we're enforcing that limit.
 TEST_P(FramebufferTest_ES3Metal, TooManyBitsGeneratesFramebufferUnsupported)
 {
-    ANGLE_SKIP_TEST_IF(!GetParam().isEnabled(Feature::LimitMaxColorTargetBitsForTesting));
+    ANGLE_SKIP_TEST_IF(
+        !getEGLWindow()->isFeatureEnabled(Feature::LimitMaxColorTargetBitsForTesting));
 
     GLint maxDrawBuffers;
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
@@ -1234,7 +1235,8 @@ TEST_P(FramebufferTest_ES3Metal, TooManyBitsGeneratesFramebufferUnsupported)
 // when drawing.
 TEST_P(FramebufferTest_ES3Metal, TooManyBitsGeneratesInvalidFramebufferOperation)
 {
-    ANGLE_SKIP_TEST_IF(!GetParam().isEnabled(Feature::LimitMaxColorTargetBitsForTesting));
+    ANGLE_SKIP_TEST_IF(
+        !getEGLWindow()->isFeatureEnabled(Feature::LimitMaxColorTargetBitsForTesting));
 
     GLint maxDrawBuffers;
     glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
@@ -1856,8 +1858,10 @@ TEST_P(FramebufferTestWithFormatFallback, R4G4B4A4_InCompatibleFormat)
 class FramebufferTest_ES31 : public ANGLETest<>
 {
   protected:
-    void validateSamplePass(GLuint &query, GLuint &passedCount, GLint width, GLint height)
+    void validateSamplePass(GLQuery &query, GLint width, GLint height)
     {
+        GLuint passedCount;
+
         glUniform2i(0, width - 1, height - 1);
         glBeginQuery(GL_ANY_SAMPLES_PASSED, query);
         glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -2843,8 +2847,6 @@ TEST_P(FramebufferTest_ES31, RenderingLimitToDefaultFBOSizeWithNoAttachments)
 {
     // anglebug.com/2253
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
-    // Occlusion query reports fragments outside the render area are still rendered
-    ANGLE_SKIP_TEST_IF(IsAndroid() || (IsWindows() && (IsIntel() || IsAMD())));
 
     constexpr char kVS1[] = R"(#version 310 es
 in layout(location = 0) highp vec2 a_position;
@@ -2896,16 +2898,12 @@ void main()
         1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f,
     };
 
-    GLuint vertexArray  = 0;
-    GLuint vertexBuffer = 0;
-    GLuint query        = 0;
-    GLuint passedCount  = 0;
+    GLQuery query;
 
-    glGenQueries(1, &query);
-    glGenVertexArrays(1, &vertexArray);
+    GLVertexArray vertexArray;
     glBindVertexArray(vertexArray);
 
-    glGenBuffers(1, &vertexBuffer);
+    GLBuffer vertexBuffer;
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
@@ -2913,10 +2911,10 @@ void main()
     glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
-    validateSamplePass(query, passedCount, defaultWidth, defaultHeight);
+    validateSamplePass(query, defaultWidth, defaultHeight);
 
     glUseProgram(program2);
-    validateSamplePass(query, passedCount, defaultWidth, defaultHeight);
+    validateSamplePass(query, defaultWidth, defaultHeight);
 
     glUseProgram(program1);
     // If fbo has attachments, the rendering size should be the same as its attachment.
@@ -2933,20 +2931,136 @@ void main()
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
     glDrawBuffers(4, bufs);
 
-    validateSamplePass(query, passedCount, width, height);
+    validateSamplePass(query, width, height);
 
     // If fbo's attachment has been removed, the rendering size should be the same as framebuffer
     // default size.
     glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, 0, 0, 0);
     EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
 
-    validateSamplePass(query, passedCount, defaultWidth, defaultHeight);
+    validateSamplePass(query, defaultWidth, defaultHeight);
+    ASSERT_GL_NO_ERROR();
+}
 
-    glDisableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glDeleteBuffers(1, &vertexBuffer);
-    glDeleteVertexArrays(1, &vertexArray);
+// If fbo has no attachments, change size should still work without vvl error.
+TEST_P(FramebufferTest_ES31, ChangeFBOSizeWithNoAttachments)
+{
+    constexpr char kVS1[] = R"(#version 310 es
+in layout(location = 0) highp vec2 a_position;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+
+    constexpr char kFS1[] = R"(#version 310 es
+uniform layout(location = 0) highp ivec2 u_expectedSize;
+out layout(location = 3) mediump vec4 f_color;
+void main()
+{
+    if (ivec2(gl_FragCoord.xy) != u_expectedSize) discard;
+    f_color = vec4(1.0, 0.5, 0.25, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program1, kVS1, kFS1);
+    glUseProgram(program1);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    const float data[] = {
+        1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f,
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+
+    GLQuery query;
+
+    // Test that:
+    // 1. create 1st no-attachment framebuffer with size 1*1, draw, delete framebuffer
+    // 2. create 2nd no-attachment framebuffer with size 2*2, draw, delete framebuffer
+    // works properly
+    for (int loop = 0; loop < 2; loop++)
+    {
+        GLFramebuffer framebuffer;
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+        GLuint defaultWidth  = 1 << loop;
+        GLuint defaultHeight = 1 << loop;
+        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
+        glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, defaultHeight);
+        EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+
+        // Draw and check the FBO size
+        validateSamplePass(query, defaultWidth, defaultHeight);
+    }
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that:
+// 1. create a no-attachment framebuffer with default size 1*1, draw
+// 2. give the fbo with 1 color attachment with size 2*2, draw
+// 3. change the fbo default size to 3*3, draw
+// 4. remove the fbo attachment, draw
+// works properly
+TEST_P(FramebufferTest_ES31, ChangeFBOSizeAndAttachmentsCount)
+{
+    constexpr char kVS1[] = R"(#version 310 es
+in layout(location = 0) highp vec2 a_position;
+void main()
+{
+    gl_Position = vec4(a_position, 0.0, 1.0);
+})";
+
+    constexpr char kFS1[] = R"(#version 310 es
+uniform layout(location = 0) highp ivec2 u_expectedSize;
+out layout(location = 3) mediump vec4 f_color;
+void main()
+{
+    if (ivec2(gl_FragCoord.xy) != u_expectedSize) discard;
+    f_color = vec4(1.0, 0.5, 0.25, 1.0);
+})";
+    ANGLE_GL_PROGRAM(program1, kVS1, kFS1);
+    glUseProgram(program1);
+
+    GLBuffer vertexBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    const float data[] = {
+        1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f,
+    };
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+
+    GLQuery query;
+
+    GLFramebuffer framebufferWithVariousSizeAndAttachment;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebufferWithVariousSizeAndAttachment);
+    GLuint defaultWidth  = 1;
+    GLuint defaultHeight = 1;
+    glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
+    glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, defaultHeight);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    validateSamplePass(query, defaultWidth, defaultHeight);
+
+    GLTexture mTexture;
+    glBindTexture(GL_TEXTURE_2D, mTexture.get());
+    GLuint attachmentWidth  = 2;
+    GLuint attachmentHeight = 2;
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, attachmentWidth, attachmentHeight);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture.get(),
+                           0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    validateSamplePass(query, attachmentWidth, attachmentWidth);
+
+    defaultWidth  = 3;
+    defaultHeight = 3;
+    glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_WIDTH, defaultWidth);
+    glFramebufferParameteri(GL_DRAW_FRAMEBUFFER, GL_FRAMEBUFFER_DEFAULT_HEIGHT, defaultHeight);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    validateSamplePass(query, attachmentWidth, attachmentHeight);
+
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0, 0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER));
+    validateSamplePass(query, defaultWidth, defaultHeight);
 
     ASSERT_GL_NO_ERROR();
 }
@@ -4462,8 +4576,9 @@ void main()
 
     glViewport(0, 0, std::max(kWidth1, kWidth2), std::max(kHeight1, kHeight2));
 
-    const bool isSwappedDimensions = GetParam().isEnabled(Feature::EmulatedPrerotation90) ||
-                                     GetParam().isEnabled(Feature::EmulatedPrerotation270);
+    const bool isSwappedDimensions =
+        getEGLWindow()->isFeatureEnabled(Feature::EmulatedPrerotation90) ||
+        getEGLWindow()->isFeatureEnabled(Feature::EmulatedPrerotation270);
 
     auto resizeWindow = [this, isSwappedDimensions](GLuint width, GLuint height) {
         if (isSwappedDimensions)

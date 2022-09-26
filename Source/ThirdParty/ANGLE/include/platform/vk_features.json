@@ -880,6 +880,14 @@
             "issue": "http://anglebug.com/5906"
         },
         {
+            "name": "supports_logic_op_dynamic_state",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the logicOp feature of VK_EXT_extended_dynamic_state2 extension"
+            ],
+            "issue": "http://anglebug.com/3862"
+        },
+        {
             "name": "supports_fragment_shading_rate",
             "category": "Features",
             "description": [
@@ -1007,6 +1015,13 @@
                 "VkDevice supports VK_EXT_color_write_enable extension"
             ],
             "issue": "https://anglebug.com/7161"
+        },
+        {
+            "name": "supports_presentation",
+            "category": "Features",
+            "description": [
+                "VkDisplay supports presentation through a present family queue"
+            ]
         }
     ]
 }

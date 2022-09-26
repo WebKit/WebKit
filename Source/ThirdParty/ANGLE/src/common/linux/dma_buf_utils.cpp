@@ -125,6 +125,39 @@ std::vector<VkFormat> DrmFourCCFormatToVkFormats(int fourccFormat)
             return {};
     }
 }
+
 #endif  // ANGLE_ENABLE_VULKAN
+
+#if defined(ANGLE_PLATFORM_LINUX) && defined(ANGLE_USES_GBM)
+#    include <gbm.h>
+
+int GLInternalFormatToGbmFourCCFormat(GLenum internalFormat)
+{
+    switch (internalFormat)
+    {
+        case GL_R8:
+            return GBM_FORMAT_R8;
+        case GL_RGB8:
+            return GBM_FORMAT_GR88;
+        case GL_RGB565:
+            return GBM_FORMAT_RGB565;
+        case GL_RGBA8:
+            return GBM_FORMAT_ABGR8888;
+        case GL_BGRA8_EXT:
+            return GBM_FORMAT_ARGB8888;
+        case GL_BGRX8_ANGLEX:
+            return GBM_FORMAT_XRGB8888;
+        case GL_RGBX8_ANGLE:
+            return GBM_FORMAT_XBGR8888;
+        case GL_RGB10_A2:
+            return GBM_FORMAT_ABGR2101010;
+        case GL_R16_EXT:
+            return GBM_FORMAT_R16;
+        default:
+            WARN() << "Unknown internalFormat: " << internalFormat << ". Treating as 0";
+            return 0;
+    }
+}
+#endif
 
 }  // namespace angle

@@ -1907,6 +1907,10 @@ void FrameCaptureShared::ReplayCall(gl::Context *context,
             context->logicOp(params.getParam("opcodePacked", ParamType::TLogicalOperation, 0)
                                  .value.LogicalOperationVal);
             break;
+        case angle::EntryPoint::GLLogicOpANGLE:
+            context->logicOpANGLE(params.getParam("opcodePacked", ParamType::TLogicalOperation, 0)
+                                      .value.LogicalOperationVal);
+            break;
         case angle::EntryPoint::GLMapBuffer:
             context->mapBuffer(params.getParam("targetPacked", ParamType::TBufferBinding, 0)
                                    .value.BufferBindingVal,

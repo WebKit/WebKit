@@ -670,6 +670,10 @@ class GraphicsPipelineDesc final
                                const gl::DrawBufferMask &alphaMask,
                                const gl::DrawBufferMask &enabledDrawBuffers);
 
+    // Logic op
+    void updateLogicOpEnabled(GraphicsPipelineTransitionBits *transition, bool enable);
+    void updateLogicOp(GraphicsPipelineTransitionBits *transition, VkLogicOp logicOp);
+
     // Depth/stencil states.
     void setDepthTestEnabled(bool enabled);
     void setDepthWriteEnabled(bool enabled);

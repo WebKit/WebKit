@@ -338,7 +338,7 @@ TEST_P(EGLSyncTest, AndroidNativeFence_ClientWait)
     // Wait for draw to complete
     EXPECT_EQ(EGL_CONDITION_SATISFIED,
               eglClientWaitSyncKHR(display, syncWithGeneratedFD, EGL_SYNC_FLUSH_COMMANDS_BIT_KHR,
-                                   1000000000));
+                                   1'000'000'000));
     EXPECT_EGL_TRUE(eglGetSyncAttribKHR(display, syncWithGeneratedFD, EGL_SYNC_STATUS_KHR, &value));
     EXPECT_EQ(value, EGL_SIGNALED_KHR);
 

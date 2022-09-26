@@ -368,6 +368,18 @@ class State : angle::NonCopyable
     // If both a Program and a ProgramPipeline are bound, the Program will
     // always override the ProgramPipeline.
     ProgramExecutable *getProgramExecutable() const { return mExecutable; }
+    ProgramExecutable *getLinkedProgramExecutable(const Context *context) const
+    {
+        if (mProgram)
+        {
+            mProgram->resolveLink(context);
+        }
+        else if (mProgramPipeline.get())
+        {
+            mProgramPipeline->resolveLink(context);
+        }
+        return mExecutable;
+    }
 
     // Program binding manipulation
     angle::Result setProgram(const Context *context, Program *newProgram);
@@ -388,6 +400,15 @@ class State : angle::NonCopyable
     }
 
     ProgramPipeline *getProgramPipeline() const { return mProgramPipeline.get(); }
+
+    ProgramPipeline *getLinkedProgramPipeline(const Context *context) const
+    {
+        if (mProgramPipeline.get())
+        {
+            mProgramPipeline->resolveLink(context);
+        }
+        return mProgramPipeline.get();
+    }
 
     // Transform feedback object (not buffer) binding manipulation
     void setTransformFeedbackBinding(const Context *context, TransformFeedback *transformFeedback);
@@ -592,12 +613,16 @@ class State : angle::NonCopyable
     void setPatchVertices(GLuint value);
     GLuint getPatchVertices() const { return mPatchVertices; }
 
+    // GL_ANGLE_shader_pixel_local_storage
+    void setPixelLocalStorageActive(bool active);
+    bool getPixelLocalStorageActive() const { return mPixelLocalStorageActive; }
+
     // State query functions
     void getBooleanv(GLenum pname, GLboolean *params) const;
     void getFloatv(GLenum pname, GLfloat *params) const;
     angle::Result getIntegerv(const Context *context, GLenum pname, GLint *params) const;
     void getPointerv(const Context *context, GLenum pname, void **params) const;
-    void getIntegeri_v(GLenum target, GLuint index, GLint *data) const;
+    void getIntegeri_v(const Context *context, GLenum target, GLuint index, GLint *data) const;
     void getInteger64i_v(GLenum target, GLuint index, GLint64 *data) const;
     void getBooleani_v(GLenum target, GLuint index, GLboolean *data) const;
 
@@ -693,6 +718,8 @@ class State : angle::NonCopyable
         EXTENDED_DIRTY_BIT_MIPMAP_GENERATION_HINT,  // mipmap generation hint
         EXTENDED_DIRTY_BIT_SHADER_DERIVATIVE_HINT,  // shader derivative hint
         EXTENDED_DIRTY_BIT_SHADING_RATE,            // QCOM_shading_rate
+        EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED,        // ANGLE_logic_op
+        EXTENDED_DIRTY_BIT_LOGIC_OP,                // ANGLE_logic_op
         EXTENDED_DIRTY_BIT_INVALID,
         EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,
     };
@@ -714,6 +741,7 @@ class State : angle::NonCopyable
         DIRTY_OBJECT_IMAGES,    // Top-level dirty bit. Also see mDirtyImages.
         DIRTY_OBJECT_SAMPLERS,  // Top-level dirty bit. Also see mDirtySamplers.
         DIRTY_OBJECT_PROGRAM,
+        DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT,
         DIRTY_OBJECT_UNKNOWN,
         DIRTY_OBJECT_MAX = DIRTY_OBJECT_UNKNOWN,
     };
@@ -725,6 +753,7 @@ class State : angle::NonCopyable
     void setAllDirtyBits()
     {
         mDirtyBits.set();
+        mExtendedDirtyBits.set();
         mDirtyCurrentValues.set();
     }
 
@@ -912,6 +941,12 @@ class State : angle::NonCopyable
 
     bool hasDisplayTextureShareGroup() const { return mDisplayTextureShareGroup; }
 
+    void setLogicOpEnabled(bool enabled);
+    bool isLogicOpEnabled() const { return mLogicOpEnabled; }
+
+    void setLogicOp(LogicalOperation opcode);
+    LogicalOperation getLogicOp() const { return mLogicOp; }
+
   private:
     friend class Context;
 
@@ -940,14 +975,24 @@ class State : angle::NonCopyable
     angle::Result syncImages(const Context *context, Command command);
     angle::Result syncSamplers(const Context *context, Command command);
     angle::Result syncProgram(const Context *context, Command command);
+    angle::Result syncProgramPipelineObject(const Context *context, Command command);
 
     using DirtyObjectHandler = angle::Result (State::*)(const Context *context, Command command);
 
     static constexpr DirtyObjectHandler kDirtyObjectHandlers[DIRTY_OBJECT_MAX] = {
-        &State::syncActiveTextures,  &State::syncTexturesInit,    &State::syncImagesInit,
-        &State::syncReadAttachments, &State::syncDrawAttachments, &State::syncReadFramebuffer,
-        &State::syncDrawFramebuffer, &State::syncVertexArray,     &State::syncTextures,
-        &State::syncImages,          &State::syncSamplers,        &State::syncProgram};
+        &State::syncActiveTextures,
+        &State::syncTexturesInit,
+        &State::syncImagesInit,
+        &State::syncReadAttachments,
+        &State::syncDrawAttachments,
+        &State::syncReadFramebuffer,
+        &State::syncDrawFramebuffer,
+        &State::syncVertexArray,
+        &State::syncTextures,
+        &State::syncImages,
+        &State::syncSamplers,
+        &State::syncProgram,
+        &State::syncProgramPipelineObject};
 
     // Robust init must happen before Framebuffer init for the Vulkan back-end.
     static_assert(DIRTY_OBJECT_ACTIVE_TEXTURES < DIRTY_OBJECT_TEXTURES_INIT, "init order");
@@ -968,6 +1013,8 @@ class State : angle::NonCopyable
     static_assert(DIRTY_OBJECT_IMAGES == 9, "check DIRTY_OBJECT_IMAGES index");
     static_assert(DIRTY_OBJECT_SAMPLERS == 10, "check DIRTY_OBJECT_SAMPLERS index");
     static_assert(DIRTY_OBJECT_PROGRAM == 11, "check DIRTY_OBJECT_PROGRAM index");
+    static_assert(DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT == 12,
+                  "check DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT index");
 
     // Dispatch table for buffer update functions.
     static const angle::PackedEnumMap<BufferBinding, BufferBindingSetter> kBufferSetters;
@@ -1126,6 +1173,10 @@ class State : angle::NonCopyable
     // GL_ANGLE_webgl_compatibility
     bool mTextureRectangleEnabled;
 
+    // GL_ANGLE_logic_op
+    bool mLogicOpEnabled;
+    LogicalOperation mLogicOp;
+
     // GL_KHR_parallel_shader_compile
     GLuint mMaxShaderCompilerThreads;
 
@@ -1134,6 +1185,9 @@ class State : angle::NonCopyable
 
     // GL_EXT_tessellation_shader
     GLuint mPatchVertices;
+
+    // GL_ANGLE_shader_pixel_local_storage
+    bool mPixelLocalStorageActive;
 
     // GLES1 emulation: state specific to GLES1
     GLES1State mGLES1State;

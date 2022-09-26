@@ -376,19 +376,22 @@ def _run_tests(tests, args, extra_flags, env):
                          (test_index + 1, len(tests), sample + 1, args.samples_per_test,
                           str(sample_wall_times)))
 
+            if len(sample_wall_times) != args.trials_per_sample:
+                logging.error('Test %s failed to record some wall_times (expected %d, got %d)' %
+                              (test, args.trials_per_sample, len(sample_wall_times)))
+                results.result_fail(test)
+                break
+
             wall_times += sample_wall_times
             test_histogram_set.Merge(sample_histogram)
 
         if not results.has_result(test):
-            if len(wall_times) == (args.samples_per_test * args.trials_per_sample):
-                stats = _wall_times_stats(wall_times)
-                if stats:
-                    logging.info('Test %d/%d: %s: %s' % (test_index + 1, len(tests), test, stats))
-                histograms.Merge(_merge_into_one_histogram(test_histogram_set))
-                results.result_pass(test)
-            else:
-                logging.error('Test %s failed to record some samples' % test)
-                results.result_fail(test)
+            assert len(wall_times) == (args.samples_per_test * args.trials_per_sample)
+            stats = _wall_times_stats(wall_times)
+            if stats:
+                logging.info('Test %d/%d: %s: %s' % (test_index + 1, len(tests), test, stats))
+            histograms.Merge(_merge_into_one_histogram(test_histogram_set))
+            results.result_pass(test)
 
     return results, histograms
 

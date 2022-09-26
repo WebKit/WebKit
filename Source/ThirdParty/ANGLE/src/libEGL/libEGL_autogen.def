@@ -91,6 +91,9 @@ EXPORTS
     eglQueryDisplayAttribANGLE
     eglQueryStringiANGLE
 
+    ; EGL_ANGLE_metal_shared_event_sync
+    eglCopyMetalSharedEventANGLE
+
     ; EGL_ANGLE_power_preference
     eglForceGPUSwitchANGLE
     eglHandleGPUSwitchANGLE

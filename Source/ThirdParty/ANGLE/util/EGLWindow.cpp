@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "common/system_utils.h"
+#include "platform/Feature.h"
 #include "platform/PlatformMethods.h"
 #include "util/OSWindow.h"
 
@@ -75,7 +76,9 @@ EGLWindow::EGLWindow(EGLenum clientType,
       mContext(EGL_NO_CONTEXT),
       mEGLMajorVersion(0),
       mEGLMinorVersion(0)
-{}
+{
+    std::fill(mFeatures.begin(), mFeatures.end(), ANGLEFeatureStatus::Unknown);
+}
 
 EGLWindow::~EGLWindow()
 {
@@ -283,6 +286,8 @@ bool EGLWindow::initializeDisplay(OSWindow *osWindow,
         destroyGL();
         return false;
     }
+
+    queryFeatures();
 
     mPlatform = params;
     return true;
@@ -857,4 +862,47 @@ void EGLWindow::Delete(EGLWindow **window)
 {
     delete *window;
     *window = nullptr;
+}
+
+void EGLWindow::queryFeatures()
+{
+    const char *extensionString =
+        static_cast<const char *>(eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
+    const bool hasFeatureControlANGLE =
+        strstr(extensionString, "EGL_ANGLE_feature_control") != nullptr;
+
+    if (!hasFeatureControlANGLE)
+    {
+        return;
+    }
+
+    angle::HashMap<std::string, angle::Feature> featureFromName;
+    for (angle::Feature feature : angle::AllEnums<angle::Feature>())
+    {
+        featureFromName[angle::GetFeatureName(feature)] = feature;
+    }
+
+    EGLAttrib featureCount = -1;
+    eglQueryDisplayAttribANGLE(mDisplay, EGL_FEATURE_COUNT_ANGLE, &featureCount);
+
+    for (int index = 0; index < featureCount; index++)
+    {
+        const char *featureName   = eglQueryStringiANGLE(mDisplay, EGL_FEATURE_NAME_ANGLE, index);
+        const char *featureStatus = eglQueryStringiANGLE(mDisplay, EGL_FEATURE_STATUS_ANGLE, index);
+        ASSERT(featureName != nullptr);
+        ASSERT(featureStatus != nullptr);
+
+        const angle::Feature feature = featureFromName[featureName];
+
+        const bool isEnabled  = strcmp(featureStatus, angle::kFeatureStatusEnabled) == 0;
+        const bool isDisabled = strcmp(featureStatus, angle::kFeatureStatusDisabled) == 0;
+        ASSERT(isEnabled || isDisabled);
+
+        mFeatures[feature] = isEnabled ? ANGLEFeatureStatus::Enabled : ANGLEFeatureStatus::Disabled;
+    }
+}
+
+bool EGLWindow::isFeatureEnabled(angle::Feature feature)
+{
+    return mFeatures[feature] == ANGLEFeatureStatus::Enabled;
 }

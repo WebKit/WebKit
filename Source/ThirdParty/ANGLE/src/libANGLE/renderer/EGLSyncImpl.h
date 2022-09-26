@@ -48,6 +48,8 @@ class EGLSyncImpl : angle::NonCopyable
                                   EGLint flags)      = 0;
     virtual egl::Error signal(const egl::Display *display, const gl::Context *context, EGLint mode);
     virtual egl::Error getStatus(const egl::Display *display, EGLint *outStatus) = 0;
+    virtual egl::Error copyMetalSharedEventANGLE(const egl::Display *display,
+                                                 void **outEvent) const;
     virtual egl::Error dupNativeFenceFD(const egl::Display *display, EGLint *fdOut) const;
 };
 }  // namespace rx

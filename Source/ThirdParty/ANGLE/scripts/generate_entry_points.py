@@ -35,10 +35,9 @@ NO_EVENT_MARKER_EXCEPTIONS_LIST = sorted([
 # marked as such in the registry.  However, that is not correct for GLES where this entry point
 # comes from GL_EXT_multisampled_render_to_texture which is never promoted to core GLES.
 ALIASING_EXCEPTIONS = [
-    'glRenderbufferStorageMultisampleEXT',
-    'renderbufferStorageMultisampleEXT',
-    'drawArraysInstancedBaseInstanceANGLE',
-    'drawElementsInstancedBaseVertexBaseInstanceANGLE',
+    'glRenderbufferStorageMultisampleEXT', 'renderbufferStorageMultisampleEXT',
+    'drawArraysInstancedBaseInstanceANGLE', 'drawElementsInstancedBaseVertexBaseInstanceANGLE',
+    'glLogicOpANGLE', 'logicOpANGLE'
 ]
 
 # These are the entry points which potentially are used first by an application

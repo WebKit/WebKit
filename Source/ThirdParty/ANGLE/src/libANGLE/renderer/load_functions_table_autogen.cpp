@@ -2230,6 +2230,126 @@ LoadImageFunctionInfo LUMINANCE_ALPHA32F_EXT_to_default(GLenum type)
     }
 }
 
+LoadImageFunctionInfo PALETTE4_R5_G6_B5_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<4, 5, 6, 0>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE4_RGB5_A1_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<4, 5, 5, 1>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE4_RGB8_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<4, 8, 8, 0>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE4_RGBA4_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<4, 4, 4, 4>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE4_RGBA8_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<4, 8, 8, 8>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE8_R5_G6_B5_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<8, 5, 6, 0>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE8_RGB5_A1_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<8, 5, 5, 1>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE8_RGB8_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<8, 8, 8, 0>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE8_RGBA4_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<8, 4, 4, 4>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
+LoadImageFunctionInfo PALETTE8_RGBA8_OES_to_R8G8B8A8_UNORM(GLenum type)
+{
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+            return LoadImageFunctionInfo(LoadPalettedToRGBA8<8, 8, 8, 8>, true);
+        default:
+            UNREACHABLE();
+            return LoadImageFunctionInfo(UnreachableLoadFunction, true);
+    }
+}
+
 LoadImageFunctionInfo R11F_G11F_B10F_to_R11G11B10_FLOAT(GLenum type)
 {
     switch (type)
@@ -4433,6 +4553,116 @@ LoadFunctionMap GetLoadFunctionsMap(GLenum internalFormat, FormatID angleFormat)
                 default:
                     return LUMINANCE_ALPHA32F_EXT_to_default;
             }
+        }
+        case GL_PALETTE4_R5_G6_B5_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE4_R5_G6_B5_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE4_RGB5_A1_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE4_RGB5_A1_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE4_RGB8_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE4_RGB8_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE4_RGBA4_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE4_RGBA4_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE4_RGBA8_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE4_RGBA8_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE8_R5_G6_B5_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE8_R5_G6_B5_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE8_RGB5_A1_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE8_RGB5_A1_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE8_RGB8_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE8_RGB8_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE8_RGBA4_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE8_RGBA4_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
+        }
+        case GL_PALETTE8_RGBA8_OES:
+        {
+            switch (angleFormat)
+            {
+                case FormatID::R8G8B8A8_UNORM:
+                    return PALETTE8_RGBA8_OES_to_R8G8B8A8_UNORM;
+                default:
+                    break;
+            }
+            break;
         }
         case GL_R11F_G11F_B10F:
         {

@@ -1,11 +1,11 @@
-/* A Bison parser, made by GNU Bison 3.3.2.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of
  * the BSD license. */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -34,8 +34,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_GLSLANG_TAB_AUTOGEN_H_INCLUDED
 #define YY_YY_GLSLANG_TAB_AUTOGEN_H_INCLUDED
@@ -52,199 +53,203 @@ extern int yydebug;
 #define YYLTYPE_IS_DECLARED 1
 #define YYLTYPE_IS_TRIVIAL 1
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 #    define YYTOKENTYPE
 enum yytokentype
 {
-    INVARIANT                 = 258,
-    PRECISE                   = 259,
-    HIGH_PRECISION            = 260,
-    MEDIUM_PRECISION          = 261,
-    LOW_PRECISION             = 262,
-    PRECISION                 = 263,
-    ATTRIBUTE                 = 264,
-    CONST_QUAL                = 265,
-    BOOL_TYPE                 = 266,
-    FLOAT_TYPE                = 267,
-    INT_TYPE                  = 268,
-    UINT_TYPE                 = 269,
-    BREAK                     = 270,
-    CONTINUE                  = 271,
-    DO                        = 272,
-    ELSE                      = 273,
-    FOR                       = 274,
-    IF                        = 275,
-    DISCARD                   = 276,
-    RETURN                    = 277,
-    SWITCH                    = 278,
-    CASE                      = 279,
-    DEFAULT                   = 280,
-    BVEC2                     = 281,
-    BVEC3                     = 282,
-    BVEC4                     = 283,
-    IVEC2                     = 284,
-    IVEC3                     = 285,
-    IVEC4                     = 286,
-    VEC2                      = 287,
-    VEC3                      = 288,
-    VEC4                      = 289,
-    UVEC2                     = 290,
-    UVEC3                     = 291,
-    UVEC4                     = 292,
-    MATRIX2                   = 293,
-    MATRIX3                   = 294,
-    MATRIX4                   = 295,
-    IN_QUAL                   = 296,
-    OUT_QUAL                  = 297,
-    INOUT_QUAL                = 298,
-    UNIFORM                   = 299,
-    BUFFER                    = 300,
-    VARYING                   = 301,
-    MATRIX2x3                 = 302,
-    MATRIX3x2                 = 303,
-    MATRIX2x4                 = 304,
-    MATRIX4x2                 = 305,
-    MATRIX3x4                 = 306,
-    MATRIX4x3                 = 307,
-    SAMPLE                    = 308,
-    CENTROID                  = 309,
-    FLAT                      = 310,
-    SMOOTH                    = 311,
-    NOPERSPECTIVE             = 312,
-    PATCH                     = 313,
-    READONLY                  = 314,
-    WRITEONLY                 = 315,
-    COHERENT                  = 316,
-    RESTRICT                  = 317,
-    VOLATILE                  = 318,
-    SHARED                    = 319,
-    STRUCT                    = 320,
-    VOID_TYPE                 = 321,
-    WHILE                     = 322,
-    SAMPLER2D                 = 323,
-    SAMPLERCUBE               = 324,
-    SAMPLER_EXTERNAL_OES      = 325,
-    SAMPLER2DRECT             = 326,
-    SAMPLER2DARRAY            = 327,
-    ISAMPLER2D                = 328,
-    ISAMPLER3D                = 329,
-    ISAMPLERCUBE              = 330,
-    ISAMPLER2DARRAY           = 331,
-    USAMPLER2D                = 332,
-    USAMPLER3D                = 333,
-    USAMPLERCUBE              = 334,
-    USAMPLER2DARRAY           = 335,
-    SAMPLER2DMS               = 336,
-    ISAMPLER2DMS              = 337,
-    USAMPLER2DMS              = 338,
-    SAMPLER2DMSARRAY          = 339,
-    ISAMPLER2DMSARRAY         = 340,
-    USAMPLER2DMSARRAY         = 341,
-    SAMPLER3D                 = 342,
-    SAMPLER3DRECT             = 343,
-    SAMPLER2DSHADOW           = 344,
-    SAMPLERCUBESHADOW         = 345,
-    SAMPLER2DARRAYSHADOW      = 346,
-    SAMPLERVIDEOWEBGL         = 347,
-    SAMPLERCUBEARRAYOES       = 348,
-    SAMPLERCUBEARRAYSHADOWOES = 349,
-    ISAMPLERCUBEARRAYOES      = 350,
-    USAMPLERCUBEARRAYOES      = 351,
-    SAMPLERCUBEARRAYEXT       = 352,
-    SAMPLERCUBEARRAYSHADOWEXT = 353,
-    ISAMPLERCUBEARRAYEXT      = 354,
-    USAMPLERCUBEARRAYEXT      = 355,
-    SAMPLERBUFFER             = 356,
-    ISAMPLERBUFFER            = 357,
-    USAMPLERBUFFER            = 358,
-    SAMPLEREXTERNAL2DY2YEXT   = 359,
-    IMAGE2D                   = 360,
-    IIMAGE2D                  = 361,
-    UIMAGE2D                  = 362,
-    IMAGE3D                   = 363,
-    IIMAGE3D                  = 364,
-    UIMAGE3D                  = 365,
-    IMAGE2DARRAY              = 366,
-    IIMAGE2DARRAY             = 367,
-    UIMAGE2DARRAY             = 368,
-    IMAGECUBE                 = 369,
-    IIMAGECUBE                = 370,
-    UIMAGECUBE                = 371,
-    IMAGECUBEARRAYOES         = 372,
-    IIMAGECUBEARRAYOES        = 373,
-    UIMAGECUBEARRAYOES        = 374,
-    IMAGECUBEARRAYEXT         = 375,
-    IIMAGECUBEARRAYEXT        = 376,
-    UIMAGECUBEARRAYEXT        = 377,
-    IMAGEBUFFER               = 378,
-    IIMAGEBUFFER              = 379,
-    UIMAGEBUFFER              = 380,
-    ATOMICUINT                = 381,
-    PIXELLOCALANGLE           = 382,
-    IPIXELLOCALANGLE          = 383,
-    UPIXELLOCALANGLE          = 384,
-    LAYOUT                    = 385,
-    YUVCSCSTANDARDEXT         = 386,
-    YUVCSCSTANDARDEXTCONSTANT = 387,
-    IDENTIFIER                = 388,
-    TYPE_NAME                 = 389,
-    FLOATCONSTANT             = 390,
-    INTCONSTANT               = 391,
-    UINTCONSTANT              = 392,
-    BOOLCONSTANT              = 393,
-    FIELD_SELECTION           = 394,
-    LEFT_OP                   = 395,
-    RIGHT_OP                  = 396,
-    INC_OP                    = 397,
-    DEC_OP                    = 398,
-    LE_OP                     = 399,
-    GE_OP                     = 400,
-    EQ_OP                     = 401,
-    NE_OP                     = 402,
-    AND_OP                    = 403,
-    OR_OP                     = 404,
-    XOR_OP                    = 405,
-    MUL_ASSIGN                = 406,
-    DIV_ASSIGN                = 407,
-    ADD_ASSIGN                = 408,
-    MOD_ASSIGN                = 409,
-    LEFT_ASSIGN               = 410,
-    RIGHT_ASSIGN              = 411,
-    AND_ASSIGN                = 412,
-    XOR_ASSIGN                = 413,
-    OR_ASSIGN                 = 414,
-    SUB_ASSIGN                = 415,
-    LEFT_PAREN                = 416,
-    RIGHT_PAREN               = 417,
-    LEFT_BRACKET              = 418,
-    RIGHT_BRACKET             = 419,
-    LEFT_BRACE                = 420,
-    RIGHT_BRACE               = 421,
-    DOT                       = 422,
-    COMMA                     = 423,
-    COLON                     = 424,
-    EQUAL                     = 425,
-    SEMICOLON                 = 426,
-    BANG                      = 427,
-    DASH                      = 428,
-    TILDE                     = 429,
-    PLUS                      = 430,
-    STAR                      = 431,
-    SLASH                     = 432,
-    PERCENT                   = 433,
-    LEFT_ANGLE                = 434,
-    RIGHT_ANGLE               = 435,
-    VERTICAL_BAR              = 436,
-    CARET                     = 437,
-    AMPERSAND                 = 438,
-    QUESTION                  = 439
+    YYEMPTY                   = -2,
+    YYEOF                     = 0,   /* "end of file"  */
+    YYerror                   = 256, /* error  */
+    YYUNDEF                   = 257, /* "invalid token"  */
+    INVARIANT                 = 258, /* INVARIANT  */
+    PRECISE                   = 259, /* PRECISE  */
+    HIGH_PRECISION            = 260, /* HIGH_PRECISION  */
+    MEDIUM_PRECISION          = 261, /* MEDIUM_PRECISION  */
+    LOW_PRECISION             = 262, /* LOW_PRECISION  */
+    PRECISION                 = 263, /* PRECISION  */
+    ATTRIBUTE                 = 264, /* ATTRIBUTE  */
+    CONST_QUAL                = 265, /* CONST_QUAL  */
+    BOOL_TYPE                 = 266, /* BOOL_TYPE  */
+    FLOAT_TYPE                = 267, /* FLOAT_TYPE  */
+    INT_TYPE                  = 268, /* INT_TYPE  */
+    UINT_TYPE                 = 269, /* UINT_TYPE  */
+    BREAK                     = 270, /* BREAK  */
+    CONTINUE                  = 271, /* CONTINUE  */
+    DO                        = 272, /* DO  */
+    ELSE                      = 273, /* ELSE  */
+    FOR                       = 274, /* FOR  */
+    IF                        = 275, /* IF  */
+    DISCARD                   = 276, /* DISCARD  */
+    RETURN                    = 277, /* RETURN  */
+    SWITCH                    = 278, /* SWITCH  */
+    CASE                      = 279, /* CASE  */
+    DEFAULT                   = 280, /* DEFAULT  */
+    BVEC2                     = 281, /* BVEC2  */
+    BVEC3                     = 282, /* BVEC3  */
+    BVEC4                     = 283, /* BVEC4  */
+    IVEC2                     = 284, /* IVEC2  */
+    IVEC3                     = 285, /* IVEC3  */
+    IVEC4                     = 286, /* IVEC4  */
+    VEC2                      = 287, /* VEC2  */
+    VEC3                      = 288, /* VEC3  */
+    VEC4                      = 289, /* VEC4  */
+    UVEC2                     = 290, /* UVEC2  */
+    UVEC3                     = 291, /* UVEC3  */
+    UVEC4                     = 292, /* UVEC4  */
+    MATRIX2                   = 293, /* MATRIX2  */
+    MATRIX3                   = 294, /* MATRIX3  */
+    MATRIX4                   = 295, /* MATRIX4  */
+    IN_QUAL                   = 296, /* IN_QUAL  */
+    OUT_QUAL                  = 297, /* OUT_QUAL  */
+    INOUT_QUAL                = 298, /* INOUT_QUAL  */
+    UNIFORM                   = 299, /* UNIFORM  */
+    BUFFER                    = 300, /* BUFFER  */
+    VARYING                   = 301, /* VARYING  */
+    MATRIX2x3                 = 302, /* MATRIX2x3  */
+    MATRIX3x2                 = 303, /* MATRIX3x2  */
+    MATRIX2x4                 = 304, /* MATRIX2x4  */
+    MATRIX4x2                 = 305, /* MATRIX4x2  */
+    MATRIX3x4                 = 306, /* MATRIX3x4  */
+    MATRIX4x3                 = 307, /* MATRIX4x3  */
+    SAMPLE                    = 308, /* SAMPLE  */
+    CENTROID                  = 309, /* CENTROID  */
+    FLAT                      = 310, /* FLAT  */
+    SMOOTH                    = 311, /* SMOOTH  */
+    NOPERSPECTIVE             = 312, /* NOPERSPECTIVE  */
+    PATCH                     = 313, /* PATCH  */
+    READONLY                  = 314, /* READONLY  */
+    WRITEONLY                 = 315, /* WRITEONLY  */
+    COHERENT                  = 316, /* COHERENT  */
+    RESTRICT                  = 317, /* RESTRICT  */
+    VOLATILE                  = 318, /* VOLATILE  */
+    SHARED                    = 319, /* SHARED  */
+    STRUCT                    = 320, /* STRUCT  */
+    VOID_TYPE                 = 321, /* VOID_TYPE  */
+    WHILE                     = 322, /* WHILE  */
+    SAMPLER2D                 = 323, /* SAMPLER2D  */
+    SAMPLERCUBE               = 324, /* SAMPLERCUBE  */
+    SAMPLER_EXTERNAL_OES      = 325, /* SAMPLER_EXTERNAL_OES  */
+    SAMPLER2DRECT             = 326, /* SAMPLER2DRECT  */
+    SAMPLER2DARRAY            = 327, /* SAMPLER2DARRAY  */
+    ISAMPLER2D                = 328, /* ISAMPLER2D  */
+    ISAMPLER3D                = 329, /* ISAMPLER3D  */
+    ISAMPLERCUBE              = 330, /* ISAMPLERCUBE  */
+    ISAMPLER2DARRAY           = 331, /* ISAMPLER2DARRAY  */
+    USAMPLER2D                = 332, /* USAMPLER2D  */
+    USAMPLER3D                = 333, /* USAMPLER3D  */
+    USAMPLERCUBE              = 334, /* USAMPLERCUBE  */
+    USAMPLER2DARRAY           = 335, /* USAMPLER2DARRAY  */
+    SAMPLER2DMS               = 336, /* SAMPLER2DMS  */
+    ISAMPLER2DMS              = 337, /* ISAMPLER2DMS  */
+    USAMPLER2DMS              = 338, /* USAMPLER2DMS  */
+    SAMPLER2DMSARRAY          = 339, /* SAMPLER2DMSARRAY  */
+    ISAMPLER2DMSARRAY         = 340, /* ISAMPLER2DMSARRAY  */
+    USAMPLER2DMSARRAY         = 341, /* USAMPLER2DMSARRAY  */
+    SAMPLER3D                 = 342, /* SAMPLER3D  */
+    SAMPLER3DRECT             = 343, /* SAMPLER3DRECT  */
+    SAMPLER2DSHADOW           = 344, /* SAMPLER2DSHADOW  */
+    SAMPLERCUBESHADOW         = 345, /* SAMPLERCUBESHADOW  */
+    SAMPLER2DARRAYSHADOW      = 346, /* SAMPLER2DARRAYSHADOW  */
+    SAMPLERVIDEOWEBGL         = 347, /* SAMPLERVIDEOWEBGL  */
+    SAMPLERCUBEARRAYOES       = 348, /* SAMPLERCUBEARRAYOES  */
+    SAMPLERCUBEARRAYSHADOWOES = 349, /* SAMPLERCUBEARRAYSHADOWOES  */
+    ISAMPLERCUBEARRAYOES      = 350, /* ISAMPLERCUBEARRAYOES  */
+    USAMPLERCUBEARRAYOES      = 351, /* USAMPLERCUBEARRAYOES  */
+    SAMPLERCUBEARRAYEXT       = 352, /* SAMPLERCUBEARRAYEXT  */
+    SAMPLERCUBEARRAYSHADOWEXT = 353, /* SAMPLERCUBEARRAYSHADOWEXT  */
+    ISAMPLERCUBEARRAYEXT      = 354, /* ISAMPLERCUBEARRAYEXT  */
+    USAMPLERCUBEARRAYEXT      = 355, /* USAMPLERCUBEARRAYEXT  */
+    SAMPLERBUFFER             = 356, /* SAMPLERBUFFER  */
+    ISAMPLERBUFFER            = 357, /* ISAMPLERBUFFER  */
+    USAMPLERBUFFER            = 358, /* USAMPLERBUFFER  */
+    SAMPLEREXTERNAL2DY2YEXT   = 359, /* SAMPLEREXTERNAL2DY2YEXT  */
+    IMAGE2D                   = 360, /* IMAGE2D  */
+    IIMAGE2D                  = 361, /* IIMAGE2D  */
+    UIMAGE2D                  = 362, /* UIMAGE2D  */
+    IMAGE3D                   = 363, /* IMAGE3D  */
+    IIMAGE3D                  = 364, /* IIMAGE3D  */
+    UIMAGE3D                  = 365, /* UIMAGE3D  */
+    IMAGE2DARRAY              = 366, /* IMAGE2DARRAY  */
+    IIMAGE2DARRAY             = 367, /* IIMAGE2DARRAY  */
+    UIMAGE2DARRAY             = 368, /* UIMAGE2DARRAY  */
+    IMAGECUBE                 = 369, /* IMAGECUBE  */
+    IIMAGECUBE                = 370, /* IIMAGECUBE  */
+    UIMAGECUBE                = 371, /* UIMAGECUBE  */
+    IMAGECUBEARRAYOES         = 372, /* IMAGECUBEARRAYOES  */
+    IIMAGECUBEARRAYOES        = 373, /* IIMAGECUBEARRAYOES  */
+    UIMAGECUBEARRAYOES        = 374, /* UIMAGECUBEARRAYOES  */
+    IMAGECUBEARRAYEXT         = 375, /* IMAGECUBEARRAYEXT  */
+    IIMAGECUBEARRAYEXT        = 376, /* IIMAGECUBEARRAYEXT  */
+    UIMAGECUBEARRAYEXT        = 377, /* UIMAGECUBEARRAYEXT  */
+    IMAGEBUFFER               = 378, /* IMAGEBUFFER  */
+    IIMAGEBUFFER              = 379, /* IIMAGEBUFFER  */
+    UIMAGEBUFFER              = 380, /* UIMAGEBUFFER  */
+    ATOMICUINT                = 381, /* ATOMICUINT  */
+    PIXELLOCALANGLE           = 382, /* PIXELLOCALANGLE  */
+    IPIXELLOCALANGLE          = 383, /* IPIXELLOCALANGLE  */
+    UPIXELLOCALANGLE          = 384, /* UPIXELLOCALANGLE  */
+    LAYOUT                    = 385, /* LAYOUT  */
+    YUVCSCSTANDARDEXT         = 386, /* YUVCSCSTANDARDEXT  */
+    YUVCSCSTANDARDEXTCONSTANT = 387, /* YUVCSCSTANDARDEXTCONSTANT  */
+    IDENTIFIER                = 388, /* IDENTIFIER  */
+    TYPE_NAME                 = 389, /* TYPE_NAME  */
+    FLOATCONSTANT             = 390, /* FLOATCONSTANT  */
+    INTCONSTANT               = 391, /* INTCONSTANT  */
+    UINTCONSTANT              = 392, /* UINTCONSTANT  */
+    BOOLCONSTANT              = 393, /* BOOLCONSTANT  */
+    FIELD_SELECTION           = 394, /* FIELD_SELECTION  */
+    LEFT_OP                   = 395, /* LEFT_OP  */
+    RIGHT_OP                  = 396, /* RIGHT_OP  */
+    INC_OP                    = 397, /* INC_OP  */
+    DEC_OP                    = 398, /* DEC_OP  */
+    LE_OP                     = 399, /* LE_OP  */
+    GE_OP                     = 400, /* GE_OP  */
+    EQ_OP                     = 401, /* EQ_OP  */
+    NE_OP                     = 402, /* NE_OP  */
+    AND_OP                    = 403, /* AND_OP  */
+    OR_OP                     = 404, /* OR_OP  */
+    XOR_OP                    = 405, /* XOR_OP  */
+    MUL_ASSIGN                = 406, /* MUL_ASSIGN  */
+    DIV_ASSIGN                = 407, /* DIV_ASSIGN  */
+    ADD_ASSIGN                = 408, /* ADD_ASSIGN  */
+    MOD_ASSIGN                = 409, /* MOD_ASSIGN  */
+    LEFT_ASSIGN               = 410, /* LEFT_ASSIGN  */
+    RIGHT_ASSIGN              = 411, /* RIGHT_ASSIGN  */
+    AND_ASSIGN                = 412, /* AND_ASSIGN  */
+    XOR_ASSIGN                = 413, /* XOR_ASSIGN  */
+    OR_ASSIGN                 = 414, /* OR_ASSIGN  */
+    SUB_ASSIGN                = 415, /* SUB_ASSIGN  */
+    LEFT_PAREN                = 416, /* LEFT_PAREN  */
+    RIGHT_PAREN               = 417, /* RIGHT_PAREN  */
+    LEFT_BRACKET              = 418, /* LEFT_BRACKET  */
+    RIGHT_BRACKET             = 419, /* RIGHT_BRACKET  */
+    LEFT_BRACE                = 420, /* LEFT_BRACE  */
+    RIGHT_BRACE               = 421, /* RIGHT_BRACE  */
+    DOT                       = 422, /* DOT  */
+    COMMA                     = 423, /* COMMA  */
+    COLON                     = 424, /* COLON  */
+    EQUAL                     = 425, /* EQUAL  */
+    SEMICOLON                 = 426, /* SEMICOLON  */
+    BANG                      = 427, /* BANG  */
+    DASH                      = 428, /* DASH  */
+    TILDE                     = 429, /* TILDE  */
+    PLUS                      = 430, /* PLUS  */
+    STAR                      = 431, /* STAR  */
+    SLASH                     = 432, /* SLASH  */
+    PERCENT                   = 433, /* PERCENT  */
+    LEFT_ANGLE                = 434, /* LEFT_ANGLE  */
+    RIGHT_ANGLE               = 435, /* RIGHT_ANGLE  */
+    VERTICAL_BAR              = 436, /* VERTICAL_BAR  */
+    CARET                     = 437, /* CARET  */
+    AMPERSAND                 = 438, /* AMPERSAND  */
+    QUESTION                  = 439  /* QUESTION  */
 };
+typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */
 #if !defined YYSTYPE && !defined YYSTYPE_IS_DECLARED
-
 union YYSTYPE
 {
 
@@ -294,7 +299,6 @@ union YYSTYPE
         };
     } interm;
 };
-
 typedef union YYSTYPE YYSTYPE;
 #    define YYSTYPE_IS_TRIVIAL 1
 #    define YYSTYPE_IS_DECLARED 1

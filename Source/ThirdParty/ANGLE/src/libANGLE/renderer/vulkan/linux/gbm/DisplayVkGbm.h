@@ -34,6 +34,7 @@ class DisplayVkGbm : public DisplayVkLinux
     void checkConfigSupport(egl::Config *config) override;
 
     const char *getWSIExtension() const override;
+    bool isGBM() const override;
 
     bool isUsingSwapchain() const override;
 

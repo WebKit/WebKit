@@ -1,26 +1,5 @@
-diff --git a/src/common/angle_version_info.h b/src/common/angle_version_info.h
-index 27de24182bdb30b736c17ac025df19d2aea56712..1d5392068c277d4999a0710eb56ab87ff6857129 100644
---- a/src/common/angle_version_info.h
-+++ b/src/common/angle_version_info.h
-@@ -5,8 +5,8 @@
- //
- // angle_version_info.h: ANGLE version queries.
- 
--#ifndef COMMON_VERSION_H_
--#define COMMON_VERSION_H_
-+#ifndef COMMON_VERSION_INFO_H_
-+#define COMMON_VERSION_INFO_H_
- 
- namespace angle
- {
-@@ -17,4 +17,4 @@ int GetANGLECommitHashSize();
- bool GetANGLEHasBinaryLoading();
- }  // namespace angle
- 
--#endif  // COMMON_VERSION_H_
-+#endif  // COMMON_VERSION_INFO_H_
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
-index f8b85a05dbf6b801907808e3a3cc92c76522e2ad..b390525d81197a50fbff9e231beec99bf0f1dcfd 100644
+index f08774523ce4e476b360a7b16ced2b2f47fd8e8d..5e07c418192b7af24ea39ec0e22a9514a42ab135 100644
 --- a/src/common/utilities.cpp
 +++ b/src/common/utilities.cpp
 @@ -6,6 +6,12 @@
@@ -37,18 +16,18 @@ index f8b85a05dbf6b801907808e3a3cc92c76522e2ad..b390525d81197a50fbff9e231beec99b
  #include "GLES3/gl3.h"
  #include "common/mathutil.h"
 diff --git a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
-index 50822f2007292801b41be16ad956ae0bf06e7e88..3ece2105bcdaea98917001b33d1c6834de022d5e 100644
+index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a8f2c6cf5 100644
 --- a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 +++ b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 @@ -1,5 +1,8 @@
- /* A Bison parser, made by GNU Bison 3.3.2.  */
+ /* A Bison parser, made by GNU Bison 3.8.2.  */
  
 +/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of
 + * the BSD license. */
 +
  /* Bison implementation for Yacc-like parsers in C
  
-    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/CodeGen.cpp b/src/compiler/translator/CodeGen.cpp
 index 497ef881e2d9cf0efb669ca8c7c4f2669633baba..47213c90497c8c9d8f76baf0653fdbc3c7a2e19d 100644
 --- a/src/compiler/translator/CodeGen.cpp
@@ -64,31 +43,31 @@ index 497ef881e2d9cf0efb669ca8c7c4f2669633baba..47213c90497c8c9d8f76baf0653fdbc3
  #ifdef ANGLE_ENABLE_METAL_SPIRV
  #    include "compiler/translator/TranslatorMetal.h"
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index 5aacebed5475c819b35072b110cf71d3ba152050..d75a99cb07583ae874e39d61323ef91e654b4fd7 100644
+index 233b571b7985ba9d33b245f495725851a12be569..6bd263e0b1ec4137e5b8bb1a6269ce07cc8a6b32 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,8 @@
- /* A Bison parser, made by GNU Bison 3.3.2.  */
+ /* A Bison parser, made by GNU Bison 3.8.2.  */
  
 +/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of
 + * the BSD license. */
 +
  /* Bison implementation for Yacc-like parsers in C
  
-    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_tab_autogen.h b/src/compiler/translator/glslang_tab_autogen.h
-index fc8e7979a2c098faa33a17dd40eed2627320c643..d6b6ef81b43fbd40f4de89b69852545e393fa5a8 100644
+index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b3912707904981863429478a 100644
 --- a/src/compiler/translator/glslang_tab_autogen.h
 +++ b/src/compiler/translator/glslang_tab_autogen.h
 @@ -1,5 +1,8 @@
- /* A Bison parser, made by GNU Bison 3.3.2.  */
+ /* A Bison parser, made by GNU Bison 3.8.2.  */
  
 +/* Apple Note: For the avoidance of doubt, Apple elects to distribute this file under the terms of
 + * the BSD license. */
 +
  /* Bison interface for Yacc-like parsers in C
  
-    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+    Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/glslang_wrapper.cpp b/src/compiler/translator/glslang_wrapper.cpp
 index 6925023e202ea9954ed19a3bda6835f1502f7a78..7ec8685896a68733c8d29679688b4ee627b09e7c 100644
 --- a/src/compiler/translator/glslang_wrapper.cpp
@@ -134,7 +113,7 @@ index 648c7190a9382f0ce020839322fae56acfbe40db..9ddc681d320550b171a2916cac8e9a4b
  {
  
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 781e3e550b3b7a2b08b20c6c1cddf365f84b7bfb..69076ed40dfc6aa996009c46fdb4f521154f521e 100644
+index a0ef1ab217575f430ef2112d2d973d38cd33d1ff..4828d90e38364a7b3b5acff5067114427715dbd0 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -205,7 +184,7 @@ diff --git a/src/libANGLE/renderer/metal/BufferMtl.mm b/src/libANGLE/renderer/me
 index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2f54269a2 100644
 --- a/src/libANGLE/renderer/metal/BufferMtl.mm
 +++ b/src/libANGLE/renderer/metal/BufferMtl.mm
-@@ -365,7 +365,7 @@
+@@ -365,7 +365,7 @@ ConversionBufferMtl *BufferMtl::getUniformConversionBuffer(ContextMtl *context,
      {
          if (buffer.offset == offset)
          {
@@ -214,7 +193,7 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
          }
      }
  
-@@ -520,7 +520,7 @@
+@@ -520,7 +520,7 @@ angle::Result BufferMtl::setDataImpl(const gl::Context *context,
          default:
              // dynamic buffer, allow up to 10 update per frame/encoding without
              // waiting for GPU.
@@ -224,10 +203,10 @@ index c8769efa38736be06a1c7fc12a4f21ef578c5f01..1766256930914b030119724f01d2adb2
                  maxBuffers = 10;
                  mBufferPool.setAlwaysUseSharedMem();
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index b91d003f8b04ff815244b07e673678efb61983f1..989d76652a709fe238ea20c858c67058aa291794 100644
+index ed8ae679d6df5181ad7f11a0f5b110df06294b66..edf9076a6a9209e859276c9c1f13c835c0255dc4 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1253,8 +1253,7 @@ bool IsMetalDisplayAvailable()
+@@ -1262,8 +1262,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -254,7 +233,7 @@ diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/rend
 index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889a614fa25 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -2540,45 +2540,13 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2540,45 +2540,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
                                              bool sRGBMipmap,
                                              NativeTexLevelArray *mipmapOutputViews)
  {
@@ -300,7 +279,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..1e2b6888ef205c355b2220fb36d3b889
      ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
      ASSERT(cmdEncoder);
  
-@@ -2615,8 +2583,29 @@ ANGLE_INLINE void SetPipelineState(ComputeCommandEncoder *encoder,
+@@ -2615,8 +2583,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
              UNREACHABLE();
      }
  
@@ -450,7 +429,7 @@ index 976eb1c2efba44b080f85a1c4a10389b99416021..eb282986994385026129e6d9a6517a03
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
      // Make sure GPU & CPU contents are synchronized.
-@@ -507,12 +509,12 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -507,12 +509,12 @@ Texture::Texture(Texture *original, const TextureSwizzleChannels &swizzle)
  
  void Texture::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -465,7 +444,7 @@ index 976eb1c2efba44b080f85a1c4a10389b99416021..eb282986994385026129e6d9a6517a03
  }
  
  bool Texture::isCPUAccessible() const
-@@ -991,7 +993,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -991,7 +993,7 @@ angle::Result Buffer::resetWithResOpt(ContextMtl *context,
  
  void Buffer::syncContent(ContextMtl *context, mtl::BlitCommandEncoder *blitEncoder)
  {
@@ -474,7 +453,7 @@ index 976eb1c2efba44b080f85a1c4a10389b99416021..eb282986994385026129e6d9a6517a03
  }
  
  const uint8_t *Buffer::mapReadOnly(ContextMtl *context)
-@@ -1012,7 +1014,7 @@ bool needMultisampleColorFormatShaderReadWorkaround(ContextMtl *context, MTLText
+@@ -1012,7 +1014,7 @@ uint8_t *Buffer::mapWithOpt(ContextMtl *context, bool readonly, bool noSync)
      {
          CommandQueue &cmdQueue = context->cmdQueue();
  
@@ -487,7 +466,7 @@ diff --git a/src/libANGLE/renderer/metal/mtl_state_cache.mm b/src/libANGLE/rende
 index c525add3369e3c5a9af865ce5a1e91b3248a1940..abd36e8aecb66fea297137cd53ce687a4a915257 100644
 --- a/src/libANGLE/renderer/metal/mtl_state_cache.mm
 +++ b/src/libANGLE/renderer/metal/mtl_state_cache.mm
-@@ -948,6 +948,62 @@ void ToObjC(const RenderPassStencilAttachmentDesc &desc,
+@@ -948,6 +948,62 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::insertRenderPipelin
      return re.first->second;
  }
  
@@ -550,7 +529,7 @@ index c525add3369e3c5a9af865ce5a1e91b3248a1940..abd36e8aecb66fea297137cd53ce687a
  AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelineState(
      ContextMtl *context,
      const RenderPipelineDesc &originalDesc,
-@@ -1009,23 +1065,10 @@ void ToObjC(const RenderPassStencilAttachmentDesc &desc,
+@@ -1009,23 +1065,10 @@ AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelin
  
          auto objCDesc = CreateMTLRenderPipelineDescriptor(vertShader, fragShader, desc);
  

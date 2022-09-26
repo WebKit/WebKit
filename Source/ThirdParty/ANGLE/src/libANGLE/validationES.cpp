@@ -480,7 +480,7 @@ bool ValidateFragmentShaderColorBufferMaskMatch(const Context *context)
 
 bool ValidateFragmentShaderColorBufferTypeMatch(const Context *context)
 {
-    const ProgramExecutable *executable = context->getState().getProgramExecutable();
+    const ProgramExecutable *executable = context->getState().getLinkedProgramExecutable(context);
     const Framebuffer *framebuffer      = context->getState().getDrawFramebuffer();
 
     return ValidateComponentTypeMasks(executable->getFragmentOutputsTypeMask().to_ulong(),
@@ -802,7 +802,7 @@ bool ValidateTransformFeedbackPrimitiveMode(const Context *context,
         return transformFeedbackPrimitiveMode == renderPrimitiveMode;
     }
 
-    const ProgramExecutable *executable = context->getState().getProgramExecutable();
+    const ProgramExecutable *executable = context->getState().getLinkedProgramExecutable(context);
     ASSERT(executable);
     if (executable->hasLinkedShaderStage(ShaderType::Geometry))
     {
@@ -911,7 +911,7 @@ bool ValidateDrawInstancedANGLE(const Context *context, angle::EntryPoint entryP
 {
     // Verify there is at least one active attribute with a divisor of zero
     const State &state                  = context->getState();
-    const ProgramExecutable *executable = state.getProgramExecutable();
+    const ProgramExecutable *executable = state.getLinkedProgramExecutable(context);
 
     if (!executable)
     {
@@ -4206,7 +4206,7 @@ const char *ValidateDrawStates(const Context *context)
     if (context->getClientVersion() >= Version(2, 0))
     {
         Program *program                    = state.getLinkedProgram(context);
-        ProgramPipeline *programPipeline    = state.getProgramPipeline();
+        ProgramPipeline *programPipeline    = state.getLinkedProgramPipeline(context);
         const ProgramExecutable *executable = state.getProgramExecutable();
 
         bool programIsYUVOutput = false;
@@ -8611,5 +8611,34 @@ bool ValidateProgramExecutableXFBBuffersPresent(const Context *context,
     }
 
     return true;
+}
+
+bool ValidateLogicOpCommon(const Context *context,
+                           angle::EntryPoint entryPoint,
+                           LogicalOperation opcodePacked)
+{
+    switch (opcodePacked)
+    {
+        case LogicalOperation::And:
+        case LogicalOperation::AndInverted:
+        case LogicalOperation::AndReverse:
+        case LogicalOperation::Clear:
+        case LogicalOperation::Copy:
+        case LogicalOperation::CopyInverted:
+        case LogicalOperation::Equiv:
+        case LogicalOperation::Invert:
+        case LogicalOperation::Nand:
+        case LogicalOperation::Noop:
+        case LogicalOperation::Nor:
+        case LogicalOperation::Or:
+        case LogicalOperation::OrInverted:
+        case LogicalOperation::OrReverse:
+        case LogicalOperation::Set:
+        case LogicalOperation::Xor:
+            return true;
+        default:
+            context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidLogicOp);
+            return false;
+    }
 }
 }  // namespace gl

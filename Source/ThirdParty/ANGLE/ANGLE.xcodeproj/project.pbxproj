@@ -355,6 +355,8 @@
 		31CDFFFD249184B000486F27 /* imageformats.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598B2284FC400018F2D8 /* imageformats.h */; };
 		31CDFFFE249184B000486F27 /* copyimage.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD59862284FC400018F2D8 /* copyimage.h */; };
 		31CDFFFF249184B000486F27 /* generatemip.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CCD598C2284FC400018F2D8 /* generatemip.h */; };
+		3A7AA54D28E1319D009E09C2 /* PixelLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7AA54B28E1319D009E09C2 /* PixelLocalStorage.h */; };
+		3A7AA54E28E1319D009E09C2 /* PixelLocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */; };
 		6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E27925827EA43F500B1BA86 /* BaseTypes.cpp */; };
 		7B19599326C3C22000C09322 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
 		7B19599426C3C22000C09322 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
@@ -1015,6 +1017,8 @@
 		31B15721236B803300CAA4FD /* SystemInfo_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemInfo_internal.h; sourceTree = "<group>"; };
 		31CDFDEE24917F8900486F27 /* ANGLE-dynamic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ANGLE-dynamic.xcconfig"; sourceTree = "<group>"; };
 		31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libANGLE-shared.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A7AA54B28E1319D009E09C2 /* PixelLocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PixelLocalStorage.h; path = src/libANGLE/PixelLocalStorage.h; sourceTree = SOURCE_ROOT; };
+		3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PixelLocalStorage.cpp; path = src/libANGLE/PixelLocalStorage.cpp; sourceTree = SOURCE_ROOT; };
 		5C1BAA961DFB60FF002906BB /* gl3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3.h; path = include/GLES3/gl3.h; sourceTree = "<group>"; };
 		5C1BAA971DFB60FF002906BB /* gl3platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl3platform.h; path = include/GLES3/gl3platform.h; sourceTree = "<group>"; };
 		5C1BAA981DFB60FF002906BB /* gl31.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gl31.h; path = include/GLES3/gl31.h; sourceTree = "<group>"; };
@@ -2178,6 +2182,8 @@
 				A315988323299037000619B9 /* Overlay_font_autogen.h */,
 				A315988523299037000619B9 /* OverlayWidgets.cpp */,
 				A315988723299037000619B9 /* OverlayWidgets.h */,
+				3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */,
+				3A7AA54B28E1319D009E09C2 /* PixelLocalStorage.h */,
 				5C1DBC751B0438D200235552 /* Platform.cpp */,
 				5C1DBC761B0438D200235552 /* Program.cpp */,
 				5C1DBC771B0438D200235552 /* Program.h */,
@@ -3357,6 +3363,7 @@
 				31CDFFDF249184A700486F27 /* ParseContext.h in Headers */,
 				31CD0005249184B500486F27 /* PbufferSurfaceCGL.h in Headers */,
 				31CD000C249184BB00486F27 /* PbufferSurfaceEAGL.h in Headers */,
+				3A7AA54D28E1319D009E09C2 /* PixelLocalStorage.h in Headers */,
 				31CDFF582491848C00486F27 /* platform.h in Headers */,
 				31CDFF502491848300486F27 /* PMurHash.h in Headers */,
 				31CDFF562491848C00486F27 /* PoolAlloc.h in Headers */,
@@ -3889,6 +3896,7 @@
 				DF83E35B2639FE92000825EF /* PbufferSurfaceCGL.cpp in Sources */,
 				DF83E34C2639FE92000825EF /* PbufferSurfaceEAGL.cpp in Sources */,
 				DF83E2352639FCD5000825EF /* Pipeline.cpp in Sources */,
+				3A7AA54E28E1319D009E09C2 /* PixelLocalStorage.cpp in Sources */,
 				DF83E2E12639FE17000825EF /* Platform.cpp in Sources */,
 				DF83E2272639FC94000825EF /* PMurHash.cpp in Sources */,
 				DF83E21D2639FC74000825EF /* PoolAlloc.cpp in Sources */,

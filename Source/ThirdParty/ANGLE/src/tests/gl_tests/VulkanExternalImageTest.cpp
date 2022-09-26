@@ -764,7 +764,7 @@ TEST_P(VulkanExternalImageTest, ShouldClearOpaqueFdWithSemaphores)
 
     // http://issuetracker.google.com/173004081
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsLinux() &&
-                       GetParam().isEnabled(Feature::AsyncCommandQueue));
+                       getEGLWindow()->isFeatureEnabled(Feature::AsyncCommandQueue));
     // http://anglebug.com/5383
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
@@ -783,7 +783,7 @@ TEST_P(VulkanExternalImageTest, ShouldClearOpaqueFdWithSemaphoresWithFlags)
 
     // http://issuetracker.google.com/173004081
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsLinux() &&
-                       GetParam().isEnabled(Feature::AsyncCommandQueue));
+                       getEGLWindow()->isFeatureEnabled(Feature::AsyncCommandQueue));
 
     RunShouldClearWithSemaphoresTest<OpaqueFdTraits>(true, kDefaultImageCreateFlags,
                                                      kDefaultImageUsageFlags, isSwiftshader(),
@@ -799,7 +799,7 @@ TEST_P(VulkanExternalImageTest, ShouldClearOpaqueFdWithSemaphoresNoStorage)
 
     // http://issuetracker.google.com/173004081
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsLinux() &&
-                       GetParam().isEnabled(Feature::AsyncCommandQueue));
+                       getEGLWindow()->isFeatureEnabled(Feature::AsyncCommandQueue));
 
     RunShouldClearWithSemaphoresTest<OpaqueFdTraits>(true, kDefaultImageCreateFlags,
                                                      kNoStorageImageUsageFlags, isSwiftshader(),
@@ -816,7 +816,7 @@ TEST_P(VulkanExternalImageTest, ShouldClearOpaqueFdWithSemaphoresMutableNoStorag
 
     // http://issuetracker.google.com/173004081
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsLinux() &&
-                       GetParam().isEnabled(Feature::AsyncCommandQueue));
+                       getEGLWindow()->isFeatureEnabled(Feature::AsyncCommandQueue));
 
     RunShouldClearWithSemaphoresTest<OpaqueFdTraits>(true, kMutableImageCreateFlags,
                                                      kNoStorageImageUsageFlags, isSwiftshader(),
@@ -1005,7 +1005,7 @@ TEST_P(VulkanExternalImageTest, ShouldDrawOpaqueFdWithSemaphores)
 
     // http://issuetracker.google.com/173004081
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsLinux() &&
-                       GetParam().isEnabled(Feature::AsyncCommandQueue));
+                       getEGLWindow()->isFeatureEnabled(Feature::AsyncCommandQueue));
     // http://anglebug.com/5383
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 
@@ -1176,7 +1176,7 @@ TEST_P(VulkanExternalImageTest, WaitSemaphoresRetainsContentOpaqueFd)
 
     // http://issuetracker.google.com/173004081
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsIntel() && IsLinux() &&
-                       GetParam().isEnabled(Feature::AsyncCommandQueue));
+                       getEGLWindow()->isFeatureEnabled(Feature::AsyncCommandQueue));
     // http://anglebug.com/5383
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsDesktopOpenGL());
 

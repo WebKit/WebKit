@@ -331,6 +331,18 @@ const gl::Limitations &RendererGL::getNativeLimitations() const
     return mNativeLimitations;
 }
 
+ShPixelLocalStorageType RendererGL::getNativePixelLocalStorageType() const
+{
+    if (!getNativeExtensions().shaderPixelLocalStorageANGLE)
+    {
+        return ShPixelLocalStorageType::NotSupported;
+    }
+    // OpenGL ES only allows read/write access to "r32*" images.
+    return getFunctions()->standard == StandardGL::STANDARD_GL_ES
+               ? ShPixelLocalStorageType::ImageStoreR32PackedFormats
+               : ShPixelLocalStorageType::ImageStoreNativeFormats;
+}
+
 MultiviewImplementationTypeGL RendererGL::getMultiviewImplementationType() const
 {
     ensureCapsInitialized();

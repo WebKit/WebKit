@@ -43,6 +43,10 @@ namespace angle
 {
 GLenum DrmFourCCFormatToGLInternalFormat(int format, bool *isYUV);
 
+#if defined(ANGLE_PLATFORM_LINUX) && defined(ANGLE_USES_GBM)
+int GLInternalFormatToGbmFourCCFormat(GLenum internalFormat);
+#endif
+
 #if defined(ANGLE_ENABLE_VULKAN)
 std::vector<int> VkFormatToDrmFourCCFormat(VkFormat format);
 std::vector<VkFormat> DrmFourCCFormatToVkFormats(int fourccFormat);

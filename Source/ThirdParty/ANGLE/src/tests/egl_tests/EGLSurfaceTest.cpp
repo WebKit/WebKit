@@ -245,9 +245,9 @@ class EGLSurfaceTest : public ANGLETest<>
         initializeSurface(defaultConfig);
     }
 
-    GLuint createProgram()
+    GLuint createProgram(const char *fs = angle::essl1_shaders::fs::Red())
     {
-        return CompileProgram(angle::essl1_shaders::vs::Simple(), angle::essl1_shaders::fs::Red());
+        return CompileProgram(angle::essl1_shaders::vs::Simple(), fs);
     }
 
     void drawWithProgram(GLuint program)
@@ -1202,6 +1202,107 @@ class EGLSurfaceTestD3D11 : public EGLSurfaceTest
         EXPECT_PIXEL_EQ(75, 75, 0, pix75, 0, 255);
         EXPECT_GL_NO_ERROR();
     }
+
+    // Draws into a surface at the specified offset using the values of gl_FragCoord in the
+    // fragment shader.
+    // texturedimension - dimension of the D3D texture and surface.
+    // offset - draw into the texture at offset (|offset|, |offset|)
+    void setupFragCoordOffset(int textureDimension, int offset)
+    {
+        ANGLE_SKIP_TEST_IF(!IsEGLClientExtensionEnabled("EGL_ANGLE_platform_angle_d3d"));
+        initializeDisplay();
+
+        EGLAttrib device       = 0;
+        EGLAttrib newEglDevice = 0;
+        ASSERT_EGL_TRUE(eglQueryDisplayAttribEXT(mDisplay, EGL_DEVICE_EXT, &newEglDevice));
+        ASSERT_EGL_TRUE(eglQueryDeviceAttribEXT(reinterpret_cast<EGLDeviceEXT>(newEglDevice),
+                                                EGL_D3D11_DEVICE_ANGLE, &device));
+        angle::ComPtr<ID3D11Device> d3d11Device(reinterpret_cast<ID3D11Device *>(device));
+        ASSERT_TRUE(!!d3d11Device);
+
+        D3D11_TEXTURE2D_DESC desc = {};
+        desc.Format               = DXGI_FORMAT_B8G8R8A8_UNORM;
+        desc.Width                = textureDimension;
+        desc.Height               = textureDimension;
+        desc.ArraySize            = 1;
+        desc.MipLevels            = 1;
+        desc.SampleDesc.Count     = 1;
+        desc.Usage                = D3D11_USAGE_DEFAULT;
+        desc.BindFlags            = D3D11_BIND_RENDER_TARGET;
+        angle::ComPtr<ID3D11Texture2D> texture;
+        HRESULT hr = d3d11Device->CreateTexture2D(&desc, nullptr, &texture);
+        ASSERT_TRUE(SUCCEEDED(hr));
+
+        const EGLint surfaceAttributes[] = {EGL_WIDTH,
+                                            textureDimension,
+                                            EGL_HEIGHT,
+                                            textureDimension,
+                                            EGL_TEXTURE_OFFSET_X_ANGLE,
+                                            offset,
+                                            EGL_TEXTURE_OFFSET_Y_ANGLE,
+                                            offset,
+                                            EGL_NONE};
+        EGLClientBuffer buffer           = reinterpret_cast<EGLClientBuffer>(texture.Get());
+
+        const EGLint configAttributes[] = {
+            EGL_RED_SIZE,   8, EGL_GREEN_SIZE,   8, EGL_BLUE_SIZE,      8, EGL_ALPHA_SIZE, 8,
+            EGL_DEPTH_SIZE, 0, EGL_STENCIL_SIZE, 0, EGL_SAMPLE_BUFFERS, 0, EGL_NONE};
+
+        EGLConfig config;
+        ASSERT_EGL_TRUE(EGLWindow::FindEGLConfig(mDisplay, configAttributes, &config));
+        mConfig = config;
+
+        mPbufferSurface = eglCreatePbufferFromClientBuffer(mDisplay, EGL_D3D_TEXTURE_ANGLE, buffer,
+                                                           config, surfaceAttributes);
+        ASSERT_EGL_SUCCESS();
+
+        initializeContext();
+
+        eglMakeCurrent(mDisplay, mPbufferSurface, mPbufferSurface, mContext);
+        ASSERT_EGL_SUCCESS();
+
+        // Fragment shader that uses the gl_FragCoord values to output the (x, y) position of
+        // the current pixel as the color.
+        //    - Reverse the offset that was applied to the original coordinates
+        //    - 0.5 is subtracted because gl_FragCoord gives the pixel center
+        //    - Divided by the size to give a max value of 1
+        std::stringstream fs;
+        fs << "precision mediump float;"
+           << "void main()"
+           << "{"
+           << "    float dimension = float(" << textureDimension << ");"
+           << "    float offset = float(" << offset << ");"
+           << "    gl_FragColor = vec4((gl_FragCoord.x + offset - 0.5) / dimension,"
+           << "                        (gl_FragCoord.y + offset - 0.5) / dimension,"
+           << "                         gl_FragCoord.z,"
+           << "                         gl_FragCoord.w);"
+           << "}";
+
+        GLuint program = createProgram(fs.str().c_str());
+        ASSERT_NE(0u, program);
+        glUseProgram(program);
+
+        glClearColor(0, 0, 0, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        const GLfloat vertices[] = {
+            -1.0f, 1.0f, 0.5f, -1.0f, -1.0f, 0.5f, 1.0f, -1.0f, 0.5f,
+            -1.0f, 1.0f, 0.5f, 1.0f,  -1.0f, 0.5f, 1.0f, 1.0f,  0.5f,
+        };
+
+        GLint positionLocation =
+            glGetAttribLocation(program, angle::essl1_shaders::PositionAttrib());
+        glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, vertices);
+        glEnableVertexAttribArray(positionLocation);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glDisableVertexAttribArray(positionLocation);
+
+        glDeleteProgram(program);
+
+        EXPECT_GL_NO_ERROR();
+    }
 };
 
 // Test that rendering to an IDCompositionSurface using a pbuffer works.
@@ -1363,6 +1464,64 @@ TEST_P(EGLSurfaceTestD3D11, CreateSurfaceWithMSAA)
     EXPECT_GL_NO_ERROR();
 
     glDeleteProgram(program);
+}
+
+// Tests that gl_FragCoord.xy is offset with the EGL_TEXTURE_OFFSET_[X|Y]_ANGLE values specified
+// at surface creation, using positive offsets
+TEST_P(EGLSurfaceTestD3D11, FragCoordOffset)
+{
+    constexpr int kTextureDimension = 28;
+    constexpr int kOffset           = 6;
+
+    setupFragCoordOffset(kTextureDimension, kOffset);
+
+    // With a positive offset, nothing is drawn in any pixels to the left of and above |kOffset|.
+    for (int x = 0; x < kOffset; x++)
+    {
+        for (int y = 0; y < kOffset; y++)
+        {
+            EXPECT_PIXEL_EQ(x, y, 0, 0, 0, 0);
+        }
+    }
+
+    // The rest of the texture's color should be the value of the (x, y) coordinates.
+    for (int x = kOffset; x < kTextureDimension; x++)
+    {
+        for (int y = kOffset; y < kTextureDimension; y++)
+        {
+            EXPECT_PIXEL_NEAR(x, y, x * 255.0 / kTextureDimension, y * 255.0 / kTextureDimension,
+                              191, 255, 0.5);
+        }
+    }
+}
+
+// Tests that gl_FragCoord.xy is offset with the EGL_TEXTURE_OFFSET_[X|Y]_ANGLE values specified
+// at surface creation, using negative offsets.
+TEST_P(EGLSurfaceTestD3D11, FragCoordOffsetNegative)
+{
+    constexpr int kTextureDimension = 28;
+    constexpr int kOffset           = 6;
+
+    setupFragCoordOffset(kTextureDimension, -kOffset);
+
+    // With a negative offset, nothing is drawn in pixels to the right of and below |koffset|.
+    for (int x = kTextureDimension - kOffset; x < kTextureDimension; x++)
+    {
+        for (int y = kTextureDimension - kOffset; y < kTextureDimension; y++)
+        {
+            EXPECT_PIXEL_EQ(x, y, 0, 0, 0, 0);
+        }
+    }
+
+    // The rest of the texture's color should be the value of the (x, y) coordinates.
+    for (int x = 0; x < kTextureDimension - kOffset; x++)
+    {
+        for (int y = 0; y < kTextureDimension - kOffset; y++)
+        {
+            EXPECT_PIXEL_NEAR(x, y, x * 255.0 / kTextureDimension, y * 255.0 / kTextureDimension,
+                              191, 255, 0.5);
+        }
+    }
 }
 
 #endif  // ANGLE_ENABLE_D3D11

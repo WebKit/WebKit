@@ -243,6 +243,14 @@
                 "When uploading textures, some drivers count an extra row padding"
             ],
             "issue": "http://anglebug.com/7573"
+        },
+        {
+            "name": "upload_data_to_iosurfaces_with_staging_buffers",
+            "category": "Workarounds",
+            "description": [
+                "When uploading data to IOSurface-backed textures, use a staging buffer."
+            ],
+            "issue": "http://anglebug.com/7573"
         }
     ]
 }
