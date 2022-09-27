@@ -51,19 +51,29 @@ ResourceTiming ResourceTiming::fromSynchronousLoad(const URL& url, const String&
     return ResourceTiming(url, initiator, loadTiming, networkLoadMetrics, response, securityOrigin);
 }
 
-ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin&)
+ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const ResourceLoadTiming& timing, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& origin)
     : m_url(url)
     , m_initiator(initiator)
     , m_resourceLoadTiming(timing)
     , m_networkLoadMetrics(networkLoadMetrics)
+    , m_serverTiming(ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming)))
     , m_isLoadedFromServiceWorker(response.source() == ResourceResponse::Source::ServiceWorker)
+    , m_isSameOriginRequest(!m_networkLoadMetrics.hasCrossOriginRedirect
+        && origin.protocol() == url.protocol()
+        && origin.host() == url.host()
+        && origin.port() == url.port())
 {
-    if (DeprecatedGlobalSettings::serverTimingEnabled() && !m_networkLoadMetrics.failsTAOCheck)
-        m_serverTiming = ServerTimingParser::parseServerTiming(response.httpHeaderField(HTTPHeaderName::ServerTiming));
 }
 
 Vector<Ref<PerformanceServerTiming>> ResourceTiming::populateServerTiming() const
 {
+    // To increase privacy, this additional check was proposed at https://github.com/w3c/resource-timing/issues/342 .
+    if (!m_isSameOriginRequest)
+        return { };
+
+    if (!DeprecatedGlobalSettings::serverTimingEnabled())
+        return { };
+
     return WTF::map(m_serverTiming, [] (auto& entry) {
         return PerformanceServerTiming::create(String(entry.name), entry.duration, String(entry.description));
     });
