@@ -1,0 +1,4 @@
+
+FAIL Test isConfigSupported() and configure() using a SharedArrayBuffer Can't find variable: AudioDecoder
+FAIL Test isConfigSupported() and configure() using a Uint8Array(SharedArrayBuffer) Can't find variable: AudioDecoder
+

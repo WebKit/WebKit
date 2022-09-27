@@ -1,0 +1,4 @@
+
+FAIL Test we can construct an EncodedAudioChunk. Can't find variable: EncodedAudioChunk
+FAIL Test copyTo() exception if destination invalid Can't find variable: EncodedAudioChunk
+

@@ -42,6 +42,9 @@ webkit.org/b/235072 imported/w3c/web-platform-tests/video-rvfc/request-video-fra
 
 webkit.org/b/244736 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback.html [ Pass Failure ]
 
+imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo.crossOriginIsolated.https.any.html [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo.crossOriginIsolated.https.any.worker.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

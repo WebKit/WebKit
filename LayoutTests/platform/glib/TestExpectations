@@ -242,6 +242,9 @@ imported/w3c/web-platform-tests/compat/webkit-box-rtl-flex.html [ Pass ]
 
 imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ Pass ]
 
+# Tests need rebasing
+imported/w3c/web-platform-tests/webcodecs [ Skip ]
+
 # Tests that timeout on Apple platforms.
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-002.html [ Pass ]
 webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-003.html [ Pass ]

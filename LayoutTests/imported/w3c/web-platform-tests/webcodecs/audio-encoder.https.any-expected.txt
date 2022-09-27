@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: AudioData
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: AudioData
+
+FAIL Simple audio encoding promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Encode audio with negative timestamp promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+

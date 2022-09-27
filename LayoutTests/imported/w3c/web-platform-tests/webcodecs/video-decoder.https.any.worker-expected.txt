@@ -1,0 +1,17 @@
+
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Empty codec Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Unrecognized codec Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Audio codec Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Ambiguous codec Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Codec with MIME type Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.configure() rejects invalid config:Empty codec Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.configure() rejects invalid config:Unrecognized codec Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.configure() rejects invalid config:Audio codec Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.configure() rejects invalid config:Ambiguous codec Can't find variable: VideoDecoder
+FAIL Test that VideoDecoder.configure() rejects invalid config:Codec with MIME type Can't find variable: VideoDecoder
+FAIL Test VideoDecoder construction assert_throws_js: function "() => {
+    new VideoDecoder({});
+  }" threw object "ReferenceError: Can't find variable: VideoDecoder" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+

@@ -1,0 +1,8 @@
+
+FAIL Test we can clone a VideoFrame. Can't find variable: OffscreenCanvas
+FAIL Verify closing a frame doesn't affect its clones. Can't find variable: OffscreenCanvas
+FAIL Verify cloning a closed frame throws. Can't find variable: OffscreenCanvas
+FAIL Verify closing frames does not propagate accross contexts. Can't find variable: OffscreenCanvas
+FAIL Verify transferring frames closes them. Can't find variable: OffscreenCanvas
+FAIL Verify posting closed frames throws. Can't find variable: OffscreenCanvas
+

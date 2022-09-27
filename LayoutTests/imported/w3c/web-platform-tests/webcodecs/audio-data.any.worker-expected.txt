@@ -1,0 +1,10 @@
+
+FAIL Verify AudioData constructors Can't find variable: AudioData
+FAIL Verify closing and cloning AudioData Can't find variable: AudioData
+FAIL Test we can construct AudioData with a negative timestamp. Can't find variable: AudioData
+FAIL Test conversion of uint8 data to float32 Can't find variable: AudioData
+FAIL Test conversion of int16 data to float32 Can't find variable: AudioData
+FAIL Test conversion of int32 data to float32 Can't find variable: AudioData
+FAIL Test conversion of float32 data to float32 Can't find variable: AudioData
+FAIL Test copying out planar and interleaved data Can't find variable: AudioData
+
