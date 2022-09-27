@@ -41,7 +41,7 @@ Ref<IPCConnectionTester> IPCConnectionTester::create(IPC::Connection& connection
 
 IPCConnectionTester::IPCConnectionTester(Ref<IPC::Connection>&& connection, IPCConnectionTesterIdentifier identifier, IPC::Connection::Handle&& handle)
     : m_connection(WTFMove(connection))
-    , m_testedConnection(IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle) }))
+    , m_testedConnection(IPC::Connection::createClientConnection(WTFMove(handle)))
     , m_identifier(identifier)
 {
 }

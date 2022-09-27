@@ -48,7 +48,7 @@ private:
 
 StreamClientConnection::StreamConnectionWithDedicatedConnection StreamClientConnection::createWithDedicatedConnection(MessageReceiver& receiver, size_t bufferSize)
 {
-    auto connectionIdentifiers = Connection::createConnectionIdentifierPair();
+    auto connections = Connection::createConnectionPair();
     // Create StreamClientConnection with "server" type Connection. The caller will send the "client" type connection identifier via
     // IPC to the other side, where StreamServerConnection will be created with "client" type Connection.
     // For Connection, "server" means the connection which was created first, the connection which is not sent through IPC to other party.
@@ -56,10 +56,9 @@ StreamClientConnection::StreamConnectionWithDedicatedConnection StreamClientConn
     // The "Client" in StreamClientConnection means the party that mostly does sending, e.g. untrusted party.
     // The "Server" in StreamServerConnection means the party that mostly does receiving, e.g. the trusted party which holds the destination object to communicate with.
     auto dedicatedConnectionClient = makeUnique<DedicatedConnectionClient>(receiver);
-    auto dedicatedConnection = Connection::createServerConnection(connectionIdentifiers->server);
-    std::unique_ptr<StreamClientConnection> streamConnection { new StreamClientConnection(WTFMove(dedicatedConnection), bufferSize, WTFMove(dedicatedConnectionClient)) };
+    std::unique_ptr<StreamClientConnection> streamConnection { new StreamClientConnection(WTFMove(connections->server), bufferSize, WTFMove(dedicatedConnectionClient)) };
     // FIXME(http://webkit.org/b238944): Make IPC::Attachment really movable on OS(DARWIN).
-    return { WTFMove(streamConnection), WTFMove(connectionIdentifiers->client) };
+    return { WTFMove(streamConnection), WTFMove(connections->client) };
 }
 
 StreamClientConnection::StreamClientConnection(Ref<Connection>&& connection, size_t bufferSize, std::unique_ptr<DedicatedConnectionClient>&& dedicatedConnectionClient)

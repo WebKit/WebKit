@@ -639,7 +639,7 @@ static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParamet
         return suffix.left(suffix.find('/'));
     }
 
-    String clientIdentifier = codeSigningIdentifier(parameters.connectionIdentifier.xpcConnection.get());
+    String clientIdentifier = codeSigningIdentifier(parameters.connection->xpcConnection());
     if (clientIdentifier.isNull())
         clientIdentifier = parameters.clientIdentifier;
     return makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier);

@@ -282,15 +282,12 @@ struct Connection::PendingSyncReply {
     }
 };
 
-Ref<Connection> Connection::createServerConnection(Identifier identifier)
+#if USE(UNIX_DOMAIN_SOCKETS) || OS(WINDOWS)
+Ref<Connection> Connection::createClientConnection(Handle&& handle, PlatformClientConnectionOptions)
 {
-    return adoptRef(*new Connection(identifier, true));
+    return adoptRef(*new Connection(WTFMove(handle)));
 }
-
-Ref<Connection> Connection::createClientConnection(Identifier identifier)
-{
-    return adoptRef(*new Connection(identifier, false));
-}
+#endif
 
 HashMap<IPC::Connection::UniqueID, Connection*>& Connection::connectionMap()
 {
@@ -308,9 +305,8 @@ static HashMap<uintptr_t, HashMap<uint64_t, CompletionHandler<void(Decoder*)>>>&
 
 static void clearAsyncReplyHandlers(const Connection&);
 
-Connection::Connection(Identifier identifier, bool isServer)
+Connection::Connection()
     : m_uniqueID(UniqueID::generate())
-    , m_isServer(isServer)
     , m_connectionQueue(WorkQueue::create("com.apple.IPC.ReceiveQueue"))
 {
     ASSERT(RunLoop::isMain());
@@ -319,8 +315,6 @@ Connection::Connection(Identifier identifier, bool isServer)
         Locker locker { s_connectionMapLock };
         connectionMap().add(m_uniqueID, this);
     }
-
-    platformInitialize(identifier);
 }
 
 Connection::~Connection()
@@ -332,7 +326,7 @@ Connection::~Connection()
         Locker locker { s_connectionMapLock };
         connectionMap().remove(m_uniqueID);
     }
-
+    platformDestroy();
     clearAsyncReplyHandlers(*this);
 }
 
@@ -477,8 +471,6 @@ void Connection::invalidate()
 {
     ASSERT(RunLoop::isMain());
     m_isValid = false;
-    if (!m_client)
-        return;
     m_client = nullptr;
     [this] {
         Locker locker { m_incomingMessagesLock };
@@ -1369,7 +1361,7 @@ void Connection::wakeUpRunLoop()
 }
 
 #if !USE(UNIX_DOMAIN_SOCKETS) && !OS(DARWIN) && !OS(WINDOWS)
-std::optional<Connection::ConnectionIdentifierPair> Connection::createConnectionIdentifierPair()
+std::optional<Connection::ConnectionPair> Connection::createConnectionPair()
 {
     notImplemented();
     return std::nullopt;

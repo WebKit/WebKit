@@ -555,20 +555,20 @@ void NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation(WebPage
         completionHandler(false);
 }
 
-void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier connectionIdentifier)
+void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, RefPtr<IPC::Connection> connectionIn)
 {
     RELEASE_LOG(Process, "%p - NetworkProcessProxy::didFinishLaunching", this);
 
-    AuxiliaryProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
+    AuxiliaryProcessProxy::didFinishLaunching(launcher, WTFMove(connectionIn));
 
-    if (!connectionIdentifier) {
+    if (!connection()) {
         networkProcessDidTerminate(ProcessTerminationReason::Crash);
         return;
     }
     
 #if PLATFORM(IOS_FAMILY)
-    if (xpc_connection_t connection = this->connection()->xpcConnection())
-        m_throttler.didConnectToProcess(xpc_connection_get_pid(connection));
+    if (xpc_connection_t xpcConnection = this->connection()->xpcConnection())
+        m_throttler.didConnectToProcess(xpc_connection_get_pid(xpcConnection));
 #endif
 }
 

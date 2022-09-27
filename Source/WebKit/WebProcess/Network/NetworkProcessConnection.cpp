@@ -80,8 +80,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier, HTTPCookieAcceptPolicy cookieAcceptPolicy)
-    : m_connection(IPC::Connection::createClientConnection(connectionIdentifier))
+NetworkProcessConnection::NetworkProcessConnection(Ref<IPC::Connection> connection, HTTPCookieAcceptPolicy cookieAcceptPolicy)
+    : m_connection(WTFMove(connection))
     , m_cookieAcceptPolicy(cookieAcceptPolicy)
 {
     m_connection->open(*this);

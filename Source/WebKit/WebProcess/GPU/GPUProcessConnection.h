@@ -115,7 +115,7 @@ public:
 
     static constexpr Seconds defaultTimeout = 3_s;
 private:
-    GPUProcessConnection(IPC::Connection::Identifier&&);
+    GPUProcessConnection(Ref<IPC::Connection>);
     bool waitForDidInitialize();
     void invalidate();
 

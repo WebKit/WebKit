@@ -58,7 +58,7 @@ class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSend
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
 
 public:
-    void initialize(const AuxiliaryProcessInitializationParameters&);
+    void initialize(AuxiliaryProcessInitializationParameters&&);
 
     // disable and enable termination of the process. when disableTermination is called, the
     // process won't terminate unless a corresponding enableTermination call is made.
@@ -192,7 +192,7 @@ struct AuxiliaryProcessInitializationParameters {
     String clientIdentifier;
     String clientBundleIdentifier;
     std::optional<WebCore::ProcessIdentifier> processIdentifier;
-    IPC::Connection::Identifier connectionIdentifier;
+    RefPtr<IPC::Connection> connection;
     HashMap<String, String> extraInitializationData;
     WebCore::AuxiliaryProcessType processType;
 #if PLATFORM(COCOA)

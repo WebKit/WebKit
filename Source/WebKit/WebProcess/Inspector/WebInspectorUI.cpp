@@ -100,14 +100,14 @@ void WebInspectorUI::updateConnection()
         m_backendConnection->invalidate();
         m_backendConnection = nullptr;
     }
-    auto connectionIdentifiers = IPC::Connection::createConnectionIdentifierPair();
-    if (!connectionIdentifiers)
+    auto connections = IPC::Connection::createConnectionPair();
+    if (!connections)
         return;
 
-    m_backendConnection = IPC::Connection::createServerConnection(connectionIdentifiers->server);
+    m_backendConnection = WTFMove(connections->server);
     m_backendConnection->open(*this);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetFrontendConnection(connectionIdentifiers->client), m_inspectedPageIdentifier);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebInspectorUIProxy::SetFrontendConnection(connections->client), m_inspectedPageIdentifier);
 }
 
 void WebInspectorUI::windowObjectCleared()

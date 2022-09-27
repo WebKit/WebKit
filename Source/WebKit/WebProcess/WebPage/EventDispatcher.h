@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "WebEvent.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/RectEdges.h>

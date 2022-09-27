@@ -1173,7 +1173,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
     if (!m_networkProcessConnection) {
         auto connectionInfo = getNetworkProcessConnection(*parentProcessConnection());
 
-        m_networkProcessConnection = NetworkProcessConnection::create(IPC::Connection::Identifier { WTFMove(connectionInfo.connection) }, connectionInfo.cookieAcceptPolicy);
+        m_networkProcessConnection = NetworkProcessConnection::create(IPC::Connection::createClientConnection(WTFMove(connectionInfo.connection)), connectionInfo.cookieAcceptPolicy);
 #if HAVE(AUDIT_TOKEN)
         m_networkProcessConnection->setNetworkProcessAuditToken(WTFMove(connectionInfo.auditToken));
 #endif

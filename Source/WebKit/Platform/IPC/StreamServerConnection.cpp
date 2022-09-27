@@ -55,7 +55,7 @@ Ref<StreamServerConnection> StreamServerConnection::create(Connection& connectio
 
 Ref<StreamServerConnection> StreamServerConnection::createWithDedicatedConnection(Connection::Handle&& connectionHandle, StreamConnectionBuffer&& streamBuffer, StreamConnectionWorkQueue& workQueue)
 {
-    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(connectionHandle) });
+    auto connection = IPC::Connection::createClientConnection(WTFMove(connectionHandle));
     auto streamConnection = adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(streamBuffer), workQueue, HasDedicatedConnection::Yes));
     return streamConnection;
 }

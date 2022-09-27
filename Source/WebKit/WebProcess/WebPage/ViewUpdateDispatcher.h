@@ -29,6 +29,7 @@
 
 #include "MessageReceiver.h"
 #include "VisibleContentRectUpdateInfo.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>

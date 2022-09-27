@@ -45,23 +45,14 @@ ProcessLauncher::ProcessLauncher(Client* client, LaunchOptions&& launchOptions)
     launchProcess();
 }
 
-void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, IPC::Connection::Identifier identifier)
+void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, RefPtr<IPC::Connection> connection)
 {
     tracePoint(ProcessLaunchEnd);
     m_processIdentifier = processIdentifier;
     m_isLaunching = false;
-    
-    if (!m_client) {
-        // FIXME: Make Identifier a move-only object and release port rights/connections in the destructor.
-#if OS(DARWIN) && !PLATFORM(GTK)
-        // FIXME: Should really be something like USE(MACH)
-        if (identifier.port)
-            mach_port_mod_refs(mach_task_self(), identifier.port, MACH_PORT_RIGHT_RECEIVE, -1);
-#endif
-        return;
-    }
-    
-    m_client->didFinishLaunching(this, identifier);
+    if (!m_client)
+        return;    
+    m_client->didFinishLaunching(this, WTFMove(connection));
 }
 
 void ProcessLauncher::invalidate()
