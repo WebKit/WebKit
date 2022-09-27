@@ -4684,6 +4684,17 @@
    },
    {
       "emails" : [
+         "marcosc@apple.com",
+         "marcos@marcosc.com"
+      ],
+      "github" : "marcoscaceres",
+      "name" : "Marcos Caceres",
+      "nicks" : [
+         "marcosc"
+      ]
+   },
+   {
+      "emails" : [
          "bulach@chromium.org"
       ],
       "name" : "Marcus Voltis Bulach"
