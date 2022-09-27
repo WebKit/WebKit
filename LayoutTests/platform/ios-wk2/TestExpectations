@@ -2392,3 +2392,5 @@ webkit.org/b/245613 scrollingcoordinator/ios/fixed-in-frame-layer-reconcile-laye
 webkit.org/b/245686 fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
 webkit.org/b/245688 fast/css/ios/system-color-for-css-value.html [ Failure ]
+
+webkit.org/b/245708 fast/text/capitalize-boundaries.html [ Failure ]
