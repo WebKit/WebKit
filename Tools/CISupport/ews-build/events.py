@@ -27,11 +27,9 @@ import os
 import time
 import twisted
 
-from base64 import b64encode
 from buildbot.process.results import SUCCESS, FAILURE, CANCELLED, WARNINGS, SKIPPED, EXCEPTION, RETRY
 from buildbot.util import httpclientservice, service
 from buildbot.www.hooks.github import GitHubEventHandler
-from steps import GitHub
 from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.internet.defer import succeed
@@ -80,7 +78,6 @@ class JSONProducer(object):
 class Events(service.BuildbotService):
 
     EVENT_SERVER_ENDPOINT = 'https://ews.webkit{}.org/results/'.format(custom_suffix).encode()
-    MAX_GITHUB_DESCRIPTION = 140
     SHORT_STEPS = (
         'configure-build',
         'validate-change',
@@ -115,24 +112,6 @@ class Events(service.BuildbotService):
         body = JSONProducer(data)
 
         agent.request(b'POST', self.EVENT_SERVER_ENDPOINT, Headers({'Content-Type': ['application/json']}), body)
-
-    def sendDataToGitHub(self, repository, sha, data, user=None):
-        username, access_token = GitHub.credentials(user=user)
-
-        data['description'] = data.get('description', '')
-        if len(data['description']) > self.MAX_GITHUB_DESCRIPTION:
-            data['description'] = '{}...'.format(data['description'][:self.MAX_GITHUB_DESCRIPTION - 3])
-
-        auth_header = b64encode('{}:{}'.format(username, access_token).encode('utf-8')).decode('utf-8')
-
-        agent = Agent(reactor)
-        body = JSONProducer(data)
-        d = agent.request(b'POST', GitHub.commit_status_url(sha, repository).encode('utf-8'), Headers({
-            'Authorization': ['Basic {}'.format(auth_header)],
-            'User-Agent': ['python-twisted/{}'.format(twisted.__version__)],
-            'Accept': ['application/vnd.github.v3+json'],
-            'Content-Type': ['application/json'],
-        }), body)
 
     def getBuilderName(self, build):
         if not (build and 'properties' in build):
@@ -174,32 +153,6 @@ class Events(service.BuildbotService):
 
         self.sendDataToEWS(data)
 
-    def buildFinishedGitHub(self, build):
-        sha = self.extractProperty(build, 'github.head.sha')
-        repository = self.extractProperty(build, 'repository')
-
-        if not sha or not repository:
-            print('Pull request number defined, but sha is {} and repository {}, which are invalid'.format(sha, repository))
-            print('Not reporting build result to GitHub')
-            return
-
-        data_to_send = dict(
-            owner=(self.extractProperty(build, 'owners') or [None])[0],
-            repo=(self.extractProperty(build, 'github.head.repo.full_name') or '').split('/')[-1],
-            sha=sha,
-            target_url='{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, build.get('builderid'), build.get('number')),
-            state={
-                SUCCESS: 'success',
-                WARNINGS: 'success',
-                SKIPPED: 'success',
-                RETRY: 'pending',
-                FAILURE: 'failure'
-            }.get(build.get('results'), 'error'),
-            description=build.get('state_string'),
-            context=build['description'] + custom_suffix,
-        )
-        self.sendDataToGitHub(repository, sha, data_to_send, user=GitHub.user_for_queue(self.extractProperty(build, 'buildername')))
-
     @defer.inlineCallbacks
     def buildFinished(self, key, build):
         if not build.get('properties'):
@@ -209,9 +162,6 @@ class Events(service.BuildbotService):
 
         builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
         build['description'] = builder.get('description', '?')
-
-        if self.extractProperty(build, 'github.number'):
-            self.buildFinishedGitHub(build)
 
         data = {
             "type": self.type_prefix + "build",
@@ -235,49 +185,10 @@ class Events(service.BuildbotService):
         self.sendDataToEWS(data)
 
     @defer.inlineCallbacks
-    def stepStartedGitHub(self, build, state_string):
-        sha = self.extractProperty(build, 'github.head.sha')
-        repository = self.extractProperty(build, 'repository')
-        if not sha or not repository:
-            print('Pull request number defined, but sha is {} and repository {}, which are invalid'.format(sha, repository))
-            print('Not reporting step started to GitHub')
-            return
-
-        if 'WebKit/WebKit' in repository:
-            # Do not report status directly to GitHub for WebKit/WebKit, since we have status-bubbles for that.
-            return
-
-        builder = yield self.master.db.builders.getBuilder(build.get('builderid'))
-
-        data_to_send = dict(
-            owner=(self.extractProperty(build, 'owners') or [None])[0],
-            repo=(self.extractProperty(build, 'github.head.repo.full_name') or '').split('/')[-1],
-            sha=sha,
-            target_url='{}#/builders/{}/builds/{}'.format(self.master.config.buildbotURL, build.get('builderid'), build.get('number')),
-            state={
-                SUCCESS: 'pending',
-                WARNINGS: 'pending',
-                FAILURE: 'failure',
-                EXCEPTION: 'error',
-            }.get(build.get('results'), 'pending'),
-            description=state_string,
-            context=builder.get('description', '?') + custom_suffix,
-        )
-        self.sendDataToGitHub(repository, sha, data_to_send, user=GitHub.user_for_queue(self.extractProperty(build, 'buildername')))
-
-    @defer.inlineCallbacks
     def stepStarted(self, key, step):
         state_string = step.get('state_string')
         if state_string == 'pending':
             state_string = 'Running {}'.format(step.get('name'))
-
-        build = yield self.master.db.builds.getBuild(step.get('buildid'))
-        if not build.get('properties'):
-            build['properties'] = yield self.master.db.builds.getBuildProperties(step.get('buildid'))
-
-        # We need to force the defered properties to resolve
-        if build['properties'].get('github.number') and build.get('step') not in self.SHORT_STEPS:
-            self.stepStartedGitHub(build, state_string)
 
         data = {
             "type": self.type_prefix + "step",
