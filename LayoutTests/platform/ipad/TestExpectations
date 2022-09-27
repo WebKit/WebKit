@@ -119,3 +119,10 @@ webkit.org/b/229656 fast/forms/ios/ipad/open-picker-using-keyboard.html [ Pass T
 
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-databases-opaque-origin.html [ Pass Failure ]
 webkit.org/b/244674 [ Release ] imported/w3c/web-platform-tests/IndexedDB/idbfactory-deleteDatabase-opaque-origin.html [ Pass Failure ]
+
+# webkit.org/b/245737 5X scrolling related layout tests are constant failures
+compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
+fast/scrolling/ios/subpixel-overflow-scrolling-with-ancestor.html [ Failure ]
+fast/scrolling/ios/overflow-scrolling-ancestor-clip.html [ Failure ]
+fast/scrolling/ios/overflow-scrolling-ancestor-clip-size.html [ Failure ]
+compositing/rtl/rtl-scrolling-with-transformed-descendants.html [ Failure ]
