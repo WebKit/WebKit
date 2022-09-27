@@ -1770,3 +1770,5 @@ webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-pol
 webkit.org/b/245010 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/location-setter.html [ Pass Failure ]
 
 webkit.org/b/245140 [ Monterey ] http/wpt/webrtc/video-script-transform-keyframe-only.html  [ Pass Failure ]
+
+webkit.org/b/245725 [ Monterey ] http/wpt/webauthn/public-key-credential-get-failure.https.html [ Pass Failure ]
