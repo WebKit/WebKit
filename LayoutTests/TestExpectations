@@ -6016,8 +6016,6 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-width-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/243562 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-no-fallback-props-001.html [ ImageOnlyFailure ]
-
 webkit.org/b/233267 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_window_open_download_block_downloads.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/permissions/permissions-cg.https.html [ Failure Pass ]
 

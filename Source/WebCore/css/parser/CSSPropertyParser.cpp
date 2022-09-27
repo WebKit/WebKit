@@ -3239,25 +3239,37 @@ static RefPtr<CSSPrimitiveValue> consumeBackgroundSize(CSSPropertyID property, C
     if (identMatches<CSSValueContain, CSSValueCover>(range.peek().id()))
         return consumeIdent(range);
 
+    auto identicalValueEncoding = Pair::IdenticalValueEncoding::DoNotCoalesce;
+
     // FIXME: We're allowing the unitless quirk on this property because our
     // tests assume that. Other browser engines don't allow it though.
     RefPtr<CSSPrimitiveValue> horizontal = consumeIdent<CSSValueAuto>(range);
-    if (!horizontal)
+    if (horizontal)
+        identicalValueEncoding = Pair::IdenticalValueEncoding::Coalesce;
+    else
         horizontal = consumeLengthOrPercent(range, cssParserMode, ValueRange::NonNegative, UnitlessQuirk::Allow);
+
+    if (!horizontal)
+        return nullptr;
 
     RefPtr<CSSPrimitiveValue> vertical;
     if (!range.atEnd()) {
-        if (range.peek().id() == CSSValueAuto) // `auto' is the default
-            range.consumeIncludingWhitespace();
-        else
+        vertical = consumeIdent<CSSValueAuto>(range);
+        if (!vertical)
             vertical = consumeLengthOrPercent(range, cssParserMode, ValueRange::NonNegative, UnitlessQuirk::Allow);
-    } else if (!vertical && property == CSSPropertyWebkitBackgroundSize) {
-        // Legacy syntax: "-webkit-background-size: 10px" is equivalent to "background-size: 10px 10px".
-        vertical = horizontal;
     }
-    if (!vertical)
-        return horizontal;
-    return createPrimitiveValuePair(horizontal.releaseNonNull(), vertical.releaseNonNull(), property == CSSPropertyWebkitBackgroundSize ? Pair::IdenticalValueEncoding::Coalesce : Pair::IdenticalValueEncoding::DoNotCoalesce);
+
+    if (!vertical) {
+        if (property == CSSPropertyWebkitBackgroundSize) {
+            // Legacy syntax: "-webkit-background-size: 10px" is equivalent to "background-size: 10px 10px".
+            vertical = horizontal;
+        } else if (property == CSSPropertyBackgroundSize)
+            vertical = CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
+        else
+            return horizontal;
+    }
+
+    return createPrimitiveValuePair(horizontal.releaseNonNull(), vertical.releaseNonNull(), identicalValueEncoding);
 }
 
 static RefPtr<CSSValueList> consumeGridAutoFlow(CSSParserTokenRange& range)
@@ -4738,7 +4750,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyBackgroundSize:
     case CSSPropertyWebkitBackgroundClip:
     case CSSPropertyWebkitBackgroundOrigin:
-    case CSSPropertyWebkitBackgroundSize:
     case CSSPropertyMaskClip:
     case CSSPropertyWebkitMaskClip:
     case CSSPropertyMaskComposite:
@@ -6641,6 +6652,13 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     }
     case CSSPropertyBackground:
         return consumeBackgroundShorthand(backgroundShorthand(), important);
+    case CSSPropertyWebkitBackgroundSize: {
+        auto backgroundSize = consumeCommaSeparatedBackgroundComponent(CSSPropertyWebkitBackgroundSize, m_range, m_context.mode);
+        if (!backgroundSize || !m_range.atEnd())
+            return false;
+        addProperty(CSSPropertyBackgroundSize, CSSPropertyWebkitBackgroundSize, backgroundSize.releaseNonNull(), important);
+        return true;
+    }
     case CSSPropertyMask:
     case CSSPropertyWebkitMask:
         return consumeBackgroundShorthand(shorthandForProperty(property), important);
