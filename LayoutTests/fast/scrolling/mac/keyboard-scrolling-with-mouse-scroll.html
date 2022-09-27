@@ -11,29 +11,47 @@
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
         }
-        
+
+        let startPosition = 0;
+        let delta = 0;
+        let position = 0;
+        let didScrollPastPosition = false;
+
         async function runTest()
         {
             eventSender.monitorWheelEvents();
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 
+            document.addEventListener('wheel', (event) => {
+                startPosition = window.scrollY;
+                // debug('startPosition = ' + startPosition);
+                delta = event.deltaY;
+                // debug('delta = ' + delta);
+
+                document.addEventListener('scroll', (event) => {
+                    position = window.scrollY;
+                    // debug('position = ' + position);
+                    if (startPosition + delta != position)
+                        didScrollPastPosition = true;
+                    // shouldBe('startPosition + delta', 'position');
+                    // testRunner.notifyDone();
+                })
+            });
+
             await UIHelper.rawKeyDown("downArrow");
             
             setTimeout(async () => {
                 await UIHelper.rawKeyUp("downArrow");
-                const startingPosition = window.scrollY;
+                await UIHelper.mouseWheelScrollAt(0, 0, 0, 0, 0, 1);
 
-                await UIHelper.mouseWheelScrollAt(0, 0, 0, 0, 0, 0);
+                await UIHelper.animationFrame();
+                await UIHelper.animationFrame();
+                await UIHelper.animationFrame();
 
-                const position = window.scrollY;
-                if (Math.abs(startingPosition - position) < 20)
-                    debug("Successful.");
-                else
-                    debug("Unsuccessful. window.scrollY after wheel event == " + position + "; window.scrollY before wheel event == " + startingPosition);
-
+                shouldBe('didScrollPastPosition', 'false')
                 testRunner.notifyDone();
-            }, 100);
+            }, 300);
         }
     </script>
 </head>
