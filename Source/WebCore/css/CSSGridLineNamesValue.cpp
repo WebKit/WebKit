@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "CSSGridLineNamesValue.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

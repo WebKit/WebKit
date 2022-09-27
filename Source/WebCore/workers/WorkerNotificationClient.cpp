@@ -24,10 +24,15 @@
  */
 
 #include "config.h"
-
-#if ENABLE(NOTIFICATIONS)
 #include "WorkerNotificationClient.h"
 
+#if ENABLE(NOTIFICATIONS)
+
+#include "NotificationData.h"
+#include "NotificationResources.h"
+#include "WorkerGlobalScope.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerThread.h"
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {

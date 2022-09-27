@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "CSSSubgridValue.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
