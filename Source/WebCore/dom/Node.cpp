@@ -345,11 +345,15 @@ void Node::trackForDebugging()
 
 inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destroying_delete_t)
 {
+    auto destroyAndFree = [&](auto& value) {
+        std::destroy_at(&value);
+        std::decay_t<decltype(value)>::freeAfterDestruction(&value);
+    };
+
     if (nodeRareData->m_isElementRareData)
-        static_cast<ElementRareData*>(nodeRareData)->~ElementRareData();
+        destroyAndFree(static_cast<ElementRareData&>(*nodeRareData));
     else
-        nodeRareData->~NodeRareData();
-    NodeRareData::freeAfterDestruction(nodeRareData);
+        destroyAndFree(*nodeRareData);
 }
 
 Node::Node(Document& document, ConstructionType type)

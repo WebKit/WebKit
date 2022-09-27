@@ -106,9 +106,8 @@ void JITStubRoutine::markRequiredObjects(SlotVisitor& visitor)
 void JITStubRoutine::operator delete(JITStubRoutine* stubRoutine, std::destroying_delete_t)
 {
     stubRoutine->runWithDowncast([&](auto* derived) {
-        using T = std::decay_t<decltype(*derived)>;
-        derived->~T();
-        T::freeAfterDestruction(derived);
+        std::destroy_at(derived);
+        std::decay_t<decltype(*derived)>::freeAfterDestruction(derived);
     });
 }
 
