@@ -12,5 +12,8 @@ EVENT(keystatuseschange)
 Session: keyId=b0b1b2b3b4b5b6b7b8b9babbbcbdbebf status=usable OK
 All appends are completed
 EXPECTED (video.duration >= '15') OK
+RUN(video.currentTime = 2)
+Playing from second 2 to 4, switch from encrypted to unencrypted happens in second 3.
+EXPECTED (video.currentTime >= '4') OK
 END OF TEST
 
