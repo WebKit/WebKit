@@ -7921,7 +7921,7 @@ PlatformMediaSession::MediaType HTMLMediaElement::mediaType() const
 {
     if (m_player && m_readyState >= HAVE_METADATA) {
         auto hasVideo = this->hasVideo();
-        if (hasVideo && hasAudio() && !muted())
+        if (hasVideo && canProduceAudio())
             return PlatformMediaSession::MediaType::VideoAudio;
         return hasVideo ? PlatformMediaSession::MediaType::Video : PlatformMediaSession::MediaType::Audio;
     }
@@ -7962,8 +7962,16 @@ bool HTMLMediaElement::canProduceAudio() const
     if (isSuspended())
         return false;
 
+    if (!volume())
+        return false;
+
+    // For GStreamer ports the semantics of IsPlayingAudio slightly differ from Apple ports. The
+    // webkit_web_view_is_playing_audio() API is expected to return true if a page is producing
+    // audio even though it might be muted.
+#if !USE(GSTREAMER)
     if (muted())
         return false;
+#endif
 
     if (m_player && m_readyState >= HAVE_METADATA)
         return hasAudio();
@@ -8223,14 +8231,7 @@ MediaProducerMediaStateFlags HTMLMediaElement::mediaState() const
     if (!isPlaying())
         return state;
 
-    // For GStreamer ports the semantics of IsPlayingAudio slightly differ from Apple ports. The
-    // webkit_web_view_is_playing_audio() API is expected to return true if a page is producing
-    // audio even though it might be muted.
-    bool isPlayingAudio = hasAudio && volume();
-#if !USE(GSTREAMER)
-    isPlayingAudio = isPlayingAudio && !muted();
-#endif
-    if (isPlayingAudio)
+    if (canProduceAudio())
         state.add(MediaProducerMediaState::IsPlayingAudio);
 
     if (hasActiveVideo)
