@@ -311,7 +311,7 @@ activebuttontext
 -webkit-activelink
 -webkit-link
 -webkit-focus-ring-color
--webkit-text
+-internal-document-text-color
 
 //
 // CSS_PROP_BACKGROUND_REPEAT:
@@ -899,6 +899,8 @@ content
 content-box
 padding
 padding-box
+// text
+-webkit-text
 
 //
 // CSS_PROP_MASK_CLIP

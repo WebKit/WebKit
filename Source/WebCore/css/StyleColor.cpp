@@ -70,7 +70,7 @@ bool StyleColor::isAbsoluteColorKeyword(CSSValueID id)
 bool StyleColor::isSystemColorKeyword(CSSValueID id)
 {
     // https://drafts.csswg.org/css-color-4/#css-system-colors
-    return (id >= CSSValueCanvas && id <= CSSValueWebkitText) || id == CSSValueText || isDeprecatedSystemColorKeyword(id);
+    return (id >= CSSValueCanvas && id <= CSSValueInternalDocumentTextColor) || id == CSSValueText || isDeprecatedSystemColorKeyword(id);
 }
 
 bool StyleColor::isDeprecatedSystemColorKeyword(CSSValueID id)

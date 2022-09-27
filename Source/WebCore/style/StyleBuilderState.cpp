@@ -281,7 +281,7 @@ bool BuilderState::createFilterOperations(const CSSValue& inValue, FilterOperati
 bool BuilderState::isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue& value)
 {
     switch (value.valueID()) {
-    case CSSValueWebkitText:
+    case CSSValueInternalDocumentTextColor:
     case CSSValueWebkitLink:
     case CSSValueWebkitActivelink:
     case CSSValueCurrentcolor:
@@ -298,7 +298,7 @@ Color BuilderState::colorFromPrimitiveValue(const CSSPrimitiveValue& value, ForV
 
     auto identifier = value.valueID();
     switch (identifier) {
-    case CSSValueWebkitText:
+    case CSSValueInternalDocumentTextColor:
         return document().textColor();
     case CSSValueWebkitLink:
         return (element() && element()->isLink() && forVisitedLink == ForVisitedLink::Yes) ? document().visitedLinkColor() : document().linkColor();
