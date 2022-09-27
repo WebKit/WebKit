@@ -98,6 +98,8 @@ public:
     bool hasAncestorMatchingFlag(AXAncestorFlag) const;
     bool matchesAncestorFlag(AXAncestorFlag) const;
 
+    bool hasDirtySubtree() const { return m_subtreeDirty; }
+
     bool hasDocumentRoleAncestor() const override;
     bool hasWebApplicationAncestor() const override;
     bool isInDescriptionListDetail() const override;
