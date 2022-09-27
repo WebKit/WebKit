@@ -1821,6 +1821,9 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ASYNC_DONE:
         if (!messageSourceIsPlaybin || m_isDelayingLoad)
             break;
+
+        // The MediaPlayerPrivateGStreamer superclass now processes what it needs by calling updateStates() in handleMessage() for
+        // GST_MESSAGE_STATE_CHANGED. However, subclasses still need to override asyncStateChangeDone() to do their own stuff.
         asyncStateChangeDone();
         break;
     case GST_MESSAGE_STATE_CHANGED: {
@@ -2233,32 +2236,22 @@ void MediaPlayerPrivateGStreamer::purgeOldDownloadFiles(const String& downloadFi
     }
 }
 
-void MediaPlayerPrivateGStreamer::asyncStateChangeDone()
+void MediaPlayerPrivateGStreamer::finishSeek()
 {
-    if (!m_pipeline || m_didErrorOccur)
+    GST_DEBUG_OBJECT(pipeline(), "[Seek] seeked to %s", toString(m_seekTime).utf8().data());
+    m_isSeeking = false;
+    invalidateCachedPosition();
+    if (m_timeOfOverlappingSeek != m_seekTime && m_timeOfOverlappingSeek.isValid()) {
+        seek(m_timeOfOverlappingSeek);
+        m_timeOfOverlappingSeek = MediaTime::invalidTime();
         return;
+    }
+    m_timeOfOverlappingSeek = MediaTime::invalidTime();
 
-    if (m_isSeeking) {
-        if (m_isSeekPending)
-            updateStates();
-        else {
-            GST_DEBUG_OBJECT(pipeline(), "[Seek] seeked to %s", toString(m_seekTime).utf8().data());
-            m_isSeeking = false;
-            invalidateCachedPosition();
-            if (m_timeOfOverlappingSeek != m_seekTime && m_timeOfOverlappingSeek.isValid()) {
-                seek(m_timeOfOverlappingSeek);
-                m_timeOfOverlappingSeek = MediaTime::invalidTime();
-                return;
-            }
-            m_timeOfOverlappingSeek = MediaTime::invalidTime();
-
-            // The pipeline can still have a pending state. In this case a position query will fail.
-            // Right now we can use m_seekTime as a fallback.
-            m_canFallBackToLastFinishedSeekPosition = true;
-            timeChanged();
-        }
-    } else
-        updateStates();
+    // The pipeline can still have a pending state. In this case a position query will fail.
+    // Right now we can use m_seekTime as a fallback.
+    m_canFallBackToLastFinishedSeekPosition = true;
+    timeChanged();
 }
 
 void MediaPlayerPrivateGStreamer::updateStates()
@@ -2433,7 +2426,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
                 invalidateCachedPosition();
                 GST_DEBUG_OBJECT(pipeline(), "[Seek] seeking to %s failed", toString(m_seekTime).utf8().data());
             }
-        }
+        } else if (m_isSeeking && !(state == GST_STATE_PLAYING && pending == GST_STATE_PAUSED))
+            finishSeek();
     }
 
     if (oldIsPaused != m_isPaused)
