@@ -112,26 +112,25 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifi
     };
 }
 
-void LibWebRTCCodecsProxy::createH264Decoder(VideoDecoderIdentifier identifier, bool useRemoteFrames)
+void* LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames)
 {
-    assertIsCurrent(workQueue());
-    auto result = m_decoders.add(identifier, webrtc::createLocalH264Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
-    ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
-    m_hasEncodersOrDecoders = true;
+    auto block = makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames));
+    switch (codecType) {
+    case VideoCodecType::H264:
+        return webrtc::createLocalH264Decoder(block.get());
+    case VideoCodecType::H265:
+        return webrtc::createLocalH265Decoder(block.get());
+    case VideoCodecType::VP9:
+        return webrtc::createLocalVP9Decoder(block.get());
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
-void LibWebRTCCodecsProxy::createH265Decoder(VideoDecoderIdentifier identifier, bool useRemoteFrames)
+void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames)
 {
     assertIsCurrent(workQueue());
-    auto result = m_decoders.add(identifier, webrtc::createLocalH265Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
-    ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
-    m_hasEncodersOrDecoders = true;
-}
-
-void LibWebRTCCodecsProxy::createVP9Decoder(VideoDecoderIdentifier identifier, bool useRemoteFrames)
-{
-    assertIsCurrent(workQueue());
-    auto result = m_decoders.add(identifier, webrtc::createLocalVP9Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
+    auto result = m_decoders.add(identifier, createLocalDecoder(identifier, codecType, useRemoteFrames));
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
 }
@@ -171,14 +170,17 @@ void LibWebRTCCodecsProxy::setFrameSize(VideoDecoderIdentifier identifier, uint1
     webrtc::setDecoderFrameSize(decoder, width, height);
 }
 
-void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, const String& formatName, const Vector<std::pair<String, String>>& parameters, bool useLowLatency)
+void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const Vector<std::pair<String, String>>& parameters, bool useLowLatency)
 {
     assertIsCurrent(workQueue());
     std::map<std::string, std::string> rtcParameters;
     for (auto& parameter : parameters)
         rtcParameters.emplace(parameter.first.utf8().data(), parameter.second.utf8().data());
 
-    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { formatName.utf8().data(), rtcParameters }, makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info) {
+    if (codecType != VideoCodecType::H264 && codecType != VideoCodecType::H265)
+        return;
+
+    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info) {
         connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, IPC::DataReference { buffer, size }, info }, 0);
     }).get());
     webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);

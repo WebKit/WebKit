@@ -4536,6 +4536,7 @@
 		418FCBE4271049DC00F96ECA /* RemoteRealtimeVideoSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeVideoSource.h; sourceTree = "<group>"; };
 		4193927728BE41C000162139 /* LSApplicationWorkspaceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSApplicationWorkspaceSPI.h; sourceTree = "<group>"; };
 		419ACF9B1F981D26009F1A83 /* WebServiceWorkerFetchTaskClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServiceWorkerFetchTaskClient.h; sourceTree = "<group>"; };
+		419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoCodecType.h; sourceTree = "<group>"; };
 		41A5F7B9226ECF7C00671764 /* AuthenticationChallengeDispositionCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeDispositionCocoa.h; sourceTree = "<group>"; };
 		41A5F7BA226ECF7C00671764 /* AuthenticationChallengeDispositionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuthenticationChallengeDispositionCocoa.mm; sourceTree = "<group>"; };
 		41AC86811E042E5300303074 /* WebRTCResolver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; lineEnding = 0; name = WebRTCResolver.messages.in; path = Network/webrtc/WebRTCResolver.messages.in; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = "<none>"; };
@@ -8076,6 +8077,7 @@
 				5C9C5C022430535800BB6740 /* UserContentControllerParameters.h */,
 				1AC1336518565B5700F3EC05 /* UserData.cpp */,
 				1AC1336618565B5700F3EC05 /* UserData.h */,
+				419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */,
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,
 				2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */,
 				46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */,

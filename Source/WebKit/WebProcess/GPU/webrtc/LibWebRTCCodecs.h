@@ -35,6 +35,7 @@
 #include "RemoteVideoFrameIdentifier.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SharedVideoFrame.h"
+#include "VideoCodecType.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
@@ -42,12 +43,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
-
-ALLOW_COMMA_BEGIN
-
-#include <webrtc/api/video/video_codec_type.h>
-
-ALLOW_COMMA_END
 
 using CVPixelBufferPoolRef = struct __CVPixelBufferPool*;
 
@@ -73,19 +68,18 @@ public:
 
     static void setCallbacks(bool useGPUProcess, bool useRemoteFrames);
 
-    enum class Type { H264, H265, VP9 };
     struct Decoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         VideoDecoderIdentifier identifier;
-        Type type;
+        VideoCodecType type;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
         Lock decodedImageCallbackLock;
         bool hasError { false };
         RefPtr<IPC::Connection> connection;
     };
 
-    Decoder* createDecoder(Type);
+    Decoder* createDecoder(VideoCodecType);
     int32_t releaseDecoder(Decoder&);
     int32_t decodeFrame(Decoder&, uint32_t timeStamp, const uint8_t*, size_t, uint16_t width, uint16_t height);
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
@@ -102,7 +96,7 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         VideoEncoderIdentifier identifier;
-        webrtc::VideoCodecType codecType { webrtc::kVideoCodecGeneric };
+        VideoCodecType type;
         Vector<std::pair<String, String>> parameters;
         std::optional<EncoderInitializationData> initializationData;
         void* encodedImageCallback WTF_GUARDED_BY_LOCK(encodedImageCallbackLock) { nullptr };
@@ -112,7 +106,7 @@ public:
         bool hasSentInitialEncodeRates { false };
     };
 
-    Encoder* createEncoder(Type, const std::map<std::string, std::string>&);
+    Encoder* createEncoder(VideoCodecType, const std::map<std::string, std::string>&);
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     int32_t encodeFrame(Encoder&, const webrtc::VideoFrame&, bool shouldEncodeAsKeyFrame);

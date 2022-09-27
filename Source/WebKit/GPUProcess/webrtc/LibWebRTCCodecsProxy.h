@@ -34,6 +34,7 @@
 #include "SharedVideoFrame.h"
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
+#include "VideoCodecType.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/ProcessIdentity.h>
 #include <atomic>
@@ -73,19 +74,18 @@ private:
     explicit LibWebRTCCodecsProxy(GPUConnectionToWebProcess&);
     void initialize();
     auto createDecoderCallback(VideoDecoderIdentifier, bool useRemoteFrames);
+    void* createLocalDecoder(VideoDecoderIdentifier, VideoCodecType, bool useRemoteFrames);
     WorkQueue& workQueue() const { return m_queue; }
 
     // IPC::WorkQueueMessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
-    void createH264Decoder(VideoDecoderIdentifier, bool useRemoteFrames);
-    void createH265Decoder(VideoDecoderIdentifier, bool useRemoteFrames);
-    void createVP9Decoder(VideoDecoderIdentifier, bool useRemoteFrames);
+    void createDecoder(VideoDecoderIdentifier, VideoCodecType, bool useRemoteFrames);
     void releaseDecoder(VideoDecoderIdentifier);
     void decodeFrame(VideoDecoderIdentifier, uint32_t timeStamp, const IPC::DataReference&);
     void setFrameSize(VideoDecoderIdentifier, uint16_t width, uint16_t height);
 
-    void createEncoder(VideoEncoderIdentifier, const String&, const Vector<std::pair<String, String>>&, bool useLowLatency);
+    void createEncoder(VideoEncoderIdentifier, VideoCodecType, const Vector<std::pair<String, String>>&, bool useLowLatency);
     void releaseEncoder(VideoEncoderIdentifier);
     void initializeEncoder(VideoEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
     void encodeFrame(VideoEncoderIdentifier, SharedVideoFrame&&, uint32_t timeStamp, bool shouldEncodeAsKeyFrame);

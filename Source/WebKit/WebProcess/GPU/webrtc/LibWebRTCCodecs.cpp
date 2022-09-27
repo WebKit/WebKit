@@ -59,13 +59,13 @@ static webrtc::WebKitVideoDecoder createVideoDecoder(const webrtc::SdpVideoForma
 {
     auto& codecs = WebProcess::singleton().libWebRTCCodecs();
     if (format.name == "H264")
-        return codecs.createDecoder(LibWebRTCCodecs::Type::H264);
+        return codecs.createDecoder(VideoCodecType::H264);
 
     if (format.name == "H265")
-        return codecs.createDecoder(LibWebRTCCodecs::Type::H265);
+        return codecs.createDecoder(VideoCodecType::H265);
 
     if (format.name == "VP9" && codecs.supportVP9VTB())
-        return codecs.createDecoder(LibWebRTCCodecs::Type::VP9);
+        return codecs.createDecoder(VideoCodecType::VP9);
 
     return nullptr;
 }
@@ -89,10 +89,10 @@ static int32_t registerDecodeCompleteCallback(webrtc::WebKitVideoDecoder decoder
 static webrtc::WebKitVideoEncoder createVideoEncoder(const webrtc::SdpVideoFormat& format)
 {
     if (format.name == "H264")
-        return WebProcess::singleton().libWebRTCCodecs().createEncoder(LibWebRTCCodecs::Type::H264, format.parameters);
+        return WebProcess::singleton().libWebRTCCodecs().createEncoder(VideoCodecType::H264, format.parameters);
 
     if (format.name == "H265")
-        return WebProcess::singleton().libWebRTCCodecs().createEncoder(LibWebRTCCodecs::Type::H265, format.parameters);
+        return WebProcess::singleton().libWebRTCCodecs().createEncoder(VideoCodecType::H265, format.parameters);
 
     return nullptr;
 }
@@ -123,34 +123,9 @@ static inline VideoFrame::Rotation toVideoRotation(webrtc::VideoRotation rotatio
     return VideoFrame::Rotation::None;
 }
 
-static inline String formatNameFromWebRTCCodecType(webrtc::VideoCodecType type)
-{
-    switch (type) {
-    case webrtc::kVideoCodecH264:
-        return "H264"_s;
-    case webrtc::kVideoCodecH265:
-        return "H265"_s;
-    case webrtc::kVideoCodecVP9:
-        return "VP9"_s;
-    default:
-        ASSERT_NOT_REACHED();
-        return "H264"_s;
-    }
-}
-
 static void createRemoteDecoder(LibWebRTCCodecs::Decoder& decoder, IPC::Connection& connection, bool useRemoteFrames)
 {
-    switch (decoder.type) {
-    case LibWebRTCCodecs::Type::H264:
-        connection.send(Messages::LibWebRTCCodecsProxy::CreateH264Decoder { decoder.identifier, useRemoteFrames }, 0);
-        break;
-    case LibWebRTCCodecs::Type::H265:
-        connection.send(Messages::LibWebRTCCodecsProxy::CreateH265Decoder { decoder.identifier, useRemoteFrames }, 0);
-        break;
-    case LibWebRTCCodecs::Type::VP9:
-        connection.send(Messages::LibWebRTCCodecsProxy::CreateVP9Decoder { decoder.identifier, useRemoteFrames }, 0);
-        break;
-    }
+    connection.send(Messages::LibWebRTCCodecsProxy::CreateDecoder { decoder.identifier, decoder.type, useRemoteFrames }, 0);
 }
 
 static int32_t encodeVideoFrame(webrtc::WebKitVideoEncoder encoder, const webrtc::VideoFrame& frame, bool shouldEncodeAsKeyFrame)
@@ -257,7 +232,7 @@ void LibWebRTCCodecs::setCallbacks(bool useGPUProcess, bool useRemoteFrames)
     webrtc::setVideoEncoderCallbacks(createVideoEncoder, releaseVideoEncoder, initializeVideoEncoder, encodeVideoFrame, registerEncodeCompleteCallback, setEncodeRatesCallback);
 }
 
-LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
+LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(VideoCodecType type)
 {
     ASSERT(!isMainRunLoop());
 
@@ -313,7 +288,7 @@ int32_t LibWebRTCCodecs::decodeFrame(Decoder& decoder, uint32_t timeStamp, const
         return WEBRTC_VIDEO_CODEC_ERROR;
     }
 
-    if (decoder.type == Type::VP9 && (width || height))
+    if (decoder.type == VideoCodecType::VP9 && (width || height))
         decoder.connection->send(Messages::LibWebRTCCodecsProxy::SetFrameSize { decoder.identifier, width, height }, 0);
 
     decoder.connection->send(Messages::LibWebRTCCodecsProxy::DecodeFrame { decoder.identifier, timeStamp, IPC::DataReference { data, size } }, 0);
@@ -385,44 +360,32 @@ void LibWebRTCCodecs::completedDecodingCV(VideoDecoderIdentifier decoderIdentifi
     webrtc::videoDecoderTaskComplete(decoder->decodedImageCallback, timeStamp, timeStampNs / 1000, pixelBuffer.get());
 }
 
-static inline String formatNameFromCodecType(LibWebRTCCodecs::Type type)
+static inline webrtc::VideoCodecType toWebRTCCodecType(VideoCodecType type)
 {
     switch (type) {
-    case LibWebRTCCodecs::Type::H264:
-        return "H264"_s;
-    case LibWebRTCCodecs::Type::H265:
-        return "H265"_s;
-    case LibWebRTCCodecs::Type::VP9:
-        return "VP9"_s;
-    }
-}
-
-static inline webrtc::VideoCodecType toWebRTCCodecType(LibWebRTCCodecs::Type type)
-{
-    switch (type) {
-    case LibWebRTCCodecs::Type::H264:
+    case VideoCodecType::H264:
         return webrtc::kVideoCodecH264;
-    case LibWebRTCCodecs::Type::H265:
+    case VideoCodecType::H265:
         return webrtc::kVideoCodecH265;
-    case LibWebRTCCodecs::Type::VP9:
+    case VideoCodecType::VP9:
         return webrtc::kVideoCodecVP9;
     }
 }
 
-LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::map<std::string, std::string>& formatParameters)
+LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(VideoCodecType type, const std::map<std::string, std::string>& formatParameters)
 {
     ASSERT(!isMainRunLoop());
 
     auto encoder = makeUnique<Encoder>();
     auto* result = encoder.get();
     encoder->identifier = VideoEncoderIdentifier::generateThreadSafe();
-    encoder->codecType = toWebRTCCodecType(type);
+    encoder->type = type;
 
     auto parameters = WTF::map(formatParameters, [](auto& entry) {
         return std::pair { String::fromUTF8(entry.first.data(), entry.first.length()), String::fromUTF8(entry.second.data(), entry.second.length()) };
     });
 
-    ensureGPUProcessConnectionAndDispatchToThread([this, encoder = WTFMove(encoder), type, parameters = WTFMove(parameters)]() mutable {
+    ensureGPUProcessConnectionAndDispatchToThread([this, encoder = WTFMove(encoder), parameters = WTFMove(parameters)]() mutable {
         assertIsCurrent(workQueue());
 
         auto connection = [&]() -> Ref<IPC::Connection> {
@@ -432,7 +395,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
 
         {
             Locker locker { m_encodersConnectionLock };
-            connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, formatNameFromCodecType(type), parameters, DeprecatedGlobalSettings::webRTCH264LowLatencyEncoderEnabled() }, 0);
+            connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, encoder->type, parameters, DeprecatedGlobalSettings::webRTCH264LowLatencyEncoderEnabled() }, 0);
             setEncoderConnection(*encoder, connection.ptr());
         }
 
@@ -555,7 +518,7 @@ void LibWebRTCCodecs::completedEncoding(VideoEncoderIdentifier identifier, IPC::
     if (!encoder->encodedImageCallback)
         return;
 
-    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, encoder->codecType, data.data(), data.size(), info);
+    webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, toWebRTCCodecType(encoder->type), data.data(), data.size(), info);
 }
 
 CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height, OSType type)
@@ -599,7 +562,7 @@ void LibWebRTCCodecs::gpuProcessConnectionDidClose(GPUProcessConnection&)
 
         Locker locker { m_encodersConnectionLock };
         for (auto& encoder : m_encoders.values()) {
-            connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, formatNameFromWebRTCCodecType(encoder->codecType), encoder->parameters, DeprecatedGlobalSettings::webRTCH264LowLatencyEncoderEnabled() }, 0);
+            connection->send(Messages::LibWebRTCCodecsProxy::CreateEncoder { encoder->identifier, encoder->type, encoder->parameters, DeprecatedGlobalSettings::webRTCH264LowLatencyEncoderEnabled() }, 0);
             if (encoder->initializationData)
                 connection->send(Messages::LibWebRTCCodecsProxy::InitializeEncoder { encoder->identifier, encoder->initializationData->width, encoder->initializationData->height, encoder->initializationData->startBitRate, encoder->initializationData->maxBitRate, encoder->initializationData->minBitRate, encoder->initializationData->maxFrameRate }, 0);
             setEncoderConnection(*encoder, connection.get());
