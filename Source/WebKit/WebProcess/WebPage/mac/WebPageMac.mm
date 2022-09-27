@@ -730,15 +730,15 @@ void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *p
 #if ENABLE(WEBGL)
 WebCore::WebGLLoadPolicy WebPage::webGLPolicyForURL(WebFrame*, const URL& url)
 {
-    WebGLLoadPolicy policyResult = WebGLLoadPolicy::WebGLAllowCreation;
-    sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url), Messages::WebPageProxy::WebGLPolicyForURL::Reply(policyResult));
+    auto sendResult = sendSync(Messages::WebPageProxy::WebGLPolicyForURL(url));
+    auto [policyResult] = sendResult.takeReplyOr(WebGLLoadPolicy::WebGLAllowCreation);
     return policyResult;
 }
 
 WebCore::WebGLLoadPolicy WebPage::resolveWebGLPolicyForURL(WebFrame*, const URL& url)
 {
-    WebGLLoadPolicy policyResult = WebGLLoadPolicy::WebGLAllowCreation;
-    sendSync(Messages::WebPageProxy::ResolveWebGLPolicyForURL(url), Messages::WebPageProxy::ResolveWebGLPolicyForURL::Reply(policyResult));
+    auto sendResult = sendSync(Messages::WebPageProxy::ResolveWebGLPolicyForURL(url));
+    auto [policyResult] = sendResult.takeReplyOr(WebGLLoadPolicy::WebGLAllowCreation);
     return policyResult;
 }
 #endif // ENABLE(WEBGL)

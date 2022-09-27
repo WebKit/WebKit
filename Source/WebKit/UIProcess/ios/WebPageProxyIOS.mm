@@ -1063,8 +1063,8 @@ size_t WebPageProxy::computePagesForPrintingiOS(FrameIdentifier frameID, const P
     if (!hasRunningProcess())
         return 0;
 
-    size_t pageCount = 0;
-    sendSync(Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Messages::WebPage::ComputePagesForPrintingiOS::Reply(pageCount), Seconds::infinity());
+    auto sendResult = sendSync(Messages::WebPage::ComputePagesForPrintingiOS(frameID, printInfo), Seconds::infinity());
+    auto [pageCount] = sendResult.takeReplyOr(0);
     return pageCount;
 }
 
