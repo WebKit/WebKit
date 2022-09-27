@@ -4707,6 +4707,8 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
             }
 
             // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
+            // If page lost focus, blur event will have already been dispatched
+            if (page() && (page()->focusController().isFocused())) {
             oldFocusedElement->dispatchBlurEvent(newFocusedElement.copyRef());
 
             if (m_focusedElement) {
@@ -4721,6 +4723,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
                 // handler shifted focus
                 focusChangeBlocked = true;
                 newFocusedElement = nullptr;
+            }
             }
         } else {
             // Match the order in HTMLTextFormControlElement::dispatchBlurEvent.
@@ -4774,6 +4777,8 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         }
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
+        // If page lost focus, event will be dispatched on page focus, don't duplicate
+        if (page() && (page()->focusController().isFocused())) {
         m_focusedElement->dispatchFocusEvent(oldFocusedElement.copyRef(), options);
 
         if (m_focusedElement != newFocusedElement) {
@@ -4786,6 +4791,7 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         if (m_focusedElement != newFocusedElement) {
             // handler shifted focus
             return false;
+        }
         }
 
         if (m_focusedElement->isRootEditableElement())
