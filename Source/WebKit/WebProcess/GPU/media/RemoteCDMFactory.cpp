@@ -63,16 +63,15 @@ GPUProcessConnection& RemoteCDMFactory::gpuProcessConnection()
 
 bool RemoteCDMFactory::supportsKeySystem(const String& keySystem)
 {
-    bool supported = false;
-    gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::SupportsKeySystem(keySystem), Messages::RemoteCDMFactoryProxy::SupportsKeySystem::Reply(supported), { });
+    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::SupportsKeySystem(keySystem), { });
+    auto [supported] = sendResult.takeReplyOr(false);
     return supported;
 }
 
 std::unique_ptr<CDMPrivate> RemoteCDMFactory::createCDM(const String& keySystem, const CDMPrivateClient&)
 {
-    RemoteCDMIdentifier identifier;
-    RemoteCDMConfiguration configuration;
-    gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem), Messages::RemoteCDMFactoryProxy::CreateCDM::Reply(identifier, configuration), { });
+    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteCDMFactoryProxy::CreateCDM(keySystem), { });
+    auto [identifier, configuration] = sendResult.takeReplyOr(RemoteCDMIdentifier { }, RemoteCDMConfiguration { });
     if (!identifier)
         return nullptr;
     return RemoteCDM::create(*this, WTFMove(identifier), WTFMove(configuration));

@@ -151,12 +151,11 @@ void SourceBufferPrivateRemote::setActive(bool active)
 
 bool SourceBufferPrivateRemote::canSwitchToType(const ContentType& contentType)
 {
-    bool canSwitch = false;
     if (!m_gpuProcessConnection)
-        return canSwitch;
+        return false;
 
-    m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(contentType), Messages::RemoteSourceBufferProxy::CanSwitchToType::Reply(canSwitch), m_remoteSourceBufferIdentifier);
-
+    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::CanSwitchToType(contentType), m_remoteSourceBufferIdentifier);
+    auto [canSwitch] = sendResult.takeReplyOr(false);
     return canSwitch;
 }
 
@@ -184,10 +183,11 @@ void SourceBufferPrivateRemote::updateBufferedFromTrackBuffers(bool sourceIsEnde
     if (!m_gpuProcessConnection)
         return;
 
-    PlatformTimeRanges buffered;
-    if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::UpdateBufferedFromTrackBuffers(sourceIsEnded), Messages::RemoteSourceBufferProxy::UpdateBufferedFromTrackBuffers::Reply(buffered), m_remoteSourceBufferIdentifier))
+    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::UpdateBufferedFromTrackBuffers(sourceIsEnded), m_remoteSourceBufferIdentifier);
+    if (!sendResult)
         return;
 
+    auto [buffered] = sendResult.takeReply();
     setBufferedRanges(buffered);
 }
 
@@ -210,10 +210,9 @@ void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t 
     if (!m_gpuProcessConnection)
         return;
 
-    uint64_t totalBufferSizeInBytes = 0;
-    if (m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, maximumBufferSize, currentTime, duration, isEnded), Messages::RemoteSourceBufferProxy::EvictCodedFrames::Reply(totalBufferSizeInBytes), m_remoteSourceBufferIdentifier)) {
-        m_totalTrackBufferSizeInBytes = totalBufferSizeInBytes;
-    }
+    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, maximumBufferSize, currentTime, duration, isEnded), m_remoteSourceBufferIdentifier);
+    if (sendResult)
+        std::tie(m_totalTrackBufferSizeInBytes) = sendResult.takeReply();
 }
 
 void SourceBufferPrivateRemote::addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&)

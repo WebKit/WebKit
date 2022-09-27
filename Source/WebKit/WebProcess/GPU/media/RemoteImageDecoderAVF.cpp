@@ -166,10 +166,8 @@ PlatformImagePtr RemoteImageDecoderAVF::createFrameImageAtIndex(size_t index, Su
         if (!m_gpuProcessConnection)
             return;
 
-        std::optional<WebKit::ShareableBitmap::Handle> imageHandle;
-        if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex::Reply(imageHandle), 0))
-            return;
-
+        auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateFrameImageAtIndex(m_identifier, index), 0);
+        auto [imageHandle] = sendResult.takeReplyOr(std::nullopt);
         if (!imageHandle)
             return;
 
@@ -202,12 +200,10 @@ void RemoteImageDecoderAVF::setData(const FragmentedSharedBuffer& data, bool all
     if (!m_gpuProcessConnection)
         return;
 
-    size_t frameCount;
-    IntSize size;
-    bool hasTrack;
-    std::optional<Vector<ImageDecoder::FrameInfo>> frameInfos;
-    if (!m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, IPC::SharedBufferReference(data), allDataReceived), Messages::RemoteImageDecoderAVFProxy::SetData::Reply(frameCount, size, hasTrack, frameInfos), 0))
+    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, IPC::SharedBufferReference(data), allDataReceived), 0);
+    if (!sendResult)
         return;
+    auto [frameCount, size, hasTrack, frameInfos] = sendResult.takeReply();
 
     m_isAllDataReceived = allDataReceived;
     m_frameCount = frameCount;

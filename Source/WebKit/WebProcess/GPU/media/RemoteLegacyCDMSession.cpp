@@ -85,8 +85,11 @@ RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mime
         return nullptr;
 
     auto ipcInitData = convertToSharedBuffer(initData);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData), m_identifier);
+
     RefPtr<SharedBuffer> ipcNextMessage;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData), Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest::Reply(ipcNextMessage, destinationURL, errorCode, systemCode), m_identifier);
+    if (sendResult)
+        std::tie(ipcNextMessage, destinationURL, errorCode, systemCode) = sendResult.takeReply();
 
     if (!ipcNextMessage)
         return nullptr;
@@ -109,9 +112,12 @@ bool RemoteLegacyCDMSession::update(Uint8Array* keyData, RefPtr<Uint8Array>& nex
         return false;
 
     auto ipcKeyData = convertToSharedBuffer(keyData);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::Update(ipcKeyData), m_identifier);
+
     bool succeeded { false };
     RefPtr<SharedBuffer> ipcNextMessage;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::Update(ipcKeyData), Messages::RemoteLegacyCDMSessionProxy::Update::Reply(succeeded, ipcNextMessage, errorCode, systemCode), m_identifier);
+    if (sendResult)
+        std::tie(succeeded, ipcNextMessage, errorCode, systemCode) = sendResult.takeReply();
 
     if (ipcNextMessage)
         nextMessage = convertToUint8Array(WTFMove(ipcNextMessage));
@@ -128,8 +134,8 @@ RefPtr<ArrayBuffer> RemoteLegacyCDMSession::cachedKeyForKeyID(const String& keyI
     if (foundInCache != m_cachedKeyCache.end())
         return foundInCache->value;
 
-    RefPtr<SharedBuffer> ipcKey;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID(keyId), Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID::Reply(ipcKey), m_identifier);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::CachedKeyForKeyID(keyId), m_identifier);
+    auto [ipcKey] = sendResult.takeReplyOr(nullptr);
 
     if (!ipcKey)
         return nullptr;
