@@ -72,6 +72,8 @@ public:
     GLint previousDepthState { 0 };
     GLint viewport[4] { 0, };
     GLint previousScissor[4] { 0, };
+    double zNear { 0 };
+    double zFar { 0 };
     RefPtr<BitmapTexture> currentSurface;
     const BitmapTextureGL::FilterInfo* filterInfo { nullptr };
 
@@ -867,15 +869,14 @@ void TextureMapperGL::drawFiltered(const BitmapTexture& sampler, const BitmapTex
     drawTexturedQuadWithProgram(program.get(), static_cast<const BitmapTextureGL&>(sampler).id(), 0, targetRect, TransformationMatrix(), 1);
 }
 
-static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored)
+static inline TransformationMatrix createProjectionMatrix(const IntSize& size, bool mirrored, double zNear, double zFar)
 {
-    const float nearValue = -99999;
-    const float farValue = 9999999;
-
-    return TransformationMatrix(2.0 / float(size.width()), 0, 0, 0,
-                                0, (mirrored ? 2.0 : -2.0) / float(size.height()), 0, 0,
-                                0, 0, -2.f / (farValue - nearValue), 0,
-                                -1, mirrored ? -1 : 1, -(farValue + nearValue) / (farValue - nearValue), 1);
+    const double nearValue = std::min(zNear + 1, 9999999.0);
+    const double farValue = std::max(zFar - 1, -99999.0);
+    return TransformationMatrix(2.0 / size.width(), 0, 0, 0,
+        0, (mirrored ? 2.0 : -2.0) / size.height(), 0, 0,
+        0, 0, 2.0 / (farValue - nearValue), 0,
+        -1, mirrored ? -1 : 1, -(farValue + nearValue) / (farValue - nearValue), 1);
 }
 
 TextureMapperGL::~TextureMapperGL()
@@ -887,7 +888,7 @@ void TextureMapperGL::bindDefaultSurface()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer);
     auto& viewport = data().viewport;
-    data().projectionMatrix = createProjectionMatrix(IntSize(viewport[2], viewport[3]), data().PaintFlags & PaintingMirrored);
+    data().projectionMatrix = createProjectionMatrix(IntSize(viewport[2], viewport[3]), data().PaintFlags & PaintingMirrored, data().zNear, data().zFar);
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     m_clipStack.apply();
     data().currentSurface = nullptr;
@@ -901,7 +902,7 @@ void TextureMapperGL::bindSurface(BitmapTexture *surface)
     }
 
     static_cast<BitmapTextureGL*>(surface)->bindAsSurface();
-    data().projectionMatrix = createProjectionMatrix(surface->size(), true /* mirrored */);
+    data().projectionMatrix = createProjectionMatrix(surface->size(), true /* mirrored */, data().zNear, data().zFar);
     data().currentSurface = surface;
 }
 
@@ -1039,6 +1040,12 @@ void TextureMapperGL::endPreserves3D()
 Ref<BitmapTexture> TextureMapperGL::createTexture(GLint internalFormat)
 {
     return BitmapTextureGL::create(m_contextAttributes, internalFormat);
+}
+
+void TextureMapperGL::setDepthRange(double zNear, double zFar)
+{
+    data().zNear = zNear;
+    data().zFar = zFar;
 }
 
 std::unique_ptr<TextureMapper> TextureMapper::platformCreateAccelerated()
