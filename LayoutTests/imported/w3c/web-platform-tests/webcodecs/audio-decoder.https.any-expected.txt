@@ -1,0 +1,18 @@
+
+FAIL Test that AudioDecoder.isConfigSupported() rejects invalid config:Empty codec Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.isConfigSupported() rejects invalid config:Unrecognized codec Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.isConfigSupported() rejects invalid config:Video codec Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.isConfigSupported() rejects invalid config:Ambiguous codec Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.isConfigSupported() rejects invalid config:Codec with MIME type Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.configure() rejects invalid config:Empty codec Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.configure() rejects invalid config:Unrecognized codec Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.configure() rejects invalid config:Video codec Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.configure() rejects invalid config:Ambiguous codec Can't find variable: AudioDecoder
+FAIL Test that AudioDecoder.configure() rejects invalid config:Codec with MIME type Can't find variable: AudioDecoder
+FAIL Test AudioDecoder construction assert_throws_js: function "() => {
+    new AudioDecoder({});
+  }" threw object "ReferenceError: Can't find variable: AudioDecoder" ("ReferenceError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Verify unconfigured AudioDecoder operations Can't find variable: AudioDecoder
+

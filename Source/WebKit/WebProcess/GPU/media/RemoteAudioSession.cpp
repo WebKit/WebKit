@@ -70,9 +70,8 @@ IPC::Connection& RemoteAudioSession::ensureConnection()
         m_gpuProcessConnection->addClient(*this);
         m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteAudioSession::messageReceiverName(), *this);
 
-        RemoteAudioSessionConfiguration configuration;
-        ensureConnection().sendSync(Messages::GPUConnectionToWebProcess::EnsureAudioSession(), Messages::GPUConnectionToWebProcess::EnsureAudioSession::Reply(configuration), { });
-        m_configuration = WTFMove(configuration);
+        auto sendResult = ensureConnection().sendSync(Messages::GPUConnectionToWebProcess::EnsureAudioSession(), { });
+        std::tie(m_configuration) = sendResult.takeReplyOr(RemoteAudioSessionConfiguration { });
     }
     return m_gpuProcessConnection->connection();
 }
@@ -116,8 +115,8 @@ void RemoteAudioSession::setPreferredBufferSize(size_t size)
 
 bool RemoteAudioSession::tryToSetActiveInternal(bool active)
 {
-    bool succeeded;
-    ensureConnection().sendSync(Messages::RemoteAudioSessionProxy::TryToSetActive(active), Messages::RemoteAudioSessionProxy::TryToSetActive::Reply(succeeded), { });
+    auto sendResult = ensureConnection().sendSync(Messages::RemoteAudioSessionProxy::TryToSetActive(active), { });
+    auto [succeeded] = sendResult.takeReplyOr(false);
     if (succeeded)
         configuration().isActive = active;
     return succeeded;

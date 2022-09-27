@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<label id="label1">First label</label>
+<input id="input1"></input>
+<label>Second label</label>
+<input id="input2"></input>
+<label id="label3">Third label</label>
+<x-input></x-input>
+<label id="label4">Fourth label</label>
+<input id="input4"></input>
+<x-custom></x-custom>
+
+<script>
+  class XInput extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let input = document.createElement("input");
+      input.id = "innerinput";
+      input.ariaLabelledByElements = [label3];
+      this.shadowRoot.appendChild(input);
+    }
+  }
+  customElements.define("x-input", XInput);
+
+  class XCustom extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let label = document.createElement("div");
+      label.id = "label5";
+      label.textContent = "Fifth label";
+      let input = document.createElement("input");
+      input.id = "input5";
+      this.shadowRoot.appendChild(label);
+      this.shadowRoot.appendChild(input);
+      input.ariaLabelledByElements = [label];
+      document.body.appendChild(label);
+    }
+  }
+  customElements.define("x-custom", XCustom);
+
+  description("Checks that element reflection is exposed to the a11y tree for 'ariaLabelledByElements'");
+  if (!window.accessibilityController) {
+    debug("This test requires accessibilityController");
+  } else {
+    input1.ariaLabelledByElements = [label1];
+    var axInput1 = accessibilityController.accessibleElementById("input1");
+    shouldBeEqualToString("platformValueForW3CName(axInput1)", "First label");
+
+    input2.ariaLabelledByElements = [document.getElementsByTagName("label")[1]];
+    var axInput2 = accessibilityController.accessibleElementById("input2");
+    shouldBeEqualToString("platformValueForW3CName(axInput2)", "Second label");
+    input2.setAttribute("aria-labelledby", "label1");
+    shouldBeEqualToString("platformValueForW3CName(axInput2)", "First label");
+
+    var axInnerInput = accessibilityController.accessibleElementById("innerinput");
+    shouldBeEqualToString("platformValueForW3CName(axInnerInput)", "Third label");
+
+    input2.ariaLabelledByElements = [label1, document.getElementsByTagName("label")[1], label3];
+    shouldBeEqualToString("platformValueForW3CName(axInput2)", "First label Second label Third label");
+
+    var axInput5 = accessibilityController.accessibleElementById("input5");
+    shouldBeEqualToString("platformValueForW3CName(axInput5)", "Fifth label");
+  }
+</script>

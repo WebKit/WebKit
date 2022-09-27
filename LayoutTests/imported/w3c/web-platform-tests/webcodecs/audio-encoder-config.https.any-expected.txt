@@ -1,0 +1,14 @@
+
+FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config:Emtpy codec Can't find variable: AudioEncoder
+FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config:Unrecognized codec Can't find variable: AudioEncoder
+FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config:Sample rate is too small Can't find variable: AudioEncoder
+FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config:Sample rate is too large Can't find variable: AudioEncoder
+FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config:Too few channels Can't find variable: AudioEncoder
+FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config:Way too many channels Can't find variable: AudioEncoder
+FAIL Test that AudioEncoder.isConfigSupported() rejects invalid config:Bit rate too big Can't find variable: AudioEncoder
+FAIL Test that AudioEncoder.isConfigSupported() doesn't support config:Too many channels promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL Test that AudioEncoder.isConfigSupported() doesn't support config:Bitrate is too low promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL AudioEncoder.isConfigSupported() supports:{"codec":"opus","sampleRate":8000,"numberOfChannels":1} promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL AudioEncoder.isConfigSupported() supports:{"codec":"opus","sampleRate":48000,"numberOfChannels":2} promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+FAIL AudioEncoder.isConfigSupported() supports:{"codec":"opus","sampleRate":48000,"numberOfChannels":2,"bitrate":128000,"bogus":123} promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: AudioEncoder"
+

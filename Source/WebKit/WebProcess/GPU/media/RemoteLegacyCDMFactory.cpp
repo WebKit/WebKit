@@ -82,8 +82,8 @@ bool RemoteLegacyCDMFactory::supportsKeySystem(const String& keySystem)
     if (foundInCache != m_supportsKeySystemCache.end())
         return foundInCache->value;
 
-    bool supported = false;
-    gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, std::nullopt), Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem::Reply(supported), { });
+    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, std::nullopt), { });
+    auto [supported] = sendResult.takeReplyOr(false);
     m_supportsKeySystemCache.set(keySystem, supported);
     return supported;
 }
@@ -95,8 +95,8 @@ bool RemoteLegacyCDMFactory::supportsKeySystemAndMimeType(const String& keySyste
     if (foundInCache != m_supportsKeySystemAndMimeTypeCache.end())
         return foundInCache->value;
 
-    bool supported = false;
-    gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, mimeType), Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem::Reply(supported), { });
+    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::SupportsKeySystem(keySystem, mimeType), { });
+    auto [supported] = sendResult.takeReplyOr(false);
     m_supportsKeySystemAndMimeTypeCache.set(key, supported);
     return supported;
 }
@@ -112,8 +112,8 @@ std::unique_ptr<CDMPrivateInterface> RemoteLegacyCDMFactory::createCDM(WebCore::
     if (auto player = cdm->mediaPlayer())
         playerId = gpuProcessConnection().mediaPlayerManager().findRemotePlayerId(player->playerPrivate());
 
-    RemoteLegacyCDMIdentifier identifier;
-    gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm->keySystem(), WTFMove(playerId)), Messages::RemoteLegacyCDMFactoryProxy::CreateCDM::Reply(identifier), { });
+    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMFactoryProxy::CreateCDM(cdm->keySystem(), WTFMove(playerId)), { });
+    auto [identifier] = sendResult.takeReplyOr(RemoteLegacyCDMIdentifier { });
     if (!identifier)
         return nullptr;
     auto remoteCDM = RemoteLegacyCDM::create(*this, identifier);

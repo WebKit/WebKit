@@ -34,6 +34,7 @@
 
 #include "GridArea.h"
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 

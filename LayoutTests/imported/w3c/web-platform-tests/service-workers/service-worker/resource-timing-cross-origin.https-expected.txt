@@ -1,3 +1,4 @@
 
-PASS Test that timing allow check fails when service worker changes origin from same to cross origin.
+
+FAIL Test that timing allow check fails when service worker changes origin from same to cross origin. assert_unreached: unexpected rejection: assert_equals: decodedBodySize should be 0 in cross-origin request. expected 0 but got 18299 Reached unreachable code
 

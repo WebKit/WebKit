@@ -94,7 +94,7 @@ void LibWebRTCCodecsProxy::initialize()
     m_connection->addWorkQueueMessageReceiver(Messages::LibWebRTCCodecsProxy::messageReceiverName(), m_queue, *this);
 }
 
-auto LibWebRTCCodecsProxy::createDecoderCallback(RTCDecoderIdentifier identifier, bool useRemoteFrames)
+auto LibWebRTCCodecsProxy::createDecoderCallback(VideoDecoderIdentifier identifier, bool useRemoteFrames)
 {
     RefPtr<RemoteVideoFrameObjectHeap> videoFrameObjectHeap;
     if (useRemoteFrames)
@@ -112,31 +112,30 @@ auto LibWebRTCCodecsProxy::createDecoderCallback(RTCDecoderIdentifier identifier
     };
 }
 
-void LibWebRTCCodecsProxy::createH264Decoder(RTCDecoderIdentifier identifier, bool useRemoteFrames)
+void* LibWebRTCCodecsProxy::createLocalDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames)
+{
+    auto block = makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames));
+    switch (codecType) {
+    case VideoCodecType::H264:
+        return webrtc::createLocalH264Decoder(block.get());
+    case VideoCodecType::H265:
+        return webrtc::createLocalH265Decoder(block.get());
+    case VideoCodecType::VP9:
+        return webrtc::createLocalVP9Decoder(block.get());
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+void LibWebRTCCodecsProxy::createDecoder(VideoDecoderIdentifier identifier, VideoCodecType codecType, bool useRemoteFrames)
 {
     assertIsCurrent(workQueue());
-    auto result = m_decoders.add(identifier, webrtc::createLocalH264Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
+    auto result = m_decoders.add(identifier, createLocalDecoder(identifier, codecType, useRemoteFrames));
     ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
     m_hasEncodersOrDecoders = true;
 }
 
-void LibWebRTCCodecsProxy::createH265Decoder(RTCDecoderIdentifier identifier, bool useRemoteFrames)
-{
-    assertIsCurrent(workQueue());
-    auto result = m_decoders.add(identifier, webrtc::createLocalH265Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
-    ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
-    m_hasEncodersOrDecoders = true;
-}
-
-void LibWebRTCCodecsProxy::createVP9Decoder(RTCDecoderIdentifier identifier, bool useRemoteFrames)
-{
-    assertIsCurrent(workQueue());
-    auto result = m_decoders.add(identifier, webrtc::createLocalVP9Decoder(makeBlockPtr(createDecoderCallback(identifier, useRemoteFrames)).get()));
-    ASSERT_UNUSED(result, result.isNewEntry || IPC::isTestingIPC());
-    m_hasEncodersOrDecoders = true;
-}
-
-void LibWebRTCCodecsProxy::releaseDecoder(RTCDecoderIdentifier identifier)
+void LibWebRTCCodecsProxy::releaseDecoder(VideoDecoderIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     auto decoder = m_decoders.take(identifier);
@@ -148,7 +147,7 @@ void LibWebRTCCodecsProxy::releaseDecoder(RTCDecoderIdentifier identifier)
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
 }
 
-void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void LibWebRTCCodecsProxy::decodeFrame(VideoDecoderIdentifier identifier, uint32_t timeStamp, const IPC::DataReference& data) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     assertIsCurrent(workQueue());
     auto decoder = m_decoders.get(identifier);
@@ -160,7 +159,7 @@ void LibWebRTCCodecsProxy::decodeFrame(RTCDecoderIdentifier identifier, uint32_t
         m_connection->send(Messages::LibWebRTCCodecs::FailedDecoding { identifier }, 0);
 }
 
-void LibWebRTCCodecsProxy::setFrameSize(RTCDecoderIdentifier identifier, uint16_t width, uint16_t height) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+void LibWebRTCCodecsProxy::setFrameSize(VideoDecoderIdentifier identifier, uint16_t width, uint16_t height) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     assertIsCurrent(workQueue());
     auto decoder = m_decoders.get(identifier);
@@ -171,14 +170,17 @@ void LibWebRTCCodecsProxy::setFrameSize(RTCDecoderIdentifier identifier, uint16_
     webrtc::setDecoderFrameSize(decoder, width, height);
 }
 
-void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const String& formatName, const Vector<std::pair<String, String>>& parameters, bool useLowLatency)
+void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, VideoCodecType codecType, const Vector<std::pair<String, String>>& parameters, bool useLowLatency)
 {
     assertIsCurrent(workQueue());
     std::map<std::string, std::string> rtcParameters;
     for (auto& parameter : parameters)
         rtcParameters.emplace(parameter.first.utf8().data(), parameter.second.utf8().data());
 
-    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { formatName.utf8().data(), rtcParameters }, makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info) {
+    if (codecType != VideoCodecType::H264 && codecType != VideoCodecType::H265)
+        return;
+
+    auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size, const webrtc::WebKitEncodedFrameInfo& info) {
         connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, IPC::DataReference { buffer, size }, info }, 0);
     }).get());
     webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);
@@ -187,7 +189,7 @@ void LibWebRTCCodecsProxy::createEncoder(RTCEncoderIdentifier identifier, const 
     m_hasEncodersOrDecoders = true;
 }
 
-void LibWebRTCCodecsProxy::releaseEncoder(RTCEncoderIdentifier identifier)
+void LibWebRTCCodecsProxy::releaseEncoder(VideoEncoderIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     auto encoder = m_encoders.take(identifier);
@@ -199,7 +201,7 @@ void LibWebRTCCodecsProxy::releaseEncoder(RTCEncoderIdentifier identifier)
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
 }
 
-void LibWebRTCCodecsProxy::initializeEncoder(RTCEncoderIdentifier identifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate)
+void LibWebRTCCodecsProxy::initializeEncoder(VideoEncoderIdentifier identifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
@@ -210,7 +212,7 @@ void LibWebRTCCodecsProxy::initializeEncoder(RTCEncoderIdentifier identifier, ui
     webrtc::initializeLocalEncoder(encoder->webrtcEncoder, width, height, startBitrate, maxBitrate, minBitrate, maxFramerate);
 }
 
-LibWebRTCCodecsProxy::Encoder* LibWebRTCCodecsProxy::findEncoder(RTCEncoderIdentifier identifier)
+LibWebRTCCodecsProxy::Encoder* LibWebRTCCodecsProxy::findEncoder(VideoEncoderIdentifier identifier)
 {
     auto iterator = m_encoders.find(identifier);
     if (iterator == m_encoders.end())
@@ -234,7 +236,7 @@ static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::VideoFrame::R
     return webrtc::kVideoRotation_0;
 }
 
-void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
+void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
@@ -264,7 +266,7 @@ void LibWebRTCCodecsProxy::encodeFrame(RTCEncoderIdentifier identifier, SharedVi
 #endif
 }
 
-void LibWebRTCCodecsProxy::setEncodeRates(RTCEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate)
+void LibWebRTCCodecsProxy::setEncodeRates(VideoEncoderIdentifier identifier, uint32_t bitRate, uint32_t frameRate)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
@@ -276,7 +278,7 @@ void LibWebRTCCodecsProxy::setEncodeRates(RTCEncoderIdentifier identifier, uint3
     webrtc::setLocalEncoderRates(encoder->webrtcEncoder, bitRate, frameRate);
 }
 
-void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(RTCEncoderIdentifier identifier, IPC::Semaphore&& semaphore)
+void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(VideoEncoderIdentifier identifier, IPC::Semaphore&& semaphore)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
@@ -288,7 +290,7 @@ void LibWebRTCCodecsProxy::setSharedVideoFrameSemaphore(RTCEncoderIdentifier ide
     encoder->frameReader->setSemaphore(WTFMove(semaphore));
 }
 
-void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(RTCEncoderIdentifier identifier, const SharedMemory::Handle& handle)
+void LibWebRTCCodecsProxy::setSharedVideoFrameMemory(VideoEncoderIdentifier identifier, const SharedMemory::Handle& handle)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);

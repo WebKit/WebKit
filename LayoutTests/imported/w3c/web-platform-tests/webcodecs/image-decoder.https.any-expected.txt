@@ -1,0 +1,43 @@
+
+FAIL Test JPEG image decoding. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation top-left. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation top-right. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation bottom-right. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation bottom-left. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation left-top. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation right-top. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation right-bottom. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation left-bottom. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation top-left. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation top-right. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation bottom-right. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation bottom-left. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation left-top. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation right-top. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation right-bottom. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation left-bottom. Can't find variable: ImageDecoder
+FAIL Test PNG image decoding. Can't find variable: ImageDecoder
+FAIL Test AVIF image decoding. Can't find variable: ImageDecoder
+FAIL Test high bit depth HDR AVIF image decoding. Can't find variable: ImageDecoder
+FAIL Test multi-track AVIF image decoding w/ preferAnimation=false. Can't find variable: ImageDecoder
+FAIL Test multi-track AVIF image decoding w/ preferAnimation=true. Can't find variable: ImageDecoder
+FAIL Test WEBP image decoding. Can't find variable: ImageDecoder
+FAIL Test GIF image decoding. Can't find variable: ImageDecoder
+FAIL Test JPEG image YUV 4:2:0 decoding. Can't find variable: ImageDecoder
+FAIL Test AVIF image YUV 4:2:0 decoding. Can't find variable: ImageDecoder
+FAIL Test AVIF image YUV 4:2:2 decoding. Can't find variable: ImageDecoder
+FAIL Test AVIF image YUV 4:4:4 decoding. Can't find variable: ImageDecoder
+FAIL Test WEBP image YUV 4:2:0 decoding. Can't find variable: ImageDecoder
+FAIL Test invalid mime type rejects decode() requests promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+FAIL Test invalid mime type rejects decodeMetadata() requests promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+FAIL Test out of range index returns RangeError Can't find variable: ImageDecoder
+FAIL Test partial decoding without a frame results in an error Can't find variable: ImageDecoder
+FAIL Test completed property on fully buffered decode Can't find variable: ImageDecoder
+FAIL Test decode, decodeMetadata after no track selected. Can't find variable: ImageDecoder
+FAIL Test track selection in multi track image. Can't find variable: ImageDecoder
+FAIL Test ReadableStream of gif promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+FAIL Test that decode requests are serialized. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+FAIL Test ReadableStream aborts promises on track change promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+FAIL Test ReadableStream aborts completed on close promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+FAIL Test ReadableStream resolves completed promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: ImageDecoder"
+

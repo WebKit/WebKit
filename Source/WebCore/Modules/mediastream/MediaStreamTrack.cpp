@@ -521,10 +521,7 @@ void MediaStreamTrack::updateToPageMutedState()
         break;
     case CaptureDevice::DeviceType::Camera:
         m_private->setMuted(page->mutedState().contains(MediaProducerMutedState::VideoCaptureIsMuted)
-#if PLATFORM(IOS_FAMILY)
-            || document.hidden()
-#endif
-        );
+            || (document.hidden() && document.settings().interruptVideoOnPageVisibilityChangeEnabled()));
         break;
     case CaptureDevice::DeviceType::Screen:
     case CaptureDevice::DeviceType::Window:

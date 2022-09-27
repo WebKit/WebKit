@@ -271,7 +271,9 @@ double PerformanceResourceTiming::responseEnd() const
 
 uint64_t PerformanceResourceTiming::transferSize() const
 {
-    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+    // This is intentionally stricter than a TAO check.
+    // See https://github.com/w3c/server-timing/issues/89
+    if (!m_resourceTiming.isSameOriginRequest())
         return 0;
 
     auto encodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyBytesReceived;
@@ -284,7 +286,9 @@ uint64_t PerformanceResourceTiming::transferSize() const
 
 uint64_t PerformanceResourceTiming::encodedBodySize() const
 {
-    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+    // This is intentionally stricter than a TAO check.
+    // See https://github.com/w3c/server-timing/issues/89
+    if (!m_resourceTiming.isSameOriginRequest())
         return 0;
 
     auto encodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyBytesReceived;
@@ -296,7 +300,9 @@ uint64_t PerformanceResourceTiming::encodedBodySize() const
 
 uint64_t PerformanceResourceTiming::decodedBodySize() const
 {
-    if (m_resourceTiming.networkLoadMetrics().failsTAOCheck)
+    // This is intentionally stricter than a TAO check.
+    // See https://github.com/w3c/server-timing/issues/89
+    if (!m_resourceTiming.isSameOriginRequest())
         return 0;
 
     auto decodedBodySize = m_resourceTiming.networkLoadMetrics().responseBodyDecodedSize;

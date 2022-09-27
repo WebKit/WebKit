@@ -1,0 +1,94 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/README.md
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-data-serialization.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-data.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-data.crossOriginIsolated.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-data.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/av1.mp4
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/chunk-serialization.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-audio-chunk.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-video-chunk.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-video-chunk.crossOriginIsolated.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/encoded-video-chunk.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-flip.avif
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-flip.gif
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-full-range-bt2020-pq-444-10bpc.avif
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-limited-range-420-8bpc.avif
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-limited-range-420-8bpc.jpg
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-limited-range-420-8bpc.webp
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-limited-range-422-8bpc.avif
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors-limited-range-444-8bpc.avif
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors.avif
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors.gif
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors.jpg
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors.mp4
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors.png
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/four-colors.webp
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/h264.annexb
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/h264.mp4
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/image-decoder-disconnect-readable-stream-crash.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/image-decoder-image-orientation-none.https.html
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/image-decoder-utils.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/image-decoder.crossOriginIsolated.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/image-decoder.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/image-decoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/pattern.png
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/reconfiguring-encoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-aac.mp4
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-alaw.wav
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-mulaw.wav
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx-opus.ogg
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx.adts
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx.mp3
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/utils.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.crossOriginIsolated.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-utils.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-frame-serialization.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-alpha.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginIsolated.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.window.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo.crossOriginIsolated.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo.crossOriginIsolated.https.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/videoFrame-utils.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/vp8.webm
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/vp9.mp4
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/webgl-test-utils.js

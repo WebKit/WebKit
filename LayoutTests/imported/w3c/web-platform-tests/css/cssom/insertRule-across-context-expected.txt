@@ -1,5 +1,5 @@
 
 
 PASS The constructor of inserted rule object must be from iframe
-FAIL The constructor of inserted rule object must be from iframe for new CSSStyleSheet() Illegal constructor
+PASS The constructor of inserted rule object must be from iframe for new CSSStyleSheet()
 

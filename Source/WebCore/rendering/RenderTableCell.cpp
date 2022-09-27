@@ -353,8 +353,8 @@ LayoutSize RenderTableCell::offsetFromContainer(RenderElement& container, const 
     ASSERT(&container == this->container());
 
     LayoutSize offset = RenderBlockFlow::offsetFromContainer(container, point, offsetDependsOnPoint);
-    if (parent())
-        offset -= parentBox()->locationOffset();
+    if (auto* containerOfRow = container.container(); containerOfRow && parent())
+        offset -= parentBox()->offsetFromContainer(*containerOfRow, point);
 
     return offset;
 }

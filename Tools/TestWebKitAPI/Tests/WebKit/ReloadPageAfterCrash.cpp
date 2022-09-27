@@ -34,7 +34,9 @@
 #include <WebKit/WKRetainPtr.h>
 #include <signal.h>
 
-#if PLATFORM(PLAYSTATION)
+#if USE(PLAYSTATION_WPE_BACKEND)
+#include <wpe/playstation.h>
+#elif PLATFORM(PLAYSTATION)
 #include <process-launcher.h>
 #endif
 
@@ -141,7 +143,9 @@ TEST(WebKit, FocusedFrameAfterCrash)
     while (!WKPageGetFocusedFrame(webView.page()))
         Util::spinRunLoop(10);
 
-#if PLATFORM(PLAYSTATION)
+#if USE(PLAYSTATION_WPE_BACKEND)
+    
+#elif PLATFORM(PLAYSTATION)
     PlayStation::terminateProcess(WKPageGetProcessIdentifier(webView.page()));
 #else
     kill(WKPageGetProcessIdentifier(webView.page()), 9);

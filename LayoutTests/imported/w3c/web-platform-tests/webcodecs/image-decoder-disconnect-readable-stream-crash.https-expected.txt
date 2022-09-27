@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: TypeError: undefined is not a constructor (evaluating 'new iframe.contentWindow.ImageDecoder({
+    data: new Blob(['blob']).stream(),
+    type: 'image/jpeg',
+})')
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderIFrame {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+        layer at (0,0) size 300x150
+          RenderView at (0,0) size 300x150
+        layer at (0,0) size 300x150
+          RenderBlock {HTML} at (0,0) size 300x150
+            RenderBody {BODY} at (8,8) size 284x134
+      RenderText {#text} at (0,0) size 0x0

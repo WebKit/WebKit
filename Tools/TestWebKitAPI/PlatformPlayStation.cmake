@@ -50,7 +50,7 @@ if (ENABLE_WEBKIT)
     )
 
     list(APPEND TestWebKit_PRIVATE_LIBRARIES
-        WebKitRequirements::ProcessLauncher
+        ${ProcessLauncher_LIBRARY}
     )
 endif ()
 

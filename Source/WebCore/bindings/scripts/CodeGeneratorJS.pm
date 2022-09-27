@@ -2855,7 +2855,6 @@ sub GenerateHeader
     my $interfaceName = $interface->type->name;
     my $className = "JS$interfaceName";
     my %structureFlags = ();
-
     my $hasParent = $interface->parentType || $interface->extendedAttributes->{JSLegacyParent};
     my $parentClassName = GetParentClassName($interface);
     my $needsVisitChildren = InstanceNeedsVisitChildren($interface);

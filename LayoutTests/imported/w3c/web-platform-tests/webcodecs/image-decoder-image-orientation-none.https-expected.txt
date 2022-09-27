@@ -1,0 +1,18 @@
+
+FAIL Test JPEG w/ EXIF orientation top-left on canvas w/o orientation Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation top-right on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation bottom-right on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation bottom-left on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation left-top on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation right-top on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation right-bottom on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test JPEG w/ EXIF orientation left-bottom on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation top-left on canvas w/o orientation Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation top-right on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation bottom-right on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation bottom-left on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation left-top on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation right-top on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation right-bottom on canvas w/o orientation. Can't find variable: ImageDecoder
+FAIL Test 4:2:0 JPEG w/ EXIF orientation left-bottom on canvas w/o orientation. Can't find variable: ImageDecoder
+

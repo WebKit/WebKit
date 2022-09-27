@@ -713,6 +713,9 @@ InlineIterator::LineBoxIterator LineLayout::lastLineBox() const
 
 LayoutRect LineLayout::firstInlineBoxRect(const RenderInline& renderInline) const
 {
+    if (!m_inlineContent)
+        return { };
+
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(renderInline);
     auto* firstBox = m_inlineContent->firstBoxForLayoutBox(layoutBox);
     if (!firstBox)

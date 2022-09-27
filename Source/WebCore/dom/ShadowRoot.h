@@ -113,7 +113,7 @@ public:
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&);
 
     void moveShadowRootToNewParentScope(TreeScope&, Document&);
-    void moveShadowRootToNewDocument(Document&);
+    void moveShadowRootToNewDocument(Document& oldDocument, Document& newDocument);
 
     using PartMappings = HashMap<AtomString, Vector<AtomString, 1>>;
     const PartMappings& partMappings() const;

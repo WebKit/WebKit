@@ -1,3 +1,4 @@
 
-FAIL adoptedStyleSheets won'te be cleared when adopting into/from <template>s Illegal constructor
+
+PASS adoptedStyleSheets won'te be cleared when adopting into/from <template>s
 

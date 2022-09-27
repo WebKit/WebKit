@@ -27,6 +27,7 @@
     GenerateIsReachable=ImplElementRoot,
     GenerateAddOpaqueRoot=element,
     Exposed=Window,
+    EnabledBySetting=FormAssociatedCustomElementsEnabled,
 ] interface ElementInternals {
     readonly attribute ShadowRoot? shadowRoot;
 

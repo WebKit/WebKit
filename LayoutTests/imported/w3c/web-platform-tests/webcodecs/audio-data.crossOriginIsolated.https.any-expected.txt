@@ -1,0 +1,4 @@
+
+FAIL Test construction and copyTo() using a SharedArrayBuffer Can't find variable: AudioData
+FAIL Test construction and copyTo() using a Uint8Array(SharedArrayBuffer) Can't find variable: AudioData
+

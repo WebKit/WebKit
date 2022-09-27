@@ -163,27 +163,7 @@ layer at (8,944) size 9600199x35
     RenderText {#text} at (160,0) size 9600199x35
       text run at (160,0) width 9600039: "Hello,"
       text run at (0,18) width 8000037: "world"
-layer at (8,1030) size 0x17
-  RenderInline {SPAN} at (0,0) size 0x17 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 0x17
-      text run at (160,0) width 0: "Hello, world"
-layer at (8,1098) size 0x17
-  RenderInline {SPAN} at (0,0) size 0x17 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 0x17
-      text run at (160,0) width 0: "Hello, world"
-layer at (8,1166) size 0x17
-  RenderInline {SPAN} at (0,0) size 0x17 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 0x17
-      text run at (160,0) width 0: "Hello, world"
 layer at (8,1558) size 176x17
   RenderInline {SPAN} at (0,0) size 176x17 [bgcolor=#CCCCFF]
     RenderText {#text} at (160,0) size 176x17
       text run at (160,0) width 176 RTL: "Hello, world"
-layer at (8,1626) size 0x17
-  RenderInline {SPAN} at (0,0) size 0x17 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 0x17
-      text run at (160,0) width 0 RTL: "Hello, world"
-layer at (8,1694) size 0x17
-  RenderInline {SPAN} at (0,0) size 0x17 [bgcolor=#CCCCFF]
-    RenderText {#text} at (160,0) size 0x17
-      text run at (160,0) width 0 RTL: "Hello, world"

@@ -908,19 +908,15 @@ NSArray* MediaPlayerPrivateRemote::timedMetadata() const
 
 String MediaPlayerPrivateRemote::accessLog() const
 {
-    String log;
-    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::AccessLog(), Messages::RemoteMediaPlayerProxy::AccessLog::Reply(log), m_id))
-        return emptyString();
-
+    auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::AccessLog(), m_id);
+    auto [log] = sendResult.takeReplyOr(emptyString());
     return log;
 }
 
 String MediaPlayerPrivateRemote::errorLog() const
 {
-    String log;
-    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::ErrorLog(), Messages::RemoteMediaPlayerProxy::ErrorLog::Reply(log), m_id))
-        return emptyString();
-
+    auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::ErrorLog(), m_id);
+    auto [log] = sendResult.takeReplyOr(emptyString());
     return log;
 }
 #endif
@@ -1040,10 +1036,11 @@ RefPtr<WebCore::VideoFrame> MediaPlayerPrivateRemote::videoFrameForCurrentTime()
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return { };
 
-    std::optional<RemoteVideoFrameProxy::Properties> result;
-    bool changed = false;
-    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(), Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged::Reply(result, changed), m_id))
+    auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::VideoFrameForCurrentTimeIfChanged(), m_id);
+    if (!sendResult)
         return nullptr;
+
+    auto [result, changed] = sendResult.takeReply();
     if (changed) {
         if (result)
             m_videoFrameForCurrentTime = RemoteVideoFrameProxy::create(connection(), videoFrameObjectHeapProxy(), WTFMove(*result));
@@ -1137,12 +1134,10 @@ std::optional<bool> MediaPlayerPrivateRemote::wouldTaintOrigin(const SecurityOri
     if (auto result = m_wouldTaintOriginCache.get(origin.data()))
         return result;
 
-    std::optional<bool> wouldTaint;
-    if (!connection().sendSync(Messages::RemoteMediaPlayerProxy::WouldTaintOrigin(origin.data()), Messages::RemoteMediaPlayerProxy::WouldTaintOrigin::Reply(wouldTaint), m_id))
-        return std::nullopt;
-
-    m_wouldTaintOriginCache.add(origin.data(), wouldTaint);
-
+    auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::WouldTaintOrigin(origin.data()), m_id);
+    auto [wouldTaint] = sendResult.takeReplyOr(std::nullopt);
+    if (wouldTaint)
+        m_wouldTaintOriginCache.add(origin.data(), wouldTaint);
     return wouldTaint;
 }
 

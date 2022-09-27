@@ -28,6 +28,7 @@
 #include "TreeScope.h"
 
 #include "Attr.h"
+#include "CSSStyleSheet.h"
 #include "DOMWindow.h"
 #include "ElementIterator.h"
 #include "FocusController.h"
@@ -54,6 +55,7 @@ namespace WebCore {
 
 struct SameSizeAsTreeScope {
     void* pointers[10];
+    Vector<void*> vector;
 };
 
 static_assert(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), "treescope should stay small");
@@ -78,7 +80,11 @@ TreeScope::TreeScope(Document& document)
     document.setTreeScope(*this);
 }
 
-TreeScope::~TreeScope() = default;
+TreeScope::~TreeScope()
+{
+    for (auto& sheet : m_adoptedStyleSheets)
+        sheet->removeAdoptingTreeScope(*this, CSSStyleSheet::IsTreeScopeBeingDestroyed::Yes);
+}
 
 void TreeScope::destroyTreeScopeData()
 {
@@ -543,6 +549,25 @@ RadioButtonGroups& TreeScope::radioButtonGroups()
     if (!m_radioButtonGroups)
         m_radioButtonGroups = makeUnique<RadioButtonGroups>();
     return *m_radioButtonGroups;
+}
+
+const Vector<RefPtr<CSSStyleSheet>>& TreeScope::adoptedStyleSheets() const
+{
+    return m_adoptedStyleSheets;
+}
+
+ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&& sheets)
+{
+    for (auto& sheet : sheets) {
+        if (!sheet->wasConstructedByJS() || sheet->constructorDocument() != &documentScope())
+            return Exception { NotAllowedError, "Sheet needs to be constructed by JavaScript and its constructor document must match"_s };
+    }
+    for (auto& sheet : m_adoptedStyleSheets)
+        sheet->removeAdoptingTreeScope(*this, CSSStyleSheet::IsTreeScopeBeingDestroyed::No);
+    m_adoptedStyleSheets = WTFMove(sheets);
+    for (auto& sheet : m_adoptedStyleSheets)
+        sheet->addAdoptingTreeScope(*this);
+    return { };
 }
 
 } // namespace WebCore

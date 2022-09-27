@@ -210,12 +210,12 @@ void WebPageProxy::attributedSubstringForCharacterRangeAsync(const EditingRange&
 
 String WebPageProxy::stringSelectionForPasteboard()
 {
-    String value;
     if (!hasRunningProcess())
-        return value;
+        return { };
     
     const Seconds messageTimeout(20);
-    sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), Messages::WebPage::GetStringSelectionForPasteboard::Reply(value), messageTimeout);
+    auto sendResult = sendSync(Messages::WebPage::GetStringSelectionForPasteboard(), messageTimeout);
+    auto [value] = sendResult.takeReplyOr(String { });
     return value;
 }
 
@@ -224,9 +224,9 @@ RefPtr<WebCore::SharedBuffer> WebPageProxy::dataSelectionForPasteboard(const Str
     if (!hasRunningProcess())
         return nullptr;
 
-    RefPtr<WebCore::SharedBuffer> buffer;
     const Seconds messageTimeout(20);
-    sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), Messages::WebPage::GetDataSelectionForPasteboard::Reply(buffer), messageTimeout);
+    auto sendResult = sendSync(Messages::WebPage::GetDataSelectionForPasteboard(pasteboardType), messageTimeout);
+    auto [buffer] = sendResult.takeReplyOr(nullptr);
     return buffer;
 }
 
@@ -237,9 +237,9 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
 
     grantAccessToCurrentPasteboardData(pasteboardName);
 
-    bool result = false;
     const Seconds messageTimeout(20);
-    sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), Messages::WebPage::ReadSelectionFromPasteboard::Reply(result), messageTimeout);
+    auto sendResult = sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), messageTimeout);
+    auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
 
@@ -342,9 +342,9 @@ bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent
     if (process().state() != WebProcessProxy::State::Running)
         return false;
 
-    bool result = false;
     const Seconds messageTimeout(3);
-    sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), Messages::WebPage::ShouldDelayWindowOrderingEvent::Reply(result), messageTimeout);
+    auto sendResult = sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), messageTimeout);
+    auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
 

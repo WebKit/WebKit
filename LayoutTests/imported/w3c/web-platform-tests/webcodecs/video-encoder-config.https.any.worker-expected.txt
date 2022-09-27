@@ -1,0 +1,13 @@
+
+FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:Emtpy codec Can't find variable: VideoEncoder
+FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:Unrecognized codec Can't find variable: VideoEncoder
+FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:Width is too large Can't find variable: VideoEncoder
+FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:Height is too large Can't find variable: VideoEncoder
+FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:Invalid scalability mode Can't find variable: VideoEncoder
+FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:AVC not supported by VP8 Can't find variable: VideoEncoder
+FAIL VideoEncoder.isConfigSupported() doesn't support config:Too strenuous accelerated encoding parameters promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
+FAIL VideoEncoder.isConfigSupported() doesn't support config:Odd sized frames for H264 promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
+FAIL VideoEncoder.isConfigSupported() supports:{"codec":"avc1.42001E","hardwareAcceleration":"no-preference","width":640,"height":480,"bitrate":5000000,"framerate":24,"avc":{"format":"annexb"},"futureConfigFeature":"foo"} promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
+FAIL VideoEncoder.isConfigSupported() supports:{"codec":"vp8","hardwareAcceleration":"no-preference","width":800,"height":600,"bitrate":7000000,"bitrateMode":"variable","framerate":60,"scalabilityMode":"L1T2","futureConfigFeature":"foo","latencyMode":"quality"} promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
+FAIL VideoEncoder.isConfigSupported() supports:{"codec":"vp09.00.10.08","hardwareAcceleration":"no-preference","width":1280,"height":720,"bitrate":7000000,"bitrateMode":"constant","framerate":25,"futureConfigFeature":"foo","latencyMode":"realtime","alpha":"discard"} promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
+

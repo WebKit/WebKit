@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<div id="error1">First error</div>
+<div id="target1">Target 1</div>
+<div id="wrapper" tabindex="0">
+  <div class="error">Second error</div>
+</div>
+<div id="target2">Target 2</div>
+<div id="error3">Third error</div>
+<x-target></x-target>
+<div id="error4">Fourth error</div>
+<div id="target4">Target 4</div>
+<x-custom></x-custom>
+
+<script>
+  class XTarget extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let target = document.createElement("div");
+      target.id = "innertarget";
+      target.textContent = "Target 3";
+      target.ariaErrorMessageElements = [error3];
+      this.shadowRoot.appendChild(target);
+    }
+  }
+  customElements.define("x-target", XTarget);
+
+  class XCustom extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let error = document.createElement("div");
+      error.id = "error5";
+      error.textContent = "Fifth error";
+      let target = document.createElement("div");
+      target.id = "target5";
+      target.textContent = "Target 5";
+      this.shadowRoot.appendChild(error);
+      this.shadowRoot.appendChild(target);
+      target.ariaErrorMessageElements = [error];
+      document.body.appendChild(error);
+    }
+  }
+  customElements.define("x-custom", XCustom);
+
+  description("Checks that element reflection is exposed to the a11y tree for 'ariaErrorMessageElements'");
+  if (!window.accessibilityController) {
+    debug("This test requires accessibilityController");
+  } else {
+    target1.ariaErrorMessageElements = [error1];
+    var axError1 = accessibilityController.accessibleElementById("error1");
+    var axTarget1 = accessibilityController.accessibleElementById("target1");
+    shouldBeTrue("axTarget1.ariaErrorMessageElementAtIndex(0).isEqual(axError1)");
+
+    target2.ariaErrorMessageElements = [document.getElementsByClassName("error")[0]];
+    var wrapper = accessibilityController.accessibleElementById("wrapper");
+    var axError2 = wrapper.childAtIndex(0);
+    var axTarget2 = accessibilityController.accessibleElementById("target2");
+    shouldBeTrue("axTarget2.ariaErrorMessageElementAtIndex(0).isEqual(axError2)");
+    target2.setAttribute("aria-errormessage", "error1");
+    shouldBeTrue("axTarget2.ariaErrorMessageElementAtIndex(0).isEqual(axError1)");
+
+    var axError3 = accessibilityController.accessibleElementById("error3");
+    var axInnerTarget = accessibilityController.accessibleElementById("innertarget");
+    shouldBeTrue("axInnerTarget.ariaErrorMessageElementAtIndex(0).isEqual(axError3)");
+
+    target2.ariaErrorMessageElements = [error1, document.getElementsByClassName("error")[0], error3];
+    shouldBeTrue("axTarget2.ariaErrorMessageElementAtIndex(0).isEqual(axError1)");
+    shouldBeTrue("axTarget2.ariaErrorMessageElementAtIndex(1).isEqual(axError2)");
+    shouldBeTrue("axTarget2.ariaErrorMessageElementAtIndex(2).isEqual(axError3)");
+
+    target4.ariaErrorMessageElements = [error4];
+    error4.id = "error4-new";
+    var axErrorMessage4 = accessibilityController.accessibleElementById("error4-new");
+    var axTarget4 = accessibilityController.accessibleElementById("target4");
+    shouldBeTrue("axTarget4.ariaErrorMessageElementAtIndex(0).isEqual(axErrorMessage4)");
+
+    var axErrorMessage5 = accessibilityController.accessibleElementById("error5");
+    var axTarget5 = accessibilityController.accessibleElementById("target5");
+    shouldBeTrue("axTarget5.ariaErrorMessageElementAtIndex(0).isEqual(axErrorMessage5)");
+  }
+</script>

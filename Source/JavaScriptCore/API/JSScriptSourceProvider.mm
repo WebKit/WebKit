@@ -24,6 +24,7 @@
  */
 
 #import "config.h"
+#import "JSBase.h"
 #import "JSScriptSourceProvider.h"
 
 #if JSC_OBJC_API_ENABLED

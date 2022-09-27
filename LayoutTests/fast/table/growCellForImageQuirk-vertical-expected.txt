@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 56x156 [bgcolor=#C0C0C0]
         RenderTableSection {TBODY} at (0,0) size 56x156
-          RenderTableRow {TR} at (0,2) size 52x156
+          RenderTableRow {TR} at (2,0) size 52x156
             RenderTableCell {TD} at (2,2) size 52x152 [r=0 c=0 rs=1 cs=1]
               RenderImage {IMG} at (1,1) size 50x75 [bgcolor=#ADD8E6]
               RenderImage {IMG} at (1,76) size 50x75 [bgcolor=#ADD8E6]

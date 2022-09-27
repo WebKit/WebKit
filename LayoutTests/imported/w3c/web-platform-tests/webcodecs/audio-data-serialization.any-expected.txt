@@ -1,0 +1,5 @@
+
+FAIL Verify closing AudioData does not propagate accross contexts. Can't find variable: AudioData
+FAIL Verify posting closed AudioData throws. Can't find variable: AudioData
+FAIL Verify transferring audio data closes them. Can't find variable: AudioData
+

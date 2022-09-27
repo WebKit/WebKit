@@ -34,6 +34,7 @@
 #include "FunctionConstructor.h"
 #include "Identifier.h"
 #include "InitializeThreading.h"
+#include "JSAPIWrapperObject.h"
 #include "JSArray.h"
 #include "JSCInlines.h"
 #include "JSCallbackConstructor.h"

@@ -2308,8 +2308,8 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     }
     PDFContextMenu contextMenu { point, WTFMove(items), WTFMove(openInPreviewIndex) };
 
-    std::optional<int> selectedIndex = -1;
-    webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu, m_identifier), Messages::WebPageProxy::ShowPDFContextMenu::Reply(selectedIndex));
+    auto sendResult = webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu, m_identifier));
+    auto [selectedIndex] = sendResult.takeReplyOr(-1);
 
     if (selectedIndex && *selectedIndex >= 0 && *selectedIndex < itemCount)
         [nsMenu performActionForItemAtIndex:*selectedIndex];

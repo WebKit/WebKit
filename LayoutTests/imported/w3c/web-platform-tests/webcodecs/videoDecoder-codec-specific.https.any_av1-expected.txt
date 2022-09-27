@@ -1,0 +1,22 @@
+
+Harness Error (FAIL), message = Error: av01.0.04M.08 unsupported
+
+NOTRUN Test isConfigSupported()
+NOTRUN Test isConfigSupported() with 1080p crop
+NOTRUN Test that isConfigSupported() returns a parsed configuration
+NOTRUN Test invalid configs
+NOTRUN Test configure()
+NOTRUN Decode a key frame
+NOTRUN Decode a non key frame first fails
+NOTRUN Verify reset() suppresses outputs
+NOTRUN Test unconfigured VideoDecoder operations
+NOTRUN Test closed VideoDecoder operations
+NOTRUN Decode empty frame
+NOTRUN Decode corrupt frame
+NOTRUN Close while decoding corrupt frame
+NOTRUN Test decoding after flush
+NOTRUN Test decoding a with negative timestamp
+NOTRUN Test reset during flush
+NOTRUN Test low-latency decoding
+NOTRUN VideoDecoder decodeQueueSize test
+

@@ -102,13 +102,8 @@ public:
     {
         return isSumSmallerThanOrEqual(offset, count, this->length());
     }
-    
-    TypedArrayType getType() const final
-    {
-        return Adaptor::typeValue;
-    }
 
-    JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) final;
+    JSArrayBufferView* wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject);
 
 private:
     GenericTypedArrayView(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t length);

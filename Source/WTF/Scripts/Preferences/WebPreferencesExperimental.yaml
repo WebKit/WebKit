@@ -519,6 +519,18 @@ CompressionStreamEnabled:
     WebCore:
       default: false
 
+ConstructableStylesheetsEnabled:
+  type: bool
+  humanReadableName: "Constructable Stylesheets"
+  humanReadableDescription: "Enable Constructable Stylesheets"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ContactPickerAPIEnabled:
   type: bool
   humanReadableName: "Contact Picker API"

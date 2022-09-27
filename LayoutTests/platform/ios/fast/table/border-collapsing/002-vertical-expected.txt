@@ -20,7 +20,7 @@ layer at (0,0) size 800x622
               RenderTableCell {TD} at (0,102) size 57x51 [border: (0.50px solid #FF0000)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (18,16) size 20x9
                   text run at (18,16) width 9: "3"
-            RenderTableRow {TR} at (0,57) size 57x153
+            RenderTableRow {TR} at (57,0) size 57x153
               RenderTableCell {TD} at (57,2) size 57x48 [border: (2.50px solid #FF0000)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (18,16) size 20x9
                   text run at (18,16) width 9: "4"
@@ -30,7 +30,7 @@ layer at (0,0) size 800x622
               RenderTableCell {TD} at (57,102) size 57x51 [border: (2.50px solid #008000)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (18,18) size 20x9
                   text run at (18,18) width 9: "6"
-            RenderTableRow {TR} at (0,114) size 55x153
+            RenderTableRow {TR} at (114,0) size 55x153
               RenderTableCell {TD} at (114,1) size 55x50 [border: (2.50px solid #FF0000)] [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (17,17) size 20x9
                   text run at (17,17) width 9: "7"
@@ -40,7 +40,7 @@ layer at (0,0) size 800x622
               RenderTableCell {TD} at (114,102) size 55x51 [border: (0.50px solid #FF0000)] [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (18,16) size 20x9
                   text run at (18,16) width 9: "9"
-            RenderTableRow {TR} at (0,169) size 53x153
+            RenderTableRow {TR} at (169,0) size 53x153
               RenderTableCell {TD} at (169,0) size 53x52 [border: (2.50px solid #FF0000)] [r=3 c=0 rs=1 cs=1]
                 RenderText {#text} at (16,18) size 20x17
                   text run at (16,18) width 17: "10"
@@ -50,7 +50,7 @@ layer at (0,0) size 800x622
               RenderTableCell {TD} at (169,102) size 53x51 [border: (0.50px solid #FF0000)] [r=3 c=2 rs=1 cs=1]
                 RenderText {#text} at (16,16) size 20x17
                   text run at (16,16) width 17: "12"
-            RenderTableRow {TR} at (0,222) size 55x153
+            RenderTableRow {TR} at (222,0) size 55x153
               RenderTableCell {TD} at (222,0) size 55x52 [border: (2.50px solid #FF0000)] [r=4 c=0 rs=1 cs=1]
                 RenderText {#text} at (16,18) size 20x17
                   text run at (16,18) width 17: "13"
@@ -76,7 +76,7 @@ layer at (0,0) size 800x622
               RenderTableCell {TD} at (0,102) size 57x51 [border: (0.50px solid #FF0000)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (19,16) size 20x9
                   text run at (19,16) width 9: "3"
-            RenderTableRow {TR} at (0,57) size 57x153
+            RenderTableRow {TR} at (57,0) size 57x153
               RenderTableCell {TD} at (57,2) size 57x48 [border: (2.50px solid #FF0000)] [r=1 c=0 rs=1 cs=1]
                 RenderText {#text} at (19,16) size 20x9
                   text run at (19,16) width 9: "4"
@@ -86,7 +86,7 @@ layer at (0,0) size 800x622
               RenderTableCell {TD} at (57,102) size 57x51 [border: (2.50px solid #008000)] [r=1 c=2 rs=1 cs=1]
                 RenderText {#text} at (19,18) size 20x9
                   text run at (19,18) width 9: "6"
-            RenderTableRow {TR} at (0,114) size 55x153
+            RenderTableRow {TR} at (114,0) size 55x153
               RenderTableCell {TD} at (114,1) size 55x50 [border: (2.50px solid #FF0000)] [r=2 c=0 rs=1 cs=1]
                 RenderText {#text} at (18,17) size 20x9
                   text run at (18,17) width 9: "7"
@@ -96,7 +96,7 @@ layer at (0,0) size 800x622
               RenderTableCell {TD} at (114,102) size 55x51 [border: (0.50px solid #FF0000)] [r=2 c=2 rs=1 cs=1]
                 RenderText {#text} at (19,16) size 20x9
                   text run at (19,16) width 9: "9"
-            RenderTableRow {TR} at (0,169) size 53x153
+            RenderTableRow {TR} at (169,0) size 53x153
               RenderTableCell {TD} at (169,0) size 53x52 [border: (2.50px solid #FF0000)] [r=3 c=0 rs=1 cs=1]
                 RenderText {#text} at (17,18) size 20x17
                   text run at (17,18) width 17: "10"
@@ -106,7 +106,7 @@ layer at (0,0) size 800x622
               RenderTableCell {TD} at (169,102) size 53x51 [border: (0.50px solid #FF0000)] [r=3 c=2 rs=1 cs=1]
                 RenderText {#text} at (17,16) size 20x17
                   text run at (17,16) width 17: "12"
-            RenderTableRow {TR} at (0,222) size 55x153
+            RenderTableRow {TR} at (222,0) size 55x153
               RenderTableCell {TD} at (222,0) size 55x52 [border: (2.50px solid #FF0000)] [r=4 c=0 rs=1 cs=1]
                 RenderText {#text} at (17,18) size 20x17
                   text run at (17,18) width 17: "13"

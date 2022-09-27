@@ -55,8 +55,8 @@ bool RemoteLegacyCDM::supportsMIMEType(const String& mimeType)
     if (!m_factory)
         return false;
 
-    bool supported = false;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), Messages::RemoteLegacyCDMProxy::SupportsMIMEType::Reply(supported), m_identifier);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::SupportsMIMEType(mimeType), m_identifier);
+    auto [supported] = sendResult.takeReplyOr(false);
     return supported;
 }
 
@@ -72,8 +72,8 @@ std::unique_ptr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCor
     logIdentifier = reinterpret_cast<uint64_t>(client.logIdentifier());
 #endif
 
-    RemoteLegacyCDMSessionIdentifier identifier;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(storageDirectory, logIdentifier), Messages::RemoteLegacyCDMProxy::CreateSession::Reply(identifier), m_identifier);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMProxy::CreateSession(storageDirectory, logIdentifier), m_identifier);
+    auto [identifier] = sendResult.takeReplyOr(RemoteLegacyCDMSessionIdentifier { });
     if (!identifier)
         return nullptr;
     return RemoteLegacyCDMSession::create(m_factory, WTFMove(identifier), client);

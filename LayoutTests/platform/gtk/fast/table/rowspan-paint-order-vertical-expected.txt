@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
                 text run at (21,-18) width 35: "Right"
                 text run at (39,4) width 13: "(3"
                 text run at (57,-19) width 36: "rows)"
-          RenderTableRow {TR} at (0,22) size 37x576
+          RenderTableRow {TR} at (22,0) size 37x576
             RenderTableCell {TD} at (22,247) size 37x-5 [bgcolor=#EEEEEE] [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (9,-8) size 18x5
                 text run at (9,-7) width 5: " "
@@ -53,7 +53,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (22,334) size 37x-5 [bgcolor=#EEEEEE] [border: (1px inset #808080)] [r=1 c=10 rs=1 cs=1]
               RenderText {#text} at (9,-8) size 18x5
                 text run at (9,-7) width 5: " "
-          RenderTableRow {TR} at (0,59) size 37x576
+          RenderTableRow {TR} at (59,0) size 37x576
             RenderTableCell {TD} at (59,46) size 37x522 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=13]
               RenderText {#text} at (9,256) size 18x274
                 text run at (9,257) width 273: "Bottom Row Overlaps with the Right Cell!"

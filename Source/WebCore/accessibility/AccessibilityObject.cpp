@@ -3739,14 +3739,27 @@ Vector<Element*> AccessibilityObject::elementsFromAttribute(const QualifiedName&
     if (!node || !node->isElementNode())
         return { };
 
+    auto& element = downcast<Element>(*node);
+    if (Element::isElementReflectionAttribute(attribute)) {
+        if (auto reflectedElement = element.getElementAttribute(attribute)) {
+            Vector<Element*> elements;
+            elements.append(reflectedElement);
+            return elements;
+        }
+    } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
+        if (auto reflectedElements = element.getElementsArrayAttribute(attribute)) {
+            return WTF::map(reflectedElements.value(), [](RefPtr<Element> element) -> Element* {
+                return element.get();
+            });
+        }
+    }
+
     auto& idsString = getAttribute(attribute);
     if (idsString.isEmpty()) {
-        auto& element = downcast<Element>(*node);
         if (auto* defaultARIA = element.customElementDefaultARIAIfExists()) {
-            Vector<Element*> elements;
-            for (auto& element : defaultARIA->elementsForAttribute(element, attribute))
-                elements.append(element.get());
-            return elements;
+            return WTF::map(defaultARIA->elementsForAttribute(element, attribute), [](RefPtr<Element> element) -> Element* {
+                return element.get();
+            });
         }
         return { };
     }

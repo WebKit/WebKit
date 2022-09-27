@@ -116,10 +116,9 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
             });
             semaphore.wait();
         } else {
-            RetainPtr<CVPixelBufferRef> pixelBuffer;
-            auto result = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(newReadReference()), Messages::RemoteVideoFrameObjectHeap::PixelBuffer::Reply(pixelBuffer), 0, defaultTimeout);
-            if (result)
-                m_pixelBuffer = WTFMove(pixelBuffer);
+            auto sendResult = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(newReadReference()), 0, defaultTimeout);
+            if (sendResult)
+                std::tie(m_pixelBuffer) = sendResult.takeReply();
         }
     }
     // FIXME: Some code paths do not like empty pixel buffers.

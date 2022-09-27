@@ -1,0 +1,17 @@
+
+FAIL Test closed frame. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test copying I420 frame to a non-shared ArrayBuffer promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test copying I420 frame to a non-shared ArrayBufferView promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test RGBA frame. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test undersized buffer. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test incorrect plane count. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test stride and offset work. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test stride and offset with padding. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test invalid stride. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test address overflow. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test codedRect. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test empty rect. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test unaligned rect. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test left crop. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test invalid rect. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+

@@ -1,0 +1,4 @@
+
+FAIL Verify EncodedAudioChunk is serializable. Can't find variable: EncodedAudioChunk
+FAIL Verify EncodedVideoChunk is serializable. Can't find variable: EncodedVideoChunk
+

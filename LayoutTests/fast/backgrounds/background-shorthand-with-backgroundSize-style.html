@@ -68,20 +68,20 @@ shouldBe("checkComputedStyleValue()", "true");
 debug("")
 
 e.style.background = "url(dummy://test.png) red 50px 60px / 50% no-repeat fixed";
-shouldBe("e.style.background", "'url(\"dummy://test.png\") 50px 60px / 50% no-repeat fixed red'");
-shouldBe("e.style.backgroundSize", "'50%'");
+shouldBe("e.style.background", "'url(\"dummy://test.png\") 50px 60px / 50% auto no-repeat fixed red'");
+shouldBe("e.style.backgroundSize", "'50% auto'");
 shouldBe("checkStyle()", "true");
-shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 50px 60px / 50% padding-box border-box'");
-shouldBe('computedStyle.getPropertyValue("background-size")', "'50%'");
+shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(\"dummy://test.png\") no-repeat fixed 50px 60px / 50% auto padding-box border-box'");
+shouldBe('computedStyle.getPropertyValue("background-size")', "'50% auto'");
 shouldBe("checkComputedStyleValue()", "true");
 debug("")
 
 e.style.background = "red repeat scroll padding-box border-box top left / 100px url(dummy://test.png)";
-shouldBe("e.style.background", "'url(\"dummy://test.png\") left top / 100px repeat scroll padding-box border-box red'");
-shouldBe("e.style.backgroundSize", "'100px'");
+shouldBe("e.style.background", "'url(\"dummy://test.png\") left top / 100px auto repeat scroll padding-box border-box red'");
+shouldBe("e.style.backgroundSize", "'100px auto'");
 shouldBe("checkStyle()", "true");
-shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(\"dummy://test.png\") repeat scroll 0% 0% / 100px padding-box border-box'");
-shouldBe('computedStyle.getPropertyValue("background-size")', "'100px'");
+shouldBe('computedStyle.getPropertyValue("background")', "'rgb(255, 0, 0) url(\"dummy://test.png\") repeat scroll 0% 0% / 100px auto padding-box border-box'");
+shouldBe('computedStyle.getPropertyValue("background-size")', "'100px auto'");
 shouldBe("checkComputedStyleValue()", "true");
 debug("")
 
@@ -95,11 +95,11 @@ shouldBe("checkComputedStyleValue()", "true");
 debug("")
 
 e.style.background = "top left / 50%";
-shouldBe("e.style.background", "'left top / 50%'");
-shouldBe("e.style.backgroundSize", "'50%'");
+shouldBe("e.style.background", "'left top / 50% auto'");
+shouldBe("e.style.backgroundSize", "'50% auto'");
 shouldBe("checkStyle()", "true");
-shouldBe('computedStyle.getPropertyValue("background")', "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / 50% padding-box border-box'");
-shouldBe('computedStyle.getPropertyValue("background-size")', "'50%'");
+shouldBe('computedStyle.getPropertyValue("background")', "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / 50% auto padding-box border-box'");
+shouldBe('computedStyle.getPropertyValue("background-size")', "'50% auto'");
 shouldBe("checkComputedStyleValue()", "true");
 debug("")
 

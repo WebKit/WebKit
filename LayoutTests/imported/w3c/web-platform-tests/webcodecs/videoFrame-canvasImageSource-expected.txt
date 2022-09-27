@@ -1,0 +1,9 @@
+
+
+FAIL <video> and VideoFrame constructed VideoFrame assert_unreached: Reached unreachable code
+FAIL CSSImageValue constructed VideoFrame assert_throws_dom: CSSImageValues are currently always tainted function "_ => { new VideoFrame(bgImage, {timestamp: 0}); }" threw object "ReferenceError: Can't find variable: VideoFrame" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+FAIL Image element constructed VideoFrame Can't find variable: VideoFrame
+FAIL SVGImageElement constructed VideoFrame Can't find variable: VideoFrame
+FAIL Canvas element constructed VideoFrame Can't find variable: VideoFrame
+FAIL Copy of canvas element constructed VideoFrame Can't find variable: VideoFrame
+
