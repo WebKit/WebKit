@@ -1679,46 +1679,42 @@ DMFWebsitePolicyMonitor *NetworkSessionCocoa::deviceManagementPolicyMonitor()
 std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageProxyIdentifier webPageProxyID, NetworkSocketChannel& channel, const WebCore::ResourceRequest& request, const String& protocol, const WebCore::ClientOrigin& clientOrigin, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy)
 {
     ASSERT(!request.hasHTTPHeaderField(WebCore::HTTPHeaderName::SecWebSocketProtocol));
-    auto nsRequest = retainPtr(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody));
-    if (!protocol.isNull()) {
-        auto requestWithProtocols = adoptNS([nsRequest mutableCopy]);
-        [requestWithProtocols addValue: StringView(protocol).createNSString().get() forHTTPHeaderField:@"Sec-WebSocket-Protocol"];
-        nsRequest = WTFMove(requestWithProtocols);
-    }
+    RetainPtr nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody);
+    RetainPtr<NSMutableURLRequest> mutableRequest;
+
+    auto ensureMutableRequest = [&] {
+        if (!mutableRequest) {
+            mutableRequest = adoptNS([nsRequest mutableCopy]);
+            nsRequest = mutableRequest.get();
+        }
+        return mutableRequest.get();
+    };
+
+    if (!protocol.isNull())
+        [ensureMutableRequest() addValue:StringView(protocol).createNSString().get() forHTTPHeaderField:@"Sec-WebSocket-Protocol"];
+
     // rdar://problem/68057031: explicitly disable sniffing for WebSocket handshakes.
     [nsRequest _setProperty:@NO forKey:(NSString *)_kCFURLConnectionPropertyShouldSniff];
 
 #if ENABLE(APP_PRIVACY_REPORT)
-    if (!request.isAppInitiated()) {
-        RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
-        mutableRequest.get().attribution = NSURLRequestAttributionUser;
-        nsRequest = WTFMove(mutableRequest);
-    }
+    if (!request.isAppInitiated())
+        ensureMutableRequest().attribution = NSURLRequestAttributionUser;
 
     appPrivacyReportTestingData().didLoadAppInitiatedRequest(nsRequest.get().attribution == NSURLRequestAttributionDeveloper);
 #endif
 
 #if HAVE(PROHIBIT_PRIVACY_PROXY)
-    if (!allowPrivacyProxy) {
-        RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
-        [mutableRequest _setProhibitPrivacyProxy:YES];
-        nsRequest = WTFMove(mutableRequest);
-    }
+    if (!allowPrivacyProxy)
+        ensureMutableRequest()._prohibitPrivacyProxy = YES;
 #endif
 
-    // FIXME: This function can make up to 4 copies of a request.
-    // Reduce that to one if the protocol is null, the request isn't app initiated,
-    // or the main frame main resource was private relayed, then set all properties
-    // on the one copy.
     if (hadMainFrameMainResourcePrivateRelayed || request.url().host() == clientOrigin.topOrigin.host) {
-        RetainPtr<NSMutableURLRequest> mutableRequest = adoptNS([nsRequest.get() mutableCopy]);
-        if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableNonMainHosts:)])
-            [mutableRequest _setPrivacyProxyFailClosedForUnreachableNonMainHosts:YES];
-        nsRequest = WTFMove(mutableRequest);
+        if ([NSMutableURLRequest instancesRespondToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableNonMainHosts:)])
+            ensureMutableRequest()._privacyProxyFailClosedForUnreachableNonMainHosts = YES;
     }
 
     auto& sessionSet = sessionSetForPage(webPageProxyID);
-    RetainPtr<NSURLSessionWebSocketTask> task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
+    RetainPtr task = [sessionSet.sessionWithCredentialStorage.session webSocketTaskWithRequest:nsRequest.get()];
     
     // Although the WebSocket protocol allows full 64-bit lengths, Chrome and Firefox limit the length to 2^63 - 1
     task.get().maximumMessageSize = 0x7FFFFFFFFFFFFFFFull;
