@@ -28,6 +28,7 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "RegisterAtOffsetList.h"

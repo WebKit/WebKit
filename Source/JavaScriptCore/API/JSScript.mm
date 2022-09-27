@@ -24,12 +24,14 @@
  */
 
 #import "config.h"
+#import "JSBase.h"
 #import "JSScriptInternal.h"
 
 #import "APICast.h"
 #import "BytecodeCacheError.h"
 #import "CachedTypes.h"
 #import "CodeCache.h"
+#import "Completion.h"
 #import "Identifier.h"
 #import "IntegrityInlines.h"
 #import "JSContextInternal.h"
