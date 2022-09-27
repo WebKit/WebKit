@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include "TreeScopeOrderedMap.h"
 #include <memory>
 #include <wtf/Forward.h>
