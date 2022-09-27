@@ -193,7 +193,7 @@ InlineLayoutUnit InlineFormattingGeometry::computedTextIndent(IsIntrinsicWidthMo
     return { minimumValueForLength(textIndent, availableWidth) };
 }
 
-std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> InlineFormattingGeometry::previousAndNextDisplayBoxForStaticPosition(const Box& outOfFlowBox, const DisplayBoxes& displayBoxes)
+static std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> previousAndNextDisplayBoxForStaticPosition(const Box& outOfFlowBox, const DisplayBoxes& displayBoxes)
 {
     // Both previous float and out-of-flow boxes are skipped here. A series of adjoining out-of-flow boxes should all be placed
     // at the same static position (they don't affect next-sibling positions) and while floats do participate in the inline layout
@@ -225,6 +225,62 @@ std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> InlineFormattin
     if (foundFirstDisplayBox)
         return { &displayBoxes[displayBoxes.size() - 1], nullptr };
     return { nullptr, nullptr };
+}
+
+LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowInlineLevelBox(const Box& outOfFlowBox) const
+{
+    ASSERT(outOfFlowBox.style().isOriginalDisplayInlineType());
+
+    auto& formattingState = formattingContext().formattingState();
+    auto& lines = formattingState.lines();
+    auto& boxes = formattingState.boxes();
+
+    auto [previousDisplayBox, nextDisplayBox] = previousAndNextDisplayBoxForStaticPosition(outOfFlowBox, boxes);
+
+    if (!previousDisplayBox && !nextDisplayBox)
+        return { boxes[0].left(), lines[0].top() };
+
+    if (!nextDisplayBox) {
+        auto& currentLine = lines[previousDisplayBox->lineIndex()];
+        auto shouldFitLine = previousDisplayBox->right() <= currentLine.right() && !previousDisplayBox->isLineBreakBox();
+        return shouldFitLine ? LayoutPoint { previousDisplayBox->right(), currentLine.top() } : LayoutPoint { currentLine.left(), currentLine.bottom() };
+    }
+
+    if (previousDisplayBox->isInlineBox()) {
+        // Special handling for cases when the previous content is an inline box:
+        // <div>text<span><img style="position: absolute">content</span></div>
+        // or
+        // <div>text<span>content</span><img style="position: absolute"></div>
+        auto isFirstContentInsideInlineBox = &outOfFlowBox.parent() == &previousDisplayBox->layoutBox();
+        auto& inlineBoxBoxGeometry = formattingContext().geometryForBox(previousDisplayBox->layoutBox());
+
+        return {
+            isFirstContentInsideInlineBox ? BoxGeometry::borderBoxLeft(inlineBoxBoxGeometry) + inlineBoxBoxGeometry.contentBoxLeft() : BoxGeometry::marginBoxRect(inlineBoxBoxGeometry).right(),
+            lines[previousDisplayBox->lineIndex()].top()
+        };
+    }
+    auto& currentLine = lines[previousDisplayBox->lineIndex()];
+    auto shouldFitLine = previousDisplayBox->lineIndex() == nextDisplayBox->lineIndex() || (previousDisplayBox->right() <= currentLine.left() && !previousDisplayBox->isLineBreakBox());
+    return shouldFitLine ? LayoutPoint { previousDisplayBox->right(), currentLine.top() } : LayoutPoint { nextDisplayBox->left(), lines[nextDisplayBox->lineIndex()].top() };
+}
+
+LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(const Box& outOfFlowBox) const
+{
+    ASSERT(outOfFlowBox.style().isOriginalDisplayBlockType());
+
+    auto& formattingState = formattingContext().formattingState();
+    auto& lines = formattingState.lines();
+    auto& boxes = formattingState.boxes();
+
+    // Block level boxes are placed under the current line as if they were normal inflow block level boxes.
+    const InlineDisplay::Box* previousDisplayBox = nullptr;
+    std::tie(previousDisplayBox, std::ignore) = previousAndNextDisplayBoxForStaticPosition(outOfFlowBox, boxes);
+
+    if (!previousDisplayBox)
+        return { boxes[0].left(), lines[0].top() };
+
+    auto& currentLine = lines[previousDisplayBox->lineIndex()];
+    return { currentLine.left(), currentLine.bottom() };
 }
 
 InlineLayoutUnit InlineFormattingGeometry::initialLineHeight() const

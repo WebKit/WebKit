@@ -252,40 +252,15 @@ void InlineFormattingContext::computeStaticPositionForOutOfFlowContent(const For
     // However it does not mean that the out-of-flow box should be involved in the inline layout process.
     // Instead we figure out this static position after the inline layout by looking at the previous/next sibling (or parent) box's geometry and
     // place the out-of-flow box at the logical right position.
+    auto& formattingGeometry = this->formattingGeometry();
     auto& formattingState = this->formattingState();
-    auto& lines = formattingState.lines();
-    auto& boxes = formattingState.boxes();
 
     for (auto& outOfFlowBox : outOfFlowBoxes) {
-        auto topLeft = LayoutPoint { };
-        auto [previousDisplayBox, nextDisplayBox] = InlineFormattingGeometry::previousAndNextDisplayBoxForStaticPosition(outOfFlowBox, boxes);
-
-        if (previousDisplayBox && nextDisplayBox) {
-            if (previousDisplayBox->isInlineBox()) {
-                // Special handling for cases when the previous content is an inline box:
-                // <div>text<span><img style="position: absolute">content</span></div>
-                // or
-                // <div>text<span>content</span><img style="position: absolute"></div>
-                auto isFirstContentInsideInlineBox = &outOfFlowBox->parent() == &previousDisplayBox->layoutBox();
-                auto& inlineBoxBoxGeometry = geometryForBox(previousDisplayBox->layoutBox());
-
-                topLeft = {
-                    isFirstContentInsideInlineBox ? BoxGeometry::borderBoxLeft(inlineBoxBoxGeometry) + inlineBoxBoxGeometry.contentBoxLeft() : BoxGeometry::marginBoxRect(inlineBoxBoxGeometry).right(),
-                    lines[previousDisplayBox->lineIndex()].top()
-                };
-            } else {
-                auto& currentLine = lines[previousDisplayBox->lineIndex()];
-                auto shouldFitLine = previousDisplayBox->lineIndex() == nextDisplayBox->lineIndex() || (previousDisplayBox->right() <= currentLine.left() && !previousDisplayBox->isLineBreakBox());
-                topLeft = shouldFitLine ? LayoutPoint { previousDisplayBox->right(), currentLine.top() } : LayoutPoint { nextDisplayBox->left(), lines[nextDisplayBox->lineIndex()].top() };
-            }
-        } else if (!previousDisplayBox)
-            topLeft = { boxes[0].left(), lines[0].top() };
-        else {
-            auto& currentLine = lines[previousDisplayBox->lineIndex()];
-            auto shouldFitLine = previousDisplayBox->right() <= currentLine.right() && !previousDisplayBox->isLineBreakBox();
-            topLeft = shouldFitLine ? LayoutPoint { previousDisplayBox->right(), currentLine.top() } : LayoutPoint { currentLine.left(), currentLine.bottom() };
+        if (outOfFlowBox->style().isOriginalDisplayInlineType()) {
+            formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(formattingGeometry.staticPositionForOutOfFlowInlineLevelBox(outOfFlowBox));
+            continue;
         }
-        formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(topLeft);
+        formattingState.boxGeometry(outOfFlowBox).setLogicalTopLeft(formattingGeometry.staticPositionForOutOfFlowBlockLevelBox(outOfFlowBox));
     }
 }
 

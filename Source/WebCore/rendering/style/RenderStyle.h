@@ -1565,7 +1565,8 @@ public:
     bool isDisplayFlexibleOrGridBox() const { return isDisplayFlexibleOrGridBox(display()); }
     bool isDisplayFlexibleBoxIncludingDeprecatedOrGridBox() const { return isDisplayFlexibleOrGridBox() || isDisplayDeprecatedFlexibleBox(display()); }
     bool isDisplayRegionType() const;
-    bool isDisplayBlockLevel() const;
+    bool isDisplayBlockLevel() const { return isDisplayBlockType(display()); }
+    bool isOriginalDisplayBlockType() const { return isDisplayBlockType(originalDisplay()); }
     bool isDisplayTableOrTablePart() const { return isDisplayTableOrTablePart(display()); }
     bool isOriginalDisplayListItemType() const { return isDisplayListItemType(originalDisplay()); }
 
@@ -2068,6 +2069,7 @@ private:
     bool hasAutoTopAndBottom() const { return top().isAuto() && bottom().isAuto(); }
 
     static bool isDisplayInlineType(DisplayType);
+    static bool isDisplayBlockType(DisplayType);
     static bool isDisplayFlexibleBox(DisplayType);
     static bool isDisplayGridBox(DisplayType);
     static bool isDisplayFlexibleOrGridBox(DisplayType);
@@ -2455,11 +2457,11 @@ inline bool RenderStyle::isDisplayRegionType() const
         || display() == DisplayType::ListItem;
 }
 
-inline bool RenderStyle::isDisplayBlockLevel() const
+inline bool RenderStyle::isDisplayBlockType(DisplayType display)
 {
-    return display() == DisplayType::Block || display() == DisplayType::Table
-        || display() == DisplayType::FlowRoot || display() == DisplayType::Grid
-        || display() == DisplayType::Flex || display() == DisplayType::ListItem;
+    return display == DisplayType::Block || display == DisplayType::Table
+        || display == DisplayType::FlowRoot || display == DisplayType::Grid
+        || display == DisplayType::Flex || display == DisplayType::ListItem;
 }
 
 inline bool RenderStyle::setWritingMode(WritingMode v)
