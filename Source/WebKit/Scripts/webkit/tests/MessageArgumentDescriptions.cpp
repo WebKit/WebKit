@@ -44,8 +44,6 @@
 #include "PDFPluginIdentifier.h"
 #include "PlaybackSessionContextIdentifier.h"
 #include "QuotaIncreaseRequestIdentifier.h"
-#include "RTCDecoderIdentifier.h"
-#include "RTCEncoderIdentifier.h"
 #include "RemoteAudioDestinationIdentifier.h"
 #include "RemoteAudioHardwareListenerIdentifier.h"
 #include "RemoteAudioSessionIdentifier.h"
@@ -65,6 +63,8 @@
 #include "StorageNamespaceIdentifier.h"
 #include "TrackPrivateRemoteIdentifier.h"
 #include "UserContentControllerIdentifier.h"
+#include "VideoDecoderIdentifier.h"
+#include "VideoEncoderIdentifier.h"
 #include "WebGPUIdentifier.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebURLSchemeHandlerIdentifier.h"
@@ -417,8 +417,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::PageGroupIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::PlaybackSessionContextIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::QuotaIncreaseRequestIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebKit::RTCDecoderIdentifier));
-    static_assert(sizeof(uint64_t) == sizeof(WebKit::RTCEncoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioDestinationIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioHardwareListenerIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioSessionIdentifier));
@@ -439,6 +437,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TapIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::TrackPrivateRemoteIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::UserContentControllerIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoDecoderIdentifier));
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::VideoEncoderIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebGPUIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebPageProxyIdentifier));
     static_assert(sizeof(uint64_t) == sizeof(WebKit::WebURLSchemeHandlerIdentifier));
@@ -490,8 +490,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::PageGroupIdentifier"_s,
         "WebKit::PlaybackSessionContextIdentifier"_s,
         "WebKit::QuotaIncreaseRequestIdentifier"_s,
-        "WebKit::RTCDecoderIdentifier"_s,
-        "WebKit::RTCEncoderIdentifier"_s,
         "WebKit::RemoteAudioDestinationIdentifier"_s,
         "WebKit::RemoteAudioHardwareListenerIdentifier"_s,
         "WebKit::RemoteAudioSessionIdentifier"_s,
@@ -512,6 +510,8 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebKit::TapIdentifier"_s,
         "WebKit::TrackPrivateRemoteIdentifier"_s,
         "WebKit::UserContentControllerIdentifier"_s,
+        "WebKit::VideoDecoderIdentifier"_s,
+        "WebKit::VideoEncoderIdentifier"_s,
         "WebKit::WebGPUIdentifier"_s,
         "WebKit::WebPageProxyIdentifier"_s,
         "WebKit::WebURLSchemeHandlerIdentifier"_s,

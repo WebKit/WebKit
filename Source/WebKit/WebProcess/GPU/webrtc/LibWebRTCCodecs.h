@@ -32,11 +32,11 @@
 #include "GPUProcessConnection.h"
 #include "IPCSemaphore.h"
 #include "MessageReceiver.h"
-#include "RTCDecoderIdentifier.h"
-#include "RTCEncoderIdentifier.h"
 #include "RemoteVideoFrameIdentifier.h"
 #include "RemoteVideoFrameProxy.h"
 #include "SharedVideoFrame.h"
+#include "VideoDecoderIdentifier.h"
+#include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
 #include <map>
 #include <wtf/HashMap.h>
@@ -77,7 +77,7 @@ public:
     struct Decoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        RTCDecoderIdentifier identifier;
+        VideoDecoderIdentifier identifier;
         Type type;
         void* decodedImageCallback WTF_GUARDED_BY_LOCK(decodedImageCallbackLock) { nullptr };
         Lock decodedImageCallbackLock;
@@ -101,7 +101,7 @@ public:
     struct Encoder {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        RTCEncoderIdentifier identifier;
+        VideoEncoderIdentifier identifier;
         webrtc::VideoCodecType codecType { webrtc::kVideoCodecGeneric };
         Vector<std::pair<String, String>> parameters;
         std::optional<EncoderInitializationData> initializationData;
@@ -133,11 +133,11 @@ private:
     void ensureGPUProcessConnectionOnMainThreadWithLock() WTF_REQUIRES_LOCK(m_connectionLock);
     void gpuProcessConnectionMayNoLongerBeNeeded();
 
-    void failedDecoding(RTCDecoderIdentifier);
-    void completedDecoding(RTCDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&&);
+    void failedDecoding(VideoDecoderIdentifier);
+    void completedDecoding(VideoDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&&);
     // FIXME: Will be removed once RemoteVideoFrameProxy providers are the only ones sending data.
-    void completedDecodingCV(RTCDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);
-    void completedEncoding(RTCEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
+    void completedDecodingCV(VideoDecoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);
+    void completedEncoding(VideoEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
     // GPUProcessConnection::Client
@@ -152,10 +152,10 @@ private:
     WorkQueue& workQueue() const { return m_queue; }
 
 private:
-    HashMap<RTCDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
+    HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());
 
     Lock m_encodersConnectionLock;
-    HashMap<RTCEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
+    HashMap<VideoEncoderIdentifier, std::unique_ptr<Encoder>> m_encoders WTF_GUARDED_BY_CAPABILITY(workQueue());
 
     std::atomic<bool> m_needsGPUProcessConnection;
 

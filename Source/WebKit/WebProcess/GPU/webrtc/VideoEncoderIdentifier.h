@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-enum RTCEncoderIdentifierType { };
-using RTCEncoderIdentifier = ObjectIdentifier<RTCEncoderIdentifierType>;
+enum VideoEncoderIdentifierType { };
+using VideoEncoderIdentifier = ObjectIdentifier<VideoEncoderIdentifierType>;
 
 } // namespace WebKit

@@ -4489,7 +4489,7 @@
 		4151853822270F53005430C6 /* ServiceWorkerFetchTask.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ServiceWorkerFetchTask.messages.in; sourceTree = "<group>"; };
 		4151E5C31FBB90A900E47E2D /* FormDataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormDataReference.h; sourceTree = "<group>"; };
 		4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "copy-webcontent-resources-to-private-headers.sh"; sourceTree = "<group>"; };
-		4158649A23BE092400A0A61E /* RTCEncoderIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCEncoderIdentifier.h; sourceTree = "<group>"; };
+		4158649A23BE092400A0A61E /* VideoEncoderIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoEncoderIdentifier.h; sourceTree = "<group>"; };
 		416008B125DA86B900E892FE /* RemoteRealtimeMediaSourceProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteRealtimeMediaSourceProxy.h; sourceTree = "<group>"; };
 		416008B225DA895B00E892FE /* RemoteRealtimeMediaSourceProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRealtimeMediaSourceProxy.cpp; sourceTree = "<group>"; };
 		41684C4D24643BFA001CE8ED /* RemoteCaptureSampleManager.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteCaptureSampleManager.messages.in; sourceTree = "<group>"; };
@@ -4502,7 +4502,7 @@
 		416F8089245C7FF500B68F02 /* LibWebRTCNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LibWebRTCNetwork.cpp; path = Network/webrtc/LibWebRTCNetwork.cpp; sourceTree = "<group>"; };
 		4172198923B6128200AE5686 /* LibWebRTCCodecs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LibWebRTCCodecs.h; sourceTree = "<group>"; };
 		4172198A23B6128200AE5686 /* LibWebRTCCodecs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LibWebRTCCodecs.cpp; sourceTree = "<group>"; };
-		4172198C23B612E800AE5686 /* RTCDecoderIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCDecoderIdentifier.h; sourceTree = "<group>"; };
+		4172198C23B612E800AE5686 /* VideoDecoderIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoDecoderIdentifier.h; sourceTree = "<group>"; };
 		4172198D23B62C7C00AE5686 /* LibWebRTCCodecs.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LibWebRTCCodecs.messages.in; sourceTree = "<group>"; };
 		4176901322FDD41B00B1576D /* NetworkRTCProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkRTCProvider.mm; sourceTree = "<group>"; };
 		4176E89223C34D6E003E83FE /* MediaRecorderProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaRecorderProvider.h; sourceTree = "<group>"; };
@@ -10079,8 +10079,6 @@
 				411B89E627B5D58400F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.cpp */,
 				411B89E527B5D58300F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.h */,
 				411B89E427B5D58200F9EBD3 /* RemoteVideoFrameObjectHeapProxyProcessor.messages.in */,
-				4172198C23B612E800AE5686 /* RTCDecoderIdentifier.h */,
-				4158649A23BE092400A0A61E /* RTCEncoderIdentifier.h */,
 				41FCD6B723CDE53D00C62567 /* SampleBufferDisplayLayer.cpp */,
 				41FCD6B323CDC60400C62567 /* SampleBufferDisplayLayer.h */,
 				41FCD6B823CDE53E00C62567 /* SampleBufferDisplayLayer.messages.in */,
@@ -10089,6 +10087,8 @@
 				41024FC023CF104500FDF98E /* SampleBufferDisplayLayerManager.h */,
 				41DC04F927A816BB008CF968 /* SharedVideoFrame.cpp */,
 				41DC04F827A816BB008CF968 /* SharedVideoFrame.h */,
+				4172198C23B612E800AE5686 /* VideoDecoderIdentifier.h */,
+				4158649A23BE092400A0A61E /* VideoEncoderIdentifier.h */,
 			);
 			path = webrtc;
 			sourceTree = "<group>";

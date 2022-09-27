@@ -263,7 +263,7 @@ LibWebRTCCodecs::Decoder* LibWebRTCCodecs::createDecoder(Type type)
 
     auto decoder = makeUnique<Decoder>();
     auto* result = decoder.get();
-    decoder->identifier = RTCDecoderIdentifier::generateThreadSafe();
+    decoder->identifier = VideoDecoderIdentifier::generateThreadSafe();
     decoder->type = type;
 
     ensureGPUProcessConnectionAndDispatchToThread([this, decoder = WTFMove(decoder)]() mutable {
@@ -328,7 +328,7 @@ void LibWebRTCCodecs::registerDecodeFrameCallback(Decoder& decoder, void* decode
     decoder.decodedImageCallback = decodedImageCallback;
 }
 
-void LibWebRTCCodecs::failedDecoding(RTCDecoderIdentifier decoderIdentifier)
+void LibWebRTCCodecs::failedDecoding(VideoDecoderIdentifier decoderIdentifier)
 {
     assertIsCurrent(workQueue());
 
@@ -336,7 +336,7 @@ void LibWebRTCCodecs::failedDecoding(RTCDecoderIdentifier decoderIdentifier)
         decoder->hasError = true;
 }
 
-void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties)
+void LibWebRTCCodecs::completedDecoding(VideoDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RemoteVideoFrameProxy::Properties&& properties)
 {
     assertIsCurrent(workQueue());
 
@@ -364,7 +364,7 @@ void LibWebRTCCodecs::completedDecoding(RTCDecoderIdentifier decoderIdentifier, 
         frame.size().width(), frame.size().height());
 }
 
-void LibWebRTCCodecs::completedDecodingCV(RTCDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
+void LibWebRTCCodecs::completedDecodingCV(VideoDecoderIdentifier decoderIdentifier, uint32_t timeStamp, uint32_t timeStampNs, RetainPtr<CVPixelBufferRef>&& pixelBuffer)
 {
     assertIsCurrent(workQueue());
 
@@ -415,7 +415,7 @@ LibWebRTCCodecs::Encoder* LibWebRTCCodecs::createEncoder(Type type, const std::m
 
     auto encoder = makeUnique<Encoder>();
     auto* result = encoder.get();
-    encoder->identifier = RTCEncoderIdentifier::generateThreadSafe();
+    encoder->identifier = VideoEncoderIdentifier::generateThreadSafe();
     encoder->codecType = toWebRTCCodecType(type);
 
     auto parameters = WTF::map(formatParameters, [](auto& entry) {
@@ -538,7 +538,7 @@ void LibWebRTCCodecs::setEncodeRates(Encoder& encoder, uint32_t bitRate, uint32_
     connection->send(Messages::LibWebRTCCodecsProxy::SetEncodeRates { encoder.identifier, bitRate, frameRate }, 0);
 }
 
-void LibWebRTCCodecs::completedEncoding(RTCEncoderIdentifier identifier, IPC::DataReference&& data, const webrtc::WebKitEncodedFrameInfo& info)
+void LibWebRTCCodecs::completedEncoding(VideoEncoderIdentifier identifier, IPC::DataReference&& data, const webrtc::WebKitEncodedFrameInfo& info)
 {
     assertIsCurrent(workQueue());
 
