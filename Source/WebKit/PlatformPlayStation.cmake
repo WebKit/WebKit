@@ -7,24 +7,24 @@ list(APPEND WebProcess_SOURCES
 )
 list(APPEND WebProcess_PRIVATE_LIBRARIES
     ${EGL_LIBRARIES}
+    ${ProcessLauncher_LIBRARY}
     OpenSSL::Crypto
-    WebKitRequirements::ProcessLauncher
 )
 
 list(APPEND NetworkProcess_SOURCES
     NetworkProcess/EntryPoint/playstation/NetworkProcessMain.cpp
 )
 list(APPEND NetworkProcess_PRIVATE_LIBRARIES
+    ${ProcessLauncher_LIBRARY}
     OpenSSL::Crypto
-    WebKitRequirements::ProcessLauncher
 )
 
 list(APPEND GPUProcess_SOURCES
     GPUProcess/EntryPoint/unix/GPUProcessMain.cpp
 )
 list(APPEND GPUProcess_PRIVATE_LIBRARIES
+    ${ProcessLauncher_LIBRARY}
     ${EGL_LIBRARIES}
-    WebKitRequirements::ProcessLauncher
 )
 
 list(APPEND WebKit_SOURCES
@@ -159,6 +159,15 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
 )
+
+if (USE_WPE_BACKEND_PLAYSTATION)
+    list(APPEND WebKit_SOURCES
+        UIProcess/Launcher/libwpe/ProcessProviderLibWPE.cpp
+
+        UIProcess/Launcher/playstation/ProcessProviderPlayStation.cpp
+    )
+    list(APPEND WebKit_INCLUDE_DIRECTORIES "${WEBKIT_DIR}/UIProcess/Launcher/libwpe")
+endif ()
 
 # PlayStation specific
 list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
