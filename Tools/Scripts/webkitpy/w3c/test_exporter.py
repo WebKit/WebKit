@@ -157,10 +157,12 @@ class WebPlatformTestExporter(object):
         return bool(self._wpt_patch)
 
     def _find_filename(self, line):
-        return line.split(b' ')[-1]
+        return line.split(b' ')[-1][2:]
 
     def _is_ignored_file(self, filename):
         filename = string_utils.decode(filename, target_type=str)
+        if not filename.startswith(WEBKIT_WPT_DIR):
+            return True
         for suffix in EXCLUDED_FILE_SUFFIXES:
             if filename.endswith(suffix):
                 return True
