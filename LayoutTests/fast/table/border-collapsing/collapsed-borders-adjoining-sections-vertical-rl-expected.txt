@@ -9,11 +9,11 @@ layer at (0,0) size 800x122
             RenderTableCell {TD} at (0,10) size 32x12 [border: (10px none #000000)] [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (0,42) size 32x2 [border: none] [r=0 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (0,64) size 32x12 [border: none] [r=0 c=2 rs=1 cs=1]
-          RenderTableRow {TR} at (0,32) size 22x86
+          RenderTableRow {TR} at (32,0) size 22x86
             RenderTableCell {TD} at (32,10) size 22x12 [border: (10px none #000000)] [r=1 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (32,42) size 22x2 [r=1 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (32,64) size 22x12 [border: none] [r=1 c=2 rs=1 cs=1]
-          RenderTableRow {TR} at (0,54) size 32x86
+          RenderTableRow {TR} at (54,0) size 32x86
             RenderTableCell {TD} at (54,10) size 32x12 [border: (10px none #000000)] [r=2 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (54,42) size 32x2 [border: none] [r=2 c=1 rs=1 cs=1]
             RenderTableCell {TD} at (54,64) size 32x12 [border: none] [r=2 c=2 rs=1 cs=1]

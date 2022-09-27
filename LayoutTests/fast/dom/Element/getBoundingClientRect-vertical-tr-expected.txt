@@ -1,0 +1,14 @@
+1-A	1-B	1-C	1-D	1-E
+2-A	2-B	2-C	2-D	2-E
+3-A	3-B	3-C	3-D	3-E
+4-A	4-B	4-C	4-D	4-E
+5-A	5-B	5-C	5-D	5-E
+PASS doesRectContainRect('tr1', gTableRect, gTrRect) is true
+PASS doesRectContainRect('tr2', gTableRect, gTrRect) is true
+PASS doesRectContainRect('tr3', gTableRect, gTrRect) is true
+PASS doesRectContainRect('tr4', gTableRect, gTrRect) is true
+PASS doesRectContainRect('tr5', gTableRect, gTrRect) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

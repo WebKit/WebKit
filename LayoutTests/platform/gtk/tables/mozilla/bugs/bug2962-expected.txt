@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           RenderTableRow {TR} at (0,0) size 296x42
             RenderTableCell {TD} at (0,0) size 296x42 [bgcolor=#FFFF00] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {CENTER} at (3,3) size 290x36
-                RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+                RenderInline {A} at (0,0) size 0x17 [color=#0000EE]
                   RenderImage {IMG} at (0,0) size 20x20
                 RenderText {#text} at (0,0) size 0x0
                 RenderInline {A} at (0,0) size 185x35 [color=#0000EE]

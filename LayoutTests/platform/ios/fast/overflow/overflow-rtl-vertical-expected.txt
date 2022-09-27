@@ -30,7 +30,7 @@ layer at (0,0) size 343x600
             text run at (1,0) width 340: "which letters are visible initially and when you scroll"
       RenderTable {TABLE} at (168,0) size 151x256
         RenderTableSection {TBODY} at (0,0) size 151x256
-          RenderTableRow {TR} at (0,2) size 147x256
+          RenderTableRow {TR} at (2,0) size 147x256
             RenderTableCell {TD} at (2,2) size 147x125 [r=0 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (2,129) size 147x125 [r=0 c=1 rs=1 cs=1]
 layer at (191,15) size 43x115 clip at (191,25) size 28x100 scrollHeight 191
