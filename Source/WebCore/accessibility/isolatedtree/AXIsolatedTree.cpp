@@ -590,8 +590,14 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         ASSERT(newChildren[i]->objectID() == newChildrenIDs[i]);
         ASSERT(newChildrenIDs[i].isValid());
         size_t index = oldChildrenIDs.find(newChildrenIDs[i]);
-        if (index != notFound)
+        if (index != notFound) {
+            // Prevent deletion of this object below by removing it from oldChildrenIDs.
             oldChildrenIDs.remove(index);
+
+            // Propagate any subtree updates downwards for this already-existing child.
+            if (auto* liveChild = dynamicDowncast<AccessibilityObject>(newChildren[i].get()); liveChild && liveChild->hasDirtySubtree())
+                collectNodeChangesForSubtree(*liveChild);
+        }
         else {
             // This is a new child, add it to the tree.
             AXLOG(makeString("AXID ", axAncestor->objectID().loggingString(), " gaining new subtree, starting at ID ", newChildren[i]->objectID().loggingString(), ":"));
