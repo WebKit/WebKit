@@ -422,6 +422,8 @@ imported/w3c/web-platform-tests/clear-site-data/executionContexts.sub.html [ Ski
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
+http/wpt/webauthn/public-key-credential-create-failure.https.html [ DumpJSConsoleLogInStdErr ]
+http/wpt/webauthn/public-key-credential-get-failure.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebIDL/current-realm.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.any.html [ DumpJSConsoleLogInStdErr ]
