@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "AirAllocateRegistersAndStackAndGenerateCode.h"
-#include "bytecode/SimdInfo.h"
 
 #if ENABLE(B3_JIT)
 
