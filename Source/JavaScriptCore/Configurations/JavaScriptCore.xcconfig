@@ -70,7 +70,7 @@ PROFILE_GENERATE_OR_USE_LDFLAGS = $(PROFILE_GENERATE_OR_USE_LDFLAGS_$(ENABLE_LLV
 
 GCC_PREFIX_HEADER = JavaScriptCorePrefix.h;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-OTHER_CFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ -D__STDC_WANT_LIB_EXT1__=1 $(PROFILE_GENERATE_OR_USE_CFLAGS);
+OTHER_CFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ -D__STDC_WANT_LIB_EXT1__=1 $(PROFILE_GENERATE_OR_USE_CFLAGS) -D_LIBCPP_ENABLE_ASSERTIONS=1;
 OTHER_CPLUSPLUSFLAGS = $(inherited) -fno-slp-vectorize --system-header-prefix=unicode/ $(PROFILE_GENERATE_OR_USE_CFLAGS);
 HEADER_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore" $(HEADER_SEARCH_PATHS);
 INFOPLIST_FILE = Info.plist;
