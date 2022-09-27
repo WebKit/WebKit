@@ -457,7 +457,8 @@ private:
     MediaTime playbackPosition() const;
 
     virtual void updateStates();
-    virtual void asyncStateChangeDone();
+    void finishSeek();
+    virtual void asyncStateChangeDone() { }
 
     void createGSTPlayBin(const URL&);
 
