@@ -214,6 +214,8 @@ std::tuple<const InlineDisplay::Box*, const InlineDisplay::Box*> InlineFormattin
     // This is supposed to find the last display box of the "inflowBox" and return it with the next display box (first box of the next inflow content).
     auto foundFirstDisplayBox = false;
     for (size_t index = 0; index < displayBoxes.size(); ++index) {
+        if (displayBoxes[index].isRootInlineBox())
+            continue;
         if (foundFirstDisplayBox && &displayBoxes[index].layoutBox() != previousInFlowBox) {
             ASSERT(index);
             return { &displayBoxes[index - 1], &displayBoxes[index] };
