@@ -96,6 +96,7 @@ public:
     void clearParentStyleSheet() { ASSERT(m_parentStyleSheet); m_parentStyleSheet = nullptr; }
     void clearParentRule() { ASSERT(m_parentRule); m_parentRule = nullptr; }
     const MediaQuerySet* queries() const { return m_mediaQueries.get(); }
+    MediaQuerySet* queries() { return m_mediaQueries.get(); }
 
     void reattach(MediaQuerySet*);
 

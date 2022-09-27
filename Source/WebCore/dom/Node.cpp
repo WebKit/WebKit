@@ -2041,7 +2041,7 @@ inline void Node::moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& 
         node.moveNodeToNewDocument(oldDocument, newDocument);
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
-        innerShadowRoot.moveShadowRootToNewDocument(newDocument);
+        innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
         moveShadowTreeToNewDocument(innerShadowRoot, oldDocument, newDocument);
     });
 }

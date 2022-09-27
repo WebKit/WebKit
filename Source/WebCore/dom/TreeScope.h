@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class CSSStyleSheet;
 class ContainerNode;
 class Document;
 class Element;
@@ -112,6 +113,9 @@ public:
 
     RadioButtonGroups& radioButtonGroups();
 
+    const Vector<RefPtr<CSSStyleSheet>>& adoptedStyleSheets() const;
+    ExceptionOr<void> setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&&);
+
 protected:
     TreeScope(ShadowRoot&, Document&);
     explicit TreeScope(Document&);
@@ -140,6 +144,7 @@ private:
     std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
     
     std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
+    Vector<RefPtr<CSSStyleSheet>> m_adoptedStyleSheets;
 };
 
 inline bool TreeScope::hasElementWithId(const AtomStringImpl& id) const

@@ -1,0 +1,4 @@
+This should be green
+
+PASS adoptedStyleSheets should allow .concat on empty starting values
+

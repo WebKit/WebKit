@@ -186,6 +186,8 @@ private:
     void pendingUpdateTimerFired();
     void clearPendingUpdate();
 
+    TreeScope& treeScope();
+
     Document& m_document;
     ShadowRoot* m_shadowRoot { nullptr };
 

@@ -189,8 +189,10 @@ RefPtr<StyleRuleBase> CSSParserImpl::parseRule(const String& string, const CSSPa
 void CSSParserImpl::parseStyleSheet(const String& string, const CSSParserContext& context, StyleSheetContents& styleSheet)
 {
     CSSParserImpl parser(context, string, &styleSheet, nullptr);
-    bool firstRuleValid = parser.consumeRuleList(parser.tokenizer()->tokenRange(), TopLevelRuleList, [&styleSheet](RefPtr<StyleRuleBase> rule) {
+    bool firstRuleValid = parser.consumeRuleList(parser.tokenizer()->tokenRange(), TopLevelRuleList, [&styleSheet, shouldIgnoreImportRules = context.shouldIgnoreImportRules](RefPtr<StyleRuleBase> rule) {
         if (rule->isCharsetRule())
+            return;
+        if (shouldIgnoreImportRules && rule->isImportRule())
             return;
         styleSheet.parserAppendRule(rule.releaseNonNull());
     });

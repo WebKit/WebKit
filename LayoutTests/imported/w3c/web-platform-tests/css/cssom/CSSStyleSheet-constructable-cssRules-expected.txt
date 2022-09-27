@@ -1,4 +1,4 @@
 Should be green
 
-FAIL cssRules doesn't change on replace / replaceSync promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
+PASS cssRules doesn't change on replace / replaceSync
 
