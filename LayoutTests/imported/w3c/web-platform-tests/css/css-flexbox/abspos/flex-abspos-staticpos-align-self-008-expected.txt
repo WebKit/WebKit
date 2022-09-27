@@ -13,9 +13,7 @@ PASS .container > div 3
 FAIL .container > div 4 assert_equals:
 <div class="container"><div style="align-self: baseline" data-offset-x="2" data-offset-y="5"></div></div>
 offsetLeft expected 2 but got 10
-FAIL .container > div 5 assert_equals:
-<div class="container"><div style="align-self: last baseline" data-offset-x="10" data-offset-y="5"></div></div>
-offsetLeft expected 10 but got 2
+PASS .container > div 5
 PASS .container > div 6
 PASS .container > div 7
 PASS .container > div 8
@@ -29,9 +27,7 @@ PASS .container > div 15
 FAIL .container > div 16 assert_equals:
 <div class="container"><div style="align-self: baseline" data-offset-x="2" data-offset-y="-3"></div></div>
 offsetLeft expected 2 but got -2
-FAIL .container > div 17 assert_equals:
-<div class="container"><div style="align-self: last baseline" data-offset-x="-2" data-offset-y="-3"></div></div>
-offsetLeft expected -2 but got 2
+PASS .container > div 17
 PASS .container > div 18
 PASS .container > div 19
 PASS .container > div 20

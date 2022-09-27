@@ -59,10 +59,11 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderFlexibleBox);
 
 struct RenderFlexibleBox::LineContext {
-    LineContext(LayoutUnit crossAxisOffset, LayoutUnit crossAxisExtent, LayoutUnit maxAscent, Vector<FlexItem>&& flexItems)
+    LineContext(LayoutUnit crossAxisOffset, LayoutUnit crossAxisExtent, LayoutUnit maxAscent, LayoutUnit lastBaselineMaxAscent, Vector<FlexItem>&& flexItems)
         : crossAxisOffset(crossAxisOffset)
         , crossAxisExtent(crossAxisExtent)
         , maxAscent(maxAscent)
+        , lastBaselineMaxAscent(lastBaselineMaxAscent)
         , flexItems(flexItems)
     {
     }
@@ -70,6 +71,7 @@ struct RenderFlexibleBox::LineContext {
     LayoutUnit crossAxisOffset;
     LayoutUnit crossAxisExtent;
     LayoutUnit maxAscent;
+    LayoutUnit lastBaselineMaxAscent;
     Vector<FlexItem> flexItems;
 };
 
@@ -1682,7 +1684,7 @@ static LayoutUnit justifyContentSpaceBetweenChildren(LayoutUnit availableFreeSpa
     return 0;
 }
 
-static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition position, LayoutUnit ascent, LayoutUnit maxAscent, bool isWrapReverse)
+static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition position, LayoutUnit ascent, LayoutUnit maxAscent, bool isWrapReverse, bool participatingInBaselineAlignment)
 {
     switch (position) {
     case ItemPosition::Legacy:
@@ -1715,11 +1717,12 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
     case ItemPosition::Center:
         return availableFreeSpace / 2;
     case ItemPosition::Baseline:
-    case ItemPosition::LastBaseline:
         // FIXME: If we get here in columns, we want the use the descent, except
         // we currently can't get the ascent/descent of orthogonal children.
         // https://bugs.webkit.org/show_bug.cgi?id=98076
         return maxAscent - ascent;
+    case ItemPosition::LastBaseline: 
+        return participatingInBaselineAlignment ? (maxAscent - ascent) : availableFreeSpace;
     }
     return 0;
 }
@@ -1746,7 +1749,7 @@ LayoutUnit RenderFlexibleBox::staticMainAxisPositionForPositionedChild(const Ren
 LayoutUnit RenderFlexibleBox::staticCrossAxisPositionForPositionedChild(const RenderBox& child)
 {
     auto availableSpace = availableAlignmentSpaceForChild(crossAxisContentExtent(), child);
-    return alignmentOffset(availableSpace, alignmentForChild(child), 0_lu, 0_lu, style().flexWrap() == FlexWrap::Reverse);
+    return alignmentOffset(availableSpace, alignmentForChild(child), 0_lu, 0_lu, style().flexWrap() == FlexWrap::Reverse, childIsParticipatingInBaselineAlignment(child));
 }
 
 LayoutUnit RenderFlexibleBox::staticInlinePositionForPositionedChild(const RenderBox& child)
@@ -2003,7 +2006,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         mainAxisOffset += isHorizontalFlow() ? verticalScrollbarWidth() : horizontalScrollbarHeight();
 
     LayoutUnit totalMainExtent = mainAxisExtent();
-    LayoutUnit maxAscent, maxDescent; // Used when align-items: baseline.
+    LayoutUnit maxAscent, maxDescent, lastBaselineMaxAscent; // Used when align-items: baseline.
     LayoutUnit maxChildCrossAxisExtent;
     ContentDistribution distribution = style().resolvedJustifyContentDistribution(contentAlignmentNormalBehavior());
     bool shouldFlipMainAxis = !isColumnFlow() && !isLeftToRightFlow();
@@ -2048,15 +2051,19 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
         updateAutoMarginsInMainAxis(child, autoMarginOffset);
 
         LayoutUnit childCrossAxisMarginBoxExtent;
-        if ((alignmentForChild(child) == ItemPosition::Baseline || alignmentForChild(child) == ItemPosition::LastBaseline) && !hasAutoMarginsInCrossAxis(child)) {
+        if (childIsParticipatingInBaselineAlignment(child)) {
             LayoutUnit ascent = marginBoxAscentForChild(child);
             LayoutUnit descent = (crossAxisMarginExtentForChild(child) + crossAxisExtentForChild(child)) - ascent;
-
-            maxAscent = std::max(maxAscent, ascent);
             maxDescent = std::max(maxDescent, descent);
+            if (alignmentForChild(child) == ItemPosition::Baseline) {
+                maxAscent =  std::max(maxAscent, ascent);
+                // FIXME: Take scrollbar into account
+                childCrossAxisMarginBoxExtent = maxAscent + maxDescent;
+            } else {
+                lastBaselineMaxAscent = std::max(lastBaselineMaxAscent, ascent);
+                childCrossAxisMarginBoxExtent = lastBaselineMaxAscent + maxDescent;
+            }
 
-            // FIXME: Take scrollbar into account
-            childCrossAxisMarginBoxExtent = maxAscent + maxDescent;
         } else
             childCrossAxisMarginBoxExtent = crossAxisIntrinsicExtentForChild(child) + crossAxisMarginExtentForChild(child);
 
@@ -2094,7 +2101,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Vect
 
     if (m_numberOfInFlowChildrenOnFirstLine == -1)
         m_numberOfInFlowChildrenOnFirstLine = children.size();
-    lineContexts.append(LineContext(crossAxisOffset, maxChildCrossAxisExtent, maxAscent, WTFMove(children)));
+    lineContexts.append(LineContext(crossAxisOffset, maxChildCrossAxisExtent, maxAscent, lastBaselineMaxAscent, WTFMove(children)));
     crossAxisOffset += maxChildCrossAxisExtent;
 }
 
@@ -2202,13 +2209,13 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
     // Keep track of the space between the baseline edge and the after edge of
     // the box for each line.
     Vector<LayoutUnit> minMarginAfterBaselines;
-    
+    bool containerHasWrapReverse = style().flexWrap() == FlexWrap::Reverse;
+    bool needToAdjustItemsTowardsCrossAxis = false; 
     for (size_t lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
         const LineContext& lineContext = lineContexts[lineNumber];
         
         LayoutUnit minMarginAfterBaseline = LayoutUnit::max();
         LayoutUnit lineCrossAxisExtent = lineContext.crossAxisExtent;
-        LayoutUnit maxAscent = lineContext.maxAscent;
         
         for (size_t childNumber = 0; childNumber < lineContext.flexItems.size(); ++childNumber) {
             const auto& flexItem = lineContext.flexItems[childNumber];
@@ -2218,30 +2225,41 @@ void RenderFlexibleBox::alignChildren(const Vector<LineContext>& lineContexts)
                 continue;
             
             ItemPosition position = alignmentForChild(flexItem.box);
+            LayoutUnit maxAscent = position == ItemPosition::LastBaseline ? lineContext.lastBaselineMaxAscent : lineContext.maxAscent;
             if (position == ItemPosition::Stretch)
                 applyStretchAlignmentToChild(flexItem.box, lineCrossAxisExtent);
             LayoutUnit availableSpace = availableAlignmentSpaceForChild(lineCrossAxisExtent, flexItem.box);
-            LayoutUnit offset = alignmentOffset(availableSpace, position, marginBoxAscentForChild(flexItem.box), maxAscent, style().flexWrap() == FlexWrap::Reverse);
+            LayoutUnit offset = alignmentOffset(availableSpace, position, marginBoxAscentForChild(flexItem.box), maxAscent, style().flexWrap() == FlexWrap::Reverse, childIsParticipatingInBaselineAlignment(flexItem.box));
             adjustAlignmentForChild(flexItem.box, offset);
-            if (position == ItemPosition::Baseline && style().flexWrap() == FlexWrap::Reverse)
+            if ((position == ItemPosition::Baseline && containerHasWrapReverse) || (childIsParticipatingInBaselineAlignment(flexItem.box) && position == ItemPosition::LastBaseline && !containerHasWrapReverse)) {
+                needToAdjustItemsTowardsCrossAxis = true;
                 minMarginAfterBaseline = std::min(minMarginAfterBaseline, availableAlignmentSpaceForChild(lineCrossAxisExtent, flexItem.box) - offset);
+            }
         }
 
         minMarginAfterBaselines.append(minMarginAfterBaseline);
     }
-    
-    if (style().flexWrap() != FlexWrap::Reverse)
+
+    if (!needToAdjustItemsTowardsCrossAxis)
         return;
-    
+
+    auto adjustWrapReverseItem = [this, containerHasWrapReverse](RenderBox& box) { 
+        return containerHasWrapReverse && alignmentForChild(box) == ItemPosition::Baseline && !hasAutoMarginsInCrossAxis(box); 
+    };
+    auto adjustLastBaselineItem = [this, containerHasWrapReverse](RenderBox& box) { 
+        return childIsParticipatingInBaselineAlignment(box) && alignmentForChild(box) == ItemPosition::LastBaseline && !containerHasWrapReverse; 
+    }; 
     // wrap-reverse flips the cross axis start and end. For baseline alignment,
     // this means we need to align the after edge of baseline elements with the
-    // after edge of the flex line.
+    // after edge of the flex line. We can also use the same logic for last
+    // baseline alignment since those items must be pushed towards the cross
+    // start as well.
     for (size_t lineNumber = 0; lineNumber < lineContexts.size(); ++lineNumber) {
         const LineContext& lineContext = lineContexts[lineNumber];
         LayoutUnit minMarginAfterBaseline = minMarginAfterBaselines[lineNumber];
         for (size_t childNumber = 0; childNumber < lineContext.flexItems.size(); ++childNumber) {
             const auto& flexItem = lineContext.flexItems[childNumber];
-            if (alignmentForChild(flexItem.box) == ItemPosition::Baseline && !hasAutoMarginsInCrossAxis(flexItem.box) && minMarginAfterBaseline)
+            if ((adjustWrapReverseItem(flexItem.box)  || adjustLastBaselineItem(flexItem.box)) && minMarginAfterBaseline)
                 adjustAlignmentForChild(flexItem.box, minMarginAfterBaseline);
         }
     }
@@ -2380,6 +2398,11 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
     flexLayout.layout();
     setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + flexLayout.contentLogicalHeight() + borderAfter() + paddingAfter()));
     updateLogicalHeight();
+}
+
+bool RenderFlexibleBox::childIsParticipatingInBaselineAlignment(const RenderBox& child) const
+{
+    return (alignmentForChild(child) == ItemPosition::Baseline || alignmentForChild(child) == ItemPosition::LastBaseline) && !hasAutoMarginsInCrossAxis(child) && mainAxisIsChildInlineAxis(child);
 }
 
 }
