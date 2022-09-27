@@ -1,0 +1,31 @@
+<html>
+<head>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+promise_test(() => {
+    return new Promise((resolve, reject) => {
+        let counter = 0;
+        function handler() {
+            counter++;
+        }
+
+        const iframe = document.createElement("iframe");
+        window.onmessage = function(ev) {
+            try {
+                assert_equals(counter, 1);
+            } catch(error) {
+                reject(error);
+                return;
+            }
+            resolve();
+        };
+        iframe.src = "javascript:(function(){document.open();document.write('test');document.close();parent.postMessage('done','*');})();";
+        iframe.onload = handler;
+        document.body.appendChild(iframe);
+    });
+}, `Dispatch 'load' event on iframe only once`);
+</script>
+</body>

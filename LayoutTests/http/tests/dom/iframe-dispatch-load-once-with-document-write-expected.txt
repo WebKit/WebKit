@@ -1,0 +1,4 @@
+
+
+PASS iframe should not receive 'load' event more than once
+
