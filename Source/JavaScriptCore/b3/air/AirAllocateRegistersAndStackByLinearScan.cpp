@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "AirAllocateRegistersAndStackByLinearScan.h"
-#include "b3/B3Width.h"
 
 #if ENABLE(B3_JIT)
 

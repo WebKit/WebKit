@@ -1263,7 +1263,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmOSREntryData.h
     wasm/WasmPageCount.h
     wasm/WasmSections.h
-    wasm/WasmSimdOpcodes.h
+    wasm/WasmSIMDOpcodes.h
     wasm/WasmTypeDefinition.h
     wasm/WasmStreamingCompiler.h
     wasm/WasmStreamingParser.h

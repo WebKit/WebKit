@@ -677,7 +677,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
             });
 
             inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width width) {
-                ASSERT(width <= Width64 || Options::useWebAssemblySIMD());
+                ASSERT_UNUSED(width, width <= Width64 || Options::useWebAssemblySIMD());
                 if (!arg.isTmp())
                     return;
 

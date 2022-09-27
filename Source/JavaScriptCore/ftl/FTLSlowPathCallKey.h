@@ -135,7 +135,7 @@ public:
     {
         // m_numberOfUsedArgumentRegistersIfClobberingCheckIsEnabled is intentionally not included because it will always be 0
         // unless Options::clobberAllRegsInFTLICSlowPath() is set, and Options::clobberAllRegsInFTLICSlowPath() is only set in debugging use cases.
-        return PtrHash<void*>::hash(callTarget().taggedPtr()) + m_offset + m_usedRegisters.set().hash() + indirectOffset() + static_cast<unsigned>(type());
+        return PtrHash<void*>::hash(callTarget().taggedPtr()) + m_offset + m_usedRegisters.hash() + indirectOffset() + static_cast<unsigned>(type());
     }
 
 private:

@@ -92,7 +92,7 @@ public:
         return result;
     }
     
-    Reg next() const
+    constexpr Reg next() const
     {
         ASSERT(!!*this);
         if (*this == last())
@@ -109,10 +109,10 @@ public:
         return last().index();
     }
     
-    bool isSet() const { return m_index != invalid(); }
-    explicit operator bool() const { return isSet(); }
+    constexpr bool isSet() const { return m_index != invalid(); }
+    constexpr explicit operator bool() const { return isSet(); }
 
-    bool isHashTableDeletedValue() const { return m_index == deleted(); }
+    constexpr bool isHashTableDeletedValue() const { return m_index == deleted(); }
     
     constexpr bool isGPR() const
     {
@@ -137,37 +137,37 @@ public:
             MacroAssembler::firstFPRegister() + (m_index - MacroAssembler::numberOfRegisters()));
     }
     
-    bool operator==(const Reg& other) const
+    constexpr bool operator==(const Reg& other) const
     {
         return m_index == other.m_index;
     }
     
-    bool operator!=(const Reg& other) const
+    constexpr bool operator!=(const Reg& other) const
     {
         return m_index != other.m_index;
     }
     
-    bool operator<(const Reg& other) const
+    constexpr bool operator<(const Reg& other) const
     {
         return m_index < other.m_index;
     }
     
-    bool operator>(const Reg& other) const
+    constexpr bool operator>(const Reg& other) const
     {
         return m_index > other.m_index;
     }
     
-    bool operator<=(const Reg& other) const
+    constexpr bool operator<=(const Reg& other) const
     {
         return m_index <= other.m_index;
     }
     
-    bool operator>=(const Reg& other) const
+    constexpr bool operator>=(const Reg& other) const
     {
         return m_index >= other.m_index;
     }
     
-    unsigned hash() const
+    constexpr unsigned hash() const
     {
         return m_index;
     }
