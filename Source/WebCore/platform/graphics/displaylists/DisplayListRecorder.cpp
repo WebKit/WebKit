@@ -473,6 +473,8 @@ void Recorder::strokePath(const Path& path)
     auto& state = currentState().state;
     if (state.changes() && state.containsOnlyInlineChanges() && !state.changes().contains(GraphicsContextState::Change::FillBrush) && path.hasInlineData() && path.hasInlineData<LineData>()) {
         recordStrokeLineWithColorAndThickness(*strokeColor().tryGetAsSRGBABytes(), strokeThickness(), path.inlineData<LineData>());
+        state.didApplyChanges();
+        currentState().lastDrawingState = state;
         return;
     }
 
