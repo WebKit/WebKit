@@ -1,0 +1,25 @@
+Checks that element reflection is exposed to the a11y tree for 'ariaDetailsElements'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axTarget1.ariaDetailsElementAtIndex(0).isEqual(axDetail1) is true
+PASS axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail2) is true
+PASS axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1) is true
+PASS axInnerTarget.ariaDetailsElementAtIndex(0).isEqual(axDetail3) is true
+PASS axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1) is true
+PASS axTarget2.ariaDetailsElementAtIndex(1).isEqual(axDetail2) is true
+PASS axTarget2.ariaDetailsElementAtIndex(2).isEqual(axDetail3) is true
+PASS axTarget4.ariaDetailsElementAtIndex(0).isEqual(axDetail4) is true
+PASS axTarget5.ariaDetailsElementAtIndex(0).isEqual(axDetail5) is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First detail
+Target 1
+Second detail
+Target 2
+Third detail
+Fourth detail
+Target 4
+Fifth detail

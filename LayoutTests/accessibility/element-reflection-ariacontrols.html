@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<div id="panel1">First panel</div>
+<div id="tab1" role="tab">Tab 1</div>
+<div id="wrapper" tabindex="0">
+  <div class="panel">Second panel</div>
+</div>
+<div id="tab2" role="tab">Tab 2</div>
+<div id="panel3">Third panel</div>
+<x-tab></x-tab>
+<div id="panel4">Fourth panel</div>
+<div id="tab4" role="tab">Tab 4</div>
+<x-custom></x-custom>
+
+<script>
+  class XTab extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let tab = document.createElement("div");
+      tab.id = "innertab";
+      tab.role = "tab";
+      tab.textContent = "Tab 3";
+      tab.ariaControlsElements = [panel3];
+      this.shadowRoot.appendChild(tab);
+    }
+  }
+  customElements.define("x-tab", XTab);
+
+  class XCustom extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let panel = document.createElement("div");
+      panel.id = "panel5";
+      panel.textContent = "Fifth panel";
+      let tab = document.createElement("div");
+      tab.id = "tab5";
+      tab.role = "tab";
+      tab.textContent = "Tab 5";
+      this.shadowRoot.appendChild(panel);
+      this.shadowRoot.appendChild(tab);
+      tab.ariaControlsElements = [panel];
+      document.body.appendChild(panel);
+    }
+  }
+  customElements.define("x-custom", XCustom);
+
+  description("Checks that element reflection is exposed to the a11y tree for 'ariaControlsElements'");
+  if (!window.accessibilityController) {
+    debug("This test requires accessibilityController");
+  } else {
+    tab1.ariaControlsElements = [panel1];
+    var axPanel1 = accessibilityController.accessibleElementById("panel1");
+    var axTab1 = accessibilityController.accessibleElementById("tab1");
+    shouldBeTrue("axTab1.ariaControlsElementAtIndex(0).isEqual(axPanel1)");
+
+    tab2.ariaControlsElements = [document.getElementsByClassName("panel")[0]];
+    var wrapper = accessibilityController.accessibleElementById("wrapper");
+    var axPanel2 = wrapper.childAtIndex(0);
+    var axTab2 = accessibilityController.accessibleElementById("tab2");
+    shouldBeTrue("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel2)");
+    tab2.setAttribute("aria-controls", "panel1");
+    shouldBeTrue("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1)");
+
+    var axPanel3 = accessibilityController.accessibleElementById("panel3");
+    var axTab3 = accessibilityController.accessibleElementById("innertab");
+    shouldBeTrue("axTab3.ariaControlsElementAtIndex(0).isEqual(axPanel3)");
+
+    tab2.ariaControlsElements = [panel1, document.getElementsByClassName("panel")[0], panel3];
+    shouldBeTrue("axTab2.ariaControlsElementAtIndex(0).isEqual(axPanel1)");
+    shouldBeTrue("axTab2.ariaControlsElementAtIndex(1).isEqual(axPanel2)");
+    shouldBeTrue("axTab2.ariaControlsElementAtIndex(2).isEqual(axPanel3)");
+
+    tab4.ariaControlsElements = [panel4];
+    panel4.id = "panel4-new";
+    var axPanel4 = accessibilityController.accessibleElementById("panel4-new");
+    var axTab4 = accessibilityController.accessibleElementById("tab4");
+    shouldBeTrue("axTab4.ariaControlsElementAtIndex(0).isEqual(axPanel4)");
+
+    var axPanel5 = accessibilityController.accessibleElementById("panel5");
+    var axTab5 = accessibilityController.accessibleElementById("tab5");
+    shouldBeTrue("axTab5.ariaControlsElementAtIndex(0).isEqual(axPanel5)");
+  }
+</script>

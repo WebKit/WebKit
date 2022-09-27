@@ -1,0 +1,16 @@
+Checks that element reflection is exposed to the a11y tree for 'ariaLabelledByElements'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS platformValueForW3CName(axInput1) is "First label"
+PASS platformValueForW3CName(axInput2) is "Second label"
+PASS platformValueForW3CName(axInput2) is "First label"
+PASS platformValueForW3CName(axInnerInput) is "Third label"
+PASS platformValueForW3CName(axInput2) is "First label Second label Third label"
+PASS platformValueForW3CName(axInput5) is "Fifth label"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First label  Second label  Third label  Fourth label
+Fifth label

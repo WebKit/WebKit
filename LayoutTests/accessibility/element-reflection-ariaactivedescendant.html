@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<ul id="target1" role="menubar">
+  <li id="descendant1"></li>
+</ul>
+<ul id="target2" role="menubar">
+  <li></li>
+  <li id="descendant2"></li>
+</ul>
+<ul id="target3" role="menubar">
+  <li id="descendant3"></li>
+</ul>
+
+<script>
+  description("Checks that element reflection is exposed to the a11y tree for 'ariaActiveDescendantElement'");
+  if (!window.accessibilityController) {
+    debug("This test requires accessibilityController");
+  } else {
+    target1.ariaActiveDescendantElement = descendant1;
+    var axTarget1 = accessibilityController.accessibleElementById("target1");
+    var axDescendant1 = accessibilityController.accessibleElementById("descendant1");
+    shouldBe("axTarget1.selectedChildrenCount", "1");
+    shouldBeTrue("axTarget1.selectedChildAtIndex(0).isEqual(axDescendant1)");
+
+    target2.ariaActiveDescendantElement = target2.firstElementChild;
+    var axTarget2 = accessibilityController.accessibleElementById("target2");
+    var axDescendant2 = accessibilityController.accessibleElementById("descendant2");
+    var axDescendantFirstChild = axTarget2.childAtIndex(0);
+    shouldBe("axTarget2.selectedChildrenCount", "1");
+    shouldBeTrue("axTarget2.selectedChildAtIndex(0).isEqual(axDescendantFirstChild)");
+    target2.setAttribute("aria-activedescendant", "descendant2");
+    shouldBe("axTarget2.selectedChildrenCount", "1");
+    shouldBeTrue("axTarget2.selectedChildAtIndex(0).isEqual(axDescendant2)");
+
+    target3.ariaActiveDescendantElement = descendant3;
+    descendant3.id = "descendant3-new";
+    var axTarget3 = accessibilityController.accessibleElementById("target3");
+    var axDescendant3 = accessibilityController.accessibleElementById("descendant3-new");
+    shouldBe("axTarget3.selectedChildrenCount", "1");
+    shouldBeTrue("axTarget3.selectedChildAtIndex(0).isEqual(axDescendant3)");
+  }
+</script>
