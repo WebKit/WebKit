@@ -68,6 +68,7 @@ static constexpr Seconds MaxSecondsToWaitForCDMProxy = 5_s;
 static void constructed(GObject*);
 static GstStateChangeReturn changeState(GstElement*, GstStateChange transition);
 static GstCaps* transformCaps(GstBaseTransform*, GstPadDirection, GstCaps*, GstCaps*);
+static gboolean acceptCaps(GstBaseTransform*, GstPadDirection, GstCaps*);
 static GstFlowReturn transformInPlace(GstBaseTransform*, GstBuffer*);
 static gboolean sinkEventHandler(GstBaseTransform*, GstEvent*);
 static void setContext(GstElement*, GstContext*);
@@ -93,7 +94,9 @@ static void webkit_media_common_encryption_decrypt_class_init(WebKitMediaCommonE
     GstBaseTransformClass* baseTransformClass = GST_BASE_TRANSFORM_CLASS(klass);
     baseTransformClass->transform_ip = GST_DEBUG_FUNCPTR(transformInPlace);
     baseTransformClass->transform_caps = GST_DEBUG_FUNCPTR(transformCaps);
+    baseTransformClass->accept_caps = GST_DEBUG_FUNCPTR(acceptCaps);
     baseTransformClass->transform_ip_on_passthrough = FALSE;
+    baseTransformClass->passthrough_on_same_caps = TRUE;
     baseTransformClass->sink_event = GST_DEBUG_FUNCPTR(sinkEventHandler);
 }
 
@@ -127,31 +130,44 @@ static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction,
         GUniquePtr<GstStructure> outgoingStructure = nullptr;
 
         if (direction == GST_PAD_SINK) {
-            if (!gst_structure_has_field(incomingStructure, "original-media-type"))
-                continue;
+            bool canDoPassthrough = false;
+            if (!gst_structure_has_field(incomingStructure, "original-media-type")) {
+                // Let's check compatibility with src pad caps to see if we can do passthrough.
+                GRefPtr<GstCaps> srcPadTemplateCaps = adoptGRef(gst_pad_get_pad_template_caps(GST_BASE_TRANSFORM_SRC_PAD(base)));
+                unsigned srcPadTemplateCapsSize = gst_caps_get_size(srcPadTemplateCaps.get());
+                for (unsigned j = 0; !canDoPassthrough && j < srcPadTemplateCapsSize; ++j)
+                    canDoPassthrough = gst_structure_can_intersect(incomingStructure, gst_caps_get_structure(srcPadTemplateCaps.get(), j));
+
+                if (!canDoPassthrough)
+                    continue;
+            }
 
             outgoingStructure = GUniquePtr<GstStructure>(gst_structure_copy(incomingStructure));
-            gst_structure_set_name(outgoingStructure.get(), gst_structure_get_string(outgoingStructure.get(), "original-media-type"));
+
+            if (!canDoPassthrough)
+                gst_structure_set_name(outgoingStructure.get(), gst_structure_get_string(outgoingStructure.get(), "original-media-type"));
 
             // Filter out the DRM related fields from the down-stream caps.
             gst_structure_remove_fields(outgoingStructure.get(), "protection-system", "original-media-type", "encryption-algorithm", "encoding-scope", "cipher-mode", nullptr);
         } else {
             outgoingStructure = GUniquePtr<GstStructure>(gst_structure_copy(incomingStructure));
-            // Filter out the video related fields from the up-stream caps,
-            // because they are not relevant to the input caps of this element and
-            // can cause caps negotiation failures with adaptive bitrate streams.
-            gst_structure_remove_fields(outgoingStructure.get(), "base-profile", "codec_data", "height", "framerate", "level", "pixel-aspect-ratio", "profile", "rate", "width", nullptr);
+            if (!gst_base_transform_is_passthrough(base)) {
+                // Filter out the video related fields from the up-stream caps,
+                // because they are not relevant to the input caps of this element and
+                // can cause caps negotiation failures with adaptive bitrate streams.
+                gst_structure_remove_fields(outgoingStructure.get(), "base-profile", "codec_data", "height", "framerate", "level", "pixel-aspect-ratio", "profile", "rate", "width", nullptr);
 
-            gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId(self),
-                "original-media-type", G_TYPE_STRING, gst_structure_get_name(incomingStructure), nullptr);
+                gst_structure_set(outgoingStructure.get(), "protection-system", G_TYPE_STRING, klass->protectionSystemId(self),
+                    "original-media-type", G_TYPE_STRING, gst_structure_get_name(incomingStructure), nullptr);
 
-            // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID was added in the GStreamer
-            // developement git master which will ship as version 1.16.0.
-            gst_structure_set_name(outgoingStructure.get(),
+                // GST_PROTECTION_UNSPECIFIED_SYSTEM_ID was added in the GStreamer
+                // developement git master which will ship as version 1.16.0.
+                gst_structure_set_name(outgoingStructure.get(),
 #if GST_CHECK_VERSION(1, 16, 0)
-                !g_strcmp0(klass->protectionSystemId(self), GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" :
+                    !g_strcmp0(klass->protectionSystemId(self), GST_PROTECTION_UNSPECIFIED_SYSTEM_ID) ? "application/x-webm-enc" :
 #endif
-                "application/x-cenc");
+                    "application/x-cenc");
+            }
         }
 
         bool duplicate = false;
@@ -178,6 +194,21 @@ static GstCaps* transformCaps(GstBaseTransform* base, GstPadDirection direction,
 
     GST_DEBUG_OBJECT(base, "returning %" GST_PTR_FORMAT, transformedCaps);
     return transformedCaps;
+}
+
+static gboolean acceptCaps(GstBaseTransform* trans, GstPadDirection direction, GstCaps* caps)
+{
+    gboolean result = GST_BASE_TRANSFORM_CLASS(parent_class)->accept_caps(trans, direction, caps);
+
+    if (result || direction == GST_PAD_SRC)
+        return result;
+
+    GRefPtr<GstCaps> srcPadTemplateCaps = adoptGRef(gst_pad_get_pad_template_caps(GST_BASE_TRANSFORM_SRC_PAD(trans)));
+    result = gst_caps_can_intersect(caps, srcPadTemplateCaps.get());
+    GST_TRACE_OBJECT(trans, "attempted to match %" GST_PTR_FORMAT " with the src pad template caps %" GST_PTR_FORMAT " to see if we can go passthrough mode, result %s",
+        caps, srcPadTemplateCaps.get(), boolForPrinting(result));
+
+    return result;
 }
 
 static GstFlowReturn transformInPlace(GstBaseTransform* base, GstBuffer* buffer)
