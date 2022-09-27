@@ -77,44 +77,71 @@ static void checkNextTokensAreBuiltinAttr(WGSL::Lexer<T>& lexer, const String& a
 
 TEST(WGSLLexerTests, SingleTokens)
 {
-    checkSingleToken(""_s, WGSL::TokenType::EndOfFile);
-    checkSingleLiteral("1"_s, WGSL::TokenType::IntegerLiteral, 1);
-    checkSingleLiteral("0"_s, WGSL::TokenType::IntegerLiteral, 0);
-    checkSingleLiteral("142"_s, WGSL::TokenType::IntegerLiteral, 142);
-    checkSingleLiteral("1.1"_s, WGSL::TokenType::DecimalFloatLiteral, 1.1);
-    checkSingleLiteral("0.4"_s, WGSL::TokenType::DecimalFloatLiteral, 0.4);
-    checkSingleLiteral("0123.456"_s, WGSL::TokenType::DecimalFloatLiteral, 0123.456);
-    checkSingleToken("0123"_s, WGSL::TokenType::Invalid);
-    checkSingleLiteral("0123."_s, WGSL::TokenType::DecimalFloatLiteral, 123);
-    checkSingleLiteral(".456"_s, WGSL::TokenType::DecimalFloatLiteral, 0.456);
-    checkSingleToken("."_s, WGSL::TokenType::Period);
-    checkSingleLiteral("42f"_s, WGSL::TokenType::DecimalFloatLiteral, 42);
-    checkSingleLiteral("42e0f"_s, WGSL::TokenType::DecimalFloatLiteral, 42);
-    checkSingleLiteral("042e0f"_s, WGSL::TokenType::DecimalFloatLiteral, 42);
-    checkSingleToken("042f"_s, WGSL::TokenType::Invalid);
-    checkSingleLiteral("42e-3"_s, WGSL::TokenType::DecimalFloatLiteral, 42e-3);
-    checkSingleLiteral("42e-a"_s, WGSL::TokenType::IntegerLiteral, 42);
+    using WGSL::TokenType;
+
+    checkSingleToken(""_s,           TokenType::EndOfFile);
+    checkSingleLiteral("1"_s,        TokenType::IntegerLiteral, 1);
+    checkSingleLiteral("0"_s,        TokenType::IntegerLiteral, 0);
+    checkSingleLiteral("142"_s,      TokenType::IntegerLiteral, 142);
+    checkSingleLiteral("1.1"_s,      TokenType::DecimalFloatLiteral, 1.1);
+    checkSingleLiteral("0.4"_s,      TokenType::DecimalFloatLiteral, 0.4);
+    checkSingleLiteral("0123.456"_s, TokenType::DecimalFloatLiteral, 0123.456);
+    checkSingleToken("0123"_s,       TokenType::Invalid);
+    checkSingleLiteral("0123."_s,    TokenType::DecimalFloatLiteral, 123);
+    checkSingleLiteral(".456"_s,     TokenType::DecimalFloatLiteral, 0.456);
+    checkSingleToken("."_s,          TokenType::Period);
+    checkSingleLiteral("42f"_s,      TokenType::DecimalFloatLiteral, 42);
+    checkSingleLiteral("42e0f"_s,    TokenType::DecimalFloatLiteral, 42);
+    checkSingleLiteral("042e0f"_s,   TokenType::DecimalFloatLiteral, 42);
+    checkSingleToken("042f"_s,       TokenType::Invalid);
+    checkSingleLiteral("42e-3"_s,    TokenType::DecimalFloatLiteral, 42e-3);
+    checkSingleLiteral("42e-a"_s,    TokenType::IntegerLiteral, 42);
+}
+
+TEST(WGSLLexerTests, KeywordTokens)
+{
+    using WGSL::TokenType;
+
+    checkSingleToken("array"_s,      TokenType::KeywordArray);
+    checkSingleToken("fn"_s,         TokenType::KeywordFn);
+    checkSingleToken("function"_s,   TokenType::KeywordFunction);
+    checkSingleToken("private"_s,    TokenType::KeywordPrivate);
+    checkSingleToken("read"_s,       TokenType::KeywordRead);
+    checkSingleToken("read_write"_s, TokenType::KeywordReadWrite);
+    checkSingleToken("return"_s,     TokenType::KeywordReturn);
+    checkSingleToken("storage"_s,    TokenType::KeywordStorage);
+    checkSingleToken("struct"_s,     TokenType::KeywordStruct);
+    checkSingleToken("uniform"_s,    TokenType::KeywordUniform);
+    checkSingleToken("var"_s,        TokenType::KeywordVar);
+    checkSingleToken("workgroup"_s,  TokenType::KeywordWorkgroup);
+    checkSingleToken("write"_s,      TokenType::KeywordWrite);
+    checkSingleToken("i32"_s,        TokenType::KeywordI32);
+    checkSingleToken("u32"_s,        TokenType::KeywordU32);
+    checkSingleToken("f32"_s,        TokenType::KeywordF32);
+    checkSingleToken("bool"_s,       TokenType::KeywordBool);
 }
 
 TEST(WGSLLexerTests, SpecialTokens)
 {
-    checkSingleToken("->"_s, WGSL::TokenType::Arrow);
-    checkSingleToken("@"_s, WGSL::TokenType::Attribute);
-    checkSingleToken("{"_s, WGSL::TokenType::BraceLeft);
-    checkSingleToken("}"_s, WGSL::TokenType::BraceRight);
-    checkSingleToken("["_s, WGSL::TokenType::BracketLeft);
-    checkSingleToken("]"_s, WGSL::TokenType::BracketRight);
-    checkSingleToken(":"_s, WGSL::TokenType::Colon);
-    checkSingleToken(","_s, WGSL::TokenType::Comma);
-    checkSingleToken("="_s, WGSL::TokenType::Equal);
-    checkSingleToken(">"_s, WGSL::TokenType::GT);
-    checkSingleToken("<"_s, WGSL::TokenType::LT);
-    checkSingleToken("-"_s, WGSL::TokenType::Minus);
-    checkSingleToken("--"_s, WGSL::TokenType::MinusMinus);
-    checkSingleToken("."_s, WGSL::TokenType::Period);
-    checkSingleToken("("_s, WGSL::TokenType::ParenLeft);
-    checkSingleToken(")"_s, WGSL::TokenType::ParenRight);
-    checkSingleToken(";"_s, WGSL::TokenType::Semicolon);
+    using WGSL::TokenType;
+
+    checkSingleToken("->"_s, TokenType::Arrow);
+    checkSingleToken("@"_s,  TokenType::Attribute);
+    checkSingleToken("{"_s,  TokenType::BraceLeft);
+    checkSingleToken("}"_s,  TokenType::BraceRight);
+    checkSingleToken("["_s,  TokenType::BracketLeft);
+    checkSingleToken("]"_s,  TokenType::BracketRight);
+    checkSingleToken(":"_s,  TokenType::Colon);
+    checkSingleToken(","_s,  TokenType::Comma);
+    checkSingleToken("="_s,  TokenType::Equal);
+    checkSingleToken(">"_s,  TokenType::GT);
+    checkSingleToken("<"_s,  TokenType::LT);
+    checkSingleToken("-"_s,  TokenType::Minus);
+    checkSingleToken("--"_s, TokenType::MinusMinus);
+    checkSingleToken("."_s,  TokenType::Period);
+    checkSingleToken("("_s,  TokenType::ParenLeft);
+    checkSingleToken(")"_s,  TokenType::ParenRight);
+    checkSingleToken(";"_s,  TokenType::Semicolon);
 }
 
 TEST(WGSLLexerTests, ComputeShader)
