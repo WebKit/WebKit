@@ -2394,3 +2394,6 @@ webkit.org/b/245686 fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 webkit.org/b/245688 fast/css/ios/system-color-for-css-value.html [ Failure ]
 
 webkit.org/b/245708 fast/text/capitalize-boundaries.html [ Failure ]
+
+webkit.org/b/245710 media/video-played-reset.html [ Pass Failure ]
+
