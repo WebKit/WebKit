@@ -162,9 +162,8 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
 #if ENABLE(SERVICE_WORKER)
     if ((m_destination == FetchOptions::Destination::Worker || m_destination == FetchOptions::Destination::Sharedworker) && is<Document>(scriptExecutionContext) && downcast<Document>(scriptExecutionContext).settings().serviceWorkersEnabled()) {
         m_topOriginForServiceWorkerRegistration = SecurityOriginData { scriptExecutionContext.topOrigin().data() };
-        options.clientIdentifier = scriptExecutionContext.identifier();
         ASSERT(clientIdentifier);
-        options.resultingClientIdentifier = m_clientIdentifier = clientIdentifier;
+        options.clientIdentifier = m_clientIdentifier = clientIdentifier;
         // In case of blob URLs, we reuse the document controlling service worker.
         if (request->url().protocolIsBlob() && scriptExecutionContext.activeServiceWorker())
             setControllingServiceWorker(ServiceWorkerData { scriptExecutionContext.activeServiceWorker()->data() });

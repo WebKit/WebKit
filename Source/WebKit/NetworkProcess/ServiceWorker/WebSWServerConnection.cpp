@@ -174,7 +174,7 @@ void WebSWServerConnection::controlClient(const NetworkResourceLoadParameters& p
     else
         clientType = ServiceWorkerClientType::Window;
 
-    auto clientIdentifier = *parameters.options.resultingClientIdentifier;
+    auto clientIdentifier = *parameters.options.clientIdentifier;
     // As per step 12 of https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm, the active service worker should be controlling the document.
     // We register the service worker client using the identifier provided by DocumentLoader and notify DocumentLoader about it.
     // If notification is successful, DocumentLoader is responsible to unregister the service worker client as needed.
@@ -211,8 +211,7 @@ std::unique_ptr<ServiceWorkerFetchTask> WebSWServerConnection::createFetchTask(N
 
         serviceWorkerRegistrationIdentifier = registration->identifier();
         controlClient(loader.parameters(), *registration, request);
-        if (auto resultingClientIdentifier = loader.parameters().options.resultingClientIdentifier)
-            loader.setResultingClientIdentifier(resultingClientIdentifier->toString());
+        loader.setResultingClientIdentifier(loader.parameters().options.clientIdentifier->toString());
         loader.setServiceWorkerRegistration(*registration);
     } else {
         if (!loader.parameters().serviceWorkerRegistrationIdentifier)

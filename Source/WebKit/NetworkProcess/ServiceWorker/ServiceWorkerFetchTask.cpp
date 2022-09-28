@@ -166,7 +166,7 @@ void ServiceWorkerFetchTask::startFetch()
     cleanHTTPRequestHeadersForAccessControl(request, m_loader.parameters().httpHeadersToKeep);
 
     String clientIdentifier;
-    if (m_loader.parameters().options.mode != FetchOptions::Mode::Navigate) {
+    if (m_loader.parameters().options.mode != FetchOptions::Mode::Navigate && m_loader.parameters().options.destination != FetchOptions::Destination::Worker) {
         if (auto identifier = m_loader.parameters().options.clientIdentifier)
             clientIdentifier = identifier->toString();
     }
