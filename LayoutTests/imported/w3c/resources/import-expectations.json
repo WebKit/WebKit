@@ -273,6 +273,7 @@
     "web-platform-tests/html/canvas/offscreen": "import", 
     "web-platform-tests/html/canvas/resources": "import", 
     "web-platform-tests/html/canvas/tools": "import", 
+    "web-platform-tests/html/cross-origin-opener-policy": "import", 
     "web-platform-tests/html/dom": "import", 
     "web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript.sub.html": "skip", 
     "web-platform-tests/html/dom/elements/requirements-relating-to-bidirectional-algorithm-formatting-characters": "skip", 
