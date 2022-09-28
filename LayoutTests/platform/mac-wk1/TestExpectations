@@ -2129,3 +2129,9 @@ webkit.org/b/245014 imported/w3c/web-platform-tests/cookies/value/value-ctl.html
 webkit.org/b/245035 imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass Failure ]
 
 webkit.org/b/245102 imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noreferrer.html [ Pass Failure ]
+
+# webkit.org/b/245801 These tests are flakily crashing with a WorkerOrWorkletThread error
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic.http-rp/upgrade/worker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic.http-rp/upgrade/worker-module.https.html [ Skip ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/worker-classic.https.html [ Skip ]
+imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/worker-module.https.html [ Skip ]
