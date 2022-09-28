@@ -39,11 +39,12 @@ namespace JSC { namespace FTL {
 static constexpr size_t wordSize = 8;
 
 SlowPathCallContext::SlowPathCallContext(
-    RegisterSet usedRegisters, CCallHelpers& jit, unsigned numArgs, GPRReg returnRegister, GPRReg indirectCallTargetRegister)
+    FrozenRegisterSet originalUsedRegisters, CCallHelpers& jit, unsigned numArgs, GPRReg returnRegister, GPRReg indirectCallTargetRegister)
     : m_jit(jit)
     , m_numArgs(numArgs)
     , m_returnRegister(returnRegister)
 {
+    RegisterSet usedRegisters = originalUsedRegisters.set();
     // We don't care that you're using callee-save, stack, or hardware registers.
     usedRegisters.exclude(RegisterSet::stackRegisters());
     usedRegisters.exclude(RegisterSet::reservedHardwareRegisters());
@@ -70,7 +71,7 @@ SlowPathCallContext::SlowPathCallContext(
     m_callingConventionRegisters = callingConventionRegisters.whole();
         
     unsigned numberOfCallingConventionRegisters =
-        callingConventionRegisters.numberOfSetRegisters();
+        m_callingConventionRegisters.numberOfSetRegisters();
         
     size_t offsetToThunkSavingArea =
         m_offsetToSavingArea +
@@ -84,20 +85,18 @@ SlowPathCallContext::SlowPathCallContext(
     m_stackBytesNeeded = (m_stackBytesNeeded + stackAlignmentBytes() - 1) & ~(stackAlignmentBytes() - 1);
         
     m_jit.subPtr(CCallHelpers::TrustedImm32(m_stackBytesNeeded), CCallHelpers::stackPointerRegister);
-
-    auto thunkSaveSet = usedRegisters;
         
     // This relies on all calling convention registers also being temp registers.
     unsigned stackIndex = 0;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (!m_callingConventionRegisters.set().includesRegister(reg))
+        if (!m_callingConventionRegisters.includesRegister(reg))
             continue;
         m_jit.storePtr(reg, CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize));
-        thunkSaveSet.excludeRegister(reg);
+        usedRegisters.excludeRegister(reg);
     }
     
-    m_thunkSaveSet = FrozenRegisterSet(thunkSaveSet.whole());
+    m_thunkSaveSet = usedRegisters.whole();
     m_offset = offsetToThunkSavingArea;
 }
     
@@ -109,7 +108,7 @@ SlowPathCallContext::~SlowPathCallContext()
     unsigned stackIndex = 0;
     for (unsigned i = GPRInfo::numberOfRegisters; i--;) {
         GPRReg reg = GPRInfo::toRegister(i);
-        if (!m_callingConventionRegisters.set().includesRegister(reg))
+        if (!m_callingConventionRegisters.includesRegister(reg))
             continue;
         m_jit.loadPtr(CCallHelpers::Address(CCallHelpers::stackPointerRegister, m_offsetToSavingArea + (stackIndex++) * wordSize), reg);
     }

@@ -149,7 +149,7 @@ CCallHelpers::Jump CCallSpecial::generate(Inst& inst, CCallHelpers& jit, Generat
 
 RegisterSet CCallSpecial::extraEarlyClobberedRegs(Inst&)
 {
-    return m_emptyRegs;
+    return { };
 }
 
 RegisterSet CCallSpecial::extraClobberedRegs(Inst&)

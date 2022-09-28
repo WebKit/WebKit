@@ -52,7 +52,7 @@ void ScratchRegisterAllocator::lock(FPRReg reg)
     if (reg == InvalidFPRReg)
         return;
     ASSERT(Reg::fromIndex(reg).isFPR());
-    m_lockedRegisters.includeRegister(reg, Options::useWebAssemblySIMD() ? Width128 : Width64);
+    m_lockedRegisters.includeRegister(reg);
 }
 
 void ScratchRegisterAllocator::lock(JSValueRegs regs)

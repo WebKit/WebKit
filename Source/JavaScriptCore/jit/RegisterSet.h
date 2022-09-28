@@ -43,10 +43,12 @@ class RegisterAtOffsetList;
 class WholeRegisterSet;
 struct RegisterSetHash;
 
-class RegisterSet {
+class RegisterSet final {
     friend FrozenRegisterSet;
     friend WholeRegisterSet;
     friend RegisterSetHash;
+
+    WTF_MAKE_FAST_ALLOCATED;
 
 protected:    
     ALWAYS_INLINE constexpr void set(Reg reg, Width width)
@@ -187,10 +189,12 @@ public:
     ALWAYS_INLINE constexpr static RegisterSet registersToSaveForCCall(RegisterSet live);
 };
 
-class WholeRegisterSet {
+class WholeRegisterSet final {
     friend FrozenRegisterSet;
     friend RegisterSet;
     friend RegisterSetHash;
+    WTF_MAKE_FAST_ALLOCATED;
+
 protected:
     ALWAYS_INLINE constexpr size_t includes(Reg reg) const
     {
@@ -355,13 +359,9 @@ constexpr size_t RegisterSet::numberOfSetRegisters() const { return whole().numb
 constexpr size_t RegisterSet::numberOfSetGPRs() const { return whole().numberOfSetGPRs(); }
 constexpr size_t RegisterSet::numberOfSetFPRs() const { return whole().numberOfSetFPRs(); }
 
-struct RegisterSetHash {
-    static unsigned hash(const WholeRegisterSet& set) { return set.m_set.m_bits.hash(); }
-    static bool equal(const WholeRegisterSet& a, const WholeRegisterSet& b) { return a == b; }
-    static constexpr bool safeToCompareToEmptyOrDeleted = false;
-};
+class FrozenRegisterSet final {
+    WTF_MAKE_FAST_ALLOCATED;
 
-class FrozenRegisterSet {
 public:
     constexpr FrozenRegisterSet() { }
 
@@ -376,7 +376,7 @@ public:
         return *this;
     }
 
-    ALWAYS_INLINE unsigned hash() const { return m_bits.hash(); }
+    ALWAYS_INLINE constexpr unsigned hash() const { return m_bits.hash(); }
     ALWAYS_INLINE constexpr bool operator==(const FrozenRegisterSet& other) const { return m_bits == other.m_bits; }
     ALWAYS_INLINE constexpr bool operator!=(const FrozenRegisterSet& other) const { return m_bits != other.m_bits; }
 
@@ -390,8 +390,57 @@ public:
         return result;
     }
 
+    ALWAYS_INLINE constexpr void includeRegister(Reg reg)
+    {
+        ASSERT(!!reg);
+        m_bits.set(reg.index());
+    }
+    
+    ALWAYS_INLINE constexpr void includeRegister(JSValueRegs regs)
+    {
+        if (regs.tagGPR() != InvalidGPRReg)
+            includeRegister(regs.tagGPR());
+        includeRegister(regs.payloadGPR());
+    }
+
+    ALWAYS_INLINE constexpr void excludeRegister(Reg reg)
+    {
+        ASSERT(!!reg);
+        m_bits.clear(reg.index());
+    }
+
+    ALWAYS_INLINE constexpr bool includesRegister(Reg reg) const
+    {
+        return m_bits.get(reg.index());
+    }
+
+    ALWAYS_INLINE constexpr size_t numberOfSetGPRs() const
+    {
+        RegisterBitmap temp = m_bits;
+        temp.filter(RegisterSet::allGPRs().m_set.m_bits);
+        return temp.count();
+    }
+
+    ALWAYS_INLINE constexpr size_t numberOfSetFPRs() const
+    {
+        RegisterBitmap temp = m_bits;
+        temp.filter(RegisterSet::allFPRs().m_set.m_bits);
+        return temp.count();
+    }
+
+    ALWAYS_INLINE constexpr size_t numberOfSetRegisters() const
+    {
+        return m_bits.count();
+    }
+
 private:
     RegisterBitmap m_bits;
+};
+
+struct RegisterSetHash {
+    static constexpr unsigned hash(const FrozenRegisterSet& set) { return set.hash(); }
+    static constexpr bool equal(const FrozenRegisterSet& a, const FrozenRegisterSet& b) { return a == b; }
+    static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
 
 constexpr WholeRegisterSet RegisterSet::stackRegisters()
@@ -772,7 +821,7 @@ constexpr WholeRegisterSet RegisterSet::allScalarRegisters()
 namespace WTF {
 
 template<typename T> struct DefaultHash;
-template<> struct DefaultHash<JSC::RegisterSet> : JSC::RegisterSetHash { };
+template<> struct DefaultHash<JSC::FrozenRegisterSet> : JSC::RegisterSetHash { };
 
 } // namespace WTF
 

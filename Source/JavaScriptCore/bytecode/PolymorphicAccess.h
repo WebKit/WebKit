@@ -234,7 +234,7 @@ struct AccessGenerationState {
         bool isEmpty() const { return numberOfStackBytesUsedForRegisterPreservation == std::numeric_limits<unsigned>::max(); }
     };
 
-    const RegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
+    const FrozenRegisterSet& calculateLiveRegistersForCallAndExceptionHandling();
 
     SpillState preserveLiveRegistersToStackForCall(const WholeRegisterSet& extra = { });
     SpillState preserveLiveRegistersToStackForCallWithoutExceptions();
@@ -242,7 +242,7 @@ struct AccessGenerationState {
     void restoreLiveRegistersFromStackForCallWithThrownException(const SpillState&);
     void restoreLiveRegistersFromStackForCall(const SpillState&, const WholeRegisterSet& dontRestore = { });
 
-    const RegisterSet& liveRegistersForCall();
+    const FrozenRegisterSet& liveRegistersForCall();
 
     CallSiteIndex callSiteIndexForExceptionHandlingOrOriginal();
     DisposableCallSiteIndex callSiteIndexForExceptionHandling();
@@ -267,10 +267,10 @@ struct AccessGenerationState {
     ScratchRegisterAllocator makeDefaultScratchAllocator(GPRReg extraToLock = InvalidGPRReg);
 
 private:
-    const RegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
+    const FrozenRegisterSet& liveRegistersToPreserveAtExceptionHandlingCallSite();
     
-    RegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
-    RegisterSet m_liveRegistersForCall;
+    FrozenRegisterSet m_liveRegistersToPreserveAtExceptionHandlingCallSite;
+    FrozenRegisterSet m_liveRegistersForCall;
     CallSiteIndex m_callSiteIndex;
     SpillState m_spillStateForJSCall;
     SpillState m_spillStateForJSGetterSetter;

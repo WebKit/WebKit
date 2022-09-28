@@ -78,14 +78,14 @@ void AccessGenerationState::succeed()
         success.append(jit->jump());
 }
 
-const RegisterSet& AccessGenerationState::liveRegistersForCall()
+const FrozenRegisterSet& AccessGenerationState::liveRegistersForCall()
 {
     if (!m_calculatedRegistersForCallAndExceptionHandling)
         calculateLiveRegistersForCallAndExceptionHandling();
     return m_liveRegistersForCall;
 }
 
-const RegisterSet& AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite()
+const FrozenRegisterSet& AccessGenerationState::liveRegistersToPreserveAtExceptionHandlingCallSite()
 {
     if (!m_calculatedRegistersForCallAndExceptionHandling)
         calculateLiveRegistersForCallAndExceptionHandling();
@@ -100,27 +100,28 @@ static RegisterSet calleeSaveRegisters()
         .merge(RegisterSet::stackRegisters());
 }
 
-const RegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling()
+const FrozenRegisterSet& AccessGenerationState::calculateLiveRegistersForCallAndExceptionHandling()
 {
     if (!m_calculatedRegistersForCallAndExceptionHandling) {
         m_calculatedRegistersForCallAndExceptionHandling = true;
 
-        m_liveRegistersToPreserveAtExceptionHandlingCallSite = jit->codeBlock()->jitCode()->liveRegistersToPreserveAtExceptionHandlingCallSite(jit->codeBlock(), stubInfo->callSiteIndex);
+        m_liveRegistersToPreserveAtExceptionHandlingCallSite = jit->codeBlock()->jitCode()->liveRegistersToPreserveAtExceptionHandlingCallSite(jit->codeBlock(), stubInfo->callSiteIndex).whole();
         m_needsToRestoreRegistersIfException = m_liveRegistersToPreserveAtExceptionHandlingCallSite.numberOfSetRegisters() > 0;
         if (m_needsToRestoreRegistersIfException)
             RELEASE_ASSERT(JITCode::isOptimizingJIT(jit->codeBlock()->jitType()));
 
-        m_liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite, allocator->usedRegisters());
+        auto liveRegistersForCall = RegisterSet(m_liveRegistersToPreserveAtExceptionHandlingCallSite.set(), allocator->usedRegisters());
         if (jit->codeBlock()->useDataIC())
-            m_liveRegistersForCall.includeRegister(stubInfo->m_stubInfoGPR);
-        m_liveRegistersForCall.exclude(calleeSaveRegisters().whole().includeWholeRegisterWidth());
+            liveRegistersForCall.includeRegister(stubInfo->m_stubInfoGPR);
+        liveRegistersForCall.exclude(calleeSaveRegisters().whole().includeWholeRegisterWidth());
+        m_liveRegistersForCall = liveRegistersForCall.whole();
     }
     return m_liveRegistersForCall;
 }
 
 auto AccessGenerationState::preserveLiveRegistersToStackForCall(const WholeRegisterSet& extra) -> SpillState
 {
-    RegisterSet liveRegisters = liveRegistersForCall();
+    RegisterSet liveRegisters = liveRegistersForCall().set();
     liveRegisters.merge(extra);
     liveRegisters.filter(RegisterSet::allScalarRegisters());
 
@@ -162,7 +163,7 @@ void AccessGenerationState::restoreLiveRegistersFromStackForCallWithThrownExcept
     // what is live for call but not live for exception handling. By ignoring things that are
     // only live at the call but not the exception handler, we will only restore things live
     // at the exception handler.
-    dontRestore.exclude(liveRegistersToPreserveAtExceptionHandlingCallSite().whole().includeWholeRegisterWidth());
+    dontRestore.exclude(liveRegistersToPreserveAtExceptionHandlingCallSite().set().includeWholeRegisterWidth());
     restoreLiveRegistersFromStackForCall(spillState, dontRestore.whole());
 }
 

@@ -420,7 +420,7 @@ private:
     // We also use this to lock registers temporarily, for instance to
     // ensure that we have at least 2 available registers for loading
     // a pair on 32bits.
-    mutable WholeRegisterSet m_lockedRegisters = { };
+    mutable FrozenRegisterSet m_lockedRegisters = { };
 
     // This stores the current recoveries present in registers. A null
     // CachedRecovery means we can trash the current value as we don't

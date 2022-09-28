@@ -81,7 +81,7 @@ public:
         return nullptr;
     }
     size_t offset() const { return m_offset; }
-    WholeRegisterSet usedRegisters() const { return m_usedRegisters.set(); }
+    const FrozenRegisterSet& usedRegisters() const { return m_usedRegisters; }
     WholeRegisterSet argumentRegistersIfClobberingCheckIsEnabled() const
     {
         RELEASE_ASSERT(Options::clobberAllRegsInFTLICSlowPath());
