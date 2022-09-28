@@ -29,6 +29,7 @@
 #import "DisplayListRecorder.h"
 #import "GraphicsContextCG.h"
 #import "GraphicsContextPlatformPrivateCG.h"
+#import "IOSurface.h"
 #import "IntRect.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/FeatureFlagsSPI.h>
@@ -222,6 +223,36 @@ void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, Documen
     }
     CGContextSetCompositeOperation(platformContext, kCGCompositeSover);
     CGContextFillPath(platformContext);
+}
+
+void GraphicsContextCG::convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>& image)
+{
+#if HAVE(CORE_ANIMATION_FIX_FOR_RADAR_93560567)
+    UNUSED_PARAM(image);
+#else
+    if (!CGColorSpaceUsesITUR_2100TF(CGImageGetColorSpace(image.get())))
+        return;
+
+    auto context = platformContext();
+
+    auto destinationSurface = CGIOSurfaceContextGetSurface(context);
+    if (!destinationSurface)
+        return;
+
+    auto destinationColorSpace = CGIOSurfaceContextGetColorSpace(context);
+    if (!destinationColorSpace)
+        return;
+
+    auto surface = IOSurface::createFromSurface(destinationSurface, DestinationColorSpace(destinationColorSpace));
+
+    auto width = CGImageGetWidth(image.get());
+    auto height = CGImageGetHeight(image.get());
+
+    auto bitmapContext = surface->createCompatibleBitmap(width, height);
+    CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, width, height), image.get());
+
+    image = adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
+#endif
 }
 
 } // namespace WebCore

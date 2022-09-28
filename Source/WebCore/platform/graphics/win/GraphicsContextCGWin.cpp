@@ -219,5 +219,9 @@ GraphicsContextPlatformPrivate* GraphicsContextCG::deprecatedPrivateContext() co
     return m_data;
 }
 
+void GraphicsContextCG::convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>&)
+{
+}
+
 }
 #endif

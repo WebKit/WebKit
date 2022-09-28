@@ -315,15 +315,11 @@ RetainPtr<CGImageRef> IOSurface::sinkIntoImage(std::unique_ptr<IOSurface> surfac
     return adoptCF(CGIOSurfaceContextCreateImageReference(surface->ensurePlatformContext()));
 }
 
-CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
+IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
 {
-    if (m_cgContext)
-        return m_cgContext.get();
-
-    CGBitmapInfo bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
+    auto bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Host);
 
     size_t bitsPerComponent = 8;
-    size_t bitsPerPixel = 32;
     
     switch (format()) {
     case Format::BGRA:
@@ -334,7 +330,6 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         // A half-float format will be used if CG needs to read back the IOSurface contents,
         // but for an IOSurface-to-IOSurface copy, there should be no conversion.
         bitsPerComponent = 16;
-        bitsPerPixel = 64;
         bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
         break;
 #endif
@@ -342,8 +337,28 @@ CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
         ASSERT_NOT_REACHED();
         break;
     }
-    
-    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), bitsPerComponent, bitsPerPixel, m_colorSpace.platformColorSpace(), bitmapInfo));
+
+    return { bitmapInfo, bitsPerComponent };
+}
+
+RetainPtr<CGContextRef> IOSurface::createCompatibleBitmap(unsigned width, unsigned height)
+{
+    auto configuration = bitmapConfiguration();
+    auto bitsPerPixel = configuration.bitsPerComponent * 4;
+    auto bytesPerRow = width * bitsPerPixel;
+
+    return adoptCF(CGBitmapContextCreate(NULL, width, height, configuration.bitsPerComponent, bytesPerRow, m_colorSpace.platformColorSpace(), configuration.bitmapInfo));
+}
+
+CGContextRef IOSurface::ensurePlatformContext(const HostWindow* hostWindow)
+{
+    if (m_cgContext)
+        return m_cgContext.get();
+
+    auto configuration = bitmapConfiguration();
+    auto bitsPerPixel = configuration.bitsPerComponent * 4;
+
+    m_cgContext = adoptCF(CGIOSurfaceContextCreate(m_surface.get(), m_size.width(), m_size.height(), configuration.bitsPerComponent, bitsPerPixel, m_colorSpace.platformColorSpace(), configuration.bitmapInfo));
 
 #if PLATFORM(MAC)
     if (auto displayMask = primaryOpenGLDisplayMask()) {
