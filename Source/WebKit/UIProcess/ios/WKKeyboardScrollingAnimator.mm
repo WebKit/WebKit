@@ -259,6 +259,7 @@ static WebCore::BoxSide boxSide(WebCore::ScrollDirection direction)
     }();
 
     // FIXME (227461): Replace with call to WebCore::KeyboardScroll constructor.
+    // FIXME (245749): Use `ScrollableArea::adjustVerticalPageScrollStepForFixedContent` to account for fixed content
 
     CGFloat scrollDistance = [_scrollable distanceForIncrement:increment inDirection:direction];
 
