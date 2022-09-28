@@ -42,11 +42,6 @@ public:
 
     void setSource(const String& source) { m_source = source; }
 
-#if !USE(ANGLE)
-    bool isValid() const { return m_isValid; }
-    void setValid(bool valid) { m_isValid = valid; }
-#endif
-
 private:
     WebGLShader(WebGLRenderingContextBase&, GCGLenum);
 
@@ -54,9 +49,6 @@ private:
 
     GCGLenum m_type;
     String m_source;
-#if !USE(ANGLE)
-    bool m_isValid = false;
-#endif
 };
 
 } // namespace WebCore

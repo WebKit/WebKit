@@ -35,7 +35,6 @@
 #include "StreamConnectionWorkQueue.h"
 #include <WebCore/ByteArrayPixelBuffer.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/GraphicsContextGLOpenGL.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>

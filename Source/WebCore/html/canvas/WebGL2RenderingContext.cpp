@@ -3188,7 +3188,6 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     }
 }
 
-
 bool WebGL2RenderingContext::validateBlendEquation(const char* functionName, GCGLenum mode)
 {
     switch (mode) {

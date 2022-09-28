@@ -31,7 +31,6 @@
 #include "BitmapImage.h"
 #include "GraphicsContextCG.h"
 #include "GraphicsContextGLImageExtractor.h"
-#include "GraphicsContextGLOpenGL.h"
 #include "Image.h"
 #include "ImageBufferUtilitiesCG.h"
 #include "PixelBuffer.h"

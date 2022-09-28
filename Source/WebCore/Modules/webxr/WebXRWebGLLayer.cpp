@@ -28,20 +28,11 @@
 
 #if ENABLE(WEBXR)
 
-#if !USE(ANGLE)
-#include "GraphicsContextGL.h"
-#endif
 #include "HTMLCanvasElement.h"
 #include "IntSize.h"
 #include "OffscreenCanvas.h"
-#if !USE(ANGLE)
-#include "TemporaryOpenGLSetting.h"
-#endif
 #include "WebGLFramebuffer.h"
 #include "WebGLRenderingContext.h"
-#if ENABLE(WEBGL2)
-#include "WebGL2RenderingContext.h"
-#endif
 #include "WebGLRenderingContextBase.h"
 #include "WebXRFrame.h"
 #include "WebXROpaqueFramebuffer.h"
@@ -51,6 +42,10 @@
 #include "XRWebGLLayerInit.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
+
+#if ENABLE(WEBGL2)
+#include "WebGL2RenderingContext.h"
+#endif
 
 namespace WebCore {
 

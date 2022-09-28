@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ANGLEUtilities.h"
 
-#if ENABLE(WEBGL) && USE(ANGLE)
+#if ENABLE(WEBGL)
 #include "ANGLEHeaders.h"
 
 namespace WebCore {

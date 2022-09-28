@@ -40,10 +40,6 @@
 #include <wtf/Locker.h>
 #include <wtf/NeverDestroyed.h>
 
-#if !USE(ANGLE)
-#include "GraphicsContextGLOpenGL.h"
-#endif
-
 namespace WebCore {
 
 Lock WebGLProgram::s_instancesLock;
@@ -222,11 +218,7 @@ void WebGLProgram::cacheActiveAttribLocations(GraphicsContextGL* context3d)
     m_activeAttribLocations.resize(static_cast<size_t>(numAttribs));
     for (int i = 0; i < numAttribs; ++i) {
         GraphicsContextGLActiveInfo info;
-#if USE(ANGLE)
         context3d->getActiveAttrib(object(), i, info);
-#else
-        static_cast<GraphicsContextGLOpenGL*>(context3d)->getActiveAttribImpl(object(), i, info);
-#endif
         m_activeAttribLocations[i] = context3d->getAttribLocation(object(), info.name);
     }
 }

@@ -99,7 +99,7 @@ private:
     TextureMapperContextAttributes m_contextAttributes;
     TextureMapperGL::Flags m_colorConvertFlags { TextureMapperGL::NoFlag };
 
-#if USE(ANGLE)
+#if ENABLE(WEBGL)
     RefPtr<Image> m_pendingContents { nullptr };
 #endif
 

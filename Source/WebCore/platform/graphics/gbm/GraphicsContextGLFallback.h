@@ -27,7 +27,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
 #include "GraphicsContextGLANGLE.h"
 
@@ -75,4 +75,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)

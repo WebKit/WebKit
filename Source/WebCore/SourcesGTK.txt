@@ -71,7 +71,6 @@ platform/gamepad/manette/ManetteGamepadProvider.cpp
 
 platform/generic/ScrollbarsControllerGeneric.cpp
 
-platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/GLContext.cpp @no-unify
 platform/graphics/PlatformDisplay.cpp @no-unify
 

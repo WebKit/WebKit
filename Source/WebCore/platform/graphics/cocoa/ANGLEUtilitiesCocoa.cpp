@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ANGLEUtilitiesCocoa.h"
 
-#if USE(ANGLE)
+#if ENABLE(WEBGL)
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
 #include "Logging.h"
