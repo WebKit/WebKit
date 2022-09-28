@@ -39,6 +39,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "HTMLTableElement.h"
+#include "HTMLTemplateElement.h"
 #include "JSCustomElementInterface.h"
 #include "LocalizedStrings.h"
 #include "MathMLNames.h"
@@ -900,10 +901,21 @@ bool HTMLTreeBuilder::processTemplateEndTag(AtomHTMLToken&& token)
     m_tree.generateImpliedEndTags();
     if (m_tree.currentStackItem().elementName() != HTML::template_)
         parseError(token);
-    m_tree.openElements().popUntilPopped(HTML::template_);
+    m_tree.openElements().popUntil(HTML::template_);
+    RELEASE_ASSERT(is<HTMLTemplateElement>(m_tree.openElements().top()));
+    Ref templateElement = downcast<HTMLTemplateElement>(m_tree.openElements().top());
+    m_tree.openElements().pop();
+
+    auto& item = adjustedCurrentStackItem();
+    RELEASE_ASSERT(item.isElement());
+    Ref shadowHost = item.element();
+
     m_tree.activeFormattingElements().clearToLastMarker();
     m_templateInsertionModes.removeLast();
     resetInsertionModeAppropriately();
+
+    m_tree.attachDeclarativeShadowRootIfNeeded(shadowHost.get(), templateElement);
+
     return true;
 }
 

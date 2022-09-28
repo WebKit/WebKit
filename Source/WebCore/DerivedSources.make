@@ -1535,6 +1535,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/worklets/WorkletOptions.idl \
     $(WebCore)/xml/CustomXPathNSResolver.idl \
     $(WebCore)/xml/DOMParser.idl \
+    $(WebCore)/xml/ParseFromStringOptions.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
     $(WebCore)/xml/XMLHttpRequestEventTarget.idl \
     $(WebCore)/xml/XMLHttpRequestProgressEvent.idl \

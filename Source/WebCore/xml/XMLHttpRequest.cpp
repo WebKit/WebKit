@@ -184,6 +184,7 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
                 responseDocument = HTMLDocument::create(nullptr, context.settings(), m_response.url(), { });
             else
                 responseDocument = XMLDocument::create(nullptr, context.settings(), m_response.url());
+            responseDocument->setParserContentPolicy({ ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
             responseDocument->overrideLastModified(m_response.lastModified());
             responseDocument->setContextDocument(context);
             responseDocument->setSecurityOriginPolicy(context.securityOriginPolicy());

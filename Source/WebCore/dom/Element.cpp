@@ -2690,14 +2690,31 @@ ExceptionOr<ShadowRoot&> Element::attachShadow(const ShadowRootInit& init)
 {
     if (!canAttachAuthorShadowRoot(*this))
         return Exception { NotSupportedError };
-    if (shadowRoot())
+    if (RefPtr shadowRoot = this->shadowRoot()) {
+        if (shadowRoot->isDeclarativeShadowRoot()) {
+            ChildListMutationScope mutation(*shadowRoot);
+            shadowRoot->removeChildren();
+            shadowRoot->setIsDeclarativeShadowRoot(false);
+            return *shadowRoot;
+        }
         return Exception { NotSupportedError };
+    }
     if (init.mode == ShadowRootMode::UserAgent)
         return Exception { TypeError };
     auto shadow = ShadowRoot::create(document(), init.mode, init.slotAssignment, init.delegatesFocus ? ShadowRoot::DelegatesFocus::Yes : ShadowRoot::DelegatesFocus::No, isPrecustomizedOrDefinedCustomElement() ? ShadowRoot::AvailableToElementInternals::Yes : ShadowRoot::AvailableToElementInternals::No);
     auto& result = shadow.get();
     addShadowRoot(WTFMove(shadow));
     return result;
+}
+
+ExceptionOr<ShadowRoot&> Element::attachDeclarativeShadow(ShadowRootMode mode, bool delegatesFocus)
+{
+    auto exceptionOrShadowRoot = attachShadow({ mode, delegatesFocus });
+    if (exceptionOrShadowRoot.hasException())
+        return exceptionOrShadowRoot.releaseException();
+    auto& shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
+    shadowRoot.setIsDeclarativeShadowRoot(true);
+    return shadowRoot;
 }
 
 ShadowRoot* Element::shadowRootForBindings(JSC::JSGlobalObject& lexicalGlobalObject) const

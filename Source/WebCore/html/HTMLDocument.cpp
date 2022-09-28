@@ -118,7 +118,7 @@ int HTMLDocument::height()
 
 Ref<DocumentParser> HTMLDocument::createParser()
 {
-    return HTMLDocumentParser::create(*this);
+    return HTMLDocumentParser::create(*this, parserContentPolicy());
 }
 
 // https://html.spec.whatwg.org/multipage/dom.html#dom-document-nameditem

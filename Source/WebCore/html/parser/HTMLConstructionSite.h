@@ -99,6 +99,7 @@ struct CustomElementConstructionData;
 class Document;
 class Element;
 class HTMLFormElement;
+class HTMLTemplateElement;
 class JSCustomElementInterface;
 class WhitespaceCache;
 
@@ -174,6 +175,8 @@ public:
     RefPtr<HTMLFormElement> takeForm();
 
     OptionSet<ParserContentPolicy> parserContentPolicy() { return m_parserContentPolicy; }
+
+    void attachDeclarativeShadowRootIfNeeded(Element& host, HTMLTemplateElement&);
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     bool isTelephoneNumberParsingEnabled() { return m_document.isTelephoneNumberParsingEnabled(); }

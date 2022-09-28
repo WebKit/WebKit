@@ -581,6 +581,18 @@ CrossOriginOpenerPolicyEnabled:
     WebCore:
       default: false
 
+DeclarativeShadowDOMEnabled:
+  type: bool
+  humanReadableName: "Declarative Shadow DOM"
+  humanReadableDescription: "Enable Declarative Shadow DOM"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DefaultARIAForCustomElementsEnabled:
   type: bool
   humanReadableName: "Default ARIA for Custom Elements"

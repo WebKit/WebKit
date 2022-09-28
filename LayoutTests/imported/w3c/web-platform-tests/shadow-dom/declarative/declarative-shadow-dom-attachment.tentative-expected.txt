@@ -1,21 +1,21 @@
 
-FAIL Declarative Shadow DOM as a child of <article>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <aside>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <blockquote>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <div>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <footer>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h1>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h2>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h3>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h4>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h5>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h6>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <header>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <main>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <nav>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <p>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <section>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <span>, with mode=open, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
+PASS Declarative Shadow DOM as a child of <article>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <aside>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <blockquote>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <div>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <footer>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h1>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h2>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h3>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h4>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h5>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h6>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <header>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <main>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <nav>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <p>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <section>, with mode=open, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <span>, with mode=open, delegatesFocus=false. Should be safelisted.
 PASS Declarative Shadow DOM as a child of <a>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <abbr>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <address>, with mode=open, delegatesFocus=false. Should be disallowed.
@@ -107,23 +107,23 @@ PASS Declarative Shadow DOM as a child of <ul>, with mode=open, delegatesFocus=f
 PASS Declarative Shadow DOM as a child of <var>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <video>, with mode=open, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <wbr>, with mode=open, delegatesFocus=false. Should be disallowed.
-FAIL Declarative Shadow DOM as a child of <article>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <aside>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <blockquote>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <div>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <footer>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h1>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h2>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h3>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h4>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h5>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h6>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <header>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <main>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <nav>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <p>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <section>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <span>, with mode=closed, delegatesFocus=false. Should be safelisted. assert_true: expected true got false
+PASS Declarative Shadow DOM as a child of <article>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <aside>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <blockquote>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <div>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <footer>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h1>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h2>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h3>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h4>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h5>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h6>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <header>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <main>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <nav>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <p>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <section>, with mode=closed, delegatesFocus=false. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <span>, with mode=closed, delegatesFocus=false. Should be safelisted.
 PASS Declarative Shadow DOM as a child of <a>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <abbr>, with mode=closed, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <address>, with mode=closed, delegatesFocus=false. Should be disallowed.
@@ -323,23 +323,23 @@ PASS Declarative Shadow DOM as a child of <ul>, with mode=invalid, delegatesFocu
 PASS Declarative Shadow DOM as a child of <var>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <video>, with mode=invalid, delegatesFocus=false. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <wbr>, with mode=invalid, delegatesFocus=false. Should be disallowed.
-FAIL Declarative Shadow DOM as a child of <article>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <aside>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <blockquote>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <div>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <footer>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h1>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h2>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h3>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h4>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h5>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h6>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <header>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <main>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <nav>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <p>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <section>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <span>, with mode=open, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
+PASS Declarative Shadow DOM as a child of <article>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <aside>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <blockquote>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <div>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <footer>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h1>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h2>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h3>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h4>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h5>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h6>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <header>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <main>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <nav>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <p>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <section>, with mode=open, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <span>, with mode=open, delegatesFocus=true. Should be safelisted.
 PASS Declarative Shadow DOM as a child of <a>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <abbr>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <address>, with mode=open, delegatesFocus=true. Should be disallowed.
@@ -431,23 +431,23 @@ PASS Declarative Shadow DOM as a child of <ul>, with mode=open, delegatesFocus=t
 PASS Declarative Shadow DOM as a child of <var>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <video>, with mode=open, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <wbr>, with mode=open, delegatesFocus=true. Should be disallowed.
-FAIL Declarative Shadow DOM as a child of <article>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <aside>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <blockquote>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <div>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <footer>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h1>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h2>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h3>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h4>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h5>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <h6>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <header>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <main>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <nav>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <p>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <section>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
-FAIL Declarative Shadow DOM as a child of <span>, with mode=closed, delegatesFocus=true. Should be safelisted. assert_true: expected true got false
+PASS Declarative Shadow DOM as a child of <article>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <aside>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <blockquote>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <div>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <footer>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h1>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h2>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h3>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h4>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h5>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <h6>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <header>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <main>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <nav>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <p>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <section>, with mode=closed, delegatesFocus=true. Should be safelisted.
+PASS Declarative Shadow DOM as a child of <span>, with mode=closed, delegatesFocus=true. Should be safelisted.
 PASS Declarative Shadow DOM as a child of <a>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <abbr>, with mode=closed, delegatesFocus=true. Should be disallowed.
 PASS Declarative Shadow DOM as a child of <address>, with mode=closed, delegatesFocus=true. Should be disallowed.

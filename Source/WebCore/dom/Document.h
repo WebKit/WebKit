@@ -37,6 +37,7 @@
 #include "DocumentEventTiming.h"
 #include "FocusOptions.h"
 #include "FontSelectorClient.h"
+#include "FragmentScriptingPermission.h"
 #include "FrameDestructionObserver.h"
 #include "FrameIdentifier.h"
 #include "FrameLoaderTypes.h"
@@ -891,6 +892,9 @@ public:
 
     Document& contextDocument() const;
     void setContextDocument(Document& document) { m_contextDocument = document; }
+    
+    OptionSet<ParserContentPolicy> parserContentPolicy() const { return m_parserContentPolicy; }
+    void setParserContentPolicy(OptionSet<ParserContentPolicy> policy) { m_parserContentPolicy = policy; }
 
     // Helper functions for forwarding DOMWindow event related tasks to the DOMWindow if it exists.
     void setWindowAttributeEventListener(const AtomString& eventType, const QualifiedName& attributeName, const AtomString& value, DOMWrapperWorld&);
@@ -1842,6 +1846,7 @@ private:
 
     RefPtr<DOMWindow> m_domWindow;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_contextDocument;
+    OptionSet<ParserContentPolicy> m_parserContentPolicy;
 
     Ref<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;

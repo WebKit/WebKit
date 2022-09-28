@@ -1,7 +1,7 @@
 
 
 
-FAIL Non-fragment parsing needs no opt-in assert_true: Shadow root NOT FOUND. expected true got false
+PASS Non-fragment parsing needs no opt-in
 PASS innerHTML on a <a>
 PASS innerHTML on a <abbr>
 PASS innerHTML on a <address>
@@ -106,17 +106,17 @@ PASS innerHTML on a <wbr>
 PASS innerHTML on template
 PASS innerHTML on template, with nested template content
 PASS innerHTML on shadowRoot
-FAIL DOMParser assert_true: Shadow root NOT FOUND. expected true got false
+PASS DOMParser
 PASS createHTMLDocument with innerHTML - not supported
 PASS createContextualFragment - not supported
 PASS XMLHttpRequest - not supported
 PASS insertAdjacentHTML on element - not supported
-FAIL document.write allowed from synchronous script loaded from main document assert_true: Shadow root NOT FOUND. expected true got false
+PASS document.write allowed from synchronous script loaded from main document
 PASS document.write disallowed on fresh document
-FAIL iframe assert_true: Shadow root NOT FOUND. expected true got false
-FAIL iframe, no sandbox assert_true: Shadow root NOT FOUND. expected true got false
-FAIL sandboxed iframe allows declarative Shadow DOM assert_true: expected true got false
-FAIL iframe with no sandbox allows declarative Shadow DOM assert_true: expected true got false
+PASS iframe
+PASS iframe, no sandbox
+PASS sandboxed iframe allows declarative Shadow DOM
+PASS iframe with no sandbox allows declarative Shadow DOM
 
 
 
