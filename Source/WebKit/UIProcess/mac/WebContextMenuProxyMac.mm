@@ -420,8 +420,18 @@ void WebContextMenuProxyMac::getShareMenuItem(CompletionHandler<void(NSMenuItem 
     }
 
     if (hitTestData.imageSharedMemory) {
-        if (auto image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSharedMemory->size()]]))
+        if (auto image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSharedMemory->size()]])) {
+#if HAVE(NSPREVIEWREPRESENTINGACTIVITYITEM)
+            NSString *title = hitTestData.imageText;
+            if (!title.length)
+                title = WEB_UI_NSSTRING(@"Image", "Fallback title for images in the share sheet");
+
+            auto activityItem = adoptNS([[NSPreviewRepresentingActivityItem alloc] initWithItem:image.get() title:title image:image.get() icon:nil]);
+            [items addObject:activityItem.get()];
+#else
             [items addObject:image.get()];
+#endif
+        }
     }
 
     if (!m_context.selectedText().isEmpty())
