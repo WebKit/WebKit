@@ -553,6 +553,9 @@
 /* Ignore Spelling context menu item */
 "Ignore Spelling" = "Ignore Spelling";
 
+/* Fallback title for images in the share sheet */
+"Image" = "Image";
+
 /* Undo action name */
 "Indent (Undo action name)" = "Indent";
 
