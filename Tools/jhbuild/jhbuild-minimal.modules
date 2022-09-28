@@ -95,9 +95,9 @@
 
   <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --enable-weak-threads">
     <pkg-config>icu-i18n.pc</pkg-config>
-    <branch module="unicode-org/icu/releases/download/release-61-2/icu4c-61_2-src.tgz" version="61.2" checkoutdir="icu"
+    <branch module="unicode-org/icu/releases/download/release-63-1/icu4c-63_1-src.tgz" version="63.1" checkoutdir="icu"
             repo="github-tarball"
-            hash="sha256:cb6a8f8e29f03554f868f81ae70d3d5686136604304073be6bde8e75d8207855">
+            hash="sha256:05c490b69454fce5860b7e8e2821231674af0a11d7ef2febea9a32512998cb9d">
       <patch file="icudata-stdlibs.patch" strip="1"/>
     </branch>
   </autotools>
