@@ -6036,7 +6036,7 @@ imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-pol
 imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html [ Skip ]
 
 # Disable ShadowRealm (while running to ensure we do not crash)
-webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Pass Failure Timeout ]
+webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Skip ]
 inspector/shadow-realm-console.html [ Pass Failure ]
 imported/w3c/web-platform-tests/compression/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/dom/idlharness-shadowrealm.window.html [ Pass Failure ]
