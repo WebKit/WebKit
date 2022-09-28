@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1C023D3F27449070001DB734 /* WGSLLexerTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C023D3E27449070001DB734 /* WGSLLexerTests.mm */; };
-		1C023D4027449070001DB734 /* libwgsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CEBD7F22716B2CC00A5254D /* libwgsl.a */; };
-		1C023D4B274495B9001DB734 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C023D4A274495B9001DB734 /* JavaScriptCore.framework */; };
 		1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0F41EC280940650005886D /* HardwareCapabilities.mm */; };
 		1C0F41EF280940650005886D /* HardwareCapabilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C0F41ED280940650005886D /* HardwareCapabilities.h */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
@@ -56,7 +53,6 @@
 		338BB2D627B6B68700E066AB /* Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 338BB2D527B6B68700E066AB /* Lexer.cpp */; };
 		339B7B1827D7FFA40072BF9A /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B7B1727D7FFA40072BF9A /* Parser.h */; };
 		339B7B1B27D800090072BF9A /* Parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 339B7B1A27D800090072BF9A /* Parser.cpp */; };
-		339B7B1D27D80A1C0072BF9A /* WGSLParserTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */; };
 		339B7B1E27D816270072BF9A /* CompilationMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33EA186727BC1B1400A1DD52 /* CompilationMessage.cpp */; };
 		33EA185E27BC194F00A1DD52 /* ASTNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185D27BC194F00A1DD52 /* ASTNode.h */; };
 		33EA186027BC198100A1DD52 /* GlobalDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = 33EA185F27BC198100A1DD52 /* GlobalDirective.h */; };
@@ -81,20 +77,12 @@
 		3A7E164C28C57BB8003F49C9 /* ArrayAccess.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */; };
 		3AAE4EB428C56E9A00DA484B /* UnaryExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */; };
 		3AE27DB528C1BA480043A8E0 /* VariableStatement.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE27DB428C1BA480043A8E0 /* VariableStatement.h */; };
-		6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6634666A285F0140002ABE8E /* ConstLiteralTests.mm */; };
 		664C92FD286A66090008D143 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 664C92FC286A66090008D143 /* IOSurface.framework */; };
 		66DC575528627E0B0014CABD /* ParserPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 66DC575428627E0B0014CABD /* ParserPrivate.h */; };
 		DD05A35C27BF09C60096EFAB /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1CEBD8292716CAE700A5254D /* libWTF.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1C023D4127449070001DB734 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1CEBD7F12716B2CC00A5254D;
-			remoteInfo = WGSL;
-		};
 		1C5319C727BDC72700CD127E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
@@ -135,9 +123,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1C023D3C27449070001DB734 /* WGSLUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WGSLUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1C023D3E27449070001DB734 /* WGSLLexerTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WGSLLexerTests.mm; sourceTree = "<group>"; };
-		1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WGSLUnitTests.xcconfig; sourceTree = "<group>"; };
 		1C023D4A274495B9001DB734 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C0F41EC280940650005886D /* HardwareCapabilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = HardwareCapabilities.mm; sourceTree = "<group>"; };
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
@@ -313,7 +298,6 @@
 		338BB2D527B6B68700E066AB /* Lexer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Lexer.cpp; sourceTree = "<group>"; };
 		339B7B1727D7FFA40072BF9A /* Parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Parser.h; sourceTree = "<group>"; };
 		339B7B1A27D800090072BF9A /* Parser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Parser.cpp; sourceTree = "<group>"; };
-		339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WGSLParserTests.mm; sourceTree = "<group>"; };
 		33EA185D27BC194F00A1DD52 /* ASTNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ASTNode.h; path = WGSL/ASTNode.h; sourceTree = SOURCE_ROOT; };
 		33EA185F27BC198100A1DD52 /* GlobalDirective.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GlobalDirective.h; sourceTree = "<group>"; };
 		33EA186127BC19C100A1DD52 /* Decl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Decl.h; sourceTree = "<group>"; };
@@ -338,21 +322,11 @@
 		3A7E164B28C57BB7003F49C9 /* ArrayAccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayAccess.h; sourceTree = "<group>"; };
 		3AAE4EB328C56E9A00DA484B /* UnaryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnaryExpression.h; sourceTree = "<group>"; };
 		3AE27DB428C1BA480043A8E0 /* VariableStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableStatement.h; sourceTree = "<group>"; };
-		6634666A285F0140002ABE8E /* ConstLiteralTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConstLiteralTests.mm; sourceTree = "<group>"; };
 		664C92FC286A66090008D143 /* IOSurface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOSurface.framework; path = System/Library/Frameworks/IOSurface.framework; sourceTree = SDKROOT; };
 		66DC575428627E0B0014CABD /* ParserPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserPrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1C023D3927449070001DB734 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				1C023D4B274495B9001DB734 /* JavaScriptCore.framework in Frameworks */,
-				1C023D4027449070001DB734 /* libwgsl.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1C5319BA27BDC6CB00CD127E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -382,16 +356,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1C023D3D27449070001DB734 /* WGSLUnitTests */ = {
-			isa = PBXGroup;
-			children = (
-				6664847F28596A3E008FB60E /* Parser */,
-				1C023D3E27449070001DB734 /* WGSLLexerTests.mm */,
-				339B7B1C27D80A1C0072BF9A /* WGSLParserTests.mm */,
-			);
-			path = WGSLUnitTests;
-			sourceTree = "<group>";
-		};
 		1C5319BE27BDC6CB00CD127E /* CommandLinePlayground */ = {
 			isa = PBXGroup;
 			children = (
@@ -560,7 +524,6 @@
 				1CEBD7F92716B38600A5254D /* Configurations */,
 				1CEBD7F62716B33100A5254D /* WGSL */,
 				1CEBD7E52716AFBA00A5254D /* WebGPU */,
-				1C023D3D27449070001DB734 /* WGSLUnitTests */,
 				1C5319BE27BDC6CB00CD127E /* CommandLinePlayground */,
 				1CEBD7E42716AFBA00A5254D /* Products */,
 				1CEBD8252716CACC00A5254D /* Frameworks */,
@@ -573,7 +536,6 @@
 				1C5319BD27BDC6CB00CD127E /* CommandLinePlayground */,
 				1CEBD7F22716B2CC00A5254D /* libwgsl.a */,
 				1CEBD7E32716AFBA00A5254D /* WebGPU.framework */,
-				1C023D3C27449070001DB734 /* WGSLUnitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -674,7 +636,6 @@
 				1CEBD7FB2716B5B400A5254D /* DebugRelease.xcconfig */,
 				1CEBD7FC2716B64400A5254D /* WebGPU.xcconfig */,
 				1CEBD7FD2716B64F00A5254D /* WGSL.xcconfig */,
-				1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -739,14 +700,6 @@
 			path = Expressions;
 			sourceTree = "<group>";
 		};
-		6664847F28596A3E008FB60E /* Parser */ = {
-			isa = PBXGroup;
-			children = (
-				6634666A285F0140002ABE8E /* ConstLiteralTests.mm */,
-			);
-			path = Parser;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -792,7 +745,6 @@
 				33EA187427BC204900A1DD52 /* StructureDecl.h in Headers */,
 				338BB2CE27B6B60200E066AB /* Token.h in Headers */,
 				33EA186E27BC1D4C00A1DD52 /* TypeDecl.h in Headers */,
-				3AAE4EB228C494D500DA484B /* UnaryExpression.h in Headers */,
 				3AAE4EB428C56E9A00DA484B /* UnaryExpression.h in Headers */,
 				33EA186427BC1A1D00A1DD52 /* VariableDecl.h in Headers */,
 				33EA187227BC1FE100A1DD52 /* VariableQualifier.h in Headers */,
@@ -804,24 +756,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		1C023D3B27449070001DB734 /* WGSLUnitTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1C023D4627449070001DB734 /* Build configuration list for PBXNativeTarget "WGSLUnitTests" */;
-			buildPhases = (
-				1C023D3827449070001DB734 /* Sources */,
-				1C023D3927449070001DB734 /* Frameworks */,
-				1C023D3A27449070001DB734 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				1C023D4227449070001DB734 /* PBXTargetDependency */,
-			);
-			name = WGSLUnitTests;
-			productName = WGSLUnitTests;
-			productReference = 1C023D3C27449070001DB734 /* WGSLUnitTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		1C5319BC27BDC6CB00CD127E /* CommandLinePlayground */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1C5319C427BDC6CC00CD127E /* Build configuration list for PBXNativeTarget "CommandLinePlayground" */;
@@ -889,9 +823,6 @@
 				LastSwiftUpdateCheck = 1400;
 				LastUpgradeCheck = 1330;
 				TargetAttributes = {
-					1C023D3B27449070001DB734 = {
-						CreatedOnToolsVersion = 13.3;
-					};
 					1C5319BC27BDC6CB00CD127E = {
 						CreatedOnToolsVersion = 14.0;
 						LastSwiftMigration = 1330;
@@ -919,20 +850,12 @@
 			targets = (
 				1CEBD7E22716AFBA00A5254D /* WebGPU */,
 				1CEBD7F12716B2CC00A5254D /* WGSL */,
-				1C023D3B27449070001DB734 /* WGSLUnitTests */,
 				1C5319BC27BDC6CB00CD127E /* CommandLinePlayground */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1C023D3A27449070001DB734 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1CEBD7E12716AFBA00A5254D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1002,16 +925,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1C023D3827449070001DB734 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6634666B285F0140002ABE8E /* ConstLiteralTests.mm in Sources */,
-				1C023D3F27449070001DB734 /* WGSLLexerTests.mm in Sources */,
-				339B7B1D27D80A1C0072BF9A /* WGSLParserTests.mm in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1C5319B927BDC6CB00CD127E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1067,11 +980,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1C023D4227449070001DB734 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1CEBD7F12716B2CC00A5254D /* WGSL */;
-			targetProxy = 1C023D4127449070001DB734 /* PBXContainerItemProxy */;
-		};
 		1C5319C827BDC72700CD127E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1CEBD7E22716AFBA00A5254D /* WebGPU */;
@@ -1085,27 +993,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1C023D4327449070001DB734 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */;
-			buildSettings = {
-			};
-			name = Debug;
-		};
-		1C023D4427449070001DB734 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
-		1C023D4527449070001DB734 /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1C023D472744916D001DB734 /* WGSLUnitTests.xcconfig */;
-			buildSettings = {
-			};
-			name = Production;
-		};
 		1C5319C127BDC6CC00CD127E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C5319CA27BDD70000CD127E /* CommandLinePlayground.xcconfig */;
@@ -1215,16 +1102,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1C023D4627449070001DB734 /* Build configuration list for PBXNativeTarget "WGSLUnitTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				1C023D4327449070001DB734 /* Debug */,
-				1C023D4427449070001DB734 /* Release */,
-				1C023D4527449070001DB734 /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
 		1C5319C427BDC6CC00CD127E /* Build configuration list for PBXNativeTarget "CommandLinePlayground" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

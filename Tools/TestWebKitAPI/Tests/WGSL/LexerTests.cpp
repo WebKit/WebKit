@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Lexer.h"
 
-namespace TestWebKitAPI {
+namespace TestWGSLAPI {
 
 static WGSL::Token checkSingleToken(const String& string, WGSL::TokenType type)
 {

@@ -85,7 +85,7 @@ static void logCompilationError(WGSL::CompilationMessage& error)
     GTEST_FAIL();
 }
 
-namespace TestWebKitAPI {
+namespace TestWGSLAPI {
 
 TEST(WGSLParserTests, Struct)
 {
