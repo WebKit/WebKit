@@ -52,10 +52,10 @@ class Environment(object):
                 self._mapping[key] = fl.read().rstrip('\n')
         return self
 
-    def get(self, key):
+    def get(self, key, value=None):
         if key in os.environ:
-            return os.environ[key]
-        return self._mapping.get(key)
+            return os.environ.get(key, value)
+        return self._mapping.get(key, value)
 
     def secure(self, *extra_paths):
         '''Delete unused environment files in self.path along with the provided extra paths'''
