@@ -45,7 +45,7 @@ StyleFillData::StyleFillData()
     , paintUri(SVGRenderStyle::initialFillPaintUri())
     , visitedLinkPaintUri(SVGRenderStyle::initialFillPaintUri())
     , paintType(SVGRenderStyle::initialFillPaintType())
-    , visitedLinkPaintType(SVGRenderStyle::initialFillPaintType())
+    , visitedLinkPaintType(SVGRenderStyle::initialStrokePaintType())
 {
 }
 
