@@ -623,6 +623,8 @@ public:
     WEBCORE_EXPORT SpeechSynthesis& speechSynthesis();
 #endif
 
+    bool hasSource() const { return hasCurrentSrc() || srcObject(); }
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
