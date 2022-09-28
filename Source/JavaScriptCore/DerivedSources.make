@@ -221,6 +221,8 @@ OBJECT_LUT_HEADERS = \
     TemporalPlainTimePrototype.lut.h \
     TemporalTimeZoneConstructor.lut.h \
     TemporalTimeZonePrototype.lut.h \
+    WebAssemblyArrayConstructor.lut.h \
+    WebAssemblyArrayPrototype.lut.h \
     WebAssemblyCompileErrorConstructor.lut.h \
     WebAssemblyCompileErrorPrototype.lut.h \
     WebAssemblyExceptionConstructor.lut.h \

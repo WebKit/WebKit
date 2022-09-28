@@ -174,6 +174,7 @@ constexpr bool typeExposedByDefault = true;
 
 #if ENABLE(WEBASSEMBLY)
 #define FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(macro) \
+    macro(WebAssemblyArray,        webAssemblyArray,        webAssemblyArray,        JSWebAssemblyArray,        Array,        object, Options::useWebAssemblyGC()) \
     macro(WebAssemblyCompileError, webAssemblyCompileError, webAssemblyCompileError, ErrorInstance,             CompileError, error,  typeExposedByDefault) \
     macro(WebAssemblyException,    webAssemblyException,    webAssemblyException,    JSWebAssemblyException,    Exception,    object, typeExposedByDefault) \
     macro(WebAssemblyGlobal,       webAssemblyGlobal,       webAssemblyGlobal,       JSWebAssemblyGlobal,       Global,       object, typeExposedByDefault) \

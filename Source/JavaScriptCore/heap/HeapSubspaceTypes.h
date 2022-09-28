@@ -88,6 +88,7 @@
 #include "JSTemplateObjectDescriptor.h"
 #include "JSToWasmICCallee.h"
 #include "JSTypedArrays.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyGlobal.h"
 #include "JSWebAssemblyInstance.h"
