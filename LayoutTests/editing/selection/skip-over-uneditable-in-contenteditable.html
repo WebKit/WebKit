@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div contentEditable>
+<p id="before">Before</p>
+<p id="middle" contentEditable="false">Middle</p>
+<p id="after">After</p>
+</div>
+<div id="console"></div>
+<script>
+description("Ensure that extending a selection inside a contentEditable skips past an uneditable region.");
+var before = document.getElementById("before");
+var after = document.getElementById("after");
+var sel = window.getSelection();
+sel.setBaseAndExtent(before, 0, before, 6);
+sel.modify("extend", "forward", "character");
+shouldBe("sel.focusNode", "after");
+sel.setBaseAndExtent(after, 5, after, 0);
+sel.modify("extend", "backward", "character");
+shouldBe("sel.focusNode.parentElement", "before");
+sel.setBaseAndExtent(before, 0, before, 6);
+sel.modify("extend", "forward", "word");
+shouldBe("sel.focusNode", "after");
+sel.setBaseAndExtent(after, 5, after, 0);
+sel.modify("extend", "backward", "word");
+shouldBe("sel.focusNode.parentElement", "before");
+sel.setBaseAndExtent(before, 0, before, 6);
+sel.modify("extend", "forward", "line");
+shouldBe("sel.focusNode.parentElement", "after");
+sel.setBaseAndExtent(after, 5, after, 0);
+sel.modify("extend", "backward", "line");
+shouldBe("sel.focusNode.parentElement", "before");
+</script>
+</body>
+</html>

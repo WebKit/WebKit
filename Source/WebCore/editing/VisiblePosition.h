@@ -57,6 +57,8 @@ public:
 
     VisiblePosition honorEditingBoundaryAtOrBefore(const VisiblePosition&, bool* reachedBoundary = nullptr) const;
     VisiblePosition honorEditingBoundaryAtOrAfter(const VisiblePosition&, bool* reachedBoundary = nullptr) const;
+    VisiblePosition skipToStartOfEditingBoundary(const VisiblePosition&) const;
+    VisiblePosition skipToEndOfEditingBoundary(const VisiblePosition&) const;
 
     WEBCORE_EXPORT VisiblePosition left(bool stayInEditableContent = false, bool* reachedBoundary = nullptr) const;
     WEBCORE_EXPORT VisiblePosition right(bool stayInEditableContent = false, bool* reachedBoundary = nullptr) const;

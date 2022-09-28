@@ -1,0 +1,19 @@
+Before the contenteditable
+
+After the contenteditable
+
+Ensure that extending a selection skips past a contentEditable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS sel.focusNode is after
+PASS sel.focusNode.parentElement is before
+PASS sel.focusNode.parentElement is after
+PASS sel.focusNode.parentElement is before
+PASS sel.focusNode.parentElement is after
+PASS sel.focusNode.parentElement is before
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
