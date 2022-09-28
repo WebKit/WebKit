@@ -106,10 +106,10 @@ rgb(255, 55, 95)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=fa
 rgb(255, 55, 95)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
 
 -apple-system-placeholder-text
-rgba(60, 60, 67, 0.298) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
-rgba(60, 60, 67, 0.298) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
-rgba(235, 235, 245, 0.298)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
-rgba(235, 235, 245, 0.298)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+rgba(60, 60, 67, 0.3)   	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.3)   	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(235, 235, 245, 0.3)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(235, 235, 245, 0.3)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
 
 -apple-system-purple
 rgb(175, 82, 222)       	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
@@ -118,10 +118,10 @@ rgb(191, 90, 242)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=fa
 rgb(191, 90, 242)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
 
 -apple-system-quaternary-label
-rgba(60, 60, 67, 0.176) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
-rgba(60, 60, 67, 0.176) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
-rgba(235, 235, 245, 0.157)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
-rgba(235, 235, 245, 0.157)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+rgba(60, 60, 67, 0.18)  	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.18)  	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(235, 235, 245, 0.16)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(235, 235, 245, 0.16)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
 
 -apple-system-red
 rgb(255, 59, 48)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
@@ -178,10 +178,10 @@ rgb(44, 44, 46)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=fa
 rgb(58, 58, 60)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
 
 -apple-system-tertiary-label
-rgba(60, 60, 67, 0.298) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
-rgba(60, 60, 67, 0.298) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
-rgba(235, 235, 245, 0.298)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
-rgba(235, 235, 245, 0.298)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+rgba(60, 60, 67, 0.3)   	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.3)   	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(235, 235, 245, 0.3)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(235, 235, 245, 0.3)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
 
 -apple-system-text-background
 rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
