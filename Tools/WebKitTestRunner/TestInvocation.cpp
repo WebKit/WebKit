@@ -150,17 +150,20 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
 
 void TestInvocation::invoke()
 {
-    TestController::singleton().configureViewForTest(*this);
-
-    WKPageSetAddsVisitedLinks(TestController::singleton().mainWebView()->page(), false);
-
-    m_textOutput.clear();
-
-    TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
-
-    WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::singleton().websiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
-
-    // FIXME: We should clear out visited links here.
+    {
+        Signpost pst("pre-test");
+        TestController::singleton().configureViewForTest(*this);
+        
+        WKPageSetAddsVisitedLinks(TestController::singleton().mainWebView()->page(), false);
+        
+        m_textOutput.clear();
+        
+        TestController::singleton().setShouldLogHistoryClientCallbacks(shouldLogHistoryClientCallbacks());
+        
+        WKHTTPCookieStoreSetHTTPCookieAcceptPolicy(WKWebsiteDataStoreGetHTTPCookieStore(TestController::singleton().websiteDataStore()), kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain, nullptr, nullptr);
+        
+        // FIXME: We should clear out visited links here.
+    }
 
     postPageMessage("BeginTest", createTestSettingsDictionary());
 

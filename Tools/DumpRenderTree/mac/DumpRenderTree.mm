@@ -1068,6 +1068,8 @@ static void runTestingServerLoop()
     char filenameBuffer[2048];
     unsigned testCount = 0;
     while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
+        WTR::Signpost::enabled = false;
+
         char *newLineCharacter = strchr(filenameBuffer, '\n');
         if (newLineCharacter)
             *newLineCharacter = '\0';

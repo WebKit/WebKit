@@ -27,6 +27,7 @@
 
 #include <optional>
 #include <string>
+#include <sys/time.h>
 #include <unordered_map>
 #include <vector>
 
@@ -70,5 +71,17 @@ enum class TestHeaderKeyType : uint8_t {
 };
 TestFeatures featureDefaultsFromTestHeaderForTest(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
 TestFeatures featureDefaultsFromSelfComparisonHeader(const TestCommand&, const std::unordered_map<std::string, TestHeaderKeyType>&);
+
+class Signpost {
+    struct timeval m_start;
+
+public:
+    static bool enabled;
+
+    const char* const name;
+
+    Signpost(const char* const);
+    ~Signpost();
+};
 
 }

@@ -1585,30 +1585,33 @@ void TestController::resetContentExtensions()
 bool TestController::runTest(const char* inputLine)
 {
     AutodrainedPool pool;
-
+    
     WKTextCheckerSetTestingMode(true);
-    
-    auto command = parseInputLine(std::string(inputLine));
+    {
+        Signpost pst("setup");
+        auto command = parseInputLine(std::string(inputLine));
+        
+        m_state = RunningTest;
+        
+        TestOptions options = testOptionsForTest(command);
+        
+        m_currentInvocation = makeUnique<TestInvocation>(adoptWK(createTestURL(command.pathOrURL.c_str())).get(), options);
+        
+        if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
+            m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
+        
+        if (command.forceDumpPixels)
+            m_currentInvocation->setForceDumpPixels(true);
+        
+        if (command.timeout > 0_s)
+            m_currentInvocation->setCustomTimeout(command.timeout);
+        
+        m_currentInvocation->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
+        
+        platformWillRunTest(*m_currentInvocation);
+    }
 
-    m_state = RunningTest;
-    
-    TestOptions options = testOptionsForTest(command);
-
-    m_currentInvocation = makeUnique<TestInvocation>(adoptWK(createTestURL(command.pathOrURL.c_str())).get(), options);
-
-    if (command.shouldDumpPixels || m_shouldDumpPixelsForAllTests)
-        m_currentInvocation->setIsPixelTest(command.expectedPixelHash);
-
-    if (command.forceDumpPixels)
-        m_currentInvocation->setForceDumpPixels(true);
-
-    if (command.timeout > 0_s)
-        m_currentInvocation->setCustomTimeout(command.timeout);
-
-    m_currentInvocation->setDumpJSConsoleLogInStdErr(command.dumpJSConsoleLogInStdErr || options.dumpJSConsoleLogInStdErr());
-
-    platformWillRunTest(*m_currentInvocation);
-
+    Signpost pst("invoke");
     m_currentInvocation->invoke();
     m_currentInvocation = nullptr;
 
@@ -1645,6 +1648,8 @@ void TestController::runTestingServerLoop()
 {
     char filenameBuffer[2048];
     while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
+        Signpost::enabled = false;
+
         char* newLineCharacter = strchr(filenameBuffer, '\n');
         if (newLineCharacter)
             *newLineCharacter = '\0';

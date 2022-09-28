@@ -42,6 +42,7 @@ from webkitpy.layout_tests.models.test_run_results import TestRunResults
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
+from webkitpy.port.driver import PerformanceSignposts
 
 
 _log = logging.getLogger(__name__)
@@ -64,6 +65,8 @@ def setup_shard(port=None, results_directory=None, devices=None, retrying=False)
     log_stack_trace_on_signal('SIGINT', output_file=stack_trace_path)
 
     port.did_spawn_worker(int((TaskPool.Process.name).split('/')[-1]))
+    PerformanceSignposts.signposts['total'] -= time.time()
+
     return Worker.setup(port=port, results_directory=results_directory)
 
 
@@ -82,7 +85,11 @@ def handle_finished_test(worker, result):
 
 
 def teardown_shard():
-    return Worker.teardown()
+    try:
+        return Worker.teardown()
+    finally:
+        PerformanceSignposts.signposts['total'] += time.time()
+        TaskPool.Process.queue.send(PerformanceSignposts())
 
 
 class TestRunInterruptedException(Exception):
@@ -177,6 +184,16 @@ class LayoutTestRunner(object):
                         callback=lambda value: self._annotate_results_with_additional_failures(value),
                     )
                 pool.wait()
+
+            if self._options.signposts:
+                print('-' * 10)
+                total = int(PerformanceSignposts.signposts['total'])
+                print('Total worker runtime: {} minutes {}{} seconds'.format(int(total / 60), '0' if total % 60 < 10 else '', total % 60))
+                for key, value in PerformanceSignposts.signposts.items():
+                    if key in ('total',):
+                        continue
+                    print('    {}: {}%'.format(key, int(100 * int(value) / PerformanceSignposts.signposts['total'])))
+                print('-' * 10)
 
         except TestRunInterruptedException as e:
             _log.warning(e.reason)

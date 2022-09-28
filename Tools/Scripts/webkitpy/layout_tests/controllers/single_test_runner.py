@@ -108,7 +108,11 @@ class SingleTestRunner(object):
         image_hash = None
         if self._should_fetch_expected_checksum():
             image_hash = self._port.expected_checksum(self._test_name, device_type=self._driver.host.device_type)
-        return DriverInput(self._test_name, self._timeout, image_hash, self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr)
+        return DriverInput(
+            self._test_name, self._timeout, image_hash,
+            self._should_run_pixel_test, self._should_dump_jsconsolelog_in_stderr,
+            signposts=self._options.signposts,
+        )
 
     def run(self):
         self_comparison_header = self._port.get_option('self_compare_with_header')
@@ -355,7 +359,7 @@ class SingleTestRunner(object):
         for expectation, reference_filename in putAllMismatchBeforeMatch(self._reference_files):
             reference_test_name = self._port.relative_test_filename(reference_filename)
             reference_test_names.append(reference_test_name)
-            reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, None, should_run_pixel_test=True), self._stop_when_done)
+            reference_output = self._driver.run_test(DriverInput(reference_test_name, self._timeout, None, should_run_pixel_test=True, signposts=self._options.signposts), self._stop_when_done)
             test_result = self._compare_output_with_reference(reference_output, test_output, reference_filename, expectation == '!=')
 
             if (expectation == '!=' and test_result.failures) or (expectation == '==' and not test_result.failures):

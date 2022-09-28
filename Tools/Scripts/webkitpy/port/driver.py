@@ -36,7 +36,7 @@ import time
 import os
 
 from collections import defaultdict
-from webkitcorepy import string_utils
+from webkitcorepy import string_utils, TaskPool
 
 from webkitpy.common.system import path
 from webkitpy.common.system.profiler import ProfilerFactory
@@ -45,8 +45,31 @@ from webkitpy.common.system.profiler import ProfilerFactory
 _log = logging.getLogger(__name__)
 
 
+class PerformanceSignposts(TaskPool.Message):
+    signposts = dict(total=0)
+
+    class Measure(object):
+        def __init__(self, name):
+            self.name = name
+            self.start = time.time()
+
+        def __enter__(self):
+            self.start = time.time()
+
+        def __exit__(self, *args, **kwargs):
+            PerformanceSignposts.signposts[self.name] = PerformanceSignposts.signposts.get(self.name, 0) + time.time() - self.start
+
+    def __init__(self):
+        super(PerformanceSignposts, self).__init__()
+        self.data = self.signposts
+
+    def __call__(self, caller):
+        for key, value in self.data.items():
+            self.signposts[key] = self.signposts.get(key, 0) + value
+
+
 class DriverInput(object):
-    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, args=None, self_comparison_header=None, force_dump_pixels=False):
+    def __init__(self, test_name, timeout, image_hash, should_run_pixel_test, should_dump_jsconsolelog_in_stderr=None, args=None, self_comparison_header=None, force_dump_pixels=False, signposts=False):
         self.test_name = test_name
         self.timeout = timeout  # in ms
         self.image_hash = image_hash
@@ -55,6 +78,7 @@ class DriverInput(object):
         self.args = args or []
         self.self_comparison_header = self_comparison_header
         self.force_dump_pixels = force_dump_pixels
+        self.signposts = signposts
 
     def __repr__(self):
         return "DriverInput(test_name='{}', timeout={}, image_hash={}, should_run_pixel_test={}, should_dump_jsconsolelog_in_stderr={}, self_comparison_header={}, force_dump_pixels={}'".format(self.test_name, self.timeout, self.image_hash, self.should_run_pixel_test, self.should_dump_jsconsolelog_in_stderr, self.self_comparison_header, self.force_dump_pixels)
@@ -146,6 +170,12 @@ class DriverPostTestOutput(object):
 
 class Driver(object):
     """object for running test(s) using DumpRenderTree/WebKitTestRunner."""
+
+    HTTP_DIR = "http/tests/"
+    HTTP_LOCAL_DIR = "http/tests/local/"
+    WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR = "http/wpt/"
+    WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = "WebKit/"
+    SIGNPOST_RE = re.compile(br'^SIGNPOST (?P<name>\S+) (?P<time>\d+\.\d+)$')
 
     def __init__(self, port, worker_number, pixel_tests, no_timeout=False):
         """Initialize a Driver to subsequently run tests.
@@ -335,11 +365,6 @@ class Driver(object):
         if self._port.get_option('wrapper'):
             return shlex.split(self._port.get_option('wrapper')) + wrapper_arguments
         return wrapper_arguments
-
-    HTTP_DIR = "http/tests/"
-    HTTP_LOCAL_DIR = "http/tests/local/"
-    WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR = "http/wpt/"
-    WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = "WebKit/"
 
     def is_http_test(self, test_name):
         return test_name.startswith(self.HTTP_DIR) and not test_name.startswith(self.HTTP_LOCAL_DIR)
@@ -626,6 +651,17 @@ class Driver(object):
             return True
         return self.has_crashed()
 
+    @classmethod
+    def _extract_signpost(cls, error_line):
+
+        match = cls.SIGNPOST_RE.match(error_line)
+        if not match:
+            return False
+        name = string_utils.decode(match.group('name'), target_type=str)
+        tm = float(match.group('time'))
+        PerformanceSignposts.signposts[name] = PerformanceSignposts.signposts.get(name, 0) + tm
+        return True
+
     def _command_from_driver_input(self, driver_input):
         # FIXME: performance tests pass in full URLs instead of test names.
         if driver_input.test_name.startswith('http://') or driver_input.test_name.startswith('https://')  or driver_input.test_name == ('about:blank'):
@@ -653,6 +689,8 @@ class Driver(object):
             command += "'--self-compare-with-header'%s" % driver_input.self_comparison_header
         if driver_input.force_dump_pixels:
             command += "'--force-dump-pixels"
+        if driver_input.signposts:
+            command += "'--signposts'"
 
         # --pixel-test must be the last argument, because the hash is optional,
         # and any argument put in its place will be incorrectly consumed as the hash.
@@ -767,7 +805,7 @@ class Driver(object):
                     deadline += 10 * 60 * 1000
                 if asan_violation_detected:
                     self._crash_report_from_driver += string_utils.decode(err_line, target_type=str)
-                else:
+                elif not self._extract_signpost(err_line):
                     self.error_from_test += string_utils.decode(err_line, target_type=str)
 
         if asan_violation_detected and not self._crashed_process_name:
