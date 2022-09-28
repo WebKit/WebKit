@@ -180,14 +180,14 @@ public:
     {
     }
     
-    static constexpr JSValueRegs withTwoAvailableRegs(GPRReg gpr1, GPRReg gpr2)
+    static constexpr JSValueRegs withTwoAvailableRegs(GPRReg tagGPR, GPRReg payloadGPR)
     {
-        return JSValueRegs(gpr1, gpr2);
+        return JSValueRegs(tagGPR, payloadGPR);
     }
     
-    static constexpr JSValueRegs payloadOnly(GPRReg gpr)
+    static constexpr JSValueRegs payloadOnly(GPRReg payloadGPR)
     {
-        return JSValueRegs(InvalidGPRReg, gpr);
+        return JSValueRegs(InvalidGPRReg, payloadGPR);
     }
     
     bool operator!() const { return !static_cast<bool>(*this); }

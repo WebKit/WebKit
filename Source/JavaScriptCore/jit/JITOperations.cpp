@@ -958,7 +958,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdDefinePrivateFieldStrictOptimize, void,
     
     definePrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [=](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
         JSObject* baseObject = asObject(baseValue);
-        LOG_IC((ICEvent::OperationPutByIdDefinePrivateFieldFieldStrictOptimize, baseObject->classInfo(), ident, putSlot.base() == baseObject));
+        LOG_IC((ICEvent::OperationPutByIdDefinePrivateFieldStrictOptimize, baseObject->classInfo(), ident, putSlot.base() == baseObject));
 
         ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(stubInfo->accessType));
 
@@ -994,7 +994,7 @@ JSC_DEFINE_JIT_OPERATION(operationPutByIdSetPrivateFieldStrictOptimize, void, (J
 
     setPrivateField(vm, globalObject, callFrame, baseValue, identifier, value, [&](VM& vm, CodeBlock* codeBlock, Structure* oldStructure, PutPropertySlot& putSlot, const Identifier& ident) {
         JSObject* baseObject = asObject(baseValue);
-        LOG_IC((ICEvent::OperationPutByIdPutPrivateFieldFieldStrictOptimize, baseObject->classInfo(), ident, putSlot.base() == baseObject));
+        LOG_IC((ICEvent::OperationPutByIdSetPrivateFieldStrictOptimize, baseObject->classInfo(), ident, putSlot.base() == baseObject));
 
         ASSERT_UNUSED(accessType, accessType == static_cast<AccessType>(stubInfo->accessType));
 
@@ -2645,7 +2645,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetPrivateNameByIdOptimize, EncodedJSValue, (J
         base->getPrivateField(globalObject, fieldName, slot);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-        LOG_IC((ICEvent::OperationGetPrivateNameOptimize, baseValue.classInfoOrNull(), fieldName, true));
+        LOG_IC((ICEvent::OperationGetPrivateNameByIdOptimize, baseValue.classInfoOrNull(), fieldName, true));
 
         CodeBlock* codeBlock = callFrame->codeBlock();
         if (stubInfo->considerCachingBy(vm, codeBlock, baseValue.structureOrNull(), identifier))
