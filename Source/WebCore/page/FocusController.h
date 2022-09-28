@@ -82,7 +82,7 @@ public:
     WEBCORE_EXPORT bool relinquishFocusToChrome(FocusDirection);
 
 private:
-    void setActiveInternal(bool);
+    virtual void setActiveInternal(bool) override;
     void setFocusedInternal(bool);
     void setIsVisibleAndActiveInternal(bool);
 

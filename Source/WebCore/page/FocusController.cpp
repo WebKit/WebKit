@@ -922,7 +922,7 @@ void FocusController::setActive(bool active)
     m_page.setActivityState(active ? m_activityState | ActivityState::WindowIsActive : m_activityState - ActivityState::WindowIsActive);
 }
 
-void FocusController::setActiveInternal(bool active)
+void FocusController::setActiveInternal()
 {
     if (FrameView* view = m_page.mainFrame().view()) {
         if (!view->platformWidget()) {
@@ -932,9 +932,6 @@ void FocusController::setActiveInternal(bool active)
     }
 
     focusedOrMainFrame().selection().pageActivationChanged();
-    
-    if (m_focusedFrame && isFocused())
-        dispatchEventsOnWindowAndFocusedElement(m_focusedFrame->document(), active);
 }
 
 static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didShow)
