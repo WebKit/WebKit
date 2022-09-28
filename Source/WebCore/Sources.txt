@@ -392,6 +392,7 @@ Modules/webauthn/fido/FidoParsingUtils.cpp
 Modules/webauthn/fido/Pin.cpp
 Modules/webauthn/fido/U2fCommandConstructor.cpp
 Modules/webauthn/fido/U2fResponseConverter.cpp
+Modules/webcodecs/WebCodecsEncodedVideoChunk.cpp
 Modules/webdatabase/ChangeVersionWrapper.cpp
 Modules/webdatabase/DOMWindowWebDatabase.cpp
 Modules/webdatabase/Database.cpp
@@ -4111,6 +4112,8 @@ JSWakeLockType.cpp
 JSWaveShaperNode.cpp
 JSWaveShaperOptions.cpp
 JSWebAnimation.cpp
+JSWebCodecsEncodedVideoChunkType.cpp
+JSWebCodecsEncodedVideoChunk.cpp
 JSWebGL2RenderingContext.cpp
 JSWebGLActiveInfo.cpp
 JSWebGLBuffer.cpp

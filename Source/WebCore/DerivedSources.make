@@ -671,11 +671,13 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
-	$(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
-	$(WebCore)/Modules/webcodecs/VideoColorSpace.idl \
-	$(WebCore)/Modules/webcodecs/VideoColorSpaceInit.idl \
-	$(WebCore)/Modules/webcodecs/VideoMatrixCoefficients.idl \
-	$(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
+    $(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
+    $(WebCore)/Modules/webcodecs/VideoColorSpace.idl \
+    $(WebCore)/Modules/webcodecs/VideoColorSpaceInit.idl \
+    $(WebCore)/Modules/webcodecs/VideoMatrixCoefficients.idl \
+    $(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl \
     $(WebCore)/Modules/webdatabase/DOMWindow+WebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \

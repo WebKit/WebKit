@@ -1964,6 +1964,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPictureInPictureWindow.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaneLayout.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaneLayout.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPlaybackDirection.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSPointerEvent.cpp
@@ -2736,6 +2738,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoFrameRequestCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoFrameRequestCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoMatrixCoefficients.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoMatrixCoefficients.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoPixelFormat.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoPixelFormat.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoPlaybackQuality.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoPlaybackQuality.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVideoTrack+MediaSource.cpp
@@ -2768,6 +2772,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWaveShaperOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebAnimation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebAnimation.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunk.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunk.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunkType.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunkType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrame.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrame.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRDevice.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRDevice.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebFakeXRInputController.cpp

@@ -1,4 +1,4 @@
 
-FAIL Test we can construct an EncodedVideoChunk. Can't find variable: EncodedVideoChunk
-FAIL Test copyTo() exception if destiation invalid Can't find variable: EncodedVideoChunk
+PASS Test we can construct an EncodedVideoChunk.
+PASS Test copyTo() exception if destiation invalid
 

@@ -718,6 +718,10 @@
 #define ENABLE_WEB_RTC 1
 #endif
 
+#if !defined(ENABLE_WEB_CODECS) && !PLATFORM(MACCATALYST) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+#define ENABLE_WEB_CODECS 1
+#endif
+
 #if !defined(ENABLE_WEB_CRYPTO)
 #define ENABLE_WEB_CRYPTO 1
 #endif

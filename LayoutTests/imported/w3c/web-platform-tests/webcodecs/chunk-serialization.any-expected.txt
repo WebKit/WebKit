@@ -1,4 +1,4 @@
 
 FAIL Verify EncodedAudioChunk is serializable. Can't find variable: EncodedAudioChunk
-FAIL Verify EncodedVideoChunk is serializable. Can't find variable: EncodedVideoChunk
+FAIL Verify EncodedVideoChunk is serializable. The object can not be cloned.
 

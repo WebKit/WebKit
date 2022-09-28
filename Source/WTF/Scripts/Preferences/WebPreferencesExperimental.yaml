@@ -1838,6 +1838,19 @@ WebAuthenticationEnabled:
     WebCore:
       default: true
 
+WebCodecsEnabled:
+  type: bool
+  humanReadableName: "Web Codecs"
+  humanReadableDescription: "Web Codecs"
+  condition: ENABLE(WEB_CODECS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebGL2Enabled:
   type: bool
   humanReadableName: "WebGL 2.0"
