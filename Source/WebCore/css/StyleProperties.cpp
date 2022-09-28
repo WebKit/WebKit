@@ -280,15 +280,15 @@ String StyleProperties::getPropertyValue(CSSPropertyID propertyID) const
     case CSSPropertyFlexFlow:
         return getShorthandValue(flexFlowShorthand());
     case CSSPropertyGridArea:
-        return getGridShorthandValue(gridAreaShorthand());
+        return getGridAreaShorthandValue();
     case CSSPropertyGridTemplate:
         return getGridTemplateValue();
     case CSSPropertyGrid:
         return getGridValue();
     case CSSPropertyGridColumn:
-        return getGridShorthandValue(gridColumnShorthand());
+        return getGridRowColumnShorthandValue(gridColumnShorthand());
     case CSSPropertyGridRow:
-        return getGridShorthandValue(gridRowShorthand());
+        return getGridRowColumnShorthandValue(gridRowShorthand());
     case CSSPropertyPageBreakAfter:
         return pageBreakPropertyValue(pageBreakAfterShorthand());
     case CSSPropertyPageBreakBefore:
@@ -1002,6 +1002,68 @@ String StyleProperties::getGridValue() const
 String StyleProperties::getGridShorthandValue(const StylePropertyShorthand& shorthand) const
 {
     return getShorthandValue(shorthand, " / ");
+}
+
+static bool isCustomIdentValue(const CSSValue& value)
+{
+    return is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isCustomIdent();
+}
+
+static bool canOmitTrailingGridAreaValue(CSSValue& value, CSSValue& trailing)
+{
+    if (isCustomIdentValue(value))
+        return isCustomIdentValue(trailing) && value.cssText() == trailing.cssText();
+    return isValueID(trailing, CSSValueAuto);
+}
+
+String StyleProperties::getGridRowColumnShorthandValue(const StylePropertyShorthand& shorthand) const
+{
+    auto start = getPropertyCSSValue(shorthand.properties()[0]);
+    auto end = getPropertyCSSValue(shorthand.properties()[1]);
+
+    if (!start || !end)
+        return String();
+
+    StringBuilder result;
+    result.append(start->cssText());
+    if (!canOmitTrailingGridAreaValue(*start, *end)) {
+        result.append(" / ");
+        result.append(end->cssText());
+    }
+
+    return result.toString();
+}
+
+String StyleProperties::getGridAreaShorthandValue() const
+{
+    RefPtr<CSSValue> values[4];
+    values[0] = getPropertyCSSValue(CSSPropertyGridRowStart);
+    values[1] = getPropertyCSSValue(CSSPropertyGridColumnStart);
+    values[2] = getPropertyCSSValue(CSSPropertyGridRowEnd);
+    values[3] = getPropertyCSSValue(CSSPropertyGridColumnEnd);
+
+    if (!values[0] || !values[1] || !values[2] || !values[3])
+        return String();
+
+    StringBuilder result;
+    result.append(values[0]->cssText());
+
+    unsigned trailingValues = 3;
+    if (canOmitTrailingGridAreaValue(*values[1], *values[3])) {
+        trailingValues--;
+        if (canOmitTrailingGridAreaValue(*values[0], *values[2])) {
+            trailingValues--;
+            if (canOmitTrailingGridAreaValue(*values[0], *values[1]))
+                trailingValues--;
+        }
+    }
+
+    for (unsigned i = 1; i <= trailingValues; ++i) {
+        result.append(" / ");
+        result.append(values[i]->cssText());
+    }
+
+    return result.toString();
 }
 
 String StyleProperties::getShorthandValue(const StylePropertyShorthand& shorthand, const char* separator) const
