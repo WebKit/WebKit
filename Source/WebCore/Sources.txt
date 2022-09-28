@@ -1902,6 +1902,7 @@ page/scrolling/ScrollingTreeOverflowScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNode.cpp
 page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp
 page/scrolling/ScrollingTreeStickyNode.cpp
+page/scrolling/ThreadedScrollingCoordinator.cpp
 page/scrolling/ThreadedScrollingTree.cpp
 platform/CommonAtomStrings.cpp
 platform/ContentType.cpp

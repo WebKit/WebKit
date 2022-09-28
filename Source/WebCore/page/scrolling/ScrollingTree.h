@@ -159,16 +159,14 @@ public:
 
     WEBCORE_EXPORT TrackingType eventTrackingTypeForPoint(EventTrackingRegions::EventType, IntPoint);
 
-    virtual WheelEventTestMonitor* wheelEventTestMonitor() { return nullptr; }
+    WheelEventTestMonitor* wheelEventTestMonitor() { return m_wheelEventTestMonitor.get(); }
+    void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& monitor) { m_wheelEventTestMonitor = WTFMove(monitor); }
+    void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason);
+    void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason);
 
 #if PLATFORM(MAC)
     virtual void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) = 0;
     virtual void setActiveScrollSnapIndices(ScrollingNodeID, std::optional<unsigned> /*horizontalIndex*/, std::optional<unsigned> /*verticalIndex*/) { }
-
-    virtual void setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&&) { }
-
-    virtual void deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) { }
-    virtual void removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier, WheelEventTestMonitor::DeferReason) { }
 #else
     void handleWheelEventPhase(ScrollingNodeID, PlatformWheelEventPhase) { }
 #endif
@@ -278,7 +276,7 @@ private:
 
     OptionSet<WheelEventProcessingSteps> computeWheelProcessingSteps(const PlatformWheelEvent&) WTF_REQUIRES_LOCK(m_treeStateLock);
 
-    virtual void receivedWheelEvent(const PlatformWheelEvent&) { }
+    void receivedWheelEvent(const PlatformWheelEvent&);
 
     RefPtr<ScrollingTreeFrameScrollingNode> m_rootNode;
 
@@ -327,6 +325,8 @@ private:
 
     Lock m_lastWheelEventTimeLock;
     MonotonicTime m_lastWheelEventTime WTF_GUARDED_BY_LOCK(m_lastWheelEventTimeLock);
+
+    RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
 
 protected:
     bool m_allowLatching { true };
