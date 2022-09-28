@@ -81,7 +81,7 @@ public:
     void startTestServer()
     {
         // Prepare argv[] for spawning the server process.
-        GUniquePtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKit2Gtk", "InspectorTestServer", nullptr));
+        GUniquePtr<char> testServerPath(g_build_filename(WEBKIT_EXEC_PATH, "TestWebKitAPI", "WebKitGTK", "InspectorTestServer", nullptr));
 
         int eventFD = eventfd(0, 0);
         g_assert_cmpint(eventFD, !=, -1);
