@@ -39,6 +39,4 @@ FontVariantLigaturesValues extractFontVariantLigatures(const CSSValue&);
 FontVariantNumericValues extractFontVariantNumeric(const CSSValue&);
 FontVariantEastAsianValues extractFontVariantEastAsian(const CSSValue&);
 
-Ref<CSSValue> computeFontVariant(const FontVariantSettings&);
-
 } // namespace WebCore
