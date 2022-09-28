@@ -47,10 +47,9 @@ Line::~Line()
 {
 }
 
-void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool collapseLeadingNonBreakingSpace)
+void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes)
 {
     m_contentIsTruncated = false;
-    m_collapseLeadingNonBreakingSpace = collapseLeadingNonBreakingSpace;
     m_inlineBoxListWithClonedDecorationEnd.clear();
     m_clonedEndDecorationWidthForInlineBoxRuns = { };
     m_nonSpanningInlineLevelBoxCount = 0;
@@ -192,15 +191,65 @@ void Line::truncate(InlineLayoutUnit logicalRight)
     }
 }
 
-void Line::handleTrailingTrimmableContent(TrailingTrimmableContentAction trailingTrimmableContentAction)
+void Line::handleTrailingTrimmableContent(TrailingContentAction trailingTrimmableContentAction)
 {
     if (m_trimmableTrailingContent.isEmpty() || m_runs.isEmpty())
         return;
 
-    if (trailingTrimmableContentAction == TrailingTrimmableContentAction::Preserve)
+    if (trailingTrimmableContentAction == TrailingContentAction::Preserve)
         return m_trimmableTrailingContent.reset();
 
     m_contentLogicalWidth -= m_trimmableTrailingContent.remove();
+}
+
+void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingContentAction, InlineLayoutUnit overflowingWidth)
+{
+    ASSERT(m_trimmableTrailingContent.isEmpty());
+    ASSERT(overflowingWidth > 0);
+
+    auto startIndex = [&] () -> size_t {
+        auto trimmedContentWidth = InlineLayoutUnit { };
+        for (auto index = m_runs.size(); index--;) {
+            auto& run = m_runs[index];
+            if (run.isLineBreak() || run.isInlineBox() || run.isWordBreakOpportunity() || run.isWordSeparator()) {
+                // It's ok to trim/remove non-breaking spaces across inline boxes.
+                continue;
+            }
+            if (!run.isNonBreakingSpace()) {
+                // Only trim/remove trailign non-breaking space.
+                return index;
+            }
+            trimmedContentWidth += run.logicalWidth();
+            if (trimmedContentWidth >= overflowingWidth) {
+                // This is how much non-breakable space needs to be removed or trimmed.
+                return index;
+            }
+        }
+        return 0;
+    };
+
+    auto index = startIndex();
+    auto removedOrCollapsedContentWidth = InlineLayoutUnit { };
+    while (index < m_runs.size()) {
+        auto& run = m_runs[index];
+
+        if (!run.isNonBreakingSpace()) {
+            run.moveHorizontally(-removedOrCollapsedContentWidth);
+            ++index;
+            continue;
+        }
+        if (trailingContentAction == TrailingContentAction::Preserve) {
+            run.moveHorizontally(-removedOrCollapsedContentWidth);
+            removedOrCollapsedContentWidth += run.logicalWidth();
+            run.shrinkHorizontally(run.logicalWidth());
+            ++index;
+            continue;
+        }
+
+        removedOrCollapsedContentWidth += run.logicalWidth();
+        m_runs.remove(index);
+    }
+    m_contentLogicalWidth -= removedOrCollapsedContentWidth;
 }
 
 void Line::removeHangingGlyphs()
@@ -318,19 +367,8 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             // Some generated content initiates empty text items. They are truly collapsible.
             return true;
         }
-        if (!inlineTextItem.isWhitespace()) {
-            auto isLeadingCollapsibleNonBreakingSpace = [&] {
-                // Let's check for leading non-breaking space collapsing to match legacy line layout quirk.
-                if (!inlineTextItem.isCollapsibleNonBreakingSpace() || !m_collapseLeadingNonBreakingSpace)
-                    return false;
-                for (auto& run : makeReversedRange(m_runs)) {
-                    if (run.isBox() || run.isText())
-                        return false;
-                }
-                return true;
-            };
-            return isLeadingCollapsibleNonBreakingSpace();
-        }
+        if (!inlineTextItem.isWhitespace())
+            return false;
         if (InlineTextItem::shouldPreserveSpacesAndTabs(inlineTextItem))
             return false;
         // This content is collapsible. Let's check if the last item is collapsed.
@@ -367,6 +405,8 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             && (inlineTextItem.isWordSeparator() || (lastRun.isWordSeparator() && lastRun.bidiLevel() != UBIDI_DEFAULT_LTR)))
             return true;
         if (inlineTextItem.isZeroWidthSpaceSeparator())
+            return true;
+        if (inlineTextItem.isQuirkNonBreakingSpace() || lastRun.isNonBreakingSpace())
             return true;
         return false;
     }();
@@ -678,7 +718,7 @@ Line::Run::Run(const InlineSoftLineBreakItem& softLineBreakItem, const RenderSty
 }
 
 Line::Run::Run(const InlineTextItem& inlineTextItem, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
-    : m_type(inlineTextItem.isWordSeparator() ? Type::WordSeparator : Type::Text)
+    : m_type(inlineTextItem.isWordSeparator() ? Type::WordSeparator : inlineTextItem.isQuirkNonBreakingSpace() ? Type::NonBreakingSpace : Type::Text)
     , m_layoutBox(&inlineTextItem.layoutBox())
     , m_style(style)
     , m_logicalLeft(logicalLeft)

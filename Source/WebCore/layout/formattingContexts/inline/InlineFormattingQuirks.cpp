@@ -58,6 +58,15 @@ bool InlineFormattingQuirks::shouldPreserveTrailingWhitespace(bool isInIntrinsic
     return lineEndWithLineBreak && !isTextAlignRight();
 }
 
+bool InlineFormattingQuirks::trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const
+{
+    if (isInIntrinsicWidthMode || !lineHasOverflow)
+        return false;
+    auto& rootStyle = formattingContext().root().style();
+    auto whiteSpace = rootStyle.whiteSpace();
+    return rootStyle.nbspMode() == NBSPMode::Space && (whiteSpace == WhiteSpace::Normal || whiteSpace == WhiteSpace::PreWrap || whiteSpace == WhiteSpace::PreLine);
+}
+
 InlineLayoutUnit InlineFormattingQuirks::initialLineHeight() const
 {
     ASSERT(!layoutState().inStandardsMode());

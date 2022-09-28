@@ -730,7 +730,7 @@ void InlineContentBreaker::ContinuousContent::appendToRunList(const InlineItem& 
     m_logicalWidth = clampTo<InlineLayoutUnit>(m_logicalWidth + logicalWidth);
 }
 
-void InlineContentBreaker::ContinuousContent::resetTrailingWhitespace()
+void InlineContentBreaker::ContinuousContent::resetTrailingTrimmableContent()
 {
     if (!m_leadingTrimmableWidth)
         m_leadingTrimmableWidth = m_trailingTrimmableWidth;
@@ -744,7 +744,7 @@ void InlineContentBreaker::ContinuousContent::append(const InlineItem& inlineIte
     if (inlineItem.isBox()) {
         // Inline boxes (whitespace-> <span></span>) do not prevent the trailing content from getting trimmed/hung
         // but atomic inline level boxes do.
-        resetTrailingWhitespace();
+        resetTrailingTrimmableContent();
     }
 }
 
@@ -752,7 +752,7 @@ void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlin
 {
     if (!trimmableWidth) {
         appendToRunList(inlineTextItem, style, logicalWidth);
-        resetTrailingWhitespace();
+        resetTrailingTrimmableContent();
         return;
     }
 
@@ -771,7 +771,7 @@ void InlineContentBreaker::ContinuousContent::append(const InlineTextItem& inlin
 {
     appendToRunList(inlineTextItem, style, hangingWidth);
     m_trailingHangingContentWidth = hangingWidth;
-    resetTrailingWhitespace();
+    resetTrailingTrimmableContent();
 }
 
 void InlineContentBreaker::ContinuousContent::reset()

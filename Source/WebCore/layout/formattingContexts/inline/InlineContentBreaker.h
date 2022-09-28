@@ -106,7 +106,7 @@ public:
 
     private:
         void appendToRunList(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
-        void resetTrailingWhitespace();
+        void resetTrailingTrimmableContent();
 
         RunList m_runs;
         InlineLayoutUnit m_logicalWidth { 0 };
