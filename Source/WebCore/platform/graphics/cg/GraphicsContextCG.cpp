@@ -285,6 +285,8 @@ void GraphicsContextCG::drawNativeImage(NativeImage& nativeImage, const FloatSiz
     CGContextStateSaver stateSaver(context, false);
     auto transform = CGContextGetCTM(context);
 
+    convertToDestinationColorSpaceIfNeeded(image);
+
     auto subImage = image;
     auto currentImageSize = imageLogicalSize(image.get(), options);
 
