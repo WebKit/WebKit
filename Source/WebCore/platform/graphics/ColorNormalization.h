@@ -89,7 +89,7 @@ template<typename ComponentType> inline ComponentType normalizeHue(ComponentType
 
 template<typename ColorType> inline ColorType makeColorTypeByNormalizingComponents(const ColorComponents<float, 4>& colorComponents)
 {
-    return makeFromComponents<ColorType>(colorComponents);
+    return makeFromComponentsClamping<ColorType>(colorComponents);
 }
 
 template<> inline HWBA<float> makeColorTypeByNormalizingComponents<HWBA<float>>(const ColorComponents<float, 4>& colorComponents)
@@ -97,7 +97,7 @@ template<> inline HWBA<float> makeColorTypeByNormalizingComponents<HWBA<float>>(
     auto [hue, whiteness, blackness, alpha] = colorComponents;
     auto [normalizedWhitness, normalizedBlackness] = normalizeWhitenessBlackness(whiteness, blackness);
 
-    return { hue, normalizedWhitness, normalizedBlackness, alpha };
+    return makeFromComponentsClamping<HWBA<float>>(hue, normalizedWhitness, normalizedBlackness, alpha);
 }
 
 // MARK: - Canonicalization

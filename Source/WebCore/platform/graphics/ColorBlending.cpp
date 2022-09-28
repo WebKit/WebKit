@@ -91,41 +91,63 @@ Color blendWithWhite(const Color& color)
     return result;
 }
 
+static bool requiresLegacyInterpolationRules(const Color& color)
+{
+    return color.callOnUnderlyingType([&] (const auto& underlyingColor) {
+        using ColorType = std::decay_t<decltype(underlyingColor)>;
+
+        if constexpr (std::is_same_v<ColorType, SRGBA<uint8_t>>)
+            return true;
+        else if constexpr (std::is_same_v<ColorType, SRGBA<float>>)
+            return true;
+        else if constexpr (std::is_same_v<ColorType, HSLA<float>>)
+            return true;
+        else if constexpr (std::is_same_v<ColorType, HWBA<float>>)
+            return true;
+        else if constexpr (std::is_same_v<ColorType, ExtendedSRGBA<float>>)
+            return !color.usesColorFunctionSerialization();
+        else
+            return false;
+    });
+}
+
 Color blend(const Color& from, const Color& to, const BlendingContext& context)
 {
-    // FIXME: ExtendedColor - needs to handle color spaces.
     // We need to preserve the state of the valid flag at the end of the animation
     if (context.progress == 1 && !to.isValid())
         return { };
 
-    using InterpolationColorSpace = ColorInterpolationMethod::SRGB;
+    if (requiresLegacyInterpolationRules(from) && requiresLegacyInterpolationRules(to)) {
+        using InterpolationColorSpace = ColorInterpolationMethod::SRGB;
 
-    auto fromComponents = from.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
-    auto toComponents = to.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
+        auto fromComponents = from.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
+        auto toComponents = to.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
 
-    switch (context.compositeOperation) {
-    case CompositeOperation::Replace: {
-        auto interpolatedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(
-            InterpolationColorSpace { },
-            fromComponents, 1.0 - context.progress,
-            toComponents, context.progress
-        );
+        switch (context.compositeOperation) {
+        case CompositeOperation::Replace: {
+            auto interpolatedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(InterpolationColorSpace { }, fromComponents, 1.0 - context.progress, toComponents, context.progress);
+            return convertColor<SRGBA<uint8_t>>(clipToGamut<SRGBA<float>>(interpolatedColor));
+        }
+        case CompositeOperation::Add:
+        case CompositeOperation::Accumulate:
+            ASSERT(context.progress == 1.0);
+            return addColorComponents<AlphaPremultiplication::Premultiplied>(InterpolationColorSpace { }, fromComponents, toComponents);
+        }
+    } else {
+        using InterpolationColorSpace = ColorInterpolationMethod::OKLab;
 
-        return convertColor<SRGBA<uint8_t>>(clipToGamut<SRGBA<float>>(interpolatedColor));
-    }
+        auto fromComponents = from.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
+        auto toComponents = to.toColorTypeLossy<typename InterpolationColorSpace::ColorType>();
 
-    case CompositeOperation::Add:
-    case CompositeOperation::Accumulate: {
-        ASSERT(context.progress == 1.0);
+        switch (context.compositeOperation) {
+        case CompositeOperation::Replace:
+            return interpolateColorComponents<AlphaPremultiplication::Premultiplied>(InterpolationColorSpace { }, fromComponents, 1.0 - context.progress, toComponents, context.progress);
 
-        auto summedColor = addColorComponents<AlphaPremultiplication::Premultiplied>(
-            InterpolationColorSpace { },
-            fromComponents,
-            toComponents
-        );
-
-        return summedColor;
-    }
+        case CompositeOperation::Add:
+        case CompositeOperation::Accumulate:
+            ASSERT(context.progress == 1.0);
+            return addColorComponents<AlphaPremultiplication::Premultiplied>(InterpolationColorSpace { }, fromComponents, toComponents);
+        }
     }
 }
 
