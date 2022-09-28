@@ -39,23 +39,9 @@
 
 namespace WebKit {
 
-static RunLoop* createRunLoop()
-{
-    RunLoop* runLoop = nullptr;
-    BinarySemaphore semaphore;
-    Thread::create("org.webkit.ThreadedCompositor", [&] {
-        runLoop = &RunLoop::current();
-        semaphore.signal();
-        runLoop->run();
-    }, ThreadType::Graphics)->detach();
-    semaphore.wait();
-
-    return runLoop;
-}
-
 CompositingRunLoop::CompositingRunLoop(Function<void ()>&& updateFunction)
-    : m_runLoop(createRunLoop())
-    , m_updateTimer(*m_runLoop, this, &CompositingRunLoop::updateTimerFired)
+    : m_runLoop(RunLoop::create("org.webkit.ThreadedCompositor"_s, ThreadType::Graphics))
+    , m_updateTimer(m_runLoop, this, &CompositingRunLoop::updateTimerFired)
     , m_updateFunction(WTFMove(updateFunction))
 {
 #if USE(GLIB_EVENT_LOOP)
@@ -68,7 +54,7 @@ CompositingRunLoop::~CompositingRunLoop()
 {
     ASSERT(RunLoop::isMain());
     // Make sure the RunLoop is stopped after the CompositingRunLoop, because m_updateTimer has a reference.
-    RunLoop::main().dispatch([runLoop = Ref { *m_runLoop }] {
+    RunLoop::main().dispatch([runLoop = Ref { m_runLoop }] {
         runLoop->stop();
         runLoop->dispatch([] {
             RunLoop::current().stop();
