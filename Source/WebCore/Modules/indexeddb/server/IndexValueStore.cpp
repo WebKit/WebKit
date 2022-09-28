@@ -29,7 +29,6 @@
 #include "IDBError.h"
 #include "IDBKeyRangeData.h"
 #include "Logging.h"
-#include "MemoryIndex.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -106,24 +105,6 @@ void IndexValueStore::removeRecord(const IDBKeyData& indexKey, const IDBKeyData&
 
     if (iterator->value->removeKey(valueKey))
         m_records.remove(iterator);
-}
-
-void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKeyData& valueKey)
-{
-    Vector<IDBKeyData> entryKeysToRemove;
-    entryKeysToRemove.reserveInitialCapacity(m_records.size());
-
-    for (auto& entry : m_records) {
-        if (entry.value->removeKey(valueKey))
-            index.notifyCursorsOfValueChange(entry.key, valueKey);
-        if (!entry.value->getCount())
-            entryKeysToRemove.uncheckedAppend(entry.key);
-    }
-
-    for (auto& entry : entryKeysToRemove) {
-        m_orderedKeys.erase(entry);
-        m_records.remove(entry);
-    }
 }
 
 IDBKeyData IndexValueStore::lowestKeyWithRecordInRange(const IDBKeyRangeData& range) const

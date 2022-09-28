@@ -51,7 +51,7 @@ class SQLiteIDBCursor;
 class SQLiteIDBBackingStore final : public IDBBackingStore {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseDirectory);
+    WEBCORE_EXPORT SQLiteIDBBackingStore(const IDBDatabaseIdentifier&, const String& databaseDirectory, const bool inMemory);
     WEBCORE_EXPORT ~SQLiteIDBBackingStore() final;
 
     IDBError getOrEstablishDatabaseInfo(IDBDatabaseInfo&) final;
@@ -85,6 +85,9 @@ public:
 
     bool supportsSimultaneousTransactions() final { return false; }
     bool isEphemeral() final { return false; }
+
+    bool isInMemoryDatabase() { return m_inMemory; }
+
     String fullDatabasePath() const final;
 
     bool hasTransaction(const IDBResourceIdentifier&) const final;
@@ -213,6 +216,7 @@ private:
     HashMap<IDBResourceIdentifier, SQLiteIDBCursor*> m_cursors;
 
     String m_databaseDirectory;
+    bool m_inMemory = { false };
 };
 
 } // namespace IDBServer

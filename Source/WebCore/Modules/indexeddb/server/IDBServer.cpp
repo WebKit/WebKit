@@ -29,7 +29,6 @@
 #include "IDBRequestData.h"
 #include "IDBResultData.h"
 #include "Logging.h"
-#include "MemoryIDBBackingStore.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteDatabaseTracker.h"
 #include "SQLiteFileSystem.h"
@@ -126,15 +125,19 @@ UniqueIDBDatabase& IDBServer::getOrCreateUniqueIDBDatabase(const IDBDatabaseIden
 
 std::unique_ptr<IDBBackingStore> IDBServer::createBackingStore(const IDBDatabaseIdentifier& identifier)
 {
+    LOG(IndexedDB, "IDBServer::createBackingStore");
+    
+    auto hashedName = WebCore::SQLiteFileSystem::computeHashForFileName(identifier.databaseName());
+
     ASSERT(!isMainThread());
     if (m_databaseDirectoryPath.isEmpty())
-        return makeUnique<MemoryIDBBackingStore>(identifier);
+        return makeUnique<SQLiteIDBBackingStore>(identifier, hashedName, true);
 
     ASSERT(!m_sessionID.isEphemeral());
     if (identifier.isTransient())
-        return makeUnique<MemoryIDBBackingStore>(identifier);
+        return makeUnique<SQLiteIDBBackingStore>(identifier, hashedName, true);
 
-    return makeUnique<SQLiteIDBBackingStore>(identifier, upgradedDatabaseDirectory(identifier));
+    return makeUnique<SQLiteIDBBackingStore>(identifier, upgradedDatabaseDirectory(identifier), false);
 }
 
 void IDBServer::openDatabase(const IDBRequestData& requestData)

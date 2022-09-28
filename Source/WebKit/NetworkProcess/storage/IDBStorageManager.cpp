@@ -29,7 +29,6 @@
 #include "IDBStorageRegistry.h"
 #include <WebCore/IDBRequestData.h>
 #include <WebCore/IDBServer.h>
-#include <WebCore/MemoryIDBBackingStore.h>
 #include <WebCore/SQLiteFileSystem.h>
 #include <WebCore/SQLiteIDBBackingStore.h>
 
@@ -265,13 +264,15 @@ void IDBStorageManager::unregisterTransaction(WebCore::IDBServer::UniqueIDBDatab
     m_registry.unregisterTransaction(transaction);
 }
 
+// Create the backing store for WK2 processes
 std::unique_ptr<WebCore::IDBServer::IDBBackingStore> IDBStorageManager::createBackingStore(const WebCore::IDBDatabaseIdentifier& identifier)
 {
-    if (m_path.isEmpty() || identifier.isTransient())
-        return makeUnique<WebCore::IDBServer::MemoryIDBBackingStore>(identifier);
+    auto hashedName = WebCore::SQLiteFileSystem::computeHashForFileName(identifier.databaseName());
 
-    auto name = WebCore::SQLiteFileSystem::computeHashForFileName(identifier.databaseName());
-    return makeUnique<WebCore::IDBServer::SQLiteIDBBackingStore>(identifier, FileSystem::pathByAppendingComponent(m_path, name));
+    if (m_path.isEmpty() || identifier.isTransient())
+        return makeUnique<WebCore::IDBServer::SQLiteIDBBackingStore>(identifier, hashedName, true);
+
+    return makeUnique<WebCore::IDBServer::SQLiteIDBBackingStore>(identifier, FileSystem::pathByAppendingComponent(m_path, hashedName), false);
 }
 
 void IDBStorageManager::requestSpace(const WebCore::ClientOrigin&, uint64_t size, CompletionHandler<void(bool)>&& completionHandler)

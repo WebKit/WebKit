@@ -117,7 +117,7 @@ SQLiteDatabase::~SQLiteDatabase()
     close();
 }
 
-bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
+bool SQLiteDatabase::open(const String& filename, OpenMode openMode, bool inMemory)
 {
     initializeSQLiteIfNecessary();
     close();
@@ -152,6 +152,9 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
             break;
         }
 
+        if (inMemory)
+            flags |= SQLITE_OPEN_MEMORY;
+
         int result = SQLITE_OK;
         {
             SQLiteTransactionInProgressAutoCounter transactionCounter;
@@ -179,7 +182,7 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
             LOG_ERROR("SQLite database could not set temp_store to memory");
     }
 
-    if (filename != inMemoryPath()) {
+    if (filename != inMemoryPath() && !inMemory) {
         if (openMode != OpenMode::ReadOnly && !useWALJournalMode())
             return false;
 

@@ -59,7 +59,7 @@ public:
     static constexpr ASCIILiteral inMemoryPath() { return ":memory:"_s; }
 
     enum class OpenMode { ReadOnly, ReadWrite, ReadWriteCreate };
-    WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate);
+    WEBCORE_EXPORT bool open(const String& filename, OpenMode = OpenMode::ReadWriteCreate, bool inMemory = false);
     bool isOpen() const { return m_db; }
     WEBCORE_EXPORT void close();
 

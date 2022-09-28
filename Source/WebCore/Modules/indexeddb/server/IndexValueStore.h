@@ -56,8 +56,6 @@ public:
     IDBError addRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey);
     void removeRecord(const IDBKeyData& indexKey, const IDBKeyData& valueKey);
 
-    void removeEntriesWithValueKey(MemoryIndex&, const IDBKeyData& valueKey);
-
     class Iterator {
         friend class IndexValueStore;
     public:

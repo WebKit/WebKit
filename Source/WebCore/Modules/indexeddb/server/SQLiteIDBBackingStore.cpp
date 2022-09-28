@@ -236,9 +236,10 @@ static ASCIILiteral indexInfoTableSchemaTemp()
     return TABLE_SCHEMA_PREFIX "_Temp_IndexInfo" INDEX_INFO_TABLE_SCHEMA_SUFFIX;
 }
 
-SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier, const String& databaseDirectory)
+SQLiteIDBBackingStore::SQLiteIDBBackingStore(const IDBDatabaseIdentifier& identifier, const String& databaseDirectory, const bool inMemory)
     : m_identifier(identifier)
     , m_databaseDirectory(databaseDirectory)
+    , m_inMemory(inMemory)
 {
 }
 
@@ -976,10 +977,14 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
         return IDBError { };
     }
 
-    String databasePath = fullDatabasePath();
-    FileSystem::makeAllDirectories(FileSystem::parentPath(databasePath));
+    String databasePath = m_databaseDirectory;
+    if (!isInMemoryDatabase()) {
+        databasePath = fullDatabasePath();
+        FileSystem::makeAllDirectories(FileSystem::parentPath(databasePath));
+    }
+
     m_sqliteDB = makeUnique<SQLiteDatabase>();
-    if (!m_sqliteDB->open(databasePath)) {
+    if (!m_sqliteDB->open(databasePath, SQLiteDatabase::OpenMode::ReadWriteCreate, isInMemoryDatabase())) {
         LOG_ERROR("Failed to open SQLite database at path '%s'", databasePath.utf8().data());
         closeSQLiteDB();
     }
