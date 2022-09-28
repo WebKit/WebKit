@@ -4067,19 +4067,6 @@ void AXObjectCache::updateRelationsForTree(ContainerNode& rootNode)
             updateRelationsForTree(*shadowRoot);
         // Collect all possible origins, i.e., elements with non-empty relation attributes.
         for (const auto& attribute : relationAttributes()) {
-            if (Element::isElementReflectionAttribute(attribute)) {
-                if (auto reflectedElement = element.getElementAttribute(attribute)) {
-                    addRelation(&element, reflectedElement, attributeToRelationType(attribute));
-                    continue;
-                }
-            } else if (Element::isElementsArrayReflectionAttribute(attribute)) {
-                if (auto reflectedElements = element.getElementsArrayAttribute(attribute)) {
-                    for (auto reflectedElement : reflectedElements.value())
-                        addRelation(&element, reflectedElement.get(), attributeToRelationType(attribute));
-                    continue;
-                }
-            }
-
             auto& idsString = element.attributeWithoutSynchronization(attribute);
             if (idsString.isNull()) {
                 if (auto* defaultARIA = element.customElementDefaultARIAIfExists()) {

@@ -1935,12 +1935,12 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
     return value;
 }
 
-bool Element::isElementReflectionAttribute(const QualifiedName& name)
+static inline bool isElementReflectionAttribute(const QualifiedName& name)
 {
     return name == HTMLNames::aria_activedescendantAttr;
 }
 
-bool Element::isElementsArrayReflectionAttribute(const QualifiedName& name)
+static inline bool isElementsArrayReflectionAttribute(const QualifiedName& name)
 {
     return name == HTMLNames::aria_controlsAttr
         || name == HTMLNames::aria_describedbyAttr
