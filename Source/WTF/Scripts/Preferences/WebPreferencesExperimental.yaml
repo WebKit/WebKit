@@ -1241,19 +1241,17 @@ PerformanceNavigationTimingAPIEnabled:
     WebCore:
       default: true
 
-# Note: This is off by default because of privacy concerns
-# such as https://github.com/w3c/resource-timing/issues/238
 PerformanceResourceTimingSensitivePropertiesEnabled:
   type: bool
   humanReadableName: "PerformanceResourceTiming.transferSize, encodedBodySize, and decodedBodySize"
   humanReadableDescription: "Enable all properties of PerformanceResourceTiming API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 PermissionsAPIEnabled:
   type: bool
@@ -1502,10 +1500,9 @@ ServerTimingEnabled:
   webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      "ENABLE(EXPERIMENTAL_FEATURES)": true
-      default: false
+      default: true
 
 ServiceWorkerNavigationPreloadEnabled:
   type: bool
