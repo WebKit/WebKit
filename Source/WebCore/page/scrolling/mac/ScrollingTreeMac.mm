@@ -273,36 +273,4 @@ void ScrollingTreeMac::registerForPlatformRenderingUpdateCallback()
     } forPhase:kCATransactionPhasePostCommit];
 }
 
-void ScrollingTreeMac::setWheelEventTestMonitor(RefPtr<WheelEventTestMonitor>&& monitor)
-{
-    m_wheelEventTestMonitor = WTFMove(monitor);
-}
-
-void ScrollingTreeMac::receivedWheelEvent(const PlatformWheelEvent& event)
-{
-    auto monitor = m_wheelEventTestMonitor;
-    if (monitor)
-        monitor->receivedWheelEvent(event);
-}
-
-void ScrollingTreeMac::deferWheelEventTestCompletionForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
-{
-    auto monitor = m_wheelEventTestMonitor;
-    if (!monitor)
-        return;
-
-    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) ScrollingTreeMac::deferForReason: Deferring on " << identifier << " for reason " << reason);
-    monitor->deferForReason(identifier, reason);
-}
-
-void ScrollingTreeMac::removeWheelEventTestCompletionDeferralForReason(WheelEventTestMonitor::ScrollableAreaIdentifier identifier, WheelEventTestMonitor::DeferReason reason)
-{
-    auto monitor = m_wheelEventTestMonitor;
-    if (!monitor)
-        return;
-
-    LOG_WITH_STREAM(WheelEventTestMonitor, stream << "    (!) ScrollingTreeMac::removeDeferralForReason: Removing deferral on " << identifier << " for reason " << reason);
-    monitor->removeDeferralForReason(identifier, reason);
-}
-
 #endif // ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)

@@ -1,4 +1,5 @@
-CONSOLE MESSAGE: TypeError: null is not an object (evaluating 'document.querySelector('#myElement').shadowRoot.querySelector')
+CONSOLE MESSAGE: TypeError: popup7.showPopUp is not a function. (In 'popup7.showPopUp()', 'popup7.showPopUp' is undefined)
+CONSOLE MESSAGE: TypeError: popup7.showPopUp is not a function. (In 'popup7.showPopUp()', 'popup7.showPopUp' is undefined)
 Popup 1 Popup 1 Popup1 anchor (no action) Outside all popups
 Inside popup 1  Popup 2 Inside popup 1 after button
 Inside popup 2
@@ -25,7 +26,7 @@ Popup
 Hint
 Manual
 
-Harness Error (FAIL), message = TypeError: null is not an object (evaluating 'document.querySelector('#myElement').shadowRoot.querySelector')
+Harness Error (FAIL), message = TypeError: popup7.showPopUp is not a function. (In 'popup7.showPopUp()', 'popup7.showPopUp' is undefined)
 
 FAIL Clicking outside a popup will dismiss the popup promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL Clicking inside a popup does not close that popup promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
@@ -40,6 +41,8 @@ FAIL Dragging from an open popup outside an open popup should leave the popup op
 FAIL An invoking element should be part of the ancestor chain promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL An invoking element that was not used to invoke the popup can still be part of the ancestor chain promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL Scrolling within a popup should not close the popup promise_test: Unhandled rejection with value: object "TypeError: popup6.showPopUp is not a function. (In 'popup6.showPopUp()', 'popup6.showPopUp' is undefined)"
+FAIL Clicking inside a shadow DOM popup does not close that popup promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
+FAIL Clicking outside a shadow DOM popup should close that popup promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL Moving focus back to the anchor element should not dismiss the popup promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL Moving focus back to the active trigger element should not dismiss the popup promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."
 FAIL Moving focus back to an inactive trigger element should also *not* dismiss the popup promise_test: Unhandled rejection with value: object "SyntaxError: The string did not match the expected pattern."

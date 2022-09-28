@@ -27,7 +27,6 @@
 
 #import "LiteralExpressions.h"
 #import "ParserPrivate.h"
-#import <XCTest/XCTest.h>
 
 static Expected<UniqueRef<WGSL::AST::Expression>, WGSL::Error> parseLCharPrimaryExpression(const String& input)
 {
@@ -43,18 +42,10 @@ struct ConstLiteralTestCase {
     NumberType expectedValue;
 };
 
-@interface ConstLiteralTests : XCTestCase
+namespace TestWGSLAPI {
 
-@end
-
-@implementation ConstLiteralTests
-
-- (void)setUp {
-    [super setUp];
-    [self setContinueAfterFailure:NO];
-}
-
-- (void)testBoolLiteralDecimal {
+TEST(WGSLConstLiteralTests, BoolLiteral)
+{
     const ConstLiteralTestCase<bool> testCases[] = {
         { "true"_s, true },
         { "false"_s, false }
@@ -62,63 +53,64 @@ struct ConstLiteralTestCase {
 
     for (const auto& testCase : testCases) {
         auto parseResult = parseLCharPrimaryExpression(testCase.input);
-        XCTAssert(parseResult);
+        EXPECT_TRUE(parseResult);
 
         auto expr = WTFMove(*parseResult);
-        XCTAssert(expr->isBoolLiteral());
+        EXPECT_TRUE(expr->isBoolLiteral());
 
         const auto& intLiteral = downcast<WGSL::AST::BoolLiteral>(expr.get());
-        XCTAssert(intLiteral.value() == testCase.expectedValue);
+        EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
-        XCTAssert(intLiteral.span() == WGSL::SourceSpan(0, inputLength, inputLength, 0));
+        EXPECT_EQ(intLiteral.span(), WGSL::SourceSpan(0, inputLength, inputLength, 0));
     }
 }
 
-- (void)testAbstractIntLiteralDecimal {
+TEST(WGSLConstLiteralTests, AbstractIntLiteralDecimal)
+{
     const ConstLiteralTestCase<int64_t> testCases[] = {
         { "0"_s, 0LL },
         { "1"_s, 1LL },
         { "12345"_s, 12345LL },
-        { "9223372036854775807"_s, 9223372036854775807LL }
     };
 
     for (const auto& testCase : testCases) {
         auto parseResult = parseLCharPrimaryExpression(testCase.input);
-        XCTAssert(parseResult);
+        EXPECT_TRUE(parseResult);
 
         auto expr = WTFMove(*parseResult);
-        XCTAssert(expr->isAbstractIntLiteral());
+        EXPECT_TRUE(expr->isAbstractIntLiteral());
 
         const auto& intLiteral = downcast<WGSL::AST::AbstractIntLiteral>(expr.get());
-        XCTAssert(intLiteral.value() == testCase.expectedValue);
+        EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
-        XCTAssert(intLiteral.span() == WGSL::SourceSpan(0, inputLength, inputLength, 0));
+        EXPECT_EQ(intLiteral.span(), WGSL::SourceSpan(0, inputLength, inputLength, 0));
     }
 }
 
-- (void)testAbstractIntLiteralHex {
+TEST(WGSLConstLiteralTests, AbstractIntLiteralHex)
+{
     const ConstLiteralTestCase<int64_t> testCases[] = {
         { "0x0"_s, 0x0LL },
         { "0x1"_s, 0x1LL },
         { "0x12345"_s, 0x12345LL },
-        { "0x8fffffffffffffff"_s, 9223372036854775807LL }
     };
 
     for (const auto& testCase : testCases) {
         auto parseResult = parseLCharPrimaryExpression(testCase.input);
-        XCTAssert(parseResult);
+        EXPECT_TRUE(parseResult);
 
         auto expr = WTFMove(*parseResult);
-        XCTAssert(expr->isAbstractIntLiteral());
+        EXPECT_TRUE(expr->isAbstractIntLiteral());
 
         const auto& intLiteral = downcast<WGSL::AST::AbstractIntLiteral>(expr.get());
-        XCTAssert(intLiteral.value() == testCase.expectedValue);
+        EXPECT_EQ(intLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
-        XCTAssert(intLiteral.span() == WGSL::SourceSpan(0, inputLength, inputLength, 0));
+        EXPECT_EQ(intLiteral.span(), WGSL::SourceSpan(0, inputLength, inputLength, 0));
     }
 }
 
-- (void)testAbstractFloatLiteralDec {
+TEST(WGSLConstLiteralTests, AbstractFloatLiteralDec)
+{
     const ConstLiteralTestCase<double> testCases[] = {
         { "0.0"_s, 0.0 },
         { "0.1"_s, 0.1 },
@@ -132,39 +124,16 @@ struct ConstLiteralTestCase {
 
     for (const auto& testCase : testCases) {
         auto parseResult = parseLCharPrimaryExpression(testCase.input);
-        XCTAssert(parseResult);
+        EXPECT_TRUE(parseResult);
 
         auto expr = WTFMove(*parseResult);
-        XCTAssert(expr->isAbstractFloatLiteral());
+        EXPECT_TRUE(expr->isAbstractFloatLiteral());
 
         const auto& floatLiteral = downcast<WGSL::AST::AbstractFloatLiteral>(expr.get());
-        XCTAssert(floatLiteral.value() == testCase.expectedValue);
+        EXPECT_EQ(floatLiteral.value(), testCase.expectedValue);
         auto inputLength = testCase.input.length();
-        XCTAssert(floatLiteral.span() == WGSL::SourceSpan(0, inputLength, inputLength, 0));
+        EXPECT_EQ(floatLiteral.span(), WGSL::SourceSpan(0, inputLength, inputLength, 0));
     }
 }
 
-- (void)testAbstractFloatLiteralHex {
-    XCTSkip(@"Hexadecimal floats not implemented yet");
-
-    const ConstLiteralTestCase<double> testCases[] = {
-        { "0xa.fp+2"_s, 0xa.fp+2 },
-        { "0X.3"_s, 0X.3p+0 },
-        { "0X1.fp-4"_s, 0X1.fp-4 }
-    };
-
-    for (const auto& testCase : testCases) {
-        auto parseResult = parseLCharPrimaryExpression(testCase.input);
-        XCTAssert(parseResult);
-
-        auto expr = WTFMove(*parseResult);
-        XCTAssert(expr->isAbstractFloatLiteral());
-
-        const auto& floatLiteral = downcast<WGSL::AST::AbstractFloatLiteral>(expr.get());
-        XCTAssert(floatLiteral.value() == testCase.expectedValue);
-        auto inputLength = testCase.input.length();
-        XCTAssert(floatLiteral.span() == WGSL::SourceSpan(0, inputLength, inputLength, 0));
-    }
-}
-
-@end
+} // namespace TestWGSLAPI

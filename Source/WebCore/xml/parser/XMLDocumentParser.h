@@ -63,9 +63,9 @@ private:
 class XMLDocumentParser final : public ScriptableDocumentParser, public PendingScriptClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<XMLDocumentParser> create(Document& document, FrameView* view)
+    static Ref<XMLDocumentParser> create(Document& document, FrameView* view, OptionSet<ParserContentPolicy> policy = DefaultParserContentPolicy)
     {
-        return adoptRef(*new XMLDocumentParser(document, view));
+        return adoptRef(*new XMLDocumentParser(document, view, policy));
     }
     static Ref<XMLDocumentParser> create(DocumentFragment& fragment, HashMap<AtomString, AtomString>&& prefixToNamespaceMap, const AtomString& defaultNamespaceURI, OptionSet<ParserContentPolicy> parserContentPolicy)
     {
@@ -88,7 +88,7 @@ public:
     static bool supportsXMLVersion(const String&);
 
 private:
-    explicit XMLDocumentParser(Document&, FrameView* = nullptr);
+    explicit XMLDocumentParser(Document&, FrameView*, OptionSet<ParserContentPolicy>);
     XMLDocumentParser(DocumentFragment&, HashMap<AtomString, AtomString>&&, const AtomString&, OptionSet<ParserContentPolicy>);
 
     void insert(SegmentedString&&) final;

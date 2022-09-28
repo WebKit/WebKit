@@ -49,12 +49,7 @@ WebGLExtension::ExtensionName ANGLEInstancedArrays::getName() const
 
 bool ANGLEInstancedArrays::supported(GraphicsContextGL& context)
 {
-#if USE(ANGLE) || PLATFORM(GTK) || PLATFORM(WPE)
     return context.supportsExtension("GL_ANGLE_instanced_arrays"_s);
-#else
-    UNUSED_PARAM(context);
-    return false;
-#endif
 }
 
 void ANGLEInstancedArrays::drawArraysInstancedANGLE(GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount)

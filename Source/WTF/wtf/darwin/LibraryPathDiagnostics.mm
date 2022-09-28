@@ -39,7 +39,10 @@
 #include <wtf/spi/darwin/dyldSPI.h>
 
 #if HAVE(CHIRP_SPI)
+// Workaround for rdar://97945223
+#define dlsym (const canary_meta_t *)dlsym
 #include <chirp/chirp.h>
+#undef dlsym
 #endif
 
 #if HAVE(SHARED_REGION_SPI)

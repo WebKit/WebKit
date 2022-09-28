@@ -422,6 +422,8 @@ imported/w3c/web-platform-tests/clear-site-data/executionContexts.sub.html [ Ski
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
+http/wpt/webauthn/public-key-credential-create-failure.https.html [ DumpJSConsoleLogInStdErr ]
+http/wpt/webauthn/public-key-credential-get-failure.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebIDL/current-realm.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.any.html [ DumpJSConsoleLogInStdErr ]
@@ -6034,7 +6036,7 @@ imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-pol
 imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html [ Skip ]
 
 # Disable ShadowRealm (while running to ensure we do not crash)
-webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Pass Failure Timeout ]
+webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Skip ]
 inspector/shadow-realm-console.html [ Pass Failure ]
 imported/w3c/web-platform-tests/compression/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/dom/idlharness-shadowrealm.window.html [ Pass Failure ]

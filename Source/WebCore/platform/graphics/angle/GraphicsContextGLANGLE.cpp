@@ -26,7 +26,7 @@
 
 #include "config.h"
 
-#if ENABLE(WEBGL) && USE(ANGLE)
+#if ENABLE(WEBGL)
 #include "GraphicsContextGLANGLE.h"
 
 #include "ANGLEHeaders.h"
@@ -3171,4 +3171,4 @@ GCGLenum GraphicsContextGLANGLE::adjustWebGL1TextureInternalFormat(GCGLenum inte
 
 }
 
-#endif // ENABLE(WEBGL) && USE(ANGLE)
+#endif // ENABLE(WEBGL)

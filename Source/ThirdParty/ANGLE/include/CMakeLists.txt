@@ -31,7 +31,7 @@ if (USE_ANGLE_EGL)
     )
 endif ()
 
-if (USE_ANGLE_WEBGL)
+if (ENABLE_WEBGL)
     set(ANGLE_WEBGL_HEADERS
         export.h
         ${khr_headers}

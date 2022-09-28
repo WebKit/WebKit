@@ -67,7 +67,6 @@ platform/gamepad/wpe/WPEGamepadProvider.cpp
 
 platform/generic/ScrollbarsControllerGeneric.cpp
 
-platform/graphics/ANGLEWebKitBridge.cpp
 platform/graphics/GLContext.cpp
 platform/graphics/PlatformDisplay.cpp
 

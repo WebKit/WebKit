@@ -48,7 +48,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
 class HTMLDocumentParser : public ScriptableDocumentParser, private HTMLScriptRunnerHost, private PendingScriptClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(HTMLDocumentParser);
 public:
-    static Ref<HTMLDocumentParser> create(HTMLDocument&);
+    static Ref<HTMLDocumentParser> create(HTMLDocument&, OptionSet<ParserContentPolicy> = DefaultParserContentPolicy);
     virtual ~HTMLDocumentParser();
 
     static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
@@ -61,7 +61,7 @@ public:
     TextPosition textPosition() const final;
 
 protected:
-    explicit HTMLDocumentParser(HTMLDocument&);
+    explicit HTMLDocumentParser(HTMLDocument&, OptionSet<ParserContentPolicy> = DefaultParserContentPolicy);
 
     void insert(SegmentedString&&) final;
     void append(RefPtr<StringImpl>&&) override;

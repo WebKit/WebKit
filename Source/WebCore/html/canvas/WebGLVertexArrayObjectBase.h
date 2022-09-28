@@ -88,9 +88,6 @@ public:
 protected:
     WebGLVertexArrayObjectBase(WebGLRenderingContextBase&, Type);
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override = 0;
-#if !USE(ANGLE)
-    void updateVertexAttrib0();
-#endif
 
     Type m_type;
     bool m_hasEverBeenBound { false };

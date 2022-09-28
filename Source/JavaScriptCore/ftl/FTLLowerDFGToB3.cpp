@@ -4229,7 +4229,7 @@ private:
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         if (m_node->child1().useKind() == CellUse)
-            setJSValue(getById(lowCell(m_node->child1()), AccessType::GetPrivateName));
+            setJSValue(getById(lowCell(m_node->child1()), AccessType::GetPrivateNameById));
         else {
             LValue base = lowJSValue(m_node->child1());
 
@@ -4242,7 +4242,7 @@ private:
 
             LBasicBlock lastNext = m_out.appendTo(baseCellCase, notCellCase);
 
-            ValueFromBlock cellResult = m_out.anchor(getById(base, AccessType::GetPrivateName));
+            ValueFromBlock cellResult = m_out.anchor(getById(base, AccessType::GetPrivateNameById));
             m_out.jump(continuation);
 
             m_out.appendTo(notCellCase, continuation);

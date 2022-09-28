@@ -544,6 +544,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , FrameDestructionObserver(frame)
     , m_settings(settings)
     , m_quirks(makeUniqueRef<Quirks>(*this))
+    , m_parserContentPolicy(DefaultParserContentPolicy)
     , m_cachedResourceLoader(createCachedResourceLoader(frame))
     , m_creationURL(url)
     , m_domTreeVersion(++s_globalTreeVersion)
@@ -2885,7 +2886,7 @@ void Document::setVisuallyOrdered()
 Ref<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
-    return XMLDocumentParser::create(*this, view());
+    return XMLDocumentParser::create(*this, view(), m_parserContentPolicy);
 }
 
 bool Document::hasHighlight() const

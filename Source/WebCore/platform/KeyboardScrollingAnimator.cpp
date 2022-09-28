@@ -27,6 +27,7 @@
 #include "KeyboardScrollingAnimator.h"
 
 #include "EventNames.h"
+#include "FrameView.h"
 #include "PlatformKeyboardEvent.h"
 #include "ScrollTypes.h"
 #include "ScrollableArea.h"
@@ -226,20 +227,30 @@ void KeyboardScrollingAnimator::updateKeyboardScrollPosition(MonotonicTime curre
 float KeyboardScrollingAnimator::scrollDistance(ScrollDirection direction, ScrollGranularity granularity) const
 {
     auto scrollbar = m_scrollAnimator.scrollableArea().scrollbarForDirection(direction);
-    if (scrollbar) {
-        switch (granularity) {
-        case ScrollGranularity::Line:
-            return scrollbar->lineStep();
-        case ScrollGranularity::Page:
-            return scrollbar->pageStep();
-        case ScrollGranularity::Document:
-            return scrollbar->totalSize();
-        case ScrollGranularity::Pixel:
-            return scrollbar->pixelStep();
-        }
+    if (!scrollbar)
+        return false;
+
+    float step = 0;
+    switch (granularity) {
+    case ScrollGranularity::Line:
+        step = scrollbar->lineStep();
+        break;
+    case ScrollGranularity::Page:
+        step = scrollbar->pageStep();
+        break;
+    case ScrollGranularity::Document:
+        step = scrollbar->totalSize();
+        break;
+    case ScrollGranularity::Pixel:
+        step = scrollbar->pixelStep();
+        break;
     }
 
-    return 0;
+    auto axis = axisFromDirection(direction);
+    if (granularity == ScrollGranularity::Page && axis == ScrollEventAxis::Vertical)
+        step = m_scrollAnimator.scrollableArea().adjustVerticalPageScrollStepForFixedContent(step);
+
+    return step;
 }
 
 std::optional<KeyboardScroll> KeyboardScrollingAnimator::makeKeyboardScroll(ScrollDirection direction, ScrollGranularity granularity) const

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "NicosiaGCGLANGLELayer.h"
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(ANGLE)
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #include "GraphicsContextGLFallback.h"
 #include "GraphicsContextGLGBM.h"
@@ -131,4 +131,4 @@ GCGLANGLELayer::~GCGLANGLELayer()
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
+#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER)

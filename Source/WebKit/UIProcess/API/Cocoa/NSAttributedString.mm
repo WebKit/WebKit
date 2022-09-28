@@ -45,11 +45,13 @@
 #endif
 
 NSString * const NSReadAccessURLDocumentOption = @"ReadAccessURL";
+NSString * const _WKReadAccessFileURLsOption = @"_WKReadAccessFileURLsOption";
 
 constexpr NSRect webViewRect = {{0, 0}, {800, 600}};
 constexpr NSTimeInterval defaultTimeoutInterval = 60;
 constexpr NSTimeInterval purgeWebViewCacheDelay = 15;
 constexpr NSUInteger maximumWebViewCacheSize = 3;
+constexpr NSUInteger maximumReadOnlyAccessPaths = 2;
 
 @interface _WKAttributedStringNavigationDelegate : NSObject <WKNavigationDelegate>
 
@@ -116,6 +118,8 @@ constexpr NSUInteger maximumWebViewCacheSize = 3;
 
 + (RetainPtr<WKWebView>)retrieveOrCreateWebView;
 + (void)cacheWebView:(WKWebView *)webView;
++ (void)maybeConsumeBundlePaths:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options;
++ (void)validateEntry:(id)maybeFileURL;
 
 @end
 
@@ -133,12 +137,28 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
     return configuration;
 }
 
+static NSMutableArray<NSURL *> *readOnlyAccessPaths()
+{
+    static NeverDestroyed<RetainPtr<NSMutableArray>> readOnlyAccessPaths = adoptNS([[NSMutableArray alloc] initWithCapacity:maximumReadOnlyAccessPaths]);
+    return readOnlyAccessPaths.get().get();
+}
+
 + (WKWebViewConfiguration *)configuration
 {
     auto& configuration = globalConfiguration();
     if (!configuration) {
         configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-        [configuration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+
+        RetainPtr<WKProcessPool> processPool;
+        if (readOnlyAccessPaths().count) {
+            RELEASE_ASSERT(readOnlyAccessPaths().count <= 2);
+            auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+            [processPoolConfiguration setAdditionalReadAccessAllowedURLs:readOnlyAccessPaths()];
+            processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+        } else
+            processPool = adoptNS([[WKProcessPool alloc] init]).get();
+
+        [configuration setProcessPool:processPool.get()];
         [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
         [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeAll];
         [configuration _setAllowsJavaScriptMarkup:NO];
@@ -162,6 +182,58 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
 + (void)clearConfiguration
 {
     globalConfiguration() = nil;
+}
+
++ (void)clearConfigurationAndRaiseExceptionIfNecessary:(NSString *)errorMessage
+{
+    if (!errorMessage)
+        return;
+
+    if (readOnlyAccessPaths().count) {
+        [readOnlyAccessPaths() removeAllObjects];
+        [self clearConfiguration];
+    }
+    [NSException raise:NSInvalidArgumentException format:@"%@", errorMessage];
+}
+
++ (void)validateEntry:(id)maybeFileURL
+{
+    NSString *errorMessage = nil;
+    auto* url = dynamic_objc_cast<NSURL>(maybeFileURL);
+    if (!url)
+        errorMessage = @"The NSArray associated with _WKReadAccessFileURLsOption may only contain NSURL objects.";
+    else if (!url.isFileURL)
+        errorMessage = @"_WKReadAccessFileURLsOption requires its NSURL objects to be file URLs.";
+
+    [self clearConfigurationAndRaiseExceptionIfNecessary:errorMessage];
+}
+
++ (void)maybeConsumeBundlePaths:(NSDictionary<NSAttributedStringDocumentReadingOptionKey, id> *)options
+{
+    id maybeReadAccessFileURLs = options[_WKReadAccessFileURLsOption];
+    if (!maybeReadAccessFileURLs)
+        return;
+
+    NSString *errorMessage = nil;
+    auto* readAccessFileURLs = dynamic_objc_cast<NSArray<NSURL *>>(maybeReadAccessFileURLs);
+    if (!readAccessFileURLs)
+        errorMessage = @"The value associated with _WKReadAccessFileURLsOption must be an NSArray of NSURL objects.";
+    else if (readAccessFileURLs.count > maximumReadOnlyAccessPaths)
+        errorMessage = @"_WKReadAccessFileURLsOption may have at most two additional directories.";
+
+    [self clearConfigurationAndRaiseExceptionIfNecessary:errorMessage];
+
+    for (id fileURL in readAccessFileURLs)
+        [self validateEntry:fileURL];
+
+    if ([readAccessFileURLs isEqualToArray:readOnlyAccessPaths()])
+        return;
+
+    if (readAccessFileURLs)
+        [readOnlyAccessPaths() setArray:readAccessFileURLs];
+    else
+        [readOnlyAccessPaths() removeAllObjects];
+    [self clearConfiguration];
 }
 
 + (RetainPtr<WKWebView>)retrieveOrCreateWebView
@@ -249,6 +321,8 @@ static RetainPtr<WKWebViewConfiguration>& globalConfiguration()
 
     auto runConversion = ^{
         __block auto finished = NO;
+
+        [_WKAttributedStringWebViewCache maybeConsumeBundlePaths:options];
         __block auto webView = [_WKAttributedStringWebViewCache retrieveOrCreateWebView];
         __block auto navigationDelegate = adoptNS([[_WKAttributedStringNavigationDelegate alloc] init]);
 

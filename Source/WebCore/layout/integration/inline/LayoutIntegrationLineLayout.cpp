@@ -400,7 +400,8 @@ void LineLayout::constructContent()
     ASSERT(m_inlineContent);
 
     auto& rootGeometry = m_layoutState.geometryForRootBox();
-    auto& rootStyle = rootLayoutBox().style();
+    auto& blockFlow = flow();
+    auto& rootStyle = blockFlow.style();
     auto isLeftToRightFloatingStateInlineDirection = m_inlineFormattingState.floatingState().isLeftToRightDirection();
     auto isHorizontalWritingMode = rootStyle.isHorizontalWritingMode();
     auto isFlippedBlocksWritingMode = rootStyle.isFlippedBlocksWritingMode();
@@ -418,8 +419,14 @@ void LineLayout::constructContent()
             auto& layer = *renderer.layer();
             auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
 
+            if (layoutBox.style().isOriginalDisplayInlineType())
+                blockFlow.setStaticInlinePositionForChild(renderer, logicalBorderBoxRect.y(), logicalBorderBoxRect.x());
+
             layer.setStaticBlockPosition(logicalBorderBoxRect.y());
             layer.setStaticInlinePosition(logicalBorderBoxRect.x());
+
+            if (layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode()))
+                renderer.setChildNeedsLayout(MarkOnlyThis);
             continue;
         }
 

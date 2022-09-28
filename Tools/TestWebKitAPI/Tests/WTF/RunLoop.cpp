@@ -28,6 +28,7 @@
 #include "Utilities.h"
 #include <wtf/RunLoop.h>
 #include <wtf/Threading.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
 
@@ -257,6 +258,36 @@ TEST(WTF_RunLoop, MAYBE_CapabilityIsCurrentNegativeDeathTest)
             assertIsCurrent(RunLoop::main()); // This should assert.
         })->waitForCompletion();
     }, "ASSERTION FAILED: &RunLoop::current\\(\\) == &runLoop");
+}
+
+TEST(WTF_RunLoop, Create)
+{
+    RefPtr<RunLoop> runLoop = RunLoop::create("RunLoopCreateTestThread"_s, ThreadType::Unknown);
+    Thread* runLoopThread = nullptr;
+    {
+        BinarySemaphore semaphore;
+        runLoop->dispatch([&] {
+            runLoopThread = &Thread::current();
+            semaphore.signal();
+        });
+        semaphore.wait();
+    }
+    {
+        Locker threadsLock { Thread::allThreadsLock() };
+        EXPECT_TRUE(Thread::allThreads().contains(runLoopThread));
+    }
+
+    runLoop->dispatch([] {
+        RunLoop::current().stop();
+    });
+    runLoop = nullptr;
+    Util::runFor(.2_s);
+
+    // Expect that RunLoop Thread does not leak.
+    {
+        Locker threadsLock { Thread::allThreadsLock() };
+        EXPECT_FALSE(Thread::allThreads().contains(runLoopThread));
+    }
 }
 
 } // namespace TestWebKitAPI

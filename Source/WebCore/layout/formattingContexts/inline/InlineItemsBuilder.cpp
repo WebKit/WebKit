@@ -551,7 +551,8 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             }
             if (startPosition == endPosition)
                 return false;
-            inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, startPosition, endPosition - startPosition, UBIDI_DEFAULT_LTR, { }, { }));
+            for (auto index = startPosition; index < endPosition; ++index)
+                inlineItems.append(InlineTextItem::createNonWhitespaceItem(inlineTextBox, index, 1, UBIDI_DEFAULT_LTR, { }, { }));
             currentPosition = endPosition;
             return true;
         };

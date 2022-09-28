@@ -153,10 +153,6 @@ def arguments_type(message):
     return 'std::tuple<%s>' % ', '.join(function_parameter_type(parameter.type, parameter.kind) for parameter in message.parameters)
 
 
-def reply_tuple(message):
-    return 'std::tuple<%s>' % (', '.join(reply_parameter_type(parameter.type) for parameter in message.reply_parameters))
-
-
 def reply_arguments_type(message):
     return 'std::tuple<%s>' % (', '.join(parameter.type for parameter in message.reply_parameters))
 
@@ -215,7 +211,6 @@ def message_to_struct_declaration(receiver, message):
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::MainThread;\n')
         else:
             result.append('    static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;\n')
-        result.append('    using Reply = %s;\n' % reply_tuple(message))
         result.append('    using ReplyArguments = %s;\n' % reply_arguments_type(message))
 
     if len(function_parameters):

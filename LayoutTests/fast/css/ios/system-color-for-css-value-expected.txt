@@ -3,46 +3,216 @@ Test that system colors for CSS values are correct.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS internals.systemColorForCSSValue('-apple-system-label', true, false) is 'rgb(255, 255, 255)'
-PASS internals.systemColorForCSSValue('-apple-system-header-text', true, false) is 'rgb(255, 255, 255)'
-PASS internals.systemColorForCSSValue('-apple-system-secondary-label', true, false) is 'rgba(235, 235, 245, 0.6)'
-PASS internals.systemColorForCSSValue('-apple-system-tertiary-label', true, false) is 'rgba(235, 235, 245, 0.3)'
-PASS internals.systemColorForCSSValue('-apple-system-quaternary-label', true, false) is 'rgba(235, 235, 245, 0.18)'
-PASS internals.systemColorForCSSValue('-apple-system-placeholder-text', true, false) is 'rgba(235, 235, 245, 0.3)'
-PASS internals.systemColorForCSSValue('-webkit-control-background', true, false) is 'rgb(0, 0, 0)'
-PASS internals.systemColorForCSSValue('-apple-system-control-background', true, false) is 'rgb(0, 0, 0)'
-PASS internals.systemColorForCSSValue('-apple-system-text-background', true, false) is 'rgb(0, 0, 0)'
-PASS internals.systemColorForCSSValue('-apple-system-background', true, false) is 'rgb(0, 0, 0)'
-PASS internals.systemColorForCSSValue('-apple-system-secondary-background', true, false) is 'rgb(28, 28, 30)'
-PASS internals.systemColorForCSSValue('-apple-system-tertiary-background', true, false) is 'rgb(44, 44, 46)'
-PASS internals.systemColorForCSSValue('-apple-system-grouped-background', true, false) is 'rgb(0, 0, 0)'
-PASS internals.systemColorForCSSValue('-apple-system-secondary-grouped-background', true, false) is 'rgb(28, 28, 30)'
-PASS internals.systemColorForCSSValue('-apple-system-tertiary-grouped-background', true, false) is 'rgb(44, 44, 46)'
-PASS internals.systemColorForCSSValue('-apple-system-grid', true, false) is 'rgba(84, 84, 88, 0.6)'
-PASS internals.systemColorForCSSValue('-apple-system-separator', true, false) is 'rgba(84, 84, 88, 0.6)'
-PASS internals.systemColorForCSSValue('-apple-system-container-border', true, false) is 'rgba(84, 84, 88, 0.6)'
-PASS internals.systemColorForCSSValue('-apple-system-selected-content-background', true, false) is 'rgb(58, 58, 60)'
-PASS internals.systemColorForCSSValue('-apple-system-unemphasized-selected-content-background', true, false) is 'rgb(58, 58, 60)'
-PASS internals.systemColorForCSSValue('-apple-system-brown', true, false) is 'rgb(172, 142, 104)'
-PASS internals.systemColorForCSSValue('-apple-system-indigo', true, false) is 'rgb(94, 92, 230)'
-PASS internals.systemColorForCSSValue('-apple-system-teal', true, false) is 'rgb(100, 210, 255)'
-PASS internals.systemColorForCSSValue('-apple-wireless-playback-target-active', true, false) is 'rgb(10, 132, 255)'
-PASS internals.systemColorForCSSValue('-apple-system-blue', true, false) is 'rgb(10, 132, 255)'
-PASS internals.systemColorForCSSValue('-apple-system-gray', true, false) is 'rgb(142, 142, 147)'
-PASS internals.systemColorForCSSValue('-apple-system-green', true, false) is 'rgb(48, 209, 88)'
-PASS internals.systemColorForCSSValue('-apple-system-orange', true, false) is 'rgb(255, 159, 10)'
-PASS internals.systemColorForCSSValue('-apple-system-pink', true, false) is 'rgb(255, 55, 95)'
-PASS internals.systemColorForCSSValue('-apple-system-purple', true, false) is 'rgb(191, 90, 242)'
-PASS internals.systemColorForCSSValue('-apple-system-red', true, false) is 'rgb(255, 69, 58)'
-PASS internals.systemColorForCSSValue('-apple-system-yellow', true, false) is 'rgb(255, 214, 10)'
-PASS internals.systemColorForCSSValue('-apple-system-opaque-fill', true, false) is 'rgb(43, 43, 46)'
-PASS internals.systemColorForCSSValue('-apple-system-opaque-fill', false, false) is 'rgb(228, 228, 229)'
-PASS internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill', true, false) is 'rgb(38, 38, 41)'
-PASS internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill', false, false) is 'rgb(233, 233, 234)'
-PASS internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill-disabled', true, false) is 'rgb(29, 29, 31)'
-PASS internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill-disabled', false, false) is 'rgb(238, 238, 239)'
-PASS internals.systemColorForCSSValue('-apple-system-opaque-tertiary-fill', true, false) is 'rgb(28, 28, 30)'
-PASS internals.systemColorForCSSValue('-apple-system-opaque-tertiary-fill', false, false) is 'rgb(238, 238, 239)'
+-apple-system-background
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(0, 0, 0)            	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-blue
+rgb(0, 122, 255)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(0, 122, 255)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(10, 132, 255)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(10, 132, 255)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-brown
+rgb(162, 132, 94)       	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(162, 132, 94)       	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(172, 142, 104)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(172, 142, 104)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-container-border
+rgba(60, 60, 67, 0.29)  	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.29)  	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(84, 84, 88, 0.6)   	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(84, 84, 88, 0.6)   	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-control-background
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(0, 0, 0)            	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-gray
+rgb(142, 142, 147)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(142, 142, 147)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(142, 142, 147)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(142, 142, 147)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-green
+rgb(52, 199, 89)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(52, 199, 89)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(48, 209, 88)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(48, 209, 88)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-grid
+rgba(60, 60, 67, 0.29)  	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.29)  	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(84, 84, 88, 0.6)   	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(84, 84, 88, 0.6)   	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-grouped-background
+rgb(242, 242, 247)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(242, 242, 247)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(0, 0, 0)            	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-header-text
+rgb(0, 0, 0)            	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(0, 0, 0)            	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(255, 255, 255)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(255, 255, 255)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-indigo
+rgb(88, 86, 214)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(88, 86, 214)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(94, 92, 230)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(94, 92, 230)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-label
+rgb(0, 0, 0)            	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(0, 0, 0)            	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(255, 255, 255)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(255, 255, 255)      	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-opaque-fill
+rgb(228, 228, 229)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(228, 228, 229)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(43, 43, 46)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(43, 43, 46)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-opaque-secondary-fill
+rgb(233, 233, 234)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(233, 233, 234)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(38, 38, 41)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(38, 38, 41)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-opaque-tertiary-fill
+rgb(238, 238, 239)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(238, 238, 239)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-orange
+rgb(255, 149, 0)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 149, 0)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(255, 159, 10)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(255, 159, 10)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-pink
+rgb(255, 45, 85)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 45, 85)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(255, 55, 95)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(255, 55, 95)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-placeholder-text
+rgba(60, 60, 67, 0.298) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.298) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(235, 235, 245, 0.298)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(235, 235, 245, 0.298)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-purple
+rgb(175, 82, 222)       	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(175, 82, 222)       	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(191, 90, 242)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(191, 90, 242)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-quaternary-label
+rgba(60, 60, 67, 0.176) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.176) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(235, 235, 245, 0.157)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(235, 235, 245, 0.157)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-red
+rgb(255, 59, 48)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 59, 48)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(255, 69, 58)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(255, 69, 58)        	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-secondary-background
+rgb(242, 242, 247)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(242, 242, 247)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(44, 44, 46)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-secondary-grouped-background
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(44, 44, 46)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-secondary-label
+rgba(60, 60, 67, 0.6)   	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.6)   	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(235, 235, 245, 0.6)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(235, 235, 245, 0.6)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-selected-content-background
+rgb(209, 209, 214)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(209, 209, 214)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(58, 58, 60)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(58, 58, 60)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-separator
+rgba(60, 60, 67, 0.29)  	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.29)  	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(84, 84, 88, 0.6)   	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(84, 84, 88, 0.6)   	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-teal
+rgb(48, 176, 199)       	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(48, 176, 199)       	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(64, 200, 224)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(64, 200, 224)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-tertiary-background
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(44, 44, 46)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(58, 58, 60)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-tertiary-grouped-background
+rgb(242, 242, 247)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(242, 242, 247)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(44, 44, 46)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(58, 58, 60)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-tertiary-label
+rgba(60, 60, 67, 0.298) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgba(60, 60, 67, 0.298) 	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgba(235, 235, 245, 0.298)	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgba(235, 235, 245, 0.298)	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-text-background
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(0, 0, 0)            	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-unemphasized-selected-content-background
+rgb(209, 209, 214)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(209, 209, 214)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(58, 58, 60)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(58, 58, 60)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-system-yellow
+rgb(255, 204, 0)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 204, 0)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(255, 214, 10)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(255, 214, 10)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-apple-wireless-playback-target-active
+rgb(0, 122, 255)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(0, 122, 255)        	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(10, 132, 255)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(10, 132, 255)       	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
+-webkit-control-background
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=false
+rgb(255, 255, 255)      	useDarkAppearance=false	useElevatedUserInterfaceLevel=true
+rgb(0, 0, 0)            	useDarkAppearance=true	useElevatedUserInterfaceLevel=false
+rgb(28, 28, 30)         	useDarkAppearance=true	useElevatedUserInterfaceLevel=true
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

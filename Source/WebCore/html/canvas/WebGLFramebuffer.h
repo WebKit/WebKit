@@ -52,11 +52,6 @@ public:
     public:
         virtual ~WebGLAttachment();
 
-#if !USE(ANGLE)
-        virtual GCGLsizei getWidth() const = 0;
-        virtual GCGLsizei getHeight() const = 0;
-        virtual GCGLenum getFormat() const = 0;
-#endif
         virtual WebGLSharedObject* getObject() const = 0;
         virtual bool isSharedObject(WebGLSharedObject*) const = 0;
         virtual bool isValid() const = 0;
@@ -86,26 +81,6 @@ public:
     void removeAttachmentFromBoundFramebuffer(const AbstractLocker&, GCGLenum target, GCGLenum attachment);
     WebGLSharedObject* getAttachmentObject(GCGLenum) const;
 
-#if !USE(ANGLE)
-    GCGLenum getColorBufferFormat() const;
-    GCGLsizei getColorBufferWidth() const;
-    GCGLsizei getColorBufferHeight() const;
-
-    // This should always be called before drawArray, drawElements, clear,
-    // readPixels, copyTexImage2D, copyTexSubImage2D if this framebuffer is
-    // currently bound.
-    // Return false if the framebuffer is incomplete; otherwise initialize
-    // the buffers if they haven't been initialized and
-    // needToInitializeAttachments is true.
-    bool onAccess(GraphicsContextGL*, const char** reason);
-
-    // Software version of glCheckFramebufferStatus(), except that when
-    // FRAMEBUFFER_COMPLETE is returned, it is still possible for
-    // glCheckFramebufferStatus() to return FRAMEBUFFER_UNSUPPORTED,
-    // depending on hardware implementation.
-    GCGLenum checkStatus(const char** reason) const;
-#endif
-
     bool hasEverBeenBound() const { return object() && m_hasEverBeenBound; }
 
     void setHasEverBeenBound() { m_hasEverBeenBound = true; }
@@ -130,11 +105,6 @@ private:
     void deleteObjectImpl(const AbstractLocker&, GraphicsContextGL*, PlatformGLObject) override;
 
     WebGLAttachment* getAttachment(GCGLenum) const;
-
-#if !USE(ANGLE)
-    // Return false if framebuffer is incomplete.
-    bool initializeAttachments(GraphicsContextGL*, const char** reason);
-#endif
 
     // Check if the framebuffer is currently bound to the given target.
     bool isBound(GCGLenum target) const;

@@ -41,7 +41,7 @@ public:
     }
 
     Kind kind() const override { return Kind::StructureAccess; }
-    UniqueRef<Expression>& base() { return m_base; }
+    Expression& base() { return m_base.get(); }
     const StringView& fieldName() const { return m_fieldName; }
 
 private:

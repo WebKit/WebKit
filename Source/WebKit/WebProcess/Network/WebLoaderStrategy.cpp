@@ -740,13 +740,15 @@ void WebLoaderStrategy::loadResourceSynchronously(FrameLoader& frameLoader, WebC
     HangDetectionDisabler hangDetectionDisabler;
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
-    if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::Reply(error, response, data), 0)) {
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad(loadParameters), 0);
+    if (!sendResult) {
         WEBLOADERSTRATEGY_WITH_FRAMELOADER_RELEASE_LOG_ERROR("loadResourceSynchronously: failed sending synchronous network process message");
         if (page)
             page->diagnosticLoggingClient().logDiagnosticMessage(WebCore::DiagnosticLoggingKeys::internalErrorKey(), WebCore::DiagnosticLoggingKeys::synchronousMessageFailedKey(), WebCore::ShouldSample::No);
         response = ResourceResponse();
         error = internalError(request.url());
-    }
+    } else
+        std::tie(error, response, data) = sendResult.takeReply();
 }
 
 void WebLoaderStrategy::pageLoadCompleted(Page& page)
@@ -957,22 +959,22 @@ void WebLoaderStrategy::setCaptureExtraNetworkLoadMetricsEnabled(bool enabled)
 
 ResourceResponse WebLoaderStrategy::responseFromResourceLoadIdentifier(ResourceLoaderIdentifier resourceLoadIdentifier)
 {
-    ResourceResponse response;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse::Reply { response }, 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadInformationResponse { resourceLoadIdentifier }, 0);
+    auto [response] = sendResult.takeReplyOr(ResourceResponse { });
     return response;
 }
 
 Vector<NetworkTransactionInformation> WebLoaderStrategy::intermediateLoadInformationFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
 {
-    Vector<NetworkTransactionInformation> information;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation::Reply { information }, 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::GetNetworkLoadIntermediateInformation { resourceLoadIdentifier }, 0);
+    auto [information] = sendResult.takeReplyOr(Vector<NetworkTransactionInformation> { });
     return information;
 }
 
 NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier)
 {
-    NetworkLoadMetrics networkMetrics;
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics::Reply { networkMetrics }, 0);
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::TakeNetworkLoadInformationMetrics { resourceLoadIdentifier }, 0);
+    auto [networkMetrics] = sendResult.takeReplyOr(NetworkLoadMetrics { });
     return networkMetrics;
 }
 

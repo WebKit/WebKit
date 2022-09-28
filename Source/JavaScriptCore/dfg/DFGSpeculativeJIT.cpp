@@ -4206,7 +4206,7 @@ void SpeculativeJIT::compileGetPrivateNameById(Node* node)
         JSValueRegs baseRegs = JSValueRegs::payloadOnly(base.gpr());
         JSValueRegs resultRegs = result.regs();
 
-        cachedGetById(node->origin.semantic, baseRegs, resultRegs, stubInfoGPR, scratchGPR, node->cacheableIdentifier(), JITCompiler::Jump(), NeedToSpill, AccessType::GetPrivateName);
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, stubInfoGPR, scratchGPR, node->cacheableIdentifier(), JITCompiler::Jump(), NeedToSpill, AccessType::GetPrivateNameById);
 
         jsValueResult(resultRegs, node, DataFormatJS);
         break;
@@ -4231,7 +4231,7 @@ void SpeculativeJIT::compileGetPrivateNameById(Node* node)
 
         JITCompiler::Jump notCell = m_jit.branchIfNotCell(baseRegs);
 
-        cachedGetById(node->origin.semantic, baseRegs, resultRegs, stubInfoGPR, scratchGPR, node->cacheableIdentifier(), notCell, NeedToSpill, AccessType::GetPrivateName);
+        cachedGetById(node->origin.semantic, baseRegs, resultRegs, stubInfoGPR, scratchGPR, node->cacheableIdentifier(), notCell, NeedToSpill, AccessType::GetPrivateNameById);
 
         jsValueResult(resultRegs, node, DataFormatJS);
         break;

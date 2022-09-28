@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "GraphicsContextGLOpenGL.h"
+#include "GraphicsContextGL.h"
 
 #if ENABLE(WEBGL) && USE(CAIRO)
 

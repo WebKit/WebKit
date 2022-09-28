@@ -180,6 +180,11 @@ skip:
     - test/intl402/ListFormat/prototype/toStringTag/toString.js
     - test/intl402/ListFormat/prototype/toStringTag/toStringTag.js
 
+
+    # Test is obsolete. microseconds and nanoseconds are added in the spec.
+    - test/intl402/Intl/supportedValuesOf/units.js
+    - test/intl402/NumberFormat/prototype/format/units-invalid.js
+
     # Depends on Temporal.Duration relativeTo option
     - test/built-ins/Temporal/Duration/compare/basic.js
     - test/built-ins/Temporal/Duration/compare/calendar-dateadd-called-with-options-undefined.js

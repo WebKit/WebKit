@@ -19,6 +19,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "ParseFromStringOptions.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -32,7 +33,7 @@ public:
     static Ref<DOMParser> create(Document& contextDocument);
     ~DOMParser();
 
-    ExceptionOr<Ref<Document>> parseFromString(const String&, const String& contentType);
+    ExceptionOr<Ref<Document>> parseFromString(const String&, const String& contentType, ParseFromStringOptions);
 
 private:
     explicit DOMParser(Document& contextDocument);

@@ -337,15 +337,6 @@
     _processPoolConfiguration->setJITEnabled(enabled);
 }
 
-- (void)setHSTSStorageDirectory:(NSURL *)directory
-{
-}
-
-- (NSURL *)hstsStorageDirectory
-{
-    return nil;
-}
-
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)alwaysRunsAtBackgroundPriority
 {

@@ -26,7 +26,7 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(LIBGBM) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(LIBGBM)
 
 #include "GBMBufferSwapchain.h"
 #include "GraphicsContextGLANGLE.h"
@@ -110,4 +110,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(LIBGBM) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(LIBGBM)

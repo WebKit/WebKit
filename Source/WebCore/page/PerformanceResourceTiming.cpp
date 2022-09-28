@@ -281,6 +281,7 @@ uint64_t PerformanceResourceTiming::transferSize() const
         return 0;
 
     // https://w3c.github.io/resource-timing/#dom-performanceresourcetiming-transfersize
+    // Motivated by https://github.com/w3c/resource-timing/issues/238
     return encodedBodySize + 300;
 }
 

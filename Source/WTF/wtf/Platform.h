@@ -157,13 +157,6 @@
 #define USE_LIBWEBRTC 1
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(WEBGL)
-#define USE_ANGLE 1
-#ifndef GL_SILENCE_DEPRECATION
-#define GL_SILENCE_DEPRECATION 1
-#endif
-#endif
-
 /* FIXME: This is used to "turn on a specific feature of WebKit", so should be converted to an ENABLE macro. */
 #if (PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)) && ENABLE(ACCESSIBILITY)
 #define USE_ACCESSIBILITY_CONTEXT_MENUS 1

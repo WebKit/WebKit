@@ -49,12 +49,7 @@ WebGLExtension::ExtensionName WebGLDrawBuffers::getName() const
 
 bool WebGLDrawBuffers::supported(WebGLRenderingContextBase& context)
 {
-#if USE(ANGLE)
     return context.graphicsContextGL()->supportsExtension("GL_EXT_draw_buffers"_s);
-#else
-    return context.graphicsContextGL()->supportsExtension("GL_EXT_draw_buffers"_s)
-        && satisfiesWebGLRequirements(context);
-#endif
 }
 
 void WebGLDrawBuffers::drawBuffersWEBGL(const Vector<GCGLenum>& buffers)

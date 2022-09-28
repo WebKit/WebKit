@@ -200,7 +200,7 @@ void RenderTextControlSingleLine::layout()
         if (containerBox) {
             // Center vertical align the placeholder content.
             auto placeholderLineBox = InlineIterator::firstLineBoxFor(downcast<RenderBlockFlow>(*placeholderBox));
-            auto placeholderLineLogicalHeight = placeholderLineBox ? LayoutUnit { placeholderLineBox->contentLogicalHeight() } : placeholderBox->logicalHeight();
+            auto placeholderLineLogicalHeight = placeholderLineBox ? LayoutUnit { std::max(placeholderLineBox->height(), placeholderLineBox->contentLogicalHeight()) } : placeholderBox->logicalHeight();
             auto logicalTop = placeholderTopLeft.y() + (containerBox->logicalHeight() / 2 - placeholderLineLogicalHeight / 2);
             placeholderBox->setLogicalTop(logicalTop);
         }

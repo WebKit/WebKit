@@ -29,7 +29,7 @@
 import re
 import unittest
 
-from webkitcorepy import StringIO
+from webkitcorepy import StringIO, string_utils
 
 import webkitpy.common.checkout.diff_parser as diff_parser
 from webkitpy.common.checkout.diff_test_data import DIFF_TEST_DATA
@@ -79,6 +79,15 @@ class DiffParserTest(unittest.TestCase):
         diff = parser.files['LayoutTests/platform/mac/fast/flexbox/box-orient-button-expected.checksum']
         self.assertEqual(1, len(diff.lines))
         self.assertEqual((0, 1), diff.lines[0][0:2])
+
+    def test_diff_parser_latin(self):
+        data = string_utils.encode(DIFF_TEST_DATA).replace(b'(o.boxOrient)', b'(o.boxOrient) // With comment, \xa3\xa3')
+        parser = diff_parser.DiffParser(data.splitlines())
+        self.assertEqual(3, len(parser.files))
+        self.assertEqual(
+            string_utils.encode(parser.files['WebCore/rendering/style/StyleRareInheritedData.cpp'].lines[10][2]),
+            b'    , boxOrient(o.boxOrient) // With comment, \xef\xbf\xbd\xef\xbf\xbd',
+        )
 
     def test_diff_converter(self):
         comment_lines = [

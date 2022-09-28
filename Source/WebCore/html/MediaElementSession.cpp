@@ -1238,10 +1238,10 @@ void MediaElementSession::updateMediaUsageIfChanged()
     if (!page || page->sessionID().isEphemeral())
         return;
 
-    // Bail out early if the currentSrc() is empty, and so was the previous currentSrc(), to
-    // avoid doing a large amount of unnecessary work below.
-    auto currentSrc = m_element.currentSrc();
-    if (currentSrc.isEmpty() && (!m_mediaUsageInfo || m_mediaUsageInfo->mediaURL.isEmpty()))
+    // Bail out early if the element currently has no source (currentSrc or
+    // srcObject) and neither did the previous state, to avoid doing a large
+    // amount of unnecessary work below.
+    if (!m_element.hasSource() && (!m_mediaUsageInfo || !m_mediaUsageInfo->hasSource))
         return;
 
     bool isOutsideOfFullscreen = false;
@@ -1255,7 +1255,8 @@ void MediaElementSession::updateMediaUsageIfChanged()
     bool isPlaying = m_element.isPlaying();
 
     MediaUsageInfo usage = {
-        WTFMove(currentSrc),
+        m_element.currentSrc(),
+        m_element.hasSource(),
         state() == PlatformMediaSession::Playing,
         canShowControlsManager(PlaybackControlsPurpose::ControlsManager),
         !page->isVisibleAndActive(),

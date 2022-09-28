@@ -31,7 +31,6 @@
 #include <mutex>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -47,21 +46,13 @@ ScrollingThread& ScrollingThread::singleton()
 }
 
 ScrollingThread::ScrollingThread()
+    : m_runLoop(RunLoop::create("WebCore: Scrolling"_s, ThreadType::Graphics, Thread::QOS::UserInteractive))
 {
-    BinarySemaphore semaphore;
-    m_thread = Thread::create("WebCore: Scrolling", [this, &semaphore] {
-        Thread::setCurrentThreadIsUserInteractive();
-        m_runLoop = &RunLoop::current();
-        semaphore.signal();
-        m_runLoop->run();
-    });
-
-    semaphore.wait();
 }
 
 bool ScrollingThread::isCurrentThread()
 {
-    return ScrollingThread::singleton().m_thread == &Thread::current();
+    return ScrollingThread::singleton().m_runLoop.ptr() == &RunLoop::current();
 }
 
 void ScrollingThread::dispatch(Function<void ()>&& function)

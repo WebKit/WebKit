@@ -75,7 +75,6 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithImageData_ReceiveImageDataReply; }
     using AsyncReply = ReceiveImageDataAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using Reply = std::tuple<RefPtr<WebCore::ImageData>&>;
     using ReplyArguments = std::tuple<RefPtr<WebCore::ImageData>>;
     const Arguments& arguments() const
     {

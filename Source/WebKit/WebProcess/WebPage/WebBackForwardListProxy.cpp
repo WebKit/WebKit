@@ -119,10 +119,8 @@ RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex)
     if (!m_page)
         return nullptr;
 
-    std::optional<BackForwardItemIdentifier> itemID;
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->identifier()))
-        return nullptr;
-
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), m_page->identifier());
+    auto [itemID] = sendResult.takeReplyOr(std::nullopt);
     if (!itemID)
         return nullptr;
 
@@ -152,8 +150,11 @@ const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecess
 {
     if (!m_cachedBackForwardListCounts) {
         WebBackForwardListCounts backForwardListCounts;
-        if (m_page)
-            WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardListCounts(), Messages::WebPageProxy::BackForwardListCounts::Reply(backForwardListCounts), m_page->identifier());
+        if (m_page) {
+            auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardListCounts(), m_page->identifier());
+            if (sendResult)
+                std::tie(backForwardListCounts) = sendResult.takeReply();
+        }
         m_cachedBackForwardListCounts = backForwardListCounts;
     }
     return *m_cachedBackForwardListCounts;

@@ -58,8 +58,8 @@ static bool isMainDocumentLoadingFromHTTP(const Document& document)
     return !document.ownerElement() && document.url().protocolIsInHTTPFamily();
 }
 
-HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document)
-    : ScriptableDocumentParser(document)
+HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document, OptionSet<ParserContentPolicy> policy)
+    : ScriptableDocumentParser(document, policy)
     , m_options(document)
     , m_tokenizer(m_options)
     , m_scriptRunner(makeUnique<HTMLScriptRunner>(document, static_cast<HTMLScriptRunnerHost&>(*this)))
@@ -70,9 +70,9 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document)
 {
 }
 
-Ref<HTMLDocumentParser> HTMLDocumentParser::create(HTMLDocument& document)
+Ref<HTMLDocumentParser> HTMLDocumentParser::create(HTMLDocument& document, OptionSet<ParserContentPolicy> policy)
 {
-    return adoptRef(*new HTMLDocumentParser(document));
+    return adoptRef(*new HTMLDocumentParser(document, policy));
 }
 
 inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> rawPolicy)

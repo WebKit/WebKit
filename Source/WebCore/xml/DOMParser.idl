@@ -22,5 +22,5 @@
 ] interface DOMParser {
     [CallWith=CurrentDocument] constructor();
 
-    [NewObject] Document parseFromString(DOMString string, DOMString contentType);
+    [NewObject] Document parseFromString(DOMString string, DOMString contentType, optional ParseFromStringOptions options = {});
 };
