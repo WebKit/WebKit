@@ -53,6 +53,7 @@ struct CSSParserContext {
 
     bool isContentOpaque { false };
     bool useSystemAppearance { false };
+    bool shouldIgnoreImportRules { false };
 
     // Settings, excluding those affecting properties.
     bool colorContrastEnabled { false };
@@ -73,7 +74,6 @@ struct CSSParserContext {
     bool gradientPremultipliedAlphaInterpolationEnabled { false };
     bool gradientInterpolationColorSpacesEnabled { false };
     bool subgridEnabled { false };
-    bool shouldIgnoreImportRules { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;
