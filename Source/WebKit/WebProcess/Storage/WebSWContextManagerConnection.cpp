@@ -136,7 +136,12 @@ void WebSWContextManagerConnection::updatePreferencesStore(WebPreferencesStore&&
 
 void WebSWContextManagerConnection::updateAppInitiatedValue(ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::LastNavigationWasAppInitiated lastNavigationWasAppInitiated)
 {
-    ASSERT(isMainRunLoop());
+    if (!isMainRunLoop()) {
+        callOnMainRunLoop([protectedThis = Ref { *this }, serviceWorkerIdentifier, lastNavigationWasAppInitiated]() mutable {
+            protectedThis->updateAppInitiatedValue(serviceWorkerIdentifier, lastNavigationWasAppInitiated);
+        });
+        return;
+    }
 
     if (auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(serviceWorkerIdentifier))
         serviceWorkerThreadProxy->setLastNavigationWasAppInitiated(lastNavigationWasAppInitiated == WebCore::LastNavigationWasAppInitiated::Yes);
