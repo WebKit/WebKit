@@ -74,7 +74,7 @@ public:
     void dump(PrintStream& out) const;
 
 private:
-    ptrdiff_t m_offset : 48 { 0 };
+    unsigned long m_offset : 48 { 0 };
     unsigned m_regIndex : 7 = Reg().index();
     bool m_width : 1 = false;
 };

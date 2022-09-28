@@ -216,7 +216,7 @@ void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOf
 {
     m_uncorrectedCalleeSaveRegisterAtOffsetList = WTFMove(registerAtOffsetList);
     for (const RegisterAtOffset& registerAtOffset : m_uncorrectedCalleeSaveRegisterAtOffsetList) {
-        ASSERT(registerAtOffset.width() <= Width64 || Options::useWebAssemblySIMD());
+        ASSERT(registerAtOffset.width() == Width64);
         m_calleeSaveRegisters.includeRegister(registerAtOffset.reg(), registerAtOffset.width());
     }
     m_calleeSaveStackSlot = slot;

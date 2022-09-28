@@ -50,7 +50,7 @@ public:
     void lockGPR(GPRReg gpr)
     {
         ASSERT(!m_lockedRegisters.includesRegister(gpr));
-        ASSERT(Reg::fromIndex(gpr).isGPR());
+        ASSERT(Reg(gpr).isGPR());
         m_lockedRegisters.includeRegister(gpr);
         if (verbose)
             dataLog("   * Locking ", gpr, "\n");

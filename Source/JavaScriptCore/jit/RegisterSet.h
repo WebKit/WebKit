@@ -48,40 +48,41 @@ class RegisterSet final {
     friend WholeRegisterSet;
     friend RegisterSetHash;
 
-    WTF_MAKE_FAST_ALLOCATED;
-
-protected:    
-    ALWAYS_INLINE constexpr void set(Reg reg, Width width)
+public:
+    ALWAYS_INLINE constexpr RegisterSet& includeRegister(Reg reg, Width width = Width64)
     {
         ASSERT(!!reg);
         m_bits.set(reg.index());
-        
-        if (width > Width64 && conservativeWidth(reg) > Width64)
+
+        if (UNLIKELY(width > Width64 && conservativeWidth(reg) > Width64))
             m_upperBits.set(reg.index());
-    }
-    
-    ALWAYS_INLINE constexpr void set(JSValueRegs regs)
-    {
-        if (regs.tagGPR() != InvalidGPRReg)
-            set(regs.tagGPR(), Width128);
-        set(regs.payloadGPR(), Width128);
+        return *this;
     }
 
-    ALWAYS_INLINE constexpr void clear(Reg reg)
+    ALWAYS_INLINE constexpr RegisterSet& includeRegister(JSValueRegs regs)
+    {
+        if (regs.tagGPR() != InvalidGPRReg)
+            includeRegister(regs.tagGPR(), Width64);
+        includeRegister(regs.payloadGPR(), Width64);
+        return *this;
+    }
+
+    ALWAYS_INLINE constexpr RegisterSet& excludeRegister(Reg reg)
     {
         ASSERT(!!reg);
         m_bits.clear(reg.index());
         m_upperBits.clear(reg.index());
+        return *this;
     }
 
-    ALWAYS_INLINE constexpr void clear(JSValueRegs regs)
+    ALWAYS_INLINE constexpr RegisterSet& excludeRegister(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            clear(regs.tagGPR());
-        clear(regs.payloadGPR());
+            excludeRegister(regs.tagGPR());
+        excludeRegister(regs.payloadGPR());
+        return *this;
     }
 
-public:
     constexpr RegisterSet() { }
 
     ALWAYS_INLINE constexpr RegisterSet(WholeRegisterSet);
@@ -93,12 +94,7 @@ public:
     }
 
     ALWAYS_INLINE constexpr bool hasAnyWideRegisters() const { return m_upperBits.count(); }
-    ALWAYS_INLINE constexpr bool isEmpty() const { return m_bits.isEmpty(); }
-
-    ALWAYS_INLINE constexpr RegisterSet& includeRegister(Reg reg, Width w = Width128) { set(reg, w); return *this; }
-    ALWAYS_INLINE constexpr RegisterSet& includeRegister(JSValueRegs regs) { set(regs); return *this; }
-    ALWAYS_INLINE constexpr RegisterSet& excludeRegister(Reg reg) { clear(reg); return *this; }
-    ALWAYS_INLINE constexpr RegisterSet& excludeRegister(JSValueRegs regs) { clear(regs); return *this; }
+    ALWAYS_INLINE constexpr bool isEmpty() const { return m_bits.isEmpty() && m_upperBits.isEmpty(); }
 
     ALWAYS_INLINE constexpr RegisterSet& merge(const RegisterSet& other)
     {
@@ -136,7 +132,7 @@ public:
             out.print(comma, reg);
             if (m_bits.get(reg.index()) && (m_upperBits.get(reg.index()) || conservativeWidth(reg) == Width64))
                 continue;
-            
+
             if (m_bits.get(reg.index()))
                 out.print("↓");
             else
@@ -144,13 +140,13 @@ public:
         }
         out.print("]");
     }
-    
+
     ALWAYS_INLINE constexpr bool operator==(const RegisterSet& other) const { return m_bits == other.m_bits && m_upperBits == other.m_upperBits; }
     ALWAYS_INLINE constexpr bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits || m_upperBits != other.m_upperBits; }
-    
+
 protected:
-    ALWAYS_INLINE constexpr void setAny(Reg reg) { set(reg, Width128); }
-    ALWAYS_INLINE constexpr void setAny(JSValueRegs regs) { set(regs); }
+    ALWAYS_INLINE constexpr void setAny(Reg reg) { ASSERT(!reg.isFPR()); includeRegister(reg, Width64); }
+    ALWAYS_INLINE constexpr void setAny(JSValueRegs regs) { includeRegister(regs); }
     ALWAYS_INLINE constexpr void setAny(const RegisterSet& set) { merge(set); }
     ALWAYS_INLINE constexpr void setMany() { }
     template<typename RegType, typename... Regs>
@@ -163,7 +159,7 @@ protected:
     // These offsets mirror the logic in Reg.h.
     static constexpr unsigned gprOffset = 0;
     static constexpr unsigned fprOffset = gprOffset + MacroAssembler::numGPRs;
-    
+
     RegisterBitmap m_bits = { };
     RegisterBitmap m_upperBits = { };
 
@@ -193,89 +189,70 @@ class WholeRegisterSet final {
     friend FrozenRegisterSet;
     friend RegisterSet;
     friend RegisterSetHash;
-    WTF_MAKE_FAST_ALLOCATED;
-
-protected:
-    ALWAYS_INLINE constexpr size_t includes(Reg reg) const
-    {
-        ASSERT(!!reg);
-        if (!m_set.m_bits.get(reg.index()))
-            return 0;
-        Width width = Width64;
-        if (m_set.m_upperBits.get(reg.index()) && width < conservativeWidth(reg))
-            width = conservativeWidth(reg);
-        return bytesForWidth(width);
-    }
-
 public:
     constexpr WholeRegisterSet() = default;
 
     constexpr explicit ALWAYS_INLINE WholeRegisterSet(const RegisterSet& set)
-        : m_set(set)
+        : m_bits(set.m_bits)
+        , m_upperBits(set.m_upperBits)
     {
-        m_set.m_bits.merge(m_set.m_upperBits);
+        m_bits.merge(m_upperBits);
     }
-
-    ALWAYS_INLINE constexpr WholeRegisterSet& includeRegister(Reg reg, Width w = Width128) { m_set.includeRegister(reg, w); m_set.whole(); return *this; }
-    ALWAYS_INLINE constexpr WholeRegisterSet& includeRegister(JSValueRegs regs) { m_set.includeRegister(regs); m_set.whole(); return *this; }
-    ALWAYS_INLINE constexpr WholeRegisterSet& excludeRegister(Reg reg) { m_set.excludeRegister(reg); m_set.whole(); return *this; }
-    ALWAYS_INLINE constexpr WholeRegisterSet& excludeRegister(JSValueRegs regs) { m_set.excludeRegister(regs); m_set.whole(); return *this; }
-    ALWAYS_INLINE constexpr void merge(const WholeRegisterSet& other) { m_set.merge(other.m_set); m_set.whole(); }
-    ALWAYS_INLINE constexpr void merge(const RegisterSet& other) { merge(other.whole()); }
 
     ALWAYS_INLINE constexpr bool includesRegister(Reg reg, Width width = Width64) const
     {
-        if (width > conservativeWidth(reg))
-            width = conservativeWidth(reg);
-        return includes(reg) >= bytesForWidth(width);
+        if (LIKELY(width <= Width64) || conservativeWidth(reg) <= Width64)
+            return m_bits.get(reg.index());
+        return m_bits.get(reg.index()) && m_upperBits.get(reg.index());
     }
 
     ALWAYS_INLINE constexpr size_t numberOfSetGPRs() const
     {
-        RegisterBitmap temp = m_set.m_bits;
-        temp.filter(RegisterSet::allGPRs().m_set.m_bits);
+        RegisterBitmap temp = m_bits;
+        temp.filter(RegisterSet::allGPRs().m_bits);
         return temp.count();
     }
 
     ALWAYS_INLINE constexpr size_t numberOfSetFPRs() const
     {
-        RegisterBitmap temp = m_set.m_bits;
-        temp.filter(RegisterSet::allFPRs().m_set.m_bits);
+        RegisterBitmap temp = m_bits;
+        temp.filter(RegisterSet::allFPRs().m_bits);
         return temp.count();
     }
 
     ALWAYS_INLINE constexpr size_t numberOfSetRegisters() const
     {
-        return m_set.m_bits.count();
+        return m_bits.count();
     }
 
     ALWAYS_INLINE constexpr size_t sizeOfSetRegisters() const
     {
-        return (m_set.m_bits.count() + m_set.m_upperBits.count()) * 8;
+        return (m_bits.count() + m_upperBits.count()) * sizeof(CPURegister);
     }
 
     ALWAYS_INLINE constexpr bool subsumes(const WholeRegisterSet& other) const
     {
-        return m_set.m_bits.subsumes(other.m_set.m_bits) && m_set.m_upperBits.subsumes(other.m_set.m_upperBits);
+        return m_bits.subsumes(other.m_bits) && m_upperBits.subsumes(other.m_upperBits);
     }
 
     ALWAYS_INLINE constexpr bool isEmpty() const
     {
-        return m_set.isEmpty();
+        return m_bits.isEmpty();
     }
 
-    ALWAYS_INLINE constexpr bool operator==(const WholeRegisterSet& other) const { return m_set == other.m_set; }
-    ALWAYS_INLINE constexpr bool operator!=(const WholeRegisterSet& other) const { return m_set != other.m_set; }
-    void dump(PrintStream& out) const { m_set.dump(out); }
-    ALWAYS_INLINE constexpr WholeRegisterSet includeWholeRegisterWidth() const;
-    
+    ALWAYS_INLINE constexpr WholeRegisterSet& includeWholeRegisterWidth()
+    {
+        m_upperBits.merge(m_bits);
+        return *this;
+    }
+
     template<typename Func>
     ALWAYS_INLINE constexpr void forEach(const Func& func) const
     {
-        ASSERT(m_set.m_bits.count() >= m_set.m_upperBits.count());
-        m_set.m_bits.forEachSetBit(
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        m_bits.forEachSetBit(
             [&] (size_t index) {
-                ASSERT(m_set.m_bits.get(index) >= m_set.m_upperBits.get(index));
+                ASSERT(m_bits.get(index) >= m_upperBits.get(index));
                 func(Reg::fromIndex(index));
             });
     }
@@ -285,74 +262,137 @@ public:
     {
         forEach(
             [&] (Reg reg) {
-                func(reg, widthForBytes(includes(reg)));
+                func(reg, (conservativeWidth(reg) <= Width64 || !m_upperBits.get(reg.index())) ? Width64 : Width128);
             });
     }
-    
+
     class iterator {
     public:
         ALWAYS_INLINE constexpr iterator() = default;
-        
+
         ALWAYS_INLINE constexpr iterator(const RegisterBitmap::iterator& iter)
             : m_iter(iter)
         {
         }
-        
+
         ALWAYS_INLINE constexpr Reg operator*() const { return Reg::fromIndex(*m_iter); }
-        
+
         iterator& operator++()
         {
             ++m_iter;
             return *this;
         }
-        
+
         ALWAYS_INLINE constexpr bool operator==(const iterator& other) const
         {
             return m_iter == other.m_iter;
         }
-        
+
         ALWAYS_INLINE constexpr bool operator!=(const iterator& other) const
         {
             return !(*this == other);
         }
-        
+
     private:
         RegisterBitmap::iterator m_iter;
     };
-    
-    ALWAYS_INLINE constexpr iterator begin() const { return iterator(m_set.m_bits.begin()); }
-    ALWAYS_INLINE constexpr iterator end() const { return iterator(m_set.m_bits.end()); }
 
-    ALWAYS_INLINE constexpr bool hasAnyWideRegisters() const { return m_set.hasAnyWideRegisters(); }
+    ALWAYS_INLINE constexpr iterator begin() const { return iterator(m_bits.begin()); }
+    ALWAYS_INLINE constexpr iterator end() const { return iterator(m_bits.end()); }
+
+    ALWAYS_INLINE constexpr WholeRegisterSet& includeRegister(Reg reg, Width width = Width64)
+    {
+        ASSERT(!!reg);
+        m_bits.set(reg.index());
+
+        if (UNLIKELY(width > Width64 && conservativeWidth(reg) > Width64))
+            m_upperBits.set(reg.index());
+        return *this;
+    }
+
+    ALWAYS_INLINE constexpr WholeRegisterSet& includeRegister(JSValueRegs regs)
+    {
+        if (regs.tagGPR() != InvalidGPRReg)
+            includeRegister(regs.tagGPR(), Width64);
+        includeRegister(regs.payloadGPR(), Width64);
+        return *this;
+    }
+
+    ALWAYS_INLINE constexpr WholeRegisterSet& excludeRegister(Reg reg)
+    {
+        ASSERT(!!reg);
+        m_bits.clear(reg.index());
+        m_upperBits.clear(reg.index());
+        return *this;
+    }
+
+    ALWAYS_INLINE constexpr WholeRegisterSet& excludeRegister(JSValueRegs regs)
+    {
+        if (regs.tagGPR() != InvalidGPRReg)
+            excludeRegister(regs.tagGPR());
+        excludeRegister(regs.payloadGPR());
+        return *this;
+    }
+
+    ALWAYS_INLINE constexpr bool hasAnyWideRegisters() const { return m_upperBits.count(); }
+
+    ALWAYS_INLINE constexpr WholeRegisterSet& merge(const RegisterSet& other)
+    {
+        m_bits.merge(other.m_bits);
+        m_upperBits.merge(other.m_upperBits);
+        return *this;
+    }
+
+    ALWAYS_INLINE constexpr WholeRegisterSet& filter(const RegisterSet& other)
+    {
+        m_bits.filter(other.m_bits);
+        m_upperBits.filter(other.m_upperBits);
+        return *this;
+    }
+
+    void dump(PrintStream& out) const
+    {
+        CommaPrinter comma;
+        out.print("[");
+        for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
+            if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
+                continue;
+            out.print(comma, reg);
+            if (m_bits.get(reg.index()) && (m_upperBits.get(reg.index()) || conservativeWidth(reg) == Width64))
+                continue;
+
+            if (m_bits.get(reg.index()))
+                out.print("↓");
+            else
+                out.print("↑");
+        }
+        out.print("]");
+    }
+
+    ALWAYS_INLINE constexpr bool operator==(const RegisterSet& other) const { return m_bits == other.m_bits && m_upperBits == other.m_upperBits; }
+    ALWAYS_INLINE constexpr bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits || m_upperBits != other.m_upperBits; }
 
 private:
-    RegisterSet m_set = { };
+    RegisterBitmap m_bits = { };
+    RegisterBitmap m_upperBits = { };
 };
 
 constexpr RegisterSet::RegisterSet(WholeRegisterSet set)
-    : RegisterSet(set.m_set)
+    : m_bits(set.m_bits)
+    , m_upperBits(set.m_upperBits)
 { }
 
 constexpr WholeRegisterSet RegisterSet::whole() const
 {
-    RegisterSet s;
+#if ASSERT_ENABLED
     for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {
         if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
             continue;
 
-        ASSERT(!m_upperBits.get(reg.index()) || m_bits.get(reg.index()));        
-        s.includeRegister(reg, m_upperBits.get(reg.index()) ? Width128 : Width64);
+        ASSERT(!m_upperBits.get(reg.index()) || m_bits.get(reg.index()));
     }
-    return WholeRegisterSet(s);
-}
-
-constexpr WholeRegisterSet WholeRegisterSet::includeWholeRegisterWidth() const
-{
-    WholeRegisterSet s;
-    forEach([&] (Reg r) {
-        s.includeRegister(r);
-    });
-    return s;
+#endif
+    return WholeRegisterSet(*this);
 }
 
 constexpr size_t RegisterSet::numberOfSetRegisters() const { return whole().numberOfSetRegisters(); }
@@ -366,13 +406,13 @@ public:
     constexpr FrozenRegisterSet() { }
 
     ALWAYS_INLINE constexpr FrozenRegisterSet(const WholeRegisterSet& registers)
-        : m_bits(registers.m_set.m_bits)
+        : m_bits(registers.m_bits)
     {
     }
 
     ALWAYS_INLINE FrozenRegisterSet& operator=(const WholeRegisterSet& r)
     {
-        m_bits = r.m_set.m_bits;
+        m_bits = r.m_bits;
         return *this;
     }
 
@@ -381,7 +421,7 @@ public:
     ALWAYS_INLINE constexpr bool operator!=(const FrozenRegisterSet& other) const { return m_bits != other.m_bits; }
 
     ALWAYS_INLINE constexpr WholeRegisterSet set() const
-    { 
+    {
         WholeRegisterSet result;
         m_bits.forEachSetBit(
             [&] (size_t index) {
@@ -395,7 +435,7 @@ public:
         ASSERT(!!reg);
         m_bits.set(reg.index());
     }
-    
+
     ALWAYS_INLINE constexpr void includeRegister(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
@@ -417,14 +457,14 @@ public:
     ALWAYS_INLINE constexpr size_t numberOfSetGPRs() const
     {
         RegisterBitmap temp = m_bits;
-        temp.filter(RegisterSet::allGPRs().m_set.m_bits);
+        temp.filter(RegisterSet::allGPRs().m_bits);
         return temp.count();
     }
 
     ALWAYS_INLINE constexpr size_t numberOfSetFPRs() const
     {
         RegisterBitmap temp = m_bits;
-        temp.filter(RegisterSet::allFPRs().m_set.m_bits);
+        temp.filter(RegisterSet::allFPRs().m_bits);
         return temp.count();
     }
 
@@ -478,8 +518,8 @@ constexpr WholeRegisterSet RegisterSet::runtimeTagRegisters()
 constexpr WholeRegisterSet RegisterSet::specialRegisters()
 {
     return RegisterSet(
-        RegisterSet::stackRegisters(), 
-        RegisterSet::reservedHardwareRegisters(), 
+        RegisterSet::stackRegisters(),
+        RegisterSet::reservedHardwareRegisters(),
         runtimeTagRegisters()).whole();
 }
 
@@ -529,7 +569,7 @@ constexpr WholeRegisterSet RegisterSet::calleeSaveRegisters()
         result.includeRegister(RegisterNames::id, Width64);
     FOR_EACH_FP_REGISTER(SET_IF_CALLEESAVED)
 #undef SET_IF_CALLEESAVED
-        
+
     return result;
 }
 
@@ -812,7 +852,7 @@ constexpr WholeRegisterSet RegisterSet::allScalarRegisters()
     WholeRegisterSet result;
     result.merge(allGPRs());
     result.merge(allFPRs());
-    result.m_set.m_upperBits.clearAll();
+    result.m_upperBits.clearAll();
     return result;
 }
 

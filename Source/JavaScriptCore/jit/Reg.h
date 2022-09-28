@@ -230,22 +230,22 @@ struct RegHash {
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };
 
-inline constexpr Width conservativeWidth(const Reg reg)
+ALWAYS_INLINE constexpr Width conservativeWidth(const Reg reg)
 {
     return reg.isFPR() ? Width128 : pointerWidth();
 }
 
-inline constexpr Width conservativeWidthForC(const Reg reg)
+ALWAYS_INLINE constexpr Width conservativeWidthForC(const Reg reg)
 {
     return reg.isFPR() ? Width64 : pointerWidth();
 }
 
-inline constexpr unsigned conservativeRegisterBytes(const Reg reg)
+ALWAYS_INLINE constexpr unsigned conservativeRegisterBytes(const Reg reg)
 {
     return bytesForWidth(conservativeWidth(reg));
 }
 
-inline constexpr unsigned conservativeRegisterBytesForC(const Reg reg)
+ALWAYS_INLINE constexpr unsigned conservativeRegisterBytesForC(const Reg reg)
 {
     return bytesForWidth(conservativeWidthForC(reg));
 }

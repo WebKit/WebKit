@@ -84,15 +84,15 @@ public:
     class iterator {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        iterator() = default;
+        constexpr iterator() = default;
 
-        iterator(const Bitmap& bitmap, size_t index)
+        constexpr iterator(const Bitmap& bitmap, size_t index)
             : m_bitmap(&bitmap)
             , m_index(index)
         {
         }
         
-        size_t operator*() const { return m_index; }
+        constexpr size_t operator*() const { return m_index; }
         
         iterator& operator++()
         {
@@ -100,12 +100,12 @@ public:
             return *this;
         }
         
-        bool operator==(const iterator& other) const
+        constexpr bool operator==(const iterator& other) const
         {
             return m_index == other.m_index;
         }
         
-        bool operator!=(const iterator& other) const
+        constexpr bool operator!=(const iterator& other) const
         {
             return !(*this == other);
         }
