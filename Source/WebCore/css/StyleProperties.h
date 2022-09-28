@@ -150,6 +150,8 @@ protected:
 
 private:
     String getGridShorthandValue(const StylePropertyShorthand&) const;
+    String getGridRowColumnShorthandValue(const StylePropertyShorthand&) const;
+    String getGridAreaShorthandValue() const;
     String getGridTemplateValue() const;
     String getGridValue() const;
     String getShorthandValue(const StylePropertyShorthand&, const char* separator = " ") const;
