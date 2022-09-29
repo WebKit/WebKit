@@ -26,6 +26,7 @@ from re import search
 
 from .command import Command
 from .find import Info
+from .trace import Trace, Relationship, CommitsStory
 from datetime import datetime
 from webkitcorepy import arguments
 from webkitscmpy import Commit, local
@@ -51,17 +52,36 @@ class Pickable(Command):
         )
 
     @classmethod
-    def pickable(cls, commits):
-        filtered_commits = []
+    def pickable(cls, commits, repository, commits_story=None):
+        filtered_in = set()
+        all_commits = dict()
+
+        commits_story = commits_story or CommitsStory()
+
         for commit in commits:
+            commits_story.add(commit)
             title = commit.message.splitlines()[0]
+            all_commits[str(commit)] = commit
             if search('Cherry-pick', title) or search('Versioning', title):
                 continue
-            filtered_commits.append(commit)
+            filtered_in.add(str(commit))
 
         # FIXME: We can eliminate more classes of commits by reasoning about commit relationship
         #    For example, a revert of a non-pickable commit is not itself pickable
-        return filtered_commits
+        for ref in list(filtered_in):
+            commit = all_commits[ref]
+            relationships = Trace.relationships(commit, repository, commits_story=commits_story)
+            if not relationships:
+                continue
+            for rel in relationships:
+                if rel.type in Relationship.PAIRED and str(rel.commit) not in filtered_in:
+                    filtered_in.remove(ref)
+                    break
+                elif rel.type in Relationship.UNDO and str(rel.commit) not in filtered_in:
+                    filtered_in.remove(ref)
+                    break
+
+        return [commit for commit in commits if str(commit) in filtered_in]
 
     @classmethod
     def main(cls, args, repository, **kwargs):
@@ -93,8 +113,8 @@ class Pickable(Command):
             sys.stderr.write(str(exception) + '\n')
             return 1
 
-        commits = cls.pickable(commits)
+        commits = cls.pickable(commits, repository)
         if not commits:
             sys.stderr.write("No commits in specified range are 'pickable'\n")
             return 1
-        return Info.print_(args, cls.pickable(commits), verbose_default=1)
+        return Info.print_(args, commits, verbose_default=1)
