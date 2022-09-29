@@ -43,8 +43,10 @@ public:
     TextureMapperLayer();
     virtual ~TextureMapperLayer();
 
+#if USE(COORDINATED_GRAPHICS)
     void setID(uint32_t id) { m_id = id; }
     uint32_t id() { return m_id; }
+#endif
 
     const Vector<TextureMapperLayer*>& children() const { return m_children; }
 
@@ -219,8 +221,8 @@ private:
 
     State m_state;
     Nicosia::Animations m_animations;
-    uint32_t m_id { 0 };
 #if USE(COORDINATED_GRAPHICS)
+    uint32_t m_id { 0 };
     RefPtr<Nicosia::AnimatedBackingStoreClient> m_animatedBackingStoreClient;
 #endif
     bool m_isBackdrop { false };
