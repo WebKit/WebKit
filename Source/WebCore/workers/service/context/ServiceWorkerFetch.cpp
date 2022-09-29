@@ -101,7 +101,7 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
 
     if (response->isAvailableNavigationPreload()) {
         client->usePreload();
-        response->markAsDisturbed();
+        response->markAsUsedForPreload();
         return;
     }
 

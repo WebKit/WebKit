@@ -25,5 +25,10 @@ onactivate = (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.url.includes("no-fetch-event-handling"))
         return;
+
+    if (event.request.url.includes("useNavigationPreloadPromise") && event.preloadResponse) {
+        event.respondWith(event.preloadResponse);
+        return;
+    }
     event.respondWith(fetch(event.request));
 });
