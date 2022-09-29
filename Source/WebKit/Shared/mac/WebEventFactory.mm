@@ -96,17 +96,17 @@ static WebEvent::Type mouseEventTypeForEvent(NSEvent* event)
     case NSEventTypeMouseMoved:
     case NSEventTypeOtherMouseDragged:
     case NSEventTypeRightMouseDragged:
-        return WebEvent::Type::MouseMove;
+        return WebEvent::MouseMove;
     case NSEventTypeLeftMouseDown:
     case NSEventTypeRightMouseDown:
     case NSEventTypeOtherMouseDown:
-        return WebEvent::Type::MouseDown;
+        return WebEvent::MouseDown;
     case NSEventTypeLeftMouseUp:
     case NSEventTypeRightMouseUp:
     case NSEventTypeOtherMouseUp:
-        return WebEvent::Type::MouseUp;
+        return WebEvent::MouseUp;
     default:
-        return WebEvent::Type::MouseMove;
+        return WebEvent::MouseMove;
     }
 }
 
@@ -340,11 +340,11 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
         // Since AppKit doesn't send mouse events for force down or force up, we have to use the current pressure
         // event and lastPressureEvent to detect if this is MouseForceDown, MouseForceUp, or just MouseForceChanged.
         if (lastPressureEvent.stage == 1 && event.stage == 2)
-            type = WebEvent::Type::MouseForceDown;
+            type = WebEvent::MouseForceDown;
         else if (lastPressureEvent.stage == 2 && event.stage == 1)
-            type = WebEvent::Type::MouseForceUp;
+            type = WebEvent::MouseForceUp;
         else
-            type = WebEvent::Type::MouseForceChanged;
+            type = WebEvent::MouseForceChanged;
     }
 
     WebMouseEvent::Button button = mouseButtonForEvent(event);
@@ -445,14 +445,14 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
         rawPlatformDelta = std::nullopt;
     }
 
-    return WebWheelEvent(WebEvent::Type::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
+    return WebWheelEvent(WebEvent::Wheel, WebCore::IntPoint(position), WebCore::IntPoint(globalPosition), WebCore::FloatSize(deltaX, deltaY), WebCore::FloatSize(wheelTicksX, wheelTicksY),
         granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas,
         scrollCount, unacceleratedScrollingDelta, modifiers, timestamp, ioHIDEventWallTime, rawPlatformDelta, momentumEndType);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool handledByInputMethod, bool replacesSoftSpace, const Vector<WebCore::KeypressCommand>& commands)
 {
-    WebEvent::Type type             = isKeyUpEvent(event) ? WebEvent::Type::KeyUp : WebEvent::Type::KeyDown;
+    WebEvent::Type type             = isKeyUpEvent(event) ? WebEvent::KeyUp : WebEvent::KeyDown;
     String text                     = textFromEvent(event, replacesSoftSpace);
     String unmodifiedText           = unmodifiedTextFromEvent(event, replacesSoftSpace);
     String key                      = WebCore::keyForKeyEvent(event);

@@ -2462,7 +2462,7 @@ private:
 
     void discardQueuedMouseEvents();
 
-    void didReceiveEvent(WebEvent::Type, bool handled);
+    void didReceiveEvent(uint32_t opaqueType, bool handled);
     void didUpdateRenderingAfterCommittingLoad();
 #if PLATFORM(IOS_FAMILY)
     void interpretKeyEvent(const EditorState&, bool isCharEvent, CompletionHandler<void(bool)>&&);

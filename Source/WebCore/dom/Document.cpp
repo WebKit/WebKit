@@ -5292,13 +5292,13 @@ ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
 bool Document::hasListenerTypeForEventType(PlatformEvent::Type eventType) const
 {
     switch (eventType) {
-    case PlatformEvent::Type::MouseForceChanged:
+    case PlatformEvent::MouseForceChanged:
         return m_listenerTypes & Document::FORCECHANGED_LISTENER;
-    case PlatformEvent::Type::MouseForceDown:
+    case PlatformEvent::MouseForceDown:
         return m_listenerTypes & Document::FORCEDOWN_LISTENER;
-    case PlatformEvent::Type::MouseForceUp:
+    case PlatformEvent::MouseForceUp:
         return m_listenerTypes & Document::FORCEUP_LISTENER;
-    case PlatformEvent::Type::MouseScroll:
+    case PlatformEvent::MouseScroll:
         return m_listenerTypes & Document::SCROLL_LISTENER;
     default:
         return false;

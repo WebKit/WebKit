@@ -2892,12 +2892,12 @@ WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
     corePage()->contextMenuController().clearContextMenu();
 
     // Simulate a mouse click to generate the correct menu.
-    PlatformMouseEvent mousePressEvent(point, point, RightButton, PlatformEvent::Type::MousePressed, 1, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
+    PlatformMouseEvent mousePressEvent(point, point, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     corePage()->userInputBridge().handleMousePressEvent(mousePressEvent);
     Ref mainFrame = corePage()->mainFrame();
     bool handled = corePage()->userInputBridge().handleContextMenuEvent(mousePressEvent, mainFrame);
     auto* menu = handled ? &contextMenu() : nullptr;
-    PlatformMouseEvent mouseReleaseEvent(point, point, RightButton, PlatformEvent::Type::MouseReleased, 1, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
+    PlatformMouseEvent mouseReleaseEvent(point, point, RightButton, PlatformEvent::MouseReleased, 1, false, false, false, false, WallTime::now(), WebCore::ForceAtClick, WebCore::NoTap);
     corePage()->userInputBridge().handleMouseReleaseEvent(mouseReleaseEvent);
 
     return menu;
@@ -3126,44 +3126,44 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, WebPage* page)
     PlatformMouseEvent platformMouseEvent = platform(mouseEvent);
 
     switch (platformMouseEvent.type()) {
-    case PlatformEvent::Type::MousePressed: {
+        case PlatformEvent::MousePressed: {
 #if ENABLE(CONTEXT_MENUS)
-        if (isContextClick(platformMouseEvent))
-            page->corePage()->contextMenuController().clearContextMenu();
+            if (isContextClick(platformMouseEvent))
+                page->corePage()->contextMenuController().clearContextMenu();
 #endif
 
-        bool handled = page->corePage()->userInputBridge().handleMousePressEvent(platformMouseEvent);
+            bool handled = page->corePage()->userInputBridge().handleMousePressEvent(platformMouseEvent);
 #if ENABLE(CONTEXT_MENU_EVENT)
-        if (isContextClick(platformMouseEvent))
-            handled = handleContextMenuEvent(platformMouseEvent, page);
+            if (isContextClick(platformMouseEvent))
+                handled = handleContextMenuEvent(platformMouseEvent, page);
 #endif
-        return handled;
-    }
-    case PlatformEvent::Type::MouseReleased:
-        if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
-            frame.eventHandler().invalidateClick();
-        return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
+            return handled;
+        }
+        case PlatformEvent::MouseReleased:
+            if (mouseEvent.gestureWasCancelled() == GestureWasCancelled::Yes)
+                frame.eventHandler().invalidateClick();
+            return page->corePage()->userInputBridge().handleMouseReleaseEvent(platformMouseEvent);
 
-    case PlatformEvent::Type::MouseMoved:
+        case PlatformEvent::MouseMoved:
 #if PLATFORM(COCOA)
-        // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
-        // button is currently pressed. It is possible that neither of those things will be true since on
-        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
-        // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
-        // efficient scrollbars-only version of the event.
-        if (!(page->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEvent::NoButton)))
-            return page->corePage()->userInputBridge().handleMouseMoveOnScrollbarEvent(platformMouseEvent);
+            // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
+            // button is currently pressed. It is possible that neither of those things will be true since on
+            // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
+            // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
+            // efficient scrollbars-only version of the event.
+            if (!(page->corePage()->focusController().isActive() || (mouseEvent.button() != WebMouseEvent::NoButton)))
+                return page->corePage()->userInputBridge().handleMouseMoveOnScrollbarEvent(platformMouseEvent);
 #endif
-        return page->corePage()->userInputBridge().handleMouseMoveEvent(platformMouseEvent);
+            return page->corePage()->userInputBridge().handleMouseMoveEvent(platformMouseEvent);
 
-    case PlatformEvent::Type::MouseForceChanged:
-    case PlatformEvent::Type::MouseForceDown:
-    case PlatformEvent::Type::MouseForceUp:
-        return page->corePage()->userInputBridge().handleMouseForceEvent(platformMouseEvent);
+        case PlatformEvent::MouseForceChanged:
+        case PlatformEvent::MouseForceDown:
+        case PlatformEvent::MouseForceUp:
+            return page->corePage()->userInputBridge().handleMouseForceEvent(platformMouseEvent);
 
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
+        default:
+            ASSERT_NOT_REACHED();
+            return false;
     }
 }
 
@@ -3186,7 +3186,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
 #endif
 
     if (!shouldHandleEvent) {
-        send(Messages::WebPageProxy::DidReceiveEvent(mouseEvent.type(), false));
+        send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), false));
         return;
     }
 
@@ -3208,7 +3208,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
         handled = handleMouseEvent(mouseEvent, this);
     }
 
-    send(Messages::WebPageProxy::DidReceiveEvent(mouseEvent.type(), handled));
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));
 
     revokeSandboxExtensions(mouseEventSandboxExtensions);
 }
@@ -3232,7 +3232,7 @@ bool WebPage::wheelEvent(const WebWheelEvent& wheelEvent, OptionSet<WheelEventPr
     bool handled = handleWheelEvent(wheelEvent, m_page.get(), processingSteps);
 
     if (processingSteps.contains(WheelEventProcessingSteps::MainThreadForScrolling) && wheelEventOrigin == EventDispatcher::WheelEventOrigin::UIProcess)
-        send(Messages::WebPageProxy::DidReceiveEvent(wheelEvent.type(), handled));
+        send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
 
     return handled;
 }
@@ -3254,7 +3254,7 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
     if (!page->mainFrame().view())
         return false;
 
-    if (keyboardEvent.type() == WebEvent::Type::Char && keyboardEvent.isSystemKey())
+    if (keyboardEvent.type() == WebEvent::Char && keyboardEvent.isSystemKey())
         return page->userInputBridge().handleAccessKeyEvent(platform(keyboardEvent));
     return page->userInputBridge().handleKeyEvent(platform(keyboardEvent));
 }
@@ -3274,7 +3274,7 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     if (!handled)
         handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
 
-    send(Messages::WebPageProxy::DidReceiveEvent(keyboardEvent.type(), handled));
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
 }
 
 bool WebPage::handleKeyEventByRelinquishingFocusToChrome(const KeyboardEvent& event)
@@ -3408,7 +3408,7 @@ void WebPage::updatePotentialTapSecurityOrigin(const WebTouchEvent& touchEvent, 
     if (!touchEvent.isPotentialTap())
         return;
 
-    if (touchEvent.type() != WebEvent::Type::TouchStart)
+    if (touchEvent.type() != WebEvent::TouchStart)
         return;
 
     auto& mainFrame = m_page->mainFrame();
@@ -3439,7 +3439,7 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 
     bool handled = handleTouchEvent(touchEvent, m_page.get());
 
-    send(Messages::WebPageProxy::DidReceiveEvent(touchEvent.type(), handled));
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(touchEvent.type()), handled));
 }
 #endif
 
@@ -3466,7 +3466,7 @@ void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
 {
     CurrentEvent currentEvent(gestureEvent);
     bool handled = handleGestureEvent(gestureEvent, m_page.get());
-    send(Messages::WebPageProxy::DidReceiveEvent(gestureEvent.type(), handled));
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(gestureEvent.type()), handled));
 }
 #endif
 
@@ -3599,9 +3599,9 @@ void WebPage::setInitialFocus(bool forward, bool isKeyboardEventValid, const Web
     Ref frame = focusController->focusedOrMainFrame();
     frame->document()->setFocusedElement(nullptr);
 
-    if (isKeyboardEventValid && event.type() == WebEvent::Type::KeyDown) {
+    if (isKeyboardEventValid && event.type() == WebEvent::KeyDown) {
         PlatformKeyboardEvent platformEvent(platform(event));
-        platformEvent.disambiguateKeyDownEvent(PlatformEvent::Type::RawKeyDown);
+        platformEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
         focusController->setInitialFocus(forward ? FocusDirection::Forward : FocusDirection::Backward, &KeyboardEvent::create(platformEvent, &frame->windowProxy()).get());
         completionHandler();
         return;
@@ -4759,7 +4759,7 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
     if (!view)
         return;
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
-    PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::Type::MouseMoved, 0, false, false, false, false, WallTime::now(), 0, WebCore::NoTap);
+    PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, WallTime::now(), 0, WebCore::NoTap);
     m_page->mainFrame().eventHandler().dragSourceEndedAt(event, dragOperationMask);
 
     send(Messages::WebPageProxy::DidEndDragging());
@@ -5993,18 +5993,18 @@ void WebPage::handleAlternativeTextUIResult(const String& result)
 void WebPage::simulateMouseDown(int button, WebCore::IntPoint position, int clickCount, WKEventModifiers modifiers, WallTime time)
 {
     static_assert(sizeof(WKEventModifiers) >= sizeof(WebEvent::Modifier), "WKEventModifiers must be greater than or equal to the size of WebEvent::Modifier");
-    mouseEvent(WebMouseEvent(WebMouseEvent::Type::MouseDown, static_cast<WebMouseEvent::Button>(button), 0, position, position, 0, 0, 0, clickCount, OptionSet<WebEvent::Modifier>::fromRaw(modifiers), time, WebCore::ForceAtClick, WebMouseEvent::NoTap), std::nullopt);
+    mouseEvent(WebMouseEvent(WebMouseEvent::MouseDown, static_cast<WebMouseEvent::Button>(button), 0, position, position, 0, 0, 0, clickCount, OptionSet<WebEvent::Modifier>::fromRaw(modifiers), time, WebCore::ForceAtClick, WebMouseEvent::NoTap), std::nullopt);
 }
 
 void WebPage::simulateMouseUp(int button, WebCore::IntPoint position, int clickCount, WKEventModifiers modifiers, WallTime time)
 {
     static_assert(sizeof(WKEventModifiers) >= sizeof(WebEvent::Modifier), "WKEventModifiers must be greater than or equal to the size of WebEvent::Modifier");
-    mouseEvent(WebMouseEvent(WebMouseEvent::Type::MouseUp, static_cast<WebMouseEvent::Button>(button), 0, position, position, 0, 0, 0, clickCount, OptionSet<WebEvent::Modifier>::fromRaw(modifiers), time, WebCore::ForceAtClick, WebMouseEvent::NoTap), std::nullopt);
+    mouseEvent(WebMouseEvent(WebMouseEvent::MouseUp, static_cast<WebMouseEvent::Button>(button), 0, position, position, 0, 0, 0, clickCount, OptionSet<WebEvent::Modifier>::fromRaw(modifiers), time, WebCore::ForceAtClick, WebMouseEvent::NoTap), std::nullopt);
 }
 
 void WebPage::simulateMouseMotion(WebCore::IntPoint position, WallTime time)
 {
-    mouseEvent(WebMouseEvent(WebMouseEvent::Type::MouseMove, WebMouseEvent::NoButton, 0, position, position, 0, 0, 0, 0, OptionSet<WebEvent::Modifier> { }, time, 0, WebMouseEvent::NoTap), std::nullopt);
+    mouseEvent(WebMouseEvent(WebMouseEvent::MouseMove, WebMouseEvent::NoButton, 0, position, position, 0, 0, 0, 0, OptionSet<WebEvent::Modifier> { }, time, 0, WebMouseEvent::NoTap), std::nullopt);
 }
 
 void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline, const Vector<CompositionHighlight>& highlights)

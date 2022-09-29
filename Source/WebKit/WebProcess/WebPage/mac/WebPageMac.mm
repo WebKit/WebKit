@@ -277,7 +277,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                 bool commandExecutedByEditor = command.execute(event);
                 eventWasHandled |= commandExecutedByEditor;
                 if (!commandExecutedByEditor) {
-                    bool performedNonEditingBehavior = event->underlyingPlatformEvent()->type() == PlatformEvent::Type::RawKeyDown && performNonEditingBehaviorForSelector(commands[i].commandName, event);
+                    bool performedNonEditingBehavior = event->underlyingPlatformEvent()->type() == PlatformEvent::RawKeyDown && performNonEditingBehaviorForSelector(commands[i].commandName, event);
                     eventWasHandled |= performedNonEditingBehavior;
                 }
             } else {
@@ -302,7 +302,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     ASSERT(!platformEvent->macEvent()); // Cannot have a native event in WebProcess.
 
     // Don't handle Esc while handling keydown event, we need to dispatch a keypress first.
-    if (platformEvent->type() != PlatformEvent::Type::Char && platformEvent->windowsVirtualKeyCode() == VK_ESCAPE && commands.size() == 1 && commandNameForSelectorName(commands[0].commandName) == "cancelOperation"_s)
+    if (platformEvent->type() != PlatformEvent::Char && platformEvent->windowsVirtualKeyCode() == VK_ESCAPE && commands.size() == 1 && commandNameForSelectorName(commands[0].commandName) == "cancelOperation"_s)
         return false;
 
     if (handleKeyEventByRelinquishingFocusToChrome(event))
@@ -321,7 +321,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
     }
     // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
     // Keypress (Char event) handler is the latest opportunity to execute.
-    if (!haveTextInsertionCommands || platformEvent->type() == PlatformEvent::Type::Char) {
+    if (!haveTextInsertionCommands || platformEvent->type() == PlatformEvent::Char) {
         eventWasHandled = executeKeypressCommandsInternal(commands, &event);
         commands.clear();
     }

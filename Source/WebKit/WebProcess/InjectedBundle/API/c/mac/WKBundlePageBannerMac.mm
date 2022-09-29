@@ -64,19 +64,19 @@ private:
     bool mouseEvent(PageBanner* pageBanner, WebEvent::Type type, WebMouseEvent::Button button, const IntPoint& position) override
     {
         switch (type) {
-        case WebEvent::Type::MouseDown: {
+        case WebEvent::MouseDown: {
             if (!m_client.mouseDown)
                 return false;
 
             return m_client.mouseDown(toAPI(pageBanner), toAPI(position), toAPI(button), m_client.base.clientInfo);
         }
-        case WebEvent::Type::MouseUp: {
+        case WebEvent::MouseUp: {
             if (!m_client.mouseUp)
                 return false;
 
             return m_client.mouseUp(toAPI(pageBanner), toAPI(position), toAPI(button), m_client.base.clientInfo);
         }
-        case WebEvent::Type::MouseMove: {
+        case WebEvent::MouseMove: {
             if (button == WebMouseEvent::NoButton) {
                 if (!m_client.mouseMoved)
                     return false;

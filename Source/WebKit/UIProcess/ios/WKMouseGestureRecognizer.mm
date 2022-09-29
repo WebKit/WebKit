@@ -149,7 +149,7 @@ static String pointerTypeForUITouchType(UITouchType)
     _touching = YES;
     _pressedButtonMask = [event _buttonMask];
 
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::Type::MouseDown wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseDown wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     self.state = UIGestureRecognizerStateChanged;
@@ -157,7 +157,7 @@ static String pointerTypeForUITouchType(UITouchType)
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::Type::MouseMove wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     self.state = UIGestureRecognizerStateChanged;
@@ -165,7 +165,7 @@ static String pointerTypeForUITouchType(UITouchType)
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::Type::MouseUp wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseUp wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
@@ -176,7 +176,7 @@ static String pointerTypeForUITouchType(UITouchType)
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::Type::MouseUp wasCancelled:YES];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseUp wasCancelled:YES];
     _lastLocation = [self locationInView:self.view];
 
     _touching = NO;
@@ -196,7 +196,7 @@ static String pointerTypeForUITouchType(UITouchType)
         _lastLocation = [self locationInView:self.view];
     }
 
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::Type::MouseMove wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
     
     if (shouldBeginGesture)
         self.state = UIGestureRecognizerStateBegan;
@@ -210,7 +210,7 @@ static String pointerTypeForUITouchType(UITouchType)
     }
 
     _cancelledOrExited = NO;
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::Type::MouseMove wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     if (_currentHoverEvent == event && [touches containsObject:_currentTouch.get()])
@@ -220,7 +220,7 @@ static String pointerTypeForUITouchType(UITouchType)
 - (void)_hoverExited:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     _cancelledOrExited = YES;
-    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::Type::MouseMove wasCancelled:NO];
+    _lastEvent = [self createMouseEventWithType:WebKit::WebEvent::MouseMove wasCancelled:NO];
     _lastLocation = [self locationInView:self.view];
 
     if (_currentHoverEvent == event) {

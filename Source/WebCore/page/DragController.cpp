@@ -135,7 +135,8 @@ static PlatformMouseEvent createMouseEvent(const DragData& dragData)
 
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
 
-    return PlatformMouseEvent(dragData.clientPosition(), dragData.globalPosition(), LeftButton, PlatformEvent::Type::MouseMoved, 0, shiftKey, ctrlKey, altKey,
+    return PlatformMouseEvent(dragData.clientPosition(), dragData.globalPosition(),
+                              LeftButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey,
                               metaKey, WallTime::now(), ForceAtClick, NoTap);
 }
 

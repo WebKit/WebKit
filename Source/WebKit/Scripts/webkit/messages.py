@@ -913,7 +913,6 @@ def headers_for_type(type):
         'WebKit::SelectionTouch': ['"GestureTypes.h"'],
         'WebKit::TapIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::TextCheckerRequestID': ['"IdentifierTypes.h"'],
-        'WebKit::WebEvent::Type': ['"WebEvent.h"'],
         'WebKit::WebGPU::BindGroupDescriptor': ['"WebGPUBindGroupDescriptor.h"'],
         'WebKit::WebGPU::BindGroupEntry': ['"WebGPUBindGroupEntry.h"'],
         'WebKit::WebGPU::BindGroupLayoutDescriptor': ['"WebGPUBindGroupLayoutDescriptor.h"'],
@@ -994,9 +993,6 @@ def headers_for_type(type):
         headers += header_info['headers']
 
     for type in header_infos_and_types['types']:
-        if type == 'WebEvent::Type':
-            sys.stderr.write('>>> headers: {}'.format(headers))
-
         if type in special_cases:
             headers += special_cases[type]
             continue

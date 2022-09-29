@@ -59,13 +59,13 @@ PlatformWheelEvent PlatformWheelEvent::createFromGesture(const PlatformGestureEv
 
 #if ENABLE(KINETIC_SCROLLING)
     switch (platformGestureEvent.type()) {
-    case PlatformEvent::Type::GestureStart:
+    case PlatformEvent::GestureStart:
         platformWheelEvent.m_phase = PlatformWheelEventPhase::Began;
         break;
-    case PlatformEvent::Type::GestureChange:
+    case PlatformEvent::GestureChange:
         platformWheelEvent.m_phase = PlatformWheelEventPhase::Changed;
         break;
-    case PlatformEvent::Type::GestureEnd:
+    case PlatformEvent::GestureEnd:
         platformWheelEvent.m_phase = PlatformWheelEventPhase::Ended;
         break;
     default:

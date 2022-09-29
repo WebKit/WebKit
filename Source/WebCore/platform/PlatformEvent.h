@@ -38,10 +38,11 @@ enum class EventHandling : uint8_t {
 
 class PlatformEvent {
 public:
-    enum class Type : uint8_t {
-        NoType = 0
+    enum Type : uint8_t {
+        NoType = 0,
 
         // PlatformKeyboardEvent
+
         , KeyDown
         , KeyUp
         , RawKeyDown
@@ -66,13 +67,20 @@ public:
         , TouchEnd
         , TouchCancel
         , TouchForceChange
+
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
         // PlatformGestureEvent
+<<<<<<< HEAD
         , GestureStart
         , GestureChange
         , GestureEnd
+=======
+        GestureStart,
+        GestureChange,
+        GestureEnd,
+>>>>>>> parent of 4bca60b50c57 (WebPageProxy::DidReceiveEvent Type compatibility change)
 #endif
     };
 
@@ -87,7 +95,7 @@ public:
         AltGraphKey = 1 << 5,
     };
 
-    Type type() const { return m_type; }
+    Type type() const { return static_cast<Type>(m_type); }
 
     bool shiftKey() const { return m_modifiers.contains(Modifier::ShiftKey); }
     bool controlKey() const { return m_modifiers.contains(Modifier::ControlKey); }
@@ -100,11 +108,11 @@ public:
 
 protected:
     PlatformEvent()
-        : m_type(Type::NoType)
+        : m_type(NoType)
     {
     }
 
-    explicit PlatformEvent(PlatformEvent::Type type)
+    explicit PlatformEvent(Type type)
         : m_type(type)
     {
     }
@@ -135,7 +143,7 @@ protected:
     ~PlatformEvent() = default;
 
     WallTime m_timestamp;
-    Type m_type;
+    unsigned m_type;
     OptionSet<Modifier> m_modifiers;
 };
 
@@ -155,5 +163,8 @@ template<> struct EnumTraits<WebCore::PlatformEvent::Modifier> {
     >;
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of 4bca60b50c57 (WebPageProxy::DidReceiveEvent Type compatibility change)
 } // namespace WTF

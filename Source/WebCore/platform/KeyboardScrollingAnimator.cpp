@@ -93,7 +93,7 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
         return { };
 
     // PlatformEvent::Char is a "keypress" event.
-    if (!(platformEvent->type() == PlatformEvent::Type::RawKeyDown || platformEvent->type() == PlatformEvent::Type::Char))
+    if (!(platformEvent->type() == PlatformEvent::RawKeyDown || platformEvent->type() == PlatformEvent::Char))
         return { };
 
     static constexpr std::pair<ComparableASCIILiteral, KeyboardScrollingKey> mappings[] = {

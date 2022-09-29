@@ -44,10 +44,11 @@ namespace WebKit {
 class WebEvent {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class Type : int8_t {
-        NoType = -1
+    enum Type {
+        NoType = -1,
         
         // WebMouseEvent
+
         , MouseDown
         , MouseUp
         , MouseMove
@@ -76,6 +77,7 @@ public:
         , GestureStart
         , GestureChange
         , GestureEnd
+
 #endif
     };
 
@@ -87,7 +89,7 @@ public:
         CapsLockKey = 1 << 4,
     };
 
-    Type type() const { return m_type; }
+    Type type() const { return static_cast<Type>(m_type); }
 
     bool shiftKey() const { return m_modifiers.contains(Modifier::ShiftKey); }
     bool controlKey() const { return m_modifiers.contains(Modifier::ControlKey); }
@@ -108,7 +110,7 @@ protected:
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, WebEvent&);
 
 private:
-    Type m_type;
+    uint32_t m_type;
     OptionSet<Modifier> m_modifiers;
     WallTime m_timestamp;
 };
@@ -125,44 +127,6 @@ template<> struct EnumTraits<WebKit::WebEvent::Modifier> {
         WebKit::WebEvent::Modifier::AltKey,
         WebKit::WebEvent::Modifier::MetaKey,
         WebKit::WebEvent::Modifier::CapsLockKey
-    >;
-};
-
-template<> struct EnumTraits<WebKit::WebEvent::Type> {
-    using values = EnumValues<
-        WebKit::WebEvent::Type
-        ,WebKit::WebEvent::Type::NoType
-        
-        // WebMouseEvent
-        ,WebKit::WebEvent::Type::MouseDown
-        ,WebKit::WebEvent::Type::MouseUp
-        ,WebKit::WebEvent::Type::MouseMove
-        ,WebKit::WebEvent::Type::MouseForceChanged
-        ,WebKit::WebEvent::Type::MouseForceDown
-        ,WebKit::WebEvent::Type::MouseForceUp
-
-        // WebWheelEvent
-        ,WebKit::WebEvent::Type::Wheel
-
-        // WebKeyboardEvent
-        ,WebKit::WebEvent::Type::KeyDown
-        ,WebKit::WebEvent::Type::KeyUp
-        ,WebKit::WebEvent::Type::RawKeyDown
-        ,WebKit::WebEvent::Type::Char
-
-#if ENABLE(TOUCH_EVENTS)
-        // WebTouchEvent
-        ,WebKit::WebEvent::Type::TouchStart
-        ,WebKit::WebEvent::Type::TouchMove
-        ,WebKit::WebEvent::Type::TouchEnd
-        ,WebKit::WebEvent::Type::TouchCancel
-#endif
-
-#if ENABLE(MAC_GESTURE_EVENTS)
-        ,WebKit::WebEvent::Type::GestureStart
-        ,WebKit::WebEvent::Type::GestureChange
-        ,WebKit::WebEvent::Type::GestureEnd
-#endif
     >;
 };
 

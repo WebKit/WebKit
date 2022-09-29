@@ -43,28 +43,28 @@ public:
     {
         // PlatformEvent
         switch (webEvent.type()) {
-        case WebEvent::Type::MouseDown:
-            m_type = WebCore::PlatformEvent::Type::MousePressed;
+        case WebEvent::MouseDown:
+            m_type = WebCore::PlatformEvent::MousePressed;
             m_force = WebCore::ForceAtClick;
             break;
-        case WebEvent::Type::MouseUp:
-            m_type = WebCore::PlatformEvent::Type::MouseReleased;
+        case WebEvent::MouseUp:
+            m_type = WebCore::PlatformEvent::MouseReleased;
             m_force = WebCore::ForceAtClick;
             break;
-        case WebEvent::Type::MouseMove:
-            m_type = WebCore::PlatformEvent::Type::MouseMoved;
+        case WebEvent::MouseMove:
+            m_type = WebCore::PlatformEvent::MouseMoved;
             m_force = webEvent.force();
             break;
-        case WebEvent::Type::MouseForceChanged:
-            m_type = WebCore::PlatformEvent::Type::MouseForceChanged;
+        case WebEvent::MouseForceChanged:
+            m_type = WebCore::PlatformEvent::MouseForceChanged;
             m_force = webEvent.force();
             break;
-        case WebEvent::Type::MouseForceDown:
-            m_type = WebCore::PlatformEvent::Type::MouseForceDown;
+        case WebEvent::MouseForceDown:
+            m_type = WebCore::PlatformEvent::MouseForceDown;
             m_force = WebCore::ForceAtForceClick;
             break;
-        case WebEvent::Type::MouseForceUp:
-            m_type = WebCore::PlatformEvent::Type::MouseForceUp;
+        case WebEvent::MouseForceUp:
+            m_type = WebCore::PlatformEvent::MouseForceUp;
             m_force = WebCore::ForceAtForceClick;
             break;
         default:
@@ -139,7 +139,7 @@ public:
     WebKit2PlatformWheelEvent(const WebWheelEvent& webEvent)
     {
         // PlatformEvent
-        m_type = PlatformEvent::Type::Wheel;
+        m_type = PlatformEvent::Wheel;
 
         if (webEvent.shiftKey())
             m_modifiers.add(Modifier::ShiftKey);
@@ -191,17 +191,17 @@ public:
     {
         // PlatformEvent
         switch (webEvent.type()) {
-        case WebEvent::Type::KeyDown:
-            m_type = WebCore::PlatformEvent::Type::KeyDown;
+        case WebEvent::KeyDown:
+            m_type = WebCore::PlatformEvent::KeyDown;
             break;
-        case WebEvent::Type::KeyUp:
-            m_type = WebCore::PlatformEvent::Type::KeyUp;
+        case WebEvent::KeyUp:
+            m_type = WebCore::PlatformEvent::KeyUp;
             break;
-        case WebEvent::Type::RawKeyDown:
-            m_type = WebCore::PlatformEvent::Type::RawKeyDown;
+        case WebEvent::RawKeyDown:
+            m_type = WebCore::PlatformEvent::RawKeyDown;
             break;
-        case WebEvent::Type::Char:
-            m_type = WebCore::PlatformEvent::Type::Char;
+        case WebEvent::Char:
+            m_type = WebCore::PlatformEvent::Char;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -337,17 +337,17 @@ public:
     {
         // PlatformEvent
         switch (webEvent.type()) {
-        case WebEvent::Type::TouchStart:
-            m_type = WebCore::PlatformEvent::Type::TouchStart;
+        case WebEvent::TouchStart: 
+            m_type = WebCore::PlatformEvent::TouchStart;
             break;
-        case WebEvent::Type::TouchMove:
-            m_type = WebCore::PlatformEvent::Type::TouchMove;
+        case WebEvent::TouchMove: 
+            m_type = WebCore::PlatformEvent::TouchMove;
             break;
-        case WebEvent::Type::TouchEnd:
-            m_type = WebCore::PlatformEvent::Type::TouchEnd;
+        case WebEvent::TouchEnd: 
+            m_type = WebCore::PlatformEvent::TouchEnd;
             break;
-        case WebEvent::Type::TouchCancel:
-            m_type = WebCore::PlatformEvent::Type::TouchCancel;
+        case WebEvent::TouchCancel:
+            m_type = WebCore::PlatformEvent::TouchCancel;
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -399,14 +399,14 @@ public:
     WebKit2PlatformGestureEvent(const WebGestureEvent& webEvent)
     {
         switch (webEvent.type()) {
-        case WebEvent::Type::GestureStart:
-            m_type = WebCore::PlatformEvent::Type::GestureStart;
+        case WebEvent::GestureStart:
+            m_type = WebCore::PlatformEvent::GestureStart;
             break;
-        case WebEvent::Type::GestureChange:
-            m_type = WebCore::PlatformEvent::Type::GestureChange;
+        case WebEvent::GestureChange:
+            m_type = WebCore::PlatformEvent::GestureChange;
             break;
-        case WebEvent::Type::GestureEnd:
-            m_type = WebCore::PlatformEvent::Type::GestureEnd;
+        case WebEvent::GestureEnd:
+            m_type = WebCore::PlatformEvent::GestureEnd;
             break;
         default:
             ASSERT_NOT_REACHED();

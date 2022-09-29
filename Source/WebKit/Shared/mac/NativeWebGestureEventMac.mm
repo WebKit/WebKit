@@ -38,12 +38,12 @@ static inline WebEvent::Type webEventTypeForNSEvent(NSEvent *event)
 {
     switch (event.phase) {
     case NSEventPhaseBegan:
-        return WebEvent::Type::GestureStart;
+        return WebEvent::GestureStart;
     case NSEventPhaseChanged:
-        return WebEvent::Type::GestureChange;
+        return WebEvent::GestureChange;
     case NSEventPhaseEnded:
     case NSEventPhaseCancelled:
-        return WebEvent::Type::GestureEnd;
+        return WebEvent::GestureEnd;
     default:
         break;
     }

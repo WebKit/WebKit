@@ -47,7 +47,7 @@ namespace WebCore {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         PlatformKeyboardEvent()
-            : PlatformEvent(PlatformEvent::Type::KeyDown)
+            : PlatformEvent(PlatformEvent::KeyDown)
         {
         }
 
