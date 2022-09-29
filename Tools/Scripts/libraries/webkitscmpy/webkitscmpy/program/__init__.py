@@ -45,6 +45,7 @@ from .pull_request import PullRequest
 from .revert import Revert
 from .setup_git_svn import SetupGitSvn
 from .setup import Setup
+from .trace import Trace
 from .track import Track
 
 from webkitbugspy import log as webkitbugspy_log
@@ -85,7 +86,7 @@ def main(
         Clean, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
-        Pickable, CherryPick, Track,
+        Pickable, CherryPick, Trace, Track,
     ]
     if subversion:
         programs.append(SetupGitSvn)
