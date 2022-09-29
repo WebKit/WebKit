@@ -50,7 +50,9 @@ void Coder<class>::encode(Encoder& encoder, const class& instance) { instance.en
 std::optional<class> Coder<class>::decode(Decoder& decoder) { return class::decode(decoder); }
 
 IMPLEMENT_CODER(WebCore::ExceptionData);
+#if ENABLE(SERVICE_WORKER)
 IMPLEMENT_CODER(WebCore::PushSubscriptionData);
+#endif
 IMPLEMENT_CODER(WebCore::PushSubscriptionIdentifier);
 IMPLEMENT_CODER(WebCore::RegistrableDomain);
 IMPLEMENT_CODER(WebCore::SecurityOriginData);
