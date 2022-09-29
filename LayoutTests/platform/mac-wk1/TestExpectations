@@ -1955,3 +1955,6 @@ webkit.org/b/244649 [ Debug ] imported/w3c/web-platform-tests/css/css-align/base
 
 webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Skip ]
 
+webkit.org/b/245008 fast/attachment/mac/attachment-numbers.html [ Skip ]
+webkit.org/b/245008 fast/attachment/mac/attachment-pages.html [ Skip ]
+webkit.org/b/245008 fast/attachment/mac/attachment-keynote.html [ Skip ]
