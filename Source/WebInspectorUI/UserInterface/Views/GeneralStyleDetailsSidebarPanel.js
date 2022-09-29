@@ -432,7 +432,11 @@ WI.GeneralStyleDetailsSidebarPanel = class GeneralStyleDetailsSidebarPanel exten
 
     _styleSheetAddedOrRemoved()
     {
-        this.needsLayout();
+        let domNode = this.domNode;
+        if (!domNode || domNode.destroyed)
+            return;
+
+        this._panel.markAsNeedsRefresh(domNode);
     }
 };
 
