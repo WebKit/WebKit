@@ -451,7 +451,7 @@ TEST(WKWebsiteDataStore, DoNotCreateDefaultDataStore)
 TEST(WebKit, DefaultHSTSStorageDirectory)
 {
     auto configuration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    EXPECT_NULL(configuration.get().hstsStorageDirectory);
+    EXPECT_NOT_NULL(configuration.get().hstsStorageDirectory);
 }
 
 } // namespace TestWebKitAPI
