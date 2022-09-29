@@ -11,8 +11,8 @@ function loaded()
 {
     description('Verify that changes done by history.replaceState and history.pushState update visitedLinks.');
 
-    window.history.replaceState(null, "Title", "#foo");
-    window.history.pushState(null, "Title", "#bar");
+    window.history.replaceState(null, "Title", "replacedURL.html");
+    window.history.pushState(null, "Title", "pushedURL.html");
 
     if (window.internals) {
         style1 = internals.computedStyleIncludingVisitedInfo(document.getElementById('link1'));
@@ -34,8 +34,8 @@ function loaded()
 </head>
 <body onload="loaded();">
 <p id=description></p>
-<a id="link1" href="#foo">This link should get colored visited as a result of replaceState() setting it as the current URL</a><br>
-<a id="link2" href="#bar">This link should get colored visited as a result of pushState() adding it to the forward list</a><br>
+<a id="link1" href="replacedURL.html">This link should get colored visited as a result of replaceState() setting it as the current URL</a><br>
+<a id="link2" href="pushedURL.html">This link should get colored visited as a result of pushState() adding it to the forward list</a><br>
 If you're running in a browser, the link should be orange-on-black and you should see "replacedURL.html" in your global history.<br>
 If you're running in DRT, the test will also append "PASS" or "FAIL".<br>
 <div id=console></div>
