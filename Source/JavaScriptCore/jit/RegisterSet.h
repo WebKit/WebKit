@@ -62,8 +62,8 @@ public:
     ALWAYS_INLINE constexpr RegisterSet& includeRegister(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            includeRegister(regs.tagGPR(), Width64);
-        includeRegister(regs.payloadGPR(), Width64);
+            includeRegister(regs.tagGPR(), Width128);
+        includeRegister(regs.payloadGPR(), Width128);
         return *this;
     }
 
@@ -130,7 +130,7 @@ public:
             if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
                 continue;
             out.print(comma, reg);
-            if (m_bits.get(reg.index()) && (m_upperBits.get(reg.index()) || conservativeWidth(reg) == Width64))
+            if (m_bits.get(reg.index()) && (m_upperBits.get(reg.index()) || conservativeWidth(reg) <= Width64))
                 continue;
 
             if (m_bits.get(reg.index()))
@@ -145,7 +145,7 @@ public:
     ALWAYS_INLINE constexpr bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits || m_upperBits != other.m_upperBits; }
 
 protected:
-    ALWAYS_INLINE constexpr void setAny(Reg reg) { ASSERT(!reg.isFPR()); includeRegister(reg, Width64); }
+    ALWAYS_INLINE constexpr void setAny(Reg reg) { ASSERT(!reg.isFPR()); includeRegister(reg, Width128); }
     ALWAYS_INLINE constexpr void setAny(JSValueRegs regs) { includeRegister(regs); }
     ALWAYS_INLINE constexpr void setAny(const RegisterSet& set) { merge(set); }
     ALWAYS_INLINE constexpr void setMany() { }
@@ -313,8 +313,8 @@ public:
     ALWAYS_INLINE constexpr WholeRegisterSet& includeRegister(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            includeRegister(regs.tagGPR(), Width64);
-        includeRegister(regs.payloadGPR(), Width64);
+            includeRegister(regs.tagGPR(), Width128);
+        includeRegister(regs.payloadGPR(), Width128);
         return *this;
     }
 
@@ -358,7 +358,7 @@ public:
             if (!m_bits.get(reg.index()) && !m_upperBits.get(reg.index()))
                 continue;
             out.print(comma, reg);
-            if (m_bits.get(reg.index()) && (m_upperBits.get(reg.index()) || conservativeWidth(reg) == Width64))
+            if (m_bits.get(reg.index()) && (m_upperBits.get(reg.index()) || conservativeWidth(reg) <= Width64))
                 continue;
 
             if (m_bits.get(reg.index()))

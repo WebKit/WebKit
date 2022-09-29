@@ -37,22 +37,23 @@ public:
     RegisterAtOffset() = default;
     
     RegisterAtOffset(Reg reg, ptrdiff_t offset, Width width)
-        : m_offset(offset)
-        , m_regIndex(reg.index())
+        : m_regIndex(reg.index())
         , m_width(width == Width128 ? true : false)
+        , m_offsetBits((offset >> 2) & 0xFFFFFFFFFFFFFF)
     {
+        ASSERT((offset & 0b11) == 0);
         ASSERT(width == Width64 || (width == Width128 && Options::useWebAssemblySIMD()));
         ASSERT(reg.index() < (1 << 6));
         ASSERT(Reg::last().index() < (1 << 6));
         ASSERT(this->reg() == reg);
-        RELEASE_ASSERT(m_offset == offset);
+        RELEASE_ASSERT(this->offset() == offset);
         ASSERT(this->width() == width);
     }
     
     bool operator!() const { return !reg(); }
     
     Reg reg() const { return Reg::fromIndex(m_regIndex); }
-    ptrdiff_t offset() const { return m_offset; }
+    ptrdiff_t offset() const { return m_offsetBits << 2; }
     size_t byteSize() const { return bytesForWidth(width()); }
     Width width() const { return m_width ? Width128 : Width64; }
     int offsetAsIndex() const { ASSERT(!(offset() % sizeof(CPURegister))); return offset() / static_cast<int>(sizeof(CPURegister)); }
@@ -74,10 +75,11 @@ public:
     void dump(PrintStream& out) const;
 
 private:
-    unsigned long m_offset : 48 { 0 };
     unsigned m_regIndex : 7 = Reg().index();
     bool m_width : 1 = false;
+    long long m_offsetBits : 56 { 0 };
 };
+static_assert(sizeof(RegisterAtOffset) == sizeof(uint64_t));
 
 } // namespace JSC
 
