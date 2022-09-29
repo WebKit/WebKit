@@ -53,7 +53,6 @@ private:
     ScrollingTreeFrameScrollingNodeNicosia(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
     void commitStateBeforeChildren(const ScrollingStateNode&) override;
-    void commitStateAfterChildren(const ScrollingStateNode&) override;
 
     bool startAnimatedScrollToPosition(FloatPoint) override;
     void stopAnimatedScroll() override;
