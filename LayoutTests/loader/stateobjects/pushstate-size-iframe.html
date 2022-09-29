@@ -32,7 +32,7 @@ var count = 1;
 function clicked()
 {
     try {
-        history.pushState(object, object, "#" + object);
+        history.pushState(object, object, object);
     } catch (e) {
         log("Unexpected exception: " + e);
         if (window.testRunner)

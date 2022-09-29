@@ -226,9 +226,6 @@ public:
 
     VisibleWebPageToken visiblePageToken() const;
 
-    void addPreviouslyApprovedFileURL(const URL&);
-    bool wasPreviouslyApprovedFileURL(const URL&) const;
-
     void updateTextCheckerState();
 
     void willAcquireUniversalFileReadSandboxExtension() { m_mayHaveUniversalFileReadSandboxExtension = true; }
@@ -599,7 +596,6 @@ private:
 
     bool m_mayHaveUniversalFileReadSandboxExtension; // True if a read extension for "/" was ever granted - we don't track whether WebProcess still has it.
     HashSet<String> m_localPathsWithAssumedReadAccess;
-    HashSet<String> m_previouslyApprovedFilePaths;
 
     WebPageProxyMap m_pageMap;
     WebFrameProxyMap m_frameMap;

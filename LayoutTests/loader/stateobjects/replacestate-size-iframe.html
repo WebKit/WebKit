@@ -22,7 +22,7 @@ function loaded()
     try {
         // Push 59+mb of state objects (while the string is exactly 1mb, it counts for a little more than 1mb)
         for (var i = 1; i < 60; ++i)
-            history.pushState(0, 0, "#" + object);
+            history.pushState(0, 0, object);
     } catch (e) {
         log("Unexpected exception pushing > 59mb but < 60mb of state objects: " + e);  
     } 
@@ -30,7 +30,7 @@ function loaded()
     log("Replace the last 1mb object with a 2mb object, bringing the total to 60+mb");
     object += object;
     try {
-        history.replaceState(0, 0, "#" + object);
+        history.replaceState(0, 0, object);
         log("It fit.");
     } catch (e) {
         log("Unexpected exception replacing 1mb with 2mb, bringing the total to 60mb: " + e);  
