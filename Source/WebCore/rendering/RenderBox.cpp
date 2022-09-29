@@ -3429,6 +3429,9 @@ LayoutUnit RenderBox::computeReplacedLogicalWidth(ShouldComputePreferred shouldC
 
 LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred shouldComputePreferred) const
 {
+    if (shouldIgnoreMinMaxSizes())
+        return logicalWidth;
+
     auto& logicalMinWidth = style().logicalMinWidth();
     auto& logicalMaxWidth = style().logicalMaxWidth();
     bool useLogicalWidthForMinWidth = (shouldComputePreferred == ComputePreferred && logicalMinWidth.isPercentOrCalculated()) || logicalMinWidth.isUndefined();
@@ -5546,6 +5549,11 @@ LayoutBoxExtent RenderBox::scrollPaddingForViewportRect(const LayoutRect& viewpo
 LayoutUnit synthesizedBaselineFromBorderBox(const RenderBox& box, LineDirectionMode direction)
 {
     return direction == HorizontalLine ? box.height() : box.width();
+}
+
+bool RenderBox::shouldIgnoreMinMaxSizes() const
+{
+    return isFlexItem() && downcast<RenderFlexibleBox>(parent())->isComputingFlexBaseSizes();
 }
 
 } // namespace WebCore

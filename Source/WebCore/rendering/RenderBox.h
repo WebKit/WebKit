@@ -674,6 +674,8 @@ override;
 
     bool shouldComputeLogicalHeightFromAspectRatio() const;
 
+    bool shouldIgnoreMinMaxSizes() const;
+
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBox(Document&, RenderStyle&&, BaseTypeFlags);
