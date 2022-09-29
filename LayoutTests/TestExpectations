@@ -6020,12 +6020,12 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 
 webkit.org/b/233267 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_window_open_download_block_downloads.tentative.html [ Pass Failure ]
 
-webkit.org/b/245164 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure Pass ]
-
 # Flaky because of network ordering
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/cors-crossorigin-requests.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/cors-crossorigin-requests.html [ Pass Failure ]
+
+webkit.org/b/245164 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure Pass ]
 
 # Screen Wake Lock tests that are timing out since their import.
 imported/w3c/web-platform-tests/screen-wake-lock/wakelock-disabled-by-feature-policy.https.sub.html [ Skip ]
