@@ -174,7 +174,7 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(JSGlobalObject* globalO
     return jsCast<JSInternalPromise*>(promise);
 }
 
-JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSValue moduleName, JSValue parameters, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSValue moduleKey, JSValue parameters, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -185,7 +185,7 @@ JSInternalPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, JSVa
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
-    arguments.append(moduleName);
+    arguments.append(moduleKey);
     arguments.append(parameters);
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());
@@ -213,7 +213,7 @@ JSValue JSModuleLoader::linkAndEvaluateModule(JSGlobalObject* globalObject, JSVa
     RELEASE_AND_RETURN(scope, call(globalObject, function, callData, this, arguments));
 }
 
-JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher)
+JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, const Identifier& moduleName, JSValue referrer, JSValue parameters, JSValue scriptFetcher)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -224,7 +224,8 @@ JSInternalPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObj
     ASSERT(callData.type != CallData::Type::None);
 
     MarkedArgumentBuffer arguments;
-    arguments.append(jsString(vm, moduleKey.string()));
+    arguments.append(jsString(vm, moduleName.string()));
+    arguments.append(referrer);
     arguments.append(parameters);
     arguments.append(scriptFetcher);
     ASSERT(!arguments.hasOverflowed());

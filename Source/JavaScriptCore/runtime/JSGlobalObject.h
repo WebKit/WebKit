@@ -83,6 +83,7 @@ class GeneratorPrototype;
 class GeneratorFunctionPrototype;
 class GetterSetter;
 class GlobalCodeBlock;
+class ImportMap;
 class IndirectEvalExecutable;
 class InputCursor;
 class IntlObject;
@@ -491,6 +492,8 @@ public:
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE_STRUCTURE)
 #undef DECLARE_TYPED_ARRAY_TYPE_STRUCTURE
 
+    LazyProperty<JSGlobalObject, JSInternalPromise> m_importMapStatusPromise;
+
     FixedVector<LazyProperty<JSGlobalObject, JSCell>> m_linkTimeConstants;
 
     StructureCache m_structureCache;
@@ -713,6 +716,8 @@ public:
 
     WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>>& customGetterFunctionSet() { return m_customGetterFunctionSet; }
     WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>>& customSetterFunctionSet() { return m_customSetterFunctionSet; }
+
+    Ref<ImportMap> m_importMap;
 
 #if ASSERT_ENABLED
     const JSGlobalObject* m_globalObjectAtDebuggerEntry { nullptr };
@@ -1307,6 +1312,20 @@ public:
     void installTypedArrayIteratorProtocolWatchpoint(JSObject* prototype, TypedArrayType);
     void installTypedArrayConstructorSpeciesWatchpoint(JSTypedArrayViewConstructor*);
     void installTypedArrayPrototypeIteratorProtocolWatchpoint(JSTypedArrayViewPrototype*);
+
+    const ImportMap& importMap() const { return m_importMap.get(); }
+    ImportMap& importMap() { return m_importMap.get(); }
+    JSInternalPromise* importMapStatusPromise() const
+    {
+        if (m_importMapStatusPromise.isInitialized())
+            return m_importMapStatusPromise.get(this);
+        return nullptr;
+    }
+    JS_EXPORT_PRIVATE void registerImportMap() const;
+    JS_EXPORT_PRIVATE bool isAcquiringImportMaps() const;
+    JS_EXPORT_PRIVATE void setAcquiringImportMaps();
+    JS_EXPORT_PRIVATE void setPendingImportMaps();
+    JS_EXPORT_PRIVATE void clearPendingImportMaps();
 
 protected:
     enum class HasSpeciesProperty : bool { Yes, No };

@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to load https://www1.web-platform.test:9443/import-maps/resources/log.js?pipe=sub&name=B because it does not appear in the script-src directive of the Content Security Policy.
+
+PASS The URL after mapping violates CSP (but not the URL before mapping)
+PASS The URL before mapping violates CSP (but not the URL after mapping)
+

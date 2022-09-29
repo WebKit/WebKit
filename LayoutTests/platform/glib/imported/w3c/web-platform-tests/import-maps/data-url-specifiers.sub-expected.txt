@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: TypeError: Module name, 'data:text/javascript,log.push('data:to-bare')' does not resolve to a valid URL.
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+
+
+PASS data:text/javascript,log.push('data:foo'): <script src type=module>
+PASS data:text/javascript,log.push('data:foo'): <script src type=text/javascript>
+PASS data:text/javascript,log.push('data:foo'): static import
+PASS data:text/javascript,log.push('data:foo'): dynamic import (from module)
+PASS data:text/javascript,log.push('data:foo'): dynamic import (from text/javascript)
+PASS data:text/javascript,log.push('data:cross-origin-foo'): <script src type=module>
+PASS data:text/javascript,log.push('data:cross-origin-foo'): <script src type=text/javascript>
+PASS data:text/javascript,log.push('data:cross-origin-foo'): static import
+PASS data:text/javascript,log.push('data:cross-origin-foo'): dynamic import (from module)
+PASS data:text/javascript,log.push('data:cross-origin-foo'): dynamic import (from text/javascript)
+PASS data:text/javascript,log.push('data:to-data'): <script src type=module>
+PASS data:text/javascript,log.push('data:to-data'): <script src type=text/javascript>
+PASS data:text/javascript,log.push('data:to-data'): static import
+PASS data:text/javascript,log.push('data:to-data'): dynamic import (from module)
+PASS data:text/javascript,log.push('data:to-data'): dynamic import (from text/javascript)
+PASS data:text/javascript,log.push('data:to-bare'): <script src type=module>
+PASS data:text/javascript,log.push('data:to-bare'): <script src type=text/javascript>
+PASS data:text/javascript,log.push('data:to-bare'): static import
+PASS data:text/javascript,log.push('data:to-bare'): dynamic import (from module)
+PASS data:text/javascript,log.push('data:to-bare'): dynamic import (from text/javascript)
+

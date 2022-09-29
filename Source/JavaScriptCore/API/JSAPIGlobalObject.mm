@@ -146,8 +146,8 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
         return promise->rejectWithCaughtException(globalObject, scope);
     };
 
-    auto import = [&] (URL& url, JSValue parameters) {
-        auto result = importModule(globalObject, Identifier::fromString(vm, url.string()), parameters, jsUndefined());
+    auto import = [&] (const String& specifier, JSValue parameters) {
+        auto result = importModule(globalObject, Identifier::fromString(vm, specifier), jsString(vm, sourceOrigin.url().string()), parameters, jsUndefined());
         RETURN_IF_EXCEPTION(scope, reject(scope));
         return result;
     };
@@ -155,24 +155,15 @@ JSInternalPromise* JSAPIGlobalObject::moduleLoaderImportModule(JSGlobalObject* g
     auto specifier = specifierValue->value(globalObject);
     RETURN_IF_EXCEPTION(scope, reject(scope));
 
-    auto result = computeValidImportSpecifier(sourceOrigin.url(), specifier);
-    if (result) {
-        auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
-        RETURN_IF_EXCEPTION(scope, reject(scope));
-        parameters = jsUndefined();
-        if (!assertions.isEmpty()) {
-            if (std::optional<ScriptFetchParameters::Type> type = ScriptFetchParameters::parseType(assertions.get(vm.propertyNames->type.impl())))
-                parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
-        }
-
-        return import(result.value(), parameters);
+    auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
+    RETURN_IF_EXCEPTION(scope, reject(scope));
+    parameters = jsUndefined();
+    if (!assertions.isEmpty()) {
+        if (std::optional<ScriptFetchParameters::Type> type = ScriptFetchParameters::parseType(assertions.get(vm.propertyNames->type.impl())))
+            parameters = JSScriptFetchParameters::create(vm, ScriptFetchParameters::create(type.value()));
     }
-    scope.release();
-    auto* promise = JSInternalPromise::create(vm, globalObject->internalPromiseStructure());
-    // FIXME: We could have error since any JS call can throw stack-overflow errors.
-    // https://bugs.webkit.org/show_bug.cgi?id=203402
-    promise->reject(globalObject, createError(globalObject, result.error()));
-    return promise;
+
+    return import(specifier, parameters);
 }
 
 JSInternalPromise* JSAPIGlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModuleLoader*, JSValue key, JSValue, JSValue)
@@ -287,7 +278,7 @@ JSValue JSAPIGlobalObject::loadAndEvaluateJSScriptModule(const JSLockHolder&, JS
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     Identifier key = Identifier::fromString(vm, String { [[script sourceURL] absoluteString] });
-    JSInternalPromise* promise = importModule(this, key, jsUndefined(), jsUndefined());
+    JSInternalPromise* promise = importModule(this, key, jsUndefined(), jsUndefined(), jsUndefined());
     RETURN_IF_EXCEPTION(scope, { });
     auto* result = JSPromise::create(vm, this->promiseStructure());
     result->resolve(this, promise);

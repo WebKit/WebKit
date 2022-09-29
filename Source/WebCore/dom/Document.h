@@ -724,6 +724,7 @@ public:
     const AtomString& baseTarget() const { return m_baseTarget; }
     void processBaseElement();
 
+    URL baseURLForComplete(const URL& baseURLOverride) const;
     WEBCORE_EXPORT URL completeURL(const String&, ForceUTF8 = ForceUTF8::No) const final;
     URL completeURL(const String&, const URL& baseURLOverride, ForceUTF8 = ForceUTF8::No) const;
 

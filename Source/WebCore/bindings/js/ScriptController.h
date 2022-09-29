@@ -117,8 +117,8 @@ public:
 
     static void initializeMainThread();
 
-    void loadModuleScriptInWorld(LoadableModuleScript&, const String& moduleName, Ref<JSC::ScriptFetchParameters>&&, DOMWrapperWorld&);
-    void loadModuleScript(LoadableModuleScript&, const String& moduleName, Ref<JSC::ScriptFetchParameters>&&);
+    void loadModuleScriptInWorld(LoadableModuleScript&, const URL& topLevelModuleURL, Ref<JSC::ScriptFetchParameters>&&, DOMWrapperWorld&);
+    void loadModuleScript(LoadableModuleScript&, const URL&, Ref<JSC::ScriptFetchParameters>&&);
     void loadModuleScriptInWorld(LoadableModuleScript&, const ScriptSourceCode&, DOMWrapperWorld&);
     void loadModuleScript(LoadableModuleScript&, const ScriptSourceCode&);
 
@@ -172,6 +172,12 @@ public:
     bool willReplaceWithResultOfExecutingJavascriptURL() const { return m_willReplaceWithResultOfExecutingJavascriptURL; }
 
     void reportExceptionFromScriptError(LoadableScript::Error, bool);
+
+    void registerImportMap(const ScriptSourceCode&, const URL& baseURL);
+    bool isAcquiringImportMaps();
+    void setAcquiringImportMaps();
+    void setPendingImportMaps();
+    void clearPendingImportMaps();
 
 private:
     ValueOrException executeScriptInWorld(DOMWrapperWorld&, RunJavaScriptParameters&&);

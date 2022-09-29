@@ -33,6 +33,7 @@
 #include "DocumentInlines.h"
 #include "ElementInlines.h"
 #include "Event.h"
+#include "EventLoop.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -42,6 +43,7 @@
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "InlineClassicScript.h"
 #include "LoadableClassicScript.h"
+#include "LoadableImportMap.h"
 #include "LoadableModuleScript.h"
 #include "MIMETypeRegistry.h"
 #include "ModuleFetchParameters.h"
@@ -56,6 +58,8 @@
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
 #include "TextNodeTraversal.h"
+#include <JavaScriptCore/ImportMap.h>
+#include <wtf/Scope.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
@@ -66,18 +70,9 @@ static const auto maxUserGesturePropagationTime = 1_s;
 
 ScriptElement::ScriptElement(Element& element, bool parserInserted, bool alreadyStarted)
     : m_element(element)
-    , m_startLineNumber(OrdinalNumber::beforeFirst())
     , m_parserInserted(parserInserted ? ParserInserted::Yes : ParserInserted::No)
-    , m_isExternalScript(false)
     , m_alreadyStarted(alreadyStarted)
-    , m_haveFiredLoad(false)
-    , m_errorOccurred(false)
-    , m_willBeParserExecuted(false)
-    , m_readyToBeParserExecuted(false)
-    , m_willExecuteWhenDocumentFinishedParsing(false)
     , m_forceAsync(!parserInserted)
-    , m_willExecuteInOrder(false)
-    , m_isModuleScript(false)
     , m_creationTime(MonotonicTime::now())
     , m_userGestureToken(UserGestureIndicator::currentUserGesture())
 {
@@ -139,7 +134,7 @@ void ScriptElement::dispatchErrorEvent()
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#prepare-a-script
-std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const
+std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const
 {
     // FIXME: isLegacySupportedJavaScriptLanguage() is not valid HTML5. It is used here to maintain backwards compatibility with existing layout tests. The specific violations are:
     // - Allowing type=javascript. type= should only support MIME types, such as text/javascript.
@@ -174,6 +169,12 @@ std::optional<ScriptElement::ScriptType> ScriptElement::determineScriptType(Lega
     // Setting the attribute to an ASCII case-insensitive match for the string "module" means that the script is a module script.
     if (equalLettersIgnoringASCIICase(type, "module"_s))
         return ScriptType::Module;
+
+    // https://wicg.github.io/import-maps/#integration-prepare-a-script
+    // If the script block’s type string is an ASCII case-insensitive match for the string "importmap", the script’s type is "importmap".
+    if (equalLettersIgnoringASCIICase(type, "importmap"_s))
+        return ScriptType::ImportMap;
+
     return std::nullopt;
 }
 
@@ -205,7 +206,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         scriptType = result.value();
     else
         return false;
-    m_isModuleScript = scriptType == ScriptType::Module;
+    m_scriptType = scriptType;
 
     if (wasParserInserted) {
         m_parserInserted = ParserInserted::Yes;
@@ -242,15 +243,36 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     else
         m_characterEncoding = document.charset();
 
-    if (scriptType == ScriptType::Classic) {
+    switch (scriptType) {
+    case ScriptType::Classic: {
         if (hasSourceAttribute()) {
             if (!requestClassicScript(sourceAttributeValue()))
                 return false;
         }
-    } else {
-        ASSERT(scriptType == ScriptType::Module);
+        break;
+    }
+    case ScriptType::Module: {
         if (!requestModuleScript(scriptStartPosition))
             return false;
+        break;
+    }
+    case ScriptType::ImportMap: {
+        // If the element’s node document's acquiring import maps is false, then queue a task to fire an event named error at the element, and return.
+        RefPtr<Frame> frame = m_element.document().frame();
+        if (!frame || !frame->script().isAcquiringImportMaps()) {
+            m_element.document().eventLoop().queueTask(TaskSource::DOMManipulation, [this, element = Ref<Element>(m_element)] {
+                dispatchErrorEvent();
+            });
+            return false;
+        }
+        frame->script().setAcquiringImportMaps();
+        if (hasSourceAttribute()) {
+            if (!requestImportMap(*frame, sourceAttributeValue()))
+                return false;
+        } else
+            frame->script().setPendingImportMaps();
+        break;
+    }
     }
 
     // All the inlined module script is handled by requestModuleScript. It produces LoadableModuleScript and inlined module script
@@ -274,13 +296,16 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         ASSERT(hasAsyncAttribute() || m_forceAsync);
         document.scriptRunner().queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
     } else if (!hasSourceAttribute() && m_parserInserted == ParserInserted::Yes && !document.haveStylesheetsLoaded()) {
-        ASSERT(scriptType == ScriptType::Classic);
+        ASSERT(scriptType == ScriptType::Classic || scriptType == ScriptType::ImportMap);
         m_willBeParserExecuted = true;
         m_readyToBeParserExecuted = true;
     } else {
-        ASSERT(scriptType == ScriptType::Classic);
+        ASSERT(scriptType == ScriptType::Classic || scriptType == ScriptType::ImportMap);
         TextPosition position = document.isInDocumentWrite() ? TextPosition() : scriptStartPosition;
-        executeClassicScript(ScriptSourceCode(sourceText, URL(document.url()), position, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
+        if (scriptType == ScriptType::Classic)
+            executeClassicScript(ScriptSourceCode(sourceText, URL(document.url()), position, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
+        else
+            registerImportMap(ScriptSourceCode(sourceText, URL(document.url()), position, JSC::SourceProviderSourceType::ImportMap));
     }
 
     return true;
@@ -310,7 +335,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     if (m_loadableScript)
         return true;
 
-    callOnMainThread([this, element = Ref<Element>(m_element)] {
+    m_element.document().eventLoop().queueTask(TaskSource::DOMManipulation, [this, element = Ref<Element>(m_element)] {
         dispatchErrorEvent();
     });
     return false;
@@ -346,7 +371,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         m_loadableScript = WTFMove(script);
         if (auto* frame = m_element.document().frame()) {
             auto& script = downcast<LoadableModuleScript>(*m_loadableScript.get());
-            frame->script().loadModuleScript(script, moduleScriptRootURL.string(), script.parameters());
+            frame->script().loadModuleScript(script, moduleScriptRootURL, script.parameters());
         }
         return true;
     }
@@ -370,6 +395,37 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
     return true;
 }
 
+bool ScriptElement::requestImportMap(Frame& frame, const String& sourceURL)
+{
+    ASSERT(m_element.isConnected());
+    ASSERT(!m_loadableScript);
+    if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
+        auto script = LoadableImportMap::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(),
+            m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
+
+        auto scriptURL = m_element.document().completeURL(sourceURL);
+        m_element.document().willLoadScriptElement(scriptURL);
+
+        const auto& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
+        if (!contentSecurityPolicy.allowNonParserInsertedScripts(scriptURL, URL(), m_startLineNumber, m_element.nonce(), String(), m_parserInserted))
+            return false;
+
+        frame.script().setPendingImportMaps();
+        if (script->load(m_element.document(), scriptURL)) {
+            m_loadableScript = WTFMove(script);
+            m_isExternalScript = true;
+        }
+    }
+
+    if (m_loadableScript)
+        return true;
+
+    m_element.document().eventLoop().queueTask(TaskSource::DOMManipulation, [this, element = Ref<Element>(m_element)] {
+        dispatchErrorEvent();
+    });
+    return false;
+}
+
 void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
@@ -380,7 +436,7 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
 
     if (!m_isExternalScript) {
         ASSERT(m_element.document().contentSecurityPolicy());
-        const ContentSecurityPolicy& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
+        const auto& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
         if (!contentSecurityPolicy.allowNonParserInsertedScripts(URL(), m_element.document().url(), m_startLineNumber, m_element.nonce(), sourceCode.source(), m_parserInserted))
             return;
 
@@ -401,11 +457,48 @@ void ScriptElement::executeClassicScript(const ScriptSourceCode& sourceCode)
     WTFEndSignpost(this, "Execute Script Element");
 }
 
+void ScriptElement::registerImportMap(const ScriptSourceCode& sourceCode)
+{
+    // https://wicg.github.io/import-maps/#integration-register-an-import-map
+
+    ASSERT(m_alreadyStarted);
+    ASSERT(scriptType() == ScriptType::ImportMap);
+
+    RefPtr<Frame> frame = m_element.document().frame();
+
+    auto scopedExit = WTF::makeScopeExit([&] {
+        if (frame)
+            frame->script().clearPendingImportMaps();
+    });
+
+    if (sourceCode.isEmpty()) {
+        dispatchErrorEvent();
+        return;
+    }
+
+    if (!m_isExternalScript) {
+        ASSERT(m_element.document().contentSecurityPolicy());
+        const auto& contentSecurityPolicy = *m_element.document().contentSecurityPolicy();
+        if (!contentSecurityPolicy.allowNonParserInsertedScripts(URL(), m_element.document().url(), m_startLineNumber, m_element.nonce(), sourceCode.source(), m_parserInserted))
+            return;
+
+        if (!contentSecurityPolicy.allowInlineScript(m_element.document().url().string(), m_startLineNumber, sourceCode.source(), m_element, m_element.nonce(), m_element.isInUserAgentShadowTree()))
+            return;
+    }
+
+    if (!frame)
+        return;
+
+    WTFBeginSignpost(this, "Register ImportMap", "registering import-map from URL: %" PRIVATE_LOG_STRING " async: %d defer: %d", m_isExternalScript ? sourceCode.url().string().utf8().data() : "inline", hasAsyncAttribute(), hasDeferAttribute());
+    frame->script().registerImportMap(sourceCode, m_element.document().baseURL());
+    WTFEndSignpost(this, "Register ImportMap");
+}
+
 void ScriptElement::executeModuleScript(LoadableModuleScript& loadableModuleScript)
 {
     // https://html.spec.whatwg.org/multipage/scripting.html#execute-the-script-block
 
-    ASSERT(!loadableModuleScript.error());
+    ASSERT(!loadableModuleScript.hasError());
 
     auto& document = m_element.document();
     auto* frame = document.frame();
@@ -433,24 +526,48 @@ void ScriptElement::dispatchLoadEventRespectingUserGestureIndicator()
 
 void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript)
 {
-    if (std::optional<LoadableScript::Error> error = loadableScript.error()) {
-        if (error->errorValue) {
-            // https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception
-            // An error value is present when there is a load failure that was
-            // not triggered during fetching. In this case, we need to report
-            // the exception to the global object.
-            if (auto* frame = m_element.document().frame())
-                frame->script().reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
-        } else {
+    if (auto error = loadableScript.takeError()) {
+        // There are three types of errors in script loading, fetch error, parse error, and script error.
+        // 1. Fetch error dispatches an error event on <script> tag, but not on window.
+        // 2. Parse error dispatches an error event on window, but not on <script>. And
+        //    it still dispatches a load event on <script>.
+        // 3. Script error dispatches an error event on window.
+        switch (error->type) {
+        // Fetch error
+        case LoadableScript::ErrorType::Fetch:
+        case LoadableScript::ErrorType::CrossOriginLoad:
+        case LoadableScript::ErrorType::MIMEType:
+        case LoadableScript::ErrorType::Nosniff:
+        case LoadableScript::ErrorType::FailedIntegrityCheck: {
             // https://html.spec.whatwg.org/multipage/scripting.html#execute-the-script-block
             // When the script is "null" due to a fetch error, an error event
             // should be dispatched for the script element.
             if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
                 m_element.document().addConsoleMessage(message->source, message->level, message->message);
             dispatchErrorEvent();
+            break;
+        }
+
+        // Parse error
+        case LoadableScript::ErrorType::Resolve: {
+            if (auto* frame = m_element.document().frame())
+                frame->script().reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
+            dispatchLoadEventRespectingUserGestureIndicator();
+            break;
+        }
+
+        // Script error
+        case LoadableScript::ErrorType::Script: {
+            // https://html.spec.whatwg.org/multipage/webappapis.html#report-the-exception
+            // An error value is present when there is a load failure that was
+            // not triggered during fetching. In this case, we need to report
+            // the exception to the global object.
+            if (auto* frame = m_element.document().frame())
+                frame->script().reportExceptionFromScriptError(error.value(), loadableScript.isModuleScript());
+            break;
+        }
         }
     } else if (!loadableScript.wasCanceled()) {
-        ASSERT(!loadableScript.error());
         loadableScript.execute(*this);
         dispatchLoadEventRespectingUserGestureIndicator();
     }
@@ -458,18 +575,31 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
 
 void ScriptElement::executePendingScript(PendingScript& pendingScript)
 {
-    if (m_element.document().identifier() != m_preparationTimeDocumentIdentifier) {
-        m_element.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not executing script because it moved between documents during fetching"_s);
-        return;
+    auto* loadableScript = pendingScript.loadableScript();
+    RefPtr<Document> document { &m_element.document() };
+    if (document->identifier() != m_preparationTimeDocumentIdentifier) {
+        document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not executing script because it moved between documents during fetching"_s);
+        if (loadableScript) {
+            if (auto* loadableImportMap = dynamicDowncast<LoadableImportMap>(loadableScript))
+                document = loadableImportMap->document();
+        }
+    } else {
+        if (loadableScript)
+            executeScriptAndDispatchEvent(*loadableScript);
+        else {
+            ASSERT(!pendingScript.hasError());
+            ASSERT_WITH_MESSAGE(scriptType() == ScriptType::Classic || scriptType() == ScriptType::ImportMap, "Module script always have a loadableScript pointer.");
+            if (scriptType() == ScriptType::Classic)
+                executeClassicScript(ScriptSourceCode(scriptContent(), URL(m_element.document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
+            else
+                registerImportMap(ScriptSourceCode(scriptContent(), URL(m_element.document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::ImportMap));
+            dispatchLoadEventRespectingUserGestureIndicator();
+        }
     }
 
-    if (auto* loadableScript = pendingScript.loadableScript())
-        executeScriptAndDispatchEvent(*loadableScript);
-    else {
-        ASSERT(!pendingScript.error());
-        ASSERT_WITH_MESSAGE(scriptType() == ScriptType::Classic, "Module script always have a loadableScript pointer.");
-        executeClassicScript(ScriptSourceCode(scriptContent(), URL(m_element.document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
-        dispatchLoadEventRespectingUserGestureIndicator();
+    if (scriptType() == ScriptType::ImportMap && document) {
+        if (auto* frame = document->frame())
+            frame->script().clearPendingImportMaps();
     }
 }
 

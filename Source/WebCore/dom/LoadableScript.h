@@ -28,6 +28,7 @@
 #include "ScriptElementCachedScriptFetcher.h"
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/text/WTFString.h>
 
@@ -38,12 +39,14 @@ class ScriptElement;
 
 class LoadableScript : public ScriptElementCachedScriptFetcher {
 public:
-    enum class ErrorType {
-        CachedScript,
+    enum class ErrorType : uint8_t {
+        Fetch,
         CrossOriginLoad,
         MIMEType,
         Nosniff,
         FailedIntegrityCheck,
+        Resolve,
+        Script,
     };
 
     struct ConsoleMessage {
@@ -55,13 +58,14 @@ public:
     struct Error {
         ErrorType type;
         std::optional<ConsoleMessage> consoleMessage;
-        std::optional<JSC::JSValue> errorValue;
+        JSC::Strong<JSC::Unknown> errorValue;
     };
 
     virtual ~LoadableScript() = default;
 
     virtual bool isLoaded() const = 0;
-    virtual std::optional<Error> error() const = 0;
+    virtual bool hasError() const = 0;
+    virtual std::optional<Error> takeError() = 0;
     virtual bool wasCanceled() const = 0;
 
     virtual void execute(ScriptElement&) = 0;

@@ -832,6 +832,7 @@ runtime/GetterSetter.cpp
 runtime/GlobalExecutable.cpp
 runtime/HashMapImpl.cpp
 runtime/Identifier.cpp
+runtime/ImportMap.cpp
 runtime/IndexingType.cpp
 runtime/IndirectEvalExecutable.cpp
 runtime/InitializeThreading.cpp

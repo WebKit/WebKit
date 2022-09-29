@@ -168,7 +168,7 @@ public:
         if (HTMLImageElement::hasLazyLoadableAttributeValue(m_lazyloadAttribute))
             return nullptr;
 
-        auto request = makeUnique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_moduleScript, m_referrerPolicy);
+        auto request = makeUnique<PreloadRequest>(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, type.value(), m_mediaAttribute, m_scriptType, m_referrerPolicy);
         request->setCrossOriginMode(m_crossOriginMode);
         request->setNonce(m_nonceAttribute);
         request->setScriptIsAsync(m_scriptIsAsync);
@@ -248,7 +248,10 @@ private:
             break;
         case TagId::Script:
             if (match(attributeName, typeAttr)) {
-                m_moduleScript = equalLettersIgnoringASCIICase(attributeValue, "module"_s) ? PreloadRequest::ModuleScript::Yes : PreloadRequest::ModuleScript::No;
+                if (equalLettersIgnoringASCIICase(attributeValue, "module"_s))
+                    m_scriptType = ScriptType::Module;
+                else if (equalLettersIgnoringASCIICase(attributeValue, "importmap"_s))
+                    m_scriptType = ScriptType::ImportMap;
                 break;
             } else if (match(attributeName, nonceAttr)) {
                 m_nonceAttribute = WTFMove(attributeValue);
@@ -374,7 +377,7 @@ private:
         if (m_tagId == TagId::Input && !m_inputIsImage)
             return false;
 
-        if (m_tagId == TagId::Script && m_moduleScript == PreloadRequest::ModuleScript::No && m_scriptIsNomodule)
+        if (m_tagId == TagId::Script && m_scriptType != ScriptType::Module && m_scriptIsNomodule)
             return false;
 
         return true;
@@ -403,7 +406,7 @@ private:
     bool m_scriptIsNomodule { false };
     bool m_scriptIsAsync { false };
     float m_deviceScaleFactor;
-    PreloadRequest::ModuleScript m_moduleScript { PreloadRequest::ModuleScript::No };
+    ScriptType m_scriptType { ScriptType::Classic };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
 };
 

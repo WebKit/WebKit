@@ -39,7 +39,7 @@ public:
     CurrentScriptIncrementer(Document& document, ScriptElement& scriptElement)
         : m_document(document)
     {
-        bool shouldPushNullForCurrentScript = scriptElement.element().isInShadowTree() || scriptElement.scriptType() != ScriptElement::ScriptType::Classic;
+        bool shouldPushNullForCurrentScript = scriptElement.element().isInShadowTree() || scriptElement.scriptType() != ScriptType::Classic;
         m_document.pushCurrentScript(shouldPushNullForCurrentScript ? nullptr : &scriptElement.element());
     }
 

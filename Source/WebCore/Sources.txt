@@ -1025,6 +1025,7 @@ dom/InputEvent.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp
 dom/LoadableClassicScript.cpp
+dom/LoadableImportMap.cpp
 dom/LoadableModuleScript.cpp
 dom/LoadableScript.cpp
 dom/MessageChannel.cpp

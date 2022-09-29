@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CachedScriptFetcher.h"
+#include "ScriptType.h"
 
 namespace WebCore {
 
@@ -35,8 +36,10 @@ public:
 
     virtual CachedResourceHandle<CachedScript> requestModuleScript(Document&, const URL& sourceURL, String&& integrity) const;
 
-    virtual bool isClassicScript() const = 0;
-    virtual bool isModuleScript() const = 0;
+    virtual ScriptType scriptType() const = 0;
+    bool isClassicScript() const { return scriptType() == ScriptType::Classic; }
+    bool isModuleScript() const { return scriptType() == ScriptType::Module; }
+    bool isImportMap() const { return scriptType() == ScriptType::ImportMap; }
 
     const String& crossOriginMode() const { return m_crossOriginMode; }
 

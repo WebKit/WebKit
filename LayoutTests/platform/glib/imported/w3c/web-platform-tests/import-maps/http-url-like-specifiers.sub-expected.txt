@@ -1,0 +1,44 @@
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: TypeError: Module name, 'http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-bare' does not resolve to a valid URL.
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+
+
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=foo: <script src type=module>
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=foo: <script src type=text/javascript>
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=foo: static import
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=foo: dynamic import (from module)
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=foo: dynamic import (from text/javascript)
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: <script src type=module>
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: <script src type=text/javascript>
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: static import
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: dynamic import (from module)
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: dynamic import (from text/javascript)
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-data: <script src type=module>
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-data: <script src type=text/javascript>
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-data: static import
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-data: dynamic import (from module)
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-data: dynamic import (from text/javascript)
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: <script src type=module>
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: <script src type=text/javascript>
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: static import
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: dynamic import (from module)
+PASS http://web-platform.test:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: dynamic import (from text/javascript)
+

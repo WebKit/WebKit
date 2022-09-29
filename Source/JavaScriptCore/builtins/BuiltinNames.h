@@ -121,6 +121,7 @@ namespace JSC {
     macro(asyncGeneratorQueueItemNext) \
     macro(dateTimeFormat) \
     macro(this) \
+    macro(importMapStatus) \
     macro(importInRealm) \
     macro(evalInRealm) \
     macro(moveFunctionToRealm) \

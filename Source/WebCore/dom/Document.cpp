@@ -5616,6 +5616,11 @@ void Document::setDecoder(RefPtr<TextResourceDecoder>&& decoder)
     m_decoder = WTFMove(decoder);
 }
 
+URL Document::baseURLForComplete(const URL& baseURLOverride) const
+{
+    return ((baseURLOverride.isEmpty() || baseURLOverride == aboutBlankURL()) && parentDocument()) ? parentDocument()->baseURL() : baseURLOverride;
+}
+
 URL Document::completeURL(const String& url, const URL& baseURLOverride, ForceUTF8 forceUTF8) const
 {
     // See also CSSParserContext::completeURL(const String&)
@@ -5625,7 +5630,7 @@ URL Document::completeURL(const String& url, const URL& baseURLOverride, ForceUT
     if (url.isNull())
         return URL();
 
-    const URL& baseURL = ((baseURLOverride.isEmpty() || baseURLOverride == aboutBlankURL()) && parentDocument()) ? parentDocument()->baseURL() : baseURLOverride;
+    URL baseURL = baseURLForComplete(baseURLOverride);
     if (!m_decoder || forceUTF8 == ForceUTF8::Yes)
         return URL(baseURL, url);
     return URL(baseURL, url, m_decoder->encodingForURLParsing());

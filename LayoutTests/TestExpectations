@@ -651,7 +651,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/mo
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-same-origin.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/referrer-unsafe-url.sub.html [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-resolve-importmap.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-enter.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-escape.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-left.html [ Skip ]
@@ -6057,3 +6056,9 @@ js/ShadowRealm-worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/svg/import/color-prop-05-t-manual.svg [ Skip ]
 svg/W3C-SVG-1.1-SE/color-prop-05-t.svg [ Skip ]
 
+# modulepreload is not supported
+imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload.html [ Skip ]
+imported/w3c/web-platform-tests/import-maps/acquiring/modulepreload-link-header.html [ Skip ]
+
+# WPT meta name="variant" is not supported. And iframe 'load' event has a bug.
+imported/w3c/web-platform-tests/import-maps/data-driven/resolving.html [ Skip ]

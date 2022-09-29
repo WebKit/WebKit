@@ -80,6 +80,7 @@ class JSGlobalObject;
     v(Set, nullptr) \
     v(Map, nullptr) \
     v(thisTimeValue, nullptr) \
+    v(importMapStatus, nullptr) \
     v(importInRealm, nullptr) \
     v(evalInRealm, nullptr) \
     v(moveFunctionToRealm, nullptr) \

@@ -26,6 +26,7 @@
 #include "LoadableScript.h"
 #include "ReferrerPolicy.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include "ScriptType.h"
 #include "UserGestureIndicator.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/TextPosition.h>
@@ -53,6 +54,7 @@ public:
     WEBCORE_EXPORT String scriptContent() const;
     void executeClassicScript(const ScriptSourceCode&);
     void executeModuleScript(LoadableModuleScript&);
+    void registerImportMap(const ScriptSourceCode&);
 
     void executePendingScript(PendingScript&);
 
@@ -73,9 +75,7 @@ public:
     bool willExecuteInOrder() const { return m_willExecuteInOrder; }
     LoadableScript* loadableScript() { return m_loadableScript.get(); }
 
-    // https://html.spec.whatwg.org/multipage/scripting.html#concept-script-type
-    enum class ScriptType { Classic, Module };
-    ScriptType scriptType() const { return m_isModuleScript ? ScriptType::Module : ScriptType::Classic; }
+    ScriptType scriptType() const { return m_scriptType; }
 
     void ref();
     void deref();
@@ -112,6 +112,7 @@ private:
 
     bool requestClassicScript(const String& sourceURL);
     bool requestModuleScript(const TextPosition& scriptStartPosition);
+    bool requestImportMap(Frame&, const String& sourceURL);
 
     virtual String sourceAttributeValue() const = 0;
     virtual String charsetAttributeValue() const = 0;
@@ -122,18 +123,18 @@ private:
     virtual ReferrerPolicy referrerPolicy() const = 0;
 
     Element& m_element;
-    OrdinalNumber m_startLineNumber;
-    ParserInserted m_parserInserted;
-    bool m_isExternalScript : 1;
+    OrdinalNumber m_startLineNumber { OrdinalNumber::beforeFirst() };
+    ParserInserted m_parserInserted : bitWidthOfParserInserted;
+    bool m_isExternalScript : 1 { false };
     bool m_alreadyStarted : 1;
-    bool m_haveFiredLoad : 1;
-    bool m_errorOccurred : 1;
-    bool m_willBeParserExecuted : 1; // Same as "The parser will handle executing the script."
-    bool m_readyToBeParserExecuted : 1;
-    bool m_willExecuteWhenDocumentFinishedParsing : 1;
+    bool m_haveFiredLoad : 1 { false };
+    bool m_errorOccurred : 1 { false };
+    bool m_willBeParserExecuted : 1 { false }; // Same as "The parser will handle executing the script."
+    bool m_readyToBeParserExecuted : 1 { false };
+    bool m_willExecuteWhenDocumentFinishedParsing : 1 { false };
     bool m_forceAsync : 1;
-    bool m_willExecuteInOrder : 1;
-    bool m_isModuleScript : 1;
+    bool m_willExecuteInOrder : 1 { false };
+    ScriptType m_scriptType : bitWidthOfScriptType { ScriptType::Classic };
     String m_characterEncoding;
     String m_fallbackCharacterEncoding;
     RefPtr<LoadableScript> m_loadableScript;

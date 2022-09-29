@@ -13,14 +13,11 @@ function test()
         description: "Test evaluating an import expression from console.",
         test(resolve, reject) {
             function testSource(expression, count) {
-                let promise = WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded);
                 return new Promise((resolve, reject) => {
                     WI.runtimeManager.evaluateInInspectedWindow(expression, {objectGroup: "test"}, (result, wasThrown) => {
-                        promise.then(() => {
-                            InspectorTest.log("Source: " + expression);
-                            InspectorTest.expectThat(result.isUndefined(), "Transformed. Should log the value or an exception.");
-                            resolve();
-                        });
+                        InspectorTest.log("Source: " + expression);
+                        InspectorTest.expectThat(result.isUndefined(), "Transformed. Should log the value or an exception.");
+                        resolve();
                     });
                 })
             }

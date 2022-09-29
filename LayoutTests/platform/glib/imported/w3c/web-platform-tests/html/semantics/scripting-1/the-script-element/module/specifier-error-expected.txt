@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: TypeError: Module specifier, 'string-without-dot-slash-prefix' does not start with "/", "./", or "../". Referenced from http://web-platform.test:8800/html/semantics/scripting-1/the-script-element/module/bad-module-specifier.js
+CONSOLE MESSAGE: TypeError: Module name, 'string-without-dot-slash-prefix' does not resolve to a valid URL.
 
 PASS Test that invalid module specifier leads to TypeError on window.
 

@@ -1,0 +1,39 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/data-url-prefix.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/empty-import-map.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/overlapping-entries.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/packages-via-trailing-slashes.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-addresses-absolute.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-addresses-invalid.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-addresses.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-invalid-json.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-schema-normalization.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-schema-scope.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-schema-specifier-map.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-schema-toplevel.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-scope-keys.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-specifier-keys.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/parsing-trailing-slashes.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/resolving-null.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/scopes-exact-vs-prefix.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/scopes.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/test-helper-iframe.js
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/test-helper.js
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/tricky-specifiers.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/url-specifiers-schemes.json
+/LayoutTests/imported/w3c/web-platform-tests/import-maps/data-driven/resources/url-specifiers.json

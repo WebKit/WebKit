@@ -37,33 +37,47 @@ namespace WebCore {
 // A CachedResourceHandle alone does not prevent the underlying CachedResource
 // from purging its data buffer. This class holds a client until this class is
 // destroyed in order to guarantee that the data buffer will not be purged.
-class LoadableClassicScript final : public LoadableScript, private CachedResourceClient {
+class LoadableNonModuleScriptBase : public LoadableScript, protected CachedResourceClient {
 public:
-    virtual ~LoadableClassicScript();
+    virtual ~LoadableNonModuleScriptBase();
 
-    static Ref<LoadableClassicScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
     bool isLoaded() const final;
-    std::optional<Error> error() const final;
+    bool hasError() const final;
+    std::optional<Error> takeError() final;
     bool wasCanceled() const final;
 
+    Document* document() { return m_weakDocument.get(); }
     CachedScript& cachedScript() { return *m_cachedScript; }
 
-    bool isClassicScript() const final { return true; }
-    bool isModuleScript() const final { return false; }
-
-    void execute(ScriptElement&) final;
-
     bool load(Document&, const URL&);
+    bool isAsync() const { return m_isAsync; }
+    const AtomString& integrity() const { return m_integrity; }
+
+protected:
+    LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
 
 private:
-    LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
-
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
+protected:
     CachedResourceHandle<CachedScript> m_cachedScript { };
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_weakDocument;
     std::optional<Error> m_error { std::nullopt };
     const AtomString m_integrity;
     bool m_isAsync { false };
+};
+
+
+class LoadableClassicScript final : public LoadableNonModuleScriptBase {
+public:
+    static Ref<LoadableClassicScript> create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
+
+    ScriptType scriptType() const final { return ScriptType::Classic; }
+
+    void execute(ScriptElement&) final;
+
+private:
+    LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree, bool isAsync);
 };
 
 }

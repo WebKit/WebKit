@@ -102,7 +102,7 @@ public:
     virtual RefPtr<const Object> asObject() const;
     virtual RefPtr<Array> asArray();
 
-    static RefPtr<Value> parseJSON(const String&);
+    static RefPtr<Value> parseJSON(StringView);
     static void escapeString(StringBuilder&, StringView);
 
     String toJSONString() const;

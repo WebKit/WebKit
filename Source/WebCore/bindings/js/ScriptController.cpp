@@ -60,6 +60,7 @@
 #include <JavaScriptCore/AbstractModuleRecord.h>
 #include <JavaScriptCore/Debugger.h>
 #include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/ImportMap.h>
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSInternalPromise.h>
@@ -174,20 +175,20 @@ JSC::JSValue ScriptController::evaluateIgnoringException(const ScriptSourceCode&
     return evaluateInWorldIgnoringException(sourceCode, mainThreadNormalWorld());
 }
 
-void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const String& moduleName, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters, DOMWrapperWorld& world)
+void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const URL& topLevelModuleURL, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters, DOMWrapperWorld& world)
 {
     JSLockHolder lock(world.vm());
 
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    auto& promise = JSExecState::loadModule(lexicalGlobalObject, moduleName, JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
+    auto& promise = JSExecState::loadModule(lexicalGlobalObject, topLevelModuleURL, JSC::JSScriptFetchParameters::create(lexicalGlobalObject.vm(), WTFMove(topLevelFetchParameters)), JSC::JSScriptFetcher::create(lexicalGlobalObject.vm(), { &moduleScript }));
     setupModuleScriptHandlers(moduleScript, promise, world);
 }
 
-void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const String& moduleName, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters)
+void ScriptController::loadModuleScript(LoadableModuleScript& moduleScript, const URL& topLevelModuleURL, Ref<JSC::ScriptFetchParameters>&& topLevelFetchParameters)
 {
-    loadModuleScriptInWorld(moduleScript, moduleName, WTFMove(topLevelFetchParameters), mainThreadNormalWorld());
+    loadModuleScriptInWorld(moduleScript, topLevelModuleURL, WTFMove(topLevelFetchParameters), mainThreadNormalWorld());
 }
 
 void ScriptController::loadModuleScriptInWorld(LoadableModuleScript& moduleScript, const ScriptSourceCode& sourceCode, DOMWrapperWorld& world)
@@ -342,9 +343,9 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
                 switch (static_cast<ModuleFetchFailureKind>(failureKindValue.asInt32())) {
                 case ModuleFetchFailureKind::WasPropagatedError:
                     moduleScript->notifyLoadFailed(LoadableScript::Error {
-                        LoadableScript::ErrorType::CachedScript,
-                        std::nullopt,
-                        std::nullopt
+                        LoadableScript::ErrorType::Fetch,
+                        { },
+                        { }
                     });
                     break;
                 // For a fetch error that was not propagated from further in the
@@ -352,13 +353,26 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
                 // include an error value as it should not be reported.
                 case ModuleFetchFailureKind::WasFetchError:
                     moduleScript->notifyLoadFailed(LoadableScript::Error {
-                        LoadableScript::ErrorType::CachedScript,
+                        LoadableScript::ErrorType::Fetch,
                         LoadableScript::ConsoleMessage {
                             MessageSource::JS,
                             MessageLevel::Error,
                             retrieveErrorMessage(*globalObject, vm, errorValue, scope),
                         },
-                        std::nullopt
+                        { }
+                    });
+                    break;
+                case ModuleFetchFailureKind::WasResolveError:
+                    moduleScript->notifyLoadFailed(LoadableScript::Error {
+                        LoadableScript::ErrorType::Resolve,
+                        LoadableScript::ConsoleMessage {
+                            MessageSource::JS,
+                            MessageLevel::Error,
+                            retrieveErrorMessage(*globalObject, vm, errorValue, scope),
+                        },
+                        // The error value is included so that it can be reported to the
+                        // appropriate global object.
+                        { vm, errorValue }
                     });
                     break;
                 case ModuleFetchFailureKind::WasCanceled:
@@ -370,7 +384,7 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
         }
 
         moduleScript->notifyLoadFailed(LoadableScript::Error {
-            LoadableScript::ErrorType::CachedScript,
+            LoadableScript::ErrorType::Script,
             LoadableScript::ConsoleMessage {
                 MessageSource::JS,
                 MessageLevel::Error,
@@ -378,7 +392,7 @@ void ScriptController::setupModuleScriptHandlers(LoadableModuleScript& moduleScr
             },
             // The error value is included so that it can be reported to the
             // appropriate global object.
-            errorValue
+            { vm, errorValue }
         });
         return JSValue::encode(jsUndefined());
     });
@@ -846,7 +860,69 @@ void ScriptController::reportExceptionFromScriptError(LoadableScript::Error erro
     auto& proxy = jsWindowProxy(world);
     auto& lexicalGlobalObject = *proxy.window();
 
-    reportException(&lexicalGlobalObject, error.errorValue.value(), nullptr, isModule);
+    reportException(&lexicalGlobalObject, error.errorValue.get(), nullptr, isModule);
+}
+
+class ImportMapWarningReporter final : public JSC::ImportMap::Reporter {
+    WTF_FORBID_HEAP_ALLOCATION;
+public:
+    ImportMapWarningReporter(JSDOMGlobalObject* globalObject)
+        : m_globalObject(globalObject)
+    {
+    }
+
+    void reportWarning(const String& message) final
+    {
+        m_globalObject->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
+    }
+
+private:
+    JSDOMGlobalObject* m_globalObject;
+};
+
+void ScriptController::registerImportMap(const ScriptSourceCode& sourceCode, const URL& baseURL)
+{
+    auto& world = mainThreadNormalWorld();
+    JSC::VM& vm = world.vm();
+    JSLockHolder lock(vm);
+    JSDOMGlobalObject* globalObject = jsWindowProxy(world).window();
+    ImportMapWarningReporter reporter(globalObject);
+    auto result = globalObject->importMap().registerImportMap(sourceCode.jsSourceCode(), baseURL, &reporter);
+    if (!result)
+        globalObject->scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, result.error());
+    globalObject->clearPendingImportMaps();
+}
+
+bool ScriptController::isAcquiringImportMaps()
+{
+    auto& world = mainThreadNormalWorld();
+    JSC::VM& vm = world.vm();
+    JSLockHolder lock(vm);
+    return jsWindowProxy(world).window()->isAcquiringImportMaps();
+}
+
+void ScriptController::setAcquiringImportMaps()
+{
+    auto& world = mainThreadNormalWorld();
+    JSC::VM& vm = world.vm();
+    JSLockHolder lock(vm);
+    jsWindowProxy(world).window()->setAcquiringImportMaps();
+}
+
+void ScriptController::setPendingImportMaps()
+{
+    auto& world = mainThreadNormalWorld();
+    JSC::VM& vm = world.vm();
+    JSLockHolder lock(vm);
+    jsWindowProxy(world).window()->setPendingImportMaps();
+}
+
+void ScriptController::clearPendingImportMaps()
+{
+    auto& world = mainThreadNormalWorld();
+    JSC::VM& vm = world.vm();
+    JSLockHolder lock(vm);
+    jsWindowProxy(world).window()->clearPendingImportMaps();
 }
 
 } // namespace WebCore

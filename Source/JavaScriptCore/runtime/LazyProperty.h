@@ -88,6 +88,8 @@ public:
         return bitwise_cast<ElementType*>(pointer);
     }
 
+    bool isInitialized() const { return !(m_pointer & lazyTag); }
+
     ElementType* getInitializedOnMainThread(const OwnerType* owner) const
     {
         if (UNLIKELY(m_pointer & lazyTag)) {

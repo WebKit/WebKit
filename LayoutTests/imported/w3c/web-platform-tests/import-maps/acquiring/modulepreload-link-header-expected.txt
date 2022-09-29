@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN With modulepreload link header, import maps should fire error events
+FAIL With modulepreload link header, import maps are not effective assert_array_equals: expected property 0 to be "log:A" but got "log:B" (expected array ["log:A"] got ["log:B"])
+
