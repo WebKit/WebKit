@@ -598,8 +598,8 @@ bool XMLDocumentParser::supportsXMLVersion(const String& version)
     return version == "1.0"_s;
 }
 
-XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView)
-    : ScriptableDocumentParser(document)
+XMLDocumentParser::XMLDocumentParser(Document& document, FrameView* frameView, OptionSet<ParserContentPolicy> policy)
+    : ScriptableDocumentParser(document, policy)
     , m_view(frameView)
     , m_pendingCallbacks(makeUnique<PendingCallbacks>())
     , m_currentNode(&document)

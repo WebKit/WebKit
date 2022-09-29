@@ -41,13 +41,13 @@ static inline WebEvent::Type webEventTypeForUIWebTouchEventType(UIWebTouchEventT
 {
     switch (type) {
     case UIWebTouchEventTouchBegin:
-        return WebEvent::TouchStart;
+        return WebEvent::Type::TouchStart;
     case UIWebTouchEventTouchChange:
-        return WebEvent::TouchMove;
+        return WebEvent::Type::TouchMove;
     case UIWebTouchEventTouchEnd:
-        return WebEvent::TouchEnd;
+        return WebEvent::Type::TouchEnd;
     case UIWebTouchEventTouchCancel:
-        return WebEvent::TouchCancel;
+        return WebEvent::Type::TouchCancel;
     }
 }
 

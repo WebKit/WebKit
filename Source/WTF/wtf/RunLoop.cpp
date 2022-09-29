@@ -28,6 +28,7 @@
 
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
 
@@ -101,6 +102,19 @@ RunLoop* RunLoop::webIfExists()
     return s_webRunLoop;
 }
 #endif
+
+Ref<RunLoop> RunLoop::create(const char* threadName, ThreadType threadType, Thread::QOS qos)
+{
+    RunLoop* runLoop = nullptr;
+    BinarySemaphore semaphore;
+    Thread::create(threadName, [&] {
+        runLoop = &RunLoop::current();
+        semaphore.signal();
+        runLoop->run();
+    }, threadType, qos)->detach();
+    semaphore.wait();
+    return *runLoop;
+}
 
 bool RunLoop::isMain()
 {

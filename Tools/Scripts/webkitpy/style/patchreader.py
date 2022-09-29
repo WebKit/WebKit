@@ -57,7 +57,7 @@ class PatchReader(object):
     def check(self, patch_string, fs=None):
         """Check style in the given patch."""
         fs = fs or FileSystem()
-        patch_string = string_utils.decode(patch_string, target_type=str)
+        patch_string = string_utils.decode(patch_string, target_type=str, errors='replace')
         patch_files = DiffParser(patch_string.splitlines()).files
 
         # If the user uses git, checking subversion config file only once is enough.

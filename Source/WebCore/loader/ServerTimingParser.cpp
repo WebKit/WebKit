@@ -38,7 +38,6 @@ namespace ServerTimingParser {
 
 Vector<ServerTiming> parseServerTiming(const String& headerValue)
 {
-    ASSERT(DeprecatedGlobalSettings::serverTimingEnabled());
     auto entries = Vector<ServerTiming>();
     if (headerValue.isNull())
         return entries;

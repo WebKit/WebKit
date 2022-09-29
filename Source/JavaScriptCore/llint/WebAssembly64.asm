@@ -1285,3 +1285,13 @@ wasmOp(i31_get_u, WasmI31GetU, macro(ctx)
 .throw:
     throwException(NullI31Get)
 end)
+
+wasmOp(array_len, WasmArrayLen, macro(ctx)
+    mloadp(ctx, m_arrayref, t0)
+    bqeq t0, ValueNull, .nullArray
+    loadi JSWebAssemblyArray::m_size[t0], t0
+    returni(ctx, t0)
+
+.nullArray:
+    throwException(NullArrayLen)
+end)

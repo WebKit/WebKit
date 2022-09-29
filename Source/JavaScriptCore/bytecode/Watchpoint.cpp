@@ -64,10 +64,9 @@ inline void Watchpoint::runWithDowncast(const Func& func)
 void Watchpoint::operator delete(Watchpoint* watchpoint, std::destroying_delete_t)
 {
     watchpoint->runWithDowncast([](auto* derived) {
-        using T = std::decay_t<decltype(*derived)>;
-        derived->~T();
+        std::destroy_at(derived);
+        std::decay_t<decltype(*derived)>::freeAfterDestruction(derived);
     });
-    Watchpoint::freeAfterDestruction(watchpoint);
 }
 
 Watchpoint::~Watchpoint()

@@ -53,6 +53,7 @@
 #include "JSPropertyNameEnumerator.h"
 #include "JSString.h"
 #include "JSTypeInfo.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
 #include "JumpTable.h"
 #include "LLIntData.h"

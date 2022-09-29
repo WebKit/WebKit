@@ -164,7 +164,7 @@ bool ScrollerPairMac::handleWheelEvent(const WebCore::PlatformWheelEvent& event)
 
 bool ScrollerPairMac::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
 {
-    if (event.type() != WebCore::PlatformEvent::MouseMoved)
+    if (event.type() != WebCore::PlatformEvent::Type::MouseMoved)
         return false;
 
     m_lastKnownMousePosition = event.position();

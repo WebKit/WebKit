@@ -70,11 +70,11 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
 
 WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
 {
-    auto colorSpace = DestinationColorSpace::SRGB();
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
-        return colorSpace;
+        return DestinationColorSpace::SRGB();
 
-    connection().sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), Messages::RemoteMediaPlayerProxy::ColorSpace::Reply(colorSpace), m_id);
+    auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
+    auto [colorSpace] = sendResult.takeReplyOr(DestinationColorSpace::SRGB());
     return colorSpace;
 }
 

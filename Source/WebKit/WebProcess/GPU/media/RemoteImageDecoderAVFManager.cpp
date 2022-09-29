@@ -41,10 +41,8 @@ using namespace WebCore;
 
 RefPtr<RemoteImageDecoderAVF> RemoteImageDecoderAVFManager::createImageDecoder(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-    std::optional<ImageDecoderIdentifier> imageDecoderIdentifier;
-    if (!ensureGPUProcessConnection().connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferReference(data), mimeType), Messages::RemoteImageDecoderAVFProxy::CreateDecoder::Reply(imageDecoderIdentifier), 0))
-        return nullptr;
-
+    auto sendResult = ensureGPUProcessConnection().connection().sendSync(Messages::RemoteImageDecoderAVFProxy::CreateDecoder(IPC::SharedBufferReference(data), mimeType), 0);
+    auto [imageDecoderIdentifier] = sendResult.takeReplyOr(std::nullopt);
     if (!imageDecoderIdentifier)
         return nullptr;
 

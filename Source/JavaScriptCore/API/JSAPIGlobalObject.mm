@@ -34,10 +34,12 @@
 #import "Completion.h"
 #import "Error.h"
 #import "Exception.h"
+#import "IdentifierInlines.h"
 #import "JSContextInternal.h"
 #import "JSInternalPromise.h"
 #import "JSModuleLoader.h"
 #import "JSNativeStdFunction.h"
+#import "JSObjectInlines.h"
 #import "JSPromise.h"
 #import "JSScriptFetchParameters.h"
 #import "JSScriptInternal.h"
@@ -47,6 +49,7 @@
 #import "JavaScriptCore.h"
 #import "ObjectConstructor.h"
 #import "SourceOrigin.h"
+#import "StrongInlines.h"
 #import <wtf/URL.h>
 
 namespace JSC {

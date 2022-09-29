@@ -58,10 +58,9 @@ private:
     ScrollingThread();
 
     void dispatchFunctionsFromScrollingThread();
-    RunLoop& runLoop() { return *m_runLoop; }
+    RunLoop& runLoop() { return m_runLoop; }
 
-    RefPtr<Thread> m_thread;
-    RunLoop* m_runLoop { nullptr };
+    Ref<RunLoop> m_runLoop;
 };
 
 } // namespace WebCore

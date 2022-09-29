@@ -37,16 +37,16 @@ layer at (0,0) size 800x810
                 text run at (4,605) width 8: "  "
                 text run at (4,613) width 92: "   My Links:   "
                 text run at (4,704) width 86: "  Lite \x{2022} Email"
-          RenderTableRow {TR} at (0,28) size 344x794
+          RenderTableRow {TR} at (28,0) size 344x794
             RenderTableCell {TD} at (28,168) size 344x-113 [border: (1px solid #008000)] [r=1 c=0 rs=1 cs=1]
             RenderTableCell {TD} at (28,222) size 344x350 [border: (1px solid #008000)] [r=1 c=1 rs=1 cs=1]
               RenderTable {TABLE} at (4,4) size 336x342
                 RenderTableSection {TBODY} at (0,0) size 336x342
-                  RenderTableRow {TR} at (0,2) size 332x342
+                  RenderTableRow {TR} at (2,0) size 332x342
                     RenderTableCell {TD} at (2,2) size 332x338 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                       RenderTable {TABLE} at (2,2) size 328x334
                         RenderTableSection {TBODY} at (0,0) size 328x334
-                          RenderTableRow {TR} at (0,2) size 324x334
+                          RenderTableRow {TR} at (2,0) size 324x334
                             RenderTableCell {TD} at (2,162) size 324x-193 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
                             RenderTableCell {TD} at (2,130) size 324x73 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
                               RenderText {#text} at (2,2) size 319x68

@@ -32,7 +32,7 @@ namespace WebKit {
 
 using namespace WebCore;
 
-WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, OptionSet<Modifier> modifiers, WallTime timestamp)
+WebWheelEvent::WebWheelEvent(WebEvent::Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, OptionSet<Modifier> modifiers, WallTime timestamp)
     : WebEvent(type, modifiers, timestamp)
     , m_position(position)
     , m_globalPosition(globalPosition)
@@ -144,7 +144,7 @@ bool WebWheelEvent::decode(IPC::Decoder& decoder, WebWheelEvent& t)
 
 bool WebWheelEvent::isWheelEventType(Type type)
 {
-    return type == Wheel;
+    return type == Type::Wheel;
 }
 
 } // namespace WebKit

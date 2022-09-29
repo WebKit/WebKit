@@ -1481,7 +1481,7 @@ deqp_framework_delibs_sources_win = [
 
 deqp_framework_delibs_sources_unix = [
   "$deqp_path/framework/delibs/dethread/unix/deMutexUnix.c",
-  "$deqp_path/framework/delibs/dethread/unix/deNamedSemaphoreUnix.c",
+  "$deqp_path/framework/delibs/dethread/unix/deSemaphoreMach.c",
   "$deqp_path/framework/delibs/dethread/unix/deSemaphoreUnix.c",
   "$deqp_path/framework/delibs/dethread/unix/deThreadLocalUnix.c",
   "$deqp_path/framework/delibs/dethread/unix/deThreadUnix.c",

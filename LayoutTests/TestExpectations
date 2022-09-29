@@ -422,6 +422,8 @@ imported/w3c/web-platform-tests/clear-site-data/executionContexts.sub.html [ Ski
 http/tests/security/cookie-module-import-propagate.html [ DumpJSConsoleLogInStdErr ]
 http/tests/security/window-opened-from-sandboxed-iframe-should-inherit-sandbox.html [ DumpJSConsoleLogInStdErr ]
 http/wpt/html/cross-origin-embedder-policy/require-corp.https.html [ DumpJSConsoleLogInStdErr ]
+http/wpt/webauthn/public-key-credential-create-failure.https.html [ DumpJSConsoleLogInStdErr ]
+http/wpt/webauthn/public-key-credential-get-failure.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/FileAPI/url/sandboxed-iframe.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/WebIDL/current-realm.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/eventsource/format-mime-bogus.any.html [ DumpJSConsoleLogInStdErr ]
@@ -6016,10 +6018,10 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-style-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-textarea-border-top-width-001.html [ ImageOnlyFailure ]
 
-webkit.org/b/243562 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-no-fallback-props-001.html [ ImageOnlyFailure ]
-
 webkit.org/b/233267 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_window_open_download_block_downloads.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/permissions/permissions-cg.https.html [ Failure Pass ]
+
+webkit.org/b/245164 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure Pass ]
 
 # Flaky because of network ordering
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset.html [ Pass Failure ]
@@ -6033,11 +6035,8 @@ imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-pol
 imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html [ Skip ]
 
-# Missing support for constructable CSSStyleSheet.
-imported/w3c/web-platform-tests/css/cssom/CSSStyleSheet-constructable-concat.html [ ImageOnlyFailure ]
-
 # Disable ShadowRealm (while running to ensure we do not crash)
-http/tests/misc/iframe-shadow-realm.html [ Pass Failure ]
+webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Skip ]
 inspector/shadow-realm-console.html [ Pass Failure ]
 imported/w3c/web-platform-tests/compression/idlharness-shadowrealm.window.html [ Pass Failure ]
 imported/w3c/web-platform-tests/dom/idlharness-shadowrealm.window.html [ Pass Failure ]

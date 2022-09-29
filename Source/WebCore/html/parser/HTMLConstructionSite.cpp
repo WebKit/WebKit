@@ -50,6 +50,7 @@
 #include "JSCustomElementInterface.h"
 #include "NotImplemented.h"
 #include "SVGElementInlines.h"
+#include "Settings.h"
 #include "Text.h"
 #include <unicode/ubrk.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -728,6 +729,12 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
     if (is<HTMLTemplateElement>(currentNode()))
         return downcast<HTMLTemplateElement>(currentNode()).content().document();
     return currentNode().document();
+}
+
+void HTMLConstructionSite::attachDeclarativeShadowRootIfNeeded(Element& shadowHost, HTMLTemplateElement& templateElement)
+{
+    if (m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowDOM) && m_document.settings().declarativeShadowDOMEnabled() && !shadowHost.document().templateDocumentHost())
+        templateElement.attachAsDeclarativeShadowRootIfNeeded(shadowHost);
 }
 
 static inline JSCustomElementInterface* findCustomElementInterface(Document& ownerDocument, const AtomString& localName)

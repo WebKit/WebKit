@@ -174,4 +174,18 @@ inline void LoadASTCToRGBA8(size_t width,
                          inputDepthPitch, output, outputRowPitch, outputDepthPitch);
 }
 
+template <uint32_t indexBits, uint32_t redBlueBits, uint32_t greenBits, uint32_t alphaBits>
+inline void LoadPalettedToRGBA8(size_t width,
+                                size_t height,
+                                size_t depth,
+                                const uint8_t *input,
+                                size_t inputRowPitch,
+                                size_t inputDepthPitch,
+                                uint8_t *output,
+                                size_t outputRowPitch,
+                                size_t outputDepthPitch)
+{
+    UNREACHABLE();
+}
+
 } // namespace angle

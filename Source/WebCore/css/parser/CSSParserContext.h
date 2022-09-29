@@ -53,6 +53,7 @@ struct CSSParserContext {
 
     bool isContentOpaque { false };
     bool useSystemAppearance { false };
+    bool shouldIgnoreImportRules { false };
 
     // Settings, excluding those affecting properties.
     bool colorContrastEnabled { false };

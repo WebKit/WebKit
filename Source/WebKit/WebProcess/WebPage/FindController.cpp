@@ -617,7 +617,7 @@ void FindController::didScrollAffectingFindIndicatorPosition()
 
 bool FindController::mouseEvent(PageOverlay&, const PlatformMouseEvent& mouseEvent)
 {
-    if (mouseEvent.type() == PlatformEvent::MousePressed)
+    if (mouseEvent.type() == PlatformEvent::Type::MousePressed)
         hideFindUI();
 
     return false;

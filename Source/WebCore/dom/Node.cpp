@@ -345,11 +345,15 @@ void Node::trackForDebugging()
 
 inline void NodeRareData::operator delete(NodeRareData* nodeRareData, std::destroying_delete_t)
 {
+    auto destroyAndFree = [&](auto& value) {
+        std::destroy_at(&value);
+        std::decay_t<decltype(value)>::freeAfterDestruction(&value);
+    };
+
     if (nodeRareData->m_isElementRareData)
-        static_cast<ElementRareData*>(nodeRareData)->~ElementRareData();
+        destroyAndFree(static_cast<ElementRareData&>(*nodeRareData));
     else
-        nodeRareData->~NodeRareData();
-    NodeRareData::freeAfterDestruction(nodeRareData);
+        destroyAndFree(*nodeRareData);
 }
 
 Node::Node(Document& document, ConstructionType type)
@@ -2037,7 +2041,7 @@ inline void Node::moveShadowTreeToNewDocument(ShadowRoot& shadowRoot, Document& 
         node.moveNodeToNewDocument(oldDocument, newDocument);
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
-        innerShadowRoot.moveShadowRootToNewDocument(newDocument);
+        innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
         moveShadowTreeToNewDocument(innerShadowRoot, oldDocument, newDocument);
     });
 }

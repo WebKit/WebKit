@@ -544,6 +544,7 @@ Document::Document(Frame* frame, const Settings& settings, const URL& url, Docum
     , FrameDestructionObserver(frame)
     , m_settings(settings)
     , m_quirks(makeUniqueRef<Quirks>(*this))
+    , m_parserContentPolicy(DefaultParserContentPolicy)
     , m_cachedResourceLoader(createCachedResourceLoader(frame))
     , m_creationURL(url)
     , m_domTreeVersion(++s_globalTreeVersion)
@@ -2885,7 +2886,7 @@ void Document::setVisuallyOrdered()
 Ref<DocumentParser> Document::createParser()
 {
     // FIXME: this should probably pass the frame instead
-    return XMLDocumentParser::create(*this, view());
+    return XMLDocumentParser::create(*this, view(), m_parserContentPolicy);
 }
 
 bool Document::hasHighlight() const
@@ -5291,13 +5292,13 @@ ExceptionOr<Ref<Event>> Document::createEvent(const String& type)
 bool Document::hasListenerTypeForEventType(PlatformEvent::Type eventType) const
 {
     switch (eventType) {
-    case PlatformEvent::MouseForceChanged:
+    case PlatformEvent::Type::MouseForceChanged:
         return m_listenerTypes & Document::FORCECHANGED_LISTENER;
-    case PlatformEvent::MouseForceDown:
+    case PlatformEvent::Type::MouseForceDown:
         return m_listenerTypes & Document::FORCEDOWN_LISTENER;
-    case PlatformEvent::MouseForceUp:
+    case PlatformEvent::Type::MouseForceUp:
         return m_listenerTypes & Document::FORCEUP_LISTENER;
-    case PlatformEvent::MouseScroll:
+    case PlatformEvent::Type::MouseScroll:
         return m_listenerTypes & Document::SCROLL_LISTENER;
     default:
         return false;

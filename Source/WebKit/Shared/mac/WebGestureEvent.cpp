@@ -59,7 +59,7 @@ bool WebGestureEvent::decode(IPC::Decoder& decoder, WebGestureEvent& result)
 
 bool WebGestureEvent::isGestureEventType(Type type) const
 {
-    return type == GestureStart || type == GestureChange || type == GestureEnd;
+    return type == Type::GestureStart || type == Type::GestureChange || type == Type::GestureEnd;
 }
     
 } // namespace WebKit

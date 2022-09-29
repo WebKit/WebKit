@@ -637,6 +637,14 @@ bool ValidCap(const Context *context, GLenum cap, bool queryOnly)
             return context->getExtensions().sampleShadingOES;
         case GL_SHADING_RATE_PRESERVE_ASPECT_RATIO_QCOM:
             return context->getExtensions().shadingRateQCOM;
+
+        // COLOR_LOGIC_OP is in GLES1, but exposed through an ANGLE extension.
+        case GL_COLOR_LOGIC_OP:
+            return context->getClientVersion() < Version(2, 0) ||
+                   context->getExtensions().logicOpANGLE;
+
+        default:
+            break;
     }
 
     // GLES1 emulation: GLES1-specific caps after this point
@@ -674,7 +682,6 @@ bool ValidCap(const Context *context, GLenum cap, bool queryOnly)
         case GL_FOG:
         case GL_POINT_SMOOTH:
         case GL_LINE_SMOOTH:
-        case GL_COLOR_LOGIC_OP:
             return context->getClientVersion() < Version(2, 0);
         case GL_POINT_SIZE_ARRAY_OES:
             return context->getClientVersion() < Version(2, 0) &&

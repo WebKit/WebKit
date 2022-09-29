@@ -1020,6 +1020,17 @@ CallCapture CaptureVertexAttribDivisorANGLE(const State &glState,
     return CallCapture(angle::EntryPoint::GLVertexAttribDivisorANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureLogicOpANGLE(const State &glState,
+                                bool isCallValid,
+                                LogicalOperation opcodePacked)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("opcodePacked", ParamType::TLogicalOperation, opcodePacked);
+
+    return CallCapture(angle::EntryPoint::GLLogicOpANGLE, std::move(paramBuffer));
+}
+
 CallCapture CaptureTexStorageMemFlags2DANGLE(const State &glState,
                                              bool isCallValid,
                                              TextureType targetPacked,
@@ -4632,6 +4643,98 @@ CallCapture CaptureImportSemaphoreZirconHandleANGLE(const State &glState,
 
     return CallCapture(angle::EntryPoint::GLImportSemaphoreZirconHandleANGLE,
                        std::move(paramBuffer));
+}
+
+CallCapture CaptureFramebufferMemorylessPixelLocalStorageANGLE(const State &glState,
+                                                               bool isCallValid,
+                                                               GLint plane,
+                                                               GLenum internalformat)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("plane", ParamType::TGLint, plane);
+    paramBuffer.addEnumParam("internalformat", GLESEnum::AllEnums, ParamType::TGLenum,
+                             internalformat);
+
+    return CallCapture(angle::EntryPoint::GLFramebufferMemorylessPixelLocalStorageANGLE,
+                       std::move(paramBuffer));
+}
+
+CallCapture CaptureFramebufferTexturePixelLocalStorageANGLE(const State &glState,
+                                                            bool isCallValid,
+                                                            GLint plane,
+                                                            TextureID backingtexturePacked,
+                                                            GLint level,
+                                                            GLint layer)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("plane", ParamType::TGLint, plane);
+    paramBuffer.addValueParam("backingtexturePacked", ParamType::TTextureID, backingtexturePacked);
+    paramBuffer.addValueParam("level", ParamType::TGLint, level);
+    paramBuffer.addValueParam("layer", ParamType::TGLint, layer);
+
+    return CallCapture(angle::EntryPoint::GLFramebufferTexturePixelLocalStorageANGLE,
+                       std::move(paramBuffer));
+}
+
+CallCapture CaptureBeginPixelLocalStorageANGLE(const State &glState,
+                                               bool isCallValid,
+                                               GLsizei planes,
+                                               const GLenum *loadops,
+                                               const void *cleardata)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("planes", ParamType::TGLsizei, planes);
+
+    if (isCallValid)
+    {
+        ParamCapture loadopsParam("loadops", ParamType::TGLenumConstPointer);
+        InitParamValue(ParamType::TGLenumConstPointer, loadops, &loadopsParam.value);
+        CaptureBeginPixelLocalStorageANGLE_loadops(glState, isCallValid, planes, loadops, cleardata,
+                                                   &loadopsParam);
+        paramBuffer.addParam(std::move(loadopsParam));
+    }
+    else
+    {
+        ParamCapture loadopsParam("loadops", ParamType::TGLenumConstPointer);
+        InitParamValue(ParamType::TGLenumConstPointer, static_cast<const GLenum *>(nullptr),
+                       &loadopsParam.value);
+        paramBuffer.addParam(std::move(loadopsParam));
+    }
+
+    if (isCallValid)
+    {
+        ParamCapture cleardataParam("cleardata", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, cleardata, &cleardataParam.value);
+        CaptureBeginPixelLocalStorageANGLE_cleardata(glState, isCallValid, planes, loadops,
+                                                     cleardata, &cleardataParam);
+        paramBuffer.addParam(std::move(cleardataParam));
+    }
+    else
+    {
+        ParamCapture cleardataParam("cleardata", ParamType::TvoidConstPointer);
+        InitParamValue(ParamType::TvoidConstPointer, static_cast<const void *>(nullptr),
+                       &cleardataParam.value);
+        paramBuffer.addParam(std::move(cleardataParam));
+    }
+
+    return CallCapture(angle::EntryPoint::GLBeginPixelLocalStorageANGLE, std::move(paramBuffer));
+}
+
+CallCapture CaptureEndPixelLocalStorageANGLE(const State &glState, bool isCallValid)
+{
+    ParamBuffer paramBuffer;
+
+    return CallCapture(angle::EntryPoint::GLEndPixelLocalStorageANGLE, std::move(paramBuffer));
+}
+
+CallCapture CapturePixelLocalStorageBarrierANGLE(const State &glState, bool isCallValid)
+{
+    ParamBuffer paramBuffer;
+
+    return CallCapture(angle::EntryPoint::GLPixelLocalStorageBarrierANGLE, std::move(paramBuffer));
 }
 
 CallCapture CaptureTexImage2DExternalANGLE(const State &glState,

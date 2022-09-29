@@ -653,6 +653,11 @@ struct FeaturesVk : FeatureSetBase
         "VkDevice supports VK_EXT_extended_dynamic_state2 extension", &members,
         "http://anglebug.com/5906"};
 
+    FeatureInfo supportsLogicOpDynamicState = {
+        "supportsLogicOpDynamicState", FeatureCategory::VulkanFeatures,
+        "VkDevice supports the logicOp feature of VK_EXT_extended_dynamic_state2 extension",
+        &members, "http://anglebug.com/3862"};
+
     FeatureInfo supportsFragmentShadingRate = {
         "supportsFragmentShadingRate", FeatureCategory::VulkanFeatures,
         "VkDevice supports VK_KHR_fragment_shading_rate extension", &members,
@@ -741,6 +746,13 @@ struct FeaturesVk : FeatureSetBase
                                             FeatureCategory::VulkanFeatures,
                                             "VkDevice supports VK_EXT_color_write_enable extension",
                                             &members, "https://anglebug.com/7161"};
+
+    FeatureInfo supportsPresentation = {
+        "supportsPresentation",
+        FeatureCategory::VulkanFeatures,
+        "VkDisplay supports presentation through a present family queue",
+        &members,
+    };
 };
 
 inline FeaturesVk::FeaturesVk()  = default;

@@ -1,7 +1,7 @@
 
 PASS PerformanceResourceTiming sizes redirect image - direct URL
 PASS PerformanceResourceTiming sizes redirect image - same origin redirect
-PASS PerformanceResourceTiming sizes redirect image - cross origin redirect
-PASS PerformanceResourceTiming sizes redirect image - cross origin to same origin redirect
-PASS PerformanceResourceTiming sizes redirect image - same origin to remote origin to same origin redirect
+FAIL PerformanceResourceTiming sizes redirect image - cross origin redirect assert_equals: decodedBodySize expected 1010 but got 0
+FAIL PerformanceResourceTiming sizes redirect image - cross origin to same origin redirect assert_equals: decodedBodySize expected 1010 but got 0
+FAIL PerformanceResourceTiming sizes redirect image - same origin to remote origin to same origin redirect assert_equals: decodedBodySize expected 1010 but got 0
 

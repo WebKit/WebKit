@@ -671,11 +671,13 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
-	$(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
-	$(WebCore)/Modules/webcodecs/VideoColorSpace.idl \
-	$(WebCore)/Modules/webcodecs/VideoColorSpaceInit.idl \
-	$(WebCore)/Modules/webcodecs/VideoMatrixCoefficients.idl \
-	$(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
+    $(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
+    $(WebCore)/Modules/webcodecs/VideoColorSpace.idl \
+    $(WebCore)/Modules/webcodecs/VideoColorSpaceInit.idl \
+    $(WebCore)/Modules/webcodecs/VideoMatrixCoefficients.idl \
+    $(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl \
     $(WebCore)/Modules/webdatabase/DOMWindow+WebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
@@ -1533,6 +1535,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/worklets/WorkletOptions.idl \
     $(WebCore)/xml/CustomXPathNSResolver.idl \
     $(WebCore)/xml/DOMParser.idl \
+    $(WebCore)/xml/ParseFromStringOptions.idl \
     $(WebCore)/xml/XMLHttpRequest.idl \
     $(WebCore)/xml/XMLHttpRequestEventTarget.idl \
     $(WebCore)/xml/XMLHttpRequestProgressEvent.idl \

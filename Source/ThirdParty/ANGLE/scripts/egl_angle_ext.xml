@@ -131,6 +131,11 @@
             <param><ptype>void *</ptype> <name>vk_image</name></param>
             <param><ptype>void *</ptype> <name>vk_image_create_info</name></param>
         </command>
+        <command>
+            <proto><ptype>void *</ptype> <name>eglCopyMetalSharedEventANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+            <param><ptype>EGLSyncKHR</ptype> <name>sync</name></param>
+        </command>
     </commands>
     <!-- SECTION: ANGLE extension interface definitions -->
     <extensions>
@@ -450,6 +455,15 @@
                 <enum name="EGL_PLATFORM_VULKAN_DISPLAY_MODE_HEADLESS_ANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_metal_shared_event_sync" supported="egl">
+            <require>
+                <command name="eglCopyMetalSharedEventANGLE"/>
+                <enum name="EGL_SYNC_METAL_SHARED_EVENT_ANGLE"/>
+                <enum name="EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE"/>
+                <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE"/>
+                <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE"/>
+            </require>
+        </extension>
     </extensions>
 
     <!-- SECTION: EGL enumerant (token) definitions. -->
@@ -565,6 +579,10 @@
         <enum value="0x34D5" name="EGL_VULKAN_IMAGE_CREATE_INFO_LO_ANGLE"/>
         <enum value="0x34D6" name="EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE"/>
         <enum value="0x34D7" name="EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE"/>
+        <enum value="0x34D8" name="EGL_SYNC_METAL_SHARED_EVENT_ANGLE"/>
+        <enum value="0x34D9" name="EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE"/>
+        <enum value="0x34DA" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE"/>
+        <enum value="0x34DB" name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE"/>
     </enums>
     <enums namespace="EGL" vendor="ANGLE">
         <enum value="0x0001" name="EGL_LOW_POWER_ANGLE"/>

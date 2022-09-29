@@ -33,6 +33,10 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "HTMLNames.h"
+#include "ShadowRoot.h"
+#include "ShadowRootInit.h"
+#include "SlotAssignmentMode.h"
 #include "TemplateContentDocumentFragment.h"
 #include "markup.h"
 #include <wtf/IsoMallocInlines.h>
@@ -96,6 +100,40 @@ void HTMLTemplateElement::didMoveToNewDocument(Document& oldDocument, Document& 
         return;
     ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
     m_content->setTreeScopeRecursively(newDocument.ensureTemplateDocument());
+}
+
+void HTMLTemplateElement::attachAsDeclarativeShadowRootIfNeeded(Element& host)
+{
+    auto modeString = attributeWithoutSynchronization(HTMLNames::shadowrootAttr);
+    std::optional<ShadowRootMode> mode;
+
+    if (equalLettersIgnoringASCIICase(modeString, "closed"_s))
+        mode = ShadowRootMode::Closed;
+    else if (equalLettersIgnoringASCIICase(modeString, "open"_s))
+        mode = ShadowRootMode::Open;
+
+    if (!mode)
+        return;
+
+    bool delegatesFocus = hasAttributeWithoutSynchronization(HTMLNames::shadowrootdelegatesfocusAttr);
+
+    auto exceptionOrShadowRoot = host.attachDeclarativeShadow(*mode, delegatesFocus);
+    if (exceptionOrShadowRoot.hasException())
+        return;
+
+    auto importedContent = document().importNode(content(), /* deep */ true).releaseReturnValue();
+    for (RefPtr<Node> node = NodeTraversal::next(importedContent), next; node; node = next) {
+        next = NodeTraversal::next(*node);
+        if (!is<HTMLTemplateElement>(*node))
+            continue;
+        if (RefPtr parentElement = node->parentElement())
+            downcast<HTMLTemplateElement>(*node).attachAsDeclarativeShadowRootIfNeeded(*parentElement);
+    }
+
+    Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
+    shadowRoot->appendChild(WTFMove(importedContent));
+
+    remove();
 }
 
 } // namespace WebCore

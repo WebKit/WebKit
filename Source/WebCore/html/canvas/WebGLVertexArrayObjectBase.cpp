@@ -40,9 +40,6 @@ WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase(WebGLRenderingContextBase
     , m_type(type)
 {
     m_vertexAttribState.resize(context.getMaxVertexAttribs());
-#if !USE(ANGLE)
-    updateVertexAttrib0();
-#endif
 }
 
 void WebGLVertexArrayObjectBase::setElementArrayBuffer(const AbstractLocker& locker, WebGLBuffer* buffer)
@@ -104,29 +101,7 @@ void WebGLVertexArrayObjectBase::unbindBuffer(const AbstractLocker& locker, WebG
                 m_allEnabledAttribBuffersBoundCache = false;
         }
     }
-#if !USE(ANGLE)
-    updateVertexAttrib0();
-#endif
 }
-
-#if !USE(ANGLE)
-void WebGLVertexArrayObjectBase::updateVertexAttrib0()
-{
-    auto& state = m_vertexAttribState[0];
-    if (!state.bufferBinding && !context()->isGLES2Compliant()) {
-        state.bufferBinding = context()->m_vertexAttrib0Buffer;
-        state.bufferBinding->onAttached();
-        state.bytesPerElement = 0;
-        state.size = 4;
-        state.type = GraphicsContextGL::FLOAT;
-        state.normalized = false;
-        state.stride = 16;
-        state.originalStride = 0;
-        state.offset = 0;
-        m_allEnabledAttribBuffersBoundCache.reset();
-    }
-}
-#endif
 
 void WebGLVertexArrayObjectBase::setVertexAttribDivisor(GCGLuint index, GCGLuint divisor)
 {

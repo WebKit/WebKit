@@ -27,7 +27,7 @@
 #include "config.h"
 #include "GraphicsContextGLGBMTextureMapper.h"
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(LIBGBM)
 
 #include "NicosiaGCGLANGLELayer.h"
 #include "PlatformLayerDisplayDelegate.h"
@@ -63,4 +63,4 @@ bool GraphicsContextGLGBMTextureMapper::platformInitialize()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(LIBGBM)

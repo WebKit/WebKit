@@ -1287,5 +1287,56 @@
     "NONE": {
       "GL_UNSIGNED_BYTE": "LoadYuvToNative"
     }
+  },
+  "GL_PALETTE4_RGB8_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<4, 8, 8, 0>"
+    }
+  },
+  "GL_PALETTE4_RGBA8_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<4, 8, 8, 8>"
+    }
+  },
+  "GL_PALETTE4_R5_G6_B5_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<4, 5, 6, 0>"
+    }
+  },
+  "GL_PALETTE4_RGBA4_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<4, 4, 4, 4>"
+    }
+  },
+  "GL_PALETTE4_RGB5_A1_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<4, 5, 5, 1>"
+    }
+  },
+  "GL_PALETTE8_RGB8_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<8, 8, 8, 0>"
+    }
+  },
+  "GL_PALETTE8_RGBA8_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<8, 8, 8, 8>"
+    }
+  },
+  "GL_PALETTE8_R5_G6_B5_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<8, 5, 6, 0>"
+    }
+  },
+  "GL_PALETTE8_RGBA4_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<8, 4, 4, 4>"
+    }
+  },
+  "GL_PALETTE8_RGB5_A1_OES": {
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadPalettedToRGBA8<8, 5, 5, 1>"
+    }
   }
+
 }

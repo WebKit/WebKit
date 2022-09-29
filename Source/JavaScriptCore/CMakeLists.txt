@@ -129,6 +129,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
 
     wasm/js/JSWebAssembly.cpp
     wasm/js/JSToWasmICCallee.cpp
+    wasm/js/WebAssemblyArrayConstructor.cpp
+    wasm/js/WebAssemblyArrayPrototype.cpp
     wasm/js/WebAssemblyCompileErrorConstructor.cpp
     wasm/js/WebAssemblyCompileErrorPrototype.cpp
     wasm/js/WebAssemblyExceptionConstructor.cpp

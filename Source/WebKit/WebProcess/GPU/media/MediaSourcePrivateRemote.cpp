@@ -93,12 +93,11 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
     if (m_mimeTypeCache.supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return AddStatus::NotSupported;
 
-    AddStatus status = AddStatus::NotSupported;
     if (!m_gpuProcessConnection)
-        return status;
+        return AddStatus::NotSupported;
 
-    std::optional<RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier;
-    m_gpuProcessConnection->connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(contentType), Messages::RemoteMediaSourceProxy::AddSourceBuffer::Reply(status, remoteSourceBufferIdentifier), m_identifier);
+    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteMediaSourceProxy::AddSourceBuffer(contentType), m_identifier);
+    auto [status, remoteSourceBufferIdentifier] = sendResult.takeReplyOr(AddStatus::NotSupported, std::nullopt);
 
     if (status == AddStatus::Ok) {
         ASSERT(remoteSourceBufferIdentifier.has_value());

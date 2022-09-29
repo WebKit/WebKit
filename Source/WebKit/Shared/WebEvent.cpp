@@ -33,7 +33,7 @@
 namespace WebKit {
 
 WebEvent::WebEvent()
-    : m_type(static_cast<uint32_t>(NoType))
+    : m_type(Type::NoType)
 {
 }
 

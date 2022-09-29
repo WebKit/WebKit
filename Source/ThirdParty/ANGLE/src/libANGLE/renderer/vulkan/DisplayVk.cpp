@@ -26,6 +26,73 @@
 
 namespace rx
 {
+
+namespace
+{
+// Query surface format and colorspace support.
+void GetSupportedFormatColorspaces(VkPhysicalDevice physicalDevice,
+                                   const angle::FeaturesVk &featuresVk,
+                                   VkSurfaceKHR surface,
+                                   std::vector<VkSurfaceFormat2KHR> *surfaceFormatsOut)
+{
+    ASSERT(surfaceFormatsOut);
+    surfaceFormatsOut->clear();
+
+    constexpr VkSurfaceFormat2KHR kSurfaceFormat2Initializer = {
+        VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR,
+        nullptr,
+        {VK_FORMAT_UNDEFINED, VK_COLOR_SPACE_SRGB_NONLINEAR_KHR}};
+
+    if (featuresVk.supportsSurfaceCapabilities2Extension.enabled)
+    {
+        VkPhysicalDeviceSurfaceInfo2KHR surfaceInfo2 = {};
+        surfaceInfo2.sType          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+        surfaceInfo2.surface        = surface;
+        uint32_t surfaceFormatCount = 0;
+
+        // Query the count first
+        VkResult result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo2,
+                                                                &surfaceFormatCount, nullptr);
+        ASSERT(result == VK_SUCCESS);
+        ASSERT(surfaceFormatCount > 0);
+
+        // Query the VkSurfaceFormat2KHR list
+        std::vector<VkSurfaceFormat2KHR> surfaceFormats2(surfaceFormatCount,
+                                                         kSurfaceFormat2Initializer);
+        result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo2,
+                                                       &surfaceFormatCount, surfaceFormats2.data());
+        ASSERT(result == VK_SUCCESS);
+
+        *surfaceFormatsOut = std::move(surfaceFormats2);
+    }
+    else
+    {
+        uint32_t surfaceFormatCount = 0;
+        // Query the count first
+        VkResult result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface,
+                                                               &surfaceFormatCount, nullptr);
+        ASSERT(result == VK_SUCCESS);
+
+        // Query the VkSurfaceFormatKHR list
+        std::vector<VkSurfaceFormatKHR> surfaceFormats(surfaceFormatCount);
+        result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount,
+                                                      surfaceFormats.data());
+        ASSERT(result == VK_SUCCESS);
+
+        // Copy over data from std::vector<VkSurfaceFormatKHR> to std::vector<VkSurfaceFormat2KHR>
+        std::vector<VkSurfaceFormat2KHR> surfaceFormats2(surfaceFormatCount,
+                                                         kSurfaceFormat2Initializer);
+        for (size_t index = 0; index < surfaceFormatCount; index++)
+        {
+            surfaceFormats2[index].surfaceFormat.format = surfaceFormats[index].format;
+        }
+
+        *surfaceFormatsOut = std::move(surfaceFormats2);
+    }
+}
+
+}  // namespace
+
 // Time interval in seconds that we should try to prune default buffer pools.
 constexpr double kTimeElapsedForPruneDefaultBufferPool = 0.25;
 
@@ -36,7 +103,8 @@ DisplayVk::DisplayVk(const egl::DisplayState &state)
     : DisplayImpl(state),
       vk::Context(new RendererVk()),
       mScratchBuffer(1000u),
-      mSavedError({VK_SUCCESS, "", "", 0})
+      mSavedError({VK_SUCCESS, "", "", 0}),
+      mSupportedColorspaceFormatsMap{}
 {}
 
 DisplayVk::~DisplayVk()
@@ -49,6 +117,8 @@ egl::Error DisplayVk::initialize(egl::Display *display)
     ASSERT(mRenderer != nullptr && display != nullptr);
     angle::Result result = mRenderer->initialize(this, display, getWSIExtension(), getWSILayer());
     ANGLE_TRY(angle::ToEGL(result, this, EGL_NOT_INITIALIZED));
+    // Query and cache supported surface format and colorspace for later use.
+    initSupportedSurfaceFormatColorspaces();
     return egl::NoError();
 }
 
@@ -177,6 +247,98 @@ ImageImpl *DisplayVk::createImage(const egl::ImageState &state,
 ShareGroupImpl *DisplayVk::createShareGroup()
 {
     return new ShareGroupVk();
+}
+
+bool DisplayVk::isConfigFormatSupported(VkFormat format) const
+{
+    // Requires VK_GOOGLE_surfaceless_query extension to be supported.
+    ASSERT(mRenderer->getFeatures().supportsSurfacelessQueryExtension.enabled);
+
+    // A format is considered supported if it is supported in atleast 1 colorspace.
+    using ColorspaceFormatSetItem =
+        const std::pair<const VkColorSpaceKHR, std::unordered_set<VkFormat>>;
+    for (ColorspaceFormatSetItem &colorspaceFormatSetItem : mSupportedColorspaceFormatsMap)
+    {
+        if (colorspaceFormatSetItem.second.count(format) > 0)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool DisplayVk::isSurfaceFormatColorspacePairSupported(VkSurfaceKHR surface,
+                                                       VkFormat format,
+                                                       VkColorSpaceKHR colorspace) const
+{
+    if (mSupportedColorspaceFormatsMap.size() > 0)
+    {
+        return mSupportedColorspaceFormatsMap.count(colorspace) > 0 &&
+               mSupportedColorspaceFormatsMap.at(colorspace).count(format) > 0;
+    }
+    else
+    {
+        const angle::FeaturesVk &featuresVk = mRenderer->getFeatures();
+        std::vector<VkSurfaceFormat2KHR> surfaceFormats;
+        GetSupportedFormatColorspaces(mRenderer->getPhysicalDevice(), featuresVk, surface,
+                                      &surfaceFormats);
+
+        if (!featuresVk.supportsSurfaceCapabilities2Extension.enabled)
+        {
+            if (surfaceFormats.size() == 1u &&
+                surfaceFormats[0].surfaceFormat.format == VK_FORMAT_UNDEFINED)
+            {
+                return true;
+            }
+        }
+
+        for (const VkSurfaceFormat2KHR &surfaceFormat : surfaceFormats)
+        {
+            if (surfaceFormat.surfaceFormat.format == format &&
+                surfaceFormat.surfaceFormat.colorSpace == colorspace)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool DisplayVk::isColorspaceSupported(VkColorSpaceKHR colorspace) const
+{
+    return mSupportedColorspaceFormatsMap.count(colorspace) > 0;
+}
+
+void DisplayVk::initSupportedSurfaceFormatColorspaces()
+{
+    const angle::FeaturesVk &featuresVk = mRenderer->getFeatures();
+    if (featuresVk.supportsSurfacelessQueryExtension.enabled &&
+        featuresVk.supportsSurfaceCapabilities2Extension.enabled)
+    {
+        // Use the VK_GOOGLE_surfaceless_query extension to query supported surface formats and
+        // colorspaces by using a VK_NULL_HANDLE for the VkSurfaceKHR handle.
+        std::vector<VkSurfaceFormat2KHR> surfaceFormats;
+        GetSupportedFormatColorspaces(mRenderer->getPhysicalDevice(), featuresVk, VK_NULL_HANDLE,
+                                      &surfaceFormats);
+        for (const VkSurfaceFormat2KHR &surfaceFormat : surfaceFormats)
+        {
+            // Cache supported VkFormat and VkColorSpaceKHR for later use
+            VkFormat format            = surfaceFormat.surfaceFormat.format;
+            VkColorSpaceKHR colorspace = surfaceFormat.surfaceFormat.colorSpace;
+
+            ASSERT(format != VK_FORMAT_UNDEFINED);
+
+            mSupportedColorspaceFormatsMap[colorspace].insert(format);
+        }
+
+        ASSERT(mSupportedColorspaceFormatsMap.size() > 0);
+    }
+    else
+    {
+        mSupportedColorspaceFormatsMap.clear();
+    }
 }
 
 ContextImpl *DisplayVk::createContext(const gl::State &state,
@@ -364,6 +526,24 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->eglColorspaceAttributePassthroughANGLE =
         outExtensions->glColorspace &&
         getRenderer()->getFeatures().eglColorspaceAttributePassthrough.enabled;
+
+    // If EGL_KHR_gl_colorspace extension is supported check if other colorspace extensions
+    // can be supported as well.
+    if (outExtensions->glColorspace)
+    {
+        if (isColorspaceSupported(VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT))
+        {
+            outExtensions->glColorspaceDisplayP3            = true;
+            outExtensions->glColorspaceDisplayP3Passthrough = true;
+        }
+
+        outExtensions->glColorspaceDisplayP3Linear =
+            isColorspaceSupported(VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT);
+        outExtensions->glColorspaceScrgb =
+            isColorspaceSupported(VK_COLOR_SPACE_EXTENDED_SRGB_NONLINEAR_EXT);
+        outExtensions->glColorspaceScrgbLinear =
+            isColorspaceSupported(VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT);
+    }
 }
 
 void DisplayVk::generateCaps(egl::Caps *outCaps) const

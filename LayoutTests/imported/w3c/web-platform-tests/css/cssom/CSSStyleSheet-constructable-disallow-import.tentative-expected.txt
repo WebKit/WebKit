@@ -1,6 +1,6 @@
 
-FAIL Inserting an @import rule through insertRule on a constructed stylesheet throws an exception assert_throws_dom: function "() => { (new CSSStyleSheet).insertRule(import_text) }" threw object "TypeError: Illegal constructor" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL @import rules should not trigger any loads. promise_test: Unhandled rejection with value: object "TypeError: Illegal constructor"
-FAIL @import rules are not parsed in CSSStyleSheet.replace Illegal constructor
-FAIL @import rules are not parsed in CSSStyleSheet.replaceSync Illegal constructor
+PASS Inserting an @import rule through insertRule on a constructed stylesheet throws an exception
+PASS @import rules should not trigger any loads.
+PASS @import rules are not parsed in CSSStyleSheet.replace
+PASS @import rules are not parsed in CSSStyleSheet.replaceSync
 

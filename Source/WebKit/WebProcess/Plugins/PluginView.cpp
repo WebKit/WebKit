@@ -486,27 +486,27 @@ void PluginView::handleEvent(Event& event)
 
     bool didHandleEvent = false;
 
-    if ((event.type() == eventNames().mousemoveEvent && currentEvent->type() == WebEvent::MouseMove)
-        || (event.type() == eventNames().mousedownEvent && currentEvent->type() == WebEvent::MouseDown)
-        || (event.type() == eventNames().mouseupEvent && currentEvent->type() == WebEvent::MouseUp)) {
+    if ((event.type() == eventNames().mousemoveEvent && currentEvent->type() == WebEvent::Type::MouseMove)
+        || (event.type() == eventNames().mousedownEvent && currentEvent->type() == WebEvent::Type::MouseDown)
+        || (event.type() == eventNames().mouseupEvent && currentEvent->type() == WebEvent::Type::MouseUp)) {
         // FIXME: Clicking in a scroll bar should not change focus.
-        if (currentEvent->type() == WebEvent::MouseDown) {
+        if (currentEvent->type() == WebEvent::Type::MouseDown) {
             focusPluginElement();
             frame()->eventHandler().setCapturingMouseEventsElement(m_pluginElement.ptr());
-        } else if (currentEvent->type() == WebEvent::MouseUp)
+        } else if (currentEvent->type() == WebEvent::Type::MouseUp)
             frame()->eventHandler().setCapturingMouseEventsElement(nullptr);
 
         didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-    } else if (eventNames().isWheelEventType(event.type()) && currentEvent->type() == WebEvent::Wheel)
+    } else if (eventNames().isWheelEventType(event.type()) && currentEvent->type() == WebEvent::Type::Wheel)
         didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
-    else if (event.type() == eventNames().mouseoverEvent && currentEvent->type() == WebEvent::MouseMove)
+    else if (event.type() == eventNames().mouseoverEvent && currentEvent->type() == WebEvent::Type::MouseMove)
         didHandleEvent = m_plugin->handleMouseEnterEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-    else if (event.type() == eventNames().mouseoutEvent && currentEvent->type() == WebEvent::MouseMove)
+    else if (event.type() == eventNames().mouseoutEvent && currentEvent->type() == WebEvent::Type::MouseMove)
         didHandleEvent = m_plugin->handleMouseLeaveEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-    else if (event.type() == eventNames().contextmenuEvent && currentEvent->type() == WebEvent::MouseDown)
+    else if (event.type() == eventNames().contextmenuEvent && currentEvent->type() == WebEvent::Type::MouseDown)
         didHandleEvent = m_plugin->handleContextMenuEvent(static_cast<const WebMouseEvent&>(*currentEvent));
-    else if ((event.type() == eventNames().keydownEvent && currentEvent->type() == WebEvent::KeyDown)
-        || (event.type() == eventNames().keyupEvent && currentEvent->type() == WebEvent::KeyUp))
+    else if ((event.type() == eventNames().keydownEvent && currentEvent->type() == WebEvent::Type::KeyDown)
+        || (event.type() == eventNames().keyupEvent && currentEvent->type() == WebEvent::Type::KeyUp))
         didHandleEvent = m_plugin->handleKeyboardEvent(static_cast<const WebKeyboardEvent&>(*currentEvent));
 
     if (didHandleEvent)

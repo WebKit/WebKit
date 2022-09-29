@@ -41,6 +41,7 @@ bool isValueAllowedInMode(unsigned short id, CSSParserMode mode)
     case CSSValueWebkitFocusRingColor:
         return isUASheetBehavior(mode) || isQuirksModeBehavior(mode);
     case CSSValueInternalThCenter:
+    case CSSValueInternalDocumentTextColor:
         return isUASheetBehavior(mode);
     default:
         return true;

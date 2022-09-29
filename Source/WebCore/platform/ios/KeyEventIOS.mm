@@ -302,7 +302,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
     if (backwardCompatibilityMode)
         return;
 
-    if (type == PlatformEvent::RawKeyDown) {
+    if (type == PlatformEvent::Type::RawKeyDown) {
         m_text = String();
         m_unmodifiedText = String();
     } else {

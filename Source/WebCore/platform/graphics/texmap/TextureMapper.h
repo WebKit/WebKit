@@ -83,6 +83,7 @@ public:
     virtual void endPreserves3D() { };
     virtual Ref<BitmapTexture> createTexture() = 0;
     virtual Ref<BitmapTexture> createTexture(int internalFormat) = 0;
+    virtual void setDepthRange(double zNear, double zFar) = 0;
 
     virtual void beginPainting(PaintFlags = 0) { }
     virtual void endPainting() { }

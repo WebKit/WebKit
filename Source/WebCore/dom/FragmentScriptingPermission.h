@@ -35,7 +35,10 @@ enum class ParserContentPolicy {
     AllowScriptingContent = 1 << 0,
     AllowPluginContent = 1 << 1,
     DoNotMarkAlreadyStarted = 1 << 2,
+    AllowDeclarativeShadowDOM = 1 << 3,
 };
+
+constexpr OptionSet<ParserContentPolicy> DefaultParserContentPolicy = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::AllowDeclarativeShadowDOM };
 
 static inline bool scriptingContentIsAllowed(OptionSet<ParserContentPolicy> parserContentPolicy) 
 {

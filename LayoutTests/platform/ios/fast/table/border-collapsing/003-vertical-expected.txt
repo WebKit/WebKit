@@ -26,6 +26,6 @@ layer at (390,0) size 410x600
             RenderTableRow {P} at (0,0) size 100x104
               RenderTableCell {SPAN} at (0,0) size 100x-37 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderTableCell {SPAN} at (0,52) size 100x20 [border: (10px solid #000000)] [r=0 c=1 rs=1 cs=1]
-            RenderTableRow {P} at (0,100) size 100x104 [border: (1px solid #0000FF)]
+            RenderTableRow {P} at (100,0) size 100x104 [border: (1px solid #0000FF)]
               RenderTableCell {SPAN} at (100,0) size 100x-28 [border: (10px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderTableCell {SPAN} at (100,52) size 100x20 [border: (10px solid #000000)] [r=1 c=1 rs=1 cs=1]

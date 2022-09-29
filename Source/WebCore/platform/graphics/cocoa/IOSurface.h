@@ -164,9 +164,18 @@ public:
 
     void migrateColorSpaceToProperties();
 
+    RetainPtr<CGContextRef> createCompatibleBitmap(unsigned width, unsigned height);
+
 private:
     IOSurface(IntSize, const DestinationColorSpace&, Format, bool& success);
     IOSurface(IOSurfaceRef, const DestinationColorSpace&);
+
+    struct BitmapConfiguration {
+        CGBitmapInfo bitmapInfo;
+        size_t bitsPerComponent;
+    };
+
+    BitmapConfiguration bitmapConfiguration() const;
 
     DestinationColorSpace m_colorSpace;
     IntSize m_size;

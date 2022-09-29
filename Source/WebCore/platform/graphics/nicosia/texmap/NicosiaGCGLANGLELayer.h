@@ -28,7 +28,7 @@
 
 #pragma once
 
-#if USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(ANGLE)
+#if USE(NICOSIA) && USE(TEXTURE_MAPPER)
 
 #include "NicosiaContentLayerTextureMapperImpl.h"
 
@@ -74,4 +74,4 @@ private:
 
 } // namespace Nicosia
 
-#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM) && USE(ANGLE)
+#endif // USE(NICOSIA) && USE(TEXTURE_MAPPER) && USE(LIBGBM)

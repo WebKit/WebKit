@@ -10,14 +10,14 @@ layer at (0,0) size 785x636
           text run at (0,18) width 253: "possible, while column 1 should be tiny."
       RenderTable {TABLE} at (0,36) size 54x584 [border: (2px outset #808080)]
         RenderTableSection {TBODY} at (2,2) size 50x580
-          RenderTableRow {TR} at (0,2) size 22x580
+          RenderTableRow {TR} at (2,0) size 22x580
             RenderTableCell {TD} at (2,2) size 22x12 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 17x8
                 text run at (2,2) width 8: "1"
             RenderTableCell {TD} at (2,16) size 22x562 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=2]
               RenderText {#text} at (2,2) size 17x21
                 text run at (2,2) width 21: "2-3"
-          RenderTableRow {TR} at (0,26) size 22x580
+          RenderTableRow {TR} at (26,0) size 22x580
             RenderTableCell {TD} at (26,2) size 22x12 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 17x8
                 text run at (2,2) width 8: "1"

@@ -26,13 +26,13 @@
 #include "config.h"
 #include "CSSNumericArray.h"
 
-#include "ExceptionOr.h"
-#include <wtf/text/StringBuilder.h>
-#include <wtf/text/WTFString.h>
-
 #if ENABLE(CSS_TYPED_OM)
 
+#include "ExceptionOr.h"
+#include <wtf/FixedVector.h>
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

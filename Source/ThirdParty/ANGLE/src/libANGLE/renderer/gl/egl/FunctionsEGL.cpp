@@ -85,7 +85,10 @@ struct FunctionsEGL::EGLDispatchTable
           getFrameTimestampSupportedANDROIDPtr(nullptr),
           getFrameTimestampsANDROIDPtr(nullptr),
 
-          dupNativeFenceFDANDROIDPtr(nullptr)
+          dupNativeFenceFDANDROIDPtr(nullptr),
+
+          queryDmaBufFormatsEXTPtr(nullptr),
+          queryDmaBufModifiersEXTPtr(nullptr)
     {}
 
     // 1.0
@@ -148,6 +151,10 @@ struct FunctionsEGL::EGLDispatchTable
 
     // EGL_ANDROID_native_fence_sync
     PFNEGLDUPNATIVEFENCEFDANDROIDPROC dupNativeFenceFDANDROIDPtr;
+
+    // EGL_EXT_image_dma_buf_import_modifiers
+    PFNEGLQUERYDMABUFFORMATSEXTPROC queryDmaBufFormatsEXTPtr;
+    PFNEGLQUERYDMABUFMODIFIERSEXTPROC queryDmaBufModifiersEXTPtr;
 };
 
 FunctionsEGL::FunctionsEGL()
@@ -289,6 +296,12 @@ egl::Error FunctionsEGL::initialize(EGLNativeDisplayType nativeDisplay)
         {
             mExtensions.push_back("EGL_ANDROID_native_fence_sync");
         }
+    }
+
+    if (hasExtension("EGL_EXT_image_dma_buf_import_modifiers"))
+    {
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->queryDmaBufFormatsEXTPtr, eglQueryDmaBufFormatsEXT);
+        ANGLE_GET_PROC_OR_ERROR(&mFnPtrs->queryDmaBufModifiersEXTPtr, eglQueryDmaBufModifiersEXT);
     }
 
 #undef ANGLE_GET_PROC_OR_ERROR
@@ -593,6 +606,23 @@ EGLBoolean FunctionsEGL::getFrameTimestampsANDROID(EGLSurface surface,
 EGLint FunctionsEGL::dupNativeFenceFDANDROID(EGLSync sync) const
 {
     return mFnPtrs->dupNativeFenceFDANDROIDPtr(mEGLDisplay, sync);
+}
+
+EGLint FunctionsEGL::queryDmaBufFormatsEXT(EGLint maxFormats,
+                                           EGLint *formats,
+                                           EGLint *numFormats) const
+{
+    return mFnPtrs->queryDmaBufFormatsEXTPtr(mEGLDisplay, maxFormats, formats, numFormats);
+}
+
+EGLint FunctionsEGL::queryDmaBufModifiersEXT(EGLint format,
+                                             EGLint maxModifiers,
+                                             EGLuint64KHR *modifiers,
+                                             EGLBoolean *externalOnly,
+                                             EGLint *numModifiers) const
+{
+    return mFnPtrs->queryDmaBufModifiersEXTPtr(mEGLDisplay, format, maxModifiers, modifiers,
+                                               externalOnly, numModifiers);
 }
 
 }  // namespace rx

@@ -116,7 +116,17 @@ struct TextureEnvironmentParameters
     GLfloat alphaScale = 1.0f;
 
     bool pointSpriteCoordReplace = false;
+
+    auto tie() const
+    {
+        return std::tie(mode, combineRgb, combineAlpha, src0Rgb, src0Alpha, src1Rgb, src1Alpha,
+                        src2Rgb, src2Alpha, op0Rgb, op0Alpha, op1Rgb, op1Alpha, op2Rgb, op2Alpha,
+                        color, rgbScale, alphaScale, pointSpriteCoordReplace);
+    }
 };
+
+bool operator==(const TextureEnvironmentParameters &a, const TextureEnvironmentParameters &b);
+bool operator!=(const TextureEnvironmentParameters &a, const TextureEnvironmentParameters &b);
 
 struct PointParameters
 {
@@ -184,6 +194,7 @@ class GLES1State final : angle::NonCopyable
     void loadMatrix(const angle::Mat4 &m);
     void multMatrix(const angle::Mat4 &m);
 
+    void setLogicOpEnabled(bool enabled);
     void setLogicOp(LogicalOperation opcodePacked);
 
     void setClientStateEnabled(ClientVertexArrayType clientState, bool enable);

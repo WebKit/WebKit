@@ -50,7 +50,7 @@ struct ClassInfo;
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(macro) \
     macro(DataView)
 
-enum TypedArrayType {
+enum TypedArrayType : uint8_t {
     NotTypedArray,
 #define DECLARE_TYPED_ARRAY_TYPE(name) Type ## name,
     FOR_EACH_TYPED_ARRAY_TYPE(DECLARE_TYPED_ARRAY_TYPE)

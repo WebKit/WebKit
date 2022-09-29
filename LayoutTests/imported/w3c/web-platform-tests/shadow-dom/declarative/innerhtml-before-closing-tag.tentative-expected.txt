@@ -1,3 +1,3 @@
 
-FAIL Declarative Shadow DOM: innerHTML should work while parsing declarative shadow root <template> assert_true: Declarative shadow template should not be left over expected true got false
+PASS Declarative Shadow DOM: innerHTML should work while parsing declarative shadow root <template>
 

@@ -80,7 +80,6 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendStringSynchronizedReply; }
     using AsyncReply = SendStringSynchronizedAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using Reply = std::tuple<int64_t&>;
     using ReplyArguments = std::tuple<int64_t>;
     explicit SendStringSynchronized(const String& url)
         : m_arguments(url)
@@ -137,7 +136,6 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_ReceiveMachSendRightReply; }
     using AsyncReply = ReceiveMachSendRightAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using Reply = std::tuple<MachSendRight&>;
     using ReplyArguments = std::tuple<MachSendRight>;
     const Arguments& arguments() const
     {
@@ -165,7 +163,6 @@ public:
     static IPC::MessageName asyncMessageReplyName() { return IPC::MessageName::TestWithStream_SendAndReceiveMachSendRightReply; }
     using AsyncReply = SendAndReceiveMachSendRightAsyncReply;
     static constexpr auto callbackThread = WTF::CompletionHandlerCallThread::ConstructionThread;
-    using Reply = std::tuple<MachSendRight&>;
     using ReplyArguments = std::tuple<MachSendRight>;
     explicit SendAndReceiveMachSendRight(const MachSendRight& a1)
         : m_arguments(a1)

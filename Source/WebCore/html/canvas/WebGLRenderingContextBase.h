@@ -542,18 +542,6 @@ protected:
     // like GL_FLOAT, GL_INT, etc.
     unsigned sizeInBytes(GCGLenum type);
 
-#if !USE(ANGLE)
-    // Basic validation of count and offset against number of elements in element array buffer
-    bool validateElementArraySize(GCGLsizei count, GCGLenum type, GCGLintptr offset);
-
-    // Conservative but quick index validation
-    virtual bool validateIndexArrayConservative(GCGLenum type, unsigned& numElementsRequired) = 0;
-
-    // Precise but slow index validation -- only done if conservative checks fail
-    bool validateIndexArrayPrecise(GCGLsizei count, GCGLenum type, GCGLintptr offset, unsigned& numElementsRequired);
-    bool validateVertexAttributes(unsigned elementCount, unsigned primitiveCount = 0);
-#endif
-
     // Validates the incoming WebGL object, which is assumed to be non-null.
     // Checks that the object belongs to this context and that it's not marked for
     // deletion. Performs a context lost check internally.
@@ -564,11 +552,6 @@ protected:
     // compared to others. Performs a context lost check internally.
     bool validateWebGLProgramOrShader(const char*, WebGLObject*);
 
-#if !USE(ANGLE)
-    bool validateDrawArrays(const char* functionName, GCGLenum mode, GCGLint first, GCGLsizei count, GCGLsizei primcount);
-    bool validateDrawElements(const char* functionName, GCGLenum mode, GCGLsizei count, GCGLenum type, long long offset, unsigned& numElements, GCGLsizei primcount);
-    bool validateNPOTTextureLevel(GCGLsizei width, GCGLsizei height, GCGLint level, const char* functionName);
-#endif
     bool validateVertexArrayObject(const char* functionName);
 
     // Adds a compressed texture format.
@@ -650,13 +633,6 @@ protected:
     };
     Vector<VertexAttribValue> m_vertexAttribValue;
     unsigned m_maxVertexAttribs;
-#if !USE(ANGLE)
-    RefPtr<WebGLBuffer> m_vertexAttrib0Buffer;
-    long m_vertexAttrib0BufferSize { 0 };
-    GCGLfloat m_vertexAttrib0BufferValue[4];
-    bool m_forceAttrib0BufferRefill { true };
-    bool m_vertexAttrib0UsedBefore { false };
-#endif
 
     RefPtr<WebGLProgram> m_currentProgram;
     RefPtr<WebGLFramebuffer> m_framebufferBinding;
@@ -668,9 +644,6 @@ protected:
         RefPtr<WebGLTexture> texture2DArrayBinding;
     };
     Vector<TextureUnitState> m_textureUnits;
-#if !USE(ANGLE)
-    HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_unrenderableTextureUnits;
-#endif
     unsigned long m_activeTextureUnit;
 
     RefPtr<WebGLTexture> m_blackTexture2D;
@@ -944,26 +917,6 @@ protected:
     virtual PixelStoreParams getPackPixelStoreParams() const;
     virtual PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const;
 
-#if !USE(ANGLE)
-    bool checkTextureCompleteness(const char*, bool);
-
-    void createFallbackBlackTextures1x1();
-
-    // Helper function for copyTex{Sub}Image, check whether the internalformat
-    // and the color buffer format of the current bound framebuffer combination
-    // is valid.
-    bool isTexInternalFormatColorBufferCombinationValid(GCGLenum texInternalFormat, GCGLenum colorBufferFormat);
-
-    // Helper function to get the bound read framebuffer's color buffer format.
-    GCGLenum getBoundReadFramebufferColorFormat();
-
-    // Helper function to get the bound read framebuffer's width.
-    int getBoundReadFramebufferWidth();
-
-    // Helper function to get the bound read framebuffer's height.
-    int getBoundReadFramebufferHeight();
-#endif
-
     // Helper function to verify limits on the length of uniform and attribute locations.
     bool validateLocationLength(const char* functionName, const String&);
 
@@ -1000,11 +953,9 @@ protected:
     // Generates GL error and returns false if parameters are invalid.
     bool validateTexFuncFormatAndType(const char* functionName, GCGLenum internalformat, GCGLenum format, GCGLenum type, GCGLint level);
 
-#if USE(ANGLE)
     // Helper function to check internal formats accepted by ANGLE but not available in WebGL.
     // Generates GL error and returns false if the internal format is invalid.
     bool validateForbiddenInternalFormats(const char* functionName, GCGLenum internalformat);
-#endif
 
     // Helper function to check input level for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if level is invalid.
@@ -1043,24 +994,8 @@ protected:
     // Generates GL error and returns false if the format is not settable.
     bool validateSettableTexInternalFormat(const char* functionName, GCGLenum format);
 
-#if !USE(ANGLE)
-    // Helper function to validate compressed texture data is correct size
-    // for the given format and dimensions.
-    bool validateCompressedTexFuncData(const char* functionName, GCGLsizei width, GCGLsizei height, GCGLenum format, ArrayBufferView& pixels);
-#endif
     // Helper function for validating compressed texture formats.
     bool validateCompressedTexFormat(const char* functionName, GCGLenum format);
-
-#if !USE(ANGLE)
-    // Helper function to validate compressed texture dimensions are valid for
-    // the given format.
-    bool validateCompressedTexDimensions(const char* functionName, GCGLenum target, GCGLint level, GCGLsizei width, GCGLsizei height, GCGLenum format);
-
-    // Helper function to validate compressed texture dimensions are valid for
-    // the given format.
-    bool validateCompressedTexSubDimensions(const char* functionName, GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset,
-        GCGLsizei width, GCGLsizei height, GCGLenum format, WebGLTexture*);
-#endif
 
     // Helper function to validate mode for draw{Arrays/Elements}.
     bool validateDrawMode(const char* functionName, GCGLenum);
@@ -1147,24 +1082,11 @@ protected:
 
     virtual bool validateAndCacheBufferBinding(const AbstractLocker&, const char* functionName, GCGLenum target, WebGLBuffer*);
 
-#if !USE(ANGLE)
-    // Helpers for simulating vertexAttrib0.
-    void initVertexAttrib0();
-    std::optional<bool> simulateVertexAttrib0(GCGLuint numVertex);
-    bool validateSimulatedVertexAttrib0(GCGLuint numVertex);
-    void restoreStatesAfterVertexAttrib0Simulation();
-#endif
-
     // Wrapper for GraphicsContextGLOpenGL::synthesizeGLError that sends a message to the JavaScript console.
     void synthesizeGLError(GCGLenum, const char* functionName, const char* description);
     void synthesizeLostContextGLError(GCGLenum, const char* functionName, const char* description);
 
     String ensureNotNull(const String&) const;
-
-#if !USE(ANGLE)
-    // Enable or disable stencil test based on user setting and whether the current FBO has a stencil buffer.
-    void applyStencilTest();
-#endif
 
     // Helper for enabling or disabling a capability.
     void enableOrDisable(GCGLenum capability, bool enable);
@@ -1186,11 +1108,6 @@ protected:
 
 #if ENABLE(OFFSCREEN_CANVAS)
     OffscreenCanvas* offscreenCanvas();
-#endif
-
-#if !USE(ANGLE)
-    template <typename T> inline std::optional<T> checkedAddAndMultiply(T value, T add, T multiply);
-    template <typename T> unsigned getMaxIndex(const RefPtr<JSC::ArrayBuffer> elementArrayBuffer, GCGLintptr uoffset, GCGLsizei n);
 #endif
 
     bool validateArrayBufferType(const char* functionName, GCGLenum type, std::optional<JSC::TypedArrayType>);
@@ -1215,39 +1132,6 @@ private:
     // The ordinal number of when the context was last active (drew, read pixels).
     uint64_t m_activeOrdinal { 0 };
 };
-
-#if !USE(ANGLE)
-template <typename T>
-inline std::optional<T> WebGLRenderingContextBase::checkedAddAndMultiply(T value, T add, T multiply)
-{
-    Checked<T, RecordOverflow> checkedResult = Checked<T>(value);
-    checkedResult += Checked<T>(add);
-    checkedResult *= Checked<T>(multiply);
-    if (checkedResult.hasOverflowed())
-        return std::nullopt;
-
-    return checkedResult.value();
-}
-
-
-template<typename T>
-inline unsigned WebGLRenderingContextBase::getMaxIndex(const RefPtr<JSC::ArrayBuffer> elementArrayBuffer, GCGLintptr uoffset, GCGLsizei n)
-{
-    unsigned maxIndex = 0;
-    T restartIndex = 0;
-
-    // Make uoffset an element offset.
-    uoffset /= sizeof(T);
-    const T* p = static_cast<const T*>(elementArrayBuffer->data()) + uoffset;
-    while (n-- > 0) {
-        if (*p != restartIndex && *p > maxIndex)
-            maxIndex = *p;
-        ++p;
-    }
-
-    return maxIndex;
-}
-#endif
 
 WebCoreOpaqueRoot root(WebGLRenderingContextBase*);
 

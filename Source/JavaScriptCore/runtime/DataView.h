@@ -34,13 +34,8 @@ class DataView final : public ArrayBufferView {
 public:
     JS_EXPORT_PRIVATE static Ref<DataView> create(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t length);
     static Ref<DataView> create(RefPtr<ArrayBuffer>&&);
-    
-    TypedArrayType getType() const final
-    {
-        return TypeDataView;
-    }
 
-    JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) final;
+    JSArrayBufferView* wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject);
     
     template<typename T>
     T get(size_t offset, bool littleEndian, bool* status = nullptr)

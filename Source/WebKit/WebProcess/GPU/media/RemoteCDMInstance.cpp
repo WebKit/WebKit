@@ -109,8 +109,8 @@ RefPtr<WebCore::CDMInstanceSession> RemoteCDMInstance::createSession()
         logIdentifier = reinterpret_cast<uint64_t>(m_client->logIdentifier());
 #endif
 
-    RemoteCDMInstanceSessionIdentifier identifier;
-    m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), Messages::RemoteCDMInstanceProxy::CreateSession::Reply(identifier), m_identifier);
+    auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteCDMInstanceProxy::CreateSession(logIdentifier), m_identifier);
+    auto [identifier] = sendResult.takeReplyOr(RemoteCDMInstanceSessionIdentifier { });
     if (!identifier)
         return nullptr;
     auto session = RemoteCDMInstanceSession::create(m_factory.get(), WTFMove(identifier));

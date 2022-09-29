@@ -45,7 +45,7 @@ WKCredentialRef WKCredentialCreate(WKStringRef username, WKStringRef password, W
 
 WKCredentialRef WKCredentialCreateWithCertificateInfo(WKCertificateInfoRef certificateInfo)
 {
-    return toAPI(&WebCredential::create(toImpl(certificateInfo)).leakRef());
+    return nullptr;
 }
 
 WKStringRef WKCredentialCopyUser(WKCredentialRef credentialRef)

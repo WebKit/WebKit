@@ -374,6 +374,11 @@ struct Caps
     GLuint maxCullDistances                = 0;
     GLuint maxCombinedClipAndCullDistances = 0;
 
+    // GL_ANGLE_shader_pixel_local_storage
+    GLuint maxPixelLocalStoragePlanes                       = 0;
+    GLuint maxColorAttachmentsWithActivePixelLocalStorage   = 0;
+    GLuint maxCombinedDrawBuffersAndPixelLocalStoragePlanes = 0;
+
     // GLES1 emulation: Caps for ES 1.1. Taken from Table 6.20 / 6.22 in the OpenGL ES 1.1 spec.
     GLuint maxMultitextureUnits                 = 0;
     GLuint maxClipPlanes                        = 0;
@@ -661,6 +666,9 @@ struct DisplayExtensions
 
     // EGL_KHR_partial_update
     bool partialUpdateKHR = false;
+
+    // EGL_ANGLE_sync_mtl_shared_event
+    bool mtlSyncSharedEventANGLE = false;
 };
 
 struct DeviceExtensions

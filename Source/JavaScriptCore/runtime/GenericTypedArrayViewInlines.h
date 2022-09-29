@@ -33,7 +33,7 @@ namespace JSC {
 template<typename Adaptor>
 GenericTypedArrayView<Adaptor>::GenericTypedArrayView(
 RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, size_t length)
-    : ArrayBufferView(WTFMove(buffer), byteOffset, length * sizeof(typename Adaptor::Type))
+    : ArrayBufferView(Adaptor::typeValue, WTFMove(buffer), byteOffset, length * sizeof(typename Adaptor::Type))
 {
     ASSERT((length / sizeof(typename Adaptor::Type)) < std::numeric_limits<size_t>::max());
 }
@@ -120,7 +120,7 @@ GenericTypedArrayView<Adaptor>::tryCreateUninitialized(size_t length)
 }
 
 template<typename Adaptor>
-JSArrayBufferView* GenericTypedArrayView<Adaptor>::wrap(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject)
+JSArrayBufferView* GenericTypedArrayView<Adaptor>::wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject)
 {
     UNUSED_PARAM(lexicalGlobalObject);
     return Adaptor::JSViewType::create(globalObject->vm(), globalObject->typedArrayStructure(Adaptor::typeValue), this);

@@ -4,5 +4,5 @@ This test validates that for a cross origin resource with different ports, the t
 
 
 PASS A port mismatch must fail the TAO check
-PASS An identical port must pass the TAO check
+FAIL An identical port must pass the TAO check assert_greater_than: transferSize should be greater than 0 expected a number greater than 0 but got 0
 

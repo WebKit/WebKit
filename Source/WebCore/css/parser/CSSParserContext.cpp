@@ -97,6 +97,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.hasDocumentSecurityOrigin == b.hasDocumentSecurityOrigin
         && a.isContentOpaque == b.isContentOpaque
         && a.useSystemAppearance == b.useSystemAppearance
+        && a.shouldIgnoreImportRules == b.shouldIgnoreImportRules
         && a.colorContrastEnabled == b.colorContrastEnabled
         && a.colorMixEnabled == b.colorMixEnabled
         && a.constantPropertiesEnabled == b.constantPropertiesEnabled

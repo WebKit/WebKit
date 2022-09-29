@@ -41,6 +41,8 @@ class DisplayVkLinux : public DisplayVk
   private:
     // Supported DRM formats
     std::vector<EGLint> mDrmFormats;
+
+    bool mDrmFormatsInitialized;
 };
 
 }  // namespace rx

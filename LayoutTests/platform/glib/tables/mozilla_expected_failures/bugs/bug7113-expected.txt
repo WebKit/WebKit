@@ -21,11 +21,11 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x28
           RenderTableRow {TR} at (0,0) size 782x28 [bgcolor=#CCCCFF]
             RenderTableCell {TD} at (0,0) size 782x28 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+              RenderInline {A} at (0,0) size 0x17 [color=#0000EE]
                 RenderText {#text} at (0,0) size 0x0
                 RenderImage {IMG} at (759,5) size 18x15
               RenderText {#text} at (0,0) size 0x0
-              RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+              RenderInline {A} at (0,0) size 0x17 [color=#0000EE]
                 RenderText {#text} at (0,0) size 0x0
                 RenderImage {IMG} at (728,5) size 28x15
               RenderText {#text} at (5,5) size 63x17

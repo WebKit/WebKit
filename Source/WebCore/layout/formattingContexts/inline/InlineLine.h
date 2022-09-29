@@ -41,7 +41,7 @@ public:
     Line(const InlineFormattingContext&);
     ~Line();
 
-    void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool collapseLeadingNonBreakingSpace);
+    void initialize(const Vector<InlineItem>& lineSpanningInlineBoxes);
 
     void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
 
@@ -62,8 +62,9 @@ public:
     std::optional<InlineLayoutUnit> trailingSoftHyphenWidth() const { return m_trailingSoftHyphenWidth; }
     void addTrailingHyphen(InlineLayoutUnit hyphenLogicalWidth);
 
-    enum class TrailingTrimmableContentAction : uint8_t { Remove, Preserve };
-    void handleTrailingTrimmableContent(TrailingTrimmableContentAction);
+    enum class TrailingContentAction : uint8_t { Remove, Preserve };
+    void handleTrailingTrimmableContent(TrailingContentAction);
+    void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
     void removeHangingGlyphs();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
     void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
@@ -72,6 +73,7 @@ public:
     struct Run {
         enum class Type : uint8_t {
             Text,
+            NonBreakingSpace,
             WordSeparator,
             HardLineBreak,
             SoftLineBreak,
@@ -83,7 +85,8 @@ public:
             LineSpanningInlineBoxStart
         };
 
-        bool isText() const { return m_type == Type::Text || isWordSeparator(); }
+        bool isText() const { return m_type == Type::Text || isWordSeparator() || isNonBreakingSpace(); }
+        bool isNonBreakingSpace() const { return m_type == Type::NonBreakingSpace; }
         bool isWordSeparator() const { return m_type == Type::WordSeparator; }
         bool isBox() const { return m_type == Type::GenericInlineLevelBox; }
         bool isListMarker() const { return m_type == Type::ListMarker; }
@@ -251,11 +254,8 @@ private:
     InlineBoxListWithClonedDecorationEnd m_inlineBoxListWithClonedDecorationEnd;
     InlineLayoutUnit m_clonedEndDecorationWidthForInlineBoxRuns { 0 };
     bool m_hasNonDefaultBidiLevelRun { false };
-    // Note that this is only needed for the special (and ancient and not supported by other browsers) "-webkit-nbsp-mode: space".
-    bool m_collapseLeadingNonBreakingSpace { false };
     bool m_contentIsTruncated { false };
 };
-
 
 inline bool Line::hasContent() const
 {

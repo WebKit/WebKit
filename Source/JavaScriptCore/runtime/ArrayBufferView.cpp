@@ -26,11 +26,14 @@
 #include "config.h"
 #include "ArrayBufferView.h"
 
+#include "DataView.h"
+#include "TypedArrayInlines.h"
+
 namespace JSC {
 
-ArrayBufferView::ArrayBufferView(
-    RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, size_t byteLength)
-        : m_byteOffset(byteOffset)
+ArrayBufferView::ArrayBufferView(TypedArrayType type, RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, size_t byteLength)
+        : m_type(type)
+        , m_byteOffset(byteOffset)
         , m_byteLength(byteLength)
         , m_buffer(WTFMove(buffer))
 {
@@ -41,10 +44,40 @@ ArrayBufferView::ArrayBufferView(
         m_baseAddress = BaseAddress(static_cast<char*>(m_buffer->data()) + m_byteOffset, byteLength);
 }
 
-ArrayBufferView::~ArrayBufferView()
+template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerived(Visitor&& visitor)
 {
-    if (!m_isDetachable)
-        m_buffer->unpin();
+    switch (m_type) {
+    case TypedArrayType::NotTypedArray:
+    case TypedArrayType::TypeDataView:
+        return std::invoke(std::forward<Visitor>(visitor), static_cast<DataView&>(*this));
+#define DECLARE_TYPED_ARRAY_TYPE(name) \
+    case TypedArrayType::Type##name: \
+        return std::invoke(std::forward<Visitor>(visitor), static_cast<name##Array&>(*this));
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(DECLARE_TYPED_ARRAY_TYPE)
+#undef DECLARE_TYPED_ARRAY_TYPE
+    }
+    ASSERT_NOT_REACHED();
+}
+
+template<typename Visitor> constexpr decltype(auto) ArrayBufferView::visitDerived(Visitor&& visitor) const
+{
+    return const_cast<ArrayBufferView&>(*this).visitDerived([&](auto& value) {
+        return std::invoke(std::forward<Visitor>(visitor), std::as_const(value));
+    });
+}
+
+JSArrayBufferView* ArrayBufferView::wrap(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject)
+{
+    return visitDerived([&](auto& derived) { return derived.wrapImpl(lexicalGlobalObject, globalObject); });
+}
+
+void ArrayBufferView::operator delete(ArrayBufferView* value, std::destroying_delete_t)
+{
+    value->visitDerived([](auto& value) {
+        using T = std::decay_t<decltype(value)>;
+        std::destroy_at(&value);
+        T::freeAfterDestruction(&value);
+    });
 }
 
 void ArrayBufferView::setDetachable(bool flag)

@@ -39,6 +39,7 @@
 #include <wtf/Seconds.h>
 #include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/ThreadSpecific.h>
+#include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -86,6 +87,8 @@ public:
     WTF_EXPORT_PRIVATE static RunLoop& web();
     WTF_EXPORT_PRIVATE static RunLoop* webIfExists();
 #endif
+    WTF_EXPORT_PRIVATE static Ref<RunLoop> create(const char* threadName, ThreadType = ThreadType::Unknown, Thread::QOS = Thread::QOS::UserInitiated);
+
     WTF_EXPORT_PRIVATE static bool isMain();
     WTF_EXPORT_PRIVATE ~RunLoop() final;
 

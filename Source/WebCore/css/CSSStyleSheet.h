@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,10 +23,13 @@
 #include "CSSRuleList.h"
 #include "CommonAtomStrings.h"
 #include "ExceptionOr.h"
+#include "MediaList.h"
 #include "StyleSheet.h"
 #include <memory>
+#include <variant>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/TextPosition.h>
@@ -38,12 +41,15 @@ class CSSParser;
 class CSSRule;
 class CSSStyleSheet;
 class CachedCSSStyleSheet;
+class DeferredPromise;
 class Document;
 class Element;
 class WeakPtrImplWithEventTargetData;
 class MediaQuerySet;
+class ShadowRoot;
 class StyleRuleKeyframes;
 class StyleSheetContents;
+class TreeScope;
 
 namespace Style {
 class Scope;
@@ -51,9 +57,15 @@ class Scope;
 
 class CSSStyleSheet final : public StyleSheet {
 public:
+    struct Init {
+        String baseURL;
+        std::variant<RefPtr<MediaList>, String> media { emptyString() };
+        bool disabled { false };
+    };
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule = 0);
     static Ref<CSSStyleSheet> create(Ref<StyleSheetContents>&&, Node& ownerNode, const std::optional<bool>& isOriginClean = std::nullopt);
     static Ref<CSSStyleSheet> createInline(Ref<StyleSheetContents>&&, Element& owner, const TextPosition& startPosition);
+    static ExceptionOr<Ref<CSSStyleSheet>> create(Document&, Init&&);
 
     virtual ~CSSStyleSheet();
 
@@ -75,6 +87,12 @@ public:
     WEBCORE_EXPORT ExceptionOr<int> addRule(const String& selector, const String& style, std::optional<unsigned> index);
     ExceptionOr<void> removeRule(unsigned index) { return deleteRule(index); }
 
+    void replace(String&&, Ref<DeferredPromise>&&);
+    ExceptionOr<void> replaceSync(String&&);
+
+    bool wasConstructedByJS() const { return m_wasConstructedByJS; }
+    Document* constructorDocument() const;
+
     // For CSSRuleList.
     unsigned length() const;
     CSSRule* item(unsigned index);
@@ -85,6 +103,10 @@ public:
     bool isLoading() const final;
 
     void clearOwnerRule() { m_ownerRule = nullptr; }
+
+    enum class IsTreeScopeBeingDestroyed : bool { No, Yes };
+    void removeAdoptingTreeScope(TreeScope&, IsTreeScopeBeingDestroyed);
+    void addAdoptingTreeScope(TreeScope&);
 
     Document* ownerDocument() const;
     CSSStyleSheet& rootStyleSheet();
@@ -98,7 +120,7 @@ public:
     bool hadRulesMutation() const { return m_mutatedRules; }
     void clearHadRulesMutation() { m_mutatedRules = false; }
 
-    enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation };
+    enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation, RuleReplace };
     enum WhetherContentsWereClonedForMutation { ContentsWereNotClonedForMutation = 0, ContentsWereClonedForMutation };
 
     class RuleMutationScope {
@@ -139,6 +161,9 @@ private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, CSSImportRule* ownerRule);
     CSSStyleSheet(Ref<StyleSheetContents>&&, Node* ownerNode, const TextPosition& startPosition, bool isInlineStylesheet);
     CSSStyleSheet(Ref<StyleSheetContents>&&, Node& ownerNode, const TextPosition& startPosition, bool isInlineStylesheet, const std::optional<bool>&);
+    CSSStyleSheet(Ref<StyleSheetContents>&&, Document&, Init&&);
+
+    void forEachStyleScope(const Function<void(Style::Scope&)>&);
 
     bool isCSSStyleSheet() const final { return true; }
     String type() const final { return cssContentTypeAtom(); }
@@ -147,10 +172,14 @@ private:
     bool m_isInlineStylesheet { false };
     bool m_isDisabled { false };
     bool m_mutatedRules { false };
+    bool m_wasConstructedByJS { false }; // constructed flag in the spec.
     std::optional<bool> m_isOriginClean;
     String m_title;
     RefPtr<MediaQuerySet> m_mediaQueries;
     WeakPtr<Style::Scope> m_styleScope;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;
+    WeakHashSet<ShadowRoot, WeakPtrImplWithEventTargetData> m_adoptingShadowRoots;
+    WeakHashSet<Document, WeakPtrImplWithEventTargetData> m_adoptingDocuments;
 
     WeakPtr<Node, WeakPtrImplWithEventTargetData> m_ownerNode;
     WeakPtr<CSSImportRule> m_ownerRule;

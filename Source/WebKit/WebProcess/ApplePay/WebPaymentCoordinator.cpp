@@ -80,9 +80,10 @@ bool WebPaymentCoordinator::canMakePayments()
 {
     auto now = MonotonicTime::now();
     if (now - m_timestampOfLastCanMakePaymentsRequest > 1_min || !m_lastCanMakePaymentsResult) {
-        bool canMakePayments;
-        if (!sendSync(Messages::WebPaymentCoordinatorProxy::CanMakePayments(), Messages::WebPaymentCoordinatorProxy::CanMakePayments::Reply(canMakePayments)))
+        auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::CanMakePayments());
+        if (!sendResult)
             return false;
+        auto [canMakePayments] = sendResult.takeReply();
 
         m_timestampOfLastCanMakePaymentsRequest = now;
         m_lastCanMakePaymentsResult = canMakePayments;
@@ -106,10 +107,8 @@ bool WebPaymentCoordinator::showPaymentUI(const URL& originatingURL, const Vecto
         return linkIconURL.string();
     });
 
-    bool result;
-    if (!sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(m_webPage.identifier(), m_webPage.webPageProxyIdentifier(), originatingURL.string(), linkIconURLStrings, paymentRequest), Messages::WebPaymentCoordinatorProxy::ShowPaymentUI::Reply(result)))
-        return false;
-
+    auto sendResult = sendSync(Messages::WebPaymentCoordinatorProxy::ShowPaymentUI(m_webPage.identifier(), m_webPage.webPageProxyIdentifier(), originatingURL.string(), linkIconURLStrings, paymentRequest));
+    auto [result] = sendResult.takeReplyOr(false);
     return result;
 }
 

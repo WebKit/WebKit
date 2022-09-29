@@ -24,20 +24,18 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 messages -> LibWebRTCCodecsProxy NotRefCounted {
-    CreateH264Decoder(WebKit::RTCDecoderIdentifier id, bool useRemoteFrames)
-    CreateH265Decoder(WebKit::RTCDecoderIdentifier id, bool useRemoteFrames)
-    CreateVP9Decoder(WebKit::RTCDecoderIdentifier id, bool useRemoteFrames)
-    ReleaseDecoder(WebKit::RTCDecoderIdentifier id)
-    DecodeFrame(WebKit::RTCDecoderIdentifier id, uint32_t timeStamp, IPC::DataReference data)
-    SetFrameSize(WebKit::RTCDecoderIdentifier id, uint16_t width, uint16_t height)
+    CreateDecoder(WebKit::VideoDecoderIdentifier id, enum:uint8_t WebKit::VideoCodecType codecType, bool useRemoteFrames)
+    ReleaseDecoder(WebKit::VideoDecoderIdentifier id)
+    DecodeFrame(WebKit::VideoDecoderIdentifier id, uint32_t timeStamp, IPC::DataReference data)
+    SetFrameSize(WebKit::VideoDecoderIdentifier id, uint16_t width, uint16_t height)
 
-    CreateEncoder(WebKit::RTCEncoderIdentifier id, String formatName, Vector<std::pair<String, String>> parameters, bool useLowLatency);
-    ReleaseEncoder(WebKit::RTCEncoderIdentifier id)
-    InitializeEncoder(WebKit::RTCEncoderIdentifier id, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate)
-    EncodeFrame(WebKit::RTCEncoderIdentifier id, struct WebKit::SharedVideoFrame buffer, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
-    SetEncodeRates(WebKit::RTCEncoderIdentifier id, uint32_t bitRate, uint32_t frameRate)
-    SetSharedVideoFrameSemaphore(WebKit::RTCEncoderIdentifier id, IPC::Semaphore semaphore)
-    SetSharedVideoFrameMemory(WebKit::RTCEncoderIdentifier id, WebKit::SharedMemory::Handle storageHandle)
+    CreateEncoder(WebKit::VideoEncoderIdentifier id, enum:uint8_t WebKit::VideoCodecType codecType, Vector<std::pair<String, String>> parameters, bool useLowLatency);
+    ReleaseEncoder(WebKit::VideoEncoderIdentifier id)
+    InitializeEncoder(WebKit::VideoEncoderIdentifier id, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate)
+    EncodeFrame(WebKit::VideoEncoderIdentifier id, struct WebKit::SharedVideoFrame buffer, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
+    SetEncodeRates(WebKit::VideoEncoderIdentifier id, uint32_t bitRate, uint32_t frameRate)
+    SetSharedVideoFrameSemaphore(WebKit::VideoEncoderIdentifier id, IPC::Semaphore semaphore)
+    SetSharedVideoFrameMemory(WebKit::VideoEncoderIdentifier id, WebKit::SharedMemory::Handle storageHandle)
     SetRTCLoggingLevel(WTFLogLevel level)
 }
 

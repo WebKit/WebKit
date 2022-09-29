@@ -259,5 +259,6 @@ EGLBoolean ExportVkImageANGLE(Thread *thread,
                               Image *imagePacked,
                               void *vk_image,
                               void *vk_image_create_info);
+void *CopyMetalSharedEventANGLE(Thread *thread, egl::Display *dpyPacked, Sync *syncPacked);
 }  // namespace egl
 #endif  // LIBGLESV2_EGL_EXT_STUBS_AUTOGEN_H_

@@ -583,8 +583,8 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
                 return true;
             case EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE:
                 // http://issuetracker.google.com/173004081
-                return !IsIntel() || !param.isEnabled(Feature::AsyncCommandQueue) ||
-                       param.isDisabled(Feature::AsyncCommandQueue);
+                return !IsIntel() || !param.isEnableRequested(Feature::AsyncCommandQueue) ||
+                       param.isDisableRequested(Feature::AsyncCommandQueue);
             default:
                 return false;
         }
@@ -618,7 +618,7 @@ bool IsConfigAllowlisted(const SystemInfo &systemInfo, const PlatformParameters 
                 {
                     return false;
                 }
-                if (param.isDisabled(Feature::SupportsNegativeViewport))
+                if (param.isDisableRequested(Feature::SupportsNegativeViewport))
                 {
                     return false;
                 }

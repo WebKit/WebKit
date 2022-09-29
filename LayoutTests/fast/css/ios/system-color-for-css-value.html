@@ -1,6 +1,6 @@
 <html>
 <head id="head">
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
 </head>
 <body >
 <script>
@@ -8,50 +8,55 @@
 description("Test that system colors for CSS values are correct.");
 
 if (window.internals) {
-    shouldBe("internals.systemColorForCSSValue('-apple-system-label', true, false)", "'rgb(255, 255, 255)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-header-text', true, false)", "'rgb(255, 255, 255)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-secondary-label', true, false)", "'rgba(235, 235, 245, 0.6)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-tertiary-label', true, false)", "'rgba(235, 235, 245, 0.3)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-quaternary-label', true, false)", "'rgba(235, 235, 245, 0.18)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-placeholder-text', true, false)", "'rgba(235, 235, 245, 0.3)'");
-    shouldBe("internals.systemColorForCSSValue('-webkit-control-background', true, false)", "'rgb(0, 0, 0)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-control-background', true, false)", "'rgb(0, 0, 0)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-text-background', true, false)", "'rgb(0, 0, 0)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-background', true, false)", "'rgb(0, 0, 0)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-secondary-background', true, false)", "'rgb(28, 28, 30)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-tertiary-background', true, false)", "'rgb(44, 44, 46)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-grouped-background', true, false)", "'rgb(0, 0, 0)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-secondary-grouped-background', true, false)", "'rgb(28, 28, 30)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-tertiary-grouped-background', true, false)", "'rgb(44, 44, 46)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-grid', true, false)", "'rgba(84, 84, 88, 0.6)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-separator', true, false)", "'rgba(84, 84, 88, 0.6)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-container-border', true, false)", "'rgba(84, 84, 88, 0.6)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-selected-content-background', true, false)", "'rgb(58, 58, 60)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-unemphasized-selected-content-background', true, false)", "'rgb(58, 58, 60)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-brown', true, false)", "'rgb(172, 142, 104)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-indigo', true, false)", "'rgb(94, 92, 230)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-teal', true, false)", "'rgb(100, 210, 255)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-wireless-playback-target-active', true, false)", "'rgb(10, 132, 255)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-blue', true, false)", "'rgb(10, 132, 255)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-gray', true, false)", "'rgb(142, 142, 147)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-green', true, false)", "'rgb(48, 209, 88)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-orange', true, false)", "'rgb(255, 159, 10)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-pink', true, false)", "'rgb(255, 55, 95)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-purple', true, false)", "'rgb(191, 90, 242)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-red', true, false)", "'rgb(255, 69, 58)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-yellow', true, false)", "'rgb(255, 214, 10)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-fill', true, false)", "'rgb(43, 43, 46)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-fill', false, false)", "'rgb(228, 228, 229)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill', true, false)", "'rgb(38, 38, 41)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill', false, false)", "'rgb(233, 233, 234)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill-disabled', true, false)", "'rgb(29, 29, 31)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-secondary-fill-disabled', false, false)", "'rgb(238, 238, 239)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-tertiary-fill', true, false)", "'rgb(28, 28, 30)'");
-    shouldBe("internals.systemColorForCSSValue('-apple-system-opaque-tertiary-fill', false, false)", "'rgb(238, 238, 239)'");
+    let colors = ['-apple-system-background',
+                  '-apple-system-blue',
+                  '-apple-system-brown',
+                  '-apple-system-container-border',
+                  '-apple-system-control-background',
+                  '-apple-system-gray',
+                  '-apple-system-green',
+                  '-apple-system-grid',
+                  '-apple-system-grouped-background',
+                  '-apple-system-header-text',
+                  '-apple-system-indigo',
+                  '-apple-system-label',
+                  '-apple-system-opaque-fill',
+                  '-apple-system-opaque-secondary-fill',
+                  '-apple-system-opaque-tertiary-fill',
+                  '-apple-system-orange',
+                  '-apple-system-pink',
+                  '-apple-system-placeholder-text',
+                  '-apple-system-purple',
+                  '-apple-system-quaternary-label',
+                  '-apple-system-red',
+                  '-apple-system-secondary-background',
+                  '-apple-system-secondary-grouped-background',
+                  '-apple-system-secondary-label',
+                  '-apple-system-selected-content-background',
+                  '-apple-system-separator',
+                  '-apple-system-teal',
+                  '-apple-system-tertiary-background',
+                  '-apple-system-tertiary-grouped-background',
+                  '-apple-system-tertiary-label',
+                  '-apple-system-text-background',
+                  '-apple-system-unemphasized-selected-content-background',
+                  '-apple-system-yellow',
+                  '-apple-wireless-playback-target-active',
+                  '-webkit-control-background'];
+
+    for (const color of colors) {
+        debug(`${color}`);
+        for (const useDarkAppearance of [false, true]) {
+            for (const useElevatedUserInterfaceLevel of [false, true]) {
+                const value = internals.systemColorForCSSValue(color, useDarkAppearance, useElevatedUserInterfaceLevel);
+                debug(`${value.padEnd(24)}\tuseDarkAppearance=${useDarkAppearance}\tuseElevatedUserInterfaceLevel=${useElevatedUserInterfaceLevel}`);
+            }
+        }
+        debug('');
+    }
 }
 
 </script>
 
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>

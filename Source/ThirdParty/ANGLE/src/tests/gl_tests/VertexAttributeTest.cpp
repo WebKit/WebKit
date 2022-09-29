@@ -4119,6 +4119,87 @@ TEST_P(VertexAttributeTestES3, emptyBuffer)
     swapBuffers();
 }
 
+// This is a test for use with ANGLE's Capture/Replay.
+// It emulates a situation we see in some apps, where attribs are passed in but may not be used.
+// In particular, that test asks for all active attributes and iterates through each one. Before any
+// changes to FrameCapture, this will create calls that look up attributes that are considered
+// unused on some platforms, making the trace non-portable. Whether they are used depends on how
+// well the stack optimizes the shader pipeline. In this instance, we are just passing them across
+// the pipeline boundary where they are dead in the fragment shader, but other cases have included
+// attributes passed to empty functions, or some eliminated with math. The more optimizations
+// applied by the driver, the higher chance of getting an unused attribute.
+TEST_P(VertexAttributeTestES3, UnusedAttribsMEC)
+{
+    constexpr char vertexShader[] =
+        R"(#version 300 es
+        precision mediump float;
+        in vec4 position;
+        in vec4 input_unused;
+        out vec4 passthrough;
+        void main()
+        {
+            passthrough = input_unused;
+            gl_Position = position;
+        })";
+
+    constexpr char fragmentShader[] =
+        R"(#version 300 es
+        precision mediump float;
+        in vec4 passthrough;
+        out vec4 color;
+        void main()
+        {
+            // ignore passthrough - this makes it unused with cross stage optimizations
+            color = vec4(1.0);
+        })";
+
+    GLuint program = CompileProgram(vertexShader, fragmentShader);
+    glUseProgram(program);
+
+    // Set up vertex data
+    GLBuffer positionBuffer;
+    const std::array<Vector3, 6> &quadVerts = GetQuadVertices();
+    glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
+    glBufferData(GL_ARRAY_BUFFER, quadVerts.size() * sizeof(quadVerts[0]), quadVerts.data(),
+                 GL_STATIC_DRAW);
+
+    // Loop through a sequence multiple times, so MEC can capture it.
+    // Ask about vertex attribs and set them up, regardless of whether they are used.
+    // This matches behavior seen in some apps.
+    for (int i = 0; i < 10; i++)
+    {
+        // Look up the number of attribs
+        GLint activeAttribCount = 0;
+        glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &activeAttribCount);
+
+        // Look up how big they might get
+        GLint maxActiveAttribLength = 0;
+        glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxActiveAttribLength);
+
+        GLsizei attribLength  = 0;
+        GLint attribSize      = 0;
+        GLenum attribType     = 0;
+        GLchar attribName[16] = {0};
+        ASSERT(maxActiveAttribLength < 16);
+
+        // Look up each attribute and set them up
+        for (int j = 0; j < activeAttribCount; j++)
+        {
+            glGetActiveAttrib(program, j, maxActiveAttribLength, &attribLength, &attribSize,
+                              &attribType, attribName);
+            GLint posLoc = glGetAttribLocation(program, attribName);
+            ASSERT_NE(posLoc, -1);
+            glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, j, nullptr);
+            glEnableVertexAttribArray(posLoc);
+        }
+
+        // Draw and swap on each loop to trigger MEC
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        EXPECT_PIXEL_COLOR_EQ(getWindowWidth() / 2, getWindowHeight() / 2, GLColor::white);
+        swapBuffers();
+    }
+}
+
 // VAO emulation fails on Mac but is not used on Mac in the wild. http://anglebug.com/5577
 #if !defined(__APPLE__)
 #    define EMULATED_VAO_CONFIGS                                       \

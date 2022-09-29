@@ -203,8 +203,8 @@
 // Seem to trigger LowMemoryKiller when run in a certain sequence
 5185 VULKAN ANDROID : dEQP-GLES31.functional.atomic_counter.* = SKIP
 
-// Framebuffer without attachments:
-3579 ANDROID VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
+// Frambuffer without attachments still fail on Pixel 4. Rendering is crossing over the default framebuffer size
+3579 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
 
 // Need to support non-color when staging image updates
 4080 ANDROID VULKAN : dEQP-GLES31.functional.stencil_texturing.misc.base_level = SKIP

@@ -256,18 +256,32 @@ echo "Done."
 ```
 
 ### Android
-#### Linux
+#### Using Linux as a Local Machine
 
 If you are on Linux, make sure not to use the build done in the previous section.  The GL renderer
 disabled in the previous section is actually needed in this section.
 
+```
+# Inside the RenderDoc directory:
+# First delete the Cmake Cache in build/ directory
+rm build/CMakeCache.txt
+
+# Then build RenderDoc with cmake:
+cmake -DCMAKE_BUILD_TYPE=Release -Bbuild -H.
+QT_SELECT=5 make -j -C build
+```
+
+Follow
+[Android Dependencies on Linux](https://github.com/baldurk/renderdoc/blob/v1.x/docs/CONTRIBUTING/Dependencies.md#android-dependencies-on-linux)
+to download dependency files.
+
 Define the following environment variables, for example in `.bashrc` (values are examples):
 
 ```
-export JAVA_HOME=/usr/local/buildtools/java/jdk
-export ANDROID_SDK=$HOME/chromium/src/third_party/android_sdk/public
-export ANDROID_NDK=$HOME/chromium/src/third_party/android_ndk
-export ANDROID_NDK_HOME=$HOME/chromium/src/third_party/android_ndk
+export JAVA_HOME=<path_to_jdk_root>
+export ANDROID_SDK=<path_to_sdk_root>
+export ANDROID_NDK=<path_to_ndk_root>
+export ANDROID_NDK_HOME=<path_to_ndk_root>
 ```
 
 In the renderdoc directory, create Android builds of RenderDoc:
@@ -316,7 +330,7 @@ dEQP on a non-default platform, the easiest way would be to modify `GetDefaultAP
 `src/tests/deqp_support/angle_deqp_gtest.cpp` (and avoid `--use-angle=X`).
 
 
-#### Windows
+#### Using Windows as a Local Machine
 You should be able to download the latest [RenderDoc on Windows](https://renderdoc.org/builds) and follow the
 [RenderDoc Official Documentation](https://renderdoc.org/docs/how/how_android_capture.html) for instructions on how to
 use RenderDoc on Android. If you would like to build RenderDoc for Android on Windows yourself, you can follow the
@@ -439,6 +453,37 @@ adb uninstall org.renderdoc.renderdoccmd.arm32
 3. Build renderdoc on windows desktop by clicking "build solution" in visual studio.
 4. Launch renderdoc from visual studio, and push the android packages to android device by selecting the connected
 device at the bottom left corner.
+
+### Add SPIRV-to-GLSL Shader View Option
+RenderDoc allows us to add and configure customized shader processing tools:
+https://renderdoc.org/docs/window/settings_window.html#shader-processing-tools-config.
+
+To configure RenderDoc to display shader source code in GLSL, instead of spirv,
+follow the below steps:
+
+
+1. Get the SPIRV-Cross tool:
+
+Clone the SPIRV-Cross git repo: https://github.com/KhronosGroup/SPIRV-Cross:
+```
+git clone https://github.com/KhronosGroup/SPIRV-Cross.git
+```
+Compile the SPIRV-Cross:
+```
+# inside SPIRV-Cross directory
+make
+```
+2. Open Shader Viewer Settings window: RenderDoc -> Tools -> Settings, and select
+   Shader Viewer on the left.
+3. Click Add on the bottom to add a new tool, and fill the new tool details:
+
+| Item       | Value                               |
+|------------|-------------------------------------|
+| Name       | SPIRV-CROSS                         |
+| Tool Type  | SPIRV-Cross                         |
+| Executable | <spirv-cross-repo-root>/spirv-cross |
+
+5. Restart RenderDoc.
 
 ## Testing with Chrome Canary
 

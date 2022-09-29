@@ -119,10 +119,8 @@ RefPtr<HistoryItem> WebBackForwardListProxy::itemAtIndex(int itemIndex)
     if (!m_page)
         return nullptr;
 
-    std::optional<BackForwardItemIdentifier> itemID;
-    if (!WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->identifier()))
-        return nullptr;
-
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), m_page->identifier());
+    auto [itemID] = sendResult.takeReplyOr(std::nullopt);
     if (!itemID)
         return nullptr;
 
@@ -143,8 +141,8 @@ bool WebBackForwardListProxy::containsItem(const WebCore::HistoryItem& item) con
 {
     // Items are removed asynchronously from idToHistoryItemMap() via IPC from the UIProcess so we need to ask
     // the UIProcess to make sure this HistoryItem is still part of the back/forward list.
-    bool contains = false;
-    m_page->sendSync(Messages::WebPageProxy::BackForwardListContainsItem(item.identifier()), Messages::WebPageProxy::BackForwardListContainsItem::Reply(contains), m_page->identifier());
+    auto sendResult = m_page->sendSync(Messages::WebPageProxy::BackForwardListContainsItem(item.identifier()), m_page->identifier());
+    auto [contains] = sendResult.takeReplyOr(false);
     return contains;
 }
 
@@ -152,8 +150,11 @@ const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecess
 {
     if (!m_cachedBackForwardListCounts) {
         WebBackForwardListCounts backForwardListCounts;
-        if (m_page)
-            WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardListCounts(), Messages::WebPageProxy::BackForwardListCounts::Reply(backForwardListCounts), m_page->identifier());
+        if (m_page) {
+            auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::BackForwardListCounts(), m_page->identifier());
+            if (sendResult)
+                std::tie(backForwardListCounts) = sendResult.takeReply();
+        }
         m_cachedBackForwardListCounts = backForwardListCounts;
     }
     return *m_cachedBackForwardListCounts;

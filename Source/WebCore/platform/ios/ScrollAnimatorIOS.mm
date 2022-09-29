@@ -56,7 +56,7 @@ ScrollAnimatorIOS::~ScrollAnimatorIOS()
 #if ENABLE(TOUCH_EVENTS)
 bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {
-    if (touchEvent.type() == PlatformEvent::TouchStart && touchEvent.touchCount() == 1) {
+    if (touchEvent.type() == PlatformEvent::Type::TouchStart && touchEvent.touchCount() == 1) {
         m_firstTouchPoint = touchEvent.touchLocationAtIndex(0);
         m_lastTouchPoint = m_firstTouchPoint;
         m_inTouchSequence = true;
@@ -70,7 +70,7 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
     if (!m_inTouchSequence)
         return false;
 
-    if (touchEvent.type() == PlatformEvent::TouchEnd || touchEvent.type() == PlatformEvent::TouchCancel) {
+    if (touchEvent.type() == PlatformEvent::Type::TouchEnd || touchEvent.type() == PlatformEvent::Type::TouchCancel) {
         m_inTouchSequence = false;
         m_scrollableAreaForTouchSequence = 0;
         if (m_startedScroll)

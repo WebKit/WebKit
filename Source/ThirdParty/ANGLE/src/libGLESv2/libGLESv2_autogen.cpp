@@ -2976,6 +2976,12 @@ void GL_APIENTRY glVertexAttribDivisorANGLE(GLuint index, GLuint divisor)
     return GL_VertexAttribDivisorANGLE(index, divisor);
 }
 
+// GL_ANGLE_logic_op
+void GL_APIENTRY glLogicOpANGLE(GLenum opcode)
+{
+    return GL_LogicOpANGLE(opcode);
+}
+
 // GL_ANGLE_memory_object_flags
 void GL_APIENTRY glTexStorageMemFlags2DANGLE(GLenum target,
                                              GLsizei levels,
@@ -3760,6 +3766,37 @@ void GL_APIENTRY glImportSemaphoreZirconHandleANGLE(GLuint semaphore,
                                                     GLuint handle)
 {
     return GL_ImportSemaphoreZirconHandleANGLE(semaphore, handleType, handle);
+}
+
+// GL_ANGLE_shader_pixel_local_storage
+void GL_APIENTRY glFramebufferMemorylessPixelLocalStorageANGLE(GLint plane, GLenum internalformat)
+{
+    return GL_FramebufferMemorylessPixelLocalStorageANGLE(plane, internalformat);
+}
+
+void GL_APIENTRY glFramebufferTexturePixelLocalStorageANGLE(GLint plane,
+                                                            GLuint backingtexture,
+                                                            GLint level,
+                                                            GLint layer)
+{
+    return GL_FramebufferTexturePixelLocalStorageANGLE(plane, backingtexture, level, layer);
+}
+
+void GL_APIENTRY glBeginPixelLocalStorageANGLE(GLsizei planes,
+                                               const GLenum *loadops,
+                                               const void *cleardata)
+{
+    return GL_BeginPixelLocalStorageANGLE(planes, loadops, cleardata);
+}
+
+void GL_APIENTRY glEndPixelLocalStorageANGLE()
+{
+    return GL_EndPixelLocalStorageANGLE();
+}
+
+void GL_APIENTRY glPixelLocalStorageBarrierANGLE()
+{
+    return GL_PixelLocalStorageBarrierANGLE();
 }
 
 // GL_ANGLE_texture_compression_dxt3
@@ -5175,6 +5212,8 @@ void GL_APIENTRY glEGLImageTargetTexture2DOES(GLenum target, GLeglImageOES image
 // GL_OES_EGL_image_external_essl3
 
 // GL_OES_compressed_ETC1_RGB8_texture
+
+// GL_OES_compressed_paletted_texture
 
 // GL_OES_copy_image
 void GL_APIENTRY glCopyImageSubDataOES(GLuint srcName,

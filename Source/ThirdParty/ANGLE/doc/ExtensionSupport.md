@@ -45,6 +45,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_OES_compressed_ETC2_RGBA8_texture](https://khronos.org/registry/OpenGL/extensions/OES/OES_compressed_ETC2_RGBA8_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_compressed_ETC2_sRGB8_alpha8_texture](https://khronos.org/registry/OpenGL/extensions/OES/OES_compressed_ETC2_sRGB8_alpha8_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_compressed_ETC2_sRGB8_texture](https://khronos.org/registry/OpenGL/extensions/OES/OES_compressed_ETC2_sRGB8_texture.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_OES_compressed_paletted_texture](https://khronos.org/registry/OpenGL/extensions/OES/OES_compressed_paletted_texture.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_copy_image](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_copy_image.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_copy_image](https://khronos.org/registry/OpenGL/extensions/OES/OES_copy_image.txt) |  |  |  |  |  |  |  |
 | [GL_KHR_debug](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_debug.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -205,6 +206,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_get_image](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_get_image.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_get_serialized_context_string](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_get_serialized_context_string.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_get_tex_level_parameter](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_get_tex_level_parameter.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_ANGLE_logic_op](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_logic_op.txt) |  |  |  |  |  |  |  |
 | [GL_CHROMIUM_lose_context](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/CHROMIUM_lose_context.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_lossy_etc_decode](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_lossy_etc_decode.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_memory_object_flags](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_memory_object_flags.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |

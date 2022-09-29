@@ -133,7 +133,7 @@ bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& 
         }
     }
 
-    if (event.type() == PlatformEvent::MousePressed && mouseIsOverActiveDataDetectorHighlightButton)
+    if (event.type() == PlatformEvent::Type::MousePressed && mouseIsOverActiveDataDetectorHighlightButton)
         return handleDataDetectorAction(*activeDataDetectorElement, mousePositionInContents);
 
     return false;

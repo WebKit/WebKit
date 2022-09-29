@@ -78,6 +78,8 @@ public:
     void setContainsFocusedElement(bool flag) { m_containsFocusedElement = flag; }
 
     bool isAvailableToElementInternals() const { return m_availableToElementInternals; }
+    bool isDeclarativeShadowRoot() const { return m_isDeclarativeShadowRoot; }
+    void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
 
     Element* host() const { return m_host.get(); }
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTFMove(host); }
@@ -113,7 +115,7 @@ public:
     const Vector<WeakPtr<Node, WeakPtrImplWithEventTargetData>>* assignedNodesForSlot(const HTMLSlotElement&);
 
     void moveShadowRootToNewParentScope(TreeScope&, Document&);
-    void moveShadowRootToNewDocument(Document&);
+    void moveShadowRootToNewDocument(Document& oldDocument, Document& newDocument);
 
     using PartMappings = HashMap<AtomString, Vector<AtomString, 1>>;
     const PartMappings& partMappings() const;
@@ -143,6 +145,7 @@ private:
     bool m_delegatesFocus { false };
     bool m_containsFocusedElement { false };
     bool m_availableToElementInternals { false };
+    bool m_isDeclarativeShadowRoot { false };
     ShadowRootMode m_type { ShadowRootMode::UserAgent };
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 

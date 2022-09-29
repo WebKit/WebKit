@@ -40,17 +40,17 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(KeyboardEvent);
 static inline const AtomString& eventTypeForKeyboardEventType(PlatformEvent::Type type)
 {
     switch (type) {
-        case PlatformEvent::KeyUp:
-            return eventNames().keyupEvent;
-        case PlatformEvent::RawKeyDown:
-            return eventNames().keydownEvent;
-        case PlatformEvent::Char:
-            return eventNames().keypressEvent;
-        case PlatformEvent::KeyDown:
-            // The caller should disambiguate the combined event into RawKeyDown or Char events.
-            break;
-        default:
-            break;
+    case PlatformEvent::Type::KeyUp:
+        return eventNames().keyupEvent;
+    case PlatformEvent::Type::RawKeyDown:
+        return eventNames().keydownEvent;
+    case PlatformEvent::Type::Char:
+        return eventNames().keypressEvent;
+    case PlatformEvent::Type::KeyDown:
+        // The caller should disambiguate the combined event into RawKeyDown or Char events.
+        break;
+    default:
+        break;
     }
     ASSERT_NOT_REACHED();
     return eventNames().keydownEvent;

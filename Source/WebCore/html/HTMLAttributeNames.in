@@ -389,6 +389,8 @@ scrolldelay
 scrolling
 select
 selected
+shadowroot
+shadowrootdelegatesfocus
 shape
 size
 sizes

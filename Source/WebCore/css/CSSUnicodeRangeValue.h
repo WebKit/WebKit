@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include <unicode/umachine.h>
 
 namespace WebCore {
 

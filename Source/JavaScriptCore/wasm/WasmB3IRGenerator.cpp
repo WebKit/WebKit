@@ -49,6 +49,7 @@
 #include "B3WasmBoundsCheckValue.h"
 #include "FunctionAllowlist.h"
 #include "JSCJSValueInlines.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
 #include "ProbeContext.h"
 #include "ScratchRegisterAllocator.h"
@@ -355,6 +356,11 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t index, ExpressionType size, ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
 
     // Basic operators
     template<OpType>
@@ -2318,6 +2324,185 @@ auto B3IRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> Pa
     }
 
     result = push(m_currentBlock->appendNew<Value>(m_proc, B3::Trunc, origin(), get(ref)));
+    return { };
+}
+
+auto B3IRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
+{
+#if ASSERT_ENABLED
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+    ASSERT(toB3Type(elementType) == value->type());
+#endif
+
+    Value* initValue = get(value);
+    if (value->type() == B3::Float || value->type() == B3::Double) {
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Int64, origin());
+        patchpoint->appendSomeRegister(initValue);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.moveDoubleTo64(params[1].fpr(), params[0].gpr());
+        });
+        initValue = patchpoint;
+    }
+
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Arrayref), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayNew)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+        get(size), initValue));
+
+    return { };
+}
+
+auto B3IRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
+{
+    // FIXME: Abstract and generalize with addArrayNew.
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+
+    Value* initValue;
+    if (Wasm::isRefType(elementType))
+        initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()));
+    else
+        initValue = m_currentBlock->appendNew<Const64Value>(m_proc, origin(), 0);
+
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    result = push(m_currentBlock->appendNew<CCallValue>(m_proc, toB3Type(Types::Arrayref), origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayNew)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+        get(size), initValue));
+
+    return { };
+}
+
+auto B3IRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
+{
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+
+    // Ensure arrayref is non-null.
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullArrayGet);
+        });
+    }
+
+    // Check array bounds.
+    Value* arraySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
+        get(arrayref), safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize()));
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), get(index), arraySize));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsArrayGet);
+        });
+    }
+
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    Value* arrayResult = m_currentBlock->appendNew<CCallValue>(m_proc, B3::Int64, origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArrayGet)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+        get(arrayref), get(index));
+
+    switch (toB3Type(elementType).kind()) {
+    case B3::Float:
+    case B3::Double: {
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(elementType), origin());
+        patchpoint->appendSomeRegister(arrayResult);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.move64ToDouble(params[1].gpr(), params[0].fpr());
+        });
+        result = push(patchpoint);
+        break;
+    }
+    case B3::Int32: {
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, toB3Type(elementType), origin());
+        patchpoint->appendSomeRegister(arrayResult);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.move(params[1].gpr(), params[0].gpr());
+        });
+        result = push(patchpoint);
+        break;
+    }
+    case B3::Int64:
+        result = push(arrayResult);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return { };
+}
+
+auto B3IRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value) -> PartialResult
+{
+#if ASSERT_ENABLED
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+#endif
+
+    // Ensure arrayref is non-null.
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullArraySet);
+        });
+    }
+
+    // Check array bounds.
+    Value* arraySize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
+        get(arrayref), safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize()));
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), get(index), arraySize));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsArraySet);
+        });
+    }
+
+    Value* setValue = get(value);
+    if (value->type() == B3::Float || value->type() == B3::Double) {
+        PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Int64, origin());
+        patchpoint->appendSomeRegister(setValue);
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.moveDoubleTo64(params[1].fpr(), params[0].gpr());
+        });
+        setValue = patchpoint;
+    }
+
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    m_currentBlock->appendNew<CCallValue>(m_proc, B3::Void, origin(),
+        m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), tagCFunction<OperationPtrTag>(operationWasmArraySet)),
+        instanceValue(), m_currentBlock->appendNew<Const32Value>(m_proc, origin(), typeIndex),
+        get(arrayref), get(index), setValue);
+
+    return { };
+}
+
+auto B3IRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result) -> PartialResult
+{
+    // Ensure arrayref is non-null.
+    {
+        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), get(arrayref), m_currentBlock->appendNew<Const64Value>(m_proc, origin(), JSValue::encode(jsNull()))));
+        check->setGenerator([=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+            this->emitExceptionCheck(jit, ExceptionType::NullArrayLen);
+        });
+    }
+
+    result = push(m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), get(arrayref), safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize())));
+
     return { };
 }
 

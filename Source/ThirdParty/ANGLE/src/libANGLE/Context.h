@@ -676,6 +676,9 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     bool isDestroyed() const { return mIsDestroyed; }
     void setIsDestroyed() { mIsDestroyed = true; }
 
+    void setLogicOpEnabled(bool enabled) { mState.setLogicOpEnabled(enabled); }
+    void setLogicOp(LogicalOperation opcode) { mState.setLogicOp(opcode); }
+
     // Needed by capture serialization logic that works with a "const" Context pointer.
     void finishImmutable() const;
 

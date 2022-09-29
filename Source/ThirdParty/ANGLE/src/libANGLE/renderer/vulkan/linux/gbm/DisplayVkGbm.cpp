@@ -68,8 +68,6 @@ egl::ConfigSet DisplayVkGbm::generateConfigs()
         egl_vk::GenerateConfigs(kColorFormats.data(), kColorFormats.size(),
                                 depthStencilFormats.data(), depthStencilFormats.size(), this);
 
-    cfgSet.begin()->second.nativeVisualID = DRM_FORMAT_XRGB8888;
-
     return cfgSet;
 }
 
@@ -81,6 +79,11 @@ const char *DisplayVkGbm::getWSIExtension() const
 }
 
 bool DisplayVkGbm::isUsingSwapchain() const
+{
+    return true;
+}
+
+bool DisplayVkGbm::isGBM() const
 {
     return true;
 }

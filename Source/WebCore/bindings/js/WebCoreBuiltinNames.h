@@ -162,6 +162,8 @@ namespace WebCore {
     macro(DeprecationReportBody) \
     macro(DocumentTimeline) \
     macro(DynamicsCompressorNode) \
+    macro(ElementInternals) \
+    macro(EncodedVideoChunk) \
     macro(ExtendableEvent) \
     macro(ExtendableMessageEvent) \
     macro(FakeXRDevice) \

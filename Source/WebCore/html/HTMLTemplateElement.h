@@ -46,6 +46,8 @@ public:
     DocumentFragment& content() const;
     DocumentFragment* contentIfAvailable() const;
 
+    void attachAsDeclarativeShadowRootIfNeeded(Element&);
+
 private:
     HTMLTemplateElement(const QualifiedName&, Document&);
 

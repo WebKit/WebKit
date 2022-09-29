@@ -212,10 +212,11 @@ class ContextImpl : public GLImplFactory
     virtual angle::Result onUnMakeCurrent(const gl::Context *context);
 
     // Native capabilities, unmodified by gl::Context.
-    virtual gl::Caps getNativeCaps() const                         = 0;
-    virtual const gl::TextureCapsMap &getNativeTextureCaps() const = 0;
-    virtual const gl::Extensions &getNativeExtensions() const      = 0;
-    virtual const gl::Limitations &getNativeLimitations() const    = 0;
+    virtual gl::Caps getNativeCaps() const                                 = 0;
+    virtual const gl::TextureCapsMap &getNativeTextureCaps() const         = 0;
+    virtual const gl::Extensions &getNativeExtensions() const              = 0;
+    virtual const gl::Limitations &getNativeLimitations() const            = 0;
+    virtual ShPixelLocalStorageType getNativePixelLocalStorageType() const = 0;
 
     virtual angle::Result dispatchCompute(const gl::Context *context,
                                           GLuint numGroupsX,

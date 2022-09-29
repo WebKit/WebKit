@@ -707,6 +707,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webcodecs/VideoColorSpaceInit.idl
     Modules/webcodecs/VideoMatrixCoefficients.idl
     Modules/webcodecs/VideoTransferCharacteristics.idl
+    Modules/webcodecs/WebCodecsEncodedVideoChunk.idl
+    Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl
 
     Modules/webdatabase/DOMWindow+WebDatabase.idl
     Modules/webdatabase/Database.idl
@@ -1323,6 +1325,7 @@ set(WebCore_NON_SVG_IDL_FILES
 
     xml/CustomXPathNSResolver.idl
     xml/DOMParser.idl
+    xml/ParseFromStringOptions.idl
     xml/XMLHttpRequest.idl
     xml/XMLHttpRequestEventTarget.idl
     xml/XMLHttpRequestProgressEvent.idl
@@ -1968,41 +1971,15 @@ if (ENABLE_WEBGL)
         platform/graphics/FormatConverter.cpp
     )
 
-    if (USE_ANGLE_WEBGL)
-        list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-            ${WEBCORE_DIR}/platform/graphics/angle
-        )
-        list(APPEND WebCore_SOURCES
-            platform/graphics/angle/ANGLEUtilities.cpp
-            platform/graphics/angle/GraphicsContextGLANGLE.cpp
-        )
+    list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
+        ${WEBCORE_DIR}/platform/graphics/angle
+    )
+    list(APPEND WebCore_SOURCES
+        platform/graphics/angle/ANGLEUtilities.cpp
+        platform/graphics/angle/GraphicsContextGLANGLE.cpp
+    )
 
-        list(APPEND WebCore_LIBRARIES ANGLE::GLES)
-    else ()
-        list(APPEND WebCore_SOURCES
-            platform/graphics/ANGLEWebKitBridge.cpp
-
-            platform/graphics/opengl/ExtensionsGLOpenGLCommon.cpp
-            platform/graphics/opengl/GraphicsContextGLOpenGL.cpp
-            platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-        )
-
-        if (USE_OPENGL_ES)
-            list(APPEND WebCore_SOURCES
-                platform/graphics/opengl/ExtensionsGLOpenGLES.cpp
-                platform/graphics/opengl/GraphicsContextGLOpenGLES.cpp
-            )
-        endif ()
-
-        if (USE_OPENGL)
-            list(APPEND WebCore_SOURCES
-                platform/graphics/opengl/ExtensionsGLOpenGL.cpp
-                platform/graphics/opengl/GraphicsContextGLOpenGLBase.cpp
-            )
-        endif ()
-
-        list(APPEND WebCore_LIBRARIES ANGLE::ANGLE)
-    endif ()
+    list(APPEND WebCore_LIBRARIES ANGLE::GLES)
 elseif (USE_ANGLE_EGL)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         ${WEBCORE_DIR}/platform/graphics/angle

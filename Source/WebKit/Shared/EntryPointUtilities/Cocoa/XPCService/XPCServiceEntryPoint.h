@@ -30,7 +30,10 @@
 #import <JavaScriptCore/ExecutableAllocator.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+
+#if !USE(RUNNINGBOARD)
 #import <wtf/spi/darwin/XPCSPI.h>
+#endif
 
 // FIXME: This should be moved to an SPI header.
 #if USE(APPLE_INTERNAL_SDK)
@@ -79,7 +82,7 @@ void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& param
     XPCServiceType::singleton().initialize(WTFMove(parameters));
 }
 
-#if PLATFORM(MAC)
+#if !USE(RUNNINGBOARD)
 void setOSTransaction(OSObjectPtr<os_transaction_t>&&);
 #endif
 
@@ -109,9 +112,9 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
     XPCServiceInitializerDelegateType delegate(WTFMove(connection), initializerMessage);
 
     // We don't want XPC to be in charge of whether the process should be terminated or not,
-    // so ensure that we have an outstanding transaction here. This is not needed on iOS because
-    // the UIProcess takes process assertions on behalf of its child processes.
-#if PLATFORM(MAC)
+    // so ensure that we have an outstanding transaction here. This is not needed when using
+    // RunningBoard because the UIProcess takes process assertions on behalf of its child processes.
+#if !USE(RUNNINGBOARD)
     setOSTransaction(adoptOSObject(os_transaction_create("WebKit XPC Service")));
 #endif
 

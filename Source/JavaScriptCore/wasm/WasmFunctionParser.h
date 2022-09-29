@@ -1098,6 +1098,102 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             m_expressionStack.constructAndAppend(Types::I32, result);
             return { };
         }
+        case GCOpType::ArrayNew: {
+            uint32_t typeIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.new");
+            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.new index ", typeIndex, " is out of bounds");
+
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.new index ", typeIndex, " does not reference an array definition");
+            const Type elementType = typeDefinition.as<ArrayType>()->elementType().type;
+
+            TypedExpression value, size;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(size, "array.new");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "array.new");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), elementType), "array.new value to type ", value.type().kind, " expected ", elementType.kind);
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new index to type ", size.type().kind, " expected ", TypeKind::I32);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addArrayNew(typeIndex, size, value, result));
+
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, TypeInformation::get(typeDefinition) }, result);
+            return { };
+        }
+        case GCOpType::ArrayNewDefault: {
+            uint32_t typeIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.new_default");
+            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.new_default index ", typeIndex, " is out of bounds");
+
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.new_default index ", typeIndex, " does not reference an array definition");
+            const Type elementType = typeDefinition.as<ArrayType>()->elementType().type;
+            WASM_VALIDATOR_FAIL_IF(!isDefaultableType(elementType), "array.new_default index ", typeIndex, " does not reference an array definition with a defaultable type");
+
+            TypedExpression size;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(size, "array.new_default");
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != size.type().kind, "array.new_default index to type ", size.type().kind, " expected ", TypeKind::I32);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addArrayNewDefault(typeIndex, size, result));
+
+            m_expressionStack.constructAndAppend(Type { TypeKind::Ref, TypeInformation::get(typeDefinition) }, result);
+            return { };
+        }
+        case GCOpType::ArrayGet: {
+            uint32_t typeIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.get");
+            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.get index ", typeIndex, " is out of bounds");
+
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.get index ", typeIndex, " does not reference an array definition");
+            const Type elementType = typeDefinition.as<ArrayType>()->elementType().type;
+
+            TypedExpression arrayref, index;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "array.get");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(arrayref, "array.get");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), Type { TypeKind::RefNull, TypeInformation::get(typeDefinition) }), "array.get arrayref to type ", arrayref.type().kind, " expected arrayref");
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "array.get index to type ", index.type().kind, " expected ", TypeKind::I32);
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addArrayGet(typeIndex, arrayref, index, result));
+
+            m_expressionStack.constructAndAppend(elementType, result);
+            return { };
+        }
+        case GCOpType::ArraySet: {
+            uint32_t typeIndex;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(typeIndex), "can't get type index for array.set");
+            WASM_VALIDATOR_FAIL_IF(typeIndex >= m_info.typeCount(), "array.set index ", typeIndex, " is out of bounds");
+
+            const TypeDefinition& typeDefinition = m_info.typeSignatures[typeIndex].get();
+            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.set index ", typeIndex, " does not reference an array definition");
+            WASM_VALIDATOR_FAIL_IF(!typeDefinition.is<ArrayType>(), "array.set index ", typeIndex, " does not reference an array definition");
+            const FieldType elementType = typeDefinition.as<ArrayType>()->elementType();
+            WASM_VALIDATOR_FAIL_IF(elementType.mutability != Mutability::Mutable, "array.set index ", typeIndex, " does not reference a mutable array definition");
+
+            TypedExpression arrayref, index, value;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(value, "array.set");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(index, "array.set");
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(arrayref, "array.set");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), Type { TypeKind::RefNull, TypeInformation::get(typeDefinition) }), "array.set arrayref to type ", arrayref.type().kind, " expected arrayref");
+            WASM_VALIDATOR_FAIL_IF(TypeKind::I32 != index.type().kind, "array.set index to type ", index.type().kind, " expected ", TypeKind::I32);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(value.type(), elementType.type), "array.set value to type ", value.type().kind, " expected ", elementType.type.kind);
+
+            WASM_TRY_ADD_TO_CONTEXT(addArraySet(typeIndex, arrayref, index, value));
+
+            return { };
+        }
+        case GCOpType::ArrayLen: {
+            TypedExpression arrayref;
+            WASM_TRY_POP_EXPRESSION_STACK_INTO(arrayref, "array.len");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(arrayref.type(), Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Arrayref) }), "array.len value to type ", arrayref.type().kind, " expected arrayref");
+
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addArrayLen(arrayref, result));
+
+            m_expressionStack.constructAndAppend(Types::I32, result);
+            return { };
+        }
 
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended GC op ", extOp);
@@ -2013,6 +2109,28 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         case GCOpType::I31New:
         case GCOpType::I31GetS:
         case GCOpType::I31GetU:
+            return { };
+        case GCOpType::ArrayNew: {
+            uint32_t unused;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get type index immediate for array.new in unreachable context");
+            return { };
+        }
+        case GCOpType::ArrayNewDefault: {
+            uint32_t unused;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get type index immediate for array.new_default in unreachable context");
+            return { };
+        }
+        case GCOpType::ArrayGet: {
+            uint32_t unused;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get type index immediate for array.get in unreachable context");
+            return { };
+        }
+        case GCOpType::ArraySet: {
+            uint32_t unused;
+            WASM_PARSER_FAIL_IF(!parseVarUInt32(unused), "can't get type index immediate for array.set in unreachable context");
+            return { };
+        }
+        case GCOpType::ArrayLen:
             return { };
         default:
             WASM_PARSER_FAIL_IF(true, "invalid extended GC op ", extOp);

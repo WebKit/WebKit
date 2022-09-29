@@ -1,5 +1,5 @@
 
 PASS Expected entry count for http://localhost:8800/server-timing/resources/blue.png: 1
 PASS Expected entry count for http://127.0.0.1:8800/server-timing/resources/blue.png: 0
-PASS Expected entry count for http://127.0.0.1:8800/server-timing/resources/blue_tao.png: 1
+FAIL Expected entry count for http://127.0.0.1:8800/server-timing/resources/blue_tao.png: 1 assert_equals: Expected entry count for http://127.0.0.1:8800/server-timing/resources/blue_tao.png: 1 expected 1 but got 0
 

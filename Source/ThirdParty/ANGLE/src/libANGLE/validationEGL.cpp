@@ -1377,6 +1377,59 @@ bool ValidateCreateSyncBase(const ValidationContext *val,
             }
             break;
 
+        case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
+            if (!display->getExtensions().fenceSync)
+            {
+                val->setError(EGL_BAD_MATCH, "EGL_KHR_fence_sync extension is not available");
+                return false;
+            }
+
+            if (!display->getExtensions().mtlSyncSharedEventANGLE)
+            {
+                val->setError(EGL_BAD_DISPLAY,
+                              "EGL_ANGLE_metal_shared_event_sync is not available");
+                return false;
+            }
+
+            if (display != currentDisplay)
+            {
+                val->setError(EGL_BAD_MATCH,
+                              "CreateSync can only be called on the current display");
+                return false;
+            }
+
+            ANGLE_VALIDATION_TRY(ValidateContext(val, currentDisplay, currentContext));
+
+            // This should be implied by exposing EGL_KHR_fence_sync
+            ASSERT(currentContext->getExtensions().EGLSyncOES);
+
+            for (const auto &attributeIter : attribs)
+            {
+                EGLAttrib attribute = attributeIter.first;
+                EGLAttrib value     = attributeIter.second;
+
+                switch (attribute)
+                {
+                    case EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE:
+                        if (!value)
+                        {
+                            val->setError(EGL_BAD_ATTRIBUTE,
+                                          "EGL_SYNC_METAL_SHARED_EVENT_ANGLE can't be NULL");
+                            return false;
+                        }
+                        break;
+
+                    case EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE:
+                    case EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE:
+                        break;
+
+                    default:
+                        val->setError(EGL_BAD_ATTRIBUTE, "Invalid attribute");
+                        return false;
+                }
+            }
+            break;
+
         default:
             if (isExt)
             {
@@ -1407,6 +1460,7 @@ bool ValidateGetSyncAttribBase(const ValidationContext *val,
             {
                 case EGL_SYNC_FENCE_KHR:
                 case EGL_SYNC_NATIVE_FENCE_ANDROID:
+                case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
                     break;
 
                 default:
@@ -6053,6 +6107,23 @@ bool ValidateCreateNativeClientBufferANDROID(const ValidationContext *val,
         val->setError(EGL_BAD_PARAMETER, "unsupported format");
         return false;
     }
+    return true;
+}
+
+bool ValidateCopyMetalSharedEventANGLE(const ValidationContext *val,
+                                       const Display *display,
+                                       const Sync *sync)
+{
+    ANGLE_VALIDATION_TRY(ValidateDisplay(val, display));
+
+    if (!display->getExtensions().mtlSyncSharedEventANGLE)
+    {
+        val->setError(EGL_BAD_DISPLAY, "EGL_ANGLE_metal_shared_event_sync is not available.");
+        return false;
+    }
+
+    ANGLE_VALIDATION_TRY(ValidateSync(val, display, sync));
+
     return true;
 }
 

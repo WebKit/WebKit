@@ -48,10 +48,12 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
 {
     if (!m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host())) {
         auto host = url.host().toString();
-        Vector<Cookie> cookies;
         bool subscribeToCookieChangeNotifications = true;
-        if (!WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(host, subscribeToCookieChangeNotifications), Messages::NetworkConnectionToWebProcess::DomCookiesForHost::Reply(cookies), 0))
+        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(host, subscribeToCookieChangeNotifications), 0);
+        if (!sendResult)
             return { };
+
+        auto& [cookies] = sendResult.reply();
         pruneCacheIfNecessary();
         m_hostsWithInMemoryStorage.add(WTFMove(host));
         for (auto& cookie : cookies)

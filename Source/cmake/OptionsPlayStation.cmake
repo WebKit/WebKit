@@ -62,8 +62,10 @@ if (ENABLE_WEBCORE)
 
         SET_AND_EXPOSE_TO_BUILD(USE_WPE_BACKEND_PLAYSTATION ON)
 
+        set(ProcessLauncher_LIBRARY WPE::PlayStation)
         list(APPEND PlayStationModule_TARGETS WPE::PlayStation)
     else ()
+        set(ProcessLauncher_LIBRARY WebKitRequirements::ProcessLauncher)
         list(APPEND WebKitRequirements_COMPONENTS
             ProcessLauncher
             libwpe

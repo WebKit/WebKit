@@ -42,6 +42,7 @@
 #include "B3StackmapGenerationParams.h"
 #include "BinarySwitch.h"
 #include "JSCJSValueInlines.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
 #include "ScratchRegisterAllocator.h"
 #include "WasmBranchHints.h"
@@ -377,6 +378,11 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
 
     // Basic operators
     template<OpType>
@@ -423,6 +429,33 @@ public:
     PartialResult addIntegerSub(B3::Air::Opcode, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
     PartialResult addFloatingPointAbs(B3::Air::Opcode, ExpressionType value, ExpressionType& result);
     PartialResult addFloatingPointBinOp(Type, B3::Air::Opcode, ExpressionType lhs, ExpressionType rhs, ExpressionType& result);
+
+    enum class FloatingPointTruncationKind {
+        F32ToI32,
+        F32ToU32,
+        F32ToI64,
+        F32ToU64,
+        F64ToI32,
+        F64ToU32,
+        F64ToI64,
+        F64ToU64,
+    };
+
+    struct FloatingPointRange {
+        TypedTmp lowerEndpoint;
+        TypedTmp upperEndpoint;
+        // Some floating point truncation operations have a half-open range; others
+        // are more convenient to specify as a open range.
+        //
+        // The top endpoint of the range is always excluded, i.e. this value chooses between:
+        // closedLowerEndopint = true    =>   range === [min, max)
+        // closedLowerEndopint = false   =>   range === (min, max)
+        bool closedLowerEndpoint;
+    };
+
+    FloatingPointRange lookupTruncationRange(FloatingPointTruncationKind);
+    PartialResult addUncheckedFloatingPointTruncation(FloatingPointTruncationKind, ExpressionType arg, ExpressionType out);
+    PartialResult addCheckedFloatingPointTruncation(FloatingPointTruncationKind, ExpressionType arg, ExpressionType& result);
 
     void dump(const ControlStack&, const Stack* expressionStack);
     void setParser(FunctionParser<AirIRGenerator>* parser) { m_parser = parser; };
@@ -2823,81 +2856,195 @@ auto AirIRGenerator::atomicFence(ExtAtomicOpType, uint8_t) -> PartialResult
     return { };
 }
 
-auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, ExpressionType& result, Type returnType, Type operandType) -> PartialResult
+auto AirIRGenerator::lookupTruncationRange(FloatingPointTruncationKind kind) -> FloatingPointRange
 {
-    TypedTmp maxFloat;
-    TypedTmp minFloat;
-    TypedTmp signBitConstant;
-    bool requiresMacroScratchRegisters = false;
-    switch (op) {
-    case Ext1OpType::I32TruncSatF32S:
-        maxFloat = addConstant(Types::F32, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int32_t>::min())));
-        minFloat = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min())));
+    TypedTmp min;
+    TypedTmp max;
+    bool closedLowerEndpoint = false;
+
+    switch (kind) {
+    case FloatingPointTruncationKind::F32ToI32:
+        closedLowerEndpoint = true;
+        max = addConstant(Types::F32, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int32_t>::min())));
+        min = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min())));
         break;
-    case Ext1OpType::I32TruncSatF32U:
-        maxFloat = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min()) * static_cast<float>(-2.0)));
-        minFloat = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
+    case FloatingPointTruncationKind::F32ToU32:
+        max = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min()) * static_cast<float>(-2.0)));
+        min = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
         break;
-    case Ext1OpType::I32TruncSatF64S:
-        maxFloat = addConstant(Types::F64, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int32_t>::min())));
-        minFloat = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) - 1.0));
+    case FloatingPointTruncationKind::F64ToI32:
+        max = addConstant(Types::F64, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int32_t>::min())));
+        min = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) - 1.0));
         break;
-    case Ext1OpType::I32TruncSatF64U:
-        maxFloat = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0));
-        minFloat = addConstant(Types::F64, bitwise_cast<uint64_t>(-1.0));
+    case FloatingPointTruncationKind::F64ToU32:
+        max = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0));
+        min = addConstant(Types::F64, bitwise_cast<uint64_t>(-1.0));
         break;
-    case Ext1OpType::I64TruncSatF32S:
-        maxFloat = addConstant(Types::F32, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int64_t>::min())));
-        minFloat = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min())));
+    case FloatingPointTruncationKind::F32ToI64:
+        closedLowerEndpoint = true;
+        max = addConstant(Types::F32, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int64_t>::min())));
+        min = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min())));
         break;
-    case Ext1OpType::I64TruncSatF32U:
-        maxFloat = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min()) * static_cast<float>(-2.0)));
-        minFloat = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
-        if (isX86())
-            signBitConstant = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-        requiresMacroScratchRegisters = true;
+    case FloatingPointTruncationKind::F32ToU64:
+        max = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min()) * static_cast<float>(-2.0)));
+        min = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
         break;
-    case Ext1OpType::I64TruncSatF64S:
-        maxFloat = addConstant(Types::F64, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int64_t>::min())));
-        minFloat = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min())));
+    case FloatingPointTruncationKind::F64ToI64:
+        closedLowerEndpoint = true;
+        max = addConstant(Types::F64, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int64_t>::min())));
+        min = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min())));
         break;
-    case Ext1OpType::I64TruncSatF64U:
-        maxFloat = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0));
-        minFloat = addConstant(Types::F64, bitwise_cast<uint64_t>(-1.0));
-        if (isX86())
-            signBitConstant = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-        requiresMacroScratchRegisters = true;
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+    case FloatingPointTruncationKind::F64ToU64:
+        max = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0));
+        min = addConstant(Types::F64, bitwise_cast<uint64_t>(-1.0));
         break;
     }
 
+    return FloatingPointRange { min, max, closedLowerEndpoint };
+}
+
+auto AirIRGenerator::addUncheckedFloatingPointTruncation(FloatingPointTruncationKind kind, ExpressionType arg, ExpressionType result) -> PartialResult
+{
+    auto* patchpoint = addPatchpoint(toB3Type(result.type()));
+    patchpoint->effects = B3::Effects::none();
+    patchpoint->setGenerator([=](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
+        switch (kind) {
+        case FloatingPointTruncationKind::F32ToI32:
+            jit.truncateFloatToInt32(params[1].fpr(), params[0].gpr());
+            break;
+        case FloatingPointTruncationKind::F32ToU32:
+            jit.truncateFloatToUint32(params[1].fpr(), params[0].gpr());
+            break;
+        case FloatingPointTruncationKind::F32ToI64:
+            jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
+            break;
+        case FloatingPointTruncationKind::F32ToU64: {
+            AllowMacroScratchRegisterUsageIf allowScratch(jit, isX86());
+            FPRReg scratch = InvalidFPRReg;
+            FPRReg constant = InvalidFPRReg;
+            if (isX86()) {
+                scratch = params.fpScratch(0);
+                constant = params[2].fpr();
+            }
+            jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+            break;
+        }
+        case FloatingPointTruncationKind::F64ToI32:
+            jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
+            break;
+        case FloatingPointTruncationKind::F64ToU32:
+            jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
+            break;
+        case FloatingPointTruncationKind::F64ToI64:
+            jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
+            break;
+        case FloatingPointTruncationKind::F64ToU64: {
+            AllowMacroScratchRegisterUsageIf allowScratch(jit, isX86());
+            FPRReg scratch = InvalidFPRReg;
+            FPRReg constant = InvalidFPRReg;
+            if (isX86()) {
+                scratch = params.fpScratch(0);
+                constant = params[2].fpr();
+            }
+            jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
+            break;
+        }
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    });
+
+    if (isX86()) {
+        switch (kind) {
+        case FloatingPointTruncationKind::F32ToU64: {
+            auto signBitConstant = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
+            patchpoint->clobber(RegisterSet::macroScratchRegisters());
+            patchpoint->numFPScratchRegisters = 1;
+            emitPatchpoint(
+                m_currentBlock, patchpoint,
+                Vector<TypedTmp, 8>::from(result),
+                Vector<ConstrainedTmp, 2>::from(arg, signBitConstant)
+            );
+            return { };
+        }
+        case FloatingPointTruncationKind::F64ToU64: {
+            auto signBitConstant = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
+            patchpoint->clobber(RegisterSet::macroScratchRegisters());
+            patchpoint->numFPScratchRegisters = 1;
+            emitPatchpoint(
+                m_currentBlock, patchpoint,
+                Vector<TypedTmp, 8>::from(result),
+                Vector<ConstrainedTmp, 2>::from(arg, signBitConstant)
+            );
+            return { };
+        }
+        default:
+            break;
+        }
+    }
+
+    emitPatchpoint(patchpoint, result, arg);
+    return { };
+}
+
+auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, ExpressionType& result, Type returnType, Type operandType) -> PartialResult
+{
+
+    auto truncationKind = ([&] {
+        switch (op) {
+        case Ext1OpType::I32TruncSatF32S:
+            return FloatingPointTruncationKind::F32ToI32;
+        case Ext1OpType::I32TruncSatF32U:
+            return FloatingPointTruncationKind::F32ToU32;
+        case Ext1OpType::I32TruncSatF64S:
+            return FloatingPointTruncationKind::F64ToI32;
+        case Ext1OpType::I32TruncSatF64U:
+            return FloatingPointTruncationKind::F64ToU32;
+        case Ext1OpType::I64TruncSatF32S:
+            return FloatingPointTruncationKind::F32ToI64;
+        case Ext1OpType::I64TruncSatF32U:
+            return FloatingPointTruncationKind::F32ToU64;
+        case Ext1OpType::I64TruncSatF64S:
+            return FloatingPointTruncationKind::F64ToI64;
+        case Ext1OpType::I64TruncSatF64U:
+            return FloatingPointTruncationKind::F64ToU64;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+    })();
+
+    auto const range = lookupTruncationRange(truncationKind);
+    auto const minFloat = range.lowerEndpoint;
+    auto const maxFloat = range.upperEndpoint;
+    // We deliberately ignore `range.closedLowerEndpoint` here because this is a saturating
+    // operation so we literally can't treat the endpoints wrong (everything in
+    // the closed ranges outside the valid range results in the corresponding
+    // endpoint's value)
+
     uint64_t minResult = 0;
     uint64_t maxResult = 0;
-    switch (op) {
-    case Ext1OpType::I32TruncSatF32S:
-    case Ext1OpType::I32TruncSatF64S:
+    switch (truncationKind) {
+    case FloatingPointTruncationKind::F32ToI32:
+    case FloatingPointTruncationKind::F64ToI32:
         maxResult = bitwise_cast<uint32_t>(INT32_MAX);
         minResult = bitwise_cast<uint32_t>(INT32_MIN);
         break;
-    case Ext1OpType::I32TruncSatF32U:
-    case Ext1OpType::I32TruncSatF64U:
+    case FloatingPointTruncationKind::F32ToU32:
+    case FloatingPointTruncationKind::F64ToU32:
         maxResult = bitwise_cast<uint32_t>(UINT32_MAX);
         minResult = bitwise_cast<uint32_t>(0U);
         break;
-    case Ext1OpType::I64TruncSatF32S:
-    case Ext1OpType::I64TruncSatF64S:
+    case FloatingPointTruncationKind::F32ToI64:
+    case FloatingPointTruncationKind::F64ToI64:
         maxResult = bitwise_cast<uint64_t>(INT64_MAX);
         minResult = bitwise_cast<uint64_t>(INT64_MIN);
         break;
-    case Ext1OpType::I64TruncSatF32U:
-    case Ext1OpType::I64TruncSatF64U:
+    case FloatingPointTruncationKind::F32ToU64:
+    case FloatingPointTruncationKind::F64ToU64:
         maxResult = bitwise_cast<uint64_t>(UINT64_MAX);
         minResult = bitwise_cast<uint64_t>(0ULL);
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
         break;
     }
 
@@ -2939,75 +3086,69 @@ auto AirIRGenerator::truncSaturated(Ext1OpType op, ExpressionType arg, Expressio
     append(maxCase, Jump);
     maxCase->setSuccessors(continuation);
 
-    Vector<ConstrainedTmp, 2> args;
-    auto* patchpoint = addPatchpoint(toB3Type(returnType));
-    patchpoint->effects = B3::Effects::none();
-    args.append(arg);
-    if (requiresMacroScratchRegisters) {
-        patchpoint->clobber(RegisterSet::macroScratchRegisters());
-        if (isX86()) {
-            args.append(signBitConstant);
-            patchpoint->numFPScratchRegisters = 1;
-        }
-    }
-
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        switch (op) {
-        case Ext1OpType::I32TruncSatF32S:
-            jit.truncateFloatToInt32(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I32TruncSatF32U:
-            jit.truncateFloatToUint32(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I32TruncSatF64S:
-            jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I32TruncSatF64U:
-            jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I64TruncSatF32S:
-            jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I64TruncSatF32U: {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            ASSERT(requiresMacroScratchRegisters);
-            FPRReg scratch = InvalidFPRReg;
-            FPRReg constant = InvalidFPRReg;
-            if (isX86()) {
-                scratch = params.fpScratch(0);
-                constant = params[2].fpr();
-            }
-            jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
-            break;
-        }
-        case Ext1OpType::I64TruncSatF64S:
-            jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
-            break;
-        case Ext1OpType::I64TruncSatF64U: {
-            AllowMacroScratchRegisterUsage allowScratch(jit);
-            ASSERT(requiresMacroScratchRegisters);
-            FPRReg scratch = InvalidFPRReg;
-            FPRReg constant = InvalidFPRReg;
-            if (isX86()) {
-                scratch = params.fpScratch(0);
-                constant = params[2].fpr();
-            }
-            jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
-            break;
-        }
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
-    });
-
-    emitPatchpoint(inBoundsCase, patchpoint, Vector<TypedTmp, 8> { result }, WTFMove(args));
+    m_currentBlock = inBoundsCase;
+    addUncheckedFloatingPointTruncation(truncationKind, arg, result);
     append(inBoundsCase, Jump);
     inBoundsCase->setSuccessors(continuation);
 
     m_currentBlock = continuation;
 
+    return { };
+}
+
+auto AirIRGenerator::addCheckedFloatingPointTruncation(FloatingPointTruncationKind kind, ExpressionType arg, ExpressionType& result) -> PartialResult
+{
+    auto const range = lookupTruncationRange(kind);
+
+    auto compareOpcode = ([&] {
+        switch (kind) {
+        case FloatingPointTruncationKind::F32ToI32:
+        case FloatingPointTruncationKind::F32ToU32:
+        case FloatingPointTruncationKind::F32ToI64:
+        case FloatingPointTruncationKind::F32ToU64:
+            return CompareFloat;
+        case FloatingPointTruncationKind::F64ToI32:
+        case FloatingPointTruncationKind::F64ToU32:
+        case FloatingPointTruncationKind::F64ToI64:
+        case FloatingPointTruncationKind::F64ToU64:
+            return CompareDouble;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    })();
+
+    auto temp1 = g32();
+    auto temp2 = g32();
+
+    auto const lowerCompareCondition = range.closedLowerEndpoint ?
+        MacroAssembler::DoubleLessThanOrUnordered : MacroAssembler::DoubleLessThanOrEqualOrUnordered;
+    auto const upperCompareCondition = MacroAssembler::DoubleGreaterThanOrEqualOrUnordered;
+
+    append(compareOpcode, Arg::doubleCond(lowerCompareCondition), arg, range.lowerEndpoint, temp1);
+    append(compareOpcode, Arg::doubleCond(upperCompareCondition), arg, range.upperEndpoint, temp2);
+    append(Or32, temp1, temp2);
+
+    emitCheck([&] {
+        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
+    }, [=, this](CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
+    });
+
+    switch (kind) {
+    case FloatingPointTruncationKind::F32ToI32:
+    case FloatingPointTruncationKind::F32ToU32:
+    case FloatingPointTruncationKind::F64ToI32:
+    case FloatingPointTruncationKind::F64ToU32:
+        result = g32();
+        break;
+    case FloatingPointTruncationKind::F32ToI64:
+    case FloatingPointTruncationKind::F32ToU64:
+    case FloatingPointTruncationKind::F64ToI64:
+    case FloatingPointTruncationKind::F64ToU64:
+        result = g64();
+        break;
+    }
+
+    addUncheckedFloatingPointTruncation(kind, arg, result);
     return { };
 }
 
@@ -3059,6 +3200,188 @@ auto AirIRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> P
 
     result = g32();
     append(Move32, ref, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
+{
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+
+    TypedTmp tmpForValue;
+    switch (value.type().kind) {
+    case TypeKind::F32:
+        tmpForValue = g32();
+        append(MoveFloatTo32, value, tmpForValue);
+        break;
+    case TypeKind::F64:
+        tmpForValue = g64();
+        append(MoveDoubleTo64, value, tmpForValue);
+        break;
+    case TypeKind::I32:
+    case TypeKind::I64:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+        tmpForValue = value;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    result = tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    emitCCall(&operationWasmArrayNew, result, instanceValue(), addConstant(Types::I32, typeIndex), size, tmpForValue);
+
+    return { };
+}
+
+auto AirIRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
+{
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+
+    TypedTmp tmpForValue;
+    if (Wasm::isRefType(elementType)) {
+        tmpForValue = gRef(elementType);
+        append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForValue);
+    } else {
+        tmpForValue = g64();
+        append(Xor64, tmpForValue, tmpForValue);
+    }
+
+    result = tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    emitCCall(&operationWasmArrayNew, result, instanceValue(), addConstant(Types::I32, typeIndex), size, tmpForValue);
+
+    return { };
+}
+
+auto AirIRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
+{
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+
+    // Ensure arrayref is non-null.
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), arrayref, tmpForNull);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::NullArrayGet);
+    });
+
+    // Check array bounds.
+    auto arraySize = g32();
+    append(Move32, Arg::addr(arrayref, JSWebAssemblyArray::offsetOfSize()), arraySize);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), index, arraySize);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsArrayGet);
+    });
+
+    auto getValue = g64();
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    emitCCall(&operationWasmArrayGet, getValue, instanceValue(), addConstant(Types::I32, typeIndex), arrayref, index);
+
+    switch (elementType.kind) {
+    case TypeKind::I32:
+        result = g32();
+        append(Move32, getValue, result);
+        break;
+    case TypeKind::F32:
+        result = f32();
+        append(Move32ToFloat, getValue, result);
+        break;
+    case TypeKind::F64:
+        result = f64();
+        append(Move64ToDouble, getValue, result);
+        break;
+    case TypeKind::I64:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+        result = tmpForType(elementType);
+        append(Move, getValue, result);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return { };
+}
+
+auto AirIRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value) -> PartialResult
+{
+    // Ensure arrayref is non-null.
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), arrayref, tmpForNull);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::NullArraySet);
+    });
+
+    // Check array bounds.
+    auto arraySize = g32();
+    append(Move32, Arg::addr(arrayref, JSWebAssemblyArray::offsetOfSize()), arraySize);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), index, arraySize);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsArraySet);
+    });
+
+    TypedTmp tmpForValue;
+    switch (value.type().kind) {
+    case TypeKind::F32:
+        tmpForValue = g32();
+        append(MoveFloatTo32, value, tmpForValue);
+        break;
+    case TypeKind::F64:
+        tmpForValue = g64();
+        append(MoveDoubleTo64, value, tmpForValue);
+        break;
+    case TypeKind::I32:
+    case TypeKind::I64:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+        tmpForValue = value;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    emitCCall(&operationWasmArraySet, TypedTmp(), instanceValue(), addConstant(Types::I32, typeIndex), arrayref, index, tmpForValue);
+
+    return { };
+}
+
+auto AirIRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result) -> PartialResult
+{
+    // Ensure arrayref is non-null.
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), arrayref, tmpForNull);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::NullArrayLen);
+    });
+
+    result = g32();
+    append(Move32, Arg::addr(arrayref, JSWebAssemblyArray::offsetOfSize()), result);
 
     return { };
 }
@@ -4450,57 +4773,14 @@ auto AirIRGenerator::addOp<OpType::F32Trunc>(ExpressionType arg, ExpressionType&
 template<>
 auto AirIRGenerator::addOp<OpType::I32TruncSF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    auto max = addConstant(Types::F64, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int32_t>::min())));
-    auto min = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) - 1.0));
-
-    auto temp1 = g32();
-    auto temp2 = g32();
-    append(CompareDouble, Arg::doubleCond(MacroAssembler::DoubleLessThanOrEqualOrUnordered), arg, min, temp1);
-    append(CompareDouble, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, max, temp2);
-    append(Or32, temp1, temp2);
-
-    emitCheck([&] {
-        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
-    });
-
-    auto* patchpoint = addPatchpoint(B3::Int32);
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        jit.truncateDoubleToInt32(params[1].fpr(), params[0].gpr());
-    });
-    result = g32();
-    emitPatchpoint(patchpoint, result, arg);
-
+    addCheckedFloatingPointTruncation(FloatingPointTruncationKind::F64ToI32, arg, result);
     return { };
 }
 
 template<>
 auto AirIRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    auto max = addConstant(Types::F32, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int32_t>::min())));
-    auto min = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min())));
-
-    auto temp1 = g32();
-    auto temp2 = g32();
-    append(CompareFloat, Arg::doubleCond(MacroAssembler::DoubleLessThanOrUnordered), arg, min, temp1);
-    append(CompareFloat, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, max, temp2);
-    append(Or32, temp1, temp2);
-
-    emitCheck([&] {
-        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
-    });
-
-    auto* patchpoint = addPatchpoint(B3::Int32);
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        jit.truncateFloatToInt32(params[1].fpr(), params[0].gpr());
-    });
-    result = g32();
-    emitPatchpoint(patchpoint, result, arg);
+    addCheckedFloatingPointTruncation(FloatingPointTruncationKind::F32ToI32, arg, result);
     return { };
 }
 
@@ -4508,208 +4788,42 @@ auto AirIRGenerator::addOp<OpType::I32TruncSF32>(ExpressionType arg, ExpressionT
 template<>
 auto AirIRGenerator::addOp<OpType::I32TruncUF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    auto max = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int32_t>::min()) * -2.0));
-    auto min = addConstant(Types::F64, bitwise_cast<uint64_t>(-1.0));
-
-    auto temp1 = g32();
-    auto temp2 = g32();
-    append(CompareDouble, Arg::doubleCond(MacroAssembler::DoubleLessThanOrEqualOrUnordered), arg, min, temp1);
-    append(CompareDouble, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, max, temp2);
-    append(Or32, temp1, temp2);
-
-    emitCheck([&] {
-        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
-    });
-
-    auto* patchpoint = addPatchpoint(B3::Int32);
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        jit.truncateDoubleToUint32(params[1].fpr(), params[0].gpr());
-    });
-    result = g32();
-    emitPatchpoint(patchpoint, result, arg);
+    addCheckedFloatingPointTruncation(FloatingPointTruncationKind::F64ToU32, arg, result);
     return { };
 }
 
 template<>
 auto AirIRGenerator::addOp<OpType::I32TruncUF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    auto max = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int32_t>::min()) * static_cast<float>(-2.0)));
-    auto min = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
-
-    auto temp1 = g32();
-    auto temp2 = g32();
-    append(CompareFloat, Arg::doubleCond(MacroAssembler::DoubleLessThanOrEqualOrUnordered), arg, min, temp1);
-    append(CompareFloat, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, max, temp2);
-    append(Or32, temp1, temp2);
-
-    emitCheck([&] {
-        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
-    });
-
-    auto* patchpoint = addPatchpoint(B3::Int32);
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        jit.truncateFloatToUint32(params[1].fpr(), params[0].gpr());
-    });
-    result = g32();
-    emitPatchpoint(patchpoint, result, arg);
+    addCheckedFloatingPointTruncation(FloatingPointTruncationKind::F32ToU32, arg, result);
     return { };
 }
 
 template<>
 auto AirIRGenerator::addOp<OpType::I64TruncSF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    auto max = addConstant(Types::F64, bitwise_cast<uint64_t>(-static_cast<double>(std::numeric_limits<int64_t>::min())));
-    auto min = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min())));
-
-    auto temp1 = g32();
-    auto temp2 = g32();
-    append(CompareDouble, Arg::doubleCond(MacroAssembler::DoubleLessThanOrUnordered), arg, min, temp1);
-    append(CompareDouble, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, max, temp2);
-    append(Or32, temp1, temp2);
-
-    emitCheck([&] {
-        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
-    });
-
-    auto* patchpoint = addPatchpoint(B3::Int64);
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        jit.truncateDoubleToInt64(params[1].fpr(), params[0].gpr());
-    });
-
-    result = g64();
-    emitPatchpoint(patchpoint, result, arg);
+    addCheckedFloatingPointTruncation(FloatingPointTruncationKind::F64ToI64, arg, result);
     return { };
 }
 
 template<>
 auto AirIRGenerator::addOp<OpType::I64TruncUF64>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    auto max = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<int64_t>::min()) * -2.0));
-    auto min = addConstant(Types::F64, bitwise_cast<uint64_t>(-1.0));
-    
-    auto temp1 = g32();
-    auto temp2 = g32();
-    append(CompareDouble, Arg::doubleCond(MacroAssembler::DoubleLessThanOrEqualOrUnordered), arg, min, temp1);
-    append(CompareDouble, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, max, temp2);
-    append(Or32, temp1, temp2);
-
-    emitCheck([&] {
-        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
-    });
-
-    TypedTmp signBitConstant;
-    if (isX86())
-        signBitConstant = addConstant(Types::F64, bitwise_cast<uint64_t>(static_cast<double>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-
-    Vector<ConstrainedTmp> args;
-    auto* patchpoint = addPatchpoint(B3::Int64);
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
-    args.append(arg);
-    if (isX86()) {
-        args.append(signBitConstant);
-        patchpoint->numFPScratchRegisters = 1;
-    }
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-        FPRReg scratch = InvalidFPRReg;
-        FPRReg constant = InvalidFPRReg;
-        if (isX86()) {
-            scratch = params.fpScratch(0);
-            constant = params[2].fpr();
-        }
-        jit.truncateDoubleToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
-    });
-
-    result = g64();
-    emitPatchpoint(m_currentBlock, patchpoint, Vector<TypedTmp, 8> { result }, WTFMove(args));
+    addCheckedFloatingPointTruncation(FloatingPointTruncationKind::F64ToU64, arg, result);
     return { };
 }
 
 template<>
 auto AirIRGenerator::addOp<OpType::I64TruncSF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    auto max = addConstant(Types::F32, bitwise_cast<uint32_t>(-static_cast<float>(std::numeric_limits<int64_t>::min())));
-    auto min = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min())));
-
-    auto temp1 = g32();
-    auto temp2 = g32();
-    append(CompareFloat, Arg::doubleCond(MacroAssembler::DoubleLessThanOrUnordered), arg, min, temp1);
-    append(CompareFloat, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, max, temp2);
-    append(Or32, temp1, temp2);
-
-    emitCheck([&] {
-        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
-    });
-
-    auto* patchpoint = addPatchpoint(B3::Int64);
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        jit.truncateFloatToInt64(params[1].fpr(), params[0].gpr());
-    });
-    result = g64();
-    emitPatchpoint(patchpoint, result, arg);
+    addCheckedFloatingPointTruncation(FloatingPointTruncationKind::F32ToI64, arg, result);
     return { };
 }
 
 template<>
 auto AirIRGenerator::addOp<OpType::I64TruncUF32>(ExpressionType arg, ExpressionType& result) -> PartialResult
 {
-    auto max = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<int64_t>::min()) * static_cast<float>(-2.0)));
-    auto min = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(-1.0)));
-    
-    auto temp1 = g32();
-    auto temp2 = g32();
-    append(CompareFloat, Arg::doubleCond(MacroAssembler::DoubleLessThanOrEqualOrUnordered), arg, min, temp1);
-    append(CompareFloat, Arg::doubleCond(MacroAssembler::DoubleGreaterThanOrEqualOrUnordered), arg, max, temp2);
-    append(Or32, temp1, temp2);
-
-    emitCheck([&] {
-        return Inst(BranchTest32, nullptr, Arg::resCond(MacroAssembler::NonZero), temp2, temp2);
-    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-        this->emitThrowException(jit, ExceptionType::OutOfBoundsTrunc);
-    });
-
-    TypedTmp signBitConstant;
-    if (isX86())
-        signBitConstant = addConstant(Types::F32, bitwise_cast<uint32_t>(static_cast<float>(std::numeric_limits<uint64_t>::max() - std::numeric_limits<int64_t>::max())));
-
-    auto* patchpoint = addPatchpoint(B3::Int64);
-    patchpoint->effects = B3::Effects::none();
-    patchpoint->clobber(RegisterSet::macroScratchRegisters());
-    Vector<ConstrainedTmp, 2> args;
-    args.append(arg);
-    if (isX86()) {
-        args.append(signBitConstant);
-        patchpoint->numFPScratchRegisters = 1;
-    }
-    patchpoint->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        AllowMacroScratchRegisterUsage allowScratch(jit);
-        FPRReg scratch = InvalidFPRReg;
-        FPRReg constant = InvalidFPRReg;
-        if (isX86()) {
-            scratch = params.fpScratch(0);
-            constant = params[2].fpr();
-        }
-        jit.truncateFloatToUint64(params[1].fpr(), params[0].gpr(), scratch, constant);
-    });
-
-    result = g64();
-    emitPatchpoint(m_currentBlock, patchpoint, Vector<TypedTmp, 8> { result }, WTFMove(args));
-
+    addCheckedFloatingPointTruncation(FloatingPointTruncationKind::F32ToU64, arg, result);
     return { };
 }
 

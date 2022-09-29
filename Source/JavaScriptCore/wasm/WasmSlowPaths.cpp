@@ -30,6 +30,7 @@
 
 #include "BytecodeStructs.h"
 #include "JITExceptions.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyInstance.h"
 #include "LLIntData.h"
@@ -320,6 +321,66 @@ WASM_SLOW_PATH_DECL(ref_func)
 {
     auto instruction = pc->as<WasmRefFunc>();
     WASM_RETURN(Wasm::operationWasmRefFunc(instance, instruction.m_functionIndex));
+}
+
+WASM_SLOW_PATH_DECL(array_new)
+{
+    auto instruction = pc->as<WasmArrayNew>();
+    uint32_t size = READ(instruction.m_size).unboxedUInt32();
+    EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
+    WASM_RETURN(Wasm::operationWasmArrayNew(instance, instruction.m_typeIndex, size, value));
+}
+
+WASM_SLOW_PATH_DECL(array_new_default)
+{
+    auto instruction = pc->as<WasmArrayNewDefault>();
+    uint32_t size = READ(instruction.m_size).unboxedUInt32();
+
+    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[instruction.m_typeIndex];
+    ASSERT(arraySignature.is<Wasm::ArrayType>());
+    Wasm::Type elementType = arraySignature.as<Wasm::ArrayType>()->elementType().type;
+
+    EncodedJSValue value = 0;
+    if (Wasm::isRefType(elementType))
+        value = JSValue::encode(jsNull());
+
+    WASM_RETURN(Wasm::operationWasmArrayNew(instance, instruction.m_typeIndex, size, value));
+}
+
+WASM_SLOW_PATH_DECL(array_get)
+{
+    auto instruction = pc->as<WasmArrayGet>();
+    EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
+    if (JSValue::decode(arrayref).isNull())
+        WASM_THROW(Wasm::ExceptionType::NullArrayGet);
+    uint32_t index = READ(instruction.m_index).unboxedUInt32();
+
+    JSValue arrayValue = JSValue::decode(arrayref);
+    ASSERT(arrayValue.isObject());
+    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
+    if (index >= arrayObject->size())
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsArrayGet);
+
+    WASM_RETURN(Wasm::operationWasmArrayGet(instance, instruction.m_typeIndex, arrayref, index));
+}
+
+WASM_SLOW_PATH_DECL(array_set)
+{
+    auto instruction = pc->as<WasmArraySet>();
+    EncodedJSValue arrayref = READ(instruction.m_arrayref).encodedJSValue();
+    if (JSValue::decode(arrayref).isNull())
+        WASM_THROW(Wasm::ExceptionType::NullArraySet);
+    uint32_t index = READ(instruction.m_index).unboxedUInt32();
+    EncodedJSValue value = READ(instruction.m_value).encodedJSValue();
+
+    JSValue arrayValue = JSValue::decode(arrayref);
+    ASSERT(arrayValue.isObject());
+    JSWebAssemblyArray* arrayObject = jsCast<JSWebAssemblyArray*>(arrayValue.getObject());
+    if (index >= arrayObject->size())
+        WASM_THROW(Wasm::ExceptionType::OutOfBoundsArraySet);
+
+    Wasm::operationWasmArraySet(instance, instruction.m_typeIndex, arrayref, index, value);
+    WASM_END_IMPL();
 }
 
 WASM_SLOW_PATH_DECL(table_get)

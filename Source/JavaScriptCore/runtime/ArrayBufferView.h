@@ -41,7 +41,7 @@ class CallFrame;
 
 class ArrayBufferView : public RefCounted<ArrayBufferView> {
 public:
-    virtual TypedArrayType getType() const = 0;
+    TypedArrayType getType() const { return m_type; }
 
     bool isDetached() const
     {
@@ -90,7 +90,7 @@ public:
     JS_EXPORT_PRIVATE void setDetachable(bool);
     bool isDetachable() const { return m_isDetachable; }
 
-    JS_EXPORT_PRIVATE virtual ~ArrayBufferView();
+    inline ~ArrayBufferView();
 
     // Helper to verify byte offset is size aligned.
     static bool verifyByteOffsetAlignment(size_t byteOffset, size_t elementSize)
@@ -109,11 +109,13 @@ public:
             return false;
         return true;
     }
-    
-    virtual JSArrayBufferView* wrap(JSGlobalObject*, JSGlobalObject*) = 0;
-    
+
+    JS_EXPORT_PRIVATE JSArrayBufferView* wrap(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject);
+
+    JS_EXPORT_PRIVATE void operator delete(ArrayBufferView*, std::destroying_delete_t);
+
 protected:
-    JS_EXPORT_PRIVATE ArrayBufferView(RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t byteLength);
+    JS_EXPORT_PRIVATE ArrayBufferView(TypedArrayType, RefPtr<ArrayBuffer>&&, size_t byteOffset, size_t byteLength);
 
     inline bool setImpl(ArrayBufferView*, size_t byteOffset);
 
@@ -148,6 +150,7 @@ protected:
         *numElements = std::min(remainingElements, *numElements);
     }
 
+    TypedArrayType m_type { TypedArrayType::NotTypedArray };
 #if USE(LARGE_TYPED_ARRAYS)
     uint64_t m_byteOffset : 63;
 #else
@@ -162,8 +165,17 @@ protected:
 
 private:
     friend class ArrayBuffer;
+    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&);
+    template<typename Visitor> constexpr decltype(auto) visitDerived(Visitor&&) const;
+
     RefPtr<ArrayBuffer> m_buffer;
 };
+
+ArrayBufferView::~ArrayBufferView()
+{
+    if (!m_isDetachable)
+        m_buffer->unpin();
+}
 
 bool ArrayBufferView::setImpl(ArrayBufferView* array, size_t byteOffset)
 {

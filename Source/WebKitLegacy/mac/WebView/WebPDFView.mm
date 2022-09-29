@@ -950,7 +950,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         break;
     case NSEventTypeKeyDown: {
         auto pe = WebCore::PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
-        pe.disambiguateKeyDownEvent(WebCore::PlatformEvent::RawKeyDown);
+        pe.disambiguateKeyDownEvent(WebCore::PlatformEvent::Type::RawKeyDown);
         event = WebCore::KeyboardEvent::create(pe, nullptr);
         break;
     }

@@ -2,7 +2,7 @@
   "src/libANGLE/renderer/angle_format.py":
     "2f8fa768088e22b0963bbdf842d3e725",
   "src/libANGLE/renderer/angle_format_map.json":
-    "951e1bceaba86eecb5c23173e897d092",
+    "4c09d19204afa53cd9d137bb4edbabb1",
   "src/libANGLE/renderer/metal/gen_mtl_format_table.py":
     "4be55bb374ce9dc939eb2b0bcb177109",
   "src/libANGLE/renderer/metal/mtl_format_map.json":

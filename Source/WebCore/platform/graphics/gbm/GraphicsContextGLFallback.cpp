@@ -29,7 +29,7 @@
 #include "config.h"
 #include "GraphicsContextGLFallback.h"
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
 #include "ANGLEHeaders.h"
 #include "Logging.h"
@@ -276,4 +276,4 @@ void GraphicsContextGLFallback::prepareForDisplay()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(ANGLE)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)

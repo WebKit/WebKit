@@ -11,10 +11,11 @@ review process. You will also want to run
 [`scripts/run_code_generation.py`](../../scripts/run_code_generation.py) to
 update the generated files.
 
-Please update both Windows and Linux binaries at the same time. Use two CLs. One
-for each platform. Note that we don't currently support Mac for generating the
-lexer and parser files. If we do we should add a flex/bison download for Mac as
-well.
+Please update both Windows and Linux binaries at the same time. Start with
+Windows, then merge your work into a single CL that updates both binaries
+simultaneously. Note that we don't currently support Mac for generating the
+lexer and parser files. If we do we should add a flex/bison download for Mac
+as well.
 
 Contact jmadill or syoussefi for any help with updating the binaries.
 
@@ -34,7 +35,7 @@ already be installed.  Install bison:
 $ pacman -S bison
 ```
 
-Note the versions of flex and bison so the same versions can be build on Linux.
+Note the versions of flex and bison, so you can build the exact same versions on Linux.
 For example:
 
 ```
@@ -42,10 +43,10 @@ $ flex --version
 flex 2.6.4
 
 $ bison --version
-bison (GNU Bison) 3.3.2
+bison (GNU Bison) 3.8.2
 ```
 
-The only dependencies from MSys2 should be the following:
+The only dependencies outside /Windows/ from MSys2 should be the following:
 
 ```
 msys-intl-8.dll
@@ -79,7 +80,7 @@ Upload the binaries:
 
 ```
 $ cd angle/
-$ python tools/flex-bison/update_flex_bison_binaries.py
+$ py tools/flex-bison/update_flex_bison_binaries.py
 ```
 
 ### On Linux
@@ -99,8 +100,8 @@ $ make -j
 
 ```
 # Get the source of bison
-$ curl http://ftp.gnu.org/gnu/bison/bison-3.3.2.tar.xz | tar -xJ
-$ cd bison-3.3.2
+$ curl http://ftp.gnu.org/gnu/bison/bison-3.8.2.tar.xz | tar -xJ
+$ cd bison-3.8.2
 # Build
 $ mkdir build && cd build
 $ ../configure CFLAGS="-O2"
@@ -123,7 +124,7 @@ Upload the binaries:
 
 ```
 $ cd angle/
-$ python tools/flex-bison/update_flex_bison_binaries.py
+$ ./tools/flex-bison/update_flex_bison_binaries.py
 ```
 
 [Bison]: https://www.gnu.org/software/bison/

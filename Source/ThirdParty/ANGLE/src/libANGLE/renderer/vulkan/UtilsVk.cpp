@@ -1054,6 +1054,7 @@ void ResetDynamicState(ContextVk *contextVk, vk::RenderPassCommandBuffer *comman
     // - line width: UtilsVk doesn't use line primitives
     // - depth bias: UtilsVk doesn't enable depth bias
     // - blend constants: UtilsVk doesn't enable blending
+    // - logic op: UtilsVk doesn't enable logic op
     //
     // The following dynamic state is always set by UtilsVk when effective:
     //
@@ -1086,6 +1087,10 @@ void ResetDynamicState(ContextVk *contextVk, vk::RenderPassCommandBuffer *comman
             VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR,
             VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR};
         commandBuffer->setFragmentShadingRate(&fragmentSize, shadingRateCombinerOp);
+    }
+    if (contextVk->getFeatures().supportsLogicOpDynamicState.enabled)
+    {
+        commandBuffer->setLogicOp(VK_LOGIC_OP_COPY);
     }
 
     // Let ContextVk know that it should refresh all dynamic state.

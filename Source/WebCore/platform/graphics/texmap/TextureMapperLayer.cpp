@@ -44,6 +44,19 @@ public:
     bool preserves3D { false };
 };
 
+struct TextureMapperLayer::ComputeTransformData {
+    double zNear { 0 };
+    double zFar { 0 };
+
+    void updateDepthRange(double z)
+    {
+        if (zNear < z)
+            zNear = z;
+        else if (zFar > z)
+            zFar = z;
+    }
+};
+
 TextureMapperLayer::TextureMapperLayer() = default;
 
 TextureMapperLayer::~TextureMapperLayer()
@@ -54,7 +67,7 @@ TextureMapperLayer::~TextureMapperLayer()
     removeFromParent();
 }
 
-void TextureMapperLayer::computeTransformsRecursive()
+void TextureMapperLayer::computeTransformsRecursive(ComputeTransformData& data)
 {
     if (m_state.size.isEmpty() && m_state.masksToBounds)
         return;
@@ -111,18 +124,37 @@ void TextureMapperLayer::computeTransformsRecursive()
 
     m_state.visible = m_state.backfaceVisibility || !m_layerTransforms.combined.isBackFaceVisible();
 
+    auto calculateZ = [&](double x, double y) -> double {
+        double z = 0;
+        double w = 1;
+        m_layerTransforms.combined.map4ComponentPoint(x, y, z, w);
+        if (w <= 0) {
+            if (!z)
+                return 0;
+            if (z < 0)
+                return -std::numeric_limits<double>::infinity();
+            return std::numeric_limits<double>::infinity();
+        }
+        return z / w;
+    };
+
+    data.updateDepthRange(calculateZ(0, 0));
+    data.updateDepthRange(calculateZ(m_state.size.width(), 0));
+    data.updateDepthRange(calculateZ(0, m_state.size.height()));
+    data.updateDepthRange(calculateZ(m_state.size.width(), m_state.size.height()));
+
     if (m_parent && m_parent->m_state.preserves3D)
-        m_centerZ = m_layerTransforms.combined.mapPoint(FloatPoint3D(m_state.size.width() / 2, m_state.size.height() / 2, 0)).z();
+        m_centerZ = calculateZ(m_state.size.width() / 2, m_state.size.height() / 2);
 
     if (m_state.maskLayer)
-        m_state.maskLayer->computeTransformsRecursive();
+        m_state.maskLayer->computeTransformsRecursive(data);
     if (m_state.replicaLayer)
-        m_state.replicaLayer->computeTransformsRecursive();
+        m_state.replicaLayer->computeTransformsRecursive(data);
     if (m_state.backdropLayer)
-        m_state.backdropLayer->computeTransformsRecursive();
+        m_state.backdropLayer->computeTransformsRecursive(data);
     for (auto* child : m_children) {
         ASSERT(child->m_parent == this);
-        child->computeTransformsRecursive();
+        child->computeTransformsRecursive(data);
     }
 
     // Reorder children if needed on the way back up.
@@ -137,7 +169,9 @@ void TextureMapperLayer::computeTransformsRecursive()
 
 void TextureMapperLayer::paint(TextureMapper& textureMapper)
 {
-    computeTransformsRecursive();
+    ComputeTransformData data;
+    computeTransformsRecursive(data);
+    textureMapper.setDepthRange(data.zNear, data.zFar);
 
     TextureMapperPaintOptions options(textureMapper);
     options.textureMapper.bindSurface(0);

@@ -38,41 +38,41 @@ enum class EventHandling : uint8_t {
 
 class PlatformEvent {
 public:
-    enum Type : uint8_t {
-        NoType = 0,
+    enum class Type : uint8_t {
+        NoType = 0
 
         // PlatformKeyboardEvent
-        KeyDown,
-        KeyUp,
-        RawKeyDown,
-        Char,
+        , KeyDown
+        , KeyUp
+        , RawKeyDown
+        , Char
 
         // PlatformMouseEvent
-        MouseMoved,
-        MousePressed,
-        MouseReleased,
-        MouseForceChanged,
-        MouseForceDown,
-        MouseForceUp,
-        MouseScroll,
+        , MouseMoved
+        , MousePressed
+        , MouseReleased
+        , MouseForceChanged
+        , MouseForceDown
+        , MouseForceUp
+        , MouseScroll
 
         // PlatformWheelEvent
-        Wheel,
+        , Wheel
 
 #if ENABLE(TOUCH_EVENTS)
         // PlatformTouchEvent
-        TouchStart,
-        TouchMove,
-        TouchEnd,
-        TouchCancel,
-        TouchForceChange,
+        , TouchStart
+        , TouchMove
+        , TouchEnd
+        , TouchCancel
+        , TouchForceChange
 #endif
 
 #if ENABLE(MAC_GESTURE_EVENTS)
         // PlatformGestureEvent
-        GestureStart,
-        GestureChange,
-        GestureEnd,
+        , GestureStart
+        , GestureChange
+        , GestureEnd
 #endif
     };
 
@@ -87,7 +87,7 @@ public:
         AltGraphKey = 1 << 5,
     };
 
-    Type type() const { return static_cast<Type>(m_type); }
+    Type type() const { return m_type; }
 
     bool shiftKey() const { return m_modifiers.contains(Modifier::ShiftKey); }
     bool controlKey() const { return m_modifiers.contains(Modifier::ControlKey); }
@@ -100,11 +100,11 @@ public:
 
 protected:
     PlatformEvent()
-        : m_type(NoType)
+        : m_type(Type::NoType)
     {
     }
 
-    explicit PlatformEvent(Type type)
+    explicit PlatformEvent(PlatformEvent::Type type)
         : m_type(type)
     {
     }
@@ -135,7 +135,7 @@ protected:
     ~PlatformEvent() = default;
 
     WallTime m_timestamp;
-    unsigned m_type;
+    Type m_type;
     OptionSet<Modifier> m_modifiers;
 };
 
@@ -154,5 +154,6 @@ template<> struct EnumTraits<WebCore::PlatformEvent::Modifier> {
         WebCore::PlatformEvent::Modifier::AltGraphKey
     >;
 };
+
 
 } // namespace WTF

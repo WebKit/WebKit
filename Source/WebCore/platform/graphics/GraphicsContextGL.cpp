@@ -27,7 +27,6 @@
 
 #include "config.h"
 #include "GraphicsContextGL.h"
-#include "GraphicsContextGLOpenGL.h"
 
 #if ENABLE(WEBGL)
 

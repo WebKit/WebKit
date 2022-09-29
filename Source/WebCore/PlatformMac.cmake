@@ -668,7 +668,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/FontFamilySpecificationCoreText.h
     platform/graphics/cocoa/FontFamilySpecificationCoreTextCache.h
     platform/graphics/cocoa/GraphicsContextGLCocoa.h
-    platform/graphics/cocoa/GraphicsContextGLOpenGL.h
     platform/graphics/cocoa/GraphicsContextGLIOSurfaceSwapChain.h
     platform/graphics/cocoa/IOSurface.h
     platform/graphics/cocoa/MediaPlaybackTargetContext.h

@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: Error: assert_equals: Declarative template content should be null expected null but got DocumentFragment node with 3 children
 CONSOLE MESSAGE: Error: assert_unreached: Unrecognized template Reached unreachable code
+CONSOLE MESSAGE: Error: assert_unreached: Unrecognized template Reached unreachable code
 
 Harness Error (FAIL), message = Error: assert_equals: Declarative template content should be null expected null but got DocumentFragment node with 3 children
 

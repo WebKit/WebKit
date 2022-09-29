@@ -259,8 +259,8 @@ void CSSValue::operator delete(CSSValue* value, std::destroying_delete_t)
 {
     value->visitDerived([](auto& value) {
         std::destroy_at(&value);
+        std::decay_t<decltype(value)>::freeAfterDestruction(&value);
     });
-    freeAfterDestruction(value);
 }
 
 Ref<DeprecatedCSSOMValue> CSSValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& styleDeclaration) const

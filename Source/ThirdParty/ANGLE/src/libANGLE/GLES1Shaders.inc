@@ -46,7 +46,9 @@
 constexpr char kGLES1DrawVShaderHeader[] = R"(#version 300 es
 precision highp float;
 
-#define kMaxTexUnits 4)";
+#define kMaxTexUnits 4
+#define kMaxLights   8
+)";
 
 constexpr char kGLES1DrawVShader[] = R"(
 
@@ -70,263 +72,6 @@ uniform float point_size_min;
 uniform float point_size_max;
 uniform vec3 point_distance_attenuation;
 
-// GL_OES_draw_texture uniforms/////////////////////////////////////////////////
-
-uniform vec4 draw_texture_coords;
-uniform vec2 draw_texture_dims;
-uniform vec4 draw_texture_normalized_crop_rect[kMaxTexUnits];
-
-// Varyings/////////////////////////////////////////////////////////////////////
-
-out vec4 pos_varying;
-out vec3 normal_varying;
-out vec4 color_varying;
-flat out vec4 color_varying_flat;
-out vec4 texcoord0_varying;
-out vec4 texcoord1_varying;
-out vec4 texcoord2_varying;
-out vec4 texcoord3_varying;
-
-const vec4 drawTextureVertices[6] = vec4[](
-    vec4(0.0, 0.0, 0.0, 1.0),
-    vec4(1.0, 0.0, 0.0, 1.0),
-    vec4(1.0, 1.0, 0.0, 1.0),
-    vec4(0.0, 0.0, 0.0, 1.0),
-    vec4(1.0, 1.0, 0.0, 1.0),
-    vec4(0.0, 1.0, 0.0, 1.0));
-
-vec4 drawTexturePosition(int vertexId)
-{
-
-    float drawTexX = draw_texture_coords[0];
-    float drawTexY = draw_texture_coords[1];
-    float drawTexZ = draw_texture_coords[2];
-    float drawTexW = draw_texture_dims[0];
-    float drawTexH = draw_texture_dims[1];
-
-    return vec4(drawTexX, drawTexY, drawTexZ, 0.0) +
-           drawTextureVertices[vertexId] *
-           vec4(drawTexW, drawTexH, 1.0, 1.0);
-}
-
-vec4 drawTextureTexCoord(int vertexId, int textureUnit)
-{
-    float texCropU = draw_texture_normalized_crop_rect[textureUnit].x;
-    float texCropV = draw_texture_normalized_crop_rect[textureUnit].y;
-    float texCropW = draw_texture_normalized_crop_rect[textureUnit].z;
-    float texCropH = draw_texture_normalized_crop_rect[textureUnit].w;
-
-    return vec4(texCropU, texCropV, 0.0, 0.0) +
-           drawTextureVertices[vertexId] *
-           vec4(texCropW, texCropH, 0.0, 0.0);
-}
-
-vec4 calcWorldPosition(vec4 posInput)
-{
-    return modelview * posInput;
-}
-
-vec4 calcNdcFromWorldPosition(vec4 worldPos)
-{
-    return projection * worldPos;
-}
-
-float calcPointSize(vec4 ndcPos)
-{
-    float dist         = length(ndcPos.z);
-    float attConst     = point_distance_attenuation[0];
-    float attLinear    = point_distance_attenuation[1];
-    float attQuad      = point_distance_attenuation[2];
-    float attPart      = attConst + attLinear * dist + attQuad * dist * dist;
-    float attPointSize = pointsize / pow(attPart, 0.5);
-
-    return clamp(attPointSize, point_size_min, point_size_max);
-}
-
-vec3 calcNormal(vec3 normalInput)
-{
-    mat3 mvInvTr3 = mat3(modelview_invtr);
-    vec3 result   = mvInvTr3 * normalInput;
-
-    if (enable_rescale_normal)
-    {
-        float rescale   = 1.0;
-        vec3 rescaleVec = vec3(mvInvTr3[2]);
-        float len       = length(rescaleVec);
-        if (len > 0.0)
-        {
-            rescale = 1.0 / len;
-        }
-        result *= rescale;
-    }
-
-    if (enable_normalize)
-    {
-        result = normalize(result);
-    }
-
-    return result;
-}
-
-void main()
-{
-    color_varying      = color;
-    color_varying_flat = color;
-
-    if (enable_draw_texture)
-    {
-        int vertexId        = gl_VertexID;
-        vec4 posDrawTexture = drawTexturePosition(vertexId);
-
-        gl_Position = posDrawTexture;
-        pos_varying = posDrawTexture;
-
-        normal_varying = normal;
-
-        gl_PointSize = pointsize;
-
-        texcoord0_varying = drawTextureTexCoord(vertexId, 0);
-        texcoord1_varying = drawTextureTexCoord(vertexId, 1);
-        texcoord2_varying = drawTextureTexCoord(vertexId, 2);
-        texcoord3_varying = drawTextureTexCoord(vertexId, 3);
-    }
-    else
-    {
-        vec4 worldPos = calcWorldPosition(pos);
-        vec4 ndcPos   = calcNdcFromWorldPosition(worldPos);
-
-        gl_Position = ndcPos;
-        pos_varying = worldPos;
-
-        normal_varying = calcNormal(normal);
-
-        // Avoid calculating point size stuff
-        // if we are not rendering points.
-        if (point_rasterization)
-        {
-            gl_PointSize = calcPointSize(ndcPos);
-        }
-        else
-        {
-            gl_PointSize = pointsize;
-        }
-
-        texcoord0_varying = texture_matrix[0] * texcoord0;
-        texcoord1_varying = texture_matrix[1] * texcoord1;
-        texcoord2_varying = texture_matrix[2] * texcoord2;
-        texcoord3_varying = texture_matrix[3] * texcoord3;
-    }
-}
-)";
-
-// version, flat,
-constexpr char kGLES1DrawFShaderHeader[] = R"(#version 300 es
-precision highp float;
-
-// Defines for GL constants
-#define kMaxLights                           8
-#define kMaxTexUnits                         4
-#define kMaxClipPlanes                       6
-
-#define kModulate                       0x2100
-#define kDecal                          0x2101
-#define kCombine                        0x8570
-#define kReplace                        0x1E01
-#define kBlend                          0x0BE2
-#define kAdd                            0x0104
-
-#define kAddSigned                      0x8574
-#define kInterpolate                    0x8575
-#define kSubtract                       0x84E7
-#define kDot3Rgb                        0x86AE
-#define kDot3Rgba                       0x86AF
-
-#define kAlpha                          0x1906
-#define kRGB                            0x1907
-#define kRGBA                           0x1908
-#define kLuminance                      0x1909
-#define kLuminanceAlpha                 0x190A
-
-#define kTexture                        0x1702
-#define kConstant                       0x8576
-#define kPrimaryColor                   0x8577
-#define kPrevious                       0x8578
-
-#define kSrcColor                       0x0300
-#define kOneMinusSrcColor               0x0301
-#define kSrcAlpha                       0x0302
-#define kOneMinusSrcAlpha               0x0303
-
-#define kLinear                         0x2601
-#define kExp                            0x0800
-#define kExp2                           0x0801
-
-#define kNever                          0x0200
-#define kLess                           0x0201
-#define kEqual                          0x0202
-#define kLequal                         0x0203
-#define kGreater                        0x0204
-#define kNotequal                       0x0205
-#define kGequal                         0x0206
-#define kAlways                         0x0207
-#define kZero                              0x0
-#define kOne                               0x1
-
-#define kClear                          0x1500
-#define kAnd                            0x1501
-#define kAnd_reverse                    0x1502
-#define kCopy                           0x1503
-#define kAnd_inverted                   0x1504
-#define kNoop                           0x1505
-#define kXor                            0x1506
-#define kOr                             0x1507
-#define kNor                            0x1508
-#define kEquiv                          0x1509
-#define kInvert                         0x150A
-#define kOr_reverse                     0x150B
-#define kCopy_inverted                  0x150C
-#define kOr_inverted                    0x150D
-#define kNand                           0x150E
-#define kSet                            0x150F)";
-
-constexpr char kGLES1DrawFShaderUniformDefs[] = R"(
-
-// Texture units ///////////////////////////////////////////////////////////////
-
-// These are not arrays because hw support for arrays
-// of samplers is rather lacking.
-
-uniform sampler2D tex_sampler0;
-uniform samplerCube tex_cube_sampler0;
-
-uniform sampler2D tex_sampler1;
-uniform samplerCube tex_cube_sampler1;
-
-uniform sampler2D tex_sampler2;
-uniform samplerCube tex_cube_sampler2;
-
-uniform sampler2D tex_sampler3;
-uniform samplerCube tex_cube_sampler3;
-
-uniform vec4 texture_env_color[kMaxTexUnits];
-uniform float texture_env_rgb_scale[kMaxTexUnits];
-uniform float texture_env_alpha_scale[kMaxTexUnits];
-
-// Vertex attributes////////////////////////////////////////////////////////////
-
-in vec4 pos_varying;
-in vec3 normal_varying;
-in vec4 color_varying;
-flat in vec4 color_varying_flat;
-in vec4 texcoord0_varying;
-in vec4 texcoord1_varying;
-in vec4 texcoord2_varying;
-in vec4 texcoord3_varying;
-
-// Alpha test///////////////////////////////////////////////////////////////////
-
-uniform float alpha_test_ref;
-
 // Shading: flat shading, lighting, and materials///////////////////////////////
 
 uniform vec4 material_ambient;
@@ -348,42 +93,37 @@ uniform float light_attenuation_consts[kMaxLights];
 uniform float light_attenuation_linears[kMaxLights];
 uniform float light_attenuation_quadratics[kMaxLights];
 
-// Fog /////////////////////////////////////////////////////////////////////////
+// GL_OES_draw_texture uniforms/////////////////////////////////////////////////
 
-uniform float fog_density;
-uniform float fog_start;
-uniform float fog_end;
-uniform vec4 fog_color;
+uniform vec4 draw_texture_coords;
+uniform vec2 draw_texture_dims;
+uniform vec4 draw_texture_normalized_crop_rect[kMaxTexUnits];
 
-// User clip plane /////////////////////////////////////////////////////////////
+// Varyings/////////////////////////////////////////////////////////////////////
 
-uniform vec4 clip_planes[kMaxClipPlanes];
-
-// Point rasterization//////////////////////////////////////////////////////////
-
-// GL_OES_draw_texture//////////////////////////////////////////////////////////
-
-// Outgoing fragment////////////////////////////////////////////////////////////
-
-out vec4 frag_color;
-)";
-
-constexpr char kGLES1DrawFShaderFunctions[] = R"(
+out vec4 pos_varying;
+out vec3 normal_varying;
+out vec4 color_varying;
+flat out vec4 color_varying_flat;
+out vec4 texcoord0_varying;
+out vec4 texcoord1_varying;
+out vec4 texcoord2_varying;
+out vec4 texcoord3_varying;
 
 float posDot(vec3 a, vec3 b)
 {
     return max(dot(a, b), 0.0);
 }
 
-vec4 doLighting(vec4 currentFragment)
+vec4 doLighting(vec4 vertexColor)
 {
     vec4 materialAmbientActual = material_ambient;
     vec4 materialDiffuseActual = material_diffuse;
 
-    if (enable_color_material || enable_texture_2d[0] || enable_texture_cube_map[0])
+    if (enable_color_material)
     {
-        materialAmbientActual = currentFragment;
-        materialDiffuseActual = currentFragment;
+        materialAmbientActual = vertexColor;
+        materialDiffuseActual = vertexColor;
     }
 
     vec4 lightingResult = material_emissive + materialAmbientActual * light_model_scene_ambient;
@@ -487,6 +227,293 @@ vec4 doLighting(vec4 currentFragment)
     return lightingResult;
 }
 
+const vec4 drawTextureVertices[6] = vec4[](
+    vec4(0.0, 0.0, 0.0, 1.0),
+    vec4(1.0, 0.0, 0.0, 1.0),
+    vec4(1.0, 1.0, 0.0, 1.0),
+    vec4(0.0, 0.0, 0.0, 1.0),
+    vec4(1.0, 1.0, 0.0, 1.0),
+    vec4(0.0, 1.0, 0.0, 1.0));
+
+vec4 drawTexturePosition(int vertexId)
+{
+
+    float drawTexX = draw_texture_coords[0];
+    float drawTexY = draw_texture_coords[1];
+    float drawTexZ = draw_texture_coords[2];
+    float drawTexW = draw_texture_dims[0];
+    float drawTexH = draw_texture_dims[1];
+
+    return vec4(drawTexX, drawTexY, drawTexZ, 0.0) +
+           drawTextureVertices[vertexId] *
+           vec4(drawTexW, drawTexH, 1.0, 1.0);
+}
+
+vec4 drawTextureTexCoord(int vertexId, int textureUnit)
+{
+    float texCropU = draw_texture_normalized_crop_rect[textureUnit].x;
+    float texCropV = draw_texture_normalized_crop_rect[textureUnit].y;
+    float texCropW = draw_texture_normalized_crop_rect[textureUnit].z;
+    float texCropH = draw_texture_normalized_crop_rect[textureUnit].w;
+
+    return vec4(texCropU, texCropV, 0.0, 0.0) +
+           drawTextureVertices[vertexId] *
+           vec4(texCropW, texCropH, 0.0, 0.0);
+}
+
+vec4 calcWorldPosition(vec4 posInput)
+{
+    return modelview * posInput;
+}
+
+vec4 calcNdcFromWorldPosition(vec4 worldPos)
+{
+    return projection * worldPos;
+}
+
+float calcPointSize(vec4 ndcPos)
+{
+    float dist         = length(ndcPos.z);
+    float attConst     = point_distance_attenuation[0];
+    float attLinear    = point_distance_attenuation[1];
+    float attQuad      = point_distance_attenuation[2];
+    float attPart      = attConst + attLinear * dist + attQuad * dist * dist;
+    float attPointSize = pointsize / pow(attPart, 0.5);
+
+    return clamp(attPointSize, point_size_min, point_size_max);
+}
+
+vec3 calcNormal(vec3 normalInput)
+{
+    mat3 mvInvTr3 = mat3(modelview_invtr);
+    vec3 result   = mvInvTr3 * normalInput;
+
+    if (enable_rescale_normal)
+    {
+        float rescale   = 1.0;
+        vec3 rescaleVec = vec3(mvInvTr3[2]);
+        float len       = length(rescaleVec);
+        if (len > 0.0)
+        {
+            rescale = 1.0 / len;
+        }
+        result *= rescale;
+    }
+
+    if (enable_normalize)
+    {
+        result = normalize(result);
+    }
+
+    return result;
+}
+
+void main()
+{
+    if (enable_draw_texture)
+    {
+        int vertexId        = gl_VertexID;
+        vec4 posDrawTexture = drawTexturePosition(vertexId);
+
+        gl_Position = posDrawTexture;
+        pos_varying = posDrawTexture;
+
+        normal_varying = normal;
+
+        gl_PointSize = pointsize;
+
+        texcoord0_varying = drawTextureTexCoord(vertexId, 0);
+        texcoord1_varying = drawTextureTexCoord(vertexId, 1);
+        texcoord2_varying = drawTextureTexCoord(vertexId, 2);
+        texcoord3_varying = drawTextureTexCoord(vertexId, 3);
+    }
+    else
+    {
+        vec4 worldPos = calcWorldPosition(pos);
+        vec4 ndcPos   = calcNdcFromWorldPosition(worldPos);
+
+        gl_Position = ndcPos;
+        pos_varying = worldPos;
+
+        normal_varying = calcNormal(normal);
+
+        // Avoid calculating point size stuff
+        // if we are not rendering points.
+        if (point_rasterization)
+        {
+            gl_PointSize = calcPointSize(ndcPos);
+        }
+        else
+        {
+            gl_PointSize = pointsize;
+        }
+
+        texcoord0_varying = texture_matrix[0] * texcoord0;
+        texcoord1_varying = texture_matrix[1] * texcoord1;
+        texcoord2_varying = texture_matrix[2] * texcoord2;
+        texcoord3_varying = texture_matrix[3] * texcoord3;
+    }
+
+    vec4 vertex_color = color;
+
+    if (enable_lighting)
+    {
+        vertex_color = doLighting(color);
+    }
+
+    vertex_color = clamp(vertex_color, vec4(0), vec4(1));
+
+    color_varying      = vertex_color;
+    color_varying_flat = vertex_color;
+}
+)";
+
+constexpr char kGLES1DrawFShaderVersion[] = R"(#version 300 es
+)";
+
+constexpr char kGLES1DrawFShaderHeader[] = R"(precision highp float;
+
+// Defines for GL constants
+#define kMaxTexUnits                         4
+#define kMaxClipPlanes                       6
+
+#define kModulate                       0x2100
+#define kDecal                          0x2101
+#define kCombine                        0x8570
+#define kReplace                        0x1E01
+#define kBlend                          0x0BE2
+#define kAdd                            0x0104
+
+#define kAddSigned                      0x8574
+#define kInterpolate                    0x8575
+#define kSubtract                       0x84E7
+#define kDot3Rgb                        0x86AE
+#define kDot3Rgba                       0x86AF
+
+#define kAlpha                          0x1906
+#define kRGB                            0x1907
+#define kRGBA                           0x1908
+#define kLuminance                      0x1909
+#define kLuminanceAlpha                 0x190A
+
+#define kTexture                        0x1702
+#define kConstant                       0x8576
+#define kPrimaryColor                   0x8577
+#define kPrevious                       0x8578
+
+#define kSrcColor                       0x0300
+#define kOneMinusSrcColor               0x0301
+#define kSrcAlpha                       0x0302
+#define kOneMinusSrcAlpha               0x0303
+
+#define kLinear                         0x2601
+#define kExp                            0x0800
+#define kExp2                           0x0801
+
+#define kNever                          0x0200
+#define kLess                           0x0201
+#define kEqual                          0x0202
+#define kLequal                         0x0203
+#define kGreater                        0x0204
+#define kNotequal                       0x0205
+#define kGequal                         0x0206
+#define kAlways                         0x0207
+#define kZero                              0x0
+#define kOne                               0x1
+
+#define kAnd                            0u
+#define kAndInverted                    1u
+#define kAndReverse                     2u
+#define kClear                          3u
+#define kCopy                           4u
+#define kCopyInverted                   5u
+#define kEquiv                          6u
+#define kInvert                         7u
+#define kNand                           8u
+#define kNoop                           9u
+#define kNor                            10u
+#define kOr                             11u
+#define kOrInverted                     12u
+#define kOrReverse                      13u
+#define kSet                            14u
+#define kXor                            15u
+)";
+
+constexpr char kGLES1DrawFShaderUniformDefs[] = R"(
+
+// Texture units ///////////////////////////////////////////////////////////////
+
+// These are not arrays because hw support for arrays
+// of samplers is rather lacking.
+
+uniform sampler2D tex_sampler0;
+uniform samplerCube tex_cube_sampler0;
+
+uniform sampler2D tex_sampler1;
+uniform samplerCube tex_cube_sampler1;
+
+uniform sampler2D tex_sampler2;
+uniform samplerCube tex_cube_sampler2;
+
+uniform sampler2D tex_sampler3;
+uniform samplerCube tex_cube_sampler3;
+
+uniform vec4 texture_env_color[kMaxTexUnits];
+uniform float texture_env_rgb_scale[kMaxTexUnits];
+uniform float texture_env_alpha_scale[kMaxTexUnits];
+
+// Vertex attributes////////////////////////////////////////////////////////////
+
+in vec4 pos_varying;
+in vec3 normal_varying;
+in vec4 color_varying;
+flat in vec4 color_varying_flat;
+in vec4 texcoord0_varying;
+in vec4 texcoord1_varying;
+in vec4 texcoord2_varying;
+in vec4 texcoord3_varying;
+
+// Alpha test///////////////////////////////////////////////////////////////////
+
+uniform float alpha_test_ref;
+
+// Fog /////////////////////////////////////////////////////////////////////////
+
+uniform float fog_density;
+uniform float fog_start;
+uniform float fog_end;
+uniform vec4 fog_color;
+
+// User clip plane /////////////////////////////////////////////////////////////
+
+uniform vec4 clip_planes[kMaxClipPlanes];
+
+// Logic Op ////////////////////////////////////////////////////////////////////
+
+// Format is:
+// - 4x4 bits depicting the bit width of each channel of color output
+// - 4 bits for the op based on LogicalOperation's packing
+uniform highp uint logic_op;
+
+// Point rasterization//////////////////////////////////////////////////////////
+
+// GL_OES_draw_texture//////////////////////////////////////////////////////////
+)";
+
+constexpr char kGLES1DrawFShaderOutputDef[] = R"(
+out vec4 frag_color;
+)";
+
+constexpr char kGLES1DrawFShaderFramebufferFetchOutputDef[] = R"(
+inout vec4 frag_color;
+)";
+
+constexpr char kGLES1DrawFShaderFramebufferFetchNonCoherentOutputDef[] = R"(
+layout(noncoherent) inout vec4 frag_color;
+)";
+
+constexpr char kGLES1DrawFShaderFunctions[] = R"(
+
 bool doAlphaTest(vec4 currentFragment)
 {
     bool shouldPassAlpha = false;
@@ -560,10 +587,101 @@ vec4 doFog(vec4 currentFragment)
             break;
     }
 
-    vec4 result = f * currentFragment + (1.0 - f) * fog_color;
+    f = clamp(f, 0.0, 1.0);
+    vec4 result = vec4(f * currentFragment.rgb + (1.0 - f) * fog_color.rgb, currentFragment.a);
     return result;
 }
+)";
 
+constexpr char kGLES1DrawFShaderLogicOpFramebufferFetchDisabled[] = R"(
+vec4 applyLogicOp(vec4 currentFragment)
+{
+    return currentFragment;
+}
+)";
+
+// applyLogicOp takes logic-op information from a packed uniform and applies it to the color
+// attachment using framebuffer fetch.  See the description of logic_op above for the format of the
+// uniform.
+//
+// In particular, 4 bits in logic_op (at offset 16) contain the packed logical operation (of
+// LogicalOperation type).  Based on the selected operation, the formula specified in the spec is
+// applied (applied as bitwise operations on unorm values).
+constexpr char kGLES1DrawFShaderLogicOpFramebufferFetchEnabled[] = R"(
+vec4 applyLogicOp(vec4 currentFragment)
+{
+    vec4 previousFragment = frag_color;
+
+    mediump uvec4 channelWidths = uvec4(logic_op & 0xFu,
+                                        logic_op >> 4u & 0xFu,
+                                        logic_op >> 8u & 0xFu,
+                                        logic_op >> 12u & 0xFu);
+
+    mediump uvec4 channelMasks = (uvec4(1) << channelWidths) - 1u;
+
+    mediump uvec4 src = uvec4(round(currentFragment * vec4(channelMasks)));
+    mediump uvec4 dst = uvec4(round(previousFragment * vec4(channelMasks)));
+    mediump uvec4 result;
+
+    switch (logic_op >> 16u & 0xFu)
+    {
+        case kAnd:
+            result = src & dst;
+            break;
+        case kAndInverted:
+            result = ~src & dst;
+            break;
+        case kAndReverse:
+            result = src & ~dst;
+            break;
+        case kClear:
+            result = uvec4(0);
+            break;
+        case kCopy:
+            result = src;
+            break;
+        case kCopyInverted:
+            result = ~src;
+            break;
+        case kEquiv:
+            result = ~(src ^ dst);
+            break;
+        case kInvert:
+            result = ~dst;
+            break;
+        case kNand:
+            result = ~(src & dst);
+            break;
+        case kNoop:
+            result = dst;
+            break;
+        case kNor:
+            result = ~(src | dst);
+            break;
+        case kOr:
+            result = src | dst;
+            break;
+        case kOrInverted:
+            result = ~src | dst;
+            break;
+        case kOrReverse:
+            result = src | ~dst;
+            break;
+        case kSet:
+            result = channelMasks;
+            break;
+        case kXor:
+            result = src ^ dst;
+            break;
+    }
+
+    result &= channelMasks;
+
+    // Avoid division by zero for formats without alpha
+    channelMasks.a = max(channelMasks.a, 1u);
+
+    return vec4(result) / vec4(channelMasks);
+}
 )";
 
 constexpr char kGLES1DrawFShaderMultitexturing[] = R"(
@@ -1049,7 +1167,6 @@ void main()
         }
     }
 
-    vec4 currentFragment;
     vec4 vertex_color;
 
     if (shade_model_flat)
@@ -1061,7 +1178,7 @@ void main()
         vertex_color = color_varying;
     }
 
-    currentFragment = vertex_color;
+    vec4 currentFragment = vertex_color;
 
     vec4 texturePrevColor = currentFragment;
 
@@ -1086,11 +1203,6 @@ void main()
         texturePrevColor = currentFragment;
     }
 
-    if (enable_lighting)
-    {
-        currentFragment = doLighting(currentFragment);
-    }
-
     if (enable_fog)
     {
         currentFragment = doFog(currentFragment);
@@ -1101,6 +1213,6 @@ void main()
         discard;
     }
 
-    frag_color = currentFragment;
+    frag_color = applyLogicOp(currentFragment);
 }
 )";

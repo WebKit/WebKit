@@ -29,22 +29,10 @@
 
 #if ENABLE(WEBXR)
 
-#if !USE(ANGLE)
-#include "ExtensionsGLOpenGLCommon.h"
-#if USE(OPENGL_ES)
-#include "ExtensionsGLOpenGLES.h"
-#include "GraphicsContextGLOpenGL.h"
-#else
-#include "ExtensionsGLOpenGL.h"
-#endif
-#include "GraphicsContextGL.h"
-#endif
 #include "IntSize.h"
-#if !USE(ANGLE)
-#include "TemporaryOpenGLSetting.h"
-#endif
 #include "WebGLFramebuffer.h"
 #include "WebGLRenderingContext.h"
+
 #if ENABLE(WEBGL2)
 #include "WebGL2RenderingContext.h"
 #endif
@@ -177,15 +165,6 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
 #else
     m_opaqueTexture = data.opaqueTexture;
-
-#if USE(OPENGL_ES) && !USE(ANGLE)
-    auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
-    if (m_attributes.antialias && extensions.isImagination()) {
-        extensions.framebufferTexture2DMultisampleIMG(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0, m_sampleCount);
-        return;
-    }
-#endif
-
     if (!m_multisampleColorBuffer)
         gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::TEXTURE_2D, m_opaqueTexture, 0);
 #endif
@@ -201,13 +180,12 @@ void WebXROpaqueFramebuffer::endFrame()
     auto& gl = *m_context.graphicsContextGL();
 
     if (m_multisampleColorBuffer) {
-#if !USE(ANGLE)
         // FIXME: These may be needed when using ANGLE, but it didn't compile in the initial implementation.
-        TemporaryOpenGLSetting scopedScissor(GL::SCISSOR_TEST, 0);
-        TemporaryOpenGLSetting scopedDither(GL::DITHER, 0);
-        TemporaryOpenGLSetting scopedDepth(GL::DEPTH_TEST, 0);
-        TemporaryOpenGLSetting scopedStencil(GL::STENCIL_TEST, 0);
-#endif
+        // https://bugs.webkit.org/show_bug.cgi?id=245210
+        // TemporaryOpenGLSetting scopedScissor(GL::SCISSOR_TEST, 0);
+        // TemporaryOpenGLSetting scopedDither(GL::DITHER, 0);
+        // TemporaryOpenGLSetting scopedDepth(GL::DEPTH_TEST, 0);
+        // TemporaryOpenGLSetting scopedStencil(GL::STENCIL_TEST, 0);
 
         GCGLint boundFBO { 0 };
         GCGLint boundReadFBO { 0 };
@@ -269,67 +247,18 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
 
     // Set up color, depth and stencil formats
     bool hasDepthOrStencil = m_attributes.stencil || m_attributes.depth;
-#if USE(ANGLE)
     bool platformSupportsPackedDepthStencil = true;
     auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
     auto stencilFormat = GL::STENCIL_INDEX8;
-#elif USE(OPENGL_ES)
-    auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
-    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_OES_packed_depth_stencil"_s);
-    auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT16;
-    auto stencilFormat = GL::STENCIL_INDEX8;
-#else
-    auto& extensions = reinterpret_cast<GraphicsContextGLOpenGL&>(gl).getExtensions();
-    bool platformSupportsPackedDepthStencil = hasDepthOrStencil && extensions.supports("GL_EXT_packed_depth_stencil"_s);
-    auto depthFormat = platformSupportsPackedDepthStencil ? GL::DEPTH24_STENCIL8 : GL::DEPTH_COMPONENT;
-    auto stencilFormat = GL::STENCIL_COMPONENT;
-#endif
 
     // Set up recommended samples for WebXR.
     // FIXME: check if we can get recommended values from each device platform.
     if (m_attributes.antialias) {
         GCGLint maxSampleCount;
-#if USE(ANGLE)
         gl.getIntegerv(GL::MAX_SAMPLES, makeGCGLSpan(&maxSampleCount, 1));
-#else
-        gl.getIntegerv(GraphicsContextGL::MAX_SAMPLES, makeGCGLSpan(&maxSampleCount, 1));
-#endif
         // Cap the maxiumum multisample count at 4. Any more than this is likely overkill and will impact performance.
         m_sampleCount = std::min(4, maxSampleCount);
     }
-
-#if USE(OPENGL_ES) && !USE(ANGLE)
-    // Use multisampled_render_to_texture extension if available.
-    if (m_attributes.antialias && extensions.isImagination()) {
-        // framebufferTexture2DMultisampleIMG is set up in startFrame call.
-        if (!hasDepthOrStencil)
-            return true;
-        
-        gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
-        m_depthStencilBuffer = gl.createRenderbuffer();
-        if (platformSupportsPackedDepthStencil) {
-            gl.bindRenderbuffer(GL::RENDERBUFFER, m_depthStencilBuffer);
-            extensions.renderbufferStorageMultisampleANGLE(GL::RENDERBUFFER, m_sampleCount, depthFormat, m_width, m_height);
-            if (m_attributes.stencil)
-                gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
-            if (m_attributes.depth)
-                gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
-        } else {
-            if (m_attributes.stencil) {
-                m_stencilBuffer = gl.createRenderbuffer();
-                gl.bindRenderbuffer(GL::RENDERBUFFER, m_stencilBuffer);
-                extensions.renderbufferStorageMultisampleANGLE(GL::RENDERBUFFER, m_sampleCount, stencilFormat, m_width, m_height);
-                gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::STENCIL_ATTACHMENT, GL::RENDERBUFFER, m_stencilBuffer);
-            }
-            if (m_attributes.depth) {
-                gl.bindRenderbuffer(GL::RENDERBUFFER, m_depthStencilBuffer);
-                extensions.renderbufferStorageMultisampleANGLE(GL::RENDERBUFFER, m_sampleCount, depthFormat, m_width, m_height);
-                gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::DEPTH_ATTACHMENT, GL::RENDERBUFFER, m_depthStencilBuffer);
-            }
-        }
-        return true;
-    }
-#endif // USE(OPENGL_ES)
 
     if (m_attributes.antialias && m_context.isWebGL2()) {
         m_resolvedFBO = gl.createFramebuffer();

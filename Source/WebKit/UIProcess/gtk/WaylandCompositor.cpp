@@ -42,9 +42,7 @@
 #if USE(OPENGL_ES)
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <WebCore/ExtensionsGLOpenGLES.h>
 #else
-#include <WebCore/ExtensionsGLOpenGL.h>
 #include <WebCore/OpenGLShims.h>
 #endif
 

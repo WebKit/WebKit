@@ -30,7 +30,6 @@
 #include "APIFrameHandle.h"
 #include "APIFrameInfo.h"
 #include "WKAPICast.h"
-#include "WebCertificateInfo.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 
@@ -99,7 +98,7 @@ WKPageRef WKFrameGetPage(WKFrameRef frameRef)
 
 WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
 {
-    return toAPI(toImpl(frameRef)->certificateInfo());
+    return nullptr;
 }
 
 bool WKFrameCanProvideSource(WKFrameRef frameRef)

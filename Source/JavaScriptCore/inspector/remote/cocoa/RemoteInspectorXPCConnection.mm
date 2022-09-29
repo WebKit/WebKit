@@ -28,6 +28,7 @@
 
 #if ENABLE(REMOTE_INSPECTOR)
 
+#import "JSCInlines.h"
 #import <Foundation/Foundation.h>
 #import <mutex>
 #import <wtf/Assertions.h>

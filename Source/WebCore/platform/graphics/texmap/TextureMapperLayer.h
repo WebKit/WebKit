@@ -111,7 +111,9 @@ private:
             return m_parent->rootLayer();
         return const_cast<TextureMapperLayer&>(*this);
     }
-    void computeTransformsRecursive();
+
+    struct ComputeTransformData;
+    void computeTransformsRecursive(ComputeTransformData&);
 
     static void sortByZOrder(Vector<TextureMapperLayer* >& array);
 

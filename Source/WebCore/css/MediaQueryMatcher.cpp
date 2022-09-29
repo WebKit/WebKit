@@ -119,8 +119,11 @@ void MediaQueryMatcher::evaluateAll(EventMode eventMode)
 
     auto mediaQueryLists = m_mediaQueryLists;
     for (auto& list : mediaQueryLists) {
-        if (RefPtr protectedList = list.get())
+        if (RefPtr protectedList = list.get()) {
             protectedList->evaluate(evaluator, eventMode);
+            if (!m_document)
+                break;
+        }
     }
 }
 

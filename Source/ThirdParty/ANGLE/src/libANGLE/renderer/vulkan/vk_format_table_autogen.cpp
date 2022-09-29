@@ -1142,6 +1142,76 @@ void Format::initialize(RendererVk *renderer, const angle::Format &angleFormat)
             mVertexLoadRequiresConversion  = false;
             break;
 
+        case angle::FormatID::PALETTE4_R4G4B4A4_UNORM:
+            mIntendedGLFormat              = GL_PALETTE4_RGBA4_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE4_R5G5B5A1_UNORM:
+            mIntendedGLFormat              = GL_PALETTE4_RGB5_A1_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE4_R5G6B5_UNORM:
+            mIntendedGLFormat              = GL_PALETTE4_R5_G6_B5_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE4_R8G8B8A8_UNORM:
+            mIntendedGLFormat              = GL_PALETTE4_RGBA8_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE4_R8G8B8_UNORM:
+            mIntendedGLFormat              = GL_PALETTE4_RGB8_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE8_R4G4B4A4_UNORM:
+            mIntendedGLFormat              = GL_PALETTE8_RGBA4_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE8_R5G5B5A1_UNORM:
+            mIntendedGLFormat              = GL_PALETTE8_RGB5_A1_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE8_R5G6B5_UNORM:
+            mIntendedGLFormat              = GL_PALETTE8_R5_G6_B5_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE8_R8G8B8A8_UNORM:
+            mIntendedGLFormat              = GL_PALETTE8_RGBA8_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
+        case angle::FormatID::PALETTE8_R8G8B8_UNORM:
+            mIntendedGLFormat              = GL_PALETTE8_RGB8_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8B8A8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
         case angle::FormatID::PVRTC1_RGBA_2BPP_UNORM_BLOCK:
             // This format is not implemented in Vulkan.
             break;

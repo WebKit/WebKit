@@ -264,6 +264,9 @@ void StructureStubInfo::reset(const ConcurrentJSLockerBase& locker, CodeBlock* c
     case AccessType::GetPrivateName:
         resetGetBy(codeBlock, *this, GetByKind::PrivateName);
         break;
+    case AccessType::GetPrivateNameById:
+        resetGetBy(codeBlock, *this, GetByKind::PrivateNameById);
+        break;
     case AccessType::PutById:
         resetPutBy(codeBlock, *this, PutByKind::ById);
         break;
@@ -445,6 +448,8 @@ static CodePtr<OperationPtrTag> slowOperationFromUnlinkedStructureStubInfo(const
         return operationHasPrivateBrandOptimize;
     case AccessType::GetPrivateName:
         return operationGetPrivateNameOptimize;
+    case AccessType::GetPrivateNameById:
+        return operationGetPrivateNameByIdOptimize;
     case AccessType::PutById:
         switch (unlinkedStubInfo.putKind) {
         case PutKind::NotDirect:
@@ -589,6 +594,7 @@ void StructureStubInfo::initializeFromUnlinkedStructureStubInfo(const BaselineUn
     case AccessType::TryGetById:
     case AccessType::GetByIdDirect:
     case AccessType::GetById:
+    case AccessType::GetPrivateNameById:
         hasConstantIdentifier = true;
         m_extraGPR = InvalidGPRReg;
         m_baseGPR = BaselineJITRegisters::GetById::baseJSR.payloadGPR();

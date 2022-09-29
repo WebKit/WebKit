@@ -741,6 +741,8 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
         if (select->usesMenuList()) {
             if (!isOptionElement)
                 return nullptr;
+            if (!select->renderer())
+                return nullptr;
             object = AccessibilityMenuListOption::create(downcast<HTMLOptionElement>(*node));
         } else
             object = AccessibilityListBoxOption::create(downcast<HTMLElement>(*node));

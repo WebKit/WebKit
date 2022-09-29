@@ -490,6 +490,33 @@ std::optional<double> maximumRoundingIncrement(TemporalUnit unit)
     return 1000;
 }
 
+static double doubleNumberOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, double defaultValue)
+{
+    // https://tc39.es/proposal-temporal/#sec-getoption
+    // 'number' case.
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!options)
+        return defaultValue;
+
+    JSValue value = options->get(globalObject, property);
+    RETURN_IF_EXCEPTION(scope, 0);
+
+    if (value.isUndefined())
+        return defaultValue;
+
+    double doubleValue = value.toNumber(globalObject);
+    RETURN_IF_EXCEPTION(scope, 0);
+
+    if (std::isnan(doubleValue)) {
+        throwRangeError(globalObject, scope, *property.publicName() + " is NaN"_s);
+        return 0;
+    }
+
+    return doubleValue;
+}
+
 // ToTemporalRoundingIncrement ( normalizedOptions, dividend, inclusive )
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalroundingincrement
 double temporalRoundingIncrement(JSGlobalObject* globalObject, JSObject* options, std::optional<double> dividend, bool inclusive)
@@ -507,8 +534,13 @@ double temporalRoundingIncrement(JSGlobalObject* globalObject, JSObject* options
     else
         maximum = 1;
 
-    double increment = intlNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1, maximum, 1);
+    double increment = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
     RETURN_IF_EXCEPTION(scope, 0);
+
+    if (increment < 1 || increment > maximum) {
+        throwRangeError(globalObject, scope, "roundingIncrement is out of range"_s);
+        return 0;
+    }
 
     increment = std::floor(increment);
     if (dividend && std::fmod(dividend.value(), increment)) {

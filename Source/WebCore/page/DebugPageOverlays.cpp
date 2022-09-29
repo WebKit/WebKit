@@ -578,7 +578,7 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
         if (!rectForSettingAtIndex(i).contains(eventInContentsCoordinates))
             continue;
         cursorToSet = handCursor();
-        if (event.button() == LeftButton && event.type() == PlatformEvent::MousePressed) {
+        if (event.button() == LeftButton && event.type() == PlatformEvent::Type::MousePressed) {
             m_settings[i].value = !m_settings[i].value;
             m_page.forceRepaintAllFrames();
             return true;
@@ -591,7 +591,7 @@ bool InteractionRegionOverlay::mouseEvent(PageOverlay& overlay, const PlatformMo
     m_mouseLocationInContentCoordinates = eventInContentsCoordinates;
     overlay.setNeedsDisplay();
 
-    if (event.type() == PlatformEvent::MouseMoved && !event.buttons() && !valueForSetting("hover"_s))
+    if (event.type() == PlatformEvent::Type::MouseMoved && !event.buttons() && !valueForSetting("hover"_s))
         return true;
 
     return false;

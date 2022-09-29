@@ -10,6 +10,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/ErrorStrings.h"
 #include "libANGLE/MemoryObject.h"
+#include "libANGLE/PixelLocalStorage.h"
 #include "libANGLE/validationES.h"
 #include "libANGLE/validationES2.h"
 #include "libANGLE/validationES3.h"
@@ -1567,6 +1568,479 @@ bool ValidateImportSemaphoreZirconHandleANGLE(const Context *context,
     return true;
 }
 
+namespace
+{
+enum class PLSExpectedStatus : bool
+{
+    Inactive,
+    Active
+};
+
+bool ValidatePLSCommon(const Context *context,
+                       angle::EntryPoint entryPoint,
+                       PLSExpectedStatus expectedStatus)
+{
+    // Check that the pixel local storage extension is enabled at all.
+    if (!context->getExtensions().shaderPixelLocalStorageANGLE)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSExtensionNotEnabled);
+        return false;
+    }
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if the default framebuffer object name 0 is
+    // bound to DRAW_FRAMEBUFFER.
+    if (context->getState().getDrawFramebuffer()->id().value == 0)
+    {
+        context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
+                                 kPLSDefaultFramebufferBound);
+        return false;
+    }
+
+    if (expectedStatus == PLSExpectedStatus::Inactive)
+    {
+        // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_ANGLE is TRUE.
+        if (context->getState().getPixelLocalStorageActive())
+        {
+            context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSActive);
+            return false;
+        }
+    }
+    else
+    {
+        ASSERT(expectedStatus == PLSExpectedStatus::Active);
+
+        // INVALID_OPERATION is generated if PIXEL_LOCAL_STORAGE_ACTIVE_ANGLE is FALSE.
+        if (!context->getState().getPixelLocalStorageActive())
+        {
+            context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSInactive);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ValidatePLSCommon(const Context *context, angle::EntryPoint entryPoint, GLint plane)
+{
+    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Inactive))
+    {
+        return false;
+    }
+
+    // INVALID_VALUE is generated if <plane> < 0 or <plane> >= MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
+    if (plane < 0)
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSPlaneLessThanZero);
+        return false;
+    }
+    if (plane >= static_cast<GLint>(context->getCaps().maxPixelLocalStoragePlanes))
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSPlaneOutOfRange);
+        return false;
+    }
+
+    return true;
+}
+
+bool ValidatePLSInternalformat(const Context *context,
+                               angle::EntryPoint entryPoint,
+                               GLenum internalformat)
+{
+    // INVALID_ENUM is generated if <internalformat> is not one of the acceptable values in Table
+    // X.2, or NONE.
+    switch (internalformat)
+    {
+        case GL_RGBA8:
+        case GL_RGBA8I:
+        case GL_RGBA8UI:
+        case GL_R32F:
+        case GL_R32UI:
+            return true;
+        default:
+            context->validationError(entryPoint, GL_INVALID_ENUM, kPLSInvalidInternalformat);
+            return false;
+    }
+}
+
+bool ValidatePLSTextureType(const Context *context,
+                            angle::EntryPoint entryPoint,
+                            Texture *tex,
+                            size_t *textureDepth)
+{
+    // INVALID_ENUM is generated if <backingtexture> is nonzero and not of type GL_TEXTURE_2D,
+    // GL_TEXTURE_CUBE_MAP, GL_TEXTURE_2D_ARRAY, or GL_TEXTURE_3D.
+    switch (tex->getType())
+    {
+        case TextureType::_2D:
+            *textureDepth = 1;
+            return true;
+        case TextureType::CubeMap:
+            *textureDepth = 6;
+            return true;
+        case TextureType::_2DArray:
+            *textureDepth = tex->getDepth(TextureTarget::_2DArray, 0);
+            return true;
+        case TextureType::_3D:
+            *textureDepth = tex->getDepth(TextureTarget::_3D, 0);
+            return true;
+        default:
+            context->validationError(entryPoint, GL_INVALID_ENUM, kPLSInvalidTextureType);
+            return false;
+    }
+}
+
+bool ValidatePLSLoadOperation(const Context *context, angle::EntryPoint entryPoint, GLenum loadop)
+{
+    // INVALID_ENUM is generated if <loadops>[0..<planes>-1] is not one of the Load Operations
+    // enumerated in Table X.1.
+    switch (loadop)
+    {
+        case GL_ZERO:
+        case GL_CLEAR_ANGLE:
+        case GL_KEEP:
+        case GL_DONT_CARE:
+        case GL_DISABLE_ANGLE:
+            return true;
+        default:
+            context->validationError(entryPoint, GL_INVALID_ENUM, kPLSInvalidLoadOperation);
+            return false;
+    }
+}
+}  // namespace
+
+bool ValidateFramebufferMemorylessPixelLocalStorageANGLE(const Context *context,
+                                                         angle::EntryPoint entryPoint,
+                                                         GLint plane,
+                                                         GLenum internalformat)
+{
+    if (!ValidatePLSCommon(context, entryPoint, plane))
+    {
+        return false;
+    }
+
+    // INVALID_ENUM is generated if <internalformat> is not one of the acceptable values in Table
+    // X.2, or NONE.
+    if (internalformat != GL_NONE)
+    {
+        if (!ValidatePLSInternalformat(context, entryPoint, internalformat))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ValidateFramebufferTexturePixelLocalStorageANGLE(const Context *context,
+                                                      angle::EntryPoint entryPoint,
+                                                      GLint plane,
+                                                      TextureID backingtexture,
+                                                      GLint level,
+                                                      GLint layer)
+{
+    if (!ValidatePLSCommon(context, entryPoint, plane))
+    {
+        return false;
+    }
+
+    if (backingtexture.value != 0)
+    {
+        Texture *tex = context->getTexture(backingtexture);
+
+        // INVALID_OPERATION is generated if <backingtexture> is not the name of an existing
+        // immutable texture object, or zero.
+        if (!tex)
+        {
+            context->validationError(entryPoint, GL_INVALID_OPERATION, kInvalidTextureName);
+            return false;
+        }
+        if (!tex->getImmutableFormat())
+        {
+            context->validationError(entryPoint, GL_INVALID_OPERATION, kTextureIsNotImmutable);
+            return false;
+        }
+
+        // INVALID_ENUM is generated if <backingtexture> is nonzero and not of type GL_TEXTURE_2D,
+        // GL_TEXTURE_CUBE_MAP, GL_TEXTURE_2D_ARRAY, or GL_TEXTURE_3D.
+        size_t textureDepth;
+        if (!ValidatePLSTextureType(context, entryPoint, tex, &textureDepth))
+        {
+            return false;
+        }
+
+        // INVALID_VALUE is generated if <backingtexture> is nonzero and <level> < 0.
+        if (level < 0)
+        {
+            context->validationError(entryPoint, GL_INVALID_VALUE, kNegativeLevel);
+            return false;
+        }
+
+        // INVALID_VALUE is generated if <backingtexture> is nonzero and <level> >= the
+        // immutable number of mipmap levels in <backingtexture>.
+        if (static_cast<GLuint>(level) >= tex->getImmutableLevels())
+        {
+            context->validationError(entryPoint, GL_INVALID_VALUE, kTextureLevelOutOfRange);
+            return false;
+        }
+
+        // INVALID_VALUE is generated if <backingtexture> is nonzero and <layer> < 0.
+        if (layer < 0)
+        {
+            context->validationError(entryPoint, GL_INVALID_VALUE, kNegativeLayer);
+            return false;
+        }
+
+        // INVALID_VALUE is generated if <backingtexture> is nonzero and <layer> >= the immutable
+        // number of texture layers in <backingtexture>.
+        if ((size_t)layer >= textureDepth)
+        {
+            context->validationError(entryPoint, GL_INVALID_VALUE, kTextureLayerOutOfRange);
+            return false;
+        }
+
+        // INVALID_ENUM is generated if <backingtexture> is nonzero and its internalformat is not
+        // one of the acceptable values in Table X.2.
+        ASSERT(tex->getImmutableFormat());
+        GLenum internalformat = tex->getState().getBaseLevelDesc().format.info->internalFormat;
+        if (!ValidatePLSInternalformat(context, entryPoint, internalformat))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
+                                         angle::EntryPoint entryPoint,
+                                         GLsizei planes,
+                                         const GLenum loadops[],
+                                         const void *cleardata)
+{
+    if (!ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Inactive))
+    {
+        return false;
+    }
+
+    const State &state             = context->getState();
+    const Framebuffer *framebuffer = state.getDrawFramebuffer();
+
+    // INVALID_OPERATION is generated if the value of SAMPLE_BUFFERS is 1 (i.e., if rendering to a
+    // multisampled framebuffer).
+    if (framebuffer->getSamples(context) != 0)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSMultisamplingEnabled);
+        return false;
+    }
+
+    // INVALID_OPERATION is generated if DITHER is enabled.
+    if (state.isDitherEnabled())
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSDitherEnabled);
+        return false;
+    }
+
+    // INVALID_OPERATION is generated if RASTERIZER_DISCARD is enabled.
+    if (state.isRasterizerDiscardEnabled())
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSRasterizerDiscardEnabled);
+        return false;
+    }
+
+    // INVALID_OPERATION is generated if SAMPLE_ALPHA_TO_COVERAGE is enabled.
+    if (state.isSampleAlphaToCoverageEnabled())
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                 kPLSSampleAlphaToCoverageEnabled);
+        return false;
+    }
+
+    // INVALID_OPERATION is generated if SAMPLE_COVERAGE is enabled.
+    if (state.isSampleCoverageEnabled())
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSSampleCoverageEnabled);
+        return false;
+    }
+
+    // INVALID_VALUE is generated if <planes> < 1 or <planes> >
+    // MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
+    if (planes < 1)
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSPlanesLessThanOne);
+        return false;
+    }
+    if (planes > static_cast<GLsizei>(context->getCaps().maxPixelLocalStoragePlanes))
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSPlanesOutOfRange);
+        return false;
+    }
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if the draw framebuffer has an image attached to
+    // any color attachment point on or after:
+    //
+    //   COLOR_ATTACHMENT0 +
+    //   MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
+    //
+    const Caps &caps = context->getCaps();
+    for (int i = caps.maxColorAttachmentsWithActivePixelLocalStorage; i < caps.maxColorAttachments;
+         ++i)
+    {
+        if (framebuffer->getColorAttachment(i))
+        {
+            context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
+                                     kPLSMaxColorAttachmentsExceded);
+            return false;
+        }
+    }
+
+    // INVALID_FRAMEBUFFER_OPERATION is generated if the draw framebuffer has an image attached to
+    // any color attachment point on or after:
+    //
+    //   COLOR_ATTACHMENT0 +
+    //   MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE -
+    //   <planes>
+    //
+    for (GLuint i = caps.maxCombinedDrawBuffersAndPixelLocalStoragePlanes - planes;
+         i < caps.maxColorAttachmentsWithActivePixelLocalStorage; ++i)
+    {
+        if (framebuffer->getColorAttachment(i))
+        {
+            context->validationError(entryPoint, GL_INVALID_FRAMEBUFFER_OPERATION,
+                                     kPLSMaxCombinedDrawBuffersAndPlanesExceded);
+            return false;
+        }
+    }
+
+    // INVALID_VALUE is generated if <loadops> is NULL.
+    if (!loadops)
+    {
+        context->validationError(entryPoint, GL_INVALID_VALUE, kPLSNullLoadOps);
+        return false;
+    }
+
+    const PixelLocalStorage *pls   = framebuffer->peekPixelLocalStorage();
+    bool hasTextureBackedPLSPlanes = false;
+    Extents textureBackedPLSExtents{};
+
+    for (int i = 0; i < planes; ++i)
+    {
+        // INVALID_ENUM is generated if <loadops>[0..<planes>-1] is not one of the Load
+        // Operations enumerated in Table X.1.
+        if (!ValidatePLSLoadOperation(context, entryPoint, loadops[i]))
+        {
+            return false;
+        }
+
+        if (loadops[i] == GL_DISABLE_ANGLE)
+        {
+            continue;
+        }
+
+        // INVALID_VALUE is generated if <loadops>[0..<planes>-1] is CLEAR_ANGLE and <cleardata> is
+        // NULL.
+        if (loadops[i] == GL_CLEAR_ANGLE && !cleardata)
+        {
+            context->validationError(entryPoint, GL_INVALID_VALUE, kPLSNullClearData);
+            return false;
+        }
+
+        // INVALID_OPERATION is generated if <loadops>[0..<planes>-1] is not DISABLE_ANGLE, and
+        // the pixel local storage plane at that same index is is in a deinitialized state.
+        if (pls == nullptr || pls->getPlane(i).isDeinitialized())
+        {
+            context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                     kPLSEnablingDeinitializedPlane);
+            return false;
+        }
+
+        // [ANGLE_shader_pixel_local_storage] Section 4.4.2.X "Configuring Pixel Local Storage
+        // on a Framebuffer": When a texture object is deleted, any pixel local storage plane to
+        // which it was bound is automatically converted to a memoryless plane of matching
+        // internalformat.
+        const PixelLocalStoragePlane &plane = pls->getPlane(i);
+
+        Extents textureExtents;
+        if (plane.getTextureImageExtents(context, &textureExtents))
+        {
+            // INVALID_OPERATION is generated if all enabled, texture-backed pixel local storage
+            // planes do not have the same width and height.
+            if (!hasTextureBackedPLSPlanes)
+            {
+                textureBackedPLSExtents   = textureExtents;
+                hasTextureBackedPLSPlanes = true;
+            }
+            else if (textureExtents != textureBackedPLSExtents)
+            {
+                context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                         kPLSMismatchedBackingTextureSizes);
+                return false;
+            }
+        }
+        else
+        {
+            // INVALID_OPERATION is generated if <loadops>[0..<planes>-1] is KEEP and the pixel
+            // local storage plane at that same index is memoryless.
+            if (loadops[i] == GL_KEEP)
+            {
+                context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                         kPLSKeepingMemorylessPlane);
+                return false;
+            }
+        }
+    }
+
+    const FramebufferAttachment *firstAttachment =
+        framebuffer->getState().getFirstNonNullAttachment();
+    if (firstAttachment)
+    {
+        // INVALID_OPERATION is generated if the draw framebuffer has other attachments, and its
+        // enabled, texture-backed pixel local storage planes do not have identical dimensions
+        // with the rendering area.
+        if (hasTextureBackedPLSPlanes &&
+            textureBackedPLSExtents != framebuffer->getState().getAttachmentExtentsIntersection())
+        {
+            context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                     kPLSDimensionsDontMatchRenderingArea);
+            return false;
+        }
+    }
+    else
+    {
+        // INVALID_OPERATION is generated if the draw framebuffer has no attachments and no
+        // enabled, texture-backed pixel local storage planes.
+        if (!hasTextureBackedPLSPlanes)
+        {
+            context->validationError(entryPoint, GL_INVALID_OPERATION,
+                                     kPLSNoAttachmentsNoTextureBacked);
+            return false;
+        }
+    }
+
+    // INVALID_OPERATION is generated if a single texture image is bound to more than one pixel
+    // local storage plane.
+    //
+    //   TODO(anglebug.com/7279): Block feedback loops
+    //
+
+    // INVALID_OPERATION is generated if a single texture image is simultaneously bound to a pixel
+    // local storage plane and attached to the draw framebuffer.
+    //
+    //   TODO(anglebug.com/7279): Block feedback loops
+    //
+
+    return true;
+}
+
+bool ValidateEndPixelLocalStorageANGLE(const Context *context, angle::EntryPoint entryPoint)
+{
+    return ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active);
+}
+
+bool ValidatePixelLocalStorageBarrierANGLE(const Context *context, angle::EntryPoint entryPoint)
+{
+    return ValidatePLSCommon(context, entryPoint, PLSExpectedStatus::Active);
+}
+
 bool ValidateFramebufferFetchBarrierEXT(const Context *context, angle::EntryPoint entryPoint)
 {
     return true;
@@ -3102,5 +3576,18 @@ bool ValidateShadingRateQCOM(const Context *context, angle::EntryPoint entryPoin
     }
 
     return true;
+}
+
+bool ValidateLogicOpANGLE(const Context *context,
+                          angle::EntryPoint entryPoint,
+                          LogicalOperation opcodePacked)
+{
+    if (!context->getExtensions().logicOpANGLE)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateLogicOpCommon(context, entryPoint, opcodePacked);
 }
 }  // namespace gl

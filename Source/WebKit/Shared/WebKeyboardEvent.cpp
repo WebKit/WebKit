@@ -220,7 +220,7 @@ bool WebKeyboardEvent::decode(IPC::Decoder& decoder, WebKeyboardEvent& result)
 
 bool WebKeyboardEvent::isKeyboardEventType(Type type)
 {
-    return type == RawKeyDown || type == KeyDown || type == KeyUp || type == Char;
+    return type == Type::RawKeyDown || type == Type::KeyDown || type == Type::KeyUp || type == Type::Char;
 }
 
 } // namespace WebKit

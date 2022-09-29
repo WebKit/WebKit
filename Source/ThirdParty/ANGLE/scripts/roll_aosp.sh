@@ -90,7 +90,7 @@ function generate_Android_bp_file() {
         gn desc ${GN_OUTPUT_DIRECTORY} --format=json "*" > ${GN_OUTPUT_DIRECTORY}/desc.$abi.json
     done
 
-    python scripts/generate_android_bp.py \
+    python3 scripts/generate_android_bp.py \
         ${GN_OUTPUT_DIRECTORY}/desc.arm.json \
         ${GN_OUTPUT_DIRECTORY}/desc.arm64.json \
         ${GN_OUTPUT_DIRECTORY}/desc.x86.json \

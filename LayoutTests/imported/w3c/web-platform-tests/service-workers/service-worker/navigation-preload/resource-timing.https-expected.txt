@@ -1,3 +1,4 @@
 
-PASS Navigation Preload Resource Timing.
+
+FAIL Navigation Preload Resource Timing. assert_greater_than: transferSize must greater then encodedBodySize. expected a number greater than 0 but got 0
 

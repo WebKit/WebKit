@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSValue.h"
+#include <wtf/text/AtomString.h>
 
 namespace WebCore::MQ {
 

@@ -507,6 +507,9 @@ EXPORTS
     glDrawElementsInstancedANGLE
     glVertexAttribDivisorANGLE
 
+    ; GL_ANGLE_logic_op
+    glLogicOpANGLE
+
     ; GL_ANGLE_memory_object_flags
     glTexStorageMemFlags2DANGLE
     glTexStorageMemFlags2DMultisampleANGLE
@@ -603,6 +606,13 @@ EXPORTS
 
     ; GL_ANGLE_semaphore_fuchsia
     glImportSemaphoreZirconHandleANGLE
+
+    ; GL_ANGLE_shader_pixel_local_storage
+    glBeginPixelLocalStorageANGLE
+    glEndPixelLocalStorageANGLE
+    glFramebufferMemorylessPixelLocalStorageANGLE
+    glFramebufferTexturePixelLocalStorageANGLE
+    glPixelLocalStorageBarrierANGLE
 
     ; GL_ANGLE_texture_compression_dxt3
 
@@ -991,6 +1001,8 @@ EXPORTS
 
     ; GL_OES_compressed_ETC1_RGB8_texture
 
+    ; GL_OES_compressed_paletted_texture
+
     ; GL_OES_copy_image
     glCopyImageSubDataOES
 
@@ -1247,6 +1259,9 @@ EXPORTS
     ; EGL_ANGLE_feature_control
     EGL_QueryDisplayAttribANGLE
     EGL_QueryStringiANGLE
+
+    ; EGL_ANGLE_metal_shared_event_sync
+    EGL_CopyMetalSharedEventANGLE
 
     ; EGL_ANGLE_power_preference
     EGL_ForceGPUSwitchANGLE

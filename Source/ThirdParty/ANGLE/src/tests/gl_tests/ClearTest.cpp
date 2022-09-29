@@ -2957,8 +2957,11 @@ ANGLE_INSTANTIATE_TEST_COMBINE_4(MaskedScissoredClearTest,
                                  ANGLE_ALL_TEST_PLATFORMS_ES3,
                                  ES3_VULKAN()
                                      .disable(Feature::SupportsExtendedDynamicState)
-                                     .disable(Feature::SupportsExtendedDynamicState2),
-                                 ES3_VULKAN().disable(Feature::SupportsExtendedDynamicState2));
+                                     .disable(Feature::SupportsExtendedDynamicState2)
+                                     .disable(Feature::SupportsLogicOpDynamicState),
+                                 ES3_VULKAN()
+                                     .disable(Feature::SupportsExtendedDynamicState2)
+                                     .disable(Feature::SupportsLogicOpDynamicState));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanClearTest);
 ANGLE_INSTANTIATE_TEST_COMBINE_4(VulkanClearTest,

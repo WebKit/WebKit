@@ -387,17 +387,17 @@ StorageRequests& StorageRequests::singleton()
 static const char* webMouseEventTypeString(WebEvent::Type type)
 {
     switch (type) {
-    case WebEvent::MouseDown:
+    case WebEvent::Type::MouseDown:
         return "MouseDown";
-    case WebEvent::MouseUp:
+    case WebEvent::Type::MouseUp:
         return "MouseUp";
-    case WebEvent::MouseMove:
+    case WebEvent::Type::MouseMove:
         return "MouseMove";
-    case WebEvent::MouseForceChanged:
+    case WebEvent::Type::MouseForceChanged:
         return "MouseForceChanged";
-    case WebEvent::MouseForceDown:
+    case WebEvent::Type::MouseForceDown:
         return "MouseForceDown";
-    case WebEvent::MouseForceUp:
+    case WebEvent::Type::MouseForceUp:
         return "MouseForceUp";
     default:
         ASSERT_NOT_REACHED();
@@ -408,13 +408,13 @@ static const char* webMouseEventTypeString(WebEvent::Type type)
 static const char* webKeyboardEventTypeString(WebEvent::Type type)
 {
     switch (type) {
-    case WebEvent::KeyDown:
+    case WebEvent::Type::KeyDown:
         return "KeyDown";
-    case WebEvent::KeyUp:
+    case WebEvent::Type::KeyUp:
         return "KeyUp";
-    case WebEvent::RawKeyDown:
+    case WebEvent::Type::RawKeyDown:
         return "RawKeyDown";
-    case WebEvent::Char:
+    case WebEvent::Type::Char:
         return "Char";
     default:
         ASSERT_NOT_REACHED();
@@ -2893,7 +2893,7 @@ void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 
 static bool removeOldRedundantEvent(Deque<NativeWebMouseEvent>& queue, WebEvent::Type incomingEventType)
 {
-    if (incomingEventType != WebEvent::MouseMove && incomingEventType != WebEvent::MouseForceChanged)
+    if (incomingEventType != WebEvent::Type::MouseMove && incomingEventType != WebEvent::Type::MouseForceChanged)
         return false;
 
     auto it = queue.rbegin();
@@ -2909,7 +2909,7 @@ static bool removeOldRedundantEvent(Deque<NativeWebMouseEvent>& queue, WebEvent:
             queue.remove(--it.base());
             return true;
         }
-        if (type != WebEvent::MouseMove && type != WebEvent::MouseForceChanged)
+        if (type != WebEvent::Type::MouseMove && type != WebEvent::Type::MouseForceChanged)
             break;
     }
     return false;
@@ -2917,7 +2917,7 @@ static bool removeOldRedundantEvent(Deque<NativeWebMouseEvent>& queue, WebEvent:
 
 void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 {
-    if (event.type() == WebEvent::MouseDown)
+    if (event.type() == WebEvent::Type::MouseDown)
         launchInitialProcessIfNecessary();
 
     if (!hasRunningProcess())
@@ -2957,9 +2957,9 @@ void WebPageProxy::processNextQueuedMouseEvent()
         setToolTip(String());
 
     WebEvent::Type eventType = event.type();
-    if (eventType == WebEvent::MouseDown || eventType == WebEvent::MouseForceChanged || eventType == WebEvent::MouseForceDown)
+    if (eventType == WebEvent::Type::MouseDown || eventType == WebEvent::Type::MouseForceChanged || eventType == WebEvent::Type::MouseForceDown)
         m_process->startResponsivenessTimer(WebProcessProxy::UseLazyStop::Yes);
-    else if (eventType != WebEvent::MouseMove) {
+    else if (eventType != WebEvent::Type::MouseMove) {
         // NOTE: This does not start the responsiveness timer because mouse move should not indicate interaction.
         m_process->startResponsivenessTimer();
     }
@@ -2967,7 +2967,7 @@ void WebPageProxy::processNextQueuedMouseEvent()
     std::optional<Vector<SandboxExtension::Handle>> sandboxExtensions;
 
 #if PLATFORM(MAC)
-    bool eventMayStartDrag = !m_currentDragOperation && eventType == WebEvent::MouseMove && event.button() != WebMouseEvent::Button::NoButton;
+    bool eventMayStartDrag = !m_currentDragOperation && eventType == WebEvent::Type::MouseMove && event.button() != WebMouseEvent::Button::NoButton;
     if (eventMayStartDrag)
         sandboxExtensions = SandboxExtension::createHandlesForMachLookup({ "com.apple.iconservices"_s, "com.apple.iconservices.store"_s }, process().auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
 #endif
@@ -3111,7 +3111,7 @@ bool WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 
     m_keyEventQueue.append(event);
 
-    m_process->startResponsivenessTimer(event.type() == WebEvent::KeyDown ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
+    m_process->startResponsivenessTimer(event.type() == WebEvent::Type::KeyDown ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
 
     if (m_keyEventQueue.size() == 1) { // Otherwise, sent from DidReceiveEvent message handler.
         LOG(KeyHandling, " UI process: sent keyEvent from handleKeyboardEvent");
@@ -3218,7 +3218,7 @@ void WebPageProxy::handleGestureEvent(const NativeWebGestureEvent& event)
     m_gestureEventQueue.append(event);
     // FIXME: Consider doing some coalescing here.
 
-    m_process->startResponsivenessTimer((event.type() == WebEvent::GestureStart || event.type() == WebEvent::GestureChange) ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
+    m_process->startResponsivenessTimer((event.type() == WebEvent::Type::GestureStart || event.type() == WebEvent::Type::GestureChange) ? WebProcessProxy::UseLazyStop::Yes : WebProcessProxy::UseLazyStop::No);
 
     send(Messages::EventDispatcher::GestureEvent(m_webPageID, event), 0);
 }
@@ -3242,9 +3242,9 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         didReleaseAllTouchPoints();
     });
 
-    bool isTouchStart = event.type() == WebEvent::TouchStart;
-    bool isTouchMove = event.type() == WebEvent::TouchMove;
-    bool isTouchEnd = event.type() == WebEvent::TouchEnd;
+    bool isTouchStart = event.type() == WebEvent::Type::TouchStart;
+    bool isTouchMove = event.type() == WebEvent::Type::TouchMove;
+    bool isTouchEnd = event.type() == WebEvent::Type::TouchEnd;
 
     if (isTouchStart)
         m_touchMovePreventionState = TouchMovePreventionState::NotWaiting;
@@ -3294,19 +3294,19 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
             return;
 
         bool didFinishDeferringTouchStart = false;
-        ASSERT_IMPLIES(event.type() == WebEvent::TouchStart, m_handlingPreventableTouchStartCount);
-        if (event.type() == WebEvent::TouchStart && m_handlingPreventableTouchStartCount)
+        ASSERT_IMPLIES(event.type() == WebEvent::Type::TouchStart, m_handlingPreventableTouchStartCount);
+        if (event.type() == WebEvent::Type::TouchStart && m_handlingPreventableTouchStartCount)
             didFinishDeferringTouchStart = !--m_handlingPreventableTouchStartCount;
 
         bool didFinishDeferringTouchMove = false;
-        if (event.type() == WebEvent::TouchMove && m_touchMovePreventionState == TouchMovePreventionState::Waiting) {
+        if (event.type() == WebEvent::Type::TouchMove && m_touchMovePreventionState == TouchMovePreventionState::Waiting) {
             m_touchMovePreventionState = TouchMovePreventionState::ReceivedReply;
             didFinishDeferringTouchMove = true;
         }
 
         bool didFinishDeferringTouchEnd = false;
-        ASSERT_IMPLIES(event.type() == WebEvent::TouchEnd, m_handlingPreventableTouchEndCount);
-        if (event.type() == WebEvent::TouchEnd && m_handlingPreventableTouchEndCount)
+        ASSERT_IMPLIES(event.type() == WebEvent::Type::TouchEnd, m_handlingPreventableTouchEndCount);
+        if (event.type() == WebEvent::Type::TouchEnd && m_handlingPreventableTouchEndCount)
             didFinishDeferringTouchEnd = !--m_handlingPreventableTouchEndCount;
 
         didReceiveEvent(event.type(), handled);
@@ -7710,49 +7710,47 @@ void WebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
     pageClient().setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
 }
 
-void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
+void WebPageProxy::didReceiveEvent(WebEvent::Type type, bool handled)
 {
-    WebEvent::Type type = static_cast<WebEvent::Type>(opaqueType);
-
     switch (type) {
-    case WebEvent::NoType:
-    case WebEvent::MouseMove:
-    case WebEvent::Wheel:
+    case WebEvent::Type::NoType:
+    case WebEvent::Type::MouseMove:
+    case WebEvent::Type::Wheel:
         break;
 
-    case WebEvent::MouseDown:
-    case WebEvent::MouseUp:
-    case WebEvent::MouseForceChanged:
-    case WebEvent::MouseForceDown:
-    case WebEvent::MouseForceUp:
-    case WebEvent::KeyDown:
-    case WebEvent::KeyUp:
-    case WebEvent::RawKeyDown:
-    case WebEvent::Char:
+    case WebEvent::Type::MouseDown:
+    case WebEvent::Type::MouseUp:
+    case WebEvent::Type::MouseForceChanged:
+    case WebEvent::Type::MouseForceDown:
+    case WebEvent::Type::MouseForceUp:
+    case WebEvent::Type::KeyDown:
+    case WebEvent::Type::KeyUp:
+    case WebEvent::Type::RawKeyDown:
+    case WebEvent::Type::Char:
 #if ENABLE(TOUCH_EVENTS)
-    case WebEvent::TouchStart:
-    case WebEvent::TouchMove:
-    case WebEvent::TouchEnd:
-    case WebEvent::TouchCancel:
+    case WebEvent::Type::TouchStart:
+    case WebEvent::Type::TouchMove:
+    case WebEvent::Type::TouchEnd:
+    case WebEvent::Type::TouchCancel:
 #endif
 #if ENABLE(MAC_GESTURE_EVENTS)
-    case WebEvent::GestureStart:
-    case WebEvent::GestureChange:
-    case WebEvent::GestureEnd:
+    case WebEvent::Type::GestureStart:
+    case WebEvent::Type::GestureChange:
+    case WebEvent::Type::GestureEnd:
 #endif
         m_process->stopResponsivenessTimer();
         break;
     }
 
     switch (type) {
-    case WebEvent::NoType:
+    case WebEvent::Type::NoType:
         break;
-    case WebEvent::MouseForceChanged:
-    case WebEvent::MouseForceDown:
-    case WebEvent::MouseForceUp:
-    case WebEvent::MouseMove:
-    case WebEvent::MouseDown:
-    case WebEvent::MouseUp: {
+    case WebEvent::Type::MouseForceChanged:
+    case WebEvent::Type::MouseForceDown:
+    case WebEvent::Type::MouseForceUp:
+    case WebEvent::Type::MouseMove:
+    case WebEvent::Type::MouseDown:
+    case WebEvent::Type::MouseUp: {
         LOG(MouseHandling, "WebPageProxy::didReceiveEvent: %s (queue size %zu)", webMouseEventTypeString(type), m_mouseEventQueue.size());
 
         // Retire the last sent event now that WebProcess is done handling it.
@@ -7771,7 +7769,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
     }
 
-    case WebEvent::Wheel: {
+    case WebEvent::Type::Wheel: {
         MESSAGE_CHECK(m_process, wheelEventCoalescer().hasEventsBeingProcessed());
         auto oldestProcessedEvent = wheelEventCoalescer().takeOldestEventBeingProcessed();
 
@@ -7788,10 +7786,10 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
     }
 
-    case WebEvent::KeyDown:
-    case WebEvent::KeyUp:
-    case WebEvent::RawKeyDown:
-    case WebEvent::Char: {
+    case WebEvent::Type::KeyDown:
+    case WebEvent::Type::KeyUp:
+    case WebEvent::Type::RawKeyDown:
+    case WebEvent::Type::Char: {
         LOG(KeyHandling, "WebPageProxy::didReceiveEvent: %s (queue empty %d)", webKeyboardEventTypeString(type), m_keyEventQueue.isEmpty());
 
         MESSAGE_CHECK(m_process, !m_keyEventQueue.isEmpty());
@@ -7799,7 +7797,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         MESSAGE_CHECK(m_process, type == event.type());
 
 #if PLATFORM(WIN)
-        if (!handled && type == WebEvent::RawKeyDown)
+        if (!handled && type == WebEvent::Type::RawKeyDown)
             dispatchPendingCharEvents(event);
 #endif
 
@@ -7825,9 +7823,9 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         break;
     }
 #if ENABLE(MAC_GESTURE_EVENTS)
-    case WebEvent::GestureStart:
-    case WebEvent::GestureChange:
-    case WebEvent::GestureEnd: {
+    case WebEvent::Type::GestureStart:
+    case WebEvent::Type::GestureChange:
+    case WebEvent::Type::GestureEnd: {
         MESSAGE_CHECK(m_process, !m_gestureEventQueue.isEmpty());
         auto event = m_gestureEventQueue.takeFirst();
         MESSAGE_CHECK(m_process, type == event.type());
@@ -7838,16 +7836,16 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     }
 #endif
 #if ENABLE(IOS_TOUCH_EVENTS)
-    case WebEvent::TouchStart:
-    case WebEvent::TouchMove:
-    case WebEvent::TouchEnd:
-    case WebEvent::TouchCancel:
+    case WebEvent::Type::TouchStart:
+    case WebEvent::Type::TouchMove:
+    case WebEvent::Type::TouchEnd:
+    case WebEvent::Type::TouchCancel:
         break;
 #elif ENABLE(TOUCH_EVENTS)
-    case WebEvent::TouchStart:
-    case WebEvent::TouchMove:
-    case WebEvent::TouchEnd:
-    case WebEvent::TouchCancel: {
+    case WebEvent::Type::TouchStart:
+    case WebEvent::Type::TouchMove:
+    case WebEvent::Type::TouchEnd:
+    case WebEvent::Type::TouchCancel: {
         MESSAGE_CHECK(m_process, !m_touchEventQueue.isEmpty());
         auto queuedEvents = m_touchEventQueue.takeFirst();
         MESSAGE_CHECK(m_process, type == queuedEvents.forwardedEvent.type());

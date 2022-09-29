@@ -29,6 +29,7 @@ Sync::Sync(rx::EGLImplFactory *factory, EGLenum type, const AttributeMap &attrib
     {
         case EGL_SYNC_FENCE:
         case EGL_SYNC_NATIVE_FENCE_ANDROID:
+        case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
             mFence = std::unique_ptr<rx::EGLSyncImpl>(factory->createSync(attribs));
             break;
 
@@ -98,6 +99,11 @@ Error Sync::signal(const Display *display, const gl::Context *context, EGLint mo
 Error Sync::getStatus(const Display *display, EGLint *outStatus) const
 {
     return mFence->getStatus(display, outStatus);
+}
+
+Error Sync::copyMetalSharedEventANGLE(const Display *display, void **result) const
+{
+    return mFence->copyMetalSharedEventANGLE(display, result);
 }
 
 Error Sync::dupNativeFenceFD(const Display *display, EGLint *result) const

@@ -137,17 +137,17 @@ static PlatformEvent::Type mouseEventTypeForEvent(NSEvent* event)
     case NSEventTypeMouseMoved:
     case NSEventTypeOtherMouseDragged:
     case NSEventTypeRightMouseDragged:
-        return PlatformEvent::MouseMoved;
+        return PlatformEvent::Type::MouseMoved;
     case NSEventTypeLeftMouseDown:
     case NSEventTypeRightMouseDown:
     case NSEventTypeOtherMouseDown:
-        return PlatformEvent::MousePressed;
+        return PlatformEvent::Type::MousePressed;
     case NSEventTypeLeftMouseUp:
     case NSEventTypeRightMouseUp:
     case NSEventTypeOtherMouseUp:
-        return PlatformEvent::MouseReleased;
+        return PlatformEvent::Type::MouseReleased;
     default:
-        return PlatformEvent::MouseMoved;
+        return PlatformEvent::Type::MouseMoved;
     }
 }
 
@@ -712,11 +712,11 @@ public:
             // Since AppKit doesn't send mouse events for force down or force up, we have to use the current pressure
             // event and correspondingPressureEvent to detect if this is MouseForceDown, MouseForceUp, or just MouseForceChanged.
             if (correspondingPressureEvent.stage == 1 && event.stage == 2)
-                m_type = PlatformEvent::MouseForceDown;
+                m_type = PlatformEvent::Type::MouseForceDown;
             else if (correspondingPressureEvent.stage == 2 && event.stage == 1)
-                m_type = PlatformEvent::MouseForceUp;
+                m_type = PlatformEvent::Type::MouseForceUp;
             else
-                m_type = PlatformEvent::MouseForceChanged;
+                m_type = PlatformEvent::Type::MouseForceChanged;
         }
 
         m_modifiers = modifiersForEvent(event);
@@ -753,7 +753,7 @@ public:
     PlatformWheelEventBuilder(NSEvent *event, NSView *windowView)
     {
         // PlatformEvent
-        m_type = PlatformEvent::Wheel;
+        m_type = PlatformEvent::Type::Wheel;
         m_modifiers = modifiersForEvent(event);
         m_timestamp = eventTimeStampSince1970(event.timestamp);
 
@@ -792,7 +792,7 @@ public:
     PlatformKeyboardEventBuilder(NSEvent *event)
     {
         // PlatformEvent
-        m_type = isKeyUpEvent(event) ? PlatformEvent::KeyUp : PlatformEvent::KeyDown;
+        m_type = isKeyUpEvent(event) ? PlatformEvent::Type::KeyUp : PlatformEvent::Type::KeyDown;
         m_modifiers = modifiersForEvent(event);
         m_timestamp = eventTimeStampSince1970(event.timestamp);
 

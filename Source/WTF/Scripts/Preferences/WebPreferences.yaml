@@ -1020,6 +1020,18 @@ InterruptAudioOnPageVisibilityChangeEnabled:
       default: false
     WebKit:
       "PLATFORM(IOS_FAMILY)": true
+    WebCore:
+      default: false
+
+InterruptVideoOnPageVisibilityChangeEnabled:
+  type: bool
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(IOS_FAMILY) && !HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      default: false
+    WebKit:
+      "PLATFORM(IOS_FAMILY) && !HAVE(UIKIT_WEBKIT_INTERNALS)": true
       default: false
     WebCore:
       default: false
