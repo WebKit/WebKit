@@ -37,9 +37,10 @@ namespace Layout {
 class ReplacedBox : public ContainerBox {
     WTF_MAKE_ISO_ALLOCATED(ReplacedBox);
 public:
-    ReplacedBox(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    ReplacedBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
     struct ListMarkerAttributes {
+        IsAnonymous isAnonymous;
         bool isImage { false };
         bool isOutside { false };
     };

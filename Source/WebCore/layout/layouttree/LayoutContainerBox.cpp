@@ -34,8 +34,8 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ContainerBox);
 
-ContainerBox::ContainerBox(std::optional<ElementAttributes> attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
-    : Box(attributes, WTFMove(style), WTFMove(firstLineStyle), baseTypeFlags | ContainerBoxFlag)
+ContainerBox::ContainerBox(ElementAttributes&& attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
+    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), baseTypeFlags | ContainerBoxFlag)
 {
 }
 

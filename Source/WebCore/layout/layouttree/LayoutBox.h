@@ -43,9 +43,10 @@ class TreeBuilder;
 class Box : public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Box);
 public:
-    enum class ElementType : uint8_t {
+    enum class NodeType : uint8_t {
+        Text,
         GenericElement,
-        Document,
+        DocumentElement,
         Body,
         TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes.
         TableBox, // The table box is a block-level box that contains the table's internal table boxes.
@@ -56,8 +57,11 @@ public:
         ListMarker,
     };
 
+    enum class IsAnonymous : bool { No, Yes };
+
     struct ElementAttributes {
-        ElementType elementType;
+        NodeType nodeType;
+        IsAnonymous isAnonymous;
     };
 
     enum BaseTypeFlag : uint8_t {
@@ -111,10 +115,10 @@ public:
     bool isLayoutContainmentBox() const;
     bool isSizeContainmentBox() const;
 
-    bool isDocumentBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Document; }
-    bool isBodyBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Body; }
-    bool isTableWrapperBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableWrapperBox; }
-    bool isTableBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::TableBox; }
+    bool isDocumentBox() const { return m_nodeType == NodeType::DocumentElement; }
+    bool isBodyBox() const { return m_nodeType == NodeType::Body; }
+    bool isTableWrapperBox() const { return m_nodeType == NodeType::TableWrapperBox; }
+    bool isTableBox() const { return m_nodeType == NodeType::TableBox; }
     bool isTableCaption() const { return style().display() == DisplayType::TableCaption; }
     bool isTableHeader() const { return style().display() == DisplayType::TableHeaderGroup; }
     bool isTableBody() const { return style().display() == DisplayType::TableRowGroup; }
@@ -126,12 +130,12 @@ public:
     bool isInternalTableBox() const;
     bool isFlexBox() const { return style().display() == DisplayType::Flex || style().display() == DisplayType::InlineFlex; }
     bool isFlexItem() const;
-    bool isIFrame() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::IFrame; }
-    bool isImage() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::Image; }
+    bool isIFrame() const { return m_nodeType == NodeType::IFrame; }
+    bool isImage() const { return m_nodeType == NodeType::Image; }
     bool isInternalRubyBox() const { return false; }
-    bool isLineBreakBox() const { return m_elementAttributes && (m_elementAttributes.value().elementType == ElementType::LineBreak || m_elementAttributes.value().elementType == ElementType::WordBreakOpportunity); }
-    bool isWordBreakOpportunity() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::WordBreakOpportunity; }
-    bool isListMarkerBox() const { return m_elementAttributes && m_elementAttributes.value().elementType == ElementType::ListMarker; }
+    bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
+    bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
+    bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
 
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
 
@@ -168,7 +172,6 @@ public:
     void setColumnWidth(LayoutUnit);
     std::optional<LayoutUnit> columnWidth() const;
 
-    void setIsAnonymous() { m_isAnonymous = true; }
     void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
 
     bool canCacheForLayoutState(const LayoutState&) const;
@@ -181,7 +184,7 @@ public:
     void decrementPtrCount() const { CanMakeCheckedPtr::decrementPtrCount(); }
 
 protected:
-    Box(std::optional<ElementAttributes>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);
+    Box(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);
 
 private:
     friend class ContainerBox;
@@ -209,7 +212,13 @@ private:
     static RareDataMap& rareDataMap();
 
     RenderStyle m_style;
-    std::optional<ElementAttributes> m_elementAttributes;
+
+    NodeType m_nodeType : 4;
+    bool m_isAnonymous : 1;
+
+    unsigned m_baseTypeFlags : 4; // OptionSet<BaseTypeFlag>
+    bool m_hasRareData : 1 { false };
+    bool m_isInlineIntegrationRoot : 1 { false };
 
     CheckedPtr<ContainerBox> m_parent;
     
@@ -220,10 +229,6 @@ private:
     mutable WeakPtr<LayoutState> m_cachedLayoutState;
     mutable std::unique_ptr<BoxGeometry> m_cachedGeometryForLayoutState;
 
-    unsigned m_baseTypeFlags : 4; // OptionSet<BaseTypeFlag>
-    bool m_hasRareData : 1 { false };
-    bool m_isAnonymous : 1 { false };
-    bool m_isInlineIntegrationRoot : 1 { false };
 };
 
 inline bool Box::isContainingBlockForInFlow() const

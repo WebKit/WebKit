@@ -124,9 +124,9 @@ TreeBuilder::TreeBuilder()
 {
 }
 
-std::unique_ptr<Box> TreeBuilder::createReplacedBox(std::optional<Box::ElementAttributes> elementAttributes, RenderStyle&& style)
+std::unique_ptr<Box> TreeBuilder::createReplacedBox(Box::ElementAttributes elementAttributes, RenderStyle&& style)
 {
-    return makeUnique<ReplacedBox>(elementAttributes, WTFMove(style));
+    return makeUnique<ReplacedBox>(WTFMove(elementAttributes), WTFMove(style));
 }
 
 std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath,  RenderStyle&& style)
@@ -134,26 +134,29 @@ std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifi
     return makeUnique<InlineTextBox>(text, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style));
 }
 
-std::unique_ptr<ContainerBox> TreeBuilder::createContainer(std::optional<Box::ElementAttributes> elementAttributes, RenderStyle&& style)
+std::unique_ptr<ContainerBox> TreeBuilder::createContainer(Box::ElementAttributes elementAttributes, RenderStyle&& style)
 {
-    return makeUnique<ContainerBox>(elementAttributes, WTFMove(style));
+    return makeUnique<ContainerBox>(WTFMove(elementAttributes), WTFMove(style));
 }
 
 std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ContainerBox& parentContainer, const RenderObject& childRenderer)
 {
-    auto elementAttributes = [] (const RenderElement& renderer) -> std::optional<Box::ElementAttributes> {
+    auto elementAttributes = [] (const RenderElement& renderer) -> Box::ElementAttributes {
+        auto isAnonymous = renderer.isAnonymous() ? Box::IsAnonymous::Yes : Box::IsAnonymous::No;
         if (renderer.isDocumentElementRenderer())
-            return Box::ElementAttributes { Box::ElementType::Document };
+            return { Box::NodeType::DocumentElement, isAnonymous };
+        if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer))
+            return { renderLineBreak->isWBR() ? Box::NodeType::WordBreakOpportunity : Box::NodeType::LineBreak, isAnonymous };
         if (auto* element = renderer.element()) {
             if (element->hasTagName(HTMLNames::bodyTag))
-                return Box::ElementAttributes { Box::ElementType::Body };
+                return { Box::NodeType::Body, isAnonymous };
             if (element->hasTagName(HTMLNames::imgTag))
-                return Box::ElementAttributes { Box::ElementType::Image };
+                return { Box::NodeType::Image, isAnonymous };
             if (element->hasTagName(HTMLNames::iframeTag))
-                return Box::ElementAttributes { Box::ElementType::IFrame };
-            return Box::ElementAttributes { Box::ElementType::GenericElement };
+                return { Box::NodeType::IFrame, isAnonymous };
+            return { Box::NodeType::GenericElement, isAnonymous };
         }
-        return std::nullopt;
+        return { Box::NodeType::GenericElement, Box::IsAnonymous::Yes };
     };
 
     std::unique_ptr<Box> childLayoutBox = nullptr;
@@ -176,8 +179,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ContainerBox& parentCont
             clonedStyle.setDisplay(DisplayType::Inline);
             clonedStyle.setFloating(Float::None);
             clonedStyle.setPosition(PositionType::Static);
-            auto attributes = Layout::Box::ElementAttributes { downcast<RenderLineBreak>(childRenderer).isWBR() ? Box::ElementType::WordBreakOpportunity : Box::ElementType::LineBreak };
-            childLayoutBox = createContainer(attributes, WTFMove(clonedStyle));
+            childLayoutBox = createContainer(elementAttributes(renderer), WTFMove(clonedStyle));
         } else if (is<RenderTable>(renderer)) {
             // Construct the principal table wrapper box (and not the table box itself).
             // The computed values of properties 'position', 'float', 'margin-*', 'top', 'right', 'bottom', and 'left' on the table element
@@ -197,8 +199,7 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ContainerBox& parentCont
             tableWrapperBoxStyle.setMarginBottom(Length { renderer.style().marginBottom() });
             tableWrapperBoxStyle.setMarginRight(Length { renderer.style().marginRight() });
 
-            childLayoutBox = createContainer(Box::ElementAttributes { Box::ElementType::TableWrapperBox }, WTFMove(tableWrapperBoxStyle));
-            childLayoutBox->setIsAnonymous();
+            childLayoutBox = createContainer(Box::ElementAttributes { Box::NodeType::TableWrapperBox, Box::IsAnonymous::Yes }, WTFMove(tableWrapperBoxStyle));
         } else if (is<RenderReplaced>(renderer)) {
             childLayoutBox = createReplacedBox(elementAttributes(renderer), WTFMove(clonedStyle));
             // FIXME: We don't yet support all replaced elements and this is temporary anyway.
@@ -257,9 +258,6 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ContainerBox& parentCont
                     childLayoutBox->setColumnSpan(columnSpan);
             }
         }
-
-        if (childRenderer.isAnonymous())
-            childLayoutBox->setIsAnonymous();
     }
     return childLayoutBox;
 }
@@ -284,7 +282,8 @@ void TreeBuilder::buildTableStructure(const RenderTable& tableRenderer, Containe
     // FIXME: Figure out where the spec says table width is like box-sizing: border-box;
     if (is<HTMLTableElement>(tableRenderer.element()))
         tableBoxStyle.setBoxSizing(BoxSizing::BorderBox);
-    auto newTableBox = createContainer(Box::ElementAttributes { Box::ElementType::TableBox }, WTFMove(tableBoxStyle));
+    auto isAnonymous = tableRenderer.isAnonymous() ? Box::IsAnonymous::Yes : Box::IsAnonymous::No;
+    auto newTableBox = createContainer(Box::ElementAttributes { Box::NodeType::TableBox, isAnonymous }, WTFMove(tableBoxStyle));
     auto& tableBox = appendChild(tableWrapperBox, WTFMove(newTableBox));
     auto* sectionRenderer = tableChild;
     while (sectionRenderer) {
