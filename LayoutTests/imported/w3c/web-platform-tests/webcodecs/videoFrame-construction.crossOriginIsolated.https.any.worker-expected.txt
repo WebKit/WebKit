@@ -1,4 +1,4 @@
 
-FAIL Test SharedArrayBuffer constructed I420 VideoFrame Can't find variable: VideoFrame
-FAIL Test Uint8Array(SharedArrayBuffer) constructed I420 VideoFrame Can't find variable: VideoFrame
+FAIL Test SharedArrayBuffer constructed I420 VideoFrame Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test Uint8Array(SharedArrayBuffer) constructed I420 VideoFrame Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
 

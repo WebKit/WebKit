@@ -393,6 +393,7 @@ Modules/webauthn/fido/Pin.cpp
 Modules/webauthn/fido/U2fCommandConstructor.cpp
 Modules/webauthn/fido/U2fResponseConverter.cpp
 Modules/webcodecs/WebCodecsEncodedVideoChunk.cpp
+Modules/webcodecs/WebCodecsVideoFrame.cpp
 Modules/webdatabase/ChangeVersionWrapper.cpp
 Modules/webdatabase/DOMWindowWebDatabase.cpp
 Modules/webdatabase/Database.cpp
@@ -3694,6 +3695,7 @@ JSPermissionStatus.cpp
 JSPermissions.cpp
 JSPictureInPictureEvent.cpp
 JSPictureInPictureWindow.cpp
+JSPlaneLayout.cpp
 JSPlaybackDirection.cpp
 JSPointerEvent.cpp
 JSPopStateEvent.cpp
@@ -4102,6 +4104,7 @@ JSVideoConfiguration.cpp
 JSVideoFrameMetadata.cpp
 JSVideoFrameRequestCallback.cpp
 JSVideoMatrixCoefficients.cpp
+JSVideoPixelFormat.cpp
 JSVideoPlaybackQuality.cpp
 JSVideoTrack.cpp
 JSVideoTrackConfiguration.cpp
@@ -4118,6 +4121,7 @@ JSWaveShaperOptions.cpp
 JSWebAnimation.cpp
 JSWebCodecsEncodedVideoChunkType.cpp
 JSWebCodecsEncodedVideoChunk.cpp
+JSWebCodecsVideoFrame.cpp
 JSWebGL2RenderingContext.cpp
 JSWebGLActiveInfo.cpp
 JSWebGLBuffer.cpp
