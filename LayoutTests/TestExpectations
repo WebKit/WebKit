@@ -5308,6 +5308,8 @@ webkit.org/b/241104 fast/block/fill-available-with-no-specified-containing-block
 webkit.org/b/241104 fast/block/fill-available-with-absolute-position.html [ ImageOnlyFailure ]
 webkit.org/b/241104 fast/css/fill-available-with-percent-height-no-quirk.html [ ImageOnlyFailure ]
 
+webkit.org/b/245164 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure Pass ]
+
 # Disable ShadowRealm (while running to ensure we do not crash)
 http/tests/misc/iframe-shadow-realm.html [ Pass Failure ]
 inspector/shadow-realm-console.html [ Pass Failure ]

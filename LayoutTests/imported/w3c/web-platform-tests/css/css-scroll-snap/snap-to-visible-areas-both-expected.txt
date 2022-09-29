@@ -1,3 +1,3 @@
 
-FAIL Only snap to visible areas in the case where taking the closest snap point of   each axis does not snap to a visible area assert_equals: expected 800 but got 0
+PASS Only snap to visible areas in the case where taking the closest snap point of   each axis does not snap to a visible area
 
