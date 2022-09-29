@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-orientation-lock' is an invalid sandbox flag.
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'screen.orientation.unlock')
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Test without 'allow-orientation-lock' sandboxing directive Test timed out
+NOTRUN Test with 'allow-orientation-lock' sandboxing directive
+
