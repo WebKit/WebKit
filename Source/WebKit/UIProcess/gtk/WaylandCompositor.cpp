@@ -390,6 +390,33 @@ static const struct wl_webkitgtk_interface webkitgtkInterface = {
     }
 };
 
+// FIXME: Merge with AcceleratedBackingStoreWayland::isEGLImageAvailable.
+static isEGLImageAvailable(bool useIndexedGetString)
+{
+#if USE(OPENGL_ES)
+    UNUSED_PARAM(useIndexedGetString);
+#else
+    if (useIndexedGetString) {
+        GLint numExtensions = 0;
+        ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+        for (GLint i = 0; i < numExtensions; ++i) {
+            String extension = String::fromLatin1(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+            if (extension == "GL_OES_EGL_image"_s || extension == "GL_OES_EGL_image_external"_s)
+                return true;
+        }
+    } else
+#endif
+    {
+        String extensionsString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
+        for (auto& extension : extensionsString.split(' ')) {
+            if (extension == "GL_OES_EGL_image"_s || extension == "GL_OES_EGL_image_external"_s)
+                return true;
+        }
+    }
+
+    return false;
+}
+
 bool WaylandCompositor::initializeEGL()
 {
     const char* extensions = eglQueryString(PlatformDisplay::sharedDisplay().eglDisplay(), EGL_EXTENSIONS);
@@ -426,11 +453,10 @@ bool WaylandCompositor::initializeEGL()
         return false;
 
 #if USE(OPENGL_ES)
-    std::unique_ptr<ExtensionsGLOpenGLES> glExtensions = makeUnique<ExtensionsGLOpenGLES>(nullptr,  false);
+    if (isEGLImageAvailable(false))
 #else
-    std::unique_ptr<ExtensionsGLOpenGL> glExtensions = makeUnique<ExtensionsGLOpenGL>(nullptr, GLContext::current()->version() >= 320);
+    if (isEGLImageAvailable(GLContext::current()->version() >= 320))
 #endif
-    if (glExtensions->supports("GL_OES_EGL_image"_s) || glExtensions->supports("GL_OES_EGL_image_external"_s))
         glImageTargetTexture2D = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
 
     if (!glImageTargetTexture2D) {
