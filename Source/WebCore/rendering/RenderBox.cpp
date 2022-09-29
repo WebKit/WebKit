@@ -3388,6 +3388,9 @@ LayoutUnit RenderBox::computeReplacedLogicalWidth(ShouldComputePreferred shouldC
 
 LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred shouldComputePreferred) const
 {
+    if (shouldIgnoreMinMaxSizes())
+        return logicalWidth;
+
     auto& logicalMinWidth = style().logicalMinWidth();
     auto& logicalMaxWidth = style().logicalMaxWidth();
     bool useLogicalWidthForMinWidth = (shouldComputePreferred == ComputePreferred && logicalMinWidth.isPercentOrCalculated()) || logicalMinWidth.isUndefined();
@@ -5545,6 +5548,11 @@ LayoutUnit RenderBox::intrinsicLogicalWidth() const
     if (shouldApplyInlineSizeContainment())
         return LayoutUnit();
     return style().isHorizontalWritingMode() ? intrinsicSize().width() : intrinsicSize().height();
+}
+
+bool RenderBox::shouldIgnoreMinMaxSizes() const
+{
+    return isFlexItem() && downcast<RenderFlexibleBox>(parent())->isComputingFlexBaseSizes();
 }
 
 } // namespace WebCore

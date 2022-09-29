@@ -1100,6 +1100,7 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForChild(RenderBox& child, Layo
     ScopedFlexBasisAsChildMainSize scoped(child, flexBasis.isContent() ? Length(LengthType::MaxContent) : flexBasis, mainAxisIsChildInlineAxis(child));
 
     maybeCacheChildMainIntrinsicSize(child, relayoutChildren);
+    SetForScope<bool> computingBaseSizesScope(m_isComputingFlexBaseSizes, true);
 
     // 9.2.3 A.
     if (childMainSizeIsDefinite(child, flexBasis))
