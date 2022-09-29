@@ -559,6 +559,15 @@ accessibility/ignored-textfield-still-accessible.html [ Skip ]
 # Default ARIA for custom elements are not yet enabled
 accessibility/custom-elements/ [ Skip ]
 
+accessibility/element-reflection-ariaactivedescendant.html [ Skip ]
+accessibility/element-reflection-ariacontrols.html [ Skip ]
+accessibility/element-reflection-ariadescribedby.html [ Skip ]
+accessibility/element-reflection-ariadetails.html [ Skip ]
+accessibility/element-reflection-ariaerrormessage.html [ Skip ]
+accessibility/element-reflection-ariaflowto.html [ Skip ]
+accessibility/element-reflection-arialabelledby.html [ Skip ]
+accessibility/element-reflection-ariaowns.html [ Skip ]
+
 webkit.org/b/245301 fast/custom-elements/reactions-for-aria-element-attributes.html [ Failure ]
 
 # TODO Conic gradients

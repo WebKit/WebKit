@@ -1,0 +1,23 @@
+Checks that element reflection is exposed to the a11y tree for 'ariaDescribedByElements'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS axTarget1.helpText is "AXHelp: First description"
+PASS axTarget2.helpText is "AXHelp: Second description"
+PASS axTarget2.helpText is "AXHelp: First description"
+PASS axInnerTarget.helpText is "AXHelp: Third description"
+PASS axTarget2.helpText is "AXHelp: First description Second description Third description"
+PASS axTarget4.helpText is "AXHelp: Fourth description"
+PASS axTarget5.helpText is "AXHelp: Fifth description"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First description
+Target 1
+Second description
+Target 2
+Third description
+Fourth description
+Target 4
+Fifth description

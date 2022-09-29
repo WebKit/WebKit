@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<div id="detail1">First detail</div>
+<div id="target1">Target 1</div>
+<div id="wrapper" tabindex="0">
+  <div class="detail">Second detail</div>
+</div>
+<div id="target2">Target 2</div>
+<div id="detail3">Third detail</div>
+<x-target></x-target>
+<div id="detail4">Fourth detail</div>
+<div id="target4">Target 4</div>
+<x-custom></x-custom>
+
+<script>
+  class XTarget extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let target = document.createElement("div");
+      target.id = "innertarget";
+      target.textContent = "Target 3";
+      target.ariaDetailsElements = [detail3];
+      this.shadowRoot.appendChild(target);
+    }
+  }
+  customElements.define("x-target", XTarget);
+
+  class XCustom extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let detail = document.createElement("div");
+      detail.id = "detail5";
+      detail.textContent = "Fifth detail";
+      let target = document.createElement("div");
+      target.id = "target5";
+      target.textContent = "Target 5";
+      this.shadowRoot.appendChild(detail);
+      this.shadowRoot.appendChild(target);
+      target.ariaDetailsElements = [detail];
+      document.body.appendChild(detail);
+    }
+  }
+  customElements.define("x-custom", XCustom);
+
+  description("Checks that element reflection is exposed to the a11y tree for 'ariaDetailsElements'");
+  if (!window.accessibilityController) {
+    debug("This test requires accessibilityController");
+  } else {
+    target1.ariaDetailsElements = [detail1];
+    var axDetail1 = accessibilityController.accessibleElementById("detail1");
+    var axTarget1 = accessibilityController.accessibleElementById("target1");
+    shouldBeTrue("axTarget1.ariaDetailsElementAtIndex(0).isEqual(axDetail1)");
+
+    target2.ariaDetailsElements = [document.getElementsByClassName("detail")[0]];
+    var wrapper = accessibilityController.accessibleElementById("wrapper");
+    var axDetail2 = wrapper.childAtIndex(0);
+    var axTarget2 = accessibilityController.accessibleElementById("target2");
+    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail2)");
+    target2.setAttribute("aria-details", "detail1");
+    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1)");
+
+    var axDetail3 = accessibilityController.accessibleElementById("detail3");
+    var axInnerTarget = accessibilityController.accessibleElementById("innertarget");
+    shouldBeTrue("axInnerTarget.ariaDetailsElementAtIndex(0).isEqual(axDetail3)");
+
+    target2.ariaDetailsElements = [detail1, document.getElementsByClassName("detail")[0], detail3];
+    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(0).isEqual(axDetail1)");
+    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(1).isEqual(axDetail2)");
+    shouldBeTrue("axTarget2.ariaDetailsElementAtIndex(2).isEqual(axDetail3)");
+
+    target4.ariaDetailsElements = [detail4];
+    detail4.id = "detail4-new";
+    var axDetail4 = accessibilityController.accessibleElementById("detail4-new");
+    var axTarget4 = accessibilityController.accessibleElementById("target4");
+    shouldBeTrue("axTarget4.ariaDetailsElementAtIndex(0).isEqual(axDetail4)");
+
+    var axDetail5 = accessibilityController.accessibleElementById("detail5");
+    var axTarget5 = accessibilityController.accessibleElementById("target5");
+    shouldBeTrue("axTarget5.ariaDetailsElementAtIndex(0).isEqual(axDetail5)");
+  }
+</script>

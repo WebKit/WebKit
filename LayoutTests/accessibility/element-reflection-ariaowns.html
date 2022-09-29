@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<div id="own1">First own</div>
+<div id="target1">Target 1</div>
+<div id="wrapper" tabindex="0">
+  <div class="own">Second own</div>
+</div>
+<div id="target2">Target 2</div>
+<div id="own3">Third own</div>
+<x-target></x-target>
+<div id="own4">Fourth own</div>
+<div id="target4">Target 4</div>
+<x-custom></x-custom>
+
+<script>
+  class XTarget extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let target = document.createElement("div");
+      target.id = "innertarget";
+      target.textContent = "Target 3";
+      target.ariaOwnsElements = [own3];
+      this.shadowRoot.appendChild(target);
+    }
+  }
+  customElements.define("x-target", XTarget);
+
+  class XCustom extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let own = document.createElement("div");
+      own.id = "own5";
+      own.textContent = "Fifth own";
+      let target = document.createElement("div");
+      target.id = "target5";
+      target.textContent = "Target 5";
+      this.shadowRoot.appendChild(own);
+      this.shadowRoot.appendChild(target);
+      target.ariaOwnsElements = [own];
+      document.body.appendChild(own);
+    }
+  }
+  customElements.define("x-custom", XCustom);
+
+  description("Checks that element reflection is exposed to the a11y tree for 'ariaOwnsElements'");
+  if (!window.accessibilityController) {
+    debug("This test requires accessibilityController");
+  } else {
+    target1.ariaOwnsElements = [own1];
+    var axOwn1 = accessibilityController.accessibleElementById("own1");
+    var axTarget1 = accessibilityController.accessibleElementById("target1");
+    shouldBeTrue("axTarget1.ariaOwnsElementAtIndex(0).isEqual(axOwn1)");
+
+    target2.ariaOwnsElements = [document.getElementsByClassName("own")[0]];
+    var wrapper = accessibilityController.accessibleElementById("wrapper");
+    var axOwn2 = wrapper.childAtIndex(0);
+    var axTarget2 = accessibilityController.accessibleElementById("target2");
+    shouldBeTrue("axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn2)");
+    target2.setAttribute("aria-owns", "own1");
+    shouldBeTrue("axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1)");
+
+    var axOwn3 = accessibilityController.accessibleElementById("own3");
+    var axInnerTarget = accessibilityController.accessibleElementById("innertarget");
+    shouldBeTrue("axInnerTarget.ariaOwnsElementAtIndex(0).isEqual(axOwn3)");
+
+    target2.ariaOwnsElements = [own1, document.getElementsByClassName("own")[0], own3];
+    shouldBeTrue("axTarget2.ariaOwnsElementAtIndex(0).isEqual(axOwn1)");
+    shouldBeTrue("axTarget2.ariaOwnsElementAtIndex(1).isEqual(axOwn2)");
+    shouldBeTrue("axTarget2.ariaOwnsElementAtIndex(2).isEqual(axOwn3)");
+
+    target4.ariaOwnsElements = [own4];
+    own4.id = "own4-new";
+    var axOwn4 = accessibilityController.accessibleElementById("own4-new");
+    var axTarget4 = accessibilityController.accessibleElementById("target4");
+    shouldBeTrue("axTarget4.ariaOwnsElementAtIndex(0).isEqual(axOwn4)");
+
+    var axOwn5 = accessibilityController.accessibleElementById("own5");
+    var axTarget5 = accessibilityController.accessibleElementById("target5");
+    shouldBeTrue("axTarget5.ariaOwnsElementAtIndex(0).isEqual(axOwn5)");
+  }
+</script>
