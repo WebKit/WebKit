@@ -181,7 +181,8 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, 
 
     CVPixelBufferRef pixelBuffer = nullptr;
     auto status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, format, shouldUseIOSurface ? (__bridge CFDictionaryRef)pixelAttributes : nullptr, &pixelBuffer);
-    ASSERT_UNUSED(status, status == noErr);
+    if (status != noErr || !pixelBuffer)
+        return nullptr;
 
     status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     ASSERT(status == noErr);
