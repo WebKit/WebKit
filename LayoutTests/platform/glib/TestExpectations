@@ -1442,11 +1442,7 @@ webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Fail
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
-webgl/1.0.3/conformance/textures/texture-upload-size.html [ Failure ]
 webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Failure ]
-webgl/webgl-draft-extensions-flag-default.html [ Failure ]
-webgl/webgl-draft-extensions-flag-off.html [ Failure ]
-webgl/webgl-draft-extensions-flag-on.html [ Failure ]
 webgl/webgl2-primitive-restart.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

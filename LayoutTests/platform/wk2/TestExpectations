@@ -847,9 +847,6 @@ webkit.org/b/183140 fast/selectors/querySelector-window-inactive.html
 
 webkit.org/b/186406 compositing/iframes/display-none-subframe.html [ Pass Failure ]
 
-# Newly imported test that is flaky on WebKit2 only.
-imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window.html [ Pass Failure ]
-
 # Newly imported test that is flaky on WK2 because the order of cookies is not consistent.
 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Pass Failure ]
 
