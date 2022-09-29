@@ -2762,7 +2762,7 @@ bool JSObject::defineOwnIndexedProperty(JSGlobalObject* globalObject, unsigned i
         if (canGetIndexQuickly(index) && canDoFastPutDirectIndex(this)) {
             DeferTermination deferScope(vm);
             PropertyDescriptor currentDescriptor;
-            ASSERT(getOwnPropertyDescriptor(globalObject, Identifier::from(vm, index), currentDescriptor));
+            getOwnPropertyDescriptor(globalObject, Identifier::from(vm, index), currentDescriptor);
             scope.assertNoException();
             ASSERT(currentDescriptor.attributes() == emptyAttributesDescriptor.attributes());
         }
