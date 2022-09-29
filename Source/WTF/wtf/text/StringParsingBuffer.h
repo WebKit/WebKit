@@ -63,6 +63,14 @@ public:
 
     StringView stringViewOfCharactersRemaining() const { return { m_position, lengthRemaining() }; }
 
+    CharacterType consume()
+    {
+        ASSERT(hasCharactersRemaining());
+        auto character = *m_position;
+        ++m_position;
+        return character;
+    }
+
     CharacterType operator[](unsigned i) const
     {
         ASSERT(i < lengthRemaining());

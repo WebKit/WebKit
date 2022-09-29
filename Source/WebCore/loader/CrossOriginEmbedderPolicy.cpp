@@ -31,9 +31,9 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderNames.h"
-#include "HTTPParsers.h"
 #include "JSFetchRequestDestination.h"
 #include "PingLoader.h"
+#include "RFC8941.h"
 #include "Report.h"
 #include "ReportingClient.h"
 #include "ResourceResponse.h"
@@ -47,11 +47,16 @@ namespace WebCore {
 CrossOriginEmbedderPolicy obtainCrossOriginEmbedderPolicy(const ResourceResponse& response, const ScriptExecutionContext* context)
 {
     auto parseCOEPHeader = [&response](HTTPHeaderName headerName, auto& value, auto& reportingEndpoint) {
-        auto coepParsingResult = parseStructuredFieldValue(response.httpHeaderField(headerName));
-        if (coepParsingResult && coepParsingResult->first == "require-corp"_s) {
-            value = CrossOriginEmbedderPolicyValue::RequireCORP;
-            reportingEndpoint = coepParsingResult->second.get<HashTranslatorASCIILiteral>("report-to"_s);
-        }
+        auto coepParsingResult = RFC8941::parseItemStructuredFieldValue(response.httpHeaderField(headerName));
+        if (!coepParsingResult)
+            return;
+        auto* policyString = std::get_if<RFC8941::Token>(&coepParsingResult->first);
+        if (!policyString || policyString->string() != "require-corp"_s)
+            return;
+
+        value = CrossOriginEmbedderPolicyValue::RequireCORP;
+        if (auto* reportToString = coepParsingResult->second.getIf<String>("report-to"_s))
+            reportingEndpoint = *reportToString;
     };
 
     CrossOriginEmbedderPolicy policy;
