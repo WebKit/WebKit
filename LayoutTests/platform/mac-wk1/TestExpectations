@@ -2124,6 +2124,9 @@ webkit.org/b/245008 fast/attachment/mac/attachment-numbers.html [ Skip ]
 webkit.org/b/245008 fast/attachment/mac/attachment-pages.html [ Skip ]
 webkit.org/b/245008 fast/attachment/mac/attachment-keynote.html [ Skip ]
 
+webkit.org/b/245816 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url.html [ Failure Pass ]
+webkit.org/b/245816 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url-with-fragment.html [ Failure Pass ]
+
 webkit.org/b/245014 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
 
 webkit.org/b/245035 imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass Failure ]
