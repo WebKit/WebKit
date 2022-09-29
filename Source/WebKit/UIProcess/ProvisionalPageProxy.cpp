@@ -420,11 +420,6 @@ void ProvisionalPageProxy::logDiagnosticMessageWithValueDictionaryFromWebProcess
     m_page.logDiagnosticMessageWithValueDictionary(message, description, valueDictionary, shouldSample);
 }
 
-void ProvisionalPageProxy::backForwardAddItem(BackForwardListItemState&& itemState)
-{
-    m_page.backForwardAddItemShared(m_process.copyRef(), WTFMove(itemState));
-}
-
 #if USE(QUICK_LOOK)
 void ProvisionalPageProxy::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)
 {
@@ -482,6 +477,7 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
         || decoder.messageName() == Messages::WebPageProxy::DidChangeProgress::name()
         || decoder.messageName() == Messages::WebPageProxy::DidDestroyNavigation::name()
         || decoder.messageName() == Messages::WebPageProxy::DidFinishProgress::name()
+        || decoder.messageName() == Messages::WebPageProxy::BackForwardAddItem::name()
         || decoder.messageName() == Messages::WebPageProxy::SetNetworkRequestsInProgress::name()
         || decoder.messageName() == Messages::WebPageProxy::WillGoToBackForwardListItem::name()
 #if USE(QUICK_LOOK)
@@ -510,11 +506,6 @@ void ProvisionalPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::D
         return;
     }
 #endif
-
-    if (decoder.messageName() == Messages::WebPageProxy::BackForwardAddItem::name()) {
-        IPC::handleMessage<Messages::WebPageProxy::BackForwardAddItem>(connection, decoder, this, &ProvisionalPageProxy::backForwardAddItem);
-        return;
-    }
 
     if (decoder.messageName() == Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess::name()) {
         IPC::handleMessage<Messages::WebPageProxy::LogDiagnosticMessageFromWebProcess>(connection, decoder, this, &ProvisionalPageProxy::logDiagnosticMessageFromWebProcess);
