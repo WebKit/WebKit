@@ -285,7 +285,7 @@ private:
                         m_clobbers.append(Clobber(indexOfHead + instIndex * 2 - 1, prevRegs.whole()));
                 }
                 if (Inst* next = block->get(instIndex)) {
-                    auto nextRegs = regs;
+                    RegisterSet nextRegs = regs;
                     next->forEach<Reg>(
                         [&] (Reg& reg, Arg::Role role, Bank, Width width) {
                             ASSERT(width <= Width64);
@@ -295,7 +295,7 @@ private:
                     if (next->kind.opcode == Patch)
                         nextRegs.merge(next->extraEarlyClobberedRegs());
                     if (!nextRegs.isEmpty())
-                        m_clobbers.append(Clobber(indexOfHead + instIndex * 2, nextRegs));
+                        m_clobbers.append(Clobber(indexOfHead + instIndex * 2, nextRegs.whole()));
                 }
             };
             

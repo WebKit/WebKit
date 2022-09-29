@@ -49,7 +49,7 @@ class RegisterSet final {
     friend RegisterSetHash;
 
 public:
-    ALWAYS_INLINE constexpr RegisterSet& includeRegister(Reg reg, Width width = Width64)
+    ALWAYS_INLINE constexpr RegisterSet& includeRegister(Reg reg, Width width = Width128)
     {
         ASSERT(!!reg);
         m_bits.set(reg.index());
@@ -117,7 +117,7 @@ public:
         return *this;
     }
 
-    ALWAYS_INLINE constexpr WholeRegisterSet whole() const;
+    ALWAYS_INLINE constexpr WholeRegisterSet whole() const WARN_UNUSED_RETURN;
     ALWAYS_INLINE constexpr size_t numberOfSetRegisters() const;
     ALWAYS_INLINE constexpr size_t numberOfSetGPRs() const;
     ALWAYS_INLINE constexpr size_t numberOfSetFPRs() const;
@@ -201,6 +201,7 @@ public:
 
     ALWAYS_INLINE constexpr bool includesRegister(Reg reg, Width width = Width64) const
     {
+        ASSERT(m_bits.count() >= m_upperBits.count());
         if (LIKELY(width <= Width64) || conservativeWidth(reg) <= Width64)
             return m_bits.get(reg.index());
         return m_bits.get(reg.index()) && m_upperBits.get(reg.index());
@@ -222,6 +223,7 @@ public:
 
     ALWAYS_INLINE constexpr size_t numberOfSetRegisters() const
     {
+        ASSERT(m_bits.count() >= m_upperBits.count());
         return m_bits.count();
     }
 
@@ -237,6 +239,7 @@ public:
 
     ALWAYS_INLINE constexpr bool isEmpty() const
     {
+        ASSERT(m_bits.count() >= m_upperBits.count());
         return m_bits.isEmpty();
     }
 
@@ -260,9 +263,13 @@ public:
     template<typename Func>
     ALWAYS_INLINE constexpr void forEachWithWidth(const Func& func) const
     {
-        forEach(
-            [&] (Reg reg) {
-                func(reg, (conservativeWidth(reg) <= Width64 || !m_upperBits.get(reg.index())) ? Width64 : Width128);
+        ASSERT(m_bits.count() >= m_upperBits.count());
+        m_bits.forEachSetBit(
+            [&] (size_t index) {
+                ASSERT(m_bits.get(index) >= m_upperBits.get(index));
+                Reg reg = Reg::fromIndex(index);
+                Width includedWidth = (conservativeWidth(reg) <= Width64 || !m_upperBits.get(index)) ? Width64 : Width128;
+                func(reg, includedWidth);
             });
     }
 
@@ -300,7 +307,7 @@ public:
     ALWAYS_INLINE constexpr iterator begin() const { return iterator(m_bits.begin()); }
     ALWAYS_INLINE constexpr iterator end() const { return iterator(m_bits.end()); }
 
-    ALWAYS_INLINE constexpr WholeRegisterSet& includeRegister(Reg reg, Width width = Width64)
+    ALWAYS_INLINE constexpr WholeRegisterSet& includeRegister(Reg reg, Width width = Width128)
     {
         ASSERT(!!reg);
         m_bits.set(reg.index());
@@ -336,17 +343,11 @@ public:
 
     ALWAYS_INLINE constexpr bool hasAnyWideRegisters() const { return m_upperBits.count(); }
 
-    ALWAYS_INLINE constexpr WholeRegisterSet& merge(const RegisterSet& other)
+    ALWAYS_INLINE constexpr WholeRegisterSet& merge(const WholeRegisterSet& other)
     {
         m_bits.merge(other.m_bits);
         m_upperBits.merge(other.m_upperBits);
-        return *this;
-    }
-
-    ALWAYS_INLINE constexpr WholeRegisterSet& filter(const RegisterSet& other)
-    {
-        m_bits.filter(other.m_bits);
-        m_upperBits.filter(other.m_upperBits);
+        ASSERT(m_bits.count() >= m_upperBits.count());
         return *this;
     }
 
@@ -369,8 +370,8 @@ public:
         out.print("]");
     }
 
-    ALWAYS_INLINE constexpr bool operator==(const RegisterSet& other) const { return m_bits == other.m_bits && m_upperBits == other.m_upperBits; }
-    ALWAYS_INLINE constexpr bool operator!=(const RegisterSet& other) const { return m_bits != other.m_bits || m_upperBits != other.m_upperBits; }
+    ALWAYS_INLINE constexpr bool operator==(const WholeRegisterSet& other) const { return m_bits == other.m_bits && m_upperBits == other.m_upperBits; }
+    ALWAYS_INLINE constexpr bool operator!=(const WholeRegisterSet& other) const { return m_bits != other.m_bits || m_upperBits != other.m_upperBits; }
 
 private:
     RegisterBitmap m_bits = { };
@@ -420,7 +421,7 @@ public:
     ALWAYS_INLINE constexpr bool operator==(const FrozenRegisterSet& other) const { return m_bits == other.m_bits; }
     ALWAYS_INLINE constexpr bool operator!=(const FrozenRegisterSet& other) const { return m_bits != other.m_bits; }
 
-    ALWAYS_INLINE constexpr WholeRegisterSet set() const
+    ALWAYS_INLINE constexpr WholeRegisterSet set() const WARN_UNUSED_RETURN
     {
         WholeRegisterSet result;
         m_bits.forEachSetBit(
