@@ -192,7 +192,8 @@ void FetchEvent::navigationPreloadIsReady(ResourceResponse&& response)
 
     // We postpone the load to leave some time for the service worker to use the preload before loading it.
     context->postTask([fetchResponse = WTFMove(fetchResponse), request = WTFMove(request)](auto& context) {
-        fetchResponse->startLoader(context, request.get(), cachedResourceRequestInitiators().navigation);
+        if (!fetchResponse->isUsedForPreload())
+            fetchResponse->startLoader(context, request.get(), cachedResourceRequestInitiators().navigation);
     });
 }
 
