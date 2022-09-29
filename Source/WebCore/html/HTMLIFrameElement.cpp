@@ -196,7 +196,8 @@ void HTMLIFrameElement::loadDeferredFrame()
 {
     AtomString currentURL = frameURL();
     setFrameURL(m_lazyLoadFrameObserver->frameURL());
-    openURL();
+    if (isConnected())
+        openURL();
     setFrameURL(currentURL);
     m_lazyLoadFrameObserver = nullptr;
 }
