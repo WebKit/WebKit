@@ -60,6 +60,7 @@ imported/w3c/web-platform-tests/speech-api/ [ Pass ]
 http/tests/media/fairplay [ Pass ]
 media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
+svg/filters/feDisplacementMap-filterUnits.svg [ Pass ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
