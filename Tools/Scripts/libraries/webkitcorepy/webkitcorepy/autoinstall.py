@@ -426,11 +426,7 @@ class AutoInstall(object):
 
     @classmethod
     def _request(cls, url, ca_cert_path=None):
-        if sys.platform.startswith('linux'):
-            cafile = None
-        else:
-            cafile = ca_cert_path or cls.ca_cert_path
-        return urlopen(url, timeout=cls.timeout, cafile=cafile)
+        return urlopen(url, timeout=cls.timeout, cafile=ca_cert_path or cls.ca_cert_path)
 
     @classmethod
     def enabled(cls):
