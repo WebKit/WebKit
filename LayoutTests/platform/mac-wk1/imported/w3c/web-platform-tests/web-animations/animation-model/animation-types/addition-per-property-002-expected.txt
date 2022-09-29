@@ -140,9 +140,6 @@ PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAddition function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
-PASS scroll-behavior (type: discrete) has testAddition function
-FAIL scroll-behavior: "smooth" onto "auto" undefined is not an object (evaluating 'getComputedStyle(target, pseudoType)[idlName].toLowerCase')
-FAIL scroll-behavior: "auto" onto "smooth" undefined is not an object (evaluating 'getComputedStyle(target, pseudoType)[idlName].toLowerCase')
 PASS shape-outside (type: discrete) has testAddition function
 PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
