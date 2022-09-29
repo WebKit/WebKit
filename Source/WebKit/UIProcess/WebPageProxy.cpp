@@ -10512,22 +10512,31 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
 {
     MESSAGE_CHECK(m_process, m_preferences->attachmentElementEnabled());
 
-    FloatSize size = requestedSize;
-    ShareableBitmap::Handle handle;
+    auto updateAttachmentIcon = [&] {
+        FloatSize size = requestedSize;
+        ShareableBitmap::Handle handle;
+
+#if PLATFORM(COCOA)
+        if (auto icon = iconForAttachment(fileName, contentType, title, size))
+            icon->createHandle(handle);
+#endif
+
+        send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, size));
+    };
+
 #if PLATFORM(MAC)
     if (auto attachment = attachmentForIdentifier(identifier); attachment && attachment->contentType() == "public.directory"_s) {
-        attachment->doWithFileWrapper([&](NSFileWrapper *fileWrapper) {
-            updateIconForDirectory(fileWrapper, attachment->identifier());
+        attachment->doWithFileWrapper([&, updateAttachmentIcon = WTFMove(updateAttachmentIcon)] (NSFileWrapper *fileWrapper) {
+            if (updateIconForDirectory(fileWrapper, attachment->identifier()))
+                return;
+
+            updateAttachmentIcon();
         });
         return;
     }
 #endif
 
-#if PLATFORM(COCOA)
-    if (auto icon = iconForAttachment(fileName, contentType, title, size))
-        icon->createHandle(handle);
-#endif
-    send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, size));
+    updateAttachmentIcon();
 }
 
 RefPtr<API::Attachment> WebPageProxy::attachmentForIdentifier(const String& identifier) const

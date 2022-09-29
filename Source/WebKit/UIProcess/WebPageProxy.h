@@ -2136,8 +2136,8 @@ public:
     void setIsWindowResizingEnabled(bool);
 #endif
 
-#if PLATFORM(MAC)
-    void updateIconForDirectory(NSFileWrapper *, const String&);
+#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(MAC)
+    bool updateIconForDirectory(NSFileWrapper *, const String&);
 #endif
 
 #if ENABLE(NOTIFICATIONS)
