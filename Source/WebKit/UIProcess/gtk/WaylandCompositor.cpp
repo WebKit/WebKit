@@ -391,7 +391,7 @@ static const struct wl_webkitgtk_interface webkitgtkInterface = {
 };
 
 // FIXME: Merge with AcceleratedBackingStoreWayland::isEGLImageAvailable.
-static isEGLImageAvailable(bool useIndexedGetString)
+static bool isEGLImageAvailable(bool useIndexedGetString)
 {
 #if USE(OPENGL_ES)
     UNUSED_PARAM(useIndexedGetString);
