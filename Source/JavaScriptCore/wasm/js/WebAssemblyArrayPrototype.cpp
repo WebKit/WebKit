@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCJSValueInlines.h"
 #include "JSWebAssemblyArray.h"
-
 #include "WebAssemblyArrayPrototype.lut.h"
 
 namespace JSC {

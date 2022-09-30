@@ -33,6 +33,8 @@
 
 namespace JSC {
 
+class SourceCode;
+
 class ImportMap final : public RefCounted<ImportMap> {
 public:
     using SpecifierMap = HashMap<String, URL>;

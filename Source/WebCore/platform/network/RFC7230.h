@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <unicode/umachine.h>
 #include <wtf/Forward.h>
 
 namespace RFC7230 {

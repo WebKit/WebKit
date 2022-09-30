@@ -33,8 +33,10 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "ElementInlines.h"
 #include "ElementRareData.h"
 #include "HTMLNames.h"
+#include "NodeTraversal.h"
 #include "ShadowRoot.h"
 #include "ShadowRootInit.h"
 #include "SlotAssignmentMode.h"
