@@ -139,7 +139,7 @@ def parse_args(args):
         optparse.make_option("--threaded", action="store_true", default=False,
             help="Run a concurrent JavaScript thread with each test"),
         optparse.make_option("--dump-render-tree", "-1", action="store_false", default=True, dest="webkit_test_runner",
-            help="Use DumpRenderTree rather than WebKitTestRunner."),
+            help="Use DumpRenderTree rather than WebKitTestRunner. This runs the wk1 single-process architecture."),
         # FIXME: We should merge this w/ --build-directory and only have one flag.
         optparse.make_option("--root", action="store",
             help="Path to a directory containing the executables needed to run tests."),
