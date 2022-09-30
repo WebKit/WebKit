@@ -48,6 +48,15 @@ PASS 'keys' in obj is false
 PASS 'forEach' in obj is false
 PASS 'values' in obj is false
 
+* Plugin
+PASS obj.__proto__ is Plugin.prototype
+PASS Symbol.iterator in obj is true
+PASS for..of did not throw an exception
+PASS 'entries' in obj is false
+PASS 'keys' in obj is false
+PASS 'forEach' in obj is false
+PASS 'values' in obj is false
+
 * PluginArray
 PASS obj.__proto__ is PluginArray.prototype
 PASS Symbol.iterator in obj is true

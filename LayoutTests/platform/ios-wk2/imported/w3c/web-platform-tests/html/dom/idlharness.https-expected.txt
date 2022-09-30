@@ -4858,7 +4858,7 @@ PASS Navigator interface: attribute cookieEnabled
 PASS Navigator interface: attribute plugins
 PASS Navigator interface: attribute mimeTypes
 PASS Navigator interface: operation javaEnabled()
-FAIL Navigator interface: attribute pdfViewerEnabled assert_true: The prototype object must have a property "pdfViewerEnabled" expected true got false
+PASS Navigator interface: attribute pdfViewerEnabled
 PASS Navigator interface: attribute hardwareConcurrency
 PASS Navigator must be primary interface of window.navigator
 PASS Stringification of window.navigator
@@ -4884,7 +4884,7 @@ PASS Navigator interface: window.navigator must inherit property "cookieEnabled"
 PASS Navigator interface: window.navigator must inherit property "plugins" with the proper type
 PASS Navigator interface: window.navigator must inherit property "mimeTypes" with the proper type
 PASS Navigator interface: window.navigator must inherit property "javaEnabled()" with the proper type
-FAIL Navigator interface: window.navigator must inherit property "pdfViewerEnabled" with the proper type assert_inherits: property "pdfViewerEnabled" not found in prototype chain
+PASS Navigator interface: window.navigator must inherit property "pdfViewerEnabled" with the proper type
 PASS Navigator interface: window.navigator must inherit property "hardwareConcurrency" with the proper type
 PASS PluginArray interface: existence and properties of interface object
 PASS PluginArray interface object length

@@ -43,6 +43,7 @@ public:
     String appVersion() const;
     DOMPluginArray& plugins();
     DOMMimeTypeArray& mimeTypes();
+    bool pdfViewerEnabled();
     bool cookieEnabled() const;
     bool javaEnabled() const { return false; }
     const String& userAgent() const final;
@@ -74,6 +75,7 @@ private:
 
     mutable RefPtr<ShareDataReader> m_loader;
     mutable bool m_hasPendingShare { false };
+    mutable bool m_pdfViewerEnabled { false };
     mutable RefPtr<DOMPluginArray> m_plugins;
     mutable RefPtr<DOMMimeTypeArray> m_mimeTypes;
     mutable String m_userAgent;

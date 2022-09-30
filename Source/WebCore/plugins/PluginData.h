@@ -113,6 +113,10 @@ public:
 
     String pluginFileForWebVisibleMimeType(const String& mimeType) const;
 
+    const std::optional<PluginInfo>& builtInPDFPlugin() const { return m_builtInPDFPluginInfo; }
+
+    static PluginInfo dummyPDFPluginInfo();
+
 private:
     explicit PluginData(Page&);
     void initPlugins();
@@ -127,6 +131,7 @@ protected:
         std::optional<Vector<PluginInfo>> pluginList;
     };
     mutable CachedVisiblePlugins m_cachedVisiblePlugins;
+    std::optional<PluginInfo> m_builtInPDFPluginInfo;
 };
 
 inline bool isSupportedPlugin(const Vector<SupportedPluginIdentifier>& pluginIdentifiers, const URL& pageURL, const String& pluginIdentifier)

@@ -270,9 +270,10 @@ namespace WebCore {
     String allFilesText();
 #endif
 
+    WEBCORE_EXPORT String pdfDocumentTypeDescription();
+
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String builtInPDFPluginName();
-    WEBCORE_EXPORT String pdfDocumentTypeDescription();
     WEBCORE_EXPORT String postScriptDocumentTypeDescription();
     String keygenMenuItem2048();
     WEBCORE_EXPORT String keygenKeychainItemName(const String& host);

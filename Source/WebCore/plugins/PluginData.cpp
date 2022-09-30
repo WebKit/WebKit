@@ -32,6 +32,18 @@
 
 namespace WebCore {
 
+#if PLATFORM(COCOA)
+static inline bool isBuiltInPDFPlugIn(const PluginInfo& plugin)
+{
+    return equalLettersIgnoringASCIICase(plugin.bundleIdentifier, "com.apple.webkit.builtinpdfplugin"_s);
+}
+#else
+static inline bool isBuiltInPDFPlugIn(const PluginInfo&)
+{
+    return false;
+}
+#endif
+
 PluginData::PluginData(Page& page)
     : m_page(page)
 {
@@ -42,6 +54,13 @@ void PluginData::initPlugins()
 {
     ASSERT(m_plugins.isEmpty());
     m_plugins = m_page.pluginInfoProvider().pluginInfo(m_page, m_supportedPluginIdentifiers);
+
+    for (auto& plugin : m_plugins) {
+        if (isBuiltInPDFPlugIn(plugin)) {
+            m_builtInPDFPluginInfo = plugin;
+            break;
+        }
+    }
 }
 
 const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
@@ -57,18 +76,6 @@ const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
 
     return *m_cachedVisiblePlugins.pluginList;
 }
-
-#if PLATFORM(COCOA)
-static inline bool isBuiltInPDFPlugIn(const PluginInfo& plugin)
-{
-    return equalLettersIgnoringASCIICase(plugin.bundleIdentifier, "com.apple.webkit.builtinpdfplugin"_s);
-}
-#else
-static inline bool isBuiltInPDFPlugIn(const PluginInfo&)
-{
-    return false;
-}
-#endif
 
 static bool shouldBePubliclyVisible(const PluginInfo& plugin)
 {
@@ -152,6 +159,31 @@ String PluginData::pluginFileForWebVisibleMimeType(const String& mimeType) const
         }
     }
     return { };
+}
+
+PluginInfo PluginData::dummyPDFPluginInfo()
+{
+    PluginInfo info;
+
+    info.name = "Dummy Plugin"_s;
+    info.desc = pdfDocumentTypeDescription();
+    info.file = "internal-pdf-viewer"_s;
+    info.isApplicationPlugin = true;
+    info.clientLoadPolicy = PluginLoadClientPolicy::Undefined;
+
+    MimeClassInfo pdfMimeClassInfo;
+    pdfMimeClassInfo.type = "application/pdf"_s;
+    pdfMimeClassInfo.desc = pdfDocumentTypeDescription();
+    pdfMimeClassInfo.extensions.append("pdf"_s);
+    info.mimes.append(pdfMimeClassInfo);
+
+    MimeClassInfo textPDFMimeClassInfo;
+    textPDFMimeClassInfo.type = "text/pdf"_s;
+    textPDFMimeClassInfo.desc = pdfDocumentTypeDescription();
+    textPDFMimeClassInfo.extensions.append("pdf"_s);
+    info.mimes.append(textPDFMimeClassInfo);
+
+    return info;
 }
 
 } // namespace WebCore
