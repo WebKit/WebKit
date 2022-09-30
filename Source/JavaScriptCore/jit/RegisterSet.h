@@ -62,8 +62,8 @@ public:
     ALWAYS_INLINE constexpr RegisterSet& includeRegister(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            includeRegister(regs.tagGPR(), Width128);
-        includeRegister(regs.payloadGPR(), Width128);
+            includeRegister(regs.tagGPR(), Width64);
+        includeRegister(regs.payloadGPR(), Width64);
         return *this;
     }
 
@@ -320,8 +320,8 @@ public:
     ALWAYS_INLINE constexpr WholeRegisterSet& includeRegister(JSValueRegs regs)
     {
         if (regs.tagGPR() != InvalidGPRReg)
-            includeRegister(regs.tagGPR(), Width128);
-        includeRegister(regs.payloadGPR(), Width128);
+            includeRegister(regs.tagGPR(), Width64);
+        includeRegister(regs.payloadGPR(), Width64);
         return *this;
     }
 

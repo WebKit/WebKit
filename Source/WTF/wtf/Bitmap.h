@@ -116,8 +116,8 @@ public:
     };
     
     // Use this to iterate over set bits.
-    iterator begin() const { return iterator(*this, findBit(0, true)); }
-    iterator end() const { return iterator(*this, bitmapSize); }
+    constexpr iterator begin() const { return iterator(*this, findBit(0, true)); }
+    constexpr iterator end() const { return iterator(*this, bitmapSize); }
     
     constexpr void mergeAndClear(Bitmap&);
     constexpr void setAndClear(Bitmap&);
