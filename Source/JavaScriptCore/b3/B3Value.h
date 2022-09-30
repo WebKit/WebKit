@@ -733,7 +733,7 @@ private:
 #if ASSERT_ENABLED
     String m_compilerConstructionSite { generateCompilerConstructionSite() };
 
-    static String generateCompilerConstructionSite();
+    static SUPPRESS_ASAN String generateCompilerConstructionSite();
 #endif
 
 public:

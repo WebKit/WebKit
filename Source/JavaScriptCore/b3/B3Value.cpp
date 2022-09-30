@@ -237,7 +237,8 @@ void Value::deepDump(const Procedure* proc, PrintStream& out) const
             out.print(comma, string);
     }
 
-    if (m_origin)
+    // This origin is cleared by freeDFGIRAfterLowering()
+    if (m_origin && Options::dumpDisassembly())
         out.print(comma, OriginDump(proc, m_origin));
 
     out.print(")");

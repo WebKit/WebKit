@@ -89,7 +89,8 @@ unsigned Inst::jsHash() const
 void Inst::dump(PrintStream& out) const
 {
     out.print(kind, " ", listDump(args));
-    if (origin) {
+    // origin is freed by freeUnneededB3ValuesAfterLowering unless shouldPreserveB3Origins() is true.
+    if (origin && Options::dumpDisassembly()) {
         if (args.size())
             out.print(", ");
         out.print(*origin);
