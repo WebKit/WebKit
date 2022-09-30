@@ -25,6 +25,7 @@
 // generate-unified-sources.sh script to look for it there.
 
 JSGestureEvent.cpp
+JSInternalsAdditions.cpp
 JSTouch.cpp
 JSTouchEvent.cpp
 JSTouchList.cpp

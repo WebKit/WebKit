@@ -52,6 +52,10 @@
 #include "AudioSession.h"
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include "InternalsAdditions.h"
+#endif
+
 OBJC_CLASS DDScannerResult;
 OBJC_CLASS VKCImageAnalysis;
 
