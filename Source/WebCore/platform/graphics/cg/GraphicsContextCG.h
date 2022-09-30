@@ -136,6 +136,8 @@ public:
 #endif
 
 private:
+    void convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>&);
+
     GraphicsContextPlatformPrivate* m_data { nullptr };
 };
 

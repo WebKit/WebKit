@@ -1,0 +1,40 @@
+
+
+PASS Test helper: fetching and sanity checking test JSON: scopes.json
+PASS Fallback to toplevel and between scopes: should fall back to `imports` when no scopes match: a
+PASS Fallback to toplevel and between scopes: should fall back to `imports` when no scopes match: b
+PASS Fallback to toplevel and between scopes: should fall back to `imports` when no scopes match: c
+PASS Fallback to toplevel and between scopes: should fall back to `imports` when no scopes match: d
+PASS Fallback to toplevel and between scopes: should use a direct scope override: a
+PASS Fallback to toplevel and between scopes: should use a direct scope override: b
+PASS Fallback to toplevel and between scopes: should use a direct scope override: c
+PASS Fallback to toplevel and between scopes: should use a direct scope override: d
+PASS Fallback to toplevel and between scopes: should use an indirect scope override: a
+PASS Fallback to toplevel and between scopes: should use an indirect scope override: b
+PASS Fallback to toplevel and between scopes: should use an indirect scope override: c
+PASS Fallback to toplevel and between scopes: should use an indirect scope override: d
+PASS Relative URL scope keys: An empty string scope is a scope with import map base URL: a
+PASS Relative URL scope keys: An empty string scope is a scope with import map base URL: b
+PASS Relative URL scope keys: An empty string scope is a scope with import map base URL: c
+PASS Relative URL scope keys: './' scope is a scope with import map base URL's directory: a
+PASS Relative URL scope keys: './' scope is a scope with import map base URL's directory: b
+PASS Relative URL scope keys: './' scope is a scope with import map base URL's directory: c
+PASS Relative URL scope keys: '../' scope is a scope with import map base URL's parent directory: a
+PASS Relative URL scope keys: '../' scope is a scope with import map base URL's parent directory: b
+PASS Relative URL scope keys: '../' scope is a scope with import map base URL's parent directory: c
+PASS Package-like scenarios: Base URLs inside the scope should use the scope if the scope has matching keys: lodash-dot
+PASS Package-like scenarios: Base URLs inside the scope should use the scope if the scope has matching keys: lodash-dot/foo
+PASS Package-like scenarios: Base URLs inside the scope should use the scope if the scope has matching keys: lodash-dotdot
+PASS Package-like scenarios: Base URLs inside the scope should use the scope if the scope has matching keys: lodash-dotdot/foo
+PASS Package-like scenarios: Base URLs inside the scope fallback to less specific scope: moment
+PASS Package-like scenarios: Base URLs inside the scope fallback to less specific scope: vue
+PASS Package-like scenarios: Base URLs inside the scope fallback to toplevel: moment/foo
+PASS Package-like scenarios: Base URLs outside a scope shouldn't use the scope even if the scope has matching keys: lodash-dot
+PASS Package-like scenarios: Base URLs outside a scope shouldn't use the scope even if the scope has matching keys: lodash-dotdot
+PASS Package-like scenarios: Base URLs outside a scope shouldn't use the scope even if the scope has matching keys: lodash-dot/foo
+PASS Package-like scenarios: Base URLs outside a scope shouldn't use the scope even if the scope has matching keys: lodash-dotdot/foo
+PASS Package-like scenarios: Fallback to toplevel or not, depending on trailing slash match: moment
+PASS Package-like scenarios: Fallback to toplevel or not, depending on trailing slash match: moment/foo
+PASS Package-like scenarios: should still fail for package-like specifiers that are not declared: underscore/
+PASS Package-like scenarios: should still fail for package-like specifiers that are not declared: underscore/foo
+

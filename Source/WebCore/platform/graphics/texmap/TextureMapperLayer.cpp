@@ -255,27 +255,6 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
     if (m_state.backdropLayer && m_state.backdropLayer == options.backdropLayer)
         return;
 
-    struct Preserves3DScope {
-        Preserves3DScope(TextureMapperPaintOptions& passedOptions, bool passedEnable)
-            : options(passedOptions)
-            , enable(passedEnable)
-        {
-            if (enable) {
-                options.preserves3D = true;
-                options.textureMapper.beginPreserves3D();
-            }
-        }
-        ~Preserves3DScope()
-        {
-            if (enable) {
-                options.preserves3D = false;
-                options.textureMapper.endPreserves3D();
-            }
-        }
-        TextureMapperPaintOptions& options;
-        bool enable;
-    } scopedPreserves3D(options, m_state.preserves3D && !options.preserves3D);
-
     if (m_state.backdropLayer && !options.backdropLayer) {
         TransformationMatrix clipTransform;
         clipTransform.translate(options.offset.width(), options.offset.height());
@@ -371,6 +350,178 @@ static void resolveOverlaps(const IntRect& newRegion, Region& overlapRegion, Reg
     nonOverlapRegion.unite(newNonOverlapRegion);
 }
 
+template<typename T>
+struct Point4D {
+    T x;
+    T y;
+    T z;
+    T w;
+};
+
+template<typename T>
+Point4D<T> operator+(Point4D<T> s, Point4D<T> t)
+{
+    return { s.x + t.x, s.y + t.y, s.z + t.z, s.w + t.w };
+}
+
+template<typename T>
+Point4D<T> operator-(Point4D<T> s, Point4D<T> t)
+{
+    return { s.x - t.x, s.y - t.y, s.z - t.z, s.w - t.w };
+}
+
+template<typename T>
+Point4D<T> operator*(T s, Point4D<T> t)
+{
+    return { s * t.x, s * t.y, s * t.z, s * t.w };
+}
+
+template<typename T>
+struct MinMax {
+    T min;
+    T max;
+};
+
+IntRect transformedBoundingBox(const TransformationMatrix& transform, FloatRect rect, const IntRect& clip)
+{
+    using Point = Point4D<double>;
+    auto mapPoint = [&](FloatPoint p) -> Point {
+        double x = p.x();
+        double y = p.y();
+        double z = 0;
+        double w = 1;
+        transform.map4ComponentPoint(x, y, z, w);
+        return { x, y, z, w };
+    };
+    Point vertex[] = {
+        mapPoint(rect.minXMinYCorner()),
+        mapPoint(rect.maxXMinYCorner()),
+        mapPoint(rect.maxXMaxYCorner()),
+        mapPoint(rect.minXMaxYCorner())
+    };
+    bool isPositive[] = {
+        vertex[0].w >= 0,
+        vertex[1].w >= 0,
+        vertex[2].w >= 0,
+        vertex[3].w >= 0
+    };
+
+    auto findFirstPositiveVertex = [&]() {
+        int i = 0;
+        for (; i < 4; i++) {
+            if (isPositive[i])
+                return i;
+        }
+        return i;
+    };
+    auto findFirstNegativeVertex = [&]() {
+        int i = 0;
+        for (; i < 4; i++) {
+            if (!isPositive[i])
+                return i;
+        }
+        return i;
+    };
+
+    auto leftVertexIndex = [](int i) {
+        return (i + 1) % 4;
+    };
+    auto diagonalVertexIndex = [](int i) {
+        return (i + 2) % 4;
+    };
+    auto rightVertexIndex = [](int i) {
+        return (i + 3) % 4;
+    };
+
+    auto minMax2 = [](double d1, double d2) -> MinMax<double> {
+        if (d1 < d2)
+            return { d1, d2 };
+        return { d2, d1 };
+    };
+    auto minMax3 = [&](double d1, double d2, double d3) -> MinMax<double> {
+        auto minmax = minMax2(d1, d2);
+        return { std::min(minmax.min, d3), std::max(minmax.max, d3) };
+    };
+    auto minMax4 = [&](double d1, double d2, double d3, double d4) -> MinMax<double> {
+        auto minmax1 = minMax2(d1, d2);
+        auto minmax2 = minMax2(d3, d4);
+        return { std::min(minmax1.min, minmax2.min), std::max(minmax1.max, minmax2.max) };
+    };
+
+    auto clipped = [&](const MinMax<double>& xMinMax, const MinMax<double>& yMinMax) -> IntRect {
+        int minX = std::max<double>(xMinMax.min, clip.x());
+        int minY = std::max<double>(yMinMax.min, clip.y());
+        int maxX = std::min<double>(xMinMax.max, clip.maxX());
+        int maxY = std::min<double>(yMinMax.max, clip.maxY());
+        return { minX, minY, maxX - minX, maxY - minY };
+    };
+
+    auto toPositive = [&](Point positive, Point negative) -> Point {
+        ASSERT(positive.w > 0);
+        ASSERT(negative.w <= 0);
+        auto v = positive.w * negative - negative.w * positive;
+        v.w = 0;
+        return v;
+    };
+    auto boundingBoxPPP = [&](Point p1, Point p2, Point p3) -> IntRect {
+        ASSERT(p1.w >= 0);
+        ASSERT(p2.w >= 0);
+        ASSERT(p3.w >= 0);
+        auto xMinMax = minMax3(p1.x / p1.w, p2.x / p2.w, p3.x / p3.w);
+        auto yMinMax = minMax3(p1.y / p1.w, p2.y / p2.w, p3.y / p3.w);
+        return clipped(xMinMax, yMinMax);
+    };
+    auto boundingBoxPPN = [&](Point p1, Point p2, Point n3) -> IntRect {
+        return boundingBoxPPP(p1, p2, toPositive(p1, n3));
+    };
+    auto boundingBoxPNN = [&](Point p1, Point n2, Point n3) -> IntRect {
+        return boundingBoxPPP(p1, toPositive(p1, n2), toPositive(p1, n3));
+    };
+
+    auto boundingBoxPPPByIndex = [&](int i1, int i2, int i3) {
+        return boundingBoxPPP(vertex[i1], vertex[i2], vertex[i3]);
+    };
+    auto boundingBoxPPNByIndex = [&](int i1, int i2, int i3) {
+        return boundingBoxPPN(vertex[i1], vertex[i2], vertex[i3]);
+    };
+    auto boundingBoxPNNByIndex = [&](int i1, int i2, int i3) {
+        return boundingBoxPNN(vertex[i1], vertex[i2], vertex[i3]);
+    };
+
+    int count = isPositive[0] + isPositive[1] + isPositive[2] + isPositive[3];
+    switch (count) {
+    case 0:
+        return { };
+    case 1: {
+        int i = findFirstPositiveVertex();
+        ASSERT(i < 4);
+        return boundingBoxPNNByIndex(i, rightVertexIndex(i), leftVertexIndex(i));
+    }
+    case 2: {
+        int i = findFirstPositiveVertex();
+        ASSERT(i < 3);
+        if (!i && isPositive[3])
+            i = 3;
+        int positiveRightIndex = i;
+        int positiveLeftIndex = leftVertexIndex(i);
+        ASSERT(isPositive[positiveLeftIndex]);
+        return unionRect(boundingBoxPPNByIndex(positiveRightIndex, positiveLeftIndex, leftVertexIndex(positiveLeftIndex)), boundingBoxPPNByIndex(positiveRightIndex, positiveLeftIndex, rightVertexIndex(positiveRightIndex)));
+    }
+    case 3: {
+        int i = findFirstNegativeVertex();
+        ASSERT(i < 4);
+        return unionRect(boundingBoxPPNByIndex(leftVertexIndex(i), rightVertexIndex(i), i), boundingBoxPPPByIndex(leftVertexIndex(i), rightVertexIndex(i), diagonalVertexIndex(i)));
+    }
+    case 4: {
+        auto xMinMax = minMax4(vertex[0].x / vertex[0].w, vertex[1].x / vertex[1].w, vertex[2].x / vertex[2].w, vertex[3].x / vertex[3].w);
+        auto yMinMax = minMax4(vertex[0].y / vertex[0].w, vertex[1].y / vertex[1].w, vertex[2].y / vertex[2].w, vertex[3].y / vertex[3].w);
+        return clipped(xMinMax, yMinMax);
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
 void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, const TransformationMatrix& accumulatedReplicaTransform, bool includesReplica)
 {
     if (!m_state.visible || !m_state.contentsVisible)
@@ -391,8 +542,7 @@ void TextureMapperLayer::computeOverlapRegions(ComputeOverlapRegionData& data, c
     TransformationMatrix transform(accumulatedReplicaTransform);
     transform.multiply(m_layerTransforms.combined);
 
-    IntRect viewportBoundingRect = enclosingIntRect(transform.mapRect(localBoundingRect));
-    viewportBoundingRect.intersect(data.clipBounds);
+    IntRect viewportBoundingRect = transformedBoundingBox(transform, localBoundingRect, data.clipBounds);
 
     switch (data.mode) {
     case ComputeOverlapRegionMode::Intersection:
@@ -604,10 +754,60 @@ void TextureMapperLayer::paintRecursive(TextureMapperPaintOptions& options)
 
     SetForScope scopedOpacity(options.opacity, options.opacity * m_currentOpacity);
 
-    if (shouldBlend())
+    if (m_state.preserves3D)
+        paintWith3DRenderingContext(options);
+    else if (shouldBlend())
         paintUsingOverlapRegions(options);
     else
         paintSelfChildrenReplicaFilterAndMask(options);
+}
+
+void TextureMapperLayer::paintWith3DRenderingContext(TextureMapperPaintOptions& options)
+{
+    if (options.preserves3D) {
+        paintSelfAndChildrenWithReplica(options);
+        return;
+    }
+    SetForScope scopedPreserves3D(options.preserves3D, true);
+
+    Region overlapRegion;
+    Region nonOverlapRegion;
+    ComputeOverlapRegionData data {
+        ComputeOverlapRegionMode::Union,
+        options.textureMapper.clipBounds(),
+        overlapRegion,
+        nonOverlapRegion
+    };
+    data.clipBounds.move(-options.offset);
+    computeOverlapRegions(data, options.transform, false);
+    ASSERT(nonOverlapRegion.isEmpty());
+
+    auto rects = overlapRegion.rects();
+    static const size_t OverlapRegionConsolidationThreshold = 4;
+    if (rects.size() > OverlapRegionConsolidationThreshold) {
+        rects.clear();
+        rects.append(overlapRegion.bounds());
+    }
+
+    IntSize maxTextureSize = options.textureMapper.maxTextureSize();
+    for (auto& rect : rects) {
+        for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
+            for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
+                IntRect tileRect(IntPoint(x, y), maxTextureSize);
+                tileRect.intersect(rect);
+                auto surface = options.textureMapper.acquireTextureFromPool(tileRect.size(), BitmapTexture::SupportsAlpha | BitmapTexture::DepthBuffer);
+                {
+                    SetForScope scopedSurface(options.surface, surface);
+                    SetForScope scopedOffset(options.offset, -toIntSize(tileRect.location()));
+                    SetForScope scopedOpacity(options.opacity, 1);
+
+                    options.textureMapper.bindSurface(options.surface.get());
+                    paintSelfAndChildrenWithReplica(options);
+                }
+                commitSurface(options, *surface, tileRect, options.opacity);
+            }
+        }
+    }
 }
 
 void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)

@@ -255,6 +255,15 @@
         "i64.extend16_s":      { "category": "conversion", "value": 195, "return": ["i64"],                          "parameter": ["i64"],                        "immediate": [], "b3op": "SExt32(SExt16(Trunc(@0)))" },
         "i64.extend32_s":      { "category": "conversion", "value": 196, "return": ["i64"],                          "parameter": ["i64"],                        "immediate": [], "b3op": "SExt32(Trunc(@0))"         },
 
+        "array.new":           { "category": "gc",         "value": 251, "return": ["arrayref"],                     "parameter": ["any", "i32", "rtt"],          "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 17 },
+        "array.new_default":   { "category": "gc",         "value": 251, "return": ["arrayref"],                     "parameter": ["i32", "rtt"],                 "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 18 },
+        "array.get":           { "category": "gc",         "value": 251, "return": ["any"],                          "parameter": ["arrayref", "i32"],            "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 19 },
+        "array.set":           { "category": "gc",         "value": 251, "return": [],                               "parameter": ["arrayref", "i32", "any"],     "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 22 },
+        "array.len":           { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["arrayref"],                   "immediate": [{"name": "type_index", "type": "varuint32"}], "extendedOp": 23 },
+        "i31.new":             { "category": "gc",         "value": 251, "return": ["i31ref"],                       "parameter": ["i32"],                        "immediate": [], "extendedOp": 32 },
+        "i31.get_s":           { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["i31ref"],                     "immediate": [], "extendedOp": 33 },
+        "i31.get_u":           { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["i31ref"],                     "immediate": [], "extendedOp": 34 },
+
         "i32.trunc_sat_f32_s": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f32"], "immediate": [], "extendedOp": 0 },
         "i32.trunc_sat_f32_u": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f32"], "immediate": [], "extendedOp": 1 },
         "i32.trunc_sat_f64_s": { "category": "conversion", "value": 252, "return": ["i32"], "parameter": ["f64"], "immediate": [], "extendedOp": 2 },
@@ -263,10 +272,6 @@
         "i64.trunc_sat_f32_u": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f32"], "immediate": [], "extendedOp": 5 },
         "i64.trunc_sat_f64_s": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f64"], "immediate": [], "extendedOp": 6 },
         "i64.trunc_sat_f64_u": { "category": "conversion", "value": 252, "return": ["i64"], "parameter": ["f64"], "immediate": [], "extendedOp": 7 },
-
-        "i31.new":             { "category": "gc",         "value": 251, "return": ["i31ref"],                       "parameter": ["i32"],                        "immediate": [], "extendedOp": 32 },
-        "i31.get_s":           { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["i31ref"],                     "immediate": [], "extendedOp": 33 },
-        "i31.get_u":           { "category": "gc",         "value": 251, "return": ["i32"],                          "parameter": ["i31ref"],                     "immediate": [], "extendedOp": 34 },
 
         "memory.atomic.notify":       { "category": "atomic",     "value": 254, "return": ["i32"],      "parameter": ["addr", "i32"],          "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "extendedOp":  0 },
         "memory.atomic.wait32":       { "category": "atomic",     "value": 254, "return": ["i32"],      "parameter": ["addr", "i32", "i64"],   "immediate": [{"name": "flags",          "type": "varuint32"}, {"name": "offset",   "type": "varuint32"}], "extendedOp":  1 },

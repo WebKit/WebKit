@@ -331,13 +331,11 @@ Path InspectorOverlayLabel::draw(GraphicsContext& context, float maximumLineWidt
     context.fillPath(labelPath);
     context.strokePath(labelPath);
 
-    int line = 0;
     float xOffset = 0;
     float yOffset = 0;
     for (auto& computedContentRun : computedContentRuns) {
         if (computedContentRun.startsNewLine) {
             xOffset = 0;
-            ++line;
             yOffset += lineHeight + labelAdditionalLineSpacing;
         }
 

@@ -76,6 +76,9 @@ media/audio-session-category-at-most-recent-playback.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data [ Skip ]
 http/tests/clear-site-data [ Skip ]
 
+# The Screen Wake Lock API is not supportted in WebKit1.
+imported/w3c/web-platform-tests/screen-wake-lock [ Skip ]
+
 # Shared workers are only implemented for WebKit2.
 http/tests/navigation/page-cache-shared-worker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Skip ]
@@ -1387,7 +1390,9 @@ accessibility/aria-current.html [ Skip ]
 accessibility/aria-sort-changed-notification.html [ Skip ]
 accessibility/aria-sort.html [ Skip ]
 accessibility/mac/aria-details.html [ Skip ]
+accessibility/element-reflection-ariadetails.html [ Skip ]
 accessibility/mac/aria-errormessage.html [ Skip ]
+accessibility/element-reflection-ariaerrormessage.html [ Skip ]
 accessibility/mac/pseudo-element-text-markers.html [ Skip ]
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 accessibility/selected-state-changed-notifications.html [ Skip ]
@@ -2092,10 +2097,6 @@ webkit.org/b/244372 imported/w3c/web-platform-tests/intersection-observer/target
 
 webkit.org/b/244404 js/dom/modules/missing-exception-check-for-import.html [ Crash ]
 
-webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002.html [ Crash ]
-webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Crash ]
-webkit.org/b/244417 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Crash ]
-
 webkit.org/b/244636 [ Monterey Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Crash ]
 
 webkit.org/b/244637 imported/w3c/web-platform-tests/content-security-policy/generic/304-response-should-update-csp.sub.html [ Pass Failure ]
@@ -2124,8 +2125,17 @@ webkit.org/b/245008 fast/attachment/mac/attachment-numbers.html [ Skip ]
 webkit.org/b/245008 fast/attachment/mac/attachment-pages.html [ Skip ]
 webkit.org/b/245008 fast/attachment/mac/attachment-keynote.html [ Skip ]
 
+webkit.org/b/245816 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url.html [ Failure Pass ]
+webkit.org/b/245816 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url-with-fragment.html [ Failure Pass ]
+
 webkit.org/b/245014 imported/w3c/web-platform-tests/cookies/value/value-ctl.html [ Pass Failure ]
 
 webkit.org/b/245035 imported/w3c/web-platform-tests/fetch/metadata/script.https.sub.html [ Pass Failure ]
 
 webkit.org/b/245102 imported/w3c/web-platform-tests/html/browsers/windows/auxiliary-browsing-contexts/opener-noreferrer.html [ Pass Failure ]
+
+# webkit.org/b/245801 These tests are flakily crashing with a WorkerOrWorkletThread error
+[ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic.http-rp/upgrade/worker-classic.https.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic.http-rp/upgrade/worker-module.https.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/worker-classic.https.html [ Skip ]
+[ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/worker-module.https.html [ Skip ]

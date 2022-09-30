@@ -70,13 +70,13 @@ JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(JSGlobalObject*, cons
 JS_EXPORT_PRIVATE JSInternalPromise* loadAndEvaluateModule(JSGlobalObject*, const SourceCode&, JSValue scriptFetcher);
 
 // Fetch the module source, and instantiate the module record.
-JS_EXPORT_PRIVATE JSInternalPromise* loadModule(JSGlobalObject*, const String& moduleName, JSValue parameters, JSValue scriptFetcher);
+JS_EXPORT_PRIVATE JSInternalPromise* loadModule(JSGlobalObject*, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher);
 JS_EXPORT_PRIVATE JSInternalPromise* loadModule(JSGlobalObject*, const SourceCode&, JSValue scriptFetcher);
 
 // Link and evaluate the already linked module. This function is called in a sync manner.
 JS_EXPORT_PRIVATE JSValue linkAndEvaluateModule(JSGlobalObject*, const Identifier& moduleKey, JSValue scriptFetcher);
 
-JS_EXPORT_PRIVATE JSInternalPromise* importModule(JSGlobalObject*, const Identifier& moduleKey, JSValue parameters, JSValue scriptFetcher);
+JS_EXPORT_PRIVATE JSInternalPromise* importModule(JSGlobalObject*, const Identifier& moduleName, JSValue referrer, JSValue parameters, JSValue scriptFetcher);
 
 JS_EXPORT_PRIVATE HashMap<RefPtr<UniquedStringImpl>, String> retrieveAssertionsFromDynamicImportOptions(JSGlobalObject*, JSValue, const Vector<RefPtr<UniquedStringImpl>>& supportedAssertions);
 

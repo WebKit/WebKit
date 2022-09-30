@@ -4118,6 +4118,15 @@
     "imported/w3c/web-platform-tests/image-decodes/image-decode.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/import-maps/bare-specifiers.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/import-maps/data-url-specifiers.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/import-maps/import-maps-base-url.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-001.html": [
         "slow"
     ],

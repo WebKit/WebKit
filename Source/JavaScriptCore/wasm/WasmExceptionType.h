@@ -47,7 +47,12 @@ namespace Wasm {
     macro(IntegerOverflow, "Integer overflow"_s) \
     macro(StackOverflow, "Stack overflow"_s) \
     macro(FuncrefNotWasm, "Funcref must be an exported wasm function"_s) \
-    macro(InvalidGCTypeUse, "Unsupported use of struct or array type"_s)
+    macro(InvalidGCTypeUse, "Unsupported use of struct or array type"_s) \
+    macro(OutOfBoundsArrayGet, "Out of bounds array.get"_s) \
+    macro(OutOfBoundsArraySet, "Out of bounds array.set"_s) \
+    macro(NullArrayGet, "array.get to a null reference"_s) \
+    macro(NullArraySet, "array.set to a null reference"_s) \
+    macro(NullArrayLen, "array.len to a null reference"_s)
 
 enum class ExceptionType : uint32_t {
 #define MAKE_ENUM(enumName, error) enumName,

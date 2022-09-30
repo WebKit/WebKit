@@ -460,7 +460,7 @@ plugins/destroy-on-setwindow.html
 
 # New history tests added in r76205 fail on WebKit2 (perhaps the change
 # as coded doesn't affect both processes for WebKit2)
-http/tests/history/history-replace-updates-current-item.html
+fast/history/history-replace-updates-current-item.html
 http/tests/navigation/redirect-on-back-updates-history-item.html
 http/tests/navigation/redirect-on-reload-updates-history-item.html
 
@@ -846,9 +846,6 @@ webkit.org/b/183139 fast/events/blur-focus-window-should-blur-focus-element.html
 webkit.org/b/183140 fast/selectors/querySelector-window-inactive.html
 
 webkit.org/b/186406 compositing/iframes/display-none-subframe.html [ Pass Failure ]
-
-# Newly imported test that is flaky on WebKit2 only.
-imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/no_window_open_when_term_nesting_level_nonzero.window.html [ Pass Failure ]
 
 # Newly imported test that is flaky on WK2 because the order of cookies is not consistent.
 imported/w3c/web-platform-tests/cookies/attributes/attributes-ctl.sub.html [ Pass Failure ]

@@ -693,6 +693,10 @@ webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/composite
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/transform-fixed-bg-007.html [ ImageOnlyFailure ]
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/perspective-split-by-zero-w.html [ ImageOnlyFailure ]
 
+webkit.org/b/245862 imported/w3c/web-platform-tests/css/css-transforms/perspective-transforms-equivalence.html [ ImageOnlyFailure ]
+
+webkit.org/b/245716 imported/w3c/web-platform-tests/css/css-transforms/transform3d-rotatex-perspective-003.html [ ImageOnlyFailure ]
+
 webkit.org/b/237502 fast/dom/Range/getClientRects.html [ Failure ]
 webkit.org/b/237502 fast/multicol/newmulticol/hide-box-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/237502 imported/blink/fast/multicol/vertical-lr/float-big-line.html [ ImageOnlyFailure ]
@@ -1442,11 +1446,7 @@ webgl/1.0.3/conformance/extensions/oes-texture-half-float-with-video.html [ Fail
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgb565.html [ Failure ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Failure ]
 webgl/1.0.3/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
-webgl/1.0.3/conformance/textures/texture-upload-size.html [ Failure ]
 webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Failure ]
-webgl/webgl-draft-extensions-flag-default.html [ Failure ]
-webgl/webgl-draft-extensions-flag-off.html [ Failure ]
-webgl/webgl-draft-extensions-flag-on.html [ Failure ]
 webgl/webgl2-primitive-restart.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

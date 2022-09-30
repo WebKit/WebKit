@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../../media/utilities.js"></script>
+<pre id=log></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+let video = document.createElement("video");
+
+waitForVideoFrame(video, async function() {
+    let canvas = document.createElement("canvas");
+    canvas.width = 3840;
+    canvas.height = 2160;
+
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0);
+
+    let x = 1920;
+    let y = 540;
+
+    let data = ctx.getImageData(x, y, 1, 1).data;
+    log.textContent = `Pixel at ${x},${y}: ${[...data]}`;
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+
+video.src = "resources/hdr.mp4";
+</script>

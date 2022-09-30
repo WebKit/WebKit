@@ -27,23 +27,20 @@
 
 #include "CachedResource.h"
 #include "CachedResourceRequest.h"
+#include "ScriptType.h"
 
 namespace WebCore {
 
 class PreloadRequest {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    enum class ModuleScript {
-        Yes,
-        No,
-    };
-    PreloadRequest(ASCIILiteral initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ModuleScript moduleScript, const ReferrerPolicy& referrerPolicy)
+    PreloadRequest(ASCIILiteral initiator, const String& resourceURL, const URL& baseURL, CachedResource::Type resourceType, const String& mediaAttribute, ScriptType scriptType, const ReferrerPolicy& referrerPolicy)
         : m_initiator(initiator)
         , m_resourceURL(resourceURL)
         , m_baseURL(baseURL.isolatedCopy())
         , m_resourceType(resourceType)
         , m_mediaAttribute(mediaAttribute)
-        , m_moduleScript(moduleScript)
+        , m_scriptType(scriptType)
         , m_referrerPolicy(referrerPolicy)
     {
     }
@@ -70,7 +67,7 @@ private:
     String m_crossOriginMode;
     String m_nonceAttribute;
     bool m_scriptIsAsync { false };
-    ModuleScript m_moduleScript;
+    ScriptType m_scriptType;
     ReferrerPolicy m_referrerPolicy;
 };
 

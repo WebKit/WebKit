@@ -259,15 +259,15 @@ PASS CSSTransformValue interface: iterable<CSSTransformComponent>
 PASS CSSTransformValue interface: attribute length
 PASS CSSTransformValue interface: attribute is2D
 PASS CSSTransformValue interface: operation toMatrix()
-FAIL CSSTransformValue must be primary interface of transformValue assert_equals: transformValue's prototype is not CSSTransformValue.prototype expected [stringifying object threw TypeError: Can only call CSSStyleValue.toString on instances of CSSStyleValue with type object] but got [stringifying object threw TypeError: Can only call CSSStyleValue.toString on instances of CSSStyleValue with type object]
-FAIL Stringification of transformValue assert_class_string: class string of transformValue expected "[object CSSTransformValue]" but got "[object CSSStyleValue]"
-FAIL CSSTransformValue interface: transformValue must inherit property "length" with the proper type assert_inherits: property "length" not found in prototype chain
-FAIL CSSTransformValue interface: transformValue must inherit property "is2D" with the proper type assert_inherits: property "is2D" not found in prototype chain
-FAIL CSSTransformValue interface: transformValue must inherit property "toMatrix()" with the proper type assert_inherits: property "toMatrix" not found in prototype chain
+PASS CSSTransformValue must be primary interface of transformValue
+PASS Stringification of transformValue
+PASS CSSTransformValue interface: transformValue must inherit property "length" with the proper type
+PASS CSSTransformValue interface: transformValue must inherit property "is2D" with the proper type
+PASS CSSTransformValue interface: transformValue must inherit property "toMatrix()" with the proper type
 PASS CSSStyleValue interface: transformValue must inherit property "parse(USVString, USVString)" with the proper type
-PASS CSSStyleValue interface: calling parse(USVString, USVString) on transformValue with too few arguments must throw TypeError
+FAIL CSSStyleValue interface: calling parse(USVString, USVString) on transformValue with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parse" missing
 PASS CSSStyleValue interface: transformValue must inherit property "parseAll(USVString, USVString)" with the proper type
-PASS CSSStyleValue interface: calling parseAll(USVString, USVString) on transformValue with too few arguments must throw TypeError
+FAIL CSSStyleValue interface: calling parseAll(USVString, USVString) on transformValue with too few arguments must throw TypeError assert_own_property: interface object must have static operation as own property expected property "parseAll" missing
 PASS CSSTransformComponent interface: existence and properties of interface object
 PASS CSSTransformComponent interface object length
 PASS CSSTransformComponent interface object name
@@ -286,13 +286,13 @@ PASS CSSTranslate interface: existence and properties of interface prototype obj
 PASS CSSTranslate interface: attribute x
 PASS CSSTranslate interface: attribute y
 PASS CSSTranslate interface: attribute z
-FAIL CSSTranslate must be primary interface of transformValue[0] assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of transformValue[0] assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTranslate interface: transformValue[0] must inherit property "x" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTranslate interface: transformValue[0] must inherit property "y" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTranslate interface: transformValue[0] must inherit property "z" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: transformValue[0] must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: transformValue[0] must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSTranslate must be primary interface of transformValue[0]
+PASS Stringification of transformValue[0]
+PASS CSSTranslate interface: transformValue[0] must inherit property "x" with the proper type
+PASS CSSTranslate interface: transformValue[0] must inherit property "y" with the proper type
+PASS CSSTranslate interface: transformValue[0] must inherit property "z" with the proper type
+PASS CSSTransformComponent interface: transformValue[0] must inherit property "is2D" with the proper type
+PASS CSSTransformComponent interface: transformValue[0] must inherit property "toMatrix()" with the proper type
 PASS CSSRotate interface: existence and properties of interface object
 PASS CSSRotate interface object length
 PASS CSSRotate interface object name
@@ -303,14 +303,14 @@ PASS CSSRotate interface: attribute x
 PASS CSSRotate interface: attribute y
 PASS CSSRotate interface: attribute z
 PASS CSSRotate interface: attribute angle
-FAIL CSSRotate must be primary interface of rotate assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of rotate assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRotate interface: rotate must inherit property "x" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRotate interface: rotate must inherit property "y" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRotate interface: rotate must inherit property "z" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSRotate interface: rotate must inherit property "angle" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: rotate must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: rotate must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSRotate must be primary interface of rotate
+PASS Stringification of rotate
+PASS CSSRotate interface: rotate must inherit property "x" with the proper type
+PASS CSSRotate interface: rotate must inherit property "y" with the proper type
+PASS CSSRotate interface: rotate must inherit property "z" with the proper type
+PASS CSSRotate interface: rotate must inherit property "angle" with the proper type
+PASS CSSTransformComponent interface: rotate must inherit property "is2D" with the proper type
+PASS CSSTransformComponent interface: rotate must inherit property "toMatrix()" with the proper type
 PASS CSSScale interface: existence and properties of interface object
 PASS CSSScale interface object length
 PASS CSSScale interface object name
@@ -320,13 +320,13 @@ PASS CSSScale interface: existence and properties of interface prototype object'
 PASS CSSScale interface: attribute x
 PASS CSSScale interface: attribute y
 PASS CSSScale interface: attribute z
-FAIL CSSScale must be primary interface of scale assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of scale assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSScale interface: scale must inherit property "x" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSScale interface: scale must inherit property "y" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSScale interface: scale must inherit property "z" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: scale must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: scale must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSScale must be primary interface of scale
+PASS Stringification of scale
+PASS CSSScale interface: scale must inherit property "x" with the proper type
+PASS CSSScale interface: scale must inherit property "y" with the proper type
+PASS CSSScale interface: scale must inherit property "z" with the proper type
+PASS CSSTransformComponent interface: scale must inherit property "is2D" with the proper type
+PASS CSSTransformComponent interface: scale must inherit property "toMatrix()" with the proper type
 PASS CSSSkew interface: existence and properties of interface object
 PASS CSSSkew interface object length
 PASS CSSSkew interface object name
@@ -335,12 +335,12 @@ PASS CSSSkew interface: existence and properties of interface prototype object's
 PASS CSSSkew interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSSkew interface: attribute ax
 PASS CSSSkew interface: attribute ay
-FAIL CSSSkew must be primary interface of skew assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of skew assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSSkew interface: skew must inherit property "ax" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSSkew interface: skew must inherit property "ay" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: skew must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: skew must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSSkew must be primary interface of skew
+PASS Stringification of skew
+PASS CSSSkew interface: skew must inherit property "ax" with the proper type
+PASS CSSSkew interface: skew must inherit property "ay" with the proper type
+PASS CSSTransformComponent interface: skew must inherit property "is2D" with the proper type
+PASS CSSTransformComponent interface: skew must inherit property "toMatrix()" with the proper type
 PASS CSSSkewX interface: existence and properties of interface object
 PASS CSSSkewX interface object length
 PASS CSSSkewX interface object name
@@ -348,11 +348,11 @@ PASS CSSSkewX interface: existence and properties of interface prototype object
 PASS CSSSkewX interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSSkewX interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSSkewX interface: attribute ax
-FAIL CSSSkewX must be primary interface of skewX assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of skewX assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSSkewX interface: skewX must inherit property "ax" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: skewX must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: skewX must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSSkewX must be primary interface of skewX
+PASS Stringification of skewX
+PASS CSSSkewX interface: skewX must inherit property "ax" with the proper type
+PASS CSSTransformComponent interface: skewX must inherit property "is2D" with the proper type
+PASS CSSTransformComponent interface: skewX must inherit property "toMatrix()" with the proper type
 PASS CSSSkewY interface: existence and properties of interface object
 PASS CSSSkewY interface object length
 PASS CSSSkewY interface object name
@@ -360,11 +360,11 @@ PASS CSSSkewY interface: existence and properties of interface prototype object
 PASS CSSSkewY interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSSkewY interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSSkewY interface: attribute ay
-FAIL CSSSkewY must be primary interface of skewY assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of skewY assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSSkewY interface: skewY must inherit property "ay" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: skewY must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: skewY must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSSkewY must be primary interface of skewY
+PASS Stringification of skewY
+PASS CSSSkewY interface: skewY must inherit property "ay" with the proper type
+PASS CSSTransformComponent interface: skewY must inherit property "is2D" with the proper type
+PASS CSSTransformComponent interface: skewY must inherit property "toMatrix()" with the proper type
 PASS CSSPerspective interface: existence and properties of interface object
 PASS CSSPerspective interface object length
 PASS CSSPerspective interface object name
@@ -372,11 +372,11 @@ PASS CSSPerspective interface: existence and properties of interface prototype o
 PASS CSSPerspective interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSPerspective interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSPerspective interface: attribute length
-FAIL CSSPerspective must be primary interface of perspective assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of perspective assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSPerspective interface: perspective must inherit property "length" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: perspective must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: perspective must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSPerspective must be primary interface of perspective
+PASS Stringification of perspective
+PASS CSSPerspective interface: perspective must inherit property "length" with the proper type
+PASS CSSTransformComponent interface: perspective must inherit property "is2D" with the proper type
+PASS CSSTransformComponent interface: perspective must inherit property "toMatrix()" with the proper type
 PASS CSSMatrixComponent interface: existence and properties of interface object
 PASS CSSMatrixComponent interface object length
 PASS CSSMatrixComponent interface object name
@@ -384,11 +384,11 @@ PASS CSSMatrixComponent interface: existence and properties of interface prototy
 PASS CSSMatrixComponent interface: existence and properties of interface prototype object's "constructor" property
 PASS CSSMatrixComponent interface: existence and properties of interface prototype object's @@unscopables property
 PASS CSSMatrixComponent interface: attribute matrix
-FAIL CSSMatrixComponent must be primary interface of matrix assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of matrix assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSMatrixComponent interface: matrix must inherit property "matrix" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: matrix must inherit property "is2D" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CSSTransformComponent interface: matrix must inherit property "toMatrix()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CSSMatrixComponent must be primary interface of matrix
+PASS Stringification of matrix
+PASS CSSMatrixComponent interface: matrix must inherit property "matrix" with the proper type
+PASS CSSTransformComponent interface: matrix must inherit property "is2D" with the proper type
+PASS CSSTransformComponent interface: matrix must inherit property "toMatrix()" with the proper type
 PASS CSSImageValue interface: existence and properties of interface object
 PASS CSSImageValue interface object length
 PASS CSSImageValue interface object name

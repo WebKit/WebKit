@@ -49,10 +49,8 @@ CoordinatedGraphicsScene::~CoordinatedGraphicsScene() = default;
 
 void CoordinatedGraphicsScene::applyStateChanges(const Vector<CoordinatedGraphicsState>& states)
 {
-    if (!m_textureMapper) {
+    if (!m_textureMapper)
         m_textureMapper = TextureMapper::create();
-        static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
-    }
 
     ensureRootLayer();
 

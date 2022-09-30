@@ -19,7 +19,7 @@ function loaded()
     log("The total payload is currently 60+mb. Pushing a 1mb object brings that 61+mb.");
 
     try {
-        history.pushState(0, 0, "#" + object);
+        history.pushState(0, 0, object);
         log("It fit.");
     } catch (e) {
         log("Unexpected exception pushing 1mb:" + e);  
@@ -29,7 +29,7 @@ function loaded()
 
     object += object;
     try {
-        history.replaceState(0, 0, "#" + object);
+        history.replaceState(0, 0, object);
         log("It fit.");
     } catch (e) {
         log("Unexpected exception replacing 1mb with 2mb:" + e);  
@@ -39,7 +39,7 @@ function loaded()
 
     object += object;
     try {
-        history.replaceState(0, 0, "#" + object);
+        history.replaceState(0, 0, object);
         log("It fit, but should not have.");
     } catch (e) {
         log("Expected exception replacing 2mb with 4mb:" + e);  

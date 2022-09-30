@@ -1,0 +1,33 @@
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL https://:invalid-url:/
+CONSOLE MESSAGE: value in specifier map needs to be a string
+CONSOLE MESSAGE: address https://example.com/x does not end with '/' while key without-trailing-slashes/b/ ends with '/'
+CONSOLE MESSAGE: value in specifier map needs to be a string
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL https://:invalid-url:/
+CONSOLE MESSAGE: address https://example.com/x does not end with '/' while key without-trailing-slashes/ ends with '/'
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL https://:invalid-url:/
+CONSOLE MESSAGE: address https://example.com/x does not end with '/' while key https://example.com/without-trailing-slashes/ ends with '/'
+CONSOLE MESSAGE: value in specifier map needs to be a string
+
+
+PASS Test helper: fetching and sanity checking test JSON: resolving-null.json
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: null/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: null/b/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: null/b/c/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: invalid-url/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: invalid-url/b/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: invalid-url/b/c/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: without-trailing-slashes/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: without-trailing-slashes/b/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: without-trailing-slashes/b/c/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: prefix-resolution-error/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: prefix-resolution-error/b/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific prefixes: prefix-resolution-error/b/c/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific scopes: null
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific scopes: invalid-url
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific scopes: without-trailing-slashes/x
+PASS Entries with errors shouldn't allow fallback: No fallback to less-specific scopes: prefix-resolution-error/x
+PASS Entries with errors shouldn't allow fallback: No fallback to absolute URL parsing: https://example.com/null
+PASS Entries with errors shouldn't allow fallback: No fallback to absolute URL parsing: https://example.com/invalid-url
+PASS Entries with errors shouldn't allow fallback: No fallback to absolute URL parsing: https://example.com/without-trailing-slashes/x
+PASS Entries with errors shouldn't allow fallback: No fallback to absolute URL parsing: https://example.com/prefix-resolution-error/x
+

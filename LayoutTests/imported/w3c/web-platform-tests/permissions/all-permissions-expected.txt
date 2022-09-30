@@ -12,7 +12,7 @@ FAIL Query "gyroscope" permission promise_test: Unhandled rejection with value: 
 FAIL Query "magnetometer" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
 FAIL Query "midi" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
 FAIL Query "nfc" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
-FAIL Query "screen-wake-lock" permission promise_test: Unhandled rejection with value: object "TypeError: Type error"
+PASS Query "screen-wake-lock" permission
 PASS Query "camera" permission
 FAIL Query "display-capture" permission promise_test: Unhandled rejection with value: object "NotSupportedError: Permissions::query does not support this API"
 PASS Query "microphone" permission

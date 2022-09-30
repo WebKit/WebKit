@@ -144,6 +144,9 @@ http/tests/clear-site-data [ Skip ]
 # color-filters are off by default
 webkit.org/b/185076 css3/color-filters [ Skip ]
 
+# The Screen Wake Lock API is not supportted in WebKit1.
+imported/w3c/web-platform-tests/screen-wake-lock [ Skip ]
+
 # IntersectionObserver is off by default
 webkit.org/b/188613 intersection-observer [ Skip ]
 webkit.org/b/188613 http/tests/intersection-observer [ Skip ]
@@ -558,6 +561,15 @@ accessibility/ignored-textfield-still-accessible.html [ Skip ]
 
 # Default ARIA for custom elements are not yet enabled
 accessibility/custom-elements/ [ Skip ]
+
+accessibility/element-reflection-ariaactivedescendant.html [ Skip ]
+accessibility/element-reflection-ariacontrols.html [ Skip ]
+accessibility/element-reflection-ariadescribedby.html [ Skip ]
+accessibility/element-reflection-ariadetails.html [ Skip ]
+accessibility/element-reflection-ariaerrormessage.html [ Skip ]
+accessibility/element-reflection-ariaflowto.html [ Skip ]
+accessibility/element-reflection-arialabelledby.html [ Skip ]
+accessibility/element-reflection-ariaowns.html [ Skip ]
 
 webkit.org/b/245301 fast/custom-elements/reactions-for-aria-element-attributes.html [ Failure ]
 
@@ -3669,6 +3681,7 @@ editing/selection/character-granularity-rect.html [ Skip ]
 editing/selection/ios [ Skip ]
 fast/canvas/canvas-createPattern-video-loading.html [ Skip ]
 fast/canvas/canvas-createPattern-video-modify.html [ Skip ]
+fast/canvas/canvas-drawImage-hdr-video.html [ Skip ]
 fast/events/before-input-prevent-insert-replacement.html [ Skip ]
 fast/events/input-event-insert-replacement.html [ Skip ]
 fast/forms/scroll-into-view-and-show-validation-message.html [ Skip ]

@@ -47,15 +47,6 @@ ScrollingTreeOverflowScrollingNodeNicosia::ScrollingTreeOverflowScrollingNodeNic
 
 ScrollingTreeOverflowScrollingNodeNicosia::~ScrollingTreeOverflowScrollingNodeNicosia() = default;
 
-void ScrollingTreeOverflowScrollingNodeNicosia::commitStateAfterChildren(const ScrollingStateNode& stateNode)
-{
-    ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
-
-    const auto& overflowStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
-    if (overflowStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition))
-        handleScrollPositionRequest(overflowStateNode.requestedScrollData());
-}
-
 FloatPoint ScrollingTreeOverflowScrollingNodeNicosia::adjustedScrollPosition(const FloatPoint& position, ScrollClamping clamping) const
 {
     FloatPoint scrollPosition(roundf(position.x()), roundf(position.y()));

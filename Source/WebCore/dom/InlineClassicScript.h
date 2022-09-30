@@ -35,8 +35,7 @@ class InlineClassicScript final : public ScriptElementCachedScriptFetcher {
 public:
     static Ref<InlineClassicScript> create(ScriptElement&);
 
-    bool isClassicScript() const final { return true; }
-    bool isModuleScript() const final { return false; }
+    ScriptType scriptType() const final { return ScriptType::Classic; }
 
 private:
     InlineClassicScript(const AtomString& nonce, const AtomString& crossOriginMode, const String& charset, const AtomString& initiatorName, bool isInUserAgentShadowTree);

@@ -32,7 +32,11 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSFunctionValue.h"
 #include "CSSKeywordValue.h"
+#include "CSSNumericFactory.h"
+#include "CSSNumericValue.h"
+#include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
@@ -67,6 +71,31 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSPerspectiveValue leng
     if (checkedLength.hasException())
         return checkedLength.releaseException();
     return adoptRef(*new CSSPerspective(checkedLength.releaseReturnValue()));
+}
+
+ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSFunctionValue& cssFunctionValue)
+{
+    if (cssFunctionValue.name() != CSSValuePerspective) {
+        ASSERT_NOT_REACHED();
+        return CSSPerspective::create("none"_s);
+    }
+
+    if (cssFunctionValue.size() != 1 || !cssFunctionValue.item(0)) {
+        ASSERT_NOT_REACHED();
+        return Exception { TypeError, "Unexpected number of values."_s };
+    }
+
+    auto keywordOrNumeric = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0));
+    if (keywordOrNumeric.hasException())
+        return keywordOrNumeric.releaseException();
+    auto& keywordOrNumericValue = keywordOrNumeric.returnValue().get();
+    return [&]() -> ExceptionOr<Ref<CSSPerspective>> {
+        if (is<CSSKeywordValue>(keywordOrNumericValue))
+            return CSSPerspective::create(&downcast<CSSKeywordValue>(keywordOrNumericValue));
+        if (is<CSSNumericValue>(keywordOrNumericValue))
+            return CSSPerspective::create(&downcast<CSSNumericValue>(keywordOrNumericValue));
+        return Exception { TypeError, "Expected a CSSNumericValue."_s };
+    }();
 }
 
 CSSPerspective::CSSPerspective(CSSPerspectiveValue length)

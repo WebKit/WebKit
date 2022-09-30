@@ -3,9 +3,9 @@ Test import rejects the incorrect relative specifiers.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS import("incorrect") rejected promise  with TypeError: Module specifier, 'incorrect' does not start with "/", "./", or "../". Referenced from file:///LayoutTests/resources/js-test-pre.js.
-PASS import("$hello") rejected promise  with TypeError: Module specifier, '$hello' does not start with "/", "./", or "../". Referenced from file:///LayoutTests/resources/js-test-pre.js.
-PASS import(".../test") rejected promise  with TypeError: Module specifier, '.../test' does not start with "/", "./", or "../". Referenced from file:///LayoutTests/resources/js-test-pre.js.
+PASS import("incorrect") rejected promise  with TypeError: Module name, 'incorrect' does not resolve to a valid URL..
+PASS import("$hello") rejected promise  with TypeError: Module name, '$hello' does not resolve to a valid URL..
+PASS import(".../test") rejected promise  with TypeError: Module name, '.../test' does not resolve to a valid URL..
 PASS successfullyParsed is true
 
 TEST COMPLETE

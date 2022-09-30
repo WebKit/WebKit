@@ -34,13 +34,13 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ReplacedBox);
 
-ReplacedBox::ReplacedBox(std::optional<ElementAttributes> elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
-    : ContainerBox(elementAttributes, WTFMove(style), WTFMove(firstLineStyle), ReplacedBoxFlag)
+ReplacedBox::ReplacedBox(ElementAttributes&& elementAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : ContainerBox(WTFMove(elementAttributes), WTFMove(style), WTFMove(firstLineStyle), ReplacedBoxFlag)
 {
 }
 
 ReplacedBox::ReplacedBox(ListMarkerAttributes listMarkerAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
-    : ContainerBox(ElementAttributes { ElementType::ListMarker }, WTFMove(style), WTFMove(firstLineStyle), ReplacedBoxFlag)
+    : ContainerBox(ElementAttributes { NodeType::ListMarker, listMarkerAttributes.isAnonymous }, WTFMove(style), WTFMove(firstLineStyle), ReplacedBoxFlag)
     , m_isListMarkerImage(listMarkerAttributes.isImage)
     , m_isListMarkerOutside(listMarkerAttributes.isOutside)
 {

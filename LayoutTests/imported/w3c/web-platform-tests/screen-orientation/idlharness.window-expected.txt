@@ -1,0 +1,27 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Screen: original interface defined
+PASS Partial interface Screen: member names are unique
+FAIL ScreenOrientation interface: existence and properties of interface object assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface object length assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface object name assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface: existence and properties of interface prototype object assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface: operation lock(OrientationLockType) assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface: operation unlock() assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface: attribute type assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface: attribute angle assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation interface: attribute onchange assert_own_property: self does not have own property "ScreenOrientation" expected property "ScreenOrientation" missing
+FAIL ScreenOrientation must be primary interface of screen.orientation assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Stringification of screen.orientation assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL ScreenOrientation interface: screen.orientation must inherit property "lock(OrientationLockType)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL ScreenOrientation interface: calling lock(OrientationLockType) on screen.orientation with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL ScreenOrientation interface: screen.orientation must inherit property "unlock()" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL ScreenOrientation interface: screen.orientation must inherit property "type" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL ScreenOrientation interface: screen.orientation must inherit property "angle" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL ScreenOrientation interface: screen.orientation must inherit property "onchange" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+FAIL Screen interface: attribute orientation assert_true: The prototype object must have a property "orientation" expected true got false
+FAIL Screen interface: screen must inherit property "orientation" with the proper type assert_inherits: property "orientation" not found in prototype chain
+

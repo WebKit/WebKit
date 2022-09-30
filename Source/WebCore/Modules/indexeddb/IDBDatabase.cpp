@@ -433,7 +433,7 @@ void IDBDatabase::didCommitOrAbortTransaction(IDBTransaction& transaction)
     if (m_abortingTransactions.contains(transaction.info().identifier()))
         ++count;
 
-    ASSERT(count == 1);
+    ASSERT_UNUSED(count, count == 1);
 #endif
 
     m_activeTransactions.remove(transaction.info().identifier());

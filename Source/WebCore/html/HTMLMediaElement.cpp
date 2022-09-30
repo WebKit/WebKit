@@ -8412,6 +8412,8 @@ MediaProducerMediaStateFlags HTMLMediaElement::mediaState() const
 
     if (hasActiveVideo && endedPlayback())
         state.add(MediaProducerMediaState::DidPlayToEnd);
+#else
+    UNUSED_VARIABLE(hasAudio);
 #endif
 
     if (!isPlaying())

@@ -52,9 +52,14 @@ bool LoadableModuleScript::isLoaded() const
     return m_isLoaded;
 }
 
-std::optional<LoadableScript::Error> LoadableModuleScript::error() const
+bool LoadableModuleScript::hasError() const
 {
-    return m_error;
+    return !!m_error;
+}
+
+std::optional<LoadableScript::Error> LoadableModuleScript::takeError()
+{
+    return std::exchange(m_error, std::nullopt);
 }
 
 bool LoadableModuleScript::wasCanceled() const

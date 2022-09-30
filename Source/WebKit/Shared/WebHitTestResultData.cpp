@@ -23,6 +23,7 @@
 #include "ShareableBitmapUtilities.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Document.h>
+#include <WebCore/ElementInlines.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HitTestResult.h>
@@ -95,6 +96,16 @@ WebHitTestResultData::WebHitTestResultData(const HitTestResult& hitTestResult, b
                 if (auto* image = cachedImage->image())
                     sourceImageMIMEType = image->mimeType();
             }
+
+            imageText = [&]() -> String {
+                if (auto* element = dynamicDowncast<Element>(target.get())) {
+                    auto& title = element->attributeWithoutSynchronization(HTMLNames::titleAttr);
+                    if (!title.isEmpty())
+                        return title;
+                }
+
+                return renderer->altText();
+            }();
         }
     }
 }
@@ -121,6 +132,7 @@ void WebHitTestResultData::encode(IPC::Encoder& encoder) const
     encoder << isDownloadableMedia;
     encoder << lookupText;
     encoder << toolTipText;
+    encoder << imageText;
     encoder << dictionaryPopupInfo;
 
     WebKit::SharedMemory::Handle imageHandle;
@@ -161,6 +173,7 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
         || !decoder.decode(hitTestResultData.isDownloadableMedia)
         || !decoder.decode(hitTestResultData.lookupText)
         || !decoder.decode(hitTestResultData.toolTipText)
+        || !decoder.decode(hitTestResultData.imageText)
         || !decoder.decode(hitTestResultData.dictionaryPopupInfo))
         return false;
 

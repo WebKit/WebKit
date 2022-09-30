@@ -27,7 +27,7 @@
 #include "config.h"
 #include "HeaderFieldTokenizer.h"
 
-#include "HTTPHeaderField.h"
+#include "RFC7230.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {

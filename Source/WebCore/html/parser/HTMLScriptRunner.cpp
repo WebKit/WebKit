@@ -258,8 +258,12 @@ void HTMLScriptRunner::runScript(ScriptElement& scriptElement, const TextPositio
     else if (scriptElement.readyToBeParserExecuted()) {
         if (m_scriptNestingLevel == 1)
             m_parserBlockingScript = PendingScript::create(scriptElement, scriptStartPosition);
-        else
-            scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.element().textContent(), documentURLForScriptExecution(m_document.get()), scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
+        else {
+            if (scriptElement.scriptType() == ScriptType::Classic)
+                scriptElement.executeClassicScript(ScriptSourceCode(scriptElement.element().textContent(), documentURLForScriptExecution(m_document.get()), scriptStartPosition, JSC::SourceProviderSourceType::Program, InlineClassicScript::create(scriptElement)));
+            else
+                scriptElement.registerImportMap(ScriptSourceCode(scriptElement.element().textContent(), documentURLForScriptExecution(m_document.get()), scriptStartPosition, JSC::SourceProviderSourceType::ImportMap));
+        }
     } else
         requestParsingBlockingScript(scriptElement);
 }

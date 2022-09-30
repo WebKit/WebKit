@@ -63,6 +63,7 @@ struct WebHitTestResultData {
 
     String lookupText;
     String toolTipText;
+    String imageText;
     RefPtr<SharedMemory> imageSharedMemory;
     RefPtr<ShareableBitmap> imageBitmap;
     String sourceImageMIMEType;

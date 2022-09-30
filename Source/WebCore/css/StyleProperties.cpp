@@ -87,6 +87,21 @@ static bool isValueID(const RefPtr<CSSValue>& value, CSSValueID id)
     return value && isValueID(*value, id);
 }
 
+static bool isValueIDIncludingList(const Ref<CSSValue>& value, CSSValueID id)
+{
+    if (is<CSSValueList>(value)) {
+        if (downcast<CSSValueList>(value.get()).size() != 1)
+            return false;
+        return isValueID(downcast<CSSValueList>(value.get()).item(0), id);
+    }
+    return isValueID(value, id);
+}
+
+static bool isValueIDIncludingList(const RefPtr<CSSValue>& value, CSSValueID id)
+{
+    return value && isValueIDIncludingList(*value, id);
+}
+
 Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode cssParserMode)
 {
     void* slot = ImmutableStylePropertiesMalloc::malloc(sizeForImmutableStylePropertiesWithPropertyCount(count));
@@ -986,17 +1001,75 @@ String StyleProperties::getGridTemplateValue() const
     return result.toString();
 }
 
+static bool gridAutoFlowContains(const RefPtr<CSSValue>& autoFlow, CSSValueID id)
+{
+    if (is<CSSValueList>(autoFlow)) {
+        for (auto& currentValue : downcast<CSSValueList>(*autoFlow)) {
+            if (isValueID(currentValue, id))
+                return true;
+        }
+        return false;
+    }
+    return isValueID(autoFlow, id);
+}
+
 String StyleProperties::getGridValue() const
 {
-    // If none of the implicit track properties have been set, then
-    // this shorthand can be represented using the grid-template shorthand
-    // format.
-    if (isValueID(getPropertyCSSValue(CSSPropertyGridAutoColumns), CSSValueAuto)
-        && isValueID(getPropertyCSSValue(CSSPropertyGridAutoRows), CSSValueAuto)
-        && isValueID(getPropertyCSSValue(CSSPropertyGridAutoFlow), CSSValueRow)) {
+    auto autoColumns = getPropertyCSSValue(CSSPropertyGridAutoColumns);
+    auto autoRows = getPropertyCSSValue(CSSPropertyGridAutoRows);
+    auto autoFlow = getPropertyCSSValue(CSSPropertyGridAutoFlow);
+    if (!autoColumns || !autoRows || !autoFlow)
+        return String();
+
+    if (isValueIDIncludingList(autoColumns, CSSValueAuto) && isValueIDIncludingList(autoRows, CSSValueAuto) && isValueIDIncludingList(autoFlow, CSSValueRow))
         return getGridTemplateValue();
+
+    if (!isValueID(getPropertyCSSValue(CSSPropertyGridTemplateAreas), CSSValueNone))
+        return String();
+
+    auto rows = getPropertyCSSValue(CSSPropertyGridTemplateRows);
+    auto columns = getPropertyCSSValue(CSSPropertyGridTemplateColumns);
+    if (!rows || !columns)
+        return String();
+
+    StringBuilder result;
+
+    if (gridAutoFlowContains(autoFlow, CSSValueColumn)) {
+        if (!isValueIDIncludingList(autoRows, CSSValueAuto) || !isValueIDIncludingList(columns, CSSValueNone))
+            return String();
+
+        result.append(rows->cssText());
+        result.append(" / auto-flow");
+        if (gridAutoFlowContains(autoFlow, CSSValueDense))
+            result.append(" dense");
+
+        if (!isValueIDIncludingList(autoColumns, CSSValueAuto)) {
+            result.append(" ");
+            result.append(autoColumns->cssText());
+        }
+
+        return result.toString();
     }
-    return getGridShorthandValue(gridShorthand());
+
+    if (!gridAutoFlowContains(autoFlow, CSSValueRow) && !gridAutoFlowContains(autoFlow, CSSValueDense))
+        return String();
+
+    if (!isValueIDIncludingList(autoColumns, CSSValueAuto) || !isValueIDIncludingList(rows, CSSValueNone))
+        return String();
+
+    result.append("auto-flow");
+    if (gridAutoFlowContains(autoFlow, CSSValueDense))
+        result.append(" dense");
+
+    if (!isValueIDIncludingList(autoRows, CSSValueAuto)) {
+        result.append(" ");
+        result.append(autoRows->cssText());
+    }
+
+    result.append(" / ");
+    result.append(columns->cssText());
+
+    return result.toString();
 }
 
 String StyleProperties::getGridShorthandValue(const StylePropertyShorthand& shorthand) const
@@ -1539,29 +1612,12 @@ StringBuilder StyleProperties::asTextInternal() const
     for (unsigned n = 0; n < size; ++n) {
         PropertyReference property = propertyAt(n);
         CSSPropertyID propertyID = property.id();
-        CSSPropertyID shorthandPropertyID = CSSPropertyInvalid;
-        CSSPropertyID borderFallbackShorthandProperty = CSSPropertyInvalid;
-        CSSPropertyID borderBlockFallbackShorthandProperty = CSSPropertyInvalid;
-        CSSPropertyID borderInlineFallbackShorthandProperty = CSSPropertyInvalid;
+        Vector<CSSPropertyID> shorthands;
         String value;
-        auto serializeBorderShorthand = [&] (const CSSPropertyID borderProperty, const CSSPropertyID fallbackProperty) {
-            // FIXME: Deal with cases where only some of border sides are specified.
-            ASSERT(borderProperty - firstCSSProperty < static_cast<CSSPropertyID>(shorthandPropertyAppeared.size()));
-            if (!shorthandPropertyAppeared[borderProperty - firstCSSProperty]) {
-                value = getPropertyValue(borderProperty);
-                if (value.isNull())
-                    shorthandPropertyAppeared.set(borderProperty - firstCSSProperty);
-                else
-                    shorthandPropertyID = borderProperty;
-            } else if (shorthandPropertyUsed[borderProperty - firstCSSProperty])
-                shorthandPropertyID = borderProperty;
-            if (!shorthandPropertyID)
-                shorthandPropertyID = fallbackProperty;
-        };
 
         if (is<CSSPendingSubstitutionValue>(property.value())) {
             auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(*property.value());
-            shorthandPropertyID = substitutionValue.shorthandPropertyId();
+            shorthands.append(substitutionValue.shorthandPropertyId());
             value = substitutionValue.shorthandValue().cssText();
         } else {
             switch (propertyID) {
@@ -1573,7 +1629,7 @@ StringBuilder StyleProperties::asTextInternal() const
             case CSSPropertyAnimationDirection:
             case CSSPropertyAnimationFillMode:
             case CSSPropertyAnimationPlayState:
-                shorthandPropertyID = CSSPropertyAnimation;
+                shorthands.append(CSSPropertyAnimation);
                 break;
             case CSSPropertyBackgroundPositionX:
                 positionXPropertyIndex = n;
@@ -1585,72 +1641,71 @@ StringBuilder StyleProperties::asTextInternal() const
             case CSSPropertyBorderRightWidth:
             case CSSPropertyBorderBottomWidth:
             case CSSPropertyBorderLeftWidth:
-                if (!borderFallbackShorthandProperty)
-                    borderFallbackShorthandProperty = CSSPropertyBorderWidth;
-                FALLTHROUGH;
+                // FIXME: Deal with cases where only some of border sides are specified.
+                shorthands.append(CSSPropertyBorder);
+                shorthands.append(CSSPropertyBorderWidth);
+                    break;
             case CSSPropertyBorderTopStyle:
             case CSSPropertyBorderRightStyle:
             case CSSPropertyBorderBottomStyle:
             case CSSPropertyBorderLeftStyle:
-                if (!borderFallbackShorthandProperty)
-                    borderFallbackShorthandProperty = CSSPropertyBorderStyle;
-                FALLTHROUGH;
+                shorthands.append(CSSPropertyBorder);
+                shorthands.append(CSSPropertyBorderStyle);
+                break;
             case CSSPropertyBorderTopColor:
             case CSSPropertyBorderRightColor:
             case CSSPropertyBorderBottomColor:
             case CSSPropertyBorderLeftColor:
-                if (!borderFallbackShorthandProperty)
-                    borderFallbackShorthandProperty = CSSPropertyBorderColor;
-                serializeBorderShorthand(CSSPropertyBorder, borderFallbackShorthandProperty);
+                shorthands.append(CSSPropertyBorder);
+                shorthands.append(CSSPropertyBorderColor);
                 break;
             case CSSPropertyBorderBlockStartWidth:
             case CSSPropertyBorderBlockEndWidth:
-                if (!borderBlockFallbackShorthandProperty)
-                    borderBlockFallbackShorthandProperty = CSSPropertyBorderBlockWidth;
-                FALLTHROUGH;
+                shorthands.append(CSSPropertyBorderBlock);
+                shorthands.append(CSSPropertyBorderBlockWidth);
+                break;
             case CSSPropertyBorderBlockStartStyle:
             case CSSPropertyBorderBlockEndStyle:
-                if (!borderBlockFallbackShorthandProperty)
-                    borderBlockFallbackShorthandProperty = CSSPropertyBorderBlockStyle;
-                FALLTHROUGH;
+                shorthands.append(CSSPropertyBorderBlock);
+                shorthands.append(CSSPropertyBorderBlockStyle);
+                break;
             case CSSPropertyBorderBlockStartColor:
             case CSSPropertyBorderBlockEndColor:
-                if (!borderBlockFallbackShorthandProperty)
-                    borderBlockFallbackShorthandProperty = CSSPropertyBorderBlockColor;
-                serializeBorderShorthand(CSSPropertyBorderBlock, borderBlockFallbackShorthandProperty);
+                shorthands.append(CSSPropertyBorderBlock);
+                shorthands.append(CSSPropertyBorderBlockColor);
                 break;
             case CSSPropertyBorderInlineStartWidth:
             case CSSPropertyBorderInlineEndWidth:
-                if (!borderInlineFallbackShorthandProperty)
-                    borderInlineFallbackShorthandProperty = CSSPropertyBorderInlineWidth;
-                FALLTHROUGH;
+                shorthands.append(CSSPropertyBorderInline);
+                shorthands.append(CSSPropertyBorderInlineWidth);
+                break;
             case CSSPropertyBorderInlineStartStyle:
             case CSSPropertyBorderInlineEndStyle:
-                if (!borderInlineFallbackShorthandProperty)
-                    borderInlineFallbackShorthandProperty = CSSPropertyBorderInlineStyle;
-                FALLTHROUGH;
+                shorthands.append(CSSPropertyBorderInline);
+                shorthands.append(CSSPropertyBorderInlineStyle);
+                break;
             case CSSPropertyBorderTopLeftRadius:
             case CSSPropertyBorderTopRightRadius:
             case CSSPropertyBorderBottomRightRadius:
             case CSSPropertyBorderBottomLeftRadius:
-                shorthandPropertyID = CSSPropertyBorderRadius;
+                shorthands.append(CSSPropertyBorderRadius);
                 break;
             case CSSPropertyBorderInlineStartColor:
             case CSSPropertyBorderInlineEndColor:
-                if (!borderInlineFallbackShorthandProperty)
-                    borderInlineFallbackShorthandProperty = CSSPropertyBorderInlineColor;
-                serializeBorderShorthand(CSSPropertyBorderInline, borderInlineFallbackShorthandProperty);
+                shorthands.append(CSSPropertyBorderInline);
+                shorthands.append(CSSPropertyBorderInlineColor);
                 break;
             case CSSPropertyWebkitBorderHorizontalSpacing:
             case CSSPropertyWebkitBorderVerticalSpacing:
-                shorthandPropertyID = CSSPropertyBorderSpacing;
+                shorthands.append(CSSPropertyBorderSpacing);
                 break;
             case CSSPropertyBorderImageSource:
             case CSSPropertyBorderImageSlice:
             case CSSPropertyBorderImageWidth:
             case CSSPropertyBorderImageOutset:
             case CSSPropertyBorderImageRepeat:
-                serializeBorderShorthand(CSSPropertyBorderImage, CSSPropertyWebkitBorderImage);
+                shorthands.append(CSSPropertyBorderImage);
+                shorthands.append(CSSPropertyWebkitBorderImage);
                 break;
             case CSSPropertyFontFamily:
             case CSSPropertyLineHeight:
@@ -1664,107 +1719,107 @@ StringBuilder StyleProperties::asTextInternal() const
             case CSSPropertyRight:
             case CSSPropertyBottom:
             case CSSPropertyLeft:
-                shorthandPropertyID = CSSPropertyInset;
+                shorthands.append(CSSPropertyInset);
                 break;
             case CSSPropertyInsetBlockStart:
             case CSSPropertyInsetBlockEnd:
-                shorthandPropertyID = CSSPropertyInsetBlock;
+                shorthands.append(CSSPropertyInsetBlock);
                 break;
             case CSSPropertyInsetInlineStart:
             case CSSPropertyInsetInlineEnd:
-                shorthandPropertyID = CSSPropertyInsetInline;
+                shorthands.append(CSSPropertyInsetInline);
                 break;
             case CSSPropertyListStyleType:
             case CSSPropertyListStylePosition:
             case CSSPropertyListStyleImage:
-                shorthandPropertyID = CSSPropertyListStyle;
+                shorthands.append(CSSPropertyListStyle);
                 break;
             case CSSPropertyMarginTop:
             case CSSPropertyMarginRight:
             case CSSPropertyMarginBottom:
             case CSSPropertyMarginLeft:
-                shorthandPropertyID = CSSPropertyMargin;
+                shorthands.append(CSSPropertyMargin);
                 break;
             case CSSPropertyMarginBlockStart:
             case CSSPropertyMarginBlockEnd:
-                shorthandPropertyID = CSSPropertyMarginBlock;
+                shorthands.append(CSSPropertyMarginBlock);
                 break;
             case CSSPropertyMarginInlineStart:
             case CSSPropertyMarginInlineEnd:
-                shorthandPropertyID = CSSPropertyMarginInline;
+                shorthands.append(CSSPropertyMarginInline);
                 break;
             case CSSPropertyOutlineWidth:
             case CSSPropertyOutlineStyle:
             case CSSPropertyOutlineColor:
-                shorthandPropertyID = CSSPropertyOutline;
+                shorthands.append(CSSPropertyOutline);
                 break;
             case CSSPropertyOverflowX:
             case CSSPropertyOverflowY:
-                shorthandPropertyID = CSSPropertyOverflow;
+                shorthands.append(CSSPropertyOverflow);
                 break;
             case CSSPropertyOverscrollBehaviorX:
             case CSSPropertyOverscrollBehaviorY:
-                shorthandPropertyID = CSSPropertyOverscrollBehavior;
+                shorthands.append(CSSPropertyOverscrollBehavior);
                 break;
             case CSSPropertyPaddingTop:
             case CSSPropertyPaddingRight:
             case CSSPropertyPaddingBottom:
             case CSSPropertyPaddingLeft:
-                shorthandPropertyID = CSSPropertyPadding;
+                shorthands.append(CSSPropertyPadding);
                 break;
             case CSSPropertyPaddingBlockStart:
             case CSSPropertyPaddingBlockEnd:
-                shorthandPropertyID = CSSPropertyPaddingBlock;
+                shorthands.append(CSSPropertyPaddingBlock);
                 break;
             case CSSPropertyPaddingInlineStart:
             case CSSPropertyPaddingInlineEnd:
-                shorthandPropertyID = CSSPropertyPaddingInline;
+                shorthands.append(CSSPropertyPaddingInline);
                 break;
             case CSSPropertyScrollMarginTop:
             case CSSPropertyScrollMarginRight:
             case CSSPropertyScrollMarginBottom:
             case CSSPropertyScrollMarginLeft:
-                shorthandPropertyID = CSSPropertyScrollMargin;
+                shorthands.append(CSSPropertyScrollMargin);
                 break;
             case CSSPropertyScrollMarginBlockStart:
             case CSSPropertyScrollMarginBlockEnd:
-                shorthandPropertyID = CSSPropertyScrollMarginBlock;
+                shorthands.append(CSSPropertyScrollMarginBlock);
                 break;
             case CSSPropertyScrollMarginInlineStart:
             case CSSPropertyScrollMarginInlineEnd:
-                shorthandPropertyID = CSSPropertyScrollMarginInline;
+                shorthands.append(CSSPropertyScrollMarginInline);
                 break;
             case CSSPropertyScrollPaddingTop:
             case CSSPropertyScrollPaddingRight:
             case CSSPropertyScrollPaddingBottom:
             case CSSPropertyScrollPaddingLeft:
-                shorthandPropertyID = CSSPropertyScrollPadding;
+                shorthands.append(CSSPropertyScrollPadding);
                 break;
             case CSSPropertyScrollPaddingBlockStart:
             case CSSPropertyScrollPaddingBlockEnd:
-                shorthandPropertyID = CSSPropertyScrollPaddingBlock;
+                shorthands.append(CSSPropertyScrollPaddingBlock);
                 break;
             case CSSPropertyScrollPaddingInlineStart:
             case CSSPropertyScrollPaddingInlineEnd:
-                shorthandPropertyID = CSSPropertyScrollPaddingInline;
+                shorthands.append(CSSPropertyScrollPaddingInline);
                 break;
             case CSSPropertyTextDecorationLine:
-                shorthandPropertyID = CSSPropertyTextDecoration;
+                shorthands.append(CSSPropertyTextDecoration);
                 break;
             case CSSPropertyTransitionProperty:
             case CSSPropertyTransitionDuration:
             case CSSPropertyTransitionTimingFunction:
             case CSSPropertyTransitionDelay:
-                shorthandPropertyID = CSSPropertyTransition;
+                shorthands.append(CSSPropertyTransition);
                 break;
             case CSSPropertyFlexDirection:
             case CSSPropertyFlexWrap:
-                shorthandPropertyID = CSSPropertyFlexFlow;
+                shorthands.append(CSSPropertyFlexFlow);
                 break;
             case CSSPropertyFlexBasis:
             case CSSPropertyFlexGrow:
             case CSSPropertyFlexShrink:
-                shorthandPropertyID = CSSPropertyFlex;
+                shorthands.append(CSSPropertyFlex);
                 break;
             case CSSPropertyWebkitMaskPositionX:
             case CSSPropertyWebkitMaskPositionY:
@@ -1773,45 +1828,65 @@ StringBuilder StyleProperties::asTextInternal() const
             case CSSPropertyMaskPosition:
             case CSSPropertyMaskClip:
             case CSSPropertyMaskOrigin:
-                shorthandPropertyID = CSSPropertyMask;
+                shorthands.append(CSSPropertyMask);
                 break;
             case CSSPropertyWebkitMaskClip:
             case CSSPropertyWebkitMaskPosition:
                 // TODO: A lot of the above properties can be both prefixed and unprefixed?
-                shorthandPropertyID = CSSPropertyWebkitMask;
+                shorthands.append(CSSPropertyWebkitMask);
                 break;
             case CSSPropertyPerspectiveOriginX:
             case CSSPropertyPerspectiveOriginY:
-                shorthandPropertyID = CSSPropertyPerspectiveOrigin;
+                shorthands.append(CSSPropertyPerspectiveOrigin);
                 break;
             case CSSPropertyTransformOriginX:
             case CSSPropertyTransformOriginY:
             case CSSPropertyTransformOriginZ:
-                shorthandPropertyID = CSSPropertyTransformOrigin;
+                shorthands.append(CSSPropertyTransformOrigin);
                 break;
             case CSSPropertyContainIntrinsicHeight:
             case CSSPropertyContainIntrinsicWidth:
-                shorthandPropertyID = CSSPropertyContainIntrinsicSize;
+                shorthands.append(CSSPropertyContainIntrinsicSize);
+                break;
+            case CSSPropertyGridTemplateRows:
+            case CSSPropertyGridTemplateColumns:
+            case CSSPropertyGridTemplateAreas:
+                shorthands.append(CSSPropertyGrid);
+                shorthands.append(CSSPropertyGridTemplate);
+                break;
+            case CSSPropertyGridAutoFlow:
+            case CSSPropertyGridAutoRows:
+            case CSSPropertyGridAutoColumns:
+                shorthands.append(CSSPropertyGrid);
                 break;
             default:
                 break;
             }
         }
 
-        unsigned shortPropertyIndex = shorthandPropertyID - firstCSSProperty;
-        if (shorthandPropertyID) {
-            ASSERT(shortPropertyIndex < shorthandPropertyUsed.size());
-            if (shorthandPropertyUsed[shortPropertyIndex])
-                continue;
-            if (!shorthandPropertyAppeared[shortPropertyIndex] && value.isNull())
-                value = getPropertyValue(shorthandPropertyID);
-            shorthandPropertyAppeared.set(shortPropertyIndex);
-        }
+        bool alreadyUsedShorthand = false;
+        for (auto& shorthandPropertyID : shorthands) {
+            unsigned shorthandPropertyIndex = shorthandPropertyID - firstCSSProperty;
 
-        if (!value.isNull()) {
-            propertyID = shorthandPropertyID;
-            shorthandPropertyUsed.set(shortPropertyIndex);
-        } else
+            ASSERT(shorthandPropertyIndex < shorthandPropertyUsed.size());
+            if (shorthandPropertyUsed[shorthandPropertyIndex]) {
+                alreadyUsedShorthand = true;
+                break;
+            }
+            if (!shorthandPropertyAppeared[shorthandPropertyIndex] && value.isNull())
+                value = getPropertyValue(shorthandPropertyID);
+            shorthandPropertyAppeared.set(shorthandPropertyIndex);
+
+            if (!value.isNull()) {
+                propertyID = shorthandPropertyID;
+                shorthandPropertyUsed.set(shorthandPropertyIndex);
+                break;
+            }
+        }
+        if (alreadyUsedShorthand)
+            continue;
+
+        if (value.isNull())
             value = property.value()->cssText();
 
         if (propertyID != CSSPropertyCustom && value == "initial"_s && !CSSProperty::isInheritedProperty(propertyID))

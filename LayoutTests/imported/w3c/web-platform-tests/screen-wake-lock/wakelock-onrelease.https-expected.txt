@@ -1,4 +1,4 @@
 
-FAIL Test onreleased event's basic properties promise_test: Unhandled rejection with value: object "Error: unimplemented"
-FAIL Ensure onreleased is called before WakeLockSentinel.release() resolves promise_test: Unhandled rejection with value: object "Error: unimplemented"
+PASS Test onreleased event's basic properties
+PASS Ensure onreleased is called before WakeLockSentinel.release() resolves
 

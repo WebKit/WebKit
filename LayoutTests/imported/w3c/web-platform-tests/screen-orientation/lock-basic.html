@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/testdriver.js"></script>
+<script src="/resources/testdriver-vendor.js"></script>
+<script>
+async function cleanup() {
+  try {
+    await document.exitFullscreen();
+  } catch (e) {}
+  screen.orientation.unlock();
+}
+
+promise_test(async t => {
+  t.add_cleanup(cleanup);
+  await test_driver.bless("request full screen", () => {
+    return document.documentElement.requestFullscreen();
+  });
+  screen.orientation.unlock();
+}, "Test that screen.orientation.unlock() doesn't throw when there is no lock with fullscreen");
+
+test(() => {
+  screen.orientation.unlock();
+}, "Test that screen.orientation.unlock() doesn't throw when there is no lock");
+
+test(() => {
+  const value = screen.orientation.unlock();
+  assert_equals(value, undefined);
+}, "Test that screen.orientation.unlock() returns a void value");
+
+promise_test(async t => {
+  t.add_cleanup(cleanup);
+  await test_driver.bless("request full screen", () => {
+    return document.documentElement.requestFullscreen();
+  });
+  const value = await screen.orientation.lock('any');
+  assert_equals(value, undefined);
+}, "Test that screen.orientation.lock returns a promise which will be fulfilled with a void value.");
+
+promise_test(async t => {
+  t.add_cleanup(cleanup);
+  await test_driver.bless("request full screen", () => {
+    return document.documentElement.requestFullscreen();
+  });
+  const orientations = [
+    'any',
+    'natural',
+    'portrait',
+    'landscape',
+    'portrait-secondary',
+    'landscape-primary',
+    'landscape-secondary',
+    'portrait-primary',
+  ];
+  for (const orientation of orientations) {
+    const promiseToChange = screen.orientation.lock(orientation);
+    assert_true(promiseToChange instanceof Promise, "Expected an instance of Promise");
+    await promiseToChange;
+    const type = screen.orientation.type;
+    switch (orientation) {
+    case 'any':
+      break;
+    case 'natural':
+      assert_true(type == "portrait-primary" || type == "landscape-primary");
+      break;
+    case 'portrait':
+      assert_true(type == "portrait-primary" || type == "portrait-secondary");
+      break;
+    case 'landscape':
+      assert_true(type == "landscape-primary" || type == "landscape-secondary");
+      break;
+    default:
+      assert_equals(type, orientation, "Expected orientation to change");
+      break;
+    }
+  }
+}, "Test that screen.orientation.lock returns a pending promise.");
+
+promise_test(async t => {
+  t.add_cleanup(cleanup);
+  await test_driver.bless("request full screen", () => {
+    return document.documentElement.requestFullscreen();
+  });
+  const preType = screen.orientation.type;
+  const isPortrait = preType.includes("portrait");
+  const newType = `${ isPortrait ? "landscape" : "portrait" }-primary`;
+  const p = screen.orientation.lock(newType);
+  assert_equals(screen.orientation.type, preType, "Must not change orientation until next spin of event loop");
+  await p;
+  assert_equals(screen.orientation.type, newType);
+}, "Test that screen.orientation.lock() is actually async");
+</script>

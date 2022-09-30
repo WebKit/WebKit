@@ -169,10 +169,6 @@ PASS resize (type: discrete) has testInterpolation function
 PASS resize uses discrete animation when animating between "both" and "horizontal" with linear easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with effect easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with keyframe easing
-PASS scroll-behavior (type: discrete) has testInterpolation function
-FAIL scroll-behavior uses discrete animation when animating between "auto" and "smooth" with linear easing undefined is not an object (evaluating 'getComputedStyle(target, pseudoType)[idlName].toLowerCase')
-FAIL scroll-behavior uses discrete animation when animating between "auto" and "smooth" with effect easing undefined is not an object (evaluating 'getComputedStyle(target, pseudoType)[idlName].toLowerCase')
-FAIL scroll-behavior uses discrete animation when animating between "auto" and "smooth" with keyframe easing undefined is not an object (evaluating 'getComputedStyle(target, pseudoType)[idlName].toLowerCase')
 PASS shape-outside (type: discrete) has testInterpolation function
 PASS shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with linear easing
 PASS shape-outside uses discrete animation when animating between "url("http://localhost/test-1")" and "url("http://localhost/test-2")" with effect easing

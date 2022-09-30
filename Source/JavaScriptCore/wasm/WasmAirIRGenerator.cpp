@@ -42,6 +42,7 @@
 #include "B3StackmapGenerationParams.h"
 #include "BinarySwitch.h"
 #include "JSCJSValueInlines.h"
+#include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyInstance.h"
 #include "ScratchRegisterAllocator.h"
 #include "WasmBranchHints.h"
@@ -377,6 +378,11 @@ public:
     PartialResult WARN_UNUSED_RETURN addI31New(ExpressionType value, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetS(ExpressionType ref, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addI31GetU(ExpressionType ref, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayNewDefault(uint32_t index, ExpressionType size, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value);
+    PartialResult WARN_UNUSED_RETURN addArrayLen(ExpressionType arrayref, ExpressionType& result);
 
     // Basic operators
     template<OpType>
@@ -3194,6 +3200,188 @@ auto AirIRGenerator::addI31GetU(ExpressionType ref, ExpressionType& result) -> P
 
     result = g32();
     append(Move32, ref, result);
+
+    return { };
+}
+
+auto AirIRGenerator::addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result) -> PartialResult
+{
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+
+    TypedTmp tmpForValue;
+    switch (value.type().kind) {
+    case TypeKind::F32:
+        tmpForValue = g32();
+        append(MoveFloatTo32, value, tmpForValue);
+        break;
+    case TypeKind::F64:
+        tmpForValue = g64();
+        append(MoveDoubleTo64, value, tmpForValue);
+        break;
+    case TypeKind::I32:
+    case TypeKind::I64:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+        tmpForValue = value;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    result = tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    emitCCall(&operationWasmArrayNew, result, instanceValue(), addConstant(Types::I32, typeIndex), size, tmpForValue);
+
+    return { };
+}
+
+auto AirIRGenerator::addArrayNewDefault(uint32_t typeIndex, ExpressionType size, ExpressionType& result) -> PartialResult
+{
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+
+    TypedTmp tmpForValue;
+    if (Wasm::isRefType(elementType)) {
+        tmpForValue = gRef(elementType);
+        append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForValue);
+    } else {
+        tmpForValue = g64();
+        append(Xor64, tmpForValue, tmpForValue);
+    }
+
+    result = tmpForType(Wasm::Type { Wasm::TypeKind::Ref, Wasm::TypeInformation::get(arraySignature) });
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    emitCCall(&operationWasmArrayNew, result, instanceValue(), addConstant(Types::I32, typeIndex), size, tmpForValue);
+
+    return { };
+}
+
+auto AirIRGenerator::addArrayGet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
+{
+    Wasm::TypeDefinition& arraySignature = m_info.typeSignatures[typeIndex];
+    ASSERT(arraySignature.is<ArrayType>());
+    Wasm::Type elementType = arraySignature.as<ArrayType>()->elementType().type;
+
+    // Ensure arrayref is non-null.
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), arrayref, tmpForNull);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::NullArrayGet);
+    });
+
+    // Check array bounds.
+    auto arraySize = g32();
+    append(Move32, Arg::addr(arrayref, JSWebAssemblyArray::offsetOfSize()), arraySize);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), index, arraySize);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsArrayGet);
+    });
+
+    auto getValue = g64();
+    // FIXME: Emit this inline.
+    // https://bugs.webkit.org/show_bug.cgi?id=245405
+    emitCCall(&operationWasmArrayGet, getValue, instanceValue(), addConstant(Types::I32, typeIndex), arrayref, index);
+
+    switch (elementType.kind) {
+    case TypeKind::I32:
+        result = g32();
+        append(Move32, getValue, result);
+        break;
+    case TypeKind::F32:
+        result = f32();
+        append(Move32ToFloat, getValue, result);
+        break;
+    case TypeKind::F64:
+        result = f64();
+        append(Move64ToDouble, getValue, result);
+        break;
+    case TypeKind::I64:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+        result = tmpForType(elementType);
+        append(Move, getValue, result);
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    return { };
+}
+
+auto AirIRGenerator::addArraySet(uint32_t typeIndex, ExpressionType arrayref, ExpressionType index, ExpressionType value) -> PartialResult
+{
+    // Ensure arrayref is non-null.
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), arrayref, tmpForNull);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::NullArraySet);
+    });
+
+    // Check array bounds.
+    auto arraySize = g32();
+    append(Move32, Arg::addr(arrayref, JSWebAssemblyArray::offsetOfSize()), arraySize);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::AboveOrEqual), index, arraySize);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::OutOfBoundsArraySet);
+    });
+
+    TypedTmp tmpForValue;
+    switch (value.type().kind) {
+    case TypeKind::F32:
+        tmpForValue = g32();
+        append(MoveFloatTo32, value, tmpForValue);
+        break;
+    case TypeKind::F64:
+        tmpForValue = g64();
+        append(MoveDoubleTo64, value, tmpForValue);
+        break;
+    case TypeKind::I32:
+    case TypeKind::I64:
+    case TypeKind::Externref:
+    case TypeKind::Funcref:
+    case TypeKind::Ref:
+    case TypeKind::RefNull:
+        tmpForValue = value;
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+
+    emitCCall(&operationWasmArraySet, TypedTmp(), instanceValue(), addConstant(Types::I32, typeIndex), arrayref, index, tmpForValue);
+
+    return { };
+}
+
+auto AirIRGenerator::addArrayLen(ExpressionType arrayref, ExpressionType& result) -> PartialResult
+{
+    // Ensure arrayref is non-null.
+    auto tmpForNull = g64();
+    append(Move, Arg::bigImm(JSValue::encode(jsNull())), tmpForNull);
+    emitCheck([&] {
+        return Inst(Branch64, nullptr, Arg::relCond(MacroAssembler::Equal), arrayref, tmpForNull);
+    }, [=, this] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitThrowException(jit, ExceptionType::NullArrayLen);
+    });
+
+    result = g32();
+    append(Move32, Arg::addr(arrayref, JSWebAssemblyArray::offsetOfSize()), result);
 
     return { };
 }

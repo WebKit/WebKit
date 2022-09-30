@@ -245,6 +245,7 @@ RefPtr<BitmapTexture> BitmapTextureGL::applyFilters(TextureMapper& textureMapper
 
 void BitmapTextureGL::initializeStencil()
 {
+#if !USE(TEXMAP_DEPTH_STENCIL_BUFFER)
     if (m_rbo)
         return;
 
@@ -255,6 +256,7 @@ void BitmapTextureGL::initializeStencil()
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
     glClearStencil(0);
     glClear(GL_STENCIL_BUFFER_BIT);
+#endif
 }
 
 void BitmapTextureGL::initializeDepthBuffer()
@@ -262,9 +264,15 @@ void BitmapTextureGL::initializeDepthBuffer()
     if (m_depthBufferObject)
         return;
 
+#if USE(TEXMAP_DEPTH_STENCIL_BUFFER)
+    GLenum format = GL_DEPTH24_STENCIL8_OES;
+#else
+    GLenum format = GL_DEPTH_COMPONENT16;
+#endif
+    
     glGenRenderbuffers(1, &m_depthBufferObject);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferObject);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_textureSize.width(), m_textureSize.height());
+    glRenderbufferStorage(GL_RENDERBUFFER, format, m_textureSize.width(), m_textureSize.height());
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBufferObject);
 }
@@ -277,7 +285,8 @@ void BitmapTextureGL::clearIfNeeded()
     m_clipStack.reset(IntRect(IntPoint::zero(), m_textureSize), ClipStack::YAxisMode::Default);
     m_clipStack.applyIfNeeded();
     glClearColor(0, 0, 0, 0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClearStencil(0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     m_shouldClear = false;
 }
 
@@ -289,6 +298,8 @@ void BitmapTextureGL::createFboIfNeeded()
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0);
+    if (flags() & DepthBuffer)
+        initializeDepthBuffer();
     m_shouldClear = true;
 }
 
@@ -298,6 +309,10 @@ void BitmapTextureGL::bindAsSurface()
     createFboIfNeeded();
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     glViewport(0, 0, m_textureSize.width(), m_textureSize.height());
+    if (flags() & DepthBuffer)
+        glEnable(GL_DEPTH_TEST);
+    else
+        glDisable(GL_DEPTH_TEST);
     clearIfNeeded();
     m_clipStack.apply();
 }
@@ -310,8 +325,10 @@ BitmapTextureGL::~BitmapTextureGL()
     if (m_fbo)
         glDeleteFramebuffers(1, &m_fbo);
 
+#if !USE(TEXMAP_DEPTH_STENCIL_BUFFER)
     if (m_rbo)
         glDeleteRenderbuffers(1, &m_rbo);
+#endif
 
     if (m_depthBufferObject)
         glDeleteRenderbuffers(1, &m_depthBufferObject);

@@ -1,6 +1,6 @@
 
-FAIL import.meta.resolve() given an import mapped bare specifier Module specifier, 'bare' does not start with "/", "./", or "../". Referenced from http://localhost:8800/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-resolve-importmap.html
-FAIL import.meta.resolve() given an import mapped  URL-like specifier assert_equals: expected "https://example.com/rewritten" but got "https://example.com/rewrite"
-FAIL Testing the ToString() step of import.meta.resolve() via import maps Module specifier, 'undefined' does not start with "/", "./", or "../". Referenced from http://localhost:8800/html/semantics/scripting-1/the-script-element/module/import-meta/import-meta-resolve-importmap.html
-FAIL import(import.meta.resolve(x)) can be different from import(x) promise_test: Unhandled rejection with value: object "TypeError: Importing a module script failed."
+PASS import.meta.resolve() given an import mapped bare specifier
+PASS import.meta.resolve() given an import mapped  URL-like specifier
+PASS Testing the ToString() step of import.meta.resolve() via import maps
+PASS import(import.meta.resolve(x)) can be different from import(x)
 

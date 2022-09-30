@@ -1,25 +1,20 @@
 <html>
 <head>
-<script src="../../../resources/js-test.js"></script>
 <script>
 
-if (window.testRunner)
+if (window.testRunner) {
     testRunner.clearBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(txt)
+{
+    document.getElementById("logger").innerText += txt + "\n";
+}
 
 function runTest()
 {
-    try {
-        history.pushState(null, null, 'some-other.html');
-        testFailed("history.pushState(null, null, 'some-other.html') didn't throw");
-    } catch (e) {
-        testPassed("history.pushState(null, null, 'some-other.html') threw");
-    }
-    try {
-        history.replaceState(null, null, 'some-other.html');
-        testFailed("history.replaceState(null, null, 'some-other.html') didn't throw");
-    } catch (e) {
-        testPassed("history.replaceState(null, null, 'some-other.html') threw");
-    }
     history.replaceState("OriginalEntry", "original");
     history.pushState(null, null, "#");
     history.pushState(null, null, "");
@@ -27,17 +22,18 @@ function runTest()
     history.pushState(null, null, "#otherhash");
     history.pushState(null, null, "#");
     history.pushState(null, null, null);
-    history.pushState(null, null, "?withquery");
-    history.pushState(null, null, "?withquery#");
-    history.pushState(null, null, "?withquery");
-    history.pushState(null, null, "?withquery#somehash");
-    history.pushState(null, null, "?withquery#");
-    history.pushState(null, null, "?withquery#someotherhash");
-    history.pushState(null, null, "?withsomeotherquery#someotherhash");
-    history.pushState(null, null, "?withsomeotherquery#somehash");
-    history.pushState(null, null, "?withsomeotherquery");
-    history.pushState(null, null, "?withsomeotherquery#");
-    history.pushState(null, null, "?withsomeotherquery");
+    history.pushState(null, null, "some-other.html");
+    history.pushState(null, null, "some-other.html?withquery");
+    history.pushState(null, null, "some-other.html?withquery#");
+    history.pushState(null, null, "some-other.html?withquery");
+    history.pushState(null, null, "some-other.html?withquery#somehash");
+    history.pushState(null, null, "some-other.html?withquery#");
+    history.pushState(null, null, "some-other.html?withquery#someotherhash");
+    history.pushState(null, null, "some-other.html?withsomeotherquery#someotherhash");
+    history.pushState(null, null, "some-other.html?withsomeotherquery#somehash");
+    history.pushState(null, null, "some-other.html?withsomeotherquery");
+    history.pushState(null, null, "some-other.html?withsomeotherquery#");
+    history.pushState(null, null, "some-other.html?withsomeotherquery");
 
     history.pushState("BufferEntry", "Last entry");
     history.back();
@@ -50,7 +46,7 @@ function lastPathComponent(url)
 
 onpopstate = function(event)
 {
-    debug("State popped with event " + event.state + " (type " + typeof event.state + ") and last path component " + lastPathComponent(location.href));
+    log("State popped with event " + event.state + " (type " + typeof event.state + ") and last path component " + lastPathComponent(location.href));
     if (event.state != "OriginalEntry")
         setTimeout("history.back();", 0);
     else if (window.testRunner)
@@ -59,14 +55,14 @@ onpopstate = function(event)
 
 onhashchange = function(event)
 {
-    debug("Hash change fired and last path component is " + lastPathComponent(event.newURL));
+    log("Hash change fired and last path component is " + lastPathComponent(event.newURL));
 }
 
 </script>
 <body onload="runTest();">
-<script>
-description("This test pushes a series of state objects with different URLs and fragment identifiers meant to test the hashChange event as states are popped.");
-jsTestIsAsync = true;
-</script>
+<pre>
+This test pushes a series of state objects with different URLs and fragment identifiers meant to test the hashChange event as states are popped.
+</pre><br>
+<pre id="logger"></pre>
 </body>
 </html>

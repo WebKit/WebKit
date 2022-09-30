@@ -1,0 +1,47 @@
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bar
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bar
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+Blocked access to external URL https://www1.localhost:9443/import-maps/resources/log.js?pipe=sub&name=cross-origin-bar
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: TypeError: Module name, 'http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-bare' does not resolve to a valid URL.
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+CONSOLE MESSAGE: value in specifier map cannot be parsed as URL bare
+
+
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=foo: <script src type=module>
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=foo: <script src type=text/javascript>
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=foo: static import
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=foo: dynamic import (from module)
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=foo: dynamic import (from text/javascript)
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: <script src type=module>
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: <script src type=text/javascript>
+FAIL http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: static import assert_unreached: script's error event shouldn't be fired Reached unreachable code
+FAIL http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: dynamic import (from module) assert_unreached: dynamic import promise shouldn't be rejected Reached unreachable code
+FAIL http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=cross-origin-foo: dynamic import (from text/javascript) assert_unreached: dynamic import promise shouldn't be rejected Reached unreachable code
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-data: <script src type=module>
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-data: <script src type=text/javascript>
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-data: static import
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-data: dynamic import (from module)
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-data: dynamic import (from text/javascript)
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: <script src type=module>
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: <script src type=text/javascript>
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: static import
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: dynamic import (from module)
+PASS http://localhost:8800/import-maps/resources/log.js?pipe=sub&name=to-bare: dynamic import (from text/javascript)
+

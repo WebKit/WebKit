@@ -885,7 +885,7 @@ void HTMLTreeBuilder::didCreateCustomOrFallbackElement(Ref<Element>&& element, C
 void HTMLTreeBuilder::processTemplateStartTag(AtomHTMLToken&& token)
 {
     m_tree.activeFormattingElements().appendMarker();
-    m_tree.insertHTMLElement(WTFMove(token));
+    m_tree.insertHTMLTemplateElement(WTFMove(token));
     m_templateInsertionModes.append(InsertionMode::TemplateContents);
     m_insertionMode = InsertionMode::TemplateContents;
 }

@@ -136,6 +136,9 @@ public:
     void handleGeolocationPermissionRequest(WKGeolocationPermissionRequestRef);
     bool isGeolocationProviderActive() const;
 
+    // Screen Wake Lock.
+    void setScreenWakeLockPermission(bool);
+
     // MediaStream.
     String saltForOrigin(WKFrameRef, String);
     void getUserMediaInfoForOrigin(WKFrameRef, WKStringRef originKey, bool&, WKRetainPtr<WKStringRef>&);
@@ -623,6 +626,7 @@ private:
     Vector<WKRetainPtr<WKGeolocationPermissionRequestRef> > m_geolocationPermissionRequests;
     bool m_isGeolocationPermissionSet { false };
     bool m_isGeolocationPermissionAllowed { false };
+    std::optional<bool> m_screenWakeLockPermission;
 
     HashMap<String, RefPtr<OriginSettings>> m_cachedUserMediaPermissions;
 

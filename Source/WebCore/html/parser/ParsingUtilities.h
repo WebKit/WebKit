@@ -131,6 +131,12 @@ template<bool characterPredicate(UChar)> void skipUntil(StringParsingBuffer<UCha
         ++buffer;
 }
 
+template<typename CharacterType, typename DelimiterType> void skipWhile(StringParsingBuffer<CharacterType>& buffer, DelimiterType delimiter)
+{
+    while (buffer.hasCharactersRemaining() && *buffer == delimiter)
+        ++buffer;
+}
+
 template<bool characterPredicate(LChar)> void skipWhile(const LChar*& position, const LChar* end)
 {
     while (position < end && characterPredicate(*position))

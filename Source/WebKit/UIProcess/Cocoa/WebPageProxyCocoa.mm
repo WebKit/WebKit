@@ -629,13 +629,13 @@ void WebPageProxy::requestThumbnailWithPath(const String& filePath, const String
 
 #endif // HAVE(QUICKLOOK_THUMBNAILING)
 
-#if PLATFORM(MAC)
+#if ENABLE(ATTACHMENT_ELEMENT) && PLATFORM(MAC)
 
-void WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const String& identifier)
+bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const String& identifier)
 {
     auto image = [fileWrapper icon];
     if (!image)
-        return;
+        return false;
 
     auto flippedIcon = [NSImage imageWithSize:iconSize flipped:YES drawingHandler:^BOOL(NSRect destinationRect) {
         [image drawInRect:destinationRect fromRect:NSMakeRect(0, 0, [image size].width, [image size].height) operation:NSCompositingOperationSourceOver fraction:1.0f];
@@ -644,11 +644,12 @@ void WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
 
     auto convertedImage = convertPlatformImageToBitmap(flippedIcon, iconSize);
     if (!convertedImage)
-        return;
+        return false;
 
     ShareableBitmap::Handle handle;
     convertedImage->createHandle(handle);
     send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, iconSize));
+    return true;
 }
 
 #endif

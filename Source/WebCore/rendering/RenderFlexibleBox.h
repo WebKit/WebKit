@@ -92,6 +92,8 @@ public:
 
     bool shouldApplyMinBlockSizeAutoForChild(const RenderBox&) const;
 
+    bool isComputingFlexBaseSizes() const { return m_isComputingFlexBaseSizes; }
+
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
 
@@ -234,6 +236,7 @@ private:
     SizeDefiniteness m_hasDefiniteHeight { SizeDefiniteness::Unknown };
     bool m_inLayout { false };
     bool m_shouldResetChildLogicalHeightBeforeLayout { false };
+    bool m_isComputingFlexBaseSizes { false };
 };
 
 } // namespace WebCore

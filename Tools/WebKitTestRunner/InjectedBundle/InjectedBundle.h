@@ -105,6 +105,9 @@ public:
     void setMockGeolocationPositionUnavailableError(WKStringRef errorMessage);
     bool isGeolocationProviderActive() const;
 
+    // Screen Wake Lock.
+    void setScreenWakeLockPermission(bool);
+
     // MediaStream.
     void setUserMediaPermission(bool);
     void resetUserMediaPermission();

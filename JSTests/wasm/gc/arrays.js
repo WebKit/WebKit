@@ -163,5 +163,380 @@ function testArrayJS() {
   )
 }
 
+function testArrayNew() {
+  instantiate(`
+    (module
+      (type (array i32))
+      (func (result (ref 0))
+        (array.new_canon 0 (i32.const 42) (i32.const 5)))
+    )
+  `);
+}
+
+function testArrayNewDefault() {
+  instantiate(`
+    (module
+      (type (array i32))
+      (func (result (ref 0))
+        (array.new_canon_default 0 (i32.const 5)))
+    )
+  `);
+}
+
+function testArrayGet() {
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (array.new_canon 0 (i32.const 0) (i32.const 5))
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.eq(m.exports.f(), 0);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (array.new_canon_default 0 (i32.const 5))
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.eq(m.exports.f(), 0);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (array.new_canon 0 (i32.const 42) (i32.const 5))
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.eq(m.exports.f(), 42);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array i64))
+        (func (export "f") (result i64)
+          (array.new_canon 0 (i64.const 0x0eee_ffff_ffff_ffff) (i32.const 5))
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.eq(m.exports.f(), 0x0eeeffffffffffffn);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array f32))
+        (func (export "f") (result f32)
+          (array.new_canon 0 (f32.const 0.25) (i32.const 5))
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.eq(m.exports.f(), 0.25);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array f64))
+        (func (export "f") (result f64)
+          (array.new_canon 0 (f64.const 1e39) (i32.const 5))
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.eq(m.exports.f(), 1e39);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array externref))
+        (func (export "f") (param externref) (result externref)
+          (array.new_canon 0 (local.get 0) (i32.const 5))
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    let sym = Symbol();
+    assert.eq(m.exports.f(sym), sym);
+    assert.eq(m.exports.f({ x: 1, y: 2 }).x, 1);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array externref))
+        (func (export "f") (result externref)
+          (array.new_canon_default 0 (i32.const 5))
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.eq(m.exports.f(), null);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array externref))
+        (import "m" "g" (func $g))
+        (global $a (mut (ref null 0)) (ref.null 0))
+        (func (export "new") (param externref)
+          (array.new_canon 0 (local.get 0) (i32.const 5))
+          (call $g)
+          (global.set $a))
+        (func (export "get") (result externref)
+          (call $g)
+          (global.get $a)
+          (i32.const 3)
+          (array.get 0))
+      )`,
+      { m: { g: () => { fullGC(); } } }
+    );
+    m.exports.new({ x: 1, y: 2 });
+    fullGC();
+    for (let i = 0; i < 1000; i++) { let o = { x: i }; }
+    assert.eq(m.exports.get().x, 1);
+    assert.eq(m.exports.get().y, 2);
+  }
+
+  // Should trap on null array.
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (ref.null 0)
+          (i32.const 3)
+          (array.get 0))
+      )
+    `);
+    assert.throws(
+      () => { m.exports.f(); },
+      WebAssembly.RuntimeError,
+      "array.get to a null reference"
+    );
+  }
+
+  // Should trap on index out of bounds.
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (array.new_canon 0 (i32.const 42) (i32.const 5))
+          (i32.const 18)
+          (array.get 0))
+      )
+    `);
+    assert.throws(
+      () => { m.exports.f(); },
+      WebAssembly.RuntimeError,
+      "Out of bounds array.get"
+    );
+  }
+}
+
+function testArraySet() {
+  {
+    let m = instantiate(`
+      (module
+        (type (array (mut i32)))
+        (global (mut (ref null 0)) (ref.null 0))
+        (func (export "init")
+          (global.set 0 (array.new_canon 0 (i32.const 42) (i32.const 5)))
+          (array.set 0 (global.get 0) (i32.const 3) (i32.const 84)))
+        (func (export "get") (param i32) (result i32)
+          (array.get 0 (global.get 0) (local.get 0)))
+      )
+    `);
+    m.exports.init();
+    assert.eq(m.exports.get(0), 42);
+    assert.eq(m.exports.get(3), 84);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array (mut i64)))
+        (global (mut (ref null 0)) (ref.null 0))
+        (func (export "init")
+          (global.set 0 (array.new_canon 0 (i64.const 0x0eee_ffff_ffff_ffff) (i32.const 5)))
+          (array.set 0 (global.get 0) (i32.const 3) (i64.const 0x0abc_ffff_ffff_ffff)))
+        (func (export "get") (param i32) (result i64)
+          (array.get 0 (global.get 0) (local.get 0)))
+      )
+    `);
+    m.exports.init();
+    assert.eq(m.exports.get(0), 0x0eeeffffffffffffn);
+    assert.eq(m.exports.get(3), 0x0abcffffffffffffn);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array (mut f32)))
+        (global (mut (ref null 0)) (ref.null 0))
+        (func (export "init")
+          (global.set 0 (array.new_canon 0 (f32.const 0.25) (i32.const 5)))
+          (array.set 0 (global.get 0) (i32.const 3) (f32.const 0.125)))
+        (func (export "get") (param i32) (result f32)
+          (array.get 0 (global.get 0) (local.get 0)))
+      )
+    `);
+    m.exports.init();
+    assert.eq(m.exports.get(0), 0.25);
+    assert.eq(m.exports.get(3), 0.125);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array (mut f64)))
+        (global (mut (ref null 0)) (ref.null 0))
+        (func (export "init")
+          (global.set 0 (array.new_canon 0 (f64.const 1e39) (i32.const 5)))
+          (array.set 0 (global.get 0) (i32.const 3) (f64.const 1e38)))
+        (func (export "get") (param i32) (result f64)
+          (array.get 0 (global.get 0) (local.get 0)))
+      )
+    `);
+    m.exports.init();
+    assert.eq(m.exports.get(0), 1e39);
+    assert.eq(m.exports.get(3), 1e38);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array (mut externref)))
+        (global (mut (ref null 0)) (ref.null 0))
+        (func (export "init") (param externref externref)
+          (global.set 0 (array.new_canon 0 (local.get 0) (i32.const 5)))
+          (array.set 0 (global.get 0) (i32.const 3) (local.get 1)))
+        (func (export "get") (param i32) (result externref)
+          (array.get 0 (global.get 0) (local.get 0)))
+      )
+    `);
+    let sym = Symbol();
+    m.exports.init(sym, { x: 1, y: 2 });
+    assert.eq(m.exports.get(0), sym);
+    assert.eq(m.exports.get(3).x, 1);
+    assert.eq(m.exports.get(3).y, 2);
+  }
+
+  {
+    assert.throws(
+      () => compile(`
+        (module
+          (type (array i32))
+          (func (export "f") (result i32)
+            (array.set 0 (ref.null 0) (i32.const 3) (i32.const 42)))
+        )
+      `),
+      WebAssembly.CompileError,
+      "array.set index 0 does not reference a mutable array definition"
+    );
+  }
+
+  // Should trap on null array.
+  {
+    let m = instantiate(`
+      (module
+        (type (array (mut i32)))
+        (func (export "f")
+          (array.set 0 (ref.null 0) (i32.const 3) (i32.const 42)))
+      )
+    `);
+    assert.throws(
+      () => { m.exports.f(); },
+      WebAssembly.RuntimeError,
+      "array.set to a null reference"
+    );
+  }
+
+  // Should trap on index out of bounds.
+  {
+    let m = instantiate(`
+      (module
+        (type (array (mut i32)))
+        (func (export "f")
+          (array.new_canon 0 (i32.const 42) (i32.const 5))
+          (i32.const 18)
+          (i32.const 84)
+          (array.set 0))
+      )
+    `);
+    assert.throws(
+      () => { m.exports.f(); },
+      WebAssembly.RuntimeError,
+      "Out of bounds array.set"
+    );
+  }
+}
+
+function testArrayLen() {
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (array.new_canon 0 (i32.const 42) (i32.const 5))
+          (array.len))
+      )
+    `);
+    assert.eq(m.exports.f(), 5);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (array.new_canon 0 (i32.const 42) (i32.const 0))
+          (array.len))
+      )
+    `);
+    assert.eq(m.exports.f(), 0);
+  }
+
+  // Should trap on null array.
+  {
+    let m = instantiate(`
+      (module
+        (type (array i32))
+        (func (export "f") (result i32)
+          (ref.null 0)
+          (array.len))
+      )
+    `);
+    assert.throws(
+      () => { m.exports.f(); },
+      WebAssembly.RuntimeError,
+      "array.len to a null reference"
+    );
+  }
+}
+
 testArrayDeclaration();
 testArrayJS();
+testArrayNew();
+testArrayNewDefault();
+testArrayGet();
+testArraySet();
+testArrayLen();

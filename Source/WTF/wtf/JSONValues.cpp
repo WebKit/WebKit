@@ -513,7 +513,7 @@ RefPtr<Array> Value::asArray()
     return nullptr;
 }
 
-RefPtr<Value> Value::parseJSON(const String& json)
+RefPtr<Value> Value::parseJSON(StringView json)
 {
     auto containsNonSpace = [] (const auto* begin, const auto* end) {
         if (!begin)

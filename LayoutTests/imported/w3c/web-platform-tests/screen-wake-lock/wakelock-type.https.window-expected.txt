@@ -1,4 +1,4 @@
 
-FAIL 'type' parameter in WakeLock.request() defaults to 'screen' promise_test: Unhandled rejection with value: object "Error: unimplemented"
+PASS 'type' parameter in WakeLock.request() defaults to 'screen'
 PASS 'TypeError' is thrown when set an invalid wake lock type
 

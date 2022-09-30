@@ -4,33 +4,34 @@ FAIL Test closed VideoFrame. Can't find variable: OffscreenCanvas
 FAIL Test we can construct a VideoFrame with a negative timestamp. Can't find variable: OffscreenCanvas
 FAIL Test that timestamp is required when constructing VideoFrame from ImageBitmap promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
 FAIL Test that timestamp is required when constructing VideoFrame from OffscreenCanvas promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Test that timestamp is NOT required when constructing VideoFrame from another VideoFrame promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoFrame"
+FAIL Test that timestamp is NOT required when constructing VideoFrame from another VideoFrame promise_test: Unhandled rejection with value: object "TypeError: Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit"
 FAIL Test we can construct an odd-sized VideoFrame. Can't find variable: OffscreenCanvas
 PASS Test constructing w/ unusable image argument throws: HAVE_NOTHING <video>.
 FAIL Test constructing w/ unusable image argument throws: emtpy Canvas. Can't find variable: OffscreenCanvas
 FAIL Test constructing w/ unusable image argument throws: closed ImageBitmap. Can't find variable: OffscreenCanvas
 FAIL Test constructing w/ unusable image argument throws: closed VideoFrame. Can't find variable: OffscreenCanvas
-FAIL Test invalid CanvasImageSource constructed VideoFrames Can't find variable: VideoFrame
-FAIL Test visibleRect metadata override where source display size = visible size Can't find variable: VideoFrame
-FAIL Test visibleRect metadata override where source display width = 2 * visible width (anamorphic) Can't find variable: VideoFrame
-FAIL Test visibleRect metadata override where source display size = 2 * visible size for both width and height Can't find variable: VideoFrame
+FAIL Test invalid CanvasImageSource constructed VideoFrames Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test visibleRect metadata override where source display size = visible size Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test visibleRect metadata override where source display width = 2 * visible width (anamorphic) Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test visibleRect metadata override where source display size = 2 * visible size for both width and height Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
 FAIL Test visibleRect + display size metadata override Can't find variable: OffscreenCanvas
 FAIL Test display size metadata override Can't find variable: OffscreenCanvas
-FAIL Test invalid buffer constructed VideoFrames assert_throws_js: invalid pixel format function "() => new VideoFrame(
-          new Uint8Array(1),
-          {format: 'ABCD', timestamp: 1234, codedWidth: 4, codedHeight: 2})" threw object "ReferenceError: Can't find variable: VideoFrame" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Test Uint8Array(ArrayBuffer) constructed I420 VideoFrame Can't find variable: VideoFrame
-FAIL Test ArrayBuffer constructed I420 VideoFrame Can't find variable: VideoFrame
-FAIL Test planar constructed I420 VideoFrame with colorSpace Can't find variable: VideoFrame
-FAIL Test buffer constructed I420+Alpha VideoFrame Can't find variable: VideoFrame
-FAIL Test buffer constructed NV12 VideoFrame Can't find variable: VideoFrame
-FAIL Test buffer constructed RGB VideoFrames Can't find variable: VideoFrame
+FAIL Test invalid buffer constructed VideoFrames assert_throws_js: invalid visible left/right function "() => constructFrame({
+                   timestamp: 1234,
+                   codedWidth: 4,
+                   codedHeight: 2,
+                   visibleRect: {x: 100, y: 100, width: 1, height: 1}
+                 })" did not throw
+FAIL Test Uint8Array(ArrayBuffer) constructed I420 VideoFrame Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test ArrayBuffer constructed I420 VideoFrame Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test planar constructed I420 VideoFrame with colorSpace Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test buffer constructed I420+Alpha VideoFrame Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test buffer constructed NV12 VideoFrame Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test buffer constructed RGB VideoFrames Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
 FAIL Test VideoFrame constructed VideoFrame Can't find variable: OffscreenCanvas
 FAIL Test we can construct a VideoFrame from an offscreen canvas. Can't find variable: OffscreenCanvas
-FAIL Test I420 VideoFrame with odd visible size Can't find variable: VideoFrame
-FAIL Test I420A VideoFrame and alpha={keep,discard} Can't find variable: VideoFrame
-FAIL Test RGBA, BGRA VideoFrames with alpha={keep,discard} Can't find variable: VideoFrame
+FAIL Test I420 VideoFrame with odd visible size assert_equals: format expected (string) "I420" but got (object) null
+FAIL Test I420A VideoFrame and alpha={keep,discard} Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL Test RGBA, BGRA VideoFrames with alpha={keep,discard} Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
 FAIL Test a VideoFrame constructed from canvas can drop the alpha channel. Can't find variable: OffscreenCanvas
 

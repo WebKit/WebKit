@@ -16,7 +16,7 @@ PASS letter-spacing (type: length) has testAccumulation function
 PASS letter-spacing: length
 PASS letter-spacing: length of rem
 PASS lighting-color (type: color) has testAccumulation function
-FAIL lighting-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS lighting-color supports animating as color of rgb() with overflowed  from and to values
 PASS lighting-color supports animating as color of #RGB
 PASS lighting-color supports animating as color of hsl()
 PASS lighting-color supports animating as color of #RGBa
@@ -85,7 +85,7 @@ PASS offset-distance: calc
 PASS order (type: integer) has testAccumulation function
 PASS order: integer
 PASS outline-color (type: color) has testAccumulation function
-FAIL outline-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS outline-color supports animating as color of rgb() with overflowed  from and to values
 PASS outline-color supports animating as color of #RGB
 PASS outline-color supports animating as color of hsl()
 PASS outline-color supports animating as color of #RGBa
@@ -140,9 +140,6 @@ PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAccumulation function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
-PASS scroll-behavior (type: discrete) has testAccumulation function
-FAIL scroll-behavior: "smooth" onto "auto" undefined is not an object (evaluating 'getComputedStyle(target, pseudoType)[idlName].toLowerCase')
-FAIL scroll-behavior: "auto" onto "smooth" undefined is not an object (evaluating 'getComputedStyle(target, pseudoType)[idlName].toLowerCase')
 PASS shape-outside (type: discrete) has testAccumulation function
 PASS shape-outside: "url("http://localhost/test-2")" onto "url("http://localhost/test-1")"
 PASS shape-outside: "url("http://localhost/test-1")" onto "url("http://localhost/test-2")"
@@ -150,7 +147,7 @@ PASS shape-rendering (type: discrete) has testAccumulation function
 PASS shape-rendering: "crispEdges" onto "optimizeSpeed"
 PASS shape-rendering: "optimizeSpeed" onto "crispEdges"
 PASS stop-color (type: color) has testAccumulation function
-FAIL stop-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS stop-color supports animating as color of rgb() with overflowed  from and to values
 PASS stop-color supports animating as color of #RGB
 PASS stop-color supports animating as color of hsl()
 PASS stop-color supports animating as color of #RGBa
@@ -188,7 +185,7 @@ PASS text-anchor (type: discrete) has testAccumulation function
 PASS text-anchor: "end" onto "middle"
 PASS text-anchor: "middle" onto "end"
 PASS text-decoration-color (type: color) has testAccumulation function
-FAIL text-decoration-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS text-decoration-color supports animating as color of rgb() with overflowed  from and to values
 PASS text-decoration-color supports animating as color of #RGB
 PASS text-decoration-color supports animating as color of hsl()
 PASS text-decoration-color supports animating as color of #RGBa
@@ -201,7 +198,7 @@ PASS text-decoration-style (type: discrete) has testAccumulation function
 PASS text-decoration-style: "dotted" onto "solid"
 PASS text-decoration-style: "solid" onto "dotted"
 PASS text-emphasis-color (type: color) has testAccumulation function
-FAIL text-emphasis-color supports animating as color of rgb() with overflowed  from and to values assert_equals: The value should be rgb(255, 128, 255) at 500ms expected "rgb(255, 128, 255)" but got "rgb(192, 128, 192)"
+PASS text-emphasis-color supports animating as color of rgb() with overflowed  from and to values
 PASS text-emphasis-color supports animating as color of #RGB
 PASS text-emphasis-color supports animating as color of hsl()
 PASS text-emphasis-color supports animating as color of #RGBa

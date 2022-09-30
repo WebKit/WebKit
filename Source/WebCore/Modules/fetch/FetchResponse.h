@@ -119,7 +119,8 @@ public:
 
     void setIsNavigationPreload(bool isNavigationPreload) { m_isNavigationPreload = isNavigationPreload; }
     bool isAvailableNavigationPreload() const { return m_isNavigationPreload && m_bodyLoader && !m_bodyLoader->hasLoader() && !hasReadableStreamBody(); }
-    void markAsDisturbed();
+    void markAsUsedForPreload();
+    bool isUsedForPreload() const { return m_isUsedForPreload; }
 
 private:
     FetchResponse(ScriptExecutionContext*, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
@@ -177,6 +178,7 @@ private:
     NetworkLoadMetrics m_networkLoadMetrics;
     bool m_hasInitializedInternalResponse { false };
     bool m_isNavigationPreload { false };
+    bool m_isUsedForPreload { false };
 };
 
 } // namespace WebCore

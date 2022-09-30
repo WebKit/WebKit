@@ -27,6 +27,6 @@
 
 namespace WebCore  {
 
-enum class WakeLockType : bool { Screen };
+enum class WakeLockType : uint8_t { Screen };
 
 } // namespace WebCore

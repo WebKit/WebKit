@@ -51,6 +51,7 @@
 #include "NotImplemented.h"
 #include "SVGElementInlines.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "Text.h"
 #include <unicode/ubrk.h>
 #include <wtf/text/TextBreakIterator.h>
@@ -130,7 +131,7 @@ static inline bool isAllWhitespace(const String& string)
 static inline void insert(HTMLConstructionSiteTask& task)
 {
     if (is<HTMLTemplateElement>(*task.parent)) {
-        task.parent = &downcast<HTMLTemplateElement>(*task.parent).content();
+        task.parent = &downcast<HTMLTemplateElement>(*task.parent).fragmentForInsertion();
         task.nextChild = nullptr;
     }
 
@@ -531,6 +532,36 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
     m_openElements.push(HTMLStackItem(WTFMove(element), WTFMove(token)));
 }
 
+void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
+{
+    if (m_document.settings().streamingDeclarativeShadowDOMEnabled() && m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowDOM)
+        && !currentElement().document().templateDocumentHost()) {
+        std::optional<ShadowRootMode> mode;
+        bool delegatesFocus = false;
+        for (auto& attribute : token.attributes()) {
+            if (attribute.name() == HTMLNames::shadowrootAttr) {
+                if (equalLettersIgnoringASCIICase(attribute.value(), "closed"_s))
+                    mode = ShadowRootMode::Closed;
+                else if (equalLettersIgnoringASCIICase(attribute.value(), "open"_s))
+                    mode = ShadowRootMode::Open;
+            } else if (attribute.name() == HTMLNames::shadowrootdelegatesfocusAttr)
+                delegatesFocus = true;
+        }
+        if (mode) {
+            auto exceptionOrShadowRoot = currentElement().attachDeclarativeShadow(*mode, delegatesFocus);
+            if (!exceptionOrShadowRoot.hasException()) {
+                Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
+                auto element = createHTMLElement(token);
+                RELEASE_ASSERT(is<HTMLTemplateElement>(element));
+                downcast<HTMLTemplateElement>(element.get()).setDeclarativeShadowRoot(shadowRoot);
+                m_openElements.push(HTMLStackItem(WTFMove(element), WTFMove(token)));
+                return;
+            }
+        }
+    }
+    insertHTMLElement(WTFMove(token));
+}
+
 std::unique_ptr<CustomElementConstructionData> HTMLConstructionSite::insertHTMLElementOrFindCustomElementInterface(AtomHTMLToken&& token)
 {
     JSCustomElementInterface* elementInterface = nullptr;
@@ -727,7 +758,7 @@ Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const Ato
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
     if (is<HTMLTemplateElement>(currentNode()))
-        return downcast<HTMLTemplateElement>(currentNode()).content().document();
+        return downcast<HTMLTemplateElement>(currentNode()).fragmentForInsertion().document();
     return currentNode().document();
 }
 

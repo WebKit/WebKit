@@ -1322,6 +1322,10 @@ webkit.org/b/244489 fast/canvas/webgl/bufferData-offset-length.html [ Failure ]
 webkit.org/b/244490 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
 webkit.org/b/244491 fast/canvas/webgl/webgl2-texture-upload-enums.html [ Failure ]
 
+webgl/webgl-draft-extensions-flag-default.html [ Failure ]
+webgl/webgl-draft-extensions-flag-off.html [ Failure ]
+webgl/webgl-draft-extensions-flag-on.html [ Failure ]
+
 ######################################################
 # Test failures from turning GPU Process on by default
 

@@ -37,8 +37,6 @@ public:
     explicit GraphicsLayerTextureMapper(Type, GraphicsLayerClient&);
     virtual ~GraphicsLayerTextureMapper();
 
-    void setID(uint32_t id) { m_layer.setID(id); }
-
     // GraphicsLayer
     bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;
     void addChild(Ref<GraphicsLayer>&&) override;

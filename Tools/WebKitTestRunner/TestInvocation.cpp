@@ -418,6 +418,11 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "SetScreenWakeLockPermission")) {
+        TestController::singleton().setScreenWakeLockPermission(booleanValue(messageBody));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetMockGeolocationPosition")) {
         auto messageBodyDictionary = dictionaryValue(messageBody);
         auto latitude = doubleValue(messageBodyDictionary, "latitude");

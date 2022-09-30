@@ -378,15 +378,13 @@ function provideFetch(key, value)
 }
 
 @visibility=PrivateRecursive
-async function loadModule(moduleName, parameters, fetcher)
+async function loadModule(key, parameters, fetcher)
 {
     "use strict";
 
-    // Loader.resolve hook point.
-    // resolve: moduleName => Promise(moduleKey)
-    // Take the name and resolve it to the unique identifier for the resource location.
-    // For example, take the "jquery" and return the URL for the resource.
-    var key = this.resolve(moduleName, @undefined, fetcher);
+    var importMap = @importMapStatus();
+    if (importMap)
+        await importMap;
     var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
     return entry.key;
 }
@@ -409,15 +407,23 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
 {
     "use strict";
 
-    var key = await this.loadModule(moduleName, parameters, fetcher);
+    var importMap = @importMapStatus();
+    if (importMap)
+        await importMap;
+    var key = this.resolve(moduleName, @undefined, fetcher);
+    key = await this.loadModule(key, parameters, fetcher);
     return await this.linkAndEvaluateModule(key, fetcher);
 }
 
 @visibility=PrivateRecursive
-async function requestImportModule(key, parameters, fetcher)
+async function requestImportModule(moduleName, referrer, parameters, fetcher)
 {
     "use strict";
 
+    var importMap = @importMapStatus();
+    if (importMap)
+        await importMap;
+    var key = this.resolve(moduleName, referrer, fetcher);
     var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
     await this.linkAndEvaluateModule(entry.key, fetcher);
     return this.getModuleNamespaceObject(entry.module);

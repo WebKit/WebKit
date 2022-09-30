@@ -47,7 +47,11 @@ BitmapTexturePool::BitmapTexturePool(const TextureMapperContextAttributes& conte
 RefPtr<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, const BitmapTexture::Flags flags)
 {
     Entry* selectedEntry = std::find_if(m_textures.begin(), m_textures.end(),
-        [&size](Entry& entry) { return entry.m_texture->refCount() == 1 && entry.m_texture->size() == size; });
+        [&](Entry& entry) {
+            return entry.m_texture->refCount() == 1
+                && entry.m_texture->size() == size
+                && (entry.m_texture->flags() & BitmapTexture::DepthBuffer) == (flags & BitmapTexture::DepthBuffer);
+        });
 
     if (selectedEntry == m_textures.end()) {
         m_textures.append(Entry(createTexture(flags)));

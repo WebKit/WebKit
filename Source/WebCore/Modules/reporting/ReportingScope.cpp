@@ -29,6 +29,7 @@
 #include "ContextDestructionObserver.h"
 #include "Document.h"
 #include "HeaderFieldTokenizer.h"
+#include "RFC8941.h"
 #include "Report.h"
 #include "ReportingObserver.h"
 #include "ScriptExecutionContext.h"
@@ -106,53 +107,34 @@ void ReportingScope::appendQueuedReportForRelevantType(ReportingObserver& observ
         observer.appendQueuedReportIfCorrectType(report);
 }
 
-static bool isQuote(UChar character)
-{
-    return character == '\"';
-}
-
 void ReportingScope::parseReportingEndpoints(const String& headerValue, const URL& baseURL)
 {
     m_reportingEndpoints = parseReportingEndpointsFromHeader(headerValue, baseURL);
 }
 
+// https://w3c.github.io/reporting/#process-header
+// FIXME: The value in the HashMap should probably be a URL, not a String.
 MemoryCompactRobinHoodHashMap<String, String> ReportingScope::parseReportingEndpointsFromHeader(const String& headerValue, const URL& baseURL)
 {
-    // https://w3c.github.io/reporting/#process-header
-    // Step 3.3.2-4
     MemoryCompactRobinHoodHashMap<String, String> reportingEndpoints;
+    auto parsedHeader = RFC8941::parseDictionaryStructuredFieldValue(headerValue);
+    if (!parsedHeader)
+        return reportingEndpoints;
 
-    HeaderFieldTokenizer tokenizer(headerValue);
-
-    // Step 3.3.5
-    while (!tokenizer.isConsumed()) {
-        // Step 3.3.5.1
-        String reportTo = tokenizer.consumeToken();
-        if (reportTo.isNull())
-            break;
-
-        if (!tokenizer.consume('='))
-            break;
-
-        // Step 3.3.5.1
-        String urlPath = tokenizer.consumeTokenOrQuotedString().stripLeadingAndTrailingCharacters(isQuote);
-
-        // Step 3.3.5.2
-        auto url = baseURL.isNull() ? URL(urlPath) : URL(baseURL, urlPath);
-        if (url.isValid()) {
-            // Step 3.3.5.3
-            if (shouldTreatAsPotentiallyTrustworthy(url)) {
-                // Step 3.3.4.4: FIXME(244368): Should track failure count for endpoint.
-                reportingEndpoints.set(WTFMove(reportTo), WTFMove(urlPath));
-            }
-        }
-
-        tokenizer.consumeBeforeAnyCharMatch({ ',', ';' });
-
-        if (!tokenizer.consume(','))
-            break;
+    for (auto& [name, valueAndParameters] : *parsedHeader) {
+        auto* bareItem = std::get_if<RFC8941::BareItem>(&valueAndParameters.first);
+        if (!bareItem)
+            continue;
+        auto* endpointURLString = std::get_if<String>(bareItem);
+        if (!endpointURLString)
+            continue;
+        URL endpointURL(baseURL, *endpointURLString);
+        if (!endpointURL.isValid())
+            continue;
+        if (!shouldTreatAsPotentiallyTrustworthy(endpointURL))
+            continue;
+        reportingEndpoints.add(name, endpointURL.string());
     }
-
     return reportingEndpoints;
 }
 

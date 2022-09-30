@@ -1,3 +1,3 @@
 
-FAIL PermissionDescriptor with name='screen-wake-lock' works promise_test: Unhandled rejection with value: object "Error: unimplemented"
+PASS PermissionDescriptor with name='screen-wake-lock' works
 

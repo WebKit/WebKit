@@ -53,6 +53,8 @@ static const char* policyTypeName(FeaturePolicy::Type type)
         return "Geolocation";
     case FeaturePolicy::Type::Payment:
         return "Payment";
+    case FeaturePolicy::Type::ScreenWakeLock:
+        return "ScreenWakeLock";
     case FeaturePolicy::Type::SyncXHR:
         return "SyncXHR";
     case FeaturePolicy::Type::Fullscreen:
@@ -180,6 +182,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isDisplayCaptureInitialized = false;
     bool isGeolocationInitialized = false;
     bool isPaymentInitialized = false;
+    bool isScreenWakeLockInitialized = false;
     bool isSyncXHRInitialized = false;
     bool isFullscreenInitialized = false;
     bool isWebShareInitialized = false;
@@ -224,6 +227,11 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         if (item.startsWith("payment"_s)) {
             isPaymentInitialized = true;
             updateList(document, policy.m_paymentRule, item.substring(8));
+            continue;
+        }
+        if (item.startsWith("screen-wake-lock"_s)) {
+            isScreenWakeLockInitialized = true;
+            updateList(document, policy.m_screenWakeLockRule, item.substring(17));
             continue;
         }
         if (item.startsWith("sync-xhr"_s)) {
@@ -274,7 +282,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
 #endif
     }
 
-    // By default, camera, microphone, speaker-selection, display-capture, fullscreen and xr-spatial-tracking policy is 'self'.
+    // By default, camera, microphone, speaker-selection, display-capture, fullscreen and xr-spatial-tracking, screen-wake-lock policy is 'self'.
     if (!isCameraInitialized)
         policy.m_cameraRule.allowedList.add(document.securityOrigin().data());
     if (!isMicrophoneInitialized)
@@ -283,6 +291,8 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         policy.m_speakerSelectionRule.allowedList.add(document.securityOrigin().data());
     if (!isDisplayCaptureInitialized)
         policy.m_displayCaptureRule.allowedList.add(document.securityOrigin().data());
+    if (!isScreenWakeLockInitialized)
+        policy.m_screenWakeLockRule.allowedList.add(document.securityOrigin().data());
     if (!isGeolocationInitialized)
         policy.m_geolocationRule.allowedList.add(document.securityOrigin().data());
     if (!isPaymentInitialized)
@@ -342,6 +352,8 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_geolocationRule, origin);
     case Type::Payment:
         return isAllowedByFeaturePolicy(m_paymentRule, origin);
+    case Type::ScreenWakeLock:
+        return isAllowedByFeaturePolicy(m_screenWakeLockRule, origin);
     case Type::SyncXHR:
         return isAllowedByFeaturePolicy(m_syncXHRRule, origin);
     case Type::Fullscreen:

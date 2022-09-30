@@ -909,6 +909,11 @@ void TestRunner::setGeolocationPermission(bool enabled)
     InjectedBundle::singleton().setGeolocationPermission(enabled);
 }
 
+void TestRunner::setScreenWakeLockPermission(bool enabled)
+{
+    InjectedBundle::singleton().setScreenWakeLockPermission(enabled);
+}
+
 bool TestRunner::isGeolocationProviderActive()
 {
     return InjectedBundle::singleton().isGeolocationProviderActive();

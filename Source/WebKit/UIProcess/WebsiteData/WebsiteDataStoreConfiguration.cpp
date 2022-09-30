@@ -71,6 +71,9 @@ void WebsiteDataStoreConfiguration::initializePaths()
     setGeneralStorageDirectory(WebsiteDataStore::defaultGeneralStorageDirectory(m_baseCacheDirectory));
     setNetworkCacheDirectory(WebsiteDataStore::defaultNetworkCacheDirectory(m_baseCacheDirectory));
     setMediaCacheDirectory(WebsiteDataStore::defaultMediaCacheDirectory(m_baseCacheDirectory));
+#if USE(GLIB) || PLATFORM(COCOA)
+    setHSTSStorageDirectory(WebsiteDataStore::defaultHSTSStorageDirectory(m_baseCacheDirectory));
+#endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
     setModelElementCacheDirectory(WebsiteDataStore::defaultModelElementCacheDirectory());
 #endif

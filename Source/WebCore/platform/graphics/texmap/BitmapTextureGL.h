@@ -38,6 +38,12 @@ class TextureMapper;
 class TextureMapperGL;
 class FilterOperation;
 
+#if OS(WINDOWS)
+#define USE_TEXMAP_DEPTH_STENCIL_BUFFER 1
+#else
+#define USE_TEXMAP_DEPTH_STENCIL_BUFFER 0
+#endif
+
 class BitmapTextureGL : public BitmapTexture {
 public:
     static Ref<BitmapTexture> create(const TextureMapperContextAttributes& contextAttributes, const Flags flags = NoFlag, GLint internalFormat = GL_DONT_CARE)
@@ -90,9 +96,10 @@ private:
 
     GLuint m_id { 0 };
     IntSize m_textureSize;
-    IntRect m_dirtyRect;
     GLuint m_fbo { 0 };
+#if !USE(TEXMAP_DEPTH_STENCIL_BUFFER)
     GLuint m_rbo { 0 };
+#endif
     GLuint m_depthBufferObject { 0 };
     bool m_shouldClear { true };
     ClipStack m_clipStack;

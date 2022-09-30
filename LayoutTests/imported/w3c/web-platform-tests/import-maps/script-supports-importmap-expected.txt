@@ -1,0 +1,4 @@
+
+PASS HTMLScriptElement.supports returns true for 'importmap'
+PASS HTMLScriptElement.supports returns false for unsupported types
+

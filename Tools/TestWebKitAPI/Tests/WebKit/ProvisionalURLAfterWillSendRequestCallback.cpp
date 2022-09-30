@@ -54,9 +54,7 @@ static void didCommitNavigationCallback(WKPageRef page, WKNavigationRef, WKTypeR
     assert(WKGetTypeID(userData) == WKURLGetTypeID());
     EXPECT_TRUE(WKURLIsEqual(committedURL.get(), static_cast<WKURLRef>(userData)));
 
-    auto previousURL = TestWebKitAPI::Util::toSTD(adoptWK(WKURLCopyString(adoptWK(Util::createURLForResource("simple", "html")).get())));
-    previousURL += "?query";
-    auto url = adoptWK(WKURLCreateWithUTF8CString(previousURL.c_str()));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("simple2", "html"));
     EXPECT_TRUE(WKURLIsEqual(committedURL.get(), url.get()));
 
     committedLoad = true;

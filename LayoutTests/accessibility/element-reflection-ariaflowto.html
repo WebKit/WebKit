@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<div id="flow1">First flow</div>
+<div id="target1">Target 1</div>
+<div id="wrapper" tabindex="0">
+  <div class="flow">Second flow</div>
+</div>
+<div id="target2">Target 2</div>
+<div id="flow3">Third flow</div>
+<x-target></x-target>
+<div id="flow4">Fourth flow</div>
+<div id="target4">Target 4</div>
+<x-custom></x-custom>
+
+<script>
+  class XTarget extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let target = document.createElement("div");
+      target.id = "innertarget";
+      target.textContent = "Target 3";
+      target.ariaFlowToElements = [flow3];
+      this.shadowRoot.appendChild(target);
+    }
+  }
+  customElements.define("x-target", XTarget);
+
+  class XCustom extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+      let flow = document.createElement("div");
+      flow.id = "flow5";
+      flow.textContent = "Fifth flow";
+      let target = document.createElement("div");
+      target.id = "target5";
+      target.textContent = "Target 5";
+      this.shadowRoot.appendChild(flow);
+      this.shadowRoot.appendChild(target);
+      target.ariaFlowToElements = [flow];
+      document.body.appendChild(flow);
+    }
+  }
+  customElements.define("x-custom", XCustom);
+
+  description("Checks that element reflection is exposed to the a11y tree for 'ariaFlowToElements'");
+  if (!window.accessibilityController) {
+    debug("This test requires accessibilityController");
+  } else {
+    target1.ariaFlowToElements = [flow1];
+    var axFlow1 = accessibilityController.accessibleElementById("flow1");
+    var axTarget1 = accessibilityController.accessibleElementById("target1");
+    shouldBeTrue("axTarget1.ariaFlowToElementAtIndex(0).isEqual(axFlow1)");
+
+    target2.ariaFlowToElements = [document.getElementsByClassName("flow")[0]];
+    var wrapper = accessibilityController.accessibleElementById("wrapper");
+    var axFlow2 = wrapper.childAtIndex(0);
+    var axTarget2 = accessibilityController.accessibleElementById("target2");
+    shouldBeTrue("axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow2)");
+    target2.setAttribute("aria-flowto", "flow1");
+    shouldBeTrue("axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1)");
+
+    var axFlow3 = accessibilityController.accessibleElementById("flow3");
+    var axInnerTarget = accessibilityController.accessibleElementById("innertarget");
+    shouldBeTrue("axInnerTarget.ariaFlowToElementAtIndex(0).isEqual(axFlow3)");
+
+    target2.ariaFlowToElements = [flow1, document.getElementsByClassName("flow")[0], flow3];
+    shouldBeTrue("axTarget2.ariaFlowToElementAtIndex(0).isEqual(axFlow1)");
+    shouldBeTrue("axTarget2.ariaFlowToElementAtIndex(1).isEqual(axFlow2)");
+    shouldBeTrue("axTarget2.ariaFlowToElementAtIndex(2).isEqual(axFlow3)");
+
+    target4.ariaFlowToElements = [flow4];
+    flow4.id = "flow4-new";
+    var axFlow4 = accessibilityController.accessibleElementById("flow4-new");
+    var axTarget4 = accessibilityController.accessibleElementById("target4");
+    shouldBeTrue("axTarget4.ariaFlowToElementAtIndex(0).isEqual(axFlow4)");
+
+    var axFlow5 = accessibilityController.accessibleElementById("flow5");
+    var axTarget5 = accessibilityController.accessibleElementById("target5");
+    shouldBeTrue("axTarget5.ariaFlowToElementAtIndex(0).isEqual(axFlow5)");
+  }
+</script>

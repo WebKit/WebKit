@@ -69,7 +69,6 @@
 #define yylval  xpathyylval
 #define yychar  xpathyychar
 #define yydebug xpathyydebug
-#define yynerrs xpathyynerrs
 
 
 /* Tokens.  */
@@ -1414,9 +1413,6 @@ int yychar;
 /* The semantic value of the look-ahead symbol.  */
 YYSTYPE yylval;
 
-/* Number of syntax errors so far.  */
-int yynerrs;
-
   int yystate;
   int yyn;
   int yyresult;
@@ -1468,7 +1464,6 @@ int yynerrs;
 
   yystate = 0;
   yyerrstatus = 0;
-  yynerrs = 0;
   yychar = YYEMPTY;		/* Cause a token to be read.  */
 
   /* Initialize stack pointers.
@@ -2082,7 +2077,6 @@ yyerrlab:
   /* If not already recovering from an error, report this error.  */
   if (!yyerrstatus)
     {
-      ++yynerrs;
 #if ! YYERROR_VERBOSE
       yyerror (parser, YY_("syntax error"));
 #else

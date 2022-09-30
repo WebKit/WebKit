@@ -200,7 +200,12 @@ void WebSocketTask::didFail(String&& errorMessage)
 
 void WebSocketTask::didCloseCallback(WebSocketTask* task)
 {
-    task->didClose(soup_websocket_connection_get_close_code(task->m_connection.get()), String::fromUTF8(soup_websocket_connection_get_close_data(task->m_connection.get())));
+    auto code = soup_websocket_connection_get_close_code(task->m_connection.get());
+    if (!code) {
+        // The connection was closed but close frame was not received or sent.
+        code = SOUP_WEBSOCKET_CLOSE_ABNORMAL;
+    }
+    task->didClose(code, String::fromUTF8(soup_websocket_connection_get_close_data(task->m_connection.get())));
 }
 
 void WebSocketTask::didClose(unsigned short code, const String& reason)

@@ -2302,11 +2302,9 @@ std::optional<uint32_t> URLParser::parseIPv4PieceInsideIPv6(CodePointIterator<Ch
         return std::nullopt;
     uint32_t piece = 0;
     bool leadingZeros = false;
-    size_t digitCount = 0;
     while (!iterator.atEnd()) {
         if (!isASCIIDigit(*iterator))
             return std::nullopt;
-        ++digitCount;
         if (!piece && *iterator == '0') {
             if (leadingZeros)
                 return std::nullopt;

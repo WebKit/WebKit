@@ -33,6 +33,7 @@
 namespace WebCore {
 
 template<typename> class ExceptionOr;
+class CSSFunctionValue;
 class CSSKeywordValue;
 using CSSPerspectiveValue = std::variant<RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
 
@@ -40,7 +41,8 @@ class CSSPerspective : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSPerspective);
 public:
     static ExceptionOr<Ref<CSSPerspective>> create(CSSPerspectiveValue);
-    
+    static ExceptionOr<Ref<CSSPerspective>> create(CSSFunctionValue&);
+
     const CSSPerspectiveValue& length() const { return m_length; }
     ExceptionOr<void> setLength(CSSPerspectiveValue);
 

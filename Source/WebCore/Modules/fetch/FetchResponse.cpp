@@ -450,10 +450,11 @@ FetchResponse::ResponseData FetchResponse::consumeBody()
     return body().take();
 }
 
-void FetchResponse::markAsDisturbed()
+void FetchResponse::markAsUsedForPreload()
 {
     ASSERT(!m_isDisturbed);
     m_isDisturbed = true;
+    m_isUsedForPreload = true;
 }
 
 void FetchResponse::consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&& callback)

@@ -57,7 +57,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
         options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
 
     String crossOriginMode = m_crossOriginMode;
-    if (m_moduleScript == ModuleScript::Yes) {
+    if (m_scriptType == ScriptType::Module) {
         if (crossOriginMode.isNull())
             crossOriginMode = ScriptElementCachedScriptFetcher::defaultCrossOriginModeForModule;
     }
@@ -66,7 +66,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     auto request = createPotentialAccessControlRequest(completeURL(document), WTFMove(options), document, crossOriginMode);
     request.setInitiator(m_initiator);
 
-    if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_moduleScript == ModuleScript::No)
+    if (m_scriptIsAsync && m_resourceType == CachedResource::Type::Script && m_scriptType == ScriptType::Classic)
         request.setPriority(DefaultResourceLoadPriority::asyncScript);
 
     return request;

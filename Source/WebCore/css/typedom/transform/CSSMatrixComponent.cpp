@@ -32,6 +32,10 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSFunctionValue.h"
+#include "CSSNumericFactory.h"
+#include "CSSStyleValueFactory.h"
+#include "CSSUnitValue.h"
 #include "DOMMatrix.h"
 #include "DOMMatrixInit.h"
 #include "ExceptionOr.h"
@@ -46,15 +50,105 @@ Ref<CSSTransformComponent> CSSMatrixComponent::create(Ref<DOMMatrixReadOnly>&& m
     return adoptRef(*new CSSMatrixComponent(WTFMove(matrix), WTFMove(options)));
 }
 
+ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSSFunctionValue& cssFunctionValue)
+{
+    auto makeMatrix = [&](const Function<Ref<CSSTransformComponent>(Vector<double>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSTransformComponent>> {
+        Vector<double> components;
+        for (auto componentCSSValue : cssFunctionValue) {
+            auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue);
+            if (valueOrException.hasException())
+                return valueOrException.releaseException();
+            if (!is<CSSUnitValue>(valueOrException.returnValue()))
+                return Exception { TypeError, "Expected a CSSUnitValue."_s };
+            components.append(downcast<CSSUnitValue>(valueOrException.releaseReturnValue().get()).value());
+        }
+        if (components.size() != expectedNumberOfComponents) {
+            ASSERT_NOT_REACHED();
+            return Exception { TypeError, "Unexpected number of values."_s };
+        }
+        return create(WTFMove(components));
+    };
+
+    switch (cssFunctionValue.name()) {
+    case CSSValueMatrix:
+        return makeMatrix([](Vector<double>&& components) {
+            auto domMatrix = DOMMatrixReadOnly::create({ components[0], components[1], components[2], components[3], components[4], components[5] }, DOMMatrixReadOnly::Is2D::Yes);
+            return CSSMatrixComponent::create(WTFMove(domMatrix), std::nullopt);
+        }, 6);
+    case CSSValueMatrix3d:
+        return makeMatrix([](Vector<double>&& components) {
+            auto domMatrix = DOMMatrixReadOnly::create({
+                components[0], components[1], components[2], components[3],
+                components[4], components[5], components[6], components[7],
+                components[8], components[9], components[10], components[11],
+                components[12], components[13], components[14], components[15]
+            }, DOMMatrixReadOnly::Is2D::No);
+            return CSSMatrixComponent::create(WTFMove(domMatrix), std::nullopt);
+        }, 16);
+    default:
+        ASSERT_NOT_REACHED();
+        auto domMatrix = DOMMatrixReadOnly::create({ }, DOMMatrixReadOnly::Is2D::Yes);
+        return { CSSMatrixComponent::create(WTFMove(domMatrix), std::nullopt) };
+    }
+}
+
 CSSMatrixComponent::CSSMatrixComponent(Ref<DOMMatrixReadOnly>&& matrix, std::optional<CSSMatrixComponentOptions>&& options)
     : CSSTransformComponent((options ? options->is2D : matrix->is2D()) ? Is2D::Yes : Is2D::No)
     , m_matrix(matrix->cloneAsDOMMatrix())
 {
 }
 
-void CSSMatrixComponent::serialize(StringBuilder&) const
+void CSSMatrixComponent::serialize(StringBuilder& builder) const
 {
-    // FIXME: Implement.
+    if (is2D()) {
+        builder.append("matrix(");
+        builder.append(String::number(m_matrix->a()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->b()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->c()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->d()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->e()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->f()));
+        builder.append(")");
+    } else {
+        builder.append("matrix3d(");
+        builder.append(String::number(m_matrix->m11()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m12()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m13()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m14()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m21()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m22()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m23()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m24()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m31()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m32()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m33()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m34()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m41()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m42()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m43()));
+        builder.append(", ");
+        builder.append(String::number(m_matrix->m44()));
+        builder.append(")");
+    }
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSMatrixComponent::toMatrix()
