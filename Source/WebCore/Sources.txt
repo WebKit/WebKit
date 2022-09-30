@@ -287,6 +287,7 @@ Modules/reporting/ReportingScope.cpp
 Modules/reporting/TestReportBody.cpp
 Modules/screen-wake-lock/NavigatorScreenWakeLock.cpp
 Modules/screen-wake-lock/WakeLock.cpp
+Modules/screen-wake-lock/WakeLockManager.cpp
 Modules/screen-wake-lock/WakeLockSentinel.cpp
 Modules/speech/SpeechRecognition.cpp
 Modules/speech/SpeechRecognitionAlternative.cpp

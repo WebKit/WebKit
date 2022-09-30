@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WakeLockSentinel.h"
 
+#include "EventNames.h"
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"
+#include "WakeLockManager.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -42,12 +44,38 @@ WakeLockSentinel::WakeLockSentinel(Document& document, WakeLockType type)
 
 void WakeLockSentinel::release(Ref<DeferredPromise>&& promise)
 {
-    promise->reject(Exception { NotSupportedError });
+    if (!m_wasReleased) {
+        if (auto* document = downcast<Document>(scriptExecutionContext()))
+            Ref { *this }->release(document->wakeLockManager());
+    }
+    promise->resolve();
+}
+
+// https://www.w3.org/TR/screen-wake-lock/#dfn-release-a-wake-lock
+void WakeLockSentinel::release(WakeLockManager& manager)
+{
+    manager.removeWakeLock(*this);
+
+    m_wasReleased = true;
+
+    if (scriptExecutionContext() && !scriptExecutionContext()->activeDOMObjectsAreStopped())
+        dispatchEvent(Event::create(eventNames().releaseEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 const char* WakeLockSentinel::activeDOMObjectName() const
 {
     return "WakeLockSentinel";
+}
+
+// https://www.w3.org/TR/screen-wake-lock/#garbage-collection
+bool WakeLockSentinel::virtualHasPendingActivity() const
+{
+    return m_hasReleaseEventListener && !m_wasReleased;
+}
+
+void WakeLockSentinel::eventListenersDidChange()
+{
+    m_hasReleaseEventListener = hasEventListeners(eventNames().releaseEvent);
 }
 
 } // namespace WebCore

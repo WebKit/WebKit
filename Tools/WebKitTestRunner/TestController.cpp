@@ -391,6 +391,16 @@ void TestController::handleQueryPermission(WKStringRef string, WKSecurityOriginR
         }
     }
 
+    if (toWTFString(string) == "screen-wake-lock"_s) {
+        if (m_screenWakeLockPermission) {
+            if (*m_screenWakeLockPermission)
+                WKQueryPermissionResultCallbackCompleteWithGranted(callback);
+            else
+                WKQueryPermissionResultCallbackCompleteWithDenied(callback);
+            return;
+        }
+    }
+
     WKQueryPermissionResultCallbackCompleteWithPrompt(callback);
 }
 
@@ -1139,6 +1149,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     m_isGeolocationPermissionSet = false;
     m_isGeolocationPermissionAllowed = false;
     m_geolocationPermissionQueryOrigins.clear();
+
+    // Reset Screen Wake Lock permission.
+    m_screenWakeLockPermission = std::nullopt;
 
     // Reset UserMedia permissions.
     m_userMediaPermissionRequests.clear();
@@ -2499,6 +2512,11 @@ void TestController::setGeolocationPermission(bool enabled)
 
     for (auto& originString : m_geolocationPermissionQueryOrigins)
         WKPagePermissionChanged(toWK("geolocation").get(), toWK(originString).get());
+}
+
+void TestController::setScreenWakeLockPermission(bool enabled)
+{
+    m_screenWakeLockPermission = enabled;
 }
 
 void TestController::setMockGeolocationPosition(double latitude, double longitude, double accuracy, std::optional<double> altitude, std::optional<double> altitudeAccuracy, std::optional<double> heading, std::optional<double> speed, std::optional<double> floorLevel)

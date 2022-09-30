@@ -237,6 +237,7 @@ class TreeWalker;
 class UndoManager;
 class VisibilityChangeClient;
 class VisitedLinkState;
+class WakeLockManager;
 class WebAnimation;
 class WebGL2RenderingContext;
 class WebGLRenderingContext;
@@ -523,6 +524,8 @@ public:
 
     Ref<HTMLCollection> windowNamedItems(const AtomString&);
     Ref<HTMLCollection> documentNamedItems(const AtomString&);
+
+    WakeLockManager& wakeLockManager();
 
     // Other methods (not part of DOM)
     bool isSynthesized() const { return m_isSynthesized; }
@@ -2313,6 +2316,7 @@ private:
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
 
     Ref<ReportingScope> m_reportingScope;
+    std::unique_ptr<WakeLockManager> m_wakeLockManager;
 };
 
 Element* eventTargetElementForDocument(Document*);

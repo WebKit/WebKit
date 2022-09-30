@@ -305,6 +305,10 @@ window.test_driver_internal.set_permission = function(permission_params, context
         testRunner.setGeolocationPermission(permission_params.state == "granted");
         return Promise.resolve();
     }
+    if (window.testRunner && permission_params.descriptor.name == "screen-wake-lock") {
+        testRunner.setScreenWakeLockPermission(permission_params.state == "granted");
+        return Promise.resolve();
+    }
     return Promise.reject(new Error("unimplemented"));
 };
 

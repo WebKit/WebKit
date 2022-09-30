@@ -218,6 +218,9 @@ interface TestRunner {
     undefined setMockGeolocationPositionUnavailableError(DOMString errorMessage);
     boolean isGeolocationProviderActive();
 
+    // Screen Wake Lock
+    undefined setScreenWakeLockPermission(boolean value);
+
     // MediaStream
     undefined setUserMediaPermission(boolean value);
     undefined resetUserMediaPermission();

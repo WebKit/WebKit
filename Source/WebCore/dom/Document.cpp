@@ -259,6 +259,7 @@
 #include "VisibilityChangeClient.h"
 #include "VisitedLinkState.h"
 #include "VisualViewport.h"
+#include "WakeLockManager.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include "WebRTCProvider.h"
@@ -1927,6 +1928,13 @@ Node::NodeType Document::nodeType() const
     return DOCUMENT_NODE;
 }
 
+WakeLockManager& Document::wakeLockManager()
+{
+    if (!m_wakeLockManager)
+        m_wakeLockManager = makeUnique<WakeLockManager>(*this);
+    return *m_wakeLockManager;
+}
+
 FormController& Document::formController()
 {
     if (!m_formController)
@@ -2837,6 +2845,10 @@ void Document::stopActiveDOMObjects()
         m_documentTaskGroup->markAsReadyToStop();
     ScriptExecutionContext::stopActiveDOMObjects();
     platformSuspendOrStopActiveDOMObjects();
+
+    // https://www.w3.org/TR/screen-wake-lock/#handling-document-loss-of-full-activity
+    if (m_wakeLockManager)
+        m_wakeLockManager->releaseAllLocks(WakeLockType::Screen);
 }
 
 void Document::clearAXObjectCache()

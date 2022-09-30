@@ -462,6 +462,8 @@ imported/w3c/web-platform-tests/html/webappapis/timers/negative-settimeout.any.w
 imported/w3c/web-platform-tests/html/webappapis/user-prompts/print-during-beforeunload.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/xhr.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/notifications/instance.https.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/screen-wake-lock/wakelock-disabled-by-feature-policy.https.sub.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-resources.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/readable-streams/patched-global.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/streams/transform-streams/terminate.any.html [ DumpJSConsoleLogInStdErr ]
@@ -6025,13 +6027,6 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/cs
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/json-module/cors-crossorigin-requests.html [ Pass Failure ]
 
 webkit.org/b/245164 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure Pass ]
-
-# Screen Wake Lock tests that are timing out since their import.
-imported/w3c/web-platform-tests/screen-wake-lock/wakelock-disabled-by-feature-policy.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy-attribute.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-by-feature-policy.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/screen-wake-lock/wakelock-enabled-on-self-origin-by-feature-policy.https.sub.html [ Skip ]
 
 # Disable ShadowRealm (while running to ensure we do not crash)
 webkit.org/b/245680 http/tests/misc/iframe-shadow-realm.html [ Skip ]

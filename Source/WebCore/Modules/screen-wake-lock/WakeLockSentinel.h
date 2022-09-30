@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class DeferredPromise;
+class WakeLockManager;
 
 class WakeLockSentinel final : public RefCounted<WakeLockSentinel>, public ActiveDOMObject, public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(WakeLockSentinel);
@@ -50,21 +51,25 @@ public:
     bool released() const { return m_wasReleased; }
     WakeLockType type() const { return m_type; }
     void release(Ref<DeferredPromise>&&);
+    void release(WakeLockManager&);
 
 private:
     WakeLockSentinel(Document&, WakeLockType);
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
+    bool virtualHasPendingActivity() const final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return WakeLockSentinelEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }
+    void eventListenersDidChange() final;
 
     WakeLockType m_type;
     bool m_wasReleased { false };
+    bool m_hasReleaseEventListener { false };
 };
 
 } // namespace WebCore

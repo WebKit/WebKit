@@ -1,5 +1,5 @@
 
-FAIL idl_test setup promise_test: Unhandled rejection with value: object "Error: unimplemented"
+PASS idl_test setup
 PASS idl_test validation
 PASS Partial interface Navigator: original interface defined
 PASS Partial interface Navigator: member names are unique
@@ -32,12 +32,12 @@ PASS WakeLockSentinel interface: attribute released
 PASS WakeLockSentinel interface: attribute type
 PASS WakeLockSentinel interface: operation release()
 PASS WakeLockSentinel interface: attribute onrelease
-FAIL WakeLockSentinel must be primary interface of sentinel assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: sentinel"
-FAIL Stringification of sentinel assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: sentinel"
-FAIL WakeLockSentinel interface: sentinel must inherit property "released" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: sentinel"
-FAIL WakeLockSentinel interface: sentinel must inherit property "type" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: sentinel"
-FAIL WakeLockSentinel interface: sentinel must inherit property "release()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: sentinel"
-FAIL WakeLockSentinel interface: sentinel must inherit property "onrelease" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: sentinel"
+PASS WakeLockSentinel must be primary interface of sentinel
+PASS Stringification of sentinel
+PASS WakeLockSentinel interface: sentinel must inherit property "released" with the proper type
+PASS WakeLockSentinel interface: sentinel must inherit property "type" with the proper type
+PASS WakeLockSentinel interface: sentinel must inherit property "release()" with the proper type
+PASS WakeLockSentinel interface: sentinel must inherit property "onrelease" with the proper type
 PASS Navigator interface: attribute wakeLock
 PASS Navigator interface: navigator must inherit property "wakeLock" with the proper type
 

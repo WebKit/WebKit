@@ -45,6 +45,7 @@ public:
         DisplayCapture,
         Geolocation,
         Payment,
+        ScreenWakeLock,
         SyncXHR,
         Fullscreen,
         WebShare,
@@ -78,6 +79,7 @@ private:
     AllowRule m_syncXHRRule;
     AllowRule m_fullscreenRule;
     AllowRule m_webShareRule;
+    AllowRule m_screenWakeLockRule;
 
 #if ENABLE(DEVICE_ORIENTATION)
     AllowRule m_gyroscopeRule;

@@ -304,6 +304,9 @@ public:
     void setMockGeolocationPositionUnavailableError(JSStringRef message);
     bool isGeolocationProviderActive();
 
+    // Screen Wake Lock.
+    void setScreenWakeLockPermission(bool);
+
     // MediaStream
     void setUserMediaPermission(bool);
     void resetUserMediaPermission();

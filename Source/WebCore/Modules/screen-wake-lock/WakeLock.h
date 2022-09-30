@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContextDestructionObserver.h"
 #include "WakeLockType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -32,19 +33,22 @@
 namespace WebCore {
 
 class DeferredPromise;
+class Document;
 class WakeLockSentinel;
 
-class WakeLock : public RefCounted<WakeLock> {
+class WakeLock : public ContextDestructionObserver, public RefCounted<WakeLock> {
 public:
-    static Ref<WakeLock> create()
+    static Ref<WakeLock> create(Document* document)
     {
-        return adoptRef(*new WakeLock);
+        return adoptRef(*new WakeLock(document));
     }
 
     void request(WakeLockType, Ref<DeferredPromise>&&);
 
 private:
-    WakeLock();
+    explicit WakeLock(Document*);
+
+    Document* document();
 };
 
 } // namespace WebCore

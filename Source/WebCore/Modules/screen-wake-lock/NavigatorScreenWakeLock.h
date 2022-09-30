@@ -49,6 +49,7 @@ private:
     static const char* supplementName();
 
     RefPtr<WakeLock> m_wakeLock;
+    Navigator& m_navigator;
 };
 
 } // namespace WebCore

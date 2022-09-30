@@ -1,8 +1,5 @@
-Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-screen-wakelock.html
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Feature-Policy allow="screen-wake-lock" allows same-origin relocation Test timed out
-TIMEOUT Feature-Policy allow="screen-wake-lock" disallows cross-origin relocation Test timed out
+PASS Feature-Policy allow="screen-wake-lock" allows same-origin relocation
+FAIL Feature-Policy allow="screen-wake-lock" disallows cross-origin relocation assert_false: navigator.wakeLock.request("screen") expected false got true
 

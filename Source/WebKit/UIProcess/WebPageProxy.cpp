@@ -8881,6 +8881,9 @@ void WebPageProxy::queryPermission(const ClientOrigin& clientOrigin, const Permi
         if (m_notificationPermissionRequesters.contains(clientOrigin.topOrigin))
             shouldChangeDeniedToPrompt = false;
 #endif
+    } else if (descriptor.name == PermissionName::ScreenWakeLock) {
+        name = "screen-wake-lock"_s;
+        shouldChangeDeniedToPrompt = false;
     }
 
     if (name.isNull()) {

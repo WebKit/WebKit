@@ -76,6 +76,9 @@ media/audio-session-category-at-most-recent-playback.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data [ Skip ]
 http/tests/clear-site-data [ Skip ]
 
+# The Screen Wake Lock API is not supportted in WebKit1.
+imported/w3c/web-platform-tests/screen-wake-lock [ Skip ]
+
 # Shared workers are only implemented for WebKit2.
 http/tests/navigation/page-cache-shared-worker.html [ Skip ]
 imported/w3c/web-platform-tests/content-security-policy/connect-src/shared-worker-connect-src-allowed.sub.html [ Skip ]

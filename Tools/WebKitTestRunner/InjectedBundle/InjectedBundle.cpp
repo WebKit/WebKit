@@ -693,6 +693,11 @@ void InjectedBundle::setGeolocationPermission(bool enabled)
     postPageMessage("SetGeolocationPermission", adoptWK(WKBooleanCreate(enabled)));
 }
 
+void InjectedBundle::setScreenWakeLockPermission(bool enabled)
+{
+    postPageMessage("SetScreenWakeLockPermission", adoptWK(WKBooleanCreate(enabled)));
+}
+
 void InjectedBundle::setMockGeolocationPosition(double latitude, double longitude, double accuracy, std::optional<double> altitude, std::optional<double> altitudeAccuracy, std::optional<double> heading, std::optional<double> speed, std::optional<double> floorLevel)
 {
     auto body = adoptWK(WKMutableDictionaryCreate());

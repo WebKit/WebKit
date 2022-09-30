@@ -31,7 +31,8 @@
 
 namespace WebCore {
 
-NavigatorScreenWakeLock::NavigatorScreenWakeLock(Navigator&)
+NavigatorScreenWakeLock::NavigatorScreenWakeLock(Navigator& navigator)
+    : m_navigator(navigator)
 {
 }
 
@@ -61,7 +62,7 @@ WakeLock& NavigatorScreenWakeLock::wakeLock(Navigator& navigator)
 WakeLock& NavigatorScreenWakeLock::wakeLock()
 {
     if (!m_wakeLock)
-        m_wakeLock = WakeLock::create();
+        m_wakeLock = WakeLock::create(downcast<Document>(m_navigator.scriptExecutionContext()));
     return *m_wakeLock;
 }
 
