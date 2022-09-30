@@ -1481,6 +1481,18 @@ ScreenCaptureEnabled:
     WebCore:
       default: false
 
+ScreenOrientationAPIEnabled:
+  type: bool
+  humanReadableName: "Screen Orientation API"
+  humanReadableDescription: "Enable Screen Orientation API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ScreenWakeLockAPIEnabled:
   type: bool
   humanReadableName: "Screen Wake Lock API"

@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: Error while parsing the 'sandbox' attribute: 'allow-orientation-lock' is an invalid sandbox flag.
-CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'screen.orientation.unlock')
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)
 
 
 Harness Error (TIMEOUT), message = null

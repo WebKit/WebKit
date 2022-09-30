@@ -1309,6 +1309,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/ResizeObserverOptions.idl \
     $(WebCore)/page/ResizeObserverSize.idl \
     $(WebCore)/page/Screen.idl \
+    $(WebCore)/page/ScreenOrientation.idl \
     $(WebCore)/page/ScrollBehavior.idl \
     $(WebCore)/page/ScrollIntoViewOptions.idl \
     $(WebCore)/page/ScrollLogicalPosition.idl \

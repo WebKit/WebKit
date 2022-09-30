@@ -36,10 +36,13 @@
 
 namespace WebCore {
 
+class ScreenOrientation;
+
 class Screen final : public ScriptWrappable, public RefCounted<Screen>, public DOMWindowProperty {
     WTF_MAKE_ISO_ALLOCATED(Screen);
 public:
     static Ref<Screen> create(DOMWindow& window) { return adoptRef(*new Screen(window)); }
+    ~Screen();
 
     unsigned height() const;
     unsigned width() const;
@@ -50,8 +53,12 @@ public:
     unsigned availHeight() const;
     unsigned availWidth() const;
 
+    ScreenOrientation& orientation();
+
 private:
     explicit Screen(DOMWindow&);
+
+    RefPtr<ScreenOrientation> m_screenOrientation;
 };
 
 } // namespace WebCore

@@ -1845,6 +1845,7 @@ page/ResizeObserver.cpp
 page/ResourceUsageOverlay.cpp
 page/ResourceUsageThread.cpp
 page/Screen.cpp
+page/ScreenOrientation.cpp
 page/ScrollBehavior.cpp
 page/SecurityOrigin.cpp
 page/SecurityOriginData.cpp
@@ -3971,6 +3972,7 @@ JSSVGViewElement.cpp
 JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp
 JSScreen.cpp
+JSScreenOrientation.cpp
 JSScriptProcessorNode.cpp
 JSScrollBehavior.cpp
 JSScrollIntoViewOptions.cpp

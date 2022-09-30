@@ -1,4 +1,4 @@
 
-FAIL screen.orientation.lock() must throw given invalid input. undefined is not an object (evaluating 'screen.orientation.lock')
-FAIL screen.orientation.lock() must throw when the input is missing. undefined is not an object (evaluating 'screen.orientation.lock')
+PASS screen.orientation.lock() must throw given invalid input.
+PASS screen.orientation.lock() must throw when the input is missing.
 

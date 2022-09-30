@@ -364,6 +364,7 @@ namespace WebCore {
     macro(SQLResultSetRowList) \
     macro(SQLTransaction) \
     macro(ScreenLuminance) \
+    macro(ScreenOrientation) \
     macro(ServiceWorker) \
     macro(ServiceWorkerContainer) \
     macro(ServiceWorkerGlobalScope) \

@@ -39,5 +39,8 @@
     readonly attribute long availTop;
     readonly attribute unsigned long availHeight;
     readonly attribute unsigned long availWidth;
+
+    // https://w3c.github.io/screen-orientation/#extensions-to-the-screen-interface
+    [SameObject, EnabledBySetting=ScreenOrientationAPIEnabled] readonly attribute ScreenOrientation orientation;
 };
 

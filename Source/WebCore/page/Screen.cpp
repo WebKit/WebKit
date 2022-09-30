@@ -39,6 +39,7 @@
 #include "PlatformScreen.h"
 #include "Quirks.h"
 #include "ResourceLoadObserver.h"
+#include "ScreenOrientation.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -49,6 +50,8 @@ Screen::Screen(DOMWindow& window)
     : DOMWindowProperty(&window)
 {
 }
+
+Screen::~Screen() = default;
 
 unsigned Screen::height() const
 {
@@ -133,6 +136,13 @@ unsigned Screen::availWidth() const
     if (DeprecatedGlobalSettings::webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logScreenAPIAccessed(*frame->document(), ScreenAPIsAccessed::AvailWidth);
     return static_cast<unsigned>(screenAvailableRect(frame->view()).width());
+}
+
+ScreenOrientation& Screen::orientation()
+{
+    if (!m_screenOrientation)
+        m_screenOrientation = ScreenOrientation::create(window() ? window()->document() : nullptr);
+    return *m_screenOrientation;
 }
 
 } // namespace WebCore

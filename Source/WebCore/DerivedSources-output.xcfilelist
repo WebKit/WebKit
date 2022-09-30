@@ -2530,6 +2530,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomAndPan.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSSVGZoomAndPan.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreen.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreenOrientation.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScreenOrientation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScriptProcessorNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScriptProcessorNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSScrollBehavior.cpp
