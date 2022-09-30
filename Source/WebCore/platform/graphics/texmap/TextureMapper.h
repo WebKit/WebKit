@@ -79,8 +79,6 @@ public:
     virtual void beginClip(const TransformationMatrix&, const FloatRoundedRect&) = 0;
     virtual void endClip() = 0;
     virtual IntRect clipBounds() = 0;
-    virtual void beginPreserves3D() { };
-    virtual void endPreserves3D() { };
     virtual Ref<BitmapTexture> createTexture() = 0;
     virtual Ref<BitmapTexture> createTexture(int internalFormat) = 0;
     virtual void setDepthRange(double zNear, double zFar) = 0;

@@ -255,27 +255,6 @@ void TextureMapperLayer::paintSelfAndChildren(TextureMapperPaintOptions& options
     if (m_state.backdropLayer && m_state.backdropLayer == options.backdropLayer)
         return;
 
-    struct Preserves3DScope {
-        Preserves3DScope(TextureMapperPaintOptions& passedOptions, bool passedEnable)
-            : options(passedOptions)
-            , enable(passedEnable)
-        {
-            if (enable) {
-                options.preserves3D = true;
-                options.textureMapper.beginPreserves3D();
-            }
-        }
-        ~Preserves3DScope()
-        {
-            if (enable) {
-                options.preserves3D = false;
-                options.textureMapper.endPreserves3D();
-            }
-        }
-        TextureMapperPaintOptions& options;
-        bool enable;
-    } scopedPreserves3D(options, m_state.preserves3D && !options.preserves3D);
-
     if (m_state.backdropLayer && !options.backdropLayer) {
         TransformationMatrix clipTransform;
         clipTransform.translate(options.offset.width(), options.offset.height());
@@ -775,10 +754,60 @@ void TextureMapperLayer::paintRecursive(TextureMapperPaintOptions& options)
 
     SetForScope scopedOpacity(options.opacity, options.opacity * m_currentOpacity);
 
-    if (shouldBlend())
+    if (m_state.preserves3D)
+        paintWith3DRenderingContext(options);
+    else if (shouldBlend())
         paintUsingOverlapRegions(options);
     else
         paintSelfChildrenReplicaFilterAndMask(options);
+}
+
+void TextureMapperLayer::paintWith3DRenderingContext(TextureMapperPaintOptions& options)
+{
+    if (options.preserves3D) {
+        paintSelfAndChildrenWithReplica(options);
+        return;
+    }
+    SetForScope scopedPreserves3D(options.preserves3D, true);
+
+    Region overlapRegion;
+    Region nonOverlapRegion;
+    ComputeOverlapRegionData data {
+        ComputeOverlapRegionMode::Union,
+        options.textureMapper.clipBounds(),
+        overlapRegion,
+        nonOverlapRegion
+    };
+    data.clipBounds.move(-options.offset);
+    computeOverlapRegions(data, options.transform, false);
+    ASSERT(nonOverlapRegion.isEmpty());
+
+    auto rects = overlapRegion.rects();
+    static const size_t OverlapRegionConsolidationThreshold = 4;
+    if (rects.size() > OverlapRegionConsolidationThreshold) {
+        rects.clear();
+        rects.append(overlapRegion.bounds());
+    }
+
+    IntSize maxTextureSize = options.textureMapper.maxTextureSize();
+    for (auto& rect : rects) {
+        for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
+            for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
+                IntRect tileRect(IntPoint(x, y), maxTextureSize);
+                tileRect.intersect(rect);
+                auto surface = options.textureMapper.acquireTextureFromPool(tileRect.size(), BitmapTexture::SupportsAlpha | BitmapTexture::DepthBuffer);
+                {
+                    SetForScope scopedSurface(options.surface, surface);
+                    SetForScope scopedOffset(options.offset, -toIntSize(tileRect.location()));
+                    SetForScope scopedOpacity(options.opacity, 1);
+
+                    options.textureMapper.bindSurface(options.surface.get());
+                    paintSelfAndChildrenWithReplica(options);
+                }
+                commitSurface(options, *surface, tileRect, options.opacity);
+            }
+        }
+    }
 }
 
 void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)

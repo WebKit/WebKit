@@ -202,7 +202,6 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
     glGetIntegerv(GL_CURRENT_PROGRAM, &data().previousProgram);
     data().previousScissorState = glIsEnabled(GL_SCISSOR_TEST);
     data().previousDepthState = glIsEnabled(GL_DEPTH_TEST);
-    glDisable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_SCISSOR_TEST);
     data().didModifyStencil = false;
@@ -885,6 +884,7 @@ void TextureMapperGL::bindDefaultSurface()
     auto& viewport = data().viewport;
     data().projectionMatrix = createProjectionMatrix(IntSize(viewport[2], viewport[3]), data().PaintFlags & PaintingMirrored, data().zNear, data().zFar);
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+    glDisable(GL_DEPTH_TEST);
     m_clipStack.apply();
     data().currentSurface = nullptr;
 }
@@ -1019,17 +1019,6 @@ void TextureMapperGL::endClip()
 IntRect TextureMapperGL::clipBounds()
 {
     return clipStack().current().scissorBox;
-}
-
-void TextureMapperGL::beginPreserves3D()
-{
-    glEnable(GL_DEPTH_TEST);
-    glClear(GL_DEPTH_BUFFER_BIT);
-}
-
-void TextureMapperGL::endPreserves3D()
-{
-    glDisable(GL_DEPTH_TEST);
 }
 
 Ref<BitmapTexture> TextureMapperGL::createTexture(GLint internalFormat)

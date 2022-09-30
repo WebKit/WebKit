@@ -137,6 +137,7 @@ private:
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix&, bool includesReplica = true);
 
     void paintRecursive(TextureMapperPaintOptions&);
+    void paintWith3DRenderingContext(TextureMapperPaintOptions&);
     void paintSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(TextureMapperPaintOptions&);
     void paintIntoSurface(TextureMapperPaintOptions&);
