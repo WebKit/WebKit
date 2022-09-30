@@ -1185,9 +1185,7 @@
         SYS_setrlimit
         SYS_sigaltstack
         SYS_sigprocmask
-#if PLATFORM(WATCHOS)
         SYS_sigreturn
-#endif
         SYS_thread_selfusage
         SYS_umask
         SYS_unlink
