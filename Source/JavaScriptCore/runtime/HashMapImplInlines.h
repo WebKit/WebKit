@@ -492,7 +492,7 @@ ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::checkConsistency() const
             ++size;
             iter = iter->next();
         }
-        ASSERT(size == m_keyCount);
+        ASSERT_UNUSED(size, size == m_keyCount);
     }
 }
 

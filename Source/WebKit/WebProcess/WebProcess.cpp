@@ -1466,8 +1466,10 @@ void WebProcess::pageActivityStateDidChange(PageIdentifier, OptionSet<WebCore::A
 
 void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&& completionHandler)
 {
+#if !RELEASE_LOG_DISABLED
     auto nowTime = MonotonicTime::now();
     double remainingRunTime = nowTime > estimatedSuspendTime ? (nowTime - estimatedSuspendTime).value() : 0.0;
+#endif
     WEBPROCESS_RELEASE_LOG(ProcessSuspension, "prepareToSuspend: isSuspensionImminent=%d, remainingRunTime=%fs", isSuspensionImminent, remainingRunTime);
     SetForScope suspensionScope(m_isSuspending, true);
     m_processIsSuspended = true;
