@@ -1515,6 +1515,7 @@ public:
     void compileDefineDataProperty(Node*);
     void compileDefineAccessorProperty(Node*);
     void compileStringSlice(Node*);
+    void compileStringSubstring(Node*);
     void compileToLowerCase(Node*);
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);

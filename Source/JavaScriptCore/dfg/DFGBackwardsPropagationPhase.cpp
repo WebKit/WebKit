@@ -306,7 +306,8 @@ private:
             break;
         }
 
-        case StringSlice: {
+        case StringSlice:
+        case StringSubstring: {
             node->child1()->mergeFlags(NodeBytecodeUsesAsValue);
             node->child2()->mergeFlags(NodeBytecodeUsesAsNumber | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex);
             if (node->child3())

@@ -296,12 +296,8 @@ ALWAYS_INLINE bool equal(const LChar* a, const UChar* b, unsigned length)
 ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length) { return equal(b, a, length); }
 
 template<typename StringClassA, typename StringClassB>
-ALWAYS_INLINE bool equalCommon(const StringClassA& a, const StringClassB& b)
+ALWAYS_INLINE bool equalCommon(const StringClassA& a, const StringClassB& b, unsigned length)
 {
-    unsigned length = a.length();
-    if (length != b.length())
-        return false;
-
     if (a.is8Bit()) {
         if (b.is8Bit())
             return equal(a.characters8(), b.characters8(), length);
@@ -313,6 +309,16 @@ ALWAYS_INLINE bool equalCommon(const StringClassA& a, const StringClassB& b)
         return equal(a.characters16(), b.characters8(), length);
 
     return equal(a.characters16(), b.characters16(), length);
+}
+
+template<typename StringClassA, typename StringClassB>
+ALWAYS_INLINE bool equalCommon(const StringClassA& a, const StringClassB& b)
+{
+    unsigned length = a.length();
+    if (length != b.length())
+        return false;
+
+    return equalCommon(a, b, length);
 }
 
 template<typename StringClassA, typename StringClassB>

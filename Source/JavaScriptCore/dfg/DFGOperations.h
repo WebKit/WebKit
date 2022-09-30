@@ -250,6 +250,8 @@ JSC_DECLARE_JIT_OPERATION(operationStringReplaceStringStringWithTable8, JSString
 JSC_DECLARE_JIT_OPERATION(operationStringReplaceStringStringWithoutSubstitutionWithTable8, JSString*, (JSGlobalObject*, JSString*, JSString*, JSString*, const BoyerMooreHorspoolTable<uint8_t>*));
 JSC_DECLARE_JIT_OPERATION(operationStringReplaceStringEmptyStringWithTable8, JSString*, (JSGlobalObject*, JSString*, JSString*, const BoyerMooreHorspoolTable<uint8_t>*));
 JSC_DECLARE_JIT_OPERATION(operationStringReplaceStringGeneric, JSString*, (JSGlobalObject*, JSString*, JSString*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationStringSubstring, JSString*, (JSGlobalObject*, JSString*, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationStringSubstringWithEnd, JSString*, (JSGlobalObject*, JSString*, int32_t, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationToLowerCase, JSString*, (JSGlobalObject*, JSString*, uint32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationInt32ToString, char*, (JSGlobalObject*, int32_t, int32_t));

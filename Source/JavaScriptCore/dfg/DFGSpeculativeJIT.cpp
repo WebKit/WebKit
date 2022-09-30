@@ -1949,6 +1949,40 @@ void SpeculativeJIT::compileStringSlice(Node* node)
     cellResult(tempGPR, node);
 }
 
+void SpeculativeJIT::compileStringSubstring(Node* node)
+{
+    SpeculateCellOperand string(this, node->child1());
+
+    SpeculateInt32Operand start(this, node->child2());
+    if (node->child3()) {
+        SpeculateInt32Operand end(this, node->child3());
+
+        GPRReg stringGPR = string.gpr();
+        GPRReg startGPR = start.gpr();
+        GPRReg endGPR = end.gpr();
+
+        speculateString(node->child1(), stringGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationStringSubstringWithEnd, resultGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, startGPR, endGPR);
+        cellResult(resultGPR, node);
+        return;
+    }
+
+    GPRReg stringGPR = string.gpr();
+    GPRReg startGPR = start.gpr();
+
+    speculateString(node->child1(), stringGPR);
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationStringSubstring, resultGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), stringGPR, startGPR);
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileToLowerCase(Node* node)
 {
     ASSERT(node->op() == ToLowerCase);

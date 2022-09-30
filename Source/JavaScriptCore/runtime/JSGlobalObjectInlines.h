@@ -166,6 +166,7 @@ inline JSFunction* JSGlobalObject::rejectPromiseFunction() const { return jsCast
 inline JSFunction* JSGlobalObject::promiseProtoThenFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::defaultPromiseThen)); }
 inline JSFunction* JSGlobalObject::performPromiseThenFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::performPromiseThen)); }
 inline JSFunction* JSGlobalObject::regExpProtoExecFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::regExpBuiltinExec)); }
+inline JSFunction* JSGlobalObject::stringProtoSubstringFunction() const { return jsCast<JSFunction*>(linkTimeConstant(LinkTimeConstant::stringSubstring)); }
 inline GetterSetter* JSGlobalObject::regExpProtoGlobalGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoGlobalGetter)); }
 inline GetterSetter* JSGlobalObject::regExpProtoUnicodeGetter() const { return bitwise_cast<GetterSetter*>(linkTimeConstant(LinkTimeConstant::regExpProtoUnicodeGetter)); }
 

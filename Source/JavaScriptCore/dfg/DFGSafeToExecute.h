@@ -306,6 +306,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case MapHash:
     case NormalizeMapKey:
     case StringSlice:
+    case StringSubstring:
     case ToLowerCase:
     case GetMapBucket:
     case GetMapBucketHead:

@@ -537,6 +537,7 @@ namespace JSC { namespace DFG {
     \
     macro(StringValueOf, NodeMustGenerate | NodeResultJS) \
     macro(StringSlice, NodeResultJS) \
+    macro(StringSubstring, NodeResultJS) \
     macro(ToLowerCase, NodeResultJS) \
     /* Nodes for DOM JIT */\
     macro(CallDOMGetter, NodeResultJS | NodeMustGenerate) \

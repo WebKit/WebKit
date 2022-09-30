@@ -64,7 +64,6 @@ static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplaceUsingStringSearch);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncReplaceAllUsingStringSearch);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSlice);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSubstr);
-static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSubstring);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncToLowerCase);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncToUpperCase);
 static JSC_DECLARE_HOST_FUNCTION(stringProtoFuncLocaleCompare);
@@ -138,7 +137,7 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().replaceAllUsingStringSearchPrivateName(), stringProtoFuncReplaceAllUsingStringSearch, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("slice"_s, stringProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public, StringPrototypeSliceIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substr"_s, stringProtoFuncSubstr, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("substring"_s, stringProtoFuncSubstring, static_cast<unsigned>(PropertyAttribute::DontEnum), 2, ImplementationVisibility::Public);
+    putDirectWithoutTransition(vm, Identifier::fromString(vm, "substring"_s), globalObject->stringProtoSubstringFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION("toLowerCase"_s, stringProtoFuncToLowerCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public, StringPrototypeToLowerCaseIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toUpperCase"_s, stringProtoFuncToUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0, ImplementationVisibility::Public);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("localeCompare"_s, stringProtoFuncLocaleCompare, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, ImplementationVisibility::Public);
@@ -1224,7 +1223,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSubstr, (JSGlobalObject* globalObject, C
     return JSValue::encode(jsSubstring(vm, uString, substringStart, substringLength));
 }
 
-static EncodedJSValue stringSubstringImpl(JSGlobalObject* globalObject, CallFrame* callFrame)
+JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSubstring, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1234,15 +1233,19 @@ static EncodedJSValue stringSubstringImpl(JSGlobalObject* globalObject, CallFram
         return throwVMTypeError(globalObject, scope);
 
     JSString* jsString = thisValue.toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
 
     JSValue a0 = callFrame->argument(0);
     JSValue a1 = callFrame->argument(1);
+
+    if (LIKELY(a0.isInt32() && (a1.isUndefined() || a1.isInt32())))
+        RELEASE_AND_RETURN(scope, JSValue::encode(stringSubstring(globalObject, jsString, a0.asInt32(), a1.isUndefined() ? std::nullopt : std::optional<int32_t>(a1.asInt32()))));
+
     int len = jsString->length();
     RELEASE_ASSERT(len >= 0);
 
     double start = a0.toNumber(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
     double end;
     if (!(start >= 0)) // check for negative values or NaN
         start = 0;
@@ -1250,9 +1253,9 @@ static EncodedJSValue stringSubstringImpl(JSGlobalObject* globalObject, CallFram
         start = len;
     if (a1.isUndefined())
         end = len;
-    else { 
+    else {
         end = a1.toNumber(globalObject);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        RETURN_IF_EXCEPTION(scope, { });
         if (!(end >= 0)) // check for negative values or NaN
             end = 0;
         else if (end > len)
@@ -1266,19 +1269,6 @@ static EncodedJSValue stringSubstringImpl(JSGlobalObject* globalObject, CallFram
     unsigned substringStart = static_cast<unsigned>(start);
     unsigned substringLength = static_cast<unsigned>(end) - substringStart;
     RELEASE_AND_RETURN(scope, JSValue::encode(jsSubstring(globalObject, jsString, substringStart, substringLength)));
-}
-
-JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSubstring, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    return stringSubstringImpl(globalObject, callFrame);
-}
-
-JSC_DEFINE_HOST_FUNCTION(builtinStringSubstringInternal, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    ASSERT(callFrame->thisValue().isString());
-    ASSERT(callFrame->argument(0).isNumber());
-    ASSERT(callFrame->argument(1).isNumber() || callFrame->argument(1).isUndefined());
-    return stringSubstringImpl(globalObject, callFrame);   
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToLowerCase, (JSGlobalObject* globalObject, CallFrame* callFrame))

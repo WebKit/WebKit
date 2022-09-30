@@ -48,6 +48,33 @@ ALWAYS_INLINE JSString* stringSlice(JSGlobalObject* globalObject, VM& vm, JSStri
     return jsEmptyString(vm);
 }
 
+ALWAYS_INLINE std::tuple<int32_t, int32_t> extractSubstringOffsets(int32_t length, int32_t startValue, std::optional<int32_t> endValue)
+{
+    int32_t start = std::min<int32_t>(std::max<int32_t>(startValue, 0), length);
+    int32_t end = length;
+    if (endValue)
+        end = std::min<int32_t>(std::max<int32_t>(endValue.value(), 0), length);
+
+    ASSERT(start >= 0);
+    ASSERT(end >= 0);
+    if (start > end)
+        std::swap(start, end);
+    return { start, end };
+}
+
+ALWAYS_INLINE JSString* stringSubstring(JSGlobalObject* globalObject, JSString* string, int32_t startValue, std::optional<int32_t> endValue)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    int length = string->length();
+    RELEASE_ASSERT(length >= 0);
+
+    auto [start, end] = extractSubstringOffsets(length, startValue, endValue);
+
+    RELEASE_AND_RETURN(scope, jsSubstring(globalObject, string, start, end - start));
+}
+
 ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalObject, JSString* sourceVal, const String& source, const Range<int32_t>* substringRanges, int rangeCount, const String* separators, int separatorCount)
 {
     VM& vm = getVM(globalObject);

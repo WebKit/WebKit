@@ -197,6 +197,7 @@ private:
     explicit StringView(const char*);
 
     friend bool equal(StringView, StringView);
+    friend bool equal(StringView, StringView, unsigned length);
     friend WTF_EXPORT_PRIVATE bool equalRespectingNullity(StringView, StringView);
 
     void initialize(const LChar*, unsigned length);
@@ -687,7 +688,17 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
     string.getCharactersWithUpconvert(buffer.data() + oldSize);
 }
 
-inline bool equal(StringView a, StringView b)
+ALWAYS_INLINE bool equal(StringView a, StringView b, unsigned length)
+{
+    if (a.m_characters == b.m_characters) {
+        ASSERT(a.is8Bit() == b.is8Bit());
+        return true;
+    }
+
+    return equalCommon(a, b, length);
+}
+
+ALWAYS_INLINE bool equal(StringView a, StringView b)
 {
     if (a.m_characters == b.m_characters) {
         ASSERT(a.is8Bit() == b.is8Bit());
