@@ -97,7 +97,7 @@ bool SQLiteStorageArea::isEmpty()
     ASSERT(!isMainRunLoop());
 
     if (m_cache)
-        return m_cache->isEmpty();
+        return m_cache->items.isEmpty();
 
     if (!prepareDatabase(ShouldCreateIfNotExists::No))
         return true;
@@ -175,14 +175,13 @@ bool SQLiteStorageArea::prepareDatabase(ShouldCreateIfNotExists shouldCreateIfNo
         return false;
     }
 
-    if (quota() != WebCore::StorageMap::noQuota)
-        m_database->setMaximumSize(quota());
-
     return true;
 }
 
 void SQLiteStorageArea::startTransactionIfNecessary()
 {
+    ASSERT(m_database);
+
     if (!m_transaction)
         m_transaction = makeUnique<WebCore::SQLiteTransaction>(*m_database);
 
@@ -213,8 +212,8 @@ WebCore::SQLiteStatementAutoResetScope SQLiteStorageArea::cachedStatement(Statem
 Expected<String, StorageError> SQLiteStorageArea::getItem(const String& key)
 {
     if (m_cache) {
-        auto iterator = m_cache->find(key);
-        if (iterator == m_cache->end())
+        auto iterator = m_cache->items.find(key);
+        if (iterator == m_cache->items.end())
             return String();
 
         if (!iterator->value.isNull())
@@ -249,17 +248,63 @@ Expected<String, StorageError> SQLiteStorageArea::getItemFromDatabase(const Stri
     return makeUnexpected(StorageError::ItemNotFound);
 }
 
+Expected<HashMap<String, String>, StorageError> SQLiteStorageArea::getAllItemsFromDatabase()
+{
+    if (!prepareDatabase(ShouldCreateIfNotExists::No))
+        return makeUnexpected(StorageError::Database);
+
+    if (!m_database)
+        return HashMap<String, String> { };
+
+    auto statement = cachedStatement(StatementType::GetAllItems);
+    if (!statement) {
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getAllItemsFromDatabase failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        return makeUnexpected(StorageError::Database);
+    }
+
+    HashMap<String, String> items;
+    int result = statement->step();
+    while (result == SQLITE_ROW) {
+        String key = statement->columnText(0);
+        String value = statement->columnBlobAsString(1);
+        if (!key.isNull() && !value.isNull())
+            items.add(WTFMove(key), WTFMove(value));
+
+        result = statement->step();
+    }
+
+    if (result != SQLITE_DONE) {
+        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getAllItemsFromDatabase failed on executing statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
+        return makeUnexpected(StorageError::Database);
+    }
+
+    return items;
+}
+
+void SQLiteStorageArea::initializeCache(const HashMap<String, String>& items)
+{
+    if (m_cache)
+        return;
+
+    m_cache = Cache { };
+    for (auto& [key, value] : items) {
+        ASSERT(!key.isNull() && !value.isNull());
+        CheckedUint64 newSize = m_cache->size;
+        newSize += key.sizeInBytes();
+        newSize += value.sizeInBytes();
+        m_cache->size = newSize;
+        m_cache->items.add(key, value.sizeInBytes() > maximumSizeForValuesKeptInMemory ? String() : value);
+    }
+}
+
 HashMap<String, String> SQLiteStorageArea::allItems()
 {
     ASSERT(!isMainRunLoop());
 
-    if (!prepareDatabase(ShouldCreateIfNotExists::No) || !m_database)
-        return HashMap<String, String> { };
-
-    HashMap<String, String> items;
     if (m_cache) {
-        items.reserveInitialCapacity(m_cache->size());
-        for (auto& [key, value] : *m_cache) {
+        HashMap<String, String> items;
+        items.reserveInitialCapacity(m_cache->items.size());
+        for (auto& [key, value] : m_cache->items) {
             if (!value.isNull()) {
                 items.add(key, value);
                 continue;
@@ -271,30 +316,12 @@ HashMap<String, String> SQLiteStorageArea::allItems()
         return items;
     }
 
-    // Import from database.
-    auto statement = cachedStatement(StatementType::GetAllItems);
-    if (!statement) {
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getAllItems failed on creating statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
-        return { };
-    }
+    auto result = getAllItemsFromDatabase();
+    if (!result)
+        return HashMap<String, String> { };
 
-    m_cache = HashMap<String, String> { };
-    int result = statement->step();
-    while (result == SQLITE_ROW) {
-        String key = statement->columnText(0);
-        String value = statement->columnBlobAsString(1);
-        if (!key.isNull() && !value.isNull()) {
-            m_cache->add(key, value.sizeInBytes() > maximumSizeForValuesKeptInMemory ? String() : value);
-            items.add(WTFMove(key), WTFMove(value));
-        }
-
-        result = statement->step();
-    }
-
-    if (result != SQLITE_DONE)
-        RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::getAllItems failed on executing statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
-
-    return items;
+    initializeCache(result.value());
+    return result.value();
 }
 
 Expected<void, StorageError> SQLiteStorageArea::setItem(IPC::Connection::UniqueID connection, StorageAreaImplIdentifier storageAreaImplID, String&& key, String&& value, const String& urlString)
@@ -304,10 +331,27 @@ Expected<void, StorageError> SQLiteStorageArea::setItem(IPC::Connection::UniqueI
     if (!prepareDatabase(ShouldCreateIfNotExists::Yes))
         return makeUnexpected(StorageError::Database);
 
+    if (!m_cache) {
+        auto result = getAllItemsFromDatabase();
+        if (!result)
+            return makeUnexpected(result.error());
+        initializeCache(result.value());
+    }
+
+    CheckedUint64 newSize = m_cache->size;
+    bool keyExists = m_cache->items.contains(key);
     startTransactionIfNecessary();
     String oldValue;
     if (auto valueOrError = getItem(key))
         oldValue = valueOrError.value();
+
+    if (keyExists)
+        newSize -= oldValue.sizeInBytes();
+    else
+        newSize += key.sizeInBytes();
+    newSize += value.sizeInBytes();
+    if (newSize.hasOverflowed() || newSize > quota())
+        return makeUnexpected(StorageError::QuotaExceeded);
 
     auto statement = cachedStatement(StatementType::SetItem);
     if (!statement || statement->bindText(1, key) || statement->bindBlob(2, value)) {
@@ -316,17 +360,14 @@ Expected<void, StorageError> SQLiteStorageArea::setItem(IPC::Connection::UniqueI
     }
 
     int result = statement->step();
-    if (result == SQLITE_FULL)
-        return makeUnexpected(StorageError::QuotaExceeded);
     if (result != SQLITE_DONE) {
         RELEASE_LOG_ERROR(Storage, "SQLiteStorageArea::setItem failed on stepping statement (%d) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return makeUnexpected(StorageError::Database);
     }
 
     dispatchEvents(connection, storageAreaImplID, key, oldValue, value, urlString);
-
-    if (m_cache)
-        m_cache->set(WTFMove(key), value.sizeInBytes() > maximumSizeForValuesKeptInMemory ? String() : WTFMove(value));
+    m_cache->items.set(WTFMove(key), value.sizeInBytes() > maximumSizeForValuesKeptInMemory ? String() : WTFMove(value));
+    m_cache->size = newSize;
 
     return { };
 }
@@ -356,8 +397,14 @@ Expected<void, StorageError> SQLiteStorageArea::removeItem(IPC::Connection::Uniq
 
     dispatchEvents(connection, storageAreaImplID, key, oldValue, String(), urlString);
 
-    if (m_cache)
-        m_cache->remove(key);
+    if (m_cache) {
+        if (m_cache->items.remove(key)) {
+            CheckedUint64 newSize = m_cache->size;
+            newSize -= key.sizeInBytes();
+            newSize -= oldValue.sizeInBytes();
+            m_cache->size = newSize;
+        }
+    }
 
     return { };
 }
@@ -369,11 +416,13 @@ Expected<void, StorageError> SQLiteStorageArea::clear(IPC::Connection::UniqueID 
     if (!prepareDatabase(ShouldCreateIfNotExists::No))
         return makeUnexpected(StorageError::Database);
 
-    if (m_cache && m_cache->isEmpty())
+    if (m_cache && m_cache->items.isEmpty())
         return makeUnexpected(StorageError::ItemNotFound);
 
-    if (m_cache)
-        m_cache->clear();
+    if (m_cache) {
+        m_cache->items.clear();
+        m_cache->size = 0;
+    }
 
     if (!m_database)
         return makeUnexpected(StorageError::ItemNotFound);
