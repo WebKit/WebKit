@@ -88,7 +88,7 @@
         <label class="form-label" for="affiliation">Affiliation/Company</label>
         <input type="text" name="affiliation" id="affiliation" placeholder="&nbsp;" list="companies">
         <datalist id="companies">
-            <option>Apple, Inc.</option>
+            <option>Apple Inc.</option>
             <option>Igalia, S.L.</option>
             <option>Google</option>
             <option>Sony Interactive Entertainment</option>
