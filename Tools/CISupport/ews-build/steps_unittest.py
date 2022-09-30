@@ -47,8 +47,7 @@ from steps import (AddReviewerToCommitMessage, AnalyzeAPITestsResults, AnalyzeCo
                    Canonicalize, CheckOutPullRequest, CheckOutSource, CheckOutSpecificRevision, CheckChangeRelevance, CheckStatusOnEWSQueues, CheckStyle,
                    CleanBuild, CleanUpGitIndexLock, CleanGitRepo, CleanWorkingDirectory, CompileJSC, CommitPatch, CompileJSCWithoutChange,
                    CompileWebKit, CompileWebKitWithoutChange, ConfigureBuild, ConfigureBuild, Contributors,
-                   DeleteStaleBuildFiles, DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
-                   EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
+                   DetermineLandedIdentifier, DownloadBuiltProduct, DownloadBuiltProductFromMaster, EWS_BUILD_HOSTNAME, ExtractBuiltProduct, ExtractTestResults,
                    FetchBranches, FindModifiedLayoutTests, GitHub,
                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies,
                    KillOldProcesses, PrintConfiguration, PushCommitToWebKitRepo, PushPullRequestBranch, ReRunAPITests, ReRunWebKitPerlTests,
@@ -6651,44 +6650,6 @@ Date:   Tue Mar 29 16:04:35 2022 -0700
             self.assertEqual(self.getProperty('bug_id'), '238553')
             self.assertEqual(self.getProperty('is_test_gardening'), False)
             return rc
-
-
-class TestDeleteStaleBuildFiles(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(DeleteStaleBuildFiles())
-        self.setProperty('fullPlatform', 'win')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/CISupport/delete-stale-build-files', '--platform=win'],
-                        logEnviron=False,
-                        timeout=600,
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Deleted stale build files')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(DeleteStaleBuildFiles())
-        self.setProperty('fullPlatform', 'win')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/CISupport/delete-stale-build-files', '--platform=win'],
-                        logEnviron=False,
-                        timeout=600,
-                        )
-            + ExpectShell.log('stdio', stdout='Unexpected error.')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Deleted stale build files (failure)')
-        return self.runStep()
 
 
 if __name__ == '__main__':

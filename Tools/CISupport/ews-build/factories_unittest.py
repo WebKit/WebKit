@@ -350,7 +350,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'check-change-relevance',
             'validate-change',
             'configuration',
-            'delete-stale-build-files',
             'clean-up-git-repo',
             'checkout-source',
             'fetch-branch-references',
