@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <wtf/SuspendableWorkQueue.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
 
@@ -36,102 +37,59 @@ Ref<SuspendableWorkQueue> SuspendableWorkQueue::create(const char* name, WorkQue
 SuspendableWorkQueue::SuspendableWorkQueue(const char* name, QOS qos)
     : WorkQueue(name, qos)
 {
-    ASSERT(isMainThread());
 }
 
-void SuspendableWorkQueue::suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& completionHandler)
+SuspendableWorkQueue::SuspendState SuspendableWorkQueue::suspend()
 {
-    ASSERT(isMainThread());
-    Locker suspensionLocker { m_suspensionLock };
-
-    if (m_state == State::Suspended)
-        return completionHandler();
-
-    // Last suspend function will be the one that is used.
-    m_suspendFunction = WTFMove(suspendFunction);
-    m_suspensionCompletionHandlers.append(WTFMove(completionHandler));
-    if (m_state == State::WillSuspend)
-        return;
-
-    m_state = State::WillSuspend;
-    // Make sure queue will be suspended when there is no task scheduled on the queue.
-    WorkQueue::dispatch([this] {
-        suspendIfNeeded();
-    });
+    Locker lock { m_lock };
+    if (m_isSuspended)
+        return WasSuspended;
+    m_isSuspended = true;
+    return WasRunning;
 }
 
-void SuspendableWorkQueue::resume()
+
+SuspendableWorkQueue::SuspendState SuspendableWorkQueue::resume()
 {
-    ASSERT(isMainThread());
-    Locker suspensionLocker { m_suspensionLock };
-
-    if (m_state == State::Running)
-        return;
-
-    if (m_state == State::Suspended)
-        m_suspensionCondition.notifyOne();
-
-    m_state = State::Running;
+    Locker lock { m_lock };
+    if (!m_isSuspended)
+        return WasRunning;
+    m_isSuspended = false;
+    // Dispatch with lock since other threads must not be able to submit inbetween 
+    // the suspended tasks.
+    for (auto& task : std::exchange(m_suspendedTasks, { }))
+        WorkQueue::dispatch(WTFMove(task));
+    return WasSuspended;
 }
 
 void SuspendableWorkQueue::dispatch(Function<void()>&& function)
 {
-    // WorkQueue will protect this in dispatch().
-    WorkQueue::dispatch([this, function = WTFMove(function)] {
-        suspendIfNeeded();
-        function();
-    });
+    {
+        Locker lock { m_lock };
+        if (m_isSuspended) {
+            m_suspendedTasks.append(WTFMove(function));
+            return;
+        }
+    }
+    // Dispatch without lock since ordering cannot be observed from the outside.
+    WorkQueue::dispatch(WTFMove(function));
 }
 
 void SuspendableWorkQueue::dispatchAfter(Seconds seconds, Function<void()>&& function)
 {
-    WorkQueue::dispatchAfter(seconds, [this, function = WTFMove(function)] {
-        suspendIfNeeded();
-        function();
+    WorkQueue::dispatchAfter(seconds, [protectedThis = Ref { *this }, function = WTFMove(function)] () mutable {
+        protectedThis->dispatch(WTFMove(function));
     });
 }
 
 void SuspendableWorkQueue::dispatchSync(Function<void()>&& function)
 {
-    // This function should be called only when queue is not about to be suspended,
-    // otherwise thread may be blocked.
-    if (isMainThread()) {
-        Locker suspensionLocker { m_suspensionLock };
-        RELEASE_ASSERT(m_state == State::Running);
-    }
-    WorkQueue::dispatchSync(WTFMove(function));
-}
-
-void SuspendableWorkQueue::invokeAllSuspensionCompletionHandlers()
-{
-    ASSERT(!isMainThread());
-
-    if (m_suspensionCompletionHandlers.isEmpty())
-        return;
-
-    callOnMainThread([completionHandlers = std::exchange(m_suspensionCompletionHandlers, { })]() mutable {
-        for (auto& completionHandler : completionHandlers) {
-            if (completionHandler)
-                completionHandler();
-        }
+    BinarySemaphore semaphore;
+    dispatch([&semaphore, function = WTFMove(function)] () mutable {
+        function();
+        semaphore.signal();
     });
-}
-
-void SuspendableWorkQueue::suspendIfNeeded()
-{
-    ASSERT(!isMainThread());
-
-    Locker suspensionLocker { m_suspensionLock };
-    auto suspendFunction = std::exchange(m_suspendFunction, { });
-    if (m_state != State::WillSuspend)
-        return;
-
-    m_state = State::Suspended;
-    suspendFunction();
-    invokeAllSuspensionCompletionHandlers();
-
-    while (m_state != State::Running)
-        m_suspensionCondition.wait(m_suspensionLock);
+    semaphore.wait();
 }
 
 } // namespace WTF
