@@ -1,1 +1,1 @@
-PASS: scrollLeft is -120
+scrollLeft is -40
