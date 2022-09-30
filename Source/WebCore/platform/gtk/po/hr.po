@@ -6,124 +6,126 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: webkit2gtk\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
-"POT-Creation-Date: 2022-02-11 08:32+0000\n"
-"PO-Revision-Date: 2022-03-31 16:39+0000\n"
+"Report-Msgid-Bugs-To: https://bugs.webkit.org/enter_bug.cgi?"
+"product=WebKit&component=WebKitGTK\n"
+"POT-Creation-Date: 2022-09-02 16:35+0000\n"
+"PO-Revision-Date: 2022-09-30 15:11+0200\n"
 "Last-Translator: gogo <trebelnik2@gmail.com>\n"
 "Language-Team: Croatian <hr@li.org>\n"
+"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Launchpad-Export-Date: 2022-03-31 16:40+0000\n"
-"X-Generator: Launchpad (build 8668e93803333858d822a57f8780c5bef185741f)\n"
+"X-Generator: Poedit 3.1.1\n"
 
-#: LocalizedStringsGtk.cpp:43
+#: ../LocalizedStringsGtk.cpp:43
 msgid "Copy Link Loc_ation"
 msgstr "Kopiraj lokaciju p_oveznice"
 
-#: LocalizedStringsGtk.cpp:48
+#: ../LocalizedStringsGtk.cpp:48
 msgid "Sa_ve Image As"
 msgstr "Sp_remi sliku kao"
 
-#: LocalizedStringsGtk.cpp:53
+#: ../LocalizedStringsGtk.cpp:53
 msgid "Copy Image _Address"
 msgstr "Kopiraj adresu _slike"
 
-#: LocalizedStringsGtk.cpp:58
+#: ../LocalizedStringsGtk.cpp:58
 msgid "Cop_y Video Link Location"
 msgstr "Kopira_j lokaciju video poveznice"
 
-#: LocalizedStringsGtk.cpp:63
+#: ../LocalizedStringsGtk.cpp:63
 msgid "Cop_y Audio Link Location"
 msgstr "Kopira_j lokaciju poveznice zvuka"
 
-#: LocalizedStringsGtk.cpp:68
+#: ../LocalizedStringsGtk.cpp:68
 msgid "_Toggle Media Controls"
 msgstr "_Uklj/Isklj medijska upravljanja"
 
-#: LocalizedStringsGtk.cpp:73
+#: ../LocalizedStringsGtk.cpp:73
 msgid "_Show Media Controls"
 msgstr "_Prikaži medijska upravljanja"
 
-#: LocalizedStringsGtk.cpp:78
+#: ../LocalizedStringsGtk.cpp:78
 msgid "_Hide Media Controls"
 msgstr "_Sakrij medijska upravljanja"
 
-#: LocalizedStringsGtk.cpp:83
+#: ../LocalizedStringsGtk.cpp:83
 msgid "Toggle Media _Loop Playback"
 msgstr "Uklj/Isklj ponavljanje _reprodukcije medija"
 
-#: LocalizedStringsGtk.cpp:88
+#: ../LocalizedStringsGtk.cpp:88
 msgid "Switch Video to _Fullscreen"
 msgstr "Prebaci video na _cijeli zaslon"
 
-#: LocalizedStringsGtk.cpp:93
+#: ../LocalizedStringsGtk.cpp:93
 msgid "Paste As Plain _Text"
 msgstr "Zalijepi kao običan_tekst"
 
-#: LocalizedStringsGtk.cpp:98
+#: ../LocalizedStringsGtk.cpp:98
 msgid "_Delete"
 msgstr "_Obriši"
 
-#: LocalizedStringsGtk.cpp:103
+#: ../LocalizedStringsGtk.cpp:103
 msgid "Select _All"
 msgstr "Odaberi _sve"
 
-#: LocalizedStringsGtk.cpp:108
+#: ../LocalizedStringsGtk.cpp:108
 msgid "Insert _Emoji"
-msgstr "Umetni _smajli"
+msgstr "Umetni _emotikoin"
 
-#: LocalizedStringsGtk.cpp:113
+#: ../LocalizedStringsGtk.cpp:113
 msgid "_Insert Unicode Control Character"
 msgstr "_Umetni unikôd kontrolni znak"
 
-#: LocalizedStringsGtk.cpp:118
+#: ../LocalizedStringsGtk.cpp:118
 msgid "Input _Methods"
 msgstr "_Načini unosa"
 
-#: LocalizedStringsGtk.cpp:123
+#: ../LocalizedStringsGtk.cpp:123
 msgid "LRM _Left-to-right mark"
 msgstr "LRM označavanje  _s lijeva-na-desno"
 
-#: LocalizedStringsGtk.cpp:128
+#: ../LocalizedStringsGtk.cpp:128
 msgid "RLM _Right-to-left mark"
 msgstr "RLM označavanje _s desna-na-lijevo"
 
-#: LocalizedStringsGtk.cpp:133
+#: ../LocalizedStringsGtk.cpp:133
 msgid "LRE Left-to-right _embedding"
 msgstr "LRE s lijeva-na-desno_ubacivanje"
 
-#: LocalizedStringsGtk.cpp:138
+#: ../LocalizedStringsGtk.cpp:138
 msgid "RLE Right-to-left e_mbedding"
 msgstr "RLE s desna-na-lijevo u_bacivanje"
 
-#: LocalizedStringsGtk.cpp:143
+#: ../LocalizedStringsGtk.cpp:143
 msgid "LRO Left-to-right _override"
 msgstr "LRO pr_imoravanje s lijeva-na-desno"
 
-#: LocalizedStringsGtk.cpp:148
+#: ../LocalizedStringsGtk.cpp:148
 msgid "RLO Right-to-left o_verride"
 msgstr "RLO primorava_nje s desna-na-lijevo"
 
-#: LocalizedStringsGtk.cpp:153
+#: ../LocalizedStringsGtk.cpp:153
 msgid "PDF _Pop directional formatting"
 msgstr "PDF _počni usmjeren zapis"
 
-#: LocalizedStringsGtk.cpp:158
+#: ../LocalizedStringsGtk.cpp:158
 msgid "ZWS _Zero width space"
 msgstr "ZWS _razmak bez širine"
 
-#: LocalizedStringsGtk.cpp:163
+#: ../LocalizedStringsGtk.cpp:163
 msgid "ZWJ Zero width _joiner"
 msgstr "ZWJ _spojnica bez širine"
 
-#: LocalizedStringsGtk.cpp:168
+#: ../LocalizedStringsGtk.cpp:168
 msgid "ZWNJ Zero width _non-joiner"
 msgstr "ZWNJ _nespojnica bez širine"
 
-#: LocalizedStringsGtk.cpp:174
+#: ../LocalizedStringsGtk.cpp:174
 #, c-format
 msgid "Use at least one character"
 msgid_plural "Use at least %d characters"
@@ -131,7 +133,7 @@ msgstr[0] "Koristi najmanje %d znak"
 msgstr[1] "Koristi najmanje %d znaka"
 msgstr[2] "Koristi najmanje %d znakova"
 
-#: LocalizedStringsGtk.cpp:180
+#: ../LocalizedStringsGtk.cpp:180
 #, c-format
 msgid "Use no more than one character"
 msgid_plural "Use no more than %d characters"
@@ -139,1826 +141,1810 @@ msgstr[0] "Koristi ne više od %d znaka"
 msgstr[1] "Koristi ne više od %d znaka"
 msgstr[2] "Koristi ne više od %d znakova"
 
-#: ../LocalizedStrings.cpp:162
+#: ../../LocalizedStrings.cpp:162
 msgctxt "alt text for <input> elements with no alt, title, or value"
 msgid "Submit"
 msgstr "Pošalji"
 
-#: ../LocalizedStrings.cpp:167
+#: ../../LocalizedStrings.cpp:167
 msgid "Reset"
 msgstr "Vrati izvorno"
 
-#: ../LocalizedStrings.cpp:172
+#: ../../LocalizedStrings.cpp:172
 msgid "This is a searchable index. Enter search keywords: "
 msgstr "Ovaj se sadržaj može pretraživati. Upišite ključne riječi: "
 
-#: ../LocalizedStrings.cpp:178
+#: ../../LocalizedStrings.cpp:178
 msgid "Submit"
 msgstr "Pošalji"
 
-#: ../LocalizedStrings.cpp:183
+#: ../../LocalizedStrings.cpp:183
 msgid "Choose File"
 msgstr "Odaberi datoteku"
 
-#: ../LocalizedStrings.cpp:188
+#: ../../LocalizedStrings.cpp:188
 msgid "Choose Files"
 msgstr "Odabir datoteka"
 
-#: ../LocalizedStrings.cpp:193
+#: ../../LocalizedStrings.cpp:193
 msgid "no file selected"
 msgstr "nema odabrane datoteke"
 
-#: ../LocalizedStrings.cpp:198
+#: ../../LocalizedStrings.cpp:198
 msgid "no files selected"
 msgstr "nema odabranih datoteka"
 
-#: ../LocalizedStrings.cpp:203
+#: ../../LocalizedStrings.cpp:203
 msgid "Details"
 msgstr "Pojediosti"
 
-#: ../LocalizedStrings.cpp:210
+#: ../../LocalizedStrings.cpp:210
 msgid "Open Link in New _Window"
 msgstr "Otvori poveznicu u novom _prozoru"
 
-#: ../LocalizedStrings.cpp:215
+#: ../../LocalizedStrings.cpp:215
 msgid "_Download Linked File"
 msgstr "_Preuzmi povezanu datoteku"
 
-#: ../LocalizedStrings.cpp:221
+#: ../../LocalizedStrings.cpp:221
 msgid "Copy Link"
 msgstr "Kopiraj poveznicu"
 
-#: ../LocalizedStrings.cpp:227
+#: ../../LocalizedStrings.cpp:227
 msgid "Open _Image in New Window"
 msgstr "Otvori _sliku u novom prozoru"
 
-#: ../LocalizedStrings.cpp:233
+#: ../../LocalizedStrings.cpp:233
 msgid "Download Image"
 msgstr "Preuzimanje slike"
 
-#: ../LocalizedStrings.cpp:239
+#: ../../LocalizedStrings.cpp:239
 msgid "Cop_y Image"
 msgstr "Kopira_j sliku"
 
-#: ../LocalizedStrings.cpp:244
+#: ../../LocalizedStrings.cpp:244
 msgid "Open _Frame in New Window"
 msgstr "Otvori_okvir u novom prozoru"
 
-#: ../LocalizedStrings.cpp:249
+#: ../../LocalizedStrings.cpp:249
 msgid "_Copy"
 msgstr "_Kopiraj"
 
-#: ../LocalizedStrings.cpp:254
+#: ../../LocalizedStrings.cpp:254
 msgid "_Back"
 msgstr "_Natrag"
 
-#: ../LocalizedStrings.cpp:259
+#: ../../LocalizedStrings.cpp:259
 msgid "_Forward"
 msgstr "_Naprijed"
 
-#: ../LocalizedStrings.cpp:264
+#: ../../LocalizedStrings.cpp:264
 msgid "_Stop"
 msgstr "_Zaustavi"
 
-#: ../LocalizedStrings.cpp:269
+#: ../../LocalizedStrings.cpp:269
 msgid "_Reload"
 msgstr "_Učitaj ponovno"
 
-#: ../LocalizedStrings.cpp:274
+#: ../../LocalizedStrings.cpp:274
 msgid "Cu_t"
 msgstr "Iz_reži"
 
-#: ../LocalizedStrings.cpp:279
+#: ../../LocalizedStrings.cpp:279
 msgid "_Paste"
 msgstr "_Zalijepi"
 
-#: ../LocalizedStrings.cpp:284
+#: ../../LocalizedStrings.cpp:284
 msgid "No Guesses Found"
 msgstr "Nema pronađenih pogodaka"
 
-#: ../LocalizedStrings.cpp:289
+#: ../../LocalizedStrings.cpp:289
 msgid "_Ignore Spelling"
 msgstr "_Zanemari pravopis"
 
-#: ../LocalizedStrings.cpp:294
+#: ../../LocalizedStrings.cpp:294
 msgid "_Learn Spelling"
 msgstr "_Uči pravopis"
 
-#: ../LocalizedStrings.cpp:303
-#, c-format
-msgid "Look Up “%s”"
-msgstr "Pretraži “%s”"
-
-#: ../LocalizedStrings.cpp:305
+#: ../../LocalizedStrings.cpp:305
 msgid "Look Up “<selection>”"
 msgstr "Pretraži “<odabir>”"
 
-#: ../LocalizedStrings.cpp:321
+#: ../../LocalizedStrings.cpp:321
 msgid "_Open Link"
 msgstr "_Otvori poveznicu"
 
-#: ../LocalizedStrings.cpp:326
+#: ../../LocalizedStrings.cpp:326
 msgid "Ignore _Grammar"
 msgstr "Zanemari _gramatiku"
 
-#: ../LocalizedStrings.cpp:331
+#: ../../LocalizedStrings.cpp:331
 msgid "Spelling and _Grammar"
 msgstr "Pravopis i _gramatika"
 
-#: ../LocalizedStrings.cpp:337
+#: ../../LocalizedStrings.cpp:337
 msgid "_Show Spelling and Grammar"
 msgstr "_Prikaži pravopis i gramatiku"
 
-#: ../LocalizedStrings.cpp:338
+#: ../../LocalizedStrings.cpp:338
 msgid "_Hide Spelling and Grammar"
 msgstr "_Sakrij pravopis i gramatiku"
 
-#: ../LocalizedStrings.cpp:343
+#: ../../LocalizedStrings.cpp:343
 msgid "_Check Document Now"
 msgstr "_Provjeri dokument odmah"
 
-#: ../LocalizedStrings.cpp:348
+#: ../../LocalizedStrings.cpp:348
 msgid "Check Spelling While _Typing"
 msgstr "Provjeri pravopis pri _tipkanju"
 
-#: ../LocalizedStrings.cpp:353
+#: ../../LocalizedStrings.cpp:353
 msgid "Check _Grammar With Spelling"
 msgstr "Provjeri gramatiku pri _tipkanju"
 
-#: ../LocalizedStrings.cpp:358
+#: ../../LocalizedStrings.cpp:358
 msgid "_Font"
 msgstr "_Slova"
 
-#: ../LocalizedStrings.cpp:363
+#: ../../LocalizedStrings.cpp:363
 msgid "_Bold"
 msgstr "_Podebljano"
 
-#: ../LocalizedStrings.cpp:368
+#: ../../LocalizedStrings.cpp:368
 msgid "_Italic"
 msgstr "_Ukošeno"
 
-#: ../LocalizedStrings.cpp:373
+#: ../../LocalizedStrings.cpp:373
 msgid "_Underline"
 msgstr "_Podvučeno"
 
-#: ../LocalizedStrings.cpp:378
+#: ../../LocalizedStrings.cpp:378
 msgid "_Outline"
 msgstr "_Obrisi"
 
-#: ../LocalizedStrings.cpp:384
+#: ../../LocalizedStrings.cpp:384
 msgid "Paragraph Direction"
 msgstr "Smjer odlomka"
 
-#: ../LocalizedStrings.cpp:389
+#: ../../LocalizedStrings.cpp:389
 msgid "Selection Direction"
 msgstr "Smjer odabira"
 
-#: ../LocalizedStrings.cpp:394
+#: ../../LocalizedStrings.cpp:394
 msgid "Default"
 msgstr "Zadano"
 
-#: ../LocalizedStrings.cpp:399
+#: ../../LocalizedStrings.cpp:399
 msgid "Left to Right"
 msgstr "S lijeva na desno"
 
-#: ../LocalizedStrings.cpp:404
+#: ../../LocalizedStrings.cpp:404
 msgid "Right to Left"
 msgstr "S desna nalijevo"
 
-#: ../LocalizedStrings.cpp:410
+#: ../../LocalizedStrings.cpp:410
 msgid "Open _Video in New Window"
 msgstr "Otvori _snimku u novom prozoru"
 
-#: ../LocalizedStrings.cpp:415
+#: ../../LocalizedStrings.cpp:415
 msgid "Open _Audio in New Window"
 msgstr "Otvori _zvuk u novom prozoru"
 
-#: ../LocalizedStrings.cpp:420
+#: ../../LocalizedStrings.cpp:420
 msgid "Download _Video"
 msgstr "Preuzmi _snimku"
 
-#: ../LocalizedStrings.cpp:425
+#: ../../LocalizedStrings.cpp:425
 msgid "Download _Audio"
 msgstr "Preuzmi _zvuk"
 
-#: ../LocalizedStrings.cpp:431
+#: ../../LocalizedStrings.cpp:431
 msgid "Copy Video Address"
 msgstr "Kopiranje adrese snimke"
 
-#: ../LocalizedStrings.cpp:436
+#: ../../LocalizedStrings.cpp:436
 msgid "Copy Audio Address"
 msgstr "Kopiranje adrese zvuka"
 
-#: ../LocalizedStrings.cpp:441
+#: ../../LocalizedStrings.cpp:441
 msgid "Controls"
 msgstr "Upravljanje"
 
-#: ../LocalizedStrings.cpp:446
+#: ../../LocalizedStrings.cpp:446
 msgid "Show Controls"
 msgstr "Prikaži upravljanja"
 
-#: ../LocalizedStrings.cpp:451
+#: ../../LocalizedStrings.cpp:451
 msgid "Hide Controls"
 msgstr "Sakrij upravljanja"
 
-#: ../LocalizedStrings.cpp:456
+#: ../../LocalizedStrings.cpp:456
 msgid "Loop"
 msgstr "Ponavljanje"
 
-#: ../LocalizedStrings.cpp:461
+#: ../../LocalizedStrings.cpp:461
 msgid "Enter Full Screen"
 msgstr "Otvori u cijelom zaslonu"
 
-#: ../LocalizedStrings.cpp:466
+#: ../../LocalizedStrings.cpp:466
 msgctxt "Video Exit Full Screen context menu item"
 msgid "Exit Full Screen"
 msgstr "Napusti cijeli zaslon"
 
-#: ../LocalizedStrings.cpp:472
+#: ../../LocalizedStrings.cpp:472
 msgid "_Play"
 msgstr "_Reproduciraj"
 
-#: ../LocalizedStrings.cpp:477
+#: ../../LocalizedStrings.cpp:477
 msgid "_Pause"
 msgstr "_Pauza"
 
-#: ../LocalizedStrings.cpp:482
+#: ../../LocalizedStrings.cpp:482
 msgid "_Mute"
 msgstr "_Utišaj"
 
-#: ../LocalizedStrings.cpp:487
+#: ../../LocalizedStrings.cpp:487
 msgid "Inspect _Element"
 msgstr "Provjeri _element"
 
-#: ../LocalizedStrings.cpp:493
+#: ../../LocalizedStrings.cpp:493
+msgid "_Automatically Resize"
+msgstr "_Automatska promjena veličine"
+
+#: ../../LocalizedStrings.cpp:498
+msgid "_Zoom In"
+msgstr "_Uvećaj"
+
+#: ../../LocalizedStrings.cpp:503
+msgid "_Zoom Out"
+msgstr "_Umanji"
+
+#: ../../LocalizedStrings.cpp:508
+msgid "_Actual Size"
+msgstr "_Stvarna veličina"
+
+#: ../../LocalizedStrings.cpp:513
+msgid "_Single Page"
+msgstr "_Jedna stranica"
+
+#: ../../LocalizedStrings.cpp:518
+msgid "_Single Page Continuous"
+msgstr "_Jedna stranica neprekidno"
+
+#: ../../LocalizedStrings.cpp:523
+msgid "_Two Pages"
+msgstr "_Dvije stranice"
+
+#: ../../LocalizedStrings.cpp:528
+msgid "_Two Pages Continuous"
+msgstr "_Dvije stranice neprekidno"
+
+#: ../../LocalizedStrings.cpp:533
+msgid "_Next Page"
+msgstr "_Sljedeća stranica"
+
+#: ../../LocalizedStrings.cpp:538
+msgid "_Previous Page"
+msgstr "_Prijašnja stranica"
+
+#: ../../LocalizedStrings.cpp:545
 msgid "_Search the Web"
 msgstr "_Pretraži web"
 
-#: ../LocalizedStrings.cpp:503
+#: ../../LocalizedStrings.cpp:555
 msgid "No recent searches"
 msgstr "Nema nedavnih pretraga"
 
-#: ../LocalizedStrings.cpp:508
+#: ../../LocalizedStrings.cpp:560
 msgid "Recent Searches"
 msgstr "Nedavne pretrage"
 
-#: ../LocalizedStrings.cpp:513
+#: ../../LocalizedStrings.cpp:565
 msgid "Clear Recent Searches"
 msgstr "Obriši nedavne pretrage"
 
-#: ../LocalizedStrings.cpp:520
+#: ../../LocalizedStrings.cpp:572
 msgid "HTML content"
 msgstr "HTML sadržaj"
 
-#: ../LocalizedStrings.cpp:525
+#: ../../LocalizedStrings.cpp:577
 msgid "link"
 msgstr "poveznica"
 
-#: ../LocalizedStrings.cpp:530
+#: ../../LocalizedStrings.cpp:582
 msgid "list marker"
 msgstr "oznaka popisa"
 
-#: ../LocalizedStrings.cpp:535
+#: ../../LocalizedStrings.cpp:587
 msgid "image map"
 msgstr "karta slike"
 
-#: ../LocalizedStrings.cpp:540
+#: ../../LocalizedStrings.cpp:592
 msgid "heading"
 msgstr "naslov"
 
-#: ../LocalizedStrings.cpp:545
+#: ../../LocalizedStrings.cpp:597
 msgid "color well"
 msgstr "krug boja"
 
-#: ../LocalizedStrings.cpp:550
+#: ../../LocalizedStrings.cpp:602
 msgid "definition"
 msgstr "definicija"
 
-#: ../LocalizedStrings.cpp:555
+#: ../../LocalizedStrings.cpp:607
 msgid "description list"
 msgstr "popis opisa"
 
-#: ../LocalizedStrings.cpp:560
+#: ../../LocalizedStrings.cpp:612
 msgid "term"
 msgstr "pojam"
 
-#: ../LocalizedStrings.cpp:565
+#: ../../LocalizedStrings.cpp:617
 msgid "description"
 msgstr "opis"
 
-#: ../LocalizedStrings.cpp:570
+#: ../../LocalizedStrings.cpp:622
 msgid "details"
 msgstr "pojedinosti"
 
-#: ../LocalizedStrings.cpp:575
+#: ../../LocalizedStrings.cpp:627
 msgid "summary"
 msgstr "sažetak"
 
-#: ../LocalizedStrings.cpp:580
+#: ../../LocalizedStrings.cpp:632
 msgid "footer"
 msgstr "podnožje"
 
-#: ../LocalizedStrings.cpp:585
+#: ../../LocalizedStrings.cpp:637
+msgid "suggestion"
+msgstr "prijedlog"
+
+#: ../../LocalizedStrings.cpp:642
 msgid "file upload button"
 msgstr "tipka slanja datoteke"
 
-#: ../LocalizedStrings.cpp:590
+#: ../../LocalizedStrings.cpp:647
 msgid "output"
 msgstr "izlaz"
 
-#: ../LocalizedStrings.cpp:595
+#: ../../LocalizedStrings.cpp:652
 msgid "attachment"
 msgstr "privitak"
 
-#: ../LocalizedStrings.cpp:600
+#: ../../LocalizedStrings.cpp:657
 msgid "cancel"
 msgstr "odustani"
 
-#: ../LocalizedStrings.cpp:605
+#: ../../LocalizedStrings.cpp:662
 msgid "feed"
 msgstr "kanal"
 
-#: ../LocalizedStrings.cpp:610
+#: ../../LocalizedStrings.cpp:667
 msgid "figure"
 msgstr "lik"
 
-#: ../LocalizedStrings.cpp:615
+#: ../../LocalizedStrings.cpp:672
 msgid "email field"
 msgstr "polje e-pošte"
 
-#: ../LocalizedStrings.cpp:620
+#: ../../LocalizedStrings.cpp:677
 msgid "telephone number field"
 msgstr "polje telefonskog broja"
 
-#: ../LocalizedStrings.cpp:625
+#: ../../LocalizedStrings.cpp:682
 msgid "URL field"
 msgstr "URL polje"
 
-#: ../LocalizedStrings.cpp:630
+#: ../../LocalizedStrings.cpp:687
 msgid "date field"
 msgstr "polje datuma"
 
-#: ../LocalizedStrings.cpp:635
+#: ../../LocalizedStrings.cpp:692
 msgid "time field"
 msgstr "polje vremena"
 
-#: ../LocalizedStrings.cpp:640
+#: ../../LocalizedStrings.cpp:697
 msgid "date and time field"
 msgstr "polje datuma i vremena"
 
-#: ../LocalizedStrings.cpp:645
+#: ../../LocalizedStrings.cpp:702
 msgid "month and year field"
 msgstr "polje mjeseca i godine"
 
-#: ../LocalizedStrings.cpp:650
+#: ../../LocalizedStrings.cpp:707
 msgid "number field"
 msgstr "polje broja"
 
-#: ../LocalizedStrings.cpp:655
+#: ../../LocalizedStrings.cpp:712
 msgid "week and year field"
 msgstr "polje tjedna i godine"
 
-#: ../LocalizedStrings.cpp:661
+#: ../../LocalizedStrings.cpp:718
 msgid "alert"
 msgstr "upozorenje"
 
-#: ../LocalizedStrings.cpp:663
+#: ../../LocalizedStrings.cpp:720
 msgid "web alert dialog"
 msgstr "dijalog web upozorenja"
 
-#: ../LocalizedStrings.cpp:665
+#: ../../LocalizedStrings.cpp:722
 msgid "web dialog"
 msgstr "web dijalog"
 
-#: ../LocalizedStrings.cpp:667
+#: ../../LocalizedStrings.cpp:724
 msgid "log"
 msgstr "zapis"
 
-#: ../LocalizedStrings.cpp:669
+#: ../../LocalizedStrings.cpp:726
 msgid "marquee"
 msgstr "pomični tekst"
 
-#: ../LocalizedStrings.cpp:671
+#: ../../LocalizedStrings.cpp:728
 msgid "application status"
 msgstr "stanje aplikacije"
 
-#: ../LocalizedStrings.cpp:673
+#: ../../LocalizedStrings.cpp:730
 msgid "timer"
 msgstr "odbrojavanje"
 
-#: ../LocalizedStrings.cpp:675
+#: ../../LocalizedStrings.cpp:732
 msgid "document"
 msgstr "dokument"
 
-#: ../LocalizedStrings.cpp:677
+#: ../../LocalizedStrings.cpp:734
 msgid "article"
 msgstr "članak"
 
-#: ../LocalizedStrings.cpp:679
+#: ../../LocalizedStrings.cpp:736
 msgid "note"
 msgstr "bilješka"
 
-#: ../LocalizedStrings.cpp:681
+#: ../../LocalizedStrings.cpp:738
 msgid "web application"
 msgstr "web aplikacija"
 
-#: ../LocalizedStrings.cpp:683
+#: ../../LocalizedStrings.cpp:740
 msgid "banner"
 msgstr "natpis"
 
-#: ../LocalizedStrings.cpp:685
+#: ../../LocalizedStrings.cpp:742
 msgid "complementary"
 msgstr "dopunski"
 
-#: ../LocalizedStrings.cpp:687
+#: ../../LocalizedStrings.cpp:744
 msgid "content information"
 msgstr "informacije sadržaja"
 
-#: ../LocalizedStrings.cpp:689
+#: ../../LocalizedStrings.cpp:746
 msgid "main"
 msgstr "glavno"
 
-#: ../LocalizedStrings.cpp:691
+#: ../../LocalizedStrings.cpp:748
 msgid "navigation"
 msgstr "navigacija"
 
-#: ../LocalizedStrings.cpp:693
+#: ../../LocalizedStrings.cpp:750
 msgid "region"
 msgstr "regija"
 
-#: ../LocalizedStrings.cpp:695
+#: ../../LocalizedStrings.cpp:752
 msgid "search"
 msgstr "pretraga"
 
-#: ../LocalizedStrings.cpp:697
+#: ../../LocalizedStrings.cpp:754
 msgid "tooltip"
 msgstr "savjet"
 
-#: ../LocalizedStrings.cpp:699
+#: ../../LocalizedStrings.cpp:756
 msgid "tab panel"
 msgstr "panel kartice"
 
-#: ../LocalizedStrings.cpp:701
+#: ../../LocalizedStrings.cpp:758
 msgid "math"
 msgstr "matematika"
 
-#: ../LocalizedStrings.cpp:707
+#: ../../LocalizedStrings.cpp:764
 msgid "separator"
 msgstr "razdjelnik"
 
-#: ../LocalizedStrings.cpp:712
+#: ../../LocalizedStrings.cpp:769
 msgid "highlighted"
 msgstr "istaknuto"
 
-#: ../LocalizedStrings.cpp:717
+#: ../../LocalizedStrings.cpp:774
 msgid "press"
 msgstr "pritisni"
 
-#: ../LocalizedStrings.cpp:722
+#: ../../LocalizedStrings.cpp:779
 msgid "select"
 msgstr "odaberi"
 
-#: ../LocalizedStrings.cpp:727
+#: ../../LocalizedStrings.cpp:784
 msgid "activate"
 msgstr "aktiviraj"
 
-#: ../LocalizedStrings.cpp:732
+#: ../../LocalizedStrings.cpp:789
 msgid "uncheck"
 msgstr "ukloni oznaku"
 
-#: ../LocalizedStrings.cpp:737
+#: ../../LocalizedStrings.cpp:794
 msgid "check"
 msgstr "označi"
 
-#: ../LocalizedStrings.cpp:742
+#: ../../LocalizedStrings.cpp:799
 msgid "jump"
 msgstr "skoči"
 
-#: ../LocalizedStrings.cpp:766
+#: ../../LocalizedStrings.cpp:823
 msgid "Apple Pay"
 msgstr "Apple Pay"
 
-#: ../LocalizedStrings.cpp:771
+#: ../../LocalizedStrings.cpp:828
 msgid "Buy with Apple Pay"
 msgstr "Kupi s Apple Payom"
 
-#: ../LocalizedStrings.cpp:776
+#: ../../LocalizedStrings.cpp:833
 msgid "Set up with Apple Pay"
 msgstr "Postavi s Apple Payom"
 
-#: ../LocalizedStrings.cpp:781
+#: ../../LocalizedStrings.cpp:838
 msgid "Donate with Apple Pay"
 msgstr "Doniraj s Apple Payom"
 
-#: ../LocalizedStrings.cpp:786
+#: ../../LocalizedStrings.cpp:843
 msgid "Check out with Apple Pay"
 msgstr "Provjeri s Apple Payom"
 
-#: ../LocalizedStrings.cpp:791
+#: ../../LocalizedStrings.cpp:848
 msgid "Book with Apple Pay"
 msgstr "Zabilježi s Apple Payom"
 
-#: ../LocalizedStrings.cpp:796
+#: ../../LocalizedStrings.cpp:853
 msgid "Subscribe with Apple Pay"
 msgstr "Pretplati se na Apple Pay"
 
-#: ../LocalizedStrings.cpp:802
+#: ../../LocalizedStrings.cpp:859
 msgid "Reload with Apple Pay"
 msgstr "Ponovno učitaj s Apple Payom"
 
-#: ../LocalizedStrings.cpp:806
+#: ../../LocalizedStrings.cpp:863
 msgid "Add money with Apple Pay"
 msgstr "Dodaj naovac u Apple Pay"
 
-#: ../LocalizedStrings.cpp:810
+#: ../../LocalizedStrings.cpp:867
 msgid "Top up with Apple Pay"
 msgstr "Nadoplati s Apple Payom"
 
-#: ../LocalizedStrings.cpp:814
+#: ../../LocalizedStrings.cpp:871
 msgid "Order with Apple Pay"
 msgstr "Naruči s Apple Payom"
 
-#: ../LocalizedStrings.cpp:818
+#: ../../LocalizedStrings.cpp:875
 msgid "Rent with Apple Pay"
 msgstr "Unajmi s Apple Payom"
 
-#: ../LocalizedStrings.cpp:822
+#: ../../LocalizedStrings.cpp:879
 msgid "Support with Apple Pay"
 msgstr "Podrži s Apple Payom"
 
-#: ../LocalizedStrings.cpp:826
+#: ../../LocalizedStrings.cpp:883
 msgid "Contribute with Apple Pay"
 msgstr "Doprinesi s Apple Payom"
 
-#: ../LocalizedStrings.cpp:830
+#: ../../LocalizedStrings.cpp:887
 msgid "Tip with Apple Pay"
 msgstr "Napojnica s Apple Payom"
 
-#: ../LocalizedStrings.cpp:837
+#: ../../LocalizedStrings.cpp:894
 msgid "password AutoFill"
 msgstr "automatsko popunjavanje lozinke"
 
-#: ../LocalizedStrings.cpp:842
+#: ../../LocalizedStrings.cpp:899
 msgid "contact info AutoFill"
 msgstr "automatsko popunjavanje informacije kontakta"
 
-#: ../LocalizedStrings.cpp:847
+#: ../../LocalizedStrings.cpp:904
 msgid "strong password AutoFill"
 msgstr "automatsko popunjavanje snažne lozinke"
 
-#: ../LocalizedStrings.cpp:852
+#: ../../LocalizedStrings.cpp:909
 msgid "credit card AutoFill"
 msgstr "automatsko popunjavanje kreditne kartice"
 
-#: ../LocalizedStrings.cpp:857
+#: ../../LocalizedStrings.cpp:914
+msgid "loading AutoFill"
+msgstr "učitavanje automatskog popunjavanja"
+
+#: ../../LocalizedStrings.cpp:919
 msgid "Strong Password"
 msgstr "Snažna lozinka"
 
-#: ../LocalizedStrings.cpp:862
+#: ../../LocalizedStrings.cpp:924
 msgid "Missing Plug-in"
 msgstr "Nedostajući priključak"
 
-#: ../LocalizedStrings.cpp:867
+#: ../../LocalizedStrings.cpp:929
 msgid "Plug-in Failure"
 msgstr "Neuspjeh priključka"
 
-#: ../LocalizedStrings.cpp:872
+#: ../../LocalizedStrings.cpp:934
 msgctxt ""
 "Label text to be used if plugin is blocked by a page's Content Security "
 "Policy"
 msgid "Blocked Plug-in"
 msgstr "Blokirani priključak"
 
-#: ../LocalizedStrings.cpp:877
+#: ../../LocalizedStrings.cpp:939
 msgctxt ""
 "Label text to be used when an insecure plug-in version was blocked from "
 "loading"
 msgid "Blocked Plug-in"
 msgstr "Blokirani priključak"
 
-#: ../LocalizedStrings.cpp:882
+#: ../../LocalizedStrings.cpp:944
 msgctxt ""
 "Label text to be used when an unsupported plug-in was blocked from loading"
 msgid "Unsupported Plug-in"
 msgstr "Nepodržani priključak"
 
-#: ../LocalizedStrings.cpp:887
+#: ../../LocalizedStrings.cpp:949
 msgctxt ""
 "Label text to be used when a plug-in was blocked from loading because it was "
 "too small"
 msgid "Plug-In too small"
 msgstr "Premali priključak"
 
-#: ../LocalizedStrings.cpp:892
-#, c-format
-msgid "%d files"
-msgstr "%d datoteke"
-
-#: ../LocalizedStrings.cpp:897
+#: ../../LocalizedStrings.cpp:959
 msgctxt "Unknown filesize FTP directory listing item"
 msgid "Unknown"
 msgstr "Nepoznata"
 
-#: ../LocalizedStrings.cpp:916
-#, c-format
-msgid "%s %d×%d pixels"
-msgstr "%s %d×%d piksela"
-
-#: ../LocalizedStrings.cpp:918
-#, c-format
-msgid "<filename> %d×%d pixels"
-msgstr "<naziv datoteke> %d×%d piksela"
-
-#: ../LocalizedStrings.cpp:924
+#: ../../LocalizedStrings.cpp:986
 msgid "Loading…"
 msgstr "Učitavanje…"
 
-#: ../LocalizedStrings.cpp:929
+#: ../../LocalizedStrings.cpp:991
 msgid "Live Broadcast"
 msgstr "Emitiranje uživo"
 
-#: ../LocalizedStrings.cpp:935
+#: ../../LocalizedStrings.cpp:997
 msgid "audio playback"
 msgstr "reprodukcija zvuka"
 
-#: ../LocalizedStrings.cpp:937
+#: ../../LocalizedStrings.cpp:999
 msgid "video playback"
 msgstr "reprodukcija snimke"
 
-#: ../LocalizedStrings.cpp:939
+#: ../../LocalizedStrings.cpp:1001
 msgid "mute"
 msgstr "utišaj"
 
-#: ../LocalizedStrings.cpp:941
+#: ../../LocalizedStrings.cpp:1003
 msgid "unmute"
 msgstr "uključi zvuk"
 
-#: ../LocalizedStrings.cpp:943
+#: ../../LocalizedStrings.cpp:1005
 msgid "play"
 msgstr "reprodukcija"
 
-#: ../LocalizedStrings.cpp:945
+#: ../../LocalizedStrings.cpp:1007
 msgid "pause"
 msgstr "pauziraj"
 
-#: ../LocalizedStrings.cpp:947
+#: ../../LocalizedStrings.cpp:1009
 msgid "movie time"
 msgstr "vrijeme filma"
 
-#: ../LocalizedStrings.cpp:949
+#: ../../LocalizedStrings.cpp:1011
 msgid "timeline slider thumb"
 msgstr "palac klizača vremenske trake"
 
-#: ../LocalizedStrings.cpp:951
+#: ../../LocalizedStrings.cpp:1013
 msgid "back 30 seconds"
 msgstr "30 sekundi unatrag"
 
-#: ../LocalizedStrings.cpp:953
+#: ../../LocalizedStrings.cpp:1015
 msgid "return to real time"
 msgstr "vraćanje u stvarno vrijeme"
 
-#: ../LocalizedStrings.cpp:955
+#: ../../LocalizedStrings.cpp:1017
 msgid "elapsed time"
 msgstr "proteklo vrijeme"
 
-#: ../LocalizedStrings.cpp:957
+#: ../../LocalizedStrings.cpp:1019
 msgid "remaining time"
 msgstr "preostalo vrijeme"
 
-#: ../LocalizedStrings.cpp:959
+#: ../../LocalizedStrings.cpp:1021
 msgid "status"
 msgstr "stanje"
 
-#: ../LocalizedStrings.cpp:961
+#: ../../LocalizedStrings.cpp:1023
 msgid "enter full screen"
 msgstr "otvaranje u cijelom zaslonu"
 
-#: ../LocalizedStrings.cpp:963
+#: ../../LocalizedStrings.cpp:1025
 msgid "exit full screen"
 msgstr "izlazak iz cijelog zaslona"
 
-#: ../LocalizedStrings.cpp:965
+#: ../../LocalizedStrings.cpp:1027
 msgid "fast forward"
 msgstr "brzo unaprijed"
 
-#: ../LocalizedStrings.cpp:967
+#: ../../LocalizedStrings.cpp:1029
 msgid "fast reverse"
 msgstr "brzo unatrag"
 
-#: ../LocalizedStrings.cpp:969
+#: ../../LocalizedStrings.cpp:1031
 msgid "show closed captions"
 msgstr "prikazivanje podnaslova"
 
-#: ../LocalizedStrings.cpp:971
+#: ../../LocalizedStrings.cpp:1033
 msgid "hide closed captions"
 msgstr "sakrivanje podnaslova"
 
-#: ../LocalizedStrings.cpp:984
+#: ../../LocalizedStrings.cpp:1046
 msgid "audio element playback controls and status display"
 msgstr "upravljanje reporodukcijom i prikaz stanja zvučnog elementa"
 
-#: ../LocalizedStrings.cpp:986
+#: ../../LocalizedStrings.cpp:1048
 msgid "video element playback controls and status display"
 msgstr "upravljanje reporodukcijom i prikaz stanja elementa snimke"
 
-#: ../LocalizedStrings.cpp:988
+#: ../../LocalizedStrings.cpp:1050
 msgid "mute audio tracks"
 msgstr "utišaj zvučni zapis"
 
-#: ../LocalizedStrings.cpp:990
+#: ../../LocalizedStrings.cpp:1052
 msgid "unmute audio tracks"
 msgstr "uključi zvuk zvučnog zapisa"
 
-#: ../LocalizedStrings.cpp:992
+#: ../../LocalizedStrings.cpp:1054
 msgid "begin playback"
 msgstr "početak reprodukcije"
 
-#: ../LocalizedStrings.cpp:994
+#: ../../LocalizedStrings.cpp:1056
 msgid "pause playback"
 msgstr "pauziranje reprodukcije"
 
-#: ../LocalizedStrings.cpp:996
+#: ../../LocalizedStrings.cpp:1058
 msgid "movie time scrubber"
 msgstr "vremenski klizač filma"
 
-#: ../LocalizedStrings.cpp:998
+#: ../../LocalizedStrings.cpp:1060
 msgid "movie time scrubber thumb"
 msgstr "tipka vremenskog klizača filma"
 
-#: ../LocalizedStrings.cpp:1000
+#: ../../LocalizedStrings.cpp:1062
 msgid "seek movie back 30 seconds"
 msgstr "traženje u filmu 30 sekundi unatrag"
 
-#: ../LocalizedStrings.cpp:1002
+#: ../../LocalizedStrings.cpp:1064
 msgid "resume real time streaming"
 msgstr "nastavi streamanje u stvarnom vremenu"
 
-#: ../LocalizedStrings.cpp:1004
+#: ../../LocalizedStrings.cpp:1066
 msgid "current movie time in seconds"
 msgstr "trenutno vrijeme filma u sekundama"
 
-#: ../LocalizedStrings.cpp:1006
+#: ../../LocalizedStrings.cpp:1068
 msgid "number of seconds of movie remaining"
 msgstr "broj sekundi ostatka filma"
 
-#: ../LocalizedStrings.cpp:1008
+#: ../../LocalizedStrings.cpp:1070
 msgid "current movie status"
 msgstr "trenutno stanje filma"
 
-#: ../LocalizedStrings.cpp:1010
+#: ../../LocalizedStrings.cpp:1072
 msgid "seek quickly back"
 msgstr "brzo premotavanje unatrag"
 
-#: ../LocalizedStrings.cpp:1012
+#: ../../LocalizedStrings.cpp:1074
 msgid "seek quickly forward"
 msgstr "brzo premotavanje unaprijed"
 
-#: ../LocalizedStrings.cpp:1014
+#: ../../LocalizedStrings.cpp:1076
 msgid "Play movie in full screen mode"
 msgstr "Reproduciraj film u cijelom zaslonu"
 
-#: ../LocalizedStrings.cpp:1016
+#: ../../LocalizedStrings.cpp:1078
 msgid "start displaying closed captions"
 msgstr "početak prikazivanja podnaslova"
 
-#: ../LocalizedStrings.cpp:1018
+#: ../../LocalizedStrings.cpp:1080
 msgid "stop displaying closed captions"
 msgstr "zaustavljanje prikazivanja podnaslova"
 
-#: ../LocalizedStrings.cpp:1031
+#: ../../LocalizedStrings.cpp:1093
 msgid "indefinite time"
 msgstr "neograničeno vrijeme"
 
-#: ../LocalizedStrings.cpp:1040
-#, c-format
-msgid "%1$d days %2$d hours %3$d minutes %4$d seconds"
-msgstr "%1$d dana %2$d sati %3$d minuta %4$d sekundi"
-
-#: ../LocalizedStrings.cpp:1042
-#, c-format
-msgid "%1$d hours %2$d minutes %3$d seconds"
-msgstr "%1$d sata %2$d minuta %3$d sekundi"
-
-#: ../LocalizedStrings.cpp:1044
-#, c-format
-msgid "%1$d minutes %2$d seconds"
-msgstr "%1$d minuta %2$d sekundi"
-
-#: ../LocalizedStrings.cpp:1045
-#, c-format
-msgid "%1$d seconds"
-msgstr "%1$d sekundi"
-
-#: ../LocalizedStrings.cpp:1050
+#: ../../LocalizedStrings.cpp:1112
 msgid "Fill out this field"
 msgstr "Popuni ovo polje"
 
-#: ../LocalizedStrings.cpp:1055
+#: ../../LocalizedStrings.cpp:1117
 msgid "Select this checkbox"
 msgstr "Odaberi ovaj okvir odabira"
 
-#: ../LocalizedStrings.cpp:1060
+#: ../../LocalizedStrings.cpp:1122
 msgid "Select a file"
 msgstr "Odaberi datoteku"
 
-#: ../LocalizedStrings.cpp:1070
+#: ../../LocalizedStrings.cpp:1132
 msgid "Select one of these options"
 msgstr "Odaberi jednu od ovih mogućnosti"
 
-#: ../LocalizedStrings.cpp:1075
+#: ../../LocalizedStrings.cpp:1137
 msgid "Select an item in the list"
 msgstr "Odaberi stavku s popisa"
 
-#: ../LocalizedStrings.cpp:1080
+#: ../../LocalizedStrings.cpp:1142
 msgid "Invalid value"
 msgstr "Nevaljana vrijednost"
 
-#: ../LocalizedStrings.cpp:1085
+#: ../../LocalizedStrings.cpp:1147
 msgid "Enter an email address"
 msgstr "Upišite adresu e-pošte"
 
-#: ../LocalizedStrings.cpp:1095
+#: ../../LocalizedStrings.cpp:1157
 msgid "Enter a URL"
 msgstr "Upiši URL"
 
-#: ../LocalizedStrings.cpp:1100
+#: ../../LocalizedStrings.cpp:1162
 msgid "Match the requested format"
 msgstr "Uskladi zatraženi format"
 
-#: ../LocalizedStrings.cpp:1106
-#, c-format
-msgid "Use at least %d characters"
-msgstr "Koristi najmanje %d znaka"
-
-#: ../LocalizedStrings.cpp:1112
-#, c-format
-msgid "Use no more than %d characters"
-msgstr "Koristi ne više od %d znaka"
-
-#: ../LocalizedStrings.cpp:1122
-#, c-format
-msgid "Value must be greater than or equal to %s"
-msgstr "Vrijednost mora biti veća od ili jednaka %s"
-
-#: ../LocalizedStrings.cpp:1125
+#: ../../LocalizedStrings.cpp:1187
 msgid "range underflow"
 msgstr "unutar raspona"
 
-#: ../LocalizedStrings.cpp:1134
-#, c-format
-msgid "Value must be less than or equal to %s"
-msgstr "Vrijednost mora biti manja od ili jednaka %s"
-
-#: ../LocalizedStrings.cpp:1137
+#: ../../LocalizedStrings.cpp:1199
 msgid "range overflow"
 msgstr "izvan raspona"
 
-#: ../LocalizedStrings.cpp:1143
+#: ../../LocalizedStrings.cpp:1205
 msgid "Enter a valid value"
 msgstr "Upiši valjanu vrijednost"
 
-#: ../LocalizedStrings.cpp:1148
+#: ../../LocalizedStrings.cpp:1210
 msgid "Enter a number"
 msgstr "Upiši broj"
 
-#: ../LocalizedStrings.cpp:1153
+#: ../../LocalizedStrings.cpp:1215
 msgid "Click to Exit Full Screen"
 msgstr "Klik za napuštanje cijelog zaslona"
 
-#: ../LocalizedStrings.cpp:1160
+#: ../../LocalizedStrings.cpp:1222
 msgctxt "Menu item label for a audio/text track that has no other name."
 msgid "Unknown"
 msgstr "Nepoznato"
 
-#: ../LocalizedStrings.cpp:1165
+#: ../../LocalizedStrings.cpp:1227
 msgctxt ""
 "Menu item label for the track that represents disabling closed captions."
 msgid "Off"
 msgstr "Isključeno"
 
-#: ../LocalizedStrings.cpp:1170
+#: ../../LocalizedStrings.cpp:1232
 msgctxt "Menu item label for automatic track selection behavior."
 msgid "Auto (Recommended)"
 msgstr "Automatski (Preporučeno)"
 
-#: ../LocalizedStrings.cpp:1306
+#: ../../LocalizedStrings.cpp:1366
+msgid "Show Media Stats"
+msgstr "_Prikaži medijsku statistiku"
+
+#: ../../LocalizedStrings.cpp:1373
 msgid "Snapshotted Plug-In"
 msgstr "Snapshotted priključak"
 
-#: ../LocalizedStrings.cpp:1311
+#: ../../LocalizedStrings.cpp:1378
 msgid "Click to restart"
 msgstr "Klikni za ponovno pokretanje"
 
-#: ../LocalizedStrings.cpp:1316
+#: ../../LocalizedStrings.cpp:1383
 msgid "Show in blocked plug-in"
 msgstr "Prikaži u blokiranim priključcima"
 
-#: ../LocalizedStrings.cpp:1326
-#, c-format
-msgid "%s WebCrypto Master Key"
-msgstr "%s WebCrypto glavni ključ"
-
-#: ../LocalizedStrings.cpp:1328
+#: ../../LocalizedStrings.cpp:1395
 msgid "<application> WebCrypto Master Key"
 msgstr "<aplikacija> WebCrypto glavni ključ"
 
-#: ../LocalizedStrings.cpp:1334
-msgid ""
-"Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
+#: ../../LocalizedStrings.cpp:1401
+msgid "Used to encrypt WebCrypto keys in persistent storage, such as IndexedDB"
 msgstr ""
 "Koristi se za šifriranje WebCrypto ključeva u trajnoj pohrani, poput "
 "IndexedDB bazi podataka"
 
-#: ../LocalizedStrings.cpp:1343
+#: ../../LocalizedStrings.cpp:1410
 msgctxt "Title of the OK button for the number pad in zoomed form controls."
 msgid "OK"
 msgstr "U redu"
 
-#: ../LocalizedStrings.cpp:1348
+#: ../../LocalizedStrings.cpp:1415
 msgid "Cancel"
 msgstr "Odustani"
 
-#: ../LocalizedStrings.cpp:1353
+#: ../../LocalizedStrings.cpp:1420
 msgid "Hide"
 msgstr "Sakrij"
 
-#: ../LocalizedStrings.cpp:1358
+#: ../../LocalizedStrings.cpp:1425
 msgid "Go"
 msgstr "Idi"
 
-#: ../LocalizedStrings.cpp:1363
+#: ../../LocalizedStrings.cpp:1430
 msgid "Search"
 msgstr "Pretraži"
 
-#: ../LocalizedStrings.cpp:1368
+#: ../../LocalizedStrings.cpp:1435
 msgctxt "Set button below date picker"
 msgid "Set"
 msgstr "Postavi"
 
-#: ../LocalizedStrings.cpp:1373
+#: ../../LocalizedStrings.cpp:1440
 msgctxt "Day label in date picker"
 msgid "DAY"
 msgstr "DAN"
 
-#: ../LocalizedStrings.cpp:1378
+#: ../../LocalizedStrings.cpp:1445
 msgctxt "Month label in date picker"
 msgid "MONTH"
 msgstr "MJESEC"
 
-#: ../LocalizedStrings.cpp:1383
+#: ../../LocalizedStrings.cpp:1450
 msgctxt "Year label in date picker"
 msgid "YEAR"
 msgstr "GODINA"
 
-#: ../LocalizedStrings.cpp:1391
+#: ../../LocalizedStrings.cpp:1458
 msgid "Unacceptable TLS certificate"
 msgstr "Neprihvatljiva TLS vjerodajnica"
 
-#: ../LocalizedStrings.cpp:1410
+#: ../../LocalizedStrings.cpp:1477
 msgid "Continue with Touch ID."
 msgstr "Nastavi s Touch ID."
 
-#: ../network/soup/NetworkStorageSessionSoup.cpp:239
+#: ../../network/soup/NetworkStorageSessionSoup.cpp:239
 msgid "WebKitGTK password"
 msgstr "WebKitGTK lozinka"
 
-#: ../../editing/EditAction.cpp:43
+#: ../../../editing/EditAction.cpp:43
 msgctxt "Undo action name"
 msgid "Set Color"
 msgstr "Postavi boju"
 
-#: ../../editing/EditAction.cpp:45
+#: ../../../editing/EditAction.cpp:45
 msgctxt "Undo action name"
 msgid "Set Background Color"
 msgstr "Postavi boju pozadine"
 
-#: ../../editing/EditAction.cpp:47
+#: ../../../editing/EditAction.cpp:47
 msgctxt "Undo action name"
 msgid "Turn Off Kerning"
 msgstr "Isključi kerning"
 
-#: ../../editing/EditAction.cpp:49
+#: ../../../editing/EditAction.cpp:49
 msgctxt "Undo action name"
 msgid "Tighten Kerning"
 msgstr "Utegnuti kerning"
 
-#: ../../editing/EditAction.cpp:51
+#: ../../../editing/EditAction.cpp:51
 msgctxt "Undo action name"
 msgid "Loosen Kerning"
 msgstr "Labavi kerning"
 
-#: ../../editing/EditAction.cpp:53
+#: ../../../editing/EditAction.cpp:53
 msgctxt "Undo action name"
 msgid "Use Standard Kerning"
 msgstr "Koristi standardni kerning"
 
-#: ../../editing/EditAction.cpp:55
+#: ../../../editing/EditAction.cpp:55
 msgctxt "Undo action name"
 msgid "Turn Off Ligatures"
 msgstr "Isključi ligature"
 
-#: ../../editing/EditAction.cpp:57
+#: ../../../editing/EditAction.cpp:57
 msgctxt "Undo action name"
 msgid "Use Standard Ligatures"
 msgstr "Koristi standardne ligature"
 
-#: ../../editing/EditAction.cpp:59
+#: ../../../editing/EditAction.cpp:59
 msgctxt "Undo action name"
 msgid "Use All Ligatures"
 msgstr "Koristi sve ligature"
 
-#: ../../editing/EditAction.cpp:61
+#: ../../../editing/EditAction.cpp:61
 msgctxt "Undo action name"
 msgid "Raise Baseline"
 msgstr "Podigni osnovicu"
 
-#: ../../editing/EditAction.cpp:63
+#: ../../../editing/EditAction.cpp:63
 msgctxt "Undo action name"
 msgid "Lower Baseline"
 msgstr "Smanji osnovicu"
 
-#: ../../editing/EditAction.cpp:65
+#: ../../../editing/EditAction.cpp:65
 msgctxt "Undo action name"
 msgid "Set Traditional Character Shape"
 msgstr "Postavi tradicionalni oblik znaka"
 
-#: ../../editing/EditAction.cpp:67
+#: ../../../editing/EditAction.cpp:67
 msgctxt "Undo action name"
 msgid "Set Font"
 msgstr "Postavi slovo"
 
-#: ../../editing/EditAction.cpp:69
+#: ../../../editing/EditAction.cpp:69
 msgctxt "Undo action name"
 msgid "Change Attributes"
 msgstr "Promijeni svojstva"
 
-#: ../../editing/EditAction.cpp:71
+#: ../../../editing/EditAction.cpp:71
 msgctxt "Undo action name"
 msgid "Align Left"
 msgstr "Poravnaj ulijevo"
 
-#: ../../editing/EditAction.cpp:73
+#: ../../../editing/EditAction.cpp:73
 msgctxt "Undo action name"
 msgid "Align Right"
 msgstr "Poravnaj udesno"
 
-#: ../../editing/EditAction.cpp:75
+#: ../../../editing/EditAction.cpp:75
 msgctxt "Undo action name"
 msgid "Center"
 msgstr "Sredina"
 
-#: ../../editing/EditAction.cpp:77
+#: ../../../editing/EditAction.cpp:77
 msgctxt "Undo action name"
 msgid "Justify"
 msgstr "Poravnaj"
 
-#: ../../editing/EditAction.cpp:80
+#: ../../../editing/EditAction.cpp:80
 msgctxt "Undo action name"
 msgid "Set Writing Direction"
 msgstr "Postavljanje smjera pisanja"
 
-#: ../../editing/EditAction.cpp:82
+#: ../../../editing/EditAction.cpp:82
 msgctxt "Undo action name"
 msgid "Subscript"
 msgstr "Potpis"
 
-#: ../../editing/EditAction.cpp:84
+#: ../../../editing/EditAction.cpp:84
 msgctxt "Undo action name"
 msgid "Superscript"
 msgstr "Natpis"
 
-#: ../../editing/EditAction.cpp:86
+#: ../../../editing/EditAction.cpp:86
 msgctxt "Undo action name"
 msgid "Underline"
 msgstr "Podcrtano"
 
-#: ../../editing/EditAction.cpp:88
+#: ../../../editing/EditAction.cpp:88
 msgctxt "Undo action name"
 msgid "StrikeThrough"
 msgstr "Precrtaj"
 
-#: ../../editing/EditAction.cpp:90
+#: ../../../editing/EditAction.cpp:90
 msgctxt "Undo action name"
 msgid "Outline"
 msgstr "Obrub"
 
-#: ../../editing/EditAction.cpp:92
+#: ../../../editing/EditAction.cpp:92
 msgctxt "Undo action name"
 msgid "Unscript"
 msgstr "Neispisano"
 
-#: ../../editing/EditAction.cpp:94
+#: ../../../editing/EditAction.cpp:94
 msgctxt "Undo action name"
 msgid "Drag"
 msgstr "Povlačenje"
 
-#: ../../editing/EditAction.cpp:96
+#: ../../../editing/EditAction.cpp:96
 msgctxt "Undo action name"
 msgid "Cut"
 msgstr "Izreži"
 
-#: ../../editing/EditAction.cpp:98
+#: ../../../editing/EditAction.cpp:98
 msgctxt "Undo action name"
 msgid "Bold"
 msgstr "Podebljaj"
 
-#: ../../editing/EditAction.cpp:100
+#: ../../../editing/EditAction.cpp:100
 msgctxt "Undo action name"
 msgid "Italics"
 msgstr "Ukosi"
 
-#: ../../editing/EditAction.cpp:102
+#: ../../../editing/EditAction.cpp:102
 msgctxt "Undo action name"
 msgid "Delete"
 msgstr "Obriši"
 
-#: ../../editing/EditAction.cpp:104
+#: ../../../editing/EditAction.cpp:104
 msgctxt "Undo action name"
 msgid "Dictation"
 msgstr "Diktiranje"
 
-#: ../../editing/EditAction.cpp:106
+#: ../../../editing/EditAction.cpp:106
 msgctxt "Undo action name"
 msgid "Paste"
 msgstr "Zalijepi"
 
-#: ../../editing/EditAction.cpp:108
+#: ../../../editing/EditAction.cpp:108
 msgctxt "Undo action name"
 msgid "Paste Font"
 msgstr "Zalijepi slovo"
 
-#: ../../editing/EditAction.cpp:110
+#: ../../../editing/EditAction.cpp:110
 msgctxt "Undo action name"
 msgid "Paste Ruler"
 msgstr "Zalijepi ravnalo"
 
-#: ../../editing/EditAction.cpp:125
+#: ../../../editing/EditAction.cpp:125
 msgctxt "Undo action name"
 msgid "Typing"
 msgstr "Tipkanje"
 
-#: ../../editing/EditAction.cpp:127
+#: ../../../editing/EditAction.cpp:127
 msgctxt "Undo action name"
 msgid "Create Link"
 msgstr "Stvori poveznicu"
 
-#: ../../editing/EditAction.cpp:129
+#: ../../../editing/EditAction.cpp:129
 msgctxt "Undo action name"
 msgid "Unlink"
 msgstr "Ukloni poveznicu"
 
-#: ../../editing/EditAction.cpp:132
+#: ../../../editing/EditAction.cpp:132
 msgctxt "Undo action name"
 msgid "Insert List"
 msgstr "Umetni popis"
 
-#: ../../editing/EditAction.cpp:134
+#: ../../../editing/EditAction.cpp:134
 msgctxt "Undo action name"
 msgid "Formatting"
 msgstr "Formatiranje"
 
-#: ../../editing/EditAction.cpp:136
+#: ../../../editing/EditAction.cpp:136
 msgctxt "Undo action name"
 msgid "Indent"
 msgstr "Uvlačenje"
 
-#: ../../editing/EditAction.cpp:138
+#: ../../../editing/EditAction.cpp:138
 msgctxt "Undo action name"
 msgid "Outdent"
 msgstr "Izvlačenje"
 
-#: ../../editing/EditAction.cpp:142
+#: ../../../editing/EditAction.cpp:142
 msgctxt "Undo action name"
 msgid "Convert to Ordered List"
 msgstr "Pretvori u uređeni popis"
 
-#: ../../editing/EditAction.cpp:144
+#: ../../../editing/EditAction.cpp:144
 msgctxt "Undo action name"
 msgid "Convert to Unordered List"
 msgstr "Pretvori u neuređeni popis"
 
-#: ../../../JavaScriptCore/API/glib/JSCOptions.cpp:661
+#: ../../../editing/EditAction.cpp:146
+msgctxt "Undo action name"
+msgid "Remove Background"
+msgstr "Ukloni pozadinu"
+
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:680
 msgid "JSC Options"
 msgstr "JSC mogućnosti"
 
-#: ../../../JavaScriptCore/API/glib/JSCOptions.cpp:661
+#: ../../../../JavaScriptCore/API/glib/JSCOptions.cpp:680
 msgid "Show JSC Options"
 msgstr "Prikaži JSC sadržaj"
 
-#: ../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:61
-#: ../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:132
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:61
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:139
 msgid "Name"
 msgstr "Naziv"
 
-#: ../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:62
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:62
 msgid "Size"
 msgstr "Veličina"
 
-#: ../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:63
+#: ../../../../WebKit/NetworkProcess/soup/WebKitDirectoryInputStream.cpp:63
 msgid "Date Modified"
 msgstr "Datum promjene"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:153
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:152
 msgid "Context"
 msgstr "Sadržaj"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:154
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:153
 msgid "Flags with the context of the WebKitHitTestResult"
 msgstr "Oznake s WebKitHitTestResult sadržejem"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:167
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:166
 msgid "Link URI"
 msgstr "URI poveznice"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:168
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:167
 msgid "The link URI"
 msgstr "URI poveznice"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:180
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:179
 msgid "Link Title"
 msgstr "Poveznica naslova"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:181
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:180
 msgid "The link title"
 msgstr "Poveznica naslova"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:193
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:192
 msgid "Link Label"
 msgstr "Poveznica obilježja"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:194
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:193
 msgid "The link label"
 msgstr "Poveznica obilježja"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:206
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:205
 msgid "Image URI"
 msgstr "URI slike"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:207
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:206
 msgid "The image URI"
 msgstr "URI slike"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:219
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:218
 msgid "Media URI"
 msgstr "URI medija"
 
-#: ../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:220
+#: ../../../../WebKit/Shared/API/glib/WebKitHitTestResult.cpp:219
 msgid "The media URI"
 msgstr "URI medija"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:99
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1184
-#: ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:450
+#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:98
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:103
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:111
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1209
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:456
 msgid "URI"
 msgstr "URI"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:100
+#: ../../../../WebKit/Shared/API/glib/WebKitURIRequest.cpp:99
 msgid "The URI to which the request will be made."
 msgstr "URI na koji će se uputiti zahtjev."
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:105
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:104
 msgid "The URI for which the response was made."
 msgstr "URI za koji je odgovor napravljen."
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:116
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:115
 msgid "Status Code"
 msgstr "Kôd stanja"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:117
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:116
 msgid "The status code of the response as returned by the server."
 msgstr "Kôd stanja odgovara vraćenog s poslužitelja."
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:129
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:128
 msgid "Content Length"
 msgstr "Duljina sadržaja"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:130
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:129
 msgid "The expected content length of the response."
 msgstr "Očekivana duljina sadržaja."
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:142
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:141
 msgid "MIME Type"
 msgstr "MIME vrsta"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:143
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:142
 msgid "The MIME type of the response"
 msgstr "MIME vrsta odgovora"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:155
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:154
 msgid "Suggested Filename"
 msgstr "Predloženi naziv datoteke"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:156
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:155
 msgid "The suggested filename for the URI response"
 msgstr "Predloženi naziv datoteke za URI odgovor"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:172
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:171
 msgid "HTTP Headers"
 msgstr "HTTP zaglavlja"
 
-#: ../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:173
+#: ../../../../WebKit/Shared/API/glib/WebKitURIResponse.cpp:172
 msgid "The HTTP headers of the response"
 msgstr "HTTP zaglavlja odgovora"
 
-#: ../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:133
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:140
 msgid "The user message name"
 msgstr "Naziv poruke korisnika"
 
-#: ../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:151
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:158
 msgid "Parameters"
 msgstr "Parametri"
 
-#: ../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:152
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:159
 msgid "The user message parameters"
 msgstr "Parametri poruke korisnika"
 
-#: ../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:169
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:176
 msgid "File Descriptor List"
 msgstr "Popis opisnika datoteke"
 
-#: ../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:170
+#: ../../../../WebKit/Shared/API/glib/WebKitUserMessage.cpp:177
 msgid "The user message list of file descriptors"
 msgstr "Popis poruka korisnika popisnika datoteke"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:42
+#: ../../../../WebKit/Shared/WebErrors.cpp:42
 msgid "Not allowed to use restricted network port"
 msgstr "Nedozvoljeno je korištenje ograničenog mrežnog ulaza"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:47
+#: ../../../../WebKit/Shared/WebErrors.cpp:47
 msgid "The URL was blocked by a content blocker"
 msgstr "URL je blokiran blokatorom sadržaja"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:52
+#: ../../../../WebKit/Shared/WebErrors.cpp:52
 msgid "The URL can’t be shown"
 msgstr "URL se ne može prikazati"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:57
+#: ../../../../WebKit/Shared/WebErrors.cpp:57
 msgid "The URL was blocked by device restrictions"
 msgstr "URL je blokiran ograničenjem uređaja"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:62
+#: ../../../../WebKit/Shared/WebErrors.cpp:62
 msgid "Frame load interrupted"
 msgstr "Prekinuto je učitavanje okvira"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:72
+#: ../../../../WebKit/Shared/WebErrors.cpp:72
 msgid "Error handling synchronous load with custom protocol"
 msgstr "Greška rukovanja sinkronim učitavanjem s prilagođenim protokolom"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:78
+#: ../../../../WebKit/Shared/WebErrors.cpp:78
 msgid "The URL was blocked by a content filter"
 msgstr "URL je blokiran filtrom sadržaja"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:84
+#: ../../../../WebKit/Shared/WebErrors.cpp:84
 msgid "Content with specified MIME type can’t be shown"
 msgstr "Sadržaj s određenom MIME vrstom ne može biti prikazan"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:89
+#: ../../../../WebKit/Shared/WebErrors.cpp:89
 msgid "Plug-in handled load"
 msgstr "Učitavanje rukovanja priključkom"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:95
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2372
+#: ../../../../WebKit/Shared/WebErrors.cpp:95
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:2452
 msgid "Load request cancelled"
 msgstr "Učitavanje zahtjeva je prekinuto"
 
-#: ../../../WebKit/Shared/WebErrors.cpp:100
+#: ../../../../WebKit/Shared/WebErrors.cpp:100
 msgid "File does not exist"
 msgstr "Datoteka ne postoji"
 
-#: ../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:43
-msgid "Printer not found"
-msgstr "Pisač nije pronađen"
-
-#: ../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:48
+#: ../../../../WebKit/Shared/gtk/WebErrorsGtk.cpp:38
 msgid "Invalid page range"
 msgstr "Neispravan raspon stranica"
 
-#: ../../../WebKit/Shared/soup/WebErrorsSoup.cpp:44
+#: ../../../../WebKit/Shared/soup/WebErrorsSoup.cpp:44
 msgid "User cancelled the download"
 msgstr "Korisnik je prekinuo preuzimanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:281
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:283
 msgid "Identifier"
 msgstr "Identifikator"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:282
+#: ../../../../WebKit/UIProcess/API/glib/WebKitAutomationSession.cpp:284
 msgid "The automation session identifier"
 msgstr "Identifikator automatske sesije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:168
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:167
 msgid "Destination"
 msgstr "Odredište"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:169
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:168
 msgid "The local URI to where the download will be saved"
 msgstr "Lokalni URI spremanja preuzimanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:181
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:125
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:180
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:124
 msgid "Response"
 msgstr "Odgovor"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:182
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:181
 msgid "The response of the download"
 msgstr "Odgovor preuzimanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:199
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:198
 msgid "Estimated Progress"
 msgstr "Preostali napredak"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:200
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:199
 msgid "Determines the current progress of the download"
 msgstr "Određuje trenutni napredak preuzimanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:216
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:215
 msgid "Allow Overwrite"
 msgstr "Doputi prebrisivanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:217
+#: ../../../../WebKit/UIProcess/API/glib/WebKitDownload.cpp:216
 msgid "Whether the destination may be overwritten"
 msgstr "Treba li odredište biti prebirsano"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:93
+#: ../../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:93
 msgid "Typing Attributes"
 msgstr "Svojstva tipkanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:94
+#: ../../../../WebKit/UIProcess/API/glib/WebKitEditorState.cpp:94
 msgid "Flags with the typing attributes"
 msgstr "Oznake sa svojstivima tipkanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:172
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:175
 msgid "Favicons database not initialized yet"
 msgstr "Baza podataka favikona još nije pokrenuta"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:178
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:181
 #, c-format
 msgid "Page %s does not have a favicon"
 msgstr "Stranica %s nema favikonu"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:188
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFaviconDatabase.cpp:191
 #, c-format
 msgid "Unknown favicon for page %s"
 msgstr "Nepoznata favikona za stranicu %s"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:139
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:139
 msgid "MIME types filter"
 msgstr "Filtar MIME vrsta"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:140
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:140
 msgid "The filter currently associated with the request"
 msgstr "Filtar trenutno pridružen sa zahtjevom"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:155
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:155
 msgid "MIME types"
 msgstr "MIME vrste"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:156
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:156
 msgid "The list of MIME types associated with the request"
 msgstr "Popis MIME vrsta povezan sa zahtjevom"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:170
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:170
 msgid "Select multiple files"
 msgstr "Odaberi više datoteka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:171
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:171
 msgid "Whether the file chooser should allow selecting multiple files"
 msgstr "Treba li odabiratelj datoteka odabrati više datoteka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:184
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:184
 msgid "Selected files"
 msgstr "Odabrane datoteke"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:185
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFileChooserRequest.cpp:185
 msgid "The list of selected files associated with the request"
 msgstr "Popis odabranih datoteka pridruženih zahtjevu"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:199
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:199
 msgid "Search text"
 msgstr "Tekst pretrage"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:200
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:200
 msgid "Text to search for in the view"
 msgstr "Tekst pretrage u pogledu"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:212
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:212
 msgid "Search Options"
 msgstr "Mogućnosti pretrage"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:213
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:213
 msgid "Search options to be used in the search operation"
 msgstr "Mogućnosti pretrage za korištenje u radanji pretrage"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:226
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:226
 msgid "Maximum matches count"
 msgstr "Najveći broj podudaranja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:227
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:227
 msgid "The maximum number of matches in a given text to report"
 msgstr "Najveći broj podudaranja u zadanom tekstu prijavka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:239
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:239
 msgid "WebView"
 msgstr "WebView"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:240
+#: ../../../../WebKit/UIProcess/API/glib/WebKitFindController.cpp:240
 msgid "The WebView associated with this find controller"
 msgstr "WebView pridružen s ovim upravljačem pretrage"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp:359
+#: ../../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp:365
 msgid "Enable high accuracy"
 msgstr "Omogući preciznu točnost"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp:360
+#: ../../../../WebKit/UIProcess/API/glib/WebKitGeolocationManager.cpp:366
 msgid "Whether high accuracy is enabled"
 msgstr "Treba li omogućiti preciznu točnost"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:118
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:118
 msgid "Navigation action"
 msgstr "Radnja navigacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:119
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:119
 msgid "The WebKitNavigationAction triggering this decision"
 msgstr "WebKitNavigationAction koja pokreće ovu radnju"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:136
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:136
 msgid "Navigation type"
 msgstr "Vrsta navigacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:137
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:137
 msgid "The type of navigation triggering this decision"
 msgstr "Vrsta navigacije koja pokreće ovu radnju"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:156
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:156
 msgid "Mouse button"
 msgstr "Tipka miša"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:157
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:157
 msgid "The mouse button used if this decision was triggered by a mouse event"
-msgstr ""
-"Tipka miša koja se koristi ako je ova radnja pokrenuta događajem miša"
+msgstr "Tipka miša koja se koristi ako je ova radnja pokrenuta događajem miša"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:175
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:175
 msgid "Mouse event modifiers"
 msgstr "Izmjenjivači događaja miša"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:176
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:176
 msgid "The modifiers active if this decision was triggered by a mouse event"
 msgstr "Izmjenjivači su aktivni ako je ova radnja pokrenuta događajem miša"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:191
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:191
 msgid "Navigation URI request"
 msgstr "Zahtjev URI navigacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:192
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:192
 msgid "The URI request that is associated with this navigation"
 msgstr "URI zahtjev koji je pridružen s navigacijom"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:208
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:208
 msgid "Frame name"
 msgstr "Naziv okvira"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:209
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNavigationPolicyDecision.cpp:209
 msgid "The name of the new frame this navigation action targets"
 msgstr "Naziv novog okvira ovog odredišta radnje navigacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:103
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:102
 msgid "ID"
 msgstr "ID"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:104
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:103
 msgid "The unique id for the notification"
 msgstr "Jedinstven id za obavijesti"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1136
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:117
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1161
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:135
 msgid "Title"
 msgstr "Naslov"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:119
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:118
 msgid "The title for the notification"
 msgstr "Naslov obavijesti"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:133
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:132
 msgid "Body"
 msgstr "Sadržaj"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:134
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:133
 msgid "The body for the notification"
 msgstr "Sadržaj obavijesti"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:148
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:147
 msgid "Tag"
 msgstr "Oznaka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:149
+#: ../../../../WebKit/UIProcess/API/glib/WebKitNotification.cpp:148
 msgid "The tag identifier for the notification"
 msgstr "Identfikator oznake obavijesti"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:92
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:92
 msgid "Response URI request"
 msgstr "Odgovor URI zahtjeva"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:93
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:93
 msgid "The URI request that is associated with this policy decision"
 msgstr "URI zahtjev koji je pridružen s ovom radnjom pravila"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:106
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:106
 msgid "URI response"
 msgstr "URI zahtjev"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:107
+#: ../../../../WebKit/UIProcess/API/glib/WebKitResponsePolicyDecision.cpp:107
 msgid "The URI response that is associated with this policy decision"
 msgstr "URI zahtjev koji je pridružen s ovom radnjom pravila"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:626
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:627
 msgid "Enable JavaScript"
 msgstr "Omogući JavaScript"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:627
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:628
 msgid "Enable JavaScript."
 msgstr "Omogući JavaScript."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:641
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:642
 msgid "Auto load images"
 msgstr "Automatsko učitavanje slika"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:642
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:643
 msgid "Load images automatically."
 msgstr "Učitaj slike automatski."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:655
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:656
 msgid "Load icons ignoring image load setting"
 msgstr "Učitaj ikone zanemarujući postavke učitavanja slike"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:656
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:657
 msgid "Whether to load site icons ignoring image load setting."
 msgstr ""
 "Treba li učitati ikone stranice zanemarujući postavke učitavanja slike."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:673
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:674
 msgid "Enable offline web application cache"
 msgstr "Omogući izvanmrežnu predmemoriju web aplikacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:674
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:675
 msgid "Whether to enable offline web application cache."
 msgstr "Treba li omogućiti izvanmrežnu predmemoriju web aplikacije."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:690
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:691
 msgid "Enable HTML5 local storage"
 msgstr "Omogući HTML5 lokalnu pohranu"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:691
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:692
 msgid "Whether to enable HTML5 Local Storage support."
 msgstr "Treba li omgućiti podršku HTML5 lokalne pohrane."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:703
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:704
 msgid "Enable HTML5 database"
 msgstr "Omogući HTML5 bazu podataka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:704
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:705
 msgid "Whether to enable HTML5 database support."
 msgstr "Treba li omogućiti podršku HTML5 baze podataka."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:717
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:720
 msgid "Enable XSS auditor"
 msgstr "Omogući XSS revizora"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:718
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:721
 msgid "Whether to enable the XSS auditor."
 msgstr "Treba li omogućiti XSS revizora."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:732
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:735
 msgid "Enable frame flattening"
 msgstr "Omogući poravnavanje okvira"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:733
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:736
 msgid "Whether to enable frame flattening."
 msgstr "Treba li omogućiti poravnavanje okvira."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:747
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:750
 msgid "Enable plugins"
 msgstr "Omogući priključke"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:748
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:751
 msgid "Enable embedded plugin objects."
 msgstr "Omogući ugrađene objekte priključka."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:760
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:765
 msgid "Enable Java"
 msgstr "Omogući Javu"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:761
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:766
 msgid "Whether Java support should be enabled."
 msgstr "Treba li omogućiti Java podršku."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:774
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:779
 msgid "JavaScript can open windows automatically"
 msgstr "JavaScript se može otvoriti u prozoru automatski"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:775
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:780
 msgid "Whether JavaScript can open windows automatically."
 msgstr "Treba li JavaScript otvoriti u prozoru automatski."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:790
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:795
 msgid "Enable hyperlink auditing"
 msgstr "Omogući revizora hiper poveznica"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:791
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:796
 msgid "Whether <a ping> should be able to send pings."
 msgstr "Treba li <ping> slati pingove."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:803
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:808
 msgid "Default font family"
 msgstr "Zadana vrsta slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:804
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:809
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
 msgstr "Zadana vrsta slova korištena za sadržaj."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:817
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:822
 msgid "Monospace font family"
 msgstr "Monospace vrsta slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:818
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:823
 msgid "The font family used as the default for content using monospace font."
 msgstr "Zadana monospace vrsta slova korištena za sadržaj."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:830
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:835
 msgid "Serif font family"
 msgstr "Serif vrsta slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:831
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:836
 msgid "The font family used as the default for content using serif font."
 msgstr "Zadana serif vrsta slova korištena za sadržaj."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:843
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:848
 msgid "Sans-serif font family"
 msgstr "Sans-serif vrsta slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:844
-msgid ""
-"The font family used as the default for content using sans-serif font."
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:849
+msgid "The font family used as the default for content using sans-serif font."
 msgstr "Zadana sans-serif vrsta slova korištena za sadržaj."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:856
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:861
 msgid "Cursive font family"
 msgstr "Cursive vrsta slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:857
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:862
 msgid "The font family used as the default for content using cursive font."
 msgstr "Zadana cursive vrsta slova korištena za sadržaj."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:869
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:874
 msgid "Fantasy font family"
 msgstr "Fantasy vrsta slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:870
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:875
 msgid "The font family used as the default for content using fantasy font."
 msgstr "Zadana fantasy vrsta slova korištena za sadržaj."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:882
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:887
 msgid "Pictograph font family"
 msgstr "Pictograph vrsta slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:883
-msgid ""
-"The font family used as the default for content using pictograph font."
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:888
+msgid "The font family used as the default for content using pictograph font."
 msgstr "Zadana pictograph vrsta slova korištena za sadržaj."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:896
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:901
 msgid "Default font size"
 msgstr "Zadana veličina slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:897
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:902
 msgid "The default font size used to display text."
 msgstr "Zadana veličina slova korištena za prikaz teksta."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:910
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:915
 msgid "Default monospace font size"
 msgstr "Zadana veličina monospace slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:911
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:916
 msgid "The default font size used to display monospace text."
 msgstr "Zadana veličina slova korištena za prikaz monospace teksta."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:925
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:930
 msgid "Minimum font size"
 msgstr "Najmanja veličina slova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:926
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:931
 msgid "The minimum font size used to display text."
 msgstr "Najmanja veličina slova korištena za prikaz teksta."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:938
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:943
 msgid "Default charset"
 msgstr "Zadani skup znakova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:939
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:944
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
@@ -1966,366 +1952,374 @@ msgstr ""
 "Zadani skup znakova teksta korišten za tumačenje sadržaja s neodređenim "
 "skupom znakova."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:955
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:960
 msgid "Enable private browsing"
 msgstr "Omogući anonimno pregledavanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:956
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:961
 msgid "Whether to enable private browsing"
 msgstr "Treba li omogućiti anonimno pregledavanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:969
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:974
 msgid "Enable developer extras"
 msgstr "Omogući dodatke za razvijatelje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:970
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:975
 msgid "Whether to enable developer extras"
 msgstr "Treba li omogućiti dodatke za razvijatelje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:982
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:987
 msgid "Enable resizable text areas"
 msgstr "Omogući područja teksta promjenjive veličine"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:983
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:988
 msgid "Whether to enable resizable text areas"
 msgstr "Treba li omogućiti područja teksta promjenjive veličine"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:998
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1003
 msgid "Enable tabs to links"
 msgstr "Omogući kartice na poveznicama"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:999
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1004
 msgid "Whether to enable tabs to links"
 msgstr "Treba li omogućiti kartice na poveznicama"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1012
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1017
 msgid "Enable DNS prefetching"
 msgstr "Omogući DNS predučitavanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1013
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1018
 msgid "Whether to enable DNS prefetching"
 msgstr "Treba li omogućiti DNS predučitavanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1025
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1030
 msgid "Enable Caret Browsing"
 msgstr "Omogući pregledavanje pokazivačem"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1026
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1031
 msgid "Whether to enable accessibility enhanced keyboard navigation"
 msgstr "Treba li omogućiti poboljšanu pristupačnost navigacije tipkovnicom"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1041
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1046
 msgid "Enable Fullscreen"
 msgstr "Omogući cjelozaslonski prikaz"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1042
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1047
 msgid "Whether to enable the Javascript Fullscreen API"
 msgstr "Treba li omogućiti Javascript cjelozaslonski API"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1054
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1059
 msgid "Print Backgrounds"
 msgstr "Ispis pozadina"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1055
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1060
 msgid "Whether background images should be drawn during printing"
 msgstr "Trebaju li se pozadinske slike iscrtati tijekom ispisa"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1071
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1076
 msgid "Enable WebAudio"
 msgstr "Omogući WebAudio"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1072
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1077
 msgid "Whether WebAudio content should be handled"
 msgstr "Treba li se rukovati WebAudio sadržajem"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1085
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1090
 msgid "Enable WebGL"
 msgstr "Omogući WebGL"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1086
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1091
 msgid "Whether WebGL content should be rendered"
 msgstr "Treba li se WebGL sadržaj prikazati"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1103
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1108
 msgid "Allow modal dialogs"
 msgstr "Dopusti modalne dijaloge"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1104
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1109
 msgid "Whether it is possible to create modal dialogs"
 msgstr "Treba li biti moguće stvaranje modalnih dijaloga"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1119
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1124
 msgid "Zoom Text Only"
 msgstr "Samo uvećanje teksta"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1120
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1125
 msgid "Whether zoom level of web view changes only the text size"
 msgstr "Treba li se razina uvećanja web prikaza odnositi samo na tekst"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1134
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1139
 msgid "JavaScript can access clipboard"
 msgstr "JavaScript može pristupiti međuspremniku"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1135
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1140
 msgid "Whether JavaScript can access Clipboard"
 msgstr "Treba li JavaScript pristupiti međuspremniku"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1151
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1156
 msgid "Media playback requires user gesture"
 msgstr "Reprodukcija medija zahtijeva geste korisnika"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1152
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1157
 msgid "Whether media playback requires user gesture"
 msgstr "Treba li reprodukcija medija zahtijevati geste korisnika"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1166
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1171
 msgid "Media playback allows inline"
 msgstr "Reprodukcija medija dopušta gledanje videa pri pregledu sadržaja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1167
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1172
 msgid "Whether media playback allows inline"
 msgstr ""
 "Treba li reprodukcija medija dopustiti gledanje videa pri pregledu sadržaja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1181
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1186
 msgid "Draw compositing indicators"
 msgstr "Iscrtaj pokazatelje sastavljanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1182
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1187
 msgid "Whether to draw compositing borders and repaint counters"
 msgstr "Treba li iscrtati rubove sastavljanja i prebojati brojače"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1199
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1204
 msgid "Enable Site Specific Quirks"
 msgstr "Omogući quirks način rada za određene stranice"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1200
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1205
 msgid "Enables the site-specific compatibility workarounds"
 msgstr "Omogući kompatibilnost za određene zastarjele stranice"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1220
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1225
 msgid "Enable page cache"
 msgstr "Omogući predmemoriju stranice"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1221
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1226
 msgid "Whether the page cache should be used"
 msgstr "Treba li se koristiti predmemorija stranice"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1240
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1245
 msgid "User agent string"
 msgstr "Korisnički agent"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1241
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1246
 msgid "The user agent string"
 msgstr "Izraz korisničkog agenta"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1253
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1258
 msgid "Enable smooth scrolling"
 msgstr "Omogući glatko pomicanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1254
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1259
 msgid "Whether to enable smooth scrolling"
 msgstr "Treba li omogućiti glatko pomicanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1273
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1278
 msgid "Enable accelerated 2D canvas"
 msgstr "Omogući ubrzano 2D platno"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1274
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1279
 msgid "Whether to enable accelerated 2D canvas"
 msgstr "Treba li omogućiti ubrzano 2D platno"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1289
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1294
 msgid "Write console messages on stdout"
 msgstr "Zapisuj poruke konzole u stdout"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1290
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1295
 msgid "Whether to write console messages on stdout"
 msgstr "Treba li zapisivati poruke konzole u stdout"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1308
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1313
 msgid "Enable MediaStream"
 msgstr "Omogući MediaStream"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1309
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1314
 msgid "Whether MediaStream content should be handled"
 msgstr "Treba li se rukovati MediaStream sadržajem"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1324
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1329
 msgid "Enable mock capture devices"
 msgstr "Omogući lažne uređaje za snimanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1325
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1330
 msgid "Whether we expose mock capture devices or not"
 msgstr "Treba li koristiti lažne uređaje za snimanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1344
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1349
 msgid "Enable Spatial Navigation"
 msgstr "Omogući prostornu navigaciju"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1345
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1350
 msgid "Whether to enable Spatial Navigation support."
 msgstr "Treba li omogućiti prostornu navigaciju."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1363
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1368
 msgid "Enable MediaSource"
 msgstr "Omogući MediaSource"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1364
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1369
 msgid "Whether MediaSource should be enabled."
 msgstr "Treba li se omogućiti MediaSource."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1383
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1388
 msgid "Enable EncryptedMedia"
 msgstr "Omogući EncryptedMedia"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1384
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1389
 msgid "Whether EncryptedMedia should be enabled."
 msgstr "Treba li se omogućiti EncryptedMedia."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1405
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1410
 msgid "Enable MediaCapabilities"
 msgstr "Omogući MediaCapabilities"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1406
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1411
 msgid "Whether MediaCapabilities should be enabled."
 msgstr "Treba li se omogućiti MediaCapabilities."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1424
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1429
 msgid "Allow file access from file URLs"
 msgstr "Dopusti pristup datoteka iz URL-ova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1425
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1430
 msgid "Whether file access is allowed from file URLs."
 msgstr "Treba li dopustiti pristup datoteka iz URL-ova."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1444
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1449
 msgid "Allow universal access from the context of file scheme URLs"
 msgstr "Dopusti univerzalan pristup iz sadržaja shema datoteke URL-ova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1445
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1450
 msgid ""
 "Whether or not universal access is allowed from the context of file scheme "
 "URLs"
 msgstr ""
 "Treba li dopustiti univerzalan pristup iz sadržaja shema datoteke URL-ova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1462
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1467
 msgid "Allow top frame navigation to data URLs"
 msgstr "Dopusti navigaciju gornjeg okvira do podataka URL-ova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1463
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1468
 msgid "Whether or not top frame navigation is allowed to data URLs"
 msgstr "Treba li dopusti navigaciju gornjeg okvira do podataka URL-ova"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1488
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1493
 msgid "Hardware Acceleration Policy"
 msgstr "Pravilo hardverskog ubrzanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1489
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1494
 msgid "The policy to decide how to enable and disable hardware acceleration"
 msgstr ""
 "Pravilo za odlučivanje omogućavanja i onemogućavanja hardverskog ubrzanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1504
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1509
 msgid "Enable back-forward navigation gestures"
 msgstr "Omogući unatrag-naprijed geste navigacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1505
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1510
 msgid "Whether horizontal swipe gesture will trigger back-forward navigation"
 msgstr ""
 "Hoće li gesta prevlačenjem vodoravno pokrenuti unatrag-naprijed navigaciju"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1522
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1527
 msgid "Enable JavaScript Markup"
 msgstr "Omogući JavaScript označavanje"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1523
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1528
 msgid "Enable JavaScript in document markup."
 msgstr "Omogući JavaScript u označavanju dokumenata."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1539
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1544
 msgid "Enable media"
 msgstr "Omogući medije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1540
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1545
 msgid "Whether media content should be handled"
 msgstr "Treba li se rukovati medijskim sadržajem"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1555
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1560
 msgid "Media content types requiring hardware support"
 msgstr "Vrsta medijskog sadržaja zahtijeva hardversku podršku"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1556
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1561
 msgid "List of media content types requiring hardware support."
-msgstr "Popis vrste medijskog sadržaja koji zahtijeva hardversku podršku"
+msgstr "Popis vrste medijskog sadržaja koji zahtijeva hardversku podršku."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp:143
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1579
+msgid "Enable WebRTC"
+msgstr "Omogući WebRTC"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitSettings.cpp:1580
+msgid "Whether WebRTC content should be handled"
+msgstr "Treba li se rukovati WebRTC sadržajem"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp:149
 msgid "Storage directory path"
 msgstr "Putanja direktorija pohrane"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp:144
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserContentFilterStore.cpp:150
 msgid "The directory where user content filters are stored"
 msgstr "Direktorij gdje su filtri sadržaja korisnika spremljeni"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:183
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:189
 msgid "Is for audio device"
 msgstr "Namijenjen je zvučnim uređajima"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:184
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:190
 msgid ""
 "Whether the media device to which the permission was requested has a "
 "microphone or not."
 msgstr "Ima li ili ne mikrofon zatraženi medijski uređaj."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:196
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:202
 msgid "Is for video device"
 msgstr "Namijenjen je video uređajima"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:197
+#: ../../../../WebKit/UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:203
 msgid ""
 "Whether the media device to which the permission was requested has a video "
 "capture capability or not."
 msgstr "Ima li ili ne medijski uređaj mogućnost snimanja videa."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:496
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:307
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:514
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:300
 msgid "Local Storage Directory"
 msgstr "Direktorij lokalne pohrane"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:497
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:515
 msgid "The directory where local storage data will be saved"
 msgstr "Direktorij za spremanje lokalnih podataka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:512
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:530
 msgid "Website Data Manager"
 msgstr "Upravitelj podacima web stranice"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:513
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:531
 msgid "The WebKitWebsiteDataManager associated with this context"
 msgstr "WebKitWebsiteDataManager pridružen ovom sadržaju"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:534
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:552
 msgid "Swap Processes on Cross-Site Navigation"
 msgstr "Procesi zamjene u navigaciji između web stranica"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:535
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:553
 msgid "Whether swap Web processes on cross-site navigations is enabled"
 msgstr "Treba li omogućiti procese zamjene u navigaciji između web stranica"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:554
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:572
 msgid "Use system appearance for scrollbars"
 msgstr "Koristi izgled sustava za trake klizanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:555
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:573
 msgid "Whether to use system appearance for rendering scrollbars"
 msgstr "Treba li koristi izgled sustava za trake klizanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:571
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:589
 msgid "Memory Pressure Settings"
 msgstr "Postavke opterećenja memorije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:572
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:590
 msgid ""
 "The WebKitMemoryPressureSettings applied to the web processes created by "
 "this context"
@@ -2333,142 +2327,145 @@ msgstr ""
 "WebKitMemoryPressureSettings primijenjen na web procese stvoren ovim "
 "sadržajem"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:113
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:611
+msgid "Time Zone Override"
+msgstr "Zaobilaženje vremenske zone"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebContext.cpp:612
+msgid "The time zone to use instead of the system one"
+msgstr "Vremenska zona koja se koristi umjesto vremenske zone sustava"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:112
 msgid "The current active URI of the resource"
 msgstr "Trenutni aktivan URI resursa"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:126
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:125
 msgid "The response of the resource"
 msgstr "Odgovor resursa"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:351
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4674
-#: ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
-#: ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:901
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebResource.cpp:353
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4921
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:287
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:907
 msgid "Operation was cancelled"
 msgstr "Radnja je prekinuta"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:195
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteData.cpp:199
 msgid "Local files"
 msgstr "Lokalne datoteke"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:272
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:264
 msgid "Base Data Directory"
 msgstr "Osnovni direktorij podataka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:273
-msgid "The base directory for Website data"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:265
+msgid "The base directory for website data"
 msgstr "Osnovni direktorij podataka web stranice"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:290
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:281
 msgid "Base Cache Directory"
 msgstr "Osnovni direktorij predmemorije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:291
-msgid "The base directory for Website cache"
-msgstr "Osnovni direktorij za predmemoriju web stranice"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:282
+msgid "The base directory for caches"
+msgstr "Osnovni direktorij za predmemorije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:308
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:301
 msgid "The directory where local storage data will be stored"
 msgstr "Direktorij gdje će se spremati podaci lokalne pohrane"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:324
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:319
 msgid "Disk Cache Directory"
 msgstr "Direktorij predmemorije ne disku"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:325
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:320
 msgid "The directory where HTTP disk cache will be stored"
 msgstr "Direktorij gdje će se spremati HTTP predmemorija na disku"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:341
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:338
 msgid "Offline Web Application Cache Directory"
 msgstr "Direktorij predmemorije izvanmrežne web aplikacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:342
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:339
 msgid "The directory where offline web application cache will be stored"
 msgstr "Direktorij gdje se sprema predmemorija izvanmrežne web aplikacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:358
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:357
 msgid "IndexedDB Directory"
 msgstr "IndexedDB direktorij"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:359
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:358
 msgid "The directory where IndexedDB databases will be stored"
 msgstr "Direktorij gdje se sprema IndexedDB baza podataka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:377
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:376
 msgid "WebSQL Directory"
 msgstr "WebSQL direktorij"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:378
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:377
 msgid "The directory where WebSQL databases will be stored"
 msgstr "Direktorij gdje se sprema WebSQL baza podataka"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:394
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:395
 msgid "HSTS Cache Directory"
 msgstr "Direktorij HSTS predmemorije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:395
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:396
 msgid ""
 "The directory where the HTTP Strict-Transport-Security cache will be stored"
 msgstr ""
 "Direktorij gdje se sprema HTTP Striktna-Sigurnost-Prijenosa predmemorija"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:411
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:414
 msgid "ITP Directory"
 msgstr "ITP direktorij"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:412
-msgid ""
-"The directory where Intelligent Tracking Prevention data will be stored"
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:415
+msgid "The directory where Intelligent Tracking Prevention data will be stored"
 msgstr ""
 "Direktorij gdje će biti pohranjeni podaci sprječavanja inteligentnog praćenja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:428
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:433
 msgid "Service Worker Registrations Directory"
 msgstr "Direktorij registracije radne usluge"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:429
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:434
 msgid "The directory where service workers registrations will be stored"
 msgstr "Direktorij u kojem će se pohranjivati registracije radne usluge"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:445
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:452
 msgid "DOM Cache directory"
 msgstr "Direktorij DOM predmemorije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:446
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:453
 msgid "The directory where DOM cache will be stored"
 msgstr "Direktorij za pohranu DOM predmemorije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:466
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebsiteDataManager.cpp:473
 msgid "Whether the WebKitWebsiteDataManager is ephemeral"
 msgstr "Treba li WebKitWebsiteDataManager biti kratkotrajan"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:748
-msgid "Acknowledge"
-msgstr "Potvrda"
-
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1062
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1087
 msgid "Backend"
 msgstr "Pozadina"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1063
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1088
 msgid "The backend for the web view"
 msgstr "Pozadina web prikaza"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1076
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1101
 msgid "Web Context"
 msgstr "Web sadržaj"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1077
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1102
 msgid "The web context for the view"
 msgstr "Web sadržaj prikaza"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1092
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1117
 msgid "Related WebView"
 msgstr "Povezani web prikaz"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1093
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1118
 msgid ""
 "The related WebKitWebView used when creating the view to share the same web "
 "process"
@@ -2476,376 +2473,445 @@ msgstr ""
 "Povezani WebKitWebView korišten pri stvaranju prikaza za dijeljene s istim "
 "web procesom"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1107
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1132
 msgid "WebView settings"
 msgstr "Postavke web prikaza"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1108
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1133
 msgid "The WebKitSettings of the view"
 msgstr "WebKit postavke prikaza"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1122
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1147
 msgid "WebView user content manager"
 msgstr "Upravitelj korisničkog sadržaja web prikaza"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1123
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1148
 msgid "The WebKitUserContentManager of the view"
 msgstr "WebKitUserContentManager web prikaza"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1137
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1162
 msgid "Main frame document title"
 msgstr "Naslov glavnog okvira dokumenta"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1155
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1180
 msgid "Estimated Load Progress"
 msgstr "Napredak preostalog učitavanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1156
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1181
 msgid "An estimate of the percent completion for a document load"
 msgstr "Preostali postotak završetka učitavanja dokumenta"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1170
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1195
 msgid "Favicon"
 msgstr "Favikona"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1171
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1196
 msgid "The favicon associated to the view, if any"
 msgstr "Favikona pridružena prikazu, ako postoji"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1185
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1210
 msgid "The current active URI of the view"
 msgstr "Trenutni aktivan URI prikaza"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1198
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1223
 msgid "Zoom level"
 msgstr "Razina uvećanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1199
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1224
 msgid "The zoom level of the view content"
 msgstr "Razina uvećanja sadržaja prikaza"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1216
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1241
 msgid "Is Loading"
 msgstr "Učitati"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1217
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1242
 msgid "Whether the view is loading a page"
 msgstr "Treba li prikaz učitati stranicu"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1235
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1260
 msgid "Whether the view is playing audio"
 msgstr "Treba li prikaz reproducirati zvuk"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1261
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1286
 msgid "Whether the web view is ephemeral"
 msgstr "Treba li web prikaz biti kratkotrajan"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1278
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1303
 msgid "Whether the web view is controlled by automation"
 msgstr "Treba li se  web prikazom upravljati automatski"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1296
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1321
 msgid "The browsing context presentation type for automation"
 msgstr "Vrsta prikaza sadržaja pregledavanja za automatizaciju"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1312
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1337
 msgid "Editable"
 msgstr "Može se uređivati"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1313
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1338
 msgid "Whether the content can be modified by the user."
 msgstr "Može li sadržaj mijenjati korisnik."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1327
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1352
 msgid "Page Identifier"
 msgstr "Identifikator stranice"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1328
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1353
 msgid "The page identifier."
 msgstr "Identifikator stranice."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1344
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1369
 msgid "Whether the view audio is muted"
 msgstr "Treba li utišati zvuk gledanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1358
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1383
 msgid "Default Website Policies"
 msgstr "Zadana pravila web stranice"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1359
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1384
 msgid "The default policy object for sites loaded in this view"
 msgstr "Zadani objekt pravila za stranice učitane u ovom prikazu"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1374
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1399
 msgid ""
 "Whether the web process currently associated to the web view is responsive"
 msgstr "Treba li web proces trenutno pridružen web prikazu biti responzivan"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1398
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1423
 msgid "The capture state of the camera device"
 msgstr "Stanje snimanja kamere"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1423
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1448
 msgid "The capture state of the microphone device"
 msgstr "Stanje snimanja mikrofona"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1448
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1473
 msgid "The capture state of the display device"
 msgstr "Stanje snimanja zaslona"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4384
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1494
+msgid "Enables WebExtension mode"
+msgstr "Omogući način rada web proširenja"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:1518
+msgid "The default Content-Security-Policy"
+msgstr "Zadana Pravila-sigurnosti-sadržaja"
+
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4628
 msgid "There was an error creating the snapshot"
 msgstr "Dogodila se greška pri stvaranju snimke"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4680
-#: ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:293
-#: ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:907
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWebView.cpp:4927
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebExtension.cpp:293
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:913
 #, c-format
 msgid "Message %s was not handled"
 msgstr "Porukom %s se ne može rukovati"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:220
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:218
 msgid "Geometry"
 msgstr "Geometrija"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:221
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:219
 msgid "The size and position of the window on the screen."
 msgstr "Veličina i položaj prozora na zaslonu."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:234
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:232
 msgid "Toolbar Visible"
 msgstr "Vidljivost alatne trake"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:235
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:233
 msgid "Whether the toolbar should be visible for the window."
 msgstr "Treba li alatna traka biti vidljiva na prozoru."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:247
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:245
 msgid "Statusbar Visible"
 msgstr "Vidljivost trake stanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:248
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:246
 msgid "Whether the statusbar should be visible for the window."
 msgstr "Treba li statusna traka biti vidljiva u prozoru."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:260
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:258
 msgid "Scrollbars Visible"
 msgstr "Vidljivost trake pomicanja"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:261
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:259
 msgid "Whether the scrollbars should be visible for the window."
 msgstr "Treba li traka pomicanja biti vidljiva u glavnom prozoru."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:273
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:271
 msgid "Menubar Visible"
 msgstr "Vidljivost trake izbornika"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:274
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:272
 msgid "Whether the menubar should be visible for the window."
 msgstr "Treba li traka izbornika biti vidljiva u prozoru."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:286
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:284
 msgid "Locationbar Visible"
 msgstr "Vidljivost trake lokacije"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:287
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:285
 msgid "Whether the locationbar should be visible for the window."
 msgstr "Treba li traka lokacije biti vidljiva u prozoru."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:298
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:296
 msgid "Resizable"
 msgstr "Promjenjiva veličina"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:299
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:297
 msgid "Whether the window can be resized."
 msgstr "Treba li se prozoru mijenjati veličina."
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:311
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:309
 msgid "Fullscreen"
 msgstr "Cjelozaslonski prikaz"
 
-#: ../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:312
+#: ../../../../WebKit/UIProcess/API/glib/WebKitWindowProperties.cpp:310
 msgid "Whether window will be displayed fullscreen."
 msgstr "Treba li glavni prozor biti prikazan u cijelo zaslonu."
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:103
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:103
 msgid "Authentication Required"
 msgstr "Potrebna je ovjera"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:129
-#: ../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:322
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:129
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:322
 msgid "_Cancel"
 msgstr "_Odustani"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:139
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:139
 msgid "_Authenticate"
 msgstr "_Ovjera"
 
 #. Prompt on the HTTP authentication dialog.
-#: ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:156
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:156
 #, c-format
 msgid "Authentication required by %s:%i"
 msgstr "Potrebna je ovjera za %s:%i"
 
 #. Label on the HTTP authentication dialog. %s is a (probably English) message from the website.
-#: ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:169
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:169
 #, c-format
 msgid "The site says: “%s”"
 msgstr "Poruka stranice: “%s”"
 
 #. Check button on the HTTP authentication dialog.
-#: ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:180
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:180
 msgid "_Remember password"
 msgstr "_Zapamti lozinku"
 
 #. Entry on the HTTP authentication dialog.
-#: ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:193
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:193
 msgid "_Username"
 msgstr "_Korisničko ime"
 
 #. Entry on the HTTP authentication dialog.
-#: ../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:205
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitAuthenticationDialog.cpp:205
 msgid "_Password"
 msgstr "_Lozinka"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:133
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:133
 msgid "Current RGBA color"
 msgstr "Trenutna RGBA boja"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:134
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitColorChooserRequest.cpp:134
 msgid "The current RGBA color for the request"
 msgstr "Trenutna RGBA boja zahtjeva"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:118
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:118
 msgid "Widget"
 msgstr "Widget"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:119
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:119
 msgid "Widget that will be added to the print dialog."
 msgstr "Widget koji će biti dodan u dijalog ispisa."
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:136
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintCustomWidget.cpp:136
 msgid "Title of the widget that will be added to the print dialog."
 msgstr "Naslov widgeta koji će biti dodan dijalogu ispisa."
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:161
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:168
 msgid "Web View"
 msgstr "Web prikaz"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:162
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:169
 msgid "The web view that will be printed"
 msgstr "Web prikaz koji će se ispisati"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:174
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:181
 msgid "Print Settings"
 msgstr "Postavke ispisa"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:175
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:182
 msgid "The initial print settings for the print operation"
 msgstr "Početne postavke ispisa za radnje ispisa"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:186
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:193
 msgid "Page Setup"
 msgstr "Postavke stranice"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:187
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:194
 msgid "The initial page setup for the print operation"
 msgstr "Početne postavke stranice za radnje ispisa"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:300
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitPrintOperation.cpp:344
+msgid "Printer not found"
+msgstr "Pisač nije pronađen"
+
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:300
 msgid "_Close"
 msgstr "_Zatvori"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:324
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:324
 msgid "_OK"
 msgstr "_U redu"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:331
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:331
 msgid "Are you sure you want to leave this page?"
 msgstr "Sigurno želite napustiti ovu stranicu?"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:333
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:333
 msgid "Stay on Page"
 msgstr "Ostani na stranici"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:335
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitScriptDialogImpl.cpp:335
 msgid "Leave Page"
 msgstr "Napusti stranicu"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:130
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:129
 msgid "Inspected URI"
 msgstr "Provjeren URI"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:131
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:130
 msgid "The URI that is currently being inspected"
 msgstr "URI koji je trenutno provjeren"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:142
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:141
 msgid "Attached Height"
 msgstr "Priložena visina"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:143
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:142
 msgid "The height that the inspector view should have when it is attached"
 msgstr "Visina koju bi inspektor trebao imati kada je priložen"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:158
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:157
 msgid "Can Attach"
 msgstr "Priložo"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:159
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebInspector.cpp:158
 msgid ""
 "Whether the inspector can be attached to the same window that contains the "
 "inspected view"
 msgstr ""
 "Može li se inspektor priložiti na isti prozor koji sadrži provjereni prikaz"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2354
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewBase.cpp:2377
 msgid "Website running in fullscreen mode"
 msgstr "Web stranica je pokrenuta u cijelom zaslonu"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
 msgid "Select Files"
 msgstr "Odaberi datoteke"
 
-#: ../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
+#: ../../../../WebKit/UIProcess/API/gtk/WebKitWebViewGtk.cpp:107
 msgid "Select File"
 msgstr "Odaberi datoteku"
 
-#: ../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:63
-#: ../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:81
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:63
+#: ../../../../WebKit/UIProcess/Inspector/gtk/WebKitInspectorWindow.cpp:81
 msgid "Web Inspector"
 msgstr "Web inspektor"
 
-#: ../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:73
-#: ../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:140
-#: ../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:166
+#. TRANSLATORS: the default action for a desktop notification created by a website.
+#: ../../../../WebKit/UIProcess/Notifications/glib/NotificationService.cpp:386
+msgid "Acknowledge"
+msgstr "Potvrda"
+
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:73
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:140
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:166
 msgid "Failed to connect to geolocation service"
 msgstr "Neuspjelo povezivanje na uslugu geolokacije"
 
-#: ../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:215
-#: ../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:273
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:215
+#: ../../../../WebKit/UIProcess/geoclue/GeoclueGeolocationProvider.cpp:273
 msgid "Failed to determine position from geolocation service"
 msgstr "Neuspjelo određivanje položaja iz usluge geolokacije"
 
-#: ../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
+#: ../../../../WebKit/UIProcess/gtk/WebColorPickerGtk.cpp:102
 msgid "Select Color"
 msgstr "Odabir boje"
 
-#: ../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
+#: ../../../../WebKit/UIProcess/WebsiteData/WebsiteDataRecord.cpp:40
 msgid "Local documents on your computer"
 msgstr "Lokalni dokumenti na vašem računalu"
 
-#: ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:103
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:103
 msgid "Node"
 msgstr "Čvor"
 
-#: ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:104
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebHitTestResult.cpp:104
 msgid "The WebKitDOMNode"
 msgstr "WebKitDOMNode"
 
-#: ../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:451
+#: ../../../../WebKit/WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:457
 msgid "The current active URI of the web page"
 msgstr "Trenutni aktivan URI web stranice"
+
+#, c-format
+#~ msgid "Look Up “%s”"
+#~ msgstr "Pretraži “%s”"
+
+#, c-format
+#~ msgid "%d files"
+#~ msgstr "%d datoteke"
+
+#, c-format
+#~ msgid "%s %d×%d pixels"
+#~ msgstr "%s %d×%d piksela"
+
+#, c-format
+#~ msgid "<filename> %d×%d pixels"
+#~ msgstr "<naziv datoteke> %d×%d piksela"
+
+#, c-format
+#~ msgid "%1$d days %2$d hours %3$d minutes %4$d seconds"
+#~ msgstr "%1$d dana %2$d sati %3$d minuta %4$d sekundi"
+
+#, c-format
+#~ msgid "%1$d hours %2$d minutes %3$d seconds"
+#~ msgstr "%1$d sata %2$d minuta %3$d sekundi"
+
+#, c-format
+#~ msgid "%1$d minutes %2$d seconds"
+#~ msgstr "%1$d minuta %2$d sekundi"
+
+#, c-format
+#~ msgid "%1$d seconds"
+#~ msgstr "%1$d sekundi"
+
+#, c-format
+#~ msgid "Use at least %d characters"
+#~ msgstr "Koristi najmanje %d znaka"
+
+#, c-format
+#~ msgid "Use no more than %d characters"
+#~ msgstr "Koristi ne više od %d znaka"
+
+#, c-format
+#~ msgid "Value must be greater than or equal to %s"
+#~ msgstr "Vrijednost mora biti veća od ili jednaka %s"
+
+#, c-format
+#~ msgid "Value must be less than or equal to %s"
+#~ msgstr "Vrijednost mora biti manja od ili jednaka %s"
+
+#, c-format
+#~ msgid "%s WebCrypto Master Key"
+#~ msgstr "%s WebCrypto glavni ključ"
 
 #~ msgid "return to realtime"
 #~ msgstr "povratak u stvarno vijeme"
