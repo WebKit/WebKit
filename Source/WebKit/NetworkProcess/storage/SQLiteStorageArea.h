@@ -69,13 +69,19 @@ private:
     WebCore::SQLiteStatementAutoResetScope cachedStatement(StatementType);
     Expected<String, StorageError> getItem(const String& key);
     Expected<String, StorageError> getItemFromDatabase(const String& key);
+    Expected<HashMap<String, String>, StorageError> getAllItemsFromDatabase();
+    void initializeCache(const HashMap<String, String>&);
 
     String m_path;
     Ref<WorkQueue> m_queue;
     std::unique_ptr<WebCore::SQLiteDatabase> m_database;
     std::unique_ptr<WebCore::SQLiteTransaction> m_transaction;
     Vector<std::unique_ptr<WebCore::SQLiteStatement>> m_cachedStatements;
-    std::optional<HashMap<String, String>> m_cache;
+    struct Cache {
+        HashMap<String, String> items;
+        uint64_t size { 0 };
+    };
+    std::optional<Cache> m_cache;
 };
 
 } // namespace WebKit
