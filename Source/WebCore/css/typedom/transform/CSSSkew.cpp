@@ -32,6 +32,10 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSFunctionValue.h"
+#include "CSSNumericFactory.h"
+#include "CSSNumericValue.h"
+#include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
@@ -47,6 +51,34 @@ ExceptionOr<Ref<CSSSkew>> CSSSkew::create(Ref<CSSNumericValue> ax, Ref<CSSNumeri
         || !ay->type().matches<CSSNumericBaseType::Angle>())
         return Exception { TypeError };
     return adoptRef(*new CSSSkew(WTFMove(ax), WTFMove(ay)));
+}
+
+ExceptionOr<Ref<CSSSkew>> CSSSkew::create(CSSFunctionValue& cssFunctionValue)
+{
+    if (cssFunctionValue.name() != CSSValueSkew) {
+        ASSERT_NOT_REACHED();
+        return CSSSkew::create(CSSNumericFactory::deg(0), CSSNumericFactory::deg(0));
+    }
+
+    Vector<Ref<CSSNumericValue>> components;
+    for (auto componentCSSValue : cssFunctionValue) {
+        auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue);
+        if (valueOrException.hasException())
+            return valueOrException.releaseException();
+        if (!is<CSSNumericValue>(valueOrException.returnValue()))
+            return Exception { TypeError, "Expected a CSSNumericValue."_s };
+        components.append(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().get()));
+    }
+
+    auto numberOfComponents = components.size();
+    if (numberOfComponents < 1 || numberOfComponents > 2) {
+        ASSERT_NOT_REACHED();
+        return Exception { TypeError, "Unexpected number of values."_s };
+    }
+
+    if (components.size() == 2)
+        return CSSSkew::create(components[0], components[1]);
+    return CSSSkew::create(components[0], CSSNumericFactory::deg(0));
 }
 
 CSSSkew::CSSSkew(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay)

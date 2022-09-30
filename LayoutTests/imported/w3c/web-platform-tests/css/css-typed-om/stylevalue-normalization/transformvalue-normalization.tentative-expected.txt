@@ -1,30 +1,30 @@
 
-FAIL Normalizing a matrix() returns a CSSMatrixComponent assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a matrix3d() returns a CSSMatrixComponent assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a translate() with X returns a CSSTranslate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a translate() with X and Y returns a CSSTranslate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a translateX() returns a CSSTranslate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a translateY() returns a CSSTranslate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a translate3d() returns a CSSTranslate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a translateZ() returns a CSSTranslate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a scale() with one argument returns a CSSScale assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a scale() with two arguments returns a CSSScale assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a scaleX() returns a CSSScale assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a scaleY() returns a CSSScale assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a scale3d() returns a CSSScale assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a scaleZ() returns a CSSScale assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a rotate() returns a CSSRotate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a rotate3d() returns a CSSRotate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a rotateX() returns a CSSRotate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a rotateY() returns a CSSRotate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a rotateZ() returns a CSSRotate assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a skew() with only X returns a CSSSkew assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a skew() with X and Y which is 0 value returns a CSSSkew assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a skew() with X and Y returns a CSSSkew assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a skewX() returns a CSSSkewX assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a skewY() returns a CSSSkewY assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a perspective() returns a CSSPerspective assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a perspective(none) returns a CSSPerspective assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing a <transform-list> returns a CSSTransformValue containing all the transforms assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
-FAIL Normalizing transforms with calc values contains CSSMathValues assert_equals: expected "CSSTransformValue" but got "CSSStyleValue"
+PASS Normalizing a matrix() returns a CSSMatrixComponent
+PASS Normalizing a matrix3d() returns a CSSMatrixComponent
+PASS Normalizing a translate() with X returns a CSSTranslate
+PASS Normalizing a translate() with X and Y returns a CSSTranslate
+PASS Normalizing a translateX() returns a CSSTranslate
+PASS Normalizing a translateY() returns a CSSTranslate
+PASS Normalizing a translate3d() returns a CSSTranslate
+PASS Normalizing a translateZ() returns a CSSTranslate
+PASS Normalizing a scale() with one argument returns a CSSScale
+PASS Normalizing a scale() with two arguments returns a CSSScale
+PASS Normalizing a scaleX() returns a CSSScale
+PASS Normalizing a scaleY() returns a CSSScale
+PASS Normalizing a scale3d() returns a CSSScale
+PASS Normalizing a scaleZ() returns a CSSScale
+PASS Normalizing a rotate() returns a CSSRotate
+PASS Normalizing a rotate3d() returns a CSSRotate
+PASS Normalizing a rotateX() returns a CSSRotate
+PASS Normalizing a rotateY() returns a CSSRotate
+PASS Normalizing a rotateZ() returns a CSSRotate
+PASS Normalizing a skew() with only X returns a CSSSkew
+PASS Normalizing a skew() with X and Y which is 0 value returns a CSSSkew
+PASS Normalizing a skew() with X and Y returns a CSSSkew
+PASS Normalizing a skewX() returns a CSSSkewX
+PASS Normalizing a skewY() returns a CSSSkewY
+PASS Normalizing a perspective() returns a CSSPerspective
+PASS Normalizing a perspective(none) returns a CSSPerspective
+FAIL Normalizing a <transform-list> returns a CSSTransformValue containing all the transforms assert_equals: expected 7 but got 1
+FAIL Normalizing transforms with calc values contains CSSMathValues assert_equals: expected 2 but got 1
 

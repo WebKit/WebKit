@@ -1,4 +1,4 @@
 
-FAIL Computed position sticky even if it does not apply assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
-FAIL Computed position absolute even if it does not apply assert_equals: expected "CSSKeywordValue" but got "CSSStyleValue"
+PASS Computed position sticky even if it does not apply
+PASS Computed position absolute even if it does not apply
 

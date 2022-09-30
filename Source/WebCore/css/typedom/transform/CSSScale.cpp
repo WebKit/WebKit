@@ -32,6 +32,10 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSFunctionValue.h"
+#include "CSSNumericFactory.h"
+#include "CSSNumericValue.h"
+#include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
 #include "DOMMatrix.h"
@@ -55,6 +59,55 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std:
         return Exception { TypeError };
 
     return adoptRef(*new CSSScale(z ? Is2D::No : Is2D::Yes, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ)));
+}
+
+ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSFunctionValue& cssFunctionValue)
+{
+    auto makeScale = [&](const Function<ExceptionOr<Ref<CSSScale>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t minNumberOfComponents, std::optional<size_t> maxNumberOfComponents = std::nullopt) -> ExceptionOr<Ref<CSSScale>> {
+        Vector<RefPtr<CSSNumericValue>> components;
+        for (auto componentCSSValue : cssFunctionValue) {
+            auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue);
+            if (valueOrException.hasException())
+                return valueOrException.releaseException();
+            if (!is<CSSNumericValue>(valueOrException.returnValue()))
+                return Exception { TypeError, "Expected a CSSNumericValue."_s };
+            components.append(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().ptr()));
+        }
+        if (!maxNumberOfComponents)
+            maxNumberOfComponents = minNumberOfComponents;
+        auto numberOfComponents = components.size();
+        if (numberOfComponents < minNumberOfComponents || numberOfComponents > maxNumberOfComponents) {
+            ASSERT_NOT_REACHED();
+            return Exception { TypeError, "Unexpected number of values."_s };
+        }
+        return create(WTFMove(components));
+    };
+
+    switch (cssFunctionValue.name()) {
+    case CSSValueScaleX:
+        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
+            return CSSScale::create(components[0], CSSNumericFactory::number(1), std::nullopt);
+        }, 1);
+    case CSSValueScaleY:
+        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
+            return CSSScale::create(CSSNumericFactory::number(1), components[0], std::nullopt);
+        }, 1);
+    case CSSValueScaleZ:
+        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
+            return CSSScale::create(CSSNumericFactory::number(1), CSSNumericFactory::number(1), components[0]);
+        }, 1);
+    case CSSValueScale:
+        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
+            return CSSScale::create(components[0], components.size() == 2 ? components[1] : components[0], std::nullopt);
+        }, 1, 2);
+    case CSSValueScale3d:
+        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
+            return CSSScale::create(components[0], components[1], components[2]);
+        }, 3);
+    default:
+        ASSERT_NOT_REACHED();
+        return CSSScale::create(CSSNumericFactory::number(1), CSSNumericFactory::number(1), std::nullopt);
+    }
 }
 
 CSSScale::CSSScale(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, Ref<CSSNumericValue> z)

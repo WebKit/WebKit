@@ -32,6 +32,10 @@
 
 #if ENABLE(CSS_TYPED_OM)
 
+#include "CSSFunctionValue.h"
+#include "CSSNumericFactory.h"
+#include "CSSNumericValue.h"
+#include "CSSStyleValueFactory.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
 #include <wtf/IsoMallocInlines.h>
@@ -45,6 +49,26 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(Ref<CSSNumericValue> ax)
     if (!ax->type().matches<CSSNumericBaseType::Angle>())
         return Exception { TypeError };
     return adoptRef(*new CSSSkewX(WTFMove(ax)));
+}
+
+ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(CSSFunctionValue& cssFunctionValue)
+{
+    if (cssFunctionValue.name() != CSSValueSkewX) {
+        ASSERT_NOT_REACHED();
+        return CSSSkewX::create(CSSNumericFactory::deg(0));
+    }
+
+    if (cssFunctionValue.size() != 1 || !cssFunctionValue.item(0)) {
+        ASSERT_NOT_REACHED();
+        return Exception { TypeError, "Unexpected number of values."_s };
+    }
+
+    auto valueOrException = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0));
+    if (valueOrException.hasException())
+        return valueOrException.releaseException();
+    if (!is<CSSNumericValue>(valueOrException.returnValue()))
+        return Exception { TypeError, "Expected a CSSNumericValue."_s };
+    return CSSSkewX::create(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().get()));
 }
 
 CSSSkewX::CSSSkewX(Ref<CSSNumericValue> ax)
