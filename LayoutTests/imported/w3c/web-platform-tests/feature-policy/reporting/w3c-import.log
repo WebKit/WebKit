@@ -1,0 +1,49 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/camera-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/camera-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/encrypted-media-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/encrypted-media-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/fullscreen-reporting.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/fullscreen-reporting.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/generic-sensor-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/generic-sensor-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/geolocation-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/geolocation-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/image.bmp
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/microphone-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/microphone-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/midi-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/midi-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/payment-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/screen-wake-lock-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/screen-wake-lock-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/serial-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/serial-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/sync-xhr-reporting.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/sync-xhr-reporting.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/usb-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/usb-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/vr-report-only.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/vr-report-only.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/vr-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/vr-reporting.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/reporting/xr-reporting.https.html.headers

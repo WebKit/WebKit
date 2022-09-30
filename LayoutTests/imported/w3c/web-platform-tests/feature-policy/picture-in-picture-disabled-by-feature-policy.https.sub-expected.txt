@@ -1,0 +1,9 @@
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-picture-in-picture.html
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Feature-Policy header: picture-in-picture "none" disallows the top-level document.
+PASS Feature-Policy header: picture-in-picture "none" disallows same-origin iframes.
+TIMEOUT Feature-Policy header: picture-in-picture "none" disallows cross-origin iframes. Test timed out
+

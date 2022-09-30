@@ -1,0 +1,6 @@
+Blocked access to external URL https://www1.localhost:9443/feature-policy/feature-policy-frame-policy-timing-iframe-camera.https.sub.html
+
+
+FAIL allow attr timing test same origin assert_equals: expected "NotAllowedError" but got "ok"
+FAIL allow attr timing test diff origin assert_equals: expected "NotAllowedError" but got "timeout"
+

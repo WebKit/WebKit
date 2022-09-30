@@ -1,0 +1,8 @@
+
+FAIL Feature-Policy: fullscreen 'self' https://www.web-platform.test:9443 https://www.example.com; -- test allowlist is [same_origin, cross_origin, https://www.example.com] undefined is not an object (evaluating 'document.featurePolicy.getAllowlistForFeature')
+FAIL Feature-Policy: fullscreen 'self' https://www.web-platform.test:9443 https://www.example.com; -- test fullscreen is allowed on same-origin subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Feature-Policy: fullscreen 'self' https://www.web-platform.test:9443 https://www.example.com; -- test fullscreen is allowed on cross-origin https://www.web-platform.test:9443/feature-policy/resources/feature-policy-allowedfeatures.html subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Feature-Policy: fullscreen 'self' https://www.web-platform.test:9443 https://www.example.com; -- test fullscreen is disallowed on cross-origin https://www1.web-platform.test:9443/feature-policy/resources/feature-policy-allowedfeatures.html subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Feature-Policy: fullscreen 'self' https://www.web-platform.test:9443 https://www.example.com;, iframe.allow = fullscreen 'none'; -- test fullscreen is disallowed on same-origin subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Feature-Policy: fullscreen 'self' https://www.web-platform.test:9443 https://www.example.com;iframe.allow = fullscreen 'none'; -- test fullscreen is disallowed on cross-origin subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+

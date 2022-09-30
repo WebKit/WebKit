@@ -2350,6 +2350,13 @@ webkit.org/b/244014 [ Debug ] imported/w3c/web-platform-tests/html/semantics/doc
 
 webkit.org/b/244549 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/blob-url-workers.window.html [ Pass Failure ]
 
+# These tests are flaky due to "Blocked access to external URL" messages because we don't support WPT domains.
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html [ DumpJSConsoleLogInStdErr Failure Pass ]
+
 # These tests have similar harness errors and timeouts. See webkit.org/b/244900
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-1.html [ Pass Timeout Failure ]
 [ Debug ] imported/w3c/web-platform-tests/dom/nodes/NodeList-static-length-getter-tampered-indexOf-2.html [ Pass Timeout Failure ]

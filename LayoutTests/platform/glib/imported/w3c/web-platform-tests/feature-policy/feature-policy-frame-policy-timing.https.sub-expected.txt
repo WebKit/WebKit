@@ -1,0 +1,5 @@
+
+
+FAIL allow attr timing test same origin assert_equals: expected "NotAllowedError" but got "ok"
+FAIL allow attr timing test diff origin assert_equals: expected "NotAllowedError" but got "ok"
+

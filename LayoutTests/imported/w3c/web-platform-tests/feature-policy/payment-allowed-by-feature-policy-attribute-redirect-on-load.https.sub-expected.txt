@@ -1,0 +1,8 @@
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-payment.html
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Feature-Policy allow="payment" allows same-origin navigation in an iframe.
+TIMEOUT Feature-Policy allow="payment" disallows cross-origin navigation in an iframe. Test timed out
+

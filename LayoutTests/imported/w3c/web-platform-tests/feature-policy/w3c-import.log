@@ -1,0 +1,67 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/README.md
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-timing-iframe-camera.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-timing.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-allowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-allowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-allowed-for-self.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-allowed-for-self.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-allowed-for-some.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-allowed-for-some.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-declined.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-declined.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-disallowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-header-policy-disallowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-allowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-allowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-allowed-for-self.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-allowed-for-self.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-disallowed-for-all.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-disallowed-for-all.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-allowed-by-feature-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-allowed-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-allowed-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-default-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-disabled-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-disabled-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/payment-supported-by-feature-policy.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/permissions-policy-feature-policy-coexist.https.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/permissions-policy-feature-policy-coexist.https.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/permissions-policy-header-policy-allowed-for-self.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/permissions-policy-header-policy-allowed-for-self.https.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/picture-in-picture-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/picture-in-picture-allowed-by-feature-policy-attribute.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/picture-in-picture-allowed-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/picture-in-picture-allowed-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/picture-in-picture-default-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/picture-in-picture-disabled-by-feature-policy.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/picture-in-picture-disabled-by-feature-policy.https.sub.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/picture-in-picture-supported-by-feature-policy.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/policy-extends-to-sandbox.html

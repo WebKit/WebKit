@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'document.featurePolicy.allowedFeatures')
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Feature policy treats opaque origins correctly Test timed out
+

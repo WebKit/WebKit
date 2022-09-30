@@ -1,0 +1,6 @@
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT When the policy is enabled, 'autofocus' and scripted focus do focus the document. Test timed out
+

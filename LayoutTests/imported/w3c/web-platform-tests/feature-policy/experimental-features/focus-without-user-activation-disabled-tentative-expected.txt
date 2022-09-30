@@ -1,0 +1,4 @@
+
+
+FAIL When the policy is disabled, 'autofocus' and scripted focus do not focus the document. assert_false: 'autofocus' should not work. expected false got true
+

@@ -1,5 +1,6 @@
 
-FAIL Default "autoplay" feature policy ["self"] allows the top-level document. Can't find variable: simulateGesture
-FAIL Default "autoplay" feature policy ["self"] allows same-origin iframes. Can't find variable: simulateGesture
-FAIL Default "autoplay" feature policy ["self"] disallows cross-origin iframes. Can't find variable: simulateGesture
+
+PASS Default "autoplay" feature policy ["self"] allows the top-level document.
+PASS Default "autoplay" feature policy ["self"] allows same-origin iframes.
+FAIL Default "autoplay" feature policy ["self"] disallows cross-origin iframes. assert_false: autoplay expected false got true
 

@@ -2681,6 +2681,30 @@
     "imported/w3c/web-platform-tests/eventsource/shared-worker/eventsource-constructor-non-same-origin.htm": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-all.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-self.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-disallowed-for-all.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-allowed-for-all.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-allowed-for-self.https.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/feature-policy/feature-policy-nested-header-policy-disallowed-for-all.https.sub.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/fetch/api/basic/error-after-response.html": [
         "slow"
     ],

@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: setMediaPermission
+
+Harness Error (FAIL), message = ReferenceError: Can't find variable: setMediaPermission
+
+NOTRUN Microphone Report Format
+

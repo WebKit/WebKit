@@ -1,0 +1,11 @@
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-payment.html
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-payment.html
+
+
+Harness Error (TIMEOUT), message = null
+
+PASS Feature-Policy header {"payment" : ["*"]} allows the top-level document.
+PASS Feature-Policy header {"payment" : ["*"]} allows same-origin iframes.
+TIMEOUT Feature-Policy header {"payment" : ["*"]} disallows cross-origin iframes. Test timed out
+TIMEOUT Feature-Policy header {"payment" : ["*"]} allow="payment" allows cross-origin iframes. Test timed out
+

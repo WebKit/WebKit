@@ -1,0 +1,28 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/common.js
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/feature-policy-trust-token-redemption.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/focus-without-user-activation-iframe-tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/lazyload-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/lazyload.png
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/vertical-scroll-scrollable-content.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/vertical-scroll-scrollbar-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/vertical-scroll-scrollintoview.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/vertical-scroll-touch-action.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/vertical-scroll-touch-block.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/vertical-scroll-wheel-block.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/experimental-features/resources/vertical-scroll.js

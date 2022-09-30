@@ -1,0 +1,8 @@
+
+FAIL Test nested header policy with local iframe on policy "fullscreen *" assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Test nested header policy with local iframe on policy "fullscreen 'self'" assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Test nested header policy with local iframe on policy "fullscreen 'none'" assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Test nested header policy with remote iframe on policy "fullscreen *" assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Test nested header policy with remote iframe on policy "fullscreen 'self'" assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Test nested header policy with remote iframe on policy "fullscreen 'none'" assert_not_equals: Feature Policy is supported got disallowed value undefined
+

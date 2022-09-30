@@ -1,0 +1,6 @@
+
+FAIL PaymentRequest Report Format assert_throws_dom: PaymentRequest API should not be allowed in this document. function "() => new PaymentRequest(
+    [{ supportedMethods: 'https://example.com/pay' }],
+    { total: { label: 'Total', amount: { currency: 'USD', value: 0 }}},
+    {}).show()" did not throw
+

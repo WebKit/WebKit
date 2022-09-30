@@ -3080,6 +3080,7 @@
         "web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_chars_extra.html",
         "web-platform-tests/encoding/legacy-mb-tchinese/big5/big5_errors.html",
         "web-platform-tests/eventsource/eventsource-onmessage-realm-support.htm",
+        "web-platform-tests/feature-policy/feature-policy-frame-policy-timing-iframe-camera.https.sub.html",
         "web-platform-tests/fetch/api/request/multi-globals/current/current.html",
         "web-platform-tests/fetch/api/request/multi-globals/incumbent/incumbent.html",
         "web-platform-tests/fetch/api/response/multi-globals/current/current.html",
