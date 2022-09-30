@@ -33,6 +33,7 @@
 
 #include "Document.h"
 #include "DocumentFragment.h"
+#include "ElementRareData.h"
 #include "HTMLNames.h"
 #include "ShadowRoot.h"
 #include "ShadowRootInit.h"
@@ -68,11 +69,24 @@ DocumentFragment* HTMLTemplateElement::contentIfAvailable() const
     return m_content.get();
 }
 
+DocumentFragment& HTMLTemplateElement::fragmentForInsertion() const
+{
+    if (m_declarativeShadowRoot)
+        return *m_declarativeShadowRoot;
+    return content();
+}
+
 DocumentFragment& HTMLTemplateElement::content() const
 {
+    ASSERT(!m_declarativeShadowRoot);
     if (!m_content)
         m_content = TemplateContentDocumentFragment::create(document().ensureTemplateDocument(), *this);
     return *m_content;
+}
+
+void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
+{
+    m_declarativeShadowRoot = shadowRoot;
 }
 
 Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& targetDocument, CloningOperation type)
@@ -104,6 +118,11 @@ void HTMLTemplateElement::didMoveToNewDocument(Document& oldDocument, Document& 
 
 void HTMLTemplateElement::attachAsDeclarativeShadowRootIfNeeded(Element& host)
 {
+    if (m_declarativeShadowRoot) {
+        ASSERT(host.shadowRoot());
+        return;
+    }
+
     auto modeString = attributeWithoutSynchronization(HTMLNames::shadowrootAttr);
     std::optional<ShadowRootMode> mode;
 
