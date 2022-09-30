@@ -4358,24 +4358,21 @@ bool FrameView::scrollAnimatorEnabled() const
 
 void FrameView::updateScrollCorner()
 {
-    RenderElement* renderer = nullptr;
     std::unique_ptr<RenderStyle> cornerStyle;
     IntRect cornerRect = scrollCornerRect();
+    Document* doc = frame().document();
     
-    if (!cornerRect.isEmpty()) {
+    if (doc && !cornerRect.isEmpty()) {
         // Try the <body> element first as a scroll corner source.
-        Document* doc = frame().document();
-        Element* body = doc ? doc->bodyOrFrameset() : nullptr;
-        if (body && body->renderer()) {
-            renderer = body->renderer();
+        if (Element* body = doc->bodyOrFrameset()) {
+            if (RenderElement* renderer = body->renderer())
             cornerStyle = renderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &renderer->style());
         }
         
         if (!cornerStyle) {
             // If the <body> didn't have a custom style, then the root element might.
-            Element* docElement = doc ? doc->documentElement() : nullptr;
-            if (docElement && docElement->renderer()) {
-                renderer = docElement->renderer();
+            if (Element* docElement = doc->documentElement()) {
+                if (RenderElement* renderer = docElement->renderer())
                 cornerStyle = renderer->getUncachedPseudoStyle({ PseudoId::ScrollbarCorner }, &renderer->style());
             }
         }
@@ -4388,11 +4385,12 @@ void FrameView::updateScrollCorner()
         }
     }
 
+    RenderElement* renderer = nullptr;
     if (!cornerStyle || !renderer)
         m_scrollCorner = nullptr;
     else {
         if (!m_scrollCorner) {
-            m_scrollCorner = createRenderer<RenderScrollbarPart>(renderer->document(), WTFMove(*cornerStyle));
+            m_scrollCorner = createRenderer<RenderScrollbarPart>(doc, WTFMove(*cornerStyle));
             m_scrollCorner->initializeStyle();
         } else
             m_scrollCorner->setStyle(WTFMove(*cornerStyle));
