@@ -49,7 +49,7 @@ public:
     const FloatingState& floatingState() const { return m_floatingState; }
 
     LayoutPoint positionForFloat(const Box&, const HorizontalConstraints&) const;
-    LayoutPoint positionForNonFloatingFloatAvoider(const Box&, const HorizontalConstraints&) const;
+    LayoutPoint positionForNonFloatingFloatAvoider(const Box&) const;
 
     struct PositionWithClearance {
         LayoutUnit position;
