@@ -48,6 +48,9 @@ public:
     URLKeepingBlobAlive& operator=(URL&&);
     URLKeepingBlobAlive& operator=(const URL& url) { return *this = URL { url }; }
 
+    URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() const &;
+    URLKeepingBlobAlive WARN_UNUSED_RETURN isolatedCopy() &&;
+
 private:
     void registerBlobURLHandleIfNecessary();
     void unregisterBlobURLHandleIfNecessary();
