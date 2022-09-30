@@ -680,7 +680,12 @@ static const NSTimeInterval kAnimationDuration = 0.2;
 
     [CATransaction commit];
 
-    [_rootViewController presentViewController:_fullscreenViewController.get() animated:YES completion:^{
+    // NOTE: In this state, there is already a AVKit fullscreen presentation; we want to
+    // animate into position under the AVKit fullscreen, then after that presentation
+    // completes, exit AVKit fullscreen.
+    BOOL shouldAnimateEnterFullscreenTransition = !_returnToFullscreenFromPictureInPicture;
+
+    [_rootViewController presentViewController:_fullscreenViewController.get() animated:shouldAnimateEnterFullscreenTransition completion:^{
         _fullScreenState = WebKit::InFullScreen;
 
         if (_exitRequested) {
