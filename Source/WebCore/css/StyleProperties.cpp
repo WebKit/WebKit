@@ -1576,8 +1576,9 @@ StringBuilder StyleProperties::asTextInternal() const
     int repeatXPropertyIndex = -1;
     int repeatYPropertyIndex = -1;
 
-    std::bitset<numCSSProperties> shorthandPropertyUsed;
-    std::bitset<numCSSProperties> shorthandPropertyAppeared;
+    constexpr unsigned shorthandPropertyCount = lastShorthandProperty - firstShorthandProperty + 1;
+    std::bitset<shorthandPropertyCount> shorthandPropertyUsed;
+    std::bitset<shorthandPropertyCount> shorthandPropertyAppeared;
 
     unsigned size = propertyCount();
     unsigned numDecls = 0;
@@ -1846,7 +1847,8 @@ StringBuilder StyleProperties::asTextInternal() const
 
         bool alreadyUsedShorthand = false;
         for (auto& shorthandPropertyID : shorthands) {
-            unsigned shorthandPropertyIndex = shorthandPropertyID - firstCSSProperty;
+            ASSERT(isShorthandCSSProperty(shorthandPropertyID));
+            unsigned shorthandPropertyIndex = shorthandPropertyID - firstShorthandProperty;
 
             ASSERT(shorthandPropertyIndex < shorthandPropertyUsed.size());
             if (shorthandPropertyUsed[shorthandPropertyIndex]) {
