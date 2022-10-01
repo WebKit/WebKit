@@ -35,6 +35,7 @@
 #include "DFGInsertionSet.h"
 #include "DFGJITCode.h"
 #include "DFGPhase.h"
+#include "JSObjectInlines.h"
 #include "MathCommon.h"
 #include "RegExpObject.h"
 #include "StringPrototypeInlines.h"
