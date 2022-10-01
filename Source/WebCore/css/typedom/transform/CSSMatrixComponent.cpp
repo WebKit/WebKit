@@ -45,9 +45,11 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CSSMatrixComponent);
 
-Ref<CSSTransformComponent> CSSMatrixComponent::create(Ref<DOMMatrixReadOnly>&& matrix, std::optional<CSSMatrixComponentOptions>&& options)
+Ref<CSSTransformComponent> CSSMatrixComponent::create(Ref<DOMMatrixReadOnly>&& matrix, CSSMatrixComponentOptions&& options)
 {
-    return adoptRef(*new CSSMatrixComponent(WTFMove(matrix), WTFMove(options)));
+    // https://drafts.css-houdini.org/css-typed-om/#dom-cssmatrixcomponent-cssmatrixcomponent
+    auto is2D = options.is2D.value_or(matrix->is2D());
+    return adoptRef(*new CSSMatrixComponent(WTFMove(matrix), is2D ? Is2D::Yes : Is2D::No));
 }
 
 ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSSFunctionValue& cssFunctionValue)
@@ -73,7 +75,7 @@ ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSSFunctionVa
     case CSSValueMatrix:
         return makeMatrix([](Vector<double>&& components) {
             auto domMatrix = DOMMatrixReadOnly::create({ components[0], components[1], components[2], components[3], components[4], components[5] }, DOMMatrixReadOnly::Is2D::Yes);
-            return CSSMatrixComponent::create(WTFMove(domMatrix), std::nullopt);
+            return CSSMatrixComponent::create(WTFMove(domMatrix));
         }, 6);
     case CSSValueMatrix3d:
         return makeMatrix([](Vector<double>&& components) {
@@ -83,17 +85,17 @@ ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSSFunctionVa
                 components[8], components[9], components[10], components[11],
                 components[12], components[13], components[14], components[15]
             }, DOMMatrixReadOnly::Is2D::No);
-            return CSSMatrixComponent::create(WTFMove(domMatrix), std::nullopt);
+            return CSSMatrixComponent::create(WTFMove(domMatrix));
         }, 16);
     default:
         ASSERT_NOT_REACHED();
         auto domMatrix = DOMMatrixReadOnly::create({ }, DOMMatrixReadOnly::Is2D::Yes);
-        return { CSSMatrixComponent::create(WTFMove(domMatrix), std::nullopt) };
+        return { CSSMatrixComponent::create(WTFMove(domMatrix)) };
     }
 }
 
-CSSMatrixComponent::CSSMatrixComponent(Ref<DOMMatrixReadOnly>&& matrix, std::optional<CSSMatrixComponentOptions>&& options)
-    : CSSTransformComponent((options ? options->is2D : matrix->is2D()) ? Is2D::Yes : Is2D::No)
+CSSMatrixComponent::CSSMatrixComponent(Ref<DOMMatrixReadOnly>&& matrix, Is2D is2D)
+    : CSSTransformComponent(is2D)
     , m_matrix(matrix->cloneAsDOMMatrix())
 {
 }

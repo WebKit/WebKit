@@ -175,6 +175,10 @@ public:
         UserMediaPermissionRequest,
         ViewportAttributes,
         VisitedLinkStore,
+#if ENABLE(WK_WEB_EXTENSIONS)
+        WebExtension,
+        WebExtensionController,
+#endif
         WebResourceLoadStatisticsManager,
         WebsiteDataRecord,
         WebsiteDataStore,
@@ -424,6 +428,10 @@ template<> struct EnumTraits<API::Object::Type> {
         API::Object::Type::UserMediaPermissionRequest,
         API::Object::Type::ViewportAttributes,
         API::Object::Type::VisitedLinkStore,
+#if ENABLE(WK_WEB_EXTENSIONS)
+        API::Object::Type::WebExtension,
+        API::Object::Type::WebExtensionController,
+#endif
         API::Object::Type::WebResourceLoadStatisticsManager,
         API::Object::Type::WebsiteDataRecord,
         API::Object::Type::WebsiteDataStore,
