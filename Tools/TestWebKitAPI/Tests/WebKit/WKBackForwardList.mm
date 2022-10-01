@@ -320,6 +320,7 @@ static RetainPtr<WKNavigation> lastNavigation;
 
 @implementation WKBackForwardNavigationDelegate {
     bool _navigated;
+    bool _didFinishNavigation;
 }
 
 - (instancetype) init
@@ -331,6 +332,7 @@ static RetainPtr<WKNavigation> lastNavigation;
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     _navigated = true;
+    _didFinishNavigation = true;
     lastNavigation = navigation;
 }
 
@@ -346,6 +348,12 @@ static RetainPtr<WKNavigation> lastNavigation;
 {
     _navigated = false;
     TestWebKitAPI::Util::run(&_navigated);
+}
+
+- (void)waitForDidFinishNavigation
+{
+    _didFinishNavigation = false;
+    TestWebKitAPI::Util::run(&_didFinishNavigation);
 }
 
 @end
@@ -822,4 +830,35 @@ TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipItemsWithRecentUserGestu
     EXPECT_WK_STREQ([lastNavigation _request].URL.absoluteString.UTF8String, expectedURLString.UTF8String);
 
     EXPECT_STREQ([webView URL].absoluteString.UTF8String, lastURL.absoluteString.UTF8String);
+}
+
+TEST(WKBackForwardList, BackForwardNavigationDoesNotSkipUpdatedItemWithRecentUserGesture)
+{
+    auto webView = adoptNS([[WKWebView alloc] init]);
+
+    auto navigationDelegate = adoptNS([WKBackForwardNavigationDelegate new]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    NSURL *url1 = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *url2 = [[NSBundle mainBundle] URLForResource:@"fragment-navigation-before-load-event" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url1]];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:url2]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Page navigated to #fragment before the load event.
+    NSString *expectedURLString = makeString(String(url2.absoluteString), "#fragment");
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, expectedURLString.UTF8String);
+
+    // Navigate with a user gesture.
+    [webView evaluateJavaScript:@"location.href = location.pathname + '#otherFragment';" completionHandler:nil];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    // Should go back to #fragment.
+    [webView goBack];
+    [navigationDelegate waitForDidFinishNavigationOrDidSameDocumentNavigation];
+
+    EXPECT_STREQ([webView URL].absoluteString.UTF8String, expectedURLString.UTF8String);
 }
