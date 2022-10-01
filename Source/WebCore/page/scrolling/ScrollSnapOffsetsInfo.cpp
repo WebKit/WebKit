@@ -52,15 +52,16 @@ struct PotentialSnapPointSearchResult {
     std::optional<std::pair<UnitType, unsigned>> next;
     std::optional<std::pair<UnitType, unsigned>> snapStop;
     bool landedInsideSnapAreaThatConsumesViewport;
+    std::pair<UnitType, UnitType> snapAreaEndWithinPadding;
 };
 
 template <typename InfoType, typename UnitType>
-static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(const InfoType& info, ScrollEventAxis axis, UnitType viewportLength, UnitType destinationOffset, std::optional<UnitType> originalOffset)
+static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(const InfoType& info, ScrollEventAxis axis, UnitType viewportLength, UnitType destinationOffset, std::optional<UnitType> originalOffset, std::optional<bool> isUserScroll = std::nullopt)
 {
     const auto& snapOffsets = info.offsetsForAxis(axis);
     std::optional<std::pair<UnitType, unsigned>> previous, next, exact, snapStop;
     bool landedInsideSnapAreaThatConsumesViewport = false;
-
+    std::pair<UnitType, UnitType> snapAreaEndWithinPadding = { 0, 0 };
     // A particular snap stop is better if it's between the original offset and destination offset and closer original
     // offset than the previously selected snap stop. We always want to stop at the snap stop closest to the original offset.
     auto isBetterSnapStop = [&](UnitType candidate) {
@@ -73,10 +74,14 @@ static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(con
     };
 
     for (unsigned i = 0; i < snapOffsets.size(); i++) {
-        if (!landedInsideSnapAreaThatConsumesViewport && snapOffsets[i].hasSnapAreaLargerThanViewport) {
+        if ((!landedInsideSnapAreaThatConsumesViewport && snapAreaEndWithinPadding.first == snapAreaEndWithinPadding.second) && snapOffsets[i].hasSnapAreaLargerThanViewport) {
             for (auto snapAreaIndices : snapOffsets[i].snapAreaIndices) {
                 auto [snapAreaMin, snapAreaMax] = rangeForAxis<UnitType>(info.snapAreas[snapAreaIndices], axis);
-                if (snapAreaMin <= destinationOffset && snapAreaMax >= (destinationOffset + viewportLength)) {
+                
+                if (isUserScroll && std::abs((float)(snapAreaMax - destinationOffset - viewportLength)) <= 35 && (snapAreaMin <= destinationOffset && (float)snapAreaMax + 39 >= (float)(destinationOffset + viewportLength)))
+                    snapAreaEndWithinPadding = rangeForAxis<UnitType>(info.snapAreas[snapAreaIndices], axis);
+                
+                if (snapAreaMin <= destinationOffset && snapAreaMax >= destinationOffset + viewportLength) {
                     landedInsideSnapAreaThatConsumesViewport = true;
                     break;
                 }
@@ -96,8 +101,8 @@ static PotentialSnapPointSearchResult<UnitType> searchForPotentialSnapPoints(con
     }
 
     if (exact)
-        return { exact, exact, snapStop, landedInsideSnapAreaThatConsumesViewport };
-    return { previous, next, snapStop, landedInsideSnapAreaThatConsumesViewport };
+        return { exact, exact, snapStop, landedInsideSnapAreaThatConsumesViewport, snapAreaEndWithinPadding };
+    return { previous, next, snapStop, landedInsideSnapAreaThatConsumesViewport, snapAreaEndWithinPadding };
 }
 
 template <typename UnitType, typename PointType>
@@ -172,7 +177,7 @@ static void adjustPreviousAndNextForOnScreenSnapAreas(const InfoType& info, Scro
 }
 
 template <typename InfoType, typename SizeType, typename LayoutType, typename PointType>
-static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoAndAxis(const InfoType& info, ScrollEventAxis axis, const SizeType& viewportSize, PointType scrollDestinationOffsetPoint, float velocity, std::optional<LayoutType> originalOffsetForDirectionalSnapping)
+static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoAndAxis(const InfoType& info, ScrollEventAxis axis, const SizeType& viewportSize, PointType scrollDestinationOffsetPoint, float velocity, std::optional<LayoutType> originalOffsetForDirectionalSnapping, std::optional<bool> isUserScroll = std::nullopt)
 {
     auto scrollDestinationOffset = axis == ScrollEventAxis::Horizontal ? scrollDestinationOffsetPoint.x() : scrollDestinationOffsetPoint.y();
     const auto& snapOffsets = info.offsetsForAxis(axis);
@@ -181,14 +186,17 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
         return pairForNoSnapping;
 
     auto viewportLength = axis == ScrollEventAxis::Horizontal ? viewportSize.width() : viewportSize.height();
-    auto searchResult = searchForPotentialSnapPoints(info, axis, viewportLength, scrollDestinationOffset, originalOffsetForDirectionalSnapping);
+    auto searchResult = searchForPotentialSnapPoints(info, axis, viewportLength, scrollDestinationOffset, originalOffsetForDirectionalSnapping, isUserScroll);
     if (searchResult.snapStop)
         return *(searchResult.snapStop);
 
     adjustPreviousAndNextForOnScreenSnapAreas<InfoType, LayoutType, PointType, SizeType>(info, axis, viewportSize, scrollDestinationOffsetPoint, searchResult);
     auto& previous = searchResult.previous;
     auto& next = searchResult.next;
-
+    auto [snapAreaMin, snapAreaMax] = searchResult.snapAreaEndWithinPadding;
+    if (snapAreaMin != snapAreaMax)
+        return { snapAreaMax - viewportLength, std::nullopt };
+    
     // From https://www.w3.org/TR/css-scroll-snap-1/#snap-overflow
     // "If the snap area is larger than the snapport in a particular axis, then any scroll position
     // in which the snap area covers the snapport, and the distance between the geometrically
@@ -496,18 +504,18 @@ std::pair<UnitType, std::optional<unsigned>> static ensureVisibleTarget(const In
 }
 
 template <> template <>
-std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis axis, const LayoutSize& viewportSize, LayoutPoint scrollDestinationOffset, float velocity, std::optional<LayoutUnit> originalPositionForDirectionalSnapping) const
+std::pair<LayoutUnit, std::optional<unsigned>> LayoutScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis axis, const LayoutSize& viewportSize, LayoutPoint scrollDestinationOffset, float velocity, std::optional<LayoutUnit> originalPositionForDirectionalSnapping, std::optional<bool> isUserScroll) const
 {
-    auto horizontal = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Horizontal, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping);
-    auto vertical = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Vertical, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping);
+    auto horizontal = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Horizontal, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping, isUserScroll);
+    auto vertical = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Vertical, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping, isUserScroll);
     return ensureVisibleTarget(*this, horizontal, vertical, axis, viewportSize, scrollDestinationOffset);
 }
 
 template <> template<>
-std::pair<float, std::optional<unsigned>> FloatScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis axis, const FloatSize& viewportSize, FloatPoint scrollDestinationOffset, float velocity, std::optional<float> originalPositionForDirectionalSnapping) const
+std::pair<float, std::optional<unsigned>> FloatScrollSnapOffsetsInfo::closestSnapOffset(ScrollEventAxis axis, const FloatSize& viewportSize, FloatPoint scrollDestinationOffset, float velocity, std::optional<float> originalPositionForDirectionalSnapping, std::optional<bool> isUserScroll) const
 {
-    auto horizontal = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Horizontal, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping);
-    auto vertical = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Vertical, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping);
+    auto horizontal = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Horizontal, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping, isUserScroll);
+    auto vertical = closestSnapOffsetWithInfoAndAxis(*this, ScrollEventAxis::Vertical, viewportSize, scrollDestinationOffset, velocity, originalPositionForDirectionalSnapping, isUserScroll);
     return ensureVisibleTarget(*this, horizontal, vertical, axis, viewportSize, scrollDestinationOffset);
 }
 

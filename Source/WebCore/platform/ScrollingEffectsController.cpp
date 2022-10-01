@@ -347,8 +347,8 @@ void ScrollingEffectsController::adjustDeltaForSnappingIfNeeded(float& deltaX, f
         auto originalOffset = LayoutPoint(scrollOffset.x() / scale, scrollOffset.y() / scale);
         auto newOffset = LayoutPoint((scrollOffset.x() + deltaX) / scale, (scrollOffset.y() + deltaY) / scale);
 
-        auto offsetX = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Horizontal, LayoutSize(extents.contentsSize), newOffset, deltaX, originalOffset.x()).first;
-        auto offsetY = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Vertical, LayoutSize(extents.contentsSize), newOffset, deltaY, originalOffset.y()).first;
+        auto offsetX = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Horizontal, LayoutSize(extents.contentsSize), newOffset, deltaX, originalOffset.x(), true).first;
+        auto offsetY = snapOffsetsInfo()->closestSnapOffset(ScrollEventAxis::Vertical, LayoutSize(extents.contentsSize), newOffset, deltaY, originalOffset.y(), true).first;
 
         deltaX = (offsetX - originalOffset.x()) * scale;
         deltaY = (offsetY - originalOffset.y()) * scale;
