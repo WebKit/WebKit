@@ -63,6 +63,12 @@ bool LegacyRenderSVGTransformableContainer::calculateLocalTransform()
         m_lastTranslation = translation;
     }
 
+    auto referenceBoxRect = transformReferenceBoxRect();
+    if (referenceBoxRect != m_lastTransformReferenceBoxRect) {
+        m_lastTransformReferenceBoxRect = referenceBoxRect;
+        m_needsTransformUpdate = true;
+    }
+
     m_didTransformToRootUpdate = m_needsTransformUpdate || SVGRenderSupport::transformToRootChanged(parent());
     if (!m_needsTransformUpdate)
         return false;
