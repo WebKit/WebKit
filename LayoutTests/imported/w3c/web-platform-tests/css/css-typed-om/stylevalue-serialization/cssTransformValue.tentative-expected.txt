@@ -18,7 +18,7 @@ PASS CSSTransformValue with multiple transforms serializes correctly
 PASS CSSTransformValue containing CSSMathValues serializes correctly
 PASS CSSMathInvert with 0 parameter serializes correctly
 FAIL CSSMathInvert with 0 parameter and nested serializes correctly assert_equals: expected "rotate3d(0, 0, 0, calc(1deg * (1 / 0)))" but got "rotate3d(0, 0, 0, calc(1deg / 0))"
-FAIL CSSMatrixComponent with 6 elements serializes correctly assert_equals: expected "matrix(1, 2, 3, 4, 5, 6)" but got "matrix3d(1, 2, 0, 0, 3, 4, 0, 0, 0, 0, 1, 0, 5, 6, 0, 1)"
+PASS CSSMatrixComponent with 6 elements serializes correctly
 PASS CSSMatrixComponent with 16 elements serializes correctly
 PASS CSSTransformValue with updated is2D serializes as 2D transforms
 

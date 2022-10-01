@@ -40,7 +40,7 @@ template<typename> class ExceptionOr;
 class CSSMatrixComponent : public CSSTransformComponent {
     WTF_MAKE_ISO_ALLOCATED(CSSMatrixComponent);
 public:
-    static Ref<CSSTransformComponent> create(Ref<DOMMatrixReadOnly>&&, std::optional<CSSMatrixComponentOptions>&&);
+    static Ref<CSSTransformComponent> create(Ref<DOMMatrixReadOnly>&&, CSSMatrixComponentOptions&& = { });
     static ExceptionOr<Ref<CSSTransformComponent>> create(CSSFunctionValue&);
 
     DOMMatrix& matrix();
@@ -51,7 +51,7 @@ public:
     
     CSSTransformType getType() const final { return CSSTransformType::MatrixComponent; }
 private:
-    CSSMatrixComponent(Ref<DOMMatrixReadOnly>&&, std::optional<CSSMatrixComponentOptions>&&);
+    CSSMatrixComponent(Ref<DOMMatrixReadOnly>&&, Is2D);
     Ref<DOMMatrix> m_matrix;
 };
 

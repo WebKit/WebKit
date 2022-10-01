@@ -1,8 +1,8 @@
 
 PASS CSSMatrixComponent can be constructed from a 2D matrix with is2D true
 PASS CSSMatrixComponent can be constructed from a 2D matrix with is2D false
-FAIL CSSMatrixComponent can be constructed from a 2D matrix without a CSSMatrixComponentOptions assert_equals: expected true but got false
-FAIL CSSMatrixComponent can be constructed from a 2D matrix with an invalid CSSMatrixComponentOptions assert_equals: expected true but got false
+PASS CSSMatrixComponent can be constructed from a 2D matrix without a CSSMatrixComponentOptions
+PASS CSSMatrixComponent can be constructed from a 2D matrix with an invalid CSSMatrixComponentOptions
 PASS CSSMatrixComponent.matrix can be updated to a 2D matrix
 PASS CSSMatrixComponent can be constructed from a 3D matrix with is2D true
 PASS CSSMatrixComponent can be constructed from a 3D matrix with is2D false
