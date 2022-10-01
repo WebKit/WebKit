@@ -35,7 +35,7 @@ class GitHubOAuthPlugin {
 
         // Initialize OAuth2
         self::$Auth = new GitHubOAuth2(WK_GITHUB_CLIENTID, WK_GITHUB_SECRET, home_url(self::REDIRECT_REQUEST));
-        self::$Auth->set_scopes(['user']);
+        self::$Auth->set_scopes(['read:user', 'user:email']);
 
         add_action('parse_request', array($this, 'request'));
     }

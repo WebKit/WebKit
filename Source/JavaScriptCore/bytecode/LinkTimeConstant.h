@@ -105,7 +105,7 @@ class JSGlobalObject;
     v(stringIncludesInternal, nullptr) \
     v(stringIndexOfInternal, nullptr) \
     v(stringSplitFast, nullptr) \
-    v(stringSubstringInternal, nullptr) \
+    v(stringSubstring, nullptr) \
     v(makeBoundFunction, nullptr) \
     v(hasOwnLengthProperty, nullptr) \
     v(handleProxyGetTrapResult, nullptr) \

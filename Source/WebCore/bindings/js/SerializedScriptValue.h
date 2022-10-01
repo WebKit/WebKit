@@ -93,7 +93,7 @@ public:
     bool hasBlobURLs() const { return !m_blobHandles.isEmpty(); }
 
     Vector<String> blobURLs() const;
-    const Vector<URLKeepingBlobAlive>& blobHandles() const { return m_blobHandles; }
+    Vector<URLKeepingBlobAlive> blobHandles() const { return crossThreadCopy(m_blobHandles); }
     void writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&&);
     IDBValue writeBlobsToDiskForIndexedDBSynchronously();
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)

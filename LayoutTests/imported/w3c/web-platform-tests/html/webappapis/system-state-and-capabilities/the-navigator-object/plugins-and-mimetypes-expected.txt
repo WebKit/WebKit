@@ -1,5 +1,5 @@
 
-FAIL navigator.pdfViewerEnabled exists assert_true: property exists expected true got false
-FAIL navigator.mimeTypes is empty assert_equals: length expected 0 but got 14
-FAIL navigator.plugins is empty assert_equals: length expected 0 but got 1
+PASS navigator.pdfViewerEnabled exists
+PASS navigator.mimeTypes contains the hard-coded list
+PASS navigator.plugins contains the hard-coded list
 

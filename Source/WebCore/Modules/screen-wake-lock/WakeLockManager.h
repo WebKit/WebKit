@@ -29,6 +29,7 @@
 #include "WakeLockType.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 

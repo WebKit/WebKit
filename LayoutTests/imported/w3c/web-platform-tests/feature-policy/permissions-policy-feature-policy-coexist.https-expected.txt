@@ -1,0 +1,7 @@
+This is a page with following headers:
+Feature-Policy: geolocation 'none', fullscreen 'none'
+Permissions-Policy: geolocation=self, payment=()
+
+FAIL When there is conflict in Feature Policy header and Permissions Policyheader, Permissions Policy wins. undefined is not an object (evaluating 'policy.allowsFeature')
+FAIL When there is no conflict, Feature Policy and Permissions Policy should all be able to control each feature by themselves. undefined is not an object (evaluating 'policy.allowsFeature')
+

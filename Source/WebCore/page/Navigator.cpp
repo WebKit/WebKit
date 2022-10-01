@@ -39,6 +39,7 @@
 #include "Geolocation.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LoaderStrategy.h"
+#include "LocalizedStrings.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "PluginData.h"
@@ -233,6 +234,23 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
     });
 }
 
+// https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
+// Section 8.9.1.6 states that if pdfViewerEnabled is true, we must return a list
+// of exactly five PDF view plugins, in a particular order.
+constexpr ASCIILiteral genericPDFViewerName { "PDF Viewer"_s };
+
+static const Vector<String>& dummyPDFPluginNames()
+{
+    static NeverDestroyed<Vector<String>> dummyPluginNames(std::initializer_list<String> {
+        genericPDFViewerName,
+        "Chrome PDF Viewer"_s,
+        "Chromium PDF Viewer"_s,
+        "Microsoft Edge PDF Viewer"_s,
+        "WebKit built-in PDF"_s,
+    });
+    return dummyPluginNames;
+}
+
 void Navigator::initializePluginAndMimeTypeArrays()
 {
     if (m_plugins)
@@ -245,43 +263,35 @@ void Navigator::initializePluginAndMimeTypeArrays()
         return;
     }
 
-    auto [publiclyVisiblePlugins, additionalWebVisiblePlugins] = frame->page()->pluginData().publiclyVisiblePluginsAndAdditionalWebVisiblePlugins();
-
-    Vector<Ref<DOMPlugin>> publiclyVisibleDOMPlugins;
-    Vector<Ref<DOMPlugin>> additionalWebVisibleDOMPlugins;
-    Vector<Ref<DOMMimeType>> webVisibleDOMMimeTypes;
-
-    publiclyVisibleDOMPlugins.reserveInitialCapacity(publiclyVisiblePlugins.size());
-    for (auto& plugin : publiclyVisiblePlugins) {
-        auto wrapper = DOMPlugin::create(*this, plugin);
-        webVisibleDOMMimeTypes.appendVector(wrapper->mimeTypes());
-        publiclyVisibleDOMPlugins.uncheckedAppend(WTFMove(wrapper));
+    m_pdfViewerEnabled = frame->loader().client().canShowMIMEType("application/pdf"_s);
+    if (!m_pdfViewerEnabled) {
+        m_plugins = DOMPluginArray::create(*this);
+        m_mimeTypes = DOMMimeTypeArray::create(*this);
+        return;
     }
 
-    additionalWebVisibleDOMPlugins.reserveInitialCapacity(additionalWebVisiblePlugins.size());
-    for (auto& plugin : additionalWebVisiblePlugins) {
-        auto wrapper = DOMPlugin::create(*this, plugin);
-        webVisibleDOMMimeTypes.appendVector(wrapper->mimeTypes());
-        additionalWebVisibleDOMPlugins.uncheckedAppend(WTFMove(wrapper));
+    // macOS uses a PDF Plugin (which may be disabled). Other ports handle PDF's through native
+    // platform views outside the engine, or use pdf.js.
+    PluginInfo pdfPluginInfo = frame->page()->pluginData().builtInPDFPlugin().value_or(PluginData::dummyPDFPluginInfo());
+
+    Vector<Ref<DOMPlugin>> domPlugins;
+    Vector<Ref<DOMMimeType>> domMimeTypes;
+
+    // https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
+    // Section 8.9.1.6 states that if pdfViewerEnabled is true, we must return a list
+    // of exactly five PDF view plugins, in a particular order.
+    for (auto& currentDummyName : dummyPDFPluginNames()) {
+        pdfPluginInfo.name = currentDummyName;
+        domPlugins.append(DOMPlugin::create(*this, pdfPluginInfo));
+
+        // Register the copy of the PluginInfo using the generic 'PDF Viewer' name
+        // as the handler for PDF MIME type to match the specification.
+        if (currentDummyName == genericPDFViewerName)
+            domMimeTypes.appendVector(domPlugins.last()->mimeTypes());
     }
 
-    std::sort(publiclyVisibleDOMPlugins.begin(), publiclyVisibleDOMPlugins.end(), [](const Ref<DOMPlugin>& a, const Ref<DOMPlugin>& b) {
-        if (auto nameComparison = codePointCompare(a->info().name, b->info().name))
-            return nameComparison < 0;
-        return codePointCompareLessThan(a->info().bundleIdentifier, b->info().bundleIdentifier);
-    });
-
-    std::sort(webVisibleDOMMimeTypes.begin(), webVisibleDOMMimeTypes.end(), [](const Ref<DOMMimeType>& a, const Ref<DOMMimeType>& b) {
-        if (auto typeComparison = codePointCompare(a->type(), b->type()))
-            return typeComparison < 0;
-        return codePointCompareLessThan(a->enabledPlugin()->info().bundleIdentifier, b->enabledPlugin()->info().bundleIdentifier);
-    });
-
-    // NOTE: It is not necessary to sort additionalWebVisibleDOMPlugins, as they are only accessible via
-    // named property look up, so their order is not exposed.
-
-    m_plugins = DOMPluginArray::create(*this, WTFMove(publiclyVisibleDOMPlugins), WTFMove(additionalWebVisibleDOMPlugins));
-    m_mimeTypes = DOMMimeTypeArray::create(*this, WTFMove(webVisibleDOMMimeTypes));
+    m_plugins = DOMPluginArray::create(*this, WTFMove(domPlugins));
+    m_mimeTypes = DOMMimeTypeArray::create(*this, WTFMove(domMimeTypes));
 }
 
 DOMPluginArray& Navigator::plugins()
@@ -302,6 +312,13 @@ DOMMimeTypeArray& Navigator::mimeTypes()
     }
     initializePluginAndMimeTypeArrays();
     return *m_mimeTypes;
+}
+
+bool Navigator::pdfViewerEnabled()
+{
+    // https://html.spec.whatwg.org/multipage/system-state.html#pdf-viewing-support
+    initializePluginAndMimeTypeArrays();
+    return m_pdfViewerEnabled;
 }
 
 bool Navigator::cookieEnabled() const

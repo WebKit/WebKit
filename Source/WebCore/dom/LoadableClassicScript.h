@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class WeakPtrImplWithEventTargetData;
+
 // A CachedResourceHandle alone does not prevent the underlying CachedResource
 // from purging its data buffer. This class holds a client until this class is
 // destroyed in order to guarantee that the data buffer will not be purged.

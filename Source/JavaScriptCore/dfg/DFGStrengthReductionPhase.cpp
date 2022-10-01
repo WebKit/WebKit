@@ -37,7 +37,7 @@
 #include "DFGPhase.h"
 #include "MathCommon.h"
 #include "RegExpObject.h"
-#include "StringPrototype.h"
+#include "StringPrototypeInlines.h"
 #include <cstdlib>
 #include <wtf/text/StringBuilder.h>
 
@@ -1048,6 +1048,36 @@ private:
             m_changed = true;
             m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
             m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, WTFMove(result)));
+            break;
+        }
+
+        case StringSubstring: {
+            Node* stringNode = m_node->child1().node();
+            String string = stringNode->tryGetString(m_graph);
+            if (!string)
+                break;
+
+            if (!m_node->child2()->isInt32Constant())
+                break;
+
+            int32_t startValue = m_node->child2()->asInt32();
+            std::optional<int32_t> endValue = std::nullopt;
+            if (m_node->child3()) {
+                if (!m_node->child3()->isInt32Constant())
+                    break;
+                endValue = m_node->child3()->asInt32();
+            }
+
+            int32_t length = string.length();
+            auto [start, end] = extractSubstringOffsets(length, startValue, endValue);
+
+            m_changed = true;
+            m_insertionSet.insertNode(m_nodeIndex, SpecNone, Check, m_node->origin, m_node->children.justChecks());
+            if (!start && end == length) {
+                m_node->convertToIdentityOn(stringNode);
+                break;
+            }
+            m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, string.substring(start, end - start)));
             break;
         }
 

@@ -1,0 +1,47 @@
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-allowedfeatures.html
+Blocked access to external URL https://www1.localhost:9443/feature-policy/resources/feature-policy-allowedfeatures.html
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-allowedfeatures.html
+Blocked access to external URL https://www1.localhost:9443/feature-policy/resources/feature-policy-allowedfeatures.html
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-allowedfeatures.html
+Blocked access to external URL https://www1.localhost:9443/feature-policy/resources/feature-policy-allowedfeatures.html
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-allowedfeatures.html
+Blocked access to external URL https://www1.localhost:9443/feature-policy/resources/feature-policy-allowedfeatures.html
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'document.featurePolicy.allowedFeatures')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'document.featurePolicy.allowedFeatures')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'document.featurePolicy.allowedFeatures')
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'document.featurePolicy.allowedFeatures')
+
+
+FAIL Test frame policy on same origin iframe with allow = "*" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on cross origin iframe with allow = "*" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on another cross origin iframe with allow = "*" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc iframe with allow = "*" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + same origin iframe with allow = "*" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + cross origin iframe with allow = "*" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + another cross origin iframe with allow = "*" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on data: URL cross origin iframe with allow = "*" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on same origin iframe with allow = "'self'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on cross origin iframe with allow = "'self'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on another cross origin iframe with allow = "'self'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc iframe with allow = "'self'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + same origin iframe with allow = "'self'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + cross origin iframe with allow = "'self'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + another cross origin iframe with allow = "'self'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on data: URL cross origin iframe with allow = "'self'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on same origin iframe with allow = "'none'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on cross origin iframe with allow = "'none'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on another cross origin iframe with allow = "'none'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc iframe with allow = "'none'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + same origin iframe with allow = "'none'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + cross origin iframe with allow = "'none'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + another cross origin iframe with allow = "'none'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on data: URL cross origin iframe with allow = "'none'" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on same origin iframe with allow = "'self' https://www.localhost:9443 https://www.example.com" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on cross origin iframe with allow = "'self' https://www.localhost:9443 https://www.example.com" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on another cross origin iframe with allow = "'self' https://www.localhost:9443 https://www.example.com" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc iframe with allow = "'self' https://www.localhost:9443 https://www.example.com" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + same origin iframe with allow = "'self' https://www.localhost:9443 https://www.example.com" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + cross origin iframe with allow = "'self' https://www.localhost:9443 https://www.example.com" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on srcdoc + another cross origin iframe with allow = "'self' https://www.localhost:9443 https://www.example.com" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+FAIL Test frame policy on data: URL cross origin iframe with allow = "'self' https://www.localhost:9443 https://www.example.com" and allowfullscreen. undefined is not an object (evaluating 'frame_policy.allowedFeatures')
+

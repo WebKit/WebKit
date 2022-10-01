@@ -1,5 +1,6 @@
 
-FAIL Feature-Policy header: autoplay * allows the top-level document. Can't find variable: simulateGesture
-FAIL Feature-Policy header: autoplay * allows same-origin iframes. Can't find variable: simulateGesture
-FAIL Feature-Policy header: autoplay * allows cross-origin iframes. Can't find variable: simulateGesture
+
+PASS Feature-Policy header: autoplay * allows the top-level document.
+PASS Feature-Policy header: autoplay * allows same-origin iframes.
+PASS Feature-Policy header: autoplay * allows cross-origin iframes.
 

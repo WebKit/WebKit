@@ -30,6 +30,7 @@
 #include "FormData.h"
 #include "SecurityPolicyViolationEvent.h"
 #include <wtf/IsoMallocInlines.h>
+#include <wtf/JSONValues.h>
 
 namespace WebCore {
 

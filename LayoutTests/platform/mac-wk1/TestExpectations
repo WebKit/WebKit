@@ -2139,3 +2139,5 @@ webkit.org/b/245102 imported/w3c/web-platform-tests/html/browsers/windows/auxili
 [ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic.http-rp/upgrade/worker-module.https.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/worker-classic.https.html [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module.http-rp/upgrade/worker-module.https.html [ Skip ]
+
+webkit.org/b/245902 [ Debug ] contentfiltering/allow-media-document.html [ Skip ]

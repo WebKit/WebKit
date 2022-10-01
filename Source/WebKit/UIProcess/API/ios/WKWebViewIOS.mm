@@ -524,6 +524,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
     _page->didLayoutForCustomContentProvider();
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)_handleKeyUIEvent:(::UIEvent *)event
 {
     // We only want to handle key events from the hardware keyboard when we are
@@ -538,6 +539,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
 
     [super _handleKeyUIEvent:event];
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_willInvokeUIScrollViewDelegateCallback
 {

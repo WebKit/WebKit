@@ -1296,3 +1296,54 @@ TEST(WebKit, OriginDirectoryExcludedFromBackup)
 }
 
 #endif
+
+TEST(WebKit, RemoveStaleWebSQLData)
+{
+    NSURL *resourceWebSQLDatabaseTrackerFile = [[NSBundle mainBundle] URLForResource:@"websql-database-tracker" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceWebSQLDatabaseFile = [[NSBundle mainBundle] URLForResource:@"websql-database" withExtension:@"db" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *resourceSalt = [[NSBundle mainBundle] URLForResource:@"general-storage-directory" withExtension:@"salt" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *customWebSQLDirectory = [NSURL fileURLWithPath:[@"~/Library/WebKit/com.apple.WebKit.TestWebKitAPI/CustomWebSQL" stringByExpandingTildeInPath] isDirectory:YES];
+    NSURL *databaseTrackerFile = [customWebSQLDirectory URLByAppendingPathComponent:@"Databases.db"];
+    NSURL *webkitSQLDirectory = [customWebSQLDirectory URLByAppendingPathComponent:@"http_webkit.org_0"];
+    NSURL *databaseFile = [webkitSQLDirectory URLByAppendingPathComponent:@"f3013c11-b9f1-4534-a9d6-f3426f777eb3.db"];
+    NSURL *salt = [customWebSQLDirectory URLByAppendingPathComponent:@"salt"];
+
+    /* Directory structure.
+    - CustomWebSQL
+        - salt
+        - Databases.db
+        - http_webkit.org_0
+            - f3013c11-b9f1-4534-a9d6-f3426f777eb3.db
+    */
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeItemAtURL:customWebSQLDirectory error:nil];
+    [fileManager createDirectoryAtURL:customWebSQLDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceWebSQLDatabaseTrackerFile toURL:databaseTrackerFile error:nil];
+    [fileManager createDirectoryAtURL:webkitSQLDirectory withIntermediateDirectories:YES attributes:nil error:nil];
+    [fileManager copyItemAtURL:resourceWebSQLDatabaseFile toURL:databaseFile error:nil];
+    [fileManager copyItemAtURL:resourceSalt toURL:salt error:nil];
+
+    // Ensure WebSQL files are deleted.
+    auto websiteDataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    websiteDataStoreConfiguration.get()._webSQLDatabaseDirectory = customWebSQLDirectory;
+    auto websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray*) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE([fileManager fileExistsAtPath:databaseTrackerFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:databaseFile.path]);
+    EXPECT_FALSE([fileManager fileExistsAtPath:webkitSQLDirectory.path]);
+    EXPECT_TRUE([fileManager fileExistsAtPath:salt.path]);
+
+    // Ensure WebSQL directory is deleted.
+    [fileManager removeItemAtURL:salt error:nil];
+    websiteDataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:websiteDataStoreConfiguration.get()]);
+    done = false;
+    [websiteDataStore fetchDataRecordsOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] completionHandler:^(NSArray*) {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_FALSE([fileManager fileExistsAtPath:customWebSQLDirectory.path]);
+}

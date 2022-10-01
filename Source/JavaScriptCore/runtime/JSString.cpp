@@ -89,14 +89,18 @@ bool JSString::equalSlowCase(JSGlobalObject* globalObject, JSString* other) cons
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (length() != other->length())
+    unsigned length = this->length();
+    if (length != other->length())
         return false;
 
-    String str1 = value(globalObject);
+    auto str1 = unsafeView(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
-    String str2 = other->value(globalObject);
+    auto str2 = other->unsafeView(globalObject);
     RETURN_IF_EXCEPTION(scope, false);
-    return WTF::equal(*str1.impl(), *str2.impl());
+
+    ensureStillAliveHere(this);
+    ensureStillAliveHere(other);
+    return WTF::equal(str1, str2, length);
 }
 
 size_t JSString::estimatedSize(JSCell* cell, VM& vm)

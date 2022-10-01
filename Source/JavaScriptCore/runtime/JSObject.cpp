@@ -2762,9 +2762,10 @@ bool JSObject::defineOwnIndexedProperty(JSGlobalObject* globalObject, unsigned i
         if (canGetIndexQuickly(index) && canDoFastPutDirectIndex(this)) {
             DeferTermination deferScope(vm);
             PropertyDescriptor currentDescriptor;
-            getOwnPropertyDescriptor(globalObject, Identifier::from(vm, index), currentDescriptor);
+            bool found = getOwnPropertyDescriptor(globalObject, Identifier::from(vm, index), currentDescriptor);
             scope.assertNoException();
-            ASSERT(currentDescriptor.attributes() == emptyAttributesDescriptor.attributes());
+            if (found)
+                ASSERT(currentDescriptor.attributes() == emptyAttributesDescriptor.attributes());
         }
 #endif
         // Fast case: we're putting a regular property to a regular array

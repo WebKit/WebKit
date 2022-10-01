@@ -1,4 +1,4 @@
-<!DOCTYPE html> <!-- webkit-test-runner [ ScrollAnimatorEnabled=false ] -->
+<!DOCTYPE html>
 <html>
     <head>
         <style>
@@ -29,6 +29,7 @@
 
                 clickOnElement(container);
                 await UIHelper.keyDown("pageDown");
+                await UIHelper.waitForTargetScrollAnimationToSettle(container);
 
                 expectTrue(container.scrollTop != 0, "paging moved container");
                 let defaultPagePosition = container.scrollTop;
@@ -37,6 +38,7 @@
                 container.scrollTop = 0;
                 container.style.scrollPaddingTop = "10px";
                 await UIHelper.keyDown("pageDown");
+                await UIHelper.waitForTargetScrollAnimationToSettle(container);
 
                 let expected = (container.clientHeight - 10) * pageProportion;
                 expectTrue(container.scrollTop != 0, "paging moved padded container");
@@ -46,6 +48,7 @@
                 container.style.scrollPaddingTop = "0px";
                 container.style.scrollPaddingBottom = "10px";
                 await UIHelper.keyDown("pageDown");
+                await UIHelper.waitForTargetScrollAnimationToSettle(container);
 
                 expectTrue(container.scrollTop != 0, "paging moved padded container");
                 shouldBeCloseTo("container.scrollTop", expected, 1);
@@ -54,6 +57,7 @@
                 container.style.scrollPaddingTop = "10px";
                 container.style.scrollPaddingBottom = "10px";
                 await UIHelper.keyDown("pageDown");
+                await UIHelper.waitForTargetScrollAnimationToSettle(container);
 
                 expected = (container.clientHeight - 20) * pageProportion;
                 expectTrue(container.scrollTop != 0, "paging moved padded container");

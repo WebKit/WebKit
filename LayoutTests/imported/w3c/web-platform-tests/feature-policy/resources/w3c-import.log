@@ -1,7 +1,7 @@
 The tests in this directory were imported from the W3C repository.
 Do NOT modify these tests directly in WebKit.
 Instead, create a pull request on the WPT github:
-	https://github.com/w3c/web-platform-tests
+	https://github.com/web-platform-tests/wpt
 
 Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
 
@@ -15,11 +15,31 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/autoplay.js
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-allowedfeatures.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-autoplay.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-battery.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-clipboard-read.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-clipboard-write.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-generic-sensor.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-geolocation.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-idle-detection-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-idle-detection-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-idle-detection.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-nested-subframe-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-payment.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-picture-in-picture.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-report-json.js
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-screen-wakelock.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-serial-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-serial-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-serial.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-usb-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-usb-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-usb.html
-/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-wakelock.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/feature-policy-webvr.html
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/featurepolicy.js
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/nested-sandbox.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/picture-in-picture.js
 /LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/redirect-on-load.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/sandbox-self.html
+/LayoutTests/imported/w3c/web-platform-tests/feature-policy/resources/sandbox-self.html.headers

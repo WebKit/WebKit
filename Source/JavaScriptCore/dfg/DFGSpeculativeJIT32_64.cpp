@@ -2614,6 +2614,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringSubstring: {
+        compileStringSubstring(node);
+        break;
+    }
+
     case ToLowerCase: {
         compileToLowerCase(node);
         break;

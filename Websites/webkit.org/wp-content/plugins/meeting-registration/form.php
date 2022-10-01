@@ -88,7 +88,7 @@
         <label class="form-label" for="affiliation">Affiliation/Company</label>
         <input type="text" name="affiliation" id="affiliation" placeholder="&nbsp;" list="companies">
         <datalist id="companies">
-            <option>Apple, Inc.</option>
+            <option>Apple Inc.</option>
             <option>Igalia, S.L.</option>
             <option>Google</option>
             <option>Sony Interactive Entertainment</option>
@@ -106,7 +106,7 @@
 
     <div class="form-field form-toggle">
         <strong>OPTIONAL</strong><br>
-        Join us for a fun after-meeting community experience in the form of a bluffing/social deduction game. The game experience is expected to last around 2-hours. Toggle the box below to participate. Scheduling will be determined based on participation.
+        Join us for a fun after-meeting community experience in the form of a bluffing/social deduction game. <a href="/meeting/social" target="_blank">Learn more details here</a>.
     </div>
 
     <div class="form-field form-toggle">

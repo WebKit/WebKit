@@ -32,11 +32,14 @@
 #include "PlatformWebView.h"
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKSerializedScriptValue.h>
 
 namespace TestWebKitAPI {
 
 static bool didFinishLoad;
 static bool didNotHandleKeyDownEvent;
+static bool javascriptRun;
+static bool isScrolled;
 
 static void didFinishNavigation(WKPageRef, WKNavigationRef, WKTypeRef, const void*)
 {
@@ -47,6 +50,18 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
 {
     if (Util::isKeyDown(event))
         didNotHandleKeyDownEvent = true;
+}
+
+
+static void didRunJavascript(WKSerializedScriptValueRef serializedScriptValue, WKErrorRef error, void* context)
+{
+    JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
+    JSValueRef jsValue = WKSerializedScriptValueDeserialize(serializedScriptValue, scriptContext, 0);
+    isScrolled = JSValueToBoolean(scriptContext, jsValue);
+
+    javascriptRun = true;
+
+    JSGlobalContextRelease(scriptContext);
 }
 
 TEST(WebKit, SpacebarScrolling)
@@ -100,6 +115,12 @@ TEST(WebKit, SpacebarScrolling)
 
     didNotHandleKeyDownEvent = false;
     webView.simulateSpacebarKeyPress();
+
+    while (!isScrolled) {
+        javascriptRun = false;
+        WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("isDocumentScrolled()").get(), 0, didRunJavascript);
+        Util::run(&javascriptRun);
+    }
 
     EXPECT_JS_TRUE(webView.page(), "isDocumentScrolled()");
     EXPECT_JS_TRUE(webView.page(), "textFieldContainsSpace()");

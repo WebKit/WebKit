@@ -33,6 +33,7 @@
 #include "FeaturePolicy.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWakeLockSentinel.h"
+#include "Page.h"
 #include "PermissionController.h"
 #include "PermissionQuerySource.h"
 #include "PermissionState.h"

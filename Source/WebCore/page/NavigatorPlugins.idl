@@ -28,4 +28,5 @@ interface mixin NavigatorPlugins {
     [SameObject] readonly attribute DOMPluginArray plugins;
     [SameObject] readonly attribute DOMMimeTypeArray mimeTypes;
     boolean javaEnabled();
+    readonly attribute boolean pdfViewerEnabled;
 };

@@ -1,0 +1,3 @@
+
+FAIL Generic Sensor Report Format assert_throws_dom: Constructing sensors should be blocked by policy function "() => new Accelerometer()" threw object "ReferenceError: Can't find variable: Accelerometer" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
+

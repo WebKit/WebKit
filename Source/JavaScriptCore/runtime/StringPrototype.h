@@ -58,8 +58,8 @@ void substituteBackreferencesSlow(StringBuilder& result, StringView replacement,
 
 JSC_DECLARE_HOST_FUNCTION(stringProtoFuncRepeatCharacter);
 JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSplitFast);
+JSC_DECLARE_HOST_FUNCTION(stringProtoFuncSubstring);
 
-JSC_DECLARE_HOST_FUNCTION(builtinStringSubstringInternal);
 JSC_DECLARE_HOST_FUNCTION(builtinStringIncludesInternal);
 JSC_DECLARE_HOST_FUNCTION(builtinStringIndexOfInternal);
 

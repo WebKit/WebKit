@@ -544,7 +544,13 @@ String contextMenuItemTagSearchWeb()
 {
     return WEB_UI_STRING_WITH_MNEMONIC("Search the Web", "_Search the Web", "Search the Web context menu item");
 }
-#endif
+
+String pdfDocumentTypeDescription()
+{
+    // Also exposed to DOM.
+    return WEB_UI_STRING("Portable Document Format", "Description of the primary type supported by the PDF pseudo plug-in.");
+}
+#endif // !PLATFORM(COCOA)
 
 #endif // ENABLE(CONTEXT_MENUS)
 

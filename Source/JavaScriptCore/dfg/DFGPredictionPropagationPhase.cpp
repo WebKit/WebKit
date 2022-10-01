@@ -1002,6 +1002,7 @@ private:
 
         case StringValueOf:
         case StringSlice:
+        case StringSubstring:
         case ToLowerCase:
             setPrediction(SpecString);
             break;

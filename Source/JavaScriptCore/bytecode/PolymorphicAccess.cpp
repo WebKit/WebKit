@@ -617,6 +617,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
                     notInt32 = jit.branchIfNotInt32(state.stubInfo->propertyTagGPR());
 #endif
                 }
+                JIT_COMMENT(jit, "Cases start (needsInt32PropertyCheck)");
                 for (unsigned i = cases.size(); i--;) {
                     fallThrough.link(&jit);
                     fallThrough.clear();
@@ -652,6 +653,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
 
                 state.failAndRepatch.append(jit.branchIfRopeStringImpl(state.scratchGPR));
 
+                JIT_COMMENT(jit, "Cases start (needsStringPropertyCheck)");
                 for (unsigned i = cases.size(); i--;) {
                     fallThrough.link(&jit);
                     fallThrough.clear();
@@ -680,6 +682,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
                     notSymbol.append(jit.branchIfNotSymbol(propertyGPR));
                 }
 
+                JIT_COMMENT(jit, "Cases start (needsSymbolPropertyCheck)");
                 for (unsigned i = cases.size(); i--;) {
                     fallThrough.link(&jit);
                     fallThrough.clear();
@@ -691,6 +694,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
             }
         } else {
             // Cascade through the list, preferring newer entries.
+            JIT_COMMENT(jit, "Cases start !(needsInt32PropertyCheck || needsStringPropertyCheck || needsSymbolPropertyCheck)");
             for (unsigned i = cases.size(); i--;) {
                 fallThrough.link(&jit);
                 fallThrough.clear();
@@ -701,6 +705,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         state.failAndRepatch.append(fallThrough);
 
     } else {
+        JIT_COMMENT(jit, "Cases start (allGuardedByStructureCheck)");
         jit.load32(
             CCallHelpers::Address(stubInfo.m_baseGPR, JSCell::structureIDOffset()),
             state.scratchGPR);
@@ -717,6 +722,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
 
     if (!state.failAndIgnore.empty()) {
         state.failAndIgnore.link(&jit);
+        JIT_COMMENT(jit, "failAndIgnore");
         
         // Make sure that the inline cache optimization code knows that we are taking slow path because
         // of something that isn't patchable. The slow path will decrement "countdown" and will only
@@ -758,6 +764,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
         // Note also that this is not reachable from custom getter/setter. Custom getter/setters will have 
         // their own exception handling logic that doesn't go through genericUnwind.
         MacroAssembler::Label makeshiftCatchHandler = jit.label();
+        JIT_COMMENT(jit, "exception handler");
 
         int stackPointerOffset = codeBlock->stackPointerOffset() * sizeof(EncodedJSValue);
         AccessGenerationState::SpillState spillStateForJSCall = state.spillStateForJSCall();
@@ -794,6 +801,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(const GCSafeConcurrentJSLoc
 
     if (codeBlock->useDataIC()) {
         failure.link(&jit);
+        JIT_COMMENT(jit, "failure far jump");
         // In ARM64, we do not push anything on stack specially.
         // So we can just jump to the slow-path even though this thunk is called (not jumped).
         // FIXME: We should tail call to the thunk which calls the slow path function.

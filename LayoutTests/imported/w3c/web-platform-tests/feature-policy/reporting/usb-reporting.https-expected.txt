@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: TypeError: undefined is not an object (evaluating 'navigator.usb.getDevices')
+
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'navigator.usb.getDevices')
+
+NOTRUN USB Report Format
+

@@ -26,6 +26,9 @@
 #include "config.h"
 #include "RFC7230.h"
 
+#include <wtf/ASCIICType.h>
+#include <wtf/text/StringView.h>
+
 namespace RFC7230 {
 
 bool isTokenCharacter(UChar c)

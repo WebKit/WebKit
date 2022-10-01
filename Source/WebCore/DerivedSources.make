@@ -1309,6 +1309,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/ResizeObserverOptions.idl \
     $(WebCore)/page/ResizeObserverSize.idl \
     $(WebCore)/page/Screen.idl \
+    $(WebCore)/page/ScreenOrientation.idl \
     $(WebCore)/page/ScrollBehavior.idl \
     $(WebCore)/page/ScrollIntoViewOptions.idl \
     $(WebCore)/page/ScrollLogicalPosition.idl \
@@ -1559,6 +1560,8 @@ JS_BINDING_IDLS := \
 ADDITIONAL_BINDING_IDLS = \
     DocumentTouch.idl \
     GestureEvent.idl \
+    Internals+Additions.idl \
+    InternalsAdditions.idl \
     Touch.idl \
     TouchEvent.idl \
     TouchList.idl \

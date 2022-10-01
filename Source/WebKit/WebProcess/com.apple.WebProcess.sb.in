@@ -2029,6 +2029,7 @@
         SYS_setsockopt ;; <rdar://90249455>
         SYS_shm_open
         SYS_sigaction
+        SYS_sigreturn
         SYS_sysctl
         SYS_unlink
         SYS_write

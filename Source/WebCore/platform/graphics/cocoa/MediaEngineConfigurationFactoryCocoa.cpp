@@ -37,6 +37,10 @@
 #include <pal/avfoundation/OutputDevice.h>
 #include <wtf/Algorithms.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MediaCapabilitiesAdditions.h>
+#endif
+
 #include "VideoToolboxSoftLink.h"
 
 namespace WebCore {
@@ -122,6 +126,9 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
             if (!parsedInfo)
                 return std::nullopt;
             info = *parsedInfo;
+#endif
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/MediaCapabilitiesAdditions.cpp>
 #endif
         } else {
             if (alphaChannel || hdrSupported)

@@ -21,7 +21,12 @@
       }
       if (window.testRunner)
           window.testRunner.waitUntilDone();
-      document.addEventListener("scroll", scrollAndRepaint, false);
+
+      eventSender.monitorWheelEvents();
+
+      setTimeout(function() {
+          eventSender.callAfterScrollingCompletes(scrollAndRepaint);
+      }, 0);
   </script>
 </head>
   <body style="height: 820;">

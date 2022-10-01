@@ -1,0 +1,7 @@
+
+FAIL Feature-Policy: fullscreen 'self' -- test allowlist is [same_origin] undefined is not an object (evaluating 'document.featurePolicy.getAllowlistForFeature')
+FAIL Feature-Policy: fullscreen 'self' -- test fullscreen is allowed on same-origin subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Feature-Policy: fullscreen 'self' -- test fullscreen is disallowed on cross-origin subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Feature-Policy: fullscreen 'self', iframe.allow = fullscreen 'src'; -- test fullscreen is allowed on same-origin subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+FAIL Feature-Policy: fullscreen 'self', iframe.allow = fullscreen 'src'; -- test fullscreen is allowed on cross-origin subframe assert_not_equals: Feature Policy is supported got disallowed value undefined
+

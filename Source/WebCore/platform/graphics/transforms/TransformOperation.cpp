@@ -97,7 +97,14 @@ std::optional<TransformOperation::OperationType> TransformOperation::sharedPrimi
 std::optional<TransformOperation::OperationType> TransformOperation::sharedPrimitiveType(const TransformOperation* other) const
 {
     // Blending with a null operation is always supported via blending with identity.
-    return other ? sharedPrimitiveType(other->primitiveType()) : primitiveType();
+    if (!other)
+        return type();
+
+    // In case we have the same type, make sure to preserve it.
+    if (other->type() == type())
+        return type();
+
+    return sharedPrimitiveType(other->primitiveType());
 }
 
 } // namespace WebCore

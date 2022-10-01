@@ -1,0 +1,11 @@
+Blocked access to external URL https://www.localhost:9443/feature-policy/resources/feature-policy-payment.html
+
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Feature-Policy header {"payment" : []} disallows the top-level document. assert_throws_dom: function "() => {
+      new PaymentRequest(supportedInstruments, details);
+    }" did not throw
+FAIL Feature-Policy header {"payment" : []} disallows same-origin iframes. assert_false: PaymentRequest() expected false got true
+TIMEOUT Feature-Policy header {"payment" : []} disallows cross-origin iframes. Test timed out
+

@@ -178,7 +178,7 @@ namespace JSC {
     macro(stringIncludesInternal) \
     macro(stringIndexOfInternal) \
     macro(stringSplitFast) \
-    macro(stringSubstringInternal) \
+    macro(stringSubstring) \
     macro(makeBoundFunction) \
     macro(hasOwnLengthProperty) \
     macro(handleProxyGetTrapResult) \

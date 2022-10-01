@@ -220,7 +220,7 @@
     "web-platform-tests/entries-api": "import", 
     "web-platform-tests/eventsource": "import", 
     "web-platform-tests/ext-xhtml-pubid": "skip", 
-    "web-platform-tests/feature-policy": "skip", 
+    "web-platform-tests/feature-policy": "import", 
     "web-platform-tests/feature-policy/resources": "import", 
     "web-platform-tests/feature-policy/resources/": "import", 
     "web-platform-tests/fetch": "import", 
