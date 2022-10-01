@@ -27,7 +27,6 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include "JSValueInWrappedObject.h"
 #include "TreeScopeOrderedMap.h"
 #include <memory>
 #include <wtf/Forward.h>
@@ -42,6 +41,7 @@ class ContainerNode;
 class Document;
 class Element;
 class FloatPoint;
+class JSDOMGlobalObject;
 class HTMLImageElement;
 class HTMLLabelElement;
 class HTMLMapElement;
