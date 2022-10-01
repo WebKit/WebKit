@@ -512,9 +512,11 @@ BackgroundImageGeometry BackgroundPainter::calculateBackgroundImageGeometry(cons
     LayoutSize positioningAreaSize;
     // Determine the background positioning area and set destination rect to the background painting area.
     // Destination rect will be adjusted later if the background is non-repeating.
-    // FIXME: transforms spec says that fixed backgrounds behave like scroll inside transforms. https://bugs.webkit.org/show_bug.cgi?id=15679
+    auto enclosingLayer = renderer.enclosingLayer();
+    bool isTransformed = renderer.hasTransform() || (enclosingLayer && enclosingLayer->hasTransformedAncestor());
+    bool fixedAttachment = fillLayer.attachment() == FillAttachment::FixedBackground && !isTransformed;
+
     LayoutRect destinationRect(borderBoxRect);
-    bool fixedAttachment = fillLayer.attachment() == FillAttachment::FixedBackground;
     float deviceScaleFactor = renderer.document().deviceScaleFactor();
     if (!fixedAttachment) {
         LayoutUnit right;
