@@ -28,7 +28,7 @@ partial interface mixin DocumentOrShadowRoot {
     [SameObject] readonly attribute StyleSheetList styleSheets;
 
     // FIXME: This should use an ObservableArray<CSSStyleSheet> but we don't support this yet.
-    // https://bugs.webkit.org/show_bug.cgi?id=245689
-    [EnabledBySetting=ConstructableStylesheetsEnabled] attribute FrozenArray<CSSStyleSheet> adoptedStyleSheets;
+    // https://bugs.webkit.org/show_bug.cgi?id=238281
+    [EnabledBySetting=ConstructableStylesheetsEnabled, CallWith=CurrentGlobalObject, ImplementedAs=adoptedStyleSheetWrapper, CachedAttribute, CustomSetter] attribute any adoptedStyleSheets;
 };
 

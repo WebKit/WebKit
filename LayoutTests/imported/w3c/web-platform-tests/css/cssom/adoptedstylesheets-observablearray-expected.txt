@@ -1,6 +1,6 @@
 Test Span
 
-FAIL document.adoptedStyleSheets should allow mutation in-place Attempted to assign to readonly property.
-FAIL shadowRoot.adoptedStyleSheets should allow mutation in-place Attempted to assign to readonly property.
+PASS document.adoptedStyleSheets should allow mutation in-place
+PASS shadowRoot.adoptedStyleSheets should allow mutation in-place
 PASS adoptedStyleSheets should return true for isArray()
 

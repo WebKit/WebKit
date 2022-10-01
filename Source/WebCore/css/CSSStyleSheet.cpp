@@ -486,30 +486,30 @@ Document* CSSStyleSheet::constructorDocument() const
     return m_constructorDocument.get();
 }
 
-void CSSStyleSheet::addAdoptingTreeScope(TreeScope& treeScope)
+void CSSStyleSheet::addAdoptingTreeScope(Document& document)
 {
-    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope.rootNode())) {
-        m_adoptingShadowRoots.add(*shadowRoot);
-        shadowRoot->styleScope().didChangeActiveStyleSheetCandidates();
-    } else {
-        auto& document = downcast<Document>(treeScope.rootNode());
-        m_adoptingDocuments.add(document);
-        document.styleScope().didChangeActiveStyleSheetCandidates();
-    }
+    m_adoptingDocuments.add(document);
+    document.styleScope().didChangeActiveStyleSheetCandidates();
 }
 
-void CSSStyleSheet::removeAdoptingTreeScope(TreeScope& treeScope, IsTreeScopeBeingDestroyed isTreeScopeBeingDestroyed)
+void CSSStyleSheet::addAdoptingTreeScope(ShadowRoot& shadowRoot)
 {
-    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(treeScope.rootNode())) {
-        m_adoptingShadowRoots.remove(*shadowRoot);
-        if (isTreeScopeBeingDestroyed == IsTreeScopeBeingDestroyed::No)
-            shadowRoot->styleScope().didChangeStyleSheetContents();
-    } else {
-        auto& document = downcast<Document>(treeScope.rootNode());
-        m_adoptingDocuments.remove(document);
-        if (isTreeScopeBeingDestroyed == IsTreeScopeBeingDestroyed::No)
-            document.styleScope().didChangeStyleSheetContents();
-    }
+    m_adoptingShadowRoots.add(shadowRoot);
+    shadowRoot.styleScope().didChangeActiveStyleSheetCandidates();
+}
+
+void CSSStyleSheet::removeAdoptingTreeScope(Document& document, IsTreeScopeBeingDestroyed isTreeScopeBeingDestroyed)
+{
+    m_adoptingDocuments.remove(document);
+    if (isTreeScopeBeingDestroyed == IsTreeScopeBeingDestroyed::No)
+        document.styleScope().didChangeStyleSheetContents();
+}
+
+void CSSStyleSheet::removeAdoptingTreeScope(ShadowRoot& shadowRoot, IsTreeScopeBeingDestroyed isTreeScopeBeingDestroyed)
+{
+    m_adoptingShadowRoots.remove(shadowRoot);
+    if (isTreeScopeBeingDestroyed == IsTreeScopeBeingDestroyed::No)
+        shadowRoot.styleScope().didChangeStyleSheetContents();
 }
 
 CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSStyleSheet* sheet, RuleMutationType mutationType, StyleRuleKeyframes* insertedKeyframesRule)

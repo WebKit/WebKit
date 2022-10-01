@@ -29,6 +29,7 @@
 
 #include "Attr.h"
 #include "CSSStyleSheet.h"
+#include "CSSStyleSheetObservableArray.h"
 #include "DOMWindow.h"
 #include "ElementIterator.h"
 #include "FocusController.h"
@@ -41,6 +42,7 @@
 #include "HTMLMapElement.h"
 #include "HitTestResult.h"
 #include "IdTargetObserverRegistry.h"
+#include "JSObservableArray.h"
 #include "NodeRareData.h"
 #include "Page.h"
 #include "PointerLockController.h"
@@ -54,8 +56,7 @@
 namespace WebCore {
 
 struct SameSizeAsTreeScope {
-    void* pointers[10];
-    Vector<void*> vector;
+    void* pointers[11];
 };
 
 static_assert(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), "treescope should stay small");
@@ -67,6 +68,7 @@ TreeScope::TreeScope(ShadowRoot& shadowRoot, Document& document)
     , m_documentScope(document)
     , m_parentTreeScope(&document)
     , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
+    , m_adoptedStyleSheets(CSSStyleSheetObservableArray::create(shadowRoot))
 {
     shadowRoot.setTreeScope(*this);
 }
@@ -76,14 +78,14 @@ TreeScope::TreeScope(Document& document)
     , m_documentScope(document)
     , m_parentTreeScope(nullptr)
     , m_idTargetObserverRegistry(makeUnique<IdTargetObserverRegistry>())
+    , m_adoptedStyleSheets(CSSStyleSheetObservableArray::create(document))
 {
     document.setTreeScope(*this);
 }
 
 TreeScope::~TreeScope()
 {
-    for (auto& sheet : m_adoptedStyleSheets)
-        sheet->removeAdoptingTreeScope(*this, CSSStyleSheet::IsTreeScopeBeingDestroyed::Yes);
+    m_adoptedStyleSheets->willDestroyTreeScope();
 }
 
 void TreeScope::destroyTreeScopeData()
@@ -553,21 +555,17 @@ RadioButtonGroups& TreeScope::radioButtonGroups()
 
 const Vector<RefPtr<CSSStyleSheet>>& TreeScope::adoptedStyleSheets() const
 {
-    return m_adoptedStyleSheets;
+    return m_adoptedStyleSheets->sheets();
+}
+
+JSC::JSValue TreeScope::adoptedStyleSheetWrapper(JSDOMGlobalObject& lexicalGlobalObject)
+{
+    return JSC::JSObservableArray::create(&lexicalGlobalObject, m_adoptedStyleSheets.copyRef());
 }
 
 ExceptionOr<void> TreeScope::setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&& sheets)
 {
-    for (auto& sheet : sheets) {
-        if (!sheet->wasConstructedByJS() || sheet->constructorDocument() != &documentScope())
-            return Exception { NotAllowedError, "Sheet needs to be constructed by JavaScript and its constructor document must match"_s };
-    }
-    for (auto& sheet : m_adoptedStyleSheets)
-        sheet->removeAdoptingTreeScope(*this, CSSStyleSheet::IsTreeScopeBeingDestroyed::No);
-    m_adoptedStyleSheets = WTFMove(sheets);
-    for (auto& sheet : m_adoptedStyleSheets)
-        sheet->addAdoptingTreeScope(*this);
-    return { };
+    return m_adoptedStyleSheets->setSheets(WTFMove(sheets));
 }
 
 } // namespace WebCore
