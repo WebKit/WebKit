@@ -35,7 +35,7 @@ class RenderTreeBuilder::List {
 public:
     List(RenderTreeBuilder&);
 
-    void updateItemMarker(RenderListItem&);
+    void updateItemMarker(RenderListItem&, RenderListMarker&);
 
 private:
     RenderTreeBuilder& m_builder;

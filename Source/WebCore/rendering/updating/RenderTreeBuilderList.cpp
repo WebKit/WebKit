@@ -85,7 +85,7 @@ RenderTreeBuilder::List::List(RenderTreeBuilder& builder)
 {
 }
 
-void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
+void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer, RenderListMarker& isInside)
 {
     auto& style = listItemRenderer.style();
 
@@ -108,7 +108,8 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     }
 
     RenderElement* currentParent = markerRenderer->parent();
-    RenderBlock* newParent = getParentOfFirstLineBox(listItemRenderer, *markerRenderer);
+    // list-style-position:inside makes the ::marker pseudo an ordinary position:static element that should be attached to RenderListItem block.
+    RenderBlock* newParent = markerRenderer->isInside() ? listItemRenderer : getParentOfFirstLineBox(listItemRenderer, *markerRenderer);    
     if (!newParent) {
         // If the marker is currently contained inside an anonymous box,
         // then we are the only item in that anonymous box (since no line box
