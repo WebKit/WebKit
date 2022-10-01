@@ -286,6 +286,7 @@ inline void LineCandidate::reset()
 
 InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, InlineLayoutUnit contentLogicalLeft) const
 {
+    ASSERT(inlineItem.layoutBox().isInlineLevelBox());
     if (is<InlineTextItem>(inlineItem)) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
         if (auto contentWidth = inlineTextItem.width())
@@ -301,9 +302,6 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
 
     auto& layoutBox = inlineItem.layoutBox();
     auto& boxGeometry = m_inlineFormattingContext.geometryForBox(layoutBox);
-
-    if (layoutBox.isFloatingPositioned())
-        return std::max(0_lu, boxGeometry.marginBoxWidth());
 
     if (layoutBox.isReplacedBox())
         return boxGeometry.marginBoxWidth();
@@ -947,17 +945,23 @@ bool LineBuilder::tryPlacingFloatBox(const InlineItem& floatItem, LineBoxConstra
 
     // Shrink the line box with the intrusive float box's margin box.
     m_contentIsConstrainedByFloat = true;
-    auto floatBoxWidth = inlineItemWidth(floatItem, { });
-
     auto shouldAdjustLineLogicalLeft = [&] {
         auto matchingInlineDirection = floatingState()->isLeftToRightDirection() == formattingContext().root().style().isLeftToRightDirection();
         // Floating state inherited from the parent BFC with mismatching inline direction (ltr vs. rtl) puts
         // a right float (float: right in direction: ltr but parent direction: rtl) to logical left.
         return (matchingInlineDirection && isLogicalLeftPositionedInFloatingState) || (!matchingInlineDirection && !isLogicalLeftPositionedInFloatingState);
     };
-    if (shouldAdjustLineLogicalLeft())
-        m_lineLogicalRect.setLeft(m_lineLogicalRect.left() + floatBoxWidth);
-    m_lineLogicalRect.expandHorizontally(-floatBoxWidth);
+
+    // FIXME: In quirks mode some content may sneak above this float.
+    if (shouldAdjustLineLogicalLeft()) {
+        auto floatLogicalRight = InlineLayoutUnit { floatBoxItem.rectWithMargin().right() };
+        auto lineMarginLogicalLeft = m_lineLogicalRect.left() - m_lineMarginStart;
+        m_lineLogicalRect.shiftLeftTo(m_lineMarginStart + std::max(lineMarginLogicalLeft, floatLogicalRight));
+    } else {
+        auto floatLogicalLeft = InlineLayoutUnit { floatBoxItem.rectWithMargin().left() };
+        auto shrinkLineBy = m_lineLogicalRect.right() - floatLogicalLeft;
+        m_lineLogicalRect.expandHorizontally(std::min(0.f, -shrinkLineBy));
+    }
     return true;
 }
 
