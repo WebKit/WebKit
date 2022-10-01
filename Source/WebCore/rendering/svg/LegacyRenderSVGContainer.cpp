@@ -79,7 +79,10 @@ void LegacyRenderSVGContainer::layout()
     if (m_needsBoundariesUpdate || updatedTransform) {
         updateCachedBoundaries();
         m_needsBoundariesUpdate = false;
-    
+
+        // New bounds can affect transforms, so recompute them here if needed.
+        calculateLocalTransform();
+
         // If our bounds changed, notify the parents.
         LegacyRenderSVGModelObject::setNeedsBoundariesUpdate();
     }

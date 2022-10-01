@@ -4198,7 +4198,6 @@ webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/rotateY-1
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/scale-transform-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-007.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-background-008.html [ ImageOnlyFailure ]
-webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-box/fill-box-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-001.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-002.html [ ImageOnlyFailure ]
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-root-bg-003.html [ ImageOnlyFailure ]
