@@ -504,6 +504,10 @@
 #define ENABLE_WEB_AUDIO 0
 #endif
 
+#if !defined(ENABLE_WK_WEB_EXTENSIONS)
+#define ENABLE_WK_WEB_EXTENSIONS 0
+#endif
+
 #if !defined(ENABLE_XSLT)
 #define ENABLE_XSLT 1
 #endif
