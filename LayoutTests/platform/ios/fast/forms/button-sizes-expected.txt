@@ -61,8 +61,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (14,3) size 70x18
           RenderText {#text} at (0,0) size 70x17
             text run at (0,0) width 70: "Test Button"
-      RenderText {#text} at (750,1) size 5x19
-        text run at (750,1) width 5: " "
+      RenderText {#text} at (0,0) size 0x0
       RenderButton {BUTTON} at (0,31) size 105x26 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (15,3) size 75x19
           RenderText {#text} at (0,0) size 75x18
@@ -97,8 +96,7 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (20,5) size 97x25
           RenderText {#text} at (0,0) size 97x24
             text run at (0,0) width 97: "Test Button"
-      RenderText {#text} at (741,33) size 5x19
-        text run at (741,33) width 5: " "
+      RenderText {#text} at (0,0) size 0x0
       RenderButton {BUTTON} at (0,60) size 142x37 [color=#007AFF] [bgcolor=#E9E9EA] [border: (1px solid #FFFFFF)]
         RenderBlock (anonymous) at (21,5) size 100x26
           RenderText {#text} at (0,0) size 100x25

@@ -1,6 +1,6 @@
 This test ensures we calculate the frame correctly for objects that don't have a renderer (like display: contents elements).
 
-#toolbar: {width: 784, height: 20}
+#toolbar: {width: 784, height: 21}
 #group: {width: 44, height: 20}
 #button: {width: 784, height: 10}
 

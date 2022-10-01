@@ -48,7 +48,9 @@
 #include "RenderBlockFlow.h"
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
+#include "RenderDeprecatedFlexibleBox.h"
 #include "RenderDescendantIterator.h"
+#include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -299,6 +301,8 @@ void LineLayout::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBloc
             || is<RenderTextControlMultiLine>(replacedOrInlineBlock)
             || is<RenderTable>(replacedOrInlineBlock)
             || is<RenderGrid>(replacedOrInlineBlock)
+            || is<RenderFlexibleBox>(replacedOrInlineBlock)
+            || is<RenderDeprecatedFlexibleBox>(replacedOrInlineBlock)
 #if ENABLE(ATTACHMENT_ELEMENT)
             || is<RenderAttachment>(replacedOrInlineBlock)
 #endif
