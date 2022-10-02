@@ -297,6 +297,18 @@ bool StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, const Strin
     return changes;
 }
 
+void StyledElement::setInlineStyleProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
+{
+    ensureMutableInlineStyle().setProperty(propertyID, WTFMove(value), important);
+    inlineStyleChanged();
+}
+
+void StyledElement::setInlineStyleCustomProperty(const String& propertyName, RefPtr<CSSValue>&& value, bool important)
+{
+    ensureMutableInlineStyle().setCustomProperty(propertyName, WTFMove(value), important);
+    inlineStyleChanged();
+}
+
 bool StyledElement::removeInlineStyleProperty(CSSPropertyID propertyID)
 {
     if (!inlineStyle())

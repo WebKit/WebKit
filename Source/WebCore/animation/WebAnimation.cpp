@@ -1475,8 +1475,6 @@ ExceptionOr<void> WebAnimation::commitStyles()
     }();
 
     auto computedStyleExtractor = ComputedStyleExtractor(&styledElement);
-    auto inlineStyle = styledElement.document().createCSSStyleDeclaration();
-    inlineStyle->setCssText(styledElement.getAttribute(HTMLNames::styleAttr));
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
 
@@ -1513,11 +1511,11 @@ ExceptionOr<void> WebAnimation::commitStyles()
         WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
                 if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr))
-                    inlineStyle->setPropertyInternal(propertyId, cssValue->cssText(), false);
+                    styledElement.setInlineStyleProperty(propertyId, WTFMove(cssValue));
             },
             [&] (AtomString customProperty) {
                 if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
-                    inlineStyle->setProperty(customProperty, cssValue->cssText(), emptyString());
+                    styledElement.setInlineStyleCustomProperty(customProperty, WTFMove(cssValue));
             }
         );
     };
@@ -1532,8 +1530,6 @@ ExceptionOr<void> WebAnimation::commitStyles()
     auto customProperties = effect->animatedCustomProperties();
     for (auto customProperty : customProperties)
         commitProperty(customProperty);
-
-    styledElement.setAttribute(HTMLNames::styleAttr, AtomString { inlineStyle->cssText() });
 
     return { };
 }

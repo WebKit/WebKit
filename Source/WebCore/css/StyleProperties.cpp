@@ -1481,6 +1481,13 @@ bool MutableStyleProperties::setCustomProperty(const Document* document, const S
     return CSSParser::parseCustomPropertyValue(*this, AtomString { propertyName }, value, important, parserContext) == CSSParser::ParseResult::Changed;
 }
 
+void MutableStyleProperties::setCustomProperty(const String& propertyName, RefPtr<CSSValue>&& value, bool important)
+{
+    removeCustomProperty(propertyName);
+    m_propertyVector.append({ CSSPropertyCustom, WTFMove(value), important });
+    return;
+}
+
 void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
 {
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);

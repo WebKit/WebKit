@@ -255,6 +255,7 @@ public:
 
     // Methods for querying and altering CSS custom properties.
     bool setCustomProperty(const Document*, const String& propertyName, const String& value, bool important, CSSParserContext);
+    void setCustomProperty(const String& propertyName, RefPtr<CSSValue>&&, bool important);
     bool removeCustomProperty(const String& propertyName, String* returnText = nullptr);
 
 private:

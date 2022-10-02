@@ -1,7 +1,7 @@
 
 PASS Interpolation between translateX(0px) and translateX(50px) gives the correct computed value halfway according to commitStyles.
 PASS Interpolation between translateX(0%) and translateX(50%) gives the correct computed value halfway according to commitStyles.
-PASS Interpolation between translateY(0%) and translateX(50%) gives the correct computed value halfway according to commitStyles.
+FAIL Interpolation between translateY(0%) and translateX(50%) gives the correct computed value halfway according to commitStyles. assert_equals: The value at 50% progress is as expected expected "translate(25%)" but got "translate(25%, 0px)"
 PASS Interpolation between translateX(50px) and translateY(50px) gives the correct computed value halfway according to commitStyles.
 PASS Interpolation between translateX(50px) and translateZ(50px) gives the correct computed value halfway according to commitStyles.
 PASS Interpolation between translateZ(50px) and translateX(50px) gives the correct computed value halfway according to commitStyles.
