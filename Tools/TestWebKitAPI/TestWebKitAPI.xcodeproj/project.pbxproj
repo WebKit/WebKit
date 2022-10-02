@@ -251,6 +251,7 @@
 		44CF31FD249941E8009CB6CB /* ContextMenuAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44CF31FB24993F66009CB6CB /* ContextMenuAction.cpp */; };
 		44D5008E26FE9ED6000EB12F /* RetainPtrARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44D5008D26FE9ED6000EB12F /* RetainPtrARC.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		4628C8E92367ABD100B073F0 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4628C8E82367ABBC00B073F0 /* WKSecurityOrigin.cpp */; };
+		462B4E8028E7B0E400653230 /* fragment-navigation-before-load-event.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 462B4E7828E7B0AF00653230 /* fragment-navigation-before-load-event.html */; };
 		46397B951DC2C850009A78AE /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46397B941DC2C850009A78AE /* DOMNode.mm */; };
 		4647B1261EBA3B850041D7EF /* ProcessDidTerminate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */; };
 		464C764D230DF85C00AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 464C764C230DF83200AFB020 /* BadServiceWorkerRegistrations-4.sqlite3 */; };
@@ -1546,6 +1547,7 @@
 				C5101C4F176B8D9200EE9B15 /* findRanges.html in Copy Resources */,
 				F43E3BC120DADBC500A4E7ED /* fixed-nav-bar.html in Copy Resources */,
 				932AE53D1D371047005DFFAF /* focus-inputs.html in Copy Resources */,
+				462B4E8028E7B0E400653230 /* fragment-navigation-before-load-event.html in Copy Resources */,
 				1A7E8B3618120B2F00AEB74A /* FragmentNavigation.html in Copy Resources */,
 				F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */,
 				F4E0A28B211E4A2B00AF7C7F /* full-page-dropzone.html in Copy Resources */,
@@ -2243,6 +2245,7 @@
 		460C2FC827039D7D0047EF11 /* ServiceWorkerPageProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerPageProtocol.h; sourceTree = "<group>"; };
 		4612C2B8210A6ABF00B788A6 /* LoadFileThenReload.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoadFileThenReload.mm; sourceTree = "<group>"; };
 		4628C8E82367ABBC00B073F0 /* WKSecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSecurityOrigin.cpp; sourceTree = "<group>"; };
+		462B4E7828E7B0AF00653230 /* fragment-navigation-before-load-event.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "fragment-navigation-before-load-event.html"; sourceTree = "<group>"; };
 		46397B941DC2C850009A78AE /* DOMNode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMNode.mm; sourceTree = "<group>"; };
 		463F4722255B49B600D9E0CC /* VisibilityState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VisibilityState.mm; sourceTree = "<group>"; };
 		4647B1251EBA3B730041D7EF /* ProcessDidTerminate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessDidTerminate.cpp; sourceTree = "<group>"; };
@@ -5103,6 +5106,7 @@
 				524BBC9B19DF3714002F1AF1 /* file-with-video.html */,
 				1A02C84B125D4A5E00E3F4BD /* find.html */,
 				C5101C4E176B8BB900EE9B15 /* findRanges.html */,
+				462B4E7828E7B0AF00653230 /* fragment-navigation-before-load-event.html */,
 				26F52EAC1828820E0023D412 /* geolocationGetCurrentPosition.html */,
 				26F52EAE18288C040023D412 /* geolocationGetCurrentPositionWithHighAccuracy.html */,
 				26F52EB018288F0F0023D412 /* geolocationWatchPosition.html */,

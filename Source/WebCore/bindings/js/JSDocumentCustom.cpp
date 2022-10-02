@@ -22,6 +22,8 @@
 
 #include "Frame.h"
 #include "FrameDestructionObserverInlines.h"
+#include "JSCSSStyleSheet.h"
+#include "JSDOMConvert.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSXMLDocument.h"
@@ -91,6 +93,22 @@ JSValue toJS(JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* globalObjec
     if (auto* wrapper = cachedDocumentWrapper(*lexicalGlobalObject, *globalObject, document))
         return wrapper;
     return toJSNewlyCreated(lexicalGlobalObject, globalObject, Ref<Document>(document));
+}
+
+void setAdoptedStyleSheetsOnTreeScope(TreeScope& treeScope, JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+{
+    auto& vm = JSC::getVM(&lexicalGlobalObject);
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto nativeValue = convert<IDLFrozenArray<IDLInterface<CSSStyleSheet>>>(lexicalGlobalObject, value);
+    RETURN_IF_EXCEPTION(throwScope, void());
+    invokeFunctorPropagatingExceptionIfNecessary(lexicalGlobalObject, throwScope, [&] {
+        return treeScope.setAdoptedStyleSheets(WTFMove(nativeValue));
+    });
+}
+
+void JSDocument::setAdoptedStyleSheets(JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue value)
+{
+    setAdoptedStyleSheetsOnTreeScope(wrapped(), lexicalGlobalObject, value);
 }
 
 template<typename Visitor>

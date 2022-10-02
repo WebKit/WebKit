@@ -606,6 +606,7 @@ bindings/js/JSNavigatorCustom.cpp
 bindings/js/JSNodeCustom.cpp
 bindings/js/JSNodeIteratorCustom.cpp
 bindings/js/JSNodeListCustom.cpp
+bindings/js/JSObservableArray.cpp
 bindings/js/JSOffscreenCanvasRenderingContext2DCustom.cpp
 bindings/js/JSPaintRenderingContext2DCustom.cpp
 bindings/js/JSPaintWorkletGlobalScopeCustom.cpp
@@ -628,6 +629,7 @@ bindings/js/JSSVGPathSegCustom.cpp
 bindings/js/JSSVGViewSpecCustom.cpp
 bindings/js/JSServiceWorkerClientCustom.cpp
 bindings/js/JSServiceWorkerGlobalScopeCustom.cpp
+bindings/js/JSShadowRootCustom.cpp
 bindings/js/JSStaticRangeCustom.cpp
 bindings/js/JSStyleSheetCustom.cpp
 bindings/js/JSTextCustom.cpp
@@ -796,6 +798,7 @@ css/CSSShadowValue.cpp
 css/CSSStyleDeclaration.cpp
 css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp
+css/CSSStyleSheetObservableArray.cpp
 css/CSSSubgridValue.cpp
 css/CSSSupportsRule.cpp
 css/CSSTimingFunctionValue.cpp

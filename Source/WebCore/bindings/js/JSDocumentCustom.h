@@ -47,7 +47,10 @@ struct InheritsTraits<WebCore::JSDocument> {
 
 namespace WebCore {
 
+class TreeScope;
+
 JSC::JSObject* cachedDocumentWrapper(JSC::JSGlobalObject&, JSDOMGlobalObject&, Document&);
 void reportMemoryForDocumentIfFrameless(JSC::JSGlobalObject&, Document&);
+void setAdoptedStyleSheetsOnTreeScope(TreeScope&, JSC::JSGlobalObject&, JSC::JSValue);
 
 } // namespace WebCore

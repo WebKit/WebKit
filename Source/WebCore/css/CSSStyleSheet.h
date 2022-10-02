@@ -105,8 +105,10 @@ public:
     void clearOwnerRule() { m_ownerRule = nullptr; }
 
     enum class IsTreeScopeBeingDestroyed : bool { No, Yes };
-    void removeAdoptingTreeScope(TreeScope&, IsTreeScopeBeingDestroyed);
-    void addAdoptingTreeScope(TreeScope&);
+    void removeAdoptingTreeScope(Document&, IsTreeScopeBeingDestroyed);
+    void removeAdoptingTreeScope(ShadowRoot&, IsTreeScopeBeingDestroyed);
+    void addAdoptingTreeScope(Document&);
+    void addAdoptingTreeScope(ShadowRoot&);
 
     Document* ownerDocument() const;
     CSSStyleSheet& rootStyleSheet();

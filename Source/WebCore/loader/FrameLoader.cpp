@@ -1142,6 +1142,12 @@ void FrameLoader::loadInSameDocument(URL url, RefPtr<SerializedScriptValue> stat
         // we have already saved away the scroll and doc state for the long slow load,
         // but it's not an obvious case.
 
+        auto* document = m_frame.document();
+        if (document && !document->hasRecentUserInteractionForNavigationFromJS() && !documentLoader()->triggeringAction().isRequestFromClientOrUserInput()) {
+            if (auto* currentItem = history().currentItem())
+                currentItem->setWasCreatedByJSWithoutUserInteraction(true);
+        }
+
         history().updateBackForwardListForFragmentScroll();
     }
 
@@ -3248,12 +3254,6 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
         m_provisionalDocumentLoader->stopLoading();
         FRAMELOADER_RELEASE_LOG(ResourceLoading, "continueFragmentScrollAfterNavigationPolicy: Clearing provisional document loader (m_provisionalDocumentLoader=%p)", m_provisionalDocumentLoader.get());
         setProvisionalDocumentLoader(nullptr);
-    }
-
-    auto* document = m_frame.document();
-    if (document && !document->hasRecentUserInteractionForNavigationFromJS() && !documentLoader()->triggeringAction().isRequestFromClientOrUserInput()) {
-        if (auto* currentItem = history().currentItem())
-            currentItem->setWasCreatedByJSWithoutUserInteraction(true);
     }
 
     bool isRedirect = m_quickRedirectComing || policyChecker().loadType() == FrameLoadType::RedirectWithLockedBackForwardList;

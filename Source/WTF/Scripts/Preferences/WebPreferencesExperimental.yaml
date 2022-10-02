@@ -525,11 +525,11 @@ ConstructableStylesheetsEnabled:
   humanReadableDescription: "Enable Constructable Stylesheets"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 ContactPickerAPIEnabled:
   type: bool

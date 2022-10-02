@@ -32,6 +32,8 @@
 #include "Logging.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderDeprecatedFlexibleBox.h"
+#include "RenderFlexibleBox.h"
 #include "RenderGrid.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -425,7 +427,7 @@ static OptionSet<AvoidanceReason> canUseForChild(const RenderObject& child, Incl
         return reasons;
     }
 
-    if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer)) {
+    if (is<RenderBlockFlow>(renderer) || is<RenderGrid>(renderer) || is<RenderFlexibleBox>(renderer) || is<RenderDeprecatedFlexibleBox>(renderer)) {
         if (!isSupportedFloatingOrPositioned(renderer))
             SET_REASON_AND_RETURN_IF_NEEDED(ChildBoxIsFloatingOrPositioned, reasons, includeReasons)
         if (renderer.isRubyRun())

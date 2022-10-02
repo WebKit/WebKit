@@ -5450,6 +5450,7 @@ sub GenerateAttributeSetterBodyDefinition
     push(@$outputArray, "{\n");
 
     push(@$outputArray, "    auto& vm = JSC::getVM(&lexicalGlobalObject);\n");
+    push(@$outputArray, "    UNUSED_PARAM(vm);\n");
     push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n") if $needThrowScope;
 
     GenerateCustomElementReactionsStackIfNeeded($outputArray, $attribute, "lexicalGlobalObject");
@@ -5487,11 +5488,7 @@ sub GenerateAttributeSetterBodyDefinition
         push(@$outputArray, "    ensureStillAliveHere(value);\n\n");
         push(@$outputArray, "    return true;\n");
     } elsif ($isReplaceable) {
-        if ($needThrowScope) {
-            push(@$outputArray, "    throwScope.release();\n");
-        } else {
-            push(@$outputArray, "    UNUSED_PARAM(vm);\n");
-        }
+        push(@$outputArray, "    throwScope.release();\n") if $needThrowScope;
         push(@$outputArray, "    bool shouldThrow = true;\n");
         push(@$outputArray, "    thisObject.createDataProperty(&lexicalGlobalObject, propertyName, value, shouldThrow);\n");
         push(@$outputArray, "    return true;\n");

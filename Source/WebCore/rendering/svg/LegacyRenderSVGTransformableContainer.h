@@ -47,6 +47,7 @@ private:
     bool m_didTransformToRootUpdate : 1;
     AffineTransform m_localTransform;
     FloatSize m_lastTranslation;
+    FloatRect m_lastTransformReferenceBoxRect;
 };
 
 } // namespace WebCore

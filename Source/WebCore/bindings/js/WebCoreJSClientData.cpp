@@ -37,6 +37,7 @@
 #include "JSDOMWindowProperties.h"
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSIDBSerializationGlobalObject.h"
+#include "JSObservableArray.h"
 #include "JSPaintWorkletGlobalScope.h"
 #include "JSRemoteDOMWindow.h"
 #include "JSServiceWorkerGlobalScope.h"
@@ -63,6 +64,7 @@ using namespace JSC;
 
 JSHeapData::JSHeapData(Heap& heap)
     : m_runtimeArrayHeapCellType(JSC::IsoHeapCellType::Args<RuntimeArray>())
+    , m_observableArrayHeapCellType(JSC::IsoHeapCellType::Args<JSObservableArray>())
     , m_runtimeObjectHeapCellType(JSC::IsoHeapCellType::Args<JSC::Bindings::RuntimeObject>())
     , m_windowProxyHeapCellType(JSC::IsoHeapCellType::Args<JSWindowProxy>())
     , m_heapCellTypeForJSDOMWindow(JSC::IsoHeapCellType::Args<JSDOMWindow>())
@@ -87,6 +89,7 @@ JSHeapData::JSHeapData(Heap& heap)
     , m_domNamespaceObjectSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMObject)
     , m_domWindowPropertiesSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, JSDOMWindowProperties)
     , m_runtimeArraySpace ISO_SUBSPACE_INIT(heap, m_runtimeArrayHeapCellType, RuntimeArray)
+    , m_observableArraySpace ISO_SUBSPACE_INIT(heap, m_observableArrayHeapCellType, JSObservableArray)
     , m_runtimeMethodSpace ISO_SUBSPACE_INIT(heap, heap.cellHeapCellType, RuntimeMethod) // Hash:0xf70c4a85
     , m_runtimeObjectSpace ISO_SUBSPACE_INIT(heap, m_runtimeObjectHeapCellType, JSC::Bindings::RuntimeObject)
     , m_windowProxySpace ISO_SUBSPACE_INIT(heap, m_windowProxyHeapCellType, JSWindowProxy)
@@ -119,6 +122,7 @@ JSVMClientData::JSVMClientData(VM& vm)
     , CLIENT_ISO_SUBSPACE_INIT(m_domNamespaceObjectSpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_domWindowPropertiesSpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_runtimeArraySpace)
+    , CLIENT_ISO_SUBSPACE_INIT(m_observableArraySpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_runtimeMethodSpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_runtimeObjectSpace)
     , CLIENT_ISO_SUBSPACE_INIT(m_windowProxySpace)

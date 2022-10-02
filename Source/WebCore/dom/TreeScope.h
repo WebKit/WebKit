@@ -36,10 +36,12 @@
 namespace WebCore {
 
 class CSSStyleSheet;
+class CSSStyleSheetObservableArray;
 class ContainerNode;
 class Document;
 class Element;
 class FloatPoint;
+class JSDOMGlobalObject;
 class HTMLImageElement;
 class HTMLLabelElement;
 class HTMLMapElement;
@@ -114,6 +116,7 @@ public:
 
     RadioButtonGroups& radioButtonGroups();
 
+    JSC::JSValue adoptedStyleSheetWrapper(JSDOMGlobalObject&);
     const Vector<RefPtr<CSSStyleSheet>>& adoptedStyleSheets() const;
     ExceptionOr<void> setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&&);
 
@@ -145,7 +148,7 @@ private:
     std::unique_ptr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
     
     std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
-    Vector<RefPtr<CSSStyleSheet>> m_adoptedStyleSheets;
+    Ref<CSSStyleSheetObservableArray> m_adoptedStyleSheets;
 };
 
 inline bool TreeScope::hasElementWithId(const AtomStringImpl& id) const
