@@ -610,8 +610,8 @@ void LegacyLineLayout::computeExpansionForJustifiedText(BidiRun* firstRun, BidiR
             
             ASSERT(opportunitiesInRun <= expansionOpportunityCount);
             
-            // Only justify text if whitespace is collapsed.
-            if (run->renderer().style().collapseWhiteSpace()) {
+            // Don't justify for white-space: pre.
+            if (run->renderer().style().whiteSpace() == WhiteSpace::Pre) {
                 LegacyInlineTextBox& textBox = downcast<LegacyInlineTextBox>(*run->box());
                 float expansion = (availableLogicalWidth - totalLogicalWidth) * opportunitiesInRun / expansionOpportunityCount;
                 textBox.setExpansion(expansion);

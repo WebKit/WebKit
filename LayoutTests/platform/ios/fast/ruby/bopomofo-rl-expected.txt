@@ -25,8 +25,8 @@ layer at (724,0) size 76x600
                   RenderText {#text} at (0,10) size 10x4
                     text run at (0,10) width 3: "\x{2CB}"
                 RenderRubyBase (anonymous) at (0,0) size 12x24
-                  RenderText {#text} at (1,0) size 10x24
-                    text run at (1,0) width 24: "\x{3115}\x{3124}"
+                  RenderText {#text} at (1,0) size 10x16
+                    text run at (1,0) width 16: "\x{3115}\x{3124}"
           RenderRubyBase (anonymous) at (0,0) size 48x32
             RenderText {#text} at (6,0) size 36x32
               text run at (6,0) width 32: "\x{4E0A}"
@@ -51,8 +51,8 @@ layer at (724,0) size 76x600
                   RenderText {#text} at (0,10) size 10x4
                     text run at (0,10) width 3: "\x{2CA}"
                 RenderRubyBase (anonymous) at (0,0) size 12x24
-                  RenderText {#text} at (1,0) size 10x24
-                    text run at (1,0) width 24: "\x{310B}\x{3122}"
+                  RenderText {#text} at (1,0) size 10x16
+                    text run at (1,0) width 16: "\x{310B}\x{3122}"
           RenderRubyBase (anonymous) at (0,0) size 48x32
             RenderText {#text} at (6,0) size 36x32
               text run at (6,0) width 32: "\x{96E3}"
@@ -71,8 +71,8 @@ layer at (724,0) size 76x600
               text run at (6,0) width 32: "\x{4E8B}"
         RenderRubyRun (anonymous) at (0,160) size 48x32
           RenderRubyText {RT} at (-5,0) size 12x32
-            RenderText {#text} at (1,5) size 10x22
-              text run at (1,5) width 22: "\x{3113}\x{2C7}"
+            RenderText {#text} at (1,5) size 10x11
+              text run at (1,5) width 11: "\x{3113}\x{2C7}"
           RenderRubyBase (anonymous) at (0,0) size 48x32
             RenderText {#text} at (6,0) size 36x32
               text run at (6,0) width 32: "\x{53EA}"
@@ -84,8 +84,8 @@ layer at (724,0) size 76x600
                   RenderText {#text} at (0,10) size 10x4
                     text run at (0,10) width 3: "\x{2CB}"
                 RenderRubyBase (anonymous) at (0,0) size 12x24
-                  RenderText {#text} at (1,0) size 10x24
-                    text run at (1,0) width 24: "\x{3106}\x{311A}"
+                  RenderText {#text} at (1,0) size 10x16
+                    text run at (1,0) width 16: "\x{3106}\x{311A}"
           RenderRubyBase (anonymous) at (0,0) size 48x32
             RenderText {#text} at (6,0) size 36x32
               text run at (6,0) width 32: "\x{6015}"
@@ -97,15 +97,15 @@ layer at (724,0) size 76x600
                   RenderText {#text} at (0,10) size 10x4
                     text run at (0,10) width 3: "\x{2C7}"
                 RenderRubyBase (anonymous) at (0,0) size 12x24
-                  RenderText {#text} at (1,0) size 10x24
-                    text run at (1,0) width 24: "\x{3127}\x{3121}"
+                  RenderText {#text} at (1,0) size 10x16
+                    text run at (1,0) width 16: "\x{3127}\x{3121}"
           RenderRubyBase (anonymous) at (0,0) size 48x32
             RenderText {#text} at (6,0) size 36x32
               text run at (6,0) width 32: "\x{6709}"
         RenderRubyRun (anonymous) at (0,256) size 48x32
           RenderRubyText {RT} at (-5,0) size 12x32
-            RenderText {#text} at (1,1) size 10x30
-              text run at (1,1) width 30: "\x{3112}\x{3127}\x{3123}"
+            RenderText {#text} at (1,1) size 10x25
+              text run at (1,1) width 24: "\x{3112}\x{3127}\x{3123}"
           RenderRubyBase (anonymous) at (0,0) size 48x32
             RenderText {#text} at (6,0) size 36x32
               text run at (6,0) width 32: "\x{5FC3}"
@@ -117,8 +117,8 @@ layer at (724,0) size 76x600
                   RenderText {#text} at (0,10) size 10x4
                     text run at (0,10) width 3: "\x{2CA}"
                 RenderRubyBase (anonymous) at (0,0) size 12x24
-                  RenderText {#text} at (1,0) size 10x24
-                    text run at (1,0) width 24: "\x{3116}\x{3123}"
+                  RenderText {#text} at (1,0) size 10x16
+                    text run at (1,0) width 16: "\x{3116}\x{3123}"
           RenderRubyBase (anonymous) at (0,0) size 48x32
             RenderText {#text} at (6,0) size 36x32
               text run at (6,0) width 32: "\x{4EBA}"

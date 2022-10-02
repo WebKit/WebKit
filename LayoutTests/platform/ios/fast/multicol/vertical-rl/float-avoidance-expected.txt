@@ -10,12 +10,12 @@ layer at (540,8) size 152x435
 layer at (550,18) size 132x415
   RenderMultiColumnFlowThread at (10,10) size 132x415
     RenderBlock {P} at (16,0) size 100x415
-      RenderText {#text} at (0,0) size 99x415
-        text run at (0,0) width 415: "This technology preview of our award winning next generation"
-        text run at (20,0) width 57: "browser "
-        text run at (20,56) width 359: "is a sign of things to come from Mozilla. Powerful yet"
-        text run at (40,0) width 122: "easy to use. This "
-        text run at (40,121) width 294: "maintenance release provides a few updates"
-        text run at (60,0) width 246: "based on user feedback - including "
-        text run at (60,245) width 170: "changes to the Extension"
+      RenderText {#text} at (0,0) size 99x405
+        text run at (0,0) width 405: "This technology preview of our award winning next generation"
+        text run at (20,0) width 56: "browser "
+        text run at (20,55) width 348: "is a sign of things to come from Mozilla. Powerful yet"
+        text run at (40,0) width 111: "easy to use. This "
+        text run at (40,110) width 281: "maintenance release provides a few updates"
+        text run at (60,0) width 227: "based on user feedback - including "
+        text run at (60,226) width 160: "changes to the Extension"
         text run at (80,0) width 206: "System and icon improvements."
