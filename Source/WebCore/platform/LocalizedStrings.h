@@ -159,8 +159,9 @@ namespace WebCore {
     String contextMenuItemTagMediaPause();
     String contextMenuItemTagMediaMute();
     WEBCORE_EXPORT String contextMenuItemTagInspectElement();
-#endif // ENABLE(CONTEXT_MENUS)
-
+#if HAVE(TRANSLATION_UI_SERVICES)
+    String contextMenuItemTagTranslate(const String& selectedString);
+#endif
 #if ENABLE(PDFJS)
     String contextMenuItemPDFAutoSize();
     String contextMenuItemPDFZoomIn();
@@ -173,6 +174,9 @@ namespace WebCore {
     String contextMenuItemPDFNextPage();
     String contextMenuItemPDFPreviousPage();
 #endif
+#endif // ENABLE(CONTEXT_MENU)
+
+    WEBCORE_EXPORT String pdfDocumentTypeDescription();
 
 #if !PLATFORM(IOS_FAMILY)
     String searchMenuNoRecentSearchesText();
@@ -269,8 +273,6 @@ namespace WebCore {
     String uploadFileText();
     String allFilesText();
 #endif
-
-    WEBCORE_EXPORT String pdfDocumentTypeDescription();
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String builtInPDFPluginName();
@@ -394,10 +396,6 @@ namespace WebCore {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     WEBCORE_EXPORT String contextMenuItemTagCopySubject();
     WEBCORE_EXPORT String contextMenuItemTitleRemoveBackground();
-#endif
-
-#if HAVE(TRANSLATION_UI_SERVICES)
-    String contextMenuItemTagTranslate(const String& selectedString);
 #endif
 
 #if USE(CF) && !PLATFORM(WIN)

@@ -294,6 +294,13 @@ String contextMenuItemTagLearnSpelling()
     return WEB_UI_STRING_WITH_MNEMONIC("Learn Spelling", "_Learn Spelling", "Learn Spelling context menu item");
 }
 
+#if !PLATFORM(COCOA)
+String contextMenuItemTagSearchWeb()
+{
+    return WEB_UI_STRING_WITH_MNEMONIC("Search the Web", "_Search the Web", "Search the Web context menu item");
+}
+#endif
+
 String contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
 #if USE(CF)
@@ -305,16 +312,6 @@ String contextMenuItemTagLookUpInDictionary(const String& selectedString)
     return makeStringByReplacingAll(WEB_UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word"), "<selection>"_s, truncatedStringForMenuItem(selectedString));
 #endif
 }
-
-#if HAVE(TRANSLATION_UI_SERVICES)
-
-String contextMenuItemTagTranslate(const String& selectedString)
-{
-    auto selectedCFString = truncatedStringForMenuItem(selectedString).createCFString();
-    return WEB_UI_FORMAT_CFSTRING("Translate “%@”", "Translate context menu item with selected word", selectedCFString.get());
-}
-
-#endif
 
 String contextMenuItemTagOpenLink()
 {
@@ -487,6 +484,14 @@ String contextMenuItemTagInspectElement()
     return WEB_UI_STRING_WITH_MNEMONIC("Inspect Element", "Inspect _Element", "Inspect Element context menu item");
 }
 
+#if HAVE(TRANSLATION_UI_SERVICES)
+String contextMenuItemTagTranslate(const String& selectedString)
+{
+    auto selectedCFString = truncatedStringForMenuItem(selectedString).createCFString();
+    return WEB_UI_FORMAT_CFSTRING("Translate “%@”", "Translate context menu item with selected word", selectedCFString.get());
+}
+#endif
+
 #if ENABLE(PDFJS)
 String contextMenuItemPDFAutoSize()
 {
@@ -538,21 +543,15 @@ String contextMenuItemPDFPreviousPage()
     return WEB_UI_STRING_WITH_MNEMONIC("Previous Page", "_Previous Page", "Previous Page context menu item");
 }
 #endif
+#endif // ENABLE(CONTEXT_MENUS)
 
 #if !PLATFORM(COCOA)
-String contextMenuItemTagSearchWeb()
-{
-    return WEB_UI_STRING_WITH_MNEMONIC("Search the Web", "_Search the Web", "Search the Web context menu item");
-}
-
 String pdfDocumentTypeDescription()
 {
     // Also exposed to DOM.
     return WEB_UI_STRING("Portable Document Format", "Description of the primary type supported by the PDF pseudo plug-in.");
 }
 #endif // !PLATFORM(COCOA)
-
-#endif // ENABLE(CONTEXT_MENUS)
 
 #if !PLATFORM(IOS_FAMILY)
 
