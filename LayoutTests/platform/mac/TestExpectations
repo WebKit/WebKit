@@ -2369,5 +2369,3 @@ webkit.org/b/244943 imported/w3c/web-platform-tests/html/capability-delegation/d
 webkit.org/b/245092 webaudio/offlineaudiocontext-gc.html [ Pass Failure ]
 
 webkit.org/b/245733 [ Monterey ] fast/text/hyphenate-avoid-orphaned-word.html [ Failure ]
-
-webkit.org/b/245900 [ Debug ] fast/inline/inline-box-adjust-position-crash2.html [ Skip ]
