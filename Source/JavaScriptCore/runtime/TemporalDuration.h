@@ -74,7 +74,7 @@ public:
 
     static int sign(const ISO8601::Duration&);
     static double round(ISO8601::Duration&, double increment, TemporalUnit, RoundingMode);
-    static void balance(ISO8601::Duration&, TemporalUnit largestUnit);
+    static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);
 
 private:
     TemporalDuration(VM&, Structure*, ISO8601::Duration&&);

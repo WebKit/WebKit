@@ -280,8 +280,13 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-sub-minute-offset.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-wrong-type.js
     - test/built-ins/Temporal/Duration/prototype/round/roundingmode-ceil.js
+    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-expand.js
     - test/built-ins/Temporal/Duration/prototype/round/roundingmode-floor.js
+    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfCeil.js
+    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfEven.js
     - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfExpand.js
+    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfFloor.js
+    - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfTrunc.js
     - test/built-ins/Temporal/Duration/prototype/round/roundingmode-trunc.js
     - test/built-ins/Temporal/Duration/prototype/round/throws-in-balance-duration-when-sign-mismatched-with-zoned-date-time.js
     - test/built-ins/Temporal/Duration/prototype/round/throws-in-unbalance-duration-relative-when-sign-mismatched.js
@@ -361,8 +366,13 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/since/rounding-relative.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingincrement.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-ceil.js
+    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-expand.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-floor.js
+    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfCeil.js
+    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfEven.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfExpand.js
+    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfFloor.js
+    - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-halfTrunc.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-trunc.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-undefined.js
     - test/built-ins/Temporal/PlainDate/prototype/since/roundingmode-wrong-type.js
@@ -372,8 +382,13 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/until/rounding-relative.js
     - test/built-ins/Temporal/PlainDate/prototype/until/roundingincrement.js
     - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-ceil.js
+    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-expand.js
     - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-floor.js
+    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfCeil.js
+    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfEven.js
     - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfExpand.js
+    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfFloor.js
+    - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-halfTrunc.js
     - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-trunc.js
     - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-undefined.js
     - test/built-ins/Temporal/PlainDate/prototype/until/roundingmode-wrong-type.js
