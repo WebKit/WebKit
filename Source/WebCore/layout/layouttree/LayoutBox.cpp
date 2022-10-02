@@ -72,9 +72,9 @@ UniqueRef<Box> Box::removeFromParent()
     return makeUniqueRefFromNonNullUniquePtr(WTFMove(ownedSelf));
 }
 
-void Box::updateStyle(const RenderStyle& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)
+void Box::updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& newFirstLineStyle)
 {
-    m_style = RenderStyle::clone(newStyle);
+    m_style = WTFMove(newStyle);
     if (newFirstLineStyle)
         ensureRareData().firstLineStyle = WTFMove(newFirstLineStyle);
 }
