@@ -1,0 +1,9 @@
+
+PASS Property text-emphasis-style value 'none'
+PASS Property text-emphasis-style value 'dot'
+PASS Property text-emphasis-style value 'filled circle'
+PASS Property text-emphasis-style value 'double-circle'
+PASS Property text-emphasis-style value 'triangle'
+PASS Property text-emphasis-style value 'open sesame'
+PASS Property text-emphasis-style value '"*"'
+

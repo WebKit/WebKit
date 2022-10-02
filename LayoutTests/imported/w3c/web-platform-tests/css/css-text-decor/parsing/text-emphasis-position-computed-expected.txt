@@ -1,0 +1,8 @@
+
+PASS Property text-emphasis-position value 'over'
+PASS Property text-emphasis-position value 'under'
+PASS Property text-emphasis-position value 'over right'
+PASS Property text-emphasis-position value 'over left'
+PASS Property text-emphasis-position value 'under right'
+PASS Property text-emphasis-position value 'under left'
+

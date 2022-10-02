@@ -1986,6 +1986,8 @@ static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(OptionSet<TextEmphasi
 {
     ASSERT(!((textEmphasisPosition & TextEmphasisPosition::Over) && (textEmphasisPosition & TextEmphasisPosition::Under)));
     ASSERT(!((textEmphasisPosition & TextEmphasisPosition::Left) && (textEmphasisPosition & TextEmphasisPosition::Right)));
+    ASSERT((textEmphasisPosition & TextEmphasisPosition::Over) || (textEmphasisPosition & TextEmphasisPosition::Under));
+
     auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createSpaceSeparated();
     if (textEmphasisPosition & TextEmphasisPosition::Over)
@@ -1994,10 +1996,6 @@ static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(OptionSet<TextEmphasi
         list->append(cssValuePool.createIdentifierValue(CSSValueUnder));
     if (textEmphasisPosition & TextEmphasisPosition::Left)
         list->append(cssValuePool.createIdentifierValue(CSSValueLeft));
-    if (textEmphasisPosition & TextEmphasisPosition::Right)
-        list->append(cssValuePool.createIdentifierValue(CSSValueRight));
-    if (!list->length())
-        return cssValuePool.createIdentifierValue(CSSValueNone);
     return list;
 }
 

@@ -356,7 +356,7 @@ rect: style.getPropertyValue(text-decoration-thickness) : auto
 rect: style.getPropertyCSSValue(text-decoration-thickness) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(text-emphasis-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(text-emphasis-color) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(text-emphasis-position) : over right
+rect: style.getPropertyValue(text-emphasis-position) : over
 rect: style.getPropertyCSSValue(text-emphasis-position) : [object CSSValueList]
 rect: style.getPropertyValue(text-emphasis-style) : none
 rect: style.getPropertyCSSValue(text-emphasis-style) : [object CSSPrimitiveValue]
@@ -862,7 +862,7 @@ g: style.getPropertyValue(text-decoration-thickness) : auto
 g: style.getPropertyCSSValue(text-decoration-thickness) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(text-emphasis-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(text-emphasis-color) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(text-emphasis-position) : over right
+g: style.getPropertyValue(text-emphasis-position) : over
 g: style.getPropertyCSSValue(text-emphasis-position) : [object CSSValueList]
 g: style.getPropertyValue(text-emphasis-style) : none
 g: style.getPropertyCSSValue(text-emphasis-style) : [object CSSPrimitiveValue]
