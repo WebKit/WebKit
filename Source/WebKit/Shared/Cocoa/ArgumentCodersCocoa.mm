@@ -59,6 +59,10 @@
 @property (nonatomic, readonly) CGColorRef wrappedColor;
 @end
 
+@interface NSAttributedString (NSAttributedString_SecureCoding)
+@property (class, readonly) NSSet<Class> *allowedSecureCodingClasses;
+@end
+
 @implementation WKSecureCodingArchivingDelegate
 
 - (id)archiver:(NSKeyedArchiver *)archiver willEncodeObject:(id)object
@@ -492,7 +496,10 @@ static std::optional<RetainPtr<id>> decodeSecureCodingInternal(Decoder& decoder,
     auto allowedClassSet = adoptNS([[NSMutableSet alloc] initWithArray:allowedClasses]);
     [allowedClassSet addObject:WKSecureCodingURLWrapper.class];
     [allowedClassSet addObject:WKSecureCodingCGColorWrapper.class];
-    
+
+    if ([allowedClasses containsObject:NSAttributedString.class])
+        [allowedClassSet unionSet:NSAttributedString.allowedSecureCodingClasses];
+
     @try {
         id result = [unarchiver decodeObjectOfClasses:allowedClassSet.get() forKey:NSKeyedArchiveRootObjectKey];
         ASSERT(!result || [result conformsToProtocol:@protocol(NSSecureCoding)]);

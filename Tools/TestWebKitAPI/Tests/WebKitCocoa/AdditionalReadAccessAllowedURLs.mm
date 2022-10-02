@@ -113,7 +113,6 @@ TEST(WebKit, AdditionalReadAccessAllowedURLs)
     TestWebKitAPI::Util::run(&done);
 }
 
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000
 TEST(WebKit, NSAttributedStringWithReadOnlyPaths)
 {
     __block bool done = false;
@@ -230,7 +229,6 @@ TEST(WebKit, NSAttributedStringWithAndWithoutReadOnlyPaths)
     }];
     TestWebKitAPI::Util::run(&done);
 }
-#endif
 
 TEST(WebKit, NSAttributedStringWithoutReadOnlyPaths)
 {
