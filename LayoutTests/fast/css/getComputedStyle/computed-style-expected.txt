@@ -179,7 +179,7 @@ text-decoration-line: none;
 text-decoration-style: solid;
 text-decoration-thickness: auto;
 text-emphasis-color: rgb(0, 0, 0);
-text-emphasis-position: over right;
+text-emphasis-position: over;
 text-emphasis-style: none;
 text-indent: 0px;
 text-orientation: mixed;

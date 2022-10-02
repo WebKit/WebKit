@@ -1,0 +1,13 @@
+PASS if no crash or assert.
+<fieldset id=fieldSet></fieldset>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+onload = () => {
+  document.body.offsetTop;
+  fieldSet.style.all = 'unset';
+  document.body.offsetTop;
+  fieldSet.style.all = 'unset';
+  fieldSet.append(document.createElement('span'));
+};
+</script>

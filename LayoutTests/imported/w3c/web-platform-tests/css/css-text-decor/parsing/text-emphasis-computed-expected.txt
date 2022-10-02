@@ -1,0 +1,9 @@
+
+PASS Property text-emphasis value 'none'
+PASS Property text-emphasis value 'dot'
+PASS Property text-emphasis value 'open sesame'
+PASS Property text-emphasis value ''*''
+PASS Property text-emphasis value 'currentColor'
+PASS Property text-emphasis value 'black'
+PASS Property text-emphasis value 'dot red'
+

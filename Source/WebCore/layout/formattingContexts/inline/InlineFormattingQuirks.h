@@ -39,7 +39,7 @@ public:
 
     bool shouldPreserveTrailingWhitespace(bool isInIntrinsicWidthMode, bool lineHasBidiContent, bool lineHasOverflow, bool lineEndWithLineBreak) const;
     bool trailingNonBreakingSpaceNeedsAdjustment(bool isInIntrinsicWidthMode, bool lineHasOverflow) const;
-    InlineLayoutUnit initialLineHeight() const;
+    InlineLayoutUnit initialLineHeight(bool isFirstLine) const;
     bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&, const LineBox&) const;
 };
 

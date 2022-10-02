@@ -7,7 +7,7 @@ PASS Property text-decoration-style has initial value solid
 PASS Property text-decoration-style does not inherit
 PASS Property text-emphasis-color has initial value rgba(2, 3, 4, 0.5)
 PASS Property text-emphasis-color inherits
-PASS Property text-emphasis-position has initial value over right
+PASS Property text-emphasis-position has initial value over
 PASS Property text-emphasis-position inherits
 PASS Property text-emphasis-style has initial value none
 PASS Property text-emphasis-style inherits

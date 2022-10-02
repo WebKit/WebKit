@@ -130,6 +130,48 @@ BoxTree::~BoxTree()
         rootLayoutBox().destroyChildren();
 }
 
+static void adjustStyleIfNeeded(const RenderObject& renderer, RenderStyle& style, RenderStyle* firstLineStyle)
+{
+    auto adjustStyle = [&] (auto& styleToAdjust) {
+        if (is<RenderBlock>(renderer)) {
+            if (styleToAdjust.display() == DisplayType::Inline)
+                styleToAdjust.setDisplay(DisplayType::InlineBlock);
+            return;
+        }
+        if (is<RenderInline>(renderer)) {
+            auto& renderInline = downcast<RenderInline>(renderer);
+            auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
+            auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline.isContinuation() && renderInline.inlineContinuation();
+            // This looks like continuation renderer.
+            if (shouldNotRetainBorderPaddingAndMarginStart) {
+                styleToAdjust.setMarginStart(RenderStyle::initialMargin());
+                styleToAdjust.resetBorderLeft();
+                styleToAdjust.setPaddingLeft(RenderStyle::initialPadding());
+            }
+            if (shouldNotRetainBorderPaddingAndMarginEnd) {
+                styleToAdjust.setMarginEnd(RenderStyle::initialMargin());
+                styleToAdjust.resetBorderRight();
+                styleToAdjust.setPaddingRight(RenderStyle::initialPadding());
+            }
+            return;
+        }
+        if (renderer.isLineBreak()) {
+            styleToAdjust.setDisplay(DisplayType::Inline);
+            styleToAdjust.setFloating(Float::None);
+            styleToAdjust.setPosition(PositionType::Static);
+            // Clear property should only apply on block elements, however,
+            // it appears that browsers seem to ignore it on <br> inline elements.
+            // https://drafts.csswg.org/css2/#propdef-clear
+            if (downcast<RenderLineBreak>(renderer).isWBR())
+                styleToAdjust.setClear(Clear::None);
+            return;
+        }
+    };
+    adjustStyle(style);
+    if (firstLineStyle)
+        adjustStyle(*firstLineStyle);
+}
+
 void BoxTree::buildTreeForInlineContent()
 {
     auto createChildBox = [&](RenderObject& childRenderer) -> std::unique_ptr<Layout::Box> {
@@ -151,24 +193,8 @@ void BoxTree::buildTreeForInlineContent()
 
         auto style = RenderStyle::clone(childRenderer.style());
         if (childRenderer.isLineBreak()) {
-            bool isWBR = downcast<RenderLineBreak>(childRenderer).isWBR();
-            auto adjustStyle = [&] (auto& styleToAdjust) {
-                styleToAdjust.setDisplay(DisplayType::Inline);
-                styleToAdjust.setFloating(Float::None);
-                styleToAdjust.setPosition(PositionType::Static);
-
-                // Clear property should only apply on block elements, however,
-                // it appears that browsers seem to ignore it on <br> inline elements.
-                // https://drafts.csswg.org/css2/#propdef-clear
-                if (isWBR)
-                    styleToAdjust.setClear(Clear::None);
-            };
-            adjustStyle(style);
-            if (firstLineStyle)
-                adjustStyle(*firstLineStyle);
-
-
-            auto attributes = elementAttributes(childRenderer, isWBR ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak);
+            adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
+            auto attributes = elementAttributes(childRenderer, downcast<RenderLineBreak>(childRenderer).isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak);
             return makeUnique<Layout::ContainerBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
         }
 
@@ -184,38 +210,13 @@ void BoxTree::buildTreeForInlineContent()
         }
 
         if (is<RenderBlock>(childRenderer)) {
-            auto adjustStyle = [&] (auto& styleToAdjust) {
-                if (styleToAdjust.display() == DisplayType::Inline)
-                    styleToAdjust.setDisplay(DisplayType::InlineBlock);
-            };
-            adjustStyle(style);
-            if (firstLineStyle)
-                adjustStyle(*firstLineStyle);
-
+            adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
             auto attributes = elementAttributes(childRenderer);
             return makeUnique<Layout::ContainerBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderInline>(childRenderer)) {
-            // This looks like continuation renderer.
-            auto& renderInline = downcast<RenderInline>(childRenderer);
-            auto shouldNotRetainBorderPaddingAndMarginStart = renderInline.isContinuation();
-            auto shouldNotRetainBorderPaddingAndMarginEnd = !renderInline.isContinuation() && renderInline.inlineContinuation();
-            auto adjustStyleForContinuation = [&] (auto& styleToAdjust) {
-                if (shouldNotRetainBorderPaddingAndMarginStart) {
-                    styleToAdjust.setMarginStart(RenderStyle::initialMargin());
-                    styleToAdjust.resetBorderLeft();
-                    styleToAdjust.setPaddingLeft(RenderStyle::initialPadding());
-                }
-                if (shouldNotRetainBorderPaddingAndMarginEnd) {
-                    styleToAdjust.setMarginEnd(RenderStyle::initialMargin());
-                    styleToAdjust.resetBorderRight();
-                    styleToAdjust.setPaddingRight(RenderStyle::initialPadding());
-                }
-            };
-            adjustStyleForContinuation(style);
-            if (firstLineStyle)
-                adjustStyleForContinuation(*firstLineStyle);
+            adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
             return makeUnique<Layout::ContainerBox>(elementAttributes(childRenderer), WTFMove(style), WTFMove(firstLineStyle));
         }
 
@@ -256,16 +257,20 @@ void BoxTree::appendChild(UniqueRef<Layout::Box> childBox, RenderObject& childRe
 void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
 {
     auto& layoutBox = layoutBoxForRenderer(renderer);
-    auto& style = renderer.style();
+    auto& rendererStyle = renderer.style();
 
     if (&layoutBox == &rootLayoutBox())
         layoutBox.updateStyle(rootBoxStyle(downcast<RenderBlock>(renderer)), firstLineStyleFor(renderer));
-    else
-        layoutBox.updateStyle(style, firstLineStyleFor(renderer));
+    else {
+        auto firstLineNewStyle = firstLineStyleFor(renderer);
+        auto newStyle = RenderStyle::clone(rendererStyle);
+        adjustStyleIfNeeded(renderer, newStyle, firstLineNewStyle.get());
+        layoutBox.updateStyle(WTFMove(newStyle), WTFMove(firstLineNewStyle));
+    }
 
     for (auto* child = layoutBox.firstChild(); child; child = child->nextSibling()) {
         if (child->isInlineTextBox())
-            child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(style, DisplayType::Inline), firstLineStyleFor(renderer));
+            child->updateStyle(RenderStyle::createAnonymousStyleWithDisplay(rendererStyle, DisplayType::Inline), firstLineStyleFor(renderer));
     }
 }
 

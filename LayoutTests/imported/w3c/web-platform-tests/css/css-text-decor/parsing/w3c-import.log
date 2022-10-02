@@ -30,9 +30,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-decoration-style-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-decoration-style-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-decoration-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-shadow-computed.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-shadow-invalid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-shadow-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-emphasis-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-emphasis-position-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-emphasis-style-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-underline-position-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-underline-position-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-text-decor/parsing/text-underline-position-valid.html

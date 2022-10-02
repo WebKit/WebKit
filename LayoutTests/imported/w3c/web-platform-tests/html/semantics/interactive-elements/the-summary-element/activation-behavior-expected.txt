@@ -1,18 +1,26 @@
 
-FAIL Should open a closed details if all conditions are met assert_equals: After activation: expected open to be true expected true but got false
-FAIL Should close an open details if all conditions are met assert_equals: After activation: expected open to be false expected false but got true
-FAIL Should open a closed details even if the details is not being rendered assert_equals: After activation: expected open to be true expected true but got false
-FAIL Should open a closed details even if the summary is not being rendered assert_equals: After activation: expected open to be true expected true but got false
-FAIL Should open a closed details if a span element precedes the summary assert_equals: After activation: expected open to be true expected true but got false
+PASS Should open a closed details if all conditions are met
+PASS Should close an open details if all conditions are met
+PASS Should open a closed details even if the details is not being rendered
+PASS Should open a closed details even if the summary is not being rendered
+PASS Should open a closed details if a span element precedes the summary
 PASS Should stay closed if another summary element precedes the summary
-FAIL Should open a closed details if another summary element *nested inside a span* precedes the summary assert_equals: After activation: expected open to be true expected true but got false
+PASS Should open a closed details if another summary element *nested inside a span* precedes the summary
 PASS Should stay closed if the summary element is nested inside a span element
-FAIL toggle events should be coalesced even when using the activation behavior of a summary assert_equals: Expected toggle to fire exactly once expected 1 but got 0
-Summary
+PASS toggle events should be coalesced even when using the activation behavior of a summary
 Summary
 Contents
 
 Summary
+Contents
+
+Summary
+Contents
+
+Summary 1
 Summary 1
 Summary 2
+Contents
+
 Summary
+Contents

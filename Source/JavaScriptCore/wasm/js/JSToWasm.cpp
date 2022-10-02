@@ -232,12 +232,12 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
 
         constexpr GPRReg savedResultsGPR = preferredArgumentGPR<decltype(operationAllocateResultsArray), 4>();
         jit.move(CCallHelpers::stackPointerRegister, savedResultsGPR);
-        if constexpr (maxFrameExtentForSlowPathCall)
+        if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
         ASSERT(wasmContextInstanceGPR != savedResultsGPR);
         jit.setupArguments<decltype(operationAllocateResultsArray)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&typeDefinition), indexingType, savedResultsGPR);
         jit.callOperation(operationAllocateResultsArray);
-        if constexpr (maxFrameExtentForSlowPathCall)
+        if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 
         jit.boxCell(GPRInfo::returnValueGPR, JSRInfo::returnValueJSR);

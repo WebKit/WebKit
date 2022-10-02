@@ -116,7 +116,7 @@ bool HTMLSummaryElement::supportsFocus() const
 
 void HTMLSummaryElement::defaultEventHandler(Event& event)
 {
-    if (isActiveSummary() && renderer()) {
+    if (isActiveSummary()) {
         auto& eventNames = WebCore::eventNames();
         if (event.type() == eventNames.DOMActivateEvent && !isClickableControl(event.target())) {
             if (RefPtr<HTMLDetailsElement> details = detailsElement())
@@ -158,10 +158,7 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
 
 bool HTMLSummaryElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    if (isActiveSummary() && renderer())
-        return true;
-
-    return HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
+    return isActiveSummary() || HTMLElement::willRespondToMouseClickEventsWithEditability(editability);
 }
 
 }
