@@ -283,11 +283,11 @@ LayoutPoint InlineFormattingGeometry::staticPositionForOutOfFlowBlockLevelBox(co
     return { currentLine.left(), currentLine.bottom() };
 }
 
-InlineLayoutUnit InlineFormattingGeometry::initialLineHeight() const
+InlineLayoutUnit InlineFormattingGeometry::initialLineHeight(bool isFirstLine) const
 {
     if (layoutState().inStandardsMode())
-        return formattingContext().root().style().computedLineHeight();
-    return formattingContext().formattingQuirks().initialLineHeight();
+        return isFirstLine ? formattingContext().root().firstLineStyle().computedLineHeight() : formattingContext().root().style().computedLineHeight();
+    return formattingContext().formattingQuirks().initialLineHeight(isFirstLine);
 }
 
 std::optional<HorizontalConstraints> InlineFormattingGeometry::floatConstraintsForLine(const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const

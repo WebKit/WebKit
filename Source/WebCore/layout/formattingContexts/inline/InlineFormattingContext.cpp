@@ -228,7 +228,7 @@ void InlineFormattingContext::lineLayout(InlineItems& inlineItems, const LineBui
     auto lineBuilder = LineBuilder { *this, floatingState, constraints.horizontal(), inlineItems };
     while (true) {
 
-        auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight() };
+        auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
         auto lineContent = lineBuilder.layoutInlineContent({ firstInlineItemNeedsLayout, needsLayoutRange.end }, lineInitialRect, previousLine);
         auto lineLogicalRect = computeGeometryForLineContent(lineContent);
         if (lineContent.isLastLineWithInlineContent)

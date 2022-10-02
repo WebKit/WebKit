@@ -48,7 +48,7 @@ public:
 
     bool inlineLevelBoxAffectsLineBox(const InlineLevelBox&, const LineBox&) const;
 
-    InlineLayoutUnit initialLineHeight() const;
+    InlineLayoutUnit initialLineHeight(bool isFirstLine) const;
 
     std::optional<HorizontalConstraints> floatConstraintsForLine(const InlineRect& lineLogicalRect, const FloatingContext&) const;
 
