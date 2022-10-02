@@ -391,8 +391,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 NS_ASSUME_NONNULL_END
 
-#endif // PLATFORM(IOS_FAMILY
+#endif // PLATFORM(IOS_FAMILY)
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+@interface AVPictureInPictureController (IPI)
+@property (nonatomic) BOOL pictureInPictureWasStartedWhenEnteringBackground;
+@end
+
 #endif // HAVE(PIP_CONTROLLER)
 

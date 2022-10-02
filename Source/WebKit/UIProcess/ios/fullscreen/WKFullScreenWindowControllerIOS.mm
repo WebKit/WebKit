@@ -45,11 +45,7 @@
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/LocalizedStrings.h>
-#if HAVE(PIP_CONTROLLER)
-#import <WebCore/VideoFullscreenInterfacePiP.h>
-#else
 #import <WebCore/VideoFullscreenInterfaceAVKit.h>
-#endif
 #import <WebCore/VideoFullscreenModel.h>
 #import <WebCore/ViewportArguments.h>
 #import <pal/spi/cf/CFNetworkSPI.h>

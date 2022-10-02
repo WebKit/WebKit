@@ -26,7 +26,7 @@
 #import "config.h"
 #import "VideoFullscreenInterfaceAVKit.h"
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE) && !HAVE(PIP_CONTROLLER)
+#if PLATFORM(IOS_FAMILY) && ENABLE(VIDEO_PRESENTATION_MODE)
 
 #import "Logging.h"
 #import "PictureInPictureSupport.h"
@@ -48,6 +48,10 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
+#if HAVE(PIP_CONTROLLER)
+#import <AVKit/AVPictureInPictureController.h>
+#endif
+
 using namespace WebCore;
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -62,6 +66,11 @@ SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerViewController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, __AVPlayerLayerView)
+
+#if HAVE(PIP_CONTROLLER)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureControllerContentSource)
+SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPictureInPictureContentViewController)
+#endif
 
 @interface UIWindow ()
 - (BOOL)_isHostedInAnotherProcess;
@@ -93,7 +102,11 @@ static bool ignoreWatchdogForDebugging = false;
 
 @class WebAVMediaSelectionOption;
 
-@interface WebAVPlayerViewControllerDelegate : NSObject <AVPlayerViewControllerDelegate_WebKitOnly> {
+@interface WebAVPlayerViewControllerDelegate : NSObject <AVPlayerViewControllerDelegate_WebKitOnly
+#if HAVE(PIP_CONTROLLER)
+    , AVPictureInPictureControllerDelegate
+#endif
+> {
     WeakPtr<VideoFullscreenInterfaceAVKit> _fullscreenInterface;
 }
 @property (assign) VideoFullscreenInterfaceAVKit* fullscreenInterface;
@@ -192,6 +205,55 @@ static VideoFullscreenInterfaceAVKit::ExitFullScreenReason convertToExitFullScre
     UNUSED_PARAM(playerViewController);
     return YES;
 }
+
+#if HAVE(PIP_CONTROLLER)
+
+// AVPictureInPictureControllerDelegate
+
+- (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController
+{
+    UNUSED_PARAM(pictureInPictureController);
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->willStartPictureInPicture();
+}
+
+- (void)pictureInPictureControllerDidStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController
+{
+    UNUSED_PARAM(pictureInPictureController);
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->didStartPictureInPicture();
+}
+
+- (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController failedToStartPictureInPictureWithError:(NSError *)error
+{
+    UNUSED_PARAM(pictureInPictureController);
+    UNUSED_PARAM(error);
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->failedToStartPictureInPicture();
+}
+
+- (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController
+{
+    UNUSED_PARAM(pictureInPictureController);
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->willStopPictureInPicture();
+}
+
+- (void)pictureInPictureControllerDidStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController
+{
+    UNUSED_PARAM(pictureInPictureController);
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->didStopPictureInPicture();
+}
+
+- (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL restored))completionHandler
+{
+    UNUSED_PARAM(pictureInPictureController);
+    if (self.fullscreenInterface)
+        self.fullscreenInterface->prepareForPictureInPictureStopWithCompletionHandler(completionHandler);
+}
+
+#endif
 
 @end
 
@@ -348,6 +410,101 @@ static WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
     return (WebAVPlayerLayerView *)[theClass alloc];
 }
 
+#if HAVE(PIP_CONTROLLER)
+
+@interface WebAVPictureInPictureContentViewController : AVPictureInPictureContentViewController
+
+- (instancetype)initWithController:(AVPlayerController *)controller;
+@property (nonatomic, nonnull, readonly) AVPlayerController* controller;
+@property (retain) AVPlayerLayer* playerLayer;
+
+@end
+
+static WebAVPictureInPictureContentViewController* WebAVPictureInPictureContentViewController_initWithController(id aSelf, SEL, AVPlayerController* controller)
+{
+    ASSERT(controller);
+
+    WebAVPictureInPictureContentViewController *pipController = aSelf;
+    objc_super superClass { pipController, getAVPictureInPictureContentViewControllerClass() };
+    auto super_init = reinterpret_cast<id(*)(objc_super*, SEL)>(objc_msgSendSuper);
+    aSelf = super_init(&superClass, @selector(init));
+    if (!aSelf)
+        return aSelf;
+
+    [controller retain];
+    object_setInstanceVariable(aSelf, "_controller", controller);
+    return aSelf;
+}
+
+static AVPlayerController *WebAVPictureInPictureContentViewController_controller(id aSelf, SEL)
+{
+    void* controller;
+    object_getInstanceVariable(aSelf, "_controller", &controller);
+    return static_cast<AVPlayerController*>(controller);
+}
+
+static AVPlayerLayer *WebAVPictureInPictureContentViewController_playerLayer(id aSelf, SEL)
+{
+    void* layer;
+    object_getInstanceVariable(aSelf, "_playerLayer", &layer);
+    return static_cast<AVPlayerLayer*>(layer);
+}
+
+static void WebAVPictureInPictureContentViewController_setPlayerLayer(id aSelf, SEL, AVPlayerLayer* layer)
+{
+    WebAVPictureInPictureContentViewController *pipController = aSelf;
+    auto oldPlayerLayer = [pipController playerLayer];
+    if (oldPlayerLayer == layer)
+        return;
+    [oldPlayerLayer release];
+    [layer retain];
+    object_setInstanceVariable(aSelf, "_playerLayer", layer);
+    [[pipController view].layer addSublayer:layer];
+}
+
+static void WebAVPictureInPictureContentViewController_viewWillLayoutSubviews(id aSelf, SEL)
+{
+    WebAVPictureInPictureContentViewController *pipController = aSelf;
+    objc_super superClass { pipController, getAVPictureInPictureContentViewControllerClass() };
+    auto super_viewWillLayoutSubviews = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
+    super_viewWillLayoutSubviews(&superClass, @selector(viewWillLayoutSubviews));
+    [[pipController playerLayer] setFrame:[pipController view].bounds];
+}
+
+static void WebAVPictureInPictureContentViewController_dealloc(id aSelf, SEL)
+{
+    WebAVPictureInPictureContentViewController *pipController = aSelf;
+    [[pipController controller] release];
+    [[pipController playerLayer] release];
+    objc_super superClass { pipController, getAVPictureInPictureContentViewControllerClass() };
+    auto super_dealloc = reinterpret_cast<void(*)(objc_super*, SEL)>(objc_msgSendSuper);
+    super_dealloc(&superClass, @selector(dealloc));
+}
+
+static WebAVPictureInPictureContentViewController *allocWebAVPictureInPictureContentViewControllerInstance()
+{
+    static Class theClass = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        theClass = objc_allocateClassPair(getAVPictureInPictureContentViewControllerClass(), "WebAVPictureInPictureContentViewController", 0);
+        class_addMethod(theClass, @selector(initWithController:), (IMP)WebAVPictureInPictureContentViewController_initWithController, "v@:@");
+        class_addMethod(theClass, @selector(controller), (IMP)WebAVPictureInPictureContentViewController_controller, "@@:");
+        class_addMethod(theClass, @selector(playerController), (IMP)WebAVPictureInPictureContentViewController_controller, "@@:");
+        class_addMethod(theClass, @selector(playerLayer), (IMP)WebAVPictureInPictureContentViewController_playerLayer, "@@:");
+        class_addMethod(theClass, @selector(setPlayerLayer:), (IMP)WebAVPictureInPictureContentViewController_setPlayerLayer, "v@:@");
+        class_addMethod(theClass, @selector(viewWillLayoutSubviews), (IMP)WebAVPictureInPictureContentViewController_viewWillLayoutSubviews, "v@:");
+        class_addMethod(theClass, @selector(dealloc), (IMP)WebAVPictureInPictureContentViewController_dealloc, "v@:");
+
+        class_addIvar(theClass, "_controller", sizeof(AVPlayerController*), log2(sizeof(AVPlayerController*)), "@");
+        class_addIvar(theClass, "_playerLayer", sizeof(AVPlayerLayer*), log2(sizeof(AVPlayerLayer*)), "@");
+        objc_registerClassPair(theClass);
+    });
+
+    return (WebAVPictureInPictureContentViewController *)[theClass alloc];
+}
+
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 @interface WebAVPlayerViewController : NSObject<AVPlayerViewControllerDelegate>
 - (instancetype)initWithFullscreenInterface:(VideoFullscreenInterfaceAVKit *)interface;
@@ -368,7 +525,12 @@ NS_ASSUME_NONNULL_END
 #endif
     RetainPtr<AVPlayerViewController> _avPlayerViewController;
     RetainPtr<NSTimer> _startPictureInPictureTimer;
-    id<AVPlayerViewControllerDelegate_WebKitOnly> _delegate;
+    WebAVPlayerViewControllerDelegate *_delegate;
+
+#if HAVE(PIP_CONTROLLER)
+    RetainPtr<AVPictureInPictureController> _pip;
+    RetainPtr<WebAVPictureInPictureContentViewController> _pipContentViewController;
+#endif
 }
 
 - (instancetype)initWithFullscreenInterface:(VideoFullscreenInterfaceAVKit *)interface
@@ -383,6 +545,15 @@ NS_ASSUME_NONNULL_END
     _avPlayerViewController.get().delegate = self;
 #endif
 
+#if HAVE(PIP_CONTROLLER)
+    auto* playerController = static_cast<AVPlayerController*>(interface->playerController());
+    _pipContentViewController = adoptNS([allocWebAVPictureInPictureContentViewControllerInstance() initWithController:playerController]);
+
+    auto source = adoptNS([allocAVPictureInPictureControllerContentSourceInstance() initWithSourceView:static_cast<UIView*>(interface->playerLayerView()) contentViewController:_pipContentViewController.get() playerController:playerController]);
+
+    _pip = adoptNS([allocAVPictureInPictureControllerInstance() initWithContentSource:source.get()]);
+#endif
+
     return self;
 }
 
@@ -393,6 +564,10 @@ NS_ASSUME_NONNULL_END
         [_startPictureInPictureTimer invalidate];
         _startPictureInPictureTimer = nil;
     }
+#if HAVE(PIP_CONTROLLER)
+    _pipContentViewController = nil;
+    _pip = nil;
+#endif
     [super dealloc];
 }
 
@@ -450,7 +625,11 @@ NS_ASSUME_NONNULL_END
 #define MY_NO_RETURN
 #endif
 
+#if HAVE(PIP_CONTROLLER)
+static const NSTimeInterval startPictureInPictureTimeInterval = 5.0;
+#else
 static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
+#endif
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
@@ -473,12 +652,20 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 
 - (void)initObserver
 {
+#if HAVE(PIP_CONTROLLER)
+    [_pip addObserver:self forKeyPath:@"pictureInPicturePossible" options:NSKeyValueObservingOptionNew context:nil];
+#else
     [_avPlayerViewController addObserver:self forKeyPath:@"pictureInPicturePossible" options:NSKeyValueObservingOptionNew context:nil];
+#endif
 }
 
 - (void)removeObserver
 {
+#if HAVE(PIP_CONTROLLER)
+    [_pip removeObserver:self forKeyPath:@"pictureInPicturePossible" context:nil];
+#else
     [_avPlayerViewController removeObserver:self forKeyPath:@"pictureInPicturePossible" context:nil];
+#endif
 }
 
 - (void)tryToStartPictureInPicture MY_NO_RETURN
@@ -512,6 +699,8 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 {
 #if PLATFORM(WATCHOS)
     ASSERT_NOT_REACHED();
+#elif HAVE(PIP_CONTROLLER)
+    [_pip startPictureInPicture];
 #else
     [_avPlayerViewController startPictureInPicture];
 #endif
@@ -521,6 +710,8 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 {
 #if PLATFORM(WATCHOS)
     ASSERT_NOT_REACHED();
+#elif HAVE(PIP_CONTROLLER)
+    [_pip stopPictureInPicture];
 #else
     [_avPlayerViewController stopPictureInPicture];
 #endif
@@ -530,6 +721,8 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 {
 #if PLATFORM(WATCHOS)
     return NO;
+#elif HAVE(PIP_CONTROLLER)
+    return [_pip isPictureInPicturePossible];
 #else
     return _avPlayerViewController.get().isPictureInPicturePossible;
 #endif
@@ -539,6 +732,8 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 {
 #if PLATFORM(WATCHOS)
     return NO;
+#elif HAVE(PIP_CONTROLLER)
+    return [_pip isPictureInPictureActive];
 #else
     return _avPlayerViewController.get().isPictureInPictureActive;
 #endif
@@ -548,6 +743,8 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 {
 #if PLATFORM(WATCHOS)
     return NO;
+#elif HAVE(PIP_CONTROLLER)
+    return [_pip isPictureInPictureActive];
 #else
     return _avPlayerViewController.get().pictureInPictureActive;
 #endif
@@ -557,12 +754,14 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 {
 #if PLATFORM(WATCHOS)
     return NO;
+#elif HAVE(PIP_CONTROLLER)
+    return [_pip pictureInPictureWasStartedWhenEnteringBackground];
 #else
     return _avPlayerViewController.get().pictureInPictureWasStartedWhenEnteringBackground;
 #endif
 }
 
-- (UIView *) view
+- (UIView *)view
 {
     return _avPlayerViewController.get().view;
 }
@@ -602,13 +801,17 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 #endif
 }
 
-- (void)setDelegate:(id <AVPlayerViewControllerDelegate>)delegate
+- (void)setDelegate:(WebAVPlayerViewControllerDelegate *)delegate
 {
 #if PLATFORM(WATCHOS)
     ASSERT(!delegate || [delegate respondsToSelector:@selector(playerViewController:shouldExitFullScreenWithReason:)]);
-    _delegate = id<AVPlayerViewControllerDelegate_WebKitOnly>(delegate);
+    _delegate = delegate;
 #else
     _avPlayerViewController.get().delegate = delegate;
+#endif
+
+#if HAVE(PIP_CONTROLLER)
+    [_pip setDelegate:delegate];
 #endif
 }
 
@@ -626,6 +829,7 @@ static const NSTimeInterval startPictureInPictureTimeInterval = 1.0;
 {
     [_avPlayerViewController removeFromParentViewController];
 }
+
 @end
 
 Ref<VideoFullscreenInterfaceAVKit> VideoFullscreenInterfaceAVKit::create(PlaybackSessionInterfaceAVKit& playbackSessionInterface)
