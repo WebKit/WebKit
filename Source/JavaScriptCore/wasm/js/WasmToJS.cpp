@@ -432,13 +432,13 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
         constexpr GPRReg savedResultsGPR = preferredArgumentGPR<decltype(operationIterateResults), 4>();
         jit.move(CCallHelpers::stackPointerRegister, savedResultsGPR);
-        if constexpr (maxFrameExtentForSlowPathCall)
+        if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.subPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
         static_assert(noOverlap(savedResultsGPR, JSRInfo::returnValueJSR));
         ASSERT(wasmContextInstanceGPR != savedResultsGPR);
         jit.setupArguments<decltype(operationIterateResults)>(wasmContextInstanceGPR, CCallHelpers::TrustedImmPtr(&typeDefinition), JSRInfo::returnValueJSR, savedResultsGPR, CCallHelpers::framePointerRegister);
         jit.callOperation(FunctionPtr<OperationPtrTag>(operationIterateResults));
-        if constexpr (maxFrameExtentForSlowPathCall)
+        if constexpr (!!maxFrameExtentForSlowPathCall)
             jit.addPtr(CCallHelpers::TrustedImm32(maxFrameExtentForSlowPathCall), CCallHelpers::stackPointerRegister);
 
         exceptionChecks.append(jit.emitJumpIfException(vm));

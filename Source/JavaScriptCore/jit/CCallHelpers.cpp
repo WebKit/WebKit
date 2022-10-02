@@ -107,14 +107,14 @@ void CCallHelpers::emitCTIThunkPrologue(bool returnAddressAlreadyTagged)
 #   error "Not implemented on platform"
 #endif
     // Make enough space on the stack to pass arguments in a call
-    if constexpr (maxFrameExtentForSlowPathCall)
+    if constexpr (!!maxFrameExtentForSlowPathCall)
         subPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
 }
 
 void CCallHelpers::emitCTIThunkEpilogue()
 {
     // Reset stack
-    if constexpr (maxFrameExtentForSlowPathCall)
+    if constexpr (!!maxFrameExtentForSlowPathCall)
         addPtr(TrustedImm32(maxFrameExtentForSlowPathCall), stackPointerRegister);
     // Restore frame pointer and return address
 #if CPU(X86_64)
