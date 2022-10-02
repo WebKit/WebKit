@@ -45,10 +45,6 @@ list(APPEND WebCore_SOURCES
     platform/win/PEImage.cpp
 )
 
-list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-    platform/graphics/wc/WCPlatformLayer.h
-)
-
 list(APPEND WebCore_LIBRARIES
     comctl32
     crypt32

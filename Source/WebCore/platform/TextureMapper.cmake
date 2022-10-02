@@ -147,6 +147,8 @@ if (USE_GRAPHICS_LAYER_WC)
     )
     list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
         platform/graphics/texmap/TextureMapperSparseBackingStore.h
+
+        platform/graphics/wc/WCPlatformLayer.h
     )
 endif ()
 
