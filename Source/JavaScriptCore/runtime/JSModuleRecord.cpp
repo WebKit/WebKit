@@ -167,15 +167,15 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
             RETURN_IF_EXCEPTION(scope, void());
             switch (resolution.type) {
             case Resolution::Type::NotFound:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name '", String(importEntry.importName.impl()), "' is not found."));
+                throwSyntaxError(globalObject, scope, makeString("Import named '", String(importEntry.importName.impl()), "' not found in module '", importedModule->moduleKey().string(), "'."));
                 return;
 
             case Resolution::Type::Ambiguous:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name '", String(importEntry.importName.impl()), "' cannot be resolved due to ambiguous multiple bindings."));
+                throwSyntaxError(globalObject, scope, makeString("Import named '", String(importEntry.importName.impl()), "' cannot be resolved due to ambiguous multiple bindings in module '", importedModule->moduleKey().string(), "'."));
                 return;
 
             case Resolution::Type::Error:
-                throwSyntaxError(globalObject, scope, makeString("Importing binding name 'default' cannot be resolved by star export entries."));
+                throwSyntaxError(globalObject, scope, makeString("Missing 'default' import in module '", importedModule->moduleKey().string(), "'."));
                 return;
 
             case Resolution::Type::Resolved: {
