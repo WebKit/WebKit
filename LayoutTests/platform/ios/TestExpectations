@@ -3809,3 +3809,6 @@ fast/canvas/canvas-large-dimensions-drawing.html [ ImageOnlyFailure ]
 
 # rdar://100140486 ([ iOS ] fast/attachment/attachment-wrapping-action.html is a constant failure)
 fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure]
+
+# rdar://100139200 ([ iOS ] editing/editable-region/search-field-basic.html is a constant failure)
+editing/editable-region/search-field-basic.html [ Failure ]
