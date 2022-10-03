@@ -211,7 +211,7 @@ public:
     WebSharedWorkerServer* sharedWorkerServer() { return m_sharedWorkerServer.get(); }
     WebSharedWorkerServer& ensureSharedWorkerServer();
 
-    NetworkStorageManager& storageManager() { return m_storageManager.get(); }
+    NetworkStorageManager& storageManager() { return *m_storageManager; }
     CacheStorage::Engine& ensureCacheEngine();
     void clearCacheEngine();
 
@@ -317,7 +317,7 @@ protected:
 #endif
     std::unique_ptr<WebSharedWorkerServer> m_sharedWorkerServer;
 
-    Ref<NetworkStorageManager> m_storageManager;
+    std::unique_ptr<NetworkStorageManager> m_storageManager;
     String m_cacheStorageDirectory;
     RefPtr<CacheStorage::Engine> m_cacheEngine;
     Vector<Function<void(CacheStorage::Engine&)>> m_cacheStorageParametersCallbacks;

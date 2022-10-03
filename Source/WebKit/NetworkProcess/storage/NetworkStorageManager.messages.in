@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
- messages -> NetworkStorageManager {
+ messages -> NetworkStorageManager NotRefCounted {
     Persisted(struct WebCore::ClientOrigin origin) -> (bool persisted)
     Persist(struct WebCore::ClientOrigin origin) -> (bool persisted)
     FileSystemGetDirectory(struct WebCore::ClientOrigin origin) -> (Expected<WebCore::FileSystemHandleIdentifier, WebKit::FileSystemStorageError> result) WantsConnection

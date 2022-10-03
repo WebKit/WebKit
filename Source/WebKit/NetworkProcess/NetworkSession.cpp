@@ -99,7 +99,7 @@ static UniqueRef<PCM::ManagerInterface> managerOrProxy(NetworkSession& networkSe
     return makeUniqueRef<PrivateClickMeasurementManager>(makeUniqueRef<PCM::ClientImpl>(networkSession, networkProcess), parameters.resourceLoadStatisticsParameters.directory);
 }
 
-static Ref<NetworkStorageManager> createNetworkStorageManager(IPC::Connection* connection, const NetworkSessionCreationParameters& parameters)
+static std::unique_ptr<NetworkStorageManager> createNetworkStorageManager(IPC::Connection* connection, const NetworkSessionCreationParameters& parameters)
 {
     SandboxExtension::consumePermanently(parameters.localStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.indexedDBDirectoryExtensionHandle);
@@ -108,7 +108,7 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(IPC::Connection* c
     IPC::Connection::UniqueID connectionID;
     if (connection)
         connectionID = connection->uniqueID();
-    return NetworkStorageManager::create(parameters.sessionID, connectionID, parameters.generalStorageDirectory, parameters.localStorageDirectory, parameters.indexedDBDirectory, parameters.cacheStorageDirectory, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.shouldUseCustomStoragePaths);
+    return makeUnique<NetworkStorageManager>(parameters.sessionID, connectionID, parameters.generalStorageDirectory, parameters.localStorageDirectory, parameters.indexedDBDirectory, parameters.cacheStorageDirectory, parameters.perOriginStorageQuota, parameters.perThirdPartyOriginStorageQuota, parameters.shouldUseCustomStoragePaths);
 }
 
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
@@ -218,7 +218,10 @@ void NetworkSession::invalidateAndCancel()
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
 #endif
-    m_storageManager->close();
+    // Destroy storage manager after close() has completed in order to avoid
+    // synchronizing this run loop with the pending writes.
+    auto* storageManager = m_storageManager.get();
+    storageManager->close([storageManager = WTFMove(m_storageManager)] { });
     m_cacheEngine = nullptr;
 #if ASSERT_ENABLED
     m_isInvalidated = true;
