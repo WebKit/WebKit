@@ -268,16 +268,17 @@ EnterKeyHintEnabled:
       default: false
 
 EventHandlerDrivenSmoothKeyboardScrollingEnabled:
- type: bool
- humanReadableName: "EventHandler driven smooth keyboard scrolling"
- humanReadableDescription: "Enable EventHandler driven smooth keyboard scrolling"
- defaultValue:
-  WebKitLegacy:
-   default: false
-  WebKit:
-   default: true
-  WebCore:
-   default: false
+  type: bool
+  humanReadableName: "EventHandler driven smooth keyboard scrolling"
+  humanReadableDescription: "Enable EventHandler driven smooth keyboard scrolling"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      "PLATFORM(COCOA)": true
+      default: false
+    WebCore:
+      default: false
 
 FasterClicksEnabled:
   type: bool
