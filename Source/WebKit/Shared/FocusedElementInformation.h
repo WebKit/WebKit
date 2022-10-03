@@ -69,7 +69,7 @@ enum class InputType {
 struct OptionItem {
     OptionItem() = default;
 
-    OptionItem(const String& text, bool isGroup, int parentID, bool selected, bool disabled)
+    OptionItem(const String& text, bool isGroup, bool selected, bool disabled, int parentID)
         : text(text)
         , isGroup(isGroup)
         , isSelected(selected)
@@ -83,9 +83,6 @@ struct OptionItem {
     bool isSelected { false };
     bool disabled { false };
     int parentGroupID { 0 };
-
-    void encode(IPC::Encoder&) const;
-    static std::optional<OptionItem> decode(IPC::Decoder&);
 };
 
 struct FocusedElementInformation {
@@ -142,9 +139,6 @@ struct FocusedElementInformation {
 
     FocusedElementInformationIdentifier identifier;
     WebCore::ScrollingNodeID containerScrollingNodeID { 0 };
-
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, FocusedElementInformation&);
 };
 #endif
 

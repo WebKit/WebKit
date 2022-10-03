@@ -1,0 +1,89 @@
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+headers: "FocusedElementInformation.h" "WebCoreArgumentCoders.h"
+
+#if PLATFORM(IOS_FAMILY)
+struct WebKit::OptionItem {
+    String text;
+    bool isGroup;
+    bool isSelected;
+    bool disabled;
+    int parentGroupID;
+}
+
+struct WebKit::FocusedElementInformation {
+    WebCore::IntRect interactionRect;
+    WebCore::ElementContext elementContext;
+    WebCore::IntPoint lastInteractionLocation;
+    double minimumScaleFactor;
+    double maximumScaleFactor;
+    double maximumScaleFactorIgnoringAlwaysScalable;
+    double nodeFontSize;
+    bool hasNextNode;
+    WebCore::IntRect nextNodeRect;
+    bool hasPreviousNode;
+    WebCore::IntRect previousNodeRect;
+    bool isAutocorrect;
+    bool isRTL;
+    bool isMultiSelect;
+    bool isReadOnly;
+    bool allowsUserScaling;
+    bool allowsUserScalingIgnoringAlwaysScalable;
+    bool insideFixedPosition;
+    WebCore::AutocapitalizeType autocapitalizeType;
+    WebKit::InputType elementType;
+    WebCore::InputMode inputMode;
+    WebCore::EnterKeyHint enterKeyHint;
+    String formAction;
+    Vector<WebKit::OptionItem> selectOptions;
+    int selectedIndex;
+    String value;
+    double valueAsNumber;
+    String title;
+    bool acceptsAutofilledLoginCredentials;
+    bool isAutofillableUsernameField;
+    URL representingPageURL;
+    WebCore::AutofillFieldName autofillFieldName;
+    String placeholder;
+    String label;
+    String ariaLabel;
+#if ENABLE(DATALIST_ELEMENT)
+    bool hasSuggestions;
+    bool isFocusingWithDataListDropdown;
+#if ENABLE(INPUT_TYPE_COLOR)
+    WebCore::Color colorValue;
+    Vector<WebCore::Color> suggestedColors;
+#endif
+#endif
+    bool shouldSynthesizeKeyEventsForEditing;
+    bool isSpellCheckingEnabled;
+    bool shouldAvoidResizingWhenInputViewBoundsChange;
+    bool shouldAvoidScrollingWhenFocusedContentIsVisible;
+    bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivation;
+    bool isFocusingWithValidationMessage;
+    bool preventScroll;
+
+    WebKit::FocusedElementInformationIdentifier identifier;
+    WebCore::ScrollingNodeID containerScrollingNodeID;
+}
+#endif

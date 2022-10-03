@@ -3485,10 +3485,10 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
         // If a select does not have groups, all the option elements have group ID 0.
         for (auto& item : element.listItems()) {
             if (auto* optionElement = dynamicDowncast<HTMLOptionElement>(item.get()))
-                information.selectOptions.append(OptionItem(optionElement->text(), false, parentGroupID, optionElement->selected(), optionElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr)));
+                information.selectOptions.append(OptionItem(optionElement->text(), false, optionElement->selected(), optionElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr), parentGroupID));
             else if (auto* optGroupElement = dynamicDowncast<HTMLOptGroupElement>(item.get())) {
                 parentGroupID++;
-                information.selectOptions.append(OptionItem(optGroupElement->groupLabelText(), true, 0, false, optGroupElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr)));
+                information.selectOptions.append(OptionItem(optGroupElement->groupLabelText(), true, false, optGroupElement->hasAttributeWithoutSynchronization(WebCore::HTMLNames::disabledAttr), 0));
             }
         }
         information.selectedIndex = element.selectedIndex();
