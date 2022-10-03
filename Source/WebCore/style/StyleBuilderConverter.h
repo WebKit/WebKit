@@ -135,7 +135,7 @@ public:
     static bool convertTouchCallout(BuilderState&, const CSSValue&);
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    static Color convertTapHighlightColor(BuilderState&, const CSSValue&);
+    static StyleColor convertTapHighlightColor(BuilderState&, const CSSValue&);
 #endif
     static OptionSet<TouchAction> convertTouchAction(BuilderState&, const CSSValue&);
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
@@ -1423,7 +1423,7 @@ inline bool BuilderConverter::convertTouchCallout(BuilderState&, const CSSValue&
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-inline Color BuilderConverter::convertTapHighlightColor(BuilderState& builderState, const CSSValue& value)
+inline StyleColor BuilderConverter::convertTapHighlightColor(BuilderState& builderState, const CSSValue& value)
 {
     return builderState.colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(value));
 }

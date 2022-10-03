@@ -345,18 +345,18 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
         if (borderTop || borderRight || borderBottom || borderLeft) {
             ts << " [border:";
 
-            auto printBorder = [&ts, &o] (LayoutUnit const& width, BorderStyle const& style, Color color) {
+            auto printBorder = [&ts, &o] (LayoutUnit const& width, BorderStyle const& style, StyleColor const& color) {
                 if (!width)
                     ts << " none";
                 else {
                     ts << " (" << width << "px ";
                     printBorderStyle(ts, style);
-                    if (!color.isValid())
-                        color = o.style().color();
-                    ts << serializationForRenderTreeAsText(color) << ")";
+                    auto resolvedColor = o.style().colorResolvingCurrentColor(color);
+                    ts << serializationForRenderTreeAsText(resolvedColor) << ")";
                 }
+
             };
-            
+
             BorderValue prevBorder = o.style().borderTop();
             printBorder(borderTop, o.style().borderTopStyle(), o.style().borderTopColor());
 
@@ -374,7 +374,6 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 prevBorder = o.style().borderLeft();
                 printBorder(borderLeft, o.style().borderLeftStyle(), o.style().borderLeftColor());
             }
-
             ts << "]";
         }
 

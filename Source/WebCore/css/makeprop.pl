@@ -1156,18 +1156,6 @@ sub generateColorValueSetter {
   return $setterContent;
 }
 
-sub handleCurrentColorValue {
-  my $name = shift;
-  my $primitiveValue = shift;
-  my $indent = shift;
-
-  my $code = $indent . "if (" . $primitiveValue . ".valueID() == CSSValueCurrentcolor) {\n";
-  $code .= $indent . "    applyInherit" . $nameToId{$name} . "(builderState);\n";
-  $code .= $indent . "    return;\n";
-  $code .= $indent . "}\n";
-  return $code;
-}
-
 sub generateAnimationPropertyInitialValueSetter {
   my $name = shift;
   my $indent = shift;
@@ -1386,7 +1374,7 @@ sub generateInheritValueSetter {
     $setterContent .= $indent . "        return;\n";
     $setterContent .= $indent . "    }\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"visited-link-color-support"}) {
-    $setterContent .= $indent . "    Color color = " . $parentStyle . "." . $getter . "();\n";
+    $setterContent .= $indent . "    auto color = " . $parentStyle . "." . $getter . "();\n";
     $setterContent .= generateColorValueSetter($name, "color", $indent . "    ");
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"animatable"}) {
@@ -1448,10 +1436,6 @@ sub generateValueSetter {
     $setterContent .= $indent . "    }\n";
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"visited-link-color-support"}) {
     $setterContent .= $indent . "    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);\n";
-    if ($name eq "color") {
-      # The "color" property supports "currentColor" value. We should add a parameter.
-      $setterContent .= handleCurrentColorValue($name, "primitiveValue", $indent . "    ");
-    }
     $setterContent .= generateColorValueSetter($name, "primitiveValue", $indent . "    ", VALUE_IS_PRIMITIVE);
     $didCallSetValue = 1;
   } elsif (exists $propertiesWithStyleBuilderOptions{$name}{"animatable"}) {

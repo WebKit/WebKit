@@ -86,7 +86,8 @@ bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect& effect,
     if (attrName == SVGNames::lighting_colorAttr) {
         RenderObject* renderer = this->renderer();
         ASSERT(renderer);
-        Color color = renderer->style().colorByApplyingColorFilter(renderer->style().svgStyle().lightingColor());
+        auto& style = renderer->style();
+        Color color = style.colorWithColorFilter(style.svgStyle().lightingColor());
         return feDiffuseLighting.setLightingColor(color);
     }
     if (attrName == SVGNames::surfaceScaleAttr)
@@ -160,8 +161,9 @@ RefPtr<FilterEffect> SVGFEDiffuseLightingElement::createFilterEffect(const Filte
         return nullptr;
 
     auto lightSource = lightElement->lightSource();
+    auto& style = renderer->style();
 
-    Color color = renderer->style().colorByApplyingColorFilter(renderer->style().svgStyle().lightingColor());
+    Color color = style.colorWithColorFilter(style.svgStyle().lightingColor());
 
     return FEDiffuseLighting::create(color, surfaceScale(), diffuseConstant(), kernelUnitLengthX(), kernelUnitLengthY(), WTFMove(lightSource));
 }

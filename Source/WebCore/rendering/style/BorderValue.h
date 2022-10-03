@@ -24,10 +24,12 @@
 
 #pragma once
 
-#include "Color.h"
 #include "RenderStyleConstants.h"
+#include "StyleColor.h"
 
 namespace WebCore {
+
+class RenderStyle;
 
 class BorderValue {
 friend class RenderStyle;
@@ -53,18 +55,18 @@ public:
         return !(*this == o);
     }
 
-    void setColor(const Color& color)
+    void setColor(const StyleColor& color)
     {
         m_color = color;
     }
 
-    const Color& color() const { return m_color; }
+    const StyleColor& color() const { return m_color; }
 
     float width() const { return m_width; }
     BorderStyle style() const { return static_cast<BorderStyle>(m_style); }
 
 protected:
-    Color m_color;
+    StyleColor m_color;
 
     float m_width { 3 };
 

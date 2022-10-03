@@ -51,7 +51,7 @@ public:
     float width { 0 };
     unsigned short count;
     BorderValue rule;
-    Color visitedLinkColumnRuleColor;
+    StyleColor visitedLinkColumnRuleColor;
 
     bool autoWidth : 1;
     bool autoCount : 1;

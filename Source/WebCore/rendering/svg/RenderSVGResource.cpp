@@ -48,7 +48,7 @@ static inline bool inheritColorFromParentStyleIfNeeded(RenderElement& object, bo
     if (!object.parent())
         return false;
     const SVGRenderStyle& parentSVGStyle = object.parent()->style().svgStyle();
-    color = applyToFill ? parentSVGStyle.fillPaintColor() : parentSVGStyle.strokePaintColor();
+    color = object.style().colorResolvingCurrentColor(applyToFill ? parentSVGStyle.fillPaintColor() : parentSVGStyle.strokePaintColor());
     return true;
 }
 
@@ -63,7 +63,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
         // When rendering the mask for a RenderSVGResourceClipper, always use the initial fill paint server, and ignore stroke.
         if (isRenderingMask) {
             RenderSVGResourceSolidColor* colorResource = RenderSVGResource::sharedSolidPaintingResource();
-            colorResource->setColor(SVGRenderStyle::initialFillPaintColor());
+            colorResource->setColor(SVGRenderStyle::initialFillPaintColor().absoluteColor());
             return colorResource;
         }
 
@@ -85,7 +85,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     case SVGPaintType::RGBColor:
     case SVGPaintType::URICurrentColor:
     case SVGPaintType::URIRGBColor:
-        color = applyToFill ? svgStyle.fillPaintColor() : svgStyle.strokePaintColor();
+        color = style.colorResolvingCurrentColor(applyToFill ? svgStyle.fillPaintColor() : svgStyle.strokePaintColor());
         break;
     default:
         break;
@@ -97,7 +97,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
 
         // For SVGPaintType::CurrentColor, 'color' already contains the 'visitedColor'.
         if (visitedPaintType < SVGPaintType::URINone && visitedPaintType != SVGPaintType::CurrentColor) {
-            const Color& visitedColor = applyToFill ? svgStyle.visitedLinkFillPaintColor() : svgStyle.visitedLinkStrokePaintColor();
+            const Color& visitedColor = style.colorResolvingCurrentColor(applyToFill ? svgStyle.visitedLinkFillPaintColor() : svgStyle.visitedLinkStrokePaintColor());
             if (visitedColor.isValid())
                 color = visitedColor.colorWithAlpha(color.alphaAsFloat());
         }

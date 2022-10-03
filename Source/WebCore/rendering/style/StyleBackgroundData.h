@@ -24,9 +24,9 @@
 
 #pragma once
 
-#include "Color.h"
 #include "FillLayer.h"
 #include "OutlineValue.h"
+#include "StyleColor.h"
 #include <wtf/DataRef.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
@@ -44,7 +44,7 @@ public:
     bool isEquivalentForPainting(const StyleBackgroundData&, bool currentColorDiffers) const;
 
     DataRef<FillLayer> background;
-    Color color;
+    StyleColor color;
     OutlineValue outline;
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
