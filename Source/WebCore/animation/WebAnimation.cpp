@@ -47,6 +47,7 @@
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
 #include "RenderElement.h"
+#include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyledElement.h"
 #include "WebAnimationUtilities.h"
@@ -1461,9 +1462,6 @@ ExceptionOr<void> WebAnimation::commitStyles()
     // 2.3 Let inline style be the result of getting the CSS declaration block corresponding to target’s style attribute. If target does not have a style
     // attribute, let inline style be a new empty CSS declaration block with the readonly flag unset and owner node set to target.
 
-    // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one animation effect associated with
-    // animation whose effect target is target.
-
     auto unanimatedStyle = [&]() {
         if (auto styleable = Styleable::fromRenderer(*renderer)) {
             if (auto* lastStyleChangeEventStyle = styleable->lastStyleChangeEventStyle())
@@ -1520,10 +1518,20 @@ ExceptionOr<void> WebAnimation::commitStyles()
         );
     };
 
-    // During iteration resolve() could clear the underlying properties so we use a copy
-    auto properties = effect->animatedProperties();
+    // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one
+    // animation effect associated with animation whose effect target is target.
+    HashSet<CSSPropertyID> targetedProperties;
+    for (auto property : effect->animatedProperties()) {
+        auto shorthand = shorthandForProperty(property);
+        if (!shorthand.length()) {
+            targetedProperties.add(property);
+            continue;
+        }
+        for (auto longhand : shorthand)
+            targetedProperties.add(longhand);
+    }
     // 2.5 For each property, property, in targeted properties:
-    for (auto property : properties) {
+    for (auto property : targetedProperties) {
         if (property != CSSPropertyCustom)
             commitProperty(property);
     }
