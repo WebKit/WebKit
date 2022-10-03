@@ -3803,3 +3803,6 @@ svg/gradients/spreadMethodDiagonal4.svg [ ImageOnlyFailure ]
 svg/gradients/spreadMethodDuplicateStop.svg [ ImageOnlyFailure ]
 svg/gradients/spreadMethodReversed.svg [ ImageOnlyFailure ]
 svg/gradients/stopAlpha.svg [ ImageOnlyFailure ]
+
+# rdar://100135651 ([ iOS ] fast/canvas/canvas-large-dimensions-drawing.html is a constant failure)
+fast/canvas/canvas-large-dimensions-drawing.html [ ImageOnlyFailure ]
