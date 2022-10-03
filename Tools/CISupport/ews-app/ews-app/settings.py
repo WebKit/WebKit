@@ -1,4 +1,4 @@
-# Copyright (C) 2018 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 is_test_mode_enabled = os.getenv('EWS_PRODUCTION') is None
+is_dev_instance = (os.getenv('DEV_INSTANCE', '').lower() == 'true')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,7 +47,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('EWS_SECRET_KEY', 'secret')
 
 DEBUG = False
-if is_test_mode_enabled:
+if (is_test_mode_enabled and not is_dev_instance):
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
 
@@ -99,7 +100,7 @@ WSGI_APPLICATION = 'ews-app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-if is_test_mode_enabled:
+if is_test_mode_enabled or is_dev_instance:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
