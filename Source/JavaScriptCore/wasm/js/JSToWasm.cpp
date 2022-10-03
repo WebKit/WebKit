@@ -335,16 +335,16 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CCallHelpers& jit, const
                     jit.storeValue(scratchJSR, addr);
                 }
             } else {
-                if (type.isF32())
-                    jit.loadFloat(jsParam, wasmFrameConvention.params[i].fpr());
-                else if (type.isF64())
-                    jit.loadDouble(jsParam, wasmFrameConvention.params[i].fpr());
-                else if (type.isI32()) {
+                if (type.isI32()) {
                     jit.load32(jsParam, wasmFrameConvention.params[i].jsr().payloadGPR());
 #if USE(JSVALUE32_64)
                     jit.move(CCallHelpers::TrustedImm32(0), wasmFrameConvention.params[i].jsr().tagGPR());
 #endif
-                } else
+                } else if (type.isF32())
+                    jit.loadFloat(jsParam, wasmFrameConvention.params[i].fpr());
+                else if (type.isF64())
+                    jit.loadDouble(jsParam, wasmFrameConvention.params[i].fpr());
+                else
                     jit.loadValue(jsParam, wasmFrameConvention.params[i].jsr());
             }
         }
