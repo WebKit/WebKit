@@ -3815,3 +3815,6 @@ editing/editable-region/search-field-basic.html [ Failure ]
 
 # rdar://100047922 ([ iOS ] fast/events/event-attribute.html is a constant failure)
 fast/events/event-attribute.html [ Failure ]
+
+# rdar://100049612 ([ iOS ] fast/canvas/canvas-scale-strokePath-shadow.html is a constant failure)
+fast/canvas/canvas-scale-strokePath-shadow.html [ Failure ]
