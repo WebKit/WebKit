@@ -29,10 +29,6 @@
 #include "WebPage.h"
 #include <WebCore/PlatformDisplay.h>
 
-#if PLATFORM(WAYLAND)
-#include "AcceleratedSurfaceWayland.h"
-#endif
-
 #if PLATFORM(X11)
 #include "AcceleratedSurfaceX11.h"
 #endif

@@ -43,10 +43,6 @@
 #include <WebCore/ApplicationGLib.h>
 #include <WebCore/MemoryCache.h>
 
-#if PLATFORM(WAYLAND)
-#include "WaylandCompositorDisplay.h"
-#endif
-
 #if USE(WPE_RENDERER)
 #include <WebCore/PlatformDisplayLibWPE.h>
 #include <wpe/wpe.h>

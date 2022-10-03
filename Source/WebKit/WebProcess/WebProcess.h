@@ -124,7 +124,6 @@ class RemoteLegacyCDMFactory;
 class RemoteMediaEngineConfigurationFactory;
 class StorageAreaMap;
 class UserData;
-class WaylandCompositorDisplay;
 class WebAutomationSessionProxy;
 class WebBroadcastChannelRegistry;
 class WebCacheStorageProvider;
@@ -293,10 +292,6 @@ public:
     void sendPrewarmInformation(const URL&);
 
     void isJITEnabled(CompletionHandler<void(bool)>&&);
-
-#if PLATFORM(WAYLAND)
-    WaylandCompositorDisplay* waylandCompositorDisplay() const { return m_waylandCompositorDisplay.get(); }
-#endif
 
     RefPtr<API::Object> transformHandlesToObjects(API::Object*);
     static RefPtr<API::Object> transformObjectsToHandles(API::Object*);
@@ -692,10 +687,6 @@ private:
 #endif
 
     HashMap<WebCore::UserGestureToken *, uint64_t> m_userGestureTokens;
-
-#if PLATFORM(WAYLAND)
-    std::unique_ptr<WaylandCompositorDisplay> m_waylandCompositorDisplay;
-#endif
 
 #if PLATFORM(WAYLAND)
     std::unique_ptr<WebCore::PlatformDisplayLibWPE> m_wpeDisplay;
