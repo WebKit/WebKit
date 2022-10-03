@@ -627,7 +627,7 @@ NSArray *DataDetection::detectContentInRange(const SimpleRange& contextRange, Op
                         auto underlineColor = convertColor<SRGBA<uint8_t>>(hsla);
 
                         anchorElement->setInlineStyleProperty(CSSPropertyColor, CSSValueCurrentcolor);
-                        anchorElement->setInlineStyleProperty(CSSPropertyTextDecorationColor, serializationForCSS(underlineColor));
+                        anchorElement->setInlineStyleProperty(CSSPropertyTextDecorationColor, serializationForCSS(static_cast<Color>(underlineColor)));
                     }
                 }
             }

@@ -536,12 +536,9 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 
 void EditingStyle::removeTextFillAndStrokeColorsIfNeeded(const RenderStyle* renderStyle)
 {
-    // If a node's text fill color is invalid, then its children use 
-    // their font-color as their text fill color (they don't
-    // inherit it).  Likewise for stroke color.
-    if (!renderStyle->textFillColor().isValid())
+    if (RenderStyle::isCurrentColor(renderStyle->textFillColor()))
         m_mutableStyle->removeProperty(CSSPropertyWebkitTextFillColor);
-    if (!renderStyle->textStrokeColor().isValid())
+    if (RenderStyle::isCurrentColor(renderStyle->textStrokeColor()))
         m_mutableStyle->removeProperty(CSSPropertyWebkitTextStrokeColor);
 }
 

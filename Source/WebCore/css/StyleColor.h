@@ -34,9 +34,14 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
+#include "ColorInterpolationMethod.h"
+#include <vector>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
+
+class CSSPrimitiveValue;
+class StyleColor;
 
 enum class StyleColorOptions : uint8_t {
     ForVisitedLink = 1 << 0,
@@ -45,10 +50,17 @@ enum class StyleColorOptions : uint8_t {
     UseElevatedUserInterfaceLevel = 1 << 3
 };
 
-struct StyleColor {
-    static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
-    static bool isAbsoluteColorKeyword(CSSValueID);
+struct CurrentColor {
+    bool operator==(const CurrentColor&) const = default;
+};
 
+class StyleColor {
+public:
+    using ColorKind = std::variant<Color, CurrentColor>;
+
+    static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
+    static Color colorFromAbsoluteKeyword(CSSValueID);
+    static bool isAbsoluteColorKeyword(CSSValueID);
     static bool isCurrentColorKeyword(CSSValueID id) { return id == CSSValueCurrentcolor; }
     static bool isCurrentColor(const CSSPrimitiveValue& value) { return isCurrentColorKeyword(value.valueID()); }
 
@@ -60,8 +72,36 @@ struct StyleColor {
         Current = 1 << 1,
         System = 1 << 2,
     };
+
     // https://drafts.csswg.org/css-color-4/#typedef-color
     static bool isColorKeyword(CSSValueID, OptionSet<CSSColorType> = { CSSColorType::Absolute, CSSColorType::Current, CSSColorType::System });
+
+    static StyleColor currentColor();
+    StyleColor();
+    StyleColor(const Color&);
+    StyleColor(const StyleColor&) = default;
+    StyleColor(StyleColor&&) = default;
+    StyleColor& operator=(const StyleColor&) = default;
+    bool operator==(const StyleColor&) const = default;
+
+    StyleColor(const SRGBA<uint8_t>&);
+
+    bool isCurrentColor() const;
+    bool isAbsoluteColor() const;
+    const Color& absoluteColor() const;
+
+    WEBCORE_EXPORT Color resolveColor(const Color& colorPropertyValue) const;
+    WEBCORE_EXPORT Color resolveColorWithoutCurrentColor() const;
+
+    friend WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
+    String debugDescription() const;
+
+private:
+    ColorKind m_color;
+    StyleColor(const ColorKind&);
 };
+
+WEBCORE_EXPORT String serializationForRenderTreeAsText(const StyleColor&);
+WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
 
 } // namespace WebCore

@@ -1233,7 +1233,7 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
     if (textColor.isValid())
         style.setColor(textColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 
-    auto backgroundColor = style.backgroundColor();
+    auto backgroundColor = style.colorResolvingCurrentColor(style.backgroundColor());
     if (backgroundColor.isValid())
         style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
 #endif

@@ -97,7 +97,7 @@ public:
     bool createFilterOperations(const CSSValue&, FilterOperations& outOperations);
 
     static bool isColorFromPrimitiveValueDerivedFromElement(const CSSPrimitiveValue&);
-    Color colorFromPrimitiveValue(const CSSPrimitiveValue&, ForVisitedLink = ForVisitedLink::No) const;
+    StyleColor colorFromPrimitiveValue(const CSSPrimitiveValue&, ForVisitedLink = ForVisitedLink::No) const;
     // FIXME: Remove. 'currentcolor' should be resolved at use time. All call sites are broken with inheritance.
     Color colorFromPrimitiveValueWithResolvedCurrentColor(const CSSPrimitiveValue&) const;
 

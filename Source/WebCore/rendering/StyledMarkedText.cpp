@@ -49,7 +49,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
         break;
     case MarkedText::Highlight:
         if (auto renderStyle = renderer.parent()->getUncachedPseudoStyle({ PseudoId::Highlight, markedText.highlightName }, &renderer.style())) {
-            style.backgroundColor = renderStyle->backgroundColor();
+            style.backgroundColor = renderStyle->colorResolvingCurrentColor(renderStyle->backgroundColor());
             style.textStyles.fillColor = renderStyle->computedStrokeColor();
             style.textStyles.strokeColor = renderStyle->computedStrokeColor();
 

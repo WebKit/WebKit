@@ -25,6 +25,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueList.h"
+#include "CSSValuePool.h"
 #include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
@@ -61,25 +62,21 @@ static Ref<CSSValue> strokeDashArrayToCSSValueList(const Vector<SVGLengthValue>&
     return list;
 }
 
-Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaintForCurrentColor(SVGPaintType paintType, const String& url, const Color& color, const Color& currentColor) const
+Ref<CSSValue> ComputedStyleExtractor::adjustSVGPaint(SVGPaintType paintType, const String& url, Ref<CSSPrimitiveValue> color) const
 {
     if (paintType >= SVGPaintType::URINone) {
         auto values = CSSValueList::createSpaceSeparated();
         values->append(CSSPrimitiveValue::create(url, CSSUnitType::CSS_URI));
         if (paintType == SVGPaintType::URINone)
             values->append(CSSPrimitiveValue::createIdentifier(CSSValueNone));
-        else if (paintType == SVGPaintType::URICurrentColor)
-            values->append(CSSPrimitiveValue::create(currentColor));
-        else if (paintType == SVGPaintType::URIRGBColor)
-            values->append(CSSPrimitiveValue::create(color));
+        else if (paintType == SVGPaintType::URICurrentColor || paintType == SVGPaintType::URIRGBColor)
+            values->append(color);
         return values;
     }
     if (paintType == SVGPaintType::None)
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-    if (paintType == SVGPaintType::CurrentColor)
-        return CSSPrimitiveValue::create(currentColor);
     
-    return CSSPrimitiveValue::create(color);
+    return color;
 }
 
 RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID propertyID)
@@ -92,6 +89,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
         return nullptr;
 
     const SVGRenderStyle& svgStyle = style->svgStyle();
+
+    auto createColor = [&style](const StyleColor& color) {
+        auto resolvedColor = style->colorResolvingCurrentColor(color);
+        return CSSValuePool::singleton().createColorValue(resolvedColor);
+    };
 
     switch (propertyID) {
     case CSSPropertyClipRule:
@@ -119,13 +121,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
     case CSSPropertyTextAnchor:
         return CSSPrimitiveValue::create(svgStyle.textAnchor());
     case CSSPropertyFloodColor:
-        return currentColorOrValidColor(style, svgStyle.floodColor());
+        return createColor(svgStyle.floodColor());
     case CSSPropertyLightingColor:
-        return currentColorOrValidColor(style, svgStyle.lightingColor());
+        return createColor(svgStyle.lightingColor());
     case CSSPropertyStopColor:
-        return currentColorOrValidColor(style, svgStyle.stopColor());
+        return createColor(svgStyle.stopColor());
     case CSSPropertyFill:
-        return adjustSVGPaintForCurrentColor(svgStyle.fillPaintType(), svgStyle.fillPaintUri(), svgStyle.fillPaintColor(), style->color());
+        return adjustSVGPaint(svgStyle.fillPaintType(), svgStyle.fillPaintUri(), createColor(svgStyle.fillPaintColor()));
     case CSSPropertyKerning:
         return SVGLengthValue::toCSSPrimitiveValue(svgStyle.kerning());
     case CSSPropertyMarkerEnd:
@@ -141,7 +143,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::svgPropertyValue(CSSPropertyID property
             return CSSPrimitiveValue::create(makeString('#', svgStyle.markerStartResource()), CSSUnitType::CSS_URI);
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
     case CSSPropertyStroke:
-        return adjustSVGPaintForCurrentColor(svgStyle.strokePaintType(), svgStyle.strokePaintUri(), svgStyle.strokePaintColor(), style->color());
+        return adjustSVGPaint(svgStyle.strokePaintType(), svgStyle.strokePaintUri(), createColor(svgStyle.strokePaintColor()));
     case CSSPropertyStrokeDasharray:
         return strokeDashArrayToCSSValueList(svgStyle.strokeDashArray());
     case CSSPropertyBaselineShift: {

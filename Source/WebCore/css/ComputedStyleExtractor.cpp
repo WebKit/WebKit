@@ -579,12 +579,10 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     return CSSValuePool::singleton().createIdentifierValue(CSSValueAuto);
 }
 
-Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle* style, const Color& color) const
+Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color) const
 {
     // This function does NOT look at visited information, so that computed style doesn't expose that.
-    if (!color.isValid())
-        return CSSValuePool::singleton().createColorValue(style->color());
-    return CSSValuePool::singleton().createColorValue(color);
+    return CSSValuePool::singleton().createColorValue(style.colorResolvingCurrentColor(color));
 }
 
 static Ref<CSSPrimitiveValue> percentageOrZoomAdjustedValue(Length length, const RenderStyle& style)
@@ -2834,10 +2832,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyAccentColor: {
         if (style.hasAutoAccentColor())
             return cssValuePool.createIdentifierValue(CSSValueAuto);
-        return currentColorOrValidColor(&style, style.accentColor());
+        return currentColorOrValidColor(style, style.accentColor());
     }
     case CSSPropertyBackgroundColor:
-        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBackgroundColor)) : currentColorOrValidColor(&style, style.backgroundColor());
+        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBackgroundColor)) : currentColorOrValidColor(style, style.backgroundColor());
     case CSSPropertyBackgroundImage:
     case CSSPropertyMaskImage: {
         auto& layers = propertyID == CSSPropertyMaskImage ? style.maskLayers() : style.backgroundLayers();
@@ -2984,13 +2982,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return style.borderImageSource()->cssValue();
         return cssValuePool.createIdentifierValue(CSSValueNone);
     case CSSPropertyBorderTopColor:
-        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderTopColor)) : currentColorOrValidColor(&style, style.borderTopColor());
+        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderTopColor)) : currentColorOrValidColor(style, style.borderTopColor());
     case CSSPropertyBorderRightColor:
-        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderRightColor)) : currentColorOrValidColor(&style, style.borderRightColor());
+        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderRightColor)) : currentColorOrValidColor(style, style.borderRightColor());
     case CSSPropertyBorderBottomColor:
-        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderBottomColor)) : currentColorOrValidColor(&style, style.borderBottomColor());
+        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderBottomColor)) : currentColorOrValidColor(style, style.borderBottomColor());
     case CSSPropertyBorderLeftColor:
-        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderLeftColor)) : currentColorOrValidColor(&style, style.borderLeftColor());
+        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderLeftColor)) : currentColorOrValidColor(style, style.borderLeftColor());
     case CSSPropertyBorderTopStyle:
         return cssValuePool.createValue(style.borderTopStyle());
     case CSSPropertyBorderRightStyle:
@@ -3039,7 +3037,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyCaptionSide:
         return cssValuePool.createValue(style.captionSide());
     case CSSPropertyCaretColor:
-        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyCaretColor)) : currentColorOrValidColor(&style, style.caretColor());
+        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyCaretColor)) : currentColorOrValidColor(style, style.caretColor());
     case CSSPropertyClear:
         return cssValuePool.createValue(style.clear());
     case CSSPropertyColor:
@@ -3065,7 +3063,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyWebkitColumnProgression:
         return cssValuePool.createValue(style.columnProgression());
     case CSSPropertyColumnRuleColor:
-        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyOutlineColor)) : currentColorOrValidColor(&style, style.columnRuleColor());
+        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyOutlineColor)) : currentColorOrValidColor(style, style.columnRuleColor());
     case CSSPropertyColumnRuleStyle:
         return cssValuePool.createValue(style.columnRuleStyle());
     case CSSPropertyColumnRuleWidth:
@@ -3386,7 +3384,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             return cssValuePool.createIdentifierValue(CSSValueAuto);
         return cssValuePool.createValue(style.orphans(), CSSUnitType::CSS_INTEGER);
     case CSSPropertyOutlineColor:
-        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyOutlineColor)) : currentColorOrValidColor(&style, style.outlineColor());
+        return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyOutlineColor)) : currentColorOrValidColor(style, style.outlineColor());
     case CSSPropertyOutlineOffset:
         return zoomAdjustedPixelValue(style.outlineOffset(), style);
     case CSSPropertyOutlineStyle:
@@ -3454,7 +3452,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextDecorationStyle:
         return renderTextDecorationStyleFlagsToCSSValue(style.textDecorationStyle());
     case CSSPropertyTextDecorationColor:
-        return currentColorOrValidColor(&style, style.textDecorationColor());
+        return currentColorOrValidColor(style, style.textDecorationColor());
     case CSSPropertyTextDecorationSkip:
         return renderTextDecorationSkipToCSSValue(style.textDecorationSkipInk());
     case CSSPropertyTextDecorationSkipInk:
@@ -3468,9 +3466,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyWebkitTextDecorationsInEffect:
         return renderTextDecorationLineFlagsToCSSValue(style.textDecorationsInEffect());
     case CSSPropertyWebkitTextFillColor:
-        return currentColorOrValidColor(&style, style.textFillColor());
+        return currentColorOrValidColor(style, style.textFillColor());
     case CSSPropertyTextEmphasisColor:
-        return currentColorOrValidColor(&style, style.textEmphasisColor());
+        return currentColorOrValidColor(style, style.textEmphasisColor());
     case CSSPropertyTextEmphasisPosition:
         return renderEmphasisPositionFlagsToCSSValue(style.textEmphasisPosition());
     case CSSPropertyTextEmphasisStyle:
@@ -3478,7 +3476,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextEmphasis: {
         auto list = CSSValueList::createSpaceSeparated();
         list->append(valueForTextEmphasisStyle(style));
-        list->append(currentColorOrValidColor(&style, style.textEmphasisColor()));
+        list->append(currentColorOrValidColor(style, style.textEmphasisColor()));
         return list;
     }
     case CSSPropertyTextIndent: {
@@ -3513,7 +3511,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return CSSPrimitiveValue::create(style.textSizeAdjust().percentage(), CSSUnitType::CSS_PERCENTAGE);
 #endif
     case CSSPropertyWebkitTextStrokeColor:
-        return currentColorOrValidColor(&style, style.textStrokeColor());
+        return currentColorOrValidColor(style, style.textStrokeColor());
     case CSSPropertyWebkitTextStrokeWidth:
         return zoomAdjustedPixelValue(style.textStrokeWidth(), style);
     case CSSPropertyTextTransform:
@@ -3749,7 +3747,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return cssValuePool.createIdentifierValue(style.rtlOrdering() == Order::Visual ? CSSValueVisual : CSSValueLogical);
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyWebkitTapHighlightColor:
-        return currentColorOrValidColor(&style, style.tapHighlightColor());
+        return currentColorOrValidColor(style, style.tapHighlightColor());
 #endif
     case CSSPropertyTouchAction:
         return touchActionFlagsToCSSValue(style.touchActions());
@@ -4078,7 +4076,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyStrokeWidth:
         return zoomAdjustedPixelValueForLength(style.strokeWidth(), style);
     case CSSPropertyStrokeColor:
-        return currentColorOrValidColor(&style, style.strokeColor());
+        return currentColorOrValidColor(style, style.strokeColor());
     case CSSPropertyStrokeMiterlimit:
         return CSSPrimitiveValue::create(style.strokeMiterLimit(), CSSUnitType::CSS_NUMBER);
 
