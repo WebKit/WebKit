@@ -27,6 +27,7 @@
 
 #import <type_traits>
 #import <wtf/RefPtr.h>
+#import <wtf/RetainPtr.h>
 
 namespace API {
 

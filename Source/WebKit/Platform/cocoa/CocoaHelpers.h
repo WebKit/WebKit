@@ -66,4 +66,6 @@ T *objectForKey(const RetainPtr<NSDictionary>& dictionary, id key, bool returnin
     return objectForKey<T>(dictionary.get(), key, returningNilIfEmpty, containingObjectsOfClass);
 }
 
+NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
+
 } // namespace WebKit

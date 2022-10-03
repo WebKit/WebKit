@@ -178,6 +178,7 @@ public:
 #if ENABLE(WK_WEB_EXTENSIONS)
         WebExtension,
         WebExtensionController,
+        WebExtensionMatchPattern,
 #endif
         WebResourceLoadStatisticsManager,
         WebsiteDataRecord,
@@ -431,6 +432,7 @@ template<> struct EnumTraits<API::Object::Type> {
 #if ENABLE(WK_WEB_EXTENSIONS)
         API::Object::Type::WebExtension,
         API::Object::Type::WebExtensionController,
+        API::Object::Type::WebExtensionMatchPattern,
 #endif
         API::Object::Type::WebResourceLoadStatisticsManager,
         API::Object::Type::WebsiteDataRecord,
