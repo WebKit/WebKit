@@ -28,8 +28,8 @@
 #if ENABLE(ASSEMBLER)
 
 #include "Reg.h"
-#include <wtf/PrintStream.h>
 #include <cstddef>
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 

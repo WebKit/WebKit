@@ -192,7 +192,7 @@ unsigned ScratchRegisterAllocator::preserveRegistersToStackForCall(AssemblyHelpe
     for (FPRReg reg = MacroAssembler::firstFPRegister(); reg <= MacroAssembler::lastFPRegister(); reg = MacroAssembler::nextFPRegister(reg)) {
         if (usedRegisters.includesRegister(reg, Width128)) {
             spooler.storeVector({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))), Width128 });
-            count+=2;
+            count += 2;
         } else if (usedRegisters.includesRegister(reg, Width64)) {
             spooler.storeFPR({ reg, static_cast<ptrdiff_t>(extraBytesAtTopOfStack + (count * sizeof(EncodedJSValue))), Width64 });
             count++;
