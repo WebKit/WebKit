@@ -3999,7 +3999,7 @@ AXRelationType AXObjectCache::attributeToRelationType(const QualifiedName& attri
 
 void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType relationType)
 {
-    if (!origin || !target || origin == target || relationType == AXRelationType::None) {
+    if (!origin || !target || (origin == target && relationType != AXRelationType::LabelledBy) || relationType == AXRelationType::None) {
         ASSERT_NOT_REACHED();
         return;
     }
