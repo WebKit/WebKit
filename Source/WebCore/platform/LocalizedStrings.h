@@ -458,6 +458,8 @@ namespace WebCore {
 
 #ifdef __OBJC__
 #define WEB_UI_NSSTRING(string, description) WebCore::localizedNSString(string)
+#define WEB_UI_NSSTRING_KEY(string, key, description) WebCore::localizedNSString(key)
+
     inline NS_FORMAT_ARGUMENT(1) NSString *localizedNSString(NSString *key)
     {
         return bridge_cast(copyLocalizedString(bridge_cast(key)).autorelease());

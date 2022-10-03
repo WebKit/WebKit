@@ -189,7 +189,7 @@ handleString:
                         # FIXME: Validate UTF-8 here?
                         $UIString = $string;
                         $expected = ",";
-                    } elsif (($macro =~ /(WEB_)?UI_(FORMAT_)?(CF)?STRING_KEY(_INTERNAL)?$/) and !defined $key) {
+                    } elsif (($macro =~ /(WEB_)?UI_(FORMAT_)?(CF|NS)?STRING_KEY(_INTERNAL)?$/) and !defined $key) {
                         # FIXME: Validate UTF-8 here?
                         $key = $string;
                         $isFormat = isFormatMacro($macro);
@@ -250,7 +250,7 @@ handleString:
                     emitError($file, $., "found $token but expected $expected");
                     $expected = "";
                 }
-                if (($token =~ /(WEB_)?UI_(FORMAT_)?(CF)?STRING(_KEY)?(_INTERNAL)?$/) || ($token =~ /WEB_UI_NSSTRING$/) || ($token =~ /WEB_UI_STRING_WITH_MNEMONIC$/)) {
+                if (($token =~ /(WEB_)?UI_(FORMAT_)?(CF|NS)?STRING(_KEY)?(_INTERNAL)?$/) || ($token =~ /WEB_UI_STRING_WITH_MNEMONIC$/)) {
                     $expected = "(";
                     $macro = $token;
                     $UIString = undef;

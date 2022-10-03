@@ -55,9 +55,6 @@
 /* Visible name of Service Worker process. The argument is the application name. */
 "%@ Service Worker (%@)" = "%@ Service Worker (%@)";
 
-/* visible name of the WebAuthn process. The argument is the application name. */
-"%@ Web Authentication" = "%@ Web Authentication";
-
 /* Visible name of the web process. The argument is the application name. */
 "%@ Web Content" = "%@ Web Content";
 
@@ -72,6 +69,9 @@
 
 /* Name of application's single WebCrypto master key in Keychain */
 "%@ WebCrypto Master Key" = "%@ WebCrypto Master Key";
+
+/* The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only). */
+"%@ in %%@" = "%@ in %%@";
 
 /* Label to describe the number of files selected in a file upload control that allows multiple files */
 "%d files" = "%d files";
@@ -127,11 +127,11 @@
 /* WKErrorJavaScriptExceptionOccurred description */
 "A JavaScript exception occurred" = "A JavaScript exception occurred";
 
+/* Actual Size context menu item */
+"Actual Size" = "Actual Size";
+
 /* Label for the add money with Apple Pay button. */
 "Add money with Apple Pay" = "Add money with Apple Pay";
-
-/* Title for Save to Photos action button */
-"Save to Photos" = "Save to Photos";
 
 /* Add to Quick Note context menu item. */
 "Add to Quick Note" = "Add to Quick Note";
@@ -144,12 +144,6 @@
 
 /* Undo action name */
 "Align Right (Undo action name)" = "Align Right";
-
-/* Allow screen button title in window and screen sharing prompt */
-"Allow to Share Screen" = "Allow to Share Screen";
-
-/* Allow window button title in window and screen sharing prompt */
-"Allow to Share Window" = "Allow to Share Window";
 
 /* Button title in Storage Access API prompt */
 "Allow (cross-site cookie and website data access)" = "Allow";
@@ -171,6 +165,12 @@
 
 /* Allow button title in window sharing prompt */
 "Allow (window sharing)" = "Allow";
+
+/* Allow screen button title in window and screen sharing prompt */
+"Allow to Share Screen" = "Allow to Share Screen";
+
+/* Allow window button title in window and screen sharing prompt */
+"Allow to Share Window" = "Allow to Share Window";
 
 /* Message for requesting cross-site cookie and website data access. */
 "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?" = "Allow “%@” and “%@” to use cookies and website data while browsing “%@”?";
@@ -217,6 +217,9 @@
 /* Menu item label for automatic track selection behavior. */
 "Auto (Recommended) (text track)" = "Auto (Recommended)";
 
+/* Automatically Resize context menu item */
+"Automatically Resize" = "Automatically Resize";
+
 /* Back context menu item */
 "Back" = "Back";
 
@@ -262,6 +265,9 @@
 /* Undo action name */
 "Center (Undo action name)" = "Center";
 
+/* Lockdown Mode alert message */
+"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings." = "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.";
+
 /* Undo action name */
 "Change Attributes (Undo action name)" = "Change Attributes";
 
@@ -280,9 +286,6 @@
 /* Label for the check out with Apple Pay button. */
 "Check out with Apple Pay" = "Check out with Apple Pay";
 
-/* Message for window sharing prompt */
-"Choose a window to share" = "Choose a window to share";
-
 /* title for a single file chooser button used in HTML forms */
 "Choose File" = "Choose File";
 
@@ -294,6 +297,9 @@
 
 /* Title for file button used in HTML forms for media files */
 "Choose Media (Single)" = "Choose Media (Single)";
+
+/* Message for window sharing prompt */
+"Choose a window to share" = "Choose a window to share";
 
 /* menu item in Recent Searches menu that empties menu's contents */
 "Clear Recent Searches" = "Clear Recent Searches";
@@ -334,14 +340,11 @@
 /* Copy context menu item */
 "Copy" = "Copy";
 
-/* Title for Copy Link or Image action button */
+/* Title for Copy Link and Image or Copy Image action button */
 "Copy (ActionSheet)" = "Copy";
 
 /* Copy Audio Address Location context menu item */
 "Copy Audio Address" = "Copy Audio Address";
-
-/* Copy Subject context menu item */
-"Copy Subject" = "Copy Subject";
 
 /* Copy Image context menu item */
 "Copy Image" = "Copy Image";
@@ -352,6 +355,9 @@
 /* Title for Copy Link button */
 "Copy Link (ActionSheet)" = "Copy Link";
 
+/* Title for Copy Subject */
+"Copy Subject" = "Copy Subject";
+
 /* Copy Video Address Location context menu item */
 "Copy Video Address" = "Copy Video Address";
 
@@ -360,6 +366,9 @@
 
 /* Undo action name */
 "Create Link (Undo action name)" = "Create Link";
+
+/* WKErrorCredentialNotFound description */
+"Credential could not be found" = "Credential could not be found";
 
 /* Cut context menu item */
 "Cut" = "Cut";
@@ -397,14 +406,14 @@
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
 
-/* Button title in Storage Access API prompt */
-"Don’t Allow (cross-site cookie and website data access)" = "Don’t Allow";
-
 /* Label for the donate with Apple Pay button. */
 "Donate with Apple Pay" = "Donate with Apple Pay";
 
 /* Title of the Done button for form controls. */
 "Done" = "Done";
+
+/* Button title in Storage Access API prompt */
+"Don’t Allow (cross-site cookie and website data access)" = "Don’t Allow";
 
 /* Disallow button title in geolocation prompt */
 "Don’t Allow (geolocation)" = "Don’t Allow";
@@ -496,11 +505,11 @@
 /* Display name for text track kind 'forced'. */
 "Forced (text track)" = "Forced";
 
-/* Label for the save data format selector when saving data in Web Inspector */
-"Format:" = "Format:";
-
 /* Undo action name */
 "Format Block (Undo action name)" = "Formatting";
+
+/* Label for the save data format selector when saving data in Web Inspector */
+"Format:" = "Format:";
 
 /* Forward context menu item */
 "Forward" = "Forward";
@@ -622,6 +631,9 @@
 /* 'Website' name displayed when local documents have stored local data */
 "Local documents on your computer" = "Local documents on your computer";
 
+/* Lockdown Mode alert title */
+"Lockdown Mode is Turned On For “%@“" = "Lockdown Mode is Turned On For “%@“";
+
 /* Title for Look Up action button */
 "Look Up" = "Look Up";
 
@@ -682,6 +694,9 @@
 /* New Quick Note context menu item. */
 "New Quick Note" = "New Quick Note";
 
+/* Next Page context menu item */
+"Next Page" = "Next Page";
+
 /* No Guesses Found context menu item */
 "No Guesses Found" = "No Guesses Found";
 
@@ -700,11 +715,14 @@
 /* Option in segmented control for inserting a numbered list in text editing */
 "Numbered list" = "Numbered list";
 
-/* Label for OK button in alerts */
+/* Lockdown Mode alert OK button */
 "OK" = "OK";
 
 /* Title of the OK button for the number pad in zoomed form controls. */
 "OK (OK button title in extra zoomed number pad)" = "OK";
+
+/* OK button label in document password failure alert */
+"OK (password failure alert)" = "OK";
 
 /* Menu item label for the track that represents disabling closed captions. */
 "Off (text track)" = "Off";
@@ -796,14 +814,20 @@
 /* WebKitErrorPlugInWillHandleLoad description */
 "Plug-in handled load" = "Plug-in handled load";
 
-/* Description of the primary type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari. */
+/* Description of the primary type supported by the PDF pseudo plug-in. */
 "Portable Document Format" = "Portable Document Format";
+
+/* Description of the primary type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari. */
+"Portable Document Format (Safari)" = "Portable Document Format";
 
 /* Description of the PostScript type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari. */
 "PostScript" = "PostScript";
 
 /* Title for file upload progress view */
 "Preparing (file upload)" = "Preparing…";
+
+/* Previous Page context menu item */
+"Previous Page" = "Previous Page";
 
 /* Undo action name */
 "Raise Baseline (Undo action name)" = "Raise Baseline";
@@ -817,14 +841,14 @@
 /* Label for the reload with Apple Pay button. */
 "Reload with Apple Pay" = "Reload with Apple Pay";
 
-/* WKErrorContentRuleListStoreRemoveFailed description */
-"Removing a WKContentRuleList failed" = "Removing a WKContentRuleList failed";
-
 /* Remove Background menu item */
 "Remove Background" = "Remove Background";
 
 /* Undo action name */
 "Remove Background (Undo action name)" = "Remove Background";
+
+/* WKErrorContentRuleListStoreRemoveFailed description */
+"Removing a WKContentRuleList failed" = "Removing a WKContentRuleList failed";
 
 /* Label for the rent with Apple Pay button. */
 "Rent with Apple Pay" = "Rent with Apple Pay";
@@ -840,6 +864,9 @@
 
 /* Display name for SDH (i.e. deaf and/or hard of hearing) text tracks. */
 "SDH (text track)" = "SDH";
+
+/* Title for Save to Photos action button */
+"Save to Photos" = "Save to Photos";
 
 /* Title of the Search button for zoomed form controls. */
 "Search" = "Search";
@@ -924,6 +951,12 @@
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";
+
+/* Single Page context menu item */
+"Single Page" = "Single Page";
+
+/* Single Page Continuous context menu item */
+"Single Page Continuous" = "Single Page Continuous";
 
 /* Smart Copy/Paste context menu item */
 "Smart Copy/Paste" = "Smart Copy/Paste";
@@ -1063,6 +1096,12 @@
 /* prompt string in authentication panel */
 "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again." = "The user name or password you entered for this area on %@ was incorrect. Make sure you’re entering them correctly, and then try again.";
 
+/* WKErrorDuplicateCredential description */
+"This credential is already present" = "This credential is already present";
+
+/* WKErrorMalformedCredential description */
+"This credential is malformed" = "This credential is malformed";
+
 /* text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index' */
 "This is a searchable index. Enter search keywords: " = "This is a searchable index. Enter search keywords: ";
 
@@ -1113,6 +1152,12 @@
 
 /* Undo action name */
 "Turn Off Ligatures (Undo action name)" = "Turn Off Ligatures";
+
+/* Two Pages context menu item */
+"Two Pages" = "Two Pages";
+
+/* Two Pages Continuous context menu item */
+"Two Pages Continuous" = "Two Pages Continuous";
 
 /* Undo action name */
 "Typing (Undo action name)" = "Typing";
@@ -1219,6 +1264,12 @@
 /* message in authentication panel */
 "Your password will be sent unencrypted." = "Your password will be sent unencrypted.";
 
+/* Zoom In Continuous context menu item */
+"Zoom In" = "Zoom In";
+
+/* Zoom Out context menu item */
+"Zoom Out" = "Zoom Out";
+
 /* HTTP result code string */
 "accepted" = "accepted";
 
@@ -1291,9 +1342,6 @@
 /* Label for the credit card AutoFill button inside a text field. */
 "credit card AutoFill" = "credit card AutoFill";
 
-/* Label for the loading AutoFill button inside a text field. */
-"loading AutoFill" = "loading AutoFill";
-
 /* The less good value description for a meter element. */
 "critical value" = "critical value";
 
@@ -1357,9 +1405,6 @@
 /* accessibility role description for a footer */
 "footer" = "footer";
 
-/* Suggestion role description for a suggestion group */
-"suggestion" = "suggestion";
-
 /* HTTP result code string */
 "forbidden" = "forbidden";
 
@@ -1401,6 +1446,9 @@
 
 /* accessibility role description for list marker */
 "list marker" = "list marker";
+
+/* Label for the loading AutoFill button inside a text field. */
+"loading AutoFill" = "loading AutoFill";
 
 /* An ARIA accessibility group that acts as a console log. */
 "log" = "log";
@@ -1606,6 +1654,9 @@
 /* HTTP result code string */
 "success" = "success";
 
+/* accessibility role description for a suggestion element */
+"suggestion" = "suggestion";
+
 /* accessibility role description for a summary element */
 "summary" = "summary";
 
@@ -1690,9 +1741,6 @@
 /* Message for requesting access to the device motion and orientation */
 "“%@” Would Like to Access Motion and Orientation" = "“%@” Would Like to Access Motion and Orientation";
 
-/* The domain and application using the camera and/or microphone. The first argument is domain, the second is the application name (iOS only). */
-"%@ in %%@" = "%@ in %%@";
-
 /* Allow the specified bundle to sign in to the specified website */
 "“%@” would like to sign in to “%@”." = "“%@” would like to sign in to “%@”.";
 
@@ -1702,29 +1750,3 @@
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";
 
-/* Lockdown Mode alert title */
-"Lockdown Mode is Turned On For “%@“" = "Lockdown Mode is Turned On For “%@“";
-
-/* Lockdown Mode alert message */
-"Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings." = "Certain experiences and features may not function as expected. You can turn off Lockdown Mode for this app in Settings.";
-
-/* PDFJS strings */
-"Automatically Resize" = "Automatically Resize";
-
-"Zoom In" = "Zoom In";
-
-"Zoom Out" = "Zoom Out";
-
-"Actual Size" = "Actual Size";
-
-"Single Page" = "Single Page";
-
-"Single Page Continuous" = "Single Page Continuous";
-
-"Two Pages" = "Two Pages";
-
-"Two Pages Continuous" = "Two Pages Continuous";
-
-"Next Page" = "Next Page";
-
-"Previous Page" = "Previous Page";
