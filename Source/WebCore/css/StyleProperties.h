@@ -229,7 +229,7 @@ public:
     // These expand shorthand properties into multiple properties.
     bool setProperty(CSSPropertyID, const String& value, bool important, CSSParserContext);
     bool setProperty(CSSPropertyID, const String& value, bool important = false);
-    void setProperty(CSSPropertyID, RefPtr<CSSValue>&&, bool important = false);
+    bool setProperty(CSSPropertyID, RefPtr<CSSValue>&&, bool important = false);
 
     // These do not. FIXME: This is too messy, we can do better.
     bool setProperty(CSSPropertyID, CSSValueID identifier, bool important = false);
@@ -255,7 +255,7 @@ public:
 
     // Methods for querying and altering CSS custom properties.
     bool setCustomProperty(const Document*, const String& propertyName, const String& value, bool important, CSSParserContext);
-    void setCustomProperty(const String& propertyName, RefPtr<CSSValue>&&, bool important);
+    bool setCustomProperty(const String& propertyName, RefPtr<CSSValue>&&, bool important);
     bool removeCustomProperty(const String& propertyName, String* returnText = nullptr);
 
 private:

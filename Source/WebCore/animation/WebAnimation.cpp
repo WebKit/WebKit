@@ -1506,14 +1506,12 @@ ExceptionOr<void> WebAnimation::commitStyles()
         }
         if (m_replaceState == ReplaceState::Removed)
             effect->animation()->resolve(*animatedStyle, { nullptr });
-        WTF::switchOn(property,
+        return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr))
-                    styledElement.setInlineStyleProperty(propertyId, WTFMove(cssValue));
+                return styledElement.setInlineStyleProperty(propertyId, computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr));
             },
             [&] (AtomString customProperty) {
-                if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
-                    styledElement.setInlineStyleCustomProperty(customProperty, WTFMove(cssValue));
+                return styledElement.setInlineStyleCustomProperty(customProperty, computedStyleExtractor.customPropertyValue(customProperty));
             }
         );
     };
@@ -1531,13 +1529,21 @@ ExceptionOr<void> WebAnimation::commitStyles()
             targetedProperties.add(longhand);
     }
     // 2.5 For each property, property, in targeted properties:
+    bool changed = false;
     for (auto property : targetedProperties) {
         if (property != CSSPropertyCustom)
-            commitProperty(property);
+            changed = changed || commitProperty(property);
     }
     auto customProperties = effect->animatedCustomProperties();
     for (auto customProperty : customProperties)
-        commitProperty(customProperty);
+        changed = changed || commitProperty(customProperty);
+
+    if (changed) {
+        AtomString cssText;
+        if (auto inlineStyle = styledElement.inlineStyle())
+            cssText = inlineStyle->asTextAtom();
+        styledElement.setAttribute(HTMLNames::styleAttr, cssText);
+    }
 
     return { };
 }

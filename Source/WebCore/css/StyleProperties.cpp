@@ -1481,25 +1481,29 @@ bool MutableStyleProperties::setCustomProperty(const Document* document, const S
     return CSSParser::parseCustomPropertyValue(*this, AtomString { propertyName }, value, important, parserContext) == CSSParser::ParseResult::Changed;
 }
 
-void MutableStyleProperties::setCustomProperty(const String& propertyName, RefPtr<CSSValue>&& value, bool important)
+bool MutableStyleProperties::setCustomProperty(const String& propertyName, RefPtr<CSSValue>&& value, bool important)
 {
+    bool changed = value != getCustomPropertyCSSValue(propertyName);
     removeCustomProperty(propertyName);
     m_propertyVector.append({ CSSPropertyCustom, WTFMove(value), important });
-    return;
+    return changed;
 }
 
-void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
+bool MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, bool important)
 {
     StylePropertyShorthand shorthand = shorthandForProperty(propertyID);
     if (!shorthand.length()) {
+        bool changed = value != getPropertyCSSValue(propertyID);
         setProperty(CSSProperty(propertyID, WTFMove(value), important));
-        return;
+        return changed;
     }
 
     removePropertiesInSet(shorthand.properties(), shorthand.length());
 
     for (auto longhand : shorthand)
         m_propertyVector.append(CSSProperty(longhand, value.copyRef(), important));
+
+    return true;
 }
 
 bool MutableStyleProperties::canUpdateInPlace(const CSSProperty& property, CSSProperty* toReplace) const
