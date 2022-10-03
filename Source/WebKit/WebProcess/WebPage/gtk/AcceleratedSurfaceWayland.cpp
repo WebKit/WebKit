@@ -49,7 +49,6 @@ void AcceleratedSurfaceWayland::initialize()
 {
     m_surface = WebProcess::singleton().waylandCompositorDisplay()->createSurface();
     m_window = wl_egl_window_create(m_surface.get(), std::max(1, m_size.width()), std::max(1, m_size.height()));
-    WebProcess::singleton().waylandCompositorDisplay()->bindSurfaceToPage(m_surface.get(), m_webPage);
 }
 
 void AcceleratedSurfaceWayland::finalize()

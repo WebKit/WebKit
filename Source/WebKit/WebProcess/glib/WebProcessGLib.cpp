@@ -122,20 +122,14 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
-#if USE(WPE_RENDERER)
-        if (!parameters.isServiceWorkerProcess) {
-            auto hostClientFileDescriptor = parameters.hostClientFileDescriptor.release().release();
-            if (hostClientFileDescriptor != -1) {
-                wpe_loader_init(parameters.implementationLibraryName.data());
-                m_wpeDisplay = WebCore::PlatformDisplayLibWPE::create();
-                if (!m_wpeDisplay->initialize(hostClientFileDescriptor))
-                    m_wpeDisplay = nullptr;
-            }
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && !parameters.isServiceWorkerProcess) {
+        auto hostClientFileDescriptor = parameters.hostClientFileDescriptor.release().release();
+        if (hostClientFileDescriptor != -1) {
+            wpe_loader_init(parameters.implementationLibraryName.data());
+            m_wpeDisplay = WebCore::PlatformDisplayLibWPE::create();
+            if (!m_wpeDisplay->initialize(hostClientFileDescriptor))
+                m_wpeDisplay = nullptr;
         }
-#else
-        m_waylandCompositorDisplay = WaylandCompositorDisplay::create(parameters.waylandCompositorDisplayName);
-#endif
     }
 #endif
 

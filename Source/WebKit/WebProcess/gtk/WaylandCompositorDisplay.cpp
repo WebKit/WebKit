@@ -27,8 +27,6 @@
 #include "WaylandCompositorDisplay.h"
 
 #if PLATFORM(WAYLAND)
-
-#include "WebKitWaylandClientProtocol.h"
 #include "WebPage.h"
 
 namespace WebKit {
@@ -53,26 +51,10 @@ std::unique_ptr<WaylandCompositorDisplay> WaylandCompositorDisplay::create(const
     return compositorDisplay;
 }
 
-void WaylandCompositorDisplay::bindSurfaceToPage(struct wl_surface* surface, WebPage& page)
-{
-    if (!m_webkitgtk)
-        return;
-
-    wl_webkitgtk_bind_surface_to_page(reinterpret_cast<struct wl_webkitgtk*>(m_webkitgtk.get()), surface, page.identifier().toUInt64());
-    wl_display_roundtrip(m_display);
-}
-
 WaylandCompositorDisplay::WaylandCompositorDisplay(struct wl_display* display)
     : PlatformDisplayWayland(display)
 {
     PlatformDisplay::setSharedDisplayForCompositing(*this);
-}
-
-void WaylandCompositorDisplay::registryGlobal(const char* interface, uint32_t name)
-{
-    PlatformDisplayWayland::registryGlobal(interface, name);
-    if (!std::strcmp(interface, "wl_webkitgtk"))
-        m_webkitgtk.reset(static_cast<struct wl_proxy*>(wl_registry_bind(m_registry.get(), name, &wl_webkitgtk_interface, 1)));
 }
 
 } // namespace WebKit

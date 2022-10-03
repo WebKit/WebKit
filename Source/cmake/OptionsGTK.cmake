@@ -75,7 +75,6 @@ WEBKIT_OPTION_DEFINE(USE_OPENGL_OR_ES "Whether to use OpenGL or ES." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_OPENJPEG "Whether to enable support for JPEG2000 images." PUBLIC ON)
 WEBKIT_OPTION_DEFINE(USE_SOUP2 "Whether to enable usage of Soup 2 instead of Soup 3." PUBLIC OFF)
 WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." PUBLIC ON)
-WEBKIT_OPTION_DEFINE(USE_WPE_RENDERER "Whether to enable WPE rendering" PUBLIC ON)
 
 # Private options specific to the GTK port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
@@ -86,8 +85,6 @@ WEBKIT_OPTION_DEPEND(ENABLE_ASYNC_SCROLLING USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_GLES2 USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(ENABLE_WEBGL USE_OPENGL_OR_ES)
 WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL USE_OPENGL_OR_ES)
-WEBKIT_OPTION_DEPEND(USE_WPE_RENDERER USE_OPENGL_OR_ES)
-WEBKIT_OPTION_DEPEND(USE_WPE_RENDERER ENABLE_WAYLAND_TARGET)
 
 WEBKIT_OPTION_CONFLICT(USE_GTK4 USE_SOUP2)
 
@@ -295,18 +292,6 @@ if (PC_GLIB_VERSION VERSION_GREATER "2.67.1" OR PC_GLIB_VERSION STREQUAL "2.67.1
     SET_AND_EXPOSE_TO_BUILD(HAVE_GURI 1)
 endif ()
 
-if (USE_WPE_RENDERER)
-    find_package(WPE 1.3.0)
-    if (NOT WPE_FOUND)
-        message(FATAL_ERROR "libwpe is required for USE_WPE_RENDERER")
-    endif ()
-
-    find_package(WPEBackend_fdo 1.6.0)
-    if (NOT WPEBACKEND_FDO_FOUND)
-        message(FATAL_ERROR "WPEBackend-fdo is required for USE_WPE_RENDERER")
-    endif ()
-endif ()
-
 if (ENABLE_GAMEPAD)
     find_package(Manette 0.2.4)
     if (NOT Manette_FOUND)
@@ -383,6 +368,20 @@ if (USE_OPENGL_OR_ES)
 
     if (ENABLE_X11_TARGET AND USE_OPENGL AND TARGET OpenGL::GLX)
         SET_AND_EXPOSE_TO_BUILD(USE_GLX TRUE)
+    endif ()
+
+    if (ENABLE_WAYLAND_TARGET AND EGL_FOUND)
+        find_package(WPE 1.3.0)
+        if (NOT WPE_FOUND)
+            message(FATAL_ERROR "libwpe is required for ENABLE_WAYLAND_TARGET")
+        endif ()
+
+        find_package(WPEBackend_fdo 1.6.0)
+        if (NOT WPEBACKEND_FDO_FOUND)
+            message(FATAL_ERROR "WPEBackend-fdo is required for ENABLE_WAYLAND_TARGET")
+        endif ()
+
+        SET_AND_EXPOSE_TO_BUILD(USE_WPE_RENDERER ON)
     endif ()
 
     SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS TRUE)

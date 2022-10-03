@@ -40,13 +40,9 @@ class WaylandCompositorDisplay final : public WebCore::PlatformDisplayWayland {
 public:
     static std::unique_ptr<WaylandCompositorDisplay> create(const String&);
     ~WaylandCompositorDisplay() = default;
-    void bindSurfaceToPage(struct wl_surface*, WebPage&);
 
 private:
     WaylandCompositorDisplay(struct wl_display*);
-    void registryGlobal(const char*, uint32_t) override;
-
-    WebCore::WlUniquePtr<struct wl_proxy> m_webkitgtk;
 };
 
 } // namespace WebKit

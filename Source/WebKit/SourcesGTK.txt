@@ -276,7 +276,6 @@ UIProcess/gtk/TextCheckerGtk.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk3.cpp @no-unify
 UIProcess/gtk/ViewSnapshotStoreGtk4.cpp @no-unify
 UIProcess/gtk/ViewGestureControllerGtk.cpp
-UIProcess/gtk/WaylandCompositor.cpp @no-unify
 UIProcess/gtk/WebColorPickerGtk.cpp
 UIProcess/gtk/WebContextMenuProxyGtk.cpp
 UIProcess/gtk/WebDataListSuggestionsDropdownGtk.cpp

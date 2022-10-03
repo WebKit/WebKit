@@ -45,7 +45,7 @@
 #if PLATFORM(GTK)
 #include <gtk/gtk.h>
 
-#if PLATFORM(WAYLAND) && USE(WPE_RENDERER)
+#if PLATFORM(WAYLAND)
 #include <wpe/wpe.h>
 #include <wpe/fdo.h>
 #endif
@@ -236,7 +236,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         GTK_MAJOR_VERSION, GTK_MINOR_VERSION, GTK_MICRO_VERSION,
         gtk_get_major_version(), gtk_get_minor_version(), gtk_get_micro_version());
 
-#if PLATFORM(WAYLAND) && USE(WPE_RENDERER)
+#if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland) {
         g_string_append_printf(html,
             " <tbody><tr>"
