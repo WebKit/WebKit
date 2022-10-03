@@ -3812,3 +3812,6 @@ fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure]
 
 # rdar://100139200 ([ iOS ] editing/editable-region/search-field-basic.html is a constant failure)
 editing/editable-region/search-field-basic.html [ Failure ]
+
+# rdar://100047922 ([ iOS ] fast/events/event-attribute.html is a constant failure)
+fast/events/event-attribute.html [ Failure ]
