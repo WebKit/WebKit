@@ -15,6 +15,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atspi"
+    "${WEBCORE_DIR}/crypto/openssl"
     "${WEBCORE_DIR}/page/gtk"
     "${WEBCORE_DIR}/platform/adwaita"
     "${WEBCORE_DIR}/platform/audio/glib"
