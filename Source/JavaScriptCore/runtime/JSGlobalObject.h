@@ -54,6 +54,15 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/JSGlobalObjectAdditions.h>
+#else
+#define JS_GLOBAL_OBJECT_ADDITIONS_1
+#define JS_GLOBAL_OBJECT_ADDITIONS_2
+#define JS_GLOBAL_OBJECT_ADDITIONS_3
+#define JS_GLOBAL_OBJECT_ADDITIONS_4
+#endif
+
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
 OBJC_CLASS JSWrapperMap;
@@ -305,6 +314,8 @@ public:
     WriteBarrier<JSScope> m_globalScopeExtension;
     WriteBarrier<JSCallee> m_globalCallee;
     WriteBarrier<JSCallee> m_stackOverflowFrameCallee;
+
+    JS_GLOBAL_OBJECT_ADDITIONS_1;
 
     LazyClassStructure m_evalErrorStructure;
     LazyClassStructure m_rangeErrorStructure;
