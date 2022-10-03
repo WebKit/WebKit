@@ -256,7 +256,13 @@ class Driver(object):
         if self._crash_report_from_driver:
             crash_log = self._crash_report_from_driver
         elif crashed:
-            self.error_from_test, crash_log = self._get_crash_log(text, self.error_from_test, newer_than=start_time)
+            gather_crash_log = True
+            if not self._port.get_option('gather-expected-crash-logs'):
+                gather_crash_log = self._port.is_unexpected_crash(driver_input.test_name)
+            gather_str = 'now' if gather_crash_log else 'not'
+            _log.debug('Test %s crashed, we will %s gather a crash log.', driver_input.test_name, gather_str)
+            if gather_crash_log:
+                self.error_from_test, crash_log = self._get_crash_log(text, self.error_from_test, newer_than=start_time)
             # If we don't find a crash log use a placeholder error message instead.
             if not crash_log:
                 pid_str = str(self._crashed_pid) if self._crashed_pid else "unknown pid"
