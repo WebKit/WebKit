@@ -3806,3 +3806,6 @@ svg/gradients/stopAlpha.svg [ ImageOnlyFailure ]
 
 # rdar://100135651 ([ iOS ] fast/canvas/canvas-large-dimensions-drawing.html is a constant failure)
 fast/canvas/canvas-large-dimensions-drawing.html [ ImageOnlyFailure ]
+
+# rdar://100140486 ([ iOS ] fast/attachment/attachment-wrapping-action.html is a constant failure)
+fast/attachment/attachment-wrapping-action.html [ ImageOnlyFailure]
