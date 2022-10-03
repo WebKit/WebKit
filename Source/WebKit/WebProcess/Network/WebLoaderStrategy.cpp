@@ -335,6 +335,8 @@ static void addParametersShared(const Frame* frame, NetworkResourceLoadParameter
             parameters.parentFrameURL = ownerElement->document().url();
         }
     }
+
+    parameters.networkConnectionIntegrityEnabled = mainFrameDocumentLoader && mainFrameDocumentLoader->networkConnectionIntegrityEnabled();
 }
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)

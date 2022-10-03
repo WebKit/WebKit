@@ -57,6 +57,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << mouseEventPolicy;
     encoder << modalContainerObservationPolicy;
     encoder << colorSchemePreference;
+    encoder << networkConnectionIntegrityEnabled;
     encoder << idempotentModeAutosizingOnlyHonorsPercentages;
     encoder << allowPrivacyProxy;
 }
@@ -160,6 +161,11 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     if (!colorSchemePreference)
         return std::nullopt;
 
+    std::optional<bool> networkConnectionIntegrityEnabled;
+    decoder >> networkConnectionIntegrityEnabled;
+    if (!networkConnectionIntegrityEnabled)
+        return std::nullopt;
+
     std::optional<bool> idempotentModeAutosizingOnlyHonorsPercentages;
     decoder >> idempotentModeAutosizingOnlyHonorsPercentages;
     if (!idempotentModeAutosizingOnlyHonorsPercentages)
@@ -192,6 +198,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
         WTFMove(*mouseEventPolicy),
         WTFMove(*modalContainerObservationPolicy),
         WTFMove(*colorSchemePreference),
+        WTFMove(*networkConnectionIntegrityEnabled),
         WTFMove(*idempotentModeAutosizingOnlyHonorsPercentages),
         WTFMove(*allowPrivacyProxy),
     } };
@@ -321,10 +328,10 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     documentLoader.setModalContainerObservationPolicy(websitePolicies.modalContainerObservationPolicy);
     documentLoader.setColorSchemePreference(websitePolicies.colorSchemePreference);
     documentLoader.setAllowContentChangeObserverQuirk(websitePolicies.allowContentChangeObserverQuirk);
+    documentLoader.setNetworkConnectionIntegrityEnabled(websitePolicies.networkConnectionIntegrityEnabled);
     documentLoader.setIdempotentModeAutosizingOnlyHonorsPercentages(websitePolicies.idempotentModeAutosizingOnlyHonorsPercentages);
 
-    auto* frame = documentLoader.frame();
-    if (!frame)
+    if (!documentLoader.frame())
         return;
 
     documentLoader.applyPoliciesToSettings();

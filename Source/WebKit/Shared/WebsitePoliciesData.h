@@ -73,6 +73,7 @@ struct WebsitePoliciesData {
     WebCore::MouseEventPolicy mouseEventPolicy { WebCore::MouseEventPolicy::Default };
     WebCore::ModalContainerObservationPolicy modalContainerObservationPolicy { WebCore::ModalContainerObservationPolicy::Disabled };
     WebCore::ColorSchemePreference colorSchemePreference { WebCore::ColorSchemePreference::NoPreference };
+    bool networkConnectionIntegrityEnabled { false };
     bool idempotentModeAutosizingOnlyHonorsPercentages { false };
     bool allowPrivacyProxy { true };
 

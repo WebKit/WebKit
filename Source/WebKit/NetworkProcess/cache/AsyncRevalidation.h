@@ -51,7 +51,7 @@ public:
         Timeout,
         Success,
     };
-    AsyncRevalidation(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>&&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, CompletionHandler<void(Result)>&&);
+    AsyncRevalidation(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>&&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled, CompletionHandler<void(Result)>&&);
     void cancel();
 
     const SpeculativeLoad& load() const { return *m_load; }

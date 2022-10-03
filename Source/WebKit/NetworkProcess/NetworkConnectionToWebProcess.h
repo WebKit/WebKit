@@ -263,7 +263,7 @@ private:
 
     void createSocketStream(URL&&, String cachePartition, WebCore::WebSocketIdentifier);
 
-    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy);
+    void createSocketChannel(const WebCore::ResourceRequest&, const String& protocol, WebCore::WebSocketIdentifier, WebPageProxyIdentifier, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, bool networkConnectionIntegrityEnabled);
     void updateQuotaBasedOnSpaceUsageForTesting(WebCore::ClientOrigin&&);
 
     void establishSharedWorkerServerConnection();

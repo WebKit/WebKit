@@ -586,4 +586,14 @@ static _WKWebsiteDeviceOrientationAndMotionAccessPolicy toWKWebsiteDeviceOrienta
 #endif
 }
 
+- (BOOL)_networkConnectionIntegrityEnabled
+{
+    return _websitePolicies->networkConnectionIntegrityEnabled();
+}
+
+- (void)_setNetworkConnectionIntegrityEnabled:(BOOL)networkConnectionIntegrityEnabled
+{
+    _websitePolicies->setNetworkConnectionIntegrityEnabled(networkConnectionIntegrityEnabled);
+}
+
 @end

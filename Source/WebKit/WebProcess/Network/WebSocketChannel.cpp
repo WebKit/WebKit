@@ -119,15 +119,18 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
     if (request->url() != url && m_client)
         m_client->didUpgradeURL();
 
+    bool networkConnectionIntegrityEnabled = false;
     bool allowPrivacyProxy { true };
     if (auto* frame = m_document ? m_document->frame() : nullptr) {
-        if (auto* mainFrameDocumentLoader = frame->mainFrame().document() ? frame->mainFrame().document()->loader() : nullptr)
+        if (auto* mainFrameDocumentLoader = frame->mainFrame().document() ? frame->mainFrame().document()->loader() : nullptr) {
             allowPrivacyProxy = mainFrameDocumentLoader->allowPrivacyProxy();
+            networkConnectionIntegrityEnabled = mainFrameDocumentLoader->networkConnectionIntegrityEnabled();
+        }
     }
 
     m_inspector.didCreateWebSocket(url);
     m_url = request->url();
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, m_identifier, m_webPageProxyID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, networkConnectionIntegrityEnabled });
     return ConnectStatus::OK;
 }
 

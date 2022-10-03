@@ -59,6 +59,9 @@
 #import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
 #else
 static void processPCMRequest(WebCore::PrivateClickMeasurement::PcmDataCarried, NSMutableURLRequest *) { }
+namespace WebKit {
+void enableNetworkConnectionIntegrity(NSMutableURLRequest *) { }
+}
 #endif
 
 namespace WebKit {
@@ -351,6 +354,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     if (!parameters.allowPrivacyProxy)
         [mutableRequest _setProhibitPrivacyProxy:YES];
 #endif
+
+    if (parameters.networkConnectionIntegrityEnabled)
+        enableNetworkConnectionIntegrity(mutableRequest.get());
 
 #if ENABLE(APP_PRIVACY_REPORT)
     mutableRequest.get().attribution = request.isAppInitiated() ? NSURLRequestAttributionDeveloper : NSURLRequestAttributionUser;

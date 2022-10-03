@@ -68,6 +68,7 @@ void NetworkCORSPreflightChecker::startPreflight()
 
     NetworkLoadParameters loadParameters;
     loadParameters.request = createAccessControlPreflightRequest(m_parameters.originalRequest, m_parameters.sourceOrigin, m_parameters.referrer);
+    loadParameters.networkConnectionIntegrityEnabled = m_parameters.networkConnectionIntegrityEnabled;
     if (!m_parameters.userAgent.isNull())
         loadParameters.request.setHTTPHeaderField(HTTPHeaderName::UserAgent, m_parameters.userAgent);
 
