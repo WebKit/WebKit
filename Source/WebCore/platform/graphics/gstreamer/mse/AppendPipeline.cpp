@@ -148,7 +148,7 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     } else if (type.endsWith("webm"_s)) {
         m_demux = makeGStreamerElement("matroskademux", nullptr);
         m_typefind = makeGStreamerElement("identity", nullptr);
-    } else if (type == "audio/mpeg"_s) {
+    } else if (type == "audio/mpeg"_s || type == "audio/flac"_s) {
         m_demux = makeGStreamerElement("identity", nullptr);
         m_typefind = makeGStreamerElement("typefind", nullptr);
         hasDemuxer = false;
@@ -691,7 +691,9 @@ createOptionalParserForFormat(const AtomString& trackId, const GstCaps* caps)
         default:
             GST_WARNING("Unsupported audio mpeg caps: %" GST_PTR_FORMAT, caps);
         }
-    }
+    } else if (!g_strcmp0(mediaType, "audio/x-flac"))
+        elementClass = "flacparse";
+
     GST_DEBUG("Creating %s parser for stream with caps %" GST_PTR_FORMAT, elementClass, caps);
     return GRefPtr<GstElement>(makeGStreamerElement(elementClass, parserName.ascii().data()));
 }
@@ -721,12 +723,7 @@ std::pair<AppendPipeline::CreateTrackResult, AppendPipeline::Track*> AppendPipel
         gst_pad_add_probe(demuxerSrcPad, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, matroskademuxForceSegmentStartToEqualZero, nullptr, nullptr);
 
     auto [parsedCaps, streamType, presentationSize] = parseDemuxerSrcPadCaps(adoptGRef(gst_pad_get_current_caps(demuxerSrcPad)).get());
-#ifndef GST_DISABLE_GST_DEBUG
-    {
-        GUniquePtr<gchar> strcaps(gst_caps_to_string(parsedCaps.get()));
-        GST_DEBUG("%s", strcaps.get());
-    }
-#endif
+    GST_DEBUG("Demuxer src pad caps: %" GST_PTR_FORMAT, parsedCaps.get());
 
     if (streamType == StreamType::Invalid) {
         GST_WARNING_OBJECT(m_pipeline.get(), "Unsupported track codec: %" GST_PTR_FORMAT, parsedCaps.get());
