@@ -72,7 +72,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (28,407) size 562x91 [stroke={[type=SOLID] [color=#000000]}] [x=17.50] [y=244.75] [width=335.50] [height=53.50]
         RenderSVGText {text} at (25,243) size 151x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 150x18
-            chunk 1 text run 1 at (25.25,258.00) startOffset 0 endOffset 23 width 149.77: "Text: \"Cute and fuzzy.\""
+            chunk 1 text run 1 at (25.25,258.00) startOffset 0 endOffset 23 width 149.78: "Text: \"Cute and fuzzy.\""
         RenderSVGText {text} at (25,260) size 292x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 292x18
             chunk 1 text run 1 at (25.25,275.25) startOffset 0 endOffset 45 width 291.72: "'tspan' char-by-char placement of \"Cute and\","

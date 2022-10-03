@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 454x159 [border: (2px solid #008000)]
         RenderImage {IMG} at (2,2) size 450x29 [bgcolor=#FFFF00]
         RenderText {#text} at (0,0) size 0x0
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (452,17) size 0x17
         RenderImage {IMG} at (2,31) size 250x125 [bgcolor=#FFA500]
         RenderText {#text} at (255,31) size 193x125
           text run at (255,31) width 186: "Theme Park Roller Coaster is"

@@ -1,6 +1,6 @@
 
 
-FAIL Using location.hash = "#te<st" must not reset scroll position assert_greater_than: First hash assignment scrolls the iframe expected a number greater than 150 but got 0
+PASS Using location.hash = "#te<st" must not reset scroll position
 PASS Using location.hash = "te<st" must not reset scroll position
 PASS Using location.hash = "#te%3Cst" must not reset scroll position
 PASS Using location.hash = "te%3Cst" must not reset scroll position

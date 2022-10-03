@@ -90,11 +90,11 @@ layer at (0,0) size 800x228
         RenderText {#text} at (0,80) size 384x16
           text run at (0,80) width 384: "  x x  x x  x x    x    "
           text run at (384,80) width 0: " "
-        RenderInline {SPAN} at (0,0) size 640x16
-          RenderText {#text} at (0,96) size 640x16
-            text run at (0,96) width 640: "x x x x x x x x x x xxxx xxxx xxxx xxxx "
-        RenderText {#text} at (640,96) size 640x32
-          text run at (640,96) width 0: " "
+        RenderInline {SPAN} at (0,0) size 624x16
+          RenderText {#text} at (0,96) size 624x16
+            text run at (0,96) width 624: "x x x x x x x x x x xxxx xxxx xxxx xxxx"
+        RenderText {#text} at (624,96) size 624x32
+          text run at (624,96) width 0: " "
           text run at (0,112) width 624: "x                 x x    x  x    x    x"
         RenderInline {SPAN} at (0,0) size 640x32
           RenderText {#text} at (0,128) size 304x16

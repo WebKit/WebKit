@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
           text run at (0,18) width 737: "<area> with a 0px outline-width. This test PASSED if no red focus ring is drawn around the <area> in the imagemap"
           text run at (0,36) width 53: "(below)."
       RenderBlock (anonymous) at (0,70) size 784x128
-        RenderInline {MAP} at (0,0) size 0x0
+        RenderInline {MAP} at (0,0) size 0x17
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

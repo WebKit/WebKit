@@ -29,6 +29,7 @@ Total elements to be tested: 122.
     exists: true
     label:
     role:
+    childNodeIds.length: 1
     parentNodeId: exists
 
 <li role="treeitem">
@@ -88,7 +89,7 @@ Total elements to be tested: 122.
         </ol>
     </li>
     exists: true
-    label: List Item Level 1
+    label:
     role: listitem
     childNodeIds.length: 1
     parentNodeId: exists

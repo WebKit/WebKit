@@ -332,6 +332,10 @@ imported/w3c/web-platform-tests/notifications/idlharness.https.any.worker.html [
 http/tests/workers/service/getnotifications-stop.html [ Pass ]
 http/tests/workers/service/getnotifications.html [ Pass ]
 
+webkit.org/b/239550 fast/text/simple-line-hyphens-with-text-align.html [ Pass ]
+webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-after.html [ Pass ]
+webkit.org/b/239550 fast/text/simple-line-layout-hyphen-limit-before.html [ Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests.
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
           text run at (674,18) width 61: ". This test"
           text run at (0,36) width 566: "FAILED if a red-colored focus ring is drawn around the <area> in the imagemap (below)."
       RenderBlock (anonymous) at (0,70) size 784x128
-        RenderInline {MAP} at (0,0) size 0x0
+        RenderInline {MAP} at (0,0) size 0x17
           RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0

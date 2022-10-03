@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
             text run at (0,1) width 35: "A"
         RenderText {#text} at (35,1) size 190x53
           text run at (35,1) width 190: "BCDEFG"
-        RenderBR {BR} at (225,0) size 0x53
+        RenderBR {BR} at (225,1) size 0x53
         RenderInline {SPAN} at (0,0) size 225x17 [color=#000000]
           RenderText {#text} at (0,55) size 225x17
             text run at (0,55) width 225: "Hover over \"A\". It must stay green."

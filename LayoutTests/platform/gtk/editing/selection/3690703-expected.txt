@@ -65,7 +65,7 @@ layer at (0,0) size 800x600
                     RenderInline {A} at (0,0) size 32x15 [color=#0000CC]
                       RenderText {#text} at (237,4) size 32x15
                         text run at (237,4) width 32: "Local"
-                      RenderInline {SUP} at (0,0) size 1x12
+                      RenderInline {SUP} at (0,0) size 1x13
                     RenderInline {A} at (0,0) size 29x15
                       RenderInline {FONT} at (0,0) size 29x15 [color=#FF0000]
                         RenderText {#text} at (268,4) size 29x15

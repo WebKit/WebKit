@@ -80,7 +80,7 @@ SANDBOX_SOURCE_ROOT = "/app/webkit"
 
 # Our SDK branch matches with the FDO SDK branch. When updating the FDO SDK release branch
 # in our SDK build definitions please don't forget to update the version here as well.
-SDK_BRANCH = "21.08"
+SDK_BRANCH = "22.08"
 
 WEBKIT_SDK_FLATPAK_REPO_URL = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
 WEBKIT_SDK_GPG_PUBKEY_URL = "https://software.igalia.com/flatpak-refs/webkit-sdk-pubkey.gpg"
