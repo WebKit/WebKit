@@ -702,70 +702,76 @@ static RefPtr<CSSValue> consumeFontVariantEastAsian(CSSParserTokenRange& range)
     if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
     
-    RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
     std::optional<FontVariantEastAsianVariant> variant;
     std::optional<FontVariantEastAsianWidth> width;
     std::optional<FontVariantEastAsianRuby> ruby;
     
-    while (!range.atEnd()) {
-        if (range.peek().type() != IdentToken)
-            return nullptr;
+    auto parseSomethingWithoutError = [&range, &variant, &width, &ruby] () {
+        bool hasParsedSomething = false;
 
-        auto id = range.peek().id();
+        while (true) {
+            if (range.peek().type() != IdentToken)
+                return hasParsedSomething;
+
+            switch (range.peek().id()) {
+            case CSSValueJis78:
+                if (variant)
+                    return false;
+                variant = FontVariantEastAsianVariant::Jis78;
+                break;
+            case CSSValueJis83:
+                if (variant)
+                    return false;
+                variant = FontVariantEastAsianVariant::Jis83;
+                break;
+            case CSSValueJis90:
+                if (variant)
+                    return false;
+                variant = FontVariantEastAsianVariant::Jis90;
+                break;
+            case CSSValueJis04:
+                if (variant)
+                    return false;
+                variant = FontVariantEastAsianVariant::Jis04;
+                break;
+            case CSSValueSimplified:
+                if (variant)
+                    return false;
+                variant = FontVariantEastAsianVariant::Simplified;
+                break;
+            case CSSValueTraditional:
+                if (variant)
+                    return false;
+                variant = FontVariantEastAsianVariant::Traditional;
+                break;
+            case CSSValueFullWidth:
+                if (width)
+                    return false;
+                width = FontVariantEastAsianWidth::Full;
+                break;
+            case CSSValueProportionalWidth:
+                if (width)
+                    return false;
+                width = FontVariantEastAsianWidth::Proportional;
+                break;
+            case CSSValueRuby:
+                if (ruby)
+                    return false;
+                ruby = FontVariantEastAsianRuby::Yes;
+                break;
+            default:
+                return hasParsedSomething;
+            }
         
-        switch (id) {
-        case CSSValueJis78:
-            if (variant)
-                return nullptr;
-            variant = FontVariantEastAsianVariant::Jis78;
-            break;
-        case CSSValueJis83:
-            if (variant)
-                return nullptr;
-            variant = FontVariantEastAsianVariant::Jis83;
-            break;
-        case CSSValueJis90:
-            if (variant)
-                return nullptr;
-            variant = FontVariantEastAsianVariant::Jis90;
-            break;
-        case CSSValueJis04:
-            if (variant)
-                return nullptr;
-            variant = FontVariantEastAsianVariant::Jis04;
-            break;
-        case CSSValueSimplified:
-            if (variant)
-                return nullptr;
-            variant = FontVariantEastAsianVariant::Simplified;
-            break;
-        case CSSValueTraditional:
-            if (variant)
-                return nullptr;
-            variant = FontVariantEastAsianVariant::Traditional;
-            break;
-        case CSSValueFullWidth:
-            if (width)
-                return nullptr;
-            width = FontVariantEastAsianWidth::Full;
-            break;
-        case CSSValueProportionalWidth:
-            if (width)
-                return nullptr;
-            width = FontVariantEastAsianWidth::Proportional;
-            break;
-        case CSSValueRuby:
-            if (ruby)
-                return nullptr;
-            ruby = FontVariantEastAsianRuby::Yes;
-            break;
-        default:
-            return nullptr;
+            range.consumeIncludingWhitespace();
+            hasParsedSomething = true;
         }
-        
-        range.consumeIncludingWhitespace();
-    }
+    };
+    
+    if (!parseSomethingWithoutError())
+        return nullptr;
 
+    RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
     switch (variant.value_or(FontVariantEastAsianVariant::Normal)) {
     case FontVariantEastAsianVariant::Normal:
         break;
