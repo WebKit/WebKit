@@ -28,22 +28,25 @@
 
 #include "Test.h"
 #include "Utilities.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/Lock.h>
+#include <wtf/Scope.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
 
 TEST(WTF_SuspendableWorkQueue, Suspend)
 {
-    Lock lock;
+    WTF::initializeMainThread();
+
     int taskCount = 100;
     int completedTaskCount = 0;
-    bool allTasksCompleted = false;
+    std::atomic<bool> allTasksCompleted = false;
     bool suspended = false;
     bool suspendCompletionHandlerCalled = false;
     auto queue = SuspendableWorkQueue::create("com.apple.WebKit.Test.simple");
     for (int i = 0; i < taskCount; i ++) {
         queue->dispatch([&]() mutable {
-            Locker locker { lock };
             suspended = false;
             ++completedTaskCount;
             if (completedTaskCount == taskCount)
@@ -51,53 +54,149 @@ TEST(WTF_SuspendableWorkQueue, Suspend)
         });
     }
     queue->suspend([&] {
-        Locker locker { lock };
         suspended = true;
     }, [&] {
         suspendCompletionHandlerCalled = true;
     });
     Util::run(&suspendCompletionHandlerCalled);
     {
-        Locker locker { lock };
         EXPECT_LE(completedTaskCount, taskCount);
         EXPECT_TRUE(suspended);
     }
 
     queue->resume();
-    Util::run(&allTasksCompleted);
-    Locker locker { lock };
+    while (!allTasksCompleted)
+        Util::spinRunLoop();
     EXPECT_EQ(completedTaskCount, taskCount);
-    EXPECT_FALSE(suspended);
+    EXPECT_TRUE(suspended);
 }
 
 TEST(WTF_SuspendableWorkQueue, SuspendTwice)
 {
-    Lock lock;
+    WTF::initializeMainThread();
+
     bool suspendCompletionHandlerCalled = false;
     int suspendCount = 0;
     auto queue = SuspendableWorkQueue::create("com.apple.WebKit.Test.simple");
     queue->suspend([&]() {
-        Locker locker { lock };
         ++suspendCount;
     }, [&] {
         suspendCompletionHandlerCalled = true;
     });
     Util::run(&suspendCompletionHandlerCalled);
     {
-        Locker locker { lock };
         EXPECT_EQ(1, suspendCount);
     }
     
     suspendCompletionHandlerCalled = false;
     queue->suspend([&]() {
-        Locker locker { lock };
         ++suspendCount;
     }, [&] {
         suspendCompletionHandlerCalled = true;
     });
     Util::run(&suspendCompletionHandlerCalled);
-    Locker locker { lock };
-    EXPECT_EQ(1, suspendCount);
+    EXPECT_EQ(2, suspendCount);
+}
+
+TEST(WTF_SuspendableWorkQueue, AllPresuspendTasksAreExecuted)
+{
+    WTF::initializeMainThread();
+
+    auto queue = SuspendableWorkQueue::create("AllPresuspendTasksAreExecuted");
+    int count = 0;
+    bool lastDone = false;
+    for (int i = 0; i < 76; ++i) {
+        queue->suspend([&count] {
+            count++;
+        }, [] { });
+    }
+    queue->suspend([] { }, [&lastDone] { 
+        lastDone = true; 
+    });
+    Util::run(&lastDone);
+    EXPECT_EQ(76, count);
+    queue->resume();
+    queue->dispatchSync([] { });
+}
+
+TEST(WTF_SuspendableWorkQueue, AllTasksBeforeSuspendAreExecuted)
+{
+    auto queue = SuspendableWorkQueue::create("AllTasksBeforeSuspendAreExecuted");
+    std::atomic<int> count = 0; // count is atomic because we race to it.
+    for (int i = 0; i < 7600; ++i) {
+        queue->dispatch([&count] {
+            count++;
+        });
+    }
+    queue->suspend();
+    for (int i = 0; i < 77; ++i) {
+        queue->dispatch([&count] {
+            count++;
+        });
+    }
+    Util::runFor(0.2_s);
+    // Here we race to count but assume .2s is enough to run the 7600 tasks.
+    EXPECT_EQ(7600, count);
+    queue->resume();
+    queue->dispatchSync([] { });
+    EXPECT_EQ(7677, count);
+}
+
+TEST(WTF_SuspendableWorkQueue, NoDeadlockWhenSuspendCompletes)
+{
+    WTF::initializeMainThread();
+
+    auto queue = SuspendableWorkQueue::create("NoDeadlockWhenSuspendCompletes");
+    for (int i = 0; i < 76; ++i) {
+        auto suspendQueue = makeScopeExit([queue] {
+            queue->suspend([] { }, [] { });
+        });
+        // The test ensures that the suspend task is not destroyed with the internal lock held.
+        queue->suspend([suspendQueueTask = WTFMove(suspendQueue)] { }, [] { });
+    }
+    queue->resume();
+    queue->dispatchSync([] { });
+    ASSERT_TRUE(true);
+}
+
+TEST(WTF_SuspendableWorkQueue, SuspendedSendSyncOtherThreadResumes)
+{
+    WTF::initializeMainThread();
+
+    auto queue = SuspendableWorkQueue::create("SuspendedSendSyncOtherThreadResumes1");
+    queue->suspend();
+
+    auto resumeQueue = SuspendableWorkQueue::create("SuspendedSendSyncOtherThreadResumes2");
+    auto start = ApproximateTime::now();
+    ApproximateTime runAt;
+    resumeQueue->dispatchAfter(0.2_s, [&queue, &runAt] { 
+        runAt = ApproximateTime::now(); 
+        queue->resume();
+    });
+    queue->dispatchSync([] { });
+    EXPECT_NEAR((runAt - start).seconds(), 0.2, .05);
+    queue->resume(); // Clean up.
+}
+
+TEST(WTF_SuspendableWorkQueue, SuspendedDispatchAfter)
+{
+    WTF::initializeMainThread();
+
+    auto queue = SuspendableWorkQueue::create("SuspendedDispatchAfter");
+    ApproximateTime start = ApproximateTime::now();
+    ApproximateTime runAt = start;
+    queue->suspend();
+    BinarySemaphore semaphore;
+    queue->dispatchAfter(0.1_s, [&runAt, &semaphore] { 
+        runAt = ApproximateTime::now(); 
+        semaphore.signal();
+    });
+    EXPECT_EQ(start, runAt);
+    Util::runFor(.3_s);
+    EXPECT_EQ(start, runAt);
+    queue->resume();
+    semaphore.wait();
+    EXPECT_NEAR((runAt - start).seconds(), 0.3, .05);
 }
 
 } // namesapce TestWebKitAPI

@@ -788,6 +788,7 @@ void NetworkStorageManager::handleLowMemoryWarning()
 {
     ASSERT(RunLoop::isMain());
 
+    bool wasSuspended = m_queue->resume() == SuspendableWorkQueue::WasSuspended;
     m_queue->dispatch([this, protectedThis = Ref { *this }] {
         for (auto& manager : m_originStorageManagers.values()) {
             if (auto localStorageManager = manager->existingLocalStorageManager())
@@ -796,12 +797,15 @@ void NetworkStorageManager::handleLowMemoryWarning()
                 idbStorageManager->handleLowMemoryWarning();
         }
     });
+    if (wasSuspended)
+        m_queue->suspend();
 }
 
 void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
+    bool wasSuspended = m_queue->resume() == SuspendableWorkQueue::WasSuspended;
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         for (auto& manager : m_originStorageManagers.values()) {
             if (auto localStorageManager = manager->existingLocalStorageManager())
@@ -810,6 +814,8 @@ void NetworkStorageManager::syncLocalStorage(CompletionHandler<void()>&& complet
 
         RunLoop::main().dispatch(WTFMove(completionHandler));
     });
+    if (wasSuspended)
+        m_queue->suspend();
 }
 
 void NetworkStorageManager::registerTemporaryBlobFilePaths(IPC::Connection& connection, const Vector<String>& filePaths)

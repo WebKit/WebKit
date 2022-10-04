@@ -25,10 +25,9 @@
 
 #pragma once
 
-#include <wtf/CompletionHandler.h>
-#include <wtf/Condition.h>
-#include <wtf/Deque.h>
 #include <wtf/Lock.h>
+#include <wtf/RunLoop.h>
+#include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 
 namespace WTF {
@@ -38,28 +37,34 @@ public:
     using QOS = WorkQueue::QOS;
     WTF_EXPORT_PRIVATE static Ref<SuspendableWorkQueue> create(const char* name, QOS = QOS::Default);
 
-    WTF_EXPORT_PRIVATE void suspend(Function<void()>&& suspendFunction, CompletionHandler<void()>&& suspensionCompletionHandler);
-    WTF_EXPORT_PRIVATE void resume();
+    template<typename C1, typename C2>
+    void suspend(C1&& presuspendTask, C2&& suspendedTask)
+    {
+        dispatch([presuspendTask = WTFMove(presuspendTask), suspendedTask = WTFMove(suspendedTask), runloop = Ref { RunLoop::current() }] () mutable {
+            presuspendTask();
+            runloop->dispatch(WTFMove(suspendedTask));
+        });
+        resume();
+        suspend();
+    }
+
+    enum SuspendState {
+        WasRunning,
+        WasSuspended
+    };
+    WTF_EXPORT_PRIVATE SuspendState suspend();
+    WTF_EXPORT_PRIVATE SuspendState resume();
     WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
+    // Note: Will hold ref the until the timeout expires.
     WTF_EXPORT_PRIVATE void dispatchAfter(Seconds, Function<void()>&&) final;
+    // Note: if sending sync to a suspended queue, other thread must resume the queue or deadlock occurs.
     WTF_EXPORT_PRIVATE void dispatchSync(Function<void()>&&) final;
 
 private:
     SuspendableWorkQueue(const char* name, QOS);
-    void invokeAllSuspensionCompletionHandlers() WTF_REQUIRES_LOCK(m_suspensionLock);
-    void suspendIfNeeded();
-#if USE(COCOA_EVENT_LOOP)
-    using WorkQueue::dispatchQueue;
-#else
-    using WorkQueue::runLoop;
-#endif
-
-    Lock m_suspensionLock;
-    Condition m_suspensionCondition;
-    enum class State : uint8_t { Running, WillSuspend, Suspended };
-    State m_state WTF_GUARDED_BY_LOCK(m_suspensionLock) { State::Running };
-    Function<void()> m_suspendFunction WTF_GUARDED_BY_LOCK(m_suspensionLock);
-    Vector<CompletionHandler<void()>> m_suspensionCompletionHandlers WTF_GUARDED_BY_LOCK(m_suspensionLock);
+    Lock m_lock;
+    bool m_isSuspended WTF_GUARDED_BY_LOCK(m_lock) { false };
+    Vector<Function<void()>> m_suspendedTasks WTF_GUARDED_BY_LOCK(m_lock);
 };
 
 } // namespace WTF
