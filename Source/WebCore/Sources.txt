@@ -394,6 +394,7 @@ Modules/webauthn/fido/Pin.cpp
 Modules/webauthn/fido/U2fCommandConstructor.cpp
 Modules/webauthn/fido/U2fResponseConverter.cpp
 Modules/webcodecs/WebCodecsEncodedVideoChunk.cpp
+Modules/webcodecs/WebCodecsVideoDecoder.cpp
 Modules/webcodecs/WebCodecsVideoFrame.cpp
 Modules/webdatabase/ChangeVersionWrapper.cpp
 Modules/webdatabase/DOMWindowWebDatabase.cpp
@@ -3489,6 +3490,7 @@ JSHTMLTrackElement.cpp
 JSHTMLUListElement.cpp
 JSHTMLUnknownElement.cpp
 JSHTMLVideoElement.cpp
+JSHardwareAcceleration.cpp
 JSHashChangeEvent.cpp
 JSHdrMetadataType.cpp
 JSHighlightRegister.cpp
@@ -4127,6 +4129,12 @@ JSWaveShaperOptions.cpp
 JSWebAnimation.cpp
 JSWebCodecsEncodedVideoChunkType.cpp
 JSWebCodecsEncodedVideoChunk.cpp
+JSWebCodecsErrorCallback.cpp
+JSWebCodecsCodecState.cpp
+JSWebCodecsVideoDecoder.cpp
+JSWebCodecsVideoDecoderConfig.cpp
+JSWebCodecsVideoDecoderSupport.cpp
+JSWebCodecsVideoFrameOutputCallback.cpp
 JSWebCodecsVideoFrame.cpp
 JSWebGL2RenderingContext.cpp
 JSWebGLActiveInfo.cpp

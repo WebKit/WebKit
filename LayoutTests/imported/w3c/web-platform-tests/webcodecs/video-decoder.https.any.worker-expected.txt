@@ -1,17 +1,33 @@
 
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Empty codec Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Unrecognized codec Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Audio codec Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Ambiguous codec Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Codec with MIME type Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.configure() rejects invalid config:Empty codec Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.configure() rejects invalid config:Unrecognized codec Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.configure() rejects invalid config:Audio codec Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.configure() rejects invalid config:Ambiguous codec Can't find variable: VideoDecoder
-FAIL Test that VideoDecoder.configure() rejects invalid config:Codec with MIME type Can't find variable: VideoDecoder
-FAIL Test VideoDecoder construction assert_throws_js: function "() => {
-    new VideoDecoder({});
-  }" threw object "ReferenceError: Can't find variable: VideoDecoder" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Empty codec promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Unrecognized codec promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Audio codec promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Ambiguous codec promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Codec with MIME type promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL Test that VideoDecoder.configure() rejects invalid config:Empty codec assert_throws_js: function "() => {
+          codec.configure(entry.config);
+        }" did not throw
+FAIL Test that VideoDecoder.configure() rejects invalid config:Unrecognized codec assert_throws_js: function "() => {
+          codec.configure(entry.config);
+        }" did not throw
+FAIL Test that VideoDecoder.configure() rejects invalid config:Audio codec assert_throws_js: function "() => {
+          codec.configure(entry.config);
+        }" did not throw
+FAIL Test that VideoDecoder.configure() rejects invalid config:Ambiguous codec assert_throws_js: function "() => {
+          codec.configure(entry.config);
+        }" did not throw
+FAIL Test that VideoDecoder.configure() rejects invalid config:Codec with MIME type assert_throws_js: function "() => {
+          codec.configure(entry.config);
+        }" did not throw
+PASS Test VideoDecoder construction
 

@@ -1,4 +1,4 @@
 
-FAIL Test isConfigSupported() and configure() using a SharedArrayBuffer Can't find variable: VideoDecoder
-FAIL Test isConfigSupported() and configure() using a Uint8Array(SharedArrayBuffer) Can't find variable: VideoDecoder
+NOTRUN Test isConfigSupported() and configure() using a SharedArrayBuffer avc1.64000b unsupported
+NOTRUN Test isConfigSupported() and configure() using a Uint8Array(SharedArrayBuffer) avc1.64000b unsupported
 
