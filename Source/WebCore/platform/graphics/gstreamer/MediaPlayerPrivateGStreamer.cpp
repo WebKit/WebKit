@@ -2034,7 +2034,6 @@ void MediaPlayerPrivateGStreamer::updateBufferingStatus(GstBufferingMode mode, d
 #endif
 
     m_didDownloadFinish = percentage == 100;
-    m_isBuffering = !m_didDownloadFinish;
 
     if (!m_didDownloadFinish)
         m_isBuffering = true;
@@ -2047,7 +2046,7 @@ void MediaPlayerPrivateGStreamer::updateBufferingStatus(GstBufferingMode mode, d
         updateMaxTimeLoaded(percentage);
 
         m_bufferingPercentage = percentage;
-        if (m_didDownloadFinish || (!wasBuffering && m_isBuffering))
+        if (m_didDownloadFinish || !wasBuffering)
             updateStates();
 
         break;
@@ -2302,7 +2301,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
             if (m_isBuffering) {
                 GRefPtr<GstQuery> query = adoptGRef(gst_query_new_buffering(GST_FORMAT_PERCENT));
 
-                m_isBuffering = m_bufferingPercentage == 100;
+                m_isBuffering = m_bufferingPercentage < 100;
                 if (gst_element_query(m_pipeline.get(), query.get())) {
                     gboolean isBuffering = m_isBuffering;
                     gst_query_parse_buffering_percent(query.get(), &isBuffering, nullptr);
@@ -2331,6 +2330,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
             break;
         }
 
+        bool shouldPauseForBuffering = false;
         // Sync states where needed.
         if (m_currentState == GST_STATE_PAUSED) {
             if (!m_areVolumeAndMuteInitialized) {
@@ -2346,7 +2346,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
         } else if (m_currentState == GST_STATE_PLAYING) {
             m_isPaused = false;
 
-            if ((m_isBuffering && !m_isLiveStream.value_or(false)) || !m_playbackRate) {
+            shouldPauseForBuffering = (m_isBuffering && !m_isLiveStream.value_or(false));
+            if (shouldPauseForBuffering || !m_playbackRate) {
                 GST_INFO_OBJECT(pipeline(), "[Buffering] Pausing stream for buffering.");
                 changePipelineState(GST_STATE_PAUSED);
             }
@@ -2363,7 +2364,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
         // the media element gets a chance to enable its page sleep disabler.
         // Emitting this notification in more cases triggers unwanted code paths
         // and test timeouts.
-        if (stateReallyChanged && (m_oldState != m_currentState) && (m_oldState == GST_STATE_PAUSED && m_currentState == GST_STATE_PLAYING)) {
+        if (stateReallyChanged && (m_oldState != m_currentState) && (m_oldState == GST_STATE_PAUSED && m_currentState == GST_STATE_PLAYING) && !shouldPauseForBuffering) {
             GST_INFO_OBJECT(pipeline(), "Playback state changed from %s to %s. Notifying the media player client", gst_element_state_get_name(m_oldState), gst_element_state_get_name(m_currentState));
             shouldUpdatePlaybackState = true;
         }
