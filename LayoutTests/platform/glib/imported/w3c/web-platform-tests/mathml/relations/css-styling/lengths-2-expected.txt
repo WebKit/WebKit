@@ -4,7 +4,7 @@ FAIL Trimming of space assert_equals: ex expected 500 but got 499.984375
 PASS Non-negative numbers
 PASS Non-positive numbers
 FAIL Legacy namedspaces assert_equals: veryverythinmathspace expected 0 but got 0.546875
-FAIL Legacy numbers assert_equals: Unitless expected 30 but got 150
+FAIL Legacy numbers assert_approx_equals: n3 expected 0 +/- 0.5 but got 70
 
 
 

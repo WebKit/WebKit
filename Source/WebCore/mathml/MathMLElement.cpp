@@ -114,6 +114,23 @@ bool MathMLElement::hasPresentationalHintsForAttribute(const QualifiedName& name
     return StyledElement::hasPresentationalHintsForAttribute(name);
 }
 
+static inline bool isDisallowedMathSizeAttribute(const AtomString& value)
+{
+    // FIXME(https://webkit.org/b/245927): The CSS parser sometimes accept non-zero <number> font-size values on MathML elements, so explicitly disallow them.
+    bool ok;
+    value.toDouble(&ok);
+    if (ok && value != "0"_s)
+        return true;
+
+    // Keywords from CSS font-size are disallowed.
+    return equalIgnoringASCIICase(value, "medium"_s)
+        || value.endsWithIgnoringASCIICase("large"_s)
+        || value.endsWithIgnoringASCIICase("small"_s)
+        || equalIgnoringASCIICase(value, "smaller"_s)
+        || equalIgnoringASCIICase(value, "larger"_s)
+        || equalIgnoringASCIICase(value, "math"_s);
+}
+
 static String convertMathSizeIfNeeded(const AtomString& value)
 {
     if (value == "small"_s)
@@ -137,9 +154,13 @@ void MathMLElement::collectPresentationalHintsForAttribute(const QualifiedName& 
 {
     if (name == mathbackgroundAttr)
         addPropertyToPresentationalHintStyle(style, CSSPropertyBackgroundColor, value);
-    else if (name == mathsizeAttr)
-        addPropertyToPresentationalHintStyle(style, CSSPropertyFontSize, convertMathSizeIfNeeded(value));
-    else if (name == mathcolorAttr)
+    else if (name == mathsizeAttr) {
+        if (document().settings().coreMathMLEnabled()) {
+            if (!isDisallowedMathSizeAttribute(value))
+                addPropertyToPresentationalHintStyle(style, CSSPropertyFontSize, value);
+        } else
+            addPropertyToPresentationalHintStyle(style, CSSPropertyFontSize, convertMathSizeIfNeeded(value));
+    } else if (name == mathcolorAttr)
         addPropertyToPresentationalHintStyle(style, CSSPropertyColor, value);
     else if (name == dirAttr)
         addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
