@@ -107,7 +107,7 @@ private:
 
     WeakPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MediaSourcePrivateGStreamer> m_mediaSourcePrivate;
-    MediaTime m_mediaTimeDuration;
+    MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
     bool m_areDurationChangesBlocked = false;
     bool m_shouldReportDurationWhenUnblocking = false;
     bool m_isPipelinePlaying = true;
