@@ -26,6 +26,7 @@ set(TestWTF_OUTPUT_NAME TestWTF${DEBUG_SUFFIX})
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
 
+    Tests/WebCore/curl/OpenSSLHelperTests.cpp
     Tests/WebCore/win/DIBPixelData.cpp
     Tests/WebCore/win/LinkedFonts.cpp
     Tests/WebCore/win/WebCoreBundle.cpp

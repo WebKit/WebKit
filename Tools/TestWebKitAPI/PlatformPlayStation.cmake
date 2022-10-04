@@ -20,6 +20,8 @@ list(APPEND TestJavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES
 
 list(APPEND TestWebCore_SOURCES
     ${test_main_SOURCES}
+
+    Tests/WebCore/curl/OpenSSLHelperTests.cpp
 )
 list(APPEND TestWebCore_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBKIT_LIBRARIES_DIR}/include
