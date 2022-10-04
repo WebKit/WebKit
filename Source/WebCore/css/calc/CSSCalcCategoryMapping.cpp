@@ -270,7 +270,7 @@ bool hasDoubleValue(CSSUnitType type)
     case CSSUnitType::CSS_ATTR:
     case CSSUnitType::CSS_COUNTER:
     case CSSUnitType::CSS_RECT:
-    case CSSUnitType::CSS_RGBCOLOR:
+    case CSSUnitType::CSS_COLOR:
     case CSSUnitType::CSS_PAIR:
     case CSSUnitType::CSS_UNICODE_RANGE:
     case CSSUnitType::CSS_COUNTER_NAME:

@@ -33,7 +33,6 @@
 #include "CSSValuePool.h"
 #include "CalculationCategory.h"
 #include "CalculationValue.h"
-#include "Color.h"
 #include "ColorSerialization.h"
 #include "ContainerQueryEvaluator.h"
 #include "Counter.h"
@@ -45,6 +44,7 @@
 #include "Rect.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
+#include "StyleColor.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -130,7 +130,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSUnitType unitType)
     case CSSUnitType::CSS_PROPERTY_ID:
     case CSSUnitType::CSS_QUAD:
     case CSSUnitType::CSS_RECT:
-    case CSSUnitType::CSS_RGBCOLOR:
+    case CSSUnitType::CSS_COLOR:
     case CSSUnitType::CSS_SHAPE:
     case CSSUnitType::CSS_STRING:
     case CSSUnitType::CSS_UNICODE_RANGE:
@@ -209,7 +209,7 @@ static inline bool isStringType(CSSUnitType type)
     case CSSUnitType::CSS_RAD:
     case CSSUnitType::CSS_RECT:
     case CSSUnitType::CSS_REMS:
-    case CSSUnitType::CSS_RGBCOLOR:
+    case CSSUnitType::CSS_COLOR:
     case CSSUnitType::CSS_S:
     case CSSUnitType::CSS_SVB:
     case CSSUnitType::CSS_SVH:
@@ -309,13 +309,6 @@ CSSPrimitiveValue::CSSPrimitiveValue(const String& string, CSSUnitType type)
         m_value.string->ref();
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(const Color& color)
-    : CSSValue(PrimitiveClass)
-{
-    setPrimitiveUnitType(CSSUnitType::CSS_RGBCOLOR);
-    m_value.color = new Color(color);
-}
-
 CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
     : CSSValue(PrimitiveClass)
 {
@@ -366,14 +359,14 @@ CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, CSSValueID valueID)
     makeStatic();
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, const Color& color)
-    : CSSPrimitiveValue(color)
+CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, double num, CSSUnitType type)
+    : CSSPrimitiveValue(num, type)
 {
     makeStatic();
 }
 
-CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, double num, CSSUnitType type)
-    : CSSPrimitiveValue(num, type)
+CSSPrimitiveValue::CSSPrimitiveValue(StaticCSSValueTag, const Color& color)
+    : CSSPrimitiveValue(color)
 {
     makeStatic();
 }
@@ -530,7 +523,7 @@ void CSSPrimitiveValue::cleanup()
     case CSSUnitType::CSS_SHAPE:
         m_value.shape->deref();
         break;
-    case CSSUnitType::CSS_RGBCOLOR:
+    case CSSUnitType::CSS_COLOR:
         ASSERT(m_value.color);
         delete m_value.color;
         m_value.color = nullptr;
@@ -1314,7 +1307,7 @@ ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
         case CSSUnitType::CSS_ATTR:
         case CSSUnitType::CSS_COUNTER:
         case CSSUnitType::CSS_RECT:
-        case CSSUnitType::CSS_RGBCOLOR:
+        case CSSUnitType::CSS_COLOR:
         case CSSUnitType::CSS_PAIR:
         case CSSUnitType::CSS_UNICODE_RANGE:
         case CSSUnitType::CSS_COUNTER_NAME:
@@ -1451,7 +1444,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::formatNumberForCustomCSSText() const
         return rectValue()->cssText();
     case CSSUnitType::CSS_QUAD:
         return quadValue()->cssText();
-    case CSSUnitType::CSS_RGBCOLOR:
+    case CSSUnitType::CSS_COLOR:
         return serializationForCSS(color());
     case CSSUnitType::CSS_PAIR:
         return pairValue()->cssText();
@@ -1626,7 +1619,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
         return m_value.rect && other.m_value.rect && m_value.rect->equals(*other.m_value.rect);
     case CSSUnitType::CSS_QUAD:
         return m_value.quad && other.m_value.quad && m_value.quad->equals(*other.m_value.quad);
-    case CSSUnitType::CSS_RGBCOLOR:
+    case CSSUnitType::CSS_COLOR:
         return color() == other.color();
     case CSSUnitType::CSS_PAIR:
         return m_value.pair && other.m_value.pair && m_value.pair->equals(*other.m_value.pair);

@@ -577,10 +577,10 @@ static bool fragmentNeedsColorTransformed(ReplacementFragment& fragment, const P
 
     auto propertyLightness = [&](const StyleProperties& inlineStyle, CSSPropertyID propertyID) -> std::optional<double> {
         auto color = inlineStyle.propertyAsColor(propertyID);
-        if (!color || !color.value().isVisible() || color.value().isSemantic())
+        if (!color || !color->isVisible() || color->isSemantic())
             return { };
 
-        return color.value().lightness();
+        return color->lightness();
     };
 
     const double lightnessDarkEnoughForText = 0.4;

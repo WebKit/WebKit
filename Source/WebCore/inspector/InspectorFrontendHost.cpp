@@ -514,7 +514,7 @@ void InspectorFrontendHost::pickColorFromScreen(Ref<DeferredPromise>&& promise)
         if (color->colorSpace() != ColorSpace::SRGB || color->colorSpace() != ColorSpace::DisplayP3) {
             // DisplayP3 is the least-lossy format the frontend currently supports. This conversion will only be lossy
             // if the color space the system is providing colors in were to support a wider gamut than DisplayP3.
-            auto colorForFrontend = color->toColorTypeLossy<DisplayP3<float>>();
+            Color colorForFrontend = color->toColorTypeLossy<DisplayP3<float>>();
             serializedColor = serializationForCSS(colorForFrontend);
         } else
             serializedColor = serializationForCSS(*color);

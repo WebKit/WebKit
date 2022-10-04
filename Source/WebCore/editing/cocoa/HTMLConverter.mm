@@ -33,6 +33,7 @@
 #import "CachedImage.h"
 #import "CharacterData.h"
 #import "ColorCocoa.h"
+#import "ColorFromPrimitiveValue.h"
 #import "ColorMac.h"
 #import "CommonAtomStrings.h"
 #import "ComposedTreeIterator.h"
@@ -875,14 +876,14 @@ Color HTMLConverterCaches::colorPropertyValueForNode(Node& node, CSSPropertyID p
 
     Element& element = downcast<Element>(node);
     if (RefPtr<CSSValue> value = computedStylePropertyForElement(element, propertyId)) {
-        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
-            return normalizedColor(downcast<CSSPrimitiveValue>(*value).color(), ignoreDefaultColor, element);
+        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isColor())
+            return normalizedColor(WebCore::Style::colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value)), ignoreDefaultColor, element);
     }
 
     bool inherit = false;
     if (RefPtr<CSSValue> value = inlineStylePropertyForElement(element, propertyId)) {
-        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isRGBColor())
-            return normalizedColor(downcast<CSSPrimitiveValue>(*value).color(), ignoreDefaultColor, element);
+        if (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).isColor())
+            return normalizedColor(WebCore::Style::colorFromPrimitiveValue(downcast<CSSPrimitiveValue>(*value)), ignoreDefaultColor, element);
         if (isValueID(*value, CSSValueInherit))
             inherit = true;
     }

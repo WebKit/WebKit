@@ -4676,11 +4676,24 @@ template<> inline CSSPrimitiveValue::operator TextAnchor() const
     return TextAnchor::Start;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(const Color& color)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CSSColorKind color)
     : CSSValue(PrimitiveClass)
 {
-    setPrimitiveUnitType(CSSUnitType::CSS_RGBCOLOR);
-    m_value.color = new Color(color);
+    setPrimitiveUnitType(CSSUnitType::CSS_COLOR);
+    m_value.color = new CSSColorKind { color };
+}
+
+template<> inline CSSPrimitiveValue::operator CSSColorKind() const
+{
+    ASSERT(this->isColor());
+    return this->color();
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Color color)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_COLOR);
+    m_value.color = new CSSColorKind { color };
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(VectorEffect e)

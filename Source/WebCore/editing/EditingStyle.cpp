@@ -37,6 +37,7 @@
 #include "CSSStyleRule.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
+#include "ColorFromPrimitiveValue.h"
 #include "ColorSerialization.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -451,8 +452,8 @@ static Color cssValueToColor(CSSValue* colorValue)
         return Color::transparentBlack;
     
     CSSPrimitiveValue& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
-    if (primitiveColor.isRGBColor())
-        return primitiveColor.color();
+    if (primitiveColor.isColor())
+        return Style::colorFromPrimitiveValue(primitiveColor);
     
     return CSSParser::parseColorWithoutContext(colorValue->cssText());
 }
@@ -1635,8 +1636,11 @@ Ref<EditingStyle> EditingStyle::inverseTransformColorIfNeeded(Element& element)
         return *this;
 
     auto colorForPropertyIfInvertible = [&](CSSPropertyID id) -> std::optional<Color> {
-        auto color = m_mutableStyle->propertyAsColor(id);
-        if (!color || !color->isVisible() || color->isSemantic())
+        auto unresolvedColor = m_mutableStyle->propertyAsColor(id);
+        if (!unresolvedColor)
+            return { };
+        auto color = renderer->style().colorResolvingCurrentColor(*unresolvedColor);
+        if (!color.isVisible() || color.isSemantic())
             return std::nullopt;
         return color;
     };
@@ -1929,8 +1933,8 @@ static bool isTransparentColorValue(CSSValue* value)
     if (!is<CSSPrimitiveValue>(*value))
         return false;
     auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (primitiveValue.isRGBColor())
-        return !primitiveValue.color().isVisible();
+    if (primitiveValue.isColor())
+        return !Style::colorFromPrimitiveValue(primitiveValue).isVisible();
     return primitiveValue.valueID() == CSSValueTransparent;
 }
 

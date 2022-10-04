@@ -37,25 +37,39 @@ namespace WebCore {
 
 namespace Style {
 
+Color colorFromPrimitiveValue(const CSSPrimitiveValue& value)
+{
+    if (value.isColor()) {
+        return { };
+    }
+    return StyleColor::colorFromKeyword(value.valueID(), { });
+}
+
 StyleColor colorFromPrimitiveValue(const Document& document, RenderStyle& style, const CSSPrimitiveValue& value, ForVisitedLink forVisitedLink)
 {
-    if (value.isRGBColor())
-        return value.color();
+    if (value.isColor()) {
+        auto colorKind = value.color();
+        if (std::holds_alternative<Color>(colorKind))
+            return std::get<Color>(colorKind);
+
+        // TODO: recursive conversion
+        return { };
+    }
 
     auto identifier = value.valueID();
     switch (identifier) {
     case CSSValueInternalDocumentTextColor:
-        return { document.textColor() };
+        return document.textColor();
     case CSSValueWebkitLink:
-        return { forVisitedLink == ForVisitedLink::Yes ? document.visitedLinkColor() : document.linkColor() };
+        return forVisitedLink == ForVisitedLink::Yes ? document.visitedLinkColor() : document.linkColor();
     case CSSValueWebkitActivelink:
-        return { document.activeLinkColor() };
+        return document.activeLinkColor();
     case CSSValueWebkitFocusRingColor:
-        return { RenderTheme::singleton().focusRingColor(document.styleColorOptions(&style)) };
+        return RenderTheme::singleton().focusRingColor(document.styleColorOptions(&style));
     case CSSValueCurrentcolor:
         return StyleColor::currentColor();
     default:
-        return { StyleColor::colorFromKeyword(identifier, document.styleColorOptions(&style)) };
+        return StyleColor::colorFromKeyword(identifier, document.styleColorOptions(&style));
     }
 }
 
@@ -69,7 +83,7 @@ Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document& document, 
         return style.color();
     }
 
-    return colorFromPrimitiveValue(document, style, value, ForVisitedLink::No).absoluteColor();
+    return colorFromPrimitiveValue(document, style, value, ForVisitedLink::No).resolveColorWithoutCurrentColor();
 }
 
 } // namespace Style

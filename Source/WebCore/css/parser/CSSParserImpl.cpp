@@ -47,6 +47,7 @@
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"
 #include "CSSVariableParser.h"
+#include "ColorFromPrimitiveValue.h"
 #include "ContainerQueryParser.h"
 #include "Document.h"
 #include "Element.h"
@@ -821,7 +822,7 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
             if (!pair.key().isInteger())
                 continue;
             unsigned key = pair.key().value<unsigned>();
-            Color color = pair.color().isRGBColor() ? pair.color().color() : StyleColor::colorFromKeyword(pair.color().valueID(), { });
+            Color color = Style::colorFromPrimitiveValue(pair.color());
             overrideColors.append(std::make_pair(key, color));
         }
     }

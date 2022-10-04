@@ -30,6 +30,8 @@
 #include "DeprecatedCSSOMRGBColor.h"
 #include "DeprecatedCSSOMRect.h"
 
+#include "ColorFromPrimitiveValue.h"
+
 namespace WebCore {
     
 unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
@@ -61,7 +63,7 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
     case CSSUnitType::CSS_PX:                           return CSS_PX;
     case CSSUnitType::CSS_RAD:                          return CSS_RAD;
     case CSSUnitType::CSS_RECT:                         return CSS_RECT;
-    case CSSUnitType::CSS_RGBCOLOR:                     return CSS_RGBCOLOR;
+    case CSSUnitType::CSS_COLOR:                        return CSS_RGBCOLOR;
     case CSSUnitType::CSS_S:                            return CSS_S;
     case CSSUnitType::CSS_STRING:                       return CSS_STRING;
     case CSSUnitType::CSS_UNKNOWN:                      return CSS_UNKNOWN;
@@ -131,7 +133,7 @@ ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> DeprecatedCSSOMPrimitiveValue::getRGBC
 {
     if (primitiveType() != CSS_RGBCOLOR)
         return Exception { InvalidAccessError };
-    return DeprecatedCSSOMRGBColor::create(m_owner, m_value->color());
+    return DeprecatedCSSOMRGBColor::create(m_owner, Style::colorFromPrimitiveValue(m_value));
 }
 
 }

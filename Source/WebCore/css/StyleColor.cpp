@@ -32,6 +32,8 @@
 #include "config.h"
 #include "StyleColor.h"
 
+#include "CSSPrimitiveValue.h"
+#include "ColorInterpolation.h"
 #include "ColorSerialization.h"
 #include "HashTools.h"
 #include "RenderTheme.h"
@@ -117,6 +119,8 @@ WTF::TextStream& operator<<(WTF::TextStream& out, const StyleColor& v)
         out << ")";
     } else if (v.isCurrentColor())
         out << "currentColor";
+    else if (v.isColorMix())
+        out << "color-mix()";
     
     out << "]";
     return out;
@@ -129,6 +133,39 @@ String StyleColor::debugDescription() const
     return ts.release();
 }
 
+template<typename InterpolationMethod> static Color mixColorComponentsUsingColorInterpolationMethod(InterpolationMethod interpolationMethod, ColorMixPercentages mixPercentages, const Color& color1, const Color& color2)
+{
+    using ColorType = typename InterpolationMethod::ColorType;
+
+    // 1. Both colors are converted to the specified <color-space>. If the specified color space has a smaller gamut than
+    //    the one in which the color to be adjusted is specified, gamut mapping will occur.
+    auto convertedColor1 = color1.template toColorTypeLossy<ColorType>();
+    auto convertedColor2 = color2.template toColorTypeLossy<ColorType>();
+
+    // 2. Colors are then interpolated in the specified color space, as described in CSS Color 4 § 13 Interpolation. [...]
+    auto mixedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(interpolationMethod, convertedColor1, mixPercentages.p1 / 100.0, convertedColor2, mixPercentages.p2 / 100.0).unresolved();
+
+    // 3. If an alpha multiplier was produced during percentage normalization, the alpha component of the interpolated result
+    //    is multiplied by the alpha multiplier.
+    if (mixPercentages.alphaMultiplier && !std::isnan(mixedColor.alpha))
+        mixedColor.alpha *= (*mixPercentages.alphaMultiplier / 100.0);
+
+    return makeCanonicalColor(mixedColor);
+}
+
+static Color mixColorComponents(
+    ColorInterpolationMethod colorInterpolationMethod,
+    ColorMixPercentages mixPercentages, 
+    const Color& color1, 
+    const Color& color2)
+{
+    return WTF::switchOn(colorInterpolationMethod.colorSpace,
+        [&] (auto colorSpace) {
+            return mixColorComponentsUsingColorInterpolationMethod<decltype(colorSpace)>(colorSpace, mixPercentages, color1, color2);
+        }
+    );
+}
+
 Color StyleColor::resolveColor(const Color& currentColor) const
 {
     if (isAbsoluteColor())
@@ -137,12 +174,41 @@ Color StyleColor::resolveColor(const Color& currentColor) const
     if (isCurrentColor())
         return currentColor;
 
+    if (isColorMix()) {
+        auto colorMix = this->colorMix();
+        StyleColor colorA = colorMix.colorA();
+        StyleColor colorB = colorMix.colorB();
+        return mixColorComponents(
+            colorMix.colorInterpolationMethod(),
+            colorMix.percentages(),
+            colorA.resolveColor(currentColor),
+            colorB.resolveColor(currentColor));
+    }
+
     return { };
+}
+
+Color StyleColor::resolveColorWithoutCurrentColor() const
+{
+    return resolveColor({ });
+}
+
+bool StyleColor::isValid() const
+{
+    if (isAbsoluteColor())
+        return absoluteColor().isValid();
+    
+    return true;
 }
 
 bool StyleColor::isCurrentColor() const
 {
     return std::holds_alternative<CurrentColor>(m_color);
+}
+
+bool StyleColor::isColorMix() const
+{
+    return std::holds_alternative<ColorMix<StyleColorKind>>(m_color);
 }
 
 bool StyleColor::isAbsoluteColor() const
@@ -154,6 +220,12 @@ const Color& StyleColor::absoluteColor() const
 {
     ASSERT(isAbsoluteColor());
     return std::get<Color>(m_color);
+}
+
+const ColorMix<StyleColorKind>& StyleColor::colorMix() const
+{
+    ASSERT(isColorMix());
+    return std::get<ColorMix<StyleColorKind>>(m_color);
 }
 
 } // namespace WebCore

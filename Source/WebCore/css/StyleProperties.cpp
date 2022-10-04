@@ -38,7 +38,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
-#include "Color.h"
+#include "ColorFromPrimitiveValue.h"
 #include "Document.h"
 #include "FontSelectionValueInlines.h"
 #include "PropertySetCSSStyleDeclaration.h"
@@ -382,7 +382,7 @@ std::optional<Color> StyleProperties::propertyAsColor(CSSPropertyID property) co
         return std::nullopt;
 
     auto& primitiveColor = downcast<CSSPrimitiveValue>(*colorValue);
-    return primitiveColor.isRGBColor() ? primitiveColor.color() : CSSParser::parseColorWithoutContext(textExpandingInitialValuePlaceholder(property, *colorValue));
+    return Style::colorFromPrimitiveValue(primitiveColor);
 }
 
 std::optional<CSSValueID> StyleProperties::propertyAsValueID(CSSPropertyID property) const

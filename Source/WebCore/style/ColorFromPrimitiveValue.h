@@ -38,6 +38,9 @@ namespace Style {
 
 enum class ForVisitedLink : bool;
 
+// This method misses some context (document, renderstyle) to always resolve the actual color.
+Color colorFromPrimitiveValue(const CSSPrimitiveValue&);
+
 StyleColor colorFromPrimitiveValue(const Document&, RenderStyle&, const CSSPrimitiveValue&, Style::ForVisitedLink);
 Color colorFromPrimitiveValueWithResolvedCurrentColor(const Document&, RenderStyle&, const CSSPrimitiveValue&);
 

@@ -74,6 +74,7 @@
 #include "CSSVariableParser.h"
 #include "CalculationCategory.h"
 #include "ColorConversion.h"
+#include "ColorFromPrimitiveValue.h"
 #include "ColorInterpolation.h"
 #include "ColorLuminance.h"
 #include "ColorNormalization.h"
@@ -1707,25 +1708,14 @@ RefPtr<CSSPrimitiveValue> consumeURL(CSSParserTokenRange& range)
     return CSSPrimitiveValue::create(url.toString(), CSSUnitType::CSS_URI);
 }
 
+// FIXME: This method should not exists, we can't fully resolve color at parse-time
 static Color consumeOriginColor(CSSParserTokenRange& args, const CSSParserContext& context)
 {
     auto value = consumeColor(args, context);
     if (!value)
         return { };
 
-    if (value->isRGBColor())
-        return value->color();
-
-    ASSERT(value->isValueID());
-    auto keyword = value->valueID();
-
-    // FIXME: We don't have enough context in the parser to resolving a system keyword
-    // correctly. We should package up the relative color parameters and resolve the
-    // whole thing at the appropriate time when the origin color is a system keyword.
-    if (StyleColor::isSystemColorKeyword(keyword))
-        return { };
-
-    return StyleColor::colorFromKeyword(keyword, { });
+    return Style::colorFromPrimitiveValue(*value);
 }
 
 static std::optional<double> consumeOptionalAlpha(CSSParserTokenRange& range)
@@ -2910,65 +2900,53 @@ static std::optional<ColorInterpolationMethod> consumeColorInterpolationMethod(C
     }
 }
 
-struct ColorMixComponent {
-    Color color;
-    std::optional<double> percentage;
-};
-
-static std::optional<ColorMixComponent> consumeColorMixComponent(CSSParserTokenRange& args, const CSSParserContext& context)
+static std::optional<ColorMixComponent<CSSColorKind>> consumeColorMixComponent(CSSParserTokenRange& args, const CSSParserContext& context)
 {
-    ColorMixComponent result;
-
-    if (auto percentage = consumePercentRaw(args)) {
-        if (percentage->value < 0.0 || percentage->value > 100.0)
-            return { };
-        result.percentage = percentage->value;
-    }
-
-    result.color = consumeOriginColor(args, context);
-    if (!result.color.isValid())
-        return std::nullopt;
-
-    if (!result.percentage) {
+    // Percentage can be before or after the color.
+    auto parse_percentage = [&]() -> std::optional<double> {
         if (auto percentage = consumePercentRaw(args)) {
             if (percentage->value < 0.0 || percentage->value > 100.0)
                 return { };
-            result.percentage = percentage->value;
+            return percentage->value;
         }
-    }
+        return { };
+    };
 
-    return result;
+    auto percentage = parse_percentage();
+
+    auto color = consumeColor(args, context);
+    if (!color)
+        return { };
+
+    if (!percentage)
+        percentage = parse_percentage();
+
+    return ColorMixComponent<CSSColorKind> { *color, percentage };
 }
 
-struct ColorMixPercentages {
-    double p1;
-    double p2;
-    std::optional<double> alphaMultiplier = std::nullopt;
-};
-
-static std::optional<ColorMixPercentages> normalizedMixPercentages(const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
+static std::optional<ColorMixPercentages> normalizedMixPercentages(const ColorMixComponent<CSSColorKind>& mixComponents1, const ColorMixComponent<CSSColorKind>& mixComponents2)
 {
     // The percentages are normalized as follows:
 
     // 1. Let p1 be the first percentage and p2 the second one.
 
     // 2. If both percentages are omitted, they each default to 50% (an equal mix of the two colors).
-    if (!mixComponents1.percentage && !mixComponents2.percentage)
-        return {{ 50.0, 50.0 }};
+    if (!mixComponents1.percentage() && !mixComponents2.percentage())
+        return {{ 50.0, 50.0, {}}};
     
     ColorMixPercentages result;
 
-    if (!mixComponents2.percentage) {
+    if (!mixComponents2.percentage()) {
         // 3. Otherwise, if p2 is omitted, it becomes 100% - p1
-        result.p1 = *mixComponents1.percentage;
+        result.p1 = *mixComponents1.percentage();
         result.p2 = 100.0 - result.p1;
-    } else if (!mixComponents1.percentage) {
+    } else if (!mixComponents1.percentage()) {
         // 4. Otherwise, if p1 is omitted, it becomes 100% - p2
-        result.p2 = *mixComponents2.percentage;
+        result.p2 = *mixComponents2.percentage();
         result.p1 = 100.0 - result.p2;
     } else {
-        result.p1 = *mixComponents1.percentage;
-        result.p2 = *mixComponents2.percentage;
+        result.p1 = *mixComponents1.percentage();
+        result.p2 = *mixComponents2.percentage();
     }
 
     auto sum = result.p1 + result.p2;
@@ -2993,40 +2971,7 @@ static std::optional<ColorMixPercentages> normalizedMixPercentages(const ColorMi
     return result;
 }
 
-template<typename InterpolationMethod> static Color mixColorComponentsUsingColorInterpolationMethod(InterpolationMethod interpolationMethod, ColorMixPercentages mixPercentages, const Color& color1, const Color& color2)
-{
-    using ColorType = typename InterpolationMethod::ColorType;
-
-    // 1. Both colors are converted to the specified <color-space>. If the specified color space has a smaller gamut than
-    //    the one in which the color to be adjusted is specified, gamut mapping will occur.
-    auto convertedColor1 = color1.template toColorTypeLossy<ColorType>();
-    auto convertedColor2 = color2.template toColorTypeLossy<ColorType>();
-
-    // 2. Colors are then interpolated in the specified color space, as described in CSS Color 4 § 13 Interpolation. [...]
-    auto mixedColor = interpolateColorComponents<AlphaPremultiplication::Premultiplied>(interpolationMethod, convertedColor1, mixPercentages.p1 / 100.0, convertedColor2, mixPercentages.p2 / 100.0).unresolved();
-
-    // 3. If an alpha multiplier was produced during percentage normalization, the alpha component of the interpolated result
-    //    is multiplied by the alpha multiplier.
-    if (mixPercentages.alphaMultiplier && !std::isnan(mixedColor.alpha))
-        mixedColor.alpha *= (*mixPercentages.alphaMultiplier / 100.0);
-
-    return makeCanonicalColor(mixedColor);
-}
-
-static Color mixColorComponents(ColorInterpolationMethod colorInterpolationMethod, const ColorMixComponent& mixComponents1, const ColorMixComponent& mixComponents2)
-{
-    auto mixPercentages = normalizedMixPercentages(mixComponents1, mixComponents2);
-    if (!mixPercentages)
-        return { };
-
-    return WTF::switchOn(colorInterpolationMethod.colorSpace,
-        [&] (auto colorSpace) {
-            return mixColorComponentsUsingColorInterpolationMethod<decltype(colorSpace)>(colorSpace, *mixPercentages, mixComponents1.color, mixComponents2.color);
-        }
-    );
-}
-
-static Color parseColorMixFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
+static std::optional<ColorMix<CSSColorKind>> parseColorMixFunctionParameters(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // color-mix() = color-mix( <color-interpolation-method> , [ <color> && <percentage [0,100]>? ]#{2})
 
@@ -3060,8 +3005,12 @@ static Color parseColorMixFunctionParameters(CSSParserTokenRange& range, const C
 
     if (!args.atEnd())
         return { };
+    
+    auto percentages = normalizedMixPercentages(*mixComponent1, *mixComponent2);
+    if (!percentages)
+        return { };
 
-    return mixColorComponents(*colorInterpolationMethod, *mixComponent1, *mixComponent2);
+    return ColorMix { *colorInterpolationMethod, *mixComponent1, *mixComponent2, *percentages } ;
 }
 
 static std::optional<SRGBA<uint8_t>> parseHexColor(CSSParserTokenRange& range, bool acceptQuirkyColors)
@@ -3144,9 +3093,6 @@ static Color parseColorFunction(CSSParserTokenRange& range, const CSSParserConte
     case CSSValueColorContrast:
         color = parseColorContrastFunctionParameters(colorRange, context);
         break;
-    case CSSValueColorMix:
-        color = parseColorMixFunctionParameters(colorRange, context);
-        break;
     default:
         return { };
     }
@@ -3155,6 +3101,22 @@ static Color parseColorFunction(CSSParserTokenRange& range, const CSSParserConte
     return color;
 }
 
+static std::optional<ColorMix<CSSColorKind>> parseColorMixFunction(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    CSSParserTokenRange colorRange = range;
+    CSSValueID functionId = range.peek().functionId();
+    if (functionId != CSSValueColorMix)
+        return { };
+
+    auto colorMix = parseColorMixFunctionParameters(colorRange, context);
+    if (!colorMix)
+        return { };
+    
+    range = colorRange;
+    return colorMix;
+}
+
+// FIXME: Is this function used?
 Color consumeColorWorkerSafe(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     Color result;
@@ -3189,15 +3151,17 @@ RefPtr<CSSPrimitiveValue> consumeColor(CSSParserTokenRange& range, const CSSPars
             return nullptr;
         return consumeIdent(range);
     }
-    Color color;
-    if (auto parsedColor = parseHexColor(range, acceptQuirkyColors))
-        color = *parsedColor;
-    else {
-        color = parseColorFunction(range, context);
-        if (!color.isValid())
-            return nullptr;
-    }
-    return CSSValuePool::singleton().createColorValue(color);
+    if (auto hexColor = parseHexColor(range, acceptQuirkyColors))
+        return CSSValuePool::singleton().createColorValue(hexColor);
+
+    auto color = parseColorFunction(range, context);
+    if (color.isValid())
+        return CSSValuePool::singleton().createColorValue(color);
+    
+    if (auto otherColor = parseColorMixFunction(range, context))
+        return CSSPrimitiveValue::create(CSSColorKind { *otherColor });
+        
+    return { };
 }
 
 static RefPtr<CSSPrimitiveValue> consumePositionComponent(CSSParserTokenRange& range, CSSParserMode parserMode, UnitlessQuirk unitless, NegativePercentagePolicy negativePercentagePolicy = NegativePercentagePolicy::Forbid)
@@ -3753,7 +3717,7 @@ static CSSGradientColorInterpolationMethod computeGradientColorInterpolationMeth
             continue;
         if (stop.color->isValueID())
             continue;
-        if (stop.color->isRGBColor() && stop.color->color().tryGetAsSRGBABytes())
+        if (stop.color->isColor() && Style::colorFromPrimitiveValue(*stop.color).tryGetAsSRGBABytes())
             continue;
 
         defaultColorInterpolationMethod = CSSGradientColorInterpolationMethod::Default::OKLab;

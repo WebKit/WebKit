@@ -31,10 +31,10 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
-#include "ColorInterpolationMethod.h"
+#include "ColorKind.h"
+#include "CSSPrimitiveValue.h"
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -44,17 +44,6 @@ enum class StyleColorOptions : uint8_t {
     UseSystemAppearance = 1 << 1,
     UseDarkAppearance = 1 << 2,
     UseElevatedUserInterfaceLevel = 1 << 3
-};
-
-struct CurrentColor {
-    bool operator==(const CurrentColor&) const
-    {
-        return true;
-    }
-    bool operator!=(const CurrentColor& other) const
-    {
-        return !(*this == other);
-    }
 };
 
 class StyleColor {
@@ -76,6 +65,11 @@ public:
     {
     }
 
+    StyleColor(const ColorMix<StyleColorKind>& color)
+        : m_color { color  }
+    {
+    }
+
     StyleColor(const StyleColor&) = default;
     StyleColor(StyleColor&&) = default;
     StyleColor& operator=(const StyleColor&) = default;
@@ -88,7 +82,7 @@ public:
         return !(*this == other);
     }
 
-    static StyleColor currentColor() { return StyleColor { CurrentColor { } }; }
+    static StyleColor currentColor() { return { }; }
 
     static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
     static Color colorFromAbsoluteKeyword(CSSValueID);
@@ -109,26 +103,29 @@ public:
     // https://drafts.csswg.org/css-color-4/#typedef-color
     static bool isColorKeyword(CSSValueID, OptionSet<CSSColorType> = { CSSColorType::Absolute, CSSColorType::Current, CSSColorType::System });
 
+    bool isValid() const;
     bool isCurrentColor() const;
     bool isAbsoluteColor() const;
+    bool isColorMix() const;
     const Color& absoluteColor() const;
+    const ColorMix<StyleColorKind>& colorMix() const;
 
     WEBCORE_EXPORT Color resolveColor(const Color& colorPropertyValue) const;
+    WEBCORE_EXPORT Color resolveColorWithoutCurrentColor() const;
 
     friend WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
     String debugDescription() const;
 
 private:
-    using ColorKind = std::variant<Color, CurrentColor>;
-
-    StyleColor(const ColorKind& color)
+    StyleColor(const StyleColorKind& color)
         : m_color { color }
     {
     }
 
-    ColorKind m_color;
+    StyleColorKind  m_color;
 };
 
+WEBCORE_EXPORT String serializationForRenderTreeAsText(const StyleColor&);
 WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
 
 } // namespace WebCore

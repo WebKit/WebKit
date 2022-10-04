@@ -55,7 +55,7 @@ enum class CSSUnitType : uint8_t {
     CSS_ATTR,
     CSS_COUNTER,
     CSS_RECT,
-    CSS_RGBCOLOR,
+    CSS_COLOR,
 
     CSS_VW,
     CSS_VH,

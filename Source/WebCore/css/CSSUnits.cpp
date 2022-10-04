@@ -119,7 +119,7 @@ CSSUnitCategory unitCategory(CSSUnitType type)
     case CSSUnitType::CSS_QUAD:
     case CSSUnitType::CSS_QUIRKY_EMS:
     case CSSUnitType::CSS_RECT:
-    case CSSUnitType::CSS_RGBCOLOR:
+    case CSSUnitType::CSS_COLOR:
     case CSSUnitType::CSS_SHAPE:
     case CSSUnitType::CSS_STRING:
     case CSSUnitType::CSS_UNICODE_RANGE:
@@ -214,7 +214,7 @@ TextStream& operator<<(TextStream& ts, CSSUnitType unitType)
     case CSSUnitType::CSS_ATTR: ts << "attr"; break;
     case CSSUnitType::CSS_COUNTER: ts << "counter"; break;
     case CSSUnitType::CSS_RECT: ts << "rect"; break;
-    case CSSUnitType::CSS_RGBCOLOR: ts << "rgbcolor"; break;
+    case CSSUnitType::CSS_COLOR: ts << "color"; break;
     case CSSUnitType::CSS_VW: ts << "vw"; break;
     case CSSUnitType::CSS_VH: ts << "vh"; break;
     case CSSUnitType::CSS_VMIN: ts << "vmin"; break;
