@@ -28,6 +28,7 @@ typedef [EnforceRange] unsigned long long WebCodecsVideoDecoderConfigSize;
 
 [
     Conditional=WEB_CODECS,
+    JSGenerateToJSObject,
 ] dictionary WebCodecsVideoDecoderConfig {
     required DOMString codec;
     BufferSource description;

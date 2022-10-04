@@ -25,6 +25,7 @@
 
 [
     Conditional=WEB_CODECS,
+    JSGenerateToJSObject,
 ] dictionary WebCodecsVideoDecoderSupport {
   boolean supported;
   WebCodecsVideoDecoderConfig config;

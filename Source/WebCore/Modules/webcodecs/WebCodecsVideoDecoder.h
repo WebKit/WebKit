@@ -30,9 +30,11 @@
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
+#include "VideoDecoder.h"
 #include "WebCodecsCodecState.h"
 #include "WebCodecsEncodedVideoChunkType.h"
 #include "WebCodecsVideoDecoderSupport.h"
+#include <wtf/Deque.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -59,11 +61,11 @@ public:
     WebCodecsCodecState state() const { return m_state; }
     size_t decodeQueueSize() const { return m_decodeQueueSize; }
 
-    void configure(WebCodecsVideoDecoderConfig&&);
-    void decode(Ref<WebCodecsEncodedVideoChunk>&&);
-    void flush(Ref<DeferredPromise>&&);
-    void reset();
-    void close();
+    ExceptionOr<void> configure(WebCodecsVideoDecoderConfig&&);
+    ExceptionOr<void> decode(Ref<WebCodecsEncodedVideoChunk>&&);
+    ExceptionOr<void> flush(Ref<DeferredPromise>&&);
+    ExceptionOr<void> reset();
+    ExceptionOr<void> close();
 
     static void isConfigSupported(WebCodecsVideoDecoderConfig&&, Ref<DeferredPromise>&&);
 
@@ -85,10 +87,25 @@ private:
     EventTargetInterface eventTargetInterface() const final { return WebCodecsVideoDecoderEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
+    ExceptionOr<void> closeDecoder(Exception&&);
+    ExceptionOr<void> resetDecoder(const Exception&);
+    void setInternalDecoder(UniqueRef<VideoDecoder>&&);
+    void scheduleDequeueEvent();
+
+    void queueControlMessageAndProcess(Function<void()>&&);
+    void processControlMessageQueue();
+
     WebCodecsCodecState m_state { WebCodecsCodecState::Unconfigured };
     size_t m_decodeQueueSize { 0 };
     Ref<WebCodecsVideoFrameOutputCallback> m_output;
     Ref<WebCodecsErrorCallback> m_error;
+    std::unique_ptr<VideoDecoder> m_internalDecoder;
+    bool m_dequeueEventScheduled { false };
+    Deque<Ref<DeferredPromise>> m_pendingFlushPromises;
+    size_t m_clearFlushPromiseCount { 0 };
+    bool m_isKeyChunkRequired { false };
+    Deque<Function<void()>> m_controlMessageQueue;
+    bool m_isMessageQueueBlocked { false };
 };
 
 }

@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct WebCodecsVideoDecoderConfig {
     String codec;
-    std::optional<BufferSource> description;
+    std::optional<BufferSource::VariantType> description;
     std::optional<size_t> codedWidth;
     std::optional<size_t> codedHeight;
     std::optional<size_t> displayAspectWidth;
@@ -44,7 +44,6 @@ struct WebCodecsVideoDecoderConfig {
     std::optional<VideoColorSpaceInit> colorSpace;
     HardwareAcceleration hardwareAcceleration { HardwareAcceleration::NoPreference };
     std::optional<bool> optimizeForLatency;
-
 };
 
 }

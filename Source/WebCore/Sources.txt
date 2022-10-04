@@ -1936,6 +1936,7 @@ platform/LengthBox.cpp
 platform/LengthFunctions.cpp
 platform/LengthPoint.cpp
 platform/LengthSize.cpp
+platform/LibWebRTCVPXVideoDecoder.cpp
 platform/LocalizedStrings.cpp
 platform/LogInitialization.cpp
 platform/Logging.cpp
@@ -1993,6 +1994,7 @@ platform/ThreadGlobalData.cpp
 platform/ThreadTimers.cpp
 platform/Timer.cpp
 platform/UserActivity.cpp
+platform/VideoDecoder.cpp
 platform/VideoFrame.cpp
 platform/WebCoreCrossThreadCopier.cpp
 platform/WebCorePersistentCoders.cpp

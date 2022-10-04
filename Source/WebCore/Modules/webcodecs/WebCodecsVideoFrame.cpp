@@ -47,6 +47,11 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(BufferSource&&
     return adoptRef(*new WebCodecsVideoFrame);
 }
 
+Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(Ref<VideoFrame>&&, BufferInit&&)
+{
+    return adoptRef(*new WebCodecsVideoFrame);
+}
+
 ExceptionOr<size_t> WebCodecsVideoFrame::allocationSize(CopyToOptions&&)
 {
     // FIXME: Implement this.

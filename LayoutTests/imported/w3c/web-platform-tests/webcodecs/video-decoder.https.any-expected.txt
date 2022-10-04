@@ -1,19 +1,9 @@
 
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Empty codec promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Unrecognized codec promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Audio codec promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Ambiguous codec promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Test that VideoDecoder.isConfigSupported() rejects invalid config:Codec with MIME type promise_rejects_js: function "function () { throw e }" threw object "NotSupportedError: Not implemented" ("NotSupportedError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
+PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Empty codec
+PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Unrecognized codec
+PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Audio codec
+PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Ambiguous codec
+PASS Test that VideoDecoder.isConfigSupported() rejects invalid config:Codec with MIME type
 FAIL Test that VideoDecoder.configure() rejects invalid config:Empty codec assert_throws_js: function "() => {
           codec.configure(entry.config);
         }" did not throw
