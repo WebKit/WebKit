@@ -29,9 +29,8 @@
 #include <wtf/text/WTFString.h>
 
 #define WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID "1077efec-c0b2-4d02-ace3-3c1e52e2fb4b"
-#if ENABLE(THUNDER)
 #define WEBCORE_GSTREAMER_EME_UTILITIES_WIDEVINE_UUID "edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"
-#endif
+#define WEBCORE_GSTREAMER_EME_UTILITIES_PLAYREADY_UUID "9a04f079-9840-4286-ab92-e65be0885f95"
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_media_common_encryption_decrypt_debug_category);
 
@@ -108,11 +107,15 @@ private:
 class GStreamerEMEUtilities {
 
 public:
-    static constexpr char const* s_ClearKeyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID;
+    static constexpr auto s_ClearKeyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_CLEARKEY_UUID ""_s;
     static constexpr auto s_ClearKeyKeySystem = "org.w3.clearkey"_s;
-#if ENABLE(THUNDER)
-    static constexpr char const* s_WidevineUUID = WEBCORE_GSTREAMER_EME_UTILITIES_WIDEVINE_UUID;
+    static constexpr auto s_WidevineUUID = WEBCORE_GSTREAMER_EME_UTILITIES_WIDEVINE_UUID ""_s;
     static constexpr auto s_WidevineKeySystem = "com.widevine.alpha"_s;
+    static constexpr auto s_PlayReadyUUID = WEBCORE_GSTREAMER_EME_UTILITIES_PLAYREADY_UUID ""_s;
+    static constexpr std::array<ASCIILiteral, 2> s_PlayReadyKeySystems = { "com.microsoft.playready"_s,  "com.youtube.playready"_s };
+#if GST_CHECK_VERSION(1, 16, 0)
+    static constexpr auto s_unspecifiedUUID = GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s;
+    static constexpr auto s_unspecifiedKeySystem = GST_PROTECTION_UNSPECIFIED_SYSTEM_ID ""_s;
 #endif
 
     static bool isClearKeyKeySystem(const String& keySystem)
@@ -120,10 +123,40 @@ public:
         return equalIgnoringASCIICase(keySystem, s_ClearKeyKeySystem);
     }
 
-#if ENABLE(THUNDER)
+    static bool isClearKeyUUID(const String& uuid)
+    {
+        return equalIgnoringASCIICase(uuid, s_ClearKeyUUID);
+    }
+
     static bool isWidevineKeySystem(const String& keySystem)
     {
         return equalIgnoringASCIICase(keySystem, s_WidevineKeySystem);
+    }
+
+    static bool isWidevineUUID(const String& uuid)
+    {
+        return equalIgnoringASCIICase(uuid, s_WidevineUUID);
+    }
+
+    static bool isPlayReadyKeySystem(const String& keySystem)
+    {
+        return equalIgnoringASCIICase(keySystem, s_PlayReadyKeySystems[0]) || equalIgnoringASCIICase(keySystem, s_PlayReadyKeySystems[1]);
+    }
+
+    static bool isPlayReadyUUID(const String& uuid)
+    {
+        return equalIgnoringASCIICase(uuid, s_PlayReadyUUID);
+    }
+
+#if GST_CHECK_VERSION(1, 16, 0)
+    static bool isUnspecifiedKeySystem(const String& keySystem)
+    {
+        return equalIgnoringASCIICase(keySystem, s_unspecifiedKeySystem);
+    }
+
+    static bool isUnspecifiedUUID(const String& uuid)
+    {
+        return equalIgnoringASCIICase(uuid, s_unspecifiedUUID);
     }
 #endif
 
@@ -132,13 +165,40 @@ public:
         if (isClearKeyKeySystem(keySystem))
             return s_ClearKeyUUID;
 
-#if ENABLE(THUNDER)
         if (isWidevineKeySystem(keySystem))
             return s_WidevineUUID;
+
+        if (isPlayReadyKeySystem(keySystem))
+            return s_PlayReadyUUID;
+
+#if GST_CHECK_VERSION(1, 16, 0)
+        if (isUnspecifiedKeySystem(keySystem))
+            return s_unspecifiedUUID;
 #endif
 
         ASSERT_NOT_REACHED();
         return { };
+    }
+
+    static const ASCIILiteral& uuidToKeySystem(const String& uuid)
+    {
+        if (isClearKeyUUID(uuid))
+            return s_ClearKeyKeySystem;
+
+        if (isWidevineUUID(uuid))
+            return s_WidevineKeySystem;
+
+        if (isPlayReadyUUID(uuid))
+            return s_PlayReadyKeySystems[0];
+
+#if GST_CHECK_VERSION(1, 16, 0)
+        if (isUnspecifiedUUID(uuid))
+            return s_unspecifiedKeySystem;
+#endif
+
+        ASSERT_NOT_REACHED();
+        static NeverDestroyed<ASCIILiteral> empty(""_s);
+        return empty;
     }
 };
 

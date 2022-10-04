@@ -4016,7 +4016,7 @@ InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMess
         // which of the UUIDs it is, so we just overwrite it. This is
         // a quirk of how GStreamer provides protection events, and
         // it's not very robust, so be careful here!
-        systemId = String::fromLatin1(eventKeySystemId);
+        systemId = GStreamerEMEUtilities::uuidToKeySystem(String::fromLatin1(eventKeySystemId));
         InitData initData { systemId, data };
         payloadBuilder.append(*initData.payload());
         m_handledProtectionEvents.add(GST_EVENT_SEQNUM(event.get()));
@@ -4138,7 +4138,7 @@ void MediaPlayerPrivateGStreamer::handleProtectionEvent(GstEvent* event)
     const char* eventKeySystemUUID = nullptr;
     GstBuffer* initData = nullptr;
     gst_event_parse_protection(event, &eventKeySystemUUID, &initData, nullptr);
-    initializationDataEncountered({ String::fromLatin1(eventKeySystemUUID), initData });
+    initializationDataEncountered({ GStreamerEMEUtilities::uuidToKeySystem(String::fromLatin1(eventKeySystemUUID)), initData });
 }
 
 bool MediaPlayerPrivateGStreamer::waitingForKey() const
