@@ -2407,3 +2407,5 @@ webkit.org/b/245745 [ Debug ] svg/compositing/inline-svg-non-integer-position-di
 imported/w3c/web-platform-tests/feature-policy/reporting/picture-in-picture-reporting.html [ Pass Failure ]
 imported/w3c/web-platform-tests/feature-policy/feature-policy-frame-policy-allowed-for-some-override.https.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/feature-policy/experimental-features/vertical-scroll-scrollintoview.tentative.html [ Failure ]
+
+webkit.org/b/245994 imported/w3c/web-platform-tests/streams/readable-byte-streams/construct-byob-request.any.worker.html [ Pass Failure ]
