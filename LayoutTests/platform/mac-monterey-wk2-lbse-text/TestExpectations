@@ -74,6 +74,7 @@ svg/filters/feDiffuseLighting-fePointLight-primitiveUnits-objectBoundingBox.svg 
 svg/filters/feDiffuseLighting-feSpotLight-dynamic-update.svg                           [ ImageOnlyFailure ]
 svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox.svg         [ ImageOnlyFailure ]
 svg/filters/feDisplacementMap-color-interpolation-filters.svg                          [ ImageOnlyFailure ]
+svg/filters/feDisplacementMap-filterUnits.svg                                          [ ImageOnlyFailure ]
 svg/filters/feDisplacementMap.svg                                                      [ ImageOnlyFailure ]
 svg/filters/feDropShadow-blur-radius.html                                              [ ImageOnlyFailure ]
 svg/filters/feDropShadow-subregion.svg                                                 [ ImageOnlyFailure ]

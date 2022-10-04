@@ -19,7 +19,7 @@ layer at (60,215) size 360x80
 layer at (60,215) size 360x80
   RenderSVGTransformableContainer {g} at (0,0) size 360x80
 layer at (60,215) size 360x80
-  RenderSVGRect {rect} at (0,0) size 360x80 [fill={[type=SOLID] [color=#00000000]}] [x=60.00] [y=215.00] [width=360.00] [height=80.00]
+  RenderSVGRect {rect} at (0,0) size 360x80 [fill={[type=SOLID] [color=#0000FF]}] [x=60.00] [y=215.00] [width=360.00] [height=80.00]
 layer at (120,142.50) size 264x71
   RenderSVGTransformableContainer {g} at (60,122.50) size 263.33x70
 layer at (120,142.50) size 35x35
