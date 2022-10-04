@@ -39,6 +39,17 @@ class ContainerBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(ContainerBox);
 public:
     ContainerBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, OptionSet<BaseTypeFlag> = { ContainerBoxFlag });
+
+    enum class ListMarkerAttribute : uint8_t { Image = 1 << 0, Outside = 1 << 1 };
+    ContainerBox(ElementAttributes&&, OptionSet<ListMarkerAttribute>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+
+    struct ReplacedAttributes {
+        LayoutSize intrinsicSize;
+        std::optional<LayoutUnit> intrinsicRatio { };
+        CachedImage* cachedImage { };
+    };
+    ContainerBox(ElementAttributes&&, ReplacedAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+
     ~ContainerBox();
 
     const Box* firstChild() const { return m_firstChild.get(); }
@@ -61,13 +72,37 @@ public:
     void setBaselineForIntegration(LayoutUnit baseline) { m_baselineForIntegration = baseline; }
     std::optional<LayoutUnit> baselineForIntegration() const { return m_baselineForIntegration; }
 
+    bool hasIntrinsicWidth() const;
+    bool hasIntrinsicHeight() const;
+    bool hasIntrinsicRatio() const;
+    LayoutUnit intrinsicWidth() const;
+    LayoutUnit intrinsicHeight() const;
+    LayoutUnit intrinsicRatio() const;
+    bool hasAspectRatio() const;
+
+    bool isListMarkerImage() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Image); }
+    bool isListMarkerOutside() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Outside); }
+
+    // FIXME: This doesn't belong.
+    CachedImage* cachedImage() const { return m_replacedData ? m_replacedData->cachedImage : nullptr; }
+
 private:
     friend class Box;
-    
+
+    struct ReplacedData {
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
+        OptionSet<ListMarkerAttribute> listMarkerAttributes;
+        std::optional<LayoutSize> intrinsicSize;
+        std::optional<LayoutUnit> intrinsicRatio;
+        CachedImage* cachedImage { nullptr };
+    };
+
     std::unique_ptr<Box> m_firstChild;
     CheckedPtr<Box> m_lastChild;
 
     std::optional<LayoutUnit> m_baselineForIntegration;
+    std::unique_ptr<ReplacedData> m_replacedData;
 };
 
 }

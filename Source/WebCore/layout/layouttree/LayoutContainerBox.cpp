@@ -39,6 +39,23 @@ ContainerBox::ContainerBox(ElementAttributes&& attributes, RenderStyle&& style, 
 {
 }
 
+ContainerBox::ContainerBox(ElementAttributes&& attributes, OptionSet<ListMarkerAttribute> listMarkerAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), ContainerBoxFlag)
+    , m_replacedData(makeUnique<ReplacedData>())
+{
+    ASSERT(isListMarkerBox());
+    m_replacedData->listMarkerAttributes = listMarkerAttributes;
+}
+
+ContainerBox::ContainerBox(ElementAttributes&& attributes, ReplacedAttributes&& replacedAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), ContainerBoxFlag)
+    , m_replacedData(makeUnique<ReplacedData>())
+{
+    m_replacedData->intrinsicSize = replacedAttributes.intrinsicSize;
+    m_replacedData->intrinsicRatio = replacedAttributes.intrinsicRatio;
+    m_replacedData->cachedImage = replacedAttributes.cachedImage;
+}
+
 ContainerBox::~ContainerBox()
 {
     destroyChildren();
@@ -113,6 +130,56 @@ void ContainerBox::destroyChildren()
             childToDestroy->m_nextSibling->m_previousSibling = nullptr;
         childToDestroy = std::exchange(childToDestroy->m_nextSibling, nullptr);
     }
+}
+
+bool ContainerBox::hasIntrinsicWidth() const
+{
+    return (m_replacedData && m_replacedData->intrinsicSize) || style().logicalWidth().isIntrinsic();
+}
+
+bool ContainerBox::hasIntrinsicHeight() const
+{
+    return (m_replacedData && m_replacedData->intrinsicSize) || style().logicalHeight().isIntrinsic();
+}
+
+bool ContainerBox::hasIntrinsicRatio() const
+{
+    if (!hasAspectRatio())
+        return false;
+    return m_replacedData && (m_replacedData->intrinsicSize || m_replacedData->intrinsicRatio);
+}
+
+LayoutUnit ContainerBox::intrinsicWidth() const
+{
+    ASSERT(hasIntrinsicWidth());
+    if (m_replacedData && m_replacedData->intrinsicSize)
+        return m_replacedData->intrinsicSize->width();
+    return LayoutUnit { style().logicalWidth().value() };
+}
+
+LayoutUnit ContainerBox::intrinsicHeight() const
+{
+    ASSERT(hasIntrinsicHeight());
+    if (m_replacedData && m_replacedData->intrinsicSize)
+        return m_replacedData->intrinsicSize->height();
+    return LayoutUnit { style().logicalHeight().value() };
+}
+
+LayoutUnit ContainerBox::intrinsicRatio() const
+{
+    ASSERT(hasIntrinsicRatio() || (hasIntrinsicWidth() && hasIntrinsicHeight()));
+    if (m_replacedData) {
+        if (m_replacedData->intrinsicRatio)
+            return *m_replacedData->intrinsicRatio;
+        if (m_replacedData->intrinsicSize->height())
+            return m_replacedData->intrinsicSize->width() / m_replacedData->intrinsicSize->height();
+    }
+    return 1;
+}
+
+bool ContainerBox::hasAspectRatio() const
+{
+    return isImage();
 }
 
 }

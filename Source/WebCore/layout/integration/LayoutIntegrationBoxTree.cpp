@@ -29,7 +29,6 @@
 #include "InlineWalker.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInlineTextBox.h"
-#include "LayoutReplacedBox.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
@@ -200,13 +199,17 @@ void BoxTree::buildTreeForInlineContent()
 
         if (is<RenderListMarker>(childRenderer)) {
             auto& listMarkerRenderer = downcast<RenderListMarker>(childRenderer);
-            auto attributes = Layout::ReplacedBox::ListMarkerAttributes { isAnonymous(childRenderer), listMarkerRenderer.isImage(), !listMarkerRenderer.isInside() };
-            return makeUnique<Layout::ReplacedBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
+            OptionSet<Layout::ContainerBox::ListMarkerAttribute> listMarkerAttributes;
+            if (listMarkerRenderer.isImage())
+                listMarkerAttributes.add(Layout::ContainerBox::ListMarkerAttribute::Image);
+            if (!listMarkerRenderer.isInside())
+                listMarkerAttributes.add(Layout::ContainerBox::ListMarkerAttribute::Outside);
+            return makeUnique<Layout::ContainerBox>(elementAttributes(childRenderer, Layout::Box::NodeType::ListMarker), listMarkerAttributes, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderReplaced>(childRenderer)) {
-            auto attributes = elementAttributes(childRenderer, is<RenderImage>(childRenderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::GenericElement);
-            return makeUnique<Layout::ReplacedBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
+            auto attributes = elementAttributes(childRenderer, is<RenderImage>(childRenderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement);
+            return makeUnique<Layout::ContainerBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderBlock>(childRenderer)) {

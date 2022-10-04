@@ -46,6 +46,7 @@ public:
     enum class NodeType : uint8_t {
         Text,
         GenericElement,
+        ReplacedElement,
         DocumentElement,
         Body,
         TableWrapperBox, // The table generates a principal block container box called the table wrapper box that contains the table box and any caption boxes.
@@ -66,9 +67,8 @@ public:
 
     enum BaseTypeFlag : uint8_t {
         InlineTextBoxFlag          = 1 << 0,
-        ReplacedBoxFlag            = 1 << 1,
+        ContainerBoxFlag           = 1 << 1,
         InitialContainingBlockFlag = 1 << 2,
-        ContainerBoxFlag           = 1 << 3
     };
 
     virtual ~Box();
@@ -136,6 +136,7 @@ public:
     bool isLineBreakBox() const { return m_nodeType == NodeType::LineBreak || m_nodeType == NodeType::WordBreakOpportunity; }
     bool isWordBreakOpportunity() const { return m_nodeType == NodeType::WordBreakOpportunity; }
     bool isListMarkerBox() const { return m_nodeType == NodeType::ListMarker; }
+    bool isReplacedBox() const { return m_nodeType == NodeType::ReplacedElement || m_nodeType == NodeType::Image || m_nodeType == NodeType::ListMarker; }
 
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
 
@@ -153,7 +154,6 @@ public:
 
     bool isContainerBox() const { return baseTypeFlags().contains(ContainerBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
-    bool isReplacedBox() const { return baseTypeFlags().contains(ReplacedBoxFlag); }
 
     bool isPaddingApplicable() const;
     bool isOverflowVisible() const;

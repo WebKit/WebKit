@@ -35,7 +35,6 @@
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LayoutReplacedBox.h"
 #include "Logging.h"
 #include "TableFormattingState.h"
 
@@ -579,7 +578,7 @@ HorizontalGeometry FormattingGeometry::outOfFlowNonReplacedHorizontalGeometry(co
     return { *left, *right, { *width, usedHorizontalMargin } };
 }
 
-VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
+VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const ContainerBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     ASSERT(replacedBox.isOutOfFlowPositioned());
 
@@ -660,7 +659,7 @@ VerticalGeometry FormattingGeometry::outOfFlowReplacedVerticalGeometry(const Rep
     return { *top, *bottom, { height, { *usedMarginBefore, *usedMarginAfter } } };
 }
 
-HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
+HorizontalGeometry FormattingGeometry::outOfFlowReplacedHorizontalGeometry(const ContainerBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     ASSERT(replacedBox.isOutOfFlowPositioned());
 
@@ -837,7 +836,7 @@ ContentWidthAndMargin FormattingGeometry::floatingNonReplacedContentWidthAndMarg
     return ContentWidthAndMargin { *width, usedHorizontallMargin };
 }
 
-ContentHeightAndMargin FormattingGeometry::floatingReplacedContentHeightAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
+ContentHeightAndMargin FormattingGeometry::floatingReplacedContentHeightAndMargin(const ContainerBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     ASSERT(replacedBox.isFloatingPositioned());
 
@@ -847,7 +846,7 @@ ContentHeightAndMargin FormattingGeometry::floatingReplacedContentHeightAndMargi
     return inlineReplacedContentHeightAndMargin(replacedBox, horizontalConstraints, { }, overriddenVerticalValues);
 }
 
-ContentWidthAndMargin FormattingGeometry::floatingReplacedContentWidthAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
+ContentWidthAndMargin FormattingGeometry::floatingReplacedContentWidthAndMargin(const ContainerBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     ASSERT(replacedBox.isFloatingPositioned());
 
@@ -868,7 +867,7 @@ VerticalGeometry FormattingGeometry::outOfFlowVerticalGeometry(const Box& layout
 
     if (!layoutBox.isReplacedBox())
         return outOfFlowNonReplacedVerticalGeometry(downcast<ContainerBox>(layoutBox), horizontalConstraints, verticalConstraints, overriddenVerticalValues);
-    return outOfFlowReplacedVerticalGeometry(downcast<ReplacedBox>(layoutBox), horizontalConstraints, verticalConstraints, overriddenVerticalValues);
+    return outOfFlowReplacedVerticalGeometry(downcast<ContainerBox>(layoutBox), horizontalConstraints, verticalConstraints, overriddenVerticalValues);
 }
 
 HorizontalGeometry FormattingGeometry::outOfFlowHorizontalGeometry(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const VerticalConstraints& verticalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
@@ -877,7 +876,7 @@ HorizontalGeometry FormattingGeometry::outOfFlowHorizontalGeometry(const Box& la
 
     if (!layoutBox.isReplacedBox())
         return outOfFlowNonReplacedHorizontalGeometry(downcast<ContainerBox>(layoutBox), horizontalConstraints, overriddenHorizontalValues);
-    return outOfFlowReplacedHorizontalGeometry(downcast<ReplacedBox>(layoutBox), horizontalConstraints, verticalConstraints, overriddenHorizontalValues);
+    return outOfFlowReplacedHorizontalGeometry(downcast<ContainerBox>(layoutBox), horizontalConstraints, verticalConstraints, overriddenHorizontalValues);
 }
 
 ContentHeightAndMargin FormattingGeometry::floatingContentHeightAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
@@ -886,7 +885,7 @@ ContentHeightAndMargin FormattingGeometry::floatingContentHeightAndMargin(const 
 
     if (!layoutBox.isReplacedBox())
         return complicatedCases(layoutBox, horizontalConstraints, overriddenVerticalValues);
-    return floatingReplacedContentHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overriddenVerticalValues);
+    return floatingReplacedContentHeightAndMargin(downcast<ContainerBox>(layoutBox), horizontalConstraints, overriddenVerticalValues);
 }
 
 ContentWidthAndMargin FormattingGeometry::floatingContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
@@ -895,10 +894,10 @@ ContentWidthAndMargin FormattingGeometry::floatingContentWidthAndMargin(const Bo
 
     if (!layoutBox.isReplacedBox())
         return floatingNonReplacedContentWidthAndMargin(layoutBox, horizontalConstraints, overriddenHorizontalValues);
-    return floatingReplacedContentWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overriddenHorizontalValues);
+    return floatingReplacedContentWidthAndMargin(downcast<ContainerBox>(layoutBox), horizontalConstraints, overriddenHorizontalValues);
 }
 
-ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, std::optional<VerticalConstraints> verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
+ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(const ContainerBox& replacedBox, const HorizontalConstraints& horizontalConstraints, std::optional<VerticalConstraints> verticalConstraints, const OverriddenVerticalValues& overriddenVerticalValues) const
 {
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     //
@@ -941,7 +940,7 @@ ContentHeightAndMargin FormattingGeometry::inlineReplacedContentHeightAndMargin(
     return { *height, usedVerticalMargin };
 }
 
-ContentWidthAndMargin FormattingGeometry::inlineReplacedContentWidthAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, std::optional<VerticalConstraints> verticalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
+ContentWidthAndMargin FormattingGeometry::inlineReplacedContentWidthAndMargin(const ContainerBox& replacedBox, const HorizontalConstraints& horizontalConstraints, std::optional<VerticalConstraints> verticalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     // 10.3.2 Inline, replaced elements
     //

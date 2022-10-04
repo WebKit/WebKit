@@ -31,7 +31,6 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutIntegrationInlineContent.h"
-#include "LayoutReplacedBox.h"
 #include "LayoutState.h"
 #include "RenderBlockFlow.h"
 #include "StringTruncator.h"

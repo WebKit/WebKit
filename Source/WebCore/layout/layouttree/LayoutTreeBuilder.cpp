@@ -41,7 +41,6 @@
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutInlineTextBox.h"
 #include "LayoutPhase.h"
-#include "LayoutReplacedBox.h"
 #include "LayoutSize.h"
 #include "LayoutState.h"
 #include "RenderBlock.h"
@@ -124,9 +123,9 @@ TreeBuilder::TreeBuilder()
 {
 }
 
-std::unique_ptr<Box> TreeBuilder::createReplacedBox(Box::ElementAttributes elementAttributes, RenderStyle&& style)
+std::unique_ptr<Box> TreeBuilder::createReplacedBox(Box::ElementAttributes elementAttributes, ContainerBox::ReplacedAttributes&& replacedAttributes, RenderStyle&& style)
 {
-    return makeUnique<ReplacedBox>(WTFMove(elementAttributes), WTFMove(style));
+    return makeUnique<ContainerBox>(WTFMove(elementAttributes), WTFMove(replacedAttributes), WTFMove(style));
 }
 
 std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath,  RenderStyle&& style)
@@ -201,16 +200,17 @@ std::unique_ptr<Box> TreeBuilder::createLayoutBox(const ContainerBox& parentCont
 
             childLayoutBox = createContainer(Box::ElementAttributes { Box::NodeType::TableWrapperBox, Box::IsAnonymous::Yes }, WTFMove(tableWrapperBoxStyle));
         } else if (is<RenderReplaced>(renderer)) {
-            childLayoutBox = createReplacedBox(elementAttributes(renderer), WTFMove(clonedStyle));
-            // FIXME: We don't yet support all replaced elements and this is temporary anyway.
-            downcast<ReplacedBox>(*childLayoutBox).setIntrinsicSize(downcast<RenderReplaced>(renderer).intrinsicSize());
+            auto replacedAttributes = ContainerBox::ReplacedAttributes {
+                downcast<RenderReplaced>(renderer).intrinsicSize()
+            };
             if (is<RenderImage>(renderer)) {
                 auto& imageRenderer = downcast<RenderImage>(renderer);
                 if (imageRenderer.shouldDisplayBrokenImageIcon())
-                    downcast<ReplacedBox>(*childLayoutBox).setIntrinsicRatio(1);
+                    replacedAttributes.intrinsicRatio = 1;
                 if (imageRenderer.cachedImage())
-                    downcast<ReplacedBox>(*childLayoutBox).setCachedImage(*imageRenderer.cachedImage());
+                    replacedAttributes.cachedImage = imageRenderer.cachedImage();
             }
+            childLayoutBox = createReplacedBox(elementAttributes(renderer), WTFMove(replacedAttributes), WTFMove(clonedStyle));
         } else {
             if (displayType == DisplayType::Block) {
                 if (auto offset = accumulatedOffsetForInFlowPositionedContinuation(downcast<RenderBox>(renderer))) {

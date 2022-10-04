@@ -41,7 +41,6 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LayoutReplacedBox.h"
 #include "Logging.h"
 #include "TransformationMatrix.h"
 
@@ -118,9 +117,9 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
 
     // FIXME: Handle isAnonymous()
     
-    if (is<Layout::ReplacedBox>(layoutBox)) {
+    if (is<Layout::ContainerBox>(layoutBox) && downcast<Layout::ContainerBox>(layoutBox).cachedImage()) {
         // FIXME: Don't assume it's an image.
-        CachedResourceHandle<CachedImage> cachedImageHandle = downcast<Layout::ReplacedBox>(layoutBox).cachedImage();
+        CachedResourceHandle<CachedImage> cachedImageHandle = downcast<Layout::ContainerBox>(layoutBox).cachedImage();
         auto imageBox = makeUnique<ImageBox>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style), WTFMove(cachedImageHandle));
         setupBoxModelBox(*imageBox, layoutBox, geometry, containingBlockContext, styleForBackground);
         return imageBox;

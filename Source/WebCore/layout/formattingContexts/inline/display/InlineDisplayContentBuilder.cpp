@@ -31,7 +31,6 @@
 #include "InlineTextBoxStyle.h"
 #include "LayoutBoxGeometry.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LayoutReplacedBox.h"
 #include "TextUtil.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/Range.h>
@@ -423,7 +422,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
             continue;
         }
         if (lineRun.isListMarker()) {
-            auto& listMarker = downcast<ReplacedBox>(layoutBox);
+            auto& listMarker = downcast<ContainerBox>(layoutBox);
             auto visualRect = visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)));
             if (listMarker.isListMarkerOutside())
                 WebCore::isHorizontalWritingMode(writingMode) ? visualRect.setLeft(outsideListMarkerVisualPosition(listMarker, displayLine)) : visualRect.setTop(outsideListMarkerVisualPosition(listMarker, displayLine));
@@ -688,8 +687,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 auto visualRect = visualRectRelativeToRoot(logicalRect);
                 auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
 
-                if (layoutBox.isListMarkerBox() && downcast<ReplacedBox>(layoutBox).isListMarkerOutside()) {
-                    auto& listMarker = downcast<ReplacedBox>(layoutBox);
+                if (layoutBox.isListMarkerBox() && downcast<ContainerBox>(layoutBox).isListMarkerOutside()) {
+                    auto& listMarker = downcast<ContainerBox>(layoutBox);
                     isHorizontalWritingMode ? visualRect.setLeft(outsideListMarkerVisualPosition(listMarker, displayLine)) : visualRect.setTop(outsideListMarkerVisualPosition(listMarker, displayLine));
                 } else
                     isHorizontalWritingMode ? visualRect.moveHorizontally(boxMarginLeft) : visualRect.moveVertically(boxMarginLeft);
@@ -1013,7 +1012,7 @@ InlineLayoutPoint InlineDisplayContentBuilder::movePointHorizontallyForWritingMo
     return visualPoint;
 }
 
-InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(const ReplacedBox& listMarker, const InlineDisplay::Line& displayLine) const
+InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(const ContainerBox& listMarker, const InlineDisplay::Line& displayLine) const
 {
     ASSERT(listMarker.isListMarkerOutside());
     auto& boxGeometry = formattingState().boxGeometry(listMarker);

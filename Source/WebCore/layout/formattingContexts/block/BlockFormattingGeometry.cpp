@@ -34,7 +34,6 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LayoutReplacedBox.h"
 #include "Logging.h"
 #include <wtf/text/TextStream.h>
 
@@ -217,7 +216,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowNonReplacedContentWidthAndM
     return contentWidthAndMargin;
 }
 
-ContentWidthAndMargin BlockFormattingGeometry::inFlowReplacedContentWidthAndMargin(const ReplacedBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
+ContentWidthAndMargin BlockFormattingGeometry::inFlowReplacedContentWidthAndMargin(const ContainerBox& replacedBox, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
 {
     ASSERT(replacedBox.isInFlow());
 
@@ -262,7 +261,7 @@ ContentHeightAndMargin BlockFormattingGeometry::inFlowContentHeightAndMargin(con
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block'
     // replaced elements in normal flow and floating replaced elements
     if (layoutBox.isReplacedBox())
-        return inlineReplacedContentHeightAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, { }, overriddenVerticalValues);
+        return inlineReplacedContentHeightAndMargin(downcast<ContainerBox>(layoutBox), horizontalConstraints, { }, overriddenVerticalValues);
 
     ContentHeightAndMargin contentHeightAndMargin;
     if (layoutBox.isOverflowVisible() && !layoutBox.isDocumentBox()) {
@@ -289,7 +288,7 @@ ContentWidthAndMargin BlockFormattingGeometry::inFlowContentWidthAndMargin(const
 
     if (!layoutBox.isReplacedBox())
         return inFlowNonReplacedContentWidthAndMargin(layoutBox, horizontalConstraints, overriddenHorizontalValues);
-    return inFlowReplacedContentWidthAndMargin(downcast<ReplacedBox>(layoutBox), horizontalConstraints, overriddenHorizontalValues);
+    return inFlowReplacedContentWidthAndMargin(downcast<ContainerBox>(layoutBox), horizontalConstraints, overriddenHorizontalValues);
 }
 
 ContentWidthAndMargin BlockFormattingGeometry::computedContentWidthAndMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints, std::optional<LayoutUnit> availableWidthFloatAvoider) const
@@ -349,7 +348,7 @@ IntrinsicWidthConstraints BlockFormattingGeometry::intrinsicWidthConstraints(con
             return { *width, *width };
 
         if (layoutBox.isReplacedBox()) {
-            auto& replacedBox = downcast<ReplacedBox>(layoutBox);
+            auto& replacedBox = downcast<ContainerBox>(layoutBox);
             if (replacedBox.hasIntrinsicWidth()) {
                 auto replacedWidth = replacedBox.intrinsicWidth();
                 return { replacedWidth, replacedWidth };

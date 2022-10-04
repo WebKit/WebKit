@@ -30,7 +30,6 @@
 namespace WebCore {
 namespace Layout {
 
-class ReplacedBox;
 struct ComputedHorizontalMargin;
 struct ComputedVerticalMargin;
 class ContainerBox;
@@ -54,8 +53,8 @@ public:
     ContentHeightAndMargin floatingContentHeightAndMargin(const Box&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
     ContentWidthAndMargin floatingContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
-    ContentHeightAndMargin inlineReplacedContentHeightAndMargin(const ReplacedBox&, const HorizontalConstraints&, std::optional<VerticalConstraints>, const OverriddenVerticalValues&) const;
-    ContentWidthAndMargin inlineReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, std::optional<VerticalConstraints>, const OverriddenHorizontalValues&) const;
+    ContentHeightAndMargin inlineReplacedContentHeightAndMargin(const ContainerBox&, const HorizontalConstraints&, std::optional<VerticalConstraints>, const OverriddenVerticalValues&) const;
+    ContentWidthAndMargin inlineReplacedContentWidthAndMargin(const ContainerBox&, const HorizontalConstraints&, std::optional<VerticalConstraints>, const OverriddenHorizontalValues&) const;
 
     LayoutSize inFlowPositionedPositionOffset(const Box&, const HorizontalConstraints&) const;
 
@@ -97,14 +96,14 @@ protected:
     const FormattingContext& formattingContext() const { return m_formattingContext; }
 
 private:
-    VerticalGeometry outOfFlowReplacedVerticalGeometry(const ReplacedBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverriddenVerticalValues&) const;
-    HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const ReplacedBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverriddenHorizontalValues&) const;
+    VerticalGeometry outOfFlowReplacedVerticalGeometry(const ContainerBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverriddenVerticalValues&) const;
+    HorizontalGeometry outOfFlowReplacedHorizontalGeometry(const ContainerBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverriddenHorizontalValues&) const;
 
     VerticalGeometry outOfFlowNonReplacedVerticalGeometry(const ContainerBox&, const HorizontalConstraints&, const VerticalConstraints&, const OverriddenVerticalValues&) const;
     HorizontalGeometry outOfFlowNonReplacedHorizontalGeometry(const ContainerBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
-    ContentHeightAndMargin floatingReplacedContentHeightAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
-    ContentWidthAndMargin floatingReplacedContentWidthAndMargin(const ReplacedBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
+    ContentHeightAndMargin floatingReplacedContentHeightAndMargin(const ContainerBox&, const HorizontalConstraints&, const OverriddenVerticalValues&) const;
+    ContentWidthAndMargin floatingReplacedContentWidthAndMargin(const ContainerBox&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 
     ContentWidthAndMargin floatingNonReplacedContentWidthAndMargin(const Box&, const HorizontalConstraints&, const OverriddenHorizontalValues&) const;
 

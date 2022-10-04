@@ -29,7 +29,6 @@
 #include "InlineLineBoxVerticalAligner.h"
 #include "InlineLineBuilder.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutReplacedBox.h"
 
 namespace WebCore {
 namespace Layout {
@@ -308,7 +307,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto& listMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
             auto marginBoxHeight = listMarkerBoxGeometry.marginBoxHeight();
             // Integration codepath constructs ReplacedBoxes for list markers.
-            auto baseline = downcast<ReplacedBox>(layoutBox).baselineForIntegration();
+            auto baseline = downcast<ContainerBox>(layoutBox).baselineForIntegration();
             auto ascent = baseline.value_or(marginBoxHeight);
 
             logicalLeft += std::max(0_lu, listMarkerBoxGeometry.marginStart());
@@ -426,7 +425,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         if (!initiatesLayoutBoundsChange)
             return;
 
-        auto behavesAsText = inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ReplacedBox>(inlineLevelBox.layoutBox()).isListMarkerImage());
+        auto behavesAsText = inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ContainerBox>(inlineLevelBox.layoutBox()).isListMarkerImage());
         auto layoutBoundsPrimaryMetrics = LayoutBoundsMetrics { };
         if (behavesAsText) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());

@@ -36,7 +36,6 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContainerBox.h"
 #include "LayoutInitialContainingBlock.h"
-#include "LayoutReplacedBox.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h" // Just for showLayoutTree.
 #include "Logging.h"
