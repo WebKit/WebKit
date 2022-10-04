@@ -1174,7 +1174,7 @@ No pre-PR checks to run""")
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created 'PR 1 | <rdar://problem/1> [Testing] Existing commit'!\n"
-            'Posted pull request link to <rdar://1>\n'
+            'Posted pull request link to rdar://1\n'
             'https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -1227,7 +1227,7 @@ No pre-PR checks to run""")
         self.assertEqual(
             captured.stdout.getvalue(),
             "Created 'PR 1 | <rdar://problem/1> [Testing] Existing commit'!\n"
-            'Posted pull request link to <rdar://1>\n'
+            'Posted pull request link to rdar://1\n'
             'https://bitbucket.example.com/projects/WEBKIT/repos/webkit/pull-requests/1/overview\n',
         )
         self.assertEqual(captured.stderr.getvalue(), '')

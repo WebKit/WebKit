@@ -103,7 +103,7 @@ class TestCommitsStory(TestCase):
                 message='Cherry-pick 123@main (0123456789ab). <rdar://54321>',
             )
             story = CommitsStory([commit])
-            self.assertEqual(story.by_issue.get('<rdar://54321>', []), [commit])
+            self.assertEqual(story.by_issue.get('rdar://54321', []), [commit])
             self.assertEqual(
                 [str(rel) for rel in story.relations.get('123@main', [])],
                 ['1234@main cherry-picked'],

@@ -55,7 +55,7 @@ static JSStaticFunction bridgedFunctions[] = {
 static JSClassRef bridgedObjectClass = NULL;
 static JSClassDefinition bridgedClassDef;
 
-static JSClassRef jsClassRef()
+static JSClassRef jsClassRef(void)
 {
     if (!bridgedObjectClass) {
         bridgedClassDef = kJSClassDefinitionEmpty;
@@ -66,7 +66,7 @@ static JSClassRef jsClassRef()
     return bridgedObjectClass;
 }
 
-void customGlobalObjectClassTest()
+void customGlobalObjectClassTest(void)
 {
     JSClassRef bridgedObjectJsClassRef = jsClassRef();
     JSGlobalContextRef globalContext = JSGlobalContextCreate(bridgedObjectJsClassRef);
@@ -105,7 +105,7 @@ void customGlobalObjectClassTest()
     JSGlobalContextRelease(globalContext);
 }
 
-void globalObjectSetPrototypeTest()
+void globalObjectSetPrototypeTest(void)
 {
     JSClassDefinition definition = kJSClassDefinitionEmpty;
     definition.className = "Global";
@@ -121,7 +121,7 @@ void globalObjectSetPrototypeTest()
     JSGlobalContextRelease(context);
 }
 
-void globalObjectPrivatePropertyTest()
+void globalObjectPrivatePropertyTest(void)
 {
     JSClassDefinition definition = kJSClassDefinitionEmpty;
     definition.className = "Global";

@@ -69,8 +69,8 @@ class TestCherryPick(testing.PathTestCase):
                 args=('cherry-pick', 'd8bce26fa65c', '-i', '<rdar://problem/123>'),
                 path=self.path,
             ))
-            self.assertEqual(repo.head.hash, '200db1e4faae82ff005f1b826a12ad8c8260b179')
-            self.assertEqual(repo.head.message, 'Cherry-pick 5@main (d8bce26fa65c). <rdar://123>\n    Patch Series\n')
+            self.assertEqual(repo.head.hash, 'bae505f206a290592fd251b057874d2d9d931202')
+            self.assertEqual(repo.head.message, 'Cherry-pick 5@main (d8bce26fa65c). rdar://123\n    Patch Series\n')
 
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
