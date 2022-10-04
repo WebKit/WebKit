@@ -331,37 +331,17 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& ori
     ensureDebugCategoryInitialized();
     EvpPKeyPtr privateKey;
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
-    privateKey.reset(EVP_PKEY_new());
-    if (!privateKey) {
-        GST_WARNING("Failed to create private key");
-        return { };
-    }
-#endif
-
     switch (info.type) {
     case PeerConnectionBackend::CertificateInformation::Type::ECDSAP256: {
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
         privateKey.reset(EVP_EC_gen("prime256v1"));
         if (!privateKey)
             return { };
-#else
-        auto ecKey = ECKeyPtr(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
-        // Ensure curve name is included when EC key is serialized.
-        // Without this call, OpenSSL versions before 1.1.0 will create
-        // certificates that don't work for TLS.
-        // This is a no-op for BoringSSL and OpenSSL 1.1.0+
-        EC_KEY_set_asn1_flag(ecKey.get(), OPENSSL_EC_NAMED_CURVE);
-        if (!privateKey || !ecKey || !EC_KEY_generate_key(ecKey.get()) || !EVP_PKEY_assign_EC_KEY(privateKey.get(), ecKey.get()))
-            return { };
-#endif
         break;
     }
     case PeerConnectionBackend::CertificateInformation::Type::RSASSAPKCS1v15: {
         int publicExponent = info.rsaParameters ? info.rsaParameters->publicExponent : 65537;
         auto modulusLength = info.rsaParameters ? info.rsaParameters->modulusLength : 2048;
 
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
         auto ctx = EvpPKeyCtxPtr(EVP_PKEY_CTX_new_from_name(nullptr, "RSA", nullptr));
         if (!ctx)
             return { };
@@ -400,16 +380,6 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& ori
         if (!pkey)
             return { };
         privateKey.reset(pkey);
-#else
-        auto rsa = RSAPtr(RSA_new());
-        if (!rsa)
-            return { };
-
-        auto exponent = BIGNUMPtr(BN_new());
-        if (!BN_set_word(exponent.get(), publicExponent) || !RSA_generate_key_ex(rsa.get(), modulusLength, exponent.get(), nullptr)
-            || !EVP_PKEY_assign_RSA(privateKey.get(), rsa.get()))
-            return { };
-#endif
         break;
     }
     }
@@ -424,11 +394,7 @@ std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& ori
 
     // Set a random 64 bit integer as serial number.
     auto serialNumber = BIGNUMPtr(BN_new());
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
     BN_rand(serialNumber.get(), 64, 0, 0);
-#else
-    BN_pseudo_rand(serialNumber.get(), 64, 0, 0);
-#endif
     ASN1_INTEGER* asn1SerialNumber = X509_get_serialNumber(x509.get());
     BN_to_ASN1_INTEGER(serialNumber.get(), asn1SerialNumber);
 
