@@ -37,11 +37,11 @@ static std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBa
     case TextBreakIterator::Mode::Line:
         return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Line, locale.string().utf8().data());
     case TextBreakIterator::Mode::Caret:
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter);
+        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
     case TextBreakIterator::Mode::Delete:
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::BackwardDeletion);
+        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::BackwardDeletion, locale);
     case TextBreakIterator::Mode::Character:
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter);
+        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
     }
 }
 
