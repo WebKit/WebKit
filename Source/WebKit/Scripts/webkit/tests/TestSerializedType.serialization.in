@@ -1,10 +1,10 @@
 # test comment
 
-headers requiring ENABLE(TEST_FEATURE): "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
 headers: "HeaderWithoutCondition"
 
 #if ENABLE(TEST_FEATURE)
-[AdditionalEncoder=OtherEncoder] struct Namespace::Subnamespace::StructName {
+headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
+[AdditionalEncoder=OtherEncoder, CustomHeader=True] struct Namespace::Subnamespace::StructName {
     FirstMemberType firstMemberName
     #if ENABLE(SECOND_MEMBER)
     SecondMemberType secondMemberName;
@@ -46,15 +46,27 @@ class WithoutNamespace {
     int a;
 }
 
-enum class EnumNamespace::BoolEnumType : bool
+class WebCore::InheritsFrom : WithoutNamespace {
+    int b;
+}
 
+#if ENABLE(BOOL_ENUM)
+enum class EnumNamespace::BoolEnumType : bool
+#endif
+
+#if ENABLE(UINT16_ENUM)
 enum class EnumNamespace::EnumType : uint16_t {
     FirstValue,
+#if ENABLE(ENUM_VALUE_CONDITION)
     SecondValue
+#endif
 }
+#endif
 
 [OptionSet] enum class EnumNamespace2::OptionSetEnumType : uint8_t {
     OptionSetFirstValue,
+#if ENABLE(OPTION_SET_SECOND_VALUE)
     OptionSetSecondValue,
+#endif
     OptionSetThirdValue
 }

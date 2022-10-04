@@ -1,3 +1,0 @@
-
-PASS Expecting logs: ["violated-directive=style-src-elem","PASS"]
-

@@ -54,46 +54,7 @@ struct ApplePayPaymentAuthorizationResult {
 #endif
 
     WEBCORE_EXPORT bool isFinalState() const;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayPaymentAuthorizationResult> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayPaymentAuthorizationResult::encode(Encoder& encoder) const
-{
-    encoder << status;
-    encoder << errors;
-#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-    encoder << orderDetails;
-#endif
-}
-
-template<class Decoder>
-std::optional<ApplePayPaymentAuthorizationResult> ApplePayPaymentAuthorizationResult::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(status, Status)
-    DECODE(errors, Vector<RefPtr<ApplePayError>>)
-#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-    DECODE(orderDetails, std::optional<ApplePayPaymentOrderDetails>)
-#endif
-
-#undef DECODE
-
-    return { {
-        WTFMove(*status),
-        WTFMove(*errors),
-#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-        WTFMove(*orderDetails),
-#endif
-    } };
-}
 
 }
 

@@ -26,7 +26,7 @@
 #pragma once
 
 #include "LayoutBoxGeometry.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
@@ -47,9 +47,9 @@ class Rect;
 class FloatingState : public RefCounted<FloatingState> {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:
-    static Ref<FloatingState> create(LayoutState& layoutState, const ContainerBox& formattingContextRoot) { return adoptRef(*new FloatingState(layoutState, formattingContextRoot)); }
+    static Ref<FloatingState> create(LayoutState& layoutState, const ElementBox& formattingContextRoot) { return adoptRef(*new FloatingState(layoutState, formattingContextRoot)); }
 
-    const ContainerBox& root() const { return m_formattingContextRoot; }
+    const ElementBox& root() const { return m_formattingContextRoot; }
 
     class FloatItem {
     public:
@@ -60,7 +60,7 @@ public:
 
         bool isLeftPositioned() const { return m_position == Position::Left; }
         bool isRightPositioned() const { return m_position == Position::Right; }
-        bool isInFormattingContextOf(const ContainerBox& formattingContextRoot) const;
+        bool isInFormattingContextOf(const ElementBox& formattingContextRoot) const;
 
         Rect rectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
         BoxGeometry::HorizontalMargin horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
@@ -92,11 +92,11 @@ public:
 
 private:
     friend class FloatingContext;
-    FloatingState(LayoutState&, const ContainerBox& formattingContextRoot);
+    FloatingState(LayoutState&, const ElementBox& formattingContextRoot);
     LayoutState& layoutState() const { return m_layoutState; }
 
     LayoutState& m_layoutState;
-    CheckedRef<const ContainerBox> m_formattingContextRoot;
+    CheckedRef<const ElementBox> m_formattingContextRoot;
     FloatList m_floats;
     enum class PositionType {
         Left = 1 << 0,

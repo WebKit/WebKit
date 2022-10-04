@@ -217,7 +217,8 @@
       "name" : "Ahmad Saleem",
       "nicks" : [
          "ahmadsaleem"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -2740,6 +2741,14 @@
       ],
       "expertise" : "Core KHTML Contributor, The QtWebKit Port",
       "name" : "George Staikos"
+   },
+   {
+      "emails" : [
+         "g_squelart@apple.com",
+         "gjs@apple.com"
+      ],
+      "github" : "squelart",
+      "name" : "Gerald Squelart"
    },
    {
       "emails" : [

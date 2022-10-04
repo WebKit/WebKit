@@ -1080,6 +1080,9 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         m_avPlayer.get().videoRangeOverride = convertDynamicRangeModeEnumToAVVideoRange(player()->preferredDynamicRangeMode());
 #endif
 
+    if ([m_videoLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
+        [m_videoLayer setToneMapToStandardDynamicRange:player()->shouldDisableHDR()];
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     updateDisableExternalPlayback();
     [m_avPlayer setAllowsExternalPlayback:m_allowsWirelessVideoPlayback];
@@ -3835,6 +3838,15 @@ void MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode(DynamicRan
 #else
     UNUSED_PARAM(mode);
 #endif
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setShouldDisableHDR(bool shouldDisable)
+{
+    if (![m_videoLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, shouldDisable);
+    [m_videoLayer setToneMapToStandardDynamicRange:shouldDisable];
 }
 
 void MediaPlayerPrivateAVFoundationObjC::audioOutputDeviceChanged()

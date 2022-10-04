@@ -34,7 +34,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableFormattingState);
 
-static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox)
+static UniqueRef<TableGrid> ensureTableGrid(const ElementBox& tableBox)
 {
     auto tableGrid = makeUniqueRef<TableGrid>();
     auto& tableStyle = tableBox.style();
@@ -62,23 +62,23 @@ static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox)
 
     if (colgroup) {
         auto& columns = tableGrid->columns();
-        for (auto* column = downcast<ContainerBox>(*colgroup).firstChild(); column; column = column->nextSibling()) {
+        for (auto* column = downcast<ElementBox>(*colgroup).firstChild(); column; column = column->nextSibling()) {
             ASSERT(column->isTableColumn());
             auto columnSpanCount = column->columnSpan();
             ASSERT(columnSpanCount > 0);
             while (columnSpanCount--)
-                columns.addColumn(downcast<ContainerBox>(*column));
+                columns.addColumn(downcast<ElementBox>(*column));
         }
     }
 
     auto* firstSection = colgroup ? colgroup->nextSibling() : tableCaption ? tableCaption->nextSibling() : firstChild;
     for (auto* section = firstSection; section; section = section->nextSibling()) {
         ASSERT(section->isTableHeader() || section->isTableBody() || section->isTableFooter());
-        for (auto* row = downcast<ContainerBox>(*section).firstChild(); row; row = row->nextSibling()) {
+        for (auto* row = downcast<ElementBox>(*section).firstChild(); row; row = row->nextSibling()) {
             ASSERT(row->isTableRow());
-            for (auto* cell = downcast<ContainerBox>(*row).firstChild(); cell; cell = cell->nextSibling()) {
+            for (auto* cell = downcast<ElementBox>(*row).firstChild(); cell; cell = cell->nextSibling()) {
                 ASSERT(cell->isTableCell());
-                tableGrid->appendCell(downcast<ContainerBox>(*cell));
+                tableGrid->appendCell(downcast<ElementBox>(*cell));
             }
         }
     }
@@ -86,7 +86,7 @@ static UniqueRef<TableGrid> ensureTableGrid(const ContainerBox& tableBox)
 }
 
 
-TableFormattingState::TableFormattingState(Ref<FloatingState>&& floatingState, LayoutState& layoutState, const ContainerBox& tableBox)
+TableFormattingState::TableFormattingState(Ref<FloatingState>&& floatingState, LayoutState& layoutState, const ElementBox& tableBox)
     : FormattingState(WTFMove(floatingState), Type::Table, layoutState)
     , m_tableGrid(ensureTableGrid(tableBox))
 {

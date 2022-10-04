@@ -47,6 +47,7 @@
 #include "KeyframeEffectStack.h"
 #include "Logging.h"
 #include "RenderElement.h"
+#include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyledElement.h"
 #include "WebAnimationUtilities.h"
@@ -1461,9 +1462,6 @@ ExceptionOr<void> WebAnimation::commitStyles()
     // 2.3 Let inline style be the result of getting the CSS declaration block corresponding to target’s style attribute. If target does not have a style
     // attribute, let inline style be a new empty CSS declaration block with the readonly flag unset and owner node set to target.
 
-    // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one animation effect associated with
-    // animation whose effect target is target.
-
     auto unanimatedStyle = [&]() {
         if (auto styleable = Styleable::fromRenderer(*renderer)) {
             if (auto* lastStyleChangeEventStyle = styleable->lastStyleChangeEventStyle())
@@ -1475,8 +1473,14 @@ ExceptionOr<void> WebAnimation::commitStyles()
     }();
 
     auto computedStyleExtractor = ComputedStyleExtractor(&styledElement);
-    auto inlineStyle = styledElement.document().createCSSStyleDeclaration();
-    inlineStyle->setCssText(styledElement.getAttribute(HTMLNames::styleAttr));
+
+    auto inlineStyle = [&]() {
+        if (auto existinInlineStyle = styledElement.inlineStyle())
+            return existinInlineStyle->mutableCopy();
+        auto styleDeclaration = styledElement.document().createCSSStyleDeclaration();
+        styleDeclaration->setCssText(styledElement.getAttribute(HTMLNames::styleAttr));
+        return styleDeclaration->copyProperties();
+    }();
 
     auto& keyframeStack = styledElement.ensureKeyframeEffectStack(PseudoId::None);
 
@@ -1510,30 +1514,40 @@ ExceptionOr<void> WebAnimation::commitStyles()
         }
         if (m_replaceState == ReplaceState::Removed)
             effect->animation()->resolve(*animatedStyle, { nullptr });
-        WTF::switchOn(property,
+        return WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
                 if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr))
-                    inlineStyle->setPropertyInternal(propertyId, cssValue->cssText(), false);
+                    return inlineStyle->setProperty(propertyId, cssValue->cssText(), false);
+                return false;
             },
             [&] (AtomString customProperty) {
                 if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
-                    inlineStyle->setProperty(customProperty, cssValue->cssText(), emptyString());
+                    return inlineStyle->setCustomProperty(&styledElement.document(), customProperty, cssValue->cssText(), false, { styledElement.document() });
+                return false;
             }
         );
     };
 
-    // During iteration resolve() could clear the underlying properties so we use a copy
-    auto properties = effect->animatedProperties();
+    // 2.4 Let targeted properties be the set of physical longhand properties that are a target property for at least one
+    // animation effect associated with animation whose effect target is target.
+    HashSet<CSSPropertyID> targetedProperties;
+    for (auto property : effect->animatedProperties()) {
+        for (auto longhand : shorthandForProperty(property))
+            targetedProperties.add(longhand);
+        targetedProperties.add(property);
+    }
     // 2.5 For each property, property, in targeted properties:
-    for (auto property : properties) {
+    auto didMutate = false;
+    for (auto property : targetedProperties) {
         if (property != CSSPropertyCustom)
-            commitProperty(property);
+            didMutate = commitProperty(property) || didMutate;
     }
     auto customProperties = effect->animatedCustomProperties();
     for (auto customProperty : customProperties)
-        commitProperty(customProperty);
+        didMutate = commitProperty(customProperty) || didMutate;
 
-    styledElement.setAttribute(HTMLNames::styleAttr, AtomString { inlineStyle->cssText() });
+    if (didMutate)
+        styledElement.setAttribute(HTMLNames::styleAttr, inlineStyle->asTextAtom());
 
     return { };
 }

@@ -156,10 +156,15 @@ bool ScrollSnapAnimatorState::resnapAfterLayout(ScrollOffset scrollOffset, const
         snapPointChanged |= preserveCurrentTargetForAxis(ScrollEventAxis::Vertical);
 
     // If we do not have current targets and are snapped to multiple targets, set them
-    if ((!activeHorizontalID && activeHorizontalIndex) && (!activeVerticalID && activeVerticalIndex) && snapOffsetsForAxis(ScrollEventAxis::Horizontal)[*activeHorizontalIndex].snapTargetID != snapOffsetsForAxis(ScrollEventAxis::Vertical)[*activeVerticalIndex].snapTargetID) {
-        setActiveSnapIndexIDForAxis(ScrollEventAxis::Horizontal, snapOffsetsForAxis(ScrollEventAxis::Horizontal)[*activeHorizontalIndex].snapTargetID);
-        setActiveSnapIndexIDForAxis(ScrollEventAxis::Vertical, snapOffsetsForAxis(ScrollEventAxis::Vertical)[*activeVerticalIndex].snapTargetID);
+    if ((!activeHorizontalID && activeHorizontalIndex) && (!activeVerticalID && activeVerticalIndex)) {
+        auto horizontalID = snapOffsetsForAxis(ScrollEventAxis::Horizontal)[*activeHorizontalIndex].snapTargetID;
+        auto verticalID = snapOffsetsForAxis(ScrollEventAxis::Vertical)[*activeVerticalIndex].snapTargetID;
+        if (horizontalID && verticalID && horizontalID != verticalID) {
+            setActiveSnapIndexIDForAxis(ScrollEventAxis::Horizontal, horizontalID);
+            setActiveSnapIndexIDForAxis(ScrollEventAxis::Vertical, verticalID);
+        }
     }
+    
     LOG_WITH_STREAM(ScrollSnap, stream << "ScrollSnapAnimatorState::resnapAfterLayout() current target: horizontal: " << activeHorizontalID << " vertical: "<< activeVerticalID);
     return snapPointChanged;
 }

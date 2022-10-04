@@ -23,7 +23,7 @@
 header: "WebGPURenderPassTimestampWrites.h"
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::RenderPassTimestampWrite {
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader=True] struct WebKit::WebGPU::RenderPassTimestampWrite {
     WebKit::WebGPUIdentifier querySet
     PAL::WebGPU::Size32 queryIndex
     PAL::WebGPU::RenderPassTimestampLocation location

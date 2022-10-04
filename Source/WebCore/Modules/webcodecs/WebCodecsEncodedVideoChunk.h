@@ -50,9 +50,11 @@ public:
     WebCodecsEncodedVideoChunkType type() const { return m_type; };
     int64_t timestamp() const { return m_timestamp; }
     std::optional<uint64_t> duration() const { return m_duration; }
-    size_t byteLength() const { return m_data.capacity(); }
+    size_t byteLength() const { return m_data.size(); }
 
     ExceptionOr<void> copyTo(BufferSource&&);
+
+    const uint8_t* data() const { return m_data.data(); }
 
 private:
     explicit WebCodecsEncodedVideoChunk(Init&&);

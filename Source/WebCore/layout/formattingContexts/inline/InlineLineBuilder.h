@@ -144,7 +144,7 @@ private:
     InlineFormattingState* formattingState() { return m_inlineFormattingState; }
     FloatingState* floatingState() { return m_floatingState; }
     const FloatingState* floatingState() const { return m_floatingState; }
-    const ContainerBox& root() const;
+    const ElementBox& root() const;
     const LayoutState& layoutState() const;
 
 private:

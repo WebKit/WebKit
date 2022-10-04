@@ -135,8 +135,21 @@ void CSSTranslate::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
 {
-    // FIXME: Implement.
-    return DOMMatrix::fromMatrix(DOMMatrixInit { });
+    // https://drafts.css-houdini.org/css-typed-om/#dom-csstransformcomponent-tomatrix
+    // As the entries of such a matrix are defined relative to the px unit, if any <length>s
+    // in this involved in generating the matrix are not compatible units with px (such as
+    // relative lengths or percentages), throw a TypeError.
+    if (!is<CSSUnitValue>(m_x) || !is<CSSUnitValue>(m_y) || !is<CSSUnitValue>(m_z))
+        return Exception { TypeError };
+
+    auto x = downcast<CSSUnitValue>(m_x.get()).convertTo(CSSUnitType::CSS_PX);
+    auto y = downcast<CSSUnitValue>(m_y.get()).convertTo(CSSUnitType::CSS_PX);
+    auto z = downcast<CSSUnitValue>(m_z.get()).convertTo(CSSUnitType::CSS_PX);
+
+    if (!x || !y || !z)
+        return Exception { TypeError };
+
+    return DOMMatrix::create({ }, is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No)->translateSelf(x->value(), y->value(), z->value());
 }
 
 } // namespace WebCore

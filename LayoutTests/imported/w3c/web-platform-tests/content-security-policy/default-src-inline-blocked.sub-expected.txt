@@ -1,5 +1,0 @@
-This test passes if the inline scripts don't create failing tests and a CSP report is sent.
-
-
-PASS Expecting logs: ["violated-directive=script-src-elem","violated-directive=script-src-elem"]
-

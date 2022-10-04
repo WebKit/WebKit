@@ -1,4 +1,4 @@
 
-FAIL Dedicated worker inherits CSP from main document assert_equals: expected "importScripts allowed" but got "importScripts blocked"
+PASS Dedicated worker delivers its own CSP
 PASS Shared worker delivers its own CSP
 

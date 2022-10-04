@@ -15,3 +15,4 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/support/child_window_location_navigate.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/support/helper.js

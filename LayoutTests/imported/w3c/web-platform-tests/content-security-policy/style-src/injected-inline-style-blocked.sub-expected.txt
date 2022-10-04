@@ -1,5 +1,5 @@
 PASS 1/2
 PASS 2/2
 
-PASS Expecting logs: ["violated-directive=style-src-elem","PASS"]
+PASS Expecting logs: ["violated-directive=style-src-elem","violated-directive=style-src-elem","PASS"]
 

@@ -29,6 +29,7 @@
 
 #include "SystemImage.h"
 #include <optional>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
@@ -72,10 +73,8 @@ public:
 
     void draw(GraphicsContext&, const FloatRect&) const final;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<ApplePayButtonSystemImage>> decode(Decoder&);
-
 private:
+    friend struct IPC::ArgumentCoder<ApplePayButtonSystemImage, void>;
     ApplePayButtonSystemImage(ApplePayButtonType applePayButtonType, ApplePayButtonStyle applePayButtonStyle, const String& locale, float largestCornerRadius)
         : SystemImage(SystemImageType::ApplePayButton)
         , m_applePayButtonType(applePayButtonType)
@@ -91,73 +90,10 @@ private:
     float m_largestCornerRadius;
 };
 
-template<class Encoder>
-void ApplePayButtonSystemImage::encode(Encoder& encoder) const
-{
-    encoder << m_applePayButtonType;
-    encoder << m_applePayButtonStyle;
-    encoder << m_locale;
-    encoder << m_largestCornerRadius;
-}
-
-template<class Decoder>
-std::optional<Ref<ApplePayButtonSystemImage>> ApplePayButtonSystemImage::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(applePayButtonType, ApplePayButtonType)
-    DECODE(applePayButtonStyle, ApplePayButtonStyle)
-    DECODE(locale, String)
-    DECODE(largestCornerRadius, float)
-
-#undef DECODE
-
-    return ApplePayButtonSystemImage::create(WTFMove(*applePayButtonType), WTFMove(*applePayButtonStyle), WTFMove(*locale), WTFMove(*largestCornerRadius));
-}
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ApplePayButtonSystemImage)
     static bool isType(const WebCore::SystemImage& systemImage) { return systemImage.systemImageType() == WebCore::SystemImageType::ApplePayButton; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ApplePayButtonType> {
-    using values = EnumValues<WebCore::ApplePayButtonType,
-        WebCore::ApplePayButtonType::Plain,
-        WebCore::ApplePayButtonType::Buy,
-        WebCore::ApplePayButtonType::SetUp,
-        WebCore::ApplePayButtonType::Donate,
-        WebCore::ApplePayButtonType::CheckOut,
-        WebCore::ApplePayButtonType::Book,
-        WebCore::ApplePayButtonType::Subscribe
-#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
-        , WebCore::ApplePayButtonType::Reload,
-        WebCore::ApplePayButtonType::AddMoney,
-        WebCore::ApplePayButtonType::TopUp,
-        WebCore::ApplePayButtonType::Order,
-        WebCore::ApplePayButtonType::Rent,
-        WebCore::ApplePayButtonType::Support,
-        WebCore::ApplePayButtonType::Contribute,
-        WebCore::ApplePayButtonType::Tip
-#endif // ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
-    >;
-};
-
-template<> struct EnumTraits<WebCore::ApplePayButtonStyle> {
-    using values = EnumValues<
-        WebCore::ApplePayButtonStyle,
-        WebCore::ApplePayButtonStyle::White,
-        WebCore::ApplePayButtonStyle::WhiteOutline,
-        WebCore::ApplePayButtonStyle::Black
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(APPLE_PAY)

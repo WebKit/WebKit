@@ -82,7 +82,6 @@ public:
     void loadURL(const URL&, const String& referrer = String());
     // Sub frames only. For main frames, use WebPageProxy::loadData.
     void loadData(const IPC::DataReference&, const String& MIMEType, const String& encodingName, const URL& baseURL);
-    void stopLoading();
 
     const URL& url() const { return m_frameLoadState.url(); }
     const URL& provisionalURL() const { return m_frameLoadState.provisionalURL(); }
@@ -98,7 +97,6 @@ public:
     WebCertificateInfo* certificateInfo() const { return m_certificateInfo.get(); }
 
     bool canProvideSource() const;
-    bool canShowMIMEType(const String& mimeType) const;
 
     bool isDisplayingStandaloneImageDocument() const;
     bool isDisplayingStandaloneMediaDocument() const;

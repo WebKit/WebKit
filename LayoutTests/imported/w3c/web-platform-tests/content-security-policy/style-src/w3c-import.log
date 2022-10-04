@@ -23,7 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/inline-style-attribute-on-html.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/inline-style-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-allowed.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-blocked.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-blocked.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-error-event-fires.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-hash-allowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/style-src/style-src-hash-blocked.html

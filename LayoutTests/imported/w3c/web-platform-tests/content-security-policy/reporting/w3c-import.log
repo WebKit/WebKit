@@ -43,6 +43,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url-on-mixed-content-frame.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-original-url.sub.html.sub.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-preload-and-consume.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/report-strips-fragment.html

@@ -33,7 +33,7 @@
 namespace WebCore {
 namespace Layout {
 
-FlexLayout::FlexLayout(const ContainerBox& flexBox)
+FlexLayout::FlexLayout(const ElementBox& flexBox)
     : m_flexBox(flexBox)
 {
 }

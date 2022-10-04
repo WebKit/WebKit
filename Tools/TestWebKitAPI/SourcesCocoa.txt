@@ -279,6 +279,7 @@ Tests/WebKitCocoa/WKProcessPoolConfiguration.mm
 Tests/WebKitCocoa/WKRequestActivatedElementInfo.mm
 Tests/WebKitCocoa/WKURLSchemeHandler-1.mm
 Tests/WebKitCocoa/WKURLSchemeHandler-leaks.mm
+Tests/WebKitCocoa/WKWebExtension.mm
 Tests/WebKitCocoa/WKWebExtensionMatchPattern.mm
 Tests/WebKitCocoa/WKWebViewAlwaysShowsScroller.mm
 Tests/WebKitCocoa/WKWebViewCandidateTests.mm

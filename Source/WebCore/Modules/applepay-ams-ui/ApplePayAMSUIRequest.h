@@ -35,27 +35,7 @@ namespace WebCore {
 
 struct ApplePayAMSUIRequest {
     String engagementRequest; // required JSON
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayAMSUIRequest> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayAMSUIRequest::encode(Encoder& encoder) const
-{
-    encoder << engagementRequest;
-}
-
-template<class Decoder>
-std::optional<ApplePayAMSUIRequest> ApplePayAMSUIRequest::decode(Decoder& decoder)
-{
-    std::optional<String> engagementRequest;
-    decoder >> engagementRequest;
-    if (!engagementRequest)
-        return std::nullopt;
-
-    return { { WTFMove(*engagementRequest) } };
-}
 
 } // namespace WebCore
 

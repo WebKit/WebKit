@@ -27,8 +27,8 @@
 #include "LayoutBox.h"
 
 #include "LayoutBoxGeometry.h"
-#include "LayoutContainerBox.h"
 #include "LayoutContainingBlockChainIterator.h"
+#include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
 #include "LayoutState.h"
@@ -132,15 +132,15 @@ bool Box::establishesInlineFormattingContext() const
     if (!isBlockContainer())
         return false;
 
-    if (!isContainerBox())
+    if (!isElementBox())
         return false;
 
     // FIXME ???
-    if (!downcast<ContainerBox>(*this).firstInFlowChild())
+    if (!downcast<ElementBox>(*this).firstInFlowChild())
         return false;
 
     // It's enough to check the first in-flow child since we can't have both block and inline level sibling boxes.
-    return downcast<ContainerBox>(*this).firstInFlowChild()->isInlineLevelBox();
+    return downcast<ElementBox>(*this).firstInFlowChild()->isInlineLevelBox();
 }
 
 bool Box::establishesTableFormattingContext() const
@@ -343,7 +343,7 @@ const Box* Box::previousInFlowOrFloatingSibling() const
     return previousSibling;
 }
 
-bool Box::isDescendantOf(const ContainerBox& ancestor) const
+bool Box::isDescendantOf(const ElementBox& ancestor) const
 {
     if (ancestor.isInitialContainingBlock())
         return true;
@@ -371,10 +371,10 @@ bool Box::isOverflowVisible() const
         return true;
     }
     if (is<InitialContainingBlock>(*this)) {
-        auto* documentBox = downcast<ContainerBox>(*this).firstChild();
-        if (!documentBox || !documentBox->isDocumentBox() || !is<ContainerBox>(documentBox))
+        auto* documentBox = downcast<ElementBox>(*this).firstChild();
+        if (!documentBox || !documentBox->isDocumentBox() || !is<ElementBox>(documentBox))
             return isOverflowVisible;
-        auto* bodyBox = downcast<ContainerBox>(documentBox)->firstChild();
+        auto* bodyBox = downcast<ElementBox>(documentBox)->firstChild();
         if (!bodyBox || !bodyBox->isBodyBox())
             return isOverflowVisible;
         auto& bodyBoxStyle = bodyBox->style();

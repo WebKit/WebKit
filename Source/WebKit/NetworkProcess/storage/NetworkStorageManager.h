@@ -179,6 +179,8 @@ private:
     void iterateCursor(const WebCore::IDBRequestData&, const WebCore::IDBIterateCursorData&);
     void getAllDatabaseNamesAndVersions(IPC::Connection&, const WebCore::IDBResourceIdentifier&, const WebCore::ClientOrigin&);
 
+    SuspendableWorkQueue& workQueue() WTF_RETURNS_CAPABILITY(m_queue.get()) { return m_queue; }
+
     PAL::SessionID m_sessionID;
     Ref<SuspendableWorkQueue> m_queue;
     String m_path;
@@ -196,7 +198,7 @@ private:
     uint64_t m_defaultThirdPartyOriginQuota;
     bool m_shouldUseCustomPaths;
     IPC::Connection::UniqueID m_parentConnection;
-    HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection;
+    HashMap<IPC::Connection::UniqueID, HashSet<String>> m_temporaryBlobPathsByConnection WTF_GUARDED_BY_CAPABILITY(workQueue());
 #if PLATFORM(IOS_FAMILY)
     Seconds m_backupExclusionPeriod;
 #endif

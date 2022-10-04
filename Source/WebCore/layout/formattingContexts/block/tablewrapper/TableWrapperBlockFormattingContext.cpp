@@ -43,7 +43,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableWrapperBlockFormattingContext);
 
-TableWrapperBlockFormattingContext::TableWrapperBlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState& formattingState)
+TableWrapperBlockFormattingContext::TableWrapperBlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState& formattingState)
     : BlockFormattingContext(formattingContextRoot, formattingState)
     , m_tableWrapperFormattingQuirks(*this)
 {
@@ -56,7 +56,7 @@ void TableWrapperBlockFormattingContext::layoutInFlowContent(const ConstraintsFo
     // The caption boxes are principal block-level boxes that retain their own content, padding, margin, and border areas, and are rendered
     // as normal block boxes inside the table wrapper box. Whether the caption boxes are placed before or after the table box is decided by
     // the 'caption-side' property, as described below.
-    for (auto& child : childrenOfType<ContainerBox>(root())) {
+    for (auto& child : childrenOfType<ElementBox>(root())) {
         if (child.isTableBox())
             layoutTableBox(child, constraints);
         else if (child.isTableCaption())
@@ -66,7 +66,7 @@ void TableWrapperBlockFormattingContext::layoutInFlowContent(const ConstraintsFo
     }
 }
 
-void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tableBox, const ConstraintsForInFlowContent& constraints)
+void TableWrapperBlockFormattingContext::layoutTableBox(const ElementBox& tableBox, const ConstraintsForInFlowContent& constraints)
 {
     layoutState().ensureTableFormattingState(tableBox);
 
@@ -84,7 +84,7 @@ void TableWrapperBlockFormattingContext::layoutTableBox(const ContainerBox& tabl
     computeHeightAndMarginForTableBox(tableBox, constraints);
 }
 
-void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(const ContainerBox& tableBox, const HorizontalConstraints& horizontalConstraints)
+void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(const ElementBox& tableBox, const HorizontalConstraints& horizontalConstraints)
 {
     ASSERT(tableBox.isTableBox());
     if (!tableBox.hasChild() || tableBox.style().borderCollapse() == BorderCollapse::Separate) {
@@ -120,7 +120,7 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
     }
 
     topBorder = std::max(topBorder, formattingGeometry().computedBorder(*tableBox.firstChild()).vertical.top);
-    for (auto& section : childrenOfType<ContainerBox>(tableBox)) {
+    for (auto& section : childrenOfType<ElementBox>(tableBox)) {
         auto horiztonalBorder = formattingGeometry().computedBorder(section).horizontal;
         leftBorder = std::max(leftBorder, horiztonalBorder.left);
         rightBorder = std::max(rightBorder, horiztonalBorder.right);
@@ -144,7 +144,7 @@ void TableWrapperBlockFormattingContext::computeBorderAndPaddingForTableBox(cons
     boxGeometry.setPadding(formattingGeometry().computedPadding(tableBox, horizontalConstraints.logicalWidth));
 }
 
-void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const ContainerBox& tableBox, const HorizontalConstraints& horizontalConstraints)
+void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const ElementBox& tableBox, const HorizontalConstraints& horizontalConstraints)
 {
     ASSERT(tableBox.isTableBox());
     // This is a special table "fit-content size" behavior handling. Not in the spec though.
@@ -215,7 +215,7 @@ void TableWrapperBlockFormattingContext::computeWidthAndMarginForTableBox(const 
     boxGeometry.setHorizontalMargin({ contentWidthAndMargin.usedMargin.start, contentWidthAndMargin.usedMargin.end });
 }
 
-void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const ContainerBox& tableBox, const ConstraintsForInFlowContent& constraints)
+void TableWrapperBlockFormattingContext::computeHeightAndMarginForTableBox(const ElementBox& tableBox, const ConstraintsForInFlowContent& constraints)
 {
     ASSERT(tableBox.isTableBox());
     // Table is a special BFC content. Its height is mainly driven by the content. Computed height, min-height and max-height are all

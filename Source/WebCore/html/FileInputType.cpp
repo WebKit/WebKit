@@ -124,14 +124,15 @@ FileInputType::~FileInputType()
         m_fileIconLoader->invalidate();
 }
 
-Vector<FileChooserFileInfo> FileInputType::filesFromFormControlState(const FormControlState& state)
+std::pair<Vector<FileChooserFileInfo>, String> FileInputType::filesFromFormControlState(const FormControlState& state)
 {
     Vector<FileChooserFileInfo> files;
-    size_t size = state.size();
+    size_t size = state.size() - 1;
     files.reserveInitialCapacity(size / 2);
     for (size_t i = 0; i < size; i += 2)
         files.uncheckedAppend({ state[i], { }, state[i + 1] });
-    return files;
+
+    return { files, state[size] };
 }
 
 const AtomString& FileInputType::formControlType() const
@@ -144,7 +145,7 @@ FormControlState FileInputType::saveFormControlState() const
     if (m_fileList->isEmpty())
         return { };
 
-    auto length = Checked<size_t>(m_fileList->files().size()) * Checked<size_t>(2);
+    auto length = Checked<size_t>(m_fileList->files().size()) * Checked<size_t>(2) + Checked<size_t>(1);
 
     Vector<AtomString> stateVector;
     stateVector.reserveInitialCapacity(length);
@@ -152,12 +153,14 @@ FormControlState FileInputType::saveFormControlState() const
         stateVector.uncheckedAppend(AtomString { file->path() });
         stateVector.uncheckedAppend(AtomString { file->name() });
     }
+    stateVector.uncheckedAppend(AtomString { m_displayString });
     return FormControlState { WTFMove(stateVector) };
 }
 
 void FileInputType::restoreFormControlState(const FormControlState& state)
 {
-    filesChosen(filesFromFormControlState(state));
+    auto [files, displayString] = filesFromFormControlState(state);
+    filesChosen(files, displayString);
 }
 
 bool FileInputType::appendFormData(DOMFormData& formData) const

@@ -40,6 +40,10 @@ Version: 1.0
     --submit-button-background-color: hsl(199.8, 76.4%, 48.2%);
     --submit-button-background-gradient: linear-gradient(hsl(199.9, 78.2%, 56.9%), hsl(200, 100%, 40%));
     --submit-button-text-color: hsl(0, 0%, 100%);
+    
+    --search-glyph: url('images/search.svg#dark');
+    --search-term-text-color: hsl(0, 0%, 0%);
+    --search-input-background: hsl(0, 100%, 100%);
 
     --pagination-border-color: hsla(0, 0%, 0%, 0.07);
     --pagination-button-shadow: inset hsla(0, 0%, 0%, 0.07) 0 0 0 1px;
@@ -59,7 +63,7 @@ Version: 1.0
     --tile-background-color: hsl(0, 0%, 100%);
     --tile-border-color: hsla(0, 0%, 0%, 0.1);
     --tile-subtle-border-shadow: inset hsla(0, 0%, 0%, 0.1) 0 0 0 1px;
-    --tile-subtle-image-border-shadoww: inset hsla(0, 0%, 0%, 0.1) 0 1px 0 1px;
+    --tile-subtle-image-border-shadow: inset hsla(0, 0%, 0%, 0.1) 0 1px 0 1px;
 
     --tile-default-background-color: hsl(215.3, 7.9%, 42.2%);
     --tile-background-color-blue: hsl(200, 100%, 40%);
@@ -156,6 +160,10 @@ Version: 1.0
         --submit-button-background-gradient: linear-gradient(hsl(199.9, 78.2%, 56.9%), hsl(200, 100%, 40%));
         --submit-button-text-color: hsl(0, 0%, 100%);
 
+        --search-glyph: url('images/search.svg#light');
+        --search-term-text-color: hsl(0, 100%, 100%);
+        --search-input-background: hsl(0, 0%, 0%);
+
         --pagination-border-color: hsla(0, 0%, 100%, 0.1);
         --pagination-button-shadow: inset hsla(0, 0%, 50%, 0.1) 0 0 0 1px;
         --pagination-button-text-color: hsl(0, 0%, 100%);
@@ -174,7 +182,7 @@ Version: 1.0
         --tile-background-color: hsl(120, 2%, 12%);
         --tile-border-color: hsl(0, 0%, 29%);
         --tile-subtle-border-shadow: inset hsla(0, 0%, 50%, 0.1) 0 0 0 1px;
-        --tile-subtle-image-border-shadoww: inset hsla(0, 0%, 100%, 0.1) 0 1px 0 1px;
+        --tile-subtle-image-border-shadow: inset hsla(0, 0%, 100%, 0.05) 0 1px 0 1px;
 
         --tile-default-background-color: hsl(215.3, 7.9%, 42.2%);
         --tile-background-color-blue: hsl(200, 100%, 40%);
@@ -2129,7 +2137,7 @@ footer nav {
 
 header nav li {
     display: inline-block;
-    padding: 1.5rem 0 1.5rem 3rem;
+    padding: 1.5rem 0 1.5rem 1.5rem;
 }
 
 footer nav li {
@@ -2197,8 +2205,8 @@ header .menu-item { /* add bottom dimension to main menu items */
     padding: 3rem;
     box-sizing: border-box;
 
-    width: 21rem;
-    margin-left: -11rem;
+    width: 24rem;
+    margin-left: -13rem;
     margin-top: -99rem;
 
     position: absolute;
@@ -2264,6 +2272,102 @@ header .menu-item { /* add bottom dimension to main menu items */
     margin-top: 0;
 }
 
+/** Search **/
+.search-input {
+    width: 30px;
+    appearance: none;
+
+    border-radius: 5px;
+    border-width: 0px;
+
+    background-image: var(--search-glyph);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-size: 1.8rem;
+    background-position: 6px 5px;
+
+    padding: 3px 3px 3px 30px;
+
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.5455;
+    letter-spacing: -0.015rem;
+    color: var(--inverse-text-color);
+    
+    transition: 200ms ease-out width, 200ms ease-in background-color;
+}
+
+.search #site-nav ul.menu li:last-child {
+    display: none;
+}
+
+.search-input:focus,
+.search-input:not([value=""]) {
+    width: 18rem;
+    background-color: rgba(0,0,0,0.3);
+}
+
+.search-results main {
+    padding-bottom: 2rem;
+}
+
+.search h1,
+.search main form,
+.search main .results-list {
+    width: 66%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.search h1 {
+    text-align: left;
+    margin-bottom: 0.5rem;
+}
+
+.search .results-list li {
+    margin-bottom: 3rem;
+}
+
+.search .no-results {
+    padding-bottom: 33vh;
+}
+
+.search main .search-input {
+    width: 100%;
+    margin-bottom: 3rem;
+    font-size: 1.7rem;
+    
+    background-image: var(--search-glyph);
+    background-position: 6px;
+    background-color: var(--search-input-background);
+
+    padding: 3px 3px 3px 30px;
+
+    border: 1px solid hsl(0, 0%, 90.6%);
+    border-color: var(--submenu-border-color);
+    transition: none;
+    
+    color: var(--text-color);
+}
+
+.search .results-list h2 {
+    font-size: 2.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.search .results-list li p {
+    opacity: 0.85;
+}
+
+.search-term {
+    font-weight: 700;
+    opacity: 1;
+}
+
+p .search-term {
+    color: var(--search-term-text-color);
+}
+
 /** Accessibility **/
 
 @media (prefers-reduced-motion) {
@@ -2320,7 +2424,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     }
 }
 
-@media only screen and (max-width: 920px) {
+@media only screen and (max-width: 1015px) {
     .main-menu.label-toggle {
         display: inline-block;
         margin: 1.5rem 0 2.5rem;
@@ -2366,6 +2470,10 @@ header .menu-item { /* add bottom dimension to main menu items */
     header nav a {
         color: hsl(0, 0, 100%);
         color: var(--text-color);
+    }
+    
+    header nav > .menu {
+        position: relative;
     }
 
     header .menu-toggle:checked ~ ul {
@@ -2439,6 +2547,32 @@ header .menu-item { /* add bottom dimension to main menu items */
 
     footer nav li {
         padding: 0 3rem 3rem 0;
+    }
+
+    .search-input {
+        width: 100%;
+        
+        background-image: var(--search-glyph);
+    
+        padding: 3px 3px 3px 30px;
+    
+        border: 1px solid hsl(0, 0%, 90.6%);
+        border-color: var(--submenu-border-color);
+        transition: none;
+        
+        color: var(--text-color);
+    }
+    
+    .search-input:focus,
+    .search-input:not([value=""]) {
+        width: 100%;
+        background-color: rgba(255,255,255,0.1);
+    }
+    
+    .search-results h1,
+    .search-results main ul {
+        width: 100%;
+        margin: 0 auto;
     }
 
 }
@@ -2758,10 +2892,6 @@ header .menu-item { /* add bottom dimension to main menu items */
 
 #compass {
     background-image: url('images/compass.svg');
-}
-
-.search-input {
-    background-image: url('images/search.svg');
 }
 
 .filters-toggle-button {

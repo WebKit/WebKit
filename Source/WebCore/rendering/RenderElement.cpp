@@ -43,7 +43,7 @@
 #include "HTMLNames.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include "LengthFunctions.h"
 #include "Logging.h"
 #include "Page.h"
@@ -152,14 +152,14 @@ RenderElement::~RenderElement()
     ASSERT(!m_firstChild);
 }
 
-Layout::ContainerBox* RenderElement::layoutBox()
+Layout::ElementBox* RenderElement::layoutBox()
 {
-    return downcast<Layout::ContainerBox>(RenderObject::layoutBox());
+    return downcast<Layout::ElementBox>(RenderObject::layoutBox());
 }
 
-const Layout::ContainerBox* RenderElement::layoutBox() const
+const Layout::ElementBox* RenderElement::layoutBox() const
 {
-    return downcast<Layout::ContainerBox>(RenderObject::layoutBox());
+    return downcast<Layout::ElementBox>(RenderObject::layoutBox());
 }
 
 bool RenderElement::isContentDataSupported(const ContentData& contentData)

@@ -28,10 +28,21 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "APIObject.h"
+#include "WebExtensionMatchPattern.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
+
+#if PLATFORM(COCOA)
+OBJC_CLASS NSArray;
+OBJC_CLASS NSBundle;
+OBJC_CLASS NSDictionary;
+OBJC_CLASS NSError;
+OBJC_CLASS NSMutableArray;
+OBJC_CLASS NSString;
+OBJC_CLASS NSURL;
+#endif
 
 namespace WebKit {
 
@@ -45,8 +56,156 @@ public:
         return adoptRef(*new WebExtension(std::forward<Args>(args)...));
     }
 
-    explicit WebExtension() { }
+#if PLATFORM(COCOA)
+    explicit WebExtension(NSBundle *appExtensionBundle);
+    explicit WebExtension(NSURL *resourceBaseURL);
+    explicit WebExtension(NSDictionary *manifest);
+    explicit WebExtension(NSData *manifestData);
+#endif
+
     ~WebExtension() { }
+
+    enum class SuppressNotification : bool { No, Yes };
+
+    enum class Error : uint8_t {
+        Unknown,
+        ManifestNotFound,
+        InvalidManifest,
+        UnsupportedManifestVersion,
+        InvalidActionIcon,
+        InvalidBackgroundContent,
+        InvalidBackgroundPersistence,
+        InvalidContentScripts,
+        InvalidDeclarativeNetRequest,
+        InvalidDescription,
+        InvalidExternallyConnectable,
+        InvalidIcon,
+        InvalidName,
+        InvalidURLOverrides,
+        InvalidVersion,
+        InvalidWebAccessibleResources,
+        BackgroundContentFailedToLoad,
+    };
+
+    enum class InjectionTime : uint8_t {
+        DocumentIdle,
+        DocumentStart,
+        DocumentEnd,
+    };
+
+    struct InjectedContentData {
+        HashSet<Ref<WebExtensionMatchPattern>> includeMatchPatterns;
+        HashSet<Ref<WebExtensionMatchPattern>> excludeMatchPatterns;
+
+        InjectionTime injectionTime = InjectionTime::DocumentIdle;
+
+        bool matchesAboutBlank = false;
+        bool injectsIntoAllFrames = false;
+
+#if PLATFORM(COCOA)
+        RetainPtr<NSArray> scriptPaths;
+        RetainPtr<NSArray> styleSheetPaths;
+
+        RetainPtr<NSArray> includeGlobPatternStrings;
+        RetainPtr<NSArray> excludeGlobPatternStrings;
+
+        NSArray *expandedIncludeMatchPatternStrings() const;
+        NSArray *expandedExcludeMatchPatternStrings() const;
+#endif
+    };
+
+#if PLATFORM(COCOA)
+    static NSSet *supportedPermissions();
+
+    bool manifestParsedSuccessfully();
+    NSDictionary *manifest();
+
+    double manifestVersion();
+    bool usesManifestVersion(double version) { return manifestVersion() >= version; }
+
+    NSString *webProcessDisplayName();
+
+    NSString *displayName();
+    NSString *displayShortName();
+    NSString *displayVersion();
+    NSString *displayDescription();
+    NSString *version();
+
+    bool hasBackgroundContent();
+    bool backgroundContentIsPersistent();
+    bool backgroundContentIsServiceWorker();
+
+    NSString *generatedBackgroundContent();
+
+    const Vector<InjectedContentData>& injectedContents();
+    bool hasInjectedContentForURL(NSURL *);
+
+    // Permissions requested by the extension in their manifest.
+    // These are not the currently allowed permissions.
+    NSSet *requestedPermissions();
+    NSSet *optionalPermissions();
+
+    bool hasRequestedPermission(NSString *) const;
+
+    // Permission origins requested by the extension in their manifest.
+    // These are not the currently allowed permission origins.
+    const HashSet<Ref<WebExtensionMatchPattern>>& requestedPermissionOrigins();
+    const HashSet<Ref<WebExtensionMatchPattern>>& optionalPermissionOrigins();
+
+    // Combined origin set that includes permissions origins and injected content patterns from the manifest.
+    const HashSet<Ref<WebExtensionMatchPattern>>&& allRequestedOrigins();
+
+    static NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
+
+    // If an error can't be synchronously determined by one of the populate methods in the errors() getter,
+    // then the caller of recordError() should pass SuppressNotification::No.
+    void recordError(NSError *, SuppressNotification = SuppressNotification::Yes);
+
+    NSArray *errors();
+#endif
+
+private:
+#if PLATFORM(COCOA)
+    bool parseManifest(NSData *);
+
+    void populateDisplayStringsIfNeeded();
+    void populateBackgroundPropertiesIfNeeded();
+    void populateContentScriptPropertiesIfNeeded();
+    void populatePermissionsPropertiesIfNeeded();
+#endif
+
+    Vector<InjectedContentData> m_injectedContents;
+    HashSet<Ref<WebExtensionMatchPattern>> m_permissionOrigins;
+    HashSet<Ref<WebExtensionMatchPattern>> m_optionalPermissionOrigins;
+
+#if PLATFORM(COCOA)
+    RetainPtr<NSBundle> m_bundle;
+    RetainPtr<NSURL> m_resourceBaseURL;
+    RetainPtr<NSDictionary> m_manifest;
+
+    RetainPtr<NSMutableArray> m_errors;
+
+    RetainPtr<NSString> m_displayName;
+    RetainPtr<NSString> m_displayShortName;
+    RetainPtr<NSString> m_displayVersion;
+    RetainPtr<NSString> m_displayDescription;
+    RetainPtr<NSString> m_version;
+
+    RetainPtr<NSArray> m_backgroundScriptPaths;
+    RetainPtr<NSString> m_backgroundPagePath;
+    RetainPtr<NSString> m_backgroundServiceWorkerPath;
+    RetainPtr<NSString> m_generatedBackgroundContent;
+    bool m_backgroundContentIsPersistent = false;
+
+    RetainPtr<NSSet> m_permissions;
+    RetainPtr<NSSet> m_optionalPermissions;
+
+    bool m_parsedManifest = false;
+    bool m_parsedManifestDisplayStrings = false;
+    bool m_parsedManifestBackgroundProperties = false;
+    bool m_parsedManifestContentScriptProperties = false;
+    bool m_parsedManifestPermissionProperties = false;
+#endif
 };
 
 } // namespace WebKit

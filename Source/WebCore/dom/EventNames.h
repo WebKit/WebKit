@@ -102,6 +102,7 @@ namespace WebCore {
     macro(dataavailable) \
     macro(datachannel) \
     macro(dblclick) \
+    macro(dequeue) \
     macro(devicechange) \
     macro(devicemotion) \
     macro(deviceorientation) \

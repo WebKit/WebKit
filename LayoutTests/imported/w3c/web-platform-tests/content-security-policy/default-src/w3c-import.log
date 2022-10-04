@@ -16,3 +16,4 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/default-src/default-src-inline-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/default-src/default-src-inline-blocked.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/default-src/default-src-strict_dynamic_and_unsafe_inline.html

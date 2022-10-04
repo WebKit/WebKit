@@ -41,7 +41,7 @@ async_test(t => {
 }, "SecurityPolicyViolation event fired on global.");
 
 async_test(t => {
-  var url = "{{location[scheme]}}://{{host}}:{{location[port]}}/common/redirect.py?location={{location[scheme]}}://{{hosts[alt][]}}:{{location[port]}}/content-security-policy/support/ping.js";
+  var url = "{{location[scheme]}}://{{host}}:{{location[port]}}/common/redirect.py?location={{location[scheme]}}://{{domains[www]}}:{{location[port]}}/content-security-policy/support/ping.js";
   waitUntilCSPEventForURL(t, url)
     .then(t.step_func_done(e => {
       assert_equals(e.blockedURI, url);

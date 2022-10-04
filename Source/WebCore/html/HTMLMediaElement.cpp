@@ -7233,6 +7233,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     m_player = MediaPlayer::create(*this);
     m_player->setBufferingPolicy(m_bufferingPolicy);
     m_player->setPreferredDynamicRangeMode(m_overrideDynamicRangeMode.value_or(preferredDynamicRangeMode(document().view())));
+    m_player->setShouldDisableHDR(shouldDisableHDR());
     m_player->setMuted(effectiveMuted());
     m_player->setPageIsVisible(!m_elementIsHidden);
     m_player->setVisibleInViewport(isVisibleInViewport());
@@ -7636,15 +7637,21 @@ String HTMLMediaElement::sourceApplicationIdentifier() const
 
 void HTMLMediaElement::setPreferredDynamicRangeMode(DynamicRangeMode mode)
 {
-    if (m_player && !m_overrideDynamicRangeMode)
-        m_player->setPreferredDynamicRangeMode(mode);
+    if (!m_player || m_overrideDynamicRangeMode)
+        return;
+
+    m_player->setPreferredDynamicRangeMode(mode);
+    m_player->setShouldDisableHDR(shouldDisableHDR());
 }
 
 void HTMLMediaElement::setOverridePreferredDynamicRangeMode(DynamicRangeMode mode)
 {
     m_overrideDynamicRangeMode = mode;
-    if (m_player)
-        m_player->setPreferredDynamicRangeMode(mode);
+    if (!m_player)
+        return;
+
+    m_player->setPreferredDynamicRangeMode(mode);
+    m_player->setShouldDisableHDR(shouldDisableHDR());
 }
 
 Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() const
@@ -8836,6 +8843,11 @@ void HTMLMediaElement::setShowingStats(bool shouldShowStats)
         return resultValue.toBoolean(&lexicalGlobalObject);
     });
 #endif
+}
+
+bool HTMLMediaElement::shouldDisableHDR() const
+{
+    return !screenSupportsHighDynamicRange(document().view());
 }
 
 }

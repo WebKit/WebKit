@@ -295,7 +295,7 @@
 #define WTF_CPU_UNKNOWN 1
 #endif
 
-#if CPU(ARM) || CPU(MIPS) || CPU(UNKNOWN)
+#if CPU(ARM) || CPU(MIPS) || CPU(RISCV64) || CPU(UNKNOWN)
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 

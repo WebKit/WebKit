@@ -21,12 +21,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 header: <WebCore/DOMCacheEngine.h>
-struct WebCore::DOMCacheEngine::CacheInfo {
+[CustomHeader=True] struct WebCore::DOMCacheEngine::CacheInfo {
     WebCore::DOMCacheIdentifier identifier
     String name
 }
 
-header: <WebCore/TransformationMatrix.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::TransformationMatrix {
     double m11()
     double m12()
@@ -46,7 +45,6 @@ header: <WebCore/TransformationMatrix.h>
     double m44()
 }
 
-header: <WebCore/CacheQueryOptions.h>
 struct WebCore::CacheQueryOptions {
     bool ignoreSearch;
     bool ignoreMethod;
@@ -54,13 +52,11 @@ struct WebCore::CacheQueryOptions {
     String cacheName;
 }
 
-header: <WebCore/CharacterRange.h>
 struct WebCore::CharacterRange {
     uint64_t location
     uint64_t length
 }
 
-header: <WebCore/AffineTransform.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::AffineTransform {
     double a()
     double b()
@@ -70,27 +66,23 @@ header: <WebCore/AffineTransform.h>
     double f()
 }
 
-header: <WebCore/FloatPoint.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatPoint {
     float x()
     float y()
 }
 
-header: <WebCore/FloatPoint3D.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatPoint3D {
     float x()
     float y()
     float z()
 }
 
-header: <WebCore/IDBCursorRecord.h>
 struct WebCore::IDBCursorRecord {
     WebCore::IDBKeyData key;
     WebCore::IDBKeyData primaryKey;
     WebCore::IDBValue value;
 }
 
-header: <WebCore/IDBCursorInfo.h>
 class WebCore::IDBCursorInfo {
     WebCore::IDBResourceIdentifier identifier();
     WebCore::IDBResourceIdentifier transactionIdentifier();
@@ -104,13 +96,11 @@ class WebCore::IDBCursorInfo {
     WebCore::IndexedDB::CursorType cursorType();
 };
 
-header: <WebCore/IDBError.h>
 class WebCore::IDBError {
     std::optional<WebCore::ExceptionCode> code()
     String messageForSerialization()
 }
 
-header: <WebCore/IDBGetAllRecordsData.h>
 struct WebCore::IDBGetAllRecordsData {
     WebCore::IDBKeyRangeData keyRangeData;
     WebCore::IndexedDB::GetAllType getAllType;
@@ -119,7 +109,6 @@ struct WebCore::IDBGetAllRecordsData {
     uint64_t indexIdentifier;
 }
 
-header: <WebCore/IDBGetResult.h>
 class WebCore::IDBGetResult {
     WebCore::IDBKeyData keyData()
     WebCore::IDBKeyData primaryKeyData()
@@ -129,7 +118,6 @@ class WebCore::IDBGetResult {
     bool isDefined()
 }
 
-header: <WebCore/IDBGetAllResult.h>
 class WebCore::IDBGetAllResult {
     WebCore::IndexedDB::GetAllType type()
     Vector<WebCore::IDBKeyData> keys()
@@ -137,7 +125,6 @@ class WebCore::IDBGetAllResult {
     std::optional<WebCore::IDBKeyPath> keyPath()
 }
 
-header: <WebCore/IDBDatabaseInfo.h>
 class WebCore::IDBDatabaseInfo {
     String m_name
     uint64_t m_version
@@ -146,7 +133,6 @@ class WebCore::IDBDatabaseInfo {
     HashMap<uint64_t, WebCore::IDBObjectStoreInfo> m_objectStoreMap
 }
 
-header: <WebCore/IDBKeyRangeData.h>
 struct WebCore::IDBKeyRangeData {
     [ReturnEarlyIfTrue] bool isNull;
 
@@ -157,7 +143,6 @@ struct WebCore::IDBKeyRangeData {
     bool upperOpen;
 };
 
-header: <WebCore/IDBTransactionInfo.h>
 class WebCore::IDBTransactionInfo {
     WebCore::IDBResourceIdentifier identifier();
     WebCore::IDBTransactionMode mode();
@@ -167,13 +152,11 @@ class WebCore::IDBTransactionInfo {
     std::unique_ptr<WebCore::IDBDatabaseInfo> originalDatabaseInfo();
 };
 
-header: <WebCore/IDBGetRecordData.h>
 struct WebCore::IDBGetRecordData {
     WebCore::IDBKeyRangeData keyRangeData;
     WebCore::IDBGetRecordDataType type;
 }
 
-header: <WebCore/IDBIndexInfo.h>
 class WebCore::IDBIndexInfo {
     uint64_t identifier()
     uint64_t objectStoreIdentifier()
@@ -183,7 +166,6 @@ class WebCore::IDBIndexInfo {
     bool multiEntry()
 }
 
-header: <WebCore/IDBObjectStoreInfo.h>
 class WebCore::IDBObjectStoreInfo {
     uint64_t identifier()
     String name()
@@ -192,7 +174,6 @@ class WebCore::IDBObjectStoreInfo {
     HashMap<uint64_t, WebCore::IDBIndexInfo> indexMap()
 }
 
-header: <WebCore/IDBIterateCursorData.h>
 struct WebCore::IDBIterateCursorData {
     WebCore::IDBKeyData keyData;
     WebCore::IDBKeyData primaryKeyData;
@@ -200,20 +181,17 @@ struct WebCore::IDBIterateCursorData {
     WebCore::IndexedDB::CursorIterateOption option;
 }
 
-header: <WebCore/IDBResourceIdentifier.h>
 class WebCore::IDBResourceIdentifier {
     WebCore::IDBConnectionIdentifier m_idbConnectionIdentifier
     uint64_t m_resourceNumber
 }
 
-header: <WebCore/IDBValue.h>
 class WebCore::IDBValue {
     WebCore::ThreadSafeDataBuffer data()
     Vector<String> blobURLs()
     Vector<String> blobFilePaths()
 };
 
-header: <WebCore/IDBRequestData.h>
 class WebCore::IDBRequestData {
     WebCore::IDBConnectionIdentifier m_serverConnectionIdentifier;
     WebCore::IDBResourceIdentifier m_requestIdentifier;
@@ -227,7 +205,6 @@ class WebCore::IDBRequestData {
     WebCore::IndexedDB::RequestType m_requestType;
 }
 
-header: <WebCore/IDBDatabaseIdentifier.h>
 # FIXME: When decoding from IPC, databaseName can be null, and the non-empty constructor asserts that this is not the case.
 [LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBDatabaseIdentifier {
     String m_databaseName
@@ -235,13 +212,11 @@ header: <WebCore/IDBDatabaseIdentifier.h>
     bool m_isTransient
 }
 
-header: <WebCore/IDBDatabaseNameAndVersion.h>
 struct WebCore::IDBDatabaseNameAndVersion {
     String name;
     uint64_t version;
 }
 
-header: <WebCore/IDBResultData.h>
 [LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBResultData {
     WebCore::IDBResultType m_type;
     WebCore::IDBResourceIdentifier m_requestIdentifier;
@@ -255,16 +230,14 @@ header: <WebCore/IDBResultData.h>
     uint64_t m_resultInteger;
 }
 
-header: <WebCore/IDBKeyData.h>
 [LegacyPopulateFrom=EmptyConstructor] class WebCore::IDBKeyData {
     [ReturnEarlyIfTrue] bool m_isNull;
     WebCore::IndexedDB::KeyType m_type;
     std::variant<Vector<WebCore::IDBKeyData>, String, double, WebCore::ThreadSafeDataBuffer> m_value;
 }
 
-headers requiring USE(CG): <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
-
 #if USE(CG)
+headers: <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
 [AdditionalEncoder=StreamConnectionEncoder] struct CGSize {
     CGFloat width
     CGFloat height
@@ -290,14 +263,13 @@ struct CGAffineTransform {
 };
 #endif
 
-header: <WebCore/FloatRect.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatRect {
     WebCore::FloatPoint location()
     WebCore::FloatSize size()
 }
 
 header: <WebCore/Pasteboard.h>
-struct WebCore::PasteboardURL {
+[CustomHeader=True] struct WebCore::PasteboardURL {
     URL url
     String title
 #if PLATFORM(MAC)
@@ -308,11 +280,10 @@ struct WebCore::PasteboardURL {
 #endif
 };
 
-header: <WebCore/TimingFunction.h>
-[Return=Ref] class WebCore::LinearTimingFunction {
+[Return=Ref, CustomHeader=True] class WebCore::LinearTimingFunction {
 };
 
-[Return=Ref] class WebCore::CubicBezierTimingFunction {
+[Return=Ref, CustomHeader=True] class WebCore::CubicBezierTimingFunction {
     WebCore::CubicBezierTimingFunction::TimingFunctionPreset timingFunctionPreset()
     double x1()
     double y1()
@@ -320,19 +291,18 @@ header: <WebCore/TimingFunction.h>
     double y2()
 };
 
-[Return=Ref] class WebCore::StepsTimingFunction {
+[Return=Ref, CustomHeader=True] class WebCore::StepsTimingFunction {
     int numberOfSteps()
     std::optional<WebCore::StepsTimingFunction::StepPosition> stepPosition()
 };
 
-[Return=Ref] class WebCore::SpringTimingFunction {
+[Return=Ref, CustomHeader=True] class WebCore::SpringTimingFunction {
     double mass()
     double stiffness()
     double damping()
     double initialVelocity()
 };
 
-header: <WebCore/ResourceLoadStatistics.h>
 [LegacyPopulateFrom=EmptyConstructor] struct WebCore::ResourceLoadStatistics {
     WebCore::RegistrableDomain registrableDomain;
     WallTime lastSeen;
@@ -385,7 +355,7 @@ header: <WebCore/ResourceLoadStatistics.h>
 };
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::GraphicsContextGLActiveInfo {
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader=True] struct WebCore::GraphicsContextGLActiveInfo {
     String name;
     GCGLenum type;
     GCGLint size;
@@ -399,7 +369,7 @@ enum class WebCore::ViewportFit : uint8_t {
 };
 
 header: <WebCore/ViewportArguments.h>
-struct WebCore::ViewportAttributes {
+[CustomHeader=True] struct WebCore::ViewportAttributes {
     WebCore::FloatSize layoutSize;
 
     float initialScale;
@@ -414,7 +384,7 @@ struct WebCore::ViewportAttributes {
 };
 
 header: <WebCore/ShareData.h>
-struct WebCore::ShareDataWithParsedURL {
+[CustomHeader=True] struct WebCore::ShareDataWithParsedURL {
     WebCore::ShareData shareData;
     std::optional<URL> url;
     Vector<WebCore::RawFile> files;
@@ -426,12 +396,11 @@ struct WebCore::ShareData {
     String url;
 };
 
-struct WebCore::RawFile {
+[CustomHeader=True] struct WebCore::RawFile {
     String fileName;
     RefPtr<WebCore::SharedBuffer> fileData;
 };
 
-header: <WebCore/FloatRoundedRect.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatRoundedRect {
     WebCore::FloatRect rect();
     WebCore::FloatSize radii().topLeft();
@@ -440,48 +409,40 @@ header: <WebCore/FloatRoundedRect.h>
     WebCore::FloatSize radii().bottomRight();
 }
 
-header: <WebCore/IntRect.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntRect {
     WebCore::IntPoint location();
     WebCore::IntSize size();
 }
 
-header: <WebCore/IntPoint.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntPoint {
     int x();
     int y();
 }
 
-header: <WebCore/IntSize.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::IntSize {
     int width();
     int height();
 }
 
-header: <WebCore/FloatSize.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::FloatSize {
     float width();
     float height();
 }
 
-header: <WebCore/LayoutUnit.h>
 [AdditionalEncoder=StreamConnectionEncoder, CreateUsing=fromRawValue] class WebCore::LayoutUnit {
     int rawValue()
 }
 
-header: <WebCore/LayoutPoint.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::LayoutPoint {
     WebCore::LayoutUnit x();
     WebCore::LayoutUnit y();
 }
 
-header: <WebCore/LayoutSize.h>
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::LayoutSize {
     WebCore::LayoutUnit width();
     WebCore::LayoutUnit height();
 }
 
-header: <WebCore/DictionaryPopupInfo.h>
 struct WebCore::DictionaryPopupInfo {
     WebCore::FloatPoint origin;
     WebCore::TextIndicatorData textIndicator;
@@ -493,7 +454,6 @@ struct WebCore::DictionaryPopupInfo {
 enum class WebCore::PCM::AttributionEphemeral : bool
 enum class WebCore::PCM::WasSent : bool
 
-header: <WebCore/PrivateClickMeasurement.h>
 class WebCore::PrivateClickMeasurement {
     uint8_t sourceID()
     WebCore::PCM::SourceSite sourceSite()
@@ -507,19 +467,19 @@ class WebCore::PrivateClickMeasurement {
     String sourceApplicationBundleID()
 }
 
-struct WebCore::PCM::SourceSite {
+[CustomHeader=True] struct WebCore::PCM::SourceSite {
     WebCore::RegistrableDomain registrableDomain
 }
 
-struct WebCore::PCM::AttributionDestinationSite {
+[CustomHeader=True] struct WebCore::PCM::AttributionDestinationSite {
     WebCore::RegistrableDomain registrableDomain
 }
 
-struct WebCore::PCM::EphemeralNonce {
+[CustomHeader=True] struct WebCore::PCM::EphemeralNonce {
     String nonce
 }
 
-struct WebCore::PCM::AttributionTriggerData {
+[CustomHeader=True] struct WebCore::PCM::AttributionTriggerData {
     uint8_t data
     uint8_t priority;
     WebCore::PCM::WasSent wasSent;
@@ -529,7 +489,196 @@ struct WebCore::PCM::AttributionTriggerData {
 # destinationUnlinkableToken and destinationSecretToken are not serialized.
 }
 
-struct WebCore::PCM::AttributionTimeToSendData {
+[CustomHeader=True] struct WebCore::PCM::AttributionTimeToSendData {
     std::optional<WallTime> sourceEarliestTimeToSend;
     std::optional<WallTime> destinationEarliestTimeToSend;
 }
+
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+struct WebCore::ApplePayRecurringPaymentRequest {
+    String paymentDescription
+    WebCore::ApplePayLineItem regularBilling
+    std::optional<WebCore::ApplePayLineItem> trialBilling
+    String billingAgreement
+    String managementURL
+    String tokenNotificationURL
+};
+#endif
+
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+struct WebCore::ApplePayPaymentTokenContext {
+    String merchantIdentifier
+    String externalIdentifier
+    String merchantName
+    String merchantDomain
+    String amount
+}
+#endif
+
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+struct WebCore::ApplePayPaymentOrderDetails {
+    String orderTypeIdentifier
+    String orderIdentifier
+    String webServiceURL
+    String authenticationToken
+}
+#endif
+
+#if ENABLE(APPLE_PAY_AMS_UI) && ENABLE(PAYMENT_REQUEST)
+struct WebCore::ApplePayAMSUIRequest {
+    String engagementRequest
+}
+#endif
+
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+struct WebCore::ApplePayAutomaticReloadPaymentRequest {
+    String paymentDescription
+    WebCore::ApplePayLineItem automaticReloadBilling
+    String billingAgreement
+    String managementURL
+    String tokenNotificationURL
+}
+#endif
+
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+struct WebCore::ApplePayDateComponents {
+    std::optional<unsigned> years;
+    std::optional<unsigned> months;
+    std::optional<unsigned> days;
+    std::optional<unsigned> hours;
+}
+
+struct WebCore::ApplePayDateComponentsRange {
+    WebCore::ApplePayDateComponents startDateComponents;
+    WebCore::ApplePayDateComponents endDateComponents;
+}
+#endif // ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+
+#if ENABLE(APPLE_PAY)
+struct WebCore::ApplePayLineItem {
+    WebCore::ApplePayLineItem::Type type
+    String label
+    String amount
+    WebCore::ApplePayPaymentTiming paymentTiming
+#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+    WallTime recurringPaymentStartDate
+    WebCore::ApplePayRecurringPaymentDateUnit recurringPaymentIntervalUnit
+    unsigned recurringPaymentIntervalCount
+    WallTime recurringPaymentEndDate
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
+    WallTime deferredPaymentDate
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    String automaticReloadPaymentThresholdAmount
+#endif
+}
+
+struct WebCore::ApplePayShippingMethod {
+    String label
+    String detail
+    String amount
+    String identifier
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+    std::optional<WebCore::ApplePayDateComponentsRange> dateComponentsRange
+#endif
+#if ENABLE(APPLE_PAY_SELECTED_SHIPPING_METHOD)
+    bool selected
+#endif
+}
+
+[Return=Ref] class WebCore::ApplePayError {
+    WebCore::ApplePayErrorCode code()
+    std::optional<WebCore::ApplePayErrorContactField> contactField()
+    String message()
+}
+
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayButtonSystemImage {
+    WebCore::ApplePayButtonType m_applePayButtonType
+    WebCore::ApplePayButtonStyle m_applePayButtonStyle
+    String m_locale
+    float m_largestCornerRadius
+}
+
+enum class WebCore::ApplePayLogoStyle : bool
+[Return=Ref, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ApplePayLogoSystemImage {
+    WebCore::ApplePayLogoStyle applePayLogoStyle()
+}
+
+header: <WebCore/ApplePayButtonSystemImage.h>
+enum class WebCore::ApplePayButtonType : uint8_t {
+    Plain,
+    Buy,
+    SetUp,
+    Donate,
+    CheckOut,
+    Book,
+    Subscribe,
+#if ENABLE(APPLE_PAY_NEW_BUTTON_TYPES)
+    Reload,
+    AddMoney,
+    TopUp,
+    Order,
+    Rent,
+    Support,
+    Contribute,
+    Tip,
+#endif
+}
+
+enum class WebCore::ApplePayButtonStyle : uint8_t {
+    White,
+    WhiteOutline,
+    Black,
+}
+
+struct WebCore::ApplePayDetailsUpdateBase {
+    WebCore::ApplePayLineItem newTotal;
+    Vector<WebCore::ApplePayLineItem> newLineItems;
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    std::optional<WebCore::ApplePayRecurringPaymentRequest> newRecurringPaymentRequest;
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    std::optional<WebCore::ApplePayAutomaticReloadPaymentRequest> newAutomaticReloadPaymentRequest;
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    std::optional<Vector<WebCore::ApplePayPaymentTokenContext>> newMultiTokenContexts;
+#endif
+}
+
+struct WebCore::ApplePayPaymentMethodUpdate : WebCore::ApplePayDetailsUpdateBase {
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    Vector<RefPtr<WebCore::ApplePayError>> errors;
+    Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
+#endif
+#if ENABLE(APPLE_PAY_INSTALLMENTS)
+    String installmentGroupIdentifier;
+#endif
+};
+
+struct WebCore::ApplePayShippingContactUpdate : WebCore::ApplePayDetailsUpdateBase {
+    Vector<RefPtr<WebCore::ApplePayError>> errors;
+    Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
+};
+
+struct WebCore::ApplePayShippingMethodUpdate : WebCore::ApplePayDetailsUpdateBase {
+#if ENABLE(APPLE_PAY_UPDATE_SHIPPING_METHODS_WHEN_CHANGING_LINE_ITEMS)
+    Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
+#endif
+};
+
+struct WebCore::ApplePayPaymentAuthorizationResult {
+    unsigned short status;
+    Vector<RefPtr<WebCore::ApplePayError>> errors;
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+    std::optional<WebCore::ApplePayPaymentOrderDetails> orderDetails;
+#endif
+}
+#endif // ENABLE(APPLE_PAY)
+
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+struct WebCore::ApplePayCouponCodeUpdate : WebCore::ApplePayDetailsUpdateBase {
+    Vector<RefPtr<WebCore::ApplePayError>> errors;
+    Vector<WebCore::ApplePayShippingMethod> newShippingMethods;
+};
+#endif

@@ -916,6 +916,17 @@ void RemoteMediaPlayerProxy::videoFrameForCurrentTimeIfChanged(CompletionHandler
     completionHandler(WTFMove(result), changed);
 }
 
+void RemoteMediaPlayerProxy::setShouldDisableHDR(bool shouldDisable)
+{
+    if (m_configuration.shouldDisableHDR == shouldDisable)
+        return;
+
+    m_configuration.shouldDisableHDR = shouldDisable;
+    if (m_player)
+        m_player->setShouldDisableHDR(shouldDisable);
+}
+
+
 void RemoteMediaPlayerProxy::updateCachedState(bool forceCurrentTimeUpdate)
 {
     if (!m_observingTimeChanges || forceCurrentTimeUpdate)

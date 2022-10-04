@@ -14,7 +14,7 @@
     var source_test =
         async_test("Disallowed track element onerror handler fires.");
 
-    var trackURL = location.protocol + "//{{hosts[alt][]}}:{{ports[http][0]}}/media/foo.vtt";
+    var trackURL = location.protocol + "//{{domains[www]}}:{{ports[http][0]}}/media/foo.vtt";
 
     var t_spv = async_test("Test that securitypolicyviolation events are fired");
     var test_count = 1;

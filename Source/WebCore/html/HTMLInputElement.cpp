@@ -156,7 +156,8 @@ const AtomString& HTMLInputElement::name() const
 
 Vector<FileChooserFileInfo> HTMLInputElement::filesFromFileInputFormControlState(const FormControlState& state)
 {
-    return FileInputType::filesFromFormControlState(state);
+    auto [files, _] = FileInputType::filesFromFormControlState(state);
+    return files;
 }
 
 HTMLElement* HTMLInputElement::containerElement() const

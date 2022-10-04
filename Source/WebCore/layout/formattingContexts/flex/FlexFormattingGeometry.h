@@ -39,10 +39,10 @@ class FlexFormattingGeometry : public FormattingGeometry {
 public:
     FlexFormattingGeometry(const FlexFormattingContext&);
 
-    IntrinsicWidthConstraints intrinsicWidthConstraints(const ContainerBox&) const;
+    IntrinsicWidthConstraints intrinsicWidthConstraints(const ElementBox&) const;
 
-    static bool isMainAxisParallelWithInlineAxis(const ContainerBox& flexBox);
-    static bool isReversedToContentDirection(const ContainerBox& flexBox);
+    static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexBox);
+    static bool isReversedToContentDirection(const ElementBox& flexBox);
 
 private:
     const FlexFormattingContext& formattingContext() const { return downcast<FlexFormattingContext>(FormattingGeometry::formattingContext()); }

@@ -90,6 +90,20 @@ promise_test((test) => {
     videoSenderTransform.port.postMessage("tryGenerateKeyFramePromiseHandling");
     return waitForMessage(videoSenderTransform.port, "PASS");
 }, "generate key frame promise handling on video sender");
+
+promise_test(async (test) => {
+    audioReceiverTransform.port.postMessage("tryAccessingDataTwice");
+    await waitForMessage(audioReceiverTransform.port, "PASS");
+
+    audioSenderTransform.port.postMessage("tryAccessingDataTwice");
+    await waitForMessage(audioSenderTransform.port, "PASS");
+
+    videoReceiverTransform.port.postMessage("tryAccessingDataTwice");
+    await waitForMessage(videoReceiverTransform.port, "PASS");
+
+    videoSenderTransform.port.postMessage("tryAccessingDataTwice");
+    await waitForMessage(videoSenderTransform.port, "PASS");
+}, "Check data getter");
         </script>
     </body>
 </html>

@@ -41,7 +41,7 @@ namespace Layout {
 class FlexFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(FlexFormattingContext);
 public:
-    FlexFormattingContext(const ContainerBox& formattingContextRoot, FlexFormattingState&);
+    FlexFormattingContext(const ElementBox& formattingContextRoot, FlexFormattingState&);
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
     LayoutUnit usedContentHeight() const override;

@@ -1041,8 +1041,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     layout/integration/inline/LayoutIntegrationInlineContent.h
     layout/integration/inline/LayoutIntegrationLine.h
 
-    layout/layouttree/LayoutContainerBox.h
     layout/layouttree/LayoutBox.h
+    layout/layouttree/LayoutElementBox.h
     layout/layouttree/LayoutInitialContainingBlock.h
     layout/layouttree/LayoutInlineTextBox.h
 

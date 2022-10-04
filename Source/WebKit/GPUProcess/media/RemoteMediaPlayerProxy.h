@@ -311,6 +311,7 @@ private:
     const std::optional<Vector<WebCore::FourCC>>& allowedMediaCaptionFormatTypes() const final { return m_configuration.allowedMediaCaptionFormatTypes; };
 
     bool mediaPlayerPrefersSandboxedParsing() const final { return m_configuration.prefersSandboxedParsing; }
+    bool mediaPlayerShouldDisableHDR() const final { return m_configuration.shouldDisableHDR; }
 
     void startUpdateCachedStateMessageTimer();
     void updateCachedState(bool = false);
@@ -346,6 +347,8 @@ private:
 #endif
 #endif
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
+
+    void setShouldDisableHDR(bool);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }

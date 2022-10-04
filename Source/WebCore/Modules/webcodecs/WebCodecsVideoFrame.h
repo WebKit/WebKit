@@ -90,6 +90,7 @@ public:
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(CanvasImageSource&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(Ref<WebCodecsVideoFrame>&&, Init&&);
     static ExceptionOr<Ref<WebCodecsVideoFrame>> create(BufferSource&&, BufferInit&&);
+    static Ref<WebCodecsVideoFrame> create(Ref<VideoFrame>&&, BufferInit&&);
 
     std::optional<VideoPixelFormat> format() const { return m_format; }
     size_t codedWidth() const { return m_codedWidth; }

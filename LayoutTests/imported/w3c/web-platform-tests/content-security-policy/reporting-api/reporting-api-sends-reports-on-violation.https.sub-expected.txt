@@ -3,5 +3,5 @@
 PASS Test that image does not load
 PASS Event is fired
 FAIL Report is observable to ReportingObserver assert_equals: expected 53 but got 0
-FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
+PASS Violation report status OK.
 

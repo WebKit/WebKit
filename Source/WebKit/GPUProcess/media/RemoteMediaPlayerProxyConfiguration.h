@@ -58,6 +58,7 @@ struct RemoteMediaPlayerProxyConfiguration {
     bool isVideo { false };
     bool renderingCanBeAccelerated { false };
     bool prefersSandboxedParsing { false };
+    bool shouldDisableHDR { false };
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -83,6 +84,7 @@ struct RemoteMediaPlayerProxyConfiguration {
         encoder << isVideo;
         encoder << renderingCanBeAccelerated;
         encoder << prefersSandboxedParsing;
+        encoder << shouldDisableHDR;
     }
 
     template <class Decoder>
@@ -108,7 +110,8 @@ struct RemoteMediaPlayerProxyConfiguration {
             && decoder.decode(configuration.shouldUsePersistentCache)
             && decoder.decode(configuration.isVideo)
             && decoder.decode(configuration.renderingCanBeAccelerated)
-            && decoder.decode(configuration.prefersSandboxedParsing);
+            && decoder.decode(configuration.prefersSandboxedParsing)
+            && decoder.decode(configuration.shouldDisableHDR);
     }
 };
 

@@ -38,7 +38,7 @@ TableWrapperQuirks::TableWrapperQuirks(const TableWrapperBlockFormattingContext&
 {
 }
 
-LayoutUnit TableWrapperQuirks::overriddenTableHeight(const ContainerBox& tableBox) const
+LayoutUnit TableWrapperQuirks::overriddenTableHeight(const ElementBox& tableBox) const
 {
     ASSERT(layoutState().inQuirksMode());
     // In quirks mode always use the content height. Note that the tables with content take computed values into account.

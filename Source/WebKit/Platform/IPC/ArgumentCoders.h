@@ -915,61 +915,27 @@ template<typename ErrorType> struct ArgumentCoder<Expected<void, ErrorType>> {
     }
 };
 
-template<size_t index, typename... Types>
-struct VariantCoder {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const std::variant<Types...>& variant, unsigned i)
-    {
-        if (i == index) {
-            encoder << std::get<index>(variant);
-            return;
-        }
-        VariantCoder<index - 1, Types...>::encode(encoder, variant, i);
-    }
-
-    template<typename Decoder>
-    static std::optional<std::variant<Types...>> decode(Decoder& decoder, unsigned i)
-    {
-        if (i == index) {
-            std::optional<typename std::variant_alternative<index, std::variant<Types...>>::type> optional;
-            decoder >> optional;
-            if (!optional)
-                return std::nullopt;
-            return { WTFMove(*optional) };
-        }
-        return VariantCoder<index - 1, Types...>::decode(decoder, i);
-    }
-};
-
-template<typename... Types>
-struct VariantCoder<0, Types...> {
-    template<typename Encoder>
-    static void encode(Encoder& encoder, const std::variant<Types...>& variant, unsigned i)
-    {
-        ASSERT_UNUSED(i, !i);
-        encoder << std::get<0>(variant);
-    }
-
-    template<typename Decoder>
-    static std::optional<std::variant<Types...>> decode(Decoder& decoder, unsigned i)
-    {
-        if (i)
-            return std::nullopt;
-        std::optional<typename std::variant_alternative<0, std::variant<Types...>>::type> optional;
-        decoder >> optional;
-        if (!optional)
-            return std::nullopt;
-        return { WTFMove(*optional) };
-    }
-};
-
 template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
     template<typename Encoder>
     static void encode(Encoder& encoder, const std::variant<Types...>& variant)
     {
         unsigned i = variant.index();
         encoder << i;
-        VariantCoder<sizeof...(Types) - 1, Types...>::encode(encoder, variant, i);
+        encode(encoder, variant, std::index_sequence_for<Types...> { }, i);
+    }
+
+    template<typename Encoder, size_t... Indices>
+    static void encode(Encoder& encoder, const std::variant<Types...>& variant, std::index_sequence<Indices...>, unsigned i)
+    {
+        constexpr size_t Index = sizeof...(Types) - sizeof...(Indices);
+        static_assert(Index < sizeof...(Types));
+        if (Index == i) {
+            encoder << std::get<Index>(variant);
+            return;
+        }
+
+        if constexpr (sizeof...(Indices) > 1)
+            encode(encoder, variant, std::make_index_sequence<sizeof...(Indices) - 1> { }, i);
     }
 
     template<typename Decoder>
@@ -979,7 +945,25 @@ template<typename... Types> struct ArgumentCoder<std::variant<Types...>> {
         decoder >> i;
         if (!i || *i >= sizeof...(Types))
             return std::nullopt;
-        return VariantCoder<sizeof...(Types) - 1, Types...>::decode(decoder, *i);
+        return decode(decoder, std::index_sequence_for<Types...> { }, *i);
+    }
+
+    template<typename Decoder, size_t... Indices>
+    static std::optional<std::variant<Types...>> decode(Decoder& decoder, std::index_sequence<Indices...>, unsigned i)
+    {
+        constexpr size_t Index = sizeof...(Types) - sizeof...(Indices);
+        static_assert(Index < sizeof...(Types));
+        if (Index == i) {
+            std::optional<typename std::variant_alternative_t<Index, std::variant<Types...>>> optional;
+            decoder >> optional;
+            if (!optional)
+                return std::nullopt;
+            return { WTFMove(*optional) };
+        }
+
+        if constexpr (sizeof...(Indices) > 1)
+            return decode(decoder, std::make_index_sequence<sizeof...(Indices) - 1> { }, i);
+        return std::nullopt;
     }
 };
 

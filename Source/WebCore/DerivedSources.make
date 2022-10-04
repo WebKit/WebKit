@@ -671,6 +671,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
+    $(WebCore)/Modules/webcodecs/HardwareAcceleration.idl \
     $(WebCore)/Modules/webcodecs/PlaneLayout.idl \
     $(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
     $(WebCore)/Modules/webcodecs/VideoColorSpace.idl \
@@ -678,6 +679,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/VideoMatrixCoefficients.idl \
     $(WebCore)/Modules/webcodecs/VideoPixelFormat.idl \
     $(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsErrorCallback.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsCodecState.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderSupport.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoFrame.idl \

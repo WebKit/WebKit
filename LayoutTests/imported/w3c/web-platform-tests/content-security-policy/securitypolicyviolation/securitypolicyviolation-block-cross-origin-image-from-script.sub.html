@@ -10,7 +10,7 @@
       .then(t.step_func_done(e => {
         assert_equals(e.documentURI, document.location.toString());
         assert_equals(e.referrer, document.referrer);
-        assert_equals(e.blockedURI, "http://{{hosts[alt][]}}:{{ports[http][0]}}/content-security-policy/support/fail.png");
+        assert_equals(e.blockedURI, "http://{{domains[www]}}:{{ports[http][0]}}/content-security-policy/support/fail.png");
         assert_equals(e.violatedDirective, "img-src");
         assert_equals(e.effectiveDirective, "img-src");
         assert_equals(e.originalPolicy, "img-src \'none\'");

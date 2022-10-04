@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-unsafe-eval-allows-wasm.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/default-src-wasm-unsafe-eval-allows-wasm.any.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/postMessage-wasm-module.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm.any.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-blocks-wasm.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/wasm-unsafe-eval/script-src-spv-asynch.any.js

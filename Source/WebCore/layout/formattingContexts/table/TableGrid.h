@@ -36,16 +36,16 @@
 namespace WebCore {
 namespace Layout {
 class Box;
-class ContainerBox;
+class ElementBox;
 
 class TableGrid {
     WTF_MAKE_ISO_ALLOCATED(TableGrid);
 public:
     TableGrid();
 
-    void appendCell(const ContainerBox&);
-    void insertCell(const ContainerBox&, const ContainerBox& before);
-    void removeCell(const ContainerBox&);
+    void appendCell(const ElementBox&);
+    void insertCell(const ElementBox&, const ElementBox& before);
+    void removeCell(const ElementBox&);
 
     void setHorizontalSpacing(LayoutUnit horizontalSpacing) { m_horizontalSpacing = horizontalSpacing; }
     LayoutUnit horizontalSpacing() const { return m_horizontalSpacing; }
@@ -63,7 +63,7 @@ public:
     // Column represents a vertical set of slots in the grid. A column has horizontal position and width.
     class Column {
     public:
-        Column(const ContainerBox*);
+        Column(const ElementBox*);
 
         void setUsedLogicalLeft(LayoutUnit);
         LayoutUnit usedLogicalLeft() const;
@@ -74,13 +74,13 @@ public:
         void setComputedLogicalWidth(Length&&);
         const Length& computedLogicalWidth() const { return m_computedLogicalWidth; }
 
-        const ContainerBox* box() const { return m_layoutBox.get(); }
+        const ElementBox* box() const { return m_layoutBox.get(); }
 
     private:
         LayoutUnit m_usedLogicalWidth;
         LayoutUnit m_usedLogicalLeft;
         Length m_computedLogicalWidth;
-        CheckedPtr<const ContainerBox> m_layoutBox;
+        CheckedPtr<const ElementBox> m_layoutBox;
 
 #if ASSERT_ENABLED
         bool m_hasUsedWidth { false };
@@ -95,7 +95,7 @@ public:
         const ColumnList& list() const { return m_columnList; }
         size_t size() const { return m_columnList.size(); }
 
-        void addColumn(const ContainerBox&);
+        void addColumn(const ElementBox&);
         void addAnonymousColumn();
 
         LayoutUnit logicalWidth() const { return m_columnList.last().usedLogicalRight() - m_columnList.first().usedLogicalLeft(); }
@@ -106,7 +106,7 @@ public:
 
     class Row {
     public:
-        Row(const ContainerBox&);
+        Row(const ElementBox&);
 
         void setLogicalTop(LayoutUnit logicalTop) { m_logicalTop = logicalTop; }
         LayoutUnit logicalTop() const { return m_logicalTop; }
@@ -118,13 +118,13 @@ public:
         void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
         InlineLayoutUnit baseline() const { return m_baseline; }
 
-        const ContainerBox& box() const { return m_layoutBox; }
+        const ElementBox& box() const { return m_layoutBox; }
 
     private:
         LayoutUnit m_logicalTop;
         LayoutUnit m_logicalHeight;
         InlineLayoutUnit m_baseline { 0 };
-        CheckedRef<const ContainerBox> m_layoutBox;
+        CheckedRef<const ElementBox> m_layoutBox;
     };
 
     class Rows {
@@ -133,7 +133,7 @@ public:
         RowList& list() { return m_rowList; }
         const RowList& list() const { return m_rowList; }
 
-        void addRow(const ContainerBox&);
+        void addRow(const ElementBox&);
 
         size_t size() const { return m_rowList.size(); }
 
@@ -145,7 +145,7 @@ public:
     class Cell : public CanMakeWeakPtr<Cell> {
         WTF_MAKE_ISO_ALLOCATED_INLINE(Cell);
     public:
-        Cell(const ContainerBox&, SlotPosition, CellSpan);
+        Cell(const ElementBox&, SlotPosition, CellSpan);
 
         size_t startColumn() const { return m_position.column; }
         size_t endColumn() const { return m_position.column + m_span.column; }
@@ -162,10 +162,10 @@ public:
         void setBaseline(InlineLayoutUnit baseline) { m_baseline = baseline; }
         InlineLayoutUnit baseline() const { return m_baseline; }
 
-        const ContainerBox& box() const { return *m_layoutBox.get(); }
+        const ElementBox& box() const { return *m_layoutBox.get(); }
 
     private:
-        CheckedPtr<const ContainerBox> m_layoutBox;
+        CheckedPtr<const ElementBox> m_layoutBox;
         SlotPosition m_position;
         CellSpan m_span;
         InlineLayoutUnit m_baseline { 0 };

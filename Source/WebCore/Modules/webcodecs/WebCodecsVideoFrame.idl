@@ -69,7 +69,7 @@ dictionary VideoFrameInit {
     unsigned long long duration;
     long long timestamp;
 
-    required DOMRectInit visibleRect;
+    DOMRectInit visibleRect;
 
     [EnforceRange] unsigned long displayWidth;
     [EnforceRange] unsigned long displayHeight;
@@ -85,7 +85,7 @@ dictionary VideoFrameBufferInit {
 
     sequence<PlaneLayout> layout;
 
-    required DOMRectInit visibleRect;
+    DOMRectInit visibleRect;
 
     [EnforceRange] unsigned long displayWidth;
     [EnforceRange] unsigned long displayHeight;

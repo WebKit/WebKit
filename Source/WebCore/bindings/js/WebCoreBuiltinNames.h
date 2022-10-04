@@ -398,6 +398,7 @@ namespace WebCore {
     macro(TransformStreamDefaultController) \
     macro(UndoItem) \
     macro(UndoManager) \
+    macro(VideoDecoder) \
     macro(VideoFrame) \
     macro(VisualViewport) \
     macro(WakeLock) \

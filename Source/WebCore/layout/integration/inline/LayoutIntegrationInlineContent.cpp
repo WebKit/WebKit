@@ -143,7 +143,7 @@ std::optional<size_t> InlineContent::firstBoxIndexForLayoutBox(const Layout::Box
 
 const Vector<size_t>& InlineContent::nonRootInlineBoxIndexesForLayoutBox(const Layout::Box& layoutBox) const
 {
-    ASSERT(layoutBox.isContainerBox());
+    ASSERT(layoutBox.isElementBox());
 
     if (!m_inlineBoxIndexCache) {
         m_inlineBoxIndexCache = makeUnique<InlineBoxIndexCache>();

@@ -27,8 +27,8 @@
 #include "TableFormattingQuirks.h"
 
 #include "LayoutBox.h"
-#include "LayoutContainerBox.h"
 #include "LayoutContainingBlockChainIterator.h"
+#include "LayoutElementBox.h"
 #include "LayoutState.h"
 #include "TableFormattingContext.h"
 #include "TableGrid.h"
@@ -41,7 +41,7 @@ TableFormattingQuirks::TableFormattingQuirks(const TableFormattingContext& table
 {
 }
 
-bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const ContainerBox& cellBox)
+bool TableFormattingQuirks::shouldIgnoreChildContentVerticalMargin(const ElementBox& cellBox)
 {
     // Normally BFC root content height takes the margin box of the child content as vertical margins don't collapse with BFC roots,
     // but table cell boxes do collapse their (non-existing) margins with child quirk margins (so much quirk), so here we check

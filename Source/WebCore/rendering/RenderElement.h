@@ -42,7 +42,7 @@ struct MarginRect {
 };
 
 namespace Layout {
-class ContainerBox;
+class ElementBox;
 }
 
 class RenderElement : public RenderObject {
@@ -90,8 +90,8 @@ public:
     RenderObject* firstInFlowChild() const;
     RenderObject* lastInFlowChild() const;
 
-    Layout::ContainerBox* layoutBox();
-    const Layout::ContainerBox* layoutBox() const;
+    Layout::ElementBox* layoutBox();
+    const Layout::ElementBox* layoutBox() const;
 
     // Note that even if these 2 "canContain" functions return true for a particular renderer, it does not necessarily mean the renderer is the containing block (see containingBlockForAbsolute(Fixed)Position).
     bool canContainFixedPositionObjects() const;

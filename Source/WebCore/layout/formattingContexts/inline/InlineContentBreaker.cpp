@@ -30,7 +30,7 @@
 #include "Hyphenation.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include "TextUtil.h"
 
 namespace WebCore {

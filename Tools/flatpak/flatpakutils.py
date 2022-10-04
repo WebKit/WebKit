@@ -276,6 +276,7 @@ class FlatpakObject:
                     tmpfile.flush()
                     self.flatpak("remote-modify", "--gpg-import=" + tmpfile.name, remote)
 
+        self.flatpak("repair", comment="Ensuring the local Flatpak repository is not corrupted")
         self.flatpak("update", comment="Updating Flatpak environment")
 
 class FlatpakPackages(FlatpakObject):

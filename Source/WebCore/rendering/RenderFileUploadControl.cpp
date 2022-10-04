@@ -260,8 +260,12 @@ String RenderFileUploadControl::fileTextValue() const
     auto& input = inputElement();
     if (!input.files())
         return { };
-    if (input.files()->length() && !input.displayString().isEmpty())
+    if (input.files()->length() && !input.displayString().isEmpty()) {
+        if (input.files()->length() == 1)
+            return StringTruncator::centerTruncate(input.displayString(), maxFilenameWidth(), style().fontCascade());
+
         return StringTruncator::rightTruncate(input.displayString(), maxFilenameWidth(), style().fontCascade());
+    }
     return theme().fileListNameForWidth(input.files(), style().fontCascade(), maxFilenameWidth(), input.multiple());
 }
     

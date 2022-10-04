@@ -31,7 +31,7 @@
 #include "DisplayTreeBuilder.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include "Page.h"
 #include <wtf/IsoMallocInlines.h>
 

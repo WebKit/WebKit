@@ -1,3 +1,3 @@
 
-FAIL CSSMatrixComponent's matrix attribute is mutable Can't find variable: CSSMatrixTransformComponent
+PASS CSSMatrixComponent's matrix attribute is mutable
 

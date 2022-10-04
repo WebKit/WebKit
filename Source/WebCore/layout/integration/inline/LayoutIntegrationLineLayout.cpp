@@ -41,7 +41,6 @@
 #include "LayoutIntegrationInlineContentBuilder.h"
 #include "LayoutIntegrationInlineContentPainter.h"
 #include "LayoutIntegrationPagination.h"
-#include "LayoutReplacedBox.h"
 #include "LayoutTreeBuilder.h"
 #include "PaintInfo.h"
 #include "RenderAttachment.h"
@@ -172,7 +171,7 @@ void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
     updateLayoutBoxDimensions(listMarker);
 
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(listMarker);
-    if (downcast<Layout::ReplacedBox>(layoutBox).isListMarkerOutside()) {
+    if (layoutBox.isListMarkerOutside()) {
         auto& rootGeometry = m_layoutState.geometryForRootBox();
         auto& listMarkerGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
         auto horizontalMargin = listMarkerGeometry.horizontalMargin();
@@ -797,12 +796,12 @@ const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBo
     return m_boxTree.rendererForLayoutBox(layoutBox);
 }
 
-const Layout::ContainerBox& LineLayout::rootLayoutBox() const
+const Layout::ElementBox& LineLayout::rootLayoutBox() const
 {
     return m_boxTree.rootLayoutBox();
 }
 
-Layout::ContainerBox& LineLayout::rootLayoutBox()
+Layout::ElementBox& LineLayout::rootLayoutBox()
 {
     return m_boxTree.rootLayoutBox();
 }

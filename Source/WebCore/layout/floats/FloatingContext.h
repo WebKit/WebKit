@@ -27,7 +27,7 @@
 
 #include "FloatingState.h"
 #include "FormattingContext.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include <wtf/IsoMalloc.h>
 
 namespace WebCore {
@@ -81,7 +81,7 @@ private:
 
     const LayoutState& layoutState() const { return m_floatingState.layoutState(); }
     const FormattingContext& formattingContext() const { return m_formattingContext; }
-    const ContainerBox& root() const { return m_formattingContext.root(); }
+    const ElementBox& root() const { return m_formattingContext.root(); }
 
     void findPositionForFormattingContextRoot(FloatAvoider&) const;
 

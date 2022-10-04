@@ -16,7 +16,7 @@ PASS Commits "none" transform
 PASS Commits the intermediate value of an animation in the middle of stack
 PASS Commit composites on top of the underlying value
 PASS Triggers mutation observers when updating style
-FAIL Does NOT trigger mutation observers when the change to style is redundant assert_equals: Should have no mutation records expected 0 but got 1
+PASS Does NOT trigger mutation observers when the change to style is redundant
 PASS Throws if the target element is a pseudo element
 PASS Throws if the target element is not something with a style attribute
 PASS Throws if the target effect is display:none

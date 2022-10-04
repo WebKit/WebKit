@@ -54,9 +54,6 @@ public:
     String message() const { return m_message; }
     void setMessage(String&& message) { m_message = WTFMove(message); }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static RefPtr<ApplePayError> decode(Decoder&);
-
 private:
     ApplePayError(ApplePayErrorCode code, std::optional<ApplePayErrorContactField> contactField, const String& message)
         : m_code(code)
@@ -69,32 +66,6 @@ private:
     std::optional<ApplePayErrorContactField> m_contactField;
     String m_message;
 };
-
-template<class Encoder>
-void ApplePayError::encode(Encoder& encoder) const
-{
-    encoder << m_code;
-    encoder << m_contactField;
-    encoder << m_message;
-}
-
-template<class Decoder>
-RefPtr<ApplePayError> ApplePayError::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return nullptr; \
-
-    DECODE(code, ApplePayErrorCode)
-    DECODE(contactField, std::optional<ApplePayErrorContactField>)
-    DECODE(message, String)
-
-#undef DECODE
-
-    return ApplePayError::create(WTFMove(*code), WTFMove(*contactField), WTFMove(*message));
-}
 
 } // namespace WebCore
 

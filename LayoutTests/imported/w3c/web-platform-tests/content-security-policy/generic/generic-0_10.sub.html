@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>test implicit port number matching (requires port 80)</title>
-    <meta http-equiv="Content-Security-Policy content="script-src 'self' {{hosts[alt][]}} 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy content="script-src 'self' {{domains[www]}} 'unsafe-inline';">
     <script src='/resources/testharness.js'></script>
     <script src='/resources/testharnessreport.js'></script>
     <script>
@@ -12,7 +12,7 @@
       var head = document.getElementsByTagName('head')[0];
       var script = document.createElement('script');
       script.type = 'text/javascript';
-      script.src = "http://{{hosts[alt][]}}/content-security-policy/generic/positiveTest.js";
+      script.src = "http://{{domains[www]}}/content-security-policy/generic/positiveTest.js";
       head.appendChild(script);
     </script>
 

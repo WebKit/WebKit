@@ -61,79 +61,7 @@ struct ApplePayLineItem final {
 #if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
     String automaticReloadPaymentThresholdAmount; /* required */
 #endif
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayLineItem> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayLineItem::encode(Encoder& encoder) const
-{
-    encoder << type;
-    encoder << label;
-    encoder << amount;
-    encoder << paymentTiming;
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
-    encoder << recurringPaymentStartDate;
-    encoder << recurringPaymentIntervalUnit;
-    encoder << recurringPaymentIntervalCount;
-    encoder << recurringPaymentEndDate;
-#endif
-#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
-    encoder << deferredPaymentDate;
-#endif
-#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
-    encoder << automaticReloadPaymentThresholdAmount;
-#endif
-}
-
-template<class Decoder>
-std::optional<ApplePayLineItem> ApplePayLineItem::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(type, Type)
-    DECODE(label, String)
-    DECODE(amount, String)
-    DECODE(paymentTiming, ApplePayPaymentTiming)
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
-    DECODE(recurringPaymentStartDate, WallTime)
-    DECODE(recurringPaymentIntervalUnit, ApplePayRecurringPaymentDateUnit)
-    DECODE(recurringPaymentIntervalCount, unsigned)
-    DECODE(recurringPaymentEndDate, WallTime)
-#endif
-#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
-    DECODE(deferredPaymentDate, WallTime)
-#endif
-#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
-    DECODE(automaticReloadPaymentThresholdAmount, String)
-#endif
-
-#undef DECODE
-
-    return { {
-        WTFMove(*type),
-        WTFMove(*label),
-        WTFMove(*amount),
-        WTFMove(*paymentTiming),
-#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
-        WTFMove(*recurringPaymentStartDate),
-        WTFMove(*recurringPaymentIntervalUnit),
-        WTFMove(*recurringPaymentIntervalCount),
-        WTFMove(*recurringPaymentEndDate),
-#endif
-#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
-        WTFMove(*deferredPaymentDate),
-#endif
-#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
-        WTFMove(*automaticReloadPaymentThresholdAmount),
-#endif
-    } };
-}
 
 } // namespace WebCore
 

@@ -182,7 +182,7 @@ bool LayerPaintScope::includes(const InlineDisplay::Box& box)
     bool hasSelfPaintingLayer = renderer && renderer->hasSelfPaintingLayer();
 
     if (hasSelfPaintingLayer && box.isNonRootInlineBox())
-        m_currentExcludedInlineBox = &downcast<Layout::ContainerBox>(box.layoutBox());
+        m_currentExcludedInlineBox = &downcast<Layout::ElementBox>(box.layoutBox());
 
     return !hasSelfPaintingLayer;
 }

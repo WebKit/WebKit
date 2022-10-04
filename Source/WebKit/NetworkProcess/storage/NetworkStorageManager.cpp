@@ -271,6 +271,7 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
 
     connection.removeWorkQueueMessageReceiver(Messages::NetworkStorageManager::messageReceiverName());
     m_queue->dispatch([this, protectedThis = Ref { *this }, connection = connection.uniqueID()]() mutable {
+        assertIsCurrent(workQueue());
         m_idbStorageRegistry->removeConnectionToClient(connection);
         m_originStorageManagers.removeIf([&](auto& entry) {
             auto& manager = entry.value;
@@ -282,10 +283,7 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
             }
             return shouldRemove;
         });
-
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), connection] {
-            protectedThis->m_temporaryBlobPathsByConnection.remove(connection);
-        });
+        m_temporaryBlobPathsByConnection.remove(connection);
     });
 }
 
@@ -819,6 +817,7 @@ void NetworkStorageManager::registerTemporaryBlobFilePaths(IPC::Connection& conn
     ASSERT(RunLoop::isMain());
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, connectionID = connection.uniqueID(), filePaths = crossThreadCopy(filePaths)] {
+        assertIsCurrent(workQueue());
         auto& temporaryBlobPaths = m_temporaryBlobPathsByConnection.ensure(connectionID, [] {
             return HashSet<String> { };
         }).iterator->value;
@@ -1116,6 +1115,7 @@ void NetworkStorageManager::renameIndex(const WebCore::IDBRequestData& requestDa
 
 void NetworkStorageManager::putOrAdd(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
+    assertIsCurrent(workQueue());
     if (value.blobURLs().size() != value.blobFilePaths().size()) {
         RELEASE_LOG_FAULT(IndexedDB, "NetworkStorageManager::putOrAdd: Number of blob URLs doesn't match the number of blob file paths.");
         ASSERT_NOT_REACHED();

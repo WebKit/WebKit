@@ -30,9 +30,9 @@
 namespace WebCore {
 namespace Layout {
 
-class Box;
 class BlockFormattingGeometry;
 class BlockFormattingState;
+class ElementBox;
 class LayoutState;
 
 // This class implements margin collapsing for block formatting context.
@@ -40,39 +40,39 @@ class BlockMarginCollapse {
 public:
     BlockMarginCollapse(const LayoutState&, const BlockFormattingState&);
 
-    UsedVerticalMargin collapsedVerticalValues(const Box&, UsedVerticalMargin::NonCollapsedValues);
+    UsedVerticalMargin collapsedVerticalValues(const ElementBox&, UsedVerticalMargin::NonCollapsedValues);
 
-    LayoutUnit marginBeforeIgnoringCollapsingThrough(const Box&, UsedVerticalMargin::NonCollapsedValues);
+    LayoutUnit marginBeforeIgnoringCollapsingThrough(const ElementBox&, UsedVerticalMargin::NonCollapsedValues);
 
-    bool marginBeforeCollapsesWithParentMarginBefore(const Box&) const;
-    bool marginBeforeCollapsesWithFirstInFlowChildMarginBefore(const Box&) const;
-    bool marginBeforeCollapsesWithParentMarginAfter(const Box&) const;
-    bool marginBeforeCollapsesWithPreviousSiblingMarginAfter(const Box&) const;
+    bool marginBeforeCollapsesWithParentMarginBefore(const ElementBox&) const;
+    bool marginBeforeCollapsesWithFirstInFlowChildMarginBefore(const ElementBox&) const;
+    bool marginBeforeCollapsesWithParentMarginAfter(const ElementBox&) const;
+    bool marginBeforeCollapsesWithPreviousSiblingMarginAfter(const ElementBox&) const;
 
-    bool marginAfterCollapsesWithParentMarginAfter(const Box&) const;
-    bool marginAfterCollapsesWithLastInFlowChildMarginAfter(const Box&) const;
-    bool marginAfterCollapsesWithParentMarginBefore(const Box&) const;
-    bool marginAfterCollapsesWithNextSiblingMarginBefore(const Box&) const;
-    bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const Box&) const;
+    bool marginAfterCollapsesWithParentMarginAfter(const ElementBox&) const;
+    bool marginAfterCollapsesWithLastInFlowChildMarginAfter(const ElementBox&) const;
+    bool marginAfterCollapsesWithParentMarginBefore(const ElementBox&) const;
+    bool marginAfterCollapsesWithNextSiblingMarginBefore(const ElementBox&) const;
+    bool marginAfterCollapsesWithSiblingMarginBeforeWithClearance(const ElementBox&) const;
 
     UsedVerticalMargin::PositiveAndNegativePair::Values computedPositiveAndNegativeMargin(UsedVerticalMargin::PositiveAndNegativePair::Values, UsedVerticalMargin::PositiveAndNegativePair::Values) const;
 
-    bool marginsCollapseThrough(const Box&) const;
+    bool marginsCollapseThrough(const ElementBox&) const;
 
-    PrecomputedMarginBefore precomputedMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues, const BlockFormattingGeometry&);
+    PrecomputedMarginBefore precomputedMarginBefore(const ElementBox&, UsedVerticalMargin::NonCollapsedValues, const BlockFormattingGeometry&);
 
 private:
     enum class MarginType { Before, After };
-    UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeValues(const Box&, MarginType) const;
-    UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
-    UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginAfter(const Box&, UsedVerticalMargin::NonCollapsedValues) const;
+    UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeValues(const ElementBox&, MarginType) const;
+    UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginBefore(const ElementBox&, UsedVerticalMargin::NonCollapsedValues) const;
+    UsedVerticalMargin::PositiveAndNegativePair::Values positiveNegativeMarginAfter(const ElementBox&, UsedVerticalMargin::NonCollapsedValues) const;
 
-    UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeMarginBefore(const Box&, UsedVerticalMargin::NonCollapsedValues, const BlockFormattingGeometry&) const;
-    UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeValues(const Box&, const BlockFormattingGeometry&) const;
+    UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeMarginBefore(const ElementBox&, UsedVerticalMargin::NonCollapsedValues, const BlockFormattingGeometry&) const;
+    UsedVerticalMargin::PositiveAndNegativePair::Values precomputedPositiveNegativeValues(const ElementBox&, const BlockFormattingGeometry&) const;
 
     std::optional<LayoutUnit> marginValue(UsedVerticalMargin::PositiveAndNegativePair::Values) const;
 
-    bool hasClearance(const Box&) const;
+    bool hasClearance(const ElementBox&) const;
 
     bool inQuirksMode() const { return m_inQuirksMode; }
     const LayoutState& layoutState() const { return m_layoutState; }

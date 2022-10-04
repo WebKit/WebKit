@@ -1,6 +1,0 @@
-Eval should be blocked in the iframe, but inline script should be allowed.
-
-
-
-FAIL Expecting logs: ["violated-directive=script-src","PASS"] assert_unreached: Logging timeout, expected logs PASS not sent. Reached unreachable code
-

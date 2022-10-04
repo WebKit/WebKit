@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/support/executor.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/support/frame.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-src/support/testharness-helper.sub.js

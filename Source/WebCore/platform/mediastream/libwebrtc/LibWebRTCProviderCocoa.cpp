@@ -29,6 +29,8 @@
 #if USE(LIBWEBRTC)
 
 #include "DeprecatedGlobalSettings.h"
+#include "MediaCapabilitiesInfo.h"
+#include "VP9UtilitiesCocoa.h"
 
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN

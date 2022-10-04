@@ -37,7 +37,7 @@ namespace Layout {
 class TableFormattingState : public FormattingState {
     WTF_MAKE_ISO_ALLOCATED(TableFormattingState);
 public:
-    TableFormattingState(Ref<FloatingState>&&, LayoutState&, const ContainerBox& tableBox);
+    TableFormattingState(Ref<FloatingState>&&, LayoutState&, const ElementBox& tableBox);
     ~TableFormattingState();
 
     TableGrid& tableGrid() { return m_tableGrid; }

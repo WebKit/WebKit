@@ -1,4 +1,4 @@
 
 
-FAIL img-src with wildcard port should match any port assert_unreached: Image should have loaded. Reached unreachable code
+PASS img-src with wildcard port should match any port
 

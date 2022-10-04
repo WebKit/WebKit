@@ -31,18 +31,62 @@
 #import "_WKWebExtensionInternal.h"
 
 #import "WebExtension.h"
+#import "_WKWebExtensionMatchPatternInternal.h"
 #import <WebCore/WebCoreObjCExtras.h>
+
+NSErrorDomain const _WKWebExtensionErrorDomain = @"_WKWebExtensionErrorDomain";
+NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWebExtensionErrorsWereUpdated";
 
 @implementation _WKWebExtension
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-- (instancetype)init
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle
 {
+    NSParameterAssert(appExtensionBundle);
+
     if (!(self = [super init]))
         return nil;
 
-    API::Object::constructInWrapper<WebKit::WebExtension>(self);
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, appExtensionBundle);
+
+    return self;
+}
+
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL
+{
+    NSParameterAssert(resourceBaseURL);
+    NSParameterAssert([resourceBaseURL isFileURL]);
+    NSParameterAssert([resourceBaseURL hasDirectoryPath]);
+
+    if (!(self = [super init]))
+        return nil;
+
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, resourceBaseURL);
+
+    return self;
+}
+
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
+{
+    NSParameterAssert(manifest);
+
+    if (!(self = [super init]))
+        return nil;
+
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifest);
+
+    return self;
+}
+
+- (instancetype)_initWithManifestData:(NSData *)manifestData
+{
+    NSParameterAssert(manifestData);
+
+    if (!(self = [super init]))
+        return nil;
+
+    API::Object::constructInWrapper<WebKit::WebExtension>(self, manifestData);
 
     return self;
 }
@@ -55,6 +99,103 @@
     _webExtension->~WebExtension();
 }
 
+- (NSDictionary<NSString *, id> *)manifest
+{
+    return _webExtension->manifest();
+}
+
+- (double)manifestVersion
+{
+    return _webExtension->manifestVersion();
+}
+
+- (BOOL)usesManifestVersion:(double)version
+{
+    return _webExtension->usesManifestVersion(version);
+}
+
+- (NSString *)displayName
+{
+    return _webExtension->displayName();
+}
+
+- (NSString *)displayShortName
+{
+    return _webExtension->displayShortName();
+}
+
+- (NSString *)displayVersion
+{
+    return _webExtension->displayVersion();
+}
+
+- (NSString *)displayDescription
+{
+    return _webExtension->displayDescription();
+}
+
+- (NSString *)version
+{
+    return _webExtension->version();
+}
+
+- (NSSet<_WKWebExtensionPermission> *)requestedPermissions
+{
+    return _webExtension->requestedPermissions();
+}
+
+- (NSSet<_WKWebExtensionPermission> *)optionalPermissions
+{
+    return _webExtension->optionalPermissions();
+}
+
+static inline NSSet<_WKWebExtensionMatchPattern *> *toAPI(const HashSet<Ref<WebKit::WebExtensionMatchPattern>>& patterns)
+{
+    NSMutableSet<_WKWebExtensionMatchPattern *> *result = [NSMutableSet setWithCapacity:patterns.size()];
+
+    for (auto& matchPattern : patterns)
+        [result addObject:WebKit::wrapper(matchPattern)];
+
+    return [result copy];
+}
+
+- (NSSet<_WKWebExtensionMatchPattern *> *)requestedPermissionOrigins
+{
+    return toAPI(_webExtension->requestedPermissionOrigins());
+}
+
+- (NSSet<_WKWebExtensionMatchPattern *> *)optionalPermissionOrigins
+{
+    return toAPI(_webExtension->optionalPermissionOrigins());
+}
+
+- (NSSet<_WKWebExtensionMatchPattern *> *)allRequestedOrigins
+{
+    return toAPI(_webExtension->allRequestedOrigins());
+}
+
+- (NSArray<NSError *> *)errors
+{
+    return _webExtension->errors();
+}
+
+- (BOOL)hasBackgroundContent
+{
+    return _webExtension->hasBackgroundContent();
+}
+
+- (BOOL)backgroundContentIsPersistent
+{
+    return _webExtension->backgroundContentIsPersistent();
+}
+
+- (BOOL)hasInjectedContentForURL:(NSURL *)url
+{
+    NSParameterAssert(url);
+
+    return _webExtension->hasInjectedContentForURL(url);
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -65,6 +206,113 @@
 - (WebKit::WebExtension&)_webExtension
 {
     return *_webExtension;
+}
+
+#else // ENABLE(WK_WEB_EXTENSIONS)
+
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)bundle
+{
+    return nil;
+}
+
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL
+{
+    return nil;
+}
+
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest
+{
+    return nil;
+}
+
+- (instancetype)_initWithManifestData:(NSData *)manifestData
+{
+    return nil;
+}
+
+- (NSDictionary<NSString *, id> *)manifest
+{
+    return nil;
+}
+
+- (double)manifestVersion
+{
+    return 0;
+}
+
+- (BOOL)usesManifestVersion:(double)version
+{
+    return NO;
+}
+
+- (NSString *)displayName
+{
+    return nil;
+}
+
+- (NSString *)displayShortName
+{
+    return nil;
+}
+
+- (NSString *)displayVersion
+{
+    return nil;
+}
+
+- (NSString *)displayDescription
+{
+    return nil;
+}
+
+- (NSString *)version
+{
+    return nil;
+}
+
+- (NSSet<_WKWebExtensionPermission> *)requestedPermissions
+{
+    return nil;
+}
+
+- (NSSet<_WKWebExtensionPermission> *)optionalPermissions
+{
+    return nil;
+}
+
+- (NSSet<_WKWebExtensionMatchPattern *> *)requestedPermissionOrigins
+{
+    return nil;
+}
+
+- (NSSet<_WKWebExtensionMatchPattern *> *)optionalPermissionOrigins
+{
+    return nil;
+}
+
+- (NSSet<_WKWebExtensionMatchPattern *> *)allRequestedOrigins
+{
+    return nil;
+}
+
+- (NSArray<NSError *> *)errors
+{
+    return nil;
+}
+
+- (BOOL)hasBackgroundContent
+{
+    return NO;
+}
+
+- (BOOL)backgroundContentIsPersistent
+{
+    return NO;
+}
+
+- (BOOL)hasInjectedContentForURL:(NSURL *)url
+{
+    return NO;
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

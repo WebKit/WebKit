@@ -15,14 +15,20 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href_blank-script-src-attr.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href_blank-script-src-elem.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-href_blank.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-window_location.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_allowed-window_open.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href_blank-script-src-attr.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href_blank-script-src-elem.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-href_blank.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-window_location.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_missing_unsafe_hashes-window_open.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href_blank-script-src-attr.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href_blank-script-src-elem.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-href_blank.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-window_location.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-hashes/javascript_src_denied_wrong_hash-window_open.html

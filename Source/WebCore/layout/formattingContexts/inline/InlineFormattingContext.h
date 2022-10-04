@@ -44,7 +44,7 @@ class LineBox;
 class InlineFormattingContext final : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(InlineFormattingContext);
 public:
-    InlineFormattingContext(const ContainerBox& formattingContextRoot, InlineFormattingState&, const InlineDamage* = nullptr);
+    InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&, const InlineDamage* = nullptr);
 
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;

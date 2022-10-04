@@ -50,64 +50,7 @@ struct ApplePayDetailsUpdateBase {
 #if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
     std::optional<Vector<ApplePayPaymentTokenContext>> newMultiTokenContexts;
 #endif
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayDetailsUpdateBase> decode(Decoder&);
-
-    template<class Decoder> WARN_UNUSED_RETURN bool decodeBase(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayDetailsUpdateBase::encode(Encoder& encoder) const
-{
-    encoder << newTotal;
-    encoder << newLineItems;
-#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
-    encoder << newRecurringPaymentRequest;
-#endif
-#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
-    encoder << newAutomaticReloadPaymentRequest;
-#endif
-#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
-    encoder << newMultiTokenContexts;
-#endif
-}
-
-template<class Decoder>
-std::optional<ApplePayDetailsUpdateBase> ApplePayDetailsUpdateBase::decode(Decoder& decoder)
-{
-    ApplePayDetailsUpdateBase result;
-    if (!result.decodeBase(decoder))
-        return std::nullopt;
-    return result;
-}
-
-template<class Decoder>
-bool ApplePayDetailsUpdateBase::decodeBase(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return false; \
-    this->name = WTFMove(*name); \
-
-    DECODE(newTotal, ApplePayLineItem)
-    DECODE(newLineItems, Vector<ApplePayLineItem>)
-#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
-    DECODE(newRecurringPaymentRequest, std::optional<ApplePayRecurringPaymentRequest>);
-#endif
-#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
-    DECODE(newAutomaticReloadPaymentRequest, std::optional<ApplePayAutomaticReloadPaymentRequest>);
-#endif
-#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
-    DECODE(newMultiTokenContexts, std::optional<Vector<ApplePayPaymentTokenContext>>);
-#endif
-
-#undef DECODE
-
-    return true;
-}
 
 } // namespace WebCore
 

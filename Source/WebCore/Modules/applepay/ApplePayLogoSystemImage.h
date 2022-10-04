@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-enum class ApplePayLogoStyle : uint8_t {
+enum class ApplePayLogoStyle : bool {
     White,
     Black,
 };
@@ -48,10 +48,9 @@ public:
 
     virtual ~ApplePayLogoSystemImage() = default;
 
-    void draw(GraphicsContext&, const FloatRect&) const final;
+    ApplePayLogoStyle applePayLogoStyle() const { return m_applePayLogoStyle; }
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<Ref<ApplePayLogoSystemImage>> decode(Decoder&);
+    void draw(GraphicsContext&, const FloatRect&) const final;
 
 private:
     ApplePayLogoSystemImage(ApplePayLogoStyle applePayLogoStyle)
@@ -63,44 +62,10 @@ private:
     ApplePayLogoStyle m_applePayLogoStyle;
 };
 
-template<class Encoder>
-void ApplePayLogoSystemImage::encode(Encoder& encoder) const
-{
-    encoder << m_applePayLogoStyle;
-}
-
-template<class Decoder>
-std::optional<Ref<ApplePayLogoSystemImage>> ApplePayLogoSystemImage::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(applePayLogoStyle, ApplePayLogoStyle)
-
-#undef DECODE
-
-    return ApplePayLogoSystemImage::create(WTFMove(*applePayLogoStyle));
-}
-
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ApplePayLogoSystemImage)
     static bool isType(const WebCore::SystemImage& systemImage) { return systemImage.systemImageType() == WebCore::SystemImageType::ApplePayLogo; }
 SPECIALIZE_TYPE_TRAITS_END()
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ApplePayLogoStyle> {
-    using values = EnumValues<
-        WebCore::ApplePayLogoStyle,
-        WebCore::ApplePayLogoStyle::White,
-        WebCore::ApplePayLogoStyle::Black
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(APPLE_PAY)

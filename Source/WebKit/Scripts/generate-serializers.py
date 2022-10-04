@@ -27,10 +27,11 @@ import sys
 
 
 class SerializedType(object):
-    def __init__(self, struct_or_class, namespace, name, members, condition, attributes):
+    def __init__(self, struct_or_class, namespace, name, parent_class, members, condition, attributes):
         self.struct_or_class = struct_or_class
         self.namespace = namespace
         self.name = name
+        self.parent_class = parent_class
         self.members = members
         self.condition = condition
         self.encoders = ['Encoder']
@@ -57,11 +58,12 @@ class SerializedType(object):
 
 
 class SerializedEnum(object):
-    def __init__(self, namespace, name, underlying_type, valid_values, attributes):
+    def __init__(self, namespace, name, underlying_type, valid_values, condition, attributes):
         self.namespace = namespace
         self.name = name
         self.underlying_type = underlying_type
         self.valid_values = valid_values
+        self.condition = condition
         self.attributes = attributes
 
     def namespace_and_name(self):
@@ -98,6 +100,12 @@ class MemberVariable(object):
         if match:
             return match.group(1)
         return None
+
+
+class EnumMember(object):
+    def __init__(self, name, condition):
+        self.name = name
+        self.condition = condition
 
 
 class ConditionalHeader(object):
@@ -148,7 +156,11 @@ def generate_header(serialized_types, serialized_enums):
     result.append('#include <wtf/Ref.h>')
     result.append('')
     for enum in serialized_enums:
+        if enum.condition is not None:
+            result.append('#if ' + enum.condition)
         result.append('namespace ' + enum.namespace + ' { enum class ' + enum.name + ' : ' + enum.underlying_type + '; }')
+        if enum.condition is not None:
+            result.append('#endif')
     for type in serialized_types:
         if type.condition is not None:
             result.append('#if ' + type.condition)
@@ -186,14 +198,32 @@ def generate_header(serialized_types, serialized_enums):
     for enum in serialized_enums:
         if enum.underlying_type == 'bool':
             continue
+        if enum.condition is not None:
+            result.append('#if ' + enum.condition)
         result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + enum.additional_template_parameter() + '>(' + enum.parameter() + ');')
+        if enum.condition is not None:
+            result.append('#endif')
     result.append('')
     result.append('} // namespace WTF')
     result.append('')
     return '\n'.join(result)
 
 
+def resolve_inheritance(serialized_types):
+    result = []
+    for serialized_type in serialized_types:
+        if serialized_type.parent_class is not None:
+            for possible_parent in serialized_types:
+                if possible_parent.namespace_and_name() == serialized_type.parent_class:
+                    serialized_type.members = possible_parent.members + serialized_type.members
+                    serialized_type.parent_class = len(possible_parent.members)
+                    break
+        result.append(serialized_type)
+    return result
+
+
 def generate_impl(serialized_types, serialized_enums, headers):
+    serialized_types = resolve_inheritance(serialized_types)
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
@@ -294,12 +324,18 @@ def generate_impl(serialized_types, serialized_enums, headers):
                 result.append('    return { ' + type.namespace_and_name() + '::' + type.create_using + '(')
             else:
                 result.append('    return { ' + type.namespace_and_name() + ' {')
+            if type.parent_class is not None:
+                result.append('        {')
             for i in range(len(type.members)):
+                member = type.members[i]
                 if type.members[i].condition is not None:
-                    result.append('#if ' + type.members[i].condition)
-                result.append('        WTFMove(*' + sanitize_string_for_variable_name(type.members[i].name) + ')' + ('' if i == len(type.members) - 1 else ','))
-                if type.members[i].condition is not None:
+                    result.append('#if ' + member.condition)
+                additional_indentation = ('    ' if type.parent_class is not None and type.parent_class > i else '')
+                result.append(additional_indentation + '        WTFMove(*' + sanitize_string_for_variable_name(member.name) + ')' + ('' if i == len(type.members) - 1 else ','))
+                if member.condition is not None:
                     result.append('#endif')
+                if type.parent_class == i + 1:
+                    result.append('        },')
             if type.return_ref or type.create_using:
                 result.append('    ) };')
             else:
@@ -316,26 +352,40 @@ def generate_impl(serialized_types, serialized_enums, headers):
         if enum.underlying_type == 'bool':
             continue
         result.append('')
+        if enum.condition is not None:
+            result.append('#if ' + enum.condition)
         result.append('template<> bool ' + enum.function_name() + '<' + enum.namespace_and_name() + enum.additional_template_parameter() + '>(' + enum.parameter() + ' value)')
         result.append('{')
         if enum.is_option_set():
             result.append('    constexpr ' + enum.underlying_type + ' allValidBitsValue =')
             for i in range(0, len(enum.valid_values)):
-                result.append('        ' + ('' if i == 0 else '| ') + 'static_cast<' + enum.underlying_type + '>(' + enum.namespace_and_name() + '::' + enum.valid_values[i] + ')' + (';' if i == len(enum.valid_values) - 1 else ''))
+                valid_value = enum.valid_values[i]
+                if valid_value.condition is not None:
+                    result.append('#if ' + valid_value.condition)
+                result.append('        ' + ('' if i == 0 else '| ') + 'static_cast<' + enum.underlying_type + '>(' + enum.namespace_and_name() + '::' + valid_value.name + ')' + (';' if i == len(enum.valid_values) - 1 else ''))
+                if valid_value.condition is not None:
+                    result.append('#endif')
             result.append('    return (value.toRaw() | allValidBitsValue) == allValidBitsValue;')
         else:
             result.append('    switch (static_cast<' + enum.namespace_and_name() + '>(value)) {')
             for valid_value in enum.valid_values:
-                result.append('    case ' + enum.namespace_and_name() + '::' + valid_value + ':')
+                if valid_value.condition is not None:
+                    result.append('#if ' + valid_value.condition)
+                result.append('    case ' + enum.namespace_and_name() + '::' + valid_value.name + ':')
+                if valid_value.condition is not None:
+                    result.append('#endif')
             result.append('        return true;')
             result.append('    default:')
             result.append('        return false;')
             result.append('    }')
         result.append('}')
+        if enum.condition is not None:
+            result.append('#endif')
     result.append('')
     result.append('} // namespace WTF')
     result.append('')
     return '\n'.join(result)
+
 
 def generate_serialized_type_info(serialized_types, serialized_enums, headers):
     result = []
@@ -369,13 +419,21 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers):
     result.append('{')
     result.append('    return {')
     for enum in serialized_enums:
+        if enum.condition is not None:
+            result.append('#if ' + enum.condition)
         result.append('        { "' + enum.namespace_and_name() + '"_s, sizeof(' + enum.namespace_and_name() + '), ' + ('true' if enum.is_option_set() else 'false') + ', {')
         if enum.underlying_type == 'bool':
             result.append('            0, 1')
         else:
             for valid_value in enum.valid_values:
-                result.append('            static_cast<uint64_t>(' + enum.namespace_and_name() + '::' + valid_value + '),')
+                if valid_value.condition is not None:
+                    result.append('#if ' + valid_value.condition)
+                result.append('            static_cast<uint64_t>(' + enum.namespace_and_name() + '::' + valid_value.name + '),')
+                if valid_value.condition is not None:
+                    result.append('#endif')
         result.append('        } },')
+        if enum.condition is not None:
+            result.append('#endif')
     result.append('    };')
     result.append('}')
     result.append('')
@@ -399,6 +457,7 @@ def parse_serialized_types(file, file_name):
     member_condition = None
     struct_or_class = None
     underlying_type = None
+    parent_class = None
     file_extension = "cpp"
 
     for line in file:
@@ -417,9 +476,16 @@ def parse_serialized_types(file, file_name):
             continue
         if line.startswith('}'):
             if underlying_type is not None:
-                serialized_enums.append(SerializedEnum(namespace, name, underlying_type, members, attributes))
+                serialized_enums.append(SerializedEnum(namespace, name, underlying_type, members, type_condition, attributes))
             else:
-                serialized_types.append(SerializedType(struct_or_class, namespace, name, members, type_condition, attributes))
+                serialized_types.append(SerializedType(struct_or_class, namespace, name, parent_class, members, type_condition, attributes))
+                if namespace is not None and (attributes is None or 'CustomHeader=True' not in attributes):
+                    if namespace == 'WebKit':
+                        headers.append(ConditionalHeader('"' + name + '.h"', type_condition))
+                    elif namespace == 'WebKit::WebGPU':
+                        headers.append(ConditionalHeader('"WebGPU' + name + '.h"', type_condition))
+                    else:
+                        headers.append(ConditionalHeader('<' + namespace + '/' + name + '.h>', type_condition))
             attributes = None
             namespace = None
             name = None
@@ -427,18 +493,13 @@ def parse_serialized_types(file, file_name):
             member_condition = None
             struct_or_class = None
             underlying_type = None
+            parent_class = None
             continue
 
-        match = re.search(r'headers? requiring (.*): (.*)', line)
-        if match:
-            condition, header_names = match.groups()
-            for header in header_names.split():
-                headers.append(ConditionalHeader(header, condition))
-            continue
         match = re.search(r'headers?: (.*)', line)
         if match:
             for header in match.group(1).split():
-                headers.append(ConditionalHeader(header, None))
+                headers.append(ConditionalHeader(header, type_condition))
             continue
         match = re.search(r'file_extension?: (.*)', line)
         if match:
@@ -453,9 +514,17 @@ def parse_serialized_types(file, file_name):
 
         match = re.search(r'(.*)enum class (.*)::(.*) : bool', line)
         if match:
-            serialized_enums.append(SerializedEnum(match.groups()[1], match.groups()[2], 'bool', [], match.groups()[0]))
+            serialized_enums.append(SerializedEnum(match.groups()[1], match.groups()[2], 'bool', [], type_condition, match.groups()[0]))
             continue
 
+        match = re.search(r'\[(.*)\] (struct|class) (.*)::(.*) : (.*) {', line)
+        if match:
+            attributes, struct_or_class, namespace, name, parent_class = match.groups()
+            continue
+        match = re.search(r'(struct|class) (.*)::(.*) : (.*) {', line)
+        if match:
+            struct_or_class, namespace, name, parent_class = match.groups()
+            continue
         match = re.search(r'\[(.*)\] (struct|class) (.*)::(.*) {', line)
         if match:
             attributes, struct_or_class, namespace, name = match.groups()
@@ -474,7 +543,7 @@ def parse_serialized_types(file, file_name):
             continue
 
         if underlying_type is not None:
-            members.append(line.strip(' ,'))
+            members.append(EnumMember(line.strip(' ,'), member_condition))
             continue
 
         match = re.search(r'\[(.*)\] (.*) ([^;]*)', line)
@@ -486,8 +555,6 @@ def parse_serialized_types(file, file_name):
             if match:
                 member_type, member_name = match.groups()
                 members.append(MemberVariable(member_type, member_name, member_condition, []))
-    if len(headers) == 0 and len(serialized_types) <= 1:
-        headers = [ConditionalHeader('"' + file_name[0:len(file_name) - len('.serialization.in')] + '.h"', None)]
     return [serialized_types, serialized_enums, headers, file_extension]
 
 

@@ -27,7 +27,7 @@
 #include "InlineLineBox.h"
 
 #include "LayoutBoxGeometry.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 
 namespace WebCore {
 namespace Layout {

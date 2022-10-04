@@ -56,6 +56,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/FontCacheCoreText.h>
 #import <WebCore/LocalizedDeviceModel.h>
+#import <WebCore/LowPowerModeNotifier.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PictureInPictureSupport.h>
@@ -1167,5 +1168,16 @@ void WebProcessPool::systemDidWake()
     sendToAllProcesses(Messages::WebProcess::SystemDidWake());
 }
 #endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS)
+void WebProcessPool::registerHighDynamicRangeChangeCallback()
+{
+    static NeverDestroyed<LowPowerModeNotifier> notifier { [](bool) {
+        auto properties = WebCore::collectScreenProperties();
+        for (auto& pool : WebProcessPool::allProcessPools())
+            pool->sendToAllProcesses(Messages::WebProcess::SetScreenProperties(properties));
+    } };
+}
+#endif // PLATFORM(MAC) || PLATFORM(IOS)
 
 } // namespace WebKit

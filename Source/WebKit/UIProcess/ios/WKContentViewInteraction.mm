@@ -5291,7 +5291,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     auto* accessoryView = self.formAccessoryView; // Creates one, if needed.
 
     if ([accessoryView respondsToSelector:@selector(setNextPreviousItemsVisible:)])
-        [accessoryView setNextPreviousItemsVisible:!self.webView._editable];
+        [accessoryView setNextPreviousItemsVisible:!WebKit::defaultAlternateFormControlDesignEnabled() && !self.webView._editable];
 
     [accessoryView setNextEnabled:_focusedElementInformation.hasNextNode];
     [accessoryView setPreviousEnabled:_focusedElementInformation.hasPreviousNode];
@@ -5355,7 +5355,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 - (void)_didChangeWebViewEditability
 {
     if ([_formAccessoryView respondsToSelector:@selector(setNextPreviousItemsVisible:)])
-        [_formAccessoryView setNextPreviousItemsVisible:!self.webView._editable];
+        [_formAccessoryView setNextPreviousItemsVisible:!WebKit::defaultAlternateFormControlDesignEnabled() && !self.webView._editable];
     
     [_twoFingerSingleTapGestureRecognizer setEnabled:!self.webView._editable];
 }

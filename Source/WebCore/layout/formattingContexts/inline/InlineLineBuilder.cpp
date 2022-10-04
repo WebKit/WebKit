@@ -404,8 +404,8 @@ void LineBuilder::initialize(const UsedConstraints& lineConstraints, const Inlin
     m_partialLeadingTextItem = { };
 
     auto createLineSpanningInlineBoxes = [&] {
-        auto isRootLayoutBox = [&](auto& containerBox) {
-            return &containerBox == &root();
+        auto isRootLayoutBox = [&](auto& elementBox) {
+            return &elementBox == &root();
         };
         if (needsLayoutRange.isEmpty())
             return;
@@ -1185,7 +1185,7 @@ TextDirection LineBuilder::inlineBaseDirectionForLineContent()
     return TextUtil::directionForTextContent(toString(m_line.runs()));
 }
 
-const ContainerBox& LineBuilder::root() const
+const ElementBox& LineBuilder::root() const
 {
     return formattingContext().root();
 }

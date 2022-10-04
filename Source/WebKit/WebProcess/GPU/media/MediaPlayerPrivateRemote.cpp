@@ -1448,6 +1448,11 @@ void MediaPlayerPrivateRemote::playerContentBoxRectChanged(const LayoutRect& con
     connection().send(Messages::RemoteMediaPlayerProxy::PlayerContentBoxRectChanged(contentRect), m_id);
 }
 
+void MediaPlayerPrivateRemote::setShouldDisableHDR(bool shouldDisable)
+{
+    connection().send(Messages::RemoteMediaPlayerProxy::SetShouldDisableHDR(shouldDisable), m_id);
+}
+
 void MediaPlayerPrivateRemote::requestResource(RemoteMediaResourceIdentifier remoteMediaResourceIdentifier, WebCore::ResourceRequest&& request, WebCore::PlatformMediaResourceLoader::LoadOptions options)
 {
     ASSERT(!m_mediaResources.contains(remoteMediaResourceIdentifier));

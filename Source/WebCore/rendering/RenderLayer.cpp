@@ -898,7 +898,7 @@ OptionSet<RenderLayer::UpdateLayerPositionsFlag> RenderLayer::flagsForUpdateLaye
     OptionSet<UpdateLayerPositionsFlag> flags = { CheckForRepaint };
 
     if (auto* parent = startingLayer.parent()) {
-        if (parent->hasFixedContainingBlockAncestor() || parent->renderer().canContainFixedPositionObjects())
+        if (parent->hasFixedContainingBlockAncestor() || (!parent->isRenderViewLayer() && parent->renderer().canContainFixedPositionObjects()))
             flags.add(SeenFixedContainingBlockLayer);
 
         if (parent->hasTransformedAncestor() || parent->transform())

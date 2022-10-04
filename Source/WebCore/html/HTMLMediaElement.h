@@ -799,6 +799,8 @@ private:
     void mediaPlayerBufferedTimeRangesChanged() final;
     bool mediaPlayerPrefersSandboxedParsing() const final;
 
+    bool mediaPlayerShouldDisableHDR() const final { return shouldDisableHDR(); }
+
 #if USE(GSTREAMER)
     void requestInstallMissingPlugins(const String& details, const String& description, MediaPlayerRequestInstallMissingPluginsCallback&) final;
 #endif
@@ -1004,6 +1006,8 @@ private:
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
     const Logger& mediaPlayerLogger() final { return logger(); }
 #endif
+
+    bool shouldDisableHDR() const;
 
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;

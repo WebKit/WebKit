@@ -28,8 +28,12 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 
+#if ENABLE(BOOL_ENUM)
 namespace EnumNamespace { enum class BoolEnumType : bool; }
+#endif
+#if ENABLE(UINT16_ENUM)
 namespace EnumNamespace { enum class EnumType : uint16_t; }
+#endif
 namespace EnumNamespace2 { enum class OptionSetEnumType : uint8_t; }
 #if ENABLE(TEST_FEATURE)
 namespace Namespace::Subnamespace { struct StructName; }
@@ -40,6 +44,7 @@ namespace Namespace { struct EmptyConstructorStruct; }
 namespace Namespace { class EmptyConstructorNullable; }
 class WithoutNamespace;
 class WithoutNamespaceWithAttributes;
+namespace WebCore { class InheritsFrom; }
 
 namespace IPC {
 
@@ -86,12 +91,19 @@ template<> struct ArgumentCoder<WithoutNamespaceWithAttributes> {
     static std::optional<WithoutNamespaceWithAttributes> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<WebCore::InheritsFrom> {
+    static void encode(Encoder&, const WebCore::InheritsFrom&);
+    static std::optional<WebCore::InheritsFrom> decode(Decoder&);
+};
+
 } // namespace IPC
 
 
 namespace WTF {
 
+#if ENABLE(UINT16_ENUM)
 template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t);
+#endif
 template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<EnumNamespace2::OptionSetEnumType>);
 
 } // namespace WTF
