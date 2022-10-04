@@ -63,6 +63,13 @@ void WorkQueueBase::platformInvalidate()
     }
 }
 
+#if ASSERT_ENABLED
+IsCurrentAssertion WorkQueueBase::isCurrentAssertion() const
+{
+    return createIsCurrentAssertion(m_threadID);
+}
+#endif
+
 void WorkQueueBase::dispatch(Function<void()>&& function)
 {
     m_runLoop->dispatch([protectedThis = Ref { *this }, function = WTFMove(function)] {
@@ -86,12 +93,5 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
 {
     return adoptRef(*new WorkQueue(RunLoop::main()));
 }
-
-#if ASSERT_ENABLED
-void WorkQueue::assertIsCurrent() const
-{
-    ASSERT(m_threadID == Thread::current().uid());
-}
-#endif
 
 }

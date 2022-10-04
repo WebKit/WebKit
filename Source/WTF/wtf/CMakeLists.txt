@@ -29,6 +29,7 @@ set(WTF_PUBLIC_HEADERS
     CagedUniquePtr.h
     CallbackAggregator.h
     CancellableTask.h
+    CapabilityIsCurrent.h
     CheckedArithmetic.h
     CheckedBoolean.h
     CheckedPtr.h

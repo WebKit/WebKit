@@ -42,7 +42,7 @@
 
 namespace WTF {
 
-class WorkQueueBase : public FunctionDispatcher, public ThreadSafeRefCounted<WorkQueueBase> {
+class WorkQueueBase : public FunctionDispatcher, public ThreadSafeRefCounted<WorkQueueBase>, protected ImplementsIsCurrent {
 public:
     using QOS = Thread::QOS;
 
@@ -88,6 +88,10 @@ protected:
  * That is, two different runnables dispatched to the WorkQueue should never be allowed to execute simultaneously.
  * They may be executed on different threads but can safely be used by objects that aren't already threadsafe.
  * Use `assertIsCurrent(m_myQueue);` in a runnable to assert that the runnable runs in a specific queue.
+ * Use `OtherClass instance { m_myQueue.isCurrentAssertion() }` to pass a work queue is current assertion to
+ * an other instance.
+ * Use `NO_UNIQUE_ADDRESS IsCurrentAssertion m_myAssertion;` to construct an is current assertion for current work
+ * queue.
  */
 class WTF_CAPABILITY("is current") WorkQueue : public WorkQueueBase {
 public:
@@ -99,6 +103,11 @@ public:
     RunLoop& runLoop() const { return *m_runLoop; }
 #endif
 
+#if ASSERT_ENABLED
+    WTF_EXPORT_PRIVATE IsCurrentAssertion isCurrentAssertion() const;
+#else
+    IsCurrentAssertion isCurrentAssertion() const { return { }; };
+#endif
 protected:
     WorkQueue(const char* name, QOS qos)
         : WorkQueueBase(name, Type::Serial, qos)
@@ -112,19 +121,11 @@ private:
 #endif
     static Ref<WorkQueue> constructMainWorkQueue();
 
-#if ASSERT_ENABLED
-    WTF_EXPORT_PRIVATE void assertIsCurrent() const;
-    friend void assertIsCurrent(const WorkQueue&);
-#endif
 };
 
 inline void assertIsCurrent(const WorkQueue& workQueue) WTF_ASSERTS_ACQUIRED_CAPABILITY(workQueue)
 {
-#if ASSERT_ENABLED
-    workQueue.assertIsCurrent();
-#else
-    UNUSED_PARAM(workQueue);
-#endif
+    assertIsCurrent(workQueue.isCurrentAssertion());
 }
 
 /**

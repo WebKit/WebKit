@@ -48,7 +48,7 @@ public:
 private:
     int doTaskImpl(int n) WTF_REQUIRES_CAPABILITY(m_ownerThread) { return n + 1; }
     int m_value WTF_GUARDED_BY_CAPABILITY(m_ownerThread) { 0 };
-    NO_UNIQUE_ADDRESS ThreadAssertion m_ownerThread;
+    NO_UNIQUE_ADDRESS IsCurrentAssertion m_ownerThread;
 };
 }
 

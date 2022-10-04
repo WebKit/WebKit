@@ -124,7 +124,16 @@ static std::optional<size_t> stackSize(ThreadType threadType)
 #endif
 }
 
-std::atomic<uint32_t> Thread::s_uid { 0 };
+std::atomic<uint32_t> ImplementsIsCurrent::s_sequenceID;
+
+uint32_t IsCurrentAssertion::currentExecutionSequenceID()
+{
+#if PLATFORM(COCOA)
+    if (uint32_t uid = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(dispatch_get_specific(&ImplementsIsCurrent::s_sequenceID))))
+        return uid;
+#endif
+    return Thread::current().uid();
+}
 
 struct Thread::NewThreadContext : public ThreadSafeRefCounted<NewThreadContext> {
 public:

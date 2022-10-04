@@ -34,8 +34,8 @@
 #include "SampleBufferDisplayLayerIdentifier.h"
 #include "SharedVideoFrame.h"
 #include <WebCore/SampleBufferDisplayLayer.h>
+#include <wtf/CapabilityIsCurrent.h>
 #include <wtf/MediaTime.h>
-#include <wtf/ThreadAssertions.h>
 
 namespace WebCore {
 class ImageTransferSessionVT;
@@ -95,8 +95,7 @@ private:
     std::unique_ptr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;
-    ThreadAssertion m_consumeThread NO_UNIQUE_ADDRESS;
-
+    NO_UNIQUE_ADDRESS IsCurrentAssertion m_consumeThread;
 };
 
 }
