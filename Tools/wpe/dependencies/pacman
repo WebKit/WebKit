@@ -8,6 +8,7 @@ PACKAGES+=(
     icu
     libxml2
     ru
+    unifdef
     zlib
 
     # These are dependencies necessary for running tests.

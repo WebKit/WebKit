@@ -9,6 +9,7 @@ PACKAGES+=(
     libicu-devel
     libtool
     libxml2-devel
+    unifdef
     zlib-devel
 
     # These are dependencies necessary for running tests.

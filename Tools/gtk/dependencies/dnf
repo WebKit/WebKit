@@ -39,6 +39,7 @@ PACKAGES+=(
     pulseaudio-libs-devel
     python-devel
     redhat-rpm-config
+    unifdef
     upower-devel
     woff2-devel
 

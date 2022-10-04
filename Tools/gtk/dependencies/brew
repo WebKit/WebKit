@@ -20,6 +20,7 @@ PACKAGES=(
     pango
     pkg-config
     sqlite
+    unifdef
     webp
     xz
 )

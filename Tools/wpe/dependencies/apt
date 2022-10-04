@@ -16,6 +16,7 @@ PACKAGES+=(
     libwpewebkit-1.0-dev
     libxml2-dev
     pkg-config
+    unifdef
     wayland-protocols
     zlib1g-dev
 

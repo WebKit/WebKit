@@ -33,6 +33,7 @@ PACKAGES+=(
     libxt-dev
     libxtst-dev
     nasm
+    unifdef
     xfonts-utils
     $(aptIfExists libenchant-dev)
 

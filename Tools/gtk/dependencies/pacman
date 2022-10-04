@@ -34,6 +34,7 @@ PACKAGES+=(
     opus
     pango
     ruby
+    unifdef
     upower
     util-linux
     wayland
