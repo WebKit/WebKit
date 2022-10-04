@@ -38,7 +38,7 @@
 namespace WebCore {
 namespace Layout {
 
-UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomputedPositiveNegativeValues(const Box& layoutBox, const BlockFormattingGeometry& formattingGeometry) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomputedPositiveNegativeValues(const ElementBox& layoutBox, const BlockFormattingGeometry& formattingGeometry) const
 {
     if (formattingState().hasUsedVerticalMargin(layoutBox))
         return formattingState().usedVerticalMargin(layoutBox).positiveAndNegativeValues.before;
@@ -49,12 +49,12 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomp
     return precomputedPositiveNegativeMarginBefore(layoutBox, nonCollapsedMargin, formattingGeometry);
 }
 
-UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomputedPositiveNegativeMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues, const BlockFormattingGeometry& formattingGeometry) const
+UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomputedPositiveNegativeMarginBefore(const ElementBox& layoutBox, UsedVerticalMargin::NonCollapsedValues nonCollapsedValues, const BlockFormattingGeometry& formattingGeometry) const
 {
     auto firstChildCollapsedMarginBefore = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
         if (!marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutBox))
             return { };
-        return precomputedPositiveNegativeValues(*downcast<ElementBox>(layoutBox).firstInFlowChild(), formattingGeometry);
+        return precomputedPositiveNegativeValues(downcast<ElementBox>(*layoutBox.firstInFlowChild()), formattingGeometry);
     };
 
     auto previouSiblingCollapsedMarginAfter = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
@@ -81,7 +81,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomp
     return computedPositiveAndNegativeMargin(collapsedMarginBefore, nonCollapsedBefore);
 }
 
-PrecomputedMarginBefore BlockMarginCollapse::precomputedMarginBefore(const Box& layoutBox, UsedVerticalMargin::NonCollapsedValues usedNonCollapsedMargin, const BlockFormattingGeometry& formattingGeometry)
+PrecomputedMarginBefore BlockMarginCollapse::precomputedMarginBefore(const ElementBox& layoutBox, UsedVerticalMargin::NonCollapsedValues usedNonCollapsedMargin, const BlockFormattingGeometry& formattingGeometry)
 {
     ASSERT(layoutBox.isBlockLevelBox());
     // Don't pre-compute vertical margins for out of flow boxes.

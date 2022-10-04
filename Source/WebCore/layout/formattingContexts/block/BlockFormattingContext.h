@@ -63,34 +63,36 @@ protected:
     };
     void placeInFlowPositionedChildren(const ElementBox&, const HorizontalConstraints&);
 
-    void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair&);
-    void computeHeightAndMargin(const Box&, const ConstraintsForInFlowContent&);
+    void computeWidthAndMargin(const FloatingContext&, const ElementBox&, const ConstraintsPair&);
+    void computeHeightAndMargin(const ElementBox&, const ConstraintsForInFlowContent&);
 
-    void computeStaticHorizontalPosition(const Box&, const HorizontalConstraints&);
-    void computeStaticVerticalPosition(const Box&, LayoutUnit containingBlockContentBoxTop);
-    void computePositionToAvoidFloats(const FloatingContext&, const Box&, const ConstraintsPair&);
-    void computeVerticalPositionForFloatClear(const FloatingContext&, const Box&);
+    void computeStaticHorizontalPosition(const ElementBox&, const HorizontalConstraints&);
+    void computeStaticVerticalPosition(const ElementBox&, LayoutUnit containingBlockContentBoxTop);
+    void computePositionToAvoidFloats(const FloatingContext&, const ElementBox&, const ConstraintsPair&);
+    void computeVerticalPositionForFloatClear(const FloatingContext&, const ElementBox&);
 
-    void precomputeVerticalPositionForBoxAndAncestors(const Box&, const ConstraintsPair&);
+    void precomputeVerticalPositionForBoxAndAncestors(const ElementBox&, const ConstraintsPair&);
 
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
 
-    LayoutUnit verticalPositionWithMargin(const Box&, const UsedVerticalMargin&, LayoutUnit containingBlockContentBoxTop) const;
+    LayoutUnit verticalPositionWithMargin(const ElementBox&, const UsedVerticalMargin&, LayoutUnit containingBlockContentBoxTop) const;
 
-    std::optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const Box&, const ConstraintsPair&);
-    void updateMarginAfterForPreviousSibling(const Box&);
+    std::optional<LayoutUnit> usedAvailableWidthForFloatAvoider(const FloatingContext&, const ElementBox&, const ConstraintsPair&);
+    void updateMarginAfterForPreviousSibling(const ElementBox&);
 
     BlockFormattingState& formattingState() { return downcast<BlockFormattingState>(FormattingContext::formattingState()); }
     BlockMarginCollapse marginCollapse() const;
 
 #if ASSERT_ENABLED
-    void setPrecomputedMarginBefore(const Box& layoutBox, const PrecomputedMarginBefore& precomputedMarginBefore) { m_precomputedMarginBeforeList.set(&layoutBox, precomputedMarginBefore); }
-    PrecomputedMarginBefore precomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.get(&layoutBox); }
-    bool hasPrecomputedMarginBefore(const Box& layoutBox) const { return m_precomputedMarginBeforeList.contains(&layoutBox); }
+    void setPrecomputedMarginBefore(const ElementBox& layoutBox, const PrecomputedMarginBefore& precomputedMarginBefore) { m_precomputedMarginBeforeList.set(&layoutBox, precomputedMarginBefore); }
+    PrecomputedMarginBefore precomputedMarginBefore(const ElementBox& layoutBox) const { return m_precomputedMarginBeforeList.get(&layoutBox); }
+    bool hasPrecomputedMarginBefore(const ElementBox& layoutBox) const { return m_precomputedMarginBeforeList.contains(&layoutBox); }
 #endif
 
 private:
-    HashMap<const Box*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
+#if ASSERT_ENABLED
+    HashMap<const ElementBox*, PrecomputedMarginBefore> m_precomputedMarginBeforeList;
+#endif
     const BlockFormattingGeometry m_blockFormattingGeometry;
     const BlockFormattingQuirks m_blockFormattingQuirks;
 };

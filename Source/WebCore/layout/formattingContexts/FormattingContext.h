@@ -98,7 +98,6 @@ protected:
     virtual void validateGeometryConstraintsAfterLayout() const;
 #endif
 
-    using LayoutQueue = Vector<const Box*>;
 private:
     void collectOutOfFlowDescendantsIfNeeded();
     void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
