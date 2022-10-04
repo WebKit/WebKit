@@ -25,6 +25,13 @@
 
 #import <WebKit/_WKWebExtension.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface _WKWebExtension ()
 
+- (instancetype)_initWithManifestDictionary:(NSDictionary<NSString *, id> *)manifest NS_DESIGNATED_INITIALIZER;
+- (instancetype)_initWithManifestData:(NSData *)manifestData NS_DESIGNATED_INITIALIZER;
+
 @end
+
+NS_ASSUME_NONNULL_END

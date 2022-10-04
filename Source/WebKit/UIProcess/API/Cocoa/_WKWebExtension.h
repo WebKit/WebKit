@@ -27,10 +27,71 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebKit/_WKWebExtensionPermission.h>
+#import <WebKit/_WKWebExtensionMatchPattern.h>
+
 NS_ASSUME_NONNULL_BEGIN
+
+WK_EXTERN NSErrorDomain const _WKWebExtensionErrorDomain WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+typedef NS_ERROR_ENUM(_WKWebExtensionErrorDomain, _WKWebExtensionError) {
+    _WKWebExtensionErrorUnknown = 1,
+    _WKWebExtensionErrorManifestNotFound,
+    _WKWebExtensionErrorInvalidManifest,
+    _WKWebExtensionErrorUnsupportedManifestVersion,
+    _WKWebExtensionErrorInvalidActionIcon,
+    _WKWebExtensionErrorInvalidBackgroundContent,
+    _WKWebExtensionErrorInvalidBackgroundPersistence,
+    _WKWebExtensionErrorInvalidContentScripts,
+    _WKWebExtensionErrorInvalidDeclarativeNetRequest,
+    _WKWebExtensionErrorInvalidDescription,
+    _WKWebExtensionErrorInvalidExternallyConnectable,
+    _WKWebExtensionErrorInvalidIcon,
+    _WKWebExtensionErrorInvalidName,
+    _WKWebExtensionErrorInvalidURLOverrides,
+    _WKWebExtensionErrorInvalidVersion,
+    _WKWebExtensionErrorInvalidWebAccessibleResources,
+    _WKWebExtensionErrorBackgroundContentFailedToLoad,
+} NS_SWIFT_NAME(_WKWebExtension.Error) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_EXTERN NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification NS_SWIFT_NAME(_WKWebExtension.errorsWereUpdatedNotification);
 
 WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
 @interface _WKWebExtension : NSObject
+
++ (instancetype)new NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
+
+- (instancetype)initWithAppExtensionBundle:(NSBundle *)appExtensionBundle NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithResourceBaseURL:(NSURL *)resourceBaseURL NS_DESIGNATED_INITIALIZER;
+
+@property (readonly, nullable, nonatomic) NSArray<NSError *> *errors;
+
+@property (readonly, nullable, nonatomic) NSDictionary<NSString *, id> *manifest;
+
+@property (readonly, nonatomic) double manifestVersion;
+- (BOOL)usesManifestVersion:(double)manifestVersion;
+
+@property (readonly, nullable, nonatomic) NSString *displayName;
+@property (readonly, nullable, nonatomic) NSString *displayShortName;
+@property (readonly, nullable, nonatomic) NSString *displayVersion;
+@property (readonly, nullable, nonatomic) NSString *displayDescription;
+
+@property (readonly, nullable, nonatomic) NSString *version;
+
+@property (readonly, nonatomic) NSSet<_WKWebExtensionPermission> *requestedPermissions;
+@property (readonly, nonatomic) NSSet<_WKWebExtensionPermission> *optionalPermissions;
+
+@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *requestedPermissionOrigins;
+@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *optionalPermissionOrigins;
+
+@property (readonly, nonatomic) NSSet<_WKWebExtensionMatchPattern *> *allRequestedOrigins;
+
+@property (readonly, nonatomic) BOOL hasBackgroundContent;
+@property (readonly, nonatomic) BOOL backgroundContentIsPersistent;
+
+- (BOOL)hasInjectedContentForURL:(NSURL *)url;
 
 @end
 
