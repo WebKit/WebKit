@@ -102,9 +102,9 @@ ExceptionOr<Ref<WritableStream>> RTCRtpScriptTransformer::writable()
                 return Exception { ExistingExceptionError };
 
             auto rtcFrame = WTF::switchOn(frame, [&](RefPtr<RTCEncodedAudioFrame>& value) {
-                return Ref { value->rtcFrame() };
+                return value->rtcFrame();
             }, [&](RefPtr<RTCEncodedVideoFrame>& value) {
-                return Ref { value->rtcFrame() };
+                return value->rtcFrame();
             });
 
             // If no data, skip the frame since there is nothing to packetize or decode.
