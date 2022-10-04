@@ -26,16 +26,20 @@
         )
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds origin 0.00 30.00)
           (bounds 300.00 400.00)
           (children 1
             (GraphicsLayer
-              (position 20.00 50.00)
-              (bounds 260.00 800.00)
+              (bounds origin 0.00 30.00)
               (children 1
                 (GraphicsLayer
+                  (position 20.00 50.00)
                   (bounds 260.00 800.00)
-                  (contentsOpaque 1)
+                  (children 1
+                    (GraphicsLayer
+                      (bounds 260.00 800.00)
+                      (contentsOpaque 1)
+                    )
+                  )
                 )
               )
             )
