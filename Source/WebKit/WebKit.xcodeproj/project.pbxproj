@@ -236,7 +236,6 @@
 		1A60224C18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A60224A18C16B9F00C3E8C9 /* VisitedLinkStoreMessageReceiver.cpp */; };
 		1A60224D18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A60224B18C16B9F00C3E8C9 /* VisitedLinkStoreMessages.h */; };
 		1A6280C51919949F006AD9F9 /* WebKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6280C41919949F006AD9F9 /* WebKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6280C61919950C006AD9F9 /* WebKitPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A6280F31919982A006AD9F9 /* WebKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A6280F21919982A006AD9F9 /* WebKit.m */; };
 		1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */; };
 		1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64229712DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp */; };
@@ -3523,6 +3522,7 @@
 		1C627477288A1DDE00CED3A2 /* WebExtensionCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionCocoa.mm; sourceTree = "<group>"; };
 		1C62747B288B4C3E00CED3A2 /* CocoaHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaHelpers.h; sourceTree = "<group>"; };
 		1C62747C288B4C3E00CED3A2 /* CocoaHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaHelpers.mm; sourceTree = "<group>"; };
+		1C628FFE28EC98B900C26B60 /* generate-umbrella-header.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "generate-umbrella-header.py"; sourceTree = "<group>"; };
 		1C739E852347BCF600C621EC /* CoreTextHelpers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreTextHelpers.mm; sourceTree = "<group>"; };
 		1C739E872347BD0F00C621EC /* CoreTextHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreTextHelpers.h; sourceTree = "<group>"; };
 		1C77C1951288A872006A742F /* WebInspectorUIProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorUIProxy.messages.in; sourceTree = "<group>"; };
@@ -13337,6 +13337,7 @@
 				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				5CD4F01C28B6ADDB00F9ECEA /* generate-serializers.py */,
+				1C628FFE28EC98B900C26B60 /* generate-umbrella-header.py */,
 				0FC0856F187CE0A900780D86 /* messages.py */,
 				0FC08570187CE0A900780D86 /* model.py */,
 				0FC08571187CE0A900780D86 /* parser.py */,
@@ -15096,7 +15097,6 @@
 				DDA0A29D27E55E4E005E086E /* WebKitErrorsPrivate.h in Headers */,
 				DDA0A41E27E94644005E086E /* WebKitLegacy.h in Headers */,
 				DDA0A37527E55E4F005E086E /* WebKitNSStringExtras.h in Headers */,
-				1A6280C71919950C006AD9F9 /* WebKitPrivate.h in Headers */,
 				DDA0A2EF27E55E4E005E086E /* WebKitStatistics.h in Headers */,
 				DDA0A2CD27E55E4E005E086E /* WebLocalizableStrings.h in Headers */,
 				465FA7262757D93D0072362B /* WebLockRegistryProxy.h in Headers */,
@@ -15907,6 +15907,7 @@
 				1A07D2F51919AA8A00ECDA16 /* Make Frameworks Symbolic Link */,
 				8DC2EF500486A6940098B216 /* Headers */,
 				DDA0A42827EA3435005E086E /* (Legacy) Install Headers */,
+				1C628FFF28EC99E700C26B60 /* Generate Private Umbrella Header */,
 				2E16B6F42019BC25008996D6 /* Copy Additional Resources */,
 				8DC2EF520486A6940098B216 /* Resources */,
 				372589431C1E496800C92CA9 /* Copy Shims */,
@@ -16211,6 +16212,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\nif [[ \"${CONFIGURATION}\" != \"Production\" ]]; then\ntouch \"${SRCROOT}/Info.plist\";\nfi;\n";
+		};
+		1C628FFF28EC99E700C26B60 /* Generate Private Umbrella Header */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/generate-umbrella-headers.py",
+				"$(SRCROOT)/Shared/API/Cocoa/WebKitPrivate.h",
+			);
+			name = "Generate Private Umbrella Header";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(PRIVATE_HEADERS_FOLDER_PATH)/WebKitPrivate.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Scripts/generate-umbrella-header.py\" --input \"${SRCROOT}/Shared/API/Cocoa/WebKitPrivate.h\" --output \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}/WebKitPrivate.h\" --tempoutput \"${TARGET_TEMP_DIR}/WebKitPrivate.h\" --headers \"${TARGET_BUILD_DIR}/${PRIVATE_HEADERS_FOLDER_PATH}\" --framework \"${PRODUCT_MODULE_NAME}\"\n";
 		};
 		2D7DEBDF21269C9F00B9F73C /* Generate Unified Sources */ = {
 			isa = PBXShellScriptBuildPhase;
