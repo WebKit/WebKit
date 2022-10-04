@@ -40,49 +40,7 @@ struct ApplePayRecurringPaymentRequest final {
     String billingAgreement;
     String managementURL; // required
     String tokenNotificationURL;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayRecurringPaymentRequest> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayRecurringPaymentRequest::encode(Encoder& encoder) const
-{
-    encoder << paymentDescription;
-    encoder << regularBilling;
-    encoder << trialBilling;
-    encoder << billingAgreement;
-    encoder << managementURL;
-    encoder << tokenNotificationURL;
-}
-
-template<class Decoder>
-std::optional<ApplePayRecurringPaymentRequest> ApplePayRecurringPaymentRequest::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(paymentDescription, String)
-    DECODE(regularBilling, ApplePayLineItem)
-    DECODE(trialBilling, std::optional<ApplePayLineItem>)
-    DECODE(billingAgreement, String)
-    DECODE(managementURL, String)
-    DECODE(tokenNotificationURL, String)
-
-#undef DECODE
-
-    return { {
-        WTFMove(*paymentDescription),
-        WTFMove(*regularBilling),
-        WTFMove(*trialBilling),
-        WTFMove(*billingAgreement),
-        WTFMove(*managementURL),
-        WTFMove(*tokenNotificationURL),
-    } };
-}
 
 } // namespace WebCore
 

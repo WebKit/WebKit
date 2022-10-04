@@ -35,6 +35,11 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
+#include <Namespace/EmptyConstructorNullable.h>
+#include <Namespace/EmptyConstructorStruct.h>
+#include <Namespace/OtherClass.h>
+#include <Namespace/ReturnRefClass.h>
+#include <WebCore/InheritsFrom.h>
 
 #if ENABLE(IPC_TESTING_API)
 
@@ -73,22 +78,34 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         { "WithoutNamespaceWithAttributes"_s, {
             "int"_s,
         } },
+        { "WebCore::InheritsFrom"_s, {
+            "int"_s,
+            "int"_s,
+        } },
     };
 }
 
 Vector<SerializedEnumInfo> allSerializedEnums()
 {
     return {
+#if ENABLE(BOOL_ENUM)
         { "EnumNamespace::BoolEnumType"_s, sizeof(EnumNamespace::BoolEnumType), false, {
             0, 1
         } },
+#endif
+#if ENABLE(UINT16_ENUM)
         { "EnumNamespace::EnumType"_s, sizeof(EnumNamespace::EnumType), false, {
             static_cast<uint64_t>(EnumNamespace::EnumType::FirstValue),
+#if ENABLE(ENUM_VALUE_CONDITION)
             static_cast<uint64_t>(EnumNamespace::EnumType::SecondValue),
+#endif
         } },
+#endif
         { "EnumNamespace2::OptionSetEnumType"_s, sizeof(EnumNamespace2::OptionSetEnumType), true, {
             static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue),
+#if ENABLE(OPTION_SET_SECOND_VALUE)
             static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue),
+#endif
             static_cast<uint64_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue),
         } },
     };

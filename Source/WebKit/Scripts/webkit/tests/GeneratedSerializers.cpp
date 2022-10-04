@@ -35,6 +35,11 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
+#include <Namespace/EmptyConstructorNullable.h>
+#include <Namespace/EmptyConstructorStruct.h>
+#include <Namespace/OtherClass.h>
+#include <Namespace/ReturnRefClass.h>
+#include <WebCore/InheritsFrom.h>
 
 namespace IPC {
 
@@ -292,26 +297,59 @@ std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWith
     } };
 }
 
+
+void ArgumentCoder<WebCore::InheritsFrom>::encode(Encoder& encoder, const WebCore::InheritsFrom& instance)
+{
+    encoder << instance.a;
+    encoder << instance.b;
+}
+
+std::optional<WebCore::InheritsFrom> ArgumentCoder<WebCore::InheritsFrom>::decode(Decoder& decoder)
+{
+    std::optional<int> a;
+    decoder >> a;
+    if (!a)
+        return std::nullopt;
+
+    std::optional<int> b;
+    decoder >> b;
+    if (!b)
+        return std::nullopt;
+
+    return { WebCore::InheritsFrom {
+        {
+            WTFMove(*a),
+        },
+        WTFMove(*b)
+    } };
+}
+
 } // namespace IPC
 
 namespace WTF {
 
+#if ENABLE(UINT16_ENUM)
 template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t value)
 {
     switch (static_cast<EnumNamespace::EnumType>(value)) {
     case EnumNamespace::EnumType::FirstValue:
+#if ENABLE(ENUM_VALUE_CONDITION)
     case EnumNamespace::EnumType::SecondValue:
+#endif
         return true;
     default:
         return false;
     }
 }
+#endif
 
 template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<EnumNamespace2::OptionSetEnumType> value)
 {
     constexpr uint8_t allValidBitsValue =
         static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetFirstValue)
+#if ENABLE(OPTION_SET_SECOND_VALUE)
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetSecondValue)
+#endif
         | static_cast<uint8_t>(EnumNamespace2::OptionSetEnumType::OptionSetThirdValue);
     return (value.toRaw() | allValidBitsValue) == allValidBitsValue;
 }

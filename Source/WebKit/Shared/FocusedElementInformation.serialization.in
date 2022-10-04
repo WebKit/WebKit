@@ -23,7 +23,7 @@
 headers: "FocusedElementInformation.h" "WebCoreArgumentCoders.h"
 
 #if PLATFORM(IOS_FAMILY)
-struct WebKit::OptionItem {
+[CustomHeader=True] struct WebKit::OptionItem {
     String text;
     bool isGroup;
     bool isSelected;
@@ -31,7 +31,7 @@ struct WebKit::OptionItem {
     int parentGroupID;
 }
 
-struct WebKit::FocusedElementInformation {
+[CustomHeader=True] struct WebKit::FocusedElementInformation {
     WebCore::IntRect interactionRect;
     WebCore::ElementContext elementContext;
     WebCore::IntPoint lastInteractionLocation;

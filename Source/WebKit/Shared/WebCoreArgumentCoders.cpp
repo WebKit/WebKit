@@ -2434,11 +2434,11 @@ void ArgumentCoder<SystemImage>::encode(Encoder& encoder, const SystemImage& sys
     switch (systemImage.systemImageType()) {
 #if ENABLE(APPLE_PAY)
     case SystemImageType::ApplePayButton:
-        downcast<ApplePayButtonSystemImage>(systemImage).encode(encoder);
+        encoder << downcast<ApplePayButtonSystemImage>(systemImage);
         return;
 
     case SystemImageType::ApplePayLogo:
-        downcast<ApplePayLogoSystemImage>(systemImage).encode(encoder);
+        encoder << downcast<ApplePayLogoSystemImage>(systemImage);
         return;
 #endif
 #if USE(SYSTEM_PREVIEW)
@@ -2465,11 +2465,21 @@ std::optional<Ref<SystemImage>> ArgumentCoder<SystemImage>::decode(Decoder& deco
 
     switch (*systemImageType) {
 #if ENABLE(APPLE_PAY)
-    case SystemImageType::ApplePayButton:
-        return ApplePayButtonSystemImage::decode(decoder);
+    case SystemImageType::ApplePayButton: {
+        std::optional<Ref<ApplePayButtonSystemImage>> image;
+        decoder >> image;
+        if (!image)
+            return std::nullopt;
+        return WTFMove(*image);
+    }
 
-    case SystemImageType::ApplePayLogo:
-        return ApplePayLogoSystemImage::decode(decoder);
+    case SystemImageType::ApplePayLogo: {
+        std::optional<Ref<ApplePayLogoSystemImage>> image;
+        decoder >> image;
+        if (!image)
+            return std::nullopt;
+        return WTFMove(*image);
+    }
 #endif
 #if USE(SYSTEM_PREVIEW)
     case SystemImageType::ARKitBadge:

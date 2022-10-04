@@ -34,34 +34,7 @@ namespace WebCore {
 struct ApplePayDateComponentsRange {
     ApplePayDateComponents startDateComponents;
     ApplePayDateComponents endDateComponents;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayDateComponentsRange> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayDateComponentsRange::encode(Encoder& encoder) const
-{
-    encoder << startDateComponents;
-    encoder << endDateComponents;
-}
-
-template<class Decoder>
-std::optional<ApplePayDateComponentsRange> ApplePayDateComponentsRange::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(startDateComponents, ApplePayDateComponents)
-    DECODE(endDateComponents, ApplePayDateComponents)
-
-#undef DECODE
-
-    return {{ WTFMove(*startDateComponents), WTFMove(*endDateComponents) }};
-}
 
 } // namespace WebCore
 

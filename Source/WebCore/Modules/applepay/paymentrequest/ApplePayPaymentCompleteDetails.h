@@ -36,42 +36,7 @@ struct ApplePayPaymentCompleteDetails {
 #if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
     std::optional<ApplePayPaymentOrderDetails> orderDetails;
 #endif
-
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<ApplePayPaymentCompleteDetails> decode(Decoder&);
 };
-
-template<typename Encoder>
-void ApplePayPaymentCompleteDetails::encode(Encoder& encoder) const
-{
-    UNUSED_PARAM(encoder);
-#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-    encoder << orderDetails;
-#endif
-}
-
-template<typename Decoder>
-std::optional<ApplePayPaymentCompleteDetails> ApplePayPaymentCompleteDetails::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    UNUSED_PARAM(decoder);
-#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-    DECODE(orderDetails, std::optional<ApplePayPaymentOrderDetails>)
-#endif
-
-#undef DECODE
-
-    return { {
-#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
-        WTFMove(*orderDetails),
-#endif
-    } };
-}
 
 } // namespace WebCore
 

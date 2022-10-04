@@ -406,13 +406,14 @@ std::optional<RefPtr<WebCore::ApplePayError>> ArgumentCoder<RefPtr<WebCore::Appl
     if (!isValid)
         return std::nullopt;
 
-    RefPtr<WebCore::ApplePayError> error;
     if (!*isValid)
         return { nullptr };
 
-    error = WebCore::ApplePayError::decode(decoder);
+    std::optional<Ref<WebCore::ApplePayError>> error;
+    decoder >> error;
     if (!error)
         return std::nullopt;
+
     return error;
 }
 

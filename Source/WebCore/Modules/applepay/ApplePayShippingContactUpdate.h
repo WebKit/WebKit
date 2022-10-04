@@ -37,43 +37,8 @@ namespace WebCore {
 
 struct ApplePayShippingContactUpdate final : public ApplePayDetailsUpdateBase {
     Vector<RefPtr<ApplePayError>> errors;
-
     Vector<ApplePayShippingMethod> newShippingMethods;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayShippingContactUpdate> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayShippingContactUpdate::encode(Encoder& encoder) const
-{
-    ApplePayDetailsUpdateBase::encode(encoder);
-    encoder << errors;
-    encoder << newShippingMethods;
-}
-
-template<class Decoder>
-std::optional<ApplePayShippingContactUpdate> ApplePayShippingContactUpdate::decode(Decoder& decoder)
-{
-    ApplePayShippingContactUpdate result;
-
-    if (!result.decodeBase(decoder))
-        return std::nullopt;
-
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-    result.name = WTFMove(*name); \
-
-    DECODE(errors, Vector<RefPtr<ApplePayError>>)
-    DECODE(newShippingMethods, Vector<ApplePayShippingMethod>)
-
-#undef DECODE
-
-    return result;
-}
 
 } // namespace WebCore
 

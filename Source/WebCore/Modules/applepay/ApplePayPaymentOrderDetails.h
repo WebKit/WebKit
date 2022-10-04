@@ -37,43 +37,7 @@ struct ApplePayPaymentOrderDetails {
     String orderIdentifier; // required
     String webServiceURL; // required
     String authenticationToken; // required
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayPaymentOrderDetails> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayPaymentOrderDetails::encode(Encoder& encoder) const
-{
-    encoder << orderTypeIdentifier;
-    encoder << orderIdentifier;
-    encoder << webServiceURL;
-    encoder << authenticationToken;
-}
-
-template<class Decoder>
-std::optional<ApplePayPaymentOrderDetails> ApplePayPaymentOrderDetails::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(orderTypeIdentifier, String)
-    DECODE(orderIdentifier, String)
-    DECODE(webServiceURL, String)
-    DECODE(authenticationToken, String)
-
-#undef DECODE
-
-    return { {
-        WTFMove(*orderTypeIdentifier),
-        WTFMove(*orderIdentifier),
-        WTFMove(*webServiceURL),
-        WTFMove(*authenticationToken),
-    } };
-}
 
 } // namespace WebCore
 

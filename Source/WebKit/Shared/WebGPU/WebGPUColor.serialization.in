@@ -23,7 +23,7 @@
 header: "WebGPUColor.h"
 
 #if ENABLE(GPU_PROCESS)
-[AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ColorDict {
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader=True] struct WebKit::WebGPU::ColorDict {
     double r
     double g
     double b

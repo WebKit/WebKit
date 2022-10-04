@@ -34,38 +34,7 @@ struct ApplePayDateComponents {
     std::optional<unsigned> months;
     std::optional<unsigned> days;
     std::optional<unsigned> hours;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayDateComponents> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayDateComponents::encode(Encoder& encoder) const
-{
-    encoder << years;
-    encoder << months;
-    encoder << days;
-    encoder << hours;
-}
-
-template<class Decoder>
-std::optional<ApplePayDateComponents> ApplePayDateComponents::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(years, std::optional<unsigned>)
-    DECODE(months, std::optional<unsigned>)
-    DECODE(days, std::optional<unsigned>)
-    DECODE(hours, std::optional<unsigned>)
-
-#undef DECODE
-
-    return {{ WTFMove(*years), WTFMove(*months), WTFMove(*days), WTFMove(*hours) }};
-}
 
 } // namespace WebCore
 

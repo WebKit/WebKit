@@ -37,46 +37,7 @@ struct ApplePayPaymentTokenContext {
     String merchantName; // required
     String merchantDomain;
     String amount; // required
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ApplePayPaymentTokenContext> decode(Decoder&);
 };
-
-template<class Encoder>
-void ApplePayPaymentTokenContext::encode(Encoder& encoder) const
-{
-    encoder << merchantIdentifier;
-    encoder << externalIdentifier;
-    encoder << merchantName;
-    encoder << merchantDomain;
-    encoder << amount;
-}
-
-template<class Decoder>
-std::optional<ApplePayPaymentTokenContext> ApplePayPaymentTokenContext::decode(Decoder& decoder)
-{
-#define DECODE(name, type) \
-    std::optional<type> name; \
-    decoder >> name; \
-    if (!name) \
-        return std::nullopt; \
-
-    DECODE(merchantIdentifier, String)
-    DECODE(externalIdentifier, String)
-    DECODE(merchantName, String)
-    DECODE(merchantDomain, String)
-    DECODE(amount, String)
-
-#undef DECODE
-
-    return { {
-        WTFMove(*merchantIdentifier),
-        WTFMove(*externalIdentifier),
-        WTFMove(*merchantName),
-        WTFMove(*merchantDomain),
-        WTFMove(*amount),
-    } };
-}
 
 } // namespace WebCore
 

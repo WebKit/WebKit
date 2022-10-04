@@ -24,7 +24,7 @@ file_extension: mm
 headers: "ArgumentCodersCocoa.h"
 
 header: <WebCore/DictionaryPopupInfo.h>
-struct WebCore::DictionaryPopupInfoCocoa {
+[CustomHeader=True] struct WebCore::DictionaryPopupInfoCocoa {
     RetainPtr<NSDictionary> options;
     RetainPtr<NSAttributedString> attributedString;
 };
