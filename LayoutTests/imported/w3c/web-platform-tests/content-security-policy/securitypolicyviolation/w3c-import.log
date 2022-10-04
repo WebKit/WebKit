@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/blockeduri-eval.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/blockeduri-inline.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/blockeduri-ws-wss-scheme.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/constructor-required-fields.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/idlharness.window.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/img-src-redirect-upgrade-reporting.https.html
@@ -32,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/securitypolicyviolation-block-image.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file-blob-scheme.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file-data-scheme.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/source-file.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/style-sample-no-opt-in.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/style-sample.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/securitypolicyviolation/targeting.html

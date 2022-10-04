@@ -1,7 +1,11 @@
-This test checks that iframes correctly block the eval function.
+This test checks that the CSP of calleeRealm only (and not of the callerRealm) is checked for allowing eval.
 
 
 
-PASS script-src blocks eval unless 'unsafe-eval' is specified.
-PASS default-src blocks eval unless 'unsafe-eval' is specified.
+PASS (script-src) Eval code should not execute from iframe in iframe
+PASS (script-src) Eval code should execute from iframe in parent
+PASS (script-src) Eval code should not execute from parent in iframe
+PASS (default-src) Eval code should not execute from iframe in iframe
+PASS (default-src) Eval code should execute from iframe in parent
+PASS (default-src) Eval code should not execute from parent in iframe
 

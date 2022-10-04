@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes-inherit-self.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-all-local-schemes.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-srcdoc-history-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/iframe-srcdoc-inheritance.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/inheritance-from-initiator.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/inheritance/inherited-csp-list-modifications-are-local.html

@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<meta http-equiv="Content-Security-Policy" content="img-src 'self' {{hosts[alt][]}}:{{ports[http][0]}}">
+<meta http-equiv="Content-Security-Policy" content="img-src 'self' {{domains[www]}}:{{ports[http][0]}}">
 <html>
 <head>
     <title>img element src attribute must match src list.</title>
@@ -28,7 +28,7 @@
         i = new Image();
         i.onload = t.step_func_done();
         i.onerror = t.unreached_func("The img should have loaded");
-        i.src = location.protocol + '//{{hosts[alt][]}}:{{ports[http][0]}}/content-security-policy/support/pass.png';
+        i.src = location.protocol + '//{{domains[www]}}:{{ports[http][0]}}/content-security-policy/support/pass.png';
       }, "img-src from approved domains should load");
     </script>
 </body>

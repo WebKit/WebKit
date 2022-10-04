@@ -88,6 +88,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-wildcards-disallowed.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-allowed.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-base64url-converts-to-base64.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-basic-blocked-error-event.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-basic-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scripthash-case-insensitive.sub.html
@@ -103,6 +104,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-changed-2.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-ignore-unsafeinline.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-redirect.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-specified-source.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/scriptnonce-specified-source.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/simpleSourcedScript.js
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/srcdoc-doesnt-bypass-script-src.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/script-src/worker-data-set-timeout.sub.html

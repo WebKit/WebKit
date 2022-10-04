@@ -1,0 +1,4 @@
+
+PASS Violated directive is script-src-elem.
+FAIL document.styleSheets should contain an item for the blocked CSS. assert_equals: expected 1 but got 0
+

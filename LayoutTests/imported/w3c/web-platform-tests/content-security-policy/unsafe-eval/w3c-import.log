@@ -16,7 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-eval/eval-allowed.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-eval/eval-blocked-and-sends-report.sub.html
-/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-eval/eval-blocked-in-about-blank-iframe.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-eval/eval-blocked-in-about-blank-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-eval/eval-blocked.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-eval/eval-in-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/unsafe-eval/eval-scripts-setInterval-allowed.sub.html

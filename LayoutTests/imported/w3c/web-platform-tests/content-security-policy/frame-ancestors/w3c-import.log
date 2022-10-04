@@ -38,6 +38,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-nested-same-in-same-url-block.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-none-block.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-overrides-xfo.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-sandbox-same-origin-self.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-self-allow.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-self-block.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/frame-ancestors/frame-ancestors-star-allow-crossorigin.html

@@ -1,0 +1,8 @@
+Eval should be blocked in the iframe, but inline script should be allowed.
+
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT eval-blocked-in-about-blank-iframe Test timed out
+

@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Refused to connect to http://www1.localhost:8800/content-security-policy/connect-src/resources/simple-event-stream because it does not appear in the connect-src directive of the Content Security Policy.
 
-FAIL Expecting logs: ["allowed"] assert_unreached: unexpected log: blocked Reached unreachable code
+PASS Expecting logs: ["allowed"]
 

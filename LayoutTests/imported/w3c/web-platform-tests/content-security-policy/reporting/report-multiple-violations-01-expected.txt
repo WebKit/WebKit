@@ -1,5 +1,5 @@
 
 
 PASS Violation report status OK.
-FAIL Test number of sent reports. assert_equals: Report count was not what was expected. expected (string) "2" but got (number) 4
+FAIL Test number of sent reports. assert_equals: Report count was not what was expected. expected 2 but got 4
 

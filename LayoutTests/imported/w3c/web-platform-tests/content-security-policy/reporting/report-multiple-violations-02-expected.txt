@@ -10,5 +10,5 @@ PASS: setTimeout #4 executed.
 
 
 PASS Violation report status OK.
-FAIL Test number of sent reports. assert_equals: Report count was not what was expected. expected (string) "1" but got (number) 5
+FAIL Test number of sent reports. assert_equals: Report count was not what was expected. expected 1 but got 5
 

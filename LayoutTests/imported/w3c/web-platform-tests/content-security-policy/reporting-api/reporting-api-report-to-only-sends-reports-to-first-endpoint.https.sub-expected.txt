@@ -2,5 +2,5 @@
 
 PASS Test that image does not load
 PASS Event is fired
-PASS Violation report status OK.
+FAIL Violation report status OK. assert_equals: CSP report sent, but not expecting one. expected 0 but got 2
 

@@ -17,6 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/support/generate-csp-report.html
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/support/generate-csp-report.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/support/not-embeddable-frame.py
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/support/preload-csp-report.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/support/preload-csp-report.https.sub.html.sub.headers
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/support/redirect-throw-function.sub.py
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/support/set-cookie.py
 /LayoutTests/imported/w3c/web-platform-tests/content-security-policy/reporting/support/throw-function.js

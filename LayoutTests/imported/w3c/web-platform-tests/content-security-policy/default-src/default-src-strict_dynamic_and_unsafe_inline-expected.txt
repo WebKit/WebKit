@@ -1,0 +1,3 @@
+
+PASS Should fire a security policy violation for the inline block
+
