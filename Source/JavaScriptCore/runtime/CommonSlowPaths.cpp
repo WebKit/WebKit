@@ -27,6 +27,7 @@
 #include "CommonSlowPaths.h"
 
 #include "ArithProfile.h"
+#include "ArrayPrototypeInlines.h"
 #include "BytecodeStructs.h"
 #include "ClonedArguments.h"
 #include "DefinePropertyAttributes.h"
@@ -1306,6 +1307,36 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_spread)
     }
 
     RETURN(result);
+}
+
+JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_with_species)
+{
+    BEGIN();
+    auto bytecode = pc->as<OpNewArrayWithSpecies>();
+    JSObject* array = asObject(GET_C(bytecode.m_array).jsValue());
+    uint64_t length = static_cast<uint64_t>(GET_C(bytecode.m_length).jsValue().asNumber());
+    auto& metadata = bytecode.metadata(codeBlock);
+    auto& arrayAllocationProfile = metadata.m_arrayAllocationProfile;
+    auto& arrayProfile = metadata.m_arrayProfile;
+
+    arrayProfile.observeStructureID(array->structureID());
+    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, array, length);
+    EXCEPTION_ASSERT(!!throwScope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+
+    if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
+        CHECK_EXCEPTION();
+
+    if (LIKELY(speciesResult.first == SpeciesConstructResult::FastPath)) {
+        if (UNLIKELY(length > std::numeric_limits<unsigned>::max()))
+            THROW(createRangeError(globalObject, "Array size is not a small enough positive integer."_s));
+
+        JSArray* result = constructEmptyArray(globalObject, &arrayAllocationProfile, static_cast<unsigned>(length));
+        CHECK_EXCEPTION();
+        RETURN_PROFILED(result);
+    }
+
+    ASSERT(speciesResult.first == SpeciesConstructResult::CreatedObject);
+    RETURN_PROFILED(speciesResult.second);
 }
 
 JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)

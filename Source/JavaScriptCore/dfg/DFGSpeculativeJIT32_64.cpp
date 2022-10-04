@@ -3093,7 +3093,12 @@ void SpeculativeJIT::compile(Node* node)
         compileNewArrayWithSize(node);
         break;
     }
-        
+
+    case NewArrayWithSpecies: {
+        compileNewArrayWithSpecies(node);
+        break;
+    }
+
     case NewArrayBuffer: {
         compileNewArrayBuffer(node);
         break;

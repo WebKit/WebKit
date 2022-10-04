@@ -230,6 +230,7 @@ inline CapabilityLevel canCompile(Node* node)
     case ObjectGetOwnPropertyNames:
     case MakeRope:
     case NewArrayWithSize:
+    case NewArrayWithSpecies:
     case TryGetById:
     case GetById:
     case GetByIdFlush:

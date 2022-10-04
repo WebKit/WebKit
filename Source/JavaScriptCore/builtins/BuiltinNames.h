@@ -48,7 +48,6 @@ namespace JSC {
     JSC_COMMON_BYTECODE_INTRINSIC_CONSTANTS_EACH_NAME(macro) \
     macro(add) \
     macro(applyFunction) \
-    macro(arraySpeciesCreate) \
     macro(assert) \
     macro(callFunction) \
     macro(charCodeAt) \

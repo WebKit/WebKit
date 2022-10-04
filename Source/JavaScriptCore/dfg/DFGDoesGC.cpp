@@ -375,6 +375,7 @@ bool doesGC(Graph& graph, Node* node)
     case NewInternalFieldObject:
     case Spread:
     case NewArrayWithSize:
+    case NewArrayWithSpecies:
     case NewArrayBuffer:
     case NewRegexp:
     case NewStringObject:

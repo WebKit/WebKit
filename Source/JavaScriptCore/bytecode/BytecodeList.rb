@@ -236,6 +236,18 @@ op :new_array_with_spread,
         bitVector: unsigned,
     }
 
+op :new_array_with_species,
+    args: {
+        dst: VirtualRegister,
+        length: VirtualRegister,
+        array: VirtualRegister,
+    },
+    metadata: {
+        arrayAllocationProfile: ArrayAllocationProfile,
+        arrayProfile: ArrayProfile,
+        profile: ValueProfile,
+    }
+
 op :spread,
     args: {
         dst: VirtualRegister,

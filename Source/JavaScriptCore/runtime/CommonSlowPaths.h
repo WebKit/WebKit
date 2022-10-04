@@ -321,6 +321,7 @@ JSC_DECLARE_COMMON_SLOW_PATH(slow_path_throw_static_error);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_new_promise);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_new_generator);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_new_array_with_spread);
+JSC_DECLARE_COMMON_SLOW_PATH(slow_path_new_array_with_species);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_new_array_buffer);
 JSC_DECLARE_COMMON_SLOW_PATH(slow_path_spread);
 JSC_DECLARE_COMMON_SLOW_PATH(iterator_open_try_fast_narrow);
