@@ -2,7 +2,7 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,6 +38,7 @@
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
 #include "Text.h"
+#include "markup.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -138,19 +139,10 @@ SVGTRefElement::~SVGTRefElement()
 
 void SVGTRefElement::updateReferencedText(Element* target)
 {
-    String textContent;
     if (target)
-        textContent = target->textContent();
-
-    auto root = userAgentShadowRoot();
-    ASSERT(root);
-    ScriptDisallowedScope::EventAllowedScope allowedScope(*root);
-    if (!root->firstChild())
-        root->appendChild(Text::create(document(), WTFMove(textContent)));
-    else {
-        ASSERT(root->firstChild()->isTextNode());
-        root->firstChild()->setTextContent(WTFMove(textContent));
-    }
+        replaceChildrenWithFragment(userAgentShadowRoot(), target->textContent());
+    else
+        userAgentShadowRoot()->removeChildren();
 }
 
 void SVGTRefElement::detachTarget()
@@ -158,10 +150,7 @@ void SVGTRefElement::detachTarget()
     // Remove active listeners and clear the text content.
     m_targetListener->detach();
 
-    ASSERT(shadowRoot());
-    RefPtr container = shadowRoot()->firstChild();
-    if (container)
-        container->setTextContent(String { });
+    userAgentShadowRoot()->removeChildren();
 
     if (!isConnected())
         return;
