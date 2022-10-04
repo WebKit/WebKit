@@ -31,7 +31,7 @@ layer at (0,-4) size 68x18 backgroundClip at (0,0) size 225x425 clip at (0,0) si
 layer at (0,0) size 200x90
   RenderSVGTransformableContainer {use} at (0,4) size 200x90
 layer at (0,0) size 200x90
-  RenderSVGPath {path} at (0,0) size 200x90 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=SOLID] [color=#00000000]}] [data="M 0 50 L 100 0 L 200 20 L 150 70 L 50 90 Z"]
+  RenderSVGPath {path} at (0,0) size 200x90 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 50 L 100 0 L 200 20 L 150 70 L 50 90 Z"]
 layer at (0,-4) size 200x94 backgroundClip at (0,0) size 225x425 clip at (0,0) size 225x425
   RenderSVGTransformableContainer {g} at (0,-4) size 200x94
 layer at (0,-4) size 76x18 backgroundClip at (0,0) size 225x425 clip at (0,0) size 225x425
@@ -41,4 +41,4 @@ layer at (0,-4) size 76x18 backgroundClip at (0,0) size 225x425 clip at (0,0) si
 layer at (0,0) size 200x90
   RenderSVGTransformableContainer {use} at (0,4) size 200x90
 layer at (0,0) size 200x90
-  RenderSVGPath {path} at (0,0) size 200x90 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=SOLID] [color=#00000000]}] [data="M 0 50 L 100 0 L 200 20 L 150 70 L 50 90 Z"]
+  RenderSVGPath {path} at (0,0) size 200x90 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 0 50 L 100 0 L 200 20 L 150 70 L 50 90 Z"]
