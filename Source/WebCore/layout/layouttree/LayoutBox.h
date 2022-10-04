@@ -34,7 +34,7 @@ namespace WebCore {
 
 namespace Layout {
 
-class ContainerBox;
+class ElementBox;
 class BoxGeometry;
 class InitialContainingBlock;
 class LayoutState;
@@ -67,7 +67,7 @@ public:
 
     enum BaseTypeFlag : uint8_t {
         InlineTextBoxFlag          = 1 << 0,
-        ContainerBoxFlag           = 1 << 1,
+        ElementBoxFlag             = 1 << 1,
         InitialContainingBlockFlag = 1 << 2,
     };
 
@@ -140,19 +140,19 @@ public:
 
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
 
-    const ContainerBox& parent() const { return *m_parent; }
+    const ElementBox& parent() const { return *m_parent; }
     const Box* nextSibling() const { return m_nextSibling.get(); }
     const Box* nextInFlowSibling() const;
     const Box* nextInFlowOrFloatingSibling() const;
     const Box* previousSibling() const { return m_previousSibling.get(); }
     const Box* previousInFlowSibling() const;
     const Box* previousInFlowOrFloatingSibling() const;
-    bool isDescendantOf(const ContainerBox&) const;
+    bool isDescendantOf(const ElementBox&) const;
 
     // FIXME: This is currently needed for style updates.
     Box* nextSibling() { return m_nextSibling.get(); }
 
-    bool isContainerBox() const { return baseTypeFlags().contains(ContainerBoxFlag); }
+    bool isElementBox() const { return baseTypeFlags().contains(ElementBoxFlag); }
     bool isInlineTextBox() const { return baseTypeFlags().contains(InlineTextBoxFlag); }
 
     bool isPaddingApplicable() const;
@@ -187,7 +187,7 @@ protected:
     Box(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag>);
 
 private:
-    friend class ContainerBox;
+    friend class ElementBox;
 
     class BoxRareData {
         WTF_MAKE_FAST_ALLOCATED;
@@ -220,7 +220,7 @@ private:
     bool m_hasRareData : 1 { false };
     bool m_isInlineIntegrationRoot : 1 { false };
 
-    CheckedPtr<ContainerBox> m_parent;
+    CheckedPtr<ElementBox> m_parent;
     
     std::unique_ptr<Box> m_nextSibling;
     CheckedPtr<Box> m_previousSibling;

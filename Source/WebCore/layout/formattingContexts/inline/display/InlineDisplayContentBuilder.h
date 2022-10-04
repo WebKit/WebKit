@@ -33,7 +33,7 @@ namespace WebCore {
 namespace Layout {
 
 struct AncestorStack;
-class ContainerBox;
+class ElementBox;
 struct DisplayBoxTree;
 struct IsFirstLastIndex;
 class InlineFormattingGeometry;
@@ -66,7 +66,7 @@ private:
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
     void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, DisplayBoxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
-    size_t ensureDisplayBoxForContainer(const ContainerBox&, DisplayBoxTree&, AncestorStack&, DisplayBoxes&);
+    size_t ensureDisplayBoxForContainer(const ElementBox&, DisplayBoxTree&, AncestorStack&, DisplayBoxes&);
 
     InlineRect flipLogicalRectToVisualForWritingModeWithinLine(const InlineRect& logicalRect, const InlineRect& lineLogicalRect, WritingMode) const;
     InlineRect flipLogicalRectToVisualForWritingMode(const InlineRect& logicalRect, WritingMode) const;
@@ -74,9 +74,9 @@ private:
     void setLeftForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
     void setRightForWritingMode(InlineDisplay::Box&, InlineLayoutUnit logicalRight, WritingMode) const;
     InlineLayoutPoint movePointHorizontallyForWritingMode(const InlineLayoutPoint& topLeft, InlineLayoutUnit horizontalOffset, WritingMode) const;
-    InlineLayoutUnit outsideListMarkerVisualPosition(const ContainerBox&, const InlineDisplay::Line&) const;
+    InlineLayoutUnit outsideListMarkerVisualPosition(const ElementBox&, const InlineDisplay::Line&) const;
 
-    const ContainerBox& root() const { return formattingContext().root(); }
+    const ElementBox& root() const { return formattingContext().root(); }
     const InlineFormattingContext& formattingContext() const { return m_formattingContext; }
     const InlineFormattingGeometry& formattingGeometry() const { return formattingContext().formattingGeometry(); }
     InlineFormattingState& formattingState() const { return m_formattingState; } 

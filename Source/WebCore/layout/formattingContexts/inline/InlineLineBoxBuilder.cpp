@@ -281,7 +281,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto marginBoxHeight = inlineLevelBoxGeometry.marginBoxHeight();
             auto ascent = [&]() -> InlineLayoutUnit {
                 if (layoutState().shouldNotSynthesizeInlineBlockBaseline())
-                    return downcast<ContainerBox>(layoutBox).baselineForIntegration().value_or(marginBoxHeight);
+                    return downcast<ElementBox>(layoutBox).baselineForIntegration().value_or(marginBoxHeight);
 
                 if (layoutBox.isInlineBlockBox()) {
                     // The baseline of an 'inline-block' is the baseline of its last line box in the normal flow, unless it has either no in-flow line boxes or
@@ -290,7 +290,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
                     if (synthesizeBaseline)
                         return marginBoxHeight;
 
-                    auto& formattingState = layoutState().formattingStateForInlineFormattingContext(downcast<ContainerBox>(layoutBox));
+                    auto& formattingState = layoutState().formattingStateForInlineFormattingContext(downcast<ElementBox>(layoutBox));
                     auto& lastLine = formattingState.lines().last();
                     auto inlineBlockBaseline = lastLine.top() + lastLine.baseline();
                     return inlineLevelBoxGeometry.marginBefore() + inlineLevelBoxGeometry.borderBefore() + inlineLevelBoxGeometry.paddingBefore().value_or(0) + inlineBlockBaseline;
@@ -307,7 +307,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox, const LineBuild
             auto& listMarkerBoxGeometry = formattingContext().geometryForBox(layoutBox);
             auto marginBoxHeight = listMarkerBoxGeometry.marginBoxHeight();
             // Integration codepath constructs ReplacedBoxes for list markers.
-            auto baseline = downcast<ContainerBox>(layoutBox).baselineForIntegration();
+            auto baseline = downcast<ElementBox>(layoutBox).baselineForIntegration();
             auto ascent = baseline.value_or(marginBoxHeight);
 
             logicalLeft += std::max(0_lu, listMarkerBoxGeometry.marginStart());
@@ -425,7 +425,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
         if (!initiatesLayoutBoundsChange)
             return;
 
-        auto behavesAsText = inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ContainerBox>(inlineLevelBox.layoutBox()).isListMarkerImage());
+        auto behavesAsText = inlineLevelBox.isLineBreakBox() || (inlineLevelBox.isListMarker() && !downcast<ElementBox>(inlineLevelBox.layoutBox()).isListMarkerImage());
         auto layoutBoundsPrimaryMetrics = LayoutBoundsMetrics { };
         if (behavesAsText) {
             auto& parentInlineBox = lineBox.inlineLevelBoxForLayoutBox(inlineLevelBox.layoutBox().parent());
@@ -456,7 +456,7 @@ void LineBoxBuilder::adjustIdeographicBaselineIfApplicable(LineBox& lineBox, siz
                 // Integration codepath sets ideographic baseline by default for non-horizontal content.
                 continue;
             }
-            auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isInlineBlockBox() && downcast<ContainerBox>(layoutBox).baselineForIntegration().has_value();
+            auto isInlineBlockWithNonSyntheticBaseline = layoutBox.isInlineBlockBox() && downcast<ElementBox>(layoutBox).baselineForIntegration().has_value();
             if (isInlineBlockWithNonSyntheticBaseline && !layoutBox.style().isHorizontalWritingMode())
                 continue;
         }

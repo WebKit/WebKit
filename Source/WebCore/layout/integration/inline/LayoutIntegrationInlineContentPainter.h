@@ -43,7 +43,7 @@ struct Box;
 };
 
 namespace Layout {
-class ContainerBox;
+class ElementBox;
 };
 
 namespace LayoutIntegration {
@@ -78,8 +78,8 @@ public:
 
 private:
     const BoxTree& m_boxTree;
-    const Layout::ContainerBox* const m_layerInlineBox;
-    const Layout::ContainerBox* m_currentExcludedInlineBox { nullptr };
+    const Layout::ElementBox* const m_layerInlineBox;
+    const Layout::ElementBox* m_currentExcludedInlineBox { nullptr };
 };
 
 }

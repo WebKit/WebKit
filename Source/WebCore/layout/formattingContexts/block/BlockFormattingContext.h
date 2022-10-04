@@ -47,7 +47,7 @@ class FloatingContext;
 class BlockFormattingContext : public FormattingContext {
     WTF_MAKE_ISO_ALLOCATED(BlockFormattingContext);
 public:
-    BlockFormattingContext(const ContainerBox& formattingContextRoot, BlockFormattingState&);
+    BlockFormattingContext(const ElementBox& formattingContextRoot, BlockFormattingState&);
 
     void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
     LayoutUnit usedContentHeight() const override;
@@ -61,7 +61,7 @@ protected:
         ConstraintsForInFlowContent formattingContextRoot;
         ConstraintsForInFlowContent containingBlock;
     };
-    void placeInFlowPositionedChildren(const ContainerBox&, const HorizontalConstraints&);
+    void placeInFlowPositionedChildren(const ElementBox&, const HorizontalConstraints&);
 
     void computeWidthAndMargin(const FloatingContext&, const Box&, const ConstraintsPair&);
     void computeHeightAndMargin(const Box&, const ConstraintsForInFlowContent&);

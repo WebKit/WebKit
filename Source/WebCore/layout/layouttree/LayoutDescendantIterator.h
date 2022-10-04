@@ -33,21 +33,21 @@ namespace Layout {
 template <typename T>
 class LayoutDescendantIterator : public LayoutIterator<T> {
 public:
-    LayoutDescendantIterator(const ContainerBox& root);
-    LayoutDescendantIterator(const ContainerBox& root, const T* current);
+    LayoutDescendantIterator(const ElementBox& root);
+    LayoutDescendantIterator(const ElementBox& root, const T* current);
     LayoutDescendantIterator& operator++();
 };
 
 template <typename T>
 class LayoutDescendantIteratorAdapter {
 public:
-    LayoutDescendantIteratorAdapter(const ContainerBox& root);
+    LayoutDescendantIteratorAdapter(const ElementBox& root);
     LayoutDescendantIterator<T> begin();
     LayoutDescendantIterator<T> end();
     LayoutDescendantIterator<T> at(const T&);
 
 private:
-    const ContainerBox& m_root;
+    const ElementBox& m_root;
 };
 
 template <typename T> LayoutDescendantIteratorAdapter<T> descendantsOfType(const Box&);
@@ -55,13 +55,13 @@ template <typename T> LayoutDescendantIteratorAdapter<T> descendantsOfType(const
 // LayoutDescendantIterator
 
 template <typename T>
-inline LayoutDescendantIterator<T>::LayoutDescendantIterator(const ContainerBox& root)
+inline LayoutDescendantIterator<T>::LayoutDescendantIterator(const ElementBox& root)
     : LayoutIterator<T>(&root)
 {
 }
 
 template <typename T>
-inline LayoutDescendantIterator<T>::LayoutDescendantIterator(const ContainerBox& root, const T* current)
+inline LayoutDescendantIterator<T>::LayoutDescendantIterator(const ElementBox& root, const T* current)
     : LayoutIterator<T>(&root, current)
 {
 }
@@ -75,7 +75,7 @@ inline LayoutDescendantIterator<T>& LayoutDescendantIterator<T>::operator++()
 // LayoutDescendantIteratorAdapter
 
 template <typename T>
-inline LayoutDescendantIteratorAdapter<T>::LayoutDescendantIteratorAdapter(const ContainerBox& root)
+inline LayoutDescendantIteratorAdapter<T>::LayoutDescendantIteratorAdapter(const ElementBox& root)
     : m_root(root)
 {
 }
@@ -101,7 +101,7 @@ inline LayoutDescendantIterator<T> LayoutDescendantIteratorAdapter<T>::at(const 
 // Standalone functions
 
 template <typename T>
-inline LayoutDescendantIteratorAdapter<T> descendantsOfType(const ContainerBox& root)
+inline LayoutDescendantIteratorAdapter<T> descendantsOfType(const ElementBox& root)
 {
     return LayoutDescendantIteratorAdapter<T>(root);
 }

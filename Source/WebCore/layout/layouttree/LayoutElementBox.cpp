@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 
 #include "RenderStyle.h"
 #include <wtf/IsoMallocInlines.h>
@@ -32,23 +32,23 @@
 namespace WebCore {
 namespace Layout {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(ContainerBox);
+WTF_MAKE_ISO_ALLOCATED_IMPL(ElementBox);
 
-ContainerBox::ContainerBox(ElementAttributes&& attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
-    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), baseTypeFlags | ContainerBoxFlag)
+ElementBox::ElementBox(ElementAttributes&& attributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle, OptionSet<BaseTypeFlag> baseTypeFlags)
+    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), baseTypeFlags | ElementBoxFlag)
 {
 }
 
-ContainerBox::ContainerBox(ElementAttributes&& attributes, OptionSet<ListMarkerAttribute> listMarkerAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
-    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), ContainerBoxFlag)
+ElementBox::ElementBox(ElementAttributes&& attributes, OptionSet<ListMarkerAttribute> listMarkerAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), ElementBoxFlag)
     , m_replacedData(makeUnique<ReplacedData>())
 {
     ASSERT(isListMarkerBox());
     m_replacedData->listMarkerAttributes = listMarkerAttributes;
 }
 
-ContainerBox::ContainerBox(ElementAttributes&& attributes, ReplacedAttributes&& replacedAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
-    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), ContainerBoxFlag)
+ElementBox::ElementBox(ElementAttributes&& attributes, ReplacedAttributes&& replacedAttributes, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+    : Box(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle), ElementBoxFlag)
     , m_replacedData(makeUnique<ReplacedData>())
 {
     m_replacedData->intrinsicSize = replacedAttributes.intrinsicSize;
@@ -56,12 +56,12 @@ ContainerBox::ContainerBox(ElementAttributes&& attributes, ReplacedAttributes&& 
     m_replacedData->cachedImage = replacedAttributes.cachedImage;
 }
 
-ContainerBox::~ContainerBox()
+ElementBox::~ElementBox()
 {
     destroyChildren();
 }
 
-const Box* ContainerBox::firstInFlowChild() const
+const Box* ElementBox::firstInFlowChild() const
 {
     if (auto* firstChild = this->firstChild()) {
         if (firstChild->isInFlow())
@@ -71,7 +71,7 @@ const Box* ContainerBox::firstInFlowChild() const
     return nullptr;
 }
 
-const Box* ContainerBox::firstInFlowOrFloatingChild() const
+const Box* ElementBox::firstInFlowOrFloatingChild() const
 {
     if (auto* firstChild = this->firstChild()) {
         if (firstChild->isInFlow() || firstChild->isFloatingPositioned())
@@ -81,7 +81,7 @@ const Box* ContainerBox::firstInFlowOrFloatingChild() const
     return nullptr;
 }
 
-const Box* ContainerBox::lastInFlowChild() const
+const Box* ElementBox::lastInFlowChild() const
 {
     if (auto* lastChild = this->lastChild()) {
         if (lastChild->isInFlow())
@@ -91,7 +91,7 @@ const Box* ContainerBox::lastInFlowChild() const
     return nullptr;
 }
 
-const Box* ContainerBox::lastInFlowOrFloatingChild() const
+const Box* ElementBox::lastInFlowOrFloatingChild() const
 {
     if (auto* lastChild = this->lastChild()) {
         if (lastChild->isInFlow() || lastChild->isFloatingPositioned())
@@ -101,7 +101,7 @@ const Box* ContainerBox::lastInFlowOrFloatingChild() const
     return nullptr;
 }
 
-void ContainerBox::appendChild(UniqueRef<Box> childRef)
+void ElementBox::appendChild(UniqueRef<Box> childRef)
 {
     auto childBox = childRef.moveToUniquePtr();
     ASSERT(!childBox->m_parent);
@@ -118,7 +118,7 @@ void ContainerBox::appendChild(UniqueRef<Box> childRef)
     nextOrFirst = WTFMove(childBox);
 }
 
-void ContainerBox::destroyChildren()
+void ElementBox::destroyChildren()
 {
     m_lastChild = nullptr;
 
@@ -132,24 +132,24 @@ void ContainerBox::destroyChildren()
     }
 }
 
-bool ContainerBox::hasIntrinsicWidth() const
+bool ElementBox::hasIntrinsicWidth() const
 {
     return (m_replacedData && m_replacedData->intrinsicSize) || style().logicalWidth().isIntrinsic();
 }
 
-bool ContainerBox::hasIntrinsicHeight() const
+bool ElementBox::hasIntrinsicHeight() const
 {
     return (m_replacedData && m_replacedData->intrinsicSize) || style().logicalHeight().isIntrinsic();
 }
 
-bool ContainerBox::hasIntrinsicRatio() const
+bool ElementBox::hasIntrinsicRatio() const
 {
     if (!hasAspectRatio())
         return false;
     return m_replacedData && (m_replacedData->intrinsicSize || m_replacedData->intrinsicRatio);
 }
 
-LayoutUnit ContainerBox::intrinsicWidth() const
+LayoutUnit ElementBox::intrinsicWidth() const
 {
     ASSERT(hasIntrinsicWidth());
     if (m_replacedData && m_replacedData->intrinsicSize)
@@ -157,7 +157,7 @@ LayoutUnit ContainerBox::intrinsicWidth() const
     return LayoutUnit { style().logicalWidth().value() };
 }
 
-LayoutUnit ContainerBox::intrinsicHeight() const
+LayoutUnit ElementBox::intrinsicHeight() const
 {
     ASSERT(hasIntrinsicHeight());
     if (m_replacedData && m_replacedData->intrinsicSize)
@@ -165,7 +165,7 @@ LayoutUnit ContainerBox::intrinsicHeight() const
     return LayoutUnit { style().logicalHeight().value() };
 }
 
-LayoutUnit ContainerBox::intrinsicRatio() const
+LayoutUnit ElementBox::intrinsicRatio() const
 {
     ASSERT(hasIntrinsicRatio() || (hasIntrinsicWidth() && hasIntrinsicHeight()));
     if (m_replacedData) {
@@ -177,7 +177,7 @@ LayoutUnit ContainerBox::intrinsicRatio() const
     return 1;
 }
 
-bool ContainerBox::hasAspectRatio() const
+bool ElementBox::hasAspectRatio() const
 {
     return isImage();
 }

@@ -27,7 +27,7 @@
 #include "FloatAvoider.h"
 
 #include "LayoutBox.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

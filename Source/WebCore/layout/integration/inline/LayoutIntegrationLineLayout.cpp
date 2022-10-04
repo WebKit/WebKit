@@ -796,12 +796,12 @@ const RenderObject& LineLayout::rendererForLayoutBox(const Layout::Box& layoutBo
     return m_boxTree.rendererForLayoutBox(layoutBox);
 }
 
-const Layout::ContainerBox& LineLayout::rootLayoutBox() const
+const Layout::ElementBox& LineLayout::rootLayoutBox() const
 {
     return m_boxTree.rootLayoutBox();
 }
 
-Layout::ContainerBox& LineLayout::rootLayoutBox()
+Layout::ElementBox& LineLayout::rootLayoutBox()
 {
     return m_boxTree.rootLayoutBox();
 }

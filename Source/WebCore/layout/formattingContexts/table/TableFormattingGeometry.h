@@ -37,11 +37,11 @@ class TableFormattingGeometry : public FormattingGeometry {
 public:
     TableFormattingGeometry(const TableFormattingContext&);
 
-    LayoutUnit cellBoxContentHeight(const ContainerBox&) const;
+    LayoutUnit cellBoxContentHeight(const ElementBox&) const;
     Edges computedCellBorder(const TableGrid::Cell&) const;
-    std::optional<LayoutUnit> computedColumnWidth(const ContainerBox& columnBox) const;
+    std::optional<LayoutUnit> computedColumnWidth(const ElementBox& columnBox) const;
     IntrinsicWidthConstraints intrinsicWidthConstraintsForCellContent(const TableGrid::Cell&) const;
-    InlineLayoutUnit usedBaselineForCell(const ContainerBox& cellBox) const;
+    InlineLayoutUnit usedBaselineForCell(const ElementBox& cellBox) const;
     LayoutUnit horizontalSpaceForCellContent(const TableGrid::Cell&) const;
     LayoutUnit verticalSpaceForCellContent(const TableGrid::Cell&, std::optional<LayoutUnit> availableVerticalSpace) const;
 

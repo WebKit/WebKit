@@ -73,7 +73,7 @@ static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBrea
     return textLength - startPosition;
 }
 
-InlineItemsBuilder::InlineItemsBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState& formattingState)
+InlineItemsBuilder::InlineItemsBuilder(const ElementBox& formattingContextRoot, InlineFormattingState& formattingState)
     : m_root(formattingContextRoot)
     , m_formattingState(formattingState)
     , m_needsVisualReordering(!formattingContextRoot.style().isLeftToRightDirection())
@@ -105,7 +105,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems)
                 break;
             // This is the start of an inline box (e.g. <span>).
             handleInlineBoxStart(layoutBox, inlineItems);
-            auto& inlineBox = downcast<ContainerBox>(layoutBox);
+            auto& inlineBox = downcast<ElementBox>(layoutBox);
             if (!inlineBox.hasChild())
                 break;
             layoutQueue.append(inlineBox.firstChild());

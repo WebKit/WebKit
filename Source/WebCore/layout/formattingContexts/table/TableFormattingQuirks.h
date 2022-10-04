@@ -36,7 +36,7 @@ class TableFormattingQuirks : public FormattingQuirks {
 public:
     TableFormattingQuirks(const TableFormattingContext&);
 
-    static bool shouldIgnoreChildContentVerticalMargin(const ContainerBox&);
+    static bool shouldIgnoreChildContentVerticalMargin(const ElementBox&);
     LayoutUnit heightValueOfNearestContainingBlockWithFixedHeight(const Box&) const final;
 
 private:

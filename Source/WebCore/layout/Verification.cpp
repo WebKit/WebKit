@@ -31,8 +31,8 @@
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutContainerBox.h"
 #include "LayoutContext.h"
+#include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutTreeBuilder.h"
 #include "LegacyInlineTextBox.h"
@@ -114,7 +114,7 @@ static void collectInlineBoxes(const RenderBlockFlow& root, Vector<WebCore::Lega
     }
 }
 
-static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ContainerBox& inlineFormattingRoot)
+static bool outputMismatchingComplexLineInformationIfNeeded(TextStream& stream, const LayoutState& layoutState, const RenderBlockFlow& blockFlow, const ElementBox& inlineFormattingRoot)
 {
     auto& inlineFormattingState = layoutState.formattingStateForFormattingContext(inlineFormattingRoot);
     auto& boxes = downcast<InlineFormattingState>(inlineFormattingState).boxes();
@@ -287,15 +287,15 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& contex
 {
     // Rendering code does not have the concept of table wrapper box. Skip it by verifying the first child(table box) instead. 
     if (layoutBox.isTableWrapperBox())
-        return verifyAndOutputSubtree(stream, context, renderer, *downcast<ContainerBox>(layoutBox).firstChild()); 
+        return verifyAndOutputSubtree(stream, context, renderer, *downcast<ElementBox>(layoutBox).firstChild()); 
 
     auto mismtachingGeometry = outputMismatchingBlockBoxInformationIfNeeded(stream, context, renderer, layoutBox);
 
-    if (!is<ContainerBox>(layoutBox))
+    if (!is<ElementBox>(layoutBox))
         return mismtachingGeometry;
 
-    auto& containerBox = downcast<ContainerBox>(layoutBox);
-    auto* childLayoutBox = containerBox.firstChild();
+    auto& elementBox = downcast<ElementBox>(layoutBox);
+    auto* childLayoutBox = elementBox.firstChild();
     auto* childRenderer = renderer.firstChild();
 
     while (childRenderer) {
@@ -317,7 +317,7 @@ static bool verifyAndOutputSubtree(TextStream& stream, const LayoutState& contex
                 return true;
 
             auto& blockFlow = downcast<RenderBlockFlow>(*childRenderer);
-            auto& formattingRoot = downcast<ContainerBox>(*childLayoutBox);
+            auto& formattingRoot = downcast<ElementBox>(*childLayoutBox);
             mismtachingGeometry |= outputMismatchingComplexLineInformationIfNeeded(stream, context, blockFlow, formattingRoot);
         } else {
             auto mismatchingSubtreeGeometry = verifyAndOutputSubtree(stream, context, downcast<RenderBox>(*childRenderer), *childLayoutBox);

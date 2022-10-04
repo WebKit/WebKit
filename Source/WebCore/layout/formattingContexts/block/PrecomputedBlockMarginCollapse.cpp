@@ -30,7 +30,7 @@
 #include "BlockFormattingGeometry.h"
 #include "BlockFormattingQuirks.h"
 #include "LayoutBox.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include "LayoutState.h"
 #include "LayoutUnit.h"
 #include "RenderStyle.h"
@@ -54,7 +54,7 @@ UsedVerticalMargin::PositiveAndNegativePair::Values BlockMarginCollapse::precomp
     auto firstChildCollapsedMarginBefore = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {
         if (!marginBeforeCollapsesWithFirstInFlowChildMarginBefore(layoutBox))
             return { };
-        return precomputedPositiveNegativeValues(*downcast<ContainerBox>(layoutBox).firstInFlowChild(), formattingGeometry);
+        return precomputedPositiveNegativeValues(*downcast<ElementBox>(layoutBox).firstInFlowChild(), formattingGeometry);
     };
 
     auto previouSiblingCollapsedMarginAfter = [&]() -> UsedVerticalMargin::PositiveAndNegativePair::Values {

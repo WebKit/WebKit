@@ -31,10 +31,10 @@
 #include "FormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutContainerBox.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutContext.h"
 #include "LayoutDescendantIterator.h"
+#include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutState.h"
 #include "Logging.h"
@@ -46,7 +46,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FormattingContext);
 
-FormattingContext::FormattingContext(const ContainerBox& formattingContextRoot, FormattingState& formattingState)
+FormattingContext::FormattingContext(const ElementBox& formattingContextRoot, FormattingState& formattingState)
     : m_root(formattingContextRoot)
     , m_formattingState(formattingState)
 {
@@ -150,14 +150,14 @@ void FormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlowCont
         computeBorderAndPadding(outOfFlowBox, horizontalConstraintsForBorderAndPadding);
 
         computeOutOfFlowHorizontalGeometry(outOfFlowBox, containingBlockConstraints);
-        auto outOfFlowBoxHasContent = is<ContainerBox>(outOfFlowBox.get()) && downcast<ContainerBox>(outOfFlowBox.get()).hasChild();
+        auto outOfFlowBoxHasContent = is<ElementBox>(outOfFlowBox.get()) && downcast<ElementBox>(outOfFlowBox.get()).hasChild();
         if (outOfFlowBoxHasContent) {
-            auto& containerBox = downcast<ContainerBox>(outOfFlowBox.get());
-            auto formattingContext = LayoutContext::createFormattingContext(containerBox, layoutState());
-            if (containerBox.hasInFlowOrFloatingChild())
-                formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(containerBox));
-            computeOutOfFlowVerticalGeometry(containerBox, containingBlockConstraints);
-            formattingContext->layoutOutOfFlowContent(formattingGeometry().constraintsForOutOfFlowContent(containerBox));
+            auto& elementBox = downcast<ElementBox>(outOfFlowBox.get());
+            auto formattingContext = LayoutContext::createFormattingContext(elementBox, layoutState());
+            if (elementBox.hasInFlowOrFloatingChild())
+                formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(elementBox));
+            computeOutOfFlowVerticalGeometry(elementBox, containingBlockConstraints);
+            formattingContext->layoutOutOfFlowContent(formattingGeometry().constraintsForOutOfFlowContent(elementBox));
         } else
             computeOutOfFlowVerticalGeometry(outOfFlowBox, containingBlockConstraints);
     }
@@ -269,7 +269,7 @@ void FormattingContext::collectOutOfFlowDescendantsIfNeeded()
     for (auto& descendant : descendantsOfType<Box>(root)) {
         if (!descendant.isOutOfFlowPositioned())
             continue;
-        auto nearestFormattingContextRoot = [&] () -> const ContainerBox* {
+        auto nearestFormattingContextRoot = [&] () -> const ElementBox* {
             for (auto& containingBlock : containingBlockChain(descendant)) {
                 if (containingBlock.establishesBlockFormattingContext())
                     return &containingBlock;
@@ -293,7 +293,7 @@ const InitialContainingBlock& FormattingContext::initialContainingBlock(const Bo
     return downcast<InitialContainingBlock>(*ancestor);
 }
 
-const ContainerBox& FormattingContext::containingBlock(const Box& layoutBox)
+const ElementBox& FormattingContext::containingBlock(const Box& layoutBox)
 {
     // If we ever end up here with the ICB, we must be doing something not-so-great.
     RELEASE_ASSERT(!is<InitialContainingBlock>(layoutBox));
@@ -335,7 +335,7 @@ const ContainerBox& FormattingContext::containingBlock(const Box& layoutBox)
 }
 
 #ifndef NDEBUG
-const ContainerBox& FormattingContext::formattingContextRoot(const Box& layoutBox)
+const ElementBox& FormattingContext::formattingContextRoot(const Box& layoutBox)
 {
     // We should never need to ask this question on the ICB.
     ASSERT(!is<InitialContainingBlock>(layoutBox));

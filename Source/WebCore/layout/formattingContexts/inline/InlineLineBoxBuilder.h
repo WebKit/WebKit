@@ -33,7 +33,7 @@ namespace WebCore {
 namespace Layout {
 
 class Box;
-class ContainerBox;
+class ElementBox;
 class LayoutState;
 struct LayoutBoundsMetrics;
 

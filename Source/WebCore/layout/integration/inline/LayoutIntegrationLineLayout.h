@@ -132,8 +132,8 @@ private:
 
     Layout::InlineDamage& ensureLineDamage();
 
-    const Layout::ContainerBox& rootLayoutBox() const;
-    Layout::ContainerBox& rootLayoutBox();
+    const Layout::ElementBox& rootLayoutBox() const;
+    Layout::ElementBox& rootLayoutBox();
     void clearInlineContent();
     void releaseCaches();
 

@@ -35,22 +35,22 @@ class RenderStyle;
 
 namespace Layout {
 
-class ContainerBox : public Box {
-    WTF_MAKE_ISO_ALLOCATED(ContainerBox);
+class ElementBox : public Box {
+    WTF_MAKE_ISO_ALLOCATED(ElementBox);
 public:
-    ContainerBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, OptionSet<BaseTypeFlag> = { ContainerBoxFlag });
+    ElementBox(ElementAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr, OptionSet<BaseTypeFlag> = { ElementBoxFlag });
 
     enum class ListMarkerAttribute : uint8_t { Image = 1 << 0, Outside = 1 << 1 };
-    ContainerBox(ElementAttributes&&, OptionSet<ListMarkerAttribute>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    ElementBox(ElementAttributes&&, OptionSet<ListMarkerAttribute>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
     struct ReplacedAttributes {
         LayoutSize intrinsicSize;
         std::optional<LayoutUnit> intrinsicRatio { };
         CachedImage* cachedImage { };
     };
-    ContainerBox(ElementAttributes&&, ReplacedAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    ElementBox(ElementAttributes&&, ReplacedAttributes&&, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
-    ~ContainerBox();
+    ~ElementBox();
 
     const Box* firstChild() const { return m_firstChild.get(); }
     const Box* firstInFlowChild() const;
@@ -108,5 +108,5 @@ private:
 }
 }
 
-SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ContainerBox, isContainerBox())
+SPECIALIZE_TYPE_TRAITS_LAYOUT_BOX(ElementBox, isElementBox())
 

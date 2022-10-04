@@ -422,7 +422,7 @@ void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineC
             continue;
         }
         if (lineRun.isListMarker()) {
-            auto& listMarker = downcast<ContainerBox>(layoutBox);
+            auto& listMarker = downcast<ElementBox>(layoutBox);
             auto visualRect = visualRectRelativeToRoot(lineBox.logicalBorderBoxForAtomicInlineLevelBox(layoutBox, formattingState().boxGeometry(layoutBox)));
             if (listMarker.isListMarkerOutside())
                 WebCore::isHorizontalWritingMode(writingMode) ? visualRect.setLeft(outsideListMarkerVisualPosition(listMarker, displayLine)) : visualRect.setTop(outsideListMarkerVisualPosition(listMarker, displayLine));
@@ -487,12 +487,12 @@ private:
 };
 
 struct AncestorStack {
-    std::optional<size_t> unwind(const ContainerBox& containerBox)
+    std::optional<size_t> unwind(const ElementBox& elementBox)
     {
         // Unwind the stack all the way to container box.
-        if (!m_set.contains(&containerBox))
+        if (!m_set.contains(&elementBox))
             return { };
-        while (m_set.last() != &containerBox) {
+        while (m_set.last() != &elementBox) {
             m_stack.removeLast();
             m_set.removeLast();
         }
@@ -501,33 +501,33 @@ struct AncestorStack {
         return m_stack.last();
     }
 
-    void push(size_t displayBoxNodeIndexForContainerBox, const ContainerBox& containerBox)
+    void push(size_t displayBoxNodeIndexForelementBox, const ElementBox& elementBox)
     {
-        m_stack.append(displayBoxNodeIndexForContainerBox);
-        ASSERT(!m_set.contains(&containerBox));
-        m_set.add(&containerBox);
+        m_stack.append(displayBoxNodeIndexForelementBox);
+        ASSERT(!m_set.contains(&elementBox));
+        m_set.add(&elementBox);
     }
 
 private:
     Vector<size_t> m_stack;
-    ListHashSet<const ContainerBox*> m_set;
+    ListHashSet<const ElementBox*> m_set;
 };
 
-static inline size_t createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(const ContainerBox& containerBox, size_t displayBoxIndex, size_t parentDisplayBoxNodeIndex, DisplayBoxTree& displayBoxTree, AncestorStack& ancestorStack)
+static inline size_t createdDisplayBoxNodeForElementBoxAndPushToAncestorStack(const ElementBox& elementBox, size_t displayBoxIndex, size_t parentDisplayBoxNodeIndex, DisplayBoxTree& displayBoxTree, AncestorStack& ancestorStack)
 {
     auto displayBoxNodeIndex = displayBoxTree.append(parentDisplayBoxNodeIndex, displayBoxIndex);
-    ancestorStack.push(displayBoxNodeIndex, containerBox);
+    ancestorStack.push(displayBoxNodeIndex, elementBox);
     return displayBoxNodeIndex;
 }
 
-size_t InlineDisplayContentBuilder::ensureDisplayBoxForContainer(const ContainerBox& containerBox, DisplayBoxTree& displayBoxTree, AncestorStack& ancestorStack, DisplayBoxes& boxes)
+size_t InlineDisplayContentBuilder::ensureDisplayBoxForContainer(const ElementBox& elementBox, DisplayBoxTree& displayBoxTree, AncestorStack& ancestorStack, DisplayBoxes& boxes)
 {
-    ASSERT(containerBox.isInlineBox() || &containerBox == &root());
-    if (auto lowestCommonAncestorIndex = ancestorStack.unwind(containerBox))
+    ASSERT(elementBox.isInlineBox() || &elementBox == &root());
+    if (auto lowestCommonAncestorIndex = ancestorStack.unwind(elementBox))
         return *lowestCommonAncestorIndex;
-    auto enclosingDisplayBoxNodeIndexForContainer = ensureDisplayBoxForContainer(containerBox.parent(), displayBoxTree, ancestorStack, boxes);
-    appendInlineDisplayBoxAtBidiBoundary(containerBox, boxes);
-    return createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(containerBox, boxes.size() - 1, enclosingDisplayBoxNodeIndexForContainer, displayBoxTree, ancestorStack);
+    auto enclosingDisplayBoxNodeIndexForContainer = ensureDisplayBoxForContainer(elementBox.parent(), displayBoxTree, ancestorStack, boxes);
+    appendInlineDisplayBoxAtBidiBoundary(elementBox, boxes);
+    return createdDisplayBoxNodeForElementBoxAndPushToAncestorStack(elementBox, boxes.size() - 1, enclosingDisplayBoxNodeIndexForContainer, displayBoxTree, ancestorStack);
 }
 
 struct IsFirstLastIndex {
@@ -687,8 +687,8 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                 auto visualRect = visualRectRelativeToRoot(logicalRect);
                 auto boxMarginLeft = marginLeftInInlineDirection(boxGeometry, isLeftToRightDirection);
 
-                if (layoutBox.isListMarkerBox() && downcast<ContainerBox>(layoutBox).isListMarkerOutside()) {
-                    auto& listMarker = downcast<ContainerBox>(layoutBox);
+                if (layoutBox.isListMarkerBox() && downcast<ElementBox>(layoutBox).isListMarkerOutside()) {
+                    auto& listMarker = downcast<ElementBox>(layoutBox);
                     isHorizontalWritingMode ? visualRect.setLeft(outsideListMarkerVisualPosition(listMarker, displayLine)) : visualRect.setTop(outsideListMarkerVisualPosition(listMarker, displayLine));
                 } else
                     isHorizontalWritingMode ? visualRect.moveHorizontally(boxMarginLeft) : visualRect.moveVertically(boxMarginLeft);
@@ -708,7 +708,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
                     setInlineBoxGeometry(layoutBox, { { }, { } }, true);
                 } else if (!lineBox.inlineLevelBoxForLayoutBox(layoutBox).hasContent()) {
                     appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
-                    createdDisplayBoxNodeForContainerBoxAndPushToAncestorStack(downcast<ContainerBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
+                    createdDisplayBoxNodeForElementBoxAndPushToAncestorStack(downcast<ElementBox>(layoutBox), boxes.size() - 1, parentDisplayBoxNodeIndex, displayBoxTree, ancestorStack);
                 }
                 continue;
             }
@@ -1012,7 +1012,7 @@ InlineLayoutPoint InlineDisplayContentBuilder::movePointHorizontallyForWritingMo
     return visualPoint;
 }
 
-InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(const ContainerBox& listMarker, const InlineDisplay::Line& displayLine) const
+InlineLayoutUnit InlineDisplayContentBuilder::outsideListMarkerVisualPosition(const ElementBox& listMarker, const InlineDisplay::Line& displayLine) const
 {
     ASSERT(listMarker.isListMarkerOutside());
     auto& boxGeometry = formattingState().boxGeometry(listMarker);

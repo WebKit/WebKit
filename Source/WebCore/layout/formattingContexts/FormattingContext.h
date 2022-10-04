@@ -26,7 +26,7 @@
 #pragma once
 
 #include "FormattingConstraints.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include "LayoutUnit.h"
 #include "LayoutUnits.h"
 #include <wtf/IsoMalloc.h>
@@ -39,7 +39,7 @@ struct Length;
 namespace Layout {
 
 class BoxGeometry;
-class ContainerBox;
+class ElementBox;
 struct ConstraintsForInFlowContent;
 struct ConstraintsForOutOfFlowContent;
 struct HorizontalConstraints;
@@ -59,7 +59,7 @@ public:
     virtual IntrinsicWidthConstraints computedIntrinsicWidthConstraints() = 0;
     virtual LayoutUnit usedContentHeight() const = 0;
 
-    const ContainerBox& root() const { return m_root; }
+    const ElementBox& root() const { return m_root; }
     LayoutState& layoutState() const;
     const FormattingState& formattingState() const { return m_formattingState; }
     virtual const FormattingGeometry& formattingGeometry() const = 0;
@@ -83,13 +83,13 @@ public:
     bool isFlexFormattingContext() const { return root().establishesFlexFormattingContext(); }
 
     static const InitialContainingBlock& initialContainingBlock(const Box&);
-    static const ContainerBox& containingBlock(const Box&);
+    static const ElementBox& containingBlock(const Box&);
 #ifndef NDEBUG
-    static const ContainerBox& formattingContextRoot(const Box&);
+    static const ElementBox& formattingContextRoot(const Box&);
 #endif
 
 protected:
-    FormattingContext(const ContainerBox& formattingContextRoot, FormattingState&);
+    FormattingContext(const ElementBox& formattingContextRoot, FormattingState&);
 
     FormattingState& formattingState() { return m_formattingState; }
     void computeBorderAndPadding(const Box&, const HorizontalConstraints&);
@@ -104,7 +104,7 @@ private:
     void computeOutOfFlowVerticalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
     void computeOutOfFlowHorizontalGeometry(const Box&, const ConstraintsForOutOfFlowContent&);
 
-    CheckedRef<const ContainerBox> m_root;
+    CheckedRef<const ElementBox> m_root;
     FormattingState& m_formattingState;
 };
 

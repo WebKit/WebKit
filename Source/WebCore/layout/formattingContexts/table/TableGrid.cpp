@@ -33,12 +33,12 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TableGrid);
 
-TableGrid::Column::Column(const ContainerBox* columnBox)
+TableGrid::Column::Column(const ElementBox* columnBox)
     : m_layoutBox(columnBox)
 {
 }
 
-void TableGrid::Columns::addColumn(const ContainerBox& columnBox)
+void TableGrid::Columns::addColumn(const ElementBox& columnBox)
 {
     m_columnList.append({ &columnBox });
 }
@@ -48,17 +48,17 @@ void TableGrid::Columns::addAnonymousColumn()
     m_columnList.append({ nullptr });
 }
 
-void TableGrid::Rows::addRow(const ContainerBox& rowBox)
+void TableGrid::Rows::addRow(const ElementBox& rowBox)
 {
     m_rowList.append({ rowBox });
 }
 
-TableGrid::Row::Row(const ContainerBox& rowBox)
+TableGrid::Row::Row(const ElementBox& rowBox)
     : m_layoutBox(rowBox)
 {
 }
 
-TableGrid::Cell::Cell(const ContainerBox& cellBox, SlotPosition position, CellSpan span)
+TableGrid::Cell::Cell(const ElementBox& cellBox, SlotPosition position, CellSpan span)
     : m_layoutBox(cellBox)
     , m_position(position)
     , m_span(span)
@@ -81,7 +81,7 @@ TableGrid::Slot* TableGrid::slot(SlotPosition position)
     return m_slotMap.get(position);
 }
 
-void TableGrid::appendCell(const ContainerBox& cellBox)
+void TableGrid::appendCell(const ElementBox& cellBox)
 {
     auto rowSpan = cellBox.rowSpan();
     auto columnSpan = cellBox.columnSpan();
@@ -127,13 +127,13 @@ void TableGrid::appendCell(const ContainerBox& cellBox)
     m_cells.add(WTFMove(cell));
 }
 
-void TableGrid::insertCell(const ContainerBox& cellBox, const ContainerBox& before)
+void TableGrid::insertCell(const ElementBox& cellBox, const ElementBox& before)
 {
     UNUSED_PARAM(cellBox);
     UNUSED_PARAM(before);
 }
 
-void TableGrid::removeCell(const ContainerBox& cellBox)
+void TableGrid::removeCell(const ElementBox& cellBox)
 {
     UNUSED_PARAM(cellBox);
 }

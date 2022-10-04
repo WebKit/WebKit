@@ -32,8 +32,8 @@
 #include "InlineFormattingState.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutContainerBox.h"
 #include "LayoutContainingBlockChainIterator.h"
+#include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "RenderBox.h"
 #include "TableFormattingState.h"
@@ -44,7 +44,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(LayoutState);
 
-LayoutState::LayoutState(const Document& document, const ContainerBox& rootContainer, std::optional<FormattingContextIntegrationType> formattingContextIntegrationType)
+LayoutState::LayoutState(const Document& document, const ElementBox& rootContainer, std::optional<FormattingContextIntegrationType> formattingContextIntegrationType)
     : m_rootContainer(rootContainer)
     , m_formattingContextIntegrationType(formattingContextIntegrationType)
 {
@@ -83,7 +83,7 @@ BoxGeometry& LayoutState::ensureGeometryForBoxSlow(const Box& layoutBox)
     }).iterator->value;
 }
 
-bool LayoutState::hasFormattingState(const ContainerBox& formattingContextRoot) const
+bool LayoutState::hasFormattingState(const ElementBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
     return m_blockFormattingStates.contains(&formattingContextRoot)
@@ -92,7 +92,7 @@ bool LayoutState::hasFormattingState(const ContainerBox& formattingContextRoot) 
         || m_flexFormattingStates.contains(&formattingContextRoot);
 }
 
-FormattingState& LayoutState::formattingStateForFormattingContext(const ContainerBox& formattingContextRoot) const
+FormattingState& LayoutState::formattingStateForFormattingContext(const ElementBox& formattingContextRoot) const
 {
     ASSERT(formattingContextRoot.establishesFormattingContext());
 
@@ -121,7 +121,7 @@ FormattingState& LayoutState::formattingStateForFormattingContext(const Containe
     CRASH();
 }
 
-InlineFormattingState& LayoutState::formattingStateForInlineFormattingContext(const ContainerBox& inlineFormattingContextRoot) const
+InlineFormattingState& LayoutState::formattingStateForInlineFormattingContext(const ElementBox& inlineFormattingContextRoot) const
 {
     ASSERT(inlineFormattingContextRoot.establishesInlineFormattingContext());
 
@@ -133,19 +133,19 @@ InlineFormattingState& LayoutState::formattingStateForInlineFormattingContext(co
     return *m_inlineFormattingStates.get(&inlineFormattingContextRoot);
 }
 
-BlockFormattingState& LayoutState::formattingStateForBlockFormattingContext(const ContainerBox& blockFormattingContextRoot) const
+BlockFormattingState& LayoutState::formattingStateForBlockFormattingContext(const ElementBox& blockFormattingContextRoot) const
 {
     ASSERT(blockFormattingContextRoot.establishesBlockFormattingContext());
     return *m_blockFormattingStates.get(&blockFormattingContextRoot);
 }
 
-TableFormattingState& LayoutState::formattingStateForTableFormattingContext(const ContainerBox& tableFormattingContextRoot) const
+TableFormattingState& LayoutState::formattingStateForTableFormattingContext(const ElementBox& tableFormattingContextRoot) const
 {
     ASSERT(tableFormattingContextRoot.establishesTableFormattingContext());
     return *m_tableFormattingStates.get(&tableFormattingContextRoot);
 }
 
-FlexFormattingState& LayoutState::formattingStateForFlexFormattingContext(const ContainerBox& flexFormattingContextRoot) const
+FlexFormattingState& LayoutState::formattingStateForFlexFormattingContext(const ElementBox& flexFormattingContextRoot) const
 {
     ASSERT(flexFormattingContextRoot.establishesFlexFormattingContext());
 
@@ -157,7 +157,7 @@ FlexFormattingState& LayoutState::formattingStateForFlexFormattingContext(const 
     return *m_flexFormattingStates.get(&flexFormattingContextRoot);
 }
 
-InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerBox& formattingContextRoot)
+InlineFormattingState& LayoutState::ensureInlineFormattingState(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesInlineFormattingContext());
 
@@ -192,7 +192,7 @@ InlineFormattingState& LayoutState::ensureInlineFormattingState(const ContainerB
     return *m_inlineFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
 
-BlockFormattingState& LayoutState::ensureBlockFormattingState(const ContainerBox& formattingContextRoot)
+BlockFormattingState& LayoutState::ensureBlockFormattingState(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesBlockFormattingContext());
 
@@ -203,7 +203,7 @@ BlockFormattingState& LayoutState::ensureBlockFormattingState(const ContainerBox
     return *m_blockFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
 
-TableFormattingState& LayoutState::ensureTableFormattingState(const ContainerBox& formattingContextRoot)
+TableFormattingState& LayoutState::ensureTableFormattingState(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesTableFormattingContext());
 
@@ -215,7 +215,7 @@ TableFormattingState& LayoutState::ensureTableFormattingState(const ContainerBox
     return *m_tableFormattingStates.ensure(&formattingContextRoot, create).iterator->value;
 }
 
-FlexFormattingState& LayoutState::ensureFlexFormattingState(const ContainerBox& formattingContextRoot)
+FlexFormattingState& LayoutState::ensureFlexFormattingState(const ElementBox& formattingContextRoot)
 {
     ASSERT(formattingContextRoot.establishesFlexFormattingContext());
 

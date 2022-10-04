@@ -40,7 +40,7 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FlexFormattingContext);
 
-FlexFormattingContext::FlexFormattingContext(const ContainerBox& formattingContextRoot, FlexFormattingState& formattingState)
+FlexFormattingContext::FlexFormattingContext(const ElementBox& formattingContextRoot, FlexFormattingState& formattingState)
     : FormattingContext(formattingContextRoot, formattingState)
     , m_flexFormattingGeometry(*this)
     , m_flexFormattingQuirks(*this)
@@ -78,7 +78,7 @@ void FlexFormattingContext::sizeAndPlaceFlexItems(const ConstraintsForFlexConten
     auto flexItemMainAxisEnd = flexItemMainAxisStart;
     auto flexItemCrosAxisStart = constraints.logicalTop();
     auto flexItemCrosAxisEnd = flexItemCrosAxisStart;
-    for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
+    for (auto& flexItem : childrenOfType<ElementBox>(root())) {
         ASSERT(flexItem.establishesFormattingContext());
         // FIXME: This is just a simple, let's layout the flex items and place them next to each other setup.
         auto intrinsicWidths = formattingState.intrinsicWidthConstraintsForBox(flexItem);
@@ -116,7 +116,7 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
 {
     auto& formattingState = this->formattingState();
     auto& formattingGeometry = this->formattingGeometry();
-    for (auto& flexItem : childrenOfType<ContainerBox>(root())) {
+    for (auto& flexItem : childrenOfType<ElementBox>(root())) {
         if (formattingState.intrinsicWidthConstraintsForBox(flexItem))
             continue;
         formattingState.setIntrinsicWidthConstraintsForBox(flexItem, formattingGeometry.intrinsicWidthConstraints(flexItem));
@@ -128,7 +128,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
     struct FlexItem {
         LayoutSize marginBoxSize;
         int logicalOrder { 0 };
-        CheckedPtr<const ContainerBox> layoutBox;
+        CheckedPtr<const ElementBox> layoutBox;
     };
 
     auto& formattingState = this->formattingState();
@@ -166,7 +166,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
             flexItemsNeedReordering = flexItemsNeedReordering || flexItemOrder != previousLogicalOrder.value_or(0);
             previousLogicalOrder = flexItemOrder;
 
-            flexItemList.append({ logicalSize, flexItemOrder, downcast<ContainerBox>(flexItem) });
+            flexItemList.append({ logicalSize, flexItemOrder, downcast<ElementBox>(flexItem) });
         }
     };
     convertVisualToLogical();

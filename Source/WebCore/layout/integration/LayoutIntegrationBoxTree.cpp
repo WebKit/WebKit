@@ -27,7 +27,7 @@
 #include "LayoutIntegrationBoxTree.h"
 
 #include "InlineWalker.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include "LayoutInlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderBlockFlow.h"
@@ -89,7 +89,7 @@ BoxTree::BoxTree(RenderBlock& rootRenderer)
 {
     auto* rootBox = m_rootRenderer.layoutBox();
     if (!rootBox) {
-        auto newRootBox = makeUniqueRef<Layout::ContainerBox>(elementAttributes(rootRenderer), rootBoxStyle(rootRenderer), firstLineStyleFor(rootRenderer));
+        auto newRootBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(rootRenderer), rootBoxStyle(rootRenderer), firstLineStyleFor(rootRenderer));
         rootBox = newRootBox.ptr();
         m_rootRenderer.setLayoutBox(*rootBox);
         initialContainingBlock().appendChild(WTFMove(newRootBox));
@@ -194,33 +194,33 @@ void BoxTree::buildTreeForInlineContent()
         if (childRenderer.isLineBreak()) {
             adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
             auto attributes = elementAttributes(childRenderer, downcast<RenderLineBreak>(childRenderer).isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak);
-            return makeUnique<Layout::ContainerBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
+            return makeUnique<Layout::ElementBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderListMarker>(childRenderer)) {
             auto& listMarkerRenderer = downcast<RenderListMarker>(childRenderer);
-            OptionSet<Layout::ContainerBox::ListMarkerAttribute> listMarkerAttributes;
+            OptionSet<Layout::ElementBox::ListMarkerAttribute> listMarkerAttributes;
             if (listMarkerRenderer.isImage())
-                listMarkerAttributes.add(Layout::ContainerBox::ListMarkerAttribute::Image);
+                listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
             if (!listMarkerRenderer.isInside())
-                listMarkerAttributes.add(Layout::ContainerBox::ListMarkerAttribute::Outside);
-            return makeUnique<Layout::ContainerBox>(elementAttributes(childRenderer, Layout::Box::NodeType::ListMarker), listMarkerAttributes, WTFMove(style), WTFMove(firstLineStyle));
+                listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
+            return makeUnique<Layout::ElementBox>(elementAttributes(childRenderer, Layout::Box::NodeType::ListMarker), listMarkerAttributes, WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderReplaced>(childRenderer)) {
             auto attributes = elementAttributes(childRenderer, is<RenderImage>(childRenderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement);
-            return makeUnique<Layout::ContainerBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
+            return makeUnique<Layout::ElementBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderBlock>(childRenderer)) {
             adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
             auto attributes = elementAttributes(childRenderer);
-            return makeUnique<Layout::ContainerBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
+            return makeUnique<Layout::ElementBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         if (is<RenderInline>(childRenderer)) {
             adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
-            return makeUnique<Layout::ContainerBox>(elementAttributes(childRenderer), WTFMove(style), WTFMove(firstLineStyle));
+            return makeUnique<Layout::ElementBox>(elementAttributes(childRenderer), WTFMove(style), WTFMove(firstLineStyle));
         }
 
         ASSERT_NOT_REACHED();
@@ -242,7 +242,7 @@ void BoxTree::buildTreeForFlexContent()
 {
     for (auto& flexItemRenderer : childrenOfType<RenderObject>(m_rootRenderer)) {
         auto style = RenderStyle::clone(flexItemRenderer.style());
-        auto flexItem = makeUnique<Layout::ContainerBox>(elementAttributes(flexItemRenderer), WTFMove(style));
+        auto flexItem = makeUnique<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTFMove(style));
         appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(flexItem)), flexItemRenderer);
     }
 }
@@ -277,12 +277,12 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     }
 }
 
-const Layout::ContainerBox& BoxTree::rootLayoutBox() const
+const Layout::ElementBox& BoxTree::rootLayoutBox() const
 {
     return *m_rootRenderer.layoutBox();
 }
 
-Layout::ContainerBox& BoxTree::rootLayoutBox()
+Layout::ElementBox& BoxTree::rootLayoutBox()
 {
     return *m_rootRenderer.layoutBox();
 }
@@ -297,14 +297,14 @@ const Layout::Box& BoxTree::layoutBoxForRenderer(const RenderObject& renderer) c
     return const_cast<BoxTree&>(*this).layoutBoxForRenderer(renderer);
 }
 
-const Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer) const
+const Layout::ElementBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer) const
 {
-    return downcast<Layout::ContainerBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
+    return downcast<Layout::ElementBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
 }
 
-Layout::ContainerBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer)
+Layout::ElementBox& BoxTree::layoutBoxForRenderer(const RenderElement& renderer)
 {
-    return downcast<Layout::ContainerBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
+    return downcast<Layout::ElementBox>(layoutBoxForRenderer(static_cast<const RenderObject&>(renderer)));
 }
 
 RenderObject& BoxTree::rendererForLayoutBox(const Layout::Box& box)

@@ -52,14 +52,14 @@ public:
     const RenderBlock& rootRenderer() const { return m_rootRenderer; }
     RenderBlock& rootRenderer() { return m_rootRenderer; }
 
-    const Layout::ContainerBox& rootLayoutBox() const;
-    Layout::ContainerBox& rootLayoutBox();
+    const Layout::ElementBox& rootLayoutBox() const;
+    Layout::ElementBox& rootLayoutBox();
 
     const Layout::Box& layoutBoxForRenderer(const RenderObject&) const;
     Layout::Box& layoutBoxForRenderer(const RenderObject&);
 
-    const Layout::ContainerBox& layoutBoxForRenderer(const RenderElement&) const;
-    Layout::ContainerBox& layoutBoxForRenderer(const RenderElement&);
+    const Layout::ElementBox& layoutBoxForRenderer(const RenderElement&) const;
+    Layout::ElementBox& layoutBoxForRenderer(const RenderElement&);
 
     const RenderObject& rendererForLayoutBox(const Layout::Box&) const;
     RenderObject& rendererForLayoutBox(const Layout::Box&);

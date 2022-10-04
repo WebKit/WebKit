@@ -26,7 +26,7 @@
 #pragma once
 
 #include "InlineFormattingState.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -35,7 +35,7 @@ class InlineTextBox;
 
 class InlineItemsBuilder {
 public:
-    InlineItemsBuilder(const ContainerBox& formattingContextRoot, InlineFormattingState&);
+    InlineItemsBuilder(const ElementBox& formattingContextRoot, InlineFormattingState&);
     InlineItems build();
 
 private:
@@ -50,9 +50,9 @@ private:
     
     bool needsVisualReordering() const { return m_needsVisualReordering; }
 
-    const ContainerBox& root() const { return m_root; }
+    const ElementBox& root() const { return m_root; }
 
-    const ContainerBox& m_root;
+    const ElementBox& m_root;
     // FIXME: We should not need this here. This is only required by the out of flow boxes.
     InlineFormattingState& m_formattingState;
     bool m_needsVisualReordering { false };

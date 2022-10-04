@@ -33,7 +33,7 @@
 #include "InlineFormattingQuirks.h"
 #include "InlineLineBoxVerticalAligner.h"
 #include "LayoutBox.h"
-#include "LayoutContainerBox.h"
+#include "LayoutElementBox.h"
 #include "LengthFunctions.h"
 
 namespace WebCore {
@@ -85,7 +85,7 @@ ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin
 
     // Exactly as inline replaced elements.
     if (formattingContextRoot.isReplacedBox())
-        return inlineReplacedContentWidthAndMargin(downcast<ContainerBox>(formattingContextRoot), horizontalConstraints, { }, overriddenHorizontalValues);
+        return inlineReplacedContentWidthAndMargin(downcast<ElementBox>(formattingContextRoot), horizontalConstraints, { }, overriddenHorizontalValues);
 
     // 10.3.9 'Inline-block', non-replaced elements in normal flow
 
@@ -108,7 +108,7 @@ ContentHeightAndMargin InlineFormattingGeometry::inlineBlockContentHeightAndMarg
 
     // 10.6.2 Inline replaced elements, block-level replaced elements in normal flow, 'inline-block' replaced elements in normal flow and floating replaced elements
     if (layoutBox.isReplacedBox())
-        return inlineReplacedContentHeightAndMargin(downcast<ContainerBox>(layoutBox), horizontalConstraints, { }, overriddenVerticalValues);
+        return inlineReplacedContentHeightAndMargin(downcast<ElementBox>(layoutBox), horizontalConstraints, { }, overriddenVerticalValues);
 
     // 10.6.6 Complicated cases
     // - 'Inline-block', non-replaced elements.
