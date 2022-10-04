@@ -54,7 +54,7 @@ public:
     FileList& files() { return m_fileList; }
     void setFiles(RefPtr<FileList>&&, WasSetByJavaScript);
 
-    static Vector<FileChooserFileInfo> filesFromFormControlState(const FormControlState&);
+    static std::pair<Vector<FileChooserFileInfo>, String> filesFromFormControlState(const FormControlState&);
     bool canSetStringValue() const final;
     bool valueMissing(const String&) const final;
 

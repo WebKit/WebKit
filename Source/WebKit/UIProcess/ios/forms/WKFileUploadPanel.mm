@@ -417,6 +417,9 @@ static bool setContainsUTIThatConformsTo(NSSet<NSString *> *typeIdentifiers, UTT
 
     NSUInteger imageCount = mediaItems.count - videoCount;
 
+    // FIXME (245996): Match the macOS behavior of showing the file name in the case of a single file selected.
+    // Currently, the file names are UUIDs which are not pleasant to display, so this should be
+    // done once the files are saved using their actual names, which will be done once 245906 is resolved.
     NSString *displayString = (imageCount || videoCount) ? [NSString localizedStringWithFormat:WEB_UI_NSSTRING(@"%lu photo(s) and %lu video(s)", "label next to file upload control; parameters are the number of photos and the number of videos"), (unsigned long)imageCount, (unsigned long)videoCount] : nil;
 
     [self _dismissDisplayAnimated:YES];
