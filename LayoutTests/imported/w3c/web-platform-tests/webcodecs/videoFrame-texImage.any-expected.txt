@@ -1,8 +1,8 @@
 
-FAIL texImage2D with 48x36 srgb VideoFrame. Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
-FAIL texSubImage2D with 48x36 srgb VideoFrame. Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
-FAIL texImage2D with 480x360 srgb VideoFrame. Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
-FAIL texSubImage2D with 480x360 srgb VideoFrame. Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
-FAIL texImage2D with a closed VideoFrame. Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
-FAIL texSubImage2D with a closed VideoFrame. Member VideoFrameBufferInit.visibleRect is required and must be an instance of DOMRectInit
+FAIL texImage2D with 48x36 srgb VideoFrame. Can't find variable: OffscreenCanvas
+FAIL texSubImage2D with 48x36 srgb VideoFrame. Can't find variable: OffscreenCanvas
+FAIL texImage2D with 480x360 srgb VideoFrame. Can't find variable: OffscreenCanvas
+FAIL texSubImage2D with 480x360 srgb VideoFrame. Can't find variable: OffscreenCanvas
+FAIL texImage2D with a closed VideoFrame. Can't find variable: OffscreenCanvas
+FAIL texSubImage2D with a closed VideoFrame. Can't find variable: OffscreenCanvas
 
