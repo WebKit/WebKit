@@ -1,7 +1,7 @@
 This test ensures we calculate the frame correctly for objects that don't have a renderer (like display: contents elements).
 
-#toolbar: {width: 784, height: 31}
-#group: {width: 41, height: 27}
+#toolbar: {width: 784, height: 27}
+#group: {width: 44, height: 27}
 #button: {width: 784, height: 10}
 
 PASS successfullyParsed is true

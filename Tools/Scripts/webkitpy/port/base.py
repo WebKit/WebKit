@@ -129,6 +129,8 @@ class Port(object):
         self._server_process_constructor = server_process.ServerProcess  # overridable for testing
         self._test_runner_process_constructor = server_process.ServerProcess
 
+        self.set_option_default('gather-expected-crash-logs', True)
+
         if not hasattr(options, 'configuration') or not options.configuration:
             self.set_option_default('configuration', self.default_configuration())
         self._test_configuration = None
@@ -487,6 +489,12 @@ class Port(object):
         if not self._filesystem.exists(baseline_path):
             return None
         return self._filesystem.read_binary_file(baseline_path)
+
+    def is_unexpected_crash(self, test_name):
+        from webkitpy.layout_tests.models.test_expectations import TestExpectations, CRASH
+        expectations = TestExpectations(self, [test_name, ])
+        expectations.parse_all_expectations()
+        return CRASH not in expectations.filtered_expectations_for_test(test_name, False, False)
 
     def expected_text(self, test_name, device_type=None):
         """Returns the text output we expect the test to produce, or None

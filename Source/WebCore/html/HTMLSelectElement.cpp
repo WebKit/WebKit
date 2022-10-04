@@ -417,7 +417,6 @@ void HTMLSelectElement::childrenChanged(const ChildChange& change)
 
 void HTMLSelectElement::optionElementChildrenChanged()
 {
-    setRecalcListItems();
     updateValidity();
     if (auto* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);

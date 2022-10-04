@@ -159,8 +159,9 @@ namespace WebCore {
     String contextMenuItemTagMediaPause();
     String contextMenuItemTagMediaMute();
     WEBCORE_EXPORT String contextMenuItemTagInspectElement();
-#endif // ENABLE(CONTEXT_MENUS)
-
+#if HAVE(TRANSLATION_UI_SERVICES)
+    String contextMenuItemTagTranslate(const String& selectedString);
+#endif
 #if ENABLE(PDFJS)
     String contextMenuItemPDFAutoSize();
     String contextMenuItemPDFZoomIn();
@@ -173,6 +174,9 @@ namespace WebCore {
     String contextMenuItemPDFNextPage();
     String contextMenuItemPDFPreviousPage();
 #endif
+#endif // ENABLE(CONTEXT_MENU)
+
+    WEBCORE_EXPORT String pdfDocumentTypeDescription();
 
 #if !PLATFORM(IOS_FAMILY)
     String searchMenuNoRecentSearchesText();
@@ -269,8 +273,6 @@ namespace WebCore {
     String uploadFileText();
     String allFilesText();
 #endif
-
-    WEBCORE_EXPORT String pdfDocumentTypeDescription();
 
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT String builtInPDFPluginName();
@@ -396,10 +398,6 @@ namespace WebCore {
     WEBCORE_EXPORT String contextMenuItemTitleRemoveBackground();
 #endif
 
-#if HAVE(TRANSLATION_UI_SERVICES)
-    String contextMenuItemTagTranslate(const String& selectedString);
-#endif
-
 #if USE(CF) && !PLATFORM(WIN)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(CFSTR(string))
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(CFSTR(key))
@@ -460,6 +458,8 @@ namespace WebCore {
 
 #ifdef __OBJC__
 #define WEB_UI_NSSTRING(string, description) WebCore::localizedNSString(string)
+#define WEB_UI_NSSTRING_KEY(string, key, description) WebCore::localizedNSString(key)
+
     inline NS_FORMAT_ARGUMENT(1) NSString *localizedNSString(NSString *key)
     {
         return bridge_cast(copyLocalizedString(bridge_cast(key)).autorelease());

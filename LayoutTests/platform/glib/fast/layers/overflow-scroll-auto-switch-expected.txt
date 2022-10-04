@@ -10,7 +10,7 @@ layer at (8,26) size 100x100 clip at (8,26) size 85x85 scrollWidth 238 scrollHei
   RenderBlock (relative positioned) {DIV} at (0,18) size 100x100
     RenderText {#text} at (0,0) size 238x17
       text run at (0,0) width 238: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    RenderBR {BR} at (0,0) size 0x0
+    RenderBR {BR} at (238,0) size 0x17
     RenderText {#text} at (0,18) size 7x17
       text run at (0,18) width 7: "a"
     RenderBR {BR} at (7,18) size 0x17

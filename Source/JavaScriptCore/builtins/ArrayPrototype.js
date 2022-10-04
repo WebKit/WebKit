@@ -141,7 +141,7 @@ function filter(callback /*, thisArg */)
         @throwTypeError("Array.prototype.filter callback must be a function");
     
     var thisArg = @argument(1);
-    var result = @arraySpeciesCreate(array, 0);
+    var result = @newArrayWithSpecies(0, array);
 
     var nextIndex = 0;
     for (var i = 0; i < length; i++) {
@@ -219,7 +219,7 @@ function map(callback /*, thisArg */)
         @throwTypeError("Array.prototype.map callback must be a function");
     
     var thisArg = @argument(1);
-    var result = @arraySpeciesCreate(array, length);
+    var result = @newArrayWithSpecies(length, array);
 
     for (var i = 0; i < length; i++) {
         if (!(i in array))
@@ -597,7 +597,7 @@ function concatSlowPath()
     var currentElement = @toObject(this, "Array.prototype.concat requires that |this| not be null or undefined");
     var argCount = arguments.length;
 
-    var result = @arraySpeciesCreate(currentElement, 0);
+    var result = @newArrayWithSpecies(0, currentElement);
     var resultIsArray = @isJSArray(result);
 
     var resultIndex = 0;
@@ -738,7 +738,7 @@ function flat()
     if (depth !== @undefined)
         depthNum = @toIntegerOrInfinity(depth);
 
-    var result = @arraySpeciesCreate(array, 0);
+    var result = @newArrayWithSpecies(0, array);
 
     @flatIntoArray(result, array, length, 0, depthNum);
     return result;
@@ -777,7 +777,7 @@ function flatMap(callback)
 
     var thisArg = @argument(1);
 
-    var result = @arraySpeciesCreate(array, 0);
+    var result = @newArrayWithSpecies(0, array);
 
     return @flatIntoArrayWithCallback(result, array, length, 0, callback, thisArg);
 }

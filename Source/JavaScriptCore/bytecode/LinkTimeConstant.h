@@ -71,7 +71,6 @@ class JSGlobalObject;
     v(InternalPromise, nullptr) \
     v(defaultPromiseThen, nullptr) \
     v(repeatCharacter, nullptr) \
-    v(arraySpeciesCreate, nullptr) \
     v(isArray, nullptr) \
     v(isArraySlow, nullptr) \
     v(concatMemcpy, nullptr) \

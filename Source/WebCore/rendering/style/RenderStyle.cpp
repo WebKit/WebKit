@@ -63,7 +63,7 @@
 namespace WebCore {
 
 struct SameSizeAsBorderValue {
-    Color m_color;
+    StyleColor m_color;
     float m_width;
     int m_restBits;
 };
@@ -2191,7 +2191,7 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
     }
 }
 
-Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool visitedLink) const
+StyleColor RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool visitedLink) const
 {
     switch (colorProperty) {
     case CSSPropertyAccentColor:
@@ -2247,6 +2247,10 @@ Color RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, bool 
     return { };
 }
 
+StyleColor RenderStyle::currentColor() { return StyleColor::currentColor(); }
+
+bool RenderStyle::isCurrentColor(const StyleColor& color) { return color.isCurrentColor();  }
+
 Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const
 {
     auto result = unresolvedColorForProperty(colorProperty, visitedLink);
@@ -2279,20 +2283,18 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
         }();
 
         if (!visitedLink && (borderStyle == BorderStyle::Inset || borderStyle == BorderStyle::Outset || borderStyle == BorderStyle::Ridge || borderStyle == BorderStyle::Groove))
-            return SRGBA<uint8_t> { 238, 238, 238 };
+            return { SRGBA<uint8_t> { 238, 238, 238 } };
 
         return visitedLink ? visitedLinkColor() : color();
     }
 
-    return result;
+    return colorResolvingCurrentColor(result);
+    
 }
 
-Color RenderStyle::colorResolvingCurrentColor(const Color& color) const
+Color RenderStyle::colorResolvingCurrentColor(const StyleColor& color) const
 {
-    if (isCurrentColor(color))
-        return this->color();
-
-    return color;
+    return color.resolveColor(this->color());
 }
 
 Color RenderStyle::visitedDependentColor(CSSPropertyID colorProperty) const
@@ -2333,6 +2335,11 @@ Color RenderStyle::colorByApplyingColorFilter(const Color& color) const
     Color transformedColor = color;
     appleColorFilter().transformColor(transformedColor);
     return transformedColor;
+}
+
+Color RenderStyle::colorWithColorFilter(const StyleColor& color) const
+{
+    return colorByApplyingColorFilter(colorResolvingCurrentColor(color));
 }
 
 Color RenderStyle::effectiveAccentColor() const
@@ -2480,7 +2487,7 @@ TextEmphasisMark RenderStyle::textEmphasisMark() const
 
 #if ENABLE(TOUCH_EVENTS)
 
-Color RenderStyle::initialTapHighlightColor()
+StyleColor RenderStyle::initialTapHighlightColor()
 {
     return RenderTheme::tapHighlightColor();
 }

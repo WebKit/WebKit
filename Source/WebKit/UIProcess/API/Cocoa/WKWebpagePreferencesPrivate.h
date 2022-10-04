@@ -104,4 +104,6 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteColorSchemePreference) {
 
 @property (nonatomic, setter=_setColorSchemePreference:) _WKWebsiteColorSchemePreference _colorSchemePreference;
 
+@property (nonatomic, setter=_setNetworkConnectionIntegrityEnabled:) BOOL _networkConnectionIntegrityEnabled;
+
 @end

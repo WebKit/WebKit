@@ -69,7 +69,6 @@ list(APPEND WebKit_DERIVED_SOURCES
 
 if (ENABLE_WAYLAND_TARGET)
     list(APPEND WebKit_DERIVED_SOURCES
-        ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitWaylandClientProtocol.c
         ${WebKitGTK_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-protocol.c
         ${WebKitGTK_DERIVED_SOURCES_DIR}/relative-pointer-unstable-v1-protocol.c
     )
@@ -637,16 +636,6 @@ add_custom_command(
 )
 
 if (ENABLE_WAYLAND_TARGET)
-    # Wayland protocol extension.
-    add_custom_command(
-        OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitWaylandClientProtocol.c
-        DEPENDS ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml
-        COMMAND ${WAYLAND_SCANNER} server-header ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitWaylandServerProtocol.h
-        COMMAND ${WAYLAND_SCANNER} client-header ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitWaylandClientProtocol.h
-        COMMAND ${WAYLAND_SCANNER} private-code ${WEBKIT_DIR}/Shared/gtk/WebKitWaylandProtocol.xml ${WebKitGTK_DERIVED_SOURCES_DIR}/WebKitWaylandClientProtocol.c
-        VERBATIM
-    )
-
     add_custom_command(
         OUTPUT ${WebKitGTK_DERIVED_SOURCES_DIR}/pointer-constraints-unstable-v1-protocol.c
         DEPENDS ${WAYLAND_PROTOCOLS_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml

@@ -36,6 +36,7 @@
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "ShapeValue.h"
+#include "StyleColor.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
@@ -175,14 +176,14 @@ public:
 
     RefPtr<PathOperation> clipPath;
 
-    Color textDecorationColor;
-    Color visitedLinkTextDecorationColor;
-    Color visitedLinkBackgroundColor;
-    Color visitedLinkOutlineColor;
-    Color visitedLinkBorderLeftColor;
-    Color visitedLinkBorderRightColor;
-    Color visitedLinkBorderTopColor;
-    Color visitedLinkBorderBottomColor;
+    StyleColor textDecorationColor;
+    StyleColor visitedLinkTextDecorationColor;
+    StyleColor visitedLinkBackgroundColor;
+    StyleColor visitedLinkOutlineColor;
+    StyleColor visitedLinkBorderLeftColor;
+    StyleColor visitedLinkBorderRightColor;
+    StyleColor visitedLinkBorderTopColor;
+    StyleColor visitedLinkBorderBottomColor;
 
     StyleContentAlignmentData alignContent;
     StyleSelfAlignmentData alignItems;

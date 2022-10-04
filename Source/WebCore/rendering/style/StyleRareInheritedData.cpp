@@ -39,8 +39,8 @@ namespace WebCore {
 struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<GreaterThanOrSameSizeAsStyleRareInheritedData> {
     float firstFloat;
     void* styleImage;
-    Color firstColor;
-    Color colors[10];
+    StyleColor firstColor;
+    StyleColor colors[10];
     void* ownPtrs[1];
     AtomString atomStrings[6];
     void* refPtrs[3];
@@ -62,7 +62,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-    Color tapHighlightColor;
+    StyleColor tapHighlightColor;
 #endif
 
 #if ENABLE(DARK_MODE_CSS)

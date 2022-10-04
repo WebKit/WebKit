@@ -37,7 +37,7 @@
 # x5  => not used
 # x6  => ws0
 # x7  => ws1
-# x8  => cfr (thought alias fp) (RISC-V frame pointer register)
+# x8  => cfr (through alias fp) (RISC-V frame pointer register)
 # x9  => csr0
 # x10 => t0, a0, wa0, r0
 # x11 => t1, a1, wa1, r1
@@ -703,6 +703,33 @@ def riscv64LowerOperation(list)
         riscv64LowerEmitMask(newList, node, size, operands[2], operands[2])
     end
 
+    def emitRotateOperation(newList, node, direction, size)
+        riscv64ValidateOperands(node.operands, [RegisterID, RegisterID])
+
+        lhs = node.operands[1]
+        rhs = node.operands[0]
+
+        case size
+        when :i
+            bits = 32
+            suffix = "w"
+        when :q
+            bits = 64
+            suffix = ""
+        end
+
+        inverseAmount = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_li", [Immediate.new(node.codeOrigin, bits), inverseAmount])
+        realAmount = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_rem#{suffix}", [rhs, inverseAmount, realAmount])
+        newList << Instruction.new(node.codeOrigin, "rv_sub#{suffix}", [inverseAmount, realAmount, inverseAmount])
+        leftRegister = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_sll#{suffix}", [lhs, direction == :l ? realAmount : inverseAmount, leftRegister])
+        rightRegister = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_srl#{suffix}", [lhs, direction == :l ? inverseAmount : realAmount, rightRegister])
+        newList << Instruction.new(node.codeOrigin, "rv_or", [leftRegister, rightRegister, lhs])
+    end
+
     def emitLogicalOperation(newList, node, operation, size)
         operands = node.operands
         if operands.size == 2
@@ -778,6 +805,44 @@ def riscv64LowerOperation(list)
         end
     end
 
+    def emitZeroCountOperation(newList, node, side, size)
+        riscv64ValidateOperands(node.operands, [RegisterID, RegisterID])
+
+        from = node.operands[0]
+        to = node.operands[1]
+
+        case size
+        when :i
+            bits = 32
+            suffix = "w"
+        when :q
+            bits = 64
+            suffix = ""
+        end
+
+        count = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_xor", [count, count, count])
+        tmp = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_li", [Immediate.new(node.codeOrigin, side == :t ? bits : bits - 1), tmp])
+        loopLabel = LocalLabel.unique("begin_count_loop")
+        newList << loopLabel
+        check = Tmp.new(node.codeOrigin, :gpr)
+        newList << Instruction.new(node.codeOrigin, "rv_srl#{suffix}", [from, side == :t ? count : tmp, check])
+        newList << Instruction.new(node.codeOrigin, "rv_andi", [check, Immediate.new(node.codeOrigin, 1), check])
+        returnLabel = LocalLabel.unique("return_count")
+        newList << Instruction.new(node.codeOrigin, "rv_bgtz", [check, LocalLabelReference.new(node.codeOrigin, returnLabel)])
+        newList << Instruction.new(node.codeOrigin, "rv_addi#{suffix}", [count, Immediate.new(node.codeOrigin, 1), count])
+        case side
+        when :t
+            newList << Instruction.new(node.codeOrigin, "rv_blt", [count, tmp, LocalLabelReference.new(node.codeOrigin, loopLabel)])
+        when :l
+            newList << Instruction.new(node.codeOrigin, "rv_addi#{suffix}", [tmp, Immediate.new(node.codeOrigin, -1), tmp])
+            newList << Instruction.new(node.codeOrigin, "rv_bgez", [tmp, LocalLabelReference.new(node.codeOrigin, loopLabel)])
+        end
+        newList << returnLabel
+        newList << Instruction.new(node.codeOrigin, "rv_mv", [count, to])
+    end
+
     newList = []
     list.each {
         | node |
@@ -801,6 +866,8 @@ def riscv64LowerOperation(list)
                 emitAdditionOperation(newList, node, $1.to_sym, $2.to_sym)
             when /^(mul|div|rem)(i|p|q)(s?)$/
                 emitMultiplicationOperation(newList, node, $1.to_sym, $2.to_sym, $3.to_sym)
+            when /^(l|r)rotate(i|q)$/
+                emitRotateOperation(newList, node, $1.to_sym, $2.to_sym)
             when /^(l|r|ur)shift(i|p|q)$/
                 emitShiftOperation(newList, node, $1.to_sym, $2.to_sym)
             when /^(and|or|xor)(h|i|p|q)$/
@@ -809,6 +876,8 @@ def riscv64LowerOperation(list)
                 emitComplementOperation(newList, node, $1.to_sym, $2.to_sym)
             when /^(s|z)x(b|h|i)2(i|p|q)$/
                 emitBitExtensionOperation(newList, node, $1.to_sym, $2.to_sym, $3.to_sym)
+            when /^(t|l)zcnt(i|q)$/
+                emitZeroCountOperation(newList, node, $1.to_sym, $2.to_sym)
             when "break"
                 newList << Instruction.new(node.codeOrigin, "rv_ebreak", [])
             when "nop", "ret"
@@ -1211,7 +1280,9 @@ def riscv64LowerFPOperation(list)
     def emitRoundingOperation(newList, node, operation, precision)
         riscv64ValidateOperands(node.operands, [FPRegisterID, FPRegisterID])
 
-        rm = RISCV64RoundingMode.new(operation)
+        from = node.operands[0]
+        to = node.operands[1]
+        roundingMode = RISCV64RoundingMode.new(operation)
         case precision
         when :f
             intSuffix = "w"
@@ -1223,9 +1294,15 @@ def riscv64LowerFPOperation(list)
             raise "Invalid precision"
         end
 
+        newList << Instruction.new(node.codeOrigin, "rv_fmv.#{fpSuffix}", [from, to])
         tmp = Tmp.new(node.codeOrigin, :gpr)
-        newList << Instruction.new(node.codeOrigin, "rv_fcvt.#{intSuffix}.#{fpSuffix}", [node.operands[0], tmp, rm])
-        newList << Instruction.new(node.codeOrigin, "rv_fcvt.#{fpSuffix}.#{intSuffix}", [tmp, node.operands[1], rm])
+        newList << Instruction.new(node.codeOrigin, "rv_fclass.#{fpSuffix}", [from, tmp])
+        newList << Instruction.new(node.codeOrigin, "rv_andi", [tmp, Immediate.new(node.codeOrigin, 0x381), tmp])
+        returnLabel = LocalLabel.unique("return_exotic_float")
+        newList << Instruction.new(node.codeOrigin, "rv_bnez", [tmp, LocalLabelReference.new(node.codeOrigin, returnLabel)])
+        newList << Instruction.new(node.codeOrigin, "rv_fcvt.#{intSuffix}.#{fpSuffix}", [from, tmp, roundingMode])
+        newList << Instruction.new(node.codeOrigin, "rv_fcvt.#{fpSuffix}.#{intSuffix}", [tmp, to])
+        newList << returnLabel
     end
 
     def emitConversionOperation(newList, node, sourceType, destinationType, signedness, roundingMode)
@@ -1332,9 +1409,9 @@ def riscv64LowerFPCompare(list)
         operands = node.operands
 
         case condition
-        when :eq
+        when :eq, :equn
             emitCompare(newList, node, precision, "feq", operands[0], operands[1])
-        when :neq
+        when :neq, :nequn
             emitCompare(newList, node, precision, "feq", operands[0], operands[1])
             newList << Instruction.new(node.codeOrigin, "rv_xori", [operands[2], Immediate.new(node.codeOrigin, 1), operands[2]])
         when :gt
@@ -1355,7 +1432,7 @@ def riscv64LowerFPCompare(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when /^c(f|d)(eq|neq|gt|gteq|lt|lteq)$/
+            when /^c(f|d)(eq|equn|neq|nequn|gt|gteq|lt|lteq)$/
                 emit(newList, node, $1.to_sym, $2.to_sym)
             else
                 newList << node
@@ -1445,10 +1522,8 @@ def riscv64GenerateWASMPlaceholders(list)
         | node |
         if node.is_a? Instruction
             case node.opcode
-            when "lrotatei", "lrotateq", "rrotatei", "rrotateq",
-                "tzcnti", "tzcntq", "lzcnti", "lzcntq", "cfnequn", "cdnequn",
-                "loadlinkacqb", "loadlinkacqh", "loadlinkacqi", "loadlinkacqq",
-                "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq"
+            when "loadlinkacqb", "loadlinkacqh", "loadlinkacqi", "loadlinkacqq",
+                 "storecondrelb", "storecondrelh", "storecondreli", "storecondrelq"
                 newList << Instruction.new(node.codeOrigin, "rv_ebreak", [], "WebAssembly placeholder for opcode #{node.opcode}")
             else
                 newList << node
@@ -1504,6 +1579,7 @@ class Instruction
 
     def lowerRISCV64
         case opcode
+        # I and M instructions
         when /^rv_(jr|jalr)$/
             riscv64ValidateOperands(operands, [RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}"
@@ -1516,7 +1592,7 @@ class Instruction
         when "rv_mv"
             riscv64ValidateOperands(operands, [RegisterID, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-        when "rv_li"
+        when /^rv_l(u?)i$/
             riscv64ValidateOperands(operands, [Immediate, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand(:any_immediate)}"
         when /^rv_l(b|bu|h|hu|w|wu|d)$/
@@ -1525,7 +1601,7 @@ class Instruction
         when /^rv_s(b|h|w|d)$/
             riscv64ValidateOperands(operands, [RegisterID, Address])
             $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
-        when /^rv_(add(w?)|sub(w?)|and|or|xor|s(ll|rl|ra)(w?)|mul(w?)|div(u?)(w?)|rem(u?)(w?))$/
+        when /^rv_(add(w?)|sub(w?)|and|or|xor|s(ll|rl|ra)(w?)|mul(w?)|div(u?)(w?)|rem(u?)(w?))$/ # all M instructions
             riscv64ValidateOperands(operands, [RegisterID, RegisterID, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
         when /^rv_addi(w?)$/, /^rv_(and|or|xor)i$/
@@ -1534,12 +1610,12 @@ class Instruction
         when /^rv_(sll|srl|sra)i(w?)$/
             riscv64ValidateOperands(operands, [RegisterID, Immediate, RegisterID])
             validationType = $2 == "w" ? :rv32_shift_immediate : :rv64_shift_immediate
-            raise "Invalid shit-amount immediate" unless riscv64ValidateImmediate(validationType, operands[1].value)
+            raise "Invalid shift-amount immediate" unless riscv64ValidateImmediate(validationType, operands[1].value)
             $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
         when /^rv_neg(w?)$/, "rv_not", "rv_sext.w"
             riscv64ValidateOperands(operands, [RegisterID, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
-        when /^rv_(slt|sltu)$/
+        when /^rv_slt|slt(u?)$/
             riscv64ValidateOperands(operands, [RegisterID, RegisterID, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
         when /^rv_(seqz|snez|sltz|sgtz)$/
@@ -1548,7 +1624,7 @@ class Instruction
         when /^rv_b(eq|ne|gt|ge|gtu|geu|lt|le|ltu|leu)$/
             riscv64ValidateOperands(operands, [RegisterID, RegisterID, LocalLabelReference])
             $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}, #{operands[2].asmLabel}"
-        when /^rv_b(eqz|nez|ltz|gtz)$/
+        when /^rv_b(eqz|nez|lez|ltz|gez|gtz)$/
             riscv64ValidateOperands(operands, [RegisterID, LocalLabelReference])
             $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].asmLabel}"
         when "rv_nop", "rv_ret", "rv_ebreak"
@@ -1556,6 +1632,7 @@ class Instruction
         when "rv_fence"
             riscv64ValidateOperands(operands, [RISCV64MemoryOrdering, RISCV64MemoryOrdering])
             $asm.puts "#{rvop(opcode)} #{operands[0].riscv64MemoryOrdering}, #{operands[1].riscv64MemoryOrdering}"
+        # D and F instructions
         when /^rv_fl(w|d)$/
             riscv64ValidateOperands(operands, [Address, FPRegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
@@ -1569,8 +1646,13 @@ class Instruction
             riscv64ValidateOperands(operands, [RegisterID, FPRegisterID], [FPRegisterID, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
         when /^rv_f(add|sub|mul|div)\.(s|d)$/
-            riscv64ValidateOperands(operands, [FPRegisterID, FPRegisterID, FPRegisterID])
-            $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+            riscv64ValidateOperands(operands,
+                                    [FPRegisterID, FPRegisterID, FPRegisterID], [FPRegisterID, FPRegisterID, FPRegisterID, RISCV64RoundingMode])
+            if operands.size == 4
+                $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}, #{operands[3].riscv64RoundingMode}"
+            else
+                $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+            end
         when /^rv_f(sqrt|abs|neg)\.(s|d)$/
             riscv64ValidateOperands(operands, [FPRegisterID, FPRegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
@@ -1590,6 +1672,19 @@ class Instruction
         when /^rv_fclass\.(s|d)$/
             riscv64ValidateOperands(operands, [FPRegisterID, RegisterID])
             $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_fsgn(n|x)?j\.(s|d)$/
+            riscv64ValidateOperands(operands, [FPRegisterID, FPRegisterID, FPRegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        # A instructions
+        when /^rv_amo(add|and|max(u)?|min(u)?|or|swap|xor)\.(d|w)(\.(aq|rl))?$/
+            riscv64ValidateOperands(operands, [RegisterID, Address, RegisterID])
+            $asm.puts "#{rvop(opcode)}, #{operands[2].riscv64Operand}, #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}"
+        when /^rv_lr\.(d|w)(\.(aq|rl))?$/
+            riscv64ValidateOperands(operands, [Address, RegisterID])
+            $asm.puts "#{rvop(opcode)} #{operands[1].riscv64Operand}, #{operands[0].riscv64Operand}"
+        when /^rv_sc\.(d|w)(\.(aq|rl))?$/
+            riscv64ValidateOperands(operands, [RegisterID, RegisterID, Address])
+            $asm.puts "#{rvop(opcode)} #{operands[0].riscv64Operand}, #{operands[1].riscv64Operand}, #{operands[2].riscv64Operand}"
         else
             lowerDefault
         end

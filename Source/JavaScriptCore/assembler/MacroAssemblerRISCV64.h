@@ -1770,7 +1770,7 @@ public:
         if (!call.isFlagSet(Call::Near))
             Assembler::linkPointer(code, call.m_label, function.taggedPtr());
         else
-            Assembler::linkCall(code, call.m_label, function.template retaggedPtr<NoPtrTag>());
+            Assembler::linkCall(code, call.m_label, function.untaggedPtr());
     }
 
     template<PtrTag callTag, PtrTag destTag>

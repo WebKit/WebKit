@@ -108,9 +108,9 @@ static void alertForWindowSelection(WebPageProxy& page, const WebCore::SecurityO
     [accessoryView addSubview:menuLabel.get()];
     [alert setAccessoryView:accessoryView.get()];
 
-    NSButton *button = [alert addButtonWithTitle:WEB_UI_NSSTRING(@"Allow (window sharing)", "Allow button title in window sharing prompt")];
+    NSButton *button = [alert addButtonWithTitle:WEB_UI_NSSTRING_KEY(@"Allow", @"Allow (window sharing)", "Allow button title in window sharing prompt")];
     button.keyEquivalent = @"";
-    button = [alert addButtonWithTitle:WEB_UI_NSSTRING(@"Don’t Allow (window sharing)", "Disallow button title in window sharing prompt")];
+    button = [alert addButtonWithTitle:WEB_UI_NSSTRING_KEY(@"Don’t Allow", @"Don’t Allow (window sharing)", "Disallow button title in window sharing prompt")];
     button.keyEquivalent = @"\E";
 
     [alert beginSheetModalForWindow:[webView window] completionHandler:[popupButton = WTFMove(popupButton), windowInfo, completionBlock = makeBlockPtr(WTFMove(completionHandler))](NSModalResponse returnCode) {
@@ -146,7 +146,7 @@ void DisplayCaptureSessionManager::alertForGetDisplayMedia(WebPageProxy& page, c
     NSString *alertTitle = [NSString stringWithFormat:WEB_UI_NSSTRING(@"Allow “%@” to observe one of your windows or screens?", "Message for window and screen sharing prompt"), visibleOrigin];
     auto *allowWindowButtonString = WEB_UI_NSSTRING(@"Allow to Share Window", "Allow window button title in window and screen sharing prompt");
     auto *allowScreenButtonString = WEB_UI_NSSTRING(@"Allow to Share Screen", "Allow screen button title in window and screen sharing prompt");
-    auto *doNotAllowButtonString = WEB_UI_NSSTRING(@"Don’t Allow (window and screen sharing)", "Disallow button title in window and screen sharing prompt");
+    auto *doNotAllowButtonString = WEB_UI_NSSTRING_KEY(@"Don’t Allow", @"Don’t Allow (window and screen sharing)", "Disallow button title in window and screen sharing prompt");
 
     auto alert = adoptNS([[NSAlert alloc] init]);
     [alert setMessageText:alertTitle];

@@ -1,5 +1,14 @@
+CONSOLE MESSAGE: Error: assert_equals: expected 1 but got 2
+CONSOLE MESSAGE: Error: assert_equals: expected 2 but got 1
 
+
+Harness Error (FAIL), message = Error: assert_equals: expected 2 but got 1
 
 PASS Data URL not shared by cross-origin SharedWorkers
-PASS Data URLs shared by same-origin SharedWorkers
+TIMEOUT Data URLs shared by same-origin SharedWorkers Test timed out
+
+Harness Error (FAIL), message = Error: assert_equals: expected 2 but got 1
+
+PASS Data URL not shared by cross-origin SharedWorkers
+TIMEOUT Data URLs shared by same-origin SharedWorkers Test timed out
 

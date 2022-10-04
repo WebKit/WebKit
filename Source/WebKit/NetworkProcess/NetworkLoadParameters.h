@@ -69,6 +69,7 @@ public:
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
     bool hadMainFrameMainResourcePrivateRelayed { false };
     bool allowPrivacyProxy { true };
+    bool networkConnectionIntegrityEnabled { false };
 };
 
 } // namespace WebKit

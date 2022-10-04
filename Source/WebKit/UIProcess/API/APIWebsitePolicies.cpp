@@ -58,6 +58,7 @@ Ref<WebsitePolicies> WebsitePolicies::copy() const
     policies->setAllowContentChangeObserverQuirk(m_allowContentChangeObserverQuirk);
     policies->setWebsiteDataStore(m_websiteDataStore.get());
     policies->setUserContentController(m_userContentController.get());
+    policies->setNetworkConnectionIntegrityEnabled(m_networkConnectionIntegrityEnabled);
     policies->setIdempotentModeAutosizingOnlyHonorsPercentages(m_idempotentModeAutosizingOnlyHonorsPercentages);
     policies->setCustomHeaderFields(Vector<WebCore::CustomHeaderFields> { m_customHeaderFields });
     policies->setAllowSiteSpecificQuirksToOverrideContentMode(m_allowSiteSpecificQuirksToOverrideContentMode);
@@ -111,6 +112,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
         m_mouseEventPolicy,
         m_modalContainerObservationPolicy,
         m_colorSchemePreference,
+        m_networkConnectionIntegrityEnabled,
         m_idempotentModeAutosizingOnlyHonorsPercentages,
         m_allowPrivacyProxy
     };

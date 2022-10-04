@@ -29,10 +29,6 @@
 #include "WebPage.h"
 #include <WebCore/PlatformDisplay.h>
 
-#if PLATFORM(WAYLAND)
-#include "AcceleratedSurfaceWayland.h"
-#endif
-
 #if PLATFORM(X11)
 #include "AcceleratedSurfaceX11.h"
 #endif
@@ -48,11 +44,7 @@ std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage,
 {
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-#if USE(WPE_RENDERER)
         return AcceleratedSurfaceLibWPE::create(webPage, client);
-#else
-        return AcceleratedSurfaceWayland::create(webPage, client);
-#endif
 #endif
 #if PLATFORM(X11)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)

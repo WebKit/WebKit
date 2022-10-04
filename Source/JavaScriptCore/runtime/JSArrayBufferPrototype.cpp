@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSArrayBufferPrototype.h"
 
+#include "ArrayPrototypeInlines.h"
 #include "JSArrayBuffer.h"
 #include "JSArrayBufferPrototypeInlines.h"
 #include "JSCInlines.h"
@@ -70,12 +71,6 @@ std::optional<JSValue> arrayBufferSpeciesConstructorSlow(JSGlobalObject* globalO
 
     return species.isUndefinedOrNull() ? std::nullopt : std::make_optional(species);
 }
-
-enum class SpeciesConstructResult : uint8_t {
-    FastPath,
-    Exception,
-    CreatedObject
-};
 
 static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesConstructArrayBuffer(JSGlobalObject* globalObject, JSArrayBuffer* thisObject, unsigned length, ArrayBufferSharingMode mode)
 {

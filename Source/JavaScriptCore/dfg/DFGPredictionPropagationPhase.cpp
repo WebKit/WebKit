@@ -862,6 +862,7 @@ private:
             break;
         }
 
+        case NewArrayWithSpecies:
         case EnumeratorGetByVal:
         case ArrayPop:
         case ArrayPush:

@@ -65,18 +65,18 @@ public:
     static GlyphOrientation initialGlyphOrientationVertical() { return GlyphOrientation::Auto; }
     static float initialFillOpacity() { return 1; }
     static SVGPaintType initialFillPaintType() { return SVGPaintType::RGBColor; }
-    static Color initialFillPaintColor() { return Color::black; }
+    static StyleColor initialFillPaintColor() { return Color::black; }
     static String initialFillPaintUri() { return String(); }
     static float initialStrokeOpacity() { return 1; }
     static SVGPaintType initialStrokePaintType() { return SVGPaintType::None; }
-    static Color initialStrokePaintColor() { return Color(); }
+    static StyleColor initialStrokePaintColor() { /* No initial value per spec. */ return Color { }; }
     static String initialStrokePaintUri() { return String(); }
     static Vector<SVGLengthValue> initialStrokeDashArray() { return { }; }
     static float initialStopOpacity() { return 1; }
-    static Color initialStopColor() { return Color::black; }
+    static StyleColor initialStopColor() { return Color::black; }
     static float initialFloodOpacity() { return 1; }
-    static Color initialFloodColor() { return Color::black; }
-    static Color initialLightingColor() { return Color::white; }
+    static StyleColor initialFloodColor() { return Color::black; }
+    static StyleColor initialLightingColor() { return Color::white; }
     static String initialMarkerStartResource() { return String(); }
     static String initialMarkerMidResource() { return String(); }
     static String initialMarkerEndResource() { return String(); }
@@ -107,18 +107,18 @@ public:
     void setX(const Length&);
     void setY(const Length&);
     void setFillOpacity(float);
-    void setFillPaint(SVGPaintType, const Color&, const String& uri, bool applyToRegularStyle = true, bool applyToVisitedLinkStyle = false);
+    void setFillPaint(SVGPaintType, const StyleColor&, const String& uri, bool applyToRegularStyle = true, bool applyToVisitedLinkStyle = false);
     void setStrokeOpacity(float);
-    void setStrokePaint(SVGPaintType, const Color&, const String& uri, bool applyToRegularStyle = true, bool applyToVisitedLinkStyle = false);
+    void setStrokePaint(SVGPaintType, const StyleColor&, const String& uri, bool applyToRegularStyle = true, bool applyToVisitedLinkStyle = false);
 
     void setStrokeDashArray(const Vector<SVGLengthValue>&);
     void setStrokeDashOffset(const Length&);
     void setKerning(const SVGLengthValue&);
     void setStopOpacity(float);
-    void setStopColor(const Color&);
+    void setStopColor(const StyleColor&);
     void setFloodOpacity(float);
-    void setFloodColor(const Color&);
-    void setLightingColor(const Color&);
+    void setFloodColor(const StyleColor&);
+    void setLightingColor(const StyleColor&);
     void setBaselineShiftValue(const SVGLengthValue&);
 
     // Setters for inherited resources
@@ -142,20 +142,20 @@ public:
     GlyphOrientation glyphOrientationVertical() const { return static_cast<GlyphOrientation>(m_inheritedFlags.glyphOrientationVertical); }
     float fillOpacity() const { return m_fillData->opacity; }
     SVGPaintType fillPaintType() const { return static_cast<SVGPaintType>(m_fillData->paintType); }
-    const Color& fillPaintColor() const { return m_fillData->paintColor; }
+    const StyleColor& fillPaintColor() const { return m_fillData->paintColor; }
     const String& fillPaintUri() const { return m_fillData->paintUri; }    
     float strokeOpacity() const { return m_strokeData->opacity; }
     SVGPaintType strokePaintType() const { return static_cast<SVGPaintType>(m_strokeData->paintType); }
-    const Color& strokePaintColor() const { return m_strokeData->paintColor; }
+    const StyleColor& strokePaintColor() const { return m_strokeData->paintColor; }
     const String& strokePaintUri() const { return m_strokeData->paintUri; }
     Vector<SVGLengthValue> strokeDashArray() const { return m_strokeData->dashArray; }
     const Length& strokeDashOffset() const { return m_strokeData->dashOffset; }
     SVGLengthValue kerning() const { return m_textData->kerning; }
     float stopOpacity() const { return m_stopData->opacity; }
-    const Color& stopColor() const { return m_stopData->color; }
+    const StyleColor& stopColor() const { return m_stopData->color; }
     float floodOpacity() const { return m_miscData->floodOpacity; }
-    const Color& floodColor() const { return m_miscData->floodColor; }
-    const Color& lightingColor() const { return m_miscData->lightingColor; }
+    const StyleColor& floodColor() const { return m_miscData->floodColor; }
+    const StyleColor& lightingColor() const { return m_miscData->lightingColor; }
     SVGLengthValue baselineShiftValue() const { return m_miscData->baselineShiftValue; }
     const Length& cx() const { return m_layoutData->cx; }
     const Length& cy() const { return m_layoutData->cy; }
@@ -170,10 +170,10 @@ public:
     MaskType maskType() const { return static_cast<MaskType>(m_nonInheritedFlags.flagBits.maskType); }
 
     SVGPaintType visitedLinkFillPaintType() const { return static_cast<SVGPaintType>(m_fillData->visitedLinkPaintType); }
-    const Color& visitedLinkFillPaintColor() const { return m_fillData->visitedLinkPaintColor; }
+    const StyleColor& visitedLinkFillPaintColor() const { return m_fillData->visitedLinkPaintColor; }
     const String& visitedLinkFillPaintUri() const { return m_fillData->visitedLinkPaintUri; }
     SVGPaintType visitedLinkStrokePaintType() const { return static_cast<SVGPaintType>(m_strokeData->visitedLinkPaintType); }
-    const Color& visitedLinkStrokePaintColor() const { return m_strokeData->visitedLinkPaintColor; }
+    const StyleColor& visitedLinkStrokePaintColor() const { return m_strokeData->visitedLinkPaintColor; }
     const String& visitedLinkStrokePaintUri() const { return m_strokeData->visitedLinkPaintUri; }
 
     // convenience
@@ -287,7 +287,7 @@ inline void SVGRenderStyle::setFillOpacity(float opacity)
         m_fillData.access().opacity = clampedOpacity;
 }
 
-inline void SVGRenderStyle::setFillPaint(SVGPaintType type, const Color& color, const String& uri, bool applyToRegularStyle, bool applyToVisitedLinkStyle)
+inline void SVGRenderStyle::setFillPaint(SVGPaintType type, const StyleColor& color, const String& uri, bool applyToRegularStyle, bool applyToVisitedLinkStyle)
 {
     if (applyToRegularStyle) {
         if (!(m_fillData->paintType == type))
@@ -314,7 +314,7 @@ inline void SVGRenderStyle::setStrokeOpacity(float opacity)
         m_strokeData.access().opacity = clampedOpacity;
 }
 
-inline void SVGRenderStyle::setStrokePaint(SVGPaintType type, const Color& color, const String& uri, bool applyToRegularStyle, bool applyToVisitedLinkStyle)
+inline void SVGRenderStyle::setStrokePaint(SVGPaintType type, const StyleColor& color, const String& uri, bool applyToRegularStyle, bool applyToVisitedLinkStyle)
 {
     if (applyToRegularStyle) {
         if (!(m_strokeData->paintType == type))
@@ -359,7 +359,7 @@ inline void SVGRenderStyle::setStopOpacity(float opacity)
         m_stopData.access().opacity = clampedOpacity;
 }
 
-inline void SVGRenderStyle::setStopColor(const Color& color)
+inline void SVGRenderStyle::setStopColor(const StyleColor& color)
 {
     if (!(m_stopData->color == color))
         m_stopData.access().color = color;
@@ -372,13 +372,13 @@ inline void SVGRenderStyle::setFloodOpacity(float opacity)
         m_miscData.access().floodOpacity = clampedOpacity;
 }
 
-inline void SVGRenderStyle::setFloodColor(const Color& color)
+inline void SVGRenderStyle::setFloodColor(const StyleColor& color)
 {
     if (!(m_miscData->floodColor == color))
         m_miscData.access().floodColor = color;
 }
 
-inline void SVGRenderStyle::setLightingColor(const Color& color)
+inline void SVGRenderStyle::setLightingColor(const StyleColor& color)
 {
     if (!(m_miscData->lightingColor == color))
         m_miscData.access().lightingColor = color;

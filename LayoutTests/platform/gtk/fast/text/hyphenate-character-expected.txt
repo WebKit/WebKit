@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
             text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
             text run at (7,154) width 42: "ened "
             text run at (48,154) width 289: "out, and was going to give the hedge" + hyphen string "-"
-            text run at (7,175) width 204: "hog a blow with its head, it "
+            text run at (7,175) width 205: "hog a blow with its head, it "
             text run at (211,175) width 126: "would twist itself"
             text run at (7,196) width 233: "round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (356,0) size 344x274
@@ -52,7 +52,7 @@ layer at (0,0) size 800x600
             text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
             text run at (7,154) width 42: "ened "
             text run at (48,154) width 289: "out, and was going to give the hedge" + hyphen string "-"
-            text run at (7,175) width 204: "hog a blow with its head, it "
+            text run at (7,175) width 205: "hog a blow with its head, it "
             text run at (211,175) width 126: "would twist itself"
             text run at (7,196) width 233: "round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (4,274) size 344x274
@@ -78,7 +78,7 @@ layer at (0,0) size 800x600
             text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "\x{2022}"
             text run at (7,154) width 42: "ened "
             text run at (48,154) width 289: "out, and was going to give the hedge" + hyphen string "\x{2022}"
-            text run at (7,175) width 204: "hog a blow with its head, it "
+            text run at (7,175) width 205: "hog a blow with its head, it "
             text run at (211,175) width 126: "would twist itself"
             text run at (7,196) width 233: "round and look up in her face\x{2026}"
       RenderBlock (floating) {DIV} at (356,274) size 357x274
@@ -104,6 +104,6 @@ layer at (0,0) size 800x600
             text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "\x{B7}~"
             text run at (7,154) width 40: "ened "
             text run at (46,154) width 291: "out, and was going to give the hedge" + hyphen string "\x{B7}~"
-            text run at (7,175) width 204: "hog a blow with its head, it "
+            text run at (7,175) width 205: "hog a blow with its head, it "
             text run at (211,175) width 126: "would twist itself"
             text run at (7,196) width 233: "round and look up in her face\x{2026}"

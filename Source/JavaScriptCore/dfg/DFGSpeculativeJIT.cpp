@@ -14673,6 +14673,40 @@ void SpeculativeJIT::compileNewArrayWithSize(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileNewArrayWithSpecies(Node* node)
+{
+    if (node->child1().useKind() == Int32Use) {
+        SpeculateInt32Operand size(this, node->child1());
+        SpeculateCellOperand array(this, node->child2());
+
+        GPRReg sizeGPR = size.gpr();
+        GPRReg arrayGPR = array.gpr();
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        callOperation(operationNewArrayWithSpeciesInt32, resultGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), sizeGPR, arrayGPR, node->indexingType());
+
+        m_jit.exceptionCheck();
+        cellResult(resultGPR, node);
+        return;
+    }
+
+    JSValueOperand size(this, node->child1());
+    SpeculateCellOperand array(this, node->child2());
+
+    JSValueRegs sizeRegs = size.jsValueRegs();
+    GPRReg arrayGPR = array.gpr();
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationNewArrayWithSpecies, resultGPR, JITCompiler::LinkableConstant(m_jit, m_graph.globalObjectFor(node->origin.semantic)), sizeRegs, arrayGPR, node->indexingType());
+
+    m_jit.exceptionCheck();
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileNewTypedArray(Node* node)
 {
     switch (node->child1().useKind()) {

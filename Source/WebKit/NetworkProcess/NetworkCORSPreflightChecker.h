@@ -58,6 +58,7 @@ public:
         WebPageProxyIdentifier webPageProxyID;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
         bool allowPrivacyProxy { true };
+        bool networkConnectionIntegrityEnabled { false };
     };
     using CompletionCallback = CompletionHandler<void(WebCore::ResourceError&&)>;
 

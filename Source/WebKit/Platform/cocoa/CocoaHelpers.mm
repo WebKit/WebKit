@@ -186,4 +186,31 @@ NSSet *objectForKey<NSSet>(NSDictionary *dictionary, id key, bool nilIfEmpty, Cl
     });
 }
 
+NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscape)
+{
+    ASSERT(string);
+    ASSERT(charactersToEscape);
+
+    if (!string.length || !charactersToEscape.length)
+        return string;
+
+    NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:charactersToEscape];
+    NSRange range = [string rangeOfCharacterFromSet:characterSet];
+
+    if (!range.length)
+        return string;
+
+    NSMutableString *result = [string mutableCopy];
+    while (range.length > 0) {
+        [result insertString:@"\\" atIndex:range.location];
+
+        if (NSMaxRange(range) + 1 >= result.length)
+            break;
+
+        range = [result rangeOfCharacterFromSet:characterSet options:0 range:NSMakeRange(NSMaxRange(range) + 1, result.length - NSMaxRange(range) - 1)];
+    }
+
+    return result;
+}
+
 } // namespace WebKit

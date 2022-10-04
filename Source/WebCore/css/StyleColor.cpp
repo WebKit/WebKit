@@ -32,19 +32,52 @@
 #include "config.h"
 #include "StyleColor.h"
 
+#include "CSSPrimitiveValue.h"
+#include "ColorSerialization.h"
 #include "HashTools.h"
 #include "RenderTheme.h"
 
 namespace WebCore {
 
-Color StyleColor::colorFromKeyword(CSSValueID keyword, OptionSet<StyleColorOptions> options)
+StyleColor StyleColor::currentColor()
 {
+    return { CurrentColor { } };
+}
+
+String serializationForRenderTreeAsText(const StyleColor& color)
+{
+    return serializationForRenderTreeAsText(color.resolveColorWithoutCurrentColor());
+}
+
+String serializationForCSS(const StyleColor& color)
+{
+    if (color.isAbsoluteColor())
+        return serializationForCSS(color.absoluteColor());
+
+    if (color.isCurrentColor())
+        return "currentcolor"_s;
+
+    ASSERT_NOT_REACHED();
+    return { };
+}
+
+Color StyleColor::colorFromAbsoluteKeyword(CSSValueID keyword)
+{
+    // TODO: maybe it should be a constexpr map for performance.
+    ASSERT(StyleColor::isAbsoluteColorKeyword(keyword));
     if (const char* valueName = getValueName(keyword)) {
-        if (const NamedColor* namedColor = findColor(valueName, strlen(valueName)))
+        if (auto namedColor = findColor(valueName, strlen(valueName)))
             return asSRGBA(PackedColor::ARGB { namedColor->ARGBValue });
     }
+    ASSERT_NOT_REACHED();
+    return { };
+}
 
-    ASSERT(!isAbsoluteColorKeyword(keyword));
+Color StyleColor::colorFromKeyword(CSSValueID keyword , OptionSet<StyleColorOptions> options)
+{
+    if (isAbsoluteColorKeyword(keyword))
+        return colorFromAbsoluteKeyword(keyword);
+
     return RenderTheme::singleton().systemColor(keyword, options);
 }
 
@@ -84,6 +117,84 @@ bool StyleColor::isColorKeyword(CSSValueID id, OptionSet<CSSColorType> allowedCo
     return (allowedColorTypes.contains(CSSColorType::Absolute) && isAbsoluteColorKeyword(id))
         || (allowedColorTypes.contains(CSSColorType::Current) && isCurrentColorKeyword(id))
         || (allowedColorTypes.contains(CSSColorType::System) && isSystemColorKeyword(id));
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& out, const StyleColor& v)
+{
+    out << "StyleColor[";
+    if (v.isAbsoluteColor()) {
+        out << "absoluteColor(";
+        out << v.absoluteColor().debugDescription();
+        out << ")";
+    } else if (v.isCurrentColor())
+        out << "currentColor";
+    
+    out << "]";
+    return out;
+}
+
+String StyleColor::debugDescription() const
+{
+    TextStream ts;
+    ts << *this;
+    return ts.release();
+}
+
+Color StyleColor::resolveColor(const Color& currentColor) const
+{
+    if (isAbsoluteColor())
+        return absoluteColor();
+
+    if (isCurrentColor())
+        return currentColor;
+
+    return { };
+}
+
+Color StyleColor::resolveColorWithoutCurrentColor() const
+{
+    if (isAbsoluteColor())
+        return absoluteColor();
+    
+    return { };
+}
+
+bool StyleColor::isCurrentColor() const
+{
+    return std::holds_alternative<CurrentColor>(m_color);
+}
+
+bool StyleColor::isAbsoluteColor() const
+{
+    return std::holds_alternative<Color>(m_color);
+}
+
+Color const& StyleColor::absoluteColor() const
+{
+    ASSERT(isAbsoluteColor());
+    return std::get<Color>(m_color);
+}
+
+// The default constructor initializes to currentcolor to preserve old behavior,
+// we might want to change it to invalid color at some point.
+StyleColor::StyleColor()
+: m_color { CurrentColor { } } 
+{
+}
+
+StyleColor::StyleColor(const ColorKind& color)
+: m_color { color }
+{
+}
+
+StyleColor::StyleColor(const Color& color)
+: m_color { Color { color } }
+{
+}
+
+StyleColor::StyleColor(const SRGBA<uint8_t>& color)
+: m_color { Color { color } }
+{
 }
 
 } // namespace WebCore

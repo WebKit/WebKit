@@ -199,7 +199,7 @@ String builtInPDFPluginName()
 String pdfDocumentTypeDescription()
 {
     // Also exposed to DOM.
-    return WEB_UI_STRING("Portable Document Format", "Description of the primary type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari.");
+    return WEB_UI_STRING_KEY("Portable Document Format", "Portable Document Format (Safari)", "Description of the primary type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari.");
 }
 
 String postScriptDocumentTypeDescription()

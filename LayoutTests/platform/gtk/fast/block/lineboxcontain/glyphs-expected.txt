@@ -19,7 +19,7 @@ layer at (0,0) size 800x276
         RenderBR {BR} at (433,0) size 0x17
         RenderText {#text} at (24,18) size 515x17
           text run at (24,18) width 515: "This should make the top of the T line up with the line and not look shifted down."
-        RenderBR {BR} at (538,18) size 1x17
+        RenderBR {BR} at (539,18) size 0x17
         RenderText {#text} at (0,36) size 450x17
           text run at (0,36) width 450: "Maybe we should do this by default for all first letters like Firefox does."
 layer at (8,26) size 384x130

@@ -25,18 +25,20 @@
 #include "config.h"
 #include "BorderValue.h"
 
+#include "RenderStyle.h"
+
 namespace WebCore {
 
 BorderValue::BorderValue()
-    : m_style(static_cast<unsigned>(BorderStyle::None))
+    : m_color(StyleColor::currentColor())
+    , m_style(static_cast<unsigned>(BorderStyle::None))
     , m_isAuto(static_cast<unsigned>(OutlineIsAuto::Off))
 {
 }
 
-
 bool BorderValue::isTransparent() const
 {
-    return m_color.isValid() && !m_color.isVisible();
+    return m_color.isAbsoluteColor() && m_color.absoluteColor().isValid() && !m_color.absoluteColor().isVisible();
 }
 
 bool BorderValue::isVisible() const

@@ -77,41 +77,6 @@ const Vector<PluginInfo>& PluginData::webVisiblePlugins() const
     return *m_cachedVisiblePlugins.pluginList;
 }
 
-static bool shouldBePubliclyVisible(const PluginInfo& plugin)
-{
-    // We can greatly reduce fingerprinting opportunities by only advertising plug-ins
-    // that are widely needed for general website compatibility. Since many users
-    // will have these plug-ins, we are not revealing much user-specific information.
-    //
-    // Web compatibility data indicate that Flash, QuickTime, Java, and PDF support
-    // are frequently accessed through the bad practice of iterating over the contents
-    // of the navigator.plugins list. Luckily, these plug-ins happen to be the least
-    // user-specific.
-    return plugin.name.containsIgnoringASCIICase("Shockwave"_s)
-        || plugin.name.containsIgnoringASCIICase("QuickTime"_s)
-        || plugin.name.containsIgnoringASCIICase("Java"_s)
-        || isBuiltInPDFPlugIn(plugin);
-}
-
-std::pair<Vector<PluginInfo>, Vector<PluginInfo>> PluginData::publiclyVisiblePluginsAndAdditionalWebVisiblePlugins() const
-{
-    auto plugins = webVisiblePlugins();
-
-    if (m_page.showAllPlugins())
-        return { plugins, { } };
-
-    Vector<PluginInfo> additionalWebVisiblePlugins;
-    plugins.removeAllMatching([&](auto& plugin) {
-        if (!shouldBePubliclyVisible(plugin)) {
-            additionalWebVisiblePlugins.append(plugin);
-            return true;
-        }
-        return false;
-    });
-
-    return { plugins, additionalWebVisiblePlugins };
-}
-
 Vector<MimeClassInfo> PluginData::webVisibleMimeTypes() const
 {
     Vector<MimeClassInfo> result;

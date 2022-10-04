@@ -523,6 +523,12 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpTailCallForwardArguments, callLinkInfo, profile)
         LINK(OpConstructVarargs, callLinkInfo, profile)
 
+        case op_new_array_with_species: {
+            INITIALIZE_METADATA(OpNewArrayWithSpecies)
+            link_profile(instruction, bytecode, metadata);
+            break;
+        }
+
         case op_resolve_scope: {
             INITIALIZE_METADATA(OpResolveScope)
 

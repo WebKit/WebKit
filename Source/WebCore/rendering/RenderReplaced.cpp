@@ -180,7 +180,7 @@ Color RenderReplaced::calculateHighlightColor() const
                         continue;
 
                     if (auto highlightStyle = getUncachedPseudoStyle({ PseudoId::Highlight, highlight.key }, &style()))
-                        return highlightStyle->backgroundColor();
+                        return highlightStyle->colorResolvingCurrentColor(highlightStyle->backgroundColor());
                 }
             }
         }

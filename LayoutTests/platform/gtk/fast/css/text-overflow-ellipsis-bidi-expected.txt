@@ -27,8 +27,8 @@ layer at (8,80) size 207x18 scrollX 125 scrollWidth 332
 layer at (8,98) size 207x18 scrollX 125 scrollWidth 332
   RenderBlock {DIV} at (0,90) size 207x18
     RenderText {#text} at (-124,0) size 332x17
-      text run at (-124,0) width 0 RTL: "\x{202C}"
-      text run at (-124,0) width 248 RTL: " \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} "
+      text run at (-124,0) width 4 RTL: " \x{202C}"
+      text run at (-120,0) width 244 RTL: " \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0} \x{5D8}\x{5E7}\x{5E1}\x{5D8} \x{5E2}\x{5D1}\x{5E8}\x{5D9} \x{5DC}\x{5D3}\x{5D5}\x{5D2}\x{5DE}\x{5D0}"
       text run at (123,0) width 80: "English Text"
       text run at (203,0) width 4 RTL: "\x{202B} "
 layer at (8,152) size 207x18 scrollWidth 243

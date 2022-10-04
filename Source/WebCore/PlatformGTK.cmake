@@ -15,6 +15,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 
 list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/accessibility/atspi"
+    "${WEBCORE_DIR}/crypto/openssl"
     "${WEBCORE_DIR}/page/gtk"
     "${WEBCORE_DIR}/platform/adwaita"
     "${WEBCORE_DIR}/platform/audio/glib"
@@ -26,6 +27,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/gbm"
     "${WEBCORE_DIR}/platform/graphics/gstreamer"
     "${WEBCORE_DIR}/platform/graphics/gtk"
+    "${WEBCORE_DIR}/platform/graphics/libwpe"
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/opentype"
     "${WEBCORE_DIR}/platform/graphics/wayland"
@@ -37,12 +39,6 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/network/glib"
     "${WEBCORE_DIR}/platform/text/gtk"
 )
-
-if (USE_WPE_RENDERER)
-    list(APPEND WebCore_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/libwpe"
-    )
-endif ()
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     accessibility/atspi/AccessibilityAtspi.h
@@ -102,12 +98,6 @@ list(APPEND WebCore_LIBRARIES
     GTK::GTK
 )
 
-if (USE_WPE_RENDERER)
-    list(APPEND WebCore_LIBRARIES
-        WPE::libwpe
-    )
-endif ()
-
 list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
     ${ENCHANT_INCLUDE_DIRS}
     ${GIO_UNIX_INCLUDE_DIRS}
@@ -133,6 +123,7 @@ if (ENABLE_WAYLAND_TARGET)
     )
     list(APPEND WebCore_LIBRARIES
         ${WAYLAND_LIBRARIES}
+        WPE::libwpe
     )
 endif ()
 

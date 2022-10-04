@@ -67,8 +67,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (6,348) size 355x53
                   text run at (6,348) width 227: "was in a furious passion, and went "
                   text run at (232,348) width 129: "stamping about, and"
-                  text run at (6,366) width 288: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
-                  text run at (293,366) width 68: "her head!\x{2019}"
+                  text run at (6,366) width 290: "shouting \x{2018}Off with his head!\x{2019} or \x{2018}Off with "
+                  text run at (295,366) width 66: "her head!\x{2019}"
                   text run at (6,384) width 147: "about once in a minute."
                 RenderBR {BR} at (153,384) size 0x17
                 RenderText {#text} at (6,402) size 406x89

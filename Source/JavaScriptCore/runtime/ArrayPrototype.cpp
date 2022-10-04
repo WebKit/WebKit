@@ -25,6 +25,7 @@
 #include "ArrayPrototype.h"
 
 #include "ArrayConstructor.h"
+#include "ArrayPrototypeInlines.h"
 #include "BuiltinNames.h"
 #include "IntegrityInlines.h"
 #include "JSArrayInlines.h"
@@ -193,104 +194,6 @@ static ALWAYS_INLINE void setLength(JSGlobalObject* globalObject, VM& vm, JSObje
     scope.release();
     PutPropertySlot slot(obj, throwException);
     obj->methodTable()->put(obj, globalObject, vm.propertyNames->length, jsNumber(value), slot);
-}
-
-namespace ArrayPrototypeInternal {
-static bool verbose = false;
-}
-
-static ALWAYS_INLINE bool speciesWatchpointIsValid(JSObject* thisObject)
-{
-    JSGlobalObject* globalObject = thisObject->globalObject();
-    ArrayPrototype* arrayPrototype = globalObject->arrayPrototype();
-
-    if (globalObject->arraySpeciesWatchpointSet().state() == ClearWatchpoint) {
-        dataLogLnIf(ArrayPrototypeInternal::verbose, "Initializing Array species watchpoints for Array.prototype: ", pointerDump(arrayPrototype), " with structure: ", pointerDump(arrayPrototype->structure()), "\nand Array: ", pointerDump(globalObject->arrayConstructor()), " with structure: ", pointerDump(globalObject->arrayConstructor()->structure()));
-        globalObject->tryInstallArraySpeciesWatchpoint();
-        ASSERT(globalObject->arraySpeciesWatchpointSet().state() != ClearWatchpoint);
-    }
-
-    return !thisObject->hasCustomProperties()
-        && arrayPrototype == thisObject->getPrototypeDirect()
-        && globalObject->arraySpeciesWatchpointSet().state() == IsWatched;
-}
-
-enum class SpeciesConstructResult : uint8_t {
-    FastPath,
-    Exception,
-    CreatedObject
-};
-
-static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray(JSGlobalObject* globalObject, JSObject* thisObject, uint64_t length)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    constexpr std::pair<SpeciesConstructResult, JSObject*> exceptionResult { SpeciesConstructResult::Exception, nullptr };
-
-    // ECMA 9.4.2.3: https://tc39.github.io/ecma262/#sec-arrayspeciescreate
-    JSValue constructor = jsUndefined();
-    bool thisIsArray = isArray(globalObject, thisObject);
-    RETURN_IF_EXCEPTION(scope, exceptionResult);
-    if (LIKELY(thisIsArray)) {
-        // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
-        // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
-        bool isValid = speciesWatchpointIsValid(thisObject);
-        RETURN_IF_EXCEPTION(scope, exceptionResult);
-        if (LIKELY(isValid))
-            return std::pair { SpeciesConstructResult::FastPath, nullptr };
-
-        constructor = thisObject->get(globalObject, vm.propertyNames->constructor);
-        RETURN_IF_EXCEPTION(scope, exceptionResult);
-        if (constructor.isConstructor()) {
-            JSObject* constructorObject = jsCast<JSObject*>(constructor);
-            bool isArrayConstructorFromAnotherRealm = globalObject != constructorObject->globalObject()
-                && constructorObject->inherits<ArrayConstructor>();
-            if (isArrayConstructorFromAnotherRealm)
-                return std::pair { SpeciesConstructResult::FastPath, nullptr };
-        }
-        if (constructor.isObject()) {
-            constructor = constructor.get(globalObject, vm.propertyNames->speciesSymbol);
-            RETURN_IF_EXCEPTION(scope, exceptionResult);
-            if (constructor.isNull())
-                return std::pair { SpeciesConstructResult::FastPath, nullptr };
-        }
-    } else {
-        // If isArray is false, return ? ArrayCreate(length).
-        return std::pair { SpeciesConstructResult::FastPath, nullptr };
-    }
-
-    if (constructor.isUndefined())
-        return std::pair { SpeciesConstructResult::FastPath, nullptr };
-
-    MarkedArgumentBuffer args;
-    args.append(jsNumber(length));
-    ASSERT(!args.hasOverflowed());
-    JSObject* newObject = construct(globalObject, constructor, args, "Species construction did not get a valid constructor"_s);
-    RETURN_IF_EXCEPTION(scope, exceptionResult);
-    return std::pair { SpeciesConstructResult::CreatedObject, newObject };
-}
-
-JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSpeciesCreate, (JSGlobalObject* globalObject, CallFrame* callFrame))
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    JSObject* object = asObject(callFrame->uncheckedArgument(0));
-    uint64_t length = static_cast<uint64_t>(callFrame->uncheckedArgument(1).asNumber());
-
-    std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(globalObject, object, length);
-    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
-    if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
-        return { };
-    if (speciesResult.first == SpeciesConstructResult::CreatedObject)
-        return JSValue::encode(speciesResult.second);
-
-    if (length > std::numeric_limits<unsigned>::max()) {
-        throwRangeError(globalObject, scope, "Array size is not a small enough positive integer."_s);
-        return { };
-    }
-
-    RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr, static_cast<unsigned>(length))));
 }
 
 static inline uint64_t argumentClampedIndexFromStartOrEnd(JSGlobalObject* globalObject, JSValue value, uint64_t length, uint64_t undefinedValue = 0)
@@ -1628,7 +1531,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
         return JSValue::encode(jsNull());
 
     // We need to check the species constructor here since checking it in the JS wrapper is too expensive for the non-optimizing tiers.
-    bool isValid = speciesWatchpointIsValid(firstArray);
+    bool isValid = arraySpeciesWatchpointIsValid(firstArray);
     RETURN_IF_EXCEPTION(scope, { });
     if (UNLIKELY(!isValid))
         return JSValue::encode(jsNull());

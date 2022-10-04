@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
             text run at (7,91) width 245: "fortably enough, under her arm,"
             text run at (7,112) width 227: "with its legs hanging down, "
             text run at (233,112) width 104: "but generally,"
-            text run at (7,133) width 330: "just as she had got its neck nicely"
-            text run at (7,154) width 93: "straightened."
+            text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
+            text run at (7,154) width 39: "ened."
       RenderBlock (floating) {DIV} at (356,0) size 344x232
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 81x17
@@ -45,8 +45,8 @@ layer at (0,0) size 800x600
             text run at (7,91) width 245: "fortably enough, under her arm,"
             text run at (7,112) width 227: "with its legs hanging down, "
             text run at (233,112) width 104: "but generally,"
-            text run at (7,133) width 330: "just as she had got its neck nicely"
-            text run at (7,154) width 93: "straightened."
+            text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "-"
+            text run at (7,154) width 39: "ened."
       RenderBlock (floating) {DIV} at (4,232) size 344x232
         RenderBlock {P} at (0,16) size 344x18
           RenderText {#text} at (0,0) size 47x17
@@ -67,8 +67,8 @@ layer at (0,0) size 800x600
             text run at (7,91) width 245: "fortably enough, under her arm,"
             text run at (7,112) width 227: "with its legs hanging down, "
             text run at (233,112) width 104: "but generally,"
-            text run at (7,133) width 330: "just as she had got its neck nicely"
-            text run at (7,154) width 93: "straightened."
+            text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "\x{2022}"
+            text run at (7,154) width 39: "ened."
       RenderBlock (floating) {DIV} at (356,232) size 357x232
         RenderBlock {P} at (0,16) size 357x18
           RenderText {#text} at (0,0) size 136x17
@@ -89,5 +89,5 @@ layer at (0,0) size 800x600
             text run at (7,91) width 245: "fortably enough, under her arm,"
             text run at (7,112) width 227: "with its legs hanging down, "
             text run at (233,112) width 104: "but generally,"
-            text run at (7,133) width 330: "just as she had got its neck nicely"
-            text run at (7,154) width 93: "straightened."
+            text run at (7,133) width 330: "just as she had got its neck nicely straight" + hyphen string "\x{B7}~"
+            text run at (7,154) width 39: "ened."

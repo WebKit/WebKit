@@ -1,0 +1,8 @@
+
+PASS Test screen.orientation properties
+PASS Test screen.orientation default values.
+FAIL Test the orientations and associated angles promise_test: Unhandled rejection with value: object "TypeError: document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)"
+PASS Test that screen.orientation properties are not writable
+PASS Test that screen.orientation is always the same object
+FAIL Test that screen.orientation values change if the orientation changes promise_test: Unhandled rejection with value: object "TypeError: document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)"
+

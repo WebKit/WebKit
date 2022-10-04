@@ -3589,15 +3589,16 @@ void RenderBlockFlow::layoutModernLines(bool relayoutChildren, LayoutUnit& repai
         if (relayoutChildren || (is<RenderBox>(renderer) && downcast<RenderBox>(renderer).hasRelativeDimensions()))
             renderer.setNeedsLayout(MarkOnlyThis);
 
+        if (renderer.isOutOfFlowPositioned())
+            renderer.containingBlock()->insertPositionedObject(downcast<RenderBox>(renderer));
+
         if (!renderer.needsLayout() && !needsUpdateReplacedDimensions)
             continue;
 
         auto shouldRunInFlowLayout = renderer.isInFlow() && is<RenderElement>(renderer) && !is<RenderLineBreak>(renderer) && !is<RenderInline>(renderer) && !is<RenderCounter>(renderer);
-        if (renderer.isOutOfFlowPositioned())
-            renderer.containingBlock()->insertPositionedObject(downcast<RenderBox>(renderer));
-        else if (shouldRunInFlowLayout || renderer.isFloating())
+        if (shouldRunInFlowLayout || renderer.isFloating())
             downcast<RenderElement>(renderer).layoutIfNeeded();
-        else
+        else if (!renderer.isOutOfFlowPositioned())
             renderer.clearNeedsLayout();
 
         if (is<RenderReplaced>(renderer)) {

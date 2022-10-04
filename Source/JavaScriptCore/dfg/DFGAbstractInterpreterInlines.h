@@ -2966,6 +2966,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingMode()));
         break;
 
+    case NewArrayWithSpecies:
+        clobberWorld();
+        setTypeForNode(node, SpecObject);
+        break;
+
     case NewArrayWithSize:
         setTypeForNode(node, SpecArray);
         break;

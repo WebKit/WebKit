@@ -94,6 +94,7 @@ enum class LinkTimeConstant : int32_t;
     macro(toPropertyKey) \
     macro(toObject) \
     macro(newArrayWithSize) \
+    macro(newArrayWithSpecies) \
     macro(newPromise) \
     macro(createPromise) \
     macro(createArgumentsButterfly) \

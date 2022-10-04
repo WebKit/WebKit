@@ -17,17 +17,17 @@ layer at (0,0) size 334x600
           text run at (1,0) width 457: "The right column should be a mirror-image of the left column in terms of"
       RenderBlock {UL} at (86,0) size 54x584
         RenderListItem {LI} at (0,40) size 18x544
-          RenderListMarker at (0,-17) size 17x7: bullet
-          RenderText {#text} at (0,0) size 17x164
-            text run at (0,0) width 164: "the presence of a scrollbar"
+          RenderListMarker at (1,-17) size 17x7: bullet
+          RenderText {#text} at (1,0) size 17x164
+            text run at (1,0) width 164: "the presence of a scrollbar"
         RenderListItem {LI} at (18,40) size 18x544
-          RenderListMarker at (0,-17) size 17x7: bullet
-          RenderText {#text} at (0,0) size 17x234
-            text run at (0,0) width 234: "the initial position of the scroll thumb"
+          RenderListMarker at (1,-17) size 17x7: bullet
+          RenderText {#text} at (1,0) size 17x234
+            text run at (1,0) width 234: "the initial position of the scroll thumb"
         RenderListItem {LI} at (36,40) size 18x544
-          RenderListMarker at (0,-17) size 17x7: bullet
-          RenderText {#text} at (0,0) size 17x331
-            text run at (0,0) width 331: "which letters are visible initially and when you scroll"
+          RenderListMarker at (1,-17) size 17x7: bullet
+          RenderText {#text} at (1,0) size 17x331
+            text run at (1,0) width 331: "which letters are visible initially and when you scroll"
       RenderTable {TABLE} at (156,0) size 155x256
         RenderTableSection {TBODY} at (0,0) size 155x256
           RenderTableRow {TR} at (0,2) size 151x256
@@ -35,8 +35,8 @@ layer at (0,0) size 334x600
             RenderTableCell {TD} at (2,129) size 151x125 [r=0 c=1 rs=1 cs=1]
 layer at (179,15) size 44x115 clip at (179,25) size 29x100 scrollHeight 188
   RenderBlock {DIV} at (5,5) size 45x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
-    RenderText {#text} at (0,10) size 17x188
-      text run at (0,10) width 188: "abcdefghijklmnopqrstuvwxyz"
+    RenderText {#text} at (1,10) size 17x188
+      text run at (1,10) width 188: "abcdefghijklmnopqrstuvwxyz"
 layer at (227,15) size 44x115 clip at (227,25) size 44x100
   RenderBlock {DIV} at (53,5) size 45x115 [bgcolor=#FFFF00] [border: (10px solid #FF0000) none (5px solid #008000) none]
     RenderBlock {DIV} at (0,10) size 18x100 [bgcolor=#D3D3D3]
@@ -49,8 +49,8 @@ layer at (275,15) size 44x115 clip at (275,25) size 29x100 scrollHeight 188
         text run at (1,0) width 188: "abcdefghijklmnopqrstuvwxyz"
 layer at (179,142) size 44x115 clip at (179,147) size 29x100 scrollY 88 scrollHeight 188
   RenderBlock {DIV} at (5,5) size 45x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
-    RenderText {#text} at (0,-83) size 17x188
-      text run at (0,-83) width 188: "zyxwvutsrqponmlkjihgfedcba"
+    RenderText {#text} at (1,-83) size 17x188
+      text run at (1,-83) width 188: "zyxwvutsrqponmlkjihgfedcba"
 layer at (227,142) size 44x115 clip at (227,147) size 44x100
   RenderBlock {DIV} at (53,5) size 45x115 [bgcolor=#FFFF00] [border: (5px solid #008000) none (10px solid #FF0000) none]
     RenderBlock {DIV} at (0,5) size 18x100 [bgcolor=#D3D3D3]

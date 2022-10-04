@@ -98,11 +98,13 @@ class XvfbDriverTest(unittest.TestCase):
         with OutputCapture(level=logging.INFO) as captured:
             self.assertRaisesRegexp(RuntimeError, 'Unable to start Xvfb display server', driver.start, False, [])
             captured_log = captured.root.log.getvalue()
-            for retry in [1, 2, 3]:
-                self.assertTrue('Failed to start Xvfb display server ... retrying [ {} of 3 ].'.format(retry) in captured_log)
-                self.assertFalse('Failed to start Xvfb display server ... retrying [ 4 of 3 ].' in captured_log)
-            self.assertTrue('Failed to start Xvfb display server ... giving up after 3 retries.' in captured_log)
-            self.assertTrue('The print-screen-size tool returned non-zero status' in captured_log)
+            for retry in [1, 2, 3, 5, 6, 8, 9]:
+                self.assertTrue('Failed to check that the Xvfb display server is replying, retrying check [ {} of 9 ].'.format(retry) in captured_log)
+            for retry in [4, 7]:
+                self.assertTrue('Failed to check that the Xvfb display server is replying. Trying to restart server and retrying check [ {} of 9 ].'.format(retry) in captured_log)
+            self.assertFalse('[ 10 of 9 ].' in captured_log)
+            self.assertTrue('Failed to start and check that the Xvfb replies after 9 retries.' in captured_log)
+            self.assertTrue('the print-screen-size tool returned non-zero status' in captured_log)
         self.cleanup_driver(driver)
 
     def test_stop(self):
@@ -112,6 +114,9 @@ class XvfbDriverTest(unittest.TestCase):
 
         class FakeXvfbProcess(object):
             pid = 1234
+
+            def poll(self):
+                return None
 
         driver._xvfb_process = FakeXvfbProcess()
 

@@ -32,15 +32,7 @@ import os
 import sys
 import re
 import time
-
-if sys.version_info[0] < 3:
-    try:
-        import subprocess32 as subprocess
-    except ImportError:
-        import subprocess
-else:
-    import subprocess
-
+import subprocess
 from webkitcorepy import string_utils
 from webkitpy.port.server_process import ServerProcess
 from webkitpy.port.driver import Driver
@@ -53,7 +45,6 @@ class XvfbDriver(Driver):
     def __init__(self, *args, **kwargs):
         Driver.__init__(self, *args, **kwargs)
         self._xvfb_process = None
-        self._current_retry_start_xvfb = 0
         self._print_screen_size_process_for_testing = None  # required for unit tests
 
     @staticmethod
@@ -120,78 +111,77 @@ class XvfbDriver(Driver):
 
     def _xvfb_stop(self):
         if self._xvfb_process:
-            self._port.host.executive.kill_process(self._xvfb_process.pid)
+            if not self._xvfb_process.poll():
+                self._port.host.executive.kill_process(self._xvfb_process.pid)
             self._xvfb_process = None
 
     def _xvfb_check_if_ready(self, display_id):
         environment_print_screen_size_process = super(XvfbDriver, self)._setup_environ_for_test()
         environment_print_screen_size_process['DISPLAY'] = ':%d' % display_id
         environment_print_screen_size_process['GDK_BACKEND'] = 'x11'
-        waited_seconds_for_xvfb_ready = 0
         xvfb_server_replying_as_expected = False
-        while True:
-            timeout_expired = False
-            query_failed = False
+
+        try:
             print_screen_size_process = self._print_screen_size_process_for_testing if self._print_screen_size_process_for_testing else \
                 subprocess.Popen([self._port.path_from_webkit_base('Tools', 'gtk', 'print-screen-size')],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=environment_print_screen_size_process)
-            # Python2 standard subprocess don't allows setting a timeout
-            if not hasattr(subprocess, 'TimeoutExpired'):
-                stdout, stderr = print_screen_size_process.communicate()
-            else:
-                try:
-                    stdout, stderr = print_screen_size_process.communicate(timeout=2)
-                except subprocess.TimeoutExpired:
-                    _log.debug('Timeout expired trying to query the Xvfb display server.')
-                    timeout_expired = True
-                    print_screen_size_process.kill()
-                    stdout, stderr = print_screen_size_process.communicate()
-                    waited_seconds_for_xvfb_ready += 2
-
-            if not timeout_expired:
-                if print_screen_size_process.returncode == 0:
-                    queried_screen_size = stdout.decode('UTF-8').strip()
-                    if queried_screen_size == self._xvfb_screen_size():
-                        xvfb_server_replying_as_expected = True
-                        _log.debug('The Xvfb display server ":%d" is ready and replying as expected.' % display_id)
-                        break
-                    else:
-                        _log.warning('The queried Xvfb screen size "%s" does not match the expectation "%s".' % (queried_screen_size, self._xvfb_screen_size()))
+            stdout, stderr = print_screen_size_process.communicate(timeout=10)
+            if print_screen_size_process.returncode == 0:
+                queried_screen_size = stdout.decode('UTF-8').strip()
+                if queried_screen_size == self._xvfb_screen_size():
+                    xvfb_server_replying_as_expected = True
+                    _log.debug('The Xvfb display server ":%d" is ready and replying as expected.' % display_id)
                 else:
-                    _log.warning('The print-screen-size tool returned non-zero status. stdout is "%s" and stderr is "%s"' % (stdout, stderr))
-                    query_failed = True
-            if timeout_expired or query_failed:
-                if self._xvfb_process.poll():
-                    _log.error('The Xvfb display server has exited unexpectedly with a return code of %s' % (self._xvfb_process.poll()))
-                    break
-            if waited_seconds_for_xvfb_ready > 5:
-                _log.error('Timeout reached meanwhile waiting for the Xvfb display server to be ready')
-                break
-            _log.debug('Waiting for Xvfb display server to be ready.')
-            if not self._print_screen_size_process_for_testing:
-                time.sleep(1)  # only wait when not running unit tests
-            waited_seconds_for_xvfb_ready += 1
+                    _log.warning('When checking the Xvfb display server ":%d" the queried Xvfb screen size "%s" does not match the expectation "%s".' % (display_id, queried_screen_size, self._xvfb_screen_size()))
+            else:
+                _log.warning('When checking the Xvfb display server ":%d" the print-screen-size tool returned non-zero status. stdout is "%s" and stderr is "%s"' % (display_id, stdout, stderr))
+        except subprocess.TimeoutExpired:
+            _log.error('Timeout expired trying to query the Xvfb display server ":%d"' % display_id)
+            print_screen_size_process.kill()
+            stdout, stderr = print_screen_size_process.communicate()
+
         return xvfb_server_replying_as_expected
+
+    def _start_and_check_xvfb(self, port_server_environment, current_retry_start_xvfb=0, display_id=None):
+        current_retry_start_xvfb += 1
+        if current_retry_start_xvfb > 9:
+            _log.error('Failed to start and check that the Xvfb replies after 9 retries.')
+            raise RuntimeError('Unable to start Xvfb display server.')
+
+        if display_id is None:
+            self._xvfb_stop()
+            display_id = self._xvfb_run(port_server_environment)
+
+        if current_retry_start_xvfb > 1:
+            time.sleep(1)
+
+        if self._xvfb_check_if_ready(display_id):
+            return display_id
+
+        # self._xvfb_check_if_ready() failed, see if the Xvfb server needs a restart
+        if self._xvfb_process.poll():
+            _log.error('The Xvfb display server ":%d" has exited unexpectedly with a return code of "%s". Restarting server and retrying check [ %s of 9 ]' % (display_id, self._xvfb_process.poll(), current_retry_start_xvfb))
+            return self._start_and_check_xvfb(port_server_environment, current_retry_start_xvfb)
+
+        # restart it anyway on checks 4 and 7
+        if current_retry_start_xvfb in [4, 7]:
+            _log.error('Failed to check that the Xvfb display server is replying. Trying to restart server and retrying check [ %s of 9 ].' % current_retry_start_xvfb)
+            return self._start_and_check_xvfb(port_server_environment, current_retry_start_xvfb)
+
+        # retry without restarting Xvfb.
+        _log.error('Failed to check that the Xvfb display server is replying, retrying check [ %s of 9 ].' % current_retry_start_xvfb)
+        return self._start_and_check_xvfb(port_server_environment, current_retry_start_xvfb, display_id)
 
     def _setup_environ_for_test(self):
         port_server_environment = self._port.setup_environ_for_server(self._server_name)
         driver_environment = super(XvfbDriver, self)._setup_environ_for_test()
-        display_id = self._xvfb_run(port_server_environment)
+        display_id = self._start_and_check_xvfb(port_server_environment)
 
-        # We must do this here because the DISPLAY number depends on _worker_number
+        # We must do this here because the DISPLAY number is different for each worker
         driver_environment['DISPLAY'] = ":%d" % display_id
         driver_environment['UNDER_XVFB'] = 'yes'
         driver_environment['GDK_BACKEND'] = 'x11'
         driver_environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
-
-        # Ensure that Xvfb is ready and replying and expected before continuing, give it 3 tries.
-        if not self._xvfb_check_if_ready(display_id):
-            self._current_retry_start_xvfb += 1
-            if self._current_retry_start_xvfb > 3:
-                _log.error('Failed to start Xvfb display server ... giving up after 3 retries.')
-                raise RuntimeError('Unable to start Xvfb display server')
-            _log.error('Failed to start Xvfb display server ... retrying [ %s of 3 ].' % self._current_retry_start_xvfb)
-            return self._setup_environ_for_test()
 
         return driver_environment
 
