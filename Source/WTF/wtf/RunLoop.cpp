@@ -116,11 +116,10 @@ Ref<RunLoop> RunLoop::create(const char* threadName, ThreadType threadType, Thre
     return *runLoop;
 }
 
-bool RunLoop::isMain()
+bool RunLoop::isCurrent() const
 {
-    ASSERT(s_mainRunLoop);
     // Avoid constructing the RunLoop for the current thread if it has not been created yet.
-    return runLoopHolder().isSet() && s_mainRunLoop == &RunLoop::current();
+    return runLoopHolder().isSet() && this == &RunLoop::current();
 }
 
 void RunLoop::performWork()

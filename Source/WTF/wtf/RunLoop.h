@@ -89,7 +89,8 @@ public:
 #endif
     WTF_EXPORT_PRIVATE static Ref<RunLoop> create(const char* threadName, ThreadType = ThreadType::Unknown, Thread::QOS = Thread::QOS::UserInitiated);
 
-    WTF_EXPORT_PRIVATE static bool isMain();
+    static bool isMain() { return main().isCurrent(); }
+    WTF_EXPORT_PRIVATE bool isCurrent() const;
     WTF_EXPORT_PRIVATE ~RunLoop() final;
 
     WTF_EXPORT_PRIVATE void dispatch(Function<void()>&&) final;
@@ -282,7 +283,7 @@ private:
 
 inline void assertIsCurrent(const RunLoop& runLoop) WTF_ASSERTS_ACQUIRED_CAPABILITY(runLoop)
 {
-    ASSERT_UNUSED(runLoop, &RunLoop::current() == &runLoop);
+    ASSERT_UNUSED(runLoop, runLoop.isCurrent());
 }
 
 } // namespace WTF
