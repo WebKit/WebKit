@@ -2,4 +2,10 @@
 PASS e.style['font-variant-east-asian'] = "normal ruby" should not set the property value
 PASS e.style['font-variant-east-asian'] = "jis78 jis83" should not set the property value
 PASS e.style['font-variant-east-asian'] = "full-width proportional-width" should not set the property value
+PASS e.style['font-variant-east-asian'] = "normal garbage" should not set the property value
+PASS e.style['font-variant-east-asian'] = "normal none" should not set the property value
+PASS e.style['font-variant-east-asian'] = "normal 30px" should not set the property value
+PASS e.style['font-variant-east-asian'] = "full-width garbage" should not set the property value
+PASS e.style['font-variant-east-asian'] = "full-width none" should not set the property value
+PASS e.style['font-variant-east-asian'] = "full-width 30px" should not set the property value
 

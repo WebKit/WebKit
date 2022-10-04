@@ -94,6 +94,18 @@
 #t18 {
     font-variant: none;
 }
+#t20 {
+    font-variant: simplified common-ligatures;
+}
+#t21 {
+    font-variant-east-asian: full-width garbage;
+}
+#t22 {
+    font-variant-east-asian: full-width none;
+}
+#t23 {
+    font-variant-east-asian: garbage full-width;
+}
 </style>
 </head>
 <body>
@@ -117,6 +129,10 @@
 <div class="test" id="t17-container"><div id="t17">Hello</div></div>
 <div class="test" id="t18-container"><div id="t18">Hello</div></div>
 <div class="test" id="t19">Hello</div>
+<div class="test" id="t20">Hello</div>
+<div class="test" id="t21">Hello</div>
+<div class="test" id="t22">Hello</div>
+<div class="test" id="t23">Hello</div>
 <script>
 description("This test makes sure that the two shorthand properties which set font-variant-caps get resolved correctly.");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('t1')).getPropertyValue('font-variant-caps')", "small-caps");
@@ -156,6 +172,10 @@ shouldBeEqualToString("window.getComputedStyle(document.getElementById('t17')).g
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('t18')).getPropertyValue('font-variant')", "none");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('t19')).getPropertyValue('font-variant')", "normal");
 shouldBeEqualToString("window.getComputedStyle(document.getElementById('t19')).getPropertyValue('font-variant-caps')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t20')).getPropertyValue('font-variant')", "common-ligatures simplified");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t21')).getPropertyValue('font-variant-east-asian')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t22')).getPropertyValue('font-variant-east-asian')", "normal");
+shouldBeEqualToString("window.getComputedStyle(document.getElementById('t23')).getPropertyValue('font-variant-east-asian')", "normal");
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

@@ -38,6 +38,10 @@ PASS window.getComputedStyle(document.getElementById('t17')).getPropertyValue('f
 PASS window.getComputedStyle(document.getElementById('t18')).getPropertyValue('font-variant') is "none"
 PASS window.getComputedStyle(document.getElementById('t19')).getPropertyValue('font-variant') is "normal"
 PASS window.getComputedStyle(document.getElementById('t19')).getPropertyValue('font-variant-caps') is "normal"
+PASS window.getComputedStyle(document.getElementById('t20')).getPropertyValue('font-variant') is "common-ligatures simplified"
+PASS window.getComputedStyle(document.getElementById('t21')).getPropertyValue('font-variant-east-asian') is "normal"
+PASS window.getComputedStyle(document.getElementById('t22')).getPropertyValue('font-variant-east-asian') is "normal"
+PASS window.getComputedStyle(document.getElementById('t23')).getPropertyValue('font-variant-east-asian') is "normal"
 PASS successfullyParsed is true
 
 TEST COMPLETE
