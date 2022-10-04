@@ -822,7 +822,7 @@ inline void compilerFenceForCrash()
 // This would be a macro except that its use of #pragma works best around
 // a function. Hence it uses macro naming convention.
 IGNORE_WARNINGS_BEGIN("missing-noreturn")
-static inline void UNREACHABLE_FOR_PLATFORM()
+static inline void UNREACHABLE_FOR_PLATFORM(void)
 {
     // This *MUST* be a release assert. We use it in places where it's better to crash than to keep
     // going.

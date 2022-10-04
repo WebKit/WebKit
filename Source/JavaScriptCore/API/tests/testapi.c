@@ -178,7 +178,7 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
     JSStringRelease(valueAsString);
 }
 
-static bool timeZoneIsPST()
+static bool timeZoneIsPST(void)
 {
     char timeZoneName[70];
     struct tm gtm;
@@ -1032,7 +1032,7 @@ static JSStaticFunction globalObject_staticFunctions[] = {
 
 static char* createStringWithContentsOfFile(const char* fileName);
 
-static void testInitializeFinalize()
+static void testInitializeFinalize(void)
 {
     JSObjectRef o = JSObjectMake(context, Derived_class(context), (void*)1);
     UNUSED_PARAM(o);
@@ -1062,7 +1062,7 @@ bool assertTrue(bool value, const char* message)
     return value;
 }
 
-static bool checkForCycleInPrototypeChain()
+static bool checkForCycleInPrototypeChain(void)
 {
     bool result = true;
     JSGlobalContextRef context = JSGlobalContextCreate(0);
@@ -1114,7 +1114,7 @@ static JSValueRef valueToObjectExceptionCallAsFunction(JSContextRef ctx, JSObjec
     
     return JSValueMakeUndefined(ctx);
 }
-static bool valueToObjectExceptionTest()
+static bool valueToObjectExceptionTest(void)
 {
     JSGlobalContextRef testContext;
     JSClassDefinition globalObjectClassDefinition = kJSClassDefinitionEmpty;
@@ -1141,7 +1141,7 @@ static bool valueToObjectExceptionTest()
     return true;
 }
 
-static bool globalContextNameTest()
+static bool globalContextNameTest(void)
 {
     bool result = true;
     JSGlobalContextRef context = JSGlobalContextCreate(0);
@@ -1175,7 +1175,7 @@ static bool globalContextNameTest()
 }
 
 IGNORE_GCC_WARNINGS_BEGIN("unused-but-set-variable")
-static void checkConstnessInJSObjectNames()
+static void checkConstnessInJSObjectNames(void)
 {
     JSStaticFunction fun;
     fun.name = "something";
