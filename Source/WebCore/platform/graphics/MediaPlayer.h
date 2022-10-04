@@ -293,6 +293,8 @@ public:
 
     virtual bool mediaPlayerPrefersSandboxedParsing() const { return false; }
 
+    virtual bool mediaPlayerShouldDisableHDR() const { return false; }
+
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;
@@ -711,6 +713,9 @@ public:
     bool prefersSandboxedParsing() const { return client().mediaPlayerPrefersSandboxedParsing(); }
 
     void renderVideoWillBeDestroyed();
+
+    void setShouldDisableHDR(bool);
+    bool shouldDisableHDR() const { return client().mediaPlayerShouldDisableHDR(); }
 
 private:
     MediaPlayer(MediaPlayerClient&);

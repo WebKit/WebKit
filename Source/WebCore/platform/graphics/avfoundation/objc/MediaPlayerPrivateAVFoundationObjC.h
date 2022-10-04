@@ -356,6 +356,8 @@ private:
 
     void checkNewVideoFrameMetadata();
 
+    void setShouldDisableHDR(bool) final;
+
     std::optional<bool> allTracksArePlayable() const;
     bool containsDisabledTracks() const;
     bool trackIsPlayable(AVAssetTrack*) const;

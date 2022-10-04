@@ -136,6 +136,7 @@ typedef struct _CARenderContext CARenderContext;
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
 @property (getter=isSeparated) BOOL separated;
 #endif
+@property BOOL toneMapToStandardDynamicRange;
 @end
 
 #if ENABLE(FILTERS_LEVEL_2)

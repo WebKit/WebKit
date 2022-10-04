@@ -191,6 +191,8 @@ public:
     virtual DestinationColorSpace colorSpace() = 0;
     virtual bool shouldGetNativeImageForCanvasDrawing() const { return true; }
 
+    virtual void setShouldDisableHDR(bool) { }
+
     virtual void setPreload(MediaPlayer::Preload) { }
 
     virtual bool hasAvailableVideoFrame() const { return readyState() >= MediaPlayer::ReadyState::HaveCurrentData; }

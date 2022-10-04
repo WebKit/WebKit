@@ -417,6 +417,8 @@ private:
 
     void playerContentBoxRectChanged(const WebCore::LayoutRect&) final;
 
+    void setShouldDisableHDR(bool) final;
+
 #if PLATFORM(COCOA)
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif

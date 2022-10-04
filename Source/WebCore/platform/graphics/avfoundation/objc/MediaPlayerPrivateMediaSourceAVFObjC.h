@@ -297,6 +297,8 @@ private:
 
     bool shouldEnsureLayer() const;
 
+    void setShouldDisableHDR(bool) final;
+
     friend class MediaSourcePrivateAVFObjC;
 
     struct PendingSeek {

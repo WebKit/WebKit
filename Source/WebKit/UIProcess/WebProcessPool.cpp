@@ -670,11 +670,13 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
 void WebProcessPool::registerDisplayConfigurationCallback()
 {
 }
+#endif // !PLATFORM(MAC)
 
+#if !PLATFORM(MAC) && !PLATFORM(IOS)
 void WebProcessPool::registerHighDynamicRangeChangeCallback()
 {
 }
-#endif // !PLATFORM(MAC)
+#endif
 
 WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebProcessProxy& process, WebsiteDataStore& websiteDataStore)
 {

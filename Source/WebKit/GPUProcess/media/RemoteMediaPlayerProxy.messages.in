@@ -138,6 +138,8 @@ messages -> RemoteMediaPlayerProxy NotRefCounted {
     StopVideoFrameMetadataGathering()
 
     PlayerContentBoxRectChanged(WebCore::LayoutRect contentRect)
+
+    SetShouldDisableHDR(bool shouldDisable)
 }
 
 #endif

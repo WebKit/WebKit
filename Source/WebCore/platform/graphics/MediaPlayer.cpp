@@ -1822,6 +1822,11 @@ void MediaPlayer::renderVideoWillBeDestroyed()
     m_private->renderVideoWillBeDestroyed();
 }
 
+void MediaPlayer::setShouldDisableHDR(bool shouldDisable)
+{
+    m_private->setShouldDisableHDR(shouldDisable);
+}
+
 void MediaPlayer::playerContentBoxRectChanged(const LayoutRect& rect)
 {
     m_private->playerContentBoxRectChanged(rect);
