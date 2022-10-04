@@ -605,7 +605,7 @@ const char* A64DOpcodeDataProcessing3Source::format()
     appendInstructionName(opName());
     appendZROrRegisterName(rd(), is64Bit());
     appendSeparator();
-    bool srcOneAndTwoAre64Bit = is64Bit() & !(opNum() & 0x2);
+    bool srcOneAndTwoAre64Bit = is64Bit() && !(opNum() & 0x2);
     appendZROrRegisterName(rn(), srcOneAndTwoAre64Bit);
     appendSeparator();
     appendZROrRegisterName(rm(), srcOneAndTwoAre64Bit);

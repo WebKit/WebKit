@@ -173,9 +173,14 @@ static WKErrorCode toWKErrorCode(const std::error_code& error)
     auto handler = adoptNS([completionHandler copy]);
     _contentRuleListStore->getContentRuleListSource(identifier, [handler](String source) {
         auto rawHandler = (void (^)(NSString *))handler.get();
-        if (source.isNull())
+        if (source.isNull()) {
+            // This should not be necessary since there are no nullability annotations
+            // in this file or any other unified source combined herein.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
             rawHandler(nil);
-        else
+#pragma clang diagnostic pop
+        } else
             rawHandler(source);
     });
 #endif
