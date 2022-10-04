@@ -1868,19 +1868,6 @@ void WebPage::navigateToPDFLinkWithSimulatedClick(const String& url, IntPoint do
     mainFrame->loader().changeLocation(mainFrameDocument->completeURL(url), emptyAtom(), mouseEvent.ptr(), ReferrerPolicy::NoReferrer, ShouldOpenExternalURLsPolicy::ShouldAllow);
 }
 
-void WebPage::stopLoadingFrame(FrameIdentifier frameID)
-{
-    WebFrame* frame = WebProcess::singleton().webFrame(frameID);
-    if (!frame)
-        return;
-
-    auto* coreFrame = frame->coreFrame();
-    if (!coreFrame || !m_page)
-        return;
-
-    m_page->userInputBridge().stopLoadingFrame(*coreFrame);
-}
-
 void WebPage::stopLoading()
 {
     if (!m_page || !m_mainFrame->coreFrame())

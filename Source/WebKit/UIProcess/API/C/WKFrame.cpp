@@ -76,9 +76,8 @@ WKURLRef WKFrameCopyUnreachableURL(WKFrameRef frameRef)
     return toCopiedURLAPI(toImpl(frameRef)->unreachableURL());
 }
 
-void WKFrameStopLoading(WKFrameRef frameRef)
+void WKFrameStopLoading(WKFrameRef)
 {
-    toImpl(frameRef)->stopLoading();
 }
 
 WKStringRef WKFrameCopyMIMEType(WKFrameRef frameRef)
@@ -106,9 +105,9 @@ bool WKFrameCanProvideSource(WKFrameRef frameRef)
     return toImpl(frameRef)->canProvideSource();
 }
 
-bool WKFrameCanShowMIMEType(WKFrameRef frameRef, WKStringRef mimeTypeRef)
+bool WKFrameCanShowMIMEType(WKFrameRef, WKStringRef)
 {
-    return toImpl(frameRef)->canShowMIMEType(toWTFString(mimeTypeRef));
+    return false;
 }
 
 bool WKFrameIsDisplayingStandaloneImageDocument(WKFrameRef frameRef)
