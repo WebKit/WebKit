@@ -2744,6 +2744,14 @@
    },
    {
       "emails" : [
+         "g_squelart@apple.com",
+         "gjs@apple.com"
+      ],
+      "github" : "squelart",
+      "name" : "Gerald Squelart"
+   },
+   {
+      "emails" : [
          "gbalogh.u-szeged@partner.samsung.com",
          "geryxyz@inf.u-szeged.hu"
       ],
