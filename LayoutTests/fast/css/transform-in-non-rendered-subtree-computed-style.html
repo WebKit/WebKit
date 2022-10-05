@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <title>Computed style of transform in non-rendered subtree should be none.</title>
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        }
+        .transformed {
+            transform: translate(50%, 50%);
+        }
+    </style>
+    <div class="box transformed" hidden></div>
+    <div class="box" hidden><div class="box transformed"></div></div>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+    test(() => {
+        for (let box of document.querySelectorAll(".transformed")) {
+            assert_equals(window.getComputedStyle(box).transform, "none");
+        }
+    }, "Computed style of transform in non-rendered subtree should be none.");
+    </script>
+</html>

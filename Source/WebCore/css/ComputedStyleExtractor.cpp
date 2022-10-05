@@ -732,7 +732,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
 {
     auto& cssValuePool = CSSValuePool::singleton();
 
-    if (!style.hasTransform() || is<RenderInline>(renderer))
+    if (!style.hasTransform() || !rendererCanBeTransformed(renderer))
         return cssValuePool.createIdentifierValue(CSSValueNone);
 
     if (renderer) {

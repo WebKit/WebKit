@@ -1,0 +1,3 @@
+
+PASS Computed style of transform in non-rendered subtree should be none.
+
