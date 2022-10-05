@@ -91,7 +91,6 @@
 #include "StyleColorScheme.h"
 #endif
 
-
 #define SET_VAR(group, variable, value) do { \
         if (!compareEqual(group->variable, value)) \
             group.access().variable = value; \
@@ -1908,8 +1907,8 @@ public:
     void getShadowInlineDirectionExtent(const ShadowData*, LayoutUnit& logicalLeft, LayoutUnit& logicalRight) const;
     void getShadowBlockDirectionExtent(const ShadowData*, LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const;
 
-    static StyleColor currentColor();
-    static bool isCurrentColor(const StyleColor&);
+    static StyleColor currentColor() { return StyleColor::currentColor(); }
+    static bool isCurrentColor(const StyleColor& color) { return color.isCurrentColor(); }
 
     const StyleColor& borderLeftColor() const { return m_surroundData->border.left().color(); }
     const StyleColor& borderRightColor() const { return m_surroundData->border.right().color(); }

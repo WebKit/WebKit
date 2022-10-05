@@ -51,7 +51,7 @@ struct ClientState {
     {
     }
 
-    bool operator == (ClientState const& other) const
+    bool operator==(const ClientState& other) const
     {
         return contextId == other.contextId && &client == &other.client;
     }

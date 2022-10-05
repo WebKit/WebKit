@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016, 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -38,11 +38,6 @@
 #include "RenderTheme.h"
 
 namespace WebCore {
-
-StyleColor StyleColor::currentColor()
-{
-    return { CurrentColor { } };
-}
 
 String serializationForRenderTreeAsText(const StyleColor& color)
 {
@@ -169,32 +164,10 @@ bool StyleColor::isAbsoluteColor() const
     return std::holds_alternative<Color>(m_color);
 }
 
-Color const& StyleColor::absoluteColor() const
+const Color& StyleColor::absoluteColor() const
 {
     ASSERT(isAbsoluteColor());
     return std::get<Color>(m_color);
-}
-
-// The default constructor initializes to currentcolor to preserve old behavior,
-// we might want to change it to invalid color at some point.
-StyleColor::StyleColor()
-: m_color { CurrentColor { } } 
-{
-}
-
-StyleColor::StyleColor(const ColorKind& color)
-: m_color { color }
-{
-}
-
-StyleColor::StyleColor(const Color& color)
-: m_color { Color { color } }
-{
-}
-
-StyleColor::StyleColor(const SRGBA<uint8_t>& color)
-: m_color { Color { color } }
-{
 }
 
 } // namespace WebCore

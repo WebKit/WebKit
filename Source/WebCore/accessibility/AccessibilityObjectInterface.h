@@ -1123,7 +1123,7 @@ public:
 
     // Text selection
     virtual Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const = 0;
-    virtual Vector<String> performTextOperation(AccessibilityTextOperation const&) = 0;
+    virtual Vector<String> performTextOperation(const AccessibilityTextOperation&) = 0;
 
     virtual AXCoreObject* observableObject() const = 0;
     virtual AccessibilityChildrenVector linkedObjects() const = 0;
@@ -1560,7 +1560,7 @@ T* findRelatedObjectInAncestry(const T& object, AXRelationType relationType, con
     return nullptr;
 }
 
-void findMatchingObjects(AccessibilitySearchCriteria const&, AXCoreObject::AccessibilityChildrenVector&);
+void findMatchingObjects(const AccessibilitySearchCriteria&, AXCoreObject::AccessibilityChildrenVector&);
 
 template<typename T, typename F>
 void enumerateAncestors(const T& object, bool includeSelf, const F& lambda)

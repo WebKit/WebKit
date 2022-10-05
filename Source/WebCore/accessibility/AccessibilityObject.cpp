@@ -963,7 +963,7 @@ Vector<SimpleRange> AccessibilityObject::findTextRanges(const AccessibilitySearc
     return result;
 }
 
-Vector<String> AccessibilityObject::performTextOperation(AccessibilityTextOperation const& operation)
+Vector<String> AccessibilityObject::performTextOperation(const AccessibilityTextOperation& operation)
 {
     Vector<String> result;
 
@@ -4012,7 +4012,7 @@ static bool isRadioButtonInDifferentAdhocGroup(RefPtr<AXCoreObject> axObject, AX
     return axObject->attributeValue("name"_s) != referenceObject->attributeValue("name"_s);
 }
 
-static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObject, AccessibilitySearchCriteria const& criteria, size_t index)
+static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObject, const AccessibilitySearchCriteria& criteria, size_t index)
 {
     switch (criteria.searchKeys[index]) {
     case AccessibilitySearchKey::AnyType:
@@ -4120,7 +4120,7 @@ static bool isAccessibilityObjectSearchMatchAtIndex(RefPtr<AXCoreObject> axObjec
     }
 }
 
-static bool isAccessibilityObjectSearchMatch(RefPtr<AXCoreObject> axObject, AccessibilitySearchCriteria const& criteria)
+static bool isAccessibilityObjectSearchMatch(RefPtr<AXCoreObject> axObject, const AccessibilitySearchCriteria& criteria)
 {
     if (!axObject)
         return false;
@@ -4136,7 +4136,7 @@ static bool isAccessibilityObjectSearchMatch(RefPtr<AXCoreObject> axObject, Acce
     return false;
 }
 
-static bool isAccessibilityTextSearchMatch(RefPtr<AXCoreObject> axObject, AccessibilitySearchCriteria const& criteria)
+static bool isAccessibilityTextSearchMatch(RefPtr<AXCoreObject> axObject, const AccessibilitySearchCriteria& criteria)
 {
     if (!axObject)
         return false;
@@ -4150,7 +4150,7 @@ static bool isAccessibilityTextSearchMatch(RefPtr<AXCoreObject> axObject, Access
         || containsPlainText(axObject->stringValue(), criteria.searchText, CaseInsensitive);
 }
 
-static bool objectMatchesSearchCriteriaWithResultLimit(RefPtr<AXCoreObject> object, AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)
+static bool objectMatchesSearchCriteriaWithResultLimit(RefPtr<AXCoreObject> object, const AccessibilitySearchCriteria& criteria, AXCoreObject::AccessibilityChildrenVector& results)
 {
     if (isAccessibilityObjectSearchMatch(object, criteria) && isAccessibilityTextSearchMatch(object, criteria)) {
         results.append(object);
@@ -4214,7 +4214,7 @@ static void appendChildrenToArray(RefPtr<AXCoreObject> object, bool isForward, R
     }
 }
 
-void findMatchingObjects(AccessibilitySearchCriteria const& criteria, AXCoreObject::AccessibilityChildrenVector& results)
+void findMatchingObjects(const AccessibilitySearchCriteria& criteria, AXCoreObject::AccessibilityChildrenVector& results)
 {
     AXTRACE("Accessibility::findMatchingObjects"_s);
     AXLOG(criteria);

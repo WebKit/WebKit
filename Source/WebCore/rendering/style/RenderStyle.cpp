@@ -2247,10 +2247,6 @@ StyleColor RenderStyle::unresolvedColorForProperty(CSSPropertyID colorProperty, 
     return { };
 }
 
-StyleColor RenderStyle::currentColor() { return StyleColor::currentColor(); }
-
-bool RenderStyle::isCurrentColor(const StyleColor& color) { return color.isCurrentColor();  }
-
 Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool visitedLink) const
 {
     auto result = unresolvedColorForProperty(colorProperty, visitedLink);
