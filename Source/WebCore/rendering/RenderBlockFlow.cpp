@@ -68,6 +68,7 @@
 #include "TextAutoSizing.h"
 #include "VerticalPositionCache.h"
 #include "VisiblePosition.h"
+#include "rendering/LegacyRootInlineBox.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -2996,6 +2997,31 @@ std::optional<LayoutUnit> RenderBlockFlow::firstLineBaseline() const
     if (style().isFlippedLinesWritingMode())
         return LayoutUnit { firstRootBox()->logicalTop() + firstLineStyle().metricsOfPrimaryFont().descent(firstRootBox()->baselineType()) };
     return LayoutUnit { firstRootBox()->logicalTop() + firstLineStyle().metricsOfPrimaryFont().ascent(firstRootBox()->baselineType()) };
+}
+
+std::optional<LayoutUnit> RenderBlockFlow::lastLineBaseline() const
+{
+    if (isWritingModeRoot() && !isRubyRun() && !isGridItem())
+        return std::nullopt;
+
+    if (shouldApplyLayoutContainment())
+        return std::nullopt;
+
+    if (!childrenInline())
+        return RenderBlock::lastLineBaseline();
+
+    if (!hasLines())
+        return std::nullopt;
+
+    if (auto* lineLayout = modernLineLayout())
+        return LayoutUnit { floorToInt(lineLayout->lastLinePhysicalBaseline()) };
+
+    ASSERT(lastRootBox()); 
+    auto rootBox = lastRootBox();
+    const RenderStyle& lastLineBoxStyle = InlineIterator::lastLineBoxFor(*this)->style();
+    if (style().isFlippedLinesWritingMode())
+        return LayoutUnit { rootBox->logicalTop() + lastLineBoxStyle.metricsOfPrimaryFont().descent(rootBox->baselineType()) };
+    return LayoutUnit { rootBox->logicalTop() + lastLineBoxStyle.metricsOfPrimaryFont().ascent(rootBox->baselineType()) };
 }
 
 std::optional<LayoutUnit> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
