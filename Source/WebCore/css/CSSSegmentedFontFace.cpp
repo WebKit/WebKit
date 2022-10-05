@@ -126,8 +126,8 @@ FontRanges CSSSegmentedFontFace::fontRanges(const FontDescription& fontDescripti
 
         auto selectionCapabilities = *face->fontSelectionCapabilities();
 
-        bool syntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && !isFontWeightBold(selectionCapabilities.weight.maximum) && isFontWeightBold(desiredRequest.weight);
-        bool syntheticItalic = (fontDescription.fontSynthesis() & FontSynthesisStyle) && !isItalic(selectionCapabilities.slope.maximum) && isItalic(desiredRequest.slope);
+        bool syntheticBold = fontDescription.hasAutoFontSynthesisWeight() && !isFontWeightBold(selectionCapabilities.weight.maximum) && isFontWeightBold(desiredRequest.weight);
+        bool syntheticItalic = fontDescription.hasAutoFontSynthesisStyle() && !isItalic(selectionCapabilities.slope.maximum) && isItalic(desiredRequest.slope);
 
         // Metrics used for layout come from FontRanges::fontForFirstRange(), which assumes that the first font is non-null.
         auto fontAccessor = CSSFontAccessor::create(face, fontDescription, fontPaletteValues, syntheticBold, syntheticItalic);

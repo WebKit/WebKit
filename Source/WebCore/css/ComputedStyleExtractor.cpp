@@ -2287,17 +2287,37 @@ Ref<CSSValue> ComputedStyleExtractor::fontVariantShorthandValue()
 
 static Ref<CSSValue> fontSynthesisFromStyle(const RenderStyle& style)
 {
-    if (style.fontDescription().fontSynthesis() == FontSynthesisNone)
-        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
-
     auto list = CSSValueList::createSpaceSeparated();
-    if (style.fontDescription().fontSynthesis() & FontSynthesisWeight)
+    if (style.fontDescription().hasAutoFontSynthesisWeight())
         list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueWeight));
-    if (style.fontDescription().fontSynthesis() & FontSynthesisStyle)
+    if (style.fontDescription().hasAutoFontSynthesisStyle())
         list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueStyle));
-    if (style.fontDescription().fontSynthesis() & FontSynthesisSmallCaps)
+    if (style.fontDescription().hasAutoFontSynthesisSmallCaps())
         list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSmallCaps));
+
+    if (!list->length())
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNone);
     return list;
+}
+
+static Ref<CSSValue> fontSynthesisLonghandToCSSValue(FontSynthesisLonghandValue value)
+{
+    return CSSValuePool::singleton().createIdentifierValue(value == FontSynthesisLonghandValue::Auto ? CSSValueAuto : CSSValueNone);
+}
+
+static Ref<CSSValue> fontSynthesisWeightFromStyle(const RenderStyle& style)
+{
+    return fontSynthesisLonghandToCSSValue(style.fontDescription().fontSynthesisWeight());
+}
+
+static Ref<CSSValue> fontSynthesisStyleFromStyle(const RenderStyle& style)
+{
+    return fontSynthesisLonghandToCSSValue(style.fontDescription().fontSynthesisStyle());
+}
+
+static Ref<CSSValue> fontSynthesisSmallCapsFromStyle(const RenderStyle& style)
+{
+    return fontSynthesisLonghandToCSSValue(style.fontDescription().fontSynthesisSmallCaps());
 }
 
 typedef const Length& (RenderStyle::*RenderStyleLengthGetter)() const;
@@ -3170,6 +3190,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return fontPaletteFromStyle(style);
     case CSSPropertyFontSynthesis:
         return fontSynthesisFromStyle(style);
+    case CSSPropertyFontSynthesisWeight:
+        return fontSynthesisWeightFromStyle(style);
+    case CSSPropertyFontSynthesisStyle:
+        return fontSynthesisStyleFromStyle(style);
+    case CSSPropertyFontSynthesisSmallCaps:
+        return fontSynthesisSmallCapsFromStyle(style);
     case CSSPropertyFontFeatureSettings: {
         const FontFeatureSettings& featureSettings = style.fontDescription().featureSettings();
         if (!featureSettings.size())

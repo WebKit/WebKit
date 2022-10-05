@@ -8,9 +8,9 @@ FAIL Animation of font-size-adjust in ::marker assert_true: font-size-adjust doe
 PASS Animation of font-stretch in ::marker
 PASS Animation of font-style in ::marker
 PASS Animation of font-synthesis in ::marker
-FAIL Animation of font-synthesis-small-caps in ::marker assert_true: font-synthesis-small-caps doesn't seem to be supported in the computed style expected true got false
-FAIL Animation of font-synthesis-style in ::marker assert_true: font-synthesis-style doesn't seem to be supported in the computed style expected true got false
-FAIL Animation of font-synthesis-weight in ::marker assert_true: font-synthesis-weight doesn't seem to be supported in the computed style expected true got false
+PASS Animation of font-synthesis-small-caps in ::marker
+PASS Animation of font-synthesis-style in ::marker
+PASS Animation of font-synthesis-weight in ::marker
 PASS Animation of font-variant in ::marker
 PASS Animation of font-variant-caps in ::marker
 PASS Animation of font-variant-east-asian in ::marker
@@ -55,9 +55,9 @@ FAIL Transition of font-size-adjust in ::marker assert_true: font-size-adjust do
 PASS Transition of font-stretch in ::marker
 PASS Transition of font-style in ::marker
 PASS Transition of font-synthesis in ::marker
-FAIL Transition of font-synthesis-small-caps in ::marker assert_true: font-synthesis-small-caps doesn't seem to be supported in the computed style expected true got false
-FAIL Transition of font-synthesis-style in ::marker assert_true: font-synthesis-style doesn't seem to be supported in the computed style expected true got false
-FAIL Transition of font-synthesis-weight in ::marker assert_true: font-synthesis-weight doesn't seem to be supported in the computed style expected true got false
+PASS Transition of font-synthesis-small-caps in ::marker
+PASS Transition of font-synthesis-style in ::marker
+PASS Transition of font-synthesis-weight in ::marker
 PASS Transition of font-variant in ::marker
 PASS Transition of font-variant-caps in ::marker
 PASS Transition of font-variant-east-asian in ::marker

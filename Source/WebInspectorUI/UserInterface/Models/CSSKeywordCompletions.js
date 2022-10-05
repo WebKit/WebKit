@@ -341,6 +341,9 @@ WI.CSSKeywordCompletions.InheritedProperties = new Set([
     "font-stretch",
     "font-style",
     "font-synthesis",
+    "font-synthesis-weight",
+    "font-synthesis-style",
+    "font-synthesis-small-caps",
     "font-variant",
     "font-variant-alternates",
     "font-variant-caps",
@@ -601,7 +604,16 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "normal", "bold", "bolder", "lighter", "100", "200", "300", "400", "500", "600", "700", "800", "900"
     ],
     "font-synthesis": [
-        "none", "weight", "style"
+        "none", "weight", "style", "small-caps"
+    ],
+    "font-synthesis-weight": [
+        "none", "auto"
+    ],
+    "font-synthesis-style": [
+        "none", "auto"
+    ],
+    "font-synthesis-small-caps": [
+        "none", "auto"
     ],
     "font-style": [
         "italic", "oblique", "normal"

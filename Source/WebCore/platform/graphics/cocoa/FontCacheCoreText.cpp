@@ -913,8 +913,8 @@ SynthesisPair computeNecessarySynthesis(CTFontRef font, const FontDescription& f
             actualTraits = CTFontGetSymbolicTraits(font);
     }
 
-    bool needsSyntheticBold = (fontDescription.fontSynthesis() & FontSynthesisWeight) && (desiredTraits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold);
-    bool needsSyntheticOblique = (fontDescription.fontSynthesis() & FontSynthesisStyle) && (desiredTraits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic);
+    bool needsSyntheticBold = fontDescription.hasAutoFontSynthesisWeight() && (desiredTraits & kCTFontTraitBold) && !(actualTraits & kCTFontTraitBold);
+    bool needsSyntheticOblique = fontDescription.hasAutoFontSynthesisStyle() && (desiredTraits & kCTFontTraitItalic) && !(actualTraits & kCTFontTraitItalic);
 
     return SynthesisPair(needsSyntheticBold, needsSyntheticOblique);
 }

@@ -166,6 +166,7 @@ private:
     String borderSpacingValue(const StylePropertyShorthand&) const;
     String fontValue() const;
     String fontVariantValue() const;
+    String fontSynthesisValue() const;
     String textDecorationSkipValue() const;
     String offsetValue() const;
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;

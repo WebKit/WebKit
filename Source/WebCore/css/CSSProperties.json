@@ -627,13 +627,60 @@
         "font-synthesis": {
             "inherited": true,
             "codegen-properties": {
-                "converter": "FontSynthesis",
+                "longhands": [
+                    "font-synthesis-weight",
+                    "font-synthesis-style",
+                    "font-synthesis-small-caps"
+                ]
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-3/#font-synthesis-prop"
+            }
+        },
+        "font-synthesis-weight": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
                 "font-property": true,
                 "high-priority": true
             },
             "specification": {
                 "category": "css-fonts",
-                "url": "https://drafts.csswg.org/css-fonts-3/#font-synthesis-prop"
+                "url": "https://drafts.csswg.org/css-fonts-4/#font-synthesis-weight"
+            }
+        },
+        "font-synthesis-style": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "font-property": true,
+                "high-priority": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-4/#font-synthesis-style"
+            }
+        },
+        "font-synthesis-small-caps": {
+            "inherited": true,
+            "values": [
+                "auto",
+                "none"
+            ],
+            "codegen-properties": {
+                "font-property": true,
+                "high-priority": true
+            },
+            "specification": {
+                "category": "css-fonts",
+                "url": "https://drafts.csswg.org/css-fonts-4/#font-synthesis-small-caps"
             }
         },
         "font-optical-sizing": {

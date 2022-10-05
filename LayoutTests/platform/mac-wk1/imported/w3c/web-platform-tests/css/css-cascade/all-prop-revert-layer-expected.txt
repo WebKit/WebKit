@@ -129,7 +129,9 @@ PASS font-palette
 PASS font-size
 PASS font-stretch
 PASS font-style
-PASS font-synthesis
+PASS font-synthesis-small-caps
+PASS font-synthesis-style
+PASS font-synthesis-weight
 PASS font-variant-alternates
 PASS font-variant-caps
 PASS font-variant-east-asian

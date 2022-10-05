@@ -335,7 +335,7 @@ void ComplexTextController::collectComplexTextRuns()
     }();
 
     auto fontVariantCaps = m_font.fontDescription().variantCaps();
-    bool dontSynthesizeSmallCaps = !static_cast<bool>(m_font.fontDescription().fontSynthesis() & FontSynthesisSmallCaps);
+    bool dontSynthesizeSmallCaps = !m_font.fontDescription().hasAutoFontSynthesisSmallCaps();
     bool engageAllSmallCapsProcessing = fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps == FontVariantCaps::AllPetite;
     bool engageSmallCapsProcessing = engageAllSmallCapsProcessing || fontVariantCaps == FontVariantCaps::Small || fontVariantCaps == FontVariantCaps::Petite;
 

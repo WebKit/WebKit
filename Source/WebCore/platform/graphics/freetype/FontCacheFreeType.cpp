@@ -100,7 +100,7 @@ static void getFontPropertiesFromPattern(FcPattern* pattern, const FontDescripti
         fixedWidth = true;
 
     syntheticBold = false;
-    bool descriptionAllowsSyntheticBold = fontDescription.fontSynthesis() & FontSynthesisWeight;
+    bool descriptionAllowsSyntheticBold = fontDescription.hasAutoFontSynthesisWeight();
     if (descriptionAllowsSyntheticBold && isFontWeightBold(fontDescription.weight())) {
         // The FC_EMBOLDEN property instructs us to fake the boldness of the font.
         FcBool fontConfigEmbolden = FcFalse;
@@ -116,7 +116,7 @@ static void getFontPropertiesFromPattern(FcPattern* pattern, const FontDescripti
     // We requested an italic font, but Fontconfig gave us one that was neither oblique nor italic.
     syntheticOblique = false;
     int actualFontSlant;
-    bool descriptionAllowsSyntheticOblique = fontDescription.fontSynthesis() & FontSynthesisStyle;
+    bool descriptionAllowsSyntheticOblique = fontDescription.hasAutoFontSynthesisStyle();
     if (descriptionAllowsSyntheticOblique && fontDescription.italic()
         && FcPatternGetInteger(pattern, FC_SLANT, 0, &actualFontSlant) == FcResultMatch) {
         syntheticOblique = actualFontSlant == FC_SLANT_ROMAN;

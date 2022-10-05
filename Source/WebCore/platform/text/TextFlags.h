@@ -116,15 +116,10 @@ struct ExpansionBehavior {
 WTF::TextStream& operator<<(WTF::TextStream&, ExpansionBehavior::Behavior);
 WTF::TextStream& operator<<(WTF::TextStream&, ExpansionBehavior);
 
-enum FontSynthesisValues {
-    FontSynthesisNone = 0x0,
-    FontSynthesisWeight = 0x1,
-    FontSynthesisStyle = 0x2,
-    FontSynthesisSmallCaps = 0x4
+enum class FontSynthesisLonghandValue : bool {
+    None,
+    Auto
 };
-// FIXME: Use OptionSet.
-typedef unsigned FontSynthesis;
-const unsigned FontSynthesisWidth = 3;
 
 enum class FontVariantLigatures : uint8_t { Normal, Yes, No };
 enum class FontVariantPosition : uint8_t { Normal, Subscript, Superscript };
