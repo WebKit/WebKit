@@ -61,8 +61,11 @@
 #import <WebCore/CaptionUserPreferencesMediaAF.h>
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #import "WindowServerConnection.h"
+#endif
+
+#if PLATFORM(MAC)
 #import "TCCSoftLink.h"
 #endif
 
