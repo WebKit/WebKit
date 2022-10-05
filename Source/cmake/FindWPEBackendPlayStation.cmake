@@ -85,6 +85,7 @@ if (WPEBackendPlayStation_LIBRARY AND NOT TARGET WPE::PlayStation)
     add_library(WPE::PlayStation UNKNOWN IMPORTED GLOBAL)
     set_target_properties(WPE::PlayStation PROPERTIES
         IMPORTED_LOCATION "${WPEBackendPlayStation_LIBRARY}"
+        INTERFACE_COMPILE_OPTIONS "-DWPE_ENABLE_FS=1"
         INTERFACE_INCLUDE_DIRECTORIES "${WPEBackendPlayStation_INCLUDE_DIR}"
     )
 endif ()
