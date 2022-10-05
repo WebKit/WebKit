@@ -1,5 +1,5 @@
 You can't Escape when this textbox has focus:
 You can Escape even if this textbox has focus:
 
-FAIL Modal dialogs should close when the escape key is pressed. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: action"
+FAIL Modal dialogs should close when the escape key is pressed. promise_test: Unhandled rejection with value: object "Error: Unknown source type "key"."
 

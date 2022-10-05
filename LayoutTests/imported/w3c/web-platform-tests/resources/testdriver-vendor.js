@@ -145,6 +145,41 @@ function dispatchTouchActions(actions, options = { insertPauseAfterPointerUp: fa
     })();`, resolve));
 }
 
+async function dispatchWheelActions(actions)
+{
+    if (!window.eventSender)
+        throw new Error("window.eventSender is undefined.");
+
+    for (let action of actions) {
+        if (action.type == "pause") {
+            await pause(action.duration);
+            continue;
+        }
+
+        if (action.type != "scroll")
+            throw new Error(`Unrecognized wheel action type: ${action.type}`);
+
+        let { x, y, origin, deltaX, deltaY } = action;
+        if (origin instanceof Element) {
+            const bounds = origin.getBoundingClientRect();
+            logDebug(() => `${origin.id} [${bounds.left}, ${bounds.top}, ${bounds.width}, ${bounds.height}]`);
+            x += bounds.left + 1;
+            y += bounds.top + 1;
+        }
+        eventSender.monitorWheelEvents();
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-deltaX, -deltaY, 'began', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-deltaX, -deltaY, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(-deltaX, -deltaY, 'changed', 'none');
+        eventSender.mouseScrollByWithWheelAndMomentumPhases(0, 0, 'ended', 'none');
+        await new Promise(resolve => {
+            eventSender.callAfterScrollingCompletes(() => {
+                requestAnimationFrame(resolve);
+            });
+        });
+    }
+}
+
 if (window.test_driver_internal === undefined)
     window.test_driver_internal = { };
 
@@ -248,12 +283,13 @@ window.test_driver_internal.click = function (element, coords)
     return Promise.resolve();
 }
 
-window.test_driver_internal.action_sequence = function(sources)
+window.test_driver_internal.action_sequence = async function(sources)
 {
-    // https://w3c.github.io/webdriver/#processing-actions    
+    // https://w3c.github.io/webdriver/#processing-actions
 
     let noneSource;
     let pointerSource;
+    let wheelSource;
     for (let source of sources) {
         switch (source.type) {
         case "none":
@@ -262,17 +298,13 @@ window.test_driver_internal.action_sequence = function(sources)
         case "pointer":
             pointerSource = source;
             break;
+        case "wheel":
+            wheelSource = source;
+            break;
         default:
-            return Promise.reject(new Error(`Unknown source type "${action.type}".`));
+            throw new Error(`Unknown source type "${source.type}".`);
         }
     }
-
-    if (!pointerSource)
-        return Promise.reject(new Error(`Unknown pointer type pointer type "${action.parameters.pointerType}".`));
-
-    const pointerType = pointerSource.parameters.pointerType;
-    if (pointerType !== "mouse" && pointerType !== "touch" && pointerType !== "pen")
-        return Promise.reject(new Error(`Unknown pointer type "${pointerType}".`));
 
     // If we have a "none" source, let's inject any pause with non-zero durations into the pointer source
     // after the matching action in the pointer source.
@@ -280,20 +312,32 @@ window.test_driver_internal.action_sequence = function(sources)
         let injectedActions = 0;
         noneSource.actions.forEach((action, index) => {
             if (action.duration > 0) {
-                pointerSource.actions.splice(index + injectedActions + 1, 0, action);
+                if (pointerSource)
+                    pointerSource.actions.splice(index + injectedActions + 1, 0, action);
+                if (wheelSource)
+                    wheelSource.actions.splice(index + injectedActions + 1, 0, action);
                 injectedActions++;
             }
         });
     }
 
-    logDebug(() => JSON.stringify(pointerSource));
+    if (wheelSource)
+        await dispatchWheelActions(wheelSource.actions);
 
-    if (pointerType === "touch")
-        return dispatchTouchActions(pointerSource.actions);
-    if (testRunner.isIOSFamily && "createTouch" in document)
-        return dispatchTouchActions(pointerSource.actions, { insertPauseAfterPointerUp: true });
-    if (pointerType === "mouse" || pointerType === "pen")
-        return dispatchMouseActions(pointerSource.actions, pointerType);
+    if (pointerSource) {
+        const pointerType = pointerSource.parameters.pointerType;
+        if (pointerType !== "mouse" && pointerType !== "touch" && pointerType !== "pen")
+            throw new Error(`Unknown pointer type "${pointerType}".`);
+
+        logDebug(() => JSON.stringify(pointerSource));
+
+        if (pointerType === "touch")
+            await dispatchTouchActions(pointerSource.actions);
+        else if (testRunner.isIOSFamily && "createTouch" in document)
+            await dispatchTouchActions(pointerSource.actions, { insertPauseAfterPointerUp: true });
+        else if (pointerType === "mouse" || pointerType === "pen")
+            await dispatchMouseActions(pointerSource.actions, pointerType);
+    }
 };
 
 window.test_driver_internal.set_permission = function(permission_params, context=null)

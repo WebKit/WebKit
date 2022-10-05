@@ -6035,6 +6035,15 @@ imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of
 
 webkit.org/b/233267 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/iframe_sandbox_window_open_download_block_downloads.tentative.html [ Pass Failure ]
 
+# These are timeouts after adding wheel actions in WPT vendor JS: webkit.org/b/243272
+imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/ [ Skip ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-label-element/proxy-modifier-click-to-associated-element.tentative.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-scrolling.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-basic.html [ Skip ]
+imported/w3c/web-platform-tests/uievents/order-of-events/focus-events/focus-management-expectations.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-keyboard.html [ Skip ]
+
 # Flaky because of network ordering
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/charset.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/css-module/cors-crossorigin-requests.html [ Pass Failure ]
