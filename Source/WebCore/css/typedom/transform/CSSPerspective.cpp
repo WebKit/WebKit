@@ -143,8 +143,17 @@ void CSSPerspective::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
 {
-    // FIXME: Implement.
-    return DOMMatrix::fromMatrix(DOMMatrixInit { });
+    if (!std::holds_alternative<RefPtr<CSSNumericValue>>(m_length))
+        return { DOMMatrix::create({ }, DOMMatrixReadOnly::Is2D::Yes) };
+
+    auto length = std::get<RefPtr<CSSNumericValue>>(m_length);
+    if (!is<CSSUnitValue>(length))
+        return Exception { TypeError };
+
+    TransformationMatrix matrix { };
+    matrix.applyPerspective(downcast<CSSUnitValue>(*length).value());
+
+    return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::No) };
 }
 
 } // namespace WebCore
