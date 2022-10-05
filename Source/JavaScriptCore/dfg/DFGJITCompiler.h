@@ -239,7 +239,7 @@ public:
         m_privateBrandAccesses.append(InlineCacheWrapper<JITPrivateBrandAccessGenerator>(gen, slowPath));
     }
 
-    void addJSCall(Label slowPathStart, Label doneLocation, OptimizingCallLinkInfo* info)
+    void addJSCall(Label slowPathStart, Label doneLocation, CompileTimeCallLinkInfo info)
     {
         m_jsCalls.append(JSCallRecord(slowPathStart, doneLocation, info));
     }
@@ -376,6 +376,7 @@ public:
     }
 
     std::tuple<CompileTimeStructureStubInfo, LinkableConstant> addStructureStubInfo();
+    std::tuple<CompileTimeCallLinkInfo, LinkableConstant> addCallLinkInfo(CodeOrigin);
     LinkerIR::Constant addToConstantPool(LinkerIR::Type, void*);
 
 private:
@@ -413,7 +414,7 @@ private:
 
 
     struct JSCallRecord {
-        JSCallRecord(Label slowPathStart, Label doneLocation, OptimizingCallLinkInfo* info)
+        JSCallRecord(Label slowPathStart, Label doneLocation, CompileTimeCallLinkInfo info)
             : slowPathStart(slowPathStart)
             , doneLocation(doneLocation)
             , info(info)
@@ -422,7 +423,7 @@ private:
         
         Label slowPathStart;
         Label doneLocation;
-        OptimizingCallLinkInfo* info;
+        CompileTimeCallLinkInfo info;
     };
     
     struct JSDirectCallRecord {
@@ -458,6 +459,7 @@ private:
     Vector<LinkerIR::Value> m_constantPool;
     HashMap<LinkerIR::Value, LinkerIR::Constant, LinkerIR::ValueHash, LinkerIR::ValueTraits> m_constantPoolMap;
     SegmentedVector<DFG::UnlinkedStructureStubInfo> m_unlinkedStubInfos;
+    SegmentedVector<DFG::UnlinkedCallLinkInfo> m_unlinkedCallLinkInfos;
     
     struct ExceptionHandlingOSRExitInfo {
         OSRExitCompilationInfo& exitInfo;

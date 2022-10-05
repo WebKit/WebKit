@@ -136,7 +136,7 @@ void ProxyObjectAccessCase::emit(AccessGenerationState& state, MacroAssembler::J
     jit.move(CCallHelpers::TrustedImmPtr(globalObject->linkTimeConstant(LinkTimeConstant::performProxyObjectGet)), scratchGPR);
     jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
-    auto slowCase = callLinkInfo->emitFastPath(jit, scratchGPR, scratchGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2);
+    auto slowCase = CallLinkInfo::emitFastPath(jit, callLinkInfo, scratchGPR, scratchGPR == GPRInfo::regT2 ? GPRInfo::regT0 : GPRInfo::regT2);
     auto doneLocation = jit.label();
 
     jit.setupResults(valueRegs);

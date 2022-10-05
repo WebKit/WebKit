@@ -28,6 +28,7 @@
 
 #include "CCallHelpers.h"
 #include "CallFrameShuffleData.h"
+#include "DFGJITCode.h"
 #include "DisallowMacroScratchRegisterUsage.h"
 #include "FunctionCodeBlock.h"
 #include "JSCellInlines.h"
@@ -443,6 +444,31 @@ void CallLinkInfo::emitDataICSlowPath(VM&, CCallHelpers& jit, GPRReg callLinkInf
     jit.call(CCallHelpers::Address(GPRInfo::regT2, offsetOfSlowPathCallDestination()), JSEntryPtrTag);
 }
 
+MacroAssembler::JumpList CallLinkInfo::emitFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo, GPRReg calleeGPR, GPRReg callLinkInfoGPR)
+{
+    if (std::holds_alternative<OptimizingCallLinkInfo*>(callLinkInfo))
+        return std::get<OptimizingCallLinkInfo*>(callLinkInfo)->emitFastPath(jit, calleeGPR, callLinkInfoGPR);
+
+    return CallLinkInfo::emitDataICFastPath(jit, calleeGPR, callLinkInfoGPR);
+}
+
+MacroAssembler::JumpList CallLinkInfo::emitTailCallFastPath(CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo, GPRReg calleeGPR, GPRReg callLinkInfoGPR, ScopedLambda<void()>&& prepareForTailCall)
+{
+    if (std::holds_alternative<OptimizingCallLinkInfo*>(callLinkInfo))
+        return std::get<OptimizingCallLinkInfo*>(callLinkInfo)->emitTailCallFastPath(jit, calleeGPR, callLinkInfoGPR, WTFMove(prepareForTailCall));
+
+    return CallLinkInfo::emitTailCallDataICFastPath(jit, calleeGPR, callLinkInfoGPR, WTFMove(prepareForTailCall));
+}
+
+void CallLinkInfo::emitSlowPath(VM& vm, CCallHelpers& jit, CompileTimeCallLinkInfo callLinkInfo, GPRReg callLinkInfoGPR)
+{
+    if (std::holds_alternative<OptimizingCallLinkInfo*>(callLinkInfo)) {
+        std::get<OptimizingCallLinkInfo*>(callLinkInfo)->emitSlowPath(vm, jit);
+        return;
+    }
+    emitDataICSlowPath(vm, jit, callLinkInfoGPR);
+}
+
 CCallHelpers::JumpList OptimizingCallLinkInfo::emitFastPath(CCallHelpers& jit, GPRReg calleeGPR, GPRReg callLinkInfoGPR)
 {
     RELEASE_ASSERT(!isTailCall());
@@ -565,6 +591,20 @@ void OptimizingCallLinkInfo::setDirectCallTarget(CodeBlock* codeBlock, CodeLocat
     MacroAssembler::repatchNearCall(m_callLocation, target);
     MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, codeBlock);
 }
+
+#if ENABLE(DFG_JIT)
+void OptimizingCallLinkInfo::initializeFromDFGUnlinkedCallLinkInfo(VM& vm, const DFG::UnlinkedCallLinkInfo& unlinkedCallLinkInfo)
+{
+    m_doneLocation = unlinkedCallLinkInfo.doneLocation;
+    setSlowPathCallDestination(vm.getCTILinkCall().code());
+    m_codeOrigin = unlinkedCallLinkInfo.codeOrigin;
+    m_callType = unlinkedCallLinkInfo.callType;
+    m_calleeGPR = unlinkedCallLinkInfo.calleeGPR;
+    m_callLinkInfoGPR = unlinkedCallLinkInfo.callLinkInfoGPR;
+    if (unlinkedCallLinkInfo.m_frameShuffleData)
+        m_frameShuffleData = makeUnique<CallFrameShuffleData>(*unlinkedCallLinkInfo.m_frameShuffleData);
+}
+#endif
 
 #endif
 

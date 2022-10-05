@@ -319,7 +319,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(VM& vm
 
     auto* callLinkInfo = callLinkInfos.add(CodeOrigin(), CallLinkInfo::UseDataIC::No);
     callLinkInfo->setUpCall(CallLinkInfo::Call, importJSCellGPRReg);
-    auto slowPath = callLinkInfo->emitFastPath(jit, importJSCellGPRReg, InvalidGPRReg);
+    auto slowPath = CallLinkInfo::emitFastPath(jit, callLinkInfo, importJSCellGPRReg, InvalidGPRReg);
 
     JIT::Jump done = jit.jump();
     slowPath.link(&jit);

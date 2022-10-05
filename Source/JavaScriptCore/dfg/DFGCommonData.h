@@ -115,11 +115,6 @@ public:
     
     void clearWatchpoints();
 
-    OptimizingCallLinkInfo* addCallLinkInfo(CodeOrigin codeOrigin, CallLinkInfo::UseDataIC useDataIC = CallLinkInfo::UseDataIC::No)
-    {
-        return m_callLinkInfos.add(codeOrigin, useDataIC);
-    }
-
     RefPtr<InlineCallFrameSet> inlineCallFrames;
     Ref<CodeOriginPool> codeOrigins;
     

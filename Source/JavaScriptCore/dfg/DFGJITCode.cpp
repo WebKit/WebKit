@@ -35,9 +35,10 @@
 
 namespace JSC { namespace DFG {
 
-JITData::JITData(const JITCode& jitCode, ExitVector&& exits)
+JITData::JITData(VM& vm, const JITCode& jitCode, ExitVector&& exits)
     : Base(jitCode.m_linkerIR.size())
     , m_stubInfos(jitCode.m_unlinkedStubInfos.size())
+    , m_callLinkInfos(jitCode.m_unlinkedCallLinkInfos.size())
     , m_exits(WTFMove(exits))
 {
     for (unsigned i = 0; i < jitCode.m_linkerIR.size(); ++i) {
@@ -49,6 +50,14 @@ JITData::JITData(const JITCode& jitCode, ExitVector&& exits)
             StructureStubInfo& stubInfo = m_stubInfos[index];
             stubInfo.initializeFromDFGUnlinkedStructureStubInfo(unlinkedStubInfo);
             at(i) = &stubInfo;
+            break;
+        }
+        case LinkerIR::Type::CallLinkInfo: {
+            unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
+            const UnlinkedCallLinkInfo& unlinkedCallLinkInfo = jitCode.m_unlinkedCallLinkInfos[index];
+            OptimizingCallLinkInfo& callLinkInfo = m_callLinkInfos[index];
+            callLinkInfo.initializeFromDFGUnlinkedCallLinkInfo(vm, unlinkedCallLinkInfo);
+            at(i) = &callLinkInfo;
             break;
         }
         default:
