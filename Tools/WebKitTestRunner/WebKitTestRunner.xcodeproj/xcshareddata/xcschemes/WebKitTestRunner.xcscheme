@@ -36,8 +36,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       disableMainThreadChecker = "YES"
       launchStyle = "0"
-      useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "/Volumes/Users/jer/Projects/WebKit.git/OpenSource/LayoutTests"
+      useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -56,10 +55,6 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "--no-timeout"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "media/mediacapabilities/mediacapabilities-allowed-containers.html"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
