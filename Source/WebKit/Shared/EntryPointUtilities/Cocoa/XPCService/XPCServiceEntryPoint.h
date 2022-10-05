@@ -87,7 +87,7 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&&);
 #endif
 
 template<typename XPCServiceType, typename XPCServiceInitializerDelegateType>
-void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage, xpc_object_t priorityBoostMessage)
+void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
 {
     if (initializerMessage) {
         if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))
@@ -124,8 +124,6 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
         exit(EXIT_FAILURE);
 
     AuxiliaryProcessInitializationParameters parameters;
-    if (priorityBoostMessage)
-        parameters.priorityBoostMessage = priorityBoostMessage;
 
     if (!delegate.getConnectionIdentifier(parameters.connectionIdentifier))
         exit(EXIT_FAILURE);
@@ -164,6 +162,6 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
 int XPCServiceMain(int, const char**);
 
-void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage);
+void XPCServiceExit();
 
 } // namespace WebKit

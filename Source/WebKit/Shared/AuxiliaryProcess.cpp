@@ -82,10 +82,6 @@ void AuxiliaryProcess::initialize(const AuxiliaryProcessInitializationParameters
 
     platformInitialize(parameters);
 
-#if PLATFORM(COCOA)
-    m_priorityBoostMessage = parameters.priorityBoostMessage;
-#endif
-
     SandboxInitializationParameters sandboxParameters;
     initializeSandbox(parameters, sandboxParameters);
 

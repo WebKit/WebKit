@@ -179,11 +179,8 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 }
 #endif
 
-void XPCServiceExit(OSObjectPtr<xpc_object_t>&& priorityBoostMessage)
+void XPCServiceExit()
 {
-    // Make sure to destroy the priority boost message to avoid leaking a transaction.
-    priorityBoostMessage = nullptr;
-
 #if !USE(RUNNINGBOARD)
     setOSTransaction(nullptr);
 #endif
