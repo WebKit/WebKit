@@ -90,7 +90,7 @@ enum {
         [NSApp setAutomaticCustomizeTouchBarMenuItemEnabled:YES];
 }
 
-static WKWebsiteDataStore *persistentDataStore()
+static WKWebsiteDataStore *persistentDataStore(void)
 {
     static WKWebsiteDataStore *dataStore;
 
