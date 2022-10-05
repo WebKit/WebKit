@@ -797,8 +797,10 @@
    },
    {
       "emails" : [
-         "annevk@annevk.nl"
+         "annevk@annevk.nl",
+         "annevk@apple.com"
       ],
+      "github" : "annevk",
       "name" : "Anne van Kesteren",
       "nicks" : [
          "annevk"
