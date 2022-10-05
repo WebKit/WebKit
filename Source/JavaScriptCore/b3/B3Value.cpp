@@ -62,7 +62,7 @@ String Value::generateCompilerConstructionSite()
     int frames = framesToShow + framesToSkip;
 
     WTFGetBacktrace(samples, &frames);
-    StackTrace stackTrace(samples + framesToSkip, frames - framesToSkip, "");
+    StackTraceSymbolResolver stackTrace({ samples + framesToSkip, static_cast<size_t>(frames - framesToSkip) });
 
     s.print("[");
     bool firstPrinted = false;

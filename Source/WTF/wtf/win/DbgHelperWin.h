@@ -34,7 +34,7 @@ namespace WTF {
 
 namespace DbgHelper {
 
-bool SymFromAddress(HANDLE hProc, DWORD64 address, DWORD64* displacement, SYMBOL_INFO*);
+WTF_EXPORT_PRIVATE bool SymFromAddress(HANDLE hProc, DWORD64 address, DWORD64* displacement, SYMBOL_INFO*);
 
 };
 

@@ -27,6 +27,7 @@
 #include "config.h"
 #include <wtf/StackTrace.h>
 
+#include <type_traits>
 #include <wtf/Assertions.h>
 #include <wtf/PrintStream.h>
 
@@ -44,35 +45,29 @@ void WTFGetBacktrace(void** stack, int* size)
 
 namespace WTF {
 
-ALWAYS_INLINE size_t StackTrace::instanceSize(int capacity)
+std::unique_ptr<StackTrace> StackTrace::captureStackTrace(size_t maxFrames, size_t framesToSkip)
 {
-    ASSERT(capacity >= 1);
-    return sizeof(StackTrace) + (capacity - 1) * sizeof(void*);
-}
+    static_assert(sizeof(StackTrace) == sizeof(void*) * 3);
+    // We overwrite the memory of the two first skipped frames, m_stack[0] will hold the third one.
+    static_assert(offsetof(StackTrace, m_stack) == sizeof(void*) * 2);
 
-std::unique_ptr<StackTrace> StackTrace::captureStackTrace(int maxFrames, int framesToSkip)
-{
-    maxFrames = std::max(1, maxFrames);
-    size_t sizeToAllocate = instanceSize(maxFrames);
-    std::unique_ptr<StackTrace> trace(new (NotNull, fastMalloc(sizeToAllocate)) StackTrace());
-
+    maxFrames = std::max<size_t>(1, maxFrames);
     // Skip 2 additional frames i.e. StackTrace::captureStackTrace and WTFGetBacktrace.
     framesToSkip += 2;
-    int numberOfFrames = maxFrames + framesToSkip;
-
-    WTFGetBacktrace(&trace->m_skippedFrame0, &numberOfFrames);
-    if (numberOfFrames) {
-        RELEASE_ASSERT(numberOfFrames >= framesToSkip);
-        trace->m_size = numberOfFrames - framesToSkip;
-    } else
-        trace->m_size = 0;
-
-    trace->m_capacity = maxFrames;
-
-    return trace;
+    size_t capacity = maxFrames + framesToSkip;
+    void** storage = static_cast<void**>(fastMalloc(capacity * sizeof(void*)));
+    size_t size = 0;
+    size_t initialFrame = 0;
+    int capturedFrames = static_cast<int>(capacity);
+    WTFGetBacktrace(storage, &capturedFrames);
+    if (static_cast<size_t>(capturedFrames) > framesToSkip) {
+        size = static_cast<size_t>(capturedFrames) - framesToSkip;
+        initialFrame = framesToSkip - 2; 
+    }
+    return std::unique_ptr<StackTrace> { new (NotNull, storage) StackTrace(size, initialFrame) };
 }
 
-auto StackTrace::demangle(void* pc) -> std::optional<DemangleEntry>
+auto StackTraceSymbolResolver::demangle(void* pc) -> std::optional<DemangleEntry>
 {
 #if HAVE(DLADDR)
     const char* mangledName = nullptr;
@@ -93,12 +88,10 @@ auto StackTrace::demangle(void* pc) -> std::optional<DemangleEntry>
     return std::nullopt;
 }
 
-void StackTrace::dump(PrintStream& out, const char* indentString) const
+void StackTracePrinter::dump(PrintStream& out) const
 {
-    if (!indentString)
-        indentString = "";
-    forEach([&](int frameNumber, void* stackFrame, const char* name) {
-        out.printf("%s%s%-3d %p %s\n", m_prefix ? m_prefix : "", indentString, frameNumber, stackFrame, name);
+    StackTraceSymbolResolver { m_stack }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
+        out.printf("%s%-3d %p %s\n", m_prefix ? m_prefix : "", frameNumber, stackFrame, name);
     });
 }
 

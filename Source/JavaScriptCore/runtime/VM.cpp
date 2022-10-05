@@ -1336,12 +1336,10 @@ void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionE
 
         if (Options::dumpSimulatedThrows()) {
             out.println("The simulated exception was thrown at:");
-            m_nativeStackTraceOfLastSimulatedThrow->dump(out, "    ");
-            out.println();
+            out.println(StackTracePrinter { *m_nativeStackTraceOfLastSimulatedThrow, "    " });
         }
         out.println("Unchecked exception detected at:");
-        currentTrace->dump(out, "    ");
-        out.println();
+        out.println(StackTracePrinter { *currentTrace, "    " });
 
         dataLog(out.toCString());
         RELEASE_ASSERT(!m_needExceptionCheck);

@@ -163,7 +163,7 @@ void JSGlobalObjectInspectorController::appendAPIBacktrace(ScriptCallStack& call
     void** stack = samples + framesToSkip;
     int size = frames - framesToSkip;
     for (int i = 0; i < size; ++i) {
-        auto demangled = StackTrace::demangle(stack[i]);
+        auto demangled = StackTraceSymbolResolver::demangle(stack[i]);
         if (demangled)
             callStack.append(ScriptCallFrame(String::fromLatin1(demangled->demangledName() ? demangled->demangledName() : demangled->mangledName()), "[native code]"_s, noSourceID, 0, 0));
         else
