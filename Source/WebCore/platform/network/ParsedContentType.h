@@ -61,7 +61,7 @@ public:
 private:
     ParsedContentType(const String&);
     ParsedContentType(const ParsedContentType&) = delete;
-    ParsedContentType& operator=(ParsedContentType const&) = delete;
+    ParsedContentType& operator=(const ParsedContentType&) = delete;
     bool parseContentType(Mode);
     void setContentType(String&&, Mode);
     void setContentTypeParameter(const String&, const String&, Mode);

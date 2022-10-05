@@ -162,7 +162,6 @@ public:
 
     static void applyValueColor(BuilderState&, CSSValue&);
 
-
 private:
     static void resetEffectiveZoom(BuilderState&);
 
@@ -233,16 +232,19 @@ inline void BuilderCustom::applyValueZoom(BuilderState& builderState, CSSValue& 
             builderState.setZoom(number);
     }
 }
+
 inline Length BuilderCustom::mmLength(double mm)
 {
     Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(mm, CSSUnitType::CSS_MM));
     return value.get().computeLength<Length>({ });
 }
+
 inline Length BuilderCustom::inchLength(double inch)
 {
     Ref<CSSPrimitiveValue> value(CSSPrimitiveValue::create(inch, CSSUnitType::CSS_IN));
     return value.get().computeLength<Length>({ });
 }
+
 bool BuilderCustom::getPageSizeFromName(CSSPrimitiveValue* pageSizeName, CSSPrimitiveValue* pageOrientation, Length& width, Length& height)
 {
     static NeverDestroyed<Length> a5Width(mmLength(148));
@@ -369,9 +371,13 @@ inline void BuilderCustom::applyValueImageResolution(BuilderState& builderState,
 
 #endif // ENABLE(CSS_IMAGE_RESOLUTION)
 
-inline void BuilderCustom::applyInheritSize(BuilderState&) { }
+inline void BuilderCustom::applyInheritSize(BuilderState&)
+{
+}
 
-inline void BuilderCustom::applyInitialSize(BuilderState&) { }
+inline void BuilderCustom::applyInitialSize(BuilderState&)
+{
+}
 
 inline void BuilderCustom::applyValueSize(BuilderState& builderState, CSSValue& value)
 {
@@ -488,7 +494,7 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
 
 enum BorderImageType { BorderImage, WebkitMaskBoxImage };
 enum BorderImageModifierType { Outset, Repeat, Slice, Width };
-template <BorderImageType type, BorderImageModifierType modifier>
+template<BorderImageType type, BorderImageModifierType modifier>
 class ApplyPropertyBorderImageModifier {
 public:
     static void applyInheritValue(BuilderState& builderState)
@@ -1385,7 +1391,9 @@ inline void BuilderCustom::applyValueCounter(BuilderState& builderState, CSSValu
     }
 }
 
-inline void BuilderCustom::applyInitialCounterIncrement(BuilderState&) { }
+inline void BuilderCustom::applyInitialCounterIncrement(BuilderState&)
+{
+}
 
 inline void BuilderCustom::applyInheritCounterIncrement(BuilderState& builderState)
 {
@@ -1397,7 +1405,9 @@ inline void BuilderCustom::applyValueCounterIncrement(BuilderState& builderState
     applyValueCounter<Increment>(builderState, value);
 }
 
-inline void BuilderCustom::applyInitialCounterReset(BuilderState&) { }
+inline void BuilderCustom::applyInitialCounterReset(BuilderState&)
+{
+}
 
 inline void BuilderCustom::applyInheritCounterReset(BuilderState& builderState)
 {
@@ -1478,7 +1488,6 @@ inline void BuilderCustom::applyInheritFill(BuilderState& builderState)
     auto& svgStyle = builderState.style().accessSVGStyle();
     auto& svgParentStyle = builderState.parentStyle().svgStyle();
     svgStyle.setFillPaint(svgParentStyle.fillPaintType(), svgParentStyle.fillPaintColor(), svgParentStyle.fillPaintUri(), builderState.applyPropertyToRegularStyle(), builderState.applyPropertyToVisitedLinkStyle());
-
 }
 
 inline void BuilderCustom::applyValueFill(BuilderState& builderState, CSSValue& value)
