@@ -3227,6 +3227,8 @@ webkit.org/b/184802 http/tests/security/contentTypeOptions/nosniff-importScript-
 
 webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pass Failure ]
 
+webkit.org/b/246005 workers/many-nested-workers-no-crash.html [ Skip ]
+
 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-large.html [ Pass Failure ]
 webkit.org/b/186574 media/video-buffering-allowed.html [ Pass Failure ]
 

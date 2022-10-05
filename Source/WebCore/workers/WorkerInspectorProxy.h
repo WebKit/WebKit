@@ -41,7 +41,7 @@ class WorkerThread;
 
 enum class WorkerThreadStartMode;
 
-class WorkerInspectorProxy : public RefCounted<WorkerInspectorProxy>, public CanMakeWeakPtr<WorkerInspectorProxy> {
+class WorkerInspectorProxy : public RefCounted<WorkerInspectorProxy>, public CanMakeWeakPtr<WorkerInspectorProxy, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_NONCOPYABLE(WorkerInspectorProxy);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -59,7 +59,7 @@ public:
         virtual void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, String&&) = 0;
     };
 
-    static WeakHashSet<WorkerInspectorProxy>& allWorkerInspectorProxies();
+    static WeakHashSet<WorkerInspectorProxy> allWorkerInspectorProxiesCopy();
 
     const URL& url() const { return m_url; }
     const String& name() const { return m_name; }
