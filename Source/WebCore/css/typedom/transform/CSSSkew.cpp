@@ -102,8 +102,19 @@ void CSSSkew::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSSkew::toMatrix()
 {
-    // FIXME: Implement.
-    return DOMMatrix::fromMatrix(DOMMatrixInit { });
+    if (!is<CSSUnitValue>(m_ax) || !is<CSSUnitValue>(m_ay))
+        return Exception { TypeError };
+
+    auto x = downcast<CSSUnitValue>(m_ax.get()).convertTo(CSSUnitType::CSS_DEG);
+    auto y = downcast<CSSUnitValue>(m_ay.get()).convertTo(CSSUnitType::CSS_DEG);
+
+    if (!x || !y)
+        return Exception { TypeError };
+
+    TransformationMatrix matrix { };
+    matrix.skew(x->value(), y->value());
+
+    return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::Yes) };
 }
 
 } // namespace WebCore
