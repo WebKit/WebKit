@@ -7,6 +7,7 @@
 // DisplayMtl.mm: Metal implementation of DisplayImpl
 
 #include "libANGLE/renderer/metal/DisplayMtl.h"
+#include <os/log.h>
 #include <sys/param.h>
 
 #include "common/apple_platform_utils.h"
@@ -1162,7 +1163,7 @@ void DisplayMtl::initializeFeatures()
     static bool once = true;
     if (once)
     {
-        fprintf(stderr, "Shader compiler output: %s\n",
+        os_log_with_type(OS_LOG_DEFAULT, OS_LOG_TYPE_DEFAULT, "ANGLE: Shader compiler output: %s\n",
                 mFeatures.directMetalGeneration.enabled ? "Metal" : "SPIR-V");
         once = false;
     }
