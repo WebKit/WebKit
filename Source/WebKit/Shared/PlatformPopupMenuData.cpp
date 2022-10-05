@@ -45,11 +45,11 @@ void PlatformPopupMenuData::encode(IPC::Encoder& encoder) const
     encoder << m_popupWidth;
     encoder << m_itemHeight;
 
-    ShareableBitmap::Handle notSelectedBackingStoreHandle;
+    ShareableBitmapHandle notSelectedBackingStoreHandle;
     m_notSelectedBackingStore->createHandle(notSelectedBackingStoreHandle);
     encoder << notSelectedBackingStoreHandle;
 
-    ShareableBitmap::Handle selectedBackingStoreHandle;
+    ShareableBitmapHandle selectedBackingStoreHandle;
     m_selectedBackingStore->createHandle(selectedBackingStoreHandle);
     encoder << selectedBackingStoreHandle;
 #else
@@ -82,12 +82,12 @@ bool PlatformPopupMenuData::decode(IPC::Decoder& decoder, PlatformPopupMenuData&
     if (!decoder.decode(data.m_itemHeight))
         return false;
 
-    ShareableBitmap::Handle notSelectedBackingStoreHandle;
+    ShareableBitmapHandle notSelectedBackingStoreHandle;
     if (!decoder.decode(notSelectedBackingStoreHandle))
         return false;
     data.m_notSelectedBackingStore = ShareableBitmap::create(notSelectedBackingStoreHandle);
 
-    ShareableBitmap::Handle selectedBackingStoreHandle;
+    ShareableBitmapHandle selectedBackingStoreHandle;
     if (!decoder.decode(selectedBackingStoreHandle))
         return false;
     data.m_selectedBackingStore = ShareableBitmap::create(selectedBackingStoreHandle);

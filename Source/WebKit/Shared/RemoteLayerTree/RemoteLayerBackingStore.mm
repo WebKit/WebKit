@@ -543,7 +543,7 @@ void RemoteLayerBackingStore::applyBackingStoreToLayer(CALayer *layer, LayerCont
     // m_bufferHandle can be unset here if IPC with the GPU process timed out.
     if (m_bufferHandle) {
         WTF::switchOn(*m_bufferHandle,
-            [&] (ShareableBitmap::Handle& handle) {
+            [&] (ShareableBitmapHandle& handle) {
                 ASSERT(m_parameters.type == Type::Bitmap);
                 if (auto bitmap = ShareableBitmap::create(handle))
                     contents = bridge_id_cast(bitmap->makeCGImageCopy());

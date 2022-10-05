@@ -37,7 +37,6 @@
 #endif
 #include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
-#include <Namespace/OtherClass.h>
 #include <Namespace/ReturnRefClass.h>
 #include <WebCore/InheritsFrom.h>
 

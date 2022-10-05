@@ -399,6 +399,7 @@ namespace WebCore {
     macro(UndoItem) \
     macro(UndoManager) \
     macro(VideoDecoder) \
+    macro(VideoEncoder) \
     macro(VideoFrame) \
     macro(VisualViewport) \
     macro(WakeLock) \

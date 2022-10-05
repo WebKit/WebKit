@@ -3325,7 +3325,9 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new CounterWrapper(CSSPropertyCounterIncrement),
         new CounterWrapper(CSSPropertyCounterReset),
         new DiscreteSVGPropertyWrapper<WindRule>(CSSPropertyFillRule, &SVGRenderStyle::fillRule, &SVGRenderStyle::setFillRule),
-        new DiscreteFontDescriptionTypedWrapper<FontSynthesis>(CSSPropertyFontSynthesis, &FontCascadeDescription::fontSynthesis, &FontCascadeDescription::setFontSynthesis),
+        new DiscreteFontDescriptionTypedWrapper<FontSynthesisLonghandValue>(CSSPropertyFontSynthesisWeight, &FontCascadeDescription::fontSynthesisWeight, &FontCascadeDescription::setFontSynthesisWeight),
+        new DiscreteFontDescriptionTypedWrapper<FontSynthesisLonghandValue>(CSSPropertyFontSynthesisStyle, &FontCascadeDescription::fontSynthesisStyle, &FontCascadeDescription::setFontSynthesisStyle),
+        new DiscreteFontDescriptionTypedWrapper<FontSynthesisLonghandValue>(CSSPropertyFontSynthesisSmallCaps, &FontCascadeDescription::fontSynthesisSmallCaps, &FontCascadeDescription::setFontSynthesisSmallCaps),
         new DiscreteFontDescriptionTypedWrapper<FontVariantAlternates>(CSSPropertyFontVariantAlternates, &FontCascadeDescription::variantAlternates, &FontCascadeDescription::setVariantAlternates),
         new FontVariantEastAsianWrapper,
         new FontVariantLigaturesWrapper,
@@ -3378,7 +3380,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyPerspectiveOrigin,
         CSSPropertyOffset,
         CSSPropertyTextEmphasis,
-        CSSPropertyFontVariant
+        CSSPropertyFontVariant,
+        CSSPropertyFontSynthesis,
     };
     const unsigned animatableShorthandPropertiesCount = WTF_ARRAY_LENGTH(animatableShorthandProperties);
 

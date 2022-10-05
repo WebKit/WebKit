@@ -702,6 +702,8 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/ResidentKeyRequirement.idl
     Modules/webauthn/UserVerificationRequirement.idl
 
+    Modules/webcodecs/BitrateMode.idl
+    Modules/webcodecs/LatencyMode.idl
     Modules/webcodecs/HardwareAcceleration.idl
     Modules/webcodecs/PlaneLayout.idl
     Modules/webcodecs/VideoColorPrimaries.idl
@@ -712,11 +714,17 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webcodecs/VideoTransferCharacteristics.idl
     Modules/webcodecs/WebCodecsCodecState.idl
     Modules/webcodecs/WebCodecsEncodedVideoChunk.idl
+    Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl
+    Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl
     Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl
     Modules/webcodecs/WebCodecsErrorCallback.idl
     Modules/webcodecs/WebCodecsVideoDecoder.idl
     Modules/webcodecs/WebCodecsVideoDecoderConfig.idl
     Modules/webcodecs/WebCodecsVideoDecoderSupport.idl
+    Modules/webcodecs/WebCodecsVideoEncoder.idl
+    Modules/webcodecs/WebCodecsVideoEncoderConfig.idl
+    Modules/webcodecs/WebCodecsVideoEncoderEncodeOptions.idl
+    Modules/webcodecs/WebCodecsVideoEncoderSupport.idl
     Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl
     Modules/webcodecs/WebCodecsVideoFrame.idl
 

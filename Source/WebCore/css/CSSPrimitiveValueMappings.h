@@ -5518,6 +5518,38 @@ template<> inline CSSPrimitiveValue::operator FontOpticalSizing() const
     return FontOpticalSizing::Enabled;
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontSynthesisLonghandValue value)
+    : CSSValue(PrimitiveClass)
+{
+    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
+    switch (value) {
+    case FontSynthesisLonghandValue::Auto:
+        m_value.valueID = CSSValueAuto;
+        break;
+    case FontSynthesisLonghandValue::None:
+        m_value.valueID = CSSValueNone;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator FontSynthesisLonghandValue() const
+{
+    ASSERT(isValueID());
+    switch (m_value.valueID) {
+    case CSSValueAuto:
+        return FontSynthesisLonghandValue::Auto;
+    case CSSValueNone:
+        return FontSynthesisLonghandValue::None;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return FontSynthesisLonghandValue::Auto;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontLoadingBehavior behavior)
     : CSSValue(PrimitiveClass)
 {

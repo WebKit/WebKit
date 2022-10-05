@@ -129,6 +129,7 @@ public:
     static constexpr OptionSet<LexerFlags> DontBuildStrings = { };
 
     ExpressionNode* makeBinaryNode(const JSTokenLocation&, int token, std::pair<ExpressionNode*, BinaryOpInfo>, std::pair<ExpressionNode*, BinaryOpInfo>);
+    ExpressionNode* makeStaticBlockFunctionCallNode(const JSTokenLocation&, ExpressionNode* func, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd);
     ExpressionNode* makeFunctionCallNode(const JSTokenLocation&, ExpressionNode* func, bool previousBaseWasSuper, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth, bool isOptionalCall);
 
     JSC::SourceElements* createSourceElements() { return new (m_parserArena) JSC::SourceElements(); }
@@ -519,6 +520,10 @@ public:
         return new (m_parserArena) PropertyNode(ident, methodDef, type, SuperBinding::Needed, tag);
     }
 
+    PropertyNode* createProperty(const Identifier* propertyName, PropertyNode::Type type, SuperBinding superBinding, ClassElementTag tag)
+    {
+        return new (m_parserArena) PropertyNode(*propertyName, type, superBinding, tag);
+    }
     PropertyNode* createProperty(const Identifier* propertyName, ExpressionNode* node, PropertyNode::Type type, SuperBinding superBinding, InferName inferName, ClassElementTag tag)
     {
         if (inferName == InferName::Allowed) {
@@ -1411,6 +1416,11 @@ ExpressionNode* ASTBuilder::makeCoalesceNode(const JSTokenLocation& location, Ex
     }
     constexpr bool hasAbsorbedOptionalChain = false;
     return new (m_parserArena) CoalesceNode(location, expr1, expr2, hasAbsorbedOptionalChain);
+}
+
+ExpressionNode* ASTBuilder::makeStaticBlockFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+{
+    return new (m_parserArena) StaticBlockFunctionCallNode(location, func, divot, divotStart, divotEnd);
 }
 
 ExpressionNode* ASTBuilder::makeFunctionCallNode(const JSTokenLocation& location, ExpressionNode* func, bool previousBaseWasSuper, ArgumentsNode* args, const JSTextPosition& divotStart, const JSTextPosition& divot, const JSTextPosition& divotEnd, size_t callOrApplyChildDepth, bool isOptionalCall)

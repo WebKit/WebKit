@@ -671,6 +671,8 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webauthn/PublicKeyCredentialType.idl \
     $(WebCore)/Modules/webauthn/ResidentKeyRequirement.idl \
     $(WebCore)/Modules/webauthn/UserVerificationRequirement.idl \
+    $(WebCore)/Modules/webcodecs/BitrateMode.idl \
+    $(WebCore)/Modules/webcodecs/LatencyMode.idl \
     $(WebCore)/Modules/webcodecs/HardwareAcceleration.idl \
     $(WebCore)/Modules/webcodecs/PlaneLayout.idl \
     $(WebCore)/Modules/webcodecs/VideoColorPrimaries.idl \
@@ -679,15 +681,21 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/VideoMatrixCoefficients.idl \
     $(WebCore)/Modules/webcodecs/VideoPixelFormat.idl \
     $(WebCore)/Modules/webcodecs/VideoTransferCharacteristics.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsErrorCallback.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsCodecState.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoder.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderSupport.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoEncoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoEncoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoEncoderEncodeOptions.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoEncoderSupport.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoFrame.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl \
     $(WebCore)/Modules/webdatabase/DOMWindow+WebDatabase.idl \
     $(WebCore)/Modules/webdatabase/Database.idl \
     $(WebCore)/Modules/webdatabase/DatabaseCallback.idl \

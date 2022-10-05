@@ -482,6 +482,15 @@
     "imported/w3c/html/syntax/xmldecl/xmldecl-3.html": [
         "slow"
     ],
+    "imported/w3c/pointerlock/movementX_Y_basic.html": [
+        "slow"
+    ],
+    "imported/w3c/pointerlock/pointerlock_remove_target.html": [
+        "slow"
+    ],
+    "imported/w3c/pointerlock/pointerlock_shadow.html": [
+        "slow"
+    ],
     "imported/w3c/quirks/hashless-hex-color/limited-quirks.html": [
         "slow"
     ],

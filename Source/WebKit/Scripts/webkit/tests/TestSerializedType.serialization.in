@@ -13,7 +13,7 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
 }
 #endif
 
-class Namespace::OtherClass {
+[Nested] class Namespace::OtherClass {
     [ReturnEarlyIfTrue] bool isNull
     int a
     bool b
@@ -63,7 +63,7 @@ enum class EnumNamespace::EnumType : uint16_t {
 }
 #endif
 
-[OptionSet] enum class EnumNamespace2::OptionSetEnumType : uint8_t {
+[OptionSet, Nested] enum class EnumNamespace2::OptionSetEnumType : uint8_t {
     OptionSetFirstValue,
 #if ENABLE(OPTION_SET_SECOND_VALUE)
     OptionSetSecondValue,

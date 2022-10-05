@@ -55,13 +55,13 @@ CString ExceptionScope::unexpectedExceptionMessage()
 
     out.println("Unexpected exception observed on thread ", Thread::current(), " at:");
     auto currentStack = StackTrace::captureStackTrace(Options::unexpectedExceptionStackTraceLimit(), 1);
-    currentStack->dump(out, "    ");
+    out.print(StackTracePrinter { *currentStack, "    " });
 
     if (!m_vm.nativeStackTraceOfLastThrow())
         return CString();
     
     out.println("The exception was thrown from thread ", *m_vm.throwingThread(), " at:");
-    m_vm.nativeStackTraceOfLastThrow()->dump(out, "    ");
+    out.print(StackTracePrinter { *m_vm.nativeStackTraceOfLastThrow(), "    " });
 
     return out.toCString();
 }

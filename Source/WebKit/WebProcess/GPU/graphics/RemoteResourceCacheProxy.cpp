@@ -101,7 +101,7 @@ void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
     if (!bitmap)
         return;
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     bitmap->createHandle(handle);
     if (handle.isNull())
         return;

@@ -1,0 +1,19 @@
+Description
+
+This test if movementX/Y can provide the change in position of the pointer, as if movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y
+
+Manual Test Steps:
+
+Click to start Test1.
+Move the mouse within the window, slow and fast, like a scribble.
+Click again to end test.
+inside window: done
+X	Y
+screen_init:	-9600	-9700
+screen_last:	-9650	-9650
+screen_delta:	0	0
+movement_sum:	-50	50
+movement:	0	0
+
+PASS Test that movementX/Y = eNow.screenX/Y-ePrevious.screenX/Y.
+

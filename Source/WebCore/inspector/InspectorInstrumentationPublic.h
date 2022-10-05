@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <atomic>
 namespace WebCore {
 
 #define FAST_RETURN_IF_NO_FRONTENDS(value)                       \
@@ -34,7 +35,7 @@ namespace WebCore {
 class WEBCORE_EXPORT InspectorInstrumentationPublic {
 public:
     static bool hasFrontends() { return s_frontendCounter; }
-    static int s_frontendCounter;
+    static std::atomic<int> s_frontendCounter;
 };
 
 }

@@ -120,7 +120,7 @@ public:
     void processIsStartingToCaptureAudio(GPUConnectionToWebProcess&);
 #endif
 
-    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
+    void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&&);
 
 private:
     void lowMemoryHandler(Critical, Synchronous);

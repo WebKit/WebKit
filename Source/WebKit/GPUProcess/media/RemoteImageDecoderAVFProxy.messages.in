@@ -32,7 +32,7 @@ messages -> RemoteImageDecoderAVFProxy NotRefCounted {
     DeleteDecoder(WebCore::ImageDecoderIdentifier identifier)
     SetExpectedContentSize(WebCore::ImageDecoderIdentifier identifier, long long expectedContentSize)
     SetData(WebCore::ImageDecoderIdentifier identifier, IPC::SharedBufferReference data, bool allDataReceived) -> (size_t frameCount, WebCore::IntSize size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>> frameInfos) Synchronous
-    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, size_t index) -> (std::optional<WebKit::ShareableBitmap::Handle> imageHandle) Synchronous
+    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, size_t index) -> (std::optional<WebKit::ShareableBitmapHandle> imageHandle) Synchronous
     ClearFrameBufferCache(WebCore::ImageDecoderIdentifier identifier, size_t index)
 }
 

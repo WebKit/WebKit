@@ -1224,6 +1224,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/RemoteDOMWindow.h
     page/RemoteFrame.h
     page/RenderingUpdateScheduler.h
+    page/ScreenOrientationLockType.h
+    page/ScreenOrientationType.h
     page/ScrollBehavior.h
     page/ScrollIntoViewOptions.h
     page/ScrollLogicalPosition.h
@@ -1403,6 +1405,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/RemoteCommandListener.h
     platform/RuntimeApplicationChecks.h
     platform/SSLKeyGenerator.h
+    platform/ScreenOrientationManager.h
+    platform/ScreenOrientationProvider.h
     platform/ScreenProperties.h
     platform/ScriptExecutionContextIdentifier.h
     platform/ScrollAlignment.h

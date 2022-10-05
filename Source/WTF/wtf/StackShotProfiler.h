@@ -68,8 +68,7 @@ private:
                 for (size_t i = list.size(), count = 0; i-- && count < m_stacksToReport; count++) {
                     auto& entry = list[i];
                     dataLog("\nTop #", count + 1, " stack: ", entry.count * 100 / m_totalCount, "%\n");
-                    StackTrace trace(entry.key->array() + m_framesToSkip, entry.key->size() - m_framesToSkip);
-                    dataLog(trace);
+                    dataLog(StackTracePrinter { { entry.key->array() + m_framesToSkip, entry.key->size() - m_framesToSkip } });
                 }
                 dataLog("\n");
             }

@@ -301,9 +301,7 @@ void VerifierSlotVisitor::dumpMarkerData(HeapCell* cell)
             opaqueRoot = nullptr;
         }
 
-        markerData->stack()->dump(WTF::dataFile(), "    ");
-        dataLogLn();
-
+        dataLogLn(StackTracePrinter { *markerData->stack(), "    " });
     } while (cell || opaqueRoot);
 }
 

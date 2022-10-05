@@ -50,6 +50,7 @@
 #import "WebPasteboardProxy.h"
 #import "WebProcessMessages.h"
 #import "WebProcessProxy.h"
+#import "WebScreenOrientationManagerProxy.h"
 #import "WebsiteDataStore.h"
 #import "WKErrorInternal.h"
 #import <Foundation/NSURLRequest.h>
@@ -251,7 +252,7 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Handle& dragImageHandle)
+void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmapHandle& dragImageHandle)
 {
     pageClient().startDrag(dragItem, dragImageHandle);
 }
@@ -312,7 +313,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
     resultRect.setLocation({ });
 
-    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
+    WebKit::ShareableBitmapConfiguration bitmapConfiguration;
     auto bitmap = WebKit::ShareableBitmap::create(resultRect.size(), bitmapConfiguration);
     if (!bitmap)
         return nullptr;
@@ -646,7 +647,7 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     if (!convertedImage)
         return false;
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     convertedImage->createHandle(handle);
     send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, iconSize));
     return true;
@@ -937,6 +938,15 @@ void WebPageProxy::classifyModalContainerControls(Vector<String>&& texts, Comple
 void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {
     send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
+}
+
+void WebPageProxy::setCocoaView(WKWebView *view)
+{
+    m_cocoaView = view;
+#if PLATFORM(IOS_FAMILY)
+    if (m_screenOrientationManager)
+        m_screenOrientationManager->setWindow(view.window);
+#endif
 }
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

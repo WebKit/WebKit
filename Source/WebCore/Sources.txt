@@ -395,6 +395,7 @@ Modules/webauthn/fido/U2fCommandConstructor.cpp
 Modules/webauthn/fido/U2fResponseConverter.cpp
 Modules/webcodecs/WebCodecsEncodedVideoChunk.cpp
 Modules/webcodecs/WebCodecsVideoDecoder.cpp
+Modules/webcodecs/WebCodecsVideoEncoder.cpp
 Modules/webcodecs/WebCodecsVideoFrame.cpp
 Modules/webdatabase/ChangeVersionWrapper.cpp
 Modules/webdatabase/DOMWindowWebDatabase.cpp
@@ -1964,6 +1965,7 @@ platform/ReferrerPolicy.cpp
 platform/RemoteCommandListener.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/SSLKeyGenerator.cpp
+platform/ScreenOrientationProvider.cpp
 platform/ScrollAlignment.cpp
 platform/ScrollAnimation.cpp
 platform/ScrollAnimationKinetic.cpp
@@ -3021,6 +3023,7 @@ JSBeforeUnloadEvent.cpp
 JSBiquadFilterNode.cpp
 JSBiquadFilterOptions.cpp
 JSBiquadFilterType.cpp
+JSBitrateMode.cpp
 JSBlob.cpp
 JSBlobCallback.cpp
 JSBlobEvent.cpp
@@ -3539,6 +3542,7 @@ JSKeyboardEvent.cpp
 JSKeyframeAnimationOptions.cpp
 JSKeyframeEffect.cpp
 JSKeyframeEffectOptions.cpp
+JSLatencyMode.cpp
 JSLocation.cpp
 JSLongRange.cpp
 JSMathMLElement.cpp
@@ -4128,13 +4132,19 @@ JSWakeLockType.cpp
 JSWaveShaperNode.cpp
 JSWaveShaperOptions.cpp
 JSWebAnimation.cpp
-JSWebCodecsEncodedVideoChunkType.cpp
 JSWebCodecsEncodedVideoChunk.cpp
+JSWebCodecsEncodedVideoChunkMetadata.cpp
+JSWebCodecsEncodedVideoChunkOutputCallback.cpp
+JSWebCodecsEncodedVideoChunkType.cpp
 JSWebCodecsErrorCallback.cpp
 JSWebCodecsCodecState.cpp
 JSWebCodecsVideoDecoder.cpp
 JSWebCodecsVideoDecoderConfig.cpp
 JSWebCodecsVideoDecoderSupport.cpp
+JSWebCodecsVideoEncoder.cpp
+JSWebCodecsVideoEncoderConfig.cpp
+JSWebCodecsVideoEncoderEncodeOptions.cpp
+JSWebCodecsVideoEncoderSupport.cpp
 JSWebCodecsVideoFrameOutputCallback.cpp
 JSWebCodecsVideoFrame.cpp
 JSWebGL2RenderingContext.cpp

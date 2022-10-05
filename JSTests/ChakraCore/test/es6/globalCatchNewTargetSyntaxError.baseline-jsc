@@ -1,2 +1,2 @@
-Exception: SyntaxError: new.target is only valid inside functions.
+Exception: SyntaxError: new.target is only valid inside functions or static blocks.
 at globalCatchNewTargetSyntaxError.js:6

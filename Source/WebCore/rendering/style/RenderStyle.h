@@ -930,10 +930,10 @@ public:
     void resetBorderLeft() { SET_VAR(m_surroundData, border.m_left, BorderValue()); }
     void resetBorderImage() { SET_VAR(m_surroundData, border.m_image, NinePieceImage()); }
     void resetBorderRadius() { resetBorderTopLeftRadius(); resetBorderTopRightRadius(); resetBorderBottomLeftRadius(); resetBorderBottomRightRadius(); }
-    void resetBorderTopLeftRadius() { SET_VAR(m_surroundData, border.m_topLeftRadius, initialBorderRadius()); }
-    void resetBorderTopRightRadius() { SET_VAR(m_surroundData, border.m_topRightRadius, initialBorderRadius()); }
-    void resetBorderBottomLeftRadius() { SET_VAR(m_surroundData, border.m_bottomLeftRadius, initialBorderRadius()); }
-    void resetBorderBottomRightRadius() { SET_VAR(m_surroundData, border.m_bottomRightRadius, initialBorderRadius()); }
+    void resetBorderTopLeftRadius() { SET_VAR(m_surroundData, border.m_radii.topLeft, initialBorderRadius()); }
+    void resetBorderTopRightRadius() { SET_VAR(m_surroundData, border.m_radii.topRight, initialBorderRadius()); }
+    void resetBorderBottomLeftRadius() { SET_VAR(m_surroundData, border.m_radii.bottomLeft, initialBorderRadius()); }
+    void resetBorderBottomRightRadius() { SET_VAR(m_surroundData, border.m_radii.bottomRight, initialBorderRadius()); }
 
     void setBackgroundColor(const StyleColor& v) { SET_VAR(m_backgroundData, color, v); }
 
@@ -957,10 +957,10 @@ public:
     void setBorderImageHorizontalRule(NinePieceImageRule);
     void setBorderImageVerticalRule(NinePieceImageRule);
 
-    void setBorderTopLeftRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_topLeftRadius, WTFMove(size)); }
-    void setBorderTopRightRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_topRightRadius, WTFMove(size)); }
-    void setBorderBottomLeftRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_bottomLeftRadius, WTFMove(size)); }
-    void setBorderBottomRightRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_bottomRightRadius, WTFMove(size)); }
+    void setBorderTopLeftRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_radii.topLeft, WTFMove(size)); }
+    void setBorderTopRightRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_radii.topRight, WTFMove(size)); }
+    void setBorderBottomLeftRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_radii.bottomLeft, WTFMove(size)); }
+    void setBorderBottomRightRadius(LengthSize&& size) { SET_VAR(m_surroundData, border.m_radii.bottomRight, WTFMove(size)); }
 
     void setBorderRadius(LengthSize&&);
     void setBorderRadius(const IntSize&);

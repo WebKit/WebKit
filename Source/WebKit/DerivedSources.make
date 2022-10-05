@@ -178,6 +178,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebProcessProxy \
 	UIProcess/Automation/WebAutomationSession \
 	UIProcess/WebProcessPool \
+        UIProcess/WebScreenOrientationManagerProxy \
 	UIProcess/Downloads/DownloadProxy \
 	UIProcess/Extensions/WebExtensionController \
 	UIProcess/Media/AudioSessionRoutingArbitratorProxy \
@@ -228,6 +229,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider \
 	WebProcess/WebCoreSupport/WebFileSystemStorageConnection \
 	WebProcess/WebCoreSupport/WebPermissionController \
+        WebProcess/WebCoreSupport/WebScreenOrientationManager \
 	WebProcess/WebCoreSupport/WebSpeechRecognitionConnection \
 	WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager \
 	WebProcess/Storage/WebSharedWorkerContextManagerConnection \
@@ -454,6 +456,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APIGeometry.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
+	Shared/ShareableBitmap.serialization.in \
 	Shared/FrameInfoData.serialization.in \
 	Shared/FrameTreeNodeData.serialization.in \
 	Shared/LayerTreeContext.serialization.in \

@@ -56,7 +56,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle& imageDataHandle)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmapHandle& imageDataHandle)
 {
     auto bitmap = ShareableBitmap::create(imageDataHandle, SharedMemory::Protection::ReadOnly);
     if (!bitmap)

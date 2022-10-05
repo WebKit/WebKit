@@ -996,12 +996,15 @@ static RefPtr<CSSValueList> consumeFontFamilyDescriptor(CSSParserTokenRange& ran
     return list;
 }
 
-static RefPtr<CSSValue> consumeFontSynthesis(CSSParserTokenRange& range)
+bool CSSPropertyParser::consumeFontSynthesis(bool important)
 {
     // none | [ weight || style || small-caps ]
-    CSSValueID id = range.peek().id();
-    if (id == CSSValueNone)
-        return consumeIdent(range);
+    if (m_range.peek().id() == CSSValueNone) {
+        addProperty(CSSPropertyFontSynthesisSmallCaps, CSSPropertyFontSynthesis, consumeIdent(m_range).releaseNonNull(), important);
+        addProperty(CSSPropertyFontSynthesisStyle, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        addProperty(CSSPropertyFontSynthesisWeight, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(CSSValueNone), important);
+        return m_range.atEnd();
+    }
 
     bool foundWeight = false;
     bool foundStyle = false;
@@ -1013,41 +1016,39 @@ static RefPtr<CSSValue> consumeFontSynthesis(CSSParserTokenRange& range)
         return *found = true;
     };
 
-    while (true) {
-        auto ident = consumeIdent<CSSValueWeight, CSSValueStyle, CSSValueSmallCaps>(range);
+    while (!m_range.atEnd()) {
+        auto ident = consumeIdent<CSSValueWeight, CSSValueStyle, CSSValueSmallCaps>(m_range);
         if (!ident)
-            break;
+            return false;
         switch (ident->valueID()) {
         case CSSValueWeight:
             if (!checkAndMarkExistence(&foundWeight))
-                return nullptr;
+                return false;
             break;
         case CSSValueStyle:
             if (!checkAndMarkExistence(&foundStyle))
-                return nullptr;
+                return false;
             break;
         case CSSValueSmallCaps:
             if (!checkAndMarkExistence(&foundSmallCaps))
-                return nullptr;
+                return false;
             break;
         default:
             ASSERT_NOT_REACHED();
-            return nullptr;
+            return false;
         }
     }
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    if (foundWeight)
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueWeight));
-    if (foundStyle)
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueStyle));
-    if (foundSmallCaps)
-        list->append(CSSValuePool::singleton().createIdentifierValue(CSSValueSmallCaps));
+    addProperty(CSSPropertyFontSynthesisWeight, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(foundWeight ? CSSValueAuto : CSSValueNone), important);
+    addProperty(CSSPropertyFontSynthesisStyle, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(foundStyle ? CSSValueAuto : CSSValueNone), important);
+    addProperty(CSSPropertyFontSynthesisSmallCaps, CSSPropertyFontSynthesis, CSSValuePool::singleton().createIdentifierValue(foundSmallCaps ? CSSValueAuto : CSSValueNone), important);
+    
+    return true;
+}
 
-    if (!list->length())
-        return nullptr;
-
-    return list;
+static RefPtr<CSSValue> consumeFontSynthesisLonghand(CSSParserTokenRange& range)
+{
+    return consumeIdent<CSSValueNone, CSSValueAuto>(range);
 }
 
 static RefPtr<CSSValue> consumeLetterSpacing(CSSParserTokenRange& range, CSSParserMode cssParserMode)
@@ -4375,8 +4376,10 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeFontStretch(m_range, CSSValuePool::singleton());
     case CSSPropertyFontStyle:
         return consumeFontStyle(m_range, m_context.mode, CSSValuePool::singleton());
-    case CSSPropertyFontSynthesis:
-        return consumeFontSynthesis(m_range);
+    case CSSPropertyFontSynthesisWeight:
+    case CSSPropertyFontSynthesisStyle:
+    case CSSPropertyFontSynthesisSmallCaps:
+        return consumeFontSynthesisLonghand(m_range);
 #if ENABLE(VARIATION_FONTS)
     case CSSPropertyFontVariationSettings:
         return consumeFontVariationSettings(m_range);
@@ -6475,6 +6478,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     }
     case CSSPropertyFontVariant:
         return consumeFontVariantShorthand(important);
+    case CSSPropertyFontSynthesis:
+        return consumeFontSynthesis(important);
     case CSSPropertyBorderSpacing:
         return consumeBorderSpacing(important);
     case CSSPropertyColumns:

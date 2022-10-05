@@ -68,6 +68,7 @@ class PaymentCoordinatorClient;
 class PerformanceLoggingClient;
 class PluginInfoProvider;
 class ProgressTrackerClient;
+class ScreenOrientationManager;
 class SocketProvider;
 class SpeechRecognitionProvider;
 class SpeechSynthesisClient;
@@ -133,6 +134,7 @@ public:
     Ref<UserContentProvider> userContentProvider;
     RefPtr<VisitedLinkStore> visitedLinkStore;
     Ref<BroadcastChannelRegistry> broadcastChannelRegistry;
+    WeakPtr<ScreenOrientationManager> screenOrientationManager;
     
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
     RefPtr<DeviceOrientationUpdateProvider> deviceOrientationUpdateProvider;

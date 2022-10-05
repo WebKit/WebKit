@@ -57,7 +57,7 @@ RefPtr<ImageBuffer> ImageBufferShareableAllocator::createImageBuffer(const Float
     if (!bitmap)
         return nullptr;
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (!bitmap->createHandle(handle))
         return nullptr;
 

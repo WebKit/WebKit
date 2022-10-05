@@ -137,7 +137,9 @@ private:
             | static_cast<unsigned>(description.fontStyleAxis() == FontStyleAxis::slnt) << 12
             | static_cast<unsigned>(description.opticalSizing()) << 11
             | static_cast<unsigned>(description.textRenderingMode()) << 9
-            | static_cast<unsigned>(description.fontSynthesis()) << 6
+            | static_cast<unsigned>(description.fontSynthesisSmallCaps()) << 8
+            | static_cast<unsigned>(description.fontSynthesisStyle()) << 7
+            | static_cast<unsigned>(description.fontSynthesisWeight()) << 6
             | static_cast<unsigned>(description.widthVariant()) << 4
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
             | static_cast<unsigned>(description.orientation()) << 2

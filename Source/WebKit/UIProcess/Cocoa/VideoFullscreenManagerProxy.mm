@@ -513,7 +513,7 @@ void VideoFullscreenManagerProxy::forEachSession(Function<void(VideoFullscreenMo
     }
 }
 
-void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&& completionHandler)
+void VideoFullscreenManagerProxy::requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier identifier, CompletionHandler<void(const ShareableBitmapHandle&)>&& completionHandler)
 {
     auto* gpuProcess = GPUProcessProxy::singletonIfCreated();
     if (!gpuProcess) {

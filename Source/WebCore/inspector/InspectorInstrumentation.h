@@ -1756,18 +1756,18 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgents(Worker
 inline void InspectorInstrumentation::frontendCreated()
 {
     ASSERT(isMainThread());
-    ++InspectorInstrumentationPublic::s_frontendCounter;
+    int frontendCount = ++InspectorInstrumentationPublic::s_frontendCounter;
 
-    if (InspectorInstrumentationPublic::s_frontendCounter == 1)
+    if (frontendCount == 1)
         InspectorInstrumentation::firstFrontendCreated();
 }
 
 inline void InspectorInstrumentation::frontendDeleted()
 {
     ASSERT(isMainThread());
-    --InspectorInstrumentationPublic::s_frontendCounter;
+    int frontendCount = --InspectorInstrumentationPublic::s_frontendCounter;
 
-    if (!InspectorInstrumentationPublic::s_frontendCounter)
+    if (!frontendCount)
         InspectorInstrumentation::lastFrontendDeleted();
 }
 

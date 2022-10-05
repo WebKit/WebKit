@@ -1,4 +1,8 @@
 
 PASS e.style['font-synthesis'] = "auto" should not set the property value
 PASS e.style['font-synthesis'] = "none weight" should not set the property value
+PASS e.style['font-synthesis'] = "none style" should not set the property value
+PASS e.style['font-synthesis'] = "style none" should not set the property value
+PASS e.style['font-synthesis'] = "none small-caps" should not set the property value
+PASS e.style['font-synthesis'] = "small-caps none" should not set the property value
 

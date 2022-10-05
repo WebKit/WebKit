@@ -1,0 +1,4 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../resources/webgl_test_files/conformance2/extensions/ext-provoking-vertex.html?webglVersion=2
+[ PASS ] All tests passed

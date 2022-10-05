@@ -1,0 +1,49 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Element: original interface defined
+PASS Partial interface Element: member names are unique
+PASS Partial interface Document: original interface defined
+PASS Partial interface Document: member names are unique
+PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined
+PASS Partial interface mixin DocumentOrShadowRoot: member names are unique
+PASS Partial interface MouseEvent: original interface defined
+PASS Partial interface MouseEvent: member names are unique
+PASS Partial dictionary MouseEventInit: original dictionary defined
+PASS Partial dictionary MouseEventInit: member names are unique
+PASS Partial interface UIEvent: member names are unique
+PASS Partial interface MouseEvent[2]: member names are unique
+PASS Partial interface UIEvent[2]: member names are unique
+PASS Partial dictionary UIEventInit: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface mixin DocumentOrShadowRoot[2]: member names are unique
+PASS Partial interface Document[3]: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes DocumentAndElementEventHandlers: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS DocumentFragment includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
+PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS DocumentFragment includes ParentNode: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS MouseEvent interface: attribute movementX
+PASS MouseEvent interface: attribute movementY
+PASS MouseEvent interface: new MouseEvent('foo') must inherit property "movementX" with the proper type
+PASS MouseEvent interface: new MouseEvent('foo') must inherit property "movementY" with the proper type
+PASS Document interface: attribute onpointerlockchange
+PASS Document interface: attribute onpointerlockerror
+PASS Document interface: operation exitPointerLock()
+PASS Document interface: attribute pointerLockElement
+PASS Document interface: window.document must inherit property "onpointerlockchange" with the proper type
+PASS Document interface: window.document must inherit property "onpointerlockerror" with the proper type
+PASS Document interface: window.document must inherit property "exitPointerLock()" with the proper type
+PASS Document interface: window.document must inherit property "pointerLockElement" with the proper type
+PASS ShadowRoot interface: attribute pointerLockElement
+PASS Element interface: operation requestPointerLock()
+PASS Element interface: window.document.documentElement must inherit property "requestPointerLock()" with the proper type
+

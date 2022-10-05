@@ -99,7 +99,7 @@ void ContextMenuContextData::encode(IPC::Encoder& encoder) const
     encoder << m_selectedText;
 
 #if ENABLE(SERVICE_CONTROLS)
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (m_controlledImage)
         m_controlledImage->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
@@ -131,7 +131,7 @@ bool ContextMenuContextData::decode(IPC::Decoder& decoder, ContextMenuContextDat
         return false;
 
 #if ENABLE(SERVICE_CONTROLS)
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (!decoder.decode(handle))
         return false;
 

@@ -574,6 +574,7 @@
 		7B9FC5D628A5326A007570E7 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */; };
 		7BA3936C271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7BA3936B271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm */; };
 		7BAA4A9028CA14AE004CE938 /* StreamConnectionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */; };
+		7BF5017828E55F7A0008BB16 /* StackTraceTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF5017028E55F7A0008BB16 /* StackTraceTest.cpp */; };
 		7C3965061CDD74F90094DBB8 /* ColorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C3965051CDD74F90094DBB8 /* ColorTests.cpp */; };
 		7C486BA11AA12567003F6F9B /* bundle-file.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C486BA01AA1254B003F6F9B /* bundle-file.html */; };
 		7C74C8FA22DFBA9600DA2DAB /* WTFStringUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CBD5A2222DE42A6004A9E32 /* WTFStringUtilities.cpp */; };
@@ -2703,6 +2704,7 @@
 		7BAA4A8F28CA14AE004CE938 /* StreamConnectionTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamConnectionTests.cpp; sourceTree = "<group>"; };
 		7BB754AF274E39A100D00EC1 /* TestUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUtilities.h; sourceTree = "<group>"; };
 		7BB754B0274E39A100D00EC1 /* TestUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestUtilities.cpp; sourceTree = "<group>"; };
+		7BF5017028E55F7A0008BB16 /* StackTraceTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StackTraceTest.cpp; sourceTree = "<group>"; };
 		7C1AF7931E8DCBAB002645B9 /* PrepareForMoveToWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PrepareForMoveToWindow.mm; sourceTree = "<group>"; };
 		7C3965051CDD74F90094DBB8 /* ColorTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorTests.cpp; sourceTree = "<group>"; };
 		7C3DB8E21D12129B00AE8CC3 /* CommandBackForward.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CommandBackForward.mm; sourceTree = "<group>"; };
@@ -5032,6 +5034,7 @@
 				33C2C9C02651F5B900E407F6 /* SmallSet.cpp */,
 				93FCDB33263631560046DD7D /* SortedArrayMap.cpp */,
 				BCA30C7D266D2F43000D230C /* Span.cpp */,
+				7BF5017028E55F7A0008BB16 /* StackTraceTest.cpp */,
 				FE2BCDC62470FC7000DEC33B /* StdLibExtras.cpp */,
 				81B50192140F232300D9EB58 /* StringBuilder.cpp */,
 				E3DE273B28A8D67700873DF2 /* StringCommon.cpp */,
@@ -5990,6 +5993,7 @@
 				BCA30C7E266D2F43000D230C /* Span.cpp in Sources */,
 				44B28A0628D18AD50010172C /* SpanCF.cpp in Sources */,
 				44B28A0828D18AE70010172C /* SpanCocoa.mm in Sources */,
+				7BF5017828E55F7A0008BB16 /* StackTraceTest.cpp in Sources */,
 				FE2BCDC72470FDA300DEC33B /* StdLibExtras.cpp in Sources */,
 				7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */,
 				E3DE273C28A8D67800873DF2 /* StringCommon.cpp in Sources */,

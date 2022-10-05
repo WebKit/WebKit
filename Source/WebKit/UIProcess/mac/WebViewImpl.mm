@@ -4005,7 +4005,7 @@ void WebViewImpl::startWindowDrag()
     [[m_view window] performWindowDragWithEvent:m_lastMouseDownEvent.get()];
 }
 
-void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap::Handle& dragImageHandle)
+void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmapHandle& dragImageHandle)
 {
     auto dragImageAsBitmap = ShareableBitmap::create(dragImageHandle);
     if (!dragImageAsBitmap) {
@@ -5878,7 +5878,7 @@ static RetainPtr<CocoaImageAnalyzerRequest> createImageAnalyzerRequest(CGImageRe
     return request;
 }
 
-void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
+void WebViewImpl::requestTextRecognition(const URL& imageURL, const ShareableBitmapHandle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&& completion)
 {
     if (!isLiveTextAvailableAndEnabled()) {
         completion({ });
@@ -5942,7 +5942,7 @@ bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInVie
 #endif
 }
 
-void WebViewImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmap::Handle& bitmapHandle, WebCore::FloatRect bounds)
+void WebViewImpl::beginTextRecognitionForVideoInElementFullscreen(const ShareableBitmapHandle& bitmapHandle, WebCore::FloatRect bounds)
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     auto imageBitmap = ShareableBitmap::create(bitmapHandle);

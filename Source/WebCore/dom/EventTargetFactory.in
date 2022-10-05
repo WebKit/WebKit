@@ -68,6 +68,7 @@ VisualViewport
 WakeLockSentinel
 WebAnimation
 WebCodecsVideoDecoder conditional=WEB_CODECS
+WebCodecsVideoEncoder conditional=WEB_CODECS
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebSocket
 Worker

@@ -241,18 +241,18 @@ void RemoteRenderingBackend::putPixelBufferForImageBuffer(RenderingResourceIdent
     }
 }
 
-void RemoteRenderingBackend::getShareableBitmapForImageBuffer(RenderingResourceIdentifier identifier, PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void RemoteRenderingBackend::getShareableBitmapForImageBuffer(RenderingResourceIdentifier identifier, PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmapHandle&&)>&& completionHandler)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
     getShareableBitmapForImageBufferWithQualifiedIdentifier({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() }, preserveResolution, WTFMove(completionHandler));
 }
 
-void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier identifier, PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdentifier(QualifiedRenderingResourceIdentifier identifier, PreserveResolution preserveResolution, CompletionHandler<void(ShareableBitmapHandle&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     [&]() {
         auto imageBuffer = m_remoteResourceCache.cachedImageBuffer(identifier);
         if (!imageBuffer)
@@ -272,13 +272,13 @@ void RemoteRenderingBackend::getShareableBitmapForImageBufferWithQualifiedIdenti
     completionHandler(WTFMove(handle));
 }
 
-void RemoteRenderingBackend::getFilteredImageForImageBuffer(RenderingResourceIdentifier identifier, IPC::FilterReference&& filterReference, CompletionHandler<void(ShareableBitmap::Handle&&)>&& completionHandler)
+void RemoteRenderingBackend::getFilteredImageForImageBuffer(RenderingResourceIdentifier identifier, IPC::FilterReference&& filterReference, CompletionHandler<void(ShareableBitmapHandle&&)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     auto filter = filterReference.takeFilter();
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     [&]() {
         auto imageBuffer = m_remoteResourceCache.cachedImageBuffer({ identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
         if (!imageBuffer)
@@ -299,14 +299,14 @@ void RemoteRenderingBackend::getFilteredImageForImageBuffer(RenderingResourceIde
     completionHandler(WTFMove(handle));
 }
 
-void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier nativeImageResourceIdentifier)
+void RemoteRenderingBackend::cacheNativeImage(const ShareableBitmapHandle& handle, RenderingResourceIdentifier nativeImageResourceIdentifier)
 {
     // Immediately turn the RenderingResourceIdentifier (which is error-prone) to a QualifiedRenderingResourceIdentifier,
     // and use a helper function to make sure that don't accidentally use the RenderingResourceIdentifier (because the helper function can't see it).
     cacheNativeImageWithQualifiedIdentifier(handle, { nativeImageResourceIdentifier, m_gpuConnectionToWebProcess->webProcessIdentifier() });
 }
 
-void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const ShareableBitmap::Handle& handle, QualifiedRenderingResourceIdentifier nativeImageResourceIdentifier)
+void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(const ShareableBitmapHandle& handle, QualifiedRenderingResourceIdentifier nativeImageResourceIdentifier)
 {
     ASSERT(!RunLoop::isMain());
 

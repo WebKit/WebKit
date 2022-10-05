@@ -48,11 +48,9 @@ NO_RETURN_DUE_TO_CRASH void StackCheck::Scope::reportVerificationFailureAndCrash
     dataLogLn();
     if constexpr (verboseStackCheckVerification) {
         dataLogLn("    Stack at previous checkpoint:");
-        m_savedLastCheckpointStackTrace->dump(WTF::dataFile(), "      ");
-        dataLogLn();
+        dataLogLn(StackTracePrinter { m_savedLastCheckpointStackTrace->stack(), "      " });
         dataLogLn("    Stack at current checkpoint:");
-        m_checker.m_lastCheckpointStackTrace->dump(WTF::dataFile(), "      ");
-        dataLogLn();
+        dataLogLn(StackTracePrinter { m_checker.m_lastCheckpointStackTrace->stack(), "      " });
     } else {
         dataLogLn("    To see the stack traces at the 2 checkpoints, set verboseStackCheckVerification to true in StackCheck.h, rebuild, and re-run your test.");
         dataLogLn();

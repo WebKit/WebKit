@@ -35,7 +35,7 @@ var global = this;
             eval('new.target');
         } catch (e) {
             thrown = true;
-            shouldBe(String(e), "SyntaxError: new.target is only valid inside functions.");
+            shouldBe(String(e), "SyntaxError: new.target is only valid inside functions or static blocks.");
         }
         shouldBe(thrown, true);
     `);
@@ -45,7 +45,7 @@ var global = this;
         globalEval('new.target');
     } catch (e) {
         thrown = true;
-        shouldBe(String(e), "SyntaxError: new.target is only valid inside functions.");
+        shouldBe(String(e), "SyntaxError: new.target is only valid inside functions or static blocks.");
     }
     shouldBe(thrown, true);
 }

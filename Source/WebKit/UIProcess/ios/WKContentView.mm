@@ -619,12 +619,11 @@ static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
     [self _accessibilityRegisterUIProcessTokens];
 }
 
-static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid, mach_port_t sendPort, NSUUID *uuid)
+static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid, NSUUID *uuid)
 {
     // The accessibility bundle needs to know the uuid, pid and mach_port that this object will refer to.
     objc_setAssociatedObject(element, (void*)[@"ax-uuid" hash], uuid, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     objc_setAssociatedObject(element, (void*)[@"ax-pid" hash], @(pid), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    objc_setAssociatedObject(element, (void*)[@"ax-machport" hash], @(sendPort), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 
@@ -654,8 +653,7 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
     // Store information about the WebProcess that can later be retrieved by the iOS Accessibility runtime.
     if (_page->process().state() == WebKit::WebProcessProxy::State::Running) {
         [self _updateRemoteAccessibilityRegistration:YES];
-        IPC::Connection* connection = _page->process().connection();
-        storeAccessibilityRemoteConnectionInformation(self, _page->process().processIdentifier(), connection->identifier().port, uuid);
+        storeAccessibilityRemoteConnectionInformation(self, _page->process().processIdentifier(), uuid);
 
         IPC::DataReference elementToken = IPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
         _page->registerUIProcessAccessibilityTokens(elementToken, elementToken);

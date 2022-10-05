@@ -35,3 +35,17 @@ enum class ScreenOrientationType : uint8_t {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ScreenOrientationType> {
+    using values = EnumValues<
+        WebCore::ScreenOrientationType,
+        WebCore::ScreenOrientationType::PortraitPrimary,
+        WebCore::ScreenOrientationType::PortraitSecondary,
+        WebCore::ScreenOrientationType::LandscapePrimary,
+        WebCore::ScreenOrientationType::LandscapeSecondary
+    >;
+};
+
+} // namespace WTF

@@ -29,13 +29,12 @@
 
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
-#include "WebCodecsVideoFrame.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class AudioWorkletProcessor;
+class WebCodecsVideoFrame;
 
 class WebCodecsVideoFrameOutputCallback : public RefCounted<WebCodecsVideoFrameOutputCallback>, public ActiveDOMCallback {
 public:
@@ -46,4 +45,4 @@ public:
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_AUDIO)
+#endif // ENABLE(WEB_CODECS)

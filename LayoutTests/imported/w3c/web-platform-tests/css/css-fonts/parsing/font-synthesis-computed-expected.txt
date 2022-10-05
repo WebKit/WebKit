@@ -2,5 +2,9 @@
 PASS Property font-synthesis value 'none'
 PASS Property font-synthesis value 'weight'
 PASS Property font-synthesis value 'style'
+PASS Property font-synthesis value 'small-caps'
+PASS Property font-synthesis value 'style small-caps'
+PASS Property font-synthesis value 'weight small-caps'
 PASS Property font-synthesis value 'weight style'
+PASS Property font-synthesis value 'weight style small-caps'
 

@@ -39,10 +39,17 @@
 namespace WebCore {
 using namespace Inspector;
 
-WeakHashSet<WorkerInspectorProxy>& WorkerInspectorProxy::allWorkerInspectorProxies()
+static Lock proxiesLock;
+static WeakHashSet<WorkerInspectorProxy>& proxies() WTF_REQUIRES_LOCK(proxiesLock)
 {
     static NeverDestroyed<WeakHashSet<WorkerInspectorProxy>> proxies;
     return proxies;
+}
+
+WeakHashSet<WorkerInspectorProxy> WorkerInspectorProxy::allWorkerInspectorProxiesCopy()
+{
+    Locker lock { proxiesLock };
+    return proxies();
 }
 
 WorkerInspectorProxy::WorkerInspectorProxy(const String& identifier)
@@ -65,13 +72,14 @@ WorkerThreadStartMode WorkerInspectorProxy::workerStartMode(ScriptExecutionConte
 void WorkerInspectorProxy::workerStarted(ScriptExecutionContext* scriptExecutionContext, WorkerThread* thread, const URL& url, const String& name)
 {
     ASSERT(!m_workerThread);
-
     m_scriptExecutionContext = scriptExecutionContext;
     m_workerThread = thread;
     m_url = url;
     m_name = name;
-
-    allWorkerInspectorProxies().add(*this);
+    {
+        Locker lock { proxiesLock };
+        proxies().add(*this);
+    }
 
     InspectorInstrumentation::workerStarted(*this);
 }
@@ -82,8 +90,10 @@ void WorkerInspectorProxy::workerTerminated()
         return;
 
     InspectorInstrumentation::workerTerminated(*this);
-
-    allWorkerInspectorProxies().remove(*this);
+    {
+        Locker lock { proxiesLock };
+        proxies().remove(*this);
+    }
 
     m_scriptExecutionContext = nullptr;
     m_workerThread = nullptr;

@@ -69,6 +69,7 @@ enum class SourceParseMode : uint8_t {
     AsyncGeneratorWrapperMethodMode   = 17,
     GeneratorWrapperMethodMode        = 18,
     ClassFieldInitializerMode         = 19,
+    ClassStaticBlockMode              = 20,
 };
 
 class SourceParseModeSet { 
@@ -118,7 +119,8 @@ ALWAYS_INLINE bool isFunctionParseMode(SourceParseMode parseMode)
         SourceParseMode::AsyncGeneratorBodyMode,
         SourceParseMode::AsyncGeneratorWrapperFunctionMode,
         SourceParseMode::AsyncGeneratorWrapperMethodMode,
-        SourceParseMode::ClassFieldInitializerMode).contains(parseMode);
+        SourceParseMode::ClassFieldInitializerMode,
+        SourceParseMode::ClassStaticBlockMode).contains(parseMode);
 } 
 
 ALWAYS_INLINE bool isAsyncFunctionParseMode(SourceParseMode parseMode) 
@@ -206,7 +208,8 @@ ALWAYS_INLINE bool isMethodParseMode(SourceParseMode parseMode)
         SourceParseMode::SetterMode,
         SourceParseMode::MethodMode,
         SourceParseMode::AsyncMethodMode,
-        SourceParseMode::AsyncGeneratorWrapperMethodMode).contains(parseMode);
+        SourceParseMode::AsyncGeneratorWrapperMethodMode,
+        SourceParseMode::ClassStaticBlockMode).contains(parseMode);
 }
 
 ALWAYS_INLINE bool isGeneratorOrAsyncFunctionBodyParseMode(SourceParseMode parseMode)

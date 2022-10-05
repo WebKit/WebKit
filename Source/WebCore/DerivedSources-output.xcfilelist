@@ -292,6 +292,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBiquadFilterType.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBitrateMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBitrateMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlob.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlob.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSBlobCallback.cpp
@@ -1550,6 +1552,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffect.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffect.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffectOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSKeyframeEffectOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLatencyMode.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLatencyMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLinkStyle.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLinkStyle.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocation.cpp
@@ -2782,6 +2786,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsCodecState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsCodecState.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunk.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunk.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunkMetadata.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunkMetadata.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunkOutputCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunkOutputCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunkType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsEncodedVideoChunkType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsErrorCallback.cpp
@@ -2792,6 +2800,14 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoDecoderConfig.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoDecoderConfig.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoDecoderSupport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoDecoderSupport.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoEncoder.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoEncoder.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoEncoderConfig.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoEncoderConfig.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoEncoderEncodeOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoEncoderEncodeOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoEncoderSupport.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoEncoderSupport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrame.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrame.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSWebCodecsVideoFrameOutputCallback.cpp

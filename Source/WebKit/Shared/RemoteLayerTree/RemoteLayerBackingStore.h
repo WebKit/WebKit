@@ -195,7 +195,7 @@ private:
 
     // Used in the UI Process.
     std::optional<ImageBufferBackendHandle> m_bufferHandle;
-    // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmap::Handle
+    // FIXME: This should be removed and m_bufferHandle should be used to ref the buffer once ShareableBitmapHandle
     // can be encoded multiple times. http://webkit.org/b/234169
     std::optional<MachSendRight> m_contentsBufferHandle;
 

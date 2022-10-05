@@ -109,7 +109,7 @@ void RemoteImageBufferProxy::backingStoreWillChange()
 void RemoteImageBufferProxy::didCreateImageBufferBackend(ImageBufferBackendHandle&& handle)
 {
     ASSERT(!m_backend);
-    if (renderingMode() == RenderingMode::Accelerated && std::holds_alternative<ShareableBitmap::Handle>(handle))
+    if (renderingMode() == RenderingMode::Accelerated && std::holds_alternative<ShareableBitmapHandle>(handle))
         m_backendInfo = ImageBuffer::populateBackendInfo<UnacceleratedImageBufferShareableBackend>(parameters());
     
     if (renderingMode() == RenderingMode::Unaccelerated)

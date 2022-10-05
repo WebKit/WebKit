@@ -15,6 +15,17 @@ if (_jsTestPreVerboseLogging) {
     let fails_class = 'pass';
     if (RESULTS.fail) {
         fails_class = 'fail';
+    } else {
+        const parseBoolean = v => v.toLowerCase().startsWith('t') || parseFloat(v) > 0;
+        const params = new URLSearchParams(window.location.search);
+        if (parseBoolean(params.get('runUntilFail') || '')) {
+          setTimeout(() => {
+            params.set('runCount', parseInt(params.get('runCount') || '0') + 1);
+            const url = new URL(window.location.href);
+            url.search = params.toString();
+            window.location.href = url.toString();
+          }, 100);
+        }
     }
     e_results.classList.add('pass');
     e_results.innerHTML = `<p>TEST COMPLETE: ${RESULTS.pass} PASS, ` +

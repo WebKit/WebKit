@@ -43,7 +43,7 @@ class ImageBufferShareableBitmapBackend final : public WebCore::PlatformImageBuf
     WTF_MAKE_NONCOPYABLE(ImageBufferShareableBitmapBackend);
 
 public:
-    static ShareableBitmap::Configuration configuration(const Parameters&);
+    static ShareableBitmapConfiguration configuration(const Parameters&);
     static WebCore::IntSize calculateSafeBackendSize(const Parameters&);
     static unsigned calculateBytesPerRow(const Parameters&, const WebCore::IntSize& backendSize);
     static size_t calculateMemoryCost(const Parameters&);

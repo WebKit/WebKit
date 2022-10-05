@@ -37,11 +37,17 @@
 #endif
 #include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
-#include <Namespace/OtherClass.h>
 #include <Namespace/ReturnRefClass.h>
 #include <WebCore/InheritsFrom.h>
 
 namespace IPC {
+
+
+template<> struct ArgumentCoder<Namespace::OtherClass> {
+    static void encode(Encoder&, const Namespace::OtherClass&);
+    static std::optional<Namespace::OtherClass> decode(Decoder&);
+};
+
 
 #if ENABLE(TEST_FEATURE)
 

@@ -54,7 +54,7 @@ ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(Ref<CSSNumericValue> x, Ref<
 
     if (!x->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
         || !y->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>()
-        || !z->type().matchesTypeOrPercentage<CSSNumericBaseType::Length>())
+        || !z->type().matches<CSSNumericBaseType::Length>())
         return Exception { TypeError };
 
     return adoptRef(*new CSSTranslate(is2D, WTFMove(x), WTFMove(y), z.releaseNonNull()));
@@ -131,6 +131,15 @@ void CSSTranslate::serialize(StringBuilder& builder) const
         m_z->serialize(builder);
     }
     builder.append(')');
+}
+
+ExceptionOr<void> CSSTranslate::setZ(Ref<CSSNumericValue> z)
+{
+    if (!z->type().matches<CSSNumericBaseType::Length>())
+        return Exception { TypeError };
+
+    m_z = WTFMove(z);
+    return { };
 }
 
 ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()

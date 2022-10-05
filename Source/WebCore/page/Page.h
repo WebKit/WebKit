@@ -155,6 +155,7 @@ class ProgressTracker;
 class RenderObject;
 class ResourceUsageOverlay;
 class RenderingUpdateScheduler;
+class ScreenOrientationManager;
 class ScrollLatchingController;
 class ScrollingCoordinator;
 class ServicesOverlayController;
@@ -783,6 +784,8 @@ public:
     WEBCORE_EXPORT UserContentProvider& userContentProvider();
     WEBCORE_EXPORT void setUserContentProvider(Ref<UserContentProvider>&&);
 
+    ScreenOrientationManager* screenOrientationManager() const;
+
     VisitedLinkStore& visitedLinkStore();
     WEBCORE_EXPORT void setVisitedLinkStore(Ref<VisitedLinkStore>&&);
 
@@ -1197,6 +1200,7 @@ private:
     Ref<PluginInfoProvider> m_pluginInfoProvider;
     Ref<StorageNamespaceProvider> m_storageNamespaceProvider;
     Ref<UserContentProvider> m_userContentProvider;
+    WeakPtr<ScreenOrientationManager> m_screenOrientationManager;
     Ref<VisitedLinkStore> m_visitedLinkStore;
     Ref<BroadcastChannelRegistry> m_broadcastChannelRegistry;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;

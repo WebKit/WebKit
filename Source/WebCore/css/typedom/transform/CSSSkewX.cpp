@@ -77,6 +77,15 @@ CSSSkewX::CSSSkewX(Ref<CSSNumericValue> ax)
 {
 }
 
+ExceptionOr<void> CSSSkewX::setAx(Ref<CSSNumericValue> ax)
+{
+    if (!ax->type().matches<CSSNumericBaseType::Angle>())
+        return Exception { TypeError };
+
+    m_ax = WTFMove(ax);
+    return { };
+}
+
 void CSSSkewX::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskewx

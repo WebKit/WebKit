@@ -142,6 +142,7 @@
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 #include "WebResourceLoadStatisticsStore.h"
+#include "WebScreenOrientationManagerProxy.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebViewDidMoveToWindowObserver.h"
@@ -1098,6 +1099,8 @@ void WebPageProxy::didAttachToRunningProcess()
     ASSERT(!m_webDeviceOrientationUpdateProviderProxy);
     m_webDeviceOrientationUpdateProviderProxy = makeUnique<WebDeviceOrientationUpdateProviderProxy>(*this);
 #endif
+
+    m_screenOrientationManager = makeUnique<WebScreenOrientationManagerProxy>(*this);
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     ASSERT(!m_xrSystem);
@@ -2825,7 +2828,7 @@ void WebPageProxy::didPerformDragControllerAction(std::optional<WebCore::DragOpe
 }
 
 #if PLATFORM(GTK)
-void WebPageProxy::startDrag(SelectionData&& selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, const ShareableBitmap::Handle& dragImageHandle, IntPoint&& dragImageHotspot)
+void WebPageProxy::startDrag(SelectionData&& selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, const ShareableBitmapHandle& dragImageHandle, IntPoint&& dragImageHotspot)
 {
     RefPtr<ShareableBitmap> dragImage = !dragImageHandle.isNull() ? ShareableBitmap::create(dragImageHandle) : nullptr;
     pageClient().startDrag(WTFMove(selectionData), dragOperationMask, WTFMove(dragImage), WTFMove(dragImageHotspot));
@@ -7056,7 +7059,7 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
     m_findClient->didCountStringMatches(this, string, matchCount);
 }
 
-void WebPageProxy::didGetImageForFindMatch(const ImageBufferBackend::Parameters& parameters, ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex)
+void WebPageProxy::didGetImageForFindMatch(const ImageBufferBackend::Parameters& parameters, ShareableBitmapHandle contentImageHandle, uint32_t matchIndex)
 {
     auto image = WebImage::create(parameters, WTFMove(contentImageHandle));
     if (!image) {
@@ -8213,6 +8216,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     }
 #endif
 
+    m_screenOrientationManager = nullptr;
+
 #if ENABLE(MEDIA_USAGE)
     if (m_mediaUsageManager)
         m_mediaUsageManager->reset();
@@ -9041,7 +9046,7 @@ void WebPageProxy::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier f
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completionHandler)
+void WebPageProxy::requestTextRecognition(const URL& imageURL, const ShareableBitmapHandle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(TextRecognitionResult&&)>&& completionHandler)
 {
     pageClient().requestTextRecognition(imageURL, imageData, sourceLanguageIdentifier, targetLanguageIdentifier, WTFMove(completionHandler));
 }
@@ -9069,7 +9074,7 @@ void WebPageProxy::startVisualTranslation(const String& sourceLanguageIdentifier
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-void WebPageProxy::requestImageBitmap(const ElementContext& elementContext, CompletionHandler<void(const ShareableBitmap::Handle&, const String&)>&& completion)
+void WebPageProxy::requestImageBitmap(const ElementContext& elementContext, CompletionHandler<void(const ShareableBitmapHandle&, const String&)>&& completion)
 {
     if (!hasRunningProcess()) {
         completion({ }, { });
@@ -9348,7 +9353,7 @@ uint64_t WebPageProxy::computePagesForPrinting(FrameIdentifier frameID, const Pr
 }
 
 #if PLATFORM(COCOA)
-uint64_t WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& callback)
+uint64_t WebPageProxy::drawRectToImage(WebFrameProxy* frame, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&& callback)
 {
     return sendWithAsyncReply(Messages::WebPage::DrawRectToImage(frame->frameID(), printInfo, rect, imageSize), WTFMove(callback), printingSendOptions(m_isPerformingDOMPrintOperation));
 }
@@ -9789,7 +9794,7 @@ void WebPageProxy::setScrollPerformanceDataCollectionEnabled(bool enabled)
 }
 #endif
 
-void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOptions options, CompletionHandler<void(const ShareableBitmap::Handle&)>&& callback)
+void WebPageProxy::takeSnapshot(IntRect rect, IntSize bitmapSize, SnapshotOptions options, CompletionHandler<void(const ShareableBitmapHandle&)>&& callback)
 {
     sendWithAsyncReply(Messages::WebPage::TakeSnapshot(rect, bitmapSize, options), WTFMove(callback));
 }
@@ -10498,7 +10503,7 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
 
     auto updateAttachmentIcon = [&] {
         FloatSize size = requestedSize;
-        ShareableBitmap::Handle handle;
+        ShareableBitmapHandle handle;
 
 #if PLATFORM(COCOA)
         if (auto icon = iconForAttachment(fileName, contentType, title, size))
@@ -10553,7 +10558,7 @@ void WebPageProxy::updateAttachmentThumbnail(const String& identifier, const Ref
     if (!hasRunningProcess())
         return;
     
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (bitmap)
         bitmap->createHandle(handle);
 
@@ -11046,13 +11051,13 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebPageProxy::addObserver(WebViewDidMoveToWindowObserver& observer)
+void WebPageProxy::addDidMoveToWindowObserver(WebViewDidMoveToWindowObserver& observer)
 {
     auto result = m_webViewDidMoveToWindowObservers.add(&observer, observer);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void WebPageProxy::removeObserver(WebViewDidMoveToWindowObserver& observer)
+void WebPageProxy::removeDidMoveToWindowObserver(WebViewDidMoveToWindowObserver& observer)
 {
     auto result = m_webViewDidMoveToWindowObservers.remove(&observer);
     ASSERT_UNUSED(result, result);

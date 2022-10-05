@@ -219,7 +219,7 @@ messages -> WebPageProxy {
     SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
 
 #if ENABLE(IMAGE_ANALYSIS)
-    RequestTextRecognition(URL imageURL, WebKit::ShareableBitmap::Handle imageData, String source, String target) -> (struct WebCore::TextRecognitionResult result)
+    RequestTextRecognition(URL imageURL, WebKit::ShareableBitmapHandle imageData, String source, String target) -> (struct WebCore::TextRecognitionResult result)
 #endif
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
@@ -244,7 +244,7 @@ messages -> WebPageProxy {
     DidFindString(String string, Vector<WebCore::IntRect> matchRect, uint32_t matchCount, int32_t matchIndex, bool didWrapAround)
     DidFailToFindString(String string)
     DidFindStringMatches(String string, Vector<Vector<WebCore::IntRect>> matches, int32_t firstIndexAfterSelection)
-    DidGetImageForFindMatch(struct WebCore::ImageBufferBackend::Parameters parameters, WebKit::ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex)
+    DidGetImageForFindMatch(struct WebCore::ImageBufferBackend::Parameters parameters, WebKit::ShareableBitmapHandle contentImageHandle, uint32_t matchIndex)
 
     # PopupMenu messages
     ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, struct WebKit::PlatformPopupMenuData data)
@@ -302,11 +302,11 @@ messages -> WebPageProxy {
     DidEndDragging();
 #endif
 #if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
-    StartDrag(struct WebCore::DragItem dragItem, WebKit::ShareableBitmap::Handle dragImage)
+    StartDrag(struct WebCore::DragItem dragItem, WebKit::ShareableBitmapHandle dragImage)
     SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::Handle imageHandle, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::Handle archiveHandle, String originIdentifier)
 #endif
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
-    StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, WebKit::ShareableBitmap::Handle dragImage, WebCore::IntPoint dragImageHotspot)
+    StartDrag(WebCore::SelectionData selectionData, OptionSet<WebCore::DragOperation> dragOperationMask, WebKit::ShareableBitmapHandle dragImage, WebCore::IntPoint dragImageHotspot)
 #endif
 
 #if ENABLE(DRAG_SUPPORT)

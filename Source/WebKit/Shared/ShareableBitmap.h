@@ -30,6 +30,7 @@
 #include <WebCore/DestinationColorSpace.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformImage.h>
+#include <wtf/ArgumentCoder.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -39,60 +40,57 @@ class GraphicsContext;
 }
 
 namespace WebKit {
-    
+
+struct ShareableBitmapConfiguration {
+    std::optional<WebCore::DestinationColorSpace> colorSpace;
+    bool isOpaque { false };
+};
+
+class ShareableBitmapHandle  {
+    WTF_MAKE_NONCOPYABLE(ShareableBitmapHandle);
+public:
+    ShareableBitmapHandle();
+    ShareableBitmapHandle(ShareableBitmapHandle&&) = default;
+    ShareableBitmapHandle(SharedMemory::Handle&&, const WebCore::IntSize&, const ShareableBitmapConfiguration&);
+
+    ShareableBitmapHandle& operator=(ShareableBitmapHandle&&) = default;
+
+    bool isNull() const { return m_handle.isNull(); }
+
+    SharedMemory::Handle& handle() { return m_handle; }
+
+    // Take ownership of the memory for process memory accounting purposes.
+    void takeOwnershipOfMemory(MemoryLedger) const;
+
+    void clear();
+private:
+    friend struct IPC::ArgumentCoder<ShareableBitmapHandle, void>;
+    friend class ShareableBitmap;
+
+    mutable SharedMemory::Handle m_handle;
+    WebCore::IntSize m_size;
+    ShareableBitmapConfiguration m_configuration;
+};
+
 class ShareableBitmap : public ThreadSafeRefCounted<ShareableBitmap> {
 public:
-    struct Configuration {
-        std::optional<WebCore::DestinationColorSpace> colorSpace;
-        bool isOpaque { false };
 
-        void encode(IPC::Encoder&) const;
-        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Configuration&);
-    };
-
-    class Handle {
-        WTF_MAKE_NONCOPYABLE(Handle);
-    public:
-        Handle();
-        Handle(Handle&&) = default;
-        Handle& operator=(Handle&&) = default;
-
-        bool isNull() const { return m_handle.isNull(); }
-
-        SharedMemory::Handle& handle() { return m_handle; }
-
-        // Take ownership of the memory for process memory accounting purposes.
-        void takeOwnershipOfMemory(MemoryLedger) const;
-
-        void clear();
-
-        void encode(IPC::Encoder&) const;
-        static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, Handle&);
-
-    private:
-        friend class ShareableBitmap;
-
-        mutable SharedMemory::Handle m_handle;
-        WebCore::IntSize m_size;
-        Configuration m_configuration;
-    };
-
-    static void validateConfiguration(Configuration&);
-    static CheckedUint32 numBytesForSize(WebCore::IntSize, const ShareableBitmap::Configuration&);
-    static CheckedUint32 calculateBytesPerRow(WebCore::IntSize, const Configuration&);
-    static CheckedUint32 calculateBytesPerPixel(const Configuration&);
+    static void validateConfiguration(ShareableBitmapConfiguration&);
+    static CheckedUint32 numBytesForSize(WebCore::IntSize, const ShareableBitmapConfiguration&);
+    static CheckedUint32 calculateBytesPerRow(WebCore::IntSize, const ShareableBitmapConfiguration&);
+    static CheckedUint32 calculateBytesPerPixel(const ShareableBitmapConfiguration&);
 
     // Create a shareable bitmap whose backing memory can be shared with another process.
-    static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, Configuration);
+    static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, ShareableBitmapConfiguration);
 
     // Create a shareable bitmap from an already existing shared memory block.
-    static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, Configuration, Ref<SharedMemory>&&);
+    static RefPtr<ShareableBitmap> create(const WebCore::IntSize&, ShareableBitmapConfiguration, Ref<SharedMemory>&&);
 
     // Create a shareable bitmap from a handle.
-    static RefPtr<ShareableBitmap> create(const Handle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
+    static RefPtr<ShareableBitmap> create(const ShareableBitmapHandle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
 
     // Create a handle.
-    bool createHandle(Handle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
+    bool createHandle(ShareableBitmapHandle&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
 
     const WebCore::IntSize& size() const { return m_size; }
     WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
@@ -131,7 +129,7 @@ public:
 #endif
 
 private:
-    ShareableBitmap(const WebCore::IntSize&, Configuration, Ref<SharedMemory>&&);
+    ShareableBitmap(const WebCore::IntSize&, ShareableBitmapConfiguration, Ref<SharedMemory>&&);
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef, WebCore::ShouldInterpolate) const;
@@ -143,7 +141,7 @@ private:
 #endif
 
     WebCore::IntSize m_size;
-    Configuration m_configuration;
+    ShareableBitmapConfiguration m_configuration;
 
 #if USE(CG)
     bool m_releaseBitmapContextDataCalled { false };

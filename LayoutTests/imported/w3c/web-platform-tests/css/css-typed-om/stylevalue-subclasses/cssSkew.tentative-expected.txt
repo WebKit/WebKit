@@ -10,16 +10,16 @@ PASS Updating CSSSkew.ax with a keyword throws a TypeError
 PASS Updating CSSSkew.ax with a double throws a TypeError
 PASS Updating CSSSkew.ax with a unitless zero throws a TypeError
 PASS Updating CSSSkew.ax with a string angle throws a TypeError
-FAIL Updating CSSSkew.ax with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => skew[attr] = value" did not throw
-FAIL Updating CSSSkew.ax with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => skew[attr] = value" did not throw
-FAIL Updating CSSSkew.ax with a CSSMathValue of length type throws a TypeError assert_throws_js: function "() => skew[attr] = value" did not throw
+PASS Updating CSSSkew.ax with a number CSSUnitValue throws a TypeError
+PASS Updating CSSSkew.ax with a time dimension CSSUnitValue throws a TypeError
+PASS Updating CSSSkew.ax with a CSSMathValue of length type throws a TypeError
 PASS Updating CSSSkew.ay with a keyword throws a TypeError
 PASS Updating CSSSkew.ay with a double throws a TypeError
 PASS Updating CSSSkew.ay with a unitless zero throws a TypeError
 PASS Updating CSSSkew.ay with a string angle throws a TypeError
-FAIL Updating CSSSkew.ay with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => skew[attr] = value" did not throw
-FAIL Updating CSSSkew.ay with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => skew[attr] = value" did not throw
-FAIL Updating CSSSkew.ay with a CSSMathValue of length type throws a TypeError assert_throws_js: function "() => skew[attr] = value" did not throw
+PASS Updating CSSSkew.ay with a number CSSUnitValue throws a TypeError
+PASS Updating CSSSkew.ay with a time dimension CSSUnitValue throws a TypeError
+PASS Updating CSSSkew.ay with a CSSMathValue of length type throws a TypeError
 PASS CSSSkew can be constructed from an angle CSSUnitValue and an angle CSSUnitValue
 PASS CSSSkew can be constructed from an angle CSSUnitValue and a CSSMathValue of angle type
 PASS CSSSkew can be constructed from a CSSMathValue of angle type and an angle CSSUnitValue
@@ -28,5 +28,5 @@ PASS CSSSkew.ax can be updated to an angle CSSUnitValue
 PASS CSSSkew.ax can be updated to a CSSMathValue of angle type
 PASS CSSSkew.ay can be updated to an angle CSSUnitValue
 PASS CSSSkew.ay can be updated to a CSSMathValue of angle type
-FAIL Modifying CSSSkew.is2D is a no-op assert_true: expected true got false
+PASS Modifying CSSSkew.is2D is a no-op
 

@@ -46,7 +46,7 @@ namespace WebKit {
 class WebImage : public API::ObjectImpl<API::Object::Type::Image> {
 public:
     static RefPtr<WebImage> create(const WebCore::IntSize&, ImageOptions, const WebCore::DestinationColorSpace&, WebCore::ChromeClient* = nullptr);
-    static RefPtr<WebImage> create(const WebCore::ImageBufferBackend::Parameters&, ShareableBitmap::Handle&&);
+    static RefPtr<WebImage> create(const WebCore::ImageBufferBackend::Parameters&, ShareableBitmapHandle&&);
     static Ref<WebImage> create(Ref<WebCore::ImageBuffer>&&);
 
     WebCore::IntSize size() const;
@@ -60,7 +60,7 @@ public:
     RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
-    ShareableBitmap::Handle createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
+    ShareableBitmapHandle createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
 
 private:
     WebImage(Ref<WebCore::ImageBuffer>&&);

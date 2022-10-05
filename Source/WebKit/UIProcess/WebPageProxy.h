@@ -382,6 +382,7 @@ class WebPageDebuggable;
 class WebPageGroup;
 class WebPageInspectorController;
 class WebProcessProxy;
+class WebScreenOrientationManagerProxy;
 class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
 class WebViewDidMoveToWindowObserver;
@@ -1236,7 +1237,7 @@ public:
     void getImageForFindMatch(int32_t matchIndex);
     void selectFindMatch(int32_t matchIndex);
     void indicateFindMatch(int32_t matchIndex);
-    void didGetImageForFindMatch(const WebCore::ImageBufferBackend::Parameters&, ShareableBitmap::Handle contentImageHandle, uint32_t matchIndex);
+    void didGetImageForFindMatch(const WebCore::ImageBufferBackend::Parameters&, ShareableBitmapHandle contentImageHandle, uint32_t matchIndex);
     void hideFindUI();
     void hideFindIndicator();
     void countStringMatches(const String&, OptionSet<FindOptions>, unsigned maxMatchCount);
@@ -1317,12 +1318,12 @@ public:
     void dragCancelled();
     void setDragCaretRect(const WebCore::IntRect&);
 #if PLATFORM(COCOA)
-    void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& dragImageHandle);
+    void startDrag(const WebCore::DragItem&, const ShareableBitmapHandle& dragImageHandle);
     void setPromisedDataForImage(const String& pasteboardName, const SharedMemory::Handle& imageHandle, const String& filename, const String& extension,
         const String& title, const String& url, const String& visibleURL, const SharedMemory::Handle& archiveHandle, const String& originIdentifier);
 #endif
 #if PLATFORM(GTK)
-    void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, const ShareableBitmap::Handle& dragImage, WebCore::IntPoint&& dragImageHotspot);
+    void startDrag(WebCore::SelectionData&&, OptionSet<WebCore::DragOperation>, const ShareableBitmapHandle& dragImage, WebCore::IntPoint&& dragImageHotspot);
 #endif
 #endif
 
@@ -1446,7 +1447,7 @@ public:
     uint64_t computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
 #if PLATFORM(COCOA)
-    uint64_t drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&&);
+    uint64_t drawRectToImage(WebFrameProxy*, const PrintInfo&, const WebCore::IntRect&, const WebCore::IntSize&, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&&);
     uint64_t drawPagesToPDF(WebFrameProxy*, const PrintInfo&, uint32_t first, uint32_t count, CompletionHandler<void(API::Data*)>&&);
     void drawToPDF(WebCore::FrameIdentifier, const std::optional<WebCore::FloatRect>&, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
 #if PLATFORM(IOS_FAMILY)
@@ -1583,7 +1584,7 @@ public:
 
     void signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String& challengeString, const URL&, CompletionHandler<void(String)>&&);
 
-    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
+    void takeSnapshot(WebCore::IntRect, WebCore::IntSize bitmapSize, SnapshotOptions, CompletionHandler<void(const ShareableBitmapHandle&)>&&);
 
     void navigationGestureDidBegin();
     void navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem&);
@@ -1776,7 +1777,7 @@ public:
 #endif
 
 #if ENABLE(IMAGE_ANALYSIS)
-    void requestTextRecognition(const URL& imageURL, const ShareableBitmap::Handle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
+    void requestTextRecognition(const URL& imageURL, const ShareableBitmapHandle& imageData, const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier, CompletionHandler<void(WebCore::TextRecognitionResult&&)>&&);
     void updateWithTextRecognitionResult(WebCore::TextRecognitionResult&&, const WebCore::ElementContext&, const WebCore::FloatPoint& location, CompletionHandler<void(TextRecognitionUpdateResult)>&&);
     void computeHasVisualSearchResults(const URL& imageURL, ShareableBitmap& imageBitmap, CompletionHandler<void(bool)>&&);
     void startVisualTranslation(const String& sourceLanguageIdentifier, const String& targetLanguageIdentifier);
@@ -1881,8 +1882,8 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
-    void addObserver(WebViewDidMoveToWindowObserver&);
-    void removeObserver(WebViewDidMoveToWindowObserver&);
+    void addDidMoveToWindowObserver(WebViewDidMoveToWindowObserver&);
+    void removeDidMoveToWindowObserver(WebViewDidMoveToWindowObserver&);
     void webViewDidMoveToWindow();
 
 #if HAVE(APP_SSO)
@@ -2100,7 +2101,7 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(const ShareableBitmap::Handle&, const String& sourceMIMEType)>&&);
+    void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(const ShareableBitmapHandle&, const String& sourceMIMEType)>&&);
 
 #if PLATFORM(MAC)
     bool isQuarantinedAndNotUserApproved(const String&);
@@ -3264,6 +3265,8 @@ private:
     std::unique_ptr<WebDeviceOrientationUpdateProviderProxy> m_webDeviceOrientationUpdateProviderProxy;
 #endif
 
+    std::unique_ptr<WebScreenOrientationManagerProxy> m_screenOrientationManager;
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     MonotonicTime m_didFinishDocumentLoadForMainFrameTimestamp;
 #endif
@@ -3321,11 +3324,6 @@ private:
 inline RetainPtr<WKWebView> WebPageProxy::cocoaView()
 {
     return m_cocoaView.get();
-}
-
-inline void WebPageProxy::setCocoaView(WKWebView *view)
-{
-    m_cocoaView = view;
 }
 
 #endif

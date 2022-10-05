@@ -10,12 +10,12 @@ PASS Updating CSSSkewY.ay with a keyword throws a TypeError
 PASS Updating CSSSkewY.ay with a double throws a TypeError
 PASS Updating CSSSkewY.ay with a unitless zero throws a TypeError
 PASS Updating CSSSkewY.ay with a string angle throws a TypeError
-FAIL Updating CSSSkewY.ay with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => skewY.ay = value" did not throw
-FAIL Updating CSSSkewY.ay with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => skewY.ay = value" did not throw
-FAIL Updating CSSSkewY.ay with a CSSMathValue of length type throws a TypeError assert_throws_js: function "() => skewY.ay = value" did not throw
+PASS Updating CSSSkewY.ay with a number CSSUnitValue throws a TypeError
+PASS Updating CSSSkewY.ay with a time dimension CSSUnitValue throws a TypeError
+PASS Updating CSSSkewY.ay with a CSSMathValue of length type throws a TypeError
 PASS CSSSkewY can be constructed from an angle CSSUnitValue
 PASS CSSSkewY can be constructed from a CSSMathValue of angle type
 PASS CSSSkewY.ay can be updated to an angle CSSUnitValue
 PASS CSSSkewY.ay can be updated to a CSSMathValue of angle type
-FAIL Modifying skewY.is2D is a no-op assert_true: expected true got false
+PASS Modifying skewY.is2D is a no-op
 

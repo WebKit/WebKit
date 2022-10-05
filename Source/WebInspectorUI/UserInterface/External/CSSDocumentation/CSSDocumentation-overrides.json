@@ -8,5 +8,20 @@
     "-webkit-appearance": {
         "description": "Changes the appearance of buttons and other controls to resemble native controls.",
         "syntax": "none | button | checkbox | listbox | menulist | menulist-button | meter | progress-bar | push-button | radio | searchfield | slider-horizontal | slider-vertical | square-button | textarea | textfield | -apple-pay-button"
+    },
+    "font-synthesis-weight": {
+        "description": "Controls whether user agents are allowed to synthesize bold font faces when a font family lacks bold faces.",
+        "syntax": "none | auto",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+    },
+    "font-synthesis-style": {
+        "description": "Controls whether user agents are allowed to synthesize oblique font faces when a font family lacks italic faces.",
+        "syntax": "none | auto",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
+    },
+    "font-synthesis-small-caps": {
+        "description": "Controls whether user agents are allowed to synthesize small-caps font faces when a font family lacks small-caps faces.",
+        "syntax": "none | auto",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/font-synthesis"
     }
 }

@@ -141,7 +141,7 @@ void WebHitTestResultData::encode(IPC::Encoder& encoder) const
 
     encoder << imageHandle;
 
-    ShareableBitmap::Handle imageBitmapHandle;
+    ShareableBitmapHandle imageBitmapHandle;
     if (imageBitmap)
         imageBitmap->createHandle(imageBitmapHandle, SharedMemory::Protection::ReadOnly);
     encoder << imageBitmapHandle;
@@ -187,7 +187,7 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
             return false;
     }
 
-    ShareableBitmap::Handle imageBitmapHandle;
+    ShareableBitmapHandle imageBitmapHandle;
     if (!decoder.decode(imageBitmapHandle))
         return false;
 

@@ -34,6 +34,7 @@
 #include "JSWebCodecsVideoDecoderSupport.h"
 #include "ScriptExecutionContext.h"
 #include "WebCodecsErrorCallback.h"
+#include "WebCodecsVideoFrame.h"
 #include "WebCodecsVideoFrameOutputCallback.h"
 #include <wtf/IsoMallocInlines.h>
 

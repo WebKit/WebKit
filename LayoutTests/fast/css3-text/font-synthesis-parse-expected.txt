@@ -3,23 +3,23 @@ PASS declaration.length is 0
 PASS declaration.getPropertyValue('font-synthesis') is ""
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "weight style small-caps"
 PASS cssRule.type is cssRule.STYLE_RULE
-PASS declaration.length is 1
+PASS declaration.length is 3
 PASS declaration.getPropertyValue('font-synthesis') is "initial"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "weight style small-caps"
 PASS cssRule.type is cssRule.STYLE_RULE
-PASS declaration.length is 1
+PASS declaration.length is 3
 PASS declaration.getPropertyValue('font-synthesis') is "weight"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "weight"
 PASS cssRule.type is cssRule.STYLE_RULE
-PASS declaration.length is 1
+PASS declaration.length is 3
 PASS declaration.getPropertyValue('font-synthesis') is "style"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "style"
 PASS cssRule.type is cssRule.STYLE_RULE
-PASS declaration.length is 1
+PASS declaration.length is 3
 PASS declaration.getPropertyValue('font-synthesis') is "weight style"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "weight style"
 PASS cssRule.type is cssRule.STYLE_RULE
-PASS declaration.length is 1
+PASS declaration.length is 3
 PASS declaration.getPropertyValue('font-synthesis') is "weight style"
 PASS computedStyle.getPropertyCSSValue('font-synthesis').cssText is "weight style"
 PASS cssRule.type is cssRule.STYLE_RULE

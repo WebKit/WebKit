@@ -90,7 +90,7 @@ public:
     void putPixelBufferForImageBuffer(WebCore::RenderingResourceIdentifier, const WebCore::PixelBuffer&, const WebCore::IntRect& srcRect, const WebCore::IntPoint& destPoint, WebCore::AlphaPremultiplication destFormat);
     RefPtr<ShareableBitmap> getShareableBitmap(WebCore::RenderingResourceIdentifier, WebCore::PreserveResolution);
     RefPtr<WebCore::Image> getFilteredImage(WebCore::RenderingResourceIdentifier, WebCore::Filter&);
-    void cacheNativeImage(const ShareableBitmap::Handle&, WebCore::RenderingResourceIdentifier);
+    void cacheNativeImage(const ShareableBitmapHandle&, WebCore::RenderingResourceIdentifier);
     void cacheFont(Ref<WebCore::Font>&&);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
     void releaseAllRemoteResources();

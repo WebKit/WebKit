@@ -356,7 +356,7 @@ export * as "\ud800" from "./ok.js"
 
 checkModuleSyntaxError(String.raw`
 new.target;
-`, `SyntaxError: new.target is only valid inside functions.:2`);
+`, `SyntaxError: new.target is only valid inside functions or static blocks.:2`);
 
 checkModuleSyntaxError(String.raw`
 super();

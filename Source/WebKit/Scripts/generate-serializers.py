@@ -39,17 +39,22 @@ class SerializedType(object):
         self.return_ref = False
         self.create_using = False
         self.populate_from_empty_constructor = False
+        self.nested = False
         if attributes is not None:
             for attribute in attributes.split(', '):
-                key, value = attribute.split('=')
-                if key == 'AdditionalEncoder':
-                    self.encoders.append(value)
-                if key == 'Return' and value == 'Ref':
-                    self.return_ref = True
-                if key == 'CreateUsing':
-                    self.create_using = value
-                if key == 'LegacyPopulateFrom' and value == 'EmptyConstructor':
-                    self.populate_from_empty_constructor = True
+                if '=' in attribute:
+                    key, value = attribute.split('=')
+                    if key == 'AdditionalEncoder':
+                        self.encoders.append(value)
+                    if key == 'Return' and value == 'Ref':
+                        self.return_ref = True
+                    if key == 'CreateUsing':
+                        self.create_using = value
+                    if key == 'LegacyPopulateFrom' and value == 'EmptyConstructor':
+                        self.populate_from_empty_constructor = True
+                else:
+                    if attribute == 'Nested':
+                        self.nested = True
 
     def namespace_and_name(self):
         if self.namespace is None:
@@ -85,7 +90,10 @@ class SerializedEnum(object):
         return self.underlying_type
 
     def is_option_set(self):
-        return self.attributes == '[OptionSet] '
+        return 'OptionSet' in self.attributes
+
+    def is_nested(self):
+        return 'Nested' in self.attributes
 
 
 class MemberVariable(object):
@@ -146,6 +154,27 @@ _license_header = """/*
 """
 
 
+def argument_coder_declarations(serialized_types, skip_nested):
+    result = []
+    for type in serialized_types:
+        if type.nested == skip_nested:
+            continue
+        result.append('')
+        if type.condition is not None:
+            result.append('#if ' + type.condition)
+        result.append('template<> struct ArgumentCoder<' + type.namespace_and_name() + '> {')
+        for encoder in type.encoders:
+            result.append('    static void encode(' + encoder + '&, const ' + type.namespace_and_name() + '&);')
+        if type.return_ref:
+            result.append('    static std::optional<Ref<' + type.namespace_and_name() + '>> decode(Decoder&);')
+        else:
+            result.append('    static std::optional<' + type.namespace_and_name() + '> decode(Decoder&);')
+        result.append('};')
+        if type.condition is not None:
+            result.append('#endif')
+    return result
+
+
 def generate_header(serialized_types, serialized_enums):
     result = []
     result.append(_license_header)
@@ -156,12 +185,16 @@ def generate_header(serialized_types, serialized_enums):
     result.append('#include <wtf/Ref.h>')
     result.append('')
     for enum in serialized_enums:
+        if enum.is_nested():
+            continue
         if enum.condition is not None:
             result.append('#if ' + enum.condition)
         result.append('namespace ' + enum.namespace + ' { enum class ' + enum.name + ' : ' + enum.underlying_type + '; }')
         if enum.condition is not None:
             result.append('#endif')
     for type in serialized_types:
+        if type.nested:
+            continue
         if type.condition is not None:
             result.append('#if ' + type.condition)
         if type.namespace is None:
@@ -176,26 +209,15 @@ def generate_header(serialized_types, serialized_enums):
     result.append('class Decoder;')
     result.append('class Encoder;')
     result.append('class StreamConnectionEncoder;')
-    for type in serialized_types:
-        result.append('')
-        if type.condition is not None:
-            result.append('#if ' + type.condition)
-        result.append('template<> struct ArgumentCoder<' + type.namespace_and_name() + '> {')
-        for encoder in type.encoders:
-            result.append('    static void encode(' + encoder + '&, const ' + type.namespace_and_name() + '&);')
-        if type.return_ref:
-            result.append('    static std::optional<Ref<' + type.namespace_and_name() + '>> decode(Decoder&);')
-        else:
-            result.append('    static std::optional<' + type.namespace_and_name() + '> decode(Decoder&);')
-        result.append('};')
-        if type.condition is not None:
-            result.append('#endif')
+    result = result + argument_coder_declarations(serialized_types, True)
     result.append('')
     result.append('} // namespace IPC\n')
     result.append('')
     result.append('namespace WTF {')
     result.append('')
     for enum in serialized_enums:
+        if enum.is_nested():
+            continue
         if enum.underlying_type == 'bool':
             continue
         if enum.condition is not None:
@@ -237,6 +259,9 @@ def generate_impl(serialized_types, serialized_enums, headers):
             result.append('#endif')
     result.append('')
     result.append('namespace IPC {')
+    result.append('')
+    result = result + argument_coder_declarations(serialized_types, False)
+    result.append('')
     for type in serialized_types:
         result.append('')
         if type.condition is not None:
@@ -479,7 +504,7 @@ def parse_serialized_types(file, file_name):
                 serialized_enums.append(SerializedEnum(namespace, name, underlying_type, members, type_condition, attributes))
             else:
                 serialized_types.append(SerializedType(struct_or_class, namespace, name, parent_class, members, type_condition, attributes))
-                if namespace is not None and (attributes is None or 'CustomHeader=True' not in attributes):
+                if namespace is not None and (attributes is None or 'CustomHeader' not in attributes and 'Nested' not in attributes):
                     if namespace == 'WebKit':
                         headers.append(ConditionalHeader('"' + name + '.h"', type_condition))
                     elif namespace == 'WebKit::WebGPU':

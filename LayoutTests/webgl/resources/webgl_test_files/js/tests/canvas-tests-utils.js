@@ -340,6 +340,7 @@ function testAPIs(contextType) {
       passed = passed && r;
     }
 
+    methods.push(...["makeXRCompatible"]);
     var extended = false;
     for (var i in gl) {
       if (typeof gl[i] == "function" && methods.indexOf(i) == -1) {

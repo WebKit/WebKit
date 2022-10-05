@@ -478,6 +478,7 @@ platform/ios/PlatformScreenIOS.mm
 platform/ios/PlaybackSessionInterfaceAVKit.mm @no-unify
 platform/ios/PreviewConverterIOS.mm
 platform/ios/QuickLook.mm
+platform/ios/ScreenOrientationProviderIOS.mm
 platform/ios/ScrollAnimatorIOS.mm
 platform/ios/ScrollViewIOS.mm
 platform/ios/ScrollbarThemeIOS.mm

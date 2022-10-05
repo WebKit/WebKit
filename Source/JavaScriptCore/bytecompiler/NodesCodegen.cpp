@@ -649,7 +649,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             continue;
         }
 
-        if (p->isStaticClassField()) {
+        if (p->isStaticClassElement()) {
             ASSERT(staticFieldLocations);
             staticFieldLocations->append(p->position());
             continue;
@@ -719,7 +719,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
                 continue;
             }
 
-            if (p->isStaticClassField()) {
+            if (p->isStaticClassElement()) {
                 ASSERT(staticFieldLocations);
                 staticFieldLocations->append(p->position());
                 continue;
@@ -1260,6 +1260,25 @@ RegisterID* FunctionCallValueNode::emitBytecode(BytecodeGenerator& generator, Re
     RegisterID* ret = generator.emitCallInTailPosition(returnValue.get(), func.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
     generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
     return ret;
+}
+
+// ------------------------------ StaticBlockFunctionCallNode ----------------------------------
+
+RegisterID* StaticBlockFunctionCallNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
+{
+    // There are two possible optimizations in this implementation.
+    // https://bugs.webkit.org/show_bug.cgi?id=245925
+    RefPtr homeObject = emitHomeObjectForCallee(generator);
+    RefPtr function = generator.emitNode(m_expr);
+    emitPutHomeObject(generator, function.get(), homeObject.get()); 
+    RefPtr returnValue = generator.finalDestination(dst, function.get());
+
+    CallArguments callArguments(generator, nullptr);
+    generator.move(callArguments.thisRegister(), generator.thisRegister());
+    RefPtr result = generator.emitCallInTailPosition(returnValue.get(), function.get(), NoExpectedFunction, callArguments, divot(), divotStart(), divotEnd(), DebuggableCall::Yes);
+
+    generator.emitProfileType(returnValue.get(), divotStart(), divotEnd());
+    return result.get();
 }
 
 // ------------------------------ FunctionCallResolveNode ----------------------------------

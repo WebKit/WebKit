@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/constructor.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/idlharness.window.js
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/mouse_buttons_back_forward.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/movementX_Y_basic.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_remove_target.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_remove_target_on_mouseup.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerlock/pointerlock_shadow.html

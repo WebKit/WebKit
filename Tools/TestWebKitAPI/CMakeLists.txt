@@ -93,6 +93,7 @@ set(TestWTF_SOURCES
     Tests/WTF/SentinelLinkedList.cpp
     Tests/WTF/SetForScope.cpp
     Tests/WTF/Span.cpp
+    Tests/WTF/StackTraceTest.cpp
     Tests/WTF/StdLibExtras.cpp
     Tests/WTF/StringBuilder.cpp
     Tests/WTF/StringCommon.cpp

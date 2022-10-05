@@ -246,6 +246,14 @@ namespace JSC {
     {
     }
 
+    inline PropertyNode::PropertyNode(const Identifier& name, Type type, SuperBinding superBinding, ClassElementTag tag)
+        : m_name(&name)
+        , m_type(type)
+        , m_needsSuperBinding(superBinding == SuperBinding::Needed)
+        , m_classElementTag(static_cast<unsigned>(tag))
+    {
+    }
+
     inline PropertyNode::PropertyNode(const Identifier& name, ExpressionNode* assign, Type type, SuperBinding superBinding, ClassElementTag tag)
         : m_name(&name)
         , m_assign(assign)
@@ -386,6 +394,14 @@ namespace JSC {
         , ThrowableExpressionData(divot, divotStart, divotEnd)
         , m_expr(expr)
         , m_args(args)
+    {
+        ASSERT(divot.offset >= divotStart.offset);
+    }
+
+    inline StaticBlockFunctionCallNode::StaticBlockFunctionCallNode(const JSTokenLocation& location, ExpressionNode* expr, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd)
+        : ExpressionNode(location)
+        , ThrowableExpressionData(divot, divotStart, divotEnd)
+        , m_expr(expr)
     {
         ASSERT(divot.offset >= divotStart.offset);
     }

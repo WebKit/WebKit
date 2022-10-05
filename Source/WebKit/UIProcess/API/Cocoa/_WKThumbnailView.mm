@@ -143,7 +143,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _lastSnapshotScale = _scale;
     _lastSnapshotMaximumSize = _maximumSnapshotSize;
-    _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](const WebKit::ShareableBitmap::Handle& imageHandle) {
+    _webPageProxy->takeSnapshot(snapshotRect, bitmapSize, options, [thumbnailView](const WebKit::ShareableBitmapHandle& imageHandle) {
         auto bitmap = WebKit::ShareableBitmap::create(imageHandle, WebKit::SharedMemory::Protection::ReadOnly);
         RetainPtr<CGImageRef> cgImage = bitmap ? bitmap->makeCGImage() : nullptr;
         tracePoint(TakeSnapshotEnd, !!cgImage);

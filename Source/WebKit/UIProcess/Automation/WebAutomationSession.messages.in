@@ -22,5 +22,5 @@
 
 messages -> WebAutomationSession {
     DidEvaluateJavaScriptFunction(uint64_t callbackID, String result, String errorType)
-    DidTakeScreenshot(uint64_t callbackID, WebKit::ShareableBitmap::Handle imageDataHandle, String errorType)
+    DidTakeScreenshot(uint64_t callbackID, WebKit::ShareableBitmapHandle imageDataHandle, String errorType)
 }

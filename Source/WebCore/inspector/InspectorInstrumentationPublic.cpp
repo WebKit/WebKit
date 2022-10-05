@@ -28,6 +28,6 @@
 
 namespace WebCore {
 
-int InspectorInstrumentationPublic::s_frontendCounter = 0;
+std::atomic<int> InspectorInstrumentationPublic::s_frontendCounter;
 
 } // namespace WebCore

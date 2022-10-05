@@ -154,7 +154,7 @@ public:
 
     void forEachSession(Function<void(VideoFullscreenModelContext&, PlatformVideoFullscreenInterface&)>&&);
 
-    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(const ShareableBitmap::Handle&)>&&);
+    void requestBitmapImageForCurrentTime(PlaybackSessionContextIdentifier, CompletionHandler<void(const ShareableBitmapHandle&)>&&);
 
 #if PLATFORM(IOS_FAMILY)
     AVPlayerViewController *playerViewController(PlaybackSessionContextIdentifier) const;

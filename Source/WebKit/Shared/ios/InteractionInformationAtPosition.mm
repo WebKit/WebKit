@@ -70,7 +70,7 @@ void InteractionInformationAtPosition::encode(IPC::Encoder& encoder) const
     encoder << cursor;
     encoder << linkIndicator;
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (image)
         image->createHandle(handle, SharedMemory::Protection::ReadOnly);
     encoder << handle;
@@ -188,7 +188,7 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
         return false;
     result.linkIndicator = WTFMove(*linkIndicator);
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (!decoder.decode(handle))
         return false;
 

@@ -35,13 +35,12 @@ class OutlineValue;
 class BorderData {
 friend class RenderStyle;
 public:
-    BorderData()
-        : m_topLeftRadius { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }
-        , m_topRightRadius { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }
-        , m_bottomLeftRadius { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }
-        , m_bottomRightRadius { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } }
-    {
-    }
+    struct Radii {
+        LengthSize topLeft { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
+        LengthSize topRight { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
+        LengthSize bottomLeft { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
+        LengthSize bottomRight { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
+    };
 
     bool hasBorder() const
     {
@@ -60,10 +59,10 @@ public:
 
     bool hasBorderRadius() const
     {
-        return !m_topLeftRadius.width.isZero()
-            || !m_topRightRadius.width.isZero()
-            || !m_bottomLeftRadius.width.isZero()
-            || !m_bottomRightRadius.width.isZero();
+        return !m_radii.topLeft.width.isZero()
+            || !m_radii.topRight.width.isZero()
+            || !m_radii.bottomLeft.width.isZero()
+            || !m_radii.bottomRight.width.isZero();
     }
 
     float borderLeftWidth() const
@@ -112,7 +111,7 @@ public:
     bool operator==(const BorderData& o) const
     {
         return m_left == o.m_left && m_right == o.m_right && m_top == o.m_top && m_bottom == o.m_bottom && m_image == o.m_image
-            && m_topLeftRadius == o.m_topLeftRadius && m_topRightRadius == o.m_topRightRadius && m_bottomLeftRadius == o.m_bottomLeftRadius && m_bottomRightRadius == o.m_bottomRightRadius;
+            && m_radii.topLeft == o.m_radii.topLeft && m_radii.topRight == o.m_radii.topRight && m_radii.bottomLeft == o.m_radii.bottomLeft && m_radii.bottomRight == o.m_radii.bottomRight;
     }
 
     bool operator!=(const BorderData& o) const
@@ -127,10 +126,10 @@ public:
 
     const NinePieceImage& image() const { return m_image; }
 
-    const LengthSize& topLeftRadius() const { return m_topLeftRadius; }
-    const LengthSize& topRightRadius() const { return m_topRightRadius; }
-    const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }
-    const LengthSize& bottomRightRadius() const { return m_bottomRightRadius; }
+    const LengthSize& topLeftRadius() const { return m_radii.topLeft; }
+    const LengthSize& topRightRadius() const { return m_radii.topRight; }
+    const LengthSize& bottomLeftRadius() const { return m_radii.bottomLeft; }
+    const LengthSize& bottomRightRadius() const { return m_radii.bottomRight; }
 
     void dump(TextStream&, DumpStyleValues = DumpStyleValues::All) const;
 
@@ -142,10 +141,7 @@ private:
 
     NinePieceImage m_image;
 
-    LengthSize m_topLeftRadius;
-    LengthSize m_topRightRadius;
-    LengthSize m_bottomLeftRadius;
-    LengthSize m_bottomRightRadius;
+    Radii m_radii;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const BorderValue&);

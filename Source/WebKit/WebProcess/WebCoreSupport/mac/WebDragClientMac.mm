@@ -96,7 +96,7 @@ void WebDragClient::startDrag(DragItem dragItem, DataTransfer&, Frame& frame)
     IntSize bitmapSize(CGImageGetWidth(image.get().get()), CGImageGetHeight(image.get().get()));
 #endif
     auto bitmap = convertDragImageToBitmap(image.get().get(), bitmapSize, frame);
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (!bitmap || !bitmap->createHandle(handle))
         return;
 
