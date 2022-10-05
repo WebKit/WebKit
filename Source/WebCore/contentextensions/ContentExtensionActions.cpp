@@ -113,28 +113,48 @@ Expected<ModifyHeadersAction, std::error_code> ModifyHeadersAction::parse(const 
     if (!responseHeaders)
         return makeUnexpected(responseHeaders.error());
 
-    return ModifyHeadersAction { WTFMove(*requestHeaders), WTFMove(*responseHeaders) };
+    auto priority = modifyHeaders.getInteger("priority"_s);
+    if (!priority) // ELLIE anything else to check here?
+    {
+        fprintf(stderr, "no priority!!\n");
+        return makeUnexpected(ContentExtensionError::JSONModifyHeadersInvalidPriority);
+    }
+
+    fprintf(stderr, "parsing working with priority %ul\n", (uint32_t)priority.value());
+    return ModifyHeadersAction { WTFMove(*requestHeaders), WTFMove(*responseHeaders), (uint32_t)priority.value() };
 }
 
 ModifyHeadersAction ModifyHeadersAction::isolatedCopy() const &
 {
-    return { crossThreadCopy(requestHeaders), crossThreadCopy(responseHeaders) };
+    return { crossThreadCopy(requestHeaders), crossThreadCopy(responseHeaders), crossThreadCopy(priority) };
 }
 
 ModifyHeadersAction ModifyHeadersAction::isolatedCopy() &&
 {
-    return { crossThreadCopy(WTFMove(requestHeaders)), crossThreadCopy(WTFMove(responseHeaders)) };
+    return { crossThreadCopy(WTFMove(requestHeaders)), crossThreadCopy(WTFMove(responseHeaders)), crossThreadCopy(priority) };
 }
 
 bool ModifyHeadersAction::operator==(const ModifyHeadersAction& other) const
 {
     return other.hashTableType == this->hashTableType
         && other.requestHeaders == this->requestHeaders
-        && other.responseHeaders == this->responseHeaders;
+        && other.responseHeaders == this->responseHeaders
+        && other.priority == this->priority;
 }
 
 void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
 {
+    fprintf(stderr, "ModifyHeadersAction::serialize\n");
+
+    append(vector, priority);
+
+    fprintf(stderr, "priority is: %ul\n", priority);
+    fprintf(stderr, "vector is: ");
+    for (size_t i = 0; i < vector.size(); i++) {
+        fprintf(stderr, "%d", vector[i]);
+    }
+    fprintf(stderr, "\n");
+
     auto beginIndex = vector.size();
     append(vector, 0);
     auto requestHeadersLengthIndex = vector.size();
@@ -145,28 +165,45 @@ void ModifyHeadersAction::serialize(Vector<uint8_t>& vector) const
     for (auto& headerInfo : responseHeaders)
         headerInfo.serialize(vector);
     writeLengthToVectorAtOffset(vector, beginIndex);
+
+    fprintf(stderr, "vector is: ");
+    for (size_t i = 0; i < vector.size(); i++) {
+        fprintf(stderr, "%d", vector[i]);
+    }
+    fprintf(stderr, "\n");
 }
 
 ModifyHeadersAction ModifyHeadersAction::deserialize(Span<const uint8_t> span)
 {
-    auto serializedLength = deserializeLength(span, 0);
-    auto requestHeadersLength = deserializeLength(span, sizeof(uint32_t));
-    size_t progress = sizeof(uint32_t) * 2;
+    uint32_t priority = deserializeLength(span, 0);
+
+    fprintf(stderr, "deserialized priority is: %ul\n", priority);
+
+    auto serializedLength = deserializeLength(span, sizeof(uint32_t));
+    fprintf(stderr, "serializedLength is: %lu\n", serializedLength);
+
+    auto requestHeadersLength = deserializeLength(span, sizeof(uint32_t) * 2);
+    fprintf(stderr, "requestHeadersLength is: %lu\n", requestHeadersLength);
+
+    size_t progress = sizeof(uint32_t) * 3;
     Vector<ModifyHeaderInfo> requestHeaders;
-    while (progress < requestHeadersLength + sizeof(uint32_t)) {
+    while (progress < requestHeadersLength + sizeof(uint32_t) * 2) {
         auto subspan = span.subspan(progress);
         progress += ModifyHeaderInfo::serializedLength(subspan);
         requestHeaders.append(ModifyHeaderInfo::deserialize(subspan));
+        fprintf(stderr, "processing \n");
     }
-    RELEASE_ASSERT(progress == requestHeadersLength + sizeof(uint32_t));
+    fprintf(stderr, "requestHeaders are finished\n");
+
+    RELEASE_ASSERT(progress == requestHeadersLength + sizeof(uint32_t) * 2);
     Vector<ModifyHeaderInfo> responseHeaders;
-    while (progress < serializedLength) {
+    while (progress < serializedLength + sizeof(uint32_t)) {
         auto subspan = span.subspan(progress);
         progress += ModifyHeaderInfo::serializedLength(subspan);
         responseHeaders.append(ModifyHeaderInfo::deserialize(subspan));
     }
-    RELEASE_ASSERT(progress == serializedLength);
-    return { WTFMove(requestHeaders), WTFMove(responseHeaders) };
+    fprintf(stderr, "made it to the end of deserialize\n");
+    return { WTFMove(requestHeaders), WTFMove(responseHeaders), priority };
 }
 
 size_t ModifyHeadersAction::serializedLength(Span<const uint8_t> span)
@@ -174,24 +211,65 @@ size_t ModifyHeadersAction::serializedLength(Span<const uint8_t> span)
     return deserializeLength(span, 0);
 }
 
-void ModifyHeadersAction::applyToRequest(ResourceRequest& request)
+void ModifyHeadersAction::applyToRequest(ResourceRequest& request, HashMap<String, String>& headerNameToFirstOperationApplied)
 {
     for (auto& info : requestHeaders)
-        info.applyToRequest(request);
+        info.applyToRequest(request, headerNameToFirstOperationApplied);
 }
 
-void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& request)
+void ModifyHeadersAction::ModifyHeaderInfo::applyToRequest(ResourceRequest& request, HashMap<String, String>& headerNameToFirstOperationApplied) // passed by reference, assuming this request object is returned higher up and used to continue with the load
 {
+    fprintf(stderr, "applying headers to request");
+
+    // ELLIE this is where we decide to set, remove, or append?
     std::visit(WTF::makeVisitor([&] (const AppendOperation& operation) {
+        HashMap<String, String>::iterator iter = headerNameToFirstOperationApplied.find(operation.header);
+        String previouslyAppliedHeaderOperation = ""_s;
+        if (iter != headerNameToFirstOperationApplied.end())
+            previouslyAppliedHeaderOperation = iter->value;
+
+        if (previouslyAppliedHeaderOperation == "remove"_s)
+            return;
+
         auto existingValue = request.httpHeaderField(operation.header);
         if (existingValue.isEmpty())
             request.setHTTPHeaderField(operation.header, operation.value);
         else
             request.setHTTPHeaderField(operation.header, makeString(existingValue, "; ", operation.value));
+
+        fprintf(stderr, "append!");
+
+        headerNameToFirstOperationApplied.add(operation.header, "append"_s); // ELLIE per Tim, should only be setting this value ONCE
     }, [&] (const SetOperation& operation) {
+        HashMap<String, String>::iterator iter = headerNameToFirstOperationApplied.find(operation.header); // per Tim, change this to just get(), should just return String and a null string in the case where no item exists
+        /*
+         bool isNull() const { return !m_impl; }
+         bool isEmpty() const { return !m_impl || m_impl->isEmpty();
+         contains() for this Set operation, the other ones can use get()
+         }
+         */
+        String previouslyAppliedHeaderOperation = ""_s;
+        if (iter != headerNameToFirstOperationApplied.end())
+            previouslyAppliedHeaderOperation = iter->value;
+
+        if (previouslyAppliedHeaderOperation != ""_s)
+            return;
+
+        fprintf(stderr, "set!");
         request.setHTTPHeaderField(operation.header, operation.value);
+        headerNameToFirstOperationApplied.add(operation.header, "set"_s);
     }, [&] (const RemoveOperation& operation) {
+        HashMap<String, String>::iterator iter = headerNameToFirstOperationApplied.find(operation.header);
+        String previouslyAppliedHeaderOperation = ""_s;
+        if (iter != headerNameToFirstOperationApplied.end())
+            previouslyAppliedHeaderOperation = iter->value;
+
+        if (previouslyAppliedHeaderOperation != ""_s)
+            return;
+
+        fprintf(stderr, "remove!");
         request.removeHTTPHeaderField(operation.header);
+        headerNameToFirstOperationApplied.add(operation.header, "remove"_s);
     }), operation);
 }
 

@@ -562,24 +562,25 @@ static void checkURLs(const Vector<String>& actual, const Vector<String>& expect
         EXPECT_WK_STREQ(actual[i], expected[i]);
 }
 
+// ELLIE run these tests
 TEST_F(WKContentRuleListStoreTest, ModifyHeaders)
 {
     auto list = compileContentRuleList(R"JSON(
         [ {
-            "action": { "type": "modify-headers", "request-headers": [ {
+            "action": { "type": "modify-headers", "priority": 2, "request-headers": [ {
                 "operation": "set",
                 "header": "testkey",
                 "value": "testvalue"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
-            "action": { "type": "modify-headers", "request-headers": [ {
+            "action": { "type": "modify-headers", "priority": 3, "request-headers": [ {
                 "operation": "remove",
                 "header": "Accept"
             } ] },
             "trigger": { "url-filter": "testscheme" }
         }, {
-            "action": { "type": "modify-headers", "request-headers": [ {
+            "action": { "type": "modify-headers", "priority": 4, "request-headers": [ {
                 "operation": "append",
                 "header": "Content-Type",
                 "value": "Modified-by-test"

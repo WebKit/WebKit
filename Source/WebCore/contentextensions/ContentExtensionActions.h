@@ -101,17 +101,19 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
         void serialize(Vector<uint8_t>&) const;
         static ModifyHeaderInfo deserialize(Span<const uint8_t>);
         static size_t serializedLength(Span<const uint8_t>);
-        void applyToRequest(ResourceRequest&);
+        void applyToRequest(ResourceRequest&, HashMap<String, String>&);
     };
 
     enum class HashTableType : uint8_t { Empty, Deleted, Full } hashTableType;
     Vector<ModifyHeaderInfo> requestHeaders;
     Vector<ModifyHeaderInfo> responseHeaders;
+    uint32_t priority;
 
-    ModifyHeadersAction(Vector<ModifyHeaderInfo>&& requestHeaders, Vector<ModifyHeaderInfo>&& responseHeaders)
+    ModifyHeadersAction(Vector<ModifyHeaderInfo>&& requestHeaders, Vector<ModifyHeaderInfo>&& responseHeaders, uint32_t priority)
         : hashTableType(HashTableType::Full)
         , requestHeaders(WTFMove(requestHeaders))
-        , responseHeaders(WTFMove(responseHeaders)) { }
+        , responseHeaders(WTFMove(responseHeaders))
+        , priority(priority) { }
 
     enum EmptyValueTag { EmptyValue };
     enum DeletedValueTag { DeletedValue };
@@ -126,7 +128,7 @@ struct WEBCORE_EXPORT ModifyHeadersAction {
     void serialize(Vector<uint8_t>&) const;
     static ModifyHeadersAction deserialize(Span<const uint8_t>);
     static size_t serializedLength(Span<const uint8_t>);
-    void applyToRequest(ResourceRequest&);
+    void applyToRequest(ResourceRequest&, HashMap<String, String>&);
 };
 
 struct WEBCORE_EXPORT RedirectAction {

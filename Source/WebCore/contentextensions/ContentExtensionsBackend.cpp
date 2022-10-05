@@ -347,8 +347,19 @@ void applyResultsToRequest(ContentRuleListResults&& results, Page* page, Resourc
         request.setURL(newURL);
     }
 
+    // ELLIE the changes need to be made at this level
+    /*
+    1. Sort [✅]
+    2. Pass around a hash table of <header, action type {set, append, remove}> [✅]
+    3. Use hash table in the same place as it is done currently [✅]
+    */
+    fprintf(stderr, "sorting the headers");
+    std::sort(results.summary.modifyHeadersActions.begin(), results.summary.modifyHeadersActions.end(),
+        [] (const ModifyHeadersAction& a, const ModifyHeadersAction& b) { return a.priority < b.priority; });
+
+    HashMap<String, String> headerNameToFirstOperationApplied;
     for (auto& action : results.summary.modifyHeadersActions)
-        action.applyToRequest(request);
+        action.applyToRequest(request, headerNameToFirstOperationApplied); // don't think this is right
 
     for (auto& pair : results.summary.redirectActions)
         pair.first.applyToRequest(request, pair.second);
