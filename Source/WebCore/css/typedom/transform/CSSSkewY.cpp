@@ -77,6 +77,15 @@ CSSSkewY::CSSSkewY(Ref<CSSNumericValue> ay)
 {
 }
 
+ExceptionOr<void> CSSSkewY::setAy(Ref<CSSNumericValue> ay)
+{
+    if (!ay->type().matches<CSSNumericBaseType::Angle>())
+        return Exception { TypeError };
+
+    m_ay = WTFMove(ay);
+    return { };
+}
+
 void CSSSkewY::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskewy
