@@ -40,6 +40,7 @@
 #import "WKWebViewInternal.h"
 #import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
+#import "_WKUserContentFilterInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import <WebCore/SecurityOrigin.h>
@@ -275,6 +276,16 @@ private:
 - (void)_addUserScriptImmediately:(WKUserScript *)userScript
 {
     _userContentControllerProxy->addUserScript(*userScript->_userScript, WebKit::InjectUserScriptImmediately::Yes);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+- (void)_addUserContentFilter:(_WKUserContentFilter *)userContentFilter
+#pragma clang diagnostic pop
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _userContentControllerProxy->addContentRuleList(*userContentFilter->_contentRuleList->_contentRuleList);
+#endif
 }
 
 - (void)_addContentRuleList:(WKContentRuleList *)contentRuleList extensionBaseURL:(NSURL *)extensionBaseURL
