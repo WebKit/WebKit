@@ -145,6 +145,32 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         return this._suggestionsView.isHandlingClickEvent();
     }
 
+    commitCurrentCompletion()
+    {
+        this._removeCompletionHint(true, true);
+
+        let replacementText = this._currentReplacementText;
+        if (!replacementText)
+            return;
+
+        let from = {line: this._lineNumber, ch: this._startOffset};
+        let cursor = {line: this._lineNumber, ch: this._endOffset};
+        let to = {line: this._lineNumber, ch: this._startOffset + replacementText.length};
+
+        let lastChar = this._currentCompletion.charAt(this._currentCompletion.length - 1);
+        let isClosing = ")]}".indexOf(lastChar);
+        if (isClosing !== -1)
+            to.ch -= 1 + this._implicitSuffix.length;
+
+        this._codeMirror.replaceRange(replacementText, from, cursor, WI.CodeMirrorCompletionController.CompletionOrigin);
+
+        // Don't call _removeLastChangeFromHistory here to allow the committed completion to be undone.
+
+        this._codeMirror.setCursor(to);
+
+        this.hideCompletions();
+    }
+
     hideCompletions()
     {
         this._suggestionsView.hide();
@@ -220,7 +246,7 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
 
     get _currentReplacementText()
     {
-        return this._currentCompletion + this._implicitSuffix;
+        return (this._currentCompletion ?? "") + (this._implicitSuffix ?? "");
     }
 
     _hasPendingCompletion()
@@ -292,34 +318,10 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
 
     _commitCompletionHint()
     {
-        function update()
-        {
-            this._removeCompletionHint(true, true);
-
-            var replacementText = this._currentReplacementText;
-
-            var from = {line: this._lineNumber, ch: this._startOffset};
-            var cursor = {line: this._lineNumber, ch: this._endOffset};
-            var to = {line: this._lineNumber, ch: this._startOffset + replacementText.length};
-
-            var lastChar = this._currentCompletion.charAt(this._currentCompletion.length - 1);
-            var isClosing = ")]}".indexOf(lastChar);
-            if (isClosing !== -1)
-                to.ch -= 1 + this._implicitSuffix.length;
-
-            this._codeMirror.replaceRange(replacementText, from, cursor, WI.CodeMirrorCompletionController.CompletionOrigin);
-
-            // Don't call _removeLastChangeFromHistory here to allow the committed completion to be undone.
-
-            this._codeMirror.setCursor(to);
-
-            this.hideCompletions();
-        }
-
         this._ignoreChange = true;
         this._ignoreNextCursorActivity = true;
 
-        this._codeMirror.operation(update.bind(this));
+        this._codeMirror.operation(this.commitCurrentCompletion.bind(this));
 
         delete this._ignoreChange;
     }

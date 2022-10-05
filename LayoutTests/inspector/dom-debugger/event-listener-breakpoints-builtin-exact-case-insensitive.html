@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/event-breakpoint-utilities.js"></script>
+<script>
+function handleBody_click(event) {
+    TestPage.dispatchEventToFrontend("TestPage-click");
+}
+
+function trigger_click() {
+    document.body.click();
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.Event.Listener");
+
+    suite.addTestCase({
+        name: "DOMDebugger.Event.Listener.Builtin.Exact.CaseInsensitive.AddBreakpoint",
+        description: "Check that the debugger pauses for enabled breakpoints.",
+        test(resolve, reject) {
+            let paused = false;
+
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                InspectorTest.pass("Should pause before event handler is run.");
+                logActiveStackTrace();
+
+                WI.debuggerManager.resume()
+                .catch(reject);
+            });
+
+            InspectorTest.singleFireEventListener(`TestPage-click`, (event) => {
+                if (!paused) {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                    InspectorTest.fail("Should pause before event handler is run.");
+                }
+
+                resolve();
+            });
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "cLiCk", caseSensitive: false})
+            .then(InspectorTest.EventBreakpoint.awaitEvent("body", "click"))
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: "DOMDebugger.Event.Listener.Builtin.Exact.CaseInsensitive.AddDisabledBreakpoint",
+        description: "Check that debugger does not pause for disabled breakpoints.",
+        test(resolve, reject) {
+            InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, "click", "Should not pause for disabled breakpoint.");
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "cLiCk", caseSensitive: false})
+            .then(InspectorTest.EventBreakpoint.disableBreakpoint)
+            .then(InspectorTest.EventBreakpoint.awaitEvent("body", "click"))
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: "DOMDebugger.Event.Listener.Builtin.Exact.CaseInsensitive.RemoveBreakpoint",
+        description: "Check that debugger does not pause for removed breakpoint.",
+        test(resolve, reject) {
+            InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, "click", "Should not pause for removed breakpoint.");
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "cLiCk", caseSensitive: false})
+            .then(InspectorTest.EventBreakpoint.removeBreakpoint)
+            .then(InspectorTest.EventBreakpoint.awaitEvent("body", "click"))
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: "DOMDebugger.Event.Listener.Builtin.Exact.CaseInsensitive.RemoveDisabledBreakpoint",
+        description: "Check that a disabled breakpoint can be removed.",
+        test(resolve, reject) {
+            InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, "click", "Should not pause for removed disabled breakpoint.");
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "cLiCk", caseSensitive: false})
+            .then(InspectorTest.EventBreakpoint.disableBreakpoint)
+            .then(InspectorTest.EventBreakpoint.removeBreakpoint)
+            .then(InspectorTest.EventBreakpoint.awaitEvent("body", "click"))
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        testCaseNamePrefix: "Builtin.Exact.CaseInsensitive.",
+        createBreakpoint() {
+            return InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "cLiCk", caseSensitive: false});
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.awaitEvent("TestPage-click"),
+                InspectorTest.evaluateInPage(`trigger_click()`),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for Event Listener breakpoints.</p>
+    <script>
+        document.body.addEventListener("click", handleBody_click);
+    </script>
+</body>
+</html>

@@ -460,7 +460,9 @@ WI.BreakpointPopover = class BreakpointPopover extends WI.Popover
 
         this._optionsRowElement.classList.remove("hidden");
 
-        this.update();
+        setTimeout(() => {
+            this.update();
+        });
     }
 
     _handleAutoContinueCheckboxChange(event)

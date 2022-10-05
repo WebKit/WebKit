@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/event-breakpoint-utilities.js"></script>
+<script>
+function handleBody_custom(event) {
+    TestPage.dispatchEventToFrontend("TestPage-custom");
+}
+
+function trigger_custom() {
+    document.body.dispatchEvent(new Event("custom"));
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.Event.Listener");
+
+    suite.addTestCase({
+        name: "DOMDebugger.Event.Listener.Custom.Regex.CaseSensitive.AddBreakpoint",
+        description: "Check that the debugger pauses for enabled breakpoints.",
+        test(resolve, reject) {
+            let paused = false;
+
+            let listener = WI.debuggerManager.singleFireEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                paused = true;
+
+                InspectorTest.pass("Should pause before event handler is run.");
+                logActiveStackTrace();
+
+                WI.debuggerManager.resume()
+                .catch(reject);
+            });
+
+            InspectorTest.singleFireEventListener(`TestPage-custom`, (event) => {
+                if (!paused) {
+                    WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+
+                    InspectorTest.fail("Should pause before event handler is run.");
+                }
+
+                resolve();
+            });
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "[c][u][s][t][o][m]", isRegex: true})
+            .then(InspectorTest.EventBreakpoint.awaitEvent("body", "custom"))
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: "DOMDebugger.Event.Listener.Custom.Regex.CaseSensitive.AddDisabledBreakpoint",
+        description: "Check that debugger does not pause for disabled breakpoints.",
+        test(resolve, reject) {
+            InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, "custom", "Should not pause for disabled breakpoint.");
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "[c][u][s][t][o][m]", isRegex: true})
+            .then(InspectorTest.EventBreakpoint.disableBreakpoint)
+            .then(InspectorTest.EventBreakpoint.awaitEvent("body", "custom"))
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: "DOMDebugger.Event.Listener.Custom.Regex.CaseSensitive.RemoveBreakpoint",
+        description: "Check that debugger does not pause for removed breakpoint.",
+        test(resolve, reject) {
+            InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, "custom", "Should not pause for removed breakpoint.");
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "[c][u][s][t][o][m]", isRegex: true})
+            .then(InspectorTest.EventBreakpoint.removeBreakpoint)
+            .then(InspectorTest.EventBreakpoint.awaitEvent("body", "custom"))
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    suite.addTestCase({
+        name: "DOMDebugger.Event.Listener.Custom.Regex.CaseSensitive.RemoveDisabledBreakpoint",
+        description: "Check that a disabled breakpoint can be removed.",
+        test(resolve, reject) {
+            InspectorTest.EventBreakpoint.failOnPause(resolve, reject, WI.DebuggerManager.PauseReason.Listener, "custom", "Should not pause for removed disabled breakpoint.");
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "[c][u][s][t][o][m]", isRegex: true})
+            .then(InspectorTest.EventBreakpoint.disableBreakpoint)
+            .then(InspectorTest.EventBreakpoint.removeBreakpoint)
+            .then(InspectorTest.EventBreakpoint.awaitEvent("body", "custom"))
+            .catch(reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        testCaseNamePrefix: "Custom.Regex.CaseSensitive.",
+        createBreakpoint() {
+            return InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener, {eventName: "[c][u][s][t][o][m]", isRegex: true});
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.awaitEvent("TestPage-custom"),
+                InspectorTest.evaluateInPage(`trigger_custom()`),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for Event Listener breakpoints.</p>
+    <script>
+        document.body.addEventListener("custom", handleBody_custom);
+    </script>
+</body>
+</html>

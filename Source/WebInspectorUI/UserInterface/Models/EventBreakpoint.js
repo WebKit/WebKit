@@ -25,7 +25,7 @@
 
 WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 {
-    constructor(type, {eventName, eventListener, disabled, actions, condition, ignoreCount, autoContinue} = {})
+    constructor(type, {eventName, caseSensitive, isRegex, eventListener, disabled, actions, condition, ignoreCount, autoContinue} = {})
     {
         // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointTypes.Timer was removed.
         if (type === "timer") {
@@ -42,12 +42,16 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 
         console.assert(Object.values(WI.EventBreakpoint.Type).includes(type), type);
         console.assert(!eventName || type === WI.EventBreakpoint.Type.Listener, eventName);
+        console.assert(caseSensitive === undefined || (type === WI.EventBreakpoint.Type.Listener && eventName), caseSensitive);
+        console.assert(isRegex === undefined || (type === WI.EventBreakpoint.Type.Listener && eventName), isRegex);
         console.assert(!eventListener || type === WI.EventBreakpoint.Type.Listener, eventListener);
 
         super({disabled, condition, actions, ignoreCount, autoContinue});
 
         this._type = type;
         this._eventName = eventName || null;
+        this._caseSensitive = caseSensitive !== undefined ? !!caseSensitive : true;
+        this._isRegex = isRegex !== undefined ? !!isRegex : false;
         this._eventListener = eventListener || null;
     }
 
@@ -59,10 +63,24 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
         return InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint", "options");
     }
 
+    static get supportsCaseSensitive()
+    {
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): DOMDebugger.setEventBreakpoint did not have a "caseSensitive" parameter yet.
+        return InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint", "caseSensitive");
+    }
+
+    static get supportsIsRegex()
+    {
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): DOMDebugger.setEventBreakpoint did not have a "isRegex" parameter yet.
+        return InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint", "isRegex");
+    }
+
     static fromJSON(json)
     {
         return new WI.EventBreakpoint(json.type, {
             eventName: json.eventName,
+            caseSensitive: json.caseSensitive,
+            isRegex: json.isRegex,
             disabled: json.disabled,
             condition: json.condition,
             actions: json.actions?.map((actionJSON) => WI.BreakpointAction.fromJSON(actionJSON)) || [],
@@ -75,6 +93,8 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
 
     get type() { return this._type; }
     get eventName() { return this._eventName; }
+    get caseSensitive() { return this._caseSensitive; }
+    get isRegex() { return this._isRegex; }
     get eventListener() { return this._eventListener; }
 
     get displayName()
@@ -93,7 +113,15 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
             return WI.repeatedUIString.allTimeouts();
         }
 
-        return this._eventName;
+        console.assert(this._type === WI.EventBreakpoint.Type.Listener && this._eventName, this);
+
+        if (this._isRegex)
+            return "/" + this._eventName + "/" + (!this._caseSensitive ? "i" : "");
+
+        let displayName = this._eventName;
+        if (!this._caseSensitive)
+            displayName = WI.UIString("%s (Case Insensitive)", "%s (Case Insensitive) @ EventBreakpoint", "Label for case-insensitive match pattern of an event breakpoint.").format(displayName);
+        return displayName;
     }
 
     get special()
@@ -119,6 +147,29 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
         return WI.EventBreakpoint.supportsEditing || super.editable;
     }
 
+    matches(eventName)
+    {
+        if (!eventName || this.disabled)
+            return false;
+
+        if (this._isRegex)
+            return (new RegExp(this._eventName, !this._caseSensitive ? "i" : "")).test(eventName);
+
+        if (!this._caseSensitive)
+            return eventName.toLowerCase() === this._eventName.toLowerCase();
+
+        return eventName === this._eventName;
+    }
+
+    equals(other)
+    {
+        console.assert(other instanceof WI.EventBreakpoint, other);
+
+        return this._eventName === other.eventName
+            && this._caseSensitive === other.caseSensitive
+            && this._isRegex === other.isRegex;
+    }
+
     remove()
     {
         super.remove();
@@ -132,8 +183,11 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
     saveIdentityToCookie(cookie)
     {
         cookie["event-breakpoint-type"] = this._type;
-        if (this._eventName)
+        if (this._eventName) {
             cookie["event-breakpoint-event-name"] = this._eventName;
+            cookie["event-breakpoint-case-sensitive"] = this._caseSensitive;
+            cookie["event-breakpoint-is-regex"] = this._isRegex;
+        }
         if (this._eventListener)
             cookie["event-breakpoint-event-listener"] = this._eventListener.eventListenerId;
     }
@@ -142,10 +196,13 @@ WI.EventBreakpoint = class EventBreakpoint extends WI.Breakpoint
     {
         let json = super.toJSON(key);
         json.type = this._type;
-        if (this._eventName)
+        if (this._eventName) {
             json.eventName = this._eventName;
+            json.caseSensitive = this._caseSensitive;
+            json.isRegex = this._isRegex;
+        }
         if (key === WI.ObjectStore.toJSONSymbol)
-            json[WI.objectStores.eventBreakpoints.keyPath] = this._type + (this._eventName ? ":" + this._eventName : "");
+            json[WI.objectStores.eventBreakpoints.keyPath] = this._type + (this._eventName ? ":" + this._eventName + "-" + this._caseSensitive + "-" + this._isRegex : "");
         return json;
     }
 };

@@ -42,12 +42,12 @@ TestPage.registerInitializer(() => {
         });
     };
 
-    InspectorTest.EventBreakpoint.createBreakpoint = function(type, {eventName} = {}) {
+    InspectorTest.EventBreakpoint.createBreakpoint = function(type, options = {}) {
         if (type !== WI.EventBreakpoint.Type.Listener)
-            eventName = null;
+            options.eventName = null;
 
-        InspectorTest.log(`Creating "${eventName || type}" Event Breakpoint...`);
-        return InspectorTest.EventBreakpoint.addBreakpoint(new WI.EventBreakpoint(type, {eventName}));
+        InspectorTest.log(`Creating "${options.eventName || type}" Event Breakpoint...`);
+        return InspectorTest.EventBreakpoint.addBreakpoint(new WI.EventBreakpoint(type, options));
     };
 
     InspectorTest.EventBreakpoint.addBreakpoint = function(breakpoint) {

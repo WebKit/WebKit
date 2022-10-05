@@ -68,8 +68,8 @@ public:
     // DOMDebuggerBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> setURLBreakpoint(const String& url, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
     Inspector::Protocol::ErrorStringOr<void> removeURLBreakpoint(const String& url, std::optional<bool>&& isRegex) final;
-    Inspector::Protocol::ErrorStringOr<void> setEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName, RefPtr<JSON::Object>&& options) final;
-    Inspector::Protocol::ErrorStringOr<void> removeEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName) final;
+    Inspector::Protocol::ErrorStringOr<void> setEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options) final;
+    Inspector::Protocol::ErrorStringOr<void> removeEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex) final;
 
     // InspectorDebuggerAgent::Listener
     void debuggerWasEnabled() override;
@@ -101,7 +101,29 @@ private:
     RefPtr<Inspector::DOMDebuggerBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
 
-    MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_listenerBreakpoints;
+    struct EventBreakpoint {
+        String eventName;
+        bool caseSensitive { true };
+        bool isRegex { false };
+
+        // This is only used for the breakpoint configuration (i.e. it's irrelevant when comparing).
+        RefPtr<JSC::Breakpoint> specialBreakpoint;
+
+        inline bool operator==(const EventBreakpoint& other) const
+        {
+            return eventName == other.eventName
+                && caseSensitive == other.caseSensitive
+                && isRegex == other.isRegex;
+        }
+
+        bool matches(const String&);
+
+    private:
+        // Avoid having to (re)match the regex each time an event is dispatched.
+        std::optional<JSC::Yarr::RegularExpression> m_eventNameMatchRegex;
+        HashSet<String> m_knownMatchingEventNames;
+    };
+    Vector<EventBreakpoint> m_listenerBreakpoints;
     RefPtr<JSC::Breakpoint> m_pauseOnAllIntervalsBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllListenersBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllTimeoutsBreakpoint;
