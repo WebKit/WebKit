@@ -96,7 +96,6 @@ void ScreenOrientationProvider::platformStartListeningForChanges()
 
 void ScreenOrientationProvider::platformStopListeningForChanges()
 {
-    ASSERT(m_systemObserver);
     m_systemObserver = nullptr;
 }
 
