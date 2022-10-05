@@ -6,5 +6,5 @@ PASS CSSSkew.toMatrix() returns correct matrix
 PASS CSSSkewX.toMatrix() returns correct matrix
 PASS CSSSkewY.toMatrix() returns correct matrix
 PASS CSSPerspective.toMatrix() returns correct matrix
-FAIL CSSMatrixComponent.toMatrix() returns correct matrix assert_array_approx_equals: property 1, expected 2 +/- 0.000001, expected 2 but got 0
+PASS CSSMatrixComponent.toMatrix() returns correct matrix
 
