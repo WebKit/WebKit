@@ -87,16 +87,16 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
         scroll(m_page.get(), ScrollDown, ScrollGranularity::Line);
         break;
     case VK_HOME:
-        scroll(m_page.get(), ScrollUp, ScrollGranularity::Document);
+        executeEditCommand("ScrollToBeginningOfDocument"_s, { });
         break;
     case VK_END:
-        scroll(m_page.get(), ScrollDown, ScrollGranularity::Document);
+        executeEditCommand("ScrollToEndOfDocument"_s, { });
         break;
     case VK_PRIOR:
-        scroll(m_page.get(), ScrollUp, ScrollGranularity::Page);
+        executeEditCommand("ScrollPageBackward"_s, { });
         break;
     case VK_NEXT:
-        scroll(m_page.get(), ScrollDown, ScrollGranularity::Page);
+        executeEditCommand("ScrollPageForward"_s, { });
         break;
     default:
         return false;
