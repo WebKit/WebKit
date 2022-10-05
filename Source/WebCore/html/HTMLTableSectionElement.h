@@ -35,7 +35,7 @@ class HTMLTableSectionElement final : public HTMLTablePartElement {
 public:
     static Ref<HTMLTableSectionElement> create(const QualifiedName&, Document&);
 
-    WEBCORE_EXPORT ExceptionOr<Ref<HTMLElement>> insertRow(int index = -1);
+    WEBCORE_EXPORT ExceptionOr<Ref<HTMLTableRowElement>> insertRow(int index = -1);
     WEBCORE_EXPORT ExceptionOr<void> deleteRow(int index);
 
     int numRows() const;
