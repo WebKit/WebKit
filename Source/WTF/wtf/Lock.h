@@ -26,11 +26,11 @@
 #pragma once
 
 #include <mutex>
+#include <wtf/CapabilityLock.h>
 #include <wtf/LockAlgorithm.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
-#include <wtf/ThreadSafetyAnalysis.h>
 
 namespace TestWebKitAPI {
 struct LockInspector;
@@ -143,7 +143,8 @@ private:
 // Asserts that the lock is held.
 // This can be used in cases where the annotations cannot be added to the function
 // declaration.
-inline void assertIsHeld(const Lock& lock) WTF_ASSERTS_ACQUIRED_LOCK(lock) { ASSERT_UNUSED(lock, lock.isHeld()); }
+template<>
+inline bool lockIsHeld<Lock>(const Lock& lock) { return lock.isHeld(); }
 
 // Locker specialization to use with Lock.
 // Non-movable simple scoped lock holder.

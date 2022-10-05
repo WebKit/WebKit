@@ -96,6 +96,10 @@
 		7A6EBA3420746C34004F9C44 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A6EBA3320746C34004F9C44 /* MachSendRight.cpp */; };
 		7AF023B52061E17000A8EFD6 /* ProcessPrivilege.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AF023B42061E16F00A8EFD6 /* ProcessPrivilege.cpp */; };
 		7AFEC6B11EB22B5900DADE36 /* UUID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7AFEC6B01EB22B5900DADE36 /* UUID.cpp */; };
+		7B66F6B728DC586E00F498F8 /* CapabilityIsCurrent.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B66F6B628DC586E00F498F8 /* CapabilityIsCurrent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B6F855B28DC7059004365EA /* LockAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B6F855A28DC7058004365EA /* LockAssertion.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7B6F855D28DC710E004365EA /* LockAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B6F855C28DC710E004365EA /* LockAssertion.cpp */; };
+		7B6F856828DC8609004365EA /* CapabilityLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B6F856728DC8609004365EA /* CapabilityLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8134013815B092FD001FF0B8 /* Base64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8134013615B092FD001FF0B8 /* Base64.cpp */; };
 		8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */; };
 		93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = 93853DD228755A6600FF4E2B /* EscapedFormsForJSON.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1180,6 +1184,10 @@
 		7AFEC6B01EB22B5900DADE36 /* UUID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UUID.cpp; sourceTree = "<group>"; };
 		7B2739DC2624DAAA0040F182 /* ThreadSafetyAnalysis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadSafetyAnalysis.h; sourceTree = "<group>"; };
 		7B2739F12632A8940040F182 /* ThreadAssertions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThreadAssertions.h; sourceTree = "<group>"; };
+		7B66F6B628DC586E00F498F8 /* CapabilityIsCurrent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CapabilityIsCurrent.h; sourceTree = "<group>"; };
+		7B6F855A28DC7058004365EA /* LockAssertion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockAssertion.h; sourceTree = "<group>"; };
+		7B6F855C28DC710E004365EA /* LockAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LockAssertion.cpp; sourceTree = "<group>"; };
+		7B6F856728DC8609004365EA /* CapabilityLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CapabilityLock.h; sourceTree = "<group>"; };
 		7C137941222326C700D7A824 /* AUTHORS */ = {isa = PBXFileReference; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
 		7C137942222326D500D7A824 /* ieee.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ieee.h; sourceTree = "<group>"; };
 		7C137943222326D500D7A824 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1954,6 +1962,8 @@
 				0F5F3D681F3FEBA600B115A2 /* CagedUniquePtr.h */,
 				413FE8F51F8D2EAB00F6D7D7 /* CallbackAggregator.h */,
 				46209A27266D543A007F8F4A /* CancellableTask.h */,
+				7B66F6B628DC586E00F498F8 /* CapabilityIsCurrent.h */,
+				7B6F856728DC8609004365EA /* CapabilityLock.h */,
 				A8A4726A151A825A004123FF /* CheckedArithmetic.h */,
 				A8A4726B151A825A004123FF /* CheckedBoolean.h */,
 				9BB91F512648EA4D00A56217 /* CheckedPtr.h */,
@@ -2093,6 +2103,8 @@
 				0FE164691B6FFC9600400E7C /* Lock.h */,
 				0F0FCDDD1DD167F900CCAB53 /* LockAlgorithm.h */,
 				0F31DD701F1308BC0072EB4A /* LockAlgorithmInlines.h */,
+				7B6F855C28DC710E004365EA /* LockAssertion.cpp */,
+				7B6F855A28DC7058004365EA /* LockAssertion.h */,
 				0F60F32D1DFCBD1B00416D6C /* LockedPrintStream.cpp */,
 				0F60F32E1DFCBD1B00416D6C /* LockedPrintStream.h */,
 				A8A472C3151A825A004123FF /* Locker.h */,
@@ -2886,6 +2898,8 @@
 				DD3DC95527A4BF8E007E5B61 /* CagedUniquePtr.h in Headers */,
 				DD3DC8E927A4BF8E007E5B61 /* CallbackAggregator.h in Headers */,
 				DD3DC99B27A4BF8E007E5B61 /* CancellableTask.h in Headers */,
+				7B66F6B728DC586E00F498F8 /* CapabilityIsCurrent.h in Headers */,
+				7B6F856828DC8609004365EA /* CapabilityLock.h in Headers */,
 				DDF306DA27C08654006A526F /* CFBundleSPI.h in Headers */,
 				63F9BED42898D96400371416 /* CFPrivSPI.h in Headers */,
 				DDF306D927C08654006A526F /* CFRunLoopSPI.h in Headers */,
@@ -3028,6 +3042,7 @@
 				DD3DC89027A4BF8E007E5B61 /* Lock.h in Headers */,
 				DD3DC98827A4BF8E007E5B61 /* LockAlgorithm.h in Headers */,
 				DD3DC94427A4BF8E007E5B61 /* LockAlgorithmInlines.h in Headers */,
+				7B6F855B28DC7059004365EA /* LockAssertion.h in Headers */,
 				DD3DC93727A4BF8E007E5B61 /* LockedPrintStream.h in Headers */,
 				DD3DC97527A4BF8E007E5B61 /* Locker.h in Headers */,
 				DD3DC91027A4BF8E007E5B61 /* LocklessBag.h in Headers */,
@@ -3667,6 +3682,7 @@
 				E3B8E41D24E7CE92003655D8 /* LineBreakIteratorPoolICU.cpp in Sources */,
 				C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */,
 				0FE1646A1B6FFC9600400E7C /* Lock.cpp in Sources */,
+				7B6F855D28DC710E004365EA /* LockAssertion.cpp in Sources */,
 				0F60F32F1DFCBD1B00416D6C /* LockedPrintStream.cpp in Sources */,
 				1CF18F3B26BB579E004B1722 /* LogChannels.cpp in Sources */,
 				93B5B45122171EEA004B7AA7 /* Logger.cpp in Sources */,

@@ -86,6 +86,8 @@ void WorkQueueBase::platformInitialize(const char* name, Type type, QOS qos)
     attr = dispatch_queue_attr_make_with_qos_class(attr, Thread::dispatchQOSClass(qos), 0);
     m_dispatchQueue = adoptOSObject(dispatch_queue_create(name, attr));
     dispatch_set_context(m_dispatchQueue.get(), this);
+    if constexpr(ASSERT_ENABLED)
+        dispatch_queue_set_specific(m_dispatchQueue.get(), this, this, nullptr);
 }
 
 void WorkQueueBase::platformInvalidate()
@@ -102,12 +104,13 @@ Ref<WorkQueue> WorkQueue::constructMainWorkQueue()
     return adoptRef(*new WorkQueue(dispatch_get_main_queue()));
 }
 
-#if ASSERT_ENABLED
-void WorkQueue::assertIsCurrent() const
+template<> bool isCurrent<WorkQueue>(const WorkQueue& workQueue)
 {
-    dispatch_assert_queue(m_dispatchQueue.get());
+    if constexpr(ASSERT_ENABLED)
+        return dispatch_get_specific(&workQueue) == &workQueue;
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
 }
-#endif
 
 void ConcurrentWorkQueue::apply(size_t iterations, WTF::Function<void(size_t index)>&& function)
 {

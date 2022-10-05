@@ -27,10 +27,10 @@
 
 #pragma once
 
+#include <wtf/CapabilityIsCurrent.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Seconds.h>
-#include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/Threading.h>
 
 #if USE(COCOA_EVENT_LOOP)
@@ -82,6 +82,9 @@ protected:
 #endif
 };
 
+class WorkQueue;
+template<> WTF_EXPORT_PRIVATE bool isCurrent<WorkQueue>(const WorkQueue&);
+
 /**
  * A WorkQueue is a function dispatching interface like FunctionDispatcher.
  * Runnables dispatched to a WorkQueue are required to execute serially.
@@ -112,20 +115,9 @@ private:
 #endif
     static Ref<WorkQueue> constructMainWorkQueue();
 
-#if ASSERT_ENABLED
-    WTF_EXPORT_PRIVATE void assertIsCurrent() const;
-    friend void assertIsCurrent(const WorkQueue&);
-#endif
+    friend bool isCurrent<WorkQueue>(const WorkQueue&);
 };
 
-inline void assertIsCurrent(const WorkQueue& workQueue) WTF_ASSERTS_ACQUIRED_CAPABILITY(workQueue)
-{
-#if ASSERT_ENABLED
-    workQueue.assertIsCurrent();
-#else
-    UNUSED_PARAM(workQueue);
-#endif
-}
 
 /**
  * A ConcurrentWorkQueue unlike a WorkQueue doesn't guarantee the order in which the dispatched runnable will run
@@ -146,4 +138,3 @@ private:
 
 using WTF::WorkQueue;
 using WTF::ConcurrentWorkQueue;
-using WTF::assertIsCurrent;

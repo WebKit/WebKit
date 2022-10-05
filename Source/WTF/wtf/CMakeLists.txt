@@ -29,6 +29,8 @@ set(WTF_PUBLIC_HEADERS
     CagedUniquePtr.h
     CallbackAggregator.h
     CancellableTask.h
+    CapabilityIsCurrent.h
+    CapabilityLock.h
     CheckedArithmetic.h
     CheckedBoolean.h
     CheckedPtr.h
@@ -133,6 +135,7 @@ set(WTF_PUBLIC_HEADERS
     ListHashSet.h
     Liveness.h
     Lock.h
+    LockAssertion.h
     LockAlgorithm.h
     LockAlgorithmInlines.h
     LockedPrintStream.h
@@ -446,6 +449,7 @@ set(WTF_SOURCES
     Language.cpp
     LikelyDenseUnsignedIntegerSet.cpp
     Lock.cpp
+    LockAssertion.cpp
     LockedPrintStream.cpp
     LogChannels.cpp
     LogInitialization.cpp
