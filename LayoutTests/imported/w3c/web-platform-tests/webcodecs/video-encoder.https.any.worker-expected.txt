@@ -1,14 +1,12 @@
 
-FAIL Test VideoEncoder construction assert_throws_js: function "() => { new VideoEncoder({}); }" threw object "ReferenceError: Can't find variable: VideoEncoder" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Test VideoEncoder.configure() Can't find variable: VideoEncoder
-FAIL Test successful configure(), encode(), and flush() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
-FAIL encodeQueueSize test promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
+PASS Test VideoEncoder construction
+FAIL Test VideoEncoder.configure() assert_equals: expected "configured" but got "unconfigured"
+FAIL Test successful configure(), encode(), and flush() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL encodeQueueSize test promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
 FAIL Test successful reset() and re-confiugre() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
-FAIL Test successful encode() after re-configure(). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
-FAIL Verify closed VideoEncoder operations promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
-FAIL Verify unconfigured VideoEncoder operations promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
-FAIL Verify encoding closed frames throws. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
-FAIL Encode video with negative timestamp promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: VideoEncoder"
+FAIL Test successful encode() after re-configure(). promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL Verify closed VideoEncoder operations promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL Verify unconfigured VideoEncoder operations promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL Verify encoding closed frames throws. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
+FAIL Encode video with negative timestamp promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: OffscreenCanvas"
 

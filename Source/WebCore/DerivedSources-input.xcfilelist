@@ -773,7 +773,9 @@ $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/webauthn/PublicKeyCredentialType.idl
 $(PROJECT_DIR)/Modules/webauthn/ResidentKeyRequirement.idl
 $(PROJECT_DIR)/Modules/webauthn/UserVerificationRequirement.idl
+$(PROJECT_DIR)/Modules/webcodecs/BitrateMode.idl
 $(PROJECT_DIR)/Modules/webcodecs/HardwareAcceleration.idl
+$(PROJECT_DIR)/Modules/webcodecs/LatencyMode.idl
 $(PROJECT_DIR)/Modules/webcodecs/PlaneLayout.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoColorPrimaries.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoColorSpace.idl
@@ -783,11 +785,17 @@ $(PROJECT_DIR)/Modules/webcodecs/VideoPixelFormat.idl
 $(PROJECT_DIR)/Modules/webcodecs/VideoTransferCharacteristics.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsCodecState.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunk.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsErrorCallback.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoDecoder.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoDecoderSupport.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoEncoder.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoEncoderConfig.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoEncoderEncodeOptions.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoEncoderSupport.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoFrame.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoFrameOutputCallback.idl
 $(PROJECT_DIR)/Modules/webdatabase/DOMWindow+WebDatabase.idl
