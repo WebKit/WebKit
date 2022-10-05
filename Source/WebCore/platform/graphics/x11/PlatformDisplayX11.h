@@ -72,7 +72,7 @@ private:
 #endif
 
 #if USE(ATSPI)
-    String plartformAccessibilityBusAddress() const override;
+    String platformAccessibilityBusAddress() const override;
 #endif
 
     ::Display* m_display { nullptr };

@@ -347,7 +347,7 @@ const String& PlatformDisplay::accessibilityBusAddress() const
         return m_accessibilityBusAddress.value();
     }
 
-    auto platformAddress = plartformAccessibilityBusAddress();
+    auto platformAddress = platformAccessibilityBusAddress();
     if (!platformAddress.isEmpty()) {
         m_accessibilityBusAddress = platformAddress;
         return m_accessibilityBusAddress.value();
