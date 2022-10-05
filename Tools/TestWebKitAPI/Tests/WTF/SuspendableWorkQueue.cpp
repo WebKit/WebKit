@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include <wtf/SuspendableWorkQueue.h>
+#include <wtf/RunLoop.h>
 
 #include "Test.h"
 #include "Utilities.h"
@@ -35,36 +36,64 @@ namespace TestWebKitAPI {
 TEST(WTF_SuspendableWorkQueue, Suspend)
 {
     Lock lock;
-    int taskCount = 100;
+    const int taskCount = 100;
+    int scheduledTaskCount = 0;
     int completedTaskCount = 0;
-    bool allTasksCompleted = false;
+    int lastCompletedTaskCount = 0;
     bool suspended = false;
+    // Main thread only.
     bool suspendCompletionHandlerCalled = false;
+    bool allTasksAreCompleted = false;
+
     auto queue = SuspendableWorkQueue::create("com.apple.WebKit.Test.simple");
-    for (int i = 0; i < taskCount; i ++) {
+    // Schedule first batch of tasks.
+    for (; scheduledTaskCount < taskCount / 2; ++scheduledTaskCount) {
         queue->dispatch([&]() mutable {
             Locker locker { lock };
-            suspended = false;
             ++completedTaskCount;
-            if (completedTaskCount == taskCount)
-                allTasksCompleted = true;
         });
     }
+
     queue->suspend([&] {
         Locker locker { lock };
         suspended = true;
     }, [&] {
         suspendCompletionHandlerCalled = true;
     });
+
+    // Schedule second batch of tasks after suspension.
+    for (; scheduledTaskCount < taskCount; ++scheduledTaskCount) {
+        queue->dispatch([&]() mutable {
+            Locker locker { lock };
+            suspended = false;
+            ++completedTaskCount;
+
+            if (completedTaskCount == taskCount) {
+                RunLoop::main().dispatch([&]() {
+                    allTasksAreCompleted = true;
+                });
+            }
+        });
+    }
+
+    // Ensure not all tasks are completed.
     Util::run(&suspendCompletionHandlerCalled);
     {
         Locker locker { lock };
-        EXPECT_LE(completedTaskCount, taskCount);
+        EXPECT_LT(completedTaskCount, taskCount);
         EXPECT_TRUE(suspended);
+        lastCompletedTaskCount = completedTaskCount;
+    }
+
+    // Ensure no more task is processed.
+    Util::runFor(100_ms);
+    {
+        Locker locker { lock };
+        EXPECT_EQ(lastCompletedTaskCount, completedTaskCount);
     }
 
     queue->resume();
-    Util::run(&allTasksCompleted);
+    Util::run(&allTasksAreCompleted);
     Locker locker { lock };
     EXPECT_EQ(completedTaskCount, taskCount);
     EXPECT_FALSE(suspended);
