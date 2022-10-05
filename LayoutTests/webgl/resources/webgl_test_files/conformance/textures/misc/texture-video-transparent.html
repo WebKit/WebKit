@@ -7,7 +7,7 @@ found in the LICENSE.txt file.
 <html>
 <head>
 <meta charset="utf-8">
-<title>Upload texture from animating transparent WebM</title>
+<title>Upload texture from animating transparent WebM or HEVC</title>
 <link rel="stylesheet" href="../../../resources/js-test-style.css"/>
 <script src="../../../js/js-test-pre.js"></script>
 <script src="../../../js/webgl-test-utils.js"></script>
@@ -34,7 +34,7 @@ function logVisibility(isOnload)
 
 function init()
 {
-    description("Upload texture from animating transparent WebM");
+    description("Upload texture from animating transparent WebM or HEVC");
 
     document.addEventListener("visibilitychange", visibilityChanged, false);
 
@@ -54,14 +54,16 @@ function init()
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     video = document.getElementById("vid");
-    const type = 'video/webm; codecs="vp8"';
+    const typeWebM = 'video/webm; codecs="vp8"';
+    const typeHEVC = 'video/mp4; codecs="hvc1"';
     if (!video.canPlayType) {
         testFailed("video.canPlayType required method missing");
         finishTest();
         return;
     }
-    if (!video.canPlayType(type).replace(/no/, '')) {
-        debug(type + " unsupported");
+    if (!video.canPlayType(typeWebM).replace(/no/, '') && !video.canPlayType(typeHEVC).replace(/no/, '')) {
+        debug(typeWebM + " unsupported");
+        debug(typeHEVC + " unsupported");
         finishTest();
         return;
     };
@@ -109,7 +111,7 @@ function runOneIteration(videoElement, useTexSubImage2D)
     // Draw the triangles
     wtu.clearAndDrawUnitQuad(gl, [255, 0, 0, 255]);
 
-    const tolerance = 5;
+    const tolerance = 20;
     const red = [255, 0, 0];
     const green = [0, 255, 0];
     const blue = [0, 0, 255];
@@ -155,6 +157,7 @@ function runOneIteration(videoElement, useTexSubImage2D)
 <div id="description"></div>
 <div id="console"></div>
 <video id="vid" style="display:none;">
+  <source src="../../../resources/transparent-2frames.mp4" type='video/mp4; codecs="hvc1"' />
   <source src="../../../resources/transparent-2frames.webm" type='video/webm; codecs="vp8"' />
 </video>
 </body>

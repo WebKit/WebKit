@@ -120,16 +120,16 @@ function runTestExtension() {
     gl.bindTexture(gl.TEXTURE_2D, tex);
 
     gl.texImage2D(gl.TEXTURE_2D, 0, ext.COMPRESSED_RED_RGTC1_EXT, 4, 4, 0, gl.RED, gl.UNSIGNED_BYTE, null);
-    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "COMPRESSED_RED_RGTC1_EXT fails with texImage2D");
+    wtu.glErrorShouldBe(gl, [gl.INVALID_VALUE, gl.INVALID_OPERATION], "COMPRESSED_RED_RGTC1_EXT fails with texImage2D");
 
     gl.texImage2D(gl.TEXTURE_2D, 0, ext.COMPRESSED_SIGNED_RED_RGTC1_EXT, 4, 4, 0, gl.RED, gl.BYTE, null);
-    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "COMPRESSED_SIGNED_RED_RGTC1_EXT fails with texImage2D");
+    wtu.glErrorShouldBe(gl, [gl.INVALID_VALUE, gl.INVALID_OPERATION], "COMPRESSED_SIGNED_RED_RGTC1_EXT fails with texImage2D");
 
     gl.texImage2D(gl.TEXTURE_2D, 0, ext.COMPRESSED_RED_GREEN_RGTC2_EXT, 4, 4, 0, gl.RG, gl.UNSIGNED_BYTE, null);
-    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "COMPRESSED_RED_GREEN_RGTC2_EXT fails with texImage2D");
+    wtu.glErrorShouldBe(gl, [gl.INVALID_VALUE, gl.INVALID_OPERATION], "COMPRESSED_RED_GREEN_RGTC2_EXT fails with texImage2D");
 
     gl.texImage2D(gl.TEXTURE_2D, 0, ext.COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT, 4, 4, 0, gl.RG, gl.BYTE, null);
-    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT fails with texImage2D");
+    wtu.glErrorShouldBe(gl, [gl.INVALID_VALUE, gl.INVALID_OPERATION], "COMPRESSED_SIGNED_RED_GREEN_RGTC2_EXT fails with texImage2D");
 
     gl.deleteTexture(tex);
   }

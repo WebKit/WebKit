@@ -1,0 +1,4 @@
+This test runs the WebGL Test listed below in an iframe and reports PASS or FAIL.
+
+Test: ../../../../../resources/webgl_test_files/deqp/data/gles3/shaders/swizzles_ivec3.html?webglVersion=2
+[ PASS ] All tests passed
