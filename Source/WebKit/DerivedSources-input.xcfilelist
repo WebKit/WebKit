@@ -207,6 +207,7 @@ $(PROJECT_DIR)/UIProcess/WebPasteboardProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebPermissionControllerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/WebProcessPool.messages.in
 $(PROJECT_DIR)/UIProcess/WebProcessProxy.messages.in
+$(PROJECT_DIR)/UIProcess/WebScreenOrientationManagerProxy.messages.in
 $(PROJECT_DIR)/UIProcess/XR/PlatformXRSystem.messages.in
 $(PROJECT_DIR)/UIProcess/ios/EditableImageController.messages.in
 $(PROJECT_DIR)/UIProcess/ios/SmartMagnificationController.messages.in
@@ -277,6 +278,7 @@ $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebBroadcastChannelRegistry.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebFileSystemStorageConnection.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebPermissionController.messages.in
+$(PROJECT_DIR)/WebProcess/WebCoreSupport/WebScreenOrientationManager.messages.in
 $(PROJECT_DIR)/WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/Cocoa/TextCheckingControllerProxy.messages.in
 $(PROJECT_DIR)/WebProcess/WebPage/DrawingArea.messages.in

@@ -27,6 +27,7 @@
 #include "ScreenOrientation.h"
 
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/IsoMallocInlines.h>
@@ -45,6 +46,16 @@ Ref<ScreenOrientation> ScreenOrientation::create(Document* document)
 ScreenOrientation::ScreenOrientation(Document* document)
     : ActiveDOMObject(document)
 {
+    if (shouldListenForChangeNotification()) {
+        if (auto* manager = this->manager())
+            manager->addObserver(*this);
+    }
+}
+
+ScreenOrientation::~ScreenOrientation()
+{
+    if (auto* manager = this->manager())
+        manager->removeObserver(*this);
 }
 
 Document* ScreenOrientation::document() const
@@ -52,28 +63,117 @@ Document* ScreenOrientation::document() const
     return downcast<Document>(scriptExecutionContext());
 }
 
-void ScreenOrientation::lock(LockType, Ref<DeferredPromise>&& promise)
+ScreenOrientationManager* ScreenOrientation::manager() const
 {
-    promise->reject(Exception { NotSupportedError });
+    auto* document = this->document();
+    if (!document)
+        return nullptr;
+    auto* page = document->page();
+    return page ? page->screenOrientationManager() : nullptr;
+}
+
+void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
+{
+    auto* manager = this->manager();
+    if (!manager) {
+        promise->reject(Exception { InvalidStateError, "No browsing context"_s });
+        return;
+    }
+    manager->lock(lockType, [promise = WTFMove(promise)](std::optional<Exception>&& exception) {
+        if (exception)
+            promise->reject(WTFMove(*exception));
+        else
+            promise->resolve();
+    });
 }
 
 void ScreenOrientation::unlock()
 {
+    if (auto* manager = this->manager())
+        manager->unlock();
 }
 
 auto ScreenOrientation::type() const -> Type
 {
-    return Type::PortraitPrimary;
+    auto* manager = this->manager();
+    if (!manager)
+        return Type::PortraitPrimary;
+    return manager->currentOrientation();
 }
 
 uint16_t ScreenOrientation::angle() const
 {
+    auto* manager = this->manager();
+    if (!manager)
+        return 0;
+
+    // The angle should depend on the device's natural orientation. We currently
+    // consider Portrait as the natural orientation.
+    switch (manager->currentOrientation()) {
+    case Type::PortraitPrimary:
+        return 0;
+    case Type::PortraitSecondary:
+        return 180;
+    case Type::LandscapePrimary:
+        return 90;
+    case Type::LandscapeSecondary:
+        return 270;
+    }
+    ASSERT_NOT_REACHED();
     return 0;
+}
+
+void ScreenOrientation::visibilityStateChanged()
+{
+    auto* document = this->document();
+    if (!document)
+        return;
+    auto* manager = this->manager();
+    if (!manager)
+        return;
+
+    if (shouldListenForChangeNotification())
+        manager->addObserver(*this);
+    else
+        manager->removeObserver(*this);
+}
+
+bool ScreenOrientation::shouldListenForChangeNotification() const
+{
+    auto* document = this->document();
+    if (!document || !document->frame())
+        return false;
+    return document->visibilityState() == VisibilityState::Visible;
+}
+
+void ScreenOrientation::screenOrientationDidChange(ScreenOrientationType)
+{
+    dispatchEvent(Event::create(eventNames().changeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 const char* ScreenOrientation::activeDOMObjectName() const
 {
     return "ScreenOrientation";
+}
+
+void ScreenOrientation::suspend(ReasonForSuspension)
+{
+    if (auto* manager = this->manager())
+        manager->removeObserver(*this);
+}
+
+void ScreenOrientation::resume()
+{
+    if (!shouldListenForChangeNotification())
+        return;
+    if (auto* manager = this->manager())
+        manager->addObserver(*this);
+}
+
+void ScreenOrientation::stop()
+{
+    if (auto* manager = this->manager())
+        manager->removeObserver(*this);
 }
 
 bool ScreenOrientation::virtualHasPendingActivity() const

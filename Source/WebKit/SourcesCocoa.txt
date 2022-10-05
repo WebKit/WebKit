@@ -481,6 +481,7 @@ UIProcess/ios/ViewGestureControllerIOS.mm
 UIProcess/ios/WebDataListSuggestionsDropdownIOS.mm
 UIProcess/ios/WebPageProxyIOS.mm
 UIProcess/ios/WebProcessProxyIOS.mm
+UIProcess/ios/WebScreenOrientationManagerProxyIOS.mm
 UIProcess/ios/WKActionSheet.mm
 UIProcess/ios/WKActionSheetAssistant.mm
 UIProcess/ios/WKApplicationStateTrackingView.mm

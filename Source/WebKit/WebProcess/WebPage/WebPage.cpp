@@ -131,6 +131,7 @@
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
 #include "WebProgressTrackerClient.h"
+#include "WebScreenOrientationManager.h"
 #include "WebServiceWorkerProvider.h"
 #include "WebSocketProvider.h"
 #include "WebSpeechRecognitionProvider.h"
@@ -534,6 +535,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_foundTextRangeController(makeUniqueRef<WebFoundTextRangeController>(*this))
     , m_inspectorTargetController(makeUnique<WebPageInspectorTargetController>(*this))
     , m_userContentController(WebUserContentController::getOrCreate(parameters.userContentControllerParameters.identifier))
+    , m_screenOrientationManager(makeUniqueRef<WebScreenOrientationManager>(*this))
 #if ENABLE(GEOLOCATION)
     , m_geolocationPermissionRequestManager(makeUniqueRef<GeolocationPermissionRequestManager>(*this))
 #endif
@@ -622,6 +624,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     pageConfiguration.diagnosticLoggingClient = makeUnique<WebDiagnosticLoggingClient>(*this);
     pageConfiguration.performanceLoggingClient = makeUnique<WebPerformanceLoggingClient>(*this);
+    pageConfiguration.screenOrientationManager = m_screenOrientationManager.get();
 
 #if ENABLE(WEBGL)
     pageConfiguration.webGLStateTracker = makeUnique<WebGLStateTracker>([this](bool isUsingHighPerformanceWebGL) {

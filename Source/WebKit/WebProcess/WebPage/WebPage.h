@@ -322,6 +322,7 @@ class WebPageOverlay;
 class WebPaymentCoordinator;
 class WebPopupMenu;
 class WebRemoteObjectRegistry;
+class WebScreenOrientationManager;
 class WebTouchEvent;
 class WebURLSchemeHandlerProxy;
 class WebUndoStep;
@@ -2210,6 +2211,7 @@ private:
     RefPtr<NotificationPermissionRequestManager> m_notificationPermissionRequestManager;
 
     Ref<WebUserContentController> m_userContentController;
+    UniqueRef<WebScreenOrientationManager> m_screenOrientationManager;
 
 #if ENABLE(GEOLOCATION)
     UniqueRef<GeolocationPermissionRequestManager> m_geolocationPermissionRequestManager;

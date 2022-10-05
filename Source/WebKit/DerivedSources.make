@@ -178,6 +178,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/WebProcessProxy \
 	UIProcess/Automation/WebAutomationSession \
 	UIProcess/WebProcessPool \
+        UIProcess/WebScreenOrientationManagerProxy \
 	UIProcess/Downloads/DownloadProxy \
 	UIProcess/Extensions/WebExtensionController \
 	UIProcess/Media/AudioSessionRoutingArbitratorProxy \
@@ -228,6 +229,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/WebCoreSupport/WebDeviceOrientationUpdateProvider \
 	WebProcess/WebCoreSupport/WebFileSystemStorageConnection \
 	WebProcess/WebCoreSupport/WebPermissionController \
+        WebProcess/WebCoreSupport/WebScreenOrientationManager \
 	WebProcess/WebCoreSupport/WebSpeechRecognitionConnection \
 	WebProcess/Speech/SpeechRecognitionRealtimeMediaSourceManager \
 	WebProcess/Storage/WebSharedWorkerContextManagerConnection \

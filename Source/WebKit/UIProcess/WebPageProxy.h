@@ -382,6 +382,7 @@ class WebPageDebuggable;
 class WebPageGroup;
 class WebPageInspectorController;
 class WebProcessProxy;
+class WebScreenOrientationManagerProxy;
 class WebURLSchemeHandler;
 class WebUserContentControllerProxy;
 class WebViewDidMoveToWindowObserver;
@@ -1881,8 +1882,8 @@ public:
 
     void configureLoggingChannel(const String&, WTFLogChannelState, WTFLogLevel);
 
-    void addObserver(WebViewDidMoveToWindowObserver&);
-    void removeObserver(WebViewDidMoveToWindowObserver&);
+    void addDidMoveToWindowObserver(WebViewDidMoveToWindowObserver&);
+    void removeDidMoveToWindowObserver(WebViewDidMoveToWindowObserver&);
     void webViewDidMoveToWindow();
 
 #if HAVE(APP_SSO)
@@ -3264,6 +3265,8 @@ private:
     std::unique_ptr<WebDeviceOrientationUpdateProviderProxy> m_webDeviceOrientationUpdateProviderProxy;
 #endif
 
+    std::unique_ptr<WebScreenOrientationManagerProxy> m_screenOrientationManager;
+
 #if ENABLE(INTELLIGENT_TRACKING_PREVENTION)
     MonotonicTime m_didFinishDocumentLoadForMainFrameTimestamp;
 #endif
@@ -3321,11 +3324,6 @@ private:
 inline RetainPtr<WKWebView> WebPageProxy::cocoaView()
 {
     return m_cocoaView.get();
-}
-
-inline void WebPageProxy::setCocoaView(WKWebView *view)
-{
-    m_cocoaView = view;
 }
 
 #endif

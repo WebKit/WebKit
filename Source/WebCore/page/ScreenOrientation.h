@@ -29,17 +29,20 @@
 #include "EventTarget.h"
 
 #include "ScreenOrientationLockType.h"
+#include "ScreenOrientationManager.h"
 #include "ScreenOrientationType.h"
+#include "VisibilityChangeClient.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class DeferredPromise;
 
-class ScreenOrientation final : public ActiveDOMObject, public EventTarget, public RefCounted<ScreenOrientation> {
+class ScreenOrientation final : public ActiveDOMObject, public EventTarget, public ScreenOrientationManager::Observer, public VisibilityChangeClient, public RefCounted<ScreenOrientation> {
     WTF_MAKE_ISO_ALLOCATED(ScreenOrientation);
 public:
     static Ref<ScreenOrientation> create(Document*);
+    ~ScreenOrientation();
 
     using LockType = ScreenOrientationLockType;
     using Type = ScreenOrientationType;
@@ -56,6 +59,15 @@ private:
     ScreenOrientation(Document*);
 
     Document* document() const;
+    ScreenOrientationManager* manager() const;
+
+    bool shouldListenForChangeNotification() const;
+
+    // VisibilityChangeClient
+    void visibilityStateChanged() final;
+
+    // ScreenOrientationManager::Observer
+    void screenOrientationDidChange(ScreenOrientationType) final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return ScreenOrientationEventTargetInterfaceType; }
@@ -67,6 +79,9 @@ private:
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
     bool virtualHasPendingActivity() const final;
+    void suspend(ReasonForSuspension) final;
+    void resume() final;
+    void stop() final;
 
     bool m_hasChangeEventListener { false };
 };

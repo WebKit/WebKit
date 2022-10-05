@@ -921,6 +921,8 @@
 		46C916AA2799D0A2001A4E7C /* WebSharedWorkerServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 46C916A92799D09D001A4E7C /* WebSharedWorkerServer.h */; };
 		46CE3B1123D8C8490016A96A /* WebBackForwardListCounts.h in Headers */ = {isa = PBXBuildFile; fileRef = 46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */; };
 		46D48FCE2799D7E1007D2014 /* WebSharedWorkerServerToContextConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 46D48FCD2799D7DE007D2014 /* WebSharedWorkerServerToContextConnection.h */; };
+		46DC53C328EB3D99005376B0 /* WebScreenOrientationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DC53C028EB3D90005376B0 /* WebScreenOrientationManager.h */; };
+		46DC53C728EB3DC8005376B0 /* WebScreenOrientationManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DC53C628EB3DBE005376B0 /* WebScreenOrientationManagerProxy.h */; };
 		46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */; };
 		46EE2849269E04AC00DD48AB /* WebBroadcastChannelRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EE2848269E049B00DD48AB /* WebBroadcastChannelRegistry.h */; };
 		46EE284D269E052500DD48AB /* NetworkBroadcastChannelRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 46EE284C269E051700DD48AB /* NetworkBroadcastChannelRegistry.h */; };
@@ -4741,6 +4743,7 @@
 		46AC532425DED81E003B57EC /* GPUProcessConnectionParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GPUProcessConnectionParameters.h; sourceTree = "<group>"; };
 		46B0524422668D2300265B97 /* WebDeviceOrientationAndMotionAccessController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationAndMotionAccessController.h; sourceTree = "<group>"; };
 		46B0524522668D2400265B97 /* WebDeviceOrientationAndMotionAccessController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationAndMotionAccessController.cpp; sourceTree = "<group>"; };
+		46B2452428ECA335000A5925 /* WebScreenOrientationManagerProxyIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebScreenOrientationManagerProxyIOS.mm; path = ios/WebScreenOrientationManagerProxyIOS.mm; sourceTree = "<group>"; };
 		46C392282316EC4D008EED9B /* WebPageProxyIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageProxyIdentifier.h; sourceTree = "<group>"; };
 		46C5B7CB27AADDBE000C5B47 /* RemoteWorkerLibWebRTCProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteWorkerLibWebRTCProvider.h; sourceTree = "<group>"; };
 		46C5B7CC27AADDBE000C5B47 /* RemoteWorkerFrameLoaderClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteWorkerFrameLoaderClient.cpp; sourceTree = "<group>"; };
@@ -4751,6 +4754,12 @@
 		46D48FCC2799D7DD007D2014 /* WebSharedWorkerServerToContextConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerServerToContextConnection.cpp; sourceTree = "<group>"; };
 		46D48FCD2799D7DE007D2014 /* WebSharedWorkerServerToContextConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerServerToContextConnection.h; sourceTree = "<group>"; };
 		46DA285727B73E760089D339 /* WebGeolocationManagerProxyCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebGeolocationManagerProxyCocoa.cpp; sourceTree = "<group>"; };
+		46DC53C028EB3D90005376B0 /* WebScreenOrientationManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebScreenOrientationManager.h; sourceTree = "<group>"; };
+		46DC53C128EB3D90005376B0 /* WebScreenOrientationManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebScreenOrientationManager.cpp; sourceTree = "<group>"; };
+		46DC53C228EB3D90005376B0 /* WebScreenOrientationManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebScreenOrientationManager.messages.in; sourceTree = "<group>"; };
+		46DC53C428EB3DBE005376B0 /* WebScreenOrientationManagerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebScreenOrientationManagerProxy.cpp; sourceTree = "<group>"; };
+		46DC53C528EB3DBE005376B0 /* WebScreenOrientationManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebScreenOrientationManagerProxy.messages.in; sourceTree = "<group>"; };
+		46DC53C628EB3DBE005376B0 /* WebScreenOrientationManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebScreenOrientationManagerProxy.h; sourceTree = "<group>"; };
 		46DF06391F3905E5001980BB /* NetworkCORSPreflightChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCORSPreflightChecker.cpp; sourceTree = "<group>"; };
 		46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCORSPreflightChecker.h; sourceTree = "<group>"; };
 		46E9760A2757F6C900ACDD37 /* WebBroadcastChannelRegistry.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebBroadcastChannelRegistry.messages.in; sourceTree = "<group>"; };
@@ -9466,6 +9475,7 @@
 				E3866AE42397400400F88FE9 /* WebDeviceOrientationUpdateProviderProxy.mm */,
 				2DA944AB1884E9BA00ED86DB /* WebPageProxyIOS.mm */,
 				2DA944AC1884E9BA00ED86DB /* WebProcessProxyIOS.mm */,
+				46B2452428ECA335000A5925 /* WebScreenOrientationManagerProxyIOS.mm */,
 				0FCB4E3818BBE044000FCFC9 /* WKActionSheet.h */,
 				0FCB4E3918BBE044000FCFC9 /* WKActionSheet.mm */,
 				0FCB4E3A18BBE044000FCFC9 /* WKActionSheetAssistant.h */,
@@ -11780,6 +11790,9 @@
 				1A1E093218861D3800D2DC49 /* WebProgressTrackerClient.h */,
 				4671FF1E23217EFF001B64C7 /* WebResourceLoadObserver.cpp */,
 				4671FF1D23217EFF001B64C7 /* WebResourceLoadObserver.h */,
+				46DC53C128EB3D90005376B0 /* WebScreenOrientationManager.cpp */,
+				46DC53C028EB3D90005376B0 /* WebScreenOrientationManager.h */,
+				46DC53C228EB3D90005376B0 /* WebScreenOrientationManager.messages.in */,
 				D3B9484411FF4B6500032B39 /* WebSearchPopupMenu.cpp */,
 				D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */,
 				93D6B767254B7BC60058DD3A /* WebSpeechRecognitionConnection.cpp */,
@@ -12061,6 +12074,9 @@
 				BC111B0D112F5E4F00337BAB /* WebProcessProxy.cpp */,
 				BC032DCF10F4389F0058C15A /* WebProcessProxy.h */,
 				BCEE7AB312817095009827DA /* WebProcessProxy.messages.in */,
+				46DC53C428EB3DBE005376B0 /* WebScreenOrientationManagerProxy.cpp */,
+				46DC53C628EB3DBE005376B0 /* WebScreenOrientationManagerProxy.h */,
+				46DC53C528EB3DBE005376B0 /* WebScreenOrientationManagerProxy.messages.in */,
 				51D124241E6D3CC3002B2820 /* WebURLSchemeHandler.cpp */,
 				51D124251E6D3CC3002B2820 /* WebURLSchemeHandler.h */,
 				51E8B68D1E712873001B7132 /* WebURLSchemeTask.cpp */,
@@ -15249,6 +15265,8 @@
 				DDA0A36827E55E4F005E086E /* WebResourcePrivate.h in Headers */,
 				413075B01DE85F580039EC69 /* WebRTCMonitor.h in Headers */,
 				41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */,
+				46DC53C328EB3D99005376B0 /* WebScreenOrientationManager.h in Headers */,
+				46DC53C728EB3DC8005376B0 /* WebScreenOrientationManagerProxy.h in Headers */,
 				DDA0A2C127E55E4E005E086E /* WebScriptDebugDelegate.h in Headers */,
 				7C361D731927FA360036A59D /* WebScriptMessageHandler.h in Headers */,
 				DDA0A38127E561C4005E086E /* WebScriptObject.h in Headers */,

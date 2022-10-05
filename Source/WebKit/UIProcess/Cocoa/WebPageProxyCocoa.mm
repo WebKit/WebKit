@@ -50,6 +50,7 @@
 #import "WebPasteboardProxy.h"
 #import "WebProcessMessages.h"
 #import "WebProcessProxy.h"
+#import "WebScreenOrientationManagerProxy.h"
 #import "WebsiteDataStore.h"
 #import "WKErrorInternal.h"
 #import <Foundation/NSURLRequest.h>
@@ -937,6 +938,15 @@ void WebPageProxy::classifyModalContainerControls(Vector<String>&& texts, Comple
 void WebPageProxy::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
 {
     send(Messages::WebPage::ReplaceSelectionWithPasteboardData(types, data));
+}
+
+void WebPageProxy::setCocoaView(WKWebView *view)
+{
+    m_cocoaView = view;
+#if PLATFORM(IOS_FAMILY)
+    if (m_screenOrientationManager)
+        m_screenOrientationManager->setWindow(view.window);
+#endif
 }
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)

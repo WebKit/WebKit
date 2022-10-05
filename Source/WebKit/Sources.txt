@@ -435,6 +435,7 @@ UIProcess/WebPreferences.cpp
 UIProcess/WebProcessCache.cpp
 UIProcess/WebProcessPool.cpp
 UIProcess/WebProcessProxy.cpp
+UIProcess/WebScreenOrientationManagerProxy.cpp
 UIProcess/WebURLSchemeHandler.cpp
 UIProcess/WebURLSchemeTask.cpp
 
@@ -802,6 +803,7 @@ WebProcess/WebCoreSupport/WebPlatformStrategies.cpp
 WebProcess/WebCoreSupport/WebPopupMenu.cpp
 WebProcess/WebCoreSupport/WebProgressTrackerClient.cpp
 WebProcess/WebCoreSupport/WebResourceLoadObserver.cpp
+WebProcess/WebCoreSupport/WebScreenOrientationManager.cpp
 WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp
 WebProcess/WebCoreSupport/WebUserMediaClient.cpp
 WebProcess/WebCoreSupport/WebSpeechRecognitionConnection.cpp
@@ -882,6 +884,8 @@ WebBroadcastChannelRegistryMessageReceiver.cpp
 WebLockRegistryProxyMessageReceiver.cpp
 WebPermissionControllerMessageReceiver.cpp
 WebPermissionControllerProxyMessageReceiver.cpp
+WebScreenOrientationManagerMessageReceiver.cpp
+WebScreenOrientationManagerProxyMessageReceiver.cpp
 WebSharedWorkerContextManagerConnectionMessageReceiver.cpp
 WebSharedWorkerObjectConnectionMessageReceiver.cpp
 WebSharedWorkerServerConnectionMessageReceiver.cpp

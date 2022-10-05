@@ -142,6 +142,7 @@
 #include "WebProcessProxy.h"
 #include "WebProtectionSpace.h"
 #include "WebResourceLoadStatisticsStore.h"
+#include "WebScreenOrientationManagerProxy.h"
 #include "WebURLSchemeHandler.h"
 #include "WebUserContentControllerProxy.h"
 #include "WebViewDidMoveToWindowObserver.h"
@@ -1098,6 +1099,8 @@ void WebPageProxy::didAttachToRunningProcess()
     ASSERT(!m_webDeviceOrientationUpdateProviderProxy);
     m_webDeviceOrientationUpdateProviderProxy = makeUnique<WebDeviceOrientationUpdateProviderProxy>(*this);
 #endif
+
+    m_screenOrientationManager = makeUnique<WebScreenOrientationManagerProxy>(*this);
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     ASSERT(!m_xrSystem);
@@ -8213,6 +8216,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     }
 #endif
 
+    m_screenOrientationManager = nullptr;
+
 #if ENABLE(MEDIA_USAGE)
     if (m_mediaUsageManager)
         m_mediaUsageManager->reset();
@@ -11046,13 +11051,13 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebPageProxy::addObserver(WebViewDidMoveToWindowObserver& observer)
+void WebPageProxy::addDidMoveToWindowObserver(WebViewDidMoveToWindowObserver& observer)
 {
     auto result = m_webViewDidMoveToWindowObservers.add(&observer, observer);
     ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-void WebPageProxy::removeObserver(WebViewDidMoveToWindowObserver& observer)
+void WebPageProxy::removeDidMoveToWindowObserver(WebViewDidMoveToWindowObserver& observer)
 {
     auto result = m_webViewDidMoveToWindowObservers.remove(&observer);
     ASSERT_UNUSED(result, result);

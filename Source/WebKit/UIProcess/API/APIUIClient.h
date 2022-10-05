@@ -34,6 +34,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/ModalContainerTypes.h>
 #include <WebCore/PermissionState.h>
+#include <WebCore/ScreenOrientationLockType.h>
 #include <wtf/CompletionHandler.h>
 
 #if PLATFORM(COCOA)
@@ -138,6 +139,9 @@ public:
     {
         completionHandler(currentQuota);
     }
+
+    virtual bool lockScreenOrientation(WebCore::ScreenOrientationLockType) { return false; }
+    virtual void unlockScreenOrientation() { }
 
     virtual bool needsFontAttributes() const { return false; }
     virtual void didChangeFontAttributes(const WebCore::FontAttributes&) { }

@@ -241,6 +241,7 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/WebPermissionControllerProxy
     UIProcess/WebProcessPool
     UIProcess/WebProcessProxy
+    UIProcess/WebScreenOrientationManagerProxy
 
     UIProcess/Automation/WebAutomationSession
 
@@ -322,6 +323,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebCoreSupport/WebBroadcastChannelRegistry
     WebProcess/WebCoreSupport/WebFileSystemStorageConnection
     WebProcess/WebCoreSupport/WebPermissionController
+    WebProcess/WebCoreSupport/WebScreenOrientationManager
     WebProcess/WebCoreSupport/WebSpeechRecognitionConnection
 
     WebProcess/WebPage/DrawingArea
