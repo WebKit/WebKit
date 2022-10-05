@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+</head>
+<body>
+    <script>
+    window.onerror = function(message, url, lineNumber)
+    {
+        document.getElementById("error").innerHTML = "ERROR: " + url + ":" + lineNumber + ": " + message;
+    }
+
+    const isInBrowser = true;
+    </script>
+    <script src="driver.js"></script>
+    <script src="results.js"></script>
+    <script src="stats.js"></script>
+    
+    <header>
+        <h1 class="logo">Rex Bench</h1>
+        <button id="trigger" class="start">
+            <span id="status">Start</span>
+        </button>
+        <div id="error" class="error"></div>
+    </header>
+
+    <main>
+    
+    <p>RexBench measures the execution time of JavaScript Regular Expression. <a href="about.html">Read more details&hellip;</a></p>
+
+    <div class="overall">
+        <h2>Overall</h2>
+        <div class="score">
+            <span id="Geomean">
+                <span class="value">0</span><span class="units">ms</span>
+            </span>
+        </div>
+    </div>    
+    
+    <div class="tests">
+        
+        <div class="regexp dna test">
+            <h2 id="RegexDNAMessage">Regex DNA</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="RegexDNAFirstIteration">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iteratons</label>
+                <span id="RegexDNAAverageWorstCase">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="RegexDNASteadyState">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+        
+        <div class=" test">
+            <h2 id="Octane2RegExpMessage">Octane RegExp</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="Octane2RegExpFirstIteration">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iteratons</label>
+                <span id="Octane2RegExpAverageWorstCase">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="Octane2RegExpSteadyState">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
+        <div class="offline assembler test">
+            <h2 id="OfflineAssemblerMessage">Offline Assembler</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="OfflineAssemblerFirstIteration">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iteratons</label>
+                <span id="OfflineAssemblerAverageWorstCase">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="OfflineAssemblerSteadyState">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
+        <div class="unipoker test">
+            <h2 id="UniPokerMessage">UniPoker</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="UniPokerFirstIteration">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iteratons</label>
+                <span id="UniPokerAverageWorstCase">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="UniPokerSteadyState">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
+        <div class="flight planner test">
+            <h2 id="FlightPlannerMessage">Flight Planner</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="FlightPlannerFirstIteration">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iterations</label>
+                <span id="FlightPlannerAverageWorstCase">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="FlightPlannerSteadyState">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
+        <div class="flight planner unicode test">
+            <h2 id="FlightPlannerUnicodeMessage">Flight Planner (Unicode)</h2> 
+            
+            <div class="score">
+                <label>First Iteration</label>
+                <span id="FlightPlannerUnicodeFirstIteration">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+ 
+            <div class="score">
+                <label>Worst 4 Iterations</label>
+                <span id="FlightPlannerUnicodeAverageWorstCase">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+
+            <div class="score">
+                <label>Average</label>
+                <span id="FlightPlannerUnicodeSteadyState">
+                    <span class="value">0</span><span class="units">ms</span>                    
+                </span>
+            </div>
+        </div>
+
+    </div>
+    </main>
+    
+    <iframe id="magic" frameBorder=0></iframe>
+    <script src="sunspider_benchmark.js"></script>
+    <script src="octane2_benchmark.js"></script>
+    <script src="offline_assembler_benchmark.js"></script>
+    <script src="unipoker_benchmark.js"></script>
+    <script src="flightplan_benchmark.js"></script>
+    <script src="flightplan_unicode_benchmark.js"></script>
+    <script src="glue.js"></script>
+        
+</body>
+</html>
