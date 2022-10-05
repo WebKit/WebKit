@@ -5333,3 +5333,6 @@ js/ShadowRealm-iframe-detach.html [ Pass Failure ]
 js/ShadowRealm-iframe-sandboxed.html [ Pass Failure ]
 js/ShadowRealm-importValue.html [ Pass Failure ]
 js/ShadowRealm-worker.html [ Pass Failure ]
+
+# rdar://100048770 ([Regression][ iOS Mac ] fast/css/text-overflow-input.html is a constant failure)
+fast/css/text-overflow-input.html [ Failure ]
