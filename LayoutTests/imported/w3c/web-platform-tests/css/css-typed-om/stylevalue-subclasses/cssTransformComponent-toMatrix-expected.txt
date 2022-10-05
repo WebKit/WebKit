@@ -4,7 +4,7 @@ FAIL CSSRotate.toMatrix() returns correct matrix assert_array_approx_equals: pro
 PASS CSSScale.toMatrix() returns correct matrix
 PASS CSSSkew.toMatrix() returns correct matrix
 PASS CSSSkewX.toMatrix() returns correct matrix
-FAIL CSSSkewY.toMatrix() returns correct matrix assert_array_approx_equals: property 1, expected 0.17632698070846498 +/- 0.000001, expected 0.17632698070846498 but got 0
+PASS CSSSkewY.toMatrix() returns correct matrix
 FAIL CSSPerspective.toMatrix() returns correct matrix assert_array_approx_equals: property 11, expected -0.1 +/- 0.000001, expected -0.1 but got 0
 FAIL CSSMatrixComponent.toMatrix() returns correct matrix assert_array_approx_equals: property 1, expected 2 +/- 0.000001, expected 2 but got 0
 
