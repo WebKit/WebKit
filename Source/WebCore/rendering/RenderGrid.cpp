@@ -276,12 +276,12 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
 
         resetLogicalHeightBeforeLayoutIfNeeded();
 
-        updateLogicalWidth();
-
         // Fieldsets need to find their legend and position it inside the border of the object.
         // The legend then gets skipped during normal layout. The same is true for ruby text.
         // It doesn't get included in the normal layout process but is instead skipped.
         layoutExcludedChildren(relayoutChildren);
+
+        updateLogicalWidth();
 
         LayoutUnit availableSpaceForColumns = availableLogicalWidth();
         placeItemsOnGrid(m_trackSizingAlgorithm, availableSpaceForColumns);
