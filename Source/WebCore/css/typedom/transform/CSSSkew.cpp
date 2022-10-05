@@ -88,6 +88,24 @@ CSSSkew::CSSSkew(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay)
 {
 }
 
+ExceptionOr<void> CSSSkew::setAx(Ref<CSSNumericValue> ax)
+{
+    if (!ax->type().matches<CSSNumericBaseType::Angle>())
+        return Exception { TypeError };
+
+    m_ax = WTFMove(ax);
+    return { };
+}
+
+ExceptionOr<void> CSSSkew::setAy(Ref<CSSNumericValue> ay)
+{
+    if (!ay->type().matches<CSSNumericBaseType::Angle>())
+        return Exception { TypeError };
+
+    m_ay = WTFMove(ay);
+    return { };
+}
+
 void CSSSkew::serialize(StringBuilder& builder) const
 {
     // https://drafts.css-houdini.org/css-typed-om/#serialize-a-cssskew

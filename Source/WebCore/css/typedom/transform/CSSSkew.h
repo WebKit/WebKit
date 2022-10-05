@@ -45,17 +45,18 @@ public:
     const CSSNumericValue& ax() const { return m_ax.get(); }
     const CSSNumericValue& ay() const { return m_ay.get(); }
     
-    void setAx(Ref<CSSNumericValue> ax) { m_ax = WTFMove(ax); }
-    void setAy(Ref<CSSNumericValue> ay) { m_ay = WTFMove(ay); }
+    ExceptionOr<void> setAx(Ref<CSSNumericValue>);
+    ExceptionOr<void> setAy(Ref<CSSNumericValue>);
 
     void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
-    
+    void setIs2D(bool) final { };
+
     CSSTransformType getType() const final { return CSSTransformType::Skew; }
 
 private:
     CSSSkew(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay);
-    
+
     Ref<CSSNumericValue> m_ax;
     Ref<CSSNumericValue> m_ay;
 };
