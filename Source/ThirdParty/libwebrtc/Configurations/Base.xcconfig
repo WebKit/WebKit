@@ -112,7 +112,7 @@ GCC_OPTIMIZATION_LEVEL[config=Debug] = 0;
 // This is overridden in libwebrtc.xcconfig, but it must be NO for static library targets to have symbols.
 STRIP_INSTALLED_PRODUCT = NO;
 
-OTHER_CFLAGS = $(inherited) -fvisibility=default -D_LIBCPP_ENABLE_ASSERTIONS=1;
+OTHER_CFLAGS = $(inherited) -fvisibility=default;
 OTHER_CPLUSPLUSFLAGS = $(inherited) -fvisibility=default;
 OTHER_LDFLAGS = $(inherited) -fvisibility=default;
 
