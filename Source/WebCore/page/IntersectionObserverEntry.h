@@ -31,6 +31,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class Element;
@@ -75,5 +79,6 @@ private:
     bool m_isIntersecting { false };
 };
 
+TextStream& operator<<(TextStream&, const IntersectionObserverEntry&);
 
 } // namespace WebCore

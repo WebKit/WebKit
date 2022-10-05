@@ -43,4 +43,25 @@ IntersectionObserverEntry::IntersectionObserverEntry(const Init& init)
         m_rootBounds = DOMRectReadOnly::fromRect(*init.rootBounds);
 }
 
+TextStream& operator<<(TextStream& ts, const IntersectionObserverEntry& entry)
+{
+    TextStream::GroupScope scope(ts);
+    ts << "IntersectionObserverEntry " << &entry;
+    ts.dumpProperty("time", entry.time());
+    
+    if (entry.rootBounds())
+        ts.dumpProperty("rootBounds", entry.rootBounds()->toFloatRect());
+
+    if (entry.boundingClientRect())
+        ts.dumpProperty("boundingClientRect", entry.boundingClientRect()->toFloatRect());
+
+    if (entry.intersectionRect())
+        ts.dumpProperty("intersectionRect", entry.intersectionRect()->toFloatRect());
+
+    ts.dumpProperty("isIntersecting", entry.isIntersecting());
+    ts.dumpProperty("intersectionRatio", entry.intersectionRatio());
+
+    return ts;
+}
+
 } // namespace WebCore
