@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ShareableBitmapHandle.h"
 
-#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
+#include "WebCoreArgumentCoders.h"
 
-messages -> RemoteImageDecoderAVFProxy NotRefCounted {
-    CreateDecoder(IPC::SharedBufferReference data, String mimeType) -> (std::optional<WebCore::ImageDecoderIdentifier> identifier) Synchronous
-    DeleteDecoder(WebCore::ImageDecoderIdentifier identifier)
-    SetExpectedContentSize(WebCore::ImageDecoderIdentifier identifier, long long expectedContentSize)
-    SetData(WebCore::ImageDecoderIdentifier identifier, IPC::SharedBufferReference data, bool allDataReceived) -> (size_t frameCount, WebCore::IntSize size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>> frameInfos) Synchronous
-    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, size_t index) -> (std::optional<WebKit::ShareableBitmapHandle> imageHandle) Synchronous
-    ClearFrameBufferCache(WebCore::ImageDecoderIdentifier identifier, size_t index)
+namespace WebKit {
+using namespace WebCore;
+
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmapHandle);
+DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ShareableBitmapHandle);
+
+ShareableBitmapHandle::ShareableBitmapHandle()
+{
 }
 
-#endif
+ShareableBitmapHandle::ShareableBitmapHandle(SharedMemory::Handle&& handle, const WebCore::IntSize& size, const ShareableBitmapConfiguration& config)
+    : m_handle(WTFMove(handle))
+    , m_size(size)
+    , m_configuration(config)
+{
+}
+
+void ShareableBitmapHandle::takeOwnershipOfMemory(MemoryLedger ledger) const
+{
+    m_handle.takeOwnershipOfMemory(ledger);
+}
+
+void ShareableBitmapHandle::clear()
+{
+    m_handle.clear();
+    m_size = IntSize();
+    m_configuration = { };
+}
+
+} // namespace WebKit

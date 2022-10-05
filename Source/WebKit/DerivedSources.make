@@ -454,6 +454,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APIGeometry.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/FocusedElementInformation.serialization.in \
+	Shared/ShareableBitmap.serialization.in \
 	Shared/FrameInfoData.serialization.in \
 	Shared/FrameTreeNodeData.serialization.in \
 	Shared/LayerTreeContext.serialization.in \

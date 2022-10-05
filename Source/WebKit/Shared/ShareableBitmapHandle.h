@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,15 +25,4 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
-
-messages -> RemoteImageDecoderAVFProxy NotRefCounted {
-    CreateDecoder(IPC::SharedBufferReference data, String mimeType) -> (std::optional<WebCore::ImageDecoderIdentifier> identifier) Synchronous
-    DeleteDecoder(WebCore::ImageDecoderIdentifier identifier)
-    SetExpectedContentSize(WebCore::ImageDecoderIdentifier identifier, long long expectedContentSize)
-    SetData(WebCore::ImageDecoderIdentifier identifier, IPC::SharedBufferReference data, bool allDataReceived) -> (size_t frameCount, WebCore::IntSize size, bool hasTrack, std::optional<Vector<WebCore::ImageDecoder::FrameInfo>> frameInfos) Synchronous
-    CreateFrameImageAtIndex(WebCore::ImageDecoderIdentifier identifier, size_t index) -> (std::optional<WebKit::ShareableBitmapHandle> imageHandle) Synchronous
-    ClearFrameBufferCache(WebCore::ImageDecoderIdentifier identifier, size_t index)
-}
-
-#endif
+#include "ShareableBitmap.h"

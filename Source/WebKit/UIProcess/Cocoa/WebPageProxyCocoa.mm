@@ -251,7 +251,7 @@ bool WebPageProxy::scrollingUpdatesDisabledForTesting()
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmap::Handle& dragImageHandle)
+void WebPageProxy::startDrag(const DragItem& dragItem, const ShareableBitmapHandle& dragImageHandle)
 {
     pageClient().startDrag(dragItem, dragImageHandle);
 }
@@ -312,7 +312,7 @@ static RefPtr<WebKit::ShareableBitmap> convertPlatformImageToBitmap(CocoaImage *
     auto resultRect = roundedIntRect(largestRectWithAspectRatioInsideRect(originalThumbnailSize.aspectRatio(), { { }, fittingSize }));
     resultRect.setLocation({ });
 
-    WebKit::ShareableBitmap::Configuration bitmapConfiguration;
+    WebKit::ShareableBitmapConfiguration bitmapConfiguration;
     auto bitmap = WebKit::ShareableBitmap::create(resultRect.size(), bitmapConfiguration);
     if (!bitmap)
         return nullptr;
@@ -646,7 +646,7 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     if (!convertedImage)
         return false;
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     convertedImage->createHandle(handle);
     send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, iconSize));
     return true;

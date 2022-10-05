@@ -2422,7 +2422,7 @@ void WebAutomationSession::takeScreenshot(const Inspector::Protocol::Automation:
 #endif
 }
 
-void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const ShareableBitmap::Handle& imageDataHandle, const String& errorType)
+void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const ShareableBitmapHandle& imageDataHandle, const String& errorType)
 {
     auto callback = m_screenshotCallbacks.take(callbackID);
     if (!callback)
@@ -2441,7 +2441,7 @@ void WebAutomationSession::didTakeScreenshot(uint64_t callbackID, const Shareabl
 }
 
 #if !PLATFORM(COCOA) && !USE(CAIRO)
-std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&)
+std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(const ShareableBitmapHandle&)
 {
     return std::nullopt;
 }

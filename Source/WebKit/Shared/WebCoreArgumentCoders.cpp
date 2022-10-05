@@ -590,7 +590,7 @@ static void encodeImage(Encoder& encoder, Image& image)
 
     graphicsContext->drawImage(image, IntPoint());
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     bitmap->createHandle(handle);
 
     encoder << handle;
@@ -603,7 +603,7 @@ static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& imag
     if (!didCreateGraphicsContext || !*didCreateGraphicsContext)
         return false;
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (!decoder.decode(handle))
         return false;
     

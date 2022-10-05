@@ -2651,9 +2651,9 @@ void WebPage::setFooterBannerHeightForTesting(int height)
 
 #endif // !PLATFORM(IOS_FAMILY)
 
-void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
+void WebPage::takeSnapshot(IntRect snapshotRect, IntSize bitmapSize, uint32_t options, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&& completionHandler)
 {
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     Frame* coreFrame = m_mainFrame->coreFrame();
     if (!coreFrame) {
         completionHandler(handle);
@@ -5750,7 +5750,7 @@ void WebPage::drawToPDF(FrameIdentifier frameID, const std::optional<FloatRect>&
     completionHandler(SharedBuffer::create(pdfData.get()));
 }
 
-void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmap::Handle&)>&& completionHandler)
+void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(const WebKit::ShareableBitmapHandle&)>&& completionHandler)
 {
     PrintContextAccessScope scope { *this };
     WebFrame* frame = WebProcess::singleton().webFrame(frameID);
@@ -5790,7 +5790,7 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
     }
 #endif
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (image)
         handle = image->createHandle(SharedMemory::Protection::ReadOnly);
 
@@ -7571,7 +7571,7 @@ void WebPage::updateAttachmentAttributes(const String& identifier, std::optional
     callback();
 }
 
-void WebPage::updateAttachmentThumbnail(const String& identifier, const ShareableBitmap::Handle& qlThumbnailHandle)
+void WebPage::updateAttachmentThumbnail(const String& identifier, const ShareableBitmapHandle& qlThumbnailHandle)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         if (RefPtr<ShareableBitmap> thumbnail = !qlThumbnailHandle.isNull() ? ShareableBitmap::create(qlThumbnailHandle) : nullptr)
@@ -7579,7 +7579,7 @@ void WebPage::updateAttachmentThumbnail(const String& identifier, const Shareabl
     }
 }
 
-void WebPage::updateAttachmentIcon(const String& identifier, const ShareableBitmap::Handle& iconHandle, const WebCore::FloatSize& size)
+void WebPage::updateAttachmentIcon(const String& identifier, const ShareableBitmapHandle& iconHandle, const WebCore::FloatSize& size)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
         if (auto icon = !iconHandle.isNull() ? ShareableBitmap::create(iconHandle) : nullptr)
@@ -7922,7 +7922,7 @@ void WebPage::requestTextRecognition(Element& element, TextRecognitionOptions&& 
         return;
     }
 
-    ShareableBitmap::Handle bitmapHandle;
+    ShareableBitmapHandle bitmapHandle;
     bitmap->createHandle(bitmapHandle);
     if (bitmapHandle.isNull()) {
         if (completion)
@@ -8016,7 +8016,7 @@ void WebPage::startVisualTranslation(const String& sourceLanguageIdentifier, con
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandler<void(const ShareableBitmap::Handle&, const String& sourceMIMEType)>&& completion)
+void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandler<void(const ShareableBitmapHandle&, const String& sourceMIMEType)>&& completion)
 {
     RefPtr element = elementForContext(context);
     if (!element) {
@@ -8036,7 +8036,7 @@ void WebPage::requestImageBitmap(const ElementContext& context, CompletionHandle
         return;
     }
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     bitmap->createHandle(handle);
     if (handle.isNull()) {
         completion({ }, { });

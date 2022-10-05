@@ -338,7 +338,7 @@ void DrawingAreaWC::sendUpdateNonAC()
                 if (is<ImageBufferBackendHandleSharing>(sharing))
                     handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
             }
-            updateInfo.bitmapHandle = std::get<ShareableBitmap::Handle>(WTFMove(handle));
+            updateInfo.bitmapHandle = std::get<ShareableBitmapHandle>(WTFMove(handle));
             send(Messages::DrawingAreaProxy::Update(stateID, WTFMove(updateInfo)));
         });
     });

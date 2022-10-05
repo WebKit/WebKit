@@ -67,7 +67,7 @@ public:
 
     RefPtr<WebCore::MediaPlayer> mediaPlayer(const WebCore::MediaPlayerIdentifier&);
 
-    ShareableBitmap::Handle bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier);
+    ShareableBitmapHandle bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier);
 
 private:
     // IPC::MessageReceiver

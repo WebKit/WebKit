@@ -258,7 +258,7 @@ private:
 
     // Called by WebAutomationSession messages.
     void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);
-    void didTakeScreenshot(uint64_t callbackID, const ShareableBitmap::Handle&, const String& errorType);
+    void didTakeScreenshot(uint64_t callbackID, const ShareableBitmapHandle&, const String& errorType);
 
     // Platform-dependent implementations.
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)
@@ -282,7 +282,7 @@ private:
 #endif // ENABLE(WEBDRIVER_WHEEL_INTERACTIONS)
 
     // Get base64-encoded PNG data from a bitmap.
-    static std::optional<String> platformGetBase64EncodedPNGData(const ShareableBitmap::Handle&);
+    static std::optional<String> platformGetBase64EncodedPNGData(const ShareableBitmapHandle&);
     static std::optional<String> platformGetBase64EncodedPNGData(const ViewSnapshot&);
 
     // Save base64-encoded file contents to a local file path and return the path.

@@ -60,7 +60,7 @@ messages -> GPUProcess LegacyReceiver {
     ShowScreenPicker() -> (std::optional<WebCore::CaptureDevice> device)
 #endif
 
-    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmap::Handle handle)
+    RequestBitmapImageForCurrentTime(WebCore::ProcessIdentifier processIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier) -> (WebKit::ShareableBitmapHandle handle)
 
 #if ENABLE(CFPREFS_DIRECT_MODE)
     NotifyPreferencesChanged(String domain, String key, std::optional<String> encodedValue)

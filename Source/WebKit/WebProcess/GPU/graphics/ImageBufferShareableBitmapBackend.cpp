@@ -41,7 +41,7 @@ using namespace WebCore;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(ImageBufferShareableBitmapBackend);
 
-ShareableBitmap::Configuration ImageBufferShareableBitmapBackend::configuration(const Parameters& parameters)
+ShareableBitmapConfiguration ImageBufferShareableBitmapBackend::configuration(const Parameters& parameters)
 {
     return { parameters.colorSpace };
 }
@@ -96,12 +96,12 @@ std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBac
 
 std::unique_ptr<ImageBufferShareableBitmapBackend> ImageBufferShareableBitmapBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)
 {
-    if (!std::holds_alternative<ShareableBitmap::Handle>(handle)) {
+    if (!std::holds_alternative<ShareableBitmapHandle>(handle)) {
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    auto bitmap = ShareableBitmap::create(WTFMove(std::get<ShareableBitmap::Handle>(handle)));
+    auto bitmap = ShareableBitmap::create(WTFMove(std::get<ShareableBitmapHandle>(handle)));
     if (!bitmap)
         return nullptr;
 
@@ -126,7 +126,7 @@ ImageBufferShareableBitmapBackend::ImageBufferShareableBitmapBackend(const Param
 
 ImageBufferBackendHandle ImageBufferShareableBitmapBackend::createBackendHandle(SharedMemory::Protection protection) const
 {
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     m_bitmap->createHandle(handle, protection);
     return ImageBufferBackendHandle(WTFMove(handle));
 }

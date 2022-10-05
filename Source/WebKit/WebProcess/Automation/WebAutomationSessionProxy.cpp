@@ -908,7 +908,7 @@ static WebCore::IntRect snapshotElementRectForScreenshot(WebPage& page, WebCore:
 void WebAutomationSessionProxy::takeScreenshot(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, String nodeHandle, bool scrollIntoViewIfNeeded, bool clipToViewport, uint64_t callbackID)
 {
     snapshotRectForScreenshot(pageID, frameID, nodeHandle, scrollIntoViewIfNeeded, clipToViewport, [pageID, frameID, callbackID] (std::optional<String> errorString, WebCore::IntRect&& rect) {
-        ShareableBitmap::Handle handle;
+        ShareableBitmapHandle handle;
         if (errorString) {
             WebProcess::singleton().parentProcessConnection()->send(Messages::WebAutomationSession::DidTakeScreenshot(callbackID, handle, *errorString), 0);
             return;

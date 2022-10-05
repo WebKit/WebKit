@@ -196,7 +196,7 @@ Logger& RemoteMediaPlayerManagerProxy::logger()
 }
 #endif
 
-ShareableBitmap::Handle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier identifier)
+ShareableBitmapHandle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier identifier)
 {
     auto player = mediaPlayer(identifier);
     if (!player)
@@ -217,7 +217,7 @@ ShareableBitmap::Handle RemoteMediaPlayerManagerProxy::bitmapImageForCurrentTime
 
     context->drawNativeImage(*image, imageSize, FloatRect { { }, imageSize }, FloatRect { { }, imageSize });
 
-    ShareableBitmap::Handle bitmapHandle;
+    ShareableBitmapHandle bitmapHandle;
     bitmap->createHandle(bitmapHandle);
     return bitmapHandle;
 }

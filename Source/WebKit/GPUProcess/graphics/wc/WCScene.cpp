@@ -230,7 +230,7 @@ std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
     if (m_usesOffscreenRendering) {
         auto bitmap = ShareableBitmap::create(windowSize, { });
         glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA, GL_UNSIGNED_BYTE, bitmap->data());
-        ShareableBitmap::Handle handle;
+        ShareableBitmapHandle handle;
         if (bitmap->createHandle(handle)) {
             result.emplace();
             result->viewSize = windowSize;

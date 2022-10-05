@@ -44,7 +44,7 @@ static void encodeImage(Encoder& encoder, Image& image)
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(IntSize(image.size()), { });
     bitmap->createGraphicsContext()->drawImage(image, IntPoint());
 
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     bitmap->createHandle(handle);
 
     encoder << handle;
@@ -52,7 +52,7 @@ static void encodeImage(Encoder& encoder, Image& image)
 
 static WARN_UNUSED_RETURN bool decodeImage(Decoder& decoder, RefPtr<Image>& image)
 {
-    ShareableBitmap::Handle handle;
+    ShareableBitmapHandle handle;
     if (!decoder.decode(handle))
         return false;
 

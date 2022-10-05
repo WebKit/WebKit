@@ -211,7 +211,7 @@ void RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory()
 RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(RenderingResourceIdentifier imageBuffer, PreserveResolution preserveResolution)
 {
     auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetShareableBitmapForImageBuffer(imageBuffer, preserveResolution));
-    auto [handle] = sendResult.takeReplyOr(ShareableBitmap::Handle { });
+    auto [handle] = sendResult.takeReplyOr(ShareableBitmapHandle { });
     if (handle.isNull())
         return { };
     handle.takeOwnershipOfMemory(MemoryLedger::Graphics);
@@ -221,7 +221,7 @@ RefPtr<ShareableBitmap> RemoteRenderingBackendProxy::getShareableBitmap(Renderin
 RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIdentifier imageBuffer, Filter& filter)
 {
     auto sendResult = sendSyncToStream(Messages::RemoteRenderingBackend::GetFilteredImageForImageBuffer(imageBuffer, IPC::FilterReference { filter }));
-    auto [handle] = sendResult.takeReplyOr(ShareableBitmap::Handle { });
+    auto [handle] = sendResult.takeReplyOr(ShareableBitmapHandle { });
     if (handle.isNull())
         return { };
 
@@ -233,7 +233,7 @@ RefPtr<Image> RemoteRenderingBackendProxy::getFilteredImage(RenderingResourceIde
     return bitmap->createImage();
 }
 
-void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmap::Handle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
+void RemoteRenderingBackendProxy::cacheNativeImage(const ShareableBitmapHandle& handle, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     sendToStream(Messages::RemoteRenderingBackend::CacheNativeImage(handle, renderingResourceIdentifier));
 }
