@@ -34,11 +34,9 @@ namespace EnumNamespace { enum class BoolEnumType : bool; }
 #if ENABLE(UINT16_ENUM)
 namespace EnumNamespace { enum class EnumType : uint16_t; }
 #endif
-namespace EnumNamespace2 { enum class OptionSetEnumType : uint8_t; }
 #if ENABLE(TEST_FEATURE)
 namespace Namespace::Subnamespace { struct StructName; }
 #endif
-namespace Namespace { class OtherClass; }
 namespace Namespace { class ReturnRefClass; }
 namespace Namespace { struct EmptyConstructorStruct; }
 namespace Namespace { class EmptyConstructorNullable; }
@@ -59,11 +57,6 @@ template<> struct ArgumentCoder<Namespace::Subnamespace::StructName> {
     static std::optional<Namespace::Subnamespace::StructName> decode(Decoder&);
 };
 #endif
-
-template<> struct ArgumentCoder<Namespace::OtherClass> {
-    static void encode(Encoder&, const Namespace::OtherClass&);
-    static std::optional<Namespace::OtherClass> decode(Decoder&);
-};
 
 template<> struct ArgumentCoder<Namespace::ReturnRefClass> {
     static void encode(Encoder&, const Namespace::ReturnRefClass&);
@@ -104,6 +97,5 @@ namespace WTF {
 #if ENABLE(UINT16_ENUM)
 template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t);
 #endif
-template<> bool isValidOptionSet<EnumNamespace2::OptionSetEnumType>(OptionSet<EnumNamespace2::OptionSetEnumType>);
 
 } // namespace WTF
