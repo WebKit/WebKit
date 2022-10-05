@@ -182,8 +182,21 @@ void CSSRotate::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
 {
-    // FIXME: Implement.
-    return DOMMatrix::fromMatrix(DOMMatrixInit { });
+    if (!is<CSSUnitValue>(m_angle) || !is<CSSUnitValue>(m_x) || !is<CSSUnitValue>(m_y) || !is<CSSUnitValue>(m_z))
+        return Exception { TypeError };
+
+    auto angle = downcast<CSSUnitValue>(m_angle.get()).convertTo(CSSUnitType::CSS_DEG);
+    if (!angle)
+        return Exception { TypeError };
+
+    auto x = downcast<CSSUnitValue>(m_x.get()).value();
+    auto y = downcast<CSSUnitValue>(m_y.get()).value();
+    auto z = downcast<CSSUnitValue>(m_z.get()).value();
+
+    TransformationMatrix matrix { };
+    matrix.rotate3d(x, y, z, angle->value());
+
+    return { DOMMatrix::create(WTFMove(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
 }
 
 } // namespace WebCore
