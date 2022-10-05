@@ -547,7 +547,14 @@ void WebPageProxy::prepareSelectionForContextMenuWithLocationInView(IntPoint poi
     if (!hasRunningProcess())
         return callbackFunction(false, RevealItem());
 
-    sendWithAsyncReply(Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView(point), WTFMove(callbackFunction));
+    dispatchAfterCurrentContextMenuEvent([weakThis = WeakPtr { *this }, point, callbackFunction = WTFMove(callbackFunction)] (bool handled) mutable {
+        if (!weakThis || handled) {
+            callbackFunction(false, RevealItem());
+            return;
+        }
+
+        weakThis->sendWithAsyncReply(Messages::WebPage::PrepareSelectionForContextMenuWithLocationInView(point), WTFMove(callbackFunction));
+    });
 }
 #endif
 

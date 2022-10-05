@@ -192,6 +192,42 @@ TEST(iOSMouseSupport, RightClickOutsideOfTextNodeDoesNotSelect)
     TestWebKitAPI::Util::run(&done);
 }
 
+TEST(iOSMouseSupport, RightClickDoesNotShowMenuIfPreventDefault)
+{
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"image"];
+    [webView stringByEvaluatingJavaScript:@"window.didContextMenu = false; document.addEventListener('contextmenu', (event) => { event.preventDefault(); didContextMenu = true; })"];
+
+    auto contentView = [webView wkContentView];
+    auto gesture = mouseGesture(contentView);
+
+    RetainPtr<WKTestingTouch> touch = adoptNS([[WKTestingTouch alloc] init]);
+    RetainPtr<NSSet> touchSet = [NSSet setWithObject:touch.get()];
+
+    RetainPtr<WKTestingEvent> event = adoptNS([[WKTestingEvent alloc] init]);
+
+    [gesture _hoverEntered:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+    [touch setTapCount:1];
+    [event _setButtonMask:UIEventButtonMaskSecondary];
+    [gesture touchesBegan:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+    [gesture touchesEnded:touchSet.get() withEvent:event.get()];
+    [contentView mouseGestureRecognizerChanged:gesture];
+
+    __block bool done = false;
+    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointMake(10, 10) completionHandler:^(BOOL shouldPresentMenu, RVItem *) {
+        EXPECT_FALSE(shouldPresentMenu);
+
+        NSNumber *didContextMenu = [webView objectByEvaluatingJavaScript:@"window.didContextMenu"];
+        EXPECT_TRUE([didContextMenu boolValue]);
+
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 TEST(iOSMouseSupport, TrackButtonMaskFromTouchStart)
 {
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
