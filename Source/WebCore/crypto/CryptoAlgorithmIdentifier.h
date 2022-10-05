@@ -36,6 +36,8 @@ enum class CryptoAlgorithmIdentifier {
     RSA_OAEP,
     ECDSA,
     ECDH,
+    Ed25519,
+    X25519,
     AES_CTR,
     AES_CBC,
     AES_GCM,

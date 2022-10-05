@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+description("Test X25519 deriveBits operation for corner-case length values.");
+
+jsTestIsAsync = true;
+
+var extractable = false;
+var PrivateKeyX25519 = new Uint8Array([2,0,0,0,7,0,0,0,6,69,12,57,1,0,0,0,4,255,28,168,2,0,0,0,120,0,0,0,44,32,48,41]);
+var PublicKeyX25519 = new Uint8Array([2,0,0,0,4,0,0,0,95,176,234,133,2,0,0,0,4,153,228,133,0,0,0,0,192,164,13,7,1,0,0,0]);
+var X25519_privateKey;
+var X25519_publicKey;
+
+crypto.subtle.importKey("raw", PrivateKeyX25519, { name: "X25519"}, extractable,[]).then(function(result) {
+    X25519_privateKey = result;
+    extractable = true;
+    return crypto.subtle.importKey("raw", PublicKeyX25519, { name: "X25519" }, extractable, [ ]);
+}).then(function(result) {
+    X25519_publicKey = result;
+    deriveBits = function(PrivateKey,PublicKey, length, expectedLength) {
+        return crypto.subtle.deriveBits({ name: "X25519", public: PublicKey },PrivateKey, length).then(function(result) {
+            if (result.byteLength * 8 != expectedLength)
+                return Promise.reject();
+            testPassed("deriveBits(..., " + length + ") successfully derived " + expectedLength + " bits for a 25519 curve");
+            return Promise.resolve();
+        });
+    };
+    return Promise.resolve().then(function(result) {
+        return Promise.all([
+            deriveBits(X25519_privateKey, X25519_publicKey, 0, 256),
+            deriveBits(X25519_privateKey, X25519_publicKey, 8, 8),
+            deriveBits(X25519_privateKey, X25519_publicKey, 256, 256),
+        ]).then(function(result) {
+            testPassed("Bit derivations for X25519 with minimum and maximum lengths succeeded");
+            return shouldReject('deriveBits(X25519_privateKey, X25519_publicKey, 256 + 8)');
+        });
+    });
+}).then(finishJSTest, finishJSTest);
+
+</script>
+
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>
+

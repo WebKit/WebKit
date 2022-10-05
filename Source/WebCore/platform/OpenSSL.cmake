@@ -14,6 +14,7 @@ if (ENABLE_WEB_CRYPTO)
         crypto/openssl/CryptoAlgorithmRSASSA_PKCS1_v1_5OpenSSL.cpp
         crypto/openssl/CryptoAlgorithmRSA_OAEPOpenSSL.cpp
         crypto/openssl/CryptoAlgorithmRSA_PSSOpenSSL.cpp
+        crypto/openssl/CryptoAlgorithmX25519OpenSSL.cpp
         crypto/openssl/CryptoAlgorithmRegistryOpenSSL.cpp
         crypto/openssl/CryptoKeyECOpenSSL.cpp
         crypto/openssl/CryptoKeyRSAOpenSSL.cpp

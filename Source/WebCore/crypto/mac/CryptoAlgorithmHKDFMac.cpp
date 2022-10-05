@@ -27,7 +27,7 @@
 #include "CryptoAlgorithmHKDF.h"
 
 #if ENABLE(WEB_CRYPTO)
-
+#include "CommonCryptoUtilities.h"
 #include "CryptoAlgorithmHkdfParams.h"
 #include "CryptoKeyRaw.h"
 #include "CryptoUtilitiesCocoa.h"

@@ -336,8 +336,10 @@ enum class CryptoAlgorithmIdentifierTag {
     SHA_512 = 18,
     HKDF = 20,
     PBKDF2 = 21,
+    Ed25519 = 22,
+    X25519 = 23,
 };
-const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 21;
+const uint8_t cryptoAlgorithmIdentifierTagMaximumValue = 23;
 
 static unsigned countUsages(CryptoKeyUsageBitmap usages)
 {
@@ -1831,6 +1833,12 @@ private:
         case CryptoAlgorithmIdentifier::ECDH:
             write(CryptoAlgorithmIdentifierTag::ECDH);
             break;
+        case CryptoAlgorithmIdentifier::Ed25519:
+            write(CryptoAlgorithmIdentifierTag::Ed25519);
+            break;
+        case CryptoAlgorithmIdentifier::X25519:
+            write(CryptoAlgorithmIdentifierTag::X25519);
+            break;
         case CryptoAlgorithmIdentifier::AES_CTR:
             write(CryptoAlgorithmIdentifierTag::AES_CTR);
             break;
@@ -2999,6 +3007,12 @@ private:
             break;
         case CryptoAlgorithmIdentifierTag::ECDH:
             result = CryptoAlgorithmIdentifier::ECDH;
+            break;
+        case CryptoAlgorithmIdentifierTag::Ed25519:
+            result = CryptoAlgorithmIdentifier::Ed25519;
+            break;
+        case CryptoAlgorithmIdentifierTag::X25519:
+            result  = CryptoAlgorithmIdentifier::X25519;
             break;
         case CryptoAlgorithmIdentifierTag::AES_CTR:
             result = CryptoAlgorithmIdentifier::AES_CTR;

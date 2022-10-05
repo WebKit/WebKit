@@ -22,6 +22,7 @@
 #pragma once
 
 #include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

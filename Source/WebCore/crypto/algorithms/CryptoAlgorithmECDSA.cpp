@@ -90,6 +90,11 @@ void CryptoAlgorithmECDSA::generateKey(const CryptoAlgorithmParameters& paramete
         return;
     }
 
+    if (ecParameters.namedCurve != "P-256"_s && ecParameters.namedCurve != "P-384"_s && ecParameters.namedCurve != "P-521"_s) {
+        exceptionCallback(NotSupportedError);
+        return;
+    }
+
     auto result = CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier::ECDSA, ecParameters.namedCurve, extractable, usages);
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
