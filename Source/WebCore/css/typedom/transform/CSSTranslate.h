@@ -48,7 +48,7 @@ public:
 
     void setX(Ref<CSSNumericValue> x) { m_x = WTFMove(x); }
     void setY(Ref<CSSNumericValue> y) { m_y = WTFMove(y); }
-    void setZ(Ref<CSSNumericValue> z) { m_z = WTFMove(z); }
+    ExceptionOr<void> setZ(Ref<CSSNumericValue>);
     
     void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
