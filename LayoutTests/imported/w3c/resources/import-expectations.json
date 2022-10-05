@@ -396,7 +396,7 @@
     "web-platform-tests/permissions": "import", 
     "web-platform-tests/picture-in-picture": "import", 
     "web-platform-tests/pointerevents": "import", 
-    "web-platform-tests/pointerlock": "skip", 
+    "web-platform-tests/pointerlock": "import", 
     "web-platform-tests/preload": "skip", 
     "web-platform-tests/presentation-api": "skip", 
     "web-platform-tests/progress-events": "skip", 

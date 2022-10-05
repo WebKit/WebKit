@@ -27,7 +27,7 @@
 [
     Conditional=POINTER_LOCK
 ] partial interface Document {
-    [NotEnumerable] attribute EventHandler onpointerlockchange; // FIXME: Should be enumerable.
-    [NotEnumerable] attribute EventHandler onpointerlockerror; // FIXME: Should be enumerable.
+    attribute EventHandler onpointerlockchange;
+    attribute EventHandler onpointerlockerror;
     undefined exitPointerLock();
 };
