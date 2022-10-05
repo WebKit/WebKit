@@ -25,6 +25,7 @@
 		7CB6844B1AFA7978002B305C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB6844A1AFA7978002B305C /* main.cpp */; };
 		CE6C3AFF20C0B17B003E33D8 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6C3AFE20C0B17B003E33D8 /* libWTF.a */; };
 		CE6C3B0120C0C444003E33D8 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CE6C3B0020C0C443003E33D8 /* libicucore.dylib */; };
+		DDB3725128ECE48500A2F32D /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDB3725028ECE48500A2F32D /* libbmalloc.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		7CB6844A1AFA7978002B305C /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
 		CE6C3AFE20C0B17B003E33D8 /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE6C3B0020C0C443003E33D8 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		DDB3725028ECE48500A2F32D /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDB3725128ECE48500A2F32D /* libbmalloc.a in Frameworks */,
 				CE6C3B0120C0C444003E33D8 /* libicucore.dylib in Frameworks */,
 				CE6C3AFF20C0B17B003E33D8 /* libWTF.a in Frameworks */,
 			);
@@ -115,6 +118,7 @@
 		CE3F4425205C6A01007195B3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DDB3725028ECE48500A2F32D /* libbmalloc.a */,
 				CE6C3B0020C0C443003E33D8 /* libicucore.dylib */,
 				CE6C3AFE20C0B17B003E33D8 /* libWTF.a */,
 			);
