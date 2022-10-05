@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>Basic</title>
+<script src="ast.js"></script>
+<script src="basic.js"></script>
+<script src="caseless_map.js"></script>
+<script src="lexer.js"></script>
+<script src="number.js"></script>
+<script src="parser.js"></script>
+<script src="random.js"></script>
+<script src="state.js"></script>
+<script src="util.js"></script>
+<script src="benchmark.js"></script>
+<script>
+    function runTest() {
+        try {
+            var result = runBenchmark();
+            document.getElementById("result-summary").innerHTML = "That took " + result + " ms.";
+        } catch (e) {
+            document.getElementById("result-summary").innerHTML = "Failed: " + e;
+        }
+    }
+</script>
+</head>
+<body>
+<h1>Basic</h1>
+<p>
+  <div id="result-summary"></div>
+  <div><a href="javascript:runTest()">Start Test</a></div>
+</p>
+</body>
+</html>
+
+

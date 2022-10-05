@@ -352,11 +352,26 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         this.domBreakpointsForNode(node).forEach(this.removeDOMBreakpoint, this);
     }
 
-    listenerBreakpointForEventName(eventName)
+    listenerBreakpointsForEventName(eventName)
     {
         if (DOMDebuggerManager.supportsAllListenersBreakpoint() && this._allListenersBreakpoint && !this._allListenersBreakpoint.disabled)
             return this._allListenersBreakpoint;
-        return this._listenerBreakpoints.find((breakpoint) => breakpoint.eventName === eventName) || null;
+
+        // Order event breakpoints based on how closely they match the given symbol. As an example,
+        // a regular expression is likely going to match more events than a case-insensitive string.
+        const rankFunctions = [
+            (breakpoint) => breakpoint.caseSensitive && !breakpoint.isRegex,  // exact match
+            (breakpoint) => !breakpoint.caseSensitive && !breakpoint.isRegex, // case-insensitive
+            (breakpoint) => breakpoint.caseSensitive && breakpoint.isRegex,   // case-sensitive regex
+            (breakpoint) => !breakpoint.caseSensitive && breakpoint.isRegex,  // case-insensitive regex
+        ];
+        return this._listenerBreakpoints
+            .filter((breakpoint) => breakpoint.matches(eventName))
+            .sort((a, b) => {
+                let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a));
+                let bRank = rankFunctions.findIndex((rankFunction) => rankFunction(b));
+                return aRank - bRank;
+            });
     }
 
     addEventBreakpoint(breakpoint)
@@ -380,7 +395,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
         case WI.EventBreakpoint.Type.Listener:
             if (breakpoint.eventName) {
-                if (this._listenerBreakpoints.find((existing) => existing.eventName === breakpoint.eventName))
+                if (this._listenerBreakpoints.some((existing) => existing.equals(breakpoint)))
                     return false;
 
                 this._listenerBreakpoints.push(breakpoint);
@@ -687,9 +702,12 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             break;
 
         default:
+            console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener, breakpoint.type);
+            console.assert(breakpoint.eventName, breakpoint.eventName);
             commandArguments.breakpointType = breakpoint.type;
             commandArguments.eventName = breakpoint.eventName;
-            console.assert(commandArguments.eventName);
+            commandArguments.caseSensitive = breakpoint.caseSensitive;
+            commandArguments.isRegex = breakpoint.isRegex;
             break;
         }
 

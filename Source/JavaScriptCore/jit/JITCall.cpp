@@ -164,13 +164,12 @@ JIT::compileSetupFrame(const Op& bytecode)
 }
 
 template<typename Op>
-bool JIT::compileCallDirectEval(const Op&)
+void JIT::compileCallDirectEval(const Op&)
 {
-    return false;
 }
 
 template<>
-bool JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
+void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 {
     using BaselineJITRegisters::CallDirectEval::SlowPath::calleeFrameGPR;
     using BaselineJITRegisters::CallDirectEval::SlowPath::thisValueJSR;
@@ -188,8 +187,6 @@ bool JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 
     setFastPathResumePoint();
     emitPutCallResult(bytecode);
-
-    return true;
 }
 
 void JIT::compileCallDirectEvalSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -210,16 +207,16 @@ void JIT::compileCallDirectEvalSlowCase(const JSInstruction* instruction, Vector
 }
 
 template<typename Op>
-bool JIT::compileTailCall(const Op&, UnlinkedCallLinkInfo*, unsigned)
+bool JIT::compileTailCall(const Op&, BaselineUnlinkedCallLinkInfo*, unsigned)
 {
     return false;
 }
 
 template<>
-bool JIT::compileTailCall(const OpTailCall& bytecode, UnlinkedCallLinkInfo*, unsigned callLinkInfoIndex)
+bool JIT::compileTailCall(const OpTailCall& bytecode, BaselineUnlinkedCallLinkInfo* callLinkInfo, unsigned callLinkInfoIndex)
 {
     materializePointerIntoMetadata(bytecode, OpTailCall::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
-    JumpList slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
+    JumpList slowPaths = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
         CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, m_unlinkedCodeBlock->numParameters());
         CallFrameShuffler shuffler { *this, shuffleData };
         shuffler.lockGPR(BaselineJITRegisters::Call::callLinkInfoGPR);
@@ -253,13 +250,13 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
         - Caller restores callFrameRegister after return.
     */
 
-    UnlinkedCallLinkInfo* info = nullptr;
+    BaselineUnlinkedCallLinkInfo* callLinkInfo = nullptr;
     if (opcodeID != op_call_direct_eval) {
-        info = addUnlinkedCallLinkInfo();
-        info->bytecodeIndex = m_bytecodeIndex;
+        callLinkInfo = addUnlinkedCallLinkInfo();
+        callLinkInfo->bytecodeIndex = m_bytecodeIndex;
         ASSERT(m_callCompilationInfo.size() == callLinkInfoIndex);
         m_callCompilationInfo.append(CallCompilationInfo());
-        m_callCompilationInfo[callLinkInfoIndex].unlinkedCallLinkInfo = info;
+        m_callCompilationInfo[callLinkInfoIndex].unlinkedCallLinkInfo = callLinkInfo;
     }
     compileSetupFrame(bytecode);
 
@@ -270,8 +267,10 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
     emitGetVirtualRegister(callee, BaselineJITRegisters::Call::calleeJSR);
     storeValue(BaselineJITRegisters::Call::calleeJSR, Address(stackPointerRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register)) - sizeof(CallerFrameAndPC)));
 
-    if (compileCallDirectEval(bytecode))
+    if (opcodeID == op_call_direct_eval) {
+        compileCallDirectEval(bytecode);
         return;
+    }
 
 #if USE(JSVALUE32_64)
     // We need this on JSVALUE32_64 only as on JSVALUE64 a pointer comparison in the DataIC fast
@@ -279,12 +278,12 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
     addSlowCase(branchIfNotCell(BaselineJITRegisters::Call::calleeJSR));
 #endif
 
-    if (compileTailCall(bytecode, info, callLinkInfoIndex))
+    if (compileTailCall(bytecode, callLinkInfo, callLinkInfoIndex))
         return;
 
     materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
     if (opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
-        auto slowPaths = CallLinkInfo::emitTailCallDataICFastPath(*this, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
+        auto slowPaths = CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR, scopedLambda<void()>([&] {
             emitRestoreCalleeSaves();
             prepareForTailCallSlow(BaselineJITRegisters::Call::callLinkInfoGPR);
         }));
@@ -294,7 +293,7 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
         return;
     }
 
-    auto slowPaths = CallLinkInfo::emitDataICFastPath(*this, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR);
+    auto slowPaths = CallLinkInfo::emitFastPath(*this, callLinkInfo, BaselineJITRegisters::Call::calleeJSR.payloadGPR(), BaselineJITRegisters::Call::callLinkInfoGPR);
     auto doneLocation = label();
     addSlowCase(slowPaths);
 
@@ -307,11 +306,12 @@ void JIT::compileOpCall(const JSInstruction* instruction, unsigned callLinkInfoI
 }
 
 template<typename Op>
-void JIT::compileOpCallSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned)
+void JIT::compileOpCallSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned callLinkInfoIndex)
 {
     OpcodeID opcodeID = Op::opcodeID;
     auto bytecode = instruction->as<Op>();
     ASSERT(opcodeID != op_call_direct_eval);
+    auto* callLinkInfo = m_callCompilationInfo[callLinkInfoIndex].unlinkedCallLinkInfo;
 
     linkAllSlowCases(iter);
 
@@ -321,7 +321,7 @@ void JIT::compileOpCallSlowCase(const JSInstruction* instruction, Vector<SlowCas
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments)
         emitRestoreCalleeSaves();
 
-    CallLinkInfo::emitDataICSlowPath(*m_vm, *this, regT2);
+    CallLinkInfo::emitSlowPath(*m_vm, *this, callLinkInfo, regT2);
 
     if (opcodeID == op_tail_call || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
         abortWithReason(JITDidReturnFromTailCall);

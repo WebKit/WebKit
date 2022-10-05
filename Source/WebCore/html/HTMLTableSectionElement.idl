@@ -22,11 +22,13 @@
     JSGenerateToNativeObject,
     Exposed=Window
 ] interface HTMLTableSectionElement : HTMLElement {
+    readonly attribute HTMLCollection rows;
+    HTMLTableRowElement insertRow(optional long index = -1);
+    [CEReactions] undefined deleteRow(long index);
+
+    // Obsolete members
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect=char] attribute DOMString ch;
     [CEReactions=NotNeeded, Reflect=charoff] attribute DOMString chOff;
     [CEReactions=NotNeeded, Reflect] attribute DOMString vAlign;
-    readonly attribute HTMLCollection rows;
-    HTMLElement insertRow(optional long index = -1);
-    [CEReactions] undefined deleteRow(long index);
 };

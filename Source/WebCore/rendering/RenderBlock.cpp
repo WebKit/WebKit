@@ -2546,13 +2546,25 @@ std::optional<LayoutUnit> RenderBlock::firstLineBaseline() const
     if (isWritingModeRoot() && !isRubyRun())
         return std::optional<LayoutUnit>();
 
-    for (RenderBox* curr = firstChildBox(); curr; curr = curr->nextSiblingBox()) {
-        if (!curr->isFloatingOrOutOfFlowPositioned()) {
-            if (auto result = curr->firstLineBaseline())
-                return LayoutUnit { curr->logicalTop() + result.value() }; // Translate to our coordinate space.
-        }
+    for (RenderBox* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
+        if (auto baseline = child->firstLineBaseline())
+            return LayoutUnit { child->logicalTop() + baseline.value() };
     }
+    return std::optional<LayoutUnit>();
+}
 
+std::optional<LayoutUnit> RenderBlock::lastLineBaseline() const
+{
+    if (shouldApplyLayoutContainment())
+        return std::nullopt;
+
+    if (isWritingModeRoot() && !isRubyRun())
+        return std::optional<LayoutUnit>();
+
+    for (RenderBox* child = lastInFlowChildBox(); child; child = child->previousInFlowSiblingBox()) {
+        if (auto baseline = child->lastLineBaseline())
+            return LayoutUnit { baseline.value() + child->logicalTop() };
+    } 
     return std::optional<LayoutUnit>();
 }
 

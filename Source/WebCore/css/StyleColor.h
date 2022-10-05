@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016, 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,7 +35,6 @@
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "ColorInterpolationMethod.h"
-#include <vector>
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -56,10 +55,33 @@ struct CurrentColor {
 
 class StyleColor {
 public:
-    using ColorKind = std::variant<Color, CurrentColor>;
+    // The default constructor initializes to currentcolor to preserve old behavior,
+    // we might want to change it to invalid color at some point.
+    StyleColor()
+        : m_color { CurrentColor { } }
+    {
+    }
+
+    StyleColor(const Color& color)
+        : m_color { Color { color } }
+    {
+    }
+
+    StyleColor(const SRGBA<uint8_t>& color)
+        : m_color { Color { color } }
+    {
+    }
+
+    StyleColor(const StyleColor&) = default;
+    StyleColor(StyleColor&&) = default;
+    StyleColor& operator=(const StyleColor&) = default;
+    bool operator==(const StyleColor&) const = default;
+
+    static StyleColor currentColor() { return StyleColor { CurrentColor { } }; }
 
     static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
     static Color colorFromAbsoluteKeyword(CSSValueID);
+
     static bool isAbsoluteColorKeyword(CSSValueID);
     static bool isCurrentColorKeyword(CSSValueID id) { return id == CSSValueCurrentcolor; }
     static bool isCurrentColor(const CSSPrimitiveValue& value) { return isCurrentColorKeyword(value.valueID()); }
@@ -76,16 +98,6 @@ public:
     // https://drafts.csswg.org/css-color-4/#typedef-color
     static bool isColorKeyword(CSSValueID, OptionSet<CSSColorType> = { CSSColorType::Absolute, CSSColorType::Current, CSSColorType::System });
 
-    static StyleColor currentColor();
-    StyleColor();
-    StyleColor(const Color&);
-    StyleColor(const StyleColor&) = default;
-    StyleColor(StyleColor&&) = default;
-    StyleColor& operator=(const StyleColor&) = default;
-    bool operator==(const StyleColor&) const = default;
-
-    StyleColor(const SRGBA<uint8_t>&);
-
     bool isCurrentColor() const;
     bool isAbsoluteColor() const;
     const Color& absoluteColor() const;
@@ -97,8 +109,14 @@ public:
     String debugDescription() const;
 
 private:
+    using ColorKind = std::variant<Color, CurrentColor>;
+
+    StyleColor(const ColorKind& color)
+        : m_color { color }
+    {
+    }
+
     ColorKind m_color;
-    StyleColor(const ColorKind&);
 };
 
 WEBCORE_EXPORT String serializationForRenderTreeAsText(const StyleColor&);

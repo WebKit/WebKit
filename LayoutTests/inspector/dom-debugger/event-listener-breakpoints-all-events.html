@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/breakpoint-options-utilities.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
+<script src="resources/event-breakpoint-utilities.js"></script>
+<script>
+function handleBody_click(event) {
+    TestPage.dispatchEventToFrontend("TestPage-click");
+}
+
+function handleBody_custom(event) {
+    TestPage.dispatchEventToFrontend("TestPage-custom");
+}
+
+function trigger_click() {
+    document.body.click();
+}
+
+function trigger_custom() {
+    document.body.dispatchEvent(new Event("custom"));
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("DOMDebugger.Event.Listener");
+
+    suite.addTestCase({
+        name: `DOMDebugger.Event.Listener.AllEventsBreakpoint`,
+        description: "Check that the all events breakpoint pauses for every event.",
+        test(resolve, reject) {
+            let pauseCount = 0;
+
+            let listener = WI.debuggerManager.addEventListener(WI.DebuggerManager.Event.Paused, (event) => {
+                ++pauseCount;
+
+                InspectorTest.pass("Should pause before event handler is run.");
+                logActiveStackTrace();
+
+                WI.debuggerManager.resume()
+                .catch(reject);
+            });
+
+            InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener)
+            .then(() => {
+                InspectorTest.log("Firing \"click\" on body...");
+                return InspectorTest.evaluateInPage(`trigger_click()`);
+            })
+            .then(() => {
+                InspectorTest.log("Firing \"custom\" on body...");
+                return InspectorTest.evaluateInPage(`trigger_custom()`);
+            })
+            .then(() => {
+                InspectorTest.expectEqual(pauseCount, 2, "Should have paused twice.");
+                InspectorTest.assert(!WI.debuggerManager.paused, "Should not be paused.");
+
+                WI.debuggerManager.removeEventListener(WI.DebuggerManager.Event.Paused, listener);
+            })
+            .then(resolve, reject);
+        },
+        teardown: InspectorTest.EventBreakpoint.teardown,
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        testCaseNamePrefix: "AllEventsBreakpoint.Builtin",
+        createBreakpoint() {
+            return InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener);
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.awaitEvent("TestPage-click"),
+                InspectorTest.evaluateInPage(`trigger_click()`),
+            ]);
+        },
+    });
+
+    InspectorTest.BreakpointOptions.addTestCases(suite, {
+        testCaseNamePrefix: "AllEventsBreakpoint.Custom",
+        createBreakpoint() {
+            return InspectorTest.EventBreakpoint.createBreakpoint(WI.EventBreakpoint.Type.Listener);
+        },
+        triggerBreakpoint() {
+            return Promise.all([
+                InspectorTest.awaitEvent("TestPage-custom"),
+                InspectorTest.evaluateInPage(`trigger_custom()`),
+            ]);
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Tests for Event Listener breakpoints.</p>
+    <script>
+        document.body.addEventListener("click", handleBody_click);
+        document.body.addEventListener("custom", handleBody_custom);
+    </script>
+</body>
+</html>

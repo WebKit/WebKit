@@ -73,6 +73,7 @@ public:
     void dumpDisassembly(PrintStream&, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback = scopedLambda<void(DFG::Node*)>([] (DFG::Node*) { }));
 
     StructureStubInfo* addStructureStubInfo();
+    OptimizingCallLinkInfo* addCallLinkInfo(CodeOrigin);
 
     // None of these things is owned by State. It is the responsibility of
     // FTL phases to properly manage the lifecycle of the module and function.

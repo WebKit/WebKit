@@ -68,6 +68,7 @@ private:
 
 using BorderEdges = RectEdges<BorderEdge>;
 BorderEdges borderEdges(const RenderStyle&, float deviceScaleFactor, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true);
+BorderEdges borderEdgesForOutline(const RenderStyle&, float deviceScaleFactor);
 
 inline bool edgesShareColor(const BorderEdge& firstEdge, const BorderEdge& secondEdge) { return firstEdge.color() == secondEdge.color(); }
 inline BoxSideFlag edgeFlagForSide(BoxSide side) { return static_cast<BoxSideFlag>(1 << static_cast<unsigned>(side)); }

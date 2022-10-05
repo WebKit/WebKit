@@ -2922,6 +2922,13 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
     if (!hasRunningProcess())
         return;
 
+#if ENABLE(CONTEXT_MENU_EVENT)
+    if (event.button() == WebMouseEvent::RightButton && event.type() == WebEvent::MouseDown) {
+        ASSERT(m_contextMenuPreventionState != EventPreventionState::Waiting);
+        m_contextMenuPreventionState = EventPreventionState::Waiting;
+    }
+#endif
+
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(COCOA)
     if (m_scrollingCoordinatorProxy)
         m_scrollingCoordinatorProxy->handleMouseEvent(platform(event));
@@ -3246,7 +3253,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
     bool isTouchEnd = event.type() == WebEvent::TouchEnd;
 
     if (isTouchStart)
-        m_touchMovePreventionState = TouchMovePreventionState::NotWaiting;
+        m_touchMovePreventionState = EventPreventionState::None;
 
     TrackingType touchEventsTrackingType = touchEventTrackingType(event);
     if (touchEventsTrackingType == TrackingType::NotTracking) {
@@ -3281,8 +3288,8 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
     if (isTouchStart)
         ++m_handlingPreventableTouchStartCount;
 
-    if (isTouchMove && m_touchMovePreventionState == TouchMovePreventionState::NotWaiting)
-        m_touchMovePreventionState = TouchMovePreventionState::Waiting;
+    if (isTouchMove && m_touchMovePreventionState == EventPreventionState::None)
+        m_touchMovePreventionState = EventPreventionState::Waiting;
 
     if (isTouchEnd)
         ++m_handlingPreventableTouchEndCount;
@@ -3298,8 +3305,8 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
             didFinishDeferringTouchStart = !--m_handlingPreventableTouchStartCount;
 
         bool didFinishDeferringTouchMove = false;
-        if (event.type() == WebEvent::TouchMove && m_touchMovePreventionState == TouchMovePreventionState::Waiting) {
-            m_touchMovePreventionState = TouchMovePreventionState::ReceivedReply;
+        if (event.type() == WebEvent::TouchMove && m_touchMovePreventionState == EventPreventionState::Waiting) {
+            m_touchMovePreventionState = handled ? EventPreventionState::Prevented : EventPreventionState::Allowed;
             didFinishDeferringTouchMove = true;
         }
 
@@ -7416,6 +7423,28 @@ void WebPageProxy::handleContextMenuKeyEvent()
 }
 #endif // ENABLE(CONTEXT_MENUS)
 
+#if ENABLE(CONTEXT_MENU_EVENT)
+
+void WebPageProxy::dispatchAfterCurrentContextMenuEvent(CompletionHandler<void(bool)>&& completionHandler)
+{
+    m_contextMenuCallbacks.append(WTFMove(completionHandler));
+
+    processContextMenuCallbacks();
+}
+
+void WebPageProxy::processContextMenuCallbacks()
+{
+    if (m_contextMenuPreventionState == EventPreventionState::Waiting)
+        return;
+
+    bool handled = m_contextMenuPreventionState == EventPreventionState::Prevented;
+
+    for (auto&& callback : std::exchange(m_contextMenuCallbacks, { }))
+        callback(handled);
+}
+
+#endif // ENABLE(CONTEXT_MENU_EVENT)
+
 #if PLATFORM(IOS_FAMILY)
 void WebPageProxy::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& fileURLs, const String& displayString, const API::Data* iconData)
 {
@@ -7743,6 +7772,18 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         MESSAGE_CHECK(m_process, !m_mouseEventQueue.isEmpty());
         auto event = m_mouseEventQueue.takeFirst();
         MESSAGE_CHECK(m_process, type == event.type());
+
+#if ENABLE(CONTEXT_MENU_EVENT)
+        if (event.button() == WebMouseEvent::RightButton) {
+            if (event.type() == WebEvent::MouseDown) {
+                ASSERT(m_contextMenuPreventionState == EventPreventionState::Waiting);
+                m_contextMenuPreventionState = handled ? EventPreventionState::Prevented : EventPreventionState::Allowed;
+            } else if (m_contextMenuPreventionState != EventPreventionState::Waiting)
+                m_contextMenuPreventionState = EventPreventionState::None;
+
+            processContextMenuCallbacks();
+        }
+#endif
 
         if (!m_mouseEventQueue.isEmpty()) {
             LOG(MouseHandling, " UIProcess: handling a queued mouse event from didReceiveEvent");

@@ -1877,7 +1877,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (pauseData.eventListenerId)
                 eventBreakpoint = WI.domManager.breakpointForEventListenerId(pauseData.eventListenerId);
             if (!eventBreakpoint)
-                eventBreakpoint = WI.domDebuggerManager.listenerBreakpointForEventName(pauseData.eventName);
+                eventBreakpoint = WI.domDebuggerManager.listenerBreakpointsForEventName(pauseData.eventName)[0];
 
             console.assert(eventBreakpoint, "Expected Event Listener breakpoint for event name.", pauseData.eventName);
             if (!eventBreakpoint)

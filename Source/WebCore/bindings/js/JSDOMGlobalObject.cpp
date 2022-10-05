@@ -592,7 +592,7 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
         // with a given wrapper world should outlive other objects in that
         // world)
         auto document = &downcast<Document>(*context);
-        auto const& originalOrigin = document->securityOrigin();
+        const auto& originalOrigin = document->securityOrigin();
         auto& originalWorld = domGlobalObject->world();
 
         while (!document->isTopDocument()) {

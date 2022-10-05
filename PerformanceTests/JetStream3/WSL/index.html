@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="Node.js"></script>
+<script src="Type.js"></script>
+<script src="ReferenceType.js"></script>
+<script src="Value.js"></script>
+<script src="Expression.js"></script>
+<script src="Rewriter.js"></script>
+<script src="Visitor.js"></script>
+<script src="CreateLiteral.js"></script>
+<script src="CreateLiteralType.js"></script>
+<script src="PropertyAccessExpression.js"></script>
+
+<script src="AddressSpace.js"></script>
+<script src="AnonymousVariable.js"></script>
+<script src="ArrayRefType.js"></script>
+<script src="ArrayType.js"></script>
+<script src="Assignment.js"></script>
+<script src="AutoWrapper.js"></script>
+<script src="Block.js"></script>
+<script src="BoolLiteral.js"></script>
+<script src="Break.js"></script>
+<script src="CallExpression.js"></script>
+<script src="CallFunction.js"></script>
+<script src="Check.js"></script>
+<script src="CheckLiteralTypes.js"></script>
+<script src="CheckLoops.js"></script>
+<script src="CheckRecursion.js"></script>
+<script src="CheckRecursiveTypes.js"></script>
+<script src="CheckReturns.js"></script>
+<script src="CheckUnreachableCode.js"></script>
+<script src="CheckWrapped.js"></script>
+<script src="Checker.js"></script>
+<script src="CloneProgram.js"></script>
+<script src="CommaExpression.js"></script>
+<script src="ConstexprFolder.js"></script>
+<script src="ConstexprTypeParameter.js"></script>
+<script src="Continue.js"></script>
+<script src="ConvertPtrToArrayRefExpression.js"></script>
+<script src="DoWhileLoop.js"></script>
+<script src="DotExpression.js"></script>
+<script src="DoubleLiteral.js"></script>
+<script src="DoubleLiteralType.js"></script>
+<script src="DereferenceExpression.js"></script>
+<script src="EArrayRef.js"></script>
+<script src="EBuffer.js"></script>
+<script src="EBufferBuilder.js"></script>
+<script src="EPtr.js"></script>
+<script src="EnumLiteral.js"></script>
+<script src="EnumMember.js"></script>
+<script src="EnumType.js"></script>
+<script src="EvaluationCommon.js"></script>
+<script src="Evaluator.js"></script>
+<script src="ExpressionFinder.js"></script>
+<script src="ExternalOrigin.js"></script>
+<script src="Field.js"></script>
+<script src="FindHighZombies.js"></script>
+<script src="FlattenProtocolExtends.js"></script>
+<script src="FlattenedStructOffsetGatherer.js"></script>
+<script src="FloatLiteral.js"></script>
+<script src="FloatLiteralType.js"></script>
+<script src="FoldConstexprs.js"></script>
+<script src="ForLoop.js"></script>
+<script src="Func.js"></script>
+<script src="FuncDef.js"></script>
+<script src="FuncInstantiator.js"></script>
+<script src="FuncParameter.js"></script>
+<script src="FunctionLikeBlock.js"></script>
+<script src="HighZombieFinder.js"></script>
+<script src="IdentityExpression.js"></script>
+<script src="IfStatement.js"></script>
+<script src="IndexExpression.js"></script>
+<script src="InferTypesForCall.js"></script>
+<script src="Inline.js"></script>
+<script src="Inliner.js"></script>
+<script src="InstantiateImmediates.js"></script>
+<script src="IntLiteral.js"></script>
+<script src="IntLiteralType.js"></script>
+<script src="Intrinsics.js"></script>
+<script src="LateChecker.js"></script>
+<script src="Lexer.js"></script>
+<script src="LexerToken.js"></script>
+<script src="LiteralTypeChecker.js"></script>
+<script src="LogicalExpression.js"></script>
+<script src="LogicalNot.js"></script>
+<script src="LoopChecker.js"></script>
+<script src="MakeArrayRefExpression.js"></script>
+<script src="MakePtrExpression.js"></script>
+<script src="NameContext.js"></script>
+<script src="NameFinder.js"></script>
+<script src="NameResolver.js"></script>
+<script src="NativeFunc.js"></script>
+<script src="NativeFuncInstance.js"></script>
+<script src="NativeType.js"></script>
+<script src="NativeTypeInstance.js"></script>
+<script src="NormalUsePropertyResolver.js"></script>
+<script src="NullLiteral.js"></script>
+<script src="NullType.js"></script>
+<script src="OriginKind.js"></script>
+<script src="OverloadResolutionFailure.js"></script>
+<script src="Parse.js"></script>
+<script src="Prepare.js"></script>
+<script src="PropertyResolver.js"></script>
+<script src="Program.js"></script>
+<script src="ProgramWithUnnecessaryThingsRemoved.js"></script>
+<script src="Protocol.js"></script>
+<script src="ProtocolDecl.js"></script>
+<script src="ProtocolFuncDecl.js"></script>
+<script src="ProtocolRef.js"></script>
+<script src="PtrType.js"></script>
+<script src="ReadModifyWriteExpression.js"></script>
+<script src="RecursionChecker.js"></script>
+<script src="RecursiveTypeChecker.js"></script>
+<script src="ResolveNames.js"></script>
+<script src="ResolveOverloadImpl.js"></script>
+<script src="ResolveProperties.js"></script>
+<script src="ResolveTypeDefs.js"></script>
+<script src="Return.js"></script>
+<script src="ReturnChecker.js"></script>
+<script src="ReturnException.js"></script>
+<script src="StandardLibrary.js"></script>
+<script src="StatementCloner.js"></script>
+<script src="StructLayoutBuilder.js"></script>
+<script src="StructType.js"></script>
+<script src="Substitution.js"></script>
+<script src="SwitchCase.js"></script>
+<script src="SwitchStatement.js"></script>
+<script src="SynthesizeEnumFunctions.js"></script>
+<script src="SynthesizeStructAccessors.js"></script>
+<script src="TrapStatement.js"></script>
+<script src="TypeDef.js"></script>
+<script src="TypeDefResolver.js"></script>
+<script src="TypeOrVariableRef.js"></script>
+<script src="TypeParameterRewriter.js"></script>
+<script src="TypeRef.js"></script>
+<script src="TypeVariable.js"></script>
+<script src="TypeVariableTracker.js"></script>
+<script src="TypedValue.js"></script>
+<script src="UintLiteral.js"></script>
+<script src="UintLiteralType.js"></script>
+<script src="UnificationContext.js"></script>
+<script src="UnreachableCodeChecker.js"></script>
+<script src="VariableDecl.js"></script>
+<script src="VariableRef.js"></script>
+<script src="VisitingSet.js"></script>
+<script src="WSyntaxError.js"></script>
+<script src="WTrapError.js"></script>
+<script src="WTypeError.js"></script>
+<script src="WhileLoop.js"></script>
+<script src="WrapChecker.js"></script>
+<style>
+#ShaderSource {
+    font-family: monospace;
+    width: 700px;
+    height: 400px;
+}
+
+td {
+    border: 1px solid black;
+}
+</style>
+<script>
+let defaultShaderSource = `struct VertexInput {
+    float2 position;
+    float3 color;
+}
+
+struct VertexOutput {
+    float4 wsl_Position;
+    float3 color;
+}
+
+struct FragmentOutput {
+    float4 wsl_Color;
+}
+
+vertex VertexOutput vertexShader(VertexInput vertexInput) {
+    VertexOutput result;
+    result.wsl_Position = float4(vertexInput.position, 0., 1.);
+    result.color = vertexInput.color;
+    return result;
+}
+
+fragment FragmentOutput fragmentShader(VertexOutput stageIn) {
+    FragmentOutput result;
+    result.wsl_Color = float4(stageIn.color, 1.);
+    return result;
+}`;
+
+let shaderSourceTextarea;
+let compileButton;
+let localStorage;
+let compileLogElement;
+let vertexShaderSelect;
+let fragmentShaderSelect;
+let dataTable;
+let resultTable;
+
+let program;
+let availableVertexShaders;
+let availableFragmentShaders;
+let currentVertexShader;
+let currentFragmentShader;
+let inlinedVertexShader;
+let inlinedFragmentShader;
+let allArgumentInfos;
+let argumentEPtrs;
+let stageInArgumentIndex;
+
+window.addEventListener("load", function() {
+    shaderSourceTextarea = document.getElementById("ShaderSource");
+    compileButton = document.getElementById("CompileButton");
+    compileButton.addEventListener("click", compilePresentShaderSource);
+    compileLogElement = document.getElementById("CompileLog");
+    vertexShaderSelect = document.getElementById("VertexShaderSelect");
+    fragmentShaderSelect = document.getElementById("FragmentShaderSelect");
+    vertexShaderSelect.addEventListener("change", selectedShadersChanged);
+    fragmentShaderSelect.addEventListener("change", selectedShadersChanged);
+    dataTable = document.getElementById("DataTable");
+    document.getElementById("RunButton").addEventListener("click", runShaders);
+    resultTable = document.getElementById("ResultTable");
+    shaderSourceTextarea.addEventListener("input", sourceCodeChanged);
+
+    let shaderSource;
+    try {
+        localStorage = window.localStorage;
+        shaderSource = localStorage.getItem("ShaderSource");
+    } catch (e) {
+    }
+
+    if (!shaderSource)
+        shaderSource = defaultShaderSource;
+    shaderSourceTextarea.value = shaderSource;
+    window.setTimeout(compilePresentShaderSource, 0);
+});
+
+function clearDataTable()
+{
+    while (dataTable.lastChild instanceof HTMLTableRowElement)
+        dataTable.removeChild(dataTable.lastChild);
+}
+
+function clearResultTable()
+{
+    while (resultTable.lastChild instanceof HTMLTableRowElement)
+        resultTable.removeChild(resultTable.lastChild);
+}
+
+function clearShaderSelect()
+{
+    while (vertexShaderSelect.firstChild)
+        vertexShaderSelect.removeChild(vertexShaderSelect.firstChild);
+    while (fragmentShaderSelect.firstChild)
+        fragmentShaderSelect.removeChild(fragmentShaderSelect.firstChild);
+}
+
+function sourceCodeChanged() {
+    compileLogElement.textContent = "";
+    clearShaderSelect();
+    clearDataTable();
+    clearResultTable();
+}
+
+function presentError(message) {
+    compileLogElement.textContent = message;
+    clearShaderSelect();
+    clearDataTable();
+    clearResultTable();
+    throw new Error(message);
+}
+
+function compilePresentShaderSource() {
+    compileLogElement.textContent = "Compiling...";
+    compileButton.disabled = true;
+    window.setTimeout(doCompilePresentShaderSource, 0);
+}
+
+function doCompilePresentShaderSource() {
+    compileButton.disabled = false;
+    let start = new Date().getTime();
+    let result;
+    try {
+        result = prepare("/internal/test", 0, shaderSourceTextarea.value);
+    } catch (e) {
+        result = e;
+    }
+    let end = new Date().getTime();
+    if (!(result instanceof Program)) {
+        compileLogElement.textContent = result.toString();
+        return;
+    } else
+        compileLogElement.textContent = "Compile successful!";
+
+    try {
+        shaderSource = localStorage.setItem("ShaderSource", shaderSourceTextarea.value);
+    } catch (e) {
+    }
+
+    program = result;
+    availableVertexShaders = [];
+    availableFragmentShaders = [];
+    for (let functionNames of program.functions.values()) {
+        for (let func of functionNames) {
+            if (func.shaderType == "vertex")
+                availableVertexShaders.push(func);
+            if (func.shaderType == "fragment")
+                availableFragmentShaders.push(func);
+        }
+    }
+    clearShaderSelect();
+    function createOption(textContent) {
+        let option = document.createElement("option");
+        option.textContent = textContent;
+        return option;
+    }
+    for (let i = 0; i < availableVertexShaders.length; ++i)
+        vertexShaderSelect.appendChild(createOption(availableVertexShaders[i].name));
+    for (let i = 0; i < availableFragmentShaders.length; ++i)
+        fragmentShaderSelect.appendChild(createOption(availableFragmentShaders[i].name));
+    selectedShadersChanged(true);
+}
+
+function createTableRow(name, elementCallback) {
+    let row = document.createElement("tr");
+    let variableCell = document.createElement("td");
+    let valueCell = document.createElement("td");
+    variableCell.textContent = name;
+    valueCell.appendChild(elementCallback());
+    row.appendChild(variableCell);
+    row.appendChild(valueCell);
+    return row;
+    dataTable.appendChild(row);
+}
+
+function linkError(message) {
+    compileLogElement.textContent = message + " Fix this by selecting a different pair of shaders below.";
+    clearDataTable();
+    clearResultTable();
+}
+
+function selectedShadersChanged(fromCompilation = false) {
+    if (!fromCompilation)
+        compileLogElement.textContent = "";
+    currentVertexShader = availableVertexShaders[vertexShaderSelect.selectedIndex];
+    currentFragmentShader = availableFragmentShaders[fragmentShaderSelect.selectedIndex];
+
+    inlinedVertexShader = program.funcInstantiator.getUnique(currentVertexShader, []);
+    _inlineFunction(program, inlinedVertexShader, new VisitingSet(currentVertexShader));
+
+    allArgumentInfos = [];
+    argumentEPtrs = [];
+    for (let parameter of inlinedVertexShader.parameters) {
+        let ePtr = new EPtr(new EBuffer(parameter.type.size), 0);
+        argumentEPtrs.push({ePtr: ePtr, size: parameter.type.size});
+        let gatherer = new FlattenedStructOffsetGatherer(parameter.name);
+        parameter.visit(gatherer);
+        for (let argumentInfo of gatherer.result) {
+            argumentInfo.ePtr = ePtr;
+            allArgumentInfos.push(argumentInfo);
+        }
+    }
+    clearDataTable();
+    clearResultTable();
+    for (let info of allArgumentInfos) {
+        dataTable.appendChild(createTableRow(info.name, function() {
+             let input = document.createElement("input");
+             input.addEventListener("input", clearResultTable);
+             input.type = "text";
+             return input;
+        }));
+    }
+
+    let found = false;
+    let index = 0;
+    for (let parameter of currentFragmentShader.parameters) {
+        if (parameter.name == "stageIn") {
+            found = true;
+            if (!parameter.type.equals(currentVertexShader.returnType))
+                linkError("Vertex shader's return type needs to match the stageIn parameter of the fragment shader!");
+            stageInArgumentIndex = index;
+            break;
+        }
+        ++index;
+    }
+    if (!found)
+        linkError("Could not find the stageIn argument in the fragment shader!");
+    if (func.parameters.length > 1)
+        linkError("Fragment shaders currently don't know how to have any other arguments other than stageIn.");
+}
+
+function runShaders() {
+    let func = inlinedVertexShader;
+
+    let index = 0;
+    for (let i = 0; i < dataTable.children.length; ++i) {
+        let childElement = dataTable.children[i];
+        if (!(childElement instanceof HTMLTableRowElement))
+            continue;
+        let value = childElement.children[1].firstChild.value;
+        let argumentInfo = allArgumentInfos[index];
+        let type = argumentInfo.type;
+        switch (type) {
+        case "float32":
+            value = Math.fround(parseFloat(value));
+            argumentInfo.ePtr.set(argumentInfo.offset, value);
+            break;
+        case "float64":
+            value = parseFloat(value);
+            break;
+        case "int32":
+            value = parseInt(value) | 0;
+            break;
+        case "uint32":
+            value = parseInt(value) >>> 0;
+            break;
+        default:
+            presentError("I don't know how to parse values of type " + type);
+        }
+        if (isNaN(value))
+            presentError("Could not parse input data " + index);
+        argumentInfo.ePtr.set(argumentInfo.offset, value);
+        ++index;
+    }
+
+    for (let i = 0; i < func.parameters.length; ++i)
+        func.parameters[i].ePtr.copyFrom(argumentEPtrs[i].ePtr, argumentEPtrs[i].size);
+    let result = new Evaluator(program).runFunc(func);
+
+    inlinedFragmentShader = program.funcInstantiator.getUnique(currentFragmentShader, []);
+    _inlineFunction(program, inlinedFragmentShader, new VisitingSet(currentFragmentShader));
+    func = inlinedFragmentShader;
+
+    func.parameters[stageInArgumentIndex].ePtr.copyFrom(result, func.parameters[stageInArgumentIndex].type.size);
+
+    result = new Evaluator(program).runFunc(func);
+
+    clearResultTable();
+    let gatherer = new FlattenedStructOffsetGatherer(func.returnType.type.name);
+    func.returnType.type.visit(gatherer);
+    for (let info of gatherer.result) {
+        resultTable.appendChild(createTableRow(info.name, function() {
+            return document.createTextNode(result.get(info.offset));
+        }));
+    }
+}
+</script>
+</head>
+<body>
+<h1>WebGPU Shading Language</h1>
+<ol>
+<li>
+    Write a shader!
+    <div><textarea id="ShaderSource"></textarea></div>
+    <div id="CompileLog"></div>
+    <div><input type="button" value="Compile" id="CompileButton"></div>
+</li>
+<li>
+    Select your shaders
+    <div><label>Vertex Shader <select id="VertexShaderSelect"></select></label></div>
+    <div><label>Fragment Shader <select id="FragmentShaderSelect"></select></label></div>
+</li>
+<li>
+    Specify input data
+    <table id="DataTable">
+        <thead>
+            <tr>
+                <td>Variable</td>
+                <td>Value</td>
+            </tr>
+        </thead>
+    </table>
+</li>
+<li>
+    <div><input type="button" value="Run" id="RunButton"></div>
+    <table id="ResultTable">
+        <thead>
+            <tr>
+                <td>Variable</td>
+                <td>Value</td>
+            </tr>
+        </thead>
+    </table>
+</li>
+</ol>
+</body>
+</html>

@@ -26,6 +26,8 @@
 #pragma once
 
 #include "DOMRectInit.h"
+#include "FloatConversion.h"
+#include "FloatRect.h"
 #include "ScriptWrappable.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/MathExtras.h>
@@ -52,6 +54,8 @@ public:
     double right() const { return WTF::nanPropagatingMax(m_x, m_x + m_width); }
     double bottom() const { return WTF::nanPropagatingMax(m_y, m_y + m_height); }
     double left() const { return WTF::nanPropagatingMin(m_x, m_x + m_width); }
+
+    FloatRect toFloatRect() const { return FloatRect { narrowPrecisionToFloat(m_x), narrowPrecisionToFloat(m_y), narrowPrecisionToFloat(m_width), narrowPrecisionToFloat(m_height) }; }
 
 protected:
     DOMRectReadOnly(double x, double y, double width, double height)

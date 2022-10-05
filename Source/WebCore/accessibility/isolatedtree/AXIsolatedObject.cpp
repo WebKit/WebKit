@@ -1080,7 +1080,7 @@ Vector<SimpleRange> AXIsolatedObject::findTextRanges(const AccessibilitySearchTe
     });
 }
 
-Vector<String> AXIsolatedObject::performTextOperation(AccessibilityTextOperation const& textOperation)
+Vector<String> AXIsolatedObject::performTextOperation(const AccessibilityTextOperation& textOperation)
 {
     return Accessibility::retrieveValueFromMainThread<Vector<String>>([&textOperation, this] () -> Vector<String> {
         if (auto* object = associatedAXObject())

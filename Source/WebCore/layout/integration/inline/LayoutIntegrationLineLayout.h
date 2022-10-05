@@ -33,6 +33,7 @@
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
+#include "layout/integration/inline/LayoutIntegrationLine.h"
 #include <wtf/CheckedPtr.h>
 
 namespace WebCore {
@@ -102,6 +103,7 @@ public:
     size_t lineCount() const;
     bool hasVisualOverflow() const;
     LayoutUnit firstLinePhysicalBaseline() const;
+    LayoutUnit lastLinePhysicalBaseline() const;
     LayoutUnit lastLineLogicalBaseline() const;
     LayoutRect firstInlineBoxRect(const RenderInline&) const;
     LayoutRect enclosingBorderBoxRectFor(const RenderInline&) const;
@@ -137,6 +139,8 @@ private:
     void clearInlineContent();
     void releaseCaches();
 
+    LayoutUnit physicalBaselineForLine(LayoutIntegration::Line&) const;
+    
     BoxTree m_boxTree;
     Layout::LayoutState m_layoutState;
     Layout::InlineFormattingState& m_inlineFormattingState;

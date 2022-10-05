@@ -1412,6 +1412,10 @@ public:
     void handleContextMenuKeyEvent();
 #endif
 
+#if ENABLE(CONTEXT_MENU_EVENT)
+    void dispatchAfterCurrentContextMenuEvent(CompletionHandler<void(bool)>&&);
+#endif
+
     // Called by the WebOpenPanelResultListenerProxy.
 #if PLATFORM(IOS_FAMILY)
     void didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>&, const String& displayString, const API::Data* iconData);
@@ -1933,7 +1937,7 @@ public:
 #endif
 
     bool isHandlingPreventableTouchStart() const { return m_handlingPreventableTouchStartCount; }
-    bool isHandlingPreventableTouchMove() const { return m_touchMovePreventionState == TouchMovePreventionState::Waiting; }
+    bool isHandlingPreventableTouchMove() const { return m_touchMovePreventionState == EventPreventionState::Waiting; }
     bool isHandlingPreventableTouchEnd() const { return m_handlingPreventableTouchEndCount; }
 
     bool hasQueuedKeyEvent() const;
@@ -2416,6 +2420,10 @@ private:
 
 #if ENABLE(CONTEXT_MENUS)
     void showContextMenu(ContextMenuContextData&&, const UserData&);
+#endif
+
+#if ENABLE(CONTEXT_MENU_EVENT)
+    void processContextMenuCallbacks();
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
@@ -2966,12 +2974,19 @@ private:
     PAL::HysteresisActivity m_wheelEventActivityHysteresis;
 #endif
 
+    enum class EventPreventionState : uint8_t { None, Waiting, Prevented, Allowed };
+
     Deque<NativeWebMouseEvent> m_mouseEventQueue;
     Deque<NativeWebKeyboardEvent> m_keyEventQueue;
 #if ENABLE(MAC_GESTURE_EVENTS)
     Deque<NativeWebGestureEvent> m_gestureEventQueue;
 #endif
     Vector<WTF::Function<void ()>> m_callbackHandlersAfterProcessingPendingMouseEvents;
+
+#if ENABLE(CONTEXT_MENU_EVENT)
+    EventPreventionState m_contextMenuPreventionState { EventPreventionState::None };
+    Vector<CompletionHandler<void(bool)>> m_contextMenuCallbacks;
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
     struct TouchEventTracking {
@@ -3001,11 +3016,9 @@ private:
 #if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     Deque<QueuedTouchEvents> m_touchEventQueue;
 #endif
-
     uint64_t m_handlingPreventableTouchStartCount { 0 };
     uint64_t m_handlingPreventableTouchEndCount { 0 };
-    enum class TouchMovePreventionState : uint8_t { NotWaiting, Waiting, ReceivedReply };
-    TouchMovePreventionState m_touchMovePreventionState { TouchMovePreventionState::NotWaiting };
+    EventPreventionState m_touchMovePreventionState { EventPreventionState::None };
 
 #if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<WebColorPicker> m_colorPicker;

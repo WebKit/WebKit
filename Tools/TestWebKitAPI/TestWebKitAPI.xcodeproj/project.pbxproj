@@ -1030,7 +1030,9 @@
 		CEDA12412437C9FB00C28A9E /* editable-region-composited-and-non-composited-overlap.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CEDA12402437C9EA00C28A9E /* editable-region-composited-and-non-composited-overlap.html */; };
 		D04CF93F285C77CA005D6337 /* MachSendRight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D04CF93E285C77C9005D6337 /* MachSendRight.cpp */; };
 		DD0EDF8D2798A6AD005152AD /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = F3FC3EE213678B7300126A65 /* libgtest.a */; };
+		DD403D4A28EB932F009B4684 /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD403D4928EB932F009B4684 /* libbmalloc.a */; };
 		DD42949F284BE0B7004D49ED /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DDB3724628ECE32F00A2F32D /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDB3724528ECE32F00A2F32D /* libbmalloc.a */; };
 		DDD2187627A21750002B7025 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
 		DF1C7CE927F5161D00D8145C /* BundlePageConsoleMessageWithDetails.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF1C7CE827F5161D00D8145C /* BundlePageConsoleMessageWithDetails.mm */; };
 		DF1C7CEC27F5309700D8145C /* console-message-with-details.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = DF1C7CEB27F5305A00D8145C /* console-message-with-details.html */; };
@@ -3207,6 +3209,8 @@
 		D04CF93E285C77C9005D6337 /* MachSendRight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MachSendRight.cpp; sourceTree = "<group>"; };
 		D3BE5E341E4CE85E00FD563A /* WKWebViewGetContents.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewGetContents.mm; sourceTree = "<group>"; };
 		DC69AA621CF77C6500C6272F /* ScopedLambda.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedLambda.cpp; sourceTree = "<group>"; };
+		DD403D4928EB932F009B4684 /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDB3724528ECE32F00A2F32D /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDF3A82928930475005920CF /* gtest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gtest.xcodeproj; path = ../../Source/ThirdParty/gtest/xcode/gtest.xcodeproj; sourceTree = SOURCE_ROOT; };
 		DF1C7CE827F5161D00D8145C /* BundlePageConsoleMessageWithDetails.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundlePageConsoleMessageWithDetails.mm; sourceTree = "<group>"; };
 		DF1C7CEA27F5239F00D8145C /* ConsoleMessageWithDetails.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ConsoleMessageWithDetails.mm; sourceTree = "<group>"; };
@@ -3474,6 +3478,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDB3724628ECE32F00A2F32D /* libbmalloc.a in Frameworks */,
 				3A5DDAF028D15BF7004DA950 /* libgtest.a in Frameworks */,
 				3A5DDAF528D1638A004DA950 /* libicucore.tbd in Frameworks */,
 				3A5DDB2D28D55265004DA950 /* libwgsl.a in Frameworks */,
@@ -3509,6 +3514,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD403D4A28EB932F009B4684 /* libbmalloc.a in Frameworks */,
 				93F56DA71E5F9174003EDE84 /* libicucore.dylib in Frameworks */,
 				143DDE9820C9018B007F76FA /* Security.framework in Frameworks */,
 			);
@@ -4353,6 +4359,8 @@
 				7B9FC5B028A5221B007570E7 /* CryptoTokenKit.framework */,
 				0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */,
 				CDA3159C1ED5643F009F60D3 /* IOKit.framework */,
+				DDB3724528ECE32F00A2F32D /* libbmalloc.a */,
+				DD403D4928EB932F009B4684 /* libbmalloc.a */,
 				5CFACF62226F73C60056C7D0 /* libboringssl.a */,
 				3A5DDAF228D1637A004DA950 /* libicu.a */,
 				7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */,

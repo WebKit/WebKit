@@ -42,6 +42,7 @@ Version: 1.0
     --submit-button-text-color: hsl(0, 0%, 100%);
     
     --search-glyph: url('images/search.svg#dark');
+    --search-glyph-light: url('images/search.svg#light');
     --search-term-text-color: hsl(0, 0%, 0%);
     --search-input-background: hsl(0, 100%, 100%);
 
@@ -2297,6 +2298,10 @@ header .menu-item { /* add bottom dimension to main menu items */
     transition: 200ms ease-out width, 200ms ease-in background-color;
 }
 
+#site-nav .search-input {
+    background-image: var(--search-glyph-light);
+}
+
 .search #site-nav ul.menu li:last-child {
     display: none;
 }
@@ -2549,6 +2554,7 @@ p .search-term {
         padding: 0 3rem 3rem 0;
     }
 
+    #site-nav .search-input,
     .search-input {
         width: 100%;
         

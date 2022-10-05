@@ -56,7 +56,7 @@
     padding-left: 5px;
 }
 
-.popover .edit-breakpoint-popover-content > table > tr.condition > td > .editor {
+.popover .edit-breakpoint-popover-content > table > tr > td > .editor {
     width: 100%;
     padding: 4px 0 2px;
     appearance: textfield;
@@ -64,13 +64,22 @@
     background: var(--background-color-content);
 }
 
-.popover .edit-breakpoint-popover-content > table > tr.condition > td > .editor > .CodeMirror {
+.popover .edit-breakpoint-popover-content > table > tr:last-child > td > .editor {
+    margin-inline-end: calc(var(--reference-page-link-size) + 4px);
+}
+
+
+.popover .edit-breakpoint-popover-content > table > tr > td > .editor > .CodeMirror {
     width: 320px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content width. */
     height: auto;
 }
 
-.popover .edit-breakpoint-popover-content.wide .condition > .CodeMirror {
+.popover .edit-breakpoint-popover-content.wide > table > tr > td > .editor > .CodeMirror {
     width: 360px; /* NOTE: Fixed value, manually tuned to .edit-breakpoint-popover-content width. */
+}
+
+.popover .edit-breakpoint-popover-content > table > tr > td > .editor + label + label {
+    margin-inline-start: 8px;
 }
 
 .popover .edit-breakpoint-popover-content input#edit-breakpoint-popover-ignore-count {
@@ -90,5 +99,10 @@
 @media (prefers-color-scheme: dark) {
     .popover .edit-breakpoint-popover-content > table > tr > th {
         color: var(--text-color-secondary);
+    }
+
+    .popover .edit-breakpoint-popover-content > table > tr > td > .editor {
+        appearance: unset;
+        border-color: var(--text-color-quaternary);
     }
 }

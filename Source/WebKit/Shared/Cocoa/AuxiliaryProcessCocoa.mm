@@ -99,7 +99,7 @@ bool AuxiliaryProcess::parentProcessHasEntitlement(ASCIILiteral entitlement)
 
 void AuxiliaryProcess::platformStopRunLoop()
 {
-    XPCServiceExit(WTFMove(m_priorityBoostMessage));
+    XPCServiceExit();
 }
 
 #if USE(OS_STATE)

@@ -119,7 +119,7 @@ bool WebGLVertexArrayObjectBase::areAllEnabledAttribBuffersBound()
 {
     if (!m_allEnabledAttribBuffersBoundCache) {
         m_allEnabledAttribBuffersBoundCache = [&] {
-            for (auto const& state : m_vertexAttribState) {
+            for (const auto& state : m_vertexAttribState) {
                 if (!state.validateBinding())
                     return false;
             }

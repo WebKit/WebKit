@@ -369,7 +369,7 @@ public:
 
     // Text selection
     Vector<SimpleRange> findTextRanges(const AccessibilitySearchTextCriteria&) const override;
-    Vector<String> performTextOperation(AccessibilityTextOperation const&) override;
+    Vector<String> performTextOperation(const AccessibilityTextOperation&) override;
 
     AccessibilityObject* observableObject() const override { return nullptr; }
     AccessibilityChildrenVector linkedObjects() const override { return { }; }

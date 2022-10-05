@@ -91,7 +91,6 @@
 #include "StyleColorScheme.h"
 #endif
 
-
 #define SET_VAR(group, variable, value) do { \
         if (!compareEqual(group->variable, value)) \
             group.access().variable = value; \
@@ -974,6 +973,7 @@ public:
 
     RoundedRect getRoundedInnerBorderFor(const LayoutRect& borderRect, LayoutUnit topWidth, LayoutUnit bottomWidth,
         LayoutUnit leftWidth, LayoutUnit rightWidth, bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
+    static RoundedRect getRoundedInnerBorderFor(const LayoutRect&, LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth, std::optional<BorderData::Radii>, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge);
 
     void setBorderLeftWidth(float v) { SET_VAR(m_surroundData, border.m_left.m_width, v); }
     void setBorderLeftStyle(BorderStyle v) { SET_VAR(m_surroundData, border.m_left.m_style, static_cast<unsigned>(v)); }
@@ -1908,8 +1908,8 @@ public:
     void getShadowInlineDirectionExtent(const ShadowData*, LayoutUnit& logicalLeft, LayoutUnit& logicalRight) const;
     void getShadowBlockDirectionExtent(const ShadowData*, LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const;
 
-    static StyleColor currentColor();
-    static bool isCurrentColor(const StyleColor&);
+    static StyleColor currentColor() { return StyleColor::currentColor(); }
+    static bool isCurrentColor(const StyleColor& color) { return color.isCurrentColor(); }
 
     const StyleColor& borderLeftColor() const { return m_surroundData->border.left().color(); }
     const StyleColor& borderRightColor() const { return m_surroundData->border.right().color(); }

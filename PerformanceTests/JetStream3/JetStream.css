@@ -1,0 +1,449 @@
+/*
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+html {
+    font-family: "Helvetica Neue", Helvetica, Verdana, sans-serif;
+    font-size: 62.5%;
+    font-synthesis: none;
+}
+
+body {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.4;
+    background-repeat: no-repeat;
+    background-position: center -5vw;
+    background-size: 100vw;
+    padding-bottom: 0px;
+    background-image: url('clouds.svg');
+}
+
+::selection {
+    background-color: #34AADC;
+    color: white;
+}
+
+main {
+    display: block;
+    max-width: 1180px;
+    margin: auto;
+    text-align: center;
+}
+
+img {
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+}
+
+.logo {
+    box-sizing: border-box;
+    width: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    perspective: 600;
+}
+
+.logo .logo-image {
+    display: block;
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('JetStream3Logo.svg');
+    color: transparent;
+    animation: swingin 350ms ease-out forwards;
+    will-change: transform, opacity;
+    height: 75px;
+}
+
+#jetstreams {
+    background-image: url('jetstreams.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    padding: 2rem 0;
+    margin: -2rem 0;
+}
+
+#jetstreams svg {
+    width: 100%;
+    max-height: 120px;
+}
+
+#magic {
+    position: absolute;
+    top: -900px;
+    left: -900px;
+    width: 300px;
+    height: 300px;
+    display: none;
+}
+
+.summary {
+    text-align: center;
+}
+
+.summary + .summary {
+    padding-top: 5px;
+    margin-top: 5px;
+}
+
+.summary:empty {
+    display: none;
+}
+
+article, .summary {
+    max-width: 70rem;
+    margin: 0 auto 1rem;
+    opacity: 0;
+    animation: fadein 0.5s ease-in-out forwards;
+    animation-delay: 200ms;
+}
+
+h1 {
+    color: black;
+    text-align: center;
+}
+
+
+h2, h3, h4, h5, h6 {
+     color: #2C98D1;
+     text-align: left;
+}
+
+
+h4, h5, h6 {
+    margin-bottom: 0;
+}
+
+p {
+    text-align: left;
+    color: #555555;
+    margin: 0 0 3rem 0;
+}
+
+h5, h6 {
+    font-size: 1.6rem;
+}
+
+h6 {
+    color: #444444;
+}
+
+dt {
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: left;
+}
+
+dd {
+    text-align: left;
+    padding: 10px 20px;
+    margin: 0;
+}
+
+a:link,
+a:visited {
+    color: #34AADC;
+}
+
+a:hover,
+a:active {
+    color: #0086BF;
+}
+
+#status {
+    margin: 2rem 0rem;
+}
+
+#status label,
+a.button {
+    display: inline-block;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 2rem;
+    background-color: rgb(52,170,220);
+    background-image: linear-gradient(180deg, rgba(134,217,255,1) -80%, rgba(52,170,220,1) 100%);
+    color: rgb(255,255,255);
+    border: 1px solid rgb(52,170,220);
+    border-radius: 2px;
+    padding: 0.3rem 9rem 0.5rem;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+a.button {
+    animation: fadein 500ms ease-in forwards, scaledown 500ms ease-in forwards;
+    opacity: 0;
+}
+
+#status label,
+.button:hover {
+    background-image: none;
+}
+
+#status.loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 48vh 0 0;
+    width: 100%;
+    line-height: 1.2;
+    font-size: 4rem;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: -0.10rem;
+    color: transparent;
+    background-image: linear-gradient(132deg, #96E5FF 0%, #96E5FF 2%, #86D9FF 42%, #8BDAFF 84%, #96E5FF 98%, #96E5FF 100%);
+    -webkit-background-clip: text;
+    background-size: 1200px 100%;
+    background-repeat: no-repeat;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#status.error {
+    max-width: 70rem;
+    margin: 0 auto 1rem;
+}
+
+.error h2, .error p {
+    color: #d24a59;
+    margin-bottom: 0;
+    text-align: center;
+    font-weight: 500;
+}
+
+.error h2 {
+    font-size: 5rem;
+    letter-spacing: -0.1rem;
+    line-height: 1;
+}
+
+#result-summary:empty {
+    display: none;
+}
+
+#result-summary {
+    margin-top: 20px;
+}
+
+#result-summary label {
+    color: #6c6c71;
+}
+
+#result-summary .score {
+    font-weight: bold;
+    font-size: 4rem;
+    line-height: 1;
+    color: #34AADC;
+    font-weight: 500;
+}
+
+#result-summary .score .interval {
+    display: block;
+    font-weight: normal;
+}
+
+#results {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    animation: fadein 500ms ease-out forwards;
+    opacity: 0;
+}
+
+.benchmark {
+    position: relative;
+    flex: 1;
+    max-width: 20%;
+    min-width: 200px;
+    text-align: left;
+    color: #8E8E93;
+    font-size: 1.6rem;
+    margin: 0 1.6rem 3rem 0;
+
+}
+
+.benchmark h3, .benchmark h4, .benchmark .result, .benchmark label {
+    color: transparent;
+    background: linear-gradient(160deg, rgba(249,249,249,1) 0%, rgba(238,238,238,1) 100%);
+    border-radius: 3px;
+}
+
+.benchmark-running h4, .benchmark-running .result, .benchmark-running label {
+    color: #86D9FF;
+    background-color: #86D9FF;
+    background-image: none;
+}
+
+.benchmark-done h3, .benchmark-done h4, .benchmark-done .result, .benchmark-done label {
+    background-color: transparent;
+    background-image: none;
+    -webkit-touch-callout: revert;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.benchmark h3 {
+    font-weight: 400;
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+.benchmark-running h3 {
+    background-color: transparent;
+    background-image: none;
+    color: #34AADC;
+}
+
+.benchmark-done h3 {
+    color: #6c6c71;
+}
+
+.benchmark h3 a,
+.benchmark h3 a:link,
+.benchmark h3 a:active,
+.benchmark h3 a:hover,
+.benchmark h3 a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+.benchmark-done h3 a:hover {
+    color: #34AADC;
+    text-decoration: underline;
+}
+
+.benchmark h4 {
+    margin: 0.3rem 0;
+    line-height: 1;
+    font-weight: 400;
+    font-size: 2.4rem;
+}
+
+.benchmark-done h4 {
+    color: #34AADC;
+    background-color: none;
+}
+
+.benchmark p,
+.benchmark-done p {
+    margin: 0;
+}
+
+.benchmark .result {
+    display: inline-block;
+    margin-right: 1.6rem;
+    line-height: 1.3;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.benchmark-done .result {
+    color: #4A4A4A;
+}
+
+.benchmark label {
+    display: block;
+}
+
+.benchmark-done label {
+    color: #8E8E93;
+    font-weight: 400;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaledown {
+    from {
+        transform: scale(1.3,1.3);
+    }
+    to {
+        transform: scale(1,1);
+    }
+}
+
+@keyframes shine {
+    0% {
+        background-position: -1200px center;
+    }
+    100% {
+        background-position: 100vw center;
+    }
+}
+
+@keyframes swingin {
+    from {
+        opacity: 0;
+        transform: rotateY(-85deg) translateZ(200px);
+    }
+    to {
+        opacity: 1;
+        transform: rotateY(0deg) translateZ(0px);
+    }
+}
+
+@media (max-width: 415px) {
+    body {
+        background-position: center 4rem;
+    }
+
+    .logo .logo-image {
+        height: 60px;
+    }
+
+    #jetstreams {
+        background-size: 200%;
+    }
+
+
+    article, .summary {
+        padding-top: 10rem;
+        margin: 0 1rem;
+    }
+
+    a.button {
+        padding: 0.3rem 6rem 0.5rem;
+    }
+}

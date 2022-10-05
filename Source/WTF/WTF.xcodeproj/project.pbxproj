@@ -35,7 +35,6 @@
 		0FE4479C1B7AAA03009498EB /* WordLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE4479A1B7AAA03009498EB /* WordLock.cpp */; };
 		0FEC3C5E1F368A9700F59B6C /* ReadWriteLock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEC3C5C1F368A9700F59B6C /* ReadWriteLock.cpp */; };
 		0FFF19DC1BB334EB00886D91 /* ParallelHelperPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */; };
-		14022F4118F5C3FC007FF0EB /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 14022F4018F5C3FC007FF0EB /* libbmalloc.a */; };
 		143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143DDE9520C8BC37007F76FA /* Entitlements.mm */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		1469419D16EAB10A0024E146 /* AutodrainedPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */; };
@@ -491,6 +490,7 @@
 		DD3DC99B27A4BF8E007E5B61 /* CancellableTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 46209A27266D543A007F8F4A /* CancellableTask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC99C27A4BF8E007E5B61 /* StackTrace.h in Headers */ = {isa = PBXBuildFile; fileRef = EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC99D27A4BF8E007E5B61 /* ConcurrentPtrHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F30CB591FCDF133004B5323 /* ConcurrentPtrHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD403D5628EB93BE009B4684 /* libbmalloc.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DD403D5528EB93BE009B4684 /* libbmalloc.a */; };
 		DD4901E627B4748A00D7E50D /* UniStdExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901DF27B4748A00D7E50D /* UniStdExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4901E727B4748A00D7E50D /* ParallelJobsGeneric.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901E027B4748A00D7E50D /* ParallelJobsGeneric.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4901E827B4748A00D7E50D /* PlatformEnablePlayStation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901E127B4748A00D7E50D /* PlatformEnablePlayStation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -901,8 +901,9 @@
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 0;
+			dstSubfolderSpec = 16;
 			files = (
+				DD403D5628EB93BE009B4684 /* libbmalloc.a in Product Dependencies */,
 				DDE99319278D08DC00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
 			);
 			name = "Product Dependencies";
@@ -1014,7 +1015,6 @@
 		0FFF19DA1BB334EB00886D91 /* ParallelHelperPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParallelHelperPool.cpp; sourceTree = "<group>"; };
 		0FFF19DB1BB334EB00886D91 /* ParallelHelperPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelHelperPool.h; sourceTree = "<group>"; };
 		132743924FC54E469F5A8E6E /* StdUnorderedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StdUnorderedSet.h; sourceTree = "<group>"; };
-		14022F4018F5C3FC007FF0EB /* libbmalloc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		143DDE9520C8BC37007F76FA /* Entitlements.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Entitlements.mm; sourceTree = "<group>"; };
 		143DDE9720C8BE99007F76FA /* Entitlements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entitlements.h; sourceTree = "<group>"; };
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
@@ -1439,6 +1439,7 @@
 		DD3DCA0427A4E176007E5B61 /* WebPreferencesInternal.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = WebPreferencesInternal.yaml; sourceTree = "<group>"; };
 		DD3DCA0527A4E176007E5B61 /* generate-unified-source-bundles.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = "generate-unified-source-bundles.rb"; sourceTree = "<group>"; };
 		DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = GeneratePreferences.rb; sourceTree = "<group>"; };
+		DD403D5528EB93BE009B4684 /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD4901DF27B4748A00D7E50D /* UniStdExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniStdExtras.h; sourceTree = "<group>"; };
 		DD4901E027B4748A00D7E50D /* ParallelJobsGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobsGeneric.h; sourceTree = "<group>"; };
 		DD4901E127B4748A00D7E50D /* PlatformEnablePlayStation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEnablePlayStation.h; sourceTree = "<group>"; };
@@ -1748,7 +1749,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14022F4118F5C3FC007FF0EB /* libbmalloc.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1762,14 +1762,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		14022F3F18F5C3E5007FF0EB /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				14022F4018F5C3FC007FF0EB /* libbmalloc.a */,
-			);
-			name = Libraries;
-			sourceTree = "<group>";
-		};
 		1C181C881D307AB800F5FA16 /* icu */ = {
 			isa = PBXGroup;
 			children = (
@@ -1825,7 +1817,6 @@
 			children = (
 				5D247B6D14689C4700E78B76 /* Configurations */,
 				DDE9931F278D0FAA00F60D26 /* Frameworks */,
-				14022F3F18F5C3E5007FF0EB /* Libraries */,
 				5D247B6314689B8600E78B76 /* Products */,
 				5D247B7614689D7600E78B76 /* Source */,
 				1447AEC518FCE57700B3D7FF /* Foundation.framework */,
@@ -2728,6 +2719,7 @@
 		DDE9931F278D0FAA00F60D26 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DD403D5528EB93BE009B4684 /* libbmalloc.a */,
 				DDE99317278D08C900F60D26 /* libWebKitAdditions.a */,
 			);
 			name = Frameworks;

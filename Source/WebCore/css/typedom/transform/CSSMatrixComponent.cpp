@@ -155,8 +155,7 @@ void CSSMatrixComponent::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSMatrixComponent::toMatrix()
 {
-    // FIXME: Implement.
-    return DOMMatrix::fromMatrix(DOMMatrixInit { });
+    return { m_matrix.get() };
 }
 
 DOMMatrix& CSSMatrixComponent::matrix()
