@@ -819,6 +819,10 @@ protected:
         // WebGL 2.0.
         SourceUnpackBuffer,
     };
+    enum class ArrayBufferViewFunctionType {
+        TexImage,
+        ReadPixels
+    };
 
     enum NullDisposition {
         NullAllowed,
@@ -1110,7 +1114,7 @@ protected:
     OffscreenCanvas* offscreenCanvas();
 #endif
 
-    bool validateArrayBufferType(const char* functionName, GCGLenum type, std::optional<JSC::TypedArrayType>);
+    bool validateTypeAndArrayBufferType(const char* functionName, ArrayBufferViewFunctionType, GCGLenum type, ArrayBufferView* pixels);
 
 private:
     void scheduleTaskToDispatchContextLostEvent();
