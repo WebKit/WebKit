@@ -10,12 +10,12 @@ PASS Updating CSSSkewX.ax with a keyword throws a TypeError
 PASS Updating CSSSkewX.ax with a double throws a TypeError
 PASS Updating CSSSkewX.ax with a unitless zero throws a TypeError
 PASS Updating CSSSkewX.ax with a string angle throws a TypeError
-FAIL Updating CSSSkewX.ax with a number CSSUnitValue throws a TypeError assert_throws_js: function "() => skewX.ax = value" did not throw
-FAIL Updating CSSSkewX.ax with a time dimension CSSUnitValue throws a TypeError assert_throws_js: function "() => skewX.ax = value" did not throw
-FAIL Updating CSSSkewX.ax with a CSSMathValue of length type throws a TypeError assert_throws_js: function "() => skewX.ax = value" did not throw
+PASS Updating CSSSkewX.ax with a number CSSUnitValue throws a TypeError
+PASS Updating CSSSkewX.ax with a time dimension CSSUnitValue throws a TypeError
+PASS Updating CSSSkewX.ax with a CSSMathValue of length type throws a TypeError
 PASS CSSSkewX can be constructed from an angle CSSUnitValue
 PASS CSSSkewX can be constructed from a CSSMathValue of angle type
 PASS CSSSkew.ax can be updated to an angle CSSUnitValue
 PASS CSSSkew.ax can be updated to a CSSMathValue of angle type
-FAIL Modifying skewX.is2D is a no-op assert_true: expected true got false
+PASS Modifying skewX.is2D is a no-op
 
