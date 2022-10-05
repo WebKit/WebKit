@@ -206,6 +206,7 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
 
     case SourceParseMode::ArrowFunctionMode:
     case SourceParseMode::ClassFieldInitializerMode:
+    case SourceParseMode::ClassStaticBlockMode:
         break;
 
     case SourceParseMode::AsyncFunctionMode:

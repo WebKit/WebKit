@@ -148,6 +148,7 @@ public:
     static constexpr OptionSet<LexerFlags> DontBuildStrings = LexerFlags::DontBuildStrings;
 
     int createSourceElements() { return SourceElementsResult; }
+    ExpressionType makeStaticBlockFunctionCallNode(const JSTokenLocation&, ExpressionType, int, int, int) { return CallExpr; }
     ExpressionType makeFunctionCallNode(const JSTokenLocation&, ExpressionType, bool, int, int, int, int, size_t, bool) { return CallExpr; }
     ExpressionType createCommaExpr(const JSTokenLocation&, ExpressionType) { return CommaExpr; }
     ExpressionType appendToCommaExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return CommaExpr; }
@@ -236,6 +237,10 @@ public:
         return Property(type);
     }
     Property createProperty(const Identifier*, int, int, PropertyNode::Type type, SuperBinding, ClassElementTag)
+    {
+        return Property(type);
+    }
+    Property createProperty(const Identifier*, PropertyNode::Type type, SuperBinding, ClassElementTag)
     {
         return Property(type);
     }

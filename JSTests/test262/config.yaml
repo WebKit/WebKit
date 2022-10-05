@@ -20,7 +20,6 @@ skip:
     - regexp-lookbehind
     - regexp-v-flag
     - resizable-arraybuffer
-    - class-static-block
     - callable-boundary-realms
     - FinalizationRegistry.prototype.cleanupSome
     - decorators
