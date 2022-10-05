@@ -137,7 +137,7 @@ void InspectorWorkerAgent::connectToAllWorkerInspectorProxiesForPage()
 {
     ASSERT(m_connectedProxies.isEmpty());
 
-    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxies()) {
+    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxiesCopy()) {
         if (!is<Document>(proxy->scriptExecutionContext()))
             continue;
 
