@@ -938,8 +938,10 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
     }
 
     if (options & LayerTreeAsTextOptions::IncludeEventRegion && !m_eventRegion.isEmpty()) {
-        ts << indent << "(event region" << m_eventRegion;
-        ts << indent << ")\n";
+        ts << indent << "(event region ";
+
+        TextStream::IndentScope indentScope(ts);
+        ts << m_eventRegion << ")\n";
     }
     
 #if ENABLE(SCROLLING_THREAD)

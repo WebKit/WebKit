@@ -655,12 +655,8 @@ void Region::setShape(Shape&& shape)
 
 TextStream& operator<<(TextStream& ts, const Region& region)
 {
-    ts << "\n";
-    {
-        TextStream::IndentScope indentScope(ts);
-        for (auto& rect : region.rects())
-            ts << indent << "(rect " << rect << ")\n";
-    }
+    for (auto& rect : region.rects())
+        ts.dumpProperty("rect", rect);
 
     return ts;
 }

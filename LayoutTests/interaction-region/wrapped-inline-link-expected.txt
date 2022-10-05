@@ -13,14 +13,11 @@ Line
       (backgroundColor #FFFFFF)
       (event region
         (rect (0,0) width=800 height=600)
-
-      (interaction regions [
-        (region
-            (rect (-3,-3) width=36 height=78)
-)
-        (hasLightBackground 1)
-        (borderRadius 0.00)])
-      )
+        (interaction regions [
+          (region
+            (rect (-3,-3) width=36 height=78))
+          (hasLightBackground 1)
+          (borderRadius 0.00)]))
     )
   )
 )

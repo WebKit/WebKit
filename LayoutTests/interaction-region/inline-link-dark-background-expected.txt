@@ -10,14 +10,11 @@ This is a link.
       (backgroundColor #000000)
       (event region
         (rect (0,0) width=800 height=600)
-
-      (interaction regions [
-        (region
-            (rect (-3,-3) width=35 height=24)
-)
-        (hasLightBackground 0)
-        (borderRadius 0.00)])
-      )
+        (interaction regions [
+          (region
+            (rect (-3,-3) width=35 height=24))
+          (hasLightBackground 0)
+          (borderRadius 0.00)]))
     )
   )
 )

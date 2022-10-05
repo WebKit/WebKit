@@ -9,14 +9,11 @@
       (backgroundColor #FFFFFF)
       (event region
         (rect (0,0) width=800 height=600)
-
-      (interaction regions [
-        (region
-            (rect (0,0) width=100 height=100)
-)
-        (hasLightBackground 1)
-        (borderRadius 10.00)])
-      )
+        (interaction regions [
+          (region
+            (rect (0,0) width=100 height=100))
+          (hasLightBackground 1)
+          (borderRadius 10.00)]))
     )
   )
 )

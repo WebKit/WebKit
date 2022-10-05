@@ -378,29 +378,20 @@ void EventRegion::dump(TextStream& ts) const
 #endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
-    if (!m_wheelEventListenerRegion.isEmpty()) {
-        ts << indent << "(wheel event listener region" << m_wheelEventListenerRegion;
-        if (!m_nonPassiveWheelEventListenerRegion.isEmpty()) {
-            TextStream::IndentScope indentScope(ts);
-            ts << indent << "(non-passive" << m_nonPassiveWheelEventListenerRegion;
-            ts << indent << ")\n";
-        }
-        ts << indent << ")\n";
-    }
+    if (!m_wheelEventListenerRegion.isEmpty())
+        ts.dumpProperty("wheel event listener region", m_wheelEventListenerRegion);
+    if (!m_nonPassiveWheelEventListenerRegion.isEmpty())
+        ts.dumpProperty("non-passive wheel event listener region", m_nonPassiveWheelEventListenerRegion);
 #endif
 
 #if ENABLE(EDITABLE_REGION)
-    if (m_editableRegion && !m_editableRegion->isEmpty()) {
-        ts << indent << "(editable region" << *m_editableRegion;
-        ts << indent << ")\n";
-    }
+    if (m_editableRegion && !m_editableRegion->isEmpty()) 
+        ts.dumpProperty("editable region", *m_editableRegion);
 #endif
     
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    if (!m_interactionRegions.isEmpty()) {
+    if (!m_interactionRegions.isEmpty())
         ts.dumpProperty("interaction regions", m_interactionRegions);
-        ts << "\n";
-    }
 #endif
 }
 
