@@ -21,6 +21,7 @@
 #include "config.h"
 #include "RenderView.h"
 
+#include "BackgroundPainter.h"
 #include "Document.h"
 #include "Element.h"
 #include "FloatQuad.h"
@@ -413,6 +414,16 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     if (paintInfo.skipRootBackground())
         return;
 
+    auto paintRootOrCanvasBackground = [this, &paintInfo]() {
+        // Paint the canvas/root element background.
+        if (auto* rootBackgroundRenderer = rendererForRootBackground(); rootBackgroundRenderer && rootBackgroundRenderer->hasBackground()) {
+            BackgroundPainter backgroundPainter { *this, paintInfo };
+
+            auto paintRect = is<RenderBox>(rootBackgroundRenderer) ? downcast<RenderBox>(rootBackgroundRenderer)->borderBoxRect() : paintInfo.rect;
+            backgroundPainter.paintBackground(paintRect, determineBackgroundBleedAvoidance(paintInfo.context()));
+        }
+    };
+
     bool rootFillsViewport = false;
     bool rootObscuresBackground = false;
     auto shouldPropagateBackgroundPaintingToInitialContainingBlock = true;
@@ -431,8 +442,10 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
 
     // If painting will entirely fill the view, no need to fill the background.
-    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1)
+    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1) {
+        paintRootOrCanvasBackground();
         return;
+    }
 
     // This code typically only executes if the root element's visibility has been set to hidden,
     // if there is a transform on the <html>, or if there is a page scale factor less than 1.
@@ -453,6 +466,8 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         } else
             paintInfo.context().clearRect(paintInfo.rect);
     }
+
+    paintRootOrCanvasBackground();
 }
 
 bool RenderView::shouldRepaint(const LayoutRect& rect) const

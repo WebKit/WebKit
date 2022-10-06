@@ -64,10 +64,14 @@ BackgroundPainter::BackgroundPainter(RenderBoxModelObject& renderer, const Paint
 
 void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance)
 {
-    if (m_renderer.isDocumentElementRenderer()) {
+    if (m_renderer.isRenderView()) {
         paintRootBoxFillLayers();
         return;
     }
+
+    // RenderView paints the root background.
+    if (m_renderer.isDocumentElementRenderer())
+        return;
 
     if (!paintsOwnBackground(m_renderer))
         return;
@@ -83,7 +87,7 @@ void BackgroundPainter::paintBackground(const LayoutRect& paintRect, BackgroundB
 
 void BackgroundPainter::paintRootBoxFillLayers()
 {
-    ASSERT(m_renderer.isDocumentElementRenderer());
+    ASSERT(m_renderer.isRenderView());
     if (m_paintInfo.skipRootBackground())
         return;
 
