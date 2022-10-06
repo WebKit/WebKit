@@ -109,6 +109,12 @@ slashed-zero
 // font-variant-alternates
 //
 historical-forms
+stylistic
+styleset
+character-variant
+swash
+ornaments
+annotation
 
 // font-variant-east-asian
 //
