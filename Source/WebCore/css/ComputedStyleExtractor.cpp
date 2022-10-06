@@ -729,7 +729,7 @@ static bool rendererCanBeTransformed(RenderObject* renderer)
     return renderer && !is<RenderInline>(*renderer);
 }
 
-static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyle& style)
+static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyle& style, ComputedStyleExtractor::PropertyValueType valueType)
 {
     auto& cssValuePool = CSSValuePool::singleton();
 
@@ -743,6 +743,12 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
         list->append(matrixTransformValue(transform, style));
         return list;
     }
+
+    // https://w3c.github.io/csswg-drafts/css-transforms-1/#serialization-of-the-computed-value
+    // If we don't have a renderer, then the value should be "none" if we're asking for the
+    // resolved value (such as when calling getComputedStyle()).
+    if (valueType == ComputedStyleExtractor::PropertyValueType::Resolved)
+        return cssValuePool.createIdentifierValue(CSSValueNone);
 
     auto list = CSSValueList::createSpaceSeparated();
 
@@ -2831,10 +2837,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!style)
         return nullptr;
 
-    return valueForPropertyInStyle(*style, propertyID, valueType == PropertyValueType::Resolved ? styledRenderer() : nullptr);
+    return valueForPropertyInStyle(*style, propertyID, valueType == PropertyValueType::Resolved ? styledRenderer() : nullptr, valueType);
 }
 
-RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderStyle& style, CSSPropertyID propertyID, RenderElement* renderer)
+RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderStyle& style, CSSPropertyID propertyID, RenderElement* renderer, PropertyValueType valueType)
 {
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
@@ -3805,7 +3811,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertySpeakAs:
         return speakAsToCSSValue(style.speakAs());
     case CSSPropertyTransform:
-        return computedTransform(renderer, style);
+        return computedTransform(renderer, style, valueType);
     case CSSPropertyTransformBox:
         return CSSPrimitiveValue::create(style.transformBox());
     case CSSPropertyTransformOrigin: {
