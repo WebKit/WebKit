@@ -1833,6 +1833,15 @@
    },
    {
       "emails" : [
+         "d_degazio@apple.com"
+      ],
+      "name" : "David Degazio",
+      "nicks" : [
+         "ddegazio"
+      ]
+   },
+   {
+      "emails" : [
          "ddorwin@chromium.org"
       ],
       "name" : "David Dorwin",
