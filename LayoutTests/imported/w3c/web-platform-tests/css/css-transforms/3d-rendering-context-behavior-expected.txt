@@ -9,6 +9,6 @@ PASS Perspective applies to direct DOM normal-flow children
 PASS Perspective applies to direct DOM abs-pos children
 PASS Perspective applies to direct DOM fixed-pos children
 PASS Perspective does not apply to DOM normal-flow grandchildren
-FAIL Perspective does not apply to DOM abs-pos grandchildren assert_approx_equals: expected 141 +/- 1 but got 161.62440490722656
-FAIL Perspective does not apply to DOM fixed-pos grandchildren assert_approx_equals: expected 141 +/- 1 but got 161.62440490722656
+PASS Perspective does not apply to DOM abs-pos grandchildren
+PASS Perspective does not apply to DOM fixed-pos grandchildren
 

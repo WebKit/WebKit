@@ -608,6 +608,7 @@ void RenderLayerBacking::destroyGraphicsLayers()
     if (m_overflowControlsHostLayerAncestorClippingStack)
         removeClippingStackLayers(*m_overflowControlsHostLayerAncestorClippingStack);
 
+    GraphicsLayer::unparentAndClear(m_perspectiveLayer);
     GraphicsLayer::unparentAndClear(m_viewportAnchorLayer);
     GraphicsLayer::unparentAndClear(m_contentsContainmentLayer);
     GraphicsLayer::unparentAndClear(m_foregroundLayer);
@@ -714,7 +715,12 @@ void RenderLayerBacking::updateChildrenTransformAndAnchorPoint(const LayoutRect&
             m_graphicsLayer->setChildrenTransform({ });
     };
 
-    if (!renderer().style().hasPerspective()) {
+    if (m_perspectiveLayer) {
+        m_perspectiveLayer->setSize(m_owningLayer.parent()->size());
+        m_perspectiveLayer->setChildrenTransform(m_owningLayer.parent()->perspectiveTransform());
+    }
+
+    if (!renderer().style().hasPerspective() || renderer().settings().css3DTransformInteroperabilityEnabled()) {
         removeChildrenTransformFromLayers();
         return;
     }
@@ -1010,6 +1016,9 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 
     bool layerConfigChanged = false;
     auto& compositor = this->compositor();
+
+    if (updatePerspectiveLayer())
+        layerConfigChanged = true;
 
     if (updateViewportConstrainedAnchorLayer(compositor.isViewportConstrainedFixedOrStickyLayer(m_owningLayer)))
         layerConfigChanged = true;
@@ -1679,8 +1688,11 @@ void RenderLayerBacking::updateInternalHierarchy()
         lastClippingLayer = m_ancestorClippingStack->lastLayer();
     }
 
-    constexpr size_t maxOrderedLayers = 5;
+    constexpr size_t maxOrderedLayers = 6;
     Vector<GraphicsLayer*, maxOrderedLayers> orderedLayers;
+
+    if (m_perspectiveLayer)
+        orderedLayers.append(m_perspectiveLayer.get());
 
     if (lastClippingLayer)
         orderedLayers.append(lastClippingLayer);
@@ -2284,6 +2296,29 @@ bool RenderLayerBacking::updateViewportConstrainedAnchorLayer(bool needsAnchorLa
 
     return layerChanged;
 }
+
+bool RenderLayerBacking::updatePerspectiveLayer()
+{
+    bool needsPerspectiveLayer = false;
+    if (renderer().settings().css3DTransformInteroperabilityEnabled())
+        needsPerspectiveLayer = renderer().parent() ? renderer().parent()->style().hasPerspective() : false;
+
+    bool layerChanged = false;
+    if (needsPerspectiveLayer) {
+        if (!m_perspectiveLayer) {
+            String layerName = makeString(m_owningLayer.name(), " (perspective)");
+            m_perspectiveLayer = createGraphicsLayer(layerName, GraphicsLayer::Type::Normal);
+            layerChanged = true;
+        }
+    } else if (m_perspectiveLayer) {
+        willDestroyLayer(m_perspectiveLayer.get());
+        GraphicsLayer::unparentAndClear(m_perspectiveLayer);
+        layerChanged = true;
+    }
+
+    return layerChanged;
+}
+
 
 bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
 {
@@ -3154,6 +3189,9 @@ GraphicsLayer* RenderLayerBacking::parentForSublayers() const
 
 GraphicsLayer* RenderLayerBacking::childForSuperlayers() const
 {
+    if (m_perspectiveLayer)
+        return m_perspectiveLayer.get();
+
     if (m_ancestorClippingStack)
         return m_ancestorClippingStack->firstLayer();
 

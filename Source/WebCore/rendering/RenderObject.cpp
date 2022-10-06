@@ -1465,18 +1465,23 @@ void RenderObject::getTransformFromContainer(const RenderObject* containerObject
         transform.multiply(layer->currentTransform());
     
 #if ENABLE(3D_TRANSFORMS)
-    if (containerObject && containerObject->hasLayer() && containerObject->style().hasPerspective()) {
+    const RenderObject* perspectiveObject = containerObject;
+    if (settings().css3DTransformInteroperabilityEnabled())
+        perspectiveObject = parent();
+
+    if (perspectiveObject && perspectiveObject->hasLayer() && perspectiveObject->style().hasPerspective()) {
         // Perpsective on the container affects us, so we have to factor it in here.
-        ASSERT(containerObject->hasLayer());
-        FloatPoint perspectiveOrigin = downcast<RenderLayerModelObject>(*containerObject).layer()->perspectiveOrigin();
+        ASSERT(perspectiveObject->hasLayer());
+        FloatPoint perspectiveOrigin = downcast<RenderLayerModelObject>(*perspectiveObject).layer()->perspectiveOrigin();
 
         TransformationMatrix perspectiveMatrix;
-        perspectiveMatrix.applyPerspective(containerObject->style().usedPerspective());
-        
+        perspectiveMatrix.applyPerspective(perspectiveObject->style().usedPerspective());
+
         transform.translateRight3d(-perspectiveOrigin.x(), -perspectiveOrigin.y(), 0);
         transform = perspectiveMatrix * transform;
         transform.translateRight3d(perspectiveOrigin.x(), perspectiveOrigin.y(), 0);
     }
+
 #else
     UNUSED_PARAM(containerObject);
 #endif

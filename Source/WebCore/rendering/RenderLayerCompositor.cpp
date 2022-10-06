@@ -1664,9 +1664,6 @@ static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle,
         || oldStyle.transformOriginY() != newStyle.transformOriginY()
         || oldStyle.transformOriginZ() != newStyle.transformOriginZ()
         || oldStyle.usedTransformStyle3D() != newStyle.usedTransformStyle3D()
-        || oldStyle.perspective() != newStyle.perspective()
-        || oldStyle.perspectiveOriginX() != newStyle.perspectiveOriginX()
-        || oldStyle.perspectiveOriginY() != newStyle.perspectiveOriginY()
         || oldStyle.backfaceVisibility() != newStyle.backfaceVisibility()
         || !arePointingToEqualData(oldStyle.offsetPath(), newStyle.offsetPath())
         || oldStyle.offsetAnchor() != newStyle.offsetAnchor()
@@ -1676,6 +1673,13 @@ static bool recompositeChangeRequiresGeometryUpdate(const RenderStyle& oldStyle,
         || !arePointingToEqualData(oldStyle.clipPath(), newStyle.clipPath())
         || oldStyle.overscrollBehaviorX() != newStyle.overscrollBehaviorX()
         || oldStyle.overscrollBehaviorY() != newStyle.overscrollBehaviorY();
+}
+
+static bool recompositeChangeRequiresChildrenGeometryUpdate(const RenderStyle& oldStyle, const RenderStyle& newStyle)
+{
+    return oldStyle.perspective() != newStyle.perspective()
+        || oldStyle.perspectiveOriginX() != newStyle.perspectiveOriginX()
+        || oldStyle.perspectiveOriginY() != newStyle.perspectiveOriginY();
 }
 
 void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer& layer, const RenderStyle* oldStyle)
@@ -1777,7 +1781,10 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
             // FIXME: transform changes really need to trigger layout. See RenderElement::adjustStyleDifference().
             layer.setNeedsPostLayoutCompositingUpdate();
             layer.setNeedsCompositingGeometryUpdate();
+
         }
+        if (m_renderView.settings().css3DTransformInteroperabilityEnabled() && oldStyle && recompositeChangeRequiresChildrenGeometryUpdate(*oldStyle, newStyle))
+            layer.setChildrenNeedCompositingGeometryUpdate();
     }
 }
 
