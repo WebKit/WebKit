@@ -25,6 +25,7 @@ import six
 import re
 
 from datetime import datetime
+from webkitbugspy import Tracker
 from webkitscmpy import Contributor
 
 
@@ -277,6 +278,27 @@ class Commit(object):
         if self.timestamp is None:
             return None
         return self.timestamp * self.UUID_MULTIPLIER + self.order
+
+    @property
+    def issues(self):
+        if not self.message:
+            return []
+        result = []
+        links = set()
+        seen_empty = False
+        for line in self.message.splitlines():
+            if not line and seen_empty:
+                break
+            elif not line:
+                seen_empty = True
+                continue
+            words = line.split()
+            for word in [words[0], words[-1]] if words[0] != words[-1] else [words[0]]:
+                candidate = Tracker.from_string(word)
+                if candidate and candidate.link not in links:
+                    result.append(candidate)
+                    links.add(candidate.link)
+        return result
 
     def __repr__(self):
         if self.branch_point and self.identifier is not None and self.branch:
