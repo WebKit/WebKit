@@ -223,6 +223,8 @@ public:
     WTF_EXPORT_PRIVATE void setProcessState(WebsamProcessState);
     WebsamProcessState processState() const { return m_processState; }
 
+    WTF_EXPORT_PRIVATE static ASCIILiteral processStateDescription();
+
     WTF_EXPORT_PRIVATE static void setPageCount(unsigned);
 
     void setShouldLogMemoryMemoryPressureEvents(bool shouldLog) { m_shouldLogMemoryMemoryPressureEvents = shouldLog; }

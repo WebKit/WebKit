@@ -39,6 +39,10 @@
 #define PROCESSTHROTTLER_RELEASE_LOG_WITH_PID(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d] ProcessThrottler::" msg, this, ##__VA_ARGS__)
 #define PROCESSTHROTTLER_ACTIVITY_RELEASE_LOG(msg, ...) RELEASE_LOG(ProcessSuspension, "%p - [PID=%d, throttler=%p] ProcessThrottler::Activity::" msg, this, m_throttler->m_processIdentifier, m_throttler, ##__VA_ARGS__)
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebKit {
     
 enum UserObservablePageCounterType { };
@@ -134,6 +138,8 @@ public:
     void setAllowsActivities(bool);
 
 private:
+    friend WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);
+
     ProcessAssertionType expectedAssertionType();
     void updateAssertionIfNeeded();
     void updateAssertionTypeNow();
@@ -174,6 +180,8 @@ inline auto ProcessThrottler::backgroundActivity(ASCIILiteral name) -> UniqueRef
 {
     return makeUniqueRef<BackgroundActivity>(*this, name);
 }
+
+WTF::TextStream& operator<<(WTF::TextStream&, const ProcessThrottler&);
 
 } // namespace WebKit
 

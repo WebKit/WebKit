@@ -106,6 +106,7 @@
 #import <wtf/FileSystem.h>
 #import <wtf/Language.h>
 #import <wtf/LogInitialization.h>
+#import <wtf/MemoryPressureHandler.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/NSURLExtras.h>
@@ -624,6 +625,8 @@ RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
 
         return [NSDate dateWithTimeIntervalSince1970:page->loadCommitTime().secondsSinceEpoch().seconds()];
     });
+    auto websamStateDescription = MemoryPressureHandler::processStateDescription().createNSString();
+    [stateDictionary setObject:websamStateDescription.get() forKey:@"Websam State"];
 
     // Adding an empty array to the process state may provide an
     // indication of the existance of private sessions, which we'd like

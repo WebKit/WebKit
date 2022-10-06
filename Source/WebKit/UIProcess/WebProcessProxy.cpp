@@ -84,6 +84,7 @@
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(COCOA)
@@ -2122,6 +2123,32 @@ void WebProcessProxy::permissionChanged(WebCore::PermissionName permissionName, 
 void WebProcessProxy::sendPermissionChanged(WebCore::PermissionName permissionName, const WebCore::SecurityOriginData& topOrigin)
 {
     send(Messages::WebPermissionController::permissionChanged(permissionName, topOrigin), 0);
+}
+
+TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
+{
+    auto appendCount = [&ts](unsigned value, ASCIILiteral description) {
+        if (value)
+            ts << ", " << description << ": " << value;
+    };
+    auto appendIf = [&ts](bool value, ASCIILiteral description) {
+        if (value)
+            ts << ", " << description;
+    };
+
+    ts << "pid: " << process.processIdentifier();
+    appendCount(process.pageCount(), "pages"_s);
+    appendCount(process.visiblePageCount(), "visible-pages"_s);
+    appendCount(process.provisionalPageCount(), "provisional-pages"_s);
+    appendCount(process.suspendedPageCount(), "suspended-pages"_s);
+    appendIf(process.isPrewarmed(), "prewarmed"_s);
+    appendIf(process.isInProcessCache(), "in-process-cache"_s);
+    appendIf(process.isRunningServiceWorkers(), "has-service-worker"_s);
+    appendIf(process.isRunningSharedWorkers(), "has-shared-worker"_s);
+    appendIf(process.isUnderMemoryPressure(), "under-memory-pressure"_s);
+    ts << ", " << process.throttler();
+
+    return ts;
 }
 
 } // namespace WebKit

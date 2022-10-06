@@ -317,4 +317,38 @@ void ProcessThrottler::TimedActivity::updateTimer()
         m_timer.startOneShot(m_timeout);
 }
 
+template <typename T>
+static void logActivityNames(WTF::TextStream& ts, ASCIILiteral description, const T& activities, bool& didLog)
+{
+    if (!activities.size())
+        return;
+
+    ts << (didLog ? ", "_s : ""_s) << description << ": "_s;
+    didLog = true;
+
+    bool isFirstItem = true;
+    for (const auto* activity : activities) {
+        if (activity && !activity->isQuietActivity()) {
+            if (!isFirstItem)
+                ts << ", "_s;
+            ts << activity->name();
+            isFirstItem = false;
+        }
+    }
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const ProcessThrottler& throttler)
+{
+    bool didLog = false;
+    logActivityNames(ts, "foreground_activities"_s, throttler.m_foregroundActivities, didLog);
+    logActivityNames(ts, "background_activities"_s, throttler.m_backgroundActivities, didLog);
+
+    if (auto assertion = throttler.m_assertion; assertion && assertion->isValid()) {
+        ts << (didLog ? ", "_s : ""_s) << "assertion: "_s << processAssertionTypeDescription(assertion->type()) << " ("_s << ProcessAssertion::remainingRunTimeInSeconds(assertion->pid()) << " sec remaining)"_s;
+        didLog = true;
+    }
+
+    return didLog ? ts : ts << "no-assertion-state"_s;
+}
+
 } // namespace WebKit

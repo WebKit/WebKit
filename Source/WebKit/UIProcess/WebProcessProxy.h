@@ -84,6 +84,10 @@ using FramesPerSecond = unsigned;
 using PlatformDisplayID = uint32_t;
 }
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
@@ -277,6 +281,7 @@ public:
     void setIsHoldingLockedFiles(bool);
 
     ProcessThrottler& throttler() final { return m_throttler; }
+    const ProcessThrottler& throttler() const { return m_throttler; }
 
     void isResponsive(CompletionHandler<void(bool isWebProcessResponsive)>&&);
     void isResponsiveWithLazyStop();
@@ -692,5 +697,7 @@ private:
     std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
     bool m_isConnectedToHardwareConsole { true };
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const WebProcessProxy&);
 
 } // namespace WebKit

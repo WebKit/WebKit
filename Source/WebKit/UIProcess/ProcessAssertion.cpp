@@ -26,12 +26,31 @@
 #include "config.h"
 #include "ProcessAssertion.h"
 
-#if !PLATFORM(COCOA) || !USE(RUNNINGBOARD)
-
 #include "WKBase.h"
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
+
+ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
+{
+    switch (type) {
+    case ProcessAssertionType::Suspended:
+        return "suspended"_s;
+    case ProcessAssertionType::Background:
+        return "background"_s;
+    case ProcessAssertionType::UnboundedNetworking:
+        return "unbounded-networking"_s;
+    case ProcessAssertionType::Foreground:
+        return "foreground"_s;
+    case ProcessAssertionType::MediaPlayback:
+        return "media-playback"_s;
+    case ProcessAssertionType::FinishTaskInterruptable:
+        return "finish-task-interruptible"_s;
+    }
+    return "unknown"_s;
+}
+
+#if !PLATFORM(COCOA) || !USE(RUNNINGBOARD)
 
 ProcessAssertion::ProcessAssertion(ProcessID pid, const String& reason, ProcessAssertionType assertionType)
     : m_assertionType(assertionType)
@@ -69,6 +88,7 @@ ProcessAndUIAssertion::ProcessAndUIAssertion(ProcessID pid, const String& reason
 
 ProcessAndUIAssertion::~ProcessAndUIAssertion() = default;
 
+#endif // !USE(RUNNINGBOARD)
+
 } // namespace WebKit
 
-#endif // !USE(RUNNINGBOARD)

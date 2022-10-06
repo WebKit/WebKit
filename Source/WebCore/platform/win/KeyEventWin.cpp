@@ -87,6 +87,8 @@ static String keyIdentifierForWindowsKeyCode(unsigned short keyCode)
         case VK_F9:
             return "F9"_s;
         case VK_F10:
+            return "F10"_s;
+        case VK_F11:
             return "F11"_s;
         case VK_F12:
             return "F12"_s;

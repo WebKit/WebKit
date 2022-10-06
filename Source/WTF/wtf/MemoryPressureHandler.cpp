@@ -26,6 +26,7 @@
 #include "config.h"
 #include <wtf/MemoryPressureHandler.h>
 
+#include <atomic>
 #include <wtf/Logging.h>
 #include <wtf/MemoryFootprint.h>
 #include <wtf/NeverDestroyed.h>
@@ -45,14 +46,22 @@ static const double s_strictThresholdFraction = 0.5;
 static const std::optional<double> s_killThresholdFraction;
 static const Seconds s_pollInterval = 30_s;
 
+static std::atomic<bool> s_hasCreatedMemoryPressureHandler;
+
 MemoryPressureHandler& MemoryPressureHandler::singleton()
 {
     static LazyNeverDestroyed<MemoryPressureHandler> memoryPressureHandler;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         memoryPressureHandler.construct();
+        s_hasCreatedMemoryPressureHandler.store(true);
     });
     return memoryPressureHandler;
+}
+
+static MemoryPressureHandler* memoryPressureHandlerIfExists()
+{
+    return s_hasCreatedMemoryPressureHandler.load() ? &MemoryPressureHandler::singleton() : nullptr;
 }
 
 MemoryPressureHandler::MemoryPressureHandler()
@@ -246,6 +255,19 @@ void MemoryPressureHandler::setProcessState(WebsamProcessState state)
     if (m_processState == state)
         return;
     m_processState = state;
+}
+
+ASCIILiteral MemoryPressureHandler::processStateDescription()
+{
+    if (auto handler = memoryPressureHandlerIfExists()) {
+        switch (handler->processState()) {
+        case WebsamProcessState::Active:
+            return "active"_s;
+        case WebsamProcessState::Inactive:
+            return "inactive"_s;
+        }
+    }
+    return "unknown"_s;
 }
 
 void MemoryPressureHandler::beginSimulatedMemoryPressure()

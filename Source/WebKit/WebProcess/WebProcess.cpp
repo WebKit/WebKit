@@ -151,6 +151,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/URLParser.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 #include "ARKitInlinePreviewModelPlayerMac.h"
@@ -489,6 +490,20 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             WebCore::logMemoryStatistics(LogMemoryStatisticsReason::DebugNotification);
         });
     }
+
+    PAL::registerNotifyCallback("com.apple.WebKit.logPageState"_s, [this] {
+        for (auto& page : m_pageMap.values()) {
+            int64_t loadCommitTime = 0;
+#if USE(OS_STATE)
+            loadCommitTime = static_cast<int64_t>(page->loadCommitTime().secondsSinceEpoch().seconds());
+#endif
+
+            WTF::TextStream activityStateStream(WTF::TextStream::LineMode::SingleLine);
+            activityStateStream << page->activityState();
+
+            RELEASE_LOG(ActivityState, "WebPage %p - load_time: %lld, visible: %d, throttleable: %d , suspended: %d , websam_state: %" PUBLIC_LOG_STRING ", activity_state: %" PUBLIC_LOG_STRING ", url: %" PRIVATE_LOG_STRING, page.get(), loadCommitTime, page->isVisible(), page->isThrottleable(), page->isSuspended(), MemoryPressureHandler::processStateDescription().characters(), activityStateStream.release().utf8().data(), page->mainWebFrame().url().string().utf8().data());
+        }
+    });
 
     SandboxExtension::consumePermanently(parameters.additionalSandboxExtensionHandles);
 
