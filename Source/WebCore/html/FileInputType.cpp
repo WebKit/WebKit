@@ -374,7 +374,7 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
         pathsChanged = true;
     else {
         for (unsigned i = 0; i < length; ++i) {
-            if (files->file(i).path() != m_fileList->file(i).path()) {
+            if (files->file(i).path() != m_fileList->file(i).path() || files->file(i).fileID() != m_fileList->file(i).fileID()) {
                 pathsChanged = true;
                 break;
             }
@@ -415,7 +415,11 @@ void FileInputType::filesChosen(const Vector<FileChooserFileInfo>& paths, const 
     auto* document = element() ? &element()->document() : nullptr;
     if (!allowsDirectories()) {
         auto files = paths.map([document](auto& fileInfo) {
-            return File::create(document, fileInfo.path, fileInfo.replacementPath, fileInfo.displayName);
+            auto handle = FileSystem::openFile(fileInfo.path, FileSystem::FileOpenMode::Read);
+            auto fileID = FileSystem::fileID(handle);
+            FileSystem::closeFile(handle);
+
+            return File::create(document, fileInfo.path, fileInfo.replacementPath, fileInfo.displayName, fileID);
         });
         didCreateFileList(FileList::create(WTFMove(files)), icon);
         return;
