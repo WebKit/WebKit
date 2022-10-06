@@ -1,0 +1,4 @@
+Should be green
+
+FAIL Invalidate :fullscreen based style document.documentElement.requestFullscreen is not a function. (In 'document.documentElement.requestFullscreen()', 'document.documentElement.requestFullscreen' is undefined)
+

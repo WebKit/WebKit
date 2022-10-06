@@ -1,0 +1,36 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-active-document.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-nested-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-active-document.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-cross-origin.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-removing-allowfullscreen.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-setting-allowfullscreen-timing.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled-setting-allowfullscreen.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-fullscreen-enabled.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/document-onfullscreenerror.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-active-document.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-dialog.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-not-allowed.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-options.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-options.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-display-contents-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-display-contents-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/fullscreen-display-contents.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/historical.html
+/LayoutTests/imported/w3c/web-platform-tests/fullscreen/api/promises-reject.html

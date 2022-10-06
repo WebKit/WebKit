@@ -1,0 +1,6 @@
+
+FAIL Fullscreen enabled test: same-origin-default assert_equals: same-origin-default frame fullscreenEnabled expected (boolean) true but got (undefined) undefined
+FAIL Fullscreen enabled test: same-origin-allow assert_equals: same-origin-allow frame fullscreenEnabled expected (boolean) true but got (undefined) undefined
+FAIL Fullscreen enabled test: cross-origin-default assert_equals: cross-origin-default frame fullscreenEnabled expected (boolean) false but got (undefined) undefined
+FAIL Fullscreen enabled test: cross-origin-allow assert_equals: cross-origin-allow frame fullscreenEnabled expected (boolean) true but got (undefined) undefined
+

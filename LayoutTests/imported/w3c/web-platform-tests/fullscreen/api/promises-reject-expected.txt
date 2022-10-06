@@ -1,0 +1,4 @@
+
+FAIL Promises#reject e.requestFullscreen is not a function. (In 'e.requestFullscreen()', 'e.requestFullscreen' is undefined)
+FAIL Promises#reject 1 document.exitFullscreen is not a function. (In 'document.exitFullscreen()', 'document.exitFullscreen' is undefined)
+
