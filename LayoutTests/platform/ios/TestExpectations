@@ -3818,3 +3818,6 @@ fast/events/event-attribute.html [ Failure ]
 
 # rdar://100049612 ([ iOS ] fast/canvas/canvas-scale-strokePath-shadow.html is a constant failure)
 fast/canvas/canvas-scale-strokePath-shadow.html [ Failure ]
+
+# rdar://100049360 ([ iOS ] fast/canvas/webgl/webgl-depth-texture.html is a constant failure)
+fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
