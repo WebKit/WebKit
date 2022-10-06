@@ -145,6 +145,7 @@ $(PROJECT_DIR)/Shared/Notifications/NotificationManagerMessageHandler.messages.i
 $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
 $(PROJECT_DIR)/Shared/ShareableBitmap.serialization.in
+$(PROJECT_DIR)/Shared/TextFlags.serialization.in
 $(PROJECT_DIR)/Shared/WebConnection.messages.in
 $(PROJECT_DIR)/Shared/WebCoreArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/WebExtensionControllerParameters.serialization.in

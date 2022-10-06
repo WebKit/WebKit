@@ -1,0 +1,139 @@
+# Copyright (C) 2022 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+enum class WebCore::FontWidthVariant : uint8_t {
+    RegularWidth,
+    HalfWidth,
+    ThirdWidth,
+    QuarterWidth,
+};
+
+enum class WebCore::Kerning : uint8_t {
+    Auto,
+    Normal,
+    NoShift
+};
+
+enum class WebCore::FontOpticalSizing : uint8_t {
+    Enabled,
+    Disabled
+};
+
+enum class WebCore::FontStyleAxis : uint8_t {
+    slnt,
+    ital
+};
+
+enum class WebCore::AllowUserInstalledFonts : uint8_t {
+    No,
+    Yes
+};
+
+enum class WebCore::FontVariantEastAsianVariant : uint8_t {
+    Normal,
+    Jis78,
+    Jis83,
+    Jis90,
+    Jis04,
+    Simplified,
+    Traditional
+};
+
+enum class WebCore::FontVariantEastAsianWidth : uint8_t {
+    Normal,
+    Full,
+    Proportional
+};
+
+enum class WebCore::FontVariantEastAsianRuby : uint8_t {
+    Normal,
+    Yes
+};
+
+enum class WebCore::FontVariantLigatures : uint8_t {
+    Normal,
+    Yes,
+    No
+};
+
+enum class WebCore::FontVariantPosition : uint8_t {
+    Normal,
+    Subscript,
+    Superscript
+};
+
+enum class WebCore::FontVariantCaps : uint8_t {
+    Normal,
+    Small,
+    AllSmall,
+    Petite,
+    AllPetite,
+    Unicase,
+    Titling
+};
+
+enum class WebCore::FontVariantNumericFigure : uint8_t {
+    Normal,
+    LiningNumbers,
+    OldStyleNumbers
+};
+
+enum class WebCore::FontVariantNumericSpacing : uint8_t {
+    Normal,
+    ProportionalNumbers,
+    TabularNumbers
+};
+
+enum class WebCore::FontVariantNumericFraction : uint8_t {
+    Normal,
+    DiagonalFractions,
+    StackedFractions
+};
+
+enum class WebCore::TextRenderingMode : uint8_t {
+    AutoTextRendering,
+    OptimizeSpeed,
+    OptimizeLegibility,
+    GeometricPrecision
+};
+
+enum class WebCore::FontSmoothingMode : uint8_t {
+    AutoSmoothing,
+    NoSmoothing,
+    Antialiased,
+    SubpixelAntialiased
+};
+
+enum class WebCore::FontOrientation : uint8_t {
+    Horizontal,
+    Vertical
+};
+
+enum class WebCore::NonCJKGlyphOrientation : uint8_t {
+    Mixed,
+    Upright
+};
+
+enum class FontVariantNumericOrdinal : bool
+enum class FontVariantNumericSlashedZero : bool
+enum class WebCore::FontSynthesisLonghandValue : bool
+enum class WebCore::FontSmallCaps : bool

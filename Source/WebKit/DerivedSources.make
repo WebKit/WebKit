@@ -460,6 +460,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/FrameInfoData.serialization.in \
 	Shared/FrameTreeNodeData.serialization.in \
 	Shared/LayerTreeContext.serialization.in \
+	Shared/TextFlags.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
