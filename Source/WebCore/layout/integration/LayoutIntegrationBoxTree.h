@@ -71,6 +71,9 @@ public:
 private:
     Layout::InitialContainingBlock& initialContainingBlock();
 
+    static UniqueRef<Layout::Box> createLayoutBox(RenderObject&);
+    static void adjustStyleIfNeeded(const RenderElement&, RenderStyle&, RenderStyle* firstLineStyle);
+
     void buildTreeForInlineContent();
     void buildTreeForFlexContent();
     void appendChild(UniqueRef<Layout::Box>, RenderObject&);

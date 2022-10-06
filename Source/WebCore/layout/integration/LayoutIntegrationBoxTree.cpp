@@ -52,20 +52,6 @@ namespace LayoutIntegration {
 
 static constexpr size_t smallTreeThreshold = 8;
 
-static RenderStyle rootBoxStyle(const RenderBlock& rootRenderer)
-{
-    auto clonedStyle = RenderStyle::clone(rootRenderer.style());
-    if (rootRenderer.isAnonymousBlock()) {
-        auto& anonBlockParentStyle = rootRenderer.parent()->style();
-        // overflow and text-overflow property values don't get forwarded to anonymous block boxes.
-        // e.g. <div style="overflow: hidden; text-overflow: ellipsis; width: 100px; white-space: pre;">this text should have ellipsis<div></div></div>
-        clonedStyle.setTextOverflow(anonBlockParentStyle.textOverflow());
-        clonedStyle.setOverflowX(anonBlockParentStyle.overflowX());
-        clonedStyle.setOverflowY(anonBlockParentStyle.overflowY());
-    }
-    return clonedStyle;
-}
-
 static std::unique_ptr<RenderStyle> firstLineStyleFor(const RenderObject& renderer)
 {
     auto& firstLineStyle = renderer.firstLineStyle();
@@ -79,8 +65,18 @@ static Layout::Box::IsAnonymous isAnonymous(const RenderObject& renderer)
     return renderer.isAnonymous() ? Layout::Box::IsAnonymous::Yes : Layout::Box::IsAnonymous::No;
 }
 
-static Layout::Box::ElementAttributes elementAttributes(const RenderObject& renderer, Layout::Box::NodeType nodeType = Layout::Box::NodeType::GenericElement)
+static Layout::Box::ElementAttributes elementAttributes(const RenderElement& renderer)
 {
+    auto nodeType = [&] {
+        if (is<RenderListMarker>(renderer))
+            return Layout::Box::NodeType::ListMarker;
+        if (is<RenderReplaced>(renderer))
+            return is<RenderImage>(renderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement;
+        if (is<RenderLineBreak>(renderer))
+            return downcast<RenderLineBreak>(renderer).isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak;
+        return Layout::Box::NodeType::GenericElement;
+    }();
+
     return { nodeType, isAnonymous(renderer) };
 }
 
@@ -89,8 +85,8 @@ BoxTree::BoxTree(RenderBlock& rootRenderer)
 {
     auto* rootBox = m_rootRenderer.layoutBox();
     if (!rootBox) {
-        auto newRootBox = makeUniqueRef<Layout::ElementBox>(elementAttributes(rootRenderer), rootBoxStyle(rootRenderer), firstLineStyleFor(rootRenderer));
-        rootBox = newRootBox.ptr();
+        auto newRootBox = createLayoutBox(rootRenderer);
+        rootBox = downcast<Layout::ElementBox>(newRootBox.ptr());
         m_rootRenderer.setLayoutBox(*rootBox);
         initialContainingBlock().appendChild(WTFMove(newRootBox));
     }
@@ -129,12 +125,20 @@ BoxTree::~BoxTree()
         rootLayoutBox().destroyChildren();
 }
 
-static void adjustStyleIfNeeded(const RenderObject& renderer, RenderStyle& style, RenderStyle* firstLineStyle)
+void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& style, RenderStyle* firstLineStyle)
 {
     auto adjustStyle = [&] (auto& styleToAdjust) {
         if (is<RenderBlock>(renderer)) {
             if (styleToAdjust.display() == DisplayType::Inline)
                 styleToAdjust.setDisplay(DisplayType::InlineBlock);
+            if (renderer.isAnonymousBlock()) {
+                auto& anonBlockParentStyle = renderer.parent()->style();
+                // overflow and text-overflow property values don't get forwarded to anonymous block boxes.
+                // e.g. <div style="overflow: hidden; text-overflow: ellipsis; width: 100px; white-space: pre;">this text should have ellipsis<div></div></div>
+                styleToAdjust.setTextOverflow(anonBlockParentStyle.textOverflow());
+                styleToAdjust.setOverflowX(anonBlockParentStyle.overflowX());
+                styleToAdjust.setOverflowY(anonBlockParentStyle.overflowY());
+            }
             return;
         }
         if (is<RenderInline>(renderer)) {
@@ -171,68 +175,50 @@ static void adjustStyleIfNeeded(const RenderObject& renderer, RenderStyle& style
         adjustStyle(*firstLineStyle);
 }
 
+UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
+{
+    std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleFor(renderer);
+
+    if (is<RenderText>(renderer)) {
+        auto& textRenderer = downcast<RenderText>(renderer);
+
+        if (is<RenderCounter>(textRenderer) && textRenderer.preferredLogicalWidthsDirty()) {
+            // This ensures that InlineTextBox always has up-to-date counter text.
+            // Counter content is updated through preferred width computation.
+            downcast<RenderCounter>(textRenderer).updateCounter();
+        }
+
+        auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
+        auto text = style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text());
+        return makeUniqueRef<Layout::InlineTextBox>(text, textRenderer.canUseSimplifiedTextMeasuring(), textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
+    }
+
+    auto& renderElement = downcast<RenderElement>(renderer);
+
+    auto style = RenderStyle::clone(renderer.style());
+    adjustStyleIfNeeded(renderElement, style, firstLineStyle.get());
+
+    if (is<RenderListMarker>(renderElement)) {
+        auto& listMarkerRenderer = downcast<RenderListMarker>(renderElement);
+        OptionSet<Layout::ElementBox::ListMarkerAttribute> listMarkerAttributes;
+        if (listMarkerRenderer.isImage())
+            listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
+        if (!listMarkerRenderer.isInside())
+            listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
+        return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), listMarkerAttributes, WTFMove(style), WTFMove(firstLineStyle));
+    }
+
+    return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), WTFMove(style), WTFMove(firstLineStyle));
+};
+
 void BoxTree::buildTreeForInlineContent()
 {
-    auto createChildBox = [&](RenderObject& childRenderer) -> std::unique_ptr<Layout::Box> {
-        std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleFor(childRenderer);
-
-        if (is<RenderCounter>(childRenderer)) {
-            // This ensures that InlineTextBox (see below) always has uptodate counter text (note that RenderCounter is a type of RenderText).
-            if (childRenderer.preferredLogicalWidthsDirty()) {
-                // Counter content is updated through preferred width computation.
-                downcast<RenderCounter>(childRenderer).updateCounter();
-            }
-        }
-        if (is<RenderText>(childRenderer)) {
-            auto& textRenderer = downcast<RenderText>(childRenderer);
-            auto style = RenderStyle::createAnonymousStyleWithDisplay(textRenderer.style(), DisplayType::Inline);
-            auto text = style.textSecurity() == TextSecurity::None ? textRenderer.text() : RenderBlock::updateSecurityDiscCharacters(style, textRenderer.text());
-            return makeUnique<Layout::InlineTextBox>(text, textRenderer.canUseSimplifiedTextMeasuring(), textRenderer.canUseSimpleFontCodePath(), WTFMove(style), WTFMove(firstLineStyle));
-        }
-
-        auto style = RenderStyle::clone(childRenderer.style());
-        if (childRenderer.isLineBreak()) {
-            adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
-            auto attributes = elementAttributes(childRenderer, downcast<RenderLineBreak>(childRenderer).isWBR() ? Layout::Box::NodeType::WordBreakOpportunity : Layout::Box::NodeType::LineBreak);
-            return makeUnique<Layout::ElementBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
-        }
-
-        if (is<RenderListMarker>(childRenderer)) {
-            auto& listMarkerRenderer = downcast<RenderListMarker>(childRenderer);
-            OptionSet<Layout::ElementBox::ListMarkerAttribute> listMarkerAttributes;
-            if (listMarkerRenderer.isImage())
-                listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
-            if (!listMarkerRenderer.isInside())
-                listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
-            return makeUnique<Layout::ElementBox>(elementAttributes(childRenderer, Layout::Box::NodeType::ListMarker), listMarkerAttributes, WTFMove(style), WTFMove(firstLineStyle));
-        }
-
-        if (is<RenderReplaced>(childRenderer)) {
-            auto attributes = elementAttributes(childRenderer, is<RenderImage>(childRenderer) ? Layout::Box::NodeType::Image : Layout::Box::NodeType::ReplacedElement);
-            return makeUnique<Layout::ElementBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
-        }
-
-        if (is<RenderBlock>(childRenderer)) {
-            adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
-            auto attributes = elementAttributes(childRenderer);
-            return makeUnique<Layout::ElementBox>(WTFMove(attributes), WTFMove(style), WTFMove(firstLineStyle));
-        }
-
-        if (is<RenderInline>(childRenderer)) {
-            adjustStyleIfNeeded(childRenderer, style, firstLineStyle.get());
-            return makeUnique<Layout::ElementBox>(elementAttributes(childRenderer), WTFMove(style), WTFMove(firstLineStyle));
-        }
-
-        ASSERT_NOT_REACHED();
-        return nullptr;
-    };
-
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(m_rootRenderer)); !walker.atEnd(); walker.advance()) {
         auto& childRenderer = *walker.current();
         auto childLayoutBox = [&] {
             if (auto existingChildBox = childRenderer.layoutBox())
                 return existingChildBox->removeFromParent();
-            return makeUniqueRefFromNonNullUniquePtr(createChildBox(childRenderer));
+            return createLayoutBox(childRenderer);
         };
         appendChild(childLayoutBox(), childRenderer);
     }
@@ -240,10 +226,10 @@ void BoxTree::buildTreeForInlineContent()
 
 void BoxTree::buildTreeForFlexContent()
 {
-    for (auto& flexItemRenderer : childrenOfType<RenderObject>(m_rootRenderer)) {
+    for (auto& flexItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
         auto style = RenderStyle::clone(flexItemRenderer.style());
-        auto flexItem = makeUnique<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTFMove(style));
-        appendChild(makeUniqueRefFromNonNullUniquePtr(WTFMove(flexItem)), flexItemRenderer);
+        auto flexItem = makeUniqueRef<Layout::ElementBox>(elementAttributes(flexItemRenderer), WTFMove(style));
+        appendChild(WTFMove(flexItem), flexItemRenderer);
     }
 }
 
@@ -262,14 +248,10 @@ void BoxTree::updateStyle(const RenderBoxModelObject& renderer)
     auto& layoutBox = layoutBoxForRenderer(renderer);
     auto& rendererStyle = renderer.style();
 
-    if (&layoutBox == &rootLayoutBox())
-        layoutBox.updateStyle(rootBoxStyle(downcast<RenderBlock>(renderer)), firstLineStyleFor(renderer));
-    else {
-        auto firstLineNewStyle = firstLineStyleFor(renderer);
-        auto newStyle = RenderStyle::clone(rendererStyle);
-        adjustStyleIfNeeded(renderer, newStyle, firstLineNewStyle.get());
-        layoutBox.updateStyle(WTFMove(newStyle), WTFMove(firstLineNewStyle));
-    }
+    auto firstLineNewStyle = firstLineStyleFor(renderer);
+    auto newStyle = RenderStyle::clone(rendererStyle);
+    adjustStyleIfNeeded(renderer, newStyle, firstLineNewStyle.get());
+    layoutBox.updateStyle(WTFMove(newStyle), WTFMove(firstLineNewStyle));
 
     for (auto* child = layoutBox.firstChild(); child; child = child->nextSibling()) {
         if (child->isInlineTextBox())
