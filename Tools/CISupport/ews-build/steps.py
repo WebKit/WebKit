@@ -2576,6 +2576,13 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
         pr_number = self.getProperty('github.number')
 
         if compile_without_patch_result == FAILURE:
+            if pr_number and self.getProperty('github.base.ref') != 'main':
+                message = 'Unable to build WebKit without PR, please check manually'
+                self.descriptionDone = message
+                self.finished(FAILURE)
+                self.build.buildFinished([message], FAILURE)
+                return defer.succeed(None)
+
             message = 'Unable to build WebKit without {}, retrying build'.format('PR' if pr_number else 'patch')
             self.descriptionDone = message
             self.send_email_for_preexisting_build_failure()
