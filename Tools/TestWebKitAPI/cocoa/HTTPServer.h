@@ -26,12 +26,22 @@
 #pragma once
 
 #import <Network/Network.h>
-#import <experimental/coroutine>
 #import <wtf/CompletionHandler.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringHash.h>
+
+#if (_LIBCPP_VERSION >= 14000) && !defined(_LIBCPP_HAS_NO_CXX20_COROUTINES)
+#import <coroutine>
+#else
+#import <experimental/coroutine>
+namespace std {
+using std::experimental::coroutine_handle;
+using std::experimental::suspend_never;
+using std::experimental::suspend_always;
+}
+#endif
 
 OBJC_CLASS NSURLRequest;
 
@@ -42,7 +52,7 @@ struct HTTPResponse;
 
 template<typename PromiseType>
 struct CoroutineHandle {
-    CoroutineHandle(std::experimental::coroutine_handle<PromiseType>&& handle)
+    CoroutineHandle(std::coroutine_handle<PromiseType>&& handle)
         : handle(WTFMove(handle)) { }
     CoroutineHandle(const CoroutineHandle&) = delete;
     CoroutineHandle(CoroutineHandle&& other)
@@ -52,14 +62,14 @@ struct CoroutineHandle {
         if (handle)
             handle.destroy();
     }
-    std::experimental::coroutine_handle<PromiseType> handle;
+    std::coroutine_handle<PromiseType> handle;
 };
 
 struct Task {
     struct promise_type {
-        Task get_return_object() { return { std::experimental::coroutine_handle<promise_type>::from_promise(*this) }; }
-        std::experimental::suspend_never initial_suspend() { return { }; }
-        std::experimental::suspend_always final_suspend() noexcept { return { }; }
+        Task get_return_object() { return { std::coroutine_handle<promise_type>::from_promise(*this) }; }
+        std::suspend_never initial_suspend() { return { }; }
+        std::suspend_always final_suspend() noexcept { return { }; }
         void unhandled_exception() { }
         void return_void() { }
     };
@@ -137,7 +147,7 @@ public:
     ReceiveOperation(const Connection& connection)
         : m_connection(connection) { }
     bool await_ready() { return false; }
-    void await_suspend(std::experimental::coroutine_handle<>);
+    void await_suspend(std::coroutine_handle<>);
     Vector<char> await_resume() { return WTFMove(m_result); }
 private:
     Connection m_connection;
@@ -150,7 +160,7 @@ public:
         : m_data(WTFMove(data))
         , m_connection(connection) { }
     bool await_ready() { return false; }
-    void await_suspend(std::experimental::coroutine_handle<>);
+    void await_suspend(std::coroutine_handle<>);
     void await_resume() { }
 private:
     RetainPtr<dispatch_data_t> m_data;
