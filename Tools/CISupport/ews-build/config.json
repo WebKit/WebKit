@@ -320,7 +320,7 @@
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["macos-bigsur-release-build-ews"],
-      "workernames": ["ews119", "ews150", "ews153", "ews155"]
+      "workernames": ["ews116", "ews119", "ews150", "ews153", "ews155"]
     },
     {
       "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
