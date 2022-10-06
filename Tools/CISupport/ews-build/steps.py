@@ -2346,7 +2346,7 @@ class RunWebKitPyPython2Tests(WebKitPyTest):
     description = ['webkitpy-tests running ({})'.format(language)]
     jsonFileName = 'webkitpy_test_{}_results.json'.format(language)
     logfiles = {'json': jsonFileName}
-    command = ['python', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', '--json-output={0}'.format(jsonFileName)]
+    command = ['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(jsonFileName)]
 
 
 class RunWebKitPyPython3Tests(WebKitPyTest):
@@ -2355,7 +2355,7 @@ class RunWebKitPyPython3Tests(WebKitPyTest):
     description = ['webkitpy-tests running ({})'.format(language)]
     jsonFileName = 'webkitpy_test_{}_results.json'.format(language)
     logfiles = {'json': jsonFileName}
-    command = ['python3', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', '--json-output={0}'.format(jsonFileName)]
+    command = ['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(jsonFileName)]
 
 
 class InstallGtkDependencies(shell.ShellCommand):

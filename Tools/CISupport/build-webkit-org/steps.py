@@ -799,7 +799,6 @@ class RunWebKitPyTests(RunPythonTests):
     command = [
         "python3",
         "Tools/Scripts/test-webkitpy",
-        "--all",
         "--verbose",
         "--buildbot-master", CURRENT_HOSTNAME,
         "--builder-name", WithProperties("%(buildername)s"),
