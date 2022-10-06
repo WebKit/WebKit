@@ -1267,7 +1267,19 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         ]
         self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
         self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'main')
         self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without PR, retrying build (failure)')
+        return self.runStep()
+
+    def test_pr_with_branch_failure(self):
+        previous_steps = [
+            mock_step(CompileWebKit(), results=FAILURE),
+            mock_step(CompileWebKitWithoutChange(), results=FAILURE),
+        ]
+        self.setupStep(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
+        self.setProperty('github.number', '1234')
+        self.setProperty('github.base.ref', 'safari-7614-branch')
+        self.expectOutcome(result=FAILURE, state_string='Unable to build WebKit without PR, please check manually (failure)')
         return self.runStep()
 
     def test_filter_logs_containing_error(self):

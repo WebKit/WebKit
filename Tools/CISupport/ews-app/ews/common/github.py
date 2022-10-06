@@ -141,7 +141,7 @@ class GitHub(object):
                 _log.error('Failed to post comment to PR {}. Unexpected response code from GitHub: {}, url: {}\n'.format(pr_number, response.status_code, comment_url))
                 return -1
             new_comment_id = response.json().get('id')
-            comment_url = 'https://github.com/{}/pull/{}#issuecomment-{}'.format(change.pr_project, pr_number, new_comment_id)
+            comment_url = '{}/pull/{}#issuecomment-{}'.format(repository_url, pr_number, new_comment_id)
             _log.info('Commented on PR {}, link: {}'.format(pr_number, comment_url))
 
             if comment_id == -1 and new_comment_id != -1 and change:
