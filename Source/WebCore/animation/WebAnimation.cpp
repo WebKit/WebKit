@@ -1512,8 +1512,8 @@ ExceptionOr<void> WebAnimation::commitStyles()
             effect->animation()->resolve(*animatedStyle, { nullptr });
         WTF::switchOn(property,
             [&] (CSSPropertyID propertyId) {
-                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr))
-                    inlineStyle->setPropertyInternal(propertyId, cssValue->cssText(), false);
+                if (auto cssValue = computedStyleExtractor.valueForPropertyInStyle(*animatedStyle, propertyId, nullptr, ComputedStyleExtractor::PropertyValueType::Computed))
+                    return inlineStyle->setProperty(propertyId, cssValue->cssText(), false);
             },
             [&] (AtomString customProperty) {
                 if (auto cssValue = computedStyleExtractor.customPropertyValue(customProperty))
