@@ -38,7 +38,9 @@ IsoMemoryAllocatorBase::IsoMemoryAllocatorBase(CString name)
     UNUSED_PARAM(name);
 }
 
-IsoMemoryAllocatorBase::~IsoMemoryAllocatorBase() = default;
+IsoMemoryAllocatorBase::~IsoMemoryAllocatorBase()
+{
+}
 
 // We need to call this from the derived class's destructor because it's undefined behavior to call pure virtual methods from within a destructor.
 void IsoMemoryAllocatorBase::releaseMemoryFromSubclassDestructor()

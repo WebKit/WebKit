@@ -104,7 +104,9 @@ public:
     
     class UpsilonCollection {
     public:
-        UpsilonCollection() = default;
+        UpsilonCollection()
+        {
+        }
         
         UpsilonCollection(PhiChildren* phiChildren, Value* value, Vector<UpsilonValue*>* values)
             : m_phiChildren(phiChildren)

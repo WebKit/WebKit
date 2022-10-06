@@ -53,7 +53,9 @@ struct HandlerInfoBase {
 };
 
 struct UnlinkedHandlerInfo : public HandlerInfoBase {
-    UnlinkedHandlerInfo() = default;
+    UnlinkedHandlerInfo()
+    {
+    }
 
     UnlinkedHandlerInfo(HandlerType handlerType, uint32_t start, uint32_t end, uint32_t target, uint32_t tryDepth, uint32_t exceptionIndexOrDelegateTarget)
     {

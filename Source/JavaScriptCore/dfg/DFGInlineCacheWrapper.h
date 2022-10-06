@@ -35,7 +35,7 @@ class SlowPathGenerator;
 
 template<typename GeneratorType>
 struct InlineCacheWrapper {
-    InlineCacheWrapper() = default;
+    InlineCacheWrapper() { }
     
     InlineCacheWrapper(const GeneratorType& generator, SlowPathGenerator* slowPath)
         : m_generator(generator)

@@ -47,7 +47,10 @@ struct ValueProfile;
 
 class MethodOfGettingAValueProfile {
 public:
-    MethodOfGettingAValueProfile() = default;
+    MethodOfGettingAValueProfile()
+        : m_kind(Kind::None)
+    {
+    }
 
     static MethodOfGettingAValueProfile unaryArithProfile(CodeOrigin codeOrigin)
     {
@@ -110,7 +113,7 @@ private:
 
     CodeOrigin m_codeOrigin;
     uint64_t m_rawOperand : Operand::maxBits { 0 };
-    Kind m_kind : bitsOfKind { Kind::None };
+    Kind m_kind : bitsOfKind;
 };
 
 } // namespace JSC

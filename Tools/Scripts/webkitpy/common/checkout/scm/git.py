@@ -373,7 +373,6 @@ class Git(SCM, SVNRepository):
             command += ['-O', order_file]
 
         if git_index:
-            assert command[1] == 'diff'
             command += ['--cached']
         elif git_commit:
             command += [merge_base]

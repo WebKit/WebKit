@@ -35,9 +35,13 @@
 
 namespace JSC { namespace B3 {
 
-PureCSE::PureCSE() = default;
+PureCSE::PureCSE()
+{
+}
 
-PureCSE::~PureCSE() = default;
+PureCSE::~PureCSE()
+{
+}
 
 void PureCSE::clear()
 {

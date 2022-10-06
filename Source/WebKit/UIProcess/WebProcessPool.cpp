@@ -61,7 +61,6 @@
 #include "WebBackForwardCache.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
-#include "WebCertificateInfo.h"
 #include "WebContextSupplement.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebGeolocationManagerProxy.h"

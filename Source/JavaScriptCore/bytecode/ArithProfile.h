@@ -196,6 +196,7 @@ class UnaryArithProfile : public ArithProfile<UnaryArithProfileBase> {
 
 public:
     UnaryArithProfile()
+        : ArithProfile<UnaryArithProfileBase>()
     {
         ASSERT(argObservedType().isEmpty());
         ASSERT(argObservedType().isEmpty());
@@ -275,6 +276,7 @@ public:
     static_assert(static_cast<unsigned>(specialFastPathBit) > static_cast<unsigned>(static_cast<BinaryArithProfileBase>(~clearLhsObservedTypeBitMask)), "These bits should not intersect and specialFastPathBit should be a higher bit.");
 
     BinaryArithProfile()
+        : ArithProfile<BinaryArithProfileBase> ()
     {
         ASSERT(lhsObservedType().isEmpty());
         ASSERT(rhsObservedType().isEmpty());

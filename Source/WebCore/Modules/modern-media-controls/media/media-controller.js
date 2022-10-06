@@ -365,8 +365,6 @@ class MediaController
         // Finally, we factor in the scale factor of the controls themselves, which reflects the page's scale factor.
         this.controls.width = Math.round((maxX - minX) * this.controls.scaleFactor);
         this.controls.height = Math.round((maxY - minY) * this.controls.scaleFactor);
-
-        this.controls.shouldCenterControlsVertically = this.isAudio;
     }
 
     _updateTextTracksClassList()

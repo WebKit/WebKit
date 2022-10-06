@@ -372,7 +372,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
 
     AffineTransform viewBoxTransform;
     if (!hasEmptyViewBox()) {
-        FloatSize size = currentViewportSize();
+        FloatSize size = currentViewportSizeExcludingZoom();
         viewBoxTransform = viewBoxToViewTransform(size.width(), size.height());
     }
 
@@ -554,22 +554,20 @@ FloatRect SVGSVGElement::currentViewBoxRect() const
     return { 0, 0, floatValueForLength(intrinsicWidth, 0), floatValueForLength(intrinsicHeight, 0) };
 }
 
-FloatSize SVGSVGElement::currentViewportSize() const
+FloatSize SVGSVGElement::currentViewportSizeExcludingZoom() const
 {
     FloatSize viewportSize;
 
     if (renderer()) {
-        if (is<LegacyRenderSVGRoot>(renderer())) {
-            auto& root = downcast<LegacyRenderSVGRoot>(*renderer());
-            viewportSize = root.contentBoxRect().size() / root.style().effectiveZoom();
-        } else if (is<LegacyRenderSVGViewportContainer>(renderer()))
-            viewportSize = downcast<LegacyRenderSVGViewportContainer>(*renderer()).viewport().size();
+        if (auto* svgRoot = dynamicDowncast<LegacyRenderSVGRoot>(renderer()))
+            viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().effectiveZoom();
+        else if (auto* svgViewportContainer = dynamicDowncast<LegacyRenderSVGViewportContainer>(renderer()))
+            viewportSize = svgViewportContainer->viewport().size();
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        else if (is<RenderSVGRoot>(renderer())) {
-            auto& root = downcast<RenderSVGRoot>(*renderer());
-            viewportSize = root.contentBoxRect().size() / root.style().effectiveZoom();
-        } else if (is<RenderSVGViewportContainer>(renderer()))
-            viewportSize = downcast<RenderSVGViewportContainer>(*renderer()).viewport().size();
+        else if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer()))
+            viewportSize = svgRoot->contentBoxRect().size() / svgRoot->style().effectiveZoom();
+        else if (auto* svgViewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer()))
+            viewportSize = svgViewportContainer->viewport().size();
 #endif
         else {
             ASSERT_NOT_REACHED();

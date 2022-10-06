@@ -1,0 +1,3 @@
+
+FAIL Document#fullscreenEnabled assert_true: top-level document expected true got undefined
+

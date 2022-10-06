@@ -189,7 +189,7 @@ void pas_assertion_failed_no_inline_with_extra_detail(const char* filename, int 
     pas_crash_with_info_impl((uint64_t)filename, (uint64_t)line, (uint64_t)function, (uint64_t)expression, extra, 1337, 0xbeef0bff);
 }
 
-void pas_panic_on_out_of_memory_error()
+void pas_panic_on_out_of_memory_error(void)
 {
     __builtin_trap();
 }

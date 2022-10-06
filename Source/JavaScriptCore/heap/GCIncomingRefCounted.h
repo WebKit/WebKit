@@ -41,7 +41,10 @@ class JSCell;
 template<typename T>
 class GCIncomingRefCounted : public DeferrableRefCounted<T> {
 public:
-    GCIncomingRefCounted() = default;
+    GCIncomingRefCounted()
+        : m_encodedPointer(0)
+    {
+    }
     
     ~GCIncomingRefCounted()
     {
@@ -102,7 +105,7 @@ private:
     
     // Singleton flag is set: this is a JSCell*.
     // Singleton flag not set: this is a pointer to a vector of cells.
-    uintptr_t m_encodedPointer { 0 };
+    uintptr_t m_encodedPointer;
 };
 
 } // namespace JSC

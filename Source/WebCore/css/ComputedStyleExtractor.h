@@ -54,7 +54,7 @@ public:
     enum class UpdateLayout : uint8_t { Yes, No };
     enum class PropertyValueType : uint8_t { Resolved, Computed };
     RefPtr<CSSValue> propertyValue(CSSPropertyID, UpdateLayout = UpdateLayout::Yes, PropertyValueType = PropertyValueType::Resolved);
-    RefPtr<CSSValue> valueForPropertyInStyle(const RenderStyle&, CSSPropertyID, RenderElement* = nullptr);
+    RefPtr<CSSValue> valueForPropertyInStyle(const RenderStyle&, CSSPropertyID, RenderElement* = nullptr, PropertyValueType = PropertyValueType::Resolved);
     String customPropertyText(const AtomString& propertyName);
     RefPtr<CSSValue> customPropertyValue(const AtomString& propertyName);
 

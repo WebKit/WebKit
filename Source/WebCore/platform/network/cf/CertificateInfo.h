@@ -73,6 +73,16 @@ public:
 #endif
     }
 
+    bool operator==(const CertificateInfo& other) const
+    {
+#if PLATFORM(COCOA)
+        return trust() == other.trust();
+#elif PLATFORM(WIN)
+        return certificateChain() == other.certificateChain();
+#endif
+    }
+    bool operator!=(const CertificateInfo& other) const { return !(*this == other); }
+
 #if PLATFORM(COCOA)
     WEBCORE_EXPORT static RetainPtr<CFArrayRef> certificateChainFromSecTrust(SecTrustRef);
     WEBCORE_EXPORT static RetainPtr<SecTrustRef> secTrustFromCertificateChain(CFArrayRef);

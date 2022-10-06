@@ -36,7 +36,9 @@ GigacageAlignedMemoryAllocator::GigacageAlignedMemoryAllocator(Gigacage::Kind ki
 {
 }
 
-GigacageAlignedMemoryAllocator::~GigacageAlignedMemoryAllocator() = default;
+GigacageAlignedMemoryAllocator::~GigacageAlignedMemoryAllocator()
+{
+}
 
 void* GigacageAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
 {

@@ -27,12 +27,13 @@
 #define WKCertificateInfo_h
 
 #include <WebKit/WKBase.h>
+#include <WebKit/WKDeprecated.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKCertificateInfoGetTypeID();
+WK_EXPORT WKTypeID WKCertificateInfoGetTypeID() WK_C_API_DEPRECATED;
 
 #ifdef __cplusplus
 }

@@ -480,15 +480,23 @@ private:
         struct BlockData {
             WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-            BlockData() = default;
+            BlockData()
+                : parent(nullptr)
+                , preNumber(UINT_MAX)
+                , semiNumber(UINT_MAX)
+                , ancestor(nullptr)
+                , label(nullptr)
+                , dom(nullptr)
+            {
+            }
         
-            typename Graph::Node parent { nullptr };
-            unsigned preNumber { UINT_MAX };
-            unsigned semiNumber { UINT_MAX };
-            typename Graph::Node ancestor { nullptr };
-            typename Graph::Node label { nullptr };
+            typename Graph::Node parent;
+            unsigned preNumber;
+            unsigned semiNumber;
+            typename Graph::Node ancestor;
+            typename Graph::Node label;
             Vector<typename Graph::Node> bucket;
-            typename Graph::Node dom { nullptr };
+            typename Graph::Node dom;
         };
     
         Graph& m_graph;
@@ -730,13 +738,18 @@ private:
     struct BlockData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-        BlockData() = default;
-
-        Vector<typename Graph::Node> idomKids;
-        typename Graph::Node idomParent { nullptr };
+        BlockData()
+            : idomParent(nullptr)
+            , preNumber(UINT_MAX)
+            , postNumber(UINT_MAX)
+        {
+        }
         
-        unsigned preNumber { UINT_MAX };
-        unsigned postNumber { UINT_MAX };
+        Vector<typename Graph::Node> idomKids;
+        typename Graph::Node idomParent;
+        
+        unsigned preNumber;
+        unsigned postNumber;
     };
     
     Graph& m_graph;

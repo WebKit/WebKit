@@ -91,7 +91,8 @@ public:
             , executable(executable)
         { }
 
-        StackFrame() = default;
+        StackFrame()
+        { }
 
         FrameType frameType { FrameType::Unknown };
         const void* cCodePC { nullptr };
@@ -167,7 +168,8 @@ public:
     struct StackTrace {
         Seconds timestamp;
         Vector<StackFrame> frames;
-        StackTrace() = default;
+        StackTrace()
+        { }
         StackTrace(StackTrace&& other)
             : timestamp(other.timestamp)
             , frames(WTFMove(other.frames))
@@ -209,8 +211,8 @@ private:
     void takeSample(Seconds& stackTraceProcessingTime) WTF_REQUIRES_LOCK(m_lock);
 
     Lock m_lock;
-    bool m_isPaused WTF_GUARDED_BY_LOCK(m_lock) { false };
-    bool m_isShutDown WTF_GUARDED_BY_LOCK(m_lock) { false };
+    bool m_isPaused WTF_GUARDED_BY_LOCK(m_lock);
+    bool m_isShutDown WTF_GUARDED_BY_LOCK(m_lock);
     bool m_needsReportAtExit { false };
     VM& m_vm;
     WeakRandom m_weakRandom;

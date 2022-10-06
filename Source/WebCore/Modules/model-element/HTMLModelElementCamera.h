@@ -33,37 +33,7 @@ struct HTMLModelElementCamera {
     double pitch { 0 };
     double yaw { 0 };
     double scale { 1 };
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<HTMLModelElementCamera> decode(Decoder&);
 };
-
-template<class Encoder> void HTMLModelElementCamera::encode(Encoder& encoder) const
-{
-    encoder << pitch;
-    encoder << yaw;
-    encoder << scale;
-}
-
-template<class Decoder> std::optional<HTMLModelElementCamera> HTMLModelElementCamera::decode(Decoder& decoder)
-{
-    std::optional<double> pitch;
-    decoder >> pitch;
-    if (!pitch)
-        return std::nullopt;
-
-    std::optional<double> yaw;
-    decoder >> yaw;
-    if (!yaw)
-        return std::nullopt;
-
-    std::optional<double> scale;
-    decoder >> scale;
-    if (!scale)
-        return std::nullopt;
-
-    return { { *pitch, *yaw, *scale } };
-}
 
 } // namespace WebCore
 

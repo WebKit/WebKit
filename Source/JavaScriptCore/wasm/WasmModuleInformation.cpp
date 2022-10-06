@@ -37,6 +37,8 @@ ModuleInformation::ModuleInformation()
 {
 }
 
+ModuleInformation::~ModuleInformation() { }
+
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)

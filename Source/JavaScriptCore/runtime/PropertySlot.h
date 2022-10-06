@@ -366,7 +366,6 @@ private:
     JS_EXPORT_PRIVATE JSValue customGetter(VM&, PropertyName) const;
 
     union Data {
-        // NOLINTNEXTLINE
         Data() { } // Needed because of GetValueFunc and PutValueFunc.
         EncodedJSValue value;
         struct {

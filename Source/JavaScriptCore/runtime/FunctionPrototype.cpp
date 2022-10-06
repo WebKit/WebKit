@@ -169,6 +169,8 @@ class RetrieveCallerFunctionFunctor {
 public:
     RetrieveCallerFunctionFunctor(JSFunction* functionObj)
         : m_targetCallee(functionObj)
+        , m_hasFoundFrame(false)
+        , m_hasSkippedToCallerFrame(false)
         , m_result(jsNull())
     {
     }
@@ -206,8 +208,8 @@ public:
 
 private:
     JSObject* m_targetCallee;
-    mutable bool m_hasFoundFrame { false };
-    mutable bool m_hasSkippedToCallerFrame { false };
+    mutable bool m_hasFoundFrame;
+    mutable bool m_hasSkippedToCallerFrame;
     mutable JSValue m_result;
 };
 

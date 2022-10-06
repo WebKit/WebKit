@@ -282,6 +282,9 @@ WebProcess& WebProcess::singleton()
 
 WebProcess::WebProcess()
     : m_webLoaderStrategy(*new WebLoaderStrategy)
+#if PLATFORM(COCOA) && USE(LIBWEBRTC) && ENABLE(WEB_CODECS)
+    , m_remoteVideoCodecFactory(*this)
+#endif
     , m_cacheStorageProvider(WebCacheStorageProvider::create())
     , m_broadcastChannelRegistry(WebBroadcastChannelRegistry::create())
     , m_cookieJar(WebCookieJar::create())

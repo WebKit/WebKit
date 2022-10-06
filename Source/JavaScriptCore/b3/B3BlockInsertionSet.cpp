@@ -40,7 +40,7 @@ BlockInsertionSet::BlockInsertionSet(Procedure &proc)
 {
 }
 
-BlockInsertionSet::~BlockInsertionSet() = default;
+BlockInsertionSet::~BlockInsertionSet() { }
 
 BasicBlock* BlockInsertionSet::splitForward(
     BasicBlock* block, unsigned& valueIndex, InsertionSet* insertionSet, double frequency)

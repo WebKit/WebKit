@@ -68,7 +68,7 @@ template<typename T> inline T* DoublyLinkedListNode<T>::next() const
 template<typename T>
 class DoublyLinkedList {
 public:
-    DoublyLinkedList() = default;
+    DoublyLinkedList();
     
     bool isEmpty() const;
     size_t size() const; // This is O(n).
@@ -85,9 +85,15 @@ public:
     void append(DoublyLinkedList<T>&);
 
 private:
-    T* m_head { nullptr };
-    T* m_tail { nullptr };
+    T* m_head;
+    T* m_tail;
 };
+
+template<typename T> inline DoublyLinkedList<T>::DoublyLinkedList()
+    : m_head(0)
+    , m_tail(0)
+{
+}
 
 template<typename T> inline bool DoublyLinkedList<T>::isEmpty() const
 {

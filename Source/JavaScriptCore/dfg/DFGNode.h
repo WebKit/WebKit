@@ -150,10 +150,15 @@ struct DataViewData {
 static_assert(sizeof(DataViewData) == sizeof(uint64_t));
 
 struct BranchTarget {
-    BranchTarget() = default;
-
+    BranchTarget()
+        : block(nullptr)
+        , count(PNaN)
+    {
+    }
+    
     explicit BranchTarget(BasicBlock* block)
         : block(block)
+        , count(PNaN)
     {
     }
     
@@ -165,8 +170,8 @@ struct BranchTarget {
     
     void dump(PrintStream&) const;
     
-    BasicBlock* block { nullptr };
-    float count { NAN };
+    BasicBlock* block;
+    float count;
 };
 
 struct BranchData {
@@ -205,7 +210,9 @@ struct BranchData {
 // one-to-many mapping. So we may have duplicate targets, but never duplicate
 // values.
 struct SwitchCase {
-    SwitchCase() = default;
+    SwitchCase()
+    {
+    }
     
     SwitchCase(LazyJSValue value, BasicBlock* target)
         : value(value)
@@ -229,13 +236,18 @@ struct SwitchData {
     // Initializes most fields to obviously invalid values. Anyone
     // constructing this should make sure to initialize everything they
     // care about manually.
-    SwitchData() = default;
+    SwitchData()
+        : switchTableIndex(UINT_MAX)
+        , kind(static_cast<SwitchKind>(-1))
+        , didUseJumpTable(false)
+    {
+    }
     
     Vector<SwitchCase> cases;
     BranchTarget fallThrough;
-    size_t switchTableIndex { UINT_MAX };
-    SwitchKind kind { static_cast<SwitchKind>(-1) };
-    bool didUseJumpTable { false };
+    size_t switchTableIndex;
+    SwitchKind kind;
+    bool didUseJumpTable;
 };
 
 struct EntrySwitchData {
@@ -257,8 +269,11 @@ struct LoadVarargsData {
 };
 
 struct StackAccessData {
-    StackAccessData() = default;
-
+    StackAccessData()
+        : format(DeadFlush)
+    {
+    }
+    
     StackAccessData(Operand operand, FlushFormat format)
         : operand(operand)
         , format(format)
@@ -267,7 +282,7 @@ struct StackAccessData {
     
     Operand operand;
     VirtualRegister machineLocal;
-    FlushFormat format { DeadFlush };
+    FlushFormat format;
     
     FlushedAt flushedAt() { return FlushedAt(format, machineLocal); }
 };
@@ -296,11 +311,15 @@ public:
     
     enum VarArgTag { VarArg };
     
-    Node() = default;
+    Node() { }
     
     Node(NodeType op, NodeOrigin nodeOrigin, const AdjacencyList& children)
         : origin(nodeOrigin)
         , children(children)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
+        , owner(nullptr)
     {
         m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
@@ -310,6 +329,10 @@ public:
     Node(NodeType op, NodeOrigin nodeOrigin, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : origin(nodeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
+        , owner(nullptr)
     {
         m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
@@ -320,6 +343,10 @@ public:
     Node(NodeFlags result, NodeType op, NodeOrigin nodeOrigin, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : origin(nodeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
+        , owner(nullptr)
     {
         m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
@@ -331,7 +358,11 @@ public:
     Node(NodeType op, NodeOrigin nodeOrigin, OpInfo imm, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : origin(nodeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
         , m_opInfo(imm.m_value)
+        , owner(nullptr)
     {
         m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
@@ -342,7 +373,11 @@ public:
     Node(NodeFlags result, NodeType op, NodeOrigin nodeOrigin, OpInfo imm, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : origin(nodeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
         , m_opInfo(imm.m_value)
+        , owner(nullptr)
     {
         m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
@@ -354,8 +389,12 @@ public:
     Node(NodeType op, NodeOrigin nodeOrigin, OpInfo imm1, OpInfo imm2, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : origin(nodeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(imm2.m_value)
+        , owner(nullptr)
     {
         m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
@@ -366,8 +405,12 @@ public:
     Node(VarArgTag, NodeType op, NodeOrigin nodeOrigin, OpInfo imm1, OpInfo imm2, unsigned firstChild, unsigned numChildren)
         : origin(nodeOrigin)
         , children(AdjacencyList::Variable, firstChild, numChildren)
+        , m_virtualRegister(VirtualRegister())
+        , m_refCount(1)
+        , m_prediction(SpecNone)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(imm2.m_value)
+        , owner(nullptr)
     {
         m_misc.replacement = nullptr;
         setOpAndDefaultFlags(op);
@@ -1664,7 +1707,10 @@ public:
     
     class SuccessorsIterable {
     public:
-        SuccessorsIterable() = default;
+        SuccessorsIterable()
+            : m_terminal(nullptr)
+        {
+        }
         
         SuccessorsIterable(Node* terminal)
             : m_terminal(terminal)
@@ -1673,8 +1719,12 @@ public:
         
         class iterator {
         public:
-            iterator() = default;
-
+            iterator()
+                : m_terminal(nullptr)
+                , m_index(UINT_MAX)
+            {
+            }
+            
             iterator(Node* terminal, unsigned index)
                 : m_terminal(terminal)
                 , m_index(index)
@@ -1702,8 +1752,8 @@ public:
                 return !(*this == other);
             }
         private:
-            Node* m_terminal { nullptr };
-            unsigned m_index { UINT_MAX };
+            Node* m_terminal;
+            unsigned m_index;
         };
         
         iterator begin()
@@ -1721,7 +1771,7 @@ public:
         BasicBlock* operator[](size_t index) const { return at(index); }
         
     private:
-        Node* m_terminal { nullptr };
+        Node* m_terminal;
     };
     
     SuccessorsIterable successors()
@@ -3309,7 +3359,7 @@ private:
     // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
-    unsigned m_refCount { 1 };
+    unsigned m_refCount;
     // The prediction ascribed to this node after propagation.
     SpeculatedType m_prediction { SpecNone };
     // Immediate values, accesses type-checked via accessors above.
@@ -3453,7 +3503,7 @@ private:
         unsigned epoch;
     } m_misc;
 public:
-    BasicBlock* owner { nullptr };
+    BasicBlock* owner;
 };
 
 // Uncomment this to log NodeSet operations.

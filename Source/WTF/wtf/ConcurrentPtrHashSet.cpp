@@ -33,6 +33,10 @@ ConcurrentPtrHashSet::ConcurrentPtrHashSet()
     initialize();
 }
 
+ConcurrentPtrHashSet::~ConcurrentPtrHashSet()
+{
+}
+
 void ConcurrentPtrHashSet::deleteOldTables()
 {
     // This is just in case. It does not make it OK for other threads to call add(). But it might prevent

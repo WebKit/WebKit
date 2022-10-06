@@ -39,7 +39,7 @@ public:
         Shadow
     };
     
-    NodeFlowProjection() = default;
+    NodeFlowProjection() { }
     
     NodeFlowProjection(Node* node)
         : m_word(bitwise_cast<uintptr_t>(node))

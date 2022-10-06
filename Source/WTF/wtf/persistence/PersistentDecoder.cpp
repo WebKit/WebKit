@@ -36,6 +36,10 @@ Decoder::Decoder(Span<const uint8_t> span)
 {
 }
 
+Decoder::~Decoder()
+{
+}
+
 bool Decoder::bufferIsLargeEnoughToContain(size_t size) const
 {
     return size <= static_cast<size_t>(m_buffer.end() - m_bufferPosition);

@@ -151,7 +151,7 @@ struct ValueProfileBase {
 };
 
 struct MinimalValueProfile : public ValueProfileBase<0> {
-    MinimalValueProfile() = default;
+    MinimalValueProfile(): ValueProfileBase<0>() { }
 };
 
 template<unsigned logNumberOfBucketsArgument>
@@ -165,7 +165,7 @@ struct ValueProfileWithLogNumberOfBuckets : public ValueProfileBase<1 << logNumb
 };
 
 struct ValueProfile : public ValueProfileWithLogNumberOfBuckets<0> {
-    ValueProfile() = default;
+    ValueProfile() : ValueProfileWithLogNumberOfBuckets<0>() { }
     static ptrdiff_t offsetOfFirstBucket() { return OBJECT_OFFSETOF(ValueProfile, m_buckets[0]); }
 };
 

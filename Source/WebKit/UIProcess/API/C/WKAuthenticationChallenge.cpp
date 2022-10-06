@@ -29,7 +29,6 @@
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "WKAPICast.h"
-#include "WebCertificateInfo.h"
 #include "WebCredential.h"
 #include "WebProtectionSpace.h"
 

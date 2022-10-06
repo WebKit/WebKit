@@ -58,7 +58,9 @@ DesiredTransitions::DesiredTransitions(CodeBlock* codeBlock)
 {
 }
 
-DesiredTransitions::~DesiredTransitions() = default;
+DesiredTransitions::~DesiredTransitions()
+{
+}
 
 void DesiredTransitions::addLazily(CodeBlock* codeOriginOwner, Structure* oldStructure, Structure* newStructure)
 {

@@ -92,17 +92,11 @@ struct CacheInfos {
     Vector<CacheInfo> infos;
     uint64_t updateCounter;
 
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<CacheInfos> decode(Decoder&);
-
     CacheInfos isolatedCopy() const & { return { crossThreadCopy(infos), updateCounter }; }
     CacheInfos isolatedCopy() && { return { crossThreadCopy(WTFMove(infos)), updateCounter }; }
 };
 
 struct CacheIdentifierOperationResult {
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<CacheIdentifierOperationResult> decode(Decoder&);
-
     DOMCacheIdentifier identifier;
     // True in case storing cache list on the filesystem failed.
     bool hadStorageError { false };
@@ -126,62 +120,6 @@ using RecordsCallback = CompletionHandler<void(RecordsOrError&&)>;
 
 using CompletionCallback = CompletionHandler<void(std::optional<Error>&&)>;
 
-template<class Encoder> inline void CacheInfos::encode(Encoder& encoder) const
-{
-    encoder << infos;
-    encoder << updateCounter;
-}
-
-template<class Decoder> inline std::optional<CacheInfos> CacheInfos::decode(Decoder& decoder)
-{
-    std::optional<Vector<CacheInfo>> infos;
-    decoder >> infos;
-    if (!infos)
-        return std::nullopt;
-
-    std::optional<uint64_t> updateCounter;
-    decoder >> updateCounter;
-    if (!updateCounter)
-        return std::nullopt;
-
-    return {{ WTFMove(*infos), WTFMove(*updateCounter) }};
-}
-
-template<class Encoder> inline void CacheIdentifierOperationResult::encode(Encoder& encoder) const
-{
-    encoder << identifier;
-    encoder << hadStorageError;
-}
-
-template<class Decoder> inline std::optional<CacheIdentifierOperationResult> CacheIdentifierOperationResult::decode(Decoder& decoder)
-{
-    std::optional<DOMCacheIdentifier> identifier;
-    decoder >> identifier;
-    if (!identifier)
-        return std::nullopt;
-
-    std::optional<bool> hadStorageError;
-    decoder >> hadStorageError;
-    if (!hadStorageError)
-        return std::nullopt;
-    return {{ WTFMove(*identifier), WTFMove(*hadStorageError) }};
-}
-
 } // namespace DOMCacheEngine
 
 } // namespace WebCore
-
-namespace WTF {
-template<> struct EnumTraits<WebCore::DOMCacheEngine::Error> {
-    using values = EnumValues<
-        WebCore::DOMCacheEngine::Error,
-        WebCore::DOMCacheEngine::Error::NotImplemented,
-        WebCore::DOMCacheEngine::Error::ReadDisk,
-        WebCore::DOMCacheEngine::Error::WriteDisk,
-        WebCore::DOMCacheEngine::Error::QuotaExceeded,
-        WebCore::DOMCacheEngine::Error::Internal,
-        WebCore::DOMCacheEngine::Error::Stopped,
-        WebCore::DOMCacheEngine::Error::CORP
-    >;
-};
-}

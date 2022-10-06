@@ -102,7 +102,7 @@ public:
     
 private:
     Graph& m_graph;
-    unsigned m_numIndices { 0 };
+    unsigned m_numIndices;
     Vector<unsigned, 0, UnsafeVectorOverflow> m_nodeIndexToShadowIndex;
     Vector<unsigned, 0, UnsafeVectorOverflow> m_shadowIndexToNodeIndex;
 };

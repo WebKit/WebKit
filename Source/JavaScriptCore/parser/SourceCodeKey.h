@@ -71,7 +71,9 @@ class SourceCodeKey {
     friend class CachedSourceCodeKey;
 
 public:
-    SourceCodeKey() = default;
+    SourceCodeKey()
+    {
+    }
 
     SourceCodeKey(
         const UnlinkedSourceCode& sourceCode, const String& name, SourceCodeType codeType, JSParserStrictMode strictMode, 

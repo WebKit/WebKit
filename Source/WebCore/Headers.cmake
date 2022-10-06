@@ -261,6 +261,21 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/mediarecorder/MediaRecorderProvider.h
 
+    Modules/mediasession/NavigatorMediaSession.h
+    Modules/mediasession/MediaSession.h
+    Modules/mediasession/MediaImage.h
+    Modules/mediasession/MediaMetadata.h
+    Modules/mediasession/MediaSessionActionDetails.h
+    Modules/mediasession/MediaPositionState.h
+    Modules/mediasession/MediaSessionActionHandler.h
+    Modules/mediasession/MediaSessionPlaybackState.h
+    Modules/mediasession/MediaSessionCoordinatorPrivate.h
+    Modules/mediasession/MediaSessionCoordinatorState.h
+    Modules/mediasession/MediaSessionReadyState.h
+    Modules/mediasession/MediaSessionCoordinator.h
+    Modules/mediasession/MediaMetadataInit.h
+    Modules/mediasession/MediaSessionAction.h
+
     Modules/mediasource/SampleMap.h
 
     Modules/mediastream/DetachedRTCDataChannel.h

@@ -34,7 +34,7 @@ class JSCell;
 
 class VisitRaceKey {
 public:
-    VisitRaceKey() = default;
+    VisitRaceKey() { }
     
     VisitRaceKey(JSCell* cell, const char* raceName)
         : m_cell(cell)

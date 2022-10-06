@@ -35,7 +35,7 @@ template<typename CharacterType>
 class CodePointIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ALWAYS_INLINE CodePointIterator() = default;
+    ALWAYS_INLINE CodePointIterator() { }
     ALWAYS_INLINE CodePointIterator(const CharacterType* begin, const CharacterType* end)
         : m_begin(begin)
         , m_end(end)

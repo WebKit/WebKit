@@ -61,7 +61,10 @@ class ExitTimeObjectMaterialization;
 
 class ExitValue {
 public:
-    ExitValue() = default;
+    ExitValue()
+        : m_kind(InvalidExitValue)
+    {
+    }
     
     bool operator!() const { return m_kind == InvalidExitValue; }
     
@@ -212,7 +215,7 @@ public:
     void validateReferences(const TrackedReferences&) const;
     
 private:
-    ExitValueKind m_kind { InvalidExitValue };
+    ExitValueKind m_kind;
     union UnionType {
         ExitArgumentRepresentation argument;
         EncodedJSValue constant;

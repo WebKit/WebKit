@@ -33,7 +33,9 @@
 
 namespace JSC { namespace B3 {
 
-Const64Value::~Const64Value() = default;
+Const64Value::~Const64Value()
+{
+}
 
 Value* Const64Value::negConstant(Procedure& proc) const
 {

@@ -208,7 +208,9 @@ public:
     
 private:
     struct Override {
-        Override() = default;
+        Override()
+        {
+        }
 
         static Override constant(BasicBlock* block, int64_t value)
         {

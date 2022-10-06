@@ -50,7 +50,7 @@ public:
     typedef T ValueType;
     typedef ValueType* PtrType;
 
-    GRefPtr() = default;
+    GRefPtr() : m_ptr(0) { }
 
     GRefPtr(T* ptr)
         : m_ptr(ptr)
@@ -130,7 +130,7 @@ private:
     // Adopting constructor.
     GRefPtr(T* ptr, GRefPtrAdoptType) : m_ptr(ptr) {}
 
-    T* m_ptr { nullptr };
+    T* m_ptr;
 };
 
 template <typename T> inline GRefPtr<T>& GRefPtr<T>::operator=(const GRefPtr<T>& o)

@@ -42,7 +42,8 @@ inline void HandleBlock::destroy(HandleBlock* block)
 }
 
 inline HandleBlock::HandleBlock(HandleSet* handleSet)
-    : m_handleSet(handleSet)
+    : DoublyLinkedListNode<HandleBlock>()
+    , m_handleSet(handleSet)
 {
 }
 

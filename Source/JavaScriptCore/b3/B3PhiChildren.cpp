@@ -46,7 +46,10 @@ PhiChildren::PhiChildren(Procedure& proc)
     }
 }
 
-PhiChildren::~PhiChildren() = default;
+PhiChildren::~PhiChildren()
+{
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

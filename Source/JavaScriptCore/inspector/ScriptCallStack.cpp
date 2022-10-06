@@ -44,7 +44,9 @@ Ref<ScriptCallStack> ScriptCallStack::create(Vector<ScriptCallFrame>&& frames, b
     return adoptRef(*new ScriptCallStack(WTFMove(frames), truncated, parentStackTrace));
 }
 
-ScriptCallStack::ScriptCallStack() = default;
+ScriptCallStack::ScriptCallStack()
+{
+}
 
 ScriptCallStack::ScriptCallStack(Vector<ScriptCallFrame>&& frames, bool truncated, AsyncStackTrace* parentStackTrace)
     : m_frames(WTFMove(frames))
@@ -54,7 +56,9 @@ ScriptCallStack::ScriptCallStack(Vector<ScriptCallFrame>&& frames, bool truncate
     ASSERT(m_frames.size() < maxCallStackSizeToCapture);
 }
 
-ScriptCallStack::~ScriptCallStack() = default;
+ScriptCallStack::~ScriptCallStack()
+{
+}
 
 const ScriptCallFrame& ScriptCallStack::at(size_t index) const
 {

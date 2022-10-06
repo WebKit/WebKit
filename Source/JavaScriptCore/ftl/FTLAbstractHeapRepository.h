@@ -281,7 +281,9 @@ public:
 private:
 
     struct HeapForValue {
-        HeapForValue() = default;
+        HeapForValue()
+        {
+        }
 
         HeapForValue(const AbstractHeap* heap, B3::Value* value)
             : heap(heap)

@@ -56,7 +56,7 @@ private:
     void grow();
 
     HeapCell** m_roots;
-    size_t m_size { 0 };
+    size_t m_size;
     size_t m_capacity;
     Heap& m_heap;
     HeapCell* m_inlineRoots[inlineCapacity];

@@ -86,7 +86,9 @@ public:
     using AddResult = typename HashTableType::AddResult;
 
 public:
-    HashMap() = default;
+    HashMap()
+    {
+    }
 
     HashMap(std::initializer_list<KeyValuePairType> initializerList)
     {

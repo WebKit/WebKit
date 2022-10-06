@@ -29,8 +29,11 @@ namespace WTF {
 
 class RawPointer {
 public:
-    RawPointer() = default;
-
+    RawPointer()
+        : m_value(nullptr)
+    {
+    }
+    
     explicit RawPointer(void* value)
         : m_value(value)
     {
@@ -50,7 +53,7 @@ public:
     const void* value() const { return m_value; }
     
 private:
-    const void* m_value { nullptr };
+    const void* m_value;
 };
 
 } // namespace WTF

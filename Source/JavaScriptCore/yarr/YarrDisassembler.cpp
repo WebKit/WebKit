@@ -52,6 +52,10 @@ YarrDisassembler::YarrDisassembler(YarrJITInfo* yarrJITInfo)
 {
 }
 
+YarrDisassembler::~YarrDisassembler()
+{
+}
+
 void YarrDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
     m_codeStart = linkBuffer.entrypoint<DisassemblyPtrTag>().untaggedPtr();

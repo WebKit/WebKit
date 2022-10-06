@@ -69,7 +69,6 @@ typedef void* PlatformBundle;
 #endif
 
 class InjectedBundleScriptWorld;
-class WebCertificateInfo;
 class WebConnection;
 class WebFrame;
 class WebPage;

@@ -5454,38 +5454,6 @@ template<> inline CSSPrimitiveValue::operator FontVariantCaps() const
     return FontVariantCaps::Normal;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontVariantAlternates alternates)
-    : CSSValue(PrimitiveClass)
-{
-    setPrimitiveUnitType(CSSUnitType::CSS_VALUE_ID);
-    switch (alternates) {
-    case FontVariantAlternates::Normal:
-        m_value.valueID = CSSValueNormal;
-        break;
-    case FontVariantAlternates::HistoricalForms:
-        m_value.valueID = CSSValueHistoricalForms;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-}
-
-template<> inline CSSPrimitiveValue::operator FontVariantAlternates() const
-{
-    ASSERT(isValueID());
-    switch (m_value.valueID) {
-    case CSSValueNormal:
-        return FontVariantAlternates::Normal;
-    case CSSValueHistoricalForms:
-        return FontVariantAlternates::HistoricalForms;
-    default:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return FontVariantAlternates::Normal;
-}
-
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(FontOpticalSizing sizing)
     : CSSValue(PrimitiveClass)
 {

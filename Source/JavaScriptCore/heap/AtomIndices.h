@@ -30,8 +30,8 @@
 namespace JSC {
 
 struct AtomIndices {
-    AtomIndices() = default;
-
+    AtomIndices() { }
+    
     AtomIndices(HeapCell* cell)
         : block(MarkedBlock::blockFor(cell))
         , blockIndex(block->handle().index())

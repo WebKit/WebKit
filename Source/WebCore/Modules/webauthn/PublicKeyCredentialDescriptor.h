@@ -37,31 +37,7 @@ struct PublicKeyCredentialDescriptor {
     PublicKeyCredentialType type;
     BufferSource id;
     Vector<AuthenticatorTransport> transports;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PublicKeyCredentialDescriptor> decode(Decoder&);
 };
-
-template<class Encoder>
-void PublicKeyCredentialDescriptor::encode(Encoder& encoder) const
-{
-    encoder << type;
-    encoder << id;
-    encoder << transports;
-}
-
-template<class Decoder>
-std::optional<PublicKeyCredentialDescriptor> PublicKeyCredentialDescriptor::decode(Decoder& decoder)
-{
-    PublicKeyCredentialDescriptor result;
-    if (!decoder.decode(result.type))
-        return std::nullopt;
-    if (!decoder.decode(result.id))
-        return std::nullopt;
-    if (!decoder.decode(result.transports))
-        return std::nullopt;
-    return result;
-}
 
 } // namespace WebCore
 

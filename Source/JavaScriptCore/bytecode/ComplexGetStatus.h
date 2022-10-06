@@ -74,9 +74,10 @@ public:
         TakesSlowPath,
         Inlineable
     };
-
+    
     ComplexGetStatus()
-        : m_offset(invalidOffset)
+        : m_kind(ShouldSkip)
+        , m_offset(invalidOffset)
     {
     }
     
@@ -100,7 +101,7 @@ public:
     const ObjectPropertyConditionSet& conditionSet() const { return m_conditionSet; }
     
 private:
-    Kind m_kind { ShouldSkip };
+    Kind m_kind;
     PropertyOffset m_offset;
     ObjectPropertyConditionSet m_conditionSet;
 };

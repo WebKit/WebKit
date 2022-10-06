@@ -36,7 +36,7 @@ namespace WTF {
 namespace double_conversion {
 
 Bignum::Bignum()
-    : bigits_buffer_(), bigits_(bigits_buffer_, kBigitCapacity) {
+    : bigits_buffer_(), bigits_(bigits_buffer_, kBigitCapacity), used_digits_(0), exponent_(0) {
   for (int i = 0; i < kBigitCapacity; ++i) {
     bigits_[i] = 0;
   }

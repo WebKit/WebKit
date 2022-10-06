@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/EnumTraits.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -43,49 +43,6 @@ enum class SpeechRecognitionErrorType : uint8_t {
 struct SpeechRecognitionError {
     SpeechRecognitionErrorType type;
     String message;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<SpeechRecognitionError> decode(Decoder&);
 };
-
-template<class Encoder>
-void SpeechRecognitionError::encode(Encoder& encoder) const
-{
-    encoder << type << message;
-}
-
-template<class Decoder>
-std::optional<SpeechRecognitionError> SpeechRecognitionError::decode(Decoder& decoder)
-{
-    std::optional<SpeechRecognitionErrorType> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    std::optional<String> message;
-    decoder >> message;
-    if (!message)
-        return std::nullopt;
-    
-    return SpeechRecognitionError { WTFMove(*type), WTFMove(*message) };
-}
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SpeechRecognitionErrorType> {
-    using values = EnumValues<
-        WebCore::SpeechRecognitionErrorType,
-        WebCore::SpeechRecognitionErrorType::NoSpeech,
-        WebCore::SpeechRecognitionErrorType::Aborted,
-        WebCore::SpeechRecognitionErrorType::AudioCapture,
-        WebCore::SpeechRecognitionErrorType::Network,
-        WebCore::SpeechRecognitionErrorType::NotAllowed,
-        WebCore::SpeechRecognitionErrorType::ServiceNotAllowed,
-        WebCore::SpeechRecognitionErrorType::BadGrammar,
-        WebCore::SpeechRecognitionErrorType::LanguageNotSupported
-    >;
-};
-
-} // namespace WTF

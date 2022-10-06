@@ -303,9 +303,14 @@ std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
     ASSERT(m_overriddenViewport.isZero());
     ASSERT(m_context);
 
-    // Root <svg> element lengths are resolved against the top level viewport.
+    // Root <svg> element lengths are resolved against the top level viewport,
+    // however excluding 'zoom' induced scaling. Length within the <svg> subtree
+    // shall be resolved against the 'vanilla' viewport size, excluding zoom, because
+    // the (anonymous) RenderSVGViewportContainer (first and only child of RenderSVGRoot)
+    // applies zooming/panning for the whole SVG subtree as affine transform. Therefore
+    // any length within the SVG subtree needs to exclude the 'zoom' information.
     if (m_context->isOutermostSVGSVGElement())
-        return downcast<SVGSVGElement>(*m_context).currentViewportSize();
+        return downcast<SVGSVGElement>(*m_context).currentViewportSizeExcludingZoom();
 
     // Take size from nearest viewport element.
     RefPtr viewportElement = m_context->viewportElement();
@@ -315,7 +320,7 @@ std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
     const SVGSVGElement& svg = downcast<SVGSVGElement>(*viewportElement);
     auto viewportSize = svg.currentViewBoxRect().size();
     if (viewportSize.isEmpty())
-        viewportSize = svg.currentViewportSize();
+        viewportSize = svg.currentViewportSizeExcludingZoom();
 
     return viewportSize;
 }

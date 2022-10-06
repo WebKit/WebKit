@@ -37,8 +37,8 @@ class OpaqueByproduct {
     WTF_MAKE_NONCOPYABLE(OpaqueByproduct);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OpaqueByproduct() = default;
-    virtual ~OpaqueByproduct() = default;
+    OpaqueByproduct() { }
+    virtual ~OpaqueByproduct() { }
 
     virtual void dump(PrintStream&) const = 0;
 };

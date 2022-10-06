@@ -161,10 +161,10 @@ private:
     WriteBarrierStructureID m_boundFunctionStructureID;
     WriteBarrier<ExecutableBase> m_executable;
     std::unique_ptr<AllocationProfileClearingWatchpoint> m_allocationProfileClearingWatchpoint;
-    bool m_hasReifiedLength : 1 { false };
-    bool m_hasReifiedName : 1 { false };
-    bool m_hasModifiedLengthForNonHostFunction : 1 { false };
-    bool m_hasModifiedNameForNonHostFunction : 1 { false };
+    bool m_hasReifiedLength : 1;
+    bool m_hasReifiedName : 1;
+    bool m_hasModifiedLengthForNonHostFunction : 1;
+    bool m_hasModifiedNameForNonHostFunction : 1;
 };
 
 class FunctionRareData::AllocationProfileClearingWatchpoint final : public Watchpoint {

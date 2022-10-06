@@ -38,6 +38,10 @@ IsoTLSEntry::IsoTLSEntry(size_t size)
 {
 }
 
+IsoTLSEntry::~IsoTLSEntry()
+{
+}
+
 } // namespace bmalloc
 
 #endif

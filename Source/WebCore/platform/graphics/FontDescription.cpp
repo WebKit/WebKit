@@ -37,7 +37,8 @@
 namespace WebCore {
 
 FontDescription::FontDescription()
-    : m_fontPalette({ FontPalette::Type::Normal, nullAtom() })
+    : m_variantAlternates(FontCascadeDescription::initialVariantAlternates())
+    , m_fontPalette({ FontPalette::Type::Normal, nullAtom() })
     , m_fontSelectionRequest { FontCascadeDescription::initialWeight(), FontCascadeDescription::initialStretch(), FontCascadeDescription::initialItalic() }
     , m_orientation(static_cast<unsigned>(FontOrientation::Horizontal))
     , m_nonCJKGlyphOrientation(static_cast<unsigned>(NonCJKGlyphOrientation::Mixed))
@@ -59,7 +60,6 @@ FontDescription::FontDescription()
     , m_variantNumericFraction(static_cast<unsigned>(FontVariantNumericFraction::Normal))
     , m_variantNumericOrdinal(static_cast<unsigned>(FontVariantNumericOrdinal::Normal))
     , m_variantNumericSlashedZero(static_cast<unsigned>(FontVariantNumericSlashedZero::Normal))
-    , m_variantAlternates(static_cast<unsigned>(FontVariantAlternates::Normal))
     , m_variantEastAsianVariant(static_cast<unsigned>(FontVariantEastAsianVariant::Normal))
     , m_variantEastAsianWidth(static_cast<unsigned>(FontVariantEastAsianWidth::Normal))
     , m_variantEastAsianRuby(static_cast<unsigned>(FontVariantEastAsianRuby::Normal))

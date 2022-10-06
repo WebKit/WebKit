@@ -780,13 +780,13 @@ public:
     static ptrdiff_t offsetOfShouldAlwaysBeInlined() { return OBJECT_OFFSETOF(CodeBlock, m_shouldAlwaysBeInlined); }
 
 #if ENABLE(JIT)
-    unsigned m_capabilityLevelState : 2 { DFG::CapabilityLevelNotSet }; // DFG::CapabilityLevel
+    unsigned m_capabilityLevelState : 2; // DFG::CapabilityLevel
 #endif
 
-    bool m_didFailJITCompilation : 1 { false };
-    bool m_didFailFTLCompilation : 1 { false };
-    bool m_hasBeenCompiledWithFTL : 1 { false };
-    bool m_isJettisoned : 1 { false };
+    bool m_didFailJITCompilation : 1;
+    bool m_didFailFTLCompilation : 1;
+    bool m_hasBeenCompiledWithFTL : 1;
+    bool m_isJettisoned : 1;
 
     bool m_visitChildrenSkippedDueToOldAge { false };
 

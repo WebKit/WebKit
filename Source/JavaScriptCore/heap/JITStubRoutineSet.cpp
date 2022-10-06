@@ -32,7 +32,7 @@
 
 namespace JSC {
 
-JITStubRoutineSet::JITStubRoutineSet() = default;
+JITStubRoutineSet::JITStubRoutineSet() { }
 JITStubRoutineSet::~JITStubRoutineSet()
 {
     for (auto& entry : m_routines) {

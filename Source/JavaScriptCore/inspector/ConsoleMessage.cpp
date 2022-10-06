@@ -47,6 +47,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_type(type)
     , m_level(level)
     , m_message(message)
+    , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
     , m_timestamp(timestamp)
 {
@@ -72,6 +73,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_level(level)
     , m_message(message)
     , m_callStack(WTFMove(callStack))
+    , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
     , m_timestamp(timestamp)
 {
@@ -90,6 +92,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_message(message)
     , m_arguments(WTFMove(arguments))
     , m_callStack(WTFMove(callStack))
+    , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
     , m_timestamp(timestamp)
 {
@@ -107,6 +110,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_level(level)
     , m_message(message)
     , m_arguments(WTFMove(arguments))
+    , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
     , m_timestamp(timestamp)
 {
@@ -117,6 +121,7 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     : m_source(source)
     , m_type(type)
     , m_level(level)
+    , m_url()
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
     , m_timestamp(timestamp)
 {
@@ -152,7 +157,9 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
         m_message = m_jsonLogValues[0].value;
 }
 
-ConsoleMessage::~ConsoleMessage() = default;
+ConsoleMessage::~ConsoleMessage()
+{
+}
 
 void ConsoleMessage::autogenerateMetadata(JSC::JSGlobalObject* globalObject)
 {

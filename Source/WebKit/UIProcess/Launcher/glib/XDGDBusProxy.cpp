@@ -41,23 +41,6 @@
 
 namespace WebKit {
 
-CString XDGDBusProxy::makePath(const char* dbusAddress)
-{
-    if (!dbusAddress || !g_str_has_prefix(dbusAddress, "unix:"))
-        return { };
-
-    if (const char* path = strstr(dbusAddress, "path=")) {
-        path += strlen("path=");
-        const char* pathEnd = path;
-        while (*pathEnd && *pathEnd != ',')
-            pathEnd++;
-
-        return CString(path, pathEnd - path);
-    }
-
-    return { };
-}
-
 CString XDGDBusProxy::makeProxy(const char* proxyTemplate)
 {
     GUniquePtr<char> appRunDir(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, nullptr));
@@ -76,21 +59,18 @@ CString XDGDBusProxy::makeProxy(const char* proxyTemplate)
     return proxySocketTemplate.get();
 }
 
-std::optional<std::pair<CString, CString>> XDGDBusProxy::dbusSessionProxy(AllowPortals allowPortals)
+std::optional<CString> XDGDBusProxy::dbusSessionProxy(AllowPortals allowPortals)
 {
     if (!m_dbusSessionProxyPath.isNull())
-        return std::pair<CString, CString> { m_dbusSessionProxyPath, m_dbusSessionPath };
+        return m_dbusSessionProxyPath;
 
     const char* dbusAddress = g_getenv("DBUS_SESSION_BUS_ADDRESS");
-    m_dbusSessionPath = makePath(dbusAddress);
-    if (m_dbusSessionPath.isNull())
+    if (!dbusAddress)
         return std::nullopt;
 
     m_dbusSessionProxyPath = makeProxy("bus-proxy-XXXXXX");
-    if (m_dbusSessionProxyPath.isNull()) {
-        m_dbusSessionPath = { };
+    if (m_dbusSessionProxyPath.isNull())
         return std::nullopt;
-    }
 
     m_args.appendVector(Vector<CString> {
         CString(dbusAddress), m_dbusSessionProxyPath,
@@ -114,28 +94,25 @@ std::optional<std::pair<CString, CString>> XDGDBusProxy::dbusSessionProxy(AllowP
     if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_DBUS_PROXY_LOGGING"), "1"))
         m_args.append("--log");
 
-    return std::pair<CString, CString> { m_dbusSessionProxyPath, m_dbusSessionPath };
+    return m_dbusSessionProxyPath;
 }
 
-std::optional<std::pair<CString, CString>> XDGDBusProxy::accessibilityProxy()
+std::optional<CString> XDGDBusProxy::accessibilityProxy(const char* sandboxedAccessibilityBusPath)
 {
 #if ENABLE(ACCESSIBILITY)
     if (!m_accessibilityProxyPath.isNull())
-        return std::pair<CString, CString> { m_accessibilityProxyPath, m_accessibilityPath };
+        return m_accessibilityProxyPath;
 
     auto dbusAddress = WebCore::PlatformDisplay::sharedDisplay().accessibilityBusAddress().utf8();
-    m_accessibilityPath = makePath(dbusAddress.data());
-    if (m_accessibilityPath.isNull())
+    if (dbusAddress.isNull())
         return std::nullopt;
 
     m_accessibilityProxyPath = makeProxy("a11y-proxy-XXXXXX");
-    if (m_accessibilityProxyPath.isNull()) {
-        m_accessibilityPath = { };
+    if (m_accessibilityProxyPath.isNull())
         return std::nullopt;
-    }
 
 #if USE(ATSPI)
-    WebCore::PlatformDisplay::sharedDisplay().setAccessibilityBusAddress(makeString("unix:path=", m_accessibilityPath.data()));
+    WebCore::PlatformDisplay::sharedDisplay().setAccessibilityBusAddress(makeString("unix:path=", sandboxedAccessibilityBusPath));
 #endif
 
     m_args.appendVector(Vector<CString> {
@@ -154,7 +131,7 @@ std::optional<std::pair<CString, CString>> XDGDBusProxy::accessibilityProxy()
     if (!g_strcmp0(g_getenv("WEBKIT_ENABLE_A11Y_DBUS_PROXY_LOGGING"), "1"))
         m_args.append("--log");
 
-    return std::pair<CString, CString> { m_accessibilityProxyPath, m_accessibilityPath };
+    return m_accessibilityProxyPath;
 #else
     return std::nullopt;
 #endif

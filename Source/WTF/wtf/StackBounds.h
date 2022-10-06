@@ -126,7 +126,11 @@ private:
         ASSERT(isGrowingDownwards());
     }
 
-    constexpr StackBounds() = default;
+    constexpr StackBounds()
+        : m_origin(nullptr)
+        , m_bound(nullptr)
+    {
+    }
 
     inline bool isGrowingDownwards() const
     {
@@ -145,8 +149,8 @@ private:
 #endif
     }
 
-    void* m_origin { nullptr };
-    void* m_bound { nullptr };
+    void* m_origin;
+    void* m_bound;
 
     friend class StackStats;
 };

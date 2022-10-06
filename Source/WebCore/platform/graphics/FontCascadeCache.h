@@ -43,9 +43,9 @@ namespace WebCore {
 struct FontDescriptionKeyRareData : public RefCounted<FontDescriptionKeyRareData> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<FontDescriptionKeyRareData> create(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontPalette&& fontPalette)
+    static Ref<FontDescriptionKeyRareData> create(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette)
     {
-        return adoptRef(*new FontDescriptionKeyRareData(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(fontPalette)));
+        return adoptRef(*new FontDescriptionKeyRareData(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(variantAlternates), WTFMove(fontPalette)));
     }
 
     const FontFeatureSettings& featureSettings() const
@@ -63,30 +63,39 @@ public:
         return m_fontPalette;
     }
 
+    const FontVariantAlternates& variantAlternates() const
+    {
+        return m_variantAlternates;
+    }
+
     bool operator==(const FontDescriptionKeyRareData& other) const
     {
         return m_featureSettings == other.m_featureSettings
             && m_variationSettings == other.m_variationSettings
+            && m_variantAlternates == other.m_variantAlternates
             && m_fontPalette == other.m_fontPalette;
     }
 
 private:
-    FontDescriptionKeyRareData(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontPalette&& fontPalette)
+    FontDescriptionKeyRareData(FontFeatureSettings&& featureSettings, FontVariationSettings&& variationSettings, FontVariantAlternates&& variantAlternates, FontPalette&& fontPalette)
         : m_featureSettings(WTFMove(featureSettings))
         , m_variationSettings(WTFMove(variationSettings))
+        , m_variantAlternates(WTFMove(variantAlternates))
         , m_fontPalette(WTFMove(fontPalette))
     {
     }
 
     FontFeatureSettings m_featureSettings;
     FontVariationSettings m_variationSettings;
+    FontVariantAlternates m_variantAlternates;
     FontPalette m_fontPalette;
 };
 
 inline void add(Hasher& hasher, const FontDescriptionKeyRareData& key)
 {
-    add(hasher, key.featureSettings(), key.variationSettings(), key.fontPalette());
+    add(hasher, key.featureSettings(), key.variationSettings(), key.variantAlternates(), key.fontPalette());
 }
+
 
 // This key contains the FontDescription fields other than family that matter when fetching FontDatas (platform fonts).
 struct FontDescriptionKey {
@@ -100,9 +109,10 @@ struct FontDescriptionKey {
     {
         auto featureSettings = description.featureSettings();
         auto variationSettings = description.variationSettings();
+        auto variantAlternates = description.variantAlternates();
         auto fontPalette = description.fontPalette();
-        if (!featureSettings.isEmpty() || !variationSettings.isEmpty() || fontPalette.type != FontPalette::Type::Normal)
-            m_rareData = FontDescriptionKeyRareData::create(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(fontPalette));
+        if (!featureSettings.isEmpty() || !variationSettings.isEmpty() || !variantAlternates.isNormal() || fontPalette.type != FontPalette::Type::Normal)
+            m_rareData = FontDescriptionKeyRareData::create(WTFMove(featureSettings), WTFMove(variationSettings), WTFMove(variantAlternates), WTFMove(fontPalette));
     }
 
     explicit FontDescriptionKey(WTF::HashTableDeletedValueType)
@@ -144,10 +154,10 @@ private:
             | static_cast<unsigned>(description.nonCJKGlyphOrientation()) << 3
             | static_cast<unsigned>(description.orientation()) << 2
             | static_cast<unsigned>(description.renderingMode());
-        unsigned second = static_cast<unsigned>(description.variantEastAsianRuby()) << 27
-            | static_cast<unsigned>(description.variantEastAsianWidth()) << 25
-            | static_cast<unsigned>(description.variantEastAsianVariant()) << 22
-            | static_cast<unsigned>(description.variantAlternates()) << 21
+        unsigned second = static_cast<unsigned>(description.variantEastAsianRuby()) << 26
+            | static_cast<unsigned>(description.variantEastAsianWidth()) << 24
+            | static_cast<unsigned>(description.variantEastAsianVariant()) << 21
+            // variantAlternates is in the Rare object, it can't be a bitfield.
             | static_cast<unsigned>(description.variantNumericSlashedZero()) << 20
             | static_cast<unsigned>(description.variantNumericOrdinal()) << 19
             | static_cast<unsigned>(description.variantNumericFraction()) << 17

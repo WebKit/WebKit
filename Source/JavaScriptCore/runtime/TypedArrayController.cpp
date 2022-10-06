@@ -28,8 +28,8 @@
 
 namespace JSC {
 
-TypedArrayController::TypedArrayController() = default;
-TypedArrayController::~TypedArrayController() = default;
+TypedArrayController::TypedArrayController() { }
+TypedArrayController::~TypedArrayController() { }
 
 } // namespace JSC
 

@@ -107,10 +107,22 @@ void Debugger::TemporarilyDisableExceptionBreakpoints::restore()
         m_debugger.m_pauseOnUncaughtExceptionsBreakpoint = WTFMove(m_pauseOnUncaughtExceptionsBreakpoint);
 }
 
-Debugger::ProfilingClient::~ProfilingClient() = default;
+
+Debugger::ProfilingClient::~ProfilingClient()
+{
+}
 
 Debugger::Debugger(VM& vm)
     : m_vm(vm)
+    , m_blackboxBreakpointEvaluations(false)
+    , m_pauseAtNextOpportunity(false)
+    , m_pastFirstExpressionInStatement(false)
+    , m_isPaused(false)
+    , m_breakpointsActivated(false)
+    , m_hasHandlerForExceptionCallback(false)
+    , m_suppressAllPauses(false)
+    , m_steppingMode(SteppingModeDisabled)
+    , m_reasonForPause(NotPaused)
     , m_lastExecutedLine(UINT_MAX)
     , m_lastExecutedSourceID(noSourceID)
     , m_pausingBreakpointID(noBreakpointID)

@@ -61,7 +61,7 @@ FEATURE(sctp, "Stream Control Transmission Protocol");
  */
 
 void
-sctp_init_sysctls()
+sctp_init_sysctls(void)
 {
 	SCTP_BASE_SYSCTL(sctp_sendspace) = SCTPCTL_MAXDGRAM_DEFAULT;
 	SCTP_BASE_SYSCTL(sctp_recvspace) = SCTPCTL_RECVSPACE_DEFAULT;

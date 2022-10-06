@@ -28,8 +28,8 @@
 
 namespace JSC {
 
-DeferredCompilationCallback::DeferredCompilationCallback() = default;
-DeferredCompilationCallback::~DeferredCompilationCallback() = default;
+DeferredCompilationCallback::DeferredCompilationCallback() { }
+DeferredCompilationCallback::~DeferredCompilationCallback() { }
 
 void DeferredCompilationCallback::compilationDidComplete(CodeBlock*, CodeBlock*, CompilationResult result)
 {

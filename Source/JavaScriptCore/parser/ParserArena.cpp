@@ -37,7 +37,11 @@ namespace JSC {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(IdentifierArena);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ParserArena);
 
-ParserArena::ParserArena() = default;
+ParserArena::ParserArena()
+    : m_freeableMemory(nullptr)
+    , m_freeablePoolEnd(nullptr)
+{
+}
 
 inline void* ParserArena::freeablePool()
 {

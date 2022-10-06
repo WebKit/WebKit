@@ -47,7 +47,7 @@ protected:
     JITPlan(JITCompilationMode, CodeBlock*);
 
 public:
-    virtual ~JITPlan() = default;
+    virtual ~JITPlan() { }
 
     VM* vm() const { return m_vm; }
     CodeBlock* codeBlock() const { return m_codeBlock; }

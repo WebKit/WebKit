@@ -100,7 +100,7 @@ public:
     Length intrinsicWidth() const;
     Length intrinsicHeight() const;
 
-    FloatSize currentViewportSize() const;
+    FloatSize currentViewportSizeExcludingZoom() const;
     FloatRect currentViewBoxRect() const;
 
     AffineTransform viewBoxToViewTransform(float viewWidth, float viewHeight) const;

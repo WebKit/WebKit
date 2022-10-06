@@ -37,7 +37,9 @@ ProfiledBytecodes::ProfiledBytecodes(Bytecodes* bytecodes, CodeBlock* profiledBl
 {
 }
 
-ProfiledBytecodes::~ProfiledBytecodes() = default;
+ProfiledBytecodes::~ProfiledBytecodes()
+{
+}
 
 JSValue ProfiledBytecodes::toJS(JSGlobalObject* globalObject) const
 {

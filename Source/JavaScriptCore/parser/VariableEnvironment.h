@@ -149,7 +149,7 @@ private:
 
 public:
 
-    VariableEnvironment() = default;
+    VariableEnvironment() { }
     VariableEnvironment(VariableEnvironment&& other)
         : m_map(WTFMove(other.m_map))
         , m_isEverythingCaptured(other.m_isEverythingCaptured)
@@ -304,7 +304,7 @@ public:
     struct RareData {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-        RareData() = default;
+        RareData() { }
         RareData(RareData&& other)
             : m_privateNames(WTFMove(other.m_privateNames))
         {
@@ -370,6 +370,7 @@ private:
 
 struct CompactTDZEnvironmentKey {
     CompactTDZEnvironmentKey()
+        : m_environment(nullptr)
     {
         ASSERT(isHashTableEmptyValue());
     }
@@ -402,7 +403,7 @@ struct CompactTDZEnvironmentKey {
     }
 
 private:
-    CompactTDZEnvironment* m_environment { nullptr };
+    CompactTDZEnvironment* m_environment;
 };
 
 } // namespace JSC

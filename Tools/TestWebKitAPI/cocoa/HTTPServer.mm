@@ -465,7 +465,7 @@ ReceiveOperation Connection::awaitableReceiveHTTPRequest() const
     return { *this };
 }
 
-void ReceiveOperation::await_suspend(std::experimental::coroutine_handle<> handle)
+void ReceiveOperation::await_suspend(std::coroutine_handle<> handle)
 {
     m_connection.receiveHTTPRequest([this, handle](Vector<char>&& result) mutable {
         m_result = WTFMove(result);
@@ -473,7 +473,7 @@ void ReceiveOperation::await_suspend(std::experimental::coroutine_handle<> handl
     });
 }
 
-void SendOperation::await_suspend(std::experimental::coroutine_handle<> handle)
+void SendOperation::await_suspend(std::coroutine_handle<> handle)
 {
     m_connection.send(WTFMove(m_data), [handle] (bool) mutable {
         handle();

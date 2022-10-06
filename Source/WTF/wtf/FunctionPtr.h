@@ -77,8 +77,8 @@ class FunctionPtr<tag, Out(In...), attr> : public FunctionPtrBase {
 public:
     using Ptr = typename FunctionCallConvention<attr, Out(In...)>::Type;
 
-    constexpr FunctionPtr() = default;
-    constexpr FunctionPtr(std::nullptr_t) { }
+    constexpr FunctionPtr() : m_ptr(nullptr) { }
+    constexpr FunctionPtr(std::nullptr_t) : m_ptr(nullptr) { }
 
     constexpr FunctionPtr(Out(*ptr)(In...))
         : m_ptr(encode(ptr))
@@ -175,7 +175,7 @@ protected:
         return result;
     }
 
-    Ptr m_ptr { nullptr };
+    Ptr m_ptr;
 
     template<PtrTag, typename, FunctionAttributes> friend class FunctionPtr;
 };

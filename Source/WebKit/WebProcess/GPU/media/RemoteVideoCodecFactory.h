@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCertificateInfo_h
-#define WebCertificateInfo_h
+#pragma once
 
-#include "APIObject.h"
-#include <WebCore/CertificateInfo.h>
-#include <wtf/Ref.h>
+#if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEB_CODECS)
+
+#include <WebCore/VideoDecoder.h>
 
 namespace WebKit {
 
-class WebCertificateInfo : public API::ObjectImpl<API::Object::Type::CertificateInfo> {
-public:
-    static Ref<WebCertificateInfo> create(const WebCore::CertificateInfo& info)
-    {
-        return adoptRef(*new WebCertificateInfo(info));
-    }
+class WebProcess;
 
-    const WebCore::CertificateInfo& certificateInfo() const { return m_certificateInfo; }
+class RemoteVideoCodecFactory {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    explicit RemoteVideoCodecFactory(WebProcess&);
+    ~RemoteVideoCodecFactory();
 
 private:
-    explicit WebCertificateInfo(const WebCore::CertificateInfo& info)
-        : m_certificateInfo(info)
-    {
-    }
+    static void createDecoder(const String&, const WebCore::VideoDecoder::Config&, WebCore::VideoDecoder::CreateCallback&&, WebCore::VideoDecoder::OutputCallback&&, WebCore::VideoDecoder::PostTaskCallback&&);
 
-    WebCore::CertificateInfo m_certificateInfo;
 };
 
 } // namespace WebKit
 
-#endif // WebCertificateInfo_h
+#endif // USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)

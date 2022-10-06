@@ -1068,7 +1068,11 @@ private:
         // going to create a new lexical scope. If we decide to create a new lexical scope, we
         // can pass the scope into this obejct and it will take care of the cleanup for us if the parse fails.
         // This is helpful if we may fail from syntax errors after creating a lexical scope conditionally.
-        AutoCleanupLexicalScope() = default;
+        AutoCleanupLexicalScope()
+            : m_scope(nullptr, UINT_MAX)
+            , m_parser(nullptr)
+        {
+        }
 
         ~AutoCleanupLexicalScope()
         {
@@ -1096,8 +1100,8 @@ private:
         ScopeRef& scope() { return m_scope; }
 
     private:
-        ScopeRef m_scope { nullptr, UINT_MAX };
-        Parser* m_parser { nullptr };
+        ScopeRef m_scope;
+        Parser* m_parser;
     };
 
     enum ExpressionErrorClass {
@@ -2112,12 +2116,12 @@ private:
 
     ParserState m_parserState;
     
-    bool m_hasStackOverflow { false };
+    bool m_hasStackOverflow;
     String m_errorMessage;
     JSToken m_token;
-    bool m_allowsIn { true };
+    bool m_allowsIn;
     JSTextPosition m_lastTokenEndPosition;
-    int m_statementDepth { 0 };
+    int m_statementDepth;
     RefPtr<SourceProviderCache> m_functionCache;
     ImplementationVisibility m_implementationVisibility;
     bool m_parsingBuiltin;
@@ -2127,7 +2131,7 @@ private:
     ConstructorKind m_defaultConstructorKindForTopLevelFunction;
     ExpressionErrorClassifier* m_expressionErrorClassifier;
     bool m_isEvalContext;
-    bool m_immediateParentAllowsFunctionDeclarationInStatement { false };
+    bool m_immediateParentAllowsFunctionDeclarationInStatement;
     RefPtr<ModuleScopeData> m_moduleScopeData;
     DebuggerParseData* m_debuggerParseData;
     CallOrApplyDepthScope* m_callOrApplyDepthScope { nullptr };

@@ -116,7 +116,7 @@ public:
         unsigned dropDepth() const { return m_dropDepth; }
 
     private:
-        intptr_t m_droppedLockCount { 0 };
+        intptr_t m_droppedLockCount;
         RefPtr<VM> m_vm;
         unsigned m_dropDepth;
     };
@@ -147,11 +147,11 @@ private:
     bool m_hasOwnerThread { false };
     bool m_shouldReleaseHeapAccess;
     RefPtr<Thread> m_ownerThread;
-    intptr_t m_lockCount { 0 };
-    unsigned m_lockDropDepth { 0 };
+    intptr_t m_lockCount;
+    unsigned m_lockDropDepth;
     uint32_t m_lastOwnerThread { 0 };
     VM* m_vm;
-    AtomStringTable* m_entryAtomStringTable { nullptr };
+    AtomStringTable* m_entryAtomStringTable; 
 };
 
 } // namespace

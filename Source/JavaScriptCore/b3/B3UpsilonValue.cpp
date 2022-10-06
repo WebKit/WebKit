@@ -30,7 +30,9 @@
 
 namespace JSC { namespace B3 {
 
-UpsilonValue::~UpsilonValue() = default;
+UpsilonValue::~UpsilonValue()
+{
+}
 
 void UpsilonValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {

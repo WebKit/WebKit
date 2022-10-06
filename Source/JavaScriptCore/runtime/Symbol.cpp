@@ -36,6 +36,7 @@ const ClassInfo Symbol::s_info = { "symbol"_s, nullptr, nullptr, nullptr, CREATE
 
 Symbol::Symbol(VM& vm)
     : Base(vm, vm.symbolStructure.get())
+    , m_privateName()
 {
 }
 

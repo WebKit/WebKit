@@ -36,7 +36,8 @@ namespace JSC { namespace B3 {
 class PCToOriginMap {
     WTF_MAKE_NONCOPYABLE(PCToOriginMap);
 public:
-    PCToOriginMap() = default;
+    PCToOriginMap()
+    { }
 
     PCToOriginMap(PCToOriginMap&& other)
         : m_ranges(WTFMove(other.m_ranges))

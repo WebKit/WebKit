@@ -52,7 +52,7 @@ inline bool belongsInMinifiedGraph(NodeType type)
 
 class MinifiedNode {
 public:
-    MinifiedNode() = default;
+    MinifiedNode() { }
     
     static MinifiedNode fromNode(Node*);
     

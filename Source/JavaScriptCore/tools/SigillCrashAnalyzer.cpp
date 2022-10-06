@@ -56,7 +56,7 @@ public:
     CrashSource analyze(SignalContext&);
 
 private:
-    SigillCrashAnalyzer() = default;
+    SigillCrashAnalyzer() { }
     void dumpCodeBlock(CodeBlock*, void* machinePC);
 
 #if ENABLE(ARM64_DISASSEMBLER)
@@ -181,7 +181,7 @@ static void installCrashHandler()
 #define log(format, ...) do { } while (false)
     
 struct SignalContext {
-    SignalContext() = default;
+    SignalContext() { }
 
     void dump() { }
 

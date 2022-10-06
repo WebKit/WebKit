@@ -89,7 +89,6 @@
 #import "WKWebpagePreferencesInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebBackForwardList.h"
-#import "WebCertificateInfo.h"
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageGroup.h"
 #import "WebPageInspectorController.h"
@@ -847,11 +846,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
 - (SecTrustRef)serverTrust
 {
-    auto certificateInfo = _page->pageLoadState().certificateInfo();
-    if (!certificateInfo)
-        return nil;
-
-    return certificateInfo->certificateInfo().trust();
+    return _page->pageLoadState().certificateInfo().trust();
 }
 
 - (BOOL)canGoBack
@@ -2652,7 +2647,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
 - (NSArray *)_certificateChain
 {
     if (WebKit::WebFrameProxy* mainFrame = _page->mainFrame())
-        return mainFrame->certificateInfo() ? (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(mainFrame->certificateInfo()->certificateInfo().trust()).autorelease() : nil;
+        return (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(mainFrame->certificateInfo().trust()).autorelease();
 
     return nil;
 }
@@ -3952,11 +3947,7 @@ static inline OptionSet<WebKit::FindOptions> toFindOptions(_WKFindOptions wkFind
 
 - (NSArray *)certificateChain
 {
-    auto certificateInfo = _page->pageLoadState().certificateInfo();
-    if (!certificateInfo)
-        return @[ ];
-
-    return (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(certificateInfo->certificateInfo().trust()).autorelease() ?: @[ ];
+    return (__bridge NSArray *)WebCore::CertificateInfo::certificateChainFromSecTrust(_page->pageLoadState().certificateInfo().trust()).autorelease() ?: @[ ];
 }
 
 @end

@@ -177,13 +177,13 @@ public:
     };
 
     struct AddResult {
-        AddResult() = default;
+        AddResult() : isNewEntry(false) { }
         AddResult(WeakHashMapIterator&& it, bool isNewEntry)
             : iterator(WTFMove(it))
             , isNewEntry(isNewEntry)
         { }
         WeakHashMapIterator iterator;
-        bool isNewEntry { false };
+        bool isNewEntry;
 
         explicit operator bool() const { return isNewEntry; }
     };

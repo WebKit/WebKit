@@ -59,7 +59,7 @@ const String& Report::url() const
     return m_url;
 }
 
-const RefPtr<ReportBody>& Report::body()
+const RefPtr<ReportBody>& Report::body() const
 {
     return m_body;
 }

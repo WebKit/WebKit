@@ -102,7 +102,6 @@
 #include "WebBackForwardList.h"
 #include "WebBackForwardListCounts.h"
 #include "WebBackForwardListItem.h"
-#include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuProxy.h"
 #include "WebCoreArgumentCoders.h"
@@ -5128,11 +5127,10 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     }
 
     auto transaction = m_pageLoadState.transaction();
-    Ref<WebCertificateInfo> webCertificateInfo = WebCertificateInfo::create(certificateInfo);
     bool markPageInsecure = hasInsecureContent ? hasInsecureContent.value() == HasInsecureContent::Yes : certificateInfo.containsNonRootSHA1SignedCertificate();
 
     if (frame->isMainFrame()) {
-        m_pageLoadState.didCommitLoad(transaction, webCertificateInfo, markPageInsecure, usedLegacyTLS);
+        m_pageLoadState.didCommitLoad(transaction, certificateInfo, markPageInsecure, usedLegacyTLS);
         m_shouldSuppressNextAutomaticNavigationSnapshot = false;
     } else if (markPageInsecure)
         m_pageLoadState.didDisplayOrRunInsecureContent(transaction);
@@ -5143,7 +5141,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     pageClient().resetSecureInputState();
 #endif
 
-    frame->didCommitLoad(mimeType, webCertificateInfo, containsPluginDocument);
+    frame->didCommitLoad(mimeType, certificateInfo, containsPluginDocument);
 
     if (frame->isMainFrame()) {
         std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;

@@ -41,7 +41,9 @@ IsoAllocator<Config>::IsoAllocator(IsoHeapImpl<Config>&)
 }
 
 template<typename Config>
-IsoAllocator<Config>::~IsoAllocator() = default;
+IsoAllocator<Config>::~IsoAllocator()
+{
+}
 
 template<typename Config>
 void* IsoAllocator<Config>::allocate(IsoHeapImpl<Config>& heap, bool abortOnFailure)

@@ -27,7 +27,6 @@
 #include "WKCredential.h"
 
 #include "APIString.h"
-#include "WebCertificateInfo.h"
 #include "WebCredential.h"
 #include "WKAPICast.h"
 

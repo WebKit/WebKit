@@ -59,6 +59,12 @@ static int memfd_create(const char* name, unsigned flags)
 }
 #endif // #if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
 
+#if PLATFORM(GTK)
+#define BASE_DIRECTORY "webkitgtk"
+#elif PLATFORM(WPE)
+#define BASE_DIRECTORY "wpe"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -195,13 +201,14 @@ static void bindIfExists(Vector<CString>& args, const char* path, BindFlags bind
 
 static void bindDBusSession(Vector<CString>& args, XDGDBusProxy& dbusProxy, bool allowPortals)
 {
-    auto dbusSessionProxy = dbusProxy.dbusSessionProxy(allowPortals ? XDGDBusProxy::AllowPortals::Yes : XDGDBusProxy::AllowPortals::No);
-    if (!dbusSessionProxy)
+    auto dbusSessionProxyPath = dbusProxy.dbusSessionProxy(allowPortals ? XDGDBusProxy::AllowPortals::Yes : XDGDBusProxy::AllowPortals::No);
+    if (!dbusSessionProxyPath)
         return;
 
-    GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", dbusSessionProxy->second.data()));
+    GUniquePtr<char> sandboxedSessionBusPath(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, "bus", nullptr));
+    GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", sandboxedSessionBusPath.get()));
     args.appendVector(Vector<CString> {
-        "--ro-bind", WTFMove(dbusSessionProxy->first), WTFMove(dbusSessionProxy->second),
+        "--ro-bind", *dbusSessionProxyPath, sandboxedSessionBusPath.get(),
         "--setenv", "DBUS_SESSION_BUS_ADDRESS", proxyAddress.get()
     });
 }
@@ -340,13 +347,14 @@ static void bindGtkData(Vector<CString>& args)
 #if ENABLE(ACCESSIBILITY)
 static void bindA11y(Vector<CString>& args, XDGDBusProxy& dbusProxy)
 {
-    auto accessibilityProxy = dbusProxy.accessibilityProxy();
-    if (!accessibilityProxy)
+    GUniquePtr<char> sandboxedAccessibilityBusPath(g_build_filename(g_get_user_runtime_dir(), BASE_DIRECTORY, "at-spi-bus", nullptr));
+    auto accessibilityProxyPath = dbusProxy.accessibilityProxy(sandboxedAccessibilityBusPath.get());
+    if (!accessibilityProxyPath)
         return;
 
-    GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", accessibilityProxy->second.data()));
+    GUniquePtr<char> proxyAddress(g_strdup_printf("unix:path=%s", sandboxedAccessibilityBusPath.get()));
     args.appendVector(Vector<CString> {
-        "--ro-bind", WTFMove(accessibilityProxy->first), WTFMove(accessibilityProxy->second),
+        "--ro-bind", *accessibilityProxyPath, sandboxedAccessibilityBusPath.get(),
         "--setenv", "AT_SPI_BUS_ADDRESS", proxyAddress.get()
     });
 }

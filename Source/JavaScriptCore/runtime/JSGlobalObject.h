@@ -291,11 +291,14 @@ private:
     struct JSGlobalObjectRareData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        JSGlobalObjectRareData() = default;
+        JSGlobalObjectRareData()
+            : profileGroup(0)
+        {
+        }
 
         WeakMapSet weakMaps;
-        unsigned profileGroup { 0 };
-
+        unsigned profileGroup;
+        
         OpaqueJSClassDataMap opaqueJSClassData;
     };
 

@@ -39,7 +39,10 @@ VariableLiveness::VariableLiveness(Procedure& proc)
     compute();
 }
 
-VariableLiveness::~VariableLiveness() = default;
+VariableLiveness::~VariableLiveness()
+{
+}
+
 } } // namespace JSC::B3
 
 #endif // ENABLE(B3_JIT)

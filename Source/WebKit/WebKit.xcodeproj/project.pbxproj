@@ -877,6 +877,7 @@
 		41E0A7CB23B645CD00561060 /* WebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417915AC2256BB7400D6F97E /* WebSocketChannel.cpp */; };
 		41E242E026E0C908009A8C64 /* NetworkRTCUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41E242DF26E0C904009A8C64 /* NetworkRTCUtilitiesCocoa.mm */; };
 		41F060E11654318500F3281C /* WebSocketChannelMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F060DD1654317500F3281C /* WebSocketChannelMessageReceiver.cpp */; };
+		41F898F028ED69470070549C /* LibWebRTCCodecs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4172198A23B6128200AE5686 /* LibWebRTCCodecs.cpp */; };
 		41FABD2A1F4DE001006A6C97 /* CacheStorageEngineCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FABD281F4DDFDC006A6C97 /* CacheStorageEngineCache.h */; };
 		41FAF5F51E3C0649001AE678 /* WebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */; };
 		41FAF5F81E3C1021001AE678 /* LibWebRTCResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FAF5F61E3C0B47001AE678 /* LibWebRTCResolver.h */; };
@@ -1876,7 +1877,6 @@
 		BCF049E611FE20F600F86A58 /* WKBundleFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF049E711FE20F600F86A58 /* WKBundlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF4DE25168FA44800C94AFC /* WebContextSupplement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF4DE24168FA44800C94AFC /* WebContextSupplement.h */; };
-		BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF50726124329AA005955AE /* WebCertificateInfo.h */; };
 		BCF69F9A1176CED600471A52 /* WebNavigationDataStore.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69F981176CED600471A52 /* WebNavigationDataStore.h */; };
 		BCF69FA21176D01400471A52 /* APINavigationData.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69FA01176D01400471A52 /* APINavigationData.h */; };
 		BCF69FA91176D1CB00471A52 /* WKNavigationDataRef.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF69FA71176D1CB00471A52 /* WKNavigationDataRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4651,6 +4651,8 @@
 		41EB4D3A274CE04500A9272B /* ServiceWorkerNavigationPreloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerNavigationPreloader.h; sourceTree = "<group>"; };
 		41EB4D3B274CE04500A9272B /* ServiceWorkerNavigationPreloader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerNavigationPreloader.cpp; sourceTree = "<group>"; };
 		41F060DD1654317500F3281C /* WebSocketChannelMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketChannelMessageReceiver.cpp; path = DerivedSources/WebKit/WebSocketChannelMessageReceiver.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
+		41F898BB28EB195B0070549C /* RemoteVideoCodecFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoCodecFactory.cpp; sourceTree = "<group>"; };
+		41F898BC28EB195C0070549C /* RemoteVideoCodecFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteVideoCodecFactory.h; sourceTree = "<group>"; };
 		41F9FD1823ED8A810099B579 /* LibWebRTCResolverIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCResolverIdentifier.h; path = Network/webrtc/LibWebRTCResolverIdentifier.h; sourceTree = "<group>"; };
 		41FABD281F4DDFDC006A6C97 /* CacheStorageEngineCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageEngineCache.h; sourceTree = "<group>"; };
 		41FAF5F41E3C0641001AE678 /* WebRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebRTCResolver.h; path = Network/webrtc/WebRTCResolver.h; sourceTree = "<group>"; };
@@ -5150,7 +5152,6 @@
 		574728CF23456E98001700AF /* _WKWebAuthenticationPanel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationPanel.h; sourceTree = "<group>"; };
 		574728D023456E98001700AF /* _WKWebAuthenticationPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebAuthenticationPanel.mm; sourceTree = "<group>"; };
 		574728D3234570AE001700AF /* _WKWebAuthenticationPanelInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebAuthenticationPanelInternal.h; sourceTree = "<group>"; };
-		575075A720AB763600693EA9 /* WebCredentialMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCredentialMac.mm; sourceTree = "<group>"; };
 		5750F32A2032D4E500389347 /* LocalAuthentication.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LocalAuthentication.framework; path = System/Library/Frameworks/LocalAuthentication.framework; sourceTree = SDKROOT; };
 		5756DD74218D104900D4EE6A /* MockHidService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockHidService.h; sourceTree = "<group>"; };
 		5756DD75218D104900D4EE6A /* MockHidService.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MockHidService.cpp; sourceTree = "<group>"; };
@@ -6577,7 +6578,6 @@
 		BCF18637167D071E00A1A85A /* CacheModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheModel.cpp; sourceTree = "<group>"; };
 		BCF4DE24168FA44800C94AFC /* WebContextSupplement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextSupplement.h; sourceTree = "<group>"; };
 		BCF5068412431861005955AE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
-		BCF50726124329AA005955AE /* WebCertificateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCertificateInfo.h; sourceTree = "<group>"; };
 		BCF69F981176CED600471A52 /* WebNavigationDataStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNavigationDataStore.h; sourceTree = "<group>"; };
 		BCF69FA01176D01400471A52 /* APINavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = APINavigationData.h; path = UIProcess/API/APINavigationData.h; sourceTree = SOURCE_ROOT; };
 		BCF69FA11176D01400471A52 /* APINavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = APINavigationData.cpp; path = UIProcess/API/APINavigationData.cpp; sourceTree = SOURCE_ROOT; };
@@ -7625,6 +7625,8 @@
 				CD8252D125D464AB00862FD8 /* RemoteRemoteCommandListener.h */,
 				CD8252D325D464BF00862FD8 /* RemoteRemoteCommandListener.messages.in */,
 				CD8252D425D4651000862FD8 /* RemoteRemoteCommandListenerIdentifier.h */,
+				41F898BB28EB195B0070549C /* RemoteVideoCodecFactory.cpp */,
+				41F898BC28EB195C0070549C /* RemoteVideoCodecFactory.h */,
 				7B5A3DA027A7DC1A006C6F97 /* RemoteVideoFrameIdentifier.h */,
 				7B5A3DA327A7DC6C006C6F97 /* RemoteVideoFrameProxy.cpp */,
 				7B5A3DA227A7DC1A006C6F97 /* RemoteVideoFrameProxy.h */,
@@ -8170,7 +8172,6 @@
 				46CE3B1023D8C83D0016A96A /* WebBackForwardListCounts.h */,
 				518D2CAB12D5153B003BB93B /* WebBackForwardListItem.cpp */,
 				518D2CAC12D5153B003BB93B /* WebBackForwardListItem.h */,
-				BCF50726124329AA005955AE /* WebCertificateInfo.h */,
 				7C4ABECE1AA8E9F00088AA37 /* WebCompiledContentRuleList.cpp */,
 				7C4ABECF1AA8E9F00088AA37 /* WebCompiledContentRuleList.h */,
 				7C4ABED21AA8FCB80088AA37 /* WebCompiledContentRuleListData.cpp */,
@@ -10547,7 +10548,6 @@
 			isa = PBXGroup;
 			children = (
 				570AB8F620AE81AB00B8BE87 /* cocoa */,
-				575075A620AB75AB00693EA9 /* mac */,
 				512F588E12A8838800629530 /* AuthenticationChallengeProxy.cpp */,
 				512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */,
 				512F589012A8838800629530 /* AuthenticationDecisionListener.cpp */,
@@ -10791,14 +10791,6 @@
 				570AB90320B2541C00B8BE87 /* SecKeyProxyStore.mm */,
 			);
 			path = cocoa;
-			sourceTree = "<group>";
-		};
-		575075A620AB75AB00693EA9 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				575075A720AB763600693EA9 /* WebCredentialMac.mm */,
-			);
-			path = mac;
 			sourceTree = "<group>";
 		};
 		5750F3292032D4E300389347 /* Frameworks */ = {
@@ -14980,7 +14972,6 @@
 				41897ED11F415D680016FA42 /* WebCacheStorageConnection.h in Headers */,
 				41D129DA1F3D101800D15E47 /* WebCacheStorageProvider.h in Headers */,
 				DDA0A35627E55E4F005E086E /* WebCaretChangeListener.h in Headers */,
-				BCF50728124329AA005955AE /* WebCertificateInfo.h in Headers */,
 				BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */,
 				3F87B9BE158940190090FF62 /* WebColorChooser.h in Headers */,
 				3F87B9C0158940D80090FF62 /* WebColorPicker.h in Headers */,
@@ -17179,6 +17170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D9FB21C237523830049F936 /* AuxiliaryProcessMain.cpp in Sources */,
+				41F898F028ED69470070549C /* LibWebRTCCodecs.cpp in Sources */,
 				2D9FB21D237523830049F936 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

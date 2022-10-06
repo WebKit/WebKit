@@ -43,7 +43,7 @@ Bytecodes::Bytecodes(size_t id, CodeBlock* codeBlock)
 {
 }
 
-Bytecodes::~Bytecodes() = default;
+Bytecodes::~Bytecodes() { }
 
 void Bytecodes::dump(PrintStream& out) const
 {

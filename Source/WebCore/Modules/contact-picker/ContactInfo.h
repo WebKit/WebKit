@@ -34,38 +34,6 @@ struct ContactInfo {
     Vector<String> name;
     Vector<String> email;
     Vector<String> tel;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<ContactInfo> decode(Decoder&);
 };
-
-template<class Encoder>
-void ContactInfo::encode(Encoder& encoder) const
-{
-    encoder << name;
-    encoder << email;
-    encoder << tel;
-}
-
-template<class Decoder>
-std::optional<ContactInfo> ContactInfo::decode(Decoder& decoder)
-{
-    std::optional<Vector<String>> name;
-    decoder >> name;
-    if (!name)
-        return std::nullopt;
-
-    std::optional<Vector<String>> email;
-    decoder >> email;
-    if (!email)
-        return std::nullopt;
-
-    std::optional<Vector<String>> tel;
-    decoder >> tel;
-    if (!tel)
-        return std::nullopt;
-
-    return {{ *name, *email, *tel }};
-}
 
 } // namespace WebCore

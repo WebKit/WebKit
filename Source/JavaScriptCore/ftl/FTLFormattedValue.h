@@ -38,8 +38,12 @@ namespace JSC { namespace FTL {
 
 class FormattedValue {
 public:
-    FormattedValue() = default;
-
+    FormattedValue()
+        : m_format(DataFormatNone)
+        , m_value(nullptr)
+    {
+    }
+    
     FormattedValue(DataFormat format, LValue value)
         : m_format(format)
         , m_value(value)
@@ -56,8 +60,8 @@ public:
     LValue value() const { return m_value; }
 
 private:
-    DataFormat m_format { DataFormatNone };
-    LValue m_value { nullptr };
+    DataFormat m_format;
+    LValue m_value;
 };
 
 static inline FormattedValue noValue() { return FormattedValue(); }

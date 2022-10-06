@@ -31,6 +31,14 @@
 
 namespace bmalloc {
 
+FreeList::FreeList()
+{
+}
+
+FreeList::~FreeList()
+{
+}
+
 void FreeList::clear()
 {
     *this = FreeList();

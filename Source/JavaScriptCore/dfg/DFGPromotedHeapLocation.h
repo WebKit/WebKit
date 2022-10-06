@@ -80,6 +80,7 @@ public:
 
     PromotedLocationDescriptor(WTF::HashTableDeletedValueType)
         : m_kind(InvalidPromotedLocationKind)
+        , m_info(1)
     {
     }
 
@@ -132,7 +133,7 @@ public:
 
 private:
     PromotedLocationKind m_kind;
-    unsigned m_info { 1 };
+    unsigned m_info;
 };
 
 struct PromotedLocationDescriptorHash {
@@ -164,7 +165,8 @@ public:
     }
     
     PromotedHeapLocation(WTF::HashTableDeletedValueType)
-        : m_meta(InvalidPromotedLocationKind, 1)
+        : m_base(nullptr)
+        , m_meta(InvalidPromotedLocationKind, 1)
     {
     }
     
@@ -196,7 +198,7 @@ public:
     void dump(PrintStream& out) const;
     
 private:
-    Node* m_base { nullptr };
+    Node* m_base;
     PromotedLocationDescriptor m_meta;
 };
 

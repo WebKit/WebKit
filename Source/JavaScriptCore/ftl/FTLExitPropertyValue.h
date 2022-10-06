@@ -38,7 +38,9 @@ namespace FTL {
 
 class ExitPropertyValue {
 public:
-    ExitPropertyValue() = default;
+    ExitPropertyValue()
+    {
+    }
     
     ExitPropertyValue(DFG::PromotedLocationDescriptor location, const ExitValue& value)
         : m_location(location)

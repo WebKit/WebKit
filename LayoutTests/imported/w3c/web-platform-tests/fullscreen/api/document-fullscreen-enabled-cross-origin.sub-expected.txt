@@ -1,0 +1,10 @@
+Blocked access to external URL http://www1.localhost:8800/fullscreen/api/resources/report-fullscreen-enabled.html
+Blocked access to external URL http://www1.localhost:8800/fullscreen/api/resources/report-fullscreen-enabled.html
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Fullscreen enabled test: same-origin-default assert_equals: same-origin-default frame fullscreenEnabled expected (boolean) true but got (undefined) undefined
+FAIL Fullscreen enabled test: same-origin-allow assert_equals: same-origin-allow frame fullscreenEnabled expected (boolean) true but got (undefined) undefined
+NOTRUN Fullscreen enabled test: cross-origin-default
+NOTRUN Fullscreen enabled test: cross-origin-allow
+

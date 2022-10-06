@@ -30,7 +30,9 @@
 
 namespace JSC {
 
-JSStringJoiner::~JSStringJoiner() = default;
+JSStringJoiner::~JSStringJoiner()
+{
+}
 
 template<typename CharacterType>
 static inline void appendStringToData(CharacterType*& data, StringView string)

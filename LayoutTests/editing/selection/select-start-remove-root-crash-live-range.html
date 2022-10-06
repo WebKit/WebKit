@@ -1,0 +1,24 @@
+<html><!-- webkit-test-runner [ LiveRangeSelectionEnabled=true ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    document.write("PASS");
+
+    if (window.testRunner)
+        setTimeout(() => testRunner.notifyDone(), 0);
+}
+
+function select()
+{
+    document.execCommand("SelectAll");
+}
+
+window.addEventListener("selectstart", runTest, true);
+window.setInterval(select, 0);
+</script>
+</html>

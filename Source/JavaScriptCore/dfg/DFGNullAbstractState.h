@@ -39,8 +39,8 @@ struct Node;
 class NullAbstractState {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NullAbstractState() = default;
-
+    NullAbstractState() { }
+    
     explicit operator bool() const { return false; }
     
     AbstractValue& forNode(Node*)

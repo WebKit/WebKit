@@ -37,10 +37,11 @@ class PrintStream;
 class TimeWithDynamicClockType final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TimeWithDynamicClockType() = default;
+    TimeWithDynamicClockType() { }
     
     TimeWithDynamicClockType(WallTime time)
         : m_value(time.secondsSinceEpoch().value())
+        , m_type(ClockType::Wall)
     {
     }
     

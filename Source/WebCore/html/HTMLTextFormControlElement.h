@@ -82,6 +82,8 @@ public:
     void setSelectionRange(unsigned start, unsigned end, const String& direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     WEBCORE_EXPORT bool setSelectionRange(unsigned start, unsigned end, TextFieldSelectionDirection = SelectionHasNoDirection, SelectionRevealMode = SelectionRevealMode::DoNotReveal, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
 
+    TextFieldSelectionDirection computeSelectionDirection() const;
+
     std::optional<SimpleRange> selection() const;
     String selectedText() const;
 
@@ -141,8 +143,6 @@ private:
     TextFieldSelectionDirection cachedSelectionDirection() const { return static_cast<TextFieldSelectionDirection>(m_cachedSelectionDirection); }
 
     bool isTextFormControlElement() const final { return true; }
-
-    TextFieldSelectionDirection computeSelectionDirection() const;
 
     void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions&) final;
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) final;

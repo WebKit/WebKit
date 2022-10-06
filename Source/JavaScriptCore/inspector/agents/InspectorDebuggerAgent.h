@@ -153,7 +153,7 @@ public:
 
     class Listener {
     public:
-        virtual ~Listener() = default;
+        virtual ~Listener() { }
         virtual void debuggerWasEnabled() = 0;
         virtual void debuggerWasDisabled() = 0;
     };

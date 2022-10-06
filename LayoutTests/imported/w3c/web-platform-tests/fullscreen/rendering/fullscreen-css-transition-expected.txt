@@ -1,0 +1,4 @@
+Should be green
+
+FAIL Transitions should not be stopped by going fullscreen trans.requestFullscreen is not a function. (In 'trans.requestFullscreen()', 'trans.requestFullscreen' is undefined)
+

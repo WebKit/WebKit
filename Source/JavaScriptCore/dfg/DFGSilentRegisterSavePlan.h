@@ -73,8 +73,14 @@ enum SilentFillAction {
 
 class SilentRegisterSavePlan {
 public:
-    SilentRegisterSavePlan() = default;
-
+    SilentRegisterSavePlan()
+        : m_spillAction(DoNothingForSpill)
+        , m_fillAction(DoNothingForFill)
+        , m_register(-1)
+        , m_node(nullptr)
+    {
+    }
+    
     SilentRegisterSavePlan(
         SilentSpillAction spillAction,
         SilentFillAction fillAction,
@@ -108,10 +114,10 @@ public:
     FPRReg fpr() const { return static_cast<FPRReg>(m_register); }
     
 private:
-    int8_t m_spillAction { DoNothingForSpill };
-    int8_t m_fillAction { DoNothingForFill };
-    int8_t m_register { -1 };
-    Node* m_node { nullptr };
+    int8_t m_spillAction;
+    int8_t m_fillAction;
+    int8_t m_register;
+    Node* m_node;
 };
 
 } } // namespace JSC::DFG

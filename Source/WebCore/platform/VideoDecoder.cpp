@@ -32,12 +32,25 @@
 
 namespace WebCore {
 
-void VideoDecoder::create(const String& codecName, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
-{
-    UNUSED_PARAM(codecName);
-    UNUSED_PARAM(outputCallback);
-    UNUSED_PARAM(postCallback);
+VideoDecoder::CreatorFunction VideoDecoder::s_customCreator = nullptr;
 
+void VideoDecoder::setCreatorCallback(CreatorFunction&& function)
+{
+    s_customCreator = WTFMove(function);
+}
+
+void VideoDecoder::create(const String& codecName, const Config& config, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+{
+    if (s_customCreator) {
+        s_customCreator(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+        return;
+    }
+    createLocalDecoder(codecName, config, WTFMove(callback), WTFMove(outputCallback), WTFMove(postCallback));
+}
+
+
+void VideoDecoder::createLocalDecoder(const String& codecName, const Config&, CreateCallback&& callback, OutputCallback&& outputCallback, PostTaskCallback&& postCallback)
+{
 #if USE(LIBWEBRTC)
     if (codecName == "vp8"_s) {
         UniqueRef<VideoDecoder> decoder = makeUniqueRef<LibWebRTCVPXVideoDecoder>(LibWebRTCVPXVideoDecoder::Type::VP8, WTFMove(outputCallback), WTFMove(postCallback));
@@ -49,6 +62,10 @@ void VideoDecoder::create(const String& codecName, CreateCallback&& callback, Ou
         callback(WTFMove(decoder));
         return;
     }
+#else
+    UNUSED_PARAM(codecName);
+    UNUSED_PARAM(outputCallback);
+    UNUSED_PARAM(postCallback);
 #endif
 
     callback(makeUnexpected("Not supported"_s));

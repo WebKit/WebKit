@@ -801,7 +801,7 @@ typedef struct scavenger_thread_suspend_data {
 #endif
 } scavenger_thread_suspend_data;
 
-static scavenger_thread_suspend_data scavenger_thread_suspend_data_create()
+static scavenger_thread_suspend_data scavenger_thread_suspend_data_create(void)
 {
     scavenger_thread_suspend_data thread_suspend_data;
     thread_suspend_data.did_suspend = false;

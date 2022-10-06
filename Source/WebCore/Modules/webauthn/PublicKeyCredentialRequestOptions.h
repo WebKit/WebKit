@@ -45,55 +45,7 @@ struct PublicKeyCredentialRequestOptions {
     UserVerificationRequirement userVerification { UserVerificationRequirement::Preferred };
     std::optional<AuthenticatorAttachment> authenticatorAttachment;
     mutable std::optional<AuthenticationExtensionsClientInputs> extensions;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<PublicKeyCredentialRequestOptions> decode(Decoder&);
 #endif // ENABLE(WEB_AUTHN)
 };
-
-#if ENABLE(WEB_AUTHN)
-// Not every member is encoded.
-template<class Encoder>
-void PublicKeyCredentialRequestOptions::encode(Encoder& encoder) const
-{
-    encoder << timeout << rpId << allowCredentials << userVerification << extensions;
-    encoder << static_cast<uint64_t>(challenge.length());
-    encoder.encodeFixedLengthData(challenge.data(), challenge.length(), 1);
-}
-
-template<class Decoder>
-std::optional<PublicKeyCredentialRequestOptions> PublicKeyCredentialRequestOptions::decode(Decoder& decoder)
-{
-    PublicKeyCredentialRequestOptions result;
-
-    std::optional<std::optional<unsigned>> timeout;
-    decoder >> timeout;
-    if (!timeout)
-        return std::nullopt;
-    result.timeout = WTFMove(*timeout);
-
-    if (!decoder.decode(result.rpId))
-        return std::nullopt;
-    if (!decoder.decode(result.allowCredentials))
-        return std::nullopt;
-
-    std::optional<UserVerificationRequirement> userVerification;
-    decoder >> userVerification;
-    if (!userVerification)
-        return std::nullopt;
-    result.userVerification = WTFMove(*userVerification);
-
-    std::optional<std::optional<AuthenticationExtensionsClientInputs>> extensions;
-    decoder >> extensions;
-    if (!extensions)
-        return std::nullopt;
-    result.extensions = WTFMove(*extensions);
-
-    if (!decoder.decode(result.challenge))
-        return std::nullopt;
-
-    return result;
-}
-#endif // ENABLE(WEB_AUTHN)
 
 } // namespace WebCore

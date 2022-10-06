@@ -33,8 +33,12 @@ namespace JSC { namespace FTL {
 
 class ValueRange {
 public:
-    ValueRange() = default;
-
+    ValueRange()
+        : m_begin(nullptr)
+        , m_end(nullptr)
+    {
+    }
+    
     ValueRange(LValue begin, LValue end)
         : m_begin(begin)
         , m_end(end)
@@ -47,8 +51,8 @@ public:
     void decorateInstruction(LValue loadInstruction, unsigned rangeKind) const;
     
 private:
-    LValue m_begin { nullptr };
-    LValue m_end { nullptr };
+    LValue m_begin;
+    LValue m_end;
 };
 
 } } // namespace JSC::FTL

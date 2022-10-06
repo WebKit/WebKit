@@ -52,7 +52,9 @@ InjectedScript::InjectedScript(Deprecated::ScriptObject injectedScriptObject, In
 {
 }
 
-InjectedScript::~InjectedScript() = default;
+InjectedScript::~InjectedScript()
+{
+}
 
 void InjectedScript::execute(Protocol::ErrorString& errorString, const String& functionString, ExecuteOptions&& options, RefPtr<Protocol::Runtime::RemoteObject>& result, std::optional<bool>& wasThrown, std::optional<int>& savedResultIndex)
 {

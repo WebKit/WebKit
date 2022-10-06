@@ -399,26 +399,26 @@ private:
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
 
-    unsigned m_numVars : 31 { 0 };
-    unsigned m_numCalleeLocals : 31 { 0 };
+    unsigned m_numVars : 31;
+    unsigned m_numCalleeLocals : 31;
     unsigned m_isConstructor : 1;
-    unsigned m_numParameters : 31 { 0 };
-    unsigned m_hasCapturedVariables : 1 { false };
+    unsigned m_numParameters : 31;
+    unsigned m_hasCapturedVariables : 1;
 
     unsigned m_isBuiltinFunction : 1;
     unsigned m_superBinding : 1;
     unsigned m_scriptMode: 1;
     unsigned m_isArrowFunctionContext : 1;
     unsigned m_isClassContext : 1;
-    unsigned m_hasTailCalls : 1 { false };
+    unsigned m_hasTailCalls : 1;
     unsigned m_constructorKind : 2;
     unsigned m_derivedContextType : 2;
     unsigned m_evalContextType : 2;
     unsigned m_codeType : 2;
     unsigned m_didOptimize : 2;
-    unsigned m_age : 3 { 0 };
+    unsigned m_age : 3;
     static_assert(((1U << 3) - 1) >= maxAge);
-    bool m_hasCheckpoints : 1 { false };
+    bool m_hasCheckpoints : 1;
     unsigned m_lexicalScopeFeatures : bitWidthOfLexicalScopeFeatures;
 public:
     ConcurrentJSLock m_lock;

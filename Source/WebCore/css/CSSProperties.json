@@ -597,12 +597,9 @@
         },
         "font-variant-alternates": {
             "inherited": true,
-            "values": [
-                "normal",
-                "historical-forms"
-            ],
             "codegen-properties": {
                 "name-for-methods": "VariantAlternates",
+                "custom": "All",
                 "font-property": true,
                 "high-priority": true
             },

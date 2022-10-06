@@ -77,7 +77,6 @@ class WebArchiveResource;
 namespace WebKit {
 
 class ObjCObjectGraph;
-class WebCertificateInfo;
 class WebConnection;
 class WebContextMenuItem;
 class WebImage;
@@ -91,7 +90,6 @@ template<typename ImplType> struct ImplTypeInfo;
 
 WK_ADD_API_MAPPING(WKArrayRef, API::Array)
 WK_ADD_API_MAPPING(WKBooleanRef, API::Boolean)
-WK_ADD_API_MAPPING(WKCertificateInfoRef, WebCertificateInfo)
 WK_ADD_API_MAPPING(WKConnectionRef, WebConnection)
 WK_ADD_API_MAPPING(WKContextMenuItemRef, WebContextMenuItem)
 WK_ADD_API_MAPPING(WKDataRef, API::Data)

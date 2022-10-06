@@ -936,7 +936,10 @@ class YarrGenerator final : public YarrJITInfo {
     public:
         typedef Vector<ReturnAddressRecord, 4> BacktrackRecords;
 
-        BacktrackingState() = default;
+        BacktrackingState()
+            : m_pendingFallthrough(false)
+        {
+        }
 
         // Add a jump or jumps, a return address, or set the flag indicating
         // that the current 'fallthrough' control flow requires backtracking.
@@ -1029,7 +1032,7 @@ class YarrGenerator final : public YarrJITInfo {
 
     private:
         MacroAssembler::JumpList m_laterFailures;
-        bool m_pendingFallthrough { false };
+        bool m_pendingFallthrough;
         Vector<MacroAssembler::DataLabelPtr, 4> m_pendingReturns;
         Vector<ReturnAddressRecord, 4> m_backtrackRecords;
     };
@@ -4121,6 +4124,7 @@ public:
     YarrGenerator(CCallHelpers& jit, const VM* vm, YarrBoyerMooreData* yarrBMData, const YarrJITRegs& regs, YarrPattern& pattern, StringView patternString, CharSize charSize, JITCompileMode compileMode)
         : m_jit(jit)
         , m_vm(vm)
+        , m_codeBlock(nullptr)
         , m_boyerMooreData(yarrBMData)
         , m_regs(regs)
         , m_pattern(pattern)
@@ -4651,7 +4655,7 @@ public:
 private:
     CCallHelpers& m_jit;
     const VM* const m_vm;
-    YarrCodeBlock* const m_codeBlock { nullptr };
+    YarrCodeBlock* const m_codeBlock;
     YarrBoyerMooreData* const m_boyerMooreData;
     const YarrJITRegs& m_regs;
 

@@ -58,7 +58,9 @@ StochasticSpaceTimeMutatorScheduler::StochasticSpaceTimeMutatorScheduler(Heap& h
 {
 }
 
-StochasticSpaceTimeMutatorScheduler::~StochasticSpaceTimeMutatorScheduler() = default;
+StochasticSpaceTimeMutatorScheduler::~StochasticSpaceTimeMutatorScheduler()
+{
+}
 
 MutatorScheduler::State StochasticSpaceTimeMutatorScheduler::state() const
 {

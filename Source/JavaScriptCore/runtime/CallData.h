@@ -43,7 +43,6 @@ struct CallData {
     enum class Type : uint8_t { None, Native, JS };
     Type type { Type::None };
 
-    // NOLINTNEXTLINE
     CallData() { } // Needed for the anonymous union below.
     union {
         struct {

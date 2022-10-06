@@ -52,7 +52,7 @@ Config g_gigacageConfig;
 #endif
 
 struct Callback {
-    Callback() = default;
+    Callback() { }
     
     Callback(void (*function)(void*), void *argument)
         : function(function)

@@ -111,6 +111,8 @@ public:
         , m_codeBlock(graph.m_codeBlock)
         , m_profiledBlock(graph.m_profiledBlock)
         , m_graph(graph)
+        , m_currentBlock(nullptr)
+        , m_currentIndex(0)
         , m_constantUndefined(graph.freeze(jsUndefined()))
         , m_constantNull(graph.freeze(jsNull()))
         , m_constantNaN(graph.freeze(jsNumber(PNaN)))
@@ -118,6 +120,10 @@ public:
         , m_numArguments(m_codeBlock->numParameters())
         , m_numLocals(m_codeBlock->numCalleeLocals())
         , m_numTmps(m_codeBlock->numTmps())
+        , m_parameterSlots(0)
+        , m_numPassedVarArgs(0)
+        , m_inlineStackTop(nullptr)
+        , m_currentInstruction(nullptr)
         , m_hasDebuggerEnabled(graph.hasDebuggerEnabled())
     {
         ASSERT(m_profiledBlock);
@@ -1130,9 +1136,9 @@ private:
     Graph& m_graph;
 
     // The current block being generated.
-    BasicBlock* m_currentBlock { nullptr };
+    BasicBlock* m_currentBlock;
     // The bytecode index of the current instruction being generated.
-    BytecodeIndex m_currentIndex { 0 };
+    BytecodeIndex m_currentIndex;
     // The semantic origin of the current node if different from the current Index.
     CodeOrigin m_currentSemanticOrigin;
     // The exit origin of the current node if different from the current Index.
@@ -1159,9 +1165,9 @@ private:
     // number includes the CallFrame slots that we initialize for the callee
     // (but not the callee-initialized CallerFrame and ReturnPC slots).
     // This number is 0 if and only if this function is a leaf.
-    unsigned m_parameterSlots { 0 };
+    unsigned m_parameterSlots;
     // The number of var args passed to the next var arg node.
-    unsigned m_numPassedVarArgs { 0 };
+    unsigned m_numPassedVarArgs;
 
     struct InlineStackEntry {
         ByteCodeParser* const m_byteCodeParser;
@@ -1234,13 +1240,13 @@ private:
             return operand.virtualRegister() + m_inlineCallFrame->stackOffset;
         }
     };
-
-    InlineStackEntry* m_inlineStackTop { nullptr };
-
+    
+    InlineStackEntry* m_inlineStackTop;
+    
     ICStatusContextStack m_icContextStack;
     
     struct DelayedSetLocal {
-        DelayedSetLocal() = default;
+        DelayedSetLocal() { }
         DelayedSetLocal(const CodeOrigin& origin, Operand operand, Node* value, SetMode setMode)
             : m_origin(origin)
             , m_operand(operand)
@@ -1265,7 +1271,7 @@ private:
 
     Vector<DelayedSetLocal, 2> m_setLocalQueue;
 
-    const JSInstruction* m_currentInstruction { nullptr };
+    const JSInstruction* m_currentInstruction;
     const bool m_hasDebuggerEnabled;
     bool m_hasAnyForceOSRExits { false };
 };

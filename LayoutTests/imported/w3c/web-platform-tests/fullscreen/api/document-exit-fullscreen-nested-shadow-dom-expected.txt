@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: outer.requestFullscreen is not a function. (In 'outer.requestFullscreen()', 'outer.requestFullscreen' is undefined)
+fullscreen
+
+Harness Error (FAIL), message = Unhandled rejection: outer.requestFullscreen is not a function. (In 'outer.requestFullscreen()', 'outer.requestFullscreen' is undefined)
+
+TIMEOUT Exiting fullscreen from a nested shadow root works correctly. Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: outer.requestFullscreen is not a function. (In 'outer.requestFullscreen()', 'outer.requestFullscreen' is undefined)
+
+TIMEOUT Exiting fullscreen from a nested shadow root works correctly. Test timed out
+

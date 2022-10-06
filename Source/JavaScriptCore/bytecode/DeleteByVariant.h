@@ -45,7 +45,7 @@ public:
         CacheableIdentifier, bool result,
         Structure* oldStrucutre, Structure* newStructure, PropertyOffset);
 
-    ~DeleteByVariant() = default;
+    ~DeleteByVariant();
 
     DeleteByVariant(const DeleteByVariant&);
     DeleteByVariant& operator=(const DeleteByVariant&);

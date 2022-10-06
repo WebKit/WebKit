@@ -36,32 +36,7 @@ struct MediaImage {
     String src;
     String sizes;
     String type;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static std::optional<MediaImage> decode(Decoder&);
 };
-
-template<class Encoder> inline void MediaImage::encode(Encoder& encoder) const
-{
-    encoder << src << sizes << type;
-}
-
-template<class Decoder> inline std::optional<MediaImage> MediaImage::decode(Decoder& decoder)
-{
-    String src;
-    if (!decoder.decode(src))
-        return { };
-
-    String sizes;
-    if (!decoder.decode(sizes))
-        return { };
-
-    String type;
-    if (!decoder.decode(type))
-        return { };
-
-    return MediaImage { WTFMove(src), WTFMove(sizes), WTFMove(type) };
-}
 
 }
 

@@ -43,7 +43,9 @@ public:
     {
     }
 
-    virtual ~Microtask() = default;
+    virtual ~Microtask()
+    {
+    }
 
     MicrotaskIdentifier identifier() const { return m_identifier; }
 

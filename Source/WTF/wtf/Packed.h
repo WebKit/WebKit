@@ -121,9 +121,15 @@ public:
     static constexpr unsigned storageSize = storageSizeWithAlignmentShift;
     static_assert(storageSize <= sizeof(uintptr_t));
 
-    constexpr PackedAlignedPtr() = default;
+    constexpr PackedAlignedPtr()
+        : m_storage()
+    {
+    }
 
-    constexpr PackedAlignedPtr(std::nullptr_t) { }
+    constexpr PackedAlignedPtr(std::nullptr_t)
+        : m_storage()
+    {
+    }
 
     PackedAlignedPtr(T* value)
     {
@@ -229,7 +235,7 @@ public:
     }
 
 private:
-    std::array<uint8_t, storageSize> m_storage { };
+    std::array<uint8_t, storageSize> m_storage;
 };
 
 template<typename T>

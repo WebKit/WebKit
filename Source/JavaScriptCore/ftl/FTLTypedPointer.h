@@ -34,8 +34,12 @@ namespace JSC { namespace FTL {
 
 class TypedPointer {
 public:
-    TypedPointer() = default;
-
+    TypedPointer()
+        : m_heap(nullptr)
+        , m_value(nullptr)
+    {
+    }
+    
     TypedPointer(const AbstractHeap& heap, LValue value)
         : m_heap(&heap)
         , m_value(value)
@@ -52,8 +56,8 @@ public:
     LValue value() const { return m_value; }
 
 private:
-    const AbstractHeap* m_heap { nullptr };
-    LValue m_value { nullptr };
+    const AbstractHeap* m_heap;
+    LValue m_value;
 };
 
 } } // namespace JSC::FTL

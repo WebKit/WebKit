@@ -39,7 +39,6 @@
 #import "WKWebViewInternal.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebBackForwardCache.h"
-#import "WebCertificateInfo.h"
 #import "WebNotificationManagerProxy.h"
 #import "WebProcessCache.h"
 #import "WebProcessMessages.h"

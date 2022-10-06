@@ -50,8 +50,8 @@ class VM;
 class IsoSubspacePerVM final {
 public:
     struct SubspaceParameters {
-        SubspaceParameters() = default;
-
+        SubspaceParameters() { }
+        
         SubspaceParameters(CString name, const HeapCellType& heapCellType, size_t size)
             : name(WTFMove(name))
             , heapCellType(&heapCellType)

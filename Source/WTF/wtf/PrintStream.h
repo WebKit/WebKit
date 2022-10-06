@@ -54,7 +54,7 @@ class PrintStream {
     WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(PrintStream);
 public:
     PrintStream();
-    virtual ~PrintStream() = default;
+    virtual ~PrintStream();
 
     WTF_EXPORT_PRIVATE void printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
     WTF_EXPORT_PRIVATE void printfVariableFormat(const char* format, ...);

@@ -37,10 +37,13 @@ OSRExit::OSRExit(unsigned id, const OriginStack& origin, ExitKind kind, bool isW
     , m_id(id)
     , m_exitKind(kind)
     , m_isWatchpoint(isWatchpoint)
+    , m_counter(0)
 {
 }
 
-OSRExit::~OSRExit() = default;
+OSRExit::~OSRExit()
+{
+}
 
 JSValue OSRExit::toJS(JSGlobalObject* globalObject) const
 {

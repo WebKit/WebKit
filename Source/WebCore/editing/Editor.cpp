@@ -3334,8 +3334,7 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
 {
     Ref<Document> protectedDocument(m_document);
 
-    // If the new selection is orphaned, then don't update the selection.
-    if (newSelection.start().isOrphan() || newSelection.end().isOrphan())
+    if (newSelection.isOrphan())
         return;
 
     // If there is no selection change, don't bother sending shouldChangeSelection, but still call setSelection,

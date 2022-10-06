@@ -42,7 +42,7 @@ class YarrCodeBlock;
 
 class YarrJITInfo {
 public:
-    virtual ~YarrJITInfo() = default;
+    virtual ~YarrJITInfo() { };
     virtual const char* variant() = 0;
     virtual unsigned opCount() = 0;
     virtual void dumpPatternString(PrintStream&) = 0;
@@ -53,7 +53,7 @@ class YarrDisassembler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     YarrDisassembler(YarrJITInfo*);
-    ~YarrDisassembler() = default;
+    ~YarrDisassembler();
 
     void setStartOfCode(MacroAssembler::Label label) { m_startOfCode = label; }
     void setForGenerate(unsigned opIndex, MacroAssembler::Label label)

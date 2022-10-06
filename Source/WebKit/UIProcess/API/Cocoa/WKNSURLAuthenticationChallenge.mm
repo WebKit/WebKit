@@ -28,7 +28,6 @@
 
 #import "AuthenticationChallengeDisposition.h"
 #import "AuthenticationDecisionListener.h"
-#import "WebCertificateInfo.h"
 #import "WebCredential.h"
 #import <WebCore/AuthenticationMac.h>
 

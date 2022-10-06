@@ -212,7 +212,7 @@ public:
 
     static ptrdiff_t offsetOfData() { return OBJECT_OFFSETOF(ArrayBuffer, m_contents) + OBJECT_OFFSETOF(ArrayBufferContents, m_data); }
 
-    ~ArrayBuffer() = default;
+    ~ArrayBuffer() { }
 
     JS_EXPORT_PRIVATE static Ref<SharedTask<void(void*)>> primitiveGigacageDestructor();
 

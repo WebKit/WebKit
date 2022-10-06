@@ -75,6 +75,7 @@ public:
 
     JITStubRoutine(Type type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& code)
         : m_code(code)
+        , m_refCount(1)
         , m_type(type)
     {
     }
@@ -145,7 +146,7 @@ protected:
     ALWAYS_INLINE void runWithDowncast(const Func& function);
 
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> m_code;
-    unsigned m_refCount { 1 };
+    unsigned m_refCount;
     mutable unsigned m_hash { 0 };
     Type m_type;
 };

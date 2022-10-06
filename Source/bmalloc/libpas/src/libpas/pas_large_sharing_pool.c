@@ -214,7 +214,7 @@ static pas_large_sharing_node* create_and_insert(
     return result;
 }
 
-static void boot_tree()
+static void boot_tree(void)
 {
     pas_range range;
     

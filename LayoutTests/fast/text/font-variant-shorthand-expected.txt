@@ -42,6 +42,7 @@ PASS window.getComputedStyle(document.getElementById('t20')).getPropertyValue('f
 PASS window.getComputedStyle(document.getElementById('t21')).getPropertyValue('font-variant-east-asian') is "normal"
 PASS window.getComputedStyle(document.getElementById('t22')).getPropertyValue('font-variant-east-asian') is "normal"
 PASS window.getComputedStyle(document.getElementById('t23')).getPropertyValue('font-variant-east-asian') is "normal"
+PASS window.getComputedStyle(document.getElementById('t24')).getPropertyValue('font-variant-alternates') is "normal"
 PASS successfullyParsed is true
 
 TEST COMPLETE

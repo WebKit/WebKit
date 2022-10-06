@@ -50,7 +50,6 @@ using namespace WebCore;
 
 LayerTreeHost::LayerTreeHost(WebPage& webPage)
     : m_webPage(webPage)
-    , m_compositorClient(*this)
     , m_surface(AcceleratedSurface::create(webPage, *this))
     , m_viewportController(webPage.size())
     , m_layerFlushTimer(RunLoop::main(), this, &LayerTreeHost::layerFlushTimerFired)
@@ -77,7 +76,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
     if (m_surface->shouldPaintMirrored())
         paintFlags |= TextureMapper::PaintingMirrored;
 
-    m_compositor = ThreadedCompositor::create(m_compositorClient, m_compositorClient, m_displayID, scaledSize, scaleFactor, paintFlags);
+    m_compositor = ThreadedCompositor::create(*this, *this, m_displayID, scaledSize, scaleFactor, paintFlags);
     m_layerTreeContext.contextID = m_surface->surfaceID();
 
     didChangeViewport();
@@ -402,6 +401,11 @@ uint64_t LayerTreeHost::nativeSurfaceHandleForCompositing()
 void LayerTreeHost::didDestroyGLContext()
 {
     m_surface->finalize();
+}
+
+void LayerTreeHost::resize(const IntSize& size)
+{
+    m_surface->clientResize(size);
 }
 
 void LayerTreeHost::willRenderFrame()

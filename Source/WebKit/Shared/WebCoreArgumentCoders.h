@@ -605,6 +605,11 @@ template<> struct ArgumentCoder<RefPtr<WebCore::SecurityOrigin>> {
     static std::optional<RefPtr<WebCore::SecurityOrigin>> decode(Decoder&);
 };
 
+template<> struct ArgumentCoder<Ref<WebCore::SecurityOrigin>> {
+    static void encode(Encoder&, const Ref<WebCore::SecurityOrigin>&);
+    static std::optional<Ref<WebCore::SecurityOrigin>> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<WebCore::FontAttributes> {
     static void encode(Encoder&, const WebCore::FontAttributes&);
     static std::optional<WebCore::FontAttributes> decode(Decoder&);
@@ -719,11 +724,6 @@ template<> struct ArgumentCoder<UnixFileDescriptor> {
 template<> struct ArgumentCoder<WebCore::PixelBuffer> {
     template<class Encoder> static void encode(Encoder&, const WebCore::PixelBuffer&);
     static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<Ref<WebCore::Report>> {
-    static void encode(Encoder&, const Ref<WebCore::Report>&);
-    static std::optional<Ref<WebCore::Report>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<RefPtr<WebCore::ReportBody>> {

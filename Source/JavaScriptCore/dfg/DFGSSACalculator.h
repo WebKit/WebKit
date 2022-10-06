@@ -142,8 +142,13 @@ public:
     private:
         friend class SSACalculator;
         
-        Def() = default;
-
+        Def()
+            : m_variable(nullptr)
+            , m_block(nullptr)
+            , m_value(nullptr)
+        {
+        }
+        
         Def(Variable* variable, BasicBlock* block, Node* value)
             : m_variable(variable)
             , m_block(block)
@@ -151,9 +156,9 @@ public:
         {
         }
         
-        Variable* m_variable { nullptr };
-        BasicBlock* m_block { nullptr };
-        Node* m_value { nullptr };
+        Variable* m_variable;
+        BasicBlock* m_block;
+        Node* m_value;
     };
     
     Variable* newVariable();

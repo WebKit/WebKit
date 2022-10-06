@@ -1,0 +1,45 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Element: original interface defined
+PASS Partial interface Element: member names are unique
+PASS Partial interface Document: original interface defined
+PASS Partial interface Document: member names are unique
+PASS Partial interface mixin DocumentOrShadowRoot: original interface mixin defined
+PASS Partial interface mixin DocumentOrShadowRoot: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Document[3]: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS DocumentFragment includes NonElementParentNode: member names are unique
+PASS Document includes DocumentOrShadowRoot: member names are unique
+PASS ShadowRoot includes DocumentOrShadowRoot: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS DocumentFragment includes ParentNode: member names are unique
+PASS Element includes ParentNode: member names are unique
+PASS Element includes NonDocumentTypeChildNode: member names are unique
+PASS Element includes ChildNode: member names are unique
+PASS Element includes Slottable: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes DocumentAndElementEventHandlers: member names are unique
+FAIL Document interface: attribute fullscreenEnabled assert_true: The prototype object must have a property "fullscreenEnabled" expected true got false
+FAIL Document interface: attribute fullscreen assert_equals: Document.prototype[Symbol.unscopables].fullscreen must exist expected "object" but got "undefined"
+FAIL Document interface: operation exitFullscreen() assert_own_property: interface prototype object missing non-static operation expected property "exitFullscreen" missing
+FAIL Document interface: attribute onfullscreenchange assert_true: The prototype object must have a property "onfullscreenchange" expected true got false
+FAIL Document interface: attribute onfullscreenerror assert_true: The prototype object must have a property "onfullscreenerror" expected true got false
+FAIL Document interface: attribute fullscreenElement assert_true: The prototype object must have a property "fullscreenElement" expected true got false
+FAIL Document interface: new Document must inherit property "fullscreenEnabled" with the proper type assert_inherits: property "fullscreenEnabled" not found in prototype chain
+FAIL Document interface: new Document must inherit property "fullscreen" with the proper type assert_inherits: property "fullscreen" not found in prototype chain
+FAIL Document interface: new Document must inherit property "exitFullscreen()" with the proper type assert_inherits: property "exitFullscreen" not found in prototype chain
+FAIL Document interface: new Document must inherit property "onfullscreenchange" with the proper type assert_inherits: property "onfullscreenchange" not found in prototype chain
+FAIL Document interface: new Document must inherit property "onfullscreenerror" with the proper type assert_inherits: property "onfullscreenerror" not found in prototype chain
+FAIL Document interface: new Document must inherit property "fullscreenElement" with the proper type assert_inherits: property "fullscreenElement" not found in prototype chain
+FAIL ShadowRoot interface: attribute fullscreenElement assert_true: The prototype object must have a property "fullscreenElement" expected true got false
+FAIL Element interface: operation requestFullscreen(optional FullscreenOptions) assert_own_property: interface prototype object missing non-static operation expected property "requestFullscreen" missing
+FAIL Element interface: attribute onfullscreenchange assert_true: The prototype object must have a property "onfullscreenchange" expected true got false
+FAIL Element interface: attribute onfullscreenerror assert_true: The prototype object must have a property "onfullscreenerror" expected true got false
+FAIL Element interface: document.createElementNS(null, "test") must inherit property "requestFullscreen(optional FullscreenOptions)" with the proper type assert_inherits: property "requestFullscreen" not found in prototype chain
+FAIL Element interface: calling requestFullscreen(optional FullscreenOptions) on document.createElementNS(null, "test") with too few arguments must throw TypeError assert_inherits: property "requestFullscreen" not found in prototype chain
+FAIL Element interface: document.createElementNS(null, "test") must inherit property "onfullscreenchange" with the proper type assert_inherits: property "onfullscreenchange" not found in prototype chain
+FAIL Element interface: document.createElementNS(null, "test") must inherit property "onfullscreenerror" with the proper type assert_inherits: property "onfullscreenerror" not found in prototype chain
+

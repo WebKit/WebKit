@@ -1136,7 +1136,6 @@ ModelDocumentEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "ENABLE(SEPARATED_MODEL)": true
       default: false
 
 ModelElementEnabled:

@@ -35,7 +35,9 @@
 
 namespace JSC { namespace B3 { namespace Air {
 
-TmpWidth::TmpWidth() = default;
+TmpWidth::TmpWidth()
+{
+}
 
 TmpWidth::TmpWidth(Code& code)
 {
@@ -43,7 +45,9 @@ TmpWidth::TmpWidth(Code& code)
     recompute<FP>(code);
 }
 
-TmpWidth::~TmpWidth() = default;
+TmpWidth::~TmpWidth()
+{
+}
 
 template <Bank bank>
 void TmpWidth::recompute(Code& code)

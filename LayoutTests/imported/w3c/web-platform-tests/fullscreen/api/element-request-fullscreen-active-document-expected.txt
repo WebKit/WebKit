@@ -1,0 +1,3 @@
+
+FAIL Element#requestFullscreen() when the document is not the active document documentBeforeNav.documentElement.requestFullscreen is not a function. (In 'documentBeforeNav.documentElement.requestFullscreen()', 'documentBeforeNav.documentElement.requestFullscreen' is undefined)
+

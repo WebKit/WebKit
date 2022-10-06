@@ -1,0 +1,6 @@
+Blocked access to external URL http://www1.localhost:8800/fullscreen/api/resources/echo-fullscreenEnabled.html
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Document#fullscreenEnabled removing allowfullscreen after load and then navigating Test timed out
+

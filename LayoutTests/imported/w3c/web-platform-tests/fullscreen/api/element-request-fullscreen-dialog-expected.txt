@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: dialog.requestFullscreen is not a function. (In 'dialog.requestFullscreen()', 'dialog.requestFullscreen' is undefined)
+
+Harness Error (FAIL), message = Unhandled rejection: dialog.requestFullscreen is not a function. (In 'dialog.requestFullscreen()', 'dialog.requestFullscreen' is undefined)
+
+TIMEOUT Element#requestFullscreen() for dialog element Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: dialog.requestFullscreen is not a function. (In 'dialog.requestFullscreen()', 'dialog.requestFullscreen' is undefined)
+
+TIMEOUT Element#requestFullscreen() for dialog element Test timed out
+

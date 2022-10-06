@@ -42,10 +42,14 @@ namespace JSC { namespace B3 { namespace Air {
 struct Kind {
     Kind(Opcode opcode)
         : opcode(opcode)
+        , effects(false)
     {
     }
     
-    Kind() = default;
+    Kind()
+        : Kind(Nop)
+    {
+    }
     
     bool operator==(const Kind& other) const
     {
@@ -70,13 +74,13 @@ struct Kind {
     
     void dump(PrintStream&) const;
     
-    Opcode opcode { Nop };
+    Opcode opcode;
     
     // This is an opcode-agnostic flag that indicates that we expect that this instruction will do
     // any of the following:
     // - Trap.
     // - Perform some non-arg non-control effect.
-    bool effects : 1 { false };
+    bool effects : 1;
 };
 
 } } } // namespace JSC::B3::Air

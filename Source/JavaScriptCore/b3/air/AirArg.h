@@ -477,7 +477,10 @@ public:
         ASSERT_NOT_REACHED();
     }
 
-    Arg() = default;
+    Arg()
+        : m_kind(Invalid)
+    {
+    }
 
     Arg(Air::Tmp tmp)
         : m_kind(Tmp)

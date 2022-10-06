@@ -42,6 +42,7 @@
 #include "CSSFontFaceSrcValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontPaletteValuesOverrideColorsValue.h"
+#include "CSSFontVariantAlternatesValue.h"
 #if ENABLE(VARIATION_FONTS)
 #include "CSSFontVariationValue.h"
 #endif
@@ -826,9 +827,76 @@ static RefPtr<CSSPrimitiveValue> consumeFontVariantCaps(CSSParserTokenRange& ran
         CSSValueUnicase, CSSValueTitlingCaps>(range);
 }
 
-static RefPtr<CSSPrimitiveValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
+static RefPtr<CSSValue> consumeFontVariantAlternates(CSSParserTokenRange& range)
 {
-    return consumeIdent<CSSValueNormal, CSSValueHistoricalForms>(range);
+    if (range.atEnd())
+        return nullptr;
+
+    if (range.peek().id() == CSSValueNormal) {
+        consumeIdent<CSSValueNormal>(range);
+        return CSSValuePool::singleton().createIdentifierValue(CSSValueNormal);
+    }
+
+    auto result = FontVariantAlternates::Normal();
+
+    auto parseSomethingWithoutError = [&range, &result]() {
+        bool hasParsedSomething = false;
+        auto parseAndSetArgument = [&range, &hasParsedSomething] (auto& value) {
+            CSSParserTokenRange args = consumeFunction(range);
+            auto ident = consumeCustomIdent(args);
+            if (!args.atEnd())
+                return false;
+        
+            if (!ident)
+                return false;
+        
+            if (value)
+                return false;
+        
+            hasParsedSomething = true;
+            value = ident->stringValue();
+            return true;
+        };
+        while (true) {
+            const CSSParserToken& token = range.peek();
+            if (token.id() == CSSValueHistoricalForms) {
+                consumeIdent<CSSValueHistoricalForms>(range);
+                
+                if (result.valuesRef().historicalForms)
+                    return false;
+
+                if (result.isNormal())
+                    result.setValues();
+
+                hasParsedSomething = true;
+                result.valuesRef().historicalForms = true;
+            } else if (token.functionId() == CSSValueSwash) {
+                if (!parseAndSetArgument(result.valuesRef().swash))
+                    return false;
+            } else if (token.functionId() == CSSValueStylistic) {
+                if (!parseAndSetArgument(result.valuesRef().stylistic))
+                    return false;
+            } else if (token.functionId() == CSSValueStyleset) {
+                if (!parseAndSetArgument(result.valuesRef().styleset))
+                    return false;
+            } else if (token.functionId() == CSSValueCharacterVariant) {
+                if (!parseAndSetArgument(result.valuesRef().characterVariant))
+                    return false;
+            } else if (token.functionId() == CSSValueOrnaments) {
+                if (!parseAndSetArgument(result.valuesRef().ornaments))
+                    return false;
+            } else if (token.functionId() == CSSValueAnnotation) {
+                if (!parseAndSetArgument(result.valuesRef().annotation))
+                    return false;
+            } else
+                return hasParsedSomething;
+        }
+    };
+
+    if (parseSomethingWithoutError())
+        return CSSFontVariantAlternatesValue::create(WTFMove(result));
+    
+    return nullptr;
 }
 
 static RefPtr<CSSPrimitiveValue> consumeFontVariantPosition(CSSParserTokenRange& range)
@@ -4356,6 +4424,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumePage(m_range);
     case CSSPropertyQuotes:
         return consumeQuotes(m_range);
+    case CSSPropertyFontVariantAlternates:
+        return consumeFontVariantAlternates(m_range);
     case CSSPropertyFontVariantCaps:
         return consumeFontVariantCaps(m_range);
     case CSSPropertyFontVariantLigatures:
@@ -5391,7 +5461,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     }
 
     RefPtr<CSSPrimitiveValue> capsValue;
-    RefPtr<CSSPrimitiveValue> alternatesValue;
+    RefPtr<CSSValue> alternatesValue;
     RefPtr<CSSPrimitiveValue> positionValue;
 
     RefPtr<CSSValue> eastAsianValue;
@@ -5449,7 +5519,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
 
     auto& valuePool = CSSValuePool::singleton();
     addPropertyWithImplicitDefault(CSSPropertyFontVariantCaps, CSSPropertyFontVariant, capsValue, valuePool.createIdentifierValue(CSSValueNormal), important);
-    addPropertyWithImplicitDefault(CSSPropertyFontVariantAlternates, CSSPropertyFontVariant, alternatesValue, valuePool.createIdentifierValue(CSSValueNormal), important);
+    addPropertyWithImplicitDefault(CSSPropertyFontVariantAlternates, CSSPropertyFontVariant, WTFMove(alternatesValue), valuePool.createIdentifierValue(CSSValueNormal), important);
     addPropertyWithImplicitDefault(CSSPropertyFontVariantPosition, CSSPropertyFontVariant, positionValue, valuePool.createIdentifierValue(CSSValueNormal), important);
     addPropertyWithImplicitDefault(CSSPropertyFontVariantEastAsian, CSSPropertyFontVariant, WTFMove(eastAsianValue), valuePool.createIdentifierValue(CSSValueNormal), important);
 

@@ -58,12 +58,12 @@ struct pas_fast_megapage_table_impl {
 };
 
 struct pas_fast_megapage_table {
-    unsigned fast_bits[PAS_BITVECTOR_NUM_WORDS(PAS_NUM_FAST_FAST_MEGAPAGE_BITS)]; // NOLINT
-    pas_fast_megapage_table_impl* instances[PAS_NUM_FAST_MEGAPAGE_TABLES]; // NOLINT
+    unsigned fast_bits[PAS_BITVECTOR_NUM_WORDS(PAS_NUM_FAST_FAST_MEGAPAGE_BITS)];
+    pas_fast_megapage_table_impl* instances[PAS_NUM_FAST_MEGAPAGE_TABLES];
 #ifdef __cplusplus
     constexpr pas_fast_megapage_table(cpp_initialization_t)
-        : fast_bits { 0 } // NOLINT
-        , instances { } // NOLINT
+        : fast_bits { 0 }
+        , instances { }
     {
         for (unsigned i = 0; i < PAS_NUM_FAST_MEGAPAGE_TABLES; ++i)
             instances[i] = &pas_fast_megapage_table_impl_null;

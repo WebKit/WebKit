@@ -54,7 +54,9 @@ RefPtr<PatchpointExceptionHandle> PatchpointExceptionHandle::defaultHandle(State
     return state.defaultExceptionHandle;
 }
 
-PatchpointExceptionHandle::~PatchpointExceptionHandle() = default;
+PatchpointExceptionHandle::~PatchpointExceptionHandle()
+{
+}
 
 RefPtr<ExceptionTarget> PatchpointExceptionHandle::scheduleExitCreation(
     const B3::StackmapGenerationParams& params)

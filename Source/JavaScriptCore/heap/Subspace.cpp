@@ -51,7 +51,9 @@ void Subspace::initialize(const HeapCellType& heapCellType, AlignedMemoryAllocat
     m_alignedMemoryAllocator->registerSubspace(this);
 }
 
-Subspace::~Subspace() = default;
+Subspace::~Subspace()
+{
+}
 
 void Subspace::finishSweep(MarkedBlock::Handle& block, FreeList* freeList)
 {

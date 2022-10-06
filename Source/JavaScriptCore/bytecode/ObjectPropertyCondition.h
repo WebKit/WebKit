@@ -35,10 +35,14 @@ class TrackedReferences;
 
 class ObjectPropertyCondition {
 public:
-    ObjectPropertyCondition() = default;
-
+    ObjectPropertyCondition()
+        : m_object(nullptr)
+    {
+    }
+    
     ObjectPropertyCondition(WTF::HashTableDeletedValueType token)
-        : m_condition(token)
+        : m_object(nullptr)
+        , m_condition(token)
     {
     }
     
@@ -301,7 +305,7 @@ public:
     ObjectPropertyCondition attemptToMakeReplacementWithoutBarrier() const;
 
 private:
-    JSObject* m_object { nullptr };
+    JSObject* m_object;
     PropertyCondition m_condition;
 };
 

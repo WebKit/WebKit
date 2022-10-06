@@ -71,6 +71,7 @@ public:
     MacroAssemblerARM64()
         : m_dataMemoryTempRegister(this, dataTempRegister)
         , m_cachedMemoryTempRegister(this, memoryTempRegister)
+        , m_makeJumpPatchable(false)
     {
     }
 
@@ -5393,7 +5394,7 @@ protected:
 
     CachedTempRegister m_dataMemoryTempRegister;
     CachedTempRegister m_cachedMemoryTempRegister;
-    bool m_makeJumpPatchable { false };
+    bool m_makeJumpPatchable;
 };
 
 // Extend the {load,store}{Unsigned,Unscaled}Immediate templated general register methods to cover all load/store sizes

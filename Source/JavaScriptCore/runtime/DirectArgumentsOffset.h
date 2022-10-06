@@ -36,7 +36,7 @@ namespace JSC {
 // DirectArgumentsOffset.
 class DirectArgumentsOffset : public GenericOffset<DirectArgumentsOffset> {
 public:
-    DirectArgumentsOffset() = default;
+    DirectArgumentsOffset() { }
     
     explicit DirectArgumentsOffset(unsigned offset)
         : GenericOffset(offset)

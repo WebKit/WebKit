@@ -44,8 +44,8 @@ struct DebuggerPausePosition {
 
 class DebuggerPausePositions {
 public:
-    DebuggerPausePositions() = default;
-    ~DebuggerPausePositions() = default;
+    DebuggerPausePositions() { }
+    ~DebuggerPausePositions() { }
 
     void appendPause(const JSTextPosition& position)
     {
@@ -79,8 +79,8 @@ private:
 
 
 struct DebuggerParseData {
-    DebuggerParseData() = default;
-    ~DebuggerParseData() = default;
+    DebuggerParseData() { }
+    ~DebuggerParseData() { }
 
     DebuggerPausePositions pausePositions;
 };

@@ -1,0 +1,3 @@
+
+FAIL Document#fullscreenEnabled removing allowfullscreen after load and then navigating assert_true: document.fullscreenEnabled in the iframe, before navigation expected true got undefined
+

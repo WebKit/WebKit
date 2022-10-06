@@ -40,7 +40,7 @@ public:
     {
         return adoptRef(*new SocketConnection(WTFMove(connection), messageHandlers, userData));
     }
-    WTF_EXPORT_PRIVATE ~SocketConnection() = default;
+    WTF_EXPORT_PRIVATE ~SocketConnection();
 
     WTF_EXPORT_PRIVATE void sendMessage(const char*, GVariant*);
 

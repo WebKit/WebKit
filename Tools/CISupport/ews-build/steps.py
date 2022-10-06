@@ -2346,7 +2346,7 @@ class RunWebKitPyPython2Tests(WebKitPyTest):
     description = ['webkitpy-tests running ({})'.format(language)]
     jsonFileName = 'webkitpy_test_{}_results.json'.format(language)
     logfiles = {'json': jsonFileName}
-    command = ['python', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', '--json-output={0}'.format(jsonFileName)]
+    command = ['python', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(jsonFileName)]
 
 
 class RunWebKitPyPython3Tests(WebKitPyTest):
@@ -2355,7 +2355,7 @@ class RunWebKitPyPython3Tests(WebKitPyTest):
     description = ['webkitpy-tests running ({})'.format(language)]
     jsonFileName = 'webkitpy_test_{}_results.json'.format(language)
     logfiles = {'json': jsonFileName}
-    command = ['python3', 'Tools/Scripts/test-webkitpy', '--all', '--verbose', '--json-output={0}'.format(jsonFileName)]
+    command = ['python3', 'Tools/Scripts/test-webkitpy', '--verbose', '--json-output={0}'.format(jsonFileName)]
 
 
 class InstallGtkDependencies(shell.ShellCommand):
@@ -2576,6 +2576,13 @@ class AnalyzeCompileWebKitResults(buildstep.BuildStep, BugzillaMixin, GitHubMixi
         pr_number = self.getProperty('github.number')
 
         if compile_without_patch_result == FAILURE:
+            if pr_number and self.getProperty('github.base.ref') != 'main':
+                message = 'Unable to build WebKit without PR, please check manually'
+                self.descriptionDone = message
+                self.finished(FAILURE)
+                self.build.buildFinished([message], FAILURE)
+                return defer.succeed(None)
+
             message = 'Unable to build WebKit without {}, retrying build'.format('PR' if pr_number else 'patch')
             self.descriptionDone = message
             self.send_email_for_preexisting_build_failure()

@@ -30,7 +30,6 @@
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKData.h"
-#include "WebCertificateInfo.h"
 
 #include <WebCore/CertificateInfo.h>
 
@@ -39,38 +38,25 @@ using CertificateChain = Vector<Certificate>;
 
 WKCertificateInfoRef WKCertificateInfoCreateWithCertficateChain(WKArrayRef certificateChainRef)
 {
-    CertificateChain certificateChain;
-    for (int i = 0, count = WKArrayGetSize(certificateChainRef); i < count; i++) {
-        auto data = reinterpret_cast<WKDataRef>(WKArrayGetItemAtIndex(certificateChainRef, i));
-        auto certificate = WebCore::CertificateInfo::makeCertificate(WKDataGetBytes(data), WKDataGetSize(data));
-        certificateChain.append(WTFMove(certificate));
-    }
-
-    WebCore::CertificateInfo certificateInfo { 0, WTFMove(certificateChain) };
-    RefPtr<WebKit::WebCertificateInfo> certificateInfoRef = WebKit::WebCertificateInfo::create(certificateInfo);
-    return WebKit::toAPI(certificateInfoRef.leakRef());
+    return nullptr;
 }
 
 int WKCertificateInfoGetVerificationError(WKCertificateInfoRef certificateInfoRef)
 {
-    return WebKit::toImpl(certificateInfoRef)->certificateInfo().verificationError();
+    return 0;
 }
 
 WKStringRef WKCertificateInfoCopyVerificationErrorDescription(WKCertificateInfoRef certificateInfoRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(certificateInfoRef)->certificateInfo().verificationErrorDescription());
+    return nullptr;
 }
 
 size_t WKCertificateInfoGetCertificateChainSize(WKCertificateInfoRef certificateInfoRef)
 {
-    return WebKit::toImpl(certificateInfoRef)->certificateInfo().certificateChain().size();
+    return 0;
 }
 
 WKDataRef WKCertificateInfoCopyCertificateAtIndex(WKCertificateInfoRef certificateInfoRef, size_t index)
 {
-    if (WebKit::toImpl(certificateInfoRef)->certificateInfo().certificateChain().size() <= index)
-        return WebKit::toAPI(&API::Data::create(nullptr, 0).leakRef());
-
-    const auto& certificate = WebKit::toImpl(certificateInfoRef)->certificateInfo().certificateChain().at(index);
-    return WebKit::toAPI(&API::Data::create(reinterpret_cast<const unsigned char*>(certificate.data()), certificate.size()).leakRef());
+    return nullptr;
 }

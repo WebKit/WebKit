@@ -33,8 +33,8 @@ template<typename Node, typename Set = HashSet<Node>>
 class GraphNodeWorklist {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GraphNodeWorklist() = default;
-    ~GraphNodeWorklist() = default;
+    GraphNodeWorklist() { }
+    ~GraphNodeWorklist() { }
 
     // Returns true if we didn't know about the node before.
     bool push(Node node)
@@ -75,7 +75,11 @@ template<typename Node, typename T>
 struct GraphNodeWith {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-    GraphNodeWith() = default;
+    GraphNodeWith()
+        : node()
+        , data()
+    {
+    }
 
     GraphNodeWith(Node node, const T& data)
         : node(node)
@@ -85,15 +89,15 @@ struct GraphNodeWith {
 
     explicit operator bool() const { return !!node; }
     
-    Node node { };
-    T data { };
+    Node node;
+    T data;
 };
 
 template<typename Node, typename T, typename Set = HashSet<Node>>
 class ExtendedGraphNodeWorklist {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ExtendedGraphNodeWorklist() = default;
+    ExtendedGraphNodeWorklist() { }
 
     void forcePush(const GraphNodeWith<Node, T>& entry)
     {
@@ -165,10 +169,14 @@ template<typename Node, typename Set = HashSet<Node>>
 class PostOrderGraphNodeWorklist {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    PostOrderGraphNodeWorklist() = default;
+    PostOrderGraphNodeWorklist()
+    {
+    }
     
-    ~PostOrderGraphNodeWorklist() = default;
-
+    ~PostOrderGraphNodeWorklist()
+    {
+    }
+    
     bool pushPre(Node node)
     {
         return m_worklist.push(node, GraphVisitOrder::Pre);

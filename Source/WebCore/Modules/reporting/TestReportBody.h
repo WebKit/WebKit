@@ -39,36 +39,16 @@ class TestReportBody final : public ReportBody {
 public:
     WEBCORE_EXPORT static Ref<TestReportBody> create(String&& message);
 
-    const String& type() const final;
-    const String& message() const;
+    WEBCORE_EXPORT const String& type() const final;
+    WEBCORE_EXPORT const String& message() const;
 
     WEBCORE_EXPORT Ref<FormData> createReportFormDataForViolation() const;
-
-    template<typename Encoder> void encode(Encoder&) const;
-    template<typename Decoder> static std::optional<RefPtr<WebCore::TestReportBody>> decode(Decoder&);
 
 private:
     TestReportBody(String&& message);
 
     const String m_bodyMessage;
 };
-
-template<typename Encoder>
-void TestReportBody::encode(Encoder& encoder) const
-{
-    encoder << m_bodyMessage;
-}
-
-template<typename Decoder>
-std::optional<RefPtr<TestReportBody>> TestReportBody::decode(Decoder& decoder)
-{
-    std::optional<String> bodymessage;
-    decoder >> bodymessage;
-    if (!bodymessage)
-        return std::nullopt;
-
-    return TestReportBody::create(WTFMove(*bodymessage));
-}
 
 } // namespace WebCore
 

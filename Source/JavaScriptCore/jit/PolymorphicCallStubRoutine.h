@@ -59,8 +59,11 @@ private:
 
 class PolymorphicCallCase {
 public:
-    PolymorphicCallCase() = default;
-
+    PolymorphicCallCase()
+        : m_codeBlock(nullptr)
+    {
+    }
+    
     PolymorphicCallCase(CallVariant variant, CodeBlock* codeBlock)
         : m_variant(variant)
         , m_codeBlock(codeBlock)
@@ -74,7 +77,7 @@ public:
     
 private:
     CallVariant m_variant;
-    CodeBlock* const m_codeBlock { nullptr };
+    CodeBlock* const m_codeBlock;
 };
 
 class PolymorphicCallStubRoutine final : public GCAwareJITStubRoutine {

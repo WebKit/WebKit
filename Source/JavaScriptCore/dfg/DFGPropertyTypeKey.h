@@ -36,7 +36,11 @@ namespace JSC { namespace DFG {
 
 class PropertyTypeKey {
 public:
-    PropertyTypeKey() = default;
+    PropertyTypeKey()
+        : m_structure(nullptr)
+        , m_uid(nullptr)
+    {
+    }
 
     PropertyTypeKey(Structure* structure, UniquedStringImpl* uid)
         : m_structure(structure)
@@ -45,7 +49,8 @@ public:
     }
 
     PropertyTypeKey(WTF::HashTableDeletedValueType)
-        : m_uid(deletedUID())
+        : m_structure(nullptr)
+        , m_uid(deletedUID())
     {
     }
 
@@ -91,8 +96,8 @@ private:
         return bitwise_cast<UniquedStringImpl*>(static_cast<intptr_t>(1));
     }
     
-    Structure* m_structure { nullptr };
-    UniquedStringImpl* m_uid { nullptr };
+    Structure* m_structure;
+    UniquedStringImpl* m_uid;
 };
 
 struct PropertyTypeKeyHash {

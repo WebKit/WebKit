@@ -36,11 +36,15 @@ namespace JSC { namespace Profiler {
 Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
     : m_kind(kind)
     , m_bytecodes(bytecodes)
+    , m_numInlinedGetByIds(0)
+    , m_numInlinedPutByIds(0)
+    , m_numInlinedCalls(0)
+    , m_jettisonReason(NotJettisoned)
     , m_uid(UID::create())
 {
 }
 
-Compilation::~Compilation() = default;
+Compilation::~Compilation() { }
 
 void Compilation::addProfiledBytecodes(Database& database, CodeBlock* profiledBlock)
 {

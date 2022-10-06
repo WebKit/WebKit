@@ -166,7 +166,7 @@ pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_node_for_in
     return pas_compact_thread_local_cache_layout_node_load(&compact_node);
 }
 
-pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_last_node()
+pas_thread_local_cache_layout_node pas_thread_local_cache_layout_get_last_node(void)
 {
     pas_heap_lock_assert_held();
     if (!pas_thread_local_cache_layout_last_segment)

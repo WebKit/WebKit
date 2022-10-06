@@ -39,7 +39,9 @@ class TieredMMapArray {
 
 public:
     TieredMMapArray()
-        : m_directory(static_cast<T**>(OSAllocator::reserveAndCommit(m_directoryCount * sizeof(T*))))
+        : m_directoryCount(4096)
+        , m_directory(static_cast<T**>(OSAllocator::reserveAndCommit(m_directoryCount * sizeof(T*))))
+        , m_size(0)
     {
         for (size_t block = 0; block < m_directoryCount; ++block)
             m_directory[block] = 0;
@@ -102,9 +104,9 @@ public:
     size_t size() const { return m_size; }
 
 private:
-    size_t m_directoryCount { 4096 };
+    size_t m_directoryCount;
     T** m_directory;
-    size_t m_size { 0 };
+    size_t m_size;
 };
 
 } // namespace JSC

@@ -273,7 +273,6 @@ private:
     RegisterSet m_liveRegistersForCall;
     CallSiteIndex m_callSiteIndex;
     SpillState m_spillStateForJSCall;
-    SpillState m_spillStateForJSGetterSetter;
     bool m_calculatedRegistersForCallAndExceptionHandling : 1 { false };
     bool m_needsToRestoreRegistersIfException : 1 { false };
     bool m_calculatedCallSiteIndex : 1 { false };

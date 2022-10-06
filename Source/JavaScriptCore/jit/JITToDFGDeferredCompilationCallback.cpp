@@ -32,8 +32,8 @@
 
 namespace JSC {
 
-JITToDFGDeferredCompilationCallback::JITToDFGDeferredCompilationCallback() = default;
-JITToDFGDeferredCompilationCallback::~JITToDFGDeferredCompilationCallback() = default;
+JITToDFGDeferredCompilationCallback::JITToDFGDeferredCompilationCallback() { }
+JITToDFGDeferredCompilationCallback::~JITToDFGDeferredCompilationCallback() { }
 
 Ref<JITToDFGDeferredCompilationCallback> JITToDFGDeferredCompilationCallback::create()
 {

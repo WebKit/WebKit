@@ -40,7 +40,7 @@ namespace JSC { namespace DFG {
 // distinguishes an immediate value (typically an index into a CodeBlock data structure - 
 // a constant index, argument, or identifier) from a Node*.
 struct OpInfo {
-    OpInfo() = default;
+    OpInfo() : m_value(0) { }
     template<
         typename IntegralType,
         typename Constraint = typename std::enable_if<(std::is_integral<IntegralType>::value || std::is_enum<IntegralType>::value) && sizeof(IntegralType) <= sizeof(uint64_t)>::type>
@@ -62,7 +62,7 @@ struct OpInfo {
         m_value = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(ptr));
     }
 
-    uint64_t m_value { 0 };
+    uint64_t m_value;
 };
 
 } } // namespace JSC::DFG

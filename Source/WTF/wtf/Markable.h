@@ -85,9 +85,12 @@ template<typename T, typename Traits>
 class Markable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    constexpr Markable() = default;
+    constexpr Markable()
+        : m_value(Traits::emptyValue())
+    { }
 
     constexpr Markable(std::nullopt_t)
+        : Markable()
     { }
 
     constexpr Markable(T&& value)
@@ -148,7 +151,7 @@ public:
     template<typename Decoder> static std::optional<Markable> decode(Decoder&);
 
 private:
-    T m_value { Traits::emptyValue() };
+    T m_value;
 };
 
 template <typename T, typename Traits> constexpr bool operator==(const Markable<T, Traits>& x, const Markable<T, Traits>& y)

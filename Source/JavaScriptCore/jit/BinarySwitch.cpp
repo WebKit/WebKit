@@ -42,6 +42,7 @@ BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type
     : m_type(type)
     , m_value(value)
     , m_weakRandom(globalCounter++)
+    , m_index(0)
     , m_caseIndex(UINT_MAX)
 {
     if (cases.isEmpty())
@@ -66,7 +67,9 @@ BinarySwitch::BinarySwitch(GPRReg value, const Vector<int64_t>& cases, Type type
     build(0, false, m_cases.size());
 }
 
-BinarySwitch::~BinarySwitch() = default;
+BinarySwitch::~BinarySwitch()
+{
+}
 
 bool BinarySwitch::advance(MacroAssembler& jit)
 {

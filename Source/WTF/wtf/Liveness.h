@@ -170,7 +170,11 @@ public:
         class iterator {
             WTF_MAKE_FAST_ALLOCATED;
         public:
-            iterator() = default;
+            iterator()
+                : m_liveness(nullptr)
+                , m_iter()
+            {
+            }
             
             iterator(Liveness& liveness, typename UnderlyingIterable::const_iterator iter)
                 : m_liveness(&liveness)
@@ -201,8 +205,8 @@ public:
             }
 
         private:
-            Liveness* m_liveness { nullptr };
-            typename UnderlyingIterable::const_iterator m_iter { nullptr };
+            Liveness* m_liveness;
+            typename UnderlyingIterable::const_iterator m_iter;
         };
 
         iterator begin() const { return iterator(m_liveness, m_iterable.begin()); }

@@ -132,7 +132,7 @@ public:
     static FontSynthesisLonghandValue initialFontSynthesisSmallCaps() { return FontSynthesisLonghandValue::Auto; }
     static FontVariantPosition initialVariantPosition() { return FontVariantPosition::Normal; }
     static FontVariantCaps initialVariantCaps() { return FontVariantCaps::Normal; }
-    static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal; }
+    static FontVariantAlternates initialVariantAlternates() { return FontVariantAlternates::Normal(); }
     static FontOpticalSizing initialOpticalSizing() { return FontOpticalSizing::Enabled; }
     static const AtomString& initialSpecifiedLocale() { return nullAtom(); }
     static FontPalette initialFontPalette() { return { FontPalette::Type::Normal, nullAtom() }; }

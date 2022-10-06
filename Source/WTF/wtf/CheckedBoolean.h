@@ -33,6 +33,7 @@ public:
 #if ASSERT_ENABLED
     CheckedBoolean(const CheckedBoolean& other)
         : m_value(other.m_value)
+        , m_checked(false)
     {
         other.m_checked = true;
     }
@@ -40,6 +41,9 @@ public:
 
     CheckedBoolean(bool value)
         : m_value(value)
+#if ASSERT_ENABLED
+        , m_checked(false)
+#endif
     {
     }
     
@@ -59,6 +63,6 @@ public:
 private:
     bool m_value;
 #if ASSERT_ENABLED
-    mutable bool m_checked { false };
+    mutable bool m_checked;
 #endif
 };
