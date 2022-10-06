@@ -63,8 +63,13 @@ public:
 
     bool operator==(const CertificateInfo& other) const
     {
-        return g_tls_certificate_is_same(certificate(), other.certificate())
-            && tlsErrors() == other.tlsErrors();
+        if (tlsErrors() != other.tlsErrors())
+            return false;
+
+        if (m_certificate.get() == other.m_certificate.get())
+            return true;
+
+        return m_certificate && other.m_certificate && g_tls_certificate_is_same(m_certificate.get(), other.m_certificate.get());
     }
     bool operator!=(const CertificateInfo& other) const { return !(*this == other); }
 
