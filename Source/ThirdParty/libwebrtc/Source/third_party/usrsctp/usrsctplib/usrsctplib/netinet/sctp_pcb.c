@@ -7952,7 +7952,7 @@ sctp_drain_mbufs(struct sctp_tcb *stcb)
 }
 
 void
-sctp_drain()
+sctp_drain(void)
 {
 	/*
 	 * We must walk the PCB lists for ALL associations here. The system

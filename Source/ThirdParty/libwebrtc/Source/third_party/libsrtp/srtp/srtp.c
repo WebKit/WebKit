@@ -110,7 +110,7 @@ static srtp_err_status_t srtp_validate_rtp_header(void *rtp_hdr,
     return srtp_err_status_ok;
 }
 
-const char *srtp_get_version_string()
+const char *srtp_get_version_string(void)
 {
     /*
      * Simply return the autotools generated string
@@ -118,7 +118,7 @@ const char *srtp_get_version_string()
     return SRTP_VER_STRING;
 }
 
-unsigned int srtp_get_version()
+unsigned int srtp_get_version(void)
 {
     unsigned int major = 0, minor = 0, micro = 0;
     unsigned int rv = 0;
@@ -2723,7 +2723,7 @@ srtp_err_status_t srtp_unprotect_mki(srtp_ctx_t *ctx,
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_init()
+srtp_err_status_t srtp_init(void)
 {
     srtp_err_status_t status;
 
@@ -2740,7 +2740,7 @@ srtp_err_status_t srtp_init()
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_shutdown()
+srtp_err_status_t srtp_shutdown(void)
 {
     srtp_err_status_t status;
 

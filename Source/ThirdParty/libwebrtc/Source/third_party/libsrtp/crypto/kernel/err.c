@@ -54,7 +54,7 @@
 
 static FILE *srtp_err_file = NULL;
 
-srtp_err_status_t srtp_err_reporting_init()
+srtp_err_status_t srtp_err_reporting_init(void)
 {
 #ifdef ERR_REPORTING_STDOUT
     srtp_err_file = stdout;

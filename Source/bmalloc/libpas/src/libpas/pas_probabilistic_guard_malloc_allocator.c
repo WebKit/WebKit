@@ -201,13 +201,13 @@ bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem)
 #pragma mark Helper Functions
 #endif
 
-size_t pas_probabilistic_guard_malloc_get_free_virtual_memory()
+size_t pas_probabilistic_guard_malloc_get_free_virtual_memory(void)
 {
     pas_heap_lock_assert_held();
     return free_virtual_mem;
 }
 
-size_t pas_probabilistic_guard_malloc_get_free_wasted_memory()
+size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void)
 {
     pas_heap_lock_assert_held();
     return free_wasted_mem;

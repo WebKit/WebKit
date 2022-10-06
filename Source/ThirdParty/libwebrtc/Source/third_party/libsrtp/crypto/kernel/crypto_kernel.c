@@ -69,7 +69,7 @@ srtp_crypto_kernel_t crypto_kernel = {
 
 #define MAX_RNG_TRIALS 25
 
-srtp_err_status_t srtp_crypto_kernel_init()
+srtp_err_status_t srtp_crypto_kernel_init(void)
 {
     srtp_err_status_t status;
 
@@ -172,7 +172,7 @@ srtp_err_status_t srtp_crypto_kernel_init()
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_crypto_kernel_status()
+srtp_err_status_t srtp_crypto_kernel_status(void)
 {
     srtp_err_status_t status;
     srtp_kernel_cipher_type_t *ctype = crypto_kernel.cipher_type_list;
@@ -213,7 +213,7 @@ srtp_err_status_t srtp_crypto_kernel_status()
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_crypto_kernel_list_debug_modules()
+srtp_err_status_t srtp_crypto_kernel_list_debug_modules(void)
 {
     srtp_kernel_debug_module_t *dm = crypto_kernel.debug_module_list;
 
@@ -232,7 +232,7 @@ srtp_err_status_t srtp_crypto_kernel_list_debug_modules()
     return srtp_err_status_ok;
 }
 
-srtp_err_status_t srtp_crypto_kernel_shutdown()
+srtp_err_status_t srtp_crypto_kernel_shutdown(void)
 {
     /*
      * free dynamic memory used in crypto_kernel at present
