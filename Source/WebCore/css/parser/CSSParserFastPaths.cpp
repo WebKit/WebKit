@@ -879,8 +879,6 @@ bool CSSParserFastPaths::isValidKeywordPropertyAndValue(CSSPropertyID propertyId
         return valueID == CSSValueNormal || valueID == CSSValueSub || valueID == CSSValueSuper;
     case CSSPropertyFontVariantCaps: // normal | small-caps | all-small-caps | petite-caps | all-petite-caps | unicase | titling-caps
         return valueID == CSSValueNormal || valueID == CSSValueSmallCaps || valueID == CSSValueAllSmallCaps || valueID == CSSValuePetiteCaps || valueID == CSSValueAllPetiteCaps || valueID == CSSValueUnicase || valueID == CSSValueTitlingCaps;
-    case CSSPropertyFontVariantAlternates: // We only support the normal and historical-forms values.
-        return valueID == CSSValueNormal || valueID == CSSValueHistoricalForms;
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     case CSSPropertyWebkitOverflowScrolling:
         return valueID == CSSValueAuto || valueID == CSSValueTouch;
@@ -927,7 +925,6 @@ bool CSSParserFastPaths::isKeywordPropertyID(CSSPropertyID propertyId)
     case CSSPropertyFlexWrap:
     case CSSPropertyFloat:
     case CSSPropertyFontKerning:
-    case CSSPropertyFontVariantAlternates:
     case CSSPropertyFontVariantCaps:
     case CSSPropertyFontVariantPosition:
     case CSSPropertyImageOrientation:

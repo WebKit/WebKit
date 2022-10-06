@@ -78,7 +78,7 @@ public:
     FontVariantNumericFraction variantNumericFraction() const { return static_cast<FontVariantNumericFraction>(m_variantNumericFraction); }
     FontVariantNumericOrdinal variantNumericOrdinal() const { return static_cast<FontVariantNumericOrdinal>(m_variantNumericOrdinal); }
     FontVariantNumericSlashedZero variantNumericSlashedZero() const { return static_cast<FontVariantNumericSlashedZero>(m_variantNumericSlashedZero); }
-    FontVariantAlternates variantAlternates() const { return static_cast<FontVariantAlternates>(m_variantAlternates); }
+    FontVariantAlternates variantAlternates() const { return m_variantAlternates; }
     FontVariantEastAsianVariant variantEastAsianVariant() const { return static_cast<FontVariantEastAsianVariant>(m_variantEastAsianVariant); }
     FontVariantEastAsianWidth variantEastAsianWidth() const { return static_cast<FontVariantEastAsianWidth>(m_variantEastAsianWidth); }
     FontVariantEastAsianRuby variantEastAsianRuby() const { return static_cast<FontVariantEastAsianRuby>(m_variantEastAsianRuby); }
@@ -133,7 +133,7 @@ public:
     void setVariantNumericFraction(FontVariantNumericFraction variant) { m_variantNumericFraction = static_cast<unsigned>(variant); }
     void setVariantNumericOrdinal(FontVariantNumericOrdinal variant) { m_variantNumericOrdinal = static_cast<unsigned>(variant); }
     void setVariantNumericSlashedZero(FontVariantNumericSlashedZero variant) { m_variantNumericSlashedZero = static_cast<unsigned>(variant); }
-    void setVariantAlternates(FontVariantAlternates variant) { m_variantAlternates = static_cast<unsigned>(variant); }
+    void setVariantAlternates(FontVariantAlternates variant) { m_variantAlternates = variant; }
     void setVariantEastAsianVariant(FontVariantEastAsianVariant variant) { m_variantEastAsianVariant = static_cast<unsigned>(variant); }
     void setVariantEastAsianWidth(FontVariantEastAsianWidth variant) { m_variantEastAsianWidth = static_cast<unsigned>(variant); }
     void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = static_cast<unsigned>(variant); }
@@ -155,6 +155,7 @@ private:
     // FIXME: Investigate moving these into their own object on the heap (to save memory).
     FontFeatureSettings m_featureSettings;
     FontVariationSettings m_variationSettings;
+    FontVariantAlternates m_variantAlternates;
     FontPalette m_fontPalette;
     AtomString m_locale;
     AtomString m_specifiedLocale;
@@ -181,7 +182,6 @@ private:
     unsigned m_variantNumericFraction : 2; // FontVariantNumericFraction
     unsigned m_variantNumericOrdinal : 1; // FontVariantNumericOrdinal
     unsigned m_variantNumericSlashedZero : 1; // FontVariantNumericSlashedZero
-    unsigned m_variantAlternates : 1; // FontVariantAlternates
     unsigned m_variantEastAsianVariant : 3; // FontVariantEastAsianVariant
     unsigned m_variantEastAsianWidth : 2; // FontVariantEastAsianWidth
     unsigned m_variantEastAsianRuby : 1; // FontVariantEastAsianRuby

@@ -309,12 +309,13 @@ static void setFeatureSettingsFromVariants(const FontVariantSettings& variantSet
         break;
     }
 
-    switch (variantSettings.alternates) {
-    case FontVariantAlternates::Normal:
-        break;
-    case FontVariantAlternates::HistoricalForms:
-        features.set(fontFeatureTag("hist"), 1);
-        break;
+    if (!variantSettings.alternates.isNormal()) {
+        auto values = variantSettings.alternates.values();
+        if (values.historicalForms)
+            features.set(fontFeatureTag("hist"), 1);
+        
+        // TODO: handle other tags.
+        // https://bugs.webkit.org/show_bug.cgi?id=246121
     }
 
     switch (variantSettings.eastAsianVariant) {

@@ -236,14 +236,13 @@ static FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&
         ASSERT_NOT_REACHED();
     }
 
-    switch (variantSettings.alternates) {
-    case FontVariantAlternates::Normal:
-        break;
-    case FontVariantAlternates::HistoricalForms:
-        result.add(fontFeatureTag("hist"), 1);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
+    // We don't do anything if "normal".
+    if (!variantSettings.alternates.isNormal()) {
+        auto values = variantSettings.alternates.values();
+        if (values.historicalForms)
+            result.add(fontFeatureTag("hist"), 1);
+        
+        // TODO: handle other tags.
     }
 
     switch (variantSettings.eastAsianVariant) {

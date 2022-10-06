@@ -26,7 +26,10 @@
 #pragma once
 
 #include <optional>
+#include <variant>
+#include <vector>
 #include <wtf/EnumTraits.h>
+#include <wtf/Hasher.h>
 
 namespace WTF {
 class TextStream;
@@ -158,7 +161,68 @@ enum class FontVariantNumericFraction : uint8_t {
 
 enum class FontVariantNumericOrdinal : bool { Normal, Yes };
 enum class FontVariantNumericSlashedZero : bool { Normal, Yes };
-enum class FontVariantAlternates : bool { Normal, HistoricalForms };
+
+struct FontVariantAlternatesNormal {
+    bool operator==(const FontVariantAlternatesNormal&) const = default;
+};
+
+struct FontVariantAlternatesValues {
+    bool operator==(const FontVariantAlternatesValues&) const = default;
+
+    std::optional<String> stylistic;
+    std::optional<String> styleset;
+    std::optional<String> characterVariant;
+    std::optional<String> swash;
+    std::optional<String> ornaments;
+    std::optional<String> annotation;
+    bool historicalForms = false;
+
+    friend void add(Hasher&, const FontVariantAlternatesValues&);
+};
+
+class FontVariantAlternates {
+    using Values = FontVariantAlternatesValues;
+
+public:
+    bool operator==(const FontVariantAlternates&) const = default;
+
+    bool isNormal() const
+    {
+        return std::holds_alternative<FontVariantAlternatesNormal>(m_val);
+    }
+
+    Values values() const
+    {
+        ASSERT(!isNormal());
+        return *std::get_if<Values>(&m_val);
+    }
+
+    Values& valuesRef()
+    {
+        if (isNormal())
+            setValues();
+
+        return *std::get_if<Values>(&m_val);
+    }
+
+    void setValues()
+    {
+        m_val = Values { };
+    }
+
+    static FontVariantAlternates Normal()
+    {
+        FontVariantAlternates result;
+        result.m_val = FontVariantAlternatesNormal { };
+        return result;
+    }
+
+    friend void add(Hasher&, const FontVariantAlternates&);
+
+private:
+    std::variant<FontVariantAlternatesNormal, Values> m_val;
+    FontVariantAlternates() = default;
+};
 
 WTF::TextStream& operator<<(WTF::TextStream&, FontVariantAlternates);
 
@@ -196,7 +260,7 @@ struct FontVariantSettings {
         , numericFraction(FontVariantNumericFraction::Normal)
         , numericOrdinal(FontVariantNumericOrdinal::Normal)
         , numericSlashedZero(FontVariantNumericSlashedZero::Normal)
-        , alternates(FontVariantAlternates::Normal)
+        , alternates(FontVariantAlternates::Normal())
         , eastAsianVariant(FontVariantEastAsianVariant::Normal)
         , eastAsianWidth(FontVariantEastAsianWidth::Normal)
         , eastAsianRuby(FontVariantEastAsianRuby::Normal)
@@ -250,7 +314,7 @@ struct FontVariantSettings {
             && numericFraction == FontVariantNumericFraction::Normal
             && numericOrdinal == FontVariantNumericOrdinal::Normal
             && numericSlashedZero == FontVariantNumericSlashedZero::Normal
-            && alternates == FontVariantAlternates::Normal
+            && alternates.isNormal()
             && eastAsianVariant == FontVariantEastAsianVariant::Normal
             && eastAsianWidth == FontVariantEastAsianWidth::Normal
             && eastAsianRuby == FontVariantEastAsianRuby::Normal;
@@ -277,29 +341,9 @@ struct FontVariantSettings {
 
     bool operator!=(const FontVariantSettings& other) const { return !(*this == other); }
 
-    unsigned uniqueValue() const
-    {
-        return static_cast<unsigned>(commonLigatures) << 26
-            | static_cast<unsigned>(discretionaryLigatures) << 24
-            | static_cast<unsigned>(historicalLigatures) << 22
-            | static_cast<unsigned>(contextualAlternates) << 20
-            | static_cast<unsigned>(position) << 18
-            | static_cast<unsigned>(caps) << 15
-            | static_cast<unsigned>(numericFigure) << 13
-            | static_cast<unsigned>(numericSpacing) << 11
-            | static_cast<unsigned>(numericFraction) << 9
-            | static_cast<unsigned>(numericOrdinal) << 8
-            | static_cast<unsigned>(numericSlashedZero) << 7
-            | static_cast<unsigned>(alternates) << 6
-            | static_cast<unsigned>(eastAsianVariant) << 3
-            | static_cast<unsigned>(eastAsianWidth) << 1
-            | static_cast<unsigned>(eastAsianRuby) << 0;
-    }
-
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<FontVariantSettings> decode(Decoder&);
 
-    // FIXME: this would be much more compact with bitfields.
     FontVariantLigatures commonLigatures;
     FontVariantLigatures discretionaryLigatures;
     FontVariantLigatures historicalLigatures;
@@ -758,14 +802,6 @@ template<> struct EnumTraits<WebCore::FontVariantNumericSlashedZero> {
     WebCore::FontVariantNumericSlashedZero,
     WebCore::FontVariantNumericSlashedZero::Normal,
     WebCore::FontVariantNumericSlashedZero::Yes
-    >;
-};
-
-template<> struct EnumTraits<WebCore::FontVariantAlternates> {
-    using values = EnumValues<
-    WebCore::FontVariantAlternates,
-    WebCore::FontVariantAlternates::Normal,
-    WebCore::FontVariantAlternates::HistoricalForms
     >;
 };
 
