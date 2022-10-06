@@ -1328,21 +1328,10 @@ void RenderThemeIOS::paintFileUploadIconDecorations(const RenderObject&, const R
         thumbnailPictureFrameRect.contract(kMultipleThumbnailShrinkSize, kMultipleThumbnailShrinkSize);
         thumbnailRect.contract(kMultipleThumbnailShrinkSize, kMultipleThumbnailShrinkSize);
 
-        // Background picture frame and simple background icon with a gradient matching the button.
+        // Background picture frame and simple background icon.
         Color backgroundImageColor = buttonRenderer.style().visitedDependentColor(CSSPropertyBackgroundColor);
         paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor);
         paintInfo.context().fillRect(thumbnailRect, backgroundImageColor);
-        {
-            GraphicsContextStateSaver stateSaver2(paintInfo.context());
-            CGContextRef cgContext = paintInfo.context().platformContext();
-            paintInfo.context().clip(thumbnailRect);
-            if (shouldUseConvexGradient(backgroundImageColor))
-                drawAxialGradient(cgContext, gradientWithName(ConvexGradient), thumbnailRect.location(), FloatPoint(thumbnailRect.x(), thumbnailRect.maxY()), LinearInterpolation);
-            else {
-                drawAxialGradient(cgContext, gradientWithName(ShadeGradient), thumbnailRect.location(), FloatPoint(thumbnailRect.x(), thumbnailRect.maxY()), LinearInterpolation);
-                drawAxialGradient(cgContext, gradientWithName(ShineGradient), FloatPoint(thumbnailRect.x(), thumbnailRect.maxY()), thumbnailRect.location(), ExponentialInterpolation);
-            }
-        }
 
         // Move the rects for the Foreground picture frame and icon.
         int inset = kVisibleBackgroundImageWidth + kThumbnailBorderStrokeWidth;
