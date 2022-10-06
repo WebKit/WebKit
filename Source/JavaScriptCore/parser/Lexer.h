@@ -217,7 +217,7 @@ private:
     const T* m_lineStart;
     JSTextPosition m_positionBeforeLastNewline;
     JSTokenLocation m_lastTokenLocation;
-    bool m_isReparsingFunction { false };
+    bool m_isReparsingFunction;
     bool m_atLineStart;
     bool m_error;
     String m_lexErrorMessage;

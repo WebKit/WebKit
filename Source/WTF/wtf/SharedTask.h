@@ -63,8 +63,8 @@ class SharedTask<PassedResultType (ArgumentTypes...)> : public ThreadSafeRefCoun
 public:
     typedef PassedResultType ResultType;
     
-    SharedTask() = default;
-    virtual ~SharedTask() = default;
+    SharedTask() { }
+    virtual ~SharedTask() { }
 
     virtual ResultType run(ArgumentTypes...) = 0;
 };

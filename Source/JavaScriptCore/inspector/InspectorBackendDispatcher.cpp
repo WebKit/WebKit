@@ -39,7 +39,9 @@ SupplementalBackendDispatcher::SupplementalBackendDispatcher(BackendDispatcher& 
 {
 }
 
-SupplementalBackendDispatcher::~SupplementalBackendDispatcher() = default;
+SupplementalBackendDispatcher::~SupplementalBackendDispatcher()
+{
+}
 
 BackendDispatcher::CallbackBase::CallbackBase(Ref<BackendDispatcher>&& backendDispatcher, long requestId)
     : m_backendDispatcher(WTFMove(backendDispatcher))

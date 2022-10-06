@@ -43,7 +43,9 @@ CCallSpecial::CCallSpecial()
     m_clobberedRegs.clear(FPRInfo::returnValueFPR);
 }
 
-CCallSpecial::~CCallSpecial() = default;
+CCallSpecial::~CCallSpecial()
+{
+}
 
 void CCallSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {

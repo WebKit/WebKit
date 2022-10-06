@@ -123,7 +123,10 @@ public:
 #endif
     }
 
-    BlockPtr() = default;
+    BlockPtr()
+        : m_block(nullptr)
+    {
+    }
 
     BlockPtr(BlockType block)
 #if __has_feature(objc_arc)
@@ -194,7 +197,7 @@ public:
     }
 
 private:
-    BlockType m_block { nullptr };
+    BlockType m_block;
 };
 
 template<typename R, typename... Args>

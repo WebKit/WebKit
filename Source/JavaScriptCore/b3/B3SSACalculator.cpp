@@ -60,7 +60,9 @@ SSACalculator::SSACalculator(Procedure& proc)
 {
 }
 
-SSACalculator::~SSACalculator() = default;
+SSACalculator::~SSACalculator()
+{
+}
 
 void SSACalculator::reset()
 {

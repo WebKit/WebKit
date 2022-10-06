@@ -123,7 +123,7 @@ enum AddSpeculationMode {
 struct Prefix {
     enum NoHeaderTag { NoHeader };
 
-    Prefix() = default;
+    Prefix() { }
 
     Prefix(const char* prefixStr, NoHeaderTag tag = NoHeader)
         : prefixStr(prefixStr)
@@ -670,8 +670,11 @@ public:
     
     class NaturalBlockIterable {
     public:
-        NaturalBlockIterable() = default;
-
+        NaturalBlockIterable()
+            : m_graph(nullptr)
+        {
+        }
+        
         NaturalBlockIterable(const Graph& graph)
             : m_graph(&graph)
         {
@@ -679,8 +682,12 @@ public:
         
         class iterator {
         public:
-            iterator() = default;
-
+            iterator()
+                : m_graph(nullptr)
+                , m_index(0)
+            {
+            }
+            
             iterator(const Graph& graph, BlockIndex index)
                 : m_graph(&graph)
                 , m_index(findNext(index))
@@ -716,8 +723,8 @@ public:
                 return index;
             }
             
-            const Graph* m_graph { nullptr };
-            BlockIndex m_index { 0 };
+            const Graph* m_graph;
+            BlockIndex m_index;
         };
         
         iterator begin()
@@ -731,7 +738,7 @@ public:
         }
         
     private:
-        const Graph* m_graph { nullptr };
+        const Graph* m_graph;
     };
     
     NaturalBlockIterable blocksInNaturalOrder() const
@@ -1205,7 +1212,7 @@ public:
     std::unique_ptr<ControlEquivalenceAnalysis> m_controlEquivalenceAnalysis;
     unsigned m_tmps;
     unsigned m_localVars;
-    unsigned m_nextMachineLocal { 0 };
+    unsigned m_nextMachineLocal;
     unsigned m_parameterSlots;
 
     // This is the number of logical entrypoints that we're compiling. This is only used
@@ -1226,13 +1233,13 @@ public:
     HashMap<GenericHashKey<int64_t>, double*> m_doubleConstantsMap;
     Bag<double> m_doubleConstants;
 #endif
-
-    OptimizationFixpointState m_fixpointState { BeforeFixpoint };
-    StructureRegistrationState m_structureRegistrationState { HaveNotStartedRegistering };
-    GraphForm m_form { LoadStore };
-    UnificationState m_unificationState { LocallyUnified };
+    
+    OptimizationFixpointState m_fixpointState;
+    StructureRegistrationState m_structureRegistrationState;
+    GraphForm m_form;
+    UnificationState m_unificationState;
     PlanStage m_planStage { PlanStage::Initial };
-    RefCountState m_refCountState { EverythingIsLive };
+    RefCountState m_refCountState;
     bool m_hasDebuggerEnabled;
     bool m_hasExceptionHandlers { false };
     bool m_isInSSAConversion { false };

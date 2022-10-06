@@ -37,7 +37,9 @@ MarkStackMergingConstraint::MarkStackMergingConstraint(Heap& heap)
 {
 }
 
-MarkStackMergingConstraint::~MarkStackMergingConstraint() = default;
+MarkStackMergingConstraint::~MarkStackMergingConstraint()
+{
+}
 
 double MarkStackMergingConstraint::quickWorkEstimate(SlotVisitor&)
 {

@@ -37,7 +37,7 @@ template<typename Out, typename... In>
 class CallableWrapperBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~CallableWrapperBase() = default;
+    virtual ~CallableWrapperBase() { }
     virtual Out call(In...) = 0;
 };
 

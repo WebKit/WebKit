@@ -61,7 +61,10 @@ template<typename T> static inline void releaseOSObject(T ptr)
 
 template<typename T> class OSObjectPtr {
 public:
-    OSObjectPtr() = default;
+    OSObjectPtr()
+        : m_ptr(nullptr)
+    {
+    }
 
     ~OSObjectPtr()
     {
@@ -142,7 +145,7 @@ private:
     {
     }
 
-    T m_ptr { nullptr };
+    T m_ptr;
 };
 
 template<typename T> inline OSObjectPtr<T> adoptOSObject(T ptr)

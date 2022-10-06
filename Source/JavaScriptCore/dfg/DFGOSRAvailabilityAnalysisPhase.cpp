@@ -224,7 +224,9 @@ LocalOSRAvailabilityCalculator::LocalOSRAvailabilityCalculator(Graph& graph)
 {
 }
 
-LocalOSRAvailabilityCalculator::~LocalOSRAvailabilityCalculator() = default;
+LocalOSRAvailabilityCalculator::~LocalOSRAvailabilityCalculator()
+{
+}
 
 void LocalOSRAvailabilityCalculator::beginBlock(BasicBlock* block)
 {

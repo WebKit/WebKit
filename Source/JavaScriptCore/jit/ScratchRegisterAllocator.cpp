@@ -36,8 +36,11 @@ namespace JSC {
 
 ScratchRegisterAllocator::ScratchRegisterAllocator(const RegisterSet& usedRegisters)
     : m_usedRegisters(usedRegisters)
+    , m_numberOfReusedRegisters(0)
 {
 }
+
+ScratchRegisterAllocator::~ScratchRegisterAllocator() { }
 
 void ScratchRegisterAllocator::lock(GPRReg reg)
 {

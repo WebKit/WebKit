@@ -40,7 +40,8 @@ GraphSafepoint::GraphSafepoint(Graph& graph, Safepoint::Result& result)
     m_safepoint.begin();
 }
 
-GraphSafepoint::~GraphSafepoint() = default;
+GraphSafepoint::~GraphSafepoint() { }
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)

@@ -77,14 +77,20 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
 SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
     : m_jit(jit)
     , m_graph(m_jit.graph())
+    , m_currentNode(nullptr)
+    , m_lastGeneratedNode(LastNodeType)
+    , m_indexInBlock(0)
     , m_generationInfo(m_graph.frameRegisterCount())
+    , m_compileOkay(true)
     , m_state(m_graph)
     , m_interpreter(m_graph, m_state)
     , m_minifiedGraph(&jit.jitCode()->minifiedDFG)
 {
 }
 
-SpeculativeJIT::~SpeculativeJIT() = default;
+SpeculativeJIT::~SpeculativeJIT()
+{
+}
 
 void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure structure, GPRReg storageGPR, unsigned numElements, unsigned vectorLength)
 {
@@ -1610,16 +1616,22 @@ void SpeculativeJIT::dump(const char* label)
         dataLogF("</%s>\n", label);
 }
 
-GPRTemporary::GPRTemporary() = default;
+GPRTemporary::GPRTemporary()
+    : m_jit(nullptr)
+    , m_gpr(InvalidGPRReg)
+{
+}
 
 GPRTemporary::GPRTemporary(SpeculativeJIT* jit)
     : m_jit(jit)
+    , m_gpr(InvalidGPRReg)
 {
     m_gpr = m_jit->allocate();
 }
 
 GPRTemporary::GPRTemporary(SpeculativeJIT* jit, GPRReg specific)
     : m_jit(jit)
+    , m_gpr(InvalidGPRReg)
 {
     m_gpr = m_jit->allocate(specific);
 }
@@ -1628,6 +1640,7 @@ GPRTemporary::GPRTemporary(SpeculativeJIT* jit, GPRReg specific)
 GPRTemporary::GPRTemporary(
     SpeculativeJIT* jit, ReuseTag, JSValueOperand& op1, WhichValueWord which)
     : m_jit(jit)
+    , m_gpr(InvalidGPRReg)
 {
     if (!op1.isDouble() && m_jit->canReuse(op1.node()))
         m_gpr = m_jit->reuse(op1.gpr(which));
@@ -1641,7 +1654,7 @@ GPRTemporary::GPRTemporary(SpeculativeJIT* jit, ReuseTag, JSValueOperand& op1, W
 }
 #endif
 
-JSValueRegsTemporary::JSValueRegsTemporary() = default;
+JSValueRegsTemporary::JSValueRegsTemporary() { }
 
 JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit)
 #if USE(JSVALUE64)
@@ -1681,7 +1694,7 @@ JSValueRegsTemporary::JSValueRegsTemporary(SpeculativeJIT* jit, ReuseTag, JSValu
 }
 #endif
 
-JSValueRegsTemporary::~JSValueRegsTemporary() = default;
+JSValueRegsTemporary::~JSValueRegsTemporary() { }
 
 JSValueRegs JSValueRegsTemporary::regs()
 {

@@ -81,10 +81,13 @@ SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
 
 SymbolTable::SymbolTable(VM& vm)
     : JSCell(vm, vm.symbolTableStructure.get())
+    , m_usesNonStrictEval(false)
+    , m_nestedLexicalScope(false)
+    , m_scopeType(VarScope)
 {
 }
 
-SymbolTable::~SymbolTable() = default;
+SymbolTable::~SymbolTable() { }
 
 void SymbolTable::finishCreation(VM& vm)
 {

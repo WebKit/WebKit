@@ -97,9 +97,8 @@ public:
     private:
         bool m_savedAllowUnfinalizedUse;
 #else
-        // Left an empty body on purpose, or we get several unused variable warnings
-        ALWAYS_INLINE AllowUnfinalizedAccessScope() { } // NOLINT
-        ALWAYS_INLINE ~AllowUnfinalizedAccessScope() = default;
+        ALWAYS_INLINE AllowUnfinalizedAccessScope() = default;
+        ALWAYS_INLINE ~AllowUnfinalizedAccessScope() { }
 #endif
     };
 

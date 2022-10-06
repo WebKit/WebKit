@@ -38,9 +38,13 @@ using Arg = Air::Arg;
 using Inst = Air::Inst;
 using Tmp = Air::Tmp;
 
-StackmapSpecial::StackmapSpecial() = default;
+StackmapSpecial::StackmapSpecial()
+{
+}
 
-StackmapSpecial::~StackmapSpecial() = default;
+StackmapSpecial::~StackmapSpecial()
+{
+}
 
 void StackmapSpecial::reportUsedRegisters(Inst& inst, const RegisterSet& usedRegisters)
 {

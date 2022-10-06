@@ -280,7 +280,9 @@ struct StringViewWithUnderlyingString {
     String underlyingString;
 };
 
-inline StringView::StringView() = default;
+inline StringView::StringView()
+{
+}
 
 #if CHECK_STRINGVIEW_LIFETIME
 

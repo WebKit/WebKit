@@ -34,8 +34,11 @@ namespace JSC { namespace FTL {
 
 class ExitArgumentForOperand {
 public:
-    ExitArgumentForOperand() = default;
-
+    ExitArgumentForOperand()
+        : m_operand(VirtualRegister())
+    {
+    }
+    
     ExitArgumentForOperand(ExitArgument exitArgument, VirtualRegister operand)
         : m_exitArgument(exitArgument)
         , m_operand(operand)

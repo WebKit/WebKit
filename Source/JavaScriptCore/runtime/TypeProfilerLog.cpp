@@ -41,6 +41,7 @@ static constexpr bool verbose = false;
 
 TypeProfilerLog::TypeProfilerLog(VM& vm)
     : m_vm(vm)
+    , m_logSize(50000)
     , m_logStartPtr(new LogEntry[m_logSize])
     , m_currentLogEntryPtr(m_logStartPtr)
     , m_logEndPtr(m_logStartPtr + m_logSize)

@@ -34,7 +34,7 @@ namespace WTF {
 class StackShot {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    StackShot() = default;
+    StackShot() { }
     
     ALWAYS_INLINE StackShot(size_t size)
         : m_size(size)
@@ -52,6 +52,7 @@ public:
     
     StackShot(WTF::HashTableDeletedValueType)
         : m_array(deletedValueArray())
+        , m_size(0)
     {
     }
     

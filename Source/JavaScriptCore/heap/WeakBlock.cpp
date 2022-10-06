@@ -51,7 +51,8 @@ void WeakBlock::destroy(Heap& heap, WeakBlock* block)
 }
 
 WeakBlock::WeakBlock(CellContainer container)
-    : m_container(container)
+    : DoublyLinkedListNode<WeakBlock>()
+    , m_container(container)
 {
     for (size_t i = 0; i < weakImplCount(); ++i) {
         WeakImpl* weakImpl = &weakImpls()[i];

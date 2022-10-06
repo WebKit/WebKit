@@ -340,8 +340,10 @@ private:
     }
     
     struct RegConst {
-        RegConst() = default;
-
+        RegConst()
+        {
+        }
+        
         RegConst(Reg reg, int64_t constant)
             : reg(reg)
             , constant(constant)
@@ -379,8 +381,10 @@ private:
             ZExt32, // Register contains zero-extended contents of stack slot.
             Match32 // Low 32 bits of register match low 32 bits of stack slot.
         };
-
-        RegSlot() = default;
+        
+        RegSlot()
+        {
+        }
 
         RegSlot(Reg reg, StackSlot* slot, Mode mode)
             : slot(slot)
@@ -429,7 +433,9 @@ private:
     };
 
     struct SlotConst {
-        SlotConst() = default;
+        SlotConst()
+        {
+        }
 
         SlotConst(StackSlot* slot, int64_t constant)
             : slot(slot)

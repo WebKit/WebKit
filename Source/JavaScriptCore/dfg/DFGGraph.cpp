@@ -75,6 +75,12 @@ Graph::Graph(VM& vm, Plan& plan)
     , m_codeBlock(m_plan.codeBlock())
     , m_profiledBlock(m_codeBlock->alternative())
     , m_ssaCFG(makeUnique<SSACFG>(*this))
+    , m_nextMachineLocal(0)
+    , m_fixpointState(BeforeFixpoint)
+    , m_structureRegistrationState(HaveNotStartedRegistering)
+    , m_form(LoadStore)
+    , m_unificationState(LocallyUnified)
+    , m_refCountState(EverythingIsLive)
 {
     ASSERT(m_profiledBlock);
     
@@ -88,7 +94,9 @@ Graph::Graph(VM& vm, Plan& plan)
     this->symbolStructure = registerStructure(vm.symbolStructure.get());
 }
 
-Graph::~Graph() = default;
+Graph::~Graph()
+{
+}
 
 const char *Graph::opName(NodeType op)
 {

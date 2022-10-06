@@ -32,8 +32,11 @@ namespace JSC { namespace Profiler {
 
 class UID {
 public:
-    UID() = default;
-
+    UID()
+        : m_uid(0)
+    {
+    }
+    
     static UID fromInt(uint64_t value)
     {
         UID result;
@@ -82,7 +85,7 @@ public:
     JSValue toJS(JSGlobalObject*) const;
     
 private:
-    uint64_t m_uid { 0 };
+    uint64_t m_uid;
 };
 
 struct UIDHash {

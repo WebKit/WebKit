@@ -200,7 +200,12 @@ private:
 class PlainTime {
     WTF_MAKE_FAST_ALLOCATED(PlainTime);
 public:
-    constexpr PlainTime() = default;
+    constexpr PlainTime()
+        : m_millisecond(0)
+        , m_microsecond(0)
+        , m_nanosecond(0)
+    {
+    }
 
     constexpr PlainTime(unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond)
         : m_hour(hour)
@@ -231,9 +236,9 @@ private:
     uint8_t m_hour { 0 };
     uint8_t m_minute { 0 };
     uint8_t m_second { 0 };
-    uint32_t m_millisecond : 10 { 0 };
-    uint32_t m_microsecond : 10 { 0 };
-    uint32_t m_nanosecond : 10 { 0 };
+    uint32_t m_millisecond : 10;
+    uint32_t m_microsecond : 10;
+    uint32_t m_nanosecond : 10;
 };
 static_assert(sizeof(PlainTime) <= sizeof(uint64_t));
 
@@ -242,7 +247,12 @@ static_assert(sizeof(PlainTime) <= sizeof(uint64_t));
 class PlainDate {
     WTF_MAKE_FAST_ALLOCATED(PlainDate);
 public:
-    constexpr PlainDate() = default;
+    constexpr PlainDate()
+        : m_year(0)
+        , m_month(1)
+        , m_day(1)
+    {
+    }
 
     constexpr PlainDate(int32_t year, unsigned month, unsigned day)
         : m_year(year)
@@ -264,9 +274,9 @@ public:
     uint8_t day() const { return m_day; }
 
 private:
-    int32_t m_year : 21 { 0 }; // ECMAScript max / min date's year can be represented <= 20 bits.
-    int32_t m_month : 5 { 1 }; // Starts with 1.
-    int32_t m_day : 6 { 1 }; // Starts with 1.
+    int32_t m_year : 21; // ECMAScript max / min date's year can be represented <= 20 bits.
+    int32_t m_month : 5; // Starts with 1.
+    int32_t m_day : 6; // Starts with 1.
 };
 #if COMPILER(GCC_COMPATIBLE)
 static_assert(sizeof(PlainDate) == sizeof(int32_t));

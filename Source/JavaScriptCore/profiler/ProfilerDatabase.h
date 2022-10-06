@@ -85,9 +85,9 @@ private:
     Vector<Ref<Compilation>> m_compilations;
     HashMap<CodeBlock*, Ref<Compilation>> m_compilationMap;
     Vector<Event> m_events;
-    bool m_shouldSaveAtExit { false };
+    bool m_shouldSaveAtExit;
     CString m_atExitSaveFilename;
-    Database* m_nextRegisteredDatabase { nullptr };
+    Database* m_nextRegisteredDatabase;
     Lock m_lock;
 };
 

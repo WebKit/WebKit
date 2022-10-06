@@ -73,7 +73,7 @@ private:
     inline uint8_t getByte();
 
     ARC4Stream m_stream;
-    int m_count { 0 };
+    int m_count;
 };
 DECLARE_STATIC_PER_PROCESS_STORAGE(ARC4RandomNumberGenerator);
 DEFINE_STATIC_PER_PROCESS_STORAGE(ARC4RandomNumberGenerator);
@@ -87,6 +87,7 @@ ARC4Stream::ARC4Stream()
 }
 
 ARC4RandomNumberGenerator::ARC4RandomNumberGenerator(const LockHolder&)
+    : m_count(0)
 {
 }
 

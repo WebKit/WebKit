@@ -280,7 +280,7 @@ private:
     friend class InlineWatchpointSet;
 
     int8_t m_state;
-    int8_t m_setIsNotEmpty { false };
+    int8_t m_setIsNotEmpty;
 
     SentinelLinkedList<Watchpoint, PackedRawSentinelNode<Watchpoint>> m_set;
 };

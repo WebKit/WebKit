@@ -35,7 +35,9 @@ IsoTLSDeallocatorEntry<Config>::IsoTLSDeallocatorEntry(const LockHolder&)
 }
 
 template<typename Config>
-IsoTLSDeallocatorEntry<Config>::~IsoTLSDeallocatorEntry() = default;
+IsoTLSDeallocatorEntry<Config>::~IsoTLSDeallocatorEntry()
+{
+}
 
 template<typename Config>
 void IsoTLSDeallocatorEntry<Config>::construct(void* entry)

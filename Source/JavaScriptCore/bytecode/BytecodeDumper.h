@@ -42,7 +42,9 @@ class BytecodeGraph;
 template<typename InstructionStreamType>
 class BytecodeDumperBase {
 public:
-    virtual ~BytecodeDumperBase() = default;
+    virtual ~BytecodeDumperBase()
+    {
+    }
 
     void printLocationAndOp(typename InstructionStreamType::Offset location, const char* op);
 
@@ -88,7 +90,7 @@ public:
     {
     }
 
-    ~BytecodeDumper() override = default;
+    ~BytecodeDumper() override { }
 
 protected:
     Block* block() const { return m_block; }
@@ -141,7 +143,7 @@ public:
     {
     }
 
-    ~BytecodeDumper() override = default;
+    ~BytecodeDumper() override { }
 
     FunctionCodeBlockGenerator* block() const { return m_block; }
 

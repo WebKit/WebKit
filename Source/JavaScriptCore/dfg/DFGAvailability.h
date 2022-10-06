@@ -36,8 +36,12 @@ struct Node;
 
 class Availability {
 public:
-    Availability() = default;
-
+    Availability()
+        : m_node(nullptr)
+        , m_flushedAt(DeadFlush)
+    {
+    }
+    
     explicit Availability(Node* node)
         : m_node(node)
         , m_flushedAt(ConflictingFlush)
@@ -152,8 +156,8 @@ private:
         return bitwise_cast<Node*>(static_cast<intptr_t>(1));
     }
     
-    Node* m_node { nullptr };
-    FlushedAt m_flushedAt { DeadFlush };
+    Node* m_node;
+    FlushedAt m_flushedAt;
 };
 
 } } // namespace JSC::DFG

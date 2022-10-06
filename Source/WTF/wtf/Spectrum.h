@@ -38,7 +38,7 @@ public:
     typedef typename HashMap<T, CounterType>::iterator iterator;
     typedef typename HashMap<T, CounterType>::const_iterator const_iterator;
     
-    Spectrum() = default;
+    Spectrum() { }
     
     void add(const T& key, CounterType count = 1)
     {
@@ -73,7 +73,7 @@ public:
     
     struct KeyAndCount {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        KeyAndCount() = default;
+        KeyAndCount() { }
         
         KeyAndCount(const T& key, CounterType count)
             : key(&key)

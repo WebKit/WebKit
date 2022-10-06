@@ -30,7 +30,9 @@
 
 namespace JSC { namespace B3 {
 
-ArgumentRegValue::~ArgumentRegValue() = default;
+ArgumentRegValue::~ArgumentRegValue()
+{
+}
 
 void ArgumentRegValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {

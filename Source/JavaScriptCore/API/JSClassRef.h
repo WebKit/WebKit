@@ -54,8 +54,7 @@ struct StaticFunctionEntry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     StaticFunctionEntry(JSObjectCallAsFunctionCallback _callAsFunction, JSPropertyAttributes _attributes)
-        : callAsFunction(_callAsFunction)
-        , attributes(_attributes)
+        : callAsFunction(_callAsFunction), attributes(_attributes)
     {
     }
 
@@ -99,7 +98,7 @@ struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     JSC::JSObject* prototype(JSC::JSGlobalObject*);
 
     OpaqueJSClass* parentClass;
-    OpaqueJSClass* prototypeClass { nullptr };
+    OpaqueJSClass* prototypeClass;
     
     JSObjectInitializeCallback initialize;
     JSObjectFinalizeCallback finalize;

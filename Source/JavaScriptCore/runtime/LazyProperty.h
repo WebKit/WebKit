@@ -57,7 +57,9 @@ private:
     typedef ElementType* (*FuncType)(const Initializer&);
 
 public:
-    LazyProperty() = default;
+    LazyProperty()
+    {
+    }
 
     // Tell the property to run the given callback next time someone tries to get the value
     // using get(). The passed callback must be stateless. For example:

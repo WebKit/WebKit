@@ -282,7 +282,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         HashTableIterator(HashTableType* table, PointerType pos, PointerType end, HashItemKnownGoodTag tag) : m_iterator(table, pos, end, tag) { }
 
     public:
-        HashTableIterator() = default;
+        HashTableIterator() { }
 
         // default copy, assignment and destructor are OK
 
@@ -317,10 +317,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     };
 
     template<typename IteratorType> struct HashTableAddResult {
-        HashTableAddResult() = default;
+        HashTableAddResult() : isNewEntry(false) { }
         HashTableAddResult(IteratorType iter, bool isNewEntry) : iterator(iter), isNewEntry(isNewEntry) { }
         IteratorType iterator;
-        bool isNewEntry { false };
+        bool isNewEntry;
 
         explicit operator bool() const { return isNewEntry; }
     };
@@ -384,16 +384,25 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         struct Stats {
             WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-            Stats() = default;
+            Stats()
+                : numAccesses(0)
+                , numRehashes(0)
+                , numRemoves(0)
+                , numReinserts(0)
+                , maxCollisions(0)
+                , numCollisions(0)
+                , collisionGraph()
+            {
+            }
 
-            unsigned numAccesses { 0 };
-            unsigned numRehashes { 0 };
-            unsigned numRemoves { 0 };
-            unsigned numReinserts { 0 };
+            unsigned numAccesses;
+            unsigned numRehashes;
+            unsigned numRemoves;
+            unsigned numReinserts;
 
-            unsigned maxCollisions { 0 };
-            unsigned numCollisions { 0 };
-            unsigned collisionGraph[4096] { };
+            unsigned maxCollisions;
+            unsigned numCollisions;
+            unsigned collisionGraph[4096];
 
             void recordCollisionAtCount(unsigned count)
             {
@@ -607,19 +616,29 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 #if CHECK_HASHTABLE_ITERATORS
     public:
         // All access to m_iterators should be guarded with m_mutex.
-        mutable const_iterator* m_iterators { nullptr };
+        mutable const_iterator* m_iterators;
         // Use std::unique_ptr so HashTable can still be memmove'd or memcpy'ed.
-        mutable std::unique_ptr<Lock> m_mutex { makeUnique<Lock>() };
+        mutable std::unique_ptr<Lock> m_mutex;
 #endif
 
 #if DUMP_HASHTABLE_STATS_PER_TABLE
     public:
-        mutable std::unique_ptr<Stats> m_stats { makeUnique<Stats>() };
+        mutable std::unique_ptr<Stats> m_stats;
 #endif
     };
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
-    inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable() = default;
+    inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable()
+        : m_table(nullptr)
+#if CHECK_HASHTABLE_ITERATORS
+        , m_iterators(0)
+        , m_mutex(makeUnique<Lock>())
+#endif
+#if DUMP_HASHTABLE_STATS_PER_TABLE
+        , m_stats(makeUnique<Stats>())
+#endif
+    {
+    }
 
 #if !ASSERT_ENABLED
 
@@ -1309,8 +1328,13 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable(const HashTable& other)
+        : m_table(nullptr)
+#if CHECK_HASHTABLE_ITERATORS
+        , m_iterators(nullptr)
+        , m_mutex(makeUnique<Lock>())
+#endif
 #if DUMP_HASHTABLE_STATS_PER_TABLE
-        : m_stats(makeUnique<Stats>(*other.m_stats))
+        , m_stats(makeUnique<Stats>(*other.m_stats))
 #endif
     {
         unsigned otherKeyCount = other.size();
@@ -1351,6 +1375,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits>
     inline HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits>::HashTable(HashTable&& other)
+#if CHECK_HASHTABLE_ITERATORS
+        : m_iterators(nullptr)
+        , m_mutex(makeUnique<Lock>())
+#endif
     {
         invalidateIterators(&other);
 
@@ -1497,7 +1525,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         using pointer = const value_type*;
         using reference = const value_type&;
 
-        HashTableConstIteratorAdapter() = default;
+        HashTableConstIteratorAdapter() {}
         HashTableConstIteratorAdapter(const typename HashTableType::const_iterator& impl) : m_impl(impl) {}
 
         const ValueType* get() const { return (const ValueType*)m_impl.get(); }
@@ -1517,7 +1545,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         using pointer = value_type*;
         using reference = value_type&;
 
-        HashTableIteratorAdapter() = default;
+        HashTableIteratorAdapter() {}
         HashTableIteratorAdapter(const typename HashTableType::iterator& impl) : m_impl(impl) {}
 
         ValueType* get() const { return (ValueType*)m_impl.get(); }

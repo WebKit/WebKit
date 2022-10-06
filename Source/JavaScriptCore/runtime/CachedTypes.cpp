@@ -98,6 +98,8 @@ public:
     Encoder(VM& vm, FileSystem::PlatformFileHandle fd = FileSystem::invalidPlatformFileHandle)
         : m_vm(vm)
         , m_fd(fd)
+        , m_baseOffset(0)
+        , m_currentPage(nullptr)
     {
         allocateNewPage();
     }
@@ -270,8 +272,8 @@ private:
 
     VM& m_vm;
     FileSystem::PlatformFileHandle m_fd;
-    ptrdiff_t m_baseOffset { 0 };
-    Page* m_currentPage { nullptr };
+    ptrdiff_t m_baseOffset;
+    Page* m_currentPage;
     Vector<Page> m_pages;
     HashMap<const void*, ptrdiff_t> m_ptrToOffsetMap;
     LeafExecutableMap m_leafExecutables;
@@ -2142,6 +2144,7 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_codeType(cachedCodeBlock.codeType())
 
     , m_didOptimize(static_cast<unsigned>(TriState::Indeterminate))
+    , m_age(0)
     , m_hasCheckpoints(cachedCodeBlock.hasCheckpoints())
 
     , m_lexicalScopeFeatures(cachedCodeBlock.lexicalScopeFeatures())
@@ -2247,6 +2250,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable* CachedFunctionExecutable::decode(Decod
 ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& decoder, const CachedFunctionExecutable& cachedExecutable)
     : Base(decoder.vm(), decoder.vm().unlinkedFunctionExecutableStructure.get())
     , m_firstLineOffset(cachedExecutable.firstLineOffset())
+    , m_isGeneratedFromCache(true)
     , m_lineCount(cachedExecutable.lineCount())
     , m_hasCapturedVariables(cachedExecutable.hasCapturedVariables())
     , m_unlinkedFunctionNameStart(cachedExecutable.unlinkedFunctionNameStart())
@@ -2260,6 +2264,7 @@ ALWAYS_INLINE UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(Decoder& de
     , m_sourceLength(cachedExecutable.sourceLength())
     , m_superBinding(cachedExecutable.superBinding())
     , m_parametersStartOffset(cachedExecutable.parametersStartOffset())
+    , m_isCached(false)
     , m_typeProfilingStartOffset(cachedExecutable.typeProfilingStartOffset())
     , m_needsClassFieldInitializer(cachedExecutable.needsClassFieldInitializer())
     , m_typeProfilingEndOffset(cachedExecutable.typeProfilingEndOffset())

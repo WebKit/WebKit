@@ -30,9 +30,13 @@
 
 namespace JSC {
 
-OpaqueByproducts::OpaqueByproducts() = default;
+OpaqueByproducts::OpaqueByproducts()
+{
+}
 
-OpaqueByproducts::~OpaqueByproducts() = default;
+OpaqueByproducts::~OpaqueByproducts()
+{
+}
 
 void OpaqueByproducts::add(std::unique_ptr<OpaqueByproduct> byproduct)
 {

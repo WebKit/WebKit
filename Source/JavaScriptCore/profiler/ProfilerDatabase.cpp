@@ -43,6 +43,8 @@ static Database* firstDatabase;
 Database::Database(VM& vm)
     : m_databaseID(++databaseCounter)
     , m_vm(vm)
+    , m_shouldSaveAtExit(false)
+    , m_nextRegisteredDatabase(nullptr)
 {
 }
 

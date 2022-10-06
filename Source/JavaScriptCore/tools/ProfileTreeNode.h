@@ -32,7 +32,11 @@ class ProfileTreeNode {
     typedef Map::KeyValuePairType MapEntry;
 
 public:
-    ProfileTreeNode() = default;
+    ProfileTreeNode()
+        : m_count(0)
+        , m_children(0)
+    {
+    }
 
     ~ProfileTreeNode()
     {
@@ -106,8 +110,8 @@ private:
         return (da < db) - (da > db);
     }
 
-    uint64_t m_count { 0 };
-    Map* m_children { nullptr };
+    uint64_t m_count;
+    Map* m_children;
 };
 
 } // namespace JSC

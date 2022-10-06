@@ -158,8 +158,11 @@ public:
         uintptr_t m_parentAndRed;
     };
 
-    RedBlackTree() = default;
-
+    RedBlackTree()
+        : m_root(nullptr)
+    {
+    }
+    
     void insert(NodeType* x)
     {
         x->reset();
@@ -615,7 +618,7 @@ private:
             x->setColor(Black);
     }
 
-    NodeType* m_root { nullptr };
+    NodeType* m_root;
 };
 
 }

@@ -46,7 +46,9 @@ class TypedPointer;
 class AbstractHeap {
     WTF_MAKE_NONCOPYABLE(AbstractHeap); WTF_MAKE_FAST_ALLOCATED;
 public:
-    AbstractHeap() = default;
+    AbstractHeap()
+    {
+    }
     
     AbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset = 0);
 

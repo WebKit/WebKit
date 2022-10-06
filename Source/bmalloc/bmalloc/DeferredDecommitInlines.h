@@ -31,7 +31,9 @@
 
 namespace bmalloc {
 
-inline DeferredDecommit::DeferredDecommit() = default;
+inline DeferredDecommit::DeferredDecommit()
+{
+}
 
 inline DeferredDecommit::DeferredDecommit(IsoDirectoryBaseBase* directory, IsoPageBase* page, unsigned pageIndex)
     : directory(directory)

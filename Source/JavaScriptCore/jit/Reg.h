@@ -180,7 +180,7 @@ public:
 
         class iterator {
         public:
-            iterator() = default;
+            iterator() { }
 
             explicit iterator(Reg reg)
                 : m_regIndex(reg.index())

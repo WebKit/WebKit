@@ -65,7 +65,10 @@ FOR_EACH_GLIB_DELETER(WTF_DEFINE_GPTR_DELETER)
 template <typename T> class GUniqueOutPtr {
     WTF_MAKE_NONCOPYABLE(GUniqueOutPtr);
 public:
-    GUniqueOutPtr() = default;
+    GUniqueOutPtr()
+        : m_ptr(nullptr)
+    {
+    }
 
     ~GUniqueOutPtr()
     {
@@ -112,7 +115,7 @@ private:
         }
     }
 
-    T* m_ptr { nullptr };
+    T* m_ptr;
 };
 
 } // namespace WTF

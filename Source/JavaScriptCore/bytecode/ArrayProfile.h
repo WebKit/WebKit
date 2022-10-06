@@ -259,7 +259,13 @@ static_assert(sizeof(ArrayProfile) == 12);
 
 class UnlinkedArrayProfile {
 public:
-    explicit UnlinkedArrayProfile() = default;
+    explicit UnlinkedArrayProfile()
+        : m_usesOriginalArrayStructures(true)
+#if USE(LARGE_TYPED_ARRAYS)
+        , m_mayBeLargeTypedArray(false)
+#endif
+    {
+    }
 
     void update(ArrayProfile& arrayProfile)
     {
@@ -303,9 +309,9 @@ private:
     bool m_mayStoreToHole { false };
     bool m_outOfBounds { false };
     bool m_mayInterceptIndexedAccesses { false };
-    bool m_usesOriginalArrayStructures : 1 { true };
+    bool m_usesOriginalArrayStructures : 1;
 #if USE(LARGE_TYPED_ARRAYS)
-    bool m_mayBeLargeTypedArray : 1 { false };
+    bool m_mayBeLargeTypedArray : 1;
 #endif
 };
 static_assert(sizeof(UnlinkedArrayProfile) <= 8);

@@ -36,6 +36,13 @@ const ClassInfo ErrorInstance::s_info = { "Error"_s, &JSNonFinalObject::s_info, 
 ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
     : Base(vm, structure)
     , m_errorType(errorType)
+    , m_stackOverflowError(false)
+    , m_outOfMemoryError(false)
+    , m_errorInfoMaterialized(false)
+    , m_nativeGetterTypeError(false)
+#if ENABLE(WEBASSEMBLY)
+    , m_catchableFromWasm(true)
+#endif // ENABLE(WEBASSEMBLY)
 {
 }
 

@@ -62,7 +62,8 @@ struct BaseInstruction {
     struct Metadata { };
 
 protected:
-    BaseInstruction() = default;
+    BaseInstruction()
+    { }
 
 private:
     template<OpcodeSize Width>

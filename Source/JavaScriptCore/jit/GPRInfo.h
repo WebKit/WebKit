@@ -240,6 +240,9 @@ class JSValueSource {
 public:
     JSValueSource()
         : m_offset(notAddress())
+        , m_baseOrTag(InvalidGPRReg)
+        , m_payload(InvalidGPRReg)
+        , m_tagType(0)
     {
     }
     
@@ -247,6 +250,7 @@ public:
         : m_offset(notAddress())
         , m_baseOrTag(regs.tagGPR())
         , m_payload(regs.payloadGPR())
+        , m_tagType(0)
     {
     }
     
@@ -254,12 +258,15 @@ public:
         : m_offset(notAddress())
         , m_baseOrTag(tagGPR)
         , m_payload(payloadGPR)
+        , m_tagType(0)
     {
     }
     
     JSValueSource(MacroAssembler::Address address)
         : m_offset(address.offset)
         , m_baseOrTag(address.base)
+        , m_payload(InvalidGPRReg)
+        , m_tagType(0)
     {
         ASSERT(m_offset != notAddress());
         ASSERT(m_baseOrTag != InvalidGPRReg);
@@ -334,9 +341,9 @@ private:
     static inline int32_t notAddress() { return 0x80000000; }     
           
     int32_t m_offset;
-    GPRReg m_baseOrTag { InvalidGPRReg };
-    GPRReg m_payload { InvalidGPRReg };
-    int8_t m_tagType { 0 }; // Contains the low bits of the tag.
+    GPRReg m_baseOrTag;
+    GPRReg m_payload;
+    int8_t m_tagType; // Contains the low bits of the tag.
 };
 #endif // USE(JSVALUE32_64)
 

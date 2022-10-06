@@ -79,7 +79,7 @@ private:
 
     InspectorEnvironment& m_environment;
     Ref<InjectedScriptHost> m_injectedScriptHost;
-    int m_nextInjectedScriptId { 1 };
+    int m_nextInjectedScriptId;
 };
 
 } // namespace Inspector

@@ -253,6 +253,7 @@ NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
 }
 
 NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(NonSharedCharacterBreakIterator&& other)
+    : m_iterator(nullptr)
 {
     std::swap(m_iterator, other.m_iterator);
 }

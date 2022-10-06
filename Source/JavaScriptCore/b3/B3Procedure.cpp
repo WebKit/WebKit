@@ -46,6 +46,7 @@ namespace JSC { namespace B3 {
 
 Procedure::Procedure()
     : m_cfg(new CFG(*this))
+    , m_lastPhaseName("initial")
     , m_byproducts(makeUnique<OpaqueByproducts>())
 {
     // Initialize all our fields before constructing Air::Code since
@@ -54,7 +55,9 @@ Procedure::Procedure()
     m_code->setNumEntrypoints(m_numEntrypoints);
 }
 
-Procedure::~Procedure() = default;
+Procedure::~Procedure()
+{
+}
 
 void Procedure::printOrigin(PrintStream& out, Origin origin) const
 {

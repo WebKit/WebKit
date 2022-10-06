@@ -48,7 +48,8 @@ public:
     }
 
     DesiredGlobalProperty(WTF::HashTableDeletedValueType)
-        : m_identifierNumber(UINT_MAX)
+        : m_globalObject(nullptr)
+        , m_identifierNumber(UINT_MAX)
     {
     }
 

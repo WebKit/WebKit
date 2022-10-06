@@ -41,10 +41,14 @@ const int MaxLineLength = 100 * 1024;
 using namespace JSC;
 
 struct CommandLine {
-    CommandLine() = default;
+    CommandLine()
+        : interactive(false)
+        , verbose(false)
+    {
+    }
 
-    bool interactive { false };
-    bool verbose { false };
+    bool interactive;
+    bool verbose;
     Vector<String> arguments;
     Vector<String> files;
 };
@@ -76,11 +80,15 @@ long StopWatch::getElapsedMS()
 }
 
 struct RegExpTest {
-    RegExpTest() = default;
+    RegExpTest()
+        : offset(0)
+        , result(0)
+    {
+    }
 
     String subject;
-    int offset { 0 };
-    int result { 0 };
+    int offset;
+    int result;
     Vector<int, 32> expectVector;
 };
 

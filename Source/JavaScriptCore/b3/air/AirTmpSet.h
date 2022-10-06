@@ -34,8 +34,10 @@ namespace JSC { namespace B3 { namespace Air {
 
 class TmpSet {
 public:
-    TmpSet() = default;
-
+    TmpSet()
+    {
+    }
+    
     bool add(Tmp tmp)
     {
         if (tmp.isGP())
@@ -69,8 +71,10 @@ public:
 
     class iterator {
     public:
-        iterator() = default;
-
+        iterator()
+        {
+        }
+        
         iterator(BitVector::iterator gpIter, BitVector::iterator fpIter)
             : m_gpIter(gpIter)
             , m_fpIter(fpIter)

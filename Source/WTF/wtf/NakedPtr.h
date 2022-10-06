@@ -35,7 +35,7 @@ namespace WTF {
 template <typename T> class NakedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ALWAYS_INLINE NakedPtr() = default;
+    ALWAYS_INLINE NakedPtr() : m_ptr(nullptr) { }
     ALWAYS_INLINE NakedPtr(T* ptr) : m_ptr(ptr) { }
     ALWAYS_INLINE NakedPtr(const NakedPtr& o) : m_ptr(o.m_ptr) { }
     template<typename U> NakedPtr(const NakedPtr<U>& o) : m_ptr(o.get()) { }
@@ -65,7 +65,7 @@ public:
     void swap(NakedPtr&);
 
 private:
-    T* m_ptr { nullptr };
+    T* m_ptr;
 };
 
 template<typename T> inline NakedPtr<T>& NakedPtr<T>::operator=(const NakedPtr& o)

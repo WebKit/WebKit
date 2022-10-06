@@ -94,6 +94,7 @@ namespace JSC {
         : ConstantNode(location, ResultType::bigIntType())
         , m_value(value)
         , m_radix(radix)
+        , m_sign(false)
     {
     }
     
@@ -143,6 +144,7 @@ namespace JSC {
     inline TemplateLiteralNode::TemplateLiteralNode(const JSTokenLocation& location, TemplateStringListNode* templateStrings)
         : ExpressionNode(location)
         , m_templateStrings(templateStrings)
+        , m_templateExpressions(nullptr)
     {
     }
 
@@ -229,6 +231,7 @@ namespace JSC {
 
     inline ArrayNode::ArrayNode(const JSTokenLocation& location, int elision)
         : ExpressionNode(location)
+        , m_element(nullptr)
         , m_elision(elision)
     {
     }
@@ -236,6 +239,7 @@ namespace JSC {
     inline ArrayNode::ArrayNode(const JSTokenLocation& location, ElementNode* element)
         : ExpressionNode(location)
         , m_element(element)
+        , m_elision(0)
     {
     }
 
@@ -305,6 +309,7 @@ namespace JSC {
 
     inline ObjectLiteralNode::ObjectLiteralNode(const JSTokenLocation& location)
         : ExpressionNode(location)
+        , m_list(nullptr)
     {
     }
 
@@ -361,7 +366,10 @@ namespace JSC {
         listNode->m_next = this;
     }
 
-    inline ArgumentsNode::ArgumentsNode() = default;
+    inline ArgumentsNode::ArgumentsNode()
+        : m_listNode(nullptr)
+    {
+    }
 
     inline ArgumentsNode::ArgumentsNode(ArgumentListNode* listNode, bool hasAssignments)
         : m_listNode(listNode)
@@ -372,6 +380,7 @@ namespace JSC {
     inline NewExprNode::NewExprNode(const JSTokenLocation& location, ExpressionNode* expr)
         : ExpressionNode(location)
         , m_expr(expr)
+        , m_args(nullptr)
     {
     }
 
@@ -819,7 +828,9 @@ namespace JSC {
     {
     }
 
-    inline SourceElements::SourceElements() = default;
+    inline SourceElements::SourceElements()
+    {
+    }
 
     inline EmptyStatementNode::EmptyStatementNode(const JSTokenLocation& location)
         : StatementNode(location)
@@ -1004,8 +1015,11 @@ namespace JSC {
     {
     }
 
-    inline FunctionParameters::FunctionParameters() = default;
+    inline FunctionParameters::FunctionParameters()
+    {
+    }
 
+    
     inline BaseFuncExprNode::BaseFuncExprNode(const JSTokenLocation& location, const Identifier& ident, FunctionMetadataNode* metadata, const SourceCode& source, FunctionMode functionMode)
         : ExpressionNode(location)
         , m_metadata(metadata)
@@ -1140,15 +1154,24 @@ namespace JSC {
         , m_isForAwait(isForAwait)
     {
     }
+    
+    inline DestructuringPatternNode::DestructuringPatternNode()
+    {
+    }
 
-    inline DestructuringPatternNode::DestructuringPatternNode() = default;
-
-    inline ArrayPatternNode::ArrayPatternNode() = default;
-
-    inline ObjectPatternNode::ObjectPatternNode() = default;
-
+    inline ArrayPatternNode::ArrayPatternNode()
+        : DestructuringPatternNode()
+    {
+    }
+    
+    inline ObjectPatternNode::ObjectPatternNode()
+        : DestructuringPatternNode()
+    {
+    }
+    
     inline BindingNode::BindingNode(const Identifier& boundProperty, const JSTextPosition& start, const JSTextPosition& end, AssignmentContext context)
-        : m_divotStart(start)
+        : DestructuringPatternNode()
+        , m_divotStart(start)
         , m_divotEnd(end)
         , m_boundProperty(boundProperty)
         , m_bindingContext(context)
@@ -1156,14 +1179,16 @@ namespace JSC {
     }
 
     inline AssignmentElementNode::AssignmentElementNode(ExpressionNode* assignmentTarget, const JSTextPosition& start, const JSTextPosition& end)
-        : m_divotStart(start)
+        : DestructuringPatternNode()
+        , m_divotStart(start)
         , m_divotEnd(end)
         , m_assignmentTarget(assignmentTarget)
     {
     }
 
     inline RestParameterNode::RestParameterNode(DestructuringPatternNode* pattern, unsigned numParametersToSkip)
-        : m_pattern(pattern)
+        : DestructuringPatternNode()
+        , m_pattern(pattern)
         , m_numParametersToSkip(numParametersToSkip)
     {
         ASSERT(!pattern->isRestParameter());

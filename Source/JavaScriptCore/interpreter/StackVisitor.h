@@ -108,8 +108,8 @@ public:
         void dump(PrintStream&, Indenter, WTF::Function<void(PrintStream&)> prefix) const;
 
     private:
-        Frame() = default;
-        ~Frame() = default;
+        Frame() { }
+        ~Frame() { }
 
         void retrieveExpressionInfo(int& divot, int& startOffset, int& endOffset, unsigned& line, unsigned& column) const;
         void setToEnd();
@@ -178,7 +178,11 @@ private:
 
 class CallerFunctor {
 public:
-    CallerFunctor() = default;
+    CallerFunctor()
+        : m_hasSkippedFirstFrame(false)
+        , m_callerFrame(nullptr)
+    {
+    }
 
     CallFrame* callerFrame() const { return m_callerFrame; }
 
@@ -194,8 +198,8 @@ public:
     }
     
 private:
-    mutable bool m_hasSkippedFirstFrame { false };
-    mutable CallFrame* m_callerFrame { nullptr };
+    mutable bool m_hasSkippedFirstFrame;
+    mutable CallFrame* m_callerFrame;
 };
 
 } // namespace JSC

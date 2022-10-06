@@ -36,11 +36,17 @@ template<typename Graph>
 class NaturalLoop {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    NaturalLoop() = default;
+    NaturalLoop()
+        : m_graph(nullptr)
+        , m_header(nullptr)
+        , m_outerLoopIndex(UINT_MAX)
+    {
+    }
     
     NaturalLoop(Graph& graph, typename Graph::Node header, unsigned index)
         : m_graph(&graph)
         , m_header(header)
+        , m_outerLoopIndex(UINT_MAX)
         , m_index(index)
     {
     }
@@ -95,10 +101,10 @@ private:
         m_body.append(block);
     }
 
-    Graph* m_graph { nullptr };
-    typename Graph::Node m_header { nullptr };
+    Graph* m_graph;
+    typename Graph::Node m_header;
     Vector<typename Graph::Node, 4> m_body;
-    unsigned m_outerLoopIndex { UINT_MAX };
+    unsigned m_outerLoopIndex;
     unsigned m_index;
 };
 

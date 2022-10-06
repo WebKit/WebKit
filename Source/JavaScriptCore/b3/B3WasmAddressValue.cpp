@@ -32,7 +32,9 @@
 
 namespace JSC { namespace B3 {
 
-WasmAddressValue::~WasmAddressValue() = default;
+WasmAddressValue::~WasmAddressValue()
+{
+}
 
 void WasmAddressValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {

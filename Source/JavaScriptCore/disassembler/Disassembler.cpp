@@ -71,8 +71,10 @@ class DisassemblyTask {
     WTF_MAKE_NONCOPYABLE(DisassemblyTask);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DisassemblyTask() = default;
-
+    DisassemblyTask()
+    {
+    }
+    
     ~DisassemblyTask()
     {
         if (header)

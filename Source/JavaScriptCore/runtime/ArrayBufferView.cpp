@@ -32,10 +32,10 @@
 namespace JSC {
 
 ArrayBufferView::ArrayBufferView(TypedArrayType type, RefPtr<ArrayBuffer>&& buffer, size_t byteOffset, size_t byteLength)
-        : m_type(type)
-        , m_byteOffset(byteOffset)
-        , m_byteLength(byteLength)
-        , m_buffer(WTFMove(buffer))
+    : m_type(type)
+    , m_byteOffset(byteOffset)
+    , m_byteLength(byteLength)
+    , m_buffer(WTFMove(buffer))
 {
     Checked<size_t, CrashOnOverflow> length(byteOffset);
     length += byteLength;

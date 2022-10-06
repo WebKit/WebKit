@@ -218,7 +218,9 @@ StringView::GraphemeClusters::Iterator::Iterator(StringView stringView, unsigned
 {
 }
 
-StringView::GraphemeClusters::Iterator::~Iterator() = default;
+StringView::GraphemeClusters::Iterator::~Iterator()
+{
+}
 
 StringView::GraphemeClusters::Iterator::Iterator(Iterator&& other)
     : m_impl(WTFMove(other.m_impl))

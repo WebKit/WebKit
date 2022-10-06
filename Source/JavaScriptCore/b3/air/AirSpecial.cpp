@@ -35,9 +35,13 @@ namespace JSC { namespace B3 { namespace Air {
 
 const char* const Special::dumpPrefix = "&";
 
-Special::Special() = default;
+Special::Special()
+{
+}
 
-Special::~Special() = default;
+Special::~Special()
+{
+}
 
 CString Special::name() const
 {

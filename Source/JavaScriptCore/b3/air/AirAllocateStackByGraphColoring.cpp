@@ -302,7 +302,9 @@ public:
 
 private:
     struct CoalescableMove {
-        CoalescableMove() = default;
+        CoalescableMove()
+        {
+        }
 
         CoalescableMove(IndexType src, IndexType dst, double frequency)
             : src(src)

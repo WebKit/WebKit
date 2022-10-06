@@ -656,6 +656,10 @@ size_t Value::memoryCost() const
     return memoryCost;
 }
 
+ObjectBase::~ObjectBase()
+{
+}
+
 RefPtr<Object> ObjectBase::asObject()
 {
     static_assert(sizeof(Object) == sizeof(ObjectBase), "cannot cast");
@@ -755,6 +759,10 @@ void ObjectBase::writeJSON(StringBuilder& output) const
 
 ObjectBase::ObjectBase()
     : Value(Type::Object)
+{
+}
+
+ArrayBase::~ArrayBase()
 {
 }
 

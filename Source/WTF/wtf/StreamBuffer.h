@@ -40,8 +40,15 @@ class StreamBuffer {
 private:
     typedef Vector<T> Block;
 public:
-    StreamBuffer() = default;
-    ~StreamBuffer() = default;
+    StreamBuffer()
+        : m_size(0)
+        , m_readOffset(0)
+    {
+    }
+
+    ~StreamBuffer()
+    {
+    }
 
     bool isEmpty() const { return !size(); }
 
@@ -98,8 +105,8 @@ public:
     }
 
 private:
-    size_t m_size { 0 };
-    size_t m_readOffset { 0 };
+    size_t m_size;
+    size_t m_readOffset;
     Deque<std::unique_ptr<Block>> m_buffer;
 };
 

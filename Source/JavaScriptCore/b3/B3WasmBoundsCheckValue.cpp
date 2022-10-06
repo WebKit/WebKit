@@ -33,7 +33,9 @@
 
 namespace JSC { namespace B3 {
 
-WasmBoundsCheckValue::~WasmBoundsCheckValue() = default;
+WasmBoundsCheckValue::~WasmBoundsCheckValue()
+{
+}
 
 WasmBoundsCheckValue::WasmBoundsCheckValue(Origin origin, GPRReg pinnedSize, Value* ptr, unsigned offset)
     : Value(CheckedOpcode, WasmBoundsCheck, One, origin, ptr)

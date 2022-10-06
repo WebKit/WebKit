@@ -38,7 +38,9 @@ SourceProvider::SourceProvider(const SourceOrigin& sourceOrigin, String&& source
 {
 }
 
-SourceProvider::~SourceProvider() = default;
+SourceProvider::~SourceProvider()
+{
+}
 
 void SourceProvider::getID()
 {

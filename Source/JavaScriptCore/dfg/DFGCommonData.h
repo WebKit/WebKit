@@ -62,7 +62,7 @@ class Plan;
 // about themselves.
 
 struct WeakReferenceTransition {
-    WeakReferenceTransition() = default;
+    WeakReferenceTransition() { }
     
     WeakReferenceTransition(VM& vm, JSCell* owner, JSCell* codeOrigin, JSCell* from, JSCell* to)
         : m_from(vm, owner, from)

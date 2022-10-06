@@ -44,7 +44,9 @@ JITFinalizer::JITFinalizer(Plan& plan, Ref<JITCode>&& jitCode, std::unique_ptr<L
 {
 }
 
-JITFinalizer::~JITFinalizer() = default;
+JITFinalizer::~JITFinalizer()
+{
+}
 
 size_t JITFinalizer::codeSize()
 {

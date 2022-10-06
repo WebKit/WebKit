@@ -45,7 +45,7 @@ AtTailAbstractState::AtTailAbstractState(Graph& graph)
     }
 }
 
-AtTailAbstractState::~AtTailAbstractState() = default;
+AtTailAbstractState::~AtTailAbstractState() { }
 
 void AtTailAbstractState::createValueForNode(NodeFlowProjection node)
 {

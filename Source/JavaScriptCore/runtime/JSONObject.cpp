@@ -76,7 +76,7 @@ public:
     JSValue value(JSGlobalObject*) const;
 
 private:
-    PropertyName m_propertyName { nullptr };
+    PropertyName m_propertyName;
     unsigned m_number;
     mutable JSValue m_value;
 };
@@ -203,7 +203,8 @@ inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(PropertyName pro
 }
 
 inline PropertyNameForFunctionCall::PropertyNameForFunctionCall(unsigned number)
-    : m_number(number)
+    : m_propertyName(nullptr)
+    , m_number(number)
 {
 }
 

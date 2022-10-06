@@ -375,6 +375,12 @@ public:
 protected:
     CallLinkInfo(Type type, CodeOrigin codeOrigin, UseDataIC useDataIC)
         : m_codeOrigin(codeOrigin)
+        , m_hasSeenShouldRepatch(false)
+        , m_hasSeenClosure(false)
+        , m_clearedByGC(false)
+        , m_clearedByVirtual(false)
+        , m_allowStubs(true)
+        , m_callType(None)
         , m_useDataIC(static_cast<unsigned>(useDataIC))
         , m_type(static_cast<unsigned>(type))
     {
@@ -411,12 +417,12 @@ protected:
     RefPtr<PolymorphicCallStubRoutine> m_stub;
 #endif
     CodeOrigin m_codeOrigin;
-    bool m_hasSeenShouldRepatch : 1 { false };
-    bool m_hasSeenClosure : 1 { false };
-    bool m_clearedByGC : 1 { false };
-    bool m_clearedByVirtual : 1 { false };
-    bool m_allowStubs : 1 { true };
-    unsigned m_callType : 4 { None }; // CallType
+    bool m_hasSeenShouldRepatch : 1;
+    bool m_hasSeenClosure : 1;
+    bool m_clearedByGC : 1;
+    bool m_clearedByVirtual : 1;
+    bool m_allowStubs : 1;
+    unsigned m_callType : 4; // CallType
     unsigned m_useDataIC : 1; // UseDataIC
     unsigned m_type : 1; // Type
 #if ENABLE(JIT)

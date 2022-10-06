@@ -32,7 +32,9 @@
 
 namespace JSC { namespace B3 {
 
-SlotBaseValue::~SlotBaseValue() = default;
+SlotBaseValue::~SlotBaseValue()
+{
+}
 
 void SlotBaseValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {

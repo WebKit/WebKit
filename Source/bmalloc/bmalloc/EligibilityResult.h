@@ -39,7 +39,7 @@ enum class EligibilityKind {
     
 template<typename Config>
 struct EligibilityResult {
-    EligibilityResult() = default;
+    EligibilityResult() { }
     
     EligibilityResult(EligibilityKind);
     EligibilityResult(IsoPage<Config>*);

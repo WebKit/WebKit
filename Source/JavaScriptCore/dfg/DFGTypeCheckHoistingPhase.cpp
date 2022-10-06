@@ -43,21 +43,28 @@ struct ArrayTypeCheck;
 struct StructureTypeCheck;
 
 struct CheckData {
-    Structure* m_structure { nullptr };
+    Structure* m_structure;
     ArrayMode m_arrayMode;
-    bool m_arrayModeIsValid { false };
-    bool m_arrayModeHoistingOkay { false };
+    bool m_arrayModeIsValid;
+    bool m_arrayModeHoistingOkay;
     
-    CheckData() = default;
-
+    CheckData()
+        : m_structure(nullptr)
+        , m_arrayModeIsValid(false)
+        , m_arrayModeHoistingOkay(false)
+    {
+    }
+    
     CheckData(Structure* structure)
         : m_structure(structure)
+        , m_arrayModeIsValid(false)
         , m_arrayModeHoistingOkay(true)
     {
     }
 
     CheckData(ArrayMode arrayMode)
-        : m_arrayMode(arrayMode)
+        : m_structure(nullptr)
+        , m_arrayMode(arrayMode)
         , m_arrayModeIsValid(true)
         , m_arrayModeHoistingOkay(true)
     {

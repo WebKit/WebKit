@@ -31,9 +31,13 @@
 
 namespace JSC {
 
-TrackedReferences::TrackedReferences() = default;
+TrackedReferences::TrackedReferences()
+{
+}
 
-TrackedReferences::~TrackedReferences() = default;
+TrackedReferences::~TrackedReferences()
+{
+}
 
 void TrackedReferences::add(JSCell* cell)
 {

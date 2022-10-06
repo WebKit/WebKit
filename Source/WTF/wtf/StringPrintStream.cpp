@@ -34,6 +34,7 @@ namespace WTF {
 
 StringPrintStream::StringPrintStream()
     : m_buffer(m_inlineBuffer)
+    , m_next(0)
     , m_size(sizeof(m_inlineBuffer))
 {
     m_buffer[0] = 0; // Make sure that we always have a null terminator.

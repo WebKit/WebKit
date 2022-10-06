@@ -32,7 +32,9 @@
 
 namespace JSC { namespace FTL {
 
-ExceptionTarget::~ExceptionTarget() = default;
+ExceptionTarget::~ExceptionTarget()
+{
+}
 
 CodeLocationLabel<ExceptionHandlerPtrTag> ExceptionTarget::label(LinkBuffer& linkBuffer)
 {

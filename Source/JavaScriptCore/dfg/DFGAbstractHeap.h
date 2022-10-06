@@ -99,8 +99,12 @@ class AbstractHeap {
 public:
     class Payload {
     public:
-        Payload() = default;
-
+        Payload()
+            : m_isTop(false)
+            , m_value(0)
+        {
+        }
+        
         Payload(bool isTop, int64_t value)
             : m_isTop(isTop)
             , m_value(value)
@@ -109,17 +113,20 @@ public:
         }
         
         Payload(int64_t value)
-            : m_value(value)
+            : m_isTop(false)
+            , m_value(value)
         {
         }
         
         Payload(const void* pointer)
-            : m_value(bitwise_cast<intptr_t>(pointer))
+            : m_isTop(false)
+            , m_value(bitwise_cast<intptr_t>(pointer))
         {
         }
 
         Payload(Operand operand)
-            : m_value(operand.asBits())
+            : m_isTop(false)
+            , m_value(operand.asBits())
         {
         }
 
@@ -184,8 +191,8 @@ public:
         void dumpAsOperand(PrintStream&) const;
         
     private:
-        bool m_isTop { false };
-        int64_t m_value { 0 };
+        bool m_isTop;
+        int64_t m_value;
     };
     
     AbstractHeap()

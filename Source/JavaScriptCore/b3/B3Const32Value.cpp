@@ -33,7 +33,9 @@
 
 namespace JSC { namespace B3 {
 
-Const32Value::~Const32Value() = default;
+Const32Value::~Const32Value()
+{
+}
 
 Value* Const32Value::negConstant(Procedure& proc) const
 {

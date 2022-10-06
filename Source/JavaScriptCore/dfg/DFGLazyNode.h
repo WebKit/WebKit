@@ -44,17 +44,22 @@ public:
 
     explicit LazyNode(Node* node = nullptr)
         : m_node(node)
+        , m_value(reinterpret_cast<uintptr_t>(nullptr))
     {
         if (node && node->isConstant())
             setFrozenValue(node->constant(), node->op());
     }
 
     explicit LazyNode(FrozenValue* value, NodeType op = JSConstant)
+        : m_node(nullptr)
+        , m_value(reinterpret_cast<uintptr_t>(nullptr))
     {
         setFrozenValue(value, op);
     }
 
     LazyNode(std::nullptr_t)
+        : m_node(nullptr)
+        , m_value(reinterpret_cast<uintptr_t>(nullptr))
     {
     }
 
@@ -162,8 +167,8 @@ private:
         }
     }
 
-    Node* m_node { nullptr };
-    uintptr_t m_value { reinterpret_cast<uintptr_t>(nullptr) };
+    Node* m_node;
+    uintptr_t m_value;
 };
 
 } } // namespace JSC::DFG

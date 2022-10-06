@@ -36,6 +36,7 @@ const ClassInfo JSModuleNamespaceObject::s_info = { "ModuleNamespaceObject"_s, &
 
 JSModuleNamespaceObject::JSModuleNamespaceObject(VM& vm, Structure* structure)
     : Base(vm, structure)
+    , m_exports()
 {
 }
 

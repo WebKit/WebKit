@@ -38,7 +38,10 @@ BlockInsertionSet::BlockInsertionSet(Code &code)
 {
 }
 
-BlockInsertionSet::~BlockInsertionSet() = default;
+BlockInsertionSet::~BlockInsertionSet()
+{
+}
+
 } } } // namespace JSC::B3::Air
 
 #endif // ENABLE(B3_JIT)

@@ -263,8 +263,12 @@ void startCrashing();
 JS_EXPORT_PRIVATE bool isCrashing();
 
 struct NodeAndIndex {
-    NodeAndIndex() = default;
-
+    NodeAndIndex()
+        : node(nullptr)
+        , index(UINT_MAX)
+    {
+    }
+    
     NodeAndIndex(Node* node, unsigned index)
         : node(node)
         , index(index)
@@ -277,8 +281,8 @@ struct NodeAndIndex {
         return !node;
     }
     
-    Node* node { nullptr };
-    unsigned index { UINT_MAX };
+    Node* node;
+    unsigned index;
 };
 
 // A less-than operator for strings that is useful for generating string switches. Sorts by <

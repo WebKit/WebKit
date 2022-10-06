@@ -42,7 +42,7 @@ struct DumpContext {
     void dump(PrintStream&, const char* prefix = "") const;
     
     StringHashDumpContext<Structure> structures;
-    DFG::Graph* graph { nullptr };
+    DFG::Graph* graph;
 };
 
 } // namespace JSC

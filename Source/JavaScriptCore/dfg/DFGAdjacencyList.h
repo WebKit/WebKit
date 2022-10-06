@@ -40,7 +40,7 @@ public:
     
     enum { Size = 3 };
     
-    AdjacencyList() = default;
+    AdjacencyList() { }
     
     AdjacencyList(Kind kind)
     {

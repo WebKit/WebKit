@@ -237,7 +237,7 @@ WTF_EXPORT_PRIVATE WARN_UNUSED_RETURN bool makeSafeToUseMemoryMapForPath(const S
 class MappedFileData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MappedFileData() = default;
+    MappedFileData() { }
     MappedFileData(MappedFileData&&);
     WTF_EXPORT_PRIVATE MappedFileData(const String& filePath, MappedFileMode, bool& success);
     WTF_EXPORT_PRIVATE MappedFileData(PlatformFileHandle, MappedFileMode, bool& success);

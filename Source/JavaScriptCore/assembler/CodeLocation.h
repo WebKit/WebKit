@@ -76,7 +76,9 @@ public:
     }
 
 protected:
-    CodeLocationCommon() = default;
+    CodeLocationCommon()
+    {
+    }
 
     CodeLocationCommon(CodePtr<tag> location)
         : CodePtr<tag>(location)
@@ -87,7 +89,7 @@ protected:
 template<PtrTag tag>
 class CodeLocationInstruction : public CodeLocationCommon<tag> {
 public:
-    CodeLocationInstruction() = default;
+    CodeLocationInstruction() { }
     explicit CodeLocationInstruction(CodePtr<tag> location)
         : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationInstruction(void* location)
@@ -97,7 +99,7 @@ public:
 template<PtrTag tag>
 class CodeLocationLabel : public CodeLocationCommon<tag> {
 public:
-    CodeLocationLabel() = default;
+    CodeLocationLabel() { }
     explicit CodeLocationLabel(CodePtr<tag> location)
         : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationLabel(void* location)
@@ -116,7 +118,7 @@ public:
 template<PtrTag tag>
 class CodeLocationJump : public CodeLocationCommon<tag> {
 public:
-    CodeLocationJump() = default;
+    CodeLocationJump() { }
     explicit CodeLocationJump(CodePtr<tag> location)
         : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationJump(void* location)
@@ -129,7 +131,7 @@ public:
 template<PtrTag tag>
 class CodeLocationCall : public CodeLocationCommon<tag> {
 public:
-    CodeLocationCall() = default;
+    CodeLocationCall() { }
     explicit CodeLocationCall(CodePtr<tag> location)
         : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationCall(void* location)
@@ -142,7 +144,7 @@ public:
 template<PtrTag tag>
 class CodeLocationNearCall : public CodeLocationCommon<tag> {
 public:
-    CodeLocationNearCall() = default;
+    CodeLocationNearCall() { }
     explicit CodeLocationNearCall(CodePtr<tag> location, NearCallMode callMode)
         : CodeLocationCommon<tag>(location), m_callMode(callMode) { }
     explicit CodeLocationNearCall(void* location, NearCallMode callMode)
@@ -155,7 +157,7 @@ private:
 template<PtrTag tag>
 class CodeLocationDataLabel32 : public CodeLocationCommon<tag> {
 public:
-    CodeLocationDataLabel32() = default;
+    CodeLocationDataLabel32() { }
     explicit CodeLocationDataLabel32(CodePtr<tag> location)
         : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationDataLabel32(void* location)
@@ -165,7 +167,7 @@ public:
 template<PtrTag tag>
 class CodeLocationDataLabelCompact : public CodeLocationCommon<tag> {
 public:
-    CodeLocationDataLabelCompact() = default;
+    CodeLocationDataLabelCompact() { }
     explicit CodeLocationDataLabelCompact(CodePtr<tag> location)
         : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationDataLabelCompact(void* location)
@@ -175,7 +177,7 @@ public:
 template<PtrTag tag>
 class CodeLocationDataLabelPtr : public CodeLocationCommon<tag> {
 public:
-    CodeLocationDataLabelPtr() = default;
+    CodeLocationDataLabelPtr() { }
     explicit CodeLocationDataLabelPtr(CodePtr<tag> location)
         : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationDataLabelPtr(void* location)
@@ -185,7 +187,7 @@ public:
 template<PtrTag tag>
 class CodeLocationConvertibleLoad : public CodeLocationCommon<tag> {
 public:
-    CodeLocationConvertibleLoad() = default;
+    CodeLocationConvertibleLoad() { }
     explicit CodeLocationConvertibleLoad(CodePtr<tag> location)
         : CodeLocationCommon<tag>(location) { }
     explicit CodeLocationConvertibleLoad(void* location)

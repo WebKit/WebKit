@@ -40,7 +40,7 @@ namespace DFG {
 
 class MinifiedGraph {
 public:
-    MinifiedGraph() = default;
+    MinifiedGraph() { }
 
     MinifiedNode* at(MinifiedID id)
     {

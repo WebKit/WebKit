@@ -38,7 +38,9 @@ class SwitchValue;
 
 class CaseCollection {
 public:
-    CaseCollection() = default;
+    CaseCollection()
+    {
+    }
     
     CaseCollection(const SwitchValue* terminal, const BasicBlock* owner)
         : m_switch(terminal)
@@ -58,7 +60,11 @@ public:
 
     class iterator {
     public:
-        iterator() = default;
+        iterator()
+            : m_collection(nullptr)
+            , m_index(0)
+        {
+        }
 
         iterator(const CaseCollection& collection, unsigned index)
             : m_collection(&collection)
@@ -89,8 +95,8 @@ public:
         }
 
     private:
-        const CaseCollection* m_collection { nullptr };
-        unsigned m_index { 0 };
+        const CaseCollection* m_collection;
+        unsigned m_index;
     };
 
     typedef iterator const_iterator;

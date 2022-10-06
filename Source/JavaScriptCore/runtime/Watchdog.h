@@ -72,9 +72,9 @@ private:
     Seconds m_cpuDeadline;
     MonotonicTime m_deadline;
 
-    ShouldTerminateCallback m_callback { nullptr };
-    void* m_callbackData1 { nullptr };
-    void* m_callbackData2 { nullptr };
+    ShouldTerminateCallback m_callback;
+    void* m_callbackData1;
+    void* m_callbackData2;
 
     Ref<WorkQueue> m_timerQueue;
 

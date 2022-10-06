@@ -40,10 +40,19 @@ namespace JSC {
 
         friend class VirtualRegister;
     public:
-        RegisterID() = default;
+        RegisterID()
+            : m_refCount(0)
+            , m_isTemporary(false)
+#if ASSERT_ENABLED
+            , m_didSetIndex(false)
+#endif
+        {
+        }
 
         RegisterID(VirtualRegister virtualRegister)
-            : m_virtualRegister(virtualRegister)
+            : m_refCount(0)
+            , m_virtualRegister(virtualRegister)
+            , m_isTemporary(false)
 #if ASSERT_ENABLED
             , m_didSetIndex(true)
 #endif
@@ -51,7 +60,9 @@ namespace JSC {
         }
         
         explicit RegisterID(int index)
-            : m_virtualRegister(VirtualRegister(index))
+            : m_refCount(0)
+            , m_virtualRegister(VirtualRegister(index))
+            , m_isTemporary(false)
 #if ASSERT_ENABLED
             , m_didSetIndex(true)
 #endif
@@ -106,11 +117,11 @@ namespace JSC {
 
     private:
 
-        int m_refCount { 0 };
+        int m_refCount;
         VirtualRegister m_virtualRegister;
-        bool m_isTemporary { false };
+        bool m_isTemporary;
 #if ASSERT_ENABLED
-        bool m_didSetIndex { false };
+        bool m_didSetIndex;
 #endif
     };
 } // namespace JSC

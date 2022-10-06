@@ -51,6 +51,9 @@ class LikelyDenseUnsignedIntegerSet {
     using Set = HashSet<IndexType, WTF::IntHash<IndexType>, WTF::UnsignedWithZeroKeyHashTraits<IndexType> >;
 public:
     LikelyDenseUnsignedIntegerSet()
+        : m_size(0)
+        , m_min(0)
+        , m_max(0)
     {
         new (NotNull, &m_inline.bitVector) BitVector;
     }
@@ -322,12 +325,12 @@ private:
         BitVector bitVector;
         Set hashSet;
 
-        U() { } // NOLINT
-        ~U() { } // NOLINT
+        U() { }
+        ~U() { }
     } m_inline;
-    unsigned m_size { 0 }; // Only updated in BitVector mode, std::numeric_limits<unsigned>::max() to indicate HashSet mode
-    IndexType m_min { 0 };
-    IndexType m_max { 0 };
+    unsigned m_size; // Only updated in BitVector mode, std::numeric_limits<unsigned>::max() to indicate HashSet mode
+    IndexType m_min;
+    IndexType m_max;
 
 };
 

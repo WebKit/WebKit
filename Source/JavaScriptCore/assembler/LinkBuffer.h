@@ -114,7 +114,12 @@ public:
     static constexpr unsigned numberOfProfilesExcludingTotal = numberOfProfiles - 1;
 
     LinkBuffer(MacroAssembler& macroAssembler, void* ownerUID, Profile profile = Profile::Uncategorized, JITCompilationEffort effort = JITCompilationMustSucceed)
-        : m_profile(profile)
+        : m_size(0)
+        , m_didAllocate(false)
+#ifndef NDEBUG
+        , m_completed(false)
+#endif
+        , m_profile(profile)
     {
         UNUSED_PARAM(ownerUID);
         linkCode(macroAssembler, effort);
@@ -123,6 +128,10 @@ public:
     template<PtrTag tag>
     LinkBuffer(MacroAssembler& macroAssembler, CodePtr<tag> code, size_t size, Profile profile = Profile::Uncategorized, JITCompilationEffort effort = JITCompilationMustSucceed, bool shouldPerformBranchCompaction = true)
         : m_size(size)
+        , m_didAllocate(false)
+#ifndef NDEBUG
+        , m_completed(false)
+#endif
         , m_profile(profile)
         , m_code(code.template retagged<LinkBufferPtrTag>())
     {
@@ -134,7 +143,9 @@ public:
         linkCode(macroAssembler, effort);
     }
 
-    ~LinkBuffer() = default;
+    ~LinkBuffer()
+    {
+    }
 
     void runMainThreadFinalizationTasks();
     
@@ -393,7 +404,7 @@ private:
 #endif
 
     RefPtr<ExecutableMemoryHandle> m_executableMemory;
-    size_t m_size { 0 };
+    size_t m_size;
 #if ENABLE(BRANCH_COMPACTION)
     AssemblerData m_assemblerStorage;
 #if CPU(ARM64E)
@@ -401,9 +412,9 @@ private:
 #endif
     bool m_shouldPerformBranchCompaction { true };
 #endif
-    bool m_didAllocate { false };
+    bool m_didAllocate;
 #ifndef NDEBUG
-    bool m_completed { false };
+    bool m_completed;
 #endif
 #if ASSERT_ENABLED
     bool m_isJumpIsland { false };

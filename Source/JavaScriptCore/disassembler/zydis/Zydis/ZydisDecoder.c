@@ -1608,7 +1608,7 @@ static ZyanStatus ZydisDecodeOperandMemory(ZydisDecoderContext* context,
                     ZydisCalcRegisterId(context, instruction,
                         vidx_register_class ? ZYDIS_REG_ENCODING_VIDX : ZYDIS_REG_ENCODING_INDEX,
                         vidx_register_class ? vidx_register_class : ZYDIS_REGCLASS_GPR64));
-            operand->mem.scale = (1 << instruction->raw.sib.scale);
+            operand->mem.scale = (1 << instruction->raw.sib.scale);;
             if (operand->mem.index == ZYDIS_REGISTER_RSP)
             {
                 operand->mem.index = ZYDIS_REGISTER_NONE;

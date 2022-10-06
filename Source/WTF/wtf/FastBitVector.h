@@ -44,7 +44,7 @@ class FastBitVectorWordView {
 public:
     typedef FastBitVectorWordView ViewType;
     
-    FastBitVectorWordView() = default;
+    FastBitVectorWordView() { }
     
     FastBitVectorWordView(const uint32_t* array, size_t numBits)
         : m_words(array)
@@ -261,8 +261,11 @@ template<typename Words>
 class FastBitVectorImpl {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    FastBitVectorImpl() = default;
-
+    FastBitVectorImpl()
+        : m_words()
+    {
+    }
+    
     FastBitVectorImpl(const Words& words)
         : m_words(words)
     {
@@ -433,7 +436,7 @@ private:
         return !!(m_words.word(index >> 5) & (1 << (index & 31)));
     }
     
-    Words m_words { };
+    Words m_words;
 };
 
 class FastBitReference {
@@ -473,7 +476,7 @@ private:
 
 class FastBitVector : public FastBitVectorImpl<FastBitVectorWordOwner> {
 public:
-    FastBitVector() = default;
+    FastBitVector() { }
     explicit FastBitVector(size_t numBits)
     {
         grow(numBits);
