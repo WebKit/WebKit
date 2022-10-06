@@ -2285,7 +2285,7 @@ header .menu-item { /* add bottom dimension to main menu items */
     background-color: transparent;
     background-repeat: no-repeat;
     background-size: 1.8rem;
-    background-position: 6px 5px;
+    background-position: 6px 5.5px;
 
     padding: 3px 3px 3px 30px;
 
@@ -2298,18 +2298,12 @@ header .menu-item { /* add bottom dimension to main menu items */
     transition: 200ms ease-out width, 200ms ease-in background-color;
 }
 
-#site-nav .search-input {
+header .search-input {
     background-image: var(--search-glyph-light);
 }
 
 .search #site-nav ul.menu li:last-child {
     display: none;
-}
-
-.search-input:focus,
-.search-input:not([value=""]) {
-    width: 18rem;
-    background-color: rgba(0,0,0,0.3);
 }
 
 .search-results main {
@@ -2371,6 +2365,12 @@ header .menu-item { /* add bottom dimension to main menu items */
 
 p .search-term {
     color: var(--search-term-text-color);
+}
+
+header .search-input:focus,
+header .search-input:not([value=""]) {
+    width: 18rem;
+    background-color: rgba(0,0,0,0.3);
 }
 
 /** Accessibility **/
@@ -2554,7 +2554,7 @@ p .search-term {
         padding: 0 3rem 3rem 0;
     }
 
-    #site-nav .search-input,
+    header .search-input,
     .search-input {
         width: 100%;
         
@@ -2569,18 +2569,11 @@ p .search-term {
         color: var(--text-color);
     }
     
-    .search-input:focus,
-    .search-input:not([value=""]) {
+    header .search-input:focus,
+    header .search-input:not([value=""]) {
         width: 100%;
         background-color: rgba(255,255,255,0.1);
     }
-    
-    .search-results h1,
-    .search-results main ul {
-        width: 100%;
-        margin: 0 auto;
-    }
-
 }
 
 @media only screen and (max-width: 690px) {
@@ -2673,6 +2666,17 @@ p .search-term {
     .scrollable .scrollable-padding {
         display: inline-block;
         padding: 0 3rem;
+    }
+    
+    .search-results h1 {
+        font-size: 5.4rem;
+    }
+
+    .search-results h1,
+    .search-results main form,
+    .search-results main .results-list {
+        width: 100%;
+        margin: 0 auto;
     }
 }
 
