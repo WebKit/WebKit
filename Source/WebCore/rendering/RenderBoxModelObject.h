@@ -201,8 +201,6 @@ public:
     void insertIntoContinuationChainAfter(RenderBoxModelObject&);
     void removeFromContinuationChain();
 
-    virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return LayoutRect(); };
-
     bool hasRunningAcceleratedAnimations() const;
 
     virtual std::optional<LayoutUnit> overridingContainingBlockContentWidth() const { ASSERT_NOT_REACHED(); return -1_lu; }

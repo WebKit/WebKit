@@ -302,6 +302,8 @@ public:
     bool isDeprecatedFlexItem() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isDeprecatedFlexibleBox(); }
     bool isFlexItemIncludingDeprecated() const { return !isInline() && !isFloatingOrOutOfFlowPositioned() && parent() && parent()->isFlexibleBoxIncludingDeprecated(); }
 
+    virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return { }; }
+
 protected:
     enum BaseTypeFlag {
         RenderLayerModelObjectFlag  = 1 << 0,
