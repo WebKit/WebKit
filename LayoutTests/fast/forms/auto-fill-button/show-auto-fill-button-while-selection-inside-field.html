@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+</head>
+<body onload="runTest()">
+<input id="input">
+<script>
+
+jsTestIsAsync = true;
+
+description("This test ensures clicking on an input field, and then adding an autofill button, leaves the selection inside the field.");
+
+async function runTest() {
+    if (!window.internals)
+        return;
+
+    await UIHelper.activateElement(input);
+
+    internals.setShowAutoFillButton(input, "Credentials");
+
+    document.execCommand("insertText", true, "Test");
+
+    shouldBeEqualToString("input.value", "Test");
+
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>
