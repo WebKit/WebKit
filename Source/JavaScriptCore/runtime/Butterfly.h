@@ -133,7 +133,7 @@ using ConstContiguousJSValues = ContiguousData<const WriteBarrier<Unknown>>;
 class Butterfly {
     WTF_MAKE_NONCOPYABLE(Butterfly);
 private:
-    Butterfly() = default; // Not instantiable.
+    Butterfly() { } // Not instantiable.
 public:
     
     static size_t totalSize(size_t preCapacity, size_t propertyCapacity, bool hasIndexingHeader, size_t indexingPayloadSizeInBytes)

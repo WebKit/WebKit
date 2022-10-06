@@ -53,6 +53,7 @@ static Lock stackStatisticsMutex;
 CLoopStack::CLoopStack(VM& vm)
     : m_vm(vm)
     , m_topCallFrame(vm.topCallFrame)
+    , m_softReservedZoneSizeInRegisters(0)
 {
     size_t capacity = Options::maxPerThreadStackUsage();
     capacity = WTF::roundUpToMultipleOf(pageSize(), capacity);

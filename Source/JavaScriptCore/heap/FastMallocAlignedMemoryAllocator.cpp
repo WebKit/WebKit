@@ -37,7 +37,9 @@ FastMallocAlignedMemoryAllocator::FastMallocAlignedMemoryAllocator()
 {
 }
 
-FastMallocAlignedMemoryAllocator::~FastMallocAlignedMemoryAllocator() = default;
+FastMallocAlignedMemoryAllocator::~FastMallocAlignedMemoryAllocator()
+{
+}
 
 void* FastMallocAlignedMemoryAllocator::tryAllocateAlignedMemory(size_t alignment, size_t size)
 {

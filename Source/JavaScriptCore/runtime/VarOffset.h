@@ -41,10 +41,15 @@ enum class VarKind : uint8_t {
 
 class VarOffset {
 public:
-    VarOffset() = default;
-
+    VarOffset()
+        : m_kind(VarKind::Invalid)
+        , m_offset(UINT_MAX)
+    {
+    }
+    
     VarOffset(WTF::HashTableDeletedValueType)
-        : m_offset(0)
+        : m_kind(VarKind::Invalid)
+        , m_offset(0)
     {
     }
     
@@ -209,8 +214,8 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    VarKind m_kind { VarKind::Invalid };
-    unsigned m_offset { UINT_MAX };
+    VarKind m_kind;
+    unsigned m_offset;
 };
 
 struct VarOffsetHash {

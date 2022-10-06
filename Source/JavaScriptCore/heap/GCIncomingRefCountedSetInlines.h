@@ -31,7 +31,10 @@
 namespace JSC {
 
 template<typename T>
-GCIncomingRefCountedSet<T>::GCIncomingRefCountedSet() = default;
+GCIncomingRefCountedSet<T>::GCIncomingRefCountedSet()
+    : m_bytes(0)
+{
+}
 
 template<typename T>
 void GCIncomingRefCountedSet<T>::lastChanceToFinalize()

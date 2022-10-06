@@ -38,6 +38,7 @@ namespace JSC {
 
 HeapVerifier::HeapVerifier(Heap* heap, unsigned numberOfGCCyclesToRecord)
     : m_heap(heap)
+    , m_currentCycle(0)
     , m_numberOfCycles(numberOfGCCyclesToRecord)
 {
     RELEASE_ASSERT(m_numberOfCycles > 0);

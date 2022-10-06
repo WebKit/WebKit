@@ -42,7 +42,7 @@ public:
     typedef T* iterator;
     typedef const T* const_iterator;
 
-    Vector() = default;
+    Vector();
     Vector(Vector&&);
     ~Vector();
 
@@ -79,10 +79,18 @@ private:
     void shrinkCapacity();
     void reallocateBuffer(size_t);
 
-    T* m_buffer { nullptr };
-    size_t m_size { 0 };
-    size_t m_capacity { 0 };
+    T* m_buffer;
+    size_t m_size;
+    size_t m_capacity;
 };
+
+template<typename T>
+inline Vector<T>::Vector()
+    : m_buffer(nullptr)
+    , m_size(0)
+    , m_capacity(0)
+{
+}
 
 template<typename T>
 inline Vector<T>::Vector(Vector&& other)

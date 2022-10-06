@@ -260,9 +260,9 @@ private:
     }
 
     unsigned m_firstLineOffset : 31;
-    unsigned m_isGeneratedFromCache : 1 { true };
+    unsigned m_isGeneratedFromCache : 1;
     unsigned m_lineCount : 31;
-    unsigned m_hasCapturedVariables : 1 { false };
+    unsigned m_hasCapturedVariables : 1;
     unsigned m_unlinkedFunctionNameStart : 31;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_unlinkedBodyStartColumn : 31;
@@ -274,7 +274,7 @@ private:
     unsigned m_sourceLength : 31;
     unsigned m_superBinding : 1;
     unsigned m_parametersStartOffset : 31;
-    unsigned m_isCached : 1 { false };
+    unsigned m_isCached : 1;
     unsigned m_typeProfilingStartOffset : 31;
     unsigned m_needsClassFieldInitializer : 1;
     unsigned m_typeProfilingEndOffset;

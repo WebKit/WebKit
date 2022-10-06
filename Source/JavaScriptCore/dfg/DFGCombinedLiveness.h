@@ -41,8 +41,8 @@ NodeSet liveNodesAtHead(Graph&, BasicBlock*);
 // liveness analysis will tell you about the liveness of shadow values. It's OK to ignore shadow
 // values if you treat Upsilon as an opaque escape, and all of the clients of CombinedLiveness do so.
 struct CombinedLiveness {
-    CombinedLiveness() = default;
-
+    CombinedLiveness() { }
+    
     CombinedLiveness(Graph&);
     
     BlockMap<NodeSet> liveAtHead;

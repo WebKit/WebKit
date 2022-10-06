@@ -64,7 +64,7 @@ private:
     {
     }
 
-    ~OpaqueJSScript() final = default;
+    ~OpaqueJSScript() final { }
 
     VM& m_vm;
     Ref<StringImpl> m_source;

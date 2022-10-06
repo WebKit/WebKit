@@ -206,7 +206,7 @@ template<class E> class bad_expected_access;
 template<>
 class bad_expected_access<void> : public std::exception {
 public:
-    explicit bad_expected_access() = default;
+    explicit bad_expected_access() { }
 };
 
 template<class E>
@@ -271,7 +271,7 @@ union storage {
     constexpr storage(value_tag_t, value_type&& val) : val(std::forward<value_type>(val)) { }
     constexpr storage(error_tag_t, const error_type& err) : err(err) { }
     constexpr storage(error_tag_t, error_type&& err) : err(std::forward<error_type>(err)) { }
-    ~storage() { } // NOLINT
+    ~storage() { }
 };
 
 template<class E>
@@ -300,7 +300,7 @@ union storage<void, E> {
     constexpr storage(error_tag_t) : err() { }
     constexpr storage(error_tag_t, const error_type& err) : err(err) { }
     constexpr storage(error_tag_t, error_type&& err) : err(std::forward<error_type>(err)) { }
-    ~storage() { } // NOLINT
+    ~storage() { }
 };
 
 template<class T, class E>

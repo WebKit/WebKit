@@ -164,8 +164,8 @@ private:
     
     unsigned m_indexInSpace { 0 };
     size_t m_cellSize;
-    bool m_isNewlyAllocated : 1 { true };
-    bool m_hasValidCell : 1 { true };
+    bool m_isNewlyAllocated : 1;
+    bool m_hasValidCell : 1;
     bool m_adjustedAlignment : 1;
     Atomic<bool> m_isMarked;
     CellAttributes m_attributes;

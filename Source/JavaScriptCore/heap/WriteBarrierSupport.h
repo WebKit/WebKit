@@ -53,7 +53,7 @@ enum WriteBarrierUseKind {
 
 class WriteBarrierCounters {
 private:
-    WriteBarrierCounters() = default;
+    WriteBarrierCounters() { }
 
 public:
 #if ENABLE(WRITE_BARRIER_PROFILING)

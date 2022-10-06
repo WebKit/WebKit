@@ -33,7 +33,7 @@
 namespace JSC { namespace DFG {
 
 struct NodeAbstractValuePair {
-    NodeAbstractValuePair() = default;
+    NodeAbstractValuePair() { }
     
     NodeAbstractValuePair(NodeFlowProjection node, const AbstractValue& value)
         : node(node)

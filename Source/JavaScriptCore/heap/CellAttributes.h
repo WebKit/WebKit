@@ -32,7 +32,7 @@
 namespace JSC {
 
 struct CellAttributes {
-    CellAttributes() = default;
+    CellAttributes() { }
     
     CellAttributes(DestructionMode destruction, HeapCell::Kind cellKind)
         : destruction(destruction)

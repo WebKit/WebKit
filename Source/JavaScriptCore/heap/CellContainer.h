@@ -43,8 +43,11 @@ typedef uint32_t HeapVersion;
 
 class CellContainer {
 public:
-    CellContainer() = default;
-
+    CellContainer()
+        : m_encodedPointer(0)
+    {
+    }
+    
     CellContainer(MarkedBlock& markedBlock)
         : m_encodedPointer(bitwise_cast<uintptr_t>(&markedBlock))
     {
@@ -92,7 +95,7 @@ public:
     
 private:
     static constexpr uintptr_t isPreciseAllocationBit = 1;
-    uintptr_t m_encodedPointer { 0 };
+    uintptr_t m_encodedPointer;
 };
 
 } // namespace JSC

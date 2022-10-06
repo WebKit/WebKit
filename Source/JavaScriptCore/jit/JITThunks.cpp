@@ -38,9 +38,13 @@
 
 namespace JSC {
 
-JITThunks::JITThunks() = default;
+JITThunks::JITThunks()
+{
+}
 
-JITThunks::~JITThunks() = default;
+JITThunks::~JITThunks()
+{
+}
 
 static inline NativeExecutable& getMayBeDyingNativeExecutable(const Weak<NativeExecutable>& weak)
 {

@@ -88,7 +88,17 @@ public:
     }
 
 protected:
-    RefCountedBase() = default;
+    RefCountedBase()
+        : m_refCount(1)
+#if ASSERT_ENABLED
+        , m_isOwnedByMainThread(isMainThread())
+#endif
+#if CHECK_REF_COUNTED_LIFECYCLE
+        , m_deletionHasBegun(false)
+        , m_adoptionIsRequired(true)
+#endif
+    {
+    }
 
     void applyRefDerefThreadingCheck() const
     {
@@ -149,15 +159,15 @@ private:
     friend void adopted(RefCountedBase*);
 #endif
 
-    mutable unsigned m_refCount { 1 };
+    mutable unsigned m_refCount;
 #if ASSERT_ENABLED
-    mutable bool m_isOwnedByMainThread { isMainThread() };
+    mutable bool m_isOwnedByMainThread;
     bool m_areThreadingChecksEnabled { true };
 #endif
     WTF_EXPORT_PRIVATE static bool areThreadingChecksEnabledGlobally;
 #if CHECK_REF_COUNTED_LIFECYCLE
-    mutable bool m_deletionHasBegun { false };
-    mutable bool m_adoptionIsRequired { true };
+    mutable bool m_deletionHasBegun;
+    mutable bool m_adoptionIsRequired;
 #endif
 };
 
@@ -181,8 +191,10 @@ public:
     }
 
 protected:
-    RefCounted() = default;
-    ~RefCounted() = default;
+    RefCounted() { }
+    ~RefCounted()
+    {
+    }
 };
 
 } // namespace WTF

@@ -39,7 +39,7 @@ namespace double_conversion {
 // platforms that support 128bit integers.
 class UInt128 {
  public:
-  UInt128() = default;
+  UInt128() : high_bits_(0), low_bits_(0) { }
   UInt128(uint64_t high, uint64_t low) : high_bits_(high), low_bits_(low) { }
 
   void Multiply(uint32_t multiplicand) {
@@ -112,8 +112,8 @@ class UInt128 {
  private:
   static const uint64_t kMask32 = 0xFFFFFFFF;
   // Value == (high_bits_ << 64) + low_bits_
-  uint64_t high_bits_ { 0 };
-  uint64_t low_bits_ { 0 };
+  uint64_t high_bits_;
+  uint64_t low_bits_;
 };
 
 

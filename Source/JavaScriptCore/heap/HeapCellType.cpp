@@ -52,7 +52,9 @@ HeapCellType::HeapCellType(CellAttributes attributes)
 {
 }
 
-HeapCellType::~HeapCellType() = default;
+HeapCellType::~HeapCellType()
+{
+}
 
 void HeapCellType::finishSweep(MarkedBlock::Handle& block, FreeList* freeList) const
 {

@@ -30,6 +30,10 @@
 
 namespace JSC { namespace B3 {
 
+Variable::~Variable()
+{
+}
+
 void Variable::dump(PrintStream& out) const
 {
     out.print("var", m_index);

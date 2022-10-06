@@ -42,7 +42,7 @@ namespace DFG {
 
 class StructureAbstractValue {
 public:
-    StructureAbstractValue() = default;
+    StructureAbstractValue() { }
     StructureAbstractValue(RegisteredStructure structure)
         : m_set(structure)
     {

@@ -50,7 +50,7 @@ private:
     void increaseSize(size_t);
     
     char* m_buffer;
-    size_t m_next { 0 };
+    size_t m_next;
     size_t m_size;
     char m_inlineBuffer[128];
 };

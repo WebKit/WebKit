@@ -65,7 +65,7 @@ private:
     int m_startOffset;
     int m_endOffset;
     Vector<Gap> m_gaps;
-    UCPURegister m_executionCount { 0 };
+    UCPURegister m_executionCount;
 };
 
 } // namespace JSC

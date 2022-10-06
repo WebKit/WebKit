@@ -41,6 +41,7 @@ class PageCount {
 
 public:
     PageCount()
+        : m_pageCount(UINT_MAX)
     {
         static_assert(maxPageCount < UINT_MAX, "We rely on this here.");
     }
@@ -104,7 +105,7 @@ private:
     // be able to parse such a memory and instantiate it with a smaller initial size.
     static constexpr uint32_t maxPageCount = std::max<uint32_t>(64*1024, MAX_ARRAY_BUFFER_SIZE / static_cast<uint64_t>(pageSize));
 
-    uint32_t m_pageCount { UINT_MAX };
+    uint32_t m_pageCount;
 };
 
 } } // namespace JSC::Wasm

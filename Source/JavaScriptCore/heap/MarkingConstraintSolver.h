@@ -71,8 +71,8 @@ private:
     void runExecutionThread(SlotVisitor&, SchedulerPreference, ScopedLambda<std::optional<unsigned>()> pickNext);
     
     struct TaskWithConstraint {
-        TaskWithConstraint() = default;
-
+        TaskWithConstraint() { }
+        
         TaskWithConstraint(RefPtr<SharedTask<void(SlotVisitor&)>> task, MarkingConstraint* constraint)
             : task(WTFMove(task))
             , constraint(constraint)

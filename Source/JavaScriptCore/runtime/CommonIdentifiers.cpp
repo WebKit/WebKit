@@ -47,7 +47,9 @@ CommonIdentifiers::CommonIdentifiers(VM& vm)
 {
 }
 
-CommonIdentifiers::~CommonIdentifiers() = default;
+CommonIdentifiers::~CommonIdentifiers()
+{
+}
 
 void CommonIdentifiers::appendExternalName(const Identifier& publicName, const Identifier& privateName)
 {

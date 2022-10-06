@@ -42,8 +42,8 @@ template<typename T> class GDIObject {
     WTF_MAKE_NONCOPYABLE(GDIObject);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    GDIObject() = default;
-    GDIObject(std::nullptr_t) { }
+    GDIObject() : m_object(0) { }
+    GDIObject(std::nullptr_t) : m_object(0) { }
     ~GDIObject() { deleteObject<T>(m_object); }
 
     T get() const { return m_object; }
@@ -73,7 +73,7 @@ private:
 
     GDIObject<T>& operator=(T);
 
-    T m_object { 0 };
+    T m_object;
 };
 
 template<typename T> inline void GDIObject<T>::clear()

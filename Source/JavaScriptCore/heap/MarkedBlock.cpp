@@ -101,6 +101,10 @@ MarkedBlock::Header::Header(VM& vm, Handle& handle)
 {
 }
 
+MarkedBlock::Header::~Header()
+{
+}
+
 void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
 {
     RELEASE_ASSERT(m_isFreeListed);

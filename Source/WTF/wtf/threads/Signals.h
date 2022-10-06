@@ -97,7 +97,7 @@ enum class SignalAction {
 };
 
 struct SigInfo {
-    void* faultingAddress { nullptr };
+    void* faultingAddress { 0 };
 };
 
 using SignalHandler = Function<SignalAction(Signal, SigInfo&, PlatformRegisters&)>;

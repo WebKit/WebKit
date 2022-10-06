@@ -41,7 +41,7 @@ class WallTime;
 class Seconds final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    constexpr Seconds() = default;
+    constexpr Seconds() { }
     
     explicit constexpr Seconds(double value)
         : m_value(value)

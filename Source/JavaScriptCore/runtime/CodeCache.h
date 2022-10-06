@@ -59,7 +59,9 @@ static constexpr bool verbose = false;
 } // namespace CodeCacheInternal
 
 struct SourceCodeValue {
-    SourceCodeValue() = default;
+    SourceCodeValue()
+    {
+    }
 
     SourceCodeValue(VM& vm, JSCell* cell, int64_t age)
         : cell(vm, cell)
@@ -78,7 +80,12 @@ public:
     typedef MapType::AddResult AddResult;
 
     CodeCacheMap()
-        : m_timeAtLastPrune(MonotonicTime::now())
+        : m_size(0)
+        , m_sizeAtLastPrune(0)
+        , m_timeAtLastPrune(MonotonicTime::now())
+        , m_minCapacity(0)
+        , m_capacity(0)
+        , m_age(0)
     {
     }
 
@@ -201,12 +208,12 @@ private:
     }
 
     MapType m_map;
-    int64_t m_size { 0 };
-    int64_t m_sizeAtLastPrune { 0 };
+    int64_t m_size;
+    int64_t m_sizeAtLastPrune;
     MonotonicTime m_timeAtLastPrune;
-    int64_t m_minCapacity { 0 };
-    int64_t m_capacity { 0 };
-    int64_t m_age { 0 };
+    int64_t m_minCapacity;
+    int64_t m_capacity;
+    int64_t m_age;
 };
 
 // Caches top-level code such as <script>, window.eval(), new Function, and JSEvaluateScript().

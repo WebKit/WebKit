@@ -60,6 +60,8 @@ private:
             : m_delegate(delegate)
             , m_errorCode(err)
             , m_isUnicode(isUnicode)
+            , m_state(CharacterClassConstructionState::Empty)
+            , m_character(0)
         {
         }
 
@@ -213,8 +215,8 @@ private:
             AfterCharacterClass,
             AfterCharacterClassHyphen,
         };
-        CharacterClassConstructionState m_state { CharacterClassConstructionState::Empty };
-        UChar32 m_character { 0 };
+        CharacterClassConstructionState m_state;
+        UChar32 m_character;
     };
 
     Parser(Delegate& delegate, StringView pattern, bool isUnicode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed)

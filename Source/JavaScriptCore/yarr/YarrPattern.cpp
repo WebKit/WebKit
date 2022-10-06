@@ -43,6 +43,8 @@ class CharacterClassConstructor {
 public:
     CharacterClassConstructor(bool isCaseInsensitive, CanonicalMode canonicalMode)
         : m_isCaseInsensitive(isCaseInsensitive)
+        , m_anyCharacter(false)
+        , m_characterWidths(CharacterClassWidths::Unknown)
         , m_canonicalMode(canonicalMode)
     {
     }
@@ -419,9 +421,9 @@ private:
     }
 
     bool m_isCaseInsensitive : 1;
-    bool m_anyCharacter : 1 { false };
-    CharacterClassWidths m_characterWidths { CharacterClassWidths::Unknown };
-
+    bool m_anyCharacter : 1;
+    CharacterClassWidths m_characterWidths;
+    
     CanonicalMode m_canonicalMode;
 
     Vector<UChar32> m_matches;
@@ -442,7 +444,9 @@ public:
         m_pattern.m_disjunctions.append(WTFMove(body));
     }
 
-    ~YarrPatternConstructor() = default;
+    ~YarrPatternConstructor()
+    {
+    }
 
     void resetForReparsing()
     {
@@ -1134,7 +1138,12 @@ ErrorCode YarrPattern::compile(StringView patternString)
 }
 
 YarrPattern::YarrPattern(StringView pattern, OptionSet<Flags> flags, ErrorCode& error)
-    : m_flags(flags)
+    : m_containsBackreferences(false)
+    , m_containsBOL(false)
+    , m_containsUnsignedLengthPattern(false)
+    , m_hasCopiedParenSubexpressions(false)
+    , m_saveInitialStartValue(false)
+    , m_flags(flags)
 {
     ASSERT(m_flags != Flags::DeletedValue);
     error = compile(pattern);

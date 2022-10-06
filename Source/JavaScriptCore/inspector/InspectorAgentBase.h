@@ -64,7 +64,7 @@ enum class DisconnectReason {
 class InspectorAgentBase {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~InspectorAgentBase() = default;
+    virtual ~InspectorAgentBase() { }
 
     String domainName() const { return m_name; }
 

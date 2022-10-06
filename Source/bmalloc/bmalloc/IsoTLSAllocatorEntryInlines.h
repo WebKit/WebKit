@@ -38,7 +38,9 @@ IsoTLSAllocatorEntry<Config>::IsoTLSAllocatorEntry(IsoHeapImpl<Config>& heap)
 }
 
 template<typename Config>
-IsoTLSAllocatorEntry<Config>::~IsoTLSAllocatorEntry() = default;
+IsoTLSAllocatorEntry<Config>::~IsoTLSAllocatorEntry()
+{
+}
 
 template<typename Config>
 void IsoTLSAllocatorEntry<Config>::construct(void* dst)

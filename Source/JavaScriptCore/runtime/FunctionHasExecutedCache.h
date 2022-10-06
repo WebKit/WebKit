@@ -42,7 +42,7 @@ public:
             static constexpr bool safeToCompareToEmptyOrDeleted = false;
         };
 
-        FunctionRange() = default;
+        FunctionRange() {}
         bool operator==(const FunctionRange& other) const 
         {
             return m_start == other.m_start && m_end == other.m_end;

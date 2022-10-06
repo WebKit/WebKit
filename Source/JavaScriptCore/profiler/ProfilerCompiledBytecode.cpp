@@ -37,7 +37,9 @@ CompiledBytecode::CompiledBytecode(const OriginStack& origin, const CString& des
 {
 }
 
-CompiledBytecode::~CompiledBytecode() = default;
+CompiledBytecode::~CompiledBytecode()
+{
+}
 
 JSValue CompiledBytecode::toJS(JSGlobalObject* globalObject) const
 {

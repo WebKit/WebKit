@@ -117,12 +117,12 @@ protected:
     String m_stackString;
     RuntimeType m_runtimeTypeForCause { TypeNothing };
     ErrorType m_errorType { ErrorType::Error };
-    bool m_stackOverflowError : 1 { false };
-    bool m_outOfMemoryError : 1 { false };
-    bool m_errorInfoMaterialized : 1 { false };
-    bool m_nativeGetterTypeError : 1 { false };
+    bool m_stackOverflowError : 1;
+    bool m_outOfMemoryError : 1;
+    bool m_errorInfoMaterialized : 1;
+    bool m_nativeGetterTypeError : 1;
 #if ENABLE(WEBASSEMBLY)
-    bool m_catchableFromWasm : 1 { true };
+    bool m_catchableFromWasm : 1;
 #endif
 };
 

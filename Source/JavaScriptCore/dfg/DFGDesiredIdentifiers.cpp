@@ -34,14 +34,21 @@
 
 namespace JSC { namespace DFG {
 
-DesiredIdentifiers::DesiredIdentifiers() = default;
-
-DesiredIdentifiers::DesiredIdentifiers(CodeBlock* codeBlock)
-    : m_codeBlock(codeBlock)
+DesiredIdentifiers::DesiredIdentifiers()
+    : m_codeBlock(nullptr)
+    , m_didProcessIdentifiers(false)
 {
 }
 
-DesiredIdentifiers::~DesiredIdentifiers() = default;
+DesiredIdentifiers::DesiredIdentifiers(CodeBlock* codeBlock)
+    : m_codeBlock(codeBlock)
+    , m_didProcessIdentifiers(false)
+{
+}
+
+DesiredIdentifiers::~DesiredIdentifiers()
+{
+}
 
 unsigned DesiredIdentifiers::numberOfIdentifiers()
 {

@@ -281,7 +281,7 @@ private:
     FlowMap<AbstractValue>& m_abstractValues;
     Operands<AbstractValue> m_variables;
     FastBitVector m_activeVariables;
-    BasicBlock* m_block { nullptr };
+    BasicBlock* m_block;
 
     bool m_shouldTryConstantFolding;
 

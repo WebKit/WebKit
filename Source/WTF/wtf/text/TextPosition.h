@@ -39,7 +39,7 @@ public:
     {
     }
 
-    TextPosition() = default;
+    TextPosition() { }
     bool operator==(const TextPosition& other) const { return m_line == other.m_line && m_column == other.m_column; }
     bool operator!=(const TextPosition& other) const { return !(*this == other); }
 

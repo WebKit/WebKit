@@ -56,7 +56,7 @@ OriginStack::OriginStack(Database& database, CodeBlock* codeBlock, const CodeOri
     }
 }
 
-OriginStack::~OriginStack() = default;
+OriginStack::~OriginStack() { }
 
 void OriginStack::append(const Origin& origin)
 {

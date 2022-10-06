@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include <wtf/FunctionDispatcher.h>
 
-#include <wtf/ObjectIdentifier.h>
-#include <wtf/RefCounted.h>
+namespace WTF {
 
-namespace JSC {
+FunctionDispatcher::FunctionDispatcher()
+{
+}
 
-class CallFrame;
-class JSGlobalObject;
+FunctionDispatcher::~FunctionDispatcher()
+{
+}
 
-enum MicrotaskIdentifierType { };
-using MicrotaskIdentifier = ObjectIdentifier<MicrotaskIdentifierType>;
-
-class Microtask : public RefCounted<Microtask> {
-public:
-    Microtask()
-        : m_identifier(MicrotaskIdentifier::generateThreadSafe())
-    {
-    }
-
-    virtual ~Microtask()
-    {
-    }
-
-    MicrotaskIdentifier identifier() const { return m_identifier; }
-
-    virtual void run(JSGlobalObject*) = 0;
-
-protected:
-    MicrotaskIdentifier m_identifier;
-};
-
-} // namespace JSC
+} // namespace WTF

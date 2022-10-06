@@ -81,10 +81,17 @@ public:
     // All CharacterClass instances have to have the full set of matches and ranges,
     // they may have an optional m_table for faster lookups (which must match the
     // specified matches and ranges)
-    CharacterClass() = default;
+    CharacterClass()
+        : m_table(nullptr)
+        , m_characterWidths(CharacterClassWidths::Unknown)
+        , m_anyCharacter(false)
+    {
+    }
     CharacterClass(const char* table, bool inverted)
         : m_table(table)
+        , m_characterWidths(CharacterClassWidths::Unknown)
         , m_tableInverted(inverted)
+        , m_anyCharacter(false)
     {
     }
     CharacterClass(std::initializer_list<UChar32> matches, std::initializer_list<CharacterRange> ranges, std::initializer_list<UChar32> matchesUnicode, std::initializer_list<CharacterRange> rangesUnicode, CharacterClassWidths widths)
@@ -92,7 +99,10 @@ public:
         , m_ranges(ranges)
         , m_matchesUnicode(matchesUnicode)
         , m_rangesUnicode(rangesUnicode)
+        , m_table(nullptr)
         , m_characterWidths(widths)
+        , m_tableInverted(false)
+        , m_anyCharacter(false)
     {
     }
 
@@ -106,10 +116,10 @@ public:
     Vector<UChar32> m_matchesUnicode;
     Vector<CharacterRange> m_rangesUnicode;
 
-    const char* m_table { nullptr };
-    CharacterClassWidths m_characterWidths { CharacterClassWidths::Unknown };
+    const char* m_table;
+    CharacterClassWidths m_characterWidths;
     bool m_tableInverted : 1;
-    bool m_anyCharacter : 1 { false };
+    bool m_anyCharacter : 1;
 };
 
 enum class QuantifierType : uint8_t {
@@ -132,8 +142,8 @@ struct PatternTerm {
         DotStarEnclosure,
     };
     Type type;
-    bool m_capture : 1 { false };
-    bool m_invert : 1 { false };
+    bool m_capture :1;
+    bool m_invert :1;
     QuantifierType quantityType;
     Checked<unsigned> quantityMinCount;
     Checked<unsigned> quantityMaxCount;
@@ -158,6 +168,8 @@ struct PatternTerm {
 
     PatternTerm(UChar32 ch)
         : type(PatternTerm::Type::PatternCharacter)
+        , m_capture(false)
+        , m_invert(false)
     {
         patternCharacter = ch;
         quantityType = QuantifierType::FixedCount;
@@ -166,6 +178,7 @@ struct PatternTerm {
 
     PatternTerm(CharacterClass* charClass, bool invert)
         : type(PatternTerm::Type::CharacterClass)
+        , m_capture(false)
         , m_invert(invert)
     {
         characterClass = charClass;
@@ -188,6 +201,7 @@ struct PatternTerm {
     
     PatternTerm(Type type, bool invert = false)
         : type(type)
+        , m_capture(false)
         , m_invert(invert)
     {
         quantityType = QuantifierType::FixedCount;
@@ -196,6 +210,8 @@ struct PatternTerm {
 
     PatternTerm(unsigned spatternId)
         : type(Type::BackReference)
+        , m_capture(false)
+        , m_invert(false)
     {
         backReferenceSubpatternId = spatternId;
         quantityType = QuantifierType::FixedCount;
@@ -204,6 +220,8 @@ struct PatternTerm {
 
     PatternTerm(bool bolAnchor, bool eolAnchor)
         : type(Type::DotStarEnclosure)
+        , m_capture(false)
+        , m_invert(false)
     {
         anchors.bolAnchor = bolAnchor;
         anchors.eolAnchor = eolAnchor;
@@ -278,6 +296,10 @@ struct PatternAlternative {
 public:
     PatternAlternative(PatternDisjunction* disjunction)
         : m_parent(disjunction)
+        , m_onceThrough(false)
+        , m_hasFixedSize(false)
+        , m_startsWithBOL(false)
+        , m_containsBOL(false)
     {
     }
 
@@ -308,10 +330,10 @@ public:
     Vector<PatternTerm> m_terms;
     PatternDisjunction* m_parent;
     unsigned m_minimumSize;
-    bool m_onceThrough : 1 { false };
-    bool m_hasFixedSize : 1 { false };
-    bool m_startsWithBOL : 1 { false };
-    bool m_containsBOL : 1 { false };
+    bool m_onceThrough : 1;
+    bool m_hasFixedSize : 1;
+    bool m_startsWithBOL : 1;
+    bool m_containsBOL : 1;
 };
 
 struct PatternDisjunction {
@@ -319,6 +341,7 @@ struct PatternDisjunction {
 public:
     PatternDisjunction(PatternAlternative* parent = nullptr)
         : m_parent(parent)
+        , m_hasFixedSize(false)
     {
     }
     
@@ -334,7 +357,7 @@ public:
     PatternAlternative* m_parent;
     unsigned m_minimumSize;
     unsigned m_callFrameSize;
-    bool m_hasFixedSize { false };
+    bool m_hasFixedSize;
 };
 
 // You probably don't want to be calling these functions directly
@@ -507,11 +530,11 @@ struct YarrPattern {
     bool unicode() const { return m_flags.contains(Flags::Unicode); }
     bool dotAll() const { return m_flags.contains(Flags::DotAll); }
 
-    bool m_containsBackreferences : 1 { false };
-    bool m_containsBOL : 1 { false };
-    bool m_containsUnsignedLengthPattern : 1 { false };
-    bool m_hasCopiedParenSubexpressions : 1 { false };
-    bool m_saveInitialStartValue : 1 { false };
+    bool m_containsBackreferences : 1;
+    bool m_containsBOL : 1;
+    bool m_containsUnsignedLengthPattern : 1;
+    bool m_hasCopiedParenSubexpressions : 1;
+    bool m_saveInitialStartValue : 1;
     OptionSet<Flags> m_flags;
     unsigned m_numSubpatterns { 0 };
     unsigned m_initialStartValueFrameLocation { 0 };

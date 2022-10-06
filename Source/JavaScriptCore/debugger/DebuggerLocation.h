@@ -34,7 +34,7 @@ class ScriptExecutable;
 
 struct DebuggerLocation {
 
-    DebuggerLocation() = default;
+    DebuggerLocation() { }
     DebuggerLocation(SourceID sourceID, unsigned line, unsigned column)
         : sourceID(sourceID)
         , line(line)

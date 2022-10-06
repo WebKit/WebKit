@@ -36,7 +36,7 @@ CheckPrivateBrandVariant::CheckPrivateBrandVariant(CacheableIdentifier identifie
     , m_identifier(WTFMove(identifier))
 { }
 
-CheckPrivateBrandVariant::~CheckPrivateBrandVariant() = default;
+CheckPrivateBrandVariant::~CheckPrivateBrandVariant() { }
 
 bool CheckPrivateBrandVariant::attemptToMerge(const CheckPrivateBrandVariant& other)
 {

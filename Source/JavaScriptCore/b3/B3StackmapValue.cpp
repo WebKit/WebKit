@@ -32,7 +32,9 @@
 
 namespace JSC { namespace B3 {
 
-StackmapValue::~StackmapValue() = default;
+StackmapValue::~StackmapValue()
+{
+}
 
 void StackmapValue::append(Value* value, const ValueRep& rep)
 {

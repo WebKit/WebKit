@@ -94,7 +94,9 @@ CheckSpecial::CheckSpecial(const CheckSpecial::Key& key)
 {
 }
 
-CheckSpecial::~CheckSpecial() = default;
+CheckSpecial::~CheckSpecial()
+{
+}
 
 Inst CheckSpecial::hiddenBranch(const Inst& inst) const
 {

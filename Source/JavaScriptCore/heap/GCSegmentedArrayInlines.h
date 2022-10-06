@@ -31,6 +31,8 @@ namespace JSC {
 
 template <typename T>
 GCSegmentedArray<T>::GCSegmentedArray()
+    : m_top(0)
+    , m_numberOfSegments(0)
 {
     m_segments.push(GCArraySegment<T>::create());
     m_numberOfSegments++;

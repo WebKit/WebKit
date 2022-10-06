@@ -134,7 +134,9 @@ IndexedAbstractHeap::IndexedAbstractHeap(AbstractHeap* parent, const char* heapN
 {
 }
 
-IndexedAbstractHeap::~IndexedAbstractHeap() = default;
+IndexedAbstractHeap::~IndexedAbstractHeap()
+{
+}
 
 TypedPointer IndexedAbstractHeap::baseIndex(Output& out, LValue base, LValue index, JSValue indexAsConstant, ptrdiff_t offset, LValue mask)
 {
@@ -240,7 +242,9 @@ NumberedAbstractHeap::NumberedAbstractHeap(AbstractHeap* heap, const char* heapN
 {
 }
 
-NumberedAbstractHeap::~NumberedAbstractHeap() = default;
+NumberedAbstractHeap::~NumberedAbstractHeap()
+{
+}
 
 void NumberedAbstractHeap::dump(PrintStream& out)
 {
@@ -252,7 +256,9 @@ AbsoluteAbstractHeap::AbsoluteAbstractHeap(AbstractHeap* heap, const char* heapN
 {
 }
 
-AbsoluteAbstractHeap::~AbsoluteAbstractHeap() = default;
+AbsoluteAbstractHeap::~AbsoluteAbstractHeap()
+{
+}
 
 void AbsoluteAbstractHeap::dump(PrintStream& out)
 {

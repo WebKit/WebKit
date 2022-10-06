@@ -34,8 +34,12 @@ namespace JSC { namespace DFG {
 
 class PureValue {
 public:
-    PureValue() = default;
-
+    PureValue()
+        : m_op(LastNodeType)
+        , m_info(0)
+    {
+    }
+    
     PureValue(NodeType op, const AdjacencyList& children, uintptr_t info)
         : m_op(op)
         , m_children(children.sanitized())
@@ -85,7 +89,8 @@ public:
     }
 
     PureValue(WTF::HashTableDeletedValueType)
-        : m_info(1)
+        : m_op(LastNodeType)
+        , m_info(1)
     {
     }
     
@@ -131,9 +136,9 @@ public:
 private:
     bool isVarargs() const { return !!m_graph; }
 
-    NodeType m_op { LastNodeType };
+    NodeType m_op;
     AdjacencyList m_children;
-    uintptr_t m_info { 0 };
+    uintptr_t m_info;
     Graph* m_graph { nullptr };
 };
 

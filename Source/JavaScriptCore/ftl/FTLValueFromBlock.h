@@ -33,8 +33,12 @@ namespace JSC { namespace FTL {
 
 class ValueFromBlock {
 public:
-    ValueFromBlock() = default;
-
+    ValueFromBlock()
+        : m_value(nullptr)
+        , m_block(nullptr)
+    {
+    }
+    
     ValueFromBlock(LValue value, LBasicBlock block)
         : m_value(value)
         , m_block(block)
@@ -47,8 +51,8 @@ public:
     LBasicBlock block() const { return m_block; }
 
 private:
-    LValue m_value { nullptr };
-    LBasicBlock m_block { nullptr };
+    LValue m_value;
+    LBasicBlock m_block;
 };
 
 } } // namespace JSC::FTL

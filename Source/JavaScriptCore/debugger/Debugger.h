@@ -181,7 +181,7 @@ public:
 
     class Observer {
     public:
-        virtual ~Observer() = default;
+        virtual ~Observer() { }
 
         virtual void didParseSource(SourceID, const Debugger::Script&) { }
         virtual void failedToParseSource(const String& /* url */, const String& /* data */, int /* firstLine */, int /* errorLine */, const String& /* errorMessage */) { }
@@ -321,19 +321,19 @@ private:
     HashSet<JSGlobalObject*> m_globalObjects;
     HashMap<SourceID, DebuggerParseData, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_parseDataMap;
     HashMap<SourceID, BlackboxType, WTF::IntHash<SourceID>, WTF::UnsignedWithZeroKeyHashTraits<SourceID>> m_blackboxedScripts;
-    bool m_blackboxBreakpointEvaluations : 1 { false };
+    bool m_blackboxBreakpointEvaluations : 1;
 
-    bool m_pauseAtNextOpportunity : 1 { false };
+    bool m_pauseAtNextOpportunity : 1;
     bool m_pauseOnStepNext : 1;
     bool m_pauseOnStepOut : 1;
-    bool m_pastFirstExpressionInStatement : 1 { false };
-    bool m_isPaused : 1 { false };
-    bool m_breakpointsActivated : 1 { false };
-    bool m_hasHandlerForExceptionCallback : 1 { false };
-    bool m_suppressAllPauses : 1 { false };
-    unsigned m_steppingMode : 1 { SteppingModeDisabled }; // SteppingMode
+    bool m_pastFirstExpressionInStatement : 1;
+    bool m_isPaused : 1;
+    bool m_breakpointsActivated : 1;
+    bool m_hasHandlerForExceptionCallback : 1;
+    bool m_suppressAllPauses : 1;
+    unsigned m_steppingMode : 1; // SteppingMode
 
-    ReasonForPause m_reasonForPause { NotPaused };
+    ReasonForPause m_reasonForPause;
     JSValue m_currentException;
     CallFrame* m_pauseOnCallFrame { nullptr };
     CallFrame* m_currentCallFrame { nullptr };

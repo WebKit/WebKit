@@ -33,7 +33,9 @@
 
 namespace JSC { namespace B3 {
 
-VariableValue::~VariableValue() = default;
+VariableValue::~VariableValue()
+{
+}
 
 void VariableValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
 {

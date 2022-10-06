@@ -130,12 +130,16 @@ template <typename LexerType>
 Parser<LexerType>::Parser(VM& vm, const SourceCode& source, ImplementationVisibility implementationVisibility, JSParserBuiltinMode builtinMode, JSParserStrictMode strictMode, JSParserScriptMode scriptMode, SourceParseMode parseMode, SuperBinding superBinding, ConstructorKind defaultConstructorKindForTopLevelFunction, DerivedContextType derivedContextType, bool isEvalContext, EvalContextType evalContextType, DebuggerParseData* debuggerParseData, bool isInsideOrdinaryFunction)
     : m_vm(vm)
     , m_source(&source)
+    , m_hasStackOverflow(false)
+    , m_allowsIn(true)
+    , m_statementDepth(0)
     , m_implementationVisibility(implementationVisibility)
     , m_parsingBuiltin(builtinMode == JSParserBuiltinMode::Builtin)
     , m_parseMode(parseMode)
     , m_scriptMode(scriptMode)
     , m_superBinding(superBinding)
     , m_defaultConstructorKindForTopLevelFunction(defaultConstructorKindForTopLevelFunction)
+    , m_immediateParentAllowsFunctionDeclarationInStatement(false)
     , m_debuggerParseData(debuggerParseData)
     , m_isInsideOrdinaryFunction(isInsideOrdinaryFunction)
 {
@@ -201,8 +205,10 @@ public:
     }
 };
 
-template<typename LexerType>
-Parser<LexerType>::~Parser() = default;
+template <typename LexerType>
+Parser<LexerType>::~Parser()
+{
+}
 
 void JSToken::dump(PrintStream& out) const
 {

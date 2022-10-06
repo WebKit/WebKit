@@ -58,7 +58,7 @@ class SmallStrings {
     WTF_MAKE_NONCOPYABLE(SmallStrings);
 public:
     SmallStrings();
-    ~SmallStrings() = default;
+    ~SmallStrings();
 
     JSString* emptyString()
     {

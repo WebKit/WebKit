@@ -93,7 +93,8 @@ public:
     }
 
     MacroAssemblerARMv7()
-        : m_cachedDataTempRegister(this, dataTempRegister)
+        : m_makeJumpPatchable(false)
+        , m_cachedDataTempRegister(this, dataTempRegister)
         , m_cachedAddressTempRegister(this, addressTempRegister)
     {
     }
@@ -2738,7 +2739,7 @@ private:
             Assembler::linkCall(code, call.m_label, function.taggedPtr());
     }
 
-    bool m_makeJumpPatchable { false };
+    bool m_makeJumpPatchable;
     CachedTempRegister m_cachedDataTempRegister;
     CachedTempRegister m_cachedAddressTempRegister;
 };

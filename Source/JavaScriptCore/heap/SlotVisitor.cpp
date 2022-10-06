@@ -78,6 +78,9 @@ static void validate(JSCell* cell)
 SlotVisitor::SlotVisitor(Heap& heap, CString codeName)
     : Base(heap, codeName, heap.m_opaqueRoots)
     , m_markingVersion(MarkedSpace::initialVersion)
+#if ASSERT_ENABLED
+    , m_isCheckingForDefaultMarkViolation(false)
+#endif
 {
 }
 

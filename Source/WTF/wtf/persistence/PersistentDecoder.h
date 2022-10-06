@@ -38,7 +38,7 @@ class Decoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WTF_EXPORT_PRIVATE Decoder(Span<const uint8_t>);
-    WTF_EXPORT_PRIVATE ~Decoder() = default;
+    WTF_EXPORT_PRIVATE ~Decoder();
 
     size_t length() const { return m_buffer.size(); }
     size_t currentOffset() const { return m_bufferPosition - m_buffer.begin(); }

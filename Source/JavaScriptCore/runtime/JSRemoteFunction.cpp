@@ -40,6 +40,7 @@ const ClassInfo JSRemoteFunction::s_info = { "Function"_s, &Base::s_info, nullpt
 JSRemoteFunction::JSRemoteFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction)
     : Base(vm, executable, globalObject, structure)
     , m_targetFunction(vm, this, targetFunction)
+    , m_length(0.0)
 {
 }
 

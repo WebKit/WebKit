@@ -31,7 +31,7 @@ template<typename T>
 class Insertion {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Insertion() = default;
+    Insertion() { }
 
     template<typename U>
     Insertion(size_t index, U&& element)

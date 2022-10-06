@@ -59,8 +59,8 @@ public:
     CacheableIdentifier(CacheableIdentifier&&) = default;
 
     CacheableIdentifier(std::nullptr_t)
-    {
-    }
+        : m_bits(0)
+    { }
 
     bool isUid() const { return m_bits & s_uidTag; }
     bool isCell() const { return !isUid(); }

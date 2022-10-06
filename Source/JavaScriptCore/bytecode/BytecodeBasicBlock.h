@@ -89,7 +89,7 @@ private:
     inline void addLength(unsigned);
 
     typename InstructionStreamType::Offset m_leaderOffset;
-    unsigned m_totalLength { 0 };
+    unsigned m_totalLength;
     unsigned m_index;
 
     Vector<uint8_t> m_delta;

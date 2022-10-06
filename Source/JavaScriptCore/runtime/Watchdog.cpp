@@ -36,6 +36,9 @@ Watchdog::Watchdog(VM* vm)
     , m_timeLimit(noTimeLimit)
     , m_cpuDeadline(noTimeLimit)
     , m_deadline(MonotonicTime::infinity())
+    , m_callback(nullptr)
+    , m_callbackData1(nullptr)
+    , m_callbackData2(nullptr)
     , m_timerQueue(WorkQueue::create("jsc.watchdog.queue", WorkQueue::QOS::Utility))
 {
 }

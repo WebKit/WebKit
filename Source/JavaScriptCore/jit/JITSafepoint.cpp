@@ -49,6 +49,7 @@ bool Safepoint::Result::didGetCancelled()
 Safepoint::Safepoint(JITPlan& plan, Result& result)
     : m_vm(plan.vm())
     , m_plan(plan)
+    , m_didCallBegin(false)
     , m_result(result)
 {
     RELEASE_ASSERT(result.m_wasChecked);

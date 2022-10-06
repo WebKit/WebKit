@@ -43,7 +43,9 @@ IsoDeallocator<Config>::IsoDeallocator(Mutex& lock)
 }
 
 template<typename Config>
-IsoDeallocator<Config>::~IsoDeallocator() = default;
+IsoDeallocator<Config>::~IsoDeallocator()
+{
+}
 
 template<typename Config>
 template<typename Type>

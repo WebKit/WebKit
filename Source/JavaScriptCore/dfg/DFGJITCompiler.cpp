@@ -62,7 +62,9 @@ JITCompiler::JITCompiler(Graph& dfg)
 #endif
 }
 
-JITCompiler::~JITCompiler() = default;
+JITCompiler::~JITCompiler()
+{
+}
 
 void JITCompiler::linkOSRExits()
 {

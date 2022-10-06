@@ -55,7 +55,7 @@ public:
     template<typename Visitor> void visitChildren(Visitor&);
 
 private:
-    CodeBlock* m_codeBlock { nullptr };
+    CodeBlock* m_codeBlock;
     HashSet<JSCell*> m_references;
 };
 

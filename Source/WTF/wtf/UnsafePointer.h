@@ -37,7 +37,7 @@ public:
     typedef typename std::remove_pointer<T>::type ValueType;
     typedef ValueType* PtrType;
 
-    UnsafePointer() = default;
+    UnsafePointer() : m_pointer(nullptr) { }
     UnsafePointer(PtrType pointer) : m_pointer(pointer) { }
 
     bool operator==(PtrType pointer) const { return pointer == m_pointer; }
@@ -45,7 +45,7 @@ public:
     operator bool() const { return m_pointer; }
 
 private:
-    PtrType m_pointer { nullptr };
+    PtrType m_pointer;
 };
 
 template<typename T>

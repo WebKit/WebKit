@@ -34,7 +34,7 @@ namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RegisterAtOffsetList);
 
-RegisterAtOffsetList::RegisterAtOffsetList() = default;
+RegisterAtOffsetList::RegisterAtOffsetList() { }
 
 RegisterAtOffsetList::RegisterAtOffsetList(RegisterSet registerSet, OffsetBaseType offsetBaseType)
     : m_registers(registerSet.numberOfSetRegisters())

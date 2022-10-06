@@ -38,7 +38,11 @@ const ClassInfo NullSetterFunction::s_info = { "Function"_s, &Base::s_info, null
 
 class GetCallerStrictnessFunctor {
 public:
-    GetCallerStrictnessFunctor() = default;
+    GetCallerStrictnessFunctor()
+        : m_iterations(0)
+        , m_callerIsStrict(false)
+    {
+    }
 
     IterationStatus operator()(StackVisitor& visitor) const
     {
@@ -56,8 +60,8 @@ public:
     bool callerIsStrict() const { return m_callerIsStrict; }
 
 private:
-    mutable int m_iterations { 0 };
-    mutable bool m_callerIsStrict { false };
+    mutable int m_iterations;
+    mutable bool m_callerIsStrict;
 };
 
 static bool callerIsStrict(VM& vm, CallFrame* callFrame)

@@ -46,7 +46,7 @@ namespace JSC {
 struct ArrayStorage {
     WTF_MAKE_NONCOPYABLE(ArrayStorage);
 private:
-    ArrayStorage() = default; // Not directly instantiable. Can only be created as part of a Butterfly.
+    ArrayStorage() { } // Not directly instantiable. Can only be created as part of a Butterfly.
 public:
     
     static ArrayStorage* from(Butterfly* butterfly) { return reinterpret_cast_ptr<ArrayStorage*>(butterfly); }

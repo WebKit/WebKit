@@ -39,7 +39,12 @@ namespace JSC {
         friend class CachedSourceCodeWithoutProvider;
 
     public:
-        UnlinkedSourceCode() = default;
+        UnlinkedSourceCode()
+            : m_provider(nullptr)
+            , m_startOffset(0)
+            , m_endOffset(0)
+        {
+        }
 
         UnlinkedSourceCode(WTF::HashTableDeletedValueType)
             : m_provider(WTF::HashTableDeletedValue)
@@ -48,6 +53,7 @@ namespace JSC {
 
         UnlinkedSourceCode(Ref<SourceProvider>&& provider)
             : m_provider(WTFMove(provider))
+            , m_startOffset(0)
             , m_endOffset(m_provider->source().length())
         {
         }
@@ -96,9 +102,9 @@ namespace JSC {
     protected:
         // FIXME: Make it Ref<SourceProvidier>.
         // https://bugs.webkit.org/show_bug.cgi?id=168325
-        RefPtr<SourceProvider> m_provider { nullptr };
-        int m_startOffset { 0 };
-        int m_endOffset { 0 };
+        RefPtr<SourceProvider> m_provider;
+        int m_startOffset;
+        int m_endOffset;
     };
 
 } // namespace JSC

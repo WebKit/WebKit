@@ -32,8 +32,8 @@ namespace JSC {
 struct InlineCallFrame;
 
 struct TerminatedCodeOrigin {
-    TerminatedCodeOrigin() = default;
-
+    TerminatedCodeOrigin() { }
+    
     TerminatedCodeOrigin(const CodeOrigin& codeOrigin, InlineCallFrame* terminal)
         : codeOrigin(codeOrigin)
         , terminal(terminal)

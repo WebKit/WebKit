@@ -63,6 +63,7 @@ class GMutexLocker {
 public:
     explicit GMutexLocker(T& mutex)
         : m_mutex(mutex)
+        , m_locked(false)
     {
         lock();
     }
@@ -92,7 +93,7 @@ public:
 
 private:
     T& m_mutex;
-    bool m_locked { false };
+    bool m_locked;
 };
 
 } // namespace WTF

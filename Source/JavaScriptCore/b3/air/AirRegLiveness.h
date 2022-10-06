@@ -42,8 +42,8 @@ namespace JSC { namespace B3 { namespace Air {
 // This makes the code sufficiently different that it didn't make sense to try to share code.
 class RegLiveness {
     struct Actions {
-        Actions() = default;
-
+        Actions() { }
+        
         RegisterSet use;
         RegisterSet def;
     };

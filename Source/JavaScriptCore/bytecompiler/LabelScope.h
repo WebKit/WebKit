@@ -40,7 +40,8 @@ public:
     enum Type { Loop, Switch, NamedLabel };
 
     LabelScope(Type type, const Identifier* name, int scopeDepth, Ref<Label>&& breakTarget, RefPtr<Label>&& continueTarget)
-        : m_type(type)
+        : m_refCount(0)
+        , m_type(type)
         , m_name(name)
         , m_scopeDepth(scopeDepth)
         , m_breakTarget(WTFMove(breakTarget))
@@ -74,7 +75,7 @@ public:
     }
 
 private:
-    int m_refCount { 0 };
+    int m_refCount;
     Type m_type;
     const Identifier* m_name;
     int m_scopeDepth;

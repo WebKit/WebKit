@@ -42,7 +42,7 @@ class DiyFp {
  public:
   static const int kSignificandSize = 64;
 
-  DiyFp() = default;
+  DiyFp() : f_(0), e_(0) {}
   DiyFp(uint64_t significand, int exponent) : f_(significand), e_(exponent) {}
 
   // this = this - other.
@@ -110,8 +110,8 @@ class DiyFp {
  private:
   static const uint64_t kUint64MSB = UINT64_2PART_C(0x80000000, 00000000);
 
-  uint64_t f_ { 0 };
-  int e_ { 0 };
+  uint64_t f_;
+  int e_;
 };
 
 }  // namespace double_conversion

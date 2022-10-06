@@ -38,7 +38,7 @@ template<typename Config> class IsoPage;
 template<IsoPageTrigger trigger>
 class DeferredTrigger {
 public:
-    DeferredTrigger() = default;
+    DeferredTrigger() { }
     
     template<typename Config>
     void didBecome(const LockHolder&, IsoPage<Config>&);

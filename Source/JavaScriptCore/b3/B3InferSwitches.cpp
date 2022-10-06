@@ -230,8 +230,10 @@ private:
     }
 
     struct SwitchDescription {
-        SwitchDescription() = default;
-
+        SwitchDescription()
+        {
+        }
+        
         explicit operator bool() { return !!block; }
         
         void dump(PrintStream& out) const

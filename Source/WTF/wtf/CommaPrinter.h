@@ -35,6 +35,7 @@ public:
     CommaPrinter(const char* comma = ", ", const char* start = "")
         : m_comma(comma)
         , m_start(start)
+        , m_didPrint(false)
     {
     }
     
@@ -54,7 +55,7 @@ public:
 private:
     const char* m_comma;
     const char* m_start;
-    mutable bool m_didPrint { false };
+    mutable bool m_didPrint;
 };
 
 } // namespace WTF

@@ -61,7 +61,10 @@ namespace WTF {
 template<typename T>
 class UnionFind {
 public:
-    UnionFind() = default;
+    UnionFind()
+        : m_parent(0)
+    {
+    }
     
     bool isRoot() const
     {
@@ -98,7 +101,7 @@ public:
         a->m_parent = b;
     }
 private:
-    T* m_parent { nullptr };
+    T* m_parent;
 };
 
 } // namespace WTF

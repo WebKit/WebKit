@@ -75,11 +75,16 @@ JSLockHolder::~JSLockHolder()
 }
 
 JSLock::JSLock(VM* vm)
-    : m_vm(vm)
+    : m_lockCount(0)
+    , m_lockDropDepth(0)
+    , m_vm(vm)
+    , m_entryAtomStringTable(nullptr)
 {
 }
 
-JSLock::~JSLock() = default;
+JSLock::~JSLock()
+{
+}
 
 void JSLock::willDestroyVM(VM* vm)
 {
@@ -275,10 +280,11 @@ void JSLock::grabAllLocks(DropAllLocks* dropper, unsigned droppedLockCount)
 }
 
 JSLock::DropAllLocks::DropAllLocks(VM* vm)
+    : m_droppedLockCount(0)
     // If the VM is in the middle of being destroyed then we don't want to resurrect it
     // by allowing DropAllLocks to ref it. By this point the JSLock has already been 
     // released anyways, so it doesn't matter that DropAllLocks is a no-op.
-    : m_vm(vm->heap.isShuttingDown() ? nullptr : vm)
+    , m_vm(vm->heap.isShuttingDown() ? nullptr : vm)
 {
     if (!m_vm)
         return;

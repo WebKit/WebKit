@@ -72,6 +72,8 @@ JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     : JSInterfaceJIT(&vm, nullptr)
     , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
     , m_pcToCodeOriginMapBuilder(vm)
+    , m_canBeOptimized(false)
+    , m_shouldEmitProfiling(false)
     , m_loopOSREntryBytecodeIndex(loopOSREntryBytecodeIndex)
     , m_profiledCodeBlock(codeBlock)
     , m_unlinkedCodeBlock(codeBlock->unlinkedCodeBlock())
@@ -80,7 +82,9 @@ JIT::JIT(VM& vm, CodeBlock* codeBlock, BytecodeIndex loopOSREntryBytecodeIndex)
     ASSERT_UNUSED(globalObjectConstant, globalObjectConstant == s_globalObjectConstant);
 }
 
-JIT::~JIT() = default;
+JIT::~JIT()
+{
+}
 
 JITConstantPool::Constant JIT::addToConstantPool(JITConstantPool::Type type, void* payload)
 {

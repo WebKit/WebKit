@@ -68,15 +68,22 @@ DEFINE_VISIT_CHILDREN(FunctionRareData);
 
 FunctionRareData::FunctionRareData(VM& vm, ExecutableBase* executable)
     : Base(vm, vm.functionRareDataStructure.get())
+    , m_objectAllocationProfile()
     // We initialize blind so that changes to the prototype after function creation but before
     // the first allocation don't disable optimizations. This isn't super important, since the
     // function is unlikely to allocate a rare data until the first allocation anyway.
     , m_allocationProfileWatchpointSet(ClearWatchpoint)
     , m_executable(vm, this, executable)
+    , m_hasReifiedLength(false)
+    , m_hasReifiedName(false)
+    , m_hasModifiedLengthForNonHostFunction(false)
+    , m_hasModifiedNameForNonHostFunction(false)
 {
 }
 
-FunctionRareData::~FunctionRareData() = default;
+FunctionRareData::~FunctionRareData()
+{
+}
 
 void FunctionRareData::initializeObjectAllocationProfile(VM& vm, JSGlobalObject* globalObject, JSObject* prototype, size_t inlineCapacity, JSFunction* constructor)
 {

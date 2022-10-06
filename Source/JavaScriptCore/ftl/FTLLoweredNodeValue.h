@@ -42,8 +42,12 @@ namespace JSC { namespace FTL {
 
 class LoweredNodeValue {
 public:
-    LoweredNodeValue() = default;
-
+    LoweredNodeValue()
+        : m_value(nullptr)
+        , m_block(nullptr)
+    {
+    }
+    
     LoweredNodeValue(LValue value, DFG::BasicBlock* block)
         : m_value(value)
         , m_block(block)
@@ -59,8 +63,8 @@ public:
     DFG::BasicBlock* block() const { return m_block; }
     
 private:
-    LValue m_value { nullptr };
-    DFG::BasicBlock* m_block { nullptr };
+    LValue m_value;
+    DFG::BasicBlock* m_block;
 };
 
 } } // namespace JSC::FTL

@@ -53,7 +53,7 @@ public:
         DoubleValue = 1 << 5,
     };
 
-    constexpr MediaTime() = default;
+    constexpr MediaTime();
     constexpr MediaTime(int64_t value, uint32_t scale, uint8_t flags = Valid);
     MediaTime(const MediaTime& rhs);
 
@@ -142,12 +142,19 @@ private:
     void setTimeScale(uint32_t, RoundingFlags = RoundingFlags::HalfAwayFromZero);
 
     union {
-        int64_t m_timeValue { 0 };
+        int64_t m_timeValue;
         double m_timeValueAsDouble;
     };
-    uint32_t m_timeScale { DefaultTimeScale };
-    uint8_t m_timeFlags { Valid };
+    uint32_t m_timeScale;
+    uint8_t m_timeFlags;
 };
+
+constexpr MediaTime::MediaTime()
+    : m_timeValue(0)
+    , m_timeScale(DefaultTimeScale)
+    , m_timeFlags(Valid)
+{
+}
 
 constexpr MediaTime::MediaTime(int64_t value, uint32_t scale, uint8_t flags)
     : m_timeValue(value)

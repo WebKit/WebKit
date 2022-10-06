@@ -1133,6 +1133,7 @@ RegisterID* NewExprNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 
 CallArguments::CallArguments(BytecodeGenerator& generator, ArgumentsNode* argumentsNode, unsigned additionalArguments)
     : m_argumentsNode(argumentsNode)
+    , m_padding(0)
 {
     size_t argumentCountIncludingThis = 1 + additionalArguments; // 'this' register.
     if (argumentsNode) {

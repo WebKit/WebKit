@@ -83,7 +83,7 @@ public:
 template<typename T, typename WeakPtrImpl> class WeakPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WeakPtr() = default;
+    WeakPtr() { }
     WeakPtr(std::nullptr_t) { }
     template<typename U> WeakPtr(const WeakPtr<U, WeakPtrImpl>&);
     template<typename U> WeakPtr(WeakPtr<U, WeakPtrImpl>&&);

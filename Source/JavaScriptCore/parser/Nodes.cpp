@@ -123,7 +123,11 @@ ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocat
     , m_startLineNumber(startLocation.line)
     , m_startStartOffset(startLocation.startOffset)
     , m_startLineStartOffset(startLocation.lineStartOffset)
+    , m_features(NoFeatures)
     , m_lexicalScopeFeatures(lexicalScopeFeatures)
+    , m_innerArrowFunctionCodeFeatures(NoInnerArrowFunctionFeatures)
+    , m_numConstants(0)
+    , m_statements(nullptr)
 {
 }
 

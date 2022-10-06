@@ -89,7 +89,7 @@ private:
 
     WriteBarrier<JSObject> m_targetFunction;
     WriteBarrier<JSString> m_nameMayBeNull;
-    double m_length { 0.0 };
+    double m_length;
 };
 
 }

@@ -51,12 +51,17 @@ public:
     void refill(const BumpRange&);
 
 private:
-    char* m_ptr { nullptr };
-    unsigned m_size { 0 };
-    unsigned m_remaining { 0 };
+    char* m_ptr;
+    unsigned m_size;
+    unsigned m_remaining;
 };
 
-inline BumpAllocator::BumpAllocator() = default;
+inline BumpAllocator::BumpAllocator()
+    : m_ptr()
+    , m_size()
+    , m_remaining()
+{
+}
 
 inline void BumpAllocator::init(size_t size)
 {

@@ -46,7 +46,9 @@ class Value;
 
 class ValueKey {
 public:
-    ValueKey() = default;
+    ValueKey()
+    {
+    }
 
     ValueKey(Kind kind, Type type)
         : m_kind(kind)

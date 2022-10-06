@@ -138,8 +138,10 @@ protected:
     // Constructor for a read-write list, to which you may append values.
     // FIXME: Remove all clients of this API, then remove this API.
     MarkedArgumentBufferBase(size_t capacity)
-        : m_capacity(capacity)
+        : m_size(0)
+        , m_capacity(capacity)
         , m_buffer(inlineBuffer())
+        , m_markSet(nullptr)
     {
     }
 
@@ -178,10 +180,10 @@ private:
     void setNeedsOverflowCheck() { }
     void clearNeedsOverflowCheck() { }
 #endif // ASSERT_ENABLED
-    int m_size { 0 };
+    int m_size;
     int m_capacity;
     EncodedJSValue* m_buffer;
-    ListSet* m_markSet { nullptr };
+    ListSet* m_markSet;
 };
 
 template<size_t passedInlineCapacity = 8>
@@ -206,7 +208,11 @@ class ArgList {
     friend class Interpreter;
     friend class JIT;
 public:
-    ArgList() = default;
+    ArgList()
+        : m_args(nullptr)
+        , m_argCount(0)
+    {
+    }
 
     ArgList(CallFrame* callFrame)
         : m_args(reinterpret_cast<JSValue*>(&callFrame[CallFrame::argumentOffset(0)]))
@@ -235,8 +241,8 @@ public:
 private:
     JSValue* data() const { return m_args; }
 
-    JSValue* m_args { nullptr };
-    int m_argCount { 0 };
+    JSValue* m_args;
+    int m_argCount;
 };
 
 } // namespace JSC

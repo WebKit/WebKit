@@ -49,7 +49,9 @@ Output::Output(State& state)
 {
 }
 
-Output::~Output() = default;
+Output::~Output()
+{
+}
 
 void Output::initialize(AbstractHeapRepository& heaps)
 {

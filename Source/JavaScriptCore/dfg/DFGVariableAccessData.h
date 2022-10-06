@@ -208,20 +208,20 @@ private:
     // putting them here simplifies the code, and we don't expect DFG space
     // usage for variable access nodes do be significant.
 
-    SpeculatedType m_prediction { SpecNone };
-    SpeculatedType m_argumentAwarePrediction { SpecNone };
+    SpeculatedType m_prediction;
+    SpeculatedType m_argumentAwarePrediction;
     Operand m_operand;
     VirtualRegister m_machineLocal;
-    NodeFlags m_flags { 0 };
+    NodeFlags m_flags;
 
-    bool m_shouldNeverUnbox { false };
-    bool m_structureCheckHoistingFailed { false };
-    bool m_checkArrayHoistingFailed { false };
-    bool m_isProfitableToUnbox { false };
-    bool m_isLoadedFrom { false };
+    bool m_shouldNeverUnbox;
+    bool m_structureCheckHoistingFailed;
+    bool m_checkArrayHoistingFailed;
+    bool m_isProfitableToUnbox;
+    bool m_isLoadedFrom;
 
     float m_votes[2]; // Used primarily for double voting but may be reused for other purposes.
-    DoubleFormatState m_doubleFormatState { EmptyDoubleFormatState };
+    DoubleFormatState m_doubleFormatState;
 };
 
 } } // namespace JSC::DFG

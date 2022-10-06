@@ -91,7 +91,9 @@ static constexpr bool verbose = false;
 // that it's just sitting here in this file.
 class IntRange {
 public:
-    IntRange() = default;
+    IntRange()
+    {
+    }
 
     IntRange(int64_t min, int64_t max)
         : m_min(min)

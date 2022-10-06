@@ -42,9 +42,12 @@ class CheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
 
-    constexpr CheckedPtr() = default;
+    constexpr CheckedPtr()
+        : m_ptr(nullptr)
+    { }
 
     constexpr CheckedPtr(std::nullptr_t)
+        : m_ptr(nullptr)
     { }
 
     ALWAYS_INLINE CheckedPtr(T* ptr)
@@ -182,7 +185,7 @@ private:
             ptr->decrementPtrCount();
     }
 
-    typename PtrTraits::StorageType m_ptr { nullptr };
+    typename PtrTraits::StorageType m_ptr;
 };
 
 template <typename T, typename PtrTraits>

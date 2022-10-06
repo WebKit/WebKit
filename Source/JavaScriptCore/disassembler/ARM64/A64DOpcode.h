@@ -39,6 +39,7 @@ private:
             : m_opcodeMask(opcodeMask)
             , m_opcodePattern(opcodePattern)
             , m_format(format)
+            , m_next(0)
         {
         }
 
@@ -66,7 +67,7 @@ private:
         uint32_t m_opcodeMask;
         uint32_t m_opcodePattern;
         const char* (*m_format)(A64DOpcode*);
-        OpcodeGroup* m_next { nullptr };
+        OpcodeGroup* m_next;
     };
 
 public:
@@ -75,6 +76,8 @@ public:
     A64DOpcode(uint32_t* startPC = nullptr, uint32_t* endPC = nullptr)
         : m_startPC(startPC)
         , m_endPC(endPC)
+        , m_opcode(0)
+        , m_bufferOffset(0)
     {
         init();
         m_formatBuffer[0] = '\0';
@@ -197,8 +200,8 @@ protected:
     uint32_t* m_startPC;
     uint32_t* m_endPC;
     uint32_t* m_currentPC;
-    uint32_t m_opcode { 0 };
-    int m_bufferOffset { 0 };
+    uint32_t m_opcode;
+    int m_bufferOffset;
     uintptr_t m_builtConstant { 0 };
 
 private:

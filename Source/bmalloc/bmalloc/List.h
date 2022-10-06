@@ -57,7 +57,7 @@ class List {
     };
 
 public:
-    List() = default;
+    List() { }
 
     bool isEmpty() { return m_root.next == &m_root; }
 

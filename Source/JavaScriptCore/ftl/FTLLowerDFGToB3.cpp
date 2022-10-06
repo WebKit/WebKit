@@ -14905,11 +14905,16 @@ IGNORE_CLANG_WARNINGS_END
     }
     
     struct ArgumentsLength {
-        ArgumentsLength() = default;
+        ArgumentsLength()
+            : isKnown(false)
+            , known(UINT_MAX)
+            , value(nullptr)
+        {
+        }
         
-        bool isKnown { false };
-        unsigned known { UINT_MAX };
-        LValue value { nullptr };
+        bool isKnown;
+        unsigned known;
+        LValue value;
     };
     ArgumentsLength getArgumentsLength(InlineCallFrame* inlineCallFrame)
     {
@@ -17207,16 +17212,20 @@ IGNORE_CLANG_WARNINGS_END
     }
     
     struct ArrayValues {
-        ArrayValues() = default;
-
+        ArrayValues()
+            : array(nullptr)
+            , butterfly(nullptr)
+        {
+        }
+        
         ArrayValues(LValue array, LValue butterfly)
             : array(array)
             , butterfly(butterfly)
         {
         }
         
-        LValue array { nullptr };
-        LValue butterfly { nullptr };
+        LValue array;
+        LValue butterfly;
     };
 
     ArrayValues allocateJSArray(LValue publicLength, LValue vectorLength, LValue structure, LValue indexingType, bool shouldInitializeElements = true, bool shouldLargeArraySizeCreateArrayStorage = true)
@@ -17901,7 +17910,7 @@ IGNORE_CLANG_WARNINGS_END
     // duplicating.
     
     struct StringSwitchCase {
-        StringSwitchCase() = default;
+        StringSwitchCase() { }
         
         StringSwitchCase(StringImpl* string, LBasicBlock target)
             : string(string)
@@ -17919,8 +17928,13 @@ IGNORE_CLANG_WARNINGS_END
     };
     
     struct CharacterCase {
-        CharacterCase() = default;
-
+        CharacterCase()
+            : character(0)
+            , begin(0)
+            , end(0)
+        {
+        }
+        
         CharacterCase(LChar character, unsigned begin, unsigned end)
             : character(character)
             , begin(begin)
@@ -17933,9 +17947,9 @@ IGNORE_CLANG_WARNINGS_END
             return character < other.character;
         }
         
-        LChar character { 0 };
-        unsigned begin { 0 };
-        unsigned end { 0 };
+        LChar character;
+        unsigned begin;
+        unsigned end;
     };
     
     void switchStringRecurse(

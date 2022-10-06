@@ -31,7 +31,9 @@
 
 namespace Inspector {
 
-AgentRegistry::AgentRegistry() = default;
+AgentRegistry::AgentRegistry()
+{
+}
 
 AgentRegistry::~AgentRegistry()
 {

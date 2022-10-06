@@ -30,7 +30,13 @@
 
 namespace WTF::Persistence {
 
-Encoder::Encoder() = default;
+Encoder::Encoder()
+{
+}
+
+Encoder::~Encoder()
+{
+}
 
 uint8_t* Encoder::grow(size_t size)
 {

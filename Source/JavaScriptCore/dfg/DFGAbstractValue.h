@@ -52,6 +52,8 @@ class VariableAccessData;
 
 struct AbstractValue {
     AbstractValue()
+        : m_type(SpecNone)
+        , m_arrayModes(0)
     {
 #if USE(JSVALUE64) && !defined(NDEBUG)
         // The WTF Traits for AbstractValue allow the initialization of values with bzero().
@@ -470,14 +472,14 @@ struct AbstractValue {
     // whose type is m_type. So, for example if m_type is SpecFinal|SpecInt32Only and
     // m_structure is [0x12345] then this abstract value corresponds to the set of
     // all integers unified with the set of all objects with structure 0x12345.
-    SpeculatedType m_type { SpecNone };
+    SpeculatedType m_type;
     
     // This is a proven constraint on the possible indexing types that this value
     // can have right now. It also implicitly constraints the set of structures
     // that the value may have right now, since a structure has an immutable
     // indexing type. This is subject to change upon reassignment, or any side
     // effect that makes non-obvious changes to the heap.
-    ArrayModes m_arrayModes { 0 };
+    ArrayModes m_arrayModes;
     
     // The effect epoch is usually ignored. This field is used by InPlaceAbstractState.
     //
